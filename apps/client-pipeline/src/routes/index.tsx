@@ -1,0 +1,53 @@
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { healthQuery, helloQuery } from "@/api/status";
+import { QueryResult } from "@/components/query-result";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+export const Route = createFileRoute("/")({
+  component: StatusPage,
+});
+
+function StatusPage() {
+  const health = useQuery(healthQuery);
+  const hello = useQuery(helloQuery);
+
+  return (
+    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
+      <header>
+        <h1 className="text-3xl font-semibold tracking-tight">Photo Pipeline</h1>
+        <p className="text-muted-foreground">
+          Local tool for preparing images and generating portfolio data.
+        </p>
+      </header>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Service status</CardTitle>
+          <CardDescription>client → bff-pipeline (Fastify) → be-pipeline (Go)</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <QueryResult query={health} pendingLabel="Checking…">
+            {(data) => (
+              <dl className="grid grid-cols-2 gap-2 text-sm">
+                <dt className="text-muted-foreground">BFF</dt>
+                <dd>{data.bff}</dd>
+                <dt className="text-muted-foreground">Backend</dt>
+                <dd>{data.backend}</dd>
+              </dl>
+            )}
+          </QueryResult>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Hello from Go</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <QueryResult query={hello}>{(data) => <p>{data.message}</p>}</QueryResult>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

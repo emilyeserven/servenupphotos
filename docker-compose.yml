@@ -1,0 +1,25 @@
+# Photo pipeline: run locally or on a Raspberry Pi (arm64) with `docker compose up -d --build`.
+# Only the BFF is exposed; the Go backend is reachable on the internal network only.
+services:
+  be-pipeline:
+    build:
+      context: ./apps/be-pipeline
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PORT: "8081"
+    restart: unless-stopped
+
+  bff-pipeline:
+    build:
+      context: .
+      dockerfile: apps/bff-pipeline/Dockerfile
+    environment:
+      PORT: "8080"
+      API_URL: http://be-pipeline:8081
+    ports:
+      - "${PIPELINE_PORT:-8080}:8080"
+    depends_on:
+      - be-pipeline
+    restart: unless-stopped
