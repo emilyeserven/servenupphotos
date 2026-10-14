@@ -28,9 +28,36 @@ browser ──► bff-pipeline (Fastify, :8080) ──► be-pipeline (Go, :8081
 ```sh
 pnpm install
 
-pnpm dev:portfolio   # http://localhost:5173/servenupphotos/
-pnpm dev:pipeline    # Go :8081 + Fastify :8080 + Vite :5173 (proxies /api → :8080)
+pnpm dev             # everything: portfolio on the host + the pipeline in Docker, all hot-reloading
+pnpm dev:portfolio   # just the portfolio: http://localhost:5173/servenupphotos/
+pnpm dev:docker      # just the pipeline in Docker: http://localhost:5174
+pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + Vite :5173 (proxies /api → :8080)
 ```
+
+`pnpm dev` opens:
+
+| URL                                     | What                                        |
+| --------------------------------------- | ------------------------------------------- |
+| <http://localhost:5173/servenupphotos/> | portfolio (Vite on the host)                |
+| <http://localhost:5174>                 | pipeline UI (`PIPELINE_DEV_PORT` in `.env`) |
+
+### Pipeline in Docker with hot reload
+
+`pnpm dev:docker` runs `docker-compose.dev.yml`, which starts each pipeline app's dev server in its own container and
+uses [Compose Watch](https://docs.docker.com/compose/how-tos/file-watch/) (Docker Compose 2.22 or newer) to copy your
+edits into them as you save:
+
+| App               | On save                                                |
+| ----------------- | ------------------------------------------------------ |
+| `client-pipeline` | Vite hot module reload in the browser                  |
+| `bff-pipeline`    | `tsx watch` restarts Fastify                           |
+| `be-pipeline`     | container restarts and `go run` recompiles the backend |
+
+Changing a `package.json`, `pnpm-lock.yaml`, `go.mod` or `vite.config.ts` rebuilds the affected image automatically.
+Stop with <kbd>Ctrl</kbd>+<kbd>C</kbd>; `docker compose -f docker-compose.dev.yml down` removes the containers.
+
+> **Frontend analogy:** Compose Watch is like the file watcher behind Vite's HMR, but one level up: it watches your
+> files on the host and syncs them into the container, where the app's own dev server takes it from there.
 
 ## Checks (same as CI)
 
@@ -75,6 +102,9 @@ The pipeline runs as two containers:
    ```
 
 3. Open <http://localhost:8080>. The status page should show both the BFF and the backend as `ok`.
+
+This runs the production builds, so code changes need another `docker compose up -d --build`. While developing, use
+`pnpm dev:docker` instead (see [Pipeline in Docker with hot reload](#pipeline-in-docker-with-hot-reload)).
 
 #### Raspberry Pi
 
