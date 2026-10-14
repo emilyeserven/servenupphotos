@@ -1,0 +1,70 @@
+# Photo pipeline with hot reload: `pnpm dev:docker` (or `pnpm dev` to also start the portfolio).
+# Compose Watch (Compose >= 2.22) syncs saved files into the containers, where Vite / tsx / go run pick them up.
+# For the production-like stack (e.g. on the Raspberry Pi), use docker-compose.yml instead.
+name: servenupphotos-dev
+
+services:
+  be-pipeline:
+    build:
+      context: ./apps/be-pipeline
+      target: dev
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PORT: "8081"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./apps/be-pipeline
+          target: /src
+          ignore:
+            - bin/
+        - action: rebuild
+          path: ./apps/be-pipeline/go.mod
+
+  bff-pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: pnpm --filter @servenup/bff-pipeline dev
+    environment:
+      PORT: "8080"
+      API_URL: http://be-pipeline:8081
+    depends_on:
+      - be-pipeline
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/bff-pipeline/src
+          target: /repo/apps/bff-pipeline/src
+        - action: rebuild
+          path: ./apps/bff-pipeline/package.json
+        - action: rebuild
+          path: ./pnpm-lock.yaml
+
+  client-pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: pnpm --filter @servenup/client-pipeline dev --host 0.0.0.0
+    environment:
+      BFF_URL: http://bff-pipeline:8080
+    ports:
+      - "${PIPELINE_DEV_PORT:-5174}:5173"
+    depends_on:
+      - bff-pipeline
+    develop:
+      watch:
+        - action: sync
+          path: ./apps/client-pipeline/src
+          target: /repo/apps/client-pipeline/src
+        - action: sync
+          path: ./apps/client-pipeline/index.html
+          target: /repo/apps/client-pipeline/index.html
+        - action: rebuild
+          path: ./apps/client-pipeline/package.json
+        - action: rebuild
+          path: ./apps/client-pipeline/vite.config.ts
+        - action: rebuild
+          path: ./pnpm-lock.yaml
