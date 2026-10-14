@@ -44,8 +44,10 @@ jobs:
         with:
           go-version-file: apps/be-pipeline/go.mod
           cache-dependency-path: apps/be-pipeline/go.mod
-      - name: gofmt
-        run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
-      - run: go vet ./...
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.14.0
+          working-directory: apps/be-pipeline
       - run: go test ./...
       - run: go build ./...
