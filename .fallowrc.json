@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "ignorePatterns": ["**/routeTree.gen.ts"],
+  "ignoreExports": [
+    {
+      "file": "apps/*/src/components/ui/**",
+      "exports": ["*"]
+    }
+  ],
+  "duplicates": {
+    "ignore": ["apps/*/src/components/ui/**", "apps/*/src/styles.css", "apps/*/src/main.tsx"]
+  }
+}

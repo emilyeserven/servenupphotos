@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typescript:
+    name: TypeScript (lint, format, typecheck, fallow)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: oxlint
+        run: pnpm lint
+      - name: oxfmt
+        run: pnpm fmt:check
+      - name: typecheck
+        run: pnpm typecheck
+      - name: fallow
+        run: pnpm fallow
+      - name: build
+        run: pnpm build
+
+  go:
+    name: Go (be-pipeline)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/be-pipeline
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: apps/be-pipeline/go.mod
+          cache-dependency-path: apps/be-pipeline/go.mod
+      - name: gofmt
+        run: test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+      - run: go vet ./...
+      - run: go test ./...
+      - run: go build ./...
