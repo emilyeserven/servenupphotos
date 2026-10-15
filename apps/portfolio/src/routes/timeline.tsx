@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { addHours, format, min, startOfDay, subDays } from "date-fns";
+import { format, min } from "date-fns";
 import { CalendarClock, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
+import { dummyPhotos, type DummyPhoto } from "@/lib/dummy-photos";
 import { buildHistogram } from "@/lib/histogram";
 import {
   absoluteTimeRange,
@@ -18,60 +19,6 @@ export const Route = createFileRoute("/timeline")({
   component: TimelineView,
 });
 
-interface DummyPhoto {
-  id: number;
-  title: string;
-  camera: string;
-  takenAt: Date;
-}
-
-// Temporary dummy data until real photos are wired up: about two years of shoot days, each with a
-// handful of photos. Dates are relative to today so every quick range has something in it, and a
-// seeded generator keeps the data stable between reloads.
-const dummyTitles = [
-  "Morning fog over the bay",
-  "Neon alley",
-  "Harbor at dusk",
-  "Cherry blossoms",
-  "Old train station",
-  "Market stalls",
-  "Mountain ridge",
-  "Rainy crosswalk",
-  "Lighthouse",
-  "Desert road",
-  "Autumn canopy",
-  "Rooftop sunset",
-];
-const dummyCameras = ["Fujifilm X-T5", "Sony A7 IV", "Ricoh GR III", "iPhone 16 Pro"];
-
-function seededRandom(seed: number) {
-  let state = seed;
-  return (max: number) => {
-    // Park–Miller generator; good enough for stable dummy data.
-    state = (state * 48_271) % 2_147_483_647;
-    return Math.floor((state / 2_147_483_647) * max);
-  };
-}
-
-function makeDummyPhotos(): DummyPhoto[] {
-  const random = seededRandom(42);
-  const pick = (items: string[]) => items[random(items.length)] ?? "";
-  const today = startOfDay(new Date());
-  const photos: DummyPhoto[] = [];
-  for (let daysAgo = random(3); daysAgo < 730; daysAgo += 1 + random(8)) {
-    const shootDay = addHours(subDays(today, daysAgo), 8);
-    const shots = Array.from({ length: 1 + random(6) }, (_, shot) => ({
-      id: photos.length + shot + 1,
-      title: pick(dummyTitles),
-      camera: pick(dummyCameras),
-      takenAt: addHours(shootDay, shot),
-    }));
-    photos.push(...shots);
-  }
-  return photos;
-}
-
-const dummyPhotos = makeDummyPhotos();
 const earliestPhoto = min(dummyPhotos.map((photo) => photo.takenAt));
 
 function groupByMonth(photos: DummyPhoto[]) {
