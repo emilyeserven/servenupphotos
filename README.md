@@ -99,6 +99,14 @@ The GitHub token needs **Contents: Read and write** and **Pull requests: Read an
 > **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and
 > merging the pull request is checkout. After that, the next save starts a new cart.
 
+### Photos in Flight
+
+`/in-flight` shows the photo data waiting in the open **Add photo data** pull request (`GET /api/photos/in-flight` →
+`GET /photos/in-flight`). It finds the open pull request with that title in the repository from Settings and shows each
+`.json` file the pull request adds or changes directly in the Settings folder (`apps/portfolio/src/data` when the folder
+is blank), read at the pull request's head. `ALLPHOTOS.json` is left out. The page only reads from GitHub; it never
+changes the pull request.
+
 ## Checks (same as CI)
 
 ```sh

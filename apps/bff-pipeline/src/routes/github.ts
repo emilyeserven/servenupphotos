@@ -11,4 +11,9 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
       timeoutMs: 35_000,
     }),
   );
+
+  // Reads the photo JSON in the open "Add photo data" pull request; the backend gives GitHub 30s.
+  app.get("/photos/in-flight", async (_request, reply) =>
+    relayToBackend(reply, app.log, "/photos/in-flight", { timeoutMs: 35_000 }),
+  );
 };

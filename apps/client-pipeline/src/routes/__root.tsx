@@ -22,6 +22,12 @@ export const Route = createRootRouteWithContext<RouterContext>()({
           EXIF
         </Link>
         <Link
+          to="/in-flight"
+          className="text-muted-foreground [&.active]:text-foreground [&.active]:font-medium"
+        >
+          Photos in Flight
+        </Link>
+        <Link
           to="/settings"
           className="text-muted-foreground [&.active]:text-foreground [&.active]:font-medium"
         >
