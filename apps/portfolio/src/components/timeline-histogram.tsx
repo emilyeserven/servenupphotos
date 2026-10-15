@@ -32,12 +32,12 @@ function plural(count: number) {
   return `${count} ${count === 1 ? "photo" : "photos"}`;
 }
 
-/** What the caption says while dragging: the span being selected and its photo count. */
-function describeDrag(bins: HistogramBin[], drag: Drag) {
+/** The span being dragged across, as one label, and its total photo count. */
+function summarizeDrag(bins: HistogramBin[], drag: Drag) {
   const [lo, hi] = sortedRange(drag);
   const count = bins.slice(lo, hi + 1).reduce((sum, bin) => sum + bin.count, 0);
   const label = [...new Set([bins[lo], bins[hi]].map((bin) => bin?.label))].join(" – ");
-  return `${label} · ${plural(count)}`;
+  return { label, count };
 }
 
 /**
@@ -73,13 +73,14 @@ export function TimelineHistogram({
     if (first && last) onSelect(first.start, last.end);
   }
 
+  // While dragging, the tooltip describes the whole span instead of the hovered bar.
+  const span = drag ? summarizeDrag(bins, drag) : undefined;
+
   return (
     <figure className="flex flex-col gap-2">
       <div className="flex items-baseline justify-between gap-4 text-xs text-muted-foreground">
         <figcaption>Photos per {resolution}</figcaption>
-        <span className="tabular-nums">
-          {drag ? describeDrag(bins, drag) : "Click a bar or drag across bars to select a range"}
-        </span>
+        <span>Click a bar or drag across bars to select a range</span>
       </div>
       <ChartContainer config={chartConfig} className="aspect-auto h-40 w-full select-none">
         <BarChart
@@ -99,8 +100,8 @@ export function TimelineHistogram({
             isAnimationActive={false}
             content={
               <ChartTooltipContent
-                labelFormatter={(bin) => (bin as HistogramBin).label}
-                valueFormatter={(value) => plural(Number(value))}
+                labelFormatter={(bin) => span?.label ?? (bin as HistogramBin).label}
+                valueFormatter={(value) => plural(span?.count ?? Number(value))}
               />
             }
           />

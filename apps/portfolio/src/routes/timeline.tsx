@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { addHours, format, min, startOfDay, subDays } from "date-fns";
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { TimelineHistogram } from "@/components/timeline-histogram";
-import { TimeRangePicker } from "@/components/time-range-picker";
+import { Button } from "@/components/ui/button";
+import { DateRangeFields, QuickRangeSelect } from "@/components/time-range-picker";
 import { buildHistogram } from "@/lib/histogram";
 import {
   absoluteTimeRange,
@@ -93,6 +94,11 @@ function TimelineView() {
     start,
     end,
   );
+  const isAllTime = Object.keys(search).length === 0;
+
+  function selectDates(from: Date, to: Date) {
+    navigate({ search: absoluteTimeRange(from, to) });
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-16 sm:px-6">
@@ -102,15 +108,23 @@ function TimelineView() {
           Timeline
         </h1>
         <div className="flex flex-wrap items-center gap-3">
-          <TimeRangePicker value={search} onChange={(next) => navigate({ search: next })} />
+          <QuickRangeSelect value={search} onChange={(next) => navigate({ search: next })} />
           <p className="text-sm text-muted-foreground">{photos.length} photos in range</p>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isAllTime}
+            onClick={() => navigate({ search: {} })}
+          >
+            <RotateCcw aria-hidden />
+            Reset
+          </Button>
         </div>
       </header>
-      <TimelineHistogram
-        bins={bins}
-        resolution={resolution}
-        onSelect={(from, to) => navigate({ search: absoluteTimeRange(from, to) })}
-      />
+      <div className="flex flex-col gap-3">
+        <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
+        <DateRangeFields start={start} end={end} onChange={selectDates} />
+      </div>
       <PhotoMonths photos={photos} />
     </div>
   );

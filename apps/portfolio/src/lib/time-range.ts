@@ -49,7 +49,7 @@ function isQuickRangeKey(value: unknown): value is QuickRangeKey {
 }
 
 /** The absolute from/to dates of a value (ISO strings or Dates), or undefined when either is missing. */
-export function getAbsoluteDates(value: { from?: unknown; to?: unknown }) {
+function getAbsoluteDates(value: { from?: unknown; to?: unknown }) {
   const from = parseDate(value.from);
   const to = parseDate(value.to);
   return from && to ? { from, to } : undefined;
