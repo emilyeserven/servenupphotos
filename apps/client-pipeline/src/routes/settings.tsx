@@ -1,6 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { ExternalLinkIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import {
   type SecretStatus,
   type SecretUpdate,
@@ -32,6 +34,8 @@ interface SectionConfig {
   description: string;
   fields: FieldConfig[];
   secret: FieldConfig;
+  /** Shown under the secret's label, given the form's current field values. */
+  secretHelp?: (fields: Record<string, string>) => ReactNode;
 }
 
 const SECTIONS: SectionConfig[] = [
@@ -57,6 +61,7 @@ const SECTIONS: SectionConfig[] = [
       { name: "folder", label: "Folder", placeholder: "apps/portfolio/src/data" },
     ],
     secret: { name: "token", label: "Personal access token" },
+    secretHelp: (fields) => <GitHubTokenHelp repo={fields.repo ?? ""} />,
   },
 ];
 
@@ -175,6 +180,13 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
               <SecretField
                 id={`${config.section}-${config.secret.name}`}
                 label={config.secret.label}
+                help={
+                  config.secretHelp && (
+                    <form.Subscribe selector={(state) => state.values.fields}>
+                      {(fields) => config.secretHelp?.(fields)}
+                    </form.Subscribe>
+                  )
+                }
                 status={secretStatus}
                 draft={f.state.value}
                 error={f.state.meta.errors[0]}
@@ -238,6 +250,7 @@ function TextField({ id, config, value, onChange, onBlur }: TextFieldProps) {
 interface SecretFieldProps {
   id: string;
   label: string;
+  help?: ReactNode;
   status: SecretStatus;
   draft: SecretDraft;
   error: string | undefined;
@@ -245,7 +258,7 @@ interface SecretFieldProps {
 }
 
 /** A write-only secret: shows whether one is stored, and lets you replace or clear it. */
-function SecretField({ id, label, status, draft, error, onChange }: SecretFieldProps) {
+function SecretField({ id, label, help, status, draft, error, onChange }: SecretFieldProps) {
   const errorId = `${id}-error`;
 
   return (
@@ -253,6 +266,7 @@ function SecretField({ id, label, status, draft, error, onChange }: SecretFieldP
       <label htmlFor={id} className="text-sm font-medium">
         {label}
       </label>
+      {help}
       {draft.action === "replace" ? (
         <SecretInput
           id={id}
@@ -362,4 +376,52 @@ function describeSecret(status: SecretStatus, clearing: boolean): string {
   if (clearing) return "Will be removed when you save";
   if (!status.set) return "Not set";
   return status.last4 ? `•••• ${status.last4}` : "••••••••";
+}
+
+/**
+ * GitHub's token form, pre-filled via its URL template parameters:
+ * https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#pre-filling-fine-grained-personal-access-token-details-using-url-parameters
+ */
+function githubTokenUrl(repo: string): string {
+  const params = new URLSearchParams({
+    name: "servenupphotos pipeline",
+    description: "Commits photo JSON from the servenupphotos pipeline.",
+    contents: "write",
+  });
+  const owner = repo.split("/")[0]?.trim();
+  if (owner) params.set("target_name", owner);
+  return `https://github.com/settings/personal-access-tokens/new?${params}`;
+}
+
+function GitHubTokenHelp({ repo }: { repo: string }) {
+  return (
+    <div className="text-muted-foreground flex flex-col gap-1 text-sm">
+      <p>
+        Use a fine-grained token. Under <strong>Repository access</strong>, choose{" "}
+        <strong>Only select repositories</strong> and pick {repo.trim() || "your photo repository"}.
+        It needs <strong>Contents: Read and write</strong>, and GitHub adds{" "}
+        <strong>Metadata: Read-only</strong> automatically.
+      </p>
+      <div className="flex gap-4">
+        <ExternalLink href={githubTokenUrl(repo)}>Create a token</ExternalLink>
+        <ExternalLink href="https://github.com/settings/personal-access-tokens">
+          Regenerate an existing one
+        </ExternalLink>
+      </div>
+    </div>
+  );
+}
+
+function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="text-foreground inline-flex items-center gap-1 underline underline-offset-4"
+    >
+      {children}
+      <ExternalLinkIcon className="size-3.5" />
+    </a>
+  );
 }
