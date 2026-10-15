@@ -10,33 +10,102 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ColorRouteImport } from './routes/color'
+import { Route as GridRouteImport } from './routes/grid'
+import { Route as MapRouteImport } from './routes/map'
+import { Route as SpotlightRouteImport } from './routes/spotlight'
+import { Route as TableRouteImport } from './routes/table'
+import { Route as TimelineRouteImport } from './routes/timeline'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ColorRoute = ColorRouteImport.update({
+  id: '/color',
+  path: '/color',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GridRoute = GridRouteImport.update({
+  id: '/grid',
+  path: '/grid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SpotlightRoute = SpotlightRouteImport.update({
+  id: '/spotlight',
+  path: '/spotlight',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TableRoute = TableRouteImport.update({
+  id: '/table',
+  path: '/table',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TimelineRoute = TimelineRouteImport.update({
+  id: '/timeline',
+  path: '/timeline',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/color': typeof ColorRoute
+  '/grid': typeof GridRoute
+  '/map': typeof MapRoute
+  '/spotlight': typeof SpotlightRoute
+  '/table': typeof TableRoute
+  '/timeline': typeof TimelineRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/color': typeof ColorRoute
+  '/grid': typeof GridRoute
+  '/map': typeof MapRoute
+  '/spotlight': typeof SpotlightRoute
+  '/table': typeof TableRoute
+  '/timeline': typeof TimelineRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/color': typeof ColorRoute
+  '/grid': typeof GridRoute
+  '/map': typeof MapRoute
+  '/spotlight': typeof SpotlightRoute
+  '/table': typeof TableRoute
+  '/timeline': typeof TimelineRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/color' | '/grid' | '/map' | '/spotlight' | '/table' | '/timeline'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/color' | '/grid' | '/map' | '/spotlight' | '/table' | '/timeline'
+  id:
+    | '__root__'
+    | '/'
+    | '/color'
+    | '/grid'
+    | '/map'
+    | '/spotlight'
+    | '/table'
+    | '/timeline'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ColorRoute: typeof ColorRoute
+  GridRoute: typeof GridRoute
+  MapRoute: typeof MapRoute
+  SpotlightRoute: typeof SpotlightRoute
+  TableRoute: typeof TableRoute
+  TimelineRoute: typeof TimelineRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +117,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/color': {
+      id: '/color'
+      path: '/color'
+      fullPath: '/color'
+      preLoaderRoute: typeof ColorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/grid': {
+      id: '/grid'
+      path: '/grid'
+      fullPath: '/grid'
+      preLoaderRoute: typeof GridRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/spotlight': {
+      id: '/spotlight'
+      path: '/spotlight'
+      fullPath: '/spotlight'
+      preLoaderRoute: typeof SpotlightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/table': {
+      id: '/table'
+      path: '/table'
+      fullPath: '/table'
+      preLoaderRoute: typeof TableRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/timeline': {
+      id: '/timeline'
+      path: '/timeline'
+      fullPath: '/timeline'
+      preLoaderRoute: typeof TimelineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ColorRoute: ColorRoute,
+  GridRoute: GridRoute,
+  MapRoute: MapRoute,
+  SpotlightRoute: SpotlightRoute,
+  TableRoute: TableRoute,
+  TimelineRoute: TimelineRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

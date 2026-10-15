@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { healthQuery, helloQuery } from "@/api/status";
+import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -13,14 +14,10 @@ function StatusPage() {
   const hello = useQuery(helloQuery);
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-6 p-6">
-      <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Photo Pipeline</h1>
-        <p className="text-muted-foreground">
-          Local tool for preparing images and generating portfolio data.
-        </p>
-      </header>
-
+    <Page
+      title="Photo Pipeline"
+      description="Local tool for preparing images and generating portfolio data."
+    >
       <Card>
         <CardHeader>
           <CardTitle>Service status</CardTitle>
@@ -48,6 +45,6 @@ function StatusPage() {
           <QueryResult query={hello}>{(data) => <p>{data.message}</p>}</QueryResult>
         </CardContent>
       </Card>
-    </div>
+    </Page>
   );
 }

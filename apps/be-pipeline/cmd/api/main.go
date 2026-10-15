@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/httpapi"
 )
 
@@ -18,9 +19,18 @@ func main() {
 	addr := ":" + getenv("PORT", "8081")
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
+	// Without exiftool the server still runs; only POST /exif is unavailable.
+	var extractor exif.Extractor
+	if et, err := exif.NewExiftool(); err != nil {
+		logger.Warn("exiftool unavailable; POST /exif will respond 503", "err", err)
+	} else {
+		defer et.Close() //nolint:errcheck // process exit
+		extractor = et
+	}
+
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           httpapi.NewRouter(),
+		Handler:           httpapi.NewRouter(extractor),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
