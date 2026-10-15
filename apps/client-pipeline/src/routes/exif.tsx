@@ -5,6 +5,7 @@ import { type ExifResponse, exifMutation } from "@/api/exif";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
+import { R2Upload } from "@/components/r2-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -78,6 +79,7 @@ function ExifPage() {
       </Card>
 
       {!extract.isIdle && <ExifResult mutation={extract} />}
+      {extract.isSuccess && <R2Upload photo={extract.variables} />}
     </Page>
   );
 }

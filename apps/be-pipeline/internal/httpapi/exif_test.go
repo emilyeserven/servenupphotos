@@ -3,47 +3,11 @@ package httpapi
 import (
 	"bytes"
 	"encoding/json"
-	"image"
-	"image/color"
-	"image/draw"
-	"image/jpeg"
-	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"path/filepath"
 	"testing"
-
-	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
-
-func TestRoutes(t *testing.T) {
-	tests := []struct {
-		path, key, want string
-	}{
-		{"/health", "status", "ok"},
-		{"/hello", "message", "Hello from be-pipeline (Go)"},
-	}
-
-	router := NewRouter(nil, settings.NewStore(filepath.Join(t.TempDir(), "settings.json")))
-	for _, tt := range tests {
-		t.Run(tt.path, func(t *testing.T) {
-			rec := httptest.NewRecorder()
-			router.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, tt.path, nil))
-
-			if rec.Code != http.StatusOK {
-				t.Fatalf("status = %d, want %d", rec.Code, http.StatusOK)
-			}
-			var body map[string]string
-			if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
-				t.Fatalf("decode: %v", err)
-			}
-			if body[tt.key] != tt.want {
-				t.Errorf("%s = %q, want %q", tt.key, body[tt.key], tt.want)
-			}
-		})
-	}
-}
 
 type fakeExtractor struct{ got []byte }
 
@@ -51,35 +15,6 @@ func (f *fakeExtractor) Extract(path string) (map[string]any, error) {
 	b, err := os.ReadFile(path) //nolint:gosec // test temp file
 	f.got = b
 	return map[string]any{"Make": "Servenup", "Model": "Test Camera"}, err
-}
-
-// redJPEG returns a small solid red JPEG.
-func redJPEG(t *testing.T) []byte {
-	t.Helper()
-	img := image.NewRGBA(image.Rect(0, 0, 16, 16))
-	draw.Draw(img, img.Bounds(), &image.Uniform{C: color.RGBA{255, 0, 0, 255}}, image.Point{}, draw.Src)
-	var buf bytes.Buffer
-	if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: 100}); err != nil {
-		t.Fatal(err)
-	}
-	return buf.Bytes()
-}
-
-// truncatedJPEG starts with the JPEG SOI/APP0 markers, enough for content
-// sniffing but not for decoding.
-var truncatedJPEG = []byte("\xff\xd8\xff\xe0\x00\x10JFIF\x00rest-of-image")
-
-func multipartBody(t *testing.T, field, filename string, content []byte) (*bytes.Buffer, string) {
-	t.Helper()
-	var buf bytes.Buffer
-	mw := multipart.NewWriter(&buf)
-	fw, err := mw.CreateFormFile(field, filename)
-	if err != nil {
-		t.Fatal(err)
-	}
-	_, _ = fw.Write(content)
-	_ = mw.Close()
-	return &buf, mw.FormDataContentType()
 }
 
 func TestExif(t *testing.T) {

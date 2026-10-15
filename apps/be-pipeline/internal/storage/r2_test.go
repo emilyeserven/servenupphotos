@@ -77,6 +77,14 @@ func TestCheckR2Validates(t *testing.T) {
 	}
 }
 
+func TestCheckR2PublicURL(t *testing.T) {
+	cfg := validR2
+	cfg.PublicURL = "https://" + validR2.AccountID + ".r2.cloudflarestorage.com/photos"
+	if got := CheckR2(t.Context(), cfg); got.OK || !strings.Contains(got.Message, "S3 API endpoint") {
+		t.Errorf("got %+v, want the S3 API endpoint rejected as a public URL", got)
+	}
+}
+
 func TestCheckR2Unreachable(t *testing.T) {
 	srv := httptest.NewServer(http.NotFoundHandler())
 	srv.Close()
