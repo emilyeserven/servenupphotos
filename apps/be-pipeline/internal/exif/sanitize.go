@@ -9,6 +9,16 @@ type Sanitized struct {
 	CreateDate  *string `json:"createDate"`
 	Country     *string `json:"country"`
 	City        *string `json:"city"`
+	Images      Images  `json:"images"`
+}
+
+// Images are the links to a photo's published copies. Sanitize leaves them
+// nil; they are filled in once the photo is uploaded.
+type Images struct {
+	// Full is the public URL of the original photo in R2.
+	Full *string `json:"full"`
+	// Key is the original photo's object key in the R2 bucket.
+	Key *string `json:"key"`
 }
 
 // Sanitize picks the publishable fields out of exiftool's output, taking the
