@@ -1,6 +1,6 @@
 import type * as React from "react";
 import type { Bin, ColorAnalysis, RawColorData as RawData } from "@/api/exif";
-import { CodeBlock } from "@/components/ui/code-block";
+import { JsonCodeBlock } from "@/components/json-code-block";
 
 export function ColorData({ colors }: { colors: ColorAnalysis }) {
   return (
@@ -108,7 +108,7 @@ export function RawColorData({ raw, samples }: { raw: RawData; samples: number }
       </Section>
 
       <Section title="JSON">
-        <CodeBlock language="json" code={JSON.stringify(raw, null, 2)} />
+        <JsonCodeBlock value={raw} />
       </Section>
     </div>
   );

@@ -69,6 +69,7 @@ const SECTIONS: SectionConfig[] = [
     ],
     secret: { name: "token", label: "Personal access token" },
     secretHelp: (fields) => <GitHubTokenHelp repo={fields.repo ?? ""} />,
+    test: (body) => testSettings("github", body),
   },
 ];
 

@@ -3,11 +3,11 @@ import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type ExifResponse, exifMutation } from "@/api/exif";
 import { ColorData, RawColorData } from "@/components/color-data";
+import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { R2Upload } from "@/components/r2-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CodeBlock } from "@/components/ui/code-block";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -194,5 +194,5 @@ function ExifData({ exif }: { exif: ExifResponse["exif"] | ExifResponse["sanitiz
       </p>
     );
   }
-  return <CodeBlock language="json" code={JSON.stringify(exif, null, 2)} />;
+  return <JsonCodeBlock value={exif} />;
 }
