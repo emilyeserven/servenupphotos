@@ -38,32 +38,43 @@ func TestFindPhotos(t *testing.T) {
 		"photos/notes.txt@2026-10-01T00:00:00Z",
 	)
 
-	found, problem := findPhotos(t.Context(), cfg, endpoint, []string{"DSCF0412.JPG", "My Trip.jpg", "missing.jpg", "!!!.jpg"})
+	byName := PhotoRef{Name: "DSCF0412.JPG"}
+	byURL := PhotoRef{Name: "DSCF0412.JPG", URL: "https://pub.example.r2.dev/photos/aaaaaaaaaaaa-dscf0412.jpg"}
+	elsewhere := PhotoRef{Name: "x.jpg", URL: "https://cdn.example.com/x.jpg"}
+	trip := PhotoRef{Name: "My Trip.jpg"}
+	refs := []PhotoRef{
+		byName, byURL, trip, elsewhere,
+		{Name: "missing.jpg"}, {Name: "!!!.jpg"},
+		{Name: "My Trip.jpg", URL: "https://pub.example.r2.dev/photos/gone.jpg"},
+	}
+	found, problem := findPhotos(t.Context(), cfg, endpoint, refs)
 	if problem != "" {
 		t.Fatalf("problem = %q", problem)
 	}
-	want := map[string]Uploaded{
-		"DSCF0412.JPG": {Key: "photos/bbbbbbbbbbbb-dscf0412.jpg", URL: "https://pub.example.r2.dev/photos/bbbbbbbbbbbb-dscf0412.jpg"},
-		"My Trip.jpg":  {Key: "photos/cccccccccccc-my-trip.jpg", URL: "https://pub.example.r2.dev/photos/cccccccccccc-my-trip.jpg"},
+	want := map[PhotoRef]Uploaded{
+		byName:    {Key: "photos/bbbbbbbbbbbb-dscf0412.jpg", URL: "https://pub.example.r2.dev/photos/bbbbbbbbbbbb-dscf0412.jpg"},
+		byURL:     {Key: "photos/aaaaaaaaaaaa-dscf0412.jpg", URL: "https://pub.example.r2.dev/photos/aaaaaaaaaaaa-dscf0412.jpg"},
+		trip:      {Key: "photos/cccccccccccc-my-trip.jpg", URL: "https://pub.example.r2.dev/photos/cccccccccccc-my-trip.jpg"},
+		elsewhere: {URL: "https://cdn.example.com/x.jpg"},
 	}
 	if len(found) != len(want) {
 		t.Fatalf("found = %+v, want %+v", found, want)
 	}
-	for name, u := range want {
-		if found[name] != u {
-			t.Errorf("found[%q] = %+v, want %+v", name, found[name], u)
+	for ref, u := range want {
+		if found[ref] != u {
+			t.Errorf("found[%+v] = %+v, want %+v", ref, found[ref], u)
 		}
 	}
 }
 
 func TestFindPhotosProblems(t *testing.T) {
 	noURL := validR2
-	if _, problem := findPhotos(t.Context(), noURL, fakeR2(t, http.StatusOK, ""), []string{"a.jpg"}); !strings.Contains(problem, "Public URL") {
+	if _, problem := findPhotos(t.Context(), noURL, fakeR2(t, http.StatusOK, ""), []PhotoRef{{Name: "a.jpg"}}); !strings.Contains(problem, "Public URL") {
 		t.Errorf("problem = %q, want one asking for the public URL", problem)
 	}
 	cfg := validR2
 	cfg.PublicURL = "https://pub.example.r2.dev"
-	if _, problem := findPhotos(t.Context(), cfg, fakeR2(t, http.StatusForbidden, "AccessDenied"), []string{"a.jpg"}); !strings.Contains(problem, "isn't allowed to read") {
+	if _, problem := findPhotos(t.Context(), cfg, fakeR2(t, http.StatusForbidden, "AccessDenied"), []PhotoRef{{Name: "a.jpg"}}); !strings.Contains(problem, "isn't allowed to read") {
 		t.Errorf("problem = %q, want an access error", problem)
 	}
 }

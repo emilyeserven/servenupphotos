@@ -27,13 +27,14 @@ func TestFindImages(t *testing.T) {
 	store := settings.NewStore(filepath.Join(t.TempDir(), "settings.json"))
 	files := []github.InFlightFile{
 		{Path: "data/a.json", PhotoName: "A.jpg"},
-		{Path: "data/b.json", PhotoName: "B.jpg"},
+		{Path: "data/b.json", PhotoName: "B.jpg", ImageURL: "https://pub/photos/b.jpg"},
 	}
-	found := func(_ context.Context, _ settings.R2, names []string) (map[string]storage.Uploaded, string) {
-		if len(names) != 2 || names[0] != "A.jpg" || names[1] != "B.jpg" {
-			t.Errorf("names = %v, want A.jpg, B.jpg", names)
+	a := storage.PhotoRef{Name: "A.jpg"}
+	found := func(_ context.Context, _ settings.R2, refs []storage.PhotoRef) (map[storage.PhotoRef]storage.Uploaded, string) {
+		if len(refs) != 2 || refs[0] != a || refs[1] != (storage.PhotoRef{Name: "B.jpg", URL: "https://pub/photos/b.jpg"}) {
+			t.Errorf("refs = %v, want A.jpg, then B.jpg with its URL", refs)
 		}
-		return map[string]storage.Uploaded{"A.jpg": {Key: "photos/a.jpg", URL: "https://pub/photos/a.jpg"}}, ""
+		return map[storage.PhotoRef]storage.Uploaded{a: {Key: "photos/a.jpg", URL: "https://pub/photos/a.jpg"}}, ""
 	}
 	images, err := findImages(t.Context(), store, found, files)
 	if err != nil {
@@ -43,7 +44,7 @@ func TestFindImages(t *testing.T) {
 		t.Errorf("images = %+v, want a.json's image only", images)
 	}
 
-	broken := func(context.Context, settings.R2, []string) (map[string]storage.Uploaded, string) {
+	broken := func(context.Context, settings.R2, []storage.PhotoRef) (map[storage.PhotoRef]storage.Uploaded, string) {
 		return nil, "Fill in Bucket first."
 	}
 	images, err = findImages(t.Context(), store, broken, files)

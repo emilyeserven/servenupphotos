@@ -47,6 +47,9 @@ type InFlightFile struct {
 	// PhotoName is the photo's original file name: Data's "file", or the
 	// JSON file's name when Data has none.
 	PhotoName string `json:"photoName"`
+	// ImageURL is Data's "images.full", the photo's R2 URL saved with it
+	// when the photo was uploaded before it was saved.
+	ImageURL string `json:"imageUrl,omitempty"`
 	// InAllPhotos says whether Data equals an entry of AllPhotosFile. It is
 	// nil when either file couldn't be read.
 	InAllPhotos *bool `json:"inAllPhotos"`
@@ -131,7 +134,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		}
 		file := InFlightFile{Path: f.Filename, Status: f.Status, FileURL: f.BlobURL}
 		file.Data, file.Error = c.readJSON(ctx, t, f.Filename, pr.Head.SHA)
-		file.PhotoName = photoName(f.Filename, file.Data)
+		file.PhotoName, file.ImageURL = photoRef(f.Filename, file.Data)
 		result.Files = append(result.Files, file)
 	}
 
@@ -167,15 +170,26 @@ func (c *Client) readAllPhotos(ctx context.Context, t target, folder, ref string
 	return all, entries
 }
 
-// photoName is the "file" field of data, or file's name without .json.
-func photoName(file string, data json.RawMessage) string {
+// photoRef returns the "file" field of data, or file's name without .json,
+// and data's "images.full" URL, if any.
+func photoRef(file string, data json.RawMessage) (name, imageURL string) {
 	var photo struct {
-		File string `json:"file"`
+		File   string `json:"file"`
+		Images struct {
+			Full *string `json:"full"`
+		} `json:"images"`
 	}
-	if json.Unmarshal(data, &photo) == nil && strings.TrimSpace(photo.File) != "" {
-		return strings.TrimSpace(photo.File)
+	if json.Unmarshal(data, &photo) != nil {
+		return strings.TrimSuffix(path.Base(file), path.Ext(file)), ""
 	}
-	return strings.TrimSuffix(path.Base(file), path.Ext(file))
+	name = strings.TrimSpace(photo.File)
+	if name == "" {
+		name = strings.TrimSuffix(path.Base(file), path.Ext(file))
+	}
+	if photo.Images.Full != nil {
+		imageURL = strings.TrimSpace(*photo.Images.Full)
+	}
+	return name, imageURL
 }
 
 // containsJSON reports whether data equals one of entries, ignoring

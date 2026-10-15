@@ -16,7 +16,7 @@ import (
 const findPhotosTimeout = 15 * time.Second
 
 // findPhotosFunc looks up uploaded photos in R2; storage.FindPhotos in production.
-type findPhotosFunc func(ctx context.Context, cfg settings.R2, names []string) (map[string]storage.Uploaded, string)
+type findPhotosFunc func(ctx context.Context, cfg settings.R2, refs []storage.PhotoRef) (map[storage.PhotoRef]storage.Uploaded, string)
 
 // inFlightImages is each in-flight photo's image in R2, by JSON file path.
 type inFlightImages struct {
@@ -78,21 +78,21 @@ func findImages(ctx context.Context, store *settings.Store, findPhotos findPhoto
 	if err != nil {
 		return images, err
 	}
-	names := make([]string, len(files))
+	refs := make([]storage.PhotoRef, len(files))
 	for i, f := range files {
-		names[i] = f.PhotoName
+		refs[i] = storage.PhotoRef{Name: f.PhotoName, URL: f.ImageURL}
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, findPhotosTimeout)
 	defer cancel()
-	found, problem := findPhotos(ctx, cfg, names)
+	found, problem := findPhotos(ctx, cfg, refs)
 	if problem != "" {
 		images.Message = problem
 		return images, nil
 	}
 	images.Checked = true
-	for _, f := range files {
-		if u, ok := found[f.PhotoName]; ok {
+	for i, f := range files {
+		if u, ok := found[refs[i]]; ok {
 			images.ByPath[f.Path] = u
 		}
 	}
