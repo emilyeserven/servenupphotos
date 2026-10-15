@@ -13,6 +13,7 @@ import (
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/githubcheck"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
@@ -22,6 +23,12 @@ const maxUploadBytes = 50 << 20
 // NewRouter returns the HTTP handler for all be-pipeline routes. extractor may be
 // nil, in which case POST /exif responds with colors only and a null "exif".
 func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
+	return newRouter(extractor, store, githubcheck.New())
+}
+
+// newRouter is NewRouter with the GitHub checker injectable, so tests can point
+// it at a fake GitHub.
+func newRouter(extractor exif.Extractor, store *settings.Store, github *githubcheck.Checker) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", handleHealth)
 	mux.HandleFunc("GET /hello", handleHello)
@@ -29,6 +36,7 @@ func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
 	mux.HandleFunc("GET /settings", handleGetSettings(store))
 	mux.HandleFunc("PUT /settings/r2", handleUpdateSettings(store.UpdateR2))
 	mux.HandleFunc("PUT /settings/github", handleUpdateSettings(store.UpdateGitHub))
+	mux.HandleFunc("POST /settings/github/test", handleTestSettings(store.ResolveGitHub, github.Check))
 	return mux
 }
 

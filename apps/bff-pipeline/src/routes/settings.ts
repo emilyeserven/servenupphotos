@@ -19,4 +19,14 @@ export const settingsRoutes: FastifyPluginAsync = async (app) => {
       }),
     );
   }
+
+  // Tests the posted (unsaved) settings. The backend gives GitHub 10s, so this waits a little longer.
+  app.post("/settings/github/test", async (request, reply) =>
+    relayToBackend(reply, app.log, "/settings/github/test", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+      timeoutMs: 15_000,
+    }),
+  );
 };
