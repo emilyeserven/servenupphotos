@@ -20,6 +20,9 @@ browser ──► bff-pipeline (Fastify, :8080) ──► be-pipeline (Go, :8081
 
 - Node 22 (`.nvmrc`) and pnpm 10 (`corepack enable`)
 - Go 1.24
+- [ExifTool](https://exiftool.org/install.html), only for `pnpm dev:pipeline` (`brew install exiftool`, or
+  `apt install libimage-exiftool-perl`); the Docker images include it. Without it the backend still starts, but
+  `POST /exif` responds 503.
 - [golangci-lint](https://golangci-lint.run/welcome/install/) v2, for linting the Go code locally
 - Docker with the Compose plugin, for deploying the pipeline
 
@@ -58,6 +61,13 @@ Stop with <kbd>Ctrl</kbd>+<kbd>C</kbd>; `docker compose -f docker-compose.dev.ym
 
 > **Frontend analogy:** Compose Watch is like the file watcher behind Vite's HMR, but one level up: it watches your
 > files on the host and syncs them into the container, where the app's own dev server takes it from there.
+
+### EXIF metadata
+
+Open `/exif` in the pipeline UI (<http://localhost:5174/exif> with `pnpm dev:docker`, <http://localhost:5173/exif> with
+`pnpm dev:pipeline`) to upload a JPEG and see its EXIF metadata. The photo streams from the client through the BFF
+(`POST /api/exif`) to the Go backend (`POST /exif`), which buffers it to a temp file, reads it with
+[go-exiftool](https://github.com/barasher/go-exiftool), and deletes it.
 
 ## Checks (same as CI)
 

@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
 import { env } from "./env.js";
+import { exifRoutes } from "./routes/exif.js";
 import { healthRoutes } from "./routes/health.js";
 import { helloRoutes } from "./routes/hello.js";
 
@@ -11,6 +12,7 @@ await app.register(
   async (api) => {
     await api.register(healthRoutes);
     await api.register(helloRoutes);
+    await api.register(exifRoutes);
   },
   { prefix: "/api" },
 );
