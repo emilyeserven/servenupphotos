@@ -6,6 +6,7 @@ import { ColorData, RawColorData } from "@/components/color-data";
 import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
+import { R2Upload } from "@/components/r2-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -79,15 +80,20 @@ function ExifPage() {
       </Card>
 
       {!extract.isIdle && <ExifResult mutation={extract} />}
-
-      {extract.data?.sanitized && (
-        <GitHubSaveCard
-          key={extract.submittedAt}
-          file={extract.data.file}
-          sanitized={extract.data.sanitized}
-        />
+      {extract.isSuccess && (
+        <PhotoActions key={extract.submittedAt} photo={extract.variables} result={extract.data} />
       )}
     </Page>
+  );
+}
+
+/** What can be done with an analyzed photo: upload it to R2, and save its sanitized EXIF to GitHub. */
+function PhotoActions({ photo, result }: { photo: File; result: ExifResponse }) {
+  return (
+    <>
+      <R2Upload photo={photo} />
+      {result.sanitized && <GitHubSaveCard file={result.file} sanitized={result.sanitized} />}
+    </>
   );
 }
 

@@ -115,6 +115,14 @@ func (s *Store) UpdateR2(u R2Update) (Public, error) {
 	})
 }
 
+// R2 returns the stored R2 settings, secret included, for talking to R2.
+func (s *Store) R2() (R2, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	cur, err := s.load()
+	return cur.R2, err
+}
+
 // ResolveR2 returns the R2 settings an update would produce, using the stored
 // secret when the update keeps it, without saving anything.
 func (s *Store) ResolveR2(u R2Update) (R2, error) {
@@ -146,16 +154,13 @@ func (s *Store) ResolveGitHub(u GitHubUpdate) (GitHub, error) {
 	return u.apply(cur.GitHub), nil
 }
 
-// GitHub returns the stored GitHub settings, token included, for the backend's
-// own use. It must never be sent to a client.
+// GitHub returns the stored GitHub settings, token included, for talking to
+// GitHub.
 func (s *Store) GitHub() (GitHub, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	cur, err := s.load()
-	if err != nil {
-		return GitHub{}, err
-	}
-	return cur.GitHub, nil
+	return cur.GitHub, err
 }
 
 func (s *Store) update(apply func(*Settings)) (Public, error) {
