@@ -13,9 +13,11 @@
     "@tanstack/react-router": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
+    "date-fns": "catalog:",
     "lucide-react": "catalog:",
     "radix-ui": "catalog:",
     "react": "catalog:",
+    "react-day-picker": "catalog:",
     "react-dom": "catalog:",
     "tailwind-merge": "catalog:"
   },
