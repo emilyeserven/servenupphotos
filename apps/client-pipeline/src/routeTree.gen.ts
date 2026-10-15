@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExifRouteImport } from './routes/exif'
+import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as SettingsRouteImport } from './routes/settings'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const ExifRoute = ExifRouteImport.update({
   path: '/exif',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InFlightRoute = InFlightRouteImport.update({
+  id: '/in-flight',
+  path: '/in-flight',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -32,30 +38,34 @@ const SettingsRoute = SettingsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/exif': typeof ExifRoute
+  '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/exif': typeof ExifRoute
+  '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/exif': typeof ExifRoute
+  '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/exif' | '/settings'
+  fullPaths: '/' | '/exif' | '/in-flight' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/exif' | '/settings'
-  id: '__root__' | '/' | '/exif' | '/settings'
+  to: '/' | '/exif' | '/in-flight' | '/settings'
+  id: '__root__' | '/' | '/exif' | '/in-flight' | '/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ExifRoute: typeof ExifRoute
+  InFlightRoute: typeof InFlightRoute
   SettingsRoute: typeof SettingsRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExifRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/in-flight': {
+      id: '/in-flight'
+      path: '/in-flight'
+      fullPath: '/in-flight'
+      preLoaderRoute: typeof InFlightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ExifRoute: ExifRoute,
+  InFlightRoute: InFlightRoute,
   SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport

@@ -114,15 +114,21 @@ func photoKey(name string, body io.ReadSeeker) (string, int64, error) {
 	}
 	hash := hex.EncodeToString(h.Sum(nil))[:12]
 
+	stem := keyStem(name)
+	if stem == "" {
+		return "photos/" + hash + ".jpg", size, nil
+	}
+	return "photos/" + hash + "-" + stem + ".jpg", size, nil
+}
+
+// keyStem is the part of an object key photoKey takes from the photo's name.
+func keyStem(name string) string {
 	stem := strings.TrimSuffix(path.Base(strings.ReplaceAll(name, `\`, "/")), path.Ext(name))
 	stem = strings.Trim(unsafeKeyChars.ReplaceAllString(strings.ToLower(stem), "-"), "-")
 	if len(stem) > 60 {
 		stem = strings.TrimRight(stem[:60], "-")
 	}
-	if stem == "" {
-		return "photos/" + hash + ".jpg", size, nil
-	}
-	return "photos/" + hash + "-" + stem + ".jpg", size, nil
+	return stem
 }
 
 // describeUploadError is describeR2Error for writes: the token may be able to
