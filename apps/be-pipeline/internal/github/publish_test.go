@@ -114,7 +114,11 @@ func ptr(s string) *string { return &s }
 var gh = settings.GitHub{Repo: "owner/repo", Folder: "/photos/data/", Token: token}
 
 func photo(name string) Photo {
-	return Photo{Name: name, File: name + ".jpg", Sanitized: exif.Sanitized{Camera: ptr("X-T5"), City: ptr("Tokyo")}}
+	return Photo{Name: name, File: name + ".jpg", Sanitized: exif.Sanitized{
+		Camera: ptr("X-T5"),
+		City:   ptr("Tokyo"),
+		Images: exif.Images{Full: ptr("https://photos.example.com/" + name + ".jpg")},
+	}}
 }
 
 func TestPublishOpensThenReusesPullRequest(t *testing.T) {
@@ -154,7 +158,10 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "gpsPosition": null,
   "createDate": null,
   "country": null,
-  "city": "Tokyo"
+  "city": "Tokyo",
+  "images": {
+    "full": "https://photos.example.com/DSC0001.jpg"
+  }
 }
 `
 	if got != wantJSON {

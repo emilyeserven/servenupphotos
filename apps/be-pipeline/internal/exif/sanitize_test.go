@@ -65,6 +65,8 @@ func TestSanitize(t *testing.T) {
 			}
 
 			got := roundTrip(t, Sanitize(fields))
+			checkNoImages(t, got)
+			delete(got, "images")
 			if len(got) != len(tt.want) {
 				t.Errorf("got %d keys, want %d: %v", len(got), len(tt.want), got)
 			}
@@ -78,10 +80,26 @@ func TestSanitize(t *testing.T) {
 }
 
 func TestSanitizeEmpty(t *testing.T) {
-	for k, v := range roundTrip(t, Sanitize(map[string]any{"Model": "", "City": 42})) {
+	got := roundTrip(t, Sanitize(map[string]any{"Model": "", "City": 42}))
+	checkNoImages(t, got)
+	delete(got, "images")
+	for k, v := range got {
 		if v != nil {
 			t.Errorf("%s = %#v, want null", k, v)
 		}
+	}
+}
+
+// checkNoImages checks that got has an images object whose links are all null,
+// since Sanitize runs before the photo is uploaded anywhere.
+func checkNoImages(t *testing.T, got map[string]any) {
+	t.Helper()
+	images, ok := got["images"].(map[string]any)
+	if !ok {
+		t.Fatalf("images = %#v, want an object", got["images"])
+	}
+	if len(images) != 1 || images["full"] != nil {
+		t.Errorf("images = %#v, want {\"full\": null}", images)
 	}
 }
 
