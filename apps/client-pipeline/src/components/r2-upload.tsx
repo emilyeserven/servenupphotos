@@ -1,18 +1,26 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { type UseMutationResult, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import { missingSettings } from "@/api/connections";
 import { settingsQuery } from "@/api/settings";
-import { type UploadResponse, uploadMutation } from "@/api/upload";
+import type { UploadResponse } from "@/api/upload";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 
+type UploadMutation = UseMutationResult<UploadResponse, Error, File>;
+
+interface R2UploadProps {
+  photo: File;
+  /** Owned by the page, which puts the uploaded photo's URL into the sanitized EXIF. */
+  upload: UploadMutation;
+}
+
 /** Uploads an analyzed photo to the R2 bucket, once R2 is set up in Settings. */
-export function R2Upload({ photo }: { photo: File }) {
+export function R2Upload({ photo, upload }: R2UploadProps) {
   const settings = useQuery(settingsQuery);
   return (
     <Card>
@@ -27,7 +35,7 @@ export function R2Upload({ photo }: { photo: File }) {
           {(data) => {
             const missing = missingSettings("r2", data);
             if (missing.length > 0) return <R2NotSetUp missing={missing} />;
-            return <UploadForm photo={photo} />;
+            return <UploadForm photo={photo} upload={upload} />;
           }}
         </QueryResult>
       </CardContent>
@@ -47,9 +55,7 @@ function R2NotSetUp({ missing }: { missing: string[] }) {
   );
 }
 
-function UploadForm({ photo }: { photo: File }) {
-  const upload = useMutation(uploadMutation);
-
+function UploadForm({ photo, upload }: R2UploadProps) {
   if (upload.isSuccess) return <Uploaded result={upload.data} />;
   return (
     <div className="flex flex-col gap-2">
