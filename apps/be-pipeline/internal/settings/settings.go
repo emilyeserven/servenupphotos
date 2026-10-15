@@ -146,6 +146,18 @@ func (s *Store) ResolveGitHub(u GitHubUpdate) (GitHub, error) {
 	return u.apply(cur.GitHub), nil
 }
 
+// GitHub returns the stored GitHub settings, token included, for the backend's
+// own use. It must never be sent to a client.
+func (s *Store) GitHub() (GitHub, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	cur, err := s.load()
+	if err != nil {
+		return GitHub{}, err
+	}
+	return cur.GitHub, nil
+}
+
 func (s *Store) update(apply func(*Settings)) (Public, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

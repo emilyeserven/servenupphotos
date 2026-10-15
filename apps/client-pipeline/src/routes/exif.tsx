@@ -3,6 +3,7 @@ import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type ExifResponse, exifMutation } from "@/api/exif";
 import { ColorData, RawColorData } from "@/components/color-data";
+import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
@@ -78,6 +79,14 @@ function ExifPage() {
       </Card>
 
       {!extract.isIdle && <ExifResult mutation={extract} />}
+
+      {extract.data?.sanitized && (
+        <GitHubSaveCard
+          key={extract.submittedAt}
+          file={extract.data.file}
+          sanitized={extract.data.sanitized}
+        />
+      )}
     </Page>
   );
 }

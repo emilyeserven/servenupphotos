@@ -61,7 +61,8 @@ const SECTIONS: SectionConfig[] = [
   {
     section: "github",
     title: "GitHub",
-    description: "Repository and folder that new photo JSON is committed to.",
+    description:
+      "Repository, base branch and folder for photo JSON. Saves go to a pull request against the branch.",
     fields: [
       { name: "repo", label: "Repository", placeholder: "owner/name" },
       { name: "branch", label: "Branch", placeholder: "main" },
@@ -483,8 +484,9 @@ function R2TokenHelp({ bucket }: { bucket: string }) {
 function githubTokenUrl(repo: string): string {
   const params = new URLSearchParams({
     name: "servenupphotos pipeline",
-    description: "Commits photo JSON from the servenupphotos pipeline.",
+    description: "Opens pull requests with photo JSON from the servenupphotos pipeline.",
     contents: "write",
+    pull_requests: "write",
   });
   const owner = repo.split("/")[0]?.trim();
   if (owner) params.set("target_name", owner);
@@ -497,7 +499,8 @@ function GitHubTokenHelp({ repo }: { repo: string }) {
       <p>
         Use a fine-grained token. Under <strong>Repository access</strong>, choose{" "}
         <strong>Only select repositories</strong> and pick {repo.trim() || "your photo repository"}.
-        It needs <strong>Contents: Read and write</strong>, and GitHub adds{" "}
+        It needs <strong>Contents: Read and write</strong> and{" "}
+        <strong>Pull requests: Read and write</strong>, and GitHub adds{" "}
         <strong>Metadata: Read-only</strong> automatically.
       </p>
       <div className="flex gap-4">

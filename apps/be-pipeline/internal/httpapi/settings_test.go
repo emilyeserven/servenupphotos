@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/githubcheck"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
@@ -101,7 +101,7 @@ func TestTestGitHubSettings(t *testing.T) {
 	if _, err := store.UpdateGitHub(settings.GitHubUpdate{Repo: "owner/repo", Token: ptr(stored)}); err != nil {
 		t.Fatal(err)
 	}
-	router := newRouter(nil, store, &githubcheck.Checker{BaseURL: gh.URL, Client: gh.Client()})
+	router := newRouter(nil, store, &github.Client{BaseURL: gh.URL, Client: gh.Client()})
 
 	test := func(body string) storage.CheckResult {
 		t.Helper()
