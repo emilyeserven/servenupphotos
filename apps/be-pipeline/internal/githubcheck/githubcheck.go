@@ -11,22 +11,13 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
 
 // DefaultBaseURL is GitHub's public REST API.
 const DefaultBaseURL = "https://api.github.com"
-
-// timeout bounds the whole check, across both requests.
-const timeout = 10 * time.Second
-
-// Result is the outcome of a check, with a message written for the Settings page.
-type Result struct {
-	OK      bool   `json:"ok"`
-	Message string `json:"message"`
-}
 
 // Checker calls the GitHub REST API at BaseURL.
 type Checker struct {
@@ -41,7 +32,7 @@ func New() *Checker {
 
 // Check reports whether gh's token can see gh's repository and branch. A blank
 // branch means the repository's default branch.
-func (c *Checker) Check(ctx context.Context, gh settings.GitHub) Result {
+func (c *Checker) Check(ctx context.Context, gh settings.GitHub) storage.CheckResult {
 	owner, name, ok := splitRepo(gh.Repo)
 	if !ok {
 		return fail("Enter the repository as owner/name.")
@@ -49,9 +40,6 @@ func (c *Checker) Check(ctx context.Context, gh settings.GitHub) Result {
 	if gh.Token == "" {
 		return fail("Set a personal access token first.")
 	}
-
-	ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
 
 	repoPath := "/repos/" + url.PathEscape(owner) + "/" + url.PathEscape(name)
 	var repo struct {
@@ -92,7 +80,7 @@ func (c *Checker) Check(ctx context.Context, gh settings.GitHub) Result {
 		return fail(fmt.Sprintf("GitHub responded %d when looking up the branch.", status))
 	}
 
-	return Result{OK: true, Message: fmt.Sprintf("Connected to %s on branch %s.", repo.FullName, branch)}
+	return storage.CheckResult{OK: true, Message: fmt.Sprintf("Connected to %s on branch %s.", repo.FullName, branch)}
 }
 
 // get requests path with the token and, on a 200, decodes the body into out
@@ -148,6 +136,6 @@ func isRateLimited(status int, header http.Header) bool {
 		header.Get("X-RateLimit-Remaining") == "0"
 }
 
-func fail(message string) Result {
-	return Result{Message: message}
+func fail(message string) storage.CheckResult {
+	return storage.CheckResult{Message: message}
 }

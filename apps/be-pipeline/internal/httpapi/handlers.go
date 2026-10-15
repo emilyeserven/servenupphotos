@@ -15,6 +15,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/githubcheck"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
 
 // maxUploadBytes caps the size of an uploaded photo.
@@ -35,6 +36,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, github *githubch
 	mux.HandleFunc("POST /exif", handleExif(extractor))
 	mux.HandleFunc("GET /settings", handleGetSettings(store))
 	mux.HandleFunc("PUT /settings/r2", handleUpdateSettings(store.UpdateR2))
+	mux.HandleFunc("POST /settings/r2/test", handleTestSettings(store.ResolveR2, storage.CheckR2))
 	mux.HandleFunc("PUT /settings/github", handleUpdateSettings(store.UpdateGitHub))
 	mux.HandleFunc("POST /settings/github/test", handleTestSettings(store.ResolveGitHub, github.Check))
 	return mux
@@ -51,8 +53,10 @@ func handleHello(w http.ResponseWriter, _ *http.Request) {
 type exifResponse struct {
 	File string `json:"file"`
 	// Exif is null when exiftool is not available.
-	Exif   map[string]any  `json:"exif"`
-	Colors colors.Analysis `json:"colors"`
+	Exif map[string]any `json:"exif"`
+	// Sanitized is null when exiftool is not available.
+	Sanitized *exif.Sanitized `json:"sanitized"`
+	Colors    colors.Analysis `json:"colors"`
 }
 
 // handleExif reads the JPEG in the "photo" field of a multipart form and
@@ -109,6 +113,8 @@ func handleExif(extractor exif.Extractor) http.HandlerFunc {
 					writeError(w, http.StatusInternalServerError, "could not read photo metadata")
 					return
 				}
+				sanitized := exif.Sanitize(res.Exif)
+				res.Sanitized = &sanitized
 			}
 
 			if res.Colors, err = analyzeColors(path); err != nil {

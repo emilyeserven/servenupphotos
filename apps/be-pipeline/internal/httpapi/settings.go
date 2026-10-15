@@ -5,13 +5,18 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+	"time"
 
-	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/githubcheck"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
 
 // maxSettingsBytes caps the size of a settings update body.
 const maxSettingsBytes = 64 << 10
+
+// connectionTestTimeout bounds how long a connection test waits on the remote
+// service.
+const connectionTestTimeout = 10 * time.Second
 
 // handleGetSettings responds with the stored settings. Secrets are reported
 // only as set / not set, never returned.
@@ -24,28 +29,6 @@ func handleGetSettings(store *settings.Store) http.HandlerFunc {
 			return
 		}
 		writeJSON(w, http.StatusOK, pub)
-	}
-}
-
-// handleTestSettings decodes an update of type U, the same body a save takes,
-// resolves it against the stored secret, and tests the connection. Nothing is
-// saved. A failed connection is still a 200; its result says why it failed.
-func handleTestSettings[U, S any](
-	resolve func(U) (S, error),
-	test func(context.Context, S) githubcheck.Result,
-) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		update, ok := decodeSettings[U](w, r)
-		if !ok {
-			return
-		}
-		resolved, err := resolve(update)
-		if err != nil {
-			slog.Error("read settings failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read settings")
-			return
-		}
-		writeJSON(w, http.StatusOK, test(r.Context(), resolved))
 	}
 }
 
@@ -66,8 +49,31 @@ func handleUpdateSettings[U any](save func(U) (settings.Public, error)) http.Han
 	}
 }
 
-// decodeSettings decodes a settings body of type U, or responds 400 and
-// reports false.
+// handleTestSettings checks a settings update of type U against the remote
+// service without saving it. resolve fills in stored secrets the update keeps.
+// A failed check is still a 200: the result's message says what went wrong.
+func handleTestSettings[U, S any](
+	resolve func(U) (S, error),
+	check func(context.Context, S) storage.CheckResult,
+) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		update, ok := decodeSettings[U](w, r)
+		if !ok {
+			return
+		}
+		cfg, err := resolve(update)
+		if err != nil {
+			slog.Error("read settings failed", "err", err)
+			writeError(w, http.StatusInternalServerError, "could not read settings")
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), connectionTestTimeout)
+		defer cancel()
+		writeJSON(w, http.StatusOK, check(ctx, cfg))
+	}
+}
+
+// decodeSettings reads a settings body of type U, writing a 400 if it is invalid.
 func decodeSettings[U any](w http.ResponseWriter, r *http.Request) (U, bool) {
 	var update U
 	dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxSettingsBytes))

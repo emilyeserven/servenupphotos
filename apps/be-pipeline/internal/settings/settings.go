@@ -111,26 +111,31 @@ func (s *Store) Get() (Public, error) {
 // UpdateR2 replaces the R2 settings and returns the new client-safe view.
 func (s *Store) UpdateR2(u R2Update) (Public, error) {
 	return s.update(func(cur *Settings) {
-		cur.R2 = R2{
-			AccountID:       u.AccountID,
-			AccessKeyID:     u.AccessKeyID,
-			SecretAccessKey: applySecret(cur.R2.SecretAccessKey, u.SecretAccessKey),
-			Bucket:          u.Bucket,
-			PublicURL:       u.PublicURL,
-		}
+		cur.R2 = u.apply(cur.R2)
 	})
+}
+
+// ResolveR2 returns the R2 settings an update would produce, using the stored
+// secret when the update keeps it, without saving anything.
+func (s *Store) ResolveR2(u R2Update) (R2, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	cur, err := s.load()
+	if err != nil {
+		return R2{}, err
+	}
+	return u.apply(cur.R2), nil
 }
 
 // UpdateGitHub replaces the GitHub settings and returns the new client-safe view.
 func (s *Store) UpdateGitHub(u GitHubUpdate) (Public, error) {
 	return s.update(func(cur *Settings) {
-		cur.GitHub = u.apply(cur.GitHub.Token)
+		cur.GitHub = u.apply(cur.GitHub)
 	})
 }
 
-// ResolveGitHub returns the GitHub settings u describes, with the stored token
-// filled in under the same keep / clear / replace rules as UpdateGitHub. It
-// saves nothing, so a connection can be tested before it is saved.
+// ResolveGitHub returns the GitHub settings an update would produce, using the
+// stored token when the update keeps it, without saving anything.
 func (s *Store) ResolveGitHub(u GitHubUpdate) (GitHub, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -138,17 +143,7 @@ func (s *Store) ResolveGitHub(u GitHubUpdate) (GitHub, error) {
 	if err != nil {
 		return GitHub{}, err
 	}
-	return u.apply(cur.GitHub.Token), nil
-}
-
-// apply returns the GitHub settings u describes, given the stored token.
-func (u GitHubUpdate) apply(storedToken string) GitHub {
-	return GitHub{
-		Repo:   u.Repo,
-		Branch: u.Branch,
-		Folder: u.Folder,
-		Token:  applySecret(storedToken, u.Token),
-	}
+	return u.apply(cur.GitHub), nil
 }
 
 func (s *Store) update(apply func(*Settings)) (Public, error) {
@@ -245,4 +240,23 @@ func status(secret string) SecretStatus {
 		return SecretStatus{Set: true}
 	}
 	return SecretStatus{Set: true, Last4: secret[len(secret)-4:]}
+}
+
+func (u R2Update) apply(cur R2) R2 {
+	return R2{
+		AccountID:       u.AccountID,
+		AccessKeyID:     u.AccessKeyID,
+		SecretAccessKey: applySecret(cur.SecretAccessKey, u.SecretAccessKey),
+		Bucket:          u.Bucket,
+		PublicURL:       u.PublicURL,
+	}
+}
+
+func (u GitHubUpdate) apply(cur GitHub) GitHub {
+	return GitHub{
+		Repo:   u.Repo,
+		Branch: u.Branch,
+		Folder: u.Folder,
+		Token:  applySecret(cur.Token, u.Token),
+	}
 }

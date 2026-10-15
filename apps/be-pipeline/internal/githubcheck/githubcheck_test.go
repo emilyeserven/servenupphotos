@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
 
 const token = "github_pat_abcdefgh1234"
@@ -103,7 +104,7 @@ func TestCheck(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := fakeGitHub(t, tt.status, tt.header).Check(t.Context(), tt.gh)
-			if want := (Result{OK: tt.ok, Message: tt.message}); got != want {
+			if want := (storage.CheckResult{OK: tt.ok, Message: tt.message}); got != want {
 				t.Errorf("Check() = %+v, want %+v", got, want)
 			}
 		})
