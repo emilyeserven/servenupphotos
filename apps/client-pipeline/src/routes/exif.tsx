@@ -2,12 +2,14 @@ import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type ExifResponse, exifMutation } from "@/api/exif";
+import { ColorData, RawColorData } from "@/components/color-data";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeBlock } from "@/components/ui/code-block";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useObjectUrl } from "@/hooks/use-object-url";
 
 export const Route = createFileRoute("/exif")({
@@ -37,8 +39,8 @@ function ExifPage() {
 
   return (
     <Page
-      title="EXIF metadata"
-      description="Upload a JPEG to read its metadata with exiftool on the Go backend."
+      title="EXIF and color data"
+      description="Upload a JPEG to read its metadata with exiftool and its colors with go-colorful on the Go backend."
     >
       <Card>
         <CardHeader>
@@ -134,7 +136,7 @@ function SubmitButton({ disabled, pending }: { disabled: boolean; pending: boole
   return (
     <Button type="submit" className="self-start" disabled={disabled || pending}>
       {pending && <Spinner />}
-      {pending ? "Reading metadata…" : "Use this photo"}
+      {pending ? "Analyzing photo…" : "Use this photo"}
     </Button>
   );
 }
@@ -143,7 +145,7 @@ function ExifResult({ mutation }: { mutation: ExifMutation }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Metadata</CardTitle>
+        <CardTitle>Results</CardTitle>
         <CardDescription>{mutation.variables?.name}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -157,5 +159,34 @@ function ExifResultBody({ mutation }: { mutation: ExifMutation }) {
   if (mutation.isPending) return <Spinner className="size-6" />;
   if (mutation.isError) return <p className="text-destructive">{mutation.error.message}</p>;
   if (!mutation.data) return null;
-  return <CodeBlock language="json" code={JSON.stringify(mutation.data.metadata, null, 2)} />;
+  const { exif, colors } = mutation.data;
+  return (
+    <Tabs defaultValue="exif">
+      <TabsList>
+        <TabsTrigger value="exif">EXIF</TabsTrigger>
+        <TabsTrigger value="colors">Colors</TabsTrigger>
+        <TabsTrigger value="raw">Raw color data</TabsTrigger>
+      </TabsList>
+      <TabsContent value="exif">
+        <ExifData exif={exif} />
+      </TabsContent>
+      <TabsContent value="colors">
+        <ColorData colors={colors} />
+      </TabsContent>
+      <TabsContent value="raw">
+        <RawColorData raw={colors.raw} samples={colors.samples} />
+      </TabsContent>
+    </Tabs>
+  );
+}
+
+function ExifData({ exif }: { exif: ExifResponse["exif"] }) {
+  if (!exif) {
+    return (
+      <p className="text-muted-foreground text-sm">
+        EXIF data is unavailable because exiftool is not running on the backend.
+      </p>
+    );
+  }
+  return <CodeBlock language="json" code={JSON.stringify(exif, null, 2)} />;
 }

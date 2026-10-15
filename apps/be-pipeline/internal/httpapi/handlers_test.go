@@ -3,10 +3,14 @@ package httpapi
 import (
 	"bytes"
 	"encoding/json"
-	"io"
+	"image"
+	"image/color"
+	"image/draw"
+	"image/jpeg"
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
@@ -40,14 +44,27 @@ func TestRoutes(t *testing.T) {
 
 type fakeExtractor struct{ got []byte }
 
-func (f *fakeExtractor) Extract(r io.Reader) (map[string]any, error) {
-	b, err := io.ReadAll(r)
+func (f *fakeExtractor) Extract(path string) (map[string]any, error) {
+	b, err := os.ReadFile(path) //nolint:gosec // test temp file
 	f.got = b
 	return map[string]any{"Make": "Servenup"}, err
 }
 
-// jpegBytes starts with the JPEG SOI/APP0 markers, enough for content sniffing.
-var jpegBytes = []byte("\xff\xd8\xff\xe0\x00\x10JFIF\x00rest-of-image")
+// redJPEG returns a small solid red JPEG.
+func redJPEG(t *testing.T) []byte {
+	t.Helper()
+	img := image.NewRGBA(image.Rect(0, 0, 16, 16))
+	draw.Draw(img, img.Bounds(), &image.Uniform{C: color.RGBA{255, 0, 0, 255}}, image.Point{}, draw.Src)
+	var buf bytes.Buffer
+	if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: 100}); err != nil {
+		t.Fatal(err)
+	}
+	return buf.Bytes()
+}
+
+// truncatedJPEG starts with the JPEG SOI/APP0 markers, enough for content
+// sniffing but not for decoding.
+var truncatedJPEG = []byte("\xff\xd8\xff\xe0\x00\x10JFIF\x00rest-of-image")
 
 func multipartBody(t *testing.T, field, filename string, content []byte) (*bytes.Buffer, string) {
 	t.Helper()
@@ -63,6 +80,7 @@ func multipartBody(t *testing.T, field, filename string, content []byte) (*bytes
 }
 
 func TestExif(t *testing.T) {
+	photo := redJPEG(t)
 	tests := []struct {
 		name      string
 		extractor *fakeExtractor
@@ -70,10 +88,11 @@ func TestExif(t *testing.T) {
 		content   []byte
 		want      int
 	}{
-		{"jpeg", &fakeExtractor{}, "photo", jpegBytes, http.StatusOK},
+		{"jpeg", &fakeExtractor{}, "photo", photo, http.StatusOK},
+		{"no exiftool", nil, "photo", photo, http.StatusOK},
 		{"not a jpeg", &fakeExtractor{}, "photo", []byte("\x89PNG\r\n\x1a\n"), http.StatusUnsupportedMediaType},
-		{"missing field", &fakeExtractor{}, "other", jpegBytes, http.StatusBadRequest},
-		{"no exiftool", nil, "photo", jpegBytes, http.StatusServiceUnavailable},
+		{"undecodable jpeg", &fakeExtractor{}, "photo", truncatedJPEG, http.StatusUnprocessableEntity},
+		{"missing field", &fakeExtractor{}, "other", photo, http.StatusBadRequest},
 	}
 
 	for _, tt := range tests {
@@ -101,11 +120,23 @@ func TestExif(t *testing.T) {
 			if err := json.NewDecoder(rec.Body).Decode(&res); err != nil {
 				t.Fatalf("decode: %v", err)
 			}
-			if res.File != "IMG_0001.jpg" || res.Metadata["Make"] != "Servenup" {
-				t.Errorf("response = %+v", res)
+			if res.File != "IMG_0001.jpg" {
+				t.Errorf("file = %q", res.File)
 			}
-			if !bytes.Equal(tt.extractor.got, jpegBytes) {
-				t.Errorf("extractor got %q, want the whole upload", tt.extractor.got)
+			if b := res.Colors.Buckets; len(b) == 0 || b[0].Name != "red" || b[0].Share < 0.99 {
+				t.Errorf("buckets = %+v, want the photo in red", b)
+			}
+			if tt.extractor == nil {
+				if res.Exif != nil {
+					t.Errorf("exif = %v, want null without exiftool", res.Exif)
+				}
+				return
+			}
+			if res.Exif["Make"] != "Servenup" {
+				t.Errorf("exif = %v", res.Exif)
+			}
+			if !bytes.Equal(tt.extractor.got, photo) {
+				t.Errorf("extractor got %d bytes, want the whole upload (%d)", len(tt.extractor.got), len(photo))
 			}
 		})
 	}

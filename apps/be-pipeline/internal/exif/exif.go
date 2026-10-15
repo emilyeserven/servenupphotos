@@ -1,18 +1,16 @@
 // Package exif reads photo metadata with exiftool, via go-exiftool.
 //
 // go-exiftool keeps one long-running exiftool process and reads files by path,
-// so uploads are written to a temporary file, read, and removed.
+// so callers pass the path of a file, typically an upload saved to a temp file.
 package exif
 
 import (
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/barasher/go-exiftool"
 )
 
-// Fields that describe the temporary file rather than the photo.
+// Fields that describe the (temporary) file rather than the photo.
 var tempFileFields = []string{
 	"SourceFile",
 	"Directory",
@@ -23,9 +21,9 @@ var tempFileFields = []string{
 	"FileModifyDate",
 }
 
-// Extractor returns the metadata of a single image.
+// Extractor returns the metadata of the image at path.
 type Extractor interface {
-	Extract(r io.Reader) (map[string]any, error)
+	Extract(path string) (map[string]any, error)
 }
 
 // Exiftool is an Extractor backed by a running exiftool process.
@@ -47,24 +45,9 @@ func (e *Exiftool) Close() error {
 	return e.et.Close()
 }
 
-// Extract buffers r to a temporary file and returns exiftool's fields for it.
-func (e *Exiftool) Extract(r io.Reader) (map[string]any, error) {
-	tmp, err := os.CreateTemp("", "upload-*.jpg")
-	if err != nil {
-		return nil, fmt.Errorf("create temp file: %w", err)
-	}
-	defer os.Remove(tmp.Name()) //nolint:errcheck // best-effort cleanup
-
-	_, copyErr := io.Copy(tmp, r)
-	closeErr := tmp.Close()
-	if copyErr != nil {
-		return nil, fmt.Errorf("buffer upload: %w", copyErr)
-	}
-	if closeErr != nil {
-		return nil, fmt.Errorf("buffer upload: %w", closeErr)
-	}
-
-	results := e.et.ExtractMetadata(tmp.Name()) // go-exiftool serialises calls itself
+// Extract returns exiftool's fields for the image at path.
+func (e *Exiftool) Extract(path string) (map[string]any, error) {
+	results := e.et.ExtractMetadata(path) // go-exiftool serialises calls itself
 
 	if len(results) != 1 {
 		return nil, fmt.Errorf("exiftool returned %d results", len(results))
