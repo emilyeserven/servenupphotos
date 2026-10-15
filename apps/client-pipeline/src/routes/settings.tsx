@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckIcon, ExternalLinkIcon, XIcon } from "lucide-react";
+import { ExternalLinkIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import {
   type ConnectionTestResult,
@@ -14,6 +14,8 @@ import {
   settingsQuery,
   testSettings,
 } from "@/api/settings";
+import { connectionQueryKey } from "@/api/connections";
+import { ConnectionStatus, toTestState } from "@/components/connection-status";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -142,6 +144,7 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
     mutationFn: (value: FormValues) => saveSettings(config.section, toSettingsBody(config, value)),
     onSuccess: (data) => {
       queryClient.setQueryData(settingsQuery.queryKey, data);
+      void queryClient.invalidateQueries({ queryKey: connectionQueryKey(config.section) });
       form.reset(toFormValues(config, data[config.section]));
     },
   });
@@ -251,53 +254,6 @@ function SaveStatus({ isSuccess, error }: { isSuccess: boolean; error: Error | n
   if (error) return <p className="text-destructive text-sm">{error.message}</p>;
   if (isSuccess) return <p className="text-muted-foreground text-sm">Saved.</p>;
   return null;
-}
-
-/** Where a connection test stands: running, finished, or not run since the last edit. */
-type TestState = "pending" | ConnectionTestResult | undefined;
-
-function toTestState({
-  isPending,
-  data,
-  error,
-}: {
-  isPending: boolean;
-  data: ConnectionTestResult | undefined;
-  error: Error | null;
-}): TestState {
-  if (isPending) return "pending";
-  if (error) return { ok: false, message: error.message };
-  return data;
-}
-
-/** A spinner while a connection test runs, then a check or an X with the reason. */
-function ConnectionStatus({ state }: { state: TestState }) {
-  return (
-    <div role="status" aria-live="polite" className="flex items-center gap-1.5 text-sm">
-      {state === "pending" ? <Spinner aria-label="Testing connection" /> : null}
-      {typeof state === "object" ? <ConnectionResult result={state} /> : null}
-    </div>
-  );
-}
-
-function ConnectionResult({ result }: { result: ConnectionTestResult }) {
-  if (!result.ok) {
-    return (
-      <>
-        <XIcon className="text-destructive size-4 shrink-0" aria-label="Connection failed" />
-        <span className="text-destructive">{result.message}</span>
-      </>
-    );
-  }
-  return (
-    <>
-      <CheckIcon
-        className="size-4 shrink-0 text-green-600 dark:text-green-400"
-        aria-label="Connected"
-      />
-      <span className="text-muted-foreground">{result.message}</span>
-    </>
-  );
 }
 
 interface TextFieldProps {

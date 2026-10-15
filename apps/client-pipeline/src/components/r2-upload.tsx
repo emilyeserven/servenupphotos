@@ -2,7 +2,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
-import { type SettingsResponse, settingsQuery } from "@/api/settings";
+import { missingSettings } from "@/api/connections";
+import { settingsQuery } from "@/api/settings";
 import { type UploadResponse, uploadMutation } from "@/api/upload";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,7 @@ export function R2Upload({ photo }: { photo: File }) {
       <CardContent>
         <QueryResult query={settings} pendingLabel="Checking R2 settings…">
           {(data) => {
-            const missing = missingR2Settings(data.r2);
+            const missing = missingSettings("r2", data);
             if (missing.length > 0) return <R2NotSetUp missing={missing} />;
             return <UploadForm photo={photo} />;
           }}
@@ -32,18 +33,6 @@ export function R2Upload({ photo }: { photo: File }) {
       </CardContent>
     </Card>
   );
-}
-
-/** Names the R2 settings an upload needs that aren't filled in yet. */
-function missingR2Settings(r2: SettingsResponse["r2"]): string[] {
-  const fields: [string, boolean][] = [
-    ["account ID", r2.accountId.trim() !== ""],
-    ["access key ID", r2.accessKeyId.trim() !== ""],
-    ["secret access key", r2.secretAccessKey.set],
-    ["bucket", r2.bucket.trim() !== ""],
-    ["public URL", r2.publicUrl.trim() !== ""],
-  ];
-  return fields.filter(([, set]) => !set).map(([name]) => name);
 }
 
 function R2NotSetUp({ missing }: { missing: string[] }) {
