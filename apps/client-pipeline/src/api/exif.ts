@@ -61,10 +61,22 @@ export interface ColorAnalysis {
   raw: RawColorData;
 }
 
+/** The publishable subset of the EXIF data; a field is null when the photo lacks it. */
+export interface SanitizedExif {
+  camera: string | null;
+  lens: string | null;
+  gpsPosition: string | null;
+  createDate: string | null;
+  country: string | null;
+  city: string | null;
+}
+
 export interface ExifResponse {
   file: string;
   /** Null when exiftool is not available on the backend. */
   exif: Record<string, unknown> | null;
+  /** Null when exiftool is not available on the backend. */
+  sanitized: SanitizedExif | null;
   colors: ColorAnalysis;
 }
 

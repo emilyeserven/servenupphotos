@@ -159,14 +159,18 @@ function ExifResultBody({ mutation }: { mutation: ExifMutation }) {
   if (mutation.isPending) return <Spinner className="size-6" />;
   if (mutation.isError) return <p className="text-destructive">{mutation.error.message}</p>;
   if (!mutation.data) return null;
-  const { exif, colors } = mutation.data;
+  const { exif, sanitized, colors } = mutation.data;
   return (
-    <Tabs defaultValue="exif">
+    <Tabs defaultValue="sanitized">
       <TabsList>
+        <TabsTrigger value="sanitized">Sanitized EXIF</TabsTrigger>
         <TabsTrigger value="exif">EXIF</TabsTrigger>
         <TabsTrigger value="colors">Colors</TabsTrigger>
         <TabsTrigger value="raw">Raw color data</TabsTrigger>
       </TabsList>
+      <TabsContent value="sanitized">
+        <ExifData exif={sanitized} />
+      </TabsContent>
       <TabsContent value="exif">
         <ExifData exif={exif} />
       </TabsContent>
@@ -180,7 +184,7 @@ function ExifResultBody({ mutation }: { mutation: ExifMutation }) {
   );
 }
 
-function ExifData({ exif }: { exif: ExifResponse["exif"] }) {
+function ExifData({ exif }: { exif: ExifResponse["exif"] | ExifResponse["sanitized"] }) {
   if (!exif) {
     return (
       <p className="text-muted-foreground text-sm">
