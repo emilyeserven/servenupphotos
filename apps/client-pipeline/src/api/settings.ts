@@ -27,7 +27,7 @@ export type SettingsSection = keyof SettingsResponse;
 /** What to do with a stored secret on save: keep it (`undefined`), clear it (`""`), or replace it. */
 export type SecretUpdate = string | undefined;
 
-async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
+export async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
   const json = (await res.json().catch(() => null)) as (T & { message?: string }) | null;
   if (!res.ok) throw new Error(json?.message ?? `${url} responded ${res.status}`);

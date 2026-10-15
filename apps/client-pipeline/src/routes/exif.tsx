@@ -3,6 +3,7 @@ import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type ExifResponse, exifMutation } from "@/api/exif";
 import { ColorData, RawColorData } from "@/components/color-data";
+import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { R2Upload } from "@/components/r2-upload";
@@ -79,8 +80,20 @@ function ExifPage() {
       </Card>
 
       {!extract.isIdle && <ExifResult mutation={extract} />}
-      {extract.isSuccess && <R2Upload photo={extract.variables} />}
+      {extract.isSuccess && (
+        <PhotoActions key={extract.submittedAt} photo={extract.variables} result={extract.data} />
+      )}
     </Page>
+  );
+}
+
+/** What can be done with an analyzed photo: upload it to R2, and save its sanitized EXIF to GitHub. */
+function PhotoActions({ photo, result }: { photo: File; result: ExifResponse }) {
+  return (
+    <>
+      <R2Upload photo={photo} />
+      {result.sanitized && <GitHubSaveCard file={result.file} sanitized={result.sanitized} />}
+    </>
   );
 }
 

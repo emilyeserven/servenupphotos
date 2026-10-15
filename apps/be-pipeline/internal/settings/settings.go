@@ -154,6 +154,15 @@ func (s *Store) ResolveGitHub(u GitHubUpdate) (GitHub, error) {
 	return u.apply(cur.GitHub), nil
 }
 
+// GitHub returns the stored GitHub settings, token included, for talking to
+// GitHub.
+func (s *Store) GitHub() (GitHub, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	cur, err := s.load()
+	return cur.GitHub, err
+}
+
 func (s *Store) update(apply func(*Settings)) (Public, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()

@@ -1,4 +1,4 @@
-package githubcheck
+package github
 
 import (
 	"net/http"
@@ -14,7 +14,7 @@ const token = "github_pat_abcdefgh1234"
 
 // fakeGitHub serves owner/repo with default branch main and branches main and
 // feature/x, and answers every request with status when status is non-zero.
-func fakeGitHub(t *testing.T, status int, header map[string]string) *Checker {
+func fakeGitHub(t *testing.T, status int, header map[string]string) *Client {
 	t.Helper()
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if got := r.Header.Get("Authorization"); got != "Bearer "+token {
@@ -38,7 +38,7 @@ func fakeGitHub(t *testing.T, status int, header map[string]string) *Checker {
 		}
 	}))
 	t.Cleanup(srv.Close)
-	return &Checker{BaseURL: srv.URL, Client: srv.Client()}
+	return &Client{BaseURL: srv.URL, Client: srv.Client()}
 }
 
 func TestCheck(t *testing.T) {
@@ -112,7 +112,7 @@ func TestCheck(t *testing.T) {
 }
 
 func TestCheckUnreachable(t *testing.T) {
-	c := &Checker{BaseURL: "http://127.0.0.1:0", Client: http.DefaultClient}
+	c := &Client{BaseURL: "http://127.0.0.1:0", Client: http.DefaultClient}
 	got := c.Check(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token})
 	if got.OK || !strings.Contains(got.Message, "Couldn't reach GitHub") {
 		t.Errorf("Check() = %+v, want an unreachable failure", got)
