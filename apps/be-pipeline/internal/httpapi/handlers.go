@@ -14,6 +14,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
 
 // maxUploadBytes caps the size of an uploaded photo.
@@ -28,6 +29,7 @@ func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
 	mux.HandleFunc("POST /exif", handleExif(extractor))
 	mux.HandleFunc("GET /settings", handleGetSettings(store))
 	mux.HandleFunc("PUT /settings/r2", handleUpdateSettings(store.UpdateR2))
+	mux.HandleFunc("POST /settings/r2/test", handleTestSettings(store.ResolveR2, storage.CheckR2))
 	mux.HandleFunc("PUT /settings/github", handleUpdateSettings(store.UpdateGitHub))
 	return mux
 }

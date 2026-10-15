@@ -1,15 +1,18 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { ExternalLinkIcon } from "lucide-react";
+import { CheckIcon, ExternalLinkIcon, XIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import {
+  type ConnectionTestResult,
   type SecretStatus,
   type SecretUpdate,
+  type SettingsBody,
   type SettingsResponse,
   type SettingsSection,
   saveSettings,
   settingsQuery,
+  testSettings,
 } from "@/api/settings";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -36,6 +39,8 @@ interface SectionConfig {
   secret: FieldConfig;
   /** Shown under the secret's label, given the form's current field values. */
   secretHelp?: (fields: Record<string, string>) => ReactNode;
+  /** Checks the form's unsaved settings; when set, the card gets a Test connection button. */
+  test?: (body: SettingsBody) => Promise<ConnectionTestResult>;
 }
 
 const SECTIONS: SectionConfig[] = [
@@ -51,6 +56,7 @@ const SECTIONS: SectionConfig[] = [
     ],
     secret: { name: "secretAccessKey", label: "Secret access key" },
     secretHelp: (fields) => <R2TokenHelp bucket={fields.bucket ?? ""} />,
+    test: (body) => testSettings("r2", body),
   },
   {
     section: "github",
@@ -104,6 +110,10 @@ function toFormValues(
   };
 }
 
+function toSettingsBody(config: SectionConfig, value: FormValues): SettingsBody {
+  return { ...value.fields, [config.secret.name]: toSecretUpdate(value.secret) };
+}
+
 function toSecretUpdate(draft: SecretDraft): SecretUpdate {
   if (draft.action === "replace") return draft.value;
   if (draft.action === "clear") return "";
@@ -127,16 +137,22 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
   ] ?? { set: false };
 
   const save = useMutation({
-    mutationFn: (value: FormValues) =>
-      saveSettings(config.section, {
-        ...value.fields,
-        [config.secret.name]: toSecretUpdate(value.secret),
-      }),
+    mutationFn: (value: FormValues) => saveSettings(config.section, toSettingsBody(config, value)),
     onSuccess: (data) => {
       queryClient.setQueryData(settingsQuery.queryKey, data);
       form.reset(toFormValues(config, data[config.section]));
     },
   });
+
+  const test = useMutation({
+    mutationFn: (value: FormValues) => config.test!(toSettingsBody(config, value)),
+  });
+
+  /** Any edit makes the last save or test result stale. */
+  const clearResults = () => {
+    save.reset();
+    test.reset();
+  };
 
   const form = useForm({
     defaultValues: toFormValues(config, stored),
@@ -168,7 +184,7 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
                   value={f.state.value}
                   onBlur={f.handleBlur}
                   onChange={(value) => {
-                    save.reset();
+                    clearResults();
                     f.handleChange(value);
                   }}
                 />
@@ -192,7 +208,7 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
                 draft={f.state.value}
                 error={f.state.meta.errors[0]}
                 onChange={(draft) => {
-                  save.reset();
+                  clearResults();
                   f.handleChange(draft);
                 }}
               />
@@ -208,6 +224,19 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
                 </Button>
               )}
             </form.Subscribe>
+            {config.test && (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={test.isPending}
+                  onClick={() => test.mutate(form.state.values)}
+                >
+                  Test connection
+                </Button>
+                <ConnectionStatus state={toTestState(test)} />
+              </>
+            )}
             <SaveStatus isSuccess={save.isSuccess} error={save.error} />
           </div>
         </form>
@@ -220,6 +249,53 @@ function SaveStatus({ isSuccess, error }: { isSuccess: boolean; error: Error | n
   if (error) return <p className="text-destructive text-sm">{error.message}</p>;
   if (isSuccess) return <p className="text-muted-foreground text-sm">Saved.</p>;
   return null;
+}
+
+/** Where a connection test stands: running, finished, or not run since the last edit. */
+type TestState = "pending" | ConnectionTestResult | undefined;
+
+function toTestState({
+  isPending,
+  data,
+  error,
+}: {
+  isPending: boolean;
+  data: ConnectionTestResult | undefined;
+  error: Error | null;
+}): TestState {
+  if (isPending) return "pending";
+  if (error) return { ok: false, message: error.message };
+  return data;
+}
+
+/** A spinner while a connection test runs, then a check or an X with the reason. */
+function ConnectionStatus({ state }: { state: TestState }) {
+  return (
+    <div role="status" aria-live="polite" className="flex items-center gap-1.5 text-sm">
+      {state === "pending" ? <Spinner aria-label="Testing connection" /> : null}
+      {typeof state === "object" ? <ConnectionResult result={state} /> : null}
+    </div>
+  );
+}
+
+function ConnectionResult({ result }: { result: ConnectionTestResult }) {
+  if (!result.ok) {
+    return (
+      <>
+        <XIcon className="text-destructive size-4 shrink-0" aria-label="Connection failed" />
+        <span className="text-destructive">{result.message}</span>
+      </>
+    );
+  }
+  return (
+    <>
+      <CheckIcon
+        className="size-4 shrink-0 text-green-600 dark:text-green-400"
+        aria-label="Connected"
+      />
+      <span className="text-muted-foreground">{result.message}</span>
+    </>
+  );
 }
 
 interface TextFieldProps {

@@ -39,9 +39,26 @@ export const settingsQuery = queryOptions({
   queryFn: () => requestJson<SettingsResponse>("/api/settings"),
 });
 
-export function saveSettings(section: SettingsSection, body: Record<string, string | undefined>) {
+/** The outcome of checking a section's settings against the service they connect to. */
+export interface ConnectionTestResult {
+  ok: boolean;
+  message: string;
+}
+
+export type SettingsBody = Record<string, string | undefined>;
+
+export function saveSettings(section: SettingsSection, body: SettingsBody) {
   return requestJson<SettingsResponse>(`/api/settings/${section}`, {
     method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+/** Checks unsaved settings; a kept (`undefined`) secret is filled in from the stored one. */
+export function testSettings(section: SettingsSection, body: SettingsBody) {
+  return requestJson<ConnectionTestResult>(`/api/settings/${section}/test`, {
+    method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
   });
