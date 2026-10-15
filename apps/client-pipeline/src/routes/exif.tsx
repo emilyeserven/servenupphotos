@@ -31,8 +31,11 @@ function validatePhoto(photo: File | null): string | undefined {
 }
 
 /** The sanitized EXIF with the photo's R2 URL filled in once it has been uploaded. */
-function withImages(sanitized: SanitizedExif | null, upload: UploadResponse | undefined) {
-  if (!sanitized || !upload) return sanitized;
+function withImages(
+  sanitized: SanitizedExif | null | undefined,
+  upload: UploadResponse | undefined,
+): SanitizedExif | null {
+  if (!sanitized || !upload) return sanitized ?? null;
   return { ...sanitized, images: { ...sanitized.images, full: upload.url } };
 }
 
@@ -91,22 +94,28 @@ function ExifPage() {
         </CardContent>
       </Card>
 
-      {!extract.isIdle && (
-        <ExifResult
-          mutation={extract}
-          sanitized={withImages(extract.data?.sanitized ?? null, upload.data)}
-        />
-      )}
+      <Analysis extract={extract} upload={upload} />
+    </Page>
+  );
+}
+
+/** The analyzed photo's results, then what can be done with it. */
+function Analysis({ extract, upload }: { extract: ExifMutation; upload: UploadMutation }) {
+  if (extract.isIdle) return null;
+  const sanitized = withImages(extract.data?.sanitized, upload.data);
+  return (
+    <>
+      <ExifResult mutation={extract} sanitized={sanitized} />
       {extract.isSuccess && (
         <PhotoActions
           key={extract.submittedAt}
           photo={extract.variables}
           file={extract.data.file}
-          sanitized={withImages(extract.data.sanitized, upload.data)}
+          sanitized={sanitized}
           upload={upload}
         />
       )}
-    </Page>
+    </>
   );
 }
 
