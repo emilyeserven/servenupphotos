@@ -31,6 +31,7 @@ func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
 	mux.HandleFunc("PUT /settings/r2", handleUpdateSettings(store.UpdateR2))
 	mux.HandleFunc("POST /settings/r2/test", handleTestSettings(store.ResolveR2, storage.CheckR2))
 	mux.HandleFunc("PUT /settings/github", handleUpdateSettings(store.UpdateGitHub))
+	mux.HandleFunc("POST /upload", handleUpload(store.R2, storage.UploadPhoto))
 	return mux
 }
 
@@ -55,69 +56,85 @@ type exifResponse struct {
 // responds with its EXIF metadata and color summary.
 func handleExif(extractor exif.Extractor) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		r.Body = http.MaxBytesReader(w, r.Body, maxUploadBytes)
-		mr, err := r.MultipartReader()
+		photo, ok := receivePhoto(w, r)
+		if !ok {
+			return
+		}
+		defer os.Remove(photo.path) //nolint:errcheck // best-effort cleanup
+
+		res := exifResponse{File: photo.name}
+		var err error
+		if extractor != nil {
+			if res.Exif, err = extractor.Extract(photo.path); err != nil {
+				slog.Error("exif extraction failed", "err", err)
+				writeError(w, http.StatusInternalServerError, "could not read photo metadata")
+				return
+			}
+			sanitized := exif.Sanitize(res.Exif)
+			res.Sanitized = &sanitized
+		}
+
+		if res.Colors, err = analyzeColors(photo.path); err != nil {
+			slog.Warn("color analysis failed", "err", err)
+			writeError(w, http.StatusUnprocessableEntity, "could not decode photo")
+			return
+		}
+
+		writeJSON(w, http.StatusOK, res)
+	}
+}
+
+// receivedPhoto is an uploaded JPEG saved to a temp file the caller removes.
+type receivedPhoto struct {
+	name string
+	path string
+}
+
+// receivePhoto saves the JPEG in the "photo" field of a multipart form to a
+// temp file. On failure it writes the error response and returns false.
+func receivePhoto(w http.ResponseWriter, r *http.Request) (receivedPhoto, bool) {
+	r.Body = http.MaxBytesReader(w, r.Body, maxUploadBytes)
+	mr, err := r.MultipartReader()
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "expected a multipart/form-data body")
+		return receivedPhoto{}, false
+	}
+
+	// Stream parts until the photo, so the upload is never held in memory whole.
+	for {
+		part, err := mr.NextPart()
 		if err != nil {
-			writeError(w, http.StatusBadRequest, "expected a multipart/form-data body")
-			return
+			if isTooBig(err) {
+				writeError(w, http.StatusRequestEntityTooLarge, "photo is too large")
+				return receivedPhoto{}, false
+			}
+			writeError(w, http.StatusBadRequest, `missing "photo" field`)
+			return receivedPhoto{}, false
+		}
+		if part.FormName() != "photo" {
+			continue
 		}
 
-		// Stream parts until the photo, so the upload is never held in memory whole.
-		for {
-			part, err := mr.NextPart()
-			if err != nil {
-				if isTooBig(err) {
-					writeError(w, http.StatusRequestEntityTooLarge, "photo is too large")
-					return
-				}
-				writeError(w, http.StatusBadRequest, `missing "photo" field`)
-				return
-			}
-			if part.FormName() != "photo" {
-				continue
-			}
-
-			body := bufio.NewReader(part)
-			head, _ := body.Peek(512)
-			if http.DetectContentType(head) != "image/jpeg" {
-				writeError(w, http.StatusUnsupportedMediaType, "photo must be a JPEG")
-				return
-			}
-
-			// exiftool reads by path, and the color pass reads the pixels, so the
-			// upload is saved once to a temp file that both read.
-			path, err := saveTemp(body)
-			if err != nil {
-				if isTooBig(err) {
-					writeError(w, http.StatusRequestEntityTooLarge, "photo is too large")
-					return
-				}
-				slog.Error("saving upload failed", "err", err)
-				writeError(w, http.StatusInternalServerError, "could not save photo")
-				return
-			}
-			defer os.Remove(path) //nolint:errcheck // best-effort cleanup
-
-			res := exifResponse{File: part.FileName()}
-			if extractor != nil {
-				if res.Exif, err = extractor.Extract(path); err != nil {
-					slog.Error("exif extraction failed", "err", err)
-					writeError(w, http.StatusInternalServerError, "could not read photo metadata")
-					return
-				}
-				sanitized := exif.Sanitize(res.Exif)
-				res.Sanitized = &sanitized
-			}
-
-			if res.Colors, err = analyzeColors(path); err != nil {
-				slog.Warn("color analysis failed", "err", err)
-				writeError(w, http.StatusUnprocessableEntity, "could not decode photo")
-				return
-			}
-
-			writeJSON(w, http.StatusOK, res)
-			return
+		body := bufio.NewReader(part)
+		head, _ := body.Peek(512)
+		if http.DetectContentType(head) != "image/jpeg" {
+			writeError(w, http.StatusUnsupportedMediaType, "photo must be a JPEG")
+			return receivedPhoto{}, false
 		}
+
+		// exiftool and the R2 upload read by path, and the color pass reads the
+		// pixels, so the upload is saved once to a temp file.
+		path, err := saveTemp(body)
+		if err != nil {
+			if isTooBig(err) {
+				writeError(w, http.StatusRequestEntityTooLarge, "photo is too large")
+				return receivedPhoto{}, false
+			}
+			slog.Error("saving upload failed", "err", err)
+			writeError(w, http.StatusInternalServerError, "could not save photo")
+			return receivedPhoto{}, false
+		}
+		return receivedPhoto{name: part.FileName(), path: path}, true
 	}
 }
 
