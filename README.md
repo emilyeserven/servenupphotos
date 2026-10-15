@@ -69,9 +69,10 @@ Open `/exif` in the pipeline UI (<http://localhost:5174/exif> with `pnpm dev:doc
 (`POST /api/exif`) to the Go backend (`POST /exif`), which buffers it to a temp file, reads its metadata with
 [go-exiftool](https://github.com/barasher/go-exiftool), summarises its colors with
 [go-colorful](https://github.com/lucasb-eyer/go-colorful), and deletes it. The response is
-`{ file, exif, colors }`, where `colors` holds the average color, the share of the photo in each of 15 fixed buckets (12
-hues every 30° around the color wheel, plus black, gray and white for unsaturated pixels), and the mean lightness and
-chroma.
+`{ file, exif, colors }`, where `colors` holds the average color, the share of the photo in each of 12 fixed hue
+buckets (every 30° around the color wheel), a lightness histogram of the neutral pixels (too dark or unsaturated to
+have a hue), the mean lightness and chroma, and `raw`: per-channel statistics in every color space go-colorful
+supports plus hue, lightness, chroma and saturation histograms. The UI shows these in Colors and Raw color data tabs.
 
 ## Checks (same as CI)
 

@@ -1,7 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { type ColorAnalysis, type ExifResponse, exifMutation } from "@/api/exif";
+import { type ExifResponse, exifMutation } from "@/api/exif";
+import { ColorData, RawColorData } from "@/components/color-data";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -164,12 +165,16 @@ function ExifResultBody({ mutation }: { mutation: ExifMutation }) {
       <TabsList>
         <TabsTrigger value="exif">EXIF</TabsTrigger>
         <TabsTrigger value="colors">Colors</TabsTrigger>
+        <TabsTrigger value="raw">Raw color data</TabsTrigger>
       </TabsList>
       <TabsContent value="exif">
         <ExifData exif={exif} />
       </TabsContent>
       <TabsContent value="colors">
         <ColorData colors={colors} />
+      </TabsContent>
+      <TabsContent value="raw">
+        <RawColorData raw={colors.raw} samples={colors.samples} />
       </TabsContent>
     </Tabs>
   );
@@ -184,77 +189,4 @@ function ExifData({ exif }: { exif: ExifResponse["exif"] }) {
     );
   }
   return <CodeBlock language="json" code={JSON.stringify(exif, null, 2)} />;
-}
-
-function ColorData({ colors }: { colors: ColorAnalysis }) {
-  return (
-    <div className="flex flex-col gap-6">
-      <section className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">Average</h3>
-        <div className="flex items-center gap-3">
-          <ColorChip hex={colors.average.hex} />
-          <dl className="text-muted-foreground grid grid-cols-[auto_1fr] gap-x-3 text-sm">
-            <dt>Hex</dt>
-            <dd className="font-mono">{colors.average.hex}</dd>
-            <dt>Mean lightness</dt>
-            <dd>{colors.lightness}</dd>
-            <dt>Mean chroma</dt>
-            <dd>{colors.chroma}</dd>
-          </dl>
-        </div>
-      </section>
-
-      <section className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">Color buckets</h3>
-        <BucketChart buckets={colors.buckets} />
-      </section>
-
-      <section className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">Raw data</h3>
-        <CodeBlock language="json" code={JSON.stringify(colors, null, 2)} />
-      </section>
-    </div>
-  );
-}
-
-function BucketChart({ buckets }: { buckets: ColorAnalysis["buckets"] }) {
-  // Scale to the largest bucket so small shares stay visible.
-  const maxShare = Math.max(...buckets.map((b) => b.share), 0.01);
-  return (
-    <ul
-      className="grid grid-cols-[repeat(15,minmax(0,1fr))] gap-1"
-      aria-label="Share of the photo per color bucket"
-    >
-      {buckets.map((bucket) => (
-        <li key={bucket.name} className="flex flex-col items-center gap-1">
-          <span className="text-muted-foreground text-[10px] tabular-nums">
-            {formatShare(bucket.share)}
-          </span>
-          <div className="flex h-40 w-full items-end">
-            <div
-              className="w-full rounded-t-sm border"
-              style={{ height: `${(bucket.share / maxShare) * 100}%`, backgroundColor: bucket.hex }}
-            />
-          </div>
-          <span className="text-xs [writing-mode:vertical-rl] rotate-180 whitespace-nowrap">
-            {bucket.name}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function ColorChip({ hex }: { hex: string }) {
-  return (
-    <span
-      aria-hidden
-      className="size-10 shrink-0 rounded-md border"
-      style={{ backgroundColor: hex }}
-    />
-  );
-}
-
-function formatShare(share: number): string {
-  return share.toLocaleString(undefined, { style: "percent", maximumFractionDigits: 0 });
 }

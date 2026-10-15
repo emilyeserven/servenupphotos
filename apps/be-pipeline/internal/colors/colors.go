@@ -1,6 +1,7 @@
 // Package colors summarises the colors of a photo with go-colorful: its
-// average color, the share of the photo in each of a fixed set of color
-// buckets, and its mean lightness and chroma.
+// average color, the share of the photo in each of 12 fixed hue buckets, a
+// lightness histogram of its neutral (black, gray and white) pixels, its mean
+// lightness and chroma, and raw per-color-space statistics.
 //
 // Values use the conventional CIELAB scales (L, a, b and chroma roughly 0–100,
 // hue in degrees) rather than go-colorful's 0–1 scale.
@@ -20,28 +21,21 @@ const (
 	// maxSamples caps how many pixels are read, so large photos stay fast.
 	maxSamples = 10_000
 	// Pixels below this CIELAB chroma are too unsaturated to have a hue and
-	// count as black, gray or white.
+	// count as neutral (black, gray or white).
 	neutralChroma = 12
-	// Lightness bounds for the neutral buckets; very dark pixels are black
-	// whatever their chroma.
-	blackLightness = 20
-	whiteLightness = 85
+	// Pixels darker than this CIELAB lightness are neutral whatever their
+	// chroma, since their hue is not visible.
+	darkLightness = 20
+	// neutralBins is how many lightness bins the neutral histogram has.
+	neutralBins = 20
 )
 
 // bucketNames lists the 12 hue buckets every 30° around the HSV color wheel,
-// starting at red (centered on 0°), then the neutrals.
+// starting at red (centered on 0°).
 var bucketNames = [...]string{
 	"red", "orange", "yellow", "chartreuse", "green", "spring green",
 	"cyan", "azure", "blue", "violet", "magenta", "rose",
-	"black", "gray", "white",
 }
-
-const (
-	hueBuckets = 12
-	black      = hueBuckets
-	gray       = hueBuckets + 1
-	white      = hueBuckets + 2
-)
 
 // Color is one color in hex, CIELAB and CIE LCh(ab) (HCL) form.
 type Color struct {
@@ -64,24 +58,44 @@ type HCL struct {
 	L float64 `json:"l"`
 }
 
-// Bucket is one fixed color category and the share of the photo in it.
+// Bucket is one fixed hue category and the share of the photo in it.
 type Bucket struct {
 	Name string `json:"name"`
 	// Hex is the bucket's reference color, for display.
 	Hex string `json:"hex"`
-	// Share is the fraction (0–1) of sampled pixels in this bucket.
+	// Share is the fraction (0–1) of all sampled pixels in this bucket.
+	Share float64 `json:"share"`
+}
+
+// Neutrals describes the pixels too dark or unsaturated to have a hue.
+type Neutrals struct {
+	// Share is the fraction (0–1) of all sampled pixels that are neutral.
+	Share float64 `json:"share"`
+	// Histogram splits the neutral pixels into equal CIELAB lightness bins
+	// from black (0) to white (100); each share is of all sampled pixels.
+	Histogram []Bin `json:"histogram"`
+}
+
+// Bin is one histogram bin covering [From, To).
+type Bin struct {
+	From float64 `json:"from"`
+	To   float64 `json:"to"`
+	// Hex is a representative color for the bin, for display.
+	Hex   string  `json:"hex,omitempty"`
 	Share float64 `json:"share"`
 }
 
 // Analysis is the color summary of a photo.
 type Analysis struct {
 	Average Color `json:"average"`
-	// Buckets always holds every bucket, in color-wheel order then black,
-	// gray and white, so photos can be compared bucket by bucket.
+	// Buckets always holds all 12 hue buckets in color-wheel order, so photos
+	// can be compared bucket by bucket. Their shares and Neutrals.Share sum to 1.
 	Buckets   []Bucket `json:"buckets"`
+	Neutrals  Neutrals `json:"neutrals"`
 	Lightness float64  `json:"lightness"`
 	Chroma    float64  `json:"chroma"`
 	Samples   int      `json:"samples"`
+	Raw       Raw      `json:"raw"`
 }
 
 // Analyze decodes the image in r and summarises its colors.
@@ -101,14 +115,19 @@ func analyzeImage(img image.Image) (Analysis, error) {
 
 	var sum Lab
 	var chroma float64
-	var counts [len(bucketNames)]int
+	var hues [len(bucketNames)]int
+	var neutral [neutralBins]int
 	for _, c := range pixels {
 		lab := toLab(c)
 		sum.L += lab.L
 		sum.A += lab.A
 		sum.B += lab.B
 		chroma += math.Hypot(lab.A, lab.B)
-		counts[bucketOf(c, lab)]++
+		if isNeutral(lab) {
+			neutral[binOf(lab.L, 100, neutralBins)]++
+			continue
+		}
+		hues[hueBucketOf(c)]++
 	}
 	n := float64(len(pixels))
 
@@ -116,46 +135,60 @@ func analyzeImage(img image.Image) (Analysis, error) {
 	for i, name := range bucketNames {
 		buckets[i] = Bucket{
 			Name:  name,
-			Hex:   bucketHex(i),
-			Share: math.Round(float64(counts[i])/n*1e4) / 1e4,
+			Hex:   colorful.Hsv(float64(i*30), 1, 1).Hex(),
+			Share: share(hues[i], n),
 		}
 	}
+
+	neutrals := Neutrals{Histogram: make([]Bin, neutralBins)}
+	for i, count := range neutral {
+		from, to := binRange(i, 100, neutralBins)
+		neutrals.Histogram[i] = Bin{
+			From:  from,
+			To:    to,
+			Hex:   colorful.Lab((from+to)/200, 0, 0).Clamped().Hex(),
+			Share: share(count, n),
+		}
+		neutrals.Share += float64(count)
+	}
+	neutrals.Share = share(int(neutrals.Share), n)
 
 	mean := Lab{sum.L / n, sum.A / n, sum.B / n}
 	return Analysis{
 		Average:   toColor(mean),
 		Buckets:   buckets,
+		Neutrals:  neutrals,
 		Lightness: round(mean.L),
 		Chroma:    round(chroma / n),
 		Samples:   len(pixels),
+		Raw:       rawStats(pixels),
 	}, nil
 }
 
-// bucketOf returns the index in bucketNames of the bucket c falls in.
-func bucketOf(c colorful.Color, lab Lab) int {
-	switch {
-	case lab.L < blackLightness:
-		return black
-	case math.Hypot(lab.A, lab.B) < neutralChroma:
-		if lab.L > whiteLightness {
-			return white
-		}
-		return gray
-	}
-	h, _, _ := c.Hsv()
-	return int(math.Mod(h+15, 360)/30) % hueBuckets
+// isNeutral reports whether a pixel is too dark or unsaturated to have a hue.
+func isNeutral(lab Lab) bool {
+	return lab.L < darkLightness || math.Hypot(lab.A, lab.B) < neutralChroma
 }
 
-func bucketHex(i int) string {
-	switch i {
-	case black:
-		return "#000000"
-	case gray:
-		return "#808080"
-	case white:
-		return "#ffffff"
-	}
-	return colorful.Hsv(float64(i*30), 1, 1).Hex()
+// hueBucketOf returns the index in bucketNames of c's HSV hue.
+func hueBucketOf(c colorful.Color) int {
+	h, _, _ := c.Hsv()
+	return int(math.Mod(h+15, 360)/30) % len(bucketNames)
+}
+
+// binOf returns which of bins equal bins over [0, hi] v falls in, clamping
+// values outside the range into the first or last bin.
+func binOf(v, hi float64, bins int) int {
+	return min(bins-1, max(0, int(v/hi*float64(bins))))
+}
+
+func binRange(i int, hi float64, bins int) (from, to float64) {
+	width := hi / float64(bins)
+	return round(float64(i) * width), round(float64(i+1) * width)
+}
+
+func share(count int, n float64) float64 {
+	return math.Round(float64(count)/n*1e4) / 1e4
 }
 
 // sample reads an evenly spaced grid of at most about maxSamples pixels.

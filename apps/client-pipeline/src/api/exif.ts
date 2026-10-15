@@ -14,13 +14,51 @@ interface ColorBucket {
   share: number;
 }
 
+/** A histogram bin covering [from, to); share is of all sampled pixels. */
+export interface Bin {
+  from: number;
+  to: number;
+  hex?: string;
+  share: number;
+}
+
+interface ChannelStats {
+  name: string;
+  min: number;
+  p5: number;
+  median: number;
+  mean: number;
+  p95: number;
+  max: number;
+  stdDev: number;
+}
+
+/** Lower-level data in go-colorful's native scales (mostly 0–1). */
+export interface RawColorData {
+  /** Per-channel stats in each color space; hue channels are left out. */
+  spaces: { name: string; channels: ChannelStats[] }[];
+  histograms: {
+    /** HSV hue in 10° bins, non-neutral pixels only. */
+    hue: Bin[];
+    /** CIELAB L* (0–100). */
+    lightness: Bin[];
+    /** CIELAB chroma (0–100, higher values in the last bin). */
+    chroma: Bin[];
+    /** HSV saturation (0–1). */
+    saturation: Bin[];
+  };
+}
+
 export interface ColorAnalysis {
   average: Color;
-  /** Every bucket: 12 hues in color-wheel order, then black, gray and white. */
+  /** The 12 hue buckets in color-wheel order. */
   buckets: ColorBucket[];
+  /** Pixels too dark or unsaturated to have a hue, by CIELAB lightness. */
+  neutrals: { share: number; histogram: Bin[] };
   lightness: number;
   chroma: number;
   samples: number;
+  raw: RawColorData;
 }
 
 export interface ExifResponse {

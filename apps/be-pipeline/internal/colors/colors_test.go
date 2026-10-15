@@ -27,7 +27,7 @@ func shares(a Analysis) map[string]float64 {
 	return m
 }
 
-func TestBuckets(t *testing.T) {
+func TestHueBuckets(t *testing.T) {
 	tests := []struct {
 		color color.Color
 		want  string
@@ -40,9 +40,6 @@ func TestBuckets(t *testing.T) {
 		{color.RGBA{0, 0, 255, 255}, "blue"},
 		{color.RGBA{255, 0, 255, 255}, "magenta"},
 		{color.RGBA{255, 0, 128, 255}, "rose"},
-		{color.RGBA{10, 10, 30, 255}, "black"},
-		{color.RGBA{128, 128, 128, 255}, "gray"},
-		{color.RGBA{250, 248, 245, 255}, "white"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.want, func(t *testing.T) {
@@ -52,6 +49,39 @@ func TestBuckets(t *testing.T) {
 			}
 			if got := shares(a); len(got) != 1 || got[tt.want] != 1 {
 				t.Errorf("shares = %v, want all %s", got, tt.want)
+			}
+			if a.Neutrals.Share != 0 {
+				t.Errorf("neutral share = %v, want 0", a.Neutrals.Share)
+			}
+		})
+	}
+}
+
+func TestNeutralHistogram(t *testing.T) {
+	tests := []struct {
+		name  string
+		color color.Color
+		bin   int
+	}{
+		{"black", color.RGBA{0, 0, 0, 255}, 0},
+		{"dark blue", color.RGBA{10, 10, 40, 255}, 0},
+		{"mid gray", color.RGBA{119, 119, 119, 255}, 10}, // L* ≈ 50
+		{"white", color.RGBA{255, 255, 255, 255}, neutralBins - 1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a, err := analyzeImage(solid(tt.color, 20, 20))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got := shares(a); len(got) != 0 {
+				t.Errorf("hue shares = %v, want none", got)
+			}
+			if a.Neutrals.Share != 1 || len(a.Neutrals.Histogram) != neutralBins {
+				t.Fatalf("neutrals = %+v, want all %d bins and share 1", a.Neutrals, neutralBins)
+			}
+			if got := a.Neutrals.Histogram[tt.bin]; got.Share != 1 {
+				t.Errorf("bin %d = %+v, want share 1", tt.bin, got)
 			}
 		})
 	}
@@ -68,15 +98,48 @@ func TestBucketsAreFixed(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(a.Buckets) != len(bucketNames) {
-		t.Fatalf("got %d buckets, want all %d", len(a.Buckets), len(bucketNames))
+	if len(a.Buckets) != 12 {
+		t.Fatalf("got %d buckets, want 12", len(a.Buckets))
 	}
 	if a.Buckets[0].Name != "red" || a.Buckets[0].Hex != "#ff0000" {
 		t.Errorf("first bucket = %+v, want red #ff0000", a.Buckets[0])
 	}
-	got := shares(a)
-	if got["blue"] != 0.75 || got["white"] != 0.25 || len(got) != 2 {
-		t.Errorf("shares = %v, want blue 0.75 and white 0.25", got)
+	if got := shares(a); got["blue"] != 0.75 || len(got) != 1 {
+		t.Errorf("shares = %v, want blue 0.75", got)
+	}
+	if a.Neutrals.Share != 0.25 {
+		t.Errorf("neutral share = %v, want 0.25", a.Neutrals.Share)
+	}
+}
+
+func TestRaw(t *testing.T) {
+	a, err := analyzeImage(solid(color.RGBA{255, 0, 0, 255}, 20, 20))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(a.Raw.Spaces) != len(spaceDefs) {
+		t.Fatalf("got %d spaces, want %d", len(a.Raw.Spaces), len(spaceDefs))
+	}
+	rgb := a.Raw.Spaces[0]
+	if rgb.Name != "rgb" || len(rgb.Channels) != 3 {
+		t.Fatalf("first space = %+v, want rgb with 3 channels", rgb)
+	}
+	if r := rgb.Channels[0]; r.Min != 1 || r.Max != 1 || r.Mean != 1 || r.StdDev != 0 {
+		t.Errorf("red channel = %+v, want all 1 with no spread", r)
+	}
+	for _, s := range a.Raw.Spaces {
+		for _, c := range s.Channels {
+			if c.Name == "h" {
+				t.Errorf("%s includes a hue channel", s.Name)
+			}
+		}
+	}
+	h := a.Raw.Histograms
+	if len(h.Hue) != 36 || h.Hue[0].Share != 1 || h.Hue[0].Hex != "#ff1500" {
+		t.Errorf("hue histogram first bin = %+v (of %d)", h.Hue[0], len(h.Hue))
+	}
+	if len(h.Lightness) != 20 || len(h.Chroma) != 20 || h.Saturation[19].Share != 1 {
+		t.Errorf("histograms = %+v", h)
 	}
 }
 
