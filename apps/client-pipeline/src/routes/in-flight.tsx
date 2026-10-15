@@ -1,9 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { CheckIcon, CircleDashedIcon } from "lucide-react";
+import { CheckIcon, CircleDashedIcon, CircleMinusIcon, ImageOffIcon } from "lucide-react";
+import { useState } from "react";
 import {
   type InFlightAllPhotos,
   type InFlightFile,
+  type InFlightImages,
   type InFlightResponse,
   photosInFlightQuery,
 } from "@/api/photos";
@@ -25,6 +27,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/in-flight")({
   component: InFlightPage,
+  staticData: { wide: true },
 });
 
 function InFlightPage() {
@@ -32,6 +35,7 @@ function InFlightPage() {
 
   return (
     <Page
+      wide
       title="Photos in Flight"
       description="Photo data saved to the open “Add photo data” pull request, not merged yet."
     >
@@ -91,13 +95,13 @@ function InFlightCard() {
       </Card>
 
       {inFlight.data?.files.map((file) => (
-        <FileSection key={file.path} file={file} />
+        <FileSection key={file.path} file={file} images={inFlight.data.images} />
       ))}
     </>
   );
 }
 
-function FileSection({ file }: { file: InFlightFile }) {
+function FileSection({ file, images }: { file: InFlightFile; images: InFlightImages }) {
   return (
     <section className="flex flex-col gap-2">
       <h2 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
@@ -112,12 +116,50 @@ function FileSection({ file }: { file: InFlightFile }) {
         <span className="text-muted-foreground font-normal">{file.status}</span>
         {file.inAllPhotos === null ? null : <AllPhotosMark inAllPhotos={file.inAllPhotos} />}
       </h2>
-      {file.error ? (
-        <p className="text-destructive text-sm">{file.error}</p>
-      ) : (
-        <JsonCodeBlock value={file.data} title={file.path} />
-      )}
+      <div className="grid items-start gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+        <PhotoImage
+          name={file.photoName}
+          url={images.byPath[file.path]?.url}
+          checked={images.checked}
+        />
+        {file.error ? (
+          <p className="text-destructive text-sm">{file.error}</p>
+        ) : (
+          <JsonCodeBlock value={file.data} title={file.path} />
+        )}
+      </div>
     </section>
+  );
+}
+
+const MISSING_IMAGE = {
+  missing: { Icon: CircleMinusIcon, label: "No image in R2", className: "text-destructive" },
+  unchecked: { Icon: ImageOffIcon, label: "Couldn't check R2", className: "text-muted-foreground" },
+};
+
+/** The photo's image from R2, or a "do not enter" sign when it has none. */
+function PhotoImage({ name, url, checked }: { name: string; url?: string; checked: boolean }) {
+  const [failed, setFailed] = useState(false);
+  if (url && !failed) {
+    return (
+      <a href={url} target="_blank" rel="noreferrer">
+        <img
+          src={url}
+          alt={name}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="bg-muted max-h-[32rem] w-full rounded-xl border object-contain"
+        />
+      </a>
+    );
+  }
+  const { Icon, label, className } = MISSING_IMAGE[checked ? "missing" : "unchecked"];
+  return (
+    <div className="bg-muted/40 flex h-48 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed text-sm">
+      <Icon className={cn("size-10", className)} aria-hidden />
+      <span className="text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground font-mono text-xs">{name}</span>
+    </div>
   );
 }
 
@@ -152,6 +194,11 @@ function allPhotosSummary(all: InFlightAllPhotos, files: InFlightFile[]): string
   return `Lists ${all.count}; ${matched} of ${files.length} photo files match`;
 }
 
+function imagesSummary(images: InFlightImages, files: number): string {
+  if (!images.checked) return images.message ?? "Couldn't check R2.";
+  return `${Object.keys(images.byPath).length} of ${files} found in R2`;
+}
+
 function PullRequestSummary({ data }: { data: InFlightResponse }) {
   if (!data.pullRequest) {
     return (
@@ -180,6 +227,8 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dd>{count === 0 ? "None in the data folder" : count}</dd>
       <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
       <dd>{allPhotosSummary(data.allPhotos, data.files)}</dd>
+      <dt className="text-muted-foreground">Images</dt>
+      <dd>{imagesSummary(data.images, count)}</dd>
     </dl>
   );
 }

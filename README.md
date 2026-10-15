@@ -106,7 +106,9 @@ The GitHub token needs **Contents: Read and write** and **Pull requests: Read an
 `.json` file the pull request adds or changes directly in the Settings folder (`apps/portfolio/src/data` when the folder
 is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
 mark when its data is one of the entries in `ALLPHOTOS.json` at the same head (compared as JSON, so formatting and key
-order don't matter). The page only reads from GitHub; it never changes the pull request.
+order don't matter). Next to each photo's JSON it shows the photo from R2: the newest `photos/<hash>-<name>.jpg`
+upload whose name matches the JSON's `file` (or the JSON file's name), served from the bucket's public URL, or a
+"no image" sign when there's none. The page only reads from GitHub and R2; it never changes the pull request.
 
 ## Checks (same as CI)
 

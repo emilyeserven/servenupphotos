@@ -106,6 +106,9 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	if got.AllPhotos != wantAll {
 		t.Errorf("AllPhotos = %+v, want %+v", got.AllPhotos, wantAll)
 	}
+	if first.PhotoName != "DSC0001.jpg" || got.Files[1].PhotoName != "broken" {
+		t.Errorf("PhotoName = %q, %q; want DSC0001.jpg, broken", first.PhotoName, got.Files[1].PhotoName)
+	}
 	if first.FileURL != "https://github.com/blob/1" || first.Status != "added" {
 		t.Errorf("Files[0] = %+v, want its blob URL and status", first)
 	}

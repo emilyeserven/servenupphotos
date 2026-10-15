@@ -30,7 +30,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("POST /settings/github/test", handleTestSettings(store.ResolveGitHub, gh.Check))
 	mux.HandleFunc("POST /upload", handleUpload(store.R2, storage.UploadPhoto))
 	mux.HandleFunc("POST /photos/github", handlePublishPhoto(store, gh))
-	mux.HandleFunc("GET /photos/in-flight", handlePhotosInFlight(store, gh))
+	mux.HandleFunc("GET /photos/in-flight", handlePhotosInFlight(store, gh, storage.FindPhotos))
 	return mux
 }
 

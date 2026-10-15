@@ -46,6 +46,8 @@ export interface InFlightFile {
   fileUrl: string;
   data?: unknown;
   error?: string;
+  /** The photo's original file name, used to find its image in R2. */
+  photoName: string;
   /** Whether the file's data is an entry of ALLPHOTOS.json; null when either couldn't be read. */
   inAllPhotos: boolean | null;
 }
@@ -68,6 +70,16 @@ export interface InFlightResponse {
   files: InFlightFile[];
   /** Not `found` when there is no pull request. */
   allPhotos: InFlightAllPhotos;
+  images: InFlightImages;
+}
+
+/** Each photo's image in R2, matched by the photo's file name. */
+export interface InFlightImages {
+  /** False when R2 couldn't be searched; `message` says why. */
+  checked: boolean;
+  message?: string;
+  /** Keyed by the JSON file's path; a path that's missing has no image in R2. */
+  byPath: Record<string, { key: string; url: string }>;
 }
 
 export const photosInFlightQuery = queryOptions({
