@@ -1,7 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { type ExifResponse, exifMutation } from "@/api/exif";
+import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
+import { type UploadResponse, uploadMutation } from "@/api/upload";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/exif")({
 });
 
 type ExifMutation = UseMutationResult<ExifResponse, Error, File>;
+type UploadMutation = UseMutationResult<UploadResponse, Error, File>;
 
 const JPEG_TYPES = ["image/jpeg", "image/pjpeg"];
 
@@ -28,13 +30,25 @@ function validatePhoto(photo: File | null): string | undefined {
   return undefined;
 }
 
+/** The sanitized EXIF with the photo's R2 URL filled in once it has been uploaded. */
+function withImages(
+  sanitized: SanitizedExif | null | undefined,
+  upload: UploadResponse | undefined,
+): SanitizedExif | null {
+  if (!sanitized || !upload) return sanitized ?? null;
+  return { ...sanitized, images: { ...sanitized.images, full: upload.url } };
+}
+
 function ExifPage() {
   const extract = useMutation(exifMutation);
+  // Lives here rather than in the upload card so its URL can go into the sanitized EXIF.
+  const upload = useMutation(uploadMutation);
 
   const form = useForm({
     defaultValues: { photo: null as File | null },
     validators: { onSubmit: ({ value }) => validatePhoto(value.photo) },
     onSubmit: async ({ value }) => {
+      upload.reset();
       if (value.photo) await extract.mutateAsync(value.photo).catch(() => {});
     },
   });
@@ -66,6 +80,7 @@ function ExifPage() {
                   onBlur={field.handleBlur}
                   onChange={(photo) => {
                     extract.reset();
+                    upload.reset();
                     field.handleChange(photo);
                   }}
                 />
@@ -79,22 +94,46 @@ function ExifPage() {
         </CardContent>
       </Card>
 
-      {!extract.isIdle && <ExifResult mutation={extract} />}
-      {extract.isSuccess && (
-        <PhotoActions key={extract.submittedAt} photo={extract.variables} result={extract.data} />
-      )}
+      <Analysis extract={extract} upload={upload} />
     </Page>
   );
 }
 
-/** What can be done with an analyzed photo: upload it to R2, and save its sanitized EXIF to GitHub. */
-function PhotoActions({ photo, result }: { photo: File; result: ExifResponse }) {
+/** The analyzed photo's results, then what can be done with it. */
+function Analysis({ extract, upload }: { extract: ExifMutation; upload: UploadMutation }) {
+  if (extract.isIdle) return null;
+  const sanitized = withImages(extract.data?.sanitized, upload.data);
   return (
     <>
-      <R2Upload photo={photo} />
-      {result.sanitized && <GitHubSaveCard file={result.file} sanitized={result.sanitized} />}
+      <ExifResult mutation={extract} sanitized={sanitized} />
+      {extract.isSuccess && (
+        <PhotoActions
+          key={extract.submittedAt}
+          photo={extract.variables}
+          file={extract.data.file}
+          sanitized={sanitized}
+          upload={upload}
+        />
+      )}
     </>
   );
+}
+
+/** What can be done with an analyzed photo: upload it to R2, and save its sanitized EXIF to GitHub. */
+function PhotoActions({ photo, file, sanitized, upload }: PhotoActionsProps) {
+  return (
+    <>
+      <R2Upload photo={photo} upload={upload} />
+      {sanitized && <GitHubSaveCard file={file} sanitized={sanitized} />}
+    </>
+  );
+}
+
+interface PhotoActionsProps {
+  photo: File;
+  file: string;
+  sanitized: SanitizedExif | null;
+  upload: UploadMutation;
 }
 
 interface PhotoFieldProps {
@@ -156,7 +195,13 @@ function SubmitButton({ disabled, pending }: { disabled: boolean; pending: boole
   );
 }
 
-function ExifResult({ mutation }: { mutation: ExifMutation }) {
+interface ExifResultProps {
+  mutation: ExifMutation;
+  /** The sanitized EXIF to show, which includes the R2 URL after an upload. */
+  sanitized: SanitizedExif | null;
+}
+
+function ExifResult({ mutation, sanitized }: ExifResultProps) {
   return (
     <Card>
       <CardHeader>
@@ -164,17 +209,17 @@ function ExifResult({ mutation }: { mutation: ExifMutation }) {
         <CardDescription>{mutation.variables?.name}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ExifResultBody mutation={mutation} />
+        <ExifResultBody mutation={mutation} sanitized={sanitized} />
       </CardContent>
     </Card>
   );
 }
 
-function ExifResultBody({ mutation }: { mutation: ExifMutation }) {
+function ExifResultBody({ mutation, sanitized }: ExifResultProps) {
   if (mutation.isPending) return <Spinner className="size-6" />;
   if (mutation.isError) return <p className="text-destructive">{mutation.error.message}</p>;
   if (!mutation.data) return null;
-  const { exif, sanitized, colors } = mutation.data;
+  const { exif, colors } = mutation.data;
   return (
     <Tabs defaultValue="sanitized">
       <TabsList>

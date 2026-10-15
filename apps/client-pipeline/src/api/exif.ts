@@ -69,6 +69,10 @@ export interface SanitizedExif {
   createDate: string | null;
   country: string | null;
   city: string | null;
+  images: {
+    /** The original photo's public R2 URL, once it has been uploaded. */
+    full: string | null;
+  };
 }
 
 export interface ExifResponse {

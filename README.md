@@ -94,6 +94,9 @@ commit to the Settings branch directly. The first save creates a `photo-data/<da
 **Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
 pull request collects every photo until you merge it. An existing file is never overwritten.
 
+The sanitized EXIF has an `images` object whose `full` is the photo's public R2 URL. It is `null` until you
+upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo.
+
 The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**.
 
 > **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and
