@@ -46,6 +46,18 @@ export interface InFlightFile {
   fileUrl: string;
   data?: unknown;
   error?: string;
+  /** Whether the file's data is an entry of ALLPHOTOS.json; null when either couldn't be read. */
+  inAllPhotos: boolean | null;
+}
+
+/** ALLPHOTOS.json, the combined photo list CI rebuilds on the pull request. */
+export interface InFlightAllPhotos {
+  path: string;
+  /** False when the file isn't on the pull request's branch yet. */
+  found: boolean;
+  /** How many photos it lists. */
+  count: number;
+  error?: string;
 }
 
 export interface InFlightResponse {
@@ -54,6 +66,8 @@ export interface InFlightResponse {
   /** Null when no pull request titled "Add photo data" is open. */
   pullRequest: InFlightPullRequest | null;
   files: InFlightFile[];
+  /** Not `found` when there is no pull request. */
+  allPhotos: InFlightAllPhotos;
 }
 
 export const photosInFlightQuery = queryOptions({

@@ -72,6 +72,8 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 		map[string]string{
 			dir + "DSC0001.json": "{\n  \"file\": \"DSC0001.jpg\"\n}\n",
 			dir + "broken.json":  "{not json",
+			// Formatted differently from DSC0001.json, as oxfmt leaves it.
+			dir + "ALLPHOTOS.json": "[\n  { \"file\": \"DSC0001.jpg\" },\n  { \"file\": \"other.jpg\" }\n]\n",
 		},
 	)
 
@@ -97,11 +99,58 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	if err := json.Unmarshal(first.Data, &data); err != nil || data["file"] != "DSC0001.jpg" || first.Error != "" {
 		t.Errorf("Files[0] = %+v, want DSC0001.json's data", first)
 	}
+	if first.InAllPhotos == nil || !*first.InAllPhotos || got.Files[1].InAllPhotos != nil {
+		t.Errorf("InAllPhotos = %v, %v; want true, then nil for the invalid file", first.InAllPhotos, got.Files[1].InAllPhotos)
+	}
+	wantAll := InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Count: 2}
+	if got.AllPhotos != wantAll {
+		t.Errorf("AllPhotos = %+v, want %+v", got.AllPhotos, wantAll)
+	}
 	if first.FileURL != "https://github.com/blob/1" || first.Status != "added" {
 		t.Errorf("Files[0] = %+v, want its blob URL and status", first)
 	}
 	if broken := got.Files[1]; broken.Data != nil || broken.Error != "The file isn't valid JSON." {
 		t.Errorf("Files[1] = %+v, want an invalid JSON error", broken)
+	}
+}
+
+func TestInFlightAllPhotos(t *testing.T) {
+	const dir = "photos/"
+	files := []map[string]any{{"filename": dir + "a.json", "status": "added"}}
+	tests := []struct {
+		name    string
+		all     *string
+		want    InFlightAllPhotos
+		inPhoto string
+	}{
+		{"missing", nil, InFlightAllPhotos{Path: dir + "ALLPHOTOS.json"}, "null"},
+		{"not an array", ptr(`{"a":1}`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Error: "The file isn't a JSON array."}, "null"},
+		{"null", ptr(`null`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Error: "The file isn't a JSON array."}, "null"},
+		{"empty", ptr(`[]`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true}, "false"},
+		{"key order", ptr(`[{"b":2,"a":1}]`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Count: 1}, "true"},
+		{"different value", ptr(`[{"a":1,"b":3}]`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Count: 1}, "false"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			contents := map[string]string{dir + "a.json": `{"a":1,"b":2}`}
+			if tt.all != nil {
+				contents[dir+"ALLPHOTOS.json"] = *tt.all
+			}
+			c := newInFlightRepo(t, []map[string]any{photoPull}, files, contents)
+			got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Folder: "photos", Token: token})
+			if err != nil {
+				t.Fatalf("InFlight() error = %v", err)
+			}
+			if got.AllPhotos != tt.want {
+				t.Errorf("AllPhotos = %+v, want %+v", got.AllPhotos, tt.want)
+			}
+			if len(got.Files) != 1 {
+				t.Fatalf("Files = %+v, want a.json", got.Files)
+			}
+			if in, _ := json.Marshal(got.Files[0].InAllPhotos); string(in) != tt.inPhoto {
+				t.Errorf("InAllPhotos = %s, want %s", in, tt.inPhoto)
+			}
+		})
 	}
 }
 
@@ -111,7 +160,7 @@ func TestInFlightNoPullRequest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("InFlight() error = %v", err)
 	}
-	if got.PullRequest != nil || len(got.Files) != 0 || got.Folder != "photos" {
+	if got.PullRequest != nil || len(got.Files) != 0 || got.AllPhotos.Found || got.Folder != "photos" {
 		t.Errorf("InFlight() = %+v, want no pull request in folder photos", got)
 	}
 }

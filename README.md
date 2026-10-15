@@ -104,8 +104,9 @@ The GitHub token needs **Contents: Read and write** and **Pull requests: Read an
 `/in-flight` shows the photo data waiting in the open **Add photo data** pull request (`GET /api/photos/in-flight` →
 `GET /photos/in-flight`). It finds the open pull request with that title in the repository from Settings and shows each
 `.json` file the pull request adds or changes directly in the Settings folder (`apps/portfolio/src/data` when the folder
-is blank), read at the pull request's head. `ALLPHOTOS.json` is left out. The page only reads from GitHub; it never
-changes the pull request.
+is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
+mark when its data is one of the entries in `ALLPHOTOS.json` at the same head (compared as JSON, so formatting and key
+order don't matter). The page only reads from GitHub; it never changes the pull request.
 
 ## Checks (same as CI)
 

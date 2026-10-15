@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -17,8 +18,9 @@ import (
 // when Settings has no folder.
 const DefaultDataFolder = "apps/portfolio/src/data"
 
-// AllPhotosFile is the portfolio's combined photo list, which InFlight leaves
-// out since it isn't one photo's data.
+// AllPhotosFile is the portfolio's combined photo list: a JSON array of every
+// photo file in the data folder, rebuilt by CI on the pull request. InFlight
+// lists it apart from the photo files and checks each photo against it.
 const AllPhotosFile = "ALLPHOTOS.json"
 
 // maxPullRequestFiles is how many changed files GitHub lists for a pull request.
@@ -42,6 +44,20 @@ type InFlightFile struct {
 	Data    json.RawMessage `json:"data,omitempty"`
 	// Error says why Data is missing, when it couldn't be read or parsed.
 	Error string `json:"error,omitempty"`
+	// InAllPhotos says whether Data equals an entry of AllPhotosFile. It is
+	// nil when either file couldn't be read.
+	InAllPhotos *bool `json:"inAllPhotos"`
+}
+
+// InFlightAllPhotos is AllPhotosFile at the pull request's head.
+type InFlightAllPhotos struct {
+	Path string `json:"path"`
+	// Found is false when the file isn't on the pull request's branch.
+	Found bool `json:"found"`
+	// Count is how many photos the file lists.
+	Count int `json:"count"`
+	// Error says why the file couldn't be used, when it was found.
+	Error string `json:"error,omitempty"`
 }
 
 // InFlightResult is the photo data waiting in the open pull request.
@@ -51,6 +67,8 @@ type InFlightResult struct {
 	Folder      string               `json:"folder"`
 	PullRequest *InFlightPullRequest `json:"pullRequest"`
 	Files       []InFlightFile       `json:"files"`
+	// AllPhotos is not Found when there is no pull request.
+	AllPhotos InFlightAllPhotos `json:"allPhotos"`
 }
 
 // inFlightPull is the part of a listed pull request InFlight uses.
@@ -84,7 +102,10 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		return InFlightResult{}, publishErr(http.StatusBadRequest, "Set the GitHub repository and token in Settings first.")
 	}
 	t := target{owner: owner, name: name, token: gh.Token}
-	result := InFlightResult{Repo: owner + "/" + name, Folder: folder, Files: []InFlightFile{}}
+	result := InFlightResult{
+		Repo: owner + "/" + name, Folder: folder, Files: []InFlightFile{},
+		AllPhotos: InFlightAllPhotos{Path: folder + "/" + AllPhotosFile},
+	}
 
 	pr, perr := c.findInFlightPull(ctx, t)
 	if perr != nil {
@@ -109,7 +130,52 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		file.Data, file.Error = c.readJSON(ctx, t, f.Filename, pr.Head.SHA)
 		result.Files = append(result.Files, file)
 	}
+
+	var entries []any
+	result.AllPhotos, entries = c.readAllPhotos(ctx, t, folder, pr.Head.SHA)
+	for i, file := range result.Files {
+		if entries != nil && file.Data != nil {
+			in := containsJSON(entries, file.Data)
+			result.Files[i].InAllPhotos = &in
+		}
+	}
 	return result, nil
+}
+
+// readAllPhotos reads AllPhotosFile in folder at ref and returns its entries.
+func (c *Client) readAllPhotos(ctx context.Context, t target, folder, ref string) (InFlightAllPhotos, []any) {
+	all := InFlightAllPhotos{Path: folder + "/" + AllPhotosFile}
+	content, found, msg := c.readFile(ctx, t, all.Path, ref)
+	all.Found = found
+	if !found {
+		return all, nil
+	}
+	if msg != "" {
+		all.Error = msg
+		return all, nil
+	}
+	entries := []any{}
+	if err := json.Unmarshal(content, &entries); err != nil || entries == nil {
+		all.Error = "The file isn't a JSON array."
+		return all, nil
+	}
+	all.Count = len(entries)
+	return all, entries
+}
+
+// containsJSON reports whether data equals one of entries, ignoring
+// formatting and key order.
+func containsJSON(entries []any, data json.RawMessage) bool {
+	var v any
+	if json.Unmarshal(data, &v) != nil {
+		return false
+	}
+	for _, e := range entries {
+		if reflect.DeepEqual(e, v) {
+			return true
+		}
+	}
+	return false
 }
 
 // dataFolder cleans the Settings folder, defaulting to DefaultDataFolder.
@@ -176,26 +242,39 @@ func (c *Client) listPullFiles(ctx context.Context, t target, number int) ([]pul
 // readJSON fetches file at ref and returns it as JSON, or a message saying why
 // it couldn't.
 func (c *Client) readJSON(ctx context.Context, t target, file, ref string) (json.RawMessage, string) {
+	content, _, msg := c.readFile(ctx, t, file, ref)
+	if msg != "" {
+		return nil, msg
+	}
+	if !json.Valid(content) {
+		return nil, "The file isn't valid JSON."
+	}
+	return json.RawMessage(content), ""
+}
+
+// readFile fetches file at ref. found is false when GitHub has no such file;
+// otherwise msg says why the content couldn't be read, if it couldn't.
+func (c *Client) readFile(ctx context.Context, t target, file, ref string) (content []byte, found bool, msg string) {
 	var out struct {
 		Content  string `json:"content"`
 		Encoding string `json:"encoding"`
 	}
 	p := repoPath(t.owner, t.name) + "/contents/" + escapePath(file) + "?ref=" + url.QueryEscape(ref)
 	res, err := c.do(ctx, http.MethodGet, p, t.token, nil, &out)
+	if err == nil && res.Status == http.StatusNotFound {
+		return nil, false, "The file wasn't found at the pull request's head."
+	}
 	if perr := readCheck(res, err, "reading the file"); perr != nil {
-		return nil, perr.Message
+		return nil, true, perr.Message
 	}
 	if out.Encoding != "base64" {
-		return nil, "GitHub didn't return the file's content. It may be too large."
+		return nil, true, "GitHub didn't return the file's content. It may be too large."
 	}
-	content, err := base64.StdEncoding.DecodeString(strings.ReplaceAll(out.Content, "\n", ""))
+	content, err = base64.StdEncoding.DecodeString(strings.ReplaceAll(out.Content, "\n", ""))
 	if err != nil {
-		return nil, "GitHub returned content that couldn't be decoded."
+		return nil, true, "GitHub returned content that couldn't be decoded."
 	}
-	if !json.Valid(content) {
-		return nil, "The file isn't valid JSON."
-	}
-	return json.RawMessage(content), ""
+	return content, true, ""
 }
 
 // readCheck is check for calls that only read, so a 403 or 404 asks for read
