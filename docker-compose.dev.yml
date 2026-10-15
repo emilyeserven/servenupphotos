@@ -13,6 +13,9 @@ services:
         required: false
     environment:
       PORT: "8081"
+      SETTINGS_FILE: /data/settings.json
+    volumes:
+      - pipeline-data:/data
     develop:
       watch:
         - action: sync+restart
@@ -20,6 +23,7 @@ services:
           target: /src
           ignore:
             - bin/
+            - data/
         - action: rebuild
           path: ./apps/be-pipeline/go.mod
 
@@ -68,3 +72,6 @@ services:
           path: ./apps/client-pipeline/vite.config.ts
         - action: rebuild
           path: ./pnpm-lock.yaml
+
+volumes:
+  pipeline-data:

@@ -13,6 +13,7 @@ import (
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
 // maxUploadBytes caps the size of an uploaded photo.
@@ -20,11 +21,14 @@ const maxUploadBytes = 50 << 20
 
 // NewRouter returns the HTTP handler for all be-pipeline routes. extractor may be
 // nil, in which case POST /exif responds with colors only and a null "exif".
-func NewRouter(extractor exif.Extractor) http.Handler {
+func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", handleHealth)
 	mux.HandleFunc("GET /hello", handleHello)
 	mux.HandleFunc("POST /exif", handleExif(extractor))
+	mux.HandleFunc("GET /settings", handleGetSettings(store))
+	mux.HandleFunc("PUT /settings/r2", handleUpdateSettings(store.UpdateR2))
+	mux.HandleFunc("PUT /settings/github", handleUpdateSettings(store.UpdateGitHub))
 	return mux
 }
 

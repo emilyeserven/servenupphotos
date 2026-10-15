@@ -11,7 +11,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
 func TestRoutes(t *testing.T) {
@@ -22,7 +25,7 @@ func TestRoutes(t *testing.T) {
 		{"/hello", "message", "Hello from be-pipeline (Go)"},
 	}
 
-	router := NewRouter(nil)
+	router := NewRouter(nil, settings.NewStore(filepath.Join(t.TempDir(), "settings.json")))
 	for _, tt := range tests {
 		t.Run(tt.path, func(t *testing.T) {
 			rec := httptest.NewRecorder()
@@ -99,9 +102,9 @@ func TestExif(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var router http.Handler
 			if tt.extractor == nil {
-				router = NewRouter(nil)
+				router = NewRouter(nil, nil)
 			} else {
-				router = NewRouter(tt.extractor)
+				router = NewRouter(tt.extractor, nil)
 			}
 
 			body, contentType := multipartBody(t, tt.field, "IMG_0001.jpg", tt.content)
