@@ -1,0 +1,65 @@
+name: Combine photo data
+
+# Rebuilds apps/portfolio/src/data/ALLPHOTOS.json on "Add photo data" pull
+# requests: every other JSON file in the folder (except dummy.json), as one
+# array sorted by file name, committed back to the pull request.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    paths:
+      - apps/portfolio/src/data/**
+
+permissions:
+  contents: write
+
+concurrency:
+  group: combine-photo-data-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  combine:
+    name: Combine photo data into ALLPHOTOS.json
+    # The pipeline opens these pull requests from branches in this repository,
+    # so the job can push back to them.
+    if: >-
+      github.event.pull_request.title == 'Add photo data' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    env:
+      DATA_DIR: apps/portfolio/src/data
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Combine JSON files
+        run: |
+          mapfile -t files < <(
+            find "$DATA_DIR" -maxdepth 1 -type f -name '*.json' \
+              ! -name 'ALLPHOTOS.json' ! -name 'dummy.json' | LC_ALL=C sort
+          )
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo '[]' > "$DATA_DIR/ALLPHOTOS.json"
+          else
+            jq -s '.' "${files[@]}" > "$DATA_DIR/ALLPHOTOS.json"
+          fi
+          pnpm exec oxfmt "$DATA_DIR/ALLPHOTOS.json"
+          echo "Combined ${#files[@]} file(s) into $DATA_DIR/ALLPHOTOS.json"
+      - name: Commit ALLPHOTOS.json
+        run: |
+          git add "$DATA_DIR/ALLPHOTOS.json"
+          if git diff --cached --quiet; then
+            echo "ALLPHOTOS.json is already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Combine photo data into ALLPHOTOS.json"
+          git push origin "HEAD:$HEAD_REF"
