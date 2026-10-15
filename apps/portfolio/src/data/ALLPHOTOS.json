@@ -1,0 +1,20 @@
+[
+  {
+    "file": "IMG_9826.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF100mm f/2.8L Macro IS USM",
+    "gpsPosition": null,
+    "createDate": "2024:06:24 18:12:24",
+    "country": null,
+    "city": null
+  },
+  {
+    "file": "20180127_163603(0).jpg",
+    "camera": "SM-G930V",
+    "lens": "Samsung Galaxy S7 Rear Camera",
+    "gpsPosition": "42 deg 21' 3.46\" N, 71 deg 3' 34.65\" W",
+    "createDate": "2018:01:27 16:36:03",
+    "country": "United States of America",
+    "city": "Boston"
+  }
+]
