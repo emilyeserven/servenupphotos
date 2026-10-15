@@ -117,7 +117,10 @@ func photo(name string) Photo {
 	return Photo{Name: name, File: name + ".jpg", Sanitized: exif.Sanitized{
 		Camera: ptr("X-T5"),
 		City:   ptr("Tokyo"),
-		Images: exif.Images{Full: ptr("https://photos.example.com/" + name + ".jpg")},
+		Images: exif.Images{
+			Full: ptr("https://photos.example.com/photos/0123456789ab-" + name + ".jpg"),
+			Key:  ptr("photos/0123456789ab-" + name + ".jpg"),
+		},
 	}}
 }
 
@@ -160,7 +163,8 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "country": null,
   "city": "Tokyo",
   "images": {
-    "full": "https://photos.example.com/DSC0001.jpg"
+    "full": "https://photos.example.com/photos/0123456789ab-DSC0001.jpg",
+    "key": "photos/0123456789ab-DSC0001.jpg"
   }
 }
 `

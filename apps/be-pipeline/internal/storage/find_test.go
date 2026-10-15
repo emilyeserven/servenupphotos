@@ -41,9 +41,11 @@ func TestFindPhotos(t *testing.T) {
 	byName := PhotoRef{Name: "DSCF0412.JPG"}
 	byURL := PhotoRef{Name: "DSCF0412.JPG", URL: "https://pub.example.r2.dev/photos/aaaaaaaaaaaa-dscf0412.jpg"}
 	elsewhere := PhotoRef{Name: "x.jpg", URL: "https://cdn.example.com/x.jpg"}
+	byKey := PhotoRef{Name: "My Trip.jpg", URL: "https://old.example.com/a.jpg", Key: "photos/aaaaaaaaaaaa-dscf0412.jpg"}
 	trip := PhotoRef{Name: "My Trip.jpg"}
 	refs := []PhotoRef{
-		byName, byURL, trip, elsewhere,
+		byName, byURL, trip, elsewhere, byKey,
+		{Name: "a.jpg", Key: "photos/gone.jpg"},
 		{Name: "missing.jpg"}, {Name: "!!!.jpg"},
 		{Name: "My Trip.jpg", URL: "https://pub.example.r2.dev/photos/gone.jpg"},
 	}
@@ -56,6 +58,7 @@ func TestFindPhotos(t *testing.T) {
 		byURL:     {Key: "photos/aaaaaaaaaaaa-dscf0412.jpg", URL: "https://pub.example.r2.dev/photos/aaaaaaaaaaaa-dscf0412.jpg"},
 		trip:      {Key: "photos/cccccccccccc-my-trip.jpg", URL: "https://pub.example.r2.dev/photos/cccccccccccc-my-trip.jpg"},
 		elsewhere: {URL: "https://cdn.example.com/x.jpg"},
+		byKey:     {Key: "photos/aaaaaaaaaaaa-dscf0412.jpg", URL: "https://pub.example.r2.dev/photos/aaaaaaaaaaaa-dscf0412.jpg"},
 	}
 	if len(found) != len(want) {
 		t.Fatalf("found = %+v, want %+v", found, want)

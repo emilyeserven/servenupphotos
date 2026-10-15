@@ -94,8 +94,9 @@ commit to the Settings branch directly. The first save creates a `photo-data/<da
 **Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
 pull request collects every photo until you merge it. An existing file is never overwritten.
 
-The sanitized EXIF has an `images` object whose `full` is the photo's public R2 URL. It is `null` until you
-upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo.
+The sanitized EXIF has an `images` object whose `full` is the photo's public R2 URL and `key` its object key. Both are `null` until you
+upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
+**JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
 The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**.
 
@@ -109,7 +110,7 @@ The GitHub token needs **Contents: Read and write** and **Pull requests: Read an
 `.json` file the pull request adds or changes directly in the Settings folder (`apps/portfolio/src/data` when the folder
 is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
 mark when its data is one of the entries in `ALLPHOTOS.json` at the same head (compared as JSON, so formatting and key
-order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.full` URL
+order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
 file's name), or a "no image" sign when there's none. The page only reads from GitHub and R2; it never changes the pull request.
 

@@ -70,10 +70,10 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 			{"filename": "README.md", "status": "modified"},
 		},
 		map[string]string{
-			dir + "DSC0001.json": "{\n  \"file\": \"DSC0001.jpg\",\n  \"images\": {\"full\": \"https://pub/photos/a-dsc0001.jpg\"}\n}\n",
+			dir + "DSC0001.json": "{\n  \"file\": \"DSC0001.jpg\",\n  \"images\": {\"full\": \"https://pub/photos/a-dsc0001.jpg\", \"key\": \"photos/a-dsc0001.jpg\"}\n}\n",
 			dir + "broken.json":  "{not json",
 			// Formatted differently from DSC0001.json, as oxfmt leaves it.
-			dir + "ALLPHOTOS.json": "[\n  { \"images\": { \"full\": \"https://pub/photos/a-dsc0001.jpg\" }, \"file\": \"DSC0001.jpg\" },\n  { \"file\": \"other.jpg\" }\n]\n",
+			dir + "ALLPHOTOS.json": "[\n  { \"images\": { \"key\": \"photos/a-dsc0001.jpg\", \"full\": \"https://pub/photos/a-dsc0001.jpg\" }, \"file\": \"DSC0001.jpg\" },\n  { \"file\": \"other.jpg\" }\n]\n",
 		},
 	)
 
@@ -108,6 +108,9 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	}
 	if first.PhotoName != "DSC0001.jpg" || got.Files[1].PhotoName != "broken" {
 		t.Errorf("PhotoName = %q, %q; want DSC0001.jpg, broken", first.PhotoName, got.Files[1].PhotoName)
+	}
+	if first.ImageKey != "photos/a-dsc0001.jpg" || got.Files[1].ImageKey != "" {
+		t.Errorf("ImageKey = %q, %q; want DSC0001.json's images.key, none", first.ImageKey, got.Files[1].ImageKey)
 	}
 	if first.ImageURL != "https://pub/photos/a-dsc0001.jpg" || got.Files[1].ImageURL != "" {
 		t.Errorf("ImageURL = %q, %q; want DSC0001.json's images.full, none", first.ImageURL, got.Files[1].ImageURL)

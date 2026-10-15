@@ -72,6 +72,8 @@ export interface SanitizedExif {
   images: {
     /** The original photo's public R2 URL, once it has been uploaded. */
     full: string | null;
+    /** The original photo's object key in the R2 bucket, once it has been uploaded. */
+    key: string | null;
   };
 }
 

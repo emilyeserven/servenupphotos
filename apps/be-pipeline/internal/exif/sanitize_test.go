@@ -98,8 +98,8 @@ func checkNoImages(t *testing.T, got map[string]any) {
 	if !ok {
 		t.Fatalf("images = %#v, want an object", got["images"])
 	}
-	if len(images) != 1 || images["full"] != nil {
-		t.Errorf("images = %#v, want {\"full\": null}", images)
+	if len(images) != 2 || images["full"] != nil || images["key"] != nil {
+		t.Errorf("images = %#v, want {\"full\": null, \"key\": null}", images)
 	}
 }
 

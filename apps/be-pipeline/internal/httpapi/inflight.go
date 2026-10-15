@@ -80,7 +80,7 @@ func findImages(ctx context.Context, store *settings.Store, findPhotos findPhoto
 	}
 	refs := make([]storage.PhotoRef, len(files))
 	for i, f := range files {
-		refs[i] = storage.PhotoRef{Name: f.PhotoName, URL: f.ImageURL}
+		refs[i] = storage.PhotoRef{Name: f.PhotoName, URL: f.ImageURL, Key: f.ImageKey}
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, findPhotosTimeout)

@@ -30,13 +30,13 @@ function validatePhoto(photo: File | null): string | undefined {
   return undefined;
 }
 
-/** The sanitized EXIF with the photo's R2 URL filled in once it has been uploaded. */
+/** The sanitized EXIF with the photo's R2 URL and key filled in once it has been uploaded. */
 function withImages(
   sanitized: SanitizedExif | null | undefined,
   upload: UploadResponse | undefined,
 ): SanitizedExif | null {
   if (!sanitized || !upload) return sanitized ?? null;
-  return { ...sanitized, images: { ...sanitized.images, full: upload.url } };
+  return { ...sanitized, images: { ...sanitized.images, full: upload.url, key: upload.key } };
 }
 
 function ExifPage() {
@@ -219,17 +219,17 @@ function ExifResultBody({ mutation, sanitized }: ExifResultProps) {
   if (mutation.isPending) return <Spinner className="size-6" />;
   if (mutation.isError) return <p className="text-destructive">{mutation.error.message}</p>;
   if (!mutation.data) return null;
-  const { exif, colors } = mutation.data;
+  const { file, exif, colors } = mutation.data;
   return (
     <Tabs defaultValue="sanitized">
       <TabsList>
-        <TabsTrigger value="sanitized">Sanitized EXIF</TabsTrigger>
+        <TabsTrigger value="sanitized">JSON to Upload</TabsTrigger>
         <TabsTrigger value="exif">EXIF</TabsTrigger>
         <TabsTrigger value="colors">Colors</TabsTrigger>
         <TabsTrigger value="raw">Raw color data</TabsTrigger>
       </TabsList>
       <TabsContent value="sanitized">
-        <ExifData exif={sanitized} />
+        <UploadJson file={file} sanitized={sanitized} />
       </TabsContent>
       <TabsContent value="exif">
         <ExifData exif={exif} />
@@ -242,6 +242,12 @@ function ExifResultBody({ mutation, sanitized }: ExifResultProps) {
       </TabsContent>
     </Tabs>
   );
+}
+
+/** The JSON Save to GitHub writes: the photo's file name and its sanitized EXIF, with images.full and images.key after an upload. */
+function UploadJson({ file, sanitized }: { file: string; sanitized: SanitizedExif | null }) {
+  if (!sanitized) return <ExifData exif={null} />;
+  return <JsonCodeBlock value={{ file, ...sanitized }} title="JSON to Upload" />;
 }
 
 function ExifData({ exif }: { exif: ExifResponse["exif"] | ExifResponse["sanitized"] }) {

@@ -19,8 +19,9 @@ var photoKeyPattern = regexp.MustCompile(`^photos/[0-9a-f]{12}(?:-([a-z0-9-]+))?
 type PhotoRef struct {
 	// Name is the photo's original file name.
 	Name string
-	// URL is the photo's public URL, when it was saved with the photo's data.
-	URL string
+	// URL and Key are the photo's public URL and object key, when they were
+	// saved with the photo's data.
+	URL, Key string
 }
 
 // upload is the newest object found for a name stem.
@@ -30,7 +31,7 @@ type upload struct {
 }
 
 // FindPhotos looks in the bucket for each of refs and returns the ones it
-// finds. A ref with a URL under the bucket's public URL matches that object,
+// finds. A ref with a Key matches that object, a ref with a URL under the bucket's public URL matches that object,
 // and one with a URL elsewhere is returned as is. Otherwise a photo matches when
 // UploadPhoto would give it the same name stem; when several uploads match,
 // the newest wins. problem says why the bucket couldn't be searched, when it
@@ -86,6 +87,9 @@ func findPhotos(ctx context.Context, cfg settings.R2, endpoint string, refs []Ph
 // refKey returns the object key ref points at, or ok false when its URL is
 // outside the bucket's public URL base. The key is "" when nothing matches.
 func refKey(ref PhotoRef, base string, newest map[string]upload) (key string, ok bool) {
+	if ref.Key != "" {
+		return ref.Key, true
+	}
 	if ref.URL != "" {
 		key, ok = strings.CutPrefix(ref.URL, base+"/")
 		return key, ok

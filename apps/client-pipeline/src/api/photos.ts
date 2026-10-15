@@ -50,6 +50,8 @@ export interface InFlightFile {
   photoName: string;
   /** The photo's `images.full` R2 URL, when it was saved with the data. */
   imageUrl?: string;
+  /** The photo's `images.key` R2 object key, when it was saved with the data. */
+  imageKey?: string;
   /** Whether the file's data is an entry of ALLPHOTOS.json; null when either couldn't be read. */
   inAllPhotos: boolean | null;
 }
