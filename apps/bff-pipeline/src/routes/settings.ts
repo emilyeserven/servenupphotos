@@ -3,7 +3,7 @@ import { relayToBackend } from "../lib/backend.js";
 
 const SECTIONS = ["r2", "github"] as const;
 /** Sections whose settings can be checked against the service they connect to. */
-const TESTABLE_SECTIONS = ["r2"] as const;
+const TESTABLE_SECTIONS = ["r2", "github"] as const;
 
 // Settings bodies can carry secrets, so they are relayed as-is and never logged.
 export const settingsRoutes: FastifyPluginAsync = async (app) => {

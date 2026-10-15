@@ -130,13 +130,20 @@ func (s *Store) ResolveR2(u R2Update) (R2, error) {
 // UpdateGitHub replaces the GitHub settings and returns the new client-safe view.
 func (s *Store) UpdateGitHub(u GitHubUpdate) (Public, error) {
 	return s.update(func(cur *Settings) {
-		cur.GitHub = GitHub{
-			Repo:   u.Repo,
-			Branch: u.Branch,
-			Folder: u.Folder,
-			Token:  applySecret(cur.GitHub.Token, u.Token),
-		}
+		cur.GitHub = u.apply(cur.GitHub)
 	})
+}
+
+// ResolveGitHub returns the GitHub settings an update would produce, using the
+// stored token when the update keeps it, without saving anything.
+func (s *Store) ResolveGitHub(u GitHubUpdate) (GitHub, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	cur, err := s.load()
+	if err != nil {
+		return GitHub{}, err
+	}
+	return u.apply(cur.GitHub), nil
 }
 
 func (s *Store) update(apply func(*Settings)) (Public, error) {
@@ -242,5 +249,14 @@ func (u R2Update) apply(cur R2) R2 {
 		SecretAccessKey: applySecret(cur.SecretAccessKey, u.SecretAccessKey),
 		Bucket:          u.Bucket,
 		PublicURL:       u.PublicURL,
+	}
+}
+
+func (u GitHubUpdate) apply(cur GitHub) GitHub {
+	return GitHub{
+		Repo:   u.Repo,
+		Branch: u.Branch,
+		Folder: u.Folder,
+		Token:  applySecret(cur.Token, u.Token),
 	}
 }
