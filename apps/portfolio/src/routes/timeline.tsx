@@ -4,7 +4,7 @@ import { CalendarClock, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
-import { DateRangeFields, QuickRangeSelect } from "@/components/time-range-picker";
+import { TimeRangePicker } from "@/components/time-range-picker";
 import { buildHistogram } from "@/lib/histogram";
 import {
   absoluteTimeRange,
@@ -108,11 +108,16 @@ function TimelineView() {
           Timeline
         </h1>
         <div className="flex flex-wrap items-center gap-3">
-          <QuickRangeSelect value={search} onChange={(next) => navigate({ search: next })} />
+          <TimeRangePicker
+            value={search}
+            selection={{ from: start, to: end }}
+            onChange={(next) => navigate({ search: next })}
+          />
           <p className="text-sm text-muted-foreground">{photos.length} photos in range</p>
           <Button
             variant="outline"
             size="sm"
+            className="ml-auto"
             disabled={isAllTime}
             onClick={() => navigate({ search: {} })}
           >
@@ -121,10 +126,7 @@ function TimelineView() {
           </Button>
         </div>
       </header>
-      <div className="flex flex-col gap-3">
-        <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
-        <DateRangeFields start={start} end={end} onChange={selectDates} />
-      </div>
+      <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
       <PhotoMonths photos={photos} />
     </div>
   );
