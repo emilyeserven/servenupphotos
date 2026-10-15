@@ -50,7 +50,7 @@ type fakeExtractor struct{ got []byte }
 func (f *fakeExtractor) Extract(path string) (map[string]any, error) {
 	b, err := os.ReadFile(path) //nolint:gosec // test temp file
 	f.got = b
-	return map[string]any{"Make": "Servenup"}, err
+	return map[string]any{"Make": "Servenup", "Model": "Test Camera"}, err
 }
 
 // redJPEG returns a small solid red JPEG.
@@ -133,10 +133,16 @@ func TestExif(t *testing.T) {
 				if res.Exif != nil {
 					t.Errorf("exif = %v, want null without exiftool", res.Exif)
 				}
+				if res.Sanitized != nil {
+					t.Errorf("sanitized = %+v, want null without exiftool", res.Sanitized)
+				}
 				return
 			}
 			if res.Exif["Make"] != "Servenup" {
 				t.Errorf("exif = %v", res.Exif)
+			}
+			if res.Sanitized == nil || res.Sanitized.Camera == nil || *res.Sanitized.Camera != "Test Camera" {
+				t.Errorf("sanitized = %+v, want camera Test Camera", res.Sanitized)
 			}
 			if !bytes.Equal(tt.extractor.got, photo) {
 				t.Errorf("extractor got %d bytes, want the whole upload (%d)", len(tt.extractor.got), len(photo))
