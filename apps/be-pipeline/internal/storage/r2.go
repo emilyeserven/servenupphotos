@@ -37,6 +37,12 @@ func checkR2(ctx context.Context, cfg settings.R2, endpoint string) CheckResult 
 	if msg := validateR2(cfg); msg != "" {
 		return CheckResult{Message: msg}
 	}
+	// The public URL is optional here, but a wrong one is caught before uploads.
+	if strings.TrimSpace(cfg.PublicURL) != "" {
+		if msg := publicURLProblem(cfg.PublicURL); msg != "" {
+			return CheckResult{Message: msg}
+		}
+	}
 	_, err := newR2Client(cfg, endpoint).ListObjectsV2(ctx, &s3.ListObjectsV2Input{
 		Bucket:  aws.String(strings.TrimSpace(cfg.Bucket)),
 		MaxKeys: aws.Int32(1),

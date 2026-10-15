@@ -72,6 +72,8 @@ func TestUploadPhotoErrors(t *testing.T) {
 	noURL := validR2
 	badURL := validR2
 	badURL.PublicURL = "photos.example.com"
+	apiURL := validR2
+	apiURL.PublicURL = "https://" + validR2.AccountID + ".r2.cloudflarestorage.com/photos"
 	noBucket := withURL
 	noBucket.Bucket = ""
 
@@ -86,6 +88,7 @@ func TestUploadPhotoErrors(t *testing.T) {
 		{"missing field", noBucket, 0, "", true, "Fill in Bucket first."},
 		{"no public url", noURL, 0, "", true, "Fill in Public URL first"},
 		{"bad public url", badURL, 0, "", true, "should start with https://"},
+		{"s3 api endpoint as public url", apiURL, 0, "", true, "S3 API endpoint"},
 		{"read-only token", withURL, http.StatusForbidden, "AccessDenied", false, "needs Object Read & Write"},
 		{"no bucket", withURL, http.StatusNotFound, "NoSuchBucket", false, "no bucket with that name"},
 	}

@@ -75,11 +75,25 @@ func publicBase(raw string) (base, problem string) {
 	if raw == "" {
 		return "", "Fill in Public URL first, so uploaded photos have a link."
 	}
-	u, err := url.Parse(raw)
-	if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" {
-		return "", "The public URL should start with https://, like https://pub-….r2.dev."
+	if problem := publicURLProblem(raw); problem != "" {
+		return "", problem
 	}
 	return raw, ""
+}
+
+// publicURLProblem says why raw can't serve photos publicly, or "" if it can.
+// The S3 API endpoint is the usual mix-up: it only answers signed requests.
+// https://developers.cloudflare.com/r2/buckets/public-buckets/
+func publicURLProblem(raw string) string {
+	u, err := url.Parse(strings.TrimSpace(raw))
+	if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" {
+		return "The public URL should start with https://, like https://pub-….r2.dev."
+	}
+	if strings.HasSuffix(strings.ToLower(u.Hostname()), ".r2.cloudflarestorage.com") {
+		return "The public URL is the bucket's S3 API endpoint, which needs a signed request. " +
+			"Turn on the r2.dev subdomain or a custom domain under the bucket's Public access settings, and use that URL."
+	}
+	return ""
 }
 
 // unsafeKeyChars matches runs of characters left out of object keys, so keys
