@@ -13,6 +13,7 @@ import (
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/httpapi"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
 func main() {
@@ -28,9 +29,11 @@ func main() {
 		extractor = et
 	}
 
+	store := settings.NewStore(getenv("SETTINGS_FILE", "data/settings.json"))
+
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           httpapi.NewRouter(extractor),
+		Handler:           httpapi.NewRouter(extractor, store),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 

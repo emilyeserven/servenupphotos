@@ -5,6 +5,7 @@ import { env } from "./env.js";
 import { exifRoutes } from "./routes/exif.js";
 import { healthRoutes } from "./routes/health.js";
 import { helloRoutes } from "./routes/hello.js";
+import { settingsRoutes } from "./routes/settings.js";
 
 const app = Fastify({ logger: true });
 
@@ -13,6 +14,7 @@ await app.register(
     await api.register(healthRoutes);
     await api.register(helloRoutes);
     await api.register(exifRoutes);
+    await api.register(settingsRoutes);
   },
   { prefix: "/api" },
 );
