@@ -91,7 +91,7 @@ func publicURLProblem(raw string) string {
 	}
 	if strings.HasSuffix(strings.ToLower(u.Hostname()), ".r2.cloudflarestorage.com") {
 		return "The public URL is the bucket's S3 API endpoint, which needs a signed request. " +
-			"Turn on the r2.dev subdomain or a custom domain under the bucket's Public access settings, and use that URL."
+			"In the bucket's settings, enable Public Development URL (or add a Custom Domain) and use that URL."
 	}
 	return ""
 }
