@@ -1,7 +1,6 @@
 package exif
 
 import (
-	"os"
 	"os/exec"
 	"testing"
 )
@@ -16,13 +15,7 @@ func TestExiftoolExtract(t *testing.T) {
 	}
 	t.Cleanup(func() { _ = et.Close() })
 
-	f, err := os.Open("testdata/sample.jpg")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer f.Close() //nolint:errcheck // read-only
-
-	fields, err := et.Extract(f)
+	fields, err := et.Extract("testdata/sample.jpg")
 	if err != nil {
 		t.Fatal(err)
 	}

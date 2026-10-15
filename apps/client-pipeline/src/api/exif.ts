@@ -1,8 +1,71 @@
 import { mutationOptions } from "@tanstack/react-query";
 
+interface Color {
+  hex: string;
+  lab: { l: number; a: number; b: number };
+  hcl: { h: number; c: number; l: number };
+}
+
+interface ColorBucket {
+  name: string;
+  /** The bucket's reference color, for display. */
+  hex: string;
+  /** Fraction (0–1) of sampled pixels in this bucket. */
+  share: number;
+}
+
+/** A histogram bin covering [from, to); share is of all sampled pixels. */
+export interface Bin {
+  from: number;
+  to: number;
+  hex?: string;
+  share: number;
+}
+
+interface ChannelStats {
+  name: string;
+  min: number;
+  p5: number;
+  median: number;
+  mean: number;
+  p95: number;
+  max: number;
+  stdDev: number;
+}
+
+/** Lower-level data in go-colorful's native scales (mostly 0–1). */
+export interface RawColorData {
+  /** Per-channel stats in each color space; hue channels are left out. */
+  spaces: { name: string; channels: ChannelStats[] }[];
+  histograms: {
+    /** HSV hue in 10° bins, non-neutral pixels only. */
+    hue: Bin[];
+    /** CIELAB L* (0–100). */
+    lightness: Bin[];
+    /** CIELAB chroma (0–100, higher values in the last bin). */
+    chroma: Bin[];
+    /** HSV saturation (0–1). */
+    saturation: Bin[];
+  };
+}
+
+export interface ColorAnalysis {
+  average: Color;
+  /** The 12 hue buckets in color-wheel order. */
+  buckets: ColorBucket[];
+  /** Pixels too dark or unsaturated to have a hue, by CIELAB lightness. */
+  neutrals: { share: number; histogram: Bin[] };
+  lightness: number;
+  chroma: number;
+  samples: number;
+  raw: RawColorData;
+}
+
 export interface ExifResponse {
   file: string;
-  metadata: Record<string, unknown>;
+  /** Null when exiftool is not available on the backend. */
+  exif: Record<string, unknown> | null;
+  colors: ColorAnalysis;
 }
 
 async function postPhoto(photo: File): Promise<ExifResponse> {
