@@ -74,6 +74,31 @@ buckets (every 30° around the color wheel), a lightness histogram of the neutra
 have a hue), the mean lightness and chroma, and `raw`: per-channel statistics in every color space go-colorful
 supports plus hue, lightness, chroma and saturation histograms. The UI shows these in Colors and Raw color data tabs.
 
+### Settings
+
+Open `/settings` in the pipeline UI to enter the Cloudflare R2 and GitHub settings the pipeline uses. The Go backend saves them to `SETTINGS_FILE`: `apps/be-pipeline/data/settings.json` (git-ignored) with
+`pnpm dev:be`, or `/data/settings.json` on the `pipeline-data` Docker volume. The file is readable only by its owner.
+
+The R2 secret access key and the GitHub token are **write-only**: `GET /settings` reports only whether each is set and
+its last four characters, so after saving you can replace or clear a secret but never read it back. In a
+`PUT /settings/{r2,github}` body, leaving the secret out keeps it, `""` clears it, and any other value replaces it.
+
+> **Frontend analogy:** it works like the "Change password" field on an account page. You can set a new password, but
+> the site never shows you the current one. The real value exists only on the backend.
+
+### Saving photo data to GitHub
+
+After a photo is analyzed on `/exif`, the **Save to GitHub** card saves its sanitized EXIF as one JSON file,
+`<folder>/<name>.json`, in the repository from Settings (`POST /api/photos/github` → `POST /photos/github`). Saves never
+commit to the Settings branch directly. The first save creates a `photo-data/<date>-<time>` branch from it and opens an
+**Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
+pull request collects every photo until you merge it. An existing file is never overwritten.
+
+The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**.
+
+> **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and
+> merging the pull request is checkout. After that, the next save starts a new cart.
+
 ## Checks (same as CI)
 
 ```sh

@@ -21,6 +21,12 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         >
           EXIF
         </Link>
+        <Link
+          to="/settings"
+          className="text-muted-foreground [&.active]:text-foreground [&.active]:font-medium"
+        >
+          Settings
+        </Link>
       </nav>
       <Outlet />
     </main>

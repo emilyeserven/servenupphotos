@@ -9,3 +9,5 @@ coverage/
 .fallow/
 # Go
 apps/be-pipeline/bin/
+# Pipeline settings written by `pnpm dev:be`; holds secrets.
+apps/be-pipeline/data/

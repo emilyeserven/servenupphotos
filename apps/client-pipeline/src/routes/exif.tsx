@@ -3,10 +3,12 @@ import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type ExifResponse, exifMutation } from "@/api/exif";
 import { ColorData, RawColorData } from "@/components/color-data";
+import { GitHubSaveCard } from "@/components/github-save";
+import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
+import { R2Upload } from "@/components/r2-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CodeBlock } from "@/components/ui/code-block";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -78,7 +80,20 @@ function ExifPage() {
       </Card>
 
       {!extract.isIdle && <ExifResult mutation={extract} />}
+      {extract.isSuccess && (
+        <PhotoActions key={extract.submittedAt} photo={extract.variables} result={extract.data} />
+      )}
     </Page>
+  );
+}
+
+/** What can be done with an analyzed photo: upload it to R2, and save its sanitized EXIF to GitHub. */
+function PhotoActions({ photo, result }: { photo: File; result: ExifResponse }) {
+  return (
+    <>
+      <R2Upload photo={photo} />
+      {result.sanitized && <GitHubSaveCard file={result.file} sanitized={result.sanitized} />}
+    </>
   );
 }
 
@@ -159,14 +174,18 @@ function ExifResultBody({ mutation }: { mutation: ExifMutation }) {
   if (mutation.isPending) return <Spinner className="size-6" />;
   if (mutation.isError) return <p className="text-destructive">{mutation.error.message}</p>;
   if (!mutation.data) return null;
-  const { exif, colors } = mutation.data;
+  const { exif, sanitized, colors } = mutation.data;
   return (
-    <Tabs defaultValue="exif">
+    <Tabs defaultValue="sanitized">
       <TabsList>
+        <TabsTrigger value="sanitized">Sanitized EXIF</TabsTrigger>
         <TabsTrigger value="exif">EXIF</TabsTrigger>
         <TabsTrigger value="colors">Colors</TabsTrigger>
         <TabsTrigger value="raw">Raw color data</TabsTrigger>
       </TabsList>
+      <TabsContent value="sanitized">
+        <ExifData exif={sanitized} />
+      </TabsContent>
       <TabsContent value="exif">
         <ExifData exif={exif} />
       </TabsContent>
@@ -180,7 +199,7 @@ function ExifResultBody({ mutation }: { mutation: ExifMutation }) {
   );
 }
 
-function ExifData({ exif }: { exif: ExifResponse["exif"] }) {
+function ExifData({ exif }: { exif: ExifResponse["exif"] | ExifResponse["sanitized"] }) {
   if (!exif) {
     return (
       <p className="text-muted-foreground text-sm">
@@ -188,5 +207,5 @@ function ExifData({ exif }: { exif: ExifResponse["exif"] }) {
       </p>
     );
   }
-  return <CodeBlock language="json" code={JSON.stringify(exif, null, 2)} />;
+  return <JsonCodeBlock value={exif} />;
 }

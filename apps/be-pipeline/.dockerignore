@@ -1,0 +1,3 @@
+bin/
+# Local settings from `pnpm dev:be`; holds secrets.
+data/
