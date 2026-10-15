@@ -19,10 +19,10 @@ func main() {
 	addr := ":" + getenv("PORT", "8081")
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	// Without exiftool the server still runs; only POST /exif is unavailable.
+	// Without exiftool the server still runs; POST /exif then returns colors only.
 	var extractor exif.Extractor
 	if et, err := exif.NewExiftool(); err != nil {
-		logger.Warn("exiftool unavailable; POST /exif will respond 503", "err", err)
+		logger.Warn("exiftool unavailable; POST /exif will omit EXIF data", "err", err)
 	} else {
 		defer et.Close() //nolint:errcheck // process exit
 		extractor = et

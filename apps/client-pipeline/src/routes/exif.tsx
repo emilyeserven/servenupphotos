@@ -1,13 +1,14 @@
 import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { type ExifResponse, exifMutation } from "@/api/exif";
+import { type ColorAnalysis, type ExifResponse, exifMutation } from "@/api/exif";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CodeBlock } from "@/components/ui/code-block";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useObjectUrl } from "@/hooks/use-object-url";
 
 export const Route = createFileRoute("/exif")({
@@ -37,8 +38,8 @@ function ExifPage() {
 
   return (
     <Page
-      title="EXIF metadata"
-      description="Upload a JPEG to read its metadata with exiftool on the Go backend."
+      title="EXIF and color data"
+      description="Upload a JPEG to read its metadata with exiftool and its colors with go-colorful on the Go backend."
     >
       <Card>
         <CardHeader>
@@ -134,7 +135,7 @@ function SubmitButton({ disabled, pending }: { disabled: boolean; pending: boole
   return (
     <Button type="submit" className="self-start" disabled={disabled || pending}>
       {pending && <Spinner />}
-      {pending ? "Reading metadata…" : "Use this photo"}
+      {pending ? "Analyzing photo…" : "Use this photo"}
     </Button>
   );
 }
@@ -143,7 +144,7 @@ function ExifResult({ mutation }: { mutation: ExifMutation }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Metadata</CardTitle>
+        <CardTitle>Results</CardTitle>
         <CardDescription>{mutation.variables?.name}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -157,5 +158,85 @@ function ExifResultBody({ mutation }: { mutation: ExifMutation }) {
   if (mutation.isPending) return <Spinner className="size-6" />;
   if (mutation.isError) return <p className="text-destructive">{mutation.error.message}</p>;
   if (!mutation.data) return null;
-  return <CodeBlock language="json" code={JSON.stringify(mutation.data.metadata, null, 2)} />;
+  const { exif, colors } = mutation.data;
+  return (
+    <Tabs defaultValue="exif">
+      <TabsList>
+        <TabsTrigger value="exif">EXIF</TabsTrigger>
+        <TabsTrigger value="colors">Colors</TabsTrigger>
+      </TabsList>
+      <TabsContent value="exif">
+        <ExifData exif={exif} />
+      </TabsContent>
+      <TabsContent value="colors">
+        <ColorData colors={colors} />
+      </TabsContent>
+    </Tabs>
+  );
+}
+
+function ExifData({ exif }: { exif: ExifResponse["exif"] }) {
+  if (!exif) {
+    return (
+      <p className="text-muted-foreground text-sm">
+        EXIF data is unavailable because exiftool is not running on the backend.
+      </p>
+    );
+  }
+  return <CodeBlock language="json" code={JSON.stringify(exif, null, 2)} />;
+}
+
+function ColorData({ colors }: { colors: ColorAnalysis }) {
+  return (
+    <div className="flex flex-col gap-6">
+      <section className="flex flex-col gap-2">
+        <h3 className="text-sm font-medium">Average</h3>
+        <div className="flex items-center gap-3">
+          <ColorChip hex={colors.average.hex} />
+          <dl className="text-muted-foreground grid grid-cols-[auto_1fr] gap-x-3 text-sm">
+            <dt>Hex</dt>
+            <dd className="font-mono">{colors.average.hex}</dd>
+            <dt>Mean lightness</dt>
+            <dd>{colors.lightness}</dd>
+            <dt>Mean chroma</dt>
+            <dd>{colors.chroma}</dd>
+          </dl>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <h3 className="text-sm font-medium">Palette</h3>
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          {colors.palette.map((swatch) => (
+            <li key={swatch.hex} className="flex items-center gap-2">
+              <ColorChip hex={swatch.hex} />
+              <div className="flex flex-col text-sm">
+                <span className="font-mono">{swatch.hex}</span>
+                <span className="text-muted-foreground">{formatShare(swatch.share)}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <h3 className="text-sm font-medium">Raw data</h3>
+        <CodeBlock language="json" code={JSON.stringify(colors, null, 2)} />
+      </section>
+    </div>
+  );
+}
+
+function ColorChip({ hex }: { hex: string }) {
+  return (
+    <span
+      aria-hidden
+      className="size-10 shrink-0 rounded-md border"
+      style={{ backgroundColor: hex }}
+    />
+  );
+}
+
+function formatShare(share: number): string {
+  return share.toLocaleString(undefined, { style: "percent", maximumFractionDigits: 1 });
 }
