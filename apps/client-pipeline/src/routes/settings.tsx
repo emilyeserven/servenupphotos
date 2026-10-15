@@ -50,6 +50,7 @@ const SECTIONS: SectionConfig[] = [
       { name: "publicUrl", label: "Public URL", placeholder: "https://photos.example.com" },
     ],
     secret: { name: "secretAccessKey", label: "Secret access key" },
+    secretHelp: (fields) => <R2TokenHelp bucket={fields.bucket ?? ""} />,
   },
   {
     section: "github",
@@ -379,6 +380,26 @@ function describeSecret(status: SecretStatus, clearing: boolean): string {
 }
 
 /**
+ * R2 token permissions, from Cloudflare's docs:
+ * https://developers.cloudflare.com/r2/api/tokens/
+ */
+function R2TokenHelp({ bucket }: { bucket: string }) {
+  return (
+    <div className="text-muted-foreground flex flex-col gap-1 text-sm">
+      <p>
+        In R2, open <strong>Manage API tokens</strong> and create a token with{" "}
+        <strong>Object Read &amp; Write</strong>, applied only to{" "}
+        {bucket.trim() || "your photo bucket"}. That lets the pipeline upload, list and download
+        photos. Cloudflare shows the secret access key only once, so paste it here right away.
+      </p>
+      <ExternalLink href="https://dash.cloudflare.com/?to=/:account/r2/overview">
+        Open R2 in the Cloudflare dashboard
+      </ExternalLink>
+    </div>
+  );
+}
+
+/**
  * GitHub's token form, pre-filled via its URL template parameters:
  * https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#pre-filling-fine-grained-personal-access-token-details-using-url-parameters
  */
@@ -418,7 +439,7 @@ function ExternalLink({ href, children }: { href: string; children: ReactNode })
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="text-foreground inline-flex items-center gap-1 underline underline-offset-4"
+      className="text-foreground inline-flex items-center gap-1 self-start underline underline-offset-4"
     >
       {children}
       <ExternalLinkIcon className="size-3.5" />
