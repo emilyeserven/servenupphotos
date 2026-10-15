@@ -123,8 +123,8 @@ func TestExif(t *testing.T) {
 			if res.File != "IMG_0001.jpg" {
 				t.Errorf("file = %q", res.File)
 			}
-			if len(res.Colors.Palette) != 1 || res.Colors.Palette[0].Share != 1 {
-				t.Errorf("palette = %+v, want one swatch", res.Colors.Palette)
+			if b := res.Colors.Buckets; len(b) == 0 || b[0].Name != "red" || b[0].Share < 0.99 {
+				t.Errorf("buckets = %+v, want the photo in red", b)
 			}
 			if tt.extractor == nil {
 				if res.Exif != nil {

@@ -205,18 +205,8 @@ function ColorData({ colors }: { colors: ColorAnalysis }) {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h3 className="text-sm font-medium">Palette</h3>
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {colors.palette.map((swatch) => (
-            <li key={swatch.hex} className="flex items-center gap-2">
-              <ColorChip hex={swatch.hex} />
-              <div className="flex flex-col text-sm">
-                <span className="font-mono">{swatch.hex}</span>
-                <span className="text-muted-foreground">{formatShare(swatch.share)}</span>
-              </div>
-            </li>
-          ))}
-        </ul>
+        <h3 className="text-sm font-medium">Color buckets</h3>
+        <BucketChart buckets={colors.buckets} />
       </section>
 
       <section className="flex flex-col gap-2">
@@ -224,6 +214,34 @@ function ColorData({ colors }: { colors: ColorAnalysis }) {
         <CodeBlock language="json" code={JSON.stringify(colors, null, 2)} />
       </section>
     </div>
+  );
+}
+
+function BucketChart({ buckets }: { buckets: ColorAnalysis["buckets"] }) {
+  // Scale to the largest bucket so small shares stay visible.
+  const maxShare = Math.max(...buckets.map((b) => b.share), 0.01);
+  return (
+    <ul
+      className="grid grid-cols-[repeat(15,minmax(0,1fr))] gap-1"
+      aria-label="Share of the photo per color bucket"
+    >
+      {buckets.map((bucket) => (
+        <li key={bucket.name} className="flex flex-col items-center gap-1">
+          <span className="text-muted-foreground text-[10px] tabular-nums">
+            {formatShare(bucket.share)}
+          </span>
+          <div className="flex h-40 w-full items-end">
+            <div
+              className="w-full rounded-t-sm border"
+              style={{ height: `${(bucket.share / maxShare) * 100}%`, backgroundColor: bucket.hex }}
+            />
+          </div>
+          <span className="text-xs [writing-mode:vertical-rl] rotate-180 whitespace-nowrap">
+            {bucket.name}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -238,5 +256,5 @@ function ColorChip({ hex }: { hex: string }) {
 }
 
 function formatShare(share: number): string {
-  return share.toLocaleString(undefined, { style: "percent", maximumFractionDigits: 1 });
+  return share.toLocaleString(undefined, { style: "percent", maximumFractionDigits: 0 });
 }

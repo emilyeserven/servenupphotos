@@ -1,31 +1,46 @@
 // Package colors summarises the colors of a photo with go-colorful: its
-// average color, a dominant palette, and its mean lightness and chroma.
+// average color, the share of the photo in each of a fixed set of color
+// buckets, and its mean lightness and chroma.
 //
 // Values use the conventional CIELAB scales (L, a, b and chroma roughly 0–100,
 // hue in degrees) rather than go-colorful's 0–1 scale.
 package colors
 
 import (
-	"cmp"
 	"fmt"
 	"image"
 	_ "image/jpeg" // register the JPEG decoder
 	"io"
 	"math"
-	"math/rand/v2"
-	"slices"
 
 	"github.com/lucasb-eyer/go-colorful"
 )
 
 const (
-	// PaletteSize is the most colors the palette holds.
-	PaletteSize = 12
 	// maxSamples caps how many pixels are read, so large photos stay fast.
 	maxSamples = 10_000
-	// mergeDistance is the CIE76 ΔE below which two palette colors read as one.
-	mergeDistance = 5
-	maxIterations = 30
+	// Pixels below this CIELAB chroma are too unsaturated to have a hue and
+	// count as black, gray or white.
+	neutralChroma = 12
+	// Lightness bounds for the neutral buckets; very dark pixels are black
+	// whatever their chroma.
+	blackLightness = 20
+	whiteLightness = 85
+)
+
+// bucketNames lists the 12 hue buckets every 30° around the HSV color wheel,
+// starting at red (centered on 0°), then the neutrals.
+var bucketNames = [...]string{
+	"red", "orange", "yellow", "chartreuse", "green", "spring green",
+	"cyan", "azure", "blue", "violet", "magenta", "rose",
+	"black", "gray", "white",
+}
+
+const (
+	hueBuckets = 12
+	black      = hueBuckets
+	gray       = hueBuckets + 1
+	white      = hueBuckets + 2
 )
 
 // Color is one color in hex, CIELAB and CIE LCh(ab) (HCL) form.
@@ -49,18 +64,21 @@ type HCL struct {
 	L float64 `json:"l"`
 }
 
-// Swatch is a palette color and the share of the photo it covers.
-type Swatch struct {
-	Color
-	// Share is the fraction (0–1) of sampled pixels closest to this color.
+// Bucket is one fixed color category and the share of the photo in it.
+type Bucket struct {
+	Name string `json:"name"`
+	// Hex is the bucket's reference color, for display.
+	Hex string `json:"hex"`
+	// Share is the fraction (0–1) of sampled pixels in this bucket.
 	Share float64 `json:"share"`
 }
 
 // Analysis is the color summary of a photo.
 type Analysis struct {
 	Average Color `json:"average"`
-	// Palette holds up to PaletteSize colors, largest share first.
-	Palette   []Swatch `json:"palette"`
+	// Buckets always holds every bucket, in color-wheel order then black,
+	// gray and white, so photos can be compared bucket by bucket.
+	Buckets   []Bucket `json:"buckets"`
 	Lightness float64  `json:"lightness"`
 	Chroma    float64  `json:"chroma"`
 	Samples   int      `json:"samples"`
@@ -83,168 +101,82 @@ func analyzeImage(img image.Image) (Analysis, error) {
 
 	var sum Lab
 	var chroma float64
-	for _, p := range pixels {
-		sum.L += p.L
-		sum.A += p.A
-		sum.B += p.B
-		chroma += math.Hypot(p.A, p.B)
+	var counts [len(bucketNames)]int
+	for _, c := range pixels {
+		lab := toLab(c)
+		sum.L += lab.L
+		sum.A += lab.A
+		sum.B += lab.B
+		chroma += math.Hypot(lab.A, lab.B)
+		counts[bucketOf(c, lab)]++
 	}
 	n := float64(len(pixels))
-	mean := Lab{sum.L / n, sum.A / n, sum.B / n}
 
+	buckets := make([]Bucket, len(bucketNames))
+	for i, name := range bucketNames {
+		buckets[i] = Bucket{
+			Name:  name,
+			Hex:   bucketHex(i),
+			Share: math.Round(float64(counts[i])/n*1e4) / 1e4,
+		}
+	}
+
+	mean := Lab{sum.L / n, sum.A / n, sum.B / n}
 	return Analysis{
 		Average:   toColor(mean),
-		Palette:   palette(pixels),
+		Buckets:   buckets,
 		Lightness: round(mean.L),
 		Chroma:    round(chroma / n),
 		Samples:   len(pixels),
 	}, nil
 }
 
+// bucketOf returns the index in bucketNames of the bucket c falls in.
+func bucketOf(c colorful.Color, lab Lab) int {
+	switch {
+	case lab.L < blackLightness:
+		return black
+	case math.Hypot(lab.A, lab.B) < neutralChroma:
+		if lab.L > whiteLightness {
+			return white
+		}
+		return gray
+	}
+	h, _, _ := c.Hsv()
+	return int(math.Mod(h+15, 360)/30) % hueBuckets
+}
+
+func bucketHex(i int) string {
+	switch i {
+	case black:
+		return "#000000"
+	case gray:
+		return "#808080"
+	case white:
+		return "#ffffff"
+	}
+	return colorful.Hsv(float64(i*30), 1, 1).Hex()
+}
+
 // sample reads an evenly spaced grid of at most about maxSamples pixels.
-func sample(img image.Image) []Lab {
+func sample(img image.Image) []colorful.Color {
 	b := img.Bounds()
 	step := max(1, int(math.Ceil(math.Sqrt(float64(b.Dx()*b.Dy())/maxSamples))))
 
-	pixels := make([]Lab, 0, min(b.Dx()*b.Dy(), maxSamples*2))
+	pixels := make([]colorful.Color, 0, min(b.Dx()*b.Dy(), maxSamples*2))
 	for y := b.Min.Y; y < b.Max.Y; y += step {
 		for x := b.Min.X; x < b.Max.X; x += step {
-			c, ok := colorful.MakeColor(img.At(x, y))
-			if !ok {
-				continue // fully transparent
+			if c, ok := colorful.MakeColor(img.At(x, y)); ok { // !ok: fully transparent
+				pixels = append(pixels, c)
 			}
-			l, a, bb := c.Lab()
-			pixels = append(pixels, Lab{l * 100, a * 100, bb * 100})
 		}
 	}
 	return pixels
 }
 
-type cluster struct {
-	center Lab
-	count  int
-}
-
-// palette groups pixels with k-means in CIELAB, merges near-identical colors
-// and drops empty clusters, so it can return fewer than PaletteSize swatches.
-func palette(pixels []Lab) []Swatch {
-	clusters := kmeans(pixels, min(PaletteSize, len(pixels)))
-	clusters = slices.DeleteFunc(clusters, func(c cluster) bool { return c.count == 0 })
-	clusters = mergeClose(clusters)
-	slices.SortFunc(clusters, func(a, b cluster) int { return cmp.Compare(b.count, a.count) })
-
-	swatches := make([]Swatch, len(clusters))
-	for i, c := range clusters {
-		swatches[i] = Swatch{Color: toColor(c.center), Share: math.Round(float64(c.count)/float64(len(pixels))*1e4) / 1e4}
-	}
-	return swatches
-}
-
-func kmeans(pixels []Lab, k int) []cluster {
-	centers := seed(pixels, k)
-	k = len(centers) // seed stops early when there are fewer distinct colors
-	assign := make([]int, len(pixels))
-	for i := range assign {
-		assign[i] = -1
-	}
-
-	clusters := make([]cluster, k)
-	for range maxIterations {
-		changed := false
-		for i, p := range pixels {
-			if c := nearest(p, centers); c != assign[i] {
-				assign[i] = c
-				changed = true
-			}
-		}
-
-		sums := make([]Lab, k)
-		clear(clusters)
-		for i, p := range pixels {
-			c := assign[i]
-			sums[c].L += p.L
-			sums[c].A += p.A
-			sums[c].B += p.B
-			clusters[c].count++
-		}
-		for c := range clusters {
-			if n := float64(clusters[c].count); n > 0 {
-				centers[c] = Lab{sums[c].L / n, sums[c].A / n, sums[c].B / n}
-			}
-			clusters[c].center = centers[c]
-		}
-		if !changed {
-			break
-		}
-	}
-	return clusters
-}
-
-// seed picks k starting centers with k-means++. The generator is seeded with
-// a constant so the same photo always yields the same palette.
-func seed(pixels []Lab, k int) []Lab {
-	rng := rand.New(rand.NewPCG(1, 2)) //nolint:gosec // deterministic, not security sensitive
-	centers := []Lab{pixels[rng.IntN(len(pixels))]}
-	dist := make([]float64, len(pixels))
-	for len(centers) < k {
-		var total float64
-		for i, p := range pixels {
-			d := distance(p, centers[nearest(p, centers)])
-			dist[i] = d * d
-			total += dist[i]
-		}
-		if total == 0 {
-			break // fewer distinct colors than k
-		}
-		target := rng.Float64() * total
-		i := 0
-		for ; i < len(dist)-1 && target >= dist[i]; i++ {
-			target -= dist[i]
-		}
-		centers = append(centers, pixels[i])
-	}
-	return centers
-}
-
-// mergeClose repeatedly merges the closest pair of clusters while they are
-// within mergeDistance, weighting the merged center by pixel count.
-func mergeClose(clusters []cluster) []cluster {
-	for {
-		bi, bj, best := -1, -1, math.Inf(1)
-		for i := range clusters {
-			for j := i + 1; j < len(clusters); j++ {
-				if d := distance(clusters[i].center, clusters[j].center); d < best {
-					bi, bj, best = i, j, d
-				}
-			}
-		}
-		if best >= mergeDistance {
-			return clusters
-		}
-		a, b := clusters[bi], clusters[bj]
-		n := float64(a.count + b.count)
-		wa, wb := float64(a.count)/n, float64(b.count)/n
-		clusters[bi] = cluster{
-			center: Lab{a.center.L*wa + b.center.L*wb, a.center.A*wa + b.center.A*wb, a.center.B*wa + b.center.B*wb},
-			count:  a.count + b.count,
-		}
-		clusters = slices.Delete(clusters, bj, bj+1)
-	}
-}
-
-func nearest(p Lab, centers []Lab) int {
-	best, bestDist := 0, math.Inf(1)
-	for i, c := range centers {
-		if d := distance(p, c); d < bestDist {
-			best, bestDist = i, d
-		}
-	}
-	return best
-}
-
-// distance is the CIE76 color difference (ΔE*ab).
-func distance(p, q Lab) float64 {
-	return math.Sqrt((p.L-q.L)*(p.L-q.L) + (p.A-q.A)*(p.A-q.A) + (p.B-q.B)*(p.B-q.B))
+func toLab(c colorful.Color) Lab {
+	l, a, b := c.Lab()
+	return Lab{l * 100, a * 100, b * 100}
 }
 
 func toColor(lab Lab) Color {

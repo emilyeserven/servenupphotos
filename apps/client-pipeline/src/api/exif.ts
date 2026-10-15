@@ -6,15 +6,18 @@ interface Color {
   hcl: { h: number; c: number; l: number };
 }
 
-interface Swatch extends Color {
-  /** Fraction (0–1) of sampled pixels closest to this color. */
+interface ColorBucket {
+  name: string;
+  /** The bucket's reference color, for display. */
+  hex: string;
+  /** Fraction (0–1) of sampled pixels in this bucket. */
   share: number;
 }
 
 export interface ColorAnalysis {
   average: Color;
-  /** Up to 12 colors, largest share first. */
-  palette: Swatch[];
+  /** Every bucket: 12 hues in color-wheel order, then black, gray and white. */
+  buckets: ColorBucket[];
   lightness: number;
   chroma: number;
   samples: number;
