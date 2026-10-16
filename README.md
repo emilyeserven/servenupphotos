@@ -98,6 +98,12 @@ The sanitized EXIF has an `images` object whose `full` is the photo's public R2 
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
+Before uploading, **Upload to R2** looks in the bucket for a different photo saved under the same name
+(`photos/<hash>-<name>.jpg` with another hash), since Photos in Flight matches photos by name. If there is one, it shows
+that photo and asks for a new name, or you can keep the name anyway (a `sameName=keep` form field before the photo). When
+Cloudflare rejects a request, the card also shows Cloudflare's own answer (HTTP status, error code and message) under
+the plain-language reason.
+
 The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**.
 
 > **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and

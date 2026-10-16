@@ -1,17 +1,24 @@
-import { type UseMutationResult, useQuery } from "@tanstack/react-query";
+import { useForm } from "@tanstack/react-form";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { CheckIcon, CopyIcon } from "lucide-react";
-import { useState } from "react";
+import { CheckIcon, CopyIcon, ImageOffIcon } from "lucide-react";
+import { Fragment, useState } from "react";
 import { missingSettings } from "@/api/connections";
+import type { BucketImage } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
-import type { UploadResponse } from "@/api/upload";
+import {
+  type CloudflareResponse,
+  type UploadMutation,
+  type UploadRequest,
+  type UploadResponse,
+  UploadError,
+  renamePhoto,
+} from "@/api/upload";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-
-type UploadMutation = UseMutationResult<UploadResponse, Error, File>;
 
 interface R2UploadProps {
   photo: File;
@@ -57,11 +64,207 @@ function R2NotSetUp({ missing }: { missing: string[] }) {
 
 function UploadForm({ photo, upload }: R2UploadProps) {
   if (upload.isSuccess) return <Uploaded result={upload.data} />;
+  // Retries send what was last tried, so a new name sticks.
+  const request: UploadRequest = upload.variables ?? { photo };
+  const sameName = sameNameError(upload.error);
+  if (sameName) {
+    return <SameNamePrompt error={sameName} photo={request.photo} onUpload={upload.mutate} />;
+  }
   return (
     <div className="flex flex-col gap-2">
-      <UploadButton pending={upload.isPending} onClick={() => upload.mutate(photo)} />
-      {upload.error && <p className="text-destructive text-sm">{upload.error.message}</p>}
+      <UploadButton pending={upload.isPending} onClick={() => upload.mutate(request)} />
+      <UploadFailure error={upload.error} />
     </div>
+  );
+}
+
+/** error when it stopped the upload because the bucket has a photo with the same name. */
+function sameNameError(error: Error | null): UploadError | undefined {
+  if (error instanceof UploadError && error.sameName.length > 0) return error;
+  return undefined;
+}
+
+/** Why the upload failed, with what Cloudflare actually answered when it rejected it. */
+function UploadFailure({ error }: { error: Error | null }) {
+  if (!error) return null;
+  const cloudflare = error instanceof UploadError ? error.cloudflare : undefined;
+  return (
+    <>
+      <p className="text-destructive text-sm">{error.message}</p>
+      {cloudflare && <CloudflareDetails response={cloudflare} />}
+    </>
+  );
+}
+
+/** Cloudflare's answer, for looking up a failure its plain-language reason doesn't explain. */
+function CloudflareDetails({ response }: { response: CloudflareResponse }) {
+  const rows = [
+    ["Status", response.status],
+    ["Code", response.code],
+    ["Message", response.message],
+    ["Request ID", response.requestId],
+  ].filter(([, value]) => value);
+  return (
+    <div className="bg-muted/40 flex flex-col gap-2 rounded-lg border p-3 text-xs">
+      <p className="font-medium">Cloudflare's response</p>
+      {rows.length > 0 && (
+        <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+          {rows.map(([label, value]) => (
+            <Fragment key={label}>
+              <dt className="text-muted-foreground">{label}</dt>
+              <dd className="font-mono">{value}</dd>
+            </Fragment>
+          ))}
+        </dl>
+      )}
+      <pre className="text-muted-foreground font-mono break-all whitespace-pre-wrap">
+        {response.error}
+      </pre>
+    </div>
+  );
+}
+
+interface SameNamePromptProps {
+  error: UploadError;
+  photo: File;
+  onUpload: (request: UploadRequest) => void;
+}
+
+/** A photo with the same name is already in the bucket: shows it, and offers to rename this one or keep the name. */
+function SameNamePrompt({ error, photo, onUpload }: SameNamePromptProps) {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1 text-sm">
+        <p className="font-medium">{error.message}</p>
+        <p className="text-muted-foreground">
+          Photos in Flight finds photos by name, so two photos named {photo.name} can show the wrong
+          one. Rename this photo before uploading it?
+        </p>
+      </div>
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {error.sameName.map((image) => (
+          <li key={image.key}>
+            <ExistingPhoto image={image} />
+          </li>
+        ))}
+      </ul>
+      <RenameForm photo={photo} onUpload={onUpload} />
+    </div>
+  );
+}
+
+function RenameForm({ photo, onUpload }: Omit<SameNamePromptProps, "error">) {
+  const form = useForm({
+    defaultValues: { name: `${photo.name.replace(/\.[^.]*$/, "")}-2` },
+    onSubmit: ({ value }) => onUpload({ photo: renamePhoto(photo, value.name) }),
+  });
+  const submit = (event: React.FormEvent) => {
+    event.preventDefault();
+    void form.handleSubmit();
+  };
+
+  return (
+    <form className="flex flex-col gap-2" onSubmit={submit}>
+      <form.Field name="name" validators={{ onChange: ({ value }) => validateName(value) }}>
+        {(field) => (
+          <RenameField
+            value={field.state.value}
+            error={field.state.meta.errors[0]}
+            onChange={field.handleChange}
+            onBlur={field.handleBlur}
+          />
+        )}
+      </form.Field>
+      <div className="flex flex-wrap gap-2">
+        <form.Subscribe selector={(state) => state.canSubmit}>
+          {(canSubmit) => (
+            <Button type="submit" disabled={!canSubmit}>
+              Rename and upload
+            </Button>
+          )}
+        </form.Subscribe>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => onUpload({ photo, keepSameName: true })}
+        >
+          Keep {photo.name}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+interface RenameFieldProps {
+  value: string;
+  error: string | undefined;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+}
+
+function RenameField({ value, error, onChange, onBlur }: RenameFieldProps) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor="r2-upload-name" className="text-sm font-medium">
+        New name
+      </label>
+      <div className="flex items-center gap-2">
+        <Input
+          id="r2-upload-name"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          aria-invalid={error !== undefined}
+          aria-describedby={error ? "r2-upload-name-error" : undefined}
+        />
+        <span className="text-muted-foreground text-sm">.jpg</span>
+      </div>
+      {error && (
+        <p id="r2-upload-name-error" className="text-destructive text-sm">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** Why name can't be used for an upload, or undefined if it can. Keys keep only letters and numbers. */
+function validateName(name: string): string | undefined {
+  if (!/[a-z0-9]/i.test(name)) return "Use at least one letter or number.";
+  return undefined;
+}
+
+const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+
+/** A photo already in the bucket, linking to its public URL, with its key and upload time. */
+function ExistingPhoto({ image }: { image: BucketImage }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <figure className="flex flex-col gap-1.5">
+      <a href={image.url} target="_blank" rel="noreferrer">
+        {failed ? (
+          <div className="bg-muted/40 text-muted-foreground flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed text-sm">
+            <ImageOffIcon className="size-6" aria-hidden />
+            Couldn't load
+          </div>
+        ) : (
+          <img
+            src={image.url}
+            alt={`Already in the bucket: ${image.key}`}
+            onError={() => setFailed(true)}
+            className="bg-muted aspect-square w-full rounded-lg border object-cover"
+          />
+        )}
+      </a>
+      <figcaption className="flex flex-col text-xs">
+        <span className="truncate font-mono" title={image.key}>
+          {image.key}
+        </span>
+        <span className="text-muted-foreground">
+          Uploaded {dateFormat.format(new Date(image.modified))}
+        </span>
+      </figcaption>
+    </figure>
   );
 }
 

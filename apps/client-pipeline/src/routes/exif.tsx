@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
-import { type UploadResponse, uploadMutation } from "@/api/upload";
+import { type UploadMutation, type UploadResponse, uploadMutation } from "@/api/upload";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
@@ -20,7 +20,6 @@ export const Route = createFileRoute("/exif")({
 });
 
 type ExifMutation = UseMutationResult<ExifResponse, Error, File>;
-type UploadMutation = UseMutationResult<UploadResponse, Error, File>;
 
 const JPEG_TYPES = ["image/jpeg", "image/pjpeg"];
 
