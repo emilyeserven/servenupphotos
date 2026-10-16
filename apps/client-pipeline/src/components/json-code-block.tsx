@@ -10,9 +10,19 @@ import {
   CodeBlockTitle,
 } from "@/components/ui/code-block";
 import { useHighlightedCode } from "@/hooks/use-highlighted-code";
+import { cn } from "@/lib/utils";
 
 /** Pretty-prints a value as syntax-highlighted JSON with line numbers and a Copy button. */
-export function JsonCodeBlock({ value, title = "JSON" }: { value: unknown; title?: string }) {
+export function JsonCodeBlock({
+  value,
+  title = "JSON",
+  contentClassName,
+}: {
+  value: unknown;
+  title?: string;
+  /** Overrides the content's classes, such as its default max height. */
+  contentClassName?: string;
+}) {
   const code = JSON.stringify(value, null, 2);
   const lines = useHighlightedCode(code, "json");
 
@@ -27,7 +37,7 @@ export function JsonCodeBlock({ value, title = "JSON" }: { value: unknown; title
           <CodeBlockCopyButton value={code} />
         </CodeBlockActions>
       </CodeBlockHeader>
-      <CodeBlockContent lineNumbers className="max-h-[32rem]">
+      <CodeBlockContent lineNumbers className={cn("max-h-[32rem]", contentClassName)}>
         {lines.map((line, index) => (
           <CodeBlockLine key={index}>{line}</CodeBlockLine>
         ))}

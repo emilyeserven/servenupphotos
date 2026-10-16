@@ -61,8 +61,12 @@ export interface InFlightAllPhotos {
   path: string;
   /** False when the file isn't on the pull request's branch yet. */
   found: boolean;
+  /** The file's page on GitHub, when the pull request changes it. */
+  fileUrl?: string;
   /** How many photos it lists. */
   count: number;
+  /** The file's JSON array, when it could be read. */
+  data?: unknown[];
   error?: string;
 }
 
