@@ -81,20 +81,28 @@ function InFlightPage() {
 function InFlightCard() {
   const inFlight = useQuery(photosInFlightQuery);
   const [removed, setRemoved] = useState<RemoveResult | null>(null);
+  // Paths removed on this visit, hidden at once: GitHub can list a deleted file for a while.
+  const [removedPaths, setRemovedPaths] = useState<ReadonlySet<string>>(new Set());
+  const onRemoved = (result: RemoveResult) => {
+    setRemoved(result);
+    setRemovedPaths((paths) => new Set(paths).add(result.path));
+  };
   const showAllPhotos = Route.useSearch({ select: (search) => search.allPhotos === true });
 
   const files = (
     <div className="flex min-w-0 flex-col gap-6">
       <PullRequestCard inFlight={inFlight} showAllPhotos={showAllPhotos} />
       {removed && <RemovedNotice result={removed} onDismiss={() => setRemoved(null)} />}
-      {inFlight.data?.files.map((file) => (
-        <FileSection
-          key={file.path}
-          file={file}
-          images={inFlight.data.images}
-          onRemoved={setRemoved}
-        />
-      ))}
+      {inFlight.data?.files
+        .filter((file) => !removedPaths.has(file.path))
+        .map((file) => (
+          <FileSection
+            key={file.path}
+            file={file}
+            images={inFlight.data.images}
+            onRemoved={onRemoved}
+          />
+        ))}
     </div>
   );
 
