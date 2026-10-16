@@ -8,7 +8,7 @@ import {
   PanelRightCloseIcon,
   PanelRightOpenIcon,
 } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import {
   type InFlightAllPhotos,
   type InFlightFile,
@@ -86,23 +86,19 @@ function InFlightCard() {
   const onRemoved = (result: RemoveResult) => {
     setRemoved(result);
     setRemovedPaths((paths) => new Set(paths).add(result.path));
+    void inFlight.refetch();
   };
+  useRefetchAfterCi(removed, inFlight.refetch);
+  const shown = inFlight.data && withoutRemoved(inFlight.data, removedPaths);
   const showAllPhotos = Route.useSearch({ select: (search) => search.allPhotos === true });
 
   const files = (
     <div className="flex min-w-0 flex-col gap-6">
-      <PullRequestCard inFlight={inFlight} showAllPhotos={showAllPhotos} />
+      <PullRequestCard inFlight={inFlight} shown={shown} showAllPhotos={showAllPhotos} />
       {removed && <RemovedNotice result={removed} onDismiss={() => setRemoved(null)} />}
-      {inFlight.data?.files
-        .filter((file) => !removedPaths.has(file.path))
-        .map((file) => (
-          <FileSection
-            key={file.path}
-            file={file}
-            images={inFlight.data.images}
-            onRemoved={onRemoved}
-          />
-        ))}
+      {shown?.files.map((file) => (
+        <FileSection key={file.path} file={file} images={shown.images} onRemoved={onRemoved} />
+      ))}
     </div>
   );
 
@@ -117,11 +113,42 @@ function InFlightCard() {
   );
 }
 
+/** How long CI takes to rebuild ALLPHOTOS.json after a push, give or take. */
+const CI_REBUILD_MS = 30_000;
+
+/**
+ * Refetches once more after a removal, when CI has likely rebuilt ALLPHOTOS.json and GitHub has
+ * caught up with the deletion.
+ */
+function useRefetchAfterCi(removed: RemoveResult | null, refetch: () => unknown) {
+  useEffect(() => {
+    if (!removed) return;
+    const timer = setTimeout(() => void refetch(), CI_REBUILD_MS);
+    return () => clearTimeout(timer);
+  }, [removed, refetch]);
+}
+
+/** data without the files removed on this visit, which GitHub may still list for a while. */
+function withoutRemoved(data: InFlightResponse, removed: ReadonlySet<string>): InFlightResponse {
+  if (removed.size === 0) return data;
+  const byPath = Object.fromEntries(
+    Object.entries(data.images.byPath).filter(([path]) => !removed.has(path)),
+  );
+  return {
+    ...data,
+    files: data.files.filter((file) => !removed.has(file.path)),
+    images: { ...data.images, byPath },
+  };
+}
+
 function PullRequestCard({
   inFlight,
+  shown,
   showAllPhotos,
 }: {
   inFlight: UseQueryResult<InFlightResponse>;
+  /** inFlight's data without the files just removed. */
+  shown?: InFlightResponse;
   showAllPhotos: boolean;
 }) {
   return (
@@ -148,7 +175,7 @@ function PullRequestCard({
       </CardHeader>
       <CardContent>
         <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
-          {(data) => <PullRequestSummary data={data} />}
+          {(data) => <PullRequestSummary data={shown ?? data} />}
         </QueryResult>
       </CardContent>
     </Card>

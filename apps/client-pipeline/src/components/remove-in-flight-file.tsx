@@ -6,7 +6,6 @@ import {
   type InFlightImages,
   type RemoveResult,
   bucketImagesQuery,
-  photosInFlightQuery,
   removeInFlightMutation,
 } from "@/api/photos";
 import { Button } from "@/components/ui/button";
@@ -60,12 +59,9 @@ function ConfirmRemove({ file, imageKey, onRemoved, onCancel }: ConfirmRemovePro
   const remove = useMutation({
     ...removeInFlightMutation,
     onSuccess: async (result) => {
+      // The page refetches the pull request itself; the image may be gone from R2 too.
       onRemoved(result);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey }),
-        // The image may be gone from R2 too.
-        queryClient.invalidateQueries({ queryKey: bucketImagesQuery.queryKey }),
-      ]);
+      await queryClient.invalidateQueries({ queryKey: bucketImagesQuery.queryKey });
     },
   });
 
