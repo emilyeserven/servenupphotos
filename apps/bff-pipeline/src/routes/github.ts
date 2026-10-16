@@ -27,4 +27,9 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
       { method: "DELETE", timeoutMs: 50_000 },
     ),
   );
+
+  // Lists every image in the R2 bucket; the backend gives R2 30s.
+  app.get("/photos/bucket", async (_request, reply) =>
+    relayToBackend(reply, app.log, "/photos/bucket", { timeoutMs: 35_000 }),
+  );
 };

@@ -32,6 +32,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("POST /photos/github", handlePublishPhoto(store, gh))
 	mux.HandleFunc("GET /photos/in-flight", handlePhotosInFlight(store, gh, storage.FindPhotos))
 	mux.HandleFunc("DELETE /photos/in-flight", handleRemoveInFlight(store, gh, storage.FindPhotos, storage.DeletePhoto))
+	mux.HandleFunc("GET /photos/bucket", handleBucketImages(store.R2, storage.ListImages))
 	return mux
 }
 

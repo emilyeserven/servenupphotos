@@ -41,6 +41,12 @@ function RootLayout() {
           Photos in Flight
         </Link>
         <Link
+          to="/bucket"
+          className="text-muted-foreground [&.active]:text-foreground [&.active]:font-medium"
+        >
+          Explore Bucket
+        </Link>
+        <Link
           to="/settings"
           className="text-muted-foreground [&.active]:text-foreground [&.active]:font-medium"
         >

@@ -114,6 +114,13 @@ order don't matter). Next to each photo's JSON it shows the photo from R2: the o
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
 file's name), or a "no image" sign when there's none. The page only reads from GitHub and R2; it never changes the pull request.
 
+### Explore Bucket
+
+`/bucket` shows every image in the R2 bucket from Settings (`GET /api/photos/bucket` → `GET /photos/bucket`), newest
+first, under any prefix: objects ending in `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp` or `.avif`. Each tile shows the image
+from the bucket's public URL with its key, size and upload time, and links to the full image. It needs the R2 keys,
+bucket and public URL in Settings, and only reads from R2.
+
 ## Checks (same as CI)
 
 ```sh
