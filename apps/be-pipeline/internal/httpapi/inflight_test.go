@@ -81,7 +81,7 @@ func TestRemoveImage(t *testing.T) {
 		{"delete fails", finds(map[storage.PhotoRef]storage.Uploaded{ref: {Key: "photos/a.jpg"}}, ""), deletes("not allowed"),
 			removedImage{Key: "photos/a.jpg", Message: "not allowed"}, "photos/a.jpg"},
 		{"no image", finds(map[storage.PhotoRef]storage.Uploaded{}, ""), deletes(""),
-			removedImage{Message: "There was no image in R2 to delete."}, ""},
+			removedImage{}, ""},
 		{"outside the bucket", finds(map[storage.PhotoRef]storage.Uploaded{ref: {URL: "https://cdn/a.jpg"}}, ""), deletes(""),
 			removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, ""},
 		{"can't search", finds(nil, "Fill in Bucket first."), deletes(""),

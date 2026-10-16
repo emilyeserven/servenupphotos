@@ -103,7 +103,7 @@ export interface RemoveResult {
     /** The R2 object that was deleted, or would have been. */
     key?: string;
     deleted: boolean;
-    /** Why the image wasn't deleted, when it wasn't. */
+    /** Why the image wasn't deleted, when it wasn't; absent when R2 had no image to delete. */
     message?: string;
   };
 }

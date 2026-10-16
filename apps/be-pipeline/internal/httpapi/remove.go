@@ -19,7 +19,8 @@ type removedImage struct {
 	// Key is the object that was deleted, or would have been.
 	Key     string `json:"key,omitempty"`
 	Deleted bool   `json:"deleted"`
-	// Message says why the image wasn't deleted, when it wasn't.
+	// Message says why the image wasn't deleted, when it wasn't. It is empty
+	// when there was no image in R2, since then there was nothing to delete.
 	Message string `json:"message,omitempty"`
 }
 
@@ -87,7 +88,7 @@ func removeImage(ctx context.Context, store *settings.Store, findPhotos findPhot
 	u, ok := found[ref]
 	switch {
 	case !ok:
-		return removedImage{Message: "There was no image in R2 to delete."}, nil
+		return removedImage{}, nil
 	case u.Key == "":
 		return removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, nil
 	}

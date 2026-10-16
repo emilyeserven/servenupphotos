@@ -11,7 +11,6 @@ import {
 } from "@/api/photos";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { cn } from "@/lib/utils";
 
 interface RemoveFileProps {
   file: InFlightFile;
@@ -114,7 +113,6 @@ export function RemovedNotice({
   result: RemoveResult;
   onDismiss: () => void;
 }) {
-  const { image } = result;
   return (
     <div
       role="status"
@@ -126,25 +124,26 @@ export function RemovedNotice({
           Removed <span className="font-medium">{fileName(result.path)}</span> from the pull
           request.
         </p>
-        <p
-          className={cn(
-            image.deleted ? "text-muted-foreground" : "text-amber-700 dark:text-amber-400",
-          )}
-        >
-          {image.deleted ? (
-            <>
-              Deleted <span className="font-mono text-xs">{image.key}</span> from R2.
-            </>
-          ) : (
-            image.message
-          )}
-        </p>
+        <ImageOutcome image={result.image} />
       </div>
       <Button variant="ghost" size="icon-xs" aria-label="Dismiss" onClick={onDismiss}>
         <XIcon />
       </Button>
     </div>
   );
+}
+
+/** What happened to the image in R2; nothing when R2 had no image to delete. */
+function ImageOutcome({ image }: { image: RemoveResult["image"] }) {
+  if (image.deleted) {
+    return (
+      <p className="text-muted-foreground">
+        Deleted <span className="font-mono text-xs">{image.key}</span> from R2.
+      </p>
+    );
+  }
+  if (!image.message) return null;
+  return <p className="text-amber-700 dark:text-amber-400">{image.message}</p>;
 }
 
 function fileName(path: string) {
