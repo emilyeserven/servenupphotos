@@ -146,19 +146,19 @@ export interface PhotoIdentity {
   createDate: string | null;
 }
 
-/** One copy of ALLPHOTOS.json the check read. */
+/** One place the check looked: ALLPHOTOS.json on the base branch, or the photo data pull request's files. */
 export interface AllPhotosSource {
   /** The base branch's name, or the photo data pull request. */
   label: string;
   fileUrl: string;
   found: boolean;
-  /** Why the copy couldn't be checked, when it was found. */
+  /** What couldn't be checked, when something couldn't. */
   error?: string;
 }
 
 /** An ALLPHOTOS.json entry for the same photo. */
 export interface AllPhotosMatch {
-  /** The label of the copy it was found in first. */
+  /** Where it was found first: the base branch, or a file in the pull request. */
   source: string;
   fileUrl: string;
   entry: unknown;
@@ -170,7 +170,7 @@ export interface AllPhotosCheck {
   matches: AllPhotosMatch[];
 }
 
-/** Looks for a photo in ALLPHOTOS.json on the base branch and in the open photo data pull request. */
+/** Looks for a photo in ALLPHOTOS.json on the base branch and in the open photo data pull request's files. */
 export const allPhotosCheckQuery = (photo: PhotoIdentity) =>
   queryOptions({
     queryKey: ["photos", "all-photos", "check", photo],

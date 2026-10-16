@@ -62,15 +62,16 @@ function AlreadyThere({ file, check }: { file: string; check: AllPhotosCheck }) 
           Already in ALLPHOTOS.json
         </CardTitle>
         <CardDescription>
-          {file} with the same GPS position and creation date is already in {check.path}, so it
-          can't be uploaded or saved again. Editing a saved photo isn't supported yet.
+          {file} with the same GPS position and creation date is already in {check.path} or waiting
+          in the photo data pull request, so it can't be uploaded or saved again. Editing a saved
+          photo isn't supported yet.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {check.matches.map((match, index) => (
           <div key={index} className="flex flex-col gap-2">
             <p className="text-sm">
-              Found on{" "}
+              Found in{" "}
               <a
                 href={match.fileUrl}
                 target="_blank"
@@ -80,7 +81,7 @@ function AlreadyThere({ file, check }: { file: string; check: AllPhotosCheck }) 
                 {match.source}
               </a>
             </p>
-            <JsonCodeBlock value={match.entry} title="ALLPHOTOS.json entry" />
+            <JsonCodeBlock value={match.entry} title="Saved photo data" />
           </div>
         ))}
       </CardContent>
@@ -88,15 +89,15 @@ function AlreadyThere({ file, check }: { file: string; check: AllPhotosCheck }) 
   );
 }
 
-/** Copies of ALLPHOTOS.json that were there but couldn't be checked. */
+/** Places the check couldn't fully read. */
 function SourceProblems({ check }: { check: AllPhotosCheck }) {
   const problems = check.sources.filter((source) => source.error);
   if (problems.length === 0) return null;
   return (
     <Warning>
-      Couldn't check ALLPHOTOS.json on{" "}
+      Couldn't fully check{" "}
       {problems.map((source) => `${source.label} (${source.error})`).join(" or ")}, so make sure
-      this photo isn't already in it.
+      this photo isn't already saved.
     </Warning>
   );
 }
