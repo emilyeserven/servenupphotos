@@ -1,7 +1,7 @@
 // Package github talks to the GitHub REST API with the token from Settings.
 // Check tests the settings without changing anything, Publish saves a photo's
-// sanitized EXIF as a JSON file in a pull request, and InFlight reads back the
-// photo JSON waiting in that pull request.
+// sanitized EXIF as a JSON file in a pull request, InFlight reads back the
+// photo JSON waiting in that pull request, and Remove deletes one of them.
 package github
 
 import (

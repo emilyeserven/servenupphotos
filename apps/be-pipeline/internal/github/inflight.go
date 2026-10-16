@@ -300,26 +300,34 @@ func (c *Client) readJSON(ctx context.Context, t target, file, ref string) (json
 // readFile fetches file at ref. found is false when GitHub has no such file;
 // otherwise msg says why the content couldn't be read, if it couldn't.
 func (c *Client) readFile(ctx context.Context, t target, file, ref string) (content []byte, found bool, msg string) {
+	content, _, found, msg = c.readFileSHA(ctx, t, file, ref)
+	return content, found, msg
+}
+
+// readFileSHA is readFile that also returns the file's blob SHA, which
+// GitHub needs to change or delete it.
+func (c *Client) readFileSHA(ctx context.Context, t target, file, ref string) (content []byte, sha string, found bool, msg string) {
 	var out struct {
 		Content  string `json:"content"`
 		Encoding string `json:"encoding"`
+		SHA      string `json:"sha"`
 	}
 	p := repoPath(t.owner, t.name) + "/contents/" + escapePath(file) + "?ref=" + url.QueryEscape(ref)
 	res, err := c.do(ctx, http.MethodGet, p, t.token, nil, &out)
 	if err == nil && res.Status == http.StatusNotFound {
-		return nil, false, "The file wasn't found at the pull request's head."
+		return nil, "", false, "The file wasn't found at the pull request's head."
 	}
 	if perr := readCheck(res, err, "reading the file"); perr != nil {
-		return nil, true, perr.Message
+		return nil, "", true, perr.Message
 	}
 	if out.Encoding != "base64" {
-		return nil, true, "GitHub didn't return the file's content. It may be too large."
+		return nil, "", true, "GitHub didn't return the file's content. It may be too large."
 	}
 	content, err = base64.StdEncoding.DecodeString(strings.ReplaceAll(out.Content, "\n", ""))
 	if err != nil {
-		return nil, true, "GitHub returned content that couldn't be decoded."
+		return nil, "", true, "GitHub returned content that couldn't be decoded."
 	}
-	return content, true, ""
+	return content, out.SHA, true, ""
 }
 
 // readCheck is check for calls that only read, so a 403 or 404 asks for read

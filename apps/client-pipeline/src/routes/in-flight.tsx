@@ -14,11 +14,13 @@ import {
   type InFlightFile,
   type InFlightImages,
   type InFlightResponse,
+  type RemoveResult,
   photosInFlightQuery,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
+import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import {
@@ -78,13 +80,20 @@ function InFlightPage() {
 
 function InFlightCard() {
   const inFlight = useQuery(photosInFlightQuery);
+  const [removed, setRemoved] = useState<RemoveResult | null>(null);
   const showAllPhotos = Route.useSearch({ select: (search) => search.allPhotos === true });
 
   const files = (
     <div className="flex min-w-0 flex-col gap-6">
       <PullRequestCard inFlight={inFlight} showAllPhotos={showAllPhotos} />
+      {removed && <RemovedNotice result={removed} onDismiss={() => setRemoved(null)} />}
       {inFlight.data?.files.map((file) => (
-        <FileSection key={file.path} file={file} images={inFlight.data.images} />
+        <FileSection
+          key={file.path}
+          file={file}
+          images={inFlight.data.images}
+          onRemoved={setRemoved}
+        />
       ))}
     </div>
   );
@@ -223,7 +232,15 @@ function PanelNote({ children }: { children: ReactNode }) {
   );
 }
 
-function FileSection({ file, images }: { file: InFlightFile; images: InFlightImages }) {
+function FileSection({
+  file,
+  images,
+  onRemoved,
+}: {
+  file: InFlightFile;
+  images: InFlightImages;
+  onRemoved: (result: RemoveResult) => void;
+}) {
   return (
     <section className="@container flex flex-col gap-2">
       <h2 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
@@ -237,6 +254,7 @@ function FileSection({ file, images }: { file: InFlightFile; images: InFlightIma
         </a>
         <span className="text-muted-foreground font-normal">{file.status}</span>
         {file.inAllPhotos === null ? null : <AllPhotosMark inAllPhotos={file.inAllPhotos} />}
+        <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <PhotoImage
