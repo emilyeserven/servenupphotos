@@ -98,6 +98,13 @@ The sanitized EXIF has an `images` object whose `full` is the photo's public R2 
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
+Once a photo is analyzed, the page first looks for it in `ALLPHOTOS.json` on GitHub (`POST /api/photos/all-photos/check` →
+`POST /photos/all-photos/check`), on the Settings branch and at the head of the open **Add photo data** pull request. An
+entry with the same `file`, `gpsPosition` and `createDate` (exactly equal, with `null` matching only `null`) means the
+photo is already in the portfolio: the page shows that entry and hides **Upload to R2** and **Save to GitHub**, since
+editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
+page says so and still offers both.
+
 Before uploading, **Upload to R2** looks in the bucket for a different photo saved under the same name
 (`photos/<hash>-<name>.jpg` with another hash), since Photos in Flight matches photos by name. If there is one, it shows
 that photo and asks for a new name, or you can keep the name anyway (a `sameName=keep` form field before the photo). When

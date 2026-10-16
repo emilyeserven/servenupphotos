@@ -7,6 +7,7 @@ import { ColorData, RawColorData } from "@/components/color-data";
 import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
+import { AllPhotosGate } from "@/components/allphotos-check";
 import { R2Upload } from "@/components/r2-upload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -118,13 +119,16 @@ function Analysis({ extract, upload }: { extract: ExifMutation; upload: UploadMu
   );
 }
 
-/** What can be done with an analyzed photo: upload it to R2, and save its sanitized EXIF to GitHub. */
+/** What can be done with an analyzed photo, unless it's already in ALLPHOTOS.json: upload it to R2, and save its sanitized EXIF to GitHub. */
 function PhotoActions({ photo, file, sanitized, upload }: PhotoActionsProps) {
+  const identity = sanitized
+    ? { file, gpsPosition: sanitized.gpsPosition, createDate: sanitized.createDate }
+    : null;
   return (
-    <>
+    <AllPhotosGate photo={identity}>
       <R2Upload photo={photo} upload={upload} />
       {sanitized && <GitHubSaveCard file={file} sanitized={sanitized} />}
-    </>
+    </AllPhotosGate>
   );
 }
 
