@@ -52,3 +52,58 @@ func TestFindImages(t *testing.T) {
 		t.Errorf("images = %+v, %v; want unchecked with the problem", images, err)
 	}
 }
+
+func TestRemoveImage(t *testing.T) {
+	store := settings.NewStore(filepath.Join(t.TempDir(), "settings.json"))
+	removed := github.RemovedFile{Path: "data/a.json", PhotoName: "A.jpg", ImageKey: "photos/a.jpg"}
+	ref := storage.PhotoRef{Name: "A.jpg", Key: "photos/a.jpg"}
+	finds := func(found map[storage.PhotoRef]storage.Uploaded, problem string) findPhotosFunc {
+		return func(context.Context, settings.R2, []storage.PhotoRef) (map[storage.PhotoRef]storage.Uploaded, string) {
+			return found, problem
+		}
+	}
+	var deletedKey string
+	deletes := func(problem string) deletePhotoFunc {
+		return func(_ context.Context, _ settings.R2, key string) string {
+			deletedKey = key
+			return problem
+		}
+	}
+	tests := []struct {
+		name    string
+		find    findPhotosFunc
+		delete  deletePhotoFunc
+		want    removedImage
+		deleted string
+	}{
+		{"deleted", finds(map[storage.PhotoRef]storage.Uploaded{ref: {Key: "photos/a.jpg"}}, ""), deletes(""),
+			removedImage{Key: "photos/a.jpg", Deleted: true}, "photos/a.jpg"},
+		{"delete fails", finds(map[storage.PhotoRef]storage.Uploaded{ref: {Key: "photos/a.jpg"}}, ""), deletes("not allowed"),
+			removedImage{Key: "photos/a.jpg", Message: "not allowed"}, "photos/a.jpg"},
+		{"no image", finds(map[storage.PhotoRef]storage.Uploaded{}, ""), deletes(""),
+			removedImage{Message: "There was no image in R2 to delete."}, ""},
+		{"outside the bucket", finds(map[storage.PhotoRef]storage.Uploaded{ref: {URL: "https://cdn/a.jpg"}}, ""), deletes(""),
+			removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, ""},
+		{"can't search", finds(nil, "Fill in Bucket first."), deletes(""),
+			removedImage{Message: "Couldn't look in R2, so the image was left there: Fill in Bucket first."}, ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			deletedKey = ""
+			got, err := removeImage(t.Context(), store, tt.find, tt.delete, removed)
+			if err != nil || got != tt.want || deletedKey != tt.deleted {
+				t.Errorf("removeImage() = %+v, %v, deleted %q; want %+v, deleted %q", got, err, deletedKey, tt.want, tt.deleted)
+			}
+		})
+	}
+}
+
+func TestRemoveInFlightNeedsPath(t *testing.T) {
+	router := NewRouter(nil, settings.NewStore(filepath.Join(t.TempDir(), "settings.json")))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodDelete, "/photos/in-flight", nil)
+	rec := httptest.NewRecorder()
+	router.ServeHTTP(rec, req)
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "path is required") {
+		t.Errorf("status = %d, body %s; want 400 asking for a path", rec.Code, rec.Body)
+	}
+}

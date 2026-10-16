@@ -91,3 +91,23 @@ export const photosInFlightQuery = queryOptions({
   queryFn: () => requestJson<InFlightResponse>("/api/photos/in-flight"),
   retry: false,
 });
+
+/** What removing a photo JSON file did, including to its image in R2. */
+export interface RemoveResult {
+  path: string;
+  image: {
+    /** The R2 object that was deleted, or would have been. */
+    key?: string;
+    deleted: boolean;
+    /** Why the image wasn't deleted, when it wasn't. */
+    message?: string;
+  };
+}
+
+export const removeInFlightMutation = mutationOptions({
+  mutationKey: ["photos", "in-flight", "remove"],
+  mutationFn: (path: string) =>
+    requestJson<RemoveResult>(`/api/photos/in-flight?${new URLSearchParams({ path })}`, {
+      method: "DELETE",
+    }),
+});
