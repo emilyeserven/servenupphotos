@@ -8,17 +8,19 @@ import {
   PanelRightCloseIcon,
   PanelRightOpenIcon,
 } from "lucide-react";
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useState } from "react";
 import {
   type InFlightAllPhotos,
   type InFlightFile,
   type InFlightImages,
   type InFlightResponse,
+  type CombineStatus,
   type RemoveResult,
   photosInFlightQuery,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { JsonCodeBlock } from "@/components/json-code-block";
+import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { QueryResult } from "@/components/query-result";
@@ -88,14 +90,14 @@ function InFlightCard() {
     setRemovedPaths((paths) => new Set(paths).add(result.path));
     void inFlight.refetch();
   };
-  useRefetchAfterCi(removed, inFlight.refetch);
-  const shown = inFlight.data && withoutRemoved(inFlight.data, removedPaths);
+  const rebuild = useAllPhotosRebuild(removed?.commitSha, () => void inFlight.refetch());
+  const shown = withoutRemoved(inFlight.data, removedPaths);
   const showAllPhotos = Route.useSearch({ select: (search) => search.allPhotos === true });
 
   const files = (
     <div className="flex min-w-0 flex-col gap-6">
       <PullRequestCard inFlight={inFlight} shown={shown} showAllPhotos={showAllPhotos} />
-      {removed && <RemovedNotice result={removed} onDismiss={() => setRemoved(null)} />}
+      <RemovalNotice removed={removed} rebuild={rebuild} onDismiss={() => setRemoved(null)} />
       {shown?.files.map((file) => (
         <FileSection key={file.path} file={file} images={shown.images} onRemoved={onRemoved} />
       ))}
@@ -113,24 +115,30 @@ function InFlightCard() {
   );
 }
 
-/** How long CI takes to rebuild ALLPHOTOS.json after a push, give or take. */
-const CI_REBUILD_MS = 30_000;
-
-/**
- * Refetches once more after a removal, when CI has likely rebuilt ALLPHOTOS.json and GitHub has
- * caught up with the deletion.
- */
-function useRefetchAfterCi(removed: RemoveResult | null, refetch: () => unknown) {
-  useEffect(() => {
-    if (!removed) return;
-    const timer = setTimeout(() => void refetch(), CI_REBUILD_MS);
-    return () => clearTimeout(timer);
-  }, [removed, refetch]);
+/** What the last removal did, then how the ALLPHOTOS.json rebuild after it is going. */
+function RemovalNotice({
+  removed,
+  rebuild,
+  onDismiss,
+}: {
+  removed: RemoveResult | null;
+  rebuild: UseQueryResult<CombineStatus>;
+  onDismiss: () => void;
+}) {
+  if (!removed) return null;
+  return (
+    <RemovedNotice result={removed} onDismiss={onDismiss}>
+      <AllPhotosRebuild status={rebuild} />
+    </RemovedNotice>
+  );
 }
 
 /** data without the files removed on this visit, which GitHub may still list for a while. */
-function withoutRemoved(data: InFlightResponse, removed: ReadonlySet<string>): InFlightResponse {
-  if (removed.size === 0) return data;
+function withoutRemoved(
+  data: InFlightResponse | undefined,
+  removed: ReadonlySet<string>,
+): InFlightResponse | undefined {
+  if (!data || removed.size === 0) return data;
   const byPath = Object.fromEntries(
     Object.entries(data.images.byPath).filter(([path]) => !removed.has(path)),
   );

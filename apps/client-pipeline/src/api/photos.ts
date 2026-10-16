@@ -99,6 +99,8 @@ export const photosInFlightQuery = queryOptions({
 /** What removing a photo JSON file did, including to its image in R2. */
 export interface RemoveResult {
   path: string;
+  /** The commit that removed the file; its CI run rebuilds ALLPHOTOS.json. */
+  commitSha: string;
   image: {
     /** The R2 object that was deleted, or would have been. */
     key?: string;
@@ -137,3 +139,45 @@ export const bucketImagesQuery = queryOptions({
   queryFn: () => requestJson<BucketResponse>("/api/photos/bucket"),
   retry: false,
 });
+
+/** Where the "Combine photo data" run that rebuilds ALLPHOTOS.json for one commit is. */
+export interface CombineStatus {
+  sha: string;
+  /**
+   * `waiting` until GitHub starts the run, then `running`, then `done` or `failed`. `unavailable`
+   * when the token can't read Actions runs; `message` says why.
+   */
+  state: "waiting" | "running" | "done" | "failed" | "unavailable";
+  runUrl?: string;
+  message?: string;
+}
+
+/** How often to check on a run that hasn't finished, and for how many checks at most. */
+const COMBINE_POLL_MS = 3_000;
+const COMBINE_MAX_POLLS = 100;
+
+/** data's run state, treating no answer yet as waiting. */
+export function combineState(data?: CombineStatus): CombineStatus["state"] {
+  return data?.state ?? "waiting";
+}
+
+/** The states of a run that hasn't finished. */
+export const COMBINE_PENDING: ReadonlySet<CombineStatus["state"]> = new Set(["waiting", "running"]);
+
+/**
+ * The "Combine photo data" run for commit `sha`, or for the photo data pull request's head when
+ * `sha` is omitted. It polls until the run finishes.
+ */
+export const combineStatusQuery = (sha?: string) =>
+  queryOptions({
+    queryKey: ["photos", "ci", sha ?? "head"],
+    queryFn: () =>
+      requestJson<CombineStatus>(
+        `/api/photos/in-flight/ci${sha ? `?${new URLSearchParams({ sha })}` : ""}`,
+      ),
+    retry: false,
+    refetchInterval: ({ state }) =>
+      COMBINE_PENDING.has(combineState(state.data)) && state.dataUpdateCount < COMBINE_MAX_POLLS
+        ? COMBINE_POLL_MS
+        : false,
+  });

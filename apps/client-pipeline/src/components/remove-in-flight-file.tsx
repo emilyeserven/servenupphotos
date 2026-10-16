@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon, Trash2Icon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import {
   type InFlightFile,
   type InFlightImages,
@@ -105,9 +105,12 @@ function ImageClause({ imageKey }: { imageKey?: string }) {
 export function RemovedNotice({
   result,
   onDismiss,
+  children,
 }: {
   result: RemoveResult;
   onDismiss: () => void;
+  /** More lines about what followed the removal. */
+  children?: ReactNode;
 }) {
   return (
     <div
@@ -121,6 +124,7 @@ export function RemovedNotice({
           request.
         </p>
         <ImageOutcome image={result.image} />
+        {children}
       </div>
       <Button variant="ghost" size="icon-xs" aria-label="Dismiss" onClick={onDismiss}>
         <XIcon />

@@ -16,6 +16,9 @@ type RemovedFile struct {
 	PhotoName string `json:"photoName"`
 	ImageURL  string `json:"imageUrl,omitempty"`
 	ImageKey  string `json:"imageKey,omitempty"`
+	// CommitSHA is the commit that removed the file, the pull request's new
+	// head, so its CI runs can be found.
+	CommitSHA string `json:"commitSha"`
 }
 
 // Remove deletes file from the branch of the open pull request titled
@@ -60,7 +63,7 @@ func (c *Client) Remove(ctx context.Context, gh settings.GitHub, file string) (R
 	removed := RemovedFile{Path: file}
 	removed.PhotoName, removed.ImageURL, removed.ImageKey = photoRef(file, json.RawMessage(content))
 
-	if perr := c.deleteFile(ctx, t, file, sha, pr.Head.Ref); perr != nil {
+	if removed.CommitSHA, perr = c.deleteFile(ctx, t, file, sha, pr.Head.Ref); perr != nil {
 		return RemovedFile{}, perr
 	}
 	return removed, nil
@@ -81,14 +84,20 @@ func checkRemovable(files []pullFile, file string) *PublishError {
 	return publishErr(http.StatusNotFound, "%s isn't in the photo data pull request anymore. Refresh to see what is.", file)
 }
 
-// deleteFile commits the deletion of file, whose blob is sha, to branch.
-func (c *Client) deleteFile(ctx context.Context, t target, file, sha, branch string) *PublishError {
+// deleteFile commits the deletion of file, whose blob is sha, to branch and
+// returns the new commit's SHA.
+func (c *Client) deleteFile(ctx context.Context, t target, file, sha, branch string) (string, *PublishError) {
 	body := map[string]string{"message": "Remove photo data " + file, "sha": sha, "branch": branch}
+	var out struct {
+		Commit struct {
+			SHA string `json:"sha"`
+		} `json:"commit"`
+	}
 	p := repoPath(t.owner, t.name) + "/contents/" + escapePath(file)
-	res, err := c.do(ctx, http.MethodDelete, p, t.token, body, nil)
+	res, err := c.do(ctx, http.MethodDelete, p, t.token, body, &out)
 	// GitHub answers 409 or 422 when the file changed since it was read.
 	if err == nil && (res.Status == http.StatusConflict || res.Status == http.StatusUnprocessableEntity) {
-		return publishErr(http.StatusConflict, "%s changed on %s while it was being removed. Refresh and try again.", file, branch)
+		return "", publishErr(http.StatusConflict, "%s changed on %s while it was being removed. Refresh and try again.", file, branch)
 	}
-	return check(res, err, "removing the file")
+	return out.Commit.SHA, check(res, err, "removing the file")
 }
