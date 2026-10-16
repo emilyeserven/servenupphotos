@@ -5,6 +5,7 @@ import {
   type InFlightFile,
   type InFlightImages,
   type RemoveResult,
+  bucketImagesQuery,
   photosInFlightQuery,
   removeInFlightMutation,
 } from "@/api/photos";
@@ -61,7 +62,11 @@ function ConfirmRemove({ file, imageKey, onRemoved, onCancel }: ConfirmRemovePro
     ...removeInFlightMutation,
     onSuccess: async (result) => {
       onRemoved(result);
-      await queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey }),
+        // The image may be gone from R2 too.
+        queryClient.invalidateQueries({ queryKey: bucketImagesQuery.queryKey }),
+      ]);
     },
   });
 
