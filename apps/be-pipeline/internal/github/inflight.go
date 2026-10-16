@@ -62,8 +62,12 @@ type InFlightAllPhotos struct {
 	Path string `json:"path"`
 	// Found is false when the file isn't on the pull request's branch.
 	Found bool `json:"found"`
+	// FileURL is the file's page on GitHub, when the pull request changes it.
+	FileURL string `json:"fileUrl,omitempty"`
 	// Count is how many photos the file lists.
 	Count int `json:"count"`
+	// Data is the file's JSON array, as committed, when it could be read.
+	Data json.RawMessage `json:"data,omitempty"`
 	// Error says why the file couldn't be used, when it was found.
 	Error string `json:"error,omitempty"`
 }
@@ -130,7 +134,11 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 	if perr != nil {
 		return InFlightResult{}, perr
 	}
+	allPhotosURL := ""
 	for _, f := range files {
+		if f.Filename == result.AllPhotos.Path {
+			allPhotosURL = f.BlobURL
+		}
 		if f.Status == "removed" || !isPhotoData(folder, f.Filename) {
 			continue
 		}
@@ -142,6 +150,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 
 	var entries []any
 	result.AllPhotos, entries = c.readAllPhotos(ctx, t, folder, pr.Head.SHA)
+	result.AllPhotos.FileURL = allPhotosURL
 	for i, file := range result.Files {
 		if entries != nil && file.Data != nil {
 			in := containsJSON(entries, file.Data)
@@ -169,6 +178,7 @@ func (c *Client) readAllPhotos(ctx context.Context, t target, folder, ref string
 		return all, nil
 	}
 	all.Count = len(entries)
+	all.Data = json.RawMessage(content)
 	return all, entries
 }
 

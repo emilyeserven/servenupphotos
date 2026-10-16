@@ -1,7 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { CheckIcon, CircleDashedIcon, CircleMinusIcon, ImageOffIcon } from "lucide-react";
-import { useState } from "react";
+import {
+  CheckIcon,
+  CircleDashedIcon,
+  CircleMinusIcon,
+  ImageOffIcon,
+  PanelRightCloseIcon,
+  PanelRightOpenIcon,
+} from "lucide-react";
+import { type ReactNode, useState } from "react";
 import {
   type InFlightAllPhotos,
   type InFlightFile,
@@ -27,9 +34,16 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
+interface InFlightSearch {
+  /** Shows ALLPHOTOS.json in a panel beside the photo files. */
+  allPhotos?: true;
+}
+
 export const Route = createFileRoute("/in-flight")({
   component: InFlightPage,
   staticData: { wide: true },
+  validateSearch: (search: Record<string, unknown>): InFlightSearch =>
+    search.allPhotos === true ? { allPhotos: true } : {},
 });
 
 function InFlightPage() {
@@ -67,38 +81,12 @@ function InFlightPage() {
 function InFlightCard() {
   const inFlight = useQuery(photosInFlightQuery);
   const [removed, setRemoved] = useState<RemoveResult | null>(null);
+  const showAllPhotos = Route.useSearch({ select: (search) => search.allPhotos === true });
 
-  return (
-    <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Pull request</CardTitle>
-          <CardDescription>
-            {inFlight.data
-              ? `${inFlight.data.repo}, JSON in ${inFlight.data.folder}`
-              : "Looking in the repository from Settings."}
-          </CardDescription>
-          <CardAction>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={inFlight.isFetching}
-              onClick={() => void inFlight.refetch()}
-            >
-              {inFlight.isFetching && <Spinner />}
-              Refresh
-            </Button>
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
-            {(data) => <PullRequestSummary data={data} />}
-          </QueryResult>
-        </CardContent>
-      </Card>
-
+  const files = (
+    <div className="flex min-w-0 flex-col gap-6">
+      <PullRequestCard inFlight={inFlight} showAllPhotos={showAllPhotos} />
       {removed && <RemovedNotice result={removed} onDismiss={() => setRemoved(null)} />}
-
       {inFlight.data?.files.map((file) => (
         <FileSection
           key={file.path}
@@ -107,7 +95,140 @@ function InFlightCard() {
           onRemoved={setRemoved}
         />
       ))}
+    </div>
+  );
+
+  if (!showAllPhotos) return files;
+  return (
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+      {files}
+      <aside className="flex flex-col gap-2 lg:sticky lg:top-6">
+        <AllPhotosPanel data={inFlight.data} />
+      </aside>
+    </div>
+  );
+}
+
+function PullRequestCard({
+  inFlight,
+  showAllPhotos,
+}: {
+  inFlight: UseQueryResult<InFlightResponse>;
+  showAllPhotos: boolean;
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Pull request</CardTitle>
+        <CardDescription>
+          {inFlight.data
+            ? `${inFlight.data.repo}, JSON in ${inFlight.data.folder}`
+            : "Looking in the repository from Settings."}
+        </CardDescription>
+        <CardAction className="flex gap-2">
+          <AllPhotosToggle shown={showAllPhotos} />
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={inFlight.isFetching}
+            onClick={() => void inFlight.refetch()}
+          >
+            {inFlight.isFetching && <Spinner />}
+            Refresh
+          </Button>
+        </CardAction>
+      </CardHeader>
+      <CardContent>
+        <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
+          {(data) => <PullRequestSummary data={data} />}
+        </QueryResult>
+      </CardContent>
+    </Card>
+  );
+}
+
+/** Shows or hides the ALLPHOTOS.json panel, kept in the URL so a reload keeps it. */
+function AllPhotosToggle({ shown }: { shown: boolean }) {
+  const navigate = Route.useNavigate();
+  const Icon = shown ? PanelRightCloseIcon : PanelRightOpenIcon;
+  return (
+    <Button
+      variant={shown ? "secondary" : "outline"}
+      size="sm"
+      aria-pressed={shown}
+      onClick={() =>
+        void navigate({
+          search: (prev) => ({ ...prev, allPhotos: shown ? undefined : true }),
+          replace: true,
+        })
+      }
+    >
+      <Icon />
+      ALLPHOTOS.json
+    </Button>
+  );
+}
+
+/** ALLPHOTOS.json from the pull request's branch, or why it can't be shown. */
+function AllPhotosPanel({ data }: { data?: InFlightResponse }) {
+  if (!data?.pullRequest) {
+    return (
+      <>
+        <AllPhotosHeading />
+        <PanelNote>
+          {data ? "No pull request to read it from." : "Waiting for the pull request."}
+        </PanelNote>
+      </>
+    );
+  }
+  return <AllPhotosFile all={data.allPhotos} />;
+}
+
+/** Why ALLPHOTOS.json can't be shown, or undefined when it can. */
+function allPhotosProblem(all: InFlightAllPhotos): string | undefined {
+  if (!all.found) return "Not on the branch yet. CI adds it after the next push.";
+  if (all.error) return all.error;
+  return all.data ? undefined : "Couldn't read the file.";
+}
+
+function AllPhotosFile({ all }: { all: InFlightAllPhotos }) {
+  const problem = allPhotosProblem(all);
+  return (
+    <>
+      <AllPhotosHeading all={problem ? undefined : all} />
+      {problem || !all.data ? (
+        <PanelNote>{problem}</PanelNote>
+      ) : (
+        <JsonCodeBlock
+          value={all.data}
+          title={all.path}
+          contentClassName="max-h-[calc(100svh-8rem)]"
+        />
+      )}
     </>
+  );
+}
+
+/** The panel's title, linked to the file on GitHub and with its count once it's read. */
+function AllPhotosHeading({ all }: { all?: InFlightAllPhotos }) {
+  return (
+    <h2 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
+      <a
+        href={all?.fileUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="underline-offset-4 [&[href]]:hover:underline"
+      >
+        ALLPHOTOS.json
+      </a>
+      {all && <span className="text-muted-foreground font-normal">{all.count} listed</span>}
+    </h2>
+  );
+}
+
+function PanelNote({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-muted-foreground rounded-xl border border-dashed p-4 text-sm">{children}</p>
   );
 }
 
@@ -121,7 +242,7 @@ function FileSection({
   onRemoved: (result: RemoveResult) => void;
 }) {
   return (
-    <section className="flex flex-col gap-2">
+    <section className="@container flex flex-col gap-2">
       <h2 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
         <a
           href={file.fileUrl}
@@ -135,7 +256,7 @@ function FileSection({
         {file.inAllPhotos === null ? null : <AllPhotosMark inAllPhotos={file.inAllPhotos} />}
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
-      <div className="grid items-start gap-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+      <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <PhotoImage
           name={file.photoName}
           url={images.byPath[file.path]?.url}
