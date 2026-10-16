@@ -98,7 +98,8 @@ The sanitized EXIF has an `images` object whose `full` is the photo's public R2 
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
-The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**.
+The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**. **Actions: Read-only** is
+optional: with it, Photos in Flight can tell when CI has rebuilt `ALLPHOTOS.json` after a removal.
 
 > **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and
 > merging the pull request is checkout. After that, the next save starts a new cart.
@@ -112,7 +113,14 @@ is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a p
 mark when its data is one of the entries in `ALLPHOTOS.json` at the same head (compared as JSON, so formatting and key
 order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
-file's name), or a "no image" sign when there's none. The page only reads from GitHub and R2; it never changes the pull request.
+file's name), or a "no image" sign when there's none.
+
+Each file the pull request adds has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it
+deletes the JSON from the pull request's branch and the image the page shows from R2 (skipped when R2 has none). Files the
+pull request only modifies can't be removed, since that would delete them from the portfolio on merge. The removal's
+commit starts the **Combine photo data** workflow, and the page polls `GET /api/photos/in-flight/ci?sha=…` (the newest
+run of that workflow for the commit, or for the pull request's head without `sha`) until it finishes, then refreshes.
+Without **Actions: Read-only** on the token it refreshes about 30 seconds later instead.
 
 ### Explore Bucket
 
