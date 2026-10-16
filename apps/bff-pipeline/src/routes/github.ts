@@ -17,6 +17,17 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/photos/in-flight", { timeoutMs: 35_000 }),
   );
 
+  // Removes one photo JSON file from that pull request and its image from R2; the backend gives
+  // GitHub 30s, then R2 15s.
+  app.delete<{ Querystring: { path?: string } }>("/photos/in-flight", async (request, reply) =>
+    relayToBackend(
+      reply,
+      app.log,
+      `/photos/in-flight?${new URLSearchParams({ path: request.query.path ?? "" })}`,
+      { method: "DELETE", timeoutMs: 50_000 },
+    ),
+  );
+
   // Lists every image in the R2 bucket; the backend gives R2 30s.
   app.get("/photos/bucket", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/bucket", { timeoutMs: 35_000 }),
