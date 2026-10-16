@@ -16,4 +16,9 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
   app.get("/photos/in-flight", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/in-flight", { timeoutMs: 35_000 }),
   );
+
+  // Lists every image in the R2 bucket; the backend gives R2 30s.
+  app.get("/photos/bucket", async (_request, reply) =>
+    relayToBackend(reply, app.log, "/photos/bucket", { timeoutMs: 35_000 }),
+  );
 };

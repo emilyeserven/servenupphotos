@@ -91,3 +91,25 @@ export const photosInFlightQuery = queryOptions({
   queryFn: () => requestJson<InFlightResponse>("/api/photos/in-flight"),
   retry: false,
 });
+
+/** One image object in the R2 bucket. */
+export interface BucketImage {
+  key: string;
+  url: string;
+  /** Size in bytes. */
+  size: number;
+  /** When it was last uploaded, as an ISO timestamp. */
+  modified: string;
+}
+
+interface BucketResponse {
+  bucket: string;
+  /** Every image in the bucket, newest first. */
+  images: BucketImage[];
+}
+
+export const bucketImagesQuery = queryOptions({
+  queryKey: ["photos", "bucket"],
+  queryFn: () => requestJson<BucketResponse>("/api/photos/bucket"),
+  retry: false,
+});
