@@ -118,9 +118,11 @@ file's name), or a "no image" sign when there's none.
 Each file the pull request adds has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it
 deletes the JSON from the pull request's branch and the image the page shows from R2 (skipped when R2 has none). Files the
 pull request only modifies can't be removed, since that would delete them from the portfolio on merge. The removal's
-commit starts the **Combine photo data** workflow, and the page polls `GET /api/photos/in-flight/ci?sha=…` (the newest
-run of that workflow for the commit, or for the pull request's head without `sha`) until it finishes, then refreshes.
-Without **Actions: Read-only** on the token it refreshes about 30 seconds later instead.
+commit starts the **Combine photo data** workflow. The page polls `GET /api/photos/in-flight/ci` (that workflow's newest
+run on the pull request's branch, or "waiting" when someone pushed after it; pass `?sha=…` for one commit's run instead)
+and, while CI is rebuilding `ALLPHOTOS.json`, shows a spinner beside it and spins each file's "Not in ALLPHOTOS.json"
+mark. When the run finishes it refreshes. Without **Actions: Read-only** on the token it refreshes about 30 seconds
+after a removal instead.
 
 ### Explore Bucket
 

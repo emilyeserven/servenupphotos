@@ -11,9 +11,9 @@ import (
 )
 
 // combineRepo serves owner/repo with photoPull open, answering the
-// CombineWorkflowFile runs listing with status and runs, and records the
-// head_sha asked for.
-func combineRepo(t *testing.T, status int, runs []map[string]any, asked *string) *Client {
+// CombineWorkflowFile runs listing with status and runs and the head commit
+// as authored by author, and records the runs query asked for.
+func combineRepo(t *testing.T, status int, runs []map[string]any, author string, asked *string) *Client {
 	t.Helper()
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
@@ -23,8 +23,11 @@ func combineRepo(t *testing.T, status int, runs []map[string]any, asked *string)
 		case "/pulls":
 			writeBody(w, http.StatusOK, []map[string]any{photoPull})
 		case "/actions/workflows/" + CombineWorkflowFile + "/runs":
-			*asked = r.URL.Query().Get("head_sha")
+			q := r.URL.Query()
+			*asked = "head_sha=" + q.Get("head_sha") + " branch=" + q.Get("branch")
 			writeBody(w, status, map[string]any{"workflow_runs": runs})
+		case "/commits/head7":
+			writeBody(w, http.StatusOK, map[string]any{"author": map[string]any{"login": author}})
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -59,18 +62,17 @@ func TestCombine(t *testing.T) {
 		{"failed", "abc1234", http.StatusOK, run("completed", "cancelled"),
 			CombineStatus{SHA: "abc1234", State: CombineFailed, RunURL: "https://github.com/run/2",
 				Message: "The Combine photo data run ended with cancelled."}, "abc1234"},
-		{"pull request head", "", http.StatusOK, nil, CombineStatus{SHA: "head7", State: CombineWaiting}, "head7"},
 		{"no Actions access", "abc1234", http.StatusForbidden, nil, CombineStatus{SHA: "abc1234", State: CombineUnavailable,
 			Message: "The token can't read Actions runs. Give it Actions read access to see when ALLPHOTOS.json is rebuilt."}, "abc1234"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var asked string
-			got, err := combineRepo(t, tt.status, tt.runs, &asked).Combine(t.Context(), gh, tt.sha)
+			got, err := combineRepo(t, tt.status, tt.runs, "emilyeserven", &asked).Combine(t.Context(), gh, tt.sha)
 			if err != nil {
 				t.Fatalf("Combine() error = %v", err)
 			}
-			if got != tt.want || asked != tt.wantSHA {
+			if got != tt.want || asked != "head_sha="+tt.wantSHA+" branch=" {
 				t.Errorf("Combine() = %+v asking for %q, want %+v asking for %q", got, asked, tt.want, tt.wantSHA)
 			}
 		})
@@ -79,7 +81,7 @@ func TestCombine(t *testing.T) {
 
 func TestCombineErrors(t *testing.T) {
 	var asked string
-	c := combineRepo(t, http.StatusOK, nil, &asked)
+	c := combineRepo(t, http.StatusOK, nil, "", &asked)
 	tests := []struct {
 		name string
 		gh   settings.GitHub
@@ -97,5 +99,48 @@ func TestCombineErrors(t *testing.T) {
 				t.Errorf("Combine() error = %v, want one containing %q", err, tt.want)
 			}
 		})
+	}
+}
+
+func TestCombinePullRequestHead(t *testing.T) {
+	gh := settings.GitHub{Repo: "owner/repo", Token: token}
+	run := func(sha, status, conclusion string) []map[string]any {
+		return []map[string]any{{"head_sha": sha, "status": status, "conclusion": conclusion, "html_url": "https://github.com/run/2"}}
+	}
+	const user, bot = "emilyeserven", "github-actions[bot]"
+	tests := []struct {
+		name   string
+		runs   []map[string]any
+		author string
+		want   CombineStatus
+	}{
+		{"running on an older commit", run("old1", "in_progress", ""), user,
+			CombineStatus{SHA: "head7", State: CombineRunning, RunURL: "https://github.com/run/2"}},
+		{"done on the head", run("head7", "completed", "success"), user,
+			CombineStatus{SHA: "head7", State: CombineDone, RunURL: "https://github.com/run/2"}},
+		{"head pushed after the run", run("old1", "completed", "success"), user,
+			CombineStatus{SHA: "head7", State: CombineWaiting}},
+		{"head is the workflow's commit", run("old1", "completed", "success"), bot,
+			CombineStatus{SHA: "head7", State: CombineDone, RunURL: "https://github.com/run/2"}},
+		{"no runs, pushed by a person", nil, user, CombineStatus{SHA: "head7", State: CombineWaiting}},
+		{"no runs, pushed by the workflow", nil, bot, CombineStatus{SHA: "head7", State: CombineDone}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var asked string
+			got, err := combineRepo(t, http.StatusOK, tt.runs, tt.author, &asked).Combine(t.Context(), gh, "")
+			if err != nil {
+				t.Fatalf("Combine() error = %v", err)
+			}
+			if got != tt.want || asked != "head_sha= branch=photo-data/2026-10-15-024500" {
+				t.Errorf("Combine() = %+v asking %q, want %+v asking for the branch", got, asked, tt.want)
+			}
+		})
+	}
+
+	var asked string
+	got, err := combineRepo(t, http.StatusForbidden, nil, user, &asked).Combine(t.Context(), gh, "")
+	if err != nil || got.State != CombineUnavailable || got.SHA != "head7" {
+		t.Errorf("Combine() = %+v, %v; want unavailable for head7", got, err)
 	}
 }

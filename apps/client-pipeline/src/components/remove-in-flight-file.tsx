@@ -38,7 +38,7 @@ export function RemoveFile({ file, images, onRemoved }: RemoveFileProps) {
     <Button
       variant="ghost"
       size="sm"
-      className="text-muted-foreground hover:text-destructive ml-auto self-center"
+      className="text-muted-foreground hover:text-destructive ml-auto"
       onClick={() => setConfirming(true)}
     >
       <Trash2Icon />
