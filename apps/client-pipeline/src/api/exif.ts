@@ -74,6 +74,10 @@ export interface SanitizedExif {
     full: string | null;
     /** The original photo's object key in the R2 bucket, once it has been uploaded. */
     key: string | null;
+    /** Public R2 URLs of the resized WEBP versions, once they have been uploaded. */
+    large: string | null;
+    medium: string | null;
+    small: string | null;
   };
 }
 

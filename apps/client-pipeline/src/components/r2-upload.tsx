@@ -6,6 +6,7 @@ import { Fragment, useState } from "react";
 import { missingSettings } from "@/api/connections";
 import type { BucketImage } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
+import { VERSIONS } from "@/api/versions";
 import {
   type CloudflareResponse,
   type UploadMutation,
@@ -34,7 +35,8 @@ export function R2Upload({ photo, upload }: R2UploadProps) {
       <CardHeader>
         <CardTitle>Upload to R2</CardTitle>
         <CardDescription>
-          Puts the original photo in your bucket and gives you its link.
+          Puts the original photo and its large, medium and small WEBP versions in your bucket and
+          gives you their links.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -290,6 +292,21 @@ function Uploaded({ result }: { result: UploadResponse }) {
         />
         <CopyButton text={result.url} />
       </div>
+      <ul className="flex flex-col gap-1 text-sm">
+        {VERSIONS.map((version) => (
+          <li key={version.name} className="flex gap-2">
+            <span className="text-muted-foreground w-16 shrink-0">{version.label}</span>
+            <a
+              href={result.versions[version.name].url}
+              target="_blank"
+              rel="noreferrer"
+              className="truncate font-mono text-xs leading-5 underline underline-offset-4"
+            >
+              {result.versions[version.name].key}
+            </a>
+          </li>
+        ))}
+      </ul>
       {imageFailed ? (
         <p className="text-muted-foreground text-sm">
           The photo was uploaded, but it didn't load from this URL. Check that the public URL in

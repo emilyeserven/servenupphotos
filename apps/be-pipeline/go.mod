@@ -1,6 +1,6 @@
 module github.com/emilyeserven/servenupphotos/apps/be-pipeline
 
-go 1.24
+go 1.24.0
 
 require github.com/barasher/go-exiftool v1.10.0
 
@@ -9,6 +9,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.9
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
 	github.com/aws/smithy-go v1.28.5
+	github.com/disintegration/imaging v1.6.2
+	github.com/gen2brain/webp v0.6.4
 	github.com/lucasb-eyer/go-colorful v1.4.1
 )
 
@@ -21,4 +23,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.7 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 // indirect
+	github.com/ebitengine/purego v0.10.1 // indirect
+	golang.org/x/image v0.36.0 // indirect
 )

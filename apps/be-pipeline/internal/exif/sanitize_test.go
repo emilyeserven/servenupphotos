@@ -3,6 +3,7 @@ package exif
 import (
 	"encoding/json"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -98,8 +99,9 @@ func checkNoImages(t *testing.T, got map[string]any) {
 	if !ok {
 		t.Fatalf("images = %#v, want an object", got["images"])
 	}
-	if len(images) != 2 || images["full"] != nil || images["key"] != nil {
-		t.Errorf("images = %#v, want {\"full\": null, \"key\": null}", images)
+	want := map[string]any{"full": nil, "key": nil, "large": nil, "medium": nil, "small": nil}
+	if !reflect.DeepEqual(images, want) {
+		t.Errorf("images = %#v, want %#v", images, want)
 	}
 }
 

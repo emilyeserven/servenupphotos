@@ -9,6 +9,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
 // deletePhotoFunc deletes a photo from R2; storage.DeletePhoto in production.
@@ -21,6 +22,9 @@ type removedImage struct {
 	Deleted bool   `json:"deleted"`
 	// Message says why the image wasn't deleted, when it wasn't.
 	Message string `json:"message,omitempty"`
+	// Versions are what happened to the image's resized WEBP versions, which
+	// are deleted along with it.
+	Versions []removedImage `json:"versions,omitempty"`
 }
 
 type removeResponse struct {
@@ -30,7 +34,7 @@ type removeResponse struct {
 
 // handleRemoveInFlight deletes the photo JSON at the "path" query parameter
 // from the open "Add photo data" pull request, then deletes its image from
-// R2. Once the JSON is gone it responds 200 even if the image couldn't be
+// R2, with all of its resized versions. Once the JSON is gone it responds 200 even if the image couldn't be
 // deleted, saying why in "image".
 func handleRemoveInFlight(store *settings.Store, gh *github.Client, findPhotos findPhotosFunc, deletePhoto deletePhotoFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +74,7 @@ func handleRemoveInFlight(store *settings.Store, gh *github.Client, findPhotos f
 }
 
 // removeImage deletes removed's image from the R2 bucket from Settings, the
-// same image the Photos in Flight page shows for it.
+// same image the Photos in Flight page shows for it, and its resized versions.
 func removeImage(ctx context.Context, store *settings.Store, findPhotos findPhotosFunc, deletePhoto deletePhotoFunc, removed github.RemovedFile) (removedImage, error) {
 	cfg, err := store.R2()
 	if err != nil {
@@ -91,8 +95,17 @@ func removeImage(ctx context.Context, store *settings.Store, findPhotos findPhot
 	case u.Key == "":
 		return removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, nil
 	}
-	if problem := deletePhoto(ctx, cfg, u.Key); problem != "" {
-		return removedImage{Key: u.Key, Message: problem}, nil
+	image := deleteImage(ctx, cfg, deletePhoto, u.Key)
+	for _, v := range versions.All {
+		image.Versions = append(image.Versions, deleteImage(ctx, cfg, deletePhoto, storage.VersionKey(u.Key, v.Name)))
 	}
-	return removedImage{Key: u.Key, Deleted: true}, nil
+	return image, nil
+}
+
+// deleteImage deletes key from R2 and says how that went.
+func deleteImage(ctx context.Context, cfg settings.R2, deletePhoto deletePhotoFunc, key string) removedImage {
+	if problem := deletePhoto(ctx, cfg, key); problem != "" {
+		return removedImage{Key: key, Message: problem}
+	}
+	return removedImage{Key: key, Deleted: true}
 }

@@ -94,7 +94,8 @@ commit to the Settings branch directly. The first save creates a `photo-data/<da
 **Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
 pull request collects every photo until you merge it. An existing file is never overwritten.
 
-The sanitized EXIF has an `images` object whose `full` is the photo's public R2 URL and `key` its object key. Both are `null` until you
+The sanitized EXIF has an `images` object whose `full` is the photo's public R2 URL and `key` its object key, and whose
+`large`, `medium` and `small` are the public URLs of its resized versions. All are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
@@ -105,6 +106,22 @@ rebuilds that after every push and may not have caught up yet. An entry with the
 photo is already in the portfolio: the page shows that entry and hides **Upload to R2** and **Save to GitHub**, since
 editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
 page says so and still offers both.
+
+Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts three WEBP
+versions next to it, scaled down to fit their longest edge (width or height) and keeping their proportions:
+`photos/<hash>-<name>-large.webp` (1800px), `-medium.webp` (500px) and `-small.webp` (250px). A photo already smaller than
+a version keeps its size. The Go backend turns the photo upright from its EXIF orientation, resizes it with
+[imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 82 with
+[gen2brain/webp](https://github.com/gen2brain/webp) (libwebp compiled to pure Go, so the image needs no C library). The
+versions carry no metadata.
+
+The **Resized versions** card above **Upload to R2** has a button per version that shows it at full size, made exactly as
+an upload would make it (`POST /api/photos/versions/{large,medium,small}` → `POST /photos/versions/{version}`, which
+answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
+deletes its versions from R2 along with the original.
+
+> **Frontend analogy:** it's `srcset` prepared ahead of time: one source image, three sizes for the portfolio to pick
+> from.
 
 Before uploading, **Upload to R2** looks in the bucket for a different photo saved under the same name
 (`photos/<hash>-<name>.jpg` with another hash), since Photos in Flight matches photos by name. If there is one, it shows

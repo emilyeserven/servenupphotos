@@ -1,10 +1,16 @@
 import { type UseMutationResult, mutationOptions } from "@tanstack/react-query";
 import type { BucketImage } from "@/api/photos";
+import type { VersionName } from "@/api/versions";
 
-/** Where an uploaded photo ended up in R2. */
-export interface UploadResponse {
+/** Where an object ended up in R2. */
+interface UploadedObject {
   key: string;
   url: string;
+}
+
+/** Where an uploaded photo and its resized WEBP versions ended up in R2. */
+export interface UploadResponse extends UploadedObject {
+  versions: Record<VersionName, UploadedObject>;
 }
 
 /** What Cloudflare answered to a failed request. */

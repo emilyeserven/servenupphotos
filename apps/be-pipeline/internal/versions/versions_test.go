@@ -1,0 +1,109 @@
+package versions
+
+import (
+	"bytes"
+	"image"
+	"image/color"
+	"image/draw"
+	"image/jpeg"
+	"testing"
+
+	"github.com/gen2brain/webp"
+)
+
+// testJPEG encodes a w×h JPEG.
+func testJPEG(t *testing.T, w, h int) []byte {
+	t.Helper()
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
+	draw.Draw(img, img.Bounds(), &image.Uniform{C: color.RGBA{200, 120, 60, 255}}, image.Point{}, draw.Src)
+	var buf bytes.Buffer
+	if err := jpeg.Encode(&buf, img, nil); err != nil {
+		t.Fatal(err)
+	}
+	return buf.Bytes()
+}
+
+// withOrientation inserts an EXIF segment with the given orientation after
+// the JPEG's start-of-image marker.
+func withOrientation(photo []byte, orientation byte) []byte {
+	tiff := []byte{
+		'M', 'M', 0, 42, 0, 0, 0, 8, // big-endian header, first IFD at 8
+		0, 1, // one entry
+		0x01, 0x12, 0, 3, 0, 0, 0, 1, 0, orientation, 0, 0, // Orientation, SHORT
+		0, 0, 0, 0, // no next IFD
+	}
+	payload := append([]byte("Exif\x00\x00"), tiff...)
+	segment := append([]byte{0xFF, 0xE1, byte((len(payload) + 2) >> 8), byte(len(payload) + 2)}, payload...)
+	out := append([]byte{}, photo[:2]...)
+	out = append(out, segment...)
+	return append(out, photo[2:]...)
+}
+
+func size(t *testing.T, data []byte) image.Point {
+	t.Helper()
+	cfg, err := webp.DecodeConfig(bytes.NewReader(data))
+	if err != nil {
+		t.Fatalf("not a WEBP: %v", err)
+	}
+	return image.Pt(cfg.Width, cfg.Height)
+}
+
+func TestEncodeAllFitsLongestEdge(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		w, h int
+		want map[string]image.Point
+	}{
+		{"landscape", 3000, 2000, map[string]image.Point{
+			"large": {1800, 1200}, "medium": {500, 333}, "small": {250, 166},
+		}},
+		{"portrait", 1000, 2000, map[string]image.Point{
+			"large": {900, 1800}, "medium": {250, 500}, "small": {125, 250},
+		}},
+		{"smaller than large", 1200, 800, map[string]image.Point{
+			"large": {1200, 800}, "medium": {500, 333}, "small": {250, 166},
+		}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			encoded, err := EncodeAll(bytes.NewReader(testJPEG(t, tc.w, tc.h)))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(encoded) != len(All) {
+				t.Fatalf("got %d versions, want %d", len(encoded), len(All))
+			}
+			for _, e := range encoded {
+				if got := size(t, e.Data); got != tc.want[e.Name] {
+					t.Errorf("%s = %v, want %v", e.Name, got, tc.want[e.Name])
+				}
+			}
+		})
+	}
+}
+
+func TestEncodeAllTurnsUpright(t *testing.T) {
+	// Orientation 6: stored landscape, shown rotated 90° clockwise.
+	photo := withOrientation(testJPEG(t, 600, 400), 6)
+	encoded, err := EncodeAll(bytes.NewReader(photo))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, want := size(t, encoded[1].Data), image.Pt(333, 500); got != want {
+		t.Errorf("medium = %v, want %v", got, want)
+	}
+}
+
+func TestEncodeAllRejectsNonJPEG(t *testing.T) {
+	if _, err := EncodeAll(bytes.NewReader([]byte("not a photo"))); err == nil {
+		t.Error("want an error")
+	}
+}
+
+func TestFind(t *testing.T) {
+	if v, ok := Find("medium"); !ok || v.MaxEdge != 500 {
+		t.Errorf("Find(medium) = %v, %v", v, ok)
+	}
+	if _, ok := Find("huge"); ok {
+		t.Error("Find(huge) found a version")
+	}
+}

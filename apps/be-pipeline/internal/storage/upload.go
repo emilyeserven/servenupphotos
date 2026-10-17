@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
@@ -18,6 +19,7 @@ import (
 	"github.com/aws/smithy-go"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
 // Uploaded is where an uploaded photo ended up.
@@ -26,12 +28,21 @@ type Uploaded struct {
 	URL string `json:"url"`
 }
 
+// UploadResult is where an uploaded photo and its resized versions ended up.
+type UploadResult struct {
+	Uploaded
+	// Versions are the photo's WEBP copies, by version name.
+	Versions map[string]Uploaded `json:"versions"`
+}
+
 // UploadError is an upload failure with a reason fit to show the person
 // uploading. NotConfigured is set when the R2 settings themselves are
 // incomplete, as opposed to Cloudflare rejecting the upload.
 type UploadError struct {
 	Message       string
 	NotConfigured bool
+	// NotAPhoto is set when the JPEG couldn't be read to make its versions.
+	NotAPhoto bool
 	// SameName lists the other photos already in the bucket under the name
 	// being uploaded, newest first, when that is why the upload stopped.
 	SameName []BucketImage
@@ -48,57 +59,94 @@ type UploadOptions struct {
 	KeepSameName bool
 }
 
-// UploadPhoto puts the JPEG in body into the configured bucket and returns its
-// key and public URL. body is read twice, once to hash it for the key, so it
-// must be seekable. Unless opts.KeepSameName is set, it first looks for other
+// UploadPhoto puts the JPEG in body into the configured bucket, along with
+// each of versions.All as a WEBP, and returns their keys and public URLs. body
+// is read three times, to hash it for the key, to make the versions and to
+// upload it, so it must be seekable. Unless opts.KeepSameName is set, it first looks for other
 // photos uploaded under the same name and stops with their list in
 // UploadError.SameName, since Photos in Flight matches photos by name. Failures
 // are *UploadError.
-func UploadPhoto(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts UploadOptions) (Uploaded, error) {
-	return uploadPhoto(ctx, cfg, r2Endpoint(cfg), name, body, opts)
+func UploadPhoto(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts UploadOptions) (UploadResult, error) {
+	return uploadPhoto(ctx, cfg, r2Endpoint(cfg), name, body, opts, versions.EncodeAll)
 }
 
-func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, body io.ReadSeeker, opts UploadOptions) (Uploaded, error) {
+// encodeFunc makes a photo's versions; versions.EncodeAll in production.
+type encodeFunc func(photo io.Reader) ([]versions.Encoded, error)
+
+func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, body io.ReadSeeker, opts UploadOptions, encode encodeFunc) (UploadResult, error) {
 	if msg := validateR2(cfg); msg != "" {
-		return Uploaded{}, &UploadError{Message: msg, NotConfigured: true}
+		return UploadResult{}, &UploadError{Message: msg, NotConfigured: true}
 	}
 	base, msg := publicBase(cfg.PublicURL)
 	if msg != "" {
-		return Uploaded{}, &UploadError{Message: msg, NotConfigured: true}
+		return UploadResult{}, &UploadError{Message: msg, NotConfigured: true}
 	}
 
 	key, size, err := photoKey(name, body)
 	if err != nil {
-		return Uploaded{}, fmt.Errorf("hash photo: %w", err)
+		return UploadResult{}, fmt.Errorf("hash photo: %w", err)
 	}
 	client := newR2Client(cfg, endpoint)
 	if stem := keyStem(name); stem != "" && !opts.KeepSameName {
 		same, err := sameNamePhotos(ctx, client, cfg, base, stem, key)
 		if err != nil {
-			return Uploaded{}, &UploadError{
+			return UploadResult{}, &UploadError{
 				Message:    "Couldn't check the bucket for a photo with the same name. " + describeR2Error(err),
 				Cloudflare: cloudflareResponse(err),
 			}
 		}
 		if len(same) > 0 {
-			return Uploaded{}, &UploadError{
+			return UploadResult{}, &UploadError{
 				Message:  "The bucket already has a different photo with this name.",
 				SameName: same,
 			}
 		}
 	}
 
-	_, err = client.PutObject(ctx, &s3.PutObjectInput{
+	// The versions are made before anything is uploaded, so a photo that
+	// can't be read leaves nothing behind in the bucket.
+	encoded, err := encode(body)
+	if err != nil {
+		return UploadResult{}, &UploadError{Message: "Couldn't read this JPEG to make its resized versions.", NotAPhoto: true}
+	}
+	if _, err := body.Seek(0, io.SeekStart); err != nil {
+		return UploadResult{}, fmt.Errorf("rewind photo: %w", err)
+	}
+
+	if err := putObject(ctx, client, cfg, key, body, size, "image/jpeg"); err != nil {
+		return UploadResult{}, err
+	}
+	res := UploadResult{Uploaded: Uploaded{Key: key, URL: base + "/" + key}, Versions: map[string]Uploaded{}}
+	for _, v := range encoded {
+		vkey := VersionKey(key, v.Name)
+		if err := putObject(ctx, client, cfg, vkey, bytes.NewReader(v.Data), int64(len(v.Data)), "image/webp"); err != nil {
+			return UploadResult{}, err
+		}
+		res.Versions[v.Name] = Uploaded{Key: vkey, URL: base + "/" + vkey}
+	}
+	return res, nil
+}
+
+// putObject uploads body to key, failing with an *UploadError.
+func putObject(ctx context.Context, client *s3.Client, cfg settings.R2, key string, body io.Reader, size int64, contentType string) error {
+	_, err := client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:        aws.String(strings.TrimSpace(cfg.Bucket)),
 		Key:           aws.String(key),
 		Body:          body,
 		ContentLength: aws.Int64(size),
-		ContentType:   aws.String("image/jpeg"),
+		ContentType:   aws.String(contentType),
 	})
 	if err != nil {
-		return Uploaded{}, &UploadError{Message: describeUploadError(err), Cloudflare: cloudflareResponse(err)}
+		return &UploadError{Message: describeUploadError(err), Cloudflare: cloudflareResponse(err)}
 	}
-	return Uploaded{Key: key, URL: base + "/" + key}, nil
+	return nil
+}
+
+// VersionKey is the object key of the version called name of the photo
+// UploadPhoto put at key: photos/<hash>-<name>-large.webp for
+// photos/<hash>-<name>.jpg.
+func VersionKey(key, name string) string {
+	return strings.TrimSuffix(key, path.Ext(key)) + "-" + name + ".webp"
 }
 
 // sameNamePhotos lists the photos in the bucket that photoKey named with stem,

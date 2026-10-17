@@ -101,7 +101,8 @@ function ImageClause({ imageKey }: { imageKey?: string }) {
   return (
     <>
       {" "}
-      and delete <span className="font-mono text-xs">{imageKey}</span> from R2
+      and delete <span className="font-mono text-xs">{imageKey}</span> and its resized versions from
+      R2
     </>
   );
 }
@@ -139,11 +140,30 @@ export function RemovedNotice({
             image.message
           )}
         </p>
+        <VersionsNotice versions={image.versions} />
       </div>
       <Button variant="ghost" size="icon-xs" aria-label="Dismiss" onClick={onDismiss}>
         <XIcon />
       </Button>
     </div>
+  );
+}
+
+/** What happened to the image's resized versions: one line when all were deleted, else each problem. */
+function VersionsNotice({ versions }: { versions?: RemoveResult["image"]["versions"] }) {
+  if (!versions?.length) return null;
+  const failed = versions.filter((version) => !version.deleted);
+  if (failed.length === 0) {
+    return <p className="text-muted-foreground">Deleted its resized versions too.</p>;
+  }
+  return (
+    <ul className="text-amber-700 dark:text-amber-400">
+      {failed.map((version) => (
+        <li key={version.key}>
+          <span className="font-mono text-xs">{version.key}</span>: {version.message}
+        </li>
+      ))}
+    </ul>
   );
 }
 
