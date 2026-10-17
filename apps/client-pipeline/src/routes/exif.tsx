@@ -1,7 +1,10 @@
 import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { RefreshCwIcon } from "lucide-react";
+import { useRef } from "react";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
+import type { PhotoIdentity } from "@/api/photos";
 import { type UploadMutation, type UploadResponse, uploadMutation } from "@/api/upload";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { GitHubSaveCard } from "@/components/github-save";
@@ -10,7 +13,6 @@ import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { R2Upload } from "@/components/r2-upload";
 import { VersionPreviews } from "@/components/version-previews";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -18,7 +20,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useObjectUrl } from "@/hooks/use-object-url";
 
 export const Route = createFileRoute("/exif")({
-  component: ExifPage,
+  component: PhotoPage,
+  staticData: { wide: true },
 });
 
 type ExifMutation = UseMutationResult<ExifResponse, Error, File>;
@@ -53,11 +56,47 @@ function withImages(
   };
 }
 
-function ExifPage() {
+function PhotoPage() {
   const extract = useMutation(exifMutation);
   // Lives here rather than in the upload card so its URL can go into the sanitized EXIF.
   const upload = useMutation(uploadMutation);
+  const sanitized = withImages(extract.data?.sanitized, upload.data);
+  const identity = photoIdentity(extract, sanitized);
 
+  return (
+    <Page
+      title="Photo"
+      description="Choose a JPEG to read its metadata with exiftool and its colors with go-colorful on the Go backend, then upload it and save its data."
+      wide
+    >
+      <div className="grid items-start gap-6 lg:grid-cols-2">
+        <div className="flex min-w-0 flex-col gap-6">
+          <PhotoCard extract={extract} upload={upload} />
+          {/* Keyed by submission so a new photo starts with fresh cards. */}
+          {extract.isSuccess && (
+            <AllPhotosGate key={extract.submittedAt} photo={identity}>
+              <VersionPreviews photo={extract.variables} />
+              <R2Upload photo={extract.variables} upload={upload} />
+            </AllPhotosGate>
+          )}
+        </div>
+        <div className="flex min-w-0 flex-col gap-6">
+          <ResultsColumn extract={extract} sanitized={sanitized} identity={identity} />
+        </div>
+      </div>
+    </Page>
+  );
+}
+
+/** What ALLPHOTOS.json is checked for, once the photo's EXIF has been read. */
+function photoIdentity(extract: ExifMutation, sanitized: SanitizedExif | null) {
+  if (!extract.isSuccess || !sanitized) return null;
+  const { gpsPosition, createDate } = sanitized;
+  return { file: extract.data.file, gpsPosition, createDate };
+}
+
+/** Picks the photo, and analyzes it as soon as a valid one is chosen. */
+function PhotoCard({ extract, upload }: { extract: ExifMutation; upload: UploadMutation }) {
   const form = useForm({
     defaultValues: { photo: null as File | null },
     validators: { onSubmit: ({ value }) => validatePhoto(value.photo) },
@@ -68,152 +107,151 @@ function ExifPage() {
   });
 
   return (
-    <Page
-      title="EXIF and color data"
-      description="Upload a JPEG to read its metadata with exiftool and its colors with go-colorful on the Go backend."
-    >
-      <Card>
-        <CardHeader>
-          <CardTitle>Photo</CardTitle>
-          <CardDescription>Pick a photo, check the preview, then confirm.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={(event) => {
-              event.preventDefault();
-              void form.handleSubmit();
-            }}
-          >
-            <form.Field name="photo" validators={{ onChange: ({ value }) => validatePhoto(value) }}>
-              {(field) => (
-                <PhotoField
-                  name={field.name}
-                  error={field.state.meta.errors[0]}
-                  disabled={extract.isPending}
-                  onBlur={field.handleBlur}
-                  onChange={(photo) => {
-                    extract.reset();
-                    upload.reset();
-                    field.handleChange(photo);
-                  }}
-                />
-              )}
-            </form.Field>
-
-            <form.Subscribe selector={(state) => state.canSubmit && state.values.photo !== null}>
-              {(canSubmit) => <SubmitButton disabled={!canSubmit} pending={extract.isPending} />}
-            </form.Subscribe>
-          </form>
-        </CardContent>
-      </Card>
-
-      <Analysis extract={extract} upload={upload} />
-    </Page>
+    <Card>
+      <CardHeader>
+        <CardTitle>Photo</CardTitle>
+        <CardDescription>Choosing a photo analyzes it right away.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            void form.handleSubmit();
+          }}
+        >
+          <form.Field name="photo" validators={{ onChange: ({ value }) => validatePhoto(value) }}>
+            {(field) => (
+              <PhotoField
+                name={field.name}
+                error={field.state.meta.errors[0]}
+                pending={extract.isPending}
+                onBlur={field.handleBlur}
+                onChange={(photo) => {
+                  extract.reset();
+                  upload.reset();
+                  field.handleChange(photo);
+                  if (!validatePhoto(photo)) void form.handleSubmit();
+                }}
+              />
+            )}
+          </form.Field>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 
-/** The analyzed photo's results, then what can be done with it. */
-function Analysis({ extract, upload }: { extract: ExifMutation; upload: UploadMutation }) {
+interface ResultsColumnProps {
+  extract: ExifMutation;
+  sanitized: SanitizedExif | null;
+  identity: PhotoIdentity | null;
+}
+
+/** The analyzed photo's results, then saving them to GitHub unless it's already in ALLPHOTOS.json. */
+function ResultsColumn({ extract, sanitized, identity }: ResultsColumnProps) {
   if (extract.isIdle) return null;
-  const sanitized = withImages(extract.data?.sanitized, upload.data);
   return (
     <>
       <ExifResult mutation={extract} sanitized={sanitized} />
-      {extract.isSuccess && (
-        <PhotoActions
-          key={extract.submittedAt}
-          photo={extract.variables}
-          file={extract.data.file}
-          sanitized={sanitized}
-          upload={upload}
-        />
+      {extract.isSuccess && sanitized && (
+        // The gate in the other column shows the check's status, so this one stays quiet.
+        <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
+          <GitHubSaveCard file={extract.data.file} sanitized={sanitized} />
+        </AllPhotosGate>
       )}
     </>
   );
 }
 
-/** What can be done with an analyzed photo, unless it's already in ALLPHOTOS.json: check its resized versions, upload it to R2, and save its sanitized EXIF to GitHub. */
-function PhotoActions({ photo, file, sanitized, upload }: PhotoActionsProps) {
-  const identity = sanitized
-    ? { file, gpsPosition: sanitized.gpsPosition, createDate: sanitized.createDate }
-    : null;
-  return (
-    <AllPhotosGate photo={identity}>
-      <VersionPreviews photo={photo} />
-      <R2Upload photo={photo} upload={upload} />
-      {sanitized && <GitHubSaveCard file={file} sanitized={sanitized} />}
-    </AllPhotosGate>
-  );
-}
-
-interface PhotoActionsProps {
-  photo: File;
-  file: string;
-  sanitized: SanitizedExif | null;
-  upload: UploadMutation;
-}
-
 interface PhotoFieldProps {
   name: string;
   error: string | undefined;
-  disabled: boolean;
+  /** The chosen photo is being analyzed, so it can't be swapped yet. */
+  pending: boolean;
   onChange: (photo: File | null) => void;
   onBlur: () => void;
 }
 
-function PhotoField({ name, error, disabled, onChange, onBlur }: PhotoFieldProps) {
+/** A file picker until a valid photo is chosen, then the photo itself, which opens the picker again when clicked. */
+function PhotoField({ name, error, pending, onChange, onBlur }: PhotoFieldProps) {
   const [previewUrl, setPreviewFile] = useObjectUrl();
+  const input = useRef<HTMLInputElement>(null);
   const errorId = `${name}-error`;
   const hintId = `${name}-hint`;
+  const chosen = previewUrl !== null && !error;
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={name} className="text-sm font-medium">
-        JPEG photo
-      </label>
-      <Input
-        id={name}
-        name={name}
-        type="file"
-        accept="image/jpeg,.jpg,.jpeg"
-        disabled={disabled}
-        aria-invalid={Boolean(error)}
-        aria-describedby={`${hintId} ${errorId}`}
-        onBlur={onBlur}
-        onChange={(event) => {
-          const file = event.target.files?.[0] ?? null;
-          setPreviewFile(file);
-          onChange(file);
-        }}
-      />
-      <p id={hintId} className="text-muted-foreground text-sm">
-        JPEG only (.jpg or .jpeg). Its resized versions are converted to WEBP when it's uploaded.
-      </p>
+      {/* Once a photo is chosen, clicking it opens this hidden picker. */}
+      <div className={chosen ? "hidden" : "flex flex-col gap-2"}>
+        <label htmlFor={name} className="text-sm font-medium">
+          JPEG photo
+        </label>
+        <Input
+          ref={input}
+          id={name}
+          name={name}
+          type="file"
+          accept="image/jpeg,.jpg,.jpeg"
+          disabled={pending}
+          aria-invalid={Boolean(error)}
+          aria-describedby={`${hintId} ${errorId}`}
+          onBlur={onBlur}
+          onChange={(event) => {
+            const file = event.target.files?.[0] ?? null;
+            setPreviewFile(file);
+            onChange(file);
+          }}
+        />
+      </div>
+      {chosen && (
+        <PhotoPreview src={previewUrl} disabled={pending} onClick={() => input.current?.click()} />
+      )}
+      <PhotoHint id={hintId} chosen={chosen} />
       <p id={errorId} className="text-destructive text-sm empty:hidden">
         {error}
       </p>
-      {previewUrl && !error && <PhotoPreview src={previewUrl} />}
     </div>
   );
 }
 
-function PhotoPreview({ src }: { src: string }) {
+function PhotoHint({ id, chosen }: { id: string; chosen: boolean }) {
   return (
-    <img
-      src={src}
-      alt="Preview of the selected photo"
-      className="max-h-80 w-full rounded-lg border object-contain"
-    />
+    <p id={id} className="text-muted-foreground text-sm">
+      {chosen
+        ? "Click the photo to choose a different one."
+        : "JPEG only (.jpg or .jpeg). Its resized versions are converted to WEBP when it's uploaded."}
+    </p>
   );
 }
 
-function SubmitButton({ disabled, pending }: { disabled: boolean; pending: boolean }) {
+interface PhotoPreviewProps {
+  src: string;
+  disabled: boolean;
+  onClick: () => void;
+}
+
+/** The chosen photo as a button that fades and shows a swap icon on hover. */
+function PhotoPreview({ src, disabled, onClick }: PhotoPreviewProps) {
   return (
-    <Button type="submit" className="self-start" disabled={disabled || pending}>
-      {pending && <Spinner />}
-      {pending ? "Analyzing photo…" : "Use this photo"}
-    </Button>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label="Choose a different photo"
+      className="group focus-visible:ring-ring/50 relative cursor-pointer overflow-hidden rounded-lg border outline-none focus-visible:ring-[3px] disabled:cursor-wait"
+    >
+      <img
+        src={src}
+        alt="The chosen photo"
+        className="max-h-80 w-full object-contain transition-opacity group-hover:opacity-80 group-focus-visible:opacity-80 group-disabled:opacity-100"
+      />
+      <span className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 group-disabled:opacity-0">
+        <span className="bg-background/80 text-foreground rounded-full p-3 shadow-sm">
+          <RefreshCwIcon className="size-6" aria-hidden />
+        </span>
+      </span>
+    </button>
   );
 }
 

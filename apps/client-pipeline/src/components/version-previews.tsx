@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { TriangleAlertIcon, XIcon } from "lucide-react";
+import { EyeIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
-import { type CSSProperties, useEffect, useState } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
 import {
   type JpegComparison,
   type VersionName,
@@ -11,12 +11,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useObjectUrl } from "@/hooks/use-object-url";
+
+const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
+
+const percentFormat = new Intl.NumberFormat(undefined, { style: "percent" });
 
 /** What the lightbox shows: one of the resized versions, or the original JPEG. */
 type Shown = VersionName | "original";
 
-/** Buttons that open each resized WEBP version of photo, or the original, at full size in a lightbox. */
+/**
+ * Each resized WEBP version of photo, and the original, with its true size and what WEBP saves over
+ * a JPEG, and a button that opens it at full size in a lightbox.
+ */
 export function VersionPreviews({ photo }: { photo: File }) {
   const [shown, setShown] = useState<Shown | null>(null);
   return (
@@ -24,23 +40,190 @@ export function VersionPreviews({ photo }: { photo: File }) {
       <CardHeader>
         <CardTitle>Resized versions</CardTitle>
         <CardDescription>
-          Uploading also puts these WEBP versions in R2. Open one to check its quality at its true
-          size.
+          Uploading also puts these WEBP versions in R2. Savings compare each with a JPEG of the
+          same size at the original's quality. Preview one to check its quality at its true size.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-wrap gap-2">
-        {VERSIONS.map((version) => (
-          <Button key={version.name} variant="outline" onClick={() => setShown(version.name)}>
-            {version.label} ({version.maxEdge}px)
-          </Button>
-        ))}
-        <Button variant="outline" onClick={() => setShown("original")}>
-          Original
-        </Button>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Version</TableHead>
+              <TableHead>Actual size</TableHead>
+              <TableHead className="whitespace-normal">Space savings</TableHead>
+              <TableHead className="text-right">
+                <span className="sr-only">Preview</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {VERSIONS.map((version) => (
+              <VersionRow
+                key={version.name}
+                photo={photo}
+                version={version}
+                onPreview={() => setShown(version.name)}
+              />
+            ))}
+            <OriginalRow photo={photo} onPreview={() => setShown("original")} />
+          </TableBody>
+        </Table>
       </CardContent>
       <Lightbox photo={photo} shown={shown} onClose={() => setShown(null)} />
     </Card>
   );
+}
+
+interface VersionRowProps {
+  photo: File;
+  version: (typeof VERSIONS)[number];
+  onPreview: () => void;
+}
+
+/** One resized version, made the way an upload makes it, to measure it. */
+function VersionRow({ photo, version, onPreview }: VersionRowProps) {
+  const query = useQuery(versionPreviewQuery(photo, version.name));
+  const label = (
+    <VersionLabel name={version.label} detail={`WEBP, longest edge up to ${version.maxEdge}px`} />
+  );
+  if (query.isPending) {
+    return (
+      <SizeRow label={label} onPreview={onPreview}>
+        <TableCell colSpan={2} className="text-muted-foreground">
+          <span className="flex items-center gap-2">
+            <Spinner /> Measuring…
+          </span>
+        </TableCell>
+      </SizeRow>
+    );
+  }
+  if (query.isError) {
+    return (
+      <SizeRow label={label} onPreview={onPreview}>
+        <TableCell colSpan={2} className="text-destructive whitespace-normal">
+          {query.error.message}
+        </TableCell>
+      </SizeRow>
+    );
+  }
+  const { webp, jpeg } = query.data;
+  return (
+    <SizeRow label={label} onPreview={onPreview}>
+      <ActualSizeCell blob={webp} />
+      <TableCell>{jpeg ? <SavingsText webpBytes={webp.size} jpeg={jpeg} /> : "—"}</TableCell>
+    </SizeRow>
+  );
+}
+
+function OriginalRow({ photo, onPreview }: { photo: File; onPreview: () => void }) {
+  return (
+    <SizeRow
+      label={<VersionLabel name="Original" detail="The JPEG you chose, unchanged" />}
+      onPreview={onPreview}
+    >
+      <ActualSizeCell blob={photo} />
+      <TableCell className="text-muted-foreground">—</TableCell>
+    </SizeRow>
+  );
+}
+
+/** A version's name, with what it is in a tooltip. */
+function VersionLabel({ name, detail }: { name: string; detail: string }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          tabIndex={0}
+          className="cursor-help font-medium underline decoration-dotted underline-offset-4 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          {name}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="right">{detail}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+interface SizeRowProps {
+  label: ReactNode;
+  onPreview: () => void;
+  /** The actual size and space savings cells. */
+  children: ReactNode;
+}
+
+function SizeRow({ label, onPreview, children }: SizeRowProps) {
+  return (
+    <TableRow>
+      <TableCell>{label}</TableCell>
+      {children}
+      <TableCell className="text-right">
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Preview"
+          title="Preview"
+          onClick={onPreview}
+        >
+          <EyeIcon aria-hidden />
+        </Button>
+      </TableCell>
+    </TableRow>
+  );
+}
+
+/** The image's pixel dimensions and file size. */
+function ActualSizeCell({ blob }: { blob: Blob }) {
+  const dimensions = useImageDimensions(blob);
+  return (
+    <TableCell className="tabular-nums">
+      <div className="flex flex-col">
+        <span>{dimensions ? `${dimensions.width} × ${dimensions.height}px` : "…"}</span>
+        <span className="text-muted-foreground text-xs">
+          {sizeFormat.format(blob.size / 1024)} KB
+        </span>
+      </div>
+    </TableCell>
+  );
+}
+
+/** How much smaller (or bigger) the WEBP is than a JPEG of the same version. */
+function SavingsText({ webpBytes, jpeg }: { webpBytes: number; jpeg: JpegComparison }) {
+  const saved = 1 - webpBytes / jpeg.bytes;
+  return (
+    <span
+      className={
+        saved > 0 ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400"
+      }
+      title={`A JPEG at quality ${jpeg.quality} would be ${sizeFormat.format(jpeg.bytes / 1024)} KB`}
+    >
+      {saved > 0 ? (
+        <>
+          {percentFormat.format(saved)}
+          <span className="hidden sm:inline"> smaller</span>
+        </>
+      ) : (
+        `${percentFormat.format(-saved)} bigger`
+      )}
+    </span>
+  );
+}
+
+/** An image blob's width and height in pixels, once decoded. */
+function useImageDimensions(blob: Blob) {
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    createImageBitmap(blob)
+      .then((bitmap) => {
+        if (!cancelled) setDimensions({ width: bitmap.width, height: bitmap.height });
+        bitmap.close();
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [blob]);
+  return dimensions;
 }
 
 interface LightboxProps {
@@ -117,8 +300,6 @@ function VersionImage({ photo, version }: { photo: File; version: VersionName })
  * show it while the real image loads: it smooths the preview's few big pixels into soft color.
  */
 const PREVIEW_BLUR = "blur(12px)";
-
-const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 
 interface Fit {
   natural: { width: number; height: number };
@@ -209,8 +390,6 @@ interface LightboxImageProps {
   /** A CSS filter, such as "blur(12px)": the image is then stretched to fill the space. */
   blur?: string;
 }
-
-const percentFormat = new Intl.NumberFormat(undefined, { style: "percent" });
 
 interface WebpSavingsProps {
   webpBytes: number;

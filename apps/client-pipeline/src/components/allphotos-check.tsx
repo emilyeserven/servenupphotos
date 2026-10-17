@@ -11,6 +11,11 @@ interface AllPhotosGateProps {
   photo: PhotoIdentity | null;
   /** What can be done with the photo, shown only once it is known not to be in ALLPHOTOS.json. */
   children: ReactNode;
+  /**
+   * Show the check's progress, warnings and matches. Turn it off where another gate on the same
+   * page already shows them, so only the children appear here.
+   */
+  showStatus?: boolean;
 }
 
 /**
@@ -18,12 +23,25 @@ interface AllPhotosGateProps {
  * there can't be uploaded or saved again, since editing a saved photo isn't supported yet. When the
  * check can't run, its actions are still offered, with a warning.
  */
-export function AllPhotosGate({ photo, children }: AllPhotosGateProps) {
+export function AllPhotosGate({ photo, children, showStatus = true }: AllPhotosGateProps) {
   if (!photo) return children;
+  if (!showStatus) return <SilentGate photo={photo}>{children}</SilentGate>;
   return <Gate photo={photo}>{children}</Gate>;
 }
 
-function Gate({ photo, children }: { photo: PhotoIdentity; children: ReactNode }) {
+interface GateProps {
+  photo: PhotoIdentity;
+  children: ReactNode;
+}
+
+/** Shows children only when the photo isn't known to be saved, with no status of its own. */
+function SilentGate({ photo, children }: GateProps) {
+  const check = useQuery(allPhotosCheckQuery(photo));
+  const blocked = check.isPending || (check.isSuccess && check.data.matches.length > 0);
+  return blocked ? null : children;
+}
+
+function Gate({ photo, children }: GateProps) {
   const check = useQuery(allPhotosCheckQuery(photo));
   if (check.isPending) {
     return (
