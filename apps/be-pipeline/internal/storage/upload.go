@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"path"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -31,18 +32,33 @@ type Uploaded struct {
 type UploadError struct {
 	Message       string
 	NotConfigured bool
+	// SameName lists the other photos already in the bucket under the name
+	// being uploaded, newest first, when that is why the upload stopped.
+	SameName []BucketImage
+	// Cloudflare is what Cloudflare answered, when it rejected a request.
+	Cloudflare *CloudflareResponse
 }
 
 func (e *UploadError) Error() string { return e.Message }
 
-// UploadPhoto puts the JPEG in body into the configured bucket and returns its
-// key and public URL. body is read twice, once to hash it for the key, so it
-// must be seekable. Failures are *UploadError.
-func UploadPhoto(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker) (Uploaded, error) {
-	return uploadPhoto(ctx, cfg, r2Endpoint(cfg), name, body)
+// UploadOptions changes how UploadPhoto treats the bucket's existing photos.
+type UploadOptions struct {
+	// KeepSameName uploads the photo even when the bucket already has a
+	// different photo under the same name.
+	KeepSameName bool
 }
 
-func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, body io.ReadSeeker) (Uploaded, error) {
+// UploadPhoto puts the JPEG in body into the configured bucket and returns its
+// key and public URL. body is read twice, once to hash it for the key, so it
+// must be seekable. Unless opts.KeepSameName is set, it first looks for other
+// photos uploaded under the same name and stops with their list in
+// UploadError.SameName, since Photos in Flight matches photos by name. Failures
+// are *UploadError.
+func UploadPhoto(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts UploadOptions) (Uploaded, error) {
+	return uploadPhoto(ctx, cfg, r2Endpoint(cfg), name, body, opts)
+}
+
+func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, body io.ReadSeeker, opts UploadOptions) (Uploaded, error) {
 	if msg := validateR2(cfg); msg != "" {
 		return Uploaded{}, &UploadError{Message: msg, NotConfigured: true}
 	}
@@ -55,7 +71,24 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 	if err != nil {
 		return Uploaded{}, fmt.Errorf("hash photo: %w", err)
 	}
-	_, err = newR2Client(cfg, endpoint).PutObject(ctx, &s3.PutObjectInput{
+	client := newR2Client(cfg, endpoint)
+	if stem := keyStem(name); stem != "" && !opts.KeepSameName {
+		same, err := sameNamePhotos(ctx, client, cfg, base, stem, key)
+		if err != nil {
+			return Uploaded{}, &UploadError{
+				Message:    "Couldn't check the bucket for a photo with the same name. " + describeR2Error(err),
+				Cloudflare: cloudflareResponse(err),
+			}
+		}
+		if len(same) > 0 {
+			return Uploaded{}, &UploadError{
+				Message:  "The bucket already has a different photo with this name.",
+				SameName: same,
+			}
+		}
+	}
+
+	_, err = client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:        aws.String(strings.TrimSpace(cfg.Bucket)),
 		Key:           aws.String(key),
 		Body:          body,
@@ -63,9 +96,40 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 		ContentType:   aws.String("image/jpeg"),
 	})
 	if err != nil {
-		return Uploaded{}, &UploadError{Message: describeUploadError(err)}
+		return Uploaded{}, &UploadError{Message: describeUploadError(err), Cloudflare: cloudflareResponse(err)}
 	}
 	return Uploaded{Key: key, URL: base + "/" + key}, nil
+}
+
+// sameNamePhotos lists the photos in the bucket that photoKey named with stem,
+// other than key itself, newest first. key is the same photo under the same
+// name, which uploading again just replaces.
+func sameNamePhotos(ctx context.Context, client *s3.Client, cfg settings.R2, base, stem, key string) ([]BucketImage, error) {
+	var same []BucketImage
+	paginator := s3.NewListObjectsV2Paginator(client, &s3.ListObjectsV2Input{
+		Bucket: aws.String(strings.TrimSpace(cfg.Bucket)),
+		Prefix: aws.String("photos/"),
+	})
+	for paginator.HasMorePages() {
+		page, err := paginator.NextPage(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, obj := range page.Contents {
+			k := aws.ToString(obj.Key)
+			if m := photoKeyPattern.FindStringSubmatch(k); m == nil || m[1] != stem || k == key {
+				continue
+			}
+			same = append(same, BucketImage{
+				Key:      k,
+				URL:      base + "/" + k,
+				Size:     aws.ToInt64(obj.Size),
+				Modified: aws.ToTime(obj.LastModified),
+			})
+		}
+	}
+	sort.SliceStable(same, func(i, j int) bool { return same[i].Modified.After(same[j].Modified) })
+	return same, nil
 }
 
 // publicBase returns the bucket's public URL setting without a trailing slash,

@@ -137,3 +137,49 @@ export const bucketImagesQuery = queryOptions({
   queryFn: () => requestJson<BucketResponse>("/api/photos/bucket"),
   retry: false,
 });
+
+/** What makes a photo the same as an ALLPHOTOS.json entry: all three fields exactly equal. */
+export interface PhotoIdentity {
+  /** The photo's original file name. */
+  file: string;
+  gpsPosition: string | null;
+  createDate: string | null;
+}
+
+/** One place the check looked: ALLPHOTOS.json on the base branch, or the photo data pull request's files. */
+export interface AllPhotosSource {
+  /** The base branch's name, or the photo data pull request. */
+  label: string;
+  fileUrl: string;
+  found: boolean;
+  /** What couldn't be checked, when something couldn't. */
+  error?: string;
+}
+
+/** An ALLPHOTOS.json entry for the same photo. */
+export interface AllPhotosMatch {
+  /** Where it was found first: the base branch, or a file in the pull request. */
+  source: string;
+  fileUrl: string;
+  entry: unknown;
+}
+
+export interface AllPhotosCheck {
+  path: string;
+  sources: AllPhotosSource[];
+  matches: AllPhotosMatch[];
+}
+
+/** Looks for a photo in ALLPHOTOS.json on the base branch and in the open photo data pull request's files. */
+export const allPhotosCheckQuery = (photo: PhotoIdentity) =>
+  queryOptions({
+    queryKey: ["photos", "all-photos", "check", photo],
+    queryFn: () =>
+      requestJson<AllPhotosCheck>("/api/photos/all-photos/check", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(photo),
+      }),
+    retry: false,
+    staleTime: 0,
+  });

@@ -12,6 +12,17 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     }),
   );
 
+  // Looks for a photo in ALLPHOTOS.json on the base branch and the photo data pull request; the
+  // backend gives GitHub 30s.
+  app.post("/photos/all-photos/check", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/all-photos/check", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+      timeoutMs: 35_000,
+    }),
+  );
+
   // Reads the photo JSON in the open "Add photo data" pull request; the backend gives GitHub 30s.
   app.get("/photos/in-flight", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/in-flight", { timeoutMs: 35_000 }),

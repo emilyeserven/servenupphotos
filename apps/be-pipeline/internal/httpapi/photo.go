@@ -13,10 +13,15 @@ import (
 // maxUploadBytes caps the size of an uploaded photo.
 const maxUploadBytes = 50 << 20
 
+// maxFieldBytes caps each form field sent along with a photo.
+const maxFieldBytes = 1 << 10
+
 // receivedPhoto is an uploaded JPEG saved to a temp file the caller removes.
 type receivedPhoto struct {
 	name string
 	path string
+	// fields are the form's other fields that came before the photo.
+	fields map[string]string
 }
 
 // receivePhoto saves the JPEG in the "photo" field of a multipart form to a
@@ -30,6 +35,7 @@ func receivePhoto(w http.ResponseWriter, r *http.Request) (receivedPhoto, bool) 
 	}
 
 	// Stream parts until the photo, so the upload is never held in memory whole.
+	fields := map[string]string{}
 	for {
 		part, err := mr.NextPart()
 		if err != nil {
@@ -41,6 +47,10 @@ func receivePhoto(w http.ResponseWriter, r *http.Request) (receivedPhoto, bool) 
 			return receivedPhoto{}, false
 		}
 		if part.FormName() != "photo" {
+			if part.FileName() == "" {
+				value, _ := io.ReadAll(io.LimitReader(part, maxFieldBytes))
+				fields[part.FormName()] = string(value)
+			}
 			continue
 		}
 
@@ -63,7 +73,7 @@ func receivePhoto(w http.ResponseWriter, r *http.Request) (receivedPhoto, bool) 
 			writeError(w, http.StatusInternalServerError, "could not save photo")
 			return receivedPhoto{}, false
 		}
-		return receivedPhoto{name: part.FileName(), path: path}, true
+		return receivedPhoto{name: part.FileName(), path: path, fields: fields}, true
 	}
 }
 
