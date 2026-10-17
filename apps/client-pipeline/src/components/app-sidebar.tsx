@@ -24,6 +24,7 @@ export const navGroups = [
       { title: "EXIF", url: "/exif" },
       { title: "Photos in Flight", url: "/in-flight" },
       { title: "Explore Bucket", url: "/bucket" },
+      { title: "Manage Sizes", url: "/sizes" },
     ],
   },
   {

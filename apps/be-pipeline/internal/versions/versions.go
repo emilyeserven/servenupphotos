@@ -23,19 +23,29 @@ type Version struct {
 	Name string
 	// MaxEdge is the most pixels the version's width or height may be.
 	MaxEdge int
+	// Quality is the WEBP quality it is encoded at, from 0 to 100.
+	Quality int
 }
 
-// All are the versions every uploaded photo gets, largest first.
+// All are the versions every uploaded photo gets, largest first. The last,
+// preview, is a tiny low-quality placeholder of well under a kilobyte, to
+// show (blurred) while a real version loads.
 var All = []Version{
-	{Name: "xlarge", MaxEdge: 2500},
-	{Name: "large", MaxEdge: 1800},
-	{Name: "medium", MaxEdge: 1200},
-	{Name: "small", MaxEdge: 500},
-	{Name: "xsmall", MaxEdge: 250},
+	{Name: "xlarge", MaxEdge: 2500, Quality: Quality},
+	{Name: "large", MaxEdge: 1800, Quality: Quality},
+	{Name: "medium", MaxEdge: 1200, Quality: Quality},
+	{Name: "small", MaxEdge: 500, Quality: Quality},
+	{Name: "xsmall", MaxEdge: 250, Quality: Quality},
+	{Name: "preview", MaxEdge: 40, Quality: PreviewQuality},
 }
 
-// Quality is the WEBP quality versions are encoded at, from 0 to 100.
+// Quality is the WEBP quality the full versions are encoded at, from 0 to
+// 100.
 const Quality = 95
+
+// PreviewQuality is the preview's WEBP quality: it is shown blurred, so
+// detail would only cost bytes.
+const PreviewQuality = 60
 
 // method is libwebp's effort, from 0 (fastest) to 6 (smallest file for the
 // quality); versions are made once, so they get the most.
@@ -68,13 +78,13 @@ func Resize(img image.Image, v Version) image.Image {
 
 // Encode resizes img for v and returns it as a WEBP.
 func Encode(img image.Image, v Version) ([]byte, error) {
-	return EncodeWEBP(Resize(img, v))
+	return EncodeWEBP(Resize(img, v), v.Quality)
 }
 
-// EncodeWEBP encodes an already resized version as a WEBP.
-func EncodeWEBP(resized image.Image) ([]byte, error) {
+// EncodeWEBP encodes an already resized version as a WEBP at quality.
+func EncodeWEBP(resized image.Image, quality int) ([]byte, error) {
 	var buf bytes.Buffer
-	if err := webp.Encode(&buf, resized, webp.Options{Quality: Quality, Method: method}); err != nil {
+	if err := webp.Encode(&buf, resized, webp.Options{Quality: quality, Method: method}); err != nil {
 		return nil, fmt.Errorf("encode WEBP: %w", err)
 	}
 	return buf.Bytes(), nil
@@ -100,12 +110,17 @@ type Encoded struct {
 
 // EncodeAll decodes the JPEG in r and encodes every version of it.
 func EncodeAll(r io.Reader) ([]Encoded, error) {
+	return EncodeOnly(r, All)
+}
+
+// EncodeOnly decodes the JPEG in r and encodes just the versions vs of it.
+func EncodeOnly(r io.Reader, vs []Version) ([]Encoded, error) {
 	img, err := Decode(r)
 	if err != nil {
 		return nil, err
 	}
-	out := make([]Encoded, 0, len(All))
-	for _, v := range All {
+	out := make([]Encoded, 0, len(vs))
+	for _, v := range vs {
 		data, err := Encode(img, v)
 		if err != nil {
 			return nil, fmt.Errorf("%s version: %w", v.Name, err)

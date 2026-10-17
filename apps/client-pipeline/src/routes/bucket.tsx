@@ -8,7 +8,7 @@ import {
   bucketImagesQuery,
   photosInFlightQuery,
 } from "@/api/photos";
-import { type SettingsResponse, settingsQuery } from "@/api/settings";
+import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { VERSIONS, keyStem, parseVersionKey, versionKeys } from "@/api/versions";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -58,13 +58,6 @@ function BucketPage() {
         }
       </QueryResult>
     </Page>
-  );
-}
-
-/** Whether Settings has everything needed to list the bucket and show its images. */
-function r2IsSetUp(r2: SettingsResponse["r2"]): boolean {
-  return [r2.accountId, r2.accessKeyId, r2.secretAccessKey.set, r2.bucket, r2.publicUrl].every(
-    Boolean,
   );
 }
 

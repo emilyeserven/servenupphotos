@@ -36,6 +36,9 @@ type Images struct {
 	Medium *string `json:"medium"`
 	Small  *string `json:"small"`
 	XSmall *string `json:"xsmall"`
+	// Preview is the public URL of a tiny, low-quality WEBP of at most 40
+	// pixels on the longest edge, to show blurred while a version loads.
+	Preview *string `json:"preview"`
 }
 
 // Sanitize picks the publishable fields out of exiftool's output, taking the
