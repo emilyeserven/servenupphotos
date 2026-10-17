@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useObjectUrl } from "@/hooks/use-object-url";
 
 const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
@@ -82,7 +83,9 @@ interface VersionRowProps {
 /** One resized version, made the way an upload makes it, to measure it. */
 function VersionRow({ photo, version, onPreview }: VersionRowProps) {
   const query = useQuery(versionPreviewQuery(photo, version.name));
-  const label = <VersionLabel name={version.label} detail={`Up to ${version.maxEdge}px`} />;
+  const label = (
+    <VersionLabel name={version.label} detail={`WEBP, longest edge up to ${version.maxEdge}px`} />
+  );
   if (query.isPending) {
     return (
       <SizeRow label={label} onPreview={onPreview}>
@@ -114,19 +117,30 @@ function VersionRow({ photo, version, onPreview }: VersionRowProps) {
 
 function OriginalRow({ photo, onPreview }: { photo: File; onPreview: () => void }) {
   return (
-    <SizeRow label={<VersionLabel name="Original" detail="JPEG" />} onPreview={onPreview}>
+    <SizeRow
+      label={<VersionLabel name="Original" detail="The JPEG you chose, unchanged" />}
+      onPreview={onPreview}
+    >
       <ActualSizeCell blob={photo} />
       <TableCell className="text-muted-foreground">—</TableCell>
     </SizeRow>
   );
 }
 
+/** A version's name, with what it is in a tooltip. */
 function VersionLabel({ name, detail }: { name: string; detail: string }) {
   return (
-    <div className="flex flex-col">
-      <span className="font-medium">{name}</span>
-      <span className="text-muted-foreground text-xs">{detail}</span>
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span
+          tabIndex={0}
+          className="cursor-help font-medium underline decoration-dotted underline-offset-4 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+        >
+          {name}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="right">{detail}</TooltipContent>
+    </Tooltip>
   );
 }
 
