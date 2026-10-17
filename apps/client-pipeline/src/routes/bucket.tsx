@@ -1,15 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { GitPullRequestIcon, ImageOffIcon } from "lucide-react";
+import { BookCheckIcon, GitPullRequestIcon, ImageOffIcon } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
-import {
-  type BucketImage,
-  type InFlightResponse,
-  bucketImagesQuery,
-  photosInFlightQuery,
-} from "@/api/photos";
+import { type BucketImage, bucketImagesQuery } from "@/api/photos";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
-import { VERSIONS, keyStem, parseVersionKey, versionKeys } from "@/api/versions";
+import { VERSIONS, keyStem, parseVersionKey } from "@/api/versions";
+import { GenerateJsonButton } from "@/components/generate-json";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -22,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { type PhotoMarks, usePhotoMarks } from "@/hooks/use-photo-marks";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/bucket")({
@@ -36,7 +33,7 @@ function BucketPage() {
     <Page
       wide
       title="Explore Bucket"
-      description="Every image in the R2 bucket, newest first. Click a stack to see its resized copies."
+      description="Every image in the R2 bucket, newest first. Click a stack to see its resized copies, or generate JSON for a photo that isn't saved yet."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -63,7 +60,7 @@ function BucketPage() {
 
 function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
   const bucket = useQuery(bucketImagesQuery);
-  const inFlight = useInFlightImages(githubIsSetUp);
+  const marks = usePhotoMarks(githubIsSetUp, bucket.data);
 
   return (
     <>
@@ -88,9 +85,10 @@ function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
           </CardAction>
         </CardHeader>
         <BucketEmpty />
+        <MarksNote githubIsSetUp={githubIsSetUp} problem={marks.problem} />
       </Card>
 
-      {bucket.data ? <BucketGrid images={bucket.data.images} inFlight={inFlight} /> : null}
+      {bucket.data ? <BucketGrid images={bucket.data.images} marks={marks} /> : null}
     </>
   );
 }
@@ -108,29 +106,66 @@ function BucketEmpty() {
   );
 }
 
-/** The images whose photo data is in the open pull request, and that pull request's number. */
-interface InFlightImages {
-  keys: Set<string>;
-  pullRequestNumber?: number;
+/** Why photos can't be marked, so no JSON can be generated: GitHub isn't set up or a check failed. */
+function MarksNote({ githubIsSetUp, problem }: { githubIsSetUp: boolean; problem?: Error }) {
+  if (!githubIsSetUp) return <GitHubNotSetUp />;
+  if (!problem) return null;
+  return (
+    <CardContent>
+      <p className="text-muted-foreground text-sm">
+        Couldn't check which photos are saved already, so JSON can't be generated: {problem.message}
+      </p>
+    </CardContent>
+  );
 }
 
-/** In-flight images from Photos in Flight's data; none when GitHub isn't set up or it fails. */
-function useInFlightImages(githubIsSetUp: boolean): InFlightImages {
-  const inFlight = useQuery({ ...photosInFlightQuery, enabled: githubIsSetUp });
-  return useMemo(() => inFlightImages(inFlight.data), [inFlight.data]);
+function GitHubNotSetUp() {
+  return (
+    <CardContent>
+      <p className="text-muted-foreground text-sm">
+        Set the GitHub repository and token in{" "}
+        <Link to="/settings" className="text-foreground underline underline-offset-4">
+          Settings
+        </Link>{" "}
+        to see which photos are saved and generate JSON for the ones that aren't.
+      </p>
+    </CardContent>
+  );
 }
 
-/**
- * R2 keys from the images matched in R2 and the keys saved with the photo data, plus each one's
- * resized versions.
- */
-function inFlightImages(data?: InFlightResponse): InFlightImages {
-  if (!data?.pullRequest) return { keys: new Set() };
-  const matched = Object.values(data.images.byPath).map((image) => image.key);
-  const saved = data.files.flatMap((file) => (file.imageKey ? [file.imageKey] : []));
-  const originals = [...matched, ...saved];
-  const keys = new Set([...originals, ...originals.flatMap(versionKeys)]);
-  return { keys, pullRequestNumber: data.pullRequest.number };
+/** What a tile shows about its photo's data: in flight, in ALLPHOTOS.json, or a way to make it. */
+interface TileStatus {
+  /** The open pull request holding this image's photo data, when there is one. */
+  inFlightPullRequest?: number;
+  published: boolean;
+  /** For an original JPEG whose photo isn't saved anywhere: its resized copies, for the JSON. */
+  generate?: BucketImage[];
+}
+
+function tileStatus(marks: PhotoMarks, image: BucketImage): TileStatus {
+  const inFlight = marks.inFlight.keys.has(image.key);
+  return {
+    inFlightPullRequest: inFlight ? marks.inFlight.pullRequestNumber : undefined,
+    published: marks.published.has(image.key),
+  };
+}
+
+/** A stack original's status, which can generate JSON when its photo is saved nowhere. */
+function originalStatus(marks: PhotoMarks, stack: Stack): TileStatus {
+  const status = tileStatus(marks, stack.image);
+  if (!isUnsavedOriginal(marks, stack, status)) return status;
+  return { ...status, generate: stack.copies.map((copy) => copy.image) };
+}
+
+/** Whether the stack's image is an original JPEG whose photo the checks found saved nowhere. */
+function isUnsavedOriginal(marks: PhotoMarks, stack: Stack, status: TileStatus): boolean {
+  return [
+    marks.checked,
+    status.inFlightPullRequest === undefined,
+    !status.published,
+    !stack.label,
+    /\.jpe?g$/i.test(stack.image.key),
+  ].every(Boolean);
 }
 
 /** One image from the bucket, with its size label when it's a resized copy. */
@@ -177,27 +212,20 @@ function stackImages(images: BucketImage[]): Stack[] {
     }));
 }
 
-function BucketGrid({ images, inFlight }: { images: BucketImage[]; inFlight: InFlightImages }) {
+function BucketGrid({ images, marks }: { images: BucketImage[]; marks: PhotoMarks }) {
   const stacks = useMemo(() => stackImages(images), [images]);
   if (stacks.length === 0) return null;
-  const pullRequestOf = (key: string) =>
-    inFlight.keys.has(key) ? inFlight.pullRequestNumber : undefined;
   return (
     <ul className="grid grid-cols-2 gap-x-4 gap-y-6 pt-3 pr-3 sm:grid-cols-3 lg:grid-cols-4">
       {stacks.map((stack) => (
-        <StackItems key={stack.image.key} stack={stack} pullRequestOf={pullRequestOf} />
+        <StackItems key={stack.image.key} stack={stack} marks={marks} />
       ))}
     </ul>
   );
 }
 
-interface StackItemsProps {
-  stack: Stack;
-  pullRequestOf: (key: string) => number | undefined;
-}
-
 /** A stack's original, and its resized copies right after it once it's opened. */
-function StackItems({ stack, pullRequestOf }: StackItemsProps) {
+function StackItems({ stack, marks }: { stack: Stack; marks: PhotoMarks }) {
   const [expanded, setExpanded] = useState(false);
   const toggle =
     stack.copies.length > 0
@@ -206,16 +234,12 @@ function StackItems({ stack, pullRequestOf }: StackItemsProps) {
   return (
     <>
       <li>
-        <BucketTile
-          tile={stack}
-          stack={toggle}
-          inFlightPullRequest={pullRequestOf(stack.image.key)}
-        />
+        <BucketTile tile={stack} stack={toggle} status={originalStatus(marks, stack)} />
       </li>
       {expanded &&
         stack.copies.map((copy) => (
           <li key={copy.image.key}>
-            <BucketTile tile={copy} inFlightPullRequest={pullRequestOf(copy.image.key)} />
+            <BucketTile tile={copy} status={tileStatus(marks, copy.image)} />
           </li>
         ))}
     </>
@@ -252,19 +276,19 @@ interface BucketTileProps {
   tile: Tile;
   /** For an original with resized copies: clicking it shows or hides them. */
   stack?: StackToggle;
-  /** The open pull request holding this image's photo data, when there is one. */
-  inFlightPullRequest?: number;
+  status: TileStatus;
 }
 
 /**
  * One image from the bucket with its key, size and upload time; the key links to its public
- * URL. An image whose photo data is still in the open pull request is faded with a PR badge.
+ * URL. An image whose photo data is still in the open pull request is faded with a PR badge, one
+ * in ALLPHOTOS.json has its own badge, and an original saved in neither can generate its JSON.
  */
-function BucketTile({ tile, stack, inFlightPullRequest }: BucketTileProps) {
+function BucketTile({ tile, stack, status }: BucketTileProps) {
   const media = (
     <>
-      <TileImage image={tile.image} faded={inFlightPullRequest !== undefined} />
-      {inFlightPullRequest !== undefined && <InFlightBadge pullRequest={inFlightPullRequest} />}
+      <TileImage image={tile.image} faded={status.inFlightPullRequest !== undefined} />
+      <StatusBadge status={status} />
       <TileLabel text={stack ? stackLabel(stack) : tile.label} />
     </>
   );
@@ -278,6 +302,7 @@ function BucketTile({ tile, stack, inFlightPullRequest }: BucketTileProps) {
         </a>
       )}
       <TileCaption image={tile.image} />
+      {status.generate && <GenerateJsonButton original={tile.image} copies={status.generate} />}
     </figure>
   );
 }
@@ -378,6 +403,28 @@ function InFlightBadge({ pullRequest }: { pullRequest: number }) {
       className="bg-background/80 text-foreground absolute top-2 right-2 flex size-7 items-center justify-center rounded-md border shadow-sm"
     >
       <GitPullRequestIcon className="size-4" aria-hidden />
+      <span className="sr-only">{label}</span>
+    </span>
+  );
+}
+
+/** The in-flight badge, or the ALLPHOTOS.json one, or nothing for a photo saved nowhere. */
+function StatusBadge({ status }: { status: TileStatus }) {
+  if (status.inFlightPullRequest !== undefined) {
+    return <InFlightBadge pullRequest={status.inFlightPullRequest} />;
+  }
+  return status.published ? <PublishedBadge /> : null;
+}
+
+/** A book icon in the image's corner, for a photo already in ALLPHOTOS.json. */
+function PublishedBadge() {
+  const label = "Saved: already in ALLPHOTOS.json";
+  return (
+    <span
+      title={label}
+      className="bg-background/80 text-foreground absolute top-2 right-2 flex size-7 items-center justify-center rounded-md border shadow-sm"
+    >
+      <BookCheckIcon className="size-4" aria-hidden />
       <span className="sr-only">{label}</span>
     </span>
   );

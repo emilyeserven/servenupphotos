@@ -152,3 +152,22 @@ func TestFindInAllPhotosNeedsSettings(t *testing.T) {
 		t.Errorf("err = %v, want file is required", err)
 	}
 }
+
+func TestAllPhotosOnBase(t *testing.T) {
+	gh := settings.GitHub{Repo: "owner/repo", Token: token}
+	const entry = `{"file":"DSC0001.jpg","images":{"key":"photos/abc-dsc0001.jpg"}}`
+	c := newAllPhotosRepo(t, nil, nil, map[string]string{dataDir + "ALLPHOTOS.json@main": "[" + entry + "]"})
+	got, err := c.AllPhotosOnBase(t.Context(), gh)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !got.Found || got.Count != 1 || got.Branch != "main" || !strings.Contains(string(got.Data), "abc-dsc0001") ||
+		got.FileURL != "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/ALLPHOTOS.json" {
+		t.Errorf("got %+v", got)
+	}
+
+	missing, err := newAllPhotosRepo(t, nil, nil, nil).AllPhotosOnBase(t.Context(), gh)
+	if err != nil || missing.Found || missing.FileURL != "" {
+		t.Errorf("missing = %+v, %v; want not found", missing, err)
+	}
+}

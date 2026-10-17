@@ -177,3 +177,29 @@ func canonicalJSON(raw json.RawMessage) string {
 	b, _ := json.Marshal(v)
 	return string(b)
 }
+
+// BaseAllPhotos is AllPhotosFile on the base branch from Settings (or the
+// default branch): the photos already in the portfolio.
+type BaseAllPhotos struct {
+	InFlightAllPhotos
+	// Branch is the base branch it was read from.
+	Branch string `json:"branch"`
+}
+
+// AllPhotosOnBase reads AllPhotosFile on the base branch from Settings, or
+// the default branch. It only reads from GitHub.
+func (c *Client) AllPhotosOnBase(ctx context.Context, gh settings.GitHub) (BaseAllPhotos, error) {
+	folder, perr := dataFolder(gh.Folder)
+	if perr != nil {
+		return BaseAllPhotos{}, perr
+	}
+	t, perr := c.target(ctx, gh)
+	if perr != nil {
+		return BaseAllPhotos{}, perr
+	}
+	all, _ := c.readAllPhotos(ctx, t, folder, t.base)
+	if all.Found {
+		all.FileURL = "https://github.com/" + t.repo.FullName + "/blob/" + escapePath(t.base) + "/" + escapePath(all.Path)
+	}
+	return BaseAllPhotos{InFlightAllPhotos: all, Branch: t.base}, nil
+}

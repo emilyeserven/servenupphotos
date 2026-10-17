@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import type { SanitizedExif } from "@/api/exif";
+import type { ExifResponse, SanitizedExif } from "@/api/exif";
 import { requestJson } from "@/api/settings";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
@@ -188,3 +188,26 @@ export const allPhotosCheckQuery = (photo: PhotoIdentity) =>
     retry: false,
     staleTime: 0,
   });
+
+/** ALLPHOTOS.json on the base branch: the photos already in the portfolio. */
+interface BaseAllPhotos extends InFlightAllPhotos {
+  /** The base branch it was read from. */
+  branch: string;
+}
+
+export const allPhotosOnBaseQuery = queryOptions({
+  queryKey: ["photos", "all-photos", "base"],
+  queryFn: () => requestJson<BaseAllPhotos>("/api/photos/all-photos"),
+  retry: false,
+});
+
+/** Reads the EXIF and colors of an original already in R2, as the Add Photo page does for an upload. */
+export const bucketExifMutation = mutationOptions({
+  mutationKey: ["photos", "bucket", "exif"],
+  mutationFn: (key: string) =>
+    requestJson<ExifResponse>("/api/photos/bucket/exif", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ key }),
+    }),
+});

@@ -169,6 +169,16 @@ Each original is shown as a stack, with blank squares behind it standing for its
 first, each labelled with its size (for example "Large · 1800px"); clicking it again collapses them. The key under a
 tile links to the image. A resized copy whose original isn't in the bucket shows on its own, still labelled.
 
+A photo already in `ALLPHOTOS.json` (on the base branch, or in the pull request's copy) gets a book badge
+(`GET /api/photos/all-photos` → `GET /photos/all-photos` reads it from the base branch). An entry matches by its saved
+`images.key`, then its `images.full` URL, then by the name stem in the original's key. An original JPEG that is neither
+in flight nor in `ALLPHOTOS.json` gets a **Generate JSON** button, which opens a modal that reads the original
+from R2 (`POST /api/photos/bucket/exif` with `{ "key" }` → `POST /photos/bucket/exif`) through the same EXIF and color
+analysis as `POST /exif`. The JSON gets the original's URL and key and the URLs of the resized copies in the bucket, and
+its `file` is the name kept in the key (`photos/<hash>-dsc0001.jpg` gives `dsc0001.jpg`). After the same
+`ALLPHOTOS.json` check as Add Photo, **Save to GitHub** asks for the JSON file name and adds it to the photo data pull
+request. The button only shows once both checks have run, so it needs the GitHub settings too.
+
 ### Manage Sizes
 
 `/sizes` lists every original the pipeline uploaded (`photos/<hash>-<name>.jpg`) in a table, one row per photo with
