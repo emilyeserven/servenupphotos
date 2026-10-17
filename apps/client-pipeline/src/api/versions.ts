@@ -7,6 +7,8 @@ export const VERSIONS = [
   { name: "medium", label: "Medium", maxEdge: 1200 },
   { name: "small", label: "Small", maxEdge: 500 },
   { name: "xsmall", label: "X-Small", maxEdge: 250 },
+  // A tiny, low-quality placeholder to show blurred while a real version loads.
+  { name: "preview", label: "Preview", maxEdge: 40 },
 ] as const;
 
 export type VersionName = (typeof VERSIONS)[number]["name"];

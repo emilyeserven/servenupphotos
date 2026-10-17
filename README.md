@@ -96,7 +96,7 @@ pull request collects every photo until you merge it. An existing file is never 
 
 The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
 whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
-its object key, and whose `xlarge`, `large`, `medium`, `small` and `xsmall` are the public URLs of its resized versions. The
+its object key, and whose `xlarge`, `large`, `medium`, `small`, `xsmall` and `preview` are the public URLs of its resized versions. The
 `images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
@@ -109,12 +109,13 @@ photo is already in the portfolio: the page shows that entry and hides **Upload 
 editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
 page says so and still offers both.
 
-Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts five WEBP
+Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts six WEBP
 versions next to it, scaled down to fit their longest edge (width or height) and keeping their proportions:
 `photos/<hash>-<name>-xlarge.webp` (2500px), `-large.webp` (1800px), `-medium.webp` (1200px), `-small.webp` (500px) and
-`-xsmall.webp` (250px), sized with high-density (Retina) screens in mind. A photo already smaller than
+`-xsmall.webp` (250px), sized with high-density (Retina) screens in mind, plus `-preview.webp` (40px), a low-res
+placeholder of a few hundred bytes to show blurred while a real version loads. A photo already smaller than
 a version keeps its size. The Go backend turns the photo upright from its EXIF orientation, resizes it with
-[imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 95 (libwebp method 6, its slowest and smallest) with
+[imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 95 (60 for the preview, which is shown blurred anyway; libwebp method 6, its slowest and smallest) with
 [gen2brain/webp](https://github.com/gen2brain/webp) (libwebp compiled to pure Go, so the image needs no C library). The
 versions carry no metadata.
 
@@ -124,12 +125,13 @@ stretch it and blur it), with a warning when the window is too small and it had 
 also says how much smaller the WEBP is than the same version saved as a JPEG at the original's own quality, estimated
 from its quantization tables (the backend sends `X-Jpeg-Bytes` and `X-Jpeg-Quality` headers). That JPEG is only a
 comparison: versions are always made straight from the original's pixels, never from a re-saved JPEG.
-Each version is made exactly as an upload would make it (`POST /api/photos/versions/{large,medium,small}` → `POST /photos/versions/{version}`, which
+Each version is made exactly as an upload would make it (`POST /api/photos/versions/{xlarge,large,medium,small,xsmall,preview}` → `POST /photos/versions/{version}`, which
 answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
 deletes its versions from R2 along with the original.
 
 > **Frontend analogy:** it's `srcset` prepared ahead of time: one source image, five sizes for the portfolio to pick
-> from.
+> from, plus a tiny `preview` for the blur-up trick (show it stretched with `filter: blur()` as the `<img>`'s background
+> until the real image loads).
 
 Before uploading, **Upload to R2** looks in the bucket for a different photo saved under the same name
 (`photos/<hash>-<name>.jpg` with another hash), since Photos in Flight matches photos by name. If there is one, it shows
