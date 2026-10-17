@@ -122,6 +122,7 @@ func TestUploadPhoto(t *testing.T) {
 	const stem = "/photos/photos/233d38afbc8e-img-0001"
 	wantPuts := []string{
 		"/photos/" + key + " image/jpeg " + string(photo),
+		stem + "-xlarge.webp image/webp xlarge:" + string(photo),
 		stem + "-large.webp image/webp large:" + string(photo),
 		stem + "-medium.webp image/webp medium:" + string(photo),
 		stem + "-small.webp image/webp small:" + string(photo),

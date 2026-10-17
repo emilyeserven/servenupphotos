@@ -43,6 +43,7 @@ function withImages(
       ...sanitized.images,
       full: upload.url,
       key: upload.key,
+      xlarge: upload.versions.xlarge.url,
       large: upload.versions.large.url,
       medium: upload.versions.medium.url,
       small: upload.versions.small.url,

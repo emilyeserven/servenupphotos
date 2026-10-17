@@ -35,8 +35,8 @@ export function R2Upload({ photo, upload }: R2UploadProps) {
       <CardHeader>
         <CardTitle>Upload to R2</CardTitle>
         <CardDescription>
-          Puts the original photo and its large, medium and small WEBP versions in your bucket and
-          gives you their links.
+          Puts the original photo and its resized WEBP versions in your bucket and gives you their
+          links.
         </CardDescription>
       </CardHeader>
       <CardContent>

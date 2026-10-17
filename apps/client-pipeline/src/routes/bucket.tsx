@@ -9,6 +9,7 @@ import {
   photosInFlightQuery,
 } from "@/api/photos";
 import { type SettingsResponse, settingsQuery } from "@/api/settings";
+import { versionKeys } from "@/api/versions";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -122,12 +123,17 @@ function useInFlightImages(githubIsSetUp: boolean): InFlightImages {
   return useMemo(() => inFlightImages(inFlight.data), [inFlight.data]);
 }
 
-/** R2 keys from the images matched in R2 and the keys saved with the photo data. */
+/**
+ * R2 keys from the images matched in R2 and the keys saved with the photo data, plus each one's
+ * resized versions.
+ */
 function inFlightImages(data?: InFlightResponse): InFlightImages {
   if (!data?.pullRequest) return { keys: new Set() };
   const matched = Object.values(data.images.byPath).map((image) => image.key);
   const saved = data.files.flatMap((file) => (file.imageKey ? [file.imageKey] : []));
-  return { keys: new Set([...matched, ...saved]), pullRequestNumber: data.pullRequest.number };
+  const originals = [...matched, ...saved];
+  const keys = new Set([...originals, ...originals.flatMap(versionKeys)]);
+  return { keys, pullRequestNumber: data.pullRequest.number };
 }
 
 function BucketGrid({ images, inFlight }: { images: BucketImage[]; inFlight: InFlightImages }) {

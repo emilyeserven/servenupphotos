@@ -59,13 +59,13 @@ func TestEncodeAllFitsLongestEdge(t *testing.T) {
 		want map[string]image.Point
 	}{
 		{"landscape", 3000, 2000, map[string]image.Point{
-			"large": {1800, 1200}, "medium": {500, 333}, "small": {250, 166},
+			"xlarge": {1800, 1200}, "large": {1200, 800}, "medium": {500, 333}, "small": {250, 166},
 		}},
 		{"portrait", 1000, 2000, map[string]image.Point{
-			"large": {900, 1800}, "medium": {250, 500}, "small": {125, 250},
+			"xlarge": {900, 1800}, "large": {600, 1200}, "medium": {250, 500}, "small": {125, 250},
 		}},
-		{"smaller than large", 1200, 800, map[string]image.Point{
-			"large": {1200, 800}, "medium": {500, 333}, "small": {250, 166},
+		{"smaller than xlarge", 1500, 1000, map[string]image.Point{
+			"xlarge": {1500, 1000}, "large": {1200, 800}, "medium": {500, 333}, "small": {250, 166},
 		}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
@@ -92,7 +92,7 @@ func TestEncodeAllTurnsUpright(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got, want := size(t, encoded[1].Data), image.Pt(333, 500); got != want {
+	if got, want := size(t, encoded[2].Data), image.Pt(333, 500); got != want {
 		t.Errorf("medium = %v, want %v", got, want)
 	}
 }

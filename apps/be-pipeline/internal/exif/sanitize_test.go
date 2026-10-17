@@ -19,6 +19,8 @@ func TestSanitize(t *testing.T) {
 			"createDate":  "2026:05:16 15:24:10",
 			"country":     "South Korea",
 			"city":        nil,
+			"width":       7503.0,
+			"height":      4220.0,
 		}},
 		{"samsung-s7.json", map[string]any{
 			"camera":      "SM-G930V",
@@ -27,6 +29,8 @@ func TestSanitize(t *testing.T) {
 			"createDate":  "2018:01:27 16:36:03",
 			"country":     "United States of America",
 			"city":        "Boston",
+			"width":       2560.0,
+			"height":      1440.0,
 		}},
 		{"sony-a65.json", map[string]any{
 			"camera":      "SLT-A65V",
@@ -35,6 +39,8 @@ func TestSanitize(t *testing.T) {
 			"createDate":  "2017:01:07 13:51:40",
 			"country":     "United States of America",
 			"city":        "New York City",
+			"width":       6000.0,
+			"height":      3376.0,
 		}},
 		{"canon-80d.json", map[string]any{
 			"camera":      "Canon EOS 80D",
@@ -43,6 +49,8 @@ func TestSanitize(t *testing.T) {
 			"createDate":  "2019:01:12 17:21:33",
 			"country":     "United States of America",
 			"city":        "New Haven",
+			"width":       4467.0,
+			"height":      2701.0,
 		}},
 		{"canon-t6i.json", map[string]any{
 			"camera":      "Canon EOS Rebel T6i",
@@ -51,6 +59,8 @@ func TestSanitize(t *testing.T) {
 			"createDate":  "2018:02:25 14:42:12",
 			"country":     "United States of America",
 			"city":        "New York City",
+			"width":       5999.0,
+			"height":      3396.0,
 		}},
 	}
 
@@ -80,6 +90,28 @@ func TestSanitize(t *testing.T) {
 	}
 }
 
+func TestSanitizeSize(t *testing.T) {
+	tests := []struct {
+		name          string
+		fields        map[string]any
+		width, height any
+	}{
+		{"upright", map[string]any{"ImageWidth": 6000.0, "ImageHeight": 4000.0, "Orientation": "Horizontal (normal)"}, 6000.0, 4000.0},
+		{"turned", map[string]any{"ImageWidth": 6000.0, "ImageHeight": 4000.0, "Orientation": "Rotate 90 CW"}, 4000.0, 6000.0},
+		{"mirrored and turned", map[string]any{"ImageWidth": 6000.0, "ImageHeight": 4000.0, "Orientation": "Mirror horizontal and rotate 270 CW"}, 4000.0, 6000.0},
+		{"missing height", map[string]any{"ImageWidth": 6000.0}, nil, nil},
+		{"not a number", map[string]any{"ImageWidth": "6000", "ImageHeight": 4000.0}, nil, nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := roundTrip(t, Sanitize(tt.fields))
+			if got["width"] != tt.width || got["height"] != tt.height {
+				t.Errorf("width, height = %v, %v; want %v, %v", got["width"], got["height"], tt.width, tt.height)
+			}
+		})
+	}
+}
+
 func TestSanitizeEmpty(t *testing.T) {
 	got := roundTrip(t, Sanitize(map[string]any{"Model": "", "City": 42}))
 	checkNoImages(t, got)
@@ -99,7 +131,7 @@ func checkNoImages(t *testing.T, got map[string]any) {
 	if !ok {
 		t.Fatalf("images = %#v, want an object", got["images"])
 	}
-	want := map[string]any{"full": nil, "key": nil, "large": nil, "medium": nil, "small": nil}
+	want := map[string]any{"full": nil, "key": nil, "xlarge": nil, "large": nil, "medium": nil, "small": nil}
 	if !reflect.DeepEqual(images, want) {
 		t.Errorf("images = %#v, want %#v", images, want)
 	}

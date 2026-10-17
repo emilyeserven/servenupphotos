@@ -26,7 +26,8 @@ type Version struct {
 
 // All are the versions every uploaded photo gets, largest first.
 var All = []Version{
-	{Name: "large", MaxEdge: 1800},
+	{Name: "xlarge", MaxEdge: 1800},
+	{Name: "large", MaxEdge: 1200},
 	{Name: "medium", MaxEdge: 500},
 	{Name: "small", MaxEdge: 250},
 }

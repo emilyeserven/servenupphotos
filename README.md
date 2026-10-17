@@ -94,8 +94,10 @@ commit to the Settings branch directly. The first save creates a `photo-data/<da
 **Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
 pull request collects every photo until you merge it. An existing file is never overwritten.
 
-The sanitized EXIF has an `images` object whose `full` is the photo's public R2 URL and `key` its object key, and whose
-`large`, `medium` and `small` are the public URLs of its resized versions. All are `null` until you
+The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
+whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
+its object key, and whose `xlarge`, `large`, `medium` and `small` are the public URLs of its resized versions. The
+`images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
@@ -107,9 +109,9 @@ photo is already in the portfolio: the page shows that entry and hides **Upload 
 editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
 page says so and still offers both.
 
-Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts three WEBP
+Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts four WEBP
 versions next to it, scaled down to fit their longest edge (width or height) and keeping their proportions:
-`photos/<hash>-<name>-large.webp` (1800px), `-medium.webp` (500px) and `-small.webp` (250px). A photo already smaller than
+`photos/<hash>-<name>-xlarge.webp` (1800px), `-large.webp` (1200px), `-medium.webp` (500px) and `-small.webp` (250px). A photo already smaller than
 a version keeps its size. The Go backend turns the photo upright from its EXIF orientation, resizes it with
 [imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 82 with
 [gen2brain/webp](https://github.com/gen2brain/webp) (libwebp compiled to pure Go, so the image needs no C library). The
@@ -151,7 +153,8 @@ file's name), or a "no image" sign when there's none. The page only reads from G
 `/bucket` shows every image in the R2 bucket from Settings (`GET /api/photos/bucket` → `GET /photos/bucket`), newest
 first, under any prefix: objects ending in `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp` or `.avif`. Each tile shows the image
 from the bucket's public URL with its key, size and upload time, and links to the full image. It needs the R2 keys,
-bucket and public URL in Settings, and only reads from R2.
+bucket and public URL in Settings, and only reads from R2. An image whose photo data is still in the open **Add photo
+data** pull request is faded with a pull request badge, and so are that photo's resized versions.
 
 ## Checks (same as CI)
 

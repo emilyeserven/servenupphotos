@@ -143,7 +143,7 @@ func putObject(ctx context.Context, client *s3.Client, cfg settings.R2, key stri
 }
 
 // VersionKey is the object key of the version called name of the photo
-// UploadPhoto put at key: photos/<hash>-<name>-large.webp for
+// UploadPhoto put at key: photos/<hash>-<name>-xlarge.webp for
 // photos/<hash>-<name>.jpg.
 func VersionKey(key, name string) string {
 	return strings.TrimSuffix(key, path.Ext(key)) + "-" + name + ".webp"

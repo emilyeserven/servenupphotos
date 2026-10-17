@@ -71,7 +71,7 @@ func TestRemoveImage(t *testing.T) {
 			return problem
 		}
 	}
-	allKeys := []string{"photos/a.jpg", "photos/a-large.webp", "photos/a-medium.webp", "photos/a-small.webp"}
+	allKeys := []string{"photos/a.jpg", "photos/a-xlarge.webp", "photos/a-large.webp", "photos/a-medium.webp", "photos/a-small.webp"}
 	withVersions := func(image removedImage, problem string) removedImage {
 		for _, key := range allKeys[1:] {
 			image.Versions = append(image.Versions, removedImage{Key: key, Deleted: problem == "", Message: problem})
