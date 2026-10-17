@@ -38,6 +38,7 @@ func TestUpload(t *testing.T) {
 		{"not a jpeg", []byte("\x89PNG\r\n\x1a\n"), "", nil, http.StatusUnsupportedMediaType, "photo must be a JPEG"},
 		{"not configured", photo, "", &storage.UploadError{Message: "Fill in Bucket first.", NotConfigured: true}, http.StatusBadRequest, "Fill in Bucket first."},
 		{"same name", photo, "", &storage.UploadError{Message: "already has", SameName: []storage.BucketImage{{Key: "photos/a-img-0001.jpg"}}}, http.StatusConflict, `"sameName":[{"key":"photos/a-img-0001.jpg"`},
+		{"unreadable", photo, "", &storage.UploadError{Message: "Couldn't read this JPEG", NotAPhoto: true}, http.StatusUnprocessableEntity, "Couldn't read this JPEG"},
 		{"rejected", photo, "", &storage.UploadError{Message: "no bucket", Cloudflare: &storage.CloudflareResponse{Status: 404, Code: "NoSuchBucket"}}, http.StatusBadGateway, `"cloudflare":{"status":404,"code":"NoSuchBucket"`},
 		{"other failure", photo, "", errors.New("disk on fire"), http.StatusInternalServerError, "could not upload photo"},
 	}
@@ -45,7 +46,7 @@ func TestUpload(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var gotName string
 			var gotBody []byte
-			upload := func(_ context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts storage.UploadOptions) (storage.Uploaded, error) {
+			upload := func(_ context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts storage.UploadOptions) (storage.UploadResult, error) {
 				if cfg != stored {
 					t.Errorf("cfg = %+v, want the stored settings", cfg)
 				}
@@ -54,7 +55,10 @@ func TestUpload(t *testing.T) {
 				}
 				gotName = name
 				gotBody, _ = io.ReadAll(body)
-				return storage.Uploaded{Key: "photos/k.jpg", URL: "https://cdn.example/photos/k.jpg"}, tt.err
+				return storage.UploadResult{
+					Uploaded: storage.Uploaded{Key: "photos/k.jpg", URL: "https://cdn.example/photos/k.jpg"},
+					Versions: map[string]storage.Uploaded{"small": {Key: "photos/k-small.webp", URL: "https://cdn.example/photos/k-small.webp"}},
+				}, tt.err
 			}
 
 			body, contentType := uploadBody(t, tt.sameName, tt.content)
@@ -72,11 +76,11 @@ func TestUpload(t *testing.T) {
 				}
 				return
 			}
-			var res storage.Uploaded
+			var res storage.UploadResult
 			if err := json.NewDecoder(rec.Body).Decode(&res); err != nil {
 				t.Fatalf("decode: %v", err)
 			}
-			if res.URL != "https://cdn.example/photos/k.jpg" || res.Key != "photos/k.jpg" {
+			if res.URL != "https://cdn.example/photos/k.jpg" || res.Key != "photos/k.jpg" || res.Versions["small"].Key != "photos/k-small.webp" {
 				t.Errorf("res = %+v", res)
 			}
 			if gotName != "IMG_0001.jpg" || string(gotBody) != string(photo) {

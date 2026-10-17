@@ -14,6 +14,7 @@ import { Route as BucketRouteImport } from './routes/bucket'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SizesRouteImport } from './routes/sizes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SizesRoute = SizesRouteImport.update({
+  id: '/sizes',
+  path: '/sizes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/exif': typeof ExifRoute
   '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
+  '/sizes': typeof SizesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/exif': typeof ExifRoute
   '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
+  '/sizes': typeof SizesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,21 @@ export interface FileRoutesById {
   '/exif': typeof ExifRoute
   '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
+  '/sizes': typeof SizesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/bucket' | '/exif' | '/in-flight' | '/settings'
+  fullPaths: '/' | '/bucket' | '/exif' | '/in-flight' | '/settings' | '/sizes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/bucket' | '/exif' | '/in-flight' | '/settings'
-  id: '__root__' | '/' | '/bucket' | '/exif' | '/in-flight' | '/settings'
+  to: '/' | '/bucket' | '/exif' | '/in-flight' | '/settings' | '/sizes'
+  id:
+    | '__root__'
+    | '/'
+    | '/bucket'
+    | '/exif'
+    | '/in-flight'
+    | '/settings'
+    | '/sizes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +93,7 @@ export interface RootRouteChildren {
   ExifRoute: typeof ExifRoute
   InFlightRoute: typeof InFlightRoute
   SettingsRoute: typeof SettingsRoute
+  SizesRoute: typeof SizesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +133,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sizes': {
+      id: '/sizes'
+      path: '/sizes'
+      fullPath: '/sizes'
+      preLoaderRoute: typeof SizesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +149,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExifRoute: ExifRoute,
   InFlightRoute: InFlightRoute,
   SettingsRoute: SettingsRoute,
+  SizesRoute: SizesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

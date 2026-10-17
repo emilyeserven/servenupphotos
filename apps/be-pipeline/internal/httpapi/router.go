@@ -29,12 +29,14 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("PUT /settings/github", handleUpdateSettings(store.UpdateGitHub))
 	mux.HandleFunc("POST /settings/github/test", handleTestSettings(store.ResolveGitHub, gh.Check))
 	mux.HandleFunc("POST /upload", handleUpload(store.R2, storage.UploadPhoto))
+	mux.HandleFunc("POST /photos/versions/{version}", handleVersionPreview)
 	mux.HandleFunc("POST /photos/github", handlePublishPhoto(store, gh))
 	mux.HandleFunc("POST /photos/all-photos/check", handleAllPhotosCheck(store, gh))
 	mux.HandleFunc("GET /photos/in-flight", handlePhotosInFlight(store, gh, storage.FindPhotos))
 	mux.HandleFunc("GET /photos/in-flight/ci", handleCombineStatus(store, gh))
 	mux.HandleFunc("DELETE /photos/in-flight", handleRemoveInFlight(store, gh, storage.FindPhotos, storage.DeletePhoto))
 	mux.HandleFunc("GET /photos/bucket", handleBucketImages(store.R2, storage.ListImages))
+	mux.HandleFunc("POST /photos/bucket/versions", handleRegenerateVersions(store.R2, storage.RegenerateVersions))
 	return mux
 }
 

@@ -9,6 +9,7 @@ import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { R2Upload } from "@/components/r2-upload";
+import { VersionPreviews } from "@/components/version-previews";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -30,13 +31,26 @@ function validatePhoto(photo: File | null): string | undefined {
   return undefined;
 }
 
-/** The sanitized EXIF with the photo's R2 URL and key filled in once it has been uploaded. */
+/** The sanitized EXIF with the photo's R2 URLs and key filled in once it has been uploaded. */
 function withImages(
   sanitized: SanitizedExif | null | undefined,
   upload: UploadResponse | undefined,
 ): SanitizedExif | null {
   if (!sanitized || !upload) return sanitized ?? null;
-  return { ...sanitized, images: { ...sanitized.images, full: upload.url, key: upload.key } };
+  return {
+    ...sanitized,
+    images: {
+      ...sanitized.images,
+      full: upload.url,
+      key: upload.key,
+      xlarge: upload.versions.xlarge.url,
+      large: upload.versions.large.url,
+      medium: upload.versions.medium.url,
+      small: upload.versions.small.url,
+      xsmall: upload.versions.xsmall.url,
+      preview: upload.versions.preview.url,
+    },
+  };
 }
 
 function ExifPage() {
@@ -119,13 +133,14 @@ function Analysis({ extract, upload }: { extract: ExifMutation; upload: UploadMu
   );
 }
 
-/** What can be done with an analyzed photo, unless it's already in ALLPHOTOS.json: upload it to R2, and save its sanitized EXIF to GitHub. */
+/** What can be done with an analyzed photo, unless it's already in ALLPHOTOS.json: check its resized versions, upload it to R2, and save its sanitized EXIF to GitHub. */
 function PhotoActions({ photo, file, sanitized, upload }: PhotoActionsProps) {
   const identity = sanitized
     ? { file, gpsPosition: sanitized.gpsPosition, createDate: sanitized.createDate }
     : null;
   return (
     <AllPhotosGate photo={identity}>
+      <VersionPreviews photo={photo} />
       <R2Upload photo={photo} upload={upload} />
       {sanitized && <GitHubSaveCard file={file} sanitized={sanitized} />}
     </AllPhotosGate>
@@ -150,6 +165,7 @@ interface PhotoFieldProps {
 function PhotoField({ name, error, disabled, onChange, onBlur }: PhotoFieldProps) {
   const [previewUrl, setPreviewFile] = useObjectUrl();
   const errorId = `${name}-error`;
+  const hintId = `${name}-hint`;
 
   return (
     <div className="flex flex-col gap-2">
@@ -160,10 +176,10 @@ function PhotoField({ name, error, disabled, onChange, onBlur }: PhotoFieldProps
         id={name}
         name={name}
         type="file"
-        accept="image/jpeg"
+        accept="image/jpeg,.jpg,.jpeg"
         disabled={disabled}
         aria-invalid={Boolean(error)}
-        aria-describedby={errorId}
+        aria-describedby={`${hintId} ${errorId}`}
         onBlur={onBlur}
         onChange={(event) => {
           const file = event.target.files?.[0] ?? null;
@@ -171,6 +187,9 @@ function PhotoField({ name, error, disabled, onChange, onBlur }: PhotoFieldProps
           onChange(file);
         }}
       />
+      <p id={hintId} className="text-muted-foreground text-sm">
+        JPEG only (.jpg or .jpeg). Its resized versions are converted to WEBP when it's uploaded.
+      </p>
       <p id={errorId} className="text-destructive text-sm empty:hidden">
         {error}
       </p>
@@ -247,7 +266,7 @@ function ExifResultBody({ mutation, sanitized }: ExifResultProps) {
   );
 }
 
-/** The JSON Save to GitHub writes: the photo's file name and its sanitized EXIF, with images.full and images.key after an upload. */
+/** The JSON Save to GitHub writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload. */
 function UploadJson({ file, sanitized }: { file: string; sanitized: SanitizedExif | null }) {
   if (!sanitized) return <ExifData exif={null} />;
   return <JsonCodeBlock value={{ file, ...sanitized }} title="JSON to Upload" />;

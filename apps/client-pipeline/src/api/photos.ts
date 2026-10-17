@@ -101,13 +101,18 @@ export interface RemoveResult {
   path: string;
   /** The commit that removed the file; its CI run rebuilds ALLPHOTOS.json. */
   commitSha: string;
-  image: {
-    /** The R2 object that was deleted, or would have been. */
-    key?: string;
-    deleted: boolean;
-    /** Why the image wasn't deleted, when it wasn't; absent when R2 had no image to delete. */
-    message?: string;
+  image: RemovedImage & {
+    /** What happened to the image's resized WEBP versions, when its key was known. */
+    versions?: RemovedImage[];
   };
+}
+
+interface RemovedImage {
+  /** The R2 object that was deleted, or would have been. */
+  key?: string;
+  deleted: boolean;
+  /** Why the image wasn't deleted, when it wasn't; absent when R2 had no image to delete. */
+  message?: string;
 }
 
 export const removeInFlightMutation = mutationOptions({

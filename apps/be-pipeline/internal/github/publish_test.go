@@ -162,9 +162,17 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "createDate": null,
   "country": null,
   "city": "Tokyo",
+  "width": null,
+  "height": null,
   "images": {
     "full": "https://photos.example.com/photos/0123456789ab-DSC0001.jpg",
-    "key": "photos/0123456789ab-DSC0001.jpg"
+    "key": "photos/0123456789ab-DSC0001.jpg",
+    "xlarge": null,
+    "large": null,
+    "medium": null,
+    "small": null,
+    "xsmall": null,
+    "preview": null
   }
 }
 `

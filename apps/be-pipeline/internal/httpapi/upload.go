@@ -13,11 +13,12 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
 
-// uploadTimeout bounds how long an upload to R2 may take.
-const uploadTimeout = 60 * time.Second
+// uploadTimeout bounds how long making a photo's versions and uploading them
+// all to R2 may take.
+const uploadTimeout = 120 * time.Second
 
 // uploadFunc puts a photo in R2; storage.UploadPhoto in production.
-type uploadFunc func(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts storage.UploadOptions) (storage.Uploaded, error)
+type uploadFunc func(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts storage.UploadOptions) (storage.UploadResult, error)
 
 // uploadErrorResponse is the body of a failed upload: the reason, plus the
 // photos already under that name or what Cloudflare answered, when known.
@@ -27,8 +28,9 @@ type uploadErrorResponse struct {
 	Cloudflare *storage.CloudflareResponse `json:"cloudflare,omitempty"`
 }
 
-// handleUpload uploads the JPEG in the "photo" field of a multipart form to
-// the R2 bucket in the stored settings and responds with its key and URL.
+// handleUpload uploads the JPEG in the "photo" field of a multipart form, and
+// its resized WEBP versions, to the R2 bucket in the stored settings and
+// responds with their keys and URLs.
 // When the bucket already has a different photo under the same name it
 // responds 409 with those photos instead, unless a "sameName" field set to
 // "keep" comes before the photo.
@@ -81,6 +83,8 @@ func uploadErrorStatus(err *storage.UploadError) int {
 	switch {
 	case err.NotConfigured:
 		return http.StatusBadRequest
+	case err.NotAPhoto:
+		return http.StatusUnprocessableEntity
 	case len(err.SameName) > 0:
 		return http.StatusConflict
 	default:

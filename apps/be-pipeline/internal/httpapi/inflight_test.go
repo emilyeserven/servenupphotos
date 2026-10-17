@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
+	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -62,37 +64,44 @@ func TestRemoveImage(t *testing.T) {
 			return found, problem
 		}
 	}
-	var deletedKey string
+	var deletedKeys []string
 	deletes := func(problem string) deletePhotoFunc {
 		return func(_ context.Context, _ settings.R2, key string) string {
-			deletedKey = key
+			deletedKeys = append(deletedKeys, key)
 			return problem
 		}
+	}
+	allKeys := []string{"photos/a.jpg", "photos/a-xlarge.webp", "photos/a-large.webp", "photos/a-medium.webp", "photos/a-small.webp", "photos/a-xsmall.webp", "photos/a-preview.webp"}
+	withVersions := func(image removedImage, problem string) removedImage {
+		for _, key := range allKeys[1:] {
+			image.Versions = append(image.Versions, removedImage{Key: key, Deleted: problem == "", Message: problem})
+		}
+		return image
 	}
 	tests := []struct {
 		name    string
 		find    findPhotosFunc
 		delete  deletePhotoFunc
 		want    removedImage
-		deleted string
+		deleted []string
 	}{
 		{"deleted", finds(map[storage.PhotoRef]storage.Uploaded{ref: {Key: "photos/a.jpg"}}, ""), deletes(""),
-			removedImage{Key: "photos/a.jpg", Deleted: true}, "photos/a.jpg"},
+			withVersions(removedImage{Key: "photos/a.jpg", Deleted: true}, ""), allKeys},
 		{"delete fails", finds(map[storage.PhotoRef]storage.Uploaded{ref: {Key: "photos/a.jpg"}}, ""), deletes("not allowed"),
-			removedImage{Key: "photos/a.jpg", Message: "not allowed"}, "photos/a.jpg"},
+			withVersions(removedImage{Key: "photos/a.jpg", Message: "not allowed"}, "not allowed"), allKeys},
 		{"no image", finds(map[storage.PhotoRef]storage.Uploaded{}, ""), deletes(""),
-			removedImage{}, ""},
+			removedImage{}, nil},
 		{"outside the bucket", finds(map[storage.PhotoRef]storage.Uploaded{ref: {URL: "https://cdn/a.jpg"}}, ""), deletes(""),
-			removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, ""},
+			removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, nil},
 		{"can't search", finds(nil, "Fill in Bucket first."), deletes(""),
-			removedImage{Message: "Couldn't look in R2, so the image was left there: Fill in Bucket first."}, ""},
+			removedImage{Message: "Couldn't look in R2, so the image was left there: Fill in Bucket first."}, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			deletedKey = ""
+			deletedKeys = nil
 			got, err := removeImage(t.Context(), store, tt.find, tt.delete, removed)
-			if err != nil || got != tt.want || deletedKey != tt.deleted {
-				t.Errorf("removeImage() = %+v, %v, deleted %q; want %+v, deleted %q", got, err, deletedKey, tt.want, tt.deleted)
+			if err != nil || !reflect.DeepEqual(got, tt.want) || !slices.Equal(deletedKeys, tt.deleted) {
+				t.Errorf("removeImage() = %+v, %v, deleted %q; want %+v, deleted %q", got, err, deletedKeys, tt.want, tt.deleted)
 			}
 		})
 	}
