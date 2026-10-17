@@ -21,7 +21,7 @@ export const navGroups = [
     title: "Pipeline",
     items: [
       { title: "Status", url: "/" },
-      { title: "EXIF", url: "/exif" },
+      { title: "Add Photo", url: "/exif" },
       { title: "Photos in Flight", url: "/in-flight" },
       { title: "Explore Bucket", url: "/bucket" },
     ],
