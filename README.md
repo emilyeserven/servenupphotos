@@ -98,6 +98,20 @@ The sanitized EXIF has an `images` object whose `full` is the photo's public R2 
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
+Once a photo is analyzed, the page first looks for it in the saved photo data on GitHub (`POST /api/photos/all-photos/check`
+→ `POST /photos/all-photos/check`): `ALLPHOTOS.json` on the Settings branch, and each photo JSON file the open **Add photo
+data** pull request adds or changes. The pull request's files are read directly, not its `ALLPHOTOS.json`, because CI
+rebuilds that after every push and may not have caught up yet. An entry with the same `file`, `gpsPosition` and `createDate` (exactly equal, with `null` matching only `null`) means the
+photo is already in the portfolio: the page shows that entry and hides **Upload to R2** and **Save to GitHub**, since
+editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
+page says so and still offers both.
+
+Before uploading, **Upload to R2** looks in the bucket for a different photo saved under the same name
+(`photos/<hash>-<name>.jpg` with another hash), since Photos in Flight matches photos by name. If there is one, it shows
+that photo and asks for a new name, or you can keep the name anyway (a `sameName=keep` form field before the photo). When
+Cloudflare rejects a request, the card also shows Cloudflare's own answer (HTTP status, error code and message) under
+the plain-language reason.
+
 The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**. **Actions: Read-only** is
 optional: with it, Photos in Flight can tell when CI has rebuilt `ALLPHOTOS.json` after a removal.
 
