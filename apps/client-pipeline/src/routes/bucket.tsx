@@ -65,8 +65,7 @@ function r2IsSetUp(r2: SettingsResponse["r2"]): boolean {
 
 function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
   const bucket = useQuery(bucketImagesQuery);
-  const inFlight = useQuery({ ...photosInFlightQuery, enabled: githubIsSetUp });
-  const inFlightKeys = useMemo(() => inFlightImageKeys(inFlight.data), [inFlight.data]);
+  const inFlight = useInFlightImages(githubIsSetUp);
 
   return (
     <>
@@ -93,13 +92,7 @@ function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
         <BucketEmpty />
       </Card>
 
-      {bucket.data ? (
-        <BucketGrid
-          images={bucket.data.images}
-          inFlightKeys={inFlightKeys}
-          pullRequestNumber={inFlight.data?.pullRequest?.number}
-        />
-      ) : null}
+      {bucket.data ? <BucketGrid images={bucket.data.images} inFlight={inFlight} /> : null}
     </>
   );
 }
@@ -117,27 +110,27 @@ function BucketEmpty() {
   );
 }
 
-/**
- * R2 keys of the images whose photo data is in the open pull request, from the
- * images matched in R2 and the keys saved with the data.
- */
-function inFlightImageKeys(data?: InFlightResponse): Set<string> {
-  const keys = new Set<string>();
-  if (!data?.pullRequest) return keys;
-  for (const image of Object.values(data.images.byPath)) keys.add(image.key);
-  for (const file of data.files) if (file.imageKey) keys.add(file.imageKey);
-  return keys;
+/** The images whose photo data is in the open pull request, and that pull request's number. */
+interface InFlightImages {
+  keys: Set<string>;
+  pullRequestNumber?: number;
 }
 
-function BucketGrid({
-  images,
-  inFlightKeys,
-  pullRequestNumber,
-}: {
-  images: BucketImage[];
-  inFlightKeys: Set<string>;
-  pullRequestNumber?: number;
-}) {
+/** In-flight images from Photos in Flight's data; none when GitHub isn't set up or it fails. */
+function useInFlightImages(githubIsSetUp: boolean): InFlightImages {
+  const inFlight = useQuery({ ...photosInFlightQuery, enabled: githubIsSetUp });
+  return useMemo(() => inFlightImages(inFlight.data), [inFlight.data]);
+}
+
+/** R2 keys from the images matched in R2 and the keys saved with the photo data. */
+function inFlightImages(data?: InFlightResponse): InFlightImages {
+  if (!data?.pullRequest) return { keys: new Set() };
+  const matched = Object.values(data.images.byPath).map((image) => image.key);
+  const saved = data.files.flatMap((file) => (file.imageKey ? [file.imageKey] : []));
+  return { keys: new Set([...matched, ...saved]), pullRequestNumber: data.pullRequest.number };
+}
+
+function BucketGrid({ images, inFlight }: { images: BucketImage[]; inFlight: InFlightImages }) {
   if (images.length === 0) return null;
   return (
     <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -145,8 +138,9 @@ function BucketGrid({
         <li key={image.key}>
           <BucketTile
             image={image}
-            inFlight={inFlightKeys.has(image.key)}
-            pullRequestNumber={pullRequestNumber}
+            inFlightPullRequest={
+              inFlight.keys.has(image.key) ? inFlight.pullRequestNumber : undefined
+            }
           />
         </li>
       ))}
@@ -173,26 +167,17 @@ function formatSize(bytes: number): string {
  */
 function BucketTile({
   image,
-  inFlight,
-  pullRequestNumber,
+  inFlightPullRequest,
 }: {
   image: BucketImage;
-  inFlight: boolean;
-  pullRequestNumber?: number;
+  /** The open pull request holding this image's photo data, when there is one. */
+  inFlightPullRequest?: number;
 }) {
   const [failed, setFailed] = useState(false);
-  const inFlightLabel = pullRequestNumber
-    ? `In flight: in pull request #${pullRequestNumber}, not merged yet`
-    : "In flight: in the open pull request, not merged yet";
+  const inFlight = inFlightPullRequest !== undefined;
   return (
     <figure className="flex flex-col gap-1.5">
-      <a
-        href={image.url}
-        target="_blank"
-        rel="noreferrer"
-        className="relative block"
-        title={inFlight ? inFlightLabel : undefined}
-      >
+      <a href={image.url} target="_blank" rel="noreferrer" className="relative block">
         {failed ? (
           <div className="bg-muted/40 text-muted-foreground flex aspect-square w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed text-sm">
             <ImageOffIcon className="size-8" aria-hidden />
@@ -210,12 +195,7 @@ function BucketTile({
             )}
           />
         )}
-        {inFlight && (
-          <span className="bg-background/80 text-foreground absolute top-2 right-2 flex size-7 items-center justify-center rounded-md border shadow-sm">
-            <GitPullRequestIcon className="size-4" aria-hidden />
-            <span className="sr-only">{inFlightLabel}</span>
-          </span>
-        )}
+        {inFlight && <InFlightBadge pullRequest={inFlightPullRequest} />}
       </a>
       <figcaption className="flex flex-col text-xs">
         <span className="truncate font-mono" title={image.key}>
@@ -226,5 +206,19 @@ function BucketTile({
         </span>
       </figcaption>
     </figure>
+  );
+}
+
+/** A pull request icon in the image's corner, for an image that isn't merged yet. */
+function InFlightBadge({ pullRequest }: { pullRequest: number }) {
+  const label = `In flight: in pull request #${pullRequest}, not merged yet`;
+  return (
+    <span
+      title={label}
+      className="bg-background/80 text-foreground absolute top-2 right-2 flex size-7 items-center justify-center rounded-md border shadow-sm"
+    >
+      <GitPullRequestIcon className="size-4" aria-hidden />
+      <span className="sr-only">{label}</span>
+    </span>
   );
 }
