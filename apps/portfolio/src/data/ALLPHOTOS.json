@@ -1,5 +1,26 @@
 [
   {
+    "file": "dscf3867.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "gpsPosition": "37 deg 35' 1.83\" N, 126 deg 59' 0.48\" E",
+    "createDate": "2026:05:17 16:44:43",
+    "country": "South Korea",
+    "city": null,
+    "width": 7045,
+    "height": 3963,
+    "images": {
+      "full": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867.jpg",
+      "key": "photos/e4f980195501-dscf3867.jpg",
+      "xlarge": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-xlarge.webp",
+      "large": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-large.webp",
+      "medium": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-medium.webp",
+      "small": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-small.webp",
+      "xsmall": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-xsmall.webp",
+      "preview": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-preview.webp"
+    }
+  },
+  {
     "file": "DSCF2926.jpg",
     "camera": "Fujifilm X-T5",
     "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
