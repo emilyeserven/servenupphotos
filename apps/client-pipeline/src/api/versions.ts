@@ -16,7 +16,14 @@ export function versionKeys(key: string): string[] {
   return VERSIONS.map((version) => `${stem}-${version.name}.webp`);
 }
 
-async function fetchVersion(photo: File, version: VersionName): Promise<Blob> {
+/** A resized version as an upload would make it, and how big it would be as a JPEG instead. */
+interface VersionPreview {
+  webp: Blob;
+  /** Bytes the same version takes as a JPEG at the same quality, when the backend said. */
+  jpegBytes?: number;
+}
+
+async function fetchVersion(photo: File, version: VersionName): Promise<VersionPreview> {
   const body = new FormData();
   body.append("photo", photo);
   const res = await fetch(`/api/photos/versions/${version}`, { method: "POST", body });
@@ -24,7 +31,8 @@ async function fetchVersion(photo: File, version: VersionName): Promise<Blob> {
     const json = (await res.json().catch(() => ({}))) as { message?: string };
     throw new Error(json.message ?? `/api/photos/versions/${version} responded ${res.status}`);
   }
-  return res.blob();
+  const jpegBytes = Number(res.headers.get("x-jpeg-bytes"));
+  return { webp: await res.blob(), jpegBytes: jpegBytes > 0 ? jpegBytes : undefined };
 }
 
 /** One version of photo, made the same way an upload makes it, before anything is uploaded. */

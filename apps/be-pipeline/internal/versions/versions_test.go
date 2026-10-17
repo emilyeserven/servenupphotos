@@ -111,3 +111,13 @@ func TestFind(t *testing.T) {
 		t.Error("Find(huge) found a version")
 	}
 }
+
+func TestJPEGSize(t *testing.T) {
+	img, err := Decode(bytes.NewReader(testJPEG(t, 600, 400)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n, err := JPEGSize(Resize(img, All[2])); err != nil || n == 0 {
+		t.Errorf("JPEGSize = %d, %v", n, err)
+	}
+}

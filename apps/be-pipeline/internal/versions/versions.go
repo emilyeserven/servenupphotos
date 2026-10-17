@@ -10,6 +10,7 @@ import (
 	"bytes"
 	"fmt"
 	"image"
+	"image/jpeg"
 	"io"
 
 	"github.com/disintegration/imaging"
@@ -33,7 +34,11 @@ var All = []Version{
 }
 
 // Quality is the WEBP quality versions are encoded at, from 0 to 100.
-const Quality = 82
+const Quality = 90
+
+// method is libwebp's effort, from 0 (fastest) to 6 (smallest file for the
+// quality); versions are made once, so they get the most.
+const method = 6
 
 // Find returns the version called name.
 func Find(name string) (Version, bool) {
@@ -54,15 +59,34 @@ func Decode(r io.Reader) (image.Image, error) {
 	return img, nil
 }
 
-// Encode scales img down, keeping its proportions, until its longest edge is
-// at most v.MaxEdge, and returns it as a WEBP. Smaller photos keep their size.
+// Resize scales img down, keeping its proportions, until its longest edge
+// is at most v.MaxEdge. Smaller photos keep their size.
+func Resize(img image.Image, v Version) image.Image {
+	return imaging.Fit(img, v.MaxEdge, v.MaxEdge, imaging.Lanczos)
+}
+
+// Encode resizes img for v and returns it as a WEBP.
 func Encode(img image.Image, v Version) ([]byte, error) {
-	resized := imaging.Fit(img, v.MaxEdge, v.MaxEdge, imaging.Lanczos)
+	return EncodeWEBP(Resize(img, v))
+}
+
+// EncodeWEBP encodes an already resized version as a WEBP.
+func EncodeWEBP(resized image.Image) ([]byte, error) {
 	var buf bytes.Buffer
-	if err := webp.Encode(&buf, resized, webp.Options{Quality: Quality, Method: 4}); err != nil {
-		return nil, fmt.Errorf("encode %s version: %w", v.Name, err)
+	if err := webp.Encode(&buf, resized, webp.Options{Quality: Quality, Method: method}); err != nil {
+		return nil, fmt.Errorf("encode WEBP: %w", err)
 	}
 	return buf.Bytes(), nil
+}
+
+// JPEGSize is how many bytes an already resized version would take as a
+// JPEG at the same quality setting, to show what WEBP saves.
+func JPEGSize(resized image.Image) (int, error) {
+	var buf bytes.Buffer
+	if err := jpeg.Encode(&buf, resized, &jpeg.Options{Quality: Quality}); err != nil {
+		return 0, fmt.Errorf("encode JPEG: %w", err)
+	}
+	return buf.Len(), nil
 }
 
 // Encoded is a version's WEBP bytes.
@@ -81,7 +105,7 @@ func EncodeAll(r io.Reader) ([]Encoded, error) {
 	for _, v := range All {
 		data, err := Encode(img, v)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%s version: %w", v.Name, err)
 		}
 		out = append(out, Encoded{Version: v, Data: data})
 	}

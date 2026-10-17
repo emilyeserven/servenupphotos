@@ -19,6 +19,7 @@ func TestVersionPreview(t *testing.T) {
 		message string
 	}{
 		{"small", "small", redJPEG(t), http.StatusOK, ""},
+		{"xlarge", "xlarge", redJPEG(t), http.StatusOK, ""},
 		{"unknown version", "huge", redJPEG(t), http.StatusNotFound, "no such version"},
 		{"not a jpeg", "small", []byte("\x89PNG\r\n\x1a\n"), http.StatusUnsupportedMediaType, "photo must be a JPEG"},
 		{"unreadable jpeg", "small", truncatedJPEG, http.StatusUnprocessableEntity, "Couldn't read this JPEG"},
@@ -42,6 +43,9 @@ func TestVersionPreview(t *testing.T) {
 			}
 			if ct := rec.Header().Get("Content-Type"); ct != "image/webp" {
 				t.Errorf("content type = %q", ct)
+			}
+			if rec.Header().Get("X-Jpeg-Bytes") == "" {
+				t.Error("no X-Jpeg-Bytes header")
 			}
 			// redJPEG is 16×16, smaller than every version, so it keeps its size.
 			cfg, err := webp.DecodeConfig(bytes.NewReader(rec.Body.Bytes()))

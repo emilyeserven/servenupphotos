@@ -97,7 +97,7 @@ function VersionImage({ photo, version }: { photo: File; version: VersionName })
     );
   }
   if (query.isError) return <p className="px-4 text-sm text-red-400">{query.error.message}</p>;
-  return <LightboxImage blob={query.data} format="WEBP" />;
+  return <LightboxImage blob={query.data.webp} format="WEBP" jpegBytes={query.data.jpegBytes} />;
 }
 
 const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
@@ -111,30 +111,56 @@ interface Fit {
  * The image at its true pixel size, centered, with its dimensions and file size. When the window
  * is too small for that, it is scaled down to fit and a warning says so.
  */
-function LightboxImage({ blob, format }: { blob: Blob; format: string }) {
+function LightboxImage({ blob, format, jpegBytes }: LightboxImageProps) {
   const [url, setBlob] = useObjectUrl();
   useEffect(() => setBlob(blob), [blob, setBlob]);
   const [setImage, fit] = useImageFit();
 
   return (
     <>
-      <div className="flex flex-col gap-1 px-4 pb-3 text-sm">
-        <p className="text-white/70">
-          {fit && (
-            <>
-              {fit.natural.width} × {fit.natural.height}px ·{" "}
-            </>
-          )}
-          {sizeFormat.format(blob.size / 1024)} KB {format}
-        </p>
-        {fit && <ScaledWarning fit={fit} />}
-      </div>
+      <ImageFacts blob={blob} format={format} jpegBytes={jpegBytes} fit={fit} />
       <div className="flex min-h-0 flex-1 items-center justify-center p-4 pt-0">
         {url && (
           <img ref={setImage} src={url} alt="" className="max-h-full max-w-full object-contain" />
         )}
       </div>
     </>
+  );
+}
+
+/** The image's size in pixels and bytes, what WEBP saves, and whether it had to be scaled down. */
+function ImageFacts({ blob, format, jpegBytes, fit }: LightboxImageProps & { fit: Fit | null }) {
+  return (
+    <div className="flex flex-col gap-1 px-4 pb-3 text-sm">
+      <p className="text-white/70">
+        {fit && `${fit.natural.width} × ${fit.natural.height}px · `}
+        {sizeFormat.format(blob.size / 1024)} KB {format}
+      </p>
+      {jpegBytes && <WebpSavings webpBytes={blob.size} jpegBytes={jpegBytes} />}
+      {fit && <ScaledWarning fit={fit} />}
+    </div>
+  );
+}
+
+interface LightboxImageProps {
+  blob: Blob;
+  format: string;
+  /** For a WEBP version, its size as a JPEG instead, to show what WEBP saves. */
+  jpegBytes?: number;
+}
+
+const percentFormat = new Intl.NumberFormat(undefined, { style: "percent" });
+
+/** How much smaller the WEBP is than the same version as a JPEG. */
+function WebpSavings({ webpBytes, jpegBytes }: { webpBytes: number; jpegBytes: number }) {
+  const saved = 1 - webpBytes / jpegBytes;
+  return (
+    <p className="text-emerald-300">
+      {saved > 0
+        ? `${percentFormat.format(saved)} smaller than`
+        : `${percentFormat.format(-saved)} bigger than`}{" "}
+      this version as a JPEG ({sizeFormat.format(jpegBytes / 1024)} KB at the same quality).
+    </p>
   );
 }
 
