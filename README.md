@@ -161,6 +161,11 @@ from the bucket's public URL with its key, size and upload time, and links to th
 bucket and public URL in Settings, and only reads from R2. An image whose photo data is still in the open **Add photo
 data** pull request is faded with a pull request badge, and so are that photo's resized versions.
 
+Each original is shown as a stack, with blank squares behind it standing for its resized copies (keys
+`<original stem>-<version>.webp`). Clicking the stack puts the copies right after the original in the grid, largest
+first, each labelled with its size (for example "Large · 1800px"); clicking it again collapses them. The key under a
+tile links to the image. A resized copy whose original isn't in the bucket shows on its own, still labelled.
+
 ## Checks (same as CI)
 
 ```sh

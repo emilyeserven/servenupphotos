@@ -13,8 +13,23 @@ export type VersionName = (typeof VERSIONS)[number]["name"];
 
 /** The R2 keys of the resized versions uploaded with the original at key, as the backend names them. */
 export function versionKeys(key: string): string[] {
-  const stem = key.replace(/\.[^./]*$/, "");
+  const stem = keyStem(key);
   return VERSIONS.map((version) => `${stem}-${version.name}.webp`);
+}
+
+/** A key without its file extension. */
+export function keyStem(key: string): string {
+  return key.replace(/\.[^./]*$/, "");
+}
+
+/** The resized version an R2 key names, and the original's key without its extension. */
+export function parseVersionKey(
+  key: string,
+): { originalStem: string; version: (typeof VERSIONS)[number] } | undefined {
+  const [, originalStem, name] = /^(.*)-([a-z]+)\.webp$/.exec(key) ?? [];
+  const version = VERSIONS.find((v) => v.name === name);
+  if (originalStem === undefined || !version) return undefined;
+  return { originalStem, version };
 }
 
 /** A resized version as an upload would make it, and how big it would be as a JPEG instead. */
