@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ImageOffIcon, RefreshCwIcon, TriangleAlertIcon, ZapIcon } from "lucide-react";
+import { ImageOffIcon, RefreshCwIcon, TriangleAlertIcon, XIcon, ZapIcon } from "lucide-react";
+import { Dialog } from "radix-ui";
 import { type ReactNode, useMemo, useState } from "react";
 import { type BucketImage, bucketImagesQuery } from "@/api/photos";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
@@ -136,7 +137,7 @@ function sizesSummary(rows: PhotoRow[]): string {
 function SizesTable({ rows }: { rows: PhotoRow[] }) {
   return (
     <div className="-mx-6 overflow-x-auto px-6">
-      <table className="w-full text-sm">
+      <table className="w-full text-sm whitespace-nowrap">
         <thead>
           <tr className="border-b text-left">
             <th scope="col" className="py-2 pr-4 font-medium">
@@ -177,7 +178,7 @@ function SizesRow({ row }: { row: PhotoRow }) {
     <tr className="group border-b last:border-b-0">
       <th scope="row" className="py-2 pr-4 text-left font-normal">
         <div className="flex items-center gap-3">
-          <Thumbnail image={row.versions.xsmall} />
+          <Thumbnail row={row} />
           <div className="flex min-w-0 items-center gap-1">
             <ActionButton
               pending={all.isPending}
@@ -197,7 +198,7 @@ function SizesRow({ row }: { row: PhotoRow }) {
               target="_blank"
               rel="noreferrer"
               title={row.original.key}
-              className="truncate font-mono text-xs hover:underline"
+              className="max-w-64 truncate font-mono text-xs hover:underline"
             >
               {row.name}
             </a>
@@ -220,13 +221,73 @@ function SizesRow({ row }: { row: PhotoRow }) {
 
 /**
  * The photo's smallest version, at most 50px tall, or a placeholder when it hasn't been made. A
- * fixed-width box keeps the names lined up whatever shape the photo is.
+ * fixed-width box keeps the names lined up whatever shape the photo is. Clicking it opens the
+ * Medium (1200px) version, or the original when there's no Medium yet.
  */
-function Thumbnail({ image }: { image?: BucketImage }) {
+function Thumbnail({ row }: { row: PhotoRow }) {
+  const [open, setOpen] = useState(false);
+  const large = largeView(row);
   return (
-    <div className="flex h-[50px] w-[75px] shrink-0 items-center justify-center">
-      <ThumbnailImage key={image?.url} image={image} />
-    </div>
+    <>
+      <button
+        type="button"
+        title={`Show the ${large.label}`}
+        onClick={() => setOpen(true)}
+        className="focus-visible:ring-ring flex h-[50px] w-[75px] shrink-0 cursor-zoom-in items-center justify-center rounded-md outline-none focus-visible:ring-2"
+      >
+        <ThumbnailImage key={row.versions.xsmall?.url} image={row.versions.xsmall} />
+        <span className="sr-only">Show {row.name} larger</span>
+      </button>
+      <ImageLightbox
+        open={open}
+        onClose={() => setOpen(false)}
+        title={`${row.name} · ${large.label}`}
+        image={large.image}
+      />
+    </>
+  );
+}
+
+/** What clicking a thumbnail shows: the Medium version, or the original until there is one. */
+function largeView(row: PhotoRow): { image: BucketImage; label: string } {
+  if (row.versions.medium) return { image: row.versions.medium, label: "Medium (1200px) version" };
+  return { image: row.original, label: "original" };
+}
+
+interface ImageLightboxProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  image: BucketImage;
+}
+
+/** A full-window overlay showing one image from the bucket, scaled down only to fit the window. */
+function ImageLightbox({ open, onClose, title, image }: ImageLightboxProps) {
+  return (
+    <Dialog.Root open={open} onOpenChange={(next) => !next && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-neutral-950/95" />
+        <Dialog.Content className="fixed inset-0 z-50 flex flex-col text-white outline-none">
+          <div className="flex items-center gap-4 p-4">
+            <Dialog.Title className="flex-1 truncate font-medium">{title}</Dialog.Title>
+            <Dialog.Description className="sr-only">{image.key} at full size.</Dialog.Description>
+            <Dialog.Close asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Close"
+                className="text-white hover:bg-white/10 hover:text-white"
+              >
+                <XIcon />
+              </Button>
+            </Dialog.Close>
+          </div>
+          <div className="flex min-h-0 flex-1 items-center justify-center p-4 pt-0">
+            <img src={freshUrl(image)} alt="" className="max-h-full max-w-full object-contain" />
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
 
@@ -244,14 +305,18 @@ function ThumbnailImage({ image }: { image?: BucketImage }) {
   }
   return (
     <img
-      // The upload time changes when a version is remade, so the new one is fetched, not cached.
-      src={`${image.url}?v=${encodeURIComponent(image.modified)}`}
+      src={freshUrl(image)}
       alt=""
       loading="lazy"
       onError={() => setFailed(true)}
       className="bg-muted max-h-[50px] max-w-[75px] rounded-md border"
     />
   );
+}
+
+/** The image's URL, changed whenever it's remade so the browser fetches the new one, not its cache. */
+function freshUrl(image: BucketImage): string {
+  return `${image.url}?v=${encodeURIComponent(image.modified)}`;
 }
 
 interface SizeCellProps {

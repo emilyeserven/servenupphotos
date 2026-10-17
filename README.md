@@ -172,7 +172,8 @@ tile links to the image. A resized copy whose original isn't in the bucket shows
 its X-Small version as a thumbnail, and one column per resized version. A size that's already in the bucket has a
 circle-arrows button that remakes it; a size that isn't (for example, one added after the photo was uploaded) has a
 lightning bolt button that makes it. Hovering a row shows a circle-arrows button next to the photo's name that remakes
-every size. Each button sends `POST /api/photos/bucket/versions` → `POST /photos/bucket/versions` with the original's
+every size. Clicking a thumbnail opens the Medium (1200px) version, or the original when there's no Medium yet, in
+a full-window view. A table too wide for the window scrolls sideways. Each button sends `POST /api/photos/bucket/versions` → `POST /photos/bucket/versions` with the original's
 `key` and the `versions` to make (every version when left out); the backend downloads the original from R2, resizes it
 exactly as an upload does, and uploads the versions over whatever was at their keys. It doesn't change the photo's
 JSON.
