@@ -33,7 +33,11 @@ func withOrientation(photo []byte, orientation byte) []byte {
 		0, 0, 0, 0, // no next IFD
 	}
 	payload := append([]byte("Exif\x00\x00"), tiff...)
-	segment := append([]byte{0xFF, 0xE1, byte((len(payload) + 2) >> 8), byte(len(payload) + 2)}, payload...)
+	// APP1 marker, then the segment length: the payload plus the two length bytes.
+	segment := append([]byte{0xFF, 0xE1, 0, 34}, payload...)
+	if len(payload)+2 != 34 {
+		panic("EXIF segment length is out of date")
+	}
 	out := append([]byte{}, photo[:2]...)
 	out = append(out, segment...)
 	return append(out, photo[2:]...)
