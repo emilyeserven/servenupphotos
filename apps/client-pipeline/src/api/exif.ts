@@ -82,6 +82,7 @@ export interface SanitizedExif {
     large: string | null;
     medium: string | null;
     small: string | null;
+    xsmall: string | null;
   };
 }
 

@@ -28,13 +28,14 @@ type Images struct {
 	Full *string `json:"full"`
 	// Key is the original photo's object key in the R2 bucket.
 	Key *string `json:"key"`
-	// XLarge, Large, Medium and Small are the public URLs of the photo's
-	// resized WEBP versions in R2, at most 1800, 1200, 500 and 250 pixels on
-	// the longest edge.
+	// XLarge, Large, Medium, Small and XSmall are the public URLs of the
+	// photo's resized WEBP versions in R2, at most 2500, 1800, 1200, 500 and
+	// 250 pixels on the longest edge.
 	XLarge *string `json:"xlarge"`
 	Large  *string `json:"large"`
 	Medium *string `json:"medium"`
 	Small  *string `json:"small"`
+	XSmall *string `json:"xsmall"`
 }
 
 // Sanitize picks the publishable fields out of exiftool's output, taking the

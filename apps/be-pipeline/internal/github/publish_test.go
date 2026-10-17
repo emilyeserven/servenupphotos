@@ -170,7 +170,8 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
     "xlarge": null,
     "large": null,
     "medium": null,
-    "small": null
+    "small": null,
+    "xsmall": null
   }
 }
 `

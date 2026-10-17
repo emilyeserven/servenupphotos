@@ -47,6 +47,7 @@ function withImages(
       large: upload.versions.large.url,
       medium: upload.versions.medium.url,
       small: upload.versions.small.url,
+      xsmall: upload.versions.xsmall.url,
     },
   };
 }

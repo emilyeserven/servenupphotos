@@ -126,6 +126,7 @@ func TestUploadPhoto(t *testing.T) {
 		stem + "-large.webp image/webp large:" + string(photo),
 		stem + "-medium.webp image/webp medium:" + string(photo),
 		stem + "-small.webp image/webp small:" + string(photo),
+		stem + "-xsmall.webp image/webp xsmall:" + string(photo),
 	}
 	if !slices.Equal(fake.puts, wantPuts) {
 		t.Errorf("PUTs = %q, want %q", fake.puts, wantPuts)

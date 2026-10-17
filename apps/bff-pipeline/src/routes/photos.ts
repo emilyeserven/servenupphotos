@@ -3,7 +3,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { relayToBackend } from "../lib/backend.js";
 
 /** The resized versions the backend can preview; keep in step with versions.All in be-pipeline. */
-const VERSIONS = ["xlarge", "large", "medium", "small"] as const;
+const VERSIONS = ["xlarge", "large", "medium", "small", "xsmall"] as const;
 
 /** Routes that take a photo upload, with how long each may take on the backend. */
 const PHOTO_ROUTES = [

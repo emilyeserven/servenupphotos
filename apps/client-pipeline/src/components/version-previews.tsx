@@ -153,7 +153,7 @@ function ImageFacts({ blob, format, jpeg, fit }: LightboxImageProps & { fit: Fit
         {sizeFormat.format(blob.size / 1024)} KB {format}
         {retinaNote(fit)}
       </p>
-      {jpeg && <WebpSavings webpBytes={blob.size} jpeg={jpeg} />}
+      {jpeg && <WebpSavings webpBytes={blob.size} jpeg={jpeg} fit={fit} />}
       {fit && <ScaledWarning fit={fit} />}
     </div>
   );
@@ -174,15 +174,22 @@ interface LightboxImageProps {
 
 const percentFormat = new Intl.NumberFormat(undefined, { style: "percent" });
 
-/** How much smaller the WEBP is than the same version saved as a JPEG at the original's quality. */
-function WebpSavings({ webpBytes, jpeg }: { webpBytes: number; jpeg: JpegComparison }) {
+interface WebpSavingsProps {
+  webpBytes: number;
+  jpeg: JpegComparison;
+  fit: Fit | null;
+}
+
+/** How much smaller the WEBP is than a JPEG of the same pixel size, at the original's quality. */
+function WebpSavings({ webpBytes, jpeg, fit }: WebpSavingsProps) {
+  const dimensions = fit ? `${fit.natural.width} × ${fit.natural.height}px ` : "";
   const saved = 1 - webpBytes / jpeg.bytes;
   return (
     <p className={saved > 0 ? "text-emerald-300" : "text-amber-300"}>
       {saved > 0
         ? `${percentFormat.format(saved)} smaller than`
         : `${percentFormat.format(-saved)} bigger than`}{" "}
-      {`this version as a JPEG at the original's quality, ${jpeg.quality} (${sizeFormat.format(jpeg.bytes / 1024)} KB).`}
+      {`a ${dimensions}JPEG of the same image at the original's quality, ${jpeg.quality} (${sizeFormat.format(jpeg.bytes / 1024)} KB).`}
     </p>
   );
 }

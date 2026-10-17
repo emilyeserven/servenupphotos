@@ -27,10 +27,11 @@ type Version struct {
 
 // All are the versions every uploaded photo gets, largest first.
 var All = []Version{
-	{Name: "xlarge", MaxEdge: 1800},
-	{Name: "large", MaxEdge: 1200},
-	{Name: "medium", MaxEdge: 500},
-	{Name: "small", MaxEdge: 250},
+	{Name: "xlarge", MaxEdge: 2500},
+	{Name: "large", MaxEdge: 1800},
+	{Name: "medium", MaxEdge: 1200},
+	{Name: "small", MaxEdge: 500},
+	{Name: "xsmall", MaxEdge: 250},
 }
 
 // Quality is the WEBP quality versions are encoded at, from 0 to 100.

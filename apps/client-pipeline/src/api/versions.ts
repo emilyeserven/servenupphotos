@@ -2,10 +2,11 @@ import { queryOptions } from "@tanstack/react-query";
 
 /** The resized WEBP versions every upload puts in R2 next to the original JPEG. */
 export const VERSIONS = [
-  { name: "xlarge", label: "X-Large", maxEdge: 1800 },
-  { name: "large", label: "Large", maxEdge: 1200 },
-  { name: "medium", label: "Medium", maxEdge: 500 },
-  { name: "small", label: "Small", maxEdge: 250 },
+  { name: "xlarge", label: "X-Large", maxEdge: 2500 },
+  { name: "large", label: "Large", maxEdge: 1800 },
+  { name: "medium", label: "Medium", maxEdge: 1200 },
+  { name: "small", label: "Small", maxEdge: 500 },
+  { name: "xsmall", label: "X-Small", maxEdge: 250 },
 ] as const;
 
 export type VersionName = (typeof VERSIONS)[number]["name"];
