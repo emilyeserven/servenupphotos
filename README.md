@@ -121,7 +121,8 @@ versions carry no metadata.
 
 The **Resized versions** card above **Upload to R2** has a button per version, plus **Original**, that opens it in a
 full-window lightbox pixel for pixel on the screen (on a Retina screen that's half its CSS size, so the browser doesn't
-stretch it and blur it), with a warning when the window is too small and it had to be scaled down. For a version it
+stretch it and blur it), with a warning when the window is too small and it had to be scaled down. The preview is the exception: it's stretched to fill the window and smoothed with
+`filter: blur(12px)`, as a page would show it while the real image loads, and the lightbox names that filter. For a version it
 also says how much smaller the WEBP is than the same version saved as a JPEG at the original's own quality, estimated
 from its quantization tables (the backend sends `X-Jpeg-Bytes` and `X-Jpeg-Quality` headers). That JPEG is only a
 comparison: versions are always made straight from the original's pixels, never from a re-saved JPEG.
