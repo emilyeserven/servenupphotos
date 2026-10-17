@@ -50,7 +50,7 @@ func handleVersionPreview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resized := versions.Resize(img, v)
-	data, err := versions.EncodeWEBP(resized)
+	data, err := versions.EncodeWEBP(resized, v.Quality)
 	if err != nil {
 		slog.Error("encode version failed", "version", v.Name, "err", err)
 		writeError(w, http.StatusInternalServerError, "could not make the "+v.Name+" version")

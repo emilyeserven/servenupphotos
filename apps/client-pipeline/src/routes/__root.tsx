@@ -35,7 +35,8 @@ function RootLayout() {
   return (
     <SidebarProvider style={{ "--sidebar-width": "19rem" } as React.CSSProperties}>
       <AppSidebar />
-      <SidebarInset>
+      {/* min-w-0 lets wide content, like a table, scroll inside the page instead of widening it. */}
+      <SidebarInset className="min-w-0">
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />

@@ -20,7 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useObjectUrl } from "@/hooks/use-object-url";
 
 export const Route = createFileRoute("/exif")({
-  component: AddPhotoPage,
+  component: PhotoPage,
   staticData: { wide: true },
 });
 
@@ -51,11 +51,12 @@ function withImages(
       medium: upload.versions.medium.url,
       small: upload.versions.small.url,
       xsmall: upload.versions.xsmall.url,
+      preview: upload.versions.preview.url,
     },
   };
 }
 
-function AddPhotoPage() {
+function PhotoPage() {
   const extract = useMutation(exifMutation);
   // Lives here rather than in the upload card so its URL can go into the sanitized EXIF.
   const upload = useMutation(uploadMutation);
@@ -64,7 +65,7 @@ function AddPhotoPage() {
 
   return (
     <Page
-      title="Add Photo"
+      title="Photo"
       description="Choose a JPEG to read its metadata with exiftool and its colors with go-colorful on the Go backend, then upload it and save its data."
       wide
     >

@@ -345,7 +345,7 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <p className="text-muted-foreground">
         No open pull request titled “Add photo data”. Saving a photo from{" "}
         <Link to="/exif" className="text-foreground underline underline-offset-4">
-          Add Photo
+          Photo
         </Link>{" "}
         opens one.
       </p>

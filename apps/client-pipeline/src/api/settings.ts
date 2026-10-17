@@ -24,6 +24,13 @@ export interface SettingsResponse {
 
 export type SettingsSection = keyof SettingsResponse;
 
+/** Whether Settings has everything needed to list the bucket and show its images. */
+export function r2IsSetUp(r2: SettingsResponse["r2"]): boolean {
+  return [r2.accountId, r2.accessKeyId, r2.secretAccessKey.set, r2.bucket, r2.publicUrl].every(
+    Boolean,
+  );
+}
+
 /** What to do with a stored secret on save: keep it (`undefined`), clear it (`""`), or replace it. */
 export type SecretUpdate = string | undefined;
 

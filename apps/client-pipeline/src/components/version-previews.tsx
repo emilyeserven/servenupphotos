@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { EyeIcon, TriangleAlertIcon, XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
-import { type ReactNode, useEffect, useState } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
 import {
   type JpegComparison,
   type VersionName,
@@ -143,9 +143,14 @@ function SizeRow({ label, onPreview, children }: SizeRowProps) {
       <TableCell>{label}</TableCell>
       {children}
       <TableCell className="text-right">
-        <Button variant="outline" size="sm" onClick={onPreview}>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Preview"
+          title="Preview"
+          onClick={onPreview}
+        >
           <EyeIcon aria-hidden />
-          <span className="sr-only sm:not-sr-only">Preview</span>
         </Button>
       </TableCell>
     </TableRow>
@@ -266,8 +271,21 @@ function VersionImage({ photo, version }: { photo: File; version: VersionName })
     );
   }
   if (query.isError) return <p className="px-4 text-sm text-red-400">{query.error.message}</p>;
-  return <LightboxImage blob={query.data.webp} format="WEBP" jpeg={query.data.jpeg} />;
+  return (
+    <LightboxImage
+      blob={query.data.webp}
+      format="WEBP"
+      jpeg={query.data.jpeg}
+      blur={version === "preview" ? PREVIEW_BLUR : undefined}
+    />
+  );
 }
+
+/**
+ * The CSS filter the preview is shown with, stretched to fill the window, the way a page would
+ * show it while the real image loads: it smooths the preview's few big pixels into soft color.
+ */
+const PREVIEW_BLUR = "blur(12px)";
 
 interface Fit {
   natural: { width: number; height: number };
@@ -283,21 +301,21 @@ interface Fit {
  * pixel over 2 × 2 screen pixels and blur it. When the window is too small for that, it is scaled
  * down to fit and a warning says so.
  */
-function LightboxImage({ blob, format, jpeg }: LightboxImageProps) {
+function LightboxImage({ blob, format, jpeg, blur }: LightboxImageProps) {
   const [url, setBlob] = useObjectUrl();
   useEffect(() => setBlob(blob), [blob, setBlob]);
   const [setImage, fit] = useImageFit();
 
   return (
     <>
-      <ImageFacts blob={blob} format={format} jpeg={jpeg} fit={fit} />
-      <div className="flex min-h-0 flex-1 items-center justify-center p-4 pt-0">
+      <ImageFacts blob={blob} format={format} jpeg={jpeg} blur={blur} fit={fit} />
+      <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden p-4 pt-0">
         {url && (
           <img
             ref={setImage}
             src={url}
             alt=""
-            style={fit ? { width: fit.natural.width / fit.pixelRatio } : undefined}
+            style={imageStyle(fit, blur)}
             className="h-auto max-h-full max-w-full object-contain"
           />
         )}
@@ -306,24 +324,47 @@ function LightboxImage({ blob, format, jpeg }: LightboxImageProps) {
   );
 }
 
+/** Pixel for pixel, or stretched to fill the space and blurred when there's a blur. */
+function imageStyle(fit: Fit | null, blur?: string): CSSProperties | undefined {
+  if (blur) return { width: "100%", height: "100%", filter: blur };
+  return fit ? { width: fit.natural.width / fit.pixelRatio } : undefined;
+}
+
 /** The image's size in pixels and bytes, what WEBP saves, and whether it had to be scaled down. */
-function ImageFacts({ blob, format, jpeg, fit }: LightboxImageProps & { fit: Fit | null }) {
+function ImageFacts({ blob, format, jpeg, blur, fit }: LightboxImageProps & { fit: Fit | null }) {
   return (
     <div className="flex flex-col gap-1 px-4 pb-3 text-sm">
       <p className="text-white/70">
         {fit && `${fit.natural.width} × ${fit.natural.height}px · `}
         {sizeFormat.format(blob.size / 1024)} KB {format}
-        {retinaNote(fit)}
+        {retinaNote(fit, blur)}
       </p>
       {jpeg && <WebpSavings webpBytes={blob.size} jpeg={jpeg} fit={fit} />}
-      {fit && <ScaledWarning fit={fit} />}
+      <FitNote fit={fit} blur={blur} />
     </div>
   );
 }
 
+/** How the image is drawn, when that needs saying: blurred, or scaled down to fit the window. */
+function FitNote({ fit, blur }: { fit: Fit | null; blur?: string }) {
+  if (blur) return <BlurNote blur={blur} />;
+  return fit && <ScaledWarning fit={fit} />;
+}
+
+/** Says the image is stretched and blurred, with the CSS that does it. */
+function BlurNote({ blur }: { blur: string }) {
+  return (
+    <p className="text-white/70">
+      Stretched to fill the window and smoothed with{" "}
+      <code className="rounded bg-white/10 px-1 py-0.5 font-mono text-white">filter: {blur};</code>{" "}
+      as a page would show it while the real image loads.
+    </p>
+  );
+}
+
 /** Explains why the image looks small on a high-density screen, where it's drawn pixel for pixel. */
-function retinaNote(fit: Fit | null): string {
-  if (!fit || fit.pixelRatio <= 1) return "";
+function retinaNote(fit: Fit | null, blur?: string): string {
+  if (blur || !fit || fit.pixelRatio <= 1) return "";
   return ` · shown pixel for pixel on this ${fit.pixelRatio}× screen`;
 }
 
@@ -332,6 +373,8 @@ interface LightboxImageProps {
   format: string;
   /** For a WEBP version, its size as a JPEG instead, to show what WEBP saves. */
   jpeg?: JpegComparison;
+  /** A CSS filter, such as "blur(12px)": the image is then stretched to fill the space. */
+  blur?: string;
 }
 
 interface WebpSavingsProps {

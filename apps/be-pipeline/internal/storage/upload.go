@@ -43,6 +43,9 @@ type UploadError struct {
 	NotConfigured bool
 	// NotAPhoto is set when the JPEG couldn't be read to make its versions.
 	NotAPhoto bool
+	// NotFound is set when regenerating the versions of a photo that isn't
+	// in the bucket.
+	NotFound bool
 	// SameName lists the other photos already in the bucket under the name
 	// being uploaded, newest first, when that is why the upload stopped.
 	SameName []BucketImage
