@@ -14,13 +14,13 @@ import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
 
 interface GenerateJsonProps {
@@ -40,12 +40,12 @@ export function GenerateJsonButton({ original, copies }: GenerateJsonProps) {
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // The original is read once, the first time the sheet opens.
+  // The original is read once, the first time the modal opens.
   const start = () => {
     if (extract.isIdle) extract.mutate(original.key);
   };
   // The tile turns in flight once the saved photo is in the pull request, which removes this
-  // button, so the bucket's marks are refreshed only after the sheet closes.
+  // button, so the bucket's marks are refreshed only after the modal closes.
   const refreshMarks = () => {
     if (!saved) return;
     void queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey });
@@ -58,26 +58,26 @@ export function GenerateJsonButton({ original, copies }: GenerateJsonProps) {
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetTrigger asChild>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="self-start">
           <BracesIcon />
           Generate JSON
         </Button>
-      </SheetTrigger>
-      <SheetContent className="w-full gap-0 overflow-y-auto sm:max-w-xl">
-        <SheetHeader>
-          <SheetTitle>Generate JSON</SheetTitle>
-          <SheetDescription className="font-mono break-all">{original.key}</SheetDescription>
-        </SheetHeader>
+      </DialogTrigger>
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Generate JSON</DialogTitle>
+          <DialogDescription className="font-mono break-all">{original.key}</DialogDescription>
+        </DialogHeader>
         <GeneratedJson
           extract={extract}
           original={original}
           copies={copies}
           onSaved={() => setSaved(true)}
         />
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -88,7 +88,7 @@ interface GeneratedJsonProps extends GenerateJsonProps {
 
 function GeneratedJson({ extract, original, copies, onSaved }: GeneratedJsonProps) {
   return (
-    <div className="flex flex-col gap-4 px-4 pb-4">
+    <div className="flex min-w-0 flex-col gap-4">
       <img
         src={original.url}
         alt={original.key}

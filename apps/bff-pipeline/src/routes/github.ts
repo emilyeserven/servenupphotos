@@ -59,4 +59,15 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
   app.get("/photos/bucket", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/bucket", { timeoutMs: 35_000 }),
   );
+
+  // Remakes resized versions of a photo already in R2 from its original; the backend gives
+  // downloading, resizing and uploading 120s, so this waits a little longer.
+  app.post("/photos/bucket/versions", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/bucket/versions", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+      timeoutMs: 150_000,
+    }),
+  );
 };

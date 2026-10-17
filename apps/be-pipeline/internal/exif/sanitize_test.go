@@ -131,7 +131,7 @@ func checkNoImages(t *testing.T, got map[string]any) {
 	if !ok {
 		t.Fatalf("images = %#v, want an object", got["images"])
 	}
-	want := map[string]any{"full": nil, "key": nil, "xlarge": nil, "large": nil, "medium": nil, "small": nil, "xsmall": nil}
+	want := map[string]any{"full": nil, "key": nil, "xlarge": nil, "large": nil, "medium": nil, "small": nil, "xsmall": nil, "preview": nil}
 	if !reflect.DeepEqual(images, want) {
 		t.Errorf("images = %#v, want %#v", images, want)
 	}

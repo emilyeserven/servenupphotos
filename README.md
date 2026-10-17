@@ -96,7 +96,7 @@ pull request collects every photo until you merge it. An existing file is never 
 
 The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
 whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
-its object key, and whose `xlarge`, `large`, `medium`, `small` and `xsmall` are the public URLs of its resized versions. The
+its object key, and whose `xlarge`, `large`, `medium`, `small`, `xsmall` and `preview` are the public URLs of its resized versions. The
 `images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
@@ -109,27 +109,30 @@ photo is already in the portfolio: the page shows that entry and hides **Upload 
 editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
 page says so and still offers both.
 
-Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts five WEBP
+Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts six WEBP
 versions next to it, scaled down to fit their longest edge (width or height) and keeping their proportions:
 `photos/<hash>-<name>-xlarge.webp` (2500px), `-large.webp` (1800px), `-medium.webp` (1200px), `-small.webp` (500px) and
-`-xsmall.webp` (250px), sized with high-density (Retina) screens in mind. A photo already smaller than
+`-xsmall.webp` (250px), sized with high-density (Retina) screens in mind, plus `-preview.webp` (40px), a low-res
+placeholder of a few hundred bytes to show blurred while a real version loads. A photo already smaller than
 a version keeps its size. The Go backend turns the photo upright from its EXIF orientation, resizes it with
-[imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 95 (libwebp method 6, its slowest and smallest) with
+[imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 95 (60 for the preview, which is shown blurred anyway; libwebp method 6, its slowest and smallest) with
 [gen2brain/webp](https://github.com/gen2brain/webp) (libwebp compiled to pure Go, so the image needs no C library). The
 versions carry no metadata.
 
 The **Resized versions** card above **Upload to R2** has a button per version, plus **Original**, that opens it in a
 full-window lightbox pixel for pixel on the screen (on a Retina screen that's half its CSS size, so the browser doesn't
-stretch it and blur it), with a warning when the window is too small and it had to be scaled down. For a version it
+stretch it and blur it), with a warning when the window is too small and it had to be scaled down. The preview is the exception: it's stretched to fill the window and smoothed with
+`filter: blur(12px)`, as a page would show it while the real image loads, and the lightbox names that filter. For a version it
 also says how much smaller the WEBP is than the same version saved as a JPEG at the original's own quality, estimated
 from its quantization tables (the backend sends `X-Jpeg-Bytes` and `X-Jpeg-Quality` headers). That JPEG is only a
 comparison: versions are always made straight from the original's pixels, never from a re-saved JPEG.
-Each version is made exactly as an upload would make it (`POST /api/photos/versions/{large,medium,small}` → `POST /photos/versions/{version}`, which
+Each version is made exactly as an upload would make it (`POST /api/photos/versions/{xlarge,large,medium,small,xsmall,preview}` → `POST /photos/versions/{version}`, which
 answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
 deletes its versions from R2 along with the original.
 
 > **Frontend analogy:** it's `srcset` prepared ahead of time: one source image, five sizes for the portfolio to pick
-> from.
+> from, plus a tiny `preview` for the blur-up trick (show it stretched with `filter: blur()` as the `<img>`'s background
+> until the real image loads).
 
 Before uploading, **Upload to R2** looks in the bucket for a different photo saved under the same name
 (`photos/<hash>-<name>.jpg` with another hash), since Photos in Flight matches photos by name. If there is one, it shows
@@ -169,12 +172,24 @@ tile links to the image. A resized copy whose original isn't in the bucket shows
 A photo already in `ALLPHOTOS.json` (on the base branch, or in the pull request's copy) gets a book badge
 (`GET /api/photos/all-photos` → `GET /photos/all-photos` reads it from the base branch). An entry matches by its saved
 `images.key`, then its `images.full` URL, then by the name stem in the original's key. An original JPEG that is neither
-in flight nor in `ALLPHOTOS.json` gets a **Generate JSON** button, which opens a side panel that reads the original
+in flight nor in `ALLPHOTOS.json` gets a **Generate JSON** button, which opens a modal that reads the original
 from R2 (`POST /api/photos/bucket/exif` with `{ "key" }` → `POST /photos/bucket/exif`) through the same EXIF and color
 analysis as `POST /exif`. The JSON gets the original's URL and key and the URLs of the resized copies in the bucket, and
 its `file` is the name kept in the key (`photos/<hash>-dsc0001.jpg` gives `dsc0001.jpg`). After the same
 `ALLPHOTOS.json` check as Add Photo, **Save to GitHub** asks for the JSON file name and adds it to the photo data pull
 request. The button only shows once both checks have run, so it needs the GitHub settings too.
+
+### Manage Sizes
+
+`/sizes` lists every original the pipeline uploaded (`photos/<hash>-<name>.jpg`) in a table, one row per photo with
+its X-Small version as a thumbnail, and one column per resized version. A size that's already in the bucket has a
+circle-arrows button that remakes it; a size that isn't (for example, one added after the photo was uploaded) has a
+lightning bolt button that makes it. Hovering a row shows a circle-arrows button next to the photo's name that remakes
+every size. Clicking a thumbnail opens the Medium (1200px) version, or the original when there's no Medium yet, in
+a full-window view. A table too wide for the window scrolls sideways. Each button sends `POST /api/photos/bucket/versions` → `POST /photos/bucket/versions` with the original's
+`key` and the `versions` to make (every version when left out); the backend downloads the original from R2, resizes it
+exactly as an upload does, and uploads the versions over whatever was at their keys. It doesn't change the photo's
+JSON.
 
 ## Checks (same as CI)
 

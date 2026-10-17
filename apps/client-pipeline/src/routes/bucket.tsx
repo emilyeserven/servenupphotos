@@ -3,7 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { BookCheckIcon, GitPullRequestIcon, ImageOffIcon } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import { type BucketImage, bucketImagesQuery } from "@/api/photos";
-import { type SettingsResponse, settingsQuery } from "@/api/settings";
+import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { VERSIONS, keyStem, parseVersionKey } from "@/api/versions";
 import { GenerateJsonButton } from "@/components/generate-json";
 import { Page } from "@/components/page";
@@ -55,13 +55,6 @@ function BucketPage() {
         }
       </QueryResult>
     </Page>
-  );
-}
-
-/** Whether Settings has everything needed to list the bucket and show its images. */
-function r2IsSetUp(r2: SettingsResponse["r2"]): boolean {
-  return [r2.accountId, r2.accessKeyId, r2.secretAccessKey.set, r2.bucket, r2.publicUrl].every(
-    Boolean,
   );
 }
 
