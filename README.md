@@ -115,8 +115,9 @@ a version keeps its size. The Go backend turns the photo upright from its EXIF o
 [gen2brain/webp](https://github.com/gen2brain/webp) (libwebp compiled to pure Go, so the image needs no C library). The
 versions carry no metadata.
 
-The **Resized versions** card above **Upload to R2** has a button per version that shows it at full size, made exactly as
-an upload would make it (`POST /api/photos/versions/{large,medium,small}` → `POST /photos/versions/{version}`, which
+The **Resized versions** card above **Upload to R2** has a button per version, plus **Original**, that opens it in a
+full-window lightbox at its true pixel size (with a warning when the window is too small and it had to be scaled down).
+Each version is made exactly as an upload would make it (`POST /api/photos/versions/{large,medium,small}` → `POST /photos/versions/{version}`, which
 answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
 deletes its versions from R2 along with the original.
 

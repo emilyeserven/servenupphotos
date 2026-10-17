@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { TriangleAlertIcon, XIcon } from "lucide-react";
+import { Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
 import { type VersionName, VERSIONS, versionPreviewQuery } from "@/api/versions";
 import { Button } from "@/components/ui/button";
@@ -6,74 +8,174 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Spinner } from "@/components/ui/spinner";
 import { useObjectUrl } from "@/hooks/use-object-url";
 
-/** Buttons that show each resized WEBP version of photo at full size, before it is uploaded. */
+/** What the lightbox shows: one of the resized versions, or the original JPEG. */
+type Shown = VersionName | "original";
+
+/** Buttons that open each resized WEBP version of photo, or the original, at full size in a lightbox. */
 export function VersionPreviews({ photo }: { photo: File }) {
-  const [shown, setShown] = useState<VersionName | null>(null);
+  const [shown, setShown] = useState<Shown | null>(null);
   return (
     <Card>
       <CardHeader>
         <CardTitle>Resized versions</CardTitle>
         <CardDescription>
-          Uploading also puts these WEBP versions in R2. Open one to check its quality at full size.
+          Uploading also puts these WEBP versions in R2. Open one to check its quality at its true
+          size.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Resized versions">
-          {VERSIONS.map((version) => (
-            <Button
-              key={version.name}
-              variant={shown === version.name ? "default" : "outline"}
-              aria-pressed={shown === version.name}
-              onClick={() => setShown(shown === version.name ? null : version.name)}
-            >
-              {version.label} ({version.maxEdge}px)
-            </Button>
-          ))}
-        </div>
-        {shown && <VersionPreview photo={photo} version={shown} />}
+      <CardContent className="flex flex-wrap gap-2">
+        {VERSIONS.map((version) => (
+          <Button key={version.name} variant="outline" onClick={() => setShown(version.name)}>
+            {version.label} ({version.maxEdge}px)
+          </Button>
+        ))}
+        <Button variant="outline" onClick={() => setShown("original")}>
+          Original
+        </Button>
       </CardContent>
+      <Lightbox photo={photo} shown={shown} onClose={() => setShown(null)} />
     </Card>
   );
 }
 
-function VersionPreview({ photo, version }: { photo: File; version: VersionName }) {
+interface LightboxProps {
+  photo: File;
+  shown: Shown | null;
+  onClose: () => void;
+}
+
+/** A full-window overlay showing the chosen image, at its true size when the window fits it. */
+function Lightbox({ photo, shown, onClose }: LightboxProps) {
+  const title = titleOf(shown);
+  return (
+    <Dialog.Root open={shown !== null} onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-neutral-950" />
+        <Dialog.Content className="fixed inset-0 z-50 flex flex-col text-white outline-none">
+          <div className="flex items-start gap-4 p-4">
+            <div className="flex flex-1 flex-col gap-1">
+              <Dialog.Title className="font-medium">{title}</Dialog.Title>
+              <Dialog.Description className="sr-only">
+                The {title.toLowerCase()} of {photo.name} at full size.
+              </Dialog.Description>
+            </div>
+            <Dialog.Close asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Close"
+                className="text-white hover:bg-white/10 hover:text-white"
+              >
+                <XIcon />
+              </Button>
+            </Dialog.Close>
+          </div>
+          {shown && <LightboxBody photo={photo} shown={shown} />}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+function titleOf(shown: Shown | null): string {
+  if (shown === "original") return "Original JPEG";
+  return `${VERSIONS.find((v) => v.name === shown)?.label ?? ""} version`;
+}
+
+function LightboxBody({ photo, shown }: { photo: File; shown: Shown }) {
+  if (shown === "original") return <LightboxImage blob={photo} format="JPEG" />;
+  return <VersionImage photo={photo} version={shown} />;
+}
+
+function VersionImage({ photo, version }: { photo: File; version: VersionName }) {
   const query = useQuery(versionPreviewQuery(photo, version));
   if (query.isPending) {
     return (
-      <p className="text-muted-foreground flex items-center gap-2 text-sm">
+      <p className="flex items-center gap-2 px-4 text-sm text-white/70">
         <Spinner /> Making the {version} version…
       </p>
     );
   }
-  if (query.isError) return <p className="text-destructive text-sm">{query.error.message}</p>;
-  return <FullSizeImage blob={query.data} version={version} />;
+  if (query.isError) return <p className="px-4 text-sm text-red-400">{query.error.message}</p>;
+  return <LightboxImage blob={query.data} format="WEBP" />;
 }
 
 const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 
-/** The version at its real pixel size, scrolling when it's wider than the page, with its dimensions and file size. */
-function FullSizeImage({ blob, version }: { blob: Blob; version: VersionName }) {
+interface Fit {
+  natural: { width: number; height: number };
+  shown: { width: number; height: number };
+}
+
+/**
+ * The image at its true pixel size, centered, with its dimensions and file size. When the window
+ * is too small for that, it is scaled down to fit and a warning says so.
+ */
+function LightboxImage({ blob, format }: { blob: Blob; format: string }) {
   const [url, setBlob] = useObjectUrl();
   useEffect(() => setBlob(blob), [blob, setBlob]);
-  const [dimensions, setDimensions] = useState<string | null>(null);
+  const [setImage, fit] = useImageFit();
+
   return (
-    <figure className="flex flex-col gap-2">
-      <figcaption className="text-muted-foreground text-sm">
-        {dimensions && <>{dimensions} · </>}
-        {sizeFormat.format(blob.size / 1024)} KB WEBP
-      </figcaption>
-      <div className="bg-muted/40 max-h-[80vh] overflow-auto rounded-lg border">
+    <>
+      <div className="flex flex-col gap-1 px-4 pb-3 text-sm">
+        <p className="text-white/70">
+          {fit && (
+            <>
+              {fit.natural.width} × {fit.natural.height}px ·{" "}
+            </>
+          )}
+          {sizeFormat.format(blob.size / 1024)} KB {format}
+        </p>
+        {fit && <ScaledWarning fit={fit} />}
+      </div>
+      <div className="flex min-h-0 flex-1 items-center justify-center p-4 pt-0">
         {url && (
-          <img
-            src={url}
-            alt={`The ${version} version at full size`}
-            className="block max-w-none"
-            onLoad={(e) =>
-              setDimensions(`${e.currentTarget.naturalWidth} × ${e.currentTarget.naturalHeight}px`)
-            }
-          />
+          <img ref={setImage} src={url} alt="" className="max-h-full max-w-full object-contain" />
         )}
       </div>
-    </figure>
+    </>
   );
+}
+
+/** Says the image is smaller than its true size, when the window made it so. */
+function ScaledWarning({ fit }: { fit: Fit }) {
+  if (fit.shown.width >= fit.natural.width) return null;
+  return (
+    <p role="status" className="flex items-start gap-2 text-amber-300">
+      <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
+      <span>
+        Shown at {fit.shown.width} × {fit.shown.height}px, not its true {fit.natural.width} ×{" "}
+        {fit.natural.height}px, because the window is too small. Widen the window or zoom out to see
+        every pixel.
+      </span>
+    </p>
+  );
+}
+
+/** Measures an image's true size against the size it's drawn at, again whenever it resizes. */
+function useImageFit() {
+  const [img, setImg] = useState<HTMLImageElement | null>(null);
+  const [value, setValue] = useState<Fit | null>(null);
+
+  useEffect(() => {
+    if (!img) return;
+    const measure = () => {
+      if (!img.naturalWidth) return;
+      setValue({
+        natural: { width: img.naturalWidth, height: img.naturalHeight },
+        shown: { width: Math.round(img.clientWidth), height: Math.round(img.clientHeight) },
+      });
+    };
+    measure();
+    img.addEventListener("load", measure);
+    const observer = new ResizeObserver(measure);
+    observer.observe(img);
+    return () => {
+      img.removeEventListener("load", measure);
+      observer.disconnect();
+    };
+  }, [img]);
+
+  return [setImg, value] as const;
 }
