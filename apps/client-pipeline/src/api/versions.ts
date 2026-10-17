@@ -19,8 +19,14 @@ export function versionKeys(key: string): string[] {
 /** A resized version as an upload would make it, and how big it would be as a JPEG instead. */
 interface VersionPreview {
   webp: Blob;
-  /** Bytes the same version takes as a JPEG at the same quality, when the backend said. */
-  jpegBytes?: number;
+  /** The same version as a JPEG at the original's quality, when the backend said. */
+  jpeg?: JpegComparison;
+}
+
+/** How big a version would be as a JPEG saved at the original photo's own quality. */
+export interface JpegComparison {
+  bytes: number;
+  quality: number;
 }
 
 async function fetchVersion(photo: File, version: VersionName): Promise<VersionPreview> {
@@ -31,8 +37,14 @@ async function fetchVersion(photo: File, version: VersionName): Promise<VersionP
     const json = (await res.json().catch(() => ({}))) as { message?: string };
     throw new Error(json.message ?? `/api/photos/versions/${version} responded ${res.status}`);
   }
-  const jpegBytes = Number(res.headers.get("x-jpeg-bytes"));
-  return { webp: await res.blob(), jpegBytes: jpegBytes > 0 ? jpegBytes : undefined };
+  return { webp: await res.blob(), jpeg: jpegComparison(res.headers) };
+}
+
+/** The JPEG comparison the backend sends in headers, when it sent one. */
+function jpegComparison(headers: Headers): JpegComparison | undefined {
+  const bytes = Number(headers.get("x-jpeg-bytes"));
+  const quality = Number(headers.get("x-jpeg-quality"));
+  return bytes > 0 && quality > 0 ? { bytes, quality } : undefined;
 }
 
 /** One version of photo, made the same way an upload makes it, before anything is uploaded. */

@@ -44,8 +44,9 @@ func TestVersionPreview(t *testing.T) {
 			if ct := rec.Header().Get("Content-Type"); ct != "image/webp" {
 				t.Errorf("content type = %q", ct)
 			}
-			if rec.Header().Get("X-Jpeg-Bytes") == "" {
-				t.Error("no X-Jpeg-Bytes header")
+			// redJPEG is saved at quality 100.
+			if rec.Header().Get("X-Jpeg-Bytes") == "" || rec.Header().Get("X-Jpeg-Quality") != "100" {
+				t.Errorf("X-Jpeg-Bytes %q, X-Jpeg-Quality %q", rec.Header().Get("X-Jpeg-Bytes"), rec.Header().Get("X-Jpeg-Quality"))
 			}
 			// redJPEG is 16×16, smaller than every version, so it keeps its size.
 			cfg, err := webp.DecodeConfig(bytes.NewReader(rec.Body.Bytes()))

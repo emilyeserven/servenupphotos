@@ -117,7 +117,24 @@ func TestJPEGSize(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if n, err := JPEGSize(Resize(img, All[2])); err != nil || n == 0 {
+	if n, err := JPEGSize(Resize(img, All[2]), 90); err != nil || n == 0 {
 		t.Errorf("JPEGSize = %d, %v", n, err)
+	}
+}
+
+func TestJPEGQuality(t *testing.T) {
+	img := image.NewRGBA(image.Rect(0, 0, 32, 32))
+	for _, want := range []int{50, 75, 90, 95, 100} {
+		var buf bytes.Buffer
+		if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: want}); err != nil {
+			t.Fatal(err)
+		}
+		got, ok := JPEGQuality(bytes.NewReader(buf.Bytes()))
+		if !ok || got < want-1 || got > want+1 {
+			t.Errorf("quality %d: got %d, %v", want, got, ok)
+		}
+	}
+	if _, ok := JPEGQuality(bytes.NewReader([]byte("not a jpeg"))); ok {
+		t.Error("found a quality in a non-JPEG")
 	}
 }

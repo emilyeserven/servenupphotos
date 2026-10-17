@@ -113,14 +113,16 @@ Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.
 versions next to it, scaled down to fit their longest edge (width or height) and keeping their proportions:
 `photos/<hash>-<name>-xlarge.webp` (1800px), `-large.webp` (1200px), `-medium.webp` (500px) and `-small.webp` (250px). A photo already smaller than
 a version keeps its size. The Go backend turns the photo upright from its EXIF orientation, resizes it with
-[imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 90 (libwebp method 6, its slowest and smallest) with
+[imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 95 (libwebp method 6, its slowest and smallest) with
 [gen2brain/webp](https://github.com/gen2brain/webp) (libwebp compiled to pure Go, so the image needs no C library). The
 versions carry no metadata.
 
 The **Resized versions** card above **Upload to R2** has a button per version, plus **Original**, that opens it in a
-full-window lightbox at its true pixel size (with a warning when the window is too small and it had to be scaled down).
-For a version it also says how much smaller the WEBP is than the same version as a JPEG at the same quality (the
-backend sends that size in an `X-Jpeg-Bytes` header).
+full-window lightbox pixel for pixel on the screen (on a Retina screen that's half its CSS size, so the browser doesn't
+stretch it and blur it), with a warning when the window is too small and it had to be scaled down. For a version it
+also says how much smaller the WEBP is than the same version saved as a JPEG at the original's own quality, estimated
+from its quantization tables (the backend sends `X-Jpeg-Bytes` and `X-Jpeg-Quality` headers). That JPEG is only a
+comparison: versions are always made straight from the original's pixels, never from a re-saved JPEG.
 Each version is made exactly as an upload would make it (`POST /api/photos/versions/{large,medium,small}` → `POST /photos/versions/{version}`, which
 answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
 deletes its versions from R2 along with the original.

@@ -34,7 +34,7 @@ var All = []Version{
 }
 
 // Quality is the WEBP quality versions are encoded at, from 0 to 100.
-const Quality = 90
+const Quality = 95
 
 // method is libwebp's effort, from 0 (fastest) to 6 (smallest file for the
 // quality); versions are made once, so they get the most.
@@ -80,10 +80,12 @@ func EncodeWEBP(resized image.Image) ([]byte, error) {
 }
 
 // JPEGSize is how many bytes an already resized version would take as a
-// JPEG at the same quality setting, to show what WEBP saves.
-func JPEGSize(resized image.Image) (int, error) {
+// JPEG saved at quality, the original photo's own, to show what WEBP saves.
+// It is only a comparison: versions are always made from the original's
+// pixels, never from a re-saved JPEG.
+func JPEGSize(resized image.Image, quality int) (int, error) {
 	var buf bytes.Buffer
-	if err := jpeg.Encode(&buf, resized, &jpeg.Options{Quality: Quality}); err != nil {
+	if err := jpeg.Encode(&buf, resized, &jpeg.Options{Quality: quality}); err != nil {
 		return 0, fmt.Errorf("encode JPEG: %w", err)
 	}
 	return buf.Len(), nil

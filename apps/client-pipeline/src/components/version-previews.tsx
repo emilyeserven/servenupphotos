@@ -2,7 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { TriangleAlertIcon, XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
 import { useEffect, useState } from "react";
-import { type VersionName, VERSIONS, versionPreviewQuery } from "@/api/versions";
+import {
+  type JpegComparison,
+  type VersionName,
+  VERSIONS,
+  versionPreviewQuery,
+} from "@/api/versions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -97,31 +102,42 @@ function VersionImage({ photo, version }: { photo: File; version: VersionName })
     );
   }
   if (query.isError) return <p className="px-4 text-sm text-red-400">{query.error.message}</p>;
-  return <LightboxImage blob={query.data.webp} format="WEBP" jpegBytes={query.data.jpegBytes} />;
+  return <LightboxImage blob={query.data.webp} format="WEBP" jpeg={query.data.jpeg} />;
 }
 
 const sizeFormat = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 
 interface Fit {
   natural: { width: number; height: number };
+  /** The size the image is drawn at, in screen pixels (CSS pixels times the device pixel ratio). */
   shown: { width: number; height: number };
+  /** Screen pixels per CSS pixel: 2 on most Retina screens. */
+  pixelRatio: number;
 }
 
 /**
- * The image at its true pixel size, centered, with its dimensions and file size. When the window
- * is too small for that, it is scaled down to fit and a warning says so.
+ * The image pixel for pixel on the screen, centered, with its dimensions and file size. On a
+ * Retina screen that is half its CSS size, since the browser would otherwise stretch each image
+ * pixel over 2 × 2 screen pixels and blur it. When the window is too small for that, it is scaled
+ * down to fit and a warning says so.
  */
-function LightboxImage({ blob, format, jpegBytes }: LightboxImageProps) {
+function LightboxImage({ blob, format, jpeg }: LightboxImageProps) {
   const [url, setBlob] = useObjectUrl();
   useEffect(() => setBlob(blob), [blob, setBlob]);
   const [setImage, fit] = useImageFit();
 
   return (
     <>
-      <ImageFacts blob={blob} format={format} jpegBytes={jpegBytes} fit={fit} />
+      <ImageFacts blob={blob} format={format} jpeg={jpeg} fit={fit} />
       <div className="flex min-h-0 flex-1 items-center justify-center p-4 pt-0">
         {url && (
-          <img ref={setImage} src={url} alt="" className="max-h-full max-w-full object-contain" />
+          <img
+            ref={setImage}
+            src={url}
+            alt=""
+            style={fit ? { width: fit.natural.width / fit.pixelRatio } : undefined}
+            className="h-auto max-h-full max-w-full object-contain"
+          />
         )}
       </div>
     </>
@@ -129,37 +145,44 @@ function LightboxImage({ blob, format, jpegBytes }: LightboxImageProps) {
 }
 
 /** The image's size in pixels and bytes, what WEBP saves, and whether it had to be scaled down. */
-function ImageFacts({ blob, format, jpegBytes, fit }: LightboxImageProps & { fit: Fit | null }) {
+function ImageFacts({ blob, format, jpeg, fit }: LightboxImageProps & { fit: Fit | null }) {
   return (
     <div className="flex flex-col gap-1 px-4 pb-3 text-sm">
       <p className="text-white/70">
         {fit && `${fit.natural.width} × ${fit.natural.height}px · `}
         {sizeFormat.format(blob.size / 1024)} KB {format}
+        {retinaNote(fit)}
       </p>
-      {jpegBytes && <WebpSavings webpBytes={blob.size} jpegBytes={jpegBytes} />}
+      {jpeg && <WebpSavings webpBytes={blob.size} jpeg={jpeg} />}
       {fit && <ScaledWarning fit={fit} />}
     </div>
   );
+}
+
+/** Explains why the image looks small on a high-density screen, where it's drawn pixel for pixel. */
+function retinaNote(fit: Fit | null): string {
+  if (!fit || fit.pixelRatio <= 1) return "";
+  return ` · shown pixel for pixel on this ${fit.pixelRatio}× screen`;
 }
 
 interface LightboxImageProps {
   blob: Blob;
   format: string;
   /** For a WEBP version, its size as a JPEG instead, to show what WEBP saves. */
-  jpegBytes?: number;
+  jpeg?: JpegComparison;
 }
 
 const percentFormat = new Intl.NumberFormat(undefined, { style: "percent" });
 
-/** How much smaller the WEBP is than the same version as a JPEG. */
-function WebpSavings({ webpBytes, jpegBytes }: { webpBytes: number; jpegBytes: number }) {
-  const saved = 1 - webpBytes / jpegBytes;
+/** How much smaller the WEBP is than the same version saved as a JPEG at the original's quality. */
+function WebpSavings({ webpBytes, jpeg }: { webpBytes: number; jpeg: JpegComparison }) {
+  const saved = 1 - webpBytes / jpeg.bytes;
   return (
-    <p className="text-emerald-300">
+    <p className={saved > 0 ? "text-emerald-300" : "text-amber-300"}>
       {saved > 0
         ? `${percentFormat.format(saved)} smaller than`
         : `${percentFormat.format(-saved)} bigger than`}{" "}
-      this version as a JPEG ({sizeFormat.format(jpegBytes / 1024)} KB at the same quality).
+      {`this version as a JPEG at the original's quality, ${jpeg.quality} (${sizeFormat.format(jpeg.bytes / 1024)} KB).`}
     </p>
   );
 }
@@ -171,9 +194,9 @@ function ScaledWarning({ fit }: { fit: Fit }) {
     <p role="status" className="flex items-start gap-2 text-amber-300">
       <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
       <span>
-        Shown at {fit.shown.width} × {fit.shown.height}px, not its true {fit.natural.width} ×{" "}
-        {fit.natural.height}px, because the window is too small. Widen the window or zoom out to see
-        every pixel.
+        Shown at {fit.shown.width} × {fit.shown.height} screen pixels, not its true{" "}
+        {fit.natural.width} × {fit.natural.height}px, because the window is too small. Widen the
+        window or zoom out to see every pixel.
       </span>
     </p>
   );
@@ -188,9 +211,14 @@ function useImageFit() {
     if (!img) return;
     const measure = () => {
       if (!img.naturalWidth) return;
+      const pixelRatio = window.devicePixelRatio || 1;
       setValue({
         natural: { width: img.naturalWidth, height: img.naturalHeight },
-        shown: { width: Math.round(img.clientWidth), height: Math.round(img.clientHeight) },
+        shown: {
+          width: Math.round(img.clientWidth * pixelRatio),
+          height: Math.round(img.clientHeight * pixelRatio),
+        },
+        pixelRatio,
       });
     };
     measure();

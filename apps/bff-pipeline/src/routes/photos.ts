@@ -26,7 +26,7 @@ export const photoRoutes: FastifyPluginAsync = async (app) => {
         body: Readable.toWeb(request.raw) as ReadableStream,
         duplex: "half",
         timeoutMs,
-        relayHeaders: ["x-jpeg-bytes"],
+        relayHeaders: ["x-jpeg-bytes", "x-jpeg-quality"],
       }),
     );
   }
