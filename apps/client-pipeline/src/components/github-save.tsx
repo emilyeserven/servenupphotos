@@ -38,10 +38,12 @@ function jsonPath(folder: string, name: string): string {
 interface GitHubSaveCardProps {
   file: string;
   sanitized: SanitizedExif;
+  /** Called once the JSON file is saved. */
+  onSaved?: () => void;
 }
 
 /** Saves a photo's sanitized EXIF as JSON in a pull request on the GitHub repository from Settings. */
-export function GitHubSaveCard({ file, sanitized }: GitHubSaveCardProps) {
+export function GitHubSaveCard({ file, sanitized, onSaved }: GitHubSaveCardProps) {
   const settings = useQuery(settingsQuery);
 
   return (
@@ -57,7 +59,12 @@ export function GitHubSaveCard({ file, sanitized }: GitHubSaveCardProps) {
         <QueryResult query={settings}>
           {(data) =>
             data.github.repo && data.github.token.set ? (
-              <GitHubSaveForm github={data.github} file={file} sanitized={sanitized} />
+              <GitHubSaveForm
+                github={data.github}
+                file={file}
+                sanitized={sanitized}
+                onSaved={onSaved}
+              />
             ) : (
               <p className="text-muted-foreground text-sm">
                 Set the GitHub repository and token in{" "}
@@ -78,8 +85,9 @@ function GitHubSaveForm({
   github,
   file,
   sanitized,
+  onSaved,
 }: GitHubSaveCardProps & { github: GitHubSettings }) {
-  const publish = useMutation(publishPhotoMutation);
+  const publish = useMutation({ ...publishPhotoMutation, onSuccess: () => onSaved?.() });
 
   const form = useForm({
     defaultValues: { name: defaultName(file) },

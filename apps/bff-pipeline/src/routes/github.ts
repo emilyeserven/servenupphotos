@@ -39,6 +39,22 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     ),
   );
 
+  // Reads ALLPHOTOS.json on the base branch; the backend gives GitHub 30s.
+  app.get("/photos/all-photos", async (_request, reply) =>
+    relayToBackend(reply, app.log, "/photos/all-photos", { timeoutMs: 35_000 }),
+  );
+
+  // Reads the EXIF and colors of an original already in R2; the backend gives R2 30s to send it,
+  // then reads it as POST /exif does.
+  app.post("/photos/bucket/exif", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/bucket/exif", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+      timeoutMs: 90_000,
+    }),
+  );
+
   // Lists every image in the R2 bucket; the backend gives R2 30s.
   app.get("/photos/bucket", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/bucket", { timeoutMs: 35_000 }),
