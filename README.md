@@ -94,7 +94,10 @@ commit to the Settings branch directly. The first save creates a `photo-data/<da
 **Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
 pull request collects every photo until you merge it. An existing file is never overwritten.
 
-The sanitized EXIF has an `images` object whose `full` is the photo's public R2 URL and `key` its object key. Both are `null` until you
+The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
+whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
+its object key, and whose `xlarge`, `large`, `medium`, `small` and `xsmall` are the public URLs of its resized versions. The
+`images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
@@ -105,6 +108,28 @@ rebuilds that after every push and may not have caught up yet. An entry with the
 photo is already in the portfolio: the page shows that entry and hides **Upload to R2** and **Save to GitHub**, since
 editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
 page says so and still offers both.
+
+Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts five WEBP
+versions next to it, scaled down to fit their longest edge (width or height) and keeping their proportions:
+`photos/<hash>-<name>-xlarge.webp` (2500px), `-large.webp` (1800px), `-medium.webp` (1200px), `-small.webp` (500px) and
+`-xsmall.webp` (250px), sized with high-density (Retina) screens in mind. A photo already smaller than
+a version keeps its size. The Go backend turns the photo upright from its EXIF orientation, resizes it with
+[imaging](https://github.com/disintegration/imaging) and encodes it at WEBP quality 95 (libwebp method 6, its slowest and smallest) with
+[gen2brain/webp](https://github.com/gen2brain/webp) (libwebp compiled to pure Go, so the image needs no C library). The
+versions carry no metadata.
+
+The **Resized versions** card above **Upload to R2** has a button per version, plus **Original**, that opens it in a
+full-window lightbox pixel for pixel on the screen (on a Retina screen that's half its CSS size, so the browser doesn't
+stretch it and blur it), with a warning when the window is too small and it had to be scaled down. For a version it
+also says how much smaller the WEBP is than the same version saved as a JPEG at the original's own quality, estimated
+from its quantization tables (the backend sends `X-Jpeg-Bytes` and `X-Jpeg-Quality` headers). That JPEG is only a
+comparison: versions are always made straight from the original's pixels, never from a re-saved JPEG.
+Each version is made exactly as an upload would make it (`POST /api/photos/versions/{large,medium,small}` → `POST /photos/versions/{version}`, which
+answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
+deletes its versions from R2 along with the original.
+
+> **Frontend analogy:** it's `srcset` prepared ahead of time: one source image, five sizes for the portfolio to pick
+> from.
 
 Before uploading, **Upload to R2** looks in the bucket for a different photo saved under the same name
 (`photos/<hash>-<name>.jpg` with another hash), since Photos in Flight matches photos by name. If there is one, it shows
@@ -133,7 +158,13 @@ file's name), or a "no image" sign when there's none. The page only reads from G
 `/bucket` shows every image in the R2 bucket from Settings (`GET /api/photos/bucket` → `GET /photos/bucket`), newest
 first, under any prefix: objects ending in `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp` or `.avif`. Each tile shows the image
 from the bucket's public URL with its key, size and upload time, and links to the full image. It needs the R2 keys,
-bucket and public URL in Settings, and only reads from R2.
+bucket and public URL in Settings, and only reads from R2. An image whose photo data is still in the open **Add photo
+data** pull request is faded with a pull request badge, and so are that photo's resized versions.
+
+Each original is shown as a stack, with blank squares behind it standing for its resized copies (keys
+`<original stem>-<version>.webp`). Clicking the stack puts the copies right after the original in the grid, largest
+first, each labelled with its size (for example "Large · 1800px"); clicking it again collapses them. The key under a
+tile links to the image. A resized copy whose original isn't in the bucket shows on its own, still labelled.
 
 ## Checks (same as CI)
 

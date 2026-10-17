@@ -69,11 +69,20 @@ export interface SanitizedExif {
   createDate: string | null;
   country: string | null;
   city: string | null;
+  /** The original photo's width and height in pixels, as shown (turned upright from its EXIF orientation). */
+  width: number | null;
+  height: number | null;
   images: {
     /** The original photo's public R2 URL, once it has been uploaded. */
     full: string | null;
     /** The original photo's object key in the R2 bucket, once it has been uploaded. */
     key: string | null;
+    /** Public R2 URLs of the resized WEBP versions, once they have been uploaded. */
+    xlarge: string | null;
+    large: string | null;
+    medium: string | null;
+    small: string | null;
+    xsmall: string | null;
   };
 }
 

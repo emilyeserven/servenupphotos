@@ -99,13 +99,18 @@ export const photosInFlightQuery = queryOptions({
 /** What removing a photo JSON file did, including to its image in R2. */
 export interface RemoveResult {
   path: string;
-  image: {
-    /** The R2 object that was deleted, or would have been. */
-    key?: string;
-    deleted: boolean;
-    /** Why the image wasn't deleted, when it wasn't. */
-    message?: string;
+  image: RemovedImage & {
+    /** What happened to the image's resized WEBP versions, when its key was known. */
+    versions?: RemovedImage[];
   };
+}
+
+interface RemovedImage {
+  /** The R2 object that was deleted, or would have been. */
+  key?: string;
+  deleted: boolean;
+  /** Why the image wasn't deleted, when it wasn't. */
+  message?: string;
 }
 
 export const removeInFlightMutation = mutationOptions({
