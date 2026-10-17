@@ -1,4 +1,5 @@
-import { queryOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { requestJson } from "@/api/settings";
 
 /** The resized WEBP versions every upload puts in R2 next to the original JPEG. */
 export const VERSIONS = [
@@ -72,3 +73,23 @@ export const versionPreviewQuery = (photo: File, version: VersionName) =>
     // Blobs can be large, so they are dropped soon after the photo changes.
     gcTime: 60_000,
   });
+
+/** Where the remade versions of a photo in R2 ended up, by version name. */
+interface RegenerateResult {
+  key: string;
+  versions: Partial<Record<VersionName, { key: string; url: string }>>;
+}
+
+/**
+ * Makes resized versions of the original at key, already in R2, again from that original and
+ * uploads them over any already there; every version when versions is left out.
+ */
+export const regenerateVersionsMutation = mutationOptions({
+  mutationKey: ["photos", "bucket", "versions"],
+  mutationFn: (request: { key: string; versions?: VersionName[] }) =>
+    requestJson<RegenerateResult>("/api/photos/bucket/versions", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request),
+    }),
+});

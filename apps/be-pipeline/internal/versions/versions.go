@@ -100,12 +100,17 @@ type Encoded struct {
 
 // EncodeAll decodes the JPEG in r and encodes every version of it.
 func EncodeAll(r io.Reader) ([]Encoded, error) {
+	return EncodeOnly(r, All)
+}
+
+// EncodeOnly decodes the JPEG in r and encodes just the versions vs of it.
+func EncodeOnly(r io.Reader, vs []Version) ([]Encoded, error) {
 	img, err := Decode(r)
 	if err != nil {
 		return nil, err
 	}
-	out := make([]Encoded, 0, len(All))
-	for _, v := range All {
+	out := make([]Encoded, 0, len(vs))
+	for _, v := range vs {
 		data, err := Encode(img, v)
 		if err != nil {
 			return nil, fmt.Errorf("%s version: %w", v.Name, err)
