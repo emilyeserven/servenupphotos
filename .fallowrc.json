@@ -9,5 +9,8 @@
   ],
   "duplicates": {
     "ignore": ["apps/*/src/components/ui/**", "apps/*/src/styles.css", "apps/*/src/main.tsx"]
+  },
+  "health": {
+    "ignore": ["apps/*/src/components/ui/**"]
   }
 }
