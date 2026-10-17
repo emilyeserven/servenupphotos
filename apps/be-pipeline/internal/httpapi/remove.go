@@ -20,7 +20,8 @@ type removedImage struct {
 	// Key is the object that was deleted, or would have been.
 	Key     string `json:"key,omitempty"`
 	Deleted bool   `json:"deleted"`
-	// Message says why the image wasn't deleted, when it wasn't.
+	// Message says why the image wasn't deleted, when it wasn't. It is empty
+	// when there was no image in R2, since then there was nothing to delete.
 	Message string `json:"message,omitempty"`
 	// Versions are what happened to the image's resized WEBP versions, which
 	// are deleted along with it.
@@ -28,8 +29,11 @@ type removedImage struct {
 }
 
 type removeResponse struct {
-	Path  string       `json:"path"`
-	Image removedImage `json:"image"`
+	Path string `json:"path"`
+	// CommitSHA is the commit that removed the file, whose CI run rebuilds
+	// ALLPHOTOS.json; see handleCombineStatus.
+	CommitSHA string       `json:"commitSha"`
+	Image     removedImage `json:"image"`
 }
 
 // handleRemoveInFlight deletes the photo JSON at the "path" query parameter
@@ -69,7 +73,7 @@ func handleRemoveInFlight(store *settings.Store, gh *github.Client, findPhotos f
 			slog.Error("read settings failed", "err", err)
 			image = removedImage{Message: "Couldn't read the R2 settings, so the image was left in R2."}
 		}
-		writeJSON(w, http.StatusOK, removeResponse{Path: removed.Path, Image: image})
+		writeJSON(w, http.StatusOK, removeResponse{Path: removed.Path, CommitSHA: removed.CommitSHA, Image: image})
 	}
 }
 
@@ -91,7 +95,7 @@ func removeImage(ctx context.Context, store *settings.Store, findPhotos findPhot
 	u, ok := found[ref]
 	switch {
 	case !ok:
-		return removedImage{Message: "There was no image in R2 to delete."}, nil
+		return removedImage{}, nil
 	case u.Key == "":
 		return removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, nil
 	}

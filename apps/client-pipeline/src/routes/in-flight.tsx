@@ -14,11 +14,13 @@ import {
   type InFlightFile,
   type InFlightImages,
   type InFlightResponse,
+  type CombineStatus,
   type RemoveResult,
   photosInFlightQuery,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { JsonCodeBlock } from "@/components/json-code-block";
+import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { QueryResult } from "@/components/query-result";
@@ -81,18 +83,44 @@ function InFlightPage() {
 function InFlightCard() {
   const inFlight = useQuery(photosInFlightQuery);
   const [removed, setRemoved] = useState<RemoveResult | null>(null);
+  // Paths removed on this visit, hidden at once: GitHub can list a deleted file for a while.
+  const [removedPaths, setRemovedPaths] = useState<ReadonlySet<string>>(new Set());
+  const rebuild = useAllPhotosRebuild(Boolean(inFlight.data?.pullRequest), () => {
+    void inFlight.refetch();
+  });
+  const onRemoved = (result: RemoveResult) => {
+    setRemoved(result);
+    setRemovedPaths((paths) => new Set(paths).add(result.path));
+    void inFlight.refetch();
+    rebuild.afterPush();
+  };
+  const shown = withoutRemoved(inFlight.data, removedPaths);
   const showAllPhotos = Route.useSearch({ select: (search) => search.allPhotos === true });
 
   const files = (
     <div className="flex min-w-0 flex-col gap-6">
-      <PullRequestCard inFlight={inFlight} showAllPhotos={showAllPhotos} />
-      {removed && <RemovedNotice result={removed} onDismiss={() => setRemoved(null)} />}
-      {inFlight.data?.files.map((file) => (
+      <PullRequestCard
+        inFlight={inFlight}
+        shown={shown}
+        rebuilding={rebuild.rebuilding}
+        showAllPhotos={showAllPhotos}
+        onRefresh={() => {
+          void inFlight.refetch();
+          void rebuild.status.refetch();
+        }}
+      />
+      <RemovalNotice
+        removed={removed}
+        rebuild={rebuild.status}
+        onDismiss={() => setRemoved(null)}
+      />
+      {shown?.files.map((file) => (
         <FileSection
           key={file.path}
           file={file}
-          images={inFlight.data.images}
-          onRemoved={setRemoved}
+          images={shown.images}
+          rebuilding={rebuild.rebuilding}
+          onRemoved={onRemoved}
         />
       ))}
     </div>
@@ -109,12 +137,54 @@ function InFlightCard() {
   );
 }
 
+/** What the last removal did, then how the ALLPHOTOS.json rebuild after it is going. */
+function RemovalNotice({
+  removed,
+  rebuild,
+  onDismiss,
+}: {
+  removed: RemoveResult | null;
+  rebuild: UseQueryResult<CombineStatus>;
+  onDismiss: () => void;
+}) {
+  if (!removed) return null;
+  return (
+    <RemovedNotice result={removed} onDismiss={onDismiss}>
+      <AllPhotosRebuild status={rebuild} />
+    </RemovedNotice>
+  );
+}
+
+/** data without the files removed on this visit, which GitHub may still list for a while. */
+function withoutRemoved(
+  data: InFlightResponse | undefined,
+  removed: ReadonlySet<string>,
+): InFlightResponse | undefined {
+  if (!data || removed.size === 0) return data;
+  const byPath = Object.fromEntries(
+    Object.entries(data.images.byPath).filter(([path]) => !removed.has(path)),
+  );
+  return {
+    ...data,
+    files: data.files.filter((file) => !removed.has(file.path)),
+    images: { ...data.images, byPath },
+  };
+}
+
 function PullRequestCard({
   inFlight,
+  shown,
+  rebuilding,
   showAllPhotos,
+  onRefresh,
 }: {
   inFlight: UseQueryResult<InFlightResponse>;
+  /** inFlight's data without the files just removed. */
+  shown?: InFlightResponse;
+  /** Whether CI is rebuilding ALLPHOTOS.json. */
+  rebuilding: boolean;
   showAllPhotos: boolean;
+  onRefresh: () => void;
 }) {
   return (
     <Card>
@@ -127,12 +197,7 @@ function PullRequestCard({
         </CardDescription>
         <CardAction className="flex gap-2">
           <AllPhotosToggle shown={showAllPhotos} />
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={inFlight.isFetching}
-            onClick={() => void inFlight.refetch()}
-          >
+          <Button variant="outline" size="sm" disabled={inFlight.isFetching} onClick={onRefresh}>
             {inFlight.isFetching && <Spinner />}
             Refresh
           </Button>
@@ -140,7 +205,7 @@ function PullRequestCard({
       </CardHeader>
       <CardContent>
         <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
-          {(data) => <PullRequestSummary data={data} />}
+          {(data) => <PullRequestSummary data={shown ?? data} rebuilding={rebuilding} />}
         </QueryResult>
       </CardContent>
     </Card>
@@ -235,15 +300,18 @@ function PanelNote({ children }: { children: ReactNode }) {
 function FileSection({
   file,
   images,
+  rebuilding,
   onRemoved,
 }: {
   file: InFlightFile;
   images: InFlightImages;
+  /** Whether CI is rebuilding ALLPHOTOS.json, so a missing entry may be on its way. */
+  rebuilding: boolean;
   onRemoved: (result: RemoveResult) => void;
 }) {
   return (
     <section className="@container flex flex-col gap-2">
-      <h2 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
+      <h2 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
         <a
           href={file.fileUrl}
           target="_blank"
@@ -253,7 +321,7 @@ function FileSection({
           {file.path.split("/").pop()}
         </a>
         <span className="text-muted-foreground font-normal">{file.status}</span>
-        {file.inAllPhotos === null ? null : <AllPhotosMark inAllPhotos={file.inAllPhotos} />}
+        <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
@@ -314,13 +382,34 @@ const ALL_PHOTOS_MARKS = {
     label: "Not in ALLPHOTOS.json",
     className: "text-muted-foreground",
   },
+  // Not in it yet, but CI is rebuilding it.
+  pending: {
+    Icon: CircleDashedIcon,
+    label: "Not in ALLPHOTOS.json yet",
+    className: "text-muted-foreground [&>svg]:animate-spin",
+  },
 };
 
-/** A check mark when the file's data is an entry of ALLPHOTOS.json. */
-function AllPhotosMark({ inAllPhotos }: { inAllPhotos: boolean }) {
-  const { Icon, label, className } = ALL_PHOTOS_MARKS[inAllPhotos ? "in" : "out"];
+function allPhotosMarkKey(inAllPhotos: boolean, rebuilding: boolean) {
+  if (inAllPhotos) return "in";
+  return rebuilding ? "pending" : "out";
+}
+
+/**
+ * A check mark when the file's data is an entry of ALLPHOTOS.json, or a dashed circle when it
+ * isn't, spinning while CI rebuilds the file. Nothing when either file couldn't be read.
+ */
+function AllPhotosMark({
+  inAllPhotos,
+  rebuilding,
+}: {
+  inAllPhotos: boolean | null;
+  rebuilding: boolean;
+}) {
+  if (inAllPhotos === null) return null;
+  const { Icon, label, className } = ALL_PHOTOS_MARKS[allPhotosMarkKey(inAllPhotos, rebuilding)];
   return (
-    <span className={cn("flex items-center gap-1 self-center text-xs font-normal", className)}>
+    <span className={cn("flex items-center gap-1 text-xs font-normal", className)}>
       <Icon className="size-4" aria-hidden />
       {label}
     </span>
@@ -334,12 +423,23 @@ function allPhotosSummary(all: InFlightAllPhotos, files: InFlightFile[]): string
   return `Lists ${all.count}; ${matched} of ${files.length} photo files match`;
 }
 
+/** A spinner and note beside ALLPHOTOS.json while CI rebuilds it. */
+function RebuildingNote({ rebuilding }: { rebuilding: boolean }) {
+  if (!rebuilding) return null;
+  return (
+    <span className="text-muted-foreground flex items-center gap-1 text-xs">
+      <Spinner />
+      CI is rebuilding it
+    </span>
+  );
+}
+
 function imagesSummary(images: InFlightImages, files: number): string {
   if (!images.checked) return images.message ?? "Couldn't check R2.";
   return `${Object.keys(images.byPath).length} of ${files} found in R2`;
 }
 
-function PullRequestSummary({ data }: { data: InFlightResponse }) {
+function PullRequestSummary({ data, rebuilding }: { data: InFlightResponse; rebuilding: boolean }) {
   if (!data.pullRequest) {
     return (
       <p className="text-muted-foreground">
@@ -366,7 +466,10 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dt className="text-muted-foreground">Photo files</dt>
       <dd>{count === 0 ? "None in the data folder" : count}</dd>
       <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
-      <dd>{allPhotosSummary(data.allPhotos, data.files)}</dd>
+      <dd className="flex items-center gap-2">
+        {allPhotosSummary(data.allPhotos, data.files)}
+        <RebuildingNote rebuilding={rebuilding} />
+      </dd>
       <dt className="text-muted-foreground">Images</dt>
       <dd>{imagesSummary(data.images, count)}</dd>
     </dl>

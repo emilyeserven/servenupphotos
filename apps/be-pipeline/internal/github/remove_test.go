@@ -43,7 +43,7 @@ func (f *removeRepo) start(t *testing.T) *Client {
 		case r.Method == http.MethodDelete && strings.HasPrefix(p, "/contents/"):
 			f.deletedPath = strings.TrimPrefix(p, "/contents/")
 			_ = json.NewDecoder(r.Body).Decode(&f.deleted)
-			w.WriteHeader(f.deleteStatus)
+			writeBody(w, f.deleteStatus, map[string]any{"commit": map[string]any{"sha": "c0ffee1"}})
 		default:
 			t.Errorf("unexpected %s %s", r.Method, r.URL.Path)
 			w.WriteHeader(http.StatusNotFound)
@@ -60,7 +60,10 @@ func TestRemove(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Remove() error = %v", err)
 	}
-	want := RemovedFile{Path: file, PhotoName: "DSC0001.jpg", ImageURL: "https://pub/photos/a-dsc0001.jpg", ImageKey: "photos/a-dsc0001.jpg"}
+	want := RemovedFile{
+		Path: file, PhotoName: "DSC0001.jpg", ImageURL: "https://pub/photos/a-dsc0001.jpg", ImageKey: "photos/a-dsc0001.jpg",
+		CommitSHA: "c0ffee1",
+	}
 	if got != want {
 		t.Errorf("Remove() = %+v, want %+v", got, want)
 	}

@@ -90,7 +90,7 @@ func TestRemoveImage(t *testing.T) {
 		{"delete fails", finds(map[storage.PhotoRef]storage.Uploaded{ref: {Key: "photos/a.jpg"}}, ""), deletes("not allowed"),
 			withVersions(removedImage{Key: "photos/a.jpg", Message: "not allowed"}, "not allowed"), allKeys},
 		{"no image", finds(map[storage.PhotoRef]storage.Uploaded{}, ""), deletes(""),
-			removedImage{Message: "There was no image in R2 to delete."}, nil},
+			removedImage{}, nil},
 		{"outside the bucket", finds(map[storage.PhotoRef]storage.Uploaded{ref: {URL: "https://cdn/a.jpg"}}, ""), deletes(""),
 			removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, nil},
 		{"can't search", finds(nil, "Fill in Bucket first."), deletes(""),
@@ -114,5 +114,15 @@ func TestRemoveInFlightNeedsPath(t *testing.T) {
 	router.ServeHTTP(rec, req)
 	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "path is required") {
 		t.Errorf("status = %d, body %s; want 400 asking for a path", rec.Code, rec.Body)
+	}
+}
+
+func TestCombineStatusNotSetUp(t *testing.T) {
+	router := NewRouter(nil, settings.NewStore(filepath.Join(t.TempDir(), "settings.json")))
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/photos/in-flight/ci?sha=abc1234", nil)
+	rec := httptest.NewRecorder()
+	router.ServeHTTP(rec, req)
+	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "Settings first") {
+		t.Errorf("status = %d, body %s; want 400 asking for settings", rec.Code, rec.Body)
 	}
 }

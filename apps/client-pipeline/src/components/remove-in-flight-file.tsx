@@ -1,17 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon, Trash2Icon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import {
   type InFlightFile,
   type InFlightImages,
   type RemoveResult,
   bucketImagesQuery,
-  photosInFlightQuery,
   removeInFlightMutation,
 } from "@/api/photos";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { cn } from "@/lib/utils";
 
 interface RemoveFileProps {
   file: InFlightFile;
@@ -40,7 +38,7 @@ export function RemoveFile({ file, images, onRemoved }: RemoveFileProps) {
     <Button
       variant="ghost"
       size="sm"
-      className="text-muted-foreground hover:text-destructive ml-auto self-center"
+      className="text-muted-foreground hover:text-destructive ml-auto"
       onClick={() => setConfirming(true)}
     >
       <Trash2Icon />
@@ -61,12 +59,9 @@ function ConfirmRemove({ file, imageKey, onRemoved, onCancel }: ConfirmRemovePro
   const remove = useMutation({
     ...removeInFlightMutation,
     onSuccess: async (result) => {
+      // The page refetches the pull request itself; the image may be gone from R2 too.
       onRemoved(result);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey }),
-        // The image may be gone from R2 too.
-        queryClient.invalidateQueries({ queryKey: bucketImagesQuery.queryKey }),
-      ]);
+      await queryClient.invalidateQueries({ queryKey: bucketImagesQuery.queryKey });
     },
   });
 
@@ -111,11 +106,13 @@ function ImageClause({ imageKey }: { imageKey?: string }) {
 export function RemovedNotice({
   result,
   onDismiss,
+  children,
 }: {
   result: RemoveResult;
   onDismiss: () => void;
+  /** More lines about what followed the removal. */
+  children?: ReactNode;
 }) {
-  const { image } = result;
   return (
     <div
       role="status"
@@ -127,26 +124,28 @@ export function RemovedNotice({
           Removed <span className="font-medium">{fileName(result.path)}</span> from the pull
           request.
         </p>
-        <p
-          className={cn(
-            image.deleted ? "text-muted-foreground" : "text-amber-700 dark:text-amber-400",
-          )}
-        >
-          {image.deleted ? (
-            <>
-              Deleted <span className="font-mono text-xs">{image.key}</span> from R2.
-            </>
-          ) : (
-            image.message
-          )}
-        </p>
-        <VersionsNotice versions={image.versions} />
+        <ImageOutcome image={result.image} />
+        <VersionsNotice versions={result.image.versions} />
+        {children}
       </div>
       <Button variant="ghost" size="icon-xs" aria-label="Dismiss" onClick={onDismiss}>
         <XIcon />
       </Button>
     </div>
   );
+}
+
+/** What happened to the image in R2; nothing when R2 had no image to delete. */
+function ImageOutcome({ image }: { image: RemoveResult["image"] }) {
+  if (image.deleted) {
+    return (
+      <p className="text-muted-foreground">
+        Deleted <span className="font-mono text-xs">{image.key}</span> from R2.
+      </p>
+    );
+  }
+  if (!image.message) return null;
+  return <p className="text-amber-700 dark:text-amber-400">{image.message}</p>;
 }
 
 /** What happened to the image's resized versions: one line when all were deleted, else each problem. */

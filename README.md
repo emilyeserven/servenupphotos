@@ -140,7 +140,8 @@ that photo and asks for a new name, or you can keep the name anyway (a `sameName
 Cloudflare rejects a request, the card also shows Cloudflare's own answer (HTTP status, error code and message) under
 the plain-language reason.
 
-The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**.
+The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**. **Actions: Read-only** is
+optional: with it, Photos in Flight can tell when CI has rebuilt `ALLPHOTOS.json` after a removal.
 
 > **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and
 > merging the pull request is checkout. After that, the next save starts a new cart.
@@ -154,7 +155,16 @@ is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a p
 mark when its data is one of the entries in `ALLPHOTOS.json` at the same head (compared as JSON, so formatting and key
 order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
-file's name), or a "no image" sign when there's none. The page only reads from GitHub and R2; it never changes the pull request.
+file's name), or a "no image" sign when there's none.
+
+Each file the pull request adds has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it
+deletes the JSON from the pull request's branch and the image the page shows from R2 (skipped when R2 has none). Files the
+pull request only modifies can't be removed, since that would delete them from the portfolio on merge. The removal's
+commit starts the **Combine photo data** workflow. The page polls `GET /api/photos/in-flight/ci` (that workflow's newest
+run on the pull request's branch, or "waiting" when someone pushed after it; pass `?sha=…` for one commit's run instead)
+and, while CI is rebuilding `ALLPHOTOS.json`, shows a spinner beside it and spins each file's "Not in ALLPHOTOS.json"
+mark. When the run finishes it refreshes. Without **Actions: Read-only** on the token it refreshes about 30 seconds
+after a removal instead.
 
 ### Explore Bucket
 

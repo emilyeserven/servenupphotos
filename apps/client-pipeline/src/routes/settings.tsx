@@ -443,6 +443,7 @@ function githubTokenUrl(repo: string): string {
     description: "Opens pull requests with photo JSON from the servenupphotos pipeline.",
     contents: "write",
     pull_requests: "write",
+    actions: "read",
   });
   const owner = repo.split("/")[0]?.trim();
   if (owner) params.set("target_name", owner);
@@ -457,7 +458,8 @@ function GitHubTokenHelp({ repo }: { repo: string }) {
         <strong>Only select repositories</strong> and pick {repo.trim() || "your photo repository"}.
         It needs <strong>Contents: Read and write</strong> and{" "}
         <strong>Pull requests: Read and write</strong>, and GitHub adds{" "}
-        <strong>Metadata: Read-only</strong> automatically.
+        <strong>Metadata: Read-only</strong> automatically. <strong>Actions: Read-only</strong> is
+        optional: it lets Photos in Flight see when CI has rebuilt ALLPHOTOS.json.
       </p>
       <div className="flex gap-4">
         <ExternalLink href={githubTokenUrl(repo)}>Create a token</ExternalLink>
