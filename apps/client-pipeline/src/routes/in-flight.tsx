@@ -21,6 +21,7 @@ import {
 import { settingsQuery } from "@/api/settings";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
+import { ImageLightbox } from "@/components/image-lightbox";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { QueryResult } from "@/components/query-result";
@@ -345,20 +346,35 @@ const MISSING_IMAGE = {
   unchecked: { Icon: ImageOffIcon, label: "Couldn't check R2", className: "text-muted-foreground" },
 };
 
-/** The photo's image from R2, or a "do not enter" sign when it has none. */
+/** The photo's image from R2, opening full size in a lightbox, or a "do not enter" sign when it has none. */
 function PhotoImage({ name, url, checked }: { name: string; url?: string; checked: boolean }) {
   const [failed, setFailed] = useState(false);
+  const [open, setOpen] = useState(false);
   if (url && !failed) {
     return (
-      <a href={url} target="_blank" rel="noreferrer">
-        <img
+      <>
+        <button
+          type="button"
+          title="Show it full size"
+          onClick={() => setOpen(true)}
+          className="focus-visible:ring-ring cursor-zoom-in rounded-xl outline-none focus-visible:ring-2"
+        >
+          <img
+            src={url}
+            alt={name}
+            loading="lazy"
+            onError={() => setFailed(true)}
+            className="bg-muted max-h-[32rem] w-full rounded-xl border object-contain"
+          />
+        </button>
+        <ImageLightbox
+          open={open}
+          onClose={() => setOpen(false)}
+          title={name}
           src={url}
-          alt={name}
-          loading="lazy"
-          onError={() => setFailed(true)}
-          className="bg-muted max-h-[32rem] w-full rounded-xl border object-contain"
+          description={`${name} at full size.`}
         />
-      </a>
+      </>
     );
   }
   const { Icon, label, className } = MISSING_IMAGE[checked ? "missing" : "unchecked"];

@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ImageOffIcon, RefreshCwIcon, TriangleAlertIcon, XIcon, ZapIcon } from "lucide-react";
-import { Dialog } from "radix-ui";
+import { ImageOffIcon, RefreshCwIcon, TriangleAlertIcon, ZapIcon } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import { type BucketImage, bucketImagesQuery } from "@/api/photos";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { VERSIONS, type VersionName, regenerateVersionsMutation } from "@/api/versions";
+import { ImageLightbox } from "@/components/image-lightbox";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -242,7 +242,8 @@ function Thumbnail({ row }: { row: PhotoRow }) {
         open={open}
         onClose={() => setOpen(false)}
         title={`${row.name} · ${large.label}`}
-        image={large.image}
+        src={freshUrl(large.image)}
+        description={`${large.image.key} at full size.`}
       />
     </>
   );
@@ -252,43 +253,6 @@ function Thumbnail({ row }: { row: PhotoRow }) {
 function largeView(row: PhotoRow): { image: BucketImage; label: string } {
   if (row.versions.medium) return { image: row.versions.medium, label: "Medium (1200px) version" };
   return { image: row.original, label: "original" };
-}
-
-interface ImageLightboxProps {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  image: BucketImage;
-}
-
-/** A full-window overlay showing one image from the bucket, scaled down only to fit the window. */
-function ImageLightbox({ open, onClose, title, image }: ImageLightboxProps) {
-  return (
-    <Dialog.Root open={open} onOpenChange={(next) => !next && onClose()}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-neutral-950/95" />
-        <Dialog.Content className="fixed inset-0 z-50 flex flex-col text-white outline-none">
-          <div className="flex items-center gap-4 p-4">
-            <Dialog.Title className="flex-1 truncate font-medium">{title}</Dialog.Title>
-            <Dialog.Description className="sr-only">{image.key} at full size.</Dialog.Description>
-            <Dialog.Close asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Close"
-                className="text-white hover:bg-white/10 hover:text-white"
-              >
-                <XIcon />
-              </Button>
-            </Dialog.Close>
-          </div>
-          <div className="flex min-h-0 flex-1 items-center justify-center p-4 pt-0">
-            <img src={freshUrl(image)} alt="" className="max-h-full max-w-full object-contain" />
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
-  );
 }
 
 function ThumbnailImage({ image }: { image?: BucketImage }) {
