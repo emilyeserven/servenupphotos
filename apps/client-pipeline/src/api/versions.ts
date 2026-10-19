@@ -14,10 +14,21 @@ export const VERSIONS = [
 
 export type VersionName = (typeof VERSIONS)[number]["name"];
 
-/** The R2 keys of the resized versions uploaded with the original at key, as the backend names them. */
+/**
+ * The square crop every upload also puts in R2, for square tiles like the portfolio's Grid. It's
+ * always exactly maxEdge × maxEdge, scaled up or down from whatever size the crop is on the photo.
+ */
+export const THUMBNAIL = { name: "thumbnail", label: "Thumbnail", maxEdge: 500 } as const;
+
+/** Every WEBP an upload puts next to the original: the resized versions, then the thumbnail. */
+export const PUBLISHED = [...VERSIONS, THUMBNAIL] as const;
+
+export type PublishedName = (typeof PUBLISHED)[number]["name"];
+
+/** The R2 keys of the WEBPs uploaded with the original at key, as the backend names them. */
 export function versionKeys(key: string): string[] {
   const stem = keyStem(key);
-  return VERSIONS.map((version) => `${stem}-${version.name}.webp`);
+  return PUBLISHED.map((version) => `${stem}-${version.name}.webp`);
 }
 
 /** A key without its file extension. */
@@ -25,12 +36,12 @@ export function keyStem(key: string): string {
   return key.replace(/\.[^./]*$/, "");
 }
 
-/** The resized version an R2 key names, and the original's key without its extension. */
+/** The resized version or thumbnail an R2 key names, and the original's key without its extension. */
 export function parseVersionKey(
   key: string,
-): { originalStem: string; version: (typeof VERSIONS)[number] } | undefined {
+): { originalStem: string; version: (typeof PUBLISHED)[number] } | undefined {
   const [, originalStem, name] = /^(.*)-([a-z]+)\.webp$/.exec(key) ?? [];
-  const version = VERSIONS.find((v) => v.name === name);
+  const version = PUBLISHED.find((v) => v.name === name);
   if (originalStem === undefined || !version) return undefined;
   return { originalStem, version };
 }

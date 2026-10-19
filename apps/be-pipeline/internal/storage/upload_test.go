@@ -32,9 +32,9 @@ type fakeR2Upload struct {
 	puts []string
 }
 
-// fakeEncode stands in for versions.EncodeAll, making a version of each
+// fakeEncode stands in for versions.EncodeUpload, making a version of each
 // size from whatever it's given.
-func fakeEncode(photo io.Reader) ([]versions.Encoded, error) {
+func fakeEncode(photo io.Reader, _ *versions.Crop) ([]versions.Encoded, error) {
 	data, err := io.ReadAll(photo)
 	if err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func TestUploadPhotoNotAPhoto(t *testing.T) {
 	cfg := validR2
 	cfg.PublicURL = "https://pub-123.r2.dev"
 	fake := &fakeR2Upload{status: http.StatusOK}
-	failEncode := func(io.Reader) ([]versions.Encoded, error) { return nil, errors.New("bad jpeg") }
+	failEncode := func(io.Reader, *versions.Crop) ([]versions.Encoded, error) { return nil, errors.New("bad jpeg") }
 	_, err := uploadPhoto(t.Context(), cfg, fake.start(t), "a.jpg", strings.NewReader("photo"), UploadOptions{}, failEncode)
 	var uploadErr *UploadError
 	if !errors.As(err, &uploadErr) || !uploadErr.NotAPhoto {
@@ -152,6 +152,24 @@ func TestUploadPhotoNotAPhoto(t *testing.T) {
 	}
 	if len(fake.puts) != 0 {
 		t.Errorf("uploaded %q from a photo that couldn't be read", fake.puts)
+	}
+}
+
+func TestUploadPhotoPassesTheCrop(t *testing.T) {
+	cfg := validR2
+	cfg.PublicURL = "https://pub-123.r2.dev"
+	fake := &fakeR2Upload{status: http.StatusOK}
+	crop := &versions.Crop{X: 10, Y: 20, Size: 300}
+	var got *versions.Crop
+	encode := func(photo io.Reader, c *versions.Crop) ([]versions.Encoded, error) {
+		got = c
+		return fakeEncode(photo, c)
+	}
+	if _, err := uploadPhoto(t.Context(), cfg, fake.start(t), "a.jpg", strings.NewReader("photo"), UploadOptions{Crop: crop}, encode); err != nil {
+		t.Fatal(err)
+	}
+	if got != crop {
+		t.Errorf("encoded with crop %+v, want %+v", got, crop)
 	}
 }
 

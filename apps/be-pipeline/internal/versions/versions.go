@@ -108,11 +108,6 @@ type Encoded struct {
 	Data []byte
 }
 
-// EncodeAll decodes the JPEG in r and encodes every version of it.
-func EncodeAll(r io.Reader) ([]Encoded, error) {
-	return EncodeOnly(r, All)
-}
-
 // EncodeOnly decodes the JPEG in r and encodes just the versions vs of it.
 func EncodeOnly(r io.Reader, vs []Version) ([]Encoded, error) {
 	img, err := Decode(r)

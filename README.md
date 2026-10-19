@@ -117,7 +117,8 @@ pull request collects every photo until you merge it. An existing file is never 
 
 The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
 whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
-its object key, and whose `xlarge`, `large`, `medium`, `small`, `xsmall` and `preview` are the public URLs of its resized versions. The
+its object key, and whose `xlarge`, `large`, `medium`, `small`, `xsmall` and `preview` are the public URLs of its resized versions
+and `thumbnail` the public URL of its square thumbnail. The
 `images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
@@ -149,7 +150,17 @@ from its quantization tables (the backend sends `X-Jpeg-Bytes` and `X-Jpeg-Quali
 comparison: versions are always made straight from the original's pixels, never from a re-saved JPEG.
 Each version is made exactly as an upload would make it (`POST /api/photos/versions/{xlarge,large,medium,small,xsmall,preview}` → `POST /photos/versions/{version}`, which
 answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
-deletes its versions from R2 along with the original.
+deletes its versions and thumbnail from R2 along with the original.
+
+The **Square thumbnail** card picks the part of the photo used where every photo gets the same square tile, such as the
+portfolio's Grid. It starts as the largest square in the middle of the photo (what `object-fit: cover` would show); drag
+the square to move it, drag a corner to resize it, or focus it and use the arrow keys (Shift for bigger steps) and `+`
+and `-`. A preview next to it shows the thumbnail as it will look. **Upload to R2** sends the square as `cropX`, `cropY`
+and `cropSize` form fields before the photo (in pixels of the photo turned upright, as the browser shows it), and the
+backend cuts it out and scales it, up or down, to exactly 500 × 500 px, `photos/<hash>-<name>-thumbnail.webp` at WEBP
+quality 95. Without those fields it uses the middle square. The square can't change once the photo is uploaded. The
+Grid shows a photo's `thumbnail` when it has one, and the middle of its resized versions for photos saved before
+thumbnails existed.
 
 > **Frontend analogy:** it's `srcset` prepared ahead of time: one source image, five sizes for the portfolio to pick
 > from, plus a tiny `preview` for the blur-up trick (show it stretched with `filter: blur()` as the `<img>`'s background

@@ -60,21 +60,26 @@ type UploadOptions struct {
 	// KeepSameName uploads the photo even when the bucket already has a
 	// different photo under the same name.
 	KeepSameName bool
+	// Crop is the square the thumbnail is cut from; the middle of the photo
+	// when nil.
+	Crop *versions.Crop
 }
 
 // UploadPhoto puts the JPEG in body into the configured bucket, along with
-// each of versions.All as a WEBP, and returns their keys and public URLs. body
+// each of versions.All and the versions.Thumbnail cut from opts.Crop as a
+// WEBP, and returns their keys and public URLs. body
 // is read three times, to hash it for the key, to make the versions and to
 // upload it, so it must be seekable. Unless opts.KeepSameName is set, it first looks for other
 // photos uploaded under the same name and stops with their list in
 // UploadError.SameName, since Photos in Flight matches photos by name. Failures
 // are *UploadError.
 func UploadPhoto(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts UploadOptions) (UploadResult, error) {
-	return uploadPhoto(ctx, cfg, r2Endpoint(cfg), name, body, opts, versions.EncodeAll)
+	return uploadPhoto(ctx, cfg, r2Endpoint(cfg), name, body, opts, versions.EncodeUpload)
 }
 
-// encodeFunc makes a photo's versions; versions.EncodeAll in production.
-type encodeFunc func(photo io.Reader) ([]versions.Encoded, error)
+// encodeFunc makes a photo's versions and its thumbnail from crop;
+// versions.EncodeUpload in production.
+type encodeFunc func(photo io.Reader, crop *versions.Crop) ([]versions.Encoded, error)
 
 func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, body io.ReadSeeker, opts UploadOptions, encode encodeFunc) (UploadResult, error) {
 	if msg := validateR2(cfg); msg != "" {
@@ -108,7 +113,7 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 
 	// The versions are made before anything is uploaded, so a photo that
 	// can't be read leaves nothing behind in the bucket.
-	encoded, err := encode(body)
+	encoded, err := encode(body, opts.Crop)
 	if err != nil {
 		return UploadResult{}, &UploadError{Message: "Couldn't read this JPEG to make its resized versions.", NotAPhoto: true}
 	}

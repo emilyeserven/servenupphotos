@@ -39,6 +39,9 @@ type Images struct {
 	// Preview is the public URL of a tiny, low-quality WEBP of at most 40
 	// pixels on the longest edge, to show blurred while a version loads.
 	Preview *string `json:"preview"`
+	// Thumbnail is the public URL of a 500×500 WEBP cut from a square of
+	// the photo picked before uploading, for square tiles like the Grid's.
+	Thumbnail *string `json:"thumbnail"`
 }
 
 // Sanitize picks the publishable fields out of exiftool's output, taking the

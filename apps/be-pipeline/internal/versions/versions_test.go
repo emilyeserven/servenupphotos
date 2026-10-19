@@ -52,29 +52,29 @@ func size(t *testing.T, data []byte) image.Point {
 	return image.Pt(cfg.Width, cfg.Height)
 }
 
-func TestEncodeAllFitsLongestEdge(t *testing.T) {
+func TestEncodeUploadFitsLongestEdge(t *testing.T) {
 	for _, tc := range []struct {
 		name string
 		w, h int
 		want map[string]image.Point
 	}{
 		{"landscape", 3000, 2000, map[string]image.Point{
-			"xlarge": {2500, 1666}, "large": {1800, 1200}, "medium": {1200, 800}, "small": {500, 333}, "xsmall": {250, 166}, "preview": {40, 26},
+			"xlarge": {2500, 1666}, "large": {1800, 1200}, "medium": {1200, 800}, "small": {500, 333}, "xsmall": {250, 166}, "preview": {40, 26}, "thumbnail": {500, 500},
 		}},
 		{"portrait", 1000, 2000, map[string]image.Point{
-			"xlarge": {1000, 2000}, "large": {900, 1800}, "medium": {600, 1200}, "small": {250, 500}, "xsmall": {125, 250}, "preview": {20, 40},
+			"xlarge": {1000, 2000}, "large": {900, 1800}, "medium": {600, 1200}, "small": {250, 500}, "xsmall": {125, 250}, "preview": {20, 40}, "thumbnail": {500, 500},
 		}},
 		{"smaller than xlarge", 2000, 1000, map[string]image.Point{
-			"xlarge": {2000, 1000}, "large": {1800, 900}, "medium": {1200, 600}, "small": {500, 250}, "xsmall": {250, 125}, "preview": {40, 20},
+			"xlarge": {2000, 1000}, "large": {1800, 900}, "medium": {1200, 600}, "small": {500, 250}, "xsmall": {250, 125}, "preview": {40, 20}, "thumbnail": {500, 500},
 		}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			encoded, err := EncodeAll(bytes.NewReader(testJPEG(t, tc.w, tc.h)))
+			encoded, err := EncodeUpload(bytes.NewReader(testJPEG(t, tc.w, tc.h)), nil)
 			if err != nil {
 				t.Fatal(err)
 			}
-			if len(encoded) != len(All) {
-				t.Fatalf("got %d versions, want %d", len(encoded), len(All))
+			if len(encoded) != len(All)+1 {
+				t.Fatalf("got %d versions, want %d", len(encoded), len(All)+1)
 			}
 			for _, e := range encoded {
 				if got := size(t, e.Data); got != tc.want[e.Name] {
@@ -85,10 +85,10 @@ func TestEncodeAllFitsLongestEdge(t *testing.T) {
 	}
 }
 
-func TestEncodeAllTurnsUpright(t *testing.T) {
+func TestEncodeUploadTurnsUpright(t *testing.T) {
 	// Orientation 6: stored landscape, shown rotated 90° clockwise.
 	photo := withOrientation(testJPEG(t, 600, 400), 6)
-	encoded, err := EncodeAll(bytes.NewReader(photo))
+	encoded, err := EncodeUpload(bytes.NewReader(photo), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -97,8 +97,8 @@ func TestEncodeAllTurnsUpright(t *testing.T) {
 	}
 }
 
-func TestEncodeAllRejectsNonJPEG(t *testing.T) {
-	if _, err := EncodeAll(bytes.NewReader([]byte("not a photo"))); err == nil {
+func TestEncodeUploadRejectsNonJPEG(t *testing.T) {
+	if _, err := EncodeUpload(bytes.NewReader([]byte("not a photo")), nil); err == nil {
 		t.Error("want an error")
 	}
 }

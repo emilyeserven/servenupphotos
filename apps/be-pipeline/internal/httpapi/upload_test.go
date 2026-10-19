@@ -15,6 +15,7 @@ import (
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
 func TestUpload(t *testing.T) {
@@ -111,4 +112,82 @@ func uploadBody(t *testing.T, sameName string, photo []byte) (io.Reader, string)
 		t.Fatal(err)
 	}
 	return &buf, mw.FormDataContentType()
+}
+
+func TestParseCrop(t *testing.T) {
+	tests := []struct {
+		name   string
+		fields map[string]string
+		want   *versions.Crop
+		ok     bool
+	}{
+		{"none", map[string]string{"sameName": "keep"}, nil, true},
+		{"all three", map[string]string{"cropX": "10", "cropY": "-4", "cropSize": "300"}, &versions.Crop{X: 10, Y: -4, Size: 300}, true},
+		{"missing one", map[string]string{"cropX": "10", "cropSize": "300"}, nil, false},
+		{"not a number", map[string]string{"cropX": "10.5", "cropY": "0", "cropSize": "300"}, nil, false},
+		{"no size", map[string]string{"cropX": "0", "cropY": "0", "cropSize": "0"}, nil, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, ok := parseCrop(tt.fields)
+			if ok != tt.ok || (got == nil) != (tt.want == nil) || (got != nil && *got != *tt.want) {
+				t.Errorf("parseCrop = %+v, %v; want %+v, %v", got, ok, tt.want, tt.ok)
+			}
+		})
+	}
+}
+
+func TestUploadCrop(t *testing.T) {
+	store := settings.NewStore(filepath.Join(t.TempDir(), "settings.json"))
+	send := func(t *testing.T, fields map[string]string, upload uploadFunc) *httptest.ResponseRecorder {
+		t.Helper()
+		var buf bytes.Buffer
+		mw := multipart.NewWriter(&buf)
+		for _, name := range []string{"cropX", "cropY", "cropSize"} {
+			if err := mw.WriteField(name, fields[name]); err != nil {
+				t.Fatal(err)
+			}
+		}
+		part, err := mw.CreateFormFile("photo", "IMG_0001.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := part.Write(redJPEG(t)); err != nil {
+			t.Fatal(err)
+		}
+		if err := mw.Close(); err != nil {
+			t.Fatal(err)
+		}
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/upload", &buf)
+		req.Header.Set("Content-Type", mw.FormDataContentType())
+		rec := httptest.NewRecorder()
+		handleUpload(store.R2, upload).ServeHTTP(rec, req)
+		return rec
+	}
+
+	t.Run("passed on", func(t *testing.T) {
+		var got *versions.Crop
+		upload := func(_ context.Context, _ settings.R2, _ string, _ io.ReadSeeker, opts storage.UploadOptions) (storage.UploadResult, error) {
+			got = opts.Crop
+			return storage.UploadResult{}, nil
+		}
+		rec := send(t, map[string]string{"cropX": "12", "cropY": "34", "cropSize": "560"}, upload)
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d (body %s)", rec.Code, rec.Body)
+		}
+		if got == nil || *got != (versions.Crop{X: 12, Y: 34, Size: 560}) {
+			t.Errorf("crop = %+v", got)
+		}
+	})
+
+	t.Run("invalid", func(t *testing.T) {
+		upload := func(context.Context, settings.R2, string, io.ReadSeeker, storage.UploadOptions) (storage.UploadResult, error) {
+			t.Error("uploaded with an invalid crop")
+			return storage.UploadResult{}, nil
+		}
+		rec := send(t, map[string]string{"cropX": "a", "cropY": "0", "cropSize": "10"}, upload)
+		if rec.Code != http.StatusBadRequest {
+			t.Errorf("status = %d, want 400", rec.Code)
+		}
+	})
 }
