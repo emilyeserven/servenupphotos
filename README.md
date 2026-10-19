@@ -47,7 +47,7 @@ pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + V
 
 ### Portfolio with your own photo data
 
-`pnpm dev:docker` (and so `pnpm dev`) first runs `pnpm photos:local`, which combines the photo JSON files in
+`pnpm dev` and `pnpm dev:docker` first run `pnpm photos:local`, which combines the photo JSON files in
 `apps/portfolio/src/data` into `apps/portfolio/src/data/ALLPHOTOS.local.json`, the same way the **Combine photo data**
 workflow builds `ALLPHOTOS.json`: every other JSON file in the folder except `dummy.json`, as one array sorted by file
 name. The file is git-ignored. While it has at least one photo, the portfolio's Timeline and Map show those photos
