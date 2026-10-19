@@ -34,7 +34,7 @@ pnpm install
 pnpm dev             # everything: portfolio on the host + the pipeline in Docker, all hot-reloading
 pnpm dev:portfolio   # just the portfolio: http://localhost:5173/servenupphotos/
 pnpm dev:docker      # just the pipeline in Docker: http://localhost:5174
-pnpm photos:local    # rebuild the portfolio's local ALLPHOTOS.local.json (see below)
+pnpm photos:local    # refresh the portfolio's local ALLPHOTOS.local.json (see below)
 pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + Vite :5173 (proxies /api → :8080)
 ```
 
@@ -47,17 +47,23 @@ pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + V
 
 ### Portfolio with your own photo data
 
-`pnpm dev` and `pnpm dev:docker` first run `pnpm photos:local`, which combines the photo JSON files in
-`apps/portfolio/src/data` into `apps/portfolio/src/data/ALLPHOTOS.local.json`, the same way the **Combine photo data**
-workflow builds `ALLPHOTOS.json`: every other JSON file in the folder except `dummy.json`, as one array sorted by file
-name. The file is git-ignored. While it has at least one photo, the portfolio's Timeline and Map show those photos
-instead of the dummy data (the Map leaves out photos without a GPS position, and photos without a `createDate` are left
-out everywhere); with no photos, or no file, they fall back to `dummy.json`. To see photos still in flight, check out
-the **Add photo data** pull request's branch, or drop its JSON files into the folder, and run `pnpm photos:local`
-again; the running portfolio picks the new file up on its own.
+`pnpm dev` and `pnpm dev:docker` first run `pnpm photos:local`, which writes
+`apps/portfolio/src/data/ALLPHOTOS.local.json` (git-ignored). It copies `ALLPHOTOS.json` from the open **Add photo
+data** pull request on the `origin` GitHub repository, so the portfolio shows the photos in flight. With no such pull
+request, or when GitHub can't be reached (it says why), it combines the photo JSON files in `apps/portfolio/src/data`
+instead, the same way the **Combine photo data** workflow builds `ALLPHOTOS.json`: every other JSON file in the folder
+except `dummy.json`, as one array sorted by file name. Set `GITHUB_TOKEN` for a private repository, or if GitHub's
+limit of 60 unauthenticated requests an hour runs out.
 
-> **Frontend analogy:** it's a local mock of the API response: the same JSON CI would publish, built on your machine so
-> the portfolio can render real data without waiting for a pull request.
+While the file has at least one photo, the portfolio's Timeline, Map and Grid show those photos instead of the dummy
+data (the Map leaves out photos without a GPS position, the Grid photos without resized versions, and photos without a
+`createDate` are left out everywhere); with no photos, or no file, they fall back to `dummy.json`, and the Grid shows
+its placeholder. The Grid loads each photo's resized versions from R2 through `srcset`, newest photo first, with the
+blurred `preview` behind each one until it loads. Run `pnpm photos:local` again to pick up new photos; the running
+portfolio reloads the file on its own.
+
+> **Frontend analogy:** it's a local mock of the API response: the same JSON CI publishes, copied to your machine so
+> the portfolio can render real data before the pull request merges.
 
 ### Pipeline in Docker with hot reload
 
