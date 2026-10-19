@@ -85,3 +85,37 @@ func TestEncodeUploadUsesTheCrop(t *testing.T) {
 		t.Errorf("thumbnail = %v, want 500×500", got)
 	}
 }
+
+func TestEncodeOnlyThumbnailRecordsItsCrop(t *testing.T) {
+	encoded, err := EncodeOnly(bytes.NewReader(testJPEG(t, 600, 400)), []Version{All[3], Thumbnail}, &Crop{X: 550, Y: 20, Size: 100})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if encoded[0].Crop != nil {
+		t.Errorf("%s crop = %+v, want none", encoded[0].Name, encoded[0].Crop)
+	}
+	// Fitted inside the 600×400 photo.
+	if got, want := encoded[1].Crop, (Crop{X: 500, Y: 20, Size: 100}); got == nil || *got != want {
+		t.Errorf("thumbnail crop = %+v, want %+v", got, want)
+	}
+}
+
+func TestParseCrop(t *testing.T) {
+	if c, ok := ParseCrop(Crop{X: 12, Y: 0, Size: 900}.String()); !ok || c != (Crop{X: 12, Y: 0, Size: 900}) {
+		t.Errorf("round trip = %+v, %v", c, ok)
+	}
+	for _, s := range []string{"", "1,2", "1,2,0", "a,b,c", "1,2,3,4", " 1,2,3"} {
+		if c, ok := ParseCrop(s); ok {
+			t.Errorf("ParseCrop(%q) = %+v, want false", s, c)
+		}
+	}
+}
+
+func TestFindPublished(t *testing.T) {
+	if v, ok := FindPublished("thumbnail"); !ok || v != Thumbnail {
+		t.Errorf("FindPublished(thumbnail) = %v, %v", v, ok)
+	}
+	if _, ok := Find("thumbnail"); ok {
+		t.Error("Find found the thumbnail, which isn't a resized version")
+	}
+}

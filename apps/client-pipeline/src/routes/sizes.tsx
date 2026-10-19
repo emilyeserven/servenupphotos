@@ -4,7 +4,12 @@ import { ImageOffIcon, RefreshCwIcon, TriangleAlertIcon, ZapIcon } from "lucide-
 import { type ReactNode, useMemo, useState } from "react";
 import { type BucketImage, bucketImagesQuery } from "@/api/photos";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
-import { VERSIONS, type VersionName, regenerateVersionsMutation } from "@/api/versions";
+import {
+  PUBLISHED,
+  type PublishedName,
+  THUMBNAIL,
+  regenerateVersionsMutation,
+} from "@/api/versions";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -32,7 +37,7 @@ function SizesPage() {
     <Page
       wide
       title="Manage Sizes"
-      description="Every photo in the R2 bucket and its resized versions. Make a missing size, or remake one from the original."
+      description="Every photo in the R2 bucket, its resized versions and its Square Thumbnail. Make a missing size, or remake one from the original."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -57,12 +62,12 @@ function SizesPage() {
   );
 }
 
-/** An original JPEG the pipeline uploaded, and which of its resized versions are in the bucket. */
+/** An original JPEG the pipeline uploaded, and which of its resized versions and Square Thumbnail are in the bucket. */
 interface PhotoRow {
   original: BucketImage;
   /** The name the photo was uploaded under, without the key's folder and hash. */
   name: string;
-  versions: Partial<Record<VersionName, BucketImage>>;
+  versions: Partial<Record<PublishedName, BucketImage>>;
 }
 
 /** The keys the backend writes originals at, capturing the name: photos/<hash>-<name>.jpg. */
@@ -79,7 +84,7 @@ function photoRow(original: BucketImage, byKey: Map<string, BucketImage>): Photo
   if (!match) return undefined;
   const stem = original.key.slice(0, -".jpg".length);
   const versions: PhotoRow["versions"] = {};
-  for (const version of VERSIONS) {
+  for (const version of PUBLISHED) {
     versions[version.name] = byKey.get(`${stem}-${version.name}.webp`);
   }
   return { original, name: `${match[1] ?? "(no name)"}.jpg`, versions };
@@ -127,11 +132,17 @@ function SizesCard() {
 function sizesSummary(rows: PhotoRow[]): string {
   const photos = rows.length === 1 ? "1 photo" : `${rows.length} photos`;
   const missing = rows.reduce(
-    (sum, row) => sum + VERSIONS.filter((v) => !row.versions[v.name]).length,
+    (sum, row) => sum + PUBLISHED.filter((v) => !row.versions[v.name]).length,
     0,
   );
   if (missing === 0) return `${photos}, every size made.`;
   return `${photos}, ${missing === 1 ? "1 size" : `${missing} sizes`} not made yet.`;
+}
+
+/** A size's column heading: its longest edge, or both edges for the Square Thumbnail. */
+function sizeText(version: (typeof PUBLISHED)[number]): string {
+  if (version.name === THUMBNAIL.name) return `${version.maxEdge}×${version.maxEdge}px`;
+  return `${version.maxEdge}px`;
 }
 
 function SizesTable({ rows }: { rows: PhotoRow[] }) {
@@ -143,11 +154,11 @@ function SizesTable({ rows }: { rows: PhotoRow[] }) {
             <th scope="col" className="py-2 pr-4 font-medium">
               Image
             </th>
-            {VERSIONS.map((version) => (
+            {PUBLISHED.map((version) => (
               <th key={version.name} scope="col" className="px-2 py-2 text-center font-medium">
                 <span className="block">{version.label}</span>
                 <span className="text-muted-foreground block text-xs font-normal">
-                  {version.maxEdge}px
+                  {sizeText(version)}
                 </span>
               </th>
             ))}
@@ -205,7 +216,7 @@ function SizesRow({ row }: { row: PhotoRow }) {
           </div>
         </div>
       </th>
-      {VERSIONS.map((version) => (
+      {PUBLISHED.map((version) => (
         <td key={version.name} className="px-2 py-2 text-center">
           <SizeCell
             row={row}
@@ -285,7 +296,7 @@ function freshUrl(image: BucketImage): string {
 
 interface SizeCellProps {
   row: PhotoRow;
-  version: VersionName;
+  version: PublishedName;
   label: string;
   /** Whether every size of the row is being remade, which includes this one. */
   rowPending: boolean;

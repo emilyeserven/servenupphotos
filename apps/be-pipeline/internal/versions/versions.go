@@ -106,21 +106,35 @@ func JPEGSize(resized image.Image, quality int) (int, error) {
 type Encoded struct {
 	Version
 	Data []byte
+	// Crop is the square the Thumbnail was cut from, fitted to the photo; nil
+	// for every other version.
+	Crop *Crop
 }
 
 // EncodeOnly decodes the JPEG in r and encodes just the versions vs of it.
-func EncodeOnly(r io.Reader, vs []Version) ([]Encoded, error) {
+// A Thumbnail among them is cut from crop, or the CenterCrop when crop is nil.
+func EncodeOnly(r io.Reader, vs []Version, crop *Crop) ([]Encoded, error) {
 	img, err := Decode(r)
 	if err != nil {
 		return nil, err
 	}
 	out := make([]Encoded, 0, len(vs))
 	for _, v := range vs {
-		data, err := Encode(img, v)
+		e, err := encodeVersion(img, v, crop)
 		if err != nil {
 			return nil, fmt.Errorf("%s version: %w", v.Name, err)
 		}
-		out = append(out, Encoded{Version: v, Data: data})
+		out = append(out, e)
 	}
 	return out, nil
+}
+
+func encodeVersion(img image.Image, v Version, crop *Crop) (Encoded, error) {
+	if v.Name == Thumbnail.Name {
+		fitted := FitCrop(img, crop)
+		data, err := EncodeWEBP(Square(img, &fitted), v.Quality)
+		return Encoded{Version: v, Data: data, Crop: &fitted}, err
+	}
+	data, err := Encode(img, v)
+	return Encoded{Version: v, Data: data}, err
 }

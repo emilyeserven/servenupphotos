@@ -118,7 +118,7 @@ pull request collects every photo until you merge it. An existing file is never 
 The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
 whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
 its object key, and whose `xlarge`, `large`, `medium`, `small`, `xsmall` and `preview` are the public URLs of its resized versions
-and `thumbnail` the public URL of its square thumbnail. The
+and `thumbnail` the public URL of its Square Thumbnail. The
 `images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
@@ -150,15 +150,16 @@ from its quantization tables (the backend sends `X-Jpeg-Bytes` and `X-Jpeg-Quali
 comparison: versions are always made straight from the original's pixels, never from a re-saved JPEG.
 Each version is made exactly as an upload would make it (`POST /api/photos/versions/{xlarge,large,medium,small,xsmall,preview}` → `POST /photos/versions/{version}`, which
 answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
-deletes its versions and thumbnail from R2 along with the original.
+deletes its versions and Square Thumbnail from R2 along with the original.
 
-The **Square thumbnail** card picks the part of the photo used where every photo gets the same square tile, such as the
+The **Square Thumbnail** card picks the part of the photo used where every photo gets the same square tile, such as the
 portfolio's Grid. It starts as the largest square in the middle of the photo (what `object-fit: cover` would show); drag
 the square to move it, drag a corner to resize it, or focus it and use the arrow keys (Shift for bigger steps) and `+`
-and `-`. A preview next to it shows the thumbnail as it will look. **Upload to R2** sends the square as `cropX`, `cropY`
+and `-`. A preview next to it shows the Square Thumbnail as it will look. **Upload to R2** sends the square as `cropX`, `cropY`
 and `cropSize` form fields before the photo (in pixels of the photo turned upright, as the browser shows it), and the
 backend cuts it out and scales it, up or down, to exactly 500 × 500 px, `photos/<hash>-<name>-thumbnail.webp` at WEBP
-quality 95. Without those fields it uses the middle square. The square can't change once the photo is uploaded. The
+quality 95, with the square saved in its `crop` object metadata (`x,y,size`) so remaking it on Manage Sizes keeps it.
+Without those fields it uses the middle square. The square can't change once the photo is uploaded. The
 Grid shows a photo's `thumbnail` when it has one, and the middle of its resized versions for photos saved before
 thumbnails existed.
 
@@ -224,14 +225,16 @@ request. The button only shows once both checks have run, so it needs the GitHub
 ### Manage Sizes
 
 `/sizes` lists every original the pipeline uploaded (`photos/<hash>-<name>.jpg`) in a table, one row per photo with
-its X-Small version as a thumbnail, and one column per resized version. A size that's already in the bucket has a
+its X-Small version as a thumbnail, and one column per resized version plus one for the Square Thumbnail. A size that's already in the bucket has a
 circle-arrows button that remakes it; a size that isn't (for example, one added after the photo was uploaded) has a
 lightning bolt button that makes it. Hovering a row shows a circle-arrows button next to the photo's name that remakes
 every size. Clicking a thumbnail opens the Medium (1200px) version, or the original when there's no Medium yet, in
 a full-window view. A table too wide for the window scrolls sideways. Each button sends `POST /api/photos/bucket/versions` → `POST /photos/bucket/versions` with the original's
-`key` and the `versions` to make (every version when left out); the backend downloads the original from R2, resizes it
-exactly as an upload does, and uploads the versions over whatever was at their keys. It doesn't change the photo's
-JSON.
+`key` and the `versions` to make (every version and the Square Thumbnail when left out); the backend downloads the
+original from R2, resizes it exactly as an upload does, and uploads the versions over whatever was at their keys. The
+Square Thumbnail is cut from the crop saved with the one already in R2 (read with a `HEAD` of it), so remaking it keeps
+the square picked on the Photo page; making one that isn't there yet, for a photo uploaded before Square Thumbnails
+existed, uses the middle of the photo. It doesn't change the photo's JSON.
 
 ## Checks (same as CI)
 

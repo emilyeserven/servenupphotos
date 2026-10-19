@@ -13,12 +13,17 @@ import (
 )
 
 // fakeR2Regenerate serves original at key's path, answering any other GET
-// with status and code, and records every PUT.
+// with status and code, and records every PUT. A HEAD of the thumbnail answers
+// with headStatus (404 when unset) and its crop metadata.
 type fakeR2Regenerate struct {
 	key, original string
 	status        int
 	code          string
+	headStatus    int
+	crop          string
 	puts          []string
+	// metas are the crop metadata of every PUT, in order.
+	metas []string
 }
 
 func (f *fakeR2Regenerate) start(t *testing.T) string {
@@ -31,26 +36,46 @@ func (f *fakeR2Regenerate) start(t *testing.T) string {
 				return
 			}
 			_, _ = io.WriteString(w, f.original)
+		case http.MethodHead:
+			if want := "/photos/" + VersionKey(f.key, "thumbnail"); r.URL.Path != want {
+				t.Errorf("HEAD %s, want %s", r.URL.Path, want)
+			}
+			if f.headStatus == 0 {
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+			w.Header().Set("X-Amz-Meta-Crop", f.crop)
+			w.WriteHeader(f.headStatus)
 		case http.MethodPut:
 			body, _ := io.ReadAll(r.Body)
 			f.puts = append(f.puts, r.URL.Path+" "+r.Header.Get("Content-Type")+" "+string(body))
+			f.metas = append(f.metas, r.Header.Get("X-Amz-Meta-Crop"))
 		default:
-			t.Errorf("method = %s, want GET or PUT", r.Method)
+			t.Errorf("method = %s, want GET, HEAD or PUT", r.Method)
 		}
 	}))
 	t.Cleanup(srv.Close)
 	return srv.URL
 }
 
-// fakeEncodeOnly stands in for versions.EncodeOnly, making each of vs from whatever it's given.
-func fakeEncodeOnly(photo io.Reader, vs []versions.Version) ([]versions.Encoded, error) {
+// fakeEncodeOnly stands in for versions.EncodeOnly, making each of vs from
+// whatever it's given, and cutting a thumbnail from crop, or a 10×10 square
+// at 0, 0 when crop is nil.
+func fakeEncodeOnly(photo io.Reader, vs []versions.Version, crop *versions.Crop) ([]versions.Encoded, error) {
 	data, err := io.ReadAll(photo)
 	if err != nil {
 		return nil, err
 	}
 	var out []versions.Encoded
 	for _, v := range vs {
-		out = append(out, versions.Encoded{Version: v, Data: append([]byte(v.Name+":"), data...)})
+		e := versions.Encoded{Version: v, Data: append([]byte(v.Name+":"), data...)}
+		if v.Name == versions.Thumbnail.Name {
+			e.Crop = &versions.Crop{Size: 10}
+			if crop != nil {
+				e.Crop = crop
+			}
+		}
+		out = append(out, e)
 	}
 	return out, nil
 }
@@ -79,10 +104,53 @@ func TestRegenerateVersions(t *testing.T) {
 	}
 }
 
+func TestRegenerateThumbnailKeepsItsCrop(t *testing.T) {
+	cfg := validR2
+	cfg.PublicURL = "https://pub-123.r2.dev"
+	const key = "photos/233d38afbc8e-img-0001.jpg"
+	small, _ := versions.Find("small")
+	tests := []struct {
+		name       string
+		headStatus int
+		crop       string
+		want       []string
+	}{
+		{"saved crop", http.StatusOK, "120,40,900", []string{"", "120,40,900"}},
+		{"no thumbnail yet", 0, "", []string{"", "0,0,10"}},
+		{"no crop saved", http.StatusOK, "", []string{"", "0,0,10"}},
+		{"unreadable crop", http.StatusOK, "wide", []string{"", "0,0,10"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: tt.headStatus, crop: tt.crop}
+			if _, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{small, versions.Thumbnail}, fakeEncodeOnly); err != nil {
+				t.Fatal(err)
+			}
+			if !slices.Equal(fake.metas, tt.want) {
+				t.Errorf("crop metadata = %q, want %q", fake.metas, tt.want)
+			}
+		})
+	}
+
+	t.Run("crop can't be read", func(t *testing.T) {
+		fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: http.StatusForbidden}
+		_, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.Thumbnail}, fakeEncodeOnly)
+		var uerr *UploadError
+		if !errors.As(err, &uerr) || !strings.Contains(uerr.Message, "Square Thumbnail's crop") {
+			t.Errorf("err = %v, want an UploadError about the crop", err)
+		}
+		if len(fake.puts) > 0 {
+			t.Errorf("puts = %q, want nothing uploaded", fake.puts)
+		}
+	})
+}
+
 func TestRegenerateVersionsProblems(t *testing.T) {
 	cfg := validR2
 	cfg.PublicURL = "https://pub-123.r2.dev"
-	failEncode := func(io.Reader, []versions.Version) ([]versions.Encoded, error) { return nil, errors.New("bad jpeg") }
+	failEncode := func(io.Reader, []versions.Version, *versions.Crop) ([]versions.Encoded, error) {
+		return nil, errors.New("bad jpeg")
+	}
 	tests := []struct {
 		name     string
 		key      string

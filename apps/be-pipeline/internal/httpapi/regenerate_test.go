@@ -16,8 +16,8 @@ import (
 
 func TestRegenerateVersionsHandler(t *testing.T) {
 	cfg := func() (settings.R2, error) { return settings.R2{Bucket: "photos"}, nil }
-	every := make([]string, 0, len(versions.All))
-	for _, v := range versions.All {
+	every := make([]string, 0, len(versions.Published()))
+	for _, v := range versions.Published() {
 		every = append(every, v.Name)
 	}
 	tests := []struct {
@@ -30,6 +30,7 @@ func TestRegenerateVersionsHandler(t *testing.T) {
 	}{
 		{"some", `{"key":"photos/k.jpg","versions":["small"]}`, nil, http.StatusOK, `"small":{"key":"photos/k-small.webp"`, []string{"small"}},
 		{"every version", `{"key":"photos/k.jpg"}`, nil, http.StatusOK, `"key":"photos/k.jpg"`, every},
+		{"thumbnail", `{"key":"photos/k.jpg","versions":["thumbnail"]}`, nil, http.StatusOK, `"key":"photos/k.jpg"`, []string{"thumbnail"}},
 		{"no key", `{}`, nil, http.StatusBadRequest, "key is required", nil},
 		{"unknown version", `{"key":"photos/k.jpg","versions":["huge"]}`, nil, http.StatusBadRequest, "no such version", nil},
 		{"gone", `{"key":"photos/k.jpg"}`, &storage.UploadError{Message: "isn't in the bucket anymore", NotFound: true}, http.StatusNotFound, "anymore", every},

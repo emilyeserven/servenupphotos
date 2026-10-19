@@ -52,7 +52,7 @@ export function ThumbnailCrop({ photo, ...editor }: ThumbnailCropProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Square thumbnail</CardTitle>
+        <CardTitle>Square Thumbnail</CardTitle>
         <CardDescription>
           Drag the square to pick the part of the photo used where every photo is a square tile,
           like the portfolio's Grid, and drag a corner to resize it. Uploading turns it into a{" "}
@@ -207,7 +207,7 @@ function EditableCropBox({ placed, onCropChange }: Omit<CropBoxProps, "locked">)
       ref={box}
       role="slider"
       tabIndex={0}
-      aria-label="Thumbnail crop"
+      aria-label="Square Thumbnail crop"
       aria-valuetext={cropText(crop)}
       aria-valuemin={0}
       aria-valuemax={photo.width - crop.size}
@@ -277,7 +277,7 @@ function CropControls({ placed, locked, onCropChange }: CropControlsProps) {
   if (locked) {
     return (
       <p className="text-muted-foreground">
-        The thumbnail is uploaded with this square. Choose the photo again to pick another.
+        The Square Thumbnail is uploaded with this square. Choose the photo again to pick another.
       </p>
     );
   }
@@ -310,7 +310,7 @@ function ThumbnailPreview({ src, placed: { photo, crop } }: { src: string; place
       <div className="bg-muted relative size-40 overflow-hidden rounded-md border">
         <img
           src={src}
-          alt="Preview of the square thumbnail"
+          alt="Preview of the Square Thumbnail"
           draggable={false}
           className="absolute max-w-none"
           style={{
@@ -321,7 +321,7 @@ function ThumbnailPreview({ src, placed: { photo, crop } }: { src: string; place
           }}
         />
       </div>
-      <figcaption className="text-muted-foreground text-xs">Thumbnail preview</figcaption>
+      <figcaption className="text-muted-foreground text-xs">Square Thumbnail preview</figcaption>
     </figure>
   );
 }

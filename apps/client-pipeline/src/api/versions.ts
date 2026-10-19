@@ -18,7 +18,7 @@ export type VersionName = (typeof VERSIONS)[number]["name"];
  * The square crop every upload also puts in R2, for square tiles like the portfolio's Grid. It's
  * always exactly maxEdge × maxEdge, scaled up or down from whatever size the crop is on the photo.
  */
-export const THUMBNAIL = { name: "thumbnail", label: "Thumbnail", maxEdge: 500 } as const;
+export const THUMBNAIL = { name: "thumbnail", label: "Square Thumbnail", maxEdge: 500 } as const;
 
 /** Every WEBP an upload puts next to the original: the resized versions, then the thumbnail. */
 export const PUBLISHED = [...VERSIONS, THUMBNAIL] as const;
@@ -90,16 +90,18 @@ export const versionPreviewQuery = (photo: File, version: VersionName) =>
 /** Where the remade versions of a photo in R2 ended up, by version name. */
 interface RegenerateResult {
   key: string;
-  versions: Partial<Record<VersionName, { key: string; url: string }>>;
+  versions: Partial<Record<PublishedName, { key: string; url: string }>>;
 }
 
 /**
  * Makes resized versions of the original at key, already in R2, again from that original and
- * uploads them over any already there; every version when versions is left out.
+ * uploads them over any already there; every version and the Square Thumbnail when versions is
+ * left out. The Square Thumbnail keeps the crop saved with the one already in R2, or is cut from
+ * the middle of the photo when there isn't one.
  */
 export const regenerateVersionsMutation = mutationOptions({
   mutationKey: ["photos", "bucket", "versions"],
-  mutationFn: (request: { key: string; versions?: VersionName[] }) =>
+  mutationFn: (request: { key: string; versions?: PublishedName[] }) =>
     requestJson<RegenerateResult>("/api/photos/bucket/versions", {
       method: "POST",
       headers: { "content-type": "application/json" },

@@ -121,13 +121,13 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 		return UploadResult{}, fmt.Errorf("rewind photo: %w", err)
 	}
 
-	if err := putObject(ctx, client, cfg, key, body, size, "image/jpeg"); err != nil {
+	if err := putObject(ctx, client, cfg, key, body, size, "image/jpeg", nil); err != nil {
 		return UploadResult{}, err
 	}
 	res := UploadResult{Uploaded: Uploaded{Key: key, URL: base + "/" + key}, Versions: map[string]Uploaded{}}
 	for _, v := range encoded {
 		vkey := VersionKey(key, v.Name)
-		if err := putObject(ctx, client, cfg, vkey, bytes.NewReader(v.Data), int64(len(v.Data)), "image/webp"); err != nil {
+		if err := putVersion(ctx, client, cfg, vkey, v); err != nil {
 			return UploadResult{}, err
 		}
 		res.Versions[v.Name] = Uploaded{Key: vkey, URL: base + "/" + vkey}
@@ -135,14 +135,29 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 	return res, nil
 }
 
-// putObject uploads body to key, failing with an *UploadError.
-func putObject(ctx context.Context, client *s3.Client, cfg settings.R2, key string, body io.Reader, size int64, contentType string) error {
+// cropMetadata is the object metadata the Thumbnail's crop is saved under,
+// as versions.Crop's String, so remaking it keeps the square picked for it.
+const cropMetadata = "crop"
+
+// putVersion uploads the encoded version v to key, with the Thumbnail's crop
+// in its metadata.
+func putVersion(ctx context.Context, client *s3.Client, cfg settings.R2, key string, v versions.Encoded) error {
+	var metadata map[string]string
+	if v.Crop != nil {
+		metadata = map[string]string{cropMetadata: v.Crop.String()}
+	}
+	return putObject(ctx, client, cfg, key, bytes.NewReader(v.Data), int64(len(v.Data)), "image/webp", metadata)
+}
+
+// putObject uploads body to key with metadata, failing with an *UploadError.
+func putObject(ctx context.Context, client *s3.Client, cfg settings.R2, key string, body io.Reader, size int64, contentType string, metadata map[string]string) error {
 	_, err := client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:        aws.String(strings.TrimSpace(cfg.Bucket)),
 		Key:           aws.String(key),
 		Body:          body,
 		ContentLength: aws.Int64(size),
 		ContentType:   aws.String(contentType),
+		Metadata:      metadata,
 	})
 	if err != nil {
 		return &UploadError{Message: describeUploadError(err), Cloudflare: cloudflareResponse(err)}

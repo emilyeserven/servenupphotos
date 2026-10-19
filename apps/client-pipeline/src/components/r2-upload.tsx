@@ -38,7 +38,7 @@ export function R2Upload({ photo, upload, crop }: R2UploadProps) {
       <CardHeader>
         <CardTitle>Upload to R2</CardTitle>
         <CardDescription>
-          Puts the original photo, its resized WEBP versions and its square thumbnail in your bucket
+          Puts the original photo, its resized WEBP versions and its Square Thumbnail in your bucket
           and gives you their links.
         </CardDescription>
       </CardHeader>
@@ -299,7 +299,7 @@ function Uploaded({ result }: { result: UploadResponse }) {
       <ul className="flex flex-col gap-1 text-sm">
         {PUBLISHED.map((version) => (
           <li key={version.name} className="flex gap-2">
-            <span className="text-muted-foreground w-20 shrink-0">{version.label}</span>
+            <span className="text-muted-foreground w-32 shrink-0">{version.label}</span>
             <a
               href={result.versions[version.name].url}
               target="_blank"
