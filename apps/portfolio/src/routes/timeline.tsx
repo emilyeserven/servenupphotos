@@ -5,7 +5,7 @@ import { useState } from "react";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
-import { dummyPhotos, type DummyPhoto } from "@/lib/dummy-photos";
+import { photos, type Photo } from "@/lib/photos";
 import { buildHistogram } from "@/lib/histogram";
 import {
   absoluteTimeRange,
@@ -19,10 +19,10 @@ export const Route = createFileRoute("/timeline")({
   component: TimelineView,
 });
 
-const earliestPhoto = min(dummyPhotos.map((photo) => photo.takenAt));
+const earliestPhoto = min(photos.map((photo) => photo.takenAt));
 
-function groupByMonth(photos: DummyPhoto[]) {
-  const months = new Map<string, DummyPhoto[]>();
+function groupByMonth(photos: Photo[]) {
+  const months = new Map<string, Photo[]>();
   for (const photo of photos) {
     const month = format(photo.takenAt, "MMMM yyyy");
     months.set(month, [...(months.get(month) ?? []), photo]);
@@ -35,9 +35,9 @@ function TimelineView() {
   const navigate = Route.useNavigate();
   const [now] = useState(() => new Date());
   const { start = earliestPhoto, end } = resolveTimeRange(search, now);
-  const photos = dummyPhotos.filter(({ takenAt }) => takenAt >= start && takenAt <= end);
+  const inRange = photos.filter(({ takenAt }) => takenAt >= start && takenAt <= end);
   const { bins, resolution } = buildHistogram(
-    photos.map((photo) => photo.takenAt),
+    inRange.map((photo) => photo.takenAt),
     start,
     end,
   );
@@ -60,7 +60,7 @@ function TimelineView() {
             selection={{ from: start, to: end }}
             onChange={(next) => navigate({ search: next })}
           />
-          <p className="text-sm text-muted-foreground">{photos.length} photos in range</p>
+          <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
           <Button
             variant="outline"
             size="sm"
@@ -74,12 +74,12 @@ function TimelineView() {
         </div>
       </header>
       <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
-      <PhotoMonths photos={photos} />
+      <PhotoMonths photos={inRange} />
     </div>
   );
 }
 
-function PhotoMonths({ photos }: { photos: DummyPhoto[] }) {
+function PhotoMonths({ photos }: { photos: Photo[] }) {
   if (photos.length === 0) {
     return <p className="text-muted-foreground">No photos in this time range.</p>;
   }

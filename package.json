@@ -4,8 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently -n docker,portfolio -c blue,green \"pnpm run dev:docker\" \"pnpm run dev:portfolio\"",
-    "dev:docker": "docker compose -f docker-compose.dev.yml up --build --watch",
+    "dev:docker": "pnpm photos:local && docker compose -f docker-compose.dev.yml up --build --watch",
     "dev:portfolio": "pnpm --filter @servenup/portfolio dev",
+    "photos:local": "node scripts/combine-photo-data.mjs",
     "dev:pipeline": "concurrently -n be,bff,client -c blue,magenta,green \"pnpm run dev:be\" \"pnpm --filter @servenup/bff-pipeline dev\" \"pnpm --filter @servenup/client-pipeline dev\"",
     "dev:be": "cd apps/be-pipeline && go run ./cmd/api",
     "build": "pnpm -r build",

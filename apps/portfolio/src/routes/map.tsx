@@ -14,7 +14,7 @@ import { LngLatBounds, setWorkerUrl, type GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useState, useSyncExternalStore } from "react";
-import { dummyPhotos, type DummyPhoto } from "@/lib/dummy-photos";
+import { photos, type Photo } from "@/lib/photos";
 
 export const Route = createFileRoute("/map")({
   component: MapView,
@@ -81,9 +81,16 @@ interface PhotoPoint {
   coordinates: [number, number];
 }
 
+/** A photo with a GPS position, which is all the map can show. */
+type PlacedPhoto = Photo & { latitude: number; longitude: number };
+
+const placedPhotos = photos.filter(
+  (photo): photo is PlacedPhoto => photo.latitude !== null && photo.longitude !== null,
+);
+
 const photoGeoJson = {
   type: "FeatureCollection" as const,
-  features: dummyPhotos.map((photo) => ({
+  features: placedPhotos.map((photo) => ({
     type: "Feature" as const,
     geometry: {
       type: "Point",
@@ -93,7 +100,7 @@ const photoGeoJson = {
   })),
 };
 
-const photosById = new globalThis.Map(dummyPhotos.map((photo) => [photo.id, photo]));
+const photosById = new globalThis.Map(placedPhotos.map((photo) => [photo.id, photo]));
 
 // The theme provider toggles the `dark` class on <html>; follow it so the basemap matches.
 function subscribeToDarkClass(onChange: () => void) {
@@ -126,7 +133,7 @@ async function zoomIntoCluster(event: MapLayerMouseEvent, clusterId: number) {
 
 function MapView() {
   const isDark = useIsDark();
-  const [selected, setSelected] = useState<DummyPhoto | null>(null);
+  const [selected, setSelected] = useState<PlacedPhoto | null>(null);
 
   // Clicking empty map has no features, which clears the popup.
   function handleClick(event: MapLayerMouseEvent) {
@@ -145,7 +152,7 @@ function MapView() {
           <MapPin className="size-8 text-muted-foreground" aria-hidden />
           Map
         </h1>
-        <p className="text-sm text-muted-foreground">{dummyPhotos.length} photos</p>
+        <p className="text-sm text-muted-foreground">{placedPhotos.length} photos</p>
       </header>
       <div className="min-h-0 flex-1">
         <Map

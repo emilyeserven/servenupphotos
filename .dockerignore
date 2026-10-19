@@ -4,3 +4,4 @@
 .env
 .env.*
 !.env.example
+apps/portfolio/src/data/ALLPHOTOS.local.json
