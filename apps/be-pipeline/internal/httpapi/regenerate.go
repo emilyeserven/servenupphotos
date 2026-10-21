@@ -19,7 +19,8 @@ type regenerateFunc func(ctx context.Context, cfg settings.R2, key string, vs []
 type regenerateRequest struct {
 	// Key is the original JPEG's object key.
 	Key string `json:"key"`
-	// Versions are the names of the versions to make; every version when empty.
+	// Versions are the names of the versions to make, "thumbnail" among them;
+	// every version and the thumbnail when empty.
 	Versions []string `json:"versions"`
 }
 
@@ -71,14 +72,15 @@ func handleRegenerateVersions(loadR2 func() (settings.R2, error), regenerate reg
 	}
 }
 
-// findVersions looks up each of names, or returns every version when there are none.
+// findVersions looks up each of names, or returns every version and the
+// thumbnail when there are none.
 func findVersions(names []string) ([]versions.Version, bool) {
 	if len(names) == 0 {
-		return versions.All, true
+		return versions.Published(), true
 	}
 	vs := make([]versions.Version, 0, len(names))
 	for _, name := range names {
-		v, ok := versions.Find(name)
+		v, ok := versions.FindPublished(name)
 		if !ok {
 			return nil, false
 		}

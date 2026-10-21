@@ -60,21 +60,26 @@ type UploadOptions struct {
 	// KeepSameName uploads the photo even when the bucket already has a
 	// different photo under the same name.
 	KeepSameName bool
+	// Crop is the square the thumbnail is cut from; the middle of the photo
+	// when nil.
+	Crop *versions.Crop
 }
 
 // UploadPhoto puts the JPEG in body into the configured bucket, along with
-// each of versions.All as a WEBP, and returns their keys and public URLs. body
+// each of versions.All and the versions.Thumbnail cut from opts.Crop as a
+// WEBP, and returns their keys and public URLs. body
 // is read three times, to hash it for the key, to make the versions and to
 // upload it, so it must be seekable. Unless opts.KeepSameName is set, it first looks for other
 // photos uploaded under the same name and stops with their list in
 // UploadError.SameName, since Photos in Flight matches photos by name. Failures
 // are *UploadError.
 func UploadPhoto(ctx context.Context, cfg settings.R2, name string, body io.ReadSeeker, opts UploadOptions) (UploadResult, error) {
-	return uploadPhoto(ctx, cfg, r2Endpoint(cfg), name, body, opts, versions.EncodeAll)
+	return uploadPhoto(ctx, cfg, r2Endpoint(cfg), name, body, opts, versions.EncodeUpload)
 }
 
-// encodeFunc makes a photo's versions; versions.EncodeAll in production.
-type encodeFunc func(photo io.Reader) ([]versions.Encoded, error)
+// encodeFunc makes a photo's versions and its thumbnail from crop;
+// versions.EncodeUpload in production.
+type encodeFunc func(photo io.Reader, crop *versions.Crop) ([]versions.Encoded, error)
 
 func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, body io.ReadSeeker, opts UploadOptions, encode encodeFunc) (UploadResult, error) {
 	if msg := validateR2(cfg); msg != "" {
@@ -108,7 +113,7 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 
 	// The versions are made before anything is uploaded, so a photo that
 	// can't be read leaves nothing behind in the bucket.
-	encoded, err := encode(body)
+	encoded, err := encode(body, opts.Crop)
 	if err != nil {
 		return UploadResult{}, &UploadError{Message: "Couldn't read this JPEG to make its resized versions.", NotAPhoto: true}
 	}
@@ -116,13 +121,13 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 		return UploadResult{}, fmt.Errorf("rewind photo: %w", err)
 	}
 
-	if err := putObject(ctx, client, cfg, key, body, size, "image/jpeg"); err != nil {
+	if err := putObject(ctx, client, cfg, key, body, size, "image/jpeg", nil); err != nil {
 		return UploadResult{}, err
 	}
 	res := UploadResult{Uploaded: Uploaded{Key: key, URL: base + "/" + key}, Versions: map[string]Uploaded{}}
 	for _, v := range encoded {
 		vkey := VersionKey(key, v.Name)
-		if err := putObject(ctx, client, cfg, vkey, bytes.NewReader(v.Data), int64(len(v.Data)), "image/webp"); err != nil {
+		if err := putVersion(ctx, client, cfg, vkey, v); err != nil {
 			return UploadResult{}, err
 		}
 		res.Versions[v.Name] = Uploaded{Key: vkey, URL: base + "/" + vkey}
@@ -130,14 +135,29 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 	return res, nil
 }
 
-// putObject uploads body to key, failing with an *UploadError.
-func putObject(ctx context.Context, client *s3.Client, cfg settings.R2, key string, body io.Reader, size int64, contentType string) error {
+// cropMetadata is the object metadata the Thumbnail's crop is saved under,
+// as versions.Crop's String, so remaking it keeps the square picked for it.
+const cropMetadata = "crop"
+
+// putVersion uploads the encoded version v to key, with the Thumbnail's crop
+// in its metadata.
+func putVersion(ctx context.Context, client *s3.Client, cfg settings.R2, key string, v versions.Encoded) error {
+	var metadata map[string]string
+	if v.Crop != nil {
+		metadata = map[string]string{cropMetadata: v.Crop.String()}
+	}
+	return putObject(ctx, client, cfg, key, bytes.NewReader(v.Data), int64(len(v.Data)), "image/webp", metadata)
+}
+
+// putObject uploads body to key with metadata, failing with an *UploadError.
+func putObject(ctx context.Context, client *s3.Client, cfg settings.R2, key string, body io.Reader, size int64, contentType string, metadata map[string]string) error {
 	_, err := client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket:        aws.String(strings.TrimSpace(cfg.Bucket)),
 		Key:           aws.String(key),
 		Body:          body,
 		ContentLength: aws.Int64(size),
 		ContentType:   aws.String(contentType),
+		Metadata:      metadata,
 	})
 	if err != nil {
 		return &UploadError{Message: describeUploadError(err), Cloudflare: cloudflareResponse(err)}

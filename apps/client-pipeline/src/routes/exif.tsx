@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { RefreshCwIcon } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
 import type { PhotoIdentity } from "@/api/photos";
 import { type UploadMutation, type UploadResponse, uploadMutation } from "@/api/upload";
@@ -12,7 +12,9 @@ import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { R2Upload } from "@/components/r2-upload";
+import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { VersionPreviews } from "@/components/version-previews";
+import type { Crop } from "@/lib/crop";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -52,6 +54,7 @@ function withImages(
       small: upload.versions.small.url,
       xsmall: upload.versions.xsmall.url,
       preview: upload.versions.preview.url,
+      thumbnail: upload.versions.thumbnail.url,
     },
   };
 }
@@ -75,8 +78,7 @@ function PhotoPage() {
           {/* Keyed by submission so a new photo starts with fresh cards. */}
           {extract.isSuccess && (
             <AllPhotosGate key={extract.submittedAt} photo={identity}>
-              <VersionPreviews photo={extract.variables} />
-              <R2Upload photo={extract.variables} upload={upload} />
+              <UploadSteps photo={extract.variables} upload={upload} />
             </AllPhotosGate>
           )}
         </div>
@@ -85,6 +87,24 @@ function PhotoPage() {
         </div>
       </div>
     </Page>
+  );
+}
+
+/** The resized versions, the square thumbnail's crop and the upload, for one analyzed photo. */
+function UploadSteps({ photo, upload }: { photo: File; upload: UploadMutation }) {
+  // Starts as the middle of the photo once it has loaded; a new photo remounts this, starting over.
+  const [crop, setCrop] = useState<Crop | null>(null);
+  return (
+    <>
+      <VersionPreviews photo={photo} />
+      <ThumbnailCrop
+        photo={photo}
+        crop={crop}
+        onCropChange={setCrop}
+        locked={upload.isPending || upload.isSuccess}
+      />
+      <R2Upload photo={photo} upload={upload} crop={crop} />
+    </>
   );
 }
 

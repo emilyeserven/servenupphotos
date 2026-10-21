@@ -6,7 +6,7 @@ import { Fragment, useState } from "react";
 import { missingSettings } from "@/api/connections";
 import type { BucketImage } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
-import { VERSIONS } from "@/api/versions";
+import { PUBLISHED } from "@/api/versions";
 import {
   type CloudflareResponse,
   type UploadMutation,
@@ -20,23 +20,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import type { Crop } from "@/lib/crop";
 
 interface R2UploadProps {
   photo: File;
   /** Owned by the page, which puts the uploaded photo's URL into the sanitized EXIF. */
   upload: UploadMutation;
+  /** The square the thumbnail is cut from, once the crop card has picked one. */
+  crop: Crop | null;
 }
 
 /** Uploads an analyzed photo to the R2 bucket, once R2 is set up in Settings. */
-export function R2Upload({ photo, upload }: R2UploadProps) {
+export function R2Upload({ photo, upload, crop }: R2UploadProps) {
   const settings = useQuery(settingsQuery);
   return (
     <Card>
       <CardHeader>
         <CardTitle>Upload to R2</CardTitle>
         <CardDescription>
-          Puts the original photo and its resized WEBP versions in your bucket and gives you their
-          links.
+          Puts the original photo, its resized WEBP versions and its Square Thumbnail in your bucket
+          and gives you their links.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -44,7 +47,7 @@ export function R2Upload({ photo, upload }: R2UploadProps) {
           {(data) => {
             const missing = missingSettings("r2", data);
             if (missing.length > 0) return <R2NotSetUp missing={missing} />;
-            return <UploadForm photo={photo} upload={upload} />;
+            return <UploadForm photo={photo} upload={upload} crop={crop} />;
           }}
         </QueryResult>
       </CardContent>
@@ -64,17 +67,18 @@ function R2NotSetUp({ missing }: { missing: string[] }) {
   );
 }
 
-function UploadForm({ photo, upload }: R2UploadProps) {
+function UploadForm({ photo, upload, crop }: R2UploadProps) {
   if (upload.isSuccess) return <Uploaded result={upload.data} />;
-  // Retries send what was last tried, so a new name sticks.
+  // Retries send what was last tried, so a new name sticks, with the crop as it is now.
   const request: UploadRequest = upload.variables ?? { photo };
+  const send = (next: UploadRequest) => upload.mutate(crop ? { ...next, crop } : next);
   const sameName = sameNameError(upload.error);
   if (sameName) {
-    return <SameNamePrompt error={sameName} photo={request.photo} onUpload={upload.mutate} />;
+    return <SameNamePrompt error={sameName} photo={request.photo} onUpload={send} />;
   }
   return (
     <div className="flex flex-col gap-2">
-      <UploadButton pending={upload.isPending} onClick={() => upload.mutate(request)} />
+      <UploadButton pending={upload.isPending} onClick={() => send(request)} />
       <UploadFailure error={upload.error} />
     </div>
   );
@@ -293,9 +297,9 @@ function Uploaded({ result }: { result: UploadResponse }) {
         <CopyButton text={result.url} />
       </div>
       <ul className="flex flex-col gap-1 text-sm">
-        {VERSIONS.map((version) => (
+        {PUBLISHED.map((version) => (
           <li key={version.name} className="flex gap-2">
-            <span className="text-muted-foreground w-16 shrink-0">{version.label}</span>
+            <span className="text-muted-foreground w-32 shrink-0">{version.label}</span>
             <a
               href={result.versions[version.name].url}
               target="_blank"

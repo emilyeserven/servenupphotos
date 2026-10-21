@@ -1,6 +1,7 @@
 import { type UseMutationResult, mutationOptions } from "@tanstack/react-query";
 import type { BucketImage } from "@/api/photos";
-import type { VersionName } from "@/api/versions";
+import type { PublishedName } from "@/api/versions";
+import type { Crop } from "@/lib/crop";
 
 /** Where an object ended up in R2. */
 interface UploadedObject {
@@ -8,9 +9,9 @@ interface UploadedObject {
   url: string;
 }
 
-/** Where an uploaded photo and its resized WEBP versions ended up in R2. */
+/** Where an uploaded photo, its resized WEBP versions and its square thumbnail ended up in R2. */
 export interface UploadResponse extends UploadedObject {
-  versions: Record<VersionName, UploadedObject>;
+  versions: Record<PublishedName, UploadedObject>;
 }
 
 /** What Cloudflare answered to a failed request. */
@@ -29,6 +30,8 @@ export interface UploadRequest {
   photo: File;
   /** Upload even when the bucket already has a different photo under this name. */
   keepSameName?: boolean;
+  /** The square the thumbnail is cut from; the middle of the photo when left out. */
+  crop?: Crop;
 }
 
 /** A failed upload, with the photos already under that name or Cloudflare's answer when known. */
@@ -50,10 +53,15 @@ type UploadErrorBody = {
   cloudflare?: CloudflareResponse;
 };
 
-async function uploadPhoto({ photo, keepSameName }: UploadRequest): Promise<UploadResponse> {
+async function uploadPhoto({ photo, keepSameName, crop }: UploadRequest): Promise<UploadResponse> {
   const body = new FormData();
   // The backend reads fields that come before the photo.
   if (keepSameName) body.append("sameName", "keep");
+  if (crop) {
+    body.append("cropX", String(Math.round(crop.x)));
+    body.append("cropY", String(Math.round(crop.y)));
+    body.append("cropSize", String(Math.round(crop.size)));
+  }
   body.append("photo", photo);
 
   const res = await fetch("/api/upload", { method: "POST", body });

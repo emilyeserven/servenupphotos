@@ -8,7 +8,7 @@ import {
   bucketExifMutation,
   photosInFlightQuery,
 } from "@/api/photos";
-import { VERSIONS, parseVersionKey } from "@/api/versions";
+import { PUBLISHED, parseVersionKey } from "@/api/versions";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
@@ -163,14 +163,14 @@ function PhotoJson({ file, sanitized, onSaved }: PhotoJsonProps) {
   );
 }
 
-/** The sanitized EXIF with the original's R2 URL and key, and the URLs of the copies in the bucket. */
+/** The sanitized EXIF with the original's R2 URL and key, and the URLs of the copies and thumbnail in the bucket. */
 function withBucketImages(
   sanitized: SanitizedExif,
   original: BucketImage,
   copies: BucketImage[],
 ): SanitizedExif {
   const images = { ...sanitized.images, full: original.url, key: original.key };
-  for (const version of VERSIONS) {
+  for (const version of PUBLISHED) {
     const copy = copies.find((image) => parseVersionKey(image.key)?.version.name === version.name);
     images[version.name] = copy?.url ?? null;
   }

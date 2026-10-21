@@ -43,6 +43,9 @@ function GridView() {
   );
 }
 
+/** The thumbnail's size, which the pipeline makes square. */
+const THUMBNAIL_SIZE = 500;
+
 function PhotoTile({ photo }: { photo: ImagePhoto }) {
   const { image } = photo;
 
@@ -58,16 +61,29 @@ function PhotoTile({ photo }: { photo: ImagePhoto }) {
             className="absolute inset-0 size-full scale-110 object-cover blur-md"
           />
         )}
-        <img
-          src={image.src}
-          srcSet={image.srcSet}
-          sizes={TILE_SIZES}
-          width={image.width}
-          height={image.height}
-          alt={photo.title}
-          loading="lazy"
-          className="relative size-full object-cover"
-        />
+        {image.thumbnail ? (
+          // The square picked on the pipeline's Photo page, sharp at every tile size.
+          <img
+            src={image.thumbnail}
+            width={THUMBNAIL_SIZE}
+            height={THUMBNAIL_SIZE}
+            alt={photo.title}
+            loading="lazy"
+            className="relative size-full object-cover"
+          />
+        ) : (
+          // Photos saved before thumbnails show their middle.
+          <img
+            src={image.src}
+            srcSet={image.srcSet}
+            sizes={TILE_SIZES}
+            width={image.width}
+            height={image.height}
+            alt={photo.title}
+            loading="lazy"
+            className="relative size-full object-cover"
+          />
+        )}
       </div>
       <figcaption className="flex flex-col">
         <span className="truncate text-sm font-medium">{photo.title}</span>

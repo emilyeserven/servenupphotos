@@ -100,7 +100,7 @@ func removeImage(ctx context.Context, store *settings.Store, findPhotos findPhot
 		return removedImage{Message: "The image is outside the R2 bucket, so it was left as is."}, nil
 	}
 	image := deleteImage(ctx, cfg, deletePhoto, u.Key)
-	for _, v := range versions.All {
+	for _, v := range versions.Published() {
 		image.Versions = append(image.Versions, deleteImage(ctx, cfg, deletePhoto, storage.VersionKey(u.Key, v.Name)))
 	}
 	return image, nil

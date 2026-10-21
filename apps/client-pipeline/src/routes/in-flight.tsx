@@ -19,11 +19,13 @@ import {
   photosInFlightQuery,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
+import { squareThumbnailUrl } from "@/api/versions";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
+import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import {
@@ -326,11 +328,7 @@ function FileSection({
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-        <PhotoImage
-          name={file.photoName}
-          url={images.byPath[file.path]?.url}
-          checked={images.checked}
-        />
+        <PhotoImages file={file} images={images} />
         {file.error ? (
           <p className="text-destructive text-sm">{file.error}</p>
         ) : (
@@ -339,6 +337,31 @@ function FileSection({
       </div>
     </section>
   );
+}
+
+/** The photo's image from R2, with its Square Thumbnail under it when it has an image. */
+function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightImages }) {
+  const url = images.byPath[file.path]?.url;
+  const square = squareUrl(file, url);
+  return (
+    <div className="flex min-w-0 flex-col gap-3">
+      <PhotoImage name={file.photoName} url={url} checked={images.checked} />
+      {square && <SquareThumbnailImage key={square} name={file.photoName} url={square} />}
+    </div>
+  );
+}
+
+/**
+ * The Square Thumbnail URL saved in the photo's JSON, or else the one next to its image in R2, or
+ * undefined when it has neither.
+ */
+function squareUrl(file: InFlightFile, imageUrl?: string): string | undefined {
+  return savedSquareUrl(file.data) ?? (imageUrl && squareThumbnailUrl(imageUrl));
+}
+
+function savedSquareUrl(data: unknown): string | undefined {
+  const saved = (data as { images?: { thumbnail?: unknown } } | undefined)?.images?.thumbnail;
+  return typeof saved === "string" ? saved || undefined : undefined;
 }
 
 const MISSING_IMAGE = {
