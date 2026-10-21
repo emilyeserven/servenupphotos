@@ -25,6 +25,8 @@ export interface PhotoImage {
   preview?: string | null;
   /** The 500 × 500 square picked for square tiles, when the photo has one. */
   thumbnail?: string | null;
+  /** A tiny version of the thumbnail's square to show blurred while it loads, when there is one. */
+  thumbnailPreview?: string | null;
 }
 
 /** The resized versions the pipeline makes, smallest first, with their longest edge in pixels. */
@@ -49,7 +51,7 @@ interface PhotoData {
   width: number | null;
   height: number | null;
   /** Older entries may be missing a version they were saved before. */
-  images: Partial<Record<Version | "preview" | "thumbnail", string | null>>;
+  images: Partial<Record<Version | "preview" | "thumbnail" | "thumbnailpreview", string | null>>;
 }
 
 // ALLPHOTOS.local.json is made by `pnpm photos:local` (which `pnpm dev` runs) and git-ignored, so
@@ -110,8 +112,8 @@ function parseImage(photo: PhotoData): PhotoImage | null {
   const src = defaultSrc(versions);
   if (!src) return null;
   const srcSet = versions.map((version) => `${version.url} ${version.width}w`).join(", ");
-  const { preview, thumbnail } = photo.images;
-  return { width, height, src, srcSet, preview, thumbnail };
+  const { preview, thumbnail, thumbnailpreview } = photo.images;
+  return { width, height, src, srcSet, preview, thumbnail, thumbnailPreview: thumbnailpreview };
 }
 
 /** The local ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */

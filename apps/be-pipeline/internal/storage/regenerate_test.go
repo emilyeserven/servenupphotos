@@ -69,7 +69,7 @@ func fakeEncodeOnly(photo io.Reader, vs []versions.Version, crop *versions.Crop)
 	var out []versions.Encoded
 	for _, v := range vs {
 		e := versions.Encoded{Version: v, Data: append([]byte(v.Name+":"), data...)}
-		if v.Name == versions.Thumbnail.Name {
+		if versions.IsSquare(v) {
 			e.Crop = &versions.Crop{Size: 10}
 			if crop != nil {
 				e.Crop = crop
@@ -131,6 +131,16 @@ func TestRegenerateThumbnailKeepsItsCrop(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("thumbnail preview alone", func(t *testing.T) {
+		fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: http.StatusOK, crop: "120,40,900"}
+		if _, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.ThumbnailPreview}, fakeEncodeOnly); err != nil {
+			t.Fatal(err)
+		}
+		if want := []string{"120,40,900"}; !slices.Equal(fake.metas, want) {
+			t.Errorf("crop metadata = %q, want %q", fake.metas, want)
+		}
+	})
 
 	t.Run("crop can't be read", func(t *testing.T) {
 		fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: http.StatusForbidden}

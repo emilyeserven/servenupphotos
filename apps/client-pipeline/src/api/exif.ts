@@ -86,6 +86,8 @@ export interface SanitizedExif {
     preview: string | null;
     /** Public R2 URL of the 500 × 500 WEBP cut from the square picked before uploading. */
     thumbnail: string | null;
+    /** Public R2 URL of a tiny 40 × 40 WEBP of the same square, to show blurred while it loads. */
+    thumbnailpreview: string | null;
   };
 }
 

@@ -46,16 +46,25 @@ function GridView() {
 /** The thumbnail's size, which the pipeline makes square. */
 const THUMBNAIL_SIZE = 500;
 
+/**
+ * The tiny image to show blurred while the tile's image loads: the thumbnail's own preview, which
+ * matches its square, or else the photo's, for photos saved before they had one.
+ */
+function placeholderOf(image: PhotoImage) {
+  return (image.thumbnail && image.thumbnailPreview) || image.preview;
+}
+
 function PhotoTile({ photo }: { photo: ImagePhoto }) {
   const { image } = photo;
+  const placeholder = placeholderOf(image);
 
   return (
     <figure className="flex flex-col gap-2">
       <div className="relative aspect-square overflow-hidden rounded-md bg-muted">
-        {image.preview && (
+        {placeholder && (
           // The blur-up placeholder, covered by the real image once it loads.
           <img
-            src={image.preview}
+            src={placeholder}
             alt=""
             aria-hidden
             className="absolute inset-0 size-full scale-110 object-cover blur-md"
