@@ -59,7 +59,10 @@ While the file has at least one photo, the portfolio's Timeline, Map and Grid sh
 data (the Map leaves out photos without a GPS position, the Grid photos without resized versions, and photos without a
 `createDate` are left out everywhere); with no photos, or no file, they fall back to `dummy.json`, and the Grid shows
 its placeholder. The Grid loads each photo's resized versions from R2 through `srcset`, newest photo first, with the
-blurred `preview` behind each one until it loads (the `thumbnailpreview` behind a Square Thumbnail). Run `pnpm photos:local` again to pick up new photos; the running
+blurred `preview` behind each one until it loads (the `thumbnailpreview` behind a Square Thumbnail, falling back to the
+`preview` when it won't load). The real image fades in over it once it loads; a Square Thumbnail that won't load falls
+back to the middle of the resized versions, and when nothing loads the tile stays blurred instead of showing a broken
+image. Run `pnpm photos:local` again to pick up new photos; the running
 portfolio reloads the file on its own.
 
 > **Frontend analogy:** it's a local mock of the API response: the same JSON CI publishes, copied to your machine so
@@ -162,7 +165,7 @@ quality 95, with the square saved in its `crop` object metadata (`x,y,size`) so 
 Without those fields it uses the middle square. The same square also becomes the **Thumbnail Preview**,
 `photos/<hash>-<name>-thumbnailpreview.webp`: 40 × 40 px at WEBP quality 60, the Square Thumbnail's own low-res
 placeholder (well under a kilobyte) to show blurred while the 500 × 500 one loads, saved as `images.thumbnailpreview`.
-The square can't change once the photo is uploaded. The Grid shows a photo's `thumbnail` when it has one, over its
+The square can be changed later from Photos in Flight's **Edit** button. The Grid shows a photo's `thumbnail` when it has one, over its
 blurred `thumbnailpreview` (or the photo's `preview` for thumbnails saved before previews of them existed), and the
 middle of its resized versions for photos saved before thumbnails existed.
 
