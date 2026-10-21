@@ -7,7 +7,7 @@ import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import {
   PUBLISHED,
   type PublishedName,
-  THUMBNAIL,
+  isSquare,
   regenerateVersionsMutation,
 } from "@/api/versions";
 import { ImageLightbox } from "@/components/image-lightbox";
@@ -37,7 +37,7 @@ function SizesPage() {
     <Page
       wide
       title="Manage Sizes"
-      description="Every photo in the R2 bucket, its resized versions and its Square Thumbnail. Make a missing size, or remake one from the original."
+      description="Every photo in the R2 bucket, its resized versions, and its Square Thumbnail with its preview. Make a missing size, or remake one from the original."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -139,9 +139,9 @@ function sizesSummary(rows: PhotoRow[]): string {
   return `${photos}, ${missing === 1 ? "1 size" : `${missing} sizes`} not made yet.`;
 }
 
-/** A size's column heading: its longest edge, or both edges for the Square Thumbnail. */
+/** A size's column heading: its longest edge, or both edges for the square ones. */
 function sizeText(version: (typeof PUBLISHED)[number]): string {
-  if (version.name === THUMBNAIL.name) return `${version.maxEdge}×${version.maxEdge}px`;
+  if (isSquare(version)) return `${version.maxEdge}×${version.maxEdge}px`;
   return `${version.maxEdge}px`;
 }
 

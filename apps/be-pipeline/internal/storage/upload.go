@@ -66,8 +66,8 @@ type UploadOptions struct {
 }
 
 // UploadPhoto puts the JPEG in body into the configured bucket, along with
-// each of versions.All and the versions.Thumbnail cut from opts.Crop as a
-// WEBP, and returns their keys and public URLs. body
+// each of versions.All and the versions.Thumbnail and ThumbnailPreview cut
+// from opts.Crop as a WEBP, and returns their keys and public URLs. body
 // is read three times, to hash it for the key, to make the versions and to
 // upload it, so it must be seekable. Unless opts.KeepSameName is set, it first looks for other
 // photos uploaded under the same name and stops with their list in
@@ -139,8 +139,8 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 // as versions.Crop's String, so remaking it keeps the square picked for it.
 const cropMetadata = "crop"
 
-// putVersion uploads the encoded version v to key, with the Thumbnail's crop
-// in its metadata.
+// putVersion uploads the encoded version v to key, with the crop of a
+// Thumbnail or ThumbnailPreview in its metadata.
 func putVersion(ctx context.Context, client *s3.Client, cfg settings.R2, key string, v versions.Encoded) error {
 	var metadata map[string]string
 	if v.Crop != nil {

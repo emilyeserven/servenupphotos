@@ -19,7 +19,7 @@ import {
   photosInFlightQuery,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
-import { squareThumbnailUrl } from "@/api/versions";
+import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
@@ -346,7 +346,14 @@ function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightIma
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <PhotoImage name={file.photoName} url={url} checked={images.checked} />
-      {square && <SquareThumbnailImage key={square} name={file.photoName} url={square} />}
+      {square && (
+        <SquareThumbnailImage
+          key={square}
+          name={file.photoName}
+          url={square}
+          previewUrl={squarePreviewUrl(file, url)}
+        />
+      )}
     </div>
   );
 }
@@ -359,8 +366,19 @@ function squareUrl(file: InFlightFile, imageUrl?: string): string | undefined {
   return savedSquareUrl(file.data) ?? (imageUrl && squareThumbnailUrl(imageUrl));
 }
 
+/** The Thumbnail Preview URL saved in the photo's JSON, or else the one next to its image in R2. */
+function squarePreviewUrl(file: InFlightFile, imageUrl?: string): string | undefined {
+  return (
+    savedImageUrl(file.data, "thumbnailpreview") ?? (imageUrl && thumbnailPreviewUrl(imageUrl))
+  );
+}
+
 function savedSquareUrl(data: unknown): string | undefined {
-  const saved = (data as { images?: { thumbnail?: unknown } } | undefined)?.images?.thumbnail;
+  return savedImageUrl(data, "thumbnail");
+}
+
+function savedImageUrl(data: unknown, name: string): string | undefined {
+  const saved = (data as { images?: Record<string, unknown> } | undefined)?.images?.[name];
   return typeof saved === "string" ? saved || undefined : undefined;
 }
 

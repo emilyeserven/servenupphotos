@@ -59,7 +59,7 @@ While the file has at least one photo, the portfolio's Timeline, Map and Grid sh
 data (the Map leaves out photos without a GPS position, the Grid photos without resized versions, and photos without a
 `createDate` are left out everywhere); with no photos, or no file, they fall back to `dummy.json`, and the Grid shows
 its placeholder. The Grid loads each photo's resized versions from R2 through `srcset`, newest photo first, with the
-blurred `preview` behind each one until it loads. Run `pnpm photos:local` again to pick up new photos; the running
+blurred `preview` behind each one until it loads (the `thumbnailpreview` behind a Square Thumbnail). Run `pnpm photos:local` again to pick up new photos; the running
 portfolio reloads the file on its own.
 
 > **Frontend analogy:** it's a local mock of the API response: the same JSON CI publishes, copied to your machine so
@@ -118,7 +118,7 @@ pull request collects every photo until you merge it. An existing file is never 
 The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
 whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
 its object key, and whose `xlarge`, `large`, `medium`, `small`, `xsmall` and `preview` are the public URLs of its resized versions
-and `thumbnail` the public URL of its Square Thumbnail. The
+and `thumbnail` the public URL of its Square Thumbnail, with `thumbnailpreview` its low-res placeholder. The
 `images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
@@ -150,7 +150,7 @@ from its quantization tables (the backend sends `X-Jpeg-Bytes` and `X-Jpeg-Quali
 comparison: versions are always made straight from the original's pixels, never from a re-saved JPEG.
 Each version is made exactly as an upload would make it (`POST /api/photos/versions/{xlarge,large,medium,small,xsmall,preview}` → `POST /photos/versions/{version}`, which
 answers with the WEBP), so its quality can be checked before anything is uploaded. Removing a photo from Photos in Flight
-deletes its versions and Square Thumbnail from R2 along with the original.
+deletes its versions, Square Thumbnail and Thumbnail Preview from R2 along with the original.
 
 The **Square Thumbnail** card picks the part of the photo used where every photo gets the same square tile, such as the
 portfolio's Grid. It starts as the largest square in the middle of the photo (what `object-fit: cover` would show); drag
@@ -159,9 +159,12 @@ and `-`. A preview next to it shows the Square Thumbnail as it will look. **Uplo
 and `cropSize` form fields before the photo (in pixels of the photo turned upright, as the browser shows it), and the
 backend cuts it out and scales it, up or down, to exactly 500 × 500 px, `photos/<hash>-<name>-thumbnail.webp` at WEBP
 quality 95, with the square saved in its `crop` object metadata (`x,y,size`) so remaking it on Manage Sizes keeps it.
-Without those fields it uses the middle square. The square can't change once the photo is uploaded. The
-Grid shows a photo's `thumbnail` when it has one, and the middle of its resized versions for photos saved before
-thumbnails existed.
+Without those fields it uses the middle square. The same square also becomes the **Thumbnail Preview**,
+`photos/<hash>-<name>-thumbnailpreview.webp`: 40 × 40 px at WEBP quality 60, the Square Thumbnail's own low-res
+placeholder (well under a kilobyte) to show blurred while the 500 × 500 one loads, saved as `images.thumbnailpreview`.
+The square can't change once the photo is uploaded. The Grid shows a photo's `thumbnail` when it has one, over its
+blurred `thumbnailpreview` (or the photo's `preview` for thumbnails saved before previews of them existed), and the
+middle of its resized versions for photos saved before thumbnails existed.
 
 > **Frontend analogy:** it's `srcset` prepared ahead of time: one source image, five sizes for the portfolio to pick
 > from, plus a tiny `preview` for the blur-up trick (show it stretched with `filter: blur()` as the `<img>`'s background
@@ -190,7 +193,8 @@ order don't matter). Next to each photo's JSON it shows the photo from R2: the o
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
 file's name), or a "no image" sign when there's none. Under the photo is its Square Thumbnail: the JSON's
 `images.thumbnail`, or else the `-thumbnail.webp` next to the photo in R2, with a placeholder when R2 doesn't have one
-(as for photos uploaded before Square Thumbnails). Clicking it opens it at its full 500 × 500.
+(as for photos uploaded before Square Thumbnails). Its Thumbnail Preview (`images.thumbnailpreview`, or the
+`-thumbnailpreview.webp` next to the photo) shows blurred behind it while it loads. Clicking it opens it at its full 500 × 500.
 
 Each file the pull request adds has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it
 deletes the JSON from the pull request's branch and the image the page shows from R2 (skipped when R2 has none). Files the
@@ -227,14 +231,14 @@ request. The button only shows once both checks have run, so it needs the GitHub
 ### Manage Sizes
 
 `/sizes` lists every original the pipeline uploaded (`photos/<hash>-<name>.jpg`) in a table, one row per photo with
-its X-Small version as a thumbnail, and one column per resized version plus one for the Square Thumbnail. A size that's already in the bucket has a
+its X-Small version as a thumbnail, and one column per resized version plus one each for the Square Thumbnail and its Thumbnail Preview. A size that's already in the bucket has a
 circle-arrows button that remakes it; a size that isn't (for example, one added after the photo was uploaded) has a
 lightning bolt button that makes it. Hovering a row shows a circle-arrows button next to the photo's name that remakes
 every size. Clicking a thumbnail opens the Medium (1200px) version, or the original when there's no Medium yet, in
 a full-window view. A table too wide for the window scrolls sideways. Each button sends `POST /api/photos/bucket/versions` → `POST /photos/bucket/versions` with the original's
 `key` and the `versions` to make (every version and the Square Thumbnail when left out); the backend downloads the
 original from R2, resizes it exactly as an upload does, and uploads the versions over whatever was at their keys. The
-Square Thumbnail is cut from the crop saved with the one already in R2 (read with a `HEAD` of it), so remaking it keeps
+Square Thumbnail and Thumbnail Preview are cut from the crop saved with the Square Thumbnail already in R2 (read with a `HEAD` of it), so remaking them keeps
 the square picked on the Photo page; making one that isn't there yet, for a photo uploaded before Square Thumbnails
 existed, uses the middle of the photo. It doesn't change the photo's JSON.
 

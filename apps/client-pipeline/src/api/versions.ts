@@ -20,10 +20,25 @@ export type VersionName = (typeof VERSIONS)[number]["name"];
  */
 export const THUMBNAIL = { name: "thumbnail", label: "Square Thumbnail", maxEdge: 500 } as const;
 
-/** Every WEBP an upload puts next to the original: the resized versions, then the thumbnail. */
-export const PUBLISHED = [...VERSIONS, THUMBNAIL] as const;
+/**
+ * The Square Thumbnail's own tiny, low-quality placeholder, cut from the same square: what the
+ * preview is to the resized versions, for square tiles to show blurred while the thumbnail loads.
+ */
+const THUMBNAIL_PREVIEW = {
+  name: "thumbnailpreview",
+  label: "Thumbnail Preview",
+  maxEdge: 40,
+} as const;
+
+/** Every WEBP an upload puts next to the original: the resized versions, then the square ones. */
+export const PUBLISHED = [...VERSIONS, THUMBNAIL, THUMBNAIL_PREVIEW] as const;
 
 export type PublishedName = (typeof PUBLISHED)[number]["name"];
+
+/** Whether version is cut from the Square Thumbnail's crop, so it's square whatever the photo. */
+export function isSquare(version: (typeof PUBLISHED)[number]): boolean {
+  return version.name === THUMBNAIL.name || version.name === THUMBNAIL_PREVIEW.name;
+}
 
 /** The R2 keys of the WEBPs uploaded with the original at key, as the backend names them. */
 export function versionKeys(key: string): string[] {
@@ -34,6 +49,11 @@ export function versionKeys(key: string): string[] {
 /** The Square Thumbnail's URL, next to the original's at url, as the backend names it. */
 export function squareThumbnailUrl(url: string): string {
   return `${keyStem(url)}-${THUMBNAIL.name}.webp`;
+}
+
+/** The Thumbnail Preview's URL, next to the original's at url, as the backend names it. */
+export function thumbnailPreviewUrl(url: string): string {
+  return `${keyStem(url)}-${THUMBNAIL_PREVIEW.name}.webp`;
 }
 
 /** A key without its file extension. */
