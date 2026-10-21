@@ -31,6 +31,11 @@ export function versionKeys(key: string): string[] {
   return PUBLISHED.map((version) => `${stem}-${version.name}.webp`);
 }
 
+/** The Square Thumbnail's URL, next to the original's at url, as the backend names it. */
+export function squareThumbnailUrl(url: string): string {
+  return `${keyStem(url)}-${THUMBNAIL.name}.webp`;
+}
+
 /** A key without its file extension. */
 export function keyStem(key: string): string {
   return key.replace(/\.[^./]*$/, "");

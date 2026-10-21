@@ -188,7 +188,9 @@ is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a p
 mark when its data is one of the entries in `ALLPHOTOS.json` at the same head (compared as JSON, so formatting and key
 order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
-file's name), or a "no image" sign when there's none.
+file's name), or a "no image" sign when there's none. Under the photo is its Square Thumbnail: the JSON's
+`images.thumbnail`, or else the `-thumbnail.webp` next to the photo in R2, with a placeholder when R2 doesn't have one
+(as for photos uploaded before Square Thumbnails). Clicking it opens it at its full 500 × 500.
 
 Each file the pull request adds has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it
 deletes the JSON from the pull request's branch and the image the page shows from R2 (skipped when R2 has none). Files the
