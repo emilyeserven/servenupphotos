@@ -4,7 +4,7 @@ import { BookCheckIcon, GitPullRequestIcon, ImageOffIcon } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import { type BucketImage, bucketImagesQuery } from "@/api/photos";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
-import { type PUBLISHED, THUMBNAIL, keyStem, parseVersionKey } from "@/api/versions";
+import { type PUBLISHED, isSquare, keyStem, parseVersionKey } from "@/api/versions";
 import { GenerateJsonButton } from "@/components/generate-json";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -181,8 +181,7 @@ interface Stack extends Tile {
 }
 
 function sizeLabel(version: (typeof PUBLISHED)[number]): string {
-  if (version.name === THUMBNAIL.name)
-    return `${version.label} · ${version.maxEdge}×${version.maxEdge}px`;
+  if (isSquare(version)) return `${version.label} · ${version.maxEdge}×${version.maxEdge}px`;
   return `${version.label} · ${version.maxEdge}px`;
 }
 

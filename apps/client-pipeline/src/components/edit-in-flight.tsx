@@ -13,6 +13,7 @@ import {
 import {
   regenerateVersionsMutation,
   squareThumbnailUrl,
+  thumbnailPreviewUrl,
   thumbnailCropQuery,
   thumbnailUrlWithCrop,
 } from "@/api/versions";
@@ -124,30 +125,52 @@ function EditWithSavedCrop({ editable }: { editable: Editable }) {
   );
 }
 
-/** data with its Square Thumbnail's URL marked with crop. */
-function withThumbnail(data: PhotoJson, url: string, crop: Crop): PhotoJson {
-  return { ...data, images: { ...data.images, thumbnail: thumbnailUrlWithCrop(url, crop) } };
+/** The versions cut from the Square Thumbnail's crop, by their key in `images`, with where R2 has each. */
+const SQUARE_URLS = { thumbnail: squareThumbnailUrl, thumbnailpreview: thumbnailPreviewUrl };
+
+type SquareName = keyof typeof SQUARE_URLS;
+
+const SQUARE_NAMES = Object.keys(SQUARE_URLS) as SquareName[];
+
+type SquareUrls = Record<SquareName, string>;
+
+/** data with its square versions' URLs, marked with crop. */
+function withSquares(data: PhotoJson, urls: SquareUrls, crop: Crop): PhotoJson {
+  return { ...data, images: { ...data.images, ...markedUrls(urls, crop) } };
 }
 
-/** The Square Thumbnail's URL saved in data, or the one next to the photo's image in R2. */
-function thumbnailUrl(data: PhotoJson, imageUrl: string): string {
-  const saved = data.images?.thumbnail;
-  return typeof saved === "string" && saved ? saved : squareThumbnailUrl(imageUrl);
+/** urls, each marked with crop. */
+function markedUrls(urls: SquareUrls, crop: Crop): SquareUrls {
+  const marked = SQUARE_NAMES.map((name) => [name, thumbnailUrlWithCrop(urls[name], crop)]);
+  return Object.fromEntries(marked) as SquareUrls;
 }
 
-/** Whether saving would change anything; a photo saved before Square Thumbnails gets one even without a new crop. */
+/** The square versions' URLs saved in data, or else the ones next to the photo's image in R2. */
+function squareUrls(data: PhotoJson, imageUrl: string): SquareUrls {
+  const urls = SQUARE_NAMES.map((name) => [
+    name,
+    savedUrl(data.images?.[name]) ?? SQUARE_URLS[name](imageUrl),
+  ]);
+  return Object.fromEntries(urls) as SquareUrls;
+}
+
+function savedUrl(value: unknown): string | undefined {
+  return typeof value === "string" && value ? value : undefined;
+}
+
+/** Whether saving would change anything; a photo saved before Square Thumbnails or Thumbnail Previews gets them even without a new crop. */
 function hasChanges(crop: Crop | null, baseline: Crop | null, saved: PhotoJson): boolean {
   if (!crop || !baseline) return false;
   return !sameCrop(crop, baseline) || !hasThumbnail(saved);
 }
 
 function hasThumbnail(saved: PhotoJson): boolean {
-  return Boolean(saved.images?.thumbnail);
+  return SQUARE_NAMES.every((name) => savedUrl(saved.images?.[name]));
 }
 
 /** saved with its Square Thumbnail marked with crop. */
 function nextJson(saved: PhotoJson, imageUrl: string, crop: Crop | null): PhotoJson | null {
-  return crop && withThumbnail(saved, thumbnailUrl(saved, imageUrl), crop);
+  return crop && withSquares(saved, squareUrls(saved, imageUrl), crop);
 }
 
 /** The crop being picked, against the last one saved, and the JSON saving it would write. */
@@ -235,13 +258,14 @@ interface SaveRequest {
 interface SaveResult {
   crop: Crop;
   data: PhotoJson;
-  thumbnailUrl: string;
+  /** The square versions' new URLs, marked with the crop. */
+  squares: SquareUrls;
   update: UpdateResult;
 }
 
 /**
- * Remakes the Square Thumbnail in R2 from a crop, then saves the photo's JSON, with the
- * thumbnail's URL marked with that crop, over the file in the pull request.
+ * Remakes the Square Thumbnail and its Thumbnail Preview in R2 from a crop, then saves the photo's
+ * JSON, with their URLs marked with that crop, over the file in the pull request.
  */
 function useSave({ file, image }: Editable, onSaved: (crop: Crop, data: PhotoJson) => void) {
   const queryClient = useQueryClient();
@@ -252,11 +276,11 @@ function useSave({ file, image }: Editable, onSaved: (crop: Crop, data: PhotoJso
   const update = useMutation(updateInFlightMutation);
   const mutation = useMutation({
     mutationFn: async ({ crop, data }: SaveRequest): Promise<SaveResult> => {
-      const made = await regenerate.mutateAsync({ key: image.key, versions: ["thumbnail"], crop });
-      const url = made.versions.thumbnail?.url ?? thumbnailUrl(data, image.url);
-      const next = withThumbnail(data, url, crop);
+      const made = await regenerate.mutateAsync({ key: image.key, versions: SQUARE_NAMES, crop });
+      const urls = { ...squareUrls(data, image.url), ...madeUrls(made.versions) };
+      const next = withSquares(data, urls, crop);
       const updated = await update.mutateAsync({ path: file.path, data: next });
-      return { crop, data: next, thumbnailUrl: thumbnailUrlWithCrop(url, crop), update: updated };
+      return { crop, data: next, squares: markedUrls(urls, crop), update: updated };
     },
     onSuccess: (result) => {
       onSaved(result.crop, result.data);
@@ -272,6 +296,12 @@ function useSave({ file, image }: Editable, onSaved: (crop: Crop, data: PhotoJso
 
 type Save = ReturnType<typeof useSave>;
 
+/** The URLs of the square versions R2 answered with. */
+function madeUrls(made: Partial<Record<string, { url: string }>>): Partial<SquareUrls> {
+  const urls = SQUARE_NAMES.flatMap((name) => (made[name] ? [[name, made[name].url]] : []));
+  return Object.fromEntries(urls) as Partial<SquareUrls>;
+}
+
 function SaveCard({ file, edit, save }: { file: InFlightFile; edit: CropEdit; save: Save }) {
   const { mutation } = save;
   const { crop, baseline } = edit;
@@ -280,8 +310,8 @@ function SaveCard({ file, edit, save }: { file: InFlightFile; edit: CropEdit; sa
       <CardHeader>
         <CardTitle>Save changes</CardTitle>
         <CardDescription>
-          Remakes the Square Thumbnail in R2 from the square above, then updates{" "}
-          <FileLink file={file} /> in the pull request.
+          Remakes the Square Thumbnail and its Thumbnail Preview in R2 from the square above, then
+          updates <FileLink file={file} /> in the pull request.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 text-sm">
@@ -337,17 +367,23 @@ function SaveOutcome({ save }: { save: Save }) {
   const { mutation, rebuild } = save;
   if (mutation.isError) return <SaveError save={save} />;
   if (!mutation.isSuccess) return null;
-  const { thumbnailUrl: url, update } = mutation.data;
+  const { squares, update } = mutation.data;
   return (
     <div className="flex flex-col gap-3">
       <p className="flex items-start gap-2">
         <CheckIcon className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
         <span>
-          Remade the Square Thumbnail in R2 and <JsonOutcome update={update} />.
+          Remade the Square Thumbnail and its Thumbnail Preview in R2 and{" "}
+          <JsonOutcome update={update} />.
         </span>
       </p>
       {update.changed && <AllPhotosRebuild status={rebuild.status} />}
-      <SquareThumbnailImage key={url} name={fileName(update.path)} url={url} />
+      <SquareThumbnailImage
+        key={squares.thumbnail}
+        name={fileName(update.path)}
+        url={squares.thumbnail}
+        previewUrl={squares.thumbnailpreview}
+      />
     </div>
   );
 }

@@ -18,9 +18,10 @@ import (
 // RegenerateVersions downloads the original JPEG at key, one UploadPhoto
 // wrote, makes the versions vs of it again and uploads them over whatever is
 // already at their keys, so a missing version is made for the first time and
-// an existing one is replaced. A versions.Thumbnail is cut from crop when it
-// isn't nil, and otherwise from the crop saved with the one already there, or
-// the middle of the photo when there is none. It returns where each version
+// an existing one is replaced. A versions.Thumbnail or
+// versions.ThumbnailPreview is cut from crop when it isn't nil, and otherwise
+// from the crop saved with the Thumbnail already there, or the middle of the
+// photo when there is none. It returns where each version
 // ended up, by version name. Failures are *UploadError, with NotFound set when
 // key isn't a photo in the bucket.
 func RegenerateVersions(ctx context.Context, cfg settings.R2, key string, vs []versions.Version, crop *versions.Crop) (map[string]Uploaded, error) {
@@ -103,11 +104,12 @@ func regenerateVersions(ctx context.Context, cfg settings.R2, endpoint, key stri
 }
 
 // thumbnailCrop is the crop saved with the thumbnail of the original at key,
-// when vs remakes it and it has one, so a remake keeps the square picked on the
-// Photo page. It is nil, for the middle of the photo, when vs doesn't include
-// the thumbnail, there is no thumbnail yet, or it has no crop saved.
+// when vs remakes it or its preview and it has one, so a remake keeps the
+// square picked on the Photo page. It is nil, for the middle of the photo,
+// when vs doesn't include either, there is no thumbnail yet, or it has no crop
+// saved.
 func thumbnailCrop(ctx context.Context, client *s3.Client, cfg settings.R2, key string, vs []versions.Version) (*versions.Crop, error) {
-	if !slices.ContainsFunc(vs, func(v versions.Version) bool { return v.Name == versions.Thumbnail.Name }) {
+	if !slices.ContainsFunc(vs, versions.IsSquare) {
 		return nil, nil
 	}
 	head, err := client.HeadObject(ctx, &s3.HeadObjectInput{

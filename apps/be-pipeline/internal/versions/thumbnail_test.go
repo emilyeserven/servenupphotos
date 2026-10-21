@@ -42,10 +42,10 @@ func TestCropFit(t *testing.T) {
 	}
 }
 
-func TestSquareIsAlwaysThumbnailSize(t *testing.T) {
+func TestSquareIsAlwaysEdgeSize(t *testing.T) {
 	img := image.NewRGBA(image.Rect(0, 0, 3000, 2000))
 	for _, crop := range []*Crop{nil, {X: 10, Y: 10, Size: 120}, {X: 0, Y: 0, Size: 1800}} {
-		if got := Square(img, crop).Bounds().Size(); got != image.Pt(500, 500) {
+		if got := Square(img, crop, 500).Bounds().Size(); got != image.Pt(500, 500) {
 			t.Errorf("Square(%+v) = %v, want 500×500", crop, got)
 		}
 	}
@@ -64,7 +64,7 @@ func TestSquareCutsTheCrop(t *testing.T) {
 			img.Set(x, y, c)
 		}
 	}
-	square := Square(img, &Crop{X: 200, Y: 0, Size: 200})
+	square := Square(img, &Crop{X: 200, Y: 0, Size: 200}, 500)
 	for _, p := range []image.Point{{0, 0}, {250, 250}, {499, 499}} {
 		if r, _, b, _ := square.At(p.X, p.Y).RGBA(); r > 0x1000 || b < 0xf000 {
 			t.Errorf("pixel %v = %v, want blue", p, square.At(p.X, p.Y))
@@ -77,12 +77,41 @@ func TestEncodeUploadUsesTheCrop(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	last := encoded[len(encoded)-1]
-	if last.Name != Thumbnail.Name {
-		t.Fatalf("last version = %s, want %s", last.Name, Thumbnail.Name)
+	thumbnail, preview := encoded[len(encoded)-2], encoded[len(encoded)-1]
+	if thumbnail.Name != Thumbnail.Name || preview.Name != ThumbnailPreview.Name {
+		t.Fatalf("last versions = %s, %s, want %s, %s", thumbnail.Name, preview.Name, Thumbnail.Name, ThumbnailPreview.Name)
 	}
-	if got := size(t, last.Data); got != image.Pt(500, 500) {
+	if got := size(t, thumbnail.Data); got != image.Pt(500, 500) {
 		t.Errorf("thumbnail = %v, want 500×500", got)
+	}
+	if got := size(t, preview.Data); got != image.Pt(40, 40) {
+		t.Errorf("thumbnail preview = %v, want 40×40", got)
+	}
+	if thumbnail.Crop == nil || preview.Crop == nil || *thumbnail.Crop != *preview.Crop {
+		t.Errorf("crops = %+v, %+v, want the same square", thumbnail.Crop, preview.Crop)
+	}
+}
+
+func TestThumbnailPreviewCutsTheSameSquare(t *testing.T) {
+	// Only the right half is blue, so both squares cut from it are all blue.
+	img := image.NewRGBA(image.Rect(0, 0, 400, 200))
+	for x := range 400 {
+		for y := range 200 {
+			c := color.RGBA{255, 0, 0, 255}
+			if x >= 200 {
+				c = color.RGBA{0, 0, 255, 255}
+			}
+			img.Set(x, y, c)
+		}
+	}
+	square := Square(img, &Crop{X: 200, Y: 0, Size: 200}, ThumbnailPreview.MaxEdge)
+	if got := square.Bounds().Size(); got != image.Pt(40, 40) {
+		t.Fatalf("size = %v, want 40×40", got)
+	}
+	for _, p := range []image.Point{{0, 0}, {20, 20}, {39, 39}} {
+		if r, _, b, _ := square.At(p.X, p.Y).RGBA(); r > 0x1000 || b < 0xf000 {
+			t.Errorf("pixel %v = %v, want blue", p, square.At(p.X, p.Y))
+		}
 	}
 }
 
@@ -117,5 +146,8 @@ func TestFindPublished(t *testing.T) {
 	}
 	if _, ok := Find("thumbnail"); ok {
 		t.Error("Find found the thumbnail, which isn't a resized version")
+	}
+	if v, ok := FindPublished("thumbnailpreview"); !ok || v != ThumbnailPreview {
+		t.Errorf("FindPublished(thumbnailpreview) = %v, %v", v, ok)
 	}
 }

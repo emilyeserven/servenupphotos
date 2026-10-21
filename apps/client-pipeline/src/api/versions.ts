@@ -21,10 +21,25 @@ export type VersionName = (typeof VERSIONS)[number]["name"];
  */
 export const THUMBNAIL = { name: "thumbnail", label: "Square Thumbnail", maxEdge: 500 } as const;
 
-/** Every WEBP an upload puts next to the original: the resized versions, then the thumbnail. */
-export const PUBLISHED = [...VERSIONS, THUMBNAIL] as const;
+/**
+ * The Square Thumbnail's own tiny, low-quality placeholder, cut from the same square: what the
+ * preview is to the resized versions, for square tiles to show blurred while the thumbnail loads.
+ */
+const THUMBNAIL_PREVIEW = {
+  name: "thumbnailpreview",
+  label: "Thumbnail Preview",
+  maxEdge: 40,
+} as const;
+
+/** Every WEBP an upload puts next to the original: the resized versions, then the square ones. */
+export const PUBLISHED = [...VERSIONS, THUMBNAIL, THUMBNAIL_PREVIEW] as const;
 
 export type PublishedName = (typeof PUBLISHED)[number]["name"];
+
+/** Whether version is cut from the Square Thumbnail's crop, so it's square whatever the photo. */
+export function isSquare(version: (typeof PUBLISHED)[number]): boolean {
+  return version.name === THUMBNAIL.name || version.name === THUMBNAIL_PREVIEW.name;
+}
 
 /** The R2 keys of the WEBPs uploaded with the original at key, as the backend names them. */
 export function versionKeys(key: string): string[] {
@@ -38,9 +53,9 @@ export function squareThumbnailUrl(url: string): string {
 }
 
 /**
- * The Square Thumbnail's url marked with the crop it was cut from, as saved in a photo's JSON after
- * an edit. The thumbnail keeps its key when it's remade, so the mark gives browsers and Cloudflare's
- * cache a new URL to fetch instead of the old square; R2 ignores it.
+ * The url of the Square Thumbnail or its Thumbnail Preview marked with the crop it was cut from, as
+ * saved in a photo's JSON after an edit. They keep their keys when they're remade, so the mark gives
+ * browsers and Cloudflare's cache a new URL to fetch instead of the old square; R2 ignores it.
  */
 export function thumbnailUrlWithCrop(url: string, crop: Crop): string {
   const { x, y, size } = roundedCrop(crop);
@@ -50,6 +65,11 @@ export function thumbnailUrlWithCrop(url: string, crop: Crop): string {
 /** crop in whole pixels, as the backend takes it. */
 function roundedCrop({ x, y, size }: Crop): Crop {
   return { x: Math.round(x), y: Math.round(y), size: Math.round(size) };
+}
+
+/** The Thumbnail Preview's URL, next to the original's at url, as the backend names it. */
+export function thumbnailPreviewUrl(url: string): string {
+  return `${keyStem(url)}-${THUMBNAIL_PREVIEW.name}.webp`;
 }
 
 /** A key without its file extension. */

@@ -14,10 +14,21 @@ import (
 // up or down, whatever its size on the photo.
 var Thumbnail = Version{Name: "thumbnail", MaxEdge: 500, Quality: Quality}
 
+// ThumbnailPreview is the Thumbnail's own tiny, low-quality placeholder, cut
+// from the same square: what preview is to the other versions, for square
+// tiles to show blurred while the Thumbnail loads.
+var ThumbnailPreview = Version{Name: "thumbnailpreview", MaxEdge: 40, Quality: PreviewQuality}
+
 // Published are every WEBP an upload puts next to the original: All, then
-// the Thumbnail.
+// the Thumbnail and its ThumbnailPreview.
 func Published() []Version {
-	return append(All[:len(All):len(All)], Thumbnail)
+	return append(All[:len(All):len(All)], Thumbnail, ThumbnailPreview)
+}
+
+// IsSquare reports whether v is cut from the thumbnail's square crop: the
+// Thumbnail or its ThumbnailPreview.
+func IsSquare(v Version) bool {
+	return v.Name == Thumbnail.Name || v.Name == ThumbnailPreview.Name
 }
 
 // Crop is a square on a photo, in pixels of the photo turned upright from its
@@ -59,21 +70,21 @@ func FitCrop(img image.Image, crop *Crop) Crop {
 }
 
 // Square cuts crop out of img, fitted to it (CenterCrop when crop is nil), and
-// scales it to Thumbnail's size.
-func Square(img image.Image, crop *Crop) image.Image {
+// scales it to edge×edge pixels.
+func Square(img image.Image, crop *Crop, edge int) image.Image {
 	c := FitCrop(img, crop)
 	area := image.Rect(c.X, c.Y, c.X+c.Size, c.Y+c.Size).Add(img.Bounds().Min)
-	return imaging.Resize(imaging.Crop(img, area), Thumbnail.MaxEdge, Thumbnail.MaxEdge, imaging.Lanczos)
+	return imaging.Resize(imaging.Crop(img, area), edge, edge, imaging.Lanczos)
 }
 
 // EncodeUpload decodes the JPEG in r and encodes everything an upload puts in
-// R2: every version, then the Thumbnail cut from crop (the CenterCrop when
-// crop is nil).
+// R2: every version, then the Thumbnail and ThumbnailPreview cut from crop
+// (the CenterCrop when crop is nil).
 func EncodeUpload(r io.Reader, crop *Crop) ([]Encoded, error) {
 	return EncodeOnly(r, Published(), crop)
 }
 
-// FindPublished returns the version or Thumbnail called name.
+// FindPublished returns the version, Thumbnail or ThumbnailPreview called name.
 func FindPublished(name string) (Version, bool) {
 	for _, v := range Published() {
 		if v.Name == name {

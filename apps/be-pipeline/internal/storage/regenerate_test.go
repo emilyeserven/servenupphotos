@@ -69,7 +69,7 @@ func fakeEncodeOnly(photo io.Reader, vs []versions.Version, crop *versions.Crop)
 	var out []versions.Encoded
 	for _, v := range vs {
 		e := versions.Encoded{Version: v, Data: append([]byte(v.Name+":"), data...)}
-		if v.Name == versions.Thumbnail.Name {
+		if versions.IsSquare(v) {
 			e.Crop = &versions.Crop{Size: 10}
 			if crop != nil {
 				e.Crop = crop
@@ -132,6 +132,16 @@ func TestRegenerateThumbnailKeepsItsCrop(t *testing.T) {
 		})
 	}
 
+	t.Run("thumbnail preview alone", func(t *testing.T) {
+		fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: http.StatusOK, crop: "120,40,900"}
+		if _, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.ThumbnailPreview}, nil, fakeEncodeOnly); err != nil {
+			t.Fatal(err)
+		}
+		if want := []string{"120,40,900"}; !slices.Equal(fake.metas, want) {
+			t.Errorf("crop metadata = %q, want %q", fake.metas, want)
+		}
+	})
+
 	t.Run("crop can't be read", func(t *testing.T) {
 		fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: http.StatusForbidden}
 		_, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.Thumbnail}, nil, fakeEncodeOnly)
@@ -152,12 +162,12 @@ func TestRegenerateThumbnailWithANewCrop(t *testing.T) {
 	// The saved crop is never read, so a HEAD would fail the fake's check.
 	fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: http.StatusForbidden}
 	crop := &versions.Crop{X: 30, Y: 0, Size: 600}
-	got, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.Thumbnail}, crop, fakeEncodeOnly)
+	got, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.Thumbnail, versions.ThumbnailPreview}, crop, fakeEncodeOnly)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !slices.Equal(fake.metas, []string{"30,0,600"}) {
-		t.Errorf("crop metadata = %q, want the new crop", fake.metas)
+	if !slices.Equal(fake.metas, []string{"30,0,600", "30,0,600"}) {
+		t.Errorf("crop metadata = %q, want the new crop on both squares", fake.metas)
 	}
 	if got["thumbnail"].URL != "https://pub-123.r2.dev/photos/233d38afbc8e-img-0001-thumbnail.webp" {
 		t.Errorf("got %+v", got)

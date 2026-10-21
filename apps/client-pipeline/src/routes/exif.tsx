@@ -77,6 +77,7 @@ function withImages(
       xsmall: upload.versions.xsmall.url,
       preview: upload.versions.preview.url,
       thumbnail: upload.versions.thumbnail.url,
+      thumbnailpreview: upload.versions.thumbnailpreview.url,
     },
   };
 }
