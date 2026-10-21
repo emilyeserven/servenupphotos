@@ -7,6 +7,7 @@ import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif"
 import type { PhotoIdentity } from "@/api/photos";
 import { type UploadMutation, type UploadResponse, uploadMutation } from "@/api/upload";
 import { ColorData, RawColorData } from "@/components/color-data";
+import { EditInFlightPhoto } from "@/components/edit-in-flight";
 import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
@@ -21,10 +22,31 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useObjectUrl } from "@/hooks/use-object-url";
 
+interface PhotoSearch {
+  /** The path of a photo JSON file in the photo data pull request to edit, instead of adding a photo. */
+  edit?: string;
+}
+
 export const Route = createFileRoute("/exif")({
-  component: PhotoPage,
+  component: PhotoRoute,
   staticData: { wide: true },
+  validateSearch: (search: Record<string, unknown>): PhotoSearch =>
+    typeof search.edit === "string" && search.edit ? { edit: search.edit } : {},
 });
+
+function PhotoRoute() {
+  const edit = Route.useSearch({ select: (search) => search.edit });
+  if (!edit) return <PhotoPage />;
+  return (
+    <Page
+      title="Edit Photo"
+      description="Change a photo already saved to the open “Add photo data” pull request, such as the square its Square Thumbnail is cut from."
+      wide
+    >
+      <EditInFlightPhoto path={edit} />
+    </Page>
+  );
+}
 
 type ExifMutation = UseMutationResult<ExifResponse, Error, File>;
 

@@ -201,6 +201,17 @@ and, while CI is rebuilding `ALLPHOTOS.json`, shows a spinner beside it and spin
 mark. When the run finishes it refreshes. Without **Actions: Read-only** on the token it refreshes about 30 seconds
 after a removal instead.
 
+Each photo whose JSON was read and whose image is in R2 has an **Edit** button, which opens it on the Photo page in
+edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from. The crop editor starts from the
+crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=…`, the middle when none is saved), on
+the original photo from R2. **Save changes** first remakes the thumbnail from the new square
+(`POST /api/photos/bucket/versions` with `versions: ["thumbnail"]` and a `crop`, which replaces the saved one), then
+writes the JSON over the file on the pull request's branch (`PUT /api/photos/in-flight` with the `path` and new `data`;
+only files the pull request adds or modifies can be edited). The thumbnail keeps its R2 key, so the JSON's
+`images.thumbnail` gets a `?crop=x,y,size` query: a new URL that browsers and Cloudflare's cache fetch afresh instead of
+showing the old square (R2 ignores the query). The commit starts the **Combine photo data** workflow, which the page
+follows the same way.
+
 ### Explore Bucket
 
 `/bucket` shows every image in the R2 bucket from Settings (`GET /api/photos/bucket` → `GET /photos/bucket`), newest

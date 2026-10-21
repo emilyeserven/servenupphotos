@@ -88,7 +88,7 @@ func TestRegenerateVersions(t *testing.T) {
 	large, _ := versions.Find("large")
 	small, _ := versions.Find("small")
 
-	got, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{large, small}, fakeEncodeOnly)
+	got, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{large, small}, nil, fakeEncodeOnly)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -123,7 +123,7 @@ func TestRegenerateThumbnailKeepsItsCrop(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: tt.headStatus, crop: tt.crop}
-			if _, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{small, versions.Thumbnail}, fakeEncodeOnly); err != nil {
+			if _, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{small, versions.Thumbnail}, nil, fakeEncodeOnly); err != nil {
 				t.Fatal(err)
 			}
 			if !slices.Equal(fake.metas, tt.want) {
@@ -134,13 +134,66 @@ func TestRegenerateThumbnailKeepsItsCrop(t *testing.T) {
 
 	t.Run("crop can't be read", func(t *testing.T) {
 		fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: http.StatusForbidden}
-		_, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.Thumbnail}, fakeEncodeOnly)
+		_, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.Thumbnail}, nil, fakeEncodeOnly)
 		var uerr *UploadError
 		if !errors.As(err, &uerr) || !strings.Contains(uerr.Message, "Square Thumbnail's crop") {
 			t.Errorf("err = %v, want an UploadError about the crop", err)
 		}
 		if len(fake.puts) > 0 {
 			t.Errorf("puts = %q, want nothing uploaded", fake.puts)
+		}
+	})
+}
+
+func TestRegenerateThumbnailWithANewCrop(t *testing.T) {
+	cfg := validR2
+	cfg.PublicURL = "https://pub-123.r2.dev"
+	const key = "photos/233d38afbc8e-img-0001.jpg"
+	// The saved crop is never read, so a HEAD would fail the fake's check.
+	fake := &fakeR2Regenerate{key: key, original: "jpeg", status: http.StatusOK, headStatus: http.StatusForbidden}
+	crop := &versions.Crop{X: 30, Y: 0, Size: 600}
+	got, err := regenerateVersions(t.Context(), cfg, fake.start(t), key, []versions.Version{versions.Thumbnail}, crop, fakeEncodeOnly)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Equal(fake.metas, []string{"30,0,600"}) {
+		t.Errorf("crop metadata = %q, want the new crop", fake.metas)
+	}
+	if got["thumbnail"].URL != "https://pub-123.r2.dev/photos/233d38afbc8e-img-0001-thumbnail.webp" {
+		t.Errorf("got %+v", got)
+	}
+}
+
+func TestThumbnailCrop(t *testing.T) {
+	const key = "photos/233d38afbc8e-img-0001.jpg"
+	tests := []struct {
+		name       string
+		headStatus int
+		crop       string
+		want       *versions.Crop
+	}{
+		{"saved crop", http.StatusOK, "120,40,900", &versions.Crop{X: 120, Y: 40, Size: 900}},
+		{"no thumbnail yet", 0, "", nil},
+		{"no crop saved", http.StatusOK, "", nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			fake := &fakeR2Regenerate{key: key, headStatus: tt.headStatus, crop: tt.crop}
+			got, err := savedThumbnailCrop(t.Context(), validR2, fake.start(t), key)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if (got == nil) != (tt.want == nil) || (got != nil && *got != *tt.want) {
+				t.Errorf("crop = %v, want %v", got, tt.want)
+			}
+		})
+	}
+
+	t.Run("not a pipeline photo", func(t *testing.T) {
+		_, err := savedThumbnailCrop(t.Context(), validR2, "http://unused.invalid", "other/img.jpg")
+		var uerr *UploadError
+		if !errors.As(err, &uerr) || !uerr.NotFound {
+			t.Errorf("err = %v, want a NotFound UploadError", err)
 		}
 	})
 }
@@ -169,7 +222,7 @@ func TestRegenerateVersionsProblems(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			fake := &fakeR2Regenerate{key: "photos/233d38afbc8e-img-0001.jpg", status: tt.status, code: tt.code}
-			_, err := regenerateVersions(t.Context(), cfg, fake.start(t), tt.key, versions.All, tt.encode)
+			_, err := regenerateVersions(t.Context(), cfg, fake.start(t), tt.key, versions.All, nil, tt.encode)
 			var uerr *UploadError
 			if !errors.As(err, &uerr) || uerr.NotFound != tt.notFound || !strings.Contains(uerr.Message, tt.want) {
 				t.Errorf("err = %+v, want NotFound %v with %q", err, tt.notFound, tt.want)
