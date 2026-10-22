@@ -5,6 +5,7 @@ import {
   localizePlace,
   mapLocalized,
   type Place,
+  placeAncestry,
   placeById,
   SCRIPT_DISPLAYS,
   type ScriptDisplay,
@@ -35,6 +36,18 @@ export interface Photo {
   approximatePosition: boolean;
   /** The photo's resized versions in R2; null for photos not uploaded yet. */
   image: PhotoImage | null;
+  /**
+   * The country and city it was taken in, in English, as the location filter matches them: the
+   * custom ones, or else the EXIF ones, or else the first of its places (or a place it's in) that
+   * says. Null when none of them do.
+   */
+  country: string | null;
+  city: string | null;
+  /** The IDs of the places it lists and every place those are in, for the location filter. */
+  placeIds: string[];
+  /** The IDs of the albums and tags it's in; empty for older entries saved without them. */
+  albums: string[];
+  tags: string[];
 }
 
 /** Where the photo was taken, written each way the menu's Script Display can choose. */
@@ -373,6 +386,32 @@ function photoLocation(photo: PhotoData): LocalizedLocation | null {
   ) as LocalizedLocation;
 }
 
+/** The IDs of the photo's places and every place they're in, each once, its own places first. */
+function placeIdsOf(photo: PhotoData): string[] {
+  const ids = (photo.places ?? []).flatMap(({ id }) => placeAncestry(id).map((place) => place.id));
+  return [...new Set(ids)];
+}
+
+/** The city or country the first of the places (or a place they're in) that says one is in. */
+function placeField(placeIds: string[], field: "city" | "country"): string | null {
+  return placeIds.map((id) => placeById(id)?.[field]?.trim()).find(Boolean) ?? null;
+}
+
+/** Where the photo was taken, as the location filter matches it: see Photo. */
+function locationFields(photo: PhotoData) {
+  const placeIds = placeIdsOf(photo);
+  return {
+    country: custom(photo.customCountry, photo.country) ?? placeField(placeIds, "country"),
+    city: custom(photo.customCity, photo.city) ?? placeField(placeIds, "city"),
+    placeIds,
+  };
+}
+
+/** The photo's albums and tags, as the album and tag filters match them. */
+function groupFields({ albums = [], tags = [] }: PhotoData) {
+  return { albums, tags };
+}
+
 /** The ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
 function fromPhotoData(data: PhotoData[]): Photo[] {
   return data.flatMap((photo, index) => {
@@ -389,15 +428,29 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       location: photoLocation(photo),
       ...photoPosition(photo),
       image: parseImage(photo),
+      ...locationFields(photo),
+      ...groupFields(photo),
     };
   });
 }
 
-const localPhotos = localData ? fromPhotoData(localData) : [];
+/** The photos, each with a city but no country given the country other photos in that city have. */
+function withCityCountries(list: Photo[]): Photo[] {
+  const countries = new Map(
+    list.flatMap(({ city, country }) => (city && country ? [[city, country]] : [])),
+  );
+  return list.map((photo) =>
+    photo.country || !photo.city ? photo : { ...photo, country: countries.get(photo.city) ?? null },
+  );
+}
+
+const localPhotos = localData ? withCityCountries(fromPhotoData(localData)) : [];
 
 /**
  * The photos in ALLPHOTOS.local.json when there are any (the photos in flight, locally), or else
  * the photos in data/photos/ALLPHOTOS.json, which the "Combine photo data" workflow builds.
  */
 export const photos: Photo[] =
-  localPhotos.length > 0 ? localPhotos : fromPhotoData(committedData as PhotoData[]);
+  localPhotos.length > 0
+    ? localPhotos
+    : withCityCountries(fromPhotoData(committedData as PhotoData[]));
