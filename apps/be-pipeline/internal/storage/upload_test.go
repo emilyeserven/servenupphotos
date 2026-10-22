@@ -173,6 +173,24 @@ func TestUploadPhotoPassesTheCrop(t *testing.T) {
 	}
 }
 
+func TestUploadPhotoReportsTheThumbnailCrop(t *testing.T) {
+	cfg := validR2
+	cfg.PublicURL = "https://pub-123.r2.dev"
+	fake := &fakeR2Upload{status: http.StatusOK}
+	fitted := &versions.Crop{X: 0, Y: 20, Size: 300}
+	encode := func(photo io.Reader, c *versions.Crop) ([]versions.Encoded, error) {
+		out, err := fakeEncode(photo, c)
+		return append(out, versions.Encoded{Version: versions.Thumbnail, Data: []byte("t"), Crop: fitted}), err
+	}
+	res, err := uploadPhoto(t.Context(), cfg, fake.start(t), "a.jpg", strings.NewReader("photo"), UploadOptions{}, encode)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.ThumbnailCrop != fitted {
+		t.Errorf("ThumbnailCrop = %+v, want %+v", res.ThumbnailCrop, fitted)
+	}
+}
+
 func TestVersionKey(t *testing.T) {
 	if got := VersionKey("photos/233d38afbc8e-img-0001.jpg", "small"); got != "photos/233d38afbc8e-img-0001-small.webp" {
 		t.Errorf("VersionKey = %q", got)

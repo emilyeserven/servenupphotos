@@ -73,6 +73,22 @@ type Images struct {
 	// ThumbnailPreview is the public URL of a tiny, low-quality 40×40 WEBP
 	// cut from the same square as Thumbnail, to show blurred while it loads.
 	ThumbnailPreview *string `json:"thumbnailpreview"`
+	// ThumbnailCrop is the square of the photo Thumbnail and
+	// ThumbnailPreview are cut from, and the size Thumbnail is scaled to.
+	ThumbnailCrop *ThumbnailCrop `json:"thumbnailcrop"`
+}
+
+// ThumbnailCrop is where a photo's Square Thumbnail is cut from, in pixels
+// of the photo turned upright from its EXIF orientation: "500 × 500 px from
+// a 4220 × 4220 px square at 1710, 0" is {1710, 0, 4220, 500}.
+type ThumbnailCrop struct {
+	// X and Y are the square's top-left corner.
+	X int `json:"x"`
+	Y int `json:"y"`
+	// Size is the square's width and height on the photo.
+	Size int `json:"size"`
+	// OutputSize is the Thumbnail's width and height, whatever Size is.
+	OutputSize int `json:"outputSize"`
 }
 
 // SanitizeFields are the JSON fields of Sanitized that Sanitize fills from a

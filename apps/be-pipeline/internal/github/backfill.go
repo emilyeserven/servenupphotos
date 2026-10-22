@@ -7,12 +7,14 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"slices"
 	"strings"
 	"sync"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
 // exifConcurrency is how many originals Backfill reads EXIF from at once.
@@ -22,6 +24,22 @@ const exifConcurrency = 4
 // or a message fit to show saying why it couldn't.
 type ExifReader func(ctx context.Context, key string) (exif.Sanitized, string)
 
+// CropReader returns the crop saved with the Square Thumbnail of the
+// original photo at key in R2, nil when it has none, or a message fit to
+// show saying why it couldn't.
+type CropReader func(ctx context.Context, key string) (*versions.Crop, string)
+
+// Readers read what Backfill fills a missing field with from R2. Either may
+// be nil, and the fields it would fill get their defaults instead.
+type Readers struct {
+	Exif ExifReader
+	Crop CropReader
+}
+
+// thumbnailCropField is where a photo file saves its Square Thumbnail's
+// crop, which Backfill reads from the Thumbnail's ?crop= mark or from R2.
+const thumbnailCropField = "images.thumbnailcrop"
+
 // AddedField is a field Backfill adds to a photo file.
 type AddedField struct {
 	// Field is where the field goes, such as "aperture" or "images.thumbnail".
@@ -30,6 +48,9 @@ type AddedField struct {
 	// FromExif is true when Value was read from the photo's original in R2,
 	// rather than being the field's default.
 	FromExif bool `json:"fromExif"`
+	// FromThumbnail is true when Value was read from the photo's Square
+	// Thumbnail: the crop marked on its URL, or saved with it in R2.
+	FromThumbnail bool `json:"fromThumbnail"`
 }
 
 // BackfillFile is a photo file missing fields.
@@ -40,6 +61,9 @@ type BackfillFile struct {
 	// ExifError says why the photo's EXIF couldn't be read, when it was
 	// tried, so its EXIF fields get their defaults instead.
 	ExifError string `json:"exifError,omitempty"`
+	// CropError says why the Square Thumbnail's crop couldn't be read from
+	// R2, when it was tried, so the crop gets its default instead.
+	CropError string `json:"cropError,omitempty"`
 }
 
 // MissingField counts the photo files missing one field.
@@ -48,6 +72,8 @@ type MissingField struct {
 	Files int    `json:"files"`
 	// FromExif is how many of them get it from the photo's EXIF.
 	FromExif int `json:"fromExif"`
+	// FromThumbnail is how many of them get it from the Square Thumbnail.
+	FromThumbnail int `json:"fromThumbnail"`
 }
 
 // BackfillPreview is what adding the missing fields would do to the photo
@@ -76,20 +102,23 @@ type BackfillResult struct {
 
 // PreviewBackfill reads every photo JSON file, as PreviewBaseURL does, and
 // lists the fields each is missing compared with a new photo file, with the
-// values Backfill would add. With readExif non-nil, a missing EXIF field
+// values Backfill would add. With read.Exif non-nil, a missing EXIF field
 // (exif.SanitizeFields) is read from the photo's original in R2, when the
-// file has its key; otherwise it gets the field's default. It only reads.
-func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, readExif ExifReader) (BackfillPreview, error) {
+// file has its key; otherwise it gets the field's default. A missing
+// images.thumbnailcrop is read from the ?crop= mark on images.thumbnail, or
+// with read.Crop non-nil from the crop saved with the thumbnail in R2. It
+// only reads.
+func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, read Readers) (BackfillPreview, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
 		return BackfillPreview{}, perr
 	}
-	plans, perr := planBackfill(ctx, scan, readExif)
+	plans, perr := planBackfill(ctx, scan, read)
 	if perr != nil {
 		return BackfillPreview{}, perr
 	}
 	preview := BackfillPreview{
-		Repo: scan.t.repo.FullName, Folder: scan.folder, Branch: scan.branch, ReadExif: readExif != nil,
+		Repo: scan.t.repo.FullName, Folder: scan.folder, Branch: scan.branch, ReadExif: read.Exif != nil,
 		Fields: []MissingField{}, Files: []BackfillFile{}, Unreadable: []BaseURLUnreadable{},
 	}
 	if scan.pr != nil {
@@ -106,9 +135,11 @@ func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, readEx
 		if len(plan.gaps) == 0 {
 			continue
 		}
-		file := BackfillFile{Path: f.path, FileURL: f.fileURL, ExifError: plan.exifErr}
+		file := BackfillFile{Path: f.path, FileURL: f.fileURL, ExifError: plan.exifErr, CropError: plan.cropErr}
 		for _, g := range plan.gaps {
-			file.Added = append(file.Added, AddedField{Field: g.field, Value: g.value, FromExif: g.fromExif})
+			file.Added = append(file.Added, AddedField{
+				Field: g.field, Value: g.value, FromExif: g.fromExif, FromThumbnail: g.fromThumbnail,
+			})
 			n := counts[g.field]
 			if n == nil {
 				n = &MissingField{Field: g.field}
@@ -117,6 +148,9 @@ func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, readEx
 			n.Files++
 			if g.fromExif {
 				n.FromExif++
+			}
+			if g.fromThumbnail {
+				n.FromThumbnail++
 			}
 		}
 		preview.Files = append(preview.Files, file)
@@ -133,7 +167,7 @@ func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, readEx
 // them, as one commit as ReplaceBaseURL makes. Fields a file has, even null
 // ones, are never changed, and the rest of each file is kept byte for byte.
 // Nothing is committed when any photo file can't be read.
-func (c *Client) Backfill(ctx context.Context, gh settings.GitHub, readExif ExifReader) (BackfillResult, error) {
+func (c *Client) Backfill(ctx context.Context, gh settings.GitHub, read Readers) (BackfillResult, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
 		return BackfillResult{}, perr
@@ -144,7 +178,7 @@ func (c *Client) Backfill(ctx context.Context, gh settings.GitHub, readExif Exif
 				"%s couldn't be read (%s), so nothing was changed.", f.path, f.err)
 		}
 	}
-	plans, perr := planBackfill(ctx, scan, readExif)
+	plans, perr := planBackfill(ctx, scan, read)
 	if perr != nil {
 		return BackfillResult{}, perr
 	}
@@ -176,11 +210,13 @@ func (c *Client) Backfill(ctx context.Context, gh settings.GitHub, readExif Exif
 type backfillPlan struct {
 	gaps    []gap
 	exifErr string
+	cropErr string
 }
 
 // planBackfill finds the gaps in every readable file of scan, filling EXIF
-// fields with readExif when it is non-nil. Files are read a few at a time.
-func planBackfill(ctx context.Context, scan baseURLScan, readExif ExifReader) ([]backfillPlan, *PublishError) {
+// fields with read.Exif and the thumbnail's crop from its URL or read.Crop,
+// when they are non-nil. Files are read from R2 a few at a time.
+func planBackfill(ctx context.Context, scan baseURLScan, read Readers) ([]backfillPlan, *PublishError) {
 	tmpl := photoTemplate()
 	plans := make([]backfillPlan, len(scan.files))
 	var wg sync.WaitGroup
@@ -199,8 +235,14 @@ func planBackfill(ctx context.Context, scan baseURLScan, readExif ExifReader) ([
 			continue
 		}
 		plans[i].gaps = gaps
+		cropGap := slices.IndexFunc(gaps, func(g gap) bool { return g.field == thumbnailCropField })
+		if cropGap >= 0 && fillCropFromURL(f.content, &gaps[cropGap]) {
+			cropGap = -1
+		}
 		key := imageKey(f.content)
-		if readExif == nil || key == "" || !slices.ContainsFunc(gaps, isExifGap) {
+		needExif := read.Exif != nil && slices.ContainsFunc(gaps, isExifGap)
+		needCrop := read.Crop != nil && cropGap >= 0
+		if key == "" || (!needExif && !needCrop) {
 			continue
 		}
 		wg.Add(1)
@@ -208,7 +250,12 @@ func planBackfill(ctx context.Context, scan baseURLScan, readExif ExifReader) ([
 			defer wg.Done()
 			sem <- struct{}{}
 			defer func() { <-sem }()
-			plans[i].exifErr = fillFromExif(ctx, readExif, key, plans[i].gaps)
+			if needExif {
+				plans[i].exifErr = fillFromExif(ctx, read.Exif, key, plans[i].gaps)
+			}
+			if needCrop {
+				plans[i].cropErr = fillCropFromR2(ctx, read.Crop, key, &plans[i].gaps[cropGap])
+			}
 		}()
 	}
 	wg.Wait()
@@ -239,6 +286,52 @@ func fillFromExif(ctx context.Context, readExif ExifReader, key string, gaps []g
 		}
 	}
 	return ""
+}
+
+// fillCropFromURL sets g, the thumbnail's crop, to the crop marked on the
+// file's images.thumbnail URL as ?crop=x,y,size, reporting whether it had one.
+func fillCropFromURL(content []byte, g *gap) bool {
+	var photo struct {
+		Images struct {
+			Thumbnail *string `json:"thumbnail"`
+		} `json:"images"`
+	}
+	if json.Unmarshal(content, &photo) != nil || photo.Images.Thumbnail == nil {
+		return false
+	}
+	u, err := url.Parse(*photo.Images.Thumbnail)
+	if err != nil {
+		return false
+	}
+	crop, ok := versions.ParseCrop(u.Query().Get("crop"))
+	if !ok {
+		return false
+	}
+	setCropGap(g, crop)
+	return true
+}
+
+// fillCropFromR2 sets g, the thumbnail's crop, to the crop saved with the
+// Square Thumbnail in R2, when it has one, returning why it couldn't when it
+// couldn't.
+func fillCropFromR2(ctx context.Context, readCrop CropReader, key string, g *gap) string {
+	crop, msg := readCrop(ctx, key)
+	if msg != "" || crop == nil {
+		return msg
+	}
+	setCropGap(g, *crop)
+	return ""
+}
+
+func setCropGap(g *gap, crop versions.Crop) {
+	g.value, _ = json.Marshal(savedCrop(crop))
+	g.fromThumbnail = true
+}
+
+// savedCrop is crop as a photo file saves it, with the size of the
+// Thumbnail cut from it.
+func savedCrop(crop versions.Crop) exif.ThumbnailCrop {
+	return exif.ThumbnailCrop{X: crop.X, Y: crop.Y, Size: crop.Size, OutputSize: versions.Thumbnail.MaxEdge}
 }
 
 // imageKey is a photo file's "images.key", its original's key in R2.
@@ -355,6 +448,8 @@ type gap struct {
 	key      string
 	value    json.RawMessage
 	fromExif bool
+	// fromThumbnail marks the thumbnail's crop read from its URL or R2.
+	fromThumbnail bool
 	// pos is the offset the field is inserted at: after the field before it,
 	// or after the object's opening brace when lead is set.
 	pos  int

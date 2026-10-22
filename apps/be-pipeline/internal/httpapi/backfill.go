@@ -13,6 +13,8 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
 // backfillTimeout bounds adding missing fields, which can download many
@@ -23,7 +25,8 @@ const backfillTimeout = 3 * time.Minute
 const maxCachedExif = 2000
 
 type backfillRequest struct {
-	// ReadExif fills missing EXIF fields from the originals in R2.
+	// ReadExif fills missing EXIF fields from the originals in R2, and a
+	// missing thumbnail crop from the one saved with the thumbnail there.
 	ReadExif bool `json:"readExif"`
 }
 
@@ -55,23 +58,23 @@ func (c *exifCache) put(key string, s exif.Sanitized) {
 
 // handlePreviewBackfill lists the fields each photo JSON file is missing,
 // as the Update Data page previews adding them.
-func handlePreviewBackfill(extractor exif.Extractor, store *settings.Store, gh *github.Client, get getPhotoFunc, cache *exifCache) http.HandlerFunc {
-	return handleBackfill(extractor, store, get, cache, func(ctx context.Context, cfg settings.GitHub, read github.ExifReader) (any, error) {
+func handlePreviewBackfill(extractor exif.Extractor, store *settings.Store, gh *github.Client, get getPhotoFunc, readCrop thumbnailCropFunc, cache *exifCache) http.HandlerFunc {
+	return handleBackfill(extractor, store, get, readCrop, cache, func(ctx context.Context, cfg settings.GitHub, read github.Readers) (any, error) {
 		return gh.PreviewBackfill(ctx, cfg, read)
 	})
 }
 
 // handleApplyBackfill adds the missing fields to every photo JSON file, as one
 // commit in the photo data pull request.
-func handleApplyBackfill(extractor exif.Extractor, store *settings.Store, gh *github.Client, get getPhotoFunc, cache *exifCache) http.HandlerFunc {
-	return handleBackfill(extractor, store, get, cache, func(ctx context.Context, cfg settings.GitHub, read github.ExifReader) (any, error) {
+func handleApplyBackfill(extractor exif.Extractor, store *settings.Store, gh *github.Client, get getPhotoFunc, readCrop thumbnailCropFunc, cache *exifCache) http.HandlerFunc {
+	return handleBackfill(extractor, store, get, readCrop, cache, func(ctx context.Context, cfg settings.GitHub, read github.Readers) (any, error) {
 		return gh.Backfill(ctx, cfg, read)
 	})
 }
 
 func handleBackfill(
-	extractor exif.Extractor, store *settings.Store, get getPhotoFunc, cache *exifCache,
-	run func(context.Context, settings.GitHub, github.ExifReader) (any, error),
+	extractor exif.Extractor, store *settings.Store, get getPhotoFunc, readCrop thumbnailCropFunc, cache *exifCache,
+	run func(context.Context, settings.GitHub, github.Readers) (any, error),
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req backfillRequest
@@ -85,9 +88,12 @@ func handleBackfill(
 			writeError(w, http.StatusInternalServerError, "could not read settings")
 			return
 		}
-		var read github.ExifReader
+		var read github.Readers
 		if req.ReadExif && extractor != nil {
-			read = exifReader(extractor, store.R2, get, cache)
+			read.Exif = exifReader(extractor, store.R2, get, cache)
+		}
+		if req.ReadExif {
+			read.Crop = cropReader(store.R2, readCrop)
 		}
 
 		ctx, cancel := context.WithTimeout(r.Context(), backfillTimeout)
@@ -131,5 +137,26 @@ func exifReader(extractor exif.Extractor, r2 func() (settings.R2, error), get ge
 		s := exif.Sanitize(fields)
 		cache.put(key, s)
 		return s, ""
+	}
+}
+
+// cropReader reads the crop saved with an original's Square Thumbnail in R2,
+// as GET /photos/bucket/thumbnail-crop does.
+func cropReader(r2 func() (settings.R2, error), readCrop thumbnailCropFunc) github.CropReader {
+	return func(ctx context.Context, key string) (*versions.Crop, string) {
+		cfg, err := r2()
+		if err != nil {
+			return nil, "Couldn't read the R2 settings."
+		}
+		crop, err := readCrop(ctx, cfg, key)
+		var uploadErr *storage.UploadError
+		switch {
+		case errors.As(err, &uploadErr):
+			return nil, uploadErr.Message
+		case err != nil:
+			slog.Error("read thumbnail crop failed", "key", key, "err", err)
+			return nil, "Couldn't read the Square Thumbnail's crop."
+		}
+		return crop, ""
 	}
 }

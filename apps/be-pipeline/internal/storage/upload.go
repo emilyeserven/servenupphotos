@@ -33,6 +33,9 @@ type UploadResult struct {
 	Uploaded
 	// Versions are the photo's WEBP copies, by version name.
 	Versions map[string]Uploaded `json:"versions"`
+	// ThumbnailCrop is the square the Thumbnail was cut from, fitted to the
+	// photo: the crop asked for, or the middle of the photo without one.
+	ThumbnailCrop *versions.Crop `json:"thumbnailCrop,omitempty"`
 }
 
 // UploadError is an upload failure with a reason fit to show the person
@@ -131,6 +134,9 @@ func uploadPhoto(ctx context.Context, cfg settings.R2, endpoint, name string, bo
 			return UploadResult{}, err
 		}
 		res.Versions[v.Name] = Uploaded{Key: vkey, URL: base + "/" + vkey}
+		if v.Name == versions.Thumbnail.Name {
+			res.ThumbnailCrop = v.Crop
+		}
 	}
 	return res, nil
 }

@@ -205,7 +205,8 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
     "xsmall": null,
     "preview": null,
     "thumbnail": null,
-    "thumbnailpreview": null
+    "thumbnailpreview": null,
+    "thumbnailcrop": null
   },
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,

@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
 import type { PhotoIdentity } from "@/api/photos";
 import { type UploadMutation, type UploadResponse, uploadMutation } from "@/api/upload";
+import { thumbnailCropField } from "@/api/versions";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
 import { GitHubSaveCard } from "@/components/github-save";
@@ -84,8 +85,14 @@ function withImages(
       preview: upload.versions.preview.url,
       thumbnail: upload.versions.thumbnail.url,
       thumbnailpreview: upload.versions.thumbnailpreview.url,
+      thumbnailcrop: uploadedCrop(upload),
     },
   };
+}
+
+/** The Square Thumbnail's crop as the photo's JSON saves it, when the upload said what it was. */
+function uploadedCrop({ thumbnailCrop }: UploadResponse) {
+  return thumbnailCrop ? thumbnailCropField(thumbnailCrop) : null;
 }
 
 const NO_DETAILS: PhotoDetails = { title: "", comment: "" };

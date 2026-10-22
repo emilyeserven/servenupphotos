@@ -62,6 +62,31 @@ export function thumbnailUrlWithCrop(url: string, crop: Crop): string {
   return `${url.replace(/[?#].*$/, "")}?crop=${x},${y},${size}`;
 }
 
+/**
+ * Where a photo's Square Thumbnail is cut from, as saved in its JSON as `images.thumbnailcrop`:
+ * "500 × 500 px from a 4220 × 4220 px square at 1710, 0" is { x: 1710, y: 0, size: 4220, outputSize: 500 }.
+ */
+export interface ThumbnailCrop extends Crop {
+  /** The Square Thumbnail's width and height, whatever the square's size on the photo. */
+  outputSize: number;
+}
+
+/** crop as a photo's JSON saves it, in whole pixels with the Square Thumbnail's size. */
+export function thumbnailCropField(crop: Crop): ThumbnailCrop {
+  return { ...roundedCrop(crop), outputSize: THUMBNAIL.maxEdge };
+}
+
+/** The crop saved in a photo's JSON as `images.thumbnailcrop`, or null when it has none. */
+export function savedThumbnailCrop(images: Record<string, unknown> | undefined): Crop | null {
+  const { x, y, size } = { ...(images?.thumbnailcrop as Partial<Crop> | null) };
+  const crop = { x, y, size };
+  return isCrop(crop) ? crop : null;
+}
+
+function isCrop(crop: Partial<Crop>): crop is Crop {
+  return Object.values(crop).every((n) => typeof n === "number") && crop.size! > 0;
+}
+
 /** crop in whole pixels, as the backend takes it. */
 function roundedCrop({ x, y, size }: Crop): Crop {
   return { x: Math.round(x), y: Math.round(y), size: Math.round(size) };
