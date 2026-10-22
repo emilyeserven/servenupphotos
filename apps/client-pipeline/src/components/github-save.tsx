@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import type { SanitizedExif } from "@/api/exif";
 import { type PublishResult, publishPhotoMutation } from "@/api/photos";
 import { type SettingsResponse, settingsQuery } from "@/api/settings";
@@ -15,10 +16,22 @@ type GitHubSettings = SettingsResponse["github"];
 /** Matches the backend's rule: plain file names only. */
 const FILE_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/;
 
-/** The photo's file name without its extension, with anything the backend refuses replaced by dashes. */
-function defaultName(file: string): string {
-  const stem = file.replace(/\.[^.]*$/, "");
-  return stem.replace(/[^A-Za-z0-9._-]/g, "-").replace(/^[^A-Za-z0-9]+/, "") || "photo";
+/**
+ * The photo's title, or else its file name without the extension, as a file name the backend takes:
+ * accents dropped, runs of spaces turned into one dash, other characters it refuses taken out, and
+ * cut to its 100-character limit.
+ */
+function defaultName(title: string | null, file: string): string {
+  const name = (title?.trim() || file.replace(/\.[^.]*$/, ""))
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^A-Za-z0-9._-]/g, "")
+    .replace(/-{2,}/g, "-")
+    .replace(/^[^A-Za-z0-9]+/, "")
+    .slice(0, 100)
+    .replace(/[.-]+$/, "");
+  return name || "photo";
 }
 
 function validateName(name: string): string | undefined {
@@ -88,14 +101,21 @@ function GitHubSaveForm({
   onSaved,
 }: GitHubSaveCardProps & { github: GitHubSettings }) {
   const publish = useMutation({ ...publishPhotoMutation, onSuccess: () => onSaved?.() });
+  const suggestedName = defaultName(sanitized.title, file);
 
   const form = useForm({
-    defaultValues: { name: defaultName(file) },
+    defaultValues: { name: suggestedName },
     validators: { onSubmit: ({ value }) => validateName(value.name) },
     onSubmit: async ({ value }) => {
       await publish.mutateAsync({ name: value.name.trim(), file, sanitized }).catch(() => {});
     },
   });
+
+  // The name follows the title until it's typed in by hand.
+  useEffect(() => {
+    if (form.getFieldMeta("name")?.isDirty) return;
+    form.setFieldValue("name", suggestedName, { dontUpdateMeta: true });
+  }, [form, suggestedName]);
 
   if (publish.isSuccess) return <PublishSuccess result={publish.data} repo={github.repo} />;
 

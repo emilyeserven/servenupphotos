@@ -12,7 +12,12 @@ import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
-import { type PhotoDetails, PhotoDetailsCard } from "@/components/photo-details";
+import {
+  fileStem,
+  type PhotoDetails,
+  PhotoDetailsCard,
+  withDetails,
+} from "@/components/photo-details";
 import { R2Upload } from "@/components/r2-upload";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { VersionPreviews } from "@/components/version-previews";
@@ -83,16 +88,6 @@ function withImages(
   };
 }
 
-/** The sanitized EXIF with the title and Markdown comment, or null for ones left empty, filled in. */
-function withDetails(sanitized: SanitizedExif | null, details: PhotoDetails): SanitizedExif | null {
-  if (!sanitized) return null;
-  return {
-    ...sanitized,
-    title: details.title.trim() || null,
-    comment: details.comment.trim() || null,
-  };
-}
-
 const NO_DETAILS: PhotoDetails = { title: "", comment: "" };
 
 /** State that belongs to the photo analyzed at `submittedAt`, so choosing another photo starts it over. */
@@ -109,7 +104,8 @@ function PhotoPage() {
   // Lives here so it can go into the JSON to upload and the JSON saved to GitHub.
   const [details, setDetails] = usePhotoState(extract.submittedAt, NO_DETAILS);
   const [saved, setSaved] = usePhotoState(extract.submittedAt, false);
-  const sanitized = withDetails(withImages(extract.data?.sanitized, upload.data), details);
+  const images = withImages(extract.data?.sanitized, upload.data);
+  const sanitized = images && withDetails(images, details);
   const identity = photoIdentity(extract, sanitized);
 
   return (
@@ -243,16 +239,40 @@ function ResultsColumn({
       {extract.isSuccess && sanitized && (
         // The gate in the other column shows the check's status, so this one stays quiet.
         <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
-          <PhotoDetailsCard
-            value={details}
-            onChange={onDetailsChange}
-            fallbackTitle={extract.data.file.replace(/\.[^.]*$/, "")}
+          <NewPhotoDetails
+            file={extract.data.file}
+            details={details}
+            onDetailsChange={onDetailsChange}
             saved={saved}
           />
           <GitHubSaveCard file={extract.data.file} sanitized={sanitized} onSaved={onSaved} />
         </AllPhotosGate>
       )}
     </>
+  );
+}
+
+interface NewPhotoDetailsProps {
+  file: string;
+  details: PhotoDetails;
+  onDetailsChange: (details: PhotoDetails) => void;
+  saved: boolean;
+}
+
+/** The new photo's title and comment, until its JSON is saved with them. */
+function NewPhotoDetails({ file, details, onDetailsChange, saved }: NewPhotoDetailsProps) {
+  return (
+    <PhotoDetailsCard
+      value={details}
+      onChange={onDetailsChange}
+      fallbackTitle={fileStem(file)}
+      description={
+        saved
+          ? "Saved with the photo's JSON."
+          : "Both optional, and saved in the JSON when you save to GitHub."
+      }
+      disabled={saved}
+    />
   );
 }
 

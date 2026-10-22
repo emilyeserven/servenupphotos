@@ -14,9 +14,26 @@ const MARKDOWN_CLASSES = [
   "[&_blockquote]:text-muted-foreground [&_blockquote]:my-2 [&_blockquote]:border-l-2 [&_blockquote]:pl-3",
 ].join(" ");
 
+/** The photo's title and Markdown comment as typed; empty when there's none. */
 export interface PhotoDetails {
   title: string;
   comment: string;
+}
+
+/** A file name without its extension, which the portfolio uses as the title of a photo without one. */
+export function fileStem(file: string): string {
+  return file.replace(/\.[^.]*$/, "");
+}
+
+/** The title and comment saved in a photo's JSON, to start editing from. */
+export function savedDetails(data: Record<string, unknown>): PhotoDetails {
+  const text = (value: unknown) => (typeof value === "string" ? value : "");
+  return { title: text(data.title), comment: text(data.comment) };
+}
+
+/** data with the title and comment, or null for ones left empty. */
+export function withDetails<T extends object>(data: T, details: PhotoDetails) {
+  return { ...data, title: details.title.trim() || null, comment: details.comment.trim() || null };
 }
 
 interface PhotoDetailsCardProps {
@@ -24,21 +41,24 @@ interface PhotoDetailsCardProps {
   onChange: (value: PhotoDetails) => void;
   /** What the portfolio calls the photo without a title: its file name without the extension. */
   fallbackTitle: string;
-  /** The JSON has been saved with these, so changing them would no longer change the file. */
-  saved: boolean;
+  description: string;
+  /** Saving is underway or done, so changing them now would not change the file. */
+  disabled: boolean;
 }
 
 /** The photo's optional title on the portfolio and Markdown comment, saved as the JSON's "title" and "comment". */
-export function PhotoDetailsCard({ value, onChange, fallbackTitle, saved }: PhotoDetailsCardProps) {
+export function PhotoDetailsCard({
+  value,
+  onChange,
+  fallbackTitle,
+  description,
+  disabled,
+}: PhotoDetailsCardProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Title and comment</CardTitle>
-        <CardDescription>
-          {saved
-            ? "Saved with the photo's JSON."
-            : "Both optional, and saved in the JSON when you save to GitHub."}
-        </CardDescription>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
@@ -49,18 +69,18 @@ export function PhotoDetailsCard({ value, onChange, fallbackTitle, saved }: Phot
             id="photo-title"
             placeholder={fallbackTitle}
             value={value.title}
-            disabled={saved}
+            disabled={disabled}
             aria-describedby="photo-title-hint"
             onChange={(event) => onChange({ ...value, title: event.target.value })}
           />
           <p id="photo-title-hint" className="text-muted-foreground text-sm">
             What the portfolio calls the photo. Without one, it uses the file name,{" "}
-            <code>{fallbackTitle}</code>.
+            <code>{fallbackTitle}</code>. A new photo's JSON file is named after it too.
           </p>
         </div>
         <CommentField
           value={value.comment}
-          disabled={saved}
+          disabled={disabled}
           onChange={(comment) => onChange({ ...value, comment })}
         />
       </CardContent>
