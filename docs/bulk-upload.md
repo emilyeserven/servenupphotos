@@ -32,3 +32,11 @@ again. **Clear finished** takes the added and skipped photos off the list.
 
 > **Frontend analogy:** it's a download manager's queue. Every file is a row with its own progress and its own retry
 > button, but only one downloads at a time, and a failed one doesn't hold up the rest.
+
+## The upload queue
+
+Bulk Upload's queue is the app's one upload queue. The Photo page's **Upload & save** button (next to Upload to R2 and
+Save, until the photo is uploaded there) hands the analyzed photo to it with its title and other details, its square,
+albums and tags, and the queue uploads it and saves its JSON while you go on to other pages. Changes made on the Photo
+page after that aren't saved with it; change it afterward with Edit. While the queue has anything in it, the Status page
+shows it, with the same rows and buttons.
