@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutGrid, MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
+import { MenuIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useState } from "react";
 import { type Theme, useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,13 @@ export function SiteMenu() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Open menu">
-          <LayoutGrid className="size-5" />
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label="Open menu"
+          className="bg-muted shadow-sm dark:bg-muted"
+        >
+          <MenuIcon className="size-5" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-[min(18rem,calc(100vw-2rem))] p-2">
