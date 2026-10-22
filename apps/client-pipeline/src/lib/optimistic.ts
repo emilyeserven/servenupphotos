@@ -12,7 +12,7 @@ import { canonicalJson } from "@/lib/combined";
 
 /**
  * One file a push changed in the photo data pull request, which the combined lists won't have
- * until CI rebuilds them. `before` is the file's data before the push, when known, so its old entry
+ * until they're committed. `before` is the file's data before the push, when known, so its old entry
  * can be replaced; `after` is null when the push removed the file.
  */
 export interface FileChange {
@@ -70,8 +70,8 @@ function changedFile(file: CombinedFile, changes: FileChange[]): CombinedFile {
 }
 
 /**
- * data with changes made to the combined lists at the pull request's head, as CI will have them
- * once it rebuilds them. The base branch's are left as they are, since the pull request hasn't
+ * data with changes made to the combined lists at the pull request's head, as they'll be
+ * once committed. The base branch's are left as they are, since the pull request hasn't
  * merged. A file that couldn't be read is left as it is.
  */
 export function withChanges(data: CombinedData, changes: FileChange[]): CombinedData {

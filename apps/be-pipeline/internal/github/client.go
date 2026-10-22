@@ -41,8 +41,8 @@ type response struct {
 }
 
 // do sends a request to path with the token and, when in is non-nil, in as a
-// JSON body. On a 2xx response with a body it decodes the body into out when
-// out is non-nil. The token goes only in the Authorization header.
+// JSON body. On a 2xx response it decodes the body into out when out is
+// non-nil. The token goes only in the Authorization header.
 func (c *Client) do(ctx context.Context, method, path, token string, in, out any) (response, error) {
 	var body io.Reader
 	if in != nil {
@@ -71,7 +71,7 @@ func (c *Client) do(ctx context.Context, method, path, token string, in, out any
 	}
 	defer res.Body.Close() //nolint:errcheck // read-only
 
-	if res.StatusCode >= 200 && res.StatusCode < 300 && res.StatusCode != http.StatusNoContent && out != nil {
+	if res.StatusCode >= 200 && res.StatusCode < 300 && out != nil {
 		if err := json.NewDecoder(res.Body).Decode(out); err != nil {
 			return response{}, fmt.Errorf("decode github response: %w", err)
 		}

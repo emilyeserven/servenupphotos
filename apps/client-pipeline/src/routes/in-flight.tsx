@@ -1,4 +1,4 @@
-import { type UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
+import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   CheckIcon,
@@ -16,8 +16,7 @@ import {
   type InFlightGroups,
   type InFlightImages,
   type InFlightResponse,
-  type CombineStatus,
-  combineStatusQuery,
+  type CombinedStatus,
   type RemoveResult,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
@@ -25,7 +24,7 @@ import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import {
   AllPhotosRebuild,
-  RebuildButton,
+  CommitButton,
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
@@ -100,7 +99,6 @@ function InFlightCard() {
   const rebuild = useAllPhotosRebuild(Boolean(inFlight.data?.pullRequest), () => {
     void inFlight.refetch();
   });
-  const queryClient = useQueryClient();
   const onRemoved = (result: RemoveResult) => {
     setRemoved(result);
     setRemovedPaths((paths) => new Set(paths).add(result.path));
@@ -114,12 +112,9 @@ function InFlightCard() {
       <PullRequestCard
         inFlight={inFlight}
         shown={shown}
-        rebuilding={rebuild.rebuilding}
-        runUrl={rebuild.runUrl}
         showAllPhotos={showAllPhotos}
         onRefresh={() => {
           void inFlight.refetch();
-          void queryClient.refetchQueries({ queryKey: combineStatusQuery().queryKey });
           void refreshCombined();
         }}
       />
@@ -157,14 +152,14 @@ function InFlightCard() {
   );
 }
 
-/** What the last removal did, then how the ALLPHOTOS.json rebuild after it is going. */
+/** What the last removal did, then whether ALLPHOTOS.json is synced with it. */
 function RemovalNotice({
   removed,
   rebuild,
   onDismiss,
 }: {
   removed: RemoveResult | null;
-  rebuild: UseQueryResult<CombineStatus>;
+  rebuild: UseQueryResult<CombinedStatus>;
   onDismiss: () => void;
 }) {
   if (!removed) return null;
@@ -194,18 +189,12 @@ function withoutRemoved(
 function PullRequestCard({
   inFlight,
   shown,
-  rebuilding,
-  runUrl,
   showAllPhotos,
   onRefresh,
 }: {
   inFlight: UseQueryResult<InFlightResponse>;
   /** inFlight's data without the files just removed. */
   shown?: InFlightResponse;
-  /** Whether CI is rebuilding ALLPHOTOS.json. */
-  rebuilding: boolean;
-  /** The run rebuilding it, or the workflow's runs page. */
-  runUrl?: string;
   showAllPhotos: boolean;
   onRefresh: () => void;
 }) {
@@ -228,9 +217,7 @@ function PullRequestCard({
       </CardHeader>
       <CardContent>
         <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
-          {(data) => (
-            <PullRequestSummary data={shown ?? data} rebuilding={rebuilding} runUrl={runUrl} />
-          )}
+          {(data) => <PullRequestSummary data={shown ?? data} />}
         </QueryResult>
       </CardContent>
     </Card>
@@ -276,7 +263,7 @@ function AllPhotosPanel({ data }: { data?: InFlightResponse }) {
 
 /** Why ALLPHOTOS.json can't be shown, or undefined when it can. */
 function allPhotosProblem(all: CombinedFile): string | undefined {
-  if (!all.found) return "Not on the branch yet. Rebuild adds it.";
+  if (!all.found) return "Not on the branch yet. Commit adds it.";
   if (all.error) return all.error;
   return all.data ? undefined : "Couldn't read the file.";
 }
@@ -330,7 +317,7 @@ function FileSection({
 }: {
   file: InFlightFile;
   images: InFlightImages;
-  /** Whether CI is rebuilding ALLPHOTOS.json, so a missing entry may be on its way. */
+  /** Whether ALLPHOTOS.json is being committed, so a missing entry may be on its way. */
   rebuilding: boolean;
   onRemoved: (result: RemoveResult) => void;
 }) {
@@ -494,13 +481,13 @@ const ALL_PHOTOS_MARKS = {
     label: (file: string) => `In ${file}`,
     className: "text-emerald-600 dark:text-emerald-400",
   },
-  // Not in it until it's rebuilt from the Rebuild button.
+  // Not in it until it's committed.
   out: {
     Icon: CircleDashedIcon,
     label: (file: string) => `Not synced to ${file} yet`,
     className: "text-amber-700 dark:text-amber-400",
   },
-  // Not in it yet, but CI is rebuilding it.
+  // Not in it yet, but it's being committed.
   pending: {
     Icon: CircleDashedIcon,
     label: (file: string) => `Not synced to ${file} yet`,
@@ -515,7 +502,7 @@ function allPhotosMarkKey(inAllPhotos: boolean, rebuilding: boolean) {
 
 /**
  * A check mark when the file's data is an entry of `allFile` (ALLPHOTOS.json unless named), or a
- * dashed circle marking it not synced when it isn't, spinning while CI rebuilds it. Nothing when either file couldn't be
+ * dashed circle marking it not synced when it isn't, spinning while it's committed. Nothing when either file couldn't be
  * read.
  */
 function AllPhotosMark({
@@ -545,7 +532,7 @@ function GroupFiles({
 }: {
   title: string;
   groups: InFlightGroups;
-  /** Whether CI is rebuilding the combined files, so a missing entry may be on its way. */
+  /** Whether the combined files are being committed, so a missing entry may be on its way. */
   rebuilding: boolean;
 }) {
   if (groups.files.length === 0) return null;
@@ -595,7 +582,7 @@ function groupsSummary(groups: InFlightGroups): string {
 }
 
 function allPhotosSummary(all: CombinedFile, files: InFlightFile[]): string {
-  if (!all.found) return "Not on the branch yet. Rebuild adds it.";
+  if (!all.found) return "Not on the branch yet. Commit adds it.";
   if (all.error) return all.error;
   const matched = files.filter((file) => file.inAllPhotos).length;
   return `Lists ${all.count}; ${matched} of ${files.length} photo files match`;
@@ -603,21 +590,27 @@ function allPhotosSummary(all: CombinedFile, files: InFlightFile[]): string {
 
 /**
  * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json have every change pushed to the pull
- * request, as checked when the app started and after each rebuild, and how many changes since the
- * last rebuild the pages already show.
+ * request, as checked when the app started and known from the app's saves and commits since, with
+ * Commit to sync them.
  */
-function SyncSummary({ rebuilding, runUrl }: { rebuilding: boolean; runUrl?: string }) {
+function SyncSummary() {
   const sync = useCombinedSync();
-  if (rebuilding) return <RebuildingNote runUrl={runUrl} />;
-  if (!sync.unsynced) {
-    const state = sync.headState;
-    if (state === "unavailable")
-      return <span className="text-muted-foreground">Couldn't check on CI</span>;
-    return <span className="text-muted-foreground">Up to date</span>;
+  if (sync.committing) {
+    return (
+      <span className="text-muted-foreground flex items-center gap-2">
+        <Spinner />
+        Committing them…
+      </span>
+    );
   }
+  if (sync.commitError) return <span className="text-destructive">{sync.commitError.message}</span>;
+  if (!sync.unsynced) return <span className="text-muted-foreground">Up to date</span>;
   return (
-    <span className="text-amber-700 dark:text-amber-400">
-      {unsyncedText(sync.changes, sync.unknownChanges, sync.headState)}
+    <span className="flex flex-col items-start gap-2">
+      <span className="text-amber-700 dark:text-amber-400">
+        {unsyncedText(sync.changes, sync.unknownChanges)}
+      </span>
+      <CommitButton />
     </span>
   );
 }
@@ -626,36 +619,18 @@ function plural(count: number, one: string): string {
   return `${count} ${one}${count === 1 ? "" : "s"}`;
 }
 
-/** What the pages already show of the changes since the last rebuild, and what they don't. */
+/** What the pages already show of the changes since the last commit, and what they don't. */
 function changesText(changes: number, unknown: number): string {
   const shown = changes > 0 ? `${plural(changes, "file change")} shown here already` : "";
-  const hidden = unknown > 0 ? `${plural(unknown, "save")} that show once rebuilt` : "";
+  const hidden = unknown > 0 ? `${plural(unknown, "save")} that show once committed` : "";
   return [shown, hidden].filter(Boolean).join(", ");
 }
 
 /** Why the combined files aren't synced, and what the pages already show of it. */
-function unsyncedText(changes: number, unknown: number, state?: CombineStatus["state"]): string {
-  const failed = state === "failed" ? "The last rebuild failed. " : "";
+function unsyncedText(changes: number, unknown: number): string {
   const since =
-    changesText(changes, unknown) || "the pull request has changes since the last rebuild";
-  return `${failed}Not synced: ${since}. Rebuild to sync them.`;
-}
-
-/** A spinner and note while CI rebuilds the combined files, linked to the run. */
-function RebuildingNote({ runUrl }: { runUrl?: string }) {
-  const note = runUrl ? (
-    <a href={runUrl} target="_blank" rel="noreferrer" className="underline underline-offset-4">
-      CI is rebuilding them
-    </a>
-  ) : (
-    "CI is rebuilding them"
-  );
-  return (
-    <span className="text-muted-foreground flex items-center gap-2">
-      <Spinner />
-      {note}
-    </span>
-  );
+    changesText(changes, unknown) || "the pull request has changes since the last commit";
+  return `Not synced: ${since}. Commit to sync them.`;
 }
 
 function imagesSummary(images: InFlightImages, files: number): string {
@@ -663,15 +638,7 @@ function imagesSummary(images: InFlightImages, files: number): string {
   return `${Object.keys(images.byPath).length} of ${files} found in R2`;
 }
 
-function PullRequestSummary({
-  data,
-  rebuilding,
-  runUrl,
-}: {
-  data: InFlightResponse;
-  rebuilding: boolean;
-  runUrl?: string;
-}) {
+function PullRequestSummary({ data }: { data: InFlightResponse }) {
   if (!data.pullRequest) {
     return (
       <p className="text-muted-foreground">
@@ -698,9 +665,8 @@ function PullRequestSummary({
       <dt className="text-muted-foreground">Photo files</dt>
       <dd>{count === 0 ? "None in the data folder" : count}</dd>
       <dt className="text-muted-foreground">Synced</dt>
-      <dd className="flex flex-col items-start gap-2">
-        <SyncSummary rebuilding={rebuilding} runUrl={runUrl} />
-        <RebuildButton />
+      <dd>
+        <SyncSummary />
       </dd>
       <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
       <dd>{allPhotosSummary(data.allPhotos, data.files)}</dd>

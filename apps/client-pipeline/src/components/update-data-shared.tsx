@@ -74,7 +74,7 @@ export function CommitSuccess({
         <ExternalLink href={result.pullRequestUrl}>
           pull request #{result.pullRequestNumber}
         </ExternalLink>
-        . Rebuild ALLPHOTOS.json from{" "}
+        . Commit ALLPHOTOS.json from{" "}
         <Link to="/in-flight" className="text-foreground underline underline-offset-4">
           Photos in Flight
         </Link>{" "}

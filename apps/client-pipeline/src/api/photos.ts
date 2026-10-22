@@ -69,7 +69,7 @@ export interface InFlightFile extends InFlightFileRead {
   inAllPhotos: boolean | null;
 }
 
-/** A combined list CI builds, ALLPHOTOS.json, ALLALBUMS.json or ALLTAGS.json, read at one ref. */
+/** A combined list, ALLPHOTOS.json, ALLALBUMS.json or ALLTAGS.json, read at one ref. */
 export interface CombinedFile {
   path: string;
   /** False when the file isn't at the ref, or hasn't been read yet. */
@@ -129,7 +129,7 @@ export interface InFlightResponse extends Omit<InFlightRead, "files" | "albums" 
   tags: InFlightGroups;
 }
 
-/** The album or tag files in the pull request, and the combined file CI rebuilds from them. */
+/** The album or tag files in the pull request, and the combined file built from them. */
 export interface InFlightGroups {
   folder: string;
   files: InFlightGroupFile[];
@@ -288,62 +288,42 @@ export const bucketImagesQuery = queryOptions({
 });
 
 /**
- * Where the "Combine photo data" run that rebuilds ALLPHOTOS.json for one commit is, or for the
- * pull request's head, whether it's rebuilt.
+ * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the photo data pull request have its
+ * latest changes: `synced` when the newest commit to its data folder committed them, `stale` when
+ * data changed after, and `none` with no pull request open.
  */
-export interface CombineStatus {
-  sha: string;
-  /**
-   * `waiting` until GitHub starts the run, then `running`, then `done` or `failed`. `stale` when
-   * the pull request's head was pushed after its last rebuild, and nothing has started one since.
-   * `unavailable` when the token can't read Actions runs; `message` says why.
-   */
-  state: "stale" | "waiting" | "running" | "done" | "failed" | "unavailable";
-  runUrl?: string;
-  /** The workflow's runs page, for when there's no runUrl yet. */
-  runsUrl?: string;
-  message?: string;
+export interface CombinedStatus {
+  state: "synced" | "stale" | "none";
+  headSha?: string;
 }
 
-/** How often to check on a run that hasn't finished, and for how many checks at most. */
-const COMBINE_POLL_MS = 3_000;
-const COMBINE_MAX_POLLS = 100;
-
-/** data's run state, treating no answer yet as waiting. */
-export function combineState(data?: CombineStatus): CombineStatus["state"] {
-  return data?.state ?? "waiting";
-}
-
-/** The states of a run that hasn't finished. */
-export const COMBINE_PENDING: ReadonlySet<CombineStatus["state"]> = new Set(["waiting", "running"]);
-
-/**
- * The "Combine photo data" run started at commit `sha`, or whether the photo data pull request's
- * head is rebuilt when `sha` is omitted. It polls until the run finishes.
- */
-export const combineStatusQuery = (sha?: string) =>
-  queryOptions({
-    queryKey: ["photos", "ci", sha ?? "head"],
-    queryFn: () =>
-      requestJson<CombineStatus>(
-        `/api/photos/in-flight/ci${sha ? `?${new URLSearchParams({ sha })}` : ""}`,
-      ),
-    retry: false,
-    refetchInterval: ({ state }) =>
-      COMBINE_PENDING.has(combineState(state.data)) && state.dataUpdateCount < COMBINE_MAX_POLLS
-        ? COMBINE_POLL_MS
-        : false,
-  });
-
-/**
- * Starts the "Combine photo data" run that rebuilds ALLPHOTOS.json, ALLALBUMS.json and
- * ALLTAGS.json on the photo data pull request. The run it answers with is waiting at the pull
- * request's head; follow it with `combineStatusQuery(sha)`.
- */
-export const startRebuildMutation = mutationOptions({
-  mutationKey: ["photos", "in-flight", "rebuild"],
-  mutationFn: () => requestJson<CombineStatus>("/api/photos/in-flight/rebuild", { method: "POST" }),
+/** The combined files' sync status, read once when the app starts; see `CombinedDataSync`. */
+export const combinedStatusQuery = queryOptions({
+  queryKey: ["photos", "combined", "status"],
+  queryFn: () => requestJson<CombinedStatus>("/api/photos/combined/status"),
+  retry: false,
+  staleTime: Infinity,
 });
+
+/** What committing the combined files did. */
+export interface CombinedCommit {
+  /** False when they were already up to date, so nothing was committed. */
+  changed: boolean;
+  commitSha?: string;
+  commitUrl?: string;
+  /** The combined files the commit changed. */
+  files: string[];
+  /** How many entries each has now. */
+  counts: { photos: number; albums: number; tags: number };
+}
+
+/**
+ * Rebuilds ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json from every data file on the photo data
+ * pull request's branch and commits the ones that changed, as one commit.
+ */
+export function commitCombined(): Promise<CombinedCommit> {
+  return requestJson<CombinedCommit>("/api/photos/combined", { method: "POST" });
+}
 
 /** What makes a photo the same as an ALLPHOTOS.json entry: all three fields exactly equal. */
 export interface PhotoIdentity {

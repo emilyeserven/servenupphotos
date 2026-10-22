@@ -117,9 +117,9 @@ func TestRemoveInFlightNeedsPath(t *testing.T) {
 	}
 }
 
-func TestCombineStatusNotSetUp(t *testing.T) {
+func TestCommitCombinedNotSetUp(t *testing.T) {
 	router := NewRouter(nil, settings.NewStore(filepath.Join(t.TempDir(), "settings.json")))
-	req := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/photos/in-flight/ci?sha=abc1234", nil)
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photos/combined", nil)
 	rec := httptest.NewRecorder()
 	router.ServeHTTP(rec, req)
 	if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "Settings first") {

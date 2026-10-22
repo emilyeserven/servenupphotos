@@ -14,8 +14,6 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Spinner } from "@/components/ui/spinner";
-import { useCombinedSync } from "@/stores/combined-data";
 
 /** Every page in the app, grouped the way the sidebar shows them. */
 export const navGroups = [
@@ -95,7 +93,6 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuSubButton asChild isActive={pathname === item.url}>
                         <Link to={item.url} onClick={closeOnMobile}>
                           {item.title}
-                          {item.url === "/in-flight" && <SyncBadge />}
                         </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
@@ -107,24 +104,5 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  );
-}
-
-/**
- * Beside Photos in Flight: a spinner while ALLPHOTOS.json is being rebuilt, or a dot when it's
- * missing changes pushed to the pull request.
- */
-function SyncBadge() {
-  const { unsynced, rebuilding } = useCombinedSync();
-  if (rebuilding) return <Spinner className="ml-auto size-3.5" aria-label="Rebuilding" />;
-  if (!unsynced) return null;
-  return (
-    <span
-      className="ml-auto flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400"
-      title="Not synced to ALLPHOTOS.json yet"
-    >
-      <span className="size-2 rounded-full bg-current" aria-hidden />
-      Not synced
-    </span>
   );
 }

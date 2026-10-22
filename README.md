@@ -132,8 +132,8 @@ its last four characters, so after saving you can replace or clear a secret but 
 
 `/update-data`, under Configuration in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
 previews what it will change, then saves everything as **one commit** on the open **Add photo data** pull request's
-branch, or on a new `photo-data/` branch with a new pull request when none is open, so one rebuild of `ALLPHOTOS.json`
-from Photos in Flight takes them all in.
+branch, or on a new `photo-data/` branch with a new pull request when none is open, so one **Commit** of `ALLPHOTOS.json`
+takes them all in.
 
 **Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
 development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder
@@ -254,8 +254,8 @@ that photo and asks for a new name, or you can keep the name anyway (a `sameName
 Cloudflare rejects a request, the card also shows Cloudflare's own answer (HTTP status, error code and message) under
 the plain-language reason.
 
-The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**. **Actions: Read and write**
-is needed for Photos in Flight's **Rebuild** button, which starts CI's rebuild of `ALLPHOTOS.json` and follows it.
+The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**. That also covers
+[committing the combined files](#committing-the-combined-files); the app doesn't use GitHub Actions.
 
 > **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and
 > merging the pull request is checkout. After that, the next save starts a new cart.
@@ -277,7 +277,7 @@ file's name), or a "no image" sign when there's none. Under the photo is its Squ
 Each file the pull request adds has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it
 deletes the JSON from the pull request's branch and the image the page shows from R2 (skipped when R2 has none). Files the
 pull request only modifies can't be removed, since that would delete them from the portfolio on merge. Like every other
-save, the removal doesn't rebuild `ALLPHOTOS.json`; see [Rebuilding the combined files](#rebuilding-the-combined-files).
+save, the removal doesn't change `ALLPHOTOS.json`; see [Committing the combined files](#committing-the-combined-files).
 
 Each photo whose JSON was read and whose image is in R2 has an **Edit** button, which opens it on the Photo page in
 edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from. The crop editor starts from the
@@ -315,10 +315,10 @@ the old file from the portfolio when it merges and the photo's file name would c
 `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once, on the Settings branch and at the open **Add photo
 data** pull request's head (`GET /api/photos/combined` → `GET /photos/combined`), and kept in a Zustand store
 (`apps/client-pipeline/src/stores/combined-data.ts`) that every page shares: Photos in Flight, Explore Bucket, the Add
-Photo check and the Instagram calendar. Other endpoints don't read them anymore. They only change when a rebuild started
-from Photos in Flight finishes, or the pull request is merged, so the store reads them again only:
+Photo check and the Instagram calendar. Other endpoints don't read them anymore. They only change when you **Commit** them or the
+pull request is merged, so the store reads them again only:
 
-- once a rebuild started from Photos in Flight finishes (or about 30 seconds later when its run can't be read),
+- once a **Commit** finishes,
 - when Photos in Flight finds another pull request than the one the store read them for, such as after a merge,
 - on Photos in Flight's **Refresh**, after the GitHub settings change, and on a page reload.
 
@@ -328,31 +328,40 @@ mark their mutation with `meta: { pushes: true }`, and those whose changed files
 when removed). The store keeps these changes, and `useCombinedData` returns the lists with them made at the pull
 request's head (`data`: the entry equal to the old data replaced, or the new one added), next to the lists as GitHub has
 them (`synced`). Pages that read the pull request's lists, such as album pages, show a save at once that way; Photos in
-Flight compares its files with `synced`, so it marks the ones CI hasn't rebuilt the lists with. A rebuild drops the
-changes it took in. Update Data and Instagram dates don't give their changes, so they only show once rebuilt.
+Flight compares its files with `synced`, so it marks the ones that haven't been committed to the lists yet. A **Commit**
+drops the changes it took in. Update Data and Instagram dates don't give their changes, so they only show once
+committed.
 
 > **Frontend analogy:** it's an optimistic update over a client-side cache: like TanStack Query's `onMutate` writing the
-> new value into the cache before the server confirms it, except the "confirmation" is the rebuild you start by hand.
+> new value into the cache before the server confirms it, except the "confirmation" is the **Commit** you press by hand.
 
-### Rebuilding the combined files
+### Committing the combined files
 
-The **Combine photo data** workflow (`.github/workflows/combine-photo-data.yml`) rebuilds `ALLPHOTOS.json`,
-`ALLALBUMS.json` and `ALLTAGS.json` only when started by hand (`workflow_dispatch`), not on every push, and never on the
-default branch. Photos in Flight's **Rebuild** button (`POST /api/photos/in-flight/rebuild` →
-`POST /photos/in-flight/rebuild`) starts it on the open **Add photo data** pull request's branch, then follows that run
-(`GET /api/photos/in-flight/ci?sha=<head>`, polling every 3 seconds only while it's waiting or running) and reads the
-combined files again once it's done. A branch made before the workflow changed has the old file, which can't be started
-by hand: update the branch from the base branch first.
+Saves don't touch `ALLPHOTOS.json`, `ALLALBUMS.json` or `ALLTAGS.json`. **Commit** (`POST /api/photos/combined` →
+`POST /photos/combined`) builds all three on the open **Add photo data** pull request's branch and commits the ones that
+changed as one commit, "Combine photo, album and tag data". Each is every other `.json` file directly in its folder,
+sorted by path, as one array, formatted as oxfmt formats it, so a list that's already up to date isn't committed again.
+When a file can't be read or isn't valid JSON, nothing is committed and the error names it. The backend does this
+itself with the contents and Git data APIs, so nothing waits for a CI runner.
 
-Whether the files are synced is checked once, when the app starts (`GET /api/photos/in-flight/ci` with no `sha`:
-`stale` when the pull request's head was pushed after its last rebuild), then known from the app's own saves and
-rebuilds; nothing polls in between. While anything isn't synced, Photos in Flight says so in its **Synced** row, marks
-each file that isn't in the combined files with "Not synced to ALLPHOTOS.json yet", and the sidebar marks Photos in
-Flight "Not synced". The lines that follow a save elsewhere, such as on the Photo page, link back to Photos in Flight to
-rebuild.
+Whether the files are synced is checked once, when the app starts (`GET /api/photos/combined/status` →
+`GET /photos/combined/status`): `stale` when the newest commit on the pull request's branch to change the data folder
+isn't a Commit, `synced` when it is, and `none` with no pull request open. After that it's known from the app's own
+saves and commits; nothing polls in between.
 
-> **Frontend analogy:** it's like a "Deploy" button instead of deploy-on-every-commit: you batch up changes, preview
-> them locally (the optimistic store), and publish them in one go.
+A floating button at the top right of every page shows where things stand: **Synced**, **Not synced · N changes**,
+**Committing…**, **Commit failed** or **Nothing in flight**. Clicking it opens a panel with the pull request, what isn't
+committed yet, the last commit's link, and **Commit**. Photos in Flight also says so in its **Synced** row, with the
+same button, and marks each file that isn't in the combined files with "Not synced to ALLPHOTOS.json yet". The lines
+that follow a save elsewhere, such as on the Photo page, link back to Photos in Flight to commit.
+
+The **Combine photo data** workflow (`.github/workflows/combine-photo-data.yml`) does the same build with the same
+commit message, but only when started by hand from the Actions tab (`workflow_dispatch`), never on a push or on the
+default branch. It's there as a fallback, for when the app isn't running.
+
+> **Frontend analogy:** it's like a "Save" button in an editor instead of autosave on every keystroke: you batch up
+> changes, see them right away (the optimistic store), and write them out in one go. The floating button is the
+> "unsaved changes" dot in the tab title.
 
 ### Albums and Tags
 

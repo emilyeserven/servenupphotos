@@ -31,6 +31,11 @@ export function r2IsSetUp(r2: SettingsResponse["r2"]): boolean {
   );
 }
 
+/** Whether Settings has the GitHub repository and token the photo data needs. */
+export function githubIsSetUp(settings: SettingsResponse | undefined): boolean {
+  return Boolean(settings?.github.repo && settings.github.token.set);
+}
+
 /** The data folder from Settings, as the backend cleans it, defaulting to the portfolio's. */
 export function dataFolder(folder: string): string {
   return folder.trim().replace(/^\/+|\/+$/g, "") || "apps/portfolio/src/data";

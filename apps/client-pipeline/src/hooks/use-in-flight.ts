@@ -6,7 +6,7 @@ import { useCombinedData, useCombinedDataStore } from "@/stores/combined-data";
 
 /**
  * The photo data pull request's files, checked against the combined lists as GitHub has them, so
- * a file whose changes CI hasn't rebuilt them with yet is marked as not synced. When the pull
+ * a file whose changes haven't been committed to them yet is marked as not synced. When the pull
  * request isn't the one the store read them for, as after a merge, the store reads them again.
  */
 export function useInFlight(enabled = true) {

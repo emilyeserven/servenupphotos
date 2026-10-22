@@ -7,7 +7,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// CombinedFiles is the combined lists CI builds, each read at one ref.
+// CombinedFiles is the combined lists CommitCombined builds, each read at one ref.
 type CombinedFiles struct {
 	Photos InFlightAllPhotos `json:"photos"`
 	Albums InFlightAllPhotos `json:"albums"`
@@ -20,8 +20,8 @@ type CombinedBase struct {
 	CombinedFiles
 }
 
-// CombinedHead is CombinedFiles at the photo data pull request's head, as CI
-// last rebuilt them there.
+// CombinedHead is CombinedFiles at the photo data pull request's head, as
+// they were last committed there.
 type CombinedHead struct {
 	PullRequest InFlightPullRequest `json:"pullRequest"`
 	CombinedFiles
@@ -37,9 +37,9 @@ type CombinedResult struct {
 	Head *CombinedHead `json:"head"`
 }
 
-// Combined reads the combined lists CI builds on the base branch from
+// Combined reads the combined lists on the base branch from
 // Settings (or the default branch) and at the photo data pull request's head,
-// so pages can keep them and only read them again after CI rebuilds them. It
+// so pages can keep them and only read them again after they're committed. It
 // only reads from GitHub.
 func (c *Client) Combined(ctx context.Context, gh settings.GitHub) (CombinedResult, error) {
 	root, perr := dataFolder(gh.Folder)
@@ -86,7 +86,7 @@ func (c *Client) readCombinedFiles(ctx context.Context, t target, root, ref, bra
 	}
 }
 
-// readCombined reads file, a combined list CI builds, at ref.
+// readCombined reads file, a combined list, at ref.
 func (c *Client) readCombined(ctx context.Context, t target, file, ref string) InFlightAllPhotos {
 	all := InFlightAllPhotos{Path: file}
 	content, found, msg := c.readFile(ctx, t, all.Path, ref)
