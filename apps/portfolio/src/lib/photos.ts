@@ -411,9 +411,9 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums and tags, as the album and tag filters match them. */
-function groupFields({ albums = [], tags = [] }: PhotoData) {
-  return { albums, tags };
+/** The photo's albums, tags and spotlight zones; older entries are missing them. */
+function groupFields({ albums = [], tags = [], spotlightZones = [] }: PhotoData) {
+  return { albums, tags, spotlightZones };
 }
 
 /** The ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
@@ -434,7 +434,6 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       image: parseImage(photo),
       ...locationFields(photo),
       ...groupFields(photo),
-      spotlightZones: photo.spotlightZones ?? [],
     };
   });
 }
