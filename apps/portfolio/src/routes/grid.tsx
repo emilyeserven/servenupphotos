@@ -3,10 +3,12 @@ import { Grid3x3, LayoutDashboard, Square } from "lucide-react";
 import { type CSSProperties, type ImgHTMLAttributes, useState } from "react";
 import { type GridSort, GridSortSelect } from "@/components/grid-sort-select";
 import { PhotoComment } from "@/components/photo-comment";
+import { NoMatchingPhotos, PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { PhotoLocation } from "@/components/photo-location";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { cn } from "@/lib/utils";
 
 /**
@@ -24,11 +26,11 @@ interface GridSearch {
   sort?: "oldest";
 }
 
-/** Reads the grid's view, info and sort settings from the URL, leaving out the defaults. */
-function validateGridSearch(search: Record<string, unknown>): GridSearch {
+/** Reads the grid's view, info and sort settings and the filters from the URL, leaving out the defaults. */
+function validateGridSearch(search: Record<string, unknown>): GridSearch & PhotoFilters {
   const view: GridSearch = search.view === "natural" ? { view: "natural" } : {};
   const sort: GridSearch = search.sort === "oldest" ? { sort: "oldest" } : {};
-  return { ...view, ...infoOf(search), ...sort };
+  return { ...view, ...infoOf(search), ...sort, ...parseFilters(search) };
 }
 
 /** The info setting from the URL, which reads `info=true` and older `info=1` links alike. */
@@ -66,8 +68,8 @@ function GridView() {
   const mode: ViewMode = search.view ?? "square";
   const showInfo = search.info === true;
   const sort: GridSort = search.sort ?? "newest";
-  const gridPhotos = SORTED[sort];
-  if (gridPhotos.length === 0) return <ViewPlaceholder to="/grid" />;
+  if (newestFirst.length === 0) return <ViewPlaceholder to="/grid" />;
+  const gridPhotos = filterPhotos(SORTED[sort], parseFilters(search));
 
   return (
     // The tiles use the whole window, less a little padding, so wider screens fit more photos; the
@@ -84,7 +86,14 @@ function GridView() {
           <InfoToggle shown={showInfo} />
           <ViewModeSwitcher mode={mode} />
         </div>
+        <div className="mt-3 w-full">
+          <PhotoFilterBar photos={newestFirst} />
+        </div>
       </header>
+      <NoMatchingPhotos
+        count={gridPhotos.length}
+        className="mx-auto w-full max-w-6xl px-1 sm:px-2"
+      />
       {/* Natural tiles sit in justified rows: each starts NATURAL_MIN_HEIGHT tall at its own
           aspect ratio, and a row's tiles grow together to fill its width, so they only get taller. */}
       <ul className={listClass(mode, showInfo)}>
