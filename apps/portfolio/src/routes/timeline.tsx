@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { format, min } from "date-fns";
-import { CalendarClock, ImageOff, RotateCcw } from "lucide-react";
+import { CalendarClock, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
-import { PhotoThumbnail } from "@/components/photo-thumbnail";
+import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
@@ -120,7 +120,7 @@ function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto)
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   return (
     <li className="flex items-center gap-3">
-      <RowThumbnail image={image} title={photo.title} onOpen={open} />
+      <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-12" />
       <div className="flex min-w-0 flex-1 flex-col">
         <RowTitle title={photo.title} onOpen={open} />
         {photo.comment && (
@@ -141,39 +141,6 @@ function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto)
         {format(photo.takenAt, "MMM d")} · {photo.camera}
       </span>
     </li>
-  );
-}
-
-/** The photo's square thumbnail, or an empty square for a photo without an image yet. */
-function RowThumbnail({
-  image,
-  title,
-  onOpen,
-}: {
-  image: PhotoImage | null;
-  title: string;
-  onOpen?: () => void;
-}) {
-  if (!image) {
-    return (
-      <div
-        title="No image yet"
-        className="flex size-12 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground"
-      >
-        <ImageOff className="size-4" aria-hidden />
-      </div>
-    );
-  }
-  return (
-    <button
-      type="button"
-      title="Show the whole photo"
-      aria-label={`Show ${title}`}
-      onClick={onOpen}
-      className="relative size-12 shrink-0 cursor-zoom-in overflow-hidden rounded-md bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-    >
-      <PhotoThumbnail image={image} />
-    </button>
   );
 }
 
