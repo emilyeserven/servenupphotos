@@ -42,7 +42,8 @@ const gridPhotos = photos
 
 // How wide a tile is at each breakpoint, matching the grid's columns, so the browser picks the
 // smallest version that's still sharp.
-const TILE_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw";
+const TILE_SIZES =
+  "(min-width: 1536px) 17vw, (min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw";
 
 function GridView() {
   const [shown, setShown] = useState<ImagePhoto | null>(null);
@@ -52,8 +53,10 @@ function GridView() {
   if (gridPhotos.length === 0) return <ViewPlaceholder to="/grid" />;
 
   return (
-    <div className={cn("mx-auto flex w-full flex-col gap-8 py-16", PAGE_WIDTH[mode])}>
-      <header className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+    // The tiles use the whole window, less a little padding, so wider screens fit more photos; the
+    // header stays in the same centered column as the other pages.
+    <div className="flex w-full flex-col gap-8 px-3 py-16 sm:px-4">
+      <header className="mx-auto flex w-full max-w-6xl flex-wrap items-baseline gap-x-4 gap-y-1 px-1 sm:px-2">
         <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
           <Grid3x3 className="size-8 text-muted-foreground" aria-hidden />
           Grid
@@ -83,18 +86,8 @@ function GridView() {
   );
 }
 
-/**
- * The list's layout: a grid of squares, or justified rows for natural tiles. Rows sit further
- * apart when tiles show their captions.
- */
-const PAGE_WIDTH = {
-  square: "max-w-6xl px-4 sm:px-6",
-  // Natural rows use the whole window, less a little padding, since wider rows fit more photos.
-  natural: "px-3 sm:px-4",
-} as const;
-
 /** How tall a natural tile is at least, where the window is wide enough for it. */
-const NATURAL_MIN_HEIGHT = 500;
+const NATURAL_MIN_HEIGHT = 250;
 
 /**
  * A natural tile's place in its row: as wide as NATURAL_MIN_HEIGHT makes it, then growing with its
@@ -115,14 +108,18 @@ function naturalSizes(image: PhotoImage): string {
   return `(max-width: ${width}px) 100vw, ${width}px`;
 }
 
+/**
+ * The list's layout: a grid of squares, or justified rows for natural tiles. Rows sit further
+ * apart when tiles show their captions.
+ */
 function listClass(mode: ViewMode, showInfo: boolean): string {
   return LIST_CLASSES[mode][showInfo ? "info" : "bare"];
 }
 
 const LIST_CLASSES = {
   square: {
-    info: "grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 lg:grid-cols-4",
-    bare: "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4",
+    info: "grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6",
+    bare: "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6",
   },
   natural: {
     // The stretchy last item keeps the last row's tiles from growing to fill it on their own.
