@@ -60,7 +60,7 @@ var photoPull = map[string]any{
 }
 
 func TestInFlightReadsPhotoJSON(t *testing.T) {
-	const dir = "apps/portfolio/src/data/"
+	const dir = "apps/portfolio/src/data/photos/"
 	c := newInFlightRepo(t,
 		[]map[string]any{{"number": 3, "title": "Unrelated", "head": map[string]any{"ref": "x", "sha": "s"}}, photoPull},
 		[]map[string]any{
@@ -83,7 +83,7 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	if err != nil {
 		t.Fatalf("InFlight() error = %v", err)
 	}
-	if got.Folder != "apps/portfolio/src/data" || got.Repo != "owner/repo" {
+	if got.Folder != "apps/portfolio/src/data/photos" || got.Repo != "owner/repo" {
 		t.Errorf("Folder, Repo = %q, %q", got.Folder, got.Repo)
 	}
 	want := InFlightPullRequest{
@@ -130,7 +130,7 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 }
 
 func TestInFlightAllPhotos(t *testing.T) {
-	const dir = "photos/"
+	const dir = "root/photos/"
 	files := []map[string]any{{"filename": dir + "a.json", "status": "added"}}
 	tests := []struct {
 		name    string
@@ -153,7 +153,7 @@ func TestInFlightAllPhotos(t *testing.T) {
 				contents[dir+"ALLPHOTOS.json"] = *tt.all
 			}
 			c := newInFlightRepo(t, []map[string]any{photoPull}, files, contents)
-			got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Folder: "photos", Token: token})
+			got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Folder: "root", Token: token})
 			if err != nil {
 				t.Fatalf("InFlight() error = %v", err)
 			}
@@ -185,8 +185,8 @@ func TestInFlightNoPullRequest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("InFlight() error = %v", err)
 	}
-	if got.PullRequest != nil || len(got.Files) != 0 || got.AllPhotos.Found || got.Folder != "photos" {
-		t.Errorf("InFlight() = %+v, want no pull request in folder photos", got)
+	if got.PullRequest != nil || len(got.Files) != 0 || got.AllPhotos.Found || got.Folder != "photos/photos" {
+		t.Errorf("InFlight() = %+v, want no pull request in folder photos/photos", got)
 	}
 }
 

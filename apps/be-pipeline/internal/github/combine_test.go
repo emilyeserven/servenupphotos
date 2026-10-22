@@ -63,7 +63,7 @@ func TestCombine(t *testing.T) {
 			CombineStatus{SHA: "abc1234", State: CombineFailed, RunURL: "https://github.com/run/2",
 				Message: "The Combine photo data run ended with cancelled."}, "abc1234"},
 		{"no Actions access", "abc1234", http.StatusForbidden, nil, CombineStatus{SHA: "abc1234", State: CombineUnavailable,
-			Message: "The token can't read Actions runs. Give it Actions read access to see when ALLPHOTOS.json is rebuilt."}, "abc1234"},
+			Message: "The token can't read Actions runs. Give it Actions read access to see when ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json are rebuilt."}, "abc1234"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

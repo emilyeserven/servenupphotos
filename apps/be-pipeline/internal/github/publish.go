@@ -42,6 +42,10 @@ type photoJSON struct {
 	Comment *string `json:"comment"`
 	File    string  `json:"file"`
 	exif.Sanitized
+	// Albums and Tags are the IDs of the albums and tags the photo is in,
+	// empty when it is saved.
+	Albums []string `json:"albums"`
+	Tags   []string `json:"tags"`
 }
 
 // newPhotoJSON is the content of a new photo file. It is also the list of
@@ -49,7 +53,9 @@ type photoJSON struct {
 // the ones an older file is missing from newPhotoJSON("", exif.Sanitized{}).
 // Give a new field its default here, such as an empty list rather than nil.
 func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
-	return photoJSON{Title: s.Title, Comment: s.Comment, File: file, Sanitized: s}
+	return photoJSON{
+		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
+	}
 }
 
 // PublishResult says where a photo's JSON went.
@@ -99,11 +105,15 @@ type target struct {
 	base               string
 }
 
-// Publish saves photo as <folder>/<name>.json on a photo-data/ branch and
-// makes sure a pull request from that branch into gh's branch (or the default
-// branch) is open. It never overwrites a file that already exists.
+// Publish saves photo as <folder>/photos/<name>.json on a photo-data/ branch
+// and makes sure a pull request from that branch into gh's branch (or the
+// default branch) is open. It never overwrites a file that already exists.
 func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (PublishResult, error) {
-	path, perr := filePath(gh.Folder, photo.Name)
+	folder, perr := photoFolder(gh.Folder)
+	if perr != nil {
+		return PublishResult{}, perr
+	}
+	path, perr := filePath(folder, photo.Name)
 	if perr != nil {
 		return PublishResult{}, perr
 	}
@@ -111,15 +121,25 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	if perr != nil {
 		return PublishResult{}, perr
 	}
-
+	content, err := json.MarshalIndent(newPhotoJSON(photo.File, photo.Sanitized), "", "  ")
+	if err != nil {
+		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
+	}
 	open, perr := c.findPullRequest(ctx, t)
 	if perr != nil {
 		return PublishResult{}, perr
 	}
+	return c.saveNewFile(ctx, t, open, path, append(content, '\n'), "Add photo data "+path)
+}
+
+// saveNewFile commits content as path on the branch of open, the open photo
+// data pull request, or on a new photo-data/ branch with a new pull request
+// when open is nil. It fails when path is already on the base branch or the
+// pull request's branch.
+func (c *Client) saveNewFile(ctx context.Context, t target, open *pullRequest, path string, content []byte, message string) (PublishResult, error) {
 	if perr := c.ensureAbsent(ctx, t, path, t.base); perr != nil {
 		return PublishResult{}, perr
 	}
-
 	branch := ""
 	if open != nil {
 		branch = open.Head.Ref
@@ -133,11 +153,7 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 		}
 	}
 
-	content, err := json.MarshalIndent(newPhotoJSON(photo.File, photo.Sanitized), "", "  ")
-	if err != nil {
-		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
-	}
-	fileURL, perr := c.createFile(ctx, t, path, branch, append(content, '\n'))
+	fileURL, perr := c.createFile(ctx, t, path, branch, content, message)
 	if perr != nil {
 		return PublishResult{}, perr
 	}
@@ -161,21 +177,12 @@ func (c *Client) now() time.Time {
 	return time.Now()
 }
 
-// filePath joins the settings folder and a file name into a repository path.
+// filePath joins a cleaned folder and a file name into a repository path.
 func filePath(folder, name string) (string, *PublishError) {
 	name = strings.TrimSuffix(strings.TrimSpace(name), ".json")
 	if !fileNamePattern.MatchString(name) {
 		return "", publishErr(http.StatusBadRequest,
 			"Use a file name of letters, numbers, dots, dashes and underscores.")
-	}
-	folder = strings.Trim(strings.TrimSpace(folder), "/")
-	if folder == "" {
-		return name + ".json", nil
-	}
-	for _, segment := range strings.Split(folder, "/") {
-		if segment == "" || segment == "." || segment == ".." {
-			return "", publishErr(http.StatusBadRequest, "The folder in Settings isn't a valid path.")
-		}
 	}
 	return folder + "/" + name + ".json", nil
 }
@@ -250,9 +257,9 @@ func (c *Client) createBranch(ctx context.Context, t target, branch string) *Pub
 
 // createFile commits content as a new file at path on branch and returns the
 // file's URL on GitHub.
-func (c *Client) createFile(ctx context.Context, t target, path, branch string, content []byte) (string, *PublishError) {
+func (c *Client) createFile(ctx context.Context, t target, path, branch string, content []byte, message string) (string, *PublishError) {
 	body := map[string]string{
-		"message": "Add photo data " + path,
+		"message": message,
 		"content": base64.StdEncoding.EncodeToString(content),
 		"branch":  branch,
 	}

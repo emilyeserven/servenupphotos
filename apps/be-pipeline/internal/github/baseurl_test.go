@@ -128,7 +128,7 @@ type baseURLRepo struct {
 
 func (f *baseURLRepo) start(t *testing.T) *Client {
 	t.Helper()
-	const dir = "apps/portfolio/src/data"
+	const dir = "apps/portfolio/src/data/photos"
 	head := "main"
 	if f.pull {
 		head = "photo-data/2026-10-15-024500"
@@ -254,7 +254,7 @@ func TestPreviewBaseURL(t *testing.T) {
 	if !reflect.DeepEqual(got.Origins, wantOrigins) {
 		t.Errorf("origins = %+v, want %+v", got.Origins, wantOrigins)
 	}
-	if len(got.Unreadable) != 1 || got.Unreadable[0].Path != "apps/portfolio/src/data/broken.json" {
+	if len(got.Unreadable) != 1 || got.Unreadable[0].Path != "apps/portfolio/src/data/photos/broken.json" {
 		t.Errorf("unreadable = %+v, want broken.json", got.Unreadable)
 	}
 	first := got.Files[0].Changes[0]
@@ -290,7 +290,7 @@ func TestReplaceBaseURLOnOpenPullRequest(t *testing.T) {
 	if got != want {
 		t.Errorf("ReplaceBaseURL() = %+v, want %+v", got, want)
 	}
-	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/DSC0001.json" || repo.tree[0]["mode"] != "100644" {
+	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/photos/DSC0001.json" || repo.tree[0]["mode"] != "100644" {
 		t.Fatalf("tree = %v, want DSC0001.json only", repo.tree)
 	}
 	if strings.Contains(repo.tree[0]["content"], `"https://pub-1234.r2.dev/DSC`) || !strings.Contains(repo.tree[0]["content"], `"note": "https://pub-1234.r2.dev/not-an-image.webp"`) {

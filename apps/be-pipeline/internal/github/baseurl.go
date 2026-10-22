@@ -449,7 +449,7 @@ func origins(files []photoFile) []ImageOrigin {
 // scanPhotos reads every photo file in gh's folder at the head of the open
 // photo data pull request's branch, or of the base branch when none is open.
 func (c *Client) scanPhotos(ctx context.Context, gh settings.GitHub) (baseURLScan, *PublishError) {
-	folder, perr := dataFolder(gh.Folder)
+	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return baseURLScan{}, perr
 	}

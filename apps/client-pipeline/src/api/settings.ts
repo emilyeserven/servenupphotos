@@ -31,6 +31,11 @@ export function r2IsSetUp(r2: SettingsResponse["r2"]): boolean {
   );
 }
 
+/** The data folder from Settings, as the backend cleans it, defaulting to the portfolio's. */
+export function dataFolder(folder: string): string {
+  return folder.trim().replace(/^\/+|\/+$/g, "") || "apps/portfolio/src/data";
+}
+
 /** What to do with a stored secret on save: keep it (`undefined`), clear it (`""`), or replace it. */
 export type SecretUpdate = string | undefined;
 

@@ -48,11 +48,11 @@ pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + V
 ### Portfolio with your own photo data
 
 `pnpm dev` and `pnpm dev:docker` first run `pnpm photos:local`, which writes
-`apps/portfolio/src/data/ALLPHOTOS.local.json` (git-ignored). It copies `ALLPHOTOS.json` from the open **Add photo
+`apps/portfolio/src/data/photos/ALLPHOTOS.local.json` (git-ignored). It copies `ALLPHOTOS.json` from the open **Add photo
 data** pull request on the `origin` GitHub repository, so the portfolio shows the photos in flight. With no such pull
-request, or when GitHub can't be reached (it says why), it combines the photo JSON files in `apps/portfolio/src/data`
-instead, the same way the **Combine photo data** workflow builds `ALLPHOTOS.json`: every other JSON file in the folder
-except `dummy.json`, as one array sorted by file name. Set `GITHUB_TOKEN` for a private repository, or if GitHub's
+request, or when GitHub can't be reached (it says why), it combines the photo JSON files in `apps/portfolio/src/data/photos`
+instead, the same way the **Combine photo data** workflow builds `ALLPHOTOS.json`: every other JSON file in the folder,
+as one array sorted by file name. Set `GITHUB_TOKEN` for a private repository, or if GitHub's
 limit of 60 unauthenticated requests an hour runs out.
 
 While the file has at least one photo, the portfolio's Timeline, Map and Grid show those photos instead of the dummy
@@ -98,6 +98,24 @@ buckets (every 30° around the color wheel), a lightness histogram of the neutra
 have a hue), the mean lightness and chroma, and `raw`: per-channel statistics in every color space go-colorful
 supports plus hue, lightness, chroma and saturation histograms. The UI shows these in Colors and Raw color data tabs.
 
+### Photo, album and tag data
+
+The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in Settings), one JSON file per thing:
+
+| What   | File                      | Combined by CI into     |
+| ------ | ------------------------- | ----------------------- |
+| Photos | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json` |
+| Albums | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json` |
+| Tags   | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`     |
+
+A photo can be in several albums and have several tags, and an album or tag can have many photos: each photo JSON has
+`albums` and `tags` keys, arrays of album and tag IDs (empty when it's saved). An album or tag file is
+`{ "id", "name", "description" }`, named by its ID. Albums and tags share one set of IDs and names, compared ignoring
+case, so a photo's `albums` and `tags` never mean the same thing.
+
+> **Frontend analogy:** it's a normalized store, like a Redux slice keyed by ID: photos hold only the IDs of their
+> albums and tags, and each album or tag is stored once, so renaming one later changes a single file.
+
 ### Settings
 
 Open `/settings` in the pipeline UI to enter the Cloudflare R2 and GitHub settings the pipeline uses. The Go backend saves them to `SETTINGS_FILE`: `apps/be-pipeline/data/settings.json` (git-ignored) with
@@ -118,8 +136,8 @@ branch, or on a new `photo-data/` branch with a new pull request when none is op
 once.
 
 **Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
-development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the Settings folder
-(except `ALLPHOTOS.json` and `dummy.json`) on the pull request's branch, or the base branch without one, and lists the
+development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder
+(except `ALLPHOTOS.json`) on the pull request's branch, or the base branch without one, and lists the
 origins their image URLs use (`POST /api/data/image-base-url/preview` with empty `from` and `to`). Previewing a change
 lists each URL under `images` that starts with `from` (followed by nothing, `/`, `?` or `#`), with its new value
 (`POST /data/image-base-url/preview`); applying it (`POST /data/image-base-url`) rewrites only those strings, keeping
@@ -167,7 +185,7 @@ while a photo file can't be read, or if two photos would land on the same day. T
 ### Saving photo data to GitHub
 
 After a photo is analyzed on `/exif`, the **Save to GitHub** card saves its sanitized EXIF as one JSON file,
-`<folder>/<name>.json`, in the repository from Settings (`POST /api/photos/github` → `POST /photos/github`). Saves never
+`<folder>/photos/<name>.json`, in the repository from Settings (`POST /api/photos/github` → `POST /photos/github`). Saves never
 commit to the Settings branch directly. The first save creates a `photo-data/<date>-<time>` branch from it and opens an
 **Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
 pull request collects every photo until you merge it. An existing file is never overwritten.
@@ -243,8 +261,8 @@ optional: with it, Photos in Flight can tell when CI has rebuilt `ALLPHOTOS.json
 
 `/in-flight` shows the photo data waiting in the open **Add photo data** pull request (`GET /api/photos/in-flight` →
 `GET /photos/in-flight`). It finds the open pull request with that title in the repository from Settings and shows each
-`.json` file the pull request adds or changes directly in the Settings folder (`apps/portfolio/src/data` when the folder
-is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
+`.json` file the pull request adds or changes directly in the photos folder (`apps/portfolio/src/data/photos` when the
+Settings data folder is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
 mark when its data is one of the entries in `ALLPHOTOS.json` at the same head (compared as JSON, so formatting and key
 order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
@@ -272,6 +290,21 @@ with the `path` and new `data`; only files the pull request adds or modifies can
 the JSON's `images.thumbnail` and `images.thumbnailpreview` get a `?crop=x,y,size` query: a new URL that browsers and
 Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores the query). The commit starts the **Combine photo data** workflow, which the page
 follows the same way.
+
+Under the photos it lists the album and tag files the pull request adds or changes, each with its JSON and a check mark
+when it's an entry of `ALLALBUMS.json` or `ALLTAGS.json` at the same head, and the pull request summary counts them.
+
+### Albums and Tags
+
+`/albums` and `/tags`, under **Organize** in the sidebar, add new albums and tags. Each page lists every album or tag
+on the Settings branch and in the open **Add photo data** pull request, marking the ones not merged yet as in flight
+(`GET /api/organize` → `GET /organize`). **New album** (or **New tag**) asks for a name and an optional description. Its ID is
+made from the name (lowercase, accents dropped, anything other than a to z and 0 to 9 turned into dashes, so
+`Busan, South Korea` becomes `busan-south-korea`), and the form warns while you type when an album or tag already has
+that name or ID, or when the name has nothing to make an ID from (such as `東京` on its own). Saving
+(`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the
+open photo data pull request, or opens one, the same way photos are saved, and follows CI's rebuild of `ALLALBUMS.json`
+or `ALLTAGS.json`. Adding photos to albums, choosing them on the Photo page and editing come later.
 
 ### Explore Bucket
 

@@ -150,3 +150,24 @@ func TestUpdateInFlight(t *testing.T) {
 		})
 	}
 }
+
+func TestCreateGroupRoute(t *testing.T) {
+	router := NewRouter(nil, settings.NewStore(filepath.Join(t.TempDir(), "settings.json")))
+	tests := []struct {
+		path, body string
+		status     int
+		want       string
+	}{
+		{"/organize/folders", `{"id":"a","name":"A"}`, http.StatusNotFound, "albums or tags"},
+		{"/organize/albums", `{"id":"a","name":"A","extra":1}`, http.StatusBadRequest, "invalid album body"},
+		{"/organize/tags", `{"id":"a","name":"A"}`, http.StatusBadRequest, "Settings first"},
+	}
+	for _, tt := range tests {
+		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, tt.path, strings.NewReader(tt.body))
+		rec := httptest.NewRecorder()
+		router.ServeHTTP(rec, req)
+		if rec.Code != tt.status || !strings.Contains(rec.Body.String(), tt.want) {
+			t.Errorf("POST %s = %d %s, want %d containing %q", tt.path, rec.Code, rec.Body, tt.status, tt.want)
+		}
+	}
+}

@@ -34,7 +34,7 @@ type UpdatedFile struct {
 // request adds can be renamed, since renaming one that is also on the base
 // branch would remove it there when the pull request merges.
 func (c *Client) Update(ctx context.Context, gh settings.GitHub, file, newName string, data json.RawMessage) (UpdatedFile, error) {
-	folder, perr := dataFolder(gh.Folder)
+	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}
@@ -115,7 +115,7 @@ func (c *Client) renameFile(ctx context.Context, t target, pr *inFlightPull, fil
 			return UpdatedFile{}, perr
 		}
 	}
-	fileURL, perr := c.createFile(ctx, t, dest, pr.Head.Ref, content)
+	fileURL, perr := c.createFile(ctx, t, dest, pr.Head.Ref, content, "Add photo data "+dest)
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}

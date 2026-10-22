@@ -23,7 +23,7 @@ type removeRepo struct {
 
 func (f *removeRepo) start(t *testing.T) *Client {
 	t.Helper()
-	const dir = "apps/portfolio/src/data/"
+	const dir = "apps/portfolio/src/data/photos/"
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		p := strings.TrimPrefix(r.URL.Path, "/repos/owner/repo")
 		switch {
@@ -54,7 +54,7 @@ func (f *removeRepo) start(t *testing.T) *Client {
 }
 
 func TestRemove(t *testing.T) {
-	const file = "apps/portfolio/src/data/DSC0001.json"
+	const file = "apps/portfolio/src/data/photos/DSC0001.json"
 	repo := &removeRepo{files: []map[string]any{{"filename": file, "status": "added"}}, deleteStatus: http.StatusOK}
 	got, err := repo.start(t).Remove(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token}, file)
 	if err != nil {
@@ -73,7 +73,7 @@ func TestRemove(t *testing.T) {
 }
 
 func TestRemoveErrors(t *testing.T) {
-	const file = "apps/portfolio/src/data/DSC0001.json"
+	const file = "apps/portfolio/src/data/photos/DSC0001.json"
 	tests := []struct {
 		name         string
 		file         string
@@ -82,8 +82,8 @@ func TestRemoveErrors(t *testing.T) {
 		want         string
 	}{
 		{"outside the folder", "README.json", "added", http.StatusOK, "Only photo JSON files"},
-		{"ALLPHOTOS.json", "apps/portfolio/src/data/ALLPHOTOS.json", "added", http.StatusOK, "Only photo JSON files"},
-		{"not in the pull request", "apps/portfolio/src/data/other.json", "added", http.StatusOK, "isn't in the photo data pull request"},
+		{"ALLPHOTOS.json", "apps/portfolio/src/data/photos/ALLPHOTOS.json", "added", http.StatusOK, "Only photo JSON files"},
+		{"not in the pull request", "apps/portfolio/src/data/photos/other.json", "added", http.StatusOK, "isn't in the photo data pull request"},
 		{"already merged", file, "modified", http.StatusOK, "Only new files can be removed"},
 		{"changed meanwhile", file, "added", http.StatusConflict, "changed on photo-data/"},
 	}

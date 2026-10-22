@@ -78,7 +78,29 @@ export interface InFlightResponse {
   files: InFlightFile[];
   /** Not `found` when there is no pull request. */
   allPhotos: InFlightAllPhotos;
+  /** The album and tag files in the pull request. */
+  albums: InFlightGroups;
+  tags: InFlightGroups;
   images: InFlightImages;
+}
+
+/** The album or tag files in the pull request, and the combined file CI rebuilds from them. */
+export interface InFlightGroups {
+  folder: string;
+  files: InFlightGroupFile[];
+  /** ALLALBUMS.json or ALLTAGS.json; not `found` when there is no pull request. */
+  all: InFlightAllPhotos;
+}
+
+/** One album or tag file in the pull request. */
+export interface InFlightGroupFile {
+  path: string;
+  status: string;
+  fileUrl: string;
+  data?: unknown;
+  error?: string;
+  /** Whether the file's data is an entry of the combined file; null when either couldn't be read. */
+  inAll: boolean | null;
 }
 
 /** Each photo's image in R2, matched by the photo's file name. */

@@ -77,8 +77,8 @@ func TestSetSocialDates(t *testing.T) {
 	repo := &baseURLRepo{pull: true, files: map[string]string{"B.json": photoB, "C.json": photoC}}
 	// Swap: C takes B's day, and B moves to the next.
 	got, err := repo.start(t).SetSocialDates(t.Context(), baseURLSettings, []SocialDate{
-		{Path: "apps/portfolio/src/data/B.json", Date: date("2026-10-23")},
-		{Path: "apps/portfolio/src/data/C.json", Date: date("2026-10-22")},
+		{Path: "apps/portfolio/src/data/photos/B.json", Date: date("2026-10-23")},
+		{Path: "apps/portfolio/src/data/photos/C.json", Date: date("2026-10-22")},
 	})
 	if err != nil {
 		t.Fatalf("SetSocialDates() error = %v", err)
@@ -90,10 +90,10 @@ func TestSetSocialDates(t *testing.T) {
 	for _, e := range repo.tree {
 		contents[e["path"]] = e["content"]
 	}
-	if want := strings.Replace(photoB, `"2026-10-22"`, `"2026-10-23"`, 1); contents["apps/portfolio/src/data/B.json"] != want {
-		t.Errorf("B.json = %s, want %s", contents["apps/portfolio/src/data/B.json"], want)
+	if want := strings.Replace(photoB, `"2026-10-22"`, `"2026-10-23"`, 1); contents["apps/portfolio/src/data/photos/B.json"] != want {
+		t.Errorf("B.json = %s, want %s", contents["apps/portfolio/src/data/photos/B.json"], want)
 	}
-	if c := contents["apps/portfolio/src/data/C.json"]; !strings.HasSuffix(c, ",\n  \"socialMediaPublishDate\": \"2026-10-22\"}") {
+	if c := contents["apps/portfolio/src/data/photos/C.json"]; !strings.HasSuffix(c, ",\n  \"socialMediaPublishDate\": \"2026-10-22\"}") {
 		t.Errorf("C.json = %s, want the date added at the end", c)
 	}
 	if msg := repo.commit["message"]; msg != "Schedule social media posts for 2 photos" {
@@ -102,7 +102,7 @@ func TestSetSocialDates(t *testing.T) {
 }
 
 func TestSetSocialDatesErrors(t *testing.T) {
-	const dir = "apps/portfolio/src/data/"
+	const dir = "apps/portfolio/src/data/photos/"
 	tests := []struct {
 		name  string
 		dates []SocialDate

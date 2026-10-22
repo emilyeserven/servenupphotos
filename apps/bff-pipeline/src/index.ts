@@ -4,6 +4,7 @@ import Fastify from "fastify";
 import { env } from "./env.js";
 import { dataRoutes } from "./routes/data.js";
 import { githubRoutes } from "./routes/github.js";
+import { organizeRoutes } from "./routes/organize.js";
 import { photoRoutes } from "./routes/photos.js";
 import { publishRoutes } from "./routes/publish.js";
 import { healthRoutes } from "./routes/health.js";
@@ -20,6 +21,7 @@ await app.register(
     await api.register(githubRoutes);
     await api.register(settingsRoutes);
     await api.register(dataRoutes);
+    await api.register(organizeRoutes);
     await api.register(publishRoutes);
   },
   { prefix: "/api" },

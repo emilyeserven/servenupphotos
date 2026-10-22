@@ -16,16 +16,19 @@ type CombineQuery = UseQueryResult<CombineStatus>;
 
 const AMBER = "text-amber-700 dark:text-amber-400";
 
-/** Per run state, the line to show unless the backend sent a message. */
-const STATES: Record<CombineStatus["state"], { text: string; className: string }> = {
+/** Per run state, the line to show about a file unless the backend sent a message. */
+const STATES: Record<
+  CombineStatus["state"],
+  { text: (file: string) => string; className: string }
+> = {
   waiting: {
-    text: "Waiting for CI to rebuild ALLPHOTOS.json…",
+    text: (file) => `Waiting for CI to rebuild ${file}…`,
     className: "text-muted-foreground",
   },
-  running: { text: "CI is rebuilding ALLPHOTOS.json…", className: "text-muted-foreground" },
-  done: { text: "CI rebuilt ALLPHOTOS.json.", className: "text-muted-foreground" },
-  failed: { text: "CI couldn't rebuild ALLPHOTOS.json.", className: AMBER },
-  unavailable: { text: "Couldn't check on CI.", className: AMBER },
+  running: { text: (file) => `CI is rebuilding ${file}…`, className: "text-muted-foreground" },
+  done: { text: (file) => `CI rebuilt ${file}.`, className: "text-muted-foreground" },
+  failed: { text: (file) => `CI couldn't rebuild ${file}.`, className: AMBER },
+  unavailable: { text: () => "Couldn't check on CI.", className: AMBER },
 };
 
 /** Whether the "Combine photo data" run is known to be waiting to start or running. */
@@ -81,16 +84,29 @@ export function useAllPhotosRebuild(enabled: boolean, onRebuilt: () => void): Re
 }
 
 /** The line to show for status, and whether the run is still going. */
-function rebuildLine(status: CombineQuery) {
+function rebuildLine(status: CombineQuery, file: string) {
   if (status.isError) return { text: status.error.message, className: AMBER, pending: false };
   const state = combineState(status.data);
   const { text, className } = STATES[state];
-  return { text: status.data?.message ?? text, className, pending: COMBINE_PENDING.has(state) };
+  return {
+    text: status.data?.message ?? text(file),
+    className,
+    pending: COMBINE_PENDING.has(state),
+  };
 }
 
-/** One line on where the ALLPHOTOS.json rebuild is, linked to its run once there is one. */
-export function AllPhotosRebuild({ status }: { status: CombineQuery }) {
-  const { text, className, pending } = rebuildLine(status);
+/**
+ * One line on where the rebuild of `file` (ALLPHOTOS.json unless named) is, linked to its run once
+ * there is one. The same run rebuilds ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json.
+ */
+export function AllPhotosRebuild({
+  status,
+  file = "ALLPHOTOS.json",
+}: {
+  status: CombineQuery;
+  file?: string;
+}) {
+  const { text, className, pending } = rebuildLine(status, file);
   return (
     <p className={cn("flex items-center gap-2", className)}>
       {pending && <Spinner />}

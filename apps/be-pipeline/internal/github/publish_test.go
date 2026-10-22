@@ -79,12 +79,29 @@ func (f *fakeRepo) serve(w http.ResponseWriter, r *http.Request) {
 		f.branches[strings.TrimPrefix(in["ref"], "refs/heads/")] = true
 		writeBody(w, http.StatusCreated, map[string]any{})
 	case strings.HasPrefix(path, "/contents/") && r.Method == http.MethodGet:
-		key := r.URL.Query().Get("ref") + ":" + strings.TrimPrefix(path, "/contents/")
-		if _, ok := f.files[key]; !ok {
+		ref, file := r.URL.Query().Get("ref"), strings.TrimPrefix(path, "/contents/")
+		if content, ok := f.files[ref+":"+file]; ok {
+			writeBody(w, http.StatusOK, map[string]any{
+				"encoding": "base64", "content": base64.StdEncoding.EncodeToString([]byte(content)),
+			})
+			return
+		}
+		// A folder lists the files directly in it.
+		var listing []map[string]any
+		for key := range f.files {
+			name, ok := strings.CutPrefix(key, ref+":"+file+"/")
+			if ok && !strings.Contains(name, "/") {
+				listing = append(listing, map[string]any{
+					"name": name, "path": file + "/" + name, "type": "file",
+					"html_url": "https://github.com/owner/repo/blob/" + ref + "/" + file + "/" + name,
+				})
+			}
+		}
+		if listing == nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		writeBody(w, http.StatusOK, map[string]any{})
+		writeBody(w, http.StatusOK, listing)
 	case strings.HasPrefix(path, "/contents/") && r.Method == http.MethodPut:
 		if f.failPUT != 0 {
 			w.WriteHeader(f.failPUT)
@@ -140,8 +157,8 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 		t.Fatalf("first Publish() error = %v", err)
 	}
 	want := PublishResult{
-		Path:              "photos/data/DSC0001.json",
-		FileURL:           "https://github.com/owner/repo/blob/photo-data/2026-10-15-024500/photos/data/DSC0001.json",
+		Path:              "photos/data/photos/DSC0001.json",
+		FileURL:           "https://github.com/owner/repo/blob/photo-data/2026-10-15-024500/photos/data/photos/DSC0001.json",
 		PullRequestURL:    "https://github.com/owner/repo/pull/1",
 		PullRequestNumber: 1,
 		NewPullRequest:    true,
@@ -154,14 +171,14 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("second Publish() error = %v", err)
 	}
-	if second.NewPullRequest || second.PullRequestNumber != 1 || second.Path != "photos/data/DSC0002.json" {
+	if second.NewPullRequest || second.PullRequestNumber != 1 || second.Path != "photos/data/photos/DSC0002.json" {
 		t.Errorf("second Publish() = %+v, want it added to pull request 1", second)
 	}
 	if len(f.pulls) != 1 {
 		t.Errorf("opened %d pull requests, want 1", len(f.pulls))
 	}
 
-	got := f.files["photo-data/2026-10-15-024500:photos/data/DSC0001.json"]
+	got := f.files["photo-data/2026-10-15-024500:photos/data/photos/DSC0001.json"]
 	wantJSON := `{
   "title": "Tokyo at night",
   "comment": "Shot from the **bridge**.",
@@ -192,7 +209,9 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   },
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
-  "socialMediaPublishDate": null
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": []
 }
 `
 	if got != wantJSON {
@@ -202,7 +221,7 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 
 func TestPublishRefusesExistingFile(t *testing.T) {
 	f, c := newFakeRepo(t)
-	f.files["main:photos/data/DSC0001.json"] = "{}"
+	f.files["main:photos/data/photos/DSC0001.json"] = "{}"
 
 	_, err := c.Publish(t.Context(), gh, photo("DSC0001"))
 	var perr *PublishError

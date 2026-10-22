@@ -58,7 +58,7 @@ func (c *Client) FindInAllPhotos(ctx context.Context, gh settings.GitHub, photo 
 	if strings.TrimSpace(photo.File) == "" {
 		return AllPhotosCheck{}, publishErr(http.StatusBadRequest, "file is required")
 	}
-	folder, perr := dataFolder(gh.Folder)
+	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return AllPhotosCheck{}, perr
 	}
@@ -189,7 +189,7 @@ type BaseAllPhotos struct {
 // AllPhotosOnBase reads AllPhotosFile on the base branch from Settings, or
 // the default branch. It only reads from GitHub.
 func (c *Client) AllPhotosOnBase(ctx context.Context, gh settings.GitHub) (BaseAllPhotos, error) {
-	folder, perr := dataFolder(gh.Folder)
+	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return BaseAllPhotos{}, perr
 	}

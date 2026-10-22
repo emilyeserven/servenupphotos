@@ -14,12 +14,15 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// DefaultDataFolder is where the portfolio keeps photo JSON, used by InFlight
-// when Settings has no folder.
+// DefaultDataFolder is where the portfolio keeps its data, used when Settings
+// has no folder. Photo, album and tag JSON each have a subfolder of it.
 const DefaultDataFolder = "apps/portfolio/src/data"
 
+// PhotosFolder is the data folder's subfolder of photo JSON files.
+const PhotosFolder = "photos"
+
 // AllPhotosFile is the portfolio's combined photo list: a JSON array of every
-// photo file in the data folder, rebuilt by CI on the pull request. InFlight
+// photo file in the photos folder, rebuilt by CI on the pull request. InFlight
 // lists it apart from the photo files and checks each photo against it.
 const AllPhotosFile = "ALLPHOTOS.json"
 
@@ -81,6 +84,30 @@ type InFlightResult struct {
 	Files       []InFlightFile       `json:"files"`
 	// AllPhotos is not Found when there is no pull request.
 	AllPhotos InFlightAllPhotos `json:"allPhotos"`
+	// Albums and Tags are the album and tag files in the pull request.
+	Albums InFlightGroups `json:"albums"`
+	Tags   InFlightGroups `json:"tags"`
+}
+
+// InFlightGroups is the files of one Kind in the pull request.
+type InFlightGroups struct {
+	Folder string              `json:"folder"`
+	Files  []InFlightGroupFile `json:"files"`
+	// All is the kind's AllFile at the pull request's head, not Found when
+	// there is no pull request.
+	All InFlightAllPhotos `json:"all"`
+}
+
+// InFlightGroupFile is one album or tag file in the pull request.
+type InFlightGroupFile struct {
+	Path    string          `json:"path"`
+	Status  string          `json:"status"`
+	FileURL string          `json:"fileUrl"`
+	Data    json.RawMessage `json:"data,omitempty"`
+	Error   string          `json:"error,omitempty"`
+	// InAll says whether Data equals an entry of the kind's AllFile. It is nil
+	// when either file couldn't be read.
+	InAll *bool `json:"inAll"`
 }
 
 // inFlightPull is the part of a listed pull request InFlight uses.
@@ -108,10 +135,11 @@ type pullFile struct {
 // repository and reads the JSON files it changes in the data folder, except
 // AllPhotosFile, at the pull request's head. It only reads from GitHub.
 func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResult, error) {
-	folder, perr := dataFolder(gh.Folder)
+	root, perr := dataFolder(gh.Folder)
 	if perr != nil {
 		return InFlightResult{}, perr
 	}
+	folder := root + "/" + PhotosFolder
 	owner, name, ok := splitRepo(gh.Repo)
 	if !ok || gh.Token == "" {
 		return InFlightResult{}, publishErr(http.StatusBadRequest, "Set the GitHub repository and token in Settings first.")
@@ -120,6 +148,8 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 	result := InFlightResult{
 		Repo: owner + "/" + name, Folder: folder, Files: []InFlightFile{},
 		AllPhotos: InFlightAllPhotos{Path: folder + "/" + AllPhotosFile},
+		Albums:    newInFlightGroups(root, Albums),
+		Tags:      newInFlightGroups(root, Tags),
 	}
 
 	pr, perr := c.findInFlightPull(ctx, t)
@@ -142,6 +172,9 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		if f.Filename == result.AllPhotos.Path {
 			allPhotosURL = f.BlobURL
 		}
+		for _, g := range []*InFlightGroups{&result.Albums, &result.Tags} {
+			g.add(f)
+		}
 		if f.Status == "removed" || !isPhotoData(folder, f.Filename) {
 			continue
 		}
@@ -160,12 +193,57 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 			result.Files[i].InAllPhotos = &in
 		}
 	}
+	for _, g := range []*InFlightGroups{&result.Albums, &result.Tags} {
+		c.readInFlightGroups(ctx, t, g, pr.Head.SHA)
+	}
 	return result, nil
+}
+
+func newInFlightGroups(root string, kind Kind) InFlightGroups {
+	folder := root + "/" + kind.Folder
+	return InFlightGroups{Folder: folder, Files: []InFlightGroupFile{}, All: InFlightAllPhotos{Path: folder + "/" + kind.AllFile}}
+}
+
+// add lists f when it is a JSON file in g's folder the pull request doesn't
+// remove, or notes its URL when it is g's AllFile.
+func (g *InFlightGroups) add(f pullFile) {
+	if f.Filename == g.All.Path {
+		g.All.FileURL = f.BlobURL
+		return
+	}
+	if f.Status == "removed" || path.Dir(f.Filename) != g.Folder || !strings.EqualFold(path.Ext(f.Filename), ".json") {
+		return
+	}
+	g.Files = append(g.Files, InFlightGroupFile{Path: f.Filename, Status: f.Status, FileURL: f.BlobURL})
+}
+
+// readInFlightGroups reads g's files and AllFile at ref and checks each file
+// against the AllFile.
+func (c *Client) readInFlightGroups(ctx context.Context, t target, g *InFlightGroups, ref string) {
+	for i := range g.Files {
+		g.Files[i].Data, g.Files[i].Error = c.readJSON(ctx, t, g.Files[i].Path, ref)
+	}
+	fileURL := g.All.FileURL
+	var entries []any
+	g.All, entries = c.readCombined(ctx, t, g.All.Path, ref)
+	g.All.FileURL = fileURL
+	for i, f := range g.Files {
+		if entries != nil && f.Data != nil {
+			in := containsJSON(entries, f.Data)
+			g.Files[i].InAll = &in
+		}
+	}
 }
 
 // readAllPhotos reads AllPhotosFile in folder at ref and returns its entries.
 func (c *Client) readAllPhotos(ctx context.Context, t target, folder, ref string) (InFlightAllPhotos, []any) {
-	all := InFlightAllPhotos{Path: folder + "/" + AllPhotosFile}
+	return c.readCombined(ctx, t, folder+"/"+AllPhotosFile, ref)
+}
+
+// readCombined reads file, a combined list CI builds, at ref and returns its
+// entries.
+func (c *Client) readCombined(ctx context.Context, t target, file, ref string) (InFlightAllPhotos, []any) {
+	all := InFlightAllPhotos{Path: file}
 	content, found, msg := c.readFile(ctx, t, all.Path, ref)
 	all.Found = found
 	if !found {
@@ -238,6 +316,15 @@ func dataFolder(folder string) (string, *PublishError) {
 		}
 	}
 	return folder, nil
+}
+
+// photoFolder is the photos folder in the Settings data folder.
+func photoFolder(folder string) (string, *PublishError) {
+	root, perr := dataFolder(folder)
+	if perr != nil {
+		return "", perr
+	}
+	return root + "/" + PhotosFolder, nil
 }
 
 // isPhotoData reports a .json file directly in folder, other than AllPhotosFile.

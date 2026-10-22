@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import type { SanitizedExif } from "@/api/exif";
 import { type PublishResult, publishPhotoMutation } from "@/api/photos";
-import { type SettingsResponse, settingsQuery } from "@/api/settings";
+import { type SettingsResponse, dataFolder, settingsQuery } from "@/api/settings";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,9 +26,8 @@ function validateName(name: string): string | undefined {
 }
 
 function jsonPath(folder: string, name: string): string {
-  const dir = folder.trim().replace(/^\/+|\/+$/g, "");
   const file = `${name.trim().replace(/\.json$/, "")}.json`;
-  return dir ? `${dir}/${file}` : file;
+  return `${dataFolder(folder)}/photos/${file}`;
 }
 
 interface GitHubSaveCardProps {

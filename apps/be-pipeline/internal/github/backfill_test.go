@@ -54,7 +54,7 @@ func TestFindGapsAndFill(t *testing.T) {
 		"title", "comment", "aperture", "exposure", "iso", "focalLength",
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
 		"images.preview", "images.thumbnail", "images.thumbnailpreview",
-		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate",
+		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate", "albums", "tags",
 	}
 	if !reflect.DeepEqual(fields, want) {
 		t.Fatalf("fields = %v, want %v", fields, want)
@@ -91,7 +91,9 @@ func TestFindGapsAndFill(t *testing.T) {
   },
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
-  "socialMediaPublishDate": null
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": []
 }
 `
 	if got != wantContent {
@@ -183,7 +185,7 @@ func TestPreviewBackfill(t *testing.T) {
 		t.Fatalf("preview = %+v, want 2 of 3 files missing fields", got)
 	}
 	first := got.Files[0]
-	if first.Path != "apps/portfolio/src/data/DSC0001.json" || first.ExifError != "" {
+	if first.Path != "apps/portfolio/src/data/photos/DSC0001.json" || first.ExifError != "" {
 		t.Fatalf("first file = %+v", first)
 	}
 	byField := map[string]AddedField{}
@@ -227,10 +229,10 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 16 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
+	if got.Files != 1 || got.Fields != 18 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
 		t.Errorf("Backfill() = %+v", got)
 	}
-	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/DSC0001.json" {
+	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/photos/DSC0001.json" {
 		t.Fatalf("tree = %v, want DSC0001.json only", repo.tree)
 	}
 	if !strings.HasPrefix(repo.tree[0]["content"], "{\n  \"title\": null,\n  \"comment\": null,\n  \"file\"") {

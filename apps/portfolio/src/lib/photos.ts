@@ -91,12 +91,18 @@ interface PhotoData {
   websiteSpotlight?: number | null;
   /** The day the photo is scheduled to be posted to social media, as YYYY-MM-DD; null or missing when it isn't. */
   socialMediaPublishDate?: string | null;
+  /** The IDs of the photo's albums and tags; older entries were saved without them. */
+  albums?: string[];
+  tags?: string[];
 }
 
 // ALLPHOTOS.local.json is made by `pnpm photos:local` (which `pnpm dev` runs) and git-ignored, so
 // it's only there locally. A glob, unlike an import, doesn't fail when the file is missing.
 const localData = Object.values(
-  import.meta.glob<PhotoData[]>("../data/ALLPHOTOS.local.json", { eager: true, import: "default" }),
+  import.meta.glob<PhotoData[]>("../data/photos/ALLPHOTOS.local.json", {
+    eager: true,
+    import: "default",
+  }),
 )[0];
 
 /** Exiftool's "2026:05:16 15:24:10" (sometimes with a time zone after it), as local time. */
