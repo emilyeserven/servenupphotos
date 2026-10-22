@@ -148,11 +148,11 @@ function imageCount(summary: PendingSummary): number {
   return added + modified + deleted;
 }
 
-/** The counts that aren't 0, each as format says it, joined with commas. */
-function nonZero(parts: [number, string][], format = plural): string {
+/** The counts that aren't 0, joined with commas. */
+function nonZero(parts: [number, string][]): string {
   return parts
     .filter(([count]) => count > 0)
-    .map(([count, word]) => format(count, word))
+    .map(([count, word]) => plural(count, word))
     .join(", ");
 }
 
@@ -164,15 +164,4 @@ export function pendingText(summary: PendingSummary): string {
     [summary.tags, "tag"],
     [summary.other, "other save"],
   ]);
-}
-
-/** How the images changed, such as "1 added, 2 modified"; "" with none. */
-export function imageBreakdown(summary: PendingSummary): string {
-  const { added, modified, deleted } = summary.images;
-  const parts: [number, string][] = [
-    [added, "added"],
-    [modified, "modified"],
-    [deleted, "deleted"],
-  ];
-  return nonZero(parts, (count, word) => `${count} ${word}`);
 }

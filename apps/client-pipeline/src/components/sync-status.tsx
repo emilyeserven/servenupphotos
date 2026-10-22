@@ -129,17 +129,17 @@ function SyncPanel({ sync, onNavigate }: { sync: Sync; onNavigate: () => void })
       className="bg-popover text-popover-foreground flex w-[min(20rem,calc(100vw-2rem))] flex-col gap-3 rounded-xl border p-4 text-sm shadow-lg"
     >
       <PullRequestLine sync={sync} />
-      <SyncLine sync={sync} />
-      <LocalEditsLine count={sync.localEdits} />
+      <ImageCounts images={sync.images} />
       <CommitResult sync={sync} />
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-3">
         <Link
           to="/in-flight"
           onClick={onNavigate}
-          className="text-muted-foreground underline underline-offset-4"
+          className="text-muted-foreground mr-auto underline underline-offset-4"
         >
           Photos in Flight
         </Link>
+        <DiscardButton count={sync.localEdits} />
         {canCommit(sync) && <CommitButton variant={sync.unsynced ? "default" : "outline"} />}
       </div>
     </div>
@@ -164,46 +164,43 @@ function canCommit(sync: Sync): boolean {
   return Boolean(sync.pullRequest) || sync.localEdits > 0;
 }
 
-/** The edits only kept in the browser so far, with a button to drop them. */
-function LocalEditsLine({ count }: { count: number }) {
+/** Drops the edits only kept in the browser so far, after asking. */
+function DiscardButton({ count }: { count: number }) {
   const discard = useLocalEditsStore((state) => state.discard);
   if (count === 0) return null;
   return (
-    <p className={cn(MUTED, "flex flex-wrap items-center gap-x-2")}>
-      {plural(count, "image")} edited here, not on GitHub until you commit.
-      <button
-        type="button"
-        onClick={() => {
-          if (window.confirm(`Discard the changes to ${plural(count, "image")}?`)) discard();
-        }}
-        className="underline underline-offset-4"
-      >
-        Discard
-      </button>
-    </p>
+    <button
+      type="button"
+      onClick={() => {
+        if (window.confirm(`Discard the uncommitted changes to ${plural(count, "image")}?`))
+          discard();
+      }}
+      className="text-muted-foreground underline underline-offset-4"
+    >
+      Discard
+    </button>
   );
 }
 
-/** Whether the combined files have the pull request's changes, and what the app shows already. */
-function SyncLine({ sync }: { sync: Sync }) {
-  if (!canCommit(sync)) return null;
-  if (!sync.unsynced) {
-    return <p className={MUTED}>ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json are up to date.</p>;
-  }
+/** How many images were added, modified and deleted since the last commit. */
+function ImageCounts({ images }: { images: Sync["images"] }) {
+  const rows: [number, string][] = [
+    [images.added, "Added"],
+    [images.modified, "Modified"],
+    [images.deleted, "Deleted"],
+  ];
   return (
-    <p className={AMBER}>
-      {unsyncedWhat(sync)}, not in ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json yet. Commit to
-      sync them.
-    </p>
+    <div className="grid grid-cols-3 gap-2 text-center">
+      {rows.map(([count, label]) => (
+        <p key={label} className="bg-muted/50 flex flex-col rounded-md py-2">
+          <span className={cn("text-2xl font-semibold tabular-nums", count === 0 && MUTED)}>
+            {count}
+          </span>
+          <span className={MUTED}>{label}</span>
+        </p>
+      ))}
+    </div>
   );
-}
-
-/** What hasn't been committed yet, as SyncLine says it. */
-function unsyncedWhat(sync: Sync): string {
-  const how = sync.imagesChanged ? ` (images: ${sync.imagesChanged})` : "";
-  return sync.pending
-    ? `${sync.pending} changed since the last commit${how}`
-    : "The pull request changed since the last commit";
 }
 
 /** What the last commit did, or why it failed. */
@@ -214,13 +211,10 @@ function CommitResult({ sync }: { sync: Sync }) {
 }
 
 function LastCommit({ commit }: { commit: CombinedCommit }) {
-  if (!commit.changed) return <p className={MUTED}>The last commit found nothing to change.</p>;
+  if (!commit.changed) return <p className={MUTED}>Nothing to commit.</p>;
   return (
-    <p className={MUTED}>
-      Committed {plural(commit.files.length, "file")}.{" "}
-      <a href={commit.commitUrl} target="_blank" rel="noreferrer" className="underline">
-        View commit
-      </a>
-    </p>
+    <a href={commit.commitUrl} target="_blank" rel="noreferrer" className={cn(MUTED, "underline")}>
+      View last commit
+    </a>
   );
 }

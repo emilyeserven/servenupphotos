@@ -9,13 +9,7 @@ import {
   type InFlightPullRequest,
   readCombinedData,
 } from "@/api/photos";
-import {
-  type FileChange,
-  imageBreakdown,
-  pendingText,
-  summarizeChanges,
-  withChanges,
-} from "@/lib/optimistic";
+import { type FileChange, pendingText, summarizeChanges, withChanges } from "@/lib/optimistic";
 import { editChanges, fieldEdits, useLocalEditsStore } from "@/stores/local-edits";
 
 /**
@@ -265,8 +259,8 @@ export function useCombinedSync() {
     localEdits,
     /** What changed since the last commit, as "2 images, 1 album"; "" when nothing known. */
     pending: pendingText(summary),
-    /** How the images changed, as "1 added, 2 modified"; "" with none. */
-    imagesChanged: imageBreakdown(summary),
+    /** How many images were added, modified and deleted since the last commit. */
+    images: summary.images,
   };
 }
 
