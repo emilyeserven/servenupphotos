@@ -32,7 +32,7 @@ browser ──► bff-pipeline (Fastify, :8080) ──► be-pipeline (Go, :8081
 pnpm install
 
 pnpm dev             # everything: portfolio on the host + the pipeline in Docker, all hot-reloading
-pnpm dev:portfolio   # just the portfolio: http://localhost:5173/servenupphotos/
+pnpm dev:portfolio   # just the portfolio: http://localhost:5173/
 pnpm dev:docker      # just the pipeline in Docker: http://localhost:5174
 pnpm photos:local    # refresh the portfolio's local ALLPHOTOS.local.json (see below)
 pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + Vite :5173 (proxies /api → :8080)
@@ -40,10 +40,10 @@ pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + V
 
 `pnpm dev` opens:
 
-| URL                                     | What                                        |
-| --------------------------------------- | ------------------------------------------- |
-| <http://localhost:5173/servenupphotos/> | portfolio (Vite on the host)                |
-| <http://localhost:5174>                 | pipeline UI (`PIPELINE_DEV_PORT` in `.env`) |
+| URL                      | What                                        |
+| ------------------------ | ------------------------------------------- |
+| <http://localhost:5173/> | portfolio (Vite on the host)                |
+| <http://localhost:5174>  | pipeline UI (`PIPELINE_DEV_PORT` in `.env`) |
 
 ### Portfolio with your own photo data
 
@@ -383,8 +383,9 @@ cd apps/be-pipeline && golangci-lint run && go test ./...   # golangci-lint also
 ### Portfolio → GitHub Pages
 
 `.github/workflows/deploy-portfolio.yml` builds `apps/portfolio` on every push to `main` and deploys it.
-One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-The site is served from `/servenupphotos/` (Vite `base`), and `404.html` is a copy of `index.html` so deep links work.
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**, and **Settings → Pages → Custom domain: `servenupphotos.net`** (with **Enforce HTTPS** on once the certificate is issued).
+Actions deploys ignore a `CNAME` file, so the domain lives only in that setting.
+The site is served from the domain root (Vite `base: "/"`), and `404.html` is a copy of `index.html` so deep links work.
 
 ### Pipeline → local machine or Raspberry Pi
 
