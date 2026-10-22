@@ -10,7 +10,7 @@
   "focalLength": 96,
   "gpsPosition": "40 deg 45' 3.36\" N, 74 deg 0' 9.24\" W",
   "createDate": "2018:02:25 12:04:39",
-  "placeName": null,
+  "placeName": "the-high-line",
   "customCity": null,
   "customCountry": null,
   "country": "United States of America",
@@ -26,10 +26,10 @@
     "small": "https://cdn.servenupphotos.net/photos/2379fac46b8f-img-2576-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/2379fac46b8f-img-2576-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/2379fac46b8f-img-2576-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/2379fac46b8f-img-2576-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2379fac46b8f-img-2576-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/2379fac46b8f-img-2576-thumbnail.webp?crop=2244,0,3653",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2379fac46b8f-img-2576-thumbnailpreview.webp?crop=2244,0,3653",
     "thumbnailcrop": {
-      "x": 1122,
+      "x": 2244,
       "y": 0,
       "size": 3653,
       "outputSize": 500
@@ -40,5 +40,10 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": []
+  "places": [
+    {
+      "relation": "",
+      "id": "the-high-line"
+    }
+  ]
 }
