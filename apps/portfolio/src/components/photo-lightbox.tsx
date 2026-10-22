@@ -14,7 +14,7 @@ interface PhotoLightboxProps {
 
 // A quick fade in on opening and out on closing, for both the overlay and the content.
 const FADE =
-  "duration-150 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0";
+  "duration-250 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0";
 
 /** A full-window overlay showing a whole photo, as large as fits the window. */
 export function PhotoLightbox({ photo: openPhoto, onClose }: PhotoLightboxProps) {
