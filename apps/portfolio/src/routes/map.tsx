@@ -436,7 +436,7 @@ function ClusterMarker({
           )}
         />
       ))}
-      {previews.length > 0 && <span aria-hidden className="absolute inset-0 bg-black/80" />}
+      {previews.length > 0 && <span aria-hidden className="absolute inset-0 bg-black/60" />}
       <span className="relative">{count}</span>
     </button>
   );
