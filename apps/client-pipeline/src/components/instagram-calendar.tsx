@@ -425,6 +425,8 @@ interface PhotoPickerProps {
 /** Picks a photo for a day, or takes the day's photo off it. */
 function PhotoPicker({ day, byDay, photos, unsaved, onClose, onSchedule }: PhotoPickerProps) {
   const [search, setSearch] = useState("");
+  // Kept between days, so opting in once shows them every time the picker opens.
+  const [showScheduled, setShowScheduled] = useState(false);
   const current = day === null ? undefined : byDay.get(day);
   /** Clears the search for the next day before closing. */
   const close = () => {
@@ -447,10 +449,20 @@ function PhotoPicker({ day, byDay, photos, unsaved, onClose, onSchedule }: Photo
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            className="accent-primary size-4"
+            checked={showScheduled}
+            onChange={(event) => setShowScheduled(event.target.checked)}
+          />
+          Show already scheduled photos
+        </label>
         <div className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
           <PickerChoices
-            choices={pickerChoices(photos, unsaved, search)}
+            choices={pickerChoices(photos, unsaved, search, showScheduled)}
             searching={search.trim() !== ""}
+            hidingScheduled={!showScheduled && photos.some((p) => dateOf(unsaved, p) !== null)}
             current={current}
             unsaved={unsaved}
             onPick={(photo) => choose(photo, day)}
@@ -483,16 +495,25 @@ function PickerHeader({ day, current }: { day: string | null; current: SocialPho
 interface PickerChoicesProps {
   choices: SocialPhoto[];
   searching: boolean;
+  /** Whether scheduled photos are left out, so an empty list can say so. */
+  hidingScheduled: boolean;
   current: SocialPhoto | undefined;
   unsaved: Unsaved;
   onPick: (photo: SocialPhoto) => void;
 }
 
-function PickerChoices({ choices, searching, current, unsaved, onPick }: PickerChoicesProps) {
+/** What an empty list of choices says. */
+function noChoices(searching: boolean, hidingScheduled: boolean): string {
+  if (searching) return hidingScheduled ? "No unscheduled photos match." : "No photos match.";
+  return hidingScheduled ? "Every photo is already scheduled." : "There are no photo files yet.";
+}
+
+function PickerChoices(props: PickerChoicesProps) {
+  const { choices, searching, hidingScheduled, current, unsaved, onPick } = props;
   if (choices.length === 0) {
     return (
       <p className="text-muted-foreground py-6 text-center text-sm">
-        {searching ? "No photos match." : "There are no photo files yet."}
+        {noChoices(searching, hidingScheduled)}
       </p>
     );
   }
