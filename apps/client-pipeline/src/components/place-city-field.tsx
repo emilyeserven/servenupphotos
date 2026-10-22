@@ -37,6 +37,8 @@ interface PlaceCityFieldProps {
   disabled: boolean;
   /** How to fill the field in, shown beside its title. */
   help: string;
+  /** Starts the field's IDs, so two on a page don't clash; "place-city" when not given. */
+  id?: string;
   /** Called with the chosen city, and its country when one is known for it. */
   onChange: (city: string, country: string | undefined) => void;
 }
@@ -45,7 +47,14 @@ interface PlaceCityFieldProps {
  * The place's city, chosen from the cities places are already in or the ones photos show (inferred),
  * or typed. Choosing a city whose country is known fills in the country too.
  */
-export function PlaceCityField({ value, places, disabled, help, onChange }: PlaceCityFieldProps) {
+export function PlaceCityField({
+  id = "place-city",
+  value,
+  places,
+  disabled,
+  help,
+  onChange,
+}: PlaceCityFieldProps) {
   const cities = cityRows(shownPhotos(useCombinedData().data), places);
   const choose = (city: string) => {
     const found = cities.find((c) => regionKey(c.name) === regionKey(city));
@@ -53,12 +62,12 @@ export function PlaceCityField({ value, places, disabled, help, onChange }: Plac
   };
   return (
     <div className="flex flex-col gap-2">
-      <FieldLabel id="place-city-label" help={help}>
+      <FieldLabel id={`${id}-label`} help={help}>
         City
       </FieldLabel>
       <SingleCombobox
-        id="place-city"
-        aria-labelledby="place-city-label"
+        id={id}
+        aria-labelledby={`${id}-label`}
         options={cityOptions(cities, value)}
         value={value}
         onChange={choose}
