@@ -168,7 +168,8 @@ function GitHubSaveForm({
   );
 }
 
-function PublishSuccess({ result, repo }: { result: PublishResult; repo: string }) {
+/** Where a save put the photo's JSON, and the pull request it went into. */
+export function PublishSuccess({ result, repo }: { result: PublishResult; repo: string }) {
   const pr = `${repo}#${result.pullRequestNumber}`;
   return (
     <div className="flex flex-col gap-2 text-sm">
