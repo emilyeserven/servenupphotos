@@ -44,7 +44,7 @@ function BulkUpload({ settings }: { settings: SettingsResponse }) {
         </p>
       )}
       <DropZone onFiles={(files) => add(files, queryClient)} disabled={missing.length > 0} />
-      <Queue />
+      <BulkQueue />
     </div>
   );
 }
@@ -64,7 +64,7 @@ function summary(photos: BulkPhoto[]): string {
 }
 
 /** The chosen photos, each with where it is, under a bar of how many are done. */
-function Queue() {
+export function BulkQueue() {
   const photos = useBulkUploadStore((state) => state.photos);
   const clearFinished = useBulkUploadStore((state) => state.clearFinished);
   if (photos.length === 0) return null;

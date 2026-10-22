@@ -11,6 +11,11 @@ interface BulkUploadState {
   photos: BulkPhoto[];
   /** Adds photos to the end of the queue and starts on them; anything but a JPEG fails right away. */
   add: (files: File[], queryClient: QueryClient) => void;
+  /**
+   * Adds a photo already analyzed on the Photo page to the end of the queue, with its details,
+   * square, albums and tags, so it's uploaded and saved even after leaving the page.
+   */
+  addAnalyzed: (photo: AnalyzedPhoto, queryClient: QueryClient) => void;
   /** Puts a failed photo back in the queue; with keepSameName, its upload keeps the name R2 has. */
   retry: (id: string, queryClient: QueryClient, keepSameName?: boolean) => void;
   /** Takes a photo that's waiting or finished off the list. */
@@ -18,6 +23,9 @@ interface BulkUploadState {
   /** Takes every added and skipped photo off the list. */
   clearFinished: () => void;
 }
+
+/** A photo from the Photo page, with what was chosen for it there. */
+export type AnalyzedPhoto = Pick<BulkPhoto, "file" | "exif" | "crop" | "groups">;
 
 let nextId = 0;
 
@@ -80,6 +88,11 @@ export const useBulkUploadStore = create<BulkUploadState>()((set, get) => {
     photos: [],
     add: (files, queryClient) => {
       set((state) => ({ photos: [...state.photos, ...files.map(queued)] }));
+      void drain(queryClient);
+    },
+    addAnalyzed: (photo, queryClient) => {
+      const queuedPhoto: BulkPhoto = { ...photo, id: `bulk-${++nextId}`, step: "waiting" };
+      set((state) => ({ photos: [...state.photos, queuedPhoto] }));
       void drain(queryClient);
     },
     retry: (id, queryClient, keepSameName) => {

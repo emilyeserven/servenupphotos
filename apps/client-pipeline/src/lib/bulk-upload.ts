@@ -4,6 +4,7 @@ import {
   type QueryClient,
 } from "@tanstack/react-query";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
+import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import {
   type AllPhotosCheck,
   type AllPhotosMatch,
@@ -15,6 +16,7 @@ import {
 } from "@/api/photos";
 import { UploadError, type UploadResponse, uploadMutation } from "@/api/upload";
 import { allPhotosCheck, type CombinedView } from "@/lib/combined";
+import type { Crop } from "@/lib/crop";
 import { jsonFileName } from "@/lib/file-name";
 import { withChanges } from "@/lib/optimistic";
 import { withImages } from "@/lib/photo-images";
@@ -49,8 +51,12 @@ export interface BulkPhoto {
   keepSameName?: boolean;
   /** Places the already-saved check couldn't read, so it may be saved twice. */
   warning?: string;
-  /** Its EXIF and colors, once analyzed. */
+  /** Its EXIF and colors, once analyzed; with its title and other details for one from the Photo page. */
   exif?: ExifResponse;
+  /** The square its Square Thumbnail is cut from; the middle square when left out. */
+  crop?: Crop;
+  /** The albums and tags to save it in; none when left out. */
+  groups?: PhotoGroups;
   /** Where it ended up in R2, once uploaded. */
   upload?: UploadResponse;
   /** The saved entries that match it, when it was skipped as already saved. */
@@ -93,9 +99,14 @@ async function analyze(photo: BulkPhoto, queryClient: QueryClient): Promise<Step
   return { exif };
 }
 
+/** The photo's original file name, as the backend read it. */
+function fileOf(photo: BulkPhoto): string {
+  return photo.exif?.file ?? photo.file.name;
+}
+
 function identityOf(photo: BulkPhoto): PhotoIdentity {
   const { gpsPosition, createDate } = sanitizedOf(photo);
-  return { file: photo.exif?.file ?? photo.file.name, gpsPosition, createDate };
+  return { file: fileOf(photo), gpsPosition, createDate };
 }
 
 /** ALLPHOTOS.json from the combined data store, with the photos pushed since made over it. */
@@ -133,18 +144,27 @@ async function checkSaved(photo: BulkPhoto, queryClient: QueryClient): Promise<S
 
 /** Uploads the photo, its resized versions and its Square Thumbnail from the middle square. */
 async function upload(photo: BulkPhoto, queryClient: QueryClient): Promise<StepResult> {
-  const request = { photo: photo.file, keepSameName: photo.keepSameName };
+  const request = { photo: photo.file, keepSameName: photo.keepSameName, crop: photo.crop };
   return { upload: await runMutation(queryClient, uploadMutation, request) };
 }
 
-/** Adds the photo's JSON to the photo data pull request, titled by its file name, in no albums or tags. */
-async function save(photo: BulkPhoto, queryClient: QueryClient): Promise<StepResult> {
-  const file = photo.exif?.file ?? photo.file.name;
+/** The photo's sanitized EXIF with its R2 URLs, once uploaded. */
+function withUpload(photo: BulkPhoto): SanitizedExif {
   const exif = sanitizedOf(photo);
+  return withImages(exif, photo.upload) ?? exif;
+}
+
+function groupsOf(photo: BulkPhoto): PhotoGroups {
+  return photo.groups ?? NO_GROUPS;
+}
+
+/** Adds the photo's JSON to the photo data pull request, named after its title or else its file name. */
+async function save(photo: BulkPhoto, queryClient: QueryClient): Promise<StepResult> {
+  const file = fileOf(photo);
   // The places go next to the albums and tags, as Add to Batch sends them.
-  const { places = [], ...sanitized } = withImages(exif, photo.upload) ?? exif;
+  const { places = [], ...sanitized } = withUpload(photo);
   const name = jsonFileName(sanitized.title, file);
-  const variables = { name, file, sanitized, albums: [], tags: [], places };
+  const variables = { name, file, sanitized, ...groupsOf(photo), places };
   return { step: "added", saved: await runMutation(queryClient, publishPhotoMutation, variables) };
 }
 
