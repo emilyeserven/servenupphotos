@@ -23,10 +23,21 @@ drops the changes it took in.
 > **Frontend analogy:** it's an optimistic update over a client-side cache: like TanStack Query's `onMutate` writing the
 > new value into the cache before the server confirms it, except the "confirmation" is the **Commit** you press by hand.
 
+## Local edits
+
+Some changes don't push at all: they're kept in the browser until **Commit**. The Instagram calendar's dates are the
+first. `stores/local-edits.ts` keeps them in a Zustand store persisted to `localStorage`, each as a photo file's path,
+its data as read, and the top-level fields to set. Setting a field back to the file's own value drops it. They're
+made over the lists like pushed changes (after them), counted by the sync button, and listed in its panel with a
+**Discard** button. **Commit** sends them as `{"edits": [{"path", "fields"}]}`; the backend sets those fields in
+each file (only those, so the rest of the file keeps its formatting), builds the combined lists from the edited files
+and commits both together. With no pull request open, that commit goes on a new `photo-data/` branch and opens one.
+Edits made while a commit runs are kept for the next one.
+
 ## Committing the combined files
 
 Saves don't touch `ALLPHOTOS.json`, `ALLALBUMS.json` or `ALLTAGS.json`. **Commit** (`POST /api/photos/combined` →
-`POST /photos/combined`) builds all three on the open **Add photo data** pull request's branch and commits the ones that
+`POST /photos/combined`) saves any [local edits](#local-edits), then builds all three on the open **Add photo data** pull request's branch and commits the ones that
 changed as one commit, "Combine photo, album and tag data". Each is every other `.json` file directly in its folder,
 sorted by path, as one array, formatted as oxfmt formats it, so a list that's already up to date isn't committed again.
 When a file can't be read or isn't valid JSON, nothing is committed and the error names it. The backend does this

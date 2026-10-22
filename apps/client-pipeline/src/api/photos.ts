@@ -320,22 +320,36 @@ export const combinedStatusQuery = queryOptions({
 
 /** What committing the combined files did. */
 export interface CombinedCommit {
-  /** False when they were already up to date, so nothing was committed. */
+  /** False when they were already up to date and there were no edits, so nothing was committed. */
   changed: boolean;
   commitSha?: string;
   commitUrl?: string;
-  /** The combined files the commit changed. */
+  /** The files the commit changed: the edited data files, then the combined files. */
   files: string[];
+  /** How many data files the local edits changed. */
+  edited: number;
   /** How many entries each has now. */
   counts: { photos: number; albums: number; tags: number };
+  /** True when the commit opened the photo data pull request. */
+  newPullRequest: boolean;
+}
+
+/** Top-level fields of one data file to set when committing, such as a photo's publish date. */
+export interface FieldEdit {
+  path: string;
+  fields: Record<string, unknown>;
 }
 
 /**
- * Rebuilds ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json from every data file on the photo data
- * pull request's branch and commits the ones that changed, as one commit.
+ * Saves `edits` to their data files, rebuilds ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json from
+ * every data file on the photo data pull request's branch and commits what changed, as one commit.
  */
-export function commitCombined(): Promise<CombinedCommit> {
-  return requestJson<CombinedCommit>("/api/photos/combined", { method: "POST" });
+export function commitCombined(edits: FieldEdit[]): Promise<CombinedCommit> {
+  return requestJson<CombinedCommit>("/api/photos/combined", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ edits }),
+  });
 }
 
 /** What makes a photo the same as an ALLPHOTOS.json entry: all three fields exactly equal. */

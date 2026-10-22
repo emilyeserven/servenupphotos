@@ -1,6 +1,7 @@
 package github
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha1" //nolint:gosec // Git's object IDs are SHA-1.
 	"encoding/base64"
@@ -10,6 +11,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -45,17 +47,31 @@ type CombinedStatus struct {
 
 // CombinedCommit says what CommitCombined did.
 type CombinedCommit struct {
-	// Changed is false when the combined lists were already up to date, so
-	// nothing was committed.
+	// Changed is false when the combined lists were already up to date and
+	// there were no edits, so nothing was committed.
 	Changed bool `json:"changed"`
 	// CommitSHA and CommitURL are the new commit's, when there is one.
 	CommitSHA string `json:"commitSha,omitempty"`
 	CommitURL string `json:"commitUrl,omitempty"`
-	// Files are the combined lists the commit changed, by path.
+	// Files are the files the commit changed, by path: the edited data files,
+	// then the combined lists.
 	Files []string `json:"files"`
+	// Edited is how many data files the edits changed.
+	Edited int `json:"edited"`
 	// Counts are how many entries each combined list has: photos, albums and
 	// tags.
 	Counts map[string]int `json:"counts"`
+	// NewPullRequest is true when the commit opened the photo data pull
+	// request, which happens when there are edits and none is open.
+	NewPullRequest bool `json:"newPullRequest"`
+}
+
+// FieldEdit sets top-level fields of the data file at Path, such as a photo's
+// socialMediaPublishDate, to scalar JSON values. Only those fields change, so
+// the rest of the file keeps its formatting.
+type FieldEdit struct {
+	Path   string                     `json:"path"`
+	Fields map[string]json.RawMessage `json:"fields"`
 }
 
 // combinedKind is one folder of data files and the combined list built from it.
@@ -112,13 +128,19 @@ func firstLine(s string) string {
 	return strings.TrimSpace(line)
 }
 
-// CommitCombined rebuilds the combined lists on the open photo data pull
-// request's branch, as the "Combine photo data" workflow does: each is every
-// other JSON file in its folder, sorted by path, as one array. It commits the
-// ones that changed as one commit, and nothing when none did or any file can't
-// be read.
-func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub) (CombinedCommit, error) {
+// CommitCombined applies edits to the data files on the open photo data pull
+// request's branch and rebuilds the combined lists from them, as the "Combine
+// photo data" workflow does: each is every other JSON file in its folder,
+// sorted by path, as one array. It commits the edited files and the lists
+// that changed as one commit, and nothing when none did or any file can't be
+// read. With edits and no pull request open, it commits to a new photo-data/
+// branch from the base branch and opens one.
+func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits []FieldEdit) (CombinedCommit, error) {
 	root, perr := dataFolder(gh.Folder)
+	if perr != nil {
+		return CombinedCommit{}, perr
+	}
+	byPath, perr := editsByPath(edits)
 	if perr != nil {
 		return CombinedCommit{}, perr
 	}
@@ -126,43 +148,124 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub) (Combin
 	if perr != nil {
 		return CombinedCommit{}, perr
 	}
-	pr, perr := c.findInFlightPull(ctx, t)
+	scan, perr := c.combinedTarget(ctx, t, len(edits) > 0)
 	if perr != nil {
 		return CombinedCommit{}, perr
 	}
-	if pr == nil {
-		return CombinedCommit{}, publishErr(http.StatusNotFound, "No pull request titled %q is open.", PullRequestTitle)
-	}
 
 	result := CombinedCommit{Files: []string{}, Counts: map[string]int{}}
-	var entries []map[string]string
+	var edited, combined []map[string]string
+	var applied []string
 	for _, kind := range combinedKinds() {
 		folder := root + "/" + kind.folder
-		content, built, perr := c.buildCombined(ctx, t, folder, kind.allFile, pr.Head.SHA)
+		content, built, perr := c.buildCombined(ctx, t, folder, kind.allFile, scan.headSHA, byPath)
 		if perr != nil {
 			return CombinedCommit{}, perr
 		}
 		result.Counts[kind.name] = built.count
+		edited, applied = append(edited, built.edited...), append(applied, built.applied...)
 		if built.oldSHA == blobSHA(content) {
 			continue
 		}
 		file := folder + "/" + kind.allFile
-		entries = append(entries, map[string]string{"path": file, "mode": "100644", "type": "blob", "content": string(content)})
-		result.Files = append(result.Files, file)
+		combined = append(combined, map[string]string{"path": file, "mode": "100644", "type": "blob", "content": string(content)})
 	}
+	if missing := unappliedEdits(byPath, applied); missing != "" {
+		return CombinedCommit{}, publishErr(http.StatusNotFound, "%s isn't a data file on %s, so nothing was committed.", missing, scan.branch)
+	}
+	entries := slices.Concat(edited, combined)
 	if len(entries) == 0 {
 		return result, nil
 	}
+	for _, e := range entries {
+		result.Files = append(result.Files, e["path"])
+	}
 
-	commit, perr := c.createCommit(ctx, t, pr.Head.SHA, entries, CombineMessage)
+	saved, perr := c.commitScan(ctx, scan, entries, combineMessage(len(edited)))
 	if perr != nil {
 		return CombinedCommit{}, perr
 	}
-	if perr := c.moveBranch(ctx, t, pr.Head.Ref, commit.SHA); perr != nil {
-		return CombinedCommit{}, perr
-	}
-	result.Changed, result.CommitSHA, result.CommitURL = true, commit.SHA, commit.HTMLURL
+	result.Changed, result.CommitSHA, result.CommitURL = true, saved.CommitSHA, saved.CommitURL
+	result.Edited, result.NewPullRequest = len(edited), saved.NewPullRequest
 	return result, nil
+}
+
+// combinedTarget is where CommitCombined commits: the open photo data pull
+// request's head, or, with edits and none open, the base branch's head, for
+// commitScan to put on a new branch.
+func (c *Client) combinedTarget(ctx context.Context, t target, hasEdits bool) (baseURLScan, *PublishError) {
+	pr, perr := c.findInFlightPull(ctx, t)
+	if perr != nil {
+		return baseURLScan{}, perr
+	}
+	if pr != nil {
+		scan := baseURLScan{t: t, branch: pr.Head.Ref, headSHA: pr.Head.SHA, pr: &pullRequest{Number: pr.Number, HTMLURL: pr.HTMLURL}}
+		scan.pr.Head.Ref = pr.Head.Ref
+		return scan, nil
+	}
+	if !hasEdits {
+		return baseURLScan{}, publishErr(http.StatusNotFound, "No pull request titled %q is open.", PullRequestTitle)
+	}
+	head, perr := c.branchHead(ctx, t, t.base)
+	return baseURLScan{t: t, branch: t.base, headSHA: head}, perr
+}
+
+// combineMessage is CommitCombined's commit message. Its first line is always
+// CombineMessage, so CombinedStatus knows the commit.
+func combineMessage(edited int) string {
+	if edited == 0 {
+		return CombineMessage
+	}
+	return fmt.Sprintf("%s\n\nAlso saves changes to %d data %s.", CombineMessage, edited, plural(edited, "file"))
+}
+
+// editsByPath checks edits and keys them by path. Each path may be edited once.
+func editsByPath(edits []FieldEdit) (map[string]FieldEdit, *PublishError) {
+	byPath := map[string]FieldEdit{}
+	for _, e := range edits {
+		if _, dup := byPath[e.Path]; dup {
+			return nil, publishErr(http.StatusBadRequest, "%s is edited more than once.", e.Path)
+		}
+		for key, value := range e.Fields {
+			if !json.Valid(value) {
+				return nil, publishErr(http.StatusBadRequest, "%s: %s isn't valid JSON.", e.Path, key)
+			}
+		}
+		byPath[e.Path] = e
+	}
+	return byPath, nil
+}
+
+// unappliedEdits names the edited paths that no data file had, or "".
+func unappliedEdits(byPath map[string]FieldEdit, applied []string) string {
+	found := map[string]bool{}
+	for _, p := range applied {
+		found[p] = true
+	}
+	var missing []string
+	for p := range byPath {
+		if !found[p] {
+			missing = append(missing, p)
+		}
+	}
+	sort.Strings(missing)
+	return strings.Join(missing, ", ")
+}
+
+// applyEdit is content with edit's fields set, in key order.
+func applyEdit(content []byte, edit FieldEdit) ([]byte, error) {
+	keys := make([]string, 0, len(edit.Fields))
+	for key := range edit.Fields {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	for _, key := range keys {
+		var err error
+		if content, err = setTopLevel(content, key, edit.Fields[key]); err != nil {
+			return nil, err
+		}
+	}
+	return content, nil
 }
 
 // builtCombined is how many files buildCombined combined, and the blob SHA of
@@ -170,6 +273,10 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub) (Combin
 type builtCombined struct {
 	count  int
 	oldSHA string
+	// edited are the tree entries of the files edits changed, and applied the
+	// paths of every file an edit named.
+	edited  []map[string]string
+	applied []string
 }
 
 // blobSHA is the Git blob SHA of content, as GitHub lists it for a file.
@@ -182,7 +289,7 @@ func blobSHA(content []byte) string {
 // buildCombined reads every JSON file directly in folder at ref except
 // allFile and prints them as allFile's array. A folder that isn't there makes
 // an empty array.
-func (c *Client) buildCombined(ctx context.Context, t target, folder, allFile, ref string) ([]byte, builtCombined, *PublishError) {
+func (c *Client) buildCombined(ctx context.Context, t target, folder, allFile, ref string, edits map[string]FieldEdit) ([]byte, builtCombined, *PublishError) {
 	files, oldSHA, perr := c.listJSONFiles(ctx, t, folder, allFile, ref)
 	if perr != nil {
 		return nil, builtCombined{}, perr
@@ -212,11 +319,40 @@ func (c *Client) buildCombined(ctx context.Context, t target, folder, allFile, r
 		return nil, builtCombined{}, publishErr(http.StatusUnprocessableEntity,
 			"Nothing was committed, since %d file(s) couldn't be read: %s", len(unreadable), strings.Join(unreadable, "; "))
 	}
+	edited, applied, perr := editFiles(files, contents, edits)
+	if perr != nil {
+		return nil, builtCombined{}, perr
+	}
 	content, err := formatJSONArray(contents)
 	if err != nil {
 		return nil, builtCombined{}, publishErr(http.StatusInternalServerError, "Couldn't format %s.", allFile)
 	}
-	return content, builtCombined{count: len(files), oldSHA: oldSHA}, nil
+	return content, builtCombined{count: len(files), oldSHA: oldSHA, edited: edited, applied: applied}, nil
+}
+
+// editFiles applies edits to the files they name, in contents, and returns
+// tree entries for the ones that changed and the paths of every file an edit
+// named, changed or not.
+func editFiles(files []folderEntry, contents []json.RawMessage, edits map[string]FieldEdit) ([]map[string]string, []string, *PublishError) {
+	var entries []map[string]string
+	var applied []string
+	for i, f := range files {
+		edit, ok := edits[f.Path]
+		if !ok {
+			continue
+		}
+		applied = append(applied, f.Path)
+		content, err := applyEdit(contents[i], edit)
+		if err != nil {
+			return nil, nil, publishErr(http.StatusConflict, "%s: %s, so nothing was committed.", f.Path, err)
+		}
+		if bytes.Equal(content, contents[i]) {
+			continue
+		}
+		contents[i] = content
+		entries = append(entries, map[string]string{"path": f.Path, "mode": "100644", "type": "blob", "content": string(content)})
+	}
+	return entries, applied, nil
 }
 
 // listJSONFiles lists the .json files directly in folder at ref except

@@ -79,10 +79,16 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/photos/combined/status", { timeoutMs: 35_000 }),
   );
 
-  // Rebuilds those lists from every data file on the pull request's branch and commits the ones
-  // that changed; the backend gives GitHub 60s.
-  app.post("/photos/combined", async (_request, reply) =>
-    relayToBackend(reply, app.log, "/photos/combined", { method: "POST", timeoutMs: 65_000 }),
+  // Saves the app's local edits (such as Instagram dates) to the data files, rebuilds those lists
+  // from every data file on the pull request's branch and commits what changed as one commit; the
+  // backend gives GitHub 60s.
+  app.post("/photos/combined", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/combined", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body ?? {}),
+      timeoutMs: 65_000,
+    }),
   );
 
   // Reads the EXIF and colors of an original already in R2; the backend gives R2 30s to send it,

@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -23,13 +24,31 @@ func handleCombinedStatus(store *settings.Store, gh *github.Client) http.Handler
 		func(ctx context.Context, cfg settings.GitHub) (any, error) { return gh.CombinedStatus(ctx, cfg) })
 }
 
-// handleCommitCombined rebuilds ALLPHOTOS.json, ALLALBUMS.json and
-// ALLTAGS.json from the data files on the open "Add photo data" pull request
-// and commits the ones that changed as one commit to its branch.
+// handleCommitCombined applies the edits in the request body, if any, to the
+// data files on the open "Add photo data" pull request, rebuilds
+// ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json from them and commits the
+// files that changed as one commit to its branch.
 func handleCommitCombined(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleCombinedAction(store, commitCombinedTimeout, "commit combined failed", "could not commit the combined files",
-		func(ctx context.Context, cfg settings.GitHub) (any, error) { return gh.CommitCombined(ctx, cfg) })
+	return func(w http.ResponseWriter, r *http.Request) {
+		var body struct {
+			Edits []github.FieldEdit `json:"edits"`
+		}
+		if r.ContentLength != 0 {
+			if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxEditsBody)).Decode(&body); err != nil {
+				writeError(w, http.StatusBadRequest, "The edits to commit couldn't be read.")
+				return
+			}
+		}
+		handleCombinedAction(store, commitCombinedTimeout, "commit combined failed", "could not commit the combined files",
+			func(ctx context.Context, cfg settings.GitHub) (any, error) {
+				return gh.CommitCombined(ctx, cfg, body.Edits)
+			})(w, r)
+	}
 }
+
+// maxEditsBody bounds the edits a commit takes, which are a few fields per
+// photo file.
+const maxEditsBody = 4 << 20
 
 // handleCombinedAction runs do with the GitHub settings and responds with its
 // result, or with its error as a PublishError's message or else as failed.

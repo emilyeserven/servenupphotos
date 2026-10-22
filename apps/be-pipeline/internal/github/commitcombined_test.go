@@ -23,6 +23,7 @@ type combinedRepo struct {
 	files     map[string]string
 	message   string
 	committed map[string]string
+	commitMsg string
 	moved     string
 }
 
@@ -64,6 +65,9 @@ func (f *combinedRepo) serve(t *testing.T) http.HandlerFunc {
 			}
 			writeBody(w, http.StatusCreated, map[string]any{"sha": "tree8"})
 		case p == "/git/commits" && r.Method == http.MethodPost:
+			var in map[string]any
+			_ = json.NewDecoder(r.Body).Decode(&in)
+			f.commitMsg, _ = in["message"].(string)
 			writeBody(w, http.StatusCreated, map[string]any{"sha": "commit8", "html_url": "https://github.com/commit/8"})
 		case p == "/git/refs/heads/photo-data/2026-10-15-024500" && r.Method == http.MethodPatch:
 			var in map[string]any
@@ -110,7 +114,7 @@ func TestCommitCombined(t *testing.T) {
 		dataRoot + "/albums/x.json":         `{"id":"x","name":"X","description":""}`,
 		dataRoot + "/albums/ALLALBUMS.json": "[\n  {\n    \"id\": \"x\",\n    \"name\": \"X\",\n    \"description\": \"\"\n  }\n]\n",
 	})
-	got, err := c.CommitCombined(t.Context(), gh)
+	got, err := c.CommitCombined(t.Context(), gh, nil)
 	if err != nil {
 		t.Fatalf("CommitCombined() error = %v", err)
 	}
@@ -137,7 +141,7 @@ func TestCommitCombinedUpToDate(t *testing.T) {
 		dataRoot + "/albums/ALLALBUMS.json": "[]\n",
 		dataRoot + "/tags/ALLTAGS.json":     "[]\n",
 	})
-	got, err := c.CommitCombined(t.Context(), gh)
+	got, err := c.CommitCombined(t.Context(), gh, nil)
 	if err != nil || got.Changed || f.committed != nil {
 		t.Errorf("CommitCombined() = %+v, %v, committed %v; want nothing committed", got, err, f.committed)
 	}
@@ -146,7 +150,7 @@ func TestCommitCombinedUpToDate(t *testing.T) {
 func TestCommitCombinedUnreadable(t *testing.T) {
 	gh := settings.GitHub{Repo: "owner/repo", Token: token}
 	f, c := newCombinedRepo(t, map[string]string{dataRoot + "/photos/a.json": `{"title":`})
-	_, err := c.CommitCombined(t.Context(), gh)
+	_, err := c.CommitCombined(t.Context(), gh, nil)
 	var perr *PublishError
 	if !errors.As(err, &perr) || !strings.Contains(perr.Message, "a.json") || f.committed != nil {
 		t.Errorf("CommitCombined() error = %v, committed %v; want a.json named and nothing committed", err, f.committed)
@@ -166,5 +170,40 @@ func TestCombinedStatus(t *testing.T) {
 		if err != nil || got.State != tt.want || got.HeadSHA != "head7" {
 			t.Errorf("CombinedStatus() after %q = %+v, %v; want %s at head7", tt.message, got, err, tt.want)
 		}
+	}
+}
+
+func TestCommitCombinedWithEdits(t *testing.T) {
+	gh := settings.GitHub{Repo: "owner/repo", Token: token}
+	photo := "{\n  \"title\": \"A\",\n  \"socialMediaPublishDate\": null\n}\n"
+	f, c := newCombinedRepo(t, map[string]string{
+		dataRoot + "/photos/a.json":         photo,
+		dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"title\": \"A\",\n    \"socialMediaPublishDate\": null\n  }\n]\n",
+		dataRoot + "/albums/ALLALBUMS.json": "[]\n",
+		dataRoot + "/tags/ALLTAGS.json":     "[]\n",
+	})
+	edits := []FieldEdit{{Path: dataRoot + "/photos/a.json", Fields: map[string]json.RawMessage{"socialMediaPublishDate": json.RawMessage(`"2026-10-30"`)}}}
+	got, err := c.CommitCombined(t.Context(), gh, edits)
+	if err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
+	}
+	wantPhoto := strings.Replace(photo, "null", `"2026-10-30"`, 1)
+	wantAll := "[\n  {\n    \"title\": \"A\",\n    \"socialMediaPublishDate\": \"2026-10-30\"\n  }\n]\n"
+	if f.committed[dataRoot+"/photos/a.json"] != wantPhoto || f.committed[dataRoot+"/photos/ALLPHOTOS.json"] != wantAll || len(f.committed) != 2 {
+		t.Errorf("committed %q, want a.json and ALLPHOTOS.json with the new date", f.committed)
+	}
+	if got.Edited != 1 || len(got.Files) != 2 || !strings.HasPrefix(f.commitMsg, CombineMessage+"\n\n") {
+		t.Errorf("CommitCombined() = %+v, message %q; want one edited file under the combine message", got, f.commitMsg)
+	}
+}
+
+func TestCommitCombinedEditMissingFile(t *testing.T) {
+	gh := settings.GitHub{Repo: "owner/repo", Token: token}
+	f, c := newCombinedRepo(t, map[string]string{dataRoot + "/photos/a.json": `{"title":"A"}`})
+	edits := []FieldEdit{{Path: dataRoot + "/photos/gone.json", Fields: map[string]json.RawMessage{"title": json.RawMessage(`"B"`)}}}
+	_, err := c.CommitCombined(t.Context(), gh, edits)
+	var perr *PublishError
+	if !errors.As(err, &perr) || perr.Status != http.StatusNotFound || !strings.Contains(perr.Message, "gone.json") || f.committed != nil {
+		t.Errorf("CommitCombined() error = %v, committed %v; want gone.json named and nothing committed", err, f.committed)
 	}
 }

@@ -10,6 +10,7 @@ import {
   readCombinedData,
 } from "@/api/photos";
 import { type FileChange, pendingText, withChanges } from "@/lib/optimistic";
+import { editChanges, fieldEdits, useLocalEditsStore } from "@/stores/local-edits";
 
 /**
  * ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, read once and kept for every page. They're only
@@ -55,8 +56,8 @@ interface CombinedDataState {
   /** Notes whether the lists at the pull request's head were synced when the app started. */
   headChecked: (status: CombinedStatus) => void;
   /**
-   * Rebuilds the lists from the pull request's data files and commits them, then reads them again
-   * and drops the changes the commit has.
+   * Saves the local edits to their files, rebuilds the lists from the pull request's data files and
+   * commits them, then reads them again and drops the changes and edits the commit has.
    */
   commit: () => Promise<void>;
   /** Reads the lists again when the pull request isn't the one they were read for. */
@@ -176,12 +177,14 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
     },
     commit: async () => {
       const { changes, unknownChanges } = get();
+      const saved = useLocalEditsStore.getState().edits;
       set({ committing: true, commitError: undefined });
       try {
-        const lastCommit = await commitCombined();
+        const lastCommit = await commitCombined(fieldEdits(saved));
         rebuilt = { changes: changes.length, unknownChanges };
         set({ lastCommit });
         await read();
+        useLocalEditsStore.getState().committed(saved);
       } catch (error) {
         set({ commitError: errorOf(error) });
       } finally {
@@ -216,27 +219,46 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
 
 /**
  * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json at the pull request's head are missing
- * changes pushed to it: ones pushed since the last commit, or found when the app started.
+ * changes: local edits, ones pushed since the last commit, or ones found when the app started.
  */
-function isUnsynced(state: CombinedDataState): boolean {
-  return state.changes.length > 0 || state.unknownChanges > 0 || state.headState === "stale";
+function isUnsynced(
+  state: Pick<CombinedDataState, "changes" | "unknownChanges" | "headState">,
+  localEdits: number,
+): boolean {
+  if (localEdits > 0 || state.changes.length > 0) return true;
+  return state.unknownChanges > 0 || state.headState === "stale";
+}
+
+/** The pushed changes and the local edits, as changes made over the lists, pushed ones first. */
+function useAllChanges(changes: FileChange[]): FileChange[] {
+  const edits = useLocalEditsStore((s) => s.edits);
+  return useMemo(() => [...changes, ...editChanges(edits)], [changes, edits]);
 }
 
 /** Where the lists stand against the pull request, for the pages that note it. */
 export function useCombinedSync() {
-  return useCombinedDataStore(
-    useShallow((state) => ({
-      unsynced: isUnsynced(state),
-      /** What changed since the last commit, as "2 images, 1 album"; "" when nothing known. */
-      pending: pendingText(state.changes, state.unknownChanges),
-      headState: state.headState,
-      committing: state.committing,
-      lastCommit: state.lastCommit,
-      commitError: state.commitError,
-      commit: state.commit,
-      pullRequest: state.data?.head?.pullRequest,
+  const state = useCombinedDataStore(
+    useShallow((s) => ({
+      changes: s.changes,
+      unknownChanges: s.unknownChanges,
+      headState: s.headState,
+      committing: s.committing,
+      lastCommit: s.lastCommit,
+      commitError: s.commitError,
+      commit: s.commit,
+      pullRequest: s.data?.head?.pullRequest,
     })),
   );
+  const all = useAllChanges(state.changes);
+  const localEdits = all.length - state.changes.length;
+  return {
+    ...state,
+    unsynced: isUnsynced(state, localEdits),
+    /** How many files have edits only kept in the browser so far. */
+    localEdits,
+    /** What changed since the last commit, as "2 images, 1 album"; "" when nothing known. */
+    pending: pendingText(all, state.unknownChanges),
+  };
 }
 
 /**
@@ -258,7 +280,8 @@ export function useCombinedData(enabled = true) {
   useEffect(() => {
     if (enabled && state.status === "idle") void load();
   }, [enabled, state.status, load]);
-  const { synced, changes } = state;
+  const changes = useAllChanges(state.changes);
+  const { synced } = state;
   const data = useMemo(() => synced && withChanges(synced, changes), [synced, changes]);
   return {
     ...state,

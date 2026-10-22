@@ -1,18 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ExternalLinkIcon,
-  ImageIcon,
-  PlusIcon,
-} from "lucide-react";
-import { type DragEvent, type ReactNode, useCallback, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { ChevronLeftIcon, ChevronRightIcon, ImageIcon, PlusIcon } from "lucide-react";
+import { type DragEvent, type ReactNode, useCallback, useMemo, useState } from "react";
 import {
   type SocialCalendar,
   type SocialCalendarRead,
-  type SocialDatesResult,
   type SocialPhoto,
-  setSocialDatesMutation,
   socialCalendarQuery,
 } from "@/api/publish";
 import { QueryResult } from "@/components/query-result";
@@ -26,20 +18,22 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { calendarDays, isoDate, parseIsoDate } from "@/lib/calendar";
 import { withBaseAllPhotos } from "@/lib/combined";
 import {
   type Unsaved,
+  PUBLISH_DATE,
+  dateChanges,
   dateOf,
   moveToDay,
   photoName,
   photosByDay,
   pickerChoices,
-  unsavedChanges,
+  unsavedFromEdits,
 } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
+import { useLocalEditsStore } from "@/stores/local-edits";
 
 /** How many weeks the calendar shows, this week first. */
 const WEEKS = 3;
@@ -87,36 +81,26 @@ export function InstagramCalendar() {
   );
 }
 
-/** The unsaved dates, and the mutation that saves them as one commit. */
-function useUnsavedDates() {
-  const queryClient = useQueryClient();
-  const [unsaved, setUnsaved] = useState<Unsaved>({});
-  const save = useMutation({
-    ...setSocialDatesMutation,
-    onSuccess: () => {
-      setUnsaved({});
-      // The photo JSON changed, so the calendar and every other read of it are stale.
-      void queryClient.invalidateQueries({ queryKey: ["publish"] });
-      void queryClient.invalidateQueries({ queryKey: ["data"] });
-      void queryClient.invalidateQueries({ queryKey: ["photos"] });
-    },
-  });
-  const update = (next: Unsaved) => {
-    save.reset();
-    setUnsaved(next);
-  };
-  return { unsaved, update, save };
+/**
+ * The dates moved on the calendar and not committed yet, kept with the app's other local edits so
+ * the sync button counts them and **Commit** saves them.
+ */
+function useUnsavedDates(photos: SocialPhoto[]) {
+  const edits = useLocalEditsStore((state) => state.edits);
+  const setField = useLocalEditsStore((state) => state.setField);
+  const unsaved = useMemo(() => unsavedFromEdits(edits), [edits]);
+  const update = (next: Unsaved) => setField(PUBLISH_DATE, dateChanges(photos, next));
+  return { unsaved, update };
 }
 
 function Schedule({ calendar }: { calendar: SocialCalendar }) {
-  const { unsaved, update, save } = useUnsavedDates();
+  const { unsaved, update } = useUnsavedDates(calendar.photos);
   const [weekOffset, setWeekOffset] = useState(0);
   const [picking, setPicking] = useState<string | null>(null);
   // Read the clock once, so the calendar doesn't shift under a drag at midnight.
   const [now] = useState(() => new Date());
 
   const byDay = photosByDay(calendar.photos, unsaved);
-  const changes = unsavedChanges(calendar.photos, unsaved);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
 
@@ -135,13 +119,6 @@ function Schedule({ calendar }: { calendar: SocialCalendar }) {
           const dropped = calendar.photos.find((p) => p.path === path);
           if (dropped) schedule(dropped, day);
         }}
-      />
-      <SaveBar
-        calendar={calendar}
-        changes={changes.length}
-        save={save}
-        onSave={() => save.mutate(changes)}
-        onDiscard={() => update({})}
       />
       <PhotoPicker
         day={picking}
@@ -174,7 +151,8 @@ function SourceNote({ calendar }: { calendar: SocialCalendar }) {
           </>
         )}
         , {inFlight} of them in flight and not in <AllPhotosName calendar={calendar} /> on the base
-        branch yet. Dates are saved to the same files.
+        branch yet. Moving a photo is kept in the app until you <strong>Commit</strong> from the
+        sync button at the top right, which saves the dates to the same files.
       </p>
       <Unreadable calendar={calendar} />
     </div>
@@ -190,7 +168,7 @@ function Unreadable({ calendar: { unreadable } }: { calendar: SocialCalendar }) 
   if (unreadable.length === 0) return null;
   return (
     <p className="text-destructive">
-      {count(unreadable.length, "photo file")} couldn&apos;t be read, so nothing can be saved:{" "}
+      {count(unreadable.length, "photo file")} couldn&apos;t be read, so nothing can be committed:{" "}
       {unreadable.map((f) => `${f.path} (${f.error})`).join(", ")}
     </p>
   );
@@ -576,82 +554,5 @@ function PickerChoice({ photo, scheduled, isCurrent, onPick }: PickerChoiceProps
       </span>
       <span className="truncate text-xs group-hover:underline">{photoName(photo)}</span>
     </button>
-  );
-}
-
-interface SaveBarProps {
-  calendar: SocialCalendar;
-  changes: number;
-  save: ReturnType<typeof useUnsavedDates>["save"];
-  onSave: () => void;
-  onDiscard: () => void;
-}
-
-function saveTarget({ pullRequest }: SocialCalendar) {
-  return pullRequest ? `pull request #${pullRequest.number}` : "a new photo data pull request";
-}
-
-/** Saves the unsaved dates as one commit, or says where the last save went. */
-function SaveBar({ calendar, changes, save, onSave, onDiscard }: SaveBarProps) {
-  if (changes === 0) return save.isSuccess ? <Saved result={save.data} /> : null;
-  return (
-    <div className="bg-muted/50 flex flex-col gap-2 rounded-md border p-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="text-sm">{count(changes, "unsaved change")}</span>
-        <div className="ml-auto flex gap-2">
-          <Button variant="outline" disabled={save.isPending} onClick={onDiscard}>
-            Discard
-          </Button>
-          <SaveButton
-            pending={save.isPending}
-            blocked={calendar.unreadable.length > 0}
-            onSave={onSave}
-          />
-        </div>
-      </div>
-      <p className="text-muted-foreground text-xs">
-        Saves as one commit on {saveTarget(calendar)}.
-      </p>
-      {save.error && <p className="text-destructive text-sm">{save.error.message}</p>}
-    </div>
-  );
-}
-
-function SaveButton({
-  pending,
-  blocked,
-  onSave,
-}: {
-  pending: boolean;
-  blocked: boolean;
-  onSave: () => void;
-}) {
-  if (pending) {
-    return (
-      <Button disabled>
-        <Spinner />
-        Saving…
-      </Button>
-    );
-  }
-  return (
-    <Button disabled={blocked} onClick={onSave}>
-      Save to GitHub
-    </Button>
-  );
-}
-
-function Saved({ result }: { result: SocialDatesResult }) {
-  return (
-    <p className="text-sm">
-      Saved {count(result.files, "photo file")} in{" "}
-      <ExternalLink href={result.commitUrl}>one commit</ExternalLink> on{" "}
-      <ExternalLink href={result.pullRequestUrl}>
-        {result.newPullRequest ? "a new pull request" : "the pull request"} #
-        {result.pullRequestNumber}
-        <ExternalLinkIcon className="ml-1 inline size-3" />
-      </ExternalLink>
-      .
-    </p>
   );
 }

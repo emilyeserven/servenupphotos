@@ -8,6 +8,7 @@ import { CommitButton } from "@/components/all-photos-rebuild";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useCombinedData, useCombinedSync } from "@/stores/combined-data";
+import { useLocalEditsStore } from "@/stores/local-edits";
 
 type Sync = ReturnType<typeof useCombinedSync>;
 
@@ -129,6 +130,7 @@ function SyncPanel({ sync, onNavigate }: { sync: Sync; onNavigate: () => void })
     >
       <PullRequestLine sync={sync} />
       <SyncLine sync={sync} />
+      <LocalEditsLine count={sync.localEdits} />
       <CommitResult sync={sync} />
       <div className="flex items-center justify-between gap-2">
         <Link
@@ -138,7 +140,7 @@ function SyncPanel({ sync, onNavigate }: { sync: Sync; onNavigate: () => void })
         >
           Photos in Flight
         </Link>
-        {sync.pullRequest && <CommitButton variant={sync.unsynced ? "default" : "outline"} />}
+        {canCommit(sync) && <CommitButton variant={sync.unsynced ? "default" : "outline"} />}
       </div>
     </div>
   );
@@ -157,9 +159,34 @@ function PullRequestLine({ sync }: { sync: Sync }) {
   );
 }
 
+/** Whether there's anything to commit: a pull request, or edits that would open one. */
+function canCommit(sync: Sync): boolean {
+  return Boolean(sync.pullRequest) || sync.localEdits > 0;
+}
+
+/** The edits only kept in the browser so far, with a button to drop them. */
+function LocalEditsLine({ count }: { count: number }) {
+  const discard = useLocalEditsStore((state) => state.discard);
+  if (count === 0) return null;
+  return (
+    <p className={cn(MUTED, "flex flex-wrap items-center gap-x-2")}>
+      {plural(count, "file")} edited here, not on GitHub until you commit.
+      <button
+        type="button"
+        onClick={() => {
+          if (window.confirm(`Discard the changes to ${plural(count, "file")}?`)) discard();
+        }}
+        className="underline underline-offset-4"
+      >
+        Discard
+      </button>
+    </p>
+  );
+}
+
 /** Whether the combined files have the pull request's changes, and what the app shows already. */
 function SyncLine({ sync }: { sync: Sync }) {
-  if (!sync.pullRequest) return null;
+  if (!canCommit(sync)) return null;
   if (!sync.unsynced) {
     return <p className={MUTED}>ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json are up to date.</p>;
   }

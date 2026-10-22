@@ -1,4 +1,4 @@
-import { type UseQueryResult, useQuery } from "@tanstack/react-query";
+import { type UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GitCommitHorizontalIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { type CombinedStatus, combinedStatusQuery } from "@/api/photos";
@@ -87,8 +87,9 @@ export function AllPhotosRebuild({
 }
 
 /**
- * Commits ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, rebuilt from the photo data pull
- * request's files, to its branch.
+ * Commits the app's local edits, such as Instagram dates, with ALLPHOTOS.json, ALLALBUMS.json and
+ * ALLTAGS.json rebuilt from the photo data pull request's files, to its branch. Afterwards the
+ * pages read the files again, since the commit changed them.
  */
 export function CommitButton({
   variant = "default",
@@ -96,14 +97,21 @@ export function CommitButton({
   variant?: "default" | "outline" | "link";
 }) {
   const { committing, commit } = useCombinedSync();
+  const queryClient = useQueryClient();
+  const commitAndReread = async () => {
+    await commit();
+    for (const area of ["photos", "publish", "data"]) {
+      void queryClient.invalidateQueries({ queryKey: [area] });
+    }
+  };
   const link = variant === "link";
   return (
     <Button
       size="sm"
       variant={variant}
       disabled={committing}
-      onClick={() => void commit()}
-      title="Rebuild ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json and commit them to the pull request"
+      onClick={() => void commitAndReread()}
+      title="Save local changes and rebuild ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, as one commit to the pull request"
       className={cn(link && "h-auto p-0 text-inherit underline")}
     >
       <CommitIcon busy={committing} hidden={link} />
