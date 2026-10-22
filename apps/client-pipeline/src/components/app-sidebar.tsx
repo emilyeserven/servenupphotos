@@ -6,7 +6,6 @@ import {
   Camera,
   DatabaseIcon,
   ImageIcon,
-  ImagesIcon,
   LanguagesIcon,
   LayoutGridIcon,
   MapPinIcon,
@@ -39,7 +38,6 @@ export const navGroups = [
     items: [
       { title: "Status", url: "/", icon: ActivityIcon },
       { title: "Photo", url: "/exif", icon: ImageIcon },
-      { title: "Bulk Upload", url: "/bulk-upload", icon: ImagesIcon },
       { title: "Photos in Flight", url: "/in-flight", icon: PlaneIcon },
       { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
       { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon },

@@ -1,6 +1,6 @@
 # Bulk Upload
 
-**Bulk Upload** (`/bulk-upload`, or the right half of the sidebar's **Upload** button, which opens it in a modal) adds
+**Bulk Upload** (`/bulk-upload`, or the icon on the right of the sidebar's **Upload** button, which opens it in a modal) adds
 many photos to the batch at once. Drop JPEGs on it or click it to choose them,
 and each one goes through the same steps as a photo on the [Photo page](saving-to-github.md), with defaults in place of
 the choices made there:
