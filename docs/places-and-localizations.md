@@ -26,6 +26,12 @@ local script, a GPS icon (see [GPS position](#gps-position)) and how many photos
 an arrow to collapse or expand them; **Expand all** and **Collapse all** sit above the list, next to **Search**, which
 narrows it to the names with the search text in them and what they're in.
 
+Each place row has a checkbox, and the one in the list's header checks every place shown (or unchecks them).
+While any are checked, a bar above the list sets a **City** (with its country, when known) and an **In** place on all
+of them; an empty field leaves each place's own. **In** doesn't offer the checked places or any place in one of them,
+so no place ends up in itself. **Save N places** saves each place it changes as its own queued commit, and the list
+shows them moved at once; when they've all saved, the places are unchecked, and any that failed are named.
+
 Choosing a row edits it in the panel; **New place** empties the panel for a new place. A place's panel changes its
 name, description, parent (**In**, which lists only places that aren't in it), city, country and GPS position (its ID
 stays), and its localization: romanization, local pronunciation and local script, as on the Localizations page. A city's
