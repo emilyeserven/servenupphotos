@@ -118,6 +118,7 @@ type baseURLRepo struct {
 	mu        sync.Mutex
 	pull      bool
 	files     map[string]string // name → content, on the branch read
+	allPhotos string            // ALLPHOTOS.json on main; missing when empty
 	tree      []map[string]string
 	commit    map[string]any
 	refs      map[string]string // created or moved ref → sha
@@ -168,6 +169,14 @@ func (f *baseURLRepo) start(t *testing.T) *Client {
 				})
 			}
 			writeBody(w, http.StatusOK, entries)
+		case r.Method == http.MethodGet && p == "/contents/"+dir+"/ALLPHOTOS.json":
+			if f.allPhotos == "" || r.URL.Query().Get("ref") != "main" {
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+			writeBody(w, http.StatusOK, map[string]any{
+				"encoding": "base64", "content": base64.StdEncoding.EncodeToString([]byte(f.allPhotos)),
+			})
 		case r.Method == http.MethodGet && strings.HasPrefix(p, "/git/blobs/"):
 			content, ok := f.files[strings.TrimPrefix(p, "/git/blobs/")]
 			if !ok {

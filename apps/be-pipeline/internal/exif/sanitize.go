@@ -36,6 +36,17 @@ type Sanitized struct {
 	Width  *int   `json:"width"`
 	Height *int   `json:"height"`
 	Images Images `json:"images"`
+
+	// IsSocialMediaEligible marks a photo that may be posted to social media,
+	// such as Instagram. Sanitize leaves it false.
+	IsSocialMediaEligible bool `json:"isSocialMediaEligible"`
+	// WebsiteSpotlight is the photo's place among the photos spotlighted on
+	// the site, or nil when it isn't spotlighted. Sanitize leaves it nil.
+	WebsiteSpotlight *int `json:"websiteSpotlight"`
+	// SocialMediaPublishDate is the day the photo is scheduled to be posted
+	// to social media, as YYYY-MM-DD, or nil when it isn't scheduled. It's
+	// set on the Instagram page; Sanitize leaves it nil.
+	SocialMediaPublishDate *string `json:"socialMediaPublishDate"`
 }
 
 // Images are the links to a photo's published copies. Sanitize leaves them

@@ -43,6 +43,8 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("PUT /photos/in-flight", handleUpdateInFlight(store, gh))
 	mux.HandleFunc("POST /data/image-base-url/preview", handlePreviewBaseURL(store, gh))
 	mux.HandleFunc("POST /data/image-base-url", handleReplaceBaseURL(store, gh))
+	mux.HandleFunc("GET /publish/instagram", handleSocialCalendar(store, gh))
+	mux.HandleFunc("PUT /publish/instagram", handleSetSocialDates(store, gh))
 	return mux
 }
 
