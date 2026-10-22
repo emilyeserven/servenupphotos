@@ -74,30 +74,33 @@ export function PhotoLightbox({ photo: openPhoto, onClose }: PhotoLightboxProps)
   );
 }
 
-/** The photo's title and comment, then its settings, camera, date and place, above it. */
+/** The photo's title, with its comment and then its settings, camera, date and place beside it. */
 function LightboxCaption({ photo }: { photo: Photo }) {
   return (
     <div className="flex min-w-0 flex-1 flex-col">
       <Dialog.Title className="truncate font-medium">{photo.title}</Dialog.Title>
-      {/* One line, so a long comment can't make the photo smaller. */}
-      {photo.comment && (
-        <PhotoComment
-          comment={photo.comment}
-          lines={1}
-          className="text-sm text-white/80"
-          expandedClassName="bg-neutral-900 ring-1 ring-white/15"
-        />
-      )}
-      <Dialog.Description className="truncate text-sm text-white/60">
-        {[
-          ...settingsText(photo.settings),
-          photo.camera,
-          format(photo.takenAt, "MMM d, yyyy"),
-          photo.location,
-        ]
-          .filter(Boolean)
-          .join(" · ")}
-      </Dialog.Description>
+      {/* One row, so the details take no room from the photo; it wraps only on narrow screens. */}
+      <div className="flex flex-wrap items-baseline gap-x-4 text-sm">
+        {/* One line, so a long comment can't make the photo smaller. */}
+        {photo.comment && (
+          <PhotoComment
+            comment={photo.comment}
+            lines={1}
+            className="text-white/80"
+            expandedClassName="bg-neutral-900 ring-1 ring-white/15"
+          />
+        )}
+        <Dialog.Description className="max-w-full min-w-0 truncate text-white/60">
+          {[
+            ...settingsText(photo.settings),
+            photo.camera,
+            format(photo.takenAt, "MMM d, yyyy"),
+            photo.location,
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+        </Dialog.Description>
+      </div>
     </div>
   );
 }
