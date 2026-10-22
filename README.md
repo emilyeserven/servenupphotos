@@ -110,6 +110,26 @@ its last four characters, so after saving you can replace or clear a secret but 
 > **Frontend analogy:** it works like the "Change password" field on an account page. You can set a new password, but
 > the site never shows you the current one. The real value exists only on the backend.
 
+### Update Data
+
+`/settings/update-data`, under Settings in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
+previews what it will change, then saves everything as **one commit** on the open **Add photo data** pull request's
+branch, or on a new `photo-data/` branch with a new pull request when none is open, so CI rebuilds `ALLPHOTOS.json`
+once.
+
+**Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
+development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the Settings folder
+(except `ALLPHOTOS.json` and `dummy.json`) on the pull request's branch, or the base branch without one, and lists the
+origins their image URLs use (`POST /api/data/image-base-url/preview` with empty `from` and `to`). Previewing a change
+lists each URL under `images` that starts with `from` (followed by nothing, `/`, `?` or `#`), with its new value
+(`POST /data/image-base-url/preview`); applying it (`POST /data/image-base-url`) rewrites only those strings, keeping
+the rest of each URL (query strings such as `?crop=` included) and every other byte of the file as it was. Nothing is
+committed while any photo file can't be read. The images in R2 aren't touched, so connect the custom domain to the
+bucket in Cloudflare first, and set the R2 **Public URL** in Settings to it so new uploads use it too.
+
+> **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
+> it opens (or adds to) a pull request.
+
 ### Saving photo data to GitHub
 
 After a photo is analyzed on `/exif`, the **Save to GitHub** card saves its sanitized EXIF as one JSON file,
