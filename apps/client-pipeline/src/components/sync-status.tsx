@@ -170,11 +170,11 @@ function LocalEditsLine({ count }: { count: number }) {
   if (count === 0) return null;
   return (
     <p className={cn(MUTED, "flex flex-wrap items-center gap-x-2")}>
-      {plural(count, "file")} edited here, not on GitHub until you commit.
+      {plural(count, "image")} edited here, not on GitHub until you commit.
       <button
         type="button"
         onClick={() => {
-          if (window.confirm(`Discard the changes to ${plural(count, "file")}?`)) discard();
+          if (window.confirm(`Discard the changes to ${plural(count, "image")}?`)) discard();
         }}
         className="underline underline-offset-4"
       >

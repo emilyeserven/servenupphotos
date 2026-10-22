@@ -200,6 +200,7 @@ function socialPhoto({ path: filePath, data }, i) {
     image: images.thumbnail ?? images.xsmall ?? null,
     isSocialMediaEligible: i % 2 === 0,
     socialMediaPublishDate: i === 0 ? "2026-10-23" : null,
+    data: { ...data, socialMediaPublishDate: i === 0 ? "2026-10-23" : null },
   };
 }
 
