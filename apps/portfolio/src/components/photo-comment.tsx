@@ -2,7 +2,6 @@ import { ChevronDownIcon } from "lucide-react";
 import { useLayoutEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
-import type { CameraSettings, Photo } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 /** Markdown's lists, links, code and quotes, which Tailwind's reset strips, kept compact for a caption. */
@@ -11,51 +10,6 @@ const PROSE =
 
 /** Keeps each line break written in the comment, not only blank lines between paragraphs. */
 const MARKDOWN_PLUGINS = [remarkBreaks];
-
-interface PhotoNotesProps {
-  photo: Photo;
-  /** How many lines of the comment to show before cutting it off. */
-  lines?: 1 | 2;
-  /** Puts each camera setting on its own line, for narrow spaces like a Grid tile. */
-  stacked?: boolean;
-  className?: string;
-  expandedClassName?: string;
-}
-
-/** The photo's comment, with how the camera was set to its right. */
-export function PhotoNotes({ photo, stacked, className, ...comment }: PhotoNotesProps) {
-  const settings = settingsText(photo.settings);
-  if (!photo.comment && settings.length === 0) return null;
-  return (
-    <div className={cn("flex items-start gap-3", className)}>
-      {photo.comment && <PhotoComment comment={photo.comment} {...comment} />}
-      <SettingsText settings={settings} stacked={stacked} />
-    </div>
-  );
-}
-
-/** The settings as a photographer writes them: "f/5.6", "1/60s", "ISO 400". */
-function settingsText({ aperture, exposure, iso }: CameraSettings): string[] {
-  return [
-    aperture === null ? null : `f/${aperture}`,
-    exposure === null ? null : `${exposure}s`,
-    iso === null ? null : `ISO ${iso}`,
-  ].filter((text) => text !== null);
-}
-
-function SettingsText({ settings, stacked }: { settings: string[]; stacked?: boolean }) {
-  if (settings.length === 0) return null;
-  return (
-    <p
-      className={cn(
-        "ml-auto shrink-0 text-right whitespace-nowrap tabular-nums opacity-70",
-        stacked && "flex flex-col",
-      )}
-    >
-      {stacked ? settings.map((text) => <span key={text}>{text}</span>) : settings.join(" · ")}
-    </p>
-  );
-}
 
 interface PhotoCommentProps {
   comment: string;
@@ -71,7 +25,7 @@ interface PhotoCommentProps {
  * or two so it never pushes the layout around. When it's cut off, a chevron says there's more, and
  * hovering or focusing it shows the whole comment floating over what's below.
  */
-function PhotoComment({
+export function PhotoComment({
   comment,
   lines = 2,
   className,
@@ -80,7 +34,7 @@ function PhotoComment({
   const [ref, cutOff] = useOverflows<HTMLDivElement>();
   return (
     <div
-      className="group/comment relative max-w-[300px] min-w-0 flex-1 outline-none"
+      className="group/comment relative max-w-[300px] min-w-0 outline-none"
       tabIndex={cutOff ? 0 : undefined}
     >
       <div className="flex items-start gap-1">

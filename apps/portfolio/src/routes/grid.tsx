@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { format } from "date-fns";
 import { Grid3x3 } from "lucide-react";
 import { type ImgHTMLAttributes, useState } from "react";
-import { PhotoNotes } from "@/components/photo-comment";
+import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
@@ -104,10 +103,10 @@ function PhotoTile({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void })
       </button>
       <figcaption className="flex flex-col">
         <span className="truncate text-sm font-medium">{photo.title}</span>
-        <PhotoNotes photo={photo} stacked className="text-xs text-foreground/80" />
-        <span className="truncate text-xs text-muted-foreground">
-          {format(photo.takenAt, "MMM d, yyyy")} · {photo.location}
-        </span>
+        {/* The rest of its details are in the lightbox. */}
+        {photo.comment && (
+          <PhotoComment comment={photo.comment} className="text-xs text-muted-foreground" />
+        )}
       </figcaption>
     </figure>
   );

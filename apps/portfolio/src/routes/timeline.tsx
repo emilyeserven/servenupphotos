@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { format, min } from "date-fns";
 import { CalendarClock, RotateCcw } from "lucide-react";
 import { useState } from "react";
-import { PhotoNotes } from "@/components/photo-comment";
+import { PhotoComment } from "@/components/photo-comment";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
@@ -97,7 +97,13 @@ function PhotoMonths({ photos }: { photos: Photo[] }) {
               <li key={photo.id} className="flex items-baseline justify-between gap-4">
                 <div className="flex min-w-0 flex-col">
                   <span>{photo.title}</span>
-                  <PhotoNotes photo={photo} lines={1} className="text-xs text-muted-foreground" />
+                  {photo.comment && (
+                    <PhotoComment
+                      comment={photo.comment}
+                      lines={1}
+                      className="text-xs text-muted-foreground"
+                    />
+                  )}
                 </div>
                 <span className="shrink-0 text-xs text-muted-foreground">
                   {format(photo.takenAt, "MMM d")} · {photo.camera}

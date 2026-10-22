@@ -25,6 +25,15 @@ export interface CameraSettings {
   iso: number | null;
 }
 
+/** The settings as a photographer writes them, such as "f/5.6", "1/60s" and "ISO 400". */
+export function settingsText({ aperture, exposure, iso }: CameraSettings): string[] {
+  return [
+    aperture === null ? null : `f/${aperture}`,
+    exposure === null ? null : `${exposure}s`,
+    iso === null ? null : `ISO ${iso}`,
+  ].filter((text) => text !== null);
+}
+
 export interface PhotoImage {
   /** The photo's size in pixels, as it's shown. */
   width: number;
