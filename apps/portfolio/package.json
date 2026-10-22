@@ -11,15 +11,19 @@
   "dependencies": {
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
+    "@vis.gl/react-maplibre": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "date-fns": "catalog:",
     "lucide-react": "catalog:",
+    "maplibre-gl": "catalog:",
     "radix-ui": "catalog:",
     "react": "catalog:",
     "react-day-picker": "catalog:",
     "react-dom": "catalog:",
+    "react-markdown": "10.1.0",
     "recharts": "catalog:",
+    "remark-breaks": "4.0.0",
     "tailwind-merge": "catalog:"
   },
   "devDependencies": {

@@ -1,25 +1,21 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import type { SanitizedExif } from "@/api/exif";
 import { type PublishResult, publishPhotoMutation } from "@/api/photos";
-import { type SettingsResponse, settingsQuery } from "@/api/settings";
+import { type SettingsResponse, dataFolder, settingsQuery } from "@/api/settings";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { jsonFileName } from "@/lib/file-name";
 
 type GitHubSettings = SettingsResponse["github"];
 
 /** Matches the backend's rule: plain file names only. */
 const FILE_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/;
-
-/** The photo's file name without its extension, with anything the backend refuses replaced by dashes. */
-function defaultName(file: string): string {
-  const stem = file.replace(/\.[^.]*$/, "");
-  return stem.replace(/[^A-Za-z0-9._-]/g, "-").replace(/^[^A-Za-z0-9]+/, "") || "photo";
-}
 
 function validateName(name: string): string | undefined {
   const stem = name.trim().replace(/\.json$/, "");
@@ -30,18 +26,19 @@ function validateName(name: string): string | undefined {
 }
 
 function jsonPath(folder: string, name: string): string {
-  const dir = folder.trim().replace(/^\/+|\/+$/g, "");
   const file = `${name.trim().replace(/\.json$/, "")}.json`;
-  return dir ? `${dir}/${file}` : file;
+  return `${dataFolder(folder)}/photos/${file}`;
 }
 
 interface GitHubSaveCardProps {
   file: string;
   sanitized: SanitizedExif;
+  /** Called once the JSON file is saved. */
+  onSaved?: () => void;
 }
 
 /** Saves a photo's sanitized EXIF as JSON in a pull request on the GitHub repository from Settings. */
-export function GitHubSaveCard({ file, sanitized }: GitHubSaveCardProps) {
+export function GitHubSaveCard({ file, sanitized, onSaved }: GitHubSaveCardProps) {
   const settings = useQuery(settingsQuery);
 
   return (
@@ -57,7 +54,12 @@ export function GitHubSaveCard({ file, sanitized }: GitHubSaveCardProps) {
         <QueryResult query={settings}>
           {(data) =>
             data.github.repo && data.github.token.set ? (
-              <GitHubSaveForm github={data.github} file={file} sanitized={sanitized} />
+              <GitHubSaveForm
+                github={data.github}
+                file={file}
+                sanitized={sanitized}
+                onSaved={onSaved}
+              />
             ) : (
               <p className="text-muted-foreground text-sm">
                 Set the GitHub repository and token in{" "}
@@ -78,16 +80,24 @@ function GitHubSaveForm({
   github,
   file,
   sanitized,
+  onSaved,
 }: GitHubSaveCardProps & { github: GitHubSettings }) {
-  const publish = useMutation(publishPhotoMutation);
+  const publish = useMutation({ ...publishPhotoMutation, onSuccess: () => onSaved?.() });
+  const suggestedName = jsonFileName(sanitized.title, file);
 
   const form = useForm({
-    defaultValues: { name: defaultName(file) },
+    defaultValues: { name: suggestedName },
     validators: { onSubmit: ({ value }) => validateName(value.name) },
     onSubmit: async ({ value }) => {
       await publish.mutateAsync({ name: value.name.trim(), file, sanitized }).catch(() => {});
     },
   });
+
+  // The name follows the title until it's typed in by hand.
+  useEffect(() => {
+    if (form.getFieldMeta("name")?.isDirty) return;
+    form.setFieldValue("name", suggestedName, { dontUpdateMeta: true });
+  }, [form, suggestedName]);
 
   if (publish.isSuccess) return <PublishSuccess result={publish.data} repo={github.repo} />;
 

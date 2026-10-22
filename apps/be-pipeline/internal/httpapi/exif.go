@@ -29,26 +29,34 @@ func handleExif(extractor exif.Extractor) http.HandlerFunc {
 		}
 		defer os.Remove(photo.path) //nolint:errcheck // best-effort cleanup
 
-		res := exifResponse{File: photo.name}
-		var err error
-		if extractor != nil {
-			if res.Exif, err = extractor.Extract(photo.path); err != nil {
-				slog.Error("exif extraction failed", "err", err)
-				writeError(w, http.StatusInternalServerError, "could not read photo metadata")
-				return
-			}
-			sanitized := exif.Sanitize(res.Exif)
-			res.Sanitized = &sanitized
-		}
-
-		if res.Colors, err = analyzeColors(photo.path); err != nil {
-			slog.Warn("color analysis failed", "err", err)
-			writeError(w, http.StatusUnprocessableEntity, "could not decode photo")
+		res, status, msg := analyzePhoto(extractor, photo.path, photo.name)
+		if status != http.StatusOK {
+			writeError(w, status, msg)
 			return
 		}
-
 		writeJSON(w, http.StatusOK, res)
 	}
+}
+
+// analyzePhoto reads the EXIF metadata and color summary of the JPEG at path,
+// returned under name. On failure it returns the status and message to send.
+func analyzePhoto(extractor exif.Extractor, path, name string) (exifResponse, int, string) {
+	res := exifResponse{File: name}
+	var err error
+	if extractor != nil {
+		if res.Exif, err = extractor.Extract(path); err != nil {
+			slog.Error("exif extraction failed", "err", err)
+			return res, http.StatusInternalServerError, "could not read photo metadata"
+		}
+		sanitized := exif.Sanitize(res.Exif)
+		res.Sanitized = &sanitized
+	}
+
+	if res.Colors, err = analyzeColors(path); err != nil {
+		slog.Warn("color analysis failed", "err", err)
+		return res, http.StatusUnprocessableEntity, "could not decode photo"
+	}
+	return res, http.StatusOK, ""
 }
 
 func analyzeColors(path string) (colors.Analysis, error) {

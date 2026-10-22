@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { addHours, format, min, startOfDay, subDays } from "date-fns";
+import { format, min } from "date-fns";
 import { CalendarClock, RotateCcw } from "lucide-react";
 import { useState } from "react";
+import { PhotoComment } from "@/components/photo-comment";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
+import { photos, type Photo } from "@/lib/photos";
 import { buildHistogram } from "@/lib/histogram";
 import {
   absoluteTimeRange,
@@ -18,64 +20,10 @@ export const Route = createFileRoute("/timeline")({
   component: TimelineView,
 });
 
-interface DummyPhoto {
-  id: number;
-  title: string;
-  camera: string;
-  takenAt: Date;
-}
+const earliestPhoto = min(photos.map((photo) => photo.takenAt));
 
-// Temporary dummy data until real photos are wired up: about two years of shoot days, each with a
-// handful of photos. Dates are relative to today so every quick range has something in it, and a
-// seeded generator keeps the data stable between reloads.
-const dummyTitles = [
-  "Morning fog over the bay",
-  "Neon alley",
-  "Harbor at dusk",
-  "Cherry blossoms",
-  "Old train station",
-  "Market stalls",
-  "Mountain ridge",
-  "Rainy crosswalk",
-  "Lighthouse",
-  "Desert road",
-  "Autumn canopy",
-  "Rooftop sunset",
-];
-const dummyCameras = ["Fujifilm X-T5", "Sony A7 IV", "Ricoh GR III", "iPhone 16 Pro"];
-
-function seededRandom(seed: number) {
-  let state = seed;
-  return (max: number) => {
-    // Park–Miller generator; good enough for stable dummy data.
-    state = (state * 48_271) % 2_147_483_647;
-    return Math.floor((state / 2_147_483_647) * max);
-  };
-}
-
-function makeDummyPhotos(): DummyPhoto[] {
-  const random = seededRandom(42);
-  const pick = (items: string[]) => items[random(items.length)] ?? "";
-  const today = startOfDay(new Date());
-  const photos: DummyPhoto[] = [];
-  for (let daysAgo = random(3); daysAgo < 730; daysAgo += 1 + random(8)) {
-    const shootDay = addHours(subDays(today, daysAgo), 8);
-    const shots = Array.from({ length: 1 + random(6) }, (_, shot) => ({
-      id: photos.length + shot + 1,
-      title: pick(dummyTitles),
-      camera: pick(dummyCameras),
-      takenAt: addHours(shootDay, shot),
-    }));
-    photos.push(...shots);
-  }
-  return photos;
-}
-
-const dummyPhotos = makeDummyPhotos();
-const earliestPhoto = min(dummyPhotos.map((photo) => photo.takenAt));
-
-function groupByMonth(photos: DummyPhoto[]) {
-  const months = new Map<string, DummyPhoto[]>();
+function groupByMonth(photos: Photo[]) {
+  const months = new Map<string, Photo[]>();
   for (const photo of photos) {
     const month = format(photo.takenAt, "MMMM yyyy");
     months.set(month, [...(months.get(month) ?? []), photo]);
@@ -88,9 +36,9 @@ function TimelineView() {
   const navigate = Route.useNavigate();
   const [now] = useState(() => new Date());
   const { start = earliestPhoto, end } = resolveTimeRange(search, now);
-  const photos = dummyPhotos.filter(({ takenAt }) => takenAt >= start && takenAt <= end);
+  const inRange = photos.filter(({ takenAt }) => takenAt >= start && takenAt <= end);
   const { bins, resolution } = buildHistogram(
-    photos.map((photo) => photo.takenAt),
+    inRange.map((photo) => photo.takenAt),
     start,
     end,
   );
@@ -113,7 +61,7 @@ function TimelineView() {
             selection={{ from: start, to: end }}
             onChange={(next) => navigate({ search: next })}
           />
-          <p className="text-sm text-muted-foreground">{photos.length} photos in range</p>
+          <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
           <Button
             variant="outline"
             size="sm"
@@ -127,12 +75,12 @@ function TimelineView() {
         </div>
       </header>
       <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
-      <PhotoMonths photos={photos} />
+      <PhotoMonths photos={inRange} />
     </div>
   );
 }
 
-function PhotoMonths({ photos }: { photos: DummyPhoto[] }) {
+function PhotoMonths({ photos }: { photos: Photo[] }) {
   if (photos.length === 0) {
     return <p className="text-muted-foreground">No photos in this time range.</p>;
   }
@@ -147,7 +95,16 @@ function PhotoMonths({ photos }: { photos: DummyPhoto[] }) {
           <ul className="flex flex-col gap-2 border-l pl-4">
             {monthPhotos.map((photo) => (
               <li key={photo.id} className="flex items-baseline justify-between gap-4">
-                <span>{photo.title}</span>
+                <div className="flex min-w-0 flex-col">
+                  <span>{photo.title}</span>
+                  {photo.comment && (
+                    <PhotoComment
+                      comment={photo.comment}
+                      lines={1}
+                      className="text-xs text-muted-foreground"
+                    />
+                  )}
+                </div>
                 <span className="shrink-0 text-xs text-muted-foreground">
                   {format(photo.takenAt, "MMM d")} · {photo.camera}
                 </span>

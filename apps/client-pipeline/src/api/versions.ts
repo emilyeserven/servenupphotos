@@ -1,0 +1,200 @@
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { requestJson } from "@/api/settings";
+import type { Crop } from "@/lib/crop";
+
+/** The resized WEBP versions every upload puts in R2 next to the original JPEG. */
+export const VERSIONS = [
+  { name: "xlarge", label: "X-Large", maxEdge: 2500 },
+  { name: "large", label: "Large", maxEdge: 1800 },
+  { name: "medium", label: "Medium", maxEdge: 1200 },
+  { name: "small", label: "Small", maxEdge: 500 },
+  { name: "xsmall", label: "X-Small", maxEdge: 250 },
+  // A tiny, low-quality placeholder to show blurred while a real version loads.
+  { name: "preview", label: "Preview", maxEdge: 40 },
+] as const;
+
+export type VersionName = (typeof VERSIONS)[number]["name"];
+
+/**
+ * The square crop every upload also puts in R2, for square tiles like the portfolio's Grid. It's
+ * always exactly maxEdge × maxEdge, scaled up or down from whatever size the crop is on the photo.
+ */
+export const THUMBNAIL = { name: "thumbnail", label: "Square Thumbnail", maxEdge: 500 } as const;
+
+/**
+ * The Square Thumbnail's own tiny, low-quality placeholder, cut from the same square: what the
+ * preview is to the resized versions, for square tiles to show blurred while the thumbnail loads.
+ */
+const THUMBNAIL_PREVIEW = {
+  name: "thumbnailpreview",
+  label: "Thumbnail Preview",
+  maxEdge: 40,
+} as const;
+
+/** Every WEBP an upload puts next to the original: the resized versions, then the square ones. */
+export const PUBLISHED = [...VERSIONS, THUMBNAIL, THUMBNAIL_PREVIEW] as const;
+
+export type PublishedName = (typeof PUBLISHED)[number]["name"];
+
+/** Whether version is cut from the Square Thumbnail's crop, so it's square whatever the photo. */
+export function isSquare(version: (typeof PUBLISHED)[number]): boolean {
+  return version.name === THUMBNAIL.name || version.name === THUMBNAIL_PREVIEW.name;
+}
+
+/** The R2 keys of the WEBPs uploaded with the original at key, as the backend names them. */
+export function versionKeys(key: string): string[] {
+  const stem = keyStem(key);
+  return PUBLISHED.map((version) => `${stem}-${version.name}.webp`);
+}
+
+/** The Square Thumbnail's URL, next to the original's at url, as the backend names it. */
+export function squareThumbnailUrl(url: string): string {
+  return `${keyStem(url)}-${THUMBNAIL.name}.webp`;
+}
+
+/**
+ * The url of the Square Thumbnail or its Thumbnail Preview marked with the crop it was cut from, as
+ * saved in a photo's JSON after an edit. They keep their keys when they're remade, so the mark gives
+ * browsers and Cloudflare's cache a new URL to fetch instead of the old square; R2 ignores it.
+ */
+export function thumbnailUrlWithCrop(url: string, crop: Crop): string {
+  const { x, y, size } = roundedCrop(crop);
+  return `${url.replace(/[?#].*$/, "")}?crop=${x},${y},${size}`;
+}
+
+/**
+ * Where a photo's Square Thumbnail is cut from, as saved in its JSON as `images.thumbnailcrop`:
+ * "500 × 500 px from a 4220 × 4220 px square at 1710, 0" is { x: 1710, y: 0, size: 4220, outputSize: 500 }.
+ */
+export interface ThumbnailCrop extends Crop {
+  /** The Square Thumbnail's width and height, whatever the square's size on the photo. */
+  outputSize: number;
+}
+
+/** crop as a photo's JSON saves it, in whole pixels with the Square Thumbnail's size. */
+export function thumbnailCropField(crop: Crop): ThumbnailCrop {
+  return { ...roundedCrop(crop), outputSize: THUMBNAIL.maxEdge };
+}
+
+/** The crop saved in a photo's JSON as `images.thumbnailcrop`, or null when it has none. */
+export function savedThumbnailCrop(images: Record<string, unknown> | undefined): Crop | null {
+  const { x, y, size } = { ...(images?.thumbnailcrop as Partial<Crop> | null) };
+  const crop = { x, y, size };
+  return isCrop(crop) ? crop : null;
+}
+
+function isCrop(crop: Partial<Crop>): crop is Crop {
+  return Object.values(crop).every((n) => typeof n === "number") && crop.size! > 0;
+}
+
+/** crop in whole pixels, as the backend takes it. */
+function roundedCrop({ x, y, size }: Crop): Crop {
+  return { x: Math.round(x), y: Math.round(y), size: Math.round(size) };
+}
+
+/** The Thumbnail Preview's URL, next to the original's at url, as the backend names it. */
+export function thumbnailPreviewUrl(url: string): string {
+  return `${keyStem(url)}-${THUMBNAIL_PREVIEW.name}.webp`;
+}
+
+/** A key without its file extension. */
+export function keyStem(key: string): string {
+  return key.replace(/\.[^./]*$/, "");
+}
+
+/** The resized version or thumbnail an R2 key names, and the original's key without its extension. */
+export function parseVersionKey(
+  key: string,
+): { originalStem: string; version: (typeof PUBLISHED)[number] } | undefined {
+  const [, originalStem, name] = /^(.*)-([a-z]+)\.webp$/.exec(key) ?? [];
+  const version = PUBLISHED.find((v) => v.name === name);
+  if (originalStem === undefined || !version) return undefined;
+  return { originalStem, version };
+}
+
+/** A resized version as an upload would make it, and how big it would be as a JPEG instead. */
+interface VersionPreview {
+  webp: Blob;
+  /** The same version as a JPEG at the original's quality, when the backend said. */
+  jpeg?: JpegComparison;
+}
+
+/** How big a version would be as a JPEG saved at the original photo's own quality. */
+export interface JpegComparison {
+  bytes: number;
+  quality: number;
+}
+
+async function fetchVersion(photo: File, version: VersionName): Promise<VersionPreview> {
+  const body = new FormData();
+  body.append("photo", photo);
+  const res = await fetch(`/api/photos/versions/${version}`, { method: "POST", body });
+  if (!res.ok) {
+    const json = (await res.json().catch(() => ({}))) as { message?: string };
+    throw new Error(json.message ?? `/api/photos/versions/${version} responded ${res.status}`);
+  }
+  return { webp: await res.blob(), jpeg: jpegComparison(res.headers) };
+}
+
+/** The JPEG comparison the backend sends in headers, when it sent one. */
+function jpegComparison(headers: Headers): JpegComparison | undefined {
+  const bytes = Number(headers.get("x-jpeg-bytes"));
+  const quality = Number(headers.get("x-jpeg-quality"));
+  return bytes > 0 && quality > 0 ? { bytes, quality } : undefined;
+}
+
+/** One version of photo, made the same way an upload makes it, before anything is uploaded. */
+export const versionPreviewQuery = (photo: File, version: VersionName) =>
+  queryOptions({
+    queryKey: ["versions", photo.name, photo.size, photo.lastModified, version],
+    queryFn: () => fetchVersion(photo, version),
+    staleTime: Infinity,
+    // Blobs can be large, so they are dropped soon after the photo changes.
+    gcTime: 60_000,
+  });
+
+/** Where the remade versions of a photo in R2 ended up, by version name. */
+interface RegenerateResult {
+  key: string;
+  versions: Partial<Record<PublishedName, { key: string; url: string }>>;
+}
+
+interface RegenerateRequest {
+  key: string;
+  versions?: PublishedName[];
+  /** The square to cut the Square Thumbnail from, replacing the one saved with it. */
+  crop?: Crop;
+}
+
+/**
+ * Makes resized versions of the original at key, already in R2, again from that original and
+ * uploads them over any already there; every version and the Square Thumbnail when versions is
+ * left out. The Square Thumbnail is cut from crop when it's given, and otherwise keeps the crop
+ * saved with the one already in R2, or is cut from the middle of the photo when there isn't one.
+ */
+export const regenerateVersionsMutation = mutationOptions({
+  mutationKey: ["photos", "bucket", "versions"],
+  mutationFn: ({ crop, ...request }: RegenerateRequest) =>
+    requestJson<RegenerateResult>("/api/photos/bucket/versions", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...request, crop: crop && roundedCrop(crop) }),
+    }),
+});
+
+/**
+ * The crop saved with the Square Thumbnail of the original at key in R2, or null when it was cut
+ * from the middle of the photo or there's no Square Thumbnail yet.
+ */
+export const thumbnailCropQuery = (key: string) =>
+  queryOptions({
+    queryKey: ["photos", "bucket", "thumbnail-crop", key],
+    queryFn: async () =>
+      (
+        await requestJson<{ key: string; crop: Crop | null }>(
+          `/api/photos/bucket/thumbnail-crop?${new URLSearchParams({ key })}`,
+        )
+      ).crop,
+    retry: false,
+    staleTime: 0,
+  });

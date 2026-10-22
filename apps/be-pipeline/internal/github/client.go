@@ -1,6 +1,9 @@
 // Package github talks to the GitHub REST API with the token from Settings.
-// Check tests the settings without changing anything, and Publish saves a
-// photo's sanitized EXIF as a JSON file in a pull request.
+// Check tests the settings without changing anything, Publish saves a photo's
+// sanitized EXIF as a JSON file in a pull request, InFlight reads back the
+// photo JSON waiting in that pull request, and Remove deletes one of them.
+// Organize lists the albums and tags, and CreateGroup saves a new one in the
+// same pull request.
 package github
 
 import (

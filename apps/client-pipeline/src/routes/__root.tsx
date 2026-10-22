@@ -1,34 +1,63 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, Link, Outlet } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet, useLocation } from "@tanstack/react-router";
+import type * as React from "react";
+import { AppSidebar, navGroups } from "@/components/app-sidebar";
+import { CombinedDataSync } from "@/components/combined-data-sync";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 interface RouterContext {
   queryClient: QueryClient;
 }
 
+declare module "@tanstack/react-router" {
+  interface StaticDataRouteOption {
+    /** Lays the page out in a wider column. */
+    wide?: boolean;
+  }
+}
+
 export const Route = createRootRouteWithContext<RouterContext>()({
-  component: () => (
-    <main className="min-h-svh bg-background text-foreground">
-      <nav className="mx-auto flex max-w-2xl gap-4 px-6 pt-6 text-sm">
-        <Link
-          to="/"
-          className="text-muted-foreground [&.active]:text-foreground [&.active]:font-medium"
-        >
-          Status
-        </Link>
-        <Link
-          to="/exif"
-          className="text-muted-foreground [&.active]:text-foreground [&.active]:font-medium"
-        >
-          EXIF
-        </Link>
-        <Link
-          to="/settings"
-          className="text-muted-foreground [&.active]:text-foreground [&.active]:font-medium"
-        >
-          Settings
-        </Link>
-      </nav>
-      <Outlet />
-    </main>
-  ),
+  component: RootLayout,
 });
+
+function RootLayout() {
+  const pathname = useLocation({ select: (location) => location.pathname });
+  const group = navGroups.find((g) => g.items.some((item) => item.url === pathname));
+  const page = group?.items.find((item) => item.url === pathname);
+
+  return (
+    <SidebarProvider style={{ "--sidebar-width": "19rem" } as React.CSSProperties}>
+      <CombinedDataSync />
+      <AppSidebar />
+      {/* min-w-0 lets wide content, like a table, scroll inside the page instead of widening it. */}
+      <SidebarInset className="min-w-0">
+        <header className="flex h-16 shrink-0 items-center gap-2 px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+          {group && page ? (
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">{group.title}</BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{page.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          ) : null}
+        </header>
+        <div className="flex-1">
+          <Outlet />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}

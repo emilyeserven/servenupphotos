@@ -79,12 +79,29 @@ func (f *fakeRepo) serve(w http.ResponseWriter, r *http.Request) {
 		f.branches[strings.TrimPrefix(in["ref"], "refs/heads/")] = true
 		writeBody(w, http.StatusCreated, map[string]any{})
 	case strings.HasPrefix(path, "/contents/") && r.Method == http.MethodGet:
-		key := r.URL.Query().Get("ref") + ":" + strings.TrimPrefix(path, "/contents/")
-		if _, ok := f.files[key]; !ok {
+		ref, file := r.URL.Query().Get("ref"), strings.TrimPrefix(path, "/contents/")
+		if content, ok := f.files[ref+":"+file]; ok {
+			writeBody(w, http.StatusOK, map[string]any{
+				"encoding": "base64", "content": base64.StdEncoding.EncodeToString([]byte(content)),
+			})
+			return
+		}
+		// A folder lists the files directly in it.
+		var listing []map[string]any
+		for key := range f.files {
+			name, ok := strings.CutPrefix(key, ref+":"+file+"/")
+			if ok && !strings.Contains(name, "/") {
+				listing = append(listing, map[string]any{
+					"name": name, "path": file + "/" + name, "type": "file",
+					"html_url": "https://github.com/owner/repo/blob/" + ref + "/" + file + "/" + name,
+				})
+			}
+		}
+		if listing == nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		writeBody(w, http.StatusOK, map[string]any{})
+		writeBody(w, http.StatusOK, listing)
 	case strings.HasPrefix(path, "/contents/") && r.Method == http.MethodPut:
 		if f.failPUT != 0 {
 			w.WriteHeader(f.failPUT)
@@ -111,10 +128,25 @@ func writeBody(w http.ResponseWriter, status int, body any) {
 
 func ptr(s string) *string { return &s }
 
+func ref[T any](v T) *T { return &v }
+
 var gh = settings.GitHub{Repo: "owner/repo", Folder: "/photos/data/", Token: token}
 
 func photo(name string) Photo {
-	return Photo{Name: name, File: name + ".jpg", Sanitized: exif.Sanitized{Camera: ptr("X-T5"), City: ptr("Tokyo")}}
+	return Photo{Name: name, File: name + ".jpg", Sanitized: exif.Sanitized{
+		Title:       ptr("Tokyo at night"),
+		Camera:      ptr("X-T5"),
+		Aperture:    ref(2.8),
+		Exposure:    ptr("1/250"),
+		ISO:         ref(400),
+		FocalLength: ref(35.0),
+		City:        ptr("Tokyo"),
+		Comment:     ptr("Shot from the **bridge**."),
+		Images: exif.Images{
+			Full: ptr("https://photos.example.com/photos/0123456789ab-" + name + ".jpg"),
+			Key:  ptr("photos/0123456789ab-" + name + ".jpg"),
+		},
+	}}
 }
 
 func TestPublishOpensThenReusesPullRequest(t *testing.T) {
@@ -125,8 +157,8 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 		t.Fatalf("first Publish() error = %v", err)
 	}
 	want := PublishResult{
-		Path:              "photos/data/DSC0001.json",
-		FileURL:           "https://github.com/owner/repo/blob/photo-data/2026-10-15-024500/photos/data/DSC0001.json",
+		Path:              "photos/data/photos/DSC0001.json",
+		FileURL:           "https://github.com/owner/repo/blob/photo-data/2026-10-15-024500/photos/data/photos/DSC0001.json",
 		PullRequestURL:    "https://github.com/owner/repo/pull/1",
 		PullRequestNumber: 1,
 		NewPullRequest:    true,
@@ -139,22 +171,48 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("second Publish() error = %v", err)
 	}
-	if second.NewPullRequest || second.PullRequestNumber != 1 || second.Path != "photos/data/DSC0002.json" {
+	if second.NewPullRequest || second.PullRequestNumber != 1 || second.Path != "photos/data/photos/DSC0002.json" {
 		t.Errorf("second Publish() = %+v, want it added to pull request 1", second)
 	}
 	if len(f.pulls) != 1 {
 		t.Errorf("opened %d pull requests, want 1", len(f.pulls))
 	}
 
-	got := f.files["photo-data/2026-10-15-024500:photos/data/DSC0001.json"]
+	got := f.files["photo-data/2026-10-15-024500:photos/data/photos/DSC0001.json"]
 	wantJSON := `{
+  "title": "Tokyo at night",
+  "comment": "Shot from the **bridge**.",
   "file": "DSC0001.jpg",
   "camera": "X-T5",
   "lens": null,
+  "aperture": 2.8,
+  "exposure": "1/250",
+  "iso": 400,
+  "focalLength": 35,
   "gpsPosition": null,
   "createDate": null,
   "country": null,
-  "city": "Tokyo"
+  "city": "Tokyo",
+  "width": null,
+  "height": null,
+  "images": {
+    "full": "https://photos.example.com/photos/0123456789ab-DSC0001.jpg",
+    "key": "photos/0123456789ab-DSC0001.jpg",
+    "xlarge": null,
+    "large": null,
+    "medium": null,
+    "small": null,
+    "xsmall": null,
+    "preview": null,
+    "thumbnail": null,
+    "thumbnailpreview": null,
+    "thumbnailcrop": null
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": []
 }
 `
 	if got != wantJSON {
@@ -164,7 +222,7 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 
 func TestPublishRefusesExistingFile(t *testing.T) {
 	f, c := newFakeRepo(t)
-	f.files["main:photos/data/DSC0001.json"] = "{}"
+	f.files["main:photos/data/photos/DSC0001.json"] = "{}"
 
 	_, err := c.Publish(t.Context(), gh, photo("DSC0001"))
 	var perr *PublishError

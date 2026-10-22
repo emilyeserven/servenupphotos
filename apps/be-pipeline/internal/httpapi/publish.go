@@ -52,3 +52,37 @@ func handlePublishPhoto(store *settings.Store, gh *github.Client) http.HandlerFu
 		writeJSON(w, http.StatusOK, result)
 	}
 }
+
+// handleAllPhotosCheck looks for the photo in the body, identified by its file
+// name, GPS position and creation date, in ALLPHOTOS.json on GitHub, so a
+// photo already in the portfolio isn't uploaded or saved again.
+func handleAllPhotosCheck(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var photo github.PhotoIdentity
+		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes)).Decode(&photo); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid photo body")
+			return
+		}
+		cfg, err := store.GitHub()
+		if err != nil {
+			slog.Error("read settings failed", "err", err)
+			writeError(w, http.StatusInternalServerError, "could not read settings")
+			return
+		}
+
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.FindInPullRequest(ctx, cfg, photo)
+		var perr *github.PublishError
+		if errors.As(err, &perr) {
+			writeError(w, perr.Status, perr.Message)
+			return
+		}
+		if err != nil {
+			slog.Error("check ALLPHOTOS.json failed", "err", err)
+			writeError(w, http.StatusInternalServerError, "could not check ALLPHOTOS.json")
+			return
+		}
+		writeJSON(w, http.StatusOK, result)
+	}
+}

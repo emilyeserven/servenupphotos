@@ -1,4 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
+import type { ThumbnailCrop } from "@/api/versions";
 
 interface Color {
   hex: string;
@@ -63,12 +64,51 @@ export interface ColorAnalysis {
 
 /** The publishable subset of the EXIF data; a field is null when the photo lacks it. */
 export interface SanitizedExif {
+  /** The photo's name on the portfolio, written on the Photo page; the portfolio uses the file name without one. */
+  title: string | null;
   camera: string | null;
   lens: string | null;
+  /** The f-number, such as 5.6 for f/5.6. */
+  aperture: number | null;
+  /** The exposure time in seconds as exiftool writes it, such as "1/60" or "2". */
+  exposure: string | null;
+  iso: number | null;
+  /** The lens's focal length in millimeters, such as 18 or 4.2. */
+  focalLength: number | null;
   gpsPosition: string | null;
   createDate: string | null;
   country: string | null;
   city: string | null;
+  /** The original photo's width and height in pixels, as shown (turned upright from its EXIF orientation). */
+  width: number | null;
+  height: number | null;
+  /** The photographer's note about the photo, in Markdown, written on the Photo page. */
+  comment: string | null;
+  images: {
+    /** The original photo's public R2 URL, once it has been uploaded. */
+    full: string | null;
+    /** The original photo's object key in the R2 bucket, once it has been uploaded. */
+    key: string | null;
+    /** Public R2 URLs of the resized WEBP versions, once they have been uploaded. */
+    xlarge: string | null;
+    large: string | null;
+    medium: string | null;
+    small: string | null;
+    xsmall: string | null;
+    preview: string | null;
+    /** Public R2 URL of the 500 × 500 WEBP cut from the square picked before uploading. */
+    thumbnail: string | null;
+    /** Public R2 URL of a tiny 40 × 40 WEBP of the same square, to show blurred while it loads. */
+    thumbnailpreview: string | null;
+    /** The square of the photo the Square Thumbnail is cut from, once it has been uploaded. */
+    thumbnailcrop: ThumbnailCrop | null;
+  };
+  /** Whether the photo may be posted to social media, such as Instagram. */
+  isSocialMediaEligible: boolean;
+  /** The photo's place among the photos spotlighted on the site, or null when it isn't spotlighted. */
+  websiteSpotlight: number | null;
+  /** The day the photo is scheduled to be posted to social media, as YYYY-MM-DD; null when it isn't. */
+  socialMediaPublishDate: string | null;
 }
 
 export interface ExifResponse {

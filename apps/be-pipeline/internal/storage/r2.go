@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	awshttp "github.com/aws/aws-sdk-go-v2/aws/transport/http"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/smithy-go"
@@ -97,6 +98,35 @@ func missingR2Fields(cfg settings.R2) []string {
 		}
 	}
 	return missing
+}
+
+// CloudflareResponse is what Cloudflare answered to a failed request, shown
+// alongside the plain-language reason so the cause can be looked up.
+type CloudflareResponse struct {
+	// Status is the HTTP status, or 0 when no response arrived.
+	Status int `json:"status,omitempty"`
+	// Code and Message are the S3 error Cloudflare sent.
+	// https://developers.cloudflare.com/r2/api/error-codes/
+	Code      string `json:"code,omitempty"`
+	Message   string `json:"message,omitempty"`
+	RequestID string `json:"requestId,omitempty"`
+	// Error is the whole error as the SDK reports it.
+	Error string `json:"error"`
+}
+
+// cloudflareResponse pulls what Cloudflare answered out of an S3 client error.
+func cloudflareResponse(err error) *CloudflareResponse {
+	res := &CloudflareResponse{Error: err.Error()}
+	var respErr *awshttp.ResponseError
+	if errors.As(err, &respErr) {
+		res.Status = respErr.HTTPStatusCode()
+		res.RequestID = respErr.ServiceRequestID()
+	}
+	var apiErr smithy.APIError
+	if errors.As(err, &apiErr) {
+		res.Code, res.Message = apiErr.ErrorCode(), apiErr.ErrorMessage()
+	}
+	return res
 }
 
 // describeR2Error turns an S3 error into a reason a person can act on.

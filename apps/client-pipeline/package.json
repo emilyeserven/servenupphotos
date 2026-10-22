@@ -18,8 +18,11 @@
     "radix-ui": "1.8.1",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-markdown": "10.1.0",
+    "remark-breaks": "4.0.0",
     "shiki": "4.5.0",
-    "tailwind-merge": "catalog:"
+    "tailwind-merge": "catalog:",
+    "zustand": "5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/vite": "catalog:",

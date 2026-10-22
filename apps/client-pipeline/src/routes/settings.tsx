@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { useCombinedDataStore } from "@/stores/combined-data";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -64,11 +65,11 @@ const SECTIONS: SectionConfig[] = [
     section: "github",
     title: "GitHub",
     description:
-      "Repository, base branch and folder for photo JSON. Saves go to a pull request against the branch.",
+      "Repository, base branch and data folder. Photo, album and tag JSON go in its photos, albums and tags folders, saved to a pull request against the branch.",
     fields: [
       { name: "repo", label: "Repository", placeholder: "owner/name" },
       { name: "branch", label: "Branch", placeholder: "main" },
-      { name: "folder", label: "Folder", placeholder: "apps/portfolio/src/data" },
+      { name: "folder", label: "Data folder", placeholder: "apps/portfolio/src/data" },
     ],
     secret: { name: "token", label: "Personal access token" },
     secretHelp: (fields) => <GitHubTokenHelp repo={fields.repo ?? ""} />,
@@ -136,6 +137,7 @@ interface SettingsCardProps {
 
 function SettingsCard({ config, stored }: SettingsCardProps) {
   const queryClient = useQueryClient();
+  const resetCombinedData = useCombinedDataStore((s) => s.reset);
   const secretStatus = (stored as unknown as Record<string, SecretStatus | undefined>)[
     config.secret.name
   ] ?? { set: false };
@@ -145,6 +147,8 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
     onSuccess: (data) => {
       queryClient.setQueryData(settingsQuery.queryKey, data);
       void queryClient.invalidateQueries({ queryKey: connectionQueryKey(config.section) });
+      // Another repository, branch or folder has other combined lists.
+      if (config.section === "github") resetCombinedData();
       form.reset(toFormValues(config, data[config.section]));
     },
   });
@@ -443,6 +447,7 @@ function githubTokenUrl(repo: string): string {
     description: "Opens pull requests with photo JSON from the servenupphotos pipeline.",
     contents: "write",
     pull_requests: "write",
+    actions: "read",
   });
   const owner = repo.split("/")[0]?.trim();
   if (owner) params.set("target_name", owner);
@@ -457,7 +462,8 @@ function GitHubTokenHelp({ repo }: { repo: string }) {
         <strong>Only select repositories</strong> and pick {repo.trim() || "your photo repository"}.
         It needs <strong>Contents: Read and write</strong> and{" "}
         <strong>Pull requests: Read and write</strong>, and GitHub adds{" "}
-        <strong>Metadata: Read-only</strong> automatically.
+        <strong>Metadata: Read-only</strong> automatically. <strong>Actions: Read-only</strong> is
+        optional: it lets Photos in Flight see when CI has rebuilt ALLPHOTOS.json.
       </p>
       <div className="flex gap-4">
         <ExternalLink href={githubTokenUrl(repo)}>Create a token</ExternalLink>
