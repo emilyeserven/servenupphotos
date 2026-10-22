@@ -25,14 +25,8 @@ function plural(count: number, one: string): string {
   return `${count} ${one}${count === 1 ? "" : "s"}`;
 }
 
-/** How many saves since the last commit, as the button counts them. */
-function pending(sync: Sync): number {
-  return sync.changes + sync.unknownChanges;
-}
-
 function unsyncedBadge(sync: Sync): Badge {
-  const count = pending(sync);
-  const label = count > 0 ? `Not synced · ${plural(count, "change")}` : "Not synced";
+  const label = sync.pending ? `Not synced · ${sync.pending}` : "Not synced";
   return { icon: <CircleDotIcon />, label, className: AMBER };
 }
 
@@ -171,19 +165,17 @@ function SyncLine({ sync }: { sync: Sync }) {
   }
   return (
     <p className={AMBER}>
-      {unsyncedWhat(sync)} aren&apos;t in ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json yet.
-      Commit to sync them.
+      {unsyncedWhat(sync)}, not in ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json yet. Commit to
+      sync them.
     </p>
   );
 }
 
 /** What hasn't been committed yet, as SyncLine says it. */
 function unsyncedWhat(sync: Sync): string {
-  const count = pending(sync);
-  if (count === 0) return "Changes since the last commit";
-  const hidden =
-    sync.unknownChanges > 0 ? ` (${sync.unknownChanges} only show once committed)` : "";
-  return `${plural(count, "save")} since the last commit${hidden}`;
+  return sync.pending
+    ? `${sync.pending} changed since the last commit`
+    : "The pull request changed since the last commit";
 }
 
 /** What the last commit did, or why it failed. */

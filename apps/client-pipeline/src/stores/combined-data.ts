@@ -9,7 +9,7 @@ import {
   type InFlightPullRequest,
   readCombinedData,
 } from "@/api/photos";
-import { type FileChange, withChanges } from "@/lib/optimistic";
+import { type FileChange, pendingText, withChanges } from "@/lib/optimistic";
 
 /**
  * ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, read once and kept for every page. They're only
@@ -227,8 +227,8 @@ export function useCombinedSync() {
   return useCombinedDataStore(
     useShallow((state) => ({
       unsynced: isUnsynced(state),
-      changes: state.changes.length,
-      unknownChanges: state.unknownChanges,
+      /** What changed since the last commit, as "2 images, 1 album"; "" when nothing known. */
+      pending: pendingText(state.changes, state.unknownChanges),
       headState: state.headState,
       committing: state.committing,
       lastCommit: state.lastCommit,

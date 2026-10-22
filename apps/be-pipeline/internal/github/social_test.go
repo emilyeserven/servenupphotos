@@ -97,6 +97,14 @@ func TestSetSocialDates(t *testing.T) {
 	if c := contents["apps/portfolio/src/data/photos/C.json"]; !strings.HasSuffix(c, ",\n  \"socialMediaPublishDate\": \"2026-10-22\"}") {
 		t.Errorf("C.json = %s, want the date added at the end", c)
 	}
+	for _, ch := range got.Changes {
+		if string(ch.After) != contents[ch.Path] || len(ch.Before) == 0 {
+			t.Errorf("change %s = %s → %s, want the file before and as committed", ch.Path, ch.Before, ch.After)
+		}
+	}
+	if len(got.Changes) != 2 {
+		t.Errorf("changes = %d, want 2", len(got.Changes))
+	}
 	if msg := repo.commit["message"]; msg != "Schedule social media posts for 2 photos" {
 		t.Errorf("commit message = %v", msg)
 	}

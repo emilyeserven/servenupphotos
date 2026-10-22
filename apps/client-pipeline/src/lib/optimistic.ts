@@ -87,3 +87,23 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
     },
   };
 }
+
+function plural(count: number, one: string): string {
+  return `${count} ${one}${count === 1 ? "" : "s"}`;
+}
+
+/**
+ * The files changed since the last commit, counted once each, as "2 images, 1 album", with saves
+ * whose files aren't known as "other saves"; "" with none.
+ */
+export function pendingText(changes: FileChange[], unknownChanges: number): string {
+  const paths = { photos: new Set<string>(), albums: new Set<string>(), tags: new Set<string>() };
+  for (const change of changes) paths[change.kind].add(change.path);
+  const parts = [
+    plural(paths.photos.size, "image"),
+    plural(paths.albums.size, "album"),
+    plural(paths.tags.size, "tag"),
+    plural(unknownChanges, "other save"),
+  ];
+  return parts.filter((part) => !part.startsWith("0 ")).join(", ");
+}

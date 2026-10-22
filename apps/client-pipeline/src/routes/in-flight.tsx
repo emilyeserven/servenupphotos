@@ -607,29 +607,17 @@ function SyncSummary() {
   if (!sync.unsynced) return <span className="text-muted-foreground">Up to date</span>;
   return (
     <span className="flex flex-col items-start gap-2">
-      <span className="text-amber-700 dark:text-amber-400">
-        {unsyncedText(sync.changes, sync.unknownChanges)}
-      </span>
+      <span className="text-amber-700 dark:text-amber-400">{unsyncedText(sync.pending)}</span>
       <CommitButton />
     </span>
   );
 }
 
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
-
-/** What the pages already show of the changes since the last commit, and what they don't. */
-function changesText(changes: number, unknown: number): string {
-  const shown = changes > 0 ? `${plural(changes, "file change")} shown here already` : "";
-  const hidden = unknown > 0 ? `${plural(unknown, "save")} that show once committed` : "";
-  return [shown, hidden].filter(Boolean).join(", ");
-}
-
 /** Why the combined files aren't synced, and what the pages already show of it. */
-function unsyncedText(changes: number, unknown: number): string {
-  const since =
-    changesText(changes, unknown) || "the pull request has changes since the last commit";
+function unsyncedText(pending: string): string {
+  const since = pending
+    ? `${pending} changed since the last commit`
+    : "the pull request has changes since the last commit";
   return `Not synced: ${since}. Commit to sync them.`;
 }
 

@@ -323,14 +323,14 @@ pull request is merged, so the store reads them again only:
 - on Photos in Flight's **Refresh**, after the GitHub settings change, and on a page reload.
 
 Saves that push to the pull request (photo JSON, edits, removals, new albums and tags, Update Data, Instagram dates)
-mark their mutation with `meta: { pushes: true }`, and those whose changed files the page knows also give them as
-`meta.changes`: the file's path, its data before (from the cached Photos in Flight or Gallery read) and after (`null`
-when removed). The store keeps these changes, and `useCombinedData` returns the lists with them made at the pull
+mark their mutation with `meta: { pushes: true }`, and give the files they changed as `meta.changes`: the file's path,
+its data before and after (`null` when removed). Single-file saves take the data before from the cached Photos in
+Flight or Gallery read; Update Data and Instagram dates, which change many files at once, get each file's data before
+and after back from the backend (`changes` in their result). The store keeps these changes, and `useCombinedData` returns the lists with them made at the pull
 request's head (`data`: the entry equal to the old data replaced, or the new one added), next to the lists as GitHub has
 them (`synced`). Pages that read the pull request's lists, such as album pages, show a save at once that way; Photos in
 Flight compares its files with `synced`, so it marks the ones that haven't been committed to the lists yet. A **Commit**
-drops the changes it took in. Update Data and Instagram dates don't give their changes, so they only show once
-committed.
+drops the changes it took in.
 
 > **Frontend analogy:** it's an optimistic update over a client-side cache: like TanStack Query's `onMutate` writing the
 > new value into the cache before the server confirms it, except the "confirmation" is the **Commit** you press by hand.
@@ -349,7 +349,7 @@ Whether the files are synced is checked once, when the app starts (`GET /api/pho
 isn't a Commit, `synced` when it is, and `none` with no pull request open. After that it's known from the app's own
 saves and commits; nothing polls in between.
 
-A floating button at the top right of every page shows where things stand: **Synced**, **Not synced · N changes**,
+A floating button at the top right of every page shows where things stand: **Synced**, **Not synced · 2 images, 1 album** (each changed file counted once),
 **Committing…**, **Commit failed** or **Nothing in flight**. Clicking it opens a panel with the pull request, what isn't
 committed yet, the last commit's link, and **Commit**. Photos in Flight also says so in its **Synced** row, with the
 same button, and marks each file that isn't in the combined files with "Not synced to ALLPHOTOS.json yet". The lines

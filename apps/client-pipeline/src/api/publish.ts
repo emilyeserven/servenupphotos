@@ -1,5 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { CombinedFile } from "@/api/photos";
+import { type ScanChange, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
 
 /** A photo JSON file as the backend reads it for the Instagram calendar. */
@@ -60,6 +61,8 @@ export interface SocialDatesResult {
   newPullRequest: boolean;
   /** How many photo files changed. */
   files: number;
+  /** The photo files the commit changed, before and after. */
+  changes: ScanChange[];
 }
 
 /** Every photo JSON file with its social media publish date. */
@@ -73,7 +76,7 @@ export const socialCalendarQuery = queryOptions({
 /** Saves publish dates as one commit in the photo data pull request. */
 export const setSocialDatesMutation = mutationOptions({
   mutationKey: ["publish", "instagram", "save"],
-  meta: { pushes: true },
+  meta: { pushes: true, changes: (result) => photoChanges(result as SocialDatesResult) },
   mutationFn: (dates: SocialDate[]) =>
     requestJson<SocialDatesResult>("/api/publish/instagram", {
       method: "PUT",
