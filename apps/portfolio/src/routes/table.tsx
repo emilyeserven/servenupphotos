@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
+  columnVisibilityFeature,
   createColumnHelper,
   createSortedRowModel,
   FlexRender,
@@ -9,15 +10,19 @@ import {
   sortFn_text,
   tableFeatures,
   useTable,
+  type Column,
+  type ColumnVisibilityState,
   type Header,
   type SortingState,
 } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { ArrowDown, ArrowUp, ArrowUpDown, Table } from "lucide-react";
-import { useState } from "react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Columns3, Table } from "lucide-react";
+import { type ReactNode, useState } from "react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import {
   photos,
@@ -45,18 +50,51 @@ const SORTABLE = [
 
 type SortColumn = (typeof SORTABLE)[number];
 
+/** Every column but the title can be hidden; the title is what names each row. */
+const HIDEABLE = ["image", ...SORTABLE.filter((column) => column !== "title")] as const;
+
+type HideableColumn = (typeof HIDEABLE)[number];
+
+/** Each column's name, in its header and in the Columns menu. */
+const LABELS: Record<SortColumn | HideableColumn, string> = {
+  image: "Thumbnail",
+  title: "Title",
+  takenAt: "Taken",
+  location: "Place",
+  camera: "Camera",
+  aperture: "Aperture",
+  exposure: "Exposure",
+  iso: "ISO",
+  focalLength: "Focal length",
+};
+
 interface TableSearch {
   /** Left out for the default, newest first. */
   sort?: SortColumn;
   dir?: "asc" | "desc";
+  /** The columns hidden from the Columns menu; left out when every column is shown. */
+  hide?: HideableColumn[];
+}
+
+/** The sort the URL asks for, leaving it out when it names no column. */
+function parseSort(search: Record<string, unknown>): TableSearch {
+  const sort = SORTABLE.find((column) => column === search.sort);
+  if (!sort) return {};
+  return { sort, dir: search.dir === "asc" ? "asc" : "desc" };
+}
+
+/** The hidden columns the URL names, leaving out any it doesn't know. */
+function parseHide(search: Record<string, unknown>): TableSearch {
+  const named: unknown[] = Array.isArray(search.hide) ? search.hide : [];
+  const hide = HIDEABLE.filter((column) => named.includes(column));
+  return hide.length > 0 ? { hide } : {};
 }
 
 export const Route = createFileRoute("/table")({
-  validateSearch: (search: Record<string, unknown>): TableSearch => {
-    const sort = SORTABLE.find((column) => column === search.sort);
-    if (!sort) return {};
-    return { sort, dir: search.dir === "asc" ? "asc" : "desc" };
-  },
+  validateSearch: (search: Record<string, unknown>): TableSearch => ({
+    ...parseSort(search),
+    ...parseHide(search),
+  }),
   component: TableView,
 });
 
@@ -69,6 +107,7 @@ function exposureSeconds(exposure: string | null): number | undefined {
 }
 
 const features = tableFeatures({
+  columnVisibilityFeature,
   rowSortingFeature,
   sortedRowModel: createSortedRowModel(),
   sortFns: { basic: sortFn_basic, datetime: sortFn_datetime, text: sortFn_text },
@@ -79,36 +118,36 @@ const helper = createColumnHelper<typeof features, Photo>();
 // Missing values are undefined, rather than null, so they sort last whichever way the column goes.
 const columns = helper.columns([
   helper.display({ id: "image", header: "", enableSorting: false }),
-  helper.accessor("title", { header: "Title", sortFn: "text" }),
-  helper.accessor("takenAt", { header: "Taken", sortFn: "datetime", sortDescFirst: true }),
+  helper.accessor("title", { header: LABELS.title, sortFn: "text", enableHiding: false }),
+  helper.accessor("takenAt", { header: LABELS.takenAt, sortFn: "datetime", sortDescFirst: true }),
   helper.accessor((photo) => photo.location?.label, {
     id: "location",
-    header: "Place",
+    header: LABELS.location,
     sortFn: "text",
     sortUndefined: "last",
   }),
-  helper.accessor("camera", { header: "Camera", sortFn: "text" }),
+  helper.accessor("camera", { header: LABELS.camera, sortFn: "text" }),
   helper.accessor((photo) => photo.settings.aperture ?? undefined, {
     id: "aperture",
-    header: "Aperture",
+    header: LABELS.aperture,
     sortFn: "basic",
     sortUndefined: "last",
   }),
   helper.accessor((photo) => exposureSeconds(photo.settings.exposure), {
     id: "exposure",
-    header: "Exposure",
+    header: LABELS.exposure,
     sortFn: "basic",
     sortUndefined: "last",
   }),
   helper.accessor((photo) => photo.settings.iso ?? undefined, {
     id: "iso",
-    header: "ISO",
+    header: LABELS.iso,
     sortFn: "basic",
     sortUndefined: "last",
   }),
   helper.accessor((photo) => photo.settings.focalLength ?? undefined, {
     id: "focalLength",
-    header: "Focal length",
+    header: LABELS.focalLength,
     sortFn: "basic",
     sortUndefined: "last",
   }),
@@ -125,9 +164,20 @@ function sortingOf(search: TableSearch): SortingState {
 }
 
 /** The URL's search for a sort, leaving out the default, newest first. */
-function searchOf([sort = DEFAULT_SORT]: SortingState): TableSearch {
-  if (sort.id === DEFAULT_SORT.id && sort.desc) return {};
+function sortSearchOf([sort = DEFAULT_SORT]: SortingState): TableSearch {
+  if (sort.id === DEFAULT_SORT.id && sort.desc) return { sort: undefined, dir: undefined };
   return { sort: sort.id as SortColumn, dir: sort.desc ? "desc" : "asc" };
+}
+
+/** Which columns the URL hides, as the table keeps it. */
+function visibilityOf(search: TableSearch): ColumnVisibilityState {
+  return Object.fromEntries((search.hide ?? []).map((column) => [column, false]));
+}
+
+/** The URL's search for which columns are hidden, leaving it out when none are. */
+function hideSearchOf(visibility: ColumnVisibilityState): TableSearch {
+  const hide = HIDEABLE.filter((column) => visibility[column] === false);
+  return { hide: hide.length > 0 ? hide : undefined };
 }
 
 function TableView() {
@@ -135,21 +185,27 @@ function TableView() {
   const navigate = Route.useNavigate();
   const [shown, setShown] = useState<ImagePhoto | null>(null);
   const sorting = sortingOf(search);
+  const columnVisibility = visibilityOf(search);
 
   const table = useTable({
     features,
     columns,
     data: photos,
-    state: { sorting },
+    state: { sorting, columnVisibility },
     onSortingChange: (updater) => {
       const next = typeof updater === "function" ? updater(sorting) : updater;
-      navigate({ search: searchOf(next), replace: true });
+      navigate({ search: (prev) => ({ ...prev, ...sortSearchOf(next) }), replace: true });
+    },
+    onColumnVisibilityChange: (updater) => {
+      const next = typeof updater === "function" ? updater(columnVisibility) : updater;
+      navigate({ search: (prev) => ({ ...prev, ...hideSearchOf(next) }), replace: true });
     },
     enableSortingRemoval: false,
     enableMultiSort: false,
   });
 
   if (photos.length === 0) return <ViewPlaceholder to="/table" />;
+  const visibleIds = table.getVisibleLeafColumns().map((column) => column.id as ColumnId);
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-16 sm:px-6">
@@ -159,6 +215,7 @@ function TableView() {
           Table
         </h1>
         <p className="text-sm text-muted-foreground">{photos.length} photos</p>
+        <ColumnsMenu allColumns={table.getAllLeafColumns()} />
       </header>
       {/* Scrolls sideways on narrow screens rather than squeezing the columns. */}
       <div className="overflow-x-auto rounded-md border">
@@ -174,13 +231,53 @@ function TableView() {
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <PhotoRow key={row.id} photo={row.original} onOpen={setShown} />
+              <PhotoRow
+                key={row.id}
+                photo={row.original}
+                columnIds={visibleIds}
+                onOpen={setShown}
+              />
             ))}
           </tbody>
         </table>
       </div>
       <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
     </div>
+  );
+}
+
+type PhotoColumn = Column<typeof features, Photo, unknown>;
+
+/** A checkbox for each column that can be hidden, in the order they're shown. */
+function ColumnsMenu({ allColumns }: { allColumns: PhotoColumn[] }) {
+  const hideable = allColumns.filter((column) => column.getCanHide());
+  const hidden = hideable.filter((column) => !column.getIsVisible()).length;
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className="ml-auto self-center">
+          <Columns3 aria-hidden />
+          Columns
+          {hidden > 0 && <span className="text-muted-foreground">({hidden} hidden)</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="flex w-48 flex-col gap-1 p-2">
+        {hideable.map((column) => (
+          <label
+            key={column.id}
+            className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm select-none hover:bg-accent"
+          >
+            <input
+              type="checkbox"
+              checked={column.getIsVisible()}
+              onChange={column.getToggleVisibilityHandler()}
+              className="size-4 cursor-pointer accent-primary"
+            />
+            {LABELS[column.id as HideableColumn]}
+          </label>
+        ))}
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -232,40 +329,78 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
 /** A dash for a value the photo doesn't have. */
 const DASH = <span className="text-muted-foreground">—</span>;
 
-/** Each setting as a photographer writes it, such as "f/5.6", or null when its EXIF didn't say. */
-function settingCells(settings: CameraSettings): (string | null)[] {
-  return SETTING_FORMATS.map(([key, write]) => {
-    const value = settings[key];
-    return value === null ? null : write(value);
-  });
+type ColumnId = SortColumn | HideableColumn;
+
+/** One setting as a photographer writes it, such as "f/5.6", or a dash when its EXIF didn't say. */
+function settingCell(settings: CameraSettings, key: keyof CameraSettings): ReactNode {
+  const value = settings[key];
+  const write = SETTING_FORMATS.find(([name]) => name === key)?.[1];
+  return value === null || !write ? DASH : write(value);
 }
 
+const CELL = "px-3 py-2 whitespace-nowrap";
+const NUMERIC_CELL = "px-3 py-2 text-right tabular-nums whitespace-nowrap";
+
+/** How each column's cell looks, given the photo and how to open it in the lightbox, if it can be. */
+const CELLS: Record<
+  ColumnId,
+  { className: string; render: (photo: Photo, open?: () => void) => ReactNode }
+> = {
+  image: {
+    className: "px-3 py-2",
+    render: (photo, open) => (
+      <PhotoThumbnailButton
+        image={photo.image}
+        title={photo.title}
+        onOpen={open}
+        className="size-10"
+      />
+    ),
+  },
+  title: {
+    className: "max-w-56 px-3 py-2",
+    render: (photo, open) => <RowTitle title={photo.title} onOpen={open} />,
+  },
+  takenAt: {
+    className: CELL,
+    render: (photo) => (
+      <time dateTime={photo.takenAt.toISOString()}>{format(photo.takenAt, "MMM d, yyyy")}</time>
+    ),
+  },
+  location: {
+    className: CELL,
+    render: (photo) => (photo.location ? <PhotoLocation location={photo.location} /> : DASH),
+  },
+  camera: { className: CELL, render: (photo) => photo.camera },
+  aperture: { className: NUMERIC_CELL, render: (photo) => settingCell(photo.settings, "aperture") },
+  exposure: { className: NUMERIC_CELL, render: (photo) => settingCell(photo.settings, "exposure") },
+  iso: { className: NUMERIC_CELL, render: (photo) => settingCell(photo.settings, "iso") },
+  focalLength: {
+    className: NUMERIC_CELL,
+    render: (photo) => settingCell(photo.settings, "focalLength"),
+  },
+};
+
 /**
- * A photo's thumbnail, title, date, place, camera and settings. The thumbnail and the title open
- * the photo in the lightbox; photos without resized versions in R2 have nothing to open.
+ * A photo's cells for the columns shown. The thumbnail and the title open the photo in the
+ * lightbox; photos without resized versions in R2 have nothing to open.
  */
-function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto) => void }) {
+function PhotoRow({
+  photo,
+  columnIds,
+  onOpen,
+}: {
+  photo: Photo;
+  columnIds: ColumnId[];
+  onOpen: (photo: ImagePhoto) => void;
+}) {
   const { image } = photo;
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   return (
     <tr className="border-t">
-      <td className="px-3 py-2">
-        <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-10" />
-      </td>
-      <td className="max-w-56 px-3 py-2">
-        <RowTitle title={photo.title} onOpen={open} />
-      </td>
-      <td className="px-3 py-2 whitespace-nowrap">
-        <time dateTime={photo.takenAt.toISOString()}>{format(photo.takenAt, "MMM d, yyyy")}</time>
-      </td>
-      <td className="px-3 py-2 whitespace-nowrap">
-        {photo.location ? <PhotoLocation location={photo.location} /> : DASH}
-      </td>
-      <td className="px-3 py-2 whitespace-nowrap">{photo.camera}</td>
-      {settingCells(photo.settings).map((text, index) => (
-        // oxlint-disable-next-line react/no-array-index-key -- the settings are always in the same order.
-        <td key={index} className="px-3 py-2 text-right tabular-nums whitespace-nowrap">
-          {text ?? DASH}
+      {columnIds.map((id) => (
+        <td key={id} className={CELLS[id].className}>
+          {CELLS[id].render(photo, open)}
         </td>
       ))}
     </tr>
