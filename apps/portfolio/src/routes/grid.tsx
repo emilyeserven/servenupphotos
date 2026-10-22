@@ -104,7 +104,9 @@ function PhotoTile({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void })
       </button>
       <figcaption className="flex flex-col">
         <span className="truncate text-sm font-medium">{photo.title}</span>
-        {photo.comment && <PhotoComment comment={photo.comment} className="text-xs text-foreground/80" />}
+        {photo.comment && (
+          <PhotoComment comment={photo.comment} className="text-xs text-foreground/80" />
+        )}
         <span className="truncate text-xs text-muted-foreground">
           {format(photo.takenAt, "MMM d, yyyy")} · {photo.location}
         </span>
