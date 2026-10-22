@@ -65,12 +65,21 @@
       "xsmall": "https://cdn.servenupphotos.net/photos/55fe37f59656-dscf2926-xsmall.webp",
       "preview": "https://cdn.servenupphotos.net/photos/55fe37f59656-dscf2926-preview.webp",
       "thumbnail": "https://cdn.servenupphotos.net/photos/55fe37f59656-dscf2926-thumbnail.webp?crop=1625,0,4220",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/55fe37f59656-dscf2926-thumbnailpreview.webp?crop=1625,0,4220"
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/55fe37f59656-dscf2926-thumbnailpreview.webp?crop=1625,0,4220",
+      "thumbnailcrop": {
+        "x": 1625,
+        "y": 0,
+        "size": 4220,
+        "outputSize": 500
+      }
     },
     "isSocialMediaEligible": false,
     "websiteSpotlight": null,
     "socialMediaPublishDate": null,
     "albums": [],
-    "tags": []
+    "tags": [],
+    "placeName": "National Museum of Korea",
+    "customCity": "Seoul",
+    "customCountry": null
   }
 ]
