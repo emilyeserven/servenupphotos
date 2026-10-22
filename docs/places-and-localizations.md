@@ -68,7 +68,10 @@ Choosing a place on Edit Photo or the Photo page follows the places' parents:
   parent. It isn't offered when the first place already has a parent.
 - **City and country.** Choosing a place fills in the photo's custom city and country from the least specific chosen
   place (the one the other is in, or else the second), or else a place it's in, or else the other chosen place: the
-  first of them with a city or country. They can still be changed by hand afterwards.
+  first of them with a city or country. They can still be changed by hand afterwards: the **City** and **Country**
+  boxes are comboboxes of the cities and countries on the Places page's tabs (inferred ones marked “Inferred from 3
+  photos”), or a new one typed in. Choosing a city whose country is known fills in the custom country when it's
+  empty and the EXIF country is different. Clearing either goes back to the EXIF one.
 - **Localizing.** A chosen place with no localization yet gets a button beside it that opens a dialog for its
   romanization, local pronunciation and local script, saved like a row on the Localizations page. It isn't shown
   when the place's country, or else the photo's, is the United States (“United States”, “United States of America”,
