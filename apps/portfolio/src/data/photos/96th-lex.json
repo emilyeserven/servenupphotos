@@ -1,0 +1,49 @@
+{
+  "title": "96th & Lex",
+  "comment": null,
+  "file": "IMG_3769.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS",
+  "aperture": 5,
+  "exposure": "1/80",
+  "iso": 1000,
+  "focalLength": 60,
+  "gpsPosition": "40 deg 47' 9.20\" N, 73 deg 57' 3.30\" W",
+  "createDate": "2019:03:30 10:13:01",
+  "placeName": "upper-east-side",
+  "customCity": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "city": "New York City",
+  "width": 6000,
+  "height": 4000,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769.jpg",
+    "key": "photos/659f85209549-img-3769.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-thumbnail.webp?crop=2000,425,3575",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-thumbnailpreview.webp?crop=2000,425,3575",
+    "thumbnailcrop": {
+      "x": 2000,
+      "y": 425,
+      "size": 3575,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "upper-east-side"
+    }
+  ]
+}
