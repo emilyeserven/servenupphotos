@@ -260,7 +260,7 @@ function MapView() {
               offset={24}
               maxWidth="none"
               onClose={() => setCluster(null)}
-              className={CLUSTER_POPUP}
+              className={MAP_POPUP}
             >
               <ClusterGrid
                 cluster={cluster}
@@ -316,7 +316,7 @@ function PhotoPopup({ photo, onClose }: { photo: PlacedPhoto; onClose: () => voi
       anchor="bottom"
       offset={10}
       onClose={onClose}
-      className="text-neutral-900"
+      className={MAP_POPUP}
     >
       <p className="font-medium">{photo.title}</p>
       {photo.location && (
@@ -332,10 +332,12 @@ function PhotoPopup({ photo, onClose }: { photo: PlacedPhoto; onClose: () => voi
 }
 
 // MapLibre styles its popups white, so dark mode recolors the box and its tip under the anchor.
-// Its CSS isn't in a layer, so it beats Tailwind's utilities unless they're important.
-const CLUSTER_POPUP = cn(
+// Its CSS isn't in a layer, so it beats Tailwind's utilities unless they're important. An outline,
+// which MapLibre doesn't set, sets the box apart from the map.
+const MAP_POPUP = cn(
   "text-neutral-900 dark:text-neutral-100",
-  "dark:[&_.maplibregl-popup-content]:bg-neutral-900! dark:[&_.maplibregl-popup-content]:ring-1 dark:[&_.maplibregl-popup-content]:ring-white/15",
+  "[&_.maplibregl-popup-content]:outline [&_.maplibregl-popup-content]:outline-black/20 dark:[&_.maplibregl-popup-content]:outline-white/25",
+  "dark:[&_.maplibregl-popup-content]:bg-neutral-900!",
   "dark:[&_.maplibregl-popup-tip]:border-t-neutral-900!",
   "dark:[&_.maplibregl-popup-close-button:hover]:bg-white/10!",
 );
