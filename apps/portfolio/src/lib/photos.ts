@@ -8,7 +8,8 @@ export interface Photo {
   camera: string;
   settings: CameraSettings;
   takenAt: Date;
-  location: string;
+  /** Null when the photo has no city, country or GPS position, so there's nothing to say. */
+  location: string | null;
   /** Null when the photo has no GPS position, so it can't go on the map. */
   latitude: number | null;
   longitude: number | null;
@@ -179,6 +180,13 @@ function photoComment(photo: PhotoData): string | null {
   return photo.comment?.trim() || null;
 }
 
+/** The photo's city and country, or null when it has neither and no GPS position either. */
+function photoLocation({ city, country, gpsPosition }: PhotoData): string | null {
+  const place = [city, country].filter(Boolean).join(", ");
+  if (place) return place;
+  return gpsPosition ? "Unknown location" : null;
+}
+
 /** The local ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
 function fromPhotoData(data: PhotoData[]): Photo[] {
   return data.flatMap((photo, index) => {
@@ -191,7 +199,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       settings: cameraSettings(photo),
       camera: photo.camera ?? "Unknown camera",
       takenAt,
-      location: [photo.city, photo.country].filter(Boolean).join(", ") || "Unknown location",
+      location: photoLocation(photo),
       ...parseGpsPosition(photo.gpsPosition),
       image: parseImage(photo),
     };
