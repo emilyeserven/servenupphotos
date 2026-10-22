@@ -48,3 +48,9 @@ opens a modal listing the photos in the photo data pull request (marked "In the 
 search by title or file name; picking one opens it on Edit Photo. Once a photo is chosen, the card goes away and a
 **Choose another photo** button next to the page's title (and Edit Photo's) opens the same modal, with an **Upload**
 tab for a new photo from this computer.
+
+## Progress on the sync button
+
+Dropping photos in the Bulk Upload modal closes it, so you can carry on while they upload. While any photo in the queue
+isn't done yet, the top-right sync button starts with a ring of how many are, such as "2/6", and its panel lists the
+queue above the batch's counts, with the same rows and buttons and a link to the Status page.

@@ -96,10 +96,11 @@ function BulkUploadDialog({ open, onClose }: UploadDialogProps) {
           <DialogTitle>Bulk Upload</DialogTitle>
           <DialogDescription>
             Each photo gets its file name as its title and the middle square as its Square
-            Thumbnail; change either afterward with Edit. Closing this keeps the queue going.
+            Thumbnail; change either afterward with Edit. This closes once they're added, and the
+            sync button shows how the uploads are going.
           </DialogDescription>
         </DialogHeader>
-        <BulkUploadPanel />
+        <BulkUploadPanel onAdded={onClose} />
       </DialogContent>
     </Dialog>
   );

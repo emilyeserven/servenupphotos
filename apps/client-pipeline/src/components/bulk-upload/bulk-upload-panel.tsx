@@ -10,11 +10,11 @@ import type { BulkPhoto, BulkStep } from "@/lib/bulk-upload";
 import { useBulkUploadStore } from "@/stores/bulk-upload";
 
 /** Bulk Upload's drop zone and queue, as its page and the sidebar's Bulk Upload modal show them. */
-export function BulkUploadPanel() {
+export function BulkUploadPanel({ onAdded }: { onAdded?: () => void }) {
   const settings = useQuery(settingsQuery);
   return (
     <QueryResult query={settings} pendingLabel="Loading settings…">
-      {(data) => <BulkUpload settings={data} />}
+      {(data) => <BulkUpload settings={data} onAdded={onAdded} />}
     </QueryResult>
   );
 }
@@ -27,7 +27,13 @@ function missingAll(settings: SettingsResponse): string[] {
   ];
 }
 
-function BulkUpload({ settings }: { settings: SettingsResponse }) {
+interface BulkUploadProps {
+  settings: SettingsResponse;
+  /** Called once photos are added to the queue, as when the modal closes to let them upload. */
+  onAdded?: () => void;
+}
+
+function BulkUpload({ settings, onAdded }: BulkUploadProps) {
   const queryClient = useQueryClient();
   const add = useBulkUploadStore((state) => state.add);
   const missing = missingAll(settings);
@@ -43,7 +49,13 @@ function BulkUpload({ settings }: { settings: SettingsResponse }) {
           first.
         </p>
       )}
-      <DropZone onFiles={(files) => add(files, queryClient)} disabled={missing.length > 0} />
+      <DropZone
+        onFiles={(files) => {
+          add(files, queryClient);
+          onAdded?.();
+        }}
+        disabled={missing.length > 0}
+      />
       <BulkQueue />
     </div>
   );
