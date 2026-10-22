@@ -11,7 +11,7 @@
   "gpsPosition": null,
   "createDate": "2018:10:13 15:56:08",
   "placeName": null,
-  "customCity": null,
+  "customCity": "New York City",
   "customCountry": null,
   "country": null,
   "city": null,
@@ -26,12 +26,12 @@
     "small": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-thumbnail.webp?crop=878,347,3021",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-thumbnailpreview.webp?crop=878,347,3021",
     "thumbnailcrop": {
-      "x": 1249,
-      "y": 0,
-      "size": 3501,
+      "x": 878,
+      "y": 347,
+      "size": 3021,
       "outputSize": 500
     }
   },
