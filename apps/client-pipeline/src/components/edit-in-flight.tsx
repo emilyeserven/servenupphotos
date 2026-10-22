@@ -2,6 +2,7 @@ import { type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tan
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeftIcon, CheckIcon, RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
+import { type PhotoGroups, sameGroups, savedGroups, withGroups } from "@/api/organize";
 import {
   type InFlightFileRead,
   type InFlightImages,
@@ -23,6 +24,7 @@ import {
   thumbnailUrlWithCrop,
 } from "@/api/versions";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
+import { PhotoGroupsCard } from "@/components/group-picker";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import {
   fileStem,
@@ -266,6 +268,11 @@ function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
   return DETAIL_FIELDS.some((key) => next[key] !== (data[key] ?? null));
 }
 
+/** Whether the details, albums or tags differ from the ones saved in data. */
+function fieldsChanged(data: PhotoJson, details: PhotoDetails, groups: PhotoGroups): boolean {
+  return detailsChanged(data, details) || !sameGroups(savedGroups(data), groups);
+}
+
 /**
  * The file name, without .json, that a new title moves the file to, or undefined when it keeps its
  * name: the title is unchanged, the new name is the same, or the file is already in the portfolio.
@@ -292,11 +299,12 @@ function photoFile(saved: PhotoJson): string {
 function saveRequest(
   saved: PhotoJson,
   details: PhotoDetails,
+  groups: PhotoGroups,
   crop: Crop | null,
   baseline: Crop | null,
   remakeSquares: boolean,
 ): SaveRequest {
-  const data = withDetails(saved, details);
+  const data = withGroups(withDetails(saved, details), groups);
   return remakeSquares ? { crop, data } : { crop: null, data: withCropField(data, baseline) };
 }
 
@@ -305,17 +313,18 @@ function nextJson({ crop, data }: SaveRequest, imageUrl: string): PhotoJson {
   return crop ? withSquares(data, squareUrls(data, imageUrl), crop) : data;
 }
 
-/** The crop, title, place name and comment being edited, against the last ones saved, and the JSON saving them would write. */
+/** The crop, title, place name, comment, albums and tags being edited, against the last ones saved, and the JSON saving them would write. */
 function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
   const [crop, setCrop] = useState<Crop | null>(savedCrop);
   // The editor reports the middle first when no crop was saved, which then counts as saved.
   const [baseline, setBaseline] = useState<Crop | null>(savedCrop);
   const [savedData, setSavedData] = useState(data);
   const [details, setDetails] = useState(() => savedDetails(data));
+  const [groups, setGroups] = useState(() => savedGroups(data));
   const remakeSquares = cropChanged(crop, baseline, savedData);
-  const changed = remakeSquares || detailsChanged(savedData, details);
+  const changed = remakeSquares || fieldsChanged(savedData, details, groups);
   const request = {
-    ...saveRequest(savedData, details, crop, baseline, remakeSquares),
+    ...saveRequest(savedData, details, groups, crop, baseline, remakeSquares),
     name: newFileName(file, savedData, details.title),
   };
   return {
@@ -324,6 +333,8 @@ function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
     savedData,
     details,
     setDetails,
+    groups,
+    setGroups,
     /** What saving would do, when there's anything to save. */
     request: changed ? request : null,
     /** The JSON saving would write, when there's anything to save. */
@@ -372,6 +383,12 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           fallbackTitle={fileStem(photoFile(editable.data) || fileName(editable.file.path))}
           exifPlace={savedExifPlace(edit.savedData)}
           description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
+          disabled={pending}
+        />
+        <PhotoGroupsCard
+          value={edit.groups}
+          onChange={edit.setGroups}
+          description="Saving changes writes them over the ones in the JSON."
           disabled={pending}
         />
         <JsonPreview file={editable.file} edit={edit} />

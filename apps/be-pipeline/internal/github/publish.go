@@ -33,6 +33,10 @@ type Photo struct {
 	// File is the photo's original file name.
 	File      string         `json:"file"`
 	Sanitized exif.Sanitized `json:"sanitized"`
+	// Albums and Tags are the IDs of the albums and tags to save the photo
+	// in; none when they're left out.
+	Albums []string `json:"albums,omitempty"`
+	Tags   []string `json:"tags,omitempty"`
 }
 
 // photoJSON is the content of a published file. The title and comment come
@@ -42,8 +46,7 @@ type photoJSON struct {
 	Comment *string `json:"comment"`
 	File    string  `json:"file"`
 	exif.Sanitized
-	// Albums and Tags are the IDs of the albums and tags the photo is in,
-	// empty when it is saved.
+	// Albums and Tags are the IDs of the albums and tags the photo is in.
 	Albums []string `json:"albums"`
 	Tags   []string `json:"tags"`
 }
@@ -121,7 +124,9 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	if perr != nil {
 		return PublishResult{}, perr
 	}
-	content, err := json.MarshalIndent(newPhotoJSON(photo.File, photo.Sanitized), "", "  ")
+	data := newPhotoJSON(photo.File, photo.Sanitized)
+	data.Albums, data.Tags = appendMissing(data.Albums, photo.Albums), appendMissing(data.Tags, photo.Tags)
+	content, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
 	}

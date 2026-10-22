@@ -8,6 +8,9 @@ interface PhotoData {
   /** The photo's original file name. */
   file: string;
   sanitized: SanitizedExif;
+  /** The IDs of the albums and tags to save the photo in. */
+  albums: string[];
+  tags: string[];
 }
 
 export interface PublishResult {

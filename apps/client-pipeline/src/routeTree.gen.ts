@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AlbumsRouteImport } from './routes/albums'
 import { Route as BucketRouteImport } from './routes/bucket'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
@@ -19,17 +18,15 @@ import { Route as InstagramRouteImport } from './routes/instagram'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
-import { Route as TagsRouteImport } from './routes/tags'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
+import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
+import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
+import { Route as TagsIndexRouteImport } from './routes/tags.index'
+import { Route as TagsIdRouteImport } from './routes/tags.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AlbumsRoute = AlbumsRouteImport.update({
-  id: '/albums',
-  path: '/albums',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BucketRoute = BucketRouteImport.update({
@@ -72,20 +69,34 @@ const SizesRoute = SizesRouteImport.update({
   path: '/sizes',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TagsRoute = TagsRouteImport.update({
-  id: '/tags',
-  path: '/tags',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const UpdateDataRoute = UpdateDataRouteImport.update({
   id: '/update-data',
   path: '/update-data',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AlbumsIndexRoute = AlbumsIndexRouteImport.update({
+  id: '/albums/',
+  path: '/albums/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlbumsIdRoute = AlbumsIdRouteImport.update({
+  id: '/albums/$id',
+  path: '/albums/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagsIndexRoute = TagsIndexRouteImport.update({
+  id: '/tags/',
+  path: '/tags/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagsIdRoute = TagsIdRouteImport.update({
+  id: '/tags/$id',
+  path: '/tags/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/albums': typeof AlbumsRoute
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
@@ -94,12 +105,14 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/tags': typeof TagsRoute
   '/update-data': typeof UpdateDataRoute
+  '/albums/$id': typeof AlbumsIdRoute
+  '/tags/$id': typeof TagsIdRoute
+  '/albums/': typeof AlbumsIndexRoute
+  '/tags/': typeof TagsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/albums': typeof AlbumsRoute
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
@@ -108,13 +121,15 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/tags': typeof TagsRoute
   '/update-data': typeof UpdateDataRoute
+  '/albums/$id': typeof AlbumsIdRoute
+  '/tags/$id': typeof TagsIdRoute
+  '/albums': typeof AlbumsIndexRoute
+  '/tags': typeof TagsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/albums': typeof AlbumsRoute
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
@@ -123,14 +138,16 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/tags': typeof TagsRoute
   '/update-data': typeof UpdateDataRoute
+  '/albums/$id': typeof AlbumsIdRoute
+  '/tags/$id': typeof TagsIdRoute
+  '/albums/': typeof AlbumsIndexRoute
+  '/tags/': typeof TagsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/albums'
     | '/bucket'
     | '/exif'
     | '/gallery'
@@ -139,12 +156,14 @@ export interface FileRouteTypes {
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
-    | '/tags'
     | '/update-data'
+    | '/albums/$id'
+    | '/tags/$id'
+    | '/albums/'
+    | '/tags/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/albums'
     | '/bucket'
     | '/exif'
     | '/gallery'
@@ -153,12 +172,14 @@ export interface FileRouteTypes {
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
-    | '/tags'
     | '/update-data'
+    | '/albums/$id'
+    | '/tags/$id'
+    | '/albums'
+    | '/tags'
   id:
     | '__root__'
     | '/'
-    | '/albums'
     | '/bucket'
     | '/exif'
     | '/gallery'
@@ -167,13 +188,15 @@ export interface FileRouteTypes {
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
-    | '/tags'
     | '/update-data'
+    | '/albums/$id'
+    | '/tags/$id'
+    | '/albums/'
+    | '/tags/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AlbumsRoute: typeof AlbumsRoute
   BucketRoute: typeof BucketRoute
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
@@ -182,8 +205,11 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
-  TagsRoute: typeof TagsRoute
   UpdateDataRoute: typeof UpdateDataRoute
+  AlbumsIdRoute: typeof AlbumsIdRoute
+  TagsIdRoute: typeof TagsIdRoute
+  AlbumsIndexRoute: typeof AlbumsIndexRoute
+  TagsIndexRoute: typeof TagsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -193,13 +219,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/albums': {
-      id: '/albums'
-      path: '/albums'
-      fullPath: '/albums'
-      preLoaderRoute: typeof AlbumsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bucket': {
@@ -258,13 +277,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SizesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tags': {
-      id: '/tags'
-      path: '/tags'
-      fullPath: '/tags'
-      preLoaderRoute: typeof TagsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/update-data': {
       id: '/update-data'
       path: '/update-data'
@@ -272,12 +284,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpdateDataRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/albums/': {
+      id: '/albums/'
+      path: '/albums'
+      fullPath: '/albums/'
+      preLoaderRoute: typeof AlbumsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/albums/$id': {
+      id: '/albums/$id'
+      path: '/albums/$id'
+      fullPath: '/albums/$id'
+      preLoaderRoute: typeof AlbumsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags/': {
+      id: '/tags/'
+      path: '/tags'
+      fullPath: '/tags/'
+      preLoaderRoute: typeof TagsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tags/$id': {
+      id: '/tags/$id'
+      path: '/tags/$id'
+      fullPath: '/tags/$id'
+      preLoaderRoute: typeof TagsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AlbumsRoute: AlbumsRoute,
   BucketRoute: BucketRoute,
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
@@ -286,8 +325,11 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
-  TagsRoute: TagsRoute,
   UpdateDataRoute: UpdateDataRoute,
+  AlbumsIdRoute: AlbumsIdRoute,
+  TagsIdRoute: TagsIdRoute,
+  AlbumsIndexRoute: AlbumsIndexRoute,
+  TagsIndexRoute: TagsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

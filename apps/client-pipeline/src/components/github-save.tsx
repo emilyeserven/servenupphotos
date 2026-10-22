@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import type { SanitizedExif } from "@/api/exif";
+import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import { type PublishResult, publishPhotoMutation } from "@/api/photos";
 import { type SettingsResponse, dataFolder, settingsQuery } from "@/api/settings";
 import { QueryResult } from "@/components/query-result";
@@ -33,12 +34,14 @@ function jsonPath(folder: string, name: string): string {
 interface GitHubSaveCardProps {
   file: string;
   sanitized: SanitizedExif;
+  /** The albums and tags to save the photo in; none unless given. */
+  groups?: PhotoGroups;
   /** Called once the JSON file is saved. */
   onSaved?: () => void;
 }
 
 /** Saves a photo's sanitized EXIF as JSON in a pull request on the GitHub repository from Settings. */
-export function GitHubSaveCard({ file, sanitized, onSaved }: GitHubSaveCardProps) {
+export function GitHubSaveCard({ file, sanitized, groups, onSaved }: GitHubSaveCardProps) {
   const settings = useQuery(settingsQuery);
 
   return (
@@ -58,6 +61,7 @@ export function GitHubSaveCard({ file, sanitized, onSaved }: GitHubSaveCardProps
                 github={data.github}
                 file={file}
                 sanitized={sanitized}
+                groups={groups}
                 onSaved={onSaved}
               />
             ) : (
@@ -80,6 +84,7 @@ function GitHubSaveForm({
   github,
   file,
   sanitized,
+  groups = NO_GROUPS,
   onSaved,
 }: GitHubSaveCardProps & { github: GitHubSettings }) {
   const publish = useMutation({ ...publishPhotoMutation, onSuccess: () => onSaved?.() });
@@ -89,7 +94,9 @@ function GitHubSaveForm({
     defaultValues: { name: suggestedName },
     validators: { onSubmit: ({ value }) => validateName(value.name) },
     onSubmit: async ({ value }) => {
-      await publish.mutateAsync({ name: value.name.trim(), file, sanitized }).catch(() => {});
+      await publish
+        .mutateAsync({ name: value.name.trim(), file, sanitized, ...groups })
+        .catch(() => {});
     },
   });
 
