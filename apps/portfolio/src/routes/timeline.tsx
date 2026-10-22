@@ -101,7 +101,12 @@ function TimelineView() {
         onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
       />
       <PhotoMonths photos={inRange} filtered={hasFilters(filters)} onOpen={setShown} />
-      <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
+      <PhotoLightbox
+        photo={shown}
+        photos={inRange}
+        onShow={setShown}
+        onClose={() => setShown(null)}
+      />
     </div>
   );
 }
