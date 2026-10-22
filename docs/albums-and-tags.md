@@ -19,5 +19,5 @@ parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }
 
 Every album and tag picker, here, on the Photo page and in the Gallery, is a combobox: type to filter, arrow keys and
 Enter to choose, and each choice shows as a chip with a button to remove it (a chip is red when its ID isn't an album
-or tag on GitHub). The Photo page has an **Albums and tags** card for a new photo, saved with **Save to GitHub**, and
+or tag on GitHub). The Photo page has an **Albums and tags** card for a new photo, saved with **Add to Batch**, and
 for a photo being edited, saved with **Save changes**.

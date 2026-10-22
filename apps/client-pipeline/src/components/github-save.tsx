@@ -47,7 +47,7 @@ export function GitHubSaveCard({ file, sanitized, groups, onSaved }: GitHubSaveC
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Save to GitHub</CardTitle>
+        <CardTitle>Add to Batch</CardTitle>
         <CardDescription>
           Adds the sanitized EXIF as one JSON file to the open photo data pull request, or opens a
           new one.
@@ -158,7 +158,7 @@ function GitHubSaveForm({
         {(canSubmit) => (
           <Button type="submit" className="self-start" disabled={!canSubmit || publish.isPending}>
             {publish.isPending && <Spinner />}
-            {publish.isPending ? "Saving…" : "Save to GitHub"}
+            {publish.isPending ? "Adding…" : "Add to Batch"}
           </Button>
         )}
       </form.Subscribe>

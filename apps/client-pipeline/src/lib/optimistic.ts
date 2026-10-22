@@ -92,18 +92,87 @@ function plural(count: number, one: string): string {
   return `${count} ${one}${count === 1 ? "" : "s"}`;
 }
 
+/** How a file changed since the last commit, from its first and last change. */
+type NetChange = "added" | "modified" | "deleted" | undefined;
+
 /**
- * The files changed since the last commit, counted once each, as "2 images, 1 album", with saves
- * whose files aren't known as "other saves"; "" with none.
+ * A file whose first change has no `before` was added since the last commit; one whose last change
+ * removed it was deleted. Added and then deleted is no change at all.
  */
-export function pendingText(changes: FileChange[], unknownChanges: number): string {
-  const paths = { photos: new Set<string>(), albums: new Set<string>(), tags: new Set<string>() };
-  for (const change of changes) paths[change.kind].add(change.path);
-  const parts = [
-    plural(paths.photos.size, "image"),
-    plural(paths.albums.size, "album"),
-    plural(paths.tags.size, "tag"),
-    plural(unknownChanges, "other save"),
+function netChange(first: FileChange, last: FileChange): NetChange {
+  const added = !("before" in first);
+  if (last.after === null) return added ? undefined : "deleted";
+  return added ? "added" : "modified";
+}
+
+/** Each changed file's first and last change, by kind and path. */
+function firstAndLast(changes: FileChange[]): Map<string, [FileChange, FileChange]> {
+  const byPath = new Map<string, [FileChange, FileChange]>();
+  for (const change of changes) {
+    const key = `${change.kind}:${change.path}`;
+    byPath.set(key, [byPath.get(key)?.[0] ?? change, change]);
+  }
+  return byPath;
+}
+
+/** What changed since the last commit, each file counted once. */
+export interface PendingSummary {
+  /** Images by how they changed. */
+  images: Record<Exclude<NetChange, undefined>, number>;
+  albums: number;
+  tags: number;
+  /** Saves whose files aren't known. */
+  other: number;
+}
+
+/** The changes since the last commit, counted once per file. */
+export function summarizeChanges(changes: FileChange[], unknownChanges: number): PendingSummary {
+  const summary: PendingSummary = {
+    images: { added: 0, modified: 0, deleted: 0 },
+    albums: 0,
+    tags: 0,
+    other: unknownChanges,
+  };
+  for (const [first, last] of firstAndLast(changes).values()) {
+    const net = netChange(first, last);
+    if (!net) continue;
+    if (first.kind === "photos") summary.images[net]++;
+    else summary[first.kind]++;
+  }
+  return summary;
+}
+
+/** How many images changed in all, added, modified and deleted together. */
+function imageCount(summary: PendingSummary): number {
+  const { added, modified, deleted } = summary.images;
+  return added + modified + deleted;
+}
+
+/** The counts that aren't 0, each as format says it, joined with commas. */
+function nonZero(parts: [number, string][], format = plural): string {
+  return parts
+    .filter(([count]) => count > 0)
+    .map(([count, word]) => format(count, word))
+    .join(", ");
+}
+
+/** The summary as the sync button says it, such as "3 images, 1 album"; "" with nothing known. */
+export function pendingText(summary: PendingSummary): string {
+  return nonZero([
+    [imageCount(summary), "image"],
+    [summary.albums, "album"],
+    [summary.tags, "tag"],
+    [summary.other, "other save"],
+  ]);
+}
+
+/** How the images changed, such as "1 added, 2 modified"; "" with none. */
+export function imageBreakdown(summary: PendingSummary): string {
+  const { added, modified, deleted } = summary.images;
+  const parts: [number, string][] = [
+    [added, "added"],
+    [modified, "modified"],
+    [deleted, "deleted"],
   ];
-  return parts.filter((part) => !part.startsWith("0 ")).join(", ");
+  return nonZero(parts, (count, word) => `${count} ${word}`);
 }

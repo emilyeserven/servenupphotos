@@ -48,7 +48,7 @@ Whether the files are synced is checked once, when the app starts (`GET /api/pho
 isn't a Commit, `synced` when it is, and `none` with no pull request open. After that it's known from the app's own
 saves and commits; nothing polls in between.
 
-A floating button at the top right of every page shows where things stand: **Synced**, **Not synced · 2 images, 1 album** (each changed file counted once),
+A floating button at the top right of every page shows where things stand: **Synced**, **Not synced · 3 images** (every image added, modified or deleted since the last commit, each counted once, with albums and tags after them; the panel breaks the images down, such as "1 added, 1 modified, 1 deleted", and a file added and then deleted again doesn't count),
 **Committing…**, **Commit failed** or **Nothing in flight**. Clicking it opens a panel with the pull request, what isn't
 committed yet, the last commit's link, and **Commit**. Photos in Flight also says so in its **Synced** row, with the
 same button, and marks each file that isn't in the combined files with "Not synced to ALLPHOTOS.json yet". The lines

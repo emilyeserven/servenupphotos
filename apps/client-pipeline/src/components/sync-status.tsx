@@ -200,8 +200,9 @@ function SyncLine({ sync }: { sync: Sync }) {
 
 /** What hasn't been committed yet, as SyncLine says it. */
 function unsyncedWhat(sync: Sync): string {
+  const how = sync.imagesChanged ? ` (images: ${sync.imagesChanged})` : "";
   return sync.pending
-    ? `${sync.pending} changed since the last commit`
+    ? `${sync.pending} changed since the last commit${how}`
     : "The pull request changed since the last commit";
 }
 
