@@ -375,6 +375,8 @@ function PhotoMarker({ photo, onOpen }: { photo: PlacedPhoto; onOpen: () => void
         "block cursor-zoom-in overflow-hidden rounded-md bg-muted",
         photo.image ? "size-11" : "size-3.5 cursor-pointer rounded-full bg-sky-300",
         MARKER_RING,
+        // A softer border for a photo placed at one of its places, as that spot is only near it.
+        photo.approximatePosition && "ring-white/40",
       )}
     >
       {photo.image && <PhotoThumbnail image={photo.image} />}
@@ -387,26 +389,38 @@ const CLUSTER_PREVIEWS = 3;
 /** How long each of them shows, in milliseconds. */
 const CLUSTER_PREVIEW_MS = 3000;
 
-/** The thumbnails of a cluster's newest photos with images, newest first. */
-function useClusterPreviews(clusterId: number): string[] {
+/** What a cluster's marker shows of the photos it covers. */
+interface ClusterLook {
+  /** The thumbnails of its newest photos with images, newest first. */
+  previews: string[];
+  /** Whether every photo in it is placed at one of its places, rather than its own GPS position. */
+  approximate: boolean;
+}
+
+/** The newest thumbnails of a cluster, newest first, and whether all its photos are approximate. */
+function clusterLook(clusterPhotos: PlacedPhoto[]): ClusterLook {
+  const previews = clusterPhotos
+    .flatMap(({ image }) => (image ? [image.thumbnail || image.small] : []))
+    .toReversed()
+    .slice(0, CLUSTER_PREVIEWS);
+  return { previews, approximate: clusterPhotos.every((photo) => photo.approximatePosition) };
+}
+
+/** How a cluster's marker looks, once its photos have been read from the map. */
+function useClusterLook(clusterId: number): ClusterLook {
   const { current: map } = useMap();
-  const [previews, setPreviews] = useState<string[]>([]);
+  const [look, setLook] = useState<ClusterLook>({ previews: [], approximate: false });
   useEffect(() => {
     if (!map) return;
     let current = true;
     void photosInCluster(map, clusterId).then((clusterPhotos) => {
-      if (!current) return;
-      const newest = clusterPhotos
-        .flatMap(({ image }) => (image ? [image.thumbnail || image.small] : []))
-        .toReversed()
-        .slice(0, CLUSTER_PREVIEWS);
-      setPreviews(newest);
+      if (current) setLook(clusterLook(clusterPhotos));
     });
     return () => {
       current = false;
     };
   }, [map, clusterId]);
-  return previews;
+  return look;
 }
 
 /** Which of `count` images to show, moving on to the next one every CLUSTER_PREVIEW_MS. */
@@ -434,7 +448,7 @@ function ClusterMarker({
   count: number;
   onOpen: () => void;
 }) {
-  const previews = useClusterPreviews(clusterId);
+  const { previews, approximate } = useClusterLook(clusterId);
   const turn = useTurn(previews.length);
   return (
     <button
@@ -448,6 +462,7 @@ function ClusterMarker({
         "relative flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-sky-300 text-sm font-semibold text-blue-950",
         previews.length > 0 && "bg-neutral-900 text-white",
         MARKER_RING,
+        approximate && "ring-white/40",
       )}
     >
       {previews.map((src, index) => (

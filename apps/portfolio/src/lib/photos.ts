@@ -26,6 +26,8 @@ export interface Photo {
    */
   latitude: number | null;
   longitude: number | null;
+  /** Whether the map puts the photo at one of its places' GPS positions, as its EXIF has none. */
+  approximatePosition: boolean;
   /** The photo's resized versions in R2; null for photos not uploaded yet. */
   image: PhotoImage | null;
 }
@@ -197,11 +199,14 @@ function ownPosition({ latitude, longitude }: Place): Position | undefined {
  * Where the photo goes on the map: its EXIF GPS position, or else the first of its places (or a
  * place it's in) with a GPS position set on the Places page.
  */
-function photoPosition(photo: PhotoData): Position {
+function photoPosition(photo: PhotoData): Position & { approximatePosition: boolean } {
   const exif = parseGpsPosition(photo.gpsPosition);
-  if (exif.latitude !== null) return exif;
+  if (exif.latitude !== null) return { ...exif, approximatePosition: false };
   const found = (photo.places ?? []).map(({ id }) => placePosition(id));
-  return found.find((position) => position.latitude !== null) ?? NO_POSITION;
+  const position = found.find(({ latitude }) => latitude !== null);
+  return position
+    ? { ...position, approximatePosition: true }
+    : { ...NO_POSITION, approximatePosition: false };
 }
 
 /** The resized versions' URLs with their widths: a version keeps the photo's size when it's already smaller. */

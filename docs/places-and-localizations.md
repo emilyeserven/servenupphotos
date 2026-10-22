@@ -51,7 +51,8 @@ A place can have a **GPS position**, written on the Places page as `latitude, lo
 `37.5796, 126.977`, which is what right-clicking a spot in Google Maps copies). It's saved as `latitude` and
 `longitude` numbers in the place file, left out when not set; saving refuses only one of them, or one off the globe.
 On the portfolio, a photo whose EXIF has no GPS position goes on the map at its first place's position, or else a
-place that place is in, or else its next place's. The hover text still shows only an EXIF position.
+place that place is in, or else its next place's. The hover text still shows only an EXIF position. Its map marker gets a
+softer border, as the spot is only near where the photo was taken.
 
 The list's GPS column shows a filled crosshair for a place with its own GPS position, a plain one for a place that uses
 the position of a place it's in (hover for which), and an amber (!) warning on a place with neither when photos
