@@ -1,13 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { ChevronLeftIcon, ChevronRightIcon, ImageIcon, PlusIcon } from "lucide-react";
-import { type DragEvent, type ReactNode, useCallback, useMemo, useState } from "react";
-import {
-  type SocialCalendar,
-  type SocialCalendarRead,
-  type SocialPhoto,
-  socialCalendarQuery,
-} from "@/api/publish";
-import { QueryResult } from "@/components/query-result";
+import { type DragEvent, type ReactNode, useMemo, useState } from "react";
+import type { SocialCalendar, SocialPhoto } from "@/api/publish";
+import { PhotoFiles } from "@/components/photo-files";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { calendarDays, isoDate, parseIsoDate } from "@/lib/calendar";
-import { withBaseAllPhotos } from "@/lib/combined";
 import {
   type Unsaved,
   PUBLISH_DATE,
@@ -32,7 +25,6 @@ import {
   unsavedFromEdits,
 } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
-import { useCombinedData } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /** How many weeks the calendar shows, this week first. */
@@ -65,20 +57,7 @@ function ExternalLink({ href, children }: { href: string; children: ReactNode })
 
 /** Schedules photos to post to Instagram, one a day, on a calendar of the coming weeks. */
 export function InstagramCalendar() {
-  // ALLPHOTOS.json on the base branch, kept by the store, tells photos in flight from published ones.
-  const combined = useCombinedData();
-  const { data: lists, error } = combined;
-  const select = useCallback(
-    (read: SocialCalendarRead) => withBaseAllPhotos(read, { data: lists, error }),
-    [lists, error],
-  );
-  const calendar = useQuery({ ...socialCalendarQuery, select });
-  if (combined.isPending) return <p>Reading ALLPHOTOS.json…</p>;
-  return (
-    <QueryResult query={calendar} pendingLabel="Reading the photo JSON…">
-      {(data) => <Schedule calendar={data} />}
-    </QueryResult>
-  );
+  return <PhotoFiles>{(data) => <Schedule calendar={data} />}</PhotoFiles>;
 }
 
 /**

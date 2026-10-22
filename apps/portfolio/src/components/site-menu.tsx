@@ -31,9 +31,6 @@ const scriptOptions: Option<ScriptDisplay>[] = [
   { value: "native", label: "Native" },
 ];
 
-// Views linked in the menu but not ready to visit yet.
-const disabledViews = new Set<string>(["/spotlight", "/color"]);
-
 export function SiteMenu() {
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -54,13 +51,13 @@ export function SiteMenu() {
       <PopoverContent align="end" className="w-[min(18rem,calc(100vw-2rem))] p-2">
         <nav aria-label="Portfolio views">
           <ul className="grid grid-cols-3 gap-1">
-            {portfolioViews.map(({ to, label, icon: Icon }) => (
+            {portfolioViews.map(({ to, label, icon: Icon, enabled }) => (
               <li key={to}>
                 <Link
                   to={to}
                   // Only the filters go along: the other settings belong to the view they're on.
                   search={(prev: Record<string, unknown>) => parseFilters(prev)}
-                  disabled={disabledViews.has(to)}
+                  disabled={!enabled}
                   onClick={() => setOpen(false)}
                   className="flex flex-col items-center gap-1.5 rounded-md px-1 py-3 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40"
                   activeProps={{

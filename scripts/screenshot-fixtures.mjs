@@ -239,10 +239,17 @@ const commit = (branch = PULL_REQUEST.branch) => ({
   newPullRequest: false,
 });
 
-/** A photo as the Instagram calendar reads it: the first is scheduled, every other one eligible. */
+/** The spotlight zones of the photo at index i: every fourth one is on the homepage. */
+const spotlightZonesOf = (i) => (i % 4 === 1 ? ["homepage"] : []);
+
+/**
+ * A photo as the Instagram calendar and Site Spotlight read it: the first is scheduled, every other
+ * one eligible.
+ */
 function socialPhoto({ path: filePath, data }, i) {
   const images = imagesOf(data);
   const socialMediaPublishDate = i === 0 ? "2026-10-23" : null;
+  const spotlightZones = spotlightZonesOf(i);
   return {
     path: filePath,
     fileUrl: fileUrl(filePath, PULL_REQUEST.branch),
@@ -253,7 +260,7 @@ function socialPhoto({ path: filePath, data }, i) {
     image: images.thumbnail ?? images.xsmall ?? null,
     isSocialMediaEligible: i % 2 === 0,
     socialMediaPublishDate,
-    data: { ...data, socialMediaPublishDate },
+    data: { ...data, socialMediaPublishDate, spotlightZones },
   };
 }
 
