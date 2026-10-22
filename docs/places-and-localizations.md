@@ -16,19 +16,30 @@ ignoring case.
 A place can't be in itself or in a place that's in it, and its parent must be a place. `city` and `country` are
 where it is, or `""`; older place files don't have these three, and read as empty.
 
-The Places page adds a place, or changes one's name, description, parent (**In**, which lists only places that aren't
-in it), city and country (its ID stays), and lists every place with its city, its local script and how many photos
-list it. Each place is listed under the place it's in, indented, and a place with places in it has an arrow to collapse
-or expand them; **Expand all** and **Collapse all** sit above the table. A place whose parent is missing is listed at
-the top.
+The Places page is a list on the left and an edit panel on the right (on a phone, the panel comes first). The list is
+one tree of every country, the cities in it, and the places in each city, each with an icon on the left: a globe for a
+country, a building for a city and a pin for a place. A place is listed under the place it's in, or else its city (its
+own, or a place above it's), or else its country; a city under its country; anything with nothing above it at the top,
+after the countries. Cities and countries come from the places' city and country and from the photos' (their custom
+city and country, or else their EXIF ones); a city only photos have says **Inferred from photos**. Each row has its
+local script, a GPS icon (see [GPS position](#gps-position)) and how many photos have it. A row with rows under it has
+an arrow to collapse or expand them; **Expand all** and **Collapse all** sit above the list, next to **Search**, which
+narrows it to the names with the search text in them and what they're in.
 
-The list has three tabs, like the Localizations page: **Places**, **Cities** and **Countries**. Cities and countries
-come from the places' city and country and from the photos' (their custom city and country, or else their EXIF ones),
-each with how many places and photos have it; a city only photos have is marked **Inferred from photos**. **Show
-places** on a city, or the **City** box above the Places tab, narrows the places to that city's: those with it as their
-own city or a place above them with it.
+Choosing a row edits it in the panel; **New place** empties the panel for a new place. A place's panel changes its
+name, description, parent (**In**, which lists only places that aren't in it), city, country and GPS position (its ID
+stays), and its localization: romanization, local pronunciation and local script, as on the Localizations page. A city's
+or country's panel shows where it is and how many cities, places and photos have it, and edits its localization only,
+since its name comes from the places and photos that have it. Each field's title has an ⓘ beside it whose tooltip says
+what to write, with an example. **Save changes**, or **Save** at the top right (the rightmost
+floating button, next to the sync button), saves the place when it changed and its localization when that did, each
+as its own commit. The list shows the change as soon as Save is pressed, before the commit is made, and reads the
+files again if the save fails.
 
-A place's **City** is a combobox of those cities, sorted by name, with inferred ones marked by how many photos
+> **Frontend analogy:** an optimistic update with TanStack Query: `onMutate` writes the new entry into the cached
+> query, `onSuccess` swaps in what the server saved, and `onError` invalidates the query to undo it.
+
+A place's **City** is a combobox of the list's cities, sorted by name, with inferred ones marked by how many photos
 show them, or a new one typed in. Choosing a city whose country is known fills in **Country**. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
 open **Add photo data** pull request, or opens one, and the list reads the place files themselves
 (`GET /api/places` → `GET /places`, at the pull request's head), so a place shows before it's committed to
@@ -41,6 +52,11 @@ A place can have a **GPS position**, written on the Places page as `latitude, lo
 `longitude` numbers in the place file, left out when not set; saving refuses only one of them, or one off the globe.
 On the portfolio, a photo whose EXIF has no GPS position goes on the map at its first place's position, or else a
 place that place is in, or else its next place's. The hover text still shows only an EXIF position.
+
+The list's GPS column shows a filled crosshair for a place with its own GPS position, a plain one for a place that uses
+the position of a place it's in (hover for which), and an amber (!) warning on a place with neither when photos
+listing it have no EXIF GPS position and none of their places has one either, so they're missing from the map. Hovering
+the warning says how many photos; giving the place, or a place it's in, a position clears it.
 
 > **Frontend analogy:** like a CSS fallback: `top: var(--exif-gps, var(--place-gps))`.
 
@@ -55,7 +71,12 @@ place (its ID made from its name, as for any new place) and then chooses it. Not
 
 ## A photo's places
 
-On the Photo page and in Edit Photo, **Place** replaces the old place name text box. It's one row, or two after
+On the Photo page and in Edit Photo, the title and comment are in one card and the photo's location in another:
+**Place**, then **City and country**. Under the **Place** title, a line says where the photo goes on the portfolio's
+map: a checkmark with the GPS position when its EXIF has one; else the place whose fallback GPS position it uses (its
+first place with one, or a place that place is in), with that position; else a warning that it isn't on the map.
+
+**Place** replaces the old place name text box. It's one row, or two after
 **Add a second place**, and each row is a relation (none, in, at, by, near, on, inside, outside, behind, in front of,
 across from, above, below, overlooking, from) and a combobox that picks one place. Its search matches each place's
 name and its saved romanization, local pronunciation and local script, so “경복” or “gyeongbok” both find

@@ -1,4 +1,5 @@
 import type { Place } from "@/api/places";
+import { FieldLabel } from "@/components/field-label";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { type CityRow, cityRows, regionKey } from "@/lib/place-cities";
@@ -34,6 +35,8 @@ interface PlaceCityFieldProps {
   value: string;
   places: Place[];
   disabled: boolean;
+  /** How to fill the field in, shown beside its title. */
+  help: string;
   /** Called with the chosen city, and its country when one is known for it. */
   onChange: (city: string, country: string | undefined) => void;
 }
@@ -42,7 +45,7 @@ interface PlaceCityFieldProps {
  * The place's city, chosen from the cities places are already in or the ones photos show (inferred),
  * or typed. Choosing a city whose country is known fills in the country too.
  */
-export function PlaceCityField({ value, places, disabled, onChange }: PlaceCityFieldProps) {
+export function PlaceCityField({ value, places, disabled, help, onChange }: PlaceCityFieldProps) {
   const cities = cityRows(shownPhotos(useCombinedData().data), places);
   const choose = (city: string) => {
     const found = cities.find((c) => regionKey(c.name) === regionKey(city));
@@ -50,9 +53,9 @@ export function PlaceCityField({ value, places, disabled, onChange }: PlaceCityF
   };
   return (
     <div className="flex flex-col gap-2">
-      <span id="place-city-label" className="text-sm font-medium">
+      <FieldLabel id="place-city-label" help={help}>
         City
-      </span>
+      </FieldLabel>
       <SingleCombobox
         id="place-city"
         aria-labelledby="place-city-label"
@@ -60,7 +63,6 @@ export function PlaceCityField({ value, places, disabled, onChange }: PlaceCityF
         value={value}
         onChange={choose}
         disabled={disabled}
-        placeholder="Optional, such as Seoul"
         emptyText="No cities yet. Type one to use it."
         createLabel={(text) => `Use “${text}” as the city`}
         onCreate={choose}

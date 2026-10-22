@@ -1,4 +1,7 @@
-import type { Place } from "@/api/places";
+import { type Place, savedPlaces } from "@/api/places";
+import type { CombinedPhoto } from "@/lib/group-photos";
+import { placePhotoCounts } from "@/lib/place-seeds";
+import { placeChain } from "@/lib/place-tree";
 
 /** A place's GPS position, or neither part when it has none. */
 type Coordinates = Pick<Place, "latitude" | "longitude">;
@@ -33,4 +36,38 @@ function isPosition(parts: number[]): parts is [number, number] {
 export function gpsText(place: Coordinates): string {
   const { latitude, longitude } = place;
   return latitude === undefined || longitude === undefined ? "" : `${latitude}, ${longitude}`;
+}
+
+/** Whether the place has a GPS position set on it. */
+function hasOwnGps(place: Place): boolean {
+  return place.latitude !== undefined && place.longitude !== undefined;
+}
+
+/** The place, or else the nearest place above it, that has a GPS position; undefined when none does. */
+export function gpsSource(place: Place, places: Place[]): Place | undefined {
+  return placeChain(place, places).chain.find(hasOwnGps);
+}
+
+/** Whether the photo's EXIF has a GPS position. */
+function hasExifGps(photo: CombinedPhoto): boolean {
+  return typeof photo.gpsPosition === "string" && photo.gpsPosition.trim() !== "";
+}
+
+/** Whether the photo can go on the portfolio's map: by its EXIF, or one of its places' (or a place above them). */
+function isOnMap(photo: CombinedPhoto, byId: Map<string, Place>, places: Place[]): boolean {
+  if (hasExifGps(photo)) return true;
+  return savedPlaces(photo.places).some(({ id }) => {
+    const place = byId.get(id);
+    return place !== undefined && gpsSource(place, places) !== undefined;
+  });
+}
+
+/**
+ * How many photos list each place, by ID, among the photos that can't go on the map: no EXIF GPS
+ * position, and none from their places. Giving one of those places a GPS position puts them there.
+ */
+export function unmappedPlacePhotos(photos: CombinedPhoto[], places: Place[]): Map<string, number> {
+  const byId = new Map(places.map((place) => [place.id, place]));
+  const unmapped = photos.filter((photo) => !isOnMap(photo, byId, places));
+  return placePhotoCounts(unmapped);
 }

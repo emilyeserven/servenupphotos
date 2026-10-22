@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
+import { PhotoGpsStatus } from "@/components/photo-gps-status";
 import { PlaceLocalizationDialog } from "@/components/place-localization-dialog";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import {
@@ -130,6 +131,8 @@ interface PlaceFieldsProps {
   disabled: boolean;
   /** The country from the photo's EXIF, for telling whether it was taken in the United States. */
   exifCountry: string | null;
+  /** The GPS position in the photo's EXIF, or null when it has none. */
+  exifGps: string | null;
 }
 
 /**
@@ -157,7 +160,7 @@ function photoCountry(value: PlaceValue, exifCountry: string | null): string {
  * Gyeongbokgung"). A place can be added from what's typed. The first place's name is kept as the
  * place name the portfolio shows.
  */
-export function PlaceFields({ value, onChange, disabled, exifCountry }: PlaceFieldsProps) {
+export function PlaceFields({ value, onChange, disabled, exifCountry, exifGps }: PlaceFieldsProps) {
   const all = usePlaces();
   // The place name as the photo was saved, kept while editing even once places replace it.
   const [oldName] = useState(() => (hasOldPlaceName(value) ? value.placeName.trim() : ""));
@@ -173,6 +176,7 @@ export function PlaceFields({ value, onChange, disabled, exifCountry }: PlaceFie
   return (
     <div className="flex flex-col gap-2">
       <PlaceLabel />
+      <PhotoGpsStatus exifGps={exifGps} rows={rows} places={all.places} />
       {oldName && <OldPlaceName name={oldName} />}
       {rows.map((row, index) => (
         <PlaceRow

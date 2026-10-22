@@ -360,7 +360,11 @@ function ResultsColumn({
         key={`details-${extract.submittedAt}`}
         identity={identity}
         file={extract.data.file}
-        exifPlace={{ city: sanitized.city, country: sanitized.country }}
+        exifPlace={{
+          city: sanitized.city,
+          country: sanitized.country,
+          gpsPosition: sanitized.gpsPosition,
+        }}
         details={details}
         onDetailsChange={onDetailsChange}
         saved={saved}

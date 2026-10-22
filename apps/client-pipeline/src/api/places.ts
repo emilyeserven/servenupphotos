@@ -115,18 +115,50 @@ function saveEntryMutation<T extends { id: string }>(kind: EntryKind) {
 export const savePlaceMutation = saveEntryMutation<Place>("places");
 export const saveLocalizationMutation = saveEntryMutation<Localization>("localizations");
 
+/** The read with entry as the file at path, in place of what was there. */
+function withEntry<T>(
+  read: PlacesResponse,
+  kind: EntryKind,
+  path: string,
+  entry: T,
+): PlacesResponse {
+  const files = read[kind] as EntryFile<T>[];
+  const others = files.filter((file) => file.path !== path);
+  return { ...read, [kind]: [...others, { path, data: entry }] };
+}
+
 /** Puts a saved place or localization into the cached read, so lists show it without reading again. */
 export function cacheSavedEntry<T>(
   queryClient: QueryClient,
   kind: EntryKind,
   result: EntryResult<T>,
 ) {
-  queryClient.setQueryData(placesQuery.queryKey, (read) => {
-    if (!read) return read;
-    const files = read[kind] as EntryFile<T>[];
-    const others = files.filter((file) => file.path !== result.path);
-    return { ...read, [kind]: [...others, { path: result.path, data: result.data }] };
-  });
+  queryClient.setQueryData(
+    placesQuery.queryKey,
+    (read) => read && withEntry(read, kind, result.path, result.data),
+  );
+}
+
+/**
+ * A save's callbacks that put the place or localization into the cached read as soon as it's
+ * queued, so lists show it at once; then what the save wrote once it's done, or a fresh read if it
+ * fails.
+ */
+export function optimisticEntry<T extends { id: string }>(
+  queryClient: QueryClient,
+  kind: EntryKind,
+) {
+  return {
+    onMutate: async (entry: T) => {
+      await queryClient.cancelQueries({ queryKey: placesQuery.queryKey });
+      queryClient.setQueryData(
+        placesQuery.queryKey,
+        (read) => read && withEntry(read, kind, `${read.folder}/${kind}/${entry.id}.json`, entry),
+      );
+    },
+    onSuccess: (result: EntryResult<T>) => cacheSavedEntry(queryClient, kind, result),
+    onError: () => queryClient.invalidateQueries({ queryKey: placesQuery.queryKey }),
+  };
 }
 
 /**
