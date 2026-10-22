@@ -10,7 +10,7 @@
   "focalLength": 39,
   "gpsPosition": "40 deg 45' 24.35\" N, 73 deg 57' 15.17\" W",
   "createDate": "2019:08:24 11:52:29",
-  "placeName": null,
+  "placeName": "queensboro-bridge",
   "customCity": null,
   "customCountry": null,
   "country": "United States of America",
@@ -40,5 +40,10 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": []
+  "places": [
+    {
+      "relation": "",
+      "id": "queensboro-bridge"
+    }
+  ]
 }
