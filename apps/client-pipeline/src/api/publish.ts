@@ -1,4 +1,4 @@
-import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 import type { CombinedFile } from "@/api/photos";
 import { requestJson } from "@/api/settings";
 
@@ -16,6 +16,8 @@ interface SocialPhotoRead {
   isSocialMediaEligible: boolean;
   /** YYYY-MM-DD, or null when the photo isn't scheduled. */
   socialMediaPublishDate: string | null;
+  /** The whole file, so a date change shows in ALLPHOTOS.json before it's committed. */
+  data: Record<string, unknown>;
 }
 
 /** A photo JSON file as the Instagram calendar shows it. */
@@ -44,40 +46,10 @@ export interface SocialCalendar extends Omit<SocialCalendarRead, "photos"> {
   photos: SocialPhoto[];
 }
 
-/** A new publish date for the photo file at `path`; null takes it off the calendar. */
-interface SocialDate {
-  path: string;
-  date: string | null;
-}
-
-export interface SocialDatesResult {
-  branch: string;
-  commitSha: string;
-  commitUrl: string;
-  pullRequestUrl: string;
-  pullRequestNumber: number;
-  /** True when saving opened the pull request. */
-  newPullRequest: boolean;
-  /** How many photo files changed. */
-  files: number;
-}
-
 /** Every photo JSON file with its social media publish date. */
 export const socialCalendarQuery = queryOptions({
   queryKey: ["publish", "instagram"],
   queryFn: () => requestJson<SocialCalendarRead>("/api/publish/instagram"),
   retry: false,
   refetchOnWindowFocus: false,
-});
-
-/** Saves publish dates as one commit in the photo data pull request. */
-export const setSocialDatesMutation = mutationOptions({
-  mutationKey: ["publish", "instagram", "save"],
-  meta: { pushes: true },
-  mutationFn: (dates: SocialDate[]) =>
-    requestJson<SocialDatesResult>("/api/publish/instagram", {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ dates }),
-    }),
 });

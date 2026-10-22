@@ -17,7 +17,7 @@ type RemovedFile struct {
 	ImageURL  string `json:"imageUrl,omitempty"`
 	ImageKey  string `json:"imageKey,omitempty"`
 	// CommitSHA is the commit that removed the file, the pull request's new
-	// head, so its CI runs can be found.
+	// head.
 	CommitSHA string `json:"commitSha"`
 }
 

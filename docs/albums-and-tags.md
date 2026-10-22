@@ -7,8 +7,8 @@ made from the name (lowercase, accents dropped, anything other than a to z and 0
 `Busan, South Korea` becomes `busan-south-korea`), and the form warns while you type when an album or tag already has
 that name or ID, or when the name has nothing to make an ID from (such as `東京` on its own). Saving
 (`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the
-open photo data pull request, or opens one, the same way photos are saved, and follows CI's rebuild of `ALLALBUMS.json`
-or `ALLTAGS.json`. A new album can have a **Parent album**. Albums are listed as a tree, sub-albums under their parent,
+open photo data pull request, or opens one, the same way photos are saved, and shows it in `ALLALBUMS.json`
+or `ALLTAGS.json` at once, until a **Commit** writes it there. A new album can have a **Parent album**. Albums are listed as a tree, sub-albums under their parent,
 with how many photos in `ALLPHOTOS.json` list each one.
 
 Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its file and status, an album's parents, a
@@ -19,5 +19,5 @@ parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }
 
 Every album and tag picker, here, on the Photo page and in the Gallery, is a combobox: type to filter, arrow keys and
 Enter to choose, and each choice shows as a chip with a button to remove it (a chip is red when its ID isn't an album
-or tag on GitHub). The Photo page has an **Albums and tags** card for a new photo, saved with **Save to GitHub**, and
+or tag on GitHub). The Photo page has an **Albums and tags** card for a new photo, saved with **Add to Batch**, and
 for a photo being edited, saved with **Save changes**.

@@ -1,4 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { type ScanChange, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
 
 /** Base URLs to move the photos' image URLs between; both empty to only list the origins. */
@@ -47,6 +48,8 @@ export interface CommittedChange {
   pullRequestNumber: number;
   /** True when the change opened the pull request. */
   newPullRequest: boolean;
+  /** The photo files the commit changed, before and after. */
+  changes: ScanChange[];
 }
 
 export interface BaseUrlPreview extends ScannedPhotos {
@@ -86,7 +89,7 @@ export const baseUrlPreviewQuery = (change: BaseUrlChange) =>
 /** Moves the image URLs in every photo JSON file, as one commit in the photo data pull request. */
 export const replaceBaseUrlMutation = mutationOptions({
   mutationKey: ["data", "image-base-url", "replace"],
-  meta: { pushes: true },
+  meta: { pushes: true, changes: (result) => photoChanges(result as BaseUrlResult) },
   mutationFn: (change: BaseUrlChange) => post<BaseUrlResult>("/api/data/image-base-url", change),
 });
 
@@ -135,7 +138,7 @@ export const missingFieldsQuery = (readExif: boolean) =>
 /** Adds the missing fields to every photo JSON file, as one commit in the photo data pull request. */
 export const addMissingFieldsMutation = mutationOptions({
   mutationKey: ["data", "missing-fields", "add"],
-  meta: { pushes: true },
+  meta: { pushes: true, changes: (result) => photoChanges(result as MissingFieldsResult) },
   mutationFn: (readExif: boolean) =>
     post<MissingFieldsResult>("/api/data/missing-fields", { readExif }),
 });

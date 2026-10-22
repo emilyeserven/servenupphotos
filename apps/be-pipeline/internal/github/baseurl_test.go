@@ -64,7 +64,7 @@ func TestRewrite(t *testing.T) {
 		`"https://pub-1234.r2.dev/DSC`, `"https://photos.example.com/DSC`,
 		`{"deep": "https://pub-1234.r2.dev"}`, `{"deep": "https://photos.example.com"}`,
 	).Replace(photoA)
-	if got != want {
+	if !reflect.DeepEqual(got, want) {
 		t.Errorf("rewrite() =\n%s\nwant\n%s", got, want)
 	}
 	if changes := rebaseAll(leaves, devURL, "https://photos.example.com"); len(changes) != 6 {
@@ -278,11 +278,17 @@ func TestReplaceBaseURLOnOpenPullRequest(t *testing.T) {
 		Branch: "photo-data/2026-10-15-024500", CommitSHA: "commit2", CommitURL: "https://github.com/owner/repo/commit/commit2",
 		PullRequestURL: "https://github.com/owner/repo/pull/7", PullRequestNumber: 7, Files: 1, URLs: 6,
 	}
-	if got != want {
+	changes := got.Changes
+	got.Changes = nil
+	if !reflect.DeepEqual(got, want) {
 		t.Errorf("ReplaceBaseURL() = %+v, want %+v", got, want)
 	}
 	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/photos/DSC0001.json" || repo.tree[0]["mode"] != "100644" {
 		t.Fatalf("tree = %v, want DSC0001.json only", repo.tree)
+	}
+	if len(changes) != 1 || changes[0].Path != repo.tree[0]["path"] || string(changes[0].Before) != photoA ||
+		string(changes[0].After) != repo.tree[0]["content"] {
+		t.Errorf("changes = %+v, want DSC0001.json before and after", changes)
 	}
 	if strings.Contains(repo.tree[0]["content"], `"https://pub-1234.r2.dev/DSC`) || !strings.Contains(repo.tree[0]["content"], `"note": "https://pub-1234.r2.dev/not-an-image.webp"`) {
 		t.Errorf("content = %s, want only the image URLs moved", repo.tree[0]["content"])

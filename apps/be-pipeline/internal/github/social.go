@@ -35,6 +35,9 @@ type SocialPhoto struct {
 	Image                  *string `json:"image"`
 	IsSocialMediaEligible  bool    `json:"isSocialMediaEligible"`
 	SocialMediaPublishDate *string `json:"socialMediaPublishDate"`
+	// Data is the whole file, so the app can show a date change in
+	// ALLPHOTOS.json before it's committed.
+	Data json.RawMessage `json:"data"`
 }
 
 // SocialCalendar is every photo file with its social media publish date.
@@ -105,6 +108,7 @@ func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (Social
 			Path: f.path, FileURL: f.fileURL, GPSPosition: fields.GPSPosition, CreateDate: fields.CreateDate,
 			Title: fields.Title, Image: socialImage(fields.Images),
 			IsSocialMediaEligible: fields.IsSocialMediaEligible, SocialMediaPublishDate: fields.SocialMediaPublishDate,
+			Data: f.content,
 		}
 		if fields.File != nil {
 			photo.File = *fields.File

@@ -21,7 +21,7 @@ const DefaultDataFolder = "apps/portfolio/src/data"
 const PhotosFolder = "photos"
 
 // AllPhotosFile is the portfolio's combined photo list: a JSON array of every
-// photo file in the photos folder, rebuilt by CI on the pull request. InFlight
+// photo file in the photos folder, rebuilt on the pull request by CommitCombined. InFlight
 // leaves it out of the photo files; Combined reads it.
 const AllPhotosFile = "ALLPHOTOS.json"
 
@@ -71,7 +71,7 @@ type BaseFile struct {
 	BaseError string `json:"baseError,omitempty"`
 }
 
-// InFlightAllPhotos is a combined list CI builds, such as AllPhotosFile, read
+// InFlightAllPhotos is a combined list CommitCombined builds, such as AllPhotosFile, read
 // at one ref.
 type InFlightAllPhotos struct {
 	Path string `json:"path"`
@@ -89,7 +89,7 @@ type InFlightAllPhotos struct {
 
 // InFlightResult is the photo data waiting in the open pull request.
 // PullRequest is nil when no pull request titled PullRequestTitle is open.
-// The combined lists CI builds aren't read here; Combined reads them.
+// The combined lists aren't read here; Combined reads them.
 type InFlightResult struct {
 	Repo        string               `json:"repo"`
 	Folder      string               `json:"folder"`
@@ -159,7 +159,7 @@ func (f pullFile) basePath() string {
 
 // InFlight finds the open pull request titled PullRequestTitle in gh's
 // repository and reads the JSON files it changes in the data folder, except
-// the combined lists CI builds, at the pull request's head. It only reads
+// the combined lists, at the pull request's head. It only reads
 // from GitHub.
 func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResult, error) {
 	root, perr := dataFolder(gh.Folder)

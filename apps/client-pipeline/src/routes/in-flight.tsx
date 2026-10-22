@@ -17,14 +17,18 @@ import {
   type InFlightGroups,
   type InFlightImages,
   type InFlightResponse,
-  type CombineStatus,
+  type CombinedStatus,
   type RemoveResult,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { JsonDiffBlock } from "@/components/json-diff-block";
-import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
+import {
+  AllPhotosRebuild,
+  CommitButton,
+  useAllPhotosRebuild,
+} from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
@@ -42,7 +46,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
 import { cn } from "@/lib/utils";
-import { useCombinedDataStore } from "@/stores/combined-data";
+import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
 
 interface InFlightSearch {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */
@@ -101,7 +105,6 @@ function InFlightCard() {
     setRemoved(result);
     setRemovedPaths((paths) => new Set(paths).add(result.path));
     void inFlight.refetch();
-    rebuild.afterPush();
   };
   const shown = withoutRemoved(inFlight.data, removedPaths);
   const baseBranch = baseBranchOf(shown);
@@ -112,12 +115,9 @@ function InFlightCard() {
       <PullRequestCard
         inFlight={inFlight}
         shown={shown}
-        rebuilding={rebuild.rebuilding}
-        runUrl={rebuild.runUrl}
         showAllPhotos={showAllPhotos}
         onRefresh={() => {
           void inFlight.refetch();
-          void rebuild.status.refetch();
           void refreshCombined();
         }}
       />
@@ -166,14 +166,14 @@ function InFlightCard() {
   );
 }
 
-/** What the last removal did, then how the ALLPHOTOS.json rebuild after it is going. */
+/** What the last removal did, then whether ALLPHOTOS.json is synced with it. */
 function RemovalNotice({
   removed,
   rebuild,
   onDismiss,
 }: {
   removed: RemoveResult | null;
-  rebuild: UseQueryResult<CombineStatus>;
+  rebuild: UseQueryResult<CombinedStatus>;
   onDismiss: () => void;
 }) {
   if (!removed) return null;
@@ -208,18 +208,12 @@ function withoutRemoved(
 function PullRequestCard({
   inFlight,
   shown,
-  rebuilding,
-  runUrl,
   showAllPhotos,
   onRefresh,
 }: {
   inFlight: UseQueryResult<InFlightResponse>;
   /** inFlight's data without the files just removed. */
   shown?: InFlightResponse;
-  /** Whether CI is rebuilding ALLPHOTOS.json. */
-  rebuilding: boolean;
-  /** The run rebuilding it, or the workflow's runs page. */
-  runUrl?: string;
   showAllPhotos: boolean;
   onRefresh: () => void;
 }) {
@@ -242,9 +236,7 @@ function PullRequestCard({
       </CardHeader>
       <CardContent>
         <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
-          {(data) => (
-            <PullRequestSummary data={shown ?? data} rebuilding={rebuilding} runUrl={runUrl} />
-          )}
+          {(data) => <PullRequestSummary data={shown ?? data} />}
         </QueryResult>
       </CardContent>
     </Card>
@@ -290,7 +282,7 @@ function AllPhotosPanel({ data }: { data?: InFlightResponse }) {
 
 /** Why ALLPHOTOS.json can't be shown, or undefined when it can. */
 function allPhotosProblem(all: CombinedFile): string | undefined {
-  if (!all.found) return "Not on the branch yet. CI adds it after the next push.";
+  if (!all.found) return "Not on the branch yet. Commit adds it.";
   if (all.error) return all.error;
   return all.data ? undefined : "Couldn't read the file.";
 }
@@ -345,7 +337,7 @@ function FileSection({
 }: {
   file: InFlightFile;
   images: InFlightImages;
-  /** Whether CI is rebuilding ALLPHOTOS.json, so a missing entry may be on its way. */
+  /** Whether ALLPHOTOS.json is being committed, so a missing entry may be on its way. */
   rebuilding: boolean;
   /** The branch the pull request merges into, which changed files are compared against. */
   baseBranch?: string;
@@ -536,15 +528,16 @@ const ALL_PHOTOS_MARKS = {
     label: (file: string) => `In ${file}`,
     className: "text-emerald-600 dark:text-emerald-400",
   },
+  // Not in it until it's committed.
   out: {
     Icon: CircleDashedIcon,
-    label: (file: string) => `Not in ${file}`,
-    className: "text-muted-foreground",
+    label: (file: string) => `Not synced to ${file} yet`,
+    className: "text-amber-700 dark:text-amber-400",
   },
-  // Not in it yet, but CI is rebuilding it.
+  // Not in it yet, but it's being committed.
   pending: {
     Icon: CircleDashedIcon,
-    label: (file: string) => `Not in ${file} yet`,
+    label: (file: string) => `Not synced to ${file} yet`,
     className: "text-muted-foreground [&>svg]:animate-spin",
   },
 };
@@ -556,7 +549,7 @@ function allPhotosMarkKey(inAllPhotos: boolean, rebuilding: boolean) {
 
 /**
  * A check mark when the file's data is an entry of `allFile` (ALLPHOTOS.json unless named), or a
- * dashed circle when it isn't, spinning while CI rebuilds it. Nothing when either file couldn't be
+ * dashed circle marking it not synced when it isn't, spinning while it's committed. Nothing when either file couldn't be
  * read.
  */
 function AllPhotosMark({
@@ -587,7 +580,7 @@ function GroupFiles({
 }: {
   title: string;
   groups: InFlightGroups;
-  /** Whether CI is rebuilding the combined files, so a missing entry may be on its way. */
+  /** Whether the combined files are being committed, so a missing entry may be on its way. */
   rebuilding: boolean;
   /** The branch the pull request merges into, which changed files are compared against. */
   baseBranch?: string;
@@ -635,28 +628,43 @@ function groupsSummary(groups: InFlightGroups): string {
 }
 
 function allPhotosSummary(all: CombinedFile, files: InFlightFile[]): string {
-  if (!all.found) return "Not on the branch yet. CI adds it after the next push.";
+  if (!all.found) return "Not on the branch yet. Commit adds it.";
   if (all.error) return all.error;
   const matched = files.filter((file) => file.inAllPhotos).length;
   return `Lists ${all.count}; ${matched} of ${files.length} photo files match`;
 }
 
-/** A spinner and note beside ALLPHOTOS.json while CI rebuilds it, linked to the run. */
-function RebuildingNote({ rebuilding, runUrl }: { rebuilding: boolean; runUrl?: string }) {
-  if (!rebuilding) return null;
-  const note = runUrl ? (
-    <a href={runUrl} target="_blank" rel="noreferrer" className="underline underline-offset-4">
-      CI is rebuilding it
-    </a>
-  ) : (
-    "CI is rebuilding it"
-  );
+/**
+ * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json have every change pushed to the pull
+ * request, as checked when the app started and known from the app's saves and commits since, with
+ * Commit to sync them.
+ */
+function SyncSummary() {
+  const sync = useCombinedSync();
+  if (sync.committing) {
+    return (
+      <span className="text-muted-foreground flex items-center gap-2">
+        <Spinner />
+        Committing them…
+      </span>
+    );
+  }
+  if (sync.commitError) return <span className="text-destructive">{sync.commitError.message}</span>;
+  if (!sync.unsynced) return <span className="text-muted-foreground">Up to date</span>;
   return (
-    <span className="text-muted-foreground flex items-center gap-1 text-xs">
-      <Spinner />
-      {note}
+    <span className="flex flex-col items-start gap-2">
+      <span className="text-amber-700 dark:text-amber-400">{unsyncedText(sync.pending)}</span>
+      <CommitButton />
     </span>
   );
+}
+
+/** Why the combined files aren't synced, and what the pages already show of it. */
+function unsyncedText(pending: string): string {
+  const since = pending
+    ? `${pending} changed since the last commit`
+    : "the pull request has changes since the last commit";
+  return `Not synced: ${since}. Commit to sync them.`;
 }
 
 function imagesSummary(images: InFlightImages, files: number): string {
@@ -664,15 +672,7 @@ function imagesSummary(images: InFlightImages, files: number): string {
   return `${Object.keys(images.byPath).length} of ${files} found in R2`;
 }
 
-function PullRequestSummary({
-  data,
-  rebuilding,
-  runUrl,
-}: {
-  data: InFlightResponse;
-  rebuilding: boolean;
-  runUrl?: string;
-}) {
+function PullRequestSummary({ data }: { data: InFlightResponse }) {
   if (!data.pullRequest) {
     return (
       <p className="text-muted-foreground">
@@ -698,23 +698,18 @@ function PullRequestSummary({
       <dd className="font-mono">{pr.branch}</dd>
       <dt className="text-muted-foreground">Photo files</dt>
       <dd>{count === 0 ? "None in the data folder" : count}</dd>
-      <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
-      <dd className="flex items-center gap-2">
-        {allPhotosSummary(data.allPhotos, data.files)}
-        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
+      <dt className="text-muted-foreground">Synced</dt>
+      <dd>
+        <SyncSummary />
       </dd>
+      <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
+      <dd>{allPhotosSummary(data.allPhotos, data.files)}</dd>
       <dt className="text-muted-foreground">Images</dt>
       <dd>{imagesSummary(data.images, count)}</dd>
       <dt className="text-muted-foreground">Album files</dt>
-      <dd className="flex items-center gap-2">
-        {groupsSummary(data.albums)}
-        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
-      </dd>
+      <dd>{groupsSummary(data.albums)}</dd>
       <dt className="text-muted-foreground">Tag files</dt>
-      <dd className="flex items-center gap-2">
-        {groupsSummary(data.tags)}
-        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
-      </dd>
+      <dd>{groupsSummary(data.tags)}</dd>
     </dl>
   );
 }

@@ -94,6 +94,8 @@ type BaseURLResult struct {
 	NewPullRequest bool `json:"newPullRequest"`
 	Files          int  `json:"files"`
 	URLs           int  `json:"urls"`
+	// Changes are the files the commit changed, before and after.
+	Changes []ScanChange `json:"changes"`
 }
 
 // photoFile is a photo JSON file read for a base URL change.
@@ -197,7 +199,7 @@ func (c *Client) ReplaceBaseURL(ctx context.Context, gh settings.GitHub, from, t
 	}
 	result.Branch, result.CommitSHA, result.CommitURL = saved.Branch, saved.CommitSHA, saved.CommitURL
 	result.PullRequestURL, result.PullRequestNumber = saved.PullRequestURL, saved.PullRequestNumber
-	result.NewPullRequest = saved.NewPullRequest
+	result.NewPullRequest, result.Changes = saved.NewPullRequest, saved.Changes
 	return result, nil
 }
 
@@ -210,6 +212,29 @@ type scanCommit struct {
 	PullRequestNumber int    `json:"pullRequestNumber"`
 	// NewPullRequest is true when the commit opened the pull request.
 	NewPullRequest bool `json:"newPullRequest"`
+	// Changes are the files the commit changed, before and after, so the app
+	// can show them in the combined lists before they're committed there.
+	Changes []ScanChange `json:"changes"`
+}
+
+// ScanChange is one photo file commitScan changed: its data before and after.
+type ScanChange struct {
+	Path   string          `json:"path"`
+	Before json.RawMessage `json:"before"`
+	After  json.RawMessage `json:"after"`
+}
+
+// scanChanges pairs each entry with the file scan read at its path.
+func scanChanges(scan baseURLScan, entries []map[string]string) []ScanChange {
+	before := map[string][]byte{}
+	for _, f := range scan.files {
+		before[f.path] = f.content
+	}
+	changes := make([]ScanChange, 0, len(entries))
+	for _, e := range entries {
+		changes = append(changes, ScanChange{Path: e["path"], Before: before[e["path"]], After: json.RawMessage(e["content"])})
+	}
+	return changes
 }
 
 // commitScan commits entries on top of the commit scan read, on the open
@@ -220,7 +245,7 @@ func (c *Client) commitScan(ctx context.Context, scan baseURLScan, entries []map
 	if perr != nil {
 		return scanCommit{}, perr
 	}
-	result := scanCommit{CommitSHA: commit.SHA, CommitURL: commit.HTMLURL}
+	result := scanCommit{CommitSHA: commit.SHA, CommitURL: commit.HTMLURL, Changes: scanChanges(scan, entries)}
 
 	if scan.pr != nil {
 		if perr := c.moveBranch(ctx, scan.t, scan.branch, commit.SHA); perr != nil {

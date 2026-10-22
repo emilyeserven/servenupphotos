@@ -288,7 +288,7 @@ function ResultsColumn({
   );
 }
 
-/** The new photo's albums and tags, saved in its JSON with Save to GitHub. */
+/** The new photo's albums and tags, saved in its JSON with Add to Batch. */
 function NewPhotoGroups({
   groups,
   onGroupsChange,
@@ -488,7 +488,7 @@ function ExifResultBody({ mutation, sanitized, groups }: ExifResultProps) {
   );
 }
 
-/** The JSON Save to GitHub writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload, then its albums and tags. */
+/** The JSON Add to Batch writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload, then its albums and tags. */
 function UploadJson({
   file,
   sanitized,
@@ -499,7 +499,7 @@ function UploadJson({
   groups: PhotoGroups;
 }) {
   if (!sanitized) return <ExifData exif={null} />;
-  // The title and comment first, and the albums and tags last, as Save to GitHub writes them.
+  // The title and comment first, and the albums and tags last, as Add to Batch writes them.
   const { title, comment, ...rest } = sanitized;
   return (
     <JsonCodeBlock

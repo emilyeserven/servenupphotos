@@ -28,13 +28,6 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/photos/in-flight", { timeoutMs: 35_000 }),
   );
 
-  // Reports the "Combine photo data" run for a commit (or the pull request's head when `sha` is
-  // absent), so pages know when ALLPHOTOS.json is rebuilt; the backend gives GitHub 30s.
-  app.get<{ Querystring: { sha?: string } }>("/photos/in-flight/ci", async (request, reply) => {
-    const query = request.query.sha ? `?${new URLSearchParams({ sha: request.query.sha })}` : "";
-    return relayToBackend(reply, app.log, `/photos/in-flight/ci${query}`, { timeoutMs: 35_000 });
-  });
-
   // Removes one photo JSON file from that pull request and its image from R2; the backend gives
   // GitHub 30s, then R2 15s.
   app.delete<{ Querystring: { path?: string } }>("/photos/in-flight", async (request, reply) =>
@@ -75,9 +68,27 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // Reads ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the base branch and the photo data
-  // pull request, which pages keep until CI rebuilds them; the backend gives GitHub 30s.
+  // pull request, which pages keep until they're committed again; the backend gives GitHub 30s.
   app.get("/photos/combined", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/combined", { timeoutMs: 35_000 }),
+  );
+
+  // Whether those lists on the pull request have its latest changes, from the newest commit to the
+  // data folder; the app checks it once when it starts. The backend gives GitHub 30s.
+  app.get("/photos/combined/status", async (_request, reply) =>
+    relayToBackend(reply, app.log, "/photos/combined/status", { timeoutMs: 35_000 }),
+  );
+
+  // Saves the app's local edits (such as Instagram dates) to the data files, rebuilds those lists
+  // from every data file on the pull request's branch and commits what changed as one commit; the
+  // backend gives GitHub 60s.
+  app.post("/photos/combined", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/combined", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body ?? {}),
+      timeoutMs: 65_000,
+    }),
   );
 
   // Reads the EXIF and colors of an original already in R2; the backend gives R2 30s to send it,

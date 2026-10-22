@@ -114,7 +114,7 @@ func checkSavedJPEG(path string) (int, string) {
 
 // handleCombined reads ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the
 // base branch from Settings and on the photo data pull request, which pages
-// keep until CI rebuilds them. It only reads from GitHub.
+// keep until they're committed again. It only reads from GitHub.
 func handleCombined(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cfg, err := store.GitHub()

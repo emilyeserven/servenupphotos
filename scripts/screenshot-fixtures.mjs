@@ -190,6 +190,7 @@ const commit = (branch = PULL_REQUEST.branch) => ({
 /** A photo as the Instagram calendar reads it: the first is scheduled, every other one eligible. */
 function socialPhoto({ path: filePath, data }, i) {
   const images = imagesOf(data);
+  const socialMediaPublishDate = i === 0 ? "2026-10-23" : null;
   return {
     path: filePath,
     fileUrl: fileUrl(filePath, PULL_REQUEST.branch),
@@ -199,7 +200,8 @@ function socialPhoto({ path: filePath, data }, i) {
     title: data.title,
     image: images.thumbnail ?? images.xsmall ?? null,
     isSocialMediaEligible: i % 2 === 0,
-    socialMediaPublishDate: i === 0 ? "2026-10-23" : null,
+    socialMediaPublishDate,
+    data: { ...data, socialMediaPublishDate },
   };
 }
 
@@ -249,11 +251,7 @@ export function defaultFixtures() {
       tags: { folder: `${FOLDER}/tags`, files: [groupFile(added.tag)] },
       images: imagesByPath([added.photo]),
     },
-    "GET /api/photos/in-flight/ci": {
-      sha: PULL_REQUEST.headSha,
-      state: "done",
-      runUrl: `https://github.com/${REPO}/actions/runs/1`,
-    },
+    "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
     "GET /api/photos/published": {
       repo: REPO,
       folder: `${FOLDER}/photos`,
@@ -300,6 +298,13 @@ export function defaultFixtures() {
       changed: true,
     }),
     "POST /api/photos/groups": ({ body }) => ({ ...commit(), files: body?.paths?.length }),
+    "POST /api/photos/combined": () => ({
+      changed: true,
+      commitSha: "c0mb1ned",
+      commitUrl: `https://github.com/${REPO}/commit/c0mb1ned`,
+      files: [`${FOLDER}/photos/ALLPHOTOS.json`],
+      counts: { photos: basePhotos.length + 1, albums: 1, tags: 1 },
+    }),
     "PUT /api/publish/instagram": ({ body }) => ({ ...commit(), files: body?.dates?.length }),
   };
 }

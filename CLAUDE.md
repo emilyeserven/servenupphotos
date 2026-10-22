@@ -3,7 +3,7 @@
 A photography portfolio (`apps/portfolio`, static, GitHub Pages) and the local "pipeline" tool that feeds it photo
 data: `apps/client-pipeline` (React UI) → `apps/bff-pipeline` (Fastify) → `apps/be-pipeline` (Go). The pipeline
 reads photos, uploads them to Cloudflare R2, and commits one JSON file per photo to this repository through an
-**Add photo data** pull request. CI combines those files into `ALLPHOTOS.json`, which the portfolio reads.
+**Add photo data** pull request. The pipeline's **Commit** button combines those files into `ALLPHOTOS.json`, which the portfolio reads.
 
 The README covers setup and commands. Each feature's behavior is in `docs/<feature>.md` (listed in the README under
 **Features**). Read the doc for the feature you're changing instead of the whole README.

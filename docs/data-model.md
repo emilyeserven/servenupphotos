@@ -2,11 +2,11 @@
 
 The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in Settings), one JSON file per thing:
 
-| What   | File                      | Combined by CI into     |
-| ------ | ------------------------- | ----------------------- |
-| Photos | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json` |
-| Albums | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json` |
-| Tags   | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`     |
+| What   | File                      | Combined by **Commit** into |
+| ------ | ------------------------- | --------------------------- |
+| Photos | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json`     |
+| Albums | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json`     |
+| Tags   | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`         |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is

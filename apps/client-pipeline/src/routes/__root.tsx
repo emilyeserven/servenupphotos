@@ -3,6 +3,7 @@ import { createRootRouteWithContext, Outlet, useLocation } from "@tanstack/react
 import type * as React from "react";
 import { AppSidebar, navGroups } from "@/components/app-sidebar";
 import { CombinedDataSync } from "@/components/combined-data-sync";
+import { SyncStatus } from "@/components/sync-status";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -38,6 +39,7 @@ function RootLayout() {
   return (
     <SidebarProvider style={{ "--sidebar-width": "19rem" } as React.CSSProperties}>
       <CombinedDataSync />
+      <SyncStatus />
       <AppSidebar />
       {/* min-w-0 lets wide content, like a table, scroll inside the page instead of widening it. */}
       <SidebarInset className="min-w-0">

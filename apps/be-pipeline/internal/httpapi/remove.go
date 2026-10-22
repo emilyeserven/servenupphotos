@@ -30,8 +30,7 @@ type removedImage struct {
 
 type removeResponse struct {
 	Path string `json:"path"`
-	// CommitSHA is the commit that removed the file, whose CI run rebuilds
-	// ALLPHOTOS.json; see handleCombineStatus.
+	// CommitSHA is the commit that removed the file.
 	CommitSHA string       `json:"commitSha"`
 	Image     removedImage `json:"image"`
 }

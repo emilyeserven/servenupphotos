@@ -14,12 +14,11 @@ file's name), or a "no image" sign when there's none. Under the photo is its Squ
 
 Each file the pull request adds has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it
 deletes the JSON from the pull request's branch and the image the page shows from R2 (skipped when R2 has none). Files the
-pull request only modifies can't be removed, since that would delete them from the portfolio on merge. The removal's
-commit starts the **Combine photo data** workflow. The page polls `GET /api/photos/in-flight/ci` (that workflow's newest
-run on the pull request's branch, or "waiting" when someone pushed after it; pass `?sha=…` for one commit's run instead)
-and, while CI is rebuilding `ALLPHOTOS.json`, shows a spinner beside it and spins each file's "Not in ALLPHOTOS.json"
-mark. When the run finishes it refreshes. Without **Actions: Read-only** on the token it refreshes about 30 seconds
-after a removal instead.
+pull request only modifies can't be removed, since that would delete them from the portfolio on merge. Like every other
+save, the removal doesn't change `ALLPHOTOS.json`; see
+[Committing the combined files](combined-data-store.md#committing-the-combined-files). The **Synced** row says whether
+the combined files have the pull request's changes, with a **Commit** button when they don't, and each file they don't
+have yet is marked "Not synced to ALLPHOTOS.json yet".
 
 Each photo whose JSON was read and whose image is in R2 has an **Edit** button, which opens it on the Photo page in
 edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from. The crop editor starts from the

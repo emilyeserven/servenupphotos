@@ -18,5 +18,5 @@ in flight nor in `ALLPHOTOS.json` gets a **Generate JSON** button, which opens a
 from R2 (`POST /api/photos/bucket/exif` with `{ "key" }` → `POST /photos/bucket/exif`) through the same EXIF and color
 analysis as `POST /exif`. The JSON gets the original's URL and key and the URLs of the resized copies in the bucket, and
 its `file` is the name kept in the key (`photos/<hash>-dsc0001.jpg` gives `dsc0001.jpg`). After the same
-`ALLPHOTOS.json` check as Add Photo, **Save to GitHub** asks for the JSON file name and adds it to the photo data pull
+`ALLPHOTOS.json` check as Add Photo, **Add to Batch** asks for the JSON file name and adds it to the photo data pull
 request. The button only shows once both checks have run, so it needs the GitHub settings too.

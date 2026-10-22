@@ -2,8 +2,8 @@
 
 `/update-data`, under Configuration in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
 previews what it will change, then saves everything as **one commit** on the open **Add photo data** pull request's
-branch, or on a new `photo-data/` branch with a new pull request when none is open, so CI rebuilds `ALLPHOTOS.json`
-once.
+branch, or on a new `photo-data/` branch with a new pull request when none is open, so one **Commit** of `ALLPHOTOS.json`
+takes them all in.
 
 **Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
 development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder

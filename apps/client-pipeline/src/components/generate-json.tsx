@@ -27,7 +27,7 @@ interface GenerateJsonProps {
 
 /**
  * A button that reads a photo's EXIF and colors from its original in R2, as Add Photo does for an
- * upload, and offers its JSON to Save to GitHub under a file name the user picks.
+ * upload, and offers its JSON to Add to Batch under a file name the user picks.
  */
 export function GenerateJsonButton({ original, copies }: GenerateJsonProps) {
   const queryClient = useQueryClient();
@@ -140,7 +140,7 @@ interface PhotoJsonProps {
   onSaved: () => void;
 }
 
-/** The JSON to save, then a check that it isn't in ALLPHOTOS.json already, then Save to GitHub. */
+/** The JSON to save, then a check that it isn't in ALLPHOTOS.json already, then Add to Batch. */
 function PhotoJson({ file, sanitized, onSaved }: PhotoJsonProps) {
   const identity = { file, gpsPosition: sanitized.gpsPosition, createDate: sanitized.createDate };
   return (

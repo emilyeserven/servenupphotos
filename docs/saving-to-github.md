@@ -1,6 +1,6 @@
 # Saving photo data to GitHub
 
-After a photo is analyzed on `/exif`, the **Save to GitHub** card saves its sanitized EXIF as one JSON file,
+After a photo is analyzed on `/exif`, the **Add to Batch** card saves its sanitized EXIF as one JSON file,
 `<folder>/photos/<name>.json`, in the repository from Settings (`POST /api/photos/github` → `POST /photos/github`). Saves never
 commit to the Settings branch directly. The first save creates a `photo-data/<date>-<time>` branch from it and opens an
 **Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
@@ -14,13 +14,13 @@ and `thumbnail` the public URL of its Square Thumbnail, with `thumbnailpreview` 
 4220 × 4220 px square at 1710, 0" is `{ "x": 1710, "y": 0, "size": 4220, "outputSize": 500 }`. The
 `images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
-**JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
+**JSON to Upload** tab shows exactly what Add to Batch will write, and picks up the URL as soon as the upload finishes.
 
 Once a photo is analyzed, the page first looks for it in the saved photo data on GitHub: `ALLPHOTOS.json` on the
 Settings branch, from the [combined data store](combined-data-store.md), and each photo JSON file the open **Add photo
-data** pull request adds or changes (`POST /api/photos/all-photos/check` → `POST /photos/all-photos/check`). The pull request's files are read directly, not its `ALLPHOTOS.json`, because CI
-rebuilds that after every push and may not have caught up yet. An entry with the same `file`, `gpsPosition` and `createDate` (exactly equal, with `null` matching only `null`) means the
-photo is already in the portfolio: the page shows that entry and hides **Upload to R2** and **Save to GitHub**, since
+data** pull request adds or changes (`POST /api/photos/all-photos/check` → `POST /photos/all-photos/check`). The pull request's files are read directly, not its `ALLPHOTOS.json`, because that only
+has the files as of the last **Commit**. An entry with the same `file`, `gpsPosition` and `createDate` (exactly equal, with `null` matching only `null`) means the
+photo is already in the portfolio: the page shows that entry and hides **Upload to R2** and **Add to Batch**, since
 editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
 page says so and still offers both; if only one of the two places can be read, it checks that one and warns about the other.
 
@@ -69,8 +69,9 @@ that photo and asks for a new name, or you can keep the name anyway (a `sameName
 Cloudflare rejects a request, the card also shows Cloudflare's own answer (HTTP status, error code and message) under
 the plain-language reason.
 
-The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**. **Actions: Read-only** is
-optional: with it, Photos in Flight can tell when CI has rebuilt `ALLPHOTOS.json` after a removal.
+The GitHub token needs **Contents: Read and write** and **Pull requests: Read and write**. That also covers
+[committing the combined files](combined-data-store.md#committing-the-combined-files); the app doesn't use GitHub
+Actions.
 
 > **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and
 > merging the pull request is checkout. After that, the next save starts a new cart.

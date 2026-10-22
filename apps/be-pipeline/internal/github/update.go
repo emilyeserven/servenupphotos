@@ -17,7 +17,7 @@ type UpdatedFile struct {
 	Path    string `json:"path"`
 	FileURL string `json:"fileUrl"`
 	// CommitSHA is the commit that changed the file, the pull request's new
-	// head, so its CI runs can be found.
+	// head.
 	CommitSHA string `json:"commitSha"`
 	// Changed is false when data was already the file's content, so nothing
 	// was committed and CommitSHA is empty.
