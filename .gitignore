@@ -13,3 +13,5 @@ apps/be-pipeline/bin/
 apps/be-pipeline/data/
 # Made by `pnpm photos:local` from the photo JSON files; the portfolio uses it locally.
 apps/portfolio/src/data/photos/ALLPHOTOS.local.json
+# Made by `pnpm shot`.
+screenshots/

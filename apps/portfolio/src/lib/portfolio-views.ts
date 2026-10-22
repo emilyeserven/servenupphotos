@@ -8,7 +8,7 @@ export interface PortfolioView {
   icon: LucideIcon;
 }
 
-const portfolioViews: PortfolioView[] = [
+export const portfolioViews: PortfolioView[] = [
   {
     to: "/timeline",
     label: "Timeline",

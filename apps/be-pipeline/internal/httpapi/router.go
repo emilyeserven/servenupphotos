@@ -45,6 +45,8 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("GET /photos/published", handlePublishedPhotos(store, gh, storage.FindPhotos))
 	mux.HandleFunc("GET /organize", handleOrganize(store, gh))
 	mux.HandleFunc("POST /organize/{kind}", handleCreateGroup(store, gh))
+	mux.HandleFunc("PUT /organize/albums/{id}/parent", handleSetAlbumParent(store, gh))
+	mux.HandleFunc("POST /photos/groups", handleAddPhotoGroups(store, gh))
 	mux.HandleFunc("POST /data/image-base-url/preview", handlePreviewBaseURL(store, gh))
 	mux.HandleFunc("POST /data/image-base-url", handleReplaceBaseURL(store, gh))
 	exifs := newExifCache()

@@ -1,6 +1,8 @@
 package github
 
 import (
+	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -18,7 +20,7 @@ import (
 // Kind is a way of organizing photos: albums or tags. Each album or tag is
 // one JSON file in its kind's folder, named by its ID, and CI combines them
 // into the kind's AllFile. A photo lists the IDs of its albums and tags in
-// its "albums" and "tags" keys.
+// its "albums" and "tags" keys. An album may have one parent album, by ID.
 type Kind struct {
 	// Name is the kind's singular name, as shown: "album" or "tag".
 	Name string
@@ -62,13 +64,34 @@ type NewGroup struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	// Parent is the ID of an album's parent album, or empty for none. Tags
+	// have no parent.
+	Parent string `json:"parent,omitempty"`
 }
 
-// groupJSON is the content of an album or tag file.
+// groupJSON is the content of an album or tag file, as read.
 type groupJSON struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Parent      *string `json:"parent,omitempty"`
+}
+
+// albumJSON is the content of an album file, as written: it always lists its
+// parent, null for a top-level album.
+type albumJSON struct {
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Parent      *string `json:"parent"`
+}
+
+// fileContent is g as kind's files are written.
+func fileContent(kind Kind, g groupJSON) any {
+	if kind == Albums {
+		return albumJSON(g)
+	}
+	return g
 }
 
 // Group is one album or tag file.
@@ -76,8 +99,10 @@ type Group struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description,omitempty"`
-	Path        string `json:"path"`
-	FileURL     string `json:"fileUrl"`
+	// Parent is an album's parent album's ID, empty for a top-level album.
+	Parent  string `json:"parent,omitempty"`
+	Path    string `json:"path"`
+	FileURL string `json:"fileUrl"`
 	// InFlight is true when the file is only on the photo data pull
 	// request's branch, not merged yet.
 	InFlight bool `json:"inFlight"`
@@ -153,8 +178,13 @@ func (c *Client) CreateGroup(ctx context.Context, gh settings.GitHub, kind Kind,
 	if perr := checkCollision(groups, group); perr != nil {
 		return PublishResult{}, perr
 	}
+	if content.Parent != nil {
+		if perr := checkParent(groups[Albums.Folder], content.ID, *content.Parent); perr != nil {
+			return PublishResult{}, perr
+		}
+	}
 	file := root + "/" + kind.Folder + "/" + content.ID + ".json"
-	b, err := json.MarshalIndent(content, "", "  ")
+	b, err := json.MarshalIndent(fileContent(kind, content), "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the %s.", kind.Name)
 	}
@@ -179,7 +209,130 @@ func validGroup(kind Kind, group NewGroup) (groupJSON, *PublishError) {
 	case utf8.RuneCountInString(g.Description) > maxGroupDescriptionLength:
 		return g, publishErr(http.StatusBadRequest, "Keep the description to %d characters.", maxGroupDescriptionLength)
 	}
+	if parent := strings.TrimSpace(group.Parent); parent != "" {
+		if kind != Albums {
+			return g, publishErr(http.StatusBadRequest, "Only albums can have a parent.")
+		}
+		g.Parent = &parent
+	}
 	return g, nil
+}
+
+// checkParent fails unless parent is one of albums and making it id's parent
+// leaves no album its own ancestor.
+func checkParent(albums []Group, id, parent string) *PublishError {
+	parents := map[string]string{}
+	names := map[string]string{}
+	for _, a := range albums {
+		parents[a.ID], names[a.ID] = a.Parent, a.Name
+	}
+	if _, ok := parents[parent]; !ok {
+		return publishErr(http.StatusBadRequest, "There's no album with the ID %q to be the parent.", parent)
+	}
+	parents[id] = parent
+	seen := map[string]bool{}
+	for at := id; at != ""; at = parents[at] {
+		if seen[at] {
+			return publishErr(http.StatusConflict,
+				"%q is inside %q already, so it can't be its parent.", cmp.Or(names[parent], parent), cmp.Or(names[id], id))
+		}
+		seen[at] = true
+	}
+	return nil
+}
+
+// AlbumParentResult says where an album's new parent was committed.
+type AlbumParentResult struct {
+	scanCommit
+	Path    string `json:"path"`
+	FileURL string `json:"fileUrl"`
+	// Changed is false when the album already had that parent, so nothing
+	// was committed.
+	Changed bool `json:"changed"`
+}
+
+// SetAlbumParent makes parent, an album ID, the parent of the album id, or
+// makes it a top-level album when parent is empty, as one commit on the open
+// photo data pull request's branch, or a new one with its pull request. Only
+// the file's "parent" changes. It fails when that would make an album its own
+// ancestor.
+func (c *Client) SetAlbumParent(ctx context.Context, gh settings.GitHub, id, parent string) (AlbumParentResult, error) {
+	id, parent = strings.TrimSpace(id), strings.TrimSpace(parent)
+	root, perr := dataFolder(gh.Folder)
+	if perr != nil {
+		return AlbumParentResult{}, perr
+	}
+	t, perr := c.target(ctx, gh)
+	if perr != nil {
+		return AlbumParentResult{}, perr
+	}
+	scan := baseURLScan{t: t, branch: t.base}
+	if scan.pr, perr = c.findPullRequest(ctx, t); perr != nil {
+		return AlbumParentResult{}, perr
+	}
+	if scan.pr != nil {
+		scan.branch = scan.pr.Head.Ref
+	}
+	groups, perr := c.readGroups(ctx, t, root, scan.pr)
+	if perr != nil {
+		return AlbumParentResult{}, perr
+	}
+	album, ok := findGroup(groups[Albums.Folder], id)
+	if !ok {
+		return AlbumParentResult{}, publishErr(http.StatusNotFound, "There's no album with the ID %q. Refresh to see what there is.", id)
+	}
+	if album.Error != "" {
+		return AlbumParentResult{}, publishErr(http.StatusConflict, "%s couldn't be read (%s), so it wasn't changed.", album.Path, album.Error)
+	}
+	value := []byte("null")
+	if parent != "" {
+		if perr := checkParent(groups[Albums.Folder], id, parent); perr != nil {
+			return AlbumParentResult{}, perr
+		}
+		value, _ = json.Marshal(parent)
+	}
+	if scan.headSHA, perr = c.branchHead(ctx, t, scan.branch); perr != nil {
+		return AlbumParentResult{}, perr
+	}
+	current, _, found, msg := c.readFileSHA(ctx, t, album.Path, scan.headSHA)
+	if !found {
+		return AlbumParentResult{}, publishErr(http.StatusConflict, "%s isn't on %s. Refresh and try again.", album.Path, scan.branch)
+	}
+	if msg != "" {
+		return AlbumParentResult{}, publishErr(http.StatusBadGateway, "%s", msg)
+	}
+	content, err := setTopLevel(current, parentKey, value)
+	if err != nil {
+		return AlbumParentResult{}, publishErr(http.StatusConflict, "%s: %s", album.Path, err)
+	}
+	result := AlbumParentResult{Path: album.Path, FileURL: album.FileURL}
+	if bytes.Equal(content, current) {
+		return result, nil
+	}
+	entries := []map[string]string{{"path": album.Path, "mode": "100644", "type": "blob", "content": string(content)}}
+	message := "Move album " + album.Path + " to the top level"
+	if parent != "" {
+		message = "Move album " + album.Path + " into " + parent
+	}
+	saved, perr := c.commitScan(ctx, scan, entries, message)
+	if perr != nil {
+		return AlbumParentResult{}, perr
+	}
+	result.scanCommit, result.Changed = saved, true
+	return result, nil
+}
+
+// parentKey is the album file field that holds its parent's ID.
+const parentKey = "parent"
+
+// findGroup returns the album or tag in groups with id.
+func findGroup(groups []Group, id string) (Group, bool) {
+	for _, g := range groups {
+		if g.ID == id {
+			return g, true
+		}
+	}
+	return Group{}, false
 }
 
 // checkCollision fails when an album or tag in groups has group's ID or name,
@@ -294,6 +447,9 @@ func (c *Client) readGroup(ctx context.Context, t target, e folderEntry, ref str
 		g.ID = id
 	}
 	g.Name, g.Description = strings.TrimSpace(content.Name), strings.TrimSpace(content.Description)
+	if content.Parent != nil {
+		g.Parent = strings.TrimSpace(*content.Parent)
+	}
 }
 
 // listJSON lists the .json files directly in folder at ref, except skip, or

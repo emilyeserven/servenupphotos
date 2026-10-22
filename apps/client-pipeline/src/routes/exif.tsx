@@ -4,12 +4,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { RefreshCwIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
+import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import type { PhotoIdentity } from "@/api/photos";
 import { type UploadMutation, type UploadResponse, uploadMutation } from "@/api/upload";
 import { thumbnailCropField } from "@/api/versions";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
 import { GitHubSaveCard } from "@/components/github-save";
+import { PhotoGroupsCard } from "@/components/group-picker";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
@@ -119,6 +121,7 @@ function PhotoPage() {
   const upload = useMutation(uploadMutation);
   // Lives here so it can go into the JSON to upload and the JSON saved to GitHub.
   const [details, setDetails] = usePhotoState(extract.submittedAt, NO_DETAILS);
+  const [groups, setGroups] = usePhotoState(extract.submittedAt, NO_GROUPS);
   const [saved, setSaved] = usePhotoState(extract.submittedAt, false);
   const images = withImages(extract.data?.sanitized, upload.data);
   const sanitized = images && withDetails(images, details);
@@ -147,6 +150,8 @@ function PhotoPage() {
             identity={identity}
             details={details}
             onDetailsChange={setDetails}
+            groups={groups}
+            onGroupsChange={setGroups}
             saved={saved}
             onSaved={() => setSaved(true)}
           />
@@ -233,23 +238,27 @@ interface ResultsColumnProps {
   identity: PhotoIdentity | null;
   details: PhotoDetails;
   onDetailsChange: (details: PhotoDetails) => void;
+  groups: PhotoGroups;
+  onGroupsChange: (groups: PhotoGroups) => void;
   /** The JSON has been saved to GitHub. */
   saved: boolean;
   onSaved: () => void;
 }
 
-/** The analyzed photo's results, then its title, place name, comment and saving them to GitHub unless it's already in ALLPHOTOS.json. */
+/** The analyzed photo's results, then its title, place name, comment, albums and tags, and saving them to GitHub unless it's already in ALLPHOTOS.json. */
 function ResultsColumn({
   extract,
   sanitized,
   identity,
   details,
   onDetailsChange,
+  groups,
+  onGroupsChange,
   saved,
   onSaved,
 }: ResultsColumnProps) {
   if (extract.isIdle) return null;
-  const result = <ExifResult mutation={extract} sanitized={sanitized} />;
+  const result = <ExifResult mutation={extract} sanitized={sanitized} groups={groups} />;
   if (!extract.isSuccess || !sanitized) return result;
   return (
     <>
@@ -262,12 +271,40 @@ function ResultsColumn({
         onDetailsChange={onDetailsChange}
         saved={saved}
       />
+      <AllPhotosGate photo={identity} showStatus={false}>
+        <NewPhotoGroups groups={groups} onGroupsChange={onGroupsChange} saved={saved} />
+      </AllPhotosGate>
       {result}
       {/* The gate in the other column shows the check's status, so this one stays quiet. */}
       <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
-        <GitHubSaveCard file={extract.data.file} sanitized={sanitized} onSaved={onSaved} />
+        <GitHubSaveCard
+          file={extract.data.file}
+          sanitized={sanitized}
+          groups={groups}
+          onSaved={onSaved}
+        />
       </AllPhotosGate>
     </>
+  );
+}
+
+/** The new photo's albums and tags, saved in its JSON with Save to GitHub. */
+function NewPhotoGroups({
+  groups,
+  onGroupsChange,
+  saved,
+}: Pick<ResultsColumnProps, "groups" | "onGroupsChange" | "saved">) {
+  return (
+    <PhotoGroupsCard
+      value={groups}
+      onChange={onGroupsChange}
+      description={
+        saved
+          ? "Saved with the photo's JSON."
+          : "Optional, and saved in the JSON when you save to GitHub."
+      }
+      disabled={saved}
+    />
   );
 }
 
@@ -404,9 +441,11 @@ interface ExifResultProps {
   mutation: ExifMutation;
   /** The sanitized EXIF to show, which includes the R2 URL after an upload. */
   sanitized: SanitizedExif | null;
+  /** The albums and tags to save the photo in. */
+  groups: PhotoGroups;
 }
 
-function ExifResult({ mutation, sanitized }: ExifResultProps) {
+function ExifResult({ mutation, sanitized, groups }: ExifResultProps) {
   return (
     <Card>
       <CardHeader>
@@ -414,13 +453,13 @@ function ExifResult({ mutation, sanitized }: ExifResultProps) {
         <CardDescription>{mutation.variables?.name}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ExifResultBody mutation={mutation} sanitized={sanitized} />
+        <ExifResultBody mutation={mutation} sanitized={sanitized} groups={groups} />
       </CardContent>
     </Card>
   );
 }
 
-function ExifResultBody({ mutation, sanitized }: ExifResultProps) {
+function ExifResultBody({ mutation, sanitized, groups }: ExifResultProps) {
   if (mutation.isPending) return <Spinner className="size-6" />;
   if (mutation.isError) return <p className="text-destructive">{mutation.error.message}</p>;
   if (!mutation.data) return null;
@@ -434,7 +473,7 @@ function ExifResultBody({ mutation, sanitized }: ExifResultProps) {
         <TabsTrigger value="raw">Raw color data</TabsTrigger>
       </TabsList>
       <TabsContent value="sanitized">
-        <UploadJson file={file} sanitized={sanitized} />
+        <UploadJson file={file} sanitized={sanitized} groups={groups} />
       </TabsContent>
       <TabsContent value="exif">
         <ExifData exif={exif} />
@@ -449,12 +488,25 @@ function ExifResultBody({ mutation, sanitized }: ExifResultProps) {
   );
 }
 
-/** The JSON Save to GitHub writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload. */
-function UploadJson({ file, sanitized }: { file: string; sanitized: SanitizedExif | null }) {
+/** The JSON Save to GitHub writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload, then its albums and tags. */
+function UploadJson({
+  file,
+  sanitized,
+  groups,
+}: {
+  file: string;
+  sanitized: SanitizedExif | null;
+  groups: PhotoGroups;
+}) {
   if (!sanitized) return <ExifData exif={null} />;
-  // The title and comment first, as Save to GitHub writes them.
+  // The title and comment first, and the albums and tags last, as Save to GitHub writes them.
   const { title, comment, ...rest } = sanitized;
-  return <JsonCodeBlock value={{ title, comment, file, ...rest }} title="JSON to Upload" />;
+  return (
+    <JsonCodeBlock
+      value={{ title, comment, file, ...rest, albums: groups.albums, tags: groups.tags }}
+      title="JSON to Upload"
+    />
+  );
 }
 
 function ExifData({ exif }: { exif: ExifResponse["exif"] | ExifResponse["sanitized"] }) {

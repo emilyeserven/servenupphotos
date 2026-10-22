@@ -7,6 +7,7 @@
     "dev:docker": "pnpm photos:local && docker compose -f docker-compose.dev.yml up --build --watch",
     "dev:portfolio": "pnpm --filter @servenup/portfolio dev",
     "photos:local": "node scripts/combine-photo-data.mjs",
+    "shot": "node scripts/screenshot.mjs",
     "dev:pipeline": "concurrently -n be,bff,client -c blue,magenta,green \"pnpm run dev:be\" \"pnpm --filter @servenup/bff-pipeline dev\" \"pnpm --filter @servenup/client-pipeline dev\"",
     "dev:be": "cd apps/be-pipeline && go run ./cmd/api",
     "build": "pnpm -r build",
@@ -22,6 +23,7 @@
     "fallow": "3.33.1",
     "oxfmt": "0.73.0",
     "oxlint": "1.88.0",
+    "playwright-core": "1.56.1",
     "typescript": "catalog:"
   },
   "engines": {

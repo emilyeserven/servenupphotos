@@ -21,7 +21,7 @@ func TestCreateGroupOpensThenReusesPullRequest(t *testing.T) {
 	if got.Path != "data/albums/seoul.json" || !got.NewPullRequest || got.PullRequestNumber != 1 {
 		t.Errorf("CreateGroup() = %+v, want data/albums/seoul.json in a new pull request", got)
 	}
-	want := "{\n  \"id\": \"seoul\",\n  \"name\": \"Seoul\",\n  \"description\": \"Spring 2026\"\n}\n"
+	want := "{\n  \"id\": \"seoul\",\n  \"name\": \"Seoul\",\n  \"description\": \"Spring 2026\",\n  \"parent\": null\n}\n"
 	if content := f.files["photo-data/2026-10-15-024500:data/albums/seoul.json"]; content != want {
 		t.Errorf("file content = %q, want %q", content, want)
 	}
@@ -32,6 +32,62 @@ func TestCreateGroupOpensThenReusesPullRequest(t *testing.T) {
 	}
 	if tag.Path != "data/tags/macro.json" || tag.NewPullRequest || tag.PullRequestNumber != 1 {
 		t.Errorf("CreateGroup(tag) = %+v, want data/tags/macro.json added to pull request 1", tag)
+	}
+	// Tags have no parent.
+	if content := f.files["photo-data/2026-10-15-024500:data/tags/macro.json"]; strings.Contains(content, "parent") {
+		t.Errorf("tag content = %q, want no parent", content)
+	}
+}
+
+func TestCreateGroupWithParent(t *testing.T) {
+	f, c := newFakeRepo(t)
+	f.files["main:data/albums/korea.json"] = `{"id":"korea","name":"Korea","parent":null}`
+
+	if _, err := c.CreateGroup(t.Context(), organizeGH, Albums, NewGroup{ID: "seoul", Name: "Seoul", Parent: "korea"}); err != nil {
+		t.Fatalf("CreateGroup() error = %v", err)
+	}
+	if content := f.files["photo-data/2026-10-15-024500:data/albums/seoul.json"]; !strings.Contains(content, `"parent": "korea"`) {
+		t.Errorf("file content = %q, want parent korea", content)
+	}
+	got, err := c.Organize(t.Context(), organizeGH)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(got.Albums) != 2 || got.Albums[1].ID != "seoul" || got.Albums[1].Parent != "korea" || got.Albums[0].Parent != "" {
+		t.Errorf("Albums = %+v, want Seoul inside Korea", got.Albums)
+	}
+
+	for _, tt := range []struct {
+		kind   Kind
+		group  NewGroup
+		status int
+	}{
+		{Albums, NewGroup{ID: "busan", Name: "Busan", Parent: "japan"}, http.StatusBadRequest},
+		{Tags, NewGroup{ID: "night", Name: "Night", Parent: "korea"}, http.StatusBadRequest},
+	} {
+		_, err := c.CreateGroup(t.Context(), organizeGH, tt.kind, tt.group)
+		var perr *PublishError
+		if !errors.As(err, &perr) || perr.Status != tt.status {
+			t.Errorf("CreateGroup(%+v) error = %v, want status %d", tt.group, err, tt.status)
+		}
+	}
+}
+
+func TestCheckParent(t *testing.T) {
+	albums := []Group{{ID: "asia", Name: "Asia"}, {ID: "korea", Name: "Korea", Parent: "asia"}, {ID: "seoul", Name: "Seoul", Parent: "korea"}}
+	tests := []struct {
+		id, parent, want string
+	}{
+		{"seoul", "asia", ""},
+		{"asia", "seoul", `"Seoul" is inside "Asia" already`},
+		{"asia", "asia", `"Asia" is inside "Asia" already`},
+		{"seoul", "japan", `no album with the ID "japan"`},
+	}
+	for _, tt := range tests {
+		perr := checkParent(albums, tt.id, tt.parent)
+		if tt.want == "" && perr != nil || tt.want != "" && (perr == nil || !strings.Contains(perr.Message, tt.want)) {
+			t.Errorf("checkParent(%s, %s) = %v, want %q", tt.id, tt.parent, perr, tt.want)
+		}
 	}
 }
 

@@ -3,10 +3,13 @@ import { format, min } from "date-fns";
 import { CalendarClock, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
+import { PhotoLightbox } from "@/components/photo-lightbox";
+import { PhotoLocation } from "@/components/photo-location";
+import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
-import { photos, type Photo } from "@/lib/photos";
+import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { buildHistogram } from "@/lib/histogram";
 import {
   absoluteTimeRange,
@@ -14,6 +17,9 @@ import {
   resolveTimeRange,
   type TimeRangeValue,
 } from "@/lib/time-range";
+
+/** A photo with resized versions in R2, which is all the lightbox can show. */
+type ImagePhoto = Photo & { image: PhotoImage };
 
 export const Route = createFileRoute("/timeline")({
   validateSearch: (search: Record<string, unknown>): TimeRangeValue => parseTimeRange(search),
@@ -35,6 +41,7 @@ function TimelineView() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const [now] = useState(() => new Date());
+  const [shown, setShown] = useState<ImagePhoto | null>(null);
   const { start = earliestPhoto, end } = resolveTimeRange(search, now);
   const inRange = photos.filter(({ takenAt }) => takenAt >= start && takenAt <= end);
   const { bins, resolution } = buildHistogram(
@@ -75,12 +82,13 @@ function TimelineView() {
         </div>
       </header>
       <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
-      <PhotoMonths photos={inRange} />
+      <PhotoMonths photos={inRange} onOpen={setShown} />
+      <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
     </div>
   );
 }
 
-function PhotoMonths({ photos }: { photos: Photo[] }) {
+function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: ImagePhoto) => void }) {
   if (photos.length === 0) {
     return <p className="text-muted-foreground">No photos in this time range.</p>;
   }
@@ -92,27 +100,60 @@ function PhotoMonths({ photos }: { photos: Photo[] }) {
           <h2 className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
             {month}
           </h2>
-          <ul className="flex flex-col gap-2 border-l pl-4">
+          <ul className="flex flex-col gap-3 border-l pl-4">
             {monthPhotos.map((photo) => (
-              <li key={photo.id} className="flex items-baseline justify-between gap-4">
-                <div className="flex min-w-0 flex-col">
-                  <span>{photo.title}</span>
-                  {photo.comment && (
-                    <PhotoComment
-                      comment={photo.comment}
-                      lines={1}
-                      className="text-xs text-muted-foreground"
-                    />
-                  )}
-                </div>
-                <span className="shrink-0 text-xs text-muted-foreground">
-                  {format(photo.takenAt, "MMM d")} · {photo.camera}
-                </span>
-              </li>
+              <PhotoRow key={photo.id} photo={photo} onOpen={onOpen} />
             ))}
           </ul>
         </li>
       ))}
     </ol>
+  );
+}
+
+/**
+ * A photo's square thumbnail, title, comment, place, date and camera. The thumbnail and the title open
+ * the photo in the lightbox; photos without resized versions in R2 have nothing to open.
+ */
+function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto) => void }) {
+  const { image } = photo;
+  const open = image ? () => onOpen({ ...photo, image }) : undefined;
+  return (
+    <li className="flex items-center gap-3">
+      <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-12" />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <RowTitle title={photo.title} onOpen={open} />
+        {photo.comment && (
+          <PhotoComment
+            comment={photo.comment}
+            lines={1}
+            className="text-xs text-muted-foreground"
+          />
+        )}
+        {photo.location && (
+          <p className="truncate text-xs text-muted-foreground">
+            {/* Beside it, so the details cover neither this title nor the next. */}
+            <PhotoLocation location={photo.location} side="right" />
+          </p>
+        )}
+      </div>
+      <span className="shrink-0 self-baseline text-xs text-muted-foreground">
+        {format(photo.takenAt, "MMM d")} · {photo.camera}
+      </span>
+    </li>
+  );
+}
+
+/** The photo's title, a button opening the lightbox when there's an image to show. */
+function RowTitle({ title, onOpen }: { title: string; onOpen?: () => void }) {
+  if (!onOpen) return <span className="truncate">{title}</span>;
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="max-w-full cursor-zoom-in self-start truncate text-left underline-offset-4 outline-none hover:underline focus-visible:underline"
+    >
+      {title}
+    </button>
   );
 }
