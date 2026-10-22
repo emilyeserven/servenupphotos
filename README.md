@@ -55,10 +55,10 @@ instead, the same way the **Combine photo data** workflow builds `ALLPHOTOS.json
 as one array sorted by file name. Set `GITHUB_TOKEN` for a private repository, or if GitHub's
 limit of 60 unauthenticated requests an hour runs out.
 
-While the file has at least one photo, the portfolio's Timeline, Map and Grid show those photos instead of the dummy
-data (the Map leaves out photos without a GPS position, the Grid photos without resized versions, and photos without a
-`createDate` are left out everywhere); with no photos, or no file, they fall back to `dummy.json`, and the Grid shows
-its placeholder. The Grid loads each photo's resized versions from R2 through `srcset`, newest photo first, with the
+While the file has at least one photo, the portfolio's Timeline, Map and Grid show those photos instead of the
+committed `apps/portfolio/src/data/photos/ALLPHOTOS.json` (the Map leaves out photos without a GPS position, the Grid photos without resized versions, and photos without a
+`createDate` are left out everywhere); with no photos, or no file, they fall back to the committed
+file, and the Grid shows its placeholder when that has no photos with resized versions either. The Grid loads each photo's resized versions from R2 through `srcset`, newest photo first, with the
 blurred `preview` behind each one until it loads (the `thumbnailpreview` behind a Square Thumbnail, falling back to the
 `preview` when it won't load). The real image fades in over it once it loads; a Square Thumbnail that won't load falls
 back to the middle of the resized versions, and when nothing loads the tile stays blurred instead of showing a broken

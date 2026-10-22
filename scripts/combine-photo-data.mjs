@@ -1,5 +1,5 @@
-// Makes apps/portfolio/src/data/photos/ALLPHOTOS.local.json, which the portfolio uses in place of its dummy
-// data whenever it has a photo in it. It's a copy of ALLPHOTOS.json from the open "Add photo data"
+// Makes apps/portfolio/src/data/photos/ALLPHOTOS.local.json, which the portfolio uses in place of the
+// committed photos/ALLPHOTOS.json whenever it has a photo in it. It's a copy of ALLPHOTOS.json from the open "Add photo data"
 // pull request on the `origin` GitHub repository, so the portfolio shows the photos in flight. With
 // no such pull request, or when GitHub can't be reached, it combines the photo JSON files in the
 // folder instead, the same way the "Combine photo data" workflow builds ALLPHOTOS.json: every other
