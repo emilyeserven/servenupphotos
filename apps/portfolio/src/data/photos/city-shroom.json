@@ -1,0 +1,49 @@
+{
+  "title": "City Shroom",
+  "comment": null,
+  "file": "IMG_4231.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF-S55-250mm f/4-5.6 IS STM",
+  "aperture": 5.6,
+  "exposure": "1/125",
+  "iso": 400,
+  "focalLength": 250,
+  "gpsPosition": null,
+  "createDate": "2018:10:13 16:13:18",
+  "placeName": "Midtown",
+  "customCity": "New York City",
+  "customCountry": null,
+  "country": null,
+  "city": null,
+  "width": 5118,
+  "height": 2918,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231.jpg",
+    "key": "photos/46125006fd68-img-4231.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1100,
+      "y": 0,
+      "size": 2918,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "midtown"
+    }
+  ]
+}
