@@ -57,6 +57,17 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     }),
   );
 
+  // Adds albums and tags to several photo files as one commit, from the Gallery; the backend reads
+  // every photo file and gives GitHub 60s.
+  app.post("/photos/groups", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/groups", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+      timeoutMs: 65_000,
+    }),
+  );
+
   // Reads every photo JSON file on the base branch, the photos already in the portfolio, for the
   // Gallery; the backend gives GitHub 30s, then R2 15s.
   app.get("/photos/published", async (_request, reply) =>

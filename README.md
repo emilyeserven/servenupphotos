@@ -108,10 +108,12 @@ The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in 
 | Albums | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json` |
 | Tags   | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`     |
 
-A photo can be in several albums and have several tags, and an album or tag can have many photos: each photo JSON has
-`albums` and `tags` keys, arrays of album and tag IDs (empty when it's saved). An album or tag file is
-`{ "id", "name", "description" }`, named by its ID. Albums and tags share one set of IDs and names, compared ignoring
-case, so a photo's `albums` and `tags` never mean the same thing.
+A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
+tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
+`{ "id", "name", "description" }` and an album file `{ "id", "name", "description", "parent" }`, each named by its ID.
+An album's `parent` is the ID of the one album it sits inside, or `null` for a top-level album; the pipeline never
+lets an album end up inside itself. Albums and tags share one set of IDs and names, compared ignoring case, so a
+photo's `albums` and `tags` never mean the same thing.
 
 > **Frontend analogy:** it's a normalized store, like a Redux slice keyed by ID: photos hold only the IDs of their
 > albums and tags, and each album or tag is stored once, so renaming one later changes a single file.
@@ -309,11 +311,18 @@ linked to Photos in Flight. The list is read from the photos folder rather than 
 each photo's file path, which `ALLPHOTOS.json` entries don't carry.
 
 Each photo with its image in R2 has an **Edit** button that opens it on the Photo page (`/exif?edit=<path>&from=gallery`),
-the same editor Photos in Flight uses. Saving writes the JSON into the pull request: over the branch's copy when one is
+the same editor Photos in Flight uses, and each tile lists the photo's album and tag names. Saving writes the JSON into
+the pull request: over the branch's copy when one is
 open (the branch must already have the file; update it from the base branch if it was made before the photo merged), or
 on a new `photo-data/` branch with a new pull request when none is open. From then on the photo is in Photos in Flight,
 and edits go to the pull request's copy. A new title doesn't rename the file, since the pull request would then delete
 the old file from the portfolio when it merges and the photo's file name would change under it.
+
+**Select** turns on choosing photos, with a checkbox on each tile (or click the tile), **Select all shown** for the
+filtered ones, and an **Add albums and tags** card with an album and a tag combobox. **Add to N photos**
+(`POST /api/photos/groups` with `paths`, `albums` and `tags`) adds them to each chosen photo's `albums` and `tags`
+after the ones it has, changing nothing else in the files, as one commit on the open pull request's branch (or a new
+one with its pull request), the way Update Data commits. It warns when a chosen photo is already in another album.
 
 ### Combined data store
 
@@ -343,7 +352,19 @@ made from the name (lowercase, accents dropped, anything other than a to z and 0
 that name or ID, or when the name has nothing to make an ID from (such as `東京` on its own). Saving
 (`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the
 open photo data pull request, or opens one, the same way photos are saved, and follows CI's rebuild of `ALLALBUMS.json`
-or `ALLTAGS.json`. Adding photos to albums, choosing them on the Photo page and editing come later.
+or `ALLTAGS.json`. A new album can have a **Parent album**. Albums are listed as a tree, sub-albums under their parent,
+with how many photos in `ALLPHOTOS.json` list each one.
+
+Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its file and status, an album's parents and
+sub-albums, and the photos `ALLPHOTOS.json` lists in it (at the pull request's head when one is open, from the
+[combined data store](#combined-data-store)), optionally with the ones in its sub-albums. An album's page can change its
+parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's
+`parent` in one commit to the pull request, refusing a parent that's the album itself or inside it.
+
+Every album and tag picker, here, on the Photo page and in the Gallery, is a combobox: type to filter, arrow keys and
+Enter to choose, and each choice shows as a chip with a button to remove it (a chip is red when its ID isn't an album
+or tag on GitHub). The Photo page has an **Albums and tags** card for a new photo, saved with **Save to GitHub**, and
+for a photo being edited, saved with **Save changes**.
 
 ### Explore Bucket
 

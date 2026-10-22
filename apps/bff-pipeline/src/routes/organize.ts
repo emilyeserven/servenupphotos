@@ -18,4 +18,19 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
       timeoutMs: 35_000,
     }),
   );
+
+  // Moves an album into another, or to the top level, in the photo data pull request.
+  app.put<{ Params: { id: string } }>("/organize/albums/:id/parent", async (request, reply) =>
+    relayToBackend(
+      reply,
+      app.log,
+      `/organize/albums/${encodeURIComponent(request.params.id)}/parent`,
+      {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(request.body),
+        timeoutMs: 35_000,
+      },
+    ),
+  );
 };

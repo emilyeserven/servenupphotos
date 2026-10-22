@@ -209,6 +209,17 @@ func (c *Client) SetSocialDates(ctx context.Context, gh settings.GitHub, dates [
 	return SocialDatesResult{scanCommit: saved, Files: len(entries)}, nil
 }
 
+// valueOffset is where a value starts in span, which runs from the end of the
+// token before it: only whitespace and its key's colon come first.
+func valueOffset(span []byte) int {
+	return bytes.IndexFunc(span, func(r rune) bool { return r != ':' && r != ' ' && r != '\n' && r != '\r' && r != '\t' })
+}
+
+// splice is content with content[start:end] replaced by value.
+func splice(content []byte, start, end int, value []byte) []byte {
+	return append(append(append([]byte{}, content[:start]...), value...), content[end:]...)
+}
+
 func plural(n int, word string) string {
 	if n == 1 {
 		return word
@@ -221,9 +232,23 @@ func plural(n int, word string) string {
 // at the end, indented as Publish writes a photo's file. It fails when the
 // key holds an object or array, which a scalar field never should.
 func setTopLevel(content []byte, key string, value []byte) ([]byte, error) {
+	return replaceTopLevel(content, key, value, false)
+}
+
+// setTopLevelList is setTopLevel for a key that holds an array, such as a
+// photo's "albums", which it replaces whole.
+func setTopLevelList(content []byte, key string, value []byte) ([]byte, error) {
+	return replaceTopLevel(content, key, value, true)
+}
+
+// replaceTopLevel is setTopLevel, also replacing an object or array the key
+// holds when containers is true.
+func replaceTopLevel(content []byte, key string, value []byte, containers bool) ([]byte, error) {
 	dec := json.NewDecoder(bytes.NewReader(content))
 	depth, prev, closing := 0, 0, -1
 	wantKey, matched := false, false
+	// valueStart is where the matched key's object or array value starts.
+	valueStart := -1
 	for {
 		tok, err := dec.Token()
 		if errors.Is(err, io.EOF) {
@@ -238,8 +263,11 @@ func setTopLevel(content []byte, key string, value []byte) ([]byte, error) {
 
 		if d, ok := tok.(json.Delim); ok {
 			if d == '{' || d == '[' {
-				if matched {
-					return nil, fmt.Errorf("%s isn't a single value", key)
+				if matched && depth == 1 {
+					if !containers {
+						return nil, fmt.Errorf("%s isn't a single value", key)
+					}
+					valueStart = start + valueOffset(content[start:end])
 				}
 				if depth == 0 && d != '{' {
 					return nil, errors.New("the file isn't a JSON object")
@@ -249,6 +277,9 @@ func setTopLevel(content []byte, key string, value []byte) ([]byte, error) {
 				continue
 			}
 			depth--
+			if depth == 1 && matched && valueStart >= 0 {
+				return splice(content, valueStart, end, value), nil
+			}
 			if depth == 0 {
 				closing = end - 1
 			}
@@ -265,9 +296,7 @@ func setTopLevel(content []byte, key string, value []byte) ([]byte, error) {
 		}
 		wantKey = true
 		if matched {
-			// Before a value come only whitespace and its key's colon.
-			start += bytes.IndexFunc(content[start:end], func(r rune) bool { return r != ':' && r != ' ' && r != '\n' && r != '\r' && r != '\t' })
-			return append(append(append([]byte{}, content[:start]...), value...), content[end:]...), nil
+			return splice(content, start+valueOffset(content[start:end]), end, value), nil
 		}
 	}
 	if closing < 0 {

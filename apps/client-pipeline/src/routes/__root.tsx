@@ -30,8 +30,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootLayout() {
   const pathname = useLocation({ select: (location) => location.pathname });
-  const group = navGroups.find((g) => g.items.some((item) => item.url === pathname));
-  const page = group?.items.find((item) => item.url === pathname);
+  // A page under one in the sidebar, such as an album's, shows as that page.
+  const isPage = (url: string) => pathname === url || pathname.startsWith(`${url}/`);
+  const group = navGroups.find((g) => g.items.some((item) => isPage(item.url)));
+  const page = group?.items.find((item) => isPage(item.url));
 
   return (
     <SidebarProvider style={{ "--sidebar-width": "19rem" } as React.CSSProperties}>

@@ -1,15 +1,18 @@
 import { useForm } from "@tanstack/react-form";
 import { type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { CornerDownRightIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import {
   GROUP_KINDS,
   type Group,
   type GroupKind,
   type OrganizeResponse,
+  albumTree,
   createGroupMutation,
   findCollision,
   groupId,
+  groupLabel,
   organizeQuery,
 } from "@/api/organize";
 import { type PublishResult, photosInFlightQuery } from "@/api/photos";
@@ -19,6 +22,7 @@ import {
   type RebuildWatch,
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
+import { GroupCombobox } from "@/components/group-picker";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -40,12 +44,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { currentPhotos, photoCounts } from "@/lib/group-photos";
+import { useCombinedData } from "@/stores/combined-data";
 
 const PAGES: Record<GroupKind, { title: string; description: string }> = {
   albums: {
     title: "Albums",
     description:
-      "Collections of photos, like categories. A photo can be in several albums, and each album is its own JSON file.",
+      "Collections of photos, like categories. A photo is usually in one album, an album can be inside one parent album, and each album is its own JSON file.",
   },
   tags: {
     title: "Tags",
@@ -56,31 +62,38 @@ const PAGES: Record<GroupKind, { title: string; description: string }> = {
 
 /** The Albums or Tags page: a form to add one, then every one on GitHub. */
 export function GroupPage({ kind }: { kind: GroupKind }) {
-  const settings = useQuery(settingsQuery);
   const page = PAGES[kind];
 
   return (
     <Page title={page.title} description={page.description}>
-      <QueryResult query={settings} pendingLabel="Loading settings…">
-        {(data) =>
-          data.github.repo && data.github.token.set ? (
-            <GroupCards kind={kind} folder={dataFolder(data.github.folder)} />
-          ) : (
-            <Card>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Not set up: add the GitHub repository and token in{" "}
-                  <Link to="/settings" className="text-foreground underline underline-offset-4">
-                    Settings
-                  </Link>
-                  .
-                </p>
-              </CardContent>
-            </Card>
-          )
-        }
-      </QueryResult>
+      <GitHubGate>{(folder) => <GroupCards kind={kind} folder={folder} />}</GitHubGate>
     </Page>
+  );
+}
+
+/** children, given the data folder, once Settings have a GitHub repository and token. */
+export function GitHubGate({ children }: { children: (folder: string) => ReactNode }) {
+  const settings = useQuery(settingsQuery);
+  return (
+    <QueryResult query={settings} pendingLabel="Loading settings…">
+      {(data) =>
+        data.github.repo && data.github.token.set ? (
+          children(dataFolder(data.github.folder))
+        ) : (
+          <Card>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Not set up: add the GitHub repository and token in{" "}
+                <Link to="/settings" className="text-foreground underline underline-offset-4">
+                  Settings
+                </Link>
+                .
+              </p>
+            </CardContent>
+          </Card>
+        )
+      }
+    </QueryResult>
   );
 }
 
@@ -203,7 +216,7 @@ function NewGroupForm({
   const create = useMutation({ ...createGroupMutation(kind), onSuccess: onSaved });
 
   const form = useForm({
-    defaultValues: { name: "", description: "" },
+    defaultValues: { name: "", description: "", parent: [] as string[] },
     validators: { onSubmit: ({ value }) => validateName(organize, value.name) },
     onSubmit: async ({ value }) => {
       await create
@@ -211,6 +224,7 @@ function NewGroupForm({
           id: groupId(value.name),
           name: value.name.trim(),
           description: value.description.trim(),
+          parent: value.parent[0],
         })
         .catch(() => {});
     },
@@ -270,6 +284,29 @@ function NewGroupForm({
           </FormField>
         )}
       </form.Field>
+
+      {kind === "albums" && (
+        <form.Field name="parent">
+          {(field) => (
+            <FormField
+              id={field.name}
+              label="Parent album"
+              hint="Optional. Puts this album inside another, as one of its sub-albums."
+            >
+              <GroupCombobox
+                id={field.name}
+                kind="albums"
+                multiple={false}
+                value={field.state.value}
+                disabled={create.isPending}
+                placeholder="None: a top-level album"
+                aria-describedby={`${field.name}-hint`}
+                onChange={(parent) => field.handleChange(parent)}
+              />
+            </FormField>
+          )}
+        </form.Field>
+      )}
 
       {create.isError && <p className="text-destructive text-sm">{create.error.message}</p>}
 
@@ -407,6 +444,7 @@ function GroupListCard({
               <p className="text-muted-foreground text-sm">No {plural} yet.</p>
             ) : (
               <GroupTable
+                kind={kind}
                 groups={data[kind]}
                 pullRequestUrl={data.pullRequest?.url}
                 label={title}
@@ -420,51 +458,104 @@ function GroupListCard({
 }
 
 function GroupTable({
+  kind,
   groups,
   pullRequestUrl,
   label,
 }: {
+  kind: GroupKind;
   groups: Group[];
   pullRequestUrl?: string;
   label: string;
 }) {
+  const countOf = usePhotoCounts(kind);
+  // Albums list each one under its parent, sub-albums indented.
+  const rows = kind === "albums" ? albumTree(groups) : groups.map((group) => ({ group, depth: 0 }));
   return (
     <Table aria-label={label}>
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead>ID</TableHead>
+          <TableHead className="text-right">Photos</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {groups.map((group) => (
-          <GroupRow key={group.path} group={group} pullRequestUrl={pullRequestUrl} />
+        {rows.map(({ group, depth }) => (
+          <GroupRow
+            key={group.path}
+            kind={kind}
+            group={group}
+            depth={depth}
+            count={countOf?.(group.id)}
+            pullRequestUrl={pullRequestUrl}
+          />
         ))}
       </TableBody>
     </Table>
   );
 }
 
-function GroupRow({ group, pullRequestUrl }: { group: Group; pullRequestUrl?: string }) {
+/** How many photos in ALLPHOTOS.json list an album or tag, by ID; undefined until it's read. */
+function usePhotoCounts(kind: GroupKind): ((id: string) => number) | undefined {
+  const combined = useCombinedData();
+  const current = combined.data ? currentPhotos(combined.data) : undefined;
+  if (!current) return undefined;
+  const counts = photoCounts(current.photos, kind);
+  return (id) => counts.get(id) ?? 0;
+}
+
+function GroupRow({
+  kind,
+  group,
+  depth,
+  count,
+  pullRequestUrl,
+}: {
+  kind: GroupKind;
+  group: Group;
+  depth: number;
+  /** How many photos list it; undefined until ALLPHOTOS.json is read. */
+  count?: number;
+  pullRequestUrl?: string;
+}) {
   return (
     <TableRow>
       <TableCell className="whitespace-normal">
-        <a
-          href={group.fileUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="font-medium underline-offset-4 hover:underline"
-        >
-          {group.name || group.id}
-        </a>
-        <GroupNote group={group} />
+        <div className="flex items-start gap-1" style={{ paddingLeft: `${depth * 1.25}rem` }}>
+          {depth > 0 && (
+            <CornerDownRightIcon className="text-muted-foreground mt-0.5 size-3.5 shrink-0" />
+          )}
+          <div className="min-w-0">
+            <GroupName kind={kind} group={group} />
+            <GroupNote group={group} />
+          </div>
+        </div>
       </TableCell>
       <TableCell className="font-mono text-xs">{group.id}</TableCell>
+      <TableCell className="text-right text-xs tabular-nums">{count ?? "…"}</TableCell>
       <TableCell className="text-xs">
         <GroupStatus inFlight={group.inFlight} pullRequestUrl={pullRequestUrl} />
       </TableCell>
     </TableRow>
+  );
+}
+
+/** Each kind's page for one album or tag. */
+const GROUP_ROUTES = { albums: "/albums/$id", tags: "/tags/$id" } as const;
+
+/** The album or tag's name, linked to its page unless its file couldn't be read. */
+function GroupName({ kind, group }: { kind: GroupKind; group: Group }) {
+  if (group.error) return <span className="font-medium">{group.id}</span>;
+  return (
+    <Link
+      to={GROUP_ROUTES[kind]}
+      params={{ id: group.id }}
+      className="font-medium underline-offset-4 hover:underline"
+    >
+      {groupLabel(group)}
+    </Link>
   );
 }
 
@@ -476,7 +567,13 @@ function GroupNote({ group }: { group: Group }) {
 }
 
 /** "In flight", linked to the pull request, or "Merged". */
-function GroupStatus({ inFlight, pullRequestUrl }: { inFlight: boolean; pullRequestUrl?: string }) {
+export function GroupStatus({
+  inFlight,
+  pullRequestUrl,
+}: {
+  inFlight: boolean;
+  pullRequestUrl?: string;
+}) {
   if (!inFlight) return <span className="text-muted-foreground">Merged</span>;
   return (
     <a
