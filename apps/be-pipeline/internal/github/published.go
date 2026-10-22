@@ -54,6 +54,7 @@ func (c *Client) Published(ctx context.Context, gh settings.GitHub) (PublishedRe
 	if pr != nil {
 		result.PullRequest = &InFlightPullRequest{
 			Number: pr.Number, Title: pr.Title, URL: pr.HTMLURL, Branch: pr.Head.Ref, HeadSHA: pr.Head.SHA,
+			BaseBranch: pr.Base.Ref,
 		}
 		files, perr := c.listPullFiles(ctx, t, pr.Number)
 		if perr != nil {
