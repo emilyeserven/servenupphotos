@@ -10,9 +10,9 @@
   "focalLength": 18,
   "gpsPosition": null,
   "createDate": "2017:10:14 14:42:50",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "Fifth Avenue Presbyterian Church",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
   "country": null,
   "city": null,
   "width": 6000,
@@ -40,5 +40,10 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": []
+  "places": [
+    {
+      "relation": "",
+      "id": "fifth-avenue-presbyterian-church"
+    }
+  ]
 }
