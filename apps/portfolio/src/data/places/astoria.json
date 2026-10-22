@@ -2,7 +2,7 @@
   "id": "astoria",
   "name": "Astoria",
   "description": "",
-  "parent": "",
+  "parent": "queens",
   "city": "",
   "country": ""
 }
