@@ -23,8 +23,8 @@
     "small": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/55fe37f59656-dscf2926-small.webp",
     "xsmall": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/55fe37f59656-dscf2926-xsmall.webp",
     "preview": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/55fe37f59656-dscf2926-preview.webp",
-    "thumbnail": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/55fe37f59656-dscf2926-thumbnail.webp",
-    "thumbnailpreview": null
+    "thumbnail": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/55fe37f59656-dscf2926-thumbnail.webp?crop=1625,0,4220",
+    "thumbnailpreview": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/55fe37f59656-dscf2926-thumbnailpreview.webp?crop=1625,0,4220"
   },
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
