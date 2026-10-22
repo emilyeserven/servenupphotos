@@ -1,0 +1,49 @@
+{
+  "title": "Up Above Manhattan Bridge Overpass",
+  "comment": null,
+  "file": "IMG_7515.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF-S10-18mm f/4.5-5.6 IS STM",
+  "aperture": 7.1,
+  "exposure": "1/80",
+  "iso": 100,
+  "focalLength": 11,
+  "gpsPosition": "40 deg 42' 27.23\" N, 73 deg 59' 27.49\" W",
+  "createDate": "2019:03:30 15:38:41",
+  "placeName": "manhattan-bridge",
+  "customCity": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "city": "New York City",
+  "width": 6000,
+  "height": 3649,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515.jpg",
+    "key": "photos/a28fed49145f-img-7515.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-thumbnail.webp?crop=991,0,3649",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-thumbnailpreview.webp?crop=991,0,3649",
+    "thumbnailcrop": {
+      "x": 991,
+      "y": 0,
+      "size": 3649,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "manhattan-bridge"
+    }
+  ]
+}
