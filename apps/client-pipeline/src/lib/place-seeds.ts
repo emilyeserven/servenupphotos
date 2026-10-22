@@ -25,7 +25,7 @@ function text(value: unknown): string {
 }
 
 /** The city or country a photo shows: the custom one written on the Photo page, or else its EXIF one. */
-function shownField(photo: CombinedPhoto, field: "city" | "country"): string {
+export function shownField(photo: CombinedPhoto, field: "city" | "country"): string {
   const custom = field === "city" ? photo.customCity : photo.customCountry;
   return text(custom) || text(photo[field]);
 }

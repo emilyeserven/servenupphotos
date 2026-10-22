@@ -17,6 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { SingleCombobox } from "@/components/ui/single-combobox";
+import { type CityRow, cityOfPlace, regionKey } from "@/lib/place-cities";
 import { cn } from "@/lib/utils";
 import { parentIds, type PlaceTreeRow, placeTreeRows } from "@/lib/place-tree";
 import { placePhotoCounts, shownPhotos } from "@/lib/place-seeds";
@@ -24,6 +26,11 @@ import { useCombinedData } from "@/stores/combined-data";
 
 interface PlaceTableProps {
   data: PlacesResponse;
+  /** The city to show the places in; "" for every place. */
+  city: string;
+  /** Every city, to filter by. */
+  cities: CityRow[];
+  onCity: (city: string) => void;
   onEdit: (place: Place) => void;
 }
 
@@ -31,7 +38,7 @@ interface PlaceTableProps {
  * Every place, each parent followed by the places in it, which can be collapsed. Each row has the
  * place's local script and how many photos list it.
  */
-export function PlaceTable({ data, onEdit }: PlaceTableProps) {
+export function PlaceTable({ data, city, cities, onCity, onEdit }: PlaceTableProps) {
   const counts = placePhotoCounts(shownPhotos(useCombinedData().data));
   const localizations = readEntries(data.localizations);
   const places = readEntries(data.places);
@@ -49,7 +56,10 @@ export function PlaceTable({ data, onEdit }: PlaceTableProps) {
   const toggle = (id: string) => setCollapsed(toggled(collapsed, id));
   return (
     <div className="flex flex-col gap-2">
-      <ExpandButtons parents={parentIds(places)} collapsed={collapsed} onChange={setCollapsed} />
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <CityFilter city={city} cities={cities} onChange={onCity} />
+        <ExpandButtons parents={parentIds(places)} collapsed={collapsed} onChange={setCollapsed} />
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -60,7 +70,7 @@ export function PlaceTable({ data, onEdit }: PlaceTableProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {placeTreeRows(places, collapsed).map((row) => (
+          {placeTreeRows(inCity(places, city), collapsed).map((row) => (
             <PlaceRow
               key={row.place.id}
               row={row}
@@ -75,6 +85,41 @@ export function PlaceTable({ data, onEdit }: PlaceTableProps) {
       </Table>
       <UnreadableFiles files={data.places} />
       <InferredPlaceList places={places} />
+    </div>
+  );
+}
+
+/** The places in the city, their own or a place above them, or every place for "". */
+function inCity(places: Place[], city: string): Place[] {
+  if (!city) return places;
+  return places.filter((place) => regionKey(cityOfPlace(place, places)) === regionKey(city));
+}
+
+interface CityFilterProps {
+  city: string;
+  cities: CityRow[];
+  onChange: (city: string) => void;
+}
+
+/** Narrows the places to one city's; clearing it shows every place. */
+function CityFilter({ city, cities, onChange }: CityFilterProps) {
+  const options = cities
+    .filter((c) => c.places > 0)
+    .map((c) => ({ value: c.name, label: c.name, detail: c.country }));
+  return (
+    <div className="flex w-full max-w-xs flex-col gap-1">
+      <span id="place-city-filter-label" className="text-sm font-medium">
+        City
+      </span>
+      <SingleCombobox
+        id="place-city-filter"
+        aria-labelledby="place-city-filter-label"
+        options={options}
+        value={city}
+        onChange={onChange}
+        placeholder="Every city"
+        emptyText="No place has a city yet."
+      />
     </div>
   );
 }

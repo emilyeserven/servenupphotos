@@ -20,7 +20,16 @@ The Places page adds a place, or changes one's name, description, parent (**In**
 in it), city and country (its ID stays), and lists every place with its city, its local script and how many photos
 list it. Each place is listed under the place it's in, indented, and a place with places in it has an arrow to collapse
 or expand them; **Expand all** and **Collapse all** sit above the table. A place whose parent is missing is listed at
-the top. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
+the top.
+
+The list has three tabs, like the Localizations page: **Places**, **Cities** and **Countries**. Cities and countries
+come from the places' city and country and from the photos' (their custom city and country, or else their EXIF ones),
+each with how many places and photos have it; a city only photos have is marked **Inferred from photos**. **Show
+places** on a city, or the **City** box above the Places tab, narrows the places to that city's: those with it as their
+own city or a place above them with it.
+
+A place's **City** is a combobox of those cities, set ones first by name, with inferred ones marked by how many photos
+show them, or a new one typed in. Choosing a city whose country is known fills in **Country**. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
 open **Add photo data** pull request, or opens one, and the list reads the place files themselves
 (`GET /api/places` → `GET /places`, at the pull request's head), so a place shows before it's committed to
 `PLACES.json`.

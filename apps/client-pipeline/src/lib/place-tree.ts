@@ -52,14 +52,22 @@ export function placeTreeRows(places: Place[], collapsed: ReadonlySet<string>): 
 
 /** Whether going up the place's parents comes back around instead of reaching the top. */
 function inLoop(place: Place, places: Place[]): boolean {
+  return placeChain(place, places).looped;
+}
+
+/**
+ * The place, then each place above it, nearest first, stopping before one comes around again
+ * (`looped`), which saving refuses.
+ */
+export function placeChain(place: Place, places: Place[]): { chain: Place[]; looped: boolean } {
   const byId = new Map(places.map((p) => [p.id, p]));
-  const passed = new Set<string>();
+  const chain: Place[] = [];
   let at: Place | undefined = place;
-  while (at && !passed.has(at.id)) {
-    passed.add(at.id);
+  while (at && !chain.includes(at)) {
+    chain.push(at);
     at = byId.get(at.parent ?? "");
   }
-  return at !== undefined;
+  return { chain, looped: at !== undefined };
 }
 
 /** The IDs of every place that has places in it, which Collapse all closes. */

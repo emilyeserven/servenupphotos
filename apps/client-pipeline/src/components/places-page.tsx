@@ -1,18 +1,17 @@
-import { type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   cacheSavedEntry,
   entryId,
   type Place,
-  type PlacesResponse,
   placesQuery,
   readEntries,
   savePlaceMutation,
 } from "@/api/places";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
-import { PlaceTable } from "@/components/place-table";
-import { QueryResult } from "@/components/query-result";
+import { PlaceCityField } from "@/components/place-city-field";
+import { PlaceListCard } from "@/components/place-list-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -109,7 +108,12 @@ function usePlaceForm(place: Place | null, places: Place[]) {
     save.reset();
     setDraft((d) => ({ ...d, [field]: value }));
   };
-  return { draft, set, save, next, problem: placeProblem(next, places, !place) };
+  /** Sets the city, and the country too when the city's is known. */
+  const setCity = (city: string, country: string | undefined) => {
+    save.reset();
+    setDraft((d) => ({ ...d, city, country: country || d.country }));
+  };
+  return { draft, set, setCity, save, next, problem: placeProblem(next, places, !place) };
 }
 
 type PlaceForm = ReturnType<typeof usePlaceForm>;
@@ -146,13 +150,11 @@ function PlaceFormCard({ folder, place, places, onDone }: PlaceFormCardProps) {
           />
           <ParentField form={form} id={form.next.id} places={places} />
           <div className="grid gap-4 sm:grid-cols-2">
-            <LabeledInput
-              id="place-city"
-              label="City"
-              placeholder="Optional, such as Seoul"
+            <PlaceCityField
               value={form.draft.city}
+              places={places}
               disabled={form.save.isPending}
-              onChange={(value) => form.set("city", value)}
+              onChange={(city, country) => form.setCity(city, country)}
             />
             <LabeledInput
               id="place-country"
@@ -307,29 +309,5 @@ function LabeledInput({ id, label, placeholder, value, disabled, onChange }: Lab
         onChange={(event) => onChange(event.target.value)}
       />
     </div>
-  );
-}
-
-interface PlaceListCardProps {
-  read: UseQueryResult<PlacesResponse>;
-  onEdit: (place: Place) => void;
-}
-
-/** Every place, with its local script and how many photos list it. */
-function PlaceListCard({ read, onEdit }: PlaceListCardProps) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Places</CardTitle>
-        <CardDescription>
-          {read.data ? `Read on ${read.data.branch}.` : "Every place file on GitHub."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <QueryResult query={read} pendingLabel="Reading places from GitHub…">
-          {(data) => <PlaceTable data={data} onEdit={onEdit} />}
-        </QueryResult>
-      </CardContent>
-    </Card>
   );
 }
