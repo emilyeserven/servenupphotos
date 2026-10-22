@@ -6,7 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import type { LocalizationRow } from "@/lib/place-seeds";
 
 /** The three fields a localization notes, as the JSON names them, with their labels. */
-const FIELDS = [
+export const FIELDS = [
   { key: "romanization", label: "Romanization" },
   { key: "pronunciation", label: "Local pronunciation" },
   { key: "localScript", label: "Local script" },

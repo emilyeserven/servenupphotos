@@ -1,33 +1,23 @@
-import { type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   cacheSavedEntry,
   entryId,
-  localizationId,
-  type Localization,
   type Place,
-  type PlacesResponse,
   placesQuery,
   readEntries,
   savePlaceMutation,
 } from "@/api/places";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
-import { QueryResult } from "@/components/query-result";
+import { PlaceCityField } from "@/components/place-city-field";
+import { PlaceListCard } from "@/components/place-list-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { placePhotoCounts, shownPhotos } from "@/lib/place-seeds";
-import { useCombinedData } from "@/stores/combined-data";
+import { notParentsOf } from "@/lib/place-hierarchy";
 
 /** The Places page: a form to add or change a place, then every place on GitHub. */
 export function PlacesPage() {
@@ -94,23 +84,36 @@ function idTaken(id: string, places: Place[]): string | undefined {
 }
 
 /** A new place's fields, before anything is typed. */
-const NO_PLACE: Place = { id: "", name: "", description: "" };
+const NO_PLACE: Place = { id: "", name: "", description: "", parent: "", city: "", country: "" };
+
+/** The fields the place form edits, as typed. */
+type Draft = Required<Omit<Place, "id">>;
+
+function draftOf(place: Place): Draft {
+  const { name, description, parent = "", city = "", country = "" } = place;
+  return { name, description, parent, city, country };
+}
 
 /** The place form's fields as typed, the place they'd save, and saving it. */
 function usePlaceForm(place: Place | null, places: Place[]) {
   const queryClient = useQueryClient();
   const initial = place ?? NO_PLACE;
-  const [draft, setDraft] = useState({ name: initial.name, description: initial.description });
+  const [draft, setDraft] = useState<Draft>(() => draftOf(initial));
   const save = useMutation({
     ...savePlaceMutation,
     onSuccess: (result) => cacheSavedEntry(queryClient, "places", result),
   });
   const next: Place = { id: place ? place.id : entryId(draft.name), ...draft };
-  const set = (field: keyof typeof draft, value: string) => {
+  const set = (field: keyof Draft, value: string) => {
     save.reset();
     setDraft((d) => ({ ...d, [field]: value }));
   };
-  return { draft, set, save, next, problem: placeProblem(next, places, !place) };
+  /** Sets the city, and the country too when the city's is known. */
+  const setCity = (city: string, country: string | undefined) => {
+    save.reset();
+    setDraft((d) => ({ ...d, city, country: country || d.country }));
+  };
+  return { draft, set, setCity, save, next, problem: placeProblem(next, places, !place) };
 }
 
 type PlaceForm = ReturnType<typeof usePlaceForm>;
@@ -145,11 +148,61 @@ function PlaceFormCard({ folder, place, places, onDone }: PlaceFormCardProps) {
             disabled={form.save.isPending}
             onChange={(value) => form.set("description", value)}
           />
+          <ParentField form={form} id={form.next.id} places={places} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <PlaceCityField
+              value={form.draft.city}
+              places={places}
+              disabled={form.save.isPending}
+              onChange={(city, country) => form.setCity(city, country)}
+            />
+            <LabeledInput
+              id="place-country"
+              label="Country"
+              placeholder="Optional, such as South Korea"
+              value={form.draft.country}
+              disabled={form.save.isPending}
+              onChange={(value) => form.set("country", value)}
+            />
+          </div>
+          <p className="text-muted-foreground -mt-2 text-xs">
+            A photo given this place takes its city and country, from the less specific of its
+            places.
+          </p>
           <FormStatus form={form} />
           <FormButtons form={form} isNew={!place} onDone={onDone} />
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+/**
+ * The less specific place this one is in, such as the palace a gate is in. Choosing this place on
+ * a photo adds the parent as its second place. Places in this one can't be its parent.
+ */
+function ParentField({ form, id, places }: { form: PlaceForm; id: string; places: Place[] }) {
+  const ruledOut = notParentsOf(places, id);
+  const options = places
+    .filter((place) => !ruledOut.has(place.id))
+    .toSorted((a, b) => a.name.localeCompare(b.name))
+    .map((place) => ({ value: place.id, label: place.name }));
+  return (
+    <div className="flex flex-col gap-2">
+      <span id="place-parent-label" className="text-sm font-medium">
+        In
+      </span>
+      <SingleCombobox
+        id="place-parent"
+        aria-labelledby="place-parent-label"
+        options={options}
+        value={form.draft.parent}
+        onChange={(parent) => form.set("parent", parent)}
+        disabled={form.save.isPending}
+        placeholder="Optional, the place it's in, such as Gyeongbokgung Palace"
+        emptyText="No other places."
+      />
+    </div>
   );
 }
 
@@ -256,114 +309,5 @@ function LabeledInput({ id, label, placeholder, value, disabled, onChange }: Lab
         onChange={(event) => onChange(event.target.value)}
       />
     </div>
-  );
-}
-
-interface PlaceListCardProps {
-  read: UseQueryResult<PlacesResponse>;
-  onEdit: (place: Place) => void;
-}
-
-/** Every place, with its local script and how many photos list it. */
-function PlaceListCard({ read, onEdit }: PlaceListCardProps) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Places</CardTitle>
-        <CardDescription>
-          {read.data ? `Read on ${read.data.branch}.` : "Every place file on GitHub."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <QueryResult query={read} pendingLabel="Reading places from GitHub…">
-          {(data) => <PlaceTable data={data} onEdit={onEdit} />}
-        </QueryResult>
-      </CardContent>
-    </Card>
-  );
-}
-
-function PlaceTable({ data, onEdit }: { data: PlacesResponse; onEdit: (place: Place) => void }) {
-  const counts = placePhotoCounts(shownPhotos(useCombinedData().data));
-  const localizations = readEntries(data.localizations);
-  const places = readEntries(data.places).toSorted((a, b) => a.name.localeCompare(b.name));
-  if (data.places.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        No places yet. Add one above, or from a photo's Place field.
-      </p>
-    );
-  }
-  return (
-    <div className="flex flex-col gap-2">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Local script</TableHead>
-            <TableHead className="text-right">Photos</TableHead>
-            <TableHead />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {places.map((place) => (
-            <PlaceRow
-              key={place.id}
-              place={place}
-              localization={localizationOf(localizations, place)}
-              photos={counts.get(place.id) ?? 0}
-              onEdit={() => onEdit(place)}
-            />
-          ))}
-        </TableBody>
-      </Table>
-      <UnreadableFiles files={data.places} />
-    </div>
-  );
-}
-
-/** The files that couldn't be read, and why. */
-function UnreadableFiles({ files }: { files: PlacesResponse["places"] }) {
-  return files
-    .filter((file) => file.error)
-    .map((file) => (
-      <p key={file.path} className="text-destructive text-sm">
-        {file.path}: {file.error}
-      </p>
-    ));
-}
-
-function localizationOf(localizations: Localization[], place: Place): Localization | undefined {
-  const id = localizationId("place", place.name, place.id);
-  return localizations.find((l) => l.id === id);
-}
-
-interface PlaceRowProps {
-  place: Place;
-  localization?: Localization;
-  photos: number;
-  onEdit: () => void;
-}
-
-function PlaceRow({ place, localization, photos, onEdit }: PlaceRowProps) {
-  return (
-    <TableRow>
-      <TableCell className="whitespace-normal">
-        <div className="font-medium">{place.name}</div>
-        <div className="text-muted-foreground text-xs">
-          <code>{place.id}</code>
-          {place.description && ` · ${place.description}`}
-        </div>
-      </TableCell>
-      <TableCell>
-        {localization?.localScript || <span className="text-muted-foreground">None</span>}
-      </TableCell>
-      <TableCell className="text-right tabular-nums">{photos}</TableCell>
-      <TableCell className="text-right">
-        <Button type="button" variant="ghost" size="sm" onClick={onEdit}>
-          Edit
-        </Button>
-      </TableCell>
-    </TableRow>
   );
 }

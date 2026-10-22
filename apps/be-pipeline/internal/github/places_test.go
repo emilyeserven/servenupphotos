@@ -17,7 +17,7 @@ func TestSavePlace(t *testing.T) {
 		t.Fatalf("SavePlace() error = %v", err)
 	}
 	file := dataRoot + "/places/gyeongbokgung-palace.json"
-	want := "{\n  \"id\": \"gyeongbokgung-palace\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\"\n}\n"
+	want := "{\n  \"id\": \"gyeongbokgung-palace\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\"\n}\n"
 	if f.committed[file] != want || len(f.committed) != 1 {
 		t.Errorf("committed %q, want %s as %q", f.committed, file, want)
 	}
@@ -31,7 +31,7 @@ func TestSavePlace(t *testing.T) {
 
 func TestSavePlaceUnchangedAndChanged(t *testing.T) {
 	file := dataRoot + "/places/gyeongbokgung-palace.json"
-	saved := "{\n  \"id\": \"gyeongbokgung-palace\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\"\n}\n"
+	saved := "{\n  \"id\": \"gyeongbokgung-palace\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\"\n}\n"
 	f, c := newCombinedRepo(t, map[string]string{file: saved})
 
 	got, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gyeongbokgung-palace", Name: "Gyeongbokgung Palace"})
@@ -45,9 +45,21 @@ func TestSavePlaceUnchangedAndChanged(t *testing.T) {
 	}
 }
 
+func TestSavePlaceWithParent(t *testing.T) {
+	f, c := newCombinedRepo(t, map[string]string{
+		dataRoot + "/places/gbg.json": `{"id":"gbg","name":"Gyeongbokgung Palace","description":""}`,
+	})
+	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gate", Name: "Geunjeongmun Gate", Parent: "gbg", City: " Seoul ", Country: "South Korea"})
+	want := "{\n  \"id\": \"gate\",\n  \"name\": \"Geunjeongmun Gate\",\n  \"description\": \"\",\n  \"parent\": \"gbg\",\n  \"city\": \"Seoul\",\n  \"country\": \"South Korea\"\n}\n"
+	if got := f.committed[dataRoot+"/places/gate.json"]; err != nil || got != want {
+		t.Errorf("SavePlace() error = %v, committed %q; want %q", err, got, want)
+	}
+}
+
 func TestSaveEntryRefuses(t *testing.T) {
 	_, c := newCombinedRepo(t, map[string]string{
-		dataRoot + "/places/gbg.json": `{"id":"gbg","name":"Gyeongbokgung Palace","description":""}`,
+		dataRoot + "/places/gbg.json":  `{"id":"gbg","name":"Gyeongbokgung Palace","description":""}`,
+		dataRoot + "/places/gate.json": `{"id":"gate","name":"Geunjeongmun Gate","description":"","parent":"gbg"}`,
 	})
 	for _, tt := range []struct {
 		name   string
@@ -60,6 +72,18 @@ func TestSaveEntryRefuses(t *testing.T) {
 		}, http.StatusConflict},
 		{"bad ID", func() error {
 			_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "경복궁", Name: "경복궁"})
+			return err
+		}, http.StatusBadRequest},
+		{"missing parent", func() error {
+			_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "hall", Name: "Hall", Parent: "nowhere"})
+			return err
+		}, http.StatusBadRequest},
+		{"parent loop", func() error {
+			_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gbg", Name: "Gyeongbokgung Palace", Parent: "gate"})
+			return err
+		}, http.StatusBadRequest},
+		{"own parent", func() error {
+			_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gbg", Name: "Gyeongbokgung Palace", Parent: "gbg"})
 			return err
 		}, http.StatusBadRequest},
 		{"no name", func() error {

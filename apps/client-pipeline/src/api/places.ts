@@ -9,6 +9,11 @@ export interface Place {
   id: string;
   name: string;
   description: string;
+  /** The ID of the less specific place it's in, such as Gyeongbokgung Palace for Geunjeongmun Gate; "" or missing for none. */
+  parent?: string;
+  /** Where it is, which a photo given the place takes as its city and country; "" or missing when not set. */
+  city?: string;
+  country?: string;
 }
 
 /** What a localization is of. */
