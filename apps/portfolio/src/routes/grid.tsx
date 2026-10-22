@@ -1,5 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Grid3x3, Info, LayoutDashboard, Square } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Grid3x3, LayoutDashboard, Square } from "lucide-react";
 import { type CSSProperties, type ImgHTMLAttributes, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
@@ -59,7 +59,7 @@ function GridView() {
           Grid
         </h1>
         <p className="text-sm text-muted-foreground">{gridPhotos.length} photos</p>
-        <div className="ml-auto flex items-center gap-2 self-center">
+        <div className="ml-auto flex items-center gap-4 self-center">
           <InfoToggle shown={showInfo} />
           <ViewModeSwitcher mode={mode} />
         </div>
@@ -136,7 +136,7 @@ const VIEW_MODES = [
   { mode: "natural", label: "Natural", Icon: LayoutDashboard },
 ] as const;
 
-/** The outline shared by the info toggle and the tile shape switcher. */
+/** The outline around the tile shape switcher. */
 const CONTROL_FRAME =
   "inline-flex rounded-md border bg-background p-0.5 shadow-xs dark:border-input dark:bg-input/30";
 
@@ -149,26 +149,27 @@ function controlButtonClass(active: boolean): string {
 }
 
 /**
- * A button to show or hide each tile's title and comment, kept in the URL so a link keeps it.
+ * A checkbox to show or hide each tile's title and comment, kept in the URL so a link keeps it.
  * Hidden by default, so the grid is only photos.
  */
 function InfoToggle({ shown }: { shown: boolean }) {
+  const navigate = useNavigate({ from: "/grid" });
   return (
-    <div className={CONTROL_FRAME}>
-      <Link
-        to="/grid"
-        search={(prev) => ({ ...prev, info: shown ? undefined : true })}
-        replace
-        aria-pressed={shown}
-        title={
-          shown ? "Hide each photo's title and comment" : "Show each photo's title and comment"
-        }
-        className={controlButtonClass(shown)}
-      >
-        <Info aria-hidden />
-        Info
-      </Link>
-    </div>
+    <label
+      title="Show each photo's title and comment under it"
+      className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-muted-foreground select-none hover:text-foreground"
+    >
+      <input
+        type="checkbox"
+        checked={shown}
+        onChange={(event) => {
+          const info = event.target.checked ? true : undefined;
+          void navigate({ search: (prev) => ({ ...prev, info }), replace: true });
+        }}
+        className="size-4 cursor-pointer accent-primary"
+      />
+      Show info
+    </label>
   );
 }
 
