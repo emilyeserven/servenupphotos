@@ -1,5 +1,5 @@
 {
-  "title": null,
+  "title": "Colorful Storefront",
   "comment": null,
   "file": "IMG_3475.jpg",
   "camera": "Canon EOS 80D",
@@ -10,9 +10,9 @@
   "focalLength": 163,
   "gpsPosition": null,
   "createDate": "2018:10:12 12:05:53",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "Astoria",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
   "country": null,
   "city": null,
   "width": 6000,
@@ -26,10 +26,10 @@
     "small": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-thumbnail.webp?crop=2000,0,4000",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-thumbnailpreview.webp?crop=2000,0,4000",
     "thumbnailcrop": {
-      "x": 1000,
+      "x": 2000,
       "y": 0,
       "size": 4000,
       "outputSize": 500
@@ -40,5 +40,14 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": []
+  "places": [
+    {
+      "relation": "",
+      "id": "astoria"
+    },
+    {
+      "relation": "in",
+      "id": "queens"
+    }
+  ]
 }
