@@ -300,7 +300,6 @@ follows the same way.
 Under the photos it lists the album and tag files the pull request adds or changes, each with its JSON and a check mark
 when it's an entry of `ALLALBUMS.json` or `ALLTAGS.json` at the same head, and the pull request summary counts them.
 
-
 ### Gallery
 
 `/gallery` shows the photos already in the portfolio: every photo `.json` on the base branch (`GET /api/photos/published`
