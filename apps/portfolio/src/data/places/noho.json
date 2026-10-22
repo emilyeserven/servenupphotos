@@ -3,6 +3,8 @@
   "name": "NoHo",
   "description": "",
   "parent": "",
-  "city": "",
-  "country": ""
+  "city": "New York City",
+  "country": "United States of America",
+  "latitude": 40.72714461561978,
+  "longitude": -73.99337287689791
 }
