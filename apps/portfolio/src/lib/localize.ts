@@ -28,6 +28,8 @@ export interface Place {
   /** The place's GPS position in decimal degrees, for photos whose EXIF has none. */
   latitude?: number;
   longitude?: number;
+  /** Whether the GPS position is exactly where photos given the place were taken, such as a station. */
+  exactLocation?: boolean;
 }
 
 /** One entry of LOCALIZATIONS.json: how a country, city or place is written and said where it is. */

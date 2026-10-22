@@ -26,7 +26,10 @@ export interface Photo {
    */
   latitude: number | null;
   longitude: number | null;
-  /** Whether the map puts the photo at one of its places' GPS positions, as its EXIF has none. */
+  /**
+   * Whether the map puts the photo at one of its places' GPS positions, as its EXIF has none, and
+   * that place isn't marked as an exact location.
+   */
   approximatePosition: boolean;
   /** The photo's resized versions in R2; null for photos not uploaded yet. */
   image: PhotoImage | null;
@@ -183,11 +186,21 @@ type Position = ReturnType<typeof parseGpsPosition>;
 
 const NO_POSITION: Position = { latitude: null, longitude: null };
 
-/** The place's own GPS position, or else the nearest place above it that has one. */
-function placePosition(id: string | undefined, passed = new Set<string>()): Position {
+/** A GPS position from a place, and whether it's exactly where photos given the place were taken. */
+type PlacePosition = Position & { exact: boolean };
+
+const NO_PLACE_POSITION: PlacePosition = { ...NO_POSITION, exact: false };
+
+/**
+ * The place's own GPS position, exact when the place is marked as an exact location, or else the
+ * nearest place above it that has one, which is never exact: the photo is only somewhere in it.
+ */
+function placePosition(id: string | undefined, passed = new Set<string>()): PlacePosition {
   const place = placeById(id);
-  if (!place || passed.has(place.id)) return NO_POSITION;
-  return ownPosition(place) ?? placePosition(place.parent, passed.add(place.id));
+  if (!place || passed.has(place.id)) return NO_PLACE_POSITION;
+  const own = ownPosition(place);
+  if (own) return { ...own, exact: place.exactLocation === true };
+  return { ...placePosition(place.parent, passed.add(place.id)), exact: false };
 }
 
 /** The GPS position set on the place itself, if both parts are. */
@@ -197,16 +210,17 @@ function ownPosition({ latitude, longitude }: Place): Position | undefined {
 
 /**
  * Where the photo goes on the map: its EXIF GPS position, or else the first of its places (or a
- * place it's in) with a GPS position set on the Places page.
+ * place it's in) with a GPS position set on the Places page. A place's position is approximate
+ * unless that place is marked as an exact location.
  */
 function photoPosition(photo: PhotoData): Position & { approximatePosition: boolean } {
   const exif = parseGpsPosition(photo.gpsPosition);
   if (exif.latitude !== null) return { ...exif, approximatePosition: false };
   const found = (photo.places ?? []).map(({ id }) => placePosition(id));
   const position = found.find(({ latitude }) => latitude !== null);
-  return position
-    ? { ...position, approximatePosition: true }
-    : { ...NO_POSITION, approximatePosition: false };
+  if (!position) return { ...NO_POSITION, approximatePosition: false };
+  const { exact, ...at } = position;
+  return { ...at, approximatePosition: !exact };
 }
 
 /** The resized versions' URLs with their widths: a version keeps the photo's size when it's already smaller. */

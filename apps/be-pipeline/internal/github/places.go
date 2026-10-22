@@ -65,6 +65,11 @@ type Place struct {
 	// both nil when not set.
 	Latitude  *float64 `json:"latitude,omitempty"`
 	Longitude *float64 `json:"longitude,omitempty"`
+	// ExactLocation is whether the GPS position is exactly where photos given
+	// the place were taken, such as a subway station or a museum, rather than
+	// somewhere near; the portfolio's map then marks them like photos with
+	// their own GPS position. Only kept when the place has a GPS position.
+	ExactLocation bool `json:"exactLocation,omitempty"`
 }
 
 // Localization types: what a localization is of.
@@ -337,6 +342,7 @@ func validPlace(place Place) (Place, *PublishError) {
 		ID: strings.TrimSpace(place.ID), Name: strings.TrimSpace(place.Name), Description: strings.TrimSpace(place.Description),
 		Parent: strings.TrimSpace(place.Parent), City: strings.TrimSpace(place.City), Country: strings.TrimSpace(place.Country),
 		Latitude: place.Latitude, Longitude: place.Longitude,
+		ExactLocation: place.ExactLocation && place.Latitude != nil,
 	}
 	if perr := badCoordinates(p); perr != nil {
 		return p, perr

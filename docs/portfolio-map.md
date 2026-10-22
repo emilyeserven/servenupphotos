@@ -10,7 +10,8 @@ to split them apart. Photos without resized versions are a small dot that opens 
 
 A photo whose EXIF has no GPS position goes at one of its places' position (see
 [Places](places-and-localizations.md#gps-position)). That spot is only near where it was taken, so its marker's white
-border is softer, and so is a group's when every photo in it is placed that way.
+border is softer, and so is a group's when every photo in it is placed that way. A place marked as an **Exact
+location** on the Places page keeps the solid border for its photos.
 
 > **Frontend analogy:** the grouping is done by MapLibre on the map's data, like a virtualized list deciding which
 > rows to render: the page asks which groups and photos are in view after each move and draws a React marker for each.

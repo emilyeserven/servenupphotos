@@ -15,6 +15,7 @@ import {
   useLocalizationDraft,
 } from "@/components/localization-fields";
 import { PlaceCityField } from "@/components/place-city-field";
+import { PlaceExactLocationField } from "@/components/place-exact-location-field";
 import { RegionIcon } from "@/components/region-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,13 +70,17 @@ const NO_PLACE: Place = { id: "", name: "", description: "", parent: "", city: "
 type Draft = Required<Omit<Place, "id" | "latitude" | "longitude">> & { gps: string };
 
 function draftOf(place: Place): Draft {
-  const { name, description, parent = "", city = "", country = "" } = place;
-  return { name, description, parent, city, country, gps: gpsText(place) };
+  const { name, description, parent = "", city = "", country = "", exactLocation = false } = place;
+  return { name, description, parent, city, country, exactLocation, gps: gpsText(place) };
 }
 
-/** The place the draft would save, with its GPS position read from the text. */
-function placeOf(id: string, { gps, ...draft }: Draft): Place {
-  return { id, ...draft, ...parseGps(gps) };
+/**
+ * The place the draft would save, with its GPS position read from the text. It's only an exact
+ * location with a GPS position, and is left out of the file when it isn't.
+ */
+function placeOf(id: string, { gps, exactLocation, ...draft }: Draft): Place {
+  const exact = exactLocation && gps.trim() !== "";
+  return { id, ...draft, ...parseGps(gps), ...(exact && { exactLocation }) };
 }
 
 /** Whether any field differs from what was saved. */
@@ -113,7 +118,7 @@ function usePlaceForm(place: Place | null, places: Place[]) {
     ...optimisticEntry(queryClient, "places"),
   });
   const next = placeOf(place ? place.id : entryId(draft.name), draft);
-  const set = (field: keyof Draft, value: string) => {
+  const set = (field: Exclude<keyof Draft, "exactLocation">, value: string) => {
     save.reset();
     setDraft((d) => ({ ...d, [field]: value }));
   };
@@ -122,9 +127,13 @@ function usePlaceForm(place: Place | null, places: Place[]) {
     save.reset();
     setDraft((d) => ({ ...d, city, country: country || d.country }));
   };
+  const setExactLocation = (exactLocation: boolean) => {
+    save.reset();
+    setDraft((d) => ({ ...d, exactLocation }));
+  };
   const problem = formProblem(save, next, draft.gps, places, !place);
   const changed = isChanged(draft, draftOf(initial));
-  return { draft, set, setCity, save, next, problem, changed };
+  return { draft, set, setCity, setExactLocation, save, next, problem, changed };
 }
 
 type PlaceForm = ReturnType<typeof usePlaceForm>;
@@ -212,6 +221,12 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
             value={form.draft.gps}
             disabled={busy}
             onChange={(value) => form.set("gps", value)}
+          />
+          <PlaceExactLocationField
+            checked={form.draft.exactLocation}
+            hasGps={form.draft.gps.trim() !== ""}
+            disabled={busy}
+            onChange={form.setExactLocation}
           />
           <LocalizationFields draft={local} idPrefix="place-localization" disabled={busy} />
           <FormStatus form={form} localization={local} />
