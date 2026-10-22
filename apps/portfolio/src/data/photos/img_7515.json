@@ -10,7 +10,7 @@
   "focalLength": 11,
   "gpsPosition": "40 deg 42' 27.23\" N, 73 deg 59' 27.49\" W",
   "createDate": "2019:03:30 15:38:41",
-  "placeName": null,
+  "placeName": "manhattan-bridge",
   "customCity": null,
   "customCountry": null,
   "country": "United States of America",
@@ -26,10 +26,10 @@
     "small": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-thumbnail.webp?crop=991,0,3649",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-thumbnailpreview.webp?crop=991,0,3649",
     "thumbnailcrop": {
-      "x": 1175,
+      "x": 991,
       "y": 0,
       "size": 3649,
       "outputSize": 500
@@ -40,5 +40,10 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": []
+  "places": [
+    {
+      "relation": "",
+      "id": "manhattan-bridge"
+    }
+  ]
 }
