@@ -20,17 +20,16 @@ function Homepage() {
           Serven Up Photos
         </h1>
         <p className="mt-3 text-lg text-white/80">Choose a way to explore the photos.</p>
-        <nav aria-label="Ways to explore" className="mt-10">
-          <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {enabledViews.map(({ to, label, description, icon: Icon }) => (
+        <nav aria-label="Ways to explore" className="mt-8">
+          <ul className="flex flex-wrap justify-center gap-2 sm:gap-3">
+            {enabledViews.map(({ to, label, icon: Icon }) => (
               <li key={to}>
                 <Link
                   to={to}
-                  className="flex h-full flex-col items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-5 shadow-lg backdrop-blur-md transition-colors outline-none hover:border-white/40 hover:bg-white/20 focus-visible:ring-[3px] focus-visible:ring-white/60 sm:gap-3 sm:p-6"
+                  className="flex w-20 flex-col items-center gap-1.5 rounded-lg border border-white/20 bg-white/10 px-2 py-3 shadow-lg backdrop-blur-sm transition-colors outline-none hover:border-white/40 hover:bg-white/20 focus-visible:ring-[3px] focus-visible:ring-white/60 sm:w-28"
                 >
-                  <Icon className="size-8 sm:size-10" aria-hidden />
-                  <span className="text-lg font-medium sm:text-xl">{label}</span>
-                  <span className="text-xs text-white/75 sm:text-sm">{description}</span>
+                  <Icon className="size-6" aria-hidden />
+                  <span className="text-sm font-medium">{label}</span>
                 </Link>
               </li>
             ))}

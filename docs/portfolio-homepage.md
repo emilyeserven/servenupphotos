@@ -1,7 +1,7 @@
 # Portfolio homepage
 
 The portfolio's homepage (`/`, `apps/portfolio/src/routes/index.tsx`) is where a visitor picks a way to explore the
-photos: one large link for each view that's ready to visit (Timeline, Table, Map and Grid). A view is ready when its
+photos: one small tile for each view, with its icon and name, that's ready to visit (Timeline, Table, Map and Grid). A view is ready when its
 entry in `apps/portfolio/src/lib/portfolio-views.ts` has `enabled: true`; the site menu greys out the others, and the
 homepage leaves them out.
 
