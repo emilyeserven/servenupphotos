@@ -260,7 +260,7 @@ function MapView() {
               offset={24}
               maxWidth="none"
               onClose={() => setCluster(null)}
-              className="text-neutral-900"
+              className={CLUSTER_POPUP}
             >
               <ClusterGrid
                 cluster={cluster}
@@ -330,6 +330,15 @@ function PhotoPopup({ photo, onClose }: { photo: PlacedPhoto; onClose: () => voi
     </Popup>
   );
 }
+
+// MapLibre styles its popups white, so dark mode recolors the box and its tip under the anchor.
+// Its CSS isn't in a layer, so it beats Tailwind's utilities unless they're important.
+const CLUSTER_POPUP = cn(
+  "text-neutral-900 dark:text-neutral-100",
+  "dark:[&_.maplibregl-popup-content]:bg-neutral-900! dark:[&_.maplibregl-popup-content]:ring-1 dark:[&_.maplibregl-popup-content]:ring-white/15",
+  "dark:[&_.maplibregl-popup-tip]:border-t-neutral-900!",
+  "dark:[&_.maplibregl-popup-close-button:hover]:bg-white/10!",
+);
 
 const MARKER_RING =
   "outline-none ring-2 ring-white shadow-md shadow-black/30 transition-transform hover:scale-110 focus-visible:scale-110 focus-visible:ring-sky-500";
@@ -461,7 +470,7 @@ function ClusterGrid({
           variant="ghost"
           size="sm"
           onClick={onZoomIn}
-          className="h-7 px-2 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+          className="h-7 px-2 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
         >
           <ZoomIn aria-hidden />
           Zoom in
@@ -476,12 +485,12 @@ function ClusterGrid({
               aria-label={`Show ${photo.title}`}
               disabled={!photo.image}
               onClick={() => onOpen(photo)}
-              className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-sm bg-neutral-200 outline-none focus-visible:ring-2 focus-visible:ring-sky-500 disabled:cursor-default"
+              className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-sm bg-neutral-200 outline-none dark:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-sky-500 disabled:cursor-default"
             >
               {photo.image ? (
                 <Thumbnail image={photo.image} />
               ) : (
-                <span className="absolute inset-0 flex items-center justify-center p-1 text-center text-[0.65rem] leading-tight text-neutral-600">
+                <span className="absolute inset-0 flex items-center justify-center p-1 text-center text-[0.65rem] leading-tight text-neutral-600 dark:text-neutral-400">
                   {photo.title}
                 </span>
               )}
