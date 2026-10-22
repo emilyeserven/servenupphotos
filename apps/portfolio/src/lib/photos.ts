@@ -19,6 +19,8 @@ export interface PhotoImage {
   height: number;
   /** The Medium version, or the largest one below it. */
   src: string;
+  /** The Small version, or the smallest one above it, or else the largest there is. */
+  small: string;
   /** Every resized version, for the browser to pick from by its width. */
   srcSet: string;
   /** A tiny version to show blurred while a real one loads, when the photo has one. */
@@ -105,15 +107,32 @@ function defaultSrc(versions: ReturnType<typeof resizedVersions>) {
   return (versions.findLast(({ longestEdge }) => longestEdge <= 1200) ?? versions[0])?.url;
 }
 
+/** The Small version, or the smallest one above it, or else the largest there is. */
+function smallSrc(versions: ReturnType<typeof resizedVersions>, fallback: string) {
+  return (
+    (versions.find(({ longestEdge }) => longestEdge >= 500) ?? versions.at(-1))?.url ?? fallback
+  );
+}
+
 function parseImage(photo: PhotoData): PhotoImage | null {
   const { width, height } = photo;
   if (!width || !height) return null;
   const versions = resizedVersions({ ...photo, width, height });
   const src = defaultSrc(versions);
   if (!src) return null;
+  const small = smallSrc(versions, src);
   const srcSet = versions.map((version) => `${version.url} ${version.width}w`).join(", ");
   const { preview, thumbnail, thumbnailpreview } = photo.images;
-  return { width, height, src, srcSet, preview, thumbnail, thumbnailPreview: thumbnailpreview };
+  return {
+    width,
+    height,
+    src,
+    small,
+    srcSet,
+    preview,
+    thumbnail,
+    thumbnailPreview: thumbnailpreview,
+  };
 }
 
 /** The local ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
