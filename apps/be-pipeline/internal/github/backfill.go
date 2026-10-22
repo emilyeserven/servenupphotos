@@ -172,13 +172,6 @@ func (c *Client) Backfill(ctx context.Context, gh settings.GitHub, readExif Exif
 	return result, nil
 }
 
-func plural(n int, word string) string {
-	if n == 1 {
-		return word
-	}
-	return word + "s"
-}
-
 // backfillPlan is what one photo file is missing.
 type backfillPlan struct {
 	gaps    []gap

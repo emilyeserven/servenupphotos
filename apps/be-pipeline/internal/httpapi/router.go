@@ -46,6 +46,8 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	exifs := newExifCache()
 	mux.HandleFunc("POST /data/missing-fields/preview", handlePreviewBackfill(extractor, store, gh, storage.GetPhoto, exifs))
 	mux.HandleFunc("POST /data/missing-fields", handleApplyBackfill(extractor, store, gh, storage.GetPhoto, exifs))
+	mux.HandleFunc("GET /publish/instagram", handleSocialCalendar(store, gh))
+	mux.HandleFunc("PUT /publish/instagram", handleSetSocialDates(store, gh))
 	return mux
 }
 

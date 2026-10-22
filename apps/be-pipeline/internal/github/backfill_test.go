@@ -54,6 +54,7 @@ func TestFindGapsAndFill(t *testing.T) {
 		"title", "comment", "aperture", "exposure", "iso", "focalLength",
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
 		"images.preview", "images.thumbnail", "images.thumbnailpreview",
+		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate",
 	}
 	if !reflect.DeepEqual(fields, want) {
 		t.Fatalf("fields = %v, want %v", fields, want)
@@ -87,7 +88,10 @@ func TestFindGapsAndFill(t *testing.T) {
     "preview": null,
     "thumbnail": null,
     "thumbnailpreview": null
-  }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null
 }
 `
 	if got != wantContent {
@@ -143,7 +147,7 @@ func TestFillGapsLayouts(t *testing.T) {
 		})
 	}
 	got := string(fillGaps([]byte("{\n  \"file\": \"a.jpg\",\n  \"images\": {}\n}\n"), mustGaps(t, "{\n  \"file\": \"a.jpg\",\n  \"images\": {}\n}\n")))
-	if !strings.Contains(got, "  \"images\": {\n    \"full\": null,\n") || !strings.Contains(got, "    \"thumbnailpreview\": null\n  }\n}") {
+	if !strings.Contains(got, "  \"images\": {\n    \"full\": null,\n") || !strings.Contains(got, "    \"thumbnailpreview\": null\n  },\n") {
 		t.Errorf("empty images filled as\n%s", got)
 	}
 }
@@ -223,7 +227,7 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 13 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
+	if got.Files != 1 || got.Fields != 16 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/DSC0001.json" {

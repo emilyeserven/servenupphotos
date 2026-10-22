@@ -28,6 +28,13 @@ export const navGroups = [
     ],
   },
   {
+    title: "Publish",
+    items: [
+      { title: "Instagram", url: "/instagram" },
+      { title: "Site Spotlight", url: "/site-spotlight" },
+    ],
+  },
+  {
     title: "Configuration",
     items: [
       { title: "Settings", url: "/settings" },
