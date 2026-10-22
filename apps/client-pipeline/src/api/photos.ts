@@ -96,6 +96,27 @@ export const photosInFlightQuery = queryOptions({
   retry: false,
 });
 
+/** What saving an edit of a photo JSON file in the pull request did. */
+export interface UpdateResult {
+  path: string;
+  fileUrl: string;
+  /** The commit that changed the file, whose CI run rebuilds ALLPHOTOS.json; empty when unchanged. */
+  commitSha: string;
+  /** False when the file already had this content, so nothing was committed. */
+  changed: boolean;
+}
+
+/** Replaces the content of a photo JSON file in the open photo data pull request. */
+export const updateInFlightMutation = mutationOptions({
+  mutationKey: ["photos", "in-flight", "update"],
+  mutationFn: (file: { path: string; data: unknown }) =>
+    requestJson<UpdateResult>("/api/photos/in-flight", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(file),
+    }),
+});
+
 /** What removing a photo JSON file did, including to its image in R2. */
 export interface RemoveResult {
   path: string;
