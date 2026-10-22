@@ -17,6 +17,8 @@ export interface Photo {
   /** A note about the photo in Markdown, written on the pipeline's Photo page; null without one. */
   comment: string | null;
   camera: string;
+  /** The lens's model, as the EXIF names it; null when it didn't say. */
+  lens: string | null;
   settings: CameraSettings;
   takenAt: Date;
   /** Null when the photo has no places, city or country, so there's nothing to say. */
@@ -128,6 +130,8 @@ interface PhotoData {
   iso?: number | null;
   focalLength?: number | null;
   camera: string | null;
+  /** Entries saved before it was added don't have it. */
+  lens?: string | null;
   gpsPosition: string | null;
   createDate: string | null;
   /** A city and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
@@ -419,6 +423,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       comment: photoComment(photo),
       settings: cameraSettings(photo),
       camera: photo.camera ?? "Unknown camera",
+      lens: photo.lens ?? null,
       takenAt,
       location: photoLocation(photo),
       ...photoPosition(photo),
