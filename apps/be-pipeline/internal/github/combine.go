@@ -30,9 +30,12 @@ const (
 // CombineStatus is where the CombineWorkflowFile run for one commit is.
 type CombineStatus struct {
 	// SHA is the commit the run is for.
-	SHA     string `json:"sha"`
-	State   string `json:"state"`
-	RunURL  string `json:"runUrl,omitempty"`
+	SHA    string `json:"sha"`
+	State  string `json:"state"`
+	RunURL string `json:"runUrl,omitempty"`
+	// RunsURL is the workflow's runs page on GitHub, to link to when RunURL
+	// is unknown, such as before GitHub starts the run.
+	RunsURL string `json:"runsUrl"`
 	Message string `json:"message,omitempty"`
 }
 
@@ -65,6 +68,15 @@ func (c *Client) Combine(ctx context.Context, gh settings.GitHub, sha string) (C
 		return CombineStatus{}, publishErr(http.StatusBadRequest, "sha should be a commit SHA.")
 	}
 	t := target{owner: owner, name: name, token: gh.Token}
+	status, err := c.combine(ctx, t, sha)
+	if err == nil {
+		status.RunsURL = "https://github.com/" + owner + "/" + name + "/actions/workflows/" + CombineWorkflowFile
+	}
+	return status, err
+}
+
+// combine is Combine for t, without RunsURL.
+func (c *Client) combine(ctx context.Context, t target, sha string) (CombineStatus, error) {
 	if sha != "" {
 		runs, perr := c.combineRuns(ctx, t, url.Values{"head_sha": {sha}})
 		if perr != nil {

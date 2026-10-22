@@ -244,6 +244,8 @@ export interface CombineStatus {
    */
   state: "waiting" | "running" | "done" | "failed" | "unavailable";
   runUrl?: string;
+  /** The workflow's runs page, for when there's no runUrl yet. */
+  runsUrl?: string;
   message?: string;
 }
 

@@ -45,6 +45,8 @@ export interface RebuildWatch {
   status: CombineQuery;
   /** True while CI is about to rebuild, or rebuilding, ALLPHOTOS.json on the pull request. */
   rebuilding: boolean;
+  /** The run doing the rebuild, or the workflow's runs page until GitHub starts it. */
+  runUrl?: string;
   /** Call after pushing to the pull request, so the new run is followed. */
   afterPush: () => void;
 }
@@ -80,7 +82,7 @@ export function useAllPhotosRebuild(enabled: boolean, onRebuilt: () => void): Re
     setPushes((n) => n + 1);
     void queryClient.invalidateQueries({ queryKey: combineStatusQuery().queryKey });
   };
-  return { status, rebuilding, afterPush };
+  return { status, rebuilding, runUrl: runLink(status.data)?.url, afterPush };
 }
 
 /** The line to show for status, and whether the run is still going. */
@@ -111,17 +113,24 @@ export function AllPhotosRebuild({
     <p className={cn("flex items-center gap-2", className)}>
       {pending && <Spinner />}
       <span>
-        {text} <RunLink url={status.data?.runUrl} />
+        {text} <RunLink data={status.data} />
       </span>
     </p>
   );
 }
 
-function RunLink({ url }: { url?: string }) {
-  if (!url) return null;
+/** data's run, or the workflow's runs page when GitHub hasn't started one yet. */
+function runLink({ runUrl, runsUrl }: Partial<CombineStatus> = {}) {
+  if (runUrl) return { url: runUrl, label: "View run" };
+  return runsUrl ? { url: runsUrl, label: "View runs" } : undefined;
+}
+
+function RunLink({ data }: { data?: CombineStatus }) {
+  const link = runLink(data);
+  if (!link) return null;
   return (
-    <a href={url} target="_blank" rel="noreferrer" className="underline underline-offset-4">
-      View run
+    <a href={link.url} target="_blank" rel="noreferrer" className="underline underline-offset-4">
+      {link.label}
     </a>
   );
 }
