@@ -4,9 +4,8 @@ import { AllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { FloatingAction } from "@/components/floating-actions";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { cropText, sameCrop } from "@/lib/crop";
+import { sameCrop } from "@/lib/crop";
 import {
   type SquareUrls,
   fileName,
@@ -15,56 +14,43 @@ import {
 } from "@/components/edit-in-flight/photo-json";
 import { type Edit, type Save } from "@/components/edit-in-flight/use-edit";
 
-/** The card that saves the edit, shows where it goes, and what saving did. */
-export function SaveCard({ file, edit, save }: { file: InFlightFileRead; edit: Edit; save: Save }) {
+/**
+ * Save changes and, once the square has moved, a way back to the saved crop, floated next to the
+ * sync button at the top right.
+ */
+export function SaveActions({ edit, save }: { edit: Edit; save: Save }) {
   const { mutation } = save;
-  const { request, baseline } = edit;
+  const { request } = edit;
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Save changes</CardTitle>
-        <CardDescription>
-          <strong>Save changes</strong>, at the top right next to the sync button, remakes the
-          Square Thumbnail and its Thumbnail Preview in R2 from the square above when it moved, then{" "}
-          <SaveTarget file={file} />
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3 text-sm">
-        {baseline && <p className="text-muted-foreground">Saved crop: {cropText(baseline)}.</p>}
-        <RenameNote file={file} edit={edit} />
-        <div className="flex flex-wrap gap-2">
-          <FloatingAction>
-            <Button
-              className="h-9 rounded-full shadow-md"
-              disabled={!request || mutation.isPending}
-              onClick={() => request && mutation.mutate(request)}
-            >
-              {mutation.isPending && <Spinner />}
-              Save changes
-            </Button>
-          </FloatingAction>
-          <ResetButton edit={edit} disabled={mutation.isPending} />
-        </div>
-        <SaveOutcome save={save} />
-      </CardContent>
-    </Card>
+    <FloatingAction>
+      <ResetButton edit={edit} disabled={mutation.isPending} />
+      <Button
+        className="h-9 rounded-full shadow-md"
+        disabled={!request || mutation.isPending}
+        onClick={() => request && mutation.mutate(request)}
+      >
+        {mutation.isPending && <Spinner />}
+        Save changes
+      </Button>
+    </FloatingAction>
   );
 }
 
-/** Where saving puts the photo's JSON. */
-function SaveTarget({ file }: { file: InFlightFileRead }) {
-  if (!isPublished(file)) {
-    return (
-      <>
-        updates <FileLink file={file} /> in the pull request.
-      </>
-    );
-  }
+/** What saving will rename the file to, then what the last save did; nothing when there's neither. */
+export function SaveStatus({
+  file,
+  edit,
+  save,
+}: {
+  file: InFlightFileRead;
+  edit: Edit;
+  save: Save;
+}) {
   return (
-    <>
-      saves <FileLink file={file} />, already in the portfolio, into the “Add photo data” pull
-      request, opening one when none is open, so the change is in flight until it merges.
-    </>
+    <div className="flex flex-col gap-3 text-sm empty:hidden lg:col-span-2">
+      <RenameNote file={file} edit={edit} />
+      <SaveOutcome save={save} />
+    </div>
   );
 }
 
@@ -94,25 +80,17 @@ function KeepsNameNote({ file, edit }: { file: InFlightFileRead; edit: Edit }) {
   );
 }
 
-function FileLink({ file }: { file: InFlightFileRead }) {
-  return (
-    <a
-      href={file.fileUrl}
-      target="_blank"
-      rel="noreferrer"
-      className="text-foreground underline underline-offset-4"
-    >
-      {fileName(file.path)}
-    </a>
-  );
-}
-
 /** Puts the square back where it was last saved, once it has moved. */
 function ResetButton({ edit, disabled }: { edit: Edit; disabled: boolean }) {
   const { crop, baseline } = edit;
   if (!crop || !baseline || sameCrop(crop, baseline)) return null;
   return (
-    <Button variant="outline" disabled={disabled} onClick={edit.reset}>
+    <Button
+      variant="outline"
+      className="bg-background h-9 rounded-full shadow-md"
+      disabled={disabled}
+      onClick={edit.reset}
+    >
       <RotateCcwIcon />
       Back to the saved crop
     </Button>

@@ -229,13 +229,45 @@ function CropOverlays({ overlays }: { overlays: Overlay[] }) {
           <line x1={0} y1={at} x2={100} y2={at} vectorEffect="non-scaling-stroke" />
         </g>
       ))}
-      {overlays.includes("center") && (
-        <g stroke="white" strokeWidth={1.5} strokeOpacity={0.9}>
-          <line x1={46} y1={50} x2={54} y2={50} vectorEffect="non-scaling-stroke" />
-          <line x1={50} y1={46} x2={50} y2={54} vectorEffect="non-scaling-stroke" />
-        </g>
-      )}
+      {overlays.includes("center") && <CenterReticle />}
     </svg>
+  );
+}
+
+/** The ends of the reticle's four arms, from just outside the middle to past its circle. */
+const RETICLE_ARMS = [
+  [50, 22, 50, 46],
+  [50, 54, 50, 78],
+  [22, 50, 46, 50],
+  [54, 50, 78, 50],
+];
+
+/** The reticle's circle, dot and arms, drawn once as a dark halo and once in white over it. */
+function ReticleShape({ halo }: { halo?: boolean }) {
+  return (
+    <g
+      fill="none"
+      stroke={halo ? "black" : "white"}
+      strokeOpacity={halo ? 0.55 : 0.95}
+      strokeWidth={halo ? 4 : 2}
+      strokeLinecap="round"
+    >
+      <circle cx={50} cy={50} r={14} vectorEffect="non-scaling-stroke" />
+      <circle cx={50} cy={50} r={0.6} vectorEffect="non-scaling-stroke" />
+      {RETICLE_ARMS.map(([x1, y1, x2, y2]) => (
+        <line key={`${x1},${y1}`} {...{ x1, y1, x2, y2 }} vectorEffect="non-scaling-stroke" />
+      ))}
+    </g>
+  );
+}
+
+/** The Center overlay: a circle round the middle with long crosshair arms, clear on any photo. */
+function CenterReticle() {
+  return (
+    <>
+      <ReticleShape halo />
+      <ReticleShape />
+    </>
   );
 }
 
