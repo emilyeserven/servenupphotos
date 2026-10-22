@@ -13,6 +13,9 @@ const themeOptions: { value: Theme; label: string; Icon: typeof SunIcon }[] = [
   { value: "system", label: "System", Icon: MonitorIcon },
 ];
 
+// Views linked in the menu but not ready to visit yet.
+const disabledViews = new Set<string>(["/spotlight", "/color"]);
+
 export function SiteMenu() {
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -31,8 +34,9 @@ export function SiteMenu() {
               <li key={to}>
                 <Link
                   to={to}
+                  disabled={disabledViews.has(to)}
                   onClick={() => setOpen(false)}
-                  className="flex flex-col items-center gap-1.5 rounded-md px-1 py-3 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                  className="flex flex-col items-center gap-1.5 rounded-md px-1 py-3 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40"
                   activeProps={{
                     className: "bg-accent text-accent-foreground",
                     "aria-current": "page",
