@@ -40,7 +40,6 @@ type UpdatedFile struct {
 // file's, the file is moved to it in the same folder. Only files the pull
 // request adds can be renamed, since renaming one that is also on the base
 // branch would remove it there when the pull request merges.
-
 func (c *Client) Update(ctx context.Context, gh settings.GitHub, file, newName string, data json.RawMessage) (UpdatedFile, error) {
 	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
