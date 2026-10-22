@@ -52,7 +52,7 @@ func TestFindGapsAndFill(t *testing.T) {
 		fields = append(fields, g.field)
 	}
 	want := []string{
-		"title", "comment", "aperture", "exposure", "iso", "focalLength",
+		"title", "comment", "aperture", "exposure", "iso", "focalLength", "placeName",
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
 		"images.preview", "images.thumbnail", "images.thumbnailpreview", "images.thumbnailcrop",
 		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate", "albums", "tags",
@@ -74,6 +74,7 @@ func TestFindGapsAndFill(t *testing.T) {
   "focalLength": null,
   "gpsPosition": null,
   "createDate": "2026:05:16 15:24:10",
+  "placeName": null,
   "country": null,
   "city": "Tokyo",
   "width": 6240,
@@ -231,7 +232,7 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 19 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
+	if got.Files != 1 || got.Fields != 20 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/photos/DSC0001.json" {

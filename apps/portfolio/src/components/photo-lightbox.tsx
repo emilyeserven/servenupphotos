@@ -3,6 +3,7 @@ import { XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
 import { useRef, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
+import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
 import { settingsText, type Photo, type PhotoImage } from "@/lib/photos";
 import { cn } from "@/lib/utils";
@@ -91,14 +92,18 @@ function LightboxCaption({ photo }: { photo: Photo }) {
           />
         )}
         <Dialog.Description className="max-w-full min-w-0 truncate text-white/60">
-          {[
-            ...settingsText(photo.settings),
-            photo.camera,
-            format(photo.takenAt, "MMM d, yyyy"),
-            photo.location,
-          ]
+          {[...settingsText(photo.settings), photo.camera, format(photo.takenAt, "MMM d, yyyy")]
             .filter(Boolean)
             .join(" · ")}
+          {photo.location && (
+            <>
+              {" · "}
+              <PhotoLocation
+                location={photo.location}
+                detailsClassName="bg-neutral-800 text-white ring-1 ring-white/15"
+              />
+            </>
+          )}
         </Dialog.Description>
       </div>
     </div>

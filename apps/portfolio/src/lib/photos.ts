@@ -8,13 +8,21 @@ export interface Photo {
   camera: string;
   settings: CameraSettings;
   takenAt: Date;
-  /** Null when the photo has no city, country or GPS position, so there's nothing to say. */
-  location: string | null;
+  /** Null when the photo has no place name, city or country, so there's nothing to say. */
+  location: PhotoLocation | null;
   /** Null when the photo has no GPS position, so it can't go on the map. */
   latitude: number | null;
   longitude: number | null;
   /** The photo's resized versions in R2; null for photos not uploaded yet. */
   image: PhotoImage | null;
+}
+
+/** Where the photo was taken, as the portfolio shows it. */
+export interface PhotoLocation {
+  /** "Place Name, City", or else "City, Country", or else the country. */
+  label: string;
+  /** The lines shown on hover: the GPS position, then the country when the label leaves it out. */
+  details: string[];
 }
 
 /** How the camera was set for the photo; each is null when its EXIF didn't say. */
@@ -24,15 +32,24 @@ export interface CameraSettings {
   /** The exposure time in seconds as exiftool writes it, such as "1/60". */
   exposure: string | null;
   iso: number | null;
+  /** The lens's focal length in millimeters, such as 18 or 4.2. */
+  focalLength: number | null;
 }
 
-/** The settings as a photographer writes them, such as "f/5.6", "1/60s" and "ISO 400". */
-export function settingsText({ aperture, exposure, iso }: CameraSettings): string[] {
-  return [
-    aperture === null ? null : `f/${aperture}`,
-    exposure === null ? null : `${exposure}s`,
-    iso === null ? null : `ISO ${iso}`,
-  ].filter((text) => text !== null);
+/** How each setting is written, in the order they're shown. */
+const SETTING_FORMATS: [keyof CameraSettings, (value: number | string) => string][] = [
+  ["aperture", (value) => `f/${value}`],
+  ["exposure", (value) => `${value}s`],
+  ["iso", (value) => `ISO ${value}`],
+  ["focalLength", (value) => `${value}mm`],
+];
+
+/** The settings as a photographer writes them, such as "f/5.6", "1/60s", "ISO 400" and "18mm". */
+export function settingsText(settings: CameraSettings): string[] {
+  return SETTING_FORMATS.flatMap(([key, write]) => {
+    const value = settings[key];
+    return value === null ? [] : [write(value)];
+  });
 }
 
 export interface PhotoImage {
@@ -79,6 +96,8 @@ interface PhotoData {
   camera: string | null;
   gpsPosition: string | null;
   createDate: string | null;
+  /** The name of the place it was taken, written on the Photo page; older entries don't have it. */
+  placeName?: string | null;
   country: string | null;
   city: string | null;
   width: number | null;
@@ -186,8 +205,9 @@ function photoTitle(photo: PhotoData): string {
   return photo.title?.trim() || photo.file.replace(/\.[^.]*$/, "");
 }
 
-function cameraSettings({ aperture, exposure, iso }: PhotoData): CameraSettings {
-  return { aperture: aperture ?? null, exposure: exposure ?? null, iso: iso ?? null };
+function cameraSettings(photo: PhotoData): CameraSettings {
+  const { aperture = null, exposure = null, iso = null, focalLength = null } = photo;
+  return { aperture, exposure, iso, focalLength };
 }
 
 /** The Markdown comment written on the Photo page, or null without one. */
@@ -195,11 +215,38 @@ function photoComment(photo: PhotoData): string | null {
   return photo.comment?.trim() || null;
 }
 
-/** The photo's city and country, or null when it has neither and no GPS position either. */
-function photoLocation({ city, country, gpsPosition }: PhotoData): string | null {
-  const place = [city, country].filter(Boolean).join(", ");
-  if (place) return place;
-  return gpsPosition ? "Unknown location" : null;
+/** One coordinate as degrees, minutes and seconds, such as 37°31′21″ N. */
+function dmsText(degrees: number, hemispheres: "NS" | "EW"): string {
+  const seconds = Math.round(Math.abs(degrees) * 3600);
+  const deg = Math.floor(seconds / 3600);
+  const min = Math.floor((seconds % 3600) / 60);
+  const hemisphere = degrees < 0 ? hemispheres[1] : hemispheres[0];
+  return `${deg}°${min}′${seconds % 60}″ ${hemisphere}`;
+}
+
+/** The GPS position as a photographer writes it, such as 37°31′21″ N, 126°58′46″ E. */
+function gpsText({ latitude, longitude }: ReturnType<typeof parseGpsPosition>): string | null {
+  if (latitude === null || longitude === null) return null;
+  return `${dmsText(latitude, "NS")}, ${dmsText(longitude, "EW")}`;
+}
+
+/** The non-empty parts, joined with commas. */
+function joinParts(...parts: (string | null | undefined)[]): string {
+  return parts.filter(Boolean).join(", ");
+}
+
+/**
+ * Where the photo was taken: its place name and city, with the country on hover; or else its city
+ * and country; or else its country. Null without any of them, even when it has a GPS position.
+ */
+function photoLocation(photo: PhotoData): PhotoLocation | null {
+  const placeName = photo.placeName?.trim();
+  const gps = gpsText(parseGpsPosition(photo.gpsPosition));
+  const label = placeName ? joinParts(placeName, photo.city) : joinParts(photo.city, photo.country);
+  if (!label) return null;
+  // The country goes on hover only when the label leaves it out for the place name.
+  const details = [gps, placeName ? photo.country : null];
+  return { label, details: details.filter((line) => line !== null && line !== "") as string[] };
 }
 
 /** The ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */

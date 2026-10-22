@@ -113,7 +113,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
- * Square Thumbnail crop, title and comment can be changed, then saved by remaking the thumbnail in R2
+ * Square Thumbnail crop, title, place name and comment can be changed, then saved by remaking the thumbnail in R2
  * when the crop moved and updating its JSON in the pull request. A photo already in the portfolio is
  * read from the base branch until its first save puts it in the pull request.
  */
@@ -258,10 +258,12 @@ function hasThumbnail(saved: PhotoJson): boolean {
   return SQUARE_NAMES.every((name) => savedUrl(saved.images?.[name]));
 }
 
-/** Whether the title or comment differs from the ones saved in data. */
+/** Whether the title, place name or comment differs from the ones saved in data. */
 function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
   const next = withDetails({}, details);
-  return next.title !== (data.title ?? null) || next.comment !== (data.comment ?? null);
+  return (["title", "placeName", "comment"] as const).some(
+    (key) => next[key] !== (data[key] ?? null),
+  );
 }
 
 /**
@@ -303,7 +305,7 @@ function nextJson({ crop, data }: SaveRequest, imageUrl: string): PhotoJson {
   return crop ? withSquares(data, squareUrls(data, imageUrl), crop) : data;
 }
 
-/** The crop, title and comment being edited, against the last ones saved, and the JSON saving them would write. */
+/** The crop, title, place name and comment being edited, against the last ones saved, and the JSON saving them would write. */
 function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
   const [crop, setCrop] = useState<Crop | null>(savedCrop);
   // The editor reports the middle first when no crop was saved, which then counts as saved.
@@ -368,7 +370,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           value={edit.details}
           onChange={edit.setDetails}
           fallbackTitle={fileStem(photoFile(editable.data) || fileName(editable.file.path))}
-          description="Both optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
+          description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
           disabled={pending}
         />
         <JsonPreview file={editable.file} edit={edit} />
