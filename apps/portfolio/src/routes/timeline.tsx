@@ -132,7 +132,8 @@ function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto)
         )}
         {photo.location && (
           <p className="truncate text-xs text-muted-foreground">
-            <PhotoLocation location={photo.location} />
+            {/* Beside it, so the details cover neither this title nor the next. */}
+            <PhotoLocation location={photo.location} side="right" />
           </p>
         )}
       </div>
