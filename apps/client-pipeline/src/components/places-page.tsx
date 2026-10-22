@@ -3,8 +3,6 @@ import { useState } from "react";
 import {
   cacheSavedEntry,
   entryId,
-  localizationId,
-  type Localization,
   type Place,
   type PlacesResponse,
   placesQuery,
@@ -13,23 +11,14 @@ import {
 } from "@/api/places";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
+import { PlaceTable } from "@/components/place-table";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { notParentsOf } from "@/lib/place-hierarchy";
-import { placePhotoCounts, shownPhotos } from "@/lib/place-seeds";
-import { useCombinedData } from "@/stores/combined-data";
 
 /** The Places page: a form to add or change a place, then every place on GitHub. */
 export function PlacesPage() {
@@ -342,99 +331,5 @@ function PlaceListCard({ read, onEdit }: PlaceListCardProps) {
         </QueryResult>
       </CardContent>
     </Card>
-  );
-}
-
-function PlaceTable({ data, onEdit }: { data: PlacesResponse; onEdit: (place: Place) => void }) {
-  const counts = placePhotoCounts(shownPhotos(useCombinedData().data));
-  const localizations = readEntries(data.localizations);
-  const places = readEntries(data.places).toSorted((a, b) => a.name.localeCompare(b.name));
-  if (data.places.length === 0) {
-    return (
-      <p className="text-muted-foreground text-sm">
-        No places yet. Add one above, or from a photo's Place field.
-      </p>
-    );
-  }
-  return (
-    <div className="flex flex-col gap-2">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Local script</TableHead>
-            <TableHead className="text-right">Photos</TableHead>
-            <TableHead />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {places.map((place) => (
-            <PlaceRow
-              key={place.id}
-              place={place}
-              localization={localizationOf(localizations, place)}
-              parent={places.find((p) => p.id === place.parent)}
-              photos={counts.get(place.id) ?? 0}
-              onEdit={() => onEdit(place)}
-            />
-          ))}
-        </TableBody>
-      </Table>
-      <UnreadableFiles files={data.places} />
-    </div>
-  );
-}
-
-/** The files that couldn't be read, and why. */
-function UnreadableFiles({ files }: { files: PlacesResponse["places"] }) {
-  return files
-    .filter((file) => file.error)
-    .map((file) => (
-      <p key={file.path} className="text-destructive text-sm">
-        {file.path}: {file.error}
-      </p>
-    ));
-}
-
-/** What's known about where the place is, after its ID: what it's in, its city and its description. */
-function placeNotes(place: Place, parent: Place | undefined): string[] {
-  const where = [place.city, place.country].filter(Boolean).join(", ");
-  return [parent && `in ${parent.name}`, where, place.description].filter(Boolean) as string[];
-}
-
-function localizationOf(localizations: Localization[], place: Place): Localization | undefined {
-  const id = localizationId("place", place.name, place.id);
-  return localizations.find((l) => l.id === id);
-}
-
-interface PlaceRowProps {
-  place: Place;
-  localization?: Localization;
-  /** The place it's in, when it has one. */
-  parent?: Place;
-  photos: number;
-  onEdit: () => void;
-}
-
-function PlaceRow({ place, localization, parent, photos, onEdit }: PlaceRowProps) {
-  return (
-    <TableRow>
-      <TableCell className="whitespace-normal">
-        <div className="font-medium">{place.name}</div>
-        <div className="text-muted-foreground text-xs">
-          <code>{place.id}</code>
-          {placeNotes(place, parent).map((note) => ` · ${note}`)}
-        </div>
-      </TableCell>
-      <TableCell>
-        {localization?.localScript || <span className="text-muted-foreground">None</span>}
-      </TableCell>
-      <TableCell className="text-right tabular-nums">{photos}</TableCell>
-      <TableCell className="text-right">
-        <Button type="button" variant="ghost" size="sm" onClick={onEdit}>
-          Edit
-        </Button>
-      </TableCell>
-    </TableRow>
   );
 }
