@@ -10,7 +10,7 @@
   "focalLength": 26.6,
   "gpsPosition": "37 deg 34' 40.13\" N, 126 deg 58' 36.74\" E",
   "createDate": "2026:05:17 13:14:28",
-  "placeName": "경복궁 (Gyeongbokgung Palace), by 근정문 (Geunjeongmun Gate)",
+  "placeName": "Gyeongbokgung Palace",
   "customCity": "Seoul",
   "customCountry": null,
   "country": "South Korea",
@@ -39,5 +39,15 @@
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
   "albums": [],
-  "tags": []
+  "tags": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "gyeongbokgung-palace"
+    },
+    {
+      "relation": "near",
+      "id": "geunjeongmun-gate"
+    }
+  ]
 }
