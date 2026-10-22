@@ -17,6 +17,7 @@ import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&ur
 import { type MouseEvent, useRef, useState, useSyncExternalStore } from "react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
+import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { Button } from "@/components/ui/button";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { cn } from "@/lib/utils";
@@ -346,7 +347,7 @@ function PhotoMarker({ photo, onOpen }: { photo: PlacedPhoto; onOpen: () => void
         MARKER_RING,
       )}
     >
-      {photo.image && <Thumbnail image={photo.image} />}
+      {photo.image && <PhotoThumbnail image={photo.image} />}
     </button>
   );
 }
@@ -408,7 +409,7 @@ function ClusterGrid({
               className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-sm bg-neutral-200 outline-none focus-visible:ring-2 focus-visible:ring-sky-500 disabled:cursor-default"
             >
               {photo.image ? (
-                <Thumbnail image={photo.image} />
+                <PhotoThumbnail image={photo.image} />
               ) : (
                 <span className="absolute inset-0 flex items-center justify-center p-1 text-center text-[0.65rem] leading-tight text-neutral-600">
                   {photo.title}
@@ -419,23 +420,5 @@ function ClusterGrid({
         ))}
       </ul>
     </div>
-  );
-}
-
-/** The square thumbnail, or the Small version cropped square for photos saved before thumbnails. */
-function Thumbnail({ image }: { image: PhotoImage }) {
-  const sources = [image.thumbnail, image.small].filter((url): url is string => Boolean(url));
-  const [index, setIndex] = useState(0);
-  const src = sources[index];
-  if (!src) return null;
-  return (
-    <img
-      key={src}
-      src={src}
-      alt=""
-      loading="lazy"
-      onError={() => setIndex((i) => i + 1)}
-      className="size-full object-cover"
-    />
   );
 }
