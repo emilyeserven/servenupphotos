@@ -29,13 +29,14 @@ export const Route = createFileRoute("/timeline")({
 
 const earliestPhoto = min(photos.map((photo) => photo.takenAt));
 
-function groupByMonth(photos: Photo[]) {
-  const months = new Map<string, Photo[]>();
-  for (const photo of photos) {
-    const month = format(photo.takenAt, "MMMM yyyy");
-    months.set(month, [...(months.get(month) ?? []), photo]);
+/** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
+function groupByDate(group: Photo[], pattern: string) {
+  const groups = new Map<string, Photo[]>();
+  for (const photo of group) {
+    const key = format(photo.takenAt, pattern);
+    groups.set(key, [...(groups.get(key) ?? []), photo]);
   }
-  return [...months];
+  return [...groups];
 }
 
 function TimelineView() {
@@ -99,7 +100,7 @@ function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: Imag
 
   return (
     <ol className="flex flex-col gap-4">
-      {groupByMonth(photos).map(([month, monthPhotos]) => (
+      {groupByDate(photos, "MMMM yyyy").map(([month, monthPhotos]) => (
         <MonthSection key={month} month={month} monthPhotos={monthPhotos} onOpen={onOpen} />
       ))}
     </ol>
@@ -138,18 +139,40 @@ function MonthSection({
         </button>
       </h2>
       {open && (
-        <ul id={listId} className="flex flex-col gap-3">
-          {monthPhotos.map((photo) => (
-            <PhotoRow key={photo.id} photo={photo} onOpen={onOpen} />
+        <ol id={listId} className="flex flex-col gap-4">
+          {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
+            <DaySection key={day} day={day} dayPhotos={dayPhotos} onOpen={onOpen} />
           ))}
-        </ul>
+        </ol>
       )}
     </li>
   );
 }
 
+/** A day's subheading and its photos, within its month. */
+function DaySection({
+  day,
+  dayPhotos,
+  onOpen,
+}: {
+  day: string;
+  dayPhotos: Photo[];
+  onOpen: (photo: ImagePhoto) => void;
+}) {
+  return (
+    <li className="flex flex-col gap-2">
+      <h3 className="text-xs font-medium text-muted-foreground">{day}</h3>
+      <ul className="flex flex-col gap-3">
+        {dayPhotos.map((photo) => (
+          <PhotoRow key={photo.id} photo={photo} onOpen={onOpen} />
+        ))}
+      </ul>
+    </li>
+  );
+}
+
 /**
- * A photo's square thumbnail, title, comment, place, date and camera. The thumbnail and the title open
+ * A photo's square thumbnail, title, comment, place and camera; its day is in the subheading above. The thumbnail and the title open
  * the photo in the lightbox; photos without resized versions in R2 have nothing to open.
  */
 function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto) => void }) {
@@ -174,9 +197,7 @@ function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto)
           </p>
         )}
       </div>
-      <span className="shrink-0 self-baseline text-xs text-muted-foreground">
-        {format(photo.takenAt, "MMM d")} · {photo.camera}
-      </span>
+      <span className="shrink-0 self-baseline text-xs text-muted-foreground">{photo.camera}</span>
     </li>
   );
 }
