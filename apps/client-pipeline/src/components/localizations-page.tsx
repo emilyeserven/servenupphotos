@@ -1,19 +1,30 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  type QueryClient,
+  useIsMutating,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   cacheSavedEntry,
-  type Localization,
   type LocalizationType,
   placesQuery,
   readEntries,
   saveLocalizationMutation,
 } from "@/api/places";
+import { FloatingAction } from "@/components/floating-actions";
+import {
+  type Fields,
+  isChanged,
+  LocalizationRowForm,
+  savedFields,
+} from "@/components/localization-row";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { type LocalizationRow, localizationRows, shownPhotos } from "@/lib/place-seeds";
@@ -54,12 +65,50 @@ function firstError(...reads: { error: Error | null | undefined }[]): Error | un
   return reads.find((read) => read.error)?.error ?? undefined;
 }
 
+/**
+ * The rows' fields as typed, kept here so they survive switching tabs, and saving them: each Save,
+ * or Save all, queues a save that runs once the ones before it are done.
+ */
+function useDrafts(rows: LocalizationRow[]) {
+  const queryClient = useQueryClient();
+  const [drafts, setDrafts] = useState<Record<string, Fields>>({});
+  const save = useMutation({
+    ...saveLocalizationMutation,
+    onSuccess: (result) => cacheSavedEntry(queryClient, "localizations", result),
+  });
+  const fieldsOf = (row: LocalizationRow) => drafts[row.id] ?? savedFields(row.saved);
+  const changed = rows.filter((row) => isChanged(row, fieldsOf(row)));
+  return {
+    fieldsOf,
+    changed,
+    set: (row: LocalizationRow, fields: Fields) => setDrafts((d) => ({ ...d, [row.id]: fields })),
+    save: (row: LocalizationRow, fields: Fields) => {
+      // A row already queued or saving isn't queued again, as when Save all is pressed twice.
+      if (isSaving(queryClient, row.id)) return;
+      save.mutate({ id: row.id, type: row.type, name: row.name, ...fields });
+    },
+  };
+}
+
+type Drafts = ReturnType<typeof useDrafts>;
+
+/** Whether a save of the localization `id` is queued or running. */
+function isSaving(queryClient: QueryClient, id: string): boolean {
+  const pending = queryClient.getMutationCache().findAll({
+    mutationKey: saveLocalizationMutation.mutationKey,
+    status: "pending",
+  });
+  return pending.some((m) => (m.state.variables as { id?: string } | undefined)?.id === id);
+}
+
 function LocalizationTabs() {
   const { rows, pending, error } = useRows();
+  const drafts = useDrafts(rows);
   if (pending) return <p>Reading photos, places and localizations from GitHub…</p>;
   return (
     <>
       {error && <p className="text-destructive text-sm">{error.message}</p>}
+      <SaveAllButton drafts={drafts} />
       <Tabs defaultValue="country">
         <TabsList>
           {TABS.map(({ type, title }) => (
@@ -74,11 +123,33 @@ function LocalizationTabs() {
               type={type}
               title={title}
               rows={rows.filter((r) => r.type === type)}
+              drafts={drafts}
             />
           </TabsContent>
         ))}
       </Tabs>
     </>
+  );
+}
+
+/**
+ * Queues a save of every changed row, on every tab, at the top right next to the sync button.
+ * The saves run one at a time, each its own commit.
+ */
+function SaveAllButton({ drafts }: { drafts: Drafts }) {
+  const count = drafts.changed.length;
+  const busy = useIsMutating({ mutationKey: ["localizations", "save"] });
+  return (
+    <FloatingAction>
+      <Button
+        className="h-9 rounded-full shadow-md"
+        disabled={count === 0}
+        onClick={() => drafts.changed.forEach((row) => drafts.save(row, drafts.fieldsOf(row)))}
+      >
+        {busy > 0 && <Spinner />}
+        Save all{count > 0 && ` (${count})`}
+      </Button>
+    </FloatingAction>
   );
 }
 
@@ -93,22 +164,32 @@ interface LocalizationCardProps {
   type: LocalizationType;
   title: string;
   rows: LocalizationRow[];
+  drafts: Drafts;
 }
 
-function LocalizationCard({ type, title, rows }: LocalizationCardProps) {
+function LocalizationCard({ type, title, rows, drafts }: LocalizationCardProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>
-          {DESCRIPTIONS[type]} Each saves as one commit in the photo data pull request.
+          {DESCRIPTIONS[type]} Each saves as one commit in the photo data pull request; saves made
+          while one runs wait their turn.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col divide-y">
         {rows.length === 0 ? (
           <EmptyRows type={type} />
         ) : (
-          rows.map((row) => <LocalizationRowForm key={row.id} row={row} />)
+          rows.map((row) => (
+            <LocalizationRowForm
+              key={row.id}
+              row={row}
+              fields={drafts.fieldsOf(row)}
+              onChange={(fields) => drafts.set(row, fields)}
+              onSave={(fields) => drafts.save(row, fields)}
+            />
+          ))
         )}
       </CardContent>
     </Card>
@@ -127,120 +208,5 @@ function EmptyRows({ type }: { type: LocalizationType }) {
       </Link>{" "}
       page.
     </p>
-  );
-}
-
-/** The three fields a localization notes, as the JSON names them, with their labels and examples. */
-const FIELDS = [
-  { key: "romanization", label: "Romanization", example: "Gyeongbokgung" },
-  { key: "pronunciation", label: "Local pronunciation", example: "Such as きょうと" },
-  { key: "localScript", label: "Local script", example: "Such as 경복궁 or 京都" },
-] as const;
-
-type Fields = Pick<Localization, (typeof FIELDS)[number]["key"]>;
-
-function savedFields(saved: Localization | undefined): Fields {
-  return Object.fromEntries(FIELDS.map(({ key }) => [key, saved?.[key] ?? ""])) as Fields;
-}
-
-function sameFields(a: Fields, b: Fields): boolean {
-  return FIELDS.every(({ key }) => a[key].trim() === b[key].trim());
-}
-
-/** One country, city or place, with its three fields and a button to save them. */
-function LocalizationRowForm({ row }: { row: LocalizationRow }) {
-  const queryClient = useQueryClient();
-  const [fields, setFields] = useState(() => savedFields(row.saved));
-  const save = useMutation({
-    ...saveLocalizationMutation,
-    onSuccess: (result) => cacheSavedEntry(queryClient, "localizations", result),
-  });
-  const changed = !sameFields(fields, savedFields(row.saved));
-  return (
-    <form
-      className="grid gap-3 py-4 first:pt-0 last:pb-0 lg:grid-cols-[minmax(10rem,1fr)_repeat(3,minmax(0,1fr))_auto] lg:items-end"
-      onSubmit={(event) => {
-        event.preventDefault();
-        save.mutate({ id: row.id, type: row.type, name: row.name, ...fields });
-      }}
-    >
-      <RowName row={row} />
-      {FIELDS.map((field) => (
-        <FieldInput
-          key={field.key}
-          id={`${row.id}-${field.key}`}
-          field={field}
-          value={fields[field.key]}
-          disabled={save.isPending}
-          onChange={(value) => {
-            save.reset();
-            setFields((f) => ({ ...f, [field.key]: value }));
-          }}
-        />
-      ))}
-      <SaveButton changed={changed} save={save} />
-      <SaveError error={save.error} />
-    </form>
-  );
-}
-
-interface SaveButtonProps {
-  changed: boolean;
-  save: { isPending: boolean; isSuccess: boolean };
-}
-
-/** Saves the row once it's changed, and says Saved after. */
-function SaveButton({ changed, save }: SaveButtonProps) {
-  return (
-    <Button type="submit" variant="outline" disabled={!changed || save.isPending}>
-      {save.isPending && <Spinner />}
-      {saveLabel(changed, save.isSuccess)}
-    </Button>
-  );
-}
-
-/** "Saved" once the row is saved and not changed since, or else "Save". */
-function saveLabel(changed: boolean, saved: boolean): string {
-  return saved && !changed ? "Saved" : "Save";
-}
-
-function SaveError({ error }: { error: Error | null }) {
-  return error && <p className="text-destructive text-sm lg:col-span-5">{error.message}</p>;
-}
-
-interface FieldInputProps {
-  id: string;
-  field: (typeof FIELDS)[number];
-  value: string;
-  disabled: boolean;
-  onChange: (value: string) => void;
-}
-
-function FieldInput({ id, field, value, disabled, onChange }: FieldInputProps) {
-  return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-muted-foreground text-xs">
-        {field.label}
-      </label>
-      <Input
-        id={id}
-        placeholder={field.example}
-        value={value}
-        disabled={disabled}
-        onChange={(event) => onChange(event.target.value)}
-      />
-    </div>
-  );
-}
-
-function RowName({ row }: { row: LocalizationRow }) {
-  const photos = `${row.photos} photo${row.photos === 1 ? "" : "s"}`;
-  return (
-    <div className="min-w-0 self-center">
-      <div className="truncate font-medium">{row.name}</div>
-      <div className="text-muted-foreground truncate text-xs">
-        {[row.detail, photos, row.saved ? undefined : "not saved yet"].filter(Boolean).join(" · ")}
-      </div>
-    </div>
   );
 }

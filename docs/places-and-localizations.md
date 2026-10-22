@@ -65,7 +65,16 @@ place's ID. The Localizations page has a tab each for countries, cities and plac
 `ALLPHOTOS.json` (at the pull request's head, with saves not committed yet, from the
 [combined data store](combined-data-store.md)): each photo's custom country and city, or else its EXIF ones, with how
 many photos show each. Places come from the place files. Rows not saved yet say so; each row's **Save**
-(`PUT /api/localizations/<id>` → `PUT /localizations/{id}`) commits its file to the pull request.
+(`PUT /api/localizations/<id>` → `PUT /localizations/{id}`) commits its file to the pull request, and **Save all**,
+at the top right next to the sync button, saves every changed row on every tab. What's typed is kept while switching
+tabs.
+
+Saves of places and localizations go through one queue: each is its own commit on top of the pull request's head,
+so a save made while another runs waits its turn (its button says **Queued…**, then **Saving…**) instead of racing it
+to move the branch. A row already queued isn't queued again.
+
+> **Frontend analogy:** it's TanStack Query's mutation `scope`: mutations sharing a scope ID run one after another,
+> like awaiting each `fetch` in a loop instead of `Promise.all`.
 
 Saves of places and localizations are counted by the sync button at the top right, like albums and tags, and show in
 the combined data store's `PLACES.json` and `LOCALIZATIONS.json` until a **Commit** writes them there.

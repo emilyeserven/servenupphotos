@@ -78,10 +78,16 @@ function entryChange<T>(kind: EntryKind, result: EntryResult<T>): FileChange[] {
   return [before === null ? { kind, path, after: data } : { kind, path, before, after: data }];
 }
 
-/** Saves a place or localization, new or changed, as one commit in the photo data pull request. */
+/**
+ * Saves a place or localization, new or changed, as one commit in the photo data pull request. Saves
+ * made while one runs are queued and run in order.
+ */
 function saveEntryMutation<T extends { id: string }>(kind: EntryKind) {
   return mutationOptions({
     mutationKey: [kind, "save"],
+    // Each save commits on top of the pull request's head, so saves wait their turn rather than
+    // racing to move the branch.
+    scope: { id: "photo-data-entries" },
     meta: {
       pushes: (result) => (result as EntryResult<T>).changed,
       changes: (result) => entryChange(kind, result as EntryResult<T>),
