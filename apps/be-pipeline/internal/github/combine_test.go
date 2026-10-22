@@ -24,7 +24,7 @@ func combineRepo(t *testing.T, status int, runs []map[string]any, author string,
 			writeBody(w, http.StatusOK, []map[string]any{photoPull})
 		case "/actions/workflows/" + CombineWorkflowFile + "/runs":
 			q := r.URL.Query()
-			*asked = "head_sha=" + q.Get("head_sha") + " branch=" + q.Get("branch")
+			*asked = "head_sha=" + q.Get("head_sha") + " branch=" + q.Get("branch") + " event=" + q.Get("event")
 			writeBody(w, status, map[string]any{"workflow_runs": runs})
 		case "/commits/head7":
 			writeBody(w, http.StatusOK, map[string]any{"author": map[string]any{"login": author}})
@@ -76,7 +76,7 @@ func TestCombine(t *testing.T) {
 				t.Fatalf("Combine() error = %v", err)
 			}
 			tt.want.RunsURL = combineRunsURL
-			if got != tt.want || asked != "head_sha="+tt.wantSHA+" branch=" {
+			if got != tt.want || asked != "head_sha="+tt.wantSHA+" branch= event=workflow_dispatch" {
 				t.Errorf("Combine() = %+v asking for %q, want %+v asking for %q", got, asked, tt.want, tt.wantSHA)
 			}
 		})
@@ -123,10 +123,10 @@ func TestCombinePullRequestHead(t *testing.T) {
 		{"done on the head", run("head7", "completed", "success"), user,
 			CombineStatus{SHA: "head7", State: CombineDone, RunURL: "https://github.com/run/2"}},
 		{"head pushed after the run", run("old1", "completed", "success"), user,
-			CombineStatus{SHA: "head7", State: CombineWaiting}},
+			CombineStatus{SHA: "head7", State: CombineStale}},
 		{"head is the workflow's commit", run("old1", "completed", "success"), bot,
 			CombineStatus{SHA: "head7", State: CombineDone, RunURL: "https://github.com/run/2"}},
-		{"no runs, pushed by a person", nil, user, CombineStatus{SHA: "head7", State: CombineWaiting}},
+		{"no runs, pushed by a person", nil, user, CombineStatus{SHA: "head7", State: CombineStale}},
 		{"no runs, pushed by the workflow", nil, bot, CombineStatus{SHA: "head7", State: CombineDone}},
 	}
 	for _, tt := range tests {
@@ -137,7 +137,7 @@ func TestCombinePullRequestHead(t *testing.T) {
 				t.Fatalf("Combine() error = %v", err)
 			}
 			tt.want.RunsURL = combineRunsURL
-			if got != tt.want || asked != "head_sha= branch=photo-data/2026-10-15-024500" {
+			if got != tt.want || asked != "head_sha= branch=photo-data/2026-10-15-024500 event=" {
 				t.Errorf("Combine() = %+v asking %q, want %+v asking for the branch", got, asked, tt.want)
 			}
 		})

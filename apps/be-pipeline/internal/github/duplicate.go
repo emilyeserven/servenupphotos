@@ -51,8 +51,8 @@ type AllPhotosCheck struct {
 
 // FindInPullRequest looks for photo in the photo data files the photo data
 // pull request adds or changes, when one is open. Those files are read
-// directly rather than through the pull request's AllPhotosFile, which CI
-// rebuilds after each push and may not have caught up with yet. AllPhotosFile
+// directly rather than through the pull request's AllPhotosFile, which is only
+// rebuilt when Rebuild starts CI and may not have caught up with yet. AllPhotosFile
 // on the base branch isn't read: pages check it from Combined, which they
 // keep. An entry found more than once is listed once. It only reads from
 // GitHub.

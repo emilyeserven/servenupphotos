@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ExternalLinkIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import type { CommittedChange, ScannedPhotos } from "@/api/data";
@@ -73,7 +74,11 @@ export function CommitSuccess({
         <ExternalLink href={result.pullRequestUrl}>
           pull request #{result.pullRequestNumber}
         </ExternalLink>
-        , where CI rebuilds ALLPHOTOS.json. The portfolio uses the change once it&apos;s merged.
+        . Rebuild ALLPHOTOS.json from{" "}
+        <Link to="/in-flight" className="text-foreground underline underline-offset-4">
+          Photos in Flight
+        </Link>{" "}
+        to sync it; the portfolio uses the change once it&apos;s merged.
       </p>
     </div>
   );

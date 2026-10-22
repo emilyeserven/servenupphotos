@@ -67,6 +67,9 @@ type PublishResult struct {
 	// NewPullRequest is true when this save opened the pull request, and false
 	// when it added to one that was already open.
 	NewPullRequest bool `json:"newPullRequest"`
+	// Data is the JSON saved, so pages can show it before CI rebuilds the
+	// combined lists with it.
+	Data json.RawMessage `json:"data"`
 }
 
 // PublishError is a failed publish, with a message fit to show and the HTTP
@@ -158,7 +161,7 @@ func (c *Client) saveNewFile(ctx context.Context, t target, open *pullRequest, p
 		return PublishResult{}, perr
 	}
 
-	result := PublishResult{Path: path, FileURL: fileURL}
+	result := PublishResult{Path: path, FileURL: fileURL, Data: json.RawMessage(content)}
 	if open == nil {
 		if open, perr = c.openPullRequest(ctx, t, branch); perr != nil {
 			return PublishResult{}, perr

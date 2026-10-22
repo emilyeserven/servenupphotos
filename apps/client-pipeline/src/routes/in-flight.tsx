@@ -1,4 +1,4 @@
-import { type UseQueryResult, useQuery } from "@tanstack/react-query";
+import { type UseQueryResult, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   CheckIcon,
@@ -17,12 +17,17 @@ import {
   type InFlightImages,
   type InFlightResponse,
   type CombineStatus,
+  combineStatusQuery,
   type RemoveResult,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 import { JsonCodeBlock } from "@/components/json-code-block";
-import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
+import {
+  AllPhotosRebuild,
+  RebuildButton,
+  useAllPhotosRebuild,
+} from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
@@ -40,7 +45,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
 import { cn } from "@/lib/utils";
-import { useCombinedDataStore } from "@/stores/combined-data";
+import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
 
 interface InFlightSearch {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */
@@ -95,11 +100,11 @@ function InFlightCard() {
   const rebuild = useAllPhotosRebuild(Boolean(inFlight.data?.pullRequest), () => {
     void inFlight.refetch();
   });
+  const queryClient = useQueryClient();
   const onRemoved = (result: RemoveResult) => {
     setRemoved(result);
     setRemovedPaths((paths) => new Set(paths).add(result.path));
     void inFlight.refetch();
-    rebuild.afterPush();
   };
   const shown = withoutRemoved(inFlight.data, removedPaths);
   const showAllPhotos = Route.useSearch({ select: (search) => search.allPhotos === true });
@@ -114,7 +119,7 @@ function InFlightCard() {
         showAllPhotos={showAllPhotos}
         onRefresh={() => {
           void inFlight.refetch();
-          void rebuild.status.refetch();
+          void queryClient.refetchQueries({ queryKey: combineStatusQuery().queryKey });
           void refreshCombined();
         }}
       />
@@ -271,7 +276,7 @@ function AllPhotosPanel({ data }: { data?: InFlightResponse }) {
 
 /** Why ALLPHOTOS.json can't be shown, or undefined when it can. */
 function allPhotosProblem(all: CombinedFile): string | undefined {
-  if (!all.found) return "Not on the branch yet. CI adds it after the next push.";
+  if (!all.found) return "Not on the branch yet. Rebuild adds it.";
   if (all.error) return all.error;
   return all.data ? undefined : "Couldn't read the file.";
 }
@@ -489,15 +494,16 @@ const ALL_PHOTOS_MARKS = {
     label: (file: string) => `In ${file}`,
     className: "text-emerald-600 dark:text-emerald-400",
   },
+  // Not in it until it's rebuilt from the Rebuild button.
   out: {
     Icon: CircleDashedIcon,
-    label: (file: string) => `Not in ${file}`,
-    className: "text-muted-foreground",
+    label: (file: string) => `Not synced to ${file} yet`,
+    className: "text-amber-700 dark:text-amber-400",
   },
   // Not in it yet, but CI is rebuilding it.
   pending: {
     Icon: CircleDashedIcon,
-    label: (file: string) => `Not in ${file} yet`,
+    label: (file: string) => `Not synced to ${file} yet`,
     className: "text-muted-foreground [&>svg]:animate-spin",
   },
 };
@@ -509,7 +515,7 @@ function allPhotosMarkKey(inAllPhotos: boolean, rebuilding: boolean) {
 
 /**
  * A check mark when the file's data is an entry of `allFile` (ALLPHOTOS.json unless named), or a
- * dashed circle when it isn't, spinning while CI rebuilds it. Nothing when either file couldn't be
+ * dashed circle marking it not synced when it isn't, spinning while CI rebuilds it. Nothing when either file couldn't be
  * read.
  */
 function AllPhotosMark({
@@ -589,24 +595,63 @@ function groupsSummary(groups: InFlightGroups): string {
 }
 
 function allPhotosSummary(all: CombinedFile, files: InFlightFile[]): string {
-  if (!all.found) return "Not on the branch yet. CI adds it after the next push.";
+  if (!all.found) return "Not on the branch yet. Rebuild adds it.";
   if (all.error) return all.error;
   const matched = files.filter((file) => file.inAllPhotos).length;
   return `Lists ${all.count}; ${matched} of ${files.length} photo files match`;
 }
 
-/** A spinner and note beside ALLPHOTOS.json while CI rebuilds it, linked to the run. */
-function RebuildingNote({ rebuilding, runUrl }: { rebuilding: boolean; runUrl?: string }) {
-  if (!rebuilding) return null;
+/**
+ * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json have every change pushed to the pull
+ * request, as checked when the app started and after each rebuild, and how many changes since the
+ * last rebuild the pages already show.
+ */
+function SyncSummary({ rebuilding, runUrl }: { rebuilding: boolean; runUrl?: string }) {
+  const sync = useCombinedSync();
+  if (rebuilding) return <RebuildingNote runUrl={runUrl} />;
+  if (!sync.unsynced) {
+    const state = sync.headState;
+    if (state === "unavailable")
+      return <span className="text-muted-foreground">Couldn't check on CI</span>;
+    return <span className="text-muted-foreground">Up to date</span>;
+  }
+  return (
+    <span className="text-amber-700 dark:text-amber-400">
+      {unsyncedText(sync.changes, sync.unknownChanges, sync.headState)}
+    </span>
+  );
+}
+
+function plural(count: number, one: string): string {
+  return `${count} ${one}${count === 1 ? "" : "s"}`;
+}
+
+/** What the pages already show of the changes since the last rebuild, and what they don't. */
+function changesText(changes: number, unknown: number): string {
+  const shown = changes > 0 ? `${plural(changes, "file change")} shown here already` : "";
+  const hidden = unknown > 0 ? `${plural(unknown, "save")} that show once rebuilt` : "";
+  return [shown, hidden].filter(Boolean).join(", ");
+}
+
+/** Why the combined files aren't synced, and what the pages already show of it. */
+function unsyncedText(changes: number, unknown: number, state?: CombineStatus["state"]): string {
+  const failed = state === "failed" ? "The last rebuild failed. " : "";
+  const since =
+    changesText(changes, unknown) || "the pull request has changes since the last rebuild";
+  return `${failed}Not synced: ${since}. Rebuild to sync them.`;
+}
+
+/** A spinner and note while CI rebuilds the combined files, linked to the run. */
+function RebuildingNote({ runUrl }: { runUrl?: string }) {
   const note = runUrl ? (
     <a href={runUrl} target="_blank" rel="noreferrer" className="underline underline-offset-4">
-      CI is rebuilding it
+      CI is rebuilding them
     </a>
   ) : (
-    "CI is rebuilding it"
+    "CI is rebuilding them"
   );
   return (
-    <span className="text-muted-foreground flex items-center gap-1 text-xs">
+    <span className="text-muted-foreground flex items-center gap-2">
       <Spinner />
       {note}
     </span>
@@ -652,23 +697,19 @@ function PullRequestSummary({
       <dd className="font-mono">{pr.branch}</dd>
       <dt className="text-muted-foreground">Photo files</dt>
       <dd>{count === 0 ? "None in the data folder" : count}</dd>
-      <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
-      <dd className="flex items-center gap-2">
-        {allPhotosSummary(data.allPhotos, data.files)}
-        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
+      <dt className="text-muted-foreground">Synced</dt>
+      <dd className="flex flex-col items-start gap-2">
+        <SyncSummary rebuilding={rebuilding} runUrl={runUrl} />
+        <RebuildButton />
       </dd>
+      <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
+      <dd>{allPhotosSummary(data.allPhotos, data.files)}</dd>
       <dt className="text-muted-foreground">Images</dt>
       <dd>{imagesSummary(data.images, count)}</dd>
       <dt className="text-muted-foreground">Album files</dt>
-      <dd className="flex items-center gap-2">
-        {groupsSummary(data.albums)}
-        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
-      </dd>
+      <dd>{groupsSummary(data.albums)}</dd>
       <dt className="text-muted-foreground">Tag files</dt>
-      <dd className="flex items-center gap-2">
-        {groupsSummary(data.tags)}
-        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
-      </dd>
+      <dd>{groupsSummary(data.tags)}</dd>
     </dl>
   );
 }

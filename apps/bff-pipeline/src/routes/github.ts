@@ -28,12 +28,22 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/photos/in-flight", { timeoutMs: 35_000 }),
   );
 
-  // Reports the "Combine photo data" run for a commit (or the pull request's head when `sha` is
-  // absent), so pages know when ALLPHOTOS.json is rebuilt; the backend gives GitHub 30s.
+  // Reports the "Combine photo data" run started at a commit (or whether the pull request's head
+  // is rebuilt, when `sha` is absent), so pages know when ALLPHOTOS.json is; the backend gives
+  // GitHub 30s.
   app.get<{ Querystring: { sha?: string } }>("/photos/in-flight/ci", async (request, reply) => {
     const query = request.query.sha ? `?${new URLSearchParams({ sha: request.query.sha })}` : "";
     return relayToBackend(reply, app.log, `/photos/in-flight/ci${query}`, { timeoutMs: 35_000 });
   });
+
+  // Starts the "Combine photo data" run that rebuilds ALLPHOTOS.json, ALLALBUMS.json and
+  // ALLTAGS.json on that pull request; the backend gives GitHub 30s.
+  app.post("/photos/in-flight/rebuild", async (_request, reply) =>
+    relayToBackend(reply, app.log, "/photos/in-flight/rebuild", {
+      method: "POST",
+      timeoutMs: 35_000,
+    }),
+  );
 
   // Removes one photo JSON file from that pull request and its image from R2; the backend gives
   // GitHub 30s, then R2 15s.

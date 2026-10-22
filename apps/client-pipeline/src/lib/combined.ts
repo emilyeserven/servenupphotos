@@ -27,7 +27,7 @@ function byKey([a]: [string, unknown], [b]: [string, unknown]): number {
 }
 
 /** value as JSON with every object's keys sorted, so equal data compares equal whatever its order. */
-function canonicalJson(value: unknown): string {
+export function canonicalJson(value: unknown): string {
   return JSON.stringify(value, (_key, v: unknown) =>
     isPlainObject(v) ? Object.fromEntries(Object.entries(v).toSorted(byKey)) : v,
   );

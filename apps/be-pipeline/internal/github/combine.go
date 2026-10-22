@@ -10,11 +10,16 @@ import (
 )
 
 // CombineWorkflowFile is the workflow that rebuilds AllPhotosFile, and each
-// Kind's AllFile, on the photo data pull request after each push to it.
+// Kind's AllFile, on the photo data pull request. It only runs when Rebuild
+// starts it, not on each push.
 const CombineWorkflowFile = "combine-photo-data.yml"
 
 // Combine run states, from first to last.
 const (
+	// CombineStale means the pull request's head was pushed after the last
+	// rebuild, so AllPhotosFile may be missing its changes until Rebuild
+	// starts another run.
+	CombineStale = "stale"
 	// CombineWaiting means GitHub hasn't started a run for the commit yet.
 	CombineWaiting = "waiting"
 	CombineRunning = "running"
@@ -54,10 +59,10 @@ type workflowRun struct {
 // pushes use the workflow's own token, so they don't start another run.
 const combineBot = "github-actions[bot]"
 
-// Combine reports the CombineWorkflowFile run for commit sha in gh's
-// repository. When sha is "", it reports whether AllPhotosFile is being
-// rebuilt on the open pull request titled PullRequestTitle: the newest run on
-// its branch, or waiting when its head was pushed after that run by someone
+// Combine reports the CombineWorkflowFile run Rebuild started at commit sha
+// in gh's repository. When sha is "", it reports whether AllPhotosFile is up
+// to date on the open pull request titled PullRequestTitle: the newest run on
+// its branch, or stale when its head was pushed after that run by someone
 // other than the workflow itself. It only reads from GitHub.
 func (c *Client) Combine(ctx context.Context, gh settings.GitHub, sha string) (CombineStatus, error) {
 	owner, name, ok := splitRepo(gh.Repo)
@@ -78,7 +83,7 @@ func (c *Client) Combine(ctx context.Context, gh settings.GitHub, sha string) (C
 // combine is Combine for t, without RunsURL.
 func (c *Client) combine(ctx context.Context, t target, sha string) (CombineStatus, error) {
 	if sha != "" {
-		runs, perr := c.combineRuns(ctx, t, url.Values{"head_sha": {sha}})
+		runs, perr := c.combineRuns(ctx, t, url.Values{"head_sha": {sha}, "event": {"workflow_dispatch"}})
 		if perr != nil {
 			return unavailableOr(sha, perr)
 		}
@@ -106,14 +111,14 @@ func (c *Client) combinePull(ctx context.Context, t target, pr *inFlightPull) (C
 		return combineStatus(head, runs), nil
 	}
 	// The head is newer than the last run: either the workflow's own commit,
-	// which starts no run, or a push whose run hasn't started yet.
+	// or a push that nothing has rebuilt from yet.
 	byBot, perr := c.committedBy(ctx, t, head, combineBot)
 	if perr != nil {
 		return CombineStatus{}, perr
 	}
 	switch {
 	case !byBot:
-		return CombineStatus{SHA: head, State: CombineWaiting}, nil
+		return CombineStatus{SHA: head, State: CombineStale}, nil
 	case len(runs) == 0:
 		return CombineStatus{SHA: head, State: CombineDone}, nil
 	}

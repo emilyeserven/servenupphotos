@@ -17,11 +17,19 @@ export interface PublishResult {
   pullRequestNumber: number;
   /** False when the file was added to a photo data pull request that was already open. */
   newPullRequest: boolean;
+  /** The JSON saved. */
+  data: unknown;
 }
 
 export const publishPhotoMutation = mutationOptions({
   mutationKey: ["photos", "github"],
-  meta: { pushes: true },
+  meta: {
+    pushes: true,
+    changes: (result) => {
+      const { path, data } = result as PublishResult;
+      return [{ kind: "photos", path, after: data }];
+    },
+  },
   mutationFn: (photo: PhotoData) =>
     requestJson<PublishResult>("/api/photos/github", {
       method: "POST",
@@ -164,7 +172,7 @@ export const photosInFlightQuery = queryOptions({
 export interface UpdateResult {
   path: string;
   fileUrl: string;
-  /** The commit that changed the file, whose CI run rebuilds ALLPHOTOS.json; empty when unchanged. */
+  /** The commit that changed the file; empty when unchanged. */
   commitSha: string;
   /** False when the file already had this content, so nothing was committed. */
   changed: boolean;
@@ -181,7 +189,15 @@ export interface UpdateResult {
  */
 export const updateInFlightMutation = mutationOptions({
   mutationKey: ["photos", "in-flight", "update"],
-  meta: { pushes: (result) => (result as UpdateResult).changed },
+  meta: {
+    pushes: (result) => (result as UpdateResult).changed,
+    changes: (result, variables, cached) => {
+      const { path, data } = variables as { path: string; data: unknown };
+      return [
+        { kind: "photos", path: (result as UpdateResult).path, before: cached(path), after: data },
+      ];
+    },
+  },
   mutationFn: (file: { path: string; data: unknown; name?: string }) =>
     requestJson<UpdateResult>("/api/photos/in-flight", {
       method: "PUT",
@@ -219,7 +235,7 @@ export const publishedPhotosQuery = queryOptions({
 /** What removing a photo JSON file did, including to its image in R2. */
 export interface RemoveResult {
   path: string;
-  /** The commit that removed the file; its CI run rebuilds ALLPHOTOS.json. */
+  /** The commit that removed the file. */
   commitSha: string;
   image: RemovedImage & {
     /** What happened to the image's resized WEBP versions, when its key was known. */
@@ -237,7 +253,12 @@ interface RemovedImage {
 
 export const removeInFlightMutation = mutationOptions({
   mutationKey: ["photos", "in-flight", "remove"],
-  meta: { pushes: true },
+  meta: {
+    pushes: true,
+    changes: (_result, path, cached) => [
+      { kind: "photos", path: path as string, before: cached(path as string), after: null },
+    ],
+  },
   mutationFn: (path: string) =>
     requestJson<RemoveResult>(`/api/photos/in-flight?${new URLSearchParams({ path })}`, {
       method: "DELETE",
@@ -266,14 +287,18 @@ export const bucketImagesQuery = queryOptions({
   retry: false,
 });
 
-/** Where the "Combine photo data" run that rebuilds ALLPHOTOS.json for one commit is. */
+/**
+ * Where the "Combine photo data" run that rebuilds ALLPHOTOS.json for one commit is, or for the
+ * pull request's head, whether it's rebuilt.
+ */
 export interface CombineStatus {
   sha: string;
   /**
-   * `waiting` until GitHub starts the run, then `running`, then `done` or `failed`. `unavailable`
-   * when the token can't read Actions runs; `message` says why.
+   * `waiting` until GitHub starts the run, then `running`, then `done` or `failed`. `stale` when
+   * the pull request's head was pushed after its last rebuild, and nothing has started one since.
+   * `unavailable` when the token can't read Actions runs; `message` says why.
    */
-  state: "waiting" | "running" | "done" | "failed" | "unavailable";
+  state: "stale" | "waiting" | "running" | "done" | "failed" | "unavailable";
   runUrl?: string;
   /** The workflow's runs page, for when there's no runUrl yet. */
   runsUrl?: string;
@@ -293,8 +318,8 @@ export function combineState(data?: CombineStatus): CombineStatus["state"] {
 export const COMBINE_PENDING: ReadonlySet<CombineStatus["state"]> = new Set(["waiting", "running"]);
 
 /**
- * The "Combine photo data" run for commit `sha`, or for the photo data pull request's head when
- * `sha` is omitted. It polls until the run finishes.
+ * The "Combine photo data" run started at commit `sha`, or whether the photo data pull request's
+ * head is rebuilt when `sha` is omitted. It polls until the run finishes.
  */
 export const combineStatusQuery = (sha?: string) =>
   queryOptions({
@@ -309,6 +334,16 @@ export const combineStatusQuery = (sha?: string) =>
         ? COMBINE_POLL_MS
         : false,
   });
+
+/**
+ * Starts the "Combine photo data" run that rebuilds ALLPHOTOS.json, ALLALBUMS.json and
+ * ALLTAGS.json on the photo data pull request. The run it answers with is waiting at the pull
+ * request's head; follow it with `combineStatusQuery(sha)`.
+ */
+export const startRebuildMutation = mutationOptions({
+  mutationKey: ["photos", "in-flight", "rebuild"],
+  mutationFn: () => requestJson<CombineStatus>("/api/photos/in-flight/rebuild", { method: "POST" }),
+});
 
 /** What makes a photo the same as an ALLPHOTOS.json entry: all three fields exactly equal. */
 export interface PhotoIdentity {

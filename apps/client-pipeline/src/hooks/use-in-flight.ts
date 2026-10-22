@@ -5,16 +5,16 @@ import { withCombined } from "@/lib/combined";
 import { useCombinedData, useCombinedDataStore } from "@/stores/combined-data";
 
 /**
- * The photo data pull request's files, checked against the combined lists the store keeps. When
- * the pull request has moved to a head the store didn't read them at, as after a merge or a push
- * from elsewhere, the store reads them again.
+ * The photo data pull request's files, checked against the combined lists as GitHub has them, so
+ * a file whose changes CI hasn't rebuilt them with yet is marked as not synced. When the pull
+ * request isn't the one the store read them for, as after a merge, the store reads them again.
  */
 export function useInFlight(enabled = true) {
   const combined = useCombinedData(enabled);
-  const { data, error } = combined;
+  const { synced, error } = combined;
   const select = useCallback(
-    (read: InFlightRead) => withCombined(read, { data, error }),
-    [data, error],
+    (read: InFlightRead) => withCombined(read, { data: synced, error }),
+    [synced, error],
   );
   const inFlight = useQuery({ ...photosInFlightQuery, enabled, select });
 

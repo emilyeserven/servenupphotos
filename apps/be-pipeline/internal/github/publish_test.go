@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -163,7 +164,9 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 		PullRequestNumber: 1,
 		NewPullRequest:    true,
 	}
-	if first != want {
+	saved := first.Data
+	first.Data = nil
+	if !reflect.DeepEqual(first, want) {
 		t.Errorf("first Publish() = %+v, want %+v", first, want)
 	}
 
@@ -220,6 +223,9 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 `
 	if got != wantJSON {
 		t.Errorf("file content = %s, want %s", got, wantJSON)
+	}
+	if string(saved) != got {
+		t.Errorf("first Publish() data = %s, want the saved file", saved)
 	}
 }
 
