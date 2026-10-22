@@ -25,7 +25,7 @@ import {
   isPublished,
   photoFile,
 } from "@/components/edit-in-flight/photo-json";
-import { SaveCard } from "@/components/edit-in-flight/save-card";
+import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
 import { type Edit, useEdit, useSave } from "@/components/edit-in-flight/use-edit";
 
 /**
@@ -122,6 +122,8 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-2">
+      <SaveActions edit={edit} save={save} />
+      <SaveStatus file={editable.file} edit={edit} save={save} />
       <div className="flex min-w-0 flex-col gap-6">
         <ThumbnailCrop
           photo={editable.image.url}
@@ -130,7 +132,12 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           locked={pending}
           lockedNote="Saving the Square Thumbnail with this square…"
         />
-        <SaveCard file={editable.file} edit={edit} save={save} />
+        <PhotoGroupsCard
+          value={edit.groups}
+          onChange={edit.setGroups}
+          description="Saving changes writes them over the ones in the JSON."
+          disabled={pending}
+        />
       </div>
       <div className="flex min-w-0 flex-col gap-6">
         <PhotoDetailsCard
@@ -139,12 +146,6 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           fallbackTitle={fileStem(photoFile(editable.data) || fileName(editable.file.path))}
           exifPlace={savedExifPlace(edit.savedData)}
           description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
-          disabled={pending}
-        />
-        <PhotoGroupsCard
-          value={edit.groups}
-          onChange={edit.setGroups}
-          description="Saving changes writes them over the ones in the JSON."
           disabled={pending}
         />
         <JsonPreview file={editable.file} edit={edit} />
