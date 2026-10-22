@@ -63,6 +63,8 @@ export interface ColorAnalysis {
 
 /** The publishable subset of the EXIF data; a field is null when the photo lacks it. */
 export interface SanitizedExif {
+  /** The photo's name on the portfolio, written on the Photo page; the portfolio uses the file name without one. */
+  title: string | null;
   camera: string | null;
   lens: string | null;
   /** The f-number, such as 5.6 for f/5.6. */

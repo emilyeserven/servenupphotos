@@ -11,7 +11,7 @@ import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
-import { PhotoCommentCard } from "@/components/photo-comment";
+import { type PhotoDetails, PhotoDetailsCard } from "@/components/photo-details";
 import { R2Upload } from "@/components/r2-upload";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { VersionPreviews } from "@/components/version-previews";
@@ -61,11 +61,17 @@ function withImages(
   };
 }
 
-/** The sanitized EXIF with the Markdown comment, or null for none, filled in. */
-function withComment(sanitized: SanitizedExif | null, comment: string): SanitizedExif | null {
+/** The sanitized EXIF with the title and Markdown comment, or null for ones left empty, filled in. */
+function withDetails(sanitized: SanitizedExif | null, details: PhotoDetails): SanitizedExif | null {
   if (!sanitized) return null;
-  return { ...sanitized, comment: comment.trim() || null };
+  return {
+    ...sanitized,
+    title: details.title.trim() || null,
+    comment: details.comment.trim() || null,
+  };
 }
+
+const NO_DETAILS: PhotoDetails = { title: "", comment: "" };
 
 /** State that belongs to the photo analyzed at `submittedAt`, so choosing another photo starts it over. */
 function usePhotoState<T>(submittedAt: number, initial: T): [T, (value: T) => void] {
@@ -79,9 +85,9 @@ function PhotoPage() {
   // Lives here rather than in the upload card so its URL can go into the sanitized EXIF.
   const upload = useMutation(uploadMutation);
   // Lives here so it can go into the JSON to upload and the JSON saved to GitHub.
-  const [comment, setComment] = usePhotoState(extract.submittedAt, "");
+  const [details, setDetails] = usePhotoState(extract.submittedAt, NO_DETAILS);
   const [saved, setSaved] = usePhotoState(extract.submittedAt, false);
-  const sanitized = withComment(withImages(extract.data?.sanitized, upload.data), comment);
+  const sanitized = withDetails(withImages(extract.data?.sanitized, upload.data), details);
   const identity = photoIdentity(extract, sanitized);
 
   return (
@@ -105,8 +111,8 @@ function PhotoPage() {
             extract={extract}
             sanitized={sanitized}
             identity={identity}
-            comment={comment}
-            onCommentChange={setComment}
+            details={details}
+            onDetailsChange={setDetails}
             saved={saved}
             onSaved={() => setSaved(true)}
           />
@@ -191,20 +197,20 @@ interface ResultsColumnProps {
   extract: ExifMutation;
   sanitized: SanitizedExif | null;
   identity: PhotoIdentity | null;
-  comment: string;
-  onCommentChange: (comment: string) => void;
+  details: PhotoDetails;
+  onDetailsChange: (details: PhotoDetails) => void;
   /** The JSON has been saved to GitHub. */
   saved: boolean;
   onSaved: () => void;
 }
 
-/** The analyzed photo's results, then its comment and saving them to GitHub unless it's already in ALLPHOTOS.json. */
+/** The analyzed photo's results, then its title, comment and saving them to GitHub unless it's already in ALLPHOTOS.json. */
 function ResultsColumn({
   extract,
   sanitized,
   identity,
-  comment,
-  onCommentChange,
+  details,
+  onDetailsChange,
   saved,
   onSaved,
 }: ResultsColumnProps) {
@@ -215,7 +221,12 @@ function ResultsColumn({
       {extract.isSuccess && sanitized && (
         // The gate in the other column shows the check's status, so this one stays quiet.
         <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
-          <PhotoCommentCard value={comment} onChange={onCommentChange} saved={saved} />
+          <PhotoDetailsCard
+            value={details}
+            onChange={onDetailsChange}
+            fallbackTitle={extract.data.file.replace(/\.[^.]*$/, "")}
+            saved={saved}
+          />
           <GitHubSaveCard file={extract.data.file} sanitized={sanitized} onSaved={onSaved} />
         </AllPhotosGate>
       )}

@@ -13,6 +13,7 @@ func TestSanitize(t *testing.T) {
 		want map[string]any
 	}{
 		{"fujifilm-x-t5.json", map[string]any{
+			"title":       nil,
 			"camera":      "Fujifilm X-T5",
 			"lens":        "XF18-135mmF3.5-5.6R LM OIS WR",
 			"aperture":    5.0,
@@ -27,6 +28,7 @@ func TestSanitize(t *testing.T) {
 			"comment":     nil,
 		}},
 		{"samsung-s7.json", map[string]any{
+			"title":       nil,
 			"camera":      "SM-G930V",
 			"lens":        "Samsung Galaxy S7 Rear Camera",
 			"aperture":    1.7,
@@ -41,6 +43,7 @@ func TestSanitize(t *testing.T) {
 			"comment":     nil,
 		}},
 		{"sony-a65.json", map[string]any{
+			"title":       nil,
 			"camera":      "SLT-A65V",
 			"lens":        "DT 18-55mm F3.5-5.6 SAM",
 			"aperture":    4.0,
@@ -55,6 +58,7 @@ func TestSanitize(t *testing.T) {
 			"comment":     nil,
 		}},
 		{"canon-80d.json", map[string]any{
+			"title":       nil,
 			"camera":      "Canon EOS 80D",
 			"lens":        "EF-S55-250mm f/4-5.6 IS STM",
 			"aperture":    8.0,
@@ -69,6 +73,7 @@ func TestSanitize(t *testing.T) {
 			"comment":     nil,
 		}},
 		{"canon-t6i.json", map[string]any{
+			"title":       nil,
 			"camera":      "Canon EOS Rebel T6i",
 			"lens":        "EF-S18-135mm f/3.5-5.6 IS STM",
 			"aperture":    5.0,

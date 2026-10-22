@@ -117,6 +117,7 @@ var gh = settings.GitHub{Repo: "owner/repo", Folder: "/photos/data/", Token: tok
 
 func photo(name string) Photo {
 	return Photo{Name: name, File: name + ".jpg", Sanitized: exif.Sanitized{
+		Title:    ptr("Tokyo at night"),
 		Camera:   ptr("X-T5"),
 		Aperture: ref(2.8),
 		Exposure: ptr("1/250"),
@@ -162,6 +163,7 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 	got := f.files["photo-data/2026-10-15-024500:photos/data/DSC0001.json"]
 	wantJSON := `{
   "file": "DSC0001.jpg",
+  "title": "Tokyo at night",
   "camera": "X-T5",
   "lens": null,
   "aperture": 2.8,

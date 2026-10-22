@@ -43,6 +43,8 @@ type Version = (typeof VERSIONS)[number][0];
 /** One entry of ALLPHOTOS.json: a photo's file name and sanitized EXIF, as the pipeline saves it. */
 interface PhotoData {
   file: string;
+  /** The name to show, when one was written; older entries don't have it. */
+  title?: string | null;
   camera: string | null;
   gpsPosition: string | null;
   createDate: string | null;
@@ -116,6 +118,11 @@ function parseImage(photo: PhotoData): PhotoImage | null {
   return { width, height, src, srcSet, preview, thumbnail, thumbnailPreview: thumbnailpreview };
 }
 
+/** The title written on the Photo page, or else the file name without its extension. */
+function photoTitle(photo: PhotoData): string {
+  return photo.title?.trim() || photo.file.replace(/\.[^.]*$/, "");
+}
+
 /** The local ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
 function fromPhotoData(data: PhotoData[]): Photo[] {
   return data.flatMap((photo, index) => {
@@ -123,7 +130,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
     if (!takenAt) return [];
     return {
       id: index + 1,
-      title: photo.file.replace(/\.[^.]*$/, ""),
+      title: photoTitle(photo),
       camera: photo.camera ?? "Unknown camera",
       takenAt,
       location: [photo.city, photo.country].filter(Boolean).join(", ") || "Unknown location",

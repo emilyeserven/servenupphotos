@@ -9,6 +9,10 @@ import (
 // Sanitized is the small, publishable subset of a photo's metadata.
 // A field is nil when the photo does not carry it.
 type Sanitized struct {
+	// Title is the photo's name on the portfolio. Sanitize leaves it nil; it
+	// is written on the Photo page before saving, and the portfolio falls back
+	// to the file name without one.
+	Title  *string `json:"title"`
 	Camera *string `json:"camera"`
 	Lens   *string `json:"lens"`
 	// Aperture is the f-number, such as 5.6 for f/5.6.
