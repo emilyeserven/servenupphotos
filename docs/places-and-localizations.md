@@ -86,7 +86,7 @@ the combined data store's `PLACES.json` and `LOCALIZATIONS.json` until a **Commi
 
 The portfolio's menu has a **Script display** setting above the color theme: English, Romanized, Phonetic or Native,
 remembered in the visitor's browser (English until they pick). Every place, city and country the portfolio shows
-(Timeline, Table, Map and the photo viewer) is written that way:
+(Timeline, Table, Map, Grid and the photo viewer) is written that way:
 
 | Script display | Shows                   | Such as    |
 | -------------- | ----------------------- | ---------- |
@@ -103,8 +103,11 @@ A photo with places shows them as a phrase before its city, such as “In 경복
 English. A photo without places, or whose places aren't in `PLACES.json`, shows its `placeName` as before. The Table
 sorts the Place column by the English names whichever way it's shown.
 
-`pnpm photos:local` also writes `PLACES.local.json` and `LOCALIZATIONS.local.json` next to the committed files, so a
-local portfolio shows places and localizations saved in the open pull request ([local photo data](local-photo-data.md)).
+The Grid shows the place under each title with **Show info** on.
+
+`pnpm photos:local` also writes `PLACES.local.json` and `LOCALIZATIONS.local.json` next to the committed files, and
+the local portfolio refreshes them from a running photo pipeline on each page load, so it shows places and
+localizations saved in the pipeline, committed or not ([local photo data](local-photo-data.md)).
 
 > **Frontend analogy:** it's i18n with a fallback chain, like `i18next`'s `fallbackLng`: each name has up to four
 > “translations”, and a missing one falls back to the next one along instead of showing nothing.

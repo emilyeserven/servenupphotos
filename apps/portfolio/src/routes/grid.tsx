@@ -4,6 +4,7 @@ import { type CSSProperties, type ImgHTMLAttributes, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ViewPlaceholder } from "@/components/view-placeholder";
+import { PhotoLocation } from "@/components/photo-location";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +17,7 @@ type ViewMode = "square" | "natural";
 interface GridSearch {
   /** Left out for the default, square tiles. */
   view?: "natural";
-  /** Set when each tile shows its title and comment under it. Left out for the default, hidden. */
+  /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
   info?: true;
 }
 
@@ -153,7 +154,7 @@ function InfoToggle({ shown }: { shown: boolean }) {
   const navigate = useNavigate({ from: "/grid" });
   return (
     <label
-      title="Show each photo's title and comment under it"
+      title="Show each photo's title, place and comment under it"
       className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-muted-foreground select-none hover:text-foreground"
     >
       <input
@@ -267,11 +268,17 @@ function PhotoTile({
   );
 }
 
-/** The title and comment under a tile, shown when the grid's Info toggle is on. */
+/** The title, place and comment under a tile, shown when the grid's Info toggle is on. */
 function TileCaption({ photo }: { photo: ImagePhoto }) {
   return (
     <figcaption className="flex flex-col">
       <span className="truncate text-sm font-medium">{photo.title}</span>
+      {photo.location && (
+        <PhotoLocation
+          location={photo.location}
+          className="w-fit max-w-full truncate text-xs text-muted-foreground"
+        />
+      )}
       {/* The rest of its details are in the lightbox. */}
       {photo.comment && (
         <PhotoComment comment={photo.comment} className="text-xs text-muted-foreground" />
