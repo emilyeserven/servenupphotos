@@ -7,6 +7,8 @@ export interface ComboboxOption {
   label: string;
   /** A second line under the label, such as where an album sits. */
   detail?: string;
+  /** More text to match what's typed against, not shown, such as a name in another script. */
+  keywords?: string;
 }
 
 interface ComboboxProps {
@@ -35,7 +37,7 @@ interface ComboboxProps {
 }
 
 /** The value of the option that offers what's typed as a new one. */
-const CREATE_VALUE = "\u0000create";
+export const CREATE_VALUE = "\u0000create";
 
 /**
  * A text box that filters a list of options to choose from, showing each chosen one as a chip with
@@ -227,7 +229,7 @@ export function Combobox({
 }
 
 /** shown, with an offer to add query as a new option when it's not any option's label. */
-function withCreate(
+export function withCreate(
   shown: ComboboxOption[],
   options: ComboboxOption[],
   query: string,
@@ -239,12 +241,13 @@ function withCreate(
   return taken ? shown : [...shown, { value: CREATE_VALUE, label: createLabel(text) }];
 }
 
-/** The options whose label, value or detail contains every word of query, ignoring case. */
-function filterOptions(options: ComboboxOption[], query: string): ComboboxOption[] {
+/** The options whose label, value, detail or keywords contain every word of query, ignoring case. */
+export function filterOptions(options: ComboboxOption[], query: string): ComboboxOption[] {
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   if (words.length === 0) return options;
   return options.filter((option) => {
-    const text = `${option.label} ${option.value} ${option.detail ?? ""}`.toLowerCase();
+    const text =
+      `${option.label} ${option.value} ${option.detail ?? ""} ${option.keywords ?? ""}`.toLowerCase();
     return words.every((word) => text.includes(word));
   });
 }

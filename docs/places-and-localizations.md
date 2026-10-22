@@ -21,8 +21,9 @@ open **Add photo data** pull request, or opens one, and the list reads the place
 
 On the Photo page and in Edit Photo, **Place** replaces the old place name text box. It's one row, or two after
 **Add a second place**, and each row is a relation (none, in, at, by, near, on, inside, outside, behind, in front of,
-across from, above, below, overlooking, from) and a combobox of places. Typing a name that isn't a place offers
-**Add “…” as a place**, which saves it as above and chooses it. Under the rows, the places read as a phrase:
+across from, above, below, overlooking, from) and a combobox that picks one place. Its search matches each place's
+name and its saved romanization, local pronunciation and local script, so “경복” or “gyeongbok” both find
+Gyeongbokgung Palace. Typing a name that isn't a place offers **Add “…” as a place**, which saves it as above and chooses it. Under the rows, the places read as a phrase:
 “In Gyeongbokgung Palace by Geunjeongmun Gate”, or “Near Gyeongbokgung” with one place and a relation.
 
 They're saved in the photo's JSON as `places`, next to `albums` and `tags`:

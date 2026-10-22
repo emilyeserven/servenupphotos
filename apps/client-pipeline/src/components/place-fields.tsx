@@ -16,8 +16,9 @@ import {
   savePlaceMutation,
 } from "@/api/places";
 import { Button } from "@/components/ui/button";
-import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
+import { type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
+import { SingleCombobox } from "@/components/ui/single-combobox";
 import { cn } from "@/lib/utils";
 
 /** What PlaceFields edits: the photo's places, and the place name the portfolio shows. */
@@ -51,11 +52,21 @@ function nextPlaceName(previous: PlaceValue, places: PhotoPlace[], names: Map<st
 }
 
 /** The place's local script and romanization, from its localization, as a second line. */
-function placeDetail(place: Place, localizations: Localization[]): string | undefined {
-  const id = localizationId("place", place.name, place.id);
-  const found = localizations.find((l) => l.id === id);
+function placeDetail(place: Place, found: Localization | undefined): string | undefined {
   const parts = [found?.localScript, found?.romanization, place.description].filter(Boolean);
   return parts.length > 0 ? parts.join(" · ") : undefined;
+}
+
+/** The place as an option, shown with its local script and romanization, and found by any of its names. */
+function placeOption(place: Place, localizations: Localization[]): ComboboxOption {
+  const id = localizationId("place", place.name, place.id);
+  const found = localizations.find((l) => l.id === id);
+  return {
+    value: place.id,
+    label: place.name || place.id,
+    detail: placeDetail(place, found),
+    keywords: found && [found.romanization, found.pronunciation, found.localScript].join(" "),
+  };
 }
 
 /** Every place, read with the Places page's query, and saving a new one from a combobox. */
@@ -84,11 +95,7 @@ function usePlaces() {
   };
   const options: ComboboxOption[] = places
     .toSorted((a, b) => a.name.localeCompare(b.name))
-    .map((place) => ({
-      value: place.id,
-      label: place.name || place.id,
-      detail: placeDetail(place, localizations),
-    }));
+    .map((place) => placeOption(place, localizations));
   /** True until the places are read, and while one is being added. */
   const busy = !read.data || save.isPending;
   return { read, places, names: placeNames(places), options, save, create, busy };
@@ -215,18 +222,17 @@ function PlaceCombobox({
 }: Omit<PlaceRowProps, "onRemove"> & { onCreate: (name: string) => void }) {
   return (
     <div className="min-w-0 flex-1">
-      <Combobox
+      <SingleCombobox
         id={`photo-place-${index}`}
         aria-labelledby="photo-place-label"
         options={all.options}
-        value={row.id ? [row.id] : []}
-        onChange={([id]) => onChange({ ...row, id: id ?? "" })}
+        value={row.id}
+        onChange={(id) => onChange({ ...row, id })}
         disabled={disabled || all.busy}
         placeholder={placeholder(index, all)}
-        emptyText="Type a name to add a place."
+        emptyText="No places yet. Type a name to add one."
         createLabel={(text) => `Add “${text}” as a place`}
         onCreate={onCreate}
-        unknownLabel={(id) => `${id}, which isn't a place on GitHub`}
       />
     </div>
   );
