@@ -16,6 +16,7 @@ import { LngLatBounds, setWorkerUrl, type GeoJSONSource, type GeoJSONFeature } f
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { type MouseEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { MapViewControls } from "@/components/map-view-controls";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
@@ -92,9 +93,17 @@ const photoBounds = boundsOf(placedPhotos);
 
 // Opens on the photos, close enough to see the streets around one photo but no closer; the whole
 // world without any.
+const ALL_PHOTOS_FIT = { padding: FIT_PADDING, maxZoom: 14 };
+const WORLD_VIEW = { center: [20, 25] as [number, number], zoom: 1.3 };
 const initialViewState = photoBounds
-  ? { bounds: photoBounds, fitBoundsOptions: { padding: FIT_PADDING, maxZoom: 14 } }
-  : { longitude: 20, latitude: 25, zoom: 1.3 };
+  ? { bounds: photoBounds, fitBoundsOptions: ALL_PHOTOS_FIT }
+  : { longitude: WORLD_VIEW.center[0], latitude: WORLD_VIEW.center[1], zoom: WORLD_VIEW.zoom };
+
+/** Moves the map back to where it opened, showing every photo. */
+function showAllPhotos(map: MapRef) {
+  if (photoBounds) map.fitBounds(photoBounds, ALL_PHOTOS_FIT);
+  else map.flyTo(WORLD_VIEW);
+}
 
 // The theme provider toggles the `dark` class on <html>; follow it so the basemap matches.
 function subscribeToDarkClass(onChange: () => void) {
@@ -235,6 +244,11 @@ function MapView() {
           }}
         >
           <NavigationControl position="top-right" />
+          <MapViewControls
+            onReset={() => {
+              if (map.current) showAllPhotos(map.current);
+            }}
+          />
           <Source
             id={SOURCE_ID}
             type="geojson"
