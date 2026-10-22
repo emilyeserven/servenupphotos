@@ -28,7 +28,10 @@ import {
   unrelatedPair,
   withParent,
 } from "@/lib/place-hierarchy";
+import { inferredName, inferredOptions, inferredPlaces } from "@/lib/inferred-places";
+import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
+import { useCombinedData } from "@/stores/combined-data";
 
 /**
  * What PlaceFields edits: the photo's places, the place name kept with them, and its custom city
@@ -107,9 +110,13 @@ function usePlaces() {
       { onSuccess: () => onCreated(id), onError: (e) => onError(e.message) },
     );
   };
-  const options: ComboboxOption[] = places
-    .toSorted((a, b) => a.name.localeCompare(b.name))
-    .map((place) => placeOption(place, localizations));
+  const inferred = inferredPlaces(shownPhotos(useCombinedData().data), places);
+  const options: ComboboxOption[] = [
+    ...places
+      .toSorted((a, b) => a.name.localeCompare(b.name))
+      .map((place) => placeOption(place, localizations)),
+    ...inferredOptions(inferred),
+  ];
   /** True until the places are read, and while one is being added. */
   const busy = !read.data || save.isPending;
   return { read, places, localizations, names: placeNames(places), options, save, create, busy };
@@ -273,7 +280,7 @@ function PlaceCombobox({
         aria-labelledby="photo-place-label"
         options={all.options}
         value={row.id}
-        onChange={(id) => onChange({ ...row, id })}
+        onChange={(id) => chooseOrSave(id, row, onChange, onCreate)}
         disabled={disabled || all.busy}
         placeholder={placeholder(index, all)}
         emptyText="No places yet. Type a name to add one."
@@ -282,6 +289,18 @@ function PlaceCombobox({
       />
     </div>
   );
+}
+
+/** Chooses the place with the ID, or saves an inferred place as a place first and then chooses it. */
+function chooseOrSave(
+  value: string,
+  row: PhotoPlace,
+  onChange: (row: PhotoPlace) => void,
+  onCreate: (name: string) => void,
+) {
+  const name = inferredName(value);
+  if (name) onCreate(name);
+  else onChange({ ...row, id: value });
 }
 
 interface LocalizeButtonProps {

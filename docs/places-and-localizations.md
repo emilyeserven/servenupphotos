@@ -17,11 +17,22 @@ A place can't be in itself or in a place that's in it, and its parent must be a 
 where it is, or `""`; older place files don't have these three, and read as empty.
 
 The Places page adds a place, or changes one's name, description, parent (**In**, which lists only places that aren't
-in it), city and country (its ID stays), and lists every place with what it's in, its city, its local script and how
-many photos list it. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
+in it), city and country (its ID stays), and lists every place with its city, its local script and how many photos
+list it. Each place is listed under the place it's in, indented, and a place with places in it has an arrow to collapse
+or expand them; **Expand all** and **Collapse all** sit above the table. A place whose parent is missing is listed at
+the top. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
 open **Add photo data** pull request, or opens one, and the list reads the place files themselves
 (`GET /api/places` → `GET /places`, at the pull request's head), so a place shows before it's committed to
 `PLACES.json`.
+
+### Inferred places
+
+An old free-text place name (`placeName`) written on two or more photos, ignoring case, that isn't a place's name or
+ID yet is an **inferred place**. The Places page lists them under the table, each with **Save as a place**, and the
+Photo page's place combobox offers them after the saved places ("Inferred from 3 photos"). Choosing one saves it as a
+place (its ID made from its name, as for any new place) and then chooses it. Nothing is saved until one is chosen.
+
+> **Frontend analogy:** like a tag input that suggests tags other posts already use, before they're in the tag list.
 
 ## A photo's places
 

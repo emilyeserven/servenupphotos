@@ -7,6 +7,7 @@ import {
   type PlacesResponse,
   readEntries,
 } from "@/api/places";
+import { InferredPlaceList } from "@/components/inferred-place-list";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -37,9 +38,12 @@ export function PlaceTable({ data, onEdit }: PlaceTableProps) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
   if (data.places.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">
-        No places yet. Add one above, or from a photo's Place field.
-      </p>
+      <div className="flex flex-col gap-2">
+        <p className="text-muted-foreground text-sm">
+          No places yet. Add one above, or from a photo's Place field.
+        </p>
+        <InferredPlaceList places={places} />
+      </div>
     );
   }
   const toggle = (id: string) => setCollapsed(toggled(collapsed, id));
@@ -70,6 +74,7 @@ export function PlaceTable({ data, onEdit }: PlaceTableProps) {
         </TableBody>
       </Table>
       <UnreadableFiles files={data.places} />
+      <InferredPlaceList places={places} />
     </div>
   );
 }
