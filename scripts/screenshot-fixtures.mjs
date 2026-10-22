@@ -190,6 +190,7 @@ const commit = (branch = PULL_REQUEST.branch) => ({
 /** A photo as the Instagram calendar reads it: the first is scheduled, every other one eligible. */
 function socialPhoto({ path: filePath, data }, i) {
   const images = imagesOf(data);
+  const socialMediaPublishDate = i === 0 ? "2026-10-23" : null;
   return {
     path: filePath,
     fileUrl: fileUrl(filePath, PULL_REQUEST.branch),
@@ -199,8 +200,8 @@ function socialPhoto({ path: filePath, data }, i) {
     title: data.title,
     image: images.thumbnail ?? images.xsmall ?? null,
     isSocialMediaEligible: i % 2 === 0,
-    socialMediaPublishDate: i === 0 ? "2026-10-23" : null,
-    data: { ...data, socialMediaPublishDate: i === 0 ? "2026-10-23" : null },
+    socialMediaPublishDate,
+    data: { ...data, socialMediaPublishDate },
   };
 }
 
