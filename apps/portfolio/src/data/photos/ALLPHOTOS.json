@@ -1,5 +1,37 @@
 [
   {
+    "title": null,
+    "comment": null,
+    "file": "dscf3867.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/600",
+    "iso": 125,
+    "focalLength": 66.2,
+    "gpsPosition": "37 deg 35' 1.83\" N, 126 deg 59' 0.48\" E",
+    "createDate": "2026:05:17 16:44:43",
+    "country": "South Korea",
+    "city": null,
+    "width": 7045,
+    "height": 3963,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/e4f980195501-dscf3867.jpg",
+      "key": "photos/e4f980195501-dscf3867.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/e4f980195501-dscf3867-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/e4f980195501-dscf3867-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/e4f980195501-dscf3867-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/e4f980195501-dscf3867-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/e4f980195501-dscf3867-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/e4f980195501-dscf3867-preview.webp",
+      "thumbnail": null,
+      "thumbnailpreview": null
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null
+  },
+  {
     "title": "Mirror Pond",
     "comment": "The dancheong (단청) ceiling of the gazebo in the National Museum of Korea's Mirror Pond.\n\nThis ceiling is one of the first examples of Korean traditional architecture I had a chance to photograph. The bright colors and patterns really stuck out to me as something uniquely Korean, especially given my familiarity with Chinese and Japanese culture. (Turns out that \"dancheong\" is the specific term for that very Korean style.) I took a lot more dancheong photos during this trip, but I think this is the best ceiling photo I ended up getting... and I would attribute that to the reflections from the pond.",
     "file": "dscf2926.jpg",
@@ -32,5 +64,37 @@
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": []
+  },
+  {
+    "title": null,
+    "comment": null,
+    "file": "post-processed-6554.jpg",
+    "camera": "SLT-A65V",
+    "lens": "DT 18-55mm F3.5-5.6 SAM",
+    "aperture": 4,
+    "exposure": "1/60",
+    "iso": 500,
+    "focalLength": 18,
+    "gpsPosition": "40 deg 45' 17.56\" N, 73 deg 59' 18.34\" W",
+    "createDate": "2017:01:07 13:51:40",
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 3376,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/994123c44ac7-post-processed-6554.jpg",
+      "key": "photos/994123c44ac7-post-processed-6554.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/994123c44ac7-post-processed-6554-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/994123c44ac7-post-processed-6554-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/994123c44ac7-post-processed-6554-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/994123c44ac7-post-processed-6554-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/994123c44ac7-post-processed-6554-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/994123c44ac7-post-processed-6554-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/994123c44ac7-post-processed-6554-thumbnail.webp?crop=682,0,3376",
+      "thumbnailpreview": null
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null
   }
 ]

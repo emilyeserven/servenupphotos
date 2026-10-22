@@ -27,7 +27,7 @@ export const Route = createFileRoute("/grid")({
 /** A photo with resized versions in R2, which is all the grid can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
 
-// Newest first. Only photos from ALLPHOTOS.local.json have images; the dummy data has none.
+// Newest first. Only photos with resized versions in R2 have images.
 const gridPhotos = photos
   .filter((photo): photo is ImagePhoto => photo.image !== null)
   .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());

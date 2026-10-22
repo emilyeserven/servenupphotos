@@ -1,4 +1,4 @@
-import dummyData from "@/data/dummy.json";
+import committedData from "@/data/photos/ALLPHOTOS.json";
 
 export interface Photo {
   id: number;
@@ -13,7 +13,7 @@ export interface Photo {
   /** Null when the photo has no GPS position, so it can't go on the map. */
   latitude: number | null;
   longitude: number | null;
-  /** The photo's resized versions in R2; null for the dummy data and photos not uploaded yet. */
+  /** The photo's resized versions in R2; null for photos not uploaded yet. */
   image: PhotoImage | null;
 }
 
@@ -202,7 +202,7 @@ function photoLocation({ city, country, gpsPosition }: PhotoData): string | null
   return gpsPosition ? "Unknown location" : null;
 }
 
-/** The local ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
+/** The ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
 function fromPhotoData(data: PhotoData[]): Photo[] {
   return data.flatMap((photo, index) => {
     const takenAt = parseCreateDate(photo.createDate);
@@ -221,17 +221,11 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
   });
 }
 
-// Dummy data until real photos are wired up for the deployed site: about two years of shoot days,
-// each with a handful of photos taken around one city.
-const dummyPhotos: Photo[] = dummyData.map((photo) => ({
-  ...photo,
-  takenAt: new Date(photo.takenAt),
-  comment: null,
-  settings: { aperture: null, exposure: null, iso: null },
-  image: null,
-}));
-
 const localPhotos = localData ? fromPhotoData(localData) : [];
 
-/** The photos in ALLPHOTOS.local.json when there are any, or else the dummy data. */
-export const photos: Photo[] = localPhotos.length > 0 ? localPhotos : dummyPhotos;
+/**
+ * The photos in ALLPHOTOS.local.json when there are any (the photos in flight, locally), or else
+ * the photos in data/photos/ALLPHOTOS.json, which the "Combine photo data" workflow builds.
+ */
+export const photos: Photo[] =
+  localPhotos.length > 0 ? localPhotos : fromPhotoData(committedData as PhotoData[]);
