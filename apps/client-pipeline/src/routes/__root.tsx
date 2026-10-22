@@ -1,11 +1,10 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, Link, Outlet, useLocation } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet, useLocation } from "@tanstack/react-router";
 import type * as React from "react";
-import { AppSidebar, findNavPage } from "@/components/app-sidebar";
+import { AppSidebar, navGroups } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -30,7 +29,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootLayout() {
   const pathname = useLocation({ select: (location) => location.pathname });
-  const nav = findNavPage(pathname);
+  const group = navGroups.find((g) => g.items.some((item) => item.url === pathname));
+  const page = group?.items.find((item) => item.url === pathname);
 
   return (
     <SidebarProvider style={{ "--sidebar-width": "19rem" } as React.CSSProperties}>
@@ -40,23 +40,13 @@ function RootLayout() {
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-          {nav ? (
+          {group && page ? (
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">{nav.group.title}</BreadcrumbItem>
+                <BreadcrumbItem className="hidden md:block">{group.title}</BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
-                {nav.parent && (
-                  <>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <Link to={nav.parent.url}>{nav.parent.title}</Link>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                  </>
-                )}
                 <BreadcrumbItem>
-                  <BreadcrumbPage>{nav.page.title}</BreadcrumbPage>
+                  <BreadcrumbPage>{page.title}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>

@@ -112,7 +112,7 @@ its last four characters, so after saving you can replace or clear a secret but 
 
 ### Update Data
 
-`/settings/update-data`, under Settings in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
+`/update-data`, under Configuration in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
 previews what it will change, then saves everything as **one commit** on the open **Add photo data** pull request's
 branch, or on a new `photo-data/` branch with a new pull request when none is open, so CI rebuilds `ALLPHOTOS.json`
 once.

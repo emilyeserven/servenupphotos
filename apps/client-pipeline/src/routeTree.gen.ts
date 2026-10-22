@@ -15,7 +15,7 @@ import { Route as ExifRouteImport } from './routes/exif'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SizesRouteImport } from './routes/sizes'
-import { Route as SettingsUpdateDataRouteImport } from './routes/settings_.update-data'
+import { Route as UpdateDataRouteImport } from './routes/update-data'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,9 +47,9 @@ const SizesRoute = SizesRouteImport.update({
   path: '/sizes',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SettingsUpdateDataRoute = SettingsUpdateDataRouteImport.update({
-  id: '/settings_/update-data',
-  path: '/settings/update-data',
+const UpdateDataRoute = UpdateDataRouteImport.update({
+  id: '/update-data',
+  path: '/update-data',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -60,7 +60,7 @@ export interface FileRoutesByFullPath {
   '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
   '/sizes': typeof SizesRoute
-  '/settings/update-data': typeof SettingsUpdateDataRoute
+  '/update-data': typeof UpdateDataRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +69,7 @@ export interface FileRoutesByTo {
   '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
   '/sizes': typeof SizesRoute
-  '/settings/update-data': typeof SettingsUpdateDataRoute
+  '/update-data': typeof UpdateDataRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +79,7 @@ export interface FileRoutesById {
   '/in-flight': typeof InFlightRoute
   '/settings': typeof SettingsRoute
   '/sizes': typeof SizesRoute
-  '/settings_/update-data': typeof SettingsUpdateDataRoute
+  '/update-data': typeof UpdateDataRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,7 +90,7 @@ export interface FileRouteTypes {
     | '/in-flight'
     | '/settings'
     | '/sizes'
-    | '/settings/update-data'
+    | '/update-data'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +99,7 @@ export interface FileRouteTypes {
     | '/in-flight'
     | '/settings'
     | '/sizes'
-    | '/settings/update-data'
+    | '/update-data'
   id:
     | '__root__'
     | '/'
@@ -108,7 +108,7 @@ export interface FileRouteTypes {
     | '/in-flight'
     | '/settings'
     | '/sizes'
-    | '/settings_/update-data'
+    | '/update-data'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +118,7 @@ export interface RootRouteChildren {
   InFlightRoute: typeof InFlightRoute
   SettingsRoute: typeof SettingsRoute
   SizesRoute: typeof SizesRoute
-  SettingsUpdateDataRoute: typeof SettingsUpdateDataRoute
+  UpdateDataRoute: typeof UpdateDataRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -165,11 +165,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SizesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings_/update-data': {
-      id: '/settings_/update-data'
-      path: '/settings/update-data'
-      fullPath: '/settings/update-data'
-      preLoaderRoute: typeof SettingsUpdateDataRouteImport
+    '/update-data': {
+      id: '/update-data'
+      path: '/update-data'
+      fullPath: '/update-data'
+      preLoaderRoute: typeof UpdateDataRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -182,7 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   InFlightRoute: InFlightRoute,
   SettingsRoute: SettingsRoute,
   SizesRoute: SizesRoute,
-  SettingsUpdateDataRoute: SettingsUpdateDataRoute,
+  UpdateDataRoute: UpdateDataRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

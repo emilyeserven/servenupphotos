@@ -5,7 +5,7 @@ import { ImageBaseUrlCard } from "@/components/image-base-url";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 
-export const Route = createFileRoute("/settings_/update-data")({
+export const Route = createFileRoute("/update-data")({
   component: UpdateDataPage,
 });
 
