@@ -5,6 +5,7 @@ import { type ReactNode, useRef, useState } from "react";
 import type { CombinedCommit } from "@/api/photos";
 import { githubIsSetUp, settingsQuery } from "@/api/settings";
 import { CommitButton } from "@/components/all-photos-rebuild";
+import { UploadProgressBadge, UploadQueueSection } from "@/components/bulk-upload/upload-progress";
 import { Spinner } from "@/components/ui/spinner";
 import { FloatingActionsSlot } from "@/components/floating-actions";
 import { useDismiss } from "@/hooks/use-dismiss";
@@ -106,6 +107,7 @@ function SyncStatusButton() {
             badge.className,
           )}
         >
+          <UploadProgressBadge />
           {badge.icon}
           {badge.label}
         </button>
@@ -131,8 +133,9 @@ function SyncPanel({
       ref={ref}
       role="dialog"
       aria-label="Photo data sync"
-      className="bg-popover text-popover-foreground flex w-[min(20rem,calc(100vw-2rem))] flex-col gap-3 rounded-xl border p-4 text-sm shadow-lg"
+      className="bg-popover text-popover-foreground flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-3 rounded-xl border p-4 text-sm shadow-lg"
     >
+      <UploadQueueSection onNavigate={onNavigate} />
       <PullRequestLine sync={sync} />
       <ImageCounts images={sync.images} />
       <OpenBatchLine sync={sync} />

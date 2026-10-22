@@ -14,6 +14,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { UploadButtons } from "@/components/upload-buttons";
 
 /** Every page in the app, grouped the way the sidebar shows them. */
 export const navGroups = [
@@ -22,6 +23,7 @@ export const navGroups = [
     items: [
       { title: "Status", url: "/" },
       { title: "Photo", url: "/exif" },
+      { title: "Bulk Upload", url: "/bulk-upload" },
       { title: "Photos in Flight", url: "/in-flight" },
       { title: "Gallery", url: "/gallery" },
       { title: "Explore Bucket", url: "/bucket" },
@@ -80,6 +82,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        <UploadButtons onNavigate={closeOnMobile} />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
