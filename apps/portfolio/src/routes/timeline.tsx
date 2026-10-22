@@ -6,6 +6,7 @@ import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { TechnicalInfo, TechnicalInfoToggle } from "@/components/technical-info";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
@@ -22,8 +23,14 @@ import {
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
 
+/** The time range, plus whether each photo shows its technical info; left out when it doesn't. */
+type TimelineSearch = TimeRangeValue & { tech?: true };
+
 export const Route = createFileRoute("/timeline")({
-  validateSearch: (search: Record<string, unknown>): TimeRangeValue => parseTimeRange(search),
+  validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
+    ...parseTimeRange(search),
+    ...(search.tech === true ? { tech: true } : {}),
+  }),
   component: TimelineView,
 });
 
@@ -54,10 +61,12 @@ function TimelineView() {
     start,
     end,
   );
-  const isAllTime = Object.keys(search).length === 0;
+  const { tech, ...range } = search;
+  const isAllTime = Object.keys(range).length === 0;
 
-  function selectDates(from: Date, to: Date) {
-    navigate({ search: absoluteTimeRange(from, to) });
+  /** Moves to a new time range, keeping the technical info shown or hidden. */
+  function selectRange(next: TimeRangeValue) {
+    navigate({ search: { ...next, ...(tech && { tech }) } });
   }
 
   return (
@@ -69,31 +78,39 @@ function TimelineView() {
         </h1>
         <div className="flex flex-wrap items-center gap-3">
           <TimeRangePicker
-            value={search}
+            value={range}
             selection={{ from: start, to: end }}
-            onChange={(next) => navigate({ search: next })}
+            onChange={selectRange}
           />
           <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="ml-auto"
-            disabled={isAllTime}
-            onClick={() => navigate({ search: {} })}
-          >
+          <TechnicalInfoToggle
+            shown={tech === true}
+            onChange={(show) => navigate({ search: { ...range, ...(show && { tech: true }) } })}
+          />
+          <Button variant="outline" size="sm" disabled={isAllTime} onClick={() => selectRange({})}>
             <RotateCcw aria-hidden />
             Reset
           </Button>
         </div>
       </header>
-      <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
-      <PhotoMonths photos={inRange} onOpen={setShown} />
+      <TimelineHistogram
+        bins={bins}
+        resolution={resolution}
+        onSelect={(from, to) => selectRange(absoluteTimeRange(from, to))}
+      />
+      <PhotoMonths photos={inRange} showTech={tech === true} onOpen={setShown} />
       <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
     </div>
   );
 }
 
-function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: ImagePhoto) => void }) {
+/** What each photo row needs from the page: whether to show technical info, and how to open it. */
+interface RowOptions {
+  showTech: boolean;
+  onOpen: (photo: ImagePhoto) => void;
+}
+
+function PhotoMonths({ photos, ...options }: RowOptions & { photos: Photo[] }) {
   if (photos.length === 0) {
     return <p className="text-muted-foreground">No photos in this time range.</p>;
   }
@@ -101,7 +118,7 @@ function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: Imag
   return (
     <ol className="flex flex-col gap-4">
       {groupByDate(photos, "MMMM yyyy").map(([month, monthPhotos]) => (
-        <MonthSection key={month} month={month} monthPhotos={monthPhotos} onOpen={onOpen} />
+        <MonthSection key={month} month={month} monthPhotos={monthPhotos} {...options} />
       ))}
     </ol>
   );
@@ -111,12 +128,8 @@ function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: Imag
 function MonthSection({
   month,
   monthPhotos,
-  onOpen,
-}: {
-  month: string;
-  monthPhotos: Photo[];
-  onOpen: (photo: ImagePhoto) => void;
-}) {
+  ...options
+}: RowOptions & { month: string; monthPhotos: Photo[] }) {
   const [open, setOpen] = useState(true);
   const listId = useId();
   return (
@@ -143,7 +156,7 @@ function MonthSection({
       {open && (
         <ol id={listId} className="flex flex-col gap-4">
           {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
-            <DaySection key={day} day={day} dayPhotos={dayPhotos} onOpen={onOpen} />
+            <DaySection key={day} day={day} dayPhotos={dayPhotos} {...options} />
           ))}
         </ol>
       )}
@@ -155,18 +168,14 @@ function MonthSection({
 function DaySection({
   day,
   dayPhotos,
-  onOpen,
-}: {
-  day: string;
-  dayPhotos: Photo[];
-  onOpen: (photo: ImagePhoto) => void;
-}) {
+  ...options
+}: RowOptions & { day: string; dayPhotos: Photo[] }) {
   return (
     <li className="flex flex-col gap-2">
       <h3 className="text-xs font-medium text-muted-foreground">{day}</h3>
       <ul className="flex flex-col gap-3">
         {dayPhotos.map((photo) => (
-          <PhotoRow key={photo.id} photo={photo} onOpen={onOpen} />
+          <PhotoRow key={photo.id} photo={photo} {...options} />
         ))}
       </ul>
     </li>
@@ -174,10 +183,11 @@ function DaySection({
 }
 
 /**
- * A photo's square thumbnail, title, comment, place and camera; its day is in the subheading above. The thumbnail and the title open
- * the photo in the lightbox; photos without resized versions in R2 have nothing to open.
+ * A photo's square thumbnail, title, comment, technical info when shown, and place; its day is in
+ * the subheading above. The thumbnail and the title open the photo in the lightbox; photos without
+ * resized versions in R2 have nothing to open.
  */
-function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto) => void }) {
+function PhotoRow({ photo, showTech, onOpen }: RowOptions & { photo: Photo }) {
   const { image } = photo;
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   return (
@@ -185,22 +195,27 @@ function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto)
       <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-12" />
       <div className="flex min-w-0 flex-1 flex-col">
         <RowTitle title={photo.title} onOpen={open} />
-        {photo.comment && (
-          <PhotoComment
-            comment={photo.comment}
-            lines={1}
-            className="text-xs text-muted-foreground"
-          />
-        )}
-        {photo.location && (
-          <p className="truncate text-xs text-muted-foreground">
-            {/* Beside it, so the details cover neither this title nor the next. */}
-            <PhotoLocation location={photo.location} side="right" />
-          </p>
-        )}
+        <RowDetails photo={photo} showTech={showTech} />
       </div>
-      <span className="shrink-0 self-baseline text-xs text-muted-foreground">{photo.camera}</span>
     </li>
+  );
+}
+
+/** What's under the photo's title: its comment, its technical info when shown, then its place. */
+function RowDetails({ photo, showTech }: { photo: Photo; showTech: boolean }) {
+  return (
+    <>
+      {photo.comment && (
+        <PhotoComment comment={photo.comment} lines={1} className="text-xs text-muted-foreground" />
+      )}
+      {showTech && <TechnicalInfo photo={photo} />}
+      {photo.location && (
+        <p className="truncate text-xs text-muted-foreground">
+          {/* Beside it, so the details cover neither this title nor the next. */}
+          <PhotoLocation location={photo.location} side="right" />
+        </p>
+      )}
+    </>
   );
 }
 
