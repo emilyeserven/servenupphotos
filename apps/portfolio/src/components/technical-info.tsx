@@ -1,7 +1,4 @@
-import { SlidersHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { settingsText, type Photo } from "@/lib/photos";
-import { cn } from "@/lib/utils";
 
 /** A photo's aperture, exposure, ISO, focal length, lens and camera, on one line. */
 export function TechnicalInfo({ photo }: { photo: Photo }) {
@@ -16,7 +13,7 @@ export function TechnicalInfo({ photo }: { photo: Photo }) {
   );
 }
 
-/** A button that shows or hides each photo's technical info. */
+/** A checkbox that shows or hides each photo's technical info. */
 export function TechnicalInfoToggle({
   shown,
   onChange,
@@ -25,16 +22,17 @@ export function TechnicalInfoToggle({
   onChange: (shown: boolean) => void;
 }) {
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      className={cn("ml-auto", shown && "bg-accent text-accent-foreground")}
-      aria-pressed={shown}
+    <label
       title="Show each photo's aperture, exposure, ISO, focal length, lens and camera"
-      onClick={() => onChange(!shown)}
+      className="ml-auto flex cursor-pointer items-center gap-2 text-sm select-none"
     >
-      <SlidersHorizontal aria-hidden />
-      Technical info
-    </Button>
+      <input
+        type="checkbox"
+        checked={shown}
+        onChange={(event) => onChange(event.target.checked)}
+        className="size-4 cursor-pointer accent-primary"
+      />
+      Show Technical Info
+    </label>
   );
 }
