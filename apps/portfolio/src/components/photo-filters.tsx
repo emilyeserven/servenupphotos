@@ -1,12 +1,12 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { FolderOpen, type LucideIcon, MapPin, Tag, X } from "lucide-react";
+import { FolderOpen, type LucideIcon, MapPin, SlidersHorizontal, Tag, X } from "lucide-react";
+import { useId, useState } from "react";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { Button } from "@/components/ui/button";
 import { albumOptions, type FilterOption, locationOptions, tagOptions } from "@/lib/filter-options";
 import {
   FILTER_KEYS,
   filterPhotos,
-  hasFilters,
   LOCATION_KEYS,
   parseFilters,
   type PhotoFilters,
@@ -44,18 +44,72 @@ function filterOf(selected: string): PhotoFilters {
 }
 
 /**
- * Dropdowns that narrow the view's photos by location (a country, city or place), album and tag,
- * kept in the URL so a link keeps them and the menu carries them to the other views. Each choice
- * says how many of `photos` it would show, given the other filters. The tag dropdown is left out
- * while there are no tags.
+ * A **Show filters** button that opens dropdowns narrowing the view's photos by location (a
+ * country, city or place), album and tag, kept in the URL so a link keeps them and the menu carries
+ * them to the other views. The button says how many filters are set while they're hidden, and
+ * **Clear filters** stays beside it.
  */
 export function PhotoFilterBar({ photos }: { photos: Photo[] }) {
+  const [open, setOpen] = useState(false);
   const filters = useFilters();
   const setFilters = useSetFilters();
+  const listId = useId();
+  const count = Object.keys(filters).length;
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          aria-expanded={open}
+          aria-controls={listId}
+          onClick={() => setOpen(!open)}
+        >
+          <SlidersHorizontal aria-hidden />
+          {open ? "Hide filters" : "Show filters"}
+          <FilterCount count={count} />
+        </Button>
+        {count > 0 && (
+          <Button variant="ghost" size="sm" onClick={() => setFilters({})}>
+            <X aria-hidden />
+            Clear filters
+          </Button>
+        )}
+      </div>
+      <div id={listId} hidden={!open}>
+        {open && <FilterDropdowns photos={photos} filters={filters} setFilters={setFilters} />}
+      </div>
+    </div>
+  );
+}
+
+/** How many filters are set, as a badge; nothing when none are. */
+function FilterCount({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <span className="rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground tabular-nums">
+      {count}
+    </span>
+  );
+}
+
+/**
+ * The location, album and tag dropdowns. Each choice says how many of `photos` it would show,
+ * given the other filters. The tag dropdown is left out while there are no tags.
+ */
+function FilterDropdowns({
+  photos,
+  filters,
+  setFilters,
+}: {
+  photos: Photo[];
+  filters: PhotoFilters;
+  setFilters: (next: PhotoFilters) => void;
+}) {
   const groupFacet = filterPhotos(photos, withoutFilters(filters, LOCATION_KEYS));
   const albumFacet = filterPhotos(photos, withoutFilters(filters, ["album"]));
-  const tagFacet = filterPhotos(photos, withoutFilters(filters, ["tag"]));
-  const tags = tagOptions(tagFacet);
+  const tags = tagOptions(filterPhotos(photos, withoutFilters(filters, ["tag"])));
 
   /** Replaces the filters `keys` name with the dropdown's choice. */
   function choose(keys: readonly string[], selected: string) {
@@ -86,12 +140,6 @@ export function PhotoFilterBar({ photos }: { photos: Photo[] }) {
           filters={filters}
           onChange={(selected) => choose(["tag"], selected)}
         />
-      )}
-      {hasFilters(filters) && (
-        <Button variant="ghost" size="sm" onClick={() => setFilters({})}>
-          <X aria-hidden />
-          Clear filters
-        </Button>
       )}
     </div>
   );

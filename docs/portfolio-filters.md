@@ -1,9 +1,11 @@
 # Portfolio Filters
 
-The portfolio's Timeline, Table, Map and Grid each have three dropdowns under their title that narrow the photos they
-show: **Location**, **Album** and **Tag**. The filters are kept in the URL, so a link keeps them, and the menu's view
+The portfolio's Timeline, Table, Map and Grid each have a **Show filters** button under their title, which opens three
+dropdowns that narrow the photos they show: **Location**, **Album** and **Tag** (**Hide filters** closes them again).
+The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
+beside it. The filters are kept in the URL, so a link keeps them, and the menu's view
 links carry them to the other views (and nothing else: a view's own settings, such as the Grid's sort or the Table's
-columns, stay with that view). **Clear filters** removes all three.
+columns, stay with that view).
 
 > **Frontend analogy:** like TanStack Router search params shared by sibling routes: each route's `validateSearch`
 > reads the same filter keys, and the menu's `<Link search={(prev) => parseFilters(prev)}>` passes them along.
