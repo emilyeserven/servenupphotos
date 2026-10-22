@@ -1,12 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Camera } from "lucide-react";
-import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getPortfolioView } from "@/lib/portfolio-views";
 
 export const Route = createFileRoute("/")({
   component: ComingSoon,
 });
 
 function ComingSoon() {
+  const { to, label, icon: Icon } = getPortfolioView("/grid");
+
   return (
     <div className="flex min-h-svh items-center justify-center p-6">
       <Card className="w-full max-w-md text-center">
@@ -17,6 +21,14 @@ function ComingSoon() {
             A new photography portfolio is in the works. Check back shortly.
           </CardDescription>
         </CardHeader>
+        <CardContent>
+          <Button asChild variant="outline">
+            <Link to={to}>
+              <Icon aria-hidden />
+              Browse the {label.toLowerCase()}
+            </Link>
+          </Button>
+        </CardContent>
       </Card>
     </div>
   );
