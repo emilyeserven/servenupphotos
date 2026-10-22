@@ -8,6 +8,10 @@ viewer. Photos too close together to tell apart are one round marker with how ma
 photos fading in turn under a dark overlay. Clicking it opens a grid of their thumbnails above it, with **Zoom in**
 to split them apart. Photos without resized versions are a small dot that opens their details instead.
 
+A photo whose EXIF has no GPS position goes at one of its places' position (see
+[Places](places-and-localizations.md#gps-position)). That spot is only near where it was taken, so its marker's white
+border is softer, and so is a group's when every photo in it is placed that way.
+
 > **Frontend analogy:** the grouping is done by MapLibre on the map's data, like a virtualized list deciding which
 > rows to render: the page asks which groups and photos are in view after each move and draws a React marker for each.
 
