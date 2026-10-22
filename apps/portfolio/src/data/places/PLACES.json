@@ -36,8 +36,10 @@
     "name": "Lower East Side",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.71674815214738,
+    "longitude": -73.98633590542832
   },
   {
     "id": "manhattan-bridge",
@@ -49,11 +51,13 @@
   },
   {
     "id": "midtown",
-    "name": "Midtown",
+    "name": "Midtown East",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.75538764219708,
+    "longitude": -73.96865957728706
   },
   {
     "id": "mirror-pond",
@@ -73,8 +77,10 @@
     "name": "NoHo",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.72714461561978,
+    "longitude": -73.99337287689791
   },
   {
     "id": "queensboro-bridge",
@@ -82,7 +88,9 @@
     "description": "",
     "parent": "",
     "city": "New York City",
-    "country": "United States of America"
+    "country": "United States of America",
+    "latitude": 40.75693989553612,
+    "longitude": -73.95462146594694
   },
   {
     "id": "upper-east-side",
@@ -90,6 +98,8 @@
     "description": "",
     "parent": "",
     "city": "New York City",
-    "country": "United States of America"
+    "country": "United States of America",
+    "latitude": 40.77416765599665,
+    "longitude": -73.95773421216752
   }
 ]
