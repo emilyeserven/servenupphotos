@@ -4,5 +4,7 @@
   "description": "",
   "parent": "queens",
   "city": "",
-  "country": ""
+  "country": "",
+  "latitude": 40.76383083369049,
+  "longitude": -73.92457375631997
 }
