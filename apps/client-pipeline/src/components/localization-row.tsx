@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import type { LocalizationRow } from "@/lib/place-seeds";
 
-/** The three fields a localization notes, as the JSON names them, with their labels and examples. */
+/** The three fields a localization notes, as the JSON names them, with their labels. */
 const FIELDS = [
-  { key: "romanization", label: "Romanization", example: "Gyeongbokgung" },
-  { key: "pronunciation", label: "Local pronunciation", example: "Such as きょうと" },
-  { key: "localScript", label: "Local script", example: "Such as 경복궁 or 京都" },
+  { key: "romanization", label: "Romanization" },
+  { key: "pronunciation", label: "Local pronunciation" },
+  { key: "localScript", label: "Local script" },
 ] as const;
 
 /** A localization's romanization, local pronunciation and local script, as typed. */
@@ -132,7 +132,6 @@ function FieldInput({ id, field, value, disabled, onChange }: FieldInputProps) {
       </label>
       <Input
         id={id}
-        placeholder={field.example}
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
