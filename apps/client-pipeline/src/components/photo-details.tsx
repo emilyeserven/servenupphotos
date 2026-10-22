@@ -1,10 +1,12 @@
-import type { ComponentProps } from "react";
+import { ChevronRightIcon, InfoIcon } from "lucide-react";
+import { type ComponentProps, type ReactNode, useState } from "react";
 import Markdown, { type ExtraProps } from "react-markdown";
 import remarkBreaks from "remark-breaks";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 /** Spacing and list, link, code and quote styles for rendered Markdown, which Tailwind's reset strips. */
 const MARKDOWN_CLASSES = [
@@ -16,28 +18,48 @@ const MARKDOWN_CLASSES = [
   "[&_blockquote]:text-muted-foreground [&_blockquote]:my-2 [&_blockquote]:border-l-2 [&_blockquote]:pl-3",
 ].join(" ");
 
-/** The photo's title, place name and Markdown comment as typed; empty when there's none. */
+/** The photo's title, place name, custom city and country, and Markdown comment as typed; empty when there's none. */
 export interface PhotoDetails {
   title: string;
   placeName: string;
+  customCity: string;
+  customCountry: string;
   comment: string;
 }
 
-/** No title, place name or comment, which a new photo starts with. */
-export const NO_DETAILS: PhotoDetails = { title: "", placeName: "", comment: "" };
+/** No title, place name, custom city or country, or comment, which a new photo starts with. */
+export const NO_DETAILS: PhotoDetails = {
+  title: "",
+  placeName: "",
+  customCity: "",
+  customCountry: "",
+  comment: "",
+};
+
+/** The fields of PhotoDetails, as the JSON names them. */
+export const DETAIL_FIELDS = Object.keys(NO_DETAILS) as (keyof PhotoDetails)[];
+
+/** The city and country read from the photo's EXIF, which the custom ones show instead of. */
+export interface ExifPlace {
+  city: string | null;
+  country: string | null;
+}
 
 /** A file name without its extension, which the portfolio uses as the title of a photo without one. */
 export function fileStem(file: string): string {
   return file.replace(/\.[^.]*$/, "");
 }
 
-/** The title, place name and comment saved in a photo's JSON, to start editing from. */
+/** The details saved in a photo's JSON, to start editing from. */
 export function savedDetails(data: Record<string, unknown>): PhotoDetails {
-  return {
-    title: text(data.title),
-    placeName: text(data.placeName),
-    comment: text(data.comment),
-  };
+  return Object.fromEntries(
+    DETAIL_FIELDS.map((field) => [field, text(data[field])]),
+  ) as unknown as PhotoDetails;
+}
+
+/** The EXIF city and country saved in a photo's JSON. */
+export function savedExifPlace(data: Record<string, unknown>): ExifPlace {
+  return { city: text(data.city) || null, country: text(data.country) || null };
 }
 
 function text(value: unknown): string {
@@ -46,7 +68,8 @@ function text(value: unknown): string {
 
 /**
  * data with the title and comment, or null for ones left empty, as its first fields, and the place
- * name where data has it (before the country, as new photo files list it), or else last.
+ * name and custom city and country where data has them (before the country, as new photo files
+ * list them), or else last.
  */
 export function withDetails<T extends object>(data: T, details: PhotoDetails) {
   const {
@@ -57,12 +80,15 @@ export function withDetails<T extends object>(data: T, details: PhotoDetails) {
     title?: unknown;
     comment?: unknown;
   };
+  const saved = (field: keyof PhotoDetails) => details[field].trim() || null;
   return {
-    title: details.title.trim() || null,
-    comment: details.comment.trim() || null,
+    title: saved("title"),
+    comment: saved("comment"),
     ...rest,
     // Setting a key the spread already added keeps it where it was.
-    placeName: details.placeName.trim() || null,
+    placeName: saved("placeName"),
+    customCity: saved("customCity"),
+    customCountry: saved("customCountry"),
   };
 }
 
@@ -76,62 +102,61 @@ interface PhotoDetailsCardProps {
   onChange: (value: PhotoDetails) => void;
   /** What the portfolio calls the photo without a title: its file name without the extension. */
   fallbackTitle: string;
+  /** The city and country from the photo's EXIF, shown until custom ones are written. */
+  exifPlace: ExifPlace;
+  /** What happens to the details when they're saved, shown on hover beside the card's title. */
   description: string;
   /** Saving is underway or done, so changing them now would not change the file. */
   disabled: boolean;
 }
 
 /**
- * The photo's optional title on the portfolio, place name and Markdown comment, saved as the JSON's
- * "title", "placeName" and "comment".
+ * The photo's optional title on the portfolio, place name, custom city and country, and Markdown
+ * comment, saved as the JSON's "title", "placeName", "customCity", "customCountry" and "comment".
  */
 export function PhotoDetailsCard({
   value,
   onChange,
   fallbackTitle,
+  exifPlace,
   description,
   disabled,
 }: PhotoDetailsCardProps) {
+  const field = (name: "title" | "placeName" | "customCity" | "customCountry") => ({
+    value: value[name],
+    disabled,
+    onChange: (next: string) => onChange({ ...value, [name]: next }),
+  });
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Title, place and comment</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="flex items-center gap-1.5">
+          Title, place and comment
+          <Hint label="About these details">{description}</Hint>
+        </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="photo-title" className="text-sm font-medium">
-            Title
-          </label>
-          <Input
-            id="photo-title"
-            placeholder={fallbackTitle}
-            value={value.title}
-            disabled={disabled}
-            aria-describedby="photo-title-hint"
-            onChange={(event) => onChange({ ...value, title: event.target.value })}
-          />
-          <p id="photo-title-hint" className="text-muted-foreground text-sm">
-            What the portfolio calls the photo. Without one, it uses the file name,{" "}
-            <code>{fallbackTitle}</code>. Its JSON file is named after it too.
-          </p>
-        </div>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="photo-place-name" className="text-sm font-medium">
-            Place name
-          </label>
-          <Input
+        <TextField
+          id="photo-title"
+          label="Title"
+          placeholder={fallbackTitle}
+          hint={
+            <>
+              What the portfolio calls the photo. Without one, it uses the file name,{" "}
+              <code>{fallbackTitle}</code>. Its JSON file is named after it too.
+            </>
+          }
+          {...field("title")}
+        />
+        <div className="flex flex-col gap-3">
+          <TextField
             id="photo-place-name"
+            label="Place name"
             placeholder="Such as Gyeongbokgung Palace"
-            value={value.placeName}
-            disabled={disabled}
-            aria-describedby="photo-place-name-hint"
-            onChange={(event) => onChange({ ...value, placeName: event.target.value })}
+            hint="Where the photo was taken, more exactly than its city. The portfolio shows it before the city, with the country under the GPS position on hover."
+            {...field("placeName")}
           />
-          <p id="photo-place-name-hint" className="text-muted-foreground text-sm">
-            Where the photo was taken, more exactly than its city. The portfolio shows it before the
-            city, with the country under the GPS position on hover.
-          </p>
+          <CityAndCountry exifPlace={exifPlace} value={value} field={field} />
         </div>
         <CommentField
           value={value.comment}
@@ -140,6 +165,138 @@ export function PhotoDetailsCard({
         />
       </CardContent>
     </Card>
+  );
+}
+
+interface FieldState {
+  value: string;
+  disabled: boolean;
+  onChange: (value: string) => void;
+}
+
+interface CityAndCountryProps {
+  exifPlace: ExifPlace;
+  value: PhotoDetails;
+  field: (name: "customCity" | "customCountry") => FieldState;
+}
+
+/**
+ * The custom city and country, collapsed to what the portfolio will show, and open from the start
+ * when either is written.
+ */
+function CityAndCountry({ exifPlace, value, field }: CityAndCountryProps) {
+  const { summary, custom } = placeSummary(value, exifPlace);
+  const [open, setOpen] = useState(custom);
+  return (
+    <details
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+      className="group rounded-md border"
+    >
+      <summary className="hover:bg-muted/50 flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-sm [&::-webkit-details-marker]:hidden">
+        <ChevronRightIcon className="size-4 shrink-0 transition-transform group-open:rotate-90" />
+        <span className="font-medium">City and country</span>
+        <span className="text-muted-foreground min-w-0 truncate">{summary}</span>
+      </summary>
+      <div className="grid gap-4 px-3 pt-1 pb-3 sm:grid-cols-2">
+        <TextField
+          id="photo-custom-city"
+          label="City"
+          placeholder={exifPlace.city ?? "Not in the EXIF"}
+          hint="Shown instead of the city from the photo's EXIF, which is kept as it is. Saved as customCity; leave it empty to use the EXIF one."
+          {...field("customCity")}
+        />
+        <TextField
+          id="photo-custom-country"
+          label="Country"
+          placeholder={exifPlace.country ?? "Not in the EXIF"}
+          hint="Shown instead of the country from the photo's EXIF, which is kept as it is. Saved as customCountry; leave it empty to use the EXIF one."
+          {...field("customCountry")}
+        />
+      </div>
+    </details>
+  );
+}
+
+/** The value written here, or else the one from the EXIF. */
+function shown(written: string, exif: string | null): string | null {
+  return written.trim() || exif;
+}
+
+/** The city and country the portfolio will show, saying whether either is custom. */
+function placeSummary(value: PhotoDetails, exifPlace: ExifPlace) {
+  const custom = [value.customCity, value.customCountry].some((written) => written.trim());
+  const place = [
+    shown(value.customCity, exifPlace.city),
+    shown(value.customCountry, exifPlace.country),
+  ]
+    .filter(Boolean)
+    .join(", ");
+  return { custom, summary: `${place || "None"} (${custom ? "custom" : "from EXIF"})` };
+}
+
+interface TextFieldProps extends FieldState {
+  id: string;
+  label: string;
+  placeholder: string;
+  /** What the field is for, shown on hover beside its label. */
+  hint: ReactNode;
+}
+
+/** A one-line text field with its label, and its hint on hover beside the label. */
+function TextField({ id, label, placeholder, hint, value, disabled, onChange }: TextFieldProps) {
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-1.5">
+        <label htmlFor={id} className="text-sm font-medium">
+          {label}
+        </label>
+        <Hint label={`About ${label}`} id={`${id}-hint`}>
+          {hint}
+        </Hint>
+      </div>
+      <Input
+        id={id}
+        placeholder={placeholder}
+        value={value}
+        disabled={disabled}
+        aria-describedby={`${id}-hint`}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
+  );
+}
+
+interface HintProps {
+  /** What the info button is called for screen readers. */
+  label: string;
+  /** An id for the hint's text, which stays in the page for aria-describedby. */
+  id?: string;
+  children: ReactNode;
+}
+
+/** An info icon showing helper text on hover or focus, to keep it from cluttering the form. */
+function Hint({ label, id, children }: HintProps) {
+  return (
+    <>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            aria-label={label}
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 rounded-full outline-none focus-visible:ring-[3px]"
+          >
+            <InfoIcon className="size-3.5" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs font-normal">{children}</TooltipContent>
+      </Tooltip>
+      {id && (
+        <span id={id} className="sr-only">
+          {children}
+        </span>
+      )}
+    </>
   );
 }
 
@@ -153,9 +310,14 @@ interface CommentFieldProps {
 function CommentField({ value, disabled, onChange }: CommentFieldProps) {
   return (
     <div className="flex flex-col gap-2">
-      <span id="photo-comment-label" className="text-sm font-medium">
-        Comment
-      </span>
+      <div className="flex items-center gap-1.5">
+        <span id="photo-comment-label" className="text-sm font-medium">
+          Comment
+        </span>
+        <Hint label="About Comment" id="photo-comment-hint">
+          Written in Markdown.
+        </Hint>
+      </div>
       <Tabs defaultValue="write">
         <TabsList>
           <TabsTrigger value="write">Write</TabsTrigger>
@@ -186,9 +348,6 @@ function CommentField({ value, disabled, onChange }: CommentFieldProps) {
           </div>
         </TabsContent>
       </Tabs>
-      <p id="photo-comment-hint" className="text-muted-foreground text-sm">
-        Written in Markdown.
-      </p>
     </div>
   );
 }

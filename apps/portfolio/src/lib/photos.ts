@@ -98,6 +98,9 @@ interface PhotoData {
   createDate: string | null;
   /** The name of the place it was taken, written on the Photo page; older entries don't have it. */
   placeName?: string | null;
+  /** A city and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
+  customCity?: string | null;
+  customCountry?: string | null;
   country: string | null;
   city: string | null;
   width: number | null;
@@ -230,22 +233,29 @@ function gpsText({ latitude, longitude }: ReturnType<typeof parseGpsPosition>): 
   return `${dmsText(latitude, "NS")}, ${dmsText(longitude, "EW")}`;
 }
 
+/** The value written on the Photo page, or else the one from the EXIF. */
+function custom(written: string | null | undefined, exif: string | null): string | null {
+  return written?.trim() || exif;
+}
+
 /** The non-empty parts, joined with commas. */
 function joinParts(...parts: (string | null | undefined)[]): string {
   return parts.filter(Boolean).join(", ");
 }
 
 /**
- * Where the photo was taken: its place name and city, with the country on hover; or else its city
+ * Where the photo was taken, with a custom city and country over the EXIF ones: its place name and city, with the country on hover; or else its city
  * and country; or else its country. Null without any of them, even when it has a GPS position.
  */
 function photoLocation(photo: PhotoData): PhotoLocation | null {
   const placeName = photo.placeName?.trim();
+  const city = custom(photo.customCity, photo.city);
+  const country = custom(photo.customCountry, photo.country);
   const gps = gpsText(parseGpsPosition(photo.gpsPosition));
-  const label = placeName ? joinParts(placeName, photo.city) : joinParts(photo.city, photo.country);
+  const label = placeName ? joinParts(placeName, city) : joinParts(city, country);
   if (!label) return null;
   // The country goes on hover only when the label leaves it out for the place name.
-  const details = [gps, placeName ? photo.country : null];
+  const details = [gps, placeName ? country : null];
   return { label, details: details.filter((line) => line !== null && line !== "") as string[] };
 }
 

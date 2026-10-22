@@ -15,6 +15,7 @@ import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import {
   fileStem,
+  type ExifPlace,
   NO_DETAILS,
   type PhotoDetails,
   PhotoDetailsCard,
@@ -256,6 +257,7 @@ function ResultsColumn({
         key={`details-${extract.submittedAt}`}
         identity={identity}
         file={extract.data.file}
+        exifPlace={{ city: sanitized.city, country: sanitized.country }}
         details={details}
         onDetailsChange={onDetailsChange}
         saved={saved}
@@ -272,15 +274,18 @@ function ResultsColumn({
 interface NewPhotoDetailsProps {
   identity: PhotoIdentity | null;
   file: string;
+  /** The city and country read from the photo's EXIF. */
+  exifPlace: ExifPlace;
   details: PhotoDetails;
   onDetailsChange: (details: PhotoDetails) => void;
   saved: boolean;
 }
 
-/** The new photo's title, place name and comment, unless it's already in ALLPHOTOS.json. */
+/** The new photo's title, place name, custom city and country, and comment, unless it's already in ALLPHOTOS.json. */
 function NewPhotoDetails({
   identity,
   file,
+  exifPlace,
   details,
   onDetailsChange,
   saved,
@@ -291,6 +296,7 @@ function NewPhotoDetails({
         value={details}
         onChange={onDetailsChange}
         fallbackTitle={fileStem(file)}
+        exifPlace={exifPlace}
         description={
           saved
             ? "Saved with the photo's JSON."
