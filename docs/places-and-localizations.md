@@ -35,8 +35,8 @@ They're saved in the photo's JSON as `places`, next to `albums` and `tags`:
 ```
 
 `placeName` stays, and is set to the first place's name, so the portfolio keeps showing it as before. A photo saved
-before places has a `placeName` and no `places`: Edit Photo shows its place name with a button to choose the place with
-that name, or add one, and **Clear** to remove it. New photos get `"places": []`, and **Update Data → Missing fields**
+before places has a `placeName` and no `places`: Edit Photo shows that place name above the rows, read-only, for
+reference while you choose or add the matching places. Once the photo is saved with places it no longer shows. New photos get `"places": []`, and **Update Data → Missing fields**
 adds it to older ones.
 
 > **Frontend analogy:** `places` is like a list of `{ preposition, ref }` objects pointing into a normalized store,

@@ -17,6 +17,7 @@ import {
 } from "@/api/places";
 import { Button } from "@/components/ui/button";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 /** What PlaceFields edits: the photo's places, and the place name the portfolio shows. */
@@ -109,6 +110,8 @@ interface PlaceFieldsProps {
  */
 export function PlaceFields({ value, onChange, disabled }: PlaceFieldsProps) {
   const all = usePlaces();
+  // The place name as the photo was saved, kept while editing even once places replace it.
+  const [oldName] = useState(() => (hasOldPlaceName(value) ? value.placeName.trim() : ""));
   const rows = value.places.length > 0 ? value.places : [NO_PLACE];
   const setRows = (places: PhotoPlace[]) =>
     onChange({ places, placeName: nextPlaceName(value, places, all.names) });
@@ -116,6 +119,7 @@ export function PlaceFields({ value, onChange, disabled }: PlaceFieldsProps) {
   return (
     <div className="flex flex-col gap-2">
       <PlaceLabel />
+      {oldName && <OldPlaceName name={oldName} />}
       {rows.map((row, index) => (
         <PlaceRow
           key={index}
@@ -130,10 +134,8 @@ export function PlaceFields({ value, onChange, disabled }: PlaceFieldsProps) {
       <PlaceFooter
         rows={rows}
         all={all}
-        value={value}
         disabled={disabled}
         onAddSecond={() => setRows([...rows, { relation: "by", id: "" }])}
-        onChange={onChange}
       />
     </div>
   );
@@ -285,14 +287,12 @@ function RelationSelect({ id, value, disabled, onChange }: RelationSelectProps) 
 interface PlaceFooterProps {
   rows: PhotoPlace[];
   all: Places;
-  value: PlaceValue;
   disabled: boolean;
   onAddSecond: () => void;
-  onChange: (value: PlaceValue) => void;
 }
 
-/** The places as a phrase, adding a second place, and the place name saved before there were places. */
-function PlaceFooter({ rows, all, value, disabled, onAddSecond, onChange }: PlaceFooterProps) {
+/** The places as a phrase, and adding a second place. */
+function PlaceFooter({ rows, all, disabled, onAddSecond }: PlaceFooterProps) {
   return (
     <div className="flex flex-col gap-2 text-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -309,9 +309,6 @@ function PlaceFooter({ rows, all, value, disabled, onAddSecond, onChange }: Plac
           </Button>
         )}
       </div>
-      {hasOldPlaceName(value) && (
-        <SavedPlaceName all={all} value={value} disabled={disabled} onChange={onChange} />
-      )}
     </div>
   );
 }
@@ -327,71 +324,17 @@ function hasOldPlaceName(value: PlaceValue): boolean {
   return !firstChosen(value.places) && Boolean(value.placeName.trim());
 }
 
-interface SavedPlaceNameProps {
-  all: Places;
-  value: PlaceValue;
-  disabled: boolean;
-  onChange: (value: PlaceValue) => void;
-}
-
 /**
- * The place name a photo saved before it had places, with a button to choose the place with that
- * name, or add one, and one to clear it.
+ * The place name a photo was saved with before it had places, read-only, to choose or add the
+ * matching places by. Once the photo is saved with places, it isn't shown anymore.
  */
-function SavedPlaceName({ all, value, disabled, onChange }: SavedPlaceNameProps) {
-  const [error, setError] = useState<string>();
-  const name = value.placeName.trim();
-  const use = (id: string) =>
-    onChange({ places: [{ relation: value.places[0]?.relation ?? "", id }], placeName: name });
+function OldPlaceName({ name }: { name: string }) {
   return (
-    <div className="bg-muted/50 flex flex-col gap-2 rounded-md px-3 py-2">
-      <p>
-        Saved with the place name <strong>{name}</strong>, from before places. The portfolio still
-        shows it.
-      </p>
-      <div className="flex flex-wrap gap-2">
-        <UsePlaceButton
-          all={all}
-          name={name}
-          disabled={disabled}
-          onUse={use}
-          onAdd={() => all.create(name, use, setError)}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          disabled={disabled}
-          onClick={() => onChange({ ...value, placeName: "" })}
-        >
-          Clear
-        </Button>
-      </div>
-      {error && <p className="text-destructive">{error}</p>}
+    <div className="flex flex-col gap-1">
+      <label htmlFor="photo-old-place-name" className="text-muted-foreground text-xs">
+        Place name saved before places, for reference
+      </label>
+      <Input id="photo-old-place-name" value={name} readOnly className="bg-muted/50" />
     </div>
-  );
-}
-
-interface UsePlaceButtonProps {
-  all: Places;
-  name: string;
-  disabled: boolean;
-  onUse: (id: string) => void;
-  onAdd: () => void;
-}
-
-/** Chooses the place named name, or adds one when there's none. */
-function UsePlaceButton({ all, name, disabled, onUse, onAdd }: UsePlaceButtonProps) {
-  const match = all.places.find((place) => place.name.toLowerCase() === name.toLowerCase());
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      disabled={disabled || all.busy}
-      onClick={match ? () => onUse(match.id) : onAdd}
-    >
-      {match ? `Use the place ${match.name}` : `Add “${name}” as a place`}
-    </Button>
   );
 }

@@ -1,6 +1,7 @@
 import { CheckIcon, RotateCcwIcon } from "lucide-react";
 import { type InFlightFileRead, type UpdateResult } from "@/api/photos";
 import { AllPhotosRebuild } from "@/components/all-photos-rebuild";
+import { FloatingAction } from "@/components/floating-actions";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,21 +24,25 @@ export function SaveCard({ file, edit, save }: { file: InFlightFileRead; edit: E
       <CardHeader>
         <CardTitle>Save changes</CardTitle>
         <CardDescription>
-          Remakes the Square Thumbnail and its Thumbnail Preview in R2 from the square above when it
-          moved, then <SaveTarget file={file} />
+          <strong>Save changes</strong>, at the top right next to the sync button, remakes the
+          Square Thumbnail and its Thumbnail Preview in R2 from the square above when it moved, then{" "}
+          <SaveTarget file={file} />
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 text-sm">
         {baseline && <p className="text-muted-foreground">Saved crop: {cropText(baseline)}.</p>}
         <RenameNote file={file} edit={edit} />
         <div className="flex flex-wrap gap-2">
-          <Button
-            disabled={!request || mutation.isPending}
-            onClick={() => request && mutation.mutate(request)}
-          >
-            {mutation.isPending && <Spinner />}
-            Save changes
-          </Button>
+          <FloatingAction>
+            <Button
+              className="h-9 rounded-full shadow-md"
+              disabled={!request || mutation.isPending}
+              onClick={() => request && mutation.mutate(request)}
+            >
+              {mutation.isPending && <Spinner />}
+              Save changes
+            </Button>
+          </FloatingAction>
           <ResetButton edit={edit} disabled={mutation.isPending} />
         </div>
         <SaveOutcome save={save} />
