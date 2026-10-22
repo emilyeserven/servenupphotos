@@ -1,10 +1,14 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import Markdown from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import { cn } from "@/lib/utils";
 
 /** Markdown's lists, links, code and quotes, which Tailwind's reset strips, kept compact for a caption. */
 const PROSE =
   "break-words [&_p+*]:mt-1.5 [&_ul]:list-disc [&_ol]:list-decimal [&_ul,&_ol]:pl-4 [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-current/10 [&_code]:px-1 [&_blockquote]:border-l-2 [&_blockquote]:border-current/30 [&_blockquote]:pl-2 [&_h1,&_h2,&_h3]:font-medium";
+
+/** Keeps each line break written in the comment, not only blank lines between paragraphs. */
+const MARKDOWN_PLUGINS = [remarkBreaks];
 
 interface PhotoCommentProps {
   comment: string;
@@ -32,7 +36,7 @@ export function PhotoComment({
         ref={ref}
         className={cn(PROSE, lines === 1 ? "line-clamp-1" : "line-clamp-2", className)}
       >
-        <Markdown>{comment}</Markdown>
+        <Markdown remarkPlugins={MARKDOWN_PLUGINS}>{comment}</Markdown>
       </div>
       {cutOff && (
         // The text above already holds the whole comment for screen readers.
@@ -45,7 +49,7 @@ export function PhotoComment({
             expandedClassName,
           )}
         >
-          <Markdown>{comment}</Markdown>
+          <Markdown remarkPlugins={MARKDOWN_PLUGINS}>{comment}</Markdown>
         </div>
       )}
     </div>

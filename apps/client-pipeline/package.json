@@ -19,6 +19,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-markdown": "10.1.0",
+    "remark-breaks": "4.0.0",
     "shiki": "4.5.0",
     "tailwind-merge": "catalog:"
   },

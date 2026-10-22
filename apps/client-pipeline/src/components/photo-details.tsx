@@ -1,5 +1,6 @@
 import type { ComponentProps } from "react";
 import Markdown, { type ExtraProps } from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -142,7 +143,9 @@ function CommentField({ value, disabled, onChange }: CommentFieldProps) {
           <div className="min-h-28 rounded-md border px-3 py-2">
             {value.trim() ? (
               <div className={MARKDOWN_CLASSES}>
-                <Markdown components={{ a: NewTabLink }}>{value}</Markdown>
+                <Markdown components={{ a: NewTabLink }} remarkPlugins={[remarkBreaks]}>
+                  {value}
+                </Markdown>
               </div>
             ) : (
               <p className="text-muted-foreground text-sm">Nothing to preview yet.</p>
