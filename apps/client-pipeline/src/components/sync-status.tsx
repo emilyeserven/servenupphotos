@@ -35,11 +35,17 @@ type Settled = "checking" | "none" | "synced";
 
 const SETTLED: Record<Settled, Badge> = {
   checking: { icon: <Spinner />, label: "Checking…", className: MUTED },
-  none: { icon: <CheckIcon />, label: "Nothing in flight", className: MUTED },
-  synced: {
+  // Synced, and no batch (photo data pull request) is open: nothing is waiting anywhere.
+  none: {
     icon: <CheckIcon />,
-    label: "Synced",
+    label: "Synced · no open batch",
     className: "text-emerald-700 dark:text-emerald-400",
+  },
+  // Synced, but the batch is still open, waiting to be merged.
+  synced: {
+    icon: <GitPullRequestIcon />,
+    label: "Synced · batch open",
+    className: "text-sky-700 dark:text-sky-400",
   },
 };
 
@@ -130,6 +136,7 @@ function SyncPanel({ sync, onNavigate }: { sync: Sync; onNavigate: () => void })
     >
       <PullRequestLine sync={sync} />
       <ImageCounts images={sync.images} />
+      <OpenBatchLine sync={sync} />
       <CommitResult sync={sync} />
       <div className="flex items-center gap-3">
         <Link
@@ -148,7 +155,7 @@ function SyncPanel({ sync, onNavigate }: { sync: Sync; onNavigate: () => void })
 
 function PullRequestLine({ sync }: { sync: Sync }) {
   const pr = sync.pullRequest;
-  if (!pr) return <p className={MUTED}>No “Add photo data” pull request is open.</p>;
+  if (!pr) return <p className={MUTED}>No open batch (“Add photo data” pull request).</p>;
   return (
     <p className="flex items-center gap-2">
       <GitPullRequestIcon className="size-4 shrink-0" aria-hidden />
@@ -162,6 +169,16 @@ function PullRequestLine({ sync }: { sync: Sync }) {
 /** Whether there's anything to commit: a pull request, or edits that would open one. */
 function canCommit(sync: Sync): boolean {
   return Boolean(sync.pullRequest) || sync.localEdits > 0;
+}
+
+/** When everything is committed but the batch is still open, says it's waiting on a merge. */
+function OpenBatchLine({ sync }: { sync: Sync }) {
+  if (sync.unsynced || sync.committing || !sync.pullRequest) return null;
+  return (
+    <p className="text-sky-700 dark:text-sky-400">
+      Synced. The batch stays open until #{sync.pullRequest.number} is merged.
+    </p>
+  );
 }
 
 /** Drops the edits only kept in the browser so far, after asking. */
