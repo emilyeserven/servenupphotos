@@ -128,10 +128,13 @@ export interface UpdateResult {
   changed: boolean;
 }
 
-/** Replaces the content of a photo JSON file in the open photo data pull request. */
+/**
+ * Replaces the content of a photo JSON file in the open photo data pull request, moving it to
+ * `name` (without .json) in the same folder when that's given.
+ */
 export const updateInFlightMutation = mutationOptions({
   mutationKey: ["photos", "in-flight", "update"],
-  mutationFn: (file: { path: string; data: unknown }) =>
+  mutationFn: (file: { path: string; data: unknown; name?: string }) =>
     requestJson<UpdateResult>("/api/photos/in-flight", {
       method: "PUT",
       headers: { "content-type": "application/json" },

@@ -323,6 +323,7 @@ function FileSection({
   return (
     <section className="@container flex flex-col gap-2">
       <h2 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
+        <PhotoTitle file={file} />
         <a
           href={file.fileUrl}
           target="_blank"
@@ -353,12 +354,12 @@ function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightIma
   const square = squareUrl(file, url);
   return (
     <div className="flex min-w-0 flex-col gap-3">
-      <PhotoImage name={file.photoName} url={url} checked={images.checked} />
+      <PhotoImage name={photoName(file)} url={url} checked={images.checked} />
       <div className="flex flex-wrap items-end justify-between gap-3">
         {square && (
           <SquareThumbnailImage
             key={square}
-            name={file.photoName}
+            name={photoName(file)}
             url={square}
             previewUrl={squarePreviewUrl(file, url)}
           />
@@ -367,6 +368,23 @@ function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightIma
       </div>
     </div>
   );
+}
+
+/** The title saved in the photo's JSON, or undefined without one. */
+function savedTitle(file: InFlightFile): string | undefined {
+  const title = (file.data as { title?: unknown } | undefined)?.title;
+  return typeof title === "string" && title.trim() ? title.trim() : undefined;
+}
+
+/** What to call the photo: its title, or else its original file name. */
+function photoName(file: InFlightFile): string {
+  return savedTitle(file) ?? file.photoName;
+}
+
+/** The photo's title, ahead of its JSON file's name, when it has one. */
+function PhotoTitle({ file }: { file: InFlightFile }) {
+  const title = savedTitle(file);
+  return title ? <span className="text-base">{title}</span> : null;
 }
 
 /** Whether the file's photo can be opened on the Photo page: its JSON was read and its image is in R2. */

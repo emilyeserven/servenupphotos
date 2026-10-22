@@ -16,11 +16,13 @@ type updateInFlightRequest struct {
 	Path string `json:"path"`
 	// Data is the file's new content, a JSON object.
 	Data json.RawMessage `json:"data"`
+	// Name, when set, is a new file name to move the file to in its folder.
+	Name string `json:"name"`
 }
 
 // handleUpdateInFlight replaces the content of a photo JSON file in the open
 // "Add photo data" pull request with the body's data, as the Photo page saves
-// an edit of a photo in flight.
+// an edit of a photo in flight, renaming the file when the body has a new name.
 func handleUpdateInFlight(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req updateInFlightRequest
@@ -37,7 +39,7 @@ func handleUpdateInFlight(store *settings.Store, gh *github.Client) http.Handler
 
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		updated, err := gh.Update(ctx, cfg, req.Path, req.Data)
+		updated, err := gh.Update(ctx, cfg, req.Path, req.Name, req.Data)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
 			writeError(w, perr.Status, perr.Message)

@@ -14,7 +14,9 @@ import { Route as AlbumsRouteImport } from './routes/albums'
 import { Route as BucketRouteImport } from './routes/bucket'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as InFlightRouteImport } from './routes/in-flight'
+import { Route as InstagramRouteImport } from './routes/instagram'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as TagsRouteImport } from './routes/tags'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
@@ -44,9 +46,19 @@ const InFlightRoute = InFlightRouteImport.update({
   path: '/in-flight',
   getParentRoute: () => rootRouteImport,
 } as any)
+const InstagramRoute = InstagramRouteImport.update({
+  id: '/instagram',
+  path: '/instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SiteSpotlightRoute = SiteSpotlightRouteImport.update({
+  id: '/site-spotlight',
+  path: '/site-spotlight',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SizesRoute = SizesRouteImport.update({
@@ -71,7 +83,9 @@ export interface FileRoutesByFullPath {
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
   '/in-flight': typeof InFlightRoute
+  '/instagram': typeof InstagramRoute
   '/settings': typeof SettingsRoute
+  '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/tags': typeof TagsRoute
   '/update-data': typeof UpdateDataRoute
@@ -82,7 +96,9 @@ export interface FileRoutesByTo {
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
   '/in-flight': typeof InFlightRoute
+  '/instagram': typeof InstagramRoute
   '/settings': typeof SettingsRoute
+  '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/tags': typeof TagsRoute
   '/update-data': typeof UpdateDataRoute
@@ -94,7 +110,9 @@ export interface FileRoutesById {
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
   '/in-flight': typeof InFlightRoute
+  '/instagram': typeof InstagramRoute
   '/settings': typeof SettingsRoute
+  '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/tags': typeof TagsRoute
   '/update-data': typeof UpdateDataRoute
@@ -107,7 +125,9 @@ export interface FileRouteTypes {
     | '/bucket'
     | '/exif'
     | '/in-flight'
+    | '/instagram'
     | '/settings'
+    | '/site-spotlight'
     | '/sizes'
     | '/tags'
     | '/update-data'
@@ -118,7 +138,9 @@ export interface FileRouteTypes {
     | '/bucket'
     | '/exif'
     | '/in-flight'
+    | '/instagram'
     | '/settings'
+    | '/site-spotlight'
     | '/sizes'
     | '/tags'
     | '/update-data'
@@ -129,7 +151,9 @@ export interface FileRouteTypes {
     | '/bucket'
     | '/exif'
     | '/in-flight'
+    | '/instagram'
     | '/settings'
+    | '/site-spotlight'
     | '/sizes'
     | '/tags'
     | '/update-data'
@@ -141,7 +165,9 @@ export interface RootRouteChildren {
   BucketRoute: typeof BucketRoute
   ExifRoute: typeof ExifRoute
   InFlightRoute: typeof InFlightRoute
+  InstagramRoute: typeof InstagramRoute
   SettingsRoute: typeof SettingsRoute
+  SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
   TagsRoute: typeof TagsRoute
   UpdateDataRoute: typeof UpdateDataRoute
@@ -184,11 +210,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InFlightRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/instagram': {
+      id: '/instagram'
+      path: '/instagram'
+      fullPath: '/instagram'
+      preLoaderRoute: typeof InstagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/site-spotlight': {
+      id: '/site-spotlight'
+      path: '/site-spotlight'
+      fullPath: '/site-spotlight'
+      preLoaderRoute: typeof SiteSpotlightRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sizes': {
@@ -221,7 +261,9 @@ const rootRouteChildren: RootRouteChildren = {
   BucketRoute: BucketRoute,
   ExifRoute: ExifRoute,
   InFlightRoute: InFlightRoute,
+  InstagramRoute: InstagramRoute,
   SettingsRoute: SettingsRoute,
+  SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
   TagsRoute: TagsRoute,
   UpdateDataRoute: UpdateDataRoute,

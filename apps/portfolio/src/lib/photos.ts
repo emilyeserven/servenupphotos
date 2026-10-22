@@ -3,14 +3,36 @@ import dummyData from "@/data/dummy.json";
 export interface Photo {
   id: number;
   title: string;
+  /** A note about the photo in Markdown, written on the pipeline's Photo page; null without one. */
+  comment: string | null;
   camera: string;
+  settings: CameraSettings;
   takenAt: Date;
-  location: string;
+  /** Null when the photo has no city, country or GPS position, so there's nothing to say. */
+  location: string | null;
   /** Null when the photo has no GPS position, so it can't go on the map. */
   latitude: number | null;
   longitude: number | null;
   /** The photo's resized versions in R2; null for the dummy data and photos not uploaded yet. */
   image: PhotoImage | null;
+}
+
+/** How the camera was set for the photo; each is null when its EXIF didn't say. */
+export interface CameraSettings {
+  /** The f-number, such as 5.6. */
+  aperture: number | null;
+  /** The exposure time in seconds as exiftool writes it, such as "1/60". */
+  exposure: string | null;
+  iso: number | null;
+}
+
+/** The settings as a photographer writes them, such as "f/5.6", "1/60s" and "ISO 400". */
+export function settingsText({ aperture, exposure, iso }: CameraSettings): string[] {
+  return [
+    aperture === null ? null : `f/${aperture}`,
+    exposure === null ? null : `${exposure}s`,
+    iso === null ? null : `ISO ${iso}`,
+  ].filter((text) => text !== null);
 }
 
 export interface PhotoImage {
@@ -45,6 +67,15 @@ type Version = (typeof VERSIONS)[number][0];
 /** One entry of ALLPHOTOS.json: a photo's file name and sanitized EXIF, as the pipeline saves it. */
 interface PhotoData {
   file: string;
+  /** The name to show, when one was written; older entries don't have it. */
+  title?: string | null;
+  /** A Markdown note about the photo, when one was written. */
+  comment?: string | null;
+  /** Entries saved before these were added don't have them. */
+  aperture?: number | null;
+  exposure?: string | null;
+  iso?: number | null;
+  focalLength?: number | null;
   camera: string | null;
   gpsPosition: string | null;
   createDate: string | null;
@@ -54,6 +85,12 @@ interface PhotoData {
   height: number | null;
   /** Older entries may be missing a version they were saved before. */
   images: Partial<Record<Version | "preview" | "thumbnail" | "thumbnailpreview", string | null>>;
+  /** Whether the photo may be posted to social media; older entries are missing it. */
+  isSocialMediaEligible?: boolean;
+  /** The photo's place among the photos spotlighted on the site; null or missing when it isn't. */
+  websiteSpotlight?: number | null;
+  /** The day the photo is scheduled to be posted to social media, as YYYY-MM-DD; null or missing when it isn't. */
+  socialMediaPublishDate?: string | null;
   /** The IDs of the photo's albums and tags; older entries were saved without them. */
   albums?: string[];
   tags?: string[];
@@ -141,6 +178,27 @@ function parseImage(photo: PhotoData): PhotoImage | null {
   };
 }
 
+/** The title written on the Photo page, or else the file name without its extension. */
+function photoTitle(photo: PhotoData): string {
+  return photo.title?.trim() || photo.file.replace(/\.[^.]*$/, "");
+}
+
+function cameraSettings({ aperture, exposure, iso }: PhotoData): CameraSettings {
+  return { aperture: aperture ?? null, exposure: exposure ?? null, iso: iso ?? null };
+}
+
+/** The Markdown comment written on the Photo page, or null without one. */
+function photoComment(photo: PhotoData): string | null {
+  return photo.comment?.trim() || null;
+}
+
+/** The photo's city and country, or null when it has neither and no GPS position either. */
+function photoLocation({ city, country, gpsPosition }: PhotoData): string | null {
+  const place = [city, country].filter(Boolean).join(", ");
+  if (place) return place;
+  return gpsPosition ? "Unknown location" : null;
+}
+
 /** The local ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
 function fromPhotoData(data: PhotoData[]): Photo[] {
   return data.flatMap((photo, index) => {
@@ -148,10 +206,12 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
     if (!takenAt) return [];
     return {
       id: index + 1,
-      title: photo.file.replace(/\.[^.]*$/, ""),
+      title: photoTitle(photo),
+      comment: photoComment(photo),
+      settings: cameraSettings(photo),
       camera: photo.camera ?? "Unknown camera",
       takenAt,
-      location: [photo.city, photo.country].filter(Boolean).join(", ") || "Unknown location",
+      location: photoLocation(photo),
       ...parseGpsPosition(photo.gpsPosition),
       image: parseImage(photo),
     };
@@ -163,6 +223,8 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
 const dummyPhotos: Photo[] = dummyData.map((photo) => ({
   ...photo,
   takenAt: new Date(photo.takenAt),
+  comment: null,
+  settings: { aperture: null, exposure: null, iso: null },
   image: null,
 }));
 

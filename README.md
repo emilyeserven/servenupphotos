@@ -145,8 +145,42 @@ the rest of each URL (query strings such as `?crop=` included) and every other b
 committed while any photo file can't be read. The images in R2 aren't touched, so connect the custom domain to the
 bucket in Cloudflare first, and set the R2 **Public URL** in Settings to it so new uploads use it too.
 
+**Missing fields** gives older photo files the fields new ones have, such as `title`, `comment`, `aperture` or
+`images.thumbnail` (`POST /api/data/missing-fields/preview`, then `POST /api/data/missing-fields`). The list of fields
+and their defaults is `newPhotoJSON` in `be-pipeline/internal/github/publish.go`, the same function that builds a new
+photo file, so a field added there (with its default, such as `[]` for a list) is backfilled with no other change.
+Missing fields go where a new file has them, nested `images` fields included, and the rest of each file is kept byte
+for byte; a field a file already has, even `null`, is never changed. With **Read missing camera details from the
+originals in R2** on, a missing EXIF field (`exif.SanitizeFields`) is read from the photo's original at `images.key`,
+as Explore Bucket reads it, instead of being added as `null`; the backend keeps each original's EXIF in memory, so
+applying doesn't download them again after a preview.
+
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.
+
+### Publish
+
+The **Publish** section of the sidebar is for choosing where photos are shown. Each photo JSON file has three fields
+for it, which new saves write with their defaults: `isSocialMediaEligible` (`false`), whether the photo may be posted
+to social media; `websiteSpotlight` (`null`), the photo's place among the photos spotlighted on the site, or `null`
+when it isn't spotlighted; and `socialMediaPublishDate` (`null`), the day the photo is scheduled to post to social
+media, as `YYYY-MM-DD`. Older files may be missing them, which means the same as the defaults.
+
+`/instagram` is a calendar of the photos scheduled to post, one a day. It shows three weeks, starting with this one
+(Sunday first), and pages a week at a time. Clicking an empty day picks a photo for it from the photo files, read
+where Update Data reads them, so photos in flight on the **Add photo data** pull request are included and marked as
+such (eligible photos first); clicking a scheduled photo changes or removes it. Dragging a photo to another
+day moves it there, and dropping it on another photo swaps the two. Changes stay unsaved until **Save to GitHub**,
+which sets `socialMediaPublishDate` in each changed photo file as one commit, where Update Data commits (the open
+**Add photo data** pull request's branch, or a new one). Only that field changes in each file. Nothing is saved
+while a photo file can't be read, or if two photos would land on the same day. The page reads the photo files with
+`GET /api/publish/instagram` and saves with `PUT /api/publish/instagram` (`{"dates": [{"path", "date"}]}`, a
+`null` date unschedules).
+
+> **Frontend analogy:** it's an optimistic form over the photo files: edits live in component state until you save,
+> then go out as one batched request, like a "Save all" button on an editable table.
+
+`/site-spotlight` is still a stub; ways to change the other fields will come later.
 
 ### Saving photo data to GitHub
 

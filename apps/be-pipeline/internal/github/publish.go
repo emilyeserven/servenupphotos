@@ -35,14 +35,27 @@ type Photo struct {
 	Sanitized exif.Sanitized `json:"sanitized"`
 }
 
-// photoJSON is the content of a published file.
+// photoJSON is the content of a published file. The title and comment come
+// first, where they're easy to find and edit, hiding the embedded ones.
 type photoJSON struct {
-	File string `json:"file"`
+	Title   *string `json:"title"`
+	Comment *string `json:"comment"`
+	File    string  `json:"file"`
 	exif.Sanitized
 	// Albums and Tags are the IDs of the albums and tags the photo is in,
 	// empty when it is saved.
 	Albums []string `json:"albums"`
 	Tags   []string `json:"tags"`
+}
+
+// newPhotoJSON is the content of a new photo file. It is also the list of
+// fields every photo file should have, with their defaults: Backfill adds
+// the ones an older file is missing from newPhotoJSON("", exif.Sanitized{}).
+// Give a new field its default here, such as an empty list rather than nil.
+func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
+	return photoJSON{
+		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
+	}
 }
 
 // PublishResult says where a photo's JSON went.
@@ -108,9 +121,7 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	if perr != nil {
 		return PublishResult{}, perr
 	}
-	content, err := json.MarshalIndent(photoJSON{
-		File: photo.File, Sanitized: photo.Sanitized, Albums: []string{}, Tags: []string{},
-	}, "", "  ")
+	content, err := json.MarshalIndent(newPhotoJSON(photo.File, photo.Sanitized), "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
 	}

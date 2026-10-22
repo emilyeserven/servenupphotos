@@ -1,6 +1,5 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ExternalLinkIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import {
   type BaseUrlChange,
@@ -14,6 +13,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  CommitSuccess,
+  PreviewDestination,
+  Unreadable,
+  count,
+} from "@/components/update-data-shared";
 
 /** Trims a base URL and its trailing slashes, as the backend does. */
 function cleanBaseUrl(value: string): string {
@@ -43,11 +48,6 @@ function defaultChange(scan: BaseUrlPreview, publicUrl: string): BaseUrlChange {
   const from = scan.origins[0]?.origin ?? "";
   const to = cleanBaseUrl(publicUrl);
   return { from, to: to === from ? "" : to };
-}
-
-/** "1 file", "2 files". */
-function count(n: number, word: string): string {
-  return `${n} ${n === 1 ? word : `${word}s`}`;
 }
 
 interface ImageBaseUrlCardProps {
@@ -353,54 +353,8 @@ function PreviewSummary({ preview }: { preview: BaseUrlPreview }) {
         <code className="break-all">{preview.to}</code>.
       </p>
       <p className="text-muted-foreground">
-        <PreviewDestination preview={preview} />
+        <PreviewDestination scan={preview} />
       </p>
-    </div>
-  );
-}
-
-/** Where the change will be committed. */
-function PreviewDestination({ preview }: { preview: BaseUrlPreview }) {
-  if (!preview.pullRequest) {
-    return (
-      <>
-        They&apos;re saved as one commit on a new photo-data branch, in a new &quot;Add photo
-        data&quot; pull request against <code>{preview.branch}</code>.
-      </>
-    );
-  }
-  return (
-    <>
-      They&apos;re saved as one commit on <code>{preview.branch}</code>, in{" "}
-      <ExternalLink href={preview.pullRequest.url}>
-        pull request #{preview.pullRequest.number}
-      </ExternalLink>
-      .
-    </>
-  );
-}
-
-function Unreadable({
-  files,
-  blocking = false,
-}: {
-  files: BaseUrlPreview["unreadable"];
-  blocking?: boolean;
-}) {
-  if (files.length === 0) return null;
-  return (
-    <div className="text-destructive flex flex-col gap-1 text-sm">
-      <p>
-        {files.length === 1 ? "This file couldn't" : "These files couldn't"} be read
-        {blocking ? ", so nothing can be changed until it's fixed:" : ":"}
-      </p>
-      <ul className="list-disc pl-5">
-        {files.map((f) => (
-          <li key={f.path}>
-            <code className="break-all">{f.path}</code>: {f.error}
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
@@ -438,33 +392,8 @@ function ChangedFiles({ files }: { files: BaseUrlPreview["files"] }) {
 
 function ReplaceSuccess({ result }: { result: BaseUrlResult }) {
   return (
-    <div className="flex flex-col gap-1 border-t pt-6 text-sm">
-      <p>
-        Moved {count(result.urls, "URL")} in {count(result.files, "file")}, in{" "}
-        <ExternalLink href={result.commitUrl}>one commit</ExternalLink> on{" "}
-        <code>{result.branch}</code>.
-      </p>
-      <p className="text-muted-foreground">
-        {result.newPullRequest ? "It opened " : "It's in "}
-        <ExternalLink href={result.pullRequestUrl}>
-          pull request #{result.pullRequestNumber}
-        </ExternalLink>
-        , where CI rebuilds ALLPHOTOS.json. The portfolio uses the new URLs once it&apos;s merged.
-      </p>
-    </div>
-  );
-}
-
-function ExternalLink({ href, children }: { href: string; children: ReactNode }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      className="text-foreground inline-flex items-center gap-1 underline underline-offset-4"
-    >
-      {children}
-      <ExternalLinkIcon className="size-3.5" />
-    </a>
+    <CommitSuccess result={result}>
+      Moved {count(result.urls, "URL")} in {count(result.files, "file")}
+    </CommitSuccess>
   );
 }

@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
+	"path"
+	"strings"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
@@ -26,7 +28,12 @@ type UpdatedFile struct {
 // request titled PullRequestTitle, with data, a JSON object, on the pull
 // request's branch. Only files the pull request adds or modifies can be
 // updated, so an edit never reaches past the photos in flight.
-func (c *Client) Update(ctx context.Context, gh settings.GitHub, file string, data json.RawMessage) (UpdatedFile, error) {
+//
+// When newName, a file name with or without the .json extension, differs from
+// file's, the file is moved to it in the same folder. Only files the pull
+// request adds can be renamed, since renaming one that is also on the base
+// branch would remove it there when the pull request merges.
+func (c *Client) Update(ctx context.Context, gh settings.GitHub, file, newName string, data json.RawMessage) (UpdatedFile, error) {
 	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return UpdatedFile{}, perr
@@ -39,6 +46,10 @@ func (c *Client) Update(ctx context.Context, gh settings.GitHub, file string, da
 		return UpdatedFile{}, publishErr(http.StatusBadRequest, "Only photo JSON files in %s can be edited.", folder)
 	}
 	content, perr := photoContent(data)
+	if perr != nil {
+		return UpdatedFile{}, perr
+	}
+	dest, perr := renamedPath(file, newName)
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}
@@ -65,10 +76,54 @@ func (c *Client) Update(ctx context.Context, gh settings.GitHub, file string, da
 	if msg != "" {
 		return UpdatedFile{}, publishErr(http.StatusBadGateway, "%s", msg)
 	}
+	if dest != file {
+		return c.renameFile(ctx, t, pr, changed, dest, sha, content)
+	}
 	if bytes.Equal(current, content) {
 		return UpdatedFile{Path: file, FileURL: changed.BlobURL}, nil
 	}
 	return c.updateFile(ctx, t, file, sha, pr.Head.Ref, content)
+}
+
+// renamedPath is file moved to name in the same folder, or file itself when
+// name is empty.
+func renamedPath(file, name string) (string, *PublishError) {
+	name = strings.TrimSuffix(strings.TrimSpace(name), ".json")
+	if name == "" {
+		return file, nil
+	}
+	if !fileNamePattern.MatchString(name) {
+		return "", publishErr(http.StatusBadRequest,
+			"Use a file name of letters, numbers, dots, dashes and underscores.")
+	}
+	return path.Join(path.Dir(file), name+".json"), nil
+}
+
+// renameFile saves content as dest on the pull request's branch, then
+// deletes file, whose blob is sha, there. dest must not exist on the
+// branch or on the base branch.
+func (c *Client) renameFile(ctx context.Context, t target, pr *inFlightPull, file pullFile, dest, sha string, content []byte) (UpdatedFile, error) {
+	if file.Status != "added" {
+		return UpdatedFile{}, publishErr(http.StatusConflict,
+			"%s is %s in the pull request, not added, so it's already in the portfolio and keeps its name.", file.Filename, file.Status)
+	}
+	for _, ref := range []string{pr.Base.Ref, pr.Head.Ref} {
+		if ref == "" {
+			continue
+		}
+		if perr := c.ensureAbsent(ctx, t, dest, ref); perr != nil {
+			return UpdatedFile{}, perr
+		}
+	}
+	fileURL, perr := c.createFile(ctx, t, dest, pr.Head.Ref, content, "Add photo data "+dest)
+	if perr != nil {
+		return UpdatedFile{}, perr
+	}
+	commit, perr := c.deleteFile(ctx, t, file.Filename, sha, pr.Head.Ref)
+	if perr != nil {
+		return UpdatedFile{}, publishErr(perr.Status, "Saved %s, but couldn't remove %s, so the pull request has both: %s", dest, file.Filename, perr.Message)
+	}
+	return UpdatedFile{Path: dest, FileURL: fileURL, CommitSHA: commit, Changed: true}, nil
 }
 
 // photoContent is data indented as Publish writes a photo's file, or an error

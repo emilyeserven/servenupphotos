@@ -56,6 +56,7 @@ var photoPull = map[string]any{
 	"title":    "Add photo data",
 	"html_url": "https://github.com/owner/repo/pull/7",
 	"head":     map[string]any{"ref": "photo-data/2026-10-15-024500", "sha": "head7"},
+	"base":     map[string]any{"ref": "main"},
 }
 
 func TestInFlightReadsPhotoJSON(t *testing.T) {

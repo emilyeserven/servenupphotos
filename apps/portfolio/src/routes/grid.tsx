@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { format } from "date-fns";
 import { Grid3x3, LayoutDashboard, Square } from "lucide-react";
 import { type ImgHTMLAttributes, useState } from "react";
+import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
@@ -180,9 +180,10 @@ function PhotoTile({
       </button>
       <figcaption className="flex flex-col">
         <span className="truncate text-sm font-medium">{photo.title}</span>
-        <span className="truncate text-xs text-muted-foreground">
-          {format(photo.takenAt, "MMM d, yyyy")} · {photo.location}
-        </span>
+        {/* The rest of its details are in the lightbox. */}
+        {photo.comment && (
+          <PhotoComment comment={photo.comment} className="text-xs text-muted-foreground" />
+        )}
       </figcaption>
     </figure>
   );
