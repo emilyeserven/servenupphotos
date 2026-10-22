@@ -28,7 +28,7 @@ each with how many places and photos have it; a city only photos have is marked 
 places** on a city, or the **City** box above the Places tab, narrows the places to that city's: those with it as their
 own city or a place above them with it.
 
-A place's **City** is a combobox of those cities, set ones first by name, with inferred ones marked by how many photos
+A place's **City** is a combobox of those cities, sorted by name, with inferred ones marked by how many photos
 show them, or a new one typed in. Choosing a city whose country is known fills in **Country**. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
 open **Add photo data** pull request, or opens one, and the list reads the place files themselves
 (`GET /api/places` → `GET /places`, at the pull request's head), so a place shows before it's committed to
