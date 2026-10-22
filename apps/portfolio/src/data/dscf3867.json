@@ -1,7 +1,13 @@
 {
+  "title": null,
+  "comment": null,
   "file": "dscf3867.jpg",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "aperture": 5.6,
+  "exposure": "1/600",
+  "iso": 125,
+  "focalLength": 66.2,
   "gpsPosition": "37 deg 35' 1.83\" N, 126 deg 59' 0.48\" E",
   "createDate": "2026:05:17 16:44:43",
   "country": "South Korea",
@@ -16,6 +22,11 @@
     "medium": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-medium.webp",
     "small": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-small.webp",
     "xsmall": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-xsmall.webp",
-    "preview": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-preview.webp"
-  }
+    "preview": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/e4f980195501-dscf3867-preview.webp",
+    "thumbnail": null,
+    "thumbnailpreview": null
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null
 }

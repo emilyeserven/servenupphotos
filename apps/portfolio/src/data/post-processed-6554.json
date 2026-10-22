@@ -1,7 +1,13 @@
 {
+  "title": null,
+  "comment": null,
   "file": "post-processed-6554.jpg",
   "camera": "SLT-A65V",
   "lens": "DT 18-55mm F3.5-5.6 SAM",
+  "aperture": 4,
+  "exposure": "1/60",
+  "iso": 500,
+  "focalLength": 18,
   "gpsPosition": "40 deg 45' 17.56\" N, 73 deg 59' 18.34\" W",
   "createDate": "2017:01:07 13:51:40",
   "country": "United States of America",
@@ -17,6 +23,10 @@
     "small": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/994123c44ac7-post-processed-6554-small.webp",
     "xsmall": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/994123c44ac7-post-processed-6554-xsmall.webp",
     "preview": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/994123c44ac7-post-processed-6554-preview.webp",
-    "thumbnail": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/994123c44ac7-post-processed-6554-thumbnail.webp?crop=682,0,3376"
-  }
+    "thumbnail": "https://pub-2008bda3c8394204ba747c1312c4b0b0.r2.dev/photos/994123c44ac7-post-processed-6554-thumbnail.webp?crop=682,0,3376",
+    "thumbnailpreview": null
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null
 }
