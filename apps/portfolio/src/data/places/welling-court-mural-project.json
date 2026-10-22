@@ -4,5 +4,7 @@
   "description": "",
   "parent": "astoria",
   "city": "",
-  "country": ""
+  "country": "",
+  "latitude": 40.7718124785072,
+  "longitude": -73.9311989162955
 }
