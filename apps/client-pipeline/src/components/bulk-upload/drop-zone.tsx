@@ -6,10 +6,24 @@ interface DropZoneProps {
   /** Called with the photos chosen or dropped, in their order. */
   onFiles: (files: File[]) => void;
   disabled?: boolean;
+  /** Take one photo rather than many; the first dropped is used. */
+  single?: boolean;
 }
 
-/** A large target to drop photos on, which also opens the file picker, for many photos at once. */
-export function DropZone({ onFiles, disabled = false }: DropZoneProps) {
+const TEXT = {
+  many: {
+    title: "Drop JPEG photos here, or click to choose them",
+    hint: "Each one is analyzed, uploaded to R2 and added to the batch in turn.",
+  },
+  single: {
+    title: "Drop a JPEG photo here, or click to choose it",
+    hint: "It opens on the Photo page, where you set its details before uploading it.",
+  },
+};
+
+/** A large target to drop photos on, which also opens the file picker, for many photos at once or one. */
+export function DropZone({ onFiles, disabled = false, single = false }: DropZoneProps) {
+  const text = TEXT[single ? "single" : "many"];
   const [over, setOver] = useState(false);
   const take = (files: FileList | null) => {
     if (files && files.length > 0) onFiles([...files]);
@@ -35,13 +49,11 @@ export function DropZone({ onFiles, disabled = false }: DropZoneProps) {
       }}
     >
       <ImagesIcon className="text-muted-foreground size-8" aria-hidden />
-      <span className="font-medium">Drop JPEG photos here, or click to choose them</span>
-      <span className="text-muted-foreground text-sm">
-        Each one is analyzed, uploaded to R2 and added to the batch in turn.
-      </span>
+      <span className="font-medium">{text.title}</span>
+      <span className="text-muted-foreground text-sm">{text.hint}</span>
       <input
         type="file"
-        multiple
+        multiple={!single}
         accept="image/jpeg,.jpg,.jpeg"
         disabled={disabled}
         className="sr-only"

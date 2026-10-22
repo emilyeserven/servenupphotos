@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { RefreshCwIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
 import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import type { PhotoIdentity } from "@/api/photos";
@@ -32,6 +32,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useObjectUrl } from "@/hooks/use-object-url";
+import { usePendingPhotoStore } from "@/stores/pending-photo";
 
 interface PhotoSearch {
   /**
@@ -331,6 +332,10 @@ function PhotoField({ name, error, pending, onChange, onBlur }: PhotoFieldProps)
   const errorId = `${name}-error`;
   const hintId = `${name}-hint`;
   const chosen = previewUrl !== null && !error;
+  usePendingPhoto((photo) => {
+    setPreviewFile(photo);
+    onChange(photo);
+  });
 
   return (
     <div className="flex flex-col gap-2">
@@ -365,6 +370,25 @@ function PhotoField({ name, error, pending, onChange, onBlur }: PhotoFieldProps)
       </p>
     </div>
   );
+}
+
+/** Picks up a photo chosen with the sidebar's Upload button, as if it had been chosen here. */
+function usePendingPhoto(onPhoto: (photo: File) => void) {
+  const pending = usePendingPhotoStore((state) => state.photo);
+  const take = usePendingPhotoStore((state) => state.take);
+  const latest = useRef(onPhoto);
+  useEffect(() => {
+    latest.current = onPhoto;
+  });
+  useEffect(() => {
+    if (!pending) return;
+    // After this render's other effects, so StrictMode's trial unmount can't revoke its preview.
+    const timer = setTimeout(() => {
+      const photo = take();
+      if (photo) latest.current(photo);
+    });
+    return () => clearTimeout(timer);
+  }, [pending, take]);
 }
 
 function PhotoHint({ id, chosen }: { id: string; chosen: boolean }) {

@@ -1,6 +1,7 @@
 # Bulk Upload
 
-**Bulk Upload** (`/bulk-upload`) adds many photos to the batch at once. Drop JPEGs on it or click it to choose them,
+**Bulk Upload** (`/bulk-upload`, or the right half of the sidebar's **Upload** button, which opens it in a modal) adds
+many photos to the batch at once. Drop JPEGs on it or click it to choose them,
 and each one goes through the same steps as a photo on the [Photo page](saving-to-github.md), with defaults in place of
 the choices made there:
 
@@ -18,7 +19,11 @@ Each row shows the step it's on, and the bar above them how many are done. The t
 photo as it's saved, the same as with Add to Batch, and **Commit** adds them all to `ALLPHOTOS.json` at once.
 
 Once a photo is added, its **Edit** button opens it on Edit Photo to give it a title, a different square, albums or
-tags. The queue keeps going while you're there, and is still there when you come back (until the page is reloaded).
+tags. The queue keeps going while you're there, or with the modal closed, and is still there when you come back, on the page
+or in the modal (until the app is reloaded).
+
+The main half of the sidebar's **Upload** button opens a modal for one photo instead; choosing it opens it on the Photo
+page, analyzed as if it had been chosen there.
 
 When a step fails, the row says why and **Retry** picks up from that step: a photo that was uploaded isn't uploaded
 again. Anything but a JPEG fails straight away. When R2 already has a different photo under the same name, the row
