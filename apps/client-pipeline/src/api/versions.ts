@@ -154,7 +154,7 @@ export const versionPreviewQuery = (photo: File, version: VersionName) =>
   });
 
 /** Where the remade versions of a photo in R2 ended up, by version name. */
-interface RegenerateResult {
+export interface RegenerateResult {
   key: string;
   versions: Partial<Record<PublishedName, { key: string; url: string }>>;
 }

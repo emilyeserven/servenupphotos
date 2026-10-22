@@ -4,7 +4,7 @@ import type { PhotoPlace } from "@/api/places";
 import { requestJson } from "@/api/settings";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
-interface PhotoData {
+export interface PhotoData {
   name: string;
   /** The photo's original file name. */
   file: string;

@@ -1,63 +1,73 @@
 import { useForm } from "@tanstack/react-form";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { CheckIcon, CopyIcon, ImageOffIcon } from "lucide-react";
-import { Fragment, useState } from "react";
-import { missingSettings } from "@/api/connections";
+import { Fragment, type ReactNode, useState } from "react";
 import type { BucketImage } from "@/api/photos";
-import { settingsQuery } from "@/api/settings";
 import { PUBLISHED } from "@/api/versions";
 import {
   type CloudflareResponse,
-  type UploadMutation,
   type UploadRequest,
   type UploadResponse,
   UploadError,
   renamePhoto,
 } from "@/api/upload";
-import { QueryResult } from "@/components/query-result";
+import { type R2Upload, sameNameError } from "@/components/r2-upload/use-r2-upload";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import type { Crop } from "@/lib/crop";
 
-interface R2UploadProps {
+interface R2DetailsProps {
+  r2: R2Upload;
   photo: File;
-  /** Owned by the page, which puts the uploaded photo's URL into the sanitized EXIF. */
-  upload: UploadMutation;
-  /** The square the thumbnail is cut from, once the crop card has picked one. */
-  crop: Crop | null;
+  /** The R2 settings still missing, which stop any upload. */
+  missing: string[];
 }
 
-/** Uploads an analyzed photo to the R2 bucket, once R2 is set up in Settings. */
-export function R2Upload({ photo, upload, crop }: R2UploadProps) {
-  const settings = useQuery(settingsQuery);
+/** What the R2 button does and did: the upload's links, or why it can't upload or failed. */
+export function R2Details({ r2, photo, missing }: R2DetailsProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Upload to R2</CardTitle>
-        <CardDescription>
+    <>
+      <div className="flex flex-col gap-1">
+        <p className="font-medium">Upload to R2</p>
+        <p className="text-muted-foreground">
           Puts the original photo, its resized WEBP versions and its Square Thumbnail in your bucket
-          and gives you their links.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <QueryResult query={settings} pendingLabel="Checking R2 settings…">
-          {(data) => {
-            const missing = missingSettings("r2", data);
-            if (missing.length > 0) return <R2NotSetUp missing={missing} />;
-            return <UploadForm photo={photo} upload={upload} crop={crop} />;
-          }}
-        </QueryResult>
-      </CardContent>
-    </Card>
+          and gives you their links. Moving the square afterwards remakes the Square Thumbnail.
+        </p>
+      </div>
+      <R2DetailsBody r2={r2} photo={photo} missing={missing} />
+    </>
+  );
+}
+
+function R2DetailsBody({ r2, photo, missing }: R2DetailsProps) {
+  if (missing.length > 0) return <R2NotSetUp missing={missing} />;
+  if (r2.uploaded) return <Uploaded r2={r2} result={r2.uploaded} />;
+  return <NotUploaded r2={r2} photo={photo} />;
+}
+
+/** The upload under way, why it failed, or a prompt for a new name. */
+function NotUploaded({ r2, photo }: Omit<R2DetailsProps, "missing">) {
+  const sameName = sameNameError(r2.upload.error);
+  if (sameName) {
+    const request = r2.upload.variables ?? { photo };
+    return <SameNamePrompt error={sameName} photo={request.photo} onUpload={r2.send} />;
+  }
+  if (r2.upload.isPending) return <Pending>Uploading the photo and its versions…</Pending>;
+  return <UploadFailure error={r2.upload.error} />;
+}
+
+function Pending({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-muted-foreground flex items-center gap-2">
+      <Spinner />
+      {children}
+    </p>
   );
 }
 
 function R2NotSetUp({ missing }: { missing: string[] }) {
   return (
-    <p className="text-muted-foreground text-sm">
+    <p className="text-muted-foreground">
       R2 isn't set up yet: add the {missing.join(", ")} in{" "}
       <Link to="/settings" className="text-foreground underline underline-offset-4">
         Settings
@@ -65,29 +75,6 @@ function R2NotSetUp({ missing }: { missing: string[] }) {
       .
     </p>
   );
-}
-
-function UploadForm({ photo, upload, crop }: R2UploadProps) {
-  if (upload.isSuccess) return <Uploaded result={upload.data} />;
-  // Retries send what was last tried, so a new name sticks, with the crop as it is now.
-  const request: UploadRequest = upload.variables ?? { photo };
-  const send = (next: UploadRequest) => upload.mutate(crop ? { ...next, crop } : next);
-  const sameName = sameNameError(upload.error);
-  if (sameName) {
-    return <SameNamePrompt error={sameName} photo={request.photo} onUpload={send} />;
-  }
-  return (
-    <div className="flex flex-col gap-2">
-      <UploadButton pending={upload.isPending} onClick={() => send(request)} />
-      <UploadFailure error={upload.error} />
-    </div>
-  );
-}
-
-/** error when it stopped the upload because the bucket has a photo with the same name. */
-function sameNameError(error: Error | null): UploadError | undefined {
-  if (error instanceof UploadError && error.sameName.length > 0) return error;
-  return undefined;
 }
 
 /** Why the upload failed, with what Cloudflare actually answered when it rejected it. */
@@ -274,19 +261,11 @@ function ExistingPhoto({ image }: { image: BucketImage }) {
   );
 }
 
-function UploadButton({ pending, onClick }: { pending: boolean; onClick: () => void }) {
-  return (
-    <Button className="self-start" disabled={pending} onClick={onClick}>
-      {pending && <Spinner />}
-      {pending ? "Uploading…" : "Upload to R2"}
-    </Button>
-  );
-}
-
-function Uploaded({ result }: { result: UploadResponse }) {
+function Uploaded({ r2, result }: { r2: R2Upload; result: UploadResponse }) {
   const [imageFailed, setImageFailed] = useState(false);
   return (
     <div className="flex flex-col gap-3">
+      <RemakeStatus r2={r2} />
       <div className="flex gap-2">
         <Input
           readOnly
@@ -320,11 +299,25 @@ function Uploaded({ result }: { result: UploadResponse }) {
         <img
           src={result.url}
           alt="The uploaded photo, loaded from R2"
-          className="max-h-80 w-full rounded-lg border object-contain"
+          className="max-h-48 w-full rounded-lg border object-contain"
           onError={() => setImageFailed(true)}
         />
       )}
     </div>
+  );
+}
+
+/** Whether the square has moved since the Square Thumbnail was cut, or is being remade, or failed to be. */
+function RemakeStatus({ r2 }: { r2: R2Upload }) {
+  const { remake } = r2;
+  if (remake.isPending) return <Pending>Remaking the Square Thumbnail…</Pending>;
+  if (remake.isError) return <p className="text-destructive">{remake.error.message}</p>;
+  if (r2.action !== "remake") return null;
+  return (
+    <p className="text-amber-700 dark:text-amber-400">
+      The square has moved since the Square Thumbnail was cut. Remake thumbnail cuts it and its
+      Thumbnail Preview again from the new square, over the ones in R2.
+    </p>
   );
 }
 
