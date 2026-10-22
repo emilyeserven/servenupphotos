@@ -191,7 +191,7 @@ function Unreadable({ calendar: { unreadable } }: { calendar: SocialCalendar }) 
   return (
     <p className="text-destructive">
       {count(unreadable.length, "photo file")} couldn&apos;t be read, so nothing can be saved:{" "}
-      {unreadable.map((f) => f.path).join(", ")}
+      {unreadable.map((f) => `${f.path} (${f.error})`).join(", ")}
     </p>
   );
 }
