@@ -4,6 +4,7 @@ import { CalendarClock, ImageOff, RotateCcw } from "lucide-react";
 import { useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
+import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { TimelineHistogram } from "@/components/timeline-histogram";
 import { Button } from "@/components/ui/button";
@@ -111,7 +112,7 @@ function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: Imag
 }
 
 /**
- * A photo's square thumbnail, title, comment, date and camera. The thumbnail and the title open
+ * A photo's square thumbnail, title, comment, place, date and camera. The thumbnail and the title open
  * the photo in the lightbox; photos without resized versions in R2 have nothing to open.
  */
 function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto) => void }) {
@@ -128,6 +129,11 @@ function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto)
             lines={1}
             className="text-xs text-muted-foreground"
           />
+        )}
+        {photo.location && (
+          <p className="truncate text-xs text-muted-foreground">
+            <PhotoLocation location={photo.location} />
+          </p>
         )}
       </div>
       <span className="shrink-0 self-baseline text-xs text-muted-foreground">
