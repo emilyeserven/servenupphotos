@@ -48,10 +48,20 @@ export interface InFlightPullRequest {
   url: string;
   branch: string;
   headSha: string;
+  /** The branch it merges into, which changed files' `base` is read from. */
+  baseBranch?: string;
+}
+
+/** A changed file as it is on the pull request's base branch; both unset for an added file. */
+export interface BaseFile {
+  /** The file's JSON on the base branch, at its old path when the pull request renames it. */
+  base?: unknown;
+  /** Why `base` is missing, when the file should be on the base branch. */
+  baseError?: string;
 }
 
 /** One photo JSON file in the pull request, as the backend reads it. */
-export interface InFlightFileRead {
+export interface InFlightFileRead extends BaseFile {
   path: string;
   /** GitHub's change status, such as `added` or `modified`. */
   status: string;
@@ -141,7 +151,7 @@ export interface InFlightGroups {
 }
 
 /** One album or tag file in the pull request, as the backend reads it. */
-interface InFlightGroupFileRead {
+interface InFlightGroupFileRead extends BaseFile {
   path: string;
   status: string;
   fileUrl: string;

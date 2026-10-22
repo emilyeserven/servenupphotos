@@ -35,6 +35,9 @@ type InFlightPullRequest struct {
 	URL     string `json:"url"`
 	Branch  string `json:"branch"`
 	HeadSHA string `json:"headSha"`
+	// BaseBranch is the branch the pull request merges into, which changed
+	// files' Base is read from.
+	BaseBranch string `json:"baseBranch"`
 }
 
 // InFlightFile is one photo JSON file in the pull request.
@@ -54,6 +57,18 @@ type InFlightFile struct {
 	// saved.
 	ImageURL string `json:"imageUrl,omitempty"`
 	ImageKey string `json:"imageKey,omitempty"`
+	BaseFile
+}
+
+// BaseFile is a changed file as it is on the pull request's base branch, so
+// the page can show what the pull request changes. Both are empty for a file
+// the pull request adds.
+type BaseFile struct {
+	// Base is the file's JSON on the base branch, at its old path when the
+	// pull request renames it.
+	Base json.RawMessage `json:"base,omitempty"`
+	// BaseError says why Base is missing, when the file should be there.
+	BaseError string `json:"baseError,omitempty"`
 }
 
 // InFlightAllPhotos is a combined list CommitCombined builds, such as AllPhotosFile, read
@@ -100,6 +115,10 @@ type InFlightGroupFile struct {
 	FileURL string          `json:"fileUrl"`
 	Data    json.RawMessage `json:"data,omitempty"`
 	Error   string          `json:"error,omitempty"`
+	BaseFile
+	// basePath is the file's path on the base branch, or "" when the pull
+	// request adds it.
+	basePath string
 }
 
 // inFlightPull is the part of a listed pull request InFlight uses.
@@ -121,6 +140,21 @@ type pullFile struct {
 	Filename string `json:"filename"`
 	Status   string `json:"status"`
 	BlobURL  string `json:"blob_url"`
+	// PreviousFilename is the file's old path, when Status is "renamed".
+	PreviousFilename string `json:"previous_filename"`
+}
+
+// basePath is f's path on the pull request's base branch, or "" when the
+// pull request adds it.
+func (f pullFile) basePath() string {
+	switch f.Status {
+	case "added", "copied", "removed":
+		return ""
+	case "renamed":
+		return f.PreviousFilename
+	default:
+		return f.Filename
+	}
 }
 
 // InFlight finds the open pull request titled PullRequestTitle in gh's
@@ -153,6 +187,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 	}
 	result.PullRequest = &InFlightPullRequest{
 		Number: pr.Number, Title: pr.Title, URL: pr.HTMLURL, Branch: pr.Head.Ref, HeadSHA: pr.Head.SHA,
+		BaseBranch: pr.Base.Ref,
 	}
 
 	files, perr := c.listPullFiles(ctx, t, pr.Number)
@@ -169,10 +204,11 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		file := InFlightFile{Path: f.Filename, Status: f.Status, FileURL: f.BlobURL}
 		file.Data, file.Error = c.readJSON(ctx, t, f.Filename, pr.Head.SHA)
 		file.PhotoName, file.ImageURL, file.ImageKey = photoRef(f.Filename, file.Data)
+		file.BaseFile = c.readBase(ctx, t, f.basePath(), pr.Base.Ref)
 		result.Files = append(result.Files, file)
 	}
 	for _, g := range []*InFlightGroups{&result.Albums, &result.Tags} {
-		c.readInFlightGroups(ctx, t, g, pr.Head.SHA)
+		c.readInFlightGroups(ctx, t, g, pr.Head.SHA, pr.Base.Ref)
 	}
 	return result, nil
 }
@@ -191,14 +227,34 @@ func (g *InFlightGroups) add(f pullFile) {
 	if f.Status == "removed" || path.Dir(f.Filename) != g.Folder || !strings.EqualFold(path.Ext(f.Filename), ".json") {
 		return
 	}
-	g.Files = append(g.Files, InFlightGroupFile{Path: f.Filename, Status: f.Status, FileURL: f.BlobURL})
+	g.Files = append(g.Files, InFlightGroupFile{Path: f.Filename, Status: f.Status, FileURL: f.BlobURL, basePath: f.basePath()})
 }
 
-// readInFlightGroups reads g's files at ref.
-func (c *Client) readInFlightGroups(ctx context.Context, t target, g *InFlightGroups, ref string) {
+// readInFlightGroups reads g's files at ref, and the ones the pull request
+// changes at base too.
+func (c *Client) readInFlightGroups(ctx context.Context, t target, g *InFlightGroups, ref, base string) {
 	for i := range g.Files {
 		g.Files[i].Data, g.Files[i].Error = c.readJSON(ctx, t, g.Files[i].Path, ref)
+		g.Files[i].BaseFile = c.readBase(ctx, t, g.Files[i].basePath, base)
 	}
+}
+
+// readBase reads file at the base branch base, or returns nothing when file
+// is "", for a file the pull request adds.
+func (c *Client) readBase(ctx context.Context, t target, file, base string) BaseFile {
+	if file == "" || base == "" {
+		return BaseFile{}
+	}
+	content, found, msg := c.readFile(ctx, t, file, base)
+	switch {
+	case !found:
+		return BaseFile{BaseError: "The file isn't on " + base + "."}
+	case msg != "":
+		return BaseFile{BaseError: msg}
+	case !json.Valid(content):
+		return BaseFile{BaseError: "The file on " + base + " isn't valid JSON."}
+	}
+	return BaseFile{Base: json.RawMessage(content)}
 }
 
 // photoRef returns the "file" field of data, or file's name without .json,

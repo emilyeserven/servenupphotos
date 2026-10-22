@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import {
+  type BaseFile,
   type CombinedFile,
   type InFlightFile,
   type InFlightGroups,
@@ -22,6 +23,7 @@ import {
 import { settingsQuery } from "@/api/settings";
 import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 import { JsonCodeBlock } from "@/components/json-code-block";
+import { JsonDiffBlock } from "@/components/json-diff-block";
 import {
   AllPhotosRebuild,
   CommitButton,
@@ -105,6 +107,7 @@ function InFlightCard() {
     void inFlight.refetch();
   };
   const shown = withoutRemoved(inFlight.data, removedPaths);
+  const baseBranch = baseBranchOf(shown);
   const showAllPhotos = Route.useSearch({ select: (search) => search.allPhotos === true });
 
   const files = (
@@ -129,13 +132,24 @@ function InFlightCard() {
           file={file}
           images={shown.images}
           rebuilding={rebuild.rebuilding}
+          baseBranch={baseBranch}
           onRemoved={onRemoved}
         />
       ))}
       {shown && (
         <>
-          <GroupFiles title="Albums" groups={shown.albums} rebuilding={rebuild.rebuilding} />
-          <GroupFiles title="Tags" groups={shown.tags} rebuilding={rebuild.rebuilding} />
+          <GroupFiles
+            title="Albums"
+            groups={shown.albums}
+            rebuilding={rebuild.rebuilding}
+            baseBranch={baseBranch}
+          />
+          <GroupFiles
+            title="Tags"
+            groups={shown.tags}
+            rebuilding={rebuild.rebuilding}
+            baseBranch={baseBranch}
+          />
         </>
       )}
     </div>
@@ -168,6 +182,11 @@ function RemovalNotice({
       <AllPhotosRebuild status={rebuild} />
     </RemovedNotice>
   );
+}
+
+/** The branch the pull request merges into, when there is one. */
+function baseBranchOf(data: InFlightResponse | undefined): string | undefined {
+  return data?.pullRequest?.baseBranch;
 }
 
 /** data without the files removed on this visit, which GitHub may still list for a while. */
@@ -313,12 +332,15 @@ function FileSection({
   file,
   images,
   rebuilding,
+  baseBranch,
   onRemoved,
 }: {
   file: InFlightFile;
   images: InFlightImages;
   /** Whether ALLPHOTOS.json is being committed, so a missing entry may be on its way. */
   rebuilding: boolean;
+  /** The branch the pull request merges into, which changed files are compared against. */
+  baseBranch?: string;
   onRemoved: (result: RemoveResult) => void;
 }) {
   return (
@@ -339,13 +361,38 @@ function FileSection({
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <PhotoImages file={file} images={images} />
-        {file.error ? (
-          <p className="text-destructive text-sm">{file.error}</p>
-        ) : (
-          <JsonCodeBlock value={file.data} title={file.path} />
-        )}
+        <FileJson file={file} baseBranch={baseBranch} />
       </div>
     </section>
+  );
+}
+
+/**
+ * A file's JSON from the pull request, with what it changes against the base branch when the pull
+ * request changes it rather than adds it, or why it couldn't be read.
+ */
+function FileJson({
+  file,
+  baseBranch = "the base branch",
+}: {
+  file: BaseFile & { path: string; data?: unknown; error?: string };
+  baseBranch?: string;
+}) {
+  if (file.error) return <p className="text-destructive text-sm">{file.error}</p>;
+  if (file.base !== undefined) {
+    return (
+      <JsonDiffBlock value={file.data} base={file.base} title={file.path} baseBranch={baseBranch} />
+    );
+  }
+  return (
+    <div className="flex min-w-0 flex-col gap-2">
+      {file.baseError && (
+        <p className="text-muted-foreground text-xs">
+          Couldn&apos;t compare it with {baseBranch}: {file.baseError}
+        </p>
+      )}
+      <JsonCodeBlock value={file.data} title={file.path} />
+    </div>
   );
 }
 
@@ -529,11 +576,14 @@ function GroupFiles({
   title,
   groups,
   rebuilding,
+  baseBranch,
 }: {
   title: string;
   groups: InFlightGroups;
   /** Whether the combined files are being committed, so a missing entry may be on its way. */
   rebuilding: boolean;
+  /** The branch the pull request merges into, which changed files are compared against. */
+  baseBranch?: string;
 }) {
   if (groups.files.length === 0) return null;
   const allFile = fileName(groups.all.path);
@@ -554,11 +604,7 @@ function GroupFiles({
             <span className="text-muted-foreground font-normal">{file.status}</span>
             <AllPhotosMark inAllPhotos={file.inAll} rebuilding={rebuilding} allFile={allFile} />
           </h3>
-          {file.error ? (
-            <p className="text-destructive text-sm">{file.error}</p>
-          ) : (
-            <JsonCodeBlock value={file.data} title={file.path} />
-          )}
+          <FileJson file={file} baseBranch={baseBranch} />
         </div>
       ))}
     </section>

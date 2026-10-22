@@ -10,8 +10,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # On pull requests, skips the jobs whose files didn't change. A skipped job
+  # still counts as passing for required checks. Pushes to main run both.
+  changes:
+    name: Changed files
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      typescript: ${{ steps.filter.outputs.typescript }}
+      go: ${{ steps.filter.outputs.go }}
+    steps:
+      - id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@v3
+        with:
+          # A file counts only if it matches every pattern of a filter.
+          predicate-quantifier: every
+          filters: |
+            typescript:
+              # oxfmt also checks the YAML, JSON and Markdown in be-pipeline,
+              # so only its Go files are left out.
+              - '**'
+              - '!apps/be-pipeline/**/*.go'
+              - '!apps/be-pipeline/go.{mod,sum}'
+            go:
+              # One pattern, since a file has to match all of them.
+              - '{apps/be-pipeline/**,.github/workflows/ci.yml}'
+
   typescript:
     name: TypeScript (lint, format, typecheck, fallow)
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.typescript == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -29,11 +59,15 @@ jobs:
         run: pnpm typecheck
       - name: fallow
         run: pnpm fallow
+      # bff-pipeline's build is the same tsc pass as its typecheck, so only
+      # the Vite apps are built.
       - name: build
-        run: pnpm build
+        run: pnpm --filter @servenup/portfolio --filter @servenup/client-pipeline build
 
   go:
     name: Go (be-pipeline)
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.go == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
