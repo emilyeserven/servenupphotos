@@ -17,6 +17,7 @@ import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
@@ -26,6 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { notParentsOf } from "@/lib/place-hierarchy";
 import { placePhotoCounts, shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
 
@@ -94,19 +96,27 @@ function idTaken(id: string, places: Place[]): string | undefined {
 }
 
 /** A new place's fields, before anything is typed. */
-const NO_PLACE: Place = { id: "", name: "", description: "" };
+const NO_PLACE: Place = { id: "", name: "", description: "", parent: "", city: "", country: "" };
+
+/** The fields the place form edits, as typed. */
+type Draft = Required<Omit<Place, "id">>;
+
+function draftOf(place: Place): Draft {
+  const { name, description, parent = "", city = "", country = "" } = place;
+  return { name, description, parent, city, country };
+}
 
 /** The place form's fields as typed, the place they'd save, and saving it. */
 function usePlaceForm(place: Place | null, places: Place[]) {
   const queryClient = useQueryClient();
   const initial = place ?? NO_PLACE;
-  const [draft, setDraft] = useState({ name: initial.name, description: initial.description });
+  const [draft, setDraft] = useState<Draft>(() => draftOf(initial));
   const save = useMutation({
     ...savePlaceMutation,
     onSuccess: (result) => cacheSavedEntry(queryClient, "places", result),
   });
   const next: Place = { id: place ? place.id : entryId(draft.name), ...draft };
-  const set = (field: keyof typeof draft, value: string) => {
+  const set = (field: keyof Draft, value: string) => {
     save.reset();
     setDraft((d) => ({ ...d, [field]: value }));
   };
@@ -145,11 +155,63 @@ function PlaceFormCard({ folder, place, places, onDone }: PlaceFormCardProps) {
             disabled={form.save.isPending}
             onChange={(value) => form.set("description", value)}
           />
+          <ParentField form={form} id={form.next.id} places={places} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <LabeledInput
+              id="place-city"
+              label="City"
+              placeholder="Optional, such as Seoul"
+              value={form.draft.city}
+              disabled={form.save.isPending}
+              onChange={(value) => form.set("city", value)}
+            />
+            <LabeledInput
+              id="place-country"
+              label="Country"
+              placeholder="Optional, such as South Korea"
+              value={form.draft.country}
+              disabled={form.save.isPending}
+              onChange={(value) => form.set("country", value)}
+            />
+          </div>
+          <p className="text-muted-foreground -mt-2 text-xs">
+            A photo given this place takes its city and country, from the less specific of its
+            places.
+          </p>
           <FormStatus form={form} />
           <FormButtons form={form} isNew={!place} onDone={onDone} />
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+/**
+ * The less specific place this one is in, such as the palace a gate is in. Choosing this place on
+ * a photo adds the parent as its second place. Places in this one can't be its parent.
+ */
+function ParentField({ form, id, places }: { form: PlaceForm; id: string; places: Place[] }) {
+  const ruledOut = notParentsOf(places, id);
+  const options = places
+    .filter((place) => !ruledOut.has(place.id))
+    .toSorted((a, b) => a.name.localeCompare(b.name))
+    .map((place) => ({ value: place.id, label: place.name }));
+  return (
+    <div className="flex flex-col gap-2">
+      <span id="place-parent-label" className="text-sm font-medium">
+        In
+      </span>
+      <SingleCombobox
+        id="place-parent"
+        aria-labelledby="place-parent-label"
+        options={options}
+        value={form.draft.parent}
+        onChange={(parent) => form.set("parent", parent)}
+        disabled={form.save.isPending}
+        placeholder="Optional, the place it's in, such as Gyeongbokgung Palace"
+        emptyText="No other places."
+      />
+    </div>
   );
 }
 
@@ -311,6 +373,7 @@ function PlaceTable({ data, onEdit }: { data: PlacesResponse; onEdit: (place: Pl
               key={place.id}
               place={place}
               localization={localizationOf(localizations, place)}
+              parent={places.find((p) => p.id === place.parent)}
               photos={counts.get(place.id) ?? 0}
               onEdit={() => onEdit(place)}
             />
@@ -333,6 +396,12 @@ function UnreadableFiles({ files }: { files: PlacesResponse["places"] }) {
     ));
 }
 
+/** What's known about where the place is, after its ID: what it's in, its city and its description. */
+function placeNotes(place: Place, parent: Place | undefined): string[] {
+  const where = [place.city, place.country].filter(Boolean).join(", ");
+  return [parent && `in ${parent.name}`, where, place.description].filter(Boolean) as string[];
+}
+
 function localizationOf(localizations: Localization[], place: Place): Localization | undefined {
   const id = localizationId("place", place.name, place.id);
   return localizations.find((l) => l.id === id);
@@ -341,18 +410,20 @@ function localizationOf(localizations: Localization[], place: Place): Localizati
 interface PlaceRowProps {
   place: Place;
   localization?: Localization;
+  /** The place it's in, when it has one. */
+  parent?: Place;
   photos: number;
   onEdit: () => void;
 }
 
-function PlaceRow({ place, localization, photos, onEdit }: PlaceRowProps) {
+function PlaceRow({ place, localization, parent, photos, onEdit }: PlaceRowProps) {
   return (
     <TableRow>
       <TableCell className="whitespace-normal">
         <div className="font-medium">{place.name}</div>
         <div className="text-muted-foreground text-xs">
           <code>{place.id}</code>
-          {place.description && ` · ${place.description}`}
+          {placeNotes(place, parent).map((note) => ` · ${note}`)}
         </div>
       </TableCell>
       <TableCell>

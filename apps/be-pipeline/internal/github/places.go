@@ -52,6 +52,13 @@ type Place struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	// Parent is the ID of the less specific place this one is in, such as
+	// Gyeongbokgung Palace for Geunjeongmun Gate; "" for none.
+	Parent string `json:"parent"`
+	// City and Country are where the place is, which a photo given the place
+	// takes as its city and country; "" when not set.
+	City    string `json:"city"`
+	Country string `json:"country"`
 }
 
 // Localization types: what a localization is of.
@@ -190,7 +197,10 @@ func (c *Client) SavePlace(ctx context.Context, gh settings.GitHub, place Place)
 		return EntryResult{}, perr
 	}
 	return c.saveEntry(ctx, gh, Places, place.ID, place, func(others []Entry) *PublishError {
-		return placeNameTaken(others, place)
+		if perr := placeNameTaken(others, place); perr != nil {
+			return perr
+		}
+		return badParent(others, place)
 	})
 }
 
@@ -275,11 +285,47 @@ func placeNameTaken(others []Entry, place Place) *PublishError {
 	return nil
 }
 
+// badParent fails when place's parent isn't another place in others, or
+// when place is already above its parent, which would make a loop.
+func badParent(others []Entry, place Place) *PublishError {
+	if place.Parent == "" {
+		return nil
+	}
+	parents := map[string]string{}
+	for _, e := range others {
+		var other Place
+		if json.Unmarshal(e.Data, &other) == nil {
+			parents[other.ID] = other.Parent
+		}
+	}
+	if _, ok := parents[place.Parent]; !ok {
+		return publishErr(http.StatusBadRequest, "There's no place with the ID %q to put this one in.", place.Parent)
+	}
+	// Walks up from the parent; reaching place means place is above its own parent.
+	for id, seen := place.Parent, 0; id != "" && seen <= len(parents); id, seen = parents[id], seen+1 {
+		if id == place.ID {
+			return publishErr(http.StatusBadRequest, "A place can't be in itself or in a place that's in it.")
+		}
+	}
+	return nil
+}
+
 // validPlace checks place and returns it trimmed, as it will be saved.
 func validPlace(place Place) (Place, *PublishError) {
-	p := Place{ID: strings.TrimSpace(place.ID), Name: strings.TrimSpace(place.Name), Description: strings.TrimSpace(place.Description)}
+	p := Place{
+		ID: strings.TrimSpace(place.ID), Name: strings.TrimSpace(place.Name), Description: strings.TrimSpace(place.Description),
+		Parent: strings.TrimSpace(place.Parent), City: strings.TrimSpace(place.City), Country: strings.TrimSpace(place.Country),
+	}
 	if perr := validEntryID("place", p.ID); perr != nil {
 		return p, perr
+	}
+	if p.Parent != "" {
+		if perr := validEntryID("parent place", p.Parent); perr != nil {
+			return p, perr
+		}
+	}
+	if utf8.RuneCountInString(p.City) > maxGroupNameLength || utf8.RuneCountInString(p.Country) > maxGroupNameLength {
+		return p, publishErr(http.StatusBadRequest, "Keep the city and country to %d characters each.", maxGroupNameLength)
 	}
 	if p.Name == "" {
 		return p, publishErr(http.StatusBadRequest, "Give the place a name.")

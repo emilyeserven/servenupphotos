@@ -169,6 +169,7 @@ export function PhotoDetailsCard({
           <PlaceFields
             value={value}
             disabled={disabled}
+            exifCountry={exifPlace.country}
             onChange={(place) => onChange({ ...value, ...place })}
           />
           <CityAndCountry exifPlace={exifPlace} value={value} field={field} />

@@ -7,13 +7,18 @@ albums and tags. The portfolio shows each photo's places, and writes places, cit
 ## Places
 
 A place is somewhere photos are taken, more exactly than their city, such as Gyeongbokgung Palace. Each is one file,
-`places/<id>.json`, `{ "id", "name", "description" }`, and **Commit** combines them into `places/PLACES.json`. Its ID
+`places/<id>.json`, `{ "id", "name", "description", "parent", "city", "country" }`, and **Commit** combines them into `places/PLACES.json`. Its ID
 is made from its name the way album IDs are (`Gyeongbokgung Palace` becomes `gyeongbokgung-palace`); a name with no
 letter or number from a to z, such as `경복궁`, gets its UTF-8 bytes in hex instead. Two places can't share a name,
 ignoring case.
 
-The Places page adds a place, or changes one's name and description (its ID stays), and lists every place with its
-local script and how many photos list it. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
+`parent` is the ID of the less specific place it's in, such as Gyeongbokgung Palace for Geunjeongmun Gate, or `""`.
+A place can't be in itself or in a place that's in it, and its parent must be a place. `city` and `country` are
+where it is, or `""`; older place files don't have these three, and read as empty.
+
+The Places page adds a place, or changes one's name, description, parent (**In**, which lists only places that aren't
+in it), city and country (its ID stays), and lists every place with what it's in, its city, its local script and how
+many photos list it. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
 open **Add photo data** pull request, or opens one, and the list reads the place files themselves
 (`GET /api/places` → `GET /places`, at the pull request's head), so a place shows before it's committed to
 `PLACES.json`.
@@ -28,6 +33,26 @@ Gyeongbokgung Palace. Typing a name that isn't a place offers **Add “…” as
 “In Gyeongbokgung Palace by Geunjeongmun Gate”, or “Near Gyeongbokgung” with one place and a relation. With two
 places, **Swap places** swaps which place is first and which second, leaving each relation where it was: “In
 Gyeongbokgung Palace by Geunjeongmun Gate” becomes “In Geunjeongmun Gate by Gyeongbokgung Palace”.
+
+### Place hierarchy and city
+
+Choosing a place on Edit Photo or the Photo page follows the places' parents:
+
+- **The parent comes along.** Choosing a place that has a parent, when no other place is chosen, adds the parent as
+  the second place with "in" (or fills an empty second row), so choosing Geunjeongmun Gate gives “In Geunjeongmun Gate
+  in Gyeongbokgung Palace”.
+- **Specific first.** Choosing a place when the first place is one the second is in swaps the two places, so the more
+  specific one is first. **Swap places** still swaps them by hand.
+- **Offering a parent.** When two places are chosen and neither is in the other, it asks “Is Gwanghwamun Square in
+  Gyeongbokgung Palace?” with **Put it in Gyeongbokgung Palace**, which saves the first place with the second as its
+  parent. It isn't offered when the first place already has a parent.
+- **City and country.** Choosing a place fills in the photo's custom city and country from the least specific chosen
+  place (the one the other is in, or else the second), or else a place it's in, or else the other chosen place: the
+  first of them with a city or country. They can still be changed by hand afterwards.
+- **Localizing.** A chosen place with no localization yet gets a button beside it that opens a dialog for its
+  romanization, local pronunciation and local script, saved like a row on the Localizations page. It isn't shown
+  when the place's country, or else the photo's, is the United States (“United States”, “United States of America”,
+  “USA”, “US” or “America”); a photo with no country shows it.
 
 They're saved in the photo's JSON as `places`, next to `albums` and `tags`:
 

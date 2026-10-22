@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowUpDownIcon, PlusIcon, XIcon } from "lucide-react";
+import { ArrowUpDownIcon, FolderTreeIcon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import {
   cacheSavedEntry,
@@ -18,13 +18,27 @@ import {
 import { Button } from "@/components/ui/button";
 import { type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
+import { PlaceLocalizationDialog } from "@/components/place-localization-dialog";
 import { SingleCombobox } from "@/components/ui/single-combobox";
+import {
+  isUnitedStates,
+  placeCity,
+  isLocalized,
+  specificFirst,
+  unrelatedPair,
+  withParent,
+} from "@/lib/place-hierarchy";
 import { cn } from "@/lib/utils";
 
-/** What PlaceFields edits: the photo's places, and the place name the portfolio shows. */
+/**
+ * What PlaceFields edits: the photo's places, the place name kept with them, and its custom city
+ * and country, which choosing a place with a city fills in.
+ */
 interface PlaceValue {
   places: PhotoPlace[];
   placeName: string;
+  customCity: string;
+  customCountry: string;
 }
 
 /** A place row with nothing chosen yet. */
@@ -98,7 +112,7 @@ function usePlaces() {
     .map((place) => placeOption(place, localizations));
   /** True until the places are read, and while one is being added. */
   const busy = !read.data || save.isPending;
-  return { read, places, names: placeNames(places), options, save, create, busy };
+  return { read, places, localizations, names: placeNames(places), options, save, create, busy };
 }
 
 type Places = ReturnType<typeof usePlaces>;
@@ -107,6 +121,27 @@ interface PlaceFieldsProps {
   value: PlaceValue;
   onChange: (value: PlaceValue) => void;
   disabled: boolean;
+  /** The country from the photo's EXIF, for telling whether it was taken in the United States. */
+  exifCountry: string | null;
+}
+
+/**
+ * rows after the place in row `index` changed: its parent added as the second place when it's the
+ * only one, and the more specific place first.
+ */
+function afterChoosing(rows: PhotoPlace[], index: number, places: Place[]): PhotoPlace[] {
+  return specificFirst(withParent(rows, index, places), places);
+}
+
+/** The custom city and country, filled in from the places when one of them has a city. */
+function cityFor(value: PlaceValue, rows: PhotoPlace[], places: Place[]) {
+  const { city = "", country = "" } = placeCity(rows, places) ?? {};
+  return { customCity: city || value.customCity, customCountry: country || value.customCountry };
+}
+
+/** The country the photo was taken in, as far as is known: the custom one, or else the EXIF's. */
+function photoCountry(value: PlaceValue, exifCountry: string | null): string {
+  return value.customCountry.trim() || exifCountry || "";
 }
 
 /**
@@ -115,14 +150,19 @@ interface PlaceFieldsProps {
  * Gyeongbokgung"). A place can be added from what's typed. The first place's name is kept as the
  * place name the portfolio shows.
  */
-export function PlaceFields({ value, onChange, disabled }: PlaceFieldsProps) {
+export function PlaceFields({ value, onChange, disabled, exifCountry }: PlaceFieldsProps) {
   const all = usePlaces();
   // The place name as the photo was saved, kept while editing even once places replace it.
   const [oldName] = useState(() => (hasOldPlaceName(value) ? value.placeName.trim() : ""));
   const rows = value.places.length > 0 ? value.places : [NO_PLACE];
-  const setRows = (places: PhotoPlace[]) =>
-    onChange({ places, placeName: nextPlaceName(value, places, all.names) });
-  const setRow = (index: number, row: PhotoPlace) => setRows(rows.with(index, row));
+  const setRows = (places: PhotoPlace[], city = {}) =>
+    onChange({ ...value, ...city, places, placeName: nextPlaceName(value, places, all.names) });
+  const setRow = (index: number, row: PhotoPlace) => {
+    if (row.id === rows[index]?.id) return setRows(rows.with(index, row));
+    const next = afterChoosing(rows.with(index, row), index, all.places);
+    setRows(next, cityFor(value, next, all.places));
+  };
+  const country = photoCountry(value, exifCountry);
   return (
     <div className="flex flex-col gap-2">
       <PlaceLabel />
@@ -136,6 +176,7 @@ export function PlaceFields({ value, onChange, disabled }: PlaceFieldsProps) {
           disabled={disabled}
           onChange={(next) => setRow(index, next)}
           onRemove={index > 0 ? () => setRows(rows.toSpliced(index, 1)) : undefined}
+          country={country}
         />
       ))}
       <PlaceFooter
@@ -145,6 +186,7 @@ export function PlaceFields({ value, onChange, disabled }: PlaceFieldsProps) {
         onAddSecond={() => setRows([...rows, { relation: "by", id: "" }])}
         onSwap={() => setRows(swappedPlaces(rows))}
       />
+      <ParentOffer rows={rows} all={all} disabled={disabled} />
     </div>
   );
 }
@@ -173,10 +215,12 @@ interface PlaceRowProps {
   onChange: (row: PhotoPlace) => void;
   /** Removes the row; the first row has none. */
   onRemove?: () => void;
+  /** The country the photo was taken in, when known, to offer localizing places outside the US. */
+  country: string;
 }
 
 /** How the photo relates to one place, and which place. */
-function PlaceRow({ index, row, all, disabled, onChange, onRemove }: PlaceRowProps) {
+function PlaceRow({ index, row, all, disabled, onChange, onRemove, country }: PlaceRowProps) {
   const [error, setError] = useState<string>();
   const create = (name: string) => {
     setError(undefined);
@@ -200,6 +244,7 @@ function PlaceRow({ index, row, all, disabled, onChange, onRemove }: PlaceRowPro
           onChange={onChange}
           onCreate={create}
         />
+        <LocalizeButton id={row.id} all={all} country={country} disabled={disabled} />
         {onRemove && <RemoveButton disabled={disabled} onRemove={onRemove} />}
       </div>
       {shown && <p className="text-destructive text-sm">{shown}</p>}
@@ -220,7 +265,7 @@ function PlaceCombobox({
   disabled,
   onChange,
   onCreate,
-}: Omit<PlaceRowProps, "onRemove"> & { onCreate: (name: string) => void }) {
+}: Omit<PlaceRowProps, "onRemove" | "country"> & { onCreate: (name: string) => void }) {
   return (
     <div className="min-w-0 flex-1">
       <SingleCombobox
@@ -235,6 +280,62 @@ function PlaceCombobox({
         createLabel={(text) => `Add “${text}” as a place`}
         onCreate={onCreate}
       />
+    </div>
+  );
+}
+
+interface LocalizeButtonProps {
+  id: string;
+  all: Places;
+  country: string;
+  disabled: boolean;
+}
+
+/**
+ * Opens a dialog to localize the chosen place, when it has no localization yet and it, or else the
+ * photo, isn't in the United States.
+ */
+function LocalizeButton({ id, all, country, disabled }: LocalizeButtonProps) {
+  const place = all.places.find((p) => p.id === id);
+  if (!place || !needsLocalizing(place, all, country)) return null;
+  return <PlaceLocalizationDialog place={place} disabled={disabled} />;
+}
+
+/** Whether the place has no localization and isn't, as far as is known, in the United States. */
+function needsLocalizing(place: Place, all: Places, country: string): boolean {
+  return !isLocalized(place, all.localizations) && !isUnitedStates(place.country || country);
+}
+
+/**
+ * When two places are chosen and neither is in the other, offers to put the first in the second,
+ * so choosing the first again adds the second on its own.
+ */
+function ParentOffer({
+  rows,
+  all,
+  disabled,
+}: {
+  rows: PhotoPlace[];
+  all: Places;
+  disabled: boolean;
+}) {
+  const pair = unrelatedPair(rows, all.places);
+  if (!pair) return null;
+  const { child, parent } = pair;
+  return (
+    <div className="bg-muted/50 flex flex-wrap items-center justify-between gap-2 rounded-md px-3 py-2 text-sm">
+      <span>
+        Is {child.name} in {parent.name}?
+      </span>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        disabled={disabled || all.busy}
+        onClick={() => all.save.mutate({ ...child, parent: parent.id })}
+      >
+        <FolderTreeIcon /> Put it in {parent.name}
+      </Button>
     </div>
   );
 }

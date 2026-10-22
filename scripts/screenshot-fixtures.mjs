@@ -89,8 +89,10 @@ const added = {
       "gyeongbokgung-palace",
       "Gyeongbokgung Palace",
       "The main royal palace of the Joseon dynasty.",
+      { city: "Seoul", country: "South Korea" },
     ),
-    placeFile("geunjeongmun-gate", "Geunjeongmun Gate", ""),
+    placeFile("geunjeongmun-gate", "Geunjeongmun Gate", "", { parent: "gyeongbokgung-palace" }),
+    placeFile("gwanghwamun-square", "Gwanghwamun Square", ""),
   ],
   localizations: [
     localizationFile("country", "south-korea", "South Korea", "Hanguk", "", "한국"),
@@ -105,8 +107,11 @@ const added = {
   ],
 };
 
-function placeFile(id, name, description) {
-  return { path: `${FOLDER}/places/${id}.json`, data: { id, name, description } };
+function placeFile(id, name, description, { parent = "", city = "", country = "" } = {}) {
+  return {
+    path: `${FOLDER}/places/${id}.json`,
+    data: { id, name, description, parent, city, country },
+  };
 }
 
 function localizationFile(type, slug, name, romanization, pronunciation, localScript) {
@@ -120,8 +125,14 @@ function localizationFile(type, slug, name, romanization, pronunciation, localSc
 const headPhotos = [...basePhotos, added.photo];
 const headAlbums = [...baseAlbums, added.album];
 const headTags = [...baseTags, added.tag];
-const headPlaces = [...basePlaces, ...added.places];
-const headLocalizations = [...baseLocalizations, ...added.localizations];
+/** base with each of added's files in place of the base file at its path, or added at the end. */
+function withAdded(base, addedFiles) {
+  const paths = new Set(addedFiles.map((file) => file.path));
+  return [...base.filter((file) => !paths.has(file.path)), ...addedFiles];
+}
+
+const headPlaces = withAdded(basePlaces, added.places);
+const headLocalizations = withAdded(baseLocalizations, added.localizations);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
