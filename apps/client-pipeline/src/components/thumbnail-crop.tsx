@@ -34,11 +34,14 @@ const CORNERS: (Corner & { className: string; label: string })[] = [
 ];
 
 interface ThumbnailCropProps {
-  photo: File;
+  /** The chosen photo, or the URL of one already in R2. */
+  photo: File | string;
   crop: Crop | null;
   onCropChange: (crop: Crop) => void;
   /** The photo is being uploaded or already was, with this crop, so it can't change. */
   locked: boolean;
+  /** What to say while it's locked. */
+  lockedNote?: string;
 }
 
 /**
@@ -46,8 +49,9 @@ interface ThumbnailCropProps {
  * the thumbnail as the upload will make it.
  */
 export function ThumbnailCrop({ photo, ...editor }: ThumbnailCropProps) {
-  const [url, setFile] = useObjectUrl();
-  useEffect(() => setFile(photo), [photo, setFile]);
+  const [objectUrl, setFile] = useObjectUrl();
+  useEffect(() => setFile(typeof photo === "string" ? null : photo), [photo, setFile]);
+  const url = typeof photo === "string" ? photo : objectUrl;
 
   return (
     <Card>
@@ -77,7 +81,7 @@ function placement(photo: Size | null, crop: Crop | null): Placed | null {
 type CropEditorProps = Omit<ThumbnailCropProps, "photo"> & { src: string };
 
 /** The photo with the crop over it, then the thumbnail it makes. */
-function CropEditor({ src, crop, onCropChange, locked }: CropEditorProps) {
+function CropEditor({ src, crop, onCropChange, locked, lockedNote }: CropEditorProps) {
   const [photo, setPhoto] = useState<Size | null>(null);
   // The crop starts in the middle once the photo's size is known.
   const onLoad = (loaded: Size) => {
@@ -91,7 +95,13 @@ function CropEditor({ src, crop, onCropChange, locked }: CropEditorProps) {
       <CropFrame src={src} onLoad={onLoad}>
         {placed && <CropBox placed={placed} locked={locked} onCropChange={onCropChange} />}
       </CropFrame>
-      <CropSummary src={src} placed={placed} locked={locked} onCropChange={onCropChange} />
+      <CropSummary
+        src={src}
+        placed={placed}
+        locked={locked}
+        lockedNote={lockedNote}
+        onCropChange={onCropChange}
+      />
     </div>
   );
 }
@@ -238,17 +248,18 @@ interface CropSummaryProps {
   src: string;
   placed: Placed | null;
   locked: boolean;
+  lockedNote?: string;
   onCropChange: (crop: Crop) => void;
 }
 
 /** The thumbnail as the upload will make it, where it's cut from, and how to change it. */
-function CropSummary({ src, placed, locked, onCropChange }: CropSummaryProps) {
+function CropSummary({ src, placed, locked, lockedNote, onCropChange }: CropSummaryProps) {
   if (!placed) return null;
   const { crop } = placed;
   return (
     <div className="flex flex-wrap items-start gap-4">
       <ThumbnailPreview src={src} placed={placed} />
-      <div className="flex min-w-0 flex-1 flex-col gap-2 text-sm">
+      <div className="flex min-w-48 flex-1 flex-col gap-2 text-sm">
         <p>
           <span className="font-medium">
             {THUMBNAIL.maxEdge} × {THUMBNAIL.maxEdge} px
@@ -260,7 +271,12 @@ function CropSummary({ src, placed, locked, onCropChange }: CropSummaryProps) {
             The square is smaller than {THUMBNAIL.maxEdge} px, so it's scaled up and may look soft.
           </p>
         )}
-        <CropControls placed={placed} locked={locked} onCropChange={onCropChange} />
+        <CropControls
+          placed={placed}
+          locked={locked}
+          lockedNote={lockedNote}
+          onCropChange={onCropChange}
+        />
       </div>
     </div>
   );
@@ -269,18 +285,18 @@ function CropSummary({ src, placed, locked, onCropChange }: CropSummaryProps) {
 interface CropControlsProps {
   placed: Placed;
   locked: boolean;
+  lockedNote?: string;
   onCropChange: (crop: Crop) => void;
 }
 
 /** How to change the crop, and a way back to the middle, or that it can't change anymore. */
-function CropControls({ placed, locked, onCropChange }: CropControlsProps) {
-  if (locked) {
-    return (
-      <p className="text-muted-foreground">
-        The Square Thumbnail is uploaded with this square. Choose the photo again to pick another.
-      </p>
-    );
-  }
+function CropControls({
+  placed,
+  locked,
+  lockedNote = "The Square Thumbnail is uploaded with this square. Choose the photo again to pick another.",
+  onCropChange,
+}: CropControlsProps) {
+  if (locked) return <p className="text-muted-foreground">{lockedNote}</p>;
   const middle = centerCrop(placed.photo);
   return (
     <>

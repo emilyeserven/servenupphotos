@@ -46,6 +46,17 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     ),
   );
 
+  // Replaces one photo JSON file in that pull request with an edit from the Photo page; the backend
+  // gives GitHub 30s.
+  app.put("/photos/in-flight", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/in-flight", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+      timeoutMs: 35_000,
+    }),
+  );
+
   // Reads ALLPHOTOS.json on the base branch; the backend gives GitHub 30s.
   app.get("/photos/all-photos", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/all-photos", { timeoutMs: 35_000 }),
@@ -65,6 +76,18 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
   // Lists every image in the R2 bucket; the backend gives R2 30s.
   app.get("/photos/bucket", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/bucket", { timeoutMs: 35_000 }),
+  );
+
+  // Reads the crop saved with a photo's Square Thumbnail in R2; the backend gives R2 15s.
+  app.get<{ Querystring: { key?: string } }>(
+    "/photos/bucket/thumbnail-crop",
+    async (request, reply) =>
+      relayToBackend(
+        reply,
+        app.log,
+        `/photos/bucket/thumbnail-crop?${new URLSearchParams({ key: request.query.key ?? "" })}`,
+        { timeoutMs: 20_000 },
+      ),
   );
 
   // Remakes resized versions of a photo already in R2 from its original; the backend gives

@@ -1,5 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { requestJson } from "@/api/settings";
+import type { Crop } from "@/lib/crop";
 
 /** The resized WEBP versions every upload puts in R2 next to the original JPEG. */
 export const VERSIONS = [
@@ -49,6 +50,21 @@ export function versionKeys(key: string): string[] {
 /** The Square Thumbnail's URL, next to the original's at url, as the backend names it. */
 export function squareThumbnailUrl(url: string): string {
   return `${keyStem(url)}-${THUMBNAIL.name}.webp`;
+}
+
+/**
+ * The url of the Square Thumbnail or its Thumbnail Preview marked with the crop it was cut from, as
+ * saved in a photo's JSON after an edit. They keep their keys when they're remade, so the mark gives
+ * browsers and Cloudflare's cache a new URL to fetch instead of the old square; R2 ignores it.
+ */
+export function thumbnailUrlWithCrop(url: string, crop: Crop): string {
+  const { x, y, size } = roundedCrop(crop);
+  return `${url.replace(/[?#].*$/, "")}?crop=${x},${y},${size}`;
+}
+
+/** crop in whole pixels, as the backend takes it. */
+function roundedCrop({ x, y, size }: Crop): Crop {
+  return { x: Math.round(x), y: Math.round(y), size: Math.round(size) };
 }
 
 /** The Thumbnail Preview's URL, next to the original's at url, as the backend names it. */
@@ -118,18 +134,42 @@ interface RegenerateResult {
   versions: Partial<Record<PublishedName, { key: string; url: string }>>;
 }
 
+interface RegenerateRequest {
+  key: string;
+  versions?: PublishedName[];
+  /** The square to cut the Square Thumbnail from, replacing the one saved with it. */
+  crop?: Crop;
+}
+
 /**
  * Makes resized versions of the original at key, already in R2, again from that original and
  * uploads them over any already there; every version and the Square Thumbnail when versions is
- * left out. The Square Thumbnail keeps the crop saved with the one already in R2, or is cut from
- * the middle of the photo when there isn't one.
+ * left out. The Square Thumbnail is cut from crop when it's given, and otherwise keeps the crop
+ * saved with the one already in R2, or is cut from the middle of the photo when there isn't one.
  */
 export const regenerateVersionsMutation = mutationOptions({
   mutationKey: ["photos", "bucket", "versions"],
-  mutationFn: (request: { key: string; versions?: PublishedName[] }) =>
+  mutationFn: ({ crop, ...request }: RegenerateRequest) =>
     requestJson<RegenerateResult>("/api/photos/bucket/versions", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(request),
+      body: JSON.stringify({ ...request, crop: crop && roundedCrop(crop) }),
     }),
 });
+
+/**
+ * The crop saved with the Square Thumbnail of the original at key in R2, or null when it was cut
+ * from the middle of the photo or there's no Square Thumbnail yet.
+ */
+export const thumbnailCropQuery = (key: string) =>
+  queryOptions({
+    queryKey: ["photos", "bucket", "thumbnail-crop", key],
+    queryFn: async () =>
+      (
+        await requestJson<{ key: string; crop: Crop | null }>(
+          `/api/photos/bucket/thumbnail-crop?${new URLSearchParams({ key })}`,
+        )
+      ).crop,
+    retry: false,
+    staleTime: 0,
+  });

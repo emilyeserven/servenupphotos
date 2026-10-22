@@ -59,7 +59,10 @@ While the file has at least one photo, the portfolio's Timeline, Map and Grid sh
 data (the Map leaves out photos without a GPS position, the Grid photos without resized versions, and photos without a
 `createDate` are left out everywhere); with no photos, or no file, they fall back to `dummy.json`, and the Grid shows
 its placeholder. The Grid loads each photo's resized versions from R2 through `srcset`, newest photo first, with the
-blurred `preview` behind each one until it loads (the `thumbnailpreview` behind a Square Thumbnail). Run `pnpm photos:local` again to pick up new photos; the running
+blurred `preview` behind each one until it loads (the `thumbnailpreview` behind a Square Thumbnail, falling back to the
+`preview` when it won't load). The real image fades in over it once it loads; a Square Thumbnail that won't load falls
+back to the middle of the resized versions, and when nothing loads the tile stays blurred instead of showing a broken
+image. Run `pnpm photos:local` again to pick up new photos; the running
 portfolio reloads the file on its own.
 
 > **Frontend analogy:** it's a local mock of the API response: the same JSON CI publishes, copied to your machine so
@@ -162,7 +165,7 @@ quality 95, with the square saved in its `crop` object metadata (`x,y,size`) so 
 Without those fields it uses the middle square. The same square also becomes the **Thumbnail Preview**,
 `photos/<hash>-<name>-thumbnailpreview.webp`: 40 × 40 px at WEBP quality 60, the Square Thumbnail's own low-res
 placeholder (well under a kilobyte) to show blurred while the 500 × 500 one loads, saved as `images.thumbnailpreview`.
-The square can't change once the photo is uploaded. The Grid shows a photo's `thumbnail` when it has one, over its
+The square can be changed later from Photos in Flight's **Edit** button. The Grid shows a photo's `thumbnail` when it has one, over its
 blurred `thumbnailpreview` (or the photo's `preview` for thumbnails saved before previews of them existed), and the
 middle of its resized versions for photos saved before thumbnails existed.
 
@@ -204,6 +207,17 @@ run on the pull request's branch, or "waiting" when someone pushed after it; pas
 and, while CI is rebuilding `ALLPHOTOS.json`, shows a spinner beside it and spins each file's "Not in ALLPHOTOS.json"
 mark. When the run finishes it refreshes. Without **Actions: Read-only** on the token it refreshes about 30 seconds
 after a removal instead.
+
+Each photo whose JSON was read and whose image is in R2 has an **Edit** button, which opens it on the Photo page in
+edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from. The crop editor starts from the
+crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=…`, the middle when none is saved), on
+the original photo from R2. **Save changes** first remakes the thumbnail and its Thumbnail Preview from the new
+square (`POST /api/photos/bucket/versions` with `versions: ["thumbnail", "thumbnailpreview"]` and a `crop`, which
+replaces the saved one), then writes the JSON over the file on the pull request's branch (`PUT /api/photos/in-flight`
+with the `path` and new `data`; only files the pull request adds or modifies can be edited). Both keep their R2 keys, so
+the JSON's `images.thumbnail` and `images.thumbnailpreview` get a `?crop=x,y,size` query: a new URL that browsers and
+Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores the query). The commit starts the **Combine photo data** workflow, which the page
+follows the same way.
 
 ### Explore Bucket
 
