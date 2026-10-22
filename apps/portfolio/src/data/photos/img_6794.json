@@ -1,5 +1,5 @@
 {
-  "title": null,
+  "title": "Photographing Photographers: 86th Street Subway Edition",
   "comment": null,
   "file": "IMG_6794.jpg",
   "camera": "Canon EOS Rebel T6i",
@@ -10,9 +10,9 @@
   "focalLength": 27,
   "gpsPosition": null,
   "createDate": "2017:10:14 12:29:46",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "86th Street Subway Station",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
   "country": null,
   "city": null,
   "width": 5992,
@@ -26,10 +26,10 @@
     "small": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-thumbnail.webp?crop=2640,0,3096",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-thumbnailpreview.webp?crop=2640,0,3096",
     "thumbnailcrop": {
-      "x": 1448,
+      "x": 2640,
       "y": 0,
       "size": 3096,
       "outputSize": 500
@@ -40,5 +40,10 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": []
+  "places": [
+    {
+      "relation": "",
+      "id": "86th-street-subway-station"
+    }
+  ]
 }
