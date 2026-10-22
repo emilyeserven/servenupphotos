@@ -34,5 +34,6 @@ Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores th
 new square. Saving any other change to a file without `images.thumbnailcrop` adds it too. The commit starts the **Combine photo data** workflow, which the page
 follows the same way.
 
-Under the photos it lists the album and tag files the pull request adds or changes, each with its JSON and a check mark
-when it's an entry of `ALLALBUMS.json` or `ALLTAGS.json` at the same head, and the pull request summary counts them.
+Under the photos it lists the album, tag, place and localization files the pull request adds or changes, each with its
+JSON and a check mark when it's an entry of `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json` or `LOCALIZATIONS.json` at
+the same head, and the pull request summary counts them.

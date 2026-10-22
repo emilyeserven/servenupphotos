@@ -67,7 +67,7 @@ function InFlightPage() {
     <Page
       wide
       title="Photos in Flight"
-      description="Photo, album and tag data saved to the open “Add photo data” pull request, not merged yet."
+      description="Photo, album, tag, place and localization data saved to the open “Add photo data” pull request, not merged yet."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -136,22 +136,16 @@ function InFlightCard() {
           onRemoved={onRemoved}
         />
       ))}
-      {shown && (
-        <>
+      {shown &&
+        GROUPS.map(([key, title]) => (
           <GroupFiles
-            title="Albums"
-            groups={shown.albums}
+            key={key}
+            title={title}
+            groups={shown[key]}
             rebuilding={rebuild.rebuilding}
             baseBranch={baseBranch}
           />
-          <GroupFiles
-            title="Tags"
-            groups={shown.tags}
-            rebuilding={rebuild.rebuilding}
-            baseBranch={baseBranch}
-          />
-        </>
-      )}
+        ))}
     </div>
   );
 
@@ -571,7 +565,17 @@ function AllPhotosMark({
   );
 }
 
-/** The album or tag files in the pull request, each with its JSON; nothing when there are none. */
+type GroupKey = "albums" | "tags" | "places" | "localizations";
+
+/** The kinds of data files listed after the photos, in order, with their headings. */
+const GROUPS: [GroupKey, string][] = [
+  ["albums", "Albums"],
+  ["tags", "Tags"],
+  ["places", "Places"],
+  ["localizations", "Localizations"],
+];
+
+/** The album, tag, place or localization files in the pull request, each with its JSON; nothing when there are none. */
 function GroupFiles({
   title,
   groups,
@@ -615,7 +619,7 @@ function fileName(path: string): string {
   return path.split("/").pop() ?? path;
 }
 
-/** How many album or tag files the pull request has, and how its combined file matches them. */
+/** How many album, tag, place or localization files the pull request has, and how its combined file matches them. */
 function groupsSummary(groups: InFlightGroups): string {
   const count = groups.files.length;
   const files = count === 0 ? "None" : String(count);
@@ -710,6 +714,10 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dd>{groupsSummary(data.albums)}</dd>
       <dt className="text-muted-foreground">Tag files</dt>
       <dd>{groupsSummary(data.tags)}</dd>
+      <dt className="text-muted-foreground">Place files</dt>
+      <dd>{groupsSummary(data.places)}</dd>
+      <dt className="text-muted-foreground">Localization files</dt>
+      <dd>{groupsSummary(data.localizations)}</dd>
     </dl>
   );
 }

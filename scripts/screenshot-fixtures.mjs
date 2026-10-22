@@ -296,6 +296,11 @@ export function defaultFixtures() {
       files: [photoFile(added.photo, "added", PULL_REQUEST.branch)],
       albums: { folder: `${FOLDER}/albums`, files: [groupFile(added.album)] },
       tags: { folder: `${FOLDER}/tags`, files: [groupFile(added.tag)] },
+      places: { folder: `${FOLDER}/places`, files: added.places.map(groupFile) },
+      localizations: {
+        folder: `${FOLDER}/localizations`,
+        files: added.localizations.map(groupFile),
+      },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },

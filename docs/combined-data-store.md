@@ -45,8 +45,14 @@ itself with the contents and Git data APIs, so nothing waits for a CI runner.
 
 Whether the files are synced is checked once, when the app starts (`GET /api/photos/combined/status` →
 `GET /photos/combined/status`): `stale` when the newest commit on the pull request's branch to change the data folder
-isn't a Commit, `synced` when it is, and `none` with no pull request open. After that it's known from the app's own
-saves and commits; nothing polls in between.
+isn't a Commit, `synced` when it is, and `none` with no pull request open. When `stale`, it also lists `pending`: the
+data files GitHub's compare shows changed between the last Commit (among the branch's last 100 commits to the data
+folder, or else the base branch) and the head, each with its kind and whether it was added, modified or deleted. The
+sync button counts those together with the app's own saves since, each file once, so saves made before a reload are
+still counted. After that it's known from the app's own saves and commits; nothing polls in between.
+
+> **Frontend analogy:** it's hydrating a client cache from the server on load. The store's own list of saves lives in
+> memory, like React state, and a reload empties it; the status call refills it with what the server already has.
 
 A floating button at the top right of every page shows where things stand: **Synced · batch open** (everything is committed, but the photo data pull request, the batch, still waits to be merged), **Synced · no open batch**, **Not synced · 3 images** (every image added, modified or deleted since the last commit, each counted once, with albums, tags, places and localizations after them; the panel shows the images as three counts, Added, Modified and Deleted, and a file added and then deleted again doesn't count),
 **Committing…** or **Commit failed**. Clicking it opens a panel with the pull request, the counts, the last commit's link,

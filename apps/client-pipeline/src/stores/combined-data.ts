@@ -7,6 +7,7 @@ import {
   type CombinedStatus,
   commitCombined,
   type InFlightPullRequest,
+  type PendingFile,
   readCombinedData,
 } from "@/api/photos";
 import { type FileChange, pendingText, summarizeChanges, withChanges } from "@/lib/optimistic";
@@ -32,6 +33,11 @@ interface CombinedDataState {
   changes: FileChange[];
   /** How many pushes since the last commit changed files the store can't make over `data`. */
   unknownChanges: number;
+  /**
+   * The data files GitHub listed as changed since the last commit when the app started, so
+   * changes pushed before a reload are still counted.
+   */
+  checked: PendingFile[];
   /**
    * Whether the lists at the pull request's head have its latest changes, as last known: checked
    * when the app starts, `synced` after a commit, `stale` after a push.
@@ -89,7 +95,7 @@ let rebuilt: Rebuilt | undefined;
 function keptChanges(state: CombinedDataState, data: CombinedData, done: Rebuilt | undefined) {
   const before = pullOf(state.data);
   if (before && before !== pullOf(data))
-    return { changes: [], unknownChanges: 0, headState: undefined };
+    return { changes: [], unknownChanges: 0, checked: [], headState: undefined };
   return withoutRebuilt(state, done);
 }
 
@@ -122,7 +128,12 @@ function withoutRebuilt(state: CombinedDataState, done: Rebuilt | undefined) {
   const changes = state.changes.slice(done.changes);
   const unknownChanges = Math.max(0, state.unknownChanges - done.unknownChanges);
   const left = changes.length > 0 || unknownChanges > 0;
-  return { changes, unknownChanges, headState: left ? ("stale" as const) : ("synced" as const) };
+  return {
+    changes,
+    unknownChanges,
+    checked: [],
+    headState: left ? ("stale" as const) : ("synced" as const),
+  };
 }
 
 export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
@@ -156,6 +167,7 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
     fetching: false,
     changes: [],
     unknownChanges: 0,
+    checked: [],
     committing: false,
     load: async () => {
       if (get().status === "idle") await read();
@@ -172,6 +184,8 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
       if (status === "ready" && !data?.head) void read();
     },
     headChecked: (status) => {
+      // A commit since the check started has the files it listed.
+      if (get().lastCommit === undefined) set({ checked: status.pending ?? [] });
       // A push or commit since the check started knows better.
       if (get().headState === undefined) set({ headState: status.state });
     },
@@ -207,6 +221,7 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
         fetching: false,
         changes: [],
         unknownChanges: 0,
+        checked: [],
         headState: undefined,
         committing: false,
         lastCommit: undefined,
@@ -241,6 +256,7 @@ export function useCombinedSync() {
     useShallow((s) => ({
       changes: s.changes,
       unknownChanges: s.unknownChanges,
+      checked: s.checked,
       headState: s.headState,
       committing: s.committing,
       lastCommit: s.lastCommit,
@@ -251,7 +267,7 @@ export function useCombinedSync() {
   );
   const all = useAllChanges(state.changes);
   const localEdits = all.length - state.changes.length;
-  const summary = summarizeChanges(all, state.unknownChanges);
+  const summary = summarizeChanges(all, state.unknownChanges, state.checked);
   return {
     ...state,
     unsynced: isUnsynced(state, localEdits),

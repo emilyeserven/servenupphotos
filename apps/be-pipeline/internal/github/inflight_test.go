@@ -131,16 +131,21 @@ func TestInFlightReadsChangedFilesOnBase(t *testing.T) {
 			{"filename": dir + "photos/moved.json", "status": "renamed", "previous_filename": dir + "photos/old.json"},
 			{"filename": dir + "photos/gone.json", "status": "modified"},
 			{"filename": dir + "albums/seoul.json", "status": "modified"},
+			{"filename": dir + "places/gyeongbokgung.json", "status": "added"},
+			{"filename": dir + "places/PLACES.json", "status": "modified"},
+			{"filename": dir + "localizations/city-seoul.json", "status": "added"},
 		},
 		map[string]string{
-			dir + "photos/new.json":          `{"file":"new.jpg"}`,
-			dir + "photos/changed.json":      `{"file":"changed.jpg","title":"After"}`,
-			dir + "photos/changed.json@main": `{"file":"changed.jpg","title":"Before"}`,
-			dir + "photos/moved.json":        `{"file":"moved.jpg"}`,
-			dir + "photos/old.json@main":     `{"file":"old.jpg"}`,
-			dir + "photos/gone.json":         `{"file":"gone.jpg"}`,
-			dir + "albums/seoul.json":        `{"id":"seoul","name":"Seoul"}`,
-			dir + "albums/seoul.json@main":   `{"id":"seoul","name":"Soul"}`,
+			dir + "photos/new.json":               `{"file":"new.jpg"}`,
+			dir + "photos/changed.json":           `{"file":"changed.jpg","title":"After"}`,
+			dir + "photos/changed.json@main":      `{"file":"changed.jpg","title":"Before"}`,
+			dir + "photos/moved.json":             `{"file":"moved.jpg"}`,
+			dir + "photos/old.json@main":          `{"file":"old.jpg"}`,
+			dir + "photos/gone.json":              `{"file":"gone.jpg"}`,
+			dir + "albums/seoul.json":             `{"id":"seoul","name":"Seoul"}`,
+			dir + "albums/seoul.json@main":        `{"id":"seoul","name":"Soul"}`,
+			dir + "places/gyeongbokgung.json":     `{"id":"gyeongbokgung","name":"Gyeongbokgung"}`,
+			dir + "localizations/city-seoul.json": `{"id":"city-seoul","type":"city","name":"Seoul"}`,
 		},
 	)
 
@@ -165,6 +170,12 @@ func TestInFlightReadsChangedFilesOnBase(t *testing.T) {
 	}
 	if len(got.Albums.Files) != 1 || string(got.Albums.Files[0].Base) != `{"id":"seoul","name":"Soul"}` {
 		t.Errorf("Albums.Files = %+v, want seoul.json with its JSON on main", got.Albums.Files)
+	}
+	if len(got.Places.Files) != 1 || string(got.Places.Files[0].Data) != `{"id":"gyeongbokgung","name":"Gyeongbokgung"}` {
+		t.Errorf("Places.Files = %+v, want gyeongbokgung.json without PLACES.json", got.Places.Files)
+	}
+	if len(got.Localizations.Files) != 1 || got.Localizations.Files[0].Status != "added" {
+		t.Errorf("Localizations.Files = %+v, want city-seoul.json", got.Localizations.Files)
 	}
 }
 

@@ -95,6 +95,8 @@ export function withCombined(read: InFlightRead, view: CombinedView): InFlightRe
     files: read.files.map((f) => ({ ...f, inAllPhotos: inEntries(photoEntries, f.data) })),
     albums: checkedGroups(read.albums, file("albums", "ALLALBUMS.json")),
     tags: checkedGroups(read.tags, file("tags", "ALLTAGS.json")),
+    places: checkedGroups(read.places, file("places", "PLACES.json")),
+    localizations: checkedGroups(read.localizations, file("localizations", "LOCALIZATIONS.json")),
   };
 }
 

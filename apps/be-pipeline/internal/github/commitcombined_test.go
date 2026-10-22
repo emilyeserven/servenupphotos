@@ -7,6 +7,7 @@ import (
 	"maps"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -20,12 +21,19 @@ const dataRoot = "apps/portfolio/src/data"
 // the pull request's head holds files (path → content), and that records the
 // tree it's asked to commit and where the branch moved.
 type combinedRepo struct {
-	mu        sync.Mutex
-	files     map[string]string
-	message   string
-	committed map[string]string
-	commitMsg string
-	moved     string
+	mu      sync.Mutex
+	files   map[string]string
+	message string
+	// history are the commits to the data folder, newest first, when the
+	// test sets them instead of message.
+	history []map[string]any
+	// compared are the files GET /compare lists.
+	compared []map[string]any
+	// compareRange is the "base...head" GET /compare was asked for.
+	compareRange string
+	committed    map[string]string
+	commitMsg    string
+	moved        string
 }
 
 func (f *combinedRepo) serve(t *testing.T) http.HandlerFunc {
@@ -42,7 +50,14 @@ func (f *combinedRepo) serve(t *testing.T) http.HandlerFunc {
 			if r.URL.Query().Get("path") != dataRoot || r.URL.Query().Get("sha") != "head7" {
 				t.Errorf("commits asked for %v", r.URL.Query())
 			}
-			writeBody(w, http.StatusOK, []map[string]any{{"commit": map[string]any{"message": f.message}}})
+			if f.history != nil {
+				writeBody(w, http.StatusOK, f.history)
+				return
+			}
+			writeBody(w, http.StatusOK, []map[string]any{{"sha": "c1", "commit": map[string]any{"message": f.message}}})
+		case strings.HasPrefix(p, "/compare/"):
+			f.compareRange = strings.TrimPrefix(p, "/compare/")
+			writeBody(w, http.StatusOK, map[string]any{"files": f.compared})
 		case strings.HasPrefix(p, "/contents/"):
 			f.list(w, strings.TrimPrefix(p, "/contents/"))
 		case strings.HasPrefix(p, "/git/blobs/"):
@@ -178,6 +193,33 @@ func TestCombinedStatus(t *testing.T) {
 		if err != nil || got.State != tt.want || got.HeadSHA != "head7" {
 			t.Errorf("CombinedStatus() after %q = %+v, %v; want %s at head7", tt.message, got, err, tt.want)
 		}
+	}
+}
+
+func TestCombinedStatusPending(t *testing.T) {
+	gh := settings.GitHub{Repo: "owner/repo", Token: token}
+	f, c := newCombinedRepo(t, map[string]string{})
+	f.history = []map[string]any{
+		{"sha": "c3", "commit": map[string]any{"message": "Add place x.json"}},
+		{"sha": "c2", "commit": map[string]any{"message": CombineMessage}},
+	}
+	f.compared = []map[string]any{
+		{"filename": dataRoot + "/photos/a.json", "status": "modified"},
+		{"filename": dataRoot + "/photos/b.json", "status": "added"},
+		{"filename": dataRoot + "/photos/ALLPHOTOS.json", "status": "modified"},
+		{"filename": dataRoot + "/places/x.json", "status": "added"},
+		{"filename": dataRoot + "/localizations/city-seoul.json", "status": "removed"},
+		{"filename": "README.md", "status": "modified"},
+	}
+	got, err := c.CombinedStatus(t.Context(), gh)
+	want := []PendingFile{
+		{"photos", dataRoot + "/photos/a.json", PendingModified},
+		{"photos", dataRoot + "/photos/b.json", PendingAdded},
+		{"places", dataRoot + "/places/x.json", PendingAdded},
+		{"localizations", dataRoot + "/localizations/city-seoul.json", PendingDeleted},
+	}
+	if err != nil || got.State != CombinedStale || !slices.Equal(got.Pending, want) || f.compareRange != "c2...head7" {
+		t.Errorf("CombinedStatus() = %+v, %v, compared %q; want stale with %+v from c2", got, err, f.compareRange, want)
 	}
 }
 

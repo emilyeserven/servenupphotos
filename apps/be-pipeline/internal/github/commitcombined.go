@@ -2,6 +2,7 @@ package github
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"crypto/sha1" //nolint:gosec // Git's object IDs are SHA-1.
 	"encoding/base64"
@@ -42,6 +43,9 @@ type CombinedStatus struct {
 	State string `json:"state"`
 	// HeadSHA is the pull request's head; empty with no pull request.
 	HeadSHA string `json:"headSha,omitempty"`
+	// Pending are the data files the pull request changed after the combined
+	// lists were last rebuilt, when they're stale and GitHub could list them.
+	Pending []PendingFile `json:"pending,omitempty"`
 }
 
 // CombinedCommit says what CommitCombined did.
@@ -107,21 +111,55 @@ func (c *Client) CombinedStatus(ctx context.Context, gh settings.GitHub) (Combin
 	if pr == nil {
 		return CombinedStatus{State: CombinedNoPullRequest}, nil
 	}
-	query := url.Values{"sha": {pr.Head.SHA}, "path": {root}, "per_page": {"1"}}
-	var commits []struct {
-		Commit struct {
-			Message string `json:"message"`
-		} `json:"commit"`
-	}
-	res, err := c.do(ctx, http.MethodGet, repoPath(t.owner, t.name)+"/commits?"+query.Encode(), t.token, nil, &commits)
-	if perr := readCheck(res, err, "reading the branch's commits"); perr != nil {
+	combined, perr := c.lastCombine(ctx, t, root, pr.Head.SHA)
+	if perr != nil {
 		return CombinedStatus{}, perr
 	}
 	status := CombinedStatus{State: CombinedSynced, HeadSHA: pr.Head.SHA}
-	if len(commits) > 0 && firstLine(commits[0].Commit.Message) != CombineMessage {
-		status.State = CombinedStale
+	if combined.newest {
+		return status, nil
 	}
+	status.State = CombinedStale
+	// Without a rebuild among the recent commits, everything the pull request changes is pending.
+	from := cmp.Or(combined.sha, pr.Base.Ref)
+	status.Pending = c.pendingFiles(ctx, t, root, from, pr.Head.SHA)
 	return status, nil
+}
+
+// combineCommit is where the newest commit that rebuilt the combined lists is
+// among the recent commits to the data folder.
+type combineCommit struct {
+	// sha is that commit's, or "" when none of the recent commits is one.
+	sha string
+	// newest is true when it's the newest commit to the data folder, or when
+	// nothing has changed the data folder.
+	newest bool
+}
+
+// branchCommit is the part of a listed commit lastCombine uses.
+type branchCommit struct {
+	SHA    string `json:"sha"`
+	Commit struct {
+		Message string `json:"message"`
+	} `json:"commit"`
+}
+
+// lastCombine finds the newest of the last 100 commits to the data folder at
+// head that rebuilt the combined lists.
+func (c *Client) lastCombine(ctx context.Context, t target, root, head string) (combineCommit, *PublishError) {
+	query := url.Values{"sha": {head}, "path": {root}, "per_page": {"100"}}
+	var commits []branchCommit
+	res, err := c.do(ctx, http.MethodGet, repoPath(t.owner, t.name)+"/commits?"+query.Encode(), t.token, nil, &commits)
+	if perr := readCheck(res, err, "reading the branch's commits"); perr != nil {
+		return combineCommit{}, perr
+	}
+	at := slices.IndexFunc(commits, func(commit branchCommit) bool {
+		return firstLine(commit.Commit.Message) == CombineMessage
+	})
+	if at == -1 {
+		return combineCommit{newest: len(commits) == 0}, nil
+	}
+	return combineCommit{sha: commits[at].SHA, newest: at == 0}, nil
 }
 
 func firstLine(s string) string {
