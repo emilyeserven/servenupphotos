@@ -37,7 +37,7 @@ export interface CameraSettings {
 }
 
 /** How each setting is written, in the order they're shown. */
-const SETTING_FORMATS: [keyof CameraSettings, (value: number | string) => string][] = [
+export const SETTING_FORMATS: [keyof CameraSettings, (value: number | string) => string][] = [
   ["aperture", (value) => `f/${value}`],
   ["exposure", (value) => `${value}s`],
   ["iso", (value) => `ISO ${value}`],
