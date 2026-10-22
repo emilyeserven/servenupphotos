@@ -290,7 +290,8 @@ crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=
 the original photo from R2. **Save changes** first remakes the thumbnail and its Thumbnail Preview from the new
 square (`POST /api/photos/bucket/versions` with `versions: ["thumbnail", "thumbnailpreview"]` and a `crop`, which
 replaces the saved one), then writes the JSON over the file on the pull request's branch (`PUT /api/photos/in-flight`
-with the `path` and new `data`; only files the pull request adds or modifies can be edited). Both keep their R2 keys, so
+with the `path` and new `data`; files the pull request removes can't be edited, and photos already in the portfolio are
+saved into the pull request, as the [Gallery](#gallery) describes). Both keep their R2 keys, so
 the JSON's `images.thumbnail` and `images.thumbnailpreview` get a `?crop=x,y,size` query: a new URL that browsers and
 Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores the query), and `images.thumbnailcrop` the
 new square. Saving any other change to a file without `images.thumbnailcrop` adds it too. The commit starts the **Combine photo data** workflow, which the page
@@ -298,6 +299,22 @@ follows the same way.
 
 Under the photos it lists the album and tag files the pull request adds or changes, each with its JSON and a check mark
 when it's an entry of `ALLALBUMS.json` or `ALLTAGS.json` at the same head, and the pull request summary counts them.
+
+
+### Gallery
+
+`/gallery` shows the photos already in the portfolio: every photo `.json` on the base branch (`GET /api/photos/published`
+→ `GET /photos/published`), newest first, as Square Thumbnail tiles with their title and file name, filterable by
+either. Photos the open **Add photo data** pull request changes are marked "Changes in flight" (or "Removed in flight"),
+linked to Photos in Flight. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
+each photo's file path, which `ALLPHOTOS.json` entries don't carry.
+
+Each photo with its image in R2 has an **Edit** button that opens it on the Photo page (`/exif?edit=<path>&from=gallery`),
+the same editor Photos in Flight uses. Saving writes the JSON into the pull request: over the branch's copy when one is
+open (the branch must already have the file; update it from the base branch if it was made before the photo merged), or
+on a new `photo-data/` branch with a new pull request when none is open. From then on the photo is in Photos in Flight,
+and edits go to the pull request's copy. A new title doesn't rename the file, since the pull request would then delete
+the old file from the portfolio when it merges and the photo's file name would change under it.
 
 ### Combined data store
 

@@ -23,6 +23,8 @@ type updateInFlightRequest struct {
 // handleUpdateInFlight replaces the content of a photo JSON file in the open
 // "Add photo data" pull request with the body's data, as the Photo page saves
 // an edit of a photo in flight, renaming the file when the body has a new name.
+// A photo already in the portfolio is saved into that pull request, opening one
+// when none is.
 func handleUpdateInFlight(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req updateInFlightRequest

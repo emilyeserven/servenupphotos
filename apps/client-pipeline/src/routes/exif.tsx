@@ -30,27 +30,36 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useObjectUrl } from "@/hooks/use-object-url";
 
 interface PhotoSearch {
-  /** The path of a photo JSON file in the photo data pull request to edit, instead of adding a photo. */
+  /**
+   * The path of a photo JSON file to edit, instead of adding a photo: one in the photo data pull
+   * request, or one already in the portfolio.
+   */
   edit?: string;
+  /** The page the edit was opened from, which the back link returns to; Photos in Flight unless set. */
+  from?: "gallery";
 }
 
 export const Route = createFileRoute("/exif")({
   component: PhotoRoute,
   staticData: { wide: true },
-  validateSearch: (search: Record<string, unknown>): PhotoSearch =>
-    typeof search.edit === "string" && search.edit ? { edit: search.edit } : {},
+  validateSearch: (search: Record<string, unknown>): PhotoSearch => {
+    if (typeof search.edit !== "string" || !search.edit) return {};
+    return search.from === "gallery"
+      ? { edit: search.edit, from: "gallery" }
+      : { edit: search.edit };
+  },
 });
 
 function PhotoRoute() {
-  const edit = Route.useSearch({ select: (search) => search.edit });
+  const { edit, from } = Route.useSearch();
   if (!edit) return <PhotoPage />;
   return (
     <Page
       title="Edit Photo"
-      description="Change a photo already saved to the open “Add photo data” pull request, such as the square its Square Thumbnail is cut from."
+      description="Change a photo saved to the open “Add photo data” pull request or already in the portfolio, such as the square its Square Thumbnail is cut from. Changes go into the pull request."
       wide
     >
-      <EditInFlightPhoto path={edit} />
+      <EditInFlightPhoto path={edit} from={from} />
     </Page>
   );
 }

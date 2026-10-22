@@ -168,11 +168,16 @@ export interface UpdateResult {
   commitSha: string;
   /** False when the file already had this content, so nothing was committed. */
   changed: boolean;
+  /** The photo data pull request, when saving a photo already in the portfolio opened it. */
+  pullRequestUrl?: string;
+  /** True when the save opened the pull request. */
+  newPullRequest?: boolean;
 }
 
 /**
  * Replaces the content of a photo JSON file in the open photo data pull request, moving it to
- * `name` (without .json) in the same folder when that's given.
+ * `name` (without .json) in the same folder when that's given. A photo already in the portfolio
+ * that the pull request doesn't change yet is saved into it, opening one when none is open.
  */
 export const updateInFlightMutation = mutationOptions({
   mutationKey: ["photos", "in-flight", "update"],
@@ -183,6 +188,32 @@ export const updateInFlightMutation = mutationOptions({
       headers: { "content-type": "application/json" },
       body: JSON.stringify(file),
     }),
+});
+
+/** One photo JSON file on the base branch, a photo already in the portfolio. */
+export interface PublishedFile extends InFlightFileRead {
+  status: "published";
+  /** The file's change status in the photo data pull request, such as `modified`, when it changes it. */
+  inFlight?: string;
+}
+
+/** Every photo JSON file on the base branch, with each photo's image in R2. */
+export interface PublishedResponse {
+  repo: string;
+  folder: string;
+  /** The base branch the files were read from. */
+  branch: string;
+  /** Null when no pull request titled "Add photo data" is open. */
+  pullRequest: InFlightPullRequest | null;
+  files: PublishedFile[];
+  images: InFlightImages;
+}
+
+/** The photos already in the portfolio, for the Gallery and for editing one on the Photo page. */
+export const publishedPhotosQuery = queryOptions({
+  queryKey: ["photos", "published"],
+  queryFn: () => requestJson<PublishedResponse>("/api/photos/published"),
+  retry: false,
 });
 
 /** What removing a photo JSON file did, including to its image in R2. */

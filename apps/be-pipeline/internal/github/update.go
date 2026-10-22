@@ -22,17 +22,25 @@ type UpdatedFile struct {
 	// Changed is false when data was already the file's content, so nothing
 	// was committed and CommitSHA is empty.
 	Changed bool `json:"changed"`
+	// PullRequestURL is the photo data pull request, when saving a file
+	// already in the portfolio opened it.
+	PullRequestURL string `json:"pullRequestUrl,omitempty"`
+	// NewPullRequest is true when the save opened the pull request.
+	NewPullRequest bool `json:"newPullRequest,omitempty"`
 }
 
 // Update replaces the content of file, a photo JSON file in the open pull
 // request titled PullRequestTitle, with data, a JSON object, on the pull
-// request's branch. Only files the pull request adds or modifies can be
-// updated, so an edit never reaches past the photos in flight.
+// request's branch. A file the pull request doesn't change yet, but that is
+// on the base branch, is saved on the pull request's branch too, so the edit
+// goes into the pull request; with no pull request open, one is opened for
+// it. A file the pull request removes can't be updated.
 //
 // When newName, a file name with or without the .json extension, differs from
 // file's, the file is moved to it in the same folder. Only files the pull
 // request adds can be renamed, since renaming one that is also on the base
 // branch would remove it there when the pull request merges.
+
 func (c *Client) Update(ctx context.Context, gh settings.GitHub, file, newName string, data json.RawMessage) (UpdatedFile, error) {
 	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
@@ -60,15 +68,23 @@ func (c *Client) Update(ctx context.Context, gh settings.GitHub, file, newName s
 		return UpdatedFile{}, perr
 	}
 	if pr == nil {
-		return UpdatedFile{}, publishErr(http.StatusNotFound, "No pull request titled %q is open.", PullRequestTitle)
+		// Only a file already in the portfolio can be edited without one.
+		if t, perr = c.target(ctx, gh); perr != nil {
+			return UpdatedFile{}, perr
+		}
+		return c.updatePublished(ctx, t, "", file, dest, content)
 	}
 	files, perr := c.listPullFiles(ctx, t, pr.Number)
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}
-	changed, perr := checkEditable(files, file)
+	changed, inPull, perr := checkEditable(files, file)
 	if perr != nil {
 		return UpdatedFile{}, perr
+	}
+	if !inPull {
+		t.base = pr.Base.Ref
+		return c.updatePublished(ctx, t, pr.Head.Ref, file, dest, content)
 	}
 
 	// Read at the branch, so the SHA sent with the change is the file's latest.
@@ -141,19 +157,19 @@ func photoContent(data json.RawMessage) ([]byte, *PublishError) {
 	return out.Bytes(), nil
 }
 
-// checkEditable returns file as the pull request changes it, failing unless
-// the pull request adds or modifies it.
-func checkEditable(files []pullFile, file string) (pullFile, *PublishError) {
+// checkEditable returns file as the pull request changes it, and whether the
+// pull request changes it at all, failing when the pull request removes it.
+func checkEditable(files []pullFile, file string) (pullFile, bool, *PublishError) {
 	for _, f := range files {
 		if f.Filename != file {
 			continue
 		}
 		if f.Status == "removed" {
-			return pullFile{}, publishErr(http.StatusConflict, "%s is removed in the pull request, so it can't be edited.", file)
+			return pullFile{}, true, publishErr(http.StatusConflict, "%s is removed in the pull request, so it can't be edited.", file)
 		}
-		return f, nil
+		return f, true, nil
 	}
-	return pullFile{}, publishErr(http.StatusNotFound, "%s isn't in the photo data pull request anymore. Refresh to see what is.", file)
+	return pullFile{}, false, nil
 }
 
 // updateFile commits content over file, whose blob is sha, on branch.
