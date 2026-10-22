@@ -37,7 +37,17 @@
   "socialMediaPublishDate": "2026-10-13",
   "albums": [],
   "tags": [],
-  "placeName": "National Museum of Korea",
+  "placeName": "Mirror Pond",
   "customCity": "Seoul",
-  "customCountry": null
+  "customCountry": null,
+  "places": [
+    {
+      "relation": "",
+      "id": "mirror-pond"
+    },
+    {
+      "relation": "in",
+      "id": "national-museum-of-korea"
+    }
+  ]
 }
