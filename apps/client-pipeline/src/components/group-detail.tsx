@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeftIcon, CheckIcon, ImageOffIcon } from "lucide-react";
+import { ArrowLeftIcon, CheckIcon, CornerDownRightIcon, ImageOffIcon } from "lucide-react";
 import { useState } from "react";
 import {
   GROUP_KINDS,
@@ -9,6 +9,7 @@ import {
   type OrganizeResponse,
   albumAncestry,
   albumDescendants,
+  albumTree,
   groupLabel,
   organizeQuery,
   setAlbumParentMutation,
@@ -32,6 +33,7 @@ import { Spinner } from "@/components/ui/spinner";
 import {
   type CombinedPhoto,
   currentPhotos,
+  photoCounts,
   photoImage,
   photoIn,
   photoText,
@@ -112,6 +114,7 @@ function GroupDetail({ kind, group, organize }: GroupDetailProps) {
       <div className="flex min-w-0 flex-col gap-6">
         <AboutCard kind={kind} group={group} organize={organize} />
         {kind === "albums" && !group.error && <ParentCard album={group} organize={organize} />}
+        {kind === "albums" && <SubAlbumsCard album={group} albums={organize.albums} />}
       </div>
       <GroupPhotos kind={kind} group={group} albums={organize.albums} />
     </div>
@@ -157,7 +160,6 @@ function AboutCard({ kind, group, organize }: GroupDetailProps) {
 /** The albums an album is inside, and the ones inside it, as rows of AboutCard's list. */
 function AlbumPlace({ album, albums }: { album: Group; albums: Group[] }) {
   const parents = albumAncestry(albums, album.id).slice(0, -1);
-  const children = albums.filter((a) => a.parent === album.id && a.id !== album.id);
   return (
     <>
       <dt className="text-muted-foreground">Inside</dt>
@@ -177,22 +179,78 @@ function AlbumPlace({ album, albums }: { album: Group; albums: Group[] }) {
           <span className="text-muted-foreground">Nothing: it's a top-level album</span>
         )}
       </dd>
-      <dt className="text-muted-foreground">Sub-albums</dt>
-      <dd>
-        {children.length > 0 ? (
-          <ul className="flex flex-wrap gap-x-3 gap-y-1">
-            {children.map((child) => (
-              <li key={child.id}>
-                <AlbumLink album={child} />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <span className="text-muted-foreground">None</span>
-        )}
-      </dd>
     </>
   );
+}
+
+/** Every album inside this one, at any depth, each under its parent, with how many photos it has. */
+function SubAlbumsCard({ album, albums }: { album: Group; albums: Group[] }) {
+  const inside = albumDescendants(albums, album.id);
+  // The album's own row comes first; the rest are its sub-albums, one level less deep.
+  const rows = albumTree(albums.filter((a) => a.id === album.id || inside.has(a.id))).slice(1);
+  const countOf = useAlbumPhotoCounts();
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Sub-albums{rows.length > 0 && ` (${rows.length})`}</CardTitle>
+        <CardDescription>
+          Albums inside this one. To add one, give it this album as its parent.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="text-sm">
+        {rows.length === 0 ? (
+          <p className="text-muted-foreground">None yet.</p>
+        ) : (
+          <ul className="flex flex-col divide-y">
+            {rows.map(({ group, depth }) => (
+              <SubAlbumRow
+                key={group.id}
+                album={group}
+                depth={depth - 1}
+                count={countOf?.(group.id)}
+              />
+            ))}
+          </ul>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/** How many photos in ALLPHOTOS.json list an album, by ID; undefined until it's read. */
+function useAlbumPhotoCounts(): ((id: string) => number) | undefined {
+  const combined = useCombinedData();
+  const current = combined.data ? currentPhotos(combined.data) : undefined;
+  if (!current) return undefined;
+  const counts = photoCounts(current.photos, "albums");
+  return (id) => counts.get(id) ?? 0;
+}
+
+function SubAlbumRow({ album, depth, count }: { album: Group; depth: number; count?: number }) {
+  return (
+    <li
+      className="flex items-start gap-2 py-2 first:pt-0 last:pb-0"
+      style={{ paddingLeft: `${depth * 1.25}rem` }}
+    >
+      {depth > 0 && (
+        <CornerDownRightIcon className="text-muted-foreground mt-0.5 size-3.5 shrink-0" />
+      )}
+      <div className="min-w-0 flex-1">
+        <AlbumLink album={album} />
+        {album.description && (
+          <p className="text-muted-foreground truncate text-xs">{album.description}</p>
+        )}
+      </div>
+      <span className="text-muted-foreground shrink-0 text-xs tabular-nums">
+        {photoCountText(count)}
+      </span>
+    </li>
+  );
+}
+
+function photoCountText(count?: number): string {
+  if (count === undefined) return "…";
+  return count === 1 ? "1 photo" : `${count} photos`;
 }
 
 function AlbumLink({ album }: { album: Group }) {

@@ -355,8 +355,8 @@ open photo data pull request, or opens one, the same way photos are saved, and f
 or `ALLTAGS.json`. A new album can have a **Parent album**. Albums are listed as a tree, sub-albums under their parent,
 with how many photos in `ALLPHOTOS.json` list each one.
 
-Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its file and status, an album's parents and
-sub-albums, and the photos `ALLPHOTOS.json` lists in it (at the pull request's head when one is open, from the
+Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its file and status, an album's parents, a
+**Sub-albums** panel under **Parent album** listing every album inside it as a tree with photo counts, and the photos `ALLPHOTOS.json` lists in it (at the pull request's head when one is open, from the
 [combined data store](#combined-data-store)), optionally with the ones in its sub-albums. An album's page can change its
 parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's
 `parent` in one commit to the pull request, refusing a parent that's the album itself or inside it.
