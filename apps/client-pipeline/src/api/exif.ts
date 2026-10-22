@@ -89,6 +89,10 @@ export interface SanitizedExif {
     /** Public R2 URL of a tiny 40 × 40 WEBP of the same square, to show blurred while it loads. */
     thumbnailpreview: string | null;
   };
+  /** Whether the photo may be posted to social media, such as Instagram. */
+  isSocialMediaEligible: boolean;
+  /** The photo's place among the photos spotlighted on the site, or null when it isn't spotlighted. */
+  websiteSpotlight: number | null;
 }
 
 export interface ExifResponse {

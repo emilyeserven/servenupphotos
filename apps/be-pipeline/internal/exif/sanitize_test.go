@@ -77,6 +77,7 @@ func TestSanitize(t *testing.T) {
 
 			got := roundTrip(t, Sanitize(fields))
 			checkNoImages(t, got)
+			checkPublishDefaults(t, got)
 			delete(got, "images")
 			if len(got) != len(tt.want) {
 				t.Errorf("got %d keys, want %d: %v", len(got), len(tt.want), got)
@@ -115,12 +116,27 @@ func TestSanitizeSize(t *testing.T) {
 func TestSanitizeEmpty(t *testing.T) {
 	got := roundTrip(t, Sanitize(map[string]any{"Model": "", "City": 42}))
 	checkNoImages(t, got)
+	checkPublishDefaults(t, got)
 	delete(got, "images")
 	for k, v := range got {
 		if v != nil {
 			t.Errorf("%s = %#v, want null", k, v)
 		}
 	}
+}
+
+// checkPublishDefaults checks that got isn't marked for social media or the
+// site's spotlight, since those are chosen by hand, then removes both keys.
+func checkPublishDefaults(t *testing.T, got map[string]any) {
+	t.Helper()
+	if v, ok := got["isSocialMediaEligible"]; !ok || v != false {
+		t.Errorf("isSocialMediaEligible = %#v, want false", v)
+	}
+	if v, ok := got["websiteSpotlight"]; !ok || v != nil {
+		t.Errorf("websiteSpotlight = %#v, want null", v)
+	}
+	delete(got, "isSocialMediaEligible")
+	delete(got, "websiteSpotlight")
 }
 
 // checkNoImages checks that got has an images object whose links are all null,

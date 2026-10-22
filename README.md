@@ -130,6 +130,14 @@ bucket in Cloudflare first, and set the R2 **Public URL** in Settings to it so n
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.
 
+### Publish
+
+The **Publish** section of the sidebar is for choosing where photos are shown. Each photo JSON file has two fields for
+it, which new saves write with their defaults: `isSocialMediaEligible` (`false`), whether the photo may be posted to
+social media, and `websiteSpotlight` (`null`), the photo's place among the photos spotlighted on the site, or `null`
+when it isn't spotlighted. Older files may be missing both, which means the same as the defaults. `/instagram` and
+`/site-spotlight` are stubs for now; ways to change the fields will come later.
+
 ### Saving photo data to GitHub
 
 After a photo is analyzed on `/exif`, the **Save to GitHub** card saves its sanitized EXIF as one JSON file,

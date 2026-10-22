@@ -54,6 +54,10 @@ interface PhotoData {
   height: number | null;
   /** Older entries may be missing a version they were saved before. */
   images: Partial<Record<Version | "preview" | "thumbnail" | "thumbnailpreview", string | null>>;
+  /** Whether the photo may be posted to social media; older entries are missing it. */
+  isSocialMediaEligible?: boolean;
+  /** The photo's place among the photos spotlighted on the site; null or missing when it isn't. */
+  websiteSpotlight?: number | null;
 }
 
 // ALLPHOTOS.local.json is made by `pnpm photos:local` (which `pnpm dev` runs) and git-ignored, so
