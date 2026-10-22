@@ -26,10 +26,10 @@
     "small": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-thumbnail.webp?crop=254,0,3374",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-thumbnailpreview.webp?crop=254,0,3374",
     "thumbnailcrop": {
-      "x": 1313,
+      "x": 254,
       "y": 0,
       "size": 3374,
       "outputSize": 500
