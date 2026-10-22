@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { format, min } from "date-fns";
-import { CalendarClock, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { CalendarClock, ChevronDown, RotateCcw } from "lucide-react";
+import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { buildHistogram } from "@/lib/histogram";
+import { cn } from "@/lib/utils";
 import {
   absoluteTimeRange,
   parseTimeRange,
@@ -97,20 +98,53 @@ function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: Imag
   }
 
   return (
-    <ol className="flex flex-col gap-8">
+    <ol className="flex flex-col gap-4">
       {groupByMonth(photos).map(([month, monthPhotos]) => (
-        <li key={month} className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
-            {month}
-          </h2>
-          <ul className="flex flex-col gap-3 border-l pl-4">
-            {monthPhotos.map((photo) => (
-              <PhotoRow key={photo.id} photo={photo} onOpen={onOpen} />
-            ))}
-          </ul>
-        </li>
+        <MonthSection key={month} month={month} monthPhotos={monthPhotos} onOpen={onOpen} />
       ))}
     </ol>
+  );
+}
+
+/** A month's heading and its photos, which the heading's button hides and shows again. */
+function MonthSection({
+  month,
+  monthPhotos,
+  onOpen,
+}: {
+  month: string;
+  monthPhotos: Photo[];
+  onOpen: (photo: ImagePhoto) => void;
+}) {
+  const [open, setOpen] = useState(true);
+  const listId = useId();
+  return (
+    <li className="flex flex-col gap-1">
+      {/* Sticks to the top while the month's photos scroll under it. */}
+      <h2 className="sticky top-0 z-10 -mx-1 bg-background px-1 py-2">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={listId}
+          onClick={() => setOpen(!open)}
+          className="flex items-center gap-1.5 rounded-sm text-sm font-medium tracking-wide text-muted-foreground uppercase outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <ChevronDown
+            className={cn("size-4 transition-transform", !open && "-rotate-90")}
+            aria-hidden
+          />
+          {month}
+          <span className="font-normal normal-case">· {monthPhotos.length}</span>
+        </button>
+      </h2>
+      {open && (
+        <ul id={listId} className="flex flex-col gap-3">
+          {monthPhotos.map((photo) => (
+            <PhotoRow key={photo.id} photo={photo} onOpen={onOpen} />
+          ))}
+        </ul>
+      )}
+    </li>
   );
 }
 
