@@ -35,8 +35,8 @@ jobs:
               - '!apps/be-pipeline/**/*.go'
               - '!apps/be-pipeline/go.{mod,sum}'
             go:
-              - 'apps/be-pipeline/**'
-              - '.github/workflows/ci.yml'
+              # One pattern, since a file has to match all of them.
+              - '{apps/be-pipeline/**,.github/workflows/ci.yml}'
 
   typescript:
     name: TypeScript (lint, format, typecheck, fallow)
