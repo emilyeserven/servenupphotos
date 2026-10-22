@@ -1,18 +1,59 @@
 [
   {
+    "id": "geunjeongjeon",
+    "name": "Geunjeongjeon",
+    "description": "",
+    "parent": "gyeongbokgung-palace",
+    "city": "",
+    "country": ""
+  },
+  {
     "id": "geunjeongmun-gate",
     "name": "Geunjeongmun Gate",
-    "description": ""
+    "description": "",
+    "parent": "gyeongbokgung-palace",
+    "city": "",
+    "country": ""
   },
   {
     "id": "gyeongbokgung-palace",
     "name": "Gyeongbokgung Palace",
-    "description": ""
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": ""
   },
   {
     "id": "gyeongbokgung-station",
     "name": "Gyeongbokgung Station",
-    "description": ""
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
+    "id": "lower-east-side",
+    "name": "Lower East Side",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
+    "id": "manhattan-bridge",
+    "name": "Manhattan Bridge",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
+    "id": "midtown",
+    "name": "Midtown",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "mirror-pond",
@@ -22,6 +63,33 @@
   {
     "id": "national-museum-of-korea",
     "name": "National Museum of Korea",
-    "description": ""
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
+    "id": "noho",
+    "name": "NoHo",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
+    "id": "queensboro-bridge",
+    "name": "Queensboro Bridge",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
+    "id": "upper-east-side",
+    "name": "Upper East Side",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
   }
 ]

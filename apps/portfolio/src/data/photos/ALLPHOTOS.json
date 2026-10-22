@@ -1,5 +1,201 @@
 [
   {
+    "title": "86th & 2nd",
+    "comment": null,
+    "file": "IMG_4848.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S10-18mm f/4.5-5.6 IS STM",
+    "aperture": 14,
+    "exposure": "1/6",
+    "iso": 500,
+    "focalLength": 11,
+    "gpsPosition": "40 deg 46' 46.20\" N, 73 deg 57' 20.20\" W",
+    "createDate": "2019:03:30 11:31:01",
+    "placeName": "Upper East Side",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 3543,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848.jpg",
+      "key": "photos/4d6acbf5dfeb-img-4848.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4d6acbf5dfeb-img-4848-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1228,
+        "y": 0,
+        "size": 3543,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "upper-east-side"
+      }
+    ]
+  },
+  {
+    "title": "96th & Lex",
+    "comment": null,
+    "file": "IMG_3769.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 5,
+    "exposure": "1/80",
+    "iso": 1000,
+    "focalLength": 60,
+    "gpsPosition": "40 deg 47' 9.20\" N, 73 deg 57' 3.30\" W",
+    "createDate": "2019:03:30 10:13:01",
+    "placeName": "upper-east-side",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 4000,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769.jpg",
+      "key": "photos/659f85209549-img-3769.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-thumbnail.webp?crop=2000,425,3575",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/659f85209549-img-3769-thumbnailpreview.webp?crop=2000,425,3575",
+      "thumbnailcrop": {
+        "x": 2000,
+        "y": 425,
+        "size": 3575,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "upper-east-side"
+      }
+    ]
+  },
+  {
+    "title": "City Shroom",
+    "comment": null,
+    "file": "IMG_4231.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S55-250mm f/4-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/125",
+    "iso": 400,
+    "focalLength": 250,
+    "gpsPosition": null,
+    "createDate": "2018:10:13 16:13:18",
+    "placeName": "Midtown",
+    "customCity": "New York City",
+    "customCountry": null,
+    "country": null,
+    "city": null,
+    "width": 5118,
+    "height": 2918,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231.jpg",
+      "key": "photos/46125006fd68-img-4231.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/46125006fd68-img-4231-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1100,
+        "y": 0,
+        "size": 2918,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "midtown"
+      }
+    ]
+  },
+  {
+    "title": "Curious Goose",
+    "comment": null,
+    "file": "IMG_4200.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S55-250mm f/4-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/320",
+    "iso": 100,
+    "focalLength": 250,
+    "gpsPosition": null,
+    "createDate": "2018:10:13 15:56:08",
+    "placeName": "midtown",
+    "customCity": "New York City",
+    "customCountry": null,
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3501,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200.jpg",
+      "key": "photos/1e9992da62c8-img-4200.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-thumbnail.webp?crop=878,347,3021",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1e9992da62c8-img-4200-thumbnailpreview.webp?crop=878,347,3021",
+      "thumbnailcrop": {
+        "x": 878,
+        "y": 347,
+        "size": 3021,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "midtown"
+      }
+    ]
+  },
+  {
     "title": "Gyeongbokgung Station on a (shockingly quiet) Saturday afternoon.",
     "comment": "One of the first things I did when I was in Seoul was get a Climate Card (the Metrocard/Oyster Card/SUICA etc equivalent). The public transit coverage was so good that I ended up only needing to get a taxi once! As a sort-of New Yorker, one of the obvious things I could say was that the stations in Korea were extremely clean. But I think the more interesting thing ended up being the amount of emergency equipment that was available in cabinets through every station I was in. From heatstroke recovery to earthquake supplies, it really added to my overall peace of mind and struck me as very thoughtful (and probably something that can't really exist in a less collectivist society, unfortunately).",
     "file": "DSCF2998.jpg",
@@ -47,6 +243,50 @@
         "id": "gyeongbokgung-station"
       }
     ]
+  },
+  {
+    "title": "Gyeonghoeru Pavilion (경회루) and Gyeonghoeji Pond (경회루 연지).",
+    "comment": "Gyeonghoeru Pavilion (경회루) and Gyeonghoeji Pond (경회루 연지).\n\n2026.05.17\nFujifilm XT-5, XF18-135mm @ 25mm, 1/500sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung Palace)\n\nThe thing about solo traveling in a country that doesn't natively speak English, is that you end up having some nice conversations with other English speakers. This doesn't always mean English is the other person's first language, but there's just enough to communicate.\n\nI had a chance to reflect on this \"English-speaking privilege\" in front of this pavilion, after having asked a stranger to get my photo using my one-shot Instax camera. This other traveler was... Romanian, I think, and he actually asked for me to take his photo with the Instax as well. As with many of these transient travel conversations, we went our separate ways without exchanging contact information. But, it's fun to think that somewhere out there, there's someone with a small instant-film photo of themselves that came out of a conversation with another traveler.",
+    "file": "DSCF3267.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/500",
+    "iso": 125,
+    "focalLength": 25.4,
+    "gpsPosition": "37 deg 34' 46.71\" N, 126 deg 58' 29.46\" E",
+    "createDate": "2026:05:17 13:58:11",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": "South Korea",
+    "city": null,
+    "width": 7421,
+    "height": 4174,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267.jpg",
+      "key": "photos/fa88523d277c-dscf3267.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/fa88523d277c-dscf3267-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1596,
+        "y": 0,
+        "size": 4174,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": []
   },
   {
     "title": "Japsang",
@@ -151,6 +391,55 @@
     ]
   },
   {
+    "title": "Overthrow?",
+    "comment": null,
+    "file": "IMG_5747.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 5,
+    "exposure": "1/60",
+    "iso": 100,
+    "focalLength": 18,
+    "gpsPosition": "40 deg 43' 31.66\" N, 73 deg 59' 34.35\" W",
+    "createDate": "2019:03:30 13:45:45",
+    "placeName": "noho",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 5469,
+    "height": 3389,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747.jpg",
+      "key": "photos/d37b74ef68d6-img-5747.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747-thumbnail.webp?crop=1568,884,2505",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d37b74ef68d6-img-5747-thumbnailpreview.webp?crop=1568,884,2505",
+      "thumbnailcrop": {
+        "x": 1568,
+        "y": 884,
+        "size": 2505,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "noho"
+      }
+    ]
+  },
+  {
     "title": "Photographing photographers... Gyeongbokgung edition.",
     "comment": "The one thing that can be frustrating about popular destinations is that you're kind of... damned if you do, damned if you don't. Like, yes, I definitely have to go see that palace. But also, everyone else does too. So of course, it gets really crowded. As a photographer, I try to do my best to make the presence of people \"work\" with a photo, but sometimes there's just too many people. In a case like this, sometimes it's just more fun to take photos of other photographers.",
     "file": "DSCF3097.jpg",
@@ -162,7 +451,7 @@
     "focalLength": 26.6,
     "gpsPosition": "37 deg 34' 40.13\" N, 126 deg 58' 36.74\" E",
     "createDate": "2026:05:17 13:14:28",
-    "placeName": "Gyeongbokgung Palace",
+    "placeName": "Geunjeongmun Gate",
     "customCity": "Seoul",
     "customCountry": null,
     "country": "South Korea",
@@ -194,12 +483,163 @@
     "tags": [],
     "places": [
       {
-        "relation": "in",
-        "id": "gyeongbokgung-palace"
+        "relation": "",
+        "id": "geunjeongmun-gate"
       },
       {
-        "relation": "near",
-        "id": "geunjeongmun-gate"
+        "relation": "in",
+        "id": "gyeongbokgung-palace"
+      }
+    ]
+  },
+  {
+    "title": "Pumgyeseok",
+    "comment": "Pumgyeseok (품계석) at Gyeongbokgung Palace. These \"rank stones\" indicate where officials of each rank would stand. If you can read a small amount of Chinese characters (or Hanja, 한자, in Korean) you can probably at least read the numbers!",
+    "file": "DSCF3132.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/1100",
+    "iso": 125,
+    "focalLength": 74.4,
+    "gpsPosition": "37 deg 34' 40.43\" N, 126 deg 58' 36.60\" E",
+    "createDate": "2026:05:17 13:16:33",
+    "placeName": "Geunjeongjeon",
+    "customCity": null,
+    "customCountry": null,
+    "country": "South Korea",
+    "city": null,
+    "width": 6982,
+    "height": 3927,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132.jpg",
+      "key": "photos/60e22ef141e3-dscf3132.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 609,
+        "y": 0,
+        "size": 3927,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "geunjeongjeon"
+      },
+      {
+        "relation": "in",
+        "id": "gyeongbokgung-palace"
+      }
+    ]
+  },
+  {
+    "title": "Stickerbox",
+    "comment": null,
+    "file": "IMG_5647.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 6.3,
+    "exposure": "1/125",
+    "iso": 100,
+    "focalLength": 47,
+    "gpsPosition": "40 deg 42' 57.40\" N, 73 deg 59' 22.79\" W",
+    "createDate": "2019:03:30 13:41:15",
+    "placeName": "lower-east-side",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 3688,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647.jpg",
+      "key": "photos/ec73b0fed3d9-img-5647.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-thumbnail.webp?crop=1237,0,3688",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-thumbnailpreview.webp?crop=1237,0,3688",
+      "thumbnailcrop": {
+        "x": 1237,
+        "y": 0,
+        "size": 3688,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "lower-east-side"
+      }
+    ]
+  },
+  {
+    "title": "Up Above Manhattan Bridge Overpass",
+    "comment": null,
+    "file": "IMG_7515.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S10-18mm f/4.5-5.6 IS STM",
+    "aperture": 7.1,
+    "exposure": "1/80",
+    "iso": 100,
+    "focalLength": 11,
+    "gpsPosition": "40 deg 42' 27.23\" N, 73 deg 59' 27.49\" W",
+    "createDate": "2019:03:30 15:38:41",
+    "placeName": "manhattan-bridge",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 3649,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515.jpg",
+      "key": "photos/a28fed49145f-img-7515.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-thumbnail.webp?crop=991,0,3649",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a28fed49145f-img-7515-thumbnailpreview.webp?crop=991,0,3649",
+      "thumbnailcrop": {
+        "x": 991,
+        "y": 0,
+        "size": 3649,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "manhattan-bridge"
       }
     ]
   },
@@ -249,6 +689,55 @@
       {
         "relation": "",
         "id": "gyeongbokgung-palace"
+      }
+    ]
+  },
+  {
+    "title": "Yellow x Stickers",
+    "comment": null,
+    "file": "IMG_1227.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 5,
+    "exposure": "1/500",
+    "iso": 100,
+    "focalLength": 39,
+    "gpsPosition": "40 deg 45' 24.35\" N, 73 deg 57' 15.17\" W",
+    "createDate": "2019:08:24 11:52:29",
+    "placeName": "queensboro-bridge",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 3374,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227.jpg",
+      "key": "photos/1c9c50ac85ad-img-1227.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-thumbnail.webp?crop=254,0,3374",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1c9c50ac85ad-img-1227-thumbnailpreview.webp?crop=254,0,3374",
+      "thumbnailcrop": {
+        "x": 254,
+        "y": 0,
+        "size": 3374,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "queensboro-bridge"
       }
     ]
   }
