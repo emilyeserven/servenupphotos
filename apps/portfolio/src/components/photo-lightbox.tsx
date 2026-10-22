@@ -2,8 +2,9 @@ import { format } from "date-fns";
 import { XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
 import { useRef, useState } from "react";
+import { PhotoComment } from "@/components/photo-comment";
 import { Button } from "@/components/ui/button";
-import type { Photo, PhotoImage } from "@/lib/photos";
+import { settingsText, type Photo, type PhotoImage } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 interface PhotoLightboxProps {
@@ -23,14 +24,20 @@ export function PhotoLightbox({ photo: openPhoto, onClose }: PhotoLightboxProps)
   if (openPhoto && openPhoto !== photo) setPhoto(openPhoto);
   // The tile that opened it, to focus again on closing, as there's no Dialog.Trigger to go back to.
   const opener = useRef<HTMLElement | null>(null);
+  const content = useRef<HTMLDivElement>(null);
   return (
     <Dialog.Root open={openPhoto !== null} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className={cn("fixed inset-0 z-50 bg-neutral-950/95", FADE)} />
         <Dialog.Content
-          onOpenAutoFocus={() => {
+          ref={content}
+          onOpenAutoFocus={(event) => {
             opener.current =
               document.activeElement instanceof HTMLElement ? document.activeElement : null;
+            // Focus the lightbox itself, not its first focusable element: that's the comment when
+            // it's cut off, and focusing it would open it over the details.
+            event.preventDefault();
+            content.current?.focus();
           }}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
@@ -41,12 +48,7 @@ export function PhotoLightbox({ photo: openPhoto, onClose }: PhotoLightboxProps)
           {photo && (
             <>
               <div className="flex items-center gap-4 p-4">
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <Dialog.Title className="truncate font-medium">{photo.title}</Dialog.Title>
-                  <Dialog.Description className="truncate text-sm text-white/60">
-                    {format(photo.takenAt, "MMM d, yyyy")} · {photo.location}
-                  </Dialog.Description>
-                </div>
+                <LightboxCaption photo={photo} />
                 <Dialog.Close asChild>
                   <Button
                     variant="ghost"
@@ -69,6 +71,37 @@ export function PhotoLightbox({ photo: openPhoto, onClose }: PhotoLightboxProps)
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+/** The photo's title, with its comment and then its settings, camera, date and place beside it. */
+function LightboxCaption({ photo }: { photo: Photo }) {
+  return (
+    <div className="flex min-w-0 flex-1 flex-col">
+      <Dialog.Title className="truncate font-medium">{photo.title}</Dialog.Title>
+      {/* One row, so the details take no room from the photo; it wraps only on narrow screens. */}
+      <div className="flex flex-wrap items-baseline gap-x-4 text-sm">
+        {/* One line, so a long comment can't make the photo smaller. */}
+        {photo.comment && (
+          <PhotoComment
+            comment={photo.comment}
+            lines={1}
+            className="text-white/80"
+            expandedClassName="bg-neutral-900 ring-1 ring-white/15"
+          />
+        )}
+        <Dialog.Description className="max-w-full min-w-0 truncate text-white/60">
+          {[
+            ...settingsText(photo.settings),
+            photo.camera,
+            format(photo.takenAt, "MMM d, yyyy"),
+            photo.location,
+          ]
+            .filter(Boolean)
+            .join(" · ")}
+        </Dialog.Description>
+      </div>
+    </div>
   );
 }
 

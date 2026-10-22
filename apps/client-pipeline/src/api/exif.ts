@@ -63,8 +63,17 @@ export interface ColorAnalysis {
 
 /** The publishable subset of the EXIF data; a field is null when the photo lacks it. */
 export interface SanitizedExif {
+  /** The photo's name on the portfolio, written on the Photo page; the portfolio uses the file name without one. */
+  title: string | null;
   camera: string | null;
   lens: string | null;
+  /** The f-number, such as 5.6 for f/5.6. */
+  aperture: number | null;
+  /** The exposure time in seconds as exiftool writes it, such as "1/60" or "2". */
+  exposure: string | null;
+  iso: number | null;
+  /** The lens's focal length in millimeters, such as 18 or 4.2. */
+  focalLength: number | null;
   gpsPosition: string | null;
   createDate: string | null;
   country: string | null;
@@ -72,6 +81,8 @@ export interface SanitizedExif {
   /** The original photo's width and height in pixels, as shown (turned upright from its EXIF orientation). */
   width: number | null;
   height: number | null;
+  /** The photographer's note about the photo, in Markdown, written on the Photo page. */
+  comment: string | null;
   images: {
     /** The original photo's public R2 URL, once it has been uploaded. */
     full: string | null;

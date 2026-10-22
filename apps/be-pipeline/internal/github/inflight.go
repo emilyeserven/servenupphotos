@@ -92,6 +92,9 @@ type inFlightPull struct {
 		Ref string `json:"ref"`
 		SHA string `json:"sha"`
 	} `json:"head"`
+	Base struct {
+		Ref string `json:"ref"`
+	} `json:"base"`
 }
 
 // pullFile is the part of GET /pulls/{n}/files InFlight uses.
