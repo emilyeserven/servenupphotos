@@ -24,6 +24,7 @@ import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
 import { gpsText, parseGps } from "@/lib/place-gps";
+import { parentOptions } from "@/lib/place-bulk";
 import { notParentsOf } from "@/lib/place-hierarchy";
 
 interface PlaceEditorProps {
@@ -254,11 +255,7 @@ interface ParentFieldProps {
  * a photo adds the parent as its second place. Places in this one can't be its parent.
  */
 function ParentField({ form, id, places, disabled }: ParentFieldProps) {
-  const ruledOut = notParentsOf(places, id);
-  const options = places
-    .filter((place) => !ruledOut.has(place.id))
-    .toSorted((a, b) => a.name.localeCompare(b.name))
-    .map((place) => ({ value: place.id, label: place.name }));
+  const options = parentOptions(places, notParentsOf(places, id));
   return (
     <div className="flex flex-col gap-2">
       <FieldLabel id="place-parent-label" help={HELP.parent}>

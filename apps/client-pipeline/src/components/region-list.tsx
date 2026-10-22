@@ -2,6 +2,7 @@ import { ChevronRightIcon, PlusIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { type Localization, type Place, type PlacesResponse } from "@/api/places";
 import { InferredPlaceList } from "@/components/inferred-place-list";
+import { PlaceBulkBar } from "@/components/place-bulk-bar";
 import { PlaceGpsCell } from "@/components/place-gps-cell";
 import { RegionIcon } from "@/components/region-icon";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,7 @@ type RegionTreeProps = Omit<RegionListProps, "onNew">;
 function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
   const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(new Set());
   const [search, setSearch] = useState("");
+  const [checked, setChecked] = useState<ReadonlySet<string>>(new Set());
   if (list.nodes.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
@@ -82,8 +84,17 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
   }
   const rows = regionTreeRows(list.nodes, { collapsed, search });
   const toggle = (key: string) => setCollapsed(toggled(collapsed, key));
+  const checkedPlaces = list.places.filter((place) => checked.has(place.id));
+  const shownIds = rows.flatMap((row) => (row.node.place ? [row.node.place.id] : []));
   return (
     <>
+      {checkedPlaces.length > 0 && (
+        <PlaceBulkBar
+          selected={checkedPlaces}
+          places={list.places}
+          onClear={() => setChecked(new Set())}
+        />
+      )}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <SearchBox value={search} onChange={setSearch} />
         <ExpandButtons
@@ -96,6 +107,9 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-8">
+              <CheckAll shown={shownIds} checked={checked} onChange={setChecked} />
+            </TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Local script</TableHead>
             <TableHead className="text-center">GPS</TableHead>
@@ -110,6 +124,8 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
               list={list}
               open={!collapsed.has(row.node.key) || search.trim() !== ""}
               selected={row.node.key === selected}
+              checked={checked}
+              onCheck={setChecked}
               onToggle={() => toggle(row.node.key)}
               onSelect={() => onSelect(row.node)}
             />
@@ -211,14 +227,29 @@ interface RegionRowProps {
   open: boolean;
   /** Whether it's the row being edited. */
   selected: boolean;
+  /** The IDs of the places checked for bulk editing. */
+  checked: ReadonlySet<string>;
+  onCheck: (checked: ReadonlySet<string>) => void;
   onToggle: () => void;
   onSelect: () => void;
 }
 
-function RegionRow({ row, list, open, selected, onToggle, onSelect }: RegionRowProps) {
+function RegionRow({
+  row,
+  list,
+  open,
+  selected,
+  checked,
+  onCheck,
+  onToggle,
+  onSelect,
+}: RegionRowProps) {
   const { node } = row;
   return (
     <TableRow data-state={selected ? "selected" : undefined}>
+      <TableCell className="align-top">
+        {node.place && <PlaceCheckbox place={node.place} checked={checked} onChange={onCheck} />}
+      </TableCell>
       <TableCell className="whitespace-normal">
         <div className="flex items-start gap-1" style={{ paddingLeft: `${row.depth * 1.25}rem` }}>
           <ToggleButton row={row} open={open} onToggle={onToggle} />
@@ -258,6 +289,58 @@ function NameButton({ node, selected, onSelect }: NameButtonProps) {
         {note && <span className="text-muted-foreground block text-xs">{note}</span>}
       </span>
     </button>
+  );
+}
+
+const CHECKBOX = "accent-primary mt-0.5 size-4 cursor-pointer align-middle";
+
+interface PlaceCheckboxProps {
+  place: Place;
+  checked: ReadonlySet<string>;
+  onChange: (checked: ReadonlySet<string>) => void;
+}
+
+/** Checks or unchecks the place for bulk editing. */
+function PlaceCheckbox({ place, checked, onChange }: PlaceCheckboxProps) {
+  return (
+    <input
+      type="checkbox"
+      className={CHECKBOX}
+      aria-label={`Check ${place.name}`}
+      checked={checked.has(place.id)}
+      onChange={() => onChange(toggled(checked, place.id))}
+    />
+  );
+}
+
+/** The checked IDs, less the ones in ids. */
+function without(checked: ReadonlySet<string>, ids: string[]): Set<string> {
+  return new Set([...checked].filter((id) => !ids.includes(id)));
+}
+
+interface CheckAllProps {
+  /** The IDs of the places in the list as it's shown. */
+  shown: string[];
+  checked: ReadonlySet<string>;
+  onChange: (checked: ReadonlySet<string>) => void;
+}
+
+/** Checks every place shown, or unchecks them all once they are; half checked when only some are. */
+function CheckAll({ shown, checked, onChange }: CheckAllProps) {
+  const count = shown.filter((id) => checked.has(id)).length;
+  const all = shown.length > 0 && count === shown.length;
+  return (
+    <input
+      type="checkbox"
+      className={CHECKBOX}
+      aria-label="Check every place shown"
+      disabled={shown.length === 0}
+      checked={all}
+      ref={(el) => {
+        if (el) el.indeterminate = count > 0 && !all;
+      }}
+      onChange={() => onChange(all ? without(checked, shown) : new Set([...checked, ...shown]))}
+    />
   );
 }
 

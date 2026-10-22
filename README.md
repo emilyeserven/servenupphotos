@@ -81,9 +81,10 @@ plain background. Options are listed at the top of `scripts/screenshot.mjs`: `--
 
 How each part of the pipeline and portfolio works is in [`docs/`](docs):
 
-- [Portfolio with your own photo data](docs/local-photo-data.md): how `pnpm photos:local` and the portfolio's dev server build its local photo, place and localization data, and what each portfolio view shows
+- [Portfolio with your own photo data](docs/local-photo-data.md): how `pnpm photos:local` and the portfolio's dev server build its local photo, place, localization, album and tag data, and what each portfolio view shows
 - [EXIF and color data](docs/exif-and-colors.md) (`/exif`): reading a photo's EXIF metadata and color analysis
 - [Portfolio homepage](docs/portfolio-homepage.md) (`/` on the portfolio): the ways to explore, over photos picked on Site Spotlight
+- [Portfolio Filters](docs/portfolio-filters.md): filtering the portfolio's views by location, album and tag, kept in the URL across views
 - [Photo Viewer](docs/photo-viewer.md): the portfolio's full-window photo, and moving between photos with the arrow keys
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other

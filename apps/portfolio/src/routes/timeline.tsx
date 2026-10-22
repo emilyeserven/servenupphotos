@@ -3,6 +3,7 @@ import { format, min } from "date-fns";
 import { CalendarClock, ChevronDown, RotateCcw } from "lucide-react";
 import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
+import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
@@ -11,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { buildHistogram } from "@/lib/histogram";
+import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { cn } from "@/lib/utils";
 import {
   absoluteTimeRange,
@@ -23,7 +25,10 @@ import {
 type ImagePhoto = Photo & { image: PhotoImage };
 
 export const Route = createFileRoute("/timeline")({
-  validateSearch: (search: Record<string, unknown>): TimeRangeValue => parseTimeRange(search),
+  validateSearch: (search: Record<string, unknown>): TimeRangeValue & PhotoFilters => ({
+    ...parseTimeRange(search),
+    ...parseFilters(search),
+  }),
   component: TimelineView,
 });
 
@@ -44,9 +49,11 @@ function TimelineView() {
   const navigate = Route.useNavigate();
   const [now] = useState(() => new Date());
   const [shown, setShown] = useState<ImagePhoto | null>(null);
-  const { start = earliestPhoto, end } = resolveTimeRange(search, now);
+  const filters = parseFilters(search);
+  const timeRange = parseTimeRange(search);
+  const { start = earliestPhoto, end } = resolveTimeRange(timeRange, now);
   // Newest first, so the months and the photos in each read down from the latest.
-  const inRange = photos
+  const inRange = filterPhotos(photos, filters)
     .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
   const { bins, resolution } = buildHistogram(
@@ -54,10 +61,11 @@ function TimelineView() {
     start,
     end,
   );
-  const isAllTime = Object.keys(search).length === 0;
+  const isAllTime = Object.keys(timeRange).length === 0;
 
-  function selectDates(from: Date, to: Date) {
-    navigate({ search: absoluteTimeRange(from, to) });
+  /** Shows the time range, keeping the filters. */
+  function showRange(next: TimeRangeValue) {
+    navigate({ search: { ...filters, ...next } });
   }
 
   return (
@@ -69,9 +77,9 @@ function TimelineView() {
         </h1>
         <div className="flex flex-wrap items-center gap-3">
           <TimeRangePicker
-            value={search}
+            value={timeRange}
             selection={{ from: start, to: end }}
-            onChange={(next) => navigate({ search: next })}
+            onChange={showRange}
           />
           <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
           <Button
@@ -79,15 +87,20 @@ function TimelineView() {
             size="sm"
             className="ml-auto"
             disabled={isAllTime}
-            onClick={() => navigate({ search: {} })}
+            onClick={() => showRange({})}
           >
             <RotateCcw aria-hidden />
             Reset
           </Button>
         </div>
+        <PhotoFilterBar photos={photos} />
       </header>
-      <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
-      <PhotoMonths photos={inRange} onOpen={setShown} />
+      <TimelineHistogram
+        bins={bins}
+        resolution={resolution}
+        onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
+      />
+      <PhotoMonths photos={inRange} filtered={hasFilters(filters)} onOpen={setShown} />
       <PhotoLightbox
         photo={shown}
         photos={inRange}
@@ -98,9 +111,19 @@ function TimelineView() {
   );
 }
 
-function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: ImagePhoto) => void }) {
+function PhotoMonths({
+  photos,
+  filtered,
+  onOpen,
+}: {
+  photos: Photo[];
+  /** Whether any filter is set, so an empty range can say the filters may be why. */
+  filtered: boolean;
+  onOpen: (photo: ImagePhoto) => void;
+}) {
   if (photos.length === 0) {
-    return <p className="text-muted-foreground">No photos in this time range.</p>;
+    const matching = filtered ? "match these filters" : "were taken";
+    return <p className="text-muted-foreground">No photos {matching} in this time range.</p>;
   }
 
   return (

@@ -12,20 +12,43 @@ import {
 } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
 import { MapPin, ZoomIn } from "lucide-react";
-import { LngLatBounds, setWorkerUrl, type GeoJSONSource, type GeoJSONFeature } from "maplibre-gl";
+import {
+  type LngLatBounds,
+  setWorkerUrl,
+  type GeoJSONSource,
+  type GeoJSONFeature,
+} from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import { type MouseEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  type MouseEvent,
+  type RefObject,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { MapViewControls } from "@/components/map-view-controls";
+import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { Button } from "@/components/ui/button";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import {
+  type PhotoPoint,
+  type PlacedPhoto,
+  boundsOf,
+  placedById,
+  placedPhotos,
+  useMapPhotos,
+} from "@/lib/map-photos";
+import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import type { Photo, PhotoImage } from "@/lib/photos";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/map")({
+  validateSearch: (search: Record<string, unknown>): PhotoFilters => parseFilters(search),
   component: MapView,
 });
 
@@ -50,59 +73,26 @@ const hiddenLayer: LayerProps = {
   paint: { "circle-opacity": 0, "circle-stroke-opacity": 0 },
 };
 
-interface PhotoPoint {
-  type: "Point";
-  coordinates: [number, number];
-}
-
-/** A photo with a GPS position, which is all the map can show. */
-type PlacedPhoto = Photo & { latitude: number; longitude: number };
-
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
 
-const placedPhotos = photos.filter(
-  (photo): photo is PlacedPhoto => photo.latitude !== null && photo.longitude !== null,
-);
-
-const photoGeoJson = {
-  type: "FeatureCollection" as const,
-  features: placedPhotos.map((photo) => ({
-    type: "Feature" as const,
-    geometry: {
-      type: "Point",
-      coordinates: [photo.longitude, photo.latitude],
-    } satisfies PhotoPoint,
-    properties: { id: photo.id },
-  })),
-};
-
-const photosById = new globalThis.Map(placedPhotos.map((photo) => [photo.id, photo]));
-
 /** How far from the photos' edges the map keeps them, in pixels. */
 const FIT_PADDING = 80;
-
-/** The bounds of every photo, or null without any. */
-function boundsOf(points: PlacedPhoto[]): LngLatBounds | null {
-  if (points.length === 0) return null;
-  const bounds = new LngLatBounds();
-  for (const photo of points) bounds.extend([photo.longitude, photo.latitude]);
-  return bounds;
-}
-
-const photoBounds = boundsOf(placedPhotos);
 
 // Opens on the photos, close enough to see the streets around one photo but no closer; the whole
 // world without any.
 const ALL_PHOTOS_FIT = { padding: FIT_PADDING, maxZoom: 14 };
 const WORLD_VIEW = { center: [20, 25] as [number, number], zoom: 1.3 };
-const initialViewState = photoBounds
-  ? { bounds: photoBounds, fitBoundsOptions: ALL_PHOTOS_FIT }
-  : { longitude: WORLD_VIEW.center[0], latitude: WORLD_VIEW.center[1], zoom: WORLD_VIEW.zoom };
+/** Where the map opens: on the photos' bounds, or the whole world without any. */
+function initialViewOf(bounds: LngLatBounds | null) {
+  return bounds
+    ? { bounds, fitBoundsOptions: ALL_PHOTOS_FIT }
+    : { longitude: WORLD_VIEW.center[0], latitude: WORLD_VIEW.center[1], zoom: WORLD_VIEW.zoom };
+}
 
-/** Moves the map back to where it opened, showing every photo. */
-function showAllPhotos(map: MapRef) {
-  if (photoBounds) map.fitBounds(photoBounds, ALL_PHOTOS_FIT);
+/** Moves the map to show every photo in the bounds, as when it opened. */
+function showAllPhotos(map: MapRef, bounds: LngLatBounds | null) {
+  if (bounds) map.fitBounds(bounds, ALL_PHOTOS_FIT);
   else map.flyTo(WORLD_VIEW);
 }
 
@@ -135,7 +125,7 @@ type MapMarker =
 function markerOf(feature: GeoJSONFeature): MapMarker | null {
   const properties = feature.properties ?? {};
   if (typeof properties.cluster_id !== "number") {
-    const photo = photosById.get(properties.id);
+    const photo = placedById.get(properties.id);
     return photo ? { kind: "photo", key: `photo-${photo.id}`, photo } : null;
   }
   const [longitude, latitude] = (feature.geometry as PhotoPoint).coordinates;
@@ -165,7 +155,7 @@ async function photosInCluster(map: MapRef, clusterId: number): Promise<PlacedPh
   if (!source) return [];
   const leaves = await source.getClusterLeaves(clusterId, Infinity, 0);
   return leaves
-    .flatMap((leaf) => photosById.get(leaf.properties?.id) ?? [])
+    .flatMap((leaf) => placedById.get(leaf.properties?.id) ?? [])
     .toSorted((a, b) => a.takenAt.getTime() - b.takenAt.getTime());
 }
 
@@ -178,6 +168,25 @@ interface OpenCluster {
   longitude: number;
   latitude: number;
   photos: PlacedPhoto[];
+}
+
+/**
+ * Moves the map to show the photos again when the filters change which photos it shows, and runs
+ * `onChange` to close what's open. It doesn't move when the map first opens, as the map opens on
+ * them already.
+ */
+function useFitOnFilter(
+  map: RefObject<MapRef | null>,
+  bounds: LngLatBounds | null,
+  onChange: () => void,
+) {
+  const shownBounds = useRef(bounds);
+  useEffect(() => {
+    if (shownBounds.current === bounds || !map.current) return;
+    shownBounds.current = bounds;
+    showAllPhotos(map.current, bounds);
+    onChange();
+  });
 }
 
 // Clicks on markers and in popups would otherwise reach the map too, which closes the popups.
@@ -193,6 +202,12 @@ function MapView() {
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
   const [shown, setShown] = useState<ImagePhoto | null>(null);
+  const mapPhotos = useMapPhotos(Route.useSearch());
+  const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds));
+  useFitOnFilter(map, mapPhotos.bounds, () => {
+    setSelected(null);
+    setCluster(null);
+  });
   // The photos the lightbox steps through: the open group's, or none for a photo on its own.
   const [shownGroup, setShownGroup] = useState<PlacedPhoto[]>([]);
 
@@ -230,7 +245,10 @@ function MapView() {
           <MapPin className="size-8 text-muted-foreground" aria-hidden />
           Map
         </h1>
-        <p className="text-sm text-muted-foreground">{placedPhotos.length} photos</p>
+        <p className="text-sm text-muted-foreground">{mapPhotos.placed.length} photos</p>
+        <div className="w-full pt-2">
+          <PhotoFilterBar photos={placedPhotos} />
+        </div>
       </header>
       <div className="min-h-0 flex-1">
         <Map
@@ -250,13 +268,13 @@ function MapView() {
           <NavigationControl position="top-right" />
           <MapViewControls
             onReset={() => {
-              if (map.current) showAllPhotos(map.current);
+              if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
             }}
           />
           <Source
             id={SOURCE_ID}
             type="geojson"
-            data={photoGeoJson}
+            data={mapPhotos.geoJson}
             cluster
             clusterMaxZoom={17}
             clusterRadius={50}

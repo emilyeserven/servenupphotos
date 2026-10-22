@@ -1,12 +1,13 @@
 # Portfolio with your own photo data
 
 `pnpm dev` and `pnpm dev:docker` first run `pnpm photos:local`, which writes `ALLPHOTOS.local.json`,
-`PLACES.local.json` and `LOCALIZATIONS.local.json` (git-ignored) in `apps/portfolio/src/data/photos`, `places` and
-`localizations`. It takes them from the first of these that answers:
+`PLACES.local.json`, `LOCALIZATIONS.local.json`, `ALLALBUMS.local.json` and `ALLTAGS.local.json` (git-ignored) in
+`apps/portfolio/src/data/photos`, `places`, `localizations`, `albums` and `tags`. The album and tag files are what the
+[filters](portfolio-filters.md) list. It takes them from the first of these that answers:
 
 1. **The photo pipeline**, when it's running locally (`PIPELINE_URL`, or else `http://localhost:8080`, then
    `http://localhost:5174`): the combined files at the open **Add photo data** pull request's head, with the pull
-   request's own photo, place and localization files put over them (matched by `file` for photos and `id` for the
+   request's own photo, place, localization, album and tag files put over them (matched by `file` for photos and `id` for the
    rest). So saves not committed with **Commit** yet show too.
 2. **GitHub**: the combined files from the open pull request on the `origin` repository. Set `GITHUB_TOKEN` for a
    private repository, or if GitHub's limit of 60 unauthenticated requests an hour runs out.
