@@ -64,13 +64,15 @@ type SocialDatesResult struct {
 
 // socialFields are the parts of a photo JSON file SocialCalendar reads.
 type socialFields struct {
-	File                   *string            `json:"file"`
-	Title                  *string            `json:"title"`
-	GPSPosition            *string            `json:"gpsPosition"`
-	CreateDate             *string            `json:"createDate"`
-	IsSocialMediaEligible  bool               `json:"isSocialMediaEligible"`
-	SocialMediaPublishDate *string            `json:"socialMediaPublishDate"`
-	Images                 map[string]*string `json:"images"`
+	File                   *string `json:"file"`
+	Title                  *string `json:"title"`
+	GPSPosition            *string `json:"gpsPosition"`
+	CreateDate             *string `json:"createDate"`
+	IsSocialMediaEligible  bool    `json:"isSocialMediaEligible"`
+	SocialMediaPublishDate *string `json:"socialMediaPublishDate"`
+	// Images holds each version's URL, and also the thumbnail's crop, an
+	// object, so its values are only read as strings where they are ones.
+	Images map[string]json.RawMessage `json:"images"`
 }
 
 // SocialCalendar reads every photo JSON file, as PreviewBaseURL does, with
@@ -113,10 +115,11 @@ func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (Social
 }
 
 // socialImage is the square thumbnail, or the smallest resized version there is.
-func socialImage(images map[string]*string) *string {
+func socialImage(images map[string]json.RawMessage) *string {
 	for _, name := range []string{"thumbnail", "small", "xsmall", "medium", "large", "xlarge"} {
-		if u := images[name]; u != nil && *u != "" {
-			return u
+		var u string
+		if json.Unmarshal(images[name], &u) == nil && u != "" {
+			return &u
 		}
 	}
 	return nil

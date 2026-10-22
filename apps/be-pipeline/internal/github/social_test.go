@@ -42,7 +42,7 @@ func TestSetTopLevel(t *testing.T) {
 
 // photoB and photoC are photo files.
 const (
-	photoB = `{"file":"B.jpg","title":"Bee","gpsPosition":null,"createDate":"2026:05:16 15:24:10","isSocialMediaEligible":true,"socialMediaPublishDate":"2026-10-22","images":{"thumbnail":null,"small":"https://cdn.example.com/B-small.webp"}}`
+	photoB = `{"file":"B.jpg","title":"Bee","gpsPosition":null,"createDate":"2026:05:16 15:24:10","isSocialMediaEligible":true,"socialMediaPublishDate":"2026-10-22","images":{"thumbnail":null,"small":"https://cdn.example.com/B-small.webp","thumbnailcrop":{"x":1,"y":2,"size":3,"outputSize":500}}}`
 	photoC = `{"file":"C.jpg","gpsPosition":"1 deg N","createDate":null,"images":{}}`
 )
 
