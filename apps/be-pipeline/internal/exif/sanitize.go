@@ -29,8 +29,12 @@ type Sanitized struct {
 	FocalLength *float64 `json:"focalLength"`
 	GPSPosition *string  `json:"gpsPosition"`
 	CreateDate  *string  `json:"createDate"`
-	Country     *string  `json:"country"`
-	City        *string  `json:"city"`
+	// PlaceName is the name of the place the photo was taken, such as a
+	// park or a building, which the portfolio shows before the city.
+	// Sanitize leaves it nil; it is written on the Photo page before saving.
+	PlaceName *string `json:"placeName"`
+	Country   *string `json:"country"`
+	City      *string `json:"city"`
 	// Width and Height are the original photo's size in pixels, as it is
 	// shown: swapped from the stored size when EXIF says to turn it 90°.
 	Width  *int   `json:"width"`

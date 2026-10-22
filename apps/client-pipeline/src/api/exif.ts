@@ -77,6 +77,8 @@ export interface SanitizedExif {
   focalLength: number | null;
   gpsPosition: string | null;
   createDate: string | null;
+  /** The name of the place the photo was taken, such as a park or building, written on the Photo page. */
+  placeName: string | null;
   country: string | null;
   city: string | null;
   /** The original photo's width and height in pixels, as shown (turned upright from its EXIF orientation). */

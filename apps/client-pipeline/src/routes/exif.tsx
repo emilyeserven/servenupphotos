@@ -15,6 +15,7 @@ import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import {
   fileStem,
+  NO_DETAILS,
   type PhotoDetails,
   PhotoDetailsCard,
   withDetails,
@@ -103,8 +104,6 @@ function withImages(
 function uploadedCrop({ thumbnailCrop }: UploadResponse) {
   return thumbnailCrop ? thumbnailCropField(thumbnailCrop) : null;
 }
-
-const NO_DETAILS: PhotoDetails = { title: "", comment: "" };
 
 /** State that belongs to the photo analyzed at `submittedAt`, so choosing another photo starts it over. */
 function usePhotoState<T>(submittedAt: number, initial: T): [T, (value: T) => void] {
@@ -238,7 +237,7 @@ interface ResultsColumnProps {
   onSaved: () => void;
 }
 
-/** The analyzed photo's results, then its title, comment and saving them to GitHub unless it's already in ALLPHOTOS.json. */
+/** The analyzed photo's results, then its title, place name, comment and saving them to GitHub unless it's already in ALLPHOTOS.json. */
 function ResultsColumn({
   extract,
   sanitized,
@@ -278,7 +277,7 @@ interface NewPhotoDetailsProps {
   saved: boolean;
 }
 
-/** The new photo's title and comment, unless it's already in ALLPHOTOS.json. */
+/** The new photo's title, place name and comment, unless it's already in ALLPHOTOS.json. */
 function NewPhotoDetails({
   identity,
   file,
@@ -295,7 +294,7 @@ function NewPhotoDetails({
         description={
           saved
             ? "Saved with the photo's JSON."
-            : "Both optional, and saved in the JSON when you save to GitHub."
+            : "All optional, and saved in the JSON when you save to GitHub."
         }
         disabled={saved}
       />

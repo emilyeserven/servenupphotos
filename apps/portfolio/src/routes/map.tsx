@@ -14,6 +14,7 @@ import { LngLatBounds, setWorkerUrl, type GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { useState, useSyncExternalStore } from "react";
+import { PhotoLocation } from "@/components/photo-location";
 import { photos, type Photo } from "@/lib/photos";
 
 export const Route = createFileRoute("/map")({
@@ -184,7 +185,11 @@ function MapView() {
               className="text-neutral-900"
             >
               <p className="font-medium">{selected.title}</p>
-              {selected.location && <p className="text-xs text-neutral-600">{selected.location}</p>}
+              {selected.location && (
+                <p className="text-xs text-neutral-600">
+                  <PhotoLocation location={selected.location} />
+                </p>
+              )}
               <p className="text-xs text-neutral-600">
                 {format(selected.takenAt, "MMM d, yyyy")} · {selected.camera}
               </p>

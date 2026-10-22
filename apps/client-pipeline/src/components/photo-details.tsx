@@ -16,27 +16,38 @@ const MARKDOWN_CLASSES = [
   "[&_blockquote]:text-muted-foreground [&_blockquote]:my-2 [&_blockquote]:border-l-2 [&_blockquote]:pl-3",
 ].join(" ");
 
-/** The photo's title and Markdown comment as typed; empty when there's none. */
+/** The photo's title, place name and Markdown comment as typed; empty when there's none. */
 export interface PhotoDetails {
   title: string;
+  placeName: string;
   comment: string;
 }
+
+/** No title, place name or comment, which a new photo starts with. */
+export const NO_DETAILS: PhotoDetails = { title: "", placeName: "", comment: "" };
 
 /** A file name without its extension, which the portfolio uses as the title of a photo without one. */
 export function fileStem(file: string): string {
   return file.replace(/\.[^.]*$/, "");
 }
 
-/** The title and comment saved in a photo's JSON, to start editing from. */
+/** The title, place name and comment saved in a photo's JSON, to start editing from. */
 export function savedDetails(data: Record<string, unknown>): PhotoDetails {
-  return { title: text(data.title), comment: text(data.comment) };
+  return {
+    title: text(data.title),
+    placeName: text(data.placeName),
+    comment: text(data.comment),
+  };
 }
 
 function text(value: unknown): string {
   return typeof value === "string" ? value : "";
 }
 
-/** data with the title and comment, or null for ones left empty, as its first fields. */
+/**
+ * data with the title and comment, or null for ones left empty, as its first fields, and the place
+ * name where data has it (before the country, as new photo files list it), or else last.
+ */
 export function withDetails<T extends object>(data: T, details: PhotoDetails) {
   const {
     title: _title,
@@ -50,6 +61,8 @@ export function withDetails<T extends object>(data: T, details: PhotoDetails) {
     title: details.title.trim() || null,
     comment: details.comment.trim() || null,
     ...rest,
+    // Setting a key the spread already added keeps it where it was.
+    placeName: details.placeName.trim() || null,
   };
 }
 
@@ -68,7 +81,10 @@ interface PhotoDetailsCardProps {
   disabled: boolean;
 }
 
-/** The photo's optional title on the portfolio and Markdown comment, saved as the JSON's "title" and "comment". */
+/**
+ * The photo's optional title on the portfolio, place name and Markdown comment, saved as the JSON's
+ * "title", "placeName" and "comment".
+ */
 export function PhotoDetailsCard({
   value,
   onChange,
@@ -79,7 +95,7 @@ export function PhotoDetailsCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Title and comment</CardTitle>
+        <CardTitle>Title, place and comment</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -98,6 +114,23 @@ export function PhotoDetailsCard({
           <p id="photo-title-hint" className="text-muted-foreground text-sm">
             What the portfolio calls the photo. Without one, it uses the file name,{" "}
             <code>{fallbackTitle}</code>. Its JSON file is named after it too.
+          </p>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="photo-place-name" className="text-sm font-medium">
+            Place name
+          </label>
+          <Input
+            id="photo-place-name"
+            placeholder="Such as Gyeongbokgung Palace"
+            value={value.placeName}
+            disabled={disabled}
+            aria-describedby="photo-place-name-hint"
+            onChange={(event) => onChange({ ...value, placeName: event.target.value })}
+          />
+          <p id="photo-place-name-hint" className="text-muted-foreground text-sm">
+            Where the photo was taken, more exactly than its city. The portfolio shows it before the
+            city, with the country under the GPS position on hover.
           </p>
         </div>
         <CommentField

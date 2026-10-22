@@ -42,10 +42,11 @@ export function MissingFieldsCard({ canReadExif }: MissingFieldsCardProps) {
       <CardHeader>
         <CardTitle>Missing fields</CardTitle>
         <CardDescription>
-          Gives older photo files the fields new ones have, such as the title, comment and camera
-          settings. A missing field gets the value a new photo starts with, usually empty, except
-          the Square Thumbnail&apos;s crop, which is read from the <code>?crop=</code> on its URL
-          when it has one. Fields a file already has, even empty ones, aren&apos;t changed.
+          Gives older photo files the fields new ones have, such as the title, place name, comment
+          and camera settings. A missing field gets the value a new photo starts with, usually
+          empty, except the Square Thumbnail&apos;s crop, which is read from the <code>?crop=</code>{" "}
+          on its URL when it has one. Fields a file already has, even empty ones, aren&apos;t
+          changed.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
