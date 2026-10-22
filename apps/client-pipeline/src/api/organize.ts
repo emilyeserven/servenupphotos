@@ -60,10 +60,11 @@ export const createGroupMutation = (kind: GroupKind) =>
       }),
   });
 
-/** Matches the backend's rule: lowercase letters and numbers, with single dashes between words. */
-const GROUP_ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-
-/** name as an ID: lowercase, accents dropped, and runs of anything else turned into one dash. */
+/**
+ * name as an album or tag ID, matching the backend's rule of lowercase letters and numbers with
+ * single dashes between words: accents dropped, and runs of anything else turned into one dash.
+ * Empty when the name has no letter or number from a to z or 0 to 9.
+ */
 export function groupId(name: string): string {
   return name
     .normalize("NFKD")
@@ -73,15 +74,6 @@ export function groupId(name: string): string {
     .replace(/^-+|-+$/g, "")
     .slice(0, 100)
     .replace(/-+$/, "");
-}
-
-export function validateGroupId(id: string): string | undefined {
-  const trimmed = id.trim();
-  if (!trimmed) return "Give it an ID.";
-  if (trimmed.length > 100 || !GROUP_ID_PATTERN.test(trimmed)) {
-    return "Use lowercase letters and numbers, with single dashes between words.";
-  }
-  return undefined;
 }
 
 /**

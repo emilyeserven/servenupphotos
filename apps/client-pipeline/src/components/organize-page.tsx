@@ -11,7 +11,6 @@ import {
   findCollision,
   groupId,
   organizeQuery,
-  validateGroupId,
 } from "@/api/organize";
 import { type PublishResult, photosInFlightQuery } from "@/api/photos";
 import { dataFolder, settingsQuery } from "@/api/settings";
@@ -164,7 +163,7 @@ function NewGroupCard(props: NewGroupCardProps) {
 /** Per field, what to say when the album or tag `group`, of kind `what`, already has the value. */
 const COLLISIONS = {
   id: (what: string, group: Group) =>
-    `The ${what} “${group.name || group.id}” already has this ID.`,
+    `The ${what} “${group.name || group.id}” already has the ID “${group.id}”, made from this name.`,
   name: (what: string, group: Group) => `There's already a ${what} named “${group.name}”.`,
 };
 
@@ -178,14 +177,21 @@ function collisionMessage(
   return found && COLLISIONS[field](GROUP_KINDS[found.kind].singular, found.group);
 }
 
-function validateName(organize: OrganizeResponse | undefined, name: string): string | undefined {
+/** Why `name` itself can't be used, before checking it against the albums and tags. */
+function nameProblem(name: string): string | undefined {
   if (!name.trim()) return "Give it a name.";
   if (name.trim().length > 100) return "Keep the name to 100 characters.";
-  return collisionMessage(organize, "name", name);
+  if (!groupId(name)) return "Include a letter or number from a to z or 0 to 9, so it gets an ID.";
+  return undefined;
 }
 
-function validateId(organize: OrganizeResponse | undefined, id: string): string | undefined {
-  return validateGroupId(id) ?? collisionMessage(organize, "id", id);
+/** Why `name` can't be used, including when an album or tag has it or the ID made from it. */
+function validateName(organize: OrganizeResponse | undefined, name: string): string | undefined {
+  return (
+    nameProblem(name) ??
+    collisionMessage(organize, "name", name) ??
+    collisionMessage(organize, "id", groupId(name))
+  );
 }
 
 function NewGroupForm({
@@ -195,18 +201,14 @@ function NewGroupForm({
   onSaved,
 }: Omit<NewGroupCardProps, "onSaved" | "rebuild"> & { onSaved: (result: PublishResult) => void }) {
   const create = useMutation({ ...createGroupMutation(kind), onSuccess: onSaved });
-  // The ID follows the name until it's edited by hand.
-  const [idEdited, setIdEdited] = useState(false);
 
   const form = useForm({
-    defaultValues: { name: "", id: "", description: "" },
-    validators: {
-      onSubmit: ({ value }) => validateName(organize, value.name) ?? validateId(organize, value.id),
-    },
+    defaultValues: { name: "", description: "" },
+    validators: { onSubmit: ({ value }) => validateName(organize, value.name) },
     onSubmit: async ({ value }) => {
       await create
         .mutateAsync({
-          id: value.id.trim(),
+          id: groupId(value.name),
           name: value.name.trim(),
           description: value.description.trim(),
         })
@@ -226,46 +228,14 @@ function NewGroupForm({
         name="name"
         validators={{ onChange: ({ value }) => validateName(organize, value) }}
       >
-        {(field) => (
-          <FormField
-            id={field.name}
-            label="Name"
-            error={field.state.meta.isTouched ? field.state.meta.errors[0] : undefined}
-          >
-            <Input
-              id={field.name}
-              name={field.name}
-              value={field.state.value}
-              disabled={create.isPending}
-              aria-invalid={Boolean(field.state.meta.isTouched && field.state.meta.errors[0])}
-              onBlur={field.handleBlur}
-              onChange={(event) => {
-                create.reset();
-                field.handleChange(event.target.value);
-                if (!idEdited) form.setFieldValue("id", groupId(event.target.value));
-              }}
-            />
-          </FormField>
-        )}
-      </form.Field>
-
-      <form.Field name="id" validators={{ onChange: ({ value }) => validateId(organize, value) }}>
         {(field) => {
-          const error = field.state.value ? field.state.meta.errors[0] : undefined;
+          const error = field.state.meta.isTouched ? field.state.meta.errors[0] : undefined;
           return (
             <FormField
               id={field.name}
-              label="ID"
+              label="Name"
               error={error}
-              hint={
-                <>
-                  Photos list it by this. Saves{" "}
-                  <code className="break-all">
-                    {folder}/{kind}/{field.state.value.trim() || "…"}.json
-                  </code>
-                  .
-                </>
-              }
+              hint={<IdHint folder={folder} kind={kind} id={groupId(field.state.value)} />}
             >
               <Input
                 id={field.name}
@@ -274,11 +244,9 @@ function NewGroupForm({
                 disabled={create.isPending}
                 aria-invalid={Boolean(error)}
                 aria-describedby={`${field.name}-hint`}
-                className="font-mono"
                 onBlur={field.handleBlur}
                 onChange={(event) => {
                   create.reset();
-                  setIdEdited(event.target.value !== "");
                   field.handleChange(event.target.value);
                 }}
               />
@@ -314,6 +282,19 @@ function NewGroupForm({
         )}
       </form.Subscribe>
     </form>
+  );
+}
+
+/** The ID made from the name, which photos list it by, and the file it's saved as. */
+function IdHint({ folder, kind, id }: { folder: string; kind: GroupKind; id: string }) {
+  return (
+    <>
+      ID <code>{id || "…"}</code>, made from the name. Saves{" "}
+      <code className="break-all">
+        {folder}/{kind}/{id || "…"}.json
+      </code>
+      .
+    </>
   );
 }
 

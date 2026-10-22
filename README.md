@@ -298,9 +298,10 @@ when it's an entry of `ALLALBUMS.json` or `ALLTAGS.json` at the same head, and t
 
 `/albums` and `/tags`, under **Organize** in the sidebar, add new albums and tags. Each page lists every album or tag
 on the Settings branch and in the open **Add photo data** pull request, marking the ones not merged yet as in flight
-(`GET /api/organize` → `GET /organize`). **New album** (or **New tag**) asks for a name, an ID that follows the name
-(lowercase letters and numbers with single dashes, editable for names like `東京` that have none) and an optional
-description, and warns while you type when an album or tag already has that name or ID. Saving
+(`GET /api/organize` → `GET /organize`). **New album** (or **New tag**) asks for a name and an optional description. Its ID is
+made from the name (lowercase, accents dropped, anything other than a to z and 0 to 9 turned into dashes, so
+`Busan, South Korea` becomes `busan-south-korea`), and the form warns while you type when an album or tag already has
+that name or ID, or when the name has nothing to make an ID from (such as `東京` on its own). Saving
 (`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the
 open photo data pull request, or opens one, the same way photos are saved, and follows CI's rebuild of `ALLALBUMS.json`
 or `ALLTAGS.json`. Adding photos to albums, choosing them on the Photo page and editing come later.
