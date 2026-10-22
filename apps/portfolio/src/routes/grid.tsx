@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Grid3x3 } from "lucide-react";
 import { type ImgHTMLAttributes, useState } from "react";
+import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,7 @@ const gridPhotos = photos
 const TILE_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw";
 
 function GridView() {
+  const [shown, setShown] = useState<ImagePhoto | null>(null);
   if (gridPhotos.length === 0) return <ViewPlaceholder to="/grid" />;
 
   return (
@@ -37,10 +39,11 @@ function GridView() {
       <ul className="grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 lg:grid-cols-4">
         {gridPhotos.map((photo) => (
           <li key={photo.id}>
-            <PhotoTile photo={photo} />
+            <PhotoTile photo={photo} onOpen={() => setShown(photo)} />
           </li>
         ))}
       </ul>
+      <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
     </div>
   );
 }
@@ -86,13 +89,18 @@ function isLoaded(img: HTMLImageElement | null): boolean {
   return Boolean(img?.complete && img.naturalWidth > 0);
 }
 
-function PhotoTile({ photo }: { photo: ImagePhoto }) {
+function PhotoTile({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void }) {
   return (
     <figure className="flex flex-col gap-2">
-      <div className="relative aspect-square overflow-hidden rounded-md bg-muted">
+      <button
+        type="button"
+        title="Show the whole photo"
+        onClick={onOpen}
+        className="relative aspect-square cursor-zoom-in overflow-hidden rounded-md bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
         <TilePlaceholder image={photo.image} />
         <TileImage image={photo.image} alt={photo.title} />
-      </div>
+      </button>
       <figcaption className="flex flex-col">
         <span className="truncate text-sm font-medium">{photo.title}</span>
         <span className="truncate text-xs text-muted-foreground">
