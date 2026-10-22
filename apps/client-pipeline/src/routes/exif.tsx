@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
 import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import type { PhotoIdentity } from "@/api/photos";
+import { ChangePhotoButton, SavedPhotoCard } from "@/components/choose-photo-dialog";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
 import { PhotoGroupsCard } from "@/components/group-picker";
@@ -66,6 +67,7 @@ function PhotoRoute() {
       title="Edit Photo"
       description="Change a photo saved to the open “Add photo data” pull request or already in the portfolio, such as the square its Square Thumbnail is cut from. Changes go into the pull request."
       wide
+      action={<ChangePhotoButton />}
     >
       <EditInFlightPhoto path={edit} from={from} />
     </Page>
@@ -108,6 +110,7 @@ function PhotoPage() {
       title="Photo"
       description="Choose a JPEG to read its metadata with exiftool and its colors with go-colorful on the Go backend, then upload it and save its data."
       wide
+      action={<TitleAction chosen={!extract.isIdle} />}
     >
       <NewPhotoActions
         extract={extract}
@@ -149,6 +152,11 @@ function PhotoPage() {
       </div>
     </Page>
   );
+}
+
+/** Once a photo is chosen, a button by the title to choose another; until then, the cards offer it. */
+function TitleAction({ chosen }: { chosen: boolean }) {
+  return chosen ? <ChangePhotoButton /> : null;
 }
 
 interface NewPhotoActionsProps {
@@ -343,7 +351,7 @@ function ResultsColumn({
   onGroupsChange,
   saved,
 }: ResultsColumnProps) {
-  if (extract.isIdle) return null;
+  if (extract.isIdle) return <SavedPhotoCard />;
   const result = <ExifResult mutation={extract} sanitized={sanitized} groups={groups} />;
   if (!extract.isSuccess || !sanitized) return result;
   return (

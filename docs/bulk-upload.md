@@ -40,3 +40,11 @@ Save, until the photo is uploaded there) hands the analyzed photo to it with its
 albums and tags, and the queue uploads it and saves its JSON while you go on to other pages. Changes made on the Photo
 page after that aren't saved with it; change it afterward with Edit. While the queue has anything in it, the Status page
 shows it, with the same rows and buttons.
+
+## Choosing a photo on the Photo page
+
+Until a photo is chosen, a **Saved photo** card sits beside the Photo page's upload card. Its **Choose a saved photo**
+opens a modal listing the photos in the photo data pull request (marked "In the batch") and those in the portfolio, with a
+search by title or file name; picking one opens it on Edit Photo. Once a photo is chosen, the card goes away and a
+**Choose another photo** button next to the page's title (and Edit Photo's) opens the same modal, with an **Upload**
+tab for a new photo from this computer.
