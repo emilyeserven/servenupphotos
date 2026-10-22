@@ -13,7 +13,7 @@ export interface SocialPhoto {
   isSocialMediaEligible: boolean;
   /** YYYY-MM-DD, or null when the photo isn't scheduled. */
   socialMediaPublishDate: string | null;
-  /** Whether the photo is an entry of ALLPHOTOS.json on the base branch. */
+  /** Whether the photo is an entry of ALLPHOTOS.json on the base branch; false while it's in flight. */
   inAllPhotos: boolean;
 }
 
@@ -24,7 +24,7 @@ export interface SocialCalendar {
   branch: string;
   /** The open photo data pull request changes go to; null when a new one would be opened. */
   pullRequest: { number: number; url: string } | null;
-  /** ALLPHOTOS.json on the base branch, which the photo picker lists from. */
+  /** ALLPHOTOS.json on the base branch, which tells photos in flight from ones already published. */
   allPhotos: { path: string; found: boolean; fileUrl?: string; count: number; error?: string };
   photos: SocialPhoto[];
   /** Photo files that couldn't be read; while there are any, nothing can be saved. */

@@ -147,46 +147,42 @@ function Schedule({ calendar }: { calendar: SocialCalendar }) {
   );
 }
 
-/** Where the photos come from, and anything that keeps the picker or saving from working. */
+/** Where the photos come from, and anything that keeps saving from working. */
 function SourceNote({ calendar }: { calendar: SocialCalendar }) {
-  const { allPhotos, pullRequest } = calendar;
-  const allPhotosName = allPhotos.fileUrl ? (
-    <ExternalLink href={allPhotos.fileUrl}>ALLPHOTOS.json</ExternalLink>
-  ) : (
-    <code>ALLPHOTOS.json</code>
-  );
+  const { pullRequest } = calendar;
+  const inFlight = calendar.photos.filter((photo) => !photo.inAllPhotos).length;
   return (
     <div className="text-muted-foreground flex flex-col gap-1 text-sm">
       <p>
-        Photos to pick from are the {count(allPhotos.count, "photo")} in {allPhotosName}. Dates are
-        read from and saved to the photo files on <code>{calendar.branch}</code>
+        Photos to pick from are the {count(calendar.photos.length, "photo file")} on{" "}
+        <code>{calendar.branch}</code>
         {pullRequest && (
           <>
             {" "}
             (<ExternalLink href={pullRequest.url}>pull request #{pullRequest.number}</ExternalLink>)
           </>
         )}
-        .
+        , {inFlight} of them in flight and not in <AllPhotosName calendar={calendar} /> on the base
+        branch yet. Dates are saved to the same files.
       </p>
-      <SourceProblems calendar={calendar} />
+      <Unreadable calendar={calendar} />
     </div>
   );
 }
 
-function SourceProblems({ calendar }: { calendar: SocialCalendar }) {
-  const { allPhotos, unreadable } = calendar;
-  const problems = [
-    !allPhotos.found &&
-      `${allPhotos.path} wasn't found on the base branch, so there are no photos to pick.`,
-    allPhotos.error && `${allPhotos.path} couldn't be read: ${allPhotos.error}`,
-    unreadable.length > 0 &&
-      `${count(unreadable.length, "photo file")} couldn't be read, so nothing can be saved: ${unreadable.map((f) => f.path).join(", ")}`,
-  ].filter(Boolean);
-  return problems.map((problem) => (
-    <p key={String(problem)} className="text-destructive">
-      {problem}
+function AllPhotosName({ calendar: { allPhotos } }: { calendar: SocialCalendar }) {
+  if (!allPhotos.fileUrl) return <code>ALLPHOTOS.json</code>;
+  return <ExternalLink href={allPhotos.fileUrl}>ALLPHOTOS.json</ExternalLink>;
+}
+
+function Unreadable({ calendar: { unreadable } }: { calendar: SocialCalendar }) {
+  if (unreadable.length === 0) return null;
+  return (
+    <p className="text-destructive">
+      {count(unreadable.length, "photo file")} couldn&apos;t be read, so nothing can be saved:{" "}
+      {unreadable.map((f) => f.path).join(", ")}
     </p>
-  ));
+  );
 }
 
 interface CalendarGridProps {
@@ -415,7 +411,7 @@ interface PhotoPickerProps {
   onSchedule: (photo: SocialPhoto, day: string | null) => void;
 }
 
-/** Picks a photo from ALLPHOTOS.json for a day, or takes the day's photo off it. */
+/** Picks a photo for a day, or takes the day's photo off it. */
 function PhotoPicker({ day, byDay, photos, unsaved, onClose, onSchedule }: PhotoPickerProps) {
   const [search, setSearch] = useState("");
   const current = day === null ? undefined : byDay.get(day);
@@ -464,7 +460,7 @@ function PhotoPicker({ day, byDay, photos, unsaved, onClose, onSchedule }: Photo
 function PickerHeader({ day, current }: { day: string | null; current: SocialPhoto | undefined }) {
   const intro = current
     ? `${photoName(current)} is posted this day. Pick another photo to swap it out.`
-    : "Pick a photo from ALLPHOTOS.json to post this day.";
+    : "Pick a photo to post this day.";
   return (
     <DialogHeader>
       <DialogTitle>{day ? longDayFormat.format(parseIsoDate(day)) : ""}</DialogTitle>
@@ -485,7 +481,7 @@ function PickerChoices({ choices, searching, current, unsaved, onPick }: PickerC
   if (choices.length === 0) {
     return (
       <p className="text-muted-foreground py-6 text-center text-sm">
-        {searching ? "No photos match." : "There are no photos in ALLPHOTOS.json yet."}
+        {searching ? "No photos match." : "There are no photo files yet."}
       </p>
     );
   }
@@ -513,8 +509,21 @@ interface PickerChoiceProps {
   onPick: () => void;
 }
 
+const BADGE = "rounded px-1 text-[10px] font-medium";
+
+/** Whether the photo is eligible for social media, and whether it's still in flight. */
+function PhotoBadges({ photo }: { photo: SocialPhoto }) {
+  return (
+    <span className="absolute top-1 left-1 flex flex-wrap gap-1">
+      {photo.isSocialMediaEligible && (
+        <span className={cn(BADGE, "bg-background/85")}>Eligible</span>
+      )}
+      {!photo.inAllPhotos && <span className={cn(BADGE, "bg-background/85")}>In flight</span>}
+    </span>
+  );
+}
+
 function PickerChoice({ photo, scheduled, isCurrent, onPick }: PickerChoiceProps) {
-  const badge = "absolute rounded px-1 text-[10px] font-medium";
   return (
     <button
       type="button"
@@ -524,11 +533,11 @@ function PickerChoice({ photo, scheduled, isCurrent, onPick }: PickerChoiceProps
     >
       <span className="relative aspect-square overflow-hidden rounded-md border">
         <PhotoImage photo={photo} />
-        {photo.isSocialMediaEligible && (
-          <span className={cn(badge, "bg-background/85 top-1 left-1")}>Eligible</span>
-        )}
+        <PhotoBadges photo={photo} />
         {scheduled && (
-          <span className={cn(badge, "bg-primary text-primary-foreground right-1 bottom-1")}>
+          <span
+            className={cn(BADGE, "bg-primary text-primary-foreground absolute right-1 bottom-1")}
+          >
             {isCurrent ? "This day" : dayFormat.format(parseIsoDate(scheduled))}
           </span>
         )}

@@ -139,8 +139,9 @@ when it isn't spotlighted; and `socialMediaPublishDate` (`null`), the day the ph
 media, as `YYYY-MM-DD`. Older files may be missing them, which means the same as the defaults.
 
 `/instagram` is a calendar of the photos scheduled to post, one a day. It shows three weeks, starting with this one
-(Sunday first), and pages a week at a time. Clicking an empty day picks a photo for it from `ALLPHOTOS.json` on the
-base branch (eligible photos first); clicking a scheduled photo changes or removes it. Dragging a photo to another
+(Sunday first), and pages a week at a time. Clicking an empty day picks a photo for it from the photo files, read
+where Update Data reads them, so photos in flight on the **Add photo data** pull request are included and marked as
+such (eligible photos first); clicking a scheduled photo changes or removes it. Dragging a photo to another
 day moves it there, and dropping it on another photo swaps the two. Changes stay unsaved until **Save to GitHub**,
 which sets `socialMediaPublishDate` in each changed photo file as one commit, where Update Data commits (the open
 **Add photo data** pull request's branch, or a new one). Only that field changes in each file. Nothing is saved

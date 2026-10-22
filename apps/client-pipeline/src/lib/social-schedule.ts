@@ -49,8 +49,8 @@ export function photoName(photo: SocialPhoto): string {
 }
 
 /**
- * The photos in ALLPHOTOS.json matching search: ones eligible for social media first, then ones
- * not scheduled yet, then by name.
+ * The photos matching search, in flight ones included: ones eligible for social media first, then
+ * ones not scheduled yet, then by name.
  */
 export function pickerChoices(photos: SocialPhoto[], unsaved: Unsaved, search: string) {
   const query = search.trim().toLowerCase();
@@ -58,7 +58,7 @@ export function pickerChoices(photos: SocialPhoto[], unsaved: Unsaved, search: s
     `${photoName(photo)} ${photo.file}`.toLowerCase().includes(query);
   const scheduled = (photo: SocialPhoto) => Number(dateOf(unsaved, photo) !== null);
   return photos
-    .filter((photo) => photo.inAllPhotos && matches(photo))
+    .filter(matches)
     .toSorted(
       (a, b) =>
         Number(b.isSocialMediaEligible) - Number(a.isSocialMediaEligible) ||

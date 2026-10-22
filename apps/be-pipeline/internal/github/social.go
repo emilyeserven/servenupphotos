@@ -43,7 +43,8 @@ type SocialCalendar struct {
 	// Branch is where the photo files were read, as for BaseURLPreview.
 	Branch      string              `json:"branch"`
 	PullRequest *BaseURLPullRequest `json:"pullRequest"`
-	// AllPhotos is ALLPHOTOS.json on the base branch, without its data.
+	// AllPhotos is ALLPHOTOS.json on the base branch, without its data. It's
+	// not found until a photo data pull request has been merged.
 	AllPhotos  InFlightAllPhotos   `json:"allPhotos"`
 	Photos     []SocialPhoto       `json:"photos"`
 	Unreadable []BaseURLUnreadable `json:"unreadable"`
