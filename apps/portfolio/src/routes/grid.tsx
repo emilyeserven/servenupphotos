@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Grid3x3, LayoutDashboard, Square } from "lucide-react";
 import { type CSSProperties, type ImgHTMLAttributes, useState } from "react";
+import { type GridSort, GridSortSelect } from "@/components/grid-sort-select";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ViewPlaceholder } from "@/components/view-placeholder";
@@ -19,13 +20,20 @@ interface GridSearch {
   view?: "natural";
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
   info?: true;
+  /** Set when the oldest photo comes first. Left out for the default, newest first. */
+  sort?: "oldest";
 }
 
-/** Reads the grid's view and info settings from the URL, leaving out the defaults. */
+/** Reads the grid's view, info and sort settings from the URL, leaving out the defaults. */
 function validateGridSearch(search: Record<string, unknown>): GridSearch {
   const view: GridSearch = search.view === "natural" ? { view: "natural" } : {};
-  const info: GridSearch = search.info === true || search.info === 1 ? { info: true } : {};
-  return { ...view, ...info };
+  const sort: GridSearch = search.sort === "oldest" ? { sort: "oldest" } : {};
+  return { ...view, ...infoOf(search), ...sort };
+}
+
+/** The info setting from the URL, which reads `info=true` and older `info=1` links alike. */
+function infoOf(search: Record<string, unknown>): GridSearch {
+  return search.info === true || search.info === 1 ? { info: true } : {};
 }
 
 export const Route = createFileRoute("/grid")({
@@ -37,9 +45,15 @@ export const Route = createFileRoute("/grid")({
 type ImagePhoto = Photo & { image: PhotoImage };
 
 // Newest first. Only photos with resized versions in R2 have images.
-const gridPhotos = photos
+const newestFirst = photos
   .filter((photo): photo is ImagePhoto => photo.image !== null)
   .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
+
+/** The grid's photos in each sort order, worked out once. */
+const SORTED: Record<GridSort, ImagePhoto[]> = {
+  newest: newestFirst,
+  oldest: newestFirst.toReversed(),
+};
 
 // How wide a tile is at each breakpoint, matching the grid's columns, so the browser picks the
 // smallest version that's still sharp.
@@ -51,6 +65,8 @@ function GridView() {
   const search = Route.useSearch();
   const mode: ViewMode = search.view ?? "square";
   const showInfo = search.info === true;
+  const sort: GridSort = search.sort ?? "newest";
+  const gridPhotos = SORTED[sort];
   if (gridPhotos.length === 0) return <ViewPlaceholder to="/grid" />;
 
   return (
@@ -63,7 +79,8 @@ function GridView() {
           Grid
         </h1>
         <p className="text-sm text-muted-foreground">{gridPhotos.length} photos</p>
-        <div className="ml-auto flex items-center gap-4 self-center">
+        <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 self-center">
+          <GridSortSelect sort={sort} />
           <InfoToggle shown={showInfo} />
           <ViewModeSwitcher mode={mode} />
         </div>
@@ -178,6 +195,7 @@ function ViewModeSwitcher({ mode }: { mode: ViewMode }) {
       {VIEW_MODES.map(({ mode: option, label, Icon }) => (
         <Link
           key={option}
+          from="/grid"
           to="/grid"
           search={(prev) => ({ ...prev, view: option === "natural" ? "natural" : undefined })}
           replace
