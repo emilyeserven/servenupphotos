@@ -11,6 +11,7 @@ import { GitHubSaveCard } from "@/components/github-save";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
 import { AllPhotosGate } from "@/components/allphotos-check";
+import { PhotoCommentCard } from "@/components/photo-comment";
 import { R2Upload } from "@/components/r2-upload";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { VersionPreviews } from "@/components/version-previews";
@@ -60,11 +61,27 @@ function withImages(
   };
 }
 
+/** The sanitized EXIF with the Markdown comment, or null for none, filled in. */
+function withComment(sanitized: SanitizedExif | null, comment: string): SanitizedExif | null {
+  if (!sanitized) return null;
+  return { ...sanitized, comment: comment.trim() || null };
+}
+
+/** State that belongs to the photo analyzed at `submittedAt`, so choosing another photo starts it over. */
+function usePhotoState<T>(submittedAt: number, initial: T): [T, (value: T) => void] {
+  const [state, setState] = useState<{ submittedAt: number; value: T } | null>(null);
+  const value = state?.submittedAt === submittedAt ? state.value : initial;
+  return [value, (next) => setState({ submittedAt, value: next })];
+}
+
 function PhotoPage() {
   const extract = useMutation(exifMutation);
   // Lives here rather than in the upload card so its URL can go into the sanitized EXIF.
   const upload = useMutation(uploadMutation);
-  const sanitized = withImages(extract.data?.sanitized, upload.data);
+  // Lives here so it can go into the JSON to upload and the JSON saved to GitHub.
+  const [comment, setComment] = usePhotoState(extract.submittedAt, "");
+  const [saved, setSaved] = usePhotoState(extract.submittedAt, false);
+  const sanitized = withComment(withImages(extract.data?.sanitized, upload.data), comment);
   const identity = photoIdentity(extract, sanitized);
 
   return (
@@ -84,7 +101,15 @@ function PhotoPage() {
           )}
         </div>
         <div className="flex min-w-0 flex-col gap-6">
-          <ResultsColumn extract={extract} sanitized={sanitized} identity={identity} />
+          <ResultsColumn
+            extract={extract}
+            sanitized={sanitized}
+            identity={identity}
+            comment={comment}
+            onCommentChange={setComment}
+            saved={saved}
+            onSaved={() => setSaved(true)}
+          />
         </div>
       </div>
     </Page>
@@ -166,10 +191,23 @@ interface ResultsColumnProps {
   extract: ExifMutation;
   sanitized: SanitizedExif | null;
   identity: PhotoIdentity | null;
+  comment: string;
+  onCommentChange: (comment: string) => void;
+  /** The JSON has been saved to GitHub. */
+  saved: boolean;
+  onSaved: () => void;
 }
 
-/** The analyzed photo's results, then saving them to GitHub unless it's already in ALLPHOTOS.json. */
-function ResultsColumn({ extract, sanitized, identity }: ResultsColumnProps) {
+/** The analyzed photo's results, then its comment and saving them to GitHub unless it's already in ALLPHOTOS.json. */
+function ResultsColumn({
+  extract,
+  sanitized,
+  identity,
+  comment,
+  onCommentChange,
+  saved,
+  onSaved,
+}: ResultsColumnProps) {
   if (extract.isIdle) return null;
   return (
     <>
@@ -177,7 +215,8 @@ function ResultsColumn({ extract, sanitized, identity }: ResultsColumnProps) {
       {extract.isSuccess && sanitized && (
         // The gate in the other column shows the check's status, so this one stays quiet.
         <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
-          <GitHubSaveCard file={extract.data.file} sanitized={sanitized} />
+          <PhotoCommentCard value={comment} onChange={onCommentChange} saved={saved} />
+          <GitHubSaveCard file={extract.data.file} sanitized={sanitized} onSaved={onSaved} />
         </AllPhotosGate>
       )}
     </>

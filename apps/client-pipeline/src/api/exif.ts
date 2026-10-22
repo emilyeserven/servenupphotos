@@ -65,6 +65,11 @@ export interface ColorAnalysis {
 export interface SanitizedExif {
   camera: string | null;
   lens: string | null;
+  /** The f-number, such as 5.6 for f/5.6. */
+  aperture: number | null;
+  /** The exposure time in seconds as exiftool writes it, such as "1/60" or "2". */
+  exposure: string | null;
+  iso: number | null;
   gpsPosition: string | null;
   createDate: string | null;
   country: string | null;
@@ -72,6 +77,8 @@ export interface SanitizedExif {
   /** The original photo's width and height in pixels, as shown (turned upright from its EXIF orientation). */
   width: number | null;
   height: number | null;
+  /** The photographer's note about the photo, in Markdown, written on the Photo page. */
+  comment: string | null;
   images: {
     /** The original photo's public R2 URL, once it has been uploaded. */
     full: string | null;

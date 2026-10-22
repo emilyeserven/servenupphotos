@@ -111,12 +111,18 @@ func writeBody(w http.ResponseWriter, status int, body any) {
 
 func ptr(s string) *string { return &s }
 
+func ref[T any](v T) *T { return &v }
+
 var gh = settings.GitHub{Repo: "owner/repo", Folder: "/photos/data/", Token: token}
 
 func photo(name string) Photo {
 	return Photo{Name: name, File: name + ".jpg", Sanitized: exif.Sanitized{
-		Camera: ptr("X-T5"),
-		City:   ptr("Tokyo"),
+		Camera:   ptr("X-T5"),
+		Aperture: ref(2.8),
+		Exposure: ptr("1/250"),
+		ISO:      ref(400),
+		City:     ptr("Tokyo"),
+		Comment:  ptr("Shot from the **bridge**."),
 		Images: exif.Images{
 			Full: ptr("https://photos.example.com/photos/0123456789ab-" + name + ".jpg"),
 			Key:  ptr("photos/0123456789ab-" + name + ".jpg"),
@@ -158,12 +164,16 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "file": "DSC0001.jpg",
   "camera": "X-T5",
   "lens": null,
+  "aperture": 2.8,
+  "exposure": "1/250",
+  "iso": 400,
   "gpsPosition": null,
   "createDate": null,
   "country": null,
   "city": "Tokyo",
   "width": null,
   "height": null,
+  "comment": "Shot from the **bridge**.",
   "images": {
     "full": "https://photos.example.com/photos/0123456789ab-DSC0001.jpg",
     "key": "photos/0123456789ab-DSC0001.jpg",
