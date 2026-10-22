@@ -43,7 +43,10 @@ function TimelineView() {
   const [now] = useState(() => new Date());
   const [shown, setShown] = useState<ImagePhoto | null>(null);
   const { start = earliestPhoto, end } = resolveTimeRange(search, now);
-  const inRange = photos.filter(({ takenAt }) => takenAt >= start && takenAt <= end);
+  // Newest first, so the months and the photos in each read down from the latest.
+  const inRange = photos
+    .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
+    .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
   const { bins, resolution } = buildHistogram(
     inRange.map((photo) => photo.takenAt),
     start,
