@@ -42,6 +42,8 @@ function readFolder(kind, combined) {
 const basePhotos = readFolder("photos", "ALLPHOTOS");
 const baseAlbums = readFolder("albums", "ALLALBUMS");
 const baseTags = readFolder("tags", "ALLTAGS");
+const basePlaces = readFolder("places", "PLACES");
+const baseLocalizations = readFolder("localizations", "LOCALIZATIONS");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -60,7 +62,11 @@ function newPhoto() {
       comment: null,
       file: "DSCF3104.jpg",
       createDate: "2026:05:19 20:41:12",
-      placeName: "Gwangjang Market",
+      placeName: "Gyeongbokgung Palace",
+      places: [
+        { relation: "in", id: "gyeongbokgung-palace" },
+        { relation: "by", id: "geunjeongmun-gate" },
+      ],
       images: { ...images, key: `photos/${stem}.jpg` },
       albums: ["seoul"],
       tags: ["night"],
@@ -78,11 +84,44 @@ const added = {
     path: `${FOLDER}/tags/night.json`,
     data: { id: "night", name: "Night", description: "" },
   },
+  places: [
+    placeFile(
+      "gyeongbokgung-palace",
+      "Gyeongbokgung Palace",
+      "The main royal palace of the Joseon dynasty.",
+    ),
+    placeFile("geunjeongmun-gate", "Geunjeongmun Gate", ""),
+  ],
+  localizations: [
+    localizationFile("country", "south-korea", "South Korea", "Hanguk", "", "한국"),
+    localizationFile(
+      "place",
+      "gyeongbokgung-palace",
+      "Gyeongbokgung Palace",
+      "Gyeongbokgung",
+      "",
+      "경복궁",
+    ),
+  ],
 };
+
+function placeFile(id, name, description) {
+  return { path: `${FOLDER}/places/${id}.json`, data: { id, name, description } };
+}
+
+function localizationFile(type, slug, name, romanization, pronunciation, localScript) {
+  const id = `${type}-${slug}`;
+  return {
+    path: `${FOLDER}/localizations/${id}.json`,
+    data: { id, type, name, romanization, pronunciation, localScript },
+  };
+}
 
 const headPhotos = [...basePhotos, added.photo];
 const headAlbums = [...baseAlbums, added.album];
 const headTags = [...baseTags, added.tag];
+const headPlaces = [...basePlaces, ...added.places];
+const headLocalizations = [...baseLocalizations, ...added.localizations];
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -95,11 +134,13 @@ function combinedFile(kind, all, files, branch) {
   };
 }
 
-function combinedFiles(photos, albums, tags, branch) {
+function combinedFiles([photos, albums, tags, places, localizations], branch) {
   return {
     photos: combinedFile("photos", "ALLPHOTOS.json", photos, branch),
     albums: combinedFile("albums", "ALLALBUMS.json", albums, branch),
     tags: combinedFile("tags", "ALLTAGS.json", tags, branch),
+    places: combinedFile("places", "PLACES.json", places, branch),
+    localizations: combinedFile("localizations", "LOCALIZATIONS.json", localizations, branch),
   };
 }
 
@@ -236,9 +277,15 @@ export function defaultFixtures() {
     "GET /api/photos/combined": {
       repo: REPO,
       folder: FOLDER,
-      base: { ...combinedFiles(basePhotos, baseAlbums, baseTags), branch: BASE_BRANCH },
+      base: {
+        ...combinedFiles([basePhotos, baseAlbums, baseTags, basePlaces, baseLocalizations]),
+        branch: BASE_BRANCH,
+      },
       head: {
-        ...combinedFiles(headPhotos, headAlbums, headTags, PULL_REQUEST.branch),
+        ...combinedFiles(
+          [headPhotos, headAlbums, headTags, headPlaces, headLocalizations],
+          PULL_REQUEST.branch,
+        ),
         pullRequest: PULL_REQUEST,
       },
     },
@@ -280,6 +327,14 @@ export function defaultFixtures() {
       pullRequest: PULL_REQUEST,
       albums: [...baseAlbums.map((f) => group(f, false)), group(added.album, true)],
       tags: [...baseTags.map((f) => group(f, false)), group(added.tag, true)],
+    },
+    "GET /api/places": {
+      repo: REPO,
+      folder: FOLDER,
+      branch: PULL_REQUEST.branch,
+      pullRequest: PULL_REQUEST,
+      places: headPlaces,
+      localizations: headLocalizations,
     },
     "GET /api/publish/instagram": {
       repo: REPO,

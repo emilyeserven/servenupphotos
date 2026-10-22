@@ -88,6 +88,8 @@ function GitHubSaveForm({
   onSaved,
 }: GitHubSaveCardProps & { github: GitHubSettings }) {
   const publish = useMutation({ ...publishPhotoMutation, onSuccess: () => onSaved?.() });
+  // The places go next to the albums and tags, which the backend adds to the JSON itself.
+  const { places = [], ...exif } = sanitized;
   const suggestedName = jsonFileName(sanitized.title, file);
 
   const form = useForm({
@@ -95,7 +97,7 @@ function GitHubSaveForm({
     validators: { onSubmit: ({ value }) => validateName(value.name) },
     onSubmit: async ({ value }) => {
       await publish
-        .mutateAsync({ name: value.name.trim(), file, sanitized, ...groups })
+        .mutateAsync({ name: value.name.trim(), file, sanitized: exif, ...groups, places })
         .catch(() => {});
     },
   });

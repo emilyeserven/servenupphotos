@@ -25,7 +25,17 @@ interface ComboboxProps {
   "aria-labelledby"?: string;
   /** Read out for the remove button on a chip whose value isn't one of the options. */
   unknownLabel?: (value: string) => string;
+  /**
+   * Offers what's typed as a new option, last in the list, when no option has it as its label; the
+   * function says what the offer reads, such as `Add “Gyeongbokgung” as a place`. Choosing it calls
+   * `onCreate` with the text.
+   */
+  createLabel?: (text: string) => string;
+  onCreate?: (text: string) => void;
 }
+
+/** The value of the option that offers what's typed as a new one. */
+const CREATE_VALUE = "\u0000create";
 
 /**
  * A text box that filters a list of options to choose from, showing each chosen one as a chip with
@@ -43,6 +53,8 @@ export function Combobox({
   emptyText = "Nothing matches.",
   disabled = false,
   unknownLabel = (v) => `${v}, which isn't one of the options`,
+  createLabel,
+  onCreate,
   ...aria
 }: ComboboxProps) {
   const generatedId = useId();
@@ -54,12 +66,14 @@ export function Combobox({
   const [active, setActive] = useState(0);
 
   const byValue = new Map(options.map((option) => [option.value, option]));
-  const shown = filterOptions(options, query);
+  const shown = withCreate(filterOptions(options, query), options, query, createLabel);
   const activeIndex = Math.min(active, shown.length - 1);
   const optionId = (index: number) => `${inputId}-option-${index}`;
 
   const choose = (option: ComboboxOption) => {
-    if (value.includes(option.value)) {
+    if (option.value === CREATE_VALUE) {
+      onCreate?.(query.trim());
+    } else if (value.includes(option.value)) {
       if (multiple) onChange(value.filter((v) => v !== option.value));
     } else {
       onChange(multiple ? [...value, option.value] : [option.value]);
@@ -210,6 +224,19 @@ export function Combobox({
       </ul>
     </div>
   );
+}
+
+/** shown, with an offer to add query as a new option when it's not any option's label. */
+function withCreate(
+  shown: ComboboxOption[],
+  options: ComboboxOption[],
+  query: string,
+  createLabel: ((text: string) => string) | undefined,
+): ComboboxOption[] {
+  const text = query.trim();
+  if (!createLabel || !text) return shown;
+  const taken = options.some((option) => option.label.toLowerCase() === text.toLowerCase());
+  return taken ? shown : [...shown, { value: CREATE_VALUE, label: createLabel(text) }];
 }
 
 /** The options whose label, value or detail contains every word of query, ignoring case. */

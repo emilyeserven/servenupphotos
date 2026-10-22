@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -119,14 +120,19 @@ func TestCommitCombined(t *testing.T) {
 		t.Fatalf("CommitCombined() error = %v", err)
 	}
 	wantPhotos := "[\n  {\n    \"title\": \"A\"\n  },\n  {\n    \"title\": \"B\",\n    \"albums\": [\"x\"]\n  }\n]\n"
-	// ALLALBUMS.json is already up to date; the tags folder isn't there, so ALLTAGS.json is made empty.
-	want := map[string]string{dataRoot + "/photos/ALLPHOTOS.json": wantPhotos, dataRoot + "/tags/ALLTAGS.json": "[]\n"}
-	if len(f.committed) != len(want) || f.committed[dataRoot+"/photos/ALLPHOTOS.json"] != wantPhotos ||
-		f.committed[dataRoot+"/tags/ALLTAGS.json"] != "[]\n" {
+	// ALLALBUMS.json is already up to date; the tags, places and localizations folders aren't there, so
+	// their combined files are made empty.
+	want := map[string]string{
+		dataRoot + "/photos/ALLPHOTOS.json":            wantPhotos,
+		dataRoot + "/tags/ALLTAGS.json":                "[]\n",
+		dataRoot + "/places/PLACES.json":               "[]\n",
+		dataRoot + "/localizations/LOCALIZATIONS.json": "[]\n",
+	}
+	if !maps.Equal(f.committed, want) {
 		t.Errorf("committed %q, want %q", f.committed, want)
 	}
-	if !got.Changed || got.CommitSHA != "commit8" || f.moved != "commit8" || len(got.Files) != 2 {
-		t.Errorf("CommitCombined() = %+v, moved to %q; want commit8 with two files", got, f.moved)
+	if !got.Changed || got.CommitSHA != "commit8" || f.moved != "commit8" || len(got.Files) != 4 {
+		t.Errorf("CommitCombined() = %+v, moved to %q; want commit8 with four files", got, f.moved)
 	}
 	if got.Counts["photos"] != 2 || got.Counts["albums"] != 1 || got.Counts["tags"] != 0 {
 		t.Errorf("counts = %v, want 2 photos, 1 album, 0 tags", got.Counts)
@@ -136,10 +142,12 @@ func TestCommitCombined(t *testing.T) {
 func TestCommitCombinedUpToDate(t *testing.T) {
 	gh := settings.GitHub{Repo: "owner/repo", Token: token}
 	f, c := newCombinedRepo(t, map[string]string{
-		dataRoot + "/photos/a.json":         `{"title":"A"}`,
-		dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"title\": \"A\"\n  }\n]\n",
-		dataRoot + "/albums/ALLALBUMS.json": "[]\n",
-		dataRoot + "/tags/ALLTAGS.json":     "[]\n",
+		dataRoot + "/photos/a.json":                    `{"title":"A"}`,
+		dataRoot + "/photos/ALLPHOTOS.json":            "[\n  {\n    \"title\": \"A\"\n  }\n]\n",
+		dataRoot + "/albums/ALLALBUMS.json":            "[]\n",
+		dataRoot + "/tags/ALLTAGS.json":                "[]\n",
+		dataRoot + "/places/PLACES.json":               "[]\n",
+		dataRoot + "/localizations/LOCALIZATIONS.json": "[]\n",
 	})
 	got, err := c.CommitCombined(t.Context(), gh, nil)
 	if err != nil || got.Changed || f.committed != nil {
@@ -177,10 +185,12 @@ func TestCommitCombinedWithEdits(t *testing.T) {
 	gh := settings.GitHub{Repo: "owner/repo", Token: token}
 	photo := "{\n  \"title\": \"A\",\n  \"socialMediaPublishDate\": null\n}\n"
 	f, c := newCombinedRepo(t, map[string]string{
-		dataRoot + "/photos/a.json":         photo,
-		dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"title\": \"A\",\n    \"socialMediaPublishDate\": null\n  }\n]\n",
-		dataRoot + "/albums/ALLALBUMS.json": "[]\n",
-		dataRoot + "/tags/ALLTAGS.json":     "[]\n",
+		dataRoot + "/photos/a.json":                    photo,
+		dataRoot + "/photos/ALLPHOTOS.json":            "[\n  {\n    \"title\": \"A\",\n    \"socialMediaPublishDate\": null\n  }\n]\n",
+		dataRoot + "/albums/ALLALBUMS.json":            "[]\n",
+		dataRoot + "/tags/ALLTAGS.json":                "[]\n",
+		dataRoot + "/places/PLACES.json":               "[]\n",
+		dataRoot + "/localizations/LOCALIZATIONS.json": "[]\n",
 	})
 	edits := []FieldEdit{{Path: dataRoot + "/photos/a.json", Fields: map[string]json.RawMessage{"socialMediaPublishDate": json.RawMessage(`"2026-10-30"`)}}}
 	got, err := c.CommitCombined(t.Context(), gh, edits)

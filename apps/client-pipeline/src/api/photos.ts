@@ -1,5 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ExifResponse, SanitizedExif } from "@/api/exif";
+import type { PhotoPlace } from "@/api/places";
 import { requestJson } from "@/api/settings";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
@@ -11,6 +12,8 @@ interface PhotoData {
   /** The IDs of the albums and tags to save the photo in. */
   albums: string[];
   tags: string[];
+  /** Where the photo was taken, as places from PLACES.json. */
+  places: PhotoPlace[];
 }
 
 export interface PublishResult {
@@ -96,11 +99,13 @@ export interface CombinedFile {
   error?: string;
 }
 
-/** ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, read at one ref. */
+/** ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json, PLACES.json and LOCALIZATIONS.json, read at one ref. */
 export interface CombinedFiles {
   photos: CombinedFile;
   albums: CombinedFile;
   tags: CombinedFile;
+  places: CombinedFile;
+  localizations: CombinedFile;
 }
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */

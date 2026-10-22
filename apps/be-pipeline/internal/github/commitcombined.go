@@ -14,7 +14,6 @@ import (
 	"slices"
 	"sort"
 	"strings"
-	"sync"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
@@ -58,8 +57,8 @@ type CombinedCommit struct {
 	Files []string `json:"files"`
 	// Edited is how many data files the edits changed.
 	Edited int `json:"edited"`
-	// Counts are how many entries each combined list has: photos, albums and
-	// tags.
+	// Counts are how many entries each combined list has: photos, albums,
+	// tags, places and localizations.
 	Counts map[string]int `json:"counts"`
 	// NewPullRequest is true when the commit opened the photo data pull
 	// request, which happens when there are edits and none is open.
@@ -84,6 +83,8 @@ func combinedKinds() []combinedKind {
 		{"photos", PhotosFolder, AllPhotosFile},
 		{"albums", Albums.Folder, Albums.AllFile},
 		{"tags", Tags.Folder, Tags.AllFile},
+		{"places", Places.Folder, Places.AllFile},
+		{"localizations", Localizations.Folder, Localizations.AllFile},
 	}
 }
 
@@ -294,20 +295,7 @@ func (c *Client) buildCombined(ctx context.Context, t target, folder, allFile, r
 	if perr != nil {
 		return nil, builtCombined{}, perr
 	}
-	contents := make([]json.RawMessage, len(files))
-	problems := make([]string, len(files))
-	var wg sync.WaitGroup
-	sem := make(chan struct{}, readConcurrency)
-	for i, f := range files {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			sem <- struct{}{}
-			defer func() { <-sem }()
-			contents[i], problems[i] = c.readBlob(ctx, t, f.SHA)
-		}()
-	}
-	wg.Wait()
+	contents, problems := c.readBlobs(ctx, t, files)
 
 	var unreadable []string
 	for i, problem := range problems {

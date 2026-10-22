@@ -84,6 +84,8 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
       photos: changedFile(data.head.photos, of("photos")),
       albums: changedFile(data.head.albums, of("albums")),
       tags: changedFile(data.head.tags, of("tags")),
+      places: changedFile(data.head.places, of("places")),
+      localizations: changedFile(data.head.localizations, of("localizations")),
     },
   };
 }
@@ -121,6 +123,8 @@ export interface PendingSummary {
   images: Record<Exclude<NetChange, undefined>, number>;
   albums: number;
   tags: number;
+  places: number;
+  localizations: number;
   /** Saves whose files aren't known. */
   other: number;
 }
@@ -131,6 +135,8 @@ export function summarizeChanges(changes: FileChange[], unknownChanges: number):
     images: { added: 0, modified: 0, deleted: 0 },
     albums: 0,
     tags: 0,
+    places: 0,
+    localizations: 0,
     other: unknownChanges,
   };
   for (const [first, last] of firstAndLast(changes).values()) {
@@ -162,6 +168,8 @@ export function pendingText(summary: PendingSummary): string {
     [imageCount(summary), "image"],
     [summary.albums, "album"],
     [summary.tags, "tag"],
+    [summary.places, "place"],
+    [summary.localizations, "localization"],
     [summary.other, "other save"],
   ]);
 }
