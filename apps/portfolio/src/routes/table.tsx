@@ -207,6 +207,7 @@ function TableView() {
 
   if (photos.length === 0) return <ViewPlaceholder to="/table" />;
   const visibleIds = table.getVisibleLeafColumns().map((column) => column.id as ColumnId);
+  const rows = table.getRowModel().rows;
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-16 sm:px-6">
@@ -231,7 +232,7 @@ function TableView() {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
+            {rows.map((row) => (
               <PhotoRow
                 key={row.id}
                 photo={row.original}
@@ -242,7 +243,12 @@ function TableView() {
           </tbody>
         </table>
       </div>
-      <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
+      <PhotoLightbox
+        photo={shown}
+        photos={rows.map((row) => row.original)}
+        onShow={setShown}
+        onClose={() => setShown(null)}
+      />
     </div>
   );
 }

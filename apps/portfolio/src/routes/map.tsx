@@ -192,12 +192,15 @@ function MapView() {
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
   const [shown, setShown] = useState<ImagePhoto | null>(null);
+  // The photos the lightbox steps through: the open group's, or none for a photo on its own.
+  const [shownGroup, setShownGroup] = useState<PlacedPhoto[]>([]);
 
   function updateMarkers() {
     if (map.current) setMarkers(markersInView(map.current));
   }
 
-  function openPhoto(photo: PlacedPhoto) {
+  function openPhoto(photo: PlacedPhoto, group: PlacedPhoto[] = []) {
+    setShownGroup(group);
     if (hasImage(photo)) setShown(photo);
     else setSelected(photo);
   }
@@ -279,7 +282,7 @@ function MapView() {
             >
               <ClusterGrid
                 cluster={cluster}
-                onOpen={openPhoto}
+                onOpen={(photo) => openPhoto(photo, cluster.photos)}
                 onZoomIn={() => zoomIntoCluster(cluster)}
               />
             </Popup>
@@ -287,7 +290,12 @@ function MapView() {
           {selected && <PhotoPopup photo={selected} onClose={() => setSelected(null)} />}
         </Map>
       </div>
-      <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
+      <PhotoLightbox
+        photo={shown}
+        photos={shownGroup}
+        onShow={setShown}
+        onClose={() => setShown(null)}
+      />
     </div>
   );
 }

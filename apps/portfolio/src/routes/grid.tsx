@@ -99,7 +99,12 @@ function GridView() {
           </li>
         ))}
       </ul>
-      <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
+      <PhotoLightbox
+        photo={shown}
+        photos={gridPhotos}
+        onShow={setShown}
+        onClose={() => setShown(null)}
+      />
     </div>
   );
 }
