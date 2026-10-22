@@ -64,11 +64,11 @@ const SECTIONS: SectionConfig[] = [
     section: "github",
     title: "GitHub",
     description:
-      "Repository, base branch and folder for photo JSON. Saves go to a pull request against the branch.",
+      "Repository, base branch and data folder. Photo, album and tag JSON go in its photos, albums and tags folders, saved to a pull request against the branch.",
     fields: [
       { name: "repo", label: "Repository", placeholder: "owner/name" },
       { name: "branch", label: "Branch", placeholder: "main" },
-      { name: "folder", label: "Folder", placeholder: "apps/portfolio/src/data" },
+      { name: "folder", label: "Data folder", placeholder: "apps/portfolio/src/data" },
     ],
     secret: { name: "token", label: "Personal access token" },
     secretHelp: (fields) => <GitHubTokenHelp repo={fields.repo ?? ""} />,

@@ -1,8 +1,9 @@
 name: Combine photo data
 
-# Rebuilds apps/portfolio/src/data/ALLPHOTOS.json on "Add photo data" pull
-# requests: every other JSON file in the folder (except dummy.json), as one
-# array sorted by file name, committed back to the pull request.
+# Rebuilds the combined lists in apps/portfolio/src/data on "Add photo data"
+# pull requests, committed back to the pull request: photos/ALLPHOTOS.json,
+# albums/ALLALBUMS.json and tags/ALLTAGS.json, each every other JSON file in
+# its folder as one array sorted by file name.
 
 on:
   pull_request:
@@ -19,7 +20,7 @@ concurrency:
 
 jobs:
   combine:
-    name: Combine photo data into ALLPHOTOS.json
+    name: Combine photo, album and tag data
     # The pipeline opens these pull requests from branches in this repository,
     # so the job can push back to them.
     if: >-
@@ -41,25 +42,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Combine JSON files
         run: |
-          mapfile -t files < <(
-            find "$DATA_DIR" -maxdepth 1 -type f -name '*.json' \
-              ! -name 'ALLPHOTOS.json' ! -name 'dummy.json' | LC_ALL=C sort
-          )
-          if [ "${#files[@]}" -eq 0 ]; then
-            echo '[]' > "$DATA_DIR/ALLPHOTOS.json"
-          else
-            jq -s '.' "${files[@]}" > "$DATA_DIR/ALLPHOTOS.json"
-          fi
-          pnpm exec oxfmt "$DATA_DIR/ALLPHOTOS.json"
-          echo "Combined ${#files[@]} file(s) into $DATA_DIR/ALLPHOTOS.json"
-      - name: Commit ALLPHOTOS.json
+          # combine FOLDER FILE: every JSON file directly in FOLDER except FILE, as one array in FILE.
+          combine() {
+            local dir="$DATA_DIR/$1" out="$DATA_DIR/$1/$2"
+            mkdir -p "$dir"
+            mapfile -t files < <(
+              find "$dir" -maxdepth 1 -type f -name '*.json' ! -name "$2" | LC_ALL=C sort
+            )
+            if [ "${#files[@]}" -eq 0 ]; then
+              echo '[]' > "$out"
+            else
+              jq -s '.' "${files[@]}" > "$out"
+            fi
+            pnpm exec oxfmt "$out"
+            echo "Combined ${#files[@]} file(s) into $out"
+          }
+          combine photos ALLPHOTOS.json
+          combine albums ALLALBUMS.json
+          combine tags ALLTAGS.json
+      - name: Commit the combined files
         run: |
-          git add "$DATA_DIR/ALLPHOTOS.json"
+          git add "$DATA_DIR/photos/ALLPHOTOS.json" "$DATA_DIR/albums/ALLALBUMS.json" "$DATA_DIR/tags/ALLTAGS.json"
           if git diff --cached --quiet; then
-            echo "ALLPHOTOS.json is already up to date."
+            echo "The combined files are already up to date."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Combine photo data into ALLPHOTOS.json"
+          git commit -m "Combine photo, album and tag data"
           git push origin "HEAD:$HEAD_REF"

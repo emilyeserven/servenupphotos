@@ -1,20 +1,20 @@
-// Makes apps/portfolio/src/data/ALLPHOTOS.local.json, which the portfolio uses in place of its dummy
+// Makes apps/portfolio/src/data/photos/ALLPHOTOS.local.json, which the portfolio uses in place of its dummy
 // data whenever it has a photo in it. It's a copy of ALLPHOTOS.json from the open "Add photo data"
 // pull request on the `origin` GitHub repository, so the portfolio shows the photos in flight. With
 // no such pull request, or when GitHub can't be reached, it combines the photo JSON files in the
 // folder instead, the same way the "Combine photo data" workflow builds ALLPHOTOS.json: every other
-// JSON file in the folder (except dummy.json), as one array sorted by file name. The local copy is
+// JSON file in the folder, as one array sorted by file name. The local copy is
 // git-ignored. Set GITHUB_TOKEN to read a private repository.
 import { execFileSync } from "node:child_process";
-import { readdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const DATA_PATH = "apps/portfolio/src/data";
+const DATA_PATH = "apps/portfolio/src/data/photos";
 const PR_TITLE = "Add photo data";
 const root = path.resolve(import.meta.dirname, "..");
 const dataDir = path.join(root, DATA_PATH);
 const outFile = path.join(dataDir, "ALLPHOTOS.local.json");
-const skipped = new Set(["ALLPHOTOS.json", "ALLPHOTOS.local.json", "dummy.json"]);
+const skipped = new Set(["ALLPHOTOS.json", "ALLPHOTOS.local.json"]);
 
 /** "owner/repo" of the `origin` remote, when it's on GitHub. */
 function originRepo() {
@@ -43,7 +43,7 @@ async function fromOpenPullRequest() {
 }
 
 async function fromDataFolder() {
-  const files = (await readdir(dataDir, { withFileTypes: true }))
+  const files = (await readdir(dataDir, { withFileTypes: true }).catch(() => []))
     .filter((entry) => entry.isFile() && entry.name.endsWith(".json") && !skipped.has(entry.name))
     .map((entry) => entry.name)
     // Byte order, like `LC_ALL=C sort` in the workflow.
@@ -68,6 +68,7 @@ async function photoData() {
 const { photos, from } = await photoData();
 // Written to a temporary file and moved into place, so Vite never reads half a file.
 const tmpFile = `${outFile}.tmp`;
+await mkdir(dataDir, { recursive: true });
 await writeFile(tmpFile, `${JSON.stringify(photos, null, 2)}\n`);
 await rename(tmpFile, outFile);
 console.log(

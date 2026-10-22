@@ -24,7 +24,7 @@ type updateRepo struct {
 
 func (f *updateRepo) start(t *testing.T) *Client {
 	t.Helper()
-	const dir = "apps/portfolio/src/data/"
+	const dir = "apps/portfolio/src/data/photos/"
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		p := strings.TrimPrefix(r.URL.Path, "/repos/owner/repo")
 		switch {
@@ -57,7 +57,7 @@ func (f *updateRepo) start(t *testing.T) *Client {
 }
 
 func TestUpdate(t *testing.T) {
-	const file = "apps/portfolio/src/data/DSC0001.json"
+	const file = "apps/portfolio/src/data/photos/DSC0001.json"
 	repo := &updateRepo{
 		files:     []map[string]any{{"filename": file, "status": "added", "blob_url": "https://github.com/blob"}},
 		current:   "{\n  \"file\": \"DSC0001.jpg\"\n}\n",
@@ -83,7 +83,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestUpdateUnchanged(t *testing.T) {
-	const file = "apps/portfolio/src/data/DSC0001.json"
+	const file = "apps/portfolio/src/data/photos/DSC0001.json"
 	repo := &updateRepo{
 		files:   []map[string]any{{"filename": file, "status": "added", "blob_url": "https://github.com/blob"}},
 		current: "{\n  \"file\": \"DSC0001.jpg\"\n}\n",
@@ -101,7 +101,7 @@ func TestUpdateUnchanged(t *testing.T) {
 }
 
 func TestUpdateErrors(t *testing.T) {
-	const file = "apps/portfolio/src/data/DSC0001.json"
+	const file = "apps/portfolio/src/data/photos/DSC0001.json"
 	tests := []struct {
 		name      string
 		file      string
@@ -111,10 +111,10 @@ func TestUpdateErrors(t *testing.T) {
 		want      string
 	}{
 		{"outside the folder", "README.json", `{}`, "added", http.StatusOK, "Only photo JSON files"},
-		{"ALLPHOTOS.json", "apps/portfolio/src/data/ALLPHOTOS.json", `{}`, "added", http.StatusOK, "Only photo JSON files"},
+		{"ALLPHOTOS.json", "apps/portfolio/src/data/photos/ALLPHOTOS.json", `{}`, "added", http.StatusOK, "Only photo JSON files"},
 		{"not an object", file, `[1]`, "added", http.StatusOK, "must be a JSON object"},
 		{"null", file, `null`, "added", http.StatusOK, "must be a JSON object"},
-		{"not in the pull request", "apps/portfolio/src/data/other.json", `{}`, "added", http.StatusOK, "isn't in the photo data pull request"},
+		{"not in the pull request", "apps/portfolio/src/data/photos/other.json", `{}`, "added", http.StatusOK, "isn't in the photo data pull request"},
 		{"removed", file, `{}`, "removed", http.StatusOK, "can't be edited"},
 		{"changed meanwhile", file, `{}`, "added", http.StatusConflict, "changed on photo-data/"},
 	}

@@ -9,8 +9,8 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// CombineWorkflowFile is the workflow that rebuilds AllPhotosFile on the
-// photo data pull request after each push to it.
+// CombineWorkflowFile is the workflow that rebuilds AllPhotosFile, and each
+// Kind's AllFile, on the photo data pull request after each push to it.
 const CombineWorkflowFile = "combine-photo-data.yml"
 
 // Combine run states, from first to last.
@@ -117,7 +117,7 @@ func unavailableOr(sha string, perr *PublishError) (CombineStatus, error) {
 		return CombineStatus{}, perr
 	}
 	return CombineStatus{SHA: sha, State: CombineUnavailable,
-		Message: "The token can't read Actions runs. Give it Actions read access to see when ALLPHOTOS.json is rebuilt."}, nil
+		Message: "The token can't read Actions runs. Give it Actions read access to see when ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json are rebuilt."}, nil
 }
 
 // combineRuns lists the newest CombineWorkflowFile runs matching query, or

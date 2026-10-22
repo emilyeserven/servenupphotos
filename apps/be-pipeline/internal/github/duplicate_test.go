@@ -11,7 +11,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-const dataDir = "apps/portfolio/src/data/"
+const dataDir = "apps/portfolio/src/data/photos/"
 
 // newAllPhotosRepo serves owner/repo, whose default branch is main, with
 // pulls open, pull request 7 changing files, and contents keyed by
@@ -80,7 +80,7 @@ func TestFindInAllPhotos(t *testing.T) {
 	}{
 		{"on the base branch, listed once", []map[string]any{photoPull},
 			PhotoIdentity{File: "DSC0001.jpg", GPSPosition: ptr(`35 deg 39' 31.20" N, 139 deg 42' 2.40" E`), CreateDate: ptr("2026:10:01 09:00:00")},
-			"main", "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/ALLPHOTOS.json"},
+			"main", "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/photos/ALLPHOTOS.json"},
 		{"waiting in the pull request, both without GPS", []map[string]any{photoPull},
 			PhotoIdentity{File: "DSC0002.jpg", CreateDate: ptr("2026:10:02 09:00:00")},
 			"DSC0002.json in pull request #7", "https://github.com/owner/repo/blob/x/DSC0002.json"},
@@ -131,7 +131,7 @@ func TestFindInAllPhotosSources(t *testing.T) {
 		t.Fatal(err)
 	}
 	want := []AllPhotosSource{
-		{Label: "main", FileURL: "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/ALLPHOTOS.json",
+		{Label: "main", FileURL: "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/photos/ALLPHOTOS.json",
 			Found: true, Error: "The file isn't a JSON array."},
 		{Label: "pull request #7", FileURL: "https://github.com/owner/repo/pull/7",
 			Found: true, Error: "couldn't read bad.json, missing.json"},
@@ -162,7 +162,7 @@ func TestAllPhotosOnBase(t *testing.T) {
 		t.Fatal(err)
 	}
 	if !got.Found || got.Count != 1 || got.Branch != "main" || !strings.Contains(string(got.Data), "abc-dsc0001") ||
-		got.FileURL != "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/ALLPHOTOS.json" {
+		got.FileURL != "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/photos/ALLPHOTOS.json" {
 		t.Errorf("got %+v", got)
 	}
 

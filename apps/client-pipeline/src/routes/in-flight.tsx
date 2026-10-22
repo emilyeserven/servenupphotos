@@ -13,6 +13,7 @@ import { type ReactNode, useState } from "react";
 import {
   type InFlightAllPhotos,
   type InFlightFile,
+  type InFlightGroups,
   type InFlightImages,
   type InFlightResponse,
   type CombineStatus,
@@ -59,7 +60,7 @@ function InFlightPage() {
     <Page
       wide
       title="Photos in Flight"
-      description="Photo data saved to the open “Add photo data” pull request, not merged yet."
+      description="Photo, album and tag data saved to the open “Add photo data” pull request, not merged yet."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -127,6 +128,12 @@ function InFlightCard() {
           onRemoved={onRemoved}
         />
       ))}
+      {shown && (
+        <>
+          <GroupFiles title="Albums" groups={shown.albums} rebuilding={rebuild.rebuilding} />
+          <GroupFiles title="Tags" groups={shown.tags} rebuilding={rebuild.rebuilding} />
+        </>
+      )}
     </div>
   );
 
@@ -322,7 +329,7 @@ function FileSection({
           rel="noreferrer"
           className="underline-offset-4 hover:underline"
         >
-          {file.path.split("/").pop()}
+          {fileName(file.path)}
         </a>
         <span className="text-muted-foreground font-normal">{file.status}</span>
         <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
@@ -452,18 +459,18 @@ function PhotoImage({ name, url, checked }: { name: string; url?: string; checke
 const ALL_PHOTOS_MARKS = {
   in: {
     Icon: CheckIcon,
-    label: "In ALLPHOTOS.json",
+    label: (file: string) => `In ${file}`,
     className: "text-emerald-600 dark:text-emerald-400",
   },
   out: {
     Icon: CircleDashedIcon,
-    label: "Not in ALLPHOTOS.json",
+    label: (file: string) => `Not in ${file}`,
     className: "text-muted-foreground",
   },
   // Not in it yet, but CI is rebuilding it.
   pending: {
     Icon: CircleDashedIcon,
-    label: "Not in ALLPHOTOS.json yet",
+    label: (file: string) => `Not in ${file} yet`,
     className: "text-muted-foreground [&>svg]:animate-spin",
   },
 };
@@ -474,24 +481,84 @@ function allPhotosMarkKey(inAllPhotos: boolean, rebuilding: boolean) {
 }
 
 /**
- * A check mark when the file's data is an entry of ALLPHOTOS.json, or a dashed circle when it
- * isn't, spinning while CI rebuilds the file. Nothing when either file couldn't be read.
+ * A check mark when the file's data is an entry of `allFile` (ALLPHOTOS.json unless named), or a
+ * dashed circle when it isn't, spinning while CI rebuilds it. Nothing when either file couldn't be
+ * read.
  */
 function AllPhotosMark({
   inAllPhotos,
   rebuilding,
+  allFile = "ALLPHOTOS.json",
 }: {
   inAllPhotos: boolean | null;
   rebuilding: boolean;
+  allFile?: string;
 }) {
   if (inAllPhotos === null) return null;
   const { Icon, label, className } = ALL_PHOTOS_MARKS[allPhotosMarkKey(inAllPhotos, rebuilding)];
   return (
     <span className={cn("flex items-center gap-1 text-xs font-normal", className)}>
       <Icon className="size-4" aria-hidden />
-      {label}
+      {label(allFile)}
     </span>
   );
+}
+
+/** The album or tag files in the pull request, each with its JSON; nothing when there are none. */
+function GroupFiles({
+  title,
+  groups,
+  rebuilding,
+}: {
+  title: string;
+  groups: InFlightGroups;
+  /** Whether CI is rebuilding the combined files, so a missing entry may be on its way. */
+  rebuilding: boolean;
+}) {
+  if (groups.files.length === 0) return null;
+  const allFile = fileName(groups.all.path);
+  return (
+    <section className="flex flex-col gap-3">
+      <h2 className="text-lg font-semibold">{title}</h2>
+      {groups.files.map((file) => (
+        <div key={file.path} className="flex flex-col gap-2">
+          <h3 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
+            <a
+              href={file.fileUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="underline-offset-4 hover:underline"
+            >
+              {fileName(file.path)}
+            </a>
+            <span className="text-muted-foreground font-normal">{file.status}</span>
+            <AllPhotosMark inAllPhotos={file.inAll} rebuilding={rebuilding} allFile={allFile} />
+          </h3>
+          {file.error ? (
+            <p className="text-destructive text-sm">{file.error}</p>
+          ) : (
+            <JsonCodeBlock value={file.data} title={file.path} />
+          )}
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function fileName(path: string): string {
+  return path.split("/").pop() ?? path;
+}
+
+/** How many album or tag files the pull request has, and how its combined file matches them. */
+function groupsSummary(groups: InFlightGroups): string {
+  const count = groups.files.length;
+  const files = count === 0 ? "None" : String(count);
+  const all = groups.all;
+  const allFile = fileName(all.path);
+  if (!all.found) return `${files}; ${allFile} not on the branch yet`;
+  if (all.error) return `${files}; ${allFile}: ${all.error}`;
+  const matched = groups.files.filter((file) => file.inAll).length;
+  return `${files}; ${allFile} lists ${all.count}, ${matched} of ${count} match`;
 }
 
 function allPhotosSummary(all: InFlightAllPhotos, files: InFlightFile[]): string {
@@ -550,6 +617,16 @@ function PullRequestSummary({ data, rebuilding }: { data: InFlightResponse; rebu
       </dd>
       <dt className="text-muted-foreground">Images</dt>
       <dd>{imagesSummary(data.images, count)}</dd>
+      <dt className="text-muted-foreground">Album files</dt>
+      <dd className="flex items-center gap-2">
+        {groupsSummary(data.albums)}
+        <RebuildingNote rebuilding={rebuilding} />
+      </dd>
+      <dt className="text-muted-foreground">Tag files</dt>
+      <dd className="flex items-center gap-2">
+        {groupsSummary(data.tags)}
+        <RebuildingNote rebuilding={rebuilding} />
+      </dd>
     </dl>
   );
 }

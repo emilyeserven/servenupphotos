@@ -28,6 +28,13 @@ export const navGroups = [
     ],
   },
   {
+    title: "Organize",
+    items: [
+      { title: "Albums", url: "/albums" },
+      { title: "Tags", url: "/tags" },
+    ],
+  },
+  {
     title: "Configuration",
     items: [
       { title: "Settings", url: "/settings" },

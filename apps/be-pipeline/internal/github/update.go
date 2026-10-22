@@ -27,7 +27,7 @@ type UpdatedFile struct {
 // request's branch. Only files the pull request adds or modifies can be
 // updated, so an edit never reaches past the photos in flight.
 func (c *Client) Update(ctx context.Context, gh settings.GitHub, file string, data json.RawMessage) (UpdatedFile, error) {
-	folder, perr := dataFolder(gh.Folder)
+	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}

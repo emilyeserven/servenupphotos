@@ -26,7 +26,7 @@ type RemovedFile struct {
 // removed: deleting one that is also on the base branch would delete it from
 // the portfolio when the pull request merges.
 func (c *Client) Remove(ctx context.Context, gh settings.GitHub, file string) (RemovedFile, error) {
-	folder, perr := dataFolder(gh.Folder)
+	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return RemovedFile{}, perr
 	}
