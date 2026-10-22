@@ -14,4 +14,17 @@ export const dataRoutes: FastifyPluginAsync = async (app) => {
       }),
     );
   }
+
+  // Each reads every photo JSON file, and may download originals from R2 to read their EXIF; the
+  // backend gives that 3 minutes.
+  for (const path of ["/data/missing-fields/preview", "/data/missing-fields"]) {
+    app.post(path, async (request, reply) =>
+      relayToBackend(reply, app.log, path, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(request.body),
+        timeoutMs: 190_000,
+      }),
+    );
+  }
 };

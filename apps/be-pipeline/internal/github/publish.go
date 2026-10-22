@@ -44,6 +44,14 @@ type photoJSON struct {
 	exif.Sanitized
 }
 
+// newPhotoJSON is the content of a new photo file. It is also the list of
+// fields every photo file should have, with their defaults: Backfill adds
+// the ones an older file is missing from newPhotoJSON("", exif.Sanitized{}).
+// Give a new field its default here, such as an empty list rather than nil.
+func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
+	return photoJSON{Title: s.Title, Comment: s.Comment, File: file, Sanitized: s}
+}
+
 // PublishResult says where a photo's JSON went.
 type PublishResult struct {
 	Path              string `json:"path"`
@@ -125,12 +133,7 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 		}
 	}
 
-	content, err := json.MarshalIndent(photoJSON{
-		Title:     photo.Sanitized.Title,
-		Comment:   photo.Sanitized.Comment,
-		File:      photo.File,
-		Sanitized: photo.Sanitized,
-	}, "", "  ")
+	content, err := json.MarshalIndent(newPhotoJSON(photo.File, photo.Sanitized), "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
 	}

@@ -64,6 +64,13 @@ type Images struct {
 	ThumbnailPreview *string `json:"thumbnailpreview"`
 }
 
+// SanitizeFields are the JSON fields of Sanitized that Sanitize fills from a
+// photo's EXIF. Backfill reads a photo's EXIF only for these.
+var SanitizeFields = []string{
+	"camera", "lens", "aperture", "exposure", "iso", "focalLength",
+	"gpsPosition", "createDate", "country", "city", "width", "height",
+}
+
 // Sanitize picks the publishable fields out of exiftool's output, taking the
 // first non-empty field from each list of candidates. Values are kept as
 // exiftool formats them.

@@ -191,15 +191,40 @@ func (c *Client) ReplaceBaseURL(ctx context.Context, gh settings.GitHub, from, t
 	}
 
 	message := fmt.Sprintf("Change image base URL from %s to %s", from, to)
-	commit, perr := c.createCommit(ctx, scan.t, scan.headSHA, entries, message)
+	saved, perr := c.commitScan(ctx, scan, entries, message)
 	if perr != nil {
 		return BaseURLResult{}, perr
 	}
-	result.CommitSHA, result.CommitURL = commit.SHA, commit.HTMLURL
+	result.Branch, result.CommitSHA, result.CommitURL = saved.Branch, saved.CommitSHA, saved.CommitURL
+	result.PullRequestURL, result.PullRequestNumber = saved.PullRequestURL, saved.PullRequestNumber
+	result.NewPullRequest = saved.NewPullRequest
+	return result, nil
+}
+
+// scanCommit says where commitScan committed.
+type scanCommit struct {
+	Branch            string `json:"branch"`
+	CommitSHA         string `json:"commitSha"`
+	CommitURL         string `json:"commitUrl"`
+	PullRequestURL    string `json:"pullRequestUrl"`
+	PullRequestNumber int    `json:"pullRequestNumber"`
+	// NewPullRequest is true when the commit opened the pull request.
+	NewPullRequest bool `json:"newPullRequest"`
+}
+
+// commitScan commits entries on top of the commit scan read, on the open
+// photo data pull request's branch. With no such pull request open, it
+// commits to a new photo-data/ branch from the base branch and opens one.
+func (c *Client) commitScan(ctx context.Context, scan baseURLScan, entries []map[string]string, message string) (scanCommit, *PublishError) {
+	commit, perr := c.createCommit(ctx, scan.t, scan.headSHA, entries, message)
+	if perr != nil {
+		return scanCommit{}, perr
+	}
+	result := scanCommit{CommitSHA: commit.SHA, CommitURL: commit.HTMLURL}
 
 	if scan.pr != nil {
 		if perr := c.moveBranch(ctx, scan.t, scan.branch, commit.SHA); perr != nil {
-			return BaseURLResult{}, perr
+			return scanCommit{}, perr
 		}
 		result.Branch = scan.branch
 		result.PullRequestURL, result.PullRequestNumber = scan.pr.HTMLURL, scan.pr.Number
@@ -210,11 +235,11 @@ func (c *Client) ReplaceBaseURL(ctx context.Context, gh settings.GitHub, from, t
 	body := map[string]string{"ref": "refs/heads/" + result.Branch, "sha": commit.SHA}
 	res, err := c.do(ctx, http.MethodPost, repoPath(scan.t.owner, scan.t.name)+"/git/refs", scan.t.token, body, nil)
 	if perr := check(res, err, "creating the branch"); perr != nil {
-		return BaseURLResult{}, perr
+		return scanCommit{}, perr
 	}
 	pr, perr := c.openPullRequest(ctx, scan.t, result.Branch)
 	if perr != nil {
-		return BaseURLResult{}, perr
+		return scanCommit{}, perr
 	}
 	result.PullRequestURL, result.PullRequestNumber, result.NewPullRequest = pr.HTMLURL, pr.Number, true
 	return result, nil
@@ -583,7 +608,7 @@ func (c *Client) moveBranch(ctx context.Context, t target, branch, sha string) *
 	res, err := c.do(ctx, http.MethodPatch, repoPath(t.owner, t.name)+"/git/refs/heads/"+escapePath(branch), t.token, body, nil)
 	// GitHub answers 422 when the branch moved since it was read.
 	if err == nil && (res.Status == http.StatusUnprocessableEntity || res.Status == http.StatusConflict) {
-		return publishErr(http.StatusConflict, "%s changed while the URLs were being saved. Preview again and retry.", branch)
+		return publishErr(http.StatusConflict, "%s changed while the files were being saved. Try again.", branch)
 	}
 	return check(res, err, "updating the branch")
 }

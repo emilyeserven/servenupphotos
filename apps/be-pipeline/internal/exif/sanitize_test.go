@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -108,6 +109,11 @@ func TestSanitize(t *testing.T) {
 			got := roundTrip(t, Sanitize(fields))
 			checkNoImages(t, got)
 			delete(got, "images")
+			for k, v := range got {
+				if v != nil && !slices.Contains(SanitizeFields, k) {
+					t.Errorf("Sanitize set %s, which SanitizeFields doesn't list", k)
+				}
+			}
 			if len(got) != len(tt.want) {
 				t.Errorf("got %d keys, want %d: %v", len(got), len(tt.want), got)
 			}
