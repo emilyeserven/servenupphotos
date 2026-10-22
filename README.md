@@ -34,7 +34,7 @@ pnpm install
 pnpm dev             # everything: portfolio on the host + the pipeline in Docker, all hot-reloading
 pnpm dev:portfolio   # just the portfolio: http://localhost:5173/
 pnpm dev:docker      # just the pipeline in Docker: http://localhost:5174
-pnpm photos:local    # refresh the portfolio's local ALLPHOTOS.local.json (docs/local-photo-data.md)
+pnpm photos:local    # refresh the portfolio's local photo, place and localization data (docs/local-photo-data.md)
 pnpm dev:pipeline    # the pipeline without Docker: Go :8081 + Fastify :8080 + Vite :5173 (proxies /api → :8080)
 pnpm shot pipeline /gallery   # screenshot a page with sample data, no backend needed (see below)
 ```
@@ -81,7 +81,7 @@ plain background. Options are listed at the top of `scripts/screenshot.mjs`: `--
 
 How each part of the pipeline and portfolio works is in [`docs/`](docs):
 
-- [Portfolio with your own photo data](docs/local-photo-data.md): how `pnpm photos:local` builds the portfolio's local `ALLPHOTOS.local.json`, and what each portfolio view shows
+- [Portfolio with your own photo data](docs/local-photo-data.md): how `pnpm photos:local` and the portfolio's dev server build its local photo, place and localization data, and what each portfolio view shows
 - [EXIF and color data](docs/exif-and-colors.md) (`/exif`): reading a photo's EXIF metadata and color analysis
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets
@@ -92,6 +92,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums and tags
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
 - [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages
+- [Places and Localizations](docs/places-and-localizations.md) (`/places` and `/localizations`): places a photo was taken at and how it relates to them, and the local script, pronunciation and romanization of countries, cities and places
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, and making JSON for an original
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
 

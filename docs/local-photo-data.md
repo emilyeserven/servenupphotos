@@ -1,12 +1,25 @@
 # Portfolio with your own photo data
 
-`pnpm dev` and `pnpm dev:docker` first run `pnpm photos:local`, which writes
-`apps/portfolio/src/data/photos/ALLPHOTOS.local.json` (git-ignored). It copies `ALLPHOTOS.json` from the open **Add photo
-data** pull request on the `origin` GitHub repository, so the portfolio shows the photos in flight. With no such pull
-request, or when GitHub can't be reached (it says why), it combines the photo JSON files in `apps/portfolio/src/data/photos`
-instead, the same way the **Combine photo data** workflow builds `ALLPHOTOS.json`: every other JSON file in the folder,
-as one array sorted by file name. Set `GITHUB_TOKEN` for a private repository, or if GitHub's
-limit of 60 unauthenticated requests an hour runs out.
+`pnpm dev` and `pnpm dev:docker` first run `pnpm photos:local`, which writes `ALLPHOTOS.local.json`,
+`PLACES.local.json` and `LOCALIZATIONS.local.json` (git-ignored) in `apps/portfolio/src/data/photos`, `places` and
+`localizations`. It takes them from the first of these that answers:
+
+1. **The photo pipeline**, when it's running locally (`PIPELINE_URL`, or else `http://localhost:8080`, then
+   `http://localhost:5174`): the combined files at the open **Add photo data** pull request's head, with the pull
+   request's own photo, place and localization files put over them (matched by `file` for photos and `id` for the
+   rest). So saves not committed with **Commit** yet show too.
+2. **GitHub**: the combined files from the open pull request on the `origin` repository. Set `GITHUB_TOKEN` for a
+   private repository, or if GitHub's limit of 60 unauthenticated requests an hour runs out.
+3. **The data folders**: every other JSON file in each folder, as one array sorted by file name, the same way the
+   **Combine photo data** workflow builds the combined files.
+
+While the portfolio's dev server runs, each page load (at most every 10 seconds) runs it again with
+`--pipeline-only`: it asks only the pipeline, and leaves the files alone when the pipeline isn't running. A file is
+only written when it changed, so saving a place, a localization or a photo's places in the pipeline and then reloading
+the portfolio shows them in the Table, Map, Timeline, Grid (with **Show info**) and photo viewer.
+
+> **Frontend analogy:** the dev server's refresh is like a loader that refetches on navigation, except it rewrites the
+> JSON the bundle imports, and Vite's file watcher does the "rerender".
 
 While the file has at least one photo, the portfolio's Timeline, Map and Grid show those photos instead of the
 committed `apps/portfolio/src/data/photos/ALLPHOTOS.json` (the Map leaves out photos without a GPS position, the Grid photos without resized versions, and photos without a

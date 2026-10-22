@@ -12,6 +12,9 @@ type CombinedFiles struct {
 	Photos InFlightAllPhotos `json:"photos"`
 	Albums InFlightAllPhotos `json:"albums"`
 	Tags   InFlightAllPhotos `json:"tags"`
+	// Places and Localizations are PLACES.json and LOCALIZATIONS.json.
+	Places        InFlightAllPhotos `json:"places"`
+	Localizations InFlightAllPhotos `json:"localizations"`
 }
 
 // CombinedBase is CombinedFiles on the base branch: what the portfolio has.
@@ -27,8 +30,9 @@ type CombinedHead struct {
 	CombinedFiles
 }
 
-// CombinedResult is ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the
-// base branch and, when one is open, on the photo data pull request.
+// CombinedResult is ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json, PLACES.json
+// and LOCALIZATIONS.json on the base branch and, when one is open, on the
+// photo data pull request.
 type CombinedResult struct {
 	Repo   string       `json:"repo"`
 	Folder string       `json:"folder"`
@@ -81,9 +85,11 @@ func (c *Client) readCombinedFiles(ctx context.Context, t target, root, ref, bra
 		return all
 	}
 	return CombinedFiles{
-		Photos: read(PhotosFolder, AllPhotosFile),
-		Albums: read(Albums.Folder, Albums.AllFile),
-		Tags:   read(Tags.Folder, Tags.AllFile),
+		Photos:        read(PhotosFolder, AllPhotosFile),
+		Albums:        read(Albums.Folder, Albums.AllFile),
+		Tags:          read(Tags.Folder, Tags.AllFile),
+		Places:        read(Places.Folder, Places.AllFile),
+		Localizations: read(Localizations.Folder, Localizations.AllFile),
 	}
 }
 

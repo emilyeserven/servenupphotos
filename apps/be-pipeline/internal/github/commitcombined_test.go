@@ -4,8 +4,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"maps"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"sync"
 	"testing"
@@ -19,12 +21,19 @@ const dataRoot = "apps/portfolio/src/data"
 // the pull request's head holds files (path → content), and that records the
 // tree it's asked to commit and where the branch moved.
 type combinedRepo struct {
-	mu        sync.Mutex
-	files     map[string]string
-	message   string
-	committed map[string]string
-	commitMsg string
-	moved     string
+	mu      sync.Mutex
+	files   map[string]string
+	message string
+	// history are the commits to the data folder, newest first, when the
+	// test sets them instead of message.
+	history []map[string]any
+	// compared are the files GET /compare lists.
+	compared []map[string]any
+	// compareRange is the "base...head" GET /compare was asked for.
+	compareRange string
+	committed    map[string]string
+	commitMsg    string
+	moved        string
 }
 
 func (f *combinedRepo) serve(t *testing.T) http.HandlerFunc {
@@ -41,7 +50,14 @@ func (f *combinedRepo) serve(t *testing.T) http.HandlerFunc {
 			if r.URL.Query().Get("path") != dataRoot || r.URL.Query().Get("sha") != "head7" {
 				t.Errorf("commits asked for %v", r.URL.Query())
 			}
-			writeBody(w, http.StatusOK, []map[string]any{{"commit": map[string]any{"message": f.message}}})
+			if f.history != nil {
+				writeBody(w, http.StatusOK, f.history)
+				return
+			}
+			writeBody(w, http.StatusOK, []map[string]any{{"sha": "c1", "commit": map[string]any{"message": f.message}}})
+		case strings.HasPrefix(p, "/compare/"):
+			f.compareRange = strings.TrimPrefix(p, "/compare/")
+			writeBody(w, http.StatusOK, map[string]any{"files": f.compared})
 		case strings.HasPrefix(p, "/contents/"):
 			f.list(w, strings.TrimPrefix(p, "/contents/"))
 		case strings.HasPrefix(p, "/git/blobs/"):
@@ -119,14 +135,19 @@ func TestCommitCombined(t *testing.T) {
 		t.Fatalf("CommitCombined() error = %v", err)
 	}
 	wantPhotos := "[\n  {\n    \"title\": \"A\"\n  },\n  {\n    \"title\": \"B\",\n    \"albums\": [\"x\"]\n  }\n]\n"
-	// ALLALBUMS.json is already up to date; the tags folder isn't there, so ALLTAGS.json is made empty.
-	want := map[string]string{dataRoot + "/photos/ALLPHOTOS.json": wantPhotos, dataRoot + "/tags/ALLTAGS.json": "[]\n"}
-	if len(f.committed) != len(want) || f.committed[dataRoot+"/photos/ALLPHOTOS.json"] != wantPhotos ||
-		f.committed[dataRoot+"/tags/ALLTAGS.json"] != "[]\n" {
+	// ALLALBUMS.json is already up to date; the tags, places and localizations folders aren't there, so
+	// their combined files are made empty.
+	want := map[string]string{
+		dataRoot + "/photos/ALLPHOTOS.json":            wantPhotos,
+		dataRoot + "/tags/ALLTAGS.json":                "[]\n",
+		dataRoot + "/places/PLACES.json":               "[]\n",
+		dataRoot + "/localizations/LOCALIZATIONS.json": "[]\n",
+	}
+	if !maps.Equal(f.committed, want) {
 		t.Errorf("committed %q, want %q", f.committed, want)
 	}
-	if !got.Changed || got.CommitSHA != "commit8" || f.moved != "commit8" || len(got.Files) != 2 {
-		t.Errorf("CommitCombined() = %+v, moved to %q; want commit8 with two files", got, f.moved)
+	if !got.Changed || got.CommitSHA != "commit8" || f.moved != "commit8" || len(got.Files) != 4 {
+		t.Errorf("CommitCombined() = %+v, moved to %q; want commit8 with four files", got, f.moved)
 	}
 	if got.Counts["photos"] != 2 || got.Counts["albums"] != 1 || got.Counts["tags"] != 0 {
 		t.Errorf("counts = %v, want 2 photos, 1 album, 0 tags", got.Counts)
@@ -136,10 +157,12 @@ func TestCommitCombined(t *testing.T) {
 func TestCommitCombinedUpToDate(t *testing.T) {
 	gh := settings.GitHub{Repo: "owner/repo", Token: token}
 	f, c := newCombinedRepo(t, map[string]string{
-		dataRoot + "/photos/a.json":         `{"title":"A"}`,
-		dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"title\": \"A\"\n  }\n]\n",
-		dataRoot + "/albums/ALLALBUMS.json": "[]\n",
-		dataRoot + "/tags/ALLTAGS.json":     "[]\n",
+		dataRoot + "/photos/a.json":                    `{"title":"A"}`,
+		dataRoot + "/photos/ALLPHOTOS.json":            "[\n  {\n    \"title\": \"A\"\n  }\n]\n",
+		dataRoot + "/albums/ALLALBUMS.json":            "[]\n",
+		dataRoot + "/tags/ALLTAGS.json":                "[]\n",
+		dataRoot + "/places/PLACES.json":               "[]\n",
+		dataRoot + "/localizations/LOCALIZATIONS.json": "[]\n",
 	})
 	got, err := c.CommitCombined(t.Context(), gh, nil)
 	if err != nil || got.Changed || f.committed != nil {
@@ -173,14 +196,43 @@ func TestCombinedStatus(t *testing.T) {
 	}
 }
 
+func TestCombinedStatusPending(t *testing.T) {
+	gh := settings.GitHub{Repo: "owner/repo", Token: token}
+	f, c := newCombinedRepo(t, map[string]string{})
+	f.history = []map[string]any{
+		{"sha": "c3", "commit": map[string]any{"message": "Add place x.json"}},
+		{"sha": "c2", "commit": map[string]any{"message": CombineMessage}},
+	}
+	f.compared = []map[string]any{
+		{"filename": dataRoot + "/photos/a.json", "status": "modified"},
+		{"filename": dataRoot + "/photos/b.json", "status": "added"},
+		{"filename": dataRoot + "/photos/ALLPHOTOS.json", "status": "modified"},
+		{"filename": dataRoot + "/places/x.json", "status": "added"},
+		{"filename": dataRoot + "/localizations/city-seoul.json", "status": "removed"},
+		{"filename": "README.md", "status": "modified"},
+	}
+	got, err := c.CombinedStatus(t.Context(), gh)
+	want := []PendingFile{
+		{"photos", dataRoot + "/photos/a.json", PendingModified},
+		{"photos", dataRoot + "/photos/b.json", PendingAdded},
+		{"places", dataRoot + "/places/x.json", PendingAdded},
+		{"localizations", dataRoot + "/localizations/city-seoul.json", PendingDeleted},
+	}
+	if err != nil || got.State != CombinedStale || !slices.Equal(got.Pending, want) || f.compareRange != "c2...head7" {
+		t.Errorf("CombinedStatus() = %+v, %v, compared %q; want stale with %+v from c2", got, err, f.compareRange, want)
+	}
+}
+
 func TestCommitCombinedWithEdits(t *testing.T) {
 	gh := settings.GitHub{Repo: "owner/repo", Token: token}
 	photo := "{\n  \"title\": \"A\",\n  \"socialMediaPublishDate\": null\n}\n"
 	f, c := newCombinedRepo(t, map[string]string{
-		dataRoot + "/photos/a.json":         photo,
-		dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"title\": \"A\",\n    \"socialMediaPublishDate\": null\n  }\n]\n",
-		dataRoot + "/albums/ALLALBUMS.json": "[]\n",
-		dataRoot + "/tags/ALLTAGS.json":     "[]\n",
+		dataRoot + "/photos/a.json":                    photo,
+		dataRoot + "/photos/ALLPHOTOS.json":            "[\n  {\n    \"title\": \"A\",\n    \"socialMediaPublishDate\": null\n  }\n]\n",
+		dataRoot + "/albums/ALLALBUMS.json":            "[]\n",
+		dataRoot + "/tags/ALLTAGS.json":                "[]\n",
+		dataRoot + "/places/PLACES.json":               "[]\n",
+		dataRoot + "/localizations/LOCALIZATIONS.json": "[]\n",
 	})
 	edits := []FieldEdit{{Path: dataRoot + "/photos/a.json", Fields: map[string]json.RawMessage{"socialMediaPublishDate": json.RawMessage(`"2026-10-30"`)}}}
 	got, err := c.CommitCombined(t.Context(), gh, edits)

@@ -1,6 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import {
   type CombinedData,
+  type PendingFile,
   type CombinedFile,
   type CombinedFiles,
   type InFlightRead,
@@ -28,7 +29,9 @@ interface CachedFile {
 }
 
 function inFlightFiles(read: InFlightRead | undefined): CachedFile[] {
-  return read ? [...read.files, ...read.albums.files, ...read.tags.files] : [];
+  if (!read) return [];
+  const groups = [read.albums, read.tags, read.places, read.localizations];
+  return [...read.files, ...groups.flatMap((group) => group.files)];
 }
 
 function publishedFiles(read: PublishedResponse | undefined): CachedFile[] {
@@ -84,6 +87,8 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
       photos: changedFile(data.head.photos, of("photos")),
       albums: changedFile(data.head.albums, of("albums")),
       tags: changedFile(data.head.tags, of("tags")),
+      places: changedFile(data.head.places, of("places")),
+      localizations: changedFile(data.head.localizations, of("localizations")),
     },
   };
 }
@@ -105,11 +110,24 @@ function netChange(first: FileChange, last: FileChange): NetChange {
   return added ? "added" : "modified";
 }
 
+/**
+ * How a file changed since the last commit when GitHub listed it as changed at `checked` when the
+ * app started, and the app changed it again since: GitHub knows whether it was added before.
+ */
+function netAfterChecked(checked: PendingFile["change"], last: FileChange): NetChange {
+  if (last.after === null) return checked === "added" ? undefined : "deleted";
+  return checked === "deleted" ? "modified" : checked;
+}
+
+function fileKey({ kind, path }: { kind: string; path: string }): string {
+  return `${kind}:${path}`;
+}
+
 /** Each changed file's first and last change, by kind and path. */
 function firstAndLast(changes: FileChange[]): Map<string, [FileChange, FileChange]> {
   const byPath = new Map<string, [FileChange, FileChange]>();
   for (const change of changes) {
-    const key = `${change.kind}:${change.path}`;
+    const key = fileKey(change);
     byPath.set(key, [byPath.get(key)?.[0] ?? change, change]);
   }
   return byPath;
@@ -121,24 +139,47 @@ export interface PendingSummary {
   images: Record<Exclude<NetChange, undefined>, number>;
   albums: number;
   tags: number;
+  places: number;
+  localizations: number;
   /** Saves whose files aren't known. */
   other: number;
 }
 
-/** The changes since the last commit, counted once per file. */
-export function summarizeChanges(changes: FileChange[], unknownChanges: number): PendingSummary {
+/** Counts a file that changed in the way net, if it did. */
+function count(summary: PendingSummary, kind: keyof CombinedFiles, net: NetChange) {
+  if (!net) return;
+  if (kind === "photos") summary.images[net]++;
+  else summary[kind]++;
+}
+
+/**
+ * The changes since the last commit, counted once per file: the files GitHub listed as changed
+ * when the app started (`checked`), and the app's own changes since.
+ */
+export function summarizeChanges(
+  changes: FileChange[],
+  unknownChanges: number,
+  checked: PendingFile[] = [],
+): PendingSummary {
   const summary: PendingSummary = {
     images: { added: 0, modified: 0, deleted: 0 },
     albums: 0,
     tags: 0,
+    places: 0,
+    localizations: 0,
     other: unknownChanges,
   };
-  for (const [first, last] of firstAndLast(changes).values()) {
-    const net = netChange(first, last);
-    if (!net) continue;
-    if (first.kind === "photos") summary.images[net]++;
-    else summary[first.kind]++;
+  const byKey = new Map(checked.map((file) => [fileKey(file), file]));
+  for (const [key, [first, last]] of firstAndLast(changes)) {
+    const before = byKey.get(key);
+    byKey.delete(key);
+    count(
+      summary,
+      first.kind,
+      before ? netAfterChecked(before.change, last) : netChange(first, last),
+    );
   }
+  for (const file of byKey.values()) count(summary, file.kind, file.change);
   return summary;
 }
 
@@ -162,6 +203,8 @@ export function pendingText(summary: PendingSummary): string {
     [imageCount(summary), "image"],
     [summary.albums, "album"],
     [summary.tags, "tag"],
+    [summary.places, "place"],
+    [summary.localizations, "localization"],
     [summary.other, "other save"],
   ]);
 }

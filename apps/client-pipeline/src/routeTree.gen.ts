@@ -15,6 +15,8 @@ import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
+import { Route as LocalizationsRouteImport } from './routes/localizations'
+import { Route as PlacesRouteImport } from './routes/places'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
@@ -52,6 +54,16 @@ const InFlightRoute = InFlightRouteImport.update({
 const InstagramRoute = InstagramRouteImport.update({
   id: '/instagram',
   path: '/instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocalizationsRoute = LocalizationsRouteImport.update({
+  id: '/localizations',
+  path: '/localizations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlacesRoute = PlacesRouteImport.update({
+  id: '/places',
+  path: '/places',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -102,6 +114,8 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/localizations': typeof LocalizationsRoute
+  '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
@@ -118,6 +132,8 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/localizations': typeof LocalizationsRoute
+  '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
@@ -135,6 +151,8 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/localizations': typeof LocalizationsRoute
+  '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
@@ -153,6 +171,8 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
+    | '/localizations'
+    | '/places'
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
@@ -169,6 +189,8 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
+    | '/localizations'
+    | '/places'
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
@@ -185,6 +207,8 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
+    | '/localizations'
+    | '/places'
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
@@ -202,6 +226,8 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
+  LocalizationsRoute: typeof LocalizationsRoute
+  PlacesRoute: typeof PlacesRoute
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
@@ -254,6 +280,20 @@ declare module '@tanstack/react-router' {
       path: '/instagram'
       fullPath: '/instagram'
       preLoaderRoute: typeof InstagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/localizations': {
+      id: '/localizations'
+      path: '/localizations'
+      fullPath: '/localizations'
+      preLoaderRoute: typeof LocalizationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/places': {
+      id: '/places'
+      path: '/places'
+      fullPath: '/places'
+      preLoaderRoute: typeof PlacesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -322,6 +362,8 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
+  LocalizationsRoute: LocalizationsRoute,
+  PlacesRoute: PlacesRoute,
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,

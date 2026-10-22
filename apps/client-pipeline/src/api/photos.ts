@@ -1,5 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ExifResponse, SanitizedExif } from "@/api/exif";
+import type { PhotoPlace } from "@/api/places";
 import { requestJson } from "@/api/settings";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
@@ -11,6 +12,8 @@ interface PhotoData {
   /** The IDs of the albums and tags to save the photo in. */
   albums: string[];
   tags: string[];
+  /** Where the photo was taken, as places from PLACES.json. */
+  places: PhotoPlace[];
 }
 
 export interface PublishResult {
@@ -96,11 +99,13 @@ export interface CombinedFile {
   error?: string;
 }
 
-/** ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, read at one ref. */
+/** ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json, PLACES.json and LOCALIZATIONS.json, read at one ref. */
 export interface CombinedFiles {
   photos: CombinedFile;
   albums: CombinedFile;
   tags: CombinedFile;
+  places: CombinedFile;
+  localizations: CombinedFile;
 }
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */
@@ -127,30 +132,43 @@ export interface InFlightRead {
   /** Null when no pull request titled "Add photo data" is open. */
   pullRequest: InFlightPullRequest | null;
   files: InFlightFileRead[];
-  albums: { folder: string; files: InFlightGroupFileRead[] };
-  tags: { folder: string; files: InFlightGroupFileRead[] };
+  albums: InFlightGroupsRead;
+  tags: InFlightGroupsRead;
+  places: InFlightGroupsRead;
+  localizations: InFlightGroupsRead;
   images: InFlightImages;
 }
 
+/** The album, tag, place or localization files in the pull request, as the backend reads them. */
+interface InFlightGroupsRead {
+  folder: string;
+  files: InFlightGroupFileRead[];
+}
+
 /** The photo data waiting in the pull request, checked against the combined lists at its head. */
-export interface InFlightResponse extends Omit<InFlightRead, "files" | "albums" | "tags"> {
+export interface InFlightResponse extends Omit<
+  InFlightRead,
+  "files" | "albums" | "tags" | "places" | "localizations"
+> {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album and tag files in the pull request. */
+  /** The album, tag, place and localization files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
+  places: InFlightGroups;
+  localizations: InFlightGroups;
 }
 
-/** The album or tag files in the pull request, and the combined file built from them. */
+/** The album, tag, place or localization files in the pull request, and the combined file built from them. */
 export interface InFlightGroups {
   folder: string;
   files: InFlightGroupFile[];
-  /** ALLALBUMS.json or ALLTAGS.json; not `found` when there is no pull request. */
+  /** ALLALBUMS.json, ALLTAGS.json, PLACES.json or LOCALIZATIONS.json; not `found` when there is no pull request. */
   all: CombinedFile;
 }
 
-/** One album or tag file in the pull request, as the backend reads it. */
+/** One album, tag, place or localization file in the pull request, as the backend reads it. */
 interface InFlightGroupFileRead extends BaseFile {
   path: string;
   status: string;
@@ -159,7 +177,7 @@ interface InFlightGroupFileRead extends BaseFile {
   error?: string;
 }
 
-/** One album or tag file in the pull request. */
+/** One album, tag, place or localization file in the pull request. */
 export interface InFlightGroupFile extends InFlightGroupFileRead {
   /** Whether the file's data is an entry of the combined file; null when either couldn't be read. */
   inAll: boolean | null;
@@ -308,6 +326,15 @@ export const bucketImagesQuery = queryOptions({
 export interface CombinedStatus {
   state: "synced" | "stale" | "none";
   headSha?: string;
+  /** The data files the pull request changed after the combined lists were last rebuilt, when stale. */
+  pending?: PendingFile[];
+}
+
+/** A data file the photo data pull request changed that the combined lists don't have yet. */
+export interface PendingFile {
+  kind: keyof CombinedFiles;
+  path: string;
+  change: "added" | "modified" | "deleted";
 }
 
 /** The combined files' sync status, read once when the app starts; see `CombinedDataSync`. */

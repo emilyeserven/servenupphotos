@@ -95,9 +95,17 @@ type InFlightResult struct {
 	Folder      string               `json:"folder"`
 	PullRequest *InFlightPullRequest `json:"pullRequest"`
 	Files       []InFlightFile       `json:"files"`
-	// Albums and Tags are the album and tag files in the pull request.
-	Albums InFlightGroups `json:"albums"`
-	Tags   InFlightGroups `json:"tags"`
+	// Albums, Tags, Places and Localizations are the album, tag, place and
+	// localization files in the pull request.
+	Albums        InFlightGroups `json:"albums"`
+	Tags          InFlightGroups `json:"tags"`
+	Places        InFlightGroups `json:"places"`
+	Localizations InFlightGroups `json:"localizations"`
+}
+
+// groups are r's album, tag, place and localization files.
+func (r *InFlightResult) groups() []*InFlightGroups {
+	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Places, &r.Localizations}
 }
 
 // InFlightGroups is the files of one Kind in the pull request.
@@ -174,8 +182,10 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 	t := target{owner: owner, name: name, token: gh.Token}
 	result := InFlightResult{
 		Repo: owner + "/" + name, Folder: folder, Files: []InFlightFile{},
-		Albums: newInFlightGroups(root, Albums),
-		Tags:   newInFlightGroups(root, Tags),
+		Albums:        newInFlightGroups(root, Albums),
+		Tags:          newInFlightGroups(root, Tags),
+		Places:        newInFlightGroups(root, Kind{Folder: Places.Folder, AllFile: Places.AllFile}),
+		Localizations: newInFlightGroups(root, Kind{Folder: Localizations.Folder, AllFile: Localizations.AllFile}),
 	}
 
 	pr, perr := c.findInFlightPull(ctx, t)
@@ -195,7 +205,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		return InFlightResult{}, perr
 	}
 	for _, f := range files {
-		for _, g := range []*InFlightGroups{&result.Albums, &result.Tags} {
+		for _, g := range result.groups() {
 			g.add(f)
 		}
 		if f.Status == "removed" || !isPhotoData(folder, f.Filename) {
@@ -207,7 +217,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		file.BaseFile = c.readBase(ctx, t, f.basePath(), pr.Base.Ref)
 		result.Files = append(result.Files, file)
 	}
-	for _, g := range []*InFlightGroups{&result.Albums, &result.Tags} {
+	for _, g := range result.groups() {
 		c.readInFlightGroups(ctx, t, g, pr.Head.SHA, pr.Base.Ref)
 	}
 	return result, nil

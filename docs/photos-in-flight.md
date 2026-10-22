@@ -24,7 +24,7 @@ Each photo whose JSON was read and whose image is in R2 has an **Edit** button, 
 edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from. The crop editor starts from the
 crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=…`, else the JSON's
 `images.thumbnailcrop`, else the middle), on
-the original photo from R2. **Save changes** first remakes the thumbnail and its Thumbnail Preview from the new
+the original photo from R2. **Save changes** (at the top right, to the right of the sync button) first remakes the thumbnail and its Thumbnail Preview from the new
 square (`POST /api/photos/bucket/versions` with `versions: ["thumbnail", "thumbnailpreview"]` and a `crop`, which
 replaces the saved one), then writes the JSON over the file on the pull request's branch (`PUT /api/photos/in-flight`
 with the `path` and new `data`; files the pull request removes can't be edited, and photos already in the portfolio are
@@ -34,5 +34,6 @@ Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores th
 new square. Saving any other change to a file without `images.thumbnailcrop` adds it too. The commit starts the **Combine photo data** workflow, which the page
 follows the same way.
 
-Under the photos it lists the album and tag files the pull request adds or changes, each with its JSON and a check mark
-when it's an entry of `ALLALBUMS.json` or `ALLTAGS.json` at the same head, and the pull request summary counts them.
+Under the photos it lists the album, tag, place and localization files the pull request adds or changes, each with its
+JSON and a check mark when it's an entry of `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json` or `LOCALIZATIONS.json` at
+the same head, and the pull request summary counts them.

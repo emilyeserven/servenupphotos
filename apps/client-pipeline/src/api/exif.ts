@@ -1,3 +1,4 @@
+import type { PhotoPlace } from "@/api/places";
 import { mutationOptions } from "@tanstack/react-query";
 import type { ThumbnailCrop } from "@/api/versions";
 
@@ -79,6 +80,11 @@ export interface SanitizedExif {
   createDate: string | null;
   /** The name of the place the photo was taken, such as a park or building, written on the Photo page. */
   placeName: string | null;
+  /**
+   * Where the photo was taken, as places from PLACES.json, each with how the photo relates to it,
+   * chosen on the Photo page. Saved as the JSON's "places", next to its albums and tags.
+   */
+  places?: PhotoPlace[];
   /** A city and country written on the Photo page, which the portfolio shows instead of the EXIF ones. */
   customCity: string | null;
   customCountry: string | null;

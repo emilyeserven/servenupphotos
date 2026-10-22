@@ -16,11 +16,13 @@ import {
   thumbnailUrlWithCrop,
 } from "@/api/versions";
 import {
+  chosenPlaces,
   type PhotoDetails,
-  DETAIL_FIELDS,
+  TEXT_FIELDS,
   savedDetails,
   withDetails,
 } from "@/components/photo-details";
+import { canonicalJson } from "@/lib/combined";
 import { type Crop, sameCrop } from "@/lib/crop";
 import { jsonFileName } from "@/lib/file-name";
 
@@ -164,10 +166,18 @@ function hasThumbnail(saved: PhotoJson): boolean {
   return SQUARE_NAMES.every((name) => savedUrl(saved.images?.[name]));
 }
 
-/** Whether the title, place name, custom city or country, or comment differs from the ones saved in data. */
+/** Whether the title, place name, places, custom city or country, or comment differs from the ones saved in data. */
 function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
   const next = withDetails({}, details);
-  return DETAIL_FIELDS.some((key) => next[key] !== (data[key] ?? null));
+  return (
+    TEXT_FIELDS.some((key) => next[key] !== (data[key] ?? null)) || placesChanged(data, details)
+  );
+}
+
+/** Whether the chosen places differ from the ones saved in data. */
+function placesChanged(data: PhotoJson, details: PhotoDetails): boolean {
+  const saved = savedDetails(data).places;
+  return canonicalJson(chosenPlaces(details.places)) !== canonicalJson(saved);
 }
 
 /** Whether the details, albums or tags differ from the ones saved in data. */

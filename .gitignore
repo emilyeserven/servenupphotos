@@ -11,7 +11,9 @@ coverage/
 apps/be-pipeline/bin/
 # Pipeline settings written by `pnpm dev:be`; holds secrets.
 apps/be-pipeline/data/
-# Made by `pnpm photos:local` from the photo JSON files; the portfolio uses it locally.
+# Made by `pnpm photos:local` from the photo, place and localization JSON files; the portfolio uses them locally.
 apps/portfolio/src/data/photos/ALLPHOTOS.local.json
+apps/portfolio/src/data/places/PLACES.local.json
+apps/portfolio/src/data/localizations/LOCALIZATIONS.local.json
 # Made by `pnpm shot`.
 screenshots/

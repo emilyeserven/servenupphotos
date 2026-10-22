@@ -2,6 +2,8 @@ import { ChevronRightIcon, InfoIcon } from "lucide-react";
 import { type ComponentProps, type ReactNode, useState } from "react";
 import Markdown, { type ExtraProps } from "react-markdown";
 import remarkBreaks from "remark-breaks";
+import { type PhotoPlace, savedPlaces } from "@/api/places";
+import { PlaceFields } from "@/components/place-fields";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,7 +21,7 @@ const MARKDOWN_CLASSES = [
 ].join(" ");
 
 /** The photo's title, place name, custom city and country, and Markdown comment as typed; empty when there's none. */
-export interface PhotoDetails {
+interface PhotoText {
   title: string;
   placeName: string;
   customCity: string;
@@ -27,8 +29,14 @@ export interface PhotoDetails {
   comment: string;
 }
 
+/** The photo's text details, and where it was taken as places from PLACES.json. */
+export interface PhotoDetails extends PhotoText {
+  /** The photo's places, each with how the photo relates to it; a row being filled in has no ID yet. */
+  places: PhotoPlace[];
+}
+
 /** No title, place name, custom city or country, or comment, which a new photo starts with. */
-export const NO_DETAILS: PhotoDetails = {
+const NO_TEXT: PhotoText = {
   title: "",
   placeName: "",
   customCity: "",
@@ -36,8 +44,11 @@ export const NO_DETAILS: PhotoDetails = {
   comment: "",
 };
 
-/** The fields of PhotoDetails, as the JSON names them. */
-export const DETAIL_FIELDS = Object.keys(NO_DETAILS) as (keyof PhotoDetails)[];
+/** No details or places, which a new photo starts with. */
+export const NO_DETAILS: PhotoDetails = { ...NO_TEXT, places: [] };
+
+/** The text fields of PhotoDetails, as the JSON names them. */
+export const TEXT_FIELDS = Object.keys(NO_TEXT) as (keyof PhotoText)[];
 
 /** The city and country read from the photo's EXIF, which the custom ones show instead of. */
 export interface ExifPlace {
@@ -52,9 +63,8 @@ export function fileStem(file: string): string {
 
 /** The details saved in a photo's JSON, to start editing from. */
 export function savedDetails(data: Record<string, unknown>): PhotoDetails {
-  return Object.fromEntries(
-    DETAIL_FIELDS.map((field) => [field, text(data[field])]),
-  ) as unknown as PhotoDetails;
+  const texts = Object.fromEntries(TEXT_FIELDS.map((field) => [field, text(data[field])]));
+  return { ...(texts as unknown as PhotoText), places: savedPlaces(data.places) };
 }
 
 /** The EXIF city and country saved in a photo's JSON. */
@@ -68,8 +78,8 @@ function text(value: unknown): string {
 
 /**
  * data with the title and comment, or null for ones left empty, as its first fields, and the place
- * name and custom city and country where data has them (before the country, as new photo files
- * list them), or else last.
+ * name, places and custom city and country where data has them (before the country, as new photo
+ * files list them), or else last.
  */
 export function withDetails<T extends object>(data: T, details: PhotoDetails) {
   const {
@@ -80,16 +90,22 @@ export function withDetails<T extends object>(data: T, details: PhotoDetails) {
     title?: unknown;
     comment?: unknown;
   };
-  const saved = (field: keyof PhotoDetails) => details[field].trim() || null;
+  const saved = (field: keyof PhotoText) => details[field].trim() || null;
   return {
     title: saved("title"),
     comment: saved("comment"),
     ...rest,
     // Setting a key the spread already added keeps it where it was.
     placeName: saved("placeName"),
+    places: chosenPlaces(details.places),
     customCity: saved("customCity"),
     customCountry: saved("customCountry"),
   };
+}
+
+/** The places with one chosen, as they're saved. */
+export function chosenPlaces(places: PhotoPlace[]): PhotoPlace[] {
+  return places.filter((place) => place.id);
 }
 
 /** A link in the comment's preview, opened in a new tab so the page and its work stay put. */
@@ -111,8 +127,9 @@ interface PhotoDetailsCardProps {
 }
 
 /**
- * The photo's optional title on the portfolio, place name, custom city and country, and Markdown
- * comment, saved as the JSON's "title", "placeName", "customCity", "customCountry" and "comment".
+ * The photo's optional title on the portfolio, places, custom city and country, and Markdown
+ * comment, saved as the JSON's "title", "places" (with the first place's name as "placeName"),
+ * "customCity", "customCountry" and "comment".
  */
 export function PhotoDetailsCard({
   value,
@@ -122,7 +139,7 @@ export function PhotoDetailsCard({
   description,
   disabled,
 }: PhotoDetailsCardProps) {
-  const field = (name: "title" | "placeName" | "customCity" | "customCountry") => ({
+  const field = (name: "title" | "customCity" | "customCountry") => ({
     value: value[name],
     disabled,
     onChange: (next: string) => onChange({ ...value, [name]: next }),
@@ -149,12 +166,10 @@ export function PhotoDetailsCard({
           {...field("title")}
         />
         <div className="flex flex-col gap-3">
-          <TextField
-            id="photo-place-name"
-            label="Place name"
-            placeholder="Such as Gyeongbokgung Palace"
-            hint="Where the photo was taken, more exactly than its city. The portfolio shows it before the city, with the country under the GPS position on hover."
-            {...field("placeName")}
+          <PlaceFields
+            value={value}
+            disabled={disabled}
+            onChange={(place) => onChange({ ...value, ...place })}
           />
           <CityAndCountry exifPlace={exifPlace} value={value} field={field} />
         </div>

@@ -47,6 +47,8 @@ export const navGroups = [
     items: [
       { title: "Settings", url: "/settings" },
       { title: "Update Data", url: "/update-data" },
+      { title: "Places", url: "/places" },
+      { title: "Localizations", url: "/localizations" },
     ],
   },
 ] as const;

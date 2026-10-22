@@ -6,6 +6,7 @@ import type { CombinedCommit } from "@/api/photos";
 import { githubIsSetUp, settingsQuery } from "@/api/settings";
 import { CommitButton } from "@/components/all-photos-rebuild";
 import { Spinner } from "@/components/ui/spinner";
+import { FloatingActionsSlot } from "@/components/floating-actions";
 import { cn } from "@/lib/utils";
 import { useCombinedData, useCombinedSync } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
@@ -108,19 +109,22 @@ function SyncStatusButton() {
 
   return (
     <div ref={ref} className="fixed top-3 right-4 z-40 flex flex-col items-end gap-2">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-haspopup="dialog"
-        onClick={() => setOpen((o) => !o)}
-        className={cn(
-          "bg-background/95 focus-visible:ring-ring flex h-9 items-center gap-2 rounded-full border px-3 text-sm font-medium shadow-md backdrop-blur outline-none focus-visible:ring-2 [&_svg]:size-4",
-          badge.className,
-        )}
-      >
-        {badge.icon}
-        {badge.label}
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-haspopup="dialog"
+          onClick={() => setOpen((o) => !o)}
+          className={cn(
+            "bg-background/95 focus-visible:ring-ring flex h-9 items-center gap-2 rounded-full border px-3 text-sm font-medium shadow-md backdrop-blur outline-none focus-visible:ring-2 [&_svg]:size-4",
+            badge.className,
+          )}
+        >
+          {badge.icon}
+          {badge.label}
+        </button>
+        <FloatingActionsSlot />
+      </div>
       {open && <SyncPanel sync={sync} onNavigate={() => setOpen(false)} />}
     </div>
   );

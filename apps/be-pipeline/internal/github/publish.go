@@ -37,6 +37,20 @@ type Photo struct {
 	// in; none when they're left out.
 	Albums []string `json:"albums,omitempty"`
 	Tags   []string `json:"tags,omitempty"`
+	// Places are where the photo was taken, as places from PLACES.json;
+	// none when they're left out.
+	Places []PhotoPlace `json:"places,omitempty"`
+}
+
+// PhotoPlace is one place a photo was taken at, from PLACES.json, and how
+// the photo relates to it, so "In Gyeongbokgung Palace by Geunjeongmun Gate"
+// is two: {"in", "gyeongbokgung-palace"} and {"by", "geunjeongmun-gate"}.
+type PhotoPlace struct {
+	// Relation is a preposition such as "in", "at", "by" or "near", or ""
+	// for none.
+	Relation string `json:"relation"`
+	// ID is the place's ID in PLACES.json.
+	ID string `json:"id"`
 }
 
 // photoJSON is the content of a published file. The title and comment come
@@ -49,6 +63,10 @@ type photoJSON struct {
 	// Albums and Tags are the IDs of the albums and tags the photo is in.
 	Albums []string `json:"albums"`
 	Tags   []string `json:"tags"`
+	// Places are where the photo was taken, by place ID, each with how the
+	// photo relates to it. The place name is kept in PlaceName too, for the
+	// portfolio.
+	Places []PhotoPlace `json:"places"`
 }
 
 // newPhotoJSON is the content of a new photo file. It is also the list of
@@ -58,6 +76,7 @@ type photoJSON struct {
 func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 	return photoJSON{
 		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
+		Places: []PhotoPlace{},
 	}
 }
 
@@ -129,6 +148,7 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	}
 	data := newPhotoJSON(photo.File, photo.Sanitized)
 	data.Albums, data.Tags = appendMissing(data.Albums, photo.Albums), appendMissing(data.Tags, photo.Tags)
+	data.Places = append(data.Places, photo.Places...)
 	content, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")

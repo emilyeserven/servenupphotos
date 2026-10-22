@@ -120,7 +120,8 @@ const columns = helper.columns([
   helper.display({ id: "image", header: "", enableSorting: false }),
   helper.accessor("title", { header: LABELS.title, sortFn: "text", enableHiding: false }),
   helper.accessor("takenAt", { header: LABELS.takenAt, sortFn: "datetime", sortDescFirst: true }),
-  helper.accessor((photo) => photo.location?.label, {
+  // Sorted by the English names, whichever way the menu shows them.
+  helper.accessor((photo) => photo.location?.english.label, {
     id: "location",
     header: LABELS.location,
     sortFn: "text",
