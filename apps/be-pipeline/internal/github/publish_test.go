@@ -192,6 +192,8 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "gpsPosition": null,
   "createDate": null,
   "placeName": null,
+  "customCity": null,
+  "customCountry": null,
   "country": null,
   "city": "Tokyo",
   "width": null,

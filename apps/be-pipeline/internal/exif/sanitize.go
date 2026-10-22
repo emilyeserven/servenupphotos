@@ -33,8 +33,13 @@ type Sanitized struct {
 	// park or a building, which the portfolio shows before the city.
 	// Sanitize leaves it nil; it is written on the Photo page before saving.
 	PlaceName *string `json:"placeName"`
-	Country   *string `json:"country"`
-	City      *string `json:"city"`
+	// CustomCity and CustomCountry are a city and country written on the
+	// Photo page, which the portfolio shows instead of City and Country.
+	// They leave the EXIF ones as they are. Sanitize leaves them nil.
+	CustomCity    *string `json:"customCity"`
+	CustomCountry *string `json:"customCountry"`
+	Country       *string `json:"country"`
+	City          *string `json:"city"`
 	// Width and Height are the original photo's size in pixels, as it is
 	// shown: swapped from the stored size when EXIF says to turn it 90°.
 	Width  *int   `json:"width"`

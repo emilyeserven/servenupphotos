@@ -79,6 +79,9 @@ export interface SanitizedExif {
   createDate: string | null;
   /** The name of the place the photo was taken, such as a park or building, written on the Photo page. */
   placeName: string | null;
+  /** A city and country written on the Photo page, which the portfolio shows instead of the EXIF ones. */
+  customCity: string | null;
+  customCountry: string | null;
   country: string | null;
   city: string | null;
   /** The original photo's width and height in pixels, as shown (turned upright from its EXIF orientation). */

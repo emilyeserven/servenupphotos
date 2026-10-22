@@ -28,7 +28,9 @@ import {
   fileStem,
   type PhotoDetails,
   PhotoDetailsCard,
+  DETAIL_FIELDS,
   savedDetails,
+  savedExifPlace,
   withDetails,
 } from "@/components/photo-details";
 import { QueryResult } from "@/components/query-result";
@@ -258,12 +260,10 @@ function hasThumbnail(saved: PhotoJson): boolean {
   return SQUARE_NAMES.every((name) => savedUrl(saved.images?.[name]));
 }
 
-/** Whether the title, place name or comment differs from the ones saved in data. */
+/** Whether the title, place name, custom city or country, or comment differs from the ones saved in data. */
 function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
   const next = withDetails({}, details);
-  return (["title", "placeName", "comment"] as const).some(
-    (key) => next[key] !== (data[key] ?? null),
-  );
+  return DETAIL_FIELDS.some((key) => next[key] !== (data[key] ?? null));
 }
 
 /**
@@ -370,6 +370,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           value={edit.details}
           onChange={edit.setDetails}
           fallbackTitle={fileStem(photoFile(editable.data) || fileName(editable.file.path))}
+          exifPlace={savedExifPlace(edit.savedData)}
           description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
           disabled={pending}
         />
