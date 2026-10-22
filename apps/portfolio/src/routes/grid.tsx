@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Grid3x3 } from "lucide-react";
+import { type ImgHTMLAttributes, useState } from "react";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/grid")({
   component: GridView,
@@ -47,52 +49,49 @@ function GridView() {
 const THUMBNAIL_SIZE = 500;
 
 /**
- * The tiny image to show blurred while the tile's image loads: the thumbnail's own preview, which
- * matches its square, or else the photo's, for photos saved before they had one.
+ * The tiny images to show blurred while the tile's image loads, or in its place when it can't:
+ * the thumbnail's own preview, which matches its square, then the photo's, for photos saved before
+ * they had one or when the thumbnail's preview won't load.
  */
-function placeholderOf(image: PhotoImage) {
-  return (image.thumbnail && image.thumbnailPreview) || image.preview;
+function placeholdersOf(image: PhotoImage): string[] {
+  const square = image.thumbnail ? [image.thumbnailPreview] : [];
+  return [...square, image.preview].filter((url): url is string => Boolean(url));
+}
+
+/**
+ * What the tile shows, best first: the square picked on the pipeline's Photo page, sharp at every
+ * tile size, then the middle of the resized versions, for photos saved before thumbnails or when
+ * the thumbnail won't load.
+ */
+function sourcesOf(image: PhotoImage): ImgHTMLAttributes<HTMLImageElement>[] {
+  const middle = {
+    src: image.src,
+    srcSet: image.srcSet,
+    sizes: TILE_SIZES,
+    width: image.width,
+    height: image.height,
+  };
+  if (!image.thumbnail) return [middle];
+  return [{ src: image.thumbnail, width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE }, middle];
+}
+
+/** The index of the first of a list of images that hasn't failed to load, moved on by `next`. */
+function useFallback() {
+  const [index, setIndex] = useState(0);
+  return { index, next: () => setIndex((i) => i + 1) };
+}
+
+/** Whether img has already loaded, as a cached image can before React listens for it. */
+function isLoaded(img: HTMLImageElement | null): boolean {
+  return Boolean(img?.complete && img.naturalWidth > 0);
 }
 
 function PhotoTile({ photo }: { photo: ImagePhoto }) {
-  const { image } = photo;
-  const placeholder = placeholderOf(image);
-
   return (
     <figure className="flex flex-col gap-2">
       <div className="relative aspect-square overflow-hidden rounded-md bg-muted">
-        {placeholder && (
-          // The blur-up placeholder, covered by the real image once it loads.
-          <img
-            src={placeholder}
-            alt=""
-            aria-hidden
-            className="absolute inset-0 size-full scale-110 object-cover blur-md"
-          />
-        )}
-        {image.thumbnail ? (
-          // The square picked on the pipeline's Photo page, sharp at every tile size.
-          <img
-            src={image.thumbnail}
-            width={THUMBNAIL_SIZE}
-            height={THUMBNAIL_SIZE}
-            alt={photo.title}
-            loading="lazy"
-            className="relative size-full object-cover"
-          />
-        ) : (
-          // Photos saved before thumbnails show their middle.
-          <img
-            src={image.src}
-            srcSet={image.srcSet}
-            sizes={TILE_SIZES}
-            width={image.width}
-            height={image.height}
-            alt={photo.title}
-            loading="lazy"
-            className="relative size-full object-cover"
-          />
-        )}
+        <TilePlaceholder image={photo.image} />
+        <TileImage image={photo.image} alt={photo.title} />
       </div>
       <figcaption className="flex flex-col">
         <span className="truncate text-sm font-medium">{photo.title}</span>
@@ -101,5 +100,53 @@ function PhotoTile({ photo }: { photo: ImagePhoto }) {
         </span>
       </figcaption>
     </figure>
+  );
+}
+
+/** The blurred placeholder, under the tile's image, trying the next one when one won't load. */
+function TilePlaceholder({ image }: { image: PhotoImage }) {
+  const fallback = useFallback();
+  const src = placeholdersOf(image)[fallback.index];
+  if (!src) return null;
+  return (
+    <img
+      key={src}
+      src={src}
+      alt=""
+      aria-hidden
+      onError={fallback.next}
+      className="absolute inset-0 size-full scale-110 object-cover blur-md"
+    />
+  );
+}
+
+/**
+ * The tile's image, fading in over the placeholder once it loads. When none of its sources load,
+ * nothing covers the placeholder, so the tile stays blurred rather than showing a broken image.
+ */
+function TileImage({ image, alt }: { image: PhotoImage; alt: string }) {
+  const fallback = useFallback();
+  const [loaded, setLoaded] = useState(false);
+  const source = sourcesOf(image)[fallback.index];
+  if (!source) return null;
+  return (
+    <img
+      key={source.src}
+      {...source}
+      ref={(img) => {
+        if (isLoaded(img)) setLoaded(true);
+      }}
+      alt={alt}
+      loading="lazy"
+      onLoad={() => setLoaded(true)}
+      onError={() => {
+        setLoaded(false);
+        fallback.next();
+      }}
+      className={cn(
+        "relative size-full object-cover transition-opacity duration-500",
+        loaded ? "opacity-100" : "opacity-0",
+      )}
+    />
   );
 }

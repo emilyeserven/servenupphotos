@@ -6,6 +6,7 @@ import {
   CircleMinusIcon,
   ImageOffIcon,
   PanelRightCloseIcon,
+  PencilIcon,
   PanelRightOpenIcon,
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
@@ -346,15 +347,35 @@ function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightIma
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <PhotoImage name={file.photoName} url={url} checked={images.checked} />
-      {square && (
-        <SquareThumbnailImage
-          key={square}
-          name={file.photoName}
-          url={square}
-          previewUrl={squarePreviewUrl(file, url)}
-        />
-      )}
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        {square && (
+          <SquareThumbnailImage
+            key={square}
+            name={file.photoName}
+            url={square}
+            previewUrl={squarePreviewUrl(file, url)}
+          />
+        )}
+        {canEdit(file, url) && <EditLink path={file.path} />}
+      </div>
     </div>
+  );
+}
+
+/** Whether the file's photo can be opened on the Photo page: its JSON was read and its image is in R2. */
+function canEdit(file: InFlightFile, imageUrl?: string): boolean {
+  return Boolean(imageUrl) && !file.error && file.status !== "removed";
+}
+
+/** Opens the photo on the Photo page, to change its Square Thumbnail crop. */
+function EditLink({ path }: { path: string }) {
+  return (
+    <Button variant="outline" size="sm" asChild>
+      <Link to="/exif" search={{ edit: path }}>
+        <PencilIcon />
+        Edit
+      </Link>
+    </Button>
   );
 }
 
