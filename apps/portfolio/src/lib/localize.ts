@@ -114,7 +114,7 @@ export function localizePlace(place: Place): Localized {
 }
 
 /** The same text every way, for names with no localization to look up. */
-export function unlocalized(value: string): Localized {
+function unlocalized(value: string): Localized {
   return { english: value, romanized: value, phonetic: value, native: value };
 }
 
