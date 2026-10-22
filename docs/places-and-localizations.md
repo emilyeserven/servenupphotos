@@ -25,7 +25,9 @@ On the Photo page and in Edit Photo, **Place** replaces the old place name text 
 across from, above, below, overlooking, from) and a combobox that picks one place. Its search matches each place's
 name and its saved romanization, local pronunciation and local script, so “경복” or “gyeongbok” both find
 Gyeongbokgung Palace. Typing a name that isn't a place offers **Add “…” as a place**, which saves it as above and chooses it. Under the rows, the places read as a phrase:
-“In Gyeongbokgung Palace by Geunjeongmun Gate”, or “Near Gyeongbokgung” with one place and a relation.
+“In Gyeongbokgung Palace by Geunjeongmun Gate”, or “Near Gyeongbokgung” with one place and a relation. With two
+places, **Swap places** swaps which place is first and which second, leaving each relation where it was: “In
+Gyeongbokgung Palace by Geunjeongmun Gate” becomes “In Geunjeongmun Gate by Gyeongbokgung Palace”.
 
 They're saved in the photo's JSON as `places`, next to `albums` and `tags`:
 
