@@ -35,9 +35,21 @@ function text(value: unknown): string {
   return typeof value === "string" ? value : "";
 }
 
-/** data with the title and comment, or null for ones left empty. */
+/** data with the title and comment, or null for ones left empty, as its first fields. */
 export function withDetails<T extends object>(data: T, details: PhotoDetails) {
-  return { ...data, title: details.title.trim() || null, comment: details.comment.trim() || null };
+  const {
+    title: _title,
+    comment: _comment,
+    ...rest
+  } = data as T & {
+    title?: unknown;
+    comment?: unknown;
+  };
+  return {
+    title: details.title.trim() || null,
+    comment: details.comment.trim() || null,
+    ...rest,
+  };
 }
 
 /** A link in the comment's preview, opened in a new tab so the page and its work stay put. */
@@ -84,7 +96,7 @@ export function PhotoDetailsCard({
           />
           <p id="photo-title-hint" className="text-muted-foreground text-sm">
             What the portfolio calls the photo. Without one, it uses the file name,{" "}
-            <code>{fallbackTitle}</code>. A new photo's JSON file is named after it too.
+            <code>{fallbackTitle}</code>. Its JSON file is named after it too.
           </p>
         </div>
         <CommentField

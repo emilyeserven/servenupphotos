@@ -35,9 +35,12 @@ type Photo struct {
 	Sanitized exif.Sanitized `json:"sanitized"`
 }
 
-// photoJSON is the content of a published file.
+// photoJSON is the content of a published file. The title and comment come
+// first, where they're easy to find and edit, hiding the embedded ones.
 type photoJSON struct {
-	File string `json:"file"`
+	Title   *string `json:"title"`
+	Comment *string `json:"comment"`
+	File    string  `json:"file"`
 	exif.Sanitized
 }
 
@@ -122,7 +125,12 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 		}
 	}
 
-	content, err := json.MarshalIndent(photoJSON{File: photo.File, Sanitized: photo.Sanitized}, "", "  ")
+	content, err := json.MarshalIndent(photoJSON{
+		Title:     photo.Sanitized.Title,
+		Comment:   photo.Sanitized.Comment,
+		File:      photo.File,
+		Sanitized: photo.Sanitized,
+	}, "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
 	}

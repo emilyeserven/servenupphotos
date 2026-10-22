@@ -233,46 +233,57 @@ function ResultsColumn({
   onSaved,
 }: ResultsColumnProps) {
   if (extract.isIdle) return null;
+  const result = <ExifResult mutation={extract} sanitized={sanitized} />;
+  if (!extract.isSuccess || !sanitized) return result;
   return (
     <>
-      <ExifResult mutation={extract} sanitized={sanitized} />
-      {extract.isSuccess && sanitized && (
-        // The gate in the other column shows the check's status, so this one stays quiet.
-        <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
-          <NewPhotoDetails
-            file={extract.data.file}
-            details={details}
-            onDetailsChange={onDetailsChange}
-            saved={saved}
-          />
-          <GitHubSaveCard file={extract.data.file} sanitized={sanitized} onSaved={onSaved} />
-        </AllPhotosGate>
-      )}
+      <NewPhotoDetails
+        key={`details-${extract.submittedAt}`}
+        identity={identity}
+        file={extract.data.file}
+        details={details}
+        onDetailsChange={onDetailsChange}
+        saved={saved}
+      />
+      {result}
+      {/* The gate in the other column shows the check's status, so this one stays quiet. */}
+      <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
+        <GitHubSaveCard file={extract.data.file} sanitized={sanitized} onSaved={onSaved} />
+      </AllPhotosGate>
     </>
   );
 }
 
 interface NewPhotoDetailsProps {
+  identity: PhotoIdentity | null;
   file: string;
   details: PhotoDetails;
   onDetailsChange: (details: PhotoDetails) => void;
   saved: boolean;
 }
 
-/** The new photo's title and comment, until its JSON is saved with them. */
-function NewPhotoDetails({ file, details, onDetailsChange, saved }: NewPhotoDetailsProps) {
+/** The new photo's title and comment, unless it's already in ALLPHOTOS.json. */
+function NewPhotoDetails({
+  identity,
+  file,
+  details,
+  onDetailsChange,
+  saved,
+}: NewPhotoDetailsProps) {
   return (
-    <PhotoDetailsCard
-      value={details}
-      onChange={onDetailsChange}
-      fallbackTitle={fileStem(file)}
-      description={
-        saved
-          ? "Saved with the photo's JSON."
-          : "Both optional, and saved in the JSON when you save to GitHub."
-      }
-      disabled={saved}
-    />
+    <AllPhotosGate photo={identity} showStatus={false}>
+      <PhotoDetailsCard
+        value={details}
+        onChange={onDetailsChange}
+        fallbackTitle={fileStem(file)}
+        description={
+          saved
+            ? "Saved with the photo's JSON."
+            : "Both optional, and saved in the JSON when you save to GitHub."
+        }
+        disabled={saved}
+      />
+    </AllPhotosGate>
   );
 }
 
@@ -420,7 +431,9 @@ function ExifResultBody({ mutation, sanitized }: ExifResultProps) {
 /** The JSON Save to GitHub writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload. */
 function UploadJson({ file, sanitized }: { file: string; sanitized: SanitizedExif | null }) {
   if (!sanitized) return <ExifData exif={null} />;
-  return <JsonCodeBlock value={{ file, ...sanitized }} title="JSON to Upload" />;
+  // The title and comment first, as Save to GitHub writes them.
+  const { title, comment, ...rest } = sanitized;
+  return <JsonCodeBlock value={{ title, comment, file, ...rest }} title="JSON to Upload" />;
 }
 
 function ExifData({ exif }: { exif: ExifResponse["exif"] | ExifResponse["sanitized"] }) {

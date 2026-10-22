@@ -12,9 +12,12 @@ type Sanitized struct {
 	// Title is the photo's name on the portfolio. Sanitize leaves it nil; it
 	// is written on the Photo page before saving, and the portfolio falls back
 	// to the file name without one.
-	Title  *string `json:"title"`
-	Camera *string `json:"camera"`
-	Lens   *string `json:"lens"`
+	Title *string `json:"title"`
+	// Comment is the photographer's note about the photo, in Markdown.
+	// Sanitize leaves it nil; it is written on the Photo page before saving.
+	Comment *string `json:"comment"`
+	Camera  *string `json:"camera"`
+	Lens    *string `json:"lens"`
 	// Aperture is the f-number, such as 5.6 for f/5.6.
 	Aperture *float64 `json:"aperture"`
 	// Exposure is the exposure time in seconds as exiftool writes it, such
@@ -27,12 +30,9 @@ type Sanitized struct {
 	City        *string `json:"city"`
 	// Width and Height are the original photo's size in pixels, as it is
 	// shown: swapped from the stored size when EXIF says to turn it 90°.
-	Width  *int `json:"width"`
-	Height *int `json:"height"`
-	// Comment is the photographer's note about the photo, in Markdown.
-	// Sanitize leaves it nil; it is written on the Photo page before saving.
-	Comment *string `json:"comment"`
-	Images  Images  `json:"images"`
+	Width  *int   `json:"width"`
+	Height *int   `json:"height"`
+	Images Images `json:"images"`
 }
 
 // Images are the links to a photo's published copies. Sanitize leaves them

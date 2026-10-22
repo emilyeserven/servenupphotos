@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeftIcon, CheckIcon, RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
 import {
@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { type Crop, cropText, sameCrop } from "@/lib/crop";
+import { jsonFileName } from "@/lib/file-name";
 
 /** A photo JSON file in the pull request, with the image in R2 it can be edited from. */
 interface Editable {
@@ -94,8 +95,8 @@ export function EditInFlightPhoto({ path }: { path: string }) {
         {(data) => {
           const editable = findEditable(data, path);
           if (typeof editable === "string") return <Problem>{editable}</Problem>;
-          // Keyed by file, so another photo starts over.
-          return <EditWithSavedCrop key={editable.file.path} editable={editable} />;
+          // Keyed by the photo's image rather than its file, which a new title can rename.
+          return <EditWithSavedCrop key={editable.image.key} editable={editable} />;
         }}
       </QueryResult>
     </>
@@ -182,6 +183,25 @@ function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
   return next.title !== (data.title ?? null) || next.comment !== (data.comment ?? null);
 }
 
+/**
+ * The file name, without .json, that a new title moves the file to, or undefined when it keeps its
+ * name: the title is unchanged, the new name is the same, or the file is already in the portfolio.
+ */
+function newFileName(file: InFlightFile, saved: PhotoJson, title: string): string | undefined {
+  if (file.status !== "added" || !titleChanged(saved, title)) return undefined;
+  const name = jsonFileName(title, photoFile(saved));
+  return `${name}.json` === fileName(file.path) ? undefined : name;
+}
+
+function titleChanged(saved: PhotoJson, title: string): boolean {
+  return title.trim() !== savedDetails(saved).title.trim();
+}
+
+/** The photo's original file name, as saved in its JSON. */
+function photoFile(saved: PhotoJson): string {
+  return typeof saved.file === "string" ? saved.file : "";
+}
+
 /** What saving would do: the crop to remake the square versions from, if they need it, and the JSON to write. */
 function saveRequest(
   saved: PhotoJson,
@@ -198,7 +218,7 @@ function nextJson({ crop, data }: SaveRequest, imageUrl: string): PhotoJson {
 }
 
 /** The crop, title and comment being edited, against the last ones saved, and the JSON saving them would write. */
-function useEdit({ data, image }: Editable, savedCrop: Crop | null) {
+function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
   const [crop, setCrop] = useState<Crop | null>(savedCrop);
   // The editor reports the middle first when no crop was saved, which then counts as saved.
   const [baseline, setBaseline] = useState<Crop | null>(savedCrop);
@@ -206,7 +226,10 @@ function useEdit({ data, image }: Editable, savedCrop: Crop | null) {
   const [details, setDetails] = useState(() => savedDetails(data));
   const remakeSquares = cropChanged(crop, baseline, savedData);
   const changed = remakeSquares || detailsChanged(savedData, details);
-  const request = saveRequest(savedData, details, crop, remakeSquares);
+  const request = {
+    ...saveRequest(savedData, details, crop, remakeSquares),
+    name: newFileName(file, savedData, details.title),
+  };
   return {
     crop,
     baseline,
@@ -258,8 +281,8 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
         <PhotoDetailsCard
           value={edit.details}
           onChange={edit.setDetails}
-          fallbackTitle={fileStem(String(editable.data.file ?? fileName(editable.file.path)))}
-          description="Both optional. Saving changes writes them over the ones in the JSON; the file keeps its name."
+          fallbackTitle={fileStem(photoFile(editable.data) || fileName(editable.file.path))}
+          description="Both optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
           disabled={pending}
         />
         <JsonPreview path={editable.file.path} edit={edit} />
@@ -292,6 +315,8 @@ interface SaveRequest {
   crop: Crop | null;
   /** The JSON to save, with the new Square Thumbnail marked in it when there's a crop. */
   data: PhotoJson;
+  /** A new file name, without .json, to move the file to. */
+  name?: string;
 }
 
 interface SaveResult {
@@ -308,25 +333,34 @@ interface SaveResult {
  */
 function useSave({ file, image }: Editable, onSaved: (crop: Crop | null, data: PhotoJson) => void) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const rebuild = useAllPhotosRebuild(true, () => {
     void queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey });
   });
   const regenerate = useMutation(regenerateVersionsMutation);
   const update = useMutation(updateInFlightMutation);
   const mutation = useMutation({
-    mutationFn: async ({ crop, data }: SaveRequest): Promise<SaveResult> => {
+    mutationFn: async ({ crop, data, name }: SaveRequest): Promise<SaveResult> => {
       if (!crop) {
-        const updated = await update.mutateAsync({ path: file.path, data });
+        const updated = await update.mutateAsync({ path: file.path, data, name });
         return { crop, data, squares: null, update: updated };
       }
       const made = await regenerate.mutateAsync({ key: image.key, versions: SQUARE_NAMES, crop });
       const urls = { ...squareUrls(data, image.url), ...madeUrls(made.versions) };
       const next = withSquares(data, urls, crop);
-      const updated = await update.mutateAsync({ path: file.path, data: next });
+      const updated = await update.mutateAsync({ path: file.path, data: next, name });
       return { crop, data: next, squares: markedUrls(urls, crop), update: updated };
     },
     onSuccess: (result) => {
       onSaved(result.crop, result.data);
+      if (result.update.path !== file.path) {
+        // Follow the file to its new name, in the cache until the pull request is read again.
+        queryClient.setQueryData(
+          photosInFlightQuery.queryKey,
+          (data) => data && renamedInFlight(data, file.path, result.update),
+        );
+        void navigate({ to: "/exif", search: { edit: result.update.path }, replace: true });
+      }
       void queryClient.invalidateQueries({ queryKey: thumbnailCropQuery(image.key).queryKey });
       void queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey });
       if (result.update.changed) rebuild.afterPush();
@@ -338,6 +372,22 @@ function useSave({ file, image }: Editable, onSaved: (crop: Crop | null, data: P
 }
 
 type Save = ReturnType<typeof useSave>;
+
+/** data with the file at `from` moved to the updated file's path. */
+function renamedInFlight(
+  data: InFlightResponse,
+  from: string,
+  updated: UpdateResult,
+): InFlightResponse {
+  const { [from]: image, ...byPath } = data.images.byPath;
+  return {
+    ...data,
+    files: data.files.map((f) =>
+      f.path === from ? { ...f, path: updated.path, fileUrl: updated.fileUrl } : f,
+    ),
+    images: { ...data.images, byPath: image ? { ...byPath, [updated.path]: image } : byPath },
+  };
+}
 
 /** The URLs of the square versions R2 answered with. */
 function madeUrls(made: Partial<Record<string, { url: string }>>): Partial<SquareUrls> {
@@ -359,6 +409,7 @@ function SaveCard({ file, edit, save }: { file: InFlightFile; edit: Edit; save: 
       </CardHeader>
       <CardContent className="flex flex-col gap-3 text-sm">
         {baseline && <p className="text-muted-foreground">Saved crop: {cropText(baseline)}.</p>}
+        <RenameNote file={file} edit={edit} />
         <div className="flex flex-wrap gap-2">
           <Button
             disabled={!request || mutation.isPending}
@@ -372,6 +423,30 @@ function SaveCard({ file, edit, save }: { file: InFlightFile; edit: Edit; save: 
         <SaveOutcome save={save} />
       </CardContent>
     </Card>
+  );
+}
+
+/** What a new title does to the file's name when it's saved. */
+function RenameNote({ file, edit }: { file: InFlightFile; edit: Edit }) {
+  const name = edit.request?.name;
+  if (name) {
+    return (
+      <p>
+        Saving renames it to <code>{name}.json</code>, after the new title.
+      </p>
+    );
+  }
+  return <KeepsNameNote file={file} edit={edit} />;
+}
+
+/** Why a new title doesn't rename a file that's already in the portfolio. */
+function KeepsNameNote({ file, edit }: { file: InFlightFile; edit: Edit }) {
+  if (file.status === "added" || !titleChanged(edit.savedData, edit.details.title)) return null;
+  return (
+    <p className="text-muted-foreground">
+      It keeps its file name, since it's {file.status} in the pull request and so already in the
+      portfolio.
+    </p>
   );
 }
 

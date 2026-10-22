@@ -162,8 +162,9 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
 
 	got := f.files["photo-data/2026-10-15-024500:photos/data/DSC0001.json"]
 	wantJSON := `{
-  "file": "DSC0001.jpg",
   "title": "Tokyo at night",
+  "comment": "Shot from the **bridge**.",
+  "file": "DSC0001.jpg",
   "camera": "X-T5",
   "lens": null,
   "aperture": 2.8,
@@ -175,7 +176,6 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "city": "Tokyo",
   "width": null,
   "height": null,
-  "comment": "Shot from the **bridge**.",
   "images": {
     "full": "https://photos.example.com/photos/0123456789ab-DSC0001.jpg",
     "key": "photos/0123456789ab-DSC0001.jpg",
