@@ -2,7 +2,7 @@
   "id": "welling-court-mural-project",
   "name": "Welling Court Mural Project",
   "description": "",
-  "parent": "",
+  "parent": "astoria",
   "city": "",
   "country": ""
 }
