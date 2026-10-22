@@ -167,6 +167,16 @@ function EditButton({ photo }: { photo: BulkPhoto }) {
   );
 }
 
+/** Edit, and hiding the photo from the list once you're done with it; it stays in the batch. */
+function AddedActions({ photo }: { photo: BulkPhoto }) {
+  return (
+    <div className="flex shrink-0 items-center gap-1">
+      <EditButton photo={photo} />
+      <RemoveButton photo={photo} label={`Hide ${photo.file.name} from the list`} />
+    </div>
+  );
+}
+
 function hasSameName(photo: BulkPhoto): boolean {
   return (photo.sameName?.length ?? 0) > 0;
 }
@@ -187,13 +197,16 @@ function FailedActions({ photo }: { photo: BulkPhoto }) {
   );
 }
 
-function RemoveButton({ photo }: { photo: BulkPhoto }) {
+/** Takes the photo off the list; label says so for screen readers, "Take … off the list" unless given. */
+function RemoveButton({ photo, label }: { photo: BulkPhoto; label?: string }) {
   const remove = useBulkUploadStore((state) => state.remove);
+  const text = label ?? `Take ${photo.file.name} off the list`;
   return (
     <Button
       variant="ghost"
       size="icon"
-      aria-label={`Take ${photo.file.name} off the list`}
+      aria-label={text}
+      title={text}
       onClick={() => remove(photo.id)}
     >
       <XIcon aria-hidden />
@@ -206,7 +219,7 @@ function RemoveButton({ photo }: { photo: BulkPhoto }) {
  * the list. Nothing while it's being worked on.
  */
 const ACTIONS: Partial<Record<BulkStep, (props: { photo: BulkPhoto }) => ReactNode>> = {
-  added: EditButton,
+  added: AddedActions,
   failed: FailedActions,
   waiting: RemoveButton,
   skipped: RemoveButton,
