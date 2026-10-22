@@ -1,13 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import { type UseMutationResult, useMutation } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { RefreshCwIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
 import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import type { PhotoIdentity } from "@/api/photos";
-import { type UploadMutation, type UploadResponse, uploadMutation } from "@/api/upload";
-import { thumbnailCropField } from "@/api/versions";
+import { type UploadMutation, uploadMutation } from "@/api/upload";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
 import { GitHubSaveCard } from "@/components/github-save";
@@ -27,6 +26,7 @@ import { R2Upload } from "@/components/r2-upload";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { VersionPreviews } from "@/components/version-previews";
 import type { Crop } from "@/lib/crop";
+import { withImages } from "@/lib/photo-images";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -76,36 +76,6 @@ function validatePhoto(photo: File | null): string | undefined {
   if (!photo) return "Choose a JPEG photo.";
   if (!JPEG_TYPES.includes(photo.type)) return "Only JPEG photos are supported.";
   return undefined;
-}
-
-/** The sanitized EXIF with the photo's R2 URLs and key filled in once it has been uploaded. */
-function withImages(
-  sanitized: SanitizedExif | null | undefined,
-  upload: UploadResponse | undefined,
-): SanitizedExif | null {
-  if (!sanitized || !upload) return sanitized ?? null;
-  return {
-    ...sanitized,
-    images: {
-      ...sanitized.images,
-      full: upload.url,
-      key: upload.key,
-      xlarge: upload.versions.xlarge.url,
-      large: upload.versions.large.url,
-      medium: upload.versions.medium.url,
-      small: upload.versions.small.url,
-      xsmall: upload.versions.xsmall.url,
-      preview: upload.versions.preview.url,
-      thumbnail: upload.versions.thumbnail.url,
-      thumbnailpreview: upload.versions.thumbnailpreview.url,
-      thumbnailcrop: uploadedCrop(upload),
-    },
-  };
-}
-
-/** The Square Thumbnail's crop as the photo's JSON saves it, when the upload said what it was. */
-function uploadedCrop({ thumbnailCrop }: UploadResponse) {
-  return thumbnailCrop ? thumbnailCropField(thumbnailCrop) : null;
 }
 
 /** State that belongs to the photo analyzed at `submittedAt`, so choosing another photo starts it over. */
@@ -400,9 +370,18 @@ function PhotoField({ name, error, pending, onChange, onBlur }: PhotoFieldProps)
 function PhotoHint({ id, chosen }: { id: string; chosen: boolean }) {
   return (
     <p id={id} className="text-muted-foreground text-sm">
-      {chosen
-        ? "Click the photo to choose a different one."
-        : "JPEG only (.jpg or .jpeg). Its resized versions are converted to WEBP when it's uploaded."}
+      {chosen ? (
+        "Click the photo to choose a different one."
+      ) : (
+        <>
+          JPEG only (.jpg or .jpeg). Its resized versions are converted to WEBP when it's uploaded.
+          For many photos at once, use{" "}
+          <Link to="/bulk-upload" className="text-foreground underline underline-offset-4">
+            Bulk Upload
+          </Link>
+          .
+        </>
+      )}
     </p>
   );
 }

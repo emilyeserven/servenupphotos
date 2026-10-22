@@ -22,6 +22,7 @@ export const navGroups = [
     items: [
       { title: "Status", url: "/" },
       { title: "Photo", url: "/exif" },
+      { title: "Bulk Upload", url: "/bulk-upload" },
       { title: "Photos in Flight", url: "/in-flight" },
       { title: "Gallery", url: "/gallery" },
       { title: "Explore Bucket", url: "/bucket" },

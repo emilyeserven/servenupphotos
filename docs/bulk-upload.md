@@ -1,0 +1,29 @@
+# Bulk Upload
+
+**Bulk Upload** (`/bulk-upload`) adds many photos to the batch at once. Drop JPEGs on it or click it to choose them,
+and each one goes through the same steps as a photo on the [Photo page](saving-to-github.md), with defaults in place of
+the choices made there:
+
+1. **Analyze**: its EXIF and colors are read (`POST /api/exif`).
+2. **Check**: it's looked for in the saved photo data, `ALLPHOTOS.json` on the Settings branch and the open **Add photo
+   data** pull request's files, exactly as the Photo page does. A photo already there is skipped and links to where it
+   was found. When a place can't be read, the photo is still added, with a warning.
+3. **Upload**: the photo, its resized versions and its Square Thumbnail go to R2 (`POST /api/upload`). The Square
+   Thumbnail is cut from the middle square, as the Photo page starts with.
+4. **Add to Batch**: its JSON is saved to the photo data pull request (`POST /api/photos/github`), named after its file
+   name and without a title, so the portfolio shows its file name. It's in no albums, tags or places yet.
+
+Photos go one at a time, in the order they were chosen, so their saves never race each other to open the pull request.
+Each row shows the step it's on, and the bar above them how many are done. The top-right sync button counts each added
+photo as it's saved, the same as with Add to Batch, and **Commit** adds them all to `ALLPHOTOS.json` at once.
+
+Once a photo is added, its **Edit** button opens it on Edit Photo to give it a title, a different square, albums or
+tags. The queue keeps going while you're there, and is still there when you come back (until the page is reloaded).
+
+When a step fails, the row says why and **Retry** picks up from that step: a photo that was uploaded isn't uploaded
+again. Anything but a JPEG fails straight away. When R2 already has a different photo under the same name, the row
+links to it; **Keep name** uploads it anyway (as the Photo page's "keep the name"), or rename the file and drop it
+again. **Clear finished** takes the added and skipped photos off the list.
+
+> **Frontend analogy:** it's a download manager's queue. Every file is a row with its own progress and its own retry
+> button, but only one downloads at a time, and a failed one doesn't hold up the rest.
