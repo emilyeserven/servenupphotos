@@ -126,7 +126,7 @@ func TestSanitizeEmpty(t *testing.T) {
 }
 
 // checkPublishDefaults checks that got isn't marked for social media or the
-// site's spotlight, since those are chosen by hand, then removes both keys.
+// site's spotlight, since those are chosen by hand, then removes those keys.
 func checkPublishDefaults(t *testing.T, got map[string]any) {
 	t.Helper()
 	if v, ok := got["isSocialMediaEligible"]; !ok || v != false {
@@ -135,8 +135,12 @@ func checkPublishDefaults(t *testing.T, got map[string]any) {
 	if v, ok := got["websiteSpotlight"]; !ok || v != nil {
 		t.Errorf("websiteSpotlight = %#v, want null", v)
 	}
+	if v, ok := got["socialMediaPublishDate"]; !ok || v != nil {
+		t.Errorf("socialMediaPublishDate = %#v, want null", v)
+	}
 	delete(got, "isSocialMediaEligible")
 	delete(got, "websiteSpotlight")
+	delete(got, "socialMediaPublishDate")
 }
 
 // checkNoImages checks that got has an images object whose links are all null,

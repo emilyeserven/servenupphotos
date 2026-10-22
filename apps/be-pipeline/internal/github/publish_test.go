@@ -177,7 +177,8 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
     "thumbnailpreview": null
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null
 }
 `
 	if got != wantJSON {

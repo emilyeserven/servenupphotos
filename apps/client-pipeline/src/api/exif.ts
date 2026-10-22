@@ -93,6 +93,8 @@ export interface SanitizedExif {
   isSocialMediaEligible: boolean;
   /** The photo's place among the photos spotlighted on the site, or null when it isn't spotlighted. */
   websiteSpotlight: number | null;
+  /** The day the photo is scheduled to be posted to social media, as YYYY-MM-DD; null when it isn't. */
+  socialMediaPublishDate: string | null;
 }
 
 export interface ExifResponse {
