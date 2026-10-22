@@ -23,7 +23,7 @@ function useCloseOnNavigate(close: () => void) {
 
 /**
  * The sidebar's split Upload button: its main part picks one photo for the Photo page, and its right
- * part, Bulk Upload, adds many to the batch. Both open in a modal.
+ * part, the Bulk Upload icon, adds many to the batch. Both open in a modal.
  */
 export function UploadButtons({ onNavigate }: { onNavigate?: () => void }) {
   const [open, setOpen] = useState<Open>(null);
@@ -32,17 +32,28 @@ export function UploadButtons({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <>
-      <div className="flex px-2" role="group" aria-label="Upload">
-        <Button className="flex-1 rounded-r-none" onClick={() => setOpen("single")}>
+      {/* In the collapsed sidebar the two parts stack as icon buttons. */}
+      <div
+        className="flex px-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-1 group-data-[collapsible=icon]:px-0"
+        role="group"
+        aria-label="Upload"
+      >
+        <Button
+          className="flex-1 rounded-r-none group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:rounded-md"
+          title="Upload"
+          onClick={() => setOpen("single")}
+        >
           <UploadIcon aria-hidden />
-          Upload
+          <span className="group-data-[collapsible=icon]:sr-only">Upload</span>
         </Button>
         <Button
-          className="border-primary-foreground/25 rounded-l-none border-l"
+          size="icon"
+          className="border-primary-foreground/25 rounded-l-none border-l group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:rounded-md group-data-[collapsible=icon]:border-l-0"
+          title="Bulk Upload"
+          aria-label="Bulk Upload"
           onClick={() => setOpen("bulk")}
         >
           <ImagesIcon aria-hidden />
-          Bulk Upload
         </Button>
       </div>
       <SingleUploadDialog open={open === "single"} onClose={close} onNavigate={onNavigate} />

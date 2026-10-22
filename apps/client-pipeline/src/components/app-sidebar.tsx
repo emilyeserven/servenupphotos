@@ -1,61 +1,78 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Camera } from "lucide-react";
+import {
+  ActivityIcon,
+  BookImageIcon,
+  CalendarDaysIcon,
+  Camera,
+  DatabaseIcon,
+  ImageIcon,
+  LanguagesIcon,
+  LayoutGridIcon,
+  MapPinIcon,
+  PlaneIcon,
+  RefreshCwIcon,
+  ScalingIcon,
+  SettingsIcon,
+  SparklesIcon,
+  TagsIcon,
+} from "lucide-react";
 import type * as React from "react";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
+  SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { UploadButtons } from "@/components/upload-buttons";
 
-/** Every page in the app, grouped the way the sidebar shows them. */
+/** Every page in the app, grouped the way the sidebar shows them, with the icon it has when collapsed. */
 export const navGroups = [
   {
     title: "Pipeline",
     items: [
-      { title: "Status", url: "/" },
-      { title: "Photo", url: "/exif" },
-      { title: "Bulk Upload", url: "/bulk-upload" },
-      { title: "Photos in Flight", url: "/in-flight" },
-      { title: "Gallery", url: "/gallery" },
-      { title: "Explore Bucket", url: "/bucket" },
-      { title: "Manage Sizes", url: "/sizes" },
+      { title: "Status", url: "/", icon: ActivityIcon },
+      { title: "Photo", url: "/exif", icon: ImageIcon },
+      { title: "Photos in Flight", url: "/in-flight", icon: PlaneIcon },
+      { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
+      { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon },
+      { title: "Manage Sizes", url: "/sizes", icon: ScalingIcon },
     ],
   },
   {
     title: "Organize",
     items: [
-      { title: "Albums", url: "/albums" },
-      { title: "Tags", url: "/tags" },
+      { title: "Albums", url: "/albums", icon: BookImageIcon },
+      { title: "Tags", url: "/tags", icon: TagsIcon },
     ],
   },
   {
     title: "Publish",
     items: [
-      { title: "Instagram", url: "/instagram" },
-      { title: "Site Spotlight", url: "/site-spotlight" },
+      { title: "Instagram", url: "/instagram", icon: CalendarDaysIcon },
+      { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
     ],
   },
   {
     title: "Configuration",
     items: [
-      { title: "Settings", url: "/settings" },
-      { title: "Update Data", url: "/update-data" },
-      { title: "Places", url: "/places" },
-      { title: "Localizations", url: "/localizations" },
+      { title: "Settings", url: "/settings", icon: SettingsIcon },
+      { title: "Update Data", url: "/update-data", icon: RefreshCwIcon },
+      { title: "Places", url: "/places", icon: MapPinIcon },
+      { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
     ],
   },
 ] as const;
 
-/** Floating sidebar navigation, adapted from shadcn's sidebar-04 block. */
+/**
+ * Floating sidebar navigation, adapted from shadcn's sidebar-04 block. It collapses to a rail of icons,
+ * each naming its page in a tooltip.
+ */
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = useLocation({ select: (location) => location.pathname });
   const { isMobile, setOpenMobile } = useSidebar();
@@ -65,11 +82,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar variant="floating" {...props}>
+    <Sidebar variant="floating" collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton size="lg" tooltip="Photo Pipeline" asChild>
               <Link to="/" onClick={closeOnMobile}>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Camera className="size-4" />
@@ -85,29 +102,27 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         <UploadButtons onNavigate={closeOnMobile} />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu className="gap-2">
-            {navGroups.map((group) => (
-              <SidebarMenuItem key={group.title}>
-                <span className="flex h-8 items-center px-2 text-sm font-medium">
-                  {group.title}
-                </span>
-                <SidebarMenuSub className="ml-0 border-l-0 px-1.5">
-                  {group.items.map((item) => (
-                    <SidebarMenuSubItem key={item.url}>
-                      <SidebarMenuSubButton asChild isActive={pathname === item.url}>
-                        <Link to={item.url} onClick={closeOnMobile}>
-                          {item.title}
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        {navGroups.map((group) => (
+          <SidebarGroup key={group.title}>
+            <SidebarGroupLabel className="text-sm text-sidebar-foreground">
+              {group.title}
+            </SidebarGroupLabel>
+            <SidebarMenu>
+              {group.items.map((item) => (
+                <SidebarMenuItem key={item.url}>
+                  <SidebarMenuButton asChild isActive={pathname === item.url} tooltip={item.title}>
+                    <Link to={item.url} onClick={closeOnMobile}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
+      <SidebarRail />
     </Sidebar>
   );
 }

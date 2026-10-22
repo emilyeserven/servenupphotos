@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { useSidebarStore } from "@/stores/sidebar";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -35,16 +36,22 @@ function RootLayout() {
   const isPage = (url: string) => pathname === url || pathname.startsWith(`${url}/`);
   const group = navGroups.find((g) => g.items.some((item) => isPage(item.url)));
   const page = group?.items.find((item) => isPage(item.url));
+  const sidebarOpen = useSidebarStore((state) => state.open);
+  const setSidebarOpen = useSidebarStore((state) => state.setOpen);
 
   return (
-    <SidebarProvider style={{ "--sidebar-width": "19rem" } as React.CSSProperties}>
+    <SidebarProvider
+      open={sidebarOpen}
+      onOpenChange={setSidebarOpen}
+      style={{ "--sidebar-width": "19rem" } as React.CSSProperties}
+    >
       <CombinedDataSync />
       <SyncStatus />
       <AppSidebar />
       {/* min-w-0 lets wide content, like a table, scroll inside the page instead of widening it. */}
       <SidebarInset className="min-w-0">
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" />
+          <SidebarTrigger className="-ml-1" title="Collapse or expand the sidebar (Ctrl+B)" />
           <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
           {group && page ? (
             <Breadcrumb>
