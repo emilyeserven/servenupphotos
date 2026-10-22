@@ -117,13 +117,14 @@ var gh = settings.GitHub{Repo: "owner/repo", Folder: "/photos/data/", Token: tok
 
 func photo(name string) Photo {
 	return Photo{Name: name, File: name + ".jpg", Sanitized: exif.Sanitized{
-		Title:    ptr("Tokyo at night"),
-		Camera:   ptr("X-T5"),
-		Aperture: ref(2.8),
-		Exposure: ptr("1/250"),
-		ISO:      ref(400),
-		City:     ptr("Tokyo"),
-		Comment:  ptr("Shot from the **bridge**."),
+		Title:       ptr("Tokyo at night"),
+		Camera:      ptr("X-T5"),
+		Aperture:    ref(2.8),
+		Exposure:    ptr("1/250"),
+		ISO:         ref(400),
+		FocalLength: ref(35.0),
+		City:        ptr("Tokyo"),
+		Comment:     ptr("Shot from the **bridge**."),
 		Images: exif.Images{
 			Full: ptr("https://photos.example.com/photos/0123456789ab-" + name + ".jpg"),
 			Key:  ptr("photos/0123456789ab-" + name + ".jpg"),
@@ -170,6 +171,7 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "aperture": 2.8,
   "exposure": "1/250",
   "iso": 400,
+  "focalLength": 35,
   "gpsPosition": null,
   "createDate": null,
   "country": null,

@@ -6,6 +6,7 @@ export interface Photo {
   /** A note about the photo in Markdown, written on the pipeline's Photo page; null without one. */
   comment: string | null;
   camera: string;
+  settings: CameraSettings;
   takenAt: Date;
   location: string;
   /** Null when the photo has no GPS position, so it can't go on the map. */
@@ -13,6 +14,15 @@ export interface Photo {
   longitude: number | null;
   /** The photo's resized versions in R2; null for the dummy data and photos not uploaded yet. */
   image: PhotoImage | null;
+}
+
+/** How the camera was set for the photo; each is null when its EXIF didn't say. */
+export interface CameraSettings {
+  /** The f-number, such as 5.6. */
+  aperture: number | null;
+  /** The exposure time in seconds as exiftool writes it, such as "1/60". */
+  exposure: string | null;
+  iso: number | null;
 }
 
 export interface PhotoImage {
@@ -49,6 +59,11 @@ interface PhotoData {
   title?: string | null;
   /** A Markdown note about the photo, when one was written. */
   comment?: string | null;
+  /** Entries saved before these were added don't have them. */
+  aperture?: number | null;
+  exposure?: string | null;
+  iso?: number | null;
+  focalLength?: number | null;
   camera: string | null;
   gpsPosition: string | null;
   createDate: string | null;
@@ -127,6 +142,10 @@ function photoTitle(photo: PhotoData): string {
   return photo.title?.trim() || photo.file.replace(/\.[^.]*$/, "");
 }
 
+function cameraSettings({ aperture, exposure, iso }: PhotoData): CameraSettings {
+  return { aperture: aperture ?? null, exposure: exposure ?? null, iso: iso ?? null };
+}
+
 /** The Markdown comment written on the Photo page, or null without one. */
 function photoComment(photo: PhotoData): string | null {
   return photo.comment?.trim() || null;
@@ -141,6 +160,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       id: index + 1,
       title: photoTitle(photo),
       comment: photoComment(photo),
+      settings: cameraSettings(photo),
       camera: photo.camera ?? "Unknown camera",
       takenAt,
       location: [photo.city, photo.country].filter(Boolean).join(", ") || "Unknown location",
@@ -156,6 +176,7 @@ const dummyPhotos: Photo[] = dummyData.map((photo) => ({
   ...photo,
   takenAt: new Date(photo.takenAt),
   comment: null,
+  settings: { aperture: null, exposure: null, iso: null },
   image: null,
 }));
 

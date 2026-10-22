@@ -72,6 +72,8 @@ export interface SanitizedExif {
   /** The exposure time in seconds as exiftool writes it, such as "1/60" or "2". */
   exposure: string | null;
   iso: number | null;
+  /** The lens's focal length in millimeters, such as 18 or 4.2. */
+  focalLength: number | null;
   gpsPosition: string | null;
   createDate: string | null;
   country: string | null;

@@ -22,12 +22,15 @@ type Sanitized struct {
 	Aperture *float64 `json:"aperture"`
 	// Exposure is the exposure time in seconds as exiftool writes it, such
 	// as "1/60" or "2".
-	Exposure    *string `json:"exposure"`
-	ISO         *int    `json:"iso"`
-	GPSPosition *string `json:"gpsPosition"`
-	CreateDate  *string `json:"createDate"`
-	Country     *string `json:"country"`
-	City        *string `json:"city"`
+	Exposure *string `json:"exposure"`
+	ISO      *int    `json:"iso"`
+	// FocalLength is the lens's focal length in millimeters, such as 18 or
+	// 4.2, as the lens set it rather than its 35 mm equivalent.
+	FocalLength *float64 `json:"focalLength"`
+	GPSPosition *string  `json:"gpsPosition"`
+	CreateDate  *string  `json:"createDate"`
+	Country     *string  `json:"country"`
+	City        *string  `json:"city"`
 	// Width and Height are the original photo's size in pixels, as it is
 	// shown: swapped from the stored size when EXIF says to turn it 90°.
 	Width  *int   `json:"width"`
@@ -73,6 +76,7 @@ func Sanitize(fields map[string]any) Sanitized {
 		Aperture:    aperture(fields),
 		Exposure:    exposure(fields),
 		ISO:         iso(fields),
+		FocalLength: focalLength(fields),
 		GPSPosition: first(fields, "GPSPosition"),
 		CreateDate:  first(fields, "CreateDate"),
 		Country:     first(fields, "Country"),
@@ -128,6 +132,19 @@ func iso(fields map[string]any) *int {
 				return &n
 			}
 		}
+	}
+	return nil
+}
+
+// focalLength returns the focal length in millimeters from FocalLength,
+// which exiftool writes as a string like "18.0 mm".
+func focalLength(fields map[string]any) *float64 {
+	v := fields["FocalLength"]
+	if s, ok := v.(string); ok {
+		v = strings.TrimSuffix(strings.TrimSpace(s), "mm")
+	}
+	if n, ok := number(v); ok && n > 0 {
+		return &n
 	}
 	return nil
 }

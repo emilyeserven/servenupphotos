@@ -19,6 +19,7 @@ func TestSanitize(t *testing.T) {
 			"aperture":    5.0,
 			"exposure":    "1/60",
 			"iso":         125.0,
+			"focalLength": 18.0,
 			"gpsPosition": `37 deg 31' 21.06" N, 126 deg 58' 46.24" E`,
 			"createDate":  "2026:05:16 15:24:10",
 			"country":     "South Korea",
@@ -34,6 +35,7 @@ func TestSanitize(t *testing.T) {
 			"aperture":    1.7,
 			"exposure":    "1/180",
 			"iso":         250.0,
+			"focalLength": 4.2,
 			"gpsPosition": `42 deg 21' 3.46" N, 71 deg 3' 34.65" W`,
 			"createDate":  "2018:01:27 16:36:03",
 			"country":     "United States of America",
@@ -49,6 +51,7 @@ func TestSanitize(t *testing.T) {
 			"aperture":    4.0,
 			"exposure":    "1/60",
 			"iso":         500.0,
+			"focalLength": 18.0,
 			"gpsPosition": `40 deg 45' 17.56" N, 73 deg 59' 18.34" W`,
 			"createDate":  "2017:01:07 13:51:40",
 			"country":     "United States of America",
@@ -64,6 +67,7 @@ func TestSanitize(t *testing.T) {
 			"aperture":    8.0,
 			"exposure":    "1/100",
 			"iso":         800.0,
+			"focalLength": 55.0,
 			"gpsPosition": `41 deg 18' 41.67" N, 72 deg 55' 46.53" W`,
 			"createDate":  "2019:01:12 17:21:33",
 			"country":     "United States of America",
@@ -79,6 +83,7 @@ func TestSanitize(t *testing.T) {
 			"aperture":    5.0,
 			"exposure":    "1/60",
 			"iso":         400.0,
+			"focalLength": 72.0,
 			"gpsPosition": `40 deg 42' 51.52" N, 73 deg 59' 35.22" W`,
 			"createDate":  "2018:02:25 14:42:12",
 			"country":     "United States of America",
@@ -158,6 +163,26 @@ func TestSanitizeCameraSettings(t *testing.T) {
 					got["aperture"], got["exposure"], got["iso"], tt.aperture, tt.exposure, tt.iso)
 			}
 		})
+	}
+}
+
+func TestSanitizeFocalLength(t *testing.T) {
+	tests := []struct {
+		value any
+		want  any
+	}{
+		{"18.0 mm", 18.0},
+		{"4.2 mm", 4.2},
+		{50.0, 50.0},
+		{"0.0 mm", nil},
+		{"unknown", nil},
+		{nil, nil},
+	}
+	for _, tt := range tests {
+		got := roundTrip(t, Sanitize(map[string]any{"FocalLength": tt.value}))
+		if got["focalLength"] != tt.want {
+			t.Errorf("FocalLength %#v: focalLength = %#v, want %#v", tt.value, got["focalLength"], tt.want)
+		}
 	}
 }
 
