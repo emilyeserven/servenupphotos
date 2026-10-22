@@ -1,8 +1,10 @@
 {
   "id": "midtown",
-  "name": "Midtown",
+  "name": "Midtown East",
   "description": "",
   "parent": "",
-  "city": "",
-  "country": ""
+  "city": "New York City",
+  "country": "United States of America",
+  "latitude": 40.75538764219708,
+  "longitude": -73.96865957728706
 }
