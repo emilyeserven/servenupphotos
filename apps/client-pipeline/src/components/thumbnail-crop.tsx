@@ -1,4 +1,4 @@
-import { RotateCcwIcon } from "lucide-react";
+import { CrosshairIcon, GridIcon, HashIcon, RotateCcwIcon } from "lucide-react";
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -89,20 +89,153 @@ function CropEditor({ src, crop, onCropChange, locked, lockedNote }: CropEditorP
     if (!crop) onCropChange(centerCrop(loaded));
   };
   const placed = placement(photo, crop);
+  const [overlays, toggleOverlay] = useOverlays();
 
   return (
     <div className="flex flex-col gap-4">
       <CropFrame src={src} onLoad={onLoad}>
-        {placed && <CropBox placed={placed} locked={locked} onCropChange={onCropChange} />}
+        {placed && (
+          <CropBox
+            placed={placed}
+            locked={locked}
+            overlays={overlays}
+            onCropChange={onCropChange}
+          />
+        )}
       </CropFrame>
+      {placed && <OverlayToggles overlays={overlays} onToggle={toggleOverlay} />}
       <CropSummary
         src={src}
         placed={placed}
+        overlays={overlays}
         locked={locked}
         lockedNote={lockedNote}
         onCropChange={onCropChange}
       />
     </div>
+  );
+}
+
+/** Guides drawn over the square to help compose it. */
+type Overlay = "thirds" | "center" | "grid";
+
+const OVERLAYS: { id: Overlay; label: string; Icon: typeof HashIcon }[] = [
+  { id: "thirds", label: "Rule of thirds", Icon: HashIcon },
+  { id: "center", label: "Center", Icon: CrosshairIcon },
+  { id: "grid", label: "Grid", Icon: GridIcon },
+];
+
+/** How many cells a side of the grid overlay has. */
+const GRID_CELLS = 6;
+
+const OVERLAYS_KEY = "thumbnail-crop-overlays";
+
+function storedOverlays(): Overlay[] {
+  try {
+    const stored: unknown = JSON.parse(localStorage.getItem(OVERLAYS_KEY) ?? "[]");
+    return Array.isArray(stored)
+      ? OVERLAYS.map(({ id }) => id).filter((id) => stored.includes(id))
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+/** The overlays turned on, remembered in this browser so the next photo starts with them. */
+function useOverlays() {
+  const [overlays, setOverlays] = useState<Overlay[]>(storedOverlays);
+  const toggle = (overlay: Overlay) =>
+    setOverlays((current) => {
+      const next = current.includes(overlay)
+        ? current.filter((id) => id !== overlay)
+        : [...current, overlay];
+      try {
+        localStorage.setItem(OVERLAYS_KEY, JSON.stringify(next));
+      } catch {
+        // Not remembered, but still shown.
+      }
+      return next;
+    });
+  return [overlays, toggle] as const;
+}
+
+interface OverlayTogglesProps {
+  overlays: Overlay[];
+  onToggle: (overlay: Overlay) => void;
+}
+
+/** Turns each overlay on the square and its preview on or off. */
+function OverlayToggles({ overlays, onToggle }: OverlayTogglesProps) {
+  return (
+    <div role="group" aria-label="Overlays" className="flex flex-wrap items-center gap-2">
+      <span className="text-muted-foreground text-sm">Overlays</span>
+      {OVERLAYS.map(({ id, label, Icon }) => {
+        const shown = overlays.includes(id);
+        return (
+          <Button
+            key={id}
+            variant={shown ? "secondary" : "outline"}
+            size="sm"
+            aria-pressed={shown}
+            onClick={() => onToggle(id)}
+          >
+            <Icon />
+            {label}
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Where each overlay's lines fall, as fractions of the square's side. */
+function overlayLines(overlays: Overlay[]) {
+  const lines = new Set<number>();
+  if (overlays.includes("grid")) {
+    for (let i = 1; i < GRID_CELLS; i++) lines.add(i / GRID_CELLS);
+  }
+  if (overlays.includes("thirds")) {
+    lines.add(1 / 3);
+    lines.add(2 / 3);
+  }
+  return lines;
+}
+
+/** The overlays' lines, stretched over whatever square they sit in. */
+function CropOverlays({ overlays }: { overlays: Overlay[] }) {
+  if (overlays.length === 0) return null;
+  const thirds = overlays.includes("thirds");
+  // Grid lines are fainter than the thirds, so the thirds stand out when both are on.
+  const lines = [...overlayLines(overlays)].map((at) => ({
+    at: at * 100,
+    strong: thirds && (Math.abs(at - 1 / 3) < 1e-9 || Math.abs(at - 2 / 3) < 1e-9),
+  }));
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-0 size-full overflow-visible drop-shadow-[0_0_1px_rgb(0_0_0/0.8)]"
+    >
+      {lines.map(({ at, strong }) => (
+        <g
+          key={at}
+          stroke="white"
+          strokeOpacity={strong ? 0.9 : 0.5}
+          strokeWidth={strong ? 1.5 : 1}
+          vectorEffect="non-scaling-stroke"
+        >
+          <line x1={at} y1={0} x2={at} y2={100} vectorEffect="non-scaling-stroke" />
+          <line x1={0} y1={at} x2={100} y2={at} vectorEffect="non-scaling-stroke" />
+        </g>
+      ))}
+      {overlays.includes("center") && (
+        <g stroke="white" strokeWidth={1.5} strokeOpacity={0.9}>
+          <line x1={46} y1={50} x2={54} y2={50} vectorEffect="non-scaling-stroke" />
+          <line x1={50} y1={46} x2={50} y2={54} vectorEffect="non-scaling-stroke" />
+        </g>
+      )}
+    </svg>
   );
 }
 
@@ -134,6 +267,7 @@ function CropFrame({ src, onLoad, children }: CropFrameProps) {
 interface CropBoxProps {
   placed: Placed;
   locked: boolean;
+  overlays: Overlay[];
   onCropChange: (crop: Crop) => void;
 }
 
@@ -151,9 +285,15 @@ function boxStyle({ photo, crop }: Placed) {
 const BOX_CLASS =
   "absolute border-2 border-white shadow-[0_0_0_9999px_rgb(0_0_0/0.5)] outline-none";
 
-function CropBox({ placed, locked, onCropChange }: CropBoxProps) {
-  if (locked) return <div aria-hidden style={boxStyle(placed)} className={BOX_CLASS} />;
-  return <EditableCropBox placed={placed} onCropChange={onCropChange} />;
+function CropBox({ placed, locked, overlays, onCropChange }: CropBoxProps) {
+  if (locked) {
+    return (
+      <div aria-hidden style={boxStyle(placed)} className={BOX_CLASS}>
+        <CropOverlays overlays={overlays} />
+      </div>
+    );
+  }
+  return <EditableCropBox placed={placed} overlays={overlays} onCropChange={onCropChange} />;
 }
 
 /** What a drag under way started from. */
@@ -200,7 +340,7 @@ function useCropDrag(
   return { start, handlers: { onPointerMove: move, onPointerUp: end, onPointerCancel: end } };
 }
 
-function EditableCropBox({ placed, onCropChange }: Omit<CropBoxProps, "locked">) {
+function EditableCropBox({ placed, overlays, onCropChange }: Omit<CropBoxProps, "locked">) {
   const box = useRef<HTMLDivElement>(null);
   const drag = useCropDrag(box, placed, onCropChange);
   const { photo, crop } = placed;
@@ -228,6 +368,7 @@ function EditableCropBox({ placed, onCropChange }: Omit<CropBoxProps, "locked">)
       style={boxStyle(placed)}
       className={cn(BOX_CLASS, "focus-visible:ring-ring cursor-move focus-visible:ring-[3px]")}
     >
+      <CropOverlays overlays={overlays} />
       {CORNERS.map((corner) => (
         <span
           key={corner.label}
@@ -247,18 +388,26 @@ function EditableCropBox({ placed, onCropChange }: Omit<CropBoxProps, "locked">)
 interface CropSummaryProps {
   src: string;
   placed: Placed | null;
+  overlays: Overlay[];
   locked: boolean;
   lockedNote?: string;
   onCropChange: (crop: Crop) => void;
 }
 
 /** The thumbnail as the upload will make it, where it's cut from, and how to change it. */
-function CropSummary({ src, placed, locked, lockedNote, onCropChange }: CropSummaryProps) {
+function CropSummary({
+  src,
+  placed,
+  overlays,
+  locked,
+  lockedNote,
+  onCropChange,
+}: CropSummaryProps) {
   if (!placed) return null;
   const { crop } = placed;
   return (
     <div className="flex flex-wrap items-start gap-4">
-      <ThumbnailPreview src={src} placed={placed} />
+      <ThumbnailPreview src={src} placed={placed} overlays={overlays} />
       <div className="flex min-w-48 flex-1 flex-col gap-2 text-sm">
         <p>
           <span className="font-medium">
@@ -319,7 +468,13 @@ function CropControls({
 }
 
 /** The crop scaled into a square, as the thumbnail will show it. */
-function ThumbnailPreview({ src, placed: { photo, crop } }: { src: string; placed: Placed }) {
+interface ThumbnailPreviewProps {
+  src: string;
+  placed: Placed;
+  overlays: Overlay[];
+}
+
+function ThumbnailPreview({ src, placed: { photo, crop }, overlays }: ThumbnailPreviewProps) {
   return (
     <figure className="flex flex-col gap-1.5">
       {/* A square, so percentages of its width and height scale the photo the same way. */}
@@ -336,6 +491,7 @@ function ThumbnailPreview({ src, placed: { photo, crop } }: { src: string; place
             height: `${(photo.height / crop.size) * 100}%`,
           }}
         />
+        <CropOverlays overlays={overlays} />
       </div>
       <figcaption className="text-muted-foreground text-xs">Square Thumbnail preview</figcaption>
     </figure>
