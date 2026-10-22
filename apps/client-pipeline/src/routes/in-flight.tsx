@@ -108,6 +108,7 @@ function InFlightCard() {
         inFlight={inFlight}
         shown={shown}
         rebuilding={rebuild.rebuilding}
+        runUrl={rebuild.runUrl}
         showAllPhotos={showAllPhotos}
         onRefresh={() => {
           void inFlight.refetch();
@@ -186,6 +187,7 @@ function PullRequestCard({
   inFlight,
   shown,
   rebuilding,
+  runUrl,
   showAllPhotos,
   onRefresh,
 }: {
@@ -194,6 +196,8 @@ function PullRequestCard({
   shown?: InFlightResponse;
   /** Whether CI is rebuilding ALLPHOTOS.json. */
   rebuilding: boolean;
+  /** The run rebuilding it, or the workflow's runs page. */
+  runUrl?: string;
   showAllPhotos: boolean;
   onRefresh: () => void;
 }) {
@@ -216,7 +220,9 @@ function PullRequestCard({
       </CardHeader>
       <CardContent>
         <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
-          {(data) => <PullRequestSummary data={shown ?? data} rebuilding={rebuilding} />}
+          {(data) => (
+            <PullRequestSummary data={shown ?? data} rebuilding={rebuilding} runUrl={runUrl} />
+          )}
         </QueryResult>
       </CardContent>
     </Card>
@@ -586,13 +592,20 @@ function allPhotosSummary(all: InFlightAllPhotos, files: InFlightFile[]): string
   return `Lists ${all.count}; ${matched} of ${files.length} photo files match`;
 }
 
-/** A spinner and note beside ALLPHOTOS.json while CI rebuilds it. */
-function RebuildingNote({ rebuilding }: { rebuilding: boolean }) {
+/** A spinner and note beside ALLPHOTOS.json while CI rebuilds it, linked to the run. */
+function RebuildingNote({ rebuilding, runUrl }: { rebuilding: boolean; runUrl?: string }) {
   if (!rebuilding) return null;
+  const note = runUrl ? (
+    <a href={runUrl} target="_blank" rel="noreferrer" className="underline underline-offset-4">
+      CI is rebuilding it
+    </a>
+  ) : (
+    "CI is rebuilding it"
+  );
   return (
     <span className="text-muted-foreground flex items-center gap-1 text-xs">
       <Spinner />
-      CI is rebuilding it
+      {note}
     </span>
   );
 }
@@ -602,7 +615,15 @@ function imagesSummary(images: InFlightImages, files: number): string {
   return `${Object.keys(images.byPath).length} of ${files} found in R2`;
 }
 
-function PullRequestSummary({ data, rebuilding }: { data: InFlightResponse; rebuilding: boolean }) {
+function PullRequestSummary({
+  data,
+  rebuilding,
+  runUrl,
+}: {
+  data: InFlightResponse;
+  rebuilding: boolean;
+  runUrl?: string;
+}) {
   if (!data.pullRequest) {
     return (
       <p className="text-muted-foreground">
@@ -631,19 +652,19 @@ function PullRequestSummary({ data, rebuilding }: { data: InFlightResponse; rebu
       <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
       <dd className="flex items-center gap-2">
         {allPhotosSummary(data.allPhotos, data.files)}
-        <RebuildingNote rebuilding={rebuilding} />
+        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
       </dd>
       <dt className="text-muted-foreground">Images</dt>
       <dd>{imagesSummary(data.images, count)}</dd>
       <dt className="text-muted-foreground">Album files</dt>
       <dd className="flex items-center gap-2">
         {groupsSummary(data.albums)}
-        <RebuildingNote rebuilding={rebuilding} />
+        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
       </dd>
       <dt className="text-muted-foreground">Tag files</dt>
       <dd className="flex items-center gap-2">
         {groupsSummary(data.tags)}
-        <RebuildingNote rebuilding={rebuilding} />
+        <RebuildingNote rebuilding={rebuilding} runUrl={runUrl} />
       </dd>
     </dl>
   );

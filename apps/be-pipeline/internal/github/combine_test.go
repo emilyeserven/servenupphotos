@@ -36,6 +36,9 @@ func combineRepo(t *testing.T, status int, runs []map[string]any, author string,
 	return &Client{BaseURL: srv.URL, Client: srv.Client()}
 }
 
+// combineRunsURL is the workflow runs page Combine links to for owner/repo.
+const combineRunsURL = "https://github.com/owner/repo/actions/workflows/" + CombineWorkflowFile
+
 func TestCombine(t *testing.T) {
 	gh := settings.GitHub{Repo: "owner/repo", Token: token}
 	run := func(status, conclusion string) []map[string]any {
@@ -72,6 +75,7 @@ func TestCombine(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Combine() error = %v", err)
 			}
+			tt.want.RunsURL = combineRunsURL
 			if got != tt.want || asked != "head_sha="+tt.wantSHA+" branch=" {
 				t.Errorf("Combine() = %+v asking for %q, want %+v asking for %q", got, asked, tt.want, tt.wantSHA)
 			}
@@ -132,6 +136,7 @@ func TestCombinePullRequestHead(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Combine() error = %v", err)
 			}
+			tt.want.RunsURL = combineRunsURL
 			if got != tt.want || asked != "head_sha= branch=photo-data/2026-10-15-024500" {
 				t.Errorf("Combine() = %+v asking %q, want %+v asking for the branch", got, asked, tt.want)
 			}
@@ -140,7 +145,7 @@ func TestCombinePullRequestHead(t *testing.T) {
 
 	var asked string
 	got, err := combineRepo(t, http.StatusForbidden, nil, user, &asked).Combine(t.Context(), gh, "")
-	if err != nil || got.State != CombineUnavailable || got.SHA != "head7" {
-		t.Errorf("Combine() = %+v, %v; want unavailable for head7", got, err)
+	if err != nil || got.State != CombineUnavailable || got.SHA != "head7" || got.RunsURL != combineRunsURL {
+		t.Errorf("Combine() = %+v, %v; want unavailable for head7 with the runs page", got, err)
 	}
 }
