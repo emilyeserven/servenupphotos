@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Grid3x3, LayoutDashboard, Square } from "lucide-react";
-import { type ImgHTMLAttributes, useState } from "react";
+import { Grid3x3, Info, LayoutDashboard, Square } from "lucide-react";
+import { type CSSProperties, type ImgHTMLAttributes, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ViewPlaceholder } from "@/components/view-placeholder";
@@ -16,11 +16,19 @@ type ViewMode = "square" | "natural";
 interface GridSearch {
   /** Left out for the default, square tiles. */
   view?: "natural";
+  /** Set when each tile shows its title and comment under it. Left out for the default, hidden. */
+  info?: true;
+}
+
+/** Reads the grid's view and info settings from the URL, leaving out the defaults. */
+function validateGridSearch(search: Record<string, unknown>): GridSearch {
+  const view: GridSearch = search.view === "natural" ? { view: "natural" } : {};
+  const info: GridSearch = search.info === true || search.info === 1 ? { info: true } : {};
+  return { ...view, ...info };
 }
 
 export const Route = createFileRoute("/grid")({
-  validateSearch: (search: Record<string, unknown>): GridSearch =>
-    search.view === "natural" ? { view: "natural" } : {},
+  validateSearch: validateGridSearch,
   component: GridView,
 });
 
@@ -38,31 +46,35 @@ const TILE_SIZES = "(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw";
 
 function GridView() {
   const [shown, setShown] = useState<ImagePhoto | null>(null);
-  const mode: ViewMode = Route.useSearch().view ?? "square";
+  const search = Route.useSearch();
+  const mode: ViewMode = search.view ?? "square";
+  const showInfo = search.info === true;
   if (gridPhotos.length === 0) return <ViewPlaceholder to="/grid" />;
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-16 sm:px-6">
+    <div className={cn("mx-auto flex w-full flex-col gap-8 py-16", PAGE_WIDTH[mode])}>
       <header className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
         <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
           <Grid3x3 className="size-8 text-muted-foreground" aria-hidden />
           Grid
         </h1>
         <p className="text-sm text-muted-foreground">{gridPhotos.length} photos</p>
-        <ViewModeSwitcher mode={mode} />
+        <div className="ml-auto flex items-center gap-2 self-center">
+          <InfoToggle shown={showInfo} />
+          <ViewModeSwitcher mode={mode} />
+        </div>
       </header>
-      {/* Natural tiles are stacked in columns, masonry style, so tiles of different heights don't
-          leave gaps. That fills each column top to bottom, so newest first reads down, not across. */}
-      <ul
-        className={cn(
-          mode === "square"
-            ? "grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 lg:grid-cols-4"
-            : "columns-2 gap-x-3 sm:columns-3 lg:columns-4",
-        )}
-      >
+      {/* Natural tiles sit in justified rows: each starts NATURAL_MIN_HEIGHT tall at its own
+          aspect ratio, and a row's tiles grow together to fill its width, so they only get taller. */}
+      <ul className={listClass(mode, showInfo)}>
         {gridPhotos.map((photo) => (
-          <li key={photo.id} className={cn(mode === "natural" && "mb-6 break-inside-avoid")}>
-            <PhotoTile photo={photo} mode={mode} onOpen={() => setShown(photo)} />
+          <li key={photo.id} style={mode === "natural" ? naturalTileStyle(photo.image) : {}}>
+            <PhotoTile
+              photo={photo}
+              mode={mode}
+              showInfo={showInfo}
+              onOpen={() => setShown(photo)}
+            />
           </li>
         ))}
       </ul>
@@ -71,33 +83,108 @@ function GridView() {
   );
 }
 
+/**
+ * The list's layout: a grid of squares, or justified rows for natural tiles. Rows sit further
+ * apart when tiles show their captions.
+ */
+const PAGE_WIDTH = {
+  square: "max-w-6xl px-4 sm:px-6",
+  // Natural rows use the whole window, less a little padding, since wider rows fit more photos.
+  natural: "px-3 sm:px-4",
+} as const;
+
+/** How tall a natural tile is at least, where the window is wide enough for it. */
+const NATURAL_MIN_HEIGHT = 500;
+
+/**
+ * A natural tile's place in its row: as wide as NATURAL_MIN_HEIGHT makes it, then growing with its
+ * aspect ratio so every tile in a row stays the same height. On a phone a wide photo can be wider
+ * than the screen, so it shrinks to the screen's width and is shorter than that.
+ */
+function naturalTileStyle(image: PhotoImage): CSSProperties {
+  const ratio = image.width / image.height;
+  return { flexGrow: ratio, flexBasis: ratio * NATURAL_MIN_HEIGHT, minWidth: 0 };
+}
+
+/**
+ * About how wide a natural tile is, for picking a sharp version: its starting width plus some room
+ * for growing to fill its row, and never more than the window.
+ */
+function naturalSizes(image: PhotoImage): string {
+  const width = Math.round((image.width / image.height) * NATURAL_MIN_HEIGHT * 1.3);
+  return `(max-width: ${width}px) 100vw, ${width}px`;
+}
+
+function listClass(mode: ViewMode, showInfo: boolean): string {
+  return LIST_CLASSES[mode][showInfo ? "info" : "bare"];
+}
+
+const LIST_CLASSES = {
+  square: {
+    info: "grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 lg:grid-cols-4",
+    bare: "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4",
+  },
+  natural: {
+    // The stretchy last item keeps the last row's tiles from growing to fill it on their own.
+    info: "flex flex-wrap gap-x-3 gap-y-6 after:grow-[1000000] after:content-['']",
+    bare: "flex flex-wrap gap-3 after:grow-[1000000] after:content-['']",
+  },
+} as const;
+
 const VIEW_MODES = [
   { mode: "square", label: "Square", Icon: Square },
   { mode: "natural", label: "Natural", Icon: LayoutDashboard },
 ] as const;
 
+/** The outline shared by the info toggle and the tile shape switcher. */
+const CONTROL_FRAME =
+  "inline-flex rounded-md border bg-background p-0.5 shadow-xs dark:border-input dark:bg-input/30";
+
+/** How one of the controls' buttons looks, depending on whether it's on. */
+function controlButtonClass(active: boolean): string {
+  return cn(
+    "inline-flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4",
+    active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
+  );
+}
+
+/**
+ * A button to show or hide each tile's title and comment, kept in the URL so a link keeps it.
+ * Hidden by default, so the grid is only photos.
+ */
+function InfoToggle({ shown }: { shown: boolean }) {
+  return (
+    <div className={CONTROL_FRAME}>
+      <Link
+        to="/grid"
+        search={(prev) => ({ ...prev, info: shown ? undefined : true })}
+        replace
+        aria-pressed={shown}
+        title={
+          shown ? "Hide each photo's title and comment" : "Show each photo's title and comment"
+        }
+        className={controlButtonClass(shown)}
+      >
+        <Info aria-hidden />
+        Info
+      </Link>
+    </div>
+  );
+}
+
 /** Buttons to switch between square and natural tiles, kept in the URL so a link keeps the view. */
 function ViewModeSwitcher({ mode }: { mode: ViewMode }) {
   return (
-    <div
-      role="group"
-      aria-label="Tile shape"
-      className="ml-auto inline-flex self-center rounded-md border bg-background p-0.5 shadow-xs dark:border-input dark:bg-input/30"
-    >
+    <div role="group" aria-label="Tile shape" className={CONTROL_FRAME}>
       {VIEW_MODES.map(({ mode: option, label, Icon }) => (
         <Link
           key={option}
           to="/grid"
-          search={option === "natural" ? { view: "natural" } : {}}
+          search={(prev) => ({ ...prev, view: option === "natural" ? "natural" : undefined })}
           replace
           aria-pressed={mode === option}
           title={option === "square" ? "Square thumbnails" : "Each photo at its own aspect ratio"}
-          className={cn(
-            "inline-flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4",
-            mode === option
-              ? "bg-accent text-accent-foreground"
-              : "text-muted-foreground hover:text-foreground",
-          )}
+          className={controlButtonClass(mode === option)}
         >
           <Icon aria-hidden />
           {label}
@@ -123,8 +210,8 @@ function placeholdersOf(image: PhotoImage, mode: ViewMode): string[] {
 /**
  * What the tile shows, best first. Square tiles show the square picked on the pipeline's Photo
  * page, sharp at every tile size, then the middle of the resized versions, for photos saved before
- * thumbnails or when the thumbnail won't load. Natural tiles show the Small version, then the
- * middle one when Small won't load.
+ * thumbnails or when the thumbnail won't load. Natural tiles pick from the resized versions by how
+ * wide the tile is, since at NATURAL_MIN_HEIGHT or taller the Small version is too soft.
  */
 function sourcesOf(image: PhotoImage, mode: ViewMode): ImgHTMLAttributes<HTMLImageElement>[] {
   const middle = {
@@ -134,10 +221,7 @@ function sourcesOf(image: PhotoImage, mode: ViewMode): ImgHTMLAttributes<HTMLIma
     width: image.width,
     height: image.height,
   };
-  if (mode === "natural") {
-    const small = { src: image.small, width: image.width, height: image.height };
-    return image.small === image.src ? [middle] : [small, middle];
-  }
+  if (mode === "natural") return [{ ...middle, sizes: naturalSizes(image) }];
   if (!image.thumbnail) return [middle];
   return [{ src: image.thumbnail, width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE }, middle];
 }
@@ -156,10 +240,12 @@ function isLoaded(img: HTMLImageElement | null): boolean {
 function PhotoTile({
   photo,
   mode,
+  showInfo,
   onOpen,
 }: {
   photo: ImagePhoto;
   mode: ViewMode;
+  showInfo: boolean;
   onOpen: () => void;
 }) {
   return (
@@ -178,14 +264,21 @@ function PhotoTile({
         <TilePlaceholder key={`placeholder-${mode}`} image={photo.image} mode={mode} />
         <TileImage key={`image-${mode}`} image={photo.image} mode={mode} alt={photo.title} />
       </button>
-      <figcaption className="flex flex-col">
-        <span className="truncate text-sm font-medium">{photo.title}</span>
-        {/* The rest of its details are in the lightbox. */}
-        {photo.comment && (
-          <PhotoComment comment={photo.comment} className="text-xs text-muted-foreground" />
-        )}
-      </figcaption>
+      {showInfo && <TileCaption photo={photo} />}
     </figure>
+  );
+}
+
+/** The title and comment under a tile, shown when the grid's Info toggle is on. */
+function TileCaption({ photo }: { photo: ImagePhoto }) {
+  return (
+    <figcaption className="flex flex-col">
+      <span className="truncate text-sm font-medium">{photo.title}</span>
+      {/* The rest of its details are in the lightbox. */}
+      {photo.comment && (
+        <PhotoComment comment={photo.comment} className="text-xs text-muted-foreground" />
+      )}
+    </figcaption>
   );
 }
 
