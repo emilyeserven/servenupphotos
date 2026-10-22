@@ -1,20 +1,26 @@
-// Makes apps/portfolio/src/data/photos/ALLPHOTOS.local.json, which the portfolio uses in place of the
-// committed photos/ALLPHOTOS.json whenever it has a photo in it. It's a copy of ALLPHOTOS.json from the open "Add photo data"
-// pull request on the `origin` GitHub repository, so the portfolio shows the photos in flight. With
-// no such pull request, or when GitHub can't be reached, it combines the photo JSON files in the
-// folder instead, the same way the "Combine photo data" workflow builds ALLPHOTOS.json: every other
-// JSON file in the folder, as one array sorted by file name. The local copy is
-// git-ignored. Set GITHUB_TOKEN to read a private repository.
+// Makes ALLPHOTOS.local.json, PLACES.local.json and LOCALIZATIONS.local.json in
+// apps/portfolio/src/data, which the portfolio uses in place of the committed ALLPHOTOS.json,
+// PLACES.json and LOCALIZATIONS.json whenever they have anything in them. Each is a copy of the
+// combined file from the open "Add photo data" pull request on the `origin` GitHub repository, so
+// the portfolio shows the photos in flight. With no such pull request, or when GitHub can't be
+// reached, it combines the JSON files in each folder instead, the same way the "Combine photo
+// data" workflow builds the combined files: every other JSON file in the folder, as one array
+// sorted by file name. The local copies are git-ignored. Set GITHUB_TOKEN to read a private
+// repository.
 import { execFileSync } from "node:child_process";
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-const DATA_PATH = "apps/portfolio/src/data/photos";
+const DATA_PATH = "apps/portfolio/src/data";
 const PR_TITLE = "Add photo data";
 const root = path.resolve(import.meta.dirname, "..");
-const dataDir = path.join(root, DATA_PATH);
-const outFile = path.join(dataDir, "ALLPHOTOS.local.json");
-const skipped = new Set(["ALLPHOTOS.json", "ALLPHOTOS.local.json"]);
+
+/** Each folder of JSON files and the combined file made from them. */
+const KINDS = [
+  { folder: "photos", all: "ALLPHOTOS" },
+  { folder: "places", all: "PLACES" },
+  { folder: "localizations", all: "LOCALIZATIONS" },
+];
 
 /** "owner/repo" of the `origin` remote, when it's on GitHub. */
 function originRepo() {
@@ -30,47 +36,62 @@ async function github(apiPath, accept = "application/vnd.github+json") {
   return res.json();
 }
 
-/** ALLPHOTOS.json at the head of the open photo data pull request, or undefined when there's none. */
-async function fromOpenPullRequest() {
+/** The open photo data pull request, or undefined when there's none. */
+async function openPullRequest() {
   const repo = originRepo();
   if (!repo) throw new Error("origin isn't a GitHub repository");
   const pulls = await github(`/repos/${repo}/pulls?state=open&per_page=100`);
   const pull = pulls.find((p) => p.title === PR_TITLE && p.head.repo?.full_name === repo);
-  if (!pull) return undefined;
-  const file = `/repos/${repo}/contents/${DATA_PATH}/ALLPHOTOS.json?ref=${pull.head.sha}`;
-  const photos = await github(file, "application/vnd.github.raw+json");
-  return { photos, from: `ALLPHOTOS.json from ${pull.html_url}` };
+  return pull && { repo, pull };
 }
 
-async function fromDataFolder() {
+/** A combined file at the head of the pull request; an empty list when it isn't there yet. */
+async function fromPullRequest({ repo, pull }, kind) {
+  const file = `/repos/${repo}/contents/${DATA_PATH}/${kind.folder}/${kind.all}.json?ref=${pull.head.sha}`;
+  const items = await github(file, "application/vnd.github.raw+json").catch(() => []);
+  return { items, from: `${kind.all}.json from ${pull.html_url}` };
+}
+
+async function fromDataFolder(kind) {
+  const dataDir = path.join(root, DATA_PATH, kind.folder);
+  const skipped = new Set([`${kind.all}.json`, `${kind.all}.local.json`]);
   const files = (await readdir(dataDir, { withFileTypes: true }).catch(() => []))
     .filter((entry) => entry.isFile() && entry.name.endsWith(".json") && !skipped.has(entry.name))
     .map((entry) => entry.name)
     // Byte order, like `LC_ALL=C sort` in the workflow.
     .sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));
-  const photos = await Promise.all(
+  const items = await Promise.all(
     files.map(async (name) => JSON.parse(await readFile(path.join(dataDir, name), "utf8"))),
   );
-  return { photos, from: `${files.length} file(s) in ${DATA_PATH}` };
+  return { items, from: `${files.length} file(s) in ${DATA_PATH}/${kind.folder}` };
 }
 
-async function photoData() {
+/** The open pull request, or undefined when there's none or GitHub can't be reached. */
+async function findPullRequest() {
   try {
-    const pr = await fromOpenPullRequest();
-    if (pr) return pr;
-    console.log(`No open "${PR_TITLE}" pull request.`);
+    const pr = await openPullRequest();
+    if (!pr) console.log(`No open "${PR_TITLE}" pull request.`);
+    return pr;
   } catch (err) {
     console.warn(`Couldn't read the open "${PR_TITLE}" pull request: ${err.message}`);
+    return undefined;
   }
-  return fromDataFolder();
 }
 
-const { photos, from } = await photoData();
-// Written to a temporary file and moved into place, so Vite never reads half a file.
-const tmpFile = `${outFile}.tmp`;
-await mkdir(dataDir, { recursive: true });
-await writeFile(tmpFile, `${JSON.stringify(photos, null, 2)}\n`);
-await rename(tmpFile, outFile);
-console.log(
-  `Wrote ${photos.length} photo(s) to ${path.relative(process.cwd(), outFile)} from ${from}`,
-);
+/** Writes one kind's local combined file. */
+async function writeLocal(pr, kind) {
+  const { items, from } = pr ? await fromPullRequest(pr, kind) : await fromDataFolder(kind);
+  const dataDir = path.join(root, DATA_PATH, kind.folder);
+  const outFile = path.join(dataDir, `${kind.all}.local.json`);
+  // Written to a temporary file and moved into place, so Vite never reads half a file.
+  const tmpFile = `${outFile}.tmp`;
+  await mkdir(dataDir, { recursive: true });
+  await writeFile(tmpFile, `${JSON.stringify(items, null, 2)}\n`);
+  await rename(tmpFile, outFile);
+  console.log(
+    `Wrote ${items.length} item(s) to ${path.relative(process.cwd(), outFile)} from ${from}`,
+  );
+}
+
+const pr = await findPullRequest();
+for (const kind of KINDS) await writeLocal(pr, kind);

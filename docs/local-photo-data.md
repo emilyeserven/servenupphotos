@@ -5,7 +5,9 @@
 data** pull request on the `origin` GitHub repository, so the portfolio shows the photos in flight. With no such pull
 request, or when GitHub can't be reached (it says why), it combines the photo JSON files in `apps/portfolio/src/data/photos`
 instead, the same way the **Combine photo data** workflow builds `ALLPHOTOS.json`: every other JSON file in the folder,
-as one array sorted by file name. Set `GITHUB_TOKEN` for a private repository, or if GitHub's
+as one array sorted by file name. It does the same for places and localizations, writing `PLACES.local.json` and
+`LOCALIZATIONS.local.json` in `apps/portfolio/src/data/places` and `localizations` (see
+[Places and Localizations](places-and-localizations.md#on-the-portfolio)). Set `GITHUB_TOKEN` for a private repository, or if GitHub's
 limit of 60 unauthenticated requests an hour runs out.
 
 While the file has at least one photo, the portfolio's Timeline, Map and Grid show those photos instead of the

@@ -1,4 +1,14 @@
 import committedData from "@/data/photos/ALLPHOTOS.json";
+import {
+  type Localized,
+  localizeName,
+  localizePlace,
+  mapLocalized,
+  placeById,
+  SCRIPT_DISPLAYS,
+  type ScriptDisplay,
+  unlocalized,
+} from "@/lib/localize";
 
 export interface Photo {
   id: number;
@@ -8,8 +18,8 @@ export interface Photo {
   camera: string;
   settings: CameraSettings;
   takenAt: Date;
-  /** Null when the photo has no place name, city or country, so there's nothing to say. */
-  location: PhotoLocation | null;
+  /** Null when the photo has no place, city or country, so there's nothing to say. */
+  location: LocalizedLocation | null;
   /** Null when the photo has no GPS position, so it can't go on the map. */
   latitude: number | null;
   longitude: number | null;
@@ -17,9 +27,12 @@ export interface Photo {
   image: PhotoImage | null;
 }
 
+/** Where the photo was taken, written each way the menu's Script Display can choose. */
+export type LocalizedLocation = Record<ScriptDisplay, PhotoLocation>;
+
 /** Where the photo was taken, as the portfolio shows it. */
 export interface PhotoLocation {
-  /** "Place Name, City", or else "City, Country", or else the country. */
+  /** "Places, City", or else "City, Country", or else the country. */
   label: string;
   /** The lines shown on hover: the GPS position, then the country when the label leaves it out. */
   details: string[];
@@ -116,6 +129,8 @@ interface PhotoData {
   websiteSpotlight?: number | null;
   /** The day the photo is scheduled to be posted to social media, as YYYY-MM-DD; null or missing when it isn't. */
   socialMediaPublishDate?: string | null;
+  /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
+  places?: { relation: string; id: string }[];
   /** The IDs of the photo's albums and tags; older entries were saved without them. */
   albums?: string[];
   tags?: string[];
@@ -233,9 +248,9 @@ function gpsText({ latitude, longitude }: ReturnType<typeof parseGpsPosition>): 
   return `${dmsText(latitude, "NS")}, ${dmsText(longitude, "EW")}`;
 }
 
-/** The value written on the Photo page, or else the one from the EXIF. */
+/** The value written on the Photo page, or else the one from the EXIF; null when neither says. */
 function custom(written: string | null | undefined, exif: string | null): string | null {
-  return written?.trim() || exif;
+  return written?.trim() || exif || null;
 }
 
 /** The non-empty parts, joined with commas. */
@@ -243,20 +258,74 @@ function joinParts(...parts: (string | null | undefined)[]): string {
   return parts.filter(Boolean).join(", ");
 }
 
+/** One of the photo's places, with how it relates to it, such as "by Geunjeongmun Gate". */
+function placePart(relation: string, name: Localized): Localized {
+  return mapLocalized(name, (n, script) => [relation, n[script]].filter(Boolean).join(" "));
+}
+
+function capitalized(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 /**
- * Where the photo was taken, with a custom city and country over the EXIF ones: its place name and city, with the country on hover; or else its city
- * and country; or else its country. Null without any of them, even when it has a GPS position.
+ * The photo's places as a phrase, such as "In Gyeongbokgung Palace by Geunjeongmun Gate", or
+ * else its place name; null with neither. Places missing from PLACES.json are left out.
  */
-function photoLocation(photo: PhotoData): PhotoLocation | null {
-  const placeName = photo.placeName?.trim();
-  const city = custom(photo.customCity, photo.city);
-  const country = custom(photo.customCountry, photo.country);
-  const gps = gpsText(parseGpsPosition(photo.gpsPosition));
-  const label = placeName ? joinParts(placeName, city) : joinParts(city, country);
-  if (!label) return null;
-  // The country goes on hover only when the label leaves it out for the place name.
-  const details = [gps, placeName ? country : null];
-  return { label, details: details.filter((line) => line !== null && line !== "") as string[] };
+function placeText(photo: PhotoData): Localized | null {
+  const parts = (photo.places ?? []).flatMap(({ relation, id }) => {
+    const place = placeById(id);
+    return place ? [placePart(relation, localizePlace(place))] : [];
+  });
+  if (parts.length === 0) return placeNameText(photo);
+  return mapLocalized(parts, (p, script) => capitalized(p.map((part) => part[script]).join(" ")));
+}
+
+/** The place name written on the Photo page before places, or null without one. */
+function placeNameText(photo: PhotoData): Localized | null {
+  const name = photo.placeName?.trim();
+  return name ? unlocalized(name) : null;
+}
+
+/** A city or country written each way, or null when there's none. */
+function localizedField(type: "country" | "city", name: string | null): Localized | null {
+  return name ? localizeName(type, name) : null;
+}
+
+/** The parts of where the photo was taken, each written every way. */
+interface LocationParts {
+  place: Localized | null;
+  city: Localized | null;
+  country: Localized | null;
+  gps: string | null;
+}
+
+/** Where the photo was taken, written one way: see photoLocation. */
+function locationIn(parts: LocationParts, script: ScriptDisplay): PhotoLocation {
+  const [place, city, country] = [parts.place, parts.city, parts.country].map(
+    (part) => part?.[script],
+  );
+  const label = place ? joinParts(place, city) : joinParts(city, country);
+  // The country goes on hover only when the label leaves it out for the place.
+  const details = [parts.gps, place ? country : null];
+  return { label, details: details.filter(Boolean) as string[] };
+}
+
+/**
+ * Where the photo was taken, with a custom city and country over the EXIF ones: its places and
+ * city, with the country on hover; or else its city and country; or else its country. Each is
+ * written every Script Display way. Null without any of them, even when it has a GPS position.
+ */
+function photoLocation(photo: PhotoData): LocalizedLocation | null {
+  const parts: LocationParts = {
+    place: placeText(photo),
+    city: localizedField("city", custom(photo.customCity, photo.city)),
+    country: localizedField("country", custom(photo.customCountry, photo.country)),
+    gps: gpsText(parseGpsPosition(photo.gpsPosition)),
+  };
+  if (!parts.place && !parts.city && !parts.country) return null;
+  return Object.fromEntries(
+    SCRIPT_DISPLAYS.map((script) => [script, locationIn(parts, script)]),
+  ) as LocalizedLocation;
 }
 
 /** The ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */

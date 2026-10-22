@@ -1,7 +1,8 @@
 # Places and Localizations
 
 `/places` and `/localizations`, under **Configuration** in the sidebar, keep two more kinds of data next to the photos,
-albums and tags. Nothing on the portfolio shows them yet; they're noted for later.
+albums and tags. The portfolio shows each photo's places, and writes places, cities and countries the way its
+**Script display** setting says (see [On the portfolio](#on-the-portfolio)).
 
 ## Places
 
@@ -35,7 +36,8 @@ They're saved in the photo's JSON as `places`, next to `albums` and `tags`:
 ]
 ```
 
-`placeName` stays, and is set to the first place's name, so the portfolio keeps showing it as before. A photo saved
+`placeName` stays, and is set to the first place's name, so a photo whose places aren't in `PLACES.json` yet still
+shows a place on the portfolio. A photo saved
 before places has a `placeName` and no `places`: Edit Photo shows that place name above the rows, read-only, for
 reference while you choose or add the matching places. Once the photo is saved with places it no longer shows. New photos get `"places": []`, and **Update Data → Missing fields**
 adds it to older ones.
@@ -79,3 +81,30 @@ to move the branch. A row already queued isn't queued again.
 
 Saves of places and localizations are counted by the sync button at the top right, like albums and tags, and show in
 the combined data store's `PLACES.json` and `LOCALIZATIONS.json` until a **Commit** writes them there.
+
+## On the portfolio
+
+The portfolio's menu has a **Script display** setting above the color theme: English, Romanized, Phonetic or Native,
+remembered in the visitor's browser (English until they pick). Every place, city and country the portfolio shows
+(Timeline, Table, Map and the photo viewer) is written that way:
+
+| Script display | Shows                   | Such as    |
+| -------------- | ----------------------- | ---------- |
+| English        | the name                | Tokyo      |
+| Romanized      | the romanization        | Tōkyō      |
+| Phonetic       | the local pronunciation | とうきょう |
+| Native         | the local script        | 東京       |
+
+When the chosen way isn't saved for a name, it shows the most native way that is saved short of it, down to the name:
+Native with no local script shows the pronunciation, else the romanization, else the name. Countries and cities are
+matched to their localization by name, and places by the place's ID.
+
+A photo with places shows them as a phrase before its city, such as “In 경복궁 by 근정문, 서울”; the relation stays in
+English. A photo without places, or whose places aren't in `PLACES.json`, shows its `placeName` as before. The Table
+sorts the Place column by the English names whichever way it's shown.
+
+`pnpm photos:local` also writes `PLACES.local.json` and `LOCALIZATIONS.local.json` next to the committed files, so a
+local portfolio shows places and localizations saved in the open pull request ([local photo data](local-photo-data.md)).
+
+> **Frontend analogy:** it's i18n with a fallback chain, like `i18next`'s `fallbackLng`: each name has up to four
+> “translations”, and a missing one falls back to the next one along instead of showing nothing.

@@ -1,9 +1,10 @@
+import { useScriptDisplay } from "@/components/script-display-provider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { PhotoLocation as Location } from "@/lib/photos";
+import type { LocalizedLocation } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 interface PhotoLocationProps {
-  location: Location;
+  location: LocalizedLocation;
   className?: string;
   /** Colors for the GPS position and country shown on hover, to match what's around it. */
   detailsClassName?: string;
@@ -13,9 +14,16 @@ interface PhotoLocationProps {
 
 /**
  * Where a photo was taken, as text that shows its GPS position on hover or focus, with its country
- * under it when the text leaves the country out. Just the text when there's nothing more to show.
+ * under it when the text leaves the country out, written as the menu's Script Display says. Just
+ * the text when there's nothing more to show.
  */
-export function PhotoLocation({ location, className, detailsClassName, side }: PhotoLocationProps) {
+export function PhotoLocation({
+  location: localized,
+  className,
+  detailsClassName,
+  side,
+}: PhotoLocationProps) {
+  const location = localized[useScriptDisplay().script];
   if (location.details.length === 0) return <span className={className}>{location.label}</span>;
   return (
     <Tooltip>
