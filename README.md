@@ -127,6 +127,16 @@ the rest of each URL (query strings such as `?crop=` included) and every other b
 committed while any photo file can't be read. The images in R2 aren't touched, so connect the custom domain to the
 bucket in Cloudflare first, and set the R2 **Public URL** in Settings to it so new uploads use it too.
 
+**Missing fields** gives older photo files the fields new ones have, such as `title`, `comment`, `aperture` or
+`images.thumbnail` (`POST /api/data/missing-fields/preview`, then `POST /api/data/missing-fields`). The list of fields
+and their defaults is `newPhotoJSON` in `be-pipeline/internal/github/publish.go`, the same function that builds a new
+photo file, so a field added there (with its default, such as `[]` for a list) is backfilled with no other change.
+Missing fields go where a new file has them, nested `images` fields included, and the rest of each file is kept byte
+for byte; a field a file already has, even `null`, is never changed. With **Read missing camera details from the
+originals in R2** on, a missing EXIF field (`exif.SanitizeFields`) is read from the photo's original at `images.key`,
+as Explore Bucket reads it, instead of being added as `null`; the backend keeps each original's EXIF in memory, so
+applying doesn't download them again after a preview.
+
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.
 
