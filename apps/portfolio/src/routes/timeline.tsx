@@ -135,7 +135,9 @@ function MonthSection({
             aria-hidden
           />
           {month}
-          <span className="font-normal normal-case">· {monthPhotos.length}</span>
+          <span className="ml-0.5 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tracking-normal text-foreground tabular-nums">
+            {monthPhotos.length}
+          </span>
         </button>
       </h2>
       {open && (
