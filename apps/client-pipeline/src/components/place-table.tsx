@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SingleCombobox } from "@/components/ui/single-combobox";
+import { gpsText } from "@/lib/place-gps";
 import { type CityRow, cityOfPlace, regionKey } from "@/lib/place-cities";
 import { cn } from "@/lib/utils";
 import { parentIds, type PlaceTreeRow, placeTreeRows } from "@/lib/place-tree";
@@ -175,10 +176,10 @@ function UnreadableFiles({ files }: { files: PlacesResponse["places"] }) {
     ));
 }
 
-/** What's known about where the place is, after its ID: its city and its description. */
+/** What's known about where the place is, after its ID: its city, its GPS position and its description. */
 function placeNotes(place: Place): string[] {
   const where = [place.city, place.country].filter(Boolean).join(", ");
-  return [where, place.description].filter(Boolean) as string[];
+  return [where, gpsText(place), place.description].filter(Boolean) as string[];
 }
 
 function localizationOf(localizations: Localization[], place: Place): Localization | undefined {

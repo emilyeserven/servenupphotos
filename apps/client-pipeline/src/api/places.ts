@@ -14,6 +14,12 @@ export interface Place {
   /** Where it is, which a photo given the place takes as its city and country; "" or missing when not set. */
   city?: string;
   country?: string;
+  /**
+   * The place's GPS position in decimal degrees, which a photo given the place uses on the portfolio's
+   * map when its EXIF has none; missing when not set.
+   */
+  latitude?: number;
+  longitude?: number;
 }
 
 /** What a localization is of. */

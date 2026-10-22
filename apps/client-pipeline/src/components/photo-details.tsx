@@ -3,6 +3,7 @@ import { type ComponentProps, type ReactNode, useState } from "react";
 import Markdown, { type ExtraProps } from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { type PhotoPlace, savedPlaces } from "@/api/places";
+import { RegionOverrideField } from "@/components/region-override-field";
 import { PlaceFields } from "@/components/place-fields";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -172,7 +173,12 @@ export function PhotoDetailsCard({
             exifCountry={exifPlace.country}
             onChange={(place) => onChange({ ...value, ...place })}
           />
-          <CityAndCountry exifPlace={exifPlace} value={value} field={field} />
+          <CityAndCountry
+            exifPlace={exifPlace}
+            value={value}
+            field={field}
+            onCity={(city, country) => onChange(withCity(value, exifPlace, city, country))}
+          />
         </div>
         <CommentField
           value={value.comment}
@@ -194,13 +200,33 @@ interface CityAndCountryProps {
   exifPlace: ExifPlace;
   value: PhotoDetails;
   field: (name: "customCity" | "customCountry") => FieldState;
+  /** Sets the custom city, with the city's country when one is known. */
+  onCity: (city: string, country: string | undefined) => void;
+}
+
+/**
+ * The details with the custom city set, and the custom country filled from the city's when it's
+ * empty and the EXIF country isn't already that.
+ */
+function withCity(
+  value: PhotoDetails,
+  exifPlace: ExifPlace,
+  city: string,
+  country: string | undefined,
+): PhotoDetails {
+  const fill = !value.customCountry.trim() && country !== exifPlace.country;
+  return {
+    ...value,
+    customCity: city,
+    customCountry: fill ? (country ?? "") : value.customCountry,
+  };
 }
 
 /**
  * The custom city and country, collapsed to what the portfolio will show, and open from the start
  * when either is written.
  */
-function CityAndCountry({ exifPlace, value, field }: CityAndCountryProps) {
+function CityAndCountry({ exifPlace, value, field, onCity }: CityAndCountryProps) {
   const { summary, custom } = placeSummary(value, exifPlace);
   const [open, setOpen] = useState(custom);
   return (
@@ -215,20 +241,31 @@ function CityAndCountry({ exifPlace, value, field }: CityAndCountryProps) {
         <span className="text-muted-foreground min-w-0 truncate">{summary}</span>
       </summary>
       <div className="grid gap-4 px-3 pt-1 pb-3 sm:grid-cols-2">
-        <TextField
+        <LabeledHint
           id="photo-custom-city"
           label="City"
-          placeholder={exifPlace.city ?? "Not in the EXIF"}
-          hint="Shown instead of the city from the photo's EXIF, which is kept as it is. Saved as customCity; leave it empty to use the EXIF one."
-          {...field("customCity")}
-        />
-        <TextField
+          hint="Shown instead of the city from the photo's EXIF, which is kept as it is. Choose one places are in or other photos show, or type one. Saved as customCity; leave it empty to use the EXIF one."
+        >
+          <RegionOverrideField
+            id="photo-custom-city"
+            kind="city"
+            placeholder={exifPlace.city ?? "Not in the EXIF"}
+            {...field("customCity")}
+            onChange={onCity}
+          />
+        </LabeledHint>
+        <LabeledHint
           id="photo-custom-country"
           label="Country"
-          placeholder={exifPlace.country ?? "Not in the EXIF"}
-          hint="Shown instead of the country from the photo's EXIF, which is kept as it is. Saved as customCountry; leave it empty to use the EXIF one."
-          {...field("customCountry")}
-        />
+          hint="Shown instead of the country from the photo's EXIF, which is kept as it is. Choose one places are in or other photos show, or type one. Saved as customCountry; leave it empty to use the EXIF one."
+        >
+          <RegionOverrideField
+            id="photo-custom-country"
+            kind="country"
+            placeholder={exifPlace.country ?? "Not in the EXIF"}
+            {...field("customCountry")}
+          />
+        </LabeledHint>
       </div>
     </details>
   );
@@ -262,6 +299,30 @@ interface TextFieldProps extends FieldState {
 /** A one-line text field with its label, and its hint on hover beside the label. */
 function TextField({ id, label, placeholder, hint, value, disabled, onChange }: TextFieldProps) {
   return (
+    <LabeledHint id={id} label={label} hint={hint}>
+      <Input
+        id={id}
+        placeholder={placeholder}
+        value={value}
+        disabled={disabled}
+        aria-describedby={`${id}-hint`}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </LabeledHint>
+  );
+}
+
+interface LabeledHintProps {
+  /** The id of the field inside, which the label points to. */
+  id: string;
+  label: string;
+  hint: ReactNode;
+  children: ReactNode;
+}
+
+/** A field with its label, and its hint on hover beside the label. */
+function LabeledHint({ id, label, hint, children }: LabeledHintProps) {
+  return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-1.5">
         <label htmlFor={id} className="text-sm font-medium">
@@ -271,14 +332,7 @@ function TextField({ id, label, placeholder, hint, value, disabled, onChange }: 
           {hint}
         </Hint>
       </div>
-      <Input
-        id={id}
-        placeholder={placeholder}
-        value={value}
-        disabled={disabled}
-        aria-describedby={`${id}-hint`}
-        onChange={(event) => onChange(event.target.value)}
-      />
+      {children}
     </div>
   );
 }

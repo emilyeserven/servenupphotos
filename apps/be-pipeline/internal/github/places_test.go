@@ -56,6 +56,16 @@ func TestSavePlaceWithParent(t *testing.T) {
 	}
 }
 
+func TestSavePlaceWithCoordinates(t *testing.T) {
+	f, c := newCombinedRepo(t, map[string]string{})
+	lat, lng := 37.5796, 126.977
+	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gbg", Name: "Gyeongbokgung Palace", Latitude: &lat, Longitude: &lng})
+	want := "{\n  \"id\": \"gbg\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\",\n  \"latitude\": 37.5796,\n  \"longitude\": 126.977\n}\n"
+	if got := f.committed[dataRoot+"/places/gbg.json"]; err != nil || got != want {
+		t.Errorf("SavePlace() error = %v, committed %q; want %q", err, got, want)
+	}
+}
+
 func TestSaveEntryRefuses(t *testing.T) {
 	_, c := newCombinedRepo(t, map[string]string{
 		dataRoot + "/places/gbg.json":  `{"id":"gbg","name":"Gyeongbokgung Palace","description":""}`,
@@ -80,6 +90,16 @@ func TestSaveEntryRefuses(t *testing.T) {
 		}, http.StatusBadRequest},
 		{"parent loop", func() error {
 			_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gbg", Name: "Gyeongbokgung Palace", Parent: "gate"})
+			return err
+		}, http.StatusBadRequest},
+		{"latitude only", func() error {
+			lat := 37.5
+			_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "hall", Name: "Hall", Latitude: &lat})
+			return err
+		}, http.StatusBadRequest},
+		{"off the globe", func() error {
+			lat, lng := 95.0, 10.0
+			_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "hall", Name: "Hall", Latitude: &lat, Longitude: &lng})
 			return err
 		}, http.StatusBadRequest},
 		{"own parent", func() error {

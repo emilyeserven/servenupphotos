@@ -4,6 +4,7 @@ import {
   localizeName,
   localizePlace,
   mapLocalized,
+  type Place,
   placeById,
   SCRIPT_DISPLAYS,
   type ScriptDisplay,
@@ -19,7 +20,10 @@ export interface Photo {
   takenAt: Date;
   /** Null when the photo has no places, city or country, so there's nothing to say. */
   location: LocalizedLocation | null;
-  /** Null when the photo has no GPS position, so it can't go on the map. */
+  /**
+   * Null when the photo has no GPS position, nor any of its places, so it can't go on the map. A
+   * place's is used when the EXIF has none.
+   */
   latitude: number | null;
   longitude: number | null;
   /** The photo's resized versions in R2; null for photos not uploaded yet. */
@@ -171,6 +175,33 @@ function parseGpsPosition(value: string | null) {
   return latitude === null || longitude === null
     ? { latitude: null, longitude: null }
     : { latitude, longitude };
+}
+
+type Position = ReturnType<typeof parseGpsPosition>;
+
+const NO_POSITION: Position = { latitude: null, longitude: null };
+
+/** The place's own GPS position, or else the nearest place above it that has one. */
+function placePosition(id: string | undefined, passed = new Set<string>()): Position {
+  const place = placeById(id);
+  if (!place || passed.has(place.id)) return NO_POSITION;
+  return ownPosition(place) ?? placePosition(place.parent, passed.add(place.id));
+}
+
+/** The GPS position set on the place itself, if both parts are. */
+function ownPosition({ latitude, longitude }: Place): Position | undefined {
+  return latitude === undefined || longitude === undefined ? undefined : { latitude, longitude };
+}
+
+/**
+ * Where the photo goes on the map: its EXIF GPS position, or else the first of its places (or a
+ * place it's in) with a GPS position set on the Places page.
+ */
+function photoPosition(photo: PhotoData): Position {
+  const exif = parseGpsPosition(photo.gpsPosition);
+  if (exif.latitude !== null) return exif;
+  const found = (photo.places ?? []).map(({ id }) => placePosition(id));
+  return found.find((position) => position.latitude !== null) ?? NO_POSITION;
 }
 
 /** The resized versions' URLs with their widths: a version keeps the photo's size when it's already smaller. */
@@ -332,7 +363,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       camera: photo.camera ?? "Unknown camera",
       takenAt,
       location: photoLocation(photo),
-      ...parseGpsPosition(photo.gpsPosition),
+      ...photoPosition(photo),
       image: parseImage(photo),
     };
   });

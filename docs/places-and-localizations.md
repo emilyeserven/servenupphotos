@@ -7,7 +7,7 @@ albums and tags. The portfolio shows each photo's places, and writes places, cit
 ## Places
 
 A place is somewhere photos are taken, more exactly than their city, such as Gyeongbokgung Palace. Each is one file,
-`places/<id>.json`, `{ "id", "name", "description", "parent", "city", "country" }`, and **Commit** combines them into `places/PLACES.json`. Its ID
+`places/<id>.json`, `{ "id", "name", "description", "parent", "city", "country" }` (plus `"latitude"` and `"longitude"` when it has a GPS position), and **Commit** combines them into `places/PLACES.json`. Its ID
 is made from its name the way album IDs are (`Gyeongbokgung Palace` becomes `gyeongbokgung-palace`); a name with no
 letter or number from a to z, such as `경복궁`, gets its UTF-8 bytes in hex instead. Two places can't share a name,
 ignoring case.
@@ -33,6 +33,16 @@ show them, or a new one typed in. Choosing a city whose country is known fills i
 open **Add photo data** pull request, or opens one, and the list reads the place files themselves
 (`GET /api/places` → `GET /places`, at the pull request's head), so a place shows before it's committed to
 `PLACES.json`.
+
+### GPS position
+
+A place can have a **GPS position**, written on the Places page as `latitude, longitude` in decimal degrees (such as
+`37.5796, 126.977`, which is what right-clicking a spot in Google Maps copies). It's saved as `latitude` and
+`longitude` numbers in the place file, left out when not set; saving refuses only one of them, or one off the globe.
+On the portfolio, a photo whose EXIF has no GPS position goes on the map at its first place's position, or else a
+place that place is in, or else its next place's. The hover text still shows only an EXIF position.
+
+> **Frontend analogy:** like a CSS fallback: `top: var(--exif-gps, var(--place-gps))`.
 
 ### Inferred places
 
@@ -68,7 +78,10 @@ Choosing a place on Edit Photo or the Photo page follows the places' parents:
   parent. It isn't offered when the first place already has a parent.
 - **City and country.** Choosing a place fills in the photo's custom city and country from the least specific chosen
   place (the one the other is in, or else the second), or else a place it's in, or else the other chosen place: the
-  first of them with a city or country. They can still be changed by hand afterwards.
+  first of them with a city or country. They can still be changed by hand afterwards: the **City** and **Country**
+  boxes are comboboxes of the cities and countries on the Places page's tabs (inferred ones marked “Inferred from 3
+  photos”), or a new one typed in. Choosing a city whose country is known fills in the custom country when it's
+  empty and the EXIF country is different. Clearing either goes back to the EXIF one.
 - **Localizing.** A chosen place with no localization yet gets a button beside it that opens a dialog for its
   romanization, local pronunciation and local script, saved like a row on the Localizations page. It isn't shown
   when the place's country, or else the photo's, is the United States (“United States”, “United States of America”,

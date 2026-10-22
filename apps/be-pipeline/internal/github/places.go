@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"math"
 	"net/http"
 	"slices"
 	"strings"
@@ -59,6 +60,11 @@ type Place struct {
 	// takes as its city and country; "" when not set.
 	City    string `json:"city"`
 	Country string `json:"country"`
+	// Latitude and Longitude are the place's GPS position in decimal degrees,
+	// which a photo given the place uses on the map when its EXIF has none;
+	// both nil when not set.
+	Latitude  *float64 `json:"latitude,omitempty"`
+	Longitude *float64 `json:"longitude,omitempty"`
 }
 
 // Localization types: what a localization is of.
@@ -310,11 +316,30 @@ func badParent(others []Entry, place Place) *PublishError {
 	return nil
 }
 
+// badCoordinates fails when the place has only one of latitude and longitude,
+// or either is off the globe.
+func badCoordinates(p Place) *PublishError {
+	if (p.Latitude == nil) != (p.Longitude == nil) {
+		return publishErr(http.StatusBadRequest, "Give both a latitude and a longitude, or neither.")
+	}
+	if p.Latitude == nil {
+		return nil
+	}
+	if math.Abs(*p.Latitude) > 90 || math.Abs(*p.Longitude) > 180 {
+		return publishErr(http.StatusBadRequest, "The latitude must be between -90 and 90, and the longitude between -180 and 180.")
+	}
+	return nil
+}
+
 // validPlace checks place and returns it trimmed, as it will be saved.
 func validPlace(place Place) (Place, *PublishError) {
 	p := Place{
 		ID: strings.TrimSpace(place.ID), Name: strings.TrimSpace(place.Name), Description: strings.TrimSpace(place.Description),
 		Parent: strings.TrimSpace(place.Parent), City: strings.TrimSpace(place.City), Country: strings.TrimSpace(place.Country),
+		Latitude: place.Latitude, Longitude: place.Longitude,
+	}
+	if perr := badCoordinates(p); perr != nil {
+		return p, perr
 	}
 	if perr := validEntryID("place", p.ID); perr != nil {
 		return p, perr
