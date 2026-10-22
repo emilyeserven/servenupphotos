@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeftIcon, CheckIcon, RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
@@ -6,8 +6,11 @@ import {
   type InFlightFileRead,
   type InFlightImages,
   type InFlightRead,
+  type PublishedFile,
+  type PublishedResponse,
   type UpdateResult,
   photosInFlightQuery,
+  publishedPhotosQuery,
   updateInFlightMutation,
 } from "@/api/photos";
 import {
@@ -37,7 +40,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { type Crop, cropText, sameCrop } from "@/lib/crop";
 import { jsonFileName } from "@/lib/file-name";
 
-/** A photo JSON file in the pull request, with the image in R2 it can be edited from. */
+/**
+ * A photo JSON file in the pull request, or one already in the portfolio that the pull request
+ * doesn't change yet (status `published`), with the image in R2 it can be edited from.
+ */
 interface Editable {
   file: InFlightFileRead;
   /** The photo's JSON object as the pull request has it. */
@@ -46,6 +52,11 @@ interface Editable {
 }
 
 type PhotoJson = Record<string, unknown> & { images?: Record<string, unknown> };
+
+/** Whether the photo is already in the portfolio and not in the pull request yet. */
+function isPublished(file: InFlightFileRead): boolean {
+  return file.status === "published";
+}
 
 /** Why the file at path can't be edited, or what to edit it from. */
 function findEditable(data: InFlightRead, path: string): Editable | string {
@@ -79,38 +90,89 @@ function imageProblem(images: InFlightImages, path: string): string | undefined 
   return "Its photo isn't in R2, so there's nothing to cut a Square Thumbnail from.";
 }
 
+/** Why the file at path, already in the portfolio, can't be edited, or what to edit it from. */
+function findPublished(data: PublishedResponse, path: string): Editable | string {
+  const file = data.files.find((f) => f.path === path);
+  if (!file) return `${path} isn't in the photo data pull request or on ${data.branch}.`;
+  const problem = publishedProblem(file) ?? imageProblem(data.images, path);
+  if (problem !== undefined) return problem;
+  return { file, data: file.data as PhotoJson, image: data.images.byPath[path]! };
+}
+
+/** Why a file already in the portfolio can't be edited, or undefined when it can. */
+function publishedProblem(file: PublishedFile): string | undefined {
+  if (file.inFlight === "removed") {
+    return `${file.path} is removed in the photo data pull request, so it can't be edited.`;
+  }
+  return fileProblem(file);
+}
+
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /**
- * The Photo page for a photo already in the photo data pull request: its Square Thumbnail crop, title
- * and comment can be changed, then saved by remaking the thumbnail in R2 when the crop moved and
- * updating its JSON in the pull request.
+ * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
+ * Square Thumbnail crop, title and comment can be changed, then saved by remaking the thumbnail in R2
+ * when the crop moved and updating its JSON in the pull request. A photo already in the portfolio is
+ * read from the base branch until its first save puts it in the pull request.
  */
-export function EditInFlightPhoto({ path }: { path: string }) {
+export function EditInFlightPhoto({ path, from }: { path: string; from?: "gallery" }) {
   const inFlight = useQuery(photosInFlightQuery);
   return (
     <>
-      <BackLink />
+      <BackLink from={from} />
       <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
-        {(data) => {
-          const editable = findEditable(data, path);
-          if (typeof editable === "string") return <Problem>{editable}</Problem>;
-          // Keyed by the photo's image rather than its file, which a new title can rename.
-          return <EditWithSavedCrop key={editable.image.key} editable={editable} />;
-        }}
+        {(data) => <EditFound inFlight={data} path={path} />}
       </QueryResult>
     </>
   );
 }
 
-function BackLink() {
+/**
+ * The editor for the file at path, from the pull request when it's there, or else from the base
+ * branch. Both render the editor in the same place with the same key, so it keeps what it showed
+ * when a first save moves the photo into the pull request.
+ */
+function EditFound({ inFlight, path }: { inFlight: InFlightRead; path: string }) {
+  const editable = useEditable(inFlight, path);
+  if (editable === null) return <p>Reading the photo from GitHub…</p>;
+  if (typeof editable === "string") return <Problem>{editable}</Problem>;
+  // Keyed by the photo's image rather than its file, which a new title can rename.
+  return <EditWithSavedCrop key={editable.image.key} editable={editable} />;
+}
+
+/**
+ * What to edit the file at path from, or why it can't be edited: the pull request's copy when the
+ * pull request has it, or else the base branch's, which is null while it's being read.
+ */
+function useEditable(inFlight: InFlightRead, path: string): Editable | string | null {
+  const fromPullRequest = findEditable(inFlight, path);
+  const onBase = typeof fromPullRequest === "string" && !inPullRequest(inFlight, path);
+  const published = useQuery({ ...publishedPhotosQuery, enabled: onBase });
+  return onBase ? fromBase(published, path) : fromPullRequest;
+}
+
+/** Whether the pull request has the file at path, so it's edited from there. */
+function inPullRequest(inFlight: InFlightRead, path: string): boolean {
+  return inFlight.files.some((f) => f.path === path);
+}
+
+/** The file at path on the base branch to edit, why it can't be, or null while it's read. */
+function fromBase(
+  published: UseQueryResult<PublishedResponse>,
+  path: string,
+): Editable | string | null {
+  if (published.isError) return published.error.message;
+  return published.data ? findPublished(published.data, path) : null;
+}
+
+function BackLink({ from }: { from?: "gallery" }) {
   return (
     <Button variant="outline" size="sm" className="self-start" asChild>
-      <Link to="/in-flight">
+      <Link to={from === "gallery" ? "/gallery" : "/in-flight"}>
         <ArrowLeftIcon />
-        Photos in Flight
+        {from === "gallery" ? "Gallery" : "Photos in Flight"}
       </Link>
     </Button>
   );
@@ -309,14 +371,15 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           description="Both optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
           disabled={pending}
         />
-        <JsonPreview path={editable.file.path} edit={edit} />
+        <JsonPreview file={editable.file} edit={edit} />
       </div>
     </div>
   );
 }
 
 /** The file's JSON, as saving would write it when there's something to save. */
-function JsonPreview({ path, edit }: { path: string; edit: Edit }) {
+function JsonPreview({ file, edit }: { file: InFlightFileRead; edit: Edit }) {
+  const where = isPublished(file) ? "the portfolio" : "the pull request";
   return (
     <Card>
       <CardHeader>
@@ -324,11 +387,11 @@ function JsonPreview({ path, edit }: { path: string; edit: Edit }) {
         <CardDescription>
           {edit.next
             ? "What saving writes over the file in the pull request."
-            : "The file as the pull request has it."}
+            : `The file as ${where} has it.`}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <JsonCodeBlock value={edit.next ?? edit.savedData} title={path} />
+        <JsonCodeBlock value={edit.next ?? edit.savedData} title={file.path} />
       </CardContent>
     </Card>
   );
@@ -387,7 +450,10 @@ function useSave({ file, image }: Editable, onSaved: (crop: Crop | null, data: P
       }
       void queryClient.invalidateQueries({ queryKey: thumbnailCropQuery(image.key).queryKey });
       void queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey });
-      if (result.update.changed) rebuild.afterPush();
+      if (!result.update.changed) return;
+      // A photo already in the portfolio is in the pull request after its first save.
+      void queryClient.invalidateQueries({ queryKey: publishedPhotosQuery.queryKey });
+      rebuild.afterPush();
     },
   });
   // The thumbnail was remade when only saving the JSON failed.
@@ -424,7 +490,7 @@ function SaveCard({ file, edit, save }: { file: InFlightFileRead; edit: Edit; sa
         <CardTitle>Save changes</CardTitle>
         <CardDescription>
           Remakes the Square Thumbnail and its Thumbnail Preview in R2 from the square above when it
-          moved, then updates <FileLink file={file} /> in the pull request.
+          moved, then <SaveTarget file={file} />
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 text-sm">
@@ -446,6 +512,23 @@ function SaveCard({ file, edit, save }: { file: InFlightFileRead; edit: Edit; sa
   );
 }
 
+/** Where saving puts the photo's JSON. */
+function SaveTarget({ file }: { file: InFlightFileRead }) {
+  if (!isPublished(file)) {
+    return (
+      <>
+        updates <FileLink file={file} /> in the pull request.
+      </>
+    );
+  }
+  return (
+    <>
+      saves <FileLink file={file} />, already in the portfolio, into the “Add photo data” pull
+      request, opening one when none is open, so the change is in flight until it merges.
+    </>
+  );
+}
+
 /** What a new title does to the file's name when it's saved. */
 function RenameNote({ file, edit }: { file: InFlightFileRead; edit: Edit }) {
   const name = edit.request?.name;
@@ -464,8 +547,10 @@ function KeepsNameNote({ file, edit }: { file: InFlightFileRead; edit: Edit }) {
   if (file.status === "added" || !titleChanged(edit.savedData, edit.details.title)) return null;
   return (
     <p className="text-muted-foreground">
-      It keeps its file name, since it's {file.status} in the pull request and so already in the
-      portfolio.
+      It keeps its file name,{" "}
+      {isPublished(file)
+        ? "since it's already in the portfolio and renaming it would remove the old file when the pull request merges."
+        : `since it's ${file.status} in the pull request and so already in the portfolio.`}
     </p>
   );
 }
@@ -561,13 +646,35 @@ function SaveError({ save: { mutation, remadeOnly } }: { save: Save }) {
 function JsonOutcome({ update, capitalized }: { update: UpdateResult; capitalized?: boolean }) {
   if (!update.changed) return capitalized ? "Left its JSON as it was" : "left its JSON as it was";
   return (
-    <a
-      href={update.fileUrl}
-      target="_blank"
-      rel="noreferrer"
-      className="underline underline-offset-4"
-    >
-      {capitalized ? "Updated its JSON" : "updated its JSON"}
-    </a>
+    <>
+      <a
+        href={update.fileUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="underline underline-offset-4"
+      >
+        {capitalized ? "Updated its JSON" : "updated its JSON"}
+      </a>
+      <NewPullRequestNote update={update} />
+    </>
+  );
+}
+
+/** Where the save went, when it opened the pull request. */
+function NewPullRequestNote({ update }: { update: UpdateResult }) {
+  if (!update.newPullRequest) return null;
+  return (
+    <>
+      {" "}
+      in a{" "}
+      <a
+        href={update.pullRequestUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="underline underline-offset-4"
+      >
+        new “Add photo data” pull request
+      </a>
+    </>
   );
 }

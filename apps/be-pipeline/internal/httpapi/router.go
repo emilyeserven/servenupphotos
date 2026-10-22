@@ -41,6 +41,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("POST /photos/bucket/versions", handleRegenerateVersions(store.R2, storage.RegenerateVersions))
 	mux.HandleFunc("GET /photos/bucket/thumbnail-crop", handleThumbnailCrop(store.R2, storage.ThumbnailCrop))
 	mux.HandleFunc("PUT /photos/in-flight", handleUpdateInFlight(store, gh))
+	mux.HandleFunc("GET /photos/published", handlePublishedPhotos(store, gh, storage.FindPhotos))
 	mux.HandleFunc("GET /organize", handleOrganize(store, gh))
 	mux.HandleFunc("POST /organize/{kind}", handleCreateGroup(store, gh))
 	mux.HandleFunc("POST /data/image-base-url/preview", handlePreviewBaseURL(store, gh))

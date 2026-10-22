@@ -57,6 +57,12 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     }),
   );
 
+  // Reads every photo JSON file on the base branch, the photos already in the portfolio, for the
+  // Gallery; the backend gives GitHub 30s, then R2 15s.
+  app.get("/photos/published", async (_request, reply) =>
+    relayToBackend(reply, app.log, "/photos/published", { timeoutMs: 50_000 }),
+  );
+
   // Reads ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the base branch and the photo data
   // pull request, which pages keep until CI rebuilds them; the backend gives GitHub 30s.
   app.get("/photos/combined", async (_request, reply) =>

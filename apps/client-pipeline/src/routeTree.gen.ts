@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlbumsRouteImport } from './routes/albums'
 import { Route as BucketRouteImport } from './routes/bucket'
 import { Route as ExifRouteImport } from './routes/exif'
+import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -39,6 +40,11 @@ const BucketRoute = BucketRouteImport.update({
 const ExifRoute = ExifRouteImport.update({
   id: '/exif',
   path: '/exif',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InFlightRoute = InFlightRouteImport.update({
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/albums': typeof AlbumsRoute
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
+  '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/settings': typeof SettingsRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/albums': typeof AlbumsRoute
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
+  '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/settings': typeof SettingsRoute
@@ -109,6 +117,7 @@ export interface FileRoutesById {
   '/albums': typeof AlbumsRoute
   '/bucket': typeof BucketRoute
   '/exif': typeof ExifRoute
+  '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/settings': typeof SettingsRoute
@@ -124,6 +133,7 @@ export interface FileRouteTypes {
     | '/albums'
     | '/bucket'
     | '/exif'
+    | '/gallery'
     | '/in-flight'
     | '/instagram'
     | '/settings'
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/albums'
     | '/bucket'
     | '/exif'
+    | '/gallery'
     | '/in-flight'
     | '/instagram'
     | '/settings'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/albums'
     | '/bucket'
     | '/exif'
+    | '/gallery'
     | '/in-flight'
     | '/instagram'
     | '/settings'
@@ -164,6 +176,7 @@ export interface RootRouteChildren {
   AlbumsRoute: typeof AlbumsRoute
   BucketRoute: typeof BucketRoute
   ExifRoute: typeof ExifRoute
+  GalleryRoute: typeof GalleryRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
   SettingsRoute: typeof SettingsRoute
@@ -201,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/exif'
       fullPath: '/exif'
       preLoaderRoute: typeof ExifRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/in-flight': {
@@ -260,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   AlbumsRoute: AlbumsRoute,
   BucketRoute: BucketRoute,
   ExifRoute: ExifRoute,
+  GalleryRoute: GalleryRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
   SettingsRoute: SettingsRoute,
