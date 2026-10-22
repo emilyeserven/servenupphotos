@@ -1,4 +1,5 @@
 import { BracesIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
 import {
   CodeBlock,
@@ -17,11 +18,14 @@ export function JsonCodeBlock({
   value,
   title = "JSON",
   contentClassName,
+  actions,
 }: {
   value: unknown;
   title?: string;
   /** Overrides the content's classes, such as its default max height. */
   contentClassName?: string;
+  /** Controls shown in the header before the Copy button. */
+  actions?: ReactNode;
 }) {
   const code = JSON.stringify(value, null, 2);
   const lines = useHighlightedCode(code, "json");
@@ -34,6 +38,7 @@ export function JsonCodeBlock({
           {title}
         </CodeBlockTitle>
         <CodeBlockActions>
+          {actions}
           <CodeBlockCopyButton value={code} />
         </CodeBlockActions>
       </CodeBlockHeader>

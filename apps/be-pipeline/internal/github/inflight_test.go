@@ -13,7 +13,8 @@ import (
 )
 
 // newInFlightRepo serves an owner/repo whose open pull requests are pulls and
-// whose pull request 7 changes files, with contents keyed by path at sha "head7".
+// whose pull request 7 changes files, with contents keyed by path at sha "head7",
+// or by path@ref at another ref.
 func newInFlightRepo(t *testing.T, pulls []map[string]any, files []map[string]any, contents map[string]string) *Client {
 	t.Helper()
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -33,8 +34,12 @@ func newInFlightRepo(t *testing.T, pulls []map[string]any, files []map[string]an
 		case p == "/pulls/7/files":
 			writeBody(w, http.StatusOK, files)
 		case strings.HasPrefix(p, "/contents/"):
-			content, ok := contents[strings.TrimPrefix(p, "/contents/")]
-			if !ok || r.URL.Query().Get("ref") != "head7" {
+			file, ref := strings.TrimPrefix(p, "/contents/"), r.URL.Query().Get("ref")
+			if ref != "head7" {
+				file += "@" + ref
+			}
+			content, ok := contents[file]
+			if !ok {
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
@@ -87,7 +92,7 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	}
 	want := InFlightPullRequest{
 		Number: 7, Title: "Add photo data", URL: "https://github.com/owner/repo/pull/7",
-		Branch: "photo-data/2026-10-15-024500", HeadSHA: "head7",
+		Branch: "photo-data/2026-10-15-024500", HeadSHA: "head7", BaseBranch: "main",
 	}
 	if got.PullRequest == nil || *got.PullRequest != want {
 		t.Fatalf("PullRequest = %+v, want %+v", got.PullRequest, want)
@@ -114,6 +119,52 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	}
 	if broken := got.Files[1]; broken.Data != nil || broken.Error != "The file isn't valid JSON." {
 		t.Errorf("Files[1] = %+v, want an invalid JSON error", broken)
+	}
+}
+
+func TestInFlightReadsChangedFilesOnBase(t *testing.T) {
+	const dir = "apps/portfolio/src/data/"
+	c := newInFlightRepo(t, []map[string]any{photoPull},
+		[]map[string]any{
+			{"filename": dir + "photos/new.json", "status": "added"},
+			{"filename": dir + "photos/changed.json", "status": "modified"},
+			{"filename": dir + "photos/moved.json", "status": "renamed", "previous_filename": dir + "photos/old.json"},
+			{"filename": dir + "photos/gone.json", "status": "modified"},
+			{"filename": dir + "albums/seoul.json", "status": "modified"},
+		},
+		map[string]string{
+			dir + "photos/new.json":          `{"file":"new.jpg"}`,
+			dir + "photos/changed.json":      `{"file":"changed.jpg","title":"After"}`,
+			dir + "photos/changed.json@main": `{"file":"changed.jpg","title":"Before"}`,
+			dir + "photos/moved.json":        `{"file":"moved.jpg"}`,
+			dir + "photos/old.json@main":     `{"file":"old.jpg"}`,
+			dir + "photos/gone.json":         `{"file":"gone.jpg"}`,
+			dir + "albums/seoul.json":        `{"id":"seoul","name":"Seoul"}`,
+			dir + "albums/seoul.json@main":   `{"id":"seoul","name":"Soul"}`,
+		},
+	)
+
+	got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token})
+	if err != nil {
+		t.Fatalf("InFlight() error = %v", err)
+	}
+	want := map[string]BaseFile{
+		"new.json":     {},
+		"changed.json": {Base: json.RawMessage(`{"file":"changed.jpg","title":"Before"}`)},
+		"moved.json":   {Base: json.RawMessage(`{"file":"old.jpg"}`)},
+		"gone.json":    {BaseError: "The file isn't on main."},
+	}
+	if len(got.Files) != len(want) {
+		t.Fatalf("Files = %+v, want %d", got.Files, len(want))
+	}
+	for _, f := range got.Files {
+		name := f.Path[strings.LastIndex(f.Path, "/")+1:]
+		if w := want[name]; string(f.Base) != string(w.Base) || f.BaseError != w.BaseError {
+			t.Errorf("%s: BaseFile = {%s %q}, want {%s %q}", name, f.Base, f.BaseError, w.Base, w.BaseError)
+		}
+	}
+	if len(got.Albums.Files) != 1 || string(got.Albums.Files[0].Base) != `{"id":"seoul","name":"Soul"}` {
+		t.Errorf("Albums.Files = %+v, want seoul.json with its JSON on main", got.Albums.Files)
 	}
 }
 

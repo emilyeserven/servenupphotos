@@ -62,6 +62,7 @@ func (c *Client) Combined(ctx context.Context, gh settings.GitHub) (CombinedResu
 		result.Head = &CombinedHead{
 			PullRequest: InFlightPullRequest{
 				Number: pr.Number, Title: pr.Title, URL: pr.HTMLURL, Branch: pr.Head.Ref, HeadSHA: pr.Head.SHA,
+				BaseBranch: pr.Base.Ref,
 			},
 			CombinedFiles: c.readCombinedFiles(ctx, t, root, pr.Head.SHA, pr.Head.Ref),
 		}
