@@ -8,13 +8,14 @@ import {
   Source,
   type LayerProps,
   type MapRef,
+  useMap,
 } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
 import { MapPin, ZoomIn } from "lucide-react";
 import { LngLatBounds, setWorkerUrl, type GeoJSONSource, type GeoJSONFeature } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import { type MouseEvent, useRef, useState, useSyncExternalStore } from "react";
+import { type MouseEvent, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
@@ -260,7 +261,7 @@ function MapView() {
               offset={24}
               maxWidth="none"
               onClose={() => setCluster(null)}
-              className="text-neutral-900"
+              className={MAP_POPUP}
             >
               <ClusterGrid
                 cluster={cluster}
@@ -291,7 +292,11 @@ function MapMarkerView({
   if (marker.kind === "cluster") {
     return (
       <Marker longitude={marker.longitude} latitude={marker.latitude}>
-        <ClusterMarker count={marker.count} onOpen={() => onOpenCluster(marker)} />
+        <ClusterMarker
+          clusterId={marker.clusterId}
+          count={marker.count}
+          onOpen={() => onOpenCluster(marker)}
+        />
       </Marker>
     );
   }
@@ -312,7 +317,7 @@ function PhotoPopup({ photo, onClose }: { photo: PlacedPhoto; onClose: () => voi
       anchor="bottom"
       offset={10}
       onClose={onClose}
-      className="text-neutral-900"
+      className={MAP_POPUP}
     >
       <p className="font-medium">{photo.title}</p>
       {photo.location && (
@@ -326,6 +331,17 @@ function PhotoPopup({ photo, onClose }: { photo: PlacedPhoto; onClose: () => voi
     </Popup>
   );
 }
+
+// MapLibre styles its popups white, so dark mode recolors the box and its tip under the anchor.
+// Its CSS isn't in a layer, so it beats Tailwind's utilities unless they're important. An outline,
+// which MapLibre doesn't set, sets the box apart from the map.
+const MAP_POPUP = cn(
+  "text-neutral-900 dark:text-neutral-100",
+  "[&_.maplibregl-popup-content]:outline [&_.maplibregl-popup-content]:outline-black/20 dark:[&_.maplibregl-popup-content]:outline-white/25",
+  "dark:[&_.maplibregl-popup-content]:bg-neutral-900!",
+  "dark:[&_.maplibregl-popup-tip]:border-t-neutral-900!",
+  "dark:[&_.maplibregl-popup-close-button:hover]:bg-white/10!",
+);
 
 const MARKER_RING =
   "outline-none ring-2 ring-white shadow-md shadow-black/30 transition-transform hover:scale-110 focus-visible:scale-110 focus-visible:ring-sky-500";
@@ -352,8 +368,60 @@ function PhotoMarker({ photo, onOpen }: { photo: PlacedPhoto; onOpen: () => void
   );
 }
 
-/** A cluster's marker: how many photos it covers. */
-function ClusterMarker({ count, onOpen }: { count: number; onOpen: () => void }) {
+/** How many of a cluster's photos its marker shows in turn, newest first. */
+const CLUSTER_PREVIEWS = 3;
+/** How long each of them shows, in milliseconds. */
+const CLUSTER_PREVIEW_MS = 3000;
+
+/** The thumbnails of a cluster's newest photos with images, newest first. */
+function useClusterPreviews(clusterId: number): string[] {
+  const { current: map } = useMap();
+  const [previews, setPreviews] = useState<string[]>([]);
+  useEffect(() => {
+    if (!map) return;
+    let current = true;
+    void photosInCluster(map, clusterId).then((clusterPhotos) => {
+      if (!current) return;
+      const newest = clusterPhotos
+        .flatMap(({ image }) => (image ? [image.thumbnail || image.small] : []))
+        .toReversed()
+        .slice(0, CLUSTER_PREVIEWS);
+      setPreviews(newest);
+    });
+    return () => {
+      current = false;
+    };
+  }, [map, clusterId]);
+  return previews;
+}
+
+/** Which of `count` images to show, moving on to the next one every CLUSTER_PREVIEW_MS. */
+function useTurn(count: number): number {
+  const [turn, setTurn] = useState(0);
+  useEffect(() => {
+    // Without motion the newest photo just stays.
+    if (count < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = setInterval(() => setTurn((t) => t + 1), CLUSTER_PREVIEW_MS);
+    return () => clearInterval(timer);
+  }, [count]);
+  return count === 0 ? 0 : turn % count;
+}
+
+/**
+ * A cluster's marker: how many photos it covers, over its newest photos fading in and out in
+ * turn, darkened so the number stays readable.
+ */
+function ClusterMarker({
+  clusterId,
+  count,
+  onOpen,
+}: {
+  clusterId: number;
+  count: number;
+  onOpen: () => void;
+}) {
+  const previews = useClusterPreviews(clusterId);
+  const turn = useTurn(previews.length);
   return (
     <button
       type="button"
@@ -363,11 +431,25 @@ function ClusterMarker({ count, onOpen }: { count: number; onOpen: () => void })
         onOpen();
       }}
       className={cn(
-        "flex size-11 cursor-pointer items-center justify-center rounded-full bg-sky-300 text-sm font-semibold text-blue-950",
+        "relative flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-sky-300 text-sm font-semibold text-blue-950",
+        previews.length > 0 && "bg-neutral-900 text-white",
         MARKER_RING,
       )}
     >
-      {count}
+      {previews.map((src, index) => (
+        <img
+          key={src}
+          src={src}
+          alt=""
+          aria-hidden
+          className={cn(
+            "absolute inset-0 size-full object-cover transition-opacity duration-1000",
+            index === turn ? "opacity-100" : "opacity-0",
+          )}
+        />
+      ))}
+      {previews.length > 0 && <span aria-hidden className="absolute inset-0 bg-black/60" />}
+      <span className="relative">{count}</span>
     </button>
   );
 }
@@ -391,7 +473,7 @@ function ClusterGrid({
           variant="ghost"
           size="sm"
           onClick={onZoomIn}
-          className="h-7 px-2 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900"
+          className="h-7 px-2 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
         >
           <ZoomIn aria-hidden />
           Zoom in
@@ -406,12 +488,12 @@ function ClusterGrid({
               aria-label={`Show ${photo.title}`}
               disabled={!photo.image}
               onClick={() => onOpen(photo)}
-              className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-sm bg-neutral-200 outline-none focus-visible:ring-2 focus-visible:ring-sky-500 disabled:cursor-default"
+              className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-sm bg-neutral-200 outline-none dark:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-sky-500 disabled:cursor-default"
             >
               {photo.image ? (
                 <PhotoThumbnail image={photo.image} />
               ) : (
-                <span className="absolute inset-0 flex items-center justify-center p-1 text-center text-[0.65rem] leading-tight text-neutral-600">
+                <span className="absolute inset-0 flex items-center justify-center p-1 text-center text-[0.65rem] leading-tight text-neutral-600 dark:text-neutral-400">
                   {photo.title}
                 </span>
               )}
