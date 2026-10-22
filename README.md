@@ -363,8 +363,8 @@ made from the name (lowercase, accents dropped, anything other than a to z and 0
 `Busan, South Korea` becomes `busan-south-korea`), and the form warns while you type when an album or tag already has
 that name or ID, or when the name has nothing to make an ID from (such as `東京` on its own). Saving
 (`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the
-open photo data pull request, or opens one, the same way photos are saved; it's in `ALLALBUMS.json` or `ALLTAGS.json`
-after the next rebuild from Photos in Flight. Adding photos to albums, choosing them on the Photo page and editing come later.
+open photo data pull request, or opens one, the same way photos are saved, and follows CI's rebuild of `ALLALBUMS.json`
+or `ALLTAGS.json`. Adding photos to albums, choosing them on the Photo page and editing come later.
 
 ### Explore Bucket
 
