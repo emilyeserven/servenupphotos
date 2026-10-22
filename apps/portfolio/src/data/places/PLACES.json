@@ -1,5 +1,25 @@
 [
   {
+    "id": "72nd-street-subway-station",
+    "name": "72nd Street Subway Station",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.767784544411064,
+    "longitude": -73.95909962262174
+  },
+  {
+    "id": "86th-street-subway-station",
+    "name": "86th Street Subway Station",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.77790332014838,
+    "longitude": -73.95177906095061
+  },
+  {
     "id": "astoria",
     "name": "Astoria",
     "description": "",
@@ -8,6 +28,36 @@
     "country": "",
     "latitude": 40.76383083369049,
     "longitude": -73.92457375631997
+  },
+  {
+    "id": "chelsea",
+    "name": "Chelsea",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.74628748518012,
+    "longitude": -74.00141720782541
+  },
+  {
+    "id": "columbus-circle",
+    "name": "Columbus Circle",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": "",
+    "latitude": 40.76805659301781,
+    "longitude": -73.98188756888125
+  },
+  {
+    "id": "fifth-avenue-presbyterian-church",
+    "name": "Fifth Avenue Presbyterian Church",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.76198521345793,
+    "longitude": -73.97500177444256
   },
   {
     "id": "geunjeongjeon",
@@ -40,6 +90,16 @@
     "parent": "",
     "city": "Seoul",
     "country": "South Korea"
+  },
+  {
+    "id": "jacqueline-kennedy-onassis-reservoir",
+    "name": "Jacqueline Kennedy Onassis Reservoir",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": "",
+    "latitude": 40.785811799352814,
+    "longitude": -73.96228768992302
   },
   {
     "id": "lower-east-side",
@@ -81,6 +141,16 @@
     "id": "mirror-pond",
     "name": "Mirror Pond",
     "description": ""
+  },
+  {
+    "id": "museum-of-arts-and-design",
+    "name": "Museum of Arts and Design",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": "",
+    "latitude": 40.76739122272109,
+    "longitude": -73.9819579321148
   },
   {
     "id": "national-museum-of-korea",
