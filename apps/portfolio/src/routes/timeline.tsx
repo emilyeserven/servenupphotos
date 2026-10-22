@@ -88,7 +88,12 @@ function TimelineView() {
       </header>
       <TimelineHistogram bins={bins} resolution={resolution} onSelect={selectDates} />
       <PhotoMonths photos={inRange} onOpen={setShown} />
-      <PhotoLightbox photo={shown} onClose={() => setShown(null)} />
+      <PhotoLightbox
+        photo={shown}
+        photos={inRange}
+        onShow={setShown}
+        onClose={() => setShown(null)}
+      />
     </div>
   );
 }
