@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { format, min } from "date-fns";
-import { CalendarClock, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { CalendarClock, ChevronDown, RotateCcw } from "lucide-react";
+import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { buildHistogram } from "@/lib/histogram";
+import { cn } from "@/lib/utils";
 import {
   absoluteTimeRange,
   parseTimeRange,
@@ -28,13 +29,14 @@ export const Route = createFileRoute("/timeline")({
 
 const earliestPhoto = min(photos.map((photo) => photo.takenAt));
 
-function groupByMonth(photos: Photo[]) {
-  const months = new Map<string, Photo[]>();
-  for (const photo of photos) {
-    const month = format(photo.takenAt, "MMMM yyyy");
-    months.set(month, [...(months.get(month) ?? []), photo]);
+/** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
+function groupByDate(group: Photo[], pattern: string) {
+  const groups = new Map<string, Photo[]>();
+  for (const photo of group) {
+    const key = format(photo.takenAt, pattern);
+    groups.set(key, [...(groups.get(key) ?? []), photo]);
   }
-  return [...months];
+  return [...groups];
 }
 
 function TimelineView() {
@@ -43,7 +45,10 @@ function TimelineView() {
   const [now] = useState(() => new Date());
   const [shown, setShown] = useState<ImagePhoto | null>(null);
   const { start = earliestPhoto, end } = resolveTimeRange(search, now);
-  const inRange = photos.filter(({ takenAt }) => takenAt >= start && takenAt <= end);
+  // Newest first, so the months and the photos in each read down from the latest.
+  const inRange = photos
+    .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
+    .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
   const { bins, resolution } = buildHistogram(
     inRange.map((photo) => photo.takenAt),
     start,
@@ -94,25 +99,82 @@ function PhotoMonths({ photos, onOpen }: { photos: Photo[]; onOpen: (photo: Imag
   }
 
   return (
-    <ol className="flex flex-col gap-8">
-      {groupByMonth(photos).map(([month, monthPhotos]) => (
-        <li key={month} className="flex flex-col gap-3">
-          <h2 className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
-            {month}
-          </h2>
-          <ul className="flex flex-col gap-3 border-l pl-4">
-            {monthPhotos.map((photo) => (
-              <PhotoRow key={photo.id} photo={photo} onOpen={onOpen} />
-            ))}
-          </ul>
-        </li>
+    <ol className="flex flex-col gap-4">
+      {groupByDate(photos, "MMMM yyyy").map(([month, monthPhotos]) => (
+        <MonthSection key={month} month={month} monthPhotos={monthPhotos} onOpen={onOpen} />
       ))}
     </ol>
   );
 }
 
+/** A month's heading and its photos, which the heading's button hides and shows again. */
+function MonthSection({
+  month,
+  monthPhotos,
+  onOpen,
+}: {
+  month: string;
+  monthPhotos: Photo[];
+  onOpen: (photo: ImagePhoto) => void;
+}) {
+  const [open, setOpen] = useState(true);
+  const listId = useId();
+  return (
+    <li className="flex flex-col gap-1">
+      {/* Sticks to the top while the month's photos scroll under it. */}
+      <h2 className="sticky top-0 z-10 -mx-1 bg-background px-1 py-2">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={listId}
+          onClick={() => setOpen(!open)}
+          className="flex items-center gap-1.5 rounded-sm text-sm font-medium tracking-wide text-muted-foreground uppercase outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <ChevronDown
+            className={cn("size-4 transition-transform", !open && "-rotate-90")}
+            aria-hidden
+          />
+          {month}
+          <span className="ml-0.5 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tracking-normal text-foreground tabular-nums">
+            {monthPhotos.length}
+          </span>
+        </button>
+      </h2>
+      {open && (
+        <ol id={listId} className="flex flex-col gap-4">
+          {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
+            <DaySection key={day} day={day} dayPhotos={dayPhotos} onOpen={onOpen} />
+          ))}
+        </ol>
+      )}
+    </li>
+  );
+}
+
+/** A day's subheading and its photos, within its month. */
+function DaySection({
+  day,
+  dayPhotos,
+  onOpen,
+}: {
+  day: string;
+  dayPhotos: Photo[];
+  onOpen: (photo: ImagePhoto) => void;
+}) {
+  return (
+    <li className="flex flex-col gap-2">
+      <h3 className="text-xs font-medium text-muted-foreground">{day}</h3>
+      <ul className="flex flex-col gap-3">
+        {dayPhotos.map((photo) => (
+          <PhotoRow key={photo.id} photo={photo} onOpen={onOpen} />
+        ))}
+      </ul>
+    </li>
+  );
+}
+
 /**
- * A photo's square thumbnail, title, comment, place, date and camera. The thumbnail and the title open
+ * A photo's square thumbnail, title, comment, place and camera; its day is in the subheading above. The thumbnail and the title open
  * the photo in the lightbox; photos without resized versions in R2 have nothing to open.
  */
 function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto) => void }) {
@@ -137,9 +199,7 @@ function PhotoRow({ photo, onOpen }: { photo: Photo; onOpen: (photo: ImagePhoto)
           </p>
         )}
       </div>
-      <span className="shrink-0 self-baseline text-xs text-muted-foreground">
-        {format(photo.takenAt, "MMM d")} · {photo.camera}
-      </span>
+      <span className="shrink-0 self-baseline text-xs text-muted-foreground">{photo.camera}</span>
     </li>
   );
 }
