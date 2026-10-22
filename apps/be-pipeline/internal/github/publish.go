@@ -67,6 +67,10 @@ type photoJSON struct {
 	// photo relates to it. The place name is kept in PlaceName too, for the
 	// portfolio.
 	Places []PhotoPlace `json:"places"`
+	// SpotlightZones are the IDs of the spots on the portfolio the photo is
+	// spotlighted in, such as "homepage", the homepage's background. They're
+	// picked on the Site Spotlight page.
+	SpotlightZones []string `json:"spotlightZones"`
 }
 
 // newPhotoJSON is the content of a new photo file. It is also the list of
@@ -76,7 +80,7 @@ type photoJSON struct {
 func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 	return photoJSON{
 		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
-		Places: []PhotoPlace{},
+		Places: []PhotoPlace{}, SpotlightZones: []string{},
 	}
 }
 

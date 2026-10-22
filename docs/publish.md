@@ -22,4 +22,18 @@ page doesn't use it.)
 > **Frontend analogy:** it's a draft kept in a client-side store (persisted to `localStorage`) instead of component
 > state, so it survives a reload and other pages can see it; Commit is the one "Save all" request.
 
-`/site-spotlight` is still a stub; ways to change the other fields will come later.
+## Site Spotlight
+
+`/site-spotlight` picks the photos each **spotlight zone** of the portfolio shows, saved as each photo file's
+`spotlightZones`: a list of zone IDs, `[]` by default (new saves write it, and Update Data → Missing fields adds it to
+older files). The zones are listed in `apps/client-pipeline/src/lib/site-spotlight.ts`; the first is **Homepage**
+(`"homepage"`), the photos fading in and out behind the [portfolio homepage](portfolio-homepage.md). With none picked,
+the homepage shows the 5 newest photos instead.
+
+Each zone is a card of its photos, newest first, each with a button to take it out, and **Add photos** opens every
+photo file (read like the Instagram calendar, in flight ones included) to click in or out of it. Like the calendar's
+dates, changes are [local edits](combined-data-store.md#local-edits) until **Commit**, which replaces the
+`spotlightZones` list in each changed file. A list sent in an edit replaces the file's whole list; other fields are
+left as they are.
+
+`websiteSpotlight` isn't used yet; ways to change it will come later.

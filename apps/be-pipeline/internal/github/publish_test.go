@@ -219,7 +219,8 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": []
+  "places": [],
+  "spotlightZones": []
 }
 `
 	if got != wantJSON {

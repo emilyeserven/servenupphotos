@@ -22,6 +22,7 @@ import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { Button } from "@/components/ui/button";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/map")({
@@ -423,18 +424,6 @@ function useClusterLook(clusterId: number): ClusterLook {
   return look;
 }
 
-/** Which of `count` images to show, moving on to the next one every CLUSTER_PREVIEW_MS. */
-function useTurn(count: number): number {
-  const [turn, setTurn] = useState(0);
-  useEffect(() => {
-    // Without motion the newest photo just stays.
-    if (count < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = setInterval(() => setTurn((t) => t + 1), CLUSTER_PREVIEW_MS);
-    return () => clearInterval(timer);
-  }, [count]);
-  return count === 0 ? 0 : turn % count;
-}
-
 /**
  * A cluster's marker: how many photos it covers, over its newest photos fading in and out in
  * turn, darkened so the number stays readable.
@@ -449,7 +438,7 @@ function ClusterMarker({
   onOpen: () => void;
 }) {
   const { previews, approximate } = useClusterLook(clusterId);
-  const turn = useTurn(previews.length);
+  const turn = useTurn(previews.length, CLUSTER_PREVIEW_MS);
   return (
     <button
       type="button"

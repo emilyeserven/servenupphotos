@@ -70,7 +70,8 @@ type CombinedCommit struct {
 }
 
 // FieldEdit sets top-level fields of the data file at Path, such as a photo's
-// socialMediaPublishDate, to scalar JSON values. Only those fields change, so
+// socialMediaPublishDate, to JSON values: scalars, or lists such as its
+// spotlightZones, which replace the list whole. Only those fields change, so
 // the rest of the file keeps its formatting.
 type FieldEdit struct {
 	Path   string                     `json:"path"`
@@ -300,11 +301,25 @@ func applyEdit(content []byte, edit FieldEdit) ([]byte, error) {
 	sort.Strings(keys)
 	for _, key := range keys {
 		var err error
-		if content, err = setTopLevel(content, key, edit.Fields[key]); err != nil {
+		if content, err = setField(content, key, edit.Fields[key]); err != nil {
 			return nil, err
 		}
 	}
 	return content, nil
+}
+
+// setField is setTopLevel for a scalar value, and setTopLevelList, indented
+// as a top-level value, for a list or object.
+func setField(content []byte, key string, value json.RawMessage) ([]byte, error) {
+	trimmed := bytes.TrimSpace(value)
+	if len(trimmed) == 0 || (trimmed[0] != '[' && trimmed[0] != '{') {
+		return setTopLevel(content, key, value)
+	}
+	var indented bytes.Buffer
+	if err := json.Indent(&indented, trimmed, "  ", "  "); err != nil {
+		return nil, err
+	}
+	return setTopLevelList(content, key, indented.Bytes())
 }
 
 // builtCombined is how many files buildCombined combined, and the blob SHA of

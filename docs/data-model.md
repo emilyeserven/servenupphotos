@@ -20,5 +20,8 @@ photo's `albums` and `tags` never mean the same thing.
 A photo's `places` list where it was taken, each a place ID and how the photo relates to it, and `LOCALIZATIONS.json`
 notes how countries, cities and places are written and said; see [Places and Localizations](places-and-localizations.md).
 
+A photo's `spotlightZones` lists the spots on the portfolio it's spotlighted in, by ID, such as `"homepage"`; see
+[Publish](publish.md#site-spotlight). Older files may be missing it, which means none.
+
 > **Frontend analogy:** it's a normalized store, like a Redux slice keyed by ID: photos hold only the IDs of their
 > albums and tags, and each album or tag is stored once, so renaming one later changes a single file.

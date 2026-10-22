@@ -33,6 +33,8 @@ export interface Photo {
   approximatePosition: boolean;
   /** The photo's resized versions in R2; null for photos not uploaded yet. */
   image: PhotoImage | null;
+  /** The IDs of the spots on the site the photo is spotlighted in, such as "homepage". */
+  spotlightZones: string[];
 }
 
 /** Where the photo was taken, written each way the menu's Script Display can choose. */
@@ -135,6 +137,8 @@ interface PhotoData {
   websiteSpotlight?: number | null;
   /** The day the photo is scheduled to be posted to social media, as YYYY-MM-DD; null or missing when it isn't. */
   socialMediaPublishDate?: string | null;
+  /** The spots on the site the photo is spotlighted in, picked on Site Spotlight; older entries don't have them. */
+  spotlightZones?: string[];
   /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
   places?: { relation: string; id: string }[];
   /** The IDs of the photo's albums and tags; older entries were saved without them. */
@@ -384,6 +388,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       location: photoLocation(photo),
       ...photoPosition(photo),
       image: parseImage(photo),
+      spotlightZones: photo.spotlightZones ?? [],
     };
   });
 }

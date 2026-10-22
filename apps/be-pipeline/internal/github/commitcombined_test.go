@@ -259,3 +259,25 @@ func TestCommitCombinedEditMissingFile(t *testing.T) {
 		t.Errorf("CommitCombined() error = %v, committed %v; want gone.json named and nothing committed", err, f.committed)
 	}
 }
+
+func TestApplyEditList(t *testing.T) {
+	content := []byte("{\n  \"title\": \"A\",\n  \"spotlightZones\": []\n}\n")
+	edit := FieldEdit{Fields: map[string]json.RawMessage{"spotlightZones": json.RawMessage(`["homepage"]`)}}
+	got, err := applyEdit(content, edit)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "{\n  \"title\": \"A\",\n  \"spotlightZones\": [\n    \"homepage\"\n  ]\n}\n"
+	if string(got) != want {
+		t.Errorf("applyEdit = %q, want %q", got, want)
+	}
+	// A file without the field gets it added.
+	got, err = applyEdit([]byte("{\n  \"title\": \"A\"\n}\n"), edit)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want = "{\n  \"title\": \"A\",\n  \"spotlightZones\": [\n    \"homepage\"\n  ]\n}\n"
+	if string(got) != want {
+		t.Errorf("applyEdit without the field = %q, want %q", got, want)
+	}
+}

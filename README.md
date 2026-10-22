@@ -83,11 +83,12 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 
 - [Portfolio with your own photo data](docs/local-photo-data.md): how `pnpm photos:local` and the portfolio's dev server build its local photo, place and localization data, and what each portfolio view shows
 - [EXIF and color data](docs/exif-and-colors.md) (`/exif`): reading a photo's EXIF metadata and color analysis
+- [Portfolio homepage](docs/portfolio-homepage.md) (`/` on the portfolio): the ways to explore, over photos picked on Site Spotlight
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets
 - [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields)
-- [Publish](docs/publish.md): the publish fields and the `/instagram` calendar
+- [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
 - [Saving photo data to GitHub](docs/saving-to-github.md): saving a photo's JSON to the Add photo data pull request, uploading to R2, resized versions and the Square Thumbnail
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
