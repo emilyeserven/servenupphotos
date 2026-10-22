@@ -1,12 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import {
-  type BucketImage,
-  type InFlightResponse,
-  allPhotosOnBaseQuery,
-  photosInFlightQuery,
-} from "@/api/photos";
+import type { BucketImage, InFlightResponse } from "@/api/photos";
 import { versionKeys } from "@/api/versions";
+import { useInFlight } from "@/hooks/use-in-flight";
+import { useCombinedData } from "@/stores/combined-data";
 
 /** The images whose photo data is in the open pull request, and that pull request's number. */
 interface InFlightImages {
@@ -33,22 +29,22 @@ export function usePhotoMarks(
   githubIsSetUp: boolean,
   bucket?: { images: BucketImage[] },
 ): PhotoMarks {
-  const inFlight = useQuery({ ...photosInFlightQuery, enabled: githubIsSetUp });
-  const allPhotos = useQuery({ ...allPhotosOnBaseQuery, enabled: githubIsSetUp });
+  const inFlight = useInFlight(githubIsSetUp);
+  const combined = useCombinedData(githubIsSetUp);
   const marked = useMemo(
     () => ({
       inFlight: inFlightImages(inFlight.data),
       published: publishedImages(imagesOf(bucket), [
-        ...entriesOf(allPhotos.data?.data),
-        ...entriesOf(inFlight.data?.allPhotos.data),
+        ...entriesOf(combined.data?.base.photos.data),
+        ...entriesOf(combined.data?.head?.photos.data),
       ]),
     }),
-    [bucket, inFlight.data, allPhotos.data],
+    [bucket, inFlight.data, combined.data],
   );
   return {
     ...marked,
-    checked: inFlight.isSuccess && allPhotos.isSuccess,
-    problem: inFlight.error ?? allPhotos.error ?? undefined,
+    checked: inFlight.isSuccess && combined.data !== undefined,
+    problem: inFlight.error ?? (combined.data ? undefined : combined.error),
   };
 }
 

@@ -21,7 +21,7 @@ func newAllPhotosRepo(t *testing.T, pulls, files []map[string]any, contents map[
 	t.Helper()
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
-			t.Errorf("%s %s: FindInAllPhotos must only read", r.Method, r.URL.Path)
+			t.Errorf("%s %s: FindInPullRequest and Combined must only read", r.Method, r.URL.Path)
 		}
 		p := strings.TrimPrefix(r.URL.Path, "/repos/owner/repo")
 		switch {
@@ -50,15 +50,17 @@ func newAllPhotosRepo(t *testing.T, pulls, files []map[string]any, contents map[
 	return &Client{BaseURL: srv.URL, Client: srv.Client()}
 }
 
-func TestFindInAllPhotos(t *testing.T) {
+func TestFindInPullRequest(t *testing.T) {
 	const (
-		published = `{"file":"DSC0001.jpg","gpsPosition":"35 deg 39' 31.20\" N, 139 deg 42' 2.40\" E","createDate":"2026:10:01 09:00:00","images":{"full":null,"key":null}}`
-		waiting   = `{"file":"DSC0002.jpg","gpsPosition":null,"createDate":"2026:10:02 09:00:00"}`
+		published  = `{"file":"DSC0001.jpg","gpsPosition":"35 deg 39' 31.20\" N, 139 deg 42' 2.40\" E","createDate":"2026:10:01 09:00:00","images":{"full":null,"key":null}}`
+		waiting    = `{"file":"DSC0002.jpg","gpsPosition":null,"createDate":"2026:10:02 09:00:00"}`
+		onlyOnMain = `{"file":"DSC0009.jpg","gpsPosition":null,"createDate":"2026:10:09 09:00:00"}`
 	)
 	// The pull request's own ALLPHOTOS.json is stale (CI hasn't rebuilt it),
-	// so DSC0002 is only found through its file.
+	// so DSC0002 is only found through its file. ALLPHOTOS.json on main isn't
+	// read: pages check it from Combined.
 	contents := map[string]string{
-		dataDir + "ALLPHOTOS.json@main":  "[" + published + "]",
+		dataDir + "ALLPHOTOS.json@main":  "[" + published + "," + onlyOnMain + "]",
 		dataDir + "ALLPHOTOS.json@head7": "[" + published + "]",
 		dataDir + "DSC0001.json@head7":   published,
 		dataDir + "DSC0002.json@head7":   waiting,
@@ -78,9 +80,11 @@ func TestFindInAllPhotos(t *testing.T) {
 		source  string
 		fileURL string
 	}{
-		{"on the base branch, listed once", []map[string]any{photoPull},
+		{"changed in the pull request", []map[string]any{photoPull},
 			PhotoIdentity{File: "DSC0001.jpg", GPSPosition: ptr(`35 deg 39' 31.20" N, 139 deg 42' 2.40" E`), CreateDate: ptr("2026:10:01 09:00:00")},
-			"main", "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/photos/ALLPHOTOS.json"},
+			"DSC0001.json in pull request #7", "https://github.com/owner/repo/blob/x/DSC0001.json"},
+		{"only on the base branch", []map[string]any{photoPull},
+			PhotoIdentity{File: "DSC0009.jpg", CreateDate: ptr("2026:10:09 09:00:00")}, "", ""},
 		{"waiting in the pull request, both without GPS", []map[string]any{photoPull},
 			PhotoIdentity{File: "DSC0002.jpg", CreateDate: ptr("2026:10:02 09:00:00")},
 			"DSC0002.json in pull request #7", "https://github.com/owner/repo/blob/x/DSC0002.json"},
@@ -96,9 +100,12 @@ func TestFindInAllPhotos(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := newAllPhotosRepo(t, tt.pulls, files, contents)
-			got, err := c.FindInAllPhotos(t.Context(), gh, tt.photo)
+			got, err := c.FindInPullRequest(t.Context(), gh, tt.photo)
 			if err != nil {
 				t.Fatal(err)
+			}
+			if want := len(tt.pulls); len(got.Sources) != want {
+				t.Errorf("sources = %+v, want %d", got.Sources, want)
 			}
 			if tt.source == "" {
 				if len(got.Matches) != 0 {
@@ -116,58 +123,34 @@ func TestFindInAllPhotos(t *testing.T) {
 	}
 }
 
-func TestFindInAllPhotosSources(t *testing.T) {
+func TestFindInPullRequestSources(t *testing.T) {
 	gh := settings.GitHub{Repo: "owner/repo", Token: token}
 	files := []map[string]any{
 		{"filename": dataDir + "bad.json", "status": "added"},
 		{"filename": dataDir + "missing.json", "status": "added"},
 	}
 	c := newAllPhotosRepo(t, []map[string]any{photoPull}, files, map[string]string{
-		dataDir + "ALLPHOTOS.json@main": `{"not":"an array"}`,
-		dataDir + "bad.json@head7":      `{not json`,
+		dataDir + "bad.json@head7": `{not json`,
 	})
-	got, err := c.FindInAllPhotos(t.Context(), gh, PhotoIdentity{File: "a.jpg"})
+	got, err := c.FindInPullRequest(t.Context(), gh, PhotoIdentity{File: "a.jpg"})
 	if err != nil {
 		t.Fatal(err)
 	}
-	want := []AllPhotosSource{
-		{Label: "main", FileURL: "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/photos/ALLPHOTOS.json",
-			Found: true, Error: "The file isn't a JSON array."},
-		{Label: "pull request #7", FileURL: "https://github.com/owner/repo/pull/7",
-			Found: true, Error: "couldn't read bad.json, missing.json"},
-	}
-	if len(got.Sources) != 2 || got.Sources[0] != want[0] || got.Sources[1] != want[1] {
+	want := AllPhotosSource{Label: "pull request #7", FileURL: "https://github.com/owner/repo/pull/7",
+		Found: true, Error: "couldn't read bad.json, missing.json"}
+	if len(got.Sources) != 1 || got.Sources[0] != want {
 		t.Errorf("sources = %+v\nwant %+v", got.Sources, want)
 	}
 }
 
-func TestFindInAllPhotosNeedsSettings(t *testing.T) {
+func TestFindInPullRequestNeedsSettings(t *testing.T) {
 	var perr *PublishError
-	_, err := New().FindInAllPhotos(t.Context(), settings.GitHub{}, PhotoIdentity{File: "a.jpg"})
+	_, err := New().FindInPullRequest(t.Context(), settings.GitHub{}, PhotoIdentity{File: "a.jpg"})
 	if !errors.As(err, &perr) || perr.Status != http.StatusBadRequest {
 		t.Errorf("err = %v, want a 400 asking for settings", err)
 	}
-	_, err = New().FindInAllPhotos(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token}, PhotoIdentity{})
+	_, err = New().FindInPullRequest(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token}, PhotoIdentity{})
 	if !errors.As(err, &perr) || perr.Message != "file is required" {
 		t.Errorf("err = %v, want file is required", err)
-	}
-}
-
-func TestAllPhotosOnBase(t *testing.T) {
-	gh := settings.GitHub{Repo: "owner/repo", Token: token}
-	const entry = `{"file":"DSC0001.jpg","images":{"key":"photos/abc-dsc0001.jpg"}}`
-	c := newAllPhotosRepo(t, nil, nil, map[string]string{dataDir + "ALLPHOTOS.json@main": "[" + entry + "]"})
-	got, err := c.AllPhotosOnBase(t.Context(), gh)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !got.Found || got.Count != 1 || got.Branch != "main" || !strings.Contains(string(got.Data), "abc-dsc0001") ||
-		got.FileURL != "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/photos/ALLPHOTOS.json" {
-		t.Errorf("got %+v", got)
-	}
-
-	missing, err := newAllPhotosRepo(t, nil, nil, nil).AllPhotosOnBase(t.Context(), gh)
-	if err != nil || missing.Found || missing.FileURL != "" {
-		t.Errorf("missing = %+v, %v; want not found", missing, err)
 	}
 }

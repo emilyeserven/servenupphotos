@@ -171,17 +171,8 @@ func TestInFlightAlbumsAndTags(t *testing.T) {
 	if albums.Folder != dir+"albums" || len(albums.Files) != 1 || albums.Files[0].FileURL != "https://github.com/blob/seoul" {
 		t.Fatalf("Albums = %+v, want seoul.json", albums)
 	}
-	if in := albums.Files[0].InAll; in == nil || !*in {
-		t.Errorf("Albums.Files[0].InAll = %v, want true", in)
-	}
-	if !albums.All.Found || albums.All.Count != 1 || albums.All.FileURL != "https://github.com/blob/allalbums" {
-		t.Errorf("Albums.All = %+v, want ALLALBUMS.json with one entry", albums.All)
-	}
 	tags := got.Tags
-	if len(tags.Files) != 1 || tags.Files[0].Path != dir+"tags/macro.json" || tags.Files[0].InAll != nil {
-		t.Errorf("Tags.Files = %+v, want macro.json, unchecked", tags.Files)
-	}
-	if tags.All.Found || tags.All.Path != dir+"tags/ALLTAGS.json" {
-		t.Errorf("Tags.All = %+v, want ALLTAGS.json not found", tags.All)
+	if len(tags.Files) != 1 || tags.Files[0].Path != dir+"tags/macro.json" {
+		t.Errorf("Tags.Files = %+v, want macro.json", tags.Files)
 	}
 }

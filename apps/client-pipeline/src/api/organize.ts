@@ -52,6 +52,7 @@ interface NewGroup {
 export const createGroupMutation = (kind: GroupKind) =>
   mutationOptions({
     mutationKey: ["organize", kind, "create"],
+    meta: { pushes: true },
     mutationFn: (group: NewGroup) =>
       requestJson<PublishResult>(`/api/organize/${kind}`, {
         method: "POST",

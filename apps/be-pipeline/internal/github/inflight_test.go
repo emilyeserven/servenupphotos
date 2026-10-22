@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"strings"
 	"testing"
 
@@ -74,8 +73,8 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 		map[string]string{
 			dir + "DSC0001.json": "{\n  \"file\": \"DSC0001.jpg\",\n  \"images\": {\"full\": \"https://pub/photos/a-dsc0001.jpg\", \"key\": \"photos/a-dsc0001.jpg\"}\n}\n",
 			dir + "broken.json":  "{not json",
-			// Formatted differently from DSC0001.json, as oxfmt leaves it.
-			dir + "ALLPHOTOS.json": "[\n  { \"images\": { \"key\": \"photos/a-dsc0001.jpg\", \"full\": \"https://pub/photos/a-dsc0001.jpg\" }, \"file\": \"DSC0001.jpg\" },\n  { \"file\": \"other.jpg\" }\n]\n",
+			// Combined reads it; InFlight leaves it out.
+			dir + "ALLPHOTOS.json": `[{"file":"DSC0001.jpg"}]`,
 		},
 	)
 
@@ -101,17 +100,6 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	if err := json.Unmarshal(first.Data, &data); err != nil || data["file"] != "DSC0001.jpg" || first.Error != "" {
 		t.Errorf("Files[0] = %+v, want DSC0001.json's data", first)
 	}
-	if first.InAllPhotos == nil || !*first.InAllPhotos || got.Files[1].InAllPhotos != nil {
-		t.Errorf("InAllPhotos = %v, %v; want true, then nil for the invalid file", first.InAllPhotos, got.Files[1].InAllPhotos)
-	}
-	wantAll := InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", FileURL: "https://github.com/blob/all", Found: true, Count: 2}
-	if gotAll := withoutData(got.AllPhotos); !reflect.DeepEqual(gotAll, wantAll) {
-		t.Errorf("AllPhotos = %+v, want %+v", gotAll, wantAll)
-	}
-	var entries []map[string]any
-	if err := json.Unmarshal(got.AllPhotos.Data, &entries); err != nil || len(entries) != 2 || entries[1]["file"] != "other.jpg" {
-		t.Errorf("AllPhotos.Data = %s, want ALLPHOTOS.json's two entries", got.AllPhotos.Data)
-	}
 	if first.PhotoName != "DSC0001.jpg" || got.Files[1].PhotoName != "broken" {
 		t.Errorf("PhotoName = %q, %q; want DSC0001.jpg, broken", first.PhotoName, got.Files[1].PhotoName)
 	}
@@ -129,63 +117,13 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	}
 }
 
-func TestInFlightAllPhotos(t *testing.T) {
-	const dir = "root/photos/"
-	files := []map[string]any{{"filename": dir + "a.json", "status": "added"}}
-	tests := []struct {
-		name    string
-		all     *string
-		want    InFlightAllPhotos
-		inPhoto string
-		data    string
-	}{
-		{"missing", nil, InFlightAllPhotos{Path: dir + "ALLPHOTOS.json"}, "null", ""},
-		{"not an array", ptr(`{"a":1}`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Error: "The file isn't a JSON array."}, "null", ""},
-		{"null", ptr(`null`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Error: "The file isn't a JSON array."}, "null", ""},
-		{"empty", ptr(`[]`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true}, "false", `[]`},
-		{"key order", ptr(`[{"b":2,"a":1}]`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Count: 1}, "true", `[{"b":2,"a":1}]`},
-		{"different value", ptr(`[{"a":1,"b":3}]`), InFlightAllPhotos{Path: dir + "ALLPHOTOS.json", Found: true, Count: 1}, "false", `[{"a":1,"b":3}]`},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			contents := map[string]string{dir + "a.json": `{"a":1,"b":2}`}
-			if tt.all != nil {
-				contents[dir+"ALLPHOTOS.json"] = *tt.all
-			}
-			c := newInFlightRepo(t, []map[string]any{photoPull}, files, contents)
-			got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Folder: "root", Token: token})
-			if err != nil {
-				t.Fatalf("InFlight() error = %v", err)
-			}
-			if gotAll := withoutData(got.AllPhotos); !reflect.DeepEqual(gotAll, tt.want) {
-				t.Errorf("AllPhotos = %+v, want %+v", gotAll, tt.want)
-			}
-			if string(got.AllPhotos.Data) != tt.data {
-				t.Errorf("AllPhotos.Data = %s, want %s", got.AllPhotos.Data, tt.data)
-			}
-			if len(got.Files) != 1 {
-				t.Fatalf("Files = %+v, want a.json", got.Files)
-			}
-			if in, _ := json.Marshal(got.Files[0].InAllPhotos); string(in) != tt.inPhoto {
-				t.Errorf("InAllPhotos = %s, want %s", in, tt.inPhoto)
-			}
-		})
-	}
-}
-
-// withoutData returns all without its Data, which tests check on its own.
-func withoutData(all InFlightAllPhotos) InFlightAllPhotos {
-	all.Data = nil
-	return all
-}
-
 func TestInFlightNoPullRequest(t *testing.T) {
 	c := newInFlightRepo(t, []map[string]any{}, nil, nil)
 	got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Folder: "/photos/", Token: token})
 	if err != nil {
 		t.Fatalf("InFlight() error = %v", err)
 	}
-	if got.PullRequest != nil || len(got.Files) != 0 || got.AllPhotos.Found || got.Folder != "photos/photos" {
+	if got.PullRequest != nil || len(got.Files) != 0 || got.Folder != "photos/photos" {
 		t.Errorf("InFlight() = %+v, want no pull request in folder photos/photos", got)
 	}
 }

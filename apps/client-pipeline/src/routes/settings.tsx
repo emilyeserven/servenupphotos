@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { useCombinedDataStore } from "@/stores/combined-data";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -136,6 +137,7 @@ interface SettingsCardProps {
 
 function SettingsCard({ config, stored }: SettingsCardProps) {
   const queryClient = useQueryClient();
+  const resetCombinedData = useCombinedDataStore((s) => s.reset);
   const secretStatus = (stored as unknown as Record<string, SecretStatus | undefined>)[
     config.secret.name
   ] ?? { set: false };
@@ -145,6 +147,8 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
     onSuccess: (data) => {
       queryClient.setQueryData(settingsQuery.queryKey, data);
       void queryClient.invalidateQueries({ queryKey: connectionQueryKey(config.section) });
+      // Another repository, branch or folder has other combined lists.
+      if (config.section === "github") resetCombinedData();
       form.reset(toFormValues(config, data[config.section]));
     },
   });

@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"reflect"
 	"strconv"
 	"strings"
 
@@ -23,7 +22,7 @@ const PhotosFolder = "photos"
 
 // AllPhotosFile is the portfolio's combined photo list: a JSON array of every
 // photo file in the photos folder, rebuilt by CI on the pull request. InFlight
-// lists it apart from the photo files and checks each photo against it.
+// leaves it out of the photo files; Combined reads it.
 const AllPhotosFile = "ALLPHOTOS.json"
 
 // maxPullRequestFiles is how many changed files GitHub lists for a pull request.
@@ -55,17 +54,15 @@ type InFlightFile struct {
 	// saved.
 	ImageURL string `json:"imageUrl,omitempty"`
 	ImageKey string `json:"imageKey,omitempty"`
-	// InAllPhotos says whether Data equals an entry of AllPhotosFile. It is
-	// nil when either file couldn't be read.
-	InAllPhotos *bool `json:"inAllPhotos"`
 }
 
-// InFlightAllPhotos is AllPhotosFile at the pull request's head.
+// InFlightAllPhotos is a combined list CI builds, such as AllPhotosFile, read
+// at one ref.
 type InFlightAllPhotos struct {
 	Path string `json:"path"`
-	// Found is false when the file isn't on the pull request's branch.
+	// Found is false when the file isn't at the ref.
 	Found bool `json:"found"`
-	// FileURL is the file's page on GitHub, when the pull request changes it.
+	// FileURL is the file's page on GitHub, when it was found.
 	FileURL string `json:"fileUrl,omitempty"`
 	// Count is how many photos the file lists.
 	Count int `json:"count"`
@@ -77,13 +74,12 @@ type InFlightAllPhotos struct {
 
 // InFlightResult is the photo data waiting in the open pull request.
 // PullRequest is nil when no pull request titled PullRequestTitle is open.
+// The combined lists CI builds aren't read here; Combined reads them.
 type InFlightResult struct {
 	Repo        string               `json:"repo"`
 	Folder      string               `json:"folder"`
 	PullRequest *InFlightPullRequest `json:"pullRequest"`
 	Files       []InFlightFile       `json:"files"`
-	// AllPhotos is not Found when there is no pull request.
-	AllPhotos InFlightAllPhotos `json:"allPhotos"`
 	// Albums and Tags are the album and tag files in the pull request.
 	Albums InFlightGroups `json:"albums"`
 	Tags   InFlightGroups `json:"tags"`
@@ -93,9 +89,8 @@ type InFlightResult struct {
 type InFlightGroups struct {
 	Folder string              `json:"folder"`
 	Files  []InFlightGroupFile `json:"files"`
-	// All is the kind's AllFile at the pull request's head, not Found when
-	// there is no pull request.
-	All InFlightAllPhotos `json:"all"`
+	// allFile is the kind's AllFile, which isn't listed.
+	allFile string
 }
 
 // InFlightGroupFile is one album or tag file in the pull request.
@@ -105,9 +100,6 @@ type InFlightGroupFile struct {
 	FileURL string          `json:"fileUrl"`
 	Data    json.RawMessage `json:"data,omitempty"`
 	Error   string          `json:"error,omitempty"`
-	// InAll says whether Data equals an entry of the kind's AllFile. It is nil
-	// when either file couldn't be read.
-	InAll *bool `json:"inAll"`
 }
 
 // inFlightPull is the part of a listed pull request InFlight uses.
@@ -133,7 +125,8 @@ type pullFile struct {
 
 // InFlight finds the open pull request titled PullRequestTitle in gh's
 // repository and reads the JSON files it changes in the data folder, except
-// AllPhotosFile, at the pull request's head. It only reads from GitHub.
+// the combined lists CI builds, at the pull request's head. It only reads
+// from GitHub.
 func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResult, error) {
 	root, perr := dataFolder(gh.Folder)
 	if perr != nil {
@@ -147,9 +140,8 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 	t := target{owner: owner, name: name, token: gh.Token}
 	result := InFlightResult{
 		Repo: owner + "/" + name, Folder: folder, Files: []InFlightFile{},
-		AllPhotos: InFlightAllPhotos{Path: folder + "/" + AllPhotosFile},
-		Albums:    newInFlightGroups(root, Albums),
-		Tags:      newInFlightGroups(root, Tags),
+		Albums: newInFlightGroups(root, Albums),
+		Tags:   newInFlightGroups(root, Tags),
 	}
 
 	pr, perr := c.findInFlightPull(ctx, t)
@@ -167,11 +159,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 	if perr != nil {
 		return InFlightResult{}, perr
 	}
-	allPhotosURL := ""
 	for _, f := range files {
-		if f.Filename == result.AllPhotos.Path {
-			allPhotosURL = f.BlobURL
-		}
 		for _, g := range []*InFlightGroups{&result.Albums, &result.Tags} {
 			g.add(f)
 		}
@@ -183,16 +171,6 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		file.PhotoName, file.ImageURL, file.ImageKey = photoRef(f.Filename, file.Data)
 		result.Files = append(result.Files, file)
 	}
-
-	var entries []any
-	result.AllPhotos, entries = c.readAllPhotos(ctx, t, folder, pr.Head.SHA)
-	result.AllPhotos.FileURL = allPhotosURL
-	for i, file := range result.Files {
-		if entries != nil && file.Data != nil {
-			in := containsJSON(entries, file.Data)
-			result.Files[i].InAllPhotos = &in
-		}
-	}
 	for _, g := range []*InFlightGroups{&result.Albums, &result.Tags} {
 		c.readInFlightGroups(ctx, t, g, pr.Head.SHA)
 	}
@@ -201,14 +179,13 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 
 func newInFlightGroups(root string, kind Kind) InFlightGroups {
 	folder := root + "/" + kind.Folder
-	return InFlightGroups{Folder: folder, Files: []InFlightGroupFile{}, All: InFlightAllPhotos{Path: folder + "/" + kind.AllFile}}
+	return InFlightGroups{Folder: folder, Files: []InFlightGroupFile{}, allFile: folder + "/" + kind.AllFile}
 }
 
 // add lists f when it is a JSON file in g's folder the pull request doesn't
-// remove, or notes its URL when it is g's AllFile.
+// remove, other than g's AllFile.
 func (g *InFlightGroups) add(f pullFile) {
-	if f.Filename == g.All.Path {
-		g.All.FileURL = f.BlobURL
+	if f.Filename == g.allFile {
 		return
 	}
 	if f.Status == "removed" || path.Dir(f.Filename) != g.Folder || !strings.EqualFold(path.Ext(f.Filename), ".json") {
@@ -217,50 +194,11 @@ func (g *InFlightGroups) add(f pullFile) {
 	g.Files = append(g.Files, InFlightGroupFile{Path: f.Filename, Status: f.Status, FileURL: f.BlobURL})
 }
 
-// readInFlightGroups reads g's files and AllFile at ref and checks each file
-// against the AllFile.
+// readInFlightGroups reads g's files at ref.
 func (c *Client) readInFlightGroups(ctx context.Context, t target, g *InFlightGroups, ref string) {
 	for i := range g.Files {
 		g.Files[i].Data, g.Files[i].Error = c.readJSON(ctx, t, g.Files[i].Path, ref)
 	}
-	fileURL := g.All.FileURL
-	var entries []any
-	g.All, entries = c.readCombined(ctx, t, g.All.Path, ref)
-	g.All.FileURL = fileURL
-	for i, f := range g.Files {
-		if entries != nil && f.Data != nil {
-			in := containsJSON(entries, f.Data)
-			g.Files[i].InAll = &in
-		}
-	}
-}
-
-// readAllPhotos reads AllPhotosFile in folder at ref and returns its entries.
-func (c *Client) readAllPhotos(ctx context.Context, t target, folder, ref string) (InFlightAllPhotos, []any) {
-	return c.readCombined(ctx, t, folder+"/"+AllPhotosFile, ref)
-}
-
-// readCombined reads file, a combined list CI builds, at ref and returns its
-// entries.
-func (c *Client) readCombined(ctx context.Context, t target, file, ref string) (InFlightAllPhotos, []any) {
-	all := InFlightAllPhotos{Path: file}
-	content, found, msg := c.readFile(ctx, t, all.Path, ref)
-	all.Found = found
-	if !found {
-		return all, nil
-	}
-	if msg != "" {
-		all.Error = msg
-		return all, nil
-	}
-	entries := []any{}
-	if err := json.Unmarshal(content, &entries); err != nil || entries == nil {
-		all.Error = "The file isn't a JSON array."
-		return all, nil
-	}
-	all.Count = len(entries)
-	all.Data = json.RawMessage(content)
-	return all, entries
 }
 
 // photoRef returns the "file" field of data, or file's name without .json,
@@ -287,21 +225,6 @@ func photoRef(file string, data json.RawMessage) (name, imageURL, imageKey strin
 		imageKey = strings.TrimSpace(*photo.Images.Key)
 	}
 	return name, imageURL, imageKey
-}
-
-// containsJSON reports whether data equals one of entries, ignoring
-// formatting and key order.
-func containsJSON(entries []any, data json.RawMessage) bool {
-	var v any
-	if json.Unmarshal(data, &v) != nil {
-		return false
-	}
-	for _, e := range entries {
-		if reflect.DeepEqual(e, v) {
-			return true
-		}
-	}
-	return false
 }
 
 // dataFolder cleans the Settings folder, defaulting to DefaultDataFolder.

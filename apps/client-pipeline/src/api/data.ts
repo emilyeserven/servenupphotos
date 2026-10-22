@@ -86,6 +86,7 @@ export const baseUrlPreviewQuery = (change: BaseUrlChange) =>
 /** Moves the image URLs in every photo JSON file, as one commit in the photo data pull request. */
 export const replaceBaseUrlMutation = mutationOptions({
   mutationKey: ["data", "image-base-url", "replace"],
+  meta: { pushes: true },
   mutationFn: (change: BaseUrlChange) => post<BaseUrlResult>("/api/data/image-base-url", change),
 });
 
@@ -130,6 +131,7 @@ export const missingFieldsQuery = (readExif: boolean) =>
 /** Adds the missing fields to every photo JSON file, as one commit in the photo data pull request. */
 export const addMissingFieldsMutation = mutationOptions({
   mutationKey: ["data", "missing-fields", "add"],
+  meta: { pushes: true },
   mutationFn: (readExif: boolean) =>
     post<MissingFieldsResult>("/api/data/missing-fields", { readExif }),
 });

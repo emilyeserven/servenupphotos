@@ -20,8 +20,9 @@ type PhotoIdentity struct {
 	CreateDate  *string `json:"createDate"`
 }
 
-// AllPhotosSource is one place FindInAllPhotos looked: AllPhotosFile on the
-// base branch, or the photo data pull request's files.
+// AllPhotosSource is one place a photo was looked for: AllPhotosFile on the
+// base branch, which pages check themselves from Combined, or the photo data
+// pull request's files, which FindInPullRequest checks.
 type AllPhotosSource struct {
 	// Label names it: the base branch, or the photo data pull request.
 	Label   string `json:"label"`
@@ -32,29 +33,30 @@ type AllPhotosSource struct {
 	Error string `json:"error,omitempty"`
 }
 
-// AllPhotosMatch is an AllPhotosFile entry for the same photo.
+// AllPhotosMatch is an entry for the same photo.
 type AllPhotosMatch struct {
-	// Source says where it was found first: the base branch's label, or the
-	// pull request file's name and the pull request's label.
+	// Source says where it was found first: the pull request file's name and
+	// the pull request's label.
 	Source  string          `json:"source"`
 	FileURL string          `json:"fileUrl"`
 	Entry   json.RawMessage `json:"entry"`
 }
 
-// AllPhotosCheck is where FindInAllPhotos looked and what it found.
+// AllPhotosCheck is where FindInPullRequest looked and what it found. Sources
+// is empty when no photo data pull request is open.
 type AllPhotosCheck struct {
-	Path    string            `json:"path"`
 	Sources []AllPhotosSource `json:"sources"`
 	Matches []AllPhotosMatch  `json:"matches"`
 }
 
-// FindInAllPhotos looks for photo in AllPhotosFile on the base branch from
-// Settings (or the default branch) and, when one is open, in the photo data
-// files the photo data pull request adds or changes. Those files are read
+// FindInPullRequest looks for photo in the photo data files the photo data
+// pull request adds or changes, when one is open. Those files are read
 // directly rather than through the pull request's AllPhotosFile, which CI
-// rebuilds after each push and may not have caught up with yet. An entry
-// found more than once is listed once. It only reads from GitHub.
-func (c *Client) FindInAllPhotos(ctx context.Context, gh settings.GitHub, photo PhotoIdentity) (AllPhotosCheck, error) {
+// rebuilds after each push and may not have caught up with yet. AllPhotosFile
+// on the base branch isn't read: pages check it from Combined, which they
+// keep. An entry found more than once is listed once. It only reads from
+// GitHub.
+func (c *Client) FindInPullRequest(ctx context.Context, gh settings.GitHub, photo PhotoIdentity) (AllPhotosCheck, error) {
 	if strings.TrimSpace(photo.File) == "" {
 		return AllPhotosCheck{}, publishErr(http.StatusBadRequest, "file is required")
 	}
@@ -62,39 +64,27 @@ func (c *Client) FindInAllPhotos(ctx context.Context, gh settings.GitHub, photo 
 	if perr != nil {
 		return AllPhotosCheck{}, perr
 	}
-	t, perr := c.target(ctx, gh)
-	if perr != nil {
-		return AllPhotosCheck{}, perr
+	owner, name, ok := splitRepo(gh.Repo)
+	if !ok || gh.Token == "" {
+		return AllPhotosCheck{}, publishErr(http.StatusBadRequest, "Set the GitHub repository and token in Settings first.")
 	}
-	check := AllPhotosCheck{Path: folder + "/" + AllPhotosFile, Sources: []AllPhotosSource{}, Matches: []AllPhotosMatch{}}
-	seen := map[string]bool{}
-	add := func(source, fileURL string, entry json.RawMessage) {
-		if key := canonicalJSON(entry); !seen[key] && sameIdentity(entry, photo) {
-			seen[key] = true
-			check.Matches = append(check.Matches, AllPhotosMatch{Source: source, FileURL: fileURL, Entry: entry})
-		}
-	}
-
-	base := AllPhotosSource{
-		Label:   t.base,
-		FileURL: "https://github.com/" + t.repo.FullName + "/blob/" + escapePath(t.base) + "/" + escapePath(check.Path),
-	}
-	var entries []json.RawMessage
-	base.Found, entries, base.Error = c.readAllPhotosEntries(ctx, t, check.Path, t.base)
-	check.Sources = append(check.Sources, base)
-	for _, e := range entries {
-		add(base.Label, base.FileURL, e)
-	}
+	t := target{owner: owner, name: name, token: gh.Token}
+	check := AllPhotosCheck{Sources: []AllPhotosSource{}, Matches: []AllPhotosMatch{}}
 
 	pr, perr := c.findInFlightPull(ctx, t)
 	if perr != nil {
 		return AllPhotosCheck{}, perr
 	}
-	if pr != nil {
-		source, files := c.readPullPhotoFiles(ctx, t, folder, pr)
-		check.Sources = append(check.Sources, source)
-		for _, f := range files {
-			add(path.Base(f.Path)+" in "+source.Label, f.FileURL, f.Data)
+	if pr == nil {
+		return check, nil
+	}
+	source, files := c.readPullPhotoFiles(ctx, t, folder, pr)
+	check.Sources = append(check.Sources, source)
+	seen := map[string]bool{}
+	for _, f := range files {
+		if key := canonicalJSON(f.Data); !seen[key] && sameIdentity(f.Data, photo) {
+			seen[key] = true
+			check.Matches = append(check.Matches, AllPhotosMatch{Source: path.Base(f.Path) + " in " + source.Label, FileURL: f.FileURL, Entry: f.Data})
 		}
 	}
 	return check, nil
@@ -128,23 +118,6 @@ func (c *Client) readPullPhotoFiles(ctx context.Context, t target, folder string
 	return source, files
 }
 
-// readAllPhotosEntries reads the AllPhotosFile at file and ref, returning
-// whether it exists, its entries, and why it couldn't be used, if it couldn't.
-func (c *Client) readAllPhotosEntries(ctx context.Context, t target, file, ref string) (bool, []json.RawMessage, string) {
-	content, found, msg := c.readFile(ctx, t, file, ref)
-	if !found {
-		return false, nil, ""
-	}
-	if msg != "" {
-		return true, nil, msg
-	}
-	var entries []json.RawMessage
-	if err := json.Unmarshal(content, &entries); err != nil || entries == nil {
-		return true, nil, "The file isn't a JSON array."
-	}
-	return true, entries, ""
-}
-
 // sameIdentity reports whether entry is a photo with photo's file name, GPS
 // position and creation date.
 func sameIdentity(entry json.RawMessage, photo PhotoIdentity) bool {
@@ -176,30 +149,4 @@ func canonicalJSON(raw json.RawMessage) string {
 	}
 	b, _ := json.Marshal(v)
 	return string(b)
-}
-
-// BaseAllPhotos is AllPhotosFile on the base branch from Settings (or the
-// default branch): the photos already in the portfolio.
-type BaseAllPhotos struct {
-	InFlightAllPhotos
-	// Branch is the base branch it was read from.
-	Branch string `json:"branch"`
-}
-
-// AllPhotosOnBase reads AllPhotosFile on the base branch from Settings, or
-// the default branch. It only reads from GitHub.
-func (c *Client) AllPhotosOnBase(ctx context.Context, gh settings.GitHub) (BaseAllPhotos, error) {
-	folder, perr := photoFolder(gh.Folder)
-	if perr != nil {
-		return BaseAllPhotos{}, perr
-	}
-	t, perr := c.target(ctx, gh)
-	if perr != nil {
-		return BaseAllPhotos{}, perr
-	}
-	all, _ := c.readAllPhotos(ctx, t, folder, t.base)
-	if all.Found {
-		all.FileURL = "https://github.com/" + t.repo.FullName + "/blob/" + escapePath(t.base) + "/" + escapePath(all.Path)
-	}
-	return BaseAllPhotos{InFlightAllPhotos: all, Branch: t.base}, nil
 }
