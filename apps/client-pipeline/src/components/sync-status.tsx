@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { CheckIcon, CircleDotIcon, GitPullRequestIcon, TriangleAlertIcon } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import type { CombinedCommit } from "@/api/photos";
 import { githubIsSetUp, settingsQuery } from "@/api/settings";
 import { CommitButton } from "@/components/all-photos-rebuild";
 import { Spinner } from "@/components/ui/spinner";
 import { FloatingActionsSlot } from "@/components/floating-actions";
+import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { useCombinedData, useCombinedSync } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
@@ -70,25 +71,6 @@ function badgeOf(sync: Sync, loading: boolean): Badge {
   return SETTLED[settledKey(sync, loading)];
 }
 
-/** Closes the panel on a click outside ref, or Escape. */
-function useDismiss(open: boolean, ref: React.RefObject<HTMLElement | null>, close: () => void) {
-  useEffect(() => {
-    if (!open) return;
-    const onPointer = (event: PointerEvent) => {
-      if (!ref.current?.contains(event.target as Node)) close();
-    };
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-    };
-    document.addEventListener("pointerdown", onPointer);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onPointer);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open, ref, close]);
-}
-
 /**
  * A floating button at the top right of every page saying whether the photo data pull request has
  * changes ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json don't have yet, opening a panel to commit
@@ -103,14 +85,18 @@ function SyncStatusButton() {
   const combined = useCombinedData();
   const sync = useCombinedSync();
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  useDismiss(open, ref, () => setOpen(false));
+  const button = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  // Not the whole corner: the floating actions next to the button have their own panels.
+  useDismiss(open, [button, panel], () => setOpen(false));
   const badge = badgeOf(sync, combined.isPending);
 
   return (
-    <div ref={ref} className="fixed top-3 right-4 z-40 flex flex-col items-end gap-2">
-      <div className="flex items-center gap-2">
+    <div className="fixed top-3 right-4 z-40 flex max-w-[calc(100vw-4rem)] flex-col items-end gap-2">
+      {/* On a phone the floating actions wrap onto a second row. */}
+      <div className="flex flex-wrap items-center justify-end gap-2">
         <button
+          ref={button}
           type="button"
           aria-expanded={open}
           aria-haspopup="dialog"
@@ -125,15 +111,24 @@ function SyncStatusButton() {
         </button>
         <FloatingActionsSlot />
       </div>
-      {open && <SyncPanel sync={sync} onNavigate={() => setOpen(false)} />}
+      {open && <SyncPanel ref={panel} sync={sync} onNavigate={() => setOpen(false)} />}
     </div>
   );
 }
 
 /** What's in flight and whether it's synced, with Commit. */
-function SyncPanel({ sync, onNavigate }: { sync: Sync; onNavigate: () => void }) {
+function SyncPanel({
+  ref,
+  sync,
+  onNavigate,
+}: {
+  ref: React.Ref<HTMLDivElement>;
+  sync: Sync;
+  onNavigate: () => void;
+}) {
   return (
     <div
+      ref={ref}
       role="dialog"
       aria-label="Photo data sync"
       className="bg-popover text-popover-foreground flex w-[min(20rem,calc(100vw-2rem))] flex-col gap-3 rounded-xl border p-4 text-sm shadow-lg"

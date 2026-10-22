@@ -6,11 +6,10 @@ import { useRef, useState } from "react";
 import { type ExifResponse, exifMutation, type SanitizedExif } from "@/api/exif";
 import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import type { PhotoIdentity } from "@/api/photos";
-import { type UploadMutation, type UploadResponse, uploadMutation } from "@/api/upload";
+import type { UploadResponse } from "@/api/upload";
 import { thumbnailCropField } from "@/api/versions";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
-import { GitHubSaveCard } from "@/components/github-save";
 import { PhotoGroupsCard } from "@/components/group-picker";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Page } from "@/components/page";
@@ -23,7 +22,10 @@ import {
   PhotoDetailsCard,
   withDetails,
 } from "@/components/photo-details";
-import { R2Upload } from "@/components/r2-upload";
+import { FloatingAction } from "@/components/floating-actions";
+import { PhotoSaveButton } from "@/components/photo-save-button";
+import { R2Button } from "@/components/r2-upload/r2-button";
+import { type R2Upload, useR2Upload } from "@/components/r2-upload/use-r2-upload";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { VersionPreviews } from "@/components/version-previews";
 import type { Crop } from "@/lib/crop";
@@ -117,13 +119,15 @@ function usePhotoState<T>(submittedAt: number, initial: T): [T, (value: T) => vo
 
 function PhotoPage() {
   const extract = useMutation(exifMutation);
-  // Lives here rather than in the upload card so its URL can go into the sanitized EXIF.
-  const upload = useMutation(uploadMutation);
+  // Starts as the middle of the photo once it has loaded; a new photo starts it over.
+  const [crop, setCrop] = usePhotoState<Crop | null>(extract.submittedAt, null);
+  // Lives here so the uploaded photo's URLs can go into the sanitized EXIF.
+  const r2 = useR2Upload(crop);
   // Lives here so it can go into the JSON to upload and the JSON saved to GitHub.
   const [details, setDetails] = usePhotoState(extract.submittedAt, NO_DETAILS);
   const [groups, setGroups] = usePhotoState(extract.submittedAt, NO_GROUPS);
   const [saved, setSaved] = usePhotoState(extract.submittedAt, false);
-  const images = withImages(extract.data?.sanitized, upload.data);
+  const images = withImages(extract.data?.sanitized, r2.uploaded);
   const sanitized = images && withDetails(images, details);
   const identity = photoIdentity(extract, sanitized);
 
@@ -133,13 +137,27 @@ function PhotoPage() {
       description="Choose a JPEG to read its metadata with exiftool and its colors with go-colorful on the Go backend, then upload it and save its data."
       wide
     >
+      <NewPhotoActions
+        extract={extract}
+        sanitized={sanitized}
+        identity={identity}
+        groups={groups}
+        r2={r2}
+        onSaved={() => setSaved(true)}
+      />
       <div className="grid items-start gap-6 lg:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-6">
-          <PhotoCard extract={extract} upload={upload} />
+          <PhotoCard extract={extract} onReset={r2.reset} />
           {/* Keyed by submission so a new photo starts with fresh cards. */}
           {extract.isSuccess && (
             <AllPhotosGate key={extract.submittedAt} photo={identity}>
-              <UploadSteps photo={extract.variables} upload={upload} />
+              <UploadSteps
+                photo={extract.variables}
+                r2={r2}
+                crop={crop}
+                onCropChange={setCrop}
+                saved={saved}
+              />
             </AllPhotosGate>
           )}
         </div>
@@ -153,7 +171,6 @@ function PhotoPage() {
             groups={groups}
             onGroupsChange={setGroups}
             saved={saved}
-            onSaved={() => setSaved(true)}
           />
         </div>
       </div>
@@ -161,22 +178,75 @@ function PhotoPage() {
   );
 }
 
-/** The resized versions, the square thumbnail's crop and the upload, for one analyzed photo. */
-function UploadSteps({ photo, upload }: { photo: File; upload: UploadMutation }) {
-  // Starts as the middle of the photo once it has loaded; a new photo remounts this, starting over.
-  const [crop, setCrop] = useState<Crop | null>(null);
+interface NewPhotoActionsProps {
+  extract: ExifMutation;
+  sanitized: SanitizedExif | null;
+  identity: PhotoIdentity | null;
+  groups: PhotoGroups;
+  r2: R2Upload;
+  onSaved: () => void;
+}
+
+/**
+ * Upload to R2 and Save, floated next to the sync button, once the photo is analyzed, unless it's
+ * already in ALLPHOTOS.json. Upload comes first, so the saved JSON links to the photo in R2.
+ */
+function NewPhotoActions({
+  extract,
+  sanitized,
+  identity,
+  groups,
+  r2,
+  onSaved,
+}: NewPhotoActionsProps) {
+  if (!extract.isSuccess || !sanitized) return null;
+  return (
+    // The gate under the photo shows the check's status, so this one stays quiet.
+    <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
+      <FloatingAction>
+        <R2Button r2={r2} photo={extract.variables} />
+        <PhotoSaveButton
+          file={extract.data.file}
+          sanitized={sanitized}
+          groups={groups}
+          uploaded={Boolean(r2.uploaded)}
+          onSaved={onSaved}
+        />
+      </FloatingAction>
+    </AllPhotosGate>
+  );
+}
+
+interface UploadStepsProps {
+  photo: File;
+  r2: R2Upload;
+  crop: Crop | null;
+  onCropChange: (crop: Crop) => void;
+  /** The JSON has been saved to GitHub, with the square as it is. */
+  saved: boolean;
+}
+
+/** The resized versions and the square thumbnail's crop, for one analyzed photo. */
+function UploadSteps({ photo, r2, crop, onCropChange, saved }: UploadStepsProps) {
   return (
     <>
       <VersionPreviews photo={photo} />
       <ThumbnailCrop
         photo={photo}
         crop={crop}
-        onCropChange={setCrop}
-        locked={upload.isPending || upload.isSuccess}
+        onCropChange={onCropChange}
+        locked={r2.pending || saved}
+        lockedNote={lockedNote(saved)}
       />
-      <R2Upload photo={photo} upload={upload} crop={crop} />
     </>
   );
+}
+
+/** Why the square can't move: it's saved in the JSON, or being uploaded. */
+function lockedNote(saved: boolean): string {
+  return saved
+    ? "Saved to the batch with this square. Change it from the photo's Edit button in Photos in Flight."
+    : "Uploading with this square…";
 }
 
 /** What ALLPHOTOS.json is checked for, once the photo's EXIF has been read. */
@@ -187,12 +257,12 @@ function photoIdentity(extract: ExifMutation, sanitized: SanitizedExif | null) {
 }
 
 /** Picks the photo, and analyzes it as soon as a valid one is chosen. */
-function PhotoCard({ extract, upload }: { extract: ExifMutation; upload: UploadMutation }) {
+function PhotoCard({ extract, onReset }: { extract: ExifMutation; onReset: () => void }) {
   const form = useForm({
     defaultValues: { photo: null as File | null },
     validators: { onSubmit: ({ value }) => validatePhoto(value.photo) },
     onSubmit: async ({ value }) => {
-      upload.reset();
+      onReset();
       if (value.photo) await extract.mutateAsync(value.photo).catch(() => {});
     },
   });
@@ -219,7 +289,7 @@ function PhotoCard({ extract, upload }: { extract: ExifMutation; upload: UploadM
                 onBlur={field.handleBlur}
                 onChange={(photo) => {
                   extract.reset();
-                  upload.reset();
+                  onReset();
                   field.handleChange(photo);
                   if (!validatePhoto(photo)) void form.handleSubmit();
                 }}
@@ -242,10 +312,9 @@ interface ResultsColumnProps {
   onGroupsChange: (groups: PhotoGroups) => void;
   /** The JSON has been saved to GitHub. */
   saved: boolean;
-  onSaved: () => void;
 }
 
-/** The analyzed photo's results, then its title, place name, comment, albums and tags, and saving them to GitHub unless it's already in ALLPHOTOS.json. */
+/** The analyzed photo's title, place name, comment, albums and tags unless it's already in ALLPHOTOS.json, then its results. */
 function ResultsColumn({
   extract,
   sanitized,
@@ -255,7 +324,6 @@ function ResultsColumn({
   groups,
   onGroupsChange,
   saved,
-  onSaved,
 }: ResultsColumnProps) {
   if (extract.isIdle) return null;
   const result = <ExifResult mutation={extract} sanitized={sanitized} groups={groups} />;
@@ -275,20 +343,11 @@ function ResultsColumn({
         <NewPhotoGroups groups={groups} onGroupsChange={onGroupsChange} saved={saved} />
       </AllPhotosGate>
       {result}
-      {/* The gate in the other column shows the check's status, so this one stays quiet. */}
-      <AllPhotosGate key={extract.submittedAt} photo={identity} showStatus={false}>
-        <GitHubSaveCard
-          file={extract.data.file}
-          sanitized={sanitized}
-          groups={groups}
-          onSaved={onSaved}
-        />
-      </AllPhotosGate>
     </>
   );
 }
 
-/** The new photo's albums and tags, saved in its JSON with Add to Batch. */
+/** The new photo's albums and tags, saved in its JSON with Save. */
 function NewPhotoGroups({
   groups,
   onGroupsChange,
@@ -299,9 +358,7 @@ function NewPhotoGroups({
       value={groups}
       onChange={onGroupsChange}
       description={
-        saved
-          ? "Saved with the photo's JSON."
-          : "Optional, and saved in the JSON when you save to GitHub."
+        saved ? "Saved with the photo's JSON." : "Optional, and saved in the JSON when you save."
       }
       disabled={saved}
     />
@@ -337,7 +394,7 @@ function NewPhotoDetails({
         description={
           saved
             ? "Saved with the photo's JSON."
-            : "All optional, and saved in the JSON when you save to GitHub."
+            : "All optional, and saved in the JSON when you save."
         }
         disabled={saved}
       />
@@ -488,7 +545,7 @@ function ExifResultBody({ mutation, sanitized, groups }: ExifResultProps) {
   );
 }
 
-/** The JSON Add to Batch writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload, then its albums and tags. */
+/** The JSON Save writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload, then its albums and tags. */
 function UploadJson({
   file,
   sanitized,
@@ -499,7 +556,7 @@ function UploadJson({
   groups: PhotoGroups;
 }) {
   if (!sanitized) return <ExifData exif={null} />;
-  // The title and comment first, and the albums and tags last, as Add to Batch writes them.
+  // The title and comment first, and the albums and tags last, as Save writes them.
   const { title, comment, ...rest } = sanitized;
   return (
     <JsonCodeBlock

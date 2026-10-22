@@ -1,4 +1,4 @@
-import { type UseMutationResult, mutationOptions } from "@tanstack/react-query";
+import { mutationOptions } from "@tanstack/react-query";
 import type { BucketImage } from "@/api/photos";
 import type { PublishedName } from "@/api/versions";
 import type { Crop } from "@/lib/crop";
@@ -89,5 +89,3 @@ export const uploadMutation = mutationOptions({
   mutationKey: ["upload"],
   mutationFn: uploadPhoto,
 });
-
-export type UploadMutation = UseMutationResult<UploadResponse, Error, UploadRequest>;
