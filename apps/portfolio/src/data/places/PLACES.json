@@ -1,5 +1,15 @@
 [
   {
+    "id": "astoria",
+    "name": "Astoria",
+    "description": "",
+    "parent": "queens",
+    "city": "",
+    "country": "",
+    "latitude": 40.76383083369049,
+    "longitude": -73.92457375631997
+  },
+  {
     "id": "geunjeongjeon",
     "name": "Geunjeongjeon",
     "description": "",
@@ -50,6 +60,14 @@
     "country": ""
   },
   {
+    "id": "manhattan-chinatown",
+    "name": "Manhattan Chinatown",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
     "id": "midtown",
     "name": "Midtown East",
     "description": "",
@@ -83,6 +101,14 @@
     "longitude": -73.99337287689791
   },
   {
+    "id": "queens",
+    "name": "Queens",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
     "id": "queensboro-bridge",
     "name": "Queensboro Bridge",
     "description": "",
@@ -93,6 +119,14 @@
     "longitude": -73.95462146594694
   },
   {
+    "id": "the-high-line",
+    "name": "The High Line",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
     "id": "upper-east-side",
     "name": "Upper East Side",
     "description": "",
@@ -101,5 +135,15 @@
     "country": "United States of America",
     "latitude": 40.77416765599665,
     "longitude": -73.95773421216752
+  },
+  {
+    "id": "welling-court-mural-project",
+    "name": "Welling Court Mural Project",
+    "description": "",
+    "parent": "astoria",
+    "city": "",
+    "country": "",
+    "latitude": 40.7718124785072,
+    "longitude": -73.9311989162955
   }
 ]

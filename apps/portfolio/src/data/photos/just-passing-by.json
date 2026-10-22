@@ -1,0 +1,53 @@
+{
+  "title": "Just Passing By",
+  "comment": null,
+  "file": "IMG_3526.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF50mm f/1.8 II",
+  "aperture": 5.6,
+  "exposure": "1/500",
+  "iso": 100,
+  "focalLength": 50,
+  "gpsPosition": null,
+  "createDate": "2018:10:12 12:34:58",
+  "placeName": "Welling Court Mural Project",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 6000,
+  "height": 3447,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526.jpg",
+    "key": "photos/8201cb8ad5b4-img-3526.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526-thumbnail.webp?crop=3015,462,2985",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8201cb8ad5b4-img-3526-thumbnailpreview.webp?crop=3015,462,2985",
+    "thumbnailcrop": {
+      "x": 3015,
+      "y": 462,
+      "size": 2985,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "welling-court-mural-project"
+    },
+    {
+      "relation": "in",
+      "id": "astoria"
+    }
+  ]
+}
