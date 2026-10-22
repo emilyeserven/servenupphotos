@@ -36,5 +36,8 @@
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
   "albums": [],
-  "tags": []
+  "tags": [],
+  "placeName": "Gyeongbokgung Station",
+  "customCity": "Seoul",
+  "customCountry": null
 }
