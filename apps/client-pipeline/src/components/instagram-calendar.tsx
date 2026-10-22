@@ -6,9 +6,10 @@ import {
   ImageIcon,
   PlusIcon,
 } from "lucide-react";
-import { type DragEvent, type ReactNode, useState } from "react";
+import { type DragEvent, type ReactNode, useCallback, useState } from "react";
 import {
   type SocialCalendar,
+  type SocialCalendarRead,
   type SocialDatesResult,
   type SocialPhoto,
   setSocialDatesMutation,
@@ -27,6 +28,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { calendarDays, isoDate, parseIsoDate } from "@/lib/calendar";
+import { withBaseAllPhotos } from "@/lib/combined";
 import {
   type Unsaved,
   dateOf,
@@ -37,6 +39,7 @@ import {
   unsavedChanges,
 } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
+import { useCombinedData } from "@/stores/combined-data";
 
 /** How many weeks the calendar shows, this week first. */
 const WEEKS = 3;
@@ -68,7 +71,15 @@ function ExternalLink({ href, children }: { href: string; children: ReactNode })
 
 /** Schedules photos to post to Instagram, one a day, on a calendar of the coming weeks. */
 export function InstagramCalendar() {
-  const calendar = useQuery(socialCalendarQuery);
+  // ALLPHOTOS.json on the base branch, kept by the store, tells photos in flight from published ones.
+  const combined = useCombinedData();
+  const { data: lists, error } = combined;
+  const select = useCallback(
+    (read: SocialCalendarRead) => withBaseAllPhotos(read, { data: lists, error }),
+    [lists, error],
+  );
+  const calendar = useQuery({ ...socialCalendarQuery, select });
+  if (combined.isPending) return <p>Reading ALLPHOTOS.json…</p>;
   return (
     <QueryResult query={calendar} pendingLabel="Reading the photo JSON…">
       {(data) => <Schedule calendar={data} />}

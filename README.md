@@ -198,13 +198,13 @@ and `thumbnail` the public URL of its Square Thumbnail, with `thumbnailpreview` 
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
 
-Once a photo is analyzed, the page first looks for it in the saved photo data on GitHub (`POST /api/photos/all-photos/check`
-→ `POST /photos/all-photos/check`): `ALLPHOTOS.json` on the Settings branch, and each photo JSON file the open **Add photo
-data** pull request adds or changes. The pull request's files are read directly, not its `ALLPHOTOS.json`, because CI
+Once a photo is analyzed, the page first looks for it in the saved photo data on GitHub: `ALLPHOTOS.json` on the
+Settings branch, from the [combined data store](#combined-data-store), and each photo JSON file the open **Add photo
+data** pull request adds or changes (`POST /api/photos/all-photos/check` → `POST /photos/all-photos/check`). The pull request's files are read directly, not its `ALLPHOTOS.json`, because CI
 rebuilds that after every push and may not have caught up yet. An entry with the same `file`, `gpsPosition` and `createDate` (exactly equal, with `null` matching only `null`) means the
 photo is already in the portfolio: the page shows that entry and hides **Upload to R2** and **Save to GitHub**, since
 editing a saved photo isn't supported yet. If the check can't run (GitHub isn't set up, or the file can't be read), the
-page says so and still offers both.
+page says so and still offers both; if only one of the two places can be read, it checks that one and warns about the other.
 
 Only JPEG photos can be uploaded. Along with the original `photos/<hash>-<name>.jpg`, **Upload to R2** puts six WEBP
 versions next to it, scaled down to fit their longest edge (width or height) and keeping their proportions:
@@ -263,8 +263,8 @@ optional: with it, Photos in Flight can tell when CI has rebuilt `ALLPHOTOS.json
 `GET /photos/in-flight`). It finds the open pull request with that title in the repository from Settings and shows each
 `.json` file the pull request adds or changes directly in the photos folder (`apps/portfolio/src/data/photos` when the
 Settings data folder is blank), read at the pull request's head. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
-mark when its data is one of the entries in `ALLPHOTOS.json` at the same head (compared as JSON, so formatting and key
-order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
+mark when its data is one of the entries in `ALLPHOTOS.json` at the pull request's head, as the
+[combined data store](#combined-data-store) has it (compared as JSON, so formatting and key order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
 file's name), or a "no image" sign when there's none. Under the photo is its Square Thumbnail: the JSON's
 `images.thumbnail`, or else the `-thumbnail.webp` next to the photo in R2, with a placeholder when R2 doesn't have one
@@ -294,6 +294,24 @@ follows the same way.
 Under the photos it lists the album and tag files the pull request adds or changes, each with its JSON and a check mark
 when it's an entry of `ALLALBUMS.json` or `ALLTAGS.json` at the same head, and the pull request summary counts them.
 
+### Combined data store
+
+`ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once, on the Settings branch and at the open **Add photo
+data** pull request's head (`GET /api/photos/combined` → `GET /photos/combined`), and kept in a Zustand store
+(`apps/client-pipeline/src/stores/combined-data.ts`) that every page shares: Photos in Flight, Explore Bucket, the Add
+Photo check and the Instagram calendar. Other endpoints don't read them anymore. They only change when CI rebuilds them
+or the pull request is merged, so the store reads them again only:
+
+- after a save that pushes to the pull request (photo JSON, edits, removals, new albums and tags, Update Data, Instagram
+  dates; each marks its mutation with `meta: { pushes: true }`), once the **Combine photo data** run for it finishes
+  (or about 30 seconds later without **Actions: Read-only**),
+- when Photos in Flight finds the pull request at a head the store didn't read them at, such as after a merge or a push
+  from elsewhere,
+- on Photos in Flight's **Refresh**, after the GitHub settings change, and on a page reload.
+
+> **Frontend analogy:** it's a client-side cache with manual invalidation, like a TanStack Query entry with
+> `staleTime: Infinity` whose only `invalidateQueries` calls are tied to "CI finished" events.
+
 ### Albums and Tags
 
 `/albums` and `/tags`, under **Organize** in the sidebar, add new albums and tags. Each page lists every album or tag
@@ -320,7 +338,7 @@ first, each labelled with its size (for example "Large · 1800px"); clicking it 
 tile links to the image. A resized copy whose original isn't in the bucket shows on its own, still labelled.
 
 A photo already in `ALLPHOTOS.json` (on the base branch, or in the pull request's copy) gets a book badge
-(`GET /api/photos/all-photos` → `GET /photos/all-photos` reads it from the base branch). An entry matches by its saved
+(both come from the [combined data store](#combined-data-store)). An entry matches by its saved
 `images.key`, then its `images.full` URL, then by the name stem in the original's key. An original JPEG that is neither
 in flight nor in `ALLPHOTOS.json` gets a **Generate JSON** button, which opens a modal that reads the original
 from R2 (`POST /api/photos/bucket/exif` with `{ "key" }` → `POST /photos/bucket/exif`) through the same EXIF and color

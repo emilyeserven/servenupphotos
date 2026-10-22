@@ -72,7 +72,7 @@ func handleAllPhotosCheck(store *settings.Store, gh *github.Client) http.Handler
 
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		result, err := gh.FindInAllPhotos(ctx, cfg, photo)
+		result, err := gh.FindInPullRequest(ctx, cfg, photo)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
 			writeError(w, perr.Status, perr.Message)

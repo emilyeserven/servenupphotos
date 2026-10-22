@@ -2,12 +2,7 @@ import { type UseMutationResult, useMutation, useQueryClient } from "@tanstack/r
 import { BracesIcon } from "lucide-react";
 import { useState } from "react";
 import type { ExifResponse, SanitizedExif } from "@/api/exif";
-import {
-  type BucketImage,
-  allPhotosOnBaseQuery,
-  bucketExifMutation,
-  photosInFlightQuery,
-} from "@/api/photos";
+import { type BucketImage, bucketExifMutation, photosInFlightQuery } from "@/api/photos";
 import { PUBLISHED, parseVersionKey } from "@/api/versions";
 import { AllPhotosGate } from "@/components/allphotos-check";
 import { GitHubSaveCard } from "@/components/github-save";
@@ -49,7 +44,6 @@ export function GenerateJsonButton({ original, copies }: GenerateJsonProps) {
   const refreshMarks = () => {
     if (!saved) return;
     void queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey });
-    void queryClient.invalidateQueries({ queryKey: allPhotosOnBaseQuery.queryKey });
   };
   const onOpenChange = (next: boolean) => {
     setOpen(next);

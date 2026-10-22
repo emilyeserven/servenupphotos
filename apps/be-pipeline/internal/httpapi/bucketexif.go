@@ -112,10 +112,10 @@ func checkSavedJPEG(path string) (int, string) {
 	return http.StatusOK, ""
 }
 
-// handleAllPhotosOnBase reads ALLPHOTOS.json on the base branch from
-// Settings, so Explore Bucket can tell which photos are already in the
-// portfolio. It only reads from GitHub.
-func handleAllPhotosOnBase(store *settings.Store, gh *github.Client) http.HandlerFunc {
+// handleCombined reads ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the
+// base branch from Settings and on the photo data pull request, which pages
+// keep until CI rebuilds them. It only reads from GitHub.
+func handleCombined(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cfg, err := store.GitHub()
 		if err != nil {
@@ -126,15 +126,15 @@ func handleAllPhotosOnBase(store *settings.Store, gh *github.Client) http.Handle
 
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		result, err := gh.AllPhotosOnBase(ctx, cfg)
+		result, err := gh.Combined(ctx, cfg)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
 			writeError(w, perr.Status, perr.Message)
 			return
 		}
 		if err != nil {
-			slog.Error("read ALLPHOTOS.json failed", "err", err)
-			writeError(w, http.StatusInternalServerError, "could not read ALLPHOTOS.json")
+			slog.Error("read combined photo data failed", "err", err)
+			writeError(w, http.StatusInternalServerError, "could not read ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json")
 			return
 		}
 		writeJSON(w, http.StatusOK, result)

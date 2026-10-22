@@ -21,6 +21,7 @@ export interface PublishResult {
 
 export const publishPhotoMutation = mutationOptions({
   mutationKey: ["photos", "github"],
+  meta: { pushes: true },
   mutationFn: (photo: PhotoData) =>
     requestJson<PublishResult>("/api/photos/github", {
       method: "POST",
@@ -38,8 +39,8 @@ export interface InFlightPullRequest {
   headSha: string;
 }
 
-/** One photo JSON file in the pull request, with its parsed data or why it couldn't be read. */
-export interface InFlightFile {
+/** One photo JSON file in the pull request, as the backend reads it. */
+export interface InFlightFileRead {
   path: string;
   /** GitHub's change status, such as `added` or `modified`. */
   status: string;
@@ -52,16 +53,20 @@ export interface InFlightFile {
   imageUrl?: string;
   /** The photo's `images.key` R2 object key, when it was saved with the data. */
   imageKey?: string;
+}
+
+/** One photo JSON file in the pull request, with its parsed data or why it couldn't be read. */
+export interface InFlightFile extends InFlightFileRead {
   /** Whether the file's data is an entry of ALLPHOTOS.json; null when either couldn't be read. */
   inAllPhotos: boolean | null;
 }
 
-/** ALLPHOTOS.json, the combined photo list CI rebuilds on the pull request. */
-export interface InFlightAllPhotos {
+/** A combined list CI builds, ALLPHOTOS.json, ALLALBUMS.json or ALLTAGS.json, read at one ref. */
+export interface CombinedFile {
   path: string;
-  /** False when the file isn't on the pull request's branch yet. */
+  /** False when the file isn't at the ref, or hasn't been read yet. */
   found: boolean;
-  /** The file's page on GitHub, when the pull request changes it. */
+  /** The file's page on GitHub, when it was found. */
   fileUrl?: string;
   /** How many photos it lists. */
   count: number;
@@ -70,18 +75,50 @@ export interface InFlightAllPhotos {
   error?: string;
 }
 
-export interface InFlightResponse {
+/** ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, read at one ref. */
+export interface CombinedFiles {
+  photos: CombinedFile;
+  albums: CombinedFile;
+  tags: CombinedFile;
+}
+
+/** The combined lists on the base branch and, when one is open, the photo data pull request. */
+export interface CombinedData {
+  repo: string;
+  folder: string;
+  base: CombinedFiles & { branch: string };
+  /** At the pull request's head; null when no pull request titled "Add photo data" is open. */
+  head: (CombinedFiles & { pullRequest: InFlightPullRequest }) | null;
+}
+
+/**
+ * Reads the combined lists. Pages keep them in the combined data store rather than reading them
+ * with each page; see `useCombinedData`.
+ */
+export function readCombinedData(): Promise<CombinedData> {
+  return requestJson<CombinedData>("/api/photos/combined");
+}
+
+/** The photo data waiting in the pull request, as the backend reads it, without the combined lists. */
+export interface InFlightRead {
   repo: string;
   folder: string;
   /** Null when no pull request titled "Add photo data" is open. */
   pullRequest: InFlightPullRequest | null;
+  files: InFlightFileRead[];
+  albums: { folder: string; files: InFlightGroupFileRead[] };
+  tags: { folder: string; files: InFlightGroupFileRead[] };
+  images: InFlightImages;
+}
+
+/** The photo data waiting in the pull request, checked against the combined lists at its head. */
+export interface InFlightResponse extends Omit<InFlightRead, "files" | "albums" | "tags"> {
   files: InFlightFile[];
-  /** Not `found` when there is no pull request. */
-  allPhotos: InFlightAllPhotos;
+  /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
+  allPhotos: CombinedFile;
   /** The album and tag files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
-  images: InFlightImages;
 }
 
 /** The album or tag files in the pull request, and the combined file CI rebuilds from them. */
@@ -89,16 +126,20 @@ export interface InFlightGroups {
   folder: string;
   files: InFlightGroupFile[];
   /** ALLALBUMS.json or ALLTAGS.json; not `found` when there is no pull request. */
-  all: InFlightAllPhotos;
+  all: CombinedFile;
 }
 
-/** One album or tag file in the pull request. */
-export interface InFlightGroupFile {
+/** One album or tag file in the pull request, as the backend reads it. */
+interface InFlightGroupFileRead {
   path: string;
   status: string;
   fileUrl: string;
   data?: unknown;
   error?: string;
+}
+
+/** One album or tag file in the pull request. */
+export interface InFlightGroupFile extends InFlightGroupFileRead {
   /** Whether the file's data is an entry of the combined file; null when either couldn't be read. */
   inAll: boolean | null;
 }
@@ -112,9 +153,10 @@ export interface InFlightImages {
   byPath: Record<string, { key: string; url: string }>;
 }
 
+/** The photo data pull request's files; `useInFlight` checks them against the combined lists. */
 export const photosInFlightQuery = queryOptions({
   queryKey: ["photos", "in-flight"],
-  queryFn: () => requestJson<InFlightResponse>("/api/photos/in-flight"),
+  queryFn: () => requestJson<InFlightRead>("/api/photos/in-flight"),
   retry: false,
 });
 
@@ -134,6 +176,7 @@ export interface UpdateResult {
  */
 export const updateInFlightMutation = mutationOptions({
   mutationKey: ["photos", "in-flight", "update"],
+  meta: { pushes: (result) => (result as UpdateResult).changed },
   mutationFn: (file: { path: string; data: unknown; name?: string }) =>
     requestJson<UpdateResult>("/api/photos/in-flight", {
       method: "PUT",
@@ -163,6 +206,7 @@ interface RemovedImage {
 
 export const removeInFlightMutation = mutationOptions({
   mutationKey: ["photos", "in-flight", "remove"],
+  meta: { pushes: true },
   mutationFn: (path: string) =>
     requestJson<RemoveResult>(`/api/photos/in-flight?${new URLSearchParams({ path })}`, {
       method: "DELETE",
@@ -241,7 +285,10 @@ export interface PhotoIdentity {
   createDate: string | null;
 }
 
-/** One place the check looked: ALLPHOTOS.json on the base branch, or the photo data pull request's files. */
+/**
+ * One place the check looked: ALLPHOTOS.json on the base branch, from the combined data store, or
+ * the photo data pull request's files.
+ */
 export interface AllPhotosSource {
   /** The base branch's name, or the photo data pull request. */
   label: string;
@@ -260,17 +307,21 @@ export interface AllPhotosMatch {
 }
 
 export interface AllPhotosCheck {
+  /** ALLPHOTOS.json on the base branch. */
   path: string;
   sources: AllPhotosSource[];
   matches: AllPhotosMatch[];
 }
 
-/** Looks for a photo in ALLPHOTOS.json on the base branch and in the open photo data pull request's files. */
-export const allPhotosCheckQuery = (photo: PhotoIdentity) =>
+/**
+ * Looks for a photo in the open photo data pull request's files; with no pull request open, there
+ * are no sources. ALLPHOTOS.json on the base branch is checked from the combined data store.
+ */
+export const pullRequestCheckQuery = (photo: PhotoIdentity) =>
   queryOptions({
     queryKey: ["photos", "all-photos", "check", photo],
     queryFn: () =>
-      requestJson<AllPhotosCheck>("/api/photos/all-photos/check", {
+      requestJson<Omit<AllPhotosCheck, "path">>("/api/photos/all-photos/check", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(photo),
@@ -278,18 +329,6 @@ export const allPhotosCheckQuery = (photo: PhotoIdentity) =>
     retry: false,
     staleTime: 0,
   });
-
-/** ALLPHOTOS.json on the base branch: the photos already in the portfolio. */
-interface BaseAllPhotos extends InFlightAllPhotos {
-  /** The base branch it was read from. */
-  branch: string;
-}
-
-export const allPhotosOnBaseQuery = queryOptions({
-  queryKey: ["photos", "all-photos", "base"],
-  queryFn: () => requestJson<BaseAllPhotos>("/api/photos/all-photos"),
-  retry: false,
-});
 
 /** Reads the EXIF and colors of an original already in R2, as the Add Photo page does for an upload. */
 export const bucketExifMutation = mutationOptions({

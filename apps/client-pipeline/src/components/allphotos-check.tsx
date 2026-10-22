@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 import { CircleAlertIcon, TriangleAlertIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { type AllPhotosCheck, type PhotoIdentity, allPhotosCheckQuery } from "@/api/photos";
+import { type AllPhotosCheck, type PhotoIdentity, pullRequestCheckQuery } from "@/api/photos";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { allPhotosCheck } from "@/lib/combined";
+import { useCombinedData } from "@/stores/combined-data";
 
 interface AllPhotosGateProps {
   /** The analyzed photo, or null when its EXIF couldn't be read and it can't be checked. */
@@ -34,15 +36,63 @@ interface GateProps {
   children: ReactNode;
 }
 
+type Check =
+  | { isPending: true; isError: false; isSuccess: false }
+  | { isPending: false; isError: true; isSuccess: false; error: Error }
+  | { isPending: false; isError: false; isSuccess: true; data: AllPhotosCheck };
+
+/**
+ * Looks for the photo in ALLPHOTOS.json on the base branch, as the combined data store keeps it,
+ * and in the photo data pull request's files, which the backend reads each time. When only one of
+ * them can be read, the check still runs on it, noting the other as a source it couldn't check.
+ */
+function useAllPhotosCheck(photo: PhotoIdentity): Check {
+  const combined = useCombinedData();
+  const pullRequest = useQuery(pullRequestCheckQuery(photo));
+  return checkOf(photo, combined, pullRequest);
+}
+
+type CombinedResult = ReturnType<typeof useCombinedData>;
+type PullRequestResult = UseQueryResult<Omit<AllPhotosCheck, "path">>;
+
+function isPending(combined: CombinedResult, pullRequest: PullRequestResult): boolean {
+  return combined.isPending || pullRequest.isPending;
+}
+
+/** Whether neither place could be read, so nothing was checked. */
+function bothFailed(combined: CombinedResult, pullRequest: PullRequestResult): boolean {
+  return !combined.data && pullRequest.isError;
+}
+
+/** The backend's check of the pull request's files, or why it couldn't run. */
+function pullRequestResult(pullRequest: PullRequestResult) {
+  return { check: pullRequest.data, error: pullRequest.error ?? undefined };
+}
+
+function checkOf(
+  photo: PhotoIdentity,
+  combined: CombinedResult,
+  pullRequest: PullRequestResult,
+): Check {
+  if (isPending(combined, pullRequest))
+    return { isPending: true, isError: false, isSuccess: false };
+  const result = pullRequestResult(pullRequest);
+  if (bothFailed(combined, pullRequest) && result.error) {
+    return { isPending: false, isError: true, isSuccess: false, error: result.error };
+  }
+  const data = allPhotosCheck(photo, combined, result);
+  return { isPending: false, isError: false, isSuccess: true, data };
+}
+
 /** Shows children only when the photo isn't known to be saved, with no status of its own. */
 function SilentGate({ photo, children }: GateProps) {
-  const check = useQuery(allPhotosCheckQuery(photo));
+  const check = useAllPhotosCheck(photo);
   const blocked = check.isPending || (check.isSuccess && check.data.matches.length > 0);
   return blocked ? null : children;
 }
 
 function Gate({ photo, children }: GateProps) {
-  const check = useQuery(allPhotosCheckQuery(photo));
+  const check = useAllPhotosCheck(photo);
   if (check.isPending) {
     return (
       <p className="text-muted-foreground flex items-center gap-2 text-sm">

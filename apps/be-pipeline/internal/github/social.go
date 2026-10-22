@@ -23,17 +23,18 @@ const publishDateKey = "socialMediaPublishDate"
 type SocialPhoto struct {
 	Path    string `json:"path"`
 	FileURL string `json:"fileUrl"`
-	// File is the photo's original file name.
-	File  string  `json:"file"`
-	Title *string `json:"title"`
+	// File, GPSPosition and CreateDate are the photo's PhotoIdentity, which
+	// pages look for in AllPhotosFile on the base branch to tell photos in
+	// flight from ones already in the portfolio.
+	File        string  `json:"file"`
+	GPSPosition *string `json:"gpsPosition"`
+	CreateDate  *string `json:"createDate"`
+	Title       *string `json:"title"`
 	// Image is the photo's square thumbnail, or else its smallest resized
 	// version; nil when it has none.
 	Image                  *string `json:"image"`
 	IsSocialMediaEligible  bool    `json:"isSocialMediaEligible"`
 	SocialMediaPublishDate *string `json:"socialMediaPublishDate"`
-	// InAllPhotos is true when the photo is an entry of ALLPHOTOS.json on the
-	// base branch, so it's already in the portfolio.
-	InAllPhotos bool `json:"inAllPhotos"`
 }
 
 // SocialCalendar is every photo file with its social media publish date.
@@ -43,11 +44,8 @@ type SocialCalendar struct {
 	// Branch is where the photo files were read, as for BaseURLPreview.
 	Branch      string              `json:"branch"`
 	PullRequest *BaseURLPullRequest `json:"pullRequest"`
-	// AllPhotos is ALLPHOTOS.json on the base branch, without its data. It's
-	// not found until a photo data pull request has been merged.
-	AllPhotos  InFlightAllPhotos   `json:"allPhotos"`
-	Photos     []SocialPhoto       `json:"photos"`
-	Unreadable []BaseURLUnreadable `json:"unreadable"`
+	Photos      []SocialPhoto       `json:"photos"`
+	Unreadable  []BaseURLUnreadable `json:"unreadable"`
 }
 
 // SocialDate sets the publish date of the photo file at Path. A nil Date
@@ -76,8 +74,7 @@ type socialFields struct {
 }
 
 // SocialCalendar reads every photo JSON file, as PreviewBaseURL does, with
-// its social media publish date and whether it's in ALLPHOTOS.json on the
-// base branch. It only reads from GitHub.
+// its social media publish date. It only reads from GitHub.
 func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (SocialCalendar, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
@@ -85,17 +82,11 @@ func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (Social
 	}
 	cal := SocialCalendar{
 		Repo: scan.t.repo.FullName, Folder: scan.folder, Branch: scan.branch,
-		AllPhotos:  InFlightAllPhotos{Path: scan.folder + "/" + AllPhotosFile},
 		Photos:     []SocialPhoto{},
 		Unreadable: []BaseURLUnreadable{},
 	}
 	if scan.pr != nil {
 		cal.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
-	}
-	found, entries, msg := c.readAllPhotosEntries(ctx, scan.t, cal.AllPhotos.Path, scan.t.base)
-	cal.AllPhotos.Found, cal.AllPhotos.Count, cal.AllPhotos.Error = found, len(entries), msg
-	if found {
-		cal.AllPhotos.FileURL = "https://github.com/" + scan.t.repo.FullName + "/blob/" + escapePath(scan.t.base) + "/" + escapePath(cal.AllPhotos.Path)
 	}
 
 	for _, f := range scan.files {
@@ -109,18 +100,12 @@ func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (Social
 			continue
 		}
 		photo := SocialPhoto{
-			Path: f.path, FileURL: f.fileURL, Title: fields.Title, Image: socialImage(fields.Images),
+			Path: f.path, FileURL: f.fileURL, GPSPosition: fields.GPSPosition, CreateDate: fields.CreateDate,
+			Title: fields.Title, Image: socialImage(fields.Images),
 			IsSocialMediaEligible: fields.IsSocialMediaEligible, SocialMediaPublishDate: fields.SocialMediaPublishDate,
 		}
 		if fields.File != nil {
 			photo.File = *fields.File
-			identity := PhotoIdentity{File: *fields.File, GPSPosition: fields.GPSPosition, CreateDate: fields.CreateDate}
-			for _, e := range entries {
-				if sameIdentity(e, identity) {
-					photo.InAllPhotos = true
-					break
-				}
-			}
 		}
 		cal.Photos = append(cal.Photos, photo)
 	}

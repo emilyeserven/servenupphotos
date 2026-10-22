@@ -40,33 +40,34 @@ func TestSetTopLevel(t *testing.T) {
 	}
 }
 
-// photoB and photoC are photo files; only photoB is in socialAllPhotos.
+// photoB and photoC are photo files.
 const (
-	photoB          = `{"file":"B.jpg","title":"Bee","gpsPosition":null,"createDate":"2026:05:16 15:24:10","isSocialMediaEligible":true,"socialMediaPublishDate":"2026-10-22","images":{"thumbnail":null,"small":"https://cdn.example.com/B-small.webp"}}`
-	photoC          = `{"file":"C.jpg","gpsPosition":null,"createDate":null,"images":{}}`
-	socialAllPhotos = `[{"file":"B.jpg","gpsPosition":null,"createDate":"2026:05:16 15:24:10"}]`
+	photoB = `{"file":"B.jpg","title":"Bee","gpsPosition":null,"createDate":"2026:05:16 15:24:10","isSocialMediaEligible":true,"socialMediaPublishDate":"2026-10-22","images":{"thumbnail":null,"small":"https://cdn.example.com/B-small.webp"}}`
+	photoC = `{"file":"C.jpg","gpsPosition":"1 deg N","createDate":null,"images":{}}`
 )
 
 func TestSocialCalendar(t *testing.T) {
-	repo := &baseURLRepo{pull: true, allPhotos: socialAllPhotos, files: map[string]string{
+	repo := &baseURLRepo{pull: true, files: map[string]string{
 		"B.json": photoB, "C.json": photoC, "broken.json": `{"file":`,
 	}}
 	got, err := repo.start(t).SocialCalendar(t.Context(), baseURLSettings)
 	if err != nil {
 		t.Fatalf("SocialCalendar() error = %v", err)
 	}
-	if got.Branch != "photo-data/2026-10-15-024500" || got.PullRequest == nil || !got.AllPhotos.Found || got.AllPhotos.Count != 1 {
-		t.Errorf("calendar = %+v, want the pull request's branch and ALLPHOTOS.json with 1 photo", got)
+	if got.Branch != "photo-data/2026-10-15-024500" || got.PullRequest == nil {
+		t.Errorf("calendar = %+v, want the pull request's branch", got)
 	}
 	if len(got.Photos) != 2 || len(got.Unreadable) != 1 {
 		t.Fatalf("photos = %+v, unreadable = %+v; want B and C, and broken.json", got.Photos, got.Unreadable)
 	}
 	b, c := got.Photos[0], got.Photos[1]
 	if b.File != "B.jpg" || *b.Title != "Bee" || *b.Image != "https://cdn.example.com/B-small.webp" ||
-		!b.IsSocialMediaEligible || *b.SocialMediaPublishDate != "2026-10-22" || !b.InAllPhotos {
+		!b.IsSocialMediaEligible || *b.SocialMediaPublishDate != "2026-10-22" ||
+		b.GPSPosition != nil || *b.CreateDate != "2026:05:16 15:24:10" {
 		t.Errorf("B = %+v", b)
 	}
-	if c.File != "C.jpg" || c.Image != nil || c.SocialMediaPublishDate != nil || c.InAllPhotos {
+	if c.File != "C.jpg" || c.Image != nil || c.SocialMediaPublishDate != nil ||
+		*c.GPSPosition != "1 deg N" || c.CreateDate != nil {
 		t.Errorf("C = %+v", c)
 	}
 }

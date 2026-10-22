@@ -3,9 +3,9 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeftIcon, CheckIcon, RotateCcwIcon } from "lucide-react";
 import { useState } from "react";
 import {
-  type InFlightFile,
+  type InFlightFileRead,
   type InFlightImages,
-  type InFlightResponse,
+  type InFlightRead,
   type UpdateResult,
   photosInFlightQuery,
   updateInFlightMutation,
@@ -37,7 +37,7 @@ import { jsonFileName } from "@/lib/file-name";
 
 /** A photo JSON file in the pull request, with the image in R2 it can be edited from. */
 interface Editable {
-  file: InFlightFile;
+  file: InFlightFileRead;
   /** The photo's JSON object as the pull request has it. */
   data: PhotoJson;
   image: { key: string; url: string };
@@ -46,7 +46,7 @@ interface Editable {
 type PhotoJson = Record<string, unknown> & { images?: Record<string, unknown> };
 
 /** Why the file at path can't be edited, or what to edit it from. */
-function findEditable(data: InFlightResponse, path: string): Editable | string {
+function findEditable(data: InFlightRead, path: string): Editable | string {
   const file = data.files.find((f) => f.path === path);
   const problem = editProblem(data, file, path);
   if (problem !== undefined || !file) return problem ?? "";
@@ -55,8 +55,8 @@ function findEditable(data: InFlightResponse, path: string): Editable | string {
 
 /** Why the file at path can't be edited, or undefined when it can. */
 function editProblem(
-  data: InFlightResponse,
-  file: InFlightFile | undefined,
+  data: InFlightRead,
+  file: InFlightFileRead | undefined,
   path: string,
 ): string | undefined {
   if (!data.pullRequest) return "No photo data pull request is open.";
@@ -65,7 +65,7 @@ function editProblem(
 }
 
 /** Why the file's JSON can't be edited, or undefined when it can. */
-function fileProblem(file: InFlightFile): string | undefined {
+function fileProblem(file: InFlightFileRead): string | undefined {
   if (file.error) return file.error;
   return isObject(file.data) ? undefined : `${file.path} isn't a JSON object.`;
 }
@@ -187,7 +187,7 @@ function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
  * The file name, without .json, that a new title moves the file to, or undefined when it keeps its
  * name: the title is unchanged, the new name is the same, or the file is already in the portfolio.
  */
-function newFileName(file: InFlightFile, saved: PhotoJson, title: string): string | undefined {
+function newFileName(file: InFlightFileRead, saved: PhotoJson, title: string): string | undefined {
   if (file.status !== "added" || !titleChanged(saved, title)) return undefined;
   const name = jsonFileName(title, photoFile(saved));
   return `${name}.json` === fileName(file.path) ? undefined : name;
@@ -374,11 +374,7 @@ function useSave({ file, image }: Editable, onSaved: (crop: Crop | null, data: P
 type Save = ReturnType<typeof useSave>;
 
 /** data with the file at `from` moved to the updated file's path. */
-function renamedInFlight(
-  data: InFlightResponse,
-  from: string,
-  updated: UpdateResult,
-): InFlightResponse {
+function renamedInFlight(data: InFlightRead, from: string, updated: UpdateResult): InFlightRead {
   const { [from]: image, ...byPath } = data.images.byPath;
   return {
     ...data,
@@ -395,7 +391,7 @@ function madeUrls(made: Partial<Record<string, { url: string }>>): Partial<Squar
   return Object.fromEntries(urls) as Partial<SquareUrls>;
 }
 
-function SaveCard({ file, edit, save }: { file: InFlightFile; edit: Edit; save: Save }) {
+function SaveCard({ file, edit, save }: { file: InFlightFileRead; edit: Edit; save: Save }) {
   const { mutation } = save;
   const { request, baseline } = edit;
   return (
@@ -427,7 +423,7 @@ function SaveCard({ file, edit, save }: { file: InFlightFile; edit: Edit; save: 
 }
 
 /** What a new title does to the file's name when it's saved. */
-function RenameNote({ file, edit }: { file: InFlightFile; edit: Edit }) {
+function RenameNote({ file, edit }: { file: InFlightFileRead; edit: Edit }) {
   const name = edit.request?.name;
   if (name) {
     return (
@@ -440,7 +436,7 @@ function RenameNote({ file, edit }: { file: InFlightFile; edit: Edit }) {
 }
 
 /** Why a new title doesn't rename a file that's already in the portfolio. */
-function KeepsNameNote({ file, edit }: { file: InFlightFile; edit: Edit }) {
+function KeepsNameNote({ file, edit }: { file: InFlightFileRead; edit: Edit }) {
   if (file.status === "added" || !titleChanged(edit.savedData, edit.details.title)) return null;
   return (
     <p className="text-muted-foreground">
@@ -455,7 +451,7 @@ function fileName(path: string): string {
   return path.slice(path.lastIndexOf("/") + 1);
 }
 
-function FileLink({ file }: { file: InFlightFile }) {
+function FileLink({ file }: { file: InFlightFileRead }) {
   return (
     <a
       href={file.fileUrl}

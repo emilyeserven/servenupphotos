@@ -37,7 +37,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("DELETE /photos/in-flight", handleRemoveInFlight(store, gh, storage.FindPhotos, storage.DeletePhoto))
 	mux.HandleFunc("GET /photos/bucket", handleBucketImages(store.R2, storage.ListImages))
 	mux.HandleFunc("POST /photos/bucket/exif", handleBucketExif(extractor, store.R2, storage.GetPhoto))
-	mux.HandleFunc("GET /photos/all-photos", handleAllPhotosOnBase(store, gh))
+	mux.HandleFunc("GET /photos/combined", handleCombined(store, gh))
 	mux.HandleFunc("POST /photos/bucket/versions", handleRegenerateVersions(store.R2, storage.RegenerateVersions))
 	mux.HandleFunc("GET /photos/bucket/thumbnail-crop", handleThumbnailCrop(store.R2, storage.ThumbnailCrop))
 	mux.HandleFunc("PUT /photos/in-flight", handleUpdateInFlight(store, gh))

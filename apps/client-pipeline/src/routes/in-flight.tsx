@@ -11,14 +11,13 @@ import {
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import {
-  type InFlightAllPhotos,
+  type CombinedFile,
   type InFlightFile,
   type InFlightGroups,
   type InFlightImages,
   type InFlightResponse,
   type CombineStatus,
   type RemoveResult,
-  photosInFlightQuery,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
@@ -39,7 +38,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import { useInFlight } from "@/hooks/use-in-flight";
 import { cn } from "@/lib/utils";
+import { useCombinedDataStore } from "@/stores/combined-data";
 
 interface InFlightSearch {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */
@@ -86,7 +87,8 @@ function InFlightPage() {
 }
 
 function InFlightCard() {
-  const inFlight = useQuery(photosInFlightQuery);
+  const inFlight = useInFlight();
+  const refreshCombined = useCombinedDataStore((s) => s.refresh);
   const [removed, setRemoved] = useState<RemoveResult | null>(null);
   // Paths removed on this visit, hidden at once: GitHub can list a deleted file for a while.
   const [removedPaths, setRemovedPaths] = useState<ReadonlySet<string>>(new Set());
@@ -112,6 +114,7 @@ function InFlightCard() {
         onRefresh={() => {
           void inFlight.refetch();
           void rebuild.status.refetch();
+          void refreshCombined();
         }}
       />
       <RemovalNotice
@@ -261,13 +264,13 @@ function AllPhotosPanel({ data }: { data?: InFlightResponse }) {
 }
 
 /** Why ALLPHOTOS.json can't be shown, or undefined when it can. */
-function allPhotosProblem(all: InFlightAllPhotos): string | undefined {
+function allPhotosProblem(all: CombinedFile): string | undefined {
   if (!all.found) return "Not on the branch yet. CI adds it after the next push.";
   if (all.error) return all.error;
   return all.data ? undefined : "Couldn't read the file.";
 }
 
-function AllPhotosFile({ all }: { all: InFlightAllPhotos }) {
+function AllPhotosFile({ all }: { all: CombinedFile }) {
   const problem = allPhotosProblem(all);
   return (
     <>
@@ -286,7 +289,7 @@ function AllPhotosFile({ all }: { all: InFlightAllPhotos }) {
 }
 
 /** The panel's title, linked to the file on GitHub and with its count once it's read. */
-function AllPhotosHeading({ all }: { all?: InFlightAllPhotos }) {
+function AllPhotosHeading({ all }: { all?: CombinedFile }) {
   return (
     <h2 className="flex flex-wrap items-baseline gap-x-2 text-sm font-medium">
       <a
@@ -579,7 +582,7 @@ function groupsSummary(groups: InFlightGroups): string {
   return `${files}; ${allFile} lists ${all.count}, ${matched} of ${count} match`;
 }
 
-function allPhotosSummary(all: InFlightAllPhotos, files: InFlightFile[]): string {
+function allPhotosSummary(all: CombinedFile, files: InFlightFile[]): string {
   if (!all.found) return "Not on the branch yet. CI adds it after the next push.";
   if (all.error) return all.error;
   const matched = files.filter((file) => file.inAllPhotos).length;
