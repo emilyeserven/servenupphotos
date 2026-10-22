@@ -12,14 +12,21 @@ interface PhotoLightboxProps {
   onClose: () => void;
 }
 
+// A quick fade in on opening and out on closing, for both the overlay and the content.
+const FADE =
+  "duration-150 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0";
+
 /** A full-window overlay showing a whole photo, as large as fits the window. */
-export function PhotoLightbox({ photo, onClose }: PhotoLightboxProps) {
+export function PhotoLightbox({ photo: openPhoto, onClose }: PhotoLightboxProps) {
+  // The last photo shown, kept while the lightbox fades out after photo goes back to null.
+  const [photo, setPhoto] = useState(openPhoto);
+  if (openPhoto && openPhoto !== photo) setPhoto(openPhoto);
   // The tile that opened it, to focus again on closing, as there's no Dialog.Trigger to go back to.
   const opener = useRef<HTMLElement | null>(null);
   return (
-    <Dialog.Root open={photo !== null} onOpenChange={(open) => !open && onClose()}>
+    <Dialog.Root open={openPhoto !== null} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-neutral-950/95" />
+        <Dialog.Overlay className={cn("fixed inset-0 z-50 bg-neutral-950/95", FADE)} />
         <Dialog.Content
           onOpenAutoFocus={() => {
             opener.current =
@@ -29,7 +36,7 @@ export function PhotoLightbox({ photo, onClose }: PhotoLightboxProps) {
             event.preventDefault();
             opener.current?.focus();
           }}
-          className="fixed inset-0 z-50 flex flex-col text-white outline-none"
+          className={cn("fixed inset-0 z-50 flex flex-col text-white outline-none", FADE)}
         >
           {photo && (
             <>
