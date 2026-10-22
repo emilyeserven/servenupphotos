@@ -23,6 +23,11 @@ export interface Place {
   id: string;
   name: string;
   description?: string;
+  /** The ID of the less specific place this one is in, such as the palace a gate is in. */
+  parent?: string;
+  /** The place's GPS position in decimal degrees, for photos whose EXIF has none. */
+  latitude?: number;
+  longitude?: number;
 }
 
 /** One entry of LOCALIZATIONS.json: how a country, city or place is written and said where it is. */
@@ -60,7 +65,7 @@ const localizations: Localization[] =
   ) ?? (committedLocalizations as Localization[]);
 
 /** The place with the ID, from PLACES.json. */
-export function placeById(id: string): Place | undefined {
+export function placeById(id: string | undefined): Place | undefined {
   return places.find((place) => place.id === id);
 }
 

@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
+import { gpsText, parseGps } from "@/lib/place-gps";
 import { notParentsOf } from "@/lib/place-hierarchy";
 
 /** The Places page: a form to add or change a place, then every place on GitHub. */
@@ -77,6 +78,12 @@ function placeProblem(draft: Place, places: Place[], isNew: boolean): string | u
   return isNew ? idTaken(draft.id, places) : undefined;
 }
 
+/** Why the GPS position can't be read, or undefined when it can or there's none. */
+function gpsProblem(gps: string): string | undefined {
+  if (parseGps(gps)) return undefined;
+  return "Write the GPS position as latitude, longitude in degrees, such as 37.5796, 126.977.";
+}
+
 /** Why a new place can't have id, when another place has it. */
 function idTaken(id: string, places: Place[]): string | undefined {
   if (!places.some((place) => place.id === id)) return undefined;
@@ -86,12 +93,17 @@ function idTaken(id: string, places: Place[]): string | undefined {
 /** A new place's fields, before anything is typed. */
 const NO_PLACE: Place = { id: "", name: "", description: "", parent: "", city: "", country: "" };
 
-/** The fields the place form edits, as typed. */
-type Draft = Required<Omit<Place, "id">>;
+/** The fields the place form edits, as typed, with the GPS position as one line of text. */
+type Draft = Required<Omit<Place, "id" | "latitude" | "longitude">> & { gps: string };
 
 function draftOf(place: Place): Draft {
   const { name, description, parent = "", city = "", country = "" } = place;
-  return { name, description, parent, city, country };
+  return { name, description, parent, city, country, gps: gpsText(place) };
+}
+
+/** The place the draft would save, with its GPS position read from the text. */
+function placeOf(id: string, { gps, ...draft }: Draft): Place {
+  return { id, ...draft, ...parseGps(gps) };
 }
 
 /** The place form's fields as typed, the place they'd save, and saving it. */
@@ -103,7 +115,7 @@ function usePlaceForm(place: Place | null, places: Place[]) {
     ...savePlaceMutation,
     onSuccess: (result) => cacheSavedEntry(queryClient, "places", result),
   });
-  const next: Place = { id: place ? place.id : entryId(draft.name), ...draft };
+  const next = placeOf(place ? place.id : entryId(draft.name), draft);
   const set = (field: keyof Draft, value: string) => {
     save.reset();
     setDraft((d) => ({ ...d, [field]: value }));
@@ -113,7 +125,8 @@ function usePlaceForm(place: Place | null, places: Place[]) {
     save.reset();
     setDraft((d) => ({ ...d, city, country: country || d.country }));
   };
-  return { draft, set, setCity, save, next, problem: placeProblem(next, places, !place) };
+  const problem = gpsProblem(draft.gps) ?? placeProblem(next, places, !place);
+  return { draft, set, setCity, save, next, problem };
 }
 
 type PlaceForm = ReturnType<typeof usePlaceForm>;
@@ -168,6 +181,18 @@ function PlaceFormCard({ folder, place, places, onDone }: PlaceFormCardProps) {
           <p className="text-muted-foreground -mt-2 text-xs">
             A photo given this place takes its city and country, from the less specific of its
             places.
+          </p>
+          <LabeledInput
+            id="place-gps"
+            label="GPS position"
+            placeholder="Optional, latitude, longitude, such as 37.5796, 126.977"
+            value={form.draft.gps}
+            disabled={form.save.isPending}
+            onChange={(value) => form.set("gps", value)}
+          />
+          <p className="text-muted-foreground -mt-2 text-xs">
+            Used on the portfolio's map for photos given this place whose EXIF has no GPS position.
+            Right-click a spot in Google Maps to copy one.
           </p>
           <FormStatus form={form} />
           <FormButtons form={form} isNew={!place} onDone={onDone} />
