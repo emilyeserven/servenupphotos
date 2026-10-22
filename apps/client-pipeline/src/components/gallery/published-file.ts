@@ -1,5 +1,5 @@
 // Helpers shared by the Gallery page and its parts, about one photo JSON file on the base branch.
-import { type PublishedFile } from "@/api/photos";
+import { type InFlightFileRead, type PublishedFile } from "@/api/photos";
 
 /** Which photos are chosen to add albums and tags to, by path; null when not choosing. */
 export type Selection = ReadonlySet<string> | null;
@@ -20,13 +20,13 @@ export function fileData(file: PublishedFile): Record<string, unknown> | undefin
 }
 
 /** The photo JSON's field, trimmed, when it's a string with something in it. */
-export function savedString(file: PublishedFile, field: string): string | undefined {
+export function savedString(file: InFlightFileRead, field: string): string | undefined {
   const value = (file.data as Record<string, unknown> | undefined)?.[field];
   return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }
 
 /** What to call the photo: its title, or else its original file name. */
-export function photoName(file: PublishedFile): string {
+export function photoName(file: InFlightFileRead): string {
   return savedString(file, "title") ?? file.photoName;
 }
 

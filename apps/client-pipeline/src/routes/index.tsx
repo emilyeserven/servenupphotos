@@ -3,6 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { connectionQuery, connectionQueryKey, missingSettings } from "@/api/connections";
 import { type SettingsResponse, type SettingsSection, settingsQuery } from "@/api/settings";
 import { healthQuery, helloQuery } from "@/api/status";
+import { UploadQueueCard } from "@/components/bulk-upload/upload-queue-card";
 import { ConnectionStatus, toTestState } from "@/components/connection-status";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -29,6 +30,7 @@ function StatusPage() {
       title="Photo Pipeline"
       description="Local tool for preparing images and generating portfolio data."
     >
+      <UploadQueueCard />
       <Card>
         <CardHeader>
           <CardTitle>Service status</CardTitle>
