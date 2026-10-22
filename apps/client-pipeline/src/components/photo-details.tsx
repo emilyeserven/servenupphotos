@@ -51,10 +51,12 @@ export const NO_DETAILS: PhotoDetails = { ...NO_TEXT, places: [] };
 /** The text fields of PhotoDetails, as the JSON names them. */
 export const TEXT_FIELDS = Object.keys(NO_TEXT) as (keyof PhotoText)[];
 
-/** The city and country read from the photo's EXIF, which the custom ones show instead of. */
+/** The city and country read from the photo's EXIF, which the custom ones show instead of, and its GPS position. */
 export interface ExifPlace {
   city: string | null;
   country: string | null;
+  /** The GPS position from the EXIF, or null when it has none. */
+  gpsPosition: string | null;
 }
 
 /** A file name without its extension, which the portfolio uses as the title of a photo without one. */
@@ -68,9 +70,13 @@ export function savedDetails(data: Record<string, unknown>): PhotoDetails {
   return { ...(texts as unknown as PhotoText), places: savedPlaces(data.places) };
 }
 
-/** The EXIF city and country saved in a photo's JSON. */
+/** The EXIF city, country and GPS position saved in a photo's JSON. */
 export function savedExifPlace(data: Record<string, unknown>): ExifPlace {
-  return { city: text(data.city) || null, country: text(data.country) || null };
+  return {
+    city: text(data.city) || null,
+    country: text(data.country) || null,
+    gpsPosition: text(data.gpsPosition) || null,
+  };
 }
 
 function text(value: unknown): string {
@@ -128,8 +134,8 @@ interface PhotoDetailsCardProps {
 }
 
 /**
- * The photo's optional title on the portfolio, places, custom city and country, and Markdown
- * comment, saved as the JSON's "title", "places" (with the first place's name as "placeName"),
+ * The photo's optional title on the portfolio and Markdown comment in one card, and its places,
+ * custom city and country and where it goes on the map in another, saved as the JSON's "title", "places" (with the first place's name as "placeName"),
  * "customCity", "customCountry" and "comment".
  */
 export function PhotoDetailsCard({
@@ -146,31 +152,37 @@ export function PhotoDetailsCard({
     onChange: (next: string) => onChange({ ...value, [name]: next }),
   });
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-1.5">
-          Title, place and comment
-          <Hint label="About these details">{description}</Hint>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-6">
-        <TextField
-          id="photo-title"
-          label="Title"
-          placeholder={fallbackTitle}
-          hint={
-            <>
-              What the portfolio calls the photo. Without one, it uses the file name,{" "}
-              <code>{fallbackTitle}</code>. Its JSON file is named after it too.
-            </>
-          }
-          {...field("title")}
-        />
-        <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-6">
+      <Card>
+        <CardTitleWithHint title="Title and comment" description={description} />
+        <CardContent className="flex flex-col gap-6">
+          <TextField
+            id="photo-title"
+            label="Title"
+            placeholder={fallbackTitle}
+            hint={
+              <>
+                What the portfolio calls the photo. Without one, it uses the file name,{" "}
+                <code>{fallbackTitle}</code>. Its JSON file is named after it too.
+              </>
+            }
+            {...field("title")}
+          />
+          <CommentField
+            value={value.comment}
+            disabled={disabled}
+            onChange={(comment) => onChange({ ...value, comment })}
+          />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardTitleWithHint title="Location" description={description} />
+        <CardContent className="flex flex-col gap-3">
           <PlaceFields
             value={value}
             disabled={disabled}
             exifCountry={exifPlace.country}
+            exifGps={exifPlace.gpsPosition}
             onChange={(place) => onChange({ ...value, ...place })}
           />
           <CityAndCountry
@@ -179,14 +191,21 @@ export function PhotoDetailsCard({
             field={field}
             onCity={(city, country) => onChange(withCity(value, exifPlace, city, country))}
           />
-        </div>
-        <CommentField
-          value={value.comment}
-          disabled={disabled}
-          onChange={(comment) => onChange({ ...value, comment })}
-        />
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+/** A card's title, with what happens to its details when they're saved on hover beside it. */
+function CardTitleWithHint({ title, description }: { title: string; description: string }) {
+  return (
+    <CardHeader>
+      <CardTitle className="flex items-center gap-1.5">
+        {title}
+        <Hint label={`About ${title.toLowerCase()}`}>{description}</Hint>
+      </CardTitle>
+    </CardHeader>
   );
 }
 

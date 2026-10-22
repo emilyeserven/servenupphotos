@@ -71,7 +71,12 @@ place (its ID made from its name, as for any new place) and then chooses it. Not
 
 ## A photo's places
 
-On the Photo page and in Edit Photo, **Place** replaces the old place name text box. It's one row, or two after
+On the Photo page and in Edit Photo, the title and comment are in one card and the photo's location in another:
+**Place**, then **City and country**. Under the **Place** title, a line says where the photo goes on the portfolio's
+map: a checkmark with the GPS position when its EXIF has one; else the place whose fallback GPS position it uses (its
+first place with one, or a place that place is in), with that position; else a warning that it isn't on the map.
+
+**Place** replaces the old place name text box. It's one row, or two after
 **Add a second place**, and each row is a relation (none, in, at, by, near, on, inside, outside, behind, in front of,
 across from, above, below, overlooking, from) and a combobox that picks one place. Its search matches each place's
 name and its saved romanization, local pronunciation and local script, so “경복” or “gyeongbok” both find
