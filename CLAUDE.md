@@ -45,7 +45,7 @@ Everything here is fast; run the narrowest check while working and `pnpm check` 
 ```sh
 pnpm check                         # oxlint, oxfmt --check, typecheck, fallow (~6s); `pnpm fmt` fixes formatting
 pnpm build                         # all three TS apps (~5s); CI runs it too
-cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~40s on a cold cache
+cd apps/be-pipeline && go test ./internal/github/   # one package; `./...` takes ~8s
 cd apps/be-pipeline && golangci-lint run
 ```
 
@@ -89,6 +89,7 @@ colors change. One screenshot per state the user asked about, not per step.
 
 ## Sandbox notes
 
+- `.claude/hooks/session-start.sh` runs when a cloud session starts: `pnpm install`, exiftool, and a warm Go build
+  cache. Add a step there when a new tool is needed in every session.
 - R2 (`cdn.servenupphotos.net`), GitHub's API and map tiles usually can't be reached; `pnpm shot` covers for them.
-- `exiftool` usually isn't installed, so the Go backend returns `"exif": null` and the EXIF tests that need it skip.
-- `pnpm install` takes about 8 seconds; Chromium for `pnpm shot` is already in `PLAYWRIGHT_BROWSERS_PATH`.
+- Chromium for `pnpm shot` is already in `PLAYWRIGHT_BROWSERS_PATH`.
