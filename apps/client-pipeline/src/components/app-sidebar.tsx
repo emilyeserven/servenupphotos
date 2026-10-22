@@ -29,7 +29,10 @@ export const navGroups = [
   },
   {
     title: "Configuration",
-    items: [{ title: "Settings", url: "/settings" }],
+    items: [
+      { title: "Settings", url: "/settings" },
+      { title: "Update Data", url: "/update-data" },
+    ],
   },
 ] as const;
 
