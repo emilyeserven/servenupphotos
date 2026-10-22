@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { PlusIcon, XIcon } from "lucide-react";
+import { ArrowUpDownIcon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import {
   cacheSavedEntry,
@@ -143,6 +143,7 @@ export function PlaceFields({ value, onChange, disabled }: PlaceFieldsProps) {
         all={all}
         disabled={disabled}
         onAddSecond={() => setRows([...rows, { relation: "by", id: "" }])}
+        onSwap={() => setRows(swappedPlaces(rows))}
       />
     </div>
   );
@@ -290,30 +291,47 @@ function RelationSelect({ id, value, disabled, onChange }: RelationSelectProps) 
   );
 }
 
+/**
+ * The two rows with their places swapped and each relation left where it was, so "In Gyeongbokgung
+ * Palace by Geunjeongmun Gate" becomes "In Geunjeongmun Gate by Gyeongbokgung Palace".
+ */
+function swappedPlaces(rows: PhotoPlace[]): PhotoPlace[] {
+  const ids = rows.map((row) => row.id).toReversed();
+  return rows.map((row, index) => ({ ...row, id: ids[index] ?? row.id }));
+}
+
 interface PlaceFooterProps {
   rows: PhotoPlace[];
   all: Places;
   disabled: boolean;
   onAddSecond: () => void;
+  /** Swaps the first and second places. */
+  onSwap: () => void;
 }
 
-/** The places as a phrase, and adding a second place. */
-function PlaceFooter({ rows, all, disabled, onAddSecond }: PlaceFooterProps) {
+/** The places as a phrase, and adding a second place or swapping the two. */
+function PlaceFooter({ rows, all, disabled, onAddSecond, onSwap }: PlaceFooterProps) {
   return (
     <div className="flex flex-col gap-2 text-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-muted-foreground">{phraseText(rows, all.names)}</span>
-        {rows.length === 1 && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={disabled}
-            onClick={onAddSecond}
-          >
-            <PlusIcon /> Add a second place
-          </Button>
-        )}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={disabled}
+          onClick={rows.length === 1 ? onAddSecond : onSwap}
+        >
+          {rows.length === 1 ? (
+            <>
+              <PlusIcon /> Add a second place
+            </>
+          ) : (
+            <>
+              <ArrowUpDownIcon /> Swap places
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );
