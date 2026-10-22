@@ -18,6 +18,7 @@ import {
 import { format } from "date-fns";
 import { ArrowDown, ArrowUp, ArrowUpDown, Columns3, Table } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { NoMatchingPhotos, PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
@@ -31,6 +32,7 @@ import {
   type Photo,
   type PhotoImage,
 } from "@/lib/photos";
+import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { cn } from "@/lib/utils";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
@@ -91,9 +93,10 @@ function parseHide(search: Record<string, unknown>): TableSearch {
 }
 
 export const Route = createFileRoute("/table")({
-  validateSearch: (search: Record<string, unknown>): TableSearch => ({
+  validateSearch: (search: Record<string, unknown>): TableSearch & PhotoFilters => ({
     ...parseSort(search),
     ...parseHide(search),
+    ...parseFilters(search),
   }),
   component: TableView,
 });
@@ -187,11 +190,12 @@ function TableView() {
   const [shown, setShown] = useState<ImagePhoto | null>(null);
   const sorting = sortingOf(search);
   const columnVisibility = visibilityOf(search);
+  const filtered = filterPhotos(photos, parseFilters(search));
 
   const table = useTable({
     features,
     columns,
-    data: photos,
+    data: filtered,
     state: { sorting, columnVisibility },
     onSortingChange: (updater) => {
       const next = typeof updater === "function" ? updater(sorting) : updater;
@@ -216,9 +220,13 @@ function TableView() {
           <Table className="size-8 text-muted-foreground" aria-hidden />
           Table
         </h1>
-        <p className="text-sm text-muted-foreground">{photos.length} photos</p>
+        <p className="text-sm text-muted-foreground">{rows.length} photos</p>
         <ColumnsMenu allColumns={table.getAllLeafColumns()} />
+        <div className="mt-3 w-full">
+          <PhotoFilterBar photos={photos} />
+        </div>
       </header>
+      <NoMatchingPhotos count={rows.length} />
       {/* Scrolls sideways on narrow screens rather than squeezing the columns. */}
       <div className="overflow-x-auto rounded-md border">
         <table className="w-full text-sm">

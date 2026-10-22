@@ -25,6 +25,9 @@ export interface Place {
   description?: string;
   /** The ID of the less specific place this one is in, such as the palace a gate is in. */
   parent?: string;
+  /** The city and country it's in, or "" when it doesn't say; older places don't have them. */
+  city?: string;
+  country?: string;
   /** The place's GPS position in decimal degrees, for photos whose EXIF has none. */
   latitude?: number;
   longitude?: number;
@@ -42,8 +45,8 @@ interface Localization {
   localScript?: string;
 }
 
-/** The PLACES.local.json or LOCALIZATIONS.local.json `pnpm photos:local` makes, when it's there. */
-function localFile<T>(files: Record<string, T[]>): T[] | undefined {
+/** The PLACES.local.json or other local combined file `pnpm photos:local` makes, when it's there. */
+export function localFile<T>(files: Record<string, T[]>): T[] | undefined {
   const local = Object.values(files)[0];
   return local && local.length > 0 ? local : undefined;
 }
@@ -69,6 +72,16 @@ const localizations: Localization[] =
 /** The place with the ID, from PLACES.json. */
 export function placeById(id: string | undefined): Place | undefined {
   return places.find((place) => place.id === id);
+}
+
+/**
+ * The place with the ID and every place it's in, most specific first, leaving out IDs that aren't
+ * places. A loop of parents stops where it comes back round.
+ */
+export function placeAncestry(id: string | undefined, passed: Place[] = []): Place[] {
+  const place = placeById(id);
+  if (!place || passed.includes(place)) return passed;
+  return placeAncestry(place.parent, [...passed, place]);
 }
 
 function key(type: Localization["type"], name: string): string {
