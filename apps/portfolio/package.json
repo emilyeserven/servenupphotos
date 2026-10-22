@@ -21,6 +21,7 @@
     "react": "catalog:",
     "react-day-picker": "catalog:",
     "react-dom": "catalog:",
+    "react-markdown": "10.1.0",
     "recharts": "catalog:",
     "tailwind-merge": "catalog:"
   },

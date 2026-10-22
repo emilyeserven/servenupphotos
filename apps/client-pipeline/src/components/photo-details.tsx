@@ -1,4 +1,5 @@
-import Markdown from "react-markdown";
+import type { ComponentProps } from "react";
+import Markdown, { type ExtraProps } from "react-markdown";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,13 +28,21 @@ export function fileStem(file: string): string {
 
 /** The title and comment saved in a photo's JSON, to start editing from. */
 export function savedDetails(data: Record<string, unknown>): PhotoDetails {
-  const text = (value: unknown) => (typeof value === "string" ? value : "");
   return { title: text(data.title), comment: text(data.comment) };
+}
+
+function text(value: unknown): string {
+  return typeof value === "string" ? value : "";
 }
 
 /** data with the title and comment, or null for ones left empty. */
 export function withDetails<T extends object>(data: T, details: PhotoDetails) {
   return { ...data, title: details.title.trim() || null, comment: details.comment.trim() || null };
+}
+
+/** A link in the comment's preview, opened in a new tab so the page and its work stay put. */
+function NewTabLink({ node: _node, ...props }: ComponentProps<"a"> & ExtraProps) {
+  return <a {...props} target="_blank" rel="noreferrer" />;
 }
 
 interface PhotoDetailsCardProps {
@@ -121,15 +130,7 @@ function CommentField({ value, disabled, onChange }: CommentFieldProps) {
           <div className="min-h-28 rounded-md border px-3 py-2">
             {value.trim() ? (
               <div className={MARKDOWN_CLASSES}>
-                <Markdown
-                  components={{
-                    a: ({ node: _node, ...props }) => (
-                      <a {...props} target="_blank" rel="noreferrer" />
-                    ),
-                  }}
-                >
-                  {value}
-                </Markdown>
+                <Markdown components={{ a: NewTabLink }}>{value}</Markdown>
               </div>
             ) : (
               <p className="text-muted-foreground text-sm">Nothing to preview yet.</p>

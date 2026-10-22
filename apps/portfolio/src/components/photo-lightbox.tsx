@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
 import { useRef, useState } from "react";
+import { PhotoComment } from "@/components/photo-comment";
 import { Button } from "@/components/ui/button";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { cn } from "@/lib/utils";
@@ -41,12 +42,7 @@ export function PhotoLightbox({ photo: openPhoto, onClose }: PhotoLightboxProps)
           {photo && (
             <>
               <div className="flex items-center gap-4 p-4">
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <Dialog.Title className="truncate font-medium">{photo.title}</Dialog.Title>
-                  <Dialog.Description className="truncate text-sm text-white/60">
-                    {format(photo.takenAt, "MMM d, yyyy")} · {photo.location}
-                  </Dialog.Description>
-                </div>
+                <LightboxCaption photo={photo} />
                 <Dialog.Close asChild>
                   <Button
                     variant="ghost"
@@ -69,6 +65,27 @@ export function PhotoLightbox({ photo: openPhoto, onClose }: PhotoLightboxProps)
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+/** The photo's title, comment, date and place, above it. */
+function LightboxCaption({ photo }: { photo: Photo }) {
+  return (
+    <div className="flex min-w-0 flex-1 flex-col">
+      <Dialog.Title className="truncate font-medium">{photo.title}</Dialog.Title>
+      {/* One line, so a long comment can't make the photo smaller. */}
+      {photo.comment && (
+        <PhotoComment
+          comment={photo.comment}
+          lines={1}
+          className="text-sm text-white/80"
+          expandedClassName="bg-neutral-900 ring-1 ring-white/15"
+        />
+      )}
+      <Dialog.Description className="truncate text-sm text-white/60">
+        {format(photo.takenAt, "MMM d, yyyy")} · {photo.location}
+      </Dialog.Description>
+    </div>
   );
 }
 

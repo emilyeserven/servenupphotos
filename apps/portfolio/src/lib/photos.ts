@@ -3,6 +3,8 @@ import dummyData from "@/data/dummy.json";
 export interface Photo {
   id: number;
   title: string;
+  /** A note about the photo in Markdown, written on the pipeline's Photo page; null without one. */
+  comment: string | null;
   camera: string;
   takenAt: Date;
   location: string;
@@ -45,6 +47,8 @@ interface PhotoData {
   file: string;
   /** The name to show, when one was written; older entries don't have it. */
   title?: string | null;
+  /** A Markdown note about the photo, when one was written. */
+  comment?: string | null;
   camera: string | null;
   gpsPosition: string | null;
   createDate: string | null;
@@ -123,6 +127,11 @@ function photoTitle(photo: PhotoData): string {
   return photo.title?.trim() || photo.file.replace(/\.[^.]*$/, "");
 }
 
+/** The Markdown comment written on the Photo page, or null without one. */
+function photoComment(photo: PhotoData): string | null {
+  return photo.comment?.trim() || null;
+}
+
 /** The local ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
 function fromPhotoData(data: PhotoData[]): Photo[] {
   return data.flatMap((photo, index) => {
@@ -131,6 +140,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
     return {
       id: index + 1,
       title: photoTitle(photo),
+      comment: photoComment(photo),
       camera: photo.camera ?? "Unknown camera",
       takenAt,
       location: [photo.city, photo.country].filter(Boolean).join(", ") || "Unknown location",
@@ -145,6 +155,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
 const dummyPhotos: Photo[] = dummyData.map((photo) => ({
   ...photo,
   takenAt: new Date(photo.takenAt),
+  comment: null,
   image: null,
 }));
 
