@@ -98,6 +98,104 @@
     ]
   },
   {
+    "title": "Always Watching...",
+    "comment": null,
+    "file": "IMG_6009.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/800",
+    "iso": 100,
+    "focalLength": 95,
+    "gpsPosition": null,
+    "createDate": "2017:10:07 10:39:47",
+    "placeName": "columbus-circle",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3426,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009.jpg",
+      "key": "photos/30132a82a858-img-6009.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009-thumbnail.webp?crop=1997,1087,2339",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/30132a82a858-img-6009-thumbnailpreview.webp?crop=1997,1087,2339",
+      "thumbnailcrop": {
+        "x": 1997,
+        "y": 1087,
+        "size": 2339,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "columbus-circle"
+      }
+    ]
+  },
+  {
+    "title": "Artery of Manhattan",
+    "comment": null,
+    "file": "IMG_6386.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/100",
+    "iso": 200,
+    "focalLength": 135,
+    "gpsPosition": null,
+    "createDate": "2017:10:14 08:48:18",
+    "placeName": "Upper East Side",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 5832,
+    "height": 3180,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386.jpg",
+      "key": "photos/2259f4c7e2c5-img-6386.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386-thumbnail.webp?crop=1709,0,2508",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2259f4c7e2c5-img-6386-thumbnailpreview.webp?crop=1709,0,2508",
+      "thumbnailcrop": {
+        "x": 1709,
+        "y": 0,
+        "size": 2508,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "upper-east-side"
+      }
+    ]
+  },
+  {
     "title": "City Shroom",
     "comment": null,
     "file": "IMG_4231.jpg",
@@ -338,7 +436,7 @@
     "places": []
   },
   {
-    "title": null,
+    "title": "Colorful Storefront",
     "comment": null,
     "file": "IMG_3475.jpg",
     "camera": "Canon EOS 80D",
@@ -349,9 +447,9 @@
     "focalLength": 163,
     "gpsPosition": null,
     "createDate": "2018:10:12 12:05:53",
-    "placeName": null,
-    "customCity": null,
-    "customCountry": null,
+    "placeName": "Astoria",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
     "country": null,
     "city": null,
     "width": 6000,
@@ -365,10 +463,10 @@
       "small": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-small.webp",
       "xsmall": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-xsmall.webp",
       "preview": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-preview.webp",
-      "thumbnail": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-thumbnail.webp",
-      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-thumbnailpreview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-thumbnail.webp?crop=2000,0,4000",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ea5c0fe636f2-img-3475-thumbnailpreview.webp?crop=2000,0,4000",
       "thumbnailcrop": {
-        "x": 1000,
+        "x": 2000,
         "y": 0,
         "size": 4000,
         "outputSize": 500
@@ -379,7 +477,109 @@
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "astoria"
+      },
+      {
+        "relation": "in",
+        "id": "queens"
+      }
+    ]
+  },
+  {
+    "title": null,
+    "comment": null,
+    "file": "IMG_6794.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 4,
+    "exposure": "1/30",
+    "iso": 100,
+    "focalLength": 27,
+    "gpsPosition": null,
+    "createDate": "2017:10:14 12:29:46",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": null,
+    "city": null,
+    "width": 5992,
+    "height": 3096,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794.jpg",
+      "key": "photos/c491d150abb4-img-6794.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c491d150abb4-img-6794-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1448,
+        "y": 0,
+        "size": 3096,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
     "places": []
+  },
+  {
+    "title": "In the Church Attic",
+    "comment": null,
+    "file": "IMG_6942.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 3.5,
+    "exposure": "1/30",
+    "iso": 1600,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "createDate": "2017:10:14 14:42:50",
+    "placeName": "Fifth Avenue Presbyterian Church",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3545,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942.jpg",
+      "key": "photos/8b252227dd6d-img-6942.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942-thumbnail.webp?crop=1512,0,3545",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8b252227dd6d-img-6942-thumbnailpreview.webp?crop=1512,0,3545",
+      "thumbnailcrop": {
+        "x": 1512,
+        "y": 0,
+        "size": 3545,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "fifth-avenue-presbyterian-church"
+      }
+    ]
   },
   {
     "title": "Japsang",
@@ -484,6 +684,104 @@
     ]
   },
   {
+    "title": "Just Some Punk",
+    "comment": null,
+    "file": "IMG_6651.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/30",
+    "iso": 200,
+    "focalLength": 89,
+    "gpsPosition": null,
+    "createDate": "2017:10:14 11:21:40",
+    "placeName": "72nd-street-subway-station",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 5967,
+    "height": 3501,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651.jpg",
+      "key": "photos/ecc7bda7d6d0-img-6651.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651-thumbnail.webp?crop=1127,0,3501",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ecc7bda7d6d0-img-6651-thumbnailpreview.webp?crop=1127,0,3501",
+      "thumbnailcrop": {
+        "x": 1127,
+        "y": 0,
+        "size": 3501,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "72nd-street-subway-station"
+      }
+    ]
+  },
+  {
+    "title": "Locks Above the Tracks",
+    "comment": null,
+    "file": "IMG_6381.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 10,
+    "exposure": "1/100",
+    "iso": 200,
+    "focalLength": 135,
+    "gpsPosition": null,
+    "createDate": "2017:10:14 08:47:44",
+    "placeName": "Upper East Side",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3471,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381.jpg",
+      "key": "photos/6d9613520678-img-6381.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381-thumbnail.webp?crop=2318,0,3471",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6d9613520678-img-6381-thumbnailpreview.webp?crop=2318,0,3471",
+      "thumbnailcrop": {
+        "x": 2318,
+        "y": 0,
+        "size": 3471,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "upper-east-side"
+      }
+    ]
+  },
+  {
     "title": "Mirror Pond",
     "comment": "The dancheong (단청) ceiling of the gazebo in the National Museum of Korea's Mirror Pond.\n\nThis ceiling is one of the first examples of Korean traditional architecture I had a chance to photograph. The bright colors and patterns really stuck out to me as something uniquely Korean, especially given my familiarity with Chinese and Japanese culture. (Turns out that \"dancheong\" is the specific term for that very Korean style.) I took a lot more dancheong photos during this trip, but I think this is the best ceiling photo I ended up getting... and I would attribute that to the reflections from the pond.",
     "file": "dscf2926.jpg",
@@ -533,6 +831,104 @@
       {
         "relation": "in",
         "id": "national-museum-of-korea"
+      }
+    ]
+  },
+  {
+    "title": "Modern Art Interaction",
+    "comment": null,
+    "file": "IMG_6765.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 3.5,
+    "exposure": "1/60",
+    "iso": 200,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "createDate": "2017:10:14 12:08:02",
+    "placeName": "72nd Street Subway Station",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3210,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765.jpg",
+      "key": "photos/ff2d0489191c-img-6765.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765-thumbnail.webp?crop=1469,0,3210",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ff2d0489191c-img-6765-thumbnailpreview.webp?crop=1469,0,3210",
+      "thumbnailcrop": {
+        "x": 1469,
+        "y": 0,
+        "size": 3210,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "72nd-street-subway-station"
+      }
+    ]
+  },
+  {
+    "title": "Ouch Ouch Ouch",
+    "comment": null,
+    "file": "IMG_6161.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 3.5,
+    "exposure": "1/640",
+    "iso": 100,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "createDate": "2017:10:07 13:15:20",
+    "placeName": "chelsea",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 4000,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161.jpg",
+      "key": "photos/787f225f960b-img-6161.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161-thumbnail.webp?crop=1076,0,4000",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/787f225f960b-img-6161-thumbnailpreview.webp?crop=1076,0,4000",
+      "thumbnailcrop": {
+        "x": 1076,
+        "y": 0,
+        "size": 4000,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "chelsea"
       }
     ]
   },
@@ -741,6 +1137,55 @@
     ]
   },
   {
+    "title": "Shrouded in Mist",
+    "comment": null,
+    "file": "IMG_6572.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 10,
+    "exposure": "1/60",
+    "iso": 100,
+    "focalLength": 91,
+    "gpsPosition": null,
+    "createDate": "2017:10:14 09:28:46",
+    "placeName": "jacqueline-kennedy-onassis-reservoir",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 5886,
+    "height": 3924,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572.jpg",
+      "key": "photos/22caf170e818-img-6572.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572-thumbnail.webp?crop=1043,0,3924",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/22caf170e818-img-6572-thumbnailpreview.webp?crop=1043,0,3924",
+      "thumbnailcrop": {
+        "x": 1043,
+        "y": 0,
+        "size": 3924,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "jacqueline-kennedy-onassis-reservoir"
+      }
+    ]
+  },
+  {
     "title": "Stickerbox",
     "comment": null,
     "file": "IMG_5647.jpg",
@@ -786,6 +1231,55 @@
       {
         "relation": "",
         "id": "lower-east-side"
+      }
+    ]
+  },
+  {
+    "title": "Strings",
+    "comment": null,
+    "file": "IMG_6139-2.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 3.5,
+    "exposure": "1/50",
+    "iso": 200,
+    "focalLength": 22,
+    "gpsPosition": null,
+    "createDate": "2017:10:07 12:09:36",
+    "placeName": "museum-of-arts-and-design",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 5911,
+    "height": 3598,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2.jpg",
+      "key": "photos/58ed4806264a-img-6139-2.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2-thumbnail.webp?crop=1087,0,3598",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/58ed4806264a-img-6139-2-thumbnailpreview.webp?crop=1087,0,3598",
+      "thumbnailcrop": {
+        "x": 1087,
+        "y": 0,
+        "size": 3598,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "museum-of-arts-and-design"
       }
     ]
   },
