@@ -52,7 +52,10 @@ A place can have a **GPS position**, written on the Places page as `latitude, lo
 `longitude` numbers in the place file, left out when not set; saving refuses only one of them, or one off the globe.
 On the portfolio, a photo whose EXIF has no GPS position goes on the map at its first place's position, or else a
 place that place is in, or else its next place's. The hover text still shows only an EXIF position. Its map marker gets a
-softer border, as the spot is only near where the photo was taken.
+softer border, as the spot is only near where the photo was taken, unless the place is ticked as an **Exact location**
+(such as a subway station or a museum, where its photos were taken right at its GPS position): then the marker keeps the
+same solid white border as a photo with its own GPS position. It's saved as `"exactLocation": true`, only on a place
+with a GPS position, and a place that uses the position of a place it's in is never exact.
 
 The list's GPS column shows a filled crosshair for a place with its own GPS position, a plain one for a place that uses
 the position of a place it's in (hover for which), and an amber (!) warning on a place with neither when photos

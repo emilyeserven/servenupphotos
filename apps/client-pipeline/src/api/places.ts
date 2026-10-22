@@ -20,6 +20,12 @@ export interface Place {
    */
   latitude?: number;
   longitude?: number;
+  /**
+   * Whether the GPS position is exactly where photos given the place were taken, such as a subway
+   * station or a museum, so the portfolio's map marks them like photos with their own GPS position;
+   * missing when it isn't, or the place has no GPS position.
+   */
+  exactLocation?: boolean;
 }
 
 /** What a localization is of. */

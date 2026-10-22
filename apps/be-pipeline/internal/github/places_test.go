@@ -3,6 +3,7 @@ package github
 import (
 	"errors"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
@@ -63,6 +64,24 @@ func TestSavePlaceWithCoordinates(t *testing.T) {
 	want := "{\n  \"id\": \"gbg\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\",\n  \"latitude\": 37.5796,\n  \"longitude\": 126.977\n}\n"
 	if got := f.committed[dataRoot+"/places/gbg.json"]; err != nil || got != want {
 		t.Errorf("SavePlace() error = %v, committed %q; want %q", err, got, want)
+	}
+}
+
+func TestSavePlaceExactLocation(t *testing.T) {
+	f, c := newCombinedRepo(t, map[string]string{})
+	lat, lng := 37.5759, 126.9735
+	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "station", Name: "Gyeongbokgung Station", Latitude: &lat, Longitude: &lng, ExactLocation: true})
+	want := "{\n  \"id\": \"station\",\n  \"name\": \"Gyeongbokgung Station\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\",\n  \"latitude\": 37.5759,\n  \"longitude\": 126.9735,\n  \"exactLocation\": true\n}\n"
+	if got := f.committed[dataRoot+"/places/station.json"]; err != nil || got != want {
+		t.Errorf("SavePlace() error = %v, committed %q; want %q", err, got, want)
+	}
+}
+
+func TestSavePlaceExactLocationNeedsCoordinates(t *testing.T) {
+	f, c := newCombinedRepo(t, map[string]string{})
+	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "station", Name: "Gyeongbokgung Station", ExactLocation: true})
+	if got := f.committed[dataRoot+"/places/station.json"]; err != nil || strings.Contains(got, "exactLocation") {
+		t.Errorf("SavePlace() error = %v, committed %q; want no exactLocation without a GPS position", err, got)
 	}
 }
 
