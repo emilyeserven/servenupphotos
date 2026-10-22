@@ -1,1 +1,27 @@
-[]
+[
+  {
+    "id": "geunjeongmun-gate",
+    "name": "Geunjeongmun Gate",
+    "description": ""
+  },
+  {
+    "id": "gyeongbokgung-palace",
+    "name": "Gyeongbokgung Palace",
+    "description": ""
+  },
+  {
+    "id": "gyeongbokgung-station",
+    "name": "Gyeongbokgung Station",
+    "description": ""
+  },
+  {
+    "id": "mirror-pond",
+    "name": "Mirror Pond",
+    "description": ""
+  },
+  {
+    "id": "national-museum-of-korea",
+    "name": "National Museum of Korea",
+    "description": ""
+  }
+]

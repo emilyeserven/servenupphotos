@@ -36,15 +36,15 @@ They're saved in the photo's JSON as `places`, next to `albums` and `tags`:
 ]
 ```
 
-`placeName` stays, and is set to the first place's name, so a photo whose places aren't in `PLACES.json` yet still
-shows a place on the portfolio. A photo saved
+`placeName` stays, set to the first place's name, but it's being phased out: the portfolio no longer shows it. A
+photo saved
 before places has a `placeName` and no `places`: Edit Photo shows that place name above the rows, read-only, for
 reference while you choose or add the matching places. Once the photo is saved with places it no longer shows. New photos get `"places": []`, and **Update Data → Missing fields**
 adds it to older ones.
 
 > **Frontend analogy:** `places` is like a list of `{ preposition, ref }` objects pointing into a normalized store,
-> the way a photo's `albums` hold album IDs; `placeName` is a denormalized copy kept for the one component that
-> already reads it.
+> the way a photo's `albums` hold album IDs; `placeName` is a leftover denormalized copy nothing on the portfolio
+> reads anymore.
 
 ## Localizations
 
@@ -100,7 +100,9 @@ Native with no local script shows the pronunciation, else the romanization, else
 matched to their localization by name, and places by the place's ID.
 
 A photo with places shows them as a phrase before its city, such as “In 경복궁 by 근정문, 서울”; the relation stays in
-English. A photo without places, or whose places aren't in `PLACES.json`, shows its `placeName` as before. The Table
+English. A photo without places, or whose places aren't in `PLACES.json`, shows only its city and country; the old
+`placeName` isn't shown, so give the photo places on the Photo page instead. Places only show once **Commit** has
+rebuilt `ALLPHOTOS.json` and `PLACES.json` before the pull request merges. The Table
 sorts the Place column by the English names whichever way it's shown.
 
 The Grid shows the place under each title with **Show info** on.

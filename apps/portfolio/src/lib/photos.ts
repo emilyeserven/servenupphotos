@@ -7,7 +7,6 @@ import {
   placeById,
   SCRIPT_DISPLAYS,
   type ScriptDisplay,
-  unlocalized,
 } from "@/lib/localize";
 
 export interface Photo {
@@ -18,7 +17,7 @@ export interface Photo {
   camera: string;
   settings: CameraSettings;
   takenAt: Date;
-  /** Null when the photo has no place, city or country, so there's nothing to say. */
+  /** Null when the photo has no places, city or country, so there's nothing to say. */
   location: LocalizedLocation | null;
   /** Null when the photo has no GPS position, so it can't go on the map. */
   latitude: number | null;
@@ -109,8 +108,6 @@ interface PhotoData {
   camera: string | null;
   gpsPosition: string | null;
   createDate: string | null;
-  /** The name of the place it was taken, written on the Photo page; older entries don't have it. */
-  placeName?: string | null;
   /** A city and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
   customCity?: string | null;
   customCountry?: string | null;
@@ -268,22 +265,16 @@ function capitalized(value: string): string {
 }
 
 /**
- * The photo's places as a phrase, such as "In Gyeongbokgung Palace by Geunjeongmun Gate", or
- * else its place name; null with neither. Places missing from PLACES.json are left out.
+ * The photo's places as a phrase, such as "In Gyeongbokgung Palace by Geunjeongmun Gate"; null
+ * without any. Places missing from PLACES.json are left out. The old `placeName` isn't shown.
  */
 function placeText(photo: PhotoData): Localized | null {
   const parts = (photo.places ?? []).flatMap(({ relation, id }) => {
     const place = placeById(id);
     return place ? [placePart(relation, localizePlace(place))] : [];
   });
-  if (parts.length === 0) return placeNameText(photo);
+  if (parts.length === 0) return null;
   return mapLocalized(parts, (p, script) => capitalized(p.map((part) => part[script]).join(" ")));
-}
-
-/** The place name written on the Photo page before places, or null without one. */
-function placeNameText(photo: PhotoData): Localized | null {
-  const name = photo.placeName?.trim();
-  return name ? unlocalized(name) : null;
 }
 
 /** A city or country written each way, or null when there's none. */

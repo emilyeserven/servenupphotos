@@ -5,7 +5,7 @@
 // 1. The photo pipeline, when it's running locally (PIPELINE_URL, or else http://localhost:8080
 //    or http://localhost:5174): the combined files at the open "Add photo data" pull request's
 //    head, with the pull request's own photo, place and localization files over them, so saves
-//    not committed with Commit yet show too.
+//    not committed with Commit yet show too. Skipped when no pull request is open.
 // 2. GitHub: the combined files from the open "Add photo data" pull request on the `origin`
 //    repository. Set GITHUB_TOKEN to read a private repository.
 // 3. The data folders: every other JSON file in each, as one array sorted by file name, the same
@@ -84,7 +84,10 @@ async function fromPipeline() {
       pipelineJson(base, "/api/photos/combined"),
       pipelineJson(base, "/api/photos/in-flight"),
     ]);
-    const lists = combined.head ?? combined.base;
+    // With no pull request open, the base branch's combined files may not have been rebuilt
+    // since its last merge, so the data folders are better.
+    if (!combined.head) return undefined;
+    const lists = combined.head;
     return Object.fromEntries(
       KINDS.map((kind) => [
         kind.folder,

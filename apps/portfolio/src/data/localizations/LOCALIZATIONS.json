@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "place-geunjeongmun-gate",
+    "type": "place",
+    "name": "Geunjeongmun Gate",
+    "romanization": "Geunjeongmun",
+    "pronunciation": "",
+    "localScript": "근정문"
+  },
+  {
+    "id": "place-gyeongbokgung-palace",
+    "type": "place",
+    "name": "Gyeongbokgung Palace",
+    "romanization": "Gyeongbokgung",
+    "pronunciation": "",
+    "localScript": "경복궁"
+  }
+]
