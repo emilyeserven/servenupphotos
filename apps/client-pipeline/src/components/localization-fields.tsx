@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
-  cacheSavedEntry,
+  optimisticEntry,
   type Localization,
   type LocalizationType,
   saveLocalizationMutation,
@@ -31,7 +31,7 @@ export function useLocalizationDraft(saved: Localization | undefined) {
   const [fields, setFields] = useState<Fields>(() => savedFields(saved));
   const save = useMutation({
     ...saveLocalizationMutation,
-    onSuccess: (result) => cacheSavedEntry(queryClient, "localizations", result),
+    ...optimisticEntry(queryClient, "localizations"),
   });
   const before = savedFields(saved);
   const changed = FIELDS.some(({ key }) => fields[key].trim() !== before[key].trim());

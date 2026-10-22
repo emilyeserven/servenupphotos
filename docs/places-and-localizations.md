@@ -31,8 +31,13 @@ name, description, parent (**In**, which lists only places that aren't in it), c
 stays), and its localization: romanization, local pronunciation and local script, as on the Localizations page. A city's
 or country's panel shows where it is and how many cities, places and photos have it, and edits its localization only,
 since its name comes from the places and photos that have it. Each field's title has an ⓘ beside it whose tooltip says
-what to write, with an example. **Save changes** saves the place when it changed and its localization when that did,
-each as its own commit.
+what to write, with an example. **Save changes**, or **Save** at the top right (the rightmost
+floating button, next to the sync button), saves the place when it changed and its localization when that did, each
+as its own commit. The list shows the change as soon as Save is pressed, before the commit is made, and reads the
+files again if the save fails.
+
+> **Frontend analogy:** an optimistic update with TanStack Query: `onMutate` writes the new entry into the cached
+> query, `onSuccess` swaps in what the server saved, and `onError` invalidates the query to undo it.
 
 A place's **City** is a combobox of the list's cities, sorted by name, with inferred ones marked by how many photos
 show them, or a new one typed in. Choosing a city whose country is known fills in **Country**. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the

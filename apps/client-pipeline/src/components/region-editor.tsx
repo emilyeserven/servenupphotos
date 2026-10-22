@@ -5,6 +5,7 @@ import {
   LocalizationFields,
   useLocalizationDraft,
 } from "@/components/localization-fields";
+import { FloatingSaveButton } from "@/components/floating-save-button";
 import { RegionIcon } from "@/components/region-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,6 +63,7 @@ function RegionLocalizationForm({ node, saved }: RegionEditorProps) {
   const { save } = draft;
   return (
     <form
+      id="region-editor-form"
       className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
@@ -74,6 +76,11 @@ function RegionLocalizationForm({ node, saved }: RegionEditorProps) {
         disabled={save.isPending}
       />
       <SaveStatus draft={draft} />
+      <FloatingSaveButton
+        form="region-editor-form"
+        disabled={!draft.changed || save.isPending}
+        busy={save.isPending}
+      />
       <div>
         <Button type="submit" disabled={!draft.changed || save.isPending}>
           {save.isPending && <Spinner />}

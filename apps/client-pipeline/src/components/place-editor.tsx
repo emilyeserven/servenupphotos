@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  cacheSavedEntry,
+  optimisticEntry,
   entryId,
   type Localization,
   localizationId,
@@ -8,6 +8,7 @@ import {
   savePlaceMutation,
 } from "@/api/places";
 import { FieldLabel } from "@/components/field-label";
+import { FloatingSaveButton } from "@/components/floating-save-button";
 import {
   type LocalizationDraft,
   LocalizationFields,
@@ -82,6 +83,26 @@ function isChanged(draft: Draft, before: Draft): boolean {
   return (Object.keys(draft) as (keyof Draft)[]).some((key) => draft[key] !== before[key]);
 }
 
+/**
+ * Whether the save is of the place with this ID and hasn't failed: the list already has it, so it
+ * isn't checked against itself.
+ */
+function isSavingPlace(save: { variables?: Place; isError: boolean }, id: string): boolean {
+  return save.variables?.id === id && !save.isError;
+}
+
+/** Why the place can't be saved as written, unless it's the one being saved. */
+function formProblem(
+  save: { variables?: Place; isError: boolean },
+  next: Place,
+  gps: string,
+  places: Place[],
+  isNew: boolean,
+): string | undefined {
+  if (isSavingPlace(save, next.id)) return undefined;
+  return gpsProblem(gps) ?? placeProblem(next, places, isNew);
+}
+
 /** The place form's fields as typed, the place they'd save, and saving it. */
 function usePlaceForm(place: Place | null, places: Place[]) {
   const queryClient = useQueryClient();
@@ -89,7 +110,7 @@ function usePlaceForm(place: Place | null, places: Place[]) {
   const [draft, setDraft] = useState<Draft>(() => draftOf(initial));
   const save = useMutation({
     ...savePlaceMutation,
-    onSuccess: (result) => cacheSavedEntry(queryClient, "places", result),
+    ...optimisticEntry(queryClient, "places"),
   });
   const next = placeOf(place ? place.id : entryId(draft.name), draft);
   const set = (field: keyof Draft, value: string) => {
@@ -101,7 +122,7 @@ function usePlaceForm(place: Place | null, places: Place[]) {
     save.reset();
     setDraft((d) => ({ ...d, city, country: country || d.country }));
   };
-  const problem = gpsProblem(draft.gps) ?? placeProblem(next, places, !place);
+  const problem = formProblem(save, next, draft.gps, places, !place);
   const changed = isChanged(draft, draftOf(initial));
   return { draft, set, setCity, save, next, problem, changed };
 }
@@ -143,6 +164,7 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
       <PlaceEditorHeader folder={folder} place={place} id={form.next.id} />
       <CardContent>
         <form
+          id="place-editor-form"
           className="flex flex-col gap-4"
           onSubmit={(event) => {
             event.preventDefault();
@@ -194,6 +216,11 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
           <LocalizationFields draft={local} idPrefix="place-localization" disabled={busy} />
           <FormStatus form={form} localization={local} />
           <FormButtons form={form} localization={local} isNew={!place} onDone={onDone} />
+          <FloatingSaveButton
+            form="place-editor-form"
+            disabled={!canSave(form, local)}
+            busy={busy}
+          />
         </form>
       </CardContent>
     </Card>
