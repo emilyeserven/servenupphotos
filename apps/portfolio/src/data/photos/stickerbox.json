@@ -1,0 +1,49 @@
+{
+  "title": "Stickerbox",
+  "comment": null,
+  "file": "IMG_5647.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS",
+  "aperture": 6.3,
+  "exposure": "1/125",
+  "iso": 100,
+  "focalLength": 47,
+  "gpsPosition": "40 deg 42' 57.40\" N, 73 deg 59' 22.79\" W",
+  "createDate": "2019:03:30 13:41:15",
+  "placeName": "lower-east-side",
+  "customCity": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "city": "New York City",
+  "width": 6000,
+  "height": 3688,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647.jpg",
+    "key": "photos/ec73b0fed3d9-img-5647.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-thumbnail.webp?crop=1237,0,3688",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ec73b0fed3d9-img-5647-thumbnailpreview.webp?crop=1237,0,3688",
+    "thumbnailcrop": {
+      "x": 1237,
+      "y": 0,
+      "size": 3688,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "lower-east-side"
+    }
+  ]
+}

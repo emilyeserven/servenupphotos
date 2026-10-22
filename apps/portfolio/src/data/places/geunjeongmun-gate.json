@@ -1,5 +1,8 @@
 {
   "id": "geunjeongmun-gate",
   "name": "Geunjeongmun Gate",
-  "description": ""
+  "description": "",
+  "parent": "gyeongbokgung-palace",
+  "city": "",
+  "country": ""
 }

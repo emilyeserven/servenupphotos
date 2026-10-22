@@ -1,0 +1,53 @@
+{
+  "title": "Pumgyeseok",
+  "comment": "Pumgyeseok (품계석) at Gyeongbokgung Palace. These \"rank stones\" indicate where officials of each rank would stand. If you can read a small amount of Chinese characters (or Hanja, 한자, in Korean) you can probably at least read the numbers!",
+  "file": "DSCF3132.jpg",
+  "camera": "Fujifilm X-T5",
+  "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "aperture": 5.6,
+  "exposure": "1/1100",
+  "iso": 125,
+  "focalLength": 74.4,
+  "gpsPosition": "37 deg 34' 40.43\" N, 126 deg 58' 36.60\" E",
+  "createDate": "2026:05:17 13:16:33",
+  "placeName": "Geunjeongjeon",
+  "customCity": null,
+  "customCountry": null,
+  "country": "South Korea",
+  "city": null,
+  "width": 6982,
+  "height": 3927,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132.jpg",
+    "key": "photos/60e22ef141e3-dscf3132.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/60e22ef141e3-dscf3132-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 609,
+      "y": 0,
+      "size": 3927,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "geunjeongjeon"
+    },
+    {
+      "relation": "in",
+      "id": "gyeongbokgung-palace"
+    }
+  ]
+}

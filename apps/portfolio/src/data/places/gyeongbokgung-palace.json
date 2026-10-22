@@ -1,5 +1,8 @@
 {
   "id": "gyeongbokgung-palace",
   "name": "Gyeongbokgung Palace",
-  "description": ""
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "country": ""
 }

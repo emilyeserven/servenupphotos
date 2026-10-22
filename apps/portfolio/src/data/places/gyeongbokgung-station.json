@@ -1,5 +1,8 @@
 {
   "id": "gyeongbokgung-station",
   "name": "Gyeongbokgung Station",
-  "description": ""
+  "description": "",
+  "parent": "",
+  "city": "Seoul",
+  "country": "South Korea"
 }
