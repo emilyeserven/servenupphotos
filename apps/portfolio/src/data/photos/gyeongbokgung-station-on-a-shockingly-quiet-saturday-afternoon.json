@@ -37,7 +37,13 @@
   "socialMediaPublishDate": "2026-10-14",
   "albums": [],
   "tags": [],
-  "placeName": "Gyeongbokgung Station",
+  "placeName": "gyeongbokgung-station",
   "customCity": "Seoul",
-  "customCountry": null
+  "customCountry": null,
+  "places": [
+    {
+      "relation": "",
+      "id": "gyeongbokgung-station"
+    }
+  ]
 }

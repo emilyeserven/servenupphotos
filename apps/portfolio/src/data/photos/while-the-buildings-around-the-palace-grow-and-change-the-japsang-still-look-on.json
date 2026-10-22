@@ -39,5 +39,11 @@
   "websiteSpotlight": null,
   "socialMediaPublishDate": "2026-10-16",
   "albums": [],
-  "tags": []
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "gyeongbokgung-palace"
+    }
+  ]
 }
