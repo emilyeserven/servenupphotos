@@ -12,7 +12,9 @@ import {
 } from "@/api/photos";
 import {
   regenerateVersionsMutation,
+  savedThumbnailCrop,
   squareThumbnailUrl,
+  thumbnailCropField,
   thumbnailPreviewUrl,
   thumbnailCropQuery,
   thumbnailUrlWithCrop,
@@ -124,12 +126,20 @@ function Problem({ children }: { children: string }) {
   );
 }
 
-/** Waits for the crop saved with the Square Thumbnail, which the editor starts from. */
+/**
+ * Waits for the crop saved with the Square Thumbnail, which the editor starts from, or else the one
+ * saved in the photo's JSON.
+ */
 function EditWithSavedCrop({ editable }: { editable: Editable }) {
   const saved = useQuery(thumbnailCropQuery(editable.image.key));
   return (
     <QueryResult query={saved} pendingLabel="Reading the Square Thumbnail's crop from R2…">
-      {(crop) => <EditSteps editable={editable} savedCrop={crop} />}
+      {(crop) => (
+        <EditSteps
+          editable={editable}
+          savedCrop={crop ?? savedThumbnailCrop(editable.data.images)}
+        />
+      )}
     </QueryResult>
   );
 }
@@ -143,9 +153,18 @@ const SQUARE_NAMES = Object.keys(SQUARE_URLS) as SquareName[];
 
 type SquareUrls = Record<SquareName, string>;
 
-/** data with its square versions' URLs, marked with crop. */
+/** data with its square versions' URLs marked with crop, and crop saved as their `thumbnailcrop`. */
 function withSquares(data: PhotoJson, urls: SquareUrls, crop: Crop): PhotoJson {
-  return { ...data, images: { ...data.images, ...markedUrls(urls, crop) } };
+  return {
+    ...data,
+    images: { ...data.images, ...markedUrls(urls, crop), thumbnailcrop: thumbnailCropField(crop) },
+  };
+}
+
+/** data with crop, the square its square versions were cut from, saved as their `thumbnailcrop` when it isn't yet. */
+function withCropField(data: PhotoJson, crop: Crop | null): PhotoJson {
+  if (!crop || !hasThumbnail(data) || savedThumbnailCrop(data.images)) return data;
+  return { ...data, images: { ...data.images, thumbnailcrop: thumbnailCropField(crop) } };
 }
 
 /** urls, each marked with crop. */
@@ -202,14 +221,19 @@ function photoFile(saved: PhotoJson): string {
   return typeof saved.file === "string" ? saved.file : "";
 }
 
-/** What saving would do: the crop to remake the square versions from, if they need it, and the JSON to write. */
+/**
+ * What saving would do: the crop to remake the square versions from, if they need it, and the JSON to
+ * write, which saves baseline as the square versions' crop when they're kept and it isn't saved yet.
+ */
 function saveRequest(
   saved: PhotoJson,
   details: PhotoDetails,
   crop: Crop | null,
+  baseline: Crop | null,
   remakeSquares: boolean,
 ): SaveRequest {
-  return { crop: remakeSquares ? crop : null, data: withDetails(saved, details) };
+  const data = withDetails(saved, details);
+  return remakeSquares ? { crop, data } : { crop: null, data: withCropField(data, baseline) };
 }
 
 /** The JSON a save request would write, with its square versions marked with the new crop. */
@@ -227,7 +251,7 @@ function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
   const remakeSquares = cropChanged(crop, baseline, savedData);
   const changed = remakeSquares || detailsChanged(savedData, details);
   const request = {
-    ...saveRequest(savedData, details, crop, remakeSquares),
+    ...saveRequest(savedData, details, crop, baseline, remakeSquares),
     name: newFileName(file, savedData, details.title),
   };
   return {

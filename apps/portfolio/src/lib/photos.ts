@@ -84,7 +84,10 @@ interface PhotoData {
   width: number | null;
   height: number | null;
   /** Older entries may be missing a version they were saved before. */
-  images: Partial<Record<Version | "preview" | "thumbnail" | "thumbnailpreview", string | null>>;
+  images: Partial<Record<Version | "preview" | "thumbnail" | "thumbnailpreview", string | null>> & {
+    /** The square the thumbnail was cut from, and its size; older entries don't have it. */
+    thumbnailcrop?: { x: number; y: number; size: number; outputSize: number } | null;
+  };
   /** Whether the photo may be posted to social media; older entries are missing it. */
   isSocialMediaEligible?: boolean;
   /** The photo's place among the photos spotlighted on the site; null or missing when it isn't. */

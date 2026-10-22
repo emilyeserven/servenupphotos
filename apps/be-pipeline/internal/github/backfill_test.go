@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
 // oldPhoto is a photo file saved before the title, comment and camera
@@ -53,7 +54,7 @@ func TestFindGapsAndFill(t *testing.T) {
 	want := []string{
 		"title", "comment", "aperture", "exposure", "iso", "focalLength",
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
-		"images.preview", "images.thumbnail", "images.thumbnailpreview",
+		"images.preview", "images.thumbnail", "images.thumbnailpreview", "images.thumbnailcrop",
 		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate", "albums", "tags",
 	}
 	if !reflect.DeepEqual(fields, want) {
@@ -87,7 +88,8 @@ func TestFindGapsAndFill(t *testing.T) {
     "xsmall": null,
     "preview": null,
     "thumbnail": null,
-    "thumbnailpreview": null
+    "thumbnailpreview": null,
+    "thumbnailcrop": null
   },
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
@@ -149,7 +151,7 @@ func TestFillGapsLayouts(t *testing.T) {
 		})
 	}
 	got := string(fillGaps([]byte("{\n  \"file\": \"a.jpg\",\n  \"images\": {}\n}\n"), mustGaps(t, "{\n  \"file\": \"a.jpg\",\n  \"images\": {}\n}\n")))
-	if !strings.Contains(got, "  \"images\": {\n    \"full\": null,\n") || !strings.Contains(got, "    \"thumbnailpreview\": null\n  },\n") {
+	if !strings.Contains(got, "  \"images\": {\n    \"full\": null,\n") || !strings.Contains(got, "    \"thumbnailcrop\": null\n  },\n") {
 		t.Errorf("empty images filled as\n%s", got)
 	}
 }
@@ -177,7 +179,7 @@ func TestPreviewBackfill(t *testing.T) {
 		camera := "Other camera"
 		return exif.Sanitized{Aperture: &aperture, ISO: &iso, Camera: &camera}, ""
 	}
-	got, err := repo.start(t).PreviewBackfill(t.Context(), baseURLSettings, read)
+	got, err := repo.start(t).PreviewBackfill(t.Context(), baseURLSettings, Readers{Exif: read})
 	if err != nil {
 		t.Fatalf("PreviewBackfill() error = %v", err)
 	}
@@ -211,7 +213,7 @@ func TestPreviewBackfillExifFails(t *testing.T) {
 	read := func(context.Context, string) (exif.Sanitized, string) {
 		return exif.Sanitized{}, "That photo isn't in the bucket anymore."
 	}
-	got, err := repo.start(t).PreviewBackfill(t.Context(), baseURLSettings, read)
+	got, err := repo.start(t).PreviewBackfill(t.Context(), baseURLSettings, Readers{Exif: read})
 	if err != nil {
 		t.Fatalf("PreviewBackfill() error = %v", err)
 	}
@@ -225,11 +227,11 @@ func TestBackfill(t *testing.T) {
 		"DSC0001.json": oldPhoto,
 		"DSC0003.json": fullPhoto(t),
 	}}
-	got, err := repo.start(t).Backfill(t.Context(), baseURLSettings, nil)
+	got, err := repo.start(t).Backfill(t.Context(), baseURLSettings, Readers{})
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 18 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
+	if got.Files != 1 || got.Fields != 19 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/photos/DSC0001.json" {
@@ -245,9 +247,88 @@ func TestBackfill(t *testing.T) {
 
 func TestBackfillNothingToAdd(t *testing.T) {
 	repo := &baseURLRepo{pull: true, files: map[string]string{"DSC0003.json": fullPhoto(t)}}
-	_, err := repo.start(t).Backfill(t.Context(), baseURLSettings, nil)
+	_, err := repo.start(t).Backfill(t.Context(), baseURLSettings, Readers{})
 	var perr *PublishError
 	if !errors.As(err, &perr) || !strings.Contains(perr.Message, "nothing to add") {
 		t.Errorf("Backfill() error = %v, want nothing to add", err)
+	}
+}
+
+// croppedPhoto has a Square Thumbnail but no thumbnail crop, and is missing
+// nothing else.
+func croppedPhoto(t *testing.T, thumbnail string) string {
+	t.Helper()
+	s := exif.Sanitized{}
+	key := "photos/ab-DSC0004.jpg"
+	s.Images.Key, s.Images.Thumbnail = &key, &thumbnail
+	raw, err := json.MarshalIndent(newPhotoJSON("DSC0004.jpg", s), "", "  ")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return strings.Replace(string(raw), ",\n    \"thumbnailcrop\": null", "", 1) + "\n"
+}
+
+func TestPreviewBackfillThumbnailCrop(t *testing.T) {
+	marked := "https://pub-1234.r2.dev/photos/ab-DSC0004-thumbnail.webp?crop=1710,0,4220"
+	plain := "https://pub-1234.r2.dev/photos/ab-DSC0004-thumbnail.webp"
+	tests := []struct {
+		name, thumbnail string
+		read            CropReader
+		want, cropError string
+	}{
+		{"from the URL", marked, nil, `{"x":1710,"y":0,"size":4220,"outputSize":500}`, ""},
+		{"not marked, not read", plain, nil, "null", ""},
+		{"from R2", plain, func(_ context.Context, key string) (*versions.Crop, string) {
+			if key != "photos/ab-DSC0004.jpg" {
+				t.Errorf("read crop of %q", key)
+			}
+			return &versions.Crop{X: 0, Y: 12, Size: 300}, ""
+		}, `{"x":0,"y":12,"size":300,"outputSize":500}`, ""},
+		{"none in R2", plain, func(context.Context, string) (*versions.Crop, string) { return nil, "" }, "null", ""},
+		{"R2 fails", plain, func(context.Context, string) (*versions.Crop, string) {
+			return nil, "That photo isn't in the bucket anymore."
+		}, "null", "That photo isn't in the bucket anymore."},
+		{"URL before R2", marked, func(context.Context, string) (*versions.Crop, string) {
+			t.Error("read the crop from R2, but the URL has it")
+			return nil, ""
+		}, `{"x":1710,"y":0,"size":4220,"outputSize":500}`, ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := &baseURLRepo{files: map[string]string{"DSC0004.json": croppedPhoto(t, tt.thumbnail)}}
+			got, err := repo.start(t).PreviewBackfill(t.Context(), baseURLSettings, Readers{Crop: tt.read})
+			if err != nil {
+				t.Fatalf("PreviewBackfill() error = %v", err)
+			}
+			if len(got.Files) != 1 || len(got.Files[0].Added) != 1 {
+				t.Fatalf("files = %+v, want one missing the crop", got.Files)
+			}
+			added := got.Files[0].Added[0]
+			if added.Field != "images.thumbnailcrop" || string(added.Value) != tt.want || added.FromThumbnail != (tt.want != "null") {
+				t.Errorf("added = %+v %s, want %s", added, added.Value, tt.want)
+			}
+			if got.Files[0].CropError != tt.cropError {
+				t.Errorf("CropError = %q, want %q", got.Files[0].CropError, tt.cropError)
+			}
+		})
+	}
+}
+
+func TestBackfillThumbnailCropFromURL(t *testing.T) {
+	marked := "https://pub-1234.r2.dev/photos/ab-DSC0004-thumbnail.webp?crop=1710,0,4220"
+	repo := &baseURLRepo{pull: true, files: map[string]string{"DSC0004.json": croppedPhoto(t, marked)}}
+	if _, err := repo.start(t).Backfill(t.Context(), baseURLSettings, Readers{}); err != nil {
+		t.Fatalf("Backfill() error = %v", err)
+	}
+	want := `    "thumbnailpreview": null,
+    "thumbnailcrop": {
+      "x": 1710,
+      "y": 0,
+      "size": 4220,
+      "outputSize": 500
+    }
+  },`
+	if !strings.Contains(repo.tree[0]["content"], want) {
+		t.Errorf("content = %s", repo.tree[0]["content"])
 	}
 }

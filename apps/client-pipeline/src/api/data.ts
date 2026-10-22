@@ -96,17 +96,21 @@ export interface AddedField {
   value: unknown;
   /** True when the value was read from the photo's original in R2, not the field's default. */
   fromExif: boolean;
+  /** True when the value is the Square Thumbnail's crop, read from its URL's ?crop= mark or from R2. */
+  fromThumbnail: boolean;
 }
 
 export interface MissingFieldsPreview extends ScannedPhotos {
   /** Each missing field with how many files miss it, in the order new photo files list them. */
-  fields: { field: string; files: number; fromExif: number }[];
+  fields: { field: string; files: number; fromExif: number; fromThumbnail: number }[];
   files: {
     path: string;
     fileUrl: string;
     added: AddedField[];
     /** Why the photo's EXIF couldn't be read, so its EXIF fields get their defaults. */
     exifError?: string;
+    /** Why the Square Thumbnail's crop couldn't be read from R2, so it gets its default. */
+    cropError?: string;
   }[];
   /** True when missing EXIF fields were read from the originals in R2. */
   readExif: boolean;

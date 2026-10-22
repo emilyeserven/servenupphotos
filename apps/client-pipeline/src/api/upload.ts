@@ -12,6 +12,8 @@ interface UploadedObject {
 /** Where an uploaded photo, its resized WEBP versions and its square thumbnail ended up in R2. */
 export interface UploadResponse extends UploadedObject {
   versions: Record<PublishedName, UploadedObject>;
+  /** The square the Square Thumbnail was cut from, fitted to the photo. */
+  thumbnailCrop?: Crop;
 }
 
 /** What Cloudflare answered to a failed request. */

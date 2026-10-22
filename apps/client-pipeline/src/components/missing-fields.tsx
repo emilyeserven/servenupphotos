@@ -43,8 +43,9 @@ export function MissingFieldsCard({ canReadExif }: MissingFieldsCardProps) {
         <CardTitle>Missing fields</CardTitle>
         <CardDescription>
           Gives older photo files the fields new ones have, such as the title, comment and camera
-          settings. A missing field gets the value a new photo starts with, usually empty. Fields a
-          file already has, even empty ones, aren&apos;t changed.
+          settings. A missing field gets the value a new photo starts with, usually empty, except
+          the Square Thumbnail&apos;s crop, which is read from the <code>?crop=</code> on its URL
+          when it has one. Fields a file already has, even empty ones, aren&apos;t changed.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -110,7 +111,7 @@ function ExifOption({ checked, disabled, onChange }: ExifOptionProps) {
         <p id={`${id}-hint`} className="text-muted-foreground">
           {disabled && !checked
             ? "Set up Cloudflare R2 in Settings to read them. Until then they're added empty."
-            : "Fills a missing camera, lens, aperture, exposure, ISO, focal length, place, date or size from the photo's EXIF. It downloads each of those photos, so it takes a little longer."}
+            : "Fills a missing camera, lens, aperture, exposure, ISO, focal length, place, date or size from the photo's EXIF, and a missing Square Thumbnail crop from the one saved with the thumbnail. It downloads each of those photos, so it takes a little longer."}
         </p>
       </div>
     </div>
@@ -184,6 +185,7 @@ function FieldCounts({ fields }: { fields: MissingFieldsPreview["fields"] }) {
           <span className="text-muted-foreground">
             {count(f.files, "file")}
             {f.fromExif > 0 && `, ${f.fromExif} from EXIF`}
+            {f.fromThumbnail > 0 && `, ${f.fromThumbnail} from the Square Thumbnail`}
           </span>
         </li>
       ))}
@@ -210,6 +212,12 @@ function FilesMissingFields({ files }: { files: MissingFieldsPreview["files"] })
                   Couldn&apos;t read its EXIF, so those fields are added empty: {file.exifError}
                 </p>
               )}
+              {file.cropError && (
+                <p className="text-destructive">
+                  Couldn&apos;t read its Square Thumbnail&apos;s crop, so it&apos;s added empty:{" "}
+                  {file.cropError}
+                </p>
+              )}
               <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
                 {file.added.map((a) => (
                   <div key={a.field} className="contents">
@@ -218,6 +226,12 @@ function FilesMissingFields({ files }: { files: MissingFieldsPreview["files"] })
                       <span className="font-mono break-all">{JSON.stringify(a.value)}</span>
                       {a.fromExif && (
                         <span className="text-muted-foreground whitespace-nowrap"> from EXIF</span>
+                      )}
+                      {a.fromThumbnail && (
+                        <span className="text-muted-foreground whitespace-nowrap">
+                          {" "}
+                          from the Square Thumbnail
+                        </span>
                       )}
                     </dd>
                   </div>

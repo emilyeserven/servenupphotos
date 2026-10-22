@@ -1,4 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
+import type { ThumbnailCrop } from "@/api/versions";
 
 interface Color {
   hex: string;
@@ -99,6 +100,8 @@ export interface SanitizedExif {
     thumbnail: string | null;
     /** Public R2 URL of a tiny 40 × 40 WEBP of the same square, to show blurred while it loads. */
     thumbnailpreview: string | null;
+    /** The square of the photo the Square Thumbnail is cut from, once it has been uploaded. */
+    thumbnailcrop: ThumbnailCrop | null;
   };
   /** Whether the photo may be posted to social media, such as Instagram. */
   isSocialMediaEligible: boolean;

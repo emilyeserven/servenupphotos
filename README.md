@@ -153,7 +153,8 @@ Missing fields go where a new file has them, nested `images` fields included, an
 for byte; a field a file already has, even `null`, is never changed. With **Read missing camera details from the
 originals in R2** on, a missing EXIF field (`exif.SanitizeFields`) is read from the photo's original at `images.key`,
 as Explore Bucket reads it, instead of being added as `null`; the backend keeps each original's EXIF in memory, so
-applying doesn't download them again after a preview.
+applying doesn't download them again after a preview. A missing `images.thumbnailcrop` is read from the `?crop=x,y,size`
+on `images.thumbnail` when it has one, or, with that option on, from the crop saved with the Square Thumbnail in R2.
 
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.
@@ -193,7 +194,9 @@ pull request collects every photo until you merge it. An existing file is never 
 The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
 whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
 its object key, and whose `xlarge`, `large`, `medium`, `small`, `xsmall` and `preview` are the public URLs of its resized versions
-and `thumbnail` the public URL of its Square Thumbnail, with `thumbnailpreview` its low-res placeholder. The
+and `thumbnail` the public URL of its Square Thumbnail, with `thumbnailpreview` its low-res placeholder.
+`thumbnailcrop` is where the Square Thumbnail is cut from, in pixels of the upright photo: "500 × 500 px from a
+4220 × 4220 px square at 1710, 0" is `{ "x": 1710, "y": 0, "size": 4220, "outputSize": 500 }`. The
 `images` links are `null` until you
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what Save to GitHub will write, and picks up the URL as soon as the upload finishes.
@@ -282,13 +285,15 @@ after a removal instead.
 
 Each photo whose JSON was read and whose image is in R2 has an **Edit** button, which opens it on the Photo page in
 edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from. The crop editor starts from the
-crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=…`, the middle when none is saved), on
+crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=…`, else the JSON's
+`images.thumbnailcrop`, else the middle), on
 the original photo from R2. **Save changes** first remakes the thumbnail and its Thumbnail Preview from the new
 square (`POST /api/photos/bucket/versions` with `versions: ["thumbnail", "thumbnailpreview"]` and a `crop`, which
 replaces the saved one), then writes the JSON over the file on the pull request's branch (`PUT /api/photos/in-flight`
 with the `path` and new `data`; only files the pull request adds or modifies can be edited). Both keep their R2 keys, so
 the JSON's `images.thumbnail` and `images.thumbnailpreview` get a `?crop=x,y,size` query: a new URL that browsers and
-Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores the query). The commit starts the **Combine photo data** workflow, which the page
+Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores the query), and `images.thumbnailcrop` the
+new square. Saving any other change to a file without `images.thumbnailcrop` adds it too. The commit starts the **Combine photo data** workflow, which the page
 follows the same way.
 
 Under the photos it lists the album and tag files the pull request adds or changes, each with its JSON and a check mark
