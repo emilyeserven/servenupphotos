@@ -69,6 +69,26 @@ type photoJSON struct {
 	// spotlighted in, such as "homepage", the homepage's background. They're
 	// picked on the Site Spotlight page.
 	SpotlightZones []string `json:"spotlightZones"`
+	// SocialPosts are the photo's posts on social media, posted or
+	// scheduled, written on the Photo page.
+	SocialPosts []SocialPost `json:"socialPosts"`
+}
+
+// SocialPost is one post of a photo on social media, such as on Instagram.
+type SocialPost struct {
+	// Platform is where it's posted, such as "instagram".
+	Platform string `json:"platform"`
+	// Status is "scheduled" or "posted".
+	Status string `json:"status"`
+	// Date is the day it's posted or scheduled for, as YYYY-MM-DD, or nil
+	// when it isn't known.
+	Date *string `json:"date"`
+	// URL is the post's link, or "" before it's posted.
+	URL string `json:"url"`
+	// Caption is the post's text, without its hashtags.
+	Caption string `json:"caption"`
+	// Hashtags are the post's hashtags, without their "#".
+	Hashtags []string `json:"hashtags"`
 }
 
 // newPhotoJSON is the content of a new photo file. It is also the list of
@@ -78,7 +98,7 @@ type photoJSON struct {
 func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 	return photoJSON{
 		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
-		Places: []PhotoPlace{}, SpotlightZones: []string{},
+		Places: []PhotoPlace{}, SpotlightZones: []string{}, SocialPosts: []SocialPost{},
 	}
 }
 

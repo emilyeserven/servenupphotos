@@ -12,6 +12,7 @@ import { PhotoGroupsCard } from "@/components/group-picker";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
 import { QueryResult } from "@/components/query-result";
+import { SocialPostsCard } from "@/components/social-posts-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +31,7 @@ import { type Edit, useEdit, useSave } from "@/components/edit-in-flight/use-edi
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
- * Square Thumbnail crop, title, place name and comment can be changed, then saved by remaking the thumbnail in R2
+ * Square Thumbnail crop, title, place name, comment and social media posts can be changed, then saved by remaking the thumbnail in R2
  * when the crop moved and updating its JSON in the pull request. A photo already in the portfolio is
  * read from the base branch until its first save puts it in the pull request.
  */
@@ -148,10 +149,22 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
           disabled={pending}
         />
+        <SocialPostsCard
+          value={edit.socialPosts}
+          onChange={edit.setSocialPosts}
+          calendarDate={calendarDate(edit.savedData)}
+          disabled={pending}
+        />
         <JsonPreview file={editable.file} edit={edit} />
       </div>
     </div>
   );
+}
+
+/** The day the Instagram calendar has the photo scheduled for, when it has one. */
+function calendarDate(data: Record<string, unknown>): string | null {
+  const date = data.socialMediaPublishDate;
+  return typeof date === "string" && date ? date : null;
 }
 
 /** The file's JSON, as saving would write it when there's something to save. */

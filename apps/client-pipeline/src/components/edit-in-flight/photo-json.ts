@@ -24,6 +24,7 @@ import {
 } from "@/components/photo-details";
 import { canonicalJson } from "@/lib/combined";
 import { type Crop, sameCrop } from "@/lib/crop";
+import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
 
 /**
@@ -180,13 +181,20 @@ function placesChanged(data: PhotoJson, details: PhotoDetails): boolean {
   return canonicalJson(chosenPlaces(details.places)) !== canonicalJson(saved);
 }
 
-/** Whether the details, albums or tags differ from the ones saved in data. */
-export function fieldsChanged(
-  data: PhotoJson,
-  details: PhotoDetails,
-  groups: PhotoGroups,
-): boolean {
-  return detailsChanged(data, details) || !sameGroups(savedGroups(data), groups);
+/** What the Photo page edits besides the crop: the details, albums and tags, and social media posts. */
+export interface EditedFields {
+  details: PhotoDetails;
+  groups: PhotoGroups;
+  socialPosts: SocialPostDraft[];
+}
+
+/** Whether the details, albums, tags or social media posts differ from the ones saved in data. */
+export function fieldsChanged(data: PhotoJson, { details, groups, socialPosts }: EditedFields) {
+  return (
+    detailsChanged(data, details) ||
+    !sameGroups(savedGroups(data), groups) ||
+    socialPostsChanged(data, socialPosts)
+  );
 }
 
 /**
@@ -219,13 +227,12 @@ export function photoFile(saved: PhotoJson): string {
  */
 export function saveRequest(
   saved: PhotoJson,
-  details: PhotoDetails,
-  groups: PhotoGroups,
+  { details, groups, socialPosts }: EditedFields,
   crop: Crop | null,
   baseline: Crop | null,
   remakeSquares: boolean,
 ): SaveRequest {
-  const data = withGroups(withDetails(saved, details), groups);
+  const data = withSocialPosts(withGroups(withDetails(saved, details), groups), socialPosts);
   return remakeSquares ? { crop, data } : { crop: null, data: withCropField(data, baseline) };
 }
 
