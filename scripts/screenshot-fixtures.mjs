@@ -110,6 +110,7 @@ const added = {
     metaGroupFile("focal-length-wide-angle", "Wide angle", "focalLength", {
       range: { min: 10, max: 24 },
     }),
+    metaGroupFile("iso-high", "High ISO", "iso", { range: { min: 1600 } }),
     metaGroupFile("lens-brands", "Brands", "lens", { order: 1 }),
     metaGroupFile("lens-canon", "Canon", "lens", {
       parent: "lens-brands",

@@ -3,13 +3,14 @@ import { useState } from "react";
 import { META_FIELDS, type MetaFieldInfo, type MetaGroup, metaGroups } from "@/api/metainfo";
 import { MetaGroupEditor } from "@/components/metadata-group-editor";
 import { MetaMoveButtons } from "@/components/metadata-move-buttons";
+import { MetaUncovered } from "@/components/metadata-uncovered";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { shownPhotos } from "@/lib/place-seeds";
-import { groupPhotoCount, groupTree } from "@/lib/meta-groups";
+import { groupPhotoCount, groupTree, uncoveredValues } from "@/lib/meta-groups";
 import { fieldValues, type MetaValueCount, showRange } from "@/lib/meta-values";
 import { cn } from "@/lib/utils";
 import type { CombinedPhoto } from "@/lib/group-photos";
@@ -112,6 +113,7 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
             depth={depth}
             subgroups={groups.filter((g) => g.parent === group.id).length}
             photos={groupPhotoCount(values, groups, group)}
+            uncovered={uncoveredValues(values, groups, group).length}
             chosen={group.id === chosen}
             onChoose={() => onChoose(group.id)}
           />
@@ -120,6 +122,14 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
           <PlusIcon aria-hidden />
           New group
         </Button>
+        <div className="mt-3 border-t pt-3">
+          <MetaUncovered
+            info={info}
+            values={uncoveredValues(values, groups)}
+            outside="any group"
+            inside="a group"
+          />
+        </div>
       </CardContent>
     </Card>
   );
@@ -135,6 +145,8 @@ interface GroupRowProps {
   /** How many groups are directly in it. */
   subgroups: number;
   photos: number;
+  /** How many of the photos' values in it none of its subgroups has. */
+  uncovered: number;
   chosen: boolean;
   onChoose: () => void;
 }
@@ -154,6 +166,14 @@ function coverage(info: MetaFieldInfo, group: MetaGroup, subgroups: number): str
   return group.range ? showRange(info.field, group.range) : listed(group, subgroups);
 }
 
+/** For a group with subgroups, how many of its values none of them has. */
+function NotInSubgroups({ subgroups, uncovered }: { subgroups: number; uncovered: number }) {
+  if (subgroups === 0 || uncovered === 0) return null;
+  return (
+    <span className="block text-amber-700 dark:text-amber-400">{uncovered} not in subgroups</span>
+  );
+}
+
 function GroupRow(props: GroupRowProps) {
   const { group, groups, depth, chosen } = props;
   return (
@@ -168,8 +188,9 @@ function GroupRow(props: GroupRowProps) {
         )}
       >
         <GroupName name={group.name} nested={depth > 0} />
-        <span className="text-muted-foreground shrink-0 text-xs">
+        <span className="text-muted-foreground shrink-0 text-right text-xs">
           {coverage(props.info, group, props.subgroups)}, {plural(props.photos, "photo")}
+          <NotInSubgroups subgroups={props.subgroups} uncovered={props.uncovered} />
         </span>
       </button>
       <MetaMoveButtons group={group} groups={groups} />

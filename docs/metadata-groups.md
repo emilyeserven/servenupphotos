@@ -43,7 +43,9 @@ group is a range:
 - **`range`** covers every value from `min` to `max`, both ends included, so a photo taken later at 15 mm is in
   **Wide angle** without editing the group. Each value is read as a number: focal lengths in mm, apertures as
   f-numbers, ISO as is, and exposures in seconds (`"1/250"` is 0.004, `"2"` is 2). Text with a number in it reads as
-  its first number (`"24 mm"` is 24). Only those four fields can have a range, and `min` can't be above `max`.
+  its first number (`"24 mm"` is 24). Either end can be left out for a range open on that side: `{ "min": 12800 }`
+  is every ISO from 12800 up, and `{ "max": 0.004 }` every exposure of 1/250 s or faster. A range needs at least
+  one end. Only those four fields can have a range, and `min` can't be above `max`.
 - **`parent`** is the ID of the group of the same field this one is in, or `""`. Groups nest as deep as needed, such
   as **Brands** holding **Canon** and **Fujifilm** while **Types** holds **Zoom** and **Prime**. A group covers its
   own values or range and those of every group in it. A group can't be in itself or in a group that's in it, and a
@@ -76,8 +78,19 @@ The photos are `ALLPHOTOS.json` at the photo data pull request's head with the c
 (exposures from fastest to slowest). It stops at each value the photos have, marked with a tick under the track, and
 also at the field's common values a stop or so apart, so a range can reach past what the photos have: focal lengths
 8 to 800 mm, apertures f/1 to f/32, exposures 1/8000 s to 30 s, and ISO 50 to 102400. The boxes under it set either
-end by typing, to any value at all (`1/16000` for an exposure). The values the photos have inside the range are
+end by typing, to any value at all (`1/16000` for an exposure). **No lowest** and **No highest** leave that end
+open: its box and handle go away, the range runs off that end of the slider, and it shows as **ISO 12800 and up** or
+**up to 1/250 s**. Unticking one puts that end back at the slider's last stop that way. The values the photos have inside the range are
 listed under it with their photo counts. A new group starts as every value the photos have.
+
+Each tab's list ends with the values the photos have that **no group** covers, as dashed chips with their photo
+counts (or a note that every one is in a group). A group with subgroups does the same for its own scope: its row says
+how many of its values are **not in subgroups**, and its editor lists them. Its scope is its own values or range, or,
+when it only holds groups, every value the photos have; a value counts as covered when any group under it, however
+deep, has it. So **Types** holding only **Zoom** shows the prime lenses as not in its subgroups.
+
+> **Frontend analogy:** it's an exhaustiveness check, like TypeScript flagging the `switch` cases a union still has
+> no `case` for.
 
 **Cameras and lenses** get **Values**, a checkbox for every value the photos have, sorted by name, each with how many
 photos have it. A value another group already lists says **Also in …** under it, and can still be checked here. A

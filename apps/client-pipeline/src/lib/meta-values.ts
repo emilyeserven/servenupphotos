@@ -80,11 +80,18 @@ export function showValue(field: MetaField, value: MetaValue): string {
   return UNITS[field]?.(value) ?? String(value);
 }
 
-/** A range as the page shows it, such as "10–24 mm" or "1/250 s – 1/60 s". */
-export function showRange(field: MetaField, range: MetaRange): string {
-  const [low, high] = [showValue(field, range.min), showValue(field, range.max)];
+/** A range with both ends as the page shows it, such as "10–24 mm" or "1/250 s – 1/60 s". */
+function showClosed(field: MetaField, min: number, max: number): string {
+  const [low, high] = [showValue(field, min), showValue(field, max)];
   if (low === high) return low;
-  return field === "focalLength" ? `${range.min}–${range.max} mm` : `${low} – ${high}`;
+  return field === "focalLength" ? `${min}–${max} mm` : `${low} – ${high}`;
+}
+
+/** A range as the page shows it, such as "10–24 mm", "ISO 12800 and up" or "up to 1/60 s". */
+export function showRange(field: MetaField, { min, max }: MetaRange): string {
+  if (min === undefined) return `up to ${showValue(field, max ?? 0)}`;
+  if (max === undefined) return `${showValue(field, min)} and up`;
+  return showClosed(field, min, max);
 }
 
 /**
@@ -98,10 +105,20 @@ export function typedValue(text: string, numeric: boolean): MetaValue | undefine
   return numeric && Number.isFinite(number) ? number : trimmed;
 }
 
-/** Whether value is in range, both ends included. */
+/** Whether n is at or above min, when there's a min. */
+function fromMin(n: number, min: number | undefined): boolean {
+  return min === undefined ? !Number.isNaN(n) : n >= min;
+}
+
+/** Whether n is at or below max, when there's a max. */
+function toMax(n: number, max: number | undefined): boolean {
+  return max === undefined ? !Number.isNaN(n) : n <= max;
+}
+
+/** Whether value is in range, both ends included; a missing end doesn't limit it. */
 function inRange(value: MetaValue, range: MetaRange): boolean {
   const n = metaNumber(value);
-  return n >= range.min && n <= range.max;
+  return fromMin(n, range.min) && toMax(n, range.max);
 }
 
 /** Whether the group has value: in its range, or one of its values. */

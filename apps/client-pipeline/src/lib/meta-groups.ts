@@ -82,3 +82,34 @@ export function otherGroupNames(
     .filter((group) => group.id !== id && group.values.some((v) => valueKey(v) === key))
     .map((group) => group.name);
 }
+
+/** Whether the group says which values it has, with a range or a list, rather than only holding groups. */
+function hasOwnValues(group: MetaGroup): boolean {
+  return Boolean(group.range) || group.values.length > 0;
+}
+
+/** The values the photos have that parent covers: its own, or every one when it only holds groups. */
+function scopeOf(values: MetaValueCount[], parent: MetaGroup | undefined): MetaValueCount[] {
+  const had = values.filter((v) => v.count > 0);
+  return parent && hasOwnValues(parent) ? had.filter((v) => hasValue(parent, v.value)) : had;
+}
+
+/** The groups under parent at any depth, or every group when there's no parent. */
+function groupsUnder(groups: MetaGroup[], parent: MetaGroup | undefined): MetaGroup[] {
+  if (!parent) return groups;
+  const ids = withDescendants(groups, parent.id);
+  return groups.filter((g) => g.id !== parent.id && ids.has(g.id));
+}
+
+/**
+ * The values the photos have that no group covers: for a parent, the ones in it that none of its
+ * subgroups (however deep) has; with no parent, the ones no group has at all.
+ */
+export function uncoveredValues(
+  values: MetaValueCount[],
+  groups: MetaGroup[],
+  parent?: MetaGroup,
+): MetaValueCount[] {
+  const under = groupsUnder(groups, parent);
+  return scopeOf(values, parent).filter((v) => !under.some((g) => hasValue(g, v.value)));
+}

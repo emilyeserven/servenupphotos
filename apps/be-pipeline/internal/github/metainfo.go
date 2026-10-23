@@ -45,15 +45,18 @@ type MetaGroup struct {
 	Values []json.RawMessage `json:"values"`
 	// Range, for a focal length, aperture, exposure or ISO group, is every
 	// value from Min to Max, both included, whether or not a photo has it
-	// yet; nil for a group of only its Values.
+	// yet, or with only one of them, every value from Min up or up to Max;
+	// nil for a group of only its Values.
 	Range *MetaRange `json:"range,omitempty"`
 }
 
 // MetaRange is a range of numbers: focal lengths in mm, apertures as
-// f-numbers, ISO, or exposures in seconds (1/250 is 0.004).
+// f-numbers, ISO, or exposures in seconds (1/250 is 0.004). Either end can be
+// left out (nil) for a range open at that end, such as ISO 12800 and up, but
+// not both.
 type MetaRange struct {
-	Min float64 `json:"min"`
-	Max float64 `json:"max"`
+	Min *float64 `json:"min,omitempty"`
+	Max *float64 `json:"max,omitempty"`
 }
 
 // SaveMetaGroup saves group as <folder>/metainfo/<id>.json, new or replacing
@@ -199,7 +202,16 @@ func validMetaShape(g MetaGroup) *PublishError {
 	if !slices.Contains(rangeMetaFields, g.Field) {
 		return publishErr(http.StatusBadRequest, "Only focal length, aperture, exposure and ISO groups can be a range.")
 	}
-	if g.Range.Min > g.Range.Max {
+	return validRange(*g.Range)
+}
+
+// validRange fails when r has neither end, or its lowest value is above its
+// highest.
+func validRange(r MetaRange) *PublishError {
+	if r.Min == nil && r.Max == nil {
+		return publishErr(http.StatusBadRequest, "Give the range a lowest value, a highest value, or both.")
+	}
+	if r.Min != nil && r.Max != nil && *r.Min > *r.Max {
 		return publishErr(http.StatusBadRequest, "The range's lowest value is above its highest.")
 	}
 	return nil
