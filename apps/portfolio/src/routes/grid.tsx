@@ -12,6 +12,7 @@ import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 import { cn } from "@/lib/utils";
 
 /**
@@ -169,18 +170,6 @@ const VIEW_MODES = [
   { mode: "square", label: "Square", Icon: Square },
   { mode: "natural", label: "Natural", Icon: LayoutDashboard },
 ] as const;
-
-/** The outline around the tile shape switcher. */
-const CONTROL_FRAME =
-  "inline-flex rounded-md border bg-background p-0.5 shadow-xs dark:border-input dark:bg-input/30";
-
-/** How one of the controls' buttons looks, depending on whether it's on. */
-function controlButtonClass(active: boolean): string {
-  return cn(
-    "inline-flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4",
-    active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
-  );
-}
 
 /**
  * A checkbox to show or hide each tile's title and comment, kept in the URL so a link keeps it.
