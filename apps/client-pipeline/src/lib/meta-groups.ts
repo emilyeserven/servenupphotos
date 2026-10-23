@@ -8,13 +8,28 @@ export interface MetaGroupRow {
   depth: number;
 }
 
-function byName(a: MetaGroup, b: MetaGroup): number {
-  return a.name.localeCompare(b.name, "en");
+/** Sorts groups by their saved order, then by name. */
+function byOrder(a: MetaGroup, b: MetaGroup): number {
+  return (a.order ?? 0) - (b.order ?? 0) || a.name.localeCompare(b.name, "en");
 }
 
-/** The groups directly in parent ("" for the top level), by name. */
-function childrenOf(groups: MetaGroup[], parent: string): MetaGroup[] {
-  return groups.filter((group) => (group.parent ?? "") === parent).toSorted(byName);
+/** The groups directly in parent ("" for the top level), in order. */
+export function childrenOf(groups: MetaGroup[], parent: string): MetaGroup[] {
+  return groups.filter((group) => (group.parent ?? "") === parent).toSorted(byOrder);
+}
+
+/**
+ * The groups to save to move the group with id one place up (-1) or down (1) among siblings, in
+ * order: every sibling numbered by its new place, keeping only the ones whose order changes.
+ */
+export function movedGroups(siblings: MetaGroup[], id: string, by: -1 | 1): MetaGroup[] {
+  const from = siblings.findIndex((group) => group.id === id);
+  const to = from + by;
+  if (from === -1 || to < 0 || to >= siblings.length) return [];
+  const moved = siblings.toSpliced(from, 1).toSpliced(to, 0, siblings[from]!);
+  return moved
+    .map((group, order) => ({ ...group, order }))
+    .filter((group, i) => group.order !== (moved[i]!.order ?? 0));
 }
 
 /** Whether group's parent is one of groups; one whose parent is gone is listed at the top. */
@@ -27,10 +42,10 @@ function addRows(groups: MetaGroup[], group: MetaGroup, depth: number, rows: Met
   for (const child of childrenOf(groups, group.id)) addRows(groups, child, depth + 1, rows);
 }
 
-/** The groups as a tree: each top-level group by name, with the groups in it under it. */
+/** The groups as a tree: each top-level group in order, with the groups in it under it. */
 export function groupTree(groups: MetaGroup[]): MetaGroupRow[] {
   const rows: MetaGroupRow[] = [];
-  const top = groups.filter((group) => !hasKnownParent(groups, group)).toSorted(byName);
+  const top = groups.filter((group) => !hasKnownParent(groups, group)).toSorted(byOrder);
   for (const group of top) addRows(groups, group, 0, rows);
   return rows;
 }
@@ -66,4 +81,35 @@ export function otherGroupNames(
   return groups
     .filter((group) => group.id !== id && group.values.some((v) => valueKey(v) === key))
     .map((group) => group.name);
+}
+
+/** Whether the group says which values it has, with a range or a list, rather than only holding groups. */
+function hasOwnValues(group: MetaGroup): boolean {
+  return Boolean(group.range) || group.values.length > 0;
+}
+
+/** The values the photos have that parent covers: its own, or every one when it only holds groups. */
+function scopeOf(values: MetaValueCount[], parent: MetaGroup | undefined): MetaValueCount[] {
+  const had = values.filter((v) => v.count > 0);
+  return parent && hasOwnValues(parent) ? had.filter((v) => hasValue(parent, v.value)) : had;
+}
+
+/** The groups under parent at any depth, or every group when there's no parent. */
+function groupsUnder(groups: MetaGroup[], parent: MetaGroup | undefined): MetaGroup[] {
+  if (!parent) return groups;
+  const ids = withDescendants(groups, parent.id);
+  return groups.filter((g) => g.id !== parent.id && ids.has(g.id));
+}
+
+/**
+ * The values the photos have that no group covers: for a parent, the ones in it that none of its
+ * subgroups (however deep) has; with no parent, the ones no group has at all.
+ */
+export function uncoveredValues(
+  values: MetaValueCount[],
+  groups: MetaGroup[],
+  parent?: MetaGroup,
+): MetaValueCount[] {
+  const under = groupsUnder(groups, parent);
+  return scopeOf(values, parent).filter((v) => !under.some((g) => hasValue(g, v.value)));
 }

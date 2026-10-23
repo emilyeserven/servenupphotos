@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { MetaFieldInfo, MetaRange } from "@/api/metainfo";
 import { FieldLabel } from "@/components/field-label";
+import { STANDARD_STOPS } from "@/lib/meta-stops";
 import { Input } from "@/components/ui/input";
 import { type MetaValueCount, metaNumber, showRange, showValue, valuesIn } from "@/lib/meta-values";
 
@@ -16,40 +17,51 @@ interface MetaRangePickerProps {
 export function rangeStops(values: MetaValueCount[], range?: MetaRange): number[] {
   const numbers = values.filter((v) => v.count > 0).map((v) => metaNumber(v.value));
   const ends = range ? [range.min, range.max] : [];
-  const finite = [...numbers, ...ends].filter(Number.isFinite);
+  const finite = [...numbers, ...ends].filter((n): n is number => Number.isFinite(n));
   return [...new Set(finite)].toSorted((a, b) => a - b);
+}
+
+/** The slider's stops: the photos' values and the range's ends, with the field's common values. */
+function sliderStops(field: MetaFieldInfo["field"], values: MetaValueCount[], range: MetaRange) {
+  const stops = new Set([...rangeStops(values, range), ...(STANDARD_STOPS[field] ?? [])]);
+  return [...stops].toSorted((a, b) => a - b);
 }
 
 /**
  * A focal length, aperture, exposure or ISO group's range: a slider with a handle for each end that
- * stops at each value the photos have, boxes to type either end, and the values the photos have in
- * it.
+ * stops at each value the photos have (marked under it) and the field's common values beyond them,
+ * boxes to type either end or leave it open ("ISO 12800 and up"), and the values the photos have in it.
  */
 export function MetaRangePicker({ info, values, range, onChange }: MetaRangePickerProps) {
-  const stops = rangeStops(values, range);
+  const stops = sliderStops(info.field, values, range);
+  const marks = rangeStops(values);
   const inside = valuesIn(values, range);
   const photos = inside.reduce((sum, v) => sum + v.count, 0);
   return (
     <div className="flex flex-col gap-3">
       <FieldLabel
         id="meta-group-range"
-        help={`Drag either end, or type it, to choose every ${info.one} from one to the other. A ${info.one} a photo takes later is in the group when it's in the range.`}
+        help={`Drag either end, or type it, to choose every ${info.one} from one to the other. The slider goes past the photos' values (the marks under it) to the common ones, and a typed end can be anything. Tick “No lowest” or “No highest” to leave that end open, such as every ISO from 12800 up. A ${info.one} a photo takes later is in the group when it's in the range.`}
       >
         Range: {showRange(info.field, range)} · {photos} {photos === 1 ? "photo" : "photos"}
       </FieldLabel>
-      <RangeSlider stops={stops} range={range} onChange={onChange} />
+      <RangeSlider stops={stops} marks={marks} range={range} onChange={onChange} />
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <EndInput
           label="From"
+          open="No lowest"
           info={info}
           value={range.min}
+          extreme={stops[0] ?? 0}
           onChange={(min) => onChange({ ...range, min })}
         />
         <span>to</span>
         <EndInput
           label="To"
+          open="No highest"
           info={info}
           value={range.max}
+          extreme={stops.at(-1) ?? 0}
           onChange={(max) => onChange({ ...range, max })}
         />
       </div>
@@ -60,6 +72,8 @@ export function MetaRangePicker({ info, values, range, onChange }: MetaRangePick
 
 interface RangeSliderProps {
   stops: number[];
+  /** The stops the photos have a value at, marked under the track. */
+  marks: number[];
   range: MetaRange;
   onChange: (range: MetaRange) => void;
 }
@@ -69,37 +83,73 @@ function percent(stops: number[], at: number): number {
   return stops.length > 1 ? (stops.indexOf(at) / (stops.length - 1)) * 100 : 0;
 }
 
-/** Two handles on one track, one for each end of the range, each stopping at the stops. */
-function RangeSlider({ stops, range, onChange }: RangeSliderProps) {
+/** A spot along the track, lined up with the handles' centers, which stay 8px inside its ends. */
+function along(p: number): string {
+  return `calc(8px + (100% - 16px) * ${p / 100})`;
+}
+
+/** Ticks under the track where the photos have values. */
+function Marks({ stops, marks }: { stops: number[]; marks: number[] }) {
+  return (
+    <div className="relative h-1.5" aria-hidden>
+      {marks.map((mark) => (
+        <span
+          key={mark}
+          className="bg-muted-foreground/60 absolute top-0 h-1.5 w-px"
+          style={{ left: along(percent(stops, mark)) }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/** Where an end is along the stops: its own stop, or the slider's end when it's open. */
+function endIndex(stops: number[], end: number | undefined, open: number): number {
+  return end === undefined ? open : stops.indexOf(end);
+}
+
+/**
+ * Two handles on one track, one for each end of the range, each stopping at the stops. An open end
+ * has no handle, and the range runs off that end of the track.
+ */
+function RangeSlider({ stops, marks, range, onChange }: RangeSliderProps) {
   if (stops.length < 2) return null;
   const last = stops.length - 1;
-  const [low, high] = [stops.indexOf(range.min), stops.indexOf(range.max)];
-  const left = percent(stops, range.min);
+  const low = endIndex(stops, range.min, 0);
+  const high = endIndex(stops, range.max, last);
+  const [left, right] = [(low / last) * 100, (high / last) * 100];
   return (
-    <div className="relative h-5">
-      <div className="bg-muted absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full" />
-      <div
-        className="bg-primary absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
-        style={{ left: `${left}%`, width: `${percent(stops, range.max) - left}%` }}
-      />
-      <Handle
-        label="Lowest"
-        index={low}
-        last={last}
-        onChange={(i) => onChange({ ...range, min: stops[Math.min(i, high)] ?? range.min })}
-      />
-      <Handle
-        label="Highest"
-        index={high}
-        last={last}
-        onChange={(i) => onChange({ ...range, max: stops[Math.max(i, low)] ?? range.max })}
-      />
+    <div className="flex flex-col gap-0.5">
+      <div className="relative h-5">
+        <div className="bg-muted absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full" />
+        <div
+          className="bg-primary absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
+          style={{ left: along(left), width: `calc((100% - 16px) * ${(right - left) / 100})` }}
+        />
+        <Handle
+          label="Lowest"
+          shown={range.min !== undefined}
+          index={low}
+          last={last}
+          onChange={(i) => onChange({ ...range, min: stops[Math.min(i, high)] ?? range.min })}
+        />
+        <Handle
+          label="Highest"
+          shown={range.max !== undefined}
+          index={high}
+          last={last}
+          onChange={(i) => onChange({ ...range, max: stops[Math.max(i, low)] ?? range.max })}
+        />
+      </div>
+      <Marks stops={stops} marks={marks} />
     </div>
   );
 }
 
 interface HandleProps {
   label: string;
+  /** False for an open end, which has no handle. */
+  shown: boolean;
   index: number;
   last: number;
   onChange: (index: number) => void;
@@ -108,7 +158,8 @@ interface HandleProps {
 const HANDLE =
   "pointer-events-none absolute inset-0 h-5 w-full appearance-none bg-transparent [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:size-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-primary [&::-moz-range-thumb]:bg-background [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-primary [&::-webkit-slider-thumb]:bg-background";
 
-function Handle({ label, index, last, onChange }: HandleProps) {
+function Handle({ label, shown, index, last, onChange }: HandleProps) {
+  if (!shown) return null;
   return (
     <input
       type="range"
@@ -125,14 +176,44 @@ function Handle({ label, index, last, onChange }: HandleProps) {
 
 interface EndInputProps {
   label: string;
+  /** The label of the box that leaves this end open, such as "No highest". */
+  open: string;
   info: MetaFieldInfo;
-  value: number;
-  onChange: (value: number) => void;
+  /** The end, or undefined when it's open. */
+  value: number | undefined;
+  /** Where the end goes when it's no longer open: the slider's last stop that way. */
+  extreme: number;
+  onChange: (value: number | undefined) => void;
+}
+
+/** An end as typed in its box, without the field's unit: "" when it's open. */
+function endText(info: MetaFieldInfo, value: number | undefined): string {
+  if (value === undefined) return "";
+  return showValue(info.field, value).replace(/^(f\/|ISO )|( mm| s)$/g, "");
+}
+
+/** One end of the range: a box to type it in, and a box to tick to leave it open. */
+function EndInput(props: EndInputProps) {
+  const { open, value, extreme, onChange } = props;
+  return (
+    <span className="flex items-center gap-2">
+      <EndText {...props} />
+      <label className="text-muted-foreground flex items-center gap-1.5 text-xs">
+        <input
+          type="checkbox"
+          className="accent-primary size-4"
+          checked={value === undefined}
+          onChange={(event) => onChange(event.target.checked ? undefined : extreme)}
+        />
+        {open}
+      </label>
+    </span>
+  );
 }
 
 /** One end of the range, typed as a number (or an exposure such as "1/250"), set when it reads as one. */
-function EndInput({ label, info, value, onChange }: EndInputProps) {
-  const shown = showValue(info.field, value).replace(/^(f\/|ISO )|( mm| s)$/g, "");
+function EndText({ label, info, value, onChange }: EndInputProps) {
+  const shown = endText(info, value);
   const [text, setText] = useState(shown);
   const [was, setWas] = useState(shown);
   // The slider moved this end: show where it is now.
@@ -148,6 +229,8 @@ function EndInput({ label, info, value, onChange }: EndInputProps) {
     <Input
       aria-label={label}
       className="h-8 w-24"
+      disabled={value === undefined}
+      placeholder="any"
       value={text}
       onChange={(event) => setText(event.target.value)}
       onBlur={commit}

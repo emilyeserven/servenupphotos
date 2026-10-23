@@ -35,21 +35,28 @@ type MetaGroup struct {
 	// Parent is the ID of the group of the same field this one is in, such
 	// as a "Canon" lens group for "Canon kit lenses"; "" for none.
 	Parent string `json:"parent"`
+	// Order is where the group goes among the groups in the same parent (or
+	// at the top level): lowest first, groups with the same order by name.
+	// Files from before it was added have none, which reads as 0.
+	Order int `json:"order"`
 	// Values are the field's values in the group, each a string or a number
 	// as the photo files have it, such as 11 for a focal length or
 	// "Canon EOS 80D" for a camera.
 	Values []json.RawMessage `json:"values"`
 	// Range, for a focal length, aperture, exposure or ISO group, is every
 	// value from Min to Max, both included, whether or not a photo has it
-	// yet; nil for a group of only its Values.
+	// yet, or with only one of them, every value from Min up or up to Max;
+	// nil for a group of only its Values.
 	Range *MetaRange `json:"range,omitempty"`
 }
 
 // MetaRange is a range of numbers: focal lengths in mm, apertures as
-// f-numbers, ISO, or exposures in seconds (1/250 is 0.004).
+// f-numbers, ISO, or exposures in seconds (1/250 is 0.004). Either end can be
+// left out (nil) for a range open at that end, such as ISO 12800 and up, but
+// not both.
 type MetaRange struct {
-	Min float64 `json:"min"`
-	Max float64 `json:"max"`
+	Min *float64 `json:"min,omitempty"`
+	Max *float64 `json:"max,omitempty"`
 }
 
 // SaveMetaGroup saves group as <folder>/metainfo/<id>.json, new or replacing
@@ -159,7 +166,7 @@ func validMetaGroup(group MetaGroup) (MetaGroup, *PublishError) {
 	g := MetaGroup{
 		ID: strings.TrimSpace(group.ID), Name: strings.TrimSpace(group.Name),
 		Description: strings.TrimSpace(group.Description), Field: strings.TrimSpace(group.Field),
-		Parent: strings.TrimSpace(group.Parent), Range: group.Range,
+		Parent: strings.TrimSpace(group.Parent), Order: group.Order, Range: group.Range,
 	}
 	if perr := validEntryID(MetaInfo.Name, g.ID); perr != nil {
 		return g, perr
@@ -186,13 +193,25 @@ func validMetaShape(g MetaGroup) *PublishError {
 			return perr
 		}
 	}
+	if g.Order < 0 {
+		return publishErr(http.StatusBadRequest, "A group's order is 0 or more.")
+	}
 	if g.Range == nil {
 		return nil
 	}
 	if !slices.Contains(rangeMetaFields, g.Field) {
 		return publishErr(http.StatusBadRequest, "Only focal length, aperture, exposure and ISO groups can be a range.")
 	}
-	if g.Range.Min > g.Range.Max {
+	return validRange(*g.Range)
+}
+
+// validRange fails when r has neither end, or its lowest value is above its
+// highest.
+func validRange(r MetaRange) *PublishError {
+	if r.Min == nil && r.Max == nil {
+		return publishErr(http.StatusBadRequest, "Give the range a lowest value, a highest value, or both.")
+	}
+	if r.Min != nil && r.Max != nil && *r.Min > *r.Max {
 		return publishErr(http.StatusBadRequest, "The range's lowest value is above its highest.")
 	}
 	return nil

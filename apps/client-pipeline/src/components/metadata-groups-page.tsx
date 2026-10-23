@@ -2,13 +2,15 @@ import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { META_FIELDS, type MetaFieldInfo, type MetaGroup, metaGroups } from "@/api/metainfo";
 import { MetaGroupEditor } from "@/components/metadata-group-editor";
+import { MetaMoveButtons } from "@/components/metadata-move-buttons";
+import { MetaUncovered } from "@/components/metadata-uncovered";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { shownPhotos } from "@/lib/place-seeds";
-import { groupPhotoCount, groupTree } from "@/lib/meta-groups";
+import { groupPhotoCount, groupTree, uncoveredValues } from "@/lib/meta-groups";
 import { fieldValues, type MetaValueCount, showRange } from "@/lib/meta-values";
 import { cn } from "@/lib/utils";
 import type { CombinedPhoto } from "@/lib/group-photos";
@@ -107,9 +109,11 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
             key={group.id}
             info={info}
             group={group}
+            groups={groups}
             depth={depth}
             subgroups={groups.filter((g) => g.parent === group.id).length}
             photos={groupPhotoCount(values, groups, group)}
+            uncovered={uncoveredValues(values, groups, group).length}
             chosen={group.id === chosen}
             onChoose={() => onChoose(group.id)}
           />
@@ -118,6 +122,14 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
           <PlusIcon aria-hidden />
           New group
         </Button>
+        <div className="mt-3 border-t pt-3">
+          <MetaUncovered
+            info={info}
+            values={uncoveredValues(values, groups)}
+            outside="any group"
+            inside="a group"
+          />
+        </div>
       </CardContent>
     </Card>
   );
@@ -126,11 +138,15 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
 interface GroupRowProps {
   info: MetaFieldInfo;
   group: MetaGroup;
+  /** The field's groups, to move the group among its siblings. */
+  groups: MetaGroup[];
   /** How far it's nested, to indent it. */
   depth: number;
   /** How many groups are directly in it. */
   subgroups: number;
   photos: number;
+  /** How many of the photos' values in it none of its subgroups has. */
+  uncovered: number;
   chosen: boolean;
   onChoose: () => void;
 }
@@ -150,29 +166,47 @@ function coverage(info: MetaFieldInfo, group: MetaGroup, subgroups: number): str
   return group.range ? showRange(info.field, group.range) : listed(group, subgroups);
 }
 
-function GroupRow({ info, group, depth, subgroups, photos, chosen, onChoose }: GroupRowProps) {
+/** For a group with subgroups, how many of its values none of them has. */
+function NotInSubgroups({ subgroups, uncovered }: { subgroups: number; uncovered: number }) {
+  if (subgroups === 0 || uncovered === 0) return null;
   return (
-    <button
-      type="button"
-      onClick={onChoose}
-      aria-current={chosen}
-      style={{ paddingLeft: `${0.5 + depth * 1.25}rem` }}
-      className={cn(
-        "hover:bg-muted flex items-baseline justify-between gap-3 rounded-md py-1.5 pr-2 text-left text-sm",
-        chosen && "bg-muted font-medium",
-      )}
-    >
-      <span className="min-w-0 truncate">
-        {depth > 0 && (
-          <span className="text-muted-foreground" aria-hidden>
-            ↳{" "}
-          </span>
+    <span className="block text-amber-700 dark:text-amber-400">{uncovered} not in subgroups</span>
+  );
+}
+
+function GroupRow(props: GroupRowProps) {
+  const { group, groups, depth, chosen } = props;
+  return (
+    <div style={{ paddingLeft: `${depth * 1.25}rem` }} className="flex items-center gap-1">
+      <button
+        type="button"
+        onClick={props.onChoose}
+        aria-current={chosen}
+        className={cn(
+          "hover:bg-muted flex min-w-0 flex-1 items-baseline justify-between gap-3 rounded-md px-2 py-1.5 text-left text-sm",
+          chosen && "bg-muted font-medium",
         )}
-        {group.name}
-      </span>
-      <span className="text-muted-foreground shrink-0 text-xs">
-        {coverage(info, group, subgroups)}, {plural(photos, "photo")}
-      </span>
-    </button>
+      >
+        <GroupName name={group.name} nested={depth > 0} />
+        <span className="text-muted-foreground shrink-0 text-right text-xs">
+          {coverage(props.info, group, props.subgroups)}, {plural(props.photos, "photo")}
+          <NotInSubgroups subgroups={props.subgroups} uncovered={props.uncovered} />
+        </span>
+      </button>
+      <MetaMoveButtons group={group} groups={groups} />
+    </div>
+  );
+}
+
+function GroupName({ name, nested }: { name: string; nested: boolean }) {
+  return (
+    <span className="min-w-0 truncate">
+      {nested && (
+        <span className="text-muted-foreground" aria-hidden>
+          ↳{" "}
+        </span>
+      )}
+      {name}
+    </span>
   );
 }

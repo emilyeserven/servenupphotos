@@ -12,6 +12,7 @@ import {
 import { FieldLabel } from "@/components/field-label";
 import { MetaParentField } from "@/components/metadata-parent-field";
 import { MetaRangePicker, rangeStops } from "@/components/metadata-range-picker";
+import { MetaUncovered } from "@/components/metadata-uncovered";
 import { MetaValuePicker } from "@/components/metadata-value-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { canonicalJson } from "@/lib/combined";
+import { uncoveredValues } from "@/lib/meta-groups";
 import type { MetaValueCount } from "@/lib/meta-values";
 
 interface MetaGroupEditorProps {
@@ -34,8 +36,23 @@ interface MetaGroupEditorProps {
   onRemoved: () => void;
 }
 
+/**
+ * Where the group goes among its siblings: its saved place while it stays in the same parent, else
+ * after the groups already in the new one.
+ */
+function orderFor(group: MetaGroup | undefined, parent: string, groups: MetaGroup[]) {
+  if (group && (group.parent ?? "") === parent) return group.order;
+  const siblings = groups.filter((g) => (g.parent ?? "") === parent && g.id !== group?.id);
+  return Math.max(-1, ...siblings.map((g) => g.order ?? 0)) + 1;
+}
+
 /** The group as typed, as it would be saved: a range for a ranged field, else its values. */
-function drafted(info: MetaFieldInfo, group: MetaGroup | undefined, draft: Draft): MetaGroup {
+function drafted(
+  info: MetaFieldInfo,
+  group: MetaGroup | undefined,
+  draft: Draft,
+  groups: MetaGroup[],
+): MetaGroup {
   const name = draft.name.trim();
   const base = {
     id: group?.id ?? metaGroupId(info.field, name),
@@ -43,6 +60,7 @@ function drafted(info: MetaFieldInfo, group: MetaGroup | undefined, draft: Draft
     description: draft.description.trim(),
     field: info.field,
     parent: draft.parent,
+    order: orderFor(group, draft.parent, groups),
   };
   return info.ranged
     ? { ...base, values: [], range: draft.range }
@@ -71,7 +89,17 @@ function startingDraft(group: MetaGroup | undefined, values: MetaValueCount[]): 
 
 /** Why the range can't be saved, or "". */
 function rangeProblem(range: MetaRange | undefined): string {
-  return range && range.min > range.max ? "The range ends before it starts." : "";
+  if (!range) return "";
+  return isOpenBothWays(range) ? "Give the range at least one end." : backwards(range);
+}
+
+function isOpenBothWays({ min, max }: MetaRange): boolean {
+  return min === undefined && max === undefined;
+}
+
+/** "The range ends before it starts." when it does, or "". */
+function backwards({ min = -Infinity, max = Infinity }: MetaRange): string {
+  return min > max ? "The range ends before it starts." : "";
 }
 
 /** Why the group can't be saved as typed, or "" when it can. */
@@ -107,7 +135,8 @@ export function MetaGroupEditor(props: MetaGroupEditorProps) {
           onChange={(parent) => setDraft({ ...draft, parent })}
         />
         <ValuesField {...props} draft={draft} onChange={setDraft} />
-        <EditorButtons {...props} next={drafted(info, group, draft)} />
+        <SubgroupGaps {...props} />
+        <EditorButtons {...props} next={drafted(info, group, draft, props.groups)} />
       </CardContent>
     </Card>
   );
@@ -140,6 +169,19 @@ function ValuesField({
       groupId={group?.id}
       chosen={draft.values}
       onChange={(chosen) => onChange({ ...draft, values: chosen })}
+    />
+  );
+}
+
+/** For a saved group with subgroups, the values in it that none of them has. */
+function SubgroupGaps({ info, group, values, groups }: MetaGroupEditorProps) {
+  if (!group || !groups.some((g) => g.parent === group.id)) return null;
+  return (
+    <MetaUncovered
+      info={info}
+      values={uncoveredValues(values, groups, group)}
+      outside="its subgroups"
+      inside="one of its subgroups"
     />
   );
 }
