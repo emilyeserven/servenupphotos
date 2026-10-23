@@ -14,7 +14,7 @@ border is softer, and so is a group's when every photo in it is placed that way.
 location** on the Places page keeps the solid border for its photos.
 
 Where the map is looking is kept in the URL as its center and zoom (`?lat=37.57&lng=126.98&zoom=12.5`), half a second
-after it stops moving, so a link opens the map there instead of on all the photos. Moving replaces the URL rather than
+after it stops moving, so a link opens the map there instead of on all the photos. When those change from outside the map, as with the photo viewer's **View on map**, the map flies there. Moving replaces the URL rather than
 adding to the history. Changing a filter still fits the map to the photos it shows, and that's saved the same way.
 
 > **Frontend analogy:** the grouping is done by MapLibre on the map's data, like a virtualized list deciding which

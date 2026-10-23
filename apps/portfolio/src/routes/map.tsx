@@ -46,7 +46,7 @@ import {
   useMapPhotos,
 } from "@/lib/map-photos";
 import { type DayRange, daysInView, isDay } from "@/lib/map-days";
-import { parseMapView, type MapViewSearch, useSaveMapView } from "@/lib/map-view";
+import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -257,7 +257,7 @@ function MapView() {
   // What the map shows, for the day filter to list only the days of the photos in view.
   const [view, setView] = useState<LngLatBounds | null>(null);
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
-  const saveView = useSaveMapView();
+  const saveView = useMapViewInUrl(map, search);
   useFitOnFilter(map, mapPhotos.bounds, () => {
     setSelected(null);
     setCluster(null);

@@ -5,6 +5,7 @@ import { type KeyboardEvent, useRef, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
+import { ViewOnMapLink } from "@/components/view-on-map-link";
 import { settingsText, type Photo, type PhotoImage } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
@@ -206,6 +207,7 @@ function LightboxCaption({ photo }: { photo: Photo }) {
             </>
           )}
         </Dialog.Description>
+        <ViewOnMapLink photo={photo} />
       </div>
     </div>
   );
