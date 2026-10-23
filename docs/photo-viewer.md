@@ -22,6 +22,11 @@ The **‹** and **›** buttons beside the photo, and the **Left** and **Right**
 photo in the order the page shows them, with where the photo is among them (such as "3 / 20") beside the close button.
 They stop at the first and last photo rather than going round. Photos without resized versions in R2 are skipped.
 
+To see the whole photo with nothing over or around it, the **eye** button beside the close button (or the **H** key)
+hides the details, the count and the ‹ › buttons, and the photo grows to fill the window. Clicking or tapping the photo,
+or pressing **H** again, brings them back. The arrow keys and **Esc** keep working while they're hidden, and the viewer
+opens with them shown each time.
+
 | Page     | The photos it moves through                                                                                              |
 | -------- | ------------------------------------------------------------------------------------------------------------------------ |
 | Grid     | Every photo, in the chosen sort (newest or oldest first)                                                                 |
