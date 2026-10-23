@@ -1,0 +1,9 @@
+{
+  "id": "lens-prime",
+  "name": "Prime",
+  "description": "",
+  "field": "lens",
+  "parent": "lens-type",
+  "order": 3,
+  "values": ["EF50mm f/1.8 II"]
+}

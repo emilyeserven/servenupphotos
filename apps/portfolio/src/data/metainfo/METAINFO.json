@@ -296,11 +296,51 @@
     "values": ["XF18-135mmF3.5-5.6R LM OIS WR"]
   },
   {
+    "id": "lens-longer-telephoto",
+    "name": "Longer Telephoto",
+    "description": "",
+    "field": "lens",
+    "parent": "lens-type",
+    "order": 2,
+    "values": ["EF-S55-250mm f/4-5.6 IS STM"]
+  },
+  {
+    "id": "lens-prime",
+    "name": "Prime",
+    "description": "",
+    "field": "lens",
+    "parent": "lens-type",
+    "order": 3,
+    "values": ["EF50mm f/1.8 II"]
+  },
+  {
+    "id": "lens-telephoto",
+    "name": "Telephoto",
+    "description": "",
+    "field": "lens",
+    "parent": "lens-type",
+    "order": 1,
+    "values": [
+      "EF-S18-135mm f/3.5-5.6 IS STM",
+      "EF-S18-135mm f/3.5-5.6 IS",
+      "XF18-135mmF3.5-5.6R LM OIS WR"
+    ]
+  },
+  {
     "id": "lens-type",
     "name": "Type",
     "description": "",
     "field": "lens",
     "parent": "",
     "values": []
+  },
+  {
+    "id": "lens-wide-zoom",
+    "name": "Wide Zoom",
+    "description": "",
+    "field": "lens",
+    "parent": "lens-type",
+    "order": 0,
+    "values": ["EF-S10-18mm f/4.5-5.6 IS STM"]
   }
 ]

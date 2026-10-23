@@ -1,0 +1,13 @@
+{
+  "id": "lens-telephoto",
+  "name": "Telephoto",
+  "description": "",
+  "field": "lens",
+  "parent": "lens-type",
+  "order": 1,
+  "values": [
+    "EF-S18-135mm f/3.5-5.6 IS STM",
+    "EF-S18-135mm f/3.5-5.6 IS",
+    "XF18-135mmF3.5-5.6R LM OIS WR"
+  ]
+}
