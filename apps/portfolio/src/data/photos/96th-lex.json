@@ -46,7 +46,5 @@
       "id": "upper-east-side"
     }
   ],
-  "spotlightZones": [
-    "homepage"
-  ]
+  "spotlightZones": ["homepage"]
 }

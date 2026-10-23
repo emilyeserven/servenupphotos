@@ -46,7 +46,5 @@
       "id": "the-high-line"
     }
   ],
-  "spotlightZones": [
-    "homepage"
-  ]
+  "spotlightZones": ["homepage"]
 }

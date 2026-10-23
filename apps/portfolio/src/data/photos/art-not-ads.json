@@ -46,7 +46,5 @@
       "id": "lower-east-side"
     }
   ],
-  "spotlightZones": [
-    "homepage"
-  ]
+  "spotlightZones": ["homepage"]
 }
