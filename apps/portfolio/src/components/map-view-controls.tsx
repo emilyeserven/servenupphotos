@@ -1,5 +1,5 @@
 import { useMap } from "@vis.gl/react-maplibre";
-import { Maximize } from "lucide-react";
+import { Maximize, Navigation } from "lucide-react";
 import { type LngLatBoundsLike } from "maplibre-gl";
 import type { ReactNode } from "react";
 
@@ -35,8 +35,8 @@ const CONTROL_BUTTON =
   "inline-flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-sm font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4";
 
 /**
- * A row of buttons over the map: one to go back to the view that shows every photo, and one for
- * each area in MAP_AREAS to zoom straight to it.
+ * A row of controls over the map: a button to go back to the view that shows every photo, and a
+ * **Jump to** dropdown that zooms straight to one of the areas in MAP_AREAS.
  */
 export function MapViewControls({
   onReset,
@@ -63,22 +63,28 @@ export function MapViewControls({
           All photos
         </button>
       </div>
-      <div
-        role="group"
-        aria-label="Go to an area"
-        className="inline-flex rounded-md border bg-background p-0.5 shadow-xs dark:border-input"
-      >
-        {MAP_AREAS.map((area) => (
-          <button
-            key={area.name}
-            type="button"
-            onClick={() => showArea(area.bounds)}
-            className={CONTROL_BUTTON}
-          >
-            {area.name}
-          </button>
-        ))}
-      </div>
+      <label className="inline-flex h-8 items-center gap-1.5 rounded-md border bg-background px-2 text-sm font-medium text-muted-foreground shadow-xs dark:border-input">
+        <Navigation className="size-4" aria-hidden />
+        <span className="sr-only">Jump to an area</span>
+        <select
+          // Always back on "Jump to", as it's an action rather than a setting.
+          value=""
+          onChange={(event) => {
+            const area = MAP_AREAS.find((choice) => choice.name === event.target.value);
+            if (area) showArea(area.bounds);
+          }}
+          className="h-full cursor-pointer bg-transparent text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <option value="" disabled>
+            Jump to
+          </option>
+          {MAP_AREAS.map((area) => (
+            <option key={area.name} value={area.name}>
+              {area.name}
+            </option>
+          ))}
+        </select>
+      </label>
       {children}
     </div>
   );

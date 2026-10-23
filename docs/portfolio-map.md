@@ -24,11 +24,11 @@ The map fills the page. The title and photo count, the controls below, and the s
 float over it, and fitting the map leaves extra room at the top so photos aren't hidden under them. The map's zoom
 buttons are in the bottom right corner.
 
-Over the top left corner, under the title:
+Over the top left corner, beside the title on wider screens and under it on phones:
 
 - **All photos** goes back to the opening view.
-- **New York City** and **Seoul** zoom straight to that area. The areas and their bounds are `MAP_AREAS` in
-  `apps/portfolio/src/components/map-view-controls.tsx`; add one there to add a button.
+- **Jump to** is a dropdown that zooms straight to an area, for now New York City or Seoul. The areas and their bounds
+  are `MAP_AREAS` in `apps/portfolio/src/components/map-view-controls.tsx`; add one there to add it to the dropdown.
 - The **day** dropdown narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the
