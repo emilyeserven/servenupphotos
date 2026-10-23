@@ -13,6 +13,7 @@ import { JsonCodeBlock } from "@/components/json-code-block";
 import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
 import { QueryResult } from "@/components/query-result";
 import { SocialPostsCard } from "@/components/social-posts-card";
+import { SpotlightCard } from "@/components/spotlight-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -141,6 +142,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           description="Saving changes writes them over the ones in the JSON."
           disabled={pending}
         />
+        <SpotlightCard path={editable.file.path} />
       </div>
       <div className="flex min-w-0 flex-col gap-6">
         <PhotoDetailsCard
