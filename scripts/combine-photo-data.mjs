@@ -4,8 +4,9 @@
 //
 // 1. The photo pipeline, when it's running locally (PIPELINE_URL, or else http://localhost:8080
 //    or http://localhost:5174): the combined files at the open "Add photo data" pull request's
-//    head, with the pull request's own photo, place, localization, album and tag files over them, so saves
-//    not committed with Commit yet show too. Skipped when no pull request is open.
+//    head, or the base branch's when none is open, with the photo, place, localization, album and
+//    tag files in flight over them, so the changes waiting for Commit show too. Skipped when no
+//    pull request is open and nothing is waiting for Commit.
 // 2. GitHub: the combined files from the open "Add photo data" pull request on the `origin`
 //    repository. Set GITHUB_TOKEN to read a private repository.
 // 3. The data folders: every other JSON file in each, as one array sorted by file name, the same
@@ -77,25 +78,50 @@ function withFiles(entries, files, identity) {
   return merged;
 }
 
+/** entries without the ones that pending changes waiting for Commit remove. */
+function withoutRemoved(entries, changes, kind) {
+  const removed = new Set(
+    changes
+      .filter((change) => change.kind === kind.folder && change.after === null && change.before)
+      .map((change) => change.before[kind.identity]),
+  );
+  return entries.filter((entry) => !removed.has(entry?.[kind.identity]));
+}
+
+/**
+ * The combined lists the files in flight go over: at the pull request's head, or the base
+ * branch's when none is open but changes are waiting for Commit. Undefined with neither, since the
+ * base branch's combined files may not have been rebuilt since its last merge, so the data
+ * folders are better.
+ */
+function listsOf(combined, changes) {
+  if (combined.head) return combined.head;
+  return changes.length > 0 ? combined.base : undefined;
+}
+
+/** Each kind's combined list with the files in flight over it, or undefined; see `listsOf`. */
+function mergedLists(combined, inFlight, changes) {
+  const lists = listsOf(combined, changes);
+  if (!lists) return undefined;
+  return Object.fromEntries(
+    KINDS.map((kind) => {
+      const entries = withoutRemoved(lists[kind.folder]?.data ?? [], changes, kind);
+      return [kind.folder, withFiles(entries, inFlightFiles(inFlight, kind), kind.identity)];
+    }),
+  );
+}
+
 /** Each kind's entries from the local pipeline, or undefined when it isn't running or can't say. */
 async function fromPipeline() {
   const base = await runningPipeline();
   if (!base) return undefined;
   try {
-    const [combined, inFlight] = await Promise.all([
+    const [combined, inFlight, status] = await Promise.all([
       pipelineJson(base, "/api/photos/combined"),
       pipelineJson(base, "/api/photos/in-flight"),
+      pipelineJson(base, "/api/photos/combined/status"),
     ]);
-    // With no pull request open, the base branch's combined files may not have been rebuilt
-    // since its last merge, so the data folders are better.
-    if (!combined.head) return undefined;
-    const lists = combined.head;
-    return Object.fromEntries(
-      KINDS.map((kind) => [
-        kind.folder,
-        withFiles(lists[kind.folder]?.data ?? [], inFlightFiles(inFlight, kind), kind.identity),
-      ]),
-    );
+    return mergedLists(combined, inFlight, status.changes ?? []);
   } catch (err) {
     console.warn(`Couldn't read the photo pipeline at ${base}: ${err.message}`);
     return undefined;

@@ -1,5 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { InFlightPullRequest, PublishResult } from "@/api/photos";
+import { type PendingSave, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
 
 /** A way of organizing photos. Each album or tag is one JSON file, and photos list them by ID. */
@@ -52,12 +53,12 @@ interface NewGroup {
   parent?: string;
 }
 
-/** Saves a new album or tag as JSON in the open photo data pull request, or a new one. */
+/** Saves a new album or tag as JSON, as a change waiting for Commit. */
 export const createGroupMutation = (kind: GroupKind) =>
   mutationOptions({
     mutationKey: ["organize", kind, "create"],
     meta: {
-      pushes: true,
+      saves: true,
       changes: (result) => {
         const { path, data } = result as PublishResult;
         return [{ kind, path, after: data }];
@@ -105,28 +106,23 @@ export function findCollision(
   return undefined;
 }
 
-/** Where saving to the photo data pull request committed, as one commit. */
-interface CommitResult {
-  branch: string;
-  commitSha: string;
-  commitUrl: string;
-  pullRequestUrl: string;
-  pullRequestNumber: number;
-  /** True when saving opened the pull request. */
-  newPullRequest: boolean;
-}
-
-/** What moving an album did; nothing is committed when it already had that parent. */
-interface AlbumParentResult extends Partial<CommitResult> {
+/** What moving an album did; nothing is saved when it already had that parent. */
+interface AlbumParentResult extends PendingSave {
   path: string;
-  fileUrl: string;
   changed: boolean;
 }
 
 /** Moves the album `id` into the album `parent`, or to the top level when it's null. */
 export const setAlbumParentMutation = mutationOptions({
   mutationKey: ["organize", "albums", "parent"],
-  meta: { pushes: (result) => (result as AlbumParentResult).changed },
+  meta: {
+    saves: (result) => (result as AlbumParentResult).changed,
+    changes: (result) =>
+      (result as AlbumParentResult).changes.map((change) => ({
+        kind: "albums" as const,
+        ...change,
+      })),
+  },
   mutationFn: ({ id, parent }: { id: string; parent: string | null }) =>
     requestJson<AlbumParentResult>(`/api/organize/albums/${encodeURIComponent(id)}/parent`, {
       method: "PUT",
@@ -166,15 +162,15 @@ function sameIds(a: string[], b: string[]): boolean {
   return a.length === b.length && a.every((id, i) => id === b[i]);
 }
 
-interface PhotoGroupsResult extends CommitResult {
+interface PhotoGroupsResult extends PendingSave {
   /** How many photo files changed; the others already had the albums and tags. */
   files: number;
 }
 
-/** Adds albums and tags to the photo files at `paths`, as one commit in the photo data pull request. */
+/** Adds albums and tags to the photo files at `paths`, as changes waiting for Commit. */
 export const addPhotoGroupsMutation = mutationOptions({
   mutationKey: ["photos", "groups"],
-  meta: { pushes: true },
+  meta: { saves: true, changes: (result) => photoChanges(result as PhotoGroupsResult) },
   mutationFn: (add: PhotoGroups & { paths: string[] }) =>
     requestJson<PhotoGroupsResult>("/api/photos/groups", {
       method: "POST",

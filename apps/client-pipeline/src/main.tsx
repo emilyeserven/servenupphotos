@@ -11,14 +11,14 @@ declare module "@tanstack/react-query" {
   interface Register {
     mutationMeta: {
       /**
-       * Whether a successful mutation pushed to the photo data pull request, so ALLPHOTOS.json,
-       * ALLALBUMS.json and ALLTAGS.json are missing its changes until they're rebuilt. A function
+       * Whether a successful mutation saved changes waiting for Commit, so ALLPHOTOS.json,
+       * ALLALBUMS.json and ALLTAGS.json are missing them until Commit rebuilds them. A function
        * decides from the result.
        */
-      pushes?: boolean | ((result: unknown) => boolean);
+      saves?: boolean | ((result: unknown) => boolean);
       /**
-       * The files a push changed, which pages see made over the combined lists until they're
-       * rebuilt; `cached` is a file's data as pages last read it. Without it, the changes only show
+       * The files a save changed, which pages see made over the combined lists until they're
+       * committed; `cached` is a file's data as pages last read it. Without it, the changes only show
        * once they are.
        */
       changes?: (
@@ -35,16 +35,16 @@ function cached(path: string): unknown {
   return cachedFile(queryClient, path);
 }
 
-/** Whether a mutation with this `pushes` meta pushed to the photo data pull request. */
-function pushed(pushes: boolean | ((result: unknown) => boolean) | undefined, result: unknown) {
-  return typeof pushes === "function" ? pushes(result) : Boolean(pushes);
+/** Whether a mutation with this `saves` meta saved changes waiting for Commit. */
+function saved(saves: boolean | ((result: unknown) => boolean) | undefined, result: unknown) {
+  return typeof saves === "function" ? saves(result) : Boolean(saves);
 }
 
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onSuccess: (result, variables, _context, { meta = {} }) => {
-      if (!pushed(meta.pushes, result)) return;
-      useCombinedDataStore.getState().afterPush(meta.changes?.(result, variables, cached));
+      if (!saved(meta.saves, result)) return;
+      useCombinedDataStore.getState().afterSave(meta.changes?.(result, variables, cached));
     },
   }),
 });

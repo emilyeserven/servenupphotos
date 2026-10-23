@@ -254,7 +254,8 @@ export function renamedInFlight(
   return {
     ...data,
     files: data.files.map((f) =>
-      f.path === from ? { ...f, path: updated.path, fileUrl: updated.fileUrl } : f,
+      // A renamed file is pending, so it has no page on GitHub until Commit.
+      f.path === from ? { ...f, path: updated.path, fileUrl: "", pending: true } : f,
     ),
     images: { ...data.images, byPath: image ? { ...byPath, [updated.path]: image } : byPath },
   };

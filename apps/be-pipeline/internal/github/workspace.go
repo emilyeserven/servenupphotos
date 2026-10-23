@@ -257,7 +257,8 @@ func (c *Client) saveFiles(w *workspace, changes []ScanChange) (pendingSave, *Pu
 
 // pendingSave is a pendingSave of changes in w.
 func (w *workspace) pendingSave(changes []ScanChange) pendingSave {
-	out := pendingSave{Changes: changes}
+	// Sent as [] rather than null when nothing changed.
+	out := pendingSave{Changes: append([]ScanChange{}, changes...)}
 	if w.pr != nil {
 		out.Branch, out.PullRequestURL, out.PullRequestNumber = w.pr.Head.Ref, w.pr.HTMLURL, w.pr.Number
 	}

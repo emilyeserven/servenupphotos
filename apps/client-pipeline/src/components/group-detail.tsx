@@ -14,6 +14,7 @@ import {
   organizeQuery,
   setAlbumParentMutation,
 } from "@/api/organize";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { GroupCombobox } from "@/components/group-picker";
 import { ImageLightbox } from "@/components/image-lightbox";
@@ -370,25 +371,7 @@ function ParentSavedText({ result }: { result: NonNullable<ParentSave["save"]["d
   if (!result.changed) return "It already had that parent, so nothing changed.";
   return (
     <>
-      Saved{" "}
-      <a
-        href={result.commitUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="underline underline-offset-4"
-      >
-        the change
-      </a>{" "}
-      {result.newPullRequest ? "and opened" : "to"}{" "}
-      <a
-        href={result.pullRequestUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="underline underline-offset-4"
-      >
-        #{result.pullRequestNumber}
-      </a>
-      .
+      Saved the change in the app. <WaitingForCommit pullRequestUrl={result.pullRequestUrl} />
     </>
   );
 }

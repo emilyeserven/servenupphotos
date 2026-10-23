@@ -17,7 +17,7 @@ export interface RebuildWatch {
   /** The last commit of them, once there is one. */
   runUrl?: string;
   /**
-   * Pushes don't rebuild the combined files, and the combined data store notes each push itself,
+   * Saves don't rebuild the combined files, and the combined data store notes each save itself,
    * so there's nothing to do after one. Kept so pages can still call it.
    */
   afterPush: () => void;
@@ -50,8 +50,8 @@ export function useAllPhotosRebuild(enabled: boolean, onRebuilt: () => void): Re
 }
 
 /**
- * One line on whether `file` (ALLPHOTOS.json unless named) has the changes pushed to the pull
- * request, with a button to commit it when it doesn't. One commit has ALLPHOTOS.json,
+ * One line on whether `file` (ALLPHOTOS.json unless named) has every change, with a button to
+ * commit when it doesn't. One commit has the changes waiting for Commit, ALLPHOTOS.json,
  * ALLALBUMS.json and ALLTAGS.json.
  */
 export function AllPhotosRebuild({
@@ -80,16 +80,17 @@ export function AllPhotosRebuild({
   if (!sync.unsynced) return <p className="text-muted-foreground">{file} is up to date.</p>;
   return (
     <p className="flex flex-wrap items-center gap-x-2 text-amber-700 dark:text-amber-400">
-      Not synced: {file} doesn&apos;t have the latest changes yet.
+      Not synced: changes are waiting for Commit, and {file} doesn&apos;t have them yet.
       <CommitButton variant="link" />
     </p>
   );
 }
 
 /**
- * Commits the app's local edits, such as Instagram dates, with ALLPHOTOS.json, ALLALBUMS.json and
- * ALLTAGS.json rebuilt from the photo data pull request's files, to its branch. Afterwards the
- * pages read the files again, since the commit changed them.
+ * Commits every change waiting for Commit and the app's local edits, such as Instagram dates, with
+ * ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json rebuilt, as one commit to the photo data pull
+ * request, opening one when none is open. It's the only button that writes photo data to GitHub.
+ * Afterwards the pages read the files again, since the commit changed them.
  */
 export function CommitButton({
   variant = "default",
@@ -100,7 +101,8 @@ export function CommitButton({
   const queryClient = useQueryClient();
   const commitAndReread = async () => {
     await commit();
-    for (const area of ["photos", "publish", "data"]) {
+    // Saved files now have pages on GitHub, so every page that lists them reads them again.
+    for (const area of ["photos", "publish", "data", "organize", "places"]) {
       void queryClient.invalidateQueries({ queryKey: [area] });
     }
   };
@@ -111,7 +113,7 @@ export function CommitButton({
       variant={variant}
       disabled={committing}
       onClick={() => void commitAndReread()}
-      title="Save local changes and rebuild ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, as one commit to the pull request"
+      title="Send every change waiting for Commit to GitHub, with ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json rebuilt, as one commit to the pull request"
       className={cn(link && "h-auto p-0 text-inherit underline")}
     >
       <CommitIcon busy={committing} hidden={link} />

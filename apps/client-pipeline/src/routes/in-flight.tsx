@@ -30,6 +30,7 @@ import {
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
@@ -117,8 +118,8 @@ function InFlightCard() {
         shown={shown}
         showAllPhotos={showAllPhotos}
         onRefresh={() => {
-          void inFlight.refetch();
-          void refreshCombined();
+          // The lists' read asks GitHub again, so the files read after it see a merge too.
+          void refreshCombined().then(() => inFlight.refetch());
         }}
       />
       <RemovalNotice
@@ -341,15 +342,8 @@ function FileSection({
     <section className="@container flex flex-col gap-2">
       <h2 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
         <PhotoTitle file={file} />
-        <a
-          href={file.fileUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="underline-offset-4 hover:underline"
-        >
-          {fileName(file.path)}
-        </a>
-        <span className="text-muted-foreground font-normal">{file.status}</span>
+        <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
+        <FileStatus status={file.status} pending={file.pending} />
         <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
@@ -597,15 +591,8 @@ function GroupFiles({
       {groups.files.map((file) => (
         <div key={file.path} className="flex flex-col gap-2">
           <h3 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
-            <a
-              href={file.fileUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="underline-offset-4 hover:underline"
-            >
-              {fileName(file.path)}
-            </a>
-            <span className="text-muted-foreground font-normal">{file.status}</span>
+            <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
+            <FileStatus status={file.status} pending={file.pending} />
             <AllPhotosMark inAllPhotos={file.inAll} rebuilding={rebuilding} allFile={allFile} />
           </h3>
           <FileJson file={file} baseBranch={baseBranch} />
@@ -639,9 +626,8 @@ function allPhotosSummary(all: CombinedFile, files: InFlightFile[]): string {
 }
 
 /**
- * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json have every change pushed to the pull
- * request, as checked when the app started and known from the app's saves and commits since, with
- * Commit to sync them.
+ * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json have every change, as checked when the
+ * app started and known from the app's saves and commits since, with Commit to sync them.
  */
 function SyncSummary() {
   const sync = useCombinedSync();
@@ -667,8 +653,8 @@ function SyncSummary() {
 function unsyncedText(pending: string): string {
   const since = pending
     ? `${pending} changed since the last commit`
-    : "the pull request has changes since the last commit";
-  return `Not synced: ${since}. Commit to sync them.`;
+    : "changes are waiting for Commit";
+  return `Not synced: ${since}. Commit sends them to GitHub.`;
 }
 
 function imagesSummary(images: InFlightImages, files: number): string {
@@ -677,17 +663,7 @@ function imagesSummary(images: InFlightImages, files: number): string {
 }
 
 function PullRequestSummary({ data }: { data: InFlightResponse }) {
-  if (!data.pullRequest) {
-    return (
-      <p className="text-muted-foreground">
-        No open pull request titled “Add photo data”. Saving a photo from{" "}
-        <Link to="/exif" className="text-foreground underline underline-offset-4">
-          Photo
-        </Link>{" "}
-        opens one.
-      </p>
-    );
-  }
+  if (!data.pullRequest) return <NoPullRequest data={data} />;
   const pr = data.pullRequest;
   const count = data.files.length;
   return (

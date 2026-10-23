@@ -4,6 +4,7 @@ import {
   type PendingFile,
   type CombinedFile,
   type CombinedFiles,
+  type InFlightPullRequest,
   type InFlightRead,
   photosInFlightQuery,
   type PublishedResponse,
@@ -12,9 +13,9 @@ import {
 import { canonicalJson } from "@/lib/combined";
 
 /**
- * One file a push changed in the photo data pull request, which the combined lists won't have
- * until they're committed. `before` is the file's data before the push, when known, so its old entry
- * can be replaced; `after` is null when the push removed the file.
+ * One file a save changed, waiting for Commit, which the combined lists won't have until it's
+ * committed. `before` is the file's data before the save, when known, so its old entry can be
+ * replaced; `after` is null when the save removed the file.
  */
 export interface FileChange {
   kind: keyof CombinedFiles;
@@ -73,22 +74,41 @@ function changedFile(file: CombinedFile, changes: FileChange[]): CombinedFile {
 }
 
 /**
- * data with changes made to the combined lists at the pull request's head, as they'll be
- * once committed. The base branch's are left as they are, since the pull request hasn't
- * merged. A file that couldn't be read is left as it is.
+ * Stands in for the pull request Commit will open when none is open, so the changes waiting for it
+ * show over the base branch's lists. Its number, 0, is never a real pull request's.
+ */
+const WAITING_FOR_COMMIT: InFlightPullRequest = {
+  number: 0,
+  title: "Add photo data",
+  url: "",
+  branch: "",
+  headSha: "",
+};
+
+/** The lists Commit starts from: at the pull request's head, or the base branch's with none open. */
+function headOf(data: CombinedData): NonNullable<CombinedData["head"]> {
+  return data.head ?? { ...data.base, pullRequest: WAITING_FOR_COMMIT };
+}
+
+/**
+ * data with changes made to the combined lists at the pull request's head, as they'll be once
+ * committed; with no pull request open, `head` is the base branch's lists with them made, under
+ * `WAITING_FOR_COMMIT`. The base branch's are left as they are, since nothing has merged. A file
+ * that couldn't be read is left as it is.
  */
 export function withChanges(data: CombinedData, changes: FileChange[]): CombinedData {
-  if (!data.head || changes.length === 0) return data;
+  if (changes.length === 0) return data;
+  const head = headOf(data);
   const of = (kind: keyof CombinedFiles) => changes.filter((change) => change.kind === kind);
   return {
     ...data,
     head: {
-      ...data.head,
-      photos: changedFile(data.head.photos, of("photos")),
-      albums: changedFile(data.head.albums, of("albums")),
-      tags: changedFile(data.head.tags, of("tags")),
-      places: changedFile(data.head.places, of("places")),
-      localizations: changedFile(data.head.localizations, of("localizations")),
+      ...head,
+      photos: changedFile(head.photos, of("photos")),
+      albums: changedFile(head.albums, of("albums")),
+      tags: changedFile(head.tags, of("tags")),
+      places: changedFile(head.places, of("places")),
+      localizations: changedFile(head.localizations, of("localizations")),
     },
   };
 }

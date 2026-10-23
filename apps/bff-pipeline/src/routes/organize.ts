@@ -9,7 +9,7 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/organize", { timeoutMs: 35_000 }),
   );
 
-  // Saves a new album or tag in the photo data pull request; the backend gives GitHub 30s.
+  // Saves a new album or tag as a change waiting for Commit; the backend gives GitHub 30s.
   app.post<{ Params: { kind: string } }>("/organize/:kind", async (request, reply) =>
     relayToBackend(reply, app.log, `/organize/${encodeURIComponent(request.params.kind)}`, {
       method: "POST",
@@ -19,7 +19,7 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
     }),
   );
 
-  // Moves an album into another, or to the top level, in the photo data pull request.
+  // Moves an album into another, or to the top level, as a change waiting for Commit.
   app.put<{ Params: { id: string } }>("/organize/albums/:id/parent", async (request, reply) =>
     relayToBackend(
       reply,

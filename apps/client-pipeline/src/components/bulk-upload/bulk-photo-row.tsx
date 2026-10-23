@@ -113,10 +113,7 @@ function Added({ photo }: { photo: BulkPhoto }) {
   const saved = photo.saved;
   return (
     <Line icon={<CircleCheckIcon />} className="text-emerald-700 dark:text-emerald-400">
-      Added to the batch as{" "}
-      <a href={saved?.fileUrl} target="_blank" rel="noreferrer" className={LINK}>
-        {saved?.path.split("/").pop()}
-      </a>
+      Added to the batch as <code>{saved?.path.split("/").pop()}</code>, waiting for Commit
     </Line>
   );
 }

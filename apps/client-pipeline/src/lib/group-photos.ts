@@ -25,9 +25,14 @@ function headPhotos({ head }: CombinedData): CurrentPhotos | undefined {
   if (!head?.photos.data) return undefined;
   return {
     photos: head.photos.data.filter(isPhoto),
-    where: `the photo data pull request #${head.pullRequest.number}`,
+    where: headName(head.pullRequest.number),
     fileUrl: head.photos.fileUrl,
   };
+}
+
+/** The pull request numbered number, or the changes waiting for Commit with none open (0). */
+function headName(number: number): string {
+  return number === 0 ? "the changes waiting for Commit" : `the photo data pull request #${number}`;
 }
 
 function basePhotos({ base }: CombinedData): CurrentPhotos | undefined {

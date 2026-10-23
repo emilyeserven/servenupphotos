@@ -75,7 +75,7 @@ export function readEntries<T>(files: EntryFile<T>[] | undefined): T[] {
   return (files ?? []).flatMap((file) => (file.data ? [file.data] : []));
 }
 
-/** What saving a place or localization did; nothing is committed when it already had that content. */
+/** What saving a place or localization did; nothing is saved when it already had that content. */
 export interface EntryResult<T> {
   path: string;
   /** The file as saved. */
@@ -96,17 +96,16 @@ function entryChange<T>(kind: EntryKind, result: EntryResult<T>): FileChange[] {
 }
 
 /**
- * Saves a place or localization, new or changed, as one commit in the photo data pull request. Saves
- * made while one runs are queued and run in order.
+ * Saves a place or localization, new or changed, as a change waiting for Commit. Saves made while
+ * one runs are queued and run in order.
  */
 function saveEntryMutation<T extends { id: string }>(kind: EntryKind) {
   return mutationOptions({
     mutationKey: [kind, "save"],
-    // Each save commits on top of the pull request's head, so saves wait their turn rather than
-    // racing to move the branch.
+    // Each save checks the others' names and parents, so saves wait their turn rather than racing.
     scope: { id: "photo-data-entries" },
     meta: {
-      pushes: (result) => (result as EntryResult<T>).changed,
+      saves: (result) => (result as EntryResult<T>).changed,
       changes: (result) => entryChange(kind, result as EntryResult<T>),
     },
     mutationFn: (entry: T) =>

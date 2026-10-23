@@ -5,6 +5,7 @@ import { FloatingAction } from "@/components/floating-actions";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { sameCrop } from "@/lib/crop";
 import {
   type SquareUrls,
@@ -132,16 +133,22 @@ function SaveOutcomeText({ remade, update }: { remade: boolean; update: UpdateRe
   if (!remade) {
     return (
       <span>
-        <JsonOutcome update={update} capitalized />.
+        <JsonOutcome update={update} capitalized />. <Waiting update={update} />
       </span>
     );
   }
   return (
     <span>
       Remade the Square Thumbnail and its Thumbnail Preview in R2 and{" "}
-      <JsonOutcome update={update} />.
+      <JsonOutcome update={update} />. <Waiting update={update} />
     </span>
   );
+}
+
+/** Where a changed JSON goes next: Commit sends it to GitHub. */
+function Waiting({ update }: { update: UpdateResult }) {
+  if (!update.changed) return null;
+  return <WaitingForCommit pullRequestUrl={update.pullRequestUrl} what="The JSON" />;
 }
 
 function SaveError({ save: { mutation, remadeOnly } }: { save: Save }) {
@@ -156,37 +163,7 @@ function SaveError({ save: { mutation, remadeOnly } }: { save: Save }) {
 }
 
 function JsonOutcome({ update, capitalized }: { update: UpdateResult; capitalized?: boolean }) {
-  if (!update.changed) return capitalized ? "Left its JSON as it was" : "left its JSON as it was";
-  return (
-    <>
-      <a
-        href={update.fileUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="underline underline-offset-4"
-      >
-        {capitalized ? "Updated its JSON" : "updated its JSON"}
-      </a>
-      <NewPullRequestNote update={update} />
-    </>
-  );
-}
-
-/** Where the save went, when it opened the pull request. */
-function NewPullRequestNote({ update }: { update: UpdateResult }) {
-  if (!update.newPullRequest) return null;
-  return (
-    <>
-      {" "}
-      in a{" "}
-      <a
-        href={update.pullRequestUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="underline underline-offset-4"
-      >
-        new “Add photo data” pull request
-      </a>
-    </>
-  );
+  const text = update.changed ? "aved its JSON in the app" : "eft its JSON as it was";
+  const first = update.changed ? "s" : "l";
+  return (capitalized ? first.toUpperCase() : first) + text;
 }

@@ -18,8 +18,9 @@ interface RemoveFileProps {
 }
 
 /**
- * A Remove button that, after asking, removes the file from the pull request and its image from
- * R2. Only files the pull request adds can be removed, so others get no button.
+ * A Remove button that, after asking, removes the file from the batch and its image from R2. The
+ * removal waits for Commit like any other change, unless the file was only saved in the app, which
+ * just drops it. Only added files can be removed, so others get no button.
  */
 export function RemoveFile({ file, images, onRemoved }: RemoveFileProps) {
   const [confirming, setConfirming] = useState(false);
@@ -59,7 +60,7 @@ function ConfirmRemove({ file, imageKey, onRemoved, onCancel }: ConfirmRemovePro
   const remove = useMutation({
     ...removeInFlightMutation,
     onSuccess: async (result) => {
-      // The page refetches the pull request itself; the image may be gone from R2 too.
+      // The page reads the batch again itself; the image may be gone from R2 too.
       onRemoved(result);
       await queryClient.invalidateQueries({ queryKey: bucketImagesQuery.queryKey });
     },
@@ -68,7 +69,7 @@ function ConfirmRemove({ file, imageKey, onRemoved, onCancel }: ConfirmRemovePro
   return (
     <div className="bg-destructive/5 border-destructive/30 flex w-full flex-col gap-2 rounded-lg border p-3 font-normal">
       <p>
-        Remove <span className="font-medium">{fileName(file.path)}</span> from the pull request
+        Remove <span className="font-medium">{fileName(file.path)}</span> from the batch
         <ImageClause imageKey={imageKey} />? This can't be undone here.
       </p>
       {remove.error && <p className="text-destructive">{remove.error.message}</p>}

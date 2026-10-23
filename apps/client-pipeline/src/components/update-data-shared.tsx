@@ -1,7 +1,8 @@
-import { Link } from "@tanstack/react-router";
 import { ExternalLinkIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import type { CommittedChange, ScannedPhotos } from "@/api/data";
+import type { ScannedPhotos } from "@/api/data";
+import type { PendingSave } from "@/api/scan-changes";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 
 /** "1 file", "2 files". */
 export function count(n: number, word: string): string {
@@ -34,19 +35,20 @@ export function Unreadable({
   );
 }
 
-/** Where a previewed change will be committed. */
+/** Where a previewed change will go: into the batch, which Commit sends to GitHub. */
 export function PreviewDestination({ scan }: { scan: ScannedPhotos }) {
   if (!scan.pullRequest) {
     return (
       <>
-        It&apos;s saved as one commit on a new photo-data branch, in a new &quot;Add photo
-        data&quot; pull request against <code>{scan.branch}</code>.
+        It&apos;s saved in the app, waiting for Commit, which opens a new &quot;Add photo data&quot;
+        pull request against <code>{scan.branch}</code> with it.
       </>
     );
   }
   return (
     <>
-      It&apos;s saved as one commit on <code>{scan.branch}</code>, in{" "}
+      It&apos;s saved in the app, waiting for Commit, which sends it to <code>{scan.branch}</code>,
+      in{" "}
       <ExternalLink href={scan.pullRequest.url}>
         pull request #{scan.pullRequest.number}
       </ExternalLink>
@@ -55,30 +57,14 @@ export function PreviewDestination({ scan }: { scan: ScannedPhotos }) {
   );
 }
 
-/** What a change did, then where it was committed. */
-export function CommitSuccess({
-  result,
-  children,
-}: {
-  result: CommittedChange;
-  children: ReactNode;
-}) {
+/** What a change did, then where it goes: Commit sends it to GitHub. */
+export function CommitSuccess({ result, children }: { result: PendingSave; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-1 border-t pt-6 text-sm">
-      <p>
-        {children}, in <ExternalLink href={result.commitUrl}>one commit</ExternalLink> on{" "}
-        <code>{result.branch}</code>.
-      </p>
+      <p>{children}, saved in the app.</p>
       <p className="text-muted-foreground">
-        {result.newPullRequest ? "It opened " : "It's in "}
-        <ExternalLink href={result.pullRequestUrl}>
-          pull request #{result.pullRequestNumber}
-        </ExternalLink>
-        . Commit ALLPHOTOS.json from{" "}
-        <Link to="/in-flight" className="text-foreground underline underline-offset-4">
-          Photos in Flight
-        </Link>{" "}
-        to sync it; the portfolio uses the change once it&apos;s merged.
+        <WaitingForCommit pullRequestUrl={result.pullRequestUrl} what="The changes" /> The portfolio
+        uses them once that pull request is merged.
       </p>
     </div>
   );
