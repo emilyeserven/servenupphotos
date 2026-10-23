@@ -1,4 +1,5 @@
 {
+  "id": 33,
   "title": "American Copper Lobby",
   "comment": null,
   "file": "IMG_8176.jpg",
@@ -50,5 +51,6 @@
       "id": "murray-hill"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

@@ -1,4 +1,5 @@
 {
+  "id": 36,
   "title": "Art not Ads",
   "comment": null,
   "file": "IMG_0173.jpg",
@@ -36,7 +37,7 @@
     }
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
+  "websiteSpotlight": 4,
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
@@ -46,5 +47,6 @@
       "id": "lower-east-side"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": ["homepage"],
+  "socialPosts": []
 }

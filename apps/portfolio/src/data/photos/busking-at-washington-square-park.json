@@ -1,4 +1,5 @@
 {
+  "id": 40,
   "title": "Busking at Washington Square Park",
   "comment": null,
   "file": "IMG_9081.jpg",
@@ -46,5 +47,6 @@
       "id": "washington-square-park"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

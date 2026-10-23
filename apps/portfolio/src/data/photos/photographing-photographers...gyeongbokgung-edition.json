@@ -1,4 +1,5 @@
 {
+  "id": 4,
   "title": "Photographing photographers... Gyeongbokgung edition.",
   "comment": "The one thing that can be frustrating about popular destinations is that you're kind of... damned if you do, damned if you don't. Like, yes, I definitely have to go see that palace. But also, everyone else does too. So of course, it gets really crowded. As a photographer, I try to do my best to make the presence of people \"work\" with a photo, but sometimes there's just too many people. In a case like this, sometimes it's just more fun to take photos of other photographers.",
   "file": "DSCF3097.jpg",
@@ -49,5 +50,7 @@
       "relation": "in",
       "id": "gyeongbokgung-palace"
     }
-  ]
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
 }

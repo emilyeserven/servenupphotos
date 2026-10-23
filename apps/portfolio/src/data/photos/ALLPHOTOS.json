@@ -1,5 +1,6 @@
 [
   {
+    "id": 6,
     "title": "86th & 2nd",
     "comment": null,
     "file": "IMG_4848.jpg",
@@ -46,9 +47,12 @@
         "relation": "",
         "id": "upper-east-side"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 7,
     "title": "96th & Lex",
     "comment": null,
     "file": "IMG_3769.jpg",
@@ -86,7 +90,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 3,
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
@@ -95,9 +99,12 @@
         "relation": "",
         "id": "upper-east-side"
       }
-    ]
+    ],
+    "spotlightZones": ["homepage"],
+    "socialPosts": []
   },
   {
+    "id": 23,
     "title": "Always Watching...",
     "comment": null,
     "file": "IMG_6009.jpg",
@@ -144,9 +151,12 @@
         "relation": "",
         "id": "columbus-circle"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 33,
     "title": "American Copper Lobby",
     "comment": null,
     "file": "IMG_8176.jpg",
@@ -198,9 +208,11 @@
         "id": "murray-hill"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 34,
     "title": "American Copper Self Portrait",
     "comment": null,
     "file": "IMG_8205.jpg",
@@ -252,9 +264,11 @@
         "id": "murray-hill"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 35,
     "title": "Apartments - Angled and Brown",
     "comment": null,
     "file": "IMG_8162.jpg",
@@ -302,9 +316,11 @@
         "id": "murray-hill"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 36,
     "title": "Art not Ads",
     "comment": null,
     "file": "IMG_0173.jpg",
@@ -342,7 +358,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 4,
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
@@ -352,9 +368,11 @@
         "id": "lower-east-side"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": ["homepage"],
+    "socialPosts": []
   },
   {
+    "id": 24,
     "title": "Artery of Manhattan",
     "comment": null,
     "file": "IMG_6386.jpg",
@@ -401,9 +419,12 @@
         "relation": "",
         "id": "upper-east-side"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 37,
     "title": "Bioglobe",
     "comment": null,
     "file": "IMG_1235.jpg",
@@ -451,9 +472,11 @@
         "id": "midtown"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 38,
     "title": "Blondie",
     "comment": null,
     "file": "IMG_0118.jpg",
@@ -501,9 +524,11 @@
         "id": "bowery"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 39,
     "title": "Brooklyn Bridge Walkthrough",
     "comment": null,
     "file": "IMG_8537.jpg",
@@ -551,9 +576,11 @@
         "id": "brooklyn-bridge"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 40,
     "title": "Busking at Washington Square Park",
     "comment": null,
     "file": "IMG_9081.jpg",
@@ -601,9 +628,11 @@
         "id": "washington-square-park"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 41,
     "title": "Change of Seasons by the Bridge",
     "comment": null,
     "file": "IMG_8570.jpg",
@@ -655,9 +684,11 @@
         "id": "brooklyn-heights"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 42,
     "title": "Chess Master",
     "comment": null,
     "file": "IMG_8053.jpg",
@@ -705,9 +736,11 @@
         "id": "washington-square-park"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 8,
     "title": "City Shroom",
     "comment": null,
     "file": "IMG_4231.jpg",
@@ -754,9 +787,12 @@
         "relation": "",
         "id": "midtown"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 43,
     "title": "Clock and Gears",
     "comment": null,
     "file": "IMG_6965.jpg",
@@ -804,9 +840,11 @@
         "id": "fifth-avenue-presbyterian-church"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 16,
     "title": "Confidence",
     "comment": null,
     "file": "post-processed-2846.jpg",
@@ -853,9 +891,12 @@
         "relation": "",
         "id": "manhattan-chinatown"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 44,
     "title": "Copper View",
     "comment": null,
     "file": "IMG_8234-2.jpg",
@@ -907,9 +948,11 @@
         "id": "murray-hill"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 9,
     "title": "Curious Goose",
     "comment": null,
     "file": "IMG_4200.jpg",
@@ -956,9 +999,12 @@
         "relation": "",
         "id": "midtown"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 45,
     "title": "Diamonds",
     "comment": null,
     "file": "IMG_8144.jpg",
@@ -1010,9 +1056,11 @@
         "id": "financial-district"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 46,
     "title": "Do Not Feed the Pigeons They're Already Stuffed",
     "comment": null,
     "file": "IMG_8987.jpg",
@@ -1060,9 +1108,11 @@
         "id": "washington-square-park"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 47,
     "title": "Freeman Alley, Enough Hate",
     "comment": null,
     "file": "IMG_0180.jpg",
@@ -1110,9 +1160,11 @@
         "id": "freeman-alley"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 48,
     "title": "Fresh Food",
     "comment": null,
     "file": "IMG_8031.jpg",
@@ -1160,9 +1212,11 @@
         "id": "midtown"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 49,
     "title": "Gears I",
     "comment": null,
     "file": "IMG_6966.jpg",
@@ -1210,9 +1264,11 @@
         "id": "fifth-avenue-presbyterian-church"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 50,
     "title": "Gears II",
     "comment": null,
     "file": "IMG_6967.jpg",
@@ -1260,9 +1316,11 @@
         "id": "fifth-avenue-presbyterian-church"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 51,
     "title": "Ghosts of the Subway",
     "comment": null,
     "file": "IMG_8154.jpg",
@@ -1305,9 +1363,11 @@
     "albums": [],
     "tags": [],
     "places": [],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 52,
     "title": "Grand Central in Motion",
     "comment": null,
     "file": "IMG_1915.jpg",
@@ -1355,9 +1415,11 @@
         "id": "grand-central-station"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 53,
     "title": "Green Door",
     "comment": null,
     "file": "IMG_0027.jpg",
@@ -1405,9 +1467,11 @@
         "id": "midtown"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 54,
     "title": "Greene Street",
     "comment": null,
     "file": "IMG_8076.jpg",
@@ -1459,9 +1523,11 @@
         "id": "soho"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 2,
     "title": "Gyeongbokgung Station on a (shockingly quiet) Saturday afternoon.",
     "comment": "One of the first things I did when I was in Seoul was get a Climate Card (the Metrocard/Oyster Card/SUICA etc equivalent). The public transit coverage was so good that I ended up only needing to get a taxi once! As a sort-of New Yorker, one of the obvious things I could say was that the stations in Korea were extremely clean. But I think the more interesting thing ended up being the amount of emergency equipment that was available in cabinets through every station I was in. From heatstroke recovery to earthquake supplies, it really added to my overall peace of mind and struck me as very thoughtful (and probably something that can't really exist in a less collectivist society, unfortunately).",
     "file": "DSCF2998.jpg",
@@ -1508,9 +1574,12 @@
         "relation": "",
         "id": "gyeongbokgung-station"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 10,
     "title": "Gyeonghoeru Pavilion (경회루) and Gyeonghoeji Pond (경회루 연지).",
     "comment": "Gyeonghoeru Pavilion (경회루) and Gyeonghoeji Pond (경회루 연지).\n\n2026.05.17\nFujifilm XT-5, XF18-135mm @ 25mm, 1/500sec, ƒ 5.6, ISO 125\n경복궁 (Gyeongbokgung Palace)\n\nThe thing about solo traveling in a country that doesn't natively speak English, is that you end up having some nice conversations with other English speakers. This doesn't always mean English is the other person's first language, but there's just enough to communicate.\n\nI had a chance to reflect on this \"English-speaking privilege\" in front of this pavilion, after having asked a stranger to get my photo using my one-shot Instax camera. This other traveler was... Romanian, I think, and he actually asked for me to take his photo with the Instax as well. As with many of these transient travel conversations, we went our separate ways without exchanging contact information. But, it's fun to think that somewhere out there, there's someone with a small instant-film photo of themselves that came out of a conversation with another traveler.",
     "file": "DSCF3267.jpg",
@@ -1552,9 +1621,12 @@
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
-    "places": []
+    "places": [],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 55,
     "title": "Human Statue",
     "comment": null,
     "file": "IMG_9102.jpg",
@@ -1602,9 +1674,11 @@
         "id": "washington-square-park"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 56,
     "title": "I like to imagine that it's just one mannequin",
     "comment": null,
     "file": "IMG_9617.jpg",
@@ -1642,7 +1716,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 5,
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
@@ -1652,9 +1726,11 @@
         "id": "the-high-line"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": ["homepage"],
+    "socialPosts": []
   },
   {
+    "id": 17,
     "title": "Colorful Storefront",
     "comment": null,
     "file": "IMG_3475.jpg",
@@ -1705,9 +1781,12 @@
         "relation": "in",
         "id": "queens"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 25,
     "title": "Photographing Photographers: 86th Street Subway Edition",
     "comment": null,
     "file": "IMG_6794.jpg",
@@ -1754,9 +1833,12 @@
         "relation": "",
         "id": "86th-street-subway-station"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 26,
     "title": "In the Church Attic",
     "comment": null,
     "file": "IMG_6942.jpg",
@@ -1803,9 +1885,12 @@
         "relation": "",
         "id": "fifth-avenue-presbyterian-church"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 3,
     "title": "Japsang",
     "comment": "Japsang (잡상) are a unique Korean architectural feature - basically little guardians of the buildings they're on. They were everywhere in Gyeongbokgung.",
     "file": "DSCF3080.jpg",
@@ -1852,9 +1937,12 @@
         "relation": "",
         "id": "gyeongbokgung-palace"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 18,
     "title": "Just Passing By",
     "comment": null,
     "file": "IMG_3526.jpg",
@@ -1905,9 +1993,12 @@
         "relation": "in",
         "id": "astoria"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 27,
     "title": "Just Some Punk",
     "comment": null,
     "file": "IMG_6651.jpg",
@@ -1954,9 +2045,12 @@
         "relation": "",
         "id": "72nd-street-subway-station"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 57,
     "title": "Kura",
     "comment": null,
     "file": "IMG_0179.jpg",
@@ -2004,9 +2098,11 @@
         "id": "freeman-alley"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 58,
     "title": "Lock and Chain",
     "comment": null,
     "file": "IMG_1452.jpg",
@@ -2054,9 +2150,11 @@
         "id": "midtown"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 28,
     "title": "Locks Above the Tracks",
     "comment": null,
     "file": "IMG_6381.jpg",
@@ -2103,9 +2201,12 @@
         "relation": "",
         "id": "upper-east-side"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 1,
     "title": "Mirror Pond",
     "comment": "The dancheong (단청) ceiling of the gazebo in the National Museum of Korea's Mirror Pond.\n\nThis ceiling is one of the first examples of Korean traditional architecture I had a chance to photograph. The bright colors and patterns really stuck out to me as something uniquely Korean, especially given my familiarity with Chinese and Japanese culture. (Turns out that \"dancheong\" is the specific term for that very Korean style.) I took a lot more dancheong photos during this trip, but I think this is the best ceiling photo I ended up getting... and I would attribute that to the reflections from the pond.",
     "file": "dscf2926.jpg",
@@ -2140,7 +2241,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 1,
     "socialMediaPublishDate": "2026-10-13",
     "albums": [],
     "tags": [],
@@ -2156,9 +2257,12 @@
         "relation": "in",
         "id": "national-museum-of-korea"
       }
-    ]
+    ],
+    "spotlightZones": ["homepage"],
+    "socialPosts": []
   },
   {
+    "id": 29,
     "title": "Modern Art Interaction",
     "comment": null,
     "file": "IMG_6765.jpg",
@@ -2205,9 +2309,12 @@
         "relation": "",
         "id": "72nd-street-subway-station"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 59,
     "title": "On the Bridge",
     "comment": null,
     "file": "IMG_0246-3.jpg",
@@ -2255,9 +2362,11 @@
         "id": "williamsburg-bridge"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 60,
     "title": "One Love",
     "comment": null,
     "file": "IMG_0184.jpg",
@@ -2305,9 +2414,11 @@
         "id": "freeman-alley"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 30,
     "title": "Ouch Ouch Ouch",
     "comment": null,
     "file": "IMG_6161.jpg",
@@ -2354,9 +2465,12 @@
         "relation": "",
         "id": "chelsea"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 11,
     "title": "Overthrow?",
     "comment": null,
     "file": "IMG_5747.jpg",
@@ -2403,9 +2517,12 @@
         "relation": "",
         "id": "noho"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 4,
     "title": "Photographing photographers... Gyeongbokgung edition.",
     "comment": "The one thing that can be frustrating about popular destinations is that you're kind of... damned if you do, damned if you don't. Like, yes, I definitely have to go see that palace. But also, everyone else does too. So of course, it gets really crowded. As a photographer, I try to do my best to make the presence of people \"work\" with a photo, but sometimes there's just too many people. In a case like this, sometimes it's just more fun to take photos of other photographers.",
     "file": "DSCF3097.jpg",
@@ -2456,9 +2573,12 @@
         "relation": "in",
         "id": "gyeongbokgung-palace"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 61,
     "title": "Photographing the Photographer: Brooklyn Pier 1 Edition",
     "comment": null,
     "file": "IMG_8631.jpg",
@@ -2506,9 +2626,11 @@
         "id": "brooklyn-bridge-park-pier-1"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 19,
     "title": "Protect and Serve",
     "comment": null,
     "file": "post-processed-2625.jpg",
@@ -2555,9 +2677,12 @@
         "relation": "",
         "id": "manhattan-chinatown"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 12,
     "title": "Pumgyeseok",
     "comment": "Pumgyeseok (품계석) at Gyeongbokgung Palace. These \"rank stones\" indicate where officials of each rank would stand. If you can read a small amount of Chinese characters (or Hanja, 한자, in Korean) you can probably at least read the numbers!",
     "file": "DSCF3132.jpg",
@@ -2608,9 +2733,12 @@
         "relation": "in",
         "id": "gyeongbokgung-palace"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 62,
     "title": "Royal Red",
     "comment": null,
     "file": "IMG_9991.jpg",
@@ -2658,9 +2786,11 @@
         "id": "midtown"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 63,
     "title": "Rust",
     "comment": null,
     "file": "IMG_1228.jpg",
@@ -2708,9 +2838,11 @@
         "id": "midtown"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 31,
     "title": "Shrouded in Mist",
     "comment": null,
     "file": "IMG_6572.jpg",
@@ -2748,7 +2880,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 2,
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
@@ -2757,9 +2889,12 @@
         "relation": "",
         "id": "jacqueline-kennedy-onassis-reservoir"
       }
-    ]
+    ],
+    "spotlightZones": ["homepage"],
+    "socialPosts": []
   },
   {
+    "id": 64,
     "title": "Snowy Tracks",
     "comment": null,
     "file": "IMG_1714.jpg",
@@ -2802,9 +2937,11 @@
     "albums": [],
     "tags": [],
     "places": [],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 65,
     "title": "Station Blues",
     "comment": null,
     "file": "IMG_9886.jpg",
@@ -2852,9 +2989,11 @@
         "id": "queensboro-plaza-subway-station"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 13,
     "title": "Stickerbox",
     "comment": null,
     "file": "IMG_5647.jpg",
@@ -2901,9 +3040,12 @@
         "relation": "",
         "id": "lower-east-side"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 66,
     "title": "Street Art",
     "comment": null,
     "file": "IMG_9087.jpg",
@@ -2951,9 +3093,11 @@
         "id": "washington-square-park"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 32,
     "title": "Strings",
     "comment": null,
     "file": "IMG_6139-2.jpg",
@@ -3000,9 +3144,12 @@
         "relation": "",
         "id": "museum-of-arts-and-design"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 20,
     "title": "Supermarkets",
     "comment": null,
     "file": "IMG_3466.jpg",
@@ -3053,9 +3200,12 @@
         "relation": "in",
         "id": "queens"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 67,
     "title": "The Corinthian",
     "comment": null,
     "file": "IMG_8168.jpg",
@@ -3103,9 +3253,11 @@
         "id": "murray-hill"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 68,
     "title": "The Pier",
     "comment": null,
     "file": "IMG_1469.jpg",
@@ -3153,9 +3305,11 @@
         "id": "midtown"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 69,
     "title": "Tiny Snowman",
     "comment": null,
     "file": "IMG_1728.jpg",
@@ -3203,9 +3357,11 @@
         "id": "washington-square-park"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 70,
     "title": "Tower Window",
     "comment": null,
     "file": "IMG_6957.jpg",
@@ -3253,9 +3409,11 @@
         "id": "fifth-avenue-presbyterian-church"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 71,
     "title": "Transit Above Transit",
     "comment": null,
     "file": "IMG_1924.jpg",
@@ -3303,9 +3461,11 @@
         "id": "grand-central-station"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 72,
     "title": "Unique Souvenir",
     "comment": null,
     "file": "IMG_9877-2.jpg",
@@ -3353,9 +3513,11 @@
         "id": "midtown-west"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 14,
     "title": "Up Above Manhattan Bridge Overpass",
     "comment": null,
     "file": "IMG_7515.jpg",
@@ -3402,9 +3564,12 @@
         "relation": "",
         "id": "manhattan-bridge"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 21,
     "title": "View from the High Line",
     "comment": null,
     "file": "IMG_2576.jpg",
@@ -3451,9 +3616,12 @@
         "relation": "",
         "id": "the-high-line"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 73,
     "title": "View from the Skybridge",
     "comment": null,
     "file": "IMG_8249.jpg",
@@ -3505,9 +3673,11 @@
         "id": "murray-hill"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 22,
     "title": "Waiting for the Train",
     "comment": null,
     "file": "IMG_3418.jpg",
@@ -3558,9 +3728,12 @@
         "relation": "in",
         "id": "queens"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 74,
     "title": "Waiting on East Broadway",
     "comment": null,
     "file": "IMG_1750.jpg",
@@ -3608,9 +3781,11 @@
         "id": "east-broadway-station"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 75,
     "title": "Waiting on Williamsburg Bridge",
     "comment": null,
     "file": "IMG_0219-2.jpg",
@@ -3658,9 +3833,11 @@
         "id": "williamsburg-bridge"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 76,
     "title": "Wave of Windows",
     "comment": null,
     "file": "IMG_8275.jpg",
@@ -3712,9 +3889,11 @@
         "id": "murray-hill"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 5,
     "title": "While the buildings around the palace grow and change, the japsang still look on...",
     "comment": null,
     "file": "DSCF3094.jpg",
@@ -3761,9 +3940,12 @@
         "relation": "",
         "id": "gyeongbokgung-palace"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   },
   {
+    "id": 15,
     "title": "Yellow x Stickers",
     "comment": null,
     "file": "IMG_1227.jpg",
@@ -3810,6 +3992,8 @@
         "relation": "",
         "id": "queensboro-bridge"
       }
-    ]
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
   }
 ]

@@ -1,4 +1,5 @@
 {
+  "id": 75,
   "title": "Waiting on Williamsburg Bridge",
   "comment": null,
   "file": "IMG_0219-2.jpg",
@@ -46,5 +47,6 @@
       "id": "williamsburg-bridge"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

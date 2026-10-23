@@ -1,4 +1,5 @@
 {
+  "id": 14,
   "title": "Up Above Manhattan Bridge Overpass",
   "comment": null,
   "file": "IMG_7515.jpg",
@@ -45,5 +46,7 @@
       "relation": "",
       "id": "manhattan-bridge"
     }
-  ]
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
 }

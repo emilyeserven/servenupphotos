@@ -1,4 +1,5 @@
 {
+  "id": 73,
   "title": "View from the Skybridge",
   "comment": null,
   "file": "IMG_8249.jpg",
@@ -50,5 +51,6 @@
       "id": "murray-hill"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

@@ -1,4 +1,5 @@
 {
+  "id": 64,
   "title": "Snowy Tracks",
   "comment": null,
   "file": "IMG_1714.jpg",
@@ -41,5 +42,6 @@
   "albums": [],
   "tags": [],
   "places": [],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

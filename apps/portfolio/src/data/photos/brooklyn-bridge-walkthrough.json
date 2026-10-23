@@ -1,4 +1,5 @@
 {
+  "id": 39,
   "title": "Brooklyn Bridge Walkthrough",
   "comment": null,
   "file": "IMG_8537.jpg",
@@ -46,5 +47,6 @@
       "id": "brooklyn-bridge"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

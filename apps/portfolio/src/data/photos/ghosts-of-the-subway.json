@@ -1,4 +1,5 @@
 {
+  "id": 51,
   "title": "Ghosts of the Subway",
   "comment": null,
   "file": "IMG_8154.jpg",
@@ -41,5 +42,6 @@
   "albums": [],
   "tags": [],
   "places": [],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }
