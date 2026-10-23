@@ -85,6 +85,11 @@ On the Photo page and in Edit Photo, the title and comment are in one card and t
 **Place**, then **City and country**. Under the **Place** title, a line says where the photo goes on the portfolio's
 map: a checkmark with the GPS position when its EXIF has one; else the place whose fallback GPS position it uses (its
 first place with one, or a place that place is in), with that position; else a warning that it isn't on the map.
+Either position ends with **Open in Google Maps**, which opens it in a new tab
+(`https://www.google.com/maps/search/?api=1&query=lat,lng`, see
+[Google Maps URLs](https://developers.google.com/maps/documentation/urls/get-started#search-action)); the EXIF one is
+read from exiftool's `40 deg 46' 46.20" N, …` into decimal degrees by `parseExifGps` in
+`client-pipeline/src/lib/google-maps.ts`.
 
 When the photo's EXIF has no GPS position, each chosen place with none either (its own or a place above it's) has
 **Add a GPS position for …** under that line, which opens a `latitude, longitude` field and **Save**. It saves the
