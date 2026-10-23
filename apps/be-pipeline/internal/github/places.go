@@ -76,6 +76,21 @@ type Place struct {
 	// somewhere near; the portfolio's map then marks them like photos with
 	// their own GPS position. Only kept when the place has a GPS position.
 	ExactLocation bool `json:"exactLocation,omitempty"`
+	// ParentRelation is the word between this place and the place it's in
+	// when a photo shows both, such as "in" or "," ("Astoria, Queens"); ""
+	// for the parent's ChildRelation. Only kept when the place has a parent.
+	ParentRelation string `json:"parentRelation,omitempty"`
+	// ChildRelation is the word between each place in this one and this one,
+	// unless that place sets its own ParentRelation; "" for "in".
+	ChildRelation string `json:"childRelation,omitempty"`
+}
+
+// placeRelations are the words a place can be joined to the place it's in
+// with: the relations a photo can have to a place, and "," for a comma,
+// as in "Astoria, Queens".
+var placeRelations = []string{
+	"in", "at", "by", "near", "on", "inside", "outside", "behind", "in front of", "across from", "above", "below",
+	"overlooking", "from", ",",
 }
 
 // Localization types: what a localization is of.
@@ -296,6 +311,13 @@ func validPlace(place Place) (Place, *PublishError) {
 		Parent: strings.TrimSpace(place.Parent), City: strings.TrimSpace(place.City), Country: strings.TrimSpace(place.Country),
 		Latitude: place.Latitude, Longitude: place.Longitude,
 		ExactLocation: place.ExactLocation && place.Latitude != nil,
+		ChildRelation: strings.TrimSpace(place.ChildRelation),
+	}
+	if p.Parent != "" {
+		p.ParentRelation = strings.TrimSpace(place.ParentRelation)
+	}
+	if perr := badRelations(p); perr != nil {
+		return p, perr
 	}
 	if perr := badCoordinates(p); perr != nil {
 		return p, perr
@@ -321,6 +343,17 @@ func validPlace(place Place) (Place, *PublishError) {
 		return p, publishErr(http.StatusBadRequest, "Keep the description to %d characters.", maxGroupDescriptionLength)
 	}
 	return p, nil
+}
+
+// badRelations fails unless p's ParentRelation and ChildRelation are each
+// "" or one of placeRelations.
+func badRelations(p Place) *PublishError {
+	for _, r := range []string{p.ParentRelation, p.ChildRelation} {
+		if r != "" && !slices.Contains(placeRelations, r) {
+			return publishErr(http.StatusBadRequest, "A place's connecting word is one of %s.", strings.Join(placeRelations, ", "))
+		}
+	}
+	return nil
 }
 
 // validLocalization checks l and returns it trimmed, as it will be saved.

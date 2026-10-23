@@ -51,6 +51,24 @@ show them, or a new one typed in. Choosing a city whose country is known fills i
 (`GET /api/places` → `GET /places`, as the next Commit will have them), so a place shows before it's committed to
 `PLACES.json`.
 
+### Connecting words
+
+When a photo has two places and the second is one the first is in (at any depth), the word between them comes from
+the places, not the photo: “In Geunjeongmun Gate in Gyeongbokgung Palace”, or with a comma, “In Astoria, Queens”. A
+place's panel sets it with two menus under **In**:
+
+- **Word before …** (only with a parent) is this place's word before the place it's in. It's saved as
+  `"parentRelation"`; **Default** leaves it out and uses the parent's word for the places in it.
+- **Word for places in it** is the default for every place in this one that doesn't pick its own, saved as
+  `"childRelation"`; **Default** leaves it out, which is “in”.
+
+Under them, a preview shows the whole phrase: how the place reads with every place it's in (“Mirror Pond, National
+Museum of Korea”), and how a place in it reads. Either is one of the photo relations (in, at, by, near, …) or `,` for a comma. When the second place is a few levels
+up, the word is the one of the place just under it on the way up. Older place files have neither and read as “in”.
+
+> **Frontend analogy:** it's CSS inheritance: a child's own `parentRelation` wins, else it inherits the parent's
+> `childRelation`, else the initial value “in”.
+
 ### GPS position
 
 A place can have a **GPS position**, written on the Places page as `latitude, longitude` in decimal degrees (such as
@@ -105,7 +123,9 @@ and the city's country (or the photo's) when the place has no country.
 across from, above, below, overlooking, from) and a combobox that picks one place. Its search matches each place's
 name and its saved romanization, local pronunciation and local script, so “경복” or “gyeongbok” both find
 Gyeongbokgung Palace. Typing a name that isn't a place offers **Add “…” as a place**, which saves it as above and chooses it. Under the rows, the places read as a phrase:
-“In Gyeongbokgung Palace by Geunjeongmun Gate”, or “Near Gyeongbokgung” with one place and a relation. With two
+“In Gyeongbokgung Palace by Geunjeongmun Gate”, or “Near Gyeongbokgung” with one place and a relation. When the second place is one the first is in, its relation menu is replaced by the place's
+[connecting word](#connecting-words) (dashed, linking to the Places page), and the photo's own `relation` for it is
+kept in the file but not used, so older photos need no change. With two
 places, **Swap places** swaps which place is first and which second, leaving each relation where it was: “In
 Gyeongbokgung Palace by Geunjeongmun Gate” becomes “In Geunjeongmun Gate by Gyeongbokgung Palace”.
 
@@ -231,7 +251,8 @@ Native with no local script shows the pronunciation, else the romanization, else
 matched to their localization by name, and places by the place's ID.
 
 A photo with places shows them as a phrase before its city, such as “In 경복궁 by 근정문, 서울”; the relation stays in
-English. A photo without places, or whose places aren't in `PLACES.json`, shows only its city and country; the old
+English. Between a place and one it's in, the phrase uses the places' [connecting word](#connecting-words), such as
+“In Astoria, Queens”. A photo without places, or whose places aren't in `PLACES.json`, shows only its city and country; the old
 `placeName` isn't shown, so give the photo places on the Photo page instead. Places only show once **Commit** has
 rebuilt `ALLPHOTOS.json` and `PLACES.json` before the pull request merges. The Table
 sorts the Place column by the English names whichever way it's shown.

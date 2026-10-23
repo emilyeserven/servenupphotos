@@ -199,7 +199,7 @@ interface PhotoData {
   /** The spots on the site the photo is spotlighted in, picked on Site Spotlight; older entries don't have them. */
   spotlightZones?: string[];
   /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
-  places?: { relation: string; id: string }[];
+  places?: PhotoPlaces;
   /** The IDs of the photo's albums and tags; older entries were saved without them. */
   albums?: string[];
   tags?: string[];
@@ -368,9 +368,47 @@ function joinParts(...parts: (string | null | undefined)[]): string {
   return parts.filter(Boolean).join(", ");
 }
 
-/** One of the photo's places, with how it relates to it, such as "by Geunjeongmun Gate". */
-function placePart(relation: string, name: Localized): Localized {
-  return mapLocalized(name, (n, script) => [relation, n[script]].filter(Boolean).join(" "));
+/** The photo's places, from PLACES.json, each with how the photo relates to it. */
+type PhotoPlaces = { relation: string; id: string }[];
+
+/**
+ * One of the photo's places, with the word before it, such as "by Geunjeongmun Gate", or ", Queens"
+ * for a comma.
+ */
+function placePart(word: string, name: Localized): Localized {
+  return mapLocalized(name, (n, script) =>
+    [word, n[script]].filter(Boolean).join(" ").replace(/^, /, ","),
+  );
+}
+
+/** The parts after each other: a space between them, but none before a comma. */
+function joinPlaceParts(parts: string[]): string {
+  return parts.join(" ").replaceAll(" ,", ", ");
+}
+
+/** The word a place is joined to the place it's in with: its own, or else its parent's default, or else "in". */
+function joinWord(place: Place): string {
+  return place.parentRelation || placeById(place.parent)?.childRelation || "in";
+}
+
+/**
+ * The word before the photo's place at `index`: when it's a place the place before it is in, the
+ * word of the place just under it on the way up, as set on the Places page; else the photo's own.
+ */
+function wordBefore(places: PhotoPlaces, index: number): string {
+  return placesWord(places, index) ?? places[index]?.relation ?? "";
+}
+
+/** The word from the Places page before the photo's place at `index`, if it's one the place before it is in. */
+function placesWord(places: PhotoPlaces, index: number): string | undefined {
+  const chain = chainBefore(places, index);
+  const at = chain.findIndex((place) => place.id === places[index]?.id);
+  return at > 0 ? chain.slice(at - 1, at).map(joinWord)[0] : undefined;
+}
+
+/** The photo's place before `index` and every place it's in; none for the first. */
+function chainBefore(places: PhotoPlaces, index: number): Place[] {
+  return index > 0 ? placeAncestry(places[index - 1]?.id) : [];
 }
 
 function capitalized(value: string): string {
@@ -382,12 +420,15 @@ function capitalized(value: string): string {
  * without any. Places missing from PLACES.json are left out. The old `placeName` isn't shown.
  */
 function placeText(photo: PhotoData): Localized | null {
-  const parts = (photo.places ?? []).flatMap(({ relation, id }) => {
+  const places = photo.places ?? [];
+  const parts = places.flatMap(({ id }, index) => {
     const place = placeById(id);
-    return place ? [placePart(relation, localizePlace(place))] : [];
+    return place ? [placePart(wordBefore(places, index), localizePlace(place))] : [];
   });
   if (parts.length === 0) return null;
-  return mapLocalized(parts, (p, script) => capitalized(p.map((part) => part[script]).join(" ")));
+  return mapLocalized(parts, (p, script) =>
+    capitalized(joinPlaceParts(p.map((part) => part[script]))),
+  );
 }
 
 /** The most specific of the photo's places, the one inside the most others; null without any. */
