@@ -31,7 +31,7 @@ Spotlight's zones are kept this way. `stores/local-edits.ts` keeps them in a Zus
 its data as read, and the top-level fields to set. Setting a field back to the file's own value drops it. They're
 made over the lists like saved changes (after them), counted by the sync button, and dropped with the rest by its
 panel's **Discard**. **Commit** sends them as `{"edits": [{"path", "fields"}]}`; the backend sets those fields in
-each file (only those, so the rest of the file keeps its formatting), builds the combined lists from the edited files
+each file (only those, so the rest of the file keeps its data), builds the combined lists from the edited files
 and commits them with everything else waiting. With no pull request open, that commit goes on a new `photo-data/` branch and opens one.
 Edits made while a commit runs are kept for the next one.
 
@@ -42,6 +42,11 @@ Saves don't touch GitHub or the combined files. **Commit** (`POST /api/photos/co
 everything that changed as one commit, "Combine photo, album and tag data", on the open **Add photo data** pull
 request's branch, or on a new `photo-data/` branch with a new pull request when none is open. Each is every other `.json` file directly in its folder,
 sorted by path, as one array, formatted as oxfmt formats it, so a list that's already up to date isn't committed again.
+Every data file in the commit is formatted the same way first (a short list such as `"spotlightZones": ["homepage"]` on one
+line), so CI's `oxfmt --check` passes on what the app commits.
+
+> **Frontend analogy:** like running Prettier on save, except the backend is the one saving, so it formats the files itself.
+
 When a file can't be read or isn't valid JSON, nothing is committed and the error names it. The backend does this
 itself with GitHub's Git database API, so nothing waits for a CI runner.
 

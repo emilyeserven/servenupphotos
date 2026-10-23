@@ -3,6 +3,7 @@ package github
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -58,5 +59,35 @@ func TestBlobSHA(t *testing.T) {
 	const want = "31d9d10263ce2a1e452ffc769e5fa8ec1fc84fb3"
 	if got := blobSHA(content); got != want {
 		t.Errorf("blobSHA() = %s, want %s", got, want)
+	}
+}
+
+// TestFormatJSONFileMatchesCommittedData formats every committed photo,
+// album, tag, place and localization file again and expects it unchanged,
+// since CI checks them all with oxfmt.
+func TestFormatJSONFileMatchesCommittedData(t *testing.T) {
+	paths, err := filepath.Glob("../../../portfolio/src/data/*/*.json")
+	if err != nil || len(paths) == 0 {
+		t.Fatalf("no data files found: %v", err)
+	}
+	for _, p := range paths {
+		want, err := os.ReadFile(p) //nolint:gosec // A path from the Glob above.
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := formatJSONFile(want); string(got) != string(want) {
+			t.Errorf("formatJSONFile(%s) =\n%s\nwant\n%s", p, got, want)
+		}
+	}
+}
+
+func TestFormatJSONFileCollapsesShortLists(t *testing.T) {
+	in := "{\n  \"tags\": [\n    \"a\"\n  ],\n  \"places\": [\n    {\n      \"id\": \"x\"\n    }\n  ]\n}"
+	want := "{\n  \"tags\": [\"a\"],\n  \"places\": [\n    {\n      \"id\": \"x\"\n    }\n  ]\n}\n"
+	if got := formatJSONFile([]byte(in)); string(got) != want {
+		t.Errorf("formatJSONFile() =\n%s\nwant\n%s", got, want)
+	}
+	if got := formatJSONFile([]byte(`{"a":`)); string(got) != `{"a":` {
+		t.Errorf("formatJSONFile() of broken JSON = %q, want it unchanged", got)
 	}
 }
