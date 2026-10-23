@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { ImageBaseUrlCard } from "@/components/image-base-url";
+import { LocationNamesCard } from "@/components/location-names-card";
 import { MissingFieldsCard } from "@/components/missing-fields";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
 import { Page } from "@/components/page";
@@ -27,6 +28,7 @@ function UpdateDataPage() {
               <ImageBaseUrlCard publicUrl={data.r2.publicUrl} />
               <MissingFieldsCard canReadExif={r2IsSetUp(data.r2)} />
               <ReapplyOverridesCard />
+              <LocationNamesCard />
             </>
           ) : (
             <p className="text-muted-foreground text-sm">

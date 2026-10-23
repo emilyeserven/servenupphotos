@@ -1,5 +1,6 @@
 import type { Place } from "@/api/places";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { type LocationNames, NO_LOCATION_NAMES, winningName } from "@/lib/location-names";
 import { shownField } from "@/lib/place-seeds";
 import { placeChain } from "@/lib/place-tree";
 
@@ -64,22 +65,48 @@ function regionName(name: string | undefined): string {
   return (name ?? "").trim();
 }
 
-/** Every city the photos show or the places are in, sorted by name. */
-export function cityRows(photos: CombinedPhoto[], places: Place[]): CityRow[] {
+/** A photo's or place's city and country, each written as the name that wins over it. */
+function regionOf(names: LocationNames, city: string | undefined, country: string | undefined) {
+  return {
+    city: winningName(names, "city", city),
+    country: winningName(names, "country", country),
+  };
+}
+
+/** Each place's and photo's city and country, written as the names that win, and what it is. */
+function regionsOf(photos: CombinedPhoto[], places: Place[], names: LocationNames) {
+  return [
+    ...places.map((p) => ({ ...regionOf(names, p.city, p.country), field: "places" as const })),
+    ...photos.map((p) => ({
+      ...regionOf(names, shownField(p, "city"), shownField(p, "country")),
+      field: "photos" as const,
+    })),
+  ];
+}
+
+/**
+ * Every city the photos show or the places are in, sorted by name. A city that's another name of
+ * one (see `locationNames`) is counted as the one that wins.
+ */
+export function cityRows(
+  photos: CombinedPhoto[],
+  places: Place[],
+  names: LocationNames = NO_LOCATION_NAMES,
+): CityRow[] {
   const tally = new Tally<CityRow>((name) => ({ name, country: "", photos: 0, places: 0 }));
-  for (const place of places) countCity(tally, place.city, place.country, "places");
-  for (const photo of photos) {
-    countCity(tally, shownField(photo, "city"), shownField(photo, "country"), "photos");
-  }
+  for (const r of regionsOf(photos, places, names)) countCity(tally, r.city, r.country, r.field);
   return tally.sorted();
 }
 
-/** Every country the photos show, the places are in, or a city is in, sorted by name. */
-export function countryRows(photos: CombinedPhoto[], places: Place[]): CountryRow[] {
+/** Every country the photos show, the places are in, or a city is in, sorted by name, as `cityRows`. */
+export function countryRows(
+  photos: CombinedPhoto[],
+  places: Place[],
+  names: LocationNames = NO_LOCATION_NAMES,
+): CountryRow[] {
   const tally = new Tally<CountryRow>((name) => ({ name, cities: 0, photos: 0, places: 0 }));
-  for (const place of places) countIn(tally.row(place.country), "places");
-  for (const photo of photos) countIn(tally.row(shownField(photo, "country")), "photos");
-  for (const city of cityRows(photos, places)) countIn(tally.row(city.country), "cities");
+  for (const r of regionsOf(photos, places, names)) countIn(tally.row(r.country), r.field);
+  for (const city of cityRows(photos, places, names)) countIn(tally.row(city.country), "cities");
   return tally.sorted();
 }
 

@@ -65,6 +65,23 @@ func handleReapplyOverrides(store *settings.Store, gh *github.Client) http.Handl
 	})
 }
 
+// handlePreviewLocationNames lists the countries and cities in each photo
+// and place file that are another name of one, as the Update Data page
+// previews it.
+func handlePreviewLocationNames(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleReapply(store, "could not read the photo and place files", func(ctx context.Context, cfg settings.GitHub) (any, error) {
+		return gh.PreviewLocationNames(ctx, cfg)
+	})
+}
+
+// handleApplyLocationNames writes each of those countries and cities as the
+// name that wins over it, as changes waiting for Commit.
+func handleApplyLocationNames(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleReapply(store, "could not apply the location names", func(ctx context.Context, cfg settings.GitHub) (any, error) {
+		return gh.ApplyLocationNames(ctx, cfg)
+	})
+}
+
 func handleReapply(store *settings.Store, failure string, run func(context.Context, settings.GitHub) (any, error)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cfg, ok := githubSettings(w, store)

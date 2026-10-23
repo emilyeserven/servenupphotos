@@ -101,6 +101,10 @@ type Localization struct {
 	Pronunciation string `json:"pronunciation"`
 	// LocalScript is the name in its own script, such as 경복궁 in hangeul.
 	LocalScript string `json:"localScript"`
+	// OtherNames are other ways photos and places write a country or city,
+	// such as "United States" for "United States of America". Name wins over
+	// them: Update Data's Location names rewrites them to it.
+	OtherNames []string `json:"otherNames,omitempty"`
 }
 
 // Entry is one place or localization file, as read.
@@ -180,13 +184,16 @@ func (c *Client) SavePlace(ctx context.Context, gh settings.GitHub, place Place)
 }
 
 // SaveLocalization saves localization as <folder>/localizations/<id>.json,
-// new or replacing the one there, as SavePlace does.
+// new or replacing the one there, as SavePlace does. It fails when one of its
+// other names is another country's or city's, or it's another's other name.
 func (c *Client) SaveLocalization(ctx context.Context, gh settings.GitHub, localization Localization) (EntryResult, error) {
 	localization, perr := validLocalization(localization)
 	if perr != nil {
 		return EntryResult{}, perr
 	}
-	return c.saveEntry(ctx, gh, Localizations, localization.ID, localization, func([]Entry) *PublishError { return nil })
+	return c.saveEntry(ctx, gh, Localizations, localization.ID, localization, func(others []Entry) *PublishError {
+		return otherNamesTaken(others, localization)
+	})
 }
 
 // saveEntry saves content as kind's file named id in the pending changes,
@@ -337,7 +344,9 @@ func validLocalization(l Localization) (Localization, *PublishError) {
 			return out, publishErr(http.StatusBadRequest, "Keep each field to %d characters.", maxEntryTextLength)
 		}
 	}
-	return out, nil
+	var perr *PublishError
+	out.OtherNames, perr = cleanOtherNames(out, l.OtherNames)
+	return out, perr
 }
 
 // validEntryID fails unless id is lowercase letters, numbers and single

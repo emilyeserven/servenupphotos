@@ -37,5 +37,11 @@ rule, reaches photos an older rule already changed; a field no rule sets any mor
 photo's [custom lens](custom-lenses.md) is applied after the rules, so it's kept, and a changed lens reaches its photos. Only the
 changed top-level fields are rewritten, and nothing is saved while any photo file can't be read.
 
+**Location names** writes every country and city that's another name of one, such as `"United States"` for
+`"United States of America"`, as the name that wins, in the photo files' `country`, `city`, `customCountry` and
+`customCity` and the place files' `country` and `city` (`POST /api/data/location-names/preview`, then
+`POST /api/data/location-names`). The other names are picked on the Places page; see
+[Other names](places-and-localizations.md#other-names).
+
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.

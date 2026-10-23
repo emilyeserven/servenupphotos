@@ -1,5 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
+import type { FieldChange } from "@/api/cameras";
 import { requestJson } from "@/api/settings";
 
 /** Base URLs to move the photos' image URLs between; both empty to only list the origins. */
@@ -136,4 +137,50 @@ export const addMissingFieldsMutation = mutationOptions({
   meta: { saves: true, changes: (result) => photoChanges(result as MissingFieldsResult) },
   mutationFn: (readExif: boolean) =>
     post<MissingFieldsResult>("/api/data/missing-fields", { readExif }),
+});
+
+/** A photo or place file whose countries or cities are written as the name that wins over them. */
+interface LocationNameFile {
+  path: string;
+  fileUrl?: string;
+  kind: "photo" | "place";
+  changes: FieldChange[];
+}
+
+/** What writing every country and city as the name that wins over it would change. */
+interface LocationNamesPreview extends ScannedPhotos {
+  /** How many place files were read. */
+  placeFiles: number;
+  /** How many other names the countries and cities have. */
+  otherNames: number;
+  files: LocationNameFile[];
+}
+
+interface LocationNamesResult extends PendingSave {
+  files: number;
+  fields: number;
+}
+
+/** The photo and place files a location names save changed, as changes over the combined lists. */
+function locationChanges(result: LocationNamesResult) {
+  return result.changes.map((change) => ({
+    kind: change.path.includes("/places/") ? ("places" as const) : ("photos" as const),
+    ...change,
+  }));
+}
+
+/** Reads every photo and place file and lists the countries and cities that are another name of one. */
+export const locationNamesPreviewQuery = queryOptions({
+  queryKey: ["data", "location-names"],
+  queryFn: () => post<LocationNamesPreview>("/api/data/location-names/preview", {}),
+  retry: false,
+  refetchOnWindowFocus: false,
+  staleTime: 0,
+});
+
+/** Writes each of those as the name that wins over it, as changes waiting for Commit. */
+export const applyLocationNamesMutation = mutationOptions({
+  mutationKey: ["data", "location-names", "apply"],
+  meta: { saves: true, changes: (result) => locationChanges(result as LocationNamesResult) },
+  mutationFn: () => post<LocationNamesResult>("/api/data/location-names", {}),
 });

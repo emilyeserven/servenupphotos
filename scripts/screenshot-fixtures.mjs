@@ -469,6 +469,32 @@ export function defaultFixtures() {
       ],
     },
     "POST /api/data/camera-overrides": () => ({ ...pendingSave(), files: 1, fields: 4 }),
+    "POST /api/data/location-names/preview": {
+      repo: REPO,
+      folder: `${FOLDER}/photos`,
+      branch: PULL_REQUEST.branch,
+      pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+      photoFiles: headPhotos.length,
+      placeFiles: headPlaces.length,
+      otherNames: 1,
+      unreadable: [],
+      files: headPhotos
+        .filter(({ data }) => data.country === "United States")
+        .map(({ path }) => ({
+          path,
+          fileUrl: "",
+          kind: "photo",
+          changes: [{ field: "country", from: "United States", to: "United States of America" }],
+        })),
+    },
+    "POST /api/data/location-names": () => ({ ...pendingSave(), files: 9, fields: 9 }),
+    "PUT /api/localizations/country-united-states-of-america": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/localizations/country-united-states-of-america.json`,
+      data: body,
+      before: null,
+      changed: true,
+    }),
     "PUT /api/cameras/x-t5": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/cameras/x-t5.json`,

@@ -1,7 +1,9 @@
-import type { Place } from "@/api/places";
+import { useQuery } from "@tanstack/react-query";
+import { type Place, placesQuery, readEntries } from "@/api/places";
 import { FieldLabel } from "@/components/field-label";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import { SingleCombobox } from "@/components/ui/single-combobox";
+import { locationNames } from "@/lib/location-names";
 import { type CityRow, cityRows, regionKey } from "@/lib/place-cities";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
@@ -58,7 +60,8 @@ export function PlaceCityField({
   help,
   onChange,
 }: PlaceCityFieldProps) {
-  const cities = cityRows(shownPhotos(useCombinedData().data), places);
+  const names = locationNames(readEntries(useQuery(placesQuery).data?.localizations));
+  const cities = cityRows(shownPhotos(useCombinedData().data), places, names);
   const choose = (city: string) => {
     const found = cities.find((c) => regionKey(c.name) === regionKey(city));
     onChange(found ? found.name : city, found?.country);

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { placesQuery, readEntries } from "@/api/places";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import { SingleCombobox } from "@/components/ui/single-combobox";
+import { locationNames } from "@/lib/location-names";
 import { type CityRow, type CountryRow, cityRows, countryRows } from "@/lib/place-cities";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
@@ -34,9 +35,11 @@ function withWritten(options: ComboboxOption[], value: string): ComboboxOption[]
 
 /** Every city and country the places are in or the photos show, read the way the Places page reads them. */
 function useRegions() {
-  const places = readEntries(useQuery(placesQuery).data?.places);
+  const read = useQuery(placesQuery).data;
+  const places = readEntries(read?.places);
+  const names = locationNames(readEntries(read?.localizations));
   const photos = shownPhotos(useCombinedData().data);
-  return { cities: cityRows(photos, places), countries: countryRows(photos, places) };
+  return { cities: cityRows(photos, places, names), countries: countryRows(photos, places, names) };
 }
 
 interface RegionOverrideFieldProps {
