@@ -17,6 +17,7 @@ import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
 import { Route as LocalizationsRouteImport } from './routes/localizations'
+import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
@@ -65,6 +66,11 @@ const InstagramRoute = InstagramRouteImport.update({
 const LocalizationsRoute = LocalizationsRouteImport.update({
   id: '/localizations',
   path: '/localizations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetadataGroupsRoute = MetadataGroupsRouteImport.update({
+  id: '/metadata-groups',
+  path: '/metadata-groups',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlacesRoute = PlacesRouteImport.update({
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/localizations': typeof LocalizationsRoute
+  '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/localizations': typeof LocalizationsRoute
+  '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/localizations': typeof LocalizationsRoute
+  '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/in-flight'
     | '/instagram'
     | '/localizations'
+    | '/metadata-groups'
     | '/places'
     | '/settings'
     | '/site-spotlight'
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
     | '/in-flight'
     | '/instagram'
     | '/localizations'
+    | '/metadata-groups'
     | '/places'
     | '/settings'
     | '/site-spotlight'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
     | '/in-flight'
     | '/instagram'
     | '/localizations'
+    | '/metadata-groups'
     | '/places'
     | '/settings'
     | '/site-spotlight'
@@ -240,6 +252,7 @@ export interface RootRouteChildren {
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
   LocalizationsRoute: typeof LocalizationsRoute
+  MetadataGroupsRoute: typeof MetadataGroupsRoute
   PlacesRoute: typeof PlacesRoute
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
@@ -307,6 +320,13 @@ declare module '@tanstack/react-router' {
       path: '/localizations'
       fullPath: '/localizations'
       preLoaderRoute: typeof LocalizationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metadata-groups': {
+      id: '/metadata-groups'
+      path: '/metadata-groups'
+      fullPath: '/metadata-groups'
+      preLoaderRoute: typeof MetadataGroupsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/places': {
@@ -384,6 +404,7 @@ const rootRouteChildren: RootRouteChildren = {
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
   LocalizationsRoute: LocalizationsRoute,
+  MetadataGroupsRoute: MetadataGroupsRoute,
   PlacesRoute: PlacesRoute,
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,

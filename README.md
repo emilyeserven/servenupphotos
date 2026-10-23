@@ -99,6 +99,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes
 - [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages
 - [Places and Localizations](docs/places-and-localizations.md) (`/places` and `/localizations`): places a photo was taken at and how it relates to them, and the local script, pronunciation and romanization of countries, cities and places
+- [Metadata Groups](docs/metadata-groups.md) (`/metadata-groups`): named groups of cameras, lenses, focal lengths, apertures, exposures and ISO values, kept in `METAINFO.json`
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, and making JSON for an original
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons

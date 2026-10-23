@@ -69,7 +69,7 @@ function InFlightPage() {
     <Page
       wide
       title="Photos in Flight"
-      description="Photo, album, tag, place and localization data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
+      description="Photo, album, tag, place, localization and metadata group data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -566,7 +566,7 @@ function AllPhotosMark({
   );
 }
 
-type GroupKey = "albums" | "tags" | "places" | "localizations";
+type GroupKey = "albums" | "tags" | "places" | "localizations" | "metainfo";
 
 /** The kinds of data files listed after the photos, in order, with their headings. */
 const GROUPS: [GroupKey, string][] = [
@@ -574,6 +574,7 @@ const GROUPS: [GroupKey, string][] = [
   ["tags", "Tags"],
   ["places", "Places"],
   ["localizations", "Localizations"],
+  ["metainfo", "Metadata groups"],
 ];
 
 /** The album, tag, place or localization files in the pull request, each with its JSON; nothing when there are none. */
@@ -701,6 +702,8 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dd>{groupsSummary(data.places)}</dd>
       <dt className="text-muted-foreground">Localization files</dt>
       <dd>{groupsSummary(data.localizations)}</dd>
+      <dt className="text-muted-foreground">Metadata group files</dt>
+      <dd>{groupsSummary(data.metainfo)}</dd>
     </dl>
   );
 }

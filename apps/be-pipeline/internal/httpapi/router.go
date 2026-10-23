@@ -47,6 +47,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	registerBucketRoutes(mux, d)
 	registerOrganizeRoutes(mux, d)
 	registerPlacesRoutes(mux, d)
+	registerMetaInfoRoutes(mux, d)
 	registerDataRoutes(mux, d)
 	registerPublishRoutes(mux, d)
 	return mux

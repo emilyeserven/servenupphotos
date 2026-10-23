@@ -108,6 +108,8 @@ export interface CombinedFiles {
   tags: CombinedFile;
   places: CombinedFile;
   localizations: CombinedFile;
+  /** METAINFO.json, the metadata groups. */
+  metainfo: CombinedFile;
 }
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */
@@ -140,6 +142,8 @@ export interface InFlightRead {
   tags: InFlightGroupsRead;
   places: InFlightGroupsRead;
   localizations: InFlightGroupsRead;
+  /** The metadata group files, combined into METAINFO.json. */
+  metainfo: InFlightGroupsRead;
   images: InFlightImages;
 }
 
@@ -152,16 +156,17 @@ interface InFlightGroupsRead {
 /** The photo data waiting in the pull request, checked against the combined lists at its head. */
 export interface InFlightResponse extends Omit<
   InFlightRead,
-  "files" | "albums" | "tags" | "places" | "localizations"
+  "files" | "albums" | "tags" | "places" | "localizations" | "metainfo"
 > {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, place and localization files in the pull request. */
+  /** The album, tag, place, localization and metadata group files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
   places: InFlightGroups;
   localizations: InFlightGroups;
+  metainfo: InFlightGroups;
 }
 
 /** The album, tag, place or localization files in the pull request, and the combined file built from them. */

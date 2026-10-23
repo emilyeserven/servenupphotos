@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import {
+  ApertureIcon,
   ActivityIcon,
   BookImageIcon,
   CalendarDaysIcon,
@@ -65,6 +66,7 @@ export const navGroups = [
       { title: "Update Data", url: "/update-data", icon: RefreshCwIcon },
       { title: "Places", url: "/places", icon: MapPinIcon },
       { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
+      { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
     ],
   },
 ] as const;
