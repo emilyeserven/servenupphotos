@@ -6,10 +6,13 @@ export const RANGE_KEYS = ["iso", "exposure", "focalLength", "aperture"] as cons
 export type RangeKey = (typeof RANGE_KEYS)[number];
 
 /** The Table's own filters as they're named in the URL; the other views don't have them. */
-export const TABLE_FILTER_KEYS = ["camera", ...RANGE_KEYS] as const;
+export const TABLE_FILTER_KEYS = ["camera", "lens", ...RANGE_KEYS] as const;
+
+/** The camera and lens filters, each matching one by name. */
+const EQUIPMENT_KEYS = ["camera", "lens"] as const;
 
 /**
- * The Table's own filters, each left out when it isn't set: one camera, and a range of each
+ * The Table's own filters, each left out when it isn't set: one camera, one lens, and a range of each
  * setting written as its lowest and highest value as the photos have them, such as "100-400" or
  * "1/500-1/30".
  */
@@ -65,11 +68,17 @@ function inRange(photo: Photo, key: RangeKey, range: [string, string]): boolean 
 
 /** Whether the photo matches every one of the Table's own filters that's set. */
 function matchesTableFilters(photo: Photo, filters: TableFilters): boolean {
-  if (filters.camera !== undefined && photo.camera !== filters.camera) return false;
-  return RANGE_KEYS.every((key) => {
-    const range = parseRange(filters[key]);
-    return !range || inRange(photo, key, range);
+  const equipment = EQUIPMENT_KEYS.every((key) => {
+    const name = filters[key];
+    return name === undefined || photo[key] === name;
   });
+  return (
+    equipment &&
+    RANGE_KEYS.every((key) => {
+      const range = parseRange(filters[key]);
+      return !range || inRange(photo, key, range);
+    })
+  );
 }
 
 /** The photos matching every one of the Table's own filters that's set, in the same order. */

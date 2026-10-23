@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
-import { Camera } from "lucide-react";
+import { Aperture, Camera } from "lucide-react";
 import { FilterSelect, selectedValue } from "@/components/photo-filters";
 import { RangeFilter } from "@/components/range-filter";
-import { cameraOptions } from "@/lib/filter-options";
+import { equipmentOptions } from "@/lib/filter-options";
 import { photos as allPhotos, SETTING_FORMATS } from "@/lib/photos";
 import type { Photo } from "@/lib/photos";
 import {
@@ -48,9 +48,9 @@ function useSetTableFilter() {
 }
 
 /**
- * The Table's own filters, after the shared ones: a **Camera** dropdown, and a range slider for
- * each of ISO, exposure, focal length and aperture. `photos` is the photos the shared filters
- * leave, which the camera counts are out of, given the other filters here.
+ * The Table's own filters, after the shared ones: **Camera** and **Lens** dropdowns, and a range
+ * slider for each of ISO, exposure, focal length and aperture. `photos` is the photos the shared
+ * filters leave, which the camera and lens counts are out of, given the other filters here.
  */
 export function TableFilterControls({
   photos,
@@ -60,19 +60,10 @@ export function TableFilterControls({
   filters: TableFilters;
 }) {
   const setFilter = useSetTableFilter();
-  const cameras = cameraOptions(
-    allPhotos,
-    filterTable(photos, withoutTableFilter(filters, "camera")),
-  );
   return (
     <>
-      <FilterSelect
-        label="Camera"
-        Icon={Camera}
-        options={cameras}
-        selected={selectedValue(cameras, filters)}
-        onChange={(selected) => setFilter("camera", selected.replace(/^camera:/, "") || undefined)}
-      />
+      <EquipmentSelect equipment="camera" photos={photos} filters={filters} onChange={setFilter} />
+      <EquipmentSelect equipment="lens" photos={photos} filters={filters} onChange={setFilter} />
       <div className="flex w-full flex-wrap gap-2">
         {RANGE_KEYS.map((key) => (
           <RangeFilter
@@ -86,5 +77,36 @@ export function TableFilterControls({
         ))}
       </div>
     </>
+  );
+}
+
+/** Each equipment dropdown's name and icon. */
+const EQUIPMENT = {
+  camera: { label: "Camera", Icon: Camera },
+  lens: { label: "Lens", plural: "lenses", Icon: Aperture },
+} as const;
+
+/** The **Camera** or **Lens** dropdown, each choice counting what the other filters leave. */
+function EquipmentSelect({
+  equipment,
+  photos,
+  filters,
+  onChange,
+}: {
+  equipment: "camera" | "lens";
+  photos: Photo[];
+  filters: TableFilters;
+  onChange: (key: keyof TableFilters, value: string | undefined) => void;
+}) {
+  const facet = filterTable(photos, withoutTableFilter(filters, equipment));
+  const options = equipmentOptions(equipment, allPhotos, facet);
+  const prefix = `${equipment}:`;
+  return (
+    <FilterSelect
+      {...EQUIPMENT[equipment]}
+      options={options}
+      selected={selectedValue(options, filters)}
+      onChange={(selected) => onChange(equipment, selected.slice(prefix.length) || undefined)}
+    />
   );
 }

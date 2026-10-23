@@ -148,14 +148,21 @@ export function tagOptions(facet: Photo[]): FilterOption[] {
   return tags.flatMap((tag) => groupOptions("tag", tag, facet, 0));
 }
 
-/** The camera filter's choices: every camera the photos were taken with, by name. */
-export function cameraOptions(list: Photo[], facet: Photo[]): FilterOption[] {
-  const cameras = [...new Set(list.map((photo) => photo.camera))].toSorted();
-  return cameras.map((camera) => ({
-    key: "camera",
-    value: camera,
-    label: sameEveryWay(camera),
+/**
+ * The camera or lens filter's choices: every camera or lens the photos were taken with, by name.
+ * Photos whose EXIF didn't name a lens aren't under any.
+ */
+export function equipmentOptions(
+  key: "camera" | "lens",
+  list: Photo[],
+  facet: Photo[],
+): FilterOption[] {
+  const names = [...new Set(list.flatMap((photo) => photo[key] ?? []))].toSorted();
+  return names.map((name) => ({
+    key,
+    value: name,
+    label: sameEveryWay(name),
     depth: 0,
-    count: facet.filter((photo) => photo.camera === camera).length,
+    count: facet.filter((photo) => photo[key] === name).length,
   }));
 }

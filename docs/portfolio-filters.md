@@ -43,7 +43,8 @@ out while there are no tags.
 
 ## Table filters
 
-The Table's filters panel also has a **Camera** dropdown (`?camera=Fujifilm X-T5`) and a slider with a handle at each end
+The Table's filters panel also has **Camera** and **Lens** dropdowns (`?camera=Fujifilm X-T5`,
+`?lens=EF50mm f/1.8 II`; a photo whose EXIF didn't name a lens is under none) and a slider with a handle at each end
 for each of **ISO**, **Exposure**, **Focal length** and **Aperture**. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,
@@ -58,7 +59,7 @@ views. They count toward the button's number, and **Clear filters** clears them 
 ## Counts
 
 Each choice says how many photos it would show in that view, given the other filters, so a place's count is out of the
-photos the chosen album and tag (and, on the Table, camera and ranges) leave. The Map counts only photos it can place and the Grid only photos with
+photos the chosen album and tag (and, on the Table, camera, lens and ranges) leave. The Map counts only photos it can place and the Grid only photos with
 resized versions. The Timeline's counts leave out its time range, which still applies on top of the filters.
 
 When the filters leave no photos, the view says so instead of its list; the Map shows no markers and moves out to the

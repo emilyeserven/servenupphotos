@@ -213,15 +213,20 @@ function optionText(option: FilterOption, name: string, chosen: boolean): string
   return `${"   ".repeat(chosen ? 0 : option.depth)}${name} (${option.count})`;
 }
 
-/** A dropdown of one filter's choices, with "All" first; `selected` is the chosen one's value. */
+/**
+ * A dropdown of one filter's choices, with "All" first; `selected` is the chosen one's value and
+ * `plural` names them all, such as "lenses", when adding an "s" doesn't.
+ */
 export function FilterSelect({
   label,
+  plural = `${label.toLowerCase()}s`,
   Icon,
   options,
   selected,
   onChange,
 }: {
   label: string;
+  plural?: string;
   Icon: LucideIcon;
   options: FilterOption[];
   selected: string;
@@ -237,7 +242,7 @@ export function FilterSelect({
         onChange={(event) => onChange(event.target.value)}
         className="h-8 max-w-56 cursor-pointer rounded-md border bg-background px-2 text-sm text-foreground shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30"
       >
-        <option value="">All {label.toLowerCase()}s</option>
+        <option value="">All {plural}</option>
         {options.map((option, index) => (
           <option key={`${index}-${optionValue(option)}`} value={optionValue(option)}>
             {optionText(option, option.label[script], optionValue(option) === selected)}
