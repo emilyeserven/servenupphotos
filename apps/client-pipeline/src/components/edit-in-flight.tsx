@@ -26,12 +26,14 @@ import {
   isPublished,
   photoFile,
 } from "@/components/edit-in-flight/photo-json";
+import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
 import { type Edit, useEdit, useSave } from "@/components/edit-in-flight/use-edit";
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
- * Square Thumbnail crop, title, place name, comment and social media posts can be changed, then saved by remaking the thumbnail in R2
+ * Square Thumbnail crop, title, place name, comment and social media posts can be changed, its
+ * camera overrides applied again, then saved by remaking the thumbnail in R2
  * when the crop moved and updating its JSON in the pull request. A photo already in the portfolio is
  * read from the base branch until its first save puts it in the pull request.
  */
@@ -153,6 +155,12 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           value={edit.socialPosts}
           onChange={edit.setSocialPosts}
           calendarDate={calendarDate(edit.savedData)}
+          disabled={pending}
+        />
+        <CameraOverridesCard
+          saved={edit.savedData}
+          applied={edit.overrides}
+          onApply={edit.setOverrides}
           disabled={pending}
         />
         <JsonPreview file={editable.file} edit={edit} />

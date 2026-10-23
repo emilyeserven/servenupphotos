@@ -98,6 +98,7 @@ export function withCombined(read: InFlightRead, view: CombinedView): InFlightRe
     places: checkedGroups(read.places, file("places", "PLACES.json")),
     localizations: checkedGroups(read.localizations, file("localizations", "LOCALIZATIONS.json")),
     metainfo: checkedGroups(read.metainfo, file("metainfo", "METAINFO.json")),
+    cameras: checkedGroups(read.cameras, file("cameras", "CAMERAS.json")),
   };
 }
 

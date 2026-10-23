@@ -31,7 +31,7 @@ import {
   withSquares,
 } from "@/components/edit-in-flight/photo-json";
 
-/** The crop, title, place name, comment, albums, tags and social media posts being edited, against the last ones saved, and the JSON saving them would write. */
+/** The crop, title, place name, comment, albums, tags, social media posts and camera overrides being edited, against the last ones saved, and the JSON saving them would write. */
 export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
   const [crop, setCrop] = useState<Crop | null>(savedCrop);
   // The editor reports the middle first when no crop was saved, which then counts as saved.
@@ -40,7 +40,8 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
   const [details, setDetails] = useState(() => savedDetails(data));
   const [groups, setGroups] = useState(() => savedGroups(data));
   const [socialPosts, setSocialPosts] = useState(() => savedSocialPosts(data));
-  const fields = { details, groups, socialPosts };
+  const [overrides, setOverrides] = useState<Record<string, unknown> | null>(null);
+  const fields = { details, groups, socialPosts, overrides };
   const remakeSquares = cropChanged(crop, baseline, savedData);
   const changed = remakeSquares || fieldsChanged(savedData, fields);
   const request = {
@@ -57,6 +58,9 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
     setGroups,
     socialPosts,
     setSocialPosts,
+    /** The fields the camera overrides change, once applied; null until they are. */
+    overrides,
+    setOverrides,
     /** What saving would do, when there's anything to save. */
     request: changed ? request : null,
     /** The JSON saving would write, when there's anything to save. */
@@ -69,6 +73,7 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
     onSaved: (saved: Crop | null, json: PhotoJson) => {
       if (saved) setBaseline(saved);
       setSavedData(json);
+      setOverrides(null);
     },
   };
 }

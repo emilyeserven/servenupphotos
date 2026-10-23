@@ -37,7 +37,14 @@ export function FileStatus({ status, pending }: { status: string; pending?: bool
 
 /** How many files have changes waiting for Commit. */
 function pendingCount(data: InFlightResponse): number {
-  const groups = [data.albums, data.tags, data.places, data.localizations, data.metainfo];
+  const groups = [
+    data.albums,
+    data.tags,
+    data.places,
+    data.localizations,
+    data.metainfo,
+    data.cameras,
+  ];
   const files = [...data.files, ...groups.flatMap((group) => group.files)];
   return files.filter((file) => file.pending).length;
 }

@@ -32,7 +32,14 @@ interface CachedFile {
 
 function inFlightFiles(read: InFlightRead | undefined): CachedFile[] {
   if (!read) return [];
-  const groups = [read.albums, read.tags, read.places, read.localizations, read.metainfo];
+  const groups = [
+    read.albums,
+    read.tags,
+    read.places,
+    read.localizations,
+    read.metainfo,
+    read.cameras,
+  ];
   return [...read.files, ...groups.flatMap((group) => group.files)];
 }
 
@@ -120,6 +127,7 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
       places: changedFile(head.places, of("places")),
       localizations: changedFile(head.localizations, of("localizations")),
       metainfo: changedFile(head.metainfo, of("metainfo")),
+      cameras: changedFile(head.cameras, of("cameras")),
     },
   };
 }
@@ -173,6 +181,7 @@ export interface PendingSummary {
   places: number;
   localizations: number;
   metainfo: number;
+  cameras: number;
   /** Saves whose files aren't known. */
   other: number;
 }
@@ -200,6 +209,7 @@ export function summarizeChanges(
     places: 0,
     localizations: 0,
     metainfo: 0,
+    cameras: 0,
     other: unknownChanges,
   };
   const byKey = new Map(checked.map((file) => [fileKey(file), file]));
@@ -239,6 +249,7 @@ export function pendingText(summary: PendingSummary): string {
     [summary.places, "place"],
     [summary.localizations, "localization"],
     [summary.metainfo, "metadata group"],
+    [summary.cameras, "camera override"],
     [summary.other, "other save"],
   ]);
 }

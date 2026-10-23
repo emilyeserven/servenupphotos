@@ -1,7 +1,7 @@
 # Changes waiting for Commit
 
 Nothing the pipeline saves goes to GitHub on its own. Saving a photo (Photo page, Bulk Upload, Explore Bucket), editing
-or removing one (Photos in Flight, Gallery), making an album or tag or moving an album, saving a place, localization or metadata group,
+or removing one (Photos in Flight, Gallery), making an album or tag or moving an album, saving a place, localization, metadata group or camera override,
 adding albums and tags to photos from the Gallery, Update Data and Instagram dates all keep their files in the app as
 **changes waiting for Commit**. The only button that writes photo data to GitHub is **Commit**, on Photos in Flight and
 in the sync button's panel at the top right. Uploads to R2 still happen right away, since the JSON points at them.
@@ -40,7 +40,7 @@ uploaded images stay in R2 for Explore Bucket.
 
 **Commit** (`POST /api/photos/combined`) writes, as **one commit**, every change waiting for Commit, the browser-only
 [local edits](combined-data-store.md#local-edits), and `ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`,
-`PLACES.json`, `LOCALIZATIONS.json` and `METAINFO.json` rebuilt from the result (`ALLPHOTOS.json` without
+`PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json` and `CAMERAS.json` rebuilt from the result (`ALLPHOTOS.json` without
 [drafts](drafts.md), photos with no title). It uses GitHub's
 [Git database API](https://docs.github.com/en/rest/git/trees#create-a-tree): one tree with every changed file (a
 deletion is an entry with `sha: null`), one commit on top of the pull request's head, and the branch moved to it. With
@@ -61,15 +61,15 @@ GitHub allows 5,000 REST requests an hour and a separate 5,000 points an hour fo
 [GraphQL limits](https://docs.github.com/en/graphql/overview/rate-limits-and-node-limits-for-the-graphql-api)).
 The backend spends them like this:
 
-| When                                        | Calls                                                                                                                                                  |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| The first read after the pipeline starts    | 1 GraphQL query: the repository, the Settings branch's head and the open pull requests. Every later read reuses it; pages loading together share it    |
-| A commit not read before                    | 1 GraphQL query: every file in the five data folders with its content. Commits never change, so each is read once, and kept on disk for the next start |
-| A file too big for GraphQL to return inline | 1 REST read of that file (`GET /git/blobs/<sha>`), such as a large `ALLPHOTOS.json`                                                                    |
-| Every other read, save, edit, removal       | None: they're answered from memory                                                                                                                     |
-| **Commit**                                  | 3 REST writes (tree, commit, branch move), plus 2 (branch, pull request) when it opens the pull request                                                |
-| **Refresh** on Photos in Flight             | 1 GraphQL query for where the repository stands now, plus a snapshot of any commit not read before                                                     |
-| Settings' **Test** button                   | 1 REST read of the repository, as before                                                                                                               |
+| When                                        | Calls                                                                                                                                               |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The first read after the pipeline starts    | 1 GraphQL query: the repository, the Settings branch's head and the open pull requests. Every later read reuses it; pages loading together share it |
+| A commit not read before                    | 1 GraphQL query: every file in the data folders with its content. Commits never change, so each is read once, and kept on disk for the next start   |
+| A file too big for GraphQL to return inline | 1 REST read of that file (`GET /git/blobs/<sha>`), such as a large `ALLPHOTOS.json`                                                                 |
+| Every other read, save, edit, removal       | None: they're answered from memory                                                                                                                  |
+| **Commit**                                  | 3 REST writes (tree, commit, branch move), plus 2 (branch, pull request) when it opens the pull request                                             |
+| **Refresh** on Photos in Flight             | 1 GraphQL query for where the repository stands now, plus a snapshot of any commit not read before                                                  |
+| Settings' **Test** button                   | 1 REST read of the repository, as before                                                                                                            |
 
 So after a restart the pipeline usually spends one GraphQL query in all until you press Commit or Refresh. A merge or a
 push made on GitHub shows after **Refresh** (`?refresh=1`) or a restart.

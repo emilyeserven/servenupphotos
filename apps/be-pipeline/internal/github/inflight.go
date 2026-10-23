@@ -96,18 +96,21 @@ type InFlightResult struct {
 	Folder      string               `json:"folder"`
 	PullRequest *InFlightPullRequest `json:"pullRequest"`
 	Files       []InFlightFile       `json:"files"`
-	// Albums, Tags, Places, Localizations and MetaInfo are the album, tag,
-	// place, localization and metadata group files in the pull request.
+	// Albums, Tags, Places, Localizations, MetaInfo and Cameras are the
+	// album, tag, place, localization, metadata group and camera override
+	// files in the pull request.
 	Albums        InFlightGroups `json:"albums"`
 	Tags          InFlightGroups `json:"tags"`
 	Places        InFlightGroups `json:"places"`
 	Localizations InFlightGroups `json:"localizations"`
 	MetaInfo      InFlightGroups `json:"metainfo"`
+	Cameras       InFlightGroups `json:"cameras"`
 }
 
-// groups are r's album, tag, place, localization and metadata group files.
+// groups are r's album, tag, place, localization, metadata group and camera
+// override files.
 func (r *InFlightResult) groups() []*InFlightGroups {
-	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Places, &r.Localizations, &r.MetaInfo}
+	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras}
 }
 
 // InFlightGroups is the files of one Kind in the pull request.
@@ -156,6 +159,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		Places:        newInFlightGroups(w.root, Kind{Folder: Places.Folder, AllFile: Places.AllFile}),
 		Localizations: newInFlightGroups(w.root, Kind{Folder: Localizations.Folder, AllFile: Localizations.AllFile}),
 		MetaInfo:      newInFlightGroups(w.root, Kind{Folder: MetaInfo.Folder, AllFile: MetaInfo.AllFile}),
+		Cameras:       newInFlightGroups(w.root, Kind{Folder: Cameras.Folder, AllFile: Cameras.AllFile}),
 	}
 	for _, p := range w.changed(folder, AllPhotosFile) {
 		if w.status(p) == statusRemoved {

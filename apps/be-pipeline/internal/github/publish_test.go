@@ -80,6 +80,7 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
   "albums": [],
   "tags": [],
   "places": [],

@@ -115,7 +115,7 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // Reads the EXIF and colors of an original already in R2; the backend gives R2 30s to send it,
-  // then reads it as POST /exif does.
+  // then reads it as POST /exif does, camera overrides included.
   app.post("/photos/bucket/exif", async (request, reply) =>
     relayToBackend(reply, app.log, "/photos/bucket/exif", {
       method: "POST",

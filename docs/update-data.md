@@ -30,5 +30,11 @@ as Explore Bucket reads it, instead of being added as `null`; the backend keeps 
 applying doesn't download them again after a preview. A missing `images.thumbnailcrop` is read from the `?crop=x,y,size`
 on `images.thumbnail` when it has one, or, with that option on, from the crop saved with the Square Thumbnail in R2.
 
+**Camera overrides** applies the [camera overrides](camera-overrides.md) to every photo file again, after they've
+changed (`POST /api/data/camera-overrides/preview`, then `POST /api/data/camera-overrides`). Each file starts from its
+EXIF values (its own, with the ones its `exifOriginals` kept laid over them), so renaming a camera again, or removing a
+rule, reaches photos an older rule already changed; a field no rule sets any more goes back to its EXIF value. Only the
+changed top-level fields are rewritten, and nothing is saved while any photo file can't be read.
+
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.

@@ -13,6 +13,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Spinner } from "@/components/ui/spinner";
 import {
   CommitSuccess,
+  FileDetails,
+  invalidatePhotoReads,
   PreviewDestination,
   Unreadable,
   count,
@@ -32,9 +34,7 @@ export function MissingFieldsCard({ canReadExif }: MissingFieldsCardProps) {
     ...addMissingFieldsMutation,
     onSuccess: () => {
       setChecked(null);
-      // The photo JSON changed, so every preview and in-flight read is stale.
-      void queryClient.invalidateQueries({ queryKey: ["data"] });
-      void queryClient.invalidateQueries({ queryKey: ["photos"] });
+      invalidatePhotoReads(queryClient);
     },
   });
 
@@ -216,40 +216,32 @@ function FilesMissingFields({ files }: { files: MissingFieldsPreview["files"] })
   return (
     <ul className="flex flex-col divide-y rounded-md border text-sm">
       {files.map((file) => (
-        <li key={file.path}>
-          <details>
-            <summary className="hover:bg-muted/50 flex cursor-pointer items-center justify-between gap-3 px-3 py-2">
-              <code className="min-w-0 truncate">{file.path.split("/").pop()}</code>
-              <span className="text-muted-foreground shrink-0">
-                {count(file.added.length, "field")}
-              </span>
-            </summary>
-            <div className="flex flex-col gap-2 px-3 pt-1 pb-3">
-              {file.exifError && (
-                <p className="text-destructive">
-                  Couldn&apos;t read its EXIF, so those fields are added empty: {file.exifError}
-                </p>
-              )}
-              {file.cropError && (
-                <p className="text-destructive">
-                  Couldn&apos;t read its Square Thumbnail&apos;s crop, so it&apos;s added empty:{" "}
-                  {file.cropError}
-                </p>
-              )}
-              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
-                {file.added.map((a) => (
-                  <div key={a.field} className="contents">
-                    <dt className="font-medium">{a.field}</dt>
-                    <dd className="text-xs">
-                      <span className="font-mono break-all">{JSON.stringify(a.value)}</span>
-                      <AddedSource field={a} />
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </div>
-          </details>
-        </li>
+        <FileDetails key={file.path} path={file.path} note={count(file.added.length, "field")}>
+          <div className="flex flex-col gap-2 px-3 pt-1 pb-3">
+            {file.exifError && (
+              <p className="text-destructive">
+                Couldn&apos;t read its EXIF, so those fields are added empty: {file.exifError}
+              </p>
+            )}
+            {file.cropError && (
+              <p className="text-destructive">
+                Couldn&apos;t read its Square Thumbnail&apos;s crop, so it&apos;s added empty:{" "}
+                {file.cropError}
+              </p>
+            )}
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+              {file.added.map((a) => (
+                <div key={a.field} className="contents">
+                  <dt className="font-medium">{a.field}</dt>
+                  <dd className="text-xs">
+                    <span className="font-mono break-all">{JSON.stringify(a.value)}</span>
+                    <AddedSource field={a} />
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </FileDetails>
       ))}
     </ul>
   );
