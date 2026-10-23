@@ -33,7 +33,7 @@ type snapFile struct {
 // snapshotQuery reads the commit's tree and each data subfolder's files with
 // their content. Each folder is an expression such as "<sha>:<folder>".
 const snapshotQuery = `query($owner: String!, $name: String!, $commit: String!, $photos: String!, $albums: String!,
-  $tags: String!, $places: String!, $localizations: String!) {
+  $tags: String!, $places: String!, $localizations: String!, $metainfo: String!) {
   repository(owner: $owner, name: $name) {
     commit: object(expression: $commit) { ... on Commit { tree { oid } } }
     photos: object(expression: $photos) { ...files }
@@ -41,6 +41,7 @@ const snapshotQuery = `query($owner: String!, $name: String!, $commit: String!, 
     tags: object(expression: $tags) { ...files }
     places: object(expression: $places) { ...files }
     localizations: object(expression: $localizations) { ...files }
+    metainfo: object(expression: $metainfo) { ...files }
   }
 }
 fragment files on Tree { entries { name type oid object { ... on Blob { text isTruncated isBinary } } } }`
@@ -71,6 +72,7 @@ type snapshotAnswer struct {
 		Tags          treeAnswer `json:"tags"`
 		Places        treeAnswer `json:"places"`
 		Localizations treeAnswer `json:"localizations"`
+		MetaInfo      treeAnswer `json:"metainfo"`
 	} `json:"repository"`
 }
 
@@ -79,7 +81,7 @@ func (a snapshotAnswer) folders() map[string]treeAnswer {
 	r := a.Repository
 	return map[string]treeAnswer{
 		PhotosFolder: r.Photos, Albums.Folder: r.Albums, Tags.Folder: r.Tags,
-		Places.Folder: r.Places, Localizations.Folder: r.Localizations,
+		Places.Folder: r.Places, Localizations.Folder: r.Localizations, MetaInfo.Folder: r.MetaInfo,
 	}
 }
 

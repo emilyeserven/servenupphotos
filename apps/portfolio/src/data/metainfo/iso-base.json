@@ -1,0 +1,13 @@
+{
+  "id": "iso-base",
+  "name": "Base",
+  "description": "",
+  "field": "iso",
+  "parent": "",
+  "order": 1,
+  "values": [],
+  "range": {
+    "min": 100,
+    "max": 200
+  }
+}

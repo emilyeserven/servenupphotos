@@ -1,0 +1,13 @@
+{
+  "id": "iso-high",
+  "name": "High",
+  "description": "",
+  "field": "iso",
+  "parent": "",
+  "order": 3,
+  "values": [],
+  "range": {
+    "min": 1601,
+    "max": 12800
+  }
+}

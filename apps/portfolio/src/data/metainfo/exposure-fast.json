@@ -1,0 +1,12 @@
+{
+  "id": "exposure-fast",
+  "name": "Fast",
+  "description": "",
+  "field": "exposure",
+  "parent": "",
+  "order": 0,
+  "values": [],
+  "range": {
+    "max": 0.0012484394506866417
+  }
+}

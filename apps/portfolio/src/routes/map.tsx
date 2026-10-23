@@ -31,7 +31,7 @@ import {
 import { MapDayFilter } from "@/components/map-day-filter";
 import { MapViewControls } from "@/components/map-view-controls";
 import { PhotoFilterControls } from "@/components/photo-filters";
-import { MAP_FILTERS, MapOverlay } from "@/components/map-overlay";
+import { MapOverlay } from "@/components/map-overlay";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
@@ -328,7 +328,7 @@ function MapView() {
                 range={search}
                 onChange={setDays}
               />
-              <PhotoFilterControls photos={placedPhotos} className={MAP_FILTERS} />
+              <PhotoFilterControls photos={placedPhotos} />
             </MapViewControls>
           </MapOverlay>
           <Source
@@ -541,6 +541,7 @@ function ClusterMarker({
           src={src}
           alt=""
           aria-hidden
+          loading="lazy"
           className={cn(
             "absolute inset-0 size-full object-cover transition-opacity duration-1000",
             index === turn ? "opacity-100" : "opacity-0",

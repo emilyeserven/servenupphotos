@@ -7,8 +7,9 @@ queue and the Photo page.
 
 ## Collapsing
 
-The button left of the breadcrumbs, **Ctrl+B** (**⌘B** on a Mac), or a click on the sidebar's right edge collapses
-it to a rail of icons, and the same again expands it. Collapsed:
+**Collapse sidebar** at the bottom of the sidebar, **Ctrl+B** (**⌘B** on a Mac), or a click on the sidebar's right
+edge collapses it to a rail of icons, and the same again expands it (the button becomes **Expand sidebar**, an icon
+at the bottom of the rail). Collapsed:
 
 - each page shows only its icon, and hovering it shows the page's name in a tooltip;
 - the group names are hidden;
@@ -20,7 +21,7 @@ stays collapsed or expanded after a reload.
 > **Frontend analogy:** it's a Zustand store with `persist`, passed to shadcn's `SidebarProvider` as a controlled
 > `open` / `onOpenChange` pair, the same way you'd control a `<Dialog>`.
 
-On a phone the sidebar is a sheet over the page instead; the same button opens and closes it, and it always shows in
-full.
+On a phone the sidebar is a sheet over the page instead. The button left of the breadcrumbs, shown only there, opens
+it; it always shows in full, so it has no collapse button.
 
 Each page's icon is set next to its title and URL in `navGroups`; a new page needs one.

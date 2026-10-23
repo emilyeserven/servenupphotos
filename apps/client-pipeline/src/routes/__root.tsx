@@ -51,8 +51,12 @@ function RootLayout() {
       {/* min-w-0 lets wide content, like a table, scroll inside the page instead of widening it. */}
       <SidebarInset className="min-w-0">
         <header className="flex h-16 shrink-0 items-center gap-2 px-4">
-          <SidebarTrigger className="-ml-1" title="Collapse or expand the sidebar (Ctrl+B)" />
-          <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+          {/* On a phone the sidebar is a sheet, opened from here; on wider screens it collapses from its own button. */}
+          <SidebarTrigger className="-ml-1 md:hidden" title="Open the sidebar" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 data-[orientation=vertical]:h-4 md:hidden"
+          />
           {group && page ? (
             <Breadcrumb>
               <BreadcrumbList>

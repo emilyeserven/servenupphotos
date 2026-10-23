@@ -28,3 +28,14 @@ They stop at the first and last photo rather than going round. Photos without re
 > from, like passing a list's `items` to a carousel, and the viewer finds the open photo in it by id.
 
 Each page passes `photos` and `onShow` to `PhotoLightbox` in `apps/portfolio/src/components/photo-lightbox.tsx`.
+
+## Image loading
+
+Every thumbnail on the portfolio (Grid tiles and their blurred placeholders, Timeline, Table, the Map's markers and
+group grids) uses `loading="lazy"`, so the browser fetches it only when it scrolls near the screen. The viewer's photo
+is the opposite: it's what the visitor just asked to see, so it loads straight away with `fetchPriority="high"`, over
+its blurred preview. The pipeline's lists of photos (Gallery, Photos in Flight, the bucket and the pickers) are lazy
+too; a page's one big photo, like the photo being read on the EXIF page, isn't.
+
+> **Frontend analogy:** `loading="lazy"` is a built-in `IntersectionObserver` for images, and `fetchPriority` is like
+> moving a request to the front of the network queue.

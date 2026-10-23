@@ -2,16 +2,9 @@ import { MapPin } from "lucide-react";
 import type { ReactNode } from "react";
 
 /**
- * The look of the location, album and tag dropdowns over the map: one box like the map's other
- * controls, with the dropdowns inside it a little shorter.
- */
-export const MAP_FILTERS =
-  "min-h-8 rounded-md border bg-background py-0.5 pr-0.5 pl-2 shadow-xs dark:border-input [&_select]:h-6 [&_select]:border-0 [&_select]:bg-transparent [&_select]:shadow-none";
-
-/**
  * The page's title and how many photos it shows, with the map's controls beside it on wider screens
- * and under it on phones, over the map's top left corner so the map can fill the page. It leaves room on the right for the site menu, and
- * clicks between the controls reach the map.
+ * and under it on phones, over the map's top left corner so the map can fill the page. It leaves
+ * room on the right for the site menu, and clicks between the controls reach the map.
  */
 export function MapOverlay({ count, children }: { count: number; children: ReactNode }) {
   return (

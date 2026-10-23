@@ -332,6 +332,7 @@ function TilePlaceholder({ image, mode }: { image: PhotoImage; mode: ViewMode })
       src={src}
       alt=""
       aria-hidden
+      loading="lazy"
       onError={fallback.next}
       className="absolute inset-0 size-full scale-110 object-cover blur-md"
     />

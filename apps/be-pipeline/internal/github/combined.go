@@ -15,6 +15,8 @@ type CombinedFiles struct {
 	// Places and Localizations are PLACES.json and LOCALIZATIONS.json.
 	Places        InFlightAllPhotos `json:"places"`
 	Localizations InFlightAllPhotos `json:"localizations"`
+	// MetaInfo is METAINFO.json, the metadata groups.
+	MetaInfo InFlightAllPhotos `json:"metainfo"`
 }
 
 // CombinedBase is CombinedFiles on the base branch: what the portfolio has.
@@ -76,6 +78,7 @@ func combinedFiles(t target, root string, s *snapshot, branch string) CombinedFi
 		Tags:          read(Tags.Folder, Tags.AllFile),
 		Places:        read(Places.Folder, Places.AllFile),
 		Localizations: read(Localizations.Folder, Localizations.AllFile),
+		MetaInfo:      read(MetaInfo.Folder, MetaInfo.AllFile),
 	}
 }
 

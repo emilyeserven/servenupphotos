@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import {
+  ApertureIcon,
   ActivityIcon,
   BookImageIcon,
   CalendarDaysIcon,
@@ -20,6 +21,7 @@ import type * as React from "react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -29,6 +31,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { SidebarCollapseButton } from "@/components/sidebar-collapse-button";
 import { UploadButtons } from "@/components/upload-buttons";
 
 /** Every page in the app, grouped the way the sidebar shows them, with the icon it has when collapsed. */
@@ -65,13 +68,14 @@ export const navGroups = [
       { title: "Update Data", url: "/update-data", icon: RefreshCwIcon },
       { title: "Places", url: "/places", icon: MapPinIcon },
       { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
+      { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
     ],
   },
 ] as const;
 
 /**
- * Floating sidebar navigation, adapted from shadcn's sidebar-04 block. It collapses to a rail of icons,
- * each naming its page in a tooltip.
+ * Floating sidebar navigation, adapted from shadcn's sidebar-04 block. Its button at the bottom collapses
+ * it to a rail of icons, each naming its page in a tooltip.
  */
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = useLocation({ select: (location) => location.pathname });
@@ -122,6 +126,9 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarCollapseButton />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

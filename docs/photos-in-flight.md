@@ -42,6 +42,6 @@ Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores th
 new square. Saving any other change to a file without `images.thumbnailcrop` adds it too. The new square is in R2 at
 once; the JSON goes to GitHub with the next **Commit**.
 
-Under the photos it lists the album, tag, place and localization files the pull request or the changes waiting for
+Under the photos it lists the album, tag, place, localization and metadata group files the pull request or the changes waiting for
 Commit add or change, each with its JSON and a check mark when it's an entry of `ALLALBUMS.json`, `ALLTAGS.json`,
-`PLACES.json` or `LOCALIZATIONS.json` at the same head, and the pull request summary counts them.
+`PLACES.json`, `LOCALIZATIONS.json` or `METAINFO.json` at the same head, and the pull request summary counts them.

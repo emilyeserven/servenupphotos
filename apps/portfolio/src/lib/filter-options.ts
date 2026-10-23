@@ -7,11 +7,14 @@ import {
   type Localized,
 } from "@/lib/localize";
 import { type FilterKey, type LocationKey, matchesFilters } from "@/lib/photo-filters";
+import { groupTree, groupValues, type MetaGroup } from "@/lib/metadata-groups";
 import type { Photo } from "@/lib/photos";
+import type { EquipmentKey } from "@/lib/table-filters";
 
 /** One choice of a filter's dropdown. */
 export interface FilterOption {
-  key: FilterKey;
+  /** The URL search key the choice sets, such as "album". */
+  key: string;
   value: string;
   /** The name, written each way the menu's Script Display can choose. */
   label: Localized;
@@ -70,15 +73,18 @@ function locationLabel({ key, value }: LocationNode): Localized {
   return place ? localizePlace(place) : sameEveryWay(value);
 }
 
-/** The tree's nodes, each followed by what's in it, sorted by their English names. */
-function flatten(
-  node: LocationNode,
-  depth = 0,
-): { node: LocationNode; label: Localized; depth: number }[] {
-  return [...node.children.values()]
-    .map((child) => ({ node: child, label: locationLabel(child), depth }))
-    .toSorted((a, b) => a.label.english.localeCompare(b.label.english))
-    .flatMap((entry) => [entry, ...flatten(entry.node, depth + 1)]);
+/** A country, city or place as a choice of the Places filter, with what's in it. */
+export interface LocationOption {
+  key: LocationKey;
+  value: string;
+  /** Where it is in the tree, such as "/country:Japan/city:Kyoto", which no other choice has. */
+  id: string;
+  /** The name, written each way the menu's Script Display can choose. */
+  label: Localized;
+  /** How many photos it would show, given the other filters. */
+  count: number;
+  /** What's in it, sorted by their English names. */
+  children: LocationOption[];
 }
 
 /** How many of the photos the filter's choice matches. */
@@ -86,19 +92,31 @@ function countOf(facet: Photo[], key: FilterKey, value: string): number {
   return facet.filter((photo) => matchesFilters(photo, { [key]: value })).length;
 }
 
+/** The node's children as choices, sorted by their English names, each with what's in it. */
+function childOptions(node: LocationNode, facet: Photo[], path = ""): LocationOption[] {
+  return [...node.children.values()]
+    .map((child) => ({ child, label: locationLabel(child) }))
+    .toSorted((a, b) => a.label.english.localeCompare(b.label.english))
+    .map(({ child, label }) => {
+      const id = `${path}/${child.key}:${child.value}`;
+      return {
+        key: child.key,
+        value: child.value,
+        id,
+        label,
+        count: countOf(facet, child.key, child.value),
+        children: childOptions(child, facet, id),
+      };
+    });
+}
+
 /**
- * The location filter's choices: every country the photos were taken in, the cities in each and
- * the places in each city, each place under the place it's in. `facet` is the photos the album
- * and tag filters leave, which the counts are out of.
+ * The Places filter's choices: every country the photos were taken in, the cities in each and
+ * the places in each city, each place under the place it's in. `facet` is the photos the other
+ * filters leave, which the counts are out of.
  */
-export function locationOptions(list: Photo[], facet: Photo[]): FilterOption[] {
-  return flatten(locationTree(list)).map(({ node, label, depth }) => ({
-    key: node.key,
-    value: node.value,
-    label,
-    depth,
-    count: countOf(facet, node.key, node.value),
-  }));
+export function locationOptions(list: Photo[], facet: Photo[]): LocationOption[] {
+  return childOptions(locationTree(list), facet);
 }
 
 /** An album or tag as a choice, and, for an album, its sub-albums after it. */
@@ -130,4 +148,70 @@ export function albumOptions(facet: Photo[]): FilterOption[] {
 /** The tag filter's choices: every tag. */
 export function tagOptions(facet: Photo[]): FilterOption[] {
   return tags.flatMap((tag) => groupOptions("tag", tag, facet, 0));
+}
+
+/** Camera or lens names as choices at the depth, each counting the photos taken with it. */
+function nameOptions(
+  key: EquipmentKey,
+  names: string[],
+  depth: number,
+  facet: Photo[],
+): FilterOption[] {
+  return names.toSorted().map((name) => ({
+    key,
+    value: name,
+    label: sameEveryWay(name),
+    depth,
+    count: facet.filter((photo) => photo[key] === name).length,
+  }));
+}
+
+/**
+ * A camera or lens metadata group as a choice, then the names it lists that the photos have; none
+ * when it would show no photos, given the other filters, unless it's the one chosen.
+ */
+function equipmentGroupOptions(
+  key: EquipmentKey,
+  [group, depth]: [MetaGroup, number],
+  names: Set<string>,
+  facet: Photo[],
+  chosen: string | undefined,
+): FilterOption[] {
+  const inGroup = groupValues(group);
+  const option = {
+    key: `${key}Group`,
+    value: group.id,
+    label: sameEveryWay(group.name),
+    depth,
+    count: facet.filter((photo) => inGroup.has(photo[key] ?? "")).length,
+  };
+  if (option.count === 0 && group.id !== chosen) return [];
+  const listed = [...new Set(group.values.map(String))].filter((name) => names.has(name));
+  return [option, ...nameOptions(key, listed, depth + 1, facet)];
+}
+
+/**
+ * The camera or lens filter's choices: the metadata groups of cameras or lenses, each under the
+ * group it's in and followed by the names it lists, then every other camera or lens the photos
+ * were taken with, by name. A group that would show none of `facet` is left out, unless it's
+ * `chosenGroup`. Photos whose EXIF didn't name a lens aren't under any.
+ */
+export function equipmentOptions(
+  key: EquipmentKey,
+  list: Photo[],
+  facet: Photo[],
+  chosenGroup?: string,
+): FilterOption[] {
+  const names = new Set(list.flatMap((photo) => photo[key] ?? []));
+  const tree = groupTree(key);
+  const grouped = new Set(tree.flatMap(([group]) => group.values.map(String)));
+  return [
+    ...tree.flatMap((entry) => equipmentGroupOptions(key, entry, names, facet, chosenGroup)),
+    ...nameOptions(
+      key,
+      [...names].filter((name) => !grouped.has(name)),
+      0,
+      facet,
+    ),
+  ];
 }
