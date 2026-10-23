@@ -56,6 +56,26 @@ views. They count toward the button's number, and **Clear filters** clears them 
 > `1/4000` and `30` seconds sit one step apart when nothing's between them, like `<input type="range">` over
 > `values[i]`.
 
+### Metadata groups
+
+The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in the Table's filters, in their order
+(lowest `order` first, then by name, each group under the one it's in):
+
+- **Camera** and **Lens** list their groups first, each indented under the group it's in and followed by the cameras or
+  lenses it lists, then every camera or lens no group lists. Choosing a group (`?lensGroup=lens-zoom`,
+  `?cameraGroup=<id>`) shows the photos taken with any value it or a group inside it lists; choosing a group clears a
+  chosen name and the other way round. A group that would show no photos, given the other filters, isn't listed,
+  unless it's the one chosen.
+- **ISO**, **Exposure**, **Focal length** and **Aperture** each get a quick-select button under the slider for each of
+  their groups, such as **Wide angle 10mm–24mm**. Pressing one moves the handles to the lowest and highest values the
+  photos have inside the group's range (so Wide angle's 10 to 24 mm becomes `?focalLength=11-24` when no photo was
+  taken at 10 mm), and the button stays pressed while the slider is there; pressing it again clears the slider. A
+  group's range runs from the lowest to the highest end of its own range, its values and those of every group in it.
+  A group no photo is in has no button.
+
+> **Frontend analogy:** a quick-select is a preset that calls the same `onChange` as letting go of the handles, so the
+> URL only ever holds the plain range; the button works out whether it's pressed by comparing its range to the URL's.
+
 ## Counts
 
 Each choice says how many photos it would show in that view, given the other filters, so a place's count is out of the

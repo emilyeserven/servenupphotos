@@ -1,6 +1,18 @@
 import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { parseRange } from "@/lib/table-filters";
+import { cn } from "@/lib/utils";
+
+/** A range a slider can be set to in one click, from a metadata group such as **Wide angle**. */
+export interface RangePreset {
+  /** The metadata group's ID. */
+  id: string;
+  name: string;
+  /** The range the group covers as a photographer writes it, such as "10–24mm". */
+  span: string;
+  /** The range it sets, as "low-high" of the values the photos have. */
+  range: string;
+}
 
 /** The value's position among the values, or `fallback` when it isn't one of them. */
 function positionOf(values: string[], value: string | undefined, fallback: number): number {
@@ -25,19 +37,22 @@ function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | unde
  * steps through `values`, the ones the photos have, lowest first, so each step shows a different
  * set of photos; `write` writes one the way a photographer does, such as "f/5.6". `range` is the
  * one set, as "low-high", and `onChange` gets the new one once a handle is let go, or undefined
- * when the handles are back at the ends.
+ * when the handles are back at the ends. `presets` are the metadata groups of the setting, each a
+ * button under the slider that sets it to the group's range, or clears it when it's already set.
  */
 export function RangeFilter({
   label,
   values,
   range,
   write,
+  presets,
   onChange,
 }: {
   label: string;
   values: string[];
   range: string | undefined;
   write: (value: string) => string;
+  presets: RangePreset[];
   onChange: (range: string | undefined) => void;
 }) {
   const committed = positionsOf(values, range);
@@ -70,6 +85,44 @@ export function RangeFilter({
         }}
         className="py-1"
       />
+      <RangePresets presets={presets} range={range} onChange={onChange} />
+    </div>
+  );
+}
+
+/** A button for each preset, pressed while the slider is set to its range. */
+function RangePresets({
+  presets,
+  range,
+  onChange,
+}: {
+  presets: RangePreset[];
+  range: string | undefined;
+  onChange: (range: string | undefined) => void;
+}) {
+  if (presets.length === 0) return null;
+  return (
+    <div className="flex flex-wrap gap-1">
+      {presets.map((preset) => {
+        const pressed = preset.range === range;
+        return (
+          <button
+            key={preset.id}
+            type="button"
+            aria-pressed={pressed}
+            onClick={() => onChange(pressed ? undefined : preset.range)}
+            className={cn(
+              "rounded-full border px-2 py-0.5 text-xs whitespace-nowrap outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring",
+              pressed && "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
+            )}
+          >
+            {preset.name}{" "}
+            <span className={cn("tabular-nums", !pressed && "text-muted-foreground")}>
+              {preset.span}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

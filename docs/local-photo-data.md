@@ -1,14 +1,15 @@
 # Portfolio with your own photo data
 
 `pnpm dev` and `pnpm dev:docker` first run `pnpm photos:local`, which writes `ALLPHOTOS.local.json`,
-`PLACES.local.json`, `LOCALIZATIONS.local.json`, `ALLALBUMS.local.json` and `ALLTAGS.local.json` (git-ignored) in
-`apps/portfolio/src/data/photos`, `places`, `localizations`, `albums` and `tags`. The album and tag files are what the
+`PLACES.local.json`, `LOCALIZATIONS.local.json`, `ALLALBUMS.local.json`, `ALLTAGS.local.json` and
+`METAINFO.local.json` (git-ignored) in `apps/portfolio/src/data/photos`, `places`, `localizations`, `albums`, `tags` and
+`metainfo`. The album, tag and [metadata group](metadata-groups.md) files are what the
 [filters](portfolio-filters.md) list. It takes them from the first of these that answers:
 
 1. **The photo pipeline**, when it's running locally (`PIPELINE_URL`, or else `http://localhost:8080`, then
    `http://localhost:5174`): the combined files at the open **Add photo data** pull request's head (or the base
    branch's, when none is open but [changes are waiting for Commit](pending-changes.md)), with the photo, place,
-   localization, album and tag files in flight put over them (matched by `file` for photos and `id` for the rest) and
+   localization, album, tag and metadata group files in flight put over them (matched by `file` for photos and `id` for the rest) and
    removed ones taken out. So saves not committed with **Commit** yet show too. Skipped with no pull request open and
    nothing waiting.
 2. **GitHub**: the combined files from the open pull request on the `origin` repository. Set `GITHUB_TOKEN` for a
