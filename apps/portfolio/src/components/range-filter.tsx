@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ClearFilterButton } from "@/components/clear-filter-button";
 import { type RangePreset, RangePresets } from "@/components/range-presets";
 import { Slider } from "@/components/ui/slider";
 import { parseRange } from "@/lib/table-filters";
@@ -25,7 +26,7 @@ function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | unde
  * steps through `values`, the ones the photos have, lowest first, so each step shows a different
  * set of photos; `write` writes one the way a photographer does, such as "f/5.6". `range` is the
  * one set, as "low-high", and `onChange` gets the new one once a handle is let go, or undefined
- * when the handles are back at the ends. `presets` are the metadata groups of the setting, listed in a
+ * when the handles are back at the ends or its X is clicked. `presets` are the metadata groups of the setting, listed in a
  * dropdown to the right of the slider as quick picks.
  */
 export function RangeFilter({
@@ -53,11 +54,14 @@ export function RangeFilter({
       aria-label={label}
       className="flex w-full flex-col sm:w-52 gap-2 rounded-md border px-3 py-2"
     >
-      <div className="flex items-baseline justify-between gap-2 text-xs">
+      <div className="flex h-5 items-center justify-between gap-2 text-xs">
         <span className="font-medium whitespace-nowrap text-muted-foreground">{label}</span>
-        <span className="whitespace-nowrap tabular-nums">
+        <span className="ml-auto whitespace-nowrap tabular-nums">
           <RangeText values={values} low={low} high={high} write={write} />
         </span>
+        {range && (
+          <ClearFilterButton label={label} onClear={() => onChange(undefined)} className="-mr-1" />
+        )}
       </div>
       <div className="flex items-center gap-2">
         <Slider

@@ -4,7 +4,8 @@ The portfolio's Timeline, Table, Map and Grid each have a **Show filters** butto
 filters that narrow the photos they show: **Places**, **Album** and **Tag** (**Hide filters** closes them again). The
 Table also has filters of its own (see [Table filters](#table-filters)).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
-beside it. The filters are kept in the URL, so a link keeps them, and the menu's view
+beside it. Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
+that one (a range slider's X sits beside its range). The filters are kept in the URL, so a link keeps them, and the menu's view
 links carry them to the other views (and nothing else: a view's own settings, such as the Grid's sort or the Table's
 columns, stay with that view).
 

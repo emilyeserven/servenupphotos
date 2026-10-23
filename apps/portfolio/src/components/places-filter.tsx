@@ -1,6 +1,7 @@
 import { ChevronRight, ChevronsUpDown, MapPin, Search } from "lucide-react";
 import { useState } from "react";
 import { useScriptDisplay } from "@/components/script-display-provider";
+import { ClearFilterButton } from "@/components/clear-filter-button";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { LocationOption } from "@/lib/filter-options";
@@ -104,19 +105,35 @@ export function PlacesFilter({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          role="combobox"
-          aria-label={`Places: ${text}`}
-          className="max-w-56 font-normal"
-        >
-          <MapPin aria-hidden className="text-muted-foreground" />
-          <span className="truncate">{text}</span>
-          <ChevronsUpDown aria-hidden className="ml-auto opacity-50" />
-        </Button>
-      </PopoverTrigger>
+      {/* The X sits over the button, inside its border, as a button can't hold another. */}
+      <div className="relative inline-flex max-w-56 items-center">
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            role="combobox"
+            aria-label={`Places: ${text}`}
+            className={cn(
+              "w-full font-normal has-[>svg]:pr-8",
+              selected.length > 0 && "has-[>svg]:pr-14",
+            )}
+          >
+            <MapPin aria-hidden className="text-muted-foreground" />
+            <span className="truncate">{text}</span>
+          </Button>
+        </PopoverTrigger>
+        {selected.length > 0 && (
+          <ClearFilterButton
+            label="Places"
+            onClear={() => onChange([])}
+            className="absolute right-7"
+          />
+        )}
+        <ChevronsUpDown
+          aria-hidden
+          className="pointer-events-none absolute right-2.5 size-4 opacity-50"
+        />
+      </div>
       <PopoverContent align="start" className="flex w-[min(20rem,calc(100vw-2rem))] flex-col p-0">
         <label className="flex items-center gap-2 border-b px-3">
           <Search aria-hidden className="size-4 shrink-0 text-muted-foreground" />
