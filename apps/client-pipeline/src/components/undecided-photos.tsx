@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
+import { ChevronRightIcon, CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
 import type { InFlightFile, InFlightImages } from "@/api/photos";
 import { squareThumbnailUrl } from "@/api/versions";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { titleOf } from "@/lib/drafts";
 import { UNDECIDED } from "@/lib/undecided";
 import { useLocalEditsStore } from "@/stores/local-edits";
@@ -49,8 +48,9 @@ export function MoveToUndecided({ file }: { file: InFlightFile }) {
 }
 
 /**
- * The Undecided queue: the untitled photos set aside from the list of photos in flight, each with
- * Edit, to name it on the Photo page, and Move back. Nothing while it's empty.
+ * The Undecided queue, a panel collapsed to its count until it's opened: the untitled photos set
+ * aside from the list of photos in flight, each with Edit, to name it on the Photo page, and Move
+ * back. Nothing while it's empty.
  */
 export function UndecidedQueue({
   files,
@@ -61,23 +61,27 @@ export function UndecidedQueue({
 }) {
   if (files.length === 0) return null;
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Undecided</CardTitle>
-        <CardDescription>
+    <details className="group bg-card rounded-xl border shadow-sm">
+      <summary className="hover:bg-muted/50 flex cursor-pointer list-none items-center gap-2 rounded-xl px-6 py-4 [&::-webkit-details-marker]:hidden">
+        <ChevronRightIcon className="text-muted-foreground size-4 transition-transform group-open:rotate-90" />
+        <span className="font-semibold">Undecided</span>
+        <span className="text-muted-foreground text-sm">
+          {files.length} {files.length === 1 ? "photo" : "photos"} set aside
+        </span>
+      </summary>
+      <div className="flex flex-col gap-4 px-6 pb-6">
+        <p className="text-muted-foreground text-sm">
           Untitled photos set aside. They stay saved as drafts the portfolio doesn&apos;t show, and
           Next untitled photo skips them. Giving one a title, or moving it back, returns it to the
           list.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+        </p>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {files.map((file) => (
             <UndecidedPhoto key={file.path} file={file} imageUrl={images.byPath[file.path]?.url} />
           ))}
         </ul>
-      </CardContent>
-    </Card>
+      </div>
+    </details>
   );
 }
 

@@ -12,7 +12,7 @@ has **Next untitled photo** to open them one after another (see
 
 ### Undecided
 
-An untitled photo's **Undecided** button sets it aside in the **Undecided** card above the list, out of the list of
+An untitled photo's **Undecided** button sets it aside in the **Undecided** panel above the list, collapsed to how many it has until it is opened, out of the list of
 photos in flight, and **Next untitled photo** skips it. Each photo there has **Edit**, to name it on the Photo page,
 and **Move back**. The mark is the photo JSON's `undecided: true`, kept as a
 [local edit](combined-data-store.md#local-edits) until **Commit** saves it to the file (moving a photo back sets it to
