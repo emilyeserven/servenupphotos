@@ -287,6 +287,14 @@
     "country": "United States of America"
   },
   {
+    "id": "komfortabel-coffee-namsan",
+    "name": "Komfortabel coffee Namsan",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
     "id": "little-italy",
     "name": "Little Italy",
     "description": "",
@@ -408,6 +416,14 @@
     "latitude": 40.76739122272109,
     "longitude": -73.9819579321148,
     "exactLocation": true
+  },
+  {
+    "id": "namsan-tower",
+    "name": "Namsan Tower",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
   },
   {
     "id": "national-museum-of-korea",

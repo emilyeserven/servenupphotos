@@ -1,7 +1,7 @@
 {
-  "id": 268,
-  "title": null,
+  "title": "View from Namsan",
   "comment": null,
+  "id": 268,
   "file": "DSCF7323.jpg",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
@@ -12,8 +12,8 @@
   "gpsPosition": "37 deg 33' 4.55\" N, 126 deg 59' 17.58\" E",
   "customGpsPosition": null,
   "createDate": "2026:05:24 17:10:15",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "namsan-tower",
+  "customCity": "Seoul",
   "customCountry": null,
   "country": "South Korea",
   "city": null,
@@ -28,11 +28,11 @@
     "small": "https://cdn.servenupphotos.net/photos/fac83a924ca4-dscf7323-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/fac83a924ca4-dscf7323-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/fac83a924ca4-dscf7323-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/fac83a924ca4-dscf7323-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/fac83a924ca4-dscf7323-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/fac83a924ca4-dscf7323-thumbnail.webp?crop=0,595,4648",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/fac83a924ca4-dscf7323-thumbnailpreview.webp?crop=0,595,4648",
     "thumbnailcrop": {
       "x": 0,
-      "y": 1162,
+      "y": 595,
       "size": 4648,
       "outputSize": 500
     }
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "namsan-tower"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null
