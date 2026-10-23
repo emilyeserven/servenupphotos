@@ -17,7 +17,7 @@ import {
 } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ArrowDown, ArrowUp, ArrowUpDown, Columns3, Table } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 import { NoMatchingPhotos, PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
@@ -33,6 +33,7 @@ import {
   type PhotoImage,
 } from "@/lib/photos";
 import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { cn } from "@/lib/utils";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
@@ -93,10 +94,13 @@ function parseHide(search: Record<string, unknown>): TableSearch {
 }
 
 export const Route = createFileRoute("/table")({
-  validateSearch: (search: Record<string, unknown>): TableSearch & PhotoFilters => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): TableSearch & PhotoFilters & ShownPhotoSearch => ({
     ...parseSort(search),
     ...parseHide(search),
     ...parseFilters(search),
+    ...parseShownPhoto(search),
   }),
   component: TableView,
 });
@@ -187,7 +191,7 @@ function hideSearchOf(visibility: ColumnVisibilityState): TableSearch {
 function TableView() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const [shown, setShown] = useState<ImagePhoto | null>(null);
+  const { shown, show, close } = useShownPhoto();
   const sorting = sortingOf(search);
   const columnVisibility = visibilityOf(search);
   const filtered = filterPhotos(photos, parseFilters(search));
@@ -241,12 +245,7 @@ function TableView() {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <PhotoRow
-                key={row.id}
-                photo={row.original}
-                columnIds={visibleIds}
-                onOpen={setShown}
-              />
+              <PhotoRow key={row.id} photo={row.original} columnIds={visibleIds} onOpen={show} />
             ))}
           </tbody>
         </table>
@@ -254,8 +253,8 @@ function TableView() {
       <PhotoLightbox
         photo={shown}
         photos={rows.map((row) => row.original)}
-        onShow={setShown}
-        onClose={() => setShown(null)}
+        onShow={show}
+        onClose={close}
       />
     </div>
   );

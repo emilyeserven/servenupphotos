@@ -45,6 +45,7 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
 		t.Errorf("first Publish() = %+v, want %+v", first, want)
 	}
 	wantJSON := `{
+  "id": 1,
   "title": "Tokyo at night",
   "comment": "Shot from the **bridge**.",
   "file": "DSC0001.jpg",
@@ -89,8 +90,12 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
 	if string(saved) != wantJSON {
 		t.Errorf("first Publish() data = %s, want %s", saved, wantJSON)
 	}
-	if _, err := c.Publish(t.Context(), gh, photo("DSC0002.json")); err != nil {
+	second, err := c.Publish(t.Context(), gh, photo("DSC0002.json"))
+	if err != nil {
 		t.Fatalf("second Publish() error = %v", err)
+	}
+	if id, _ := photoID(second.Data); id != 2 {
+		t.Errorf("second Publish() id = %d, want 2, after the first's", id)
 	}
 	if w := f.writes(); len(w) != 0 {
 		t.Errorf("Publish() wrote to GitHub: %v", w)

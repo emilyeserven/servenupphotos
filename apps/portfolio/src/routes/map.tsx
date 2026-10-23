@@ -42,13 +42,22 @@ import {
   placedPhotos,
   useMapPhotos,
 } from "@/lib/map-photos";
+import { parseMapView, type MapViewSearch, useSaveMapView } from "@/lib/map-view";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
+import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
+/** The map's search: the shared filters, the open photo, and where the map is looking. */
+type MapSearch = PhotoFilters & ShownPhotoSearch & MapViewSearch;
+
 export const Route = createFileRoute("/map")({
-  validateSearch: (search: Record<string, unknown>): PhotoFilters => parseFilters(search),
+  validateSearch: (search: Record<string, unknown>): MapSearch => ({
+    ...parseFilters(search),
+    ...parseShownPhoto(search),
+    ...parseMapView(search),
+  }),
   component: MapView,
 });
 
@@ -83,8 +92,12 @@ const FIT_PADDING = 80;
 // world without any.
 const ALL_PHOTOS_FIT = { padding: FIT_PADDING, maxZoom: 14 };
 const WORLD_VIEW = { center: [20, 25] as [number, number], zoom: 1.3 };
-/** Where the map opens: on the photos' bounds, or the whole world without any. */
-function initialViewOf(bounds: LngLatBounds | null) {
+/**
+ * Where the map opens: where the URL says, as a link keeps it, or else on the photos' bounds, or
+ * the whole world without any.
+ */
+function initialViewOf(bounds: LngLatBounds | null, view: MapViewSearch) {
+  if (view.zoom !== undefined) return { longitude: view.lng, latitude: view.lat, zoom: view.zoom };
   return bounds
     ? { bounds, fitBoundsOptions: ALL_PHOTOS_FIT }
     : { longitude: WORLD_VIEW.center[0], latitude: WORLD_VIEW.center[1], zoom: WORLD_VIEW.zoom };
@@ -201,9 +214,11 @@ function MapView() {
   // A photo without an image, shown in a popup as the lightbox can't show it.
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
-  const [shown, setShown] = useState<ImagePhoto | null>(null);
-  const mapPhotos = useMapPhotos(Route.useSearch());
-  const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds));
+  const { shown, show, close } = useShownPhoto();
+  const search = Route.useSearch();
+  const mapPhotos = useMapPhotos(parseFilters(search));
+  const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
+  const saveView = useSaveMapView();
   useFitOnFilter(map, mapPhotos.bounds, () => {
     setSelected(null);
     setCluster(null);
@@ -215,9 +230,14 @@ function MapView() {
     if (map.current) setMarkers(markersInView(map.current));
   }
 
+  function onMoveEnd() {
+    updateMarkers();
+    if (map.current) saveView(map.current);
+  }
+
   function openPhoto(photo: PlacedPhoto, group: PlacedPhoto[] = []) {
     setShownGroup(group);
-    if (hasImage(photo)) setShown(photo);
+    if (hasImage(photo)) show(photo);
     else setSelected(photo);
   }
 
@@ -255,7 +275,7 @@ function MapView() {
           ref={map}
           initialViewState={initialViewState}
           mapStyle={isDark ? MAP_STYLES.dark : MAP_STYLES.light}
-          onMoveEnd={updateMarkers}
+          onMoveEnd={onMoveEnd}
           onSourceData={(event) => {
             if (event.sourceId === SOURCE_ID && event.isSourceLoaded) updateMarkers();
           }}
@@ -309,12 +329,7 @@ function MapView() {
           {selected && <PhotoPopup photo={selected} onClose={() => setSelected(null)} />}
         </Map>
       </div>
-      <PhotoLightbox
-        photo={shown}
-        photos={shownGroup}
-        onShow={setShown}
-        onClose={() => setShown(null)}
-      />
+      <PhotoLightbox photo={shown} photos={shownGroup} onShow={show} onClose={close} />
     </div>
   );
 }

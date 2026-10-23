@@ -89,11 +89,19 @@ export interface AddedField {
   fromExif: boolean;
   /** True when the value is the Square Thumbnail's crop, read from its URL's ?crop= mark or from R2. */
   fromThumbnail: boolean;
+  /** True when the value is the photo's new ID, counted in the order the photo files were created. */
+  numbered: boolean;
 }
 
 export interface MissingFieldsPreview extends ScannedPhotos {
   /** Each missing field with how many files miss it, in the order new photo files list them. */
-  fields: { field: string; files: number; fromExif: number; fromThumbnail: number }[];
+  fields: {
+    field: string;
+    files: number;
+    fromExif: number;
+    fromThumbnail: number;
+    numbered: number;
+  }[];
   files: {
     path: string;
     fileUrl: string;
