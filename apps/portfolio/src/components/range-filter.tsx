@@ -26,7 +26,7 @@ function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | unde
  * set of photos; `write` writes one the way a photographer does, such as "f/5.6". `range` is the
  * one set, as "low-high", and `onChange` gets the new one once a handle is let go, or undefined
  * when the handles are back at the ends. `presets` are the metadata groups of the setting, listed in a
- * dropdown to the right of the range as quick picks.
+ * dropdown to the right of the slider as quick picks.
  */
 export function RangeFilter({
   label,
@@ -55,25 +55,27 @@ export function RangeFilter({
     >
       <div className="flex items-baseline justify-between gap-2 text-xs">
         <span className="font-medium whitespace-nowrap text-muted-foreground">{label}</span>
-        <span className="flex items-baseline gap-1 whitespace-nowrap tabular-nums">
+        <span className="whitespace-nowrap tabular-nums">
           <RangeText values={values} low={low} high={high} write={write} />
-          <RangePresets label={label} presets={presets} range={range} onChange={onChange} />
         </span>
       </div>
-      <Slider
-        min={0}
-        max={Math.max(0, values.length - 1)}
-        step={1}
-        minStepsBetweenThumbs={0}
-        value={[low, high]}
-        disabled={values.length < 2}
-        onValueChange={setDragging}
-        onValueCommit={(next) => {
-          setDragging(null);
-          onChange(rangeOf(values, next));
-        }}
-        className="py-1"
-      />
+      <div className="flex items-center gap-2">
+        <Slider
+          min={0}
+          max={Math.max(0, values.length - 1)}
+          step={1}
+          minStepsBetweenThumbs={0}
+          value={[low, high]}
+          disabled={values.length < 2}
+          onValueChange={setDragging}
+          onValueCommit={(next) => {
+            setDragging(null);
+            onChange(rangeOf(values, next));
+          }}
+          className="py-1"
+        />
+        <RangePresets label={label} presets={presets} range={range} onChange={onChange} />
+      </div>
     </div>
   );
 }

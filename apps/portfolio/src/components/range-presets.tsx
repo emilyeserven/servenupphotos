@@ -15,7 +15,7 @@ export interface RangePreset {
 }
 
 /**
- * A small dropdown beside a slider's range listing its quick picks. Choosing one sets the slider
+ * A small dropdown to the right of a slider, listing its quick picks. Choosing one sets the slider
  * to its range, or clears the slider when it's already there, and closes the list. Nothing shows
  * when there are none.
  */
@@ -38,7 +38,7 @@ export function RangePresets({
         <button
           type="button"
           aria-label={`${label} quick picks`}
-          className="flex size-5 shrink-0 items-center justify-center self-center rounded-sm text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex size-5 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
         >
           <ChevronDown aria-hidden className="size-3.5" />
         </button>

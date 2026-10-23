@@ -66,7 +66,7 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
   `?cameraGroup=<id>`) shows the photos taken with any value it or a group inside it lists; choosing a group clears a
   chosen name and the other way round. A group that would show no photos, given the other filters, isn't listed,
   unless it's the one chosen.
-- **ISO**, **Exposure**, **Focal length** and **Aperture** each get a small dropdown to the right of the slider's range,
+- **ISO**, **Exposure**, **Focal length** and **Aperture** each get a small dropdown to the right of the slider,
   listing a quick pick for each of their groups, such as **Wide angle 10mm–24mm**. Choosing one moves the handles to
   the lowest and highest values the photos have inside the group's range (so Wide angle's 10 to 24 mm becomes
   `?focalLength=11-24` when no photo was taken at 10 mm) and closes the list; the list checks the one the slider is
