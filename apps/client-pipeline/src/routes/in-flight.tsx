@@ -31,6 +31,7 @@ import {
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
+import { DraftMark } from "@/components/draft-mark";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
@@ -46,6 +47,7 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
+import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
 import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
@@ -357,7 +359,9 @@ function FileSection({
         <PhotoTitle file={file} />
         <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
         <FileStatus status={file.status} pending={file.pending} />
-        <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
+        <DraftMark data={file.status === "removed" ? undefined : file.data}>
+          <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
+        </DraftMark>
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
@@ -626,11 +630,23 @@ function groupsSummary(groups: InFlightGroups): string {
   return `${files}; ${allFile} lists ${all.count}, ${matched} of ${count} match`;
 }
 
-function allPhotosSummary(all: CombinedFile, files: InFlightFile[]): string {
+/**
+ * How many entries ALLPHOTOS.json has and how many of the photo files match one, leaving out the
+ * drafts, which it doesn't list, when untitled photos are kept as drafts.
+ */
+function AllPhotosSummary({ all, files }: { all: CombinedFile; files: InFlightFile[] }) {
+  const listed = useUntitledDrafts() ? files.filter((file) => !isDraft(file.data)) : files;
   if (!all.found) return "Not on the branch yet. Commit adds it.";
   if (all.error) return all.error;
-  const matched = files.filter((file) => file.inAllPhotos).length;
-  return `Lists ${all.count}; ${matched} of ${files.length} photo files match`;
+  const matched = listed.filter((file) => file.inAllPhotos).length;
+  const drafts = files.length - listed.length;
+  return `Lists ${all.count}; ${matched} of ${listed.length} photo files match${draftsLeftOut(drafts)}`;
+}
+
+/** ", N drafts left out" after the ALLPHOTOS.json summary, when there are any. */
+function draftsLeftOut(drafts: number): string {
+  if (drafts === 0) return "";
+  return `, ${drafts} ${drafts === 1 ? "draft" : "drafts"} left out`;
 }
 
 /**
@@ -691,7 +707,9 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
         <SyncSummary />
       </dd>
       <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
-      <dd>{allPhotosSummary(data.allPhotos, data.files)}</dd>
+      <dd>
+        <AllPhotosSummary all={data.allPhotos} files={data.files} />
+      </dd>
       <dt className="text-muted-foreground">Images</dt>
       <dd>{imagesSummary(data.images, count)}</dd>
       <dt className="text-muted-foreground">Album files</dt>

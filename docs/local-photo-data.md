@@ -15,7 +15,7 @@
 2. **GitHub**: the combined files from the open pull request on the `origin` repository. Set `GITHUB_TOKEN` for a
    private repository, or if GitHub's limit of 60 unauthenticated requests an hour runs out.
 3. **The data folders**: every other JSON file in each folder, as one array sorted by file name, the same way the
-   **Combine photo data** workflow builds the combined files.
+   **Combine photo data** workflow builds the combined files, without [drafts](drafts.md).
 
 While the portfolio's dev server runs, each page load (at most every 10 seconds) runs it again with
 `--pipeline-only`: it asks only the pipeline, and leaves the files alone when the pipeline isn't running. A file is

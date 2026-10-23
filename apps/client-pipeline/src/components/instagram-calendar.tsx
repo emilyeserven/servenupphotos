@@ -1,6 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon, ImageIcon, PlusIcon } from "lucide-react";
 import { type DragEvent, type ReactNode, useMemo, useState } from "react";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
+import { DraftBadge } from "@/components/draft-mark";
 import { PhotoFiles } from "@/components/photo-files";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { calendarDays, isoDate, parseIsoDate } from "@/lib/calendar";
+import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import {
   type Unsaved,
   PUBLISH_DATE,
@@ -114,10 +116,28 @@ function Schedule({ calendar }: { calendar: SocialCalendar }) {
   );
 }
 
+/**
+ * How many of photos are drafts, with untitled photos kept as drafts, and how many others are in
+ * flight, not in ALLPHOTOS.json on the base branch yet.
+ */
+function photoCounts(photos: SocialPhoto[], untitledDrafts: boolean) {
+  const draft = (photo: SocialPhoto) => untitledDrafts && isDraft(photo.data);
+  return {
+    drafts: photos.filter(draft).length,
+    inFlight: photos.filter((photo) => !photo.inAllPhotos && !draft(photo)).length,
+  };
+}
+
+/** ", and N drafts…" after the photo counts, when there are any. */
+function DraftCount({ drafts }: { drafts: number }) {
+  if (drafts === 0) return null;
+  return <>, and {count(drafts, "draft")} without a title, which the portfolio doesn't show</>;
+}
+
 /** Where the photos come from, and anything that keeps saving from working. */
 function SourceNote({ calendar }: { calendar: SocialCalendar }) {
   const { pullRequest } = calendar;
-  const inFlight = calendar.photos.filter((photo) => !photo.inAllPhotos).length;
+  const { inFlight, drafts } = photoCounts(calendar.photos, useUntitledDrafts());
   return (
     <div className="text-muted-foreground flex flex-col gap-1 text-sm">
       <p>
@@ -130,8 +150,10 @@ function SourceNote({ calendar }: { calendar: SocialCalendar }) {
           </>
         )}
         , {inFlight} of them in flight and not in <AllPhotosName calendar={calendar} /> on the base
-        branch yet. Moving a photo is kept in the app until you <strong>Commit</strong> from the
-        sync button at the top right, which saves the dates to the same files.
+        branch yet
+        <DraftCount drafts={drafts} />. Moving a photo is kept in the app until you{" "}
+        <strong>Commit</strong> from the sync button at the top right, which saves the dates to the
+        same files.
       </p>
       <Unreadable calendar={calendar} />
     </div>
@@ -500,14 +522,16 @@ interface PickerChoiceProps {
 
 const BADGE = "rounded px-1 text-[10px] font-medium";
 
-/** Whether the photo is eligible for social media, and whether it's still in flight. */
+/** Whether the photo is eligible for social media, and whether it's a draft or still in flight. */
 function PhotoBadges({ photo }: { photo: SocialPhoto }) {
   return (
     <span className="absolute top-1 left-1 flex flex-wrap gap-1">
       {photo.isSocialMediaEligible && (
         <span className={cn(BADGE, "bg-background/85")}>Eligible</span>
       )}
-      {!photo.inAllPhotos && <span className={cn(BADGE, "bg-background/85")}>In flight</span>}
+      <DraftBadge data={photo.data} className={cn(BADGE, "bg-violet-600 text-white")}>
+        {!photo.inAllPhotos && <span className={cn(BADGE, "bg-background/85")}>In flight</span>}
+      </DraftBadge>
     </span>
   );
 }

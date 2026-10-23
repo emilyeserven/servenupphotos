@@ -11,6 +11,7 @@ import {
   savedGroups,
 } from "@/api/organize";
 import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
+import { DraftMark } from "@/components/draft-mark";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -100,6 +101,7 @@ function PhotoCard({ file, images, selected, onToggle }: PhotoCardProps) {
         </div>
         <GroupNames file={file} />
         <InFlightMark status={file.inFlight} />
+        <DraftMark data={file.data} />
         <div className="mt-auto flex items-center gap-2">
           {problem ? (
             <p className="text-muted-foreground text-xs">{problem}</p>

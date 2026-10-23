@@ -29,6 +29,10 @@ type GitHub struct {
 	Branch string `json:"branch"`
 	Folder string `json:"folder"`
 	Token  string `json:"token"`
+	// IncludeUntitled puts photos without a title in ALLPHOTOS.json too. Off,
+	// the default, keeps them as drafts: saved in their own files, but left
+	// out of ALLPHOTOS.json, so the portfolio doesn't show them.
+	IncludeUntitled bool `json:"includeUntitled"`
 }
 
 // Settings is everything the store persists.
@@ -54,10 +58,11 @@ type PublicR2 struct {
 
 // PublicGitHub is GitHub with its secret replaced by a SecretStatus.
 type PublicGitHub struct {
-	Repo   string       `json:"repo"`
-	Branch string       `json:"branch"`
-	Folder string       `json:"folder"`
-	Token  SecretStatus `json:"token"`
+	Repo            string       `json:"repo"`
+	Branch          string       `json:"branch"`
+	Folder          string       `json:"folder"`
+	Token           SecretStatus `json:"token"`
+	IncludeUntitled bool         `json:"includeUntitled"`
 }
 
 // Public is the client-safe view of Settings.
@@ -77,12 +82,14 @@ type R2Update struct {
 }
 
 // GitHubUpdate replaces the GitHub settings, with Token following the same
-// keep / clear / replace rules as R2Update.SecretAccessKey.
+// keep / clear / replace rules as R2Update.SecretAccessKey. A nil
+// IncludeUntitled keeps the stored choice.
 type GitHubUpdate struct {
-	Repo   string  `json:"repo"`
-	Branch string  `json:"branch"`
-	Folder string  `json:"folder"`
-	Token  *string `json:"token"`
+	Repo            string  `json:"repo"`
+	Branch          string  `json:"branch"`
+	Folder          string  `json:"folder"`
+	Token           *string `json:"token"`
+	IncludeUntitled *bool   `json:"includeUntitled"`
 }
 
 // Store reads and writes Settings at a file path.
@@ -242,6 +249,8 @@ func (cur Settings) public() Public {
 			Branch: cur.GitHub.Branch,
 			Folder: cur.GitHub.Folder,
 			Token:  status(cur.GitHub.Token),
+
+			IncludeUntitled: cur.GitHub.IncludeUntitled,
 		},
 	}
 }
@@ -281,5 +290,14 @@ func (u GitHubUpdate) apply(cur GitHub) GitHub {
 		Branch: u.Branch,
 		Folder: u.Folder,
 		Token:  applySecret(cur.Token, u.Token),
+
+		IncludeUntitled: applyBool(cur.IncludeUntitled, u.IncludeUntitled),
 	}
+}
+
+func applyBool(stored bool, next *bool) bool {
+	if next == nil {
+		return stored
+	}
+	return *next
 }

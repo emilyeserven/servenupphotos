@@ -1,9 +1,14 @@
 import { GripVerticalIcon, ImageIcon, XIcon } from "lucide-react";
 import { type DragEvent, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
+import { DraftBadge } from "@/components/draft-mark";
 import { Button } from "@/components/ui/button";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
+
+/** Where a zone photo's "Draft" label goes: its bottom right corner. */
+export const DRAFT_BADGE =
+  "pointer-events-none absolute right-1 bottom-1 rounded bg-violet-600 px-1 text-[10px] font-medium text-white";
 
 /** The type the dragged photo's place in the zone is carried under. */
 const DRAG_TYPE = "application/x-spotlight-index";
@@ -103,6 +108,7 @@ function ZonePhoto({ photo, index, unsaved, onDropAt, onRemove }: ZonePhotoProps
       >
         <XIcon className="size-3.5" />
       </Button>
+      <DraftBadge data={photo.data} className={DRAFT_BADGE} />
       {unsaved && <UnsavedDot />}
     </li>
   );

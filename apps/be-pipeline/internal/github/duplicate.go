@@ -43,7 +43,8 @@ type AllPhotosMatch struct {
 }
 
 // AllPhotosCheck is where FindInPullRequest looked and what it found. Sources
-// is empty when no photo data pull request is open.
+// is empty when no photo data pull request is open, nothing is waiting for
+// Commit and the base branch has no drafts.
 type AllPhotosCheck struct {
 	Sources []AllPhotosSource `json:"sources"`
 	Matches []AllPhotosMatch  `json:"matches"`
@@ -51,7 +52,7 @@ type AllPhotosCheck struct {
 
 // FindInPullRequest looks for photo in the photo data files the photo data
 // pull request and the pending changes add or change, as the next Commit will
-// have them. Those files are read directly rather than through the pull
+// have them, and in the drafts on the base branch (see baseDrafts). Those files are read directly rather than through the pull
 // request's AllPhotosFile, which is only rebuilt by Commit. AllPhotosFile on
 // the base branch isn't read: pages check it from Combined, which they keep.
 // An entry found more than once is listed once. It changes nothing.
@@ -68,19 +69,27 @@ func (c *Client) FindInPullRequest(ctx context.Context, gh settings.GitHub, phot
 		return AllPhotosCheck{}, perr
 	}
 	check := AllPhotosCheck{Sources: []AllPhotosSource{}, Matches: []AllPhotosMatch{}}
-	source, files := w.inFlightPhotos(folder)
-	if w.pr == nil && len(files) == 0 {
-		return check, nil
-	}
-	check.Sources = append(check.Sources, source)
 	seen := map[string]bool{}
+	source, files := w.inFlightPhotos(folder)
+	if w.pr != nil || len(files) > 0 {
+		check.add(source, files, photo, seen)
+	}
+	if source, files := w.baseDrafts(folder); len(files) > 0 {
+		check.add(source, files, photo, seen)
+	}
+	return check, nil
+}
+
+// add adds source to the places check looked, and its files for the same
+// photo as photo to its matches, unless seen has them already.
+func (check *AllPhotosCheck) add(source AllPhotosSource, files []InFlightFile, photo PhotoIdentity, seen map[string]bool) {
+	check.Sources = append(check.Sources, source)
 	for _, f := range files {
 		if key := canonicalJSON(f.Data); !seen[key] && sameIdentity(f.Data, photo) {
 			seen[key] = true
 			check.Matches = append(check.Matches, AllPhotosMatch{Source: path.Base(f.Path) + " in " + source.Label, FileURL: f.FileURL, Entry: f.Data})
 		}
 	}
-	return check, nil
 }
 
 // inFlightPhotos reads the photo data files in folder that w adds or changes

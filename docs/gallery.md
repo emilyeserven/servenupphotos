@@ -3,7 +3,8 @@
 `/gallery` shows the photos already in the portfolio: every photo `.json` on the base branch (`GET /api/photos/published`
 → `GET /photos/published`), newest first, as Square Thumbnail tiles with their title and file name, filterable by
 either. Photos the open **Add photo data** pull request changes are marked "Changes in flight" (or "Removed in flight"),
-linked to Photos in Flight. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
+linked to Photos in Flight. A photo with no title on the base branch is a [draft](drafts.md), listed here but marked
+**Draft**, since `ALLPHOTOS.json` leaves it out. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
 each photo's file path, which `ALLPHOTOS.json` entries don't carry.
 
 Each photo with its image in R2 has an **Edit** button that opens it on the Photo page (`/exif?edit=<path>&from=gallery`),

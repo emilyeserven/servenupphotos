@@ -1,8 +1,9 @@
 import { CheckIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
+import { DraftBadge } from "@/components/draft-mark";
 import { PhotoFiles } from "@/components/photo-files";
-import { Thumbnail, ZonePhotos } from "@/components/spotlight-zone-photos";
+import { DRAFT_BADGE, Thumbnail, ZonePhotos } from "@/components/spotlight-zone-photos";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -86,7 +87,8 @@ function Zones({ files }: { files: SocialCalendar }) {
         Photos to pick from are the {files.photos.length} photo files on <code>{files.branch}</code>
         , in flight ones included. Changes are kept in the app until you <strong>Commit</strong>{" "}
         from the sync button at the top right, which saves them to each photo&apos;s{" "}
-        <code>spotlightZones</code> and, for the order, <code>websiteSpotlight</code>.
+        <code>spotlightZones</code> and, for the order, <code>websiteSpotlight</code>. A photo
+        marked <strong>Draft</strong> has no title, so the portfolio skips it until it gets one.
       </p>
       {files.unreadable.length > 0 && (
         <p className="text-destructive text-sm">
@@ -225,6 +227,7 @@ function PickerPhoto({ photo, chosen, onToggle }: PickerPhotoProps) {
         )}
       >
         <Thumbnail photo={photo} />
+        <DraftBadge data={photo.data} className={DRAFT_BADGE} />
         {chosen && (
           <span className="bg-primary text-primary-foreground absolute top-1 right-1 rounded-full p-0.5">
             <CheckIcon className="size-3.5" />

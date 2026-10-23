@@ -19,6 +19,8 @@ export interface SettingsResponse {
     branch: string;
     folder: string;
     token: SecretStatus;
+    /** Whether Commit puts untitled photos in ALLPHOTOS.json too; false keeps them as drafts. */
+    includeUntitled: boolean;
   };
 }
 
@@ -62,7 +64,7 @@ export interface ConnectionTestResult {
   message: string;
 }
 
-export type SettingsBody = Record<string, string | undefined>;
+export type SettingsBody = Record<string, string | boolean | undefined>;
 
 export function saveSettings(section: SettingsSection, body: SettingsBody) {
   return requestJson<SettingsResponse>(`/api/settings/${section}`, {

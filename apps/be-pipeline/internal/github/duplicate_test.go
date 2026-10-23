@@ -13,7 +13,7 @@ func TestFindInPullRequest(t *testing.T) {
 	const (
 		published  = `{"file":"DSC0001.jpg","gpsPosition":"35 deg 39' 31.20\" N, 139 deg 42' 2.40\" E","createDate":"2026:10:01 09:00:00","images":{"full":null,"key":null}}`
 		waiting    = `{"file":"DSC0002.jpg","gpsPosition":null,"createDate":"2026:10:02 09:00:00"}`
-		onlyOnMain = `{"file":"DSC0009.jpg","gpsPosition":null,"createDate":"2026:10:09 09:00:00"}`
+		onlyOnMain = `{"file":"DSC0009.jpg","title":"Nine","gpsPosition":null,"createDate":"2026:10:09 09:00:00"}`
 	)
 	tests := []struct {
 		name   string
@@ -34,7 +34,7 @@ func TestFindInPullRequest(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			f, c := newFakeGitHub(t)
-			f.files["main:"+photosDir+"DSC0001.json"] = `{"file":"DSC0001.jpg"}`
+			f.files["main:"+photosDir+"DSC0001.json"] = `{"file":"DSC0001.jpg","title":"One"}`
 			f.files["main:"+photosDir+"DSC0009.json"] = onlyOnMain
 			// The pull request's own ALLPHOTOS.json is stale, so DSC0002 is
 			// only found through its file.
@@ -64,6 +64,29 @@ func TestFindInPullRequest(t *testing.T) {
 				t.Errorf("entry = %s", got.Matches[0].Entry)
 			}
 		})
+	}
+}
+
+func TestFindInPullRequestBaseDrafts(t *testing.T) {
+	const (
+		draft  = `{"file":"DSC0001.jpg","title":" ","createDate":"2026:10:01 09:00:00"}`
+		listed = `{"file":"DSC0002.jpg","title":null,"createDate":"2026:10:02 09:00:00"}`
+	)
+	f, c := newFakeGitHub(t)
+	f.files["main:"+photosDir+"DSC0001.json"] = draft
+	f.files["main:"+photosDir+"DSC0002.json"] = listed
+	// DSC0002 was committed before drafts, so pages find it in ALLPHOTOS.json.
+	f.files["main:"+photosDir+"ALLPHOTOS.json"] = "[" + listed + "]"
+	got, err := c.FindInPullRequest(t.Context(), pullGH, PhotoIdentity{File: "DSC0001.jpg", CreateDate: ptr("2026:10:01 09:00:00")})
+	if err != nil || len(got.Sources) != 1 || got.Sources[0].Label != "the drafts on main" {
+		t.Fatalf("FindInPullRequest() = %+v, %v; want the drafts on main", got, err)
+	}
+	if len(got.Matches) != 1 || got.Matches[0].Source != "DSC0001.json in the drafts on main" {
+		t.Errorf("matches = %+v, want the draft", got.Matches)
+	}
+	got, err = c.FindInPullRequest(t.Context(), pullGH, PhotoIdentity{File: "DSC0002.jpg", CreateDate: ptr("2026:10:02 09:00:00")})
+	if err != nil || len(got.Matches) != 0 {
+		t.Errorf("FindInPullRequest() = %+v, %v; want no match for a photo in ALLPHOTOS.json", got, err)
 	}
 }
 

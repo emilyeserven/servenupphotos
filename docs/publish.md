@@ -9,7 +9,8 @@ media, as `YYYY-MM-DD`. Older files may be missing them, which means the same as
 `/instagram` is a calendar of the photos scheduled to post, one a day. It shows three weeks, starting with this one
 (Sunday first), and pages a week at a time. Clicking an empty day picks a photo for it from the photo files, read
 where Update Data reads them, so photos in flight on the **Add photo data** pull request are included and marked as
-such (eligible photos first); clicking a scheduled photo changes or removes it. Dragging a photo to another
+such (eligible photos first), and ones without a title are marked **Draft** (see [Drafts](drafts.md)): they can be
+scheduled, but aren't on the portfolio; clicking a scheduled photo changes or removes it. Dragging a photo to another
 day moves it there, and dropping it on another photo swaps the two. The page reads the photo files with
 `GET /api/publish/instagram`, each with its whole JSON as `data`.
 
@@ -65,7 +66,8 @@ photo onto another moves it to that place, shifting the ones between, and saves 
 `websiteSpotlight` (1 first). Photos without one, such as ones just added, come after the rest, newest first, and
 taking a photo out of a zone clears its `websiteSpotlight`. The places are one order shared by every zone, so each
 zone shows its photos in that order. **Add photos** opens every
-photo file (read like the Instagram calendar, in flight ones included) to click in or out of it. Like the calendar's
+photo file (read like the Instagram calendar, in flight ones included) to click in or out of it. A photo without a
+title is labeled **Draft**: it can be picked, but the portfolio skips it until it has one (see [Drafts](drafts.md)). Like the calendar's
 dates, changes are [local edits](combined-data-store.md#local-edits) until **Commit**, which replaces the
 `spotlightZones` list and sets `websiteSpotlight` in each changed file. A list sent in an edit replaces the file's whole list; other fields are
 left as they are.

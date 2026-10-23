@@ -32,7 +32,8 @@ type CombinedCommit struct {
 	// Edited is how many data files the commit changed.
 	Edited int `json:"edited"`
 	// Counts are how many entries each combined list has: photos, albums,
-	// tags, places, localizations and metadata groups (metainfo).
+	// tags, places, localizations and metadata groups (metainfo), and how
+	// many photos were left out of ALLPHOTOS.json as drafts (drafts).
 	Counts map[string]int `json:"counts"`
 	// NewPullRequest is true when the commit opened the photo data pull
 	// request, which happens when none is open.
@@ -69,7 +70,8 @@ func combinedKinds() []combinedKind {
 // CommitCombined commits every pending change, with edits made over the data
 // files, and the combined lists rebuilt from the result, as the "Combine
 // photo data" workflow does (each is every other JSON file in its folder,
-// sorted by path, as one array), as one commit on the open photo data pull
+// sorted by path, as one array, but without untitled photos unless Settings
+// include them: see isDraft), as one commit on the open photo data pull
 // request's branch. With none open, it commits to a new photo-data/ branch
 // from the base branch and opens one. Nothing is committed when a file can't
 // be read. It makes 3 GitHub calls (a tree, a commit and the branch moving to
@@ -153,30 +155,48 @@ func (w *workspace) commitChanges(edits map[string]FieldEdit) (map[string][]byte
 func (w *workspace) addCombined(kind combinedKind, changes map[string][]byte, counts map[string]int) *PublishError {
 	folder := w.root + "/" + kind.folder
 	view := w.withChanges(changes)
-	paths := view.paths(folder, kind.allFile)
-	contents := make([]json.RawMessage, len(paths))
-	var unreadable []string
-	for i, p := range paths {
-		data, msg := view.json(p)
-		if msg != "" {
-			unreadable = append(unreadable, fmt.Sprintf("%s (%s)", p, msg))
-		}
-		contents[i] = data
-	}
-	if len(unreadable) > 0 {
-		return publishErr(http.StatusUnprocessableEntity,
-			"Nothing was committed, since %d file(s) couldn't be read: %s", len(unreadable), strings.Join(unreadable, "; "))
+	contents, drafts, perr := view.combinedEntries(kind)
+	if perr != nil {
+		return perr
 	}
 	content, err := formatJSONArray(contents)
 	if err != nil {
 		return publishErr(http.StatusInternalServerError, "Couldn't format %s.", kind.allFile)
 	}
-	counts[kind.name] = len(paths)
+	counts[kind.name] = len(contents)
+	if kind.name == "photos" {
+		counts["drafts"] = drafts
+	}
 	all := folder + "/" + kind.allFile
 	if old, ok := w.head.files[all]; !ok || old.sha != blobSHA(content) {
 		changes[all] = content
 	}
 	return nil
+}
+
+// combinedEntries is the data of kind's files in w, sorted by path, without
+// the ones left out of its combined list (see leftOut), and how many were
+// left out. It fails when a file can't be read.
+func (w *workspace) combinedEntries(kind combinedKind) ([]json.RawMessage, int, *PublishError) {
+	contents := []json.RawMessage{}
+	var unreadable []string
+	drafts := 0
+	for _, p := range w.paths(w.root+"/"+kind.folder, kind.allFile) {
+		data, msg := w.json(p)
+		switch {
+		case msg != "":
+			unreadable = append(unreadable, fmt.Sprintf("%s (%s)", p, msg))
+		case w.leftOut(kind, data):
+			drafts++
+		default:
+			contents = append(contents, data)
+		}
+	}
+	if len(unreadable) > 0 {
+		return nil, 0, publishErr(http.StatusUnprocessableEntity,
+			"Nothing was committed, since %d file(s) couldn't be read: %s", len(unreadable), strings.Join(unreadable, "; "))
+	}
+	return contents, drafts, nil
 }
 
 // withChanges is w with changes as its only pending changes.

@@ -264,8 +264,8 @@ func TestCombinedStatus(t *testing.T) {
 	}
 
 	f.openPull(prBranch, with(emptyLists, map[string]string{
-		dataRoot + "/photos/a.json":         "{\n  \"file\": \"a.jpg\"\n}\n",
-		dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"file\": \"a.jpg\"\n  }\n]\n",
+		dataRoot + "/photos/a.json":         "{\n  \"file\": \"a.jpg\",\n  \"title\": \"A\"\n}\n",
+		dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"file\": \"a.jpg\",\n    \"title\": \"A\"\n  }\n]\n",
 	}))
 	_ = c.Refresh(t.Context(), pullGH)
 	got, err = c.CombinedStatus(t.Context(), pullGH)
@@ -280,9 +280,9 @@ func TestCombinedStatusPending(t *testing.T) {
 	f.openPull(prBranch, with(emptyLists, map[string]string{
 		// Pushed without rebuilding the lists: a.json changed, b.json is new, and city-seoul is gone.
 		dataRoot + "/photos/a.json":                    `{"file":"a.jpg","title":"New"}`,
-		dataRoot + "/photos/b.json":                    `{"file":"b.jpg"}`,
-		dataRoot + "/photos/c.json":                    `{"file":"c.jpg"}`,
-		dataRoot + "/photos/ALLPHOTOS.json":            `[{"file":"a.jpg","title":"Old"},{"file":"c.jpg"}]`,
+		dataRoot + "/photos/b.json":                    `{"file":"b.jpg","title":"B"}`,
+		dataRoot + "/photos/c.json":                    `{"file":"c.jpg","title":"C"}`,
+		dataRoot + "/photos/ALLPHOTOS.json":            `[{"file":"a.jpg","title":"Old"},{"file":"c.jpg","title":"C"}]`,
 		dataRoot + "/localizations/LOCALIZATIONS.json": `[{"id":"city-seoul"}]`,
 	}))
 	delete(f.files, prBranch+":"+dataRoot+"/localizations/city-seoul.json")

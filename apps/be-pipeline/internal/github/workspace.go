@@ -29,6 +29,9 @@ type workspace struct {
 	// head is the pull request's head, or base when none is open.
 	head   *snapshot
 	staged map[string]StagedFile
+	// includeUntitled is Settings' choice to put untitled photos in
+	// AllPhotosFile too, rather than keep them as drafts (see isDraft).
+	includeUntitled bool
 }
 
 // workspace reads gh's workspace, from cached reads where they're recent
@@ -42,7 +45,7 @@ func (c *Client) workspace(ctx context.Context, gh settings.GitHub) (*workspace,
 	if perr != nil {
 		return nil, perr
 	}
-	w := &workspace{repoState: s, root: root}
+	w := &workspace{repoState: s, root: root, includeUntitled: gh.IncludeUntitled}
 	if w.base, perr = c.snapshot(ctx, s.t, root, s.baseHead); perr != nil {
 		return nil, perr
 	}

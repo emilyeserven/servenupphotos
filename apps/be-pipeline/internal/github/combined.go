@@ -41,6 +41,9 @@ type CombinedResult struct {
 	Base   CombinedBase `json:"base"`
 	// Head is nil when no pull request titled PullRequestTitle is open.
 	Head *CombinedHead `json:"head"`
+	// IncludeUntitled is Settings' choice to put untitled photos in
+	// AllPhotosFile too; false keeps them out as drafts.
+	IncludeUntitled bool `json:"includeUntitled"`
 }
 
 // Combined reads the combined lists on the base branch from Settings (or the
@@ -53,7 +56,7 @@ func (c *Client) Combined(ctx context.Context, gh settings.GitHub) (CombinedResu
 		return CombinedResult{}, perr
 	}
 	result := CombinedResult{
-		Repo: w.t.repo.FullName, Folder: w.root,
+		Repo: w.t.repo.FullName, Folder: w.root, IncludeUntitled: w.includeUntitled,
 		Base: CombinedBase{Branch: w.t.base, CombinedFiles: combinedFiles(w.t, w.root, w.base, w.t.base)},
 	}
 	if pr := w.inFlightPullRequest(); pr != nil {
