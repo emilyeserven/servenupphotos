@@ -1,0 +1,13 @@
+{
+  "id": "focal-length-standard",
+  "name": "Standard",
+  "description": "",
+  "field": "focalLength",
+  "parent": "",
+  "order": 2,
+  "values": [],
+  "range": {
+    "min": 40,
+    "max": 58
+  }
+}

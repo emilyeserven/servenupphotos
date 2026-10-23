@@ -1,0 +1,14 @@
+{
+  "id": "lens-canon",
+  "name": "Canon",
+  "description": "",
+  "field": "lens",
+  "parent": "lens-brand",
+  "values": [
+    "EF-S10-18mm f/4.5-5.6 IS STM",
+    "EF-S18-135mm f/3.5-5.6 IS",
+    "EF-S18-135mm f/3.5-5.6 IS STM",
+    "EF50mm f/1.8 II",
+    "EF-S55-250mm f/4-5.6 IS STM"
+  ]
+}

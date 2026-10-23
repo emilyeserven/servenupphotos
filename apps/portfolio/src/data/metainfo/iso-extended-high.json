@@ -1,0 +1,12 @@
+{
+  "id": "iso-extended-high",
+  "name": "Extended High",
+  "description": "",
+  "field": "iso",
+  "parent": "",
+  "order": 4,
+  "values": [],
+  "range": {
+    "min": 12801
+  }
+}

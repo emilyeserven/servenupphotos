@@ -1,0 +1,13 @@
+{
+  "id": "exposure-handheld",
+  "name": "Handheld",
+  "description": "",
+  "field": "exposure",
+  "parent": "",
+  "order": 2,
+  "values": [],
+  "range": {
+    "min": 0.004016064257028112,
+    "max": 0.0196078431372549
+  }
+}

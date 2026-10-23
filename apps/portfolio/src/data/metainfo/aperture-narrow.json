@@ -1,0 +1,12 @@
+{
+  "id": "aperture-narrow",
+  "name": "Narrow",
+  "description": "",
+  "field": "aperture",
+  "parent": "",
+  "order": 3,
+  "values": [],
+  "range": {
+    "min": 9
+  }
+}

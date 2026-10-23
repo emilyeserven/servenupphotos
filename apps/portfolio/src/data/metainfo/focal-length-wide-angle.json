@@ -1,0 +1,13 @@
+{
+  "id": "focal-length-wide-angle",
+  "name": "Wide-angle",
+  "description": "",
+  "field": "focalLength",
+  "parent": "",
+  "order": 1,
+  "values": [],
+  "range": {
+    "min": 23,
+    "max": 39
+  }
+}

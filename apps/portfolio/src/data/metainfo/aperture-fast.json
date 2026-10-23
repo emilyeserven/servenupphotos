@@ -1,0 +1,13 @@
+{
+  "id": "aperture-fast",
+  "name": "Fast",
+  "description": "",
+  "field": "aperture",
+  "parent": "",
+  "order": 1,
+  "values": [],
+  "range": {
+    "min": 2,
+    "max": 3.1
+  }
+}

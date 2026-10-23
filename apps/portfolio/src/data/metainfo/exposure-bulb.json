@@ -1,0 +1,12 @@
+{
+  "id": "exposure-bulb",
+  "name": "Bulb",
+  "description": "",
+  "field": "exposure",
+  "parent": "",
+  "order": 5,
+  "values": [],
+  "range": {
+    "min": 30
+  }
+}
