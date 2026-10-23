@@ -22,7 +22,7 @@ import { PlaceCityAdders } from "@/components/place-city-adder";
 import { PlaceGpsAdders } from "@/components/place-gps-adder";
 import { PlacesJoinWord } from "@/components/place-join-fields";
 import { PlaceLocalizationDialog } from "@/components/place-localization-dialog";
-import { PlaceScopeNote, usePlaceScope } from "@/components/place-scope";
+import { type PlaceMenu, PlaceScopeNote, usePlaceScope } from "@/components/place-scope";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import {
   isUnitedStates,
@@ -199,7 +199,7 @@ export function PlaceFields({
   };
   const country = photoCountry(value, exifCountry);
   const city = photoCity(value, exifCity);
-  const scope = usePlaceScope({ city, country, ...all });
+  const scope = usePlaceScope({ city, country, rows, ...all });
   return (
     <div className="flex flex-col gap-2">
       <PlaceLabel />
@@ -222,7 +222,7 @@ export function PlaceFields({
         disabled={disabled}
       />
       {oldName && <OldPlaceName name={oldName} />}
-      <PlaceScopeNote scope={scope.scope} showAll={scope.showAll} onShowAll={scope.setShowAll} />
+      <PlaceScopeNote {...scope} onShowAll={scope.setShowAll} />
       {rows.map((row, index) => (
         <PlaceRow
           key={index}
@@ -234,7 +234,7 @@ export function PlaceFields({
           onRemove={index > 0 ? () => setRows(rows.toSpliced(index, 1)) : undefined}
           country={country}
           joined={placesJoin(rows, index, all.places)}
-          menu={{ options: scope.optionsFor(row.id), emptyText: scope.emptyText }}
+          menu={scope.menuFor(index, row.id)}
         />
       ))}
       <PlaceFooter
@@ -279,12 +279,6 @@ interface PlaceRowProps {
   joined: string | undefined;
   /** The places the menu lists, and what it says when none matches. */
   menu: PlaceMenu;
-}
-
-/** The places a place menu lists, and what it says when none matches. */
-interface PlaceMenu {
-  options: ComboboxOption[];
-  emptyText: string;
 }
 
 /** How the photo relates to one place, and which place. */

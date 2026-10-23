@@ -152,9 +152,11 @@ that city; with no city but a country, only the places in that country. A place 
 it, or the nearest place it's in has it, and names compare by their [other names](#other-names) ignoring case, so a
 place in “USA” is listed for a photo in “United States” once “USA” is one of its other names. Places with no city or country, and inferred places, aren't
 listed. The place a row has chosen always stays in its list. A line above the rows says “Listing places in Seoul.”
-with **Show all places**, which lists every place until **Only places in Seoul**; it's not saved. Choosing a place
+with **Show all places**, which lists every place until **Only matching places**; it's not saved. Choosing a place
 with a city fills in the photo's city, so the second row lists that city's places. A photo with neither lists every
-place.
+place. When the second (less specific) place is chosen, the first
+row lists only the places in it, at any depth, such as Geunjeongjeon and Geunjeongmun Gate for Gyeongbokgung Palace,
+and the line adds “places in Gyeongbokgung Palace for the first place”. **Show all places** lifts both.
 
 > **Frontend analogy:** like a cascading select, where picking a state narrows the city dropdown, with an escape
 > hatch to search everything.

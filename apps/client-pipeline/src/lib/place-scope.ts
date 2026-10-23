@@ -1,7 +1,7 @@
 import type { Place } from "@/api/places";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import { type LocationNames, type RegionType, winningName } from "@/lib/location-names";
-import { ancestors } from "@/lib/place-hierarchy";
+import { ancestors, notParentsOf } from "@/lib/place-hierarchy";
 
 /**
  * Which places the Photo page's place menus list: those in the photo's city, or, when it has no
@@ -39,17 +39,26 @@ function inScope(place: Place, places: Place[], scope: PlaceScope, names: Locati
   return nameKey(region) === nameKey(scope.name);
 }
 
+/** The IDs of the places in the scope's city or country. */
+export function idsInScope(places: Place[], scope: PlaceScope, names: LocationNames): Set<string> {
+  return new Set(places.filter((p) => inScope(p, places, scope, names)).map((p) => p.id));
+}
+
+/** The IDs of the places in the place `parent`, at any depth, not counting it. */
+export function idsInside(places: Place[], parent: string): Set<string> {
+  const ids = notParentsOf(places, parent);
+  ids.delete(parent);
+  return ids;
+}
+
 /**
- * The options for the places in the scope, and the chosen one whatever its scope, so it still shows.
- * Inferred places, which have no city or country, are left out.
+ * The options for the places with the IDs, and the chosen one whatever it is, so it still shows.
+ * Inferred places, which aren't saved places yet, are left out.
  */
-export function scopedOptions(
+export function optionsWith(
   options: ComboboxOption[],
-  places: Place[],
-  scope: PlaceScope,
-  names: LocationNames,
+  ids: Set<string>,
   chosen: string,
 ): ComboboxOption[] {
-  const ids = new Set(places.filter((p) => inScope(p, places, scope, names)).map((p) => p.id));
   return options.filter((option) => option.value === chosen || ids.has(option.value));
 }
