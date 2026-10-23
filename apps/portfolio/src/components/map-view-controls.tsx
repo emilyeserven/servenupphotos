@@ -1,6 +1,7 @@
 import { useMap } from "@vis.gl/react-maplibre";
-import { Maximize } from "lucide-react";
+import { ChevronsUpDown, Maximize, Navigation } from "lucide-react";
 import { type LngLatBoundsLike } from "maplibre-gl";
+import type { ReactNode } from "react";
 
 /** An area of the map to jump to, with the bounds to fit. */
 interface MapArea {
@@ -30,47 +31,64 @@ const MAP_AREAS: MapArea[] = [
 /** How far from the edges of the map an area is kept, in pixels. */
 const AREA_PADDING = 40;
 
-const CONTROL_BUTTON =
-  "inline-flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-sm font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4";
-
 /**
- * Buttons over the map's top left corner: one to go back to the view that shows every photo, and
- * one for each area in MAP_AREAS to zoom straight to it.
+ * A row of controls over the map, starting with a button group: a **Jump to** dropdown that zooms
+ * straight to one of the areas in MAP_AREAS, and an icon button that goes back to the view that
+ * shows every photo.
  */
-export function MapViewControls({ onReset }: { onReset: () => void }) {
+export function MapViewControls({
+  onReset,
+  children,
+}: {
+  onReset: () => void;
+  /** More controls for the same row, such as the day filter. */
+  children?: ReactNode;
+}) {
   const { current: map } = useMap();
   function showArea(bounds: LngLatBoundsLike) {
     map?.fitBounds(bounds, { padding: AREA_PADDING });
   }
   return (
-    <div className="absolute top-2.5 left-2.5 z-10 flex max-w-[calc(100%-4rem)] flex-wrap gap-2">
-      <div className="inline-flex rounded-md border bg-background p-0.5 shadow-xs dark:border-input">
+    <div className="flex flex-wrap gap-2">
+      <div className="inline-flex h-8 divide-x overflow-hidden rounded-md border bg-background text-sm text-muted-foreground shadow-xs dark:divide-input dark:border-input">
+        <label className="relative inline-flex items-center">
+          <Navigation className="pointer-events-none absolute left-2.5 size-4" aria-hidden />
+          <span className="sr-only">Jump to an area</span>
+          <select
+            // Always back on "Jump to", as it's an action rather than a setting.
+            value=""
+            onChange={(event) => {
+              const area = MAP_AREAS.find((choice) => choice.name === event.target.value);
+              if (area) showArea(area.bounds);
+            }}
+            // Only as wide as "Jump to", rather than its longest area.
+            className="h-full cursor-pointer appearance-none bg-transparent pr-8 pl-8 text-foreground outline-none [field-sizing:content] hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+          >
+            <option value="" disabled>
+              Jump to
+            </option>
+            {MAP_AREAS.map((area) => (
+              <option key={area.name} value={area.name}>
+                {area.name}
+              </option>
+            ))}
+          </select>
+          <ChevronsUpDown
+            className="pointer-events-none absolute right-2.5 size-4 opacity-50"
+            aria-hidden
+          />
+        </label>
         <button
           type="button"
           onClick={onReset}
           title="Zoom out to every photo"
-          className={CONTROL_BUTTON}
+          aria-label="Zoom out to every photo"
+          className="inline-flex w-8 items-center justify-center outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
         >
-          <Maximize aria-hidden />
-          All photos
+          <Maximize className="size-4" aria-hidden />
         </button>
       </div>
-      <div
-        role="group"
-        aria-label="Go to an area"
-        className="inline-flex rounded-md border bg-background p-0.5 shadow-xs dark:border-input"
-      >
-        {MAP_AREAS.map((area) => (
-          <button
-            key={area.name}
-            type="button"
-            onClick={() => showArea(area.bounds)}
-            className={CONTROL_BUTTON}
-          >
-            {area.name}
-          </button>
-        ))}
-      </div>
+      {children}
     </div>
   );
 }

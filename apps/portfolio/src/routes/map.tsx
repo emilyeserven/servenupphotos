@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Layer,
   Map,
@@ -11,7 +11,7 @@ import {
   useMap,
 } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
-import { MapPin, ZoomIn } from "lucide-react";
+import { ZoomIn } from "lucide-react";
 import {
   type LngLatBounds,
   setWorkerUrl,
@@ -28,8 +28,10 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { MapDayFilter } from "@/components/map-day-filter";
 import { MapViewControls } from "@/components/map-view-controls";
-import { PhotoFilterBar } from "@/components/photo-filters";
+import { PhotoFilterControls } from "@/components/photo-filters";
+import { MapOverlay } from "@/components/map-overlay";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
@@ -40,8 +42,10 @@ import {
   boundsOf,
   placedById,
   placedPhotos,
+  useDayPhotos,
   useMapPhotos,
 } from "@/lib/map-photos";
+import { type DayRange, daysInView, isDay } from "@/lib/map-days";
 import { parseMapView, type MapViewSearch, useSaveMapView } from "@/lib/map-view";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
@@ -49,12 +53,24 @@ import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/sho
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
-/** The map's search: the shared filters, the open photo, and where the map is looking. */
-type MapSearch = PhotoFilters & ShownPhotoSearch & MapViewSearch;
+/**
+ * The map's search: the shared filters, the open photo, where the map is looking, and the day only
+ * the map narrows to, or the first day of a range with `to` as its last.
+ */
+type MapSearch = PhotoFilters & ShownPhotoSearch & MapViewSearch & { day?: string; to?: string };
+
+/** The day, and the last day of the range when there's a day and it's after it. */
+function daysOf(search: Record<string, unknown>): Pick<MapSearch, "day" | "to"> {
+  if (!isDay(search.day)) return {};
+  return isDay(search.to) && search.to > search.day
+    ? { day: search.day, to: search.to }
+    : { day: search.day };
+}
 
 export const Route = createFileRoute("/map")({
   validateSearch: (search: Record<string, unknown>): MapSearch => ({
     ...parseFilters(search),
+    ...daysOf(search),
     ...parseShownPhoto(search),
     ...parseMapView(search),
   }),
@@ -85,8 +101,11 @@ const hiddenLayer: LayerProps = {
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
 
-/** How far from the photos' edges the map keeps them, in pixels. */
-const FIT_PADDING = 80;
+/**
+ * How far from the map's edges the map keeps the photos it fits to, in pixels; more at the top,
+ * where the title and controls cover it.
+ */
+const FIT_PADDING = { top: 140, right: 80, bottom: 80, left: 80 };
 
 // Opens on the photos, close enough to see the streets around one photo but no closer; the whole
 // world without any.
@@ -202,6 +221,25 @@ function useFitOnFilter(
   });
 }
 
+/**
+ * The photos the shared filters leave, which the map fits itself to, and of those the ones taken
+ * on the day in the URL, which it draws.
+ */
+function useMapFilters() {
+  const search = Route.useSearch();
+  const mapPhotos = useMapPhotos(parseFilters(search));
+  const dayPhotos = useDayPhotos(mapPhotos, search.day, search.to);
+  return { search, mapPhotos, dayPhotos, setDays: useSetDays() };
+}
+
+/** Sets the days the map is narrowed to in the URL, keeping the other filters; no day for all. */
+function useSetDays() {
+  const navigate = useNavigate({ from: "/map" });
+  return ({ day, to }: DayRange) => {
+    void navigate({ search: (prev) => ({ ...prev, day, to }), replace: true });
+  };
+}
+
 // Clicks on markers and in popups would otherwise reach the map too, which closes the popups.
 function stopAtMarker(event: MouseEvent) {
   event.stopPropagation();
@@ -215,8 +253,9 @@ function MapView() {
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
   const { shown, show, close } = useShownPhoto();
-  const search = Route.useSearch();
-  const mapPhotos = useMapPhotos(parseFilters(search));
+  const { search, mapPhotos, dayPhotos, setDays } = useMapFilters();
+  // What the map shows, for the day filter to list only the days of the photos in view.
+  const [view, setView] = useState<LngLatBounds | null>(null);
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
   const saveView = useSaveMapView();
   useFitOnFilter(map, mapPhotos.bounds, () => {
@@ -227,7 +266,9 @@ function MapView() {
   const [shownGroup, setShownGroup] = useState<PlacedPhoto[]>([]);
 
   function updateMarkers() {
-    if (map.current) setMarkers(markersInView(map.current));
+    if (!map.current) return;
+    setMarkers(markersInView(map.current));
+    setView(map.current.getBounds());
   }
 
   function onMoveEnd() {
@@ -260,16 +301,6 @@ function MapView() {
 
   return (
     <div className="flex h-svh flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-4 py-6 pr-16 sm:px-6">
-        <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
-          <MapPin className="size-8 text-muted-foreground" aria-hidden />
-          Map
-        </h1>
-        <p className="text-sm text-muted-foreground">{mapPhotos.placed.length} photos</p>
-        <div className="w-full pt-2">
-          <PhotoFilterBar photos={placedPhotos} />
-        </div>
-      </header>
       <div className="min-h-0 flex-1">
         <Map
           ref={map}
@@ -285,16 +316,25 @@ function MapView() {
             setCluster(null);
           }}
         >
-          <NavigationControl position="top-right" />
-          <MapViewControls
-            onReset={() => {
-              if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
-            }}
-          />
+          <NavigationControl position="bottom-right" />
+          <MapOverlay count={dayPhotos.placed.length}>
+            <MapViewControls
+              onReset={() => {
+                if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
+              }}
+            >
+              <MapDayFilter
+                days={daysInView(mapPhotos.placed, view)}
+                range={search}
+                onChange={setDays}
+              />
+              <PhotoFilterControls photos={placedPhotos} />
+            </MapViewControls>
+          </MapOverlay>
           <Source
             id={SOURCE_ID}
             type="geojson"
-            data={mapPhotos.geoJson}
+            data={dayPhotos.geoJson}
             cluster
             clusterMaxZoom={17}
             clusterRadius={50}

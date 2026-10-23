@@ -115,12 +115,7 @@ export function PhotoFilterBar({
           {open ? "Hide filters" : "Show filters"}
           <FilterCount count={count} />
         </Button>
-        {count > 0 && (
-          <Button variant="ghost" size="sm" onClick={clearFilters}>
-            <X aria-hidden />
-            Clear filters
-          </Button>
-        )}
+        <ClearFilters count={count} onClear={clearFilters} />
       </div>
       <div
         id={listId}
@@ -142,6 +137,34 @@ export function PhotoFilterBar({
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * The Places combobox and the album and tag dropdowns always shown, with **Clear filters** after
+ * them while any is set, for a view with no room to spare for the **Show filters** button, such as
+ * the map.
+ */
+export function PhotoFilterControls({ photos }: { photos: Photo[] }) {
+  const filters = useFilters();
+  const setFilters = useSetFilters();
+  const clearFilters = useClearFilters([]);
+  return (
+    <>
+      <FilterDropdowns photos={photos} facet={photos} filters={filters} setFilters={setFilters} />
+      <ClearFilters count={filterCount(filters)} onClear={clearFilters} />
+    </>
+  );
+}
+
+/** A **Clear filters** button, shown only while `count` filters are set. */
+function ClearFilters({ count, onClear }: { count: number; onClear: () => void }) {
+  if (count === 0) return null;
+  return (
+    <Button variant="ghost" size="sm" onClick={onClear} className="bg-background/80">
+      <X aria-hidden />
+      Clear filters
+    </Button>
   );
 }
 
