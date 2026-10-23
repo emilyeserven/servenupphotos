@@ -11,7 +11,8 @@ import type { Photo } from "@/lib/photos";
 
 /** One choice of a filter's dropdown. */
 export interface FilterOption {
-  key: FilterKey;
+  /** The URL search key the choice sets, such as "album". */
+  key: string;
   value: string;
   /** The name, written each way the menu's Script Display can choose. */
   label: Localized;
@@ -70,15 +71,18 @@ function locationLabel({ key, value }: LocationNode): Localized {
   return place ? localizePlace(place) : sameEveryWay(value);
 }
 
-/** The tree's nodes, each followed by what's in it, sorted by their English names. */
-function flatten(
-  node: LocationNode,
-  depth = 0,
-): { node: LocationNode; label: Localized; depth: number }[] {
-  return [...node.children.values()]
-    .map((child) => ({ node: child, label: locationLabel(child), depth }))
-    .toSorted((a, b) => a.label.english.localeCompare(b.label.english))
-    .flatMap((entry) => [entry, ...flatten(entry.node, depth + 1)]);
+/** A country, city or place as a choice of the Places filter, with what's in it. */
+export interface LocationOption {
+  key: LocationKey;
+  value: string;
+  /** Where it is in the tree, such as "/country:Japan/city:Kyoto", which no other choice has. */
+  id: string;
+  /** The name, written each way the menu's Script Display can choose. */
+  label: Localized;
+  /** How many photos it would show, given the other filters. */
+  count: number;
+  /** What's in it, sorted by their English names. */
+  children: LocationOption[];
 }
 
 /** How many of the photos the filter's choice matches. */
@@ -86,19 +90,31 @@ function countOf(facet: Photo[], key: FilterKey, value: string): number {
   return facet.filter((photo) => matchesFilters(photo, { [key]: value })).length;
 }
 
+/** The node's children as choices, sorted by their English names, each with what's in it. */
+function childOptions(node: LocationNode, facet: Photo[], path = ""): LocationOption[] {
+  return [...node.children.values()]
+    .map((child) => ({ child, label: locationLabel(child) }))
+    .toSorted((a, b) => a.label.english.localeCompare(b.label.english))
+    .map(({ child, label }) => {
+      const id = `${path}/${child.key}:${child.value}`;
+      return {
+        key: child.key,
+        value: child.value,
+        id,
+        label,
+        count: countOf(facet, child.key, child.value),
+        children: childOptions(child, facet, id),
+      };
+    });
+}
+
 /**
- * The location filter's choices: every country the photos were taken in, the cities in each and
- * the places in each city, each place under the place it's in. `facet` is the photos the album
- * and tag filters leave, which the counts are out of.
+ * The Places filter's choices: every country the photos were taken in, the cities in each and
+ * the places in each city, each place under the place it's in. `facet` is the photos the other
+ * filters leave, which the counts are out of.
  */
-export function locationOptions(list: Photo[], facet: Photo[]): FilterOption[] {
-  return flatten(locationTree(list)).map(({ node, label, depth }) => ({
-    key: node.key,
-    value: node.value,
-    label,
-    depth,
-    count: countOf(facet, node.key, node.value),
-  }));
+export function locationOptions(list: Photo[], facet: Photo[]): LocationOption[] {
+  return childOptions(locationTree(list), facet);
 }
 
 /** An album or tag as a choice, and, for an album, its sub-albums after it. */
@@ -130,4 +146,23 @@ export function albumOptions(facet: Photo[]): FilterOption[] {
 /** The tag filter's choices: every tag. */
 export function tagOptions(facet: Photo[]): FilterOption[] {
   return tags.flatMap((tag) => groupOptions("tag", tag, facet, 0));
+}
+
+/**
+ * The camera or lens filter's choices: every camera or lens the photos were taken with, by name.
+ * Photos whose EXIF didn't name a lens aren't under any.
+ */
+export function equipmentOptions(
+  key: "camera" | "lens",
+  list: Photo[],
+  facet: Photo[],
+): FilterOption[] {
+  const names = [...new Set(list.flatMap((photo) => photo[key] ?? []))].toSorted();
+  return names.map((name) => ({
+    key,
+    value: name,
+    label: sameEveryWay(name),
+    depth: 0,
+    count: facet.filter((photo) => photo[key] === name).length,
+  }));
 }

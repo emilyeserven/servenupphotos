@@ -1,13 +1,25 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { FolderOpen, type LucideIcon, MapPin, SlidersHorizontal, Tag, X } from "lucide-react";
-import { useId, useState } from "react";
+import {
+  ChevronsUpDown,
+  FolderOpen,
+  type LucideIcon,
+  SlidersHorizontal,
+  Tag,
+  X,
+} from "lucide-react";
+import { type ReactNode, useId, useState } from "react";
+import { PlacesFilter } from "@/components/places-filter";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { Button } from "@/components/ui/button";
 import { albumOptions, type FilterOption, locationOptions, tagOptions } from "@/lib/filter-options";
 import {
   FILTER_KEYS,
+  filterCount,
+  type FilterKey,
   filterPhotos,
   LOCATION_KEYS,
+  locationFilters,
+  locationSelection,
   parseFilters,
   type PhotoFilters,
   withoutFilters,
@@ -32,6 +44,29 @@ function useSetFilters() {
   };
 }
 
+/** Clears the shared filters and the view's own ones the keys name, keeping its other settings. */
+function useClearFilters(ownKeys: readonly string[]) {
+  const navigate = useNavigate();
+  return () => {
+    const cleared = Object.fromEntries([...FILTER_KEYS, ...ownKeys].map((key) => [key, undefined]));
+    void navigate({
+      to: ".",
+      search: (prev: Record<string, unknown>) => ({ ...prev, ...cleared }),
+    });
+  };
+}
+
+/** A view's own filters, shown after the shared ones, such as the Table's camera and settings. */
+interface OwnFilters {
+  /** Their keys in the URL, which **Clear filters** clears too. */
+  keys: readonly string[];
+  /** How many are set, added to the button's count. */
+  count: number;
+  children: ReactNode;
+}
+
+const NO_OWN_FILTERS: OwnFilters = { keys: [], count: 0, children: null };
+
 /** A choice's value in its dropdown: the filter's key and its value, such as "city:Seoul". */
 function optionValue({ key, value }: Pick<FilterOption, "key" | "value">): string {
   return `${key}:${value}`;
@@ -44,17 +79,27 @@ function filterOf(selected: string): PhotoFilters {
 }
 
 /**
- * A **Show filters** button that opens dropdowns narrowing the view's photos by location (a
- * country, city or place), album and tag, kept in the URL so a link keeps them and the menu carries
- * them to the other views. The button says how many filters are set while they're hidden, and
- * **Clear filters** stays beside it.
+ * A **Show filters** button that opens filters narrowing the view's photos by place (any number of
+ * countries, cities and places), album and tag, kept in the URL so a link keeps them and the menu
+ * carries them to the other views. The button says how many filters are set while they're hidden,
+ * and **Clear filters** stays beside it. `facet` is the photos the counts are out of, when the view
+ * narrows them with its own filters; `own` are those filters, shown after the shared ones.
  */
-export function PhotoFilterBar({ photos }: { photos: Photo[] }) {
+export function PhotoFilterBar({
+  photos,
+  facet = photos,
+  own = NO_OWN_FILTERS,
+}: {
+  photos: Photo[];
+  facet?: Photo[];
+  own?: OwnFilters;
+}) {
   const [open, setOpen] = useState(false);
   const filters = useFilters();
   const setFilters = useSetFilters();
+  const clearFilters = useClearFilters(own.keys);
   const listId = useId();
-  const count = Object.keys(filters).length;
+  const count = filterCount(filters) + own.count;
 
   return (
     <div className="flex flex-col gap-2">
@@ -71,14 +116,30 @@ export function PhotoFilterBar({ photos }: { photos: Photo[] }) {
           <FilterCount count={count} />
         </Button>
         {count > 0 && (
-          <Button variant="ghost" size="sm" onClick={() => setFilters({})}>
+          <Button variant="ghost" size="sm" onClick={clearFilters}>
             <X aria-hidden />
             Clear filters
           </Button>
         )}
       </div>
-      <div id={listId} hidden={!open}>
-        {open && <FilterDropdowns photos={photos} filters={filters} setFilters={setFilters} />}
+      <div
+        id={listId}
+        hidden={!open}
+        className="flex flex-wrap items-start gap-x-3 gap-y-2"
+        role="group"
+        aria-label="Filters"
+      >
+        {open && (
+          <>
+            <FilterDropdowns
+              photos={photos}
+              facet={facet}
+              filters={filters}
+              setFilters={setFilters}
+            />
+            {own.children}
+          </>
+        )}
       </div>
     </div>
   );
@@ -95,59 +156,59 @@ function FilterCount({ count }: { count: number }) {
 }
 
 /**
- * The location, album and tag dropdowns. Each choice says how many of `photos` it would show,
- * given the other filters. The tag dropdown is left out while there are no tags.
+ * The Places combobox and the album and tag dropdowns. Each choice says how many of `facet` it
+ * would show, given the other filters. The tag dropdown is left out while there are no tags.
  */
 function FilterDropdowns({
   photos,
+  facet,
   filters,
   setFilters,
 }: {
   photos: Photo[];
+  facet: Photo[];
   filters: PhotoFilters;
   setFilters: (next: PhotoFilters) => void;
 }) {
-  const groupFacet = filterPhotos(photos, withoutFilters(filters, LOCATION_KEYS));
-  const albumFacet = filterPhotos(photos, withoutFilters(filters, ["album"]));
-  const tags = tagOptions(filterPhotos(photos, withoutFilters(filters, ["tag"])));
+  const placeFacet = filterPhotos(facet, withoutFilters(filters, LOCATION_KEYS));
+  const albums = albumOptions(filterPhotos(facet, withoutFilters(filters, ["album"])));
+  const tags = tagOptions(filterPhotos(facet, withoutFilters(filters, ["tag"])));
 
-  /** Replaces the filters `keys` name with the dropdown's choice. */
-  function choose(keys: readonly string[], selected: string) {
-    setFilters({ ...withoutFilters(filters, keys as typeof FILTER_KEYS), ...filterOf(selected) });
+  /** Replaces the filters `keys` name with the ones chosen. */
+  function choose(keys: readonly FilterKey[], chosen: PhotoFilters) {
+    setFilters({ ...withoutFilters(filters, keys), ...chosen });
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2" role="group" aria-label="Filters">
-      <FilterSelect
-        label="Location"
-        Icon={MapPin}
-        options={locationOptions(photos, groupFacet)}
-        filters={filters}
-        onChange={(selected) => choose(LOCATION_KEYS, selected)}
+    <>
+      <PlacesFilter
+        options={locationOptions(photos, placeFacet)}
+        selected={locationSelection(filters)}
+        onChange={(selection) => choose(LOCATION_KEYS, locationFilters(selection))}
       />
       <FilterSelect
         label="Album"
         Icon={FolderOpen}
-        options={albumOptions(albumFacet)}
-        filters={filters}
-        onChange={(selected) => choose(["album"], selected)}
+        options={albums}
+        selected={selectedValue(albums, filters)}
+        onChange={(selected) => choose(["album"], filterOf(selected))}
       />
       {tags.length > 0 && (
         <FilterSelect
           label="Tag"
           Icon={Tag}
           options={tags}
-          filters={filters}
-          onChange={(selected) => choose(["tag"], selected)}
+          selected={selectedValue(tags, filters)}
+          onChange={(selected) => choose(["tag"], filterOf(selected))}
         />
       )}
-    </div>
+    </>
   );
 }
 
-/** The value of the dropdown's choice the filters set, or "" for "All". */
-function selectedValue(options: FilterOption[], filters: PhotoFilters): string {
-  const chosen = options.find((option) => filters[option.key] === option.value);
+/** The value of the dropdown's choice the search sets, or "" for "All". */
+export function selectedValue(options: FilterOption[], search: Record<string, unknown>): string {
+  const chosen = options.find((option) => search[option.key] === option.value);
   return chosen ? optionValue(chosen) : "";
 }
 
@@ -156,41 +217,50 @@ function selectedValue(options: FilterOption[], filters: PhotoFilters): string {
  * isn't indented, as the closed dropdown shows it on its own.
  */
 function optionText(option: FilterOption, name: string, chosen: boolean): string {
-  return `${"   ".repeat(chosen ? 0 : option.depth)}${name} (${option.count})`;
+  return `${"   ".repeat(chosen ? 0 : option.depth)}${name} (${option.count})`;
 }
 
-function FilterSelect({
+/**
+ * A dropdown of one filter's choices, with "All" first; `selected` is the chosen one's value and
+ * `plural` names them all, such as "lenses", when adding an "s" doesn't.
+ */
+export function FilterSelect({
   label,
+  plural = `${label.toLowerCase()}s`,
   Icon,
   options,
-  filters,
+  selected,
   onChange,
 }: {
   label: string;
+  plural?: string;
   Icon: LucideIcon;
   options: FilterOption[];
-  filters: PhotoFilters;
+  selected: string;
   onChange: (selected: string) => void;
 }) {
   const { script } = useScriptDisplay();
-  const selected = selectedValue(options, filters);
   return (
-    <label className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-      <Icon className="size-4" aria-hidden />
+    // The icon and chevron sit over the dropdown, inside its border, like the Places button's.
+    <label className="relative inline-flex items-center text-sm text-muted-foreground">
+      <Icon className="pointer-events-none absolute left-2.5 size-4" aria-hidden />
       <span className="sr-only">{label}</span>
       <select
         value={selected}
         onChange={(event) => onChange(event.target.value)}
-        className="h-8 max-w-56 cursor-pointer rounded-md border bg-background px-2 text-sm text-foreground shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30"
+        className="h-8 max-w-56 cursor-pointer appearance-none truncate rounded-md border bg-background pr-8 pl-8 text-sm text-foreground shadow-xs outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30 dark:hover:bg-input/50"
       >
-        <option value="">All {label.toLowerCase()}s</option>
-        {/* A place in two cities is listed under each, so the key has its position too. */}
+        <option value="">All {plural}</option>
         {options.map((option, index) => (
           <option key={`${index}-${optionValue(option)}`} value={optionValue(option)}>
             {optionText(option, option.label[script], optionValue(option) === selected)}
           </option>
         ))}
       </select>
+      <ChevronsUpDown
+        className="pointer-events-none absolute right-2.5 size-4 opacity-50"
+        aria-hidden
+      />
     </label>
   );
 }
