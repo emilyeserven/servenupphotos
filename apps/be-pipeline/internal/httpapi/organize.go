@@ -28,7 +28,7 @@ func handleOrganize(store *settings.Store, gh *github.Client) http.HandlerFunc {
 		result, err := gh.Organize(ctx, cfg)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {
@@ -68,7 +68,7 @@ func handleCreateGroup(store *settings.Store, gh *github.Client) http.HandlerFun
 		result, err := gh.CreateGroup(ctx, cfg, kind, group)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {

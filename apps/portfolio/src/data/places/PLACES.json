@@ -22,6 +22,14 @@
     "exactLocation": true
   },
   {
+    "id": "9-11-memorial",
+    "name": "9/11 Memorial",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
     "id": "american-copper-building",
     "name": "American Copper Building",
     "description": "",
@@ -40,7 +48,16 @@
     "city": "",
     "country": "",
     "latitude": 40.76383083369049,
-    "longitude": -73.92457375631997
+    "longitude": -73.92457375631997,
+    "parentRelation": ","
+  },
+  {
+    "id": "bethesda-fountain",
+    "name": "Bethesda Fountain",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
   },
   {
     "id": "bowery",
@@ -83,6 +100,14 @@
     "longitude": -73.99508072439512
   },
   {
+    "id": "central-park",
+    "name": "Central Park",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
     "id": "chelsea",
     "name": "Chelsea",
     "description": "",
@@ -101,6 +126,16 @@
     "country": "United States of America",
     "latitude": 40.76805659301781,
     "longitude": -73.98188756888125
+  },
+  {
+    "id": "delray-public-beach",
+    "name": "Delray Public Beach",
+    "description": "",
+    "parent": "",
+    "city": "Delray Beach",
+    "country": "United States of America",
+    "latitude": 26.461618709845016,
+    "longitude": -80.05759565128407
   },
   {
     "id": "devil-s-den-state-park",
@@ -282,6 +317,14 @@
     "country": "United States of America"
   },
   {
+    "id": "metropolitan-museum-of-art",
+    "name": "Metropolitan Museum of Art",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
     "id": "midtown-west",
     "name": "Midtown West",
     "description": "",
@@ -318,6 +361,16 @@
     "parent": "national-museum-of-korea",
     "city": "",
     "country": ""
+  },
+  {
+    "id": "morikami-museum-and-japanese-gardens",
+    "name": "Morikami Museum and Japanese Gardens",
+    "description": "",
+    "parent": "",
+    "city": "Delray Beach",
+    "country": "United States of America",
+    "latitude": 26.42915437684975,
+    "longitude": -80.15643210386787
   },
   {
     "id": "murray-hill",
@@ -422,6 +475,14 @@
     "exactLocation": true
   },
   {
+    "id": "rockefeller-center",
+    "name": "Rockefeller Center",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
     "id": "soho",
     "name": "SoHo",
     "description": "",
@@ -456,6 +517,14 @@
     "country": "United States of America"
   },
   {
+    "id": "surfside-beach",
+    "name": "Surfside Beach",
+    "description": "",
+    "parent": "",
+    "city": "Nantucket",
+    "country": "United States of America"
+  },
+  {
     "id": "the-high-line",
     "name": "The High Line",
     "description": "",
@@ -464,6 +533,14 @@
     "country": "United States of America",
     "latitude": 40.74797621532001,
     "longitude": -74.0047541744432
+  },
+  {
+    "id": "the-oculus",
+    "name": "The Oculus",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
   },
   {
     "id": "upper-east-side",

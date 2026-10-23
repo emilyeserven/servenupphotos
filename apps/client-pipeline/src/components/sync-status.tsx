@@ -5,6 +5,7 @@ import { type ReactNode, useRef, useState } from "react";
 import type { CombinedCommit } from "@/api/photos";
 import { githubIsSetUp, settingsQuery } from "@/api/settings";
 import { CommitButton } from "@/components/all-photos-rebuild";
+import { CommitError } from "@/components/commit-error";
 import { DiscardButton } from "@/components/discard-changes";
 import { UploadProgressBadge, UploadQueueSection } from "@/components/bulk-upload/upload-progress";
 import { Spinner } from "@/components/ui/spinner";
@@ -211,7 +212,7 @@ function ImageCounts({ images }: { images: Sync["images"] }) {
 
 /** What the last commit did, or why it failed. */
 function CommitResult({ sync }: { sync: Sync }) {
-  if (sync.commitError) return <p className="text-destructive">{sync.commitError.message}</p>;
+  if (sync.commitError) return <CommitError error={sync.commitError} />;
   if (!sync.lastCommit || sync.committing) return null;
   return <LastCommit commit={sync.lastCommit} />;
 }

@@ -59,7 +59,7 @@ func handleBaseURL(store *settings.Store, run func(context.Context, settings.Git
 		result, err := run(ctx, cfg, req)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {

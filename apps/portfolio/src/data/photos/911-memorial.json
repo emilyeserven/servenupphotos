@@ -1,0 +1,55 @@
+{
+  "title": "9/11 Memorial",
+  "comment": null,
+  "id": 149,
+  "file": "IMG_1916.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": null,
+  "aperture": null,
+  "exposure": "1/1000",
+  "iso": 100,
+  "focalLength": null,
+  "gpsPosition": "40 deg 42' 39.32\" N, 74 deg 0' 48.72\" W",
+  "createDate": "2017:09:09 13:07:57",
+  "placeName": "9-11-memorial",
+  "customCity": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "city": "New York City",
+  "width": 6000,
+  "height": 3448,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916.jpg",
+    "key": "photos/4a6ce4b3586a-img-1916.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916-thumbnail.webp?crop=0,0,3448",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4a6ce4b3586a-img-1916-thumbnailpreview.webp?crop=0,0,3448",
+    "thumbnailcrop": {
+      "x": 0,
+      "y": 0,
+      "size": 3448,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "9-11-memorial"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

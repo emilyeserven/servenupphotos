@@ -26,6 +26,7 @@ import {
 import { MapDayFilter } from "@/components/map-day-filter";
 import { MapViewControls } from "@/components/map-view-controls";
 import { PhotoFilterControls } from "@/components/photo-filters";
+import { MapFilterToggle } from "@/components/map-filter-toggle";
 import { MapOverlay } from "@/components/map-overlay";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
@@ -41,7 +42,12 @@ import {
 import { type DayRange, daysInView, isDay } from "@/lib/map-days";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
-import { locationSelection, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import {
+  filterCount,
+  locationSelection,
+  parseFilters,
+  type PhotoFilters,
+} from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useTurn } from "@/lib/use-turn";
@@ -142,6 +148,11 @@ interface OpenCluster {
   longitude: number;
   latitude: number;
   photos: PlacedPhoto[];
+}
+
+/** How many filters the map has set: the shared ones, and one more for a day or range of days. */
+function setFilterCount(search: MapSearch): number {
+  return filterCount(search) + (search.day ? 1 : 0);
 }
 
 /** Whether the places chosen before were all unchosen, leaving none. */
@@ -284,12 +295,14 @@ function MapView() {
                 if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
               }}
             >
-              <MapDayFilter
-                days={daysInView(mapPhotos.placed, view)}
-                range={search}
-                onChange={setDays}
-              />
-              <PhotoFilterControls photos={placedPhotos} />
+              <MapFilterToggle count={setFilterCount(search)}>
+                <MapDayFilter
+                  days={daysInView(mapPhotos.placed, view)}
+                  range={search}
+                  onChange={setDays}
+                />
+                <PhotoFilterControls photos={placedPhotos} />
+              </MapFilterToggle>
             </MapViewControls>
           </MapOverlay>
           <Source

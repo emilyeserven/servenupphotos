@@ -32,7 +32,7 @@ func handleDiscardPending(store *settings.Store, gh *github.Client) http.Handler
 		result, err := gh.Discard(cfg, body.Paths)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {
