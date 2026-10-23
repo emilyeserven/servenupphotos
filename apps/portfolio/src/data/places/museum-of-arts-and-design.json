@@ -3,8 +3,9 @@
   "name": "Museum of Arts and Design",
   "description": "",
   "parent": "",
-  "city": "",
-  "country": "",
+  "city": "New York City",
+  "country": "United States of America",
   "latitude": 40.76739122272109,
-  "longitude": -73.9819579321148
+  "longitude": -73.9819579321148,
+  "exactLocation": true
 }

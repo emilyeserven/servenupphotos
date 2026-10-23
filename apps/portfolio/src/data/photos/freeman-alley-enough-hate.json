@@ -1,0 +1,50 @@
+{
+  "title": "Freeman Alley, Enough Hate",
+  "comment": null,
+  "file": "IMG_0180.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+  "aperture": 4,
+  "exposure": "1/50",
+  "iso": 100,
+  "focalLength": 18,
+  "gpsPosition": null,
+  "createDate": "2017:11:04 11:20:10",
+  "placeName": "Freeman Alley",
+  "customCity": null,
+  "customCountry": null,
+  "country": null,
+  "city": null,
+  "width": 5999,
+  "height": 3418,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180.jpg",
+    "key": "photos/b126ec774e9f-img-0180.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180-thumbnail.webp?crop=0,0,2379",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b126ec774e9f-img-0180-thumbnailpreview.webp?crop=0,0,2379",
+    "thumbnailcrop": {
+      "x": 0,
+      "y": 0,
+      "size": 2379,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "freeman-alley"
+    }
+  ],
+  "spotlightZones": []
+}

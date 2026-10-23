@@ -6,5 +6,6 @@
   "city": "New York City",
   "country": "United States of America",
   "latitude": 40.76198521345793,
-  "longitude": -73.97500177444256
+  "longitude": -73.97500177444256,
+  "exactLocation": true
 }

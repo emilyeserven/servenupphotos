@@ -1,0 +1,50 @@
+{
+  "title": "Art not Ads",
+  "comment": null,
+  "file": "IMG_0173.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+  "aperture": 5.6,
+  "exposure": "1/50",
+  "iso": 100,
+  "focalLength": 85,
+  "gpsPosition": null,
+  "createDate": "2017:11:04 11:18:59",
+  "placeName": "Lower East Side",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 5999,
+  "height": 3500,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173.jpg",
+    "key": "photos/1bc6a3a5c0ad-img-0173.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173-thumbnail.webp?crop=1505,0,3500",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1bc6a3a5c0ad-img-0173-thumbnailpreview.webp?crop=1505,0,3500",
+    "thumbnailcrop": {
+      "x": 1505,
+      "y": 0,
+      "size": 3500,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "lower-east-side"
+    }
+  ],
+  "spotlightZones": []
+}

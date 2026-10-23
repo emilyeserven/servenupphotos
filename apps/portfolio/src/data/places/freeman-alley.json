@@ -1,0 +1,11 @@
+{
+  "id": "freeman-alley",
+  "name": "Freeman Alley",
+  "description": "",
+  "parent": "",
+  "city": "New York City",
+  "country": "United States of America",
+  "latitude": 40.721588420173134,
+  "longitude": -73.99262771234002,
+  "exactLocation": true
+}
