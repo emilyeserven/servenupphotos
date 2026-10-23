@@ -76,9 +76,13 @@ func combinedKinds() []combinedKind {
 // sorted by path, as one array, but without untitled photos unless Settings
 // include them: see isDraft), as one commit on the open photo data pull
 // request's branch. With none open, it commits to a new photo-data/ branch
-// from the base branch and opens one. Nothing is committed when a file can't
-// be read. It makes 3 GitHub calls (a tree, a commit and the branch moving to
-// it), plus 2 to open the pull request when it opens one.
+// from the base branch and opens one. When the pull request is behind its
+// base branch, the commit also merges the base branch in (see catchUp), even
+// with nothing else to commit. Nothing is committed when a file can't be
+// read. It makes 3 GitHub calls (a tree, a commit and the branch moving to
+// it), plus 1 to compare an open pull request with its base branch, 1 for
+// each 100 files it changes when it's behind, and 2 to open the pull request
+// when it opens one.
 func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits []FieldEdit) (CombinedCommit, error) {
 	byPath, perr := editsByPath(edits)
 	if perr != nil {
@@ -89,6 +93,9 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits [
 	// the next Commit reads it again.
 	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
+		return CombinedCommit{}, perr
+	}
+	if perr := c.catchUp(ctx, w); perr != nil {
 		return CombinedCommit{}, perr
 	}
 	changes, perr := w.commitChanges(byPath)
@@ -103,7 +110,7 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits [
 	}
 	result.Files, result.Edited = changedPaths(changes)
 	// With nothing in flight, a stale list on the base branch isn't worth a new pull request.
-	if len(changes) == 0 || (w.pr == nil && result.Edited == 0) {
+	if w.catchUp == nil && (len(changes) == 0 || (w.pr == nil && result.Edited == 0)) {
 		result.Files = []string{}
 		return result, nil
 	}
@@ -314,15 +321,7 @@ type gitCommit struct {
 // https://docs.github.com/en/rest/git/trees#create-a-tree
 func (c *Client) commit(ctx context.Context, w *workspace, changes map[string][]byte, message string, result *CombinedCommit) *PublishError {
 	t, repo := w.t, repoPath(w.t.owner, w.t.name)
-	entries := make([]map[string]any, 0, len(changes))
-	for _, p := range result.Files {
-		entry := map[string]any{"path": p, "mode": "100644", "type": "blob", "sha": nil}
-		if content := changes[p]; content != nil {
-			delete(entry, "sha")
-			entry["content"] = string(content)
-		}
-		entries = append(entries, entry)
-	}
+	entries := w.treeEntries(result.Files, changes)
 	var tree struct {
 		SHA string `json:"sha"`
 	}
@@ -331,7 +330,7 @@ func (c *Client) commit(ctx context.Context, w *workspace, changes map[string][]
 		return perr
 	}
 	var commit gitCommit
-	body := map[string]any{"message": message, "tree": tree.SHA, "parents": []string{w.head.commit}}
+	body := map[string]any{"message": message, "tree": tree.SHA, "parents": w.parents()}
 	res, err = c.do(ctx, http.MethodPost, repo+"/git/commits", t.token, body, &commit)
 	if perr := check(res, err, "making the commit"); perr != nil {
 		return perr

@@ -32,6 +32,9 @@ type workspace struct {
 	// includeUntitled is Settings' choice to put untitled photos in
 	// AllPhotosFile too, rather than keep them as drafts (see isDraft).
 	includeUntitled bool
+	// catchUp is set when Commit merges the base branch into the pull
+	// request, which head then has (see Client.catchUp).
+	catchUp *catchUp
 }
 
 // workspace reads gh's workspace, from cached reads where they're recent
