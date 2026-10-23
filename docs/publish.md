@@ -63,11 +63,17 @@ the homepage shows the 5 newest photos instead.
 
 Each zone is a card of its photos in their order, numbered from 1, each with a button to take it out. Dragging a
 photo onto another moves it to that place, shifting the ones between, and saves every photo in the zone's place as
-`websiteSpotlight` (1 first). Photos without one, such as ones just added, come after the rest, newest first, and
-taking a photo out of a zone clears its `websiteSpotlight`. The places are one order shared by every zone, so each
+`websiteSpotlight` (1 first). A photo put in a zone goes to the end of its order: when some of the zone's photos have
+no place yet (they come after the rest, newest first), adding one numbers them all in the order shown, so the sync
+button can count several photos for one add. Taking a photo out of its last zone clears its `websiteSpotlight`. The places are one order shared by every zone, so each
 zone shows its photos in that order. **Add photos** opens every
 photo file (read like the Instagram calendar, in flight ones included) to click in or out of it. A photo without a
 title is labeled **Draft**: it can be picked, but the portfolio skips it until it has one (see [Drafts](drafts.md)). Like the calendar's
 dates, changes are [local edits](combined-data-store.md#local-edits) until **Commit**, which replaces the
 `spotlightZones` list and sets `websiteSpotlight` in each changed file. A list sent in an edit replaces the file's whole list; other fields are
 left as they are.
+
+The Photo page in edit mode (`/exif?edit=<path>`) has a **Spotlight** card in its left column, under Albums and Tags,
+with a checkbox for each zone and the photo's number among the zone's photos while it's in one. It makes the same local
+edits as Site Spotlight, at once and apart from the page's **Save changes**, so they wait for **Commit** like the rest.
+The order is still set on Site Spotlight.
