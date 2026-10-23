@@ -33,6 +33,9 @@ buttons are in the bottom right corner.
 
 Over the top left corner, beside the title on wider screens and under it on phones:
 
+On phones, the day, Places and album filters sit behind a **Filters** button next to **Jump to**, so they don't cover the
+map. The button shows how many filters are set while they're hidden.
+
 - **Jump to** is a dropdown that zooms straight to an area, for now New York City or Seoul. The areas and their bounds
   are `MAP_AREAS` in `apps/portfolio/src/components/map-view-controls.tsx`; add one there to add it to the dropdown. The
   icon button beside it zooms back out to every photo.
