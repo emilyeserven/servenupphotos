@@ -3,8 +3,8 @@
   "name": "East Broadway Station",
   "description": "",
   "parent": "",
-  "city": "",
-  "country": "",
+  "city": "New York City",
+  "country": "United States of America",
   "latitude": 40.714174155945194,
   "longitude": -73.99009350299123,
   "exactLocation": true
