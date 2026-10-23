@@ -1,7 +1,8 @@
-import { CircleAlertIcon, CircleCheckIcon, LocateIcon } from "lucide-react";
+import { CircleAlertIcon, CircleCheckIcon, ExternalLinkIcon, LocateIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import type { PhotoPlace, Place } from "@/api/places";
-import { gpsSource, gpsText } from "@/lib/place-gps";
+import { googleMapsUrl, type LatLng, parseExifGps } from "@/lib/google-maps";
+import { gpsSource, gpsText, writtenPosition } from "@/lib/place-gps";
 
 interface PhotoGpsStatusProps {
   /** The GPS position in the photo's EXIF, or null when it has none. */
@@ -10,17 +11,33 @@ interface PhotoGpsStatusProps {
   rows: PhotoPlace[];
   /** Every place, to find the one whose GPS position the photo falls back to. */
   places: Place[];
+  /** The GPS position written on the Photo page as "latitude, longitude", which wins over the others. */
+  customGps?: string;
 }
 
 /**
- * Where the photo goes on the portfolio's map: a checkmark when its EXIF has a GPS position, or else
- * the place whose position it falls back to, or else a warning that it has none.
+ * Where the photo goes on the portfolio's map: a checkmark when it has a custom GPS position or its
+ * EXIF has one, or else the place whose position it falls back to, or else a warning that it has
+ * none. Each position has an **Open in Google Maps** link, opening it in a new tab.
  */
-export function PhotoGpsStatus({ exifGps, rows, places }: PhotoGpsStatusProps) {
+export function PhotoGpsStatus({ customGps, ...props }: PhotoGpsStatusProps) {
+  const custom = writtenPosition(customGps);
+  if (!custom) return <ExifOrPlaceStatus {...props} />;
+  return (
+    <Status icon={<CircleCheckIcon className="text-emerald-600 dark:text-emerald-400" />}>
+      Custom GPS position: {gpsText(custom)}
+      <GoogleMapsLink position={custom} />
+    </Status>
+  );
+}
+
+/** The status from the photo's EXIF GPS position, or else its places'. */
+function ExifOrPlaceStatus({ exifGps, rows, places }: PhotoGpsStatusProps) {
   if (exifGps?.trim()) {
     return (
       <Status icon={<CircleCheckIcon className="text-emerald-600 dark:text-emerald-400" />}>
         GPS position from the photo's EXIF: {exifGps}
+        <GoogleMapsLink position={parseExifGps(exifGps)} />
       </Status>
     );
   }
@@ -30,6 +47,7 @@ export function PhotoGpsStatus({ exifGps, rows, places }: PhotoGpsStatusProps) {
       <Status icon={<LocateIcon className="text-sky-600 dark:text-sky-400" />}>
         No GPS position in the EXIF, so the map uses {fallback.name}'s fallback position:{" "}
         {gpsText(fallback)}
+        <GoogleMapsLink position={latLngOf(fallback)} />
       </Status>
     );
   }
@@ -50,6 +68,30 @@ function fallbackPlace(rows: PhotoPlace[], places: Place[]): Place | undefined {
     if (source) return source;
   }
   return undefined;
+}
+
+/** The place's GPS position, or null when it has none. */
+function latLngOf({ latitude, longitude }: Place): LatLng | null {
+  return latitude === undefined || longitude === undefined ? null : { latitude, longitude };
+}
+
+/** A link opening the position in Google Maps in a new tab; nothing when there's no position. */
+function GoogleMapsLink({ position }: { position: LatLng | null }) {
+  if (!position) return null;
+  return (
+    <>
+      {" "}
+      <a
+        href={googleMapsUrl(position)}
+        target="_blank"
+        rel="noreferrer"
+        className="text-foreground inline-flex items-center gap-1 whitespace-nowrap underline underline-offset-4 [&_svg]:mt-0! [&_svg]:size-3!"
+      >
+        Open in Google Maps
+        <ExternalLinkIcon aria-hidden />
+      </a>
+    </>
+  );
 }
 
 function Status({ icon, children }: { icon: ReactNode; children: ReactNode }) {

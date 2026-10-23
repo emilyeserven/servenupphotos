@@ -76,6 +76,21 @@ type Place struct {
 	// somewhere near; the portfolio's map then marks them like photos with
 	// their own GPS position. Only kept when the place has a GPS position.
 	ExactLocation bool `json:"exactLocation,omitempty"`
+	// ParentRelation is the word between this place and the place it's in
+	// when a photo shows both, such as "in" or "," ("Astoria, Queens"); ""
+	// for the parent's ChildRelation. Only kept when the place has a parent.
+	ParentRelation string `json:"parentRelation,omitempty"`
+	// ChildRelation is the word between each place in this one and this one,
+	// unless that place sets its own ParentRelation; "" for "in".
+	ChildRelation string `json:"childRelation,omitempty"`
+}
+
+// placeRelations are the words a place can be joined to the place it's in
+// with: the relations a photo can have to a place, and "," for a comma,
+// as in "Astoria, Queens".
+var placeRelations = []string{
+	"in", "at", "by", "near", "on", "inside", "outside", "behind", "in front of", "across from", "above", "below",
+	"overlooking", "from", ",",
 }
 
 // Localization types: what a localization is of.
@@ -101,6 +116,10 @@ type Localization struct {
 	Pronunciation string `json:"pronunciation"`
 	// LocalScript is the name in its own script, such as 경복궁 in hangeul.
 	LocalScript string `json:"localScript"`
+	// OtherNames are other ways photos and places write a country or city,
+	// such as "United States" for "United States of America". Name wins over
+	// them: Update Data's Location names rewrites them to it.
+	OtherNames []string `json:"otherNames,omitempty"`
 }
 
 // Entry is one place or localization file, as read.
@@ -180,13 +199,16 @@ func (c *Client) SavePlace(ctx context.Context, gh settings.GitHub, place Place)
 }
 
 // SaveLocalization saves localization as <folder>/localizations/<id>.json,
-// new or replacing the one there, as SavePlace does.
+// new or replacing the one there, as SavePlace does. It fails when one of its
+// other names is another country's or city's, or it's another's other name.
 func (c *Client) SaveLocalization(ctx context.Context, gh settings.GitHub, localization Localization) (EntryResult, error) {
 	localization, perr := validLocalization(localization)
 	if perr != nil {
 		return EntryResult{}, perr
 	}
-	return c.saveEntry(ctx, gh, Localizations, localization.ID, localization, func([]Entry) *PublishError { return nil })
+	return c.saveEntry(ctx, gh, Localizations, localization.ID, localization, func(others []Entry) *PublishError {
+		return otherNamesTaken(others, localization)
+	})
 }
 
 // saveEntry saves content as kind's file named id in the pending changes,
@@ -289,6 +311,13 @@ func validPlace(place Place) (Place, *PublishError) {
 		Parent: strings.TrimSpace(place.Parent), City: strings.TrimSpace(place.City), Country: strings.TrimSpace(place.Country),
 		Latitude: place.Latitude, Longitude: place.Longitude,
 		ExactLocation: place.ExactLocation && place.Latitude != nil,
+		ChildRelation: strings.TrimSpace(place.ChildRelation),
+	}
+	if p.Parent != "" {
+		p.ParentRelation = strings.TrimSpace(place.ParentRelation)
+	}
+	if perr := badRelations(p); perr != nil {
+		return p, perr
 	}
 	if perr := badCoordinates(p); perr != nil {
 		return p, perr
@@ -316,6 +345,17 @@ func validPlace(place Place) (Place, *PublishError) {
 	return p, nil
 }
 
+// badRelations fails unless p's ParentRelation and ChildRelation are each
+// "" or one of placeRelations.
+func badRelations(p Place) *PublishError {
+	for _, r := range []string{p.ParentRelation, p.ChildRelation} {
+		if r != "" && !slices.Contains(placeRelations, r) {
+			return publishErr(http.StatusBadRequest, "A place's connecting word is one of %s.", strings.Join(placeRelations, ", "))
+		}
+	}
+	return nil
+}
+
 // validLocalization checks l and returns it trimmed, as it will be saved.
 func validLocalization(l Localization) (Localization, *PublishError) {
 	out := Localization{
@@ -337,7 +377,9 @@ func validLocalization(l Localization) (Localization, *PublishError) {
 			return out, publishErr(http.StatusBadRequest, "Keep each field to %d characters.", maxEntryTextLength)
 		}
 	}
-	return out, nil
+	var perr *PublishError
+	out.OtherNames, perr = cleanOtherNames(out, l.OtherNames)
+	return out, perr
 }
 
 // validEntryID fails unless id is lowercase letters, numbers and single

@@ -51,7 +51,8 @@ the combined files have every change, with a **Commit** button when they don't, 
 marked "Not synced to ALLPHOTOS.json yet".
 
 Each photo whose JSON was read and whose image is in R2 has an **Edit** button, which opens it on the Photo page in
-edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from. The crop editor starts from the
+edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from, or to
+[replace its image](replace-image.md) with a re-edit. The crop editor starts from the
 crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=…`, else the JSON's
 `images.thumbnailcrop`, else the middle), on
 the original photo from R2. **Save changes** (at the top right, to the right of the sync button, with **Back to the saved crop** beside it once the square has moved; what the save did is shown above the page's cards) first remakes the thumbnail and its Thumbnail Preview from the new

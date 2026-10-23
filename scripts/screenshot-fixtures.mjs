@@ -351,6 +351,33 @@ const savedPhoto = (filePath, data) => ({
   data: data ?? {},
 });
 
+/**
+ * What reading a JPEG's EXIF answers on the Photo page: the photo data pull request's own photo, as
+ * if the JPEG were a re-edit of it, with its EXIF stripped the way an edited export often has it.
+ */
+function reEditExif(data) {
+  const { width, height } = data;
+  const fields = Object.fromEntries(Object.keys(data).map((key) => [key, null]));
+  return {
+    file: data.file,
+    exif: { ImageWidth: width, ImageHeight: height },
+    sanitized: { ...fields, width, height, images: {}, exifOriginals: null },
+    colors: null,
+  };
+}
+
+/** What uploading a JPEG to R2 answers: the photo at key, with every version next to it. */
+function uploadAnswer(key) {
+  const stem = key.replace(/\.jpe?g$/, "");
+  const versions = Object.fromEntries(
+    VERSIONS.map((name) => {
+      const k = `${stem}-${name}.webp`;
+      return [name, { key: k, url: `${CDN}/${k}` }];
+    }),
+  );
+  return { key, url: `${CDN}/${key}`, versions };
+}
+
 const secret = { set: true, last4: "a1b2" };
 
 /** The default answers: everything set up, and one photo data pull request open. */
@@ -469,6 +496,32 @@ export function defaultFixtures() {
       ],
     },
     "POST /api/data/camera-overrides": () => ({ ...pendingSave(), files: 1, fields: 4 }),
+    "POST /api/data/location-names/preview": {
+      repo: REPO,
+      folder: `${FOLDER}/photos`,
+      branch: PULL_REQUEST.branch,
+      pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+      photoFiles: headPhotos.length,
+      placeFiles: headPlaces.length,
+      otherNames: 1,
+      unreadable: [],
+      files: headPhotos
+        .filter(({ data }) => data.country === "United States")
+        .map(({ path }) => ({
+          path,
+          fileUrl: "",
+          kind: "photo",
+          changes: [{ field: "country", from: "United States", to: "United States of America" }],
+        })),
+    },
+    "POST /api/data/location-names": () => ({ ...pendingSave(), files: 9, fields: 9 }),
+    "PUT /api/localizations/country-united-states-of-america": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/localizations/country-united-states-of-america.json`,
+      data: body,
+      before: null,
+      changed: true,
+    }),
     "PUT /api/cameras/x-t5": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/cameras/x-t5.json`,
@@ -502,6 +555,8 @@ export function defaultFixtures() {
       sanitized: null,
       colors: null,
     },
+    "POST /api/exif": () => reEditExif(added.photo.data),
+    "POST /api/upload": uploadAnswer("photos/0a1b2c3d4e5f-dscf3104.jpg"),
     "POST /api/photos/all-photos/check": {
       sources: [
         { label: `Pull request #${PULL_REQUEST.number}`, fileUrl: PULL_REQUEST.url, found: true },

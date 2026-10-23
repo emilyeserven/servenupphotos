@@ -9,7 +9,6 @@ import {
   localizationId,
   type Place,
   type PhotoPlace,
-  placePhrase,
   placesQuery,
   RELATIONS,
   readEntries,
@@ -21,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { PhotoGpsStatus } from "@/components/photo-gps-status";
 import { PlaceCityAdders } from "@/components/place-city-adder";
 import { PlaceGpsAdders } from "@/components/place-gps-adder";
+import { PlacesJoinWord } from "@/components/place-join-fields";
 import { PlaceLocalizationDialog } from "@/components/place-localization-dialog";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import {
@@ -32,6 +32,7 @@ import {
   withParent,
 } from "@/lib/place-hierarchy";
 import { inferredName, inferredOptions, inferredPlaces } from "@/lib/inferred-places";
+import { placePhrase, placesJoin } from "@/lib/place-joins";
 import { shownPhotos } from "@/lib/place-seeds";
 import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
@@ -45,6 +46,13 @@ interface PlaceValue {
   placeName: string;
   customCity: string;
   customCountry: string;
+  /** The photo's custom GPS position, which the map uses before its EXIF one or its places'. */
+  customGpsPosition?: string;
+}
+
+/** The photo's own GPS position, from its EXIF or else written on the page; null when it has neither. */
+function ownGps(exifGps: string | null, value: PlaceValue): string | null {
+  return exifGps || value.customGpsPosition?.trim() || null;
 }
 
 /** A place row with nothing chosen yet. */
@@ -192,8 +200,18 @@ export function PlaceFields({
   return (
     <div className="flex flex-col gap-2">
       <PlaceLabel />
-      <PhotoGpsStatus exifGps={exifGps} rows={rows} places={all.places} />
-      <PlaceGpsAdders rows={rows} places={all.places} exifGps={exifGps} disabled={disabled} />
+      <PhotoGpsStatus
+        exifGps={exifGps}
+        customGps={value.customGpsPosition}
+        rows={rows}
+        places={all.places}
+      />
+      <PlaceGpsAdders
+        rows={rows}
+        places={all.places}
+        exifGps={ownGps(exifGps, value)}
+        disabled={disabled}
+      />
       <PlaceCityAdders
         rows={rows}
         places={all.places}
@@ -211,6 +229,7 @@ export function PlaceFields({
           onChange={(next) => setRow(index, next)}
           onRemove={index > 0 ? () => setRows(rows.toSpliced(index, 1)) : undefined}
           country={country}
+          joined={placesJoin(rows, index, all.places)}
         />
       ))}
       <PlaceFooter
@@ -251,10 +270,21 @@ interface PlaceRowProps {
   onRemove?: () => void;
   /** The country the photo was taken in, when known, to offer localizing places outside the US. */
   country: string;
+  /** The word from the places, when this row's place is one the row above's is in; it replaces the relation menu. */
+  joined: string | undefined;
 }
 
 /** How the photo relates to one place, and which place. */
-function PlaceRow({ index, row, all, disabled, onChange, onRemove, country }: PlaceRowProps) {
+function PlaceRow({
+  index,
+  row,
+  all,
+  disabled,
+  onChange,
+  onRemove,
+  country,
+  joined,
+}: PlaceRowProps) {
   const [error, setError] = useState<string>();
   const create = (name: string) => {
     setError(undefined);
@@ -264,12 +294,16 @@ function PlaceRow({ index, row, all, disabled, onChange, onRemove, country }: Pl
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-start gap-2">
-        <RelationSelect
-          id={`photo-place-relation-${index}`}
-          value={row.relation}
-          disabled={disabled}
-          onChange={(relation) => onChange({ ...row, relation })}
-        />
+        {joined === undefined ? (
+          <RelationSelect
+            id={`photo-place-relation-${index}`}
+            value={row.relation}
+            disabled={disabled}
+            onChange={(relation) => onChange({ ...row, relation })}
+          />
+        ) : (
+          <PlacesJoinWord word={joined} />
+        )}
         <PlaceCombobox
           index={index}
           row={row}
@@ -299,7 +333,7 @@ function PlaceCombobox({
   disabled,
   onChange,
   onCreate,
-}: Omit<PlaceRowProps, "onRemove" | "country"> & { onCreate: (name: string) => void }) {
+}: Omit<PlaceRowProps, "onRemove" | "country" | "joined"> & { onCreate: (name: string) => void }) {
   return (
     <div className="min-w-0 flex-1">
       <SingleCombobox
@@ -461,7 +495,7 @@ function PlaceFooter({ rows, all, disabled, onAddSecond, onSwap }: PlaceFooterPr
   return (
     <div className="flex flex-col gap-2 text-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-muted-foreground">{phraseText(rows, all.names)}</span>
+        <span className="text-muted-foreground">{phraseText(rows, all)}</span>
         <Button
           type="button"
           variant="outline"
@@ -485,8 +519,8 @@ function PlaceFooter({ rows, all, disabled, onAddSecond, onSwap }: PlaceFooterPr
 }
 
 /** The places as a quoted phrase, or what to do when none is chosen. */
-function phraseText(rows: PhotoPlace[], names: Map<string, string>): string {
-  const phrase = placePhrase(rows, names);
+function phraseText(rows: PhotoPlace[], all: Places): string {
+  const phrase = placePhrase(rows, all.places, all.names);
   return phrase ? `“${phrase}”` : "Choose a place, and how the photo relates to it.";
 }
 

@@ -86,6 +86,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio homepage](docs/portfolio-homepage.md) (`/` on the portfolio): the ways to explore, over photos picked on Site Spotlight
 - [Portfolio Filters](docs/portfolio-filters.md): filtering the portfolio's views by place, album and tag (plus camera, lens and settings on the Table and Grid), kept in the URL across views
 - [Photo Viewer](docs/photo-viewer.md): the portfolio's full-window photo, and moving between photos with the arrow keys
+- [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, technical info, and picking a range on the graph or the heatmap
 - [Portfolio Table](docs/portfolio-table.md) (`/table` on the portfolio): sorting, the Columns menu, and the View menu's place names
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
@@ -96,6 +97,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums and tags
+- [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
 - [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes

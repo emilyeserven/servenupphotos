@@ -60,7 +60,7 @@ func handleRemoveInFlight(store *settings.Store, gh *github.Client, findPhotos f
 		removed, err := gh.Remove(ctx, cfg, file)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {

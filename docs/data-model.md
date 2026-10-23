@@ -45,5 +45,8 @@ A photo's `spotlightZones` lists the spots on the portfolio it's spotlighted in,
 A photo's `socialPosts` lists its posts on social media, each with its platform, status, date, link, caption and
 hashtags; see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
 
+A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
+[Re-editing a photo](replace-image.md).
+
 > **Frontend analogy:** it's a normalized store, like a Redux slice keyed by ID: photos hold only the IDs of their
 > albums and tags, and each album or tag is stored once, so renaming one later changes a single file.

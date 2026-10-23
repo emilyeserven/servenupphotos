@@ -67,7 +67,7 @@ func handleCombinedAction(store *settings.Store, timeout time.Duration, logMsg, 
 		result, err := do(ctx, cfg)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {

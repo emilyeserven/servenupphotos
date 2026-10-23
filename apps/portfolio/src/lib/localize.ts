@@ -33,6 +33,10 @@ export interface Place {
   longitude?: number;
   /** Whether the GPS position is exactly where photos given the place were taken, such as a station. */
   exactLocation?: boolean;
+  /** The word between it and the place it's in on a photo, such as "in" or ","; missing for the parent's childRelation. */
+  parentRelation?: string;
+  /** The word between each place in it and it, unless that place sets its own; missing for "in". */
+  childRelation?: string;
 }
 
 /** One entry of LOCALIZATIONS.json: how a country, city or place is written and said where it is. */

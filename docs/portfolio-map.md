@@ -8,7 +8,8 @@ viewer. Photos too close together to tell apart are one round marker with how ma
 photos fading in turn under a dark overlay. Clicking it opens a grid of their thumbnails above it, with **Zoom in**
 to split them apart. Photos without resized versions are a small dot that opens their details instead.
 
-A photo whose EXIF has no GPS position goes at one of its places' position (see
+A photo's [custom GPS position](places-and-localizations.md#custom-gps-position), written on the Photo page, wins over
+its EXIF one. A photo with neither goes at one of its places' position (see
 [Places](places-and-localizations.md#gps-position)). That spot is only near where it was taken, so its marker's white
 border is softer, and so is a group's when every photo in it is placed that way. A place marked as an **Exact
 location** on the Places page keeps the solid border for its photos.
@@ -19,7 +20,9 @@ and opened (`lib/map-fan.ts`, used by `markersInView` in `lib/map-markers.ts`). 
 
 Where the map is looking is kept in the URL as its center and zoom (`?lat=37.57&lng=126.98&zoom=12.5`), half a second
 after it stops moving, so a link opens the map there instead of on all the photos. When those change from outside the map, as with the photo viewer's **View on map**, the map flies there. Moving replaces the URL rather than
-adding to the history. Changing a filter still fits the map to the photos it shows, and that's saved the same way.
+adding to the history. Changing a filter still fits the map to the photos it shows, and that's saved the same way. Unchoosing every place in the
+Places filter (or clearing the filters while places were chosen) is the exception: the map stays where it is rather
+than zooming out to every photo.
 
 > **Frontend analogy:** the grouping is done by MapLibre on the map's data, like a virtualized list deciding which
 > rows to render: the page asks which groups and photos are in view after each move and draws a React marker for each.

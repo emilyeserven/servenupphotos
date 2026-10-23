@@ -22,6 +22,7 @@ import {
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
+import { CommitError } from "@/components/commit-error";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { JsonDiffBlock } from "@/components/json-diff-block";
 import {
@@ -31,6 +32,7 @@ import {
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
+import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
@@ -381,6 +383,7 @@ function FileSection({
         <DraftMark data={file.status === "removed" ? undefined : file.data}>
           <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
         </DraftMark>
+        <ReEditMark data={file.status === "removed" ? undefined : file.data} />
         <MoveToUndecided file={file} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
@@ -685,7 +688,7 @@ function SyncSummary() {
       </span>
     );
   }
-  if (sync.commitError) return <span className="text-destructive">{sync.commitError.message}</span>;
+  if (sync.commitError) return <CommitError error={sync.commitError} />;
   if (!sync.unsynced) return <span className="text-muted-foreground">Up to date</span>;
   return (
     <span className="flex flex-col items-start gap-2">

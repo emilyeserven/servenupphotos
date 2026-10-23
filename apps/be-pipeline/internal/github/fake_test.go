@@ -138,6 +138,18 @@ func (f *fakeGitHub) head(branch string) string {
 	return branch + "@" + strconv.Itoa(f.versions[branch])
 }
 
+// missingDeletion is the path of the first entry that deletes a file base
+// doesn't have, or "".
+func (f *fakeGitHub) missingDeletion(base string, entries []map[string]any) string {
+	for _, e := range entries {
+		sha, hasSHA := e["sha"]
+		if _, ok := f.files[base+":"+e["path"].(string)]; hasSHA && sha == nil && !ok {
+			return e["path"].(string)
+		}
+	}
+	return ""
+}
+
 func branchOf(oid string) string {
 	return oid[:strings.LastIndex(oid, "@")]
 }
@@ -189,7 +201,15 @@ func (f *fakeGitHub) serve(w http.ResponseWriter, r *http.Request) {
 		for _, e := range in["tree"].([]any) {
 			entries = append(entries, e.(map[string]any))
 		}
-		f.trees[id] = fakeTree{base: branchOf(strings.TrimPrefix(in["base_tree"].(string), "tree:")), entries: entries}
+		base := branchOf(strings.TrimPrefix(in["base_tree"].(string), "tree:"))
+		if missing := f.missingDeletion(base, entries); missing != "" {
+			// As GitHub does, see https://docs.github.com/en/rest/git/trees#create-a-tree
+			writeBody(w, http.StatusUnprocessableEntity, map[string]any{
+				"message": "GitRPC::BadObjectState", "documentation_url": "https://docs.github.com/rest/git/trees#create-a-tree",
+			})
+			return
+		}
+		f.trees[id] = fakeTree{base: base, entries: entries}
 		writeBody(w, http.StatusCreated, map[string]any{"sha": id})
 	case path == "/git/commits" && r.Method == http.MethodPost:
 		id := "commit-" + strconv.Itoa(len(f.commits)+1)

@@ -6,5 +6,6 @@
   "city": "",
   "country": "",
   "latitude": 40.76383083369049,
-  "longitude": -73.92457375631997
+  "longitude": -73.92457375631997,
+  "parentRelation": ","
 }

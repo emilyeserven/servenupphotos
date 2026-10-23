@@ -8,11 +8,11 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
 import { TechnicalInfo, TechnicalInfoToggle } from "@/components/technical-info";
-import { TimelineHistogram } from "@/components/timeline-histogram";
+import { TimelineChart } from "@/components/timeline-chart";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
-import { buildHistogram } from "@/lib/histogram";
+import { dayKey } from "@/lib/heatmap";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { cn } from "@/lib/utils";
@@ -27,10 +27,12 @@ import {
 type ImagePhoto = Photo & { image: PhotoImage };
 
 /**
- * The time range, filters and open photo, plus whether each photo shows its technical info; left
- * out when it doesn't.
+ * The time range, filters and open photo, plus whether each photo shows its technical info and
+ * whether the chart is the heatmap; each left out when it isn't.
  */
-type TimelineSearch = TimeRangeValue & PhotoFilters & ShownPhotoSearch & { tech?: true };
+type TimelineSearch = TimeRangeValue &
+  PhotoFilters &
+  ShownPhotoSearch & { tech?: true; chart?: "heatmap" };
 
 export const Route = createFileRoute("/timeline")({
   validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
@@ -38,6 +40,7 @@ export const Route = createFileRoute("/timeline")({
     ...parseFilters(search),
     ...parseShownPhoto(search),
     ...(search.tech === true ? { tech: true } : {}),
+    ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
   }),
   component: TimelineView,
 });
@@ -63,20 +66,18 @@ function TimelineView() {
   const timeRange = parseTimeRange(search);
   const { start = earliestPhoto, end } = resolveTimeRange(timeRange, now);
   // Newest first, so the months and the photos in each read down from the latest.
-  const inRange = filterPhotos(photos, filters)
+  const matching = filterPhotos(photos, filters);
+  const inRange = matching
     .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
-  const { bins, resolution } = buildHistogram(
-    inRange.map((photo) => photo.takenAt),
-    start,
-    end,
-  );
   const isAllTime = Object.keys(timeRange).length === 0;
   const tech = search.tech === true;
 
-  /** Shows the time range, keeping the filters and the technical info shown or hidden. */
+  /** Shows the time range, keeping the filters and the rest of the view's options. */
   function showRange(next: TimeRangeValue) {
-    navigate({ search: { ...filters, ...next, ...(tech && { tech }) } });
+    navigate({
+      search: (prev) => ({ ...prev, range: undefined, from: undefined, to: undefined, ...next }),
+    });
   }
 
   return (
@@ -96,7 +97,7 @@ function TimelineView() {
           <TechnicalInfoToggle
             shown={tech}
             onChange={(show) =>
-              navigate({ search: { ...filters, ...timeRange, ...(show && { tech: true }) } })
+              navigate({ search: (prev) => ({ ...prev, tech: show ? true : undefined }) })
             }
           />
           <Button variant="outline" size="sm" disabled={isAllTime} onClick={() => showRange({})}>
@@ -106,9 +107,14 @@ function TimelineView() {
         </div>
         <PhotoFilterBar photos={photos} />
       </header>
-      <TimelineHistogram
-        bins={bins}
-        resolution={resolution}
+      <TimelineChart
+        mode={search.chart ?? "graph"}
+        inRange={inRange.map((photo) => photo.takenAt)}
+        all={matching.map((photo) => photo.takenAt)}
+        start={start}
+        end={end}
+        now={now}
+        shown={isAllTime ? undefined : { from: dayKey(start), to: dayKey(end) }}
         onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
       />
       <PhotoMonths photos={inRange} filtered={hasFilters(filters)} showTech={tech} onOpen={show} />

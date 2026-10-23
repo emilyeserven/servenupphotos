@@ -85,7 +85,13 @@ function useDrafts(rows: LocalizationRow[]) {
     save: (row: LocalizationRow, fields: Fields) => {
       // A row already queued or saving isn't queued again, as when Save all is pressed twice.
       if (isSaving(queryClient, row.id)) return;
-      save.mutate({ id: row.id, type: row.type, name: row.name, ...fields });
+      save.mutate({
+        id: row.id,
+        type: row.type,
+        name: row.name,
+        otherNames: row.saved?.otherNames,
+        ...fields,
+      });
     },
   };
 }

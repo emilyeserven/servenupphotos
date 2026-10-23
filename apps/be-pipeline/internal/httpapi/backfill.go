@@ -101,7 +101,7 @@ func handleBackfill(
 		result, err := run(ctx, cfg, read)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {

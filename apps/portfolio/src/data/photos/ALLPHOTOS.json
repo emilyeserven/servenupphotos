@@ -578,6 +578,116 @@
     "socialPosts": []
   },
   {
+    "title": "Becky's Mixtape Cover",
+    "comment": null,
+    "id": 197,
+    "file": "IMG_6068.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": null,
+    "aperture": null,
+    "exposure": "1/80",
+    "iso": 1600,
+    "focalLength": null,
+    "gpsPosition": "41 deg 15' 56.86\" N, 70 deg 6' 53.42\" W",
+    "createDate": "2019:07:12 19:27:53",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Nantucket",
+    "width": 6000,
+    "height": 4000,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068.jpg",
+      "key": "photos/b1eec3f23f73-img-6068.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068-thumbnail.webp?crop=733,0,4000",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b1eec3f23f73-img-6068-thumbnailpreview.webp?crop=733,0,4000",
+      "thumbnailcrop": {
+        "x": 733,
+        "y": 0,
+        "size": 4000,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "fix crop",
+      "date": "2026-10-23"
+    }
+  },
+  {
+    "title": "Bethesda Fountain",
+    "comment": null,
+    "id": 167,
+    "file": "IMG_3918.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": null,
+    "aperture": null,
+    "exposure": "1/1250",
+    "iso": 200,
+    "focalLength": null,
+    "gpsPosition": "40 deg 46' 25.97\" N, 73 deg 58' 15.93\" W",
+    "createDate": "2017:09:23 15:33:33",
+    "placeName": "Bethesda Fountain",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 3508,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918.jpg",
+      "key": "photos/5f14fe429295-img-3918.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918-thumbnail.webp?crop=897,0,3508",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5f14fe429295-img-3918-thumbnailpreview.webp?crop=897,0,3508",
+      "thumbnailcrop": {
+        "x": 897,
+        "y": 0,
+        "size": 3508,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "bethesda-fountain"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "id": 37,
     "title": "Bioglobe",
     "comment": null,
@@ -838,6 +948,62 @@
     "socialPosts": []
   },
   {
+    "title": "Central Park Gazebo",
+    "comment": null,
+    "id": 163,
+    "file": "IMG_3774.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 4,
+    "exposure": "1/160",
+    "iso": 100,
+    "focalLength": 29,
+    "gpsPosition": "40 deg 46' 11.89\" N, 73 deg 58' 11.34\" W",
+    "createDate": "2017:09:23 14:39:28",
+    "placeName": "Central Park",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 3336,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774.jpg",
+      "key": "photos/b8c4f0eb3d05-img-3774.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774-thumbnail.webp?crop=0,463,2873",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b8c4f0eb3d05-img-3774-thumbnailpreview.webp?crop=0,463,2873",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 463,
+        "size": 2873,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "central-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "id": 41,
     "title": "Change of Seasons by the Bridge",
     "comment": null,
@@ -894,6 +1060,62 @@
     "socialPosts": []
   },
   {
+    "title": "Chasing Bubbles",
+    "comment": null,
+    "id": 165,
+    "file": "IMG_3848.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/800",
+    "iso": 200,
+    "focalLength": 50,
+    "gpsPosition": "40 deg 46' 26.74\" N, 73 deg 58' 15.38\" W",
+    "createDate": "2017:09:23 15:05:16",
+    "placeName": "Bethesda Fountain",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 6000,
+    "height": 3478,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848.jpg",
+      "key": "photos/869d64e7316f-img-3848.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/869d64e7316f-img-3848-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1261,
+        "y": 0,
+        "size": 3478,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "bethesda-fountain"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "id": 42,
     "title": "Chess Master",
     "comment": null,
@@ -944,6 +1166,62 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "Circle of Harmony",
+    "comment": null,
+    "id": 153,
+    "file": "IMG_2528.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 10,
+    "exposure": "1/250",
+    "iso": 250,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "createDate": "2019:12:20 12:20:27",
+    "placeName": "Morikami Museum and Japanese Gardens",
+    "customCity": "Delray Beach",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3375,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528.jpg",
+      "key": "photos/d400e9138397-img-2528.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528-thumbnail.webp?crop=1393,177,3198",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d400e9138397-img-2528-thumbnailpreview.webp?crop=1393,177,3198",
+      "thumbnailcrop": {
+        "x": 1393,
+        "y": 177,
+        "size": 3198,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "morikami-museum-and-japanese-gardens"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "id": 8,
@@ -1208,6 +1486,62 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "CRASH & DAB",
+    "comment": null,
+    "id": 198,
+    "file": "IMG_6677.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 11,
+    "exposure": "1/400",
+    "iso": 100,
+    "focalLength": 55,
+    "gpsPosition": "41 deg 14' 40.86\" N, 70 deg 4' 38.68\" W",
+    "createDate": "2019:07:13 09:37:37",
+    "placeName": "surfside-beach",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Nantucket",
+    "width": 6000,
+    "height": 3375,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677.jpg",
+      "key": "photos/1a42e7b7c22e-img-6677.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1a42e7b7c22e-img-6677-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1312,
+        "y": 0,
+        "size": 3375,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "surfside-beach"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "id": 9,
@@ -1475,6 +1809,62 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "Flight Line",
+    "comment": null,
+    "id": 136,
+    "file": "IMG_4328.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 10,
+    "exposure": "1/400",
+    "iso": 500,
+    "focalLength": 87,
+    "gpsPosition": null,
+    "createDate": "2019:12:24 07:04:59",
+    "placeName": "delray-public-beach",
+    "customCity": "Delray Beach",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 5664,
+    "height": 3186,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328.jpg",
+      "key": "photos/b5b1d36356da-img-4328.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328-thumbnail.webp?crop=1191,0,3186",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b5b1d36356da-img-4328-thumbnailpreview.webp?crop=1191,0,3186",
+      "thumbnailcrop": {
+        "x": 1191,
+        "y": 0,
+        "size": 3186,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "delray-public-beach"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "id": 47,
@@ -1892,6 +2282,62 @@
     "socialPosts": []
   },
   {
+    "title": "Gull in Command",
+    "comment": null,
+    "id": 137,
+    "file": "IMG_4339.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 6.3,
+    "exposure": "1/320",
+    "iso": 500,
+    "focalLength": 135,
+    "gpsPosition": null,
+    "createDate": "2019:12:24 07:06:13",
+    "placeName": "Delray Public Beach",
+    "customCity": "Delray Beach",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3375,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339.jpg",
+      "key": "photos/c3f29b18713f-img-4339.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339-thumbnail.webp?crop=2776,151,3224",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c3f29b18713f-img-4339-thumbnailpreview.webp?crop=2776,151,3224",
+      "thumbnailcrop": {
+        "x": 2776,
+        "y": 151,
+        "size": 3224,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "delray-public-beach"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "id": 2,
     "title": "Gyeongbokgung Station on a (shockingly quiet) Saturday afternoon.",
     "comment": "One of the first things I did when I was in Seoul was get a Climate Card (the Metrocard/Oyster Card/SUICA etc equivalent). The public transit coverage was so good that I ended up only needing to get a taxi once! As a sort-of New Yorker, one of the obvious things I could say was that the stations in Korea were extremely clean. But I think the more interesting thing ended up being the amount of emergency equipment that was available in cabinets through every station I was in. From heatstroke recovery to earthquake supplies, it really added to my overall peace of mind and struck me as very thoughtful (and probably something that can't really exist in a less collectivist society, unfortunately).",
@@ -1989,6 +2435,118 @@
     "places": [],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "Heron on a Stroll",
+    "comment": null,
+    "id": 160,
+    "file": "IMG_3075.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S55-250mm f/4-5.6 IS STM",
+    "aperture": 8,
+    "exposure": "1/640",
+    "iso": 1600,
+    "focalLength": 163,
+    "gpsPosition": null,
+    "createDate": "2019:12:20 13:08:40",
+    "placeName": "Morikami Museum and Japanese Gardens",
+    "customCity": "Delray Beach",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3375,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075.jpg",
+      "key": "photos/9f1fd6f6b643-img-3075.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9f1fd6f6b643-img-3075-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1312,
+        "y": 0,
+        "size": 3375,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "morikami-museum-and-japanese-gardens"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
+    "title": "High Line Covered Area",
+    "comment": null,
+    "id": 159,
+    "file": "IMG_3068.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 3.5,
+    "exposure": "1/500",
+    "iso": 100,
+    "focalLength": 19,
+    "gpsPosition": "40 deg 44' 34.42\" N, 74 deg 0' 26.41\" W",
+    "createDate": "2017:09:16 11:01:15",
+    "placeName": "The High Line",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 5585,
+    "height": 3224,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068.jpg",
+      "key": "photos/5fea66c0c91b-img-3068.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068-thumbnail.webp?crop=1771,0,3224",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5fea66c0c91b-img-3068-thumbnailpreview.webp?crop=1771,0,3224",
+      "thumbnailcrop": {
+        "x": 1771,
+        "y": 0,
+        "size": 3224,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "the-high-line"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "id": 55,
@@ -2357,6 +2915,62 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "Jowls of Destiny",
+    "comment": null,
+    "id": 155,
+    "file": "IMG_2686.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S55-250mm f/4-5.6 IS STM",
+    "aperture": 8,
+    "exposure": "1/500",
+    "iso": 250,
+    "focalLength": 250,
+    "gpsPosition": null,
+    "createDate": "2019:12:20 12:28:29",
+    "placeName": "morikami-museum-and-japanese-gardens",
+    "customCity": "Delray Beach",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 5656,
+    "height": 3181,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686.jpg",
+      "key": "photos/dde707f0419d-img-2686.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/dde707f0419d-img-2686-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1237,
+        "y": 0,
+        "size": 3181,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "morikami-museum-and-japanese-gardens"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "id": 18,
@@ -2788,6 +3402,57 @@
     "socialPosts": []
   },
   {
+    "title": "Lonely Bench, Lonely Road",
+    "comment": null,
+    "id": 194,
+    "file": "IMG_1443.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 7.1,
+    "exposure": "1/1600",
+    "iso": 500,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "createDate": "2020:07:04 15:54:31",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": null,
+    "city": null,
+    "width": 2560,
+    "height": 1440,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443.jpg",
+      "key": "photos/3340fd52d5ea-img-1443.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443-thumbnail.webp?crop=1120,0,1440",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3340fd52d5ea-img-1443-thumbnailpreview.webp?crop=1120,0,1440",
+      "thumbnailcrop": {
+        "x": 1120,
+        "y": 0,
+        "size": 1440,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "title": "Long Shadows at Grand Central",
     "comment": null,
     "id": 148,
@@ -2841,6 +3506,118 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "Looking from the High Line",
+    "comment": null,
+    "id": 158,
+    "file": "IMG_2944.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": null,
+    "aperture": null,
+    "exposure": "1/2500",
+    "iso": 100,
+    "focalLength": null,
+    "gpsPosition": "40 deg 44' 59.56\" N, 74 deg 0' 11.93\" W",
+    "createDate": "2017:09:16 10:01:05",
+    "placeName": "The High Line",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 5999,
+    "height": 3090,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944.jpg",
+      "key": "photos/4cab13c3d1f7-img-2944.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944-thumbnail.webp?crop=902,0,3090",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4cab13c3d1f7-img-2944-thumbnailpreview.webp?crop=902,0,3090",
+      "thumbnailcrop": {
+        "x": 902,
+        "y": 0,
+        "size": 3090,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "the-high-line"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
+    "title": "Looking Over Bethesda Fountain",
+    "comment": null,
+    "id": 168,
+    "file": "IMG_3951.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 8,
+    "exposure": "1/500",
+    "iso": 200,
+    "focalLength": 18,
+    "gpsPosition": "40 deg 46' 25.97\" N, 73 deg 58' 15.93\" W",
+    "createDate": "2017:09:23 16:10:33",
+    "placeName": "Bethesda Fountain",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 5999,
+    "height": 3105,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951.jpg",
+      "key": "photos/59e1a9ba1ae8-img-3951.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/59e1a9ba1ae8-img-3951-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1447,
+        "y": 0,
+        "size": 3105,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "bethesda-fountain"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "title": "Masterpiece",
@@ -3107,6 +3884,57 @@
     "socialPosts": []
   },
   {
+    "title": "Nantucket Dock",
+    "comment": null,
+    "id": 204,
+    "file": "IMG_8785.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 4.5,
+    "exposure": "1/60",
+    "iso": 1250,
+    "focalLength": 37,
+    "gpsPosition": "41 deg 16' 57.01\" N, 70 deg 5' 33.72\" W",
+    "createDate": "2019:07:16 20:28:37",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Nantucket",
+    "width": 6000,
+    "height": 3374,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785.jpg",
+      "key": "photos/9f395345c24d-img-8785.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785-thumbnail.webp?crop=2626,0,3374",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9f395345c24d-img-8785-thumbnailpreview.webp?crop=2626,0,3374",
+      "thumbnailcrop": {
+        "x": 2626,
+        "y": 0,
+        "size": 3374,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "title": "Neat Newt",
     "comment": null,
     "id": 90,
@@ -3209,6 +4037,65 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "NYC Ice Cream",
+    "comment": null,
+    "id": 161,
+    "file": "IMG_3446.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5,
+    "exposure": "1/200",
+    "iso": 100,
+    "focalLength": 50,
+    "gpsPosition": "40 deg 45' 9.28\" N, 73 deg 58' 41.87\" W",
+    "createDate": "2017:09:23 08:14:49",
+    "placeName": "Midtown East",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 5854,
+    "height": 3336,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446.jpg",
+      "key": "photos/7493c7f893a1-img-3446.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-thumbnail.webp?crop=1948,0,3336",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7493c7f893a1-img-3446-thumbnailpreview.webp?crop=1948,0,3336",
+      "thumbnailcrop": {
+        "x": 1948,
+        "y": 0,
+        "size": 3336,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "midtown"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "Need to rotate a bit, probably",
+      "date": "2026-10-23"
+    }
   },
   {
     "title": "Oculus",
@@ -3898,6 +4785,65 @@
     "socialPosts": []
   },
   {
+    "title": "Rockefeller Lights",
+    "comment": null,
+    "id": 162,
+    "file": "IMG_3507.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": null,
+    "aperture": null,
+    "exposure": "1/25",
+    "iso": 100,
+    "focalLength": null,
+    "gpsPosition": "40 deg 45' 34.40\" N, 73 deg 58' 49.52\" W",
+    "createDate": "2017:09:23 08:53:24",
+    "placeName": "rockefeller-center",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 5981,
+    "height": 2984,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507.jpg",
+      "key": "photos/853be5de64d2-img-3507.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507-thumbnail.webp?crop=1797,0,2984",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/853be5de64d2-img-3507-thumbnailpreview.webp?crop=1797,0,2984",
+      "thumbnailcrop": {
+        "x": 1797,
+        "y": 0,
+        "size": 2984,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "rockefeller-center"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "fix centering",
+      "date": "2026-10-23"
+    }
+  },
+  {
     "id": 62,
     "title": "Royal Red",
     "comment": null,
@@ -4156,6 +5102,62 @@
     ],
     "spotlightZones": ["homepage"],
     "socialPosts": []
+  },
+  {
+    "title": "Small Stone Lantern",
+    "comment": null,
+    "id": 157,
+    "file": "IMG_2923.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 10,
+    "exposure": "1/320",
+    "iso": 800,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "createDate": "2019:12:20 12:52:50",
+    "placeName": "Morikami Museum and Japanese Gardens",
+    "customCity": "Delray Beach",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 6000,
+    "height": 3375,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923.jpg",
+      "key": "photos/83e7a98baac9-img-2923.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-thumbnail.webp?crop=1113,0,3375",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-thumbnailpreview.webp?crop=1113,0,3375",
+      "thumbnailcrop": {
+        "x": 1113,
+        "y": 0,
+        "size": 3375,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "morikami-museum-and-japanese-gardens"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "title": "Snake Woman",
@@ -4672,6 +5674,65 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "Sunrise Seagull Watch",
+    "comment": null,
+    "id": 135,
+    "file": "IMG_4317.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 10,
+    "exposure": "1/320",
+    "iso": 500,
+    "focalLength": 45,
+    "gpsPosition": null,
+    "createDate": "2019:12:24 07:04:34",
+    "placeName": "Delray Public Beach",
+    "customCity": "Delray Beach",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 5951,
+    "height": 3347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317.jpg",
+      "key": "photos/697f9cd49d24-img-4317.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317-thumbnail.webp?crop=2604,0,3347",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/697f9cd49d24-img-4317-thumbnailpreview.webp?crop=2604,0,3347",
+      "thumbnailcrop": {
+        "x": 2604,
+        "y": 0,
+        "size": 3347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "delray-public-beach"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "brighten",
+      "date": "2026-10-23"
+    }
   },
   {
     "title": "Sunset over the Parc",
@@ -5408,6 +6469,65 @@
     "socialPosts": []
   },
   {
+    "title": "View from the Met",
+    "comment": null,
+    "id": 154,
+    "file": "IMG_2679.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/80",
+    "iso": 200,
+    "focalLength": 109,
+    "gpsPosition": "40 deg 46' 42.81\" N, 73 deg 57' 52.69\" W",
+    "createDate": "2017:09:09 19:29:15",
+    "placeName": "metropolitan-museum-of-art",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New York City",
+    "width": 5999,
+    "height": 3187,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679.jpg",
+      "key": "photos/b3723a779104-img-2679.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679-thumbnail.webp?crop=281,0,3187",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b3723a779104-img-2679-thumbnailpreview.webp?crop=281,0,3187",
+      "thumbnailcrop": {
+        "x": 281,
+        "y": 0,
+        "size": 3187,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "metropolitan-museum-of-art"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "Crop out the left area",
+      "date": "2026-10-23"
+    }
+  },
+  {
     "id": 73,
     "title": "View from the Skybridge",
     "comment": null,
@@ -5674,6 +6794,62 @@
     ],
     "spotlightZones": ["homepage"],
     "socialPosts": []
+  },
+  {
+    "title": "WATCH THE GAP",
+    "comment": null,
+    "id": 156,
+    "file": "IMG_2833.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": null,
+    "aperture": null,
+    "exposure": "1/100",
+    "iso": 100,
+    "focalLength": null,
+    "gpsPosition": "41 deg 2' 48.34\" N, 73 deg 32' 32.69\" W",
+    "createDate": "2017:09:14 18:30:27",
+    "placeName": "Stamford Train Station",
+    "customCity": "Stamford",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "Stamford",
+    "width": 5893,
+    "height": 3079,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833.jpg",
+      "key": "photos/cb8398f5741a-img-2833.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/cb8398f5741a-img-2833-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1407,
+        "y": 0,
+        "size": 3079,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "stamford-train-station"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "title": "Water over the Rocks",

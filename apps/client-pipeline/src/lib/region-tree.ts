@@ -1,4 +1,5 @@
 import type { Place } from "@/api/places";
+import { type LocationNames, winningName } from "@/lib/location-names";
 import { type CityRow, type CountryRow, cityOfPlace, regionKey } from "@/lib/place-cities";
 import { placeChain } from "@/lib/place-tree";
 
@@ -45,13 +46,17 @@ function countryOfPlace(place: Place, places: Place[]): string {
   return countries.find(Boolean) ?? "";
 }
 
-/** What a place is listed under: the place it's in, or else its city, or else its country. */
-function placeParentKey(place: Place, places: Place[], ids: Set<string>): string {
+/**
+ * What a place is listed under: the place it's in, or else its city, or else its country, each
+ * written as the name that wins over it.
+ */
+function placeParentKey(place: Place, input: RegionTreeInput, ids: Set<string>): string {
+  const { places, names } = input;
   const parent = place.parent ?? "";
   if (ids.has(parent)) return placeNodeKey(parent);
   return (
-    regionNodeKey("city", cityOfPlace(place, places)) ||
-    regionNodeKey("country", countryOfPlace(place, places))
+    regionNodeKey("city", winningName(names, "city", cityOfPlace(place, places))) ||
+    regionNodeKey("country", winningName(names, "country", countryOfPlace(place, places)))
   );
 }
 
@@ -62,10 +67,13 @@ export interface RegionTreeInput {
   places: Place[];
   /** How many photos list each place, by ID. */
   placePhotos: ReadonlyMap<string, number>;
+  /** The names that win over other names of a country or city, which the rows are counted as. */
+  names: LocationNames;
 }
 
 /** Every country, city and place as a node, each with what it's listed under. */
-export function regionNodes({ countries, cities, places, placePhotos }: RegionTreeInput) {
+export function regionNodes(input: RegionTreeInput) {
+  const { countries, cities, places, placePhotos } = input;
   const ids = new Set(places.map((place) => place.id));
   const nodes: RegionNode[] = [
     ...countries.map((country) => ({
@@ -88,7 +96,7 @@ export function regionNodes({ countries, cities, places, placePhotos }: RegionTr
       key: placeNodeKey(place.id),
       kind: "place" as const,
       name: place.name,
-      parentKey: placeParentKey(place, places, ids),
+      parentKey: placeParentKey(place, input, ids),
       photos: placePhotos.get(place.id) ?? 0,
       place,
     })),

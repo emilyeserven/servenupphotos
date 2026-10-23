@@ -76,6 +76,19 @@ type photoJSON struct {
 	// SocialPosts are the photo's posts on social media, posted or
 	// scheduled, written on the Photo page.
 	SocialPosts []SocialPost `json:"socialPosts"`
+	// ReEdit marks a photo to edit again, such as in Lightroom, with why;
+	// nil when it isn't marked. It's set on the Photo page, and replacing the
+	// photo's image there clears it.
+	ReEdit *ReEdit `json:"reEdit"`
+}
+
+// ReEdit is a photo's mark for re-editing.
+type ReEdit struct {
+	// Reason is why the photo needs editing again, such as "Too warm"; ""
+	// when none was given.
+	Reason string `json:"reason"`
+	// Date is the day it was marked, as YYYY-MM-DD.
+	Date string `json:"date"`
 }
 
 // SocialPost is one post of a photo on social media, such as on Instagram.
@@ -127,6 +140,9 @@ type PublishResult struct {
 type PublishError struct {
 	Status  int
 	Message string
+	// GitHub is GitHub's own answer, when a GitHub call failed, so the page
+	// can show exactly what went wrong.
+	GitHub *Failure
 }
 
 func (e *PublishError) Error() string { return e.Message }
@@ -250,6 +266,15 @@ func (c *Client) openPullRequest(ctx context.Context, t target, branch string) (
 // check turns a failed GitHub call into a PublishError naming what was being
 // done, and returns nil for a 2xx response.
 func check(res response, err error, doing string) *PublishError {
+	perr := checkStatus(res, err, doing)
+	if perr != nil && err == nil {
+		perr.GitHub = failureOf(res, doing)
+	}
+	return perr
+}
+
+// checkStatus is check's message for res, without GitHub's answer.
+func checkStatus(res response, err error, doing string) *PublishError {
 	switch {
 	case err != nil:
 		return publishErr(http.StatusBadGateway, "Couldn't reach GitHub.")
@@ -263,7 +288,7 @@ func check(res response, err error, doing string) *PublishError {
 		return publishErr(http.StatusBadGateway,
 			"The token can't write to this repository. Give it Contents and Pull requests read and write access.")
 	default:
-		return publishErr(http.StatusBadGateway, "GitHub responded %d when %s.", res.Status, doing)
+		return publishErr(http.StatusBadGateway, "GitHub responded %d when %s%s.", res.Status, doing, githubSaid(res))
 	}
 }
 
@@ -274,7 +299,7 @@ const readAccess = "The token can't read this repository. Give it Contents and P
 // access rather than write access.
 func readCheck(res response, err error, doing string) *PublishError {
 	if err == nil && (res.Status == http.StatusForbidden || res.Status == http.StatusNotFound) && !isRateLimited(res) {
-		return publishErr(http.StatusBadGateway, readAccess)
+		return &PublishError{Status: http.StatusBadGateway, Message: readAccess, GitHub: failureOf(res, doing)}
 	}
 	return check(res, err, doing)
 }

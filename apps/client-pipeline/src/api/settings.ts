@@ -1,4 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
+import { type ErrorBody, apiErrorOf } from "@/api/errors";
 
 /** All the client ever learns about a stored secret. */
 export interface SecretStatus {
@@ -48,8 +49,8 @@ export type SecretUpdate = string | undefined;
 
 export async function requestJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, init);
-  const json = (await res.json().catch(() => null)) as (T & { message?: string }) | null;
-  if (!res.ok) throw new Error(json?.message ?? `${url} responded ${res.status}`);
+  const json = (await res.json().catch(() => null)) as (T & ErrorBody) | null;
+  if (!res.ok) throw apiErrorOf(url, res.status, json);
   return json as T;
 }
 

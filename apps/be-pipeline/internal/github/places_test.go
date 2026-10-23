@@ -74,6 +74,25 @@ func TestSavePlaceWithParent(t *testing.T) {
 	}
 }
 
+func TestSavePlaceRelations(t *testing.T) {
+	_, c := newMainRepo(t, map[string]string{
+		dataRoot + "/places/queens.json": `{"id":"queens","name":"Queens","description":""}`,
+	})
+	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "astoria", Name: "Astoria", Parent: "queens", ParentRelation: " , ", ChildRelation: "near"})
+	saved := staged(t, c, dataRoot+"/places/astoria.json")
+	if err != nil || !strings.Contains(saved, `"parentRelation": ","`) || !strings.Contains(saved, `"childRelation": "near"`) {
+		t.Errorf("SavePlace() error = %v, committed %q", err, saved)
+	}
+	// Without a parent, the word to it isn't kept.
+	_, err = c.SavePlace(t.Context(), placesGH, Place{ID: "nyc", Name: "New York City", ParentRelation: "at"})
+	if got := staged(t, c, dataRoot+"/places/nyc.json"); err != nil || strings.Contains(got, "parentRelation") {
+		t.Errorf("SavePlace() error = %v, committed %q; want no parentRelation", err, got)
+	}
+	if _, err := c.SavePlace(t.Context(), placesGH, Place{ID: "x", Name: "X", ChildRelation: "under"}); err == nil {
+		t.Error("SavePlace() saved an unknown connecting word")
+	}
+}
+
 func TestSavePlaceWithCoordinates(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{})
 	lat, lng := 37.5796, 126.977

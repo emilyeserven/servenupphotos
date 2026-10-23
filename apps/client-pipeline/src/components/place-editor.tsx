@@ -16,6 +16,7 @@ import {
 } from "@/components/localization-fields";
 import { PlaceCityField } from "@/components/place-city-field";
 import { PlaceExactLocationField } from "@/components/place-exact-location-field";
+import { PlaceJoinFields } from "@/components/place-join-fields";
 import { RegionIcon } from "@/components/region-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -72,7 +73,9 @@ type Draft = Required<Omit<Place, "id" | "latitude" | "longitude">> & { gps: str
 
 function draftOf(place: Place): Draft {
   const { name, description, parent = "", city = "", country = "", exactLocation = false } = place;
-  return { name, description, parent, city, country, exactLocation, gps: gpsText(place) };
+  const { parentRelation = "", childRelation = "" } = place;
+  const fields = { name, description, parent, city, country, exactLocation };
+  return { ...fields, parentRelation, childRelation, gps: gpsText(place) };
 }
 
 /**
@@ -198,6 +201,16 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
             onChange={(value) => form.set("description", value)}
           />
           <ParentField form={form} id={form.next.id} places={places} disabled={busy} />
+          <PlaceJoinFields
+            parent={places.find((p) => p.id === form.draft.parent)}
+            places={places}
+            id={form.next.id}
+            name={form.draft.name}
+            parentRelation={form.draft.parentRelation}
+            childRelation={form.draft.childRelation}
+            disabled={busy}
+            onChange={form.set}
+          />
           <div className="grid gap-4 sm:grid-cols-2">
             <PlaceCityField
               value={form.draft.city}

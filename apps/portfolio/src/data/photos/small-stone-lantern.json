@@ -1,0 +1,56 @@
+{
+  "title": "Small Stone Lantern",
+  "comment": null,
+  "id": 157,
+  "file": "IMG_2923.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS",
+  "aperture": 10,
+  "exposure": "1/320",
+  "iso": 800,
+  "focalLength": 18,
+  "gpsPosition": null,
+  "createDate": "2019:12:20 12:52:50",
+  "placeName": "Morikami Museum and Japanese Gardens",
+  "customCity": "Delray Beach",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 6000,
+  "height": 3375,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923.jpg",
+    "key": "photos/83e7a98baac9-img-2923.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-thumbnail.webp?crop=1113,0,3375",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/83e7a98baac9-img-2923-thumbnailpreview.webp?crop=1113,0,3375",
+    "thumbnailcrop": {
+      "x": 1113,
+      "y": 0,
+      "size": 3375,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "morikami-museum-and-japanese-gardens"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": [],
+  "reEdit": null
+}

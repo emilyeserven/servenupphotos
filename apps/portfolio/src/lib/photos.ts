@@ -177,6 +177,8 @@ interface PhotoData {
   /** Entries saved before it was added don't have it. */
   lens?: string | null;
   gpsPosition: string | null;
+  /** A GPS position written on the Photo page, "latitude, longitude" in decimal degrees, used instead of the EXIF one. */
+  customGpsPosition?: string | null;
   createDate: string | null;
   /** A city and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
   customCity?: string | null;
@@ -199,7 +201,7 @@ interface PhotoData {
   /** The spots on the site the photo is spotlighted in, picked on Site Spotlight; older entries don't have them. */
   spotlightZones?: string[];
   /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
-  places?: { relation: string; id: string }[];
+  places?: PhotoPlaces;
   /** The IDs of the photo's albums and tags; older entries were saved without them. */
   albums?: string[];
   tags?: string[];
@@ -227,7 +229,7 @@ function parseCreateDate(value: string | null): Date | null {
  * One coordinate of exiftool's `37 deg 31' 21.06" N, 126 deg 58' 46.24" E`, in decimal degrees.
  * `hemispheres` lists the positive hemisphere first: "NS" for latitude, "EW" for longitude.
  */
-function parseCoordinate(value: string, hemispheres: "NS" | "EW"): number | null {
+function exifCoordinate(value: string, hemispheres: "NS" | "EW"): number | null {
   const number = String.raw`(\d+(?:\.\d+)?)`;
   const match = value.match(new RegExp(`${number} deg ${number}' ${number}" ([${hemispheres}])`));
   if (!match) return null;
@@ -236,6 +238,20 @@ function parseCoordinate(value: string, hemispheres: "NS" | "EW"): number | null
   return hemisphere === hemispheres[0] ? degrees : -degrees;
 }
 
+/** One coordinate in decimal degrees, as a custom GPS position writes it, such as `-73.9634`. */
+function decimalCoordinate(value: string): number | null {
+  return /^\s*-?\d+(\.\d+)?\s*$/.test(value) ? Number(value) : null;
+}
+
+/** One coordinate, written in decimal degrees or as exiftool writes it. */
+function parseCoordinate(value: string, hemispheres: "NS" | "EW"): number | null {
+  return decimalCoordinate(value) ?? exifCoordinate(value, hemispheres);
+}
+
+/**
+ * A GPS position as exiftool writes it, or as a custom one is written on the Photo page
+ * ("40.7795, -73.9634"); both parts null when it can't be read.
+ */
 function parseGpsPosition(value: string | null) {
   const [lat = "", lng = ""] = value?.split(",") ?? [];
   const latitude = parseCoordinate(lat, "NS");
@@ -271,13 +287,19 @@ function ownPosition({ latitude, longitude }: Place): Position | undefined {
   return latitude === undefined || longitude === undefined ? undefined : { latitude, longitude };
 }
 
+/** The photo's own GPS position: the custom one written on the Photo page, or else its EXIF one. */
+function photoGps(photo: PhotoData): Position {
+  const written = parseGpsPosition(photo.customGpsPosition ?? null);
+  return written.latitude === null ? parseGpsPosition(photo.gpsPosition) : written;
+}
+
 /**
- * Where the photo goes on the map: its EXIF GPS position, or else the first of its places (or a
+ * Where the photo goes on the map: its custom or EXIF GPS position, or else the first of its places (or a
  * place it's in) with a GPS position set on the Places page. A place's position is approximate
  * unless that place is marked as an exact location.
  */
 function photoPosition(photo: PhotoData): Position & { approximatePosition: boolean } {
-  const exif = parseGpsPosition(photo.gpsPosition);
+  const exif = photoGps(photo);
   if (exif.latitude !== null) return { ...exif, approximatePosition: false };
   const found = (photo.places ?? []).map(({ id }) => placePosition(id));
   const position = found.find(({ latitude }) => latitude !== null);
@@ -368,9 +390,47 @@ function joinParts(...parts: (string | null | undefined)[]): string {
   return parts.filter(Boolean).join(", ");
 }
 
-/** One of the photo's places, with how it relates to it, such as "by Geunjeongmun Gate". */
-function placePart(relation: string, name: Localized): Localized {
-  return mapLocalized(name, (n, script) => [relation, n[script]].filter(Boolean).join(" "));
+/** The photo's places, from PLACES.json, each with how the photo relates to it. */
+type PhotoPlaces = { relation: string; id: string }[];
+
+/**
+ * One of the photo's places, with the word before it, such as "by Geunjeongmun Gate", or ", Queens"
+ * for a comma.
+ */
+function placePart(word: string, name: Localized): Localized {
+  return mapLocalized(name, (n, script) =>
+    [word, n[script]].filter(Boolean).join(" ").replace(/^, /, ","),
+  );
+}
+
+/** The parts after each other: a space between them, but none before a comma. */
+function joinPlaceParts(parts: string[]): string {
+  return parts.join(" ").replaceAll(" ,", ", ");
+}
+
+/** The word a place is joined to the place it's in with: its own, or else its parent's default, or else "in". */
+function joinWord(place: Place): string {
+  return place.parentRelation || placeById(place.parent)?.childRelation || "in";
+}
+
+/**
+ * The word before the photo's place at `index`: when it's a place the place before it is in, the
+ * word of the place just under it on the way up, as set on the Places page; else the photo's own.
+ */
+function wordBefore(places: PhotoPlaces, index: number): string {
+  return placesWord(places, index) ?? places[index]?.relation ?? "";
+}
+
+/** The word from the Places page before the photo's place at `index`, if it's one the place before it is in. */
+function placesWord(places: PhotoPlaces, index: number): string | undefined {
+  const chain = chainBefore(places, index);
+  const at = chain.findIndex((place) => place.id === places[index]?.id);
+  return at > 0 ? chain.slice(at - 1, at).map(joinWord)[0] : undefined;
+}
+
+/** The photo's place before `index` and every place it's in; none for the first. */
+function chainBefore(places: PhotoPlaces, index: number): Place[] {
+  return index > 0 ? placeAncestry(places[index - 1]?.id) : [];
 }
 
 function capitalized(value: string): string {
@@ -382,12 +442,15 @@ function capitalized(value: string): string {
  * without any. Places missing from PLACES.json are left out. The old `placeName` isn't shown.
  */
 function placeText(photo: PhotoData): Localized | null {
-  const parts = (photo.places ?? []).flatMap(({ relation, id }) => {
+  const places = photo.places ?? [];
+  const parts = places.flatMap(({ id }, index) => {
     const place = placeById(id);
-    return place ? [placePart(relation, localizePlace(place))] : [];
+    return place ? [placePart(wordBefore(places, index), localizePlace(place))] : [];
   });
   if (parts.length === 0) return null;
-  return mapLocalized(parts, (p, script) => capitalized(p.map((part) => part[script]).join(" ")));
+  return mapLocalized(parts, (p, script) =>
+    capitalized(joinPlaceParts(p.map((part) => part[script]))),
+  );
 }
 
 /** The most specific of the photo's places, the one inside the most others; null without any. */
@@ -446,7 +509,7 @@ function photoLocation(photo: PhotoData): LocalizedLocation | null {
     place: placeText(photo),
     city: localizedField("city", custom(photo.customCity, photo.city)),
     country: localizedField("country", custom(photo.customCountry, photo.country)),
-    gps: gpsText(parseGpsPosition(photo.gpsPosition)),
+    gps: gpsText(photoGps(photo)),
   };
   if (!parts.place && !parts.city && !parts.country) return null;
   return Object.fromEntries(

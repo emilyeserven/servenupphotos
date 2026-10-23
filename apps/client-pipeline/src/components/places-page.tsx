@@ -13,6 +13,7 @@ import { PlaceEditor } from "@/components/place-editor";
 import { QueryResult } from "@/components/query-result";
 import { RegionEditor } from "@/components/region-editor";
 import { RegionList, type RegionListData } from "@/components/region-list";
+import { locationNames } from "@/lib/location-names";
 import { cityRows, countryRows } from "@/lib/place-cities";
 import { unmappedPlacePhotos } from "@/lib/place-gps";
 import { placePhotoCounts, shownPhotos } from "@/lib/place-seeds";
@@ -50,19 +51,23 @@ function nodeLocalizationId(node: RegionNode): string {
 function useRegionList(data: PlacesResponse): RegionListData {
   const photos = shownPhotos(useCombinedData().data);
   const places = readEntries(data.places);
+  const savedLocalizations = readEntries(data.localizations);
+  const names = locationNames(savedLocalizations);
   const nodes = regionNodes({
-    countries: countryRows(photos, places),
-    cities: cityRows(photos, places),
+    countries: countryRows(photos, places, names),
+    cities: cityRows(photos, places, names),
     places,
     placePhotos: placePhotoCounts(photos),
+    names,
   });
-  const byId = new Map(readEntries(data.localizations).map((l) => [l.id, l]));
+  const byId = new Map(savedLocalizations.map((l) => [l.id, l]));
   const localizations = new Map<string, Localization>();
   for (const node of nodes) {
     const saved = byId.get(nodeLocalizationId(node));
     if (saved) localizations.set(node.key, saved);
   }
-  return { data, places, nodes, localizations, unmapped: unmappedPlacePhotos(photos, places) };
+  const unmapped = unmappedPlacePhotos(photos, places);
+  return { data, places, nodes, localizations, unmapped, photos, names };
 }
 
 /** The list on the left and the edit panel on the right; on a phone the panel comes first. */
@@ -110,7 +115,7 @@ function EditPanel({ folder, list, node, onDone }: EditPanelProps) {
   if (!node)
     return <PlaceEditor folder={folder} place={null} places={list.places} onDone={onDone} />;
   const saved = list.localizations.get(node.key);
-  if (!node.place) return <RegionEditor node={node} saved={saved} />;
+  if (!node.place) return <RegionEditor node={node} saved={saved} list={list} />;
   return (
     <PlaceEditor
       folder={folder}

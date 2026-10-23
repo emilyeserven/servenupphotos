@@ -122,13 +122,13 @@ export interface FieldChange {
 }
 
 /** What applying the camera overrides again would change in every photo file. */
-export interface ReapplyPreview extends ScannedPhotos {
+interface ReapplyPreview extends ScannedPhotos {
   /** How many camera overrides there are. */
   overrides: number;
   files: { path: string; fileUrl: string; camera: string; changes: FieldChange[] }[];
 }
 
-export interface ReapplyResult extends PendingSave {
+interface ReapplyResult extends PendingSave {
   files: number;
   fields: number;
 }
