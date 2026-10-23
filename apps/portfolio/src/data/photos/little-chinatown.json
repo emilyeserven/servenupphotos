@@ -4,11 +4,11 @@
   "id": 132,
   "file": "DSCF1244.jpg",
   "camera": "Fujifilm X-T5",
-  "lens": "21.0 mm",
-  "aperture": 1,
+  "lens": "TTARTISAN Tilt 50mm f/1.4",
+  "aperture": null,
   "exposure": "1/2000",
   "iso": 200,
-  "focalLength": 21,
+  "focalLength": 50,
   "gpsPosition": null,
   "createDate": "2026:10:18 01:56:33",
   "placeName": "Manhattan Bridge",
@@ -50,6 +50,12 @@
   "spotlightZones": [],
   "socialPosts": [],
   "exifOriginals": {
-    "camera": "X-T5"
-  }
+    "camera": "X-T5",
+    "lens": "21.0 mm",
+    "focalLength": 21,
+    "aperture": 1,
+    "manualAperture": null
+  },
+  "customLens": "ttartisan-tilt-50mm-f-1-4",
+  "manualAperture": true
 }

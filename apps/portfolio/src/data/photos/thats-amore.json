@@ -4,11 +4,11 @@
   "id": 131,
   "file": "DSCF0848.jpg",
   "camera": "Fujifilm X-T5",
-  "lens": "21.0 mm",
-  "aperture": 1,
+  "lens": "TTARTISAN Tilt 50mm f/1.4",
+  "aperture": null,
   "exposure": "1/250",
   "iso": 125,
-  "focalLength": 21,
+  "focalLength": 50,
   "gpsPosition": null,
   "createDate": "2026:10:17 23:01:54",
   "placeName": "little-italy",
@@ -50,6 +50,12 @@
   "spotlightZones": [],
   "socialPosts": [],
   "exifOriginals": {
-    "camera": "X-T5"
-  }
+    "camera": "X-T5",
+    "lens": "21.0 mm",
+    "focalLength": 21,
+    "aperture": 1,
+    "manualAperture": null
+  },
+  "customLens": "ttartisan-tilt-50mm-f-1-4",
+  "manualAperture": true
 }
