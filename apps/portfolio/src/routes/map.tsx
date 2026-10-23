@@ -44,19 +44,30 @@ import {
   useDayPhotos,
   useMapPhotos,
 } from "@/lib/map-photos";
-import { daysInView, isDay } from "@/lib/map-days";
+import { type DayRange, daysInView, isDay } from "@/lib/map-days";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
-/** The map's search: the shared filters, and the day only the map narrows to. */
-type MapSearch = PhotoFilters & { day?: string };
+/**
+ * The map's search: the shared filters, and the day only the map narrows to, or the first day of a
+ * range with `to` as its last.
+ */
+type MapSearch = PhotoFilters & { day?: string; to?: string };
+
+/** The day, and the last day of the range when there's a day and it's after it. */
+function daysOf(search: Record<string, unknown>): Pick<MapSearch, "day" | "to"> {
+  if (!isDay(search.day)) return {};
+  return isDay(search.to) && search.to > search.day
+    ? { day: search.day, to: search.to }
+    : { day: search.day };
+}
 
 export const Route = createFileRoute("/map")({
   validateSearch: (search: Record<string, unknown>): MapSearch => ({
     ...parseFilters(search),
-    ...(isDay(search.day) && { day: search.day }),
+    ...daysOf(search),
   }),
   component: MapView,
 });
@@ -203,16 +214,17 @@ function useFitOnFilter(
  * on the day in the URL, which it draws.
  */
 function useMapFilters() {
-  const { day, ...filters } = Route.useSearch();
+  const { day, to, ...filters } = Route.useSearch();
   const mapPhotos = useMapPhotos(filters);
-  return { day, mapPhotos, dayPhotos: useDayPhotos(mapPhotos, day), setDay: useSetDay() };
+  const dayPhotos = useDayPhotos(mapPhotos, day, to);
+  return { range: { day, to }, mapPhotos, dayPhotos, setDays: useSetDays() };
 }
 
-/** Sets the day the map is narrowed to in the URL, keeping the other filters; undefined for all. */
-function useSetDay() {
+/** Sets the days the map is narrowed to in the URL, keeping the other filters; no day for all. */
+function useSetDays() {
   const navigate = useNavigate({ from: "/map" });
-  return (day: string | undefined) => {
-    void navigate({ search: (prev) => ({ ...prev, day }), replace: true });
+  return ({ day, to }: DayRange) => {
+    void navigate({ search: (prev) => ({ ...prev, day, to }), replace: true });
   };
 }
 
@@ -229,7 +241,7 @@ function MapView() {
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
   const [shown, setShown] = useState<ImagePhoto | null>(null);
-  const { day, mapPhotos, dayPhotos, setDay } = useMapFilters();
+  const { range, mapPhotos, dayPhotos, setDays } = useMapFilters();
   // What the map shows, for the day filter to list only the days of the photos in view.
   const [view, setView] = useState<LngLatBounds | null>(null);
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds));
@@ -302,7 +314,11 @@ function MapView() {
               if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
             }}
           >
-            <MapDayFilter days={daysInView(mapPhotos.placed, view)} day={day} onChange={setDay} />
+            <MapDayFilter
+              days={daysInView(mapPhotos.placed, view)}
+              range={range}
+              onChange={setDays}
+            />
           </MapViewControls>
           <Source
             id={SOURCE_ID}

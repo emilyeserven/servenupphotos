@@ -12,6 +12,13 @@ export function isDay(value: unknown): value is string {
   return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
+/** The days the map is narrowed to: one day, or `day` through `to`; neither for all of them. */
+export interface DayRange {
+  day?: string;
+  /** The range's last day, after `day`; missing for just the one day. */
+  to?: string;
+}
+
 /** A day the map can be narrowed to, with how many of the photos in view were taken on it. */
 export interface MapDay {
   day: string;
@@ -37,7 +44,16 @@ export function daysInView(photos: PlacedPhoto[], bounds: LngLatBounds | null): 
     .toSorted((a, b) => b.day.localeCompare(a.day));
 }
 
-/** The photos taken on the day, or all of them without one. */
-export function photosOnDay(photos: PlacedPhoto[], day: string | undefined): PlacedPhoto[] {
-  return day ? photos.filter((photo) => dayOf(photo) === day) : photos;
+/**
+ * The photos taken from the day through `to`, both included; on the day alone without `to`, or all
+ * of them without a day.
+ */
+export function photosOnDays(
+  photos: PlacedPhoto[],
+  day: string | undefined,
+  to: string | undefined,
+): PlacedPhoto[] {
+  if (!day) return photos;
+  const last = to ?? day;
+  return photos.filter((photo) => dayOf(photo) >= day && dayOf(photo) <= last);
 }

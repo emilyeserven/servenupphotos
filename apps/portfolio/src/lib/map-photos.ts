@@ -1,6 +1,6 @@
 import { LngLatBounds } from "maplibre-gl";
 import { useMemo } from "react";
-import { photosOnDay } from "@/lib/map-days";
+import { photosOnDays } from "@/lib/map-days";
 import { filterPhotos, type PhotoFilters } from "@/lib/photo-filters";
 import { photos, type Photo } from "@/lib/photos";
 
@@ -77,13 +77,18 @@ interface DayPhotos {
 }
 
 /**
- * The map's photos taken on the day, or all of them without one. It's apart from the other filters
- * so choosing a day neither moves the map nor takes the other days out of the day filter's choices.
+ * The map's photos taken on the day, or from it through `to`, or all of them without a day. It's
+ * apart from the other filters so choosing days neither moves the map nor takes the other days out
+ * of the day filter's choices.
  */
-export function useDayPhotos(mapPhotos: MapPhotos, day: string | undefined): DayPhotos {
+export function useDayPhotos(
+  mapPhotos: MapPhotos,
+  day: string | undefined,
+  to: string | undefined,
+): DayPhotos {
   return useMemo(() => {
     if (!day) return mapPhotos;
-    const placed = photosOnDay(mapPhotos.placed, day);
+    const placed = photosOnDays(mapPhotos.placed, day, to);
     return { placed, geoJson: geoJsonOf(placed) };
-  }, [mapPhotos, day]);
+  }, [mapPhotos, day, to]);
 }

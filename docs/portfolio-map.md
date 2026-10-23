@@ -25,3 +25,6 @@ Over the top left corner:
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the
   location, album and tag filters, but the menu doesn't carry it to the other views.
+- Once a day is chosen and another day is in view, a second **to** dropdown picks the last day of a range
+  (`?day=2026-05-01&to=2026-05-17`), and the map shows every photo from the first day through the last. Either day can
+  be the earlier one; the range is put in order. **Just this day** goes back to one day.
