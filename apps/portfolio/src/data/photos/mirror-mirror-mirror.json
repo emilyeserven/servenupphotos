@@ -1,0 +1,52 @@
+{
+  "title": "Mirror, Mirror (Mirror)",
+  "comment": null,
+  "id": 125,
+  "file": "DSCF2947.jpg",
+  "camera": "Fujifilm X-T5",
+  "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "aperture": 7.1,
+  "exposure": "1/4",
+  "iso": 125,
+  "focalLength": 18,
+  "gpsPosition": "37 deg 34' 33.06\" N, 126 deg 58' 24.43\" E",
+  "createDate": "2026:05:17 11:21:18",
+  "placeName": "Gyeongbokgung Station",
+  "customCity": "Seoul",
+  "customCountry": "South Korea",
+  "country": "South Korea",
+  "city": null,
+  "width": 7467,
+  "height": 4200,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947.jpg",
+    "key": "photos/4e7c73007333-dscf2947.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-thumbnail.webp?crop=1527,0,4200",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-thumbnailpreview.webp?crop=1527,0,4200",
+    "thumbnailcrop": {
+      "x": 1527,
+      "y": 0,
+      "size": 4200,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "gyeongbokgung-station"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

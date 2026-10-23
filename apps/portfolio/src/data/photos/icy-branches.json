@@ -1,0 +1,52 @@
+{
+  "title": "Icy Branches",
+  "comment": null,
+  "id": 77,
+  "file": "IMG_0010.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS",
+  "aperture": 5.6,
+  "exposure": "1/640",
+  "iso": 320,
+  "focalLength": 135,
+  "gpsPosition": "41 deg 3' 16.50\" N, 73 deg 32' 41.53\" W",
+  "createDate": "2019:01:26 16:17:20",
+  "placeName": "mill-river-park",
+  "customCity": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "city": "Stamford",
+  "width": 6000,
+  "height": 3718,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010.jpg",
+    "key": "photos/30314b0a9a11-img-0010.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-thumbnail.webp?crop=0,0,3718",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-thumbnailpreview.webp?crop=0,0,3718",
+    "thumbnailcrop": {
+      "x": 0,
+      "y": 0,
+      "size": 3718,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "mill-river-park"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

@@ -1,0 +1,55 @@
+{
+  "title": "That's Amore",
+  "comment": null,
+  "id": 131,
+  "file": "DSCF0848.jpg",
+  "camera": "Fujifilm X-T5",
+  "lens": "21.0 mm",
+  "aperture": 1,
+  "exposure": "1/250",
+  "iso": 125,
+  "focalLength": 21,
+  "gpsPosition": null,
+  "createDate": "2026:10:17 23:01:54",
+  "placeName": "little-italy",
+  "customCity": null,
+  "customCountry": null,
+  "country": null,
+  "city": null,
+  "width": 7728,
+  "height": 4347,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848.jpg",
+    "key": "photos/4ea839031bc7-dscf0848.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-thumbnail.webp?crop=2263,682,3449",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-thumbnailpreview.webp?crop=2263,682,3449",
+    "thumbnailcrop": {
+      "x": 2263,
+      "y": 682,
+      "size": 3449,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "little-italy"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": [],
+  "exifOriginals": {
+    "camera": "X-T5"
+  }
+}

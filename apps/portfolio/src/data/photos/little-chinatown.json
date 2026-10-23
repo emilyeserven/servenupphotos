@@ -1,0 +1,55 @@
+{
+  "title": "Little Chinatown",
+  "comment": null,
+  "id": 132,
+  "file": "DSCF1244.jpg",
+  "camera": "Fujifilm X-T5",
+  "lens": "21.0 mm",
+  "aperture": 1,
+  "exposure": "1/2000",
+  "iso": 200,
+  "focalLength": 21,
+  "gpsPosition": null,
+  "createDate": "2026:10:18 01:56:33",
+  "placeName": "Manhattan Bridge",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 7728,
+  "height": 4347,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244.jpg",
+    "key": "photos/c7ce983abf3c-dscf1244.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-thumbnail.webp?crop=2415,0,4347",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-thumbnailpreview.webp?crop=2415,0,4347",
+    "thumbnailcrop": {
+      "x": 2415,
+      "y": 0,
+      "size": 4347,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "manhattan-bridge"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": [],
+  "exifOriginals": {
+    "camera": "X-T5"
+  }
+}

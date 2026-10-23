@@ -320,6 +320,58 @@
     "socialPosts": []
   },
   {
+    "title": "Appalachian Stump",
+    "comment": null,
+    "id": 114,
+    "file": "post-1369.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+    "aperture": 5.6,
+    "exposure": "1/15",
+    "iso": 200,
+    "focalLength": 55,
+    "gpsPosition": "41 deg 46' 34.63\" N, 73 deg 25' 3.86\" W",
+    "createDate": "2016:05:22 03:27:28",
+    "placeName": "Kent Falls State Park",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Cornwall Bridge",
+    "width": 5184,
+    "height": 3456,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369.jpg",
+      "key": "photos/dc268a38aebc-post-1369.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369-thumbnail.webp?crop=710,0,3456",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/dc268a38aebc-post-1369-thumbnailpreview.webp?crop=710,0,3456",
+      "thumbnailcrop": {
+        "x": 710,
+        "y": 0,
+        "size": 3456,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "kent-falls-state-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 36,
     "title": "Art not Ads",
     "comment": null,
@@ -424,6 +476,53 @@
     "socialPosts": []
   },
   {
+    "title": "Bad Luck Love",
+    "comment": null,
+    "id": 100,
+    "file": "IMG_4712.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF50mm f/1.8 STM",
+    "aperture": 10,
+    "exposure": "1/400",
+    "iso": 100,
+    "focalLength": 50,
+    "gpsPosition": "41 deg 8' 47.52\" N, 73 deg 29' 42.73\" W",
+    "createDate": "2017:09:29 16:25:37",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New Canaan",
+    "width": 6000,
+    "height": 3329,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712.jpg",
+      "key": "photos/b3b84b9df04f-img-4712.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712-thumbnail.webp?crop=1494,0,3329",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b3b84b9df04f-img-4712-thumbnailpreview.webp?crop=1494,0,3329",
+      "thumbnailcrop": {
+        "x": 1494,
+        "y": 0,
+        "size": 3329,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 37,
     "title": "Bioglobe",
     "comment": null,
@@ -522,6 +621,58 @@
       {
         "relation": "",
         "id": "bowery"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Blue Bridge",
+    "comment": null,
+    "id": 117,
+    "file": "post-7701.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+    "aperture": 3.5,
+    "exposure": "1/30",
+    "iso": 100,
+    "focalLength": 18,
+    "gpsPosition": "41 deg 2' 47.02\" N, 73 deg 32' 33.37\" W",
+    "createDate": "2016:10:12 01:28:39",
+    "placeName": "stamford-train-station",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Stamford",
+    "width": 5042,
+    "height": 3361,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701.jpg",
+      "key": "photos/6d16f76bdd39-post-7701.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701-thumbnail.webp?crop=917,300,3061",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6d16f76bdd39-post-7701-thumbnailpreview.webp?crop=917,300,3061",
+      "thumbnailcrop": {
+        "x": 917,
+        "y": 300,
+        "size": 3061,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "stamford-train-station"
       }
     ],
     "spotlightZones": [],
@@ -952,6 +1103,58 @@
     "socialPosts": []
   },
   {
+    "title": "Crab's Rock Now",
+    "comment": null,
+    "id": 95,
+    "file": "IMG_4560.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 6.3,
+    "exposure": "1/200",
+    "iso": 100,
+    "focalLength": 135,
+    "gpsPosition": "41 deg 8' 37.77\" N, 73 deg 13' 55.36\" W",
+    "createDate": "2018:06:24 14:13:48",
+    "placeName": "st-mary-s-by-the-sea",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Bridgeport",
+    "width": 5184,
+    "height": 2809,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560.jpg",
+      "key": "photos/00c079a79e5d-img-4560.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560-thumbnail.webp?crop=771,0,2809",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/00c079a79e5d-img-4560-thumbnailpreview.webp?crop=771,0,2809",
+      "thumbnailcrop": {
+        "x": 771,
+        "y": 0,
+        "size": 2809,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "st-mary-s-by-the-sea"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 9,
     "title": "Curious Goose",
     "comment": null,
@@ -1106,6 +1309,58 @@
       {
         "relation": "",
         "id": "washington-square-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Fire Alarm",
+    "comment": null,
+    "id": 133,
+    "file": "DSCF1609.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF30mmF2.8 R LM WR Macro",
+    "aperture": 8,
+    "exposure": "1/75",
+    "iso": 125,
+    "focalLength": 30,
+    "gpsPosition": null,
+    "createDate": "2026:10:18 05:08:52",
+    "placeName": "Bowery",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 7562,
+    "height": 4254,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609.jpg",
+      "key": "photos/be103fa664f8-dscf1609.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/be103fa664f8-dscf1609-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1654,
+        "y": 0,
+        "size": 4254,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "bowery"
       }
     ],
     "spotlightZones": [],
@@ -1730,6 +1985,58 @@
     "socialPosts": []
   },
   {
+    "title": "Icy Branches",
+    "comment": null,
+    "id": 77,
+    "file": "IMG_0010.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 5.6,
+    "exposure": "1/640",
+    "iso": 320,
+    "focalLength": 135,
+    "gpsPosition": "41 deg 3' 16.50\" N, 73 deg 32' 41.53\" W",
+    "createDate": "2019:01:26 16:17:20",
+    "placeName": "mill-river-park",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Stamford",
+    "width": 6000,
+    "height": 3718,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010.jpg",
+      "key": "photos/30314b0a9a11-img-0010.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-thumbnail.webp?crop=0,0,3718",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/30314b0a9a11-img-0010-thumbnailpreview.webp?crop=0,0,3718",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 3718,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "mill-river-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 17,
     "title": "Colorful Storefront",
     "comment": null,
@@ -2050,6 +2357,58 @@
     "socialPosts": []
   },
   {
+    "title": "Just your average birds!",
+    "comment": null,
+    "id": 83,
+    "file": "IMG_1373.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+    "aperture": 5.6,
+    "exposure": "1/30",
+    "iso": 400,
+    "focalLength": 55,
+    "gpsPosition": "41 deg 46' 34.63\" N, 73 deg 25' 3.86\" W",
+    "createDate": "2016:05:22 03:31:22",
+    "placeName": "Kent Falls State Park",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Cornwall Bridge",
+    "width": 5184,
+    "height": 2916,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373.jpg",
+      "key": "photos/ee0afe9c858d-img-1373.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373-thumbnail.webp?crop=235,0,2916",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ee0afe9c858d-img-1373-thumbnailpreview.webp?crop=235,0,2916",
+      "thumbnailcrop": {
+        "x": 235,
+        "y": 0,
+        "size": 2916,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "kent-falls-state-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 57,
     "title": "Kura",
     "comment": null,
@@ -2100,6 +2459,113 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "Ladies Waiting",
+    "comment": null,
+    "id": 128,
+    "file": "DSCF3061.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.3,
+    "exposure": "1/140",
+    "iso": 125,
+    "focalLength": 74.4,
+    "gpsPosition": "37 deg 34' 38.24\" N, 126 deg 58' 36.98\" E",
+    "createDate": "2026:05:17 12:59:03",
+    "placeName": "Gyeongbokgung Palace",
+    "customCity": "Seoul",
+    "customCountry": null,
+    "country": "South Korea",
+    "city": null,
+    "width": 7696,
+    "height": 4329,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061.jpg",
+      "key": "photos/3c802731c261-dscf3061.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061-thumbnail.webp?crop=2152,393,3331",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3c802731c261-dscf3061-thumbnailpreview.webp?crop=2152,393,3331",
+      "thumbnailcrop": {
+        "x": 2152,
+        "y": 393,
+        "size": 3331,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "gyeongbokgung-palace"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Little Chinatown",
+    "comment": null,
+    "id": 132,
+    "file": "DSCF1244.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "21.0 mm",
+    "aperture": 1,
+    "exposure": "1/2000",
+    "iso": 200,
+    "focalLength": 21,
+    "gpsPosition": null,
+    "createDate": "2026:10:18 01:56:33",
+    "placeName": "Manhattan Bridge",
+    "customCity": "New York City",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244.jpg",
+      "key": "photos/c7ce983abf3c-dscf1244.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-thumbnail.webp?crop=2415,0,4347",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c7ce983abf3c-dscf1244-thumbnailpreview.webp?crop=2415,0,4347",
+      "thumbnailcrop": {
+        "x": 2415,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "manhattan-bridge"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "exifOriginals": {
+      "camera": "X-T5"
+    }
   },
   {
     "id": 58,
@@ -2200,6 +2666,110 @@
       {
         "relation": "",
         "id": "upper-east-side"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Masterpiece",
+    "comment": null,
+    "id": 121,
+    "file": "DSCF2877-2.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 22,
+    "exposure": "1/60",
+    "iso": 250,
+    "focalLength": 55.6,
+    "gpsPosition": "37 deg 32' 9.52\" N, 126 deg 59' 59.25\" E",
+    "createDate": "2026:05:16 10:52:28",
+    "placeName": "Itaewon",
+    "customCity": null,
+    "customCountry": null,
+    "country": "South Korea",
+    "city": null,
+    "width": 7690,
+    "height": 4326,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2.jpg",
+      "key": "photos/485896b801a4-dscf2877-2.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-thumbnail.webp?crop=1724,231,4095",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/485896b801a4-dscf2877-2-thumbnailpreview.webp?crop=1724,231,4095",
+      "thumbnailcrop": {
+        "x": 1724,
+        "y": 231,
+        "size": 4095,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "itaewon"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Mirror, Mirror (Mirror)",
+    "comment": null,
+    "id": 125,
+    "file": "DSCF2947.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 7.1,
+    "exposure": "1/4",
+    "iso": 125,
+    "focalLength": 18,
+    "gpsPosition": "37 deg 34' 33.06\" N, 126 deg 58' 24.43\" E",
+    "createDate": "2026:05:17 11:21:18",
+    "placeName": "Gyeongbokgung Station",
+    "customCity": "Seoul",
+    "customCountry": "South Korea",
+    "country": "South Korea",
+    "city": null,
+    "width": 7467,
+    "height": 4200,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947.jpg",
+      "key": "photos/4e7c73007333-dscf2947.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-thumbnail.webp?crop=1527,0,4200",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4e7c73007333-dscf2947-thumbnailpreview.webp?crop=1527,0,4200",
+      "thumbnailcrop": {
+        "x": 1527,
+        "y": 0,
+        "size": 4200,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "gyeongbokgung-station"
       }
     ],
     "spotlightZones": [],
@@ -2314,6 +2884,162 @@
     "socialPosts": []
   },
   {
+    "title": "Movable Type",
+    "comment": null,
+    "id": 84,
+    "file": "IMG_1630.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+    "aperture": 5,
+    "exposure": "1/80",
+    "iso": 500,
+    "focalLength": 43,
+    "gpsPosition": "41 deg 9' 1.66\" N, 73 deg 29' 51.12\" W",
+    "createDate": "2016:06:05 03:35:46",
+    "placeName": "new-canaan-historical-society",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New Canaan",
+    "width": 5184,
+    "height": 2905,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630.jpg",
+      "key": "photos/0f4850624c2d-img-1630.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630-thumbnail.webp?crop=1488,0,2905",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0f4850624c2d-img-1630-thumbnailpreview.webp?crop=1488,0,2905",
+      "thumbnailcrop": {
+        "x": 1488,
+        "y": 0,
+        "size": 2905,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-historical-society"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Neat Newt",
+    "comment": null,
+    "id": 90,
+    "file": "IMG_2142.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S35mm f/2.8 MACRO IS STM",
+    "aperture": 8,
+    "exposure": "1/100",
+    "iso": 1000,
+    "focalLength": 35,
+    "gpsPosition": "41 deg 14' 13.64\" N, 73 deg 23' 44.79\" W",
+    "createDate": "2018:10:06 15:35:31",
+    "placeName": "Devil's Den State Park",
+    "customCity": "Weston",
+    "customCountry": "United States",
+    "country": "United States",
+    "city": "Weston",
+    "width": 5151,
+    "height": 3032,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142.jpg",
+      "key": "photos/0b1540323e6a-img-2142.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142-thumbnail.webp?crop=556,0,3032",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0b1540323e6a-img-2142-thumbnailpreview.webp?crop=556,0,3032",
+      "thumbnailcrop": {
+        "x": 556,
+        "y": 0,
+        "size": 3032,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "devil-s-den-state-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "North Appalachian Trail Marker",
+    "comment": null,
+    "id": 82,
+    "file": "IMG_1361.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+    "aperture": 5.6,
+    "exposure": "1/50",
+    "iso": 100,
+    "focalLength": 55,
+    "gpsPosition": "41 deg 46' 34.63\" N, 73 deg 25' 3.86\" W",
+    "createDate": "2016:05:22 03:24:31",
+    "placeName": "Kent Falls State Park",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Cornwall Bridge",
+    "width": 4666,
+    "height": 2731,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361.jpg",
+      "key": "photos/c8bd0162207a-img-1361.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361-thumbnail.webp?crop=1935,0,2731",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c8bd0162207a-img-1361-thumbnailpreview.webp?crop=1935,0,2731",
+      "thumbnailcrop": {
+        "x": 1935,
+        "y": 0,
+        "size": 2731,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "kent-falls-state-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 59,
     "title": "On the Bridge",
     "comment": null,
@@ -2412,6 +3138,58 @@
       {
         "relation": "",
         "id": "freeman-alley"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Only Goat Knows",
+    "comment": null,
+    "id": 80,
+    "file": "IMG_1122.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 6.3,
+    "exposure": "1/200",
+    "iso": 100,
+    "focalLength": 101,
+    "gpsPosition": "41 deg 9' 14.84\" N, 73 deg 30' 8.22\" W",
+    "createDate": "2017:09:02 13:16:20",
+    "placeName": "new-canaan-nature-center",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New Canaan",
+    "width": 6000,
+    "height": 3530,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122.jpg",
+      "key": "photos/bc96f2047992-img-1122.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122-thumbnail.webp?crop=3107,0,2893",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bc96f2047992-img-1122-thumbnailpreview.webp?crop=3107,0,2893",
+      "thumbnailcrop": {
+        "x": 3107,
+        "y": 0,
+        "size": 2893,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-nature-center"
       }
     ],
     "spotlightZones": [],
@@ -2738,6 +3516,110 @@
     "socialPosts": []
   },
   {
+    "title": "Quiet Itaewon Morning",
+    "comment": null,
+    "id": 120,
+    "file": "DSCF2753.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/340",
+    "iso": 125,
+    "focalLength": 18,
+    "gpsPosition": "37 deg 32' 6.09\" N, 126 deg 59' 38.90\" E",
+    "createDate": "2026:05:15 21:24:28",
+    "placeName": "itaewon",
+    "customCity": null,
+    "customCountry": null,
+    "country": "South Korea",
+    "city": null,
+    "width": 7652,
+    "height": 4304,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753.jpg",
+      "key": "photos/70516da379db-dscf2753.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753-thumbnail.webp?crop=1409,0,4304",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70516da379db-dscf2753-thumbnailpreview.webp?crop=1409,0,4304",
+      "thumbnailcrop": {
+        "x": 1409,
+        "y": 0,
+        "size": 4304,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "itaewon"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Red Toadstool",
+    "comment": null,
+    "id": 85,
+    "file": "IMG_1991.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S35mm f/2.8 MACRO IS STM",
+    "aperture": 8,
+    "exposure": "1/100",
+    "iso": 1000,
+    "focalLength": 35,
+    "gpsPosition": "41 deg 14' 13.64\" N, 73 deg 23' 44.79\" W",
+    "createDate": "2018:10:06 15:09:21",
+    "placeName": "devil-s-den-state-park",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States",
+    "city": "Weston",
+    "width": 6000,
+    "height": 3549,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991.jpg",
+      "key": "photos/aec0444d6e3d-img-1991.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/aec0444d6e3d-img-1991-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1225,
+        "y": 0,
+        "size": 3549,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "devil-s-den-state-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 62,
     "title": "Royal Red",
     "comment": null,
@@ -2842,6 +3724,110 @@
     "socialPosts": []
   },
   {
+    "title": "Sakura Sundown",
+    "comment": null,
+    "id": 102,
+    "file": "IMG_7767.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 11,
+    "exposure": "1/320",
+    "iso": 1000,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "createDate": "2020:04:08 18:53:57",
+    "placeName": "Mill River Park",
+    "customCity": "Stamford",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 1689,
+    "height": 2251,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767.jpg",
+      "key": "photos/683d7acc3821-img-7767.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767-thumbnail.webp?crop=0,0,1689",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/683d7acc3821-img-7767-thumbnailpreview.webp?crop=0,0,1689",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 1689,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "mill-river-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Seaweed King",
+    "comment": null,
+    "id": 98,
+    "file": "IMG_4623.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/100",
+    "iso": 200,
+    "focalLength": 135,
+    "gpsPosition": "41 deg 8' 37.77\" N, 73 deg 13' 55.36\" W",
+    "createDate": "2018:06:24 14:27:23",
+    "placeName": "St. Mary's by the Sea",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Bridgeport",
+    "width": 5184,
+    "height": 3056,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623.jpg",
+      "key": "photos/0bd30c6d11b3-img-4623.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623-thumbnail.webp?crop=957,0,3056",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0bd30c6d11b3-img-4623-thumbnailpreview.webp?crop=957,0,3056",
+      "thumbnailcrop": {
+        "x": 957,
+        "y": 0,
+        "size": 3056,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "st-mary-s-by-the-sea"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 31,
     "title": "Shrouded in Mist",
     "comment": null,
@@ -2891,6 +3877,53 @@
       }
     ],
     "spotlightZones": ["homepage"],
+    "socialPosts": []
+  },
+  {
+    "title": "Snowy Road",
+    "comment": null,
+    "id": 93,
+    "file": "IMG_3018.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 3.5,
+    "exposure": "1/1600",
+    "iso": 1600,
+    "focalLength": 18,
+    "gpsPosition": "41 deg 10' 42.02\" N, 73 deg 28' 27.43\" W",
+    "createDate": "2018:03:14 18:03:29",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New Canaan",
+    "width": 6000,
+    "height": 3334,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018.jpg",
+      "key": "photos/2e809575391f-img-3018.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018-thumbnail.webp?crop=1295,0,3334",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2e809575391f-img-3018-thumbnailpreview.webp?crop=1295,0,3334",
+      "thumbnailcrop": {
+        "x": 1295,
+        "y": 0,
+        "size": 3334,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [],
+    "spotlightZones": [],
     "socialPosts": []
   },
   {
@@ -3149,6 +4182,58 @@
     "socialPosts": []
   },
   {
+    "title": "Sunset over the Parc",
+    "comment": null,
+    "id": 94,
+    "file": "IMG_3355.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 6.3,
+    "exposure": "1/100",
+    "iso": 320,
+    "focalLength": 18,
+    "gpsPosition": "41 deg 3' 13.60\" N, 73 deg 32' 41.20\" W",
+    "createDate": "2019:03:26 19:15:18",
+    "placeName": "Mill River Park",
+    "customCity": "Stamford",
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "city": "Stamford",
+    "width": 3185,
+    "height": 5735,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355.jpg",
+      "key": "photos/828038efedd1-img-3355.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-thumbnail.webp?crop=0,1728,3185",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-thumbnailpreview.webp?crop=0,1728,3185",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1728,
+        "size": 3185,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "mill-river-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 20,
     "title": "Supermarkets",
     "comment": null,
@@ -3203,6 +4288,61 @@
     ],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "That's Amore",
+    "comment": null,
+    "id": 131,
+    "file": "DSCF0848.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "21.0 mm",
+    "aperture": 1,
+    "exposure": "1/250",
+    "iso": 125,
+    "focalLength": 21,
+    "gpsPosition": null,
+    "createDate": "2026:10:17 23:01:54",
+    "placeName": "little-italy",
+    "customCity": null,
+    "customCountry": null,
+    "country": null,
+    "city": null,
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848.jpg",
+      "key": "photos/4ea839031bc7-dscf0848.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-thumbnail.webp?crop=2263,682,3449",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4ea839031bc7-dscf0848-thumbnailpreview.webp?crop=2263,682,3449",
+      "thumbnailcrop": {
+        "x": 2263,
+        "y": 682,
+        "size": 3449,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "little-italy"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "exifOriginals": {
+      "camera": "X-T5"
+    }
   },
   {
     "id": 67,
@@ -3837,6 +4977,110 @@
     "socialPosts": []
   },
   {
+    "title": "Waiting Room",
+    "comment": null,
+    "id": 118,
+    "file": "post-7862.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+    "aperture": 4,
+    "exposure": "1/40",
+    "iso": 100,
+    "focalLength": 18,
+    "gpsPosition": "41 deg 17' 50.94\" N, 72 deg 55' 35.92\" W",
+    "createDate": "2016:10:14 00:23:46",
+    "placeName": "new-haven-train-station",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New Haven",
+    "width": 5183,
+    "height": 2941,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862.jpg",
+      "key": "photos/94a0cb50aaa7-post-7862.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-thumbnail.webp?crop=1111,0,2941",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-thumbnailpreview.webp?crop=1111,0,2941",
+      "thumbnailcrop": {
+        "x": 1111,
+        "y": 0,
+        "size": 2941,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-haven-train-station"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Water over the Rocks",
+    "comment": null,
+    "id": 79,
+    "file": "IMG_1002.jpg",
+    "camera": "Canon EOS REBEL T3i",
+    "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+    "aperture": 22,
+    "exposure": "1/10",
+    "iso": 100,
+    "focalLength": 18,
+    "gpsPosition": "41 deg 46' 34.63\" N, 73 deg 25' 3.86\" W",
+    "createDate": "2016:05:22 01:21:25",
+    "placeName": "kent-falls-state-park",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "Cornwall Bridge",
+    "width": 5184,
+    "height": 2916,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002.jpg",
+      "key": "photos/81f875475941-img-1002.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1134,
+        "y": 0,
+        "size": 2916,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "kent-falls-state-park"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
     "id": 76,
     "title": "Wave of Windows",
     "comment": null,
@@ -3887,6 +5131,58 @@
       {
         "relation": "in",
         "id": "murray-hill"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": []
+  },
+  {
+    "title": "Waveny Ducks",
+    "comment": null,
+    "id": 78,
+    "file": "IMG_0996.jpg",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/800",
+    "iso": 400,
+    "focalLength": 135,
+    "gpsPosition": "41 deg 7' 18.93\" N, 73 deg 29' 15.81\" W",
+    "createDate": "2017:09:02 11:36:48",
+    "placeName": "waveny-park",
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "city": "New Canaan",
+    "width": 6000,
+    "height": 3307,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996.jpg",
+      "key": "photos/609c39b11ca0-img-0996.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996-thumbnail.webp?crop=1843,674,2633",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/609c39b11ca0-img-0996-thumbnailpreview.webp?crop=1843,674,2633",
+      "thumbnailcrop": {
+        "x": 1843,
+        "y": 674,
+        "size": 2633,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
       }
     ],
     "spotlightZones": [],

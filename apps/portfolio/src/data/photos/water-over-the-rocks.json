@@ -1,0 +1,52 @@
+{
+  "title": "Water over the Rocks",
+  "comment": null,
+  "id": 79,
+  "file": "IMG_1002.jpg",
+  "camera": "Canon EOS REBEL T3i",
+  "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+  "aperture": 22,
+  "exposure": "1/10",
+  "iso": 100,
+  "focalLength": 18,
+  "gpsPosition": "41 deg 46' 34.63\" N, 73 deg 25' 3.86\" W",
+  "createDate": "2016:05:22 01:21:25",
+  "placeName": "kent-falls-state-park",
+  "customCity": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "city": "Cornwall Bridge",
+  "width": 5184,
+  "height": 2916,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002.jpg",
+    "key": "photos/81f875475941-img-1002.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/81f875475941-img-1002-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1134,
+      "y": 0,
+      "size": 2916,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "kent-falls-state-park"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

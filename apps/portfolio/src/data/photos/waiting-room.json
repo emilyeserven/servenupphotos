@@ -1,0 +1,52 @@
+{
+  "title": "Waiting Room",
+  "comment": null,
+  "id": 118,
+  "file": "post-7862.jpg",
+  "camera": "Canon EOS REBEL T3i",
+  "lens": "EF-S18-55mm f/3.5-5.6 IS II",
+  "aperture": 4,
+  "exposure": "1/40",
+  "iso": 100,
+  "focalLength": 18,
+  "gpsPosition": "41 deg 17' 50.94\" N, 72 deg 55' 35.92\" W",
+  "createDate": "2016:10:14 00:23:46",
+  "placeName": "new-haven-train-station",
+  "customCity": null,
+  "customCountry": null,
+  "country": "United States of America",
+  "city": "New Haven",
+  "width": 5183,
+  "height": 2941,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862.jpg",
+    "key": "photos/94a0cb50aaa7-post-7862.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-thumbnail.webp?crop=1111,0,2941",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/94a0cb50aaa7-post-7862-thumbnailpreview.webp?crop=1111,0,2941",
+    "thumbnailcrop": {
+      "x": 1111,
+      "y": 0,
+      "size": 2941,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "new-haven-train-station"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "x-t5",
+    "camera": "X-T5",
+    "rules": [
+      {
+        "when": null,
+        "set": {
+          "camera": "Fujifilm X-T5"
+        }
+      }
+    ]
+  }
+]
