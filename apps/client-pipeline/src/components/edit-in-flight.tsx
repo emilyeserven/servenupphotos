@@ -12,6 +12,7 @@ import { PhotoGroupsCard } from "@/components/group-picker";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-details";
 import { QueryResult } from "@/components/query-result";
+import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
 import { SpotlightCard } from "@/components/spotlight-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
@@ -37,7 +38,7 @@ import { lensChanged, withLensChoice } from "@/lib/custom-lens";
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
- * Square Thumbnail crop, title, place name, comment and social media posts can be changed, its
+ * Square Thumbnail crop, title, place name, comment, social media posts and re-edit mark can be changed, its
  * image replaced, its custom lens chosen and camera overrides applied again, then saved by remaking the thumbnail in R2
  * when the crop moved and updating its JSON in the pull request. A photo already in the portfolio is
  * read from the base branch until its first save puts it in the pull request.
@@ -170,6 +171,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           calendarDate={calendarDate(edit.savedData)}
           disabled={pending}
         />
+        <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
         <LensCards edit={edit} disabled={pending} />
         <JsonPreview file={editable.file} edit={edit} />
       </div>

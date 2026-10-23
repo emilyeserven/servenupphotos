@@ -58,7 +58,7 @@ export interface Replacement {
 
 /**
  * saved with its images pointing at the upload, its width and height from the new image, and its
- * EXIF fields too when they're refreshed. Everything else, its ID, title, places, albums, tags,
+ * EXIF fields too when they're refreshed, and its re-edit mark taken off. Everything else, its ID, title, places, albums, tags,
  * spotlight and posts among them, stays as saved.
  */
 export function replacedJson(
@@ -68,7 +68,8 @@ export function replacedJson(
   settings: LensSettings,
 ): PhotoJson {
   const { width, height } = replacement.sanitized;
-  const sized = { ...saved, width, height, images: uploadedImages(saved, upload) };
+  // The new image is the re-edit the photo was marked for, if it was.
+  const sized = { ...saved, width, height, images: uploadedImages(saved, upload), reEdit: null };
   return replacement.refreshExif ? withExif(sized, replacement.sanitized, settings) : sized;
 }
 

@@ -97,7 +97,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums and tags
-- [Replace image](docs/replace-image.md): swapping a saved photo's image for a re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
+- [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
 - [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes
