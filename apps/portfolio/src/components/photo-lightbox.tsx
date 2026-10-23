@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon, EyeOffIcon, XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
-import { type KeyboardEvent, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useRef, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
@@ -112,25 +112,26 @@ function LightboxBody({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
   );
 }
 
-/** The photo between the previous and next buttons, or on its own, filling the window, when bare. */
+/**
+ * The photo, with the previous and next buttons over its sides while it's hovered, or on its own,
+ * filling the window, when bare.
+ */
 function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
   return (
     <div
-      className={cn(
-        "flex min-h-0 flex-1 items-center justify-center gap-2",
-        bare ? "p-0" : "p-4 pt-0",
-      )}
+      className={cn("flex min-h-0 flex-1 items-center justify-center", bare ? "p-0" : "p-4 pt-0")}
     >
-      {!bare && <StepButton direction="previous" steps={steps} />}
       {/* A size container, so the photo can be fitted to it with cqw and cqh. Clicking it hides
           the details or shows them again. */}
       <div
         onClick={onToggleBare}
         className="flex size-full items-center justify-center [container-type:size]"
       >
-        <LightboxImage key={photo.id} image={photo.image} alt={photo.title} />
+        <LightboxImage key={photo.id} image={photo.image} alt={photo.title}>
+          {!bare && <StepButton direction="previous" steps={steps} />}
+          {!bare && <StepButton direction="next" steps={steps} />}
+        </LightboxImage>
       </div>
-      {!bare && <StepButton direction="next" steps={steps} />}
     </div>
   );
 }
@@ -223,19 +224,35 @@ function positionText(index: number, count: number): string | undefined {
   return `${index + 1} / ${count}`;
 }
 
-/** The previous or next button beside the photo, disabled at that end and left out for a photo on its own. */
+/** Each step button's name, icon and side of the photo. */
+const STEP_LOOKS = {
+  previous: { label: "Previous photo", Icon: ChevronLeftIcon, side: "left-2" },
+  next: { label: "Next photo", Icon: ChevronRightIcon, side: "right-2" },
+};
+
+/**
+ * The previous or next button over the photo's side, shown while the photo is hovered or the
+ * button has the keyboard focus, and always on touch screens, which can't hover. It's left out at
+ * that end and for a photo on its own.
+ */
 function StepButton({ direction, steps }: { direction: "previous" | "next"; steps: Steps }) {
-  if (!steps.position) return null;
   const onStep = steps[direction];
-  const Icon = direction === "previous" ? ChevronLeftIcon : ChevronRightIcon;
+  if (!steps.position || !onStep) return null;
+  const { label, Icon, side } = STEP_LOOKS[direction];
   return (
     <Button
       variant="ghost"
       size="icon"
-      aria-label={direction === "previous" ? "Previous photo" : "Next photo"}
-      disabled={!onStep}
-      onClick={onStep}
-      className="shrink-0 text-white hover:bg-white/10 hover:text-white disabled:opacity-25"
+      aria-label={label}
+      onClick={(event) => {
+        // Not a click on the photo, which would hide the details.
+        event.stopPropagation();
+        onStep();
+      }}
+      className={cn(
+        "absolute top-1/2 size-10 -translate-y-1/2 rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/60 hover:text-white focus-visible:opacity-100 pointer-coarse:opacity-100",
+        side,
+      )}
     >
       <Icon className="size-6" />
     </Button>
@@ -289,12 +306,21 @@ function isLoaded(img: HTMLImageElement | null): boolean {
  * The browser picks the version from the srcset by how wide the photo is shown, roughly the
  * window's width or its height times the photo's aspect ratio, whichever is smaller.
  */
-function LightboxImage({ image, alt }: { image: PhotoImage; alt: string }) {
+function LightboxImage({
+  image,
+  alt,
+  children,
+}: {
+  image: PhotoImage;
+  alt: string;
+  /** Shown over the photo, such as the previous and next buttons. */
+  children?: ReactNode;
+}) {
   const [loaded, setLoaded] = useState(false);
   const ratio = image.width / image.height;
   return (
     <div
-      className="relative overflow-hidden"
+      className="group relative overflow-hidden"
       style={{
         aspectRatio: `${image.width} / ${image.height}`,
         width: `min(100cqw, 100cqh * ${ratio})`,
@@ -325,6 +351,7 @@ function LightboxImage({ image, alt }: { image: PhotoImage; alt: string }) {
           loaded ? "opacity-100" : "opacity-0",
         )}
       />
+      {children}
     </div>
   );
 }
