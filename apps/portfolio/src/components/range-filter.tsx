@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { type RangePreset, RangePresets } from "@/components/range-presets";
 import { Slider } from "@/components/ui/slider";
 import { parseRange } from "@/lib/table-filters";
-
 /** The value's position among the values, or `fallback` when it isn't one of them. */
 function positionOf(values: string[], value: string | undefined, fallback: number): number {
   const at = value === undefined ? -1 : values.indexOf(value);
@@ -25,19 +25,22 @@ function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | unde
  * steps through `values`, the ones the photos have, lowest first, so each step shows a different
  * set of photos; `write` writes one the way a photographer does, such as "f/5.6". `range` is the
  * one set, as "low-high", and `onChange` gets the new one once a handle is let go, or undefined
- * when the handles are back at the ends.
+ * when the handles are back at the ends. `presets` are the metadata groups of the setting, listed in a
+ * dropdown to the right of the slider as quick picks.
  */
 export function RangeFilter({
   label,
   values,
   range,
   write,
+  presets,
   onChange,
 }: {
   label: string;
   values: string[];
   range: string | undefined;
   write: (value: string) => string;
+  presets: RangePreset[];
   onChange: (range: string | undefined) => void;
 }) {
   const committed = positionsOf(values, range);
@@ -56,20 +59,23 @@ export function RangeFilter({
           <RangeText values={values} low={low} high={high} write={write} />
         </span>
       </div>
-      <Slider
-        min={0}
-        max={Math.max(0, values.length - 1)}
-        step={1}
-        minStepsBetweenThumbs={0}
-        value={[low, high]}
-        disabled={values.length < 2}
-        onValueChange={setDragging}
-        onValueCommit={(next) => {
-          setDragging(null);
-          onChange(rangeOf(values, next));
-        }}
-        className="py-1"
-      />
+      <div className="flex items-center gap-2">
+        <Slider
+          min={0}
+          max={Math.max(0, values.length - 1)}
+          step={1}
+          minStepsBetweenThumbs={0}
+          value={[low, high]}
+          disabled={values.length < 2}
+          onValueChange={setDragging}
+          onValueCommit={(next) => {
+            setDragging(null);
+            onChange(rangeOf(values, next));
+          }}
+          className="py-1"
+        />
+        <RangePresets label={label} presets={presets} range={range} onChange={onChange} />
+      </div>
     </div>
   );
 }

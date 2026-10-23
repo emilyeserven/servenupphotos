@@ -7,7 +7,9 @@ import {
   type Localized,
 } from "@/lib/localize";
 import { type FilterKey, type LocationKey, matchesFilters } from "@/lib/photo-filters";
+import { groupTree, groupValues, type MetaGroup } from "@/lib/metadata-groups";
 import type { Photo } from "@/lib/photos";
+import type { EquipmentKey } from "@/lib/table-filters";
 
 /** One choice of a filter's dropdown. */
 export interface FilterOption {
@@ -148,21 +150,68 @@ export function tagOptions(facet: Photo[]): FilterOption[] {
   return tags.flatMap((tag) => groupOptions("tag", tag, facet, 0));
 }
 
-/**
- * The camera or lens filter's choices: every camera or lens the photos were taken with, by name.
- * Photos whose EXIF didn't name a lens aren't under any.
- */
-export function equipmentOptions(
-  key: "camera" | "lens",
-  list: Photo[],
+/** Camera or lens names as choices at the depth, each counting the photos taken with it. */
+function nameOptions(
+  key: EquipmentKey,
+  names: string[],
+  depth: number,
   facet: Photo[],
 ): FilterOption[] {
-  const names = [...new Set(list.flatMap((photo) => photo[key] ?? []))].toSorted();
-  return names.map((name) => ({
+  return names.toSorted().map((name) => ({
     key,
     value: name,
     label: sameEveryWay(name),
-    depth: 0,
+    depth,
     count: facet.filter((photo) => photo[key] === name).length,
   }));
+}
+
+/**
+ * A camera or lens metadata group as a choice, then the names it lists that the photos have; none
+ * when it would show no photos, given the other filters, unless it's the one chosen.
+ */
+function equipmentGroupOptions(
+  key: EquipmentKey,
+  [group, depth]: [MetaGroup, number],
+  names: Set<string>,
+  facet: Photo[],
+  chosen: string | undefined,
+): FilterOption[] {
+  const inGroup = groupValues(group);
+  const option = {
+    key: `${key}Group`,
+    value: group.id,
+    label: sameEveryWay(group.name),
+    depth,
+    count: facet.filter((photo) => inGroup.has(photo[key] ?? "")).length,
+  };
+  if (option.count === 0 && group.id !== chosen) return [];
+  const listed = [...new Set(group.values.map(String))].filter((name) => names.has(name));
+  return [option, ...nameOptions(key, listed, depth + 1, facet)];
+}
+
+/**
+ * The camera or lens filter's choices: the metadata groups of cameras or lenses, each under the
+ * group it's in and followed by the names it lists, then every other camera or lens the photos
+ * were taken with, by name. A group that would show none of `facet` is left out, unless it's
+ * `chosenGroup`. Photos whose EXIF didn't name a lens aren't under any.
+ */
+export function equipmentOptions(
+  key: EquipmentKey,
+  list: Photo[],
+  facet: Photo[],
+  chosenGroup?: string,
+): FilterOption[] {
+  const names = new Set(list.flatMap((photo) => photo[key] ?? []));
+  const tree = groupTree(key);
+  const grouped = new Set(tree.flatMap(([group]) => group.values.map(String)));
+  return [
+    ...tree.flatMap((entry) => equipmentGroupOptions(key, entry, names, facet, chosenGroup)),
+    ...nameOptions(
+      key,
+      [...names].filter((name) => !grouped.has(name)),
+      0,
+      facet,
+    ),
+  ];
 }
