@@ -49,8 +49,11 @@ func New(stage *Stage) *Client {
 
 // response is the part of a GitHub response the callers look at.
 type response struct {
-	Status int
-	Header http.Header
+	// Method and Path are the request's, such as POST and
+	// /repos/owner/name/git/trees, to say which call failed.
+	Method, Path string
+	Status       int
+	Header       http.Header
 	// Body is the start of a failed response's body, which says why.
 	Body string
 }
@@ -94,7 +97,7 @@ func (c *Client) doURL(ctx context.Context, method, u, token string, in, out any
 	}
 	defer res.Body.Close() //nolint:errcheck // read-only
 
-	got := response{Status: res.StatusCode, Header: res.Header}
+	got := response{Method: method, Path: req.URL.Path, Status: res.StatusCode, Header: res.Header}
 	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		b, _ := io.ReadAll(io.LimitReader(res.Body, maxErrorBody))
 		got.Body = string(b)

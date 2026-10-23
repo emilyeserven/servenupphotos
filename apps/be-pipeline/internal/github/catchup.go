@@ -125,14 +125,35 @@ func (w *workspace) treeEntries(paths []string, changes map[string][]byte) []map
 	}
 	entries := make([]map[string]any, 0, len(all))
 	for _, p := range slices.Sorted(maps.Keys(all)) {
-		entry := map[string]any{"path": p, "mode": "100644", "type": "blob", "sha": nil}
-		if content := all[p]; content != nil {
-			delete(entry, "sha")
-			entry["content"] = string(content)
+		if all[p] == nil && !w.inBaseTree(p) {
+			continue
 		}
-		entries = append(entries, entry)
+		entries = append(entries, treeEntry(p, all[p]))
 	}
 	return entries
+}
+
+// treeEntry is the tree entry that writes content to p, or deletes p when
+// content is nil.
+func treeEntry(p string, content []byte) map[string]any {
+	if content == nil {
+		return map[string]any{"path": p, "mode": "100644", "type": "blob", "sha": nil}
+	}
+	return map[string]any{"path": p, "mode": "100644", "type": "blob", "content": string(content)}
+}
+
+// inBaseTree reports whether p is in the tree the commit's tree is made on:
+// the base branch's when w catches up, else the head's. GitHub refuses a
+// whole tree (422) that deletes a file which isn't there, such as a photo
+// only the pull request added, deleted while the commit merges the base
+// branch in.
+func (w *workspace) inBaseTree(p string) bool {
+	files := w.head.files
+	if w.catchUp != nil {
+		files = w.base.files
+	}
+	_, ok := files[p]
+	return ok
 }
 
 // parents are a commit's parents: w's head, and the base branch's head when

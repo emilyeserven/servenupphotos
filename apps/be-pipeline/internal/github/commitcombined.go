@@ -376,7 +376,9 @@ func (c *Client) moveBranch(ctx context.Context, t target, branch, sha string) *
 	res, err := c.do(ctx, http.MethodPatch, repoPath(t.owner, t.name)+"/git/refs/heads/"+escapePath(branch), t.token, body, nil)
 	// GitHub answers 422 when the branch moved since it was read.
 	if err == nil && (res.Status == http.StatusUnprocessableEntity || res.Status == http.StatusConflict) {
-		return publishErr(http.StatusConflict, "%s changed on GitHub while the files were being committed. Try again; nothing was lost.", branch)
+		perr := publishErr(http.StatusConflict, "%s changed on GitHub while the files were being committed. Try again; nothing was lost.", branch)
+		perr.GitHub = failureOf(res, "updating the branch")
+		return perr
 	}
 	return check(res, err, "updating the branch")
 }

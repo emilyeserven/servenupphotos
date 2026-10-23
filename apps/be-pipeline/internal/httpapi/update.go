@@ -44,7 +44,7 @@ func handleUpdateInFlight(store *settings.Store, gh *github.Client) http.Handler
 		updated, err := gh.Update(ctx, cfg, req.Path, req.Name, req.Data)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {

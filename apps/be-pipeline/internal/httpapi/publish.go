@@ -41,7 +41,7 @@ func handlePublishPhoto(store *settings.Store, gh *github.Client) http.HandlerFu
 		result, err := gh.Publish(ctx, cfg, photo)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {
@@ -75,7 +75,7 @@ func handleAllPhotosCheck(store *settings.Store, gh *github.Client) http.Handler
 		result, err := gh.FindInPullRequest(ctx, cfg, photo)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {
