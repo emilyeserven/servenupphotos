@@ -22,6 +22,7 @@ import { NoMatchingPhotos, PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { TableFilterControls } from "@/components/table-filters";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ViewPlaceholder } from "@/components/view-placeholder";
@@ -34,6 +35,13 @@ import {
 } from "@/lib/photos";
 import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import {
+  exposureSeconds,
+  filterTable,
+  parseTableFilters,
+  TABLE_FILTER_KEYS,
+  type TableFilters,
+} from "@/lib/table-filters";
 import { cn } from "@/lib/utils";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
@@ -45,6 +53,7 @@ const SORTABLE = [
   "takenAt",
   "location",
   "camera",
+  "lens",
   "aperture",
   "exposure",
   "iso",
@@ -65,6 +74,7 @@ const LABELS: Record<SortColumn | HideableColumn, string> = {
   takenAt: "Taken",
   location: "Place",
   camera: "Camera",
+  lens: "Lens",
   aperture: "Aperture",
   exposure: "Exposure",
   iso: "ISO",
@@ -96,22 +106,15 @@ function parseHide(search: Record<string, unknown>): TableSearch {
 export const Route = createFileRoute("/table")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): TableSearch & PhotoFilters & ShownPhotoSearch => ({
+  ): TableSearch & PhotoFilters & TableFilters & ShownPhotoSearch => ({
     ...parseSort(search),
     ...parseHide(search),
     ...parseFilters(search),
+    ...parseTableFilters(search),
     ...parseShownPhoto(search),
   }),
   component: TableView,
 });
-
-/** Exiftool's exposure time, such as "1/60" or "2.5", in seconds, so exposures sort by length. */
-function exposureSeconds(exposure: string | null): number | undefined {
-  if (!exposure) return undefined;
-  const [top = Number.NaN, bottom] = exposure.split("/").map(Number);
-  const seconds = bottom ? top / bottom : top;
-  return Number.isFinite(seconds) ? seconds : undefined;
-}
 
 const features = tableFeatures({
   columnVisibilityFeature,
@@ -135,6 +138,12 @@ const columns = helper.columns([
     sortUndefined: "last",
   }),
   helper.accessor("camera", { header: LABELS.camera, sortFn: "text" }),
+  helper.accessor((photo) => photo.lens ?? undefined, {
+    id: "lens",
+    header: LABELS.lens,
+    sortFn: "text",
+    sortUndefined: "last",
+  }),
   helper.accessor((photo) => photo.settings.aperture ?? undefined, {
     id: "aperture",
     header: LABELS.aperture,
@@ -194,7 +203,9 @@ function TableView() {
   const { shown, show, close } = useShownPhoto();
   const sorting = sortingOf(search);
   const columnVisibility = visibilityOf(search);
-  const filtered = filterPhotos(photos, parseFilters(search));
+  const shared = filterPhotos(photos, parseFilters(search));
+  const own = parseTableFilters(search);
+  const filtered = filterTable(shared, own);
 
   const table = useTable({
     features,
@@ -227,7 +238,15 @@ function TableView() {
         <p className="text-sm text-muted-foreground">{rows.length} photos</p>
         <ColumnsMenu allColumns={table.getAllLeafColumns()} />
         <div className="mt-3 w-full">
-          <PhotoFilterBar photos={photos} />
+          <PhotoFilterBar
+            photos={photos}
+            facet={filterTable(photos, own)}
+            own={{
+              keys: TABLE_FILTER_KEYS,
+              count: Object.keys(own).length,
+              children: <TableFilterControls photos={shared} filters={own} />,
+            }}
+          />
         </div>
       </header>
       <NoMatchingPhotos count={rows.length} />
@@ -386,6 +405,7 @@ const CELLS: Record<
     render: (photo) => (photo.location ? <PhotoLocation location={photo.location} /> : DASH),
   },
   camera: { className: CELL, render: (photo) => photo.camera },
+  lens: { className: CELL, render: (photo) => photo.lens ?? DASH },
   aperture: { className: NUMERIC_CELL, render: (photo) => settingCell(photo.settings, "aperture") },
   exposure: { className: NUMERIC_CELL, render: (photo) => settingCell(photo.settings, "exposure") },
   iso: { className: NUMERIC_CELL, render: (photo) => settingCell(photo.settings, "iso") },
