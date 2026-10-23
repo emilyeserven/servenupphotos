@@ -9,3 +9,6 @@ its last four characters, so after saving you can replace or clear a secret but 
 
 > **Frontend analogy:** it works like the "Change password" field on an account page. You can set a new password, but
 > the site never shows you the current one. The real value exists only on the backend.
+
+The GitHub card also has **Keep untitled photos as drafts**, on by default, saved as `includeUntitled: false`; leaving
+`includeUntitled` out of a `PUT /settings/github` body keeps it. See [Drafts](drafts.md).

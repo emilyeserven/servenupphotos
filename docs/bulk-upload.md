@@ -12,7 +12,8 @@ the choices made there:
 3. **Upload**: the photo, its resized versions and its Square Thumbnail go to R2 (`POST /api/upload`). The Square
    Thumbnail is cut from the middle square, as the Photo page starts with.
 4. **Add to Batch**: its JSON is saved to the photo data pull request (`POST /api/photos/github`), named after its file
-   name and without a title, so the portfolio shows its file name. It's in no albums, tags or places yet.
+   name and without a title, so it's a [draft](drafts.md) the portfolio doesn't show until it's named (or, with drafts
+   turned off in Settings, the portfolio shows its file name). It's in no albums, tags or places yet.
 
 Photos go one at a time, in the order they were chosen, so their saves never race each other to open the pull request.
 Each row shows the step it's on, and the bar above them how many are done. The top-right sync button counts each added

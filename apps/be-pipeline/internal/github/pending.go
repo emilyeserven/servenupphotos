@@ -101,7 +101,8 @@ func (c *Client) CombinedStatus(ctx context.Context, gh settings.GitHub) (Combin
 // unsyncedAtHead adds to pending kind's files at the head that its combined
 // list there doesn't have: a file whose data isn't one of its entries was
 // added or modified (modified when an entry has its identity, its "file" or
-// "id"), and an entry no file has the identity of was deleted.
+// "id"), and an entry no file has the identity of was deleted. A draft left
+// out of the list is only unsynced while the list still has an entry for it.
 func (w *workspace) unsyncedAtHead(kind combinedKind, pending map[string]PendingFile) {
 	folder := w.root + "/" + kind.folder
 	head := w.withChanges(nil)
@@ -117,14 +118,9 @@ func (w *workspace) unsyncedAtHead(kind combinedKind, pending map[string]Pending
 		data, _ := head.json(p)
 		id := identity(kind, data)
 		fileIDs[id] = true
-		if inList[canonicalJSON(data)] {
-			continue
+		if change := unsyncedChange(inList[canonicalJSON(data)], ids[id], head.leftOut(kind, data)); change != "" {
+			pending[p] = PendingFile{Kind: kind.name, Path: p, Change: change}
 		}
-		change := PendingAdded
-		if ids[id] {
-			change = PendingModified
-		}
-		pending[p] = PendingFile{Kind: kind.name, Path: p, Change: change}
 	}
 	for id := range ids {
 		if !fileIDs[id] && id != "" {
@@ -132,6 +128,20 @@ func (w *workspace) unsyncedAtHead(kind combinedKind, pending map[string]Pending
 			pending[p] = PendingFile{Kind: kind.name, Path: p, Change: PendingDeleted}
 		}
 	}
+}
+
+// unsyncedChange is how a data file differs from its combined list: whether
+// the list has its data as an entry, whether it has an entry with its
+// identity, and whether the file is left out of it (see leftOut). It's ""
+// when the list is as it should be.
+func unsyncedChange(inList, idInList, leftOut bool) string {
+	switch {
+	case leftOut && !idInList, !leftOut && inList:
+		return ""
+	case idInList:
+		return PendingModified
+	}
+	return PendingAdded
 }
 
 // identity is what entry, a data file's JSON, is told apart by: a photo's

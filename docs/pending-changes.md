@@ -40,7 +40,8 @@ uploaded images stay in R2 for Explore Bucket.
 
 **Commit** (`POST /api/photos/combined`) writes, as **one commit**, every change waiting for Commit, the browser-only
 [local edits](combined-data-store.md#local-edits), and `ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`,
-`PLACES.json`, `LOCALIZATIONS.json` and `METAINFO.json` rebuilt from the result. It uses GitHub's
+`PLACES.json`, `LOCALIZATIONS.json` and `METAINFO.json` rebuilt from the result (`ALLPHOTOS.json` without
+[drafts](drafts.md), photos with no title). It uses GitHub's
 [Git database API](https://docs.github.com/en/rest/git/trees#create-a-tree): one tree with every changed file (a
 deletion is an entry with `sha: null`), one commit on top of the pull request's head, and the branch moved to it. With
 no pull request open it creates a `photo-data/<date>-<time>` branch at that commit from the Settings branch and opens

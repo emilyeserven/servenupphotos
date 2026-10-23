@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useUntitledDrafts } from "@/lib/drafts";
 
 /** Spacing and list, link, code and quote styles for rendered Markdown, which Tailwind's reset strips. */
 const MARKDOWN_CLASSES = [
@@ -160,12 +161,7 @@ export function PhotoDetailsCard({
             id="photo-title"
             label="Title"
             placeholder={fallbackTitle}
-            hint={
-              <>
-                What the portfolio calls the photo. Without one, it uses the file name,{" "}
-                <code>{fallbackTitle}</code>. Its JSON file is named after it too.
-              </>
-            }
+            hint={<TitleHint fallbackTitle={fallbackTitle} />}
             {...field("title")}
           />
           <CommentField
@@ -194,6 +190,28 @@ export function PhotoDetailsCard({
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+/**
+ * What the title is for, and what happens without one: the photo is a draft the portfolio doesn't
+ * show, or, with untitled photos included in Settings, it goes by its file name.
+ */
+function TitleHint({ fallbackTitle }: { fallbackTitle: string }) {
+  if (useUntitledDrafts()) {
+    return (
+      <>
+        What the portfolio calls the photo. Without one, the photo is a <strong>draft</strong>: its
+        JSON is saved, but Commit leaves it out of <code>ALLPHOTOS.json</code>, so the portfolio
+        doesn&apos;t show it. Its JSON file is named after the title too.
+      </>
+    );
+  }
+  return (
+    <>
+      What the portfolio calls the photo. Without one, it uses the file name,{" "}
+      <code>{fallbackTitle}</code>. Its JSON file is named after it too.
+    </>
   );
 }
 

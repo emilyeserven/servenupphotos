@@ -11,6 +11,7 @@ import {
   publishedPhotosQuery,
 } from "@/api/photos";
 import { canonicalJson } from "@/lib/combined";
+import { isDraft } from "@/lib/drafts";
 
 /**
  * One file a save changed, waiting for Commit, which the combined lists won't have until it's
@@ -74,6 +75,15 @@ function changedFile(file: CombinedFile, changes: FileChange[]): CombinedFile {
 }
 
 /**
+ * The photo changes as they change ALLPHOTOS.json: a photo saved without a title is left out, as a
+ * draft, unless untitled photos are included.
+ */
+function photoChanges(changes: FileChange[], includeUntitled = false): FileChange[] {
+  if (includeUntitled) return changes;
+  return changes.map((change) => (isDraft(change.after) ? { ...change, after: null } : change));
+}
+
+/**
  * Stands in for the pull request Commit will open when none is open, so the changes waiting for it
  * show over the base branch's lists. Its number, 0, is never a real pull request's.
  */
@@ -94,7 +104,7 @@ function headOf(data: CombinedData): NonNullable<CombinedData["head"]> {
  * data with changes made to the combined lists at the pull request's head, as they'll be once
  * committed; with no pull request open, `head` is the base branch's lists with them made, under
  * `WAITING_FOR_COMMIT`. The base branch's are left as they are, since nothing has merged. A file
- * that couldn't be read is left as it is.
+ * that couldn't be read is left as it is, and a draft is taken out of ALLPHOTOS.json.
  */
 export function withChanges(data: CombinedData, changes: FileChange[]): CombinedData {
   if (changes.length === 0) return data;
@@ -104,7 +114,7 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
     ...data,
     head: {
       ...head,
-      photos: changedFile(head.photos, of("photos")),
+      photos: changedFile(head.photos, photoChanges(of("photos"), data.includeUntitled)),
       albums: changedFile(head.albums, of("albums")),
       tags: changedFile(head.tags, of("tags")),
       places: changedFile(head.places, of("places")),

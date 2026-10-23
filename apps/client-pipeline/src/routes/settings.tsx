@@ -16,6 +16,7 @@ import {
 } from "@/api/settings";
 import { connectionQueryKey } from "@/api/connections";
 import { ConnectionStatus, toTestState } from "@/components/connection-status";
+import { SettingsSwitch, type SwitchConfig } from "@/components/settings-switch";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,8 @@ interface SectionConfig {
   description: string;
   fields: FieldConfig[];
   secret: FieldConfig;
+  /** On-or-off settings, shown after the fields. */
+  switches: SwitchConfig[];
   /** Shown under the secret's label, given the form's current field values. */
   secretHelp?: (fields: Record<string, string>) => ReactNode;
   /** Checks the form's unsaved settings; when set, the card gets a Test connection button. */
@@ -58,6 +61,7 @@ const SECTIONS: SectionConfig[] = [
       { name: "publicUrl", label: "Public URL", placeholder: "https://photos.example.com" },
     ],
     secret: { name: "secretAccessKey", label: "Secret access key" },
+    switches: [],
     secretHelp: (fields) => <R2TokenHelp bucket={fields.bucket ?? ""} />,
     test: (body) => testSettings("r2", body),
   },
@@ -72,6 +76,21 @@ const SECTIONS: SectionConfig[] = [
       { name: "folder", label: "Data folder", placeholder: "apps/portfolio/src/data" },
     ],
     secret: { name: "token", label: "Personal access token" },
+    switches: [
+      {
+        name: "includeUntitled",
+        label: "Keep untitled photos as drafts",
+        help: (
+          <>
+            A photo without a title keeps its JSON file, but Commit leaves it out of{" "}
+            <code>ALLPHOTOS.json</code>, so the portfolio doesn&apos;t show it until it gets one.
+            Turn this off to put every photo in <code>ALLPHOTOS.json</code>, named by its file when
+            it has no title.
+          </>
+        ),
+        inverted: true,
+      },
+    ],
     secretHelp: (fields) => <GitHubTokenHelp repo={fields.repo ?? ""} />,
     test: (body) => testSettings("github", body),
   },
@@ -101,6 +120,7 @@ type SecretDraft = { action: "keep" } | { action: "replace"; value: string } | {
 
 interface FormValues {
   fields: Record<string, string>;
+  switches: Record<string, boolean>;
   secret: SecretDraft;
 }
 
@@ -109,14 +129,22 @@ function toFormValues(
   stored: SettingsResponse[SettingsSection],
 ): FormValues {
   const values = stored as unknown as Record<string, string>;
+  const switches = stored as unknown as Record<string, boolean | undefined>;
   return {
     fields: Object.fromEntries(config.fields.map(({ name }) => [name, values[name] ?? ""])),
+    switches: Object.fromEntries(
+      config.switches.map(({ name }) => [name, Boolean(switches[name])]),
+    ),
     secret: { action: "keep" },
   };
 }
 
 function toSettingsBody(config: SectionConfig, value: FormValues): SettingsBody {
-  return { ...value.fields, [config.secret.name]: toSecretUpdate(value.secret) };
+  return {
+    ...value.fields,
+    ...value.switches,
+    [config.secret.name]: toSecretUpdate(value.secret),
+  };
 }
 
 function toSecretUpdate(draft: SecretDraft): SecretUpdate {
@@ -147,7 +175,7 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
     onSuccess: (data) => {
       queryClient.setQueryData(settingsQuery.queryKey, data);
       void queryClient.invalidateQueries({ queryKey: connectionQueryKey(config.section) });
-      // Another repository, branch or folder has other combined lists.
+      // Another repository, branch or folder has other combined lists, and drafts change ALLPHOTOS.json.
       if (config.section === "github") resetCombinedData();
       form.reset(toFormValues(config, data[config.section]));
     },
@@ -192,6 +220,22 @@ function SettingsCard({ config, stored }: SettingsCardProps) {
                   config={field}
                   value={f.state.value}
                   onBlur={f.handleBlur}
+                  onChange={(value) => {
+                    clearResults();
+                    f.handleChange(value);
+                  }}
+                />
+              )}
+            </form.Field>
+          ))}
+
+          {config.switches.map((sw) => (
+            <form.Field key={sw.name} name={`switches.${sw.name}`}>
+              {(f) => (
+                <SettingsSwitch
+                  id={`${config.section}-${sw.name}`}
+                  config={sw}
+                  value={f.state.value}
                   onChange={(value) => {
                     clearResults();
                     f.handleChange(value);

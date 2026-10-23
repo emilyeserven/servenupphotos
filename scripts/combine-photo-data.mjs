@@ -10,7 +10,8 @@
 // 2. GitHub: the combined files from the open "Add photo data" pull request on the `origin`
 //    repository. Set GITHUB_TOKEN to read a private repository.
 // 3. The data folders: every other JSON file in each, as one array sorted by file name, the same
-//    way the "Combine photo data" workflow builds the combined files.
+//    way the "Combine photo data" workflow builds the combined files, without draft photos (ones
+//    with no title).
 //
 // `--pipeline-only` skips 2 and 3 and leaves the files as they are when the pipeline isn't
 // running; the portfolio's dev server runs it that way on each page load. `--quiet` only prints
@@ -67,16 +68,37 @@ function inFlightFiles(inFlight, kind) {
   return kind.folder === "photos" ? inFlight.files : (inFlight[kind.folder]?.files ?? []);
 }
 
-/** entries with each of the pull request's files over the entry with the same identity, or added. */
-function withFiles(entries, files, identity) {
+/**
+ * Whether a photo is a draft: it has no title, so the pipeline's Commit leaves it out of
+ * ALLPHOTOS.json unless Settings include untitled photos (see docs/drafts.md).
+ */
+function isDraft(photo) {
+  return typeof photo?.title !== "string" || photo.title.trim() === "";
+}
+
+/**
+ * entries with each of the pull request's files over the entry with the same identity, or added.
+ * A file `leftOut` says isn't in the list takes its entry out instead.
+ */
+function withFiles(entries, files, identity, leftOut = () => false) {
   const merged = [...entries];
   for (const { data } of files) {
-    if (!data) continue;
-    const at = merged.findIndex((entry) => entry?.[identity] === data[identity]);
-    if (at === -1) merged.push(data);
-    else merged[at] = data;
+    if (data) withFile(merged, data, identity, leftOut(data));
   }
   return merged;
+}
+
+/** Puts data in entries over the entry with the same identity, or adds it; takes it out when leftOut. */
+function withFile(entries, data, identity, leftOut) {
+  const at = entries.findIndex((entry) => entry?.[identity] === data[identity]);
+  const replacement = leftOut ? [] : [data];
+  if (at === -1) entries.push(...replacement);
+  else entries.splice(at, 1, ...replacement);
+}
+
+/** What the kind's combined list leaves out: drafts, for photos, unless untitled photos are included. */
+function leftOutOf(kind, includeUntitled) {
+  return kind.folder === "photos" && !includeUntitled ? isDraft : () => false;
 }
 
 /** entries without the ones that pending changes waiting for Commit remove. */
@@ -107,7 +129,11 @@ function mergedLists(combined, inFlight, changes) {
   return Object.fromEntries(
     KINDS.map((kind) => {
       const entries = withoutRemoved(lists[kind.folder]?.data ?? [], changes, kind);
-      return [kind.folder, withFiles(entries, inFlightFiles(inFlight, kind), kind.identity)];
+      const leftOut = leftOutOf(kind, combined.includeUntitled);
+      return [
+        kind.folder,
+        withFiles(entries, inFlightFiles(inFlight, kind), kind.identity, leftOut),
+      ];
     }),
   );
 }
@@ -167,9 +193,12 @@ async function fromDataFolder(kind) {
     .map((entry) => entry.name)
     // Byte order, like `LC_ALL=C sort` in the workflow.
     .sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));
-  const items = await Promise.all(
+  const all = await Promise.all(
     files.map(async (name) => JSON.parse(await readFile(path.join(dataDir, name), "utf8"))),
   );
+  // Without the pipeline to ask, drafts are left out, as Settings do by default.
+  const leftOut = leftOutOf(kind, false);
+  const items = all.filter((item) => !leftOut(item));
   return { items, from: `${files.length} file(s) in ${DATA_PATH}/${kind.folder}` };
 }
 

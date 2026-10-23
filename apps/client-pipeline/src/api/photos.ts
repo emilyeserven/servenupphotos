@@ -119,6 +119,8 @@ export interface CombinedData {
   base: CombinedFiles & { branch: string };
   /** At the pull request's head; null when no pull request titled "Add photo data" is open. */
   head: (CombinedFiles & { pullRequest: InFlightPullRequest }) | null;
+  /** Whether Commit puts untitled photos in ALLPHOTOS.json too; false keeps them out as drafts. */
+  includeUntitled?: boolean;
 }
 
 /**
@@ -376,8 +378,8 @@ export interface CombinedCommit {
   files: string[];
   /** How many data files the local edits changed. */
   edited: number;
-  /** How many entries each has now. */
-  counts: { photos: number; albums: number; tags: number };
+  /** How many entries each has now, and how many photos were left out of ALLPHOTOS.json as drafts. */
+  counts: { photos: number; albums: number; tags: number; drafts?: number };
   /** True when the commit opened the photo data pull request. */
   newPullRequest: boolean;
   /** The photo data pull request the commit went to. */

@@ -1,9 +1,9 @@
 import type { InFlightFileRead, InFlightRead } from "@/api/photos";
+import { titleOf } from "@/lib/drafts";
 
 /** The title saved in the photo's JSON, or undefined without one. */
 export function savedTitle(file: InFlightFileRead): string | undefined {
-  const title = (file.data as { title?: unknown } | undefined)?.title;
-  return typeof title === "string" && title.trim() ? title.trim() : undefined;
+  return titleOf(file.data);
 }
 
 /** Whether the photo's JSON was read and has no title yet. */

@@ -4,13 +4,19 @@ name: Combine photo data
 # started on, committed back to that branch: photos/ALLPHOTOS.json,
 # albums/ALLALBUMS.json, tags/ALLTAGS.json, places/PLACES.json,
 # localizations/LOCALIZATIONS.json and metainfo/METAINFO.json, each every other JSON file in
-# its folder as one array sorted by file name. The pipeline's Commit button
+# its folder as one array sorted by file name. Photos without a title are drafts and are left out
+# of ALLPHOTOS.json, unless include_untitled is checked (see docs/drafts.md). The pipeline's Commit button
 # does the same itself (CommitCombined in apps/be-pipeline), with the same
 # commit message, so this only runs when started by hand from the Actions
 # tab, as a fallback.
 
 on:
   workflow_dispatch:
+    inputs:
+      include_untitled:
+        description: Put photos without a title in ALLPHOTOS.json too, instead of keeping them as drafts
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -29,6 +35,7 @@ jobs:
     env:
       DATA_DIR: apps/portfolio/src/data
       HEAD_REF: ${{ github.ref_name }}
+      INCLUDE_UNTITLED: ${{ inputs.include_untitled }}
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -39,9 +46,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Combine JSON files
         run: |
-          # combine FOLDER FILE: every JSON file directly in FOLDER except FILE, as one array in FILE.
+          # combine FOLDER FILE [FILTER]: every JSON file directly in FOLDER except FILE, as one
+          # array in FILE, through the jq FILTER when one is given.
           combine() {
-            local dir="$DATA_DIR/$1" out="$DATA_DIR/$1/$2"
+            local dir="$DATA_DIR/$1" out="$DATA_DIR/$1/$2" filter="${3:-.}"
             mkdir -p "$dir"
             mapfile -t files < <(
               find "$dir" -maxdepth 1 -type f -name '*.json' ! -name "$2" | LC_ALL=C sort
@@ -49,12 +57,14 @@ jobs:
             if [ "${#files[@]}" -eq 0 ]; then
               echo '[]' > "$out"
             else
-              jq -s '.' "${files[@]}" > "$out"
+              jq -s "$filter" "${files[@]}" > "$out"
             fi
             pnpm exec oxfmt "$out"
             echo "Combined ${#files[@]} file(s) into $out"
           }
-          combine photos ALLPHOTOS.json
+          drafts='map(select((.title | type) == "string" and (.title | test("\\S"))))'
+          if [ "$INCLUDE_UNTITLED" = "true" ]; then drafts='.'; fi
+          combine photos ALLPHOTOS.json "$drafts"
           combine albums ALLALBUMS.json
           combine tags ALLTAGS.json
           combine places PLACES.json
