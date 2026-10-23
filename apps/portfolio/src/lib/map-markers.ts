@@ -42,14 +42,14 @@ function markerOf(feature: GeoJSONFeature): MapMarker | null {
   };
 }
 
-/** The markers for the clusters and photos in view, once each, as tiles can repeat them. */
+/** Each marker once, by its key, as tiles can repeat them. */
+function once(markers: MapMarker[]): MapMarker[] {
+  return [...new globalThis.Map(markers.map((marker) => [marker.key, marker])).values()];
+}
+
+/** The markers for the clusters and photos in view, once each. */
 function sourceMarkers(map: MapRef): MapMarker[] {
-  const markers = new globalThis.Map<string, MapMarker>();
-  for (const feature of map.querySourceFeatures(SOURCE_ID)) {
-    const marker = markerOf(feature);
-    if (marker) markers.set(marker.key, marker);
-  }
-  return [...markers.values()];
+  return once(map.querySourceFeatures(SOURCE_ID).flatMap((feature) => markerOf(feature) ?? []));
 }
 
 function photoMarker(photo: PlacedPhoto): MapMarker {
@@ -84,7 +84,9 @@ export async function markersInView(map: MapRef): Promise<MapMarker[]> {
   const markers = sourceMarkers(map);
   if (map.getZoom() < FAN_MIN_ZOOM) return markers;
   const split = await Promise.all(markers.map((marker) => splitAtOneSpot(map, marker)));
-  return fanOut(split.flat());
+  // While zooming, tiles from the old zoom and the new one can both be loaded, so a cluster split
+  // here can repeat photos another tile already has on their own.
+  return fanOut(once(split.flat()));
 }
 
 /** The photos in a cluster, oldest first. */
