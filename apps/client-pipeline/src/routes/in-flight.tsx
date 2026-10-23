@@ -31,10 +31,12 @@ import {
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { FileChecks, fileName } from "@/components/in-flight-checks";
 import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
 import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
 import { Page } from "@/components/page";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { SavedDrafts } from "@/components/saved-drafts";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
@@ -51,14 +53,14 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
-import { isDraft, useUntitledDrafts } from "@/lib/drafts";
+import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
 import { undecidedPaths } from "@/lib/undecided";
 import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
 import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
-interface InFlightSearch {
+interface InFlightSearch extends PhotoFilters {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */
   allPhotos?: true;
 }
@@ -66,8 +68,10 @@ interface InFlightSearch {
 export const Route = createFileRoute("/in-flight")({
   component: InFlightPage,
   staticData: { wide: true },
-  validateSearch: (search: Record<string, unknown>): InFlightSearch =>
-    search.allPhotos === true ? { allPhotos: true } : {},
+  validateSearch: (search: Record<string, unknown>): InFlightSearch => ({
+    ...(search.allPhotos === true ? { allPhotos: true } : {}),
+    ...parseFilters(search),
+  }),
 });
 
 function InFlightPage() {
@@ -167,9 +171,9 @@ function InFlightCard() {
 }
 
 /**
- * The photo files, with the ones without a title first so they're easy to find and name, after the
- * Undecided queue, which takes the photos set aside out of the list. With no photos in flight, the
- * drafts already on the base branch instead.
+ * The photo files that pass the filters, with the ones without a title first so they're easy to
+ * find and name, after the Undecided queue, which takes the photos set aside out of the list. With
+ * no photos in flight, the drafts already on the base branch instead.
  */
 function PhotoFiles({
   shown,
@@ -181,16 +185,19 @@ function PhotoFiles({
   onRemoved: (result: RemoveResult) => void;
 }) {
   const edits = useLocalEditsStore((s) => s.edits);
+  const { filters, filter } = usePhotoFilters();
   if (!shown) return null;
   if (shown.files.length === 0) return <SavedDrafts />;
-  const undecided = undecidedPaths(shown.files, edits);
+  const files = filter(shown.files);
+  const undecided = undecidedPaths(files, edits);
   return (
     <>
+      <PhotoFilterBar filters={filters} shown={files.length} total={shown.files.length} />
       <UndecidedQueue
-        files={shown.files.filter((file) => undecided.has(file.path))}
+        files={files.filter((file) => undecided.has(file.path))}
         images={shown.images}
       />
-      {untitledFirst(shown.files.filter((file) => !undecided.has(file.path))).map((file) => (
+      {untitledFirst(files.filter((file) => !undecided.has(file.path))).map((file) => (
         <FileSection key={file.path} file={file} images={shown.images} {...props} />
       ))}
     </>
@@ -639,41 +646,6 @@ function GroupFiles({
   );
 }
 
-function fileName(path: string): string {
-  return path.split("/").pop() ?? path;
-}
-
-/** How many album, tag, place or localization files the pull request has, and how its combined file matches them. */
-function groupsSummary(groups: InFlightGroups): string {
-  const count = groups.files.length;
-  const files = count === 0 ? "None" : String(count);
-  const all = groups.all;
-  const allFile = fileName(all.path);
-  if (!all.found) return `${files}; ${allFile} not on the branch yet`;
-  if (all.error) return `${files}; ${allFile}: ${all.error}`;
-  const matched = groups.files.filter((file) => file.inAll).length;
-  return `${files}; ${allFile} lists ${all.count}, ${matched} of ${count} match`;
-}
-
-/**
- * How many entries ALLPHOTOS.json has and how many of the photo files match one, leaving out the
- * drafts, which it doesn't list, when untitled photos are kept as drafts.
- */
-function AllPhotosSummary({ all, files }: { all: CombinedFile; files: InFlightFile[] }) {
-  const listed = useUntitledDrafts() ? files.filter((file) => !isDraft(file.data)) : files;
-  if (!all.found) return "Not on the branch yet. Commit adds it.";
-  if (all.error) return all.error;
-  const matched = listed.filter((file) => file.inAllPhotos).length;
-  const drafts = files.length - listed.length;
-  return `Lists ${all.count}; ${matched} of ${listed.length} photo files match${draftsLeftOut(drafts)}`;
-}
-
-/** ", N drafts left out" after the ALLPHOTOS.json summary, when there are any. */
-function draftsLeftOut(drafts: number): string {
-  if (drafts === 0) return "";
-  return `, ${drafts} ${drafts === 1 ? "draft" : "drafts"} left out`;
-}
-
 /**
  * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json have every change, as checked when the
  * app started and known from the app's saves and commits since, with Commit to sync them.
@@ -706,11 +678,6 @@ function unsyncedText(pending: string): string {
   return `Not synced: ${since}. Commit sends them to GitHub.`;
 }
 
-function imagesSummary(images: InFlightImages, files: number): string {
-  if (!images.checked) return images.message ?? "Couldn't check R2.";
-  return `${Object.keys(images.byPath).length} of ${files} found in R2`;
-}
-
 function PullRequestSummary({ data }: { data: InFlightResponse }) {
   if (!data.pullRequest) return <NoPullRequest data={data} />;
   const pr = data.pullRequest;
@@ -731,26 +698,10 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dd>
         <SyncSummary />
       </dd>
-      <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
+      <dt className="text-muted-foreground">File checks</dt>
       <dd>
-        <AllPhotosSummary all={data.allPhotos} files={data.files} />
+        <FileChecks data={data} />
       </dd>
-      <dt className="text-muted-foreground">Images</dt>
-      <dd>{imagesSummary(data.images, count)}</dd>
-      <dt className="text-muted-foreground">Album files</dt>
-      <dd>{groupsSummary(data.albums)}</dd>
-      <dt className="text-muted-foreground">Tag files</dt>
-      <dd>{groupsSummary(data.tags)}</dd>
-      <dt className="text-muted-foreground">Place files</dt>
-      <dd>{groupsSummary(data.places)}</dd>
-      <dt className="text-muted-foreground">Localization files</dt>
-      <dd>{groupsSummary(data.localizations)}</dd>
-      <dt className="text-muted-foreground">Metadata group files</dt>
-      <dd>{groupsSummary(data.metainfo)}</dd>
-      <dt className="text-muted-foreground">Camera override files</dt>
-      <dd>{groupsSummary(data.cameras)}</dd>
-      <dt className="text-muted-foreground">Custom lens files</dt>
-      <dd>{groupsSummary(data.lenses)}</dd>
     </dl>
   );
 }
