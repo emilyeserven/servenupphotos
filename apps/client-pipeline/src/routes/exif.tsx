@@ -37,6 +37,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useObjectUrl } from "@/hooks/use-object-url";
 import type { AnalyzedPhoto } from "@/stores/bulk-upload";
 import { usePendingPhotoStore } from "@/stores/pending-photo";
+import type { CustomLens } from "@/api/lenses";
+import { NewPhotoLens } from "@/components/custom-lens-card";
+import { withNewLens } from "@/components/edit-in-flight/lens-edit";
+import { useLensSettings } from "@/components/edit-in-flight/use-edit";
+import type { LensChoice } from "@/lib/custom-lens";
+import type { CombinedPhoto } from "@/lib/group-photos";
 
 interface PhotoSearch {
   /**
@@ -101,8 +107,10 @@ function PhotoPage() {
   const [details, setDetails] = usePhotoState(extract.submittedAt, NO_DETAILS);
   const [groups, setGroups] = usePhotoState(extract.submittedAt, NO_GROUPS);
   const [saved, setSaved] = usePhotoState(extract.submittedAt, false);
+  const [lens, setLens] = usePhotoState<LensChoice | null>(extract.submittedAt, null);
+  const lensSettings = useLensSettings();
   const images = withImages(extract.data?.sanitized, r2.uploaded);
-  const sanitized = images && withDetails(images, details);
+  const sanitized = images && withNewLens(withDetails(images, details), lens, lensSettings);
   const identity = photoIdentity(extract, sanitized);
 
   return (
@@ -146,6 +154,8 @@ function PhotoPage() {
             onDetailsChange={setDetails}
             groups={groups}
             onGroupsChange={setGroups}
+            lenses={lensSettings.lenses}
+            onLensChange={setLens}
             saved={saved}
           />
         </div>
@@ -336,11 +346,14 @@ interface ResultsColumnProps {
   onDetailsChange: (details: PhotoDetails) => void;
   groups: PhotoGroups;
   onGroupsChange: (groups: PhotoGroups) => void;
+  /** The custom lenses to pick from. */
+  lenses: CustomLens[];
+  onLensChange: (lens: LensChoice) => void;
   /** The JSON has been saved to GitHub. */
   saved: boolean;
 }
 
-/** The analyzed photo's title, place name, comment, albums and tags unless it's already in ALLPHOTOS.json, then its results. */
+/** The analyzed photo's title, place name, comment, albums, tags and lens unless it's already in ALLPHOTOS.json, then its results. */
 function ResultsColumn({
   extract,
   sanitized,
@@ -349,6 +362,8 @@ function ResultsColumn({
   onDetailsChange,
   groups,
   onGroupsChange,
+  lenses,
+  onLensChange,
   saved,
 }: ResultsColumnProps) {
   if (extract.isIdle) return <SavedPhotoCard />;
@@ -371,6 +386,12 @@ function ResultsColumn({
       />
       <AllPhotosGate photo={identity} showStatus={false}>
         <NewPhotoGroups groups={groups} onGroupsChange={onGroupsChange} saved={saved} />
+        <NewPhotoLens
+          photo={sanitized as unknown as CombinedPhoto}
+          lenses={lenses}
+          onChange={onLensChange}
+          saved={saved}
+        />
       </AllPhotosGate>
       {result}
     </>

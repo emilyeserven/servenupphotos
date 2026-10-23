@@ -16,9 +16,10 @@ import (
 )
 
 // OverrideFields are the photo JSON fields a camera override can set: the
-// ones Sanitize reads from EXIF, except the photo's size.
+// ones Sanitize reads from EXIF, except the photo's size, and manualAperture.
 var OverrideFields = []string{
-	"camera", "lens", "aperture", "exposure", "iso", "focalLength", "gpsPosition", "createDate", "country", "city",
+	"camera", "lens", "aperture", "manualAperture", "exposure", "iso", "focalLength", "gpsPosition", "createDate",
+	"country", "city",
 }
 
 // exifOriginalsField is the photo JSON field that keeps the EXIF values of
@@ -117,7 +118,7 @@ func ApplyCameraOverrides(overrides []CameraOverride, s exif.Sanitized) exif.San
 	if json.Unmarshal(raw, &fields) != nil {
 		return s
 	}
-	maps.Copy(fields, overriddenFields(overrides, fields))
+	maps.Copy(fields, overriddenFields(overrides, nil, fields))
 	raw, _ = json.Marshal(fields)
 	var out exif.Sanitized
 	if json.Unmarshal(raw, &out) != nil {
@@ -128,11 +129,12 @@ func ApplyCameraOverrides(overrides []CameraOverride, s exif.Sanitized) exif.San
 
 // overriddenFields is every OverrideFields value of a photo with the
 // fields, top-level JSON values as its file has them, once the overrides are
-// made over its EXIF values, and its exifOriginalsField. The EXIF values
+// made over its EXIF values, then its custom lens's (see lensFields), and
+// its exifOriginalsField. The EXIF values
 // are the fields' own, or the ones exifOriginalsField kept when an override
 // changed them, so applying the overrides again starts from EXIF, and a field
 // no override sets any more goes back to its EXIF value.
-func overriddenFields(overrides []CameraOverride, fields map[string]json.RawMessage) map[string]json.RawMessage {
+func overriddenFields(overrides []CameraOverride, lenses []CustomLens, fields map[string]json.RawMessage) map[string]json.RawMessage {
 	original := exifValues(fields)
 	out := maps.Clone(original)
 	if o := overrideFor(overrides, original["camera"]); o != nil {
@@ -142,6 +144,7 @@ func overriddenFields(overrides []CameraOverride, fields map[string]json.RawMess
 			}
 		}
 	}
+	maps.Copy(out, lensFields(lenses, fields[customLensField]))
 	kept := map[string]json.RawMessage{}
 	for _, f := range OverrideFields {
 		if !sameJSON(out[f], original[f]) {

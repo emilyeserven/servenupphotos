@@ -1,17 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { cameraOverrides } from "@/api/cameras";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exifCamera, overrideChanges } from "@/lib/camera-overrides";
 import type { CombinedPhoto } from "@/lib/group-photos";
-import { useCombinedData } from "@/stores/combined-data";
+import { type LensSettings } from "@/components/edit-in-flight/lens-edit";
 
 interface CameraOverridesCardProps {
-  /** The photo's JSON as last saved. */
-  saved: CombinedPhoto;
-  /** The fields the overrides change, once applied to the edit; null until they are. */
-  applied: Record<string, unknown> | null;
-  onApply: (fields: Record<string, unknown> | null) => void;
+  /** The photo's JSON as last saved, with the lens and manual aperture chosen on the page. */
+  photo: CombinedPhoto;
+  settings: LensSettings;
+  /** Whether the overrides are applied to the edit. */
+  applied: boolean;
+  /** Whether picking another lens applied them, so they can't be left out. */
+  forced: boolean;
+  onApply: (apply: boolean) => void;
   disabled: boolean;
 }
 
@@ -20,20 +22,21 @@ interface CameraOverridesCardProps {
  * with a button putting those changes into the edit for Save changes to write.
  */
 export function CameraOverridesCard({
-  saved,
+  photo,
+  settings,
   applied,
+  forced,
   onApply,
   disabled,
 }: CameraOverridesCardProps) {
-  const combined = useCombinedData();
-  const changes = overrideChanges(cameraOverrides(combined.data), saved);
+  const changes = overrideChanges(settings.overrides, settings.lenses, photo);
   const fields = Object.entries(changes);
   return (
     <Card>
       <CardHeader>
         <CardTitle>Camera overrides</CardTitle>
         <CardDescription>
-          <Status camera={exifCamera(saved)} changes={fields.length} />{" "}
+          <Status camera={exifCamera(photo)} changes={fields.length} />{" "}
           <Link to="/camera-overrides" className="text-foreground underline underline-offset-4">
             Camera Overrides
           </Link>{" "}
@@ -47,15 +50,15 @@ export function CameraOverridesCard({
               <div key={field} className="contents">
                 <dt className="font-medium">{field}</dt>
                 <dd className="font-mono text-xs break-all">
-                  {JSON.stringify(saved[field] ?? null)} → {JSON.stringify(to)}
+                  {JSON.stringify(photo[field] ?? null)} → {JSON.stringify(to)}
                 </dd>
               </div>
             ))}
           </dl>
           <ApplyButton
-            applied={applied !== null}
-            disabled={disabled}
-            onClick={() => onApply(applied ? null : changes)}
+            applied={applied}
+            disabled={disabled || forced}
+            onClick={() => onApply(!applied)}
           />
         </CardContent>
       )}
@@ -67,7 +70,12 @@ export function CameraOverridesCard({
 function Status({ camera, changes }: { camera: string; changes: number }) {
   if (!camera) return <>Its EXIF names no camera, so no override is for it.</>;
   if (changes === 0) return <>The photo already has the overrides for {camera}, if it has any.</>;
-  return <>The overrides for {camera} change these fields from what the JSON has.</>;
+  return (
+    <>
+      The overrides for {camera} and the photo&apos;s custom lens change these fields from what the
+      JSON has; picking another lens applies them.
+    </>
+  );
 }
 
 function ApplyButton({

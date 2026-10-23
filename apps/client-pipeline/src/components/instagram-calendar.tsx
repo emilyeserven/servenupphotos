@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon, ImageIcon, PlusIcon } from "lucide-react";
-import { type DragEvent, type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
 import { PhotoFiles } from "@/components/photo-files";
@@ -26,6 +26,7 @@ import {
   pickerChoices,
   unsavedFromEdits,
 } from "@/lib/social-schedule";
+import { useDropTarget } from "@/hooks/use-drop-target";
 import { cn } from "@/lib/utils";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
@@ -266,30 +267,6 @@ interface DayProps {
   onDropPhoto: (path: string) => void;
 }
 
-/** Drag handlers that take a photo dropped on a day, and whether one is being dragged over it. */
-function useDropTarget(onDropPhoto: (path: string) => void) {
-  const [over, setOver] = useState(false);
-  const handlers = {
-    onDragOver: (event: DragEvent) => {
-      if (!event.dataTransfer.types.includes(DRAG_TYPE)) return;
-      event.preventDefault();
-      event.dataTransfer.dropEffect = "move";
-      setOver(true);
-    },
-    onDragLeave: (event: DragEvent) => {
-      // Moving onto the day's own button or image isn't leaving it.
-      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOver(false);
-    },
-    onDrop: (event: DragEvent) => {
-      event.preventDefault();
-      setOver(false);
-      const path = event.dataTransfer.getData(DRAG_TYPE);
-      if (path) onDropPhoto(path);
-    },
-  };
-  return { over, handlers };
-}
-
 /** A day's box: dimmed in the past, ringed today and while a photo is dragged over it. */
 function dayClass(day: string, today: string, over: boolean) {
   return cn(
@@ -302,7 +279,7 @@ function dayClass(day: string, today: string, over: boolean) {
 
 /** One day of the calendar: a drop target holding its photo, or a button to pick one. */
 function Day({ day, today, photo, unsaved, onOpen, onDropPhoto }: DayProps) {
-  const { over, handlers } = useDropTarget(onDropPhoto);
+  const { over, handlers } = useDropTarget(DRAG_TYPE, onDropPhoto);
   const label = longDayFormat.format(parseIsoDate(day));
   return (
     <div role="gridcell" className={dayClass(day, today, over)} {...handlers}>
