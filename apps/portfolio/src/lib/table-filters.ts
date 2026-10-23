@@ -60,10 +60,16 @@ function groupNumber(key: RangeKey, value: string | number): number | undefined 
   return first ? Number(first[0]) : undefined;
 }
 
+/** A range's ends, a missing one as far as it goes: only `min` runs up to Infinity. */
+function rangeEnds(range: MetaGroup["range"]): number[] {
+  if (!range) return [];
+  return [range.min ?? Number.NEGATIVE_INFINITY, range.max ?? Number.POSITIVE_INFINITY];
+}
+
 /** Every number a range group covers the ends of: its range and its values, and those of the groups in it. */
 function groupNumbers(key: RangeKey, group: MetaGroup): number[] {
   return groupAndInside(group).flatMap(({ range, values }) => [
-    ...(range ? [range.min, range.max] : []),
+    ...rangeEnds(range),
     ...values.flatMap((value) => groupNumber(key, value) ?? []),
   ]);
 }

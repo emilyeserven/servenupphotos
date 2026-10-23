@@ -66,15 +66,16 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
   `?cameraGroup=<id>`) shows the photos taken with any value it or a group inside it lists; choosing a group clears a
   chosen name and the other way round. A group that would show no photos, given the other filters, isn't listed,
   unless it's the one chosen.
-- **ISO**, **Exposure**, **Focal length** and **Aperture** each get a quick-select button under the slider for each of
-  their groups, such as **Wide angle 10mm–24mm**. Pressing one moves the handles to the lowest and highest values the
-  photos have inside the group's range (so Wide angle's 10 to 24 mm becomes `?focalLength=11-24` when no photo was
-  taken at 10 mm), and the button stays pressed while the slider is there; pressing it again clears the slider. A
-  group's range runs from the lowest to the highest end of its own range, its values and those of every group in it.
-  A group no photo is in has no button.
+- **ISO**, **Exposure**, **Focal length** and **Aperture** each get a small dropdown to the right of the slider's range,
+  listing a quick pick for each of their groups, such as **Wide angle 10mm–24mm**. Choosing one moves the handles to
+  the lowest and highest values the photos have inside the group's range (so Wide angle's 10 to 24 mm becomes
+  `?focalLength=11-24` when no photo was taken at 10 mm) and closes the list; the list checks the one the slider is
+  set to, and choosing that one again clears the slider. A group's range runs from the lowest to the highest end of
+  its own range, its values and those of every group in it. A range with only a `min` runs up from it (**High ≥
+  12800**), and one with only a `max` up to it (**Fast ≤ 1/250s**). A group no photo is in isn't listed.
 
-> **Frontend analogy:** a quick-select is a preset that calls the same `onChange` as letting go of the handles, so the
-> URL only ever holds the plain range; the button works out whether it's pressed by comparing its range to the URL's.
+> **Frontend analogy:** a quick pick is a preset that calls the same `onChange` as letting go of the handles, so the
+> URL only ever holds the plain range; the list works out which one to check by comparing its range to the URL's.
 
 ## Counts
 

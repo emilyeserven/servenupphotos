@@ -1,7 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Aperture, Camera } from "lucide-react";
 import { FilterSelect, selectedValue } from "@/components/photo-filters";
-import { RangeFilter, type RangePreset } from "@/components/range-filter";
+import { RangeFilter } from "@/components/range-filter";
+import type { RangePreset } from "@/components/range-presets";
 import { equipmentOptions } from "@/lib/filter-options";
 import { groupTree } from "@/lib/metadata-groups";
 import { photos as allPhotos, SETTING_FORMATS } from "@/lib/photos";
@@ -46,17 +47,18 @@ function exposureText(seconds: number): string {
 }
 
 /**
- * A range group's ends as a photographer writes them, such as "10mm–24mm", the one value, or
- * "≤ 1/250s" for a range from 0.
+ * A range group's ends as a photographer writes them, such as "10mm–24mm", the one value,
+ * "≥ 12800" for one with no top, or "≤ 1/250s" for one from 0 or with no bottom.
  */
 function spanText(key: RangeKey, [low, high]: [number, number]): string {
   const write = writeSetting(key);
   const text = (end: number) => write(key === "exposure" ? exposureText(end) : String(end));
+  if (high === Number.POSITIVE_INFINITY) return `≥ ${text(low)}`;
   if (low <= 0) return `≤ ${text(high)}`;
   return low === high ? text(low) : `${text(low)}–${text(high)}`;
 }
 
-/** Each slider's quick-select buttons: the metadata groups of its setting with photos in their range. */
+/** Each slider's quick picks: the metadata groups of its setting with photos in their range. */
 const RANGE_PRESETS = Object.fromEntries(
   RANGE_KEYS.map((key) => [
     key,
@@ -84,7 +86,7 @@ function useSetTableFilters() {
 /**
  * The Table's own filters, after the shared ones: **Camera** and **Lens** dropdowns, with the
  * metadata groups of each, and a range slider for each of ISO, exposure, focal length and
- * aperture, with a quick-select button for each of its range groups. `photos` is the photos the shared
+ * aperture, with its range groups as quick picks. `photos` is the photos the shared
  * filters leave, which the camera and lens counts are out of, given the other filters here.
  */
 export function TableFilterControls({

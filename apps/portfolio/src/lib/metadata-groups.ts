@@ -19,8 +19,11 @@ export interface MetaGroup {
   values: (string | number)[];
   /** Where it goes among the groups with the same parent, lowest first; missing counts as 0. */
   order?: number;
-  /** For a focal length, aperture, exposure or ISO group, every value from `min` to `max`. */
-  range?: { min: number; max: number };
+  /**
+   * For a focal length, aperture, exposure or ISO group, every value from `min` to `max`, both
+   * included. One end can be missing: only `min` is that and up, only `max` is up to that.
+   */
+  range?: { min?: number; max?: number };
 }
 
 // Like ALLPHOTOS.local.json, METAINFO.local.json is git-ignored and only there locally.
