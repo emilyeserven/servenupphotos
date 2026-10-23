@@ -86,10 +86,9 @@ On the Photo page and in Edit Photo, the title and comment are in one card and t
 map: a checkmark with the GPS position when its EXIF has one; else the place whose fallback GPS position it uses (its
 first place with one, or a place that place is in), with that position; else a warning that it isn't on the map.
 
-Under that line, each chosen place with no GPS position of its own has **Add a GPS position for …**, which opens a
-`latitude, longitude` field with **Use this photo's position** (when its EXIF has one, written in decimal degrees) and
-**Save**. It saves the place's position as the Places page does, so the status line and the Places list show it at
-once.
+When the photo's EXIF has no GPS position, each chosen place with none either (its own or a place above it's) has
+**Add a GPS position for …** under that line, which opens a `latitude, longitude` field and **Save**. It saves the
+place's position as the Places page does, so the status line and the Places list show it at once.
 
 **Place** replaces the old place name text box. It's one row, or two after
 **Add a second place**, and each row is a relation (none, in, at, by, near, on, inside, outside, behind, in front of,

@@ -5,35 +5,31 @@ import { optimisticEntry, type PhotoPlace, type Place, savePlaceMutation } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { exifGpsText, parseGps } from "@/lib/place-gps";
+import { gpsSource, parseGps } from "@/lib/place-gps";
 
 interface PlaceGpsAddersProps {
   /** The photo's places, in order. */
   rows: PhotoPlace[];
   places: Place[];
-  /** The GPS position in the photo's EXIF, offered as the place's; null when it has none. */
+  /** The GPS position in the photo's EXIF; null when it has none. */
   exifGps: string | null;
   disabled: boolean;
 }
 
-/** Whether the place has no GPS position of its own. */
-function lacksGps(place: Place): boolean {
-  return place.latitude === undefined || place.longitude === undefined;
-}
-
-/** A way to give each of the photo's places that has no GPS position one, without leaving the page. */
+/**
+ * A way to give each of the photo's places that has no GPS position, its own or a place above it's,
+ * one without leaving the page. Nothing shows when the photo's EXIF has its own.
+ */
 export function PlaceGpsAdders({ rows, places, exifGps, disabled }: PlaceGpsAddersProps) {
+  if (exifGps?.trim()) return null;
   const chosen = rows.flatMap((row) => places.filter((place) => place.id === row.id));
   return chosen
-    .filter(lacksGps)
-    .map((place) => (
-      <PlaceGpsAdder key={place.id} place={place} exifGps={exifGps} disabled={disabled} />
-    ));
+    .filter((place) => !gpsSource(place, places))
+    .map((place) => <PlaceGpsAdder key={place.id} place={place} disabled={disabled} />);
 }
 
 interface PlaceGpsAdderProps {
   place: Place;
-  exifGps: string | null;
   disabled: boolean;
 }
 
@@ -41,7 +37,7 @@ interface PlaceGpsAdderProps {
  * A button that opens a GPS position field for a place that has none, saved to the place like on
  * the Places page, so photos given it without their own GPS position go there on the map.
  */
-function PlaceGpsAdder({ place, exifGps, disabled }: PlaceGpsAdderProps) {
+function PlaceGpsAdder({ place, disabled }: PlaceGpsAdderProps) {
   const [open, setOpen] = useState(false);
   if (!open) {
     return (
@@ -58,17 +54,16 @@ function PlaceGpsAdder({ place, exifGps, disabled }: PlaceGpsAdderProps) {
       </Button>
     );
   }
-  return <PlaceGpsForm place={place} exifGps={exifGps} onClose={() => setOpen(false)} />;
+  return <PlaceGpsForm place={place} onClose={() => setOpen(false)} />;
 }
 
 interface PlaceGpsFormProps {
   place: Place;
-  exifGps: string | null;
   onClose: () => void;
 }
 
-/** The place's GPS position as latitude, longitude, with this photo's offered, and Save. */
-function PlaceGpsForm({ place, exifGps, onClose }: PlaceGpsFormProps) {
+/** The place's GPS position as latitude, longitude, and Save. */
+function PlaceGpsForm({ place, onClose }: PlaceGpsFormProps) {
   const queryClient = useQueryClient();
   const save = useMutation({ ...savePlaceMutation, ...optimisticEntry(queryClient, "places") });
   const [text, setText] = useState("");
@@ -100,7 +95,6 @@ function PlaceGpsForm({ place, exifGps, onClose }: PlaceGpsFormProps) {
           {save.isPending && <Spinner />}
           Save
         </Button>
-        <PhotoPositionButton exifGps={exifGps} onUse={setText} />
         <Button type="button" size="sm" variant="ghost" onClick={onClose}>
           Cancel
         </Button>
@@ -124,21 +118,4 @@ function problemText(text: string, error: Error | null): string {
 function FormProblem({ text, error }: { text: string; error: Error | null }) {
   const message = problemText(text, error);
   return message ? <p className="text-destructive text-xs">{message}</p> : null;
-}
-
-/** Fills in the photo's own EXIF GPS position, when it has one. */
-function PhotoPositionButton({
-  exifGps,
-  onUse,
-}: {
-  exifGps: string | null;
-  onUse: (text: string) => void;
-}) {
-  const fromPhoto = exifGpsText(exifGps);
-  if (!fromPhoto) return null;
-  return (
-    <Button type="button" size="sm" variant="outline" onClick={() => onUse(fromPhoto)}>
-      Use this photo's position
-    </Button>
-  );
 }
