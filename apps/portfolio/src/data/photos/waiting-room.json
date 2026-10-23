@@ -37,7 +37,7 @@
     }
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
+  "websiteSpotlight": 6,
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
@@ -47,6 +47,6 @@
       "id": "new-haven-train-station"
     }
   ],
-  "spotlightZones": [],
+  "spotlightZones": ["homepage"],
   "socialPosts": []
 }
