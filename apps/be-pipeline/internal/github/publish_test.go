@@ -1,135 +1,17 @@
 package github
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"net/http"
-	"net/http/httptest"
+	"path/filepath"
 	"reflect"
-	"strconv"
+	"slices"
 	"strings"
-	"sync"
 	"testing"
-	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
-
-// fakeRepo is an in-memory owner/repo with default branch main, enough of the
-// REST API for Publish.
-type fakeRepo struct {
-	mu       sync.Mutex
-	branches map[string]bool
-	files    map[string]string // "branch:path" → content
-	pulls    []map[string]any
-	writes   int
-	failPUT  int
-}
-
-func newFakeRepo(t *testing.T) (*fakeRepo, *Client) {
-	t.Helper()
-	f := &fakeRepo{branches: map[string]bool{"main": true}, files: map[string]string{}}
-	srv := httptest.NewServer(http.HandlerFunc(f.serve))
-	t.Cleanup(srv.Close)
-	now := time.Date(2026, 10, 15, 2, 45, 0, 0, time.UTC)
-	return f, &Client{BaseURL: srv.URL, Client: srv.Client(), Now: func() time.Time { return now }}
-}
-
-func (f *fakeRepo) serve(w http.ResponseWriter, r *http.Request) {
-	f.mu.Lock()
-	defer f.mu.Unlock()
-	if r.Header.Get("Authorization") != "Bearer "+token {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	path := strings.TrimPrefix(r.URL.Path, "/repos/owner/repo")
-	switch {
-	case path == "" && r.Method == http.MethodGet:
-		writeBody(w, http.StatusOK, map[string]any{"full_name": "owner/repo", "default_branch": "main"})
-	case path == "/pulls" && r.Method == http.MethodGet:
-		var open []map[string]any
-		for _, pr := range f.pulls {
-			if pr["base"] == r.URL.Query().Get("base") {
-				open = append(open, pr)
-			}
-		}
-		writeBody(w, http.StatusOK, append([]map[string]any{}, open...))
-	case path == "/pulls" && r.Method == http.MethodPost:
-		var in map[string]string
-		_ = json.NewDecoder(r.Body).Decode(&in)
-		n := len(f.pulls) + 1
-		pr := map[string]any{
-			"number":   n,
-			"html_url": "https://github.com/owner/repo/pull/" + strconv.Itoa(n),
-			"base":     in["base"],
-			"head":     map[string]any{"ref": in["head"], "repo": map[string]any{"full_name": "owner/repo"}},
-		}
-		f.pulls = append(f.pulls, pr)
-		writeBody(w, http.StatusCreated, pr)
-	case strings.HasPrefix(path, "/git/ref/heads/"):
-		if !f.branches[strings.TrimPrefix(path, "/git/ref/heads/")] {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		writeBody(w, http.StatusOK, map[string]any{"object": map[string]any{"sha": "abc123"}})
-	case path == "/git/refs" && r.Method == http.MethodPost:
-		var in map[string]string
-		_ = json.NewDecoder(r.Body).Decode(&in)
-		f.branches[strings.TrimPrefix(in["ref"], "refs/heads/")] = true
-		writeBody(w, http.StatusCreated, map[string]any{})
-	case strings.HasPrefix(path, "/contents/") && r.Method == http.MethodGet:
-		ref, file := r.URL.Query().Get("ref"), strings.TrimPrefix(path, "/contents/")
-		if content, ok := f.files[ref+":"+file]; ok {
-			writeBody(w, http.StatusOK, map[string]any{
-				"encoding": "base64", "content": base64.StdEncoding.EncodeToString([]byte(content)),
-			})
-			return
-		}
-		// A folder lists the files directly in it.
-		var listing []map[string]any
-		for key := range f.files {
-			name, ok := strings.CutPrefix(key, ref+":"+file+"/")
-			if ok && !strings.Contains(name, "/") {
-				listing = append(listing, map[string]any{
-					"name": name, "path": file + "/" + name, "type": "file",
-					"html_url": "https://github.com/owner/repo/blob/" + ref + "/" + file + "/" + name,
-				})
-			}
-		}
-		if listing == nil {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		writeBody(w, http.StatusOK, listing)
-	case strings.HasPrefix(path, "/contents/") && r.Method == http.MethodPut:
-		if f.failPUT != 0 {
-			w.WriteHeader(f.failPUT)
-			return
-		}
-		var in map[string]string
-		_ = json.NewDecoder(r.Body).Decode(&in)
-		file := strings.TrimPrefix(path, "/contents/")
-		content, _ := base64.StdEncoding.DecodeString(in["content"])
-		f.files[in["branch"]+":"+file] = string(content)
-		f.writes++
-		writeBody(w, http.StatusCreated, map[string]any{
-			"content": map[string]any{"html_url": "https://github.com/owner/repo/blob/" + in["branch"] + "/" + file},
-		})
-	default:
-		w.WriteHeader(http.StatusNotFound)
-	}
-}
-
-func writeBody(w http.ResponseWriter, status int, body any) {
-	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(body)
-}
-
-func ptr(s string) *string { return &s }
-
-func ref[T any](v T) *T { return &v }
 
 var gh = settings.GitHub{Repo: "owner/repo", Folder: "/photos/data/", Token: token}
 
@@ -150,38 +32,18 @@ func photo(name string) Photo {
 	}}
 }
 
-func TestPublishOpensThenReusesPullRequest(t *testing.T) {
-	f, c := newFakeRepo(t)
+func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
+	f, c := newFakeGitHub(t)
 
 	first, err := c.Publish(t.Context(), gh, photo("DSC0001"))
 	if err != nil {
 		t.Fatalf("first Publish() error = %v", err)
 	}
-	want := PublishResult{
-		Path:              "photos/data/photos/DSC0001.json",
-		FileURL:           "https://github.com/owner/repo/blob/photo-data/2026-10-15-024500/photos/data/photos/DSC0001.json",
-		PullRequestURL:    "https://github.com/owner/repo/pull/1",
-		PullRequestNumber: 1,
-		NewPullRequest:    true,
-	}
 	saved := first.Data
 	first.Data = nil
-	if !reflect.DeepEqual(first, want) {
+	if want := (PublishResult{Path: "photos/data/photos/DSC0001.json"}); !reflect.DeepEqual(first, want) {
 		t.Errorf("first Publish() = %+v, want %+v", first, want)
 	}
-
-	second, err := c.Publish(t.Context(), gh, photo("DSC0002.json"))
-	if err != nil {
-		t.Fatalf("second Publish() error = %v", err)
-	}
-	if second.NewPullRequest || second.PullRequestNumber != 1 || second.Path != "photos/data/photos/DSC0002.json" {
-		t.Errorf("second Publish() = %+v, want it added to pull request 1", second)
-	}
-	if len(f.pulls) != 1 {
-		t.Errorf("opened %d pull requests, want 1", len(f.pulls))
-	}
-
-	got := f.files["photo-data/2026-10-15-024500:photos/data/photos/DSC0001.json"]
 	wantJSON := `{
   "title": "Tokyo at night",
   "comment": "Shot from the **bridge**.",
@@ -223,53 +85,105 @@ func TestPublishOpensThenReusesPullRequest(t *testing.T) {
   "spotlightZones": []
 }
 `
-	if got != wantJSON {
-		t.Errorf("file content = %s, want %s", got, wantJSON)
+	if string(saved) != wantJSON {
+		t.Errorf("first Publish() data = %s, want %s", saved, wantJSON)
 	}
-	if string(saved) != got {
-		t.Errorf("first Publish() data = %s, want the saved file", saved)
+	if _, err := c.Publish(t.Context(), gh, photo("DSC0002.json")); err != nil {
+		t.Fatalf("second Publish() error = %v", err)
+	}
+	if w := f.writes(); len(w) != 0 {
+		t.Errorf("Publish() wrote to GitHub: %v", w)
+	}
+	// Both saves read GitHub once: where the repository stands, and main's files.
+	if n := len(f.calls); n != 2 {
+		t.Errorf("two saves made %d GitHub calls (%v), want 2", n, f.calls)
+	}
+
+	commit, err := c.CommitCombined(t.Context(), gh, nil)
+	if err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
+	}
+	if !commit.NewPullRequest || commit.PullRequestURL != "https://github.com/owner/repo/pull/1" || commit.Edited != 2 {
+		t.Errorf("CommitCombined() = %+v, want both files committed in a new pull request", commit)
+	}
+	wantWrites := []string{"POST /git/trees", "POST /git/commits", "POST /git/refs", "POST /pulls"}
+	if w := f.writes(); !slices.Equal(w, wantWrites) {
+		t.Errorf("CommitCombined() wrote %v, want %v", w, wantWrites)
+	}
+	got, _ := f.file("photo-data/2026-10-15-024500", "photos/data/photos/DSC0001.json")
+	if got != wantJSON {
+		t.Errorf("committed file = %s, want %s", got, wantJSON)
+	}
+	if _, ok := f.file("photo-data/2026-10-15-024500", "photos/data/photos/ALLPHOTOS.json"); !ok {
+		t.Error("the commit has no ALLPHOTOS.json")
+	}
+
+	// The next save goes into the pull request the commit opened.
+	third, err := c.Publish(t.Context(), gh, photo("DSC0003"))
+	if err != nil {
+		t.Fatalf("third Publish() error = %v", err)
+	}
+	if third.PullRequestNumber != 1 {
+		t.Errorf("third Publish() = %+v, want it in pull request 1", third)
 	}
 }
 
 func TestPublishRefusesExistingFile(t *testing.T) {
-	f, c := newFakeRepo(t)
+	f, c := newFakeGitHub(t)
 	f.files["main:photos/data/photos/DSC0001.json"] = "{}"
+	f.openPull("photo-data/x", map[string]string{"photos/data/photos/DSC0003.json": "{}"})
 
-	_, err := c.Publish(t.Context(), gh, photo("DSC0001"))
 	var perr *PublishError
-	if !errors.As(err, &perr) || perr.Status != http.StatusConflict {
-		t.Fatalf("Publish() error = %v, want a conflict", err)
+	_, err := c.Publish(t.Context(), gh, photo("DSC0001"))
+	if !errors.As(err, &perr) || perr.Message != "photos/data/photos/DSC0001.json already exists on main. Pick another file name." {
+		t.Errorf("Publish() of a photo on main: error = %v, want a conflict", err)
 	}
-	if len(f.branches) != 1 || f.writes != 0 {
-		t.Errorf("Publish() created a branch or file for an existing photo")
+	_, err = c.Publish(t.Context(), gh, photo("DSC0003"))
+	if !errors.As(err, &perr) || perr.Message != "photos/data/photos/DSC0003.json already exists on photo-data/x. Pick another file name." {
+		t.Errorf("Publish() of a photo in the pull request: error = %v, want a conflict", err)
 	}
-
-	// A file saved earlier to the open pull request also counts.
 	if _, err := c.Publish(t.Context(), gh, photo("DSC0002")); err != nil {
 		t.Fatalf("Publish() error = %v", err)
 	}
 	_, err = c.Publish(t.Context(), gh, photo("DSC0002"))
-	if !errors.As(err, &perr) || perr.Status != http.StatusConflict {
-		t.Errorf("Publish() of a file already in the pull request: error = %v, want a conflict", err)
+	if !errors.As(err, &perr) || perr.Status != http.StatusConflict || !strings.Contains(perr.Message, "waiting for Commit") {
+		t.Errorf("Publish() of a photo already saved: error = %v, want a conflict", err)
 	}
 }
 
 func TestPublishIgnoresOtherPullRequests(t *testing.T) {
-	f, c := newFakeRepo(t)
-	f.pulls = append(f.pulls, map[string]any{
-		"number": 9, "html_url": "https://github.com/owner/repo/pull/9", "base": "main",
-		"head": map[string]any{"ref": "feature/x", "repo": map[string]any{"full_name": "owner/repo"}},
-	}, map[string]any{
-		"number": 10, "html_url": "https://github.com/fork/repo/pull/10", "base": "main",
-		"head": map[string]any{"ref": "photo-data/x", "repo": map[string]any{"full_name": "fork/repo"}},
-	})
+	f, c := newFakeGitHub(t)
+	f.pulls = append(f.pulls, fakePull{number: 1, title: "Fix the map", branch: "feature/x", base: "main"})
+	f.versions["feature/x"] = 1
 
 	got, err := c.Publish(t.Context(), gh, photo("DSC0001"))
-	if err != nil {
+	if err != nil || got.PullRequestNumber != 0 {
+		t.Fatalf("Publish() = %+v, %v, want no pull request", got, err)
+	}
+	commit, err := c.CommitCombined(t.Context(), gh, nil)
+	if err != nil || !commit.NewPullRequest || commit.PullRequestURL != "https://github.com/owner/repo/pull/2" {
+		t.Errorf("CommitCombined() = %+v, %v, want a new pull request", commit, err)
+	}
+}
+
+func TestPublishKeepsPendingChangesAcrossRestarts(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	file := filepath.Join(t.TempDir(), "pending-changes.json")
+	c.Stage = NewStage(file)
+	if _, err := c.Publish(t.Context(), gh, photo("DSC0001")); err != nil {
 		t.Fatalf("Publish() error = %v", err)
 	}
-	if !got.NewPullRequest || got.PullRequestNumber != 3 {
-		t.Errorf("Publish() = %+v, want a new pull request", got)
+
+	restarted := &Client{BaseURL: c.BaseURL, Client: c.Client, Now: c.Now, Stage: NewStage(file)}
+	inFlight, err := restarted.InFlight(t.Context(), gh)
+	if err != nil {
+		t.Fatalf("InFlight() error = %v", err)
+	}
+	if len(inFlight.Files) != 1 || !inFlight.Files[0].Pending || inFlight.Files[0].Status != "added" {
+		t.Errorf("InFlight() after a restart = %+v, want the pending photo", inFlight.Files)
+	}
+	if w := f.writes(); len(w) != 0 {
+		t.Errorf("wrote to GitHub before Commit: %v", w)
 	}
 }
 
@@ -278,7 +192,7 @@ func TestPublishErrors(t *testing.T) {
 		name    string
 		gh      settings.GitHub
 		photo   Photo
-		failPUT int
+		limited bool
 		status  int
 		message string
 	}{
@@ -311,21 +225,28 @@ func TestPublishErrors(t *testing.T) {
 			message: `Branch "nope" wasn't found in owner/repo.`,
 		},
 		{
-			name:    "no write access",
+			name:    "missing repository",
+			gh:      settings.GitHub{Repo: "owner/nope", Token: token},
+			photo:   photo("DSC0001"),
+			status:  http.StatusBadGateway,
+			message: "Repository owner/nope wasn't found, or the token can't see it.",
+		},
+		{
+			name:    "rate limited",
 			gh:      gh,
 			photo:   photo("DSC0001"),
-			failPUT: http.StatusForbidden,
-			status:  http.StatusBadGateway,
-			message: "The token can't write to this repository. Give it Contents and Pull requests read and write access.",
+			limited: true,
+			status:  http.StatusTooManyRequests,
+			message: "GitHub's rate limit was hit, so nothing was read or saved. Try again in 23 minutes",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f, c := newFakeRepo(t)
-			f.failPUT = tt.failPUT
+			f, c := newFakeGitHub(t)
+			f.limited = tt.limited
 			_, err := c.Publish(t.Context(), tt.gh, tt.photo)
 			var perr *PublishError
-			if !errors.As(err, &perr) || perr.Status != tt.status || perr.Message != tt.message {
+			if !errors.As(err, &perr) || perr.Status != tt.status || !strings.HasPrefix(perr.Message, tt.message) {
 				t.Errorf("Publish() error = %v, want %d %q", err, tt.status, tt.message)
 			}
 		})

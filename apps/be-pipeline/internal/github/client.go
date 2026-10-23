@@ -1,9 +1,9 @@
-// Package github talks to the GitHub REST API with the token from Settings.
-// Check tests the settings without changing anything, Publish saves a photo's
-// sanitized EXIF as a JSON file in a pull request, InFlight reads back the
-// photo JSON waiting in that pull request, and Remove deletes one of them.
-// Organize lists the albums and tags, and CreateGroup saves a new one in the
-// same pull request.
+// Package github keeps the photo data and commits it to GitHub with the token
+// from Settings. Saves don't commit: they're kept as pending changes (Stage)
+// over the photo data pull request's files, read once per commit and cached
+// (see workspace), until CommitCombined commits all of them, with the
+// combined lists, as one commit. Check tests the settings without changing
+// anything.
 package github
 
 import (
@@ -15,35 +15,53 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 )
 
 // DefaultBaseURL is GitHub's public REST API.
 const DefaultBaseURL = "https://api.github.com"
 
-// Client calls the GitHub REST API at BaseURL.
+// Client calls the GitHub REST and GraphQL APIs at BaseURL.
 type Client struct {
 	BaseURL string
 	Client  *http.Client
 	// Now names new branches; nil means time.Now.
 	Now func() time.Time
+	// Stage keeps the changes saved and not committed yet; nil keeps them in
+	// memory only.
+	Stage *Stage
+
+	mu    sync.Mutex
+	cache *readCache
 }
 
-// New returns a Client for GitHub's public API.
-func New() *Client {
-	return &Client{BaseURL: DefaultBaseURL, Client: http.DefaultClient}
+// New returns a Client for GitHub's public API that keeps pending changes in
+// stage.
+func New(stage *Stage) *Client {
+	return &Client{BaseURL: DefaultBaseURL, Client: http.DefaultClient, Stage: stage}
 }
 
 // response is the part of a GitHub response the callers look at.
 type response struct {
 	Status int
 	Header http.Header
+	// Body is the start of a failed response's body, which says why.
+	Body string
 }
+
+// maxErrorBody is how much of a failed response's body is kept.
+const maxErrorBody = 4 << 10
 
 // do sends a request to path with the token and, when in is non-nil, in as a
 // JSON body. On a 2xx response it decodes the body into out when out is
 // non-nil. The token goes only in the Authorization header.
 func (c *Client) do(ctx context.Context, method, path, token string, in, out any) (response, error) {
+	return c.doURL(ctx, method, strings.TrimRight(c.BaseURL, "/")+path, token, in, out)
+}
+
+// doURL is do for a whole URL, such as the GraphQL endpoint's.
+func (c *Client) doURL(ctx context.Context, method, u, token string, in, out any) (response, error) {
 	var body io.Reader
 	if in != nil {
 		b, err := json.Marshal(in)
@@ -52,7 +70,7 @@ func (c *Client) do(ctx context.Context, method, path, token string, in, out any
 		}
 		body = bytes.NewReader(b)
 	}
-	req, err := http.NewRequestWithContext(ctx, method, strings.TrimRight(c.BaseURL, "/")+path, body)
+	req, err := http.NewRequestWithContext(ctx, method, u, body)
 	if err != nil {
 		return response{}, fmt.Errorf("build request: %w", err)
 	}
@@ -71,12 +89,18 @@ func (c *Client) do(ctx context.Context, method, path, token string, in, out any
 	}
 	defer res.Body.Close() //nolint:errcheck // read-only
 
-	if res.StatusCode >= 200 && res.StatusCode < 300 && out != nil {
+	got := response{Status: res.StatusCode, Header: res.Header}
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		b, _ := io.ReadAll(io.LimitReader(res.Body, maxErrorBody))
+		got.Body = string(b)
+		return got, nil
+	}
+	if out != nil {
 		if err := json.NewDecoder(res.Body).Decode(out); err != nil {
 			return response{}, fmt.Errorf("decode github response: %w", err)
 		}
 	}
-	return response{Status: res.StatusCode, Header: res.Header}, nil
+	return got, nil
 }
 
 // repoPath returns the API path of owner/name.
@@ -103,13 +127,6 @@ func escapePath(p string) string {
 	return strings.Join(segments, "/")
 }
 
-// isRateLimited reports a primary rate limit response, per
-// https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api
-func isRateLimited(res response) bool {
-	return (res.Status == http.StatusForbidden || res.Status == http.StatusTooManyRequests) &&
-		res.Header.Get("X-RateLimit-Remaining") == "0"
-}
-
 // repoInfo is the part of GET /repos/{owner}/{repo} the callers use.
 type repoInfo struct {
 	FullName      string `json:"full_name"`
@@ -125,9 +142,9 @@ func (c *Client) getRepo(ctx context.Context, owner, name, token string) (repoIn
 	}
 	switch {
 	case res.Status == http.StatusUnauthorized:
-		return repo, "GitHub rejected the token. It may be wrong, expired or revoked."
+		return repo, tokenRejected
 	case isRateLimited(res):
-		return repo, rateLimited
+		return repo, rateLimitMessage(res.Header, c.now())
 	case res.Status == http.StatusForbidden:
 		return repo, "The token isn't allowed to access this repository."
 	case res.Status == http.StatusNotFound:
@@ -138,4 +155,4 @@ func (c *Client) getRepo(ctx context.Context, owner, name, token string) (repoIn
 	return repo, ""
 }
 
-const rateLimited = "GitHub's rate limit was hit. Try again in a few minutes."
+const tokenRejected = "GitHub rejected the token. It may be wrong, expired or revoked." //nolint:gosec // a message, not a credential

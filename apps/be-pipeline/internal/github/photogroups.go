@@ -20,9 +20,10 @@ type PhotoGroups struct {
 	Tags   []string `json:"tags"`
 }
 
-// PhotoGroupsResult says where the albums and tags were committed.
+// PhotoGroupsResult says where the albums and tags were saved: in the pending
+// changes, for the next Commit.
 type PhotoGroupsResult struct {
-	scanCommit
+	pendingSave
 	// Files is how many photo files changed; the others already had them.
 	Files int `json:"files"`
 }
@@ -31,9 +32,9 @@ type PhotoGroupsResult struct {
 const maxGroupsPerSave = 100
 
 // AddPhotoGroups adds each of add's albums and tags that a photo file in
-// add.Paths doesn't list yet to its "albums" and "tags", as one commit, where
-// ReplaceBaseURL commits. Nothing else in the files changes, and nothing is
-// committed when one of them can't be read.
+// add.Paths doesn't list yet to its "albums" and "tags", in the pending
+// changes as ReplaceBaseURL saves them. Nothing else in the files changes, and
+// nothing is saved when one of them can't be read.
 func (c *Client) AddPhotoGroups(ctx context.Context, gh settings.GitHub, add PhotoGroups) (PhotoGroupsResult, error) {
 	if perr := validPhotoGroups(add); perr != nil {
 		return PhotoGroupsResult{}, perr
@@ -78,12 +79,11 @@ func (c *Client) AddPhotoGroups(ctx context.Context, gh settings.GitHub, add Pho
 		return PhotoGroupsResult{}, publishErr(http.StatusConflict, "Those photos already have those albums and tags, so there's nothing to change.")
 	}
 
-	message := fmt.Sprintf("Add albums and tags to %d %s", len(entries), plural(len(entries), "photo"))
-	saved, perr := c.commitScan(ctx, scan, entries, message)
+	saved, perr := c.saveScan(scan, entries)
 	if perr != nil {
 		return PhotoGroupsResult{}, perr
 	}
-	return PhotoGroupsResult{scanCommit: saved, Files: len(entries)}, nil
+	return PhotoGroupsResult{pendingSave: saved, Files: len(entries)}, nil
 }
 
 // validPhotoGroups checks there are photos, and albums or tags with valid IDs

@@ -1,89 +1,31 @@
 package github
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// newInFlightRepo serves an owner/repo whose open pull requests are pulls and
-// whose pull request 7 changes files, with contents keyed by path at sha "head7",
-// or by path@ref at another ref.
-func newInFlightRepo(t *testing.T, pulls []map[string]any, files []map[string]any, contents map[string]string) *Client {
-	t.Helper()
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Header.Get("Authorization") != "Bearer "+token {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		if r.Method != http.MethodGet {
-			t.Errorf("%s %s: InFlight must only read", r.Method, r.URL.Path)
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		p := strings.TrimPrefix(r.URL.Path, "/repos/owner/repo")
-		switch {
-		case p == "/pulls":
-			writeBody(w, http.StatusOK, pulls)
-		case p == "/pulls/7/files":
-			writeBody(w, http.StatusOK, files)
-		case strings.HasPrefix(p, "/contents/"):
-			file, ref := strings.TrimPrefix(p, "/contents/"), r.URL.Query().Get("ref")
-			if ref != "head7" {
-				file += "@" + ref
-			}
-			content, ok := contents[file]
-			if !ok {
-				w.WriteHeader(http.StatusNotFound)
-				return
-			}
-			writeBody(w, http.StatusOK, map[string]any{
-				"encoding": "base64",
-				"content":  base64.StdEncoding.EncodeToString([]byte(content)),
-			})
-		default:
-			w.WriteHeader(http.StatusNotFound)
-		}
-	}))
-	t.Cleanup(srv.Close)
-	return &Client{BaseURL: srv.URL, Client: srv.Client()}
-}
-
-var photoPull = map[string]any{
-	"number":   7,
-	"title":    "Add photo data",
-	"html_url": "https://github.com/owner/repo/pull/7",
-	"head":     map[string]any{"ref": "photo-data/2026-10-15-024500", "sha": "head7"},
-	"base":     map[string]any{"ref": "main"},
-}
-
 func TestInFlightReadsPhotoJSON(t *testing.T) {
 	const dir = "apps/portfolio/src/data/photos/"
-	c := newInFlightRepo(t,
-		[]map[string]any{{"number": 3, "title": "Unrelated", "head": map[string]any{"ref": "x", "sha": "s"}}, photoPull},
-		[]map[string]any{
-			{"filename": dir + "DSC0001.json", "status": "added", "blob_url": "https://github.com/blob/1"},
-			{"filename": dir + "ALLPHOTOS.json", "status": "modified", "blob_url": "https://github.com/blob/all"},
-			{"filename": dir + "DSC0002.json", "status": "removed"},
-			{"filename": dir + "broken.json", "status": "added"},
-			{"filename": dir + "nested/DSC0003.json", "status": "added"},
-			{"filename": "README.md", "status": "modified"},
-		},
-		map[string]string{
-			dir + "DSC0001.json": "{\n  \"file\": \"DSC0001.jpg\",\n  \"images\": {\"full\": \"https://pub/photos/a-dsc0001.jpg\", \"key\": \"photos/a-dsc0001.jpg\"}\n}\n",
-			dir + "broken.json":  "{not json",
-			// Combined reads it; InFlight leaves it out.
-			dir + "ALLPHOTOS.json": `[{"file":"DSC0001.jpg"}]`,
-		},
-	)
+	f, c := newFakeGitHub(t)
+	f.files["main:"+dir+"DSC0002.json"] = `{"file":"DSC0002.jpg"}`
+	f.files["main:README.md"] = "hi"
+	f.pulls = append(f.pulls, fakePull{number: 3, title: "Unrelated", branch: "x", base: "main"})
+	f.versions["x"] = 1
+	f.openPull(prBranch, map[string]string{
+		dir + "DSC0001.json":        "{\n  \"file\": \"DSC0001.jpg\",\n  \"images\": {\"full\": \"https://pub/photos/a-dsc0001.jpg\", \"key\": \"photos/a-dsc0001.jpg\"}\n}\n",
+		dir + "broken.json":         "{not json",
+		dir + "nested/DSC0003.json": "{}",
+		// Combined reads it; InFlight leaves it out.
+		dir + "ALLPHOTOS.json": `[{"file":"DSC0001.jpg"}]`,
+	})
+	delete(f.files, prBranch+":"+dir+"DSC0002.json")
 
-	got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token})
+	got, err := c.InFlight(t.Context(), pullGH)
 	if err != nil {
 		t.Fatalf("InFlight() error = %v", err)
 	}
@@ -91,12 +33,13 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 		t.Errorf("Folder, Repo = %q, %q", got.Folder, got.Repo)
 	}
 	want := InFlightPullRequest{
-		Number: 7, Title: "Add photo data", URL: "https://github.com/owner/repo/pull/7",
-		Branch: "photo-data/2026-10-15-024500", HeadSHA: "head7", BaseBranch: "main",
+		Number: 2, Title: "Add photo data", URL: "https://github.com/owner/repo/pull/2",
+		Branch: prBranch, HeadSHA: prBranch + "@1", BaseBranch: "main",
 	}
 	if got.PullRequest == nil || *got.PullRequest != want {
 		t.Fatalf("PullRequest = %+v, want %+v", got.PullRequest, want)
 	}
+	// DSC0002.json is removed in the pull request, so it isn't listed.
 	if len(got.Files) != 2 {
 		t.Fatalf("Files = %+v, want DSC0001.json and broken.json", got.Files)
 	}
@@ -108,56 +51,49 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	if first.PhotoName != "DSC0001.jpg" || got.Files[1].PhotoName != "broken" {
 		t.Errorf("PhotoName = %q, %q; want DSC0001.jpg, broken", first.PhotoName, got.Files[1].PhotoName)
 	}
-	if first.ImageKey != "photos/a-dsc0001.jpg" || got.Files[1].ImageKey != "" {
-		t.Errorf("ImageKey = %q, %q; want DSC0001.json's images.key, none", first.ImageKey, got.Files[1].ImageKey)
+	if first.ImageKey != "photos/a-dsc0001.jpg" || first.ImageURL != "https://pub/photos/a-dsc0001.jpg" {
+		t.Errorf("ImageKey, ImageURL = %q, %q; want DSC0001.json's images", first.ImageKey, first.ImageURL)
 	}
-	if first.ImageURL != "https://pub/photos/a-dsc0001.jpg" || got.Files[1].ImageURL != "" {
-		t.Errorf("ImageURL = %q, %q; want DSC0001.json's images.full, none", first.ImageURL, got.Files[1].ImageURL)
-	}
-	if first.FileURL != "https://github.com/blob/1" || first.Status != "added" {
-		t.Errorf("Files[0] = %+v, want its blob URL and status", first)
+	if first.FileURL != "https://github.com/owner/repo/blob/"+prBranch+"/"+dir+"DSC0001.json" || first.Status != "added" || first.Pending {
+		t.Errorf("Files[0] = %+v, want its page on the branch, added and committed", first)
 	}
 	if broken := got.Files[1]; broken.Data != nil || broken.Error != "The file isn't valid JSON." {
 		t.Errorf("Files[1] = %+v, want an invalid JSON error", broken)
+	}
+	if n := len(f.calls); n != 3 {
+		t.Errorf("InFlight() made %d GitHub calls (%v), want 3: the state and two snapshots", n, f.calls)
+	}
+	if _, err := c.InFlight(t.Context(), pullGH); err != nil || len(f.calls) != 3 {
+		t.Errorf("InFlight() again called GitHub: %v, %v", f.calls[3:], err)
 	}
 }
 
 func TestInFlightReadsChangedFilesOnBase(t *testing.T) {
 	const dir = "apps/portfolio/src/data/"
-	c := newInFlightRepo(t, []map[string]any{photoPull},
-		[]map[string]any{
-			{"filename": dir + "photos/new.json", "status": "added"},
-			{"filename": dir + "photos/changed.json", "status": "modified"},
-			{"filename": dir + "photos/moved.json", "status": "renamed", "previous_filename": dir + "photos/old.json"},
-			{"filename": dir + "photos/gone.json", "status": "modified"},
-			{"filename": dir + "albums/seoul.json", "status": "modified"},
-			{"filename": dir + "places/gyeongbokgung.json", "status": "added"},
-			{"filename": dir + "places/PLACES.json", "status": "modified"},
-			{"filename": dir + "localizations/city-seoul.json", "status": "added"},
-		},
-		map[string]string{
-			dir + "photos/new.json":               `{"file":"new.jpg"}`,
-			dir + "photos/changed.json":           `{"file":"changed.jpg","title":"After"}`,
-			dir + "photos/changed.json@main":      `{"file":"changed.jpg","title":"Before"}`,
-			dir + "photos/moved.json":             `{"file":"moved.jpg"}`,
-			dir + "photos/old.json@main":          `{"file":"old.jpg"}`,
-			dir + "photos/gone.json":              `{"file":"gone.jpg"}`,
-			dir + "albums/seoul.json":             `{"id":"seoul","name":"Seoul"}`,
-			dir + "albums/seoul.json@main":        `{"id":"seoul","name":"Soul"}`,
-			dir + "places/gyeongbokgung.json":     `{"id":"gyeongbokgung","name":"Gyeongbokgung"}`,
-			dir + "localizations/city-seoul.json": `{"id":"city-seoul","type":"city","name":"Seoul"}`,
-		},
-	)
+	f, c := newFakeGitHub(t)
+	for p, v := range map[string]string{
+		dir + "photos/changed.json": `{"file":"changed.jpg","title":"Before"}`,
+		dir + "photos/same.json":    `{"file":"same.jpg"}`,
+		dir + "albums/seoul.json":   `{"id":"seoul","name":"Soul"}`,
+	} {
+		f.files["main:"+p] = v
+	}
+	f.openPull(prBranch, map[string]string{
+		dir + "photos/new.json":               `{"file":"new.jpg"}`,
+		dir + "photos/changed.json":           `{"file":"changed.jpg","title":"After"}`,
+		dir + "albums/seoul.json":             `{"id":"seoul","name":"Seoul"}`,
+		dir + "places/gyeongbokgung.json":     `{"id":"gyeongbokgung","name":"Gyeongbokgung"}`,
+		dir + "places/PLACES.json":            `[]`,
+		dir + "localizations/city-seoul.json": `{"id":"city-seoul","type":"city","name":"Seoul"}`,
+	})
 
-	got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token})
+	got, err := c.InFlight(t.Context(), pullGH)
 	if err != nil {
 		t.Fatalf("InFlight() error = %v", err)
 	}
 	want := map[string]BaseFile{
 		"new.json":     {},
 		"changed.json": {Base: json.RawMessage(`{"file":"changed.jpg","title":"Before"}`)},
-		"moved.json":   {Base: json.RawMessage(`{"file":"old.jpg"}`)},
-		"gone.json":    {BaseError: "The file isn't on main."},
 	}
 	if len(got.Files) != len(want) {
 		t.Fatalf("Files = %+v, want %d", got.Files, len(want))
@@ -179,8 +115,31 @@ func TestInFlightReadsChangedFilesOnBase(t *testing.T) {
 	}
 }
 
+func TestInFlightListsPendingChanges(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	if _, err := c.Publish(t.Context(), pullGH, photo("DSC0001")); err != nil {
+		t.Fatalf("Publish() error = %v", err)
+	}
+	if _, err := c.CreateGroup(t.Context(), pullGH, Tags, NewGroup{ID: "night", Name: "Night"}); err != nil {
+		t.Fatalf("CreateGroup() error = %v", err)
+	}
+	got, err := c.InFlight(t.Context(), pullGH)
+	if err != nil {
+		t.Fatalf("InFlight() error = %v", err)
+	}
+	if got.PullRequest != nil || len(got.Files) != 1 || !got.Files[0].Pending || got.Files[0].FileURL != "" {
+		t.Errorf("InFlight() = %+v, want the pending photo without a pull request or a page on GitHub", got)
+	}
+	if len(got.Tags.Files) != 1 || !got.Tags.Files[0].Pending {
+		t.Errorf("Tags.Files = %+v, want the pending tag", got.Tags.Files)
+	}
+	if w := f.writes(); len(w) != 0 {
+		t.Errorf("wrote to GitHub: %v", w)
+	}
+}
+
 func TestInFlightNoPullRequest(t *testing.T) {
-	c := newInFlightRepo(t, []map[string]any{}, nil, nil)
+	_, c := newFakeGitHub(t)
 	got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Folder: "/photos/", Token: token})
 	if err != nil {
 		t.Fatalf("InFlight() error = %v", err)
@@ -190,8 +149,24 @@ func TestInFlightNoPullRequest(t *testing.T) {
 	}
 }
 
+func TestInFlightSeesAMergeAfterForget(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, map[string]string{dataRoot + "/photos/a.json": `{}`})
+	if got, _ := c.InFlight(t.Context(), pullGH); got.PullRequest == nil {
+		t.Fatal("InFlight() found no pull request")
+	}
+	f.pulls = nil
+	if got, _ := c.InFlight(t.Context(), pullGH); got.PullRequest == nil {
+		t.Error("InFlight() asked GitHub again right away")
+	}
+	c.Forget(pullGH)
+	if got, _ := c.InFlight(t.Context(), pullGH); got.PullRequest != nil {
+		t.Errorf("InFlight() after Forget() = %+v, want the merge seen", got.PullRequest)
+	}
+}
+
 func TestInFlightErrors(t *testing.T) {
-	c := newInFlightRepo(t, []map[string]any{photoPull}, nil, nil)
+	_, c := newFakeGitHub(t)
 	tests := []struct {
 		name string
 		gh   settings.GitHub
@@ -200,7 +175,7 @@ func TestInFlightErrors(t *testing.T) {
 		{"not set up", settings.GitHub{Repo: "owner/repo"}, "Settings first"},
 		{"bad folder", settings.GitHub{Repo: "owner/repo", Folder: "a/../b", Token: token}, "isn't a valid path"},
 		{"bad token", settings.GitHub{Repo: "owner/repo", Token: "nope"}, "rejected the token"},
-		{"unknown repo", settings.GitHub{Repo: "owner/other", Token: token}, "can't read this repository"},
+		{"unknown repo", settings.GitHub{Repo: "owner/other", Token: token}, "wasn't found, or the token can't see it"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -210,5 +185,21 @@ func TestInFlightErrors(t *testing.T) {
 				t.Errorf("InFlight() error = %v, want one containing %q", err, tt.want)
 			}
 		})
+	}
+}
+
+func TestSnapshotReadsTruncatedFilesFromTheirBlob(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, map[string]string{
+		dataRoot + "/photos/a.json":         `{"file":"a.jpg"}`,
+		dataRoot + "/photos/ALLPHOTOS.json": `[{"file":"a.jpg"}]`,
+	})
+	f.truncated[dataRoot+"/photos/ALLPHOTOS.json"] = true
+	got, err := c.Combined(t.Context(), pullGH)
+	if err != nil || got.Head == nil || string(got.Head.Photos.Data) != `[{"file":"a.jpg"}]` {
+		t.Fatalf("Combined() = %+v, %v; want ALLPHOTOS.json read from its blob", got.Head, err)
+	}
+	if f.count("GET /git/blobs/"+blobSHA([]byte(`[{"file":"a.jpg"}]`))) == 0 {
+		t.Errorf("calls = %v, want the blob read", f.calls)
 	}
 }

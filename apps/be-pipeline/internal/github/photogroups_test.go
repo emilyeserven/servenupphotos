@@ -42,17 +42,18 @@ func TestAddPhotoGroups(t *testing.T) {
 	if err != nil {
 		t.Fatalf("AddPhotoGroups() error = %v", err)
 	}
-	if got.Files != 2 || got.PullRequestNumber != 7 {
-		t.Errorf("AddPhotoGroups() = %+v, want 2 files in the pull request", got)
+	if got.Files != 2 || got.PullRequestNumber != 1 || len(got.Changes) != 2 {
+		t.Errorf("AddPhotoGroups() = %+v, want 2 files pending for the pull request", got)
 	}
-	for _, e := range repo.tree {
+	staged := repo.staged(t)
+	if len(staged) != 2 {
+		t.Errorf("pending = %v, want B.json and C.json", staged)
+	}
+	for p, content := range staged {
 		var data struct{ Albums []string }
-		if json.Unmarshal([]byte(e["content"]), &data) != nil || len(data.Albums) != 1 || data.Albums[0] != "seoul" {
-			t.Errorf("%s = %s, want album seoul", e["path"], e["content"])
+		if json.Unmarshal([]byte(content), &data) != nil || len(data.Albums) != 1 || data.Albums[0] != "seoul" {
+			t.Errorf("%s = %s, want album seoul", p, content)
 		}
-	}
-	if msg := repo.commit["message"]; msg != "Add albums and tags to 2 photos" {
-		t.Errorf("commit message = %v", msg)
 	}
 }
 
@@ -77,8 +78,8 @@ func TestAddPhotoGroupsErrors(t *testing.T) {
 			if !errors.As(err, &perr) || !strings.Contains(perr.Message, tt.want) {
 				t.Errorf("AddPhotoGroups() error = %v, want one containing %q", err, tt.want)
 			}
-			if repo.commit != nil {
-				t.Errorf("committed %v, want nothing", repo.commit)
+			if staged := repo.staged(t); len(staged) != 0 {
+				t.Errorf("pending = %v, want nothing", staged)
 			}
 		})
 	}

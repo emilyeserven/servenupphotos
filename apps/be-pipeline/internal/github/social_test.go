@@ -54,7 +54,7 @@ func TestSocialCalendar(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SocialCalendar() error = %v", err)
 	}
-	if got.Branch != "photo-data/2026-10-15-024500" || got.PullRequest == nil {
+	if got.Branch != prBranch || got.PullRequest == nil {
 		t.Errorf("calendar = %+v, want the pull request's branch", got)
 	}
 	if len(got.Photos) != 2 || len(got.Unreadable) != 1 {
@@ -84,13 +84,10 @@ func TestSetSocialDates(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SetSocialDates() error = %v", err)
 	}
-	if got.Files != 2 || got.PullRequestNumber != 7 || repo.refs["photo-data/2026-10-15-024500"] != "commit2" {
-		t.Errorf("SetSocialDates() = %+v, refs %v; want 2 files on the pull request's branch", got, repo.refs)
+	if got.Files != 2 || got.PullRequestNumber != 1 || got.Branch != prBranch {
+		t.Errorf("SetSocialDates() = %+v, want 2 files pending for the pull request's branch", got)
 	}
-	contents := map[string]string{}
-	for _, e := range repo.tree {
-		contents[e["path"]] = e["content"]
-	}
+	contents := repo.staged(t)
 	if want := strings.Replace(photoB, `"2026-10-22"`, `"2026-10-23"`, 1); contents["apps/portfolio/src/data/photos/B.json"] != want {
 		t.Errorf("B.json = %s, want %s", contents["apps/portfolio/src/data/photos/B.json"], want)
 	}
@@ -99,14 +96,11 @@ func TestSetSocialDates(t *testing.T) {
 	}
 	for _, ch := range got.Changes {
 		if string(ch.After) != contents[ch.Path] || len(ch.Before) == 0 {
-			t.Errorf("change %s = %s → %s, want the file before and as committed", ch.Path, ch.Before, ch.After)
+			t.Errorf("change %s = %s → %s, want the file before and as saved", ch.Path, ch.Before, ch.After)
 		}
 	}
 	if len(got.Changes) != 2 {
 		t.Errorf("changes = %d, want 2", len(got.Changes))
-	}
-	if msg := repo.commit["message"]; msg != "Schedule social media posts for 2 photos" {
-		t.Errorf("commit message = %v", msg)
 	}
 }
 
@@ -132,8 +126,8 @@ func TestSetSocialDatesErrors(t *testing.T) {
 			if !errors.As(err, &perr) || !strings.Contains(perr.Message, tt.want) {
 				t.Errorf("SetSocialDates() error = %v, want one containing %q", err, tt.want)
 			}
-			if repo.commit != nil {
-				t.Errorf("committed %v, want nothing", repo.commit)
+			if staged := repo.staged(t); len(staged) != 0 {
+				t.Errorf("pending = %v, want nothing", staged)
 			}
 		})
 	}

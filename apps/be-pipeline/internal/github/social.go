@@ -58,9 +58,10 @@ type SocialDate struct {
 	Date *string `json:"date"`
 }
 
-// SocialDatesResult says where publish date changes were committed.
+// SocialDatesResult says where publish date changes were saved: in the
+// pending changes, for the next Commit.
 type SocialDatesResult struct {
-	scanCommit
+	pendingSave
 	// Files is how many photo files changed.
 	Files int `json:"files"`
 }
@@ -79,7 +80,7 @@ type socialFields struct {
 }
 
 // SocialCalendar reads every photo JSON file, as PreviewBaseURL does, with
-// its social media publish date. It only reads from GitHub.
+// its social media publish date. It changes nothing.
 func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (SocialCalendar, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
@@ -130,8 +131,8 @@ func socialImage(images map[string]json.RawMessage) *string {
 }
 
 // SetSocialDates sets the social media publish date of each photo file in
-// dates, as one commit, where ReplaceBaseURL commits. Only that field of each
-// file changes. Nothing is committed when a file can't be read, or when two
+// dates, in the pending changes as ReplaceBaseURL saves them. Only that field
+// of each file changes. Nothing is saved when a file can't be read, or when two
 // photos would end up on the same day.
 func (c *Client) SetSocialDates(ctx context.Context, gh settings.GitHub, dates []SocialDate) (SocialDatesResult, error) {
 	if len(dates) == 0 {
@@ -205,12 +206,11 @@ func (c *Client) SetSocialDates(ctx context.Context, gh settings.GitHub, dates [
 		return SocialDatesResult{}, publishErr(http.StatusConflict, "Those publish dates are already saved, so there's nothing to change.")
 	}
 
-	message := fmt.Sprintf("Schedule social media posts for %d %s", len(entries), plural(len(entries), "photo"))
-	saved, perr := c.commitScan(ctx, scan, entries, message)
+	saved, perr := c.saveScan(scan, entries)
 	if perr != nil {
 		return SocialDatesResult{}, perr
 	}
-	return SocialDatesResult{scanCommit: saved, Files: len(entries)}, nil
+	return SocialDatesResult{pendingSave: saved, Files: len(entries)}, nil
 }
 
 // valueOffset is where a value starts in span, which runs from the end of the

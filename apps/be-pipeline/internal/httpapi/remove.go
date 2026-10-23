@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
@@ -30,15 +31,16 @@ type removedImage struct {
 
 type removeResponse struct {
 	Path string `json:"path"`
-	// CommitSHA is the commit that removed the file.
-	CommitSHA string       `json:"commitSha"`
-	Image     removedImage `json:"image"`
+	// Before is the file's data before it was removed.
+	Before json.RawMessage `json:"before"`
+	Image  removedImage    `json:"image"`
 }
 
-// handleRemoveInFlight deletes the photo JSON at the "path" query parameter
-// from the open "Add photo data" pull request, then deletes its image from
-// R2, with all of its resized versions. Once the JSON is gone it responds 200 even if the image couldn't be
-// deleted, saying why in "image".
+// handleRemoveInFlight takes the photo JSON at the "path" query parameter out
+// of the photo data waiting for Commit (the next Commit deletes it from the
+// "Add photo data" pull request), then deletes its image from R2 right away,
+// with all of its resized versions. Once the JSON is out it responds 200 even
+// if the image couldn't be deleted, saying why in "image".
 func handleRemoveInFlight(store *settings.Store, gh *github.Client, findPhotos findPhotosFunc, deletePhoto deletePhotoFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		file := r.URL.Query().Get("path")
@@ -72,7 +74,7 @@ func handleRemoveInFlight(store *settings.Store, gh *github.Client, findPhotos f
 			slog.Error("read settings failed", "err", err)
 			image = removedImage{Message: "Couldn't read the R2 settings, so the image was left in R2."}
 		}
-		writeJSON(w, http.StatusOK, removeResponse{Path: removed.Path, CommitSHA: removed.CommitSHA, Image: image})
+		writeJSON(w, http.StatusOK, removeResponse{Path: removed.Path, Before: removed.Before, Image: image})
 	}
 }
 

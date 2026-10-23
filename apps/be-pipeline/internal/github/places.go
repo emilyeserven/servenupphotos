@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"slices"
 	"strings"
-	"sync"
 	"unicode/utf8"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
@@ -106,12 +105,13 @@ type Entry struct {
 	Error string `json:"error,omitempty"`
 }
 
-// EntriesResult is every place and localization file at the open photo data
-// pull request's head, or on the base branch when none is open.
+// EntriesResult is every place and localization file as the next Commit
+// will have it: at the open photo data pull request's head, or on the base
+// branch when none is open, with the pending changes.
 type EntriesResult struct {
 	Repo   string `json:"repo"`
 	Folder string `json:"folder"`
-	// Branch is where the files were read.
+	// Branch is where the next Commit commits them.
 	Branch string `json:"branch"`
 	// PullRequest is nil when no photo data pull request is open.
 	PullRequest   *InFlightPullRequest `json:"pullRequest"`
@@ -121,86 +121,43 @@ type EntriesResult struct {
 
 // EntryResult says where a place or localization was saved.
 type EntryResult struct {
-	scanCommit
+	pendingSave
 	Path string `json:"path"`
 	// Data is the file as saved.
 	Data json.RawMessage `json:"data"`
 	// Before is the file before, or null when it's new.
 	Before json.RawMessage `json:"before"`
 	// Changed is false when the file already had that content, so nothing
-	// was committed.
+	// was saved.
 	Changed bool `json:"changed"`
 }
 
-// Entries reads every place and localization file at the open photo data
-// pull request's head, or on the base branch when none is open, so they're
-// listed whether or not Commit has combined them yet. It only reads from
-// GitHub.
+// Entries lists every place and localization file as the next Commit will
+// have them, so they're listed whether or not Commit has combined them yet.
 func (c *Client) Entries(ctx context.Context, gh settings.GitHub) (EntriesResult, error) {
-	root, perr := dataFolder(gh.Folder)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return EntriesResult{}, perr
 	}
-	t, perr := c.target(ctx, gh)
-	if perr != nil {
-		return EntriesResult{}, perr
-	}
-	pr, perr := c.findInFlightPull(ctx, t)
-	if perr != nil {
-		return EntriesResult{}, perr
-	}
-	result := EntriesResult{Repo: t.repo.FullName, Folder: root, Branch: t.base}
-	ref := t.base
-	if pr != nil {
-		result.Branch, ref = pr.Head.Ref, pr.Head.SHA
-		result.PullRequest = &InFlightPullRequest{Number: pr.Number, Title: pr.Title, URL: pr.HTMLURL, Branch: pr.Head.Ref, HeadSHA: pr.Head.SHA}
-	}
-	if result.Places, perr = c.readEntries(ctx, t, root, Places, ref); perr != nil {
-		return EntriesResult{}, perr
-	}
-	if result.Localizations, perr = c.readEntries(ctx, t, root, Localizations, ref); perr != nil {
-		return EntriesResult{}, perr
-	}
-	return result, nil
+	return EntriesResult{
+		Repo: w.t.repo.FullName, Folder: w.root, Branch: w.branch(), PullRequest: w.inFlightPullRequest(),
+		Places: w.entries(Places), Localizations: w.entries(Localizations),
+	}, nil
 }
 
-// readEntries reads kind's files in the data folder root at ref, by path.
-func (c *Client) readEntries(ctx context.Context, t target, root string, kind EntryKind, ref string) ([]Entry, *PublishError) {
-	files, _, perr := c.listJSONFiles(ctx, t, root+"/"+kind.Folder, kind.AllFile, ref)
-	if perr != nil {
-		return nil, perr
+// entries is kind's files, by path.
+func (w *workspace) entries(kind EntryKind) []Entry {
+	paths := w.paths(w.root+"/"+kind.Folder, kind.AllFile)
+	entries := make([]Entry, len(paths))
+	for i, p := range paths {
+		entries[i].Path = p
+		entries[i].Data, entries[i].Error = w.json(p)
 	}
-	contents, problems := c.readBlobs(ctx, t, files)
-	entries := make([]Entry, len(files))
-	for i, f := range files {
-		entries[i] = Entry{Path: f.Path, Data: contents[i], Error: problems[i]}
-	}
-	return entries, nil
-}
-
-// readBlobs reads each of files' JSON, or says why it couldn't, a few at a
-// time.
-func (c *Client) readBlobs(ctx context.Context, t target, files []folderEntry) ([]json.RawMessage, []string) {
-	contents := make([]json.RawMessage, len(files))
-	problems := make([]string, len(files))
-	var wg sync.WaitGroup
-	sem := make(chan struct{}, readConcurrency)
-	for i, f := range files {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			sem <- struct{}{}
-			defer func() { <-sem }()
-			contents[i], problems[i] = c.readBlob(ctx, t, f.SHA)
-		}()
-	}
-	wg.Wait()
-	return contents, problems
+	return entries
 }
 
 // SavePlace saves place as <folder>/places/<id>.json, new or replacing the
-// one there, as one commit on the open photo data pull request's branch, or
-// a new one with its pull request. It fails when another place has the same
+// one there, in the pending changes. It fails when another place has the same
 // name, ignoring case.
 func (c *Client) SavePlace(ctx context.Context, gh settings.GitHub, place Place) (EntryResult, error) {
 	place, perr := validPlace(place)
@@ -225,27 +182,15 @@ func (c *Client) SaveLocalization(ctx context.Context, gh settings.GitHub, local
 	return c.saveEntry(ctx, gh, Localizations, localization.ID, localization, func([]Entry) *PublishError { return nil })
 }
 
-// saveEntry commits content as kind's file named id, after check passes on
-// the kind's other files.
+// saveEntry saves content as kind's file named id in the pending changes,
+// after check passes on the kind's other files.
 func (c *Client) saveEntry(ctx context.Context, gh settings.GitHub, kind EntryKind, id string, content any, check func(others []Entry) *PublishError) (EntryResult, error) {
-	root, perr := dataFolder(gh.Folder)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return EntryResult{}, perr
 	}
-	t, perr := c.target(ctx, gh)
-	if perr != nil {
-		return EntryResult{}, perr
-	}
-	scan, perr := c.combinedTarget(ctx, t, true)
-	if perr != nil {
-		return EntryResult{}, perr
-	}
-	entries, perr := c.readEntries(ctx, t, root, kind, scan.headSHA)
-	if perr != nil {
-		return EntryResult{}, perr
-	}
-	file := root + "/" + kind.Folder + "/" + id + ".json"
-	before, others := splitEntry(entries, file)
+	file := w.root + "/" + kind.Folder + "/" + id + ".json"
+	before, others := splitEntry(w.entries(kind), file)
 	if perr := check(others); perr != nil {
 		return EntryResult{}, perr
 	}
@@ -254,19 +199,13 @@ func (c *Client) saveEntry(ctx context.Context, gh settings.GitHub, kind EntryKi
 		return EntryResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the %s.", kind.Name)
 	}
 	b = append(b, '\n')
-	result := EntryResult{Path: file, Data: b, Before: before}
+	result := EntryResult{Path: file, Data: b, Before: before, pendingSave: w.pendingSave(nil)}
 	if bytes.Equal(before, b) {
 		return result, nil
 	}
-	message := "Add " + kind.Name + " " + file
-	if before != nil {
-		message = "Change " + kind.Name + " " + file
-	}
-	entry := []map[string]string{{"path": file, "mode": "100644", "type": "blob", "content": string(b)}}
-	if result.scanCommit, perr = c.commitScan(ctx, scan, entry, message); perr != nil {
+	if result.pendingSave, perr = c.saveFiles(w, []ScanChange{{Path: file, Before: before, After: b}}); perr != nil {
 		return EntryResult{}, perr
 	}
-	result.Changes = []ScanChange{{Path: file, Before: before, After: b}}
 	result.Changed = true
 	return result, nil
 }

@@ -41,46 +41,32 @@ type CombinedResult struct {
 	Head *CombinedHead `json:"head"`
 }
 
-// Combined reads the combined lists on the base branch from
-// Settings (or the default branch) and at the photo data pull request's head,
-// so pages can keep them and only read them again after they're committed. It
-// only reads from GitHub.
+// Combined reads the combined lists on the base branch from Settings (or the
+// default branch) and at the photo data pull request's head, as they were
+// last committed, so pages can keep them and only read them again after
+// they're committed.
 func (c *Client) Combined(ctx context.Context, gh settings.GitHub) (CombinedResult, error) {
-	root, perr := dataFolder(gh.Folder)
-	if perr != nil {
-		return CombinedResult{}, perr
-	}
-	t, perr := c.target(ctx, gh)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return CombinedResult{}, perr
 	}
 	result := CombinedResult{
-		Repo: t.repo.FullName, Folder: root,
-		Base: CombinedBase{Branch: t.base, CombinedFiles: c.readCombinedFiles(ctx, t, root, t.base, t.base)},
+		Repo: w.t.repo.FullName, Folder: w.root,
+		Base: CombinedBase{Branch: w.t.base, CombinedFiles: combinedFiles(w.t, w.root, w.base, w.t.base)},
 	}
-	pr, perr := c.findInFlightPull(ctx, t)
-	if perr != nil {
-		return CombinedResult{}, perr
-	}
-	if pr != nil {
-		result.Head = &CombinedHead{
-			PullRequest: InFlightPullRequest{
-				Number: pr.Number, Title: pr.Title, URL: pr.HTMLURL, Branch: pr.Head.Ref, HeadSHA: pr.Head.SHA,
-				BaseBranch: pr.Base.Ref,
-			},
-			CombinedFiles: c.readCombinedFiles(ctx, t, root, pr.Head.SHA, pr.Head.Ref),
-		}
+	if pr := w.inFlightPullRequest(); pr != nil {
+		result.Head = &CombinedHead{PullRequest: *pr, CombinedFiles: combinedFiles(w.t, w.root, w.head, pr.Branch)}
 	}
 	return result, nil
 }
 
-// readCombinedFiles reads each combined list in the data folder root at ref,
-// linking the ones it finds to their page on branch.
-func (c *Client) readCombinedFiles(ctx context.Context, t target, root, ref, branch string) CombinedFiles {
+// combinedFiles is each combined list in the data folder root in s, linked to
+// its page on branch.
+func combinedFiles(t target, root string, s *snapshot, branch string) CombinedFiles {
 	read := func(folder, file string) InFlightAllPhotos {
-		all := c.readCombined(ctx, t, root+"/"+folder+"/"+file, ref)
+		all := readCombined(s, root+"/"+folder+"/"+file)
 		if all.Found {
-			all.FileURL = "https://github.com/" + t.repo.FullName + "/blob/" + escapePath(branch) + "/" + escapePath(all.Path)
+			all.FileURL = blobURL(t, branch, all.Path)
 		}
 		return all
 	}
@@ -93,24 +79,24 @@ func (c *Client) readCombinedFiles(ctx context.Context, t target, root, ref, bra
 	}
 }
 
-// readCombined reads file, a combined list, at ref.
-func (c *Client) readCombined(ctx context.Context, t target, file, ref string) InFlightAllPhotos {
+// readCombined is file, a combined list, in s.
+func readCombined(s *snapshot, file string) InFlightAllPhotos {
 	all := InFlightAllPhotos{Path: file}
-	content, found, msg := c.readFile(ctx, t, all.Path, ref)
+	f, found := s.files[file]
 	all.Found = found
 	if !found {
 		return all
 	}
-	if msg != "" {
-		all.Error = msg
+	if f.err != "" {
+		all.Error = f.err
 		return all
 	}
 	entries := []json.RawMessage{}
-	if err := json.Unmarshal(content, &entries); err != nil || entries == nil {
+	if err := json.Unmarshal(f.content, &entries); err != nil || entries == nil {
 		all.Error = "The file isn't a JSON array."
 		return all
 	}
 	all.Count = len(entries)
-	all.Data = json.RawMessage(content)
+	all.Data = json.RawMessage(f.content)
 	return all
 }

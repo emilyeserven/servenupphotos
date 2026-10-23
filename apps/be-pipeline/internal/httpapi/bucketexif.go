@@ -124,6 +124,7 @@ func handleCombined(store *settings.Store, gh *github.Client) http.HandlerFunc {
 			return
 		}
 
+		forgetOnRefresh(r, gh, cfg)
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
 		result, err := gh.Combined(ctx, cfg)

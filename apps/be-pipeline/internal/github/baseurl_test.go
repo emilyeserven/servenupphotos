@@ -1,16 +1,11 @@
 package github
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"strings"
-	"sync"
 	"testing"
-	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
@@ -112,111 +107,53 @@ func TestBaseURLPair(t *testing.T) {
 	}
 }
 
-// baseURLRepo is owner/repo with default branch main, an optional open photo
-// data pull request, and photo files in apps/portfolio/src/data on each branch.
+// baseURLRepo is owner/repo on a fake GitHub, with files as photo files in
+// apps/portfolio/src/data/photos: on the photo data pull request's branch
+// when pull is set, or else on main.
 type baseURLRepo struct {
-	mu        sync.Mutex
-	pull      bool
-	files     map[string]string // name → content, on the branch read
-	tree      []map[string]string
-	commit    map[string]any
-	refs      map[string]string // created or moved ref → sha
-	moveFails bool
-	opened    map[string]string
+	pull  bool
+	files map[string]string // name → content
+	f     *fakeGitHub
+	c     *Client
 }
 
-func (f *baseURLRepo) start(t *testing.T) *Client {
+func (r *baseURLRepo) start(t *testing.T) *Client {
 	t.Helper()
-	const dir = "apps/portfolio/src/data/photos"
-	head := "main"
-	if f.pull {
-		head = "photo-data/2026-10-15-024500"
+	r.f, r.c = newFakeGitHub(t)
+	files := map[string]string{
+		photosDir + "ALLPHOTOS.json": "[]\n",
+		photosDir + "README.md":      "hi",
+		photosDir + "sub/x.json":     "{}",
 	}
-	f.refs = map[string]string{}
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		f.mu.Lock()
-		defer f.mu.Unlock()
-		p := strings.TrimPrefix(r.URL.Path, "/repos/owner/repo")
-		switch {
-		case r.Method == http.MethodGet && p == "":
-			writeBody(w, http.StatusOK, map[string]any{"full_name": "owner/repo", "default_branch": "main"})
-		case r.Method == http.MethodGet && p == "/pulls":
-			pulls := []map[string]any{}
-			if f.pull {
-				pulls = append(pulls, map[string]any{
-					"number": 7, "html_url": "https://github.com/owner/repo/pull/7",
-					"head": map[string]any{"ref": head, "repo": map[string]any{"full_name": "owner/repo"}},
-				})
-			}
-			writeBody(w, http.StatusOK, pulls)
-		case r.Method == http.MethodGet && p == "/git/ref/heads/"+head:
-			writeBody(w, http.StatusOK, map[string]any{"object": map[string]any{"sha": "head1"}})
-		case r.Method == http.MethodGet && p == "/contents/"+dir:
-			if r.URL.Query().Get("ref") != "head1" {
-				t.Errorf("listed at ref %q, want the branch's head", r.URL.Query().Get("ref"))
-			}
-			entries := []map[string]any{
-				{"name": "ALLPHOTOS.json", "path": dir + "/ALLPHOTOS.json", "type": "file", "sha": "all"},
-				{"name": "dummy.json", "path": dir + "/dummy.json", "type": "file", "sha": "dummy"},
-				{"name": "README.md", "path": dir + "/README.md", "type": "file", "sha": "readme"},
-				{"name": "sub", "path": dir + "/sub", "type": "dir", "sha": "sub"},
-			}
-			for name := range f.files {
-				entries = append(entries, map[string]any{
-					"name": name, "path": dir + "/" + name, "type": "file", "sha": name,
-					"html_url": "https://github.com/owner/repo/blob/" + head + "/" + dir + "/" + name,
-				})
-			}
-			writeBody(w, http.StatusOK, entries)
-		case r.Method == http.MethodGet && strings.HasPrefix(p, "/git/blobs/"):
-			content, ok := f.files[strings.TrimPrefix(p, "/git/blobs/")]
-			if !ok {
-				t.Errorf("read blob %s, want photo files only", p)
-			}
-			writeBody(w, http.StatusOK, map[string]any{
-				"encoding": "base64", "content": base64.StdEncoding.EncodeToString([]byte(content)),
-			})
-		case r.Method == http.MethodGet && p == "/git/commits/head1":
-			writeBody(w, http.StatusOK, map[string]any{"sha": "head1", "tree": map[string]any{"sha": "tree1"}})
-		case r.Method == http.MethodPost && p == "/git/trees":
-			var in struct {
-				BaseTree string              `json:"base_tree"`
-				Tree     []map[string]string `json:"tree"`
-			}
-			_ = json.NewDecoder(r.Body).Decode(&in)
-			if in.BaseTree != "tree1" {
-				t.Errorf("base_tree = %q, want tree1", in.BaseTree)
-			}
-			f.tree = in.Tree
-			writeBody(w, http.StatusCreated, map[string]any{"sha": "tree2"})
-		case r.Method == http.MethodPost && p == "/git/commits":
-			_ = json.NewDecoder(r.Body).Decode(&f.commit)
-			writeBody(w, http.StatusCreated, map[string]any{"sha": "commit2", "html_url": "https://github.com/owner/repo/commit/commit2"})
-		case r.Method == http.MethodPatch && strings.HasPrefix(p, "/git/refs/heads/"):
-			if f.moveFails {
-				w.WriteHeader(http.StatusUnprocessableEntity)
-				return
-			}
-			var in map[string]any
-			_ = json.NewDecoder(r.Body).Decode(&in)
-			f.refs[strings.TrimPrefix(p, "/git/refs/heads/")] = in["sha"].(string)
-			writeBody(w, http.StatusOK, map[string]any{})
-		case r.Method == http.MethodPost && p == "/git/refs":
-			var in map[string]string
-			_ = json.NewDecoder(r.Body).Decode(&in)
-			f.refs[strings.TrimPrefix(in["ref"], "refs/heads/")] = in["sha"]
-			writeBody(w, http.StatusCreated, map[string]any{})
-		case r.Method == http.MethodPost && p == "/pulls":
-			_ = json.NewDecoder(r.Body).Decode(&f.opened)
-			writeBody(w, http.StatusCreated, map[string]any{"number": 8, "html_url": "https://github.com/owner/repo/pull/8"})
-		default:
-			t.Errorf("unexpected %s %s", r.Method, r.URL.Path)
-			w.WriteHeader(http.StatusNotFound)
-		}
-	}))
-	t.Cleanup(srv.Close)
-	now := time.Date(2026, 10, 22, 1, 2, 3, 0, time.UTC)
-	return &Client{BaseURL: srv.URL, Client: srv.Client(), Now: func() time.Time { return now }}
+	for name, content := range r.files {
+		files[photosDir+name] = content
+	}
+	if r.pull {
+		r.f.openPull(prBranch, files)
+		return r.c
+	}
+	for p, content := range files {
+		r.f.files["main:"+p] = content
+	}
+	return r.c
+}
+
+// staged is every pending file's content, by path, and fails the test when
+// anything was written to GitHub.
+func (r *baseURLRepo) staged(t *testing.T) map[string]string {
+	t.Helper()
+	if w := r.f.writes(); len(w) != 0 {
+		t.Errorf("wrote to GitHub: %v", w)
+	}
+	files, err := r.c.stage().files(target{owner: "owner", name: "repo"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	out := map[string]string{}
+	for p, f := range files {
+		out[p] = f.Content
+	}
+	return out
 }
 
 var baseURLSettings = settings.GitHub{Repo: "owner/repo", Token: token}
@@ -231,7 +168,7 @@ func TestPreviewBaseURL(t *testing.T) {
 	if err != nil {
 		t.Fatalf("PreviewBaseURL() error = %v", err)
 	}
-	if got.Branch != "photo-data/2026-10-15-024500" || got.PullRequest == nil || got.PullRequest.Number != 7 {
+	if got.Branch != prBranch || got.PullRequest == nil || got.PullRequest.Number != 1 {
 		t.Errorf("read %q with pull request %+v, want the photo data pull request's branch", got.Branch, got.PullRequest)
 	}
 	if got.From != devURL || got.PhotoFiles != 2 || got.URLs != 6 || len(got.Files) != 1 {
@@ -245,7 +182,7 @@ func TestPreviewBaseURL(t *testing.T) {
 	if !reflect.DeepEqual(got.Origins, wantOrigins) {
 		t.Errorf("origins = %+v, want %+v", got.Origins, wantOrigins)
 	}
-	if len(got.Unreadable) != 1 || got.Unreadable[0].Path != "apps/portfolio/src/data/photos/broken.json" {
+	if len(got.Unreadable) != 1 || got.Unreadable[0].Path != photosDir+"broken.json" {
 		t.Errorf("unreadable = %+v, want broken.json", got.Unreadable)
 	}
 	first := got.Files[0].Changes[0]
@@ -274,68 +211,59 @@ func TestReplaceBaseURLOnOpenPullRequest(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ReplaceBaseURL() error = %v", err)
 	}
-	want := BaseURLResult{
-		Branch: "photo-data/2026-10-15-024500", CommitSHA: "commit2", CommitURL: "https://github.com/owner/repo/commit/commit2",
-		PullRequestURL: "https://github.com/owner/repo/pull/7", PullRequestNumber: 7, Files: 1, URLs: 6,
+	if got.Branch != prBranch || got.PullRequestNumber != 1 || got.Files != 1 || got.URLs != 6 {
+		t.Errorf("ReplaceBaseURL() = %+v, want 6 URLs in 1 file, for pull request 1", got)
 	}
-	changes := got.Changes
-	got.Changes = nil
-	if !reflect.DeepEqual(got, want) {
-		t.Errorf("ReplaceBaseURL() = %+v, want %+v", got, want)
+	staged := repo.staged(t)
+	file := photosDir + "DSC0001.json"
+	content, ok := staged[file]
+	if len(staged) != 1 || !ok {
+		t.Fatalf("pending = %v, want DSC0001.json only", staged)
 	}
-	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/photos/DSC0001.json" || repo.tree[0]["mode"] != "100644" {
-		t.Fatalf("tree = %v, want DSC0001.json only", repo.tree)
+	if len(got.Changes) != 1 || got.Changes[0].Path != file || string(got.Changes[0].Before) != photoA ||
+		string(got.Changes[0].After) != content {
+		t.Errorf("changes = %+v, want DSC0001.json before and after", got.Changes)
 	}
-	if len(changes) != 1 || changes[0].Path != repo.tree[0]["path"] || string(changes[0].Before) != photoA ||
-		string(changes[0].After) != repo.tree[0]["content"] {
-		t.Errorf("changes = %+v, want DSC0001.json before and after", changes)
-	}
-	if strings.Contains(repo.tree[0]["content"], `"https://pub-1234.r2.dev/DSC`) || !strings.Contains(repo.tree[0]["content"], `"note": "https://pub-1234.r2.dev/not-an-image.webp"`) {
-		t.Errorf("content = %s, want only the image URLs moved", repo.tree[0]["content"])
-	}
-	if parents := repo.commit["parents"].([]any); len(parents) != 1 || parents[0] != "head1" {
-		t.Errorf("commit parents = %v, want the branch's head", parents)
-	}
-	if repo.refs["photo-data/2026-10-15-024500"] != "commit2" || repo.opened != nil {
-		t.Errorf("refs %v, opened %v; want the branch moved and no new pull request", repo.refs, repo.opened)
+	if strings.Contains(content, `"https://pub-1234.r2.dev/DSC`) || !strings.Contains(content, `"note": "https://pub-1234.r2.dev/not-an-image.webp"`) {
+		t.Errorf("content = %s, want only the image URLs moved", content)
 	}
 }
 
-func TestReplaceBaseURLOpensPullRequest(t *testing.T) {
+func TestReplaceBaseURLWithoutPullRequest(t *testing.T) {
 	repo := &baseURLRepo{files: map[string]string{"DSC0001.json": photoA}}
 	got, err := repo.start(t).ReplaceBaseURL(t.Context(), baseURLSettings, devURL, "https://photos.example.com")
 	if err != nil {
 		t.Fatalf("ReplaceBaseURL() error = %v", err)
 	}
-	const branch = "photo-data/2026-10-22-010203"
-	if got.Branch != branch || !got.NewPullRequest || got.PullRequestNumber != 8 {
-		t.Errorf("ReplaceBaseURL() = %+v, want a new pull request from %s", got, branch)
+	if got.Branch != "" || got.PullRequestNumber != 0 || got.Files != 1 {
+		t.Errorf("ReplaceBaseURL() = %+v, want it pending for the pull request Commit opens", got)
 	}
-	if repo.refs[branch] != "commit2" || repo.opened["head"] != branch || repo.opened["base"] != "main" || repo.opened["title"] != PullRequestTitle {
-		t.Errorf("refs %v, opened %v; want a new branch at the commit and a pull request into main", repo.refs, repo.opened)
+	if staged := repo.staged(t); len(staged) != 1 {
+		t.Errorf("pending = %v, want DSC0001.json", staged)
 	}
 }
 
 func TestReplaceBaseURLErrors(t *testing.T) {
 	tests := []struct {
-		name      string
-		files     map[string]string
-		moveFails bool
-		to        string
-		want      string
+		name  string
+		files map[string]string
+		to    string
+		want  string
 	}{
-		{"nothing to change", map[string]string{"a.json": `{"images":{"full":"https://photos.example.com/a.jpg"}}`}, false, "https://photos.example.com", "nothing to change"},
-		{"unreadable file", map[string]string{"a.json": photoA, "b.json": `[]`}, false, "https://photos.example.com", "b.json couldn't be read"},
-		{"branch moved", map[string]string{"a.json": photoA}, true, "https://photos.example.com", "changed while"},
-		{"missing new URL", map[string]string{"a.json": photoA}, false, "", "new base URL"},
+		{"nothing to change", map[string]string{"a.json": `{"images":{"full":"https://photos.example.com/a.jpg"}}`}, "https://photos.example.com", "nothing to change"},
+		{"unreadable file", map[string]string{"a.json": photoA, "b.json": `[]`}, "https://photos.example.com", "b.json couldn't be read"},
+		{"missing new URL", map[string]string{"a.json": photoA}, "", "new base URL"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			repo := &baseURLRepo{pull: true, files: tt.files, moveFails: tt.moveFails}
+			repo := &baseURLRepo{pull: true, files: tt.files}
 			_, err := repo.start(t).ReplaceBaseURL(t.Context(), baseURLSettings, devURL, tt.to)
 			var perr *PublishError
 			if !errors.As(err, &perr) || !strings.Contains(perr.Message, tt.want) {
 				t.Errorf("ReplaceBaseURL() error = %v, want one containing %q", err, tt.want)
+			}
+			if staged := repo.staged(t); len(staged) != 0 {
+				t.Errorf("pending = %v, want nothing", staged)
 			}
 		})
 	}

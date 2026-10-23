@@ -238,17 +238,16 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 24 || got.CommitSHA != "commit2" || got.PullRequestNumber != 7 {
+	if got.Files != 1 || got.Fields != 24 || got.PullRequestNumber != 1 {
 		t.Errorf("Backfill() = %+v", got)
 	}
-	if len(repo.tree) != 1 || repo.tree[0]["path"] != "apps/portfolio/src/data/photos/DSC0001.json" {
-		t.Fatalf("tree = %v, want DSC0001.json only", repo.tree)
+	staged := repo.staged(t)
+	content, ok := staged[photosDir+"DSC0001.json"]
+	if len(staged) != 1 || !ok {
+		t.Fatalf("pending = %v, want DSC0001.json only", staged)
 	}
-	if !strings.HasPrefix(repo.tree[0]["content"], "{\n  \"title\": null,\n  \"comment\": null,\n  \"file\"") {
-		t.Errorf("content = %s", repo.tree[0]["content"])
-	}
-	if repo.commit["message"] != "Add missing fields to 1 photo file" {
-		t.Errorf("message = %v", repo.commit["message"])
+	if !strings.HasPrefix(content, "{\n  \"title\": null,\n  \"comment\": null,\n  \"file\"") {
+		t.Errorf("content = %s", content)
 	}
 }
 
@@ -335,7 +334,7 @@ func TestBackfillThumbnailCropFromURL(t *testing.T) {
       "outputSize": 500
     }
   },`
-	if !strings.Contains(repo.tree[0]["content"], want) {
-		t.Errorf("content = %s", repo.tree[0]["content"])
+	if content := repo.staged(t)[photosDir+"DSC0004.json"]; !strings.Contains(content, want) {
+		t.Errorf("content = %s", content)
 	}
 }
