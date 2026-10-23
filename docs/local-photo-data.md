@@ -6,9 +6,11 @@
 [filters](portfolio-filters.md) list. It takes them from the first of these that answers:
 
 1. **The photo pipeline**, when it's running locally (`PIPELINE_URL`, or else `http://localhost:8080`, then
-   `http://localhost:5174`): the combined files at the open **Add photo data** pull request's head, with the pull
-   request's own photo, place, localization, album and tag files put over them (matched by `file` for photos and `id` for the
-   rest). So saves not committed with **Commit** yet show too.
+   `http://localhost:5174`): the combined files at the open **Add photo data** pull request's head (or the base
+   branch's, when none is open but [changes are waiting for Commit](pending-changes.md)), with the photo, place,
+   localization, album and tag files in flight put over them (matched by `file` for photos and `id` for the rest) and
+   removed ones taken out. So saves not committed with **Commit** yet show too. Skipped with no pull request open and
+   nothing waiting.
 2. **GitHub**: the combined files from the open pull request on the `origin` repository. Set `GITHUB_TOKEN` for a
    private repository, or if GitHub's limit of 60 unauthenticated requests an hour runs out.
 3. **The data folders**: every other JSON file in each folder, as one array sorted by file name, the same way the

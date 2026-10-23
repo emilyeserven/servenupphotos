@@ -68,7 +68,7 @@ function InFlightPage() {
     <Page
       wide
       title="Photos in Flight"
-      description="Photo, album, tag, place and localization data saved to the open “Add photo data” pull request, not merged yet."
+      description="Photo, album, tag, place and localization data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>

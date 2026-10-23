@@ -15,7 +15,7 @@ Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its fi
 **Sub-albums** panel under **Parent album** listing every album inside it as a tree with photo counts, and the photos `ALLPHOTOS.json` lists in it (at the pull request's head when one is open, from the
 [combined data store](combined-data-store.md)), optionally with the ones in its sub-albums. An album's page can change its
 parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's
-`parent` in one commit to the pull request, refusing a parent that's the album itself or inside it.
+`parent`, as a [change waiting for Commit](pending-changes.md), refusing a parent that's the album itself or inside it.
 
 Every album and tag picker, here, on the Photo page and in the Gallery, is a combobox: type to filter, arrow keys and
 Enter to choose, and each choice shows as a chip with a button to remove it (a chip is red when its ID isn't an album

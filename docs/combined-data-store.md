@@ -10,13 +10,14 @@ pull request is merged, so the store reads them again only:
 - when Photos in Flight finds another pull request than the one the store read them for, such as after a merge,
 - on Photos in Flight's **Refresh**, after the GitHub settings change, and on a page reload.
 
-Saves that push to the pull request (photo JSON, edits, removals, new albums and tags, places and localizations, Update Data, Instagram dates)
-mark their mutation with `meta: { pushes: true }`, and give the files they changed as `meta.changes`: the file's path,
-its data before and after (`null` when removed). Single-file saves take the data before from the cached Photos in
-Flight or Gallery read; Update Data and Instagram dates, which change many files at once, get each file's data before
-and after back from the backend (`changes` in their result). The store keeps these changes, and `useCombinedData` returns the lists with them made at the pull
-request's head (`data`: the entry equal to the old data replaced, or the new one added), next to the lists as GitHub has
-them (`synced`). Pages that read the pull request's lists, such as album pages, show a save at once that way; Photos in
+Saves (photo JSON, edits, removals, new albums and tags, moved albums, places and localizations, albums and tags added
+from the Gallery, Update Data) become [changes waiting for Commit](pending-changes.md), kept by the backend. Their
+mutations are marked `meta: { saves: true }` and give the files they changed as `meta.changes`: the file's path, its
+data before and after (`null` when removed). New files take theirs from the result's `data`; edits and removals get
+the data before back from the backend (`before`), and bulk saves get each file's data before and after (`changes`). The
+store keeps these changes, and `useCombinedData` returns the lists with them made at the pull request's head (`data`:
+the entry equal to the old data replaced, or the new one added; with no pull request open, over the base branch's
+lists, as the head Commit will open), next to the lists as GitHub has them (`synced`). Pages that read the pull request's lists, such as album pages, show a save at once that way; Photos in
 Flight compares its files with `synced`, so it marks the ones that haven't been committed to the lists yet. A **Commit**
 drops the changes it took in.
 
@@ -25,38 +26,41 @@ drops the changes it took in.
 
 ## Local edits
 
-Some changes don't push at all: they're kept in the browser until **Commit**. The Instagram calendar's dates and Site
+Some changes aren't even kept by the backend: they're kept in the browser until **Commit**. The Instagram calendar's dates and Site
 Spotlight's zones are kept this way. `stores/local-edits.ts` keeps them in a Zustand store persisted to `localStorage`, each as a photo file's path,
 its data as read, and the top-level fields to set. Setting a field back to the file's own value drops it. They're
-made over the lists like pushed changes (after them), counted by the sync button, and listed in its panel with a
-**Discard** button. **Commit** sends them as `{"edits": [{"path", "fields"}]}`; the backend sets those fields in
+made over the lists like saved changes (after them), counted by the sync button, and dropped with the rest by its
+panel's **Discard**. **Commit** sends them as `{"edits": [{"path", "fields"}]}`; the backend sets those fields in
 each file (only those, so the rest of the file keeps its formatting), builds the combined lists from the edited files
-and commits both together. With no pull request open, that commit goes on a new `photo-data/` branch and opens one.
+and commits them with everything else waiting. With no pull request open, that commit goes on a new `photo-data/` branch and opens one.
 Edits made while a commit runs are kept for the next one.
 
 ## Committing the combined files
 
-Saves don't touch the combined files. **Commit** (`POST /api/photos/combined` →
-`POST /photos/combined`) saves any [local edits](#local-edits), then builds all five (`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json` and `LOCALIZATIONS.json`) on the open **Add photo data** pull request's branch and commits the ones that
-changed as one commit, "Combine photo, album and tag data". Each is every other `.json` file directly in its folder,
+Saves don't touch GitHub or the combined files. **Commit** (`POST /api/photos/combined` →
+`POST /photos/combined`) takes every [change waiting for Commit](pending-changes.md) and any [local edits](#local-edits), builds all five (`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json` and `LOCALIZATIONS.json`) from the result and commits
+everything that changed as one commit, "Combine photo, album and tag data", on the open **Add photo data** pull
+request's branch, or on a new `photo-data/` branch with a new pull request when none is open. Each is every other `.json` file directly in its folder,
 sorted by path, as one array, formatted as oxfmt formats it, so a list that's already up to date isn't committed again.
 When a file can't be read or isn't valid JSON, nothing is committed and the error names it. The backend does this
-itself with the contents and Git data APIs, so nothing waits for a CI runner.
+itself with GitHub's Git database API, so nothing waits for a CI runner.
 
 Whether the files are synced is checked once, when the app starts (`GET /api/photos/combined/status` →
-`GET /photos/combined/status`): `stale` when the newest commit on the pull request's branch to change the data folder
-isn't a Commit, `synced` when it is, and `none` with no pull request open. When `stale`, it also lists `pending`: the
-data files GitHub's compare shows changed between the last Commit (among the branch's last 100 commits to the data
-folder, or else the base branch) and the head, each with its kind and whether it was added, modified or deleted. The
-sync button counts those together with the app's own saves since, each file once, so saves made before a reload are
-still counted. After that it's known from the app's own saves and commits; nothing polls in between.
+`GET /photos/combined/status`), without asking GitHub anything new: the backend compares each combined list at the
+pull request's head with the data files it's built from, from the same read as everything else. It's `stale` when
+changes are waiting for Commit or a data file isn't in its list (as after a push made on GitHub), `synced` when every
+one is, and `none` with no pull request open and nothing waiting. It lists `pending`, each such file with its kind and
+whether it was added, modified or deleted, and `changes`, the changes waiting for Commit with their data at the head
+and as saved, which the store makes over the lists again after a reload. The sync button counts those together with
+the app's own saves since, each file once. After that it's known from the app's own saves and commits; nothing polls in
+between.
 
 > **Frontend analogy:** it's hydrating a client cache from the server on load. The store's own list of saves lives in
 > memory, like React state, and a reload empties it; the status call refills it with what the server already has.
 
 A floating button at the top right of every page shows where things stand: **Synced · batch open** (everything is committed, but the photo data pull request, the batch, still waits to be merged), **Synced · no open batch**, **Not synced · 3 images** (every image added, modified or deleted since the last commit, each counted once, with albums, tags, places and localizations after them; the panel shows the images as three counts, Added, Modified and Deleted, and a file added and then deleted again doesn't count),
 **Committing…** or **Commit failed**. Clicking it opens a panel with the pull request, the counts, the last commit's link,
-**Discard** for local edits, and **Commit**. Photos in Flight also says so in its **Synced** row, with the
+**Discard** for everything waiting for Commit, and **Commit**. Photos in Flight also says so in its **Synced** row, with the
 same button, and marks each file that isn't in the combined files with "Not synced to ALLPHOTOS.json yet". The lines
 that follow a save elsewhere, such as on the Photo page, link back to Photos in Flight to commit.
 

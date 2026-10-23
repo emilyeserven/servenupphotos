@@ -1,16 +1,18 @@
 # Saving photo data to GitHub
 
 After a photo is analyzed on `/exif`, the floating **Save** button, to the right of the sync button at the top right,
-saves its sanitized EXIF as one JSON file, `<folder>/photos/<name>.json`, in the repository from Settings (`POST /api/photos/github` → `POST /photos/github`). Saves never
-commit to the Settings branch directly. The first save creates a `photo-data/<date>-<time>` branch from it and opens an
-**Add photo data** pull request; later saves add their files to that pull request for as long as it is open, so one
-pull request collects every photo until you merge it. An existing file is never overwritten.
+saves its sanitized EXIF as one JSON file, `<folder>/photos/<name>.json`, for the repository from Settings (`POST /api/photos/github` → `POST /photos/github`). The
+save stays in the app, one of the [changes waiting for Commit](pending-changes.md), until **Commit** sends every waiting file
+to GitHub as one commit. Commits never go to the Settings branch directly: the first creates a `photo-data/<date>-<time>`
+branch from it and opens an **Add photo data** pull request, and later ones add to that pull request for as long as it
+is open, so one pull request collects every photo until you merge it. An existing file is never overwritten, whether
+it's on GitHub or waiting for Commit.
 
 The file is always named after the photo's title, made into a file name (lowercase, accents dropped, spaces turned into
 dashes), or after the photo's file name without its extension when there's no title; it can't be typed in by hand. If a
 file with that name is already there, the save fails and says so: change the title and save again. **Save**'s chevron
 opens a flyout saying which file it will write and where, warning when the photo isn't in R2 yet, and once it's saved,
-linking to the file and the pull request.
+saying it's waiting for Commit and which pull request Commit will add it to.
 
 The sanitized EXIF has the original photo's `width` and `height` in pixels (as it's shown, so swapped for a photo
 whose EXIF orientation turns it on its side), and an `images` object whose `full` is the photo's public R2 URL and `key`
@@ -86,5 +88,6 @@ The GitHub token needs **Contents: Read and write** and **Pull requests: Read an
 [committing the combined files](combined-data-store.md#committing-the-combined-files); the app doesn't use GitHub
 Actions.
 
-> **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (the open pull request), and
-> merging the pull request is checkout. After that, the next save starts a new cart.
+> **Frontend analogy:** it's like a "drafts" cart. Each save drops a file in the cart (kept in the app), **Commit**
+> moves the whole cart into the open pull request in one trip, and merging the pull request is checkout. After that,
+> the next Commit starts a new cart.

@@ -96,6 +96,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums and tags
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
+- [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes
 - [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages
 - [Places and Localizations](docs/places-and-localizations.md) (`/places` and `/localizations`): places a photo was taken at and how it relates to them, and the local script, pronunciation and romanization of countries, cities and places
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, and making JSON for an original
