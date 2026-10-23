@@ -9,6 +9,7 @@ import { DiscardButton } from "@/components/discard-changes";
 import { UploadProgressBadge, UploadQueueSection } from "@/components/bulk-upload/upload-progress";
 import { Spinner } from "@/components/ui/spinner";
 import { FloatingActionsSlot } from "@/components/floating-actions";
+import { NextUntitledPhoto } from "@/components/next-untitled-photo";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { useCombinedData, useCombinedSync } from "@/stores/combined-data";
@@ -133,6 +134,7 @@ function SyncPanel({
     >
       <UploadQueueSection onNavigate={onNavigate} />
       <PullRequestLine sync={sync} />
+      <NextUntitledPhoto onNavigate={onNavigate} />
       <ImageCounts images={sync.images} />
       <OpenBatchLine sync={sync} />
       <CommitResult sync={sync} />

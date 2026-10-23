@@ -4,7 +4,10 @@
 [changes waiting for Commit](pending-changes.md) (`GET /api/photos/in-flight` →
 `GET /photos/in-flight`). It finds the open pull request with that title in the repository from Settings and shows each
 `.json` file that it or a change waiting for Commit adds or changes directly in the photos folder
-(`apps/portfolio/src/data/photos` when the Settings data folder is blank), as the next Commit will have it. A file with
+(`apps/portfolio/src/data/photos` when the Settings data folder is blank), as the next Commit will have it. Photos
+without a title (a `title` that's null or blank) come first, so they're easy to find and name; the sync button's panel
+has **Next untitled photo** to open them one after another (see
+[Committing the combined files](combined-data-store.md#committing-the-combined-files)). A file with
 a change waiting for Commit is marked **Waiting for Commit** and has no GitHub link yet. With no pull request open, the
 summary says how many files are waiting, with **Commit**, which opens one. **Refresh** asks GitHub again
 (`?refresh=1`), rather than using the backend's read from when it started, so a merge made on GitHub shows at once. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
