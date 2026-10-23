@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
+import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
 import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
 
@@ -127,16 +128,12 @@ function InFlightCard() {
         rebuild={rebuild.status}
         onDismiss={() => setRemoved(null)}
       />
-      {shown?.files.map((file) => (
-        <FileSection
-          key={file.path}
-          file={file}
-          images={shown.images}
-          rebuilding={rebuild.rebuilding}
-          baseBranch={baseBranch}
-          onRemoved={onRemoved}
-        />
-      ))}
+      <PhotoFiles
+        shown={shown}
+        rebuilding={rebuild.rebuilding}
+        baseBranch={baseBranch}
+        onRemoved={onRemoved}
+      />
       {shown &&
         GROUPS.map(([key, title]) => (
           <GroupFiles
@@ -159,6 +156,22 @@ function InFlightCard() {
       </aside>
     </div>
   );
+}
+
+/** The photo files, with the ones without a title first so they're easy to find and name. */
+function PhotoFiles({
+  shown,
+  ...props
+}: {
+  shown?: InFlightResponse;
+  rebuilding: boolean;
+  baseBranch?: string;
+  onRemoved: (result: RemoveResult) => void;
+}) {
+  if (!shown) return null;
+  return untitledFirst(shown.files).map((file) => (
+    <FileSection key={file.path} file={file} images={shown.images} {...props} />
+  ));
 }
 
 /** What the last removal did, then whether ALLPHOTOS.json is synced with it. */
@@ -404,12 +417,6 @@ function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightIma
       </div>
     </div>
   );
-}
-
-/** The title saved in the photo's JSON, or undefined without one. */
-function savedTitle(file: InFlightFile): string | undefined {
-  const title = (file.data as { title?: unknown } | undefined)?.title;
-  return typeof title === "string" && title.trim() ? title.trim() : undefined;
 }
 
 /** What to call the photo: its title, or else its original file name. */
