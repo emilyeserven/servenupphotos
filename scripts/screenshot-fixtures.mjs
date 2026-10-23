@@ -110,7 +110,7 @@ const added = {
     metaGroupFile("focal-length-wide-angle", "Wide angle", "focalLength", {
       range: { min: 10, max: 24 },
     }),
-    metaGroupFile("lens-brands", "Brands", "lens"),
+    metaGroupFile("lens-brands", "Brands", "lens", { order: 1 }),
     metaGroupFile("lens-canon", "Canon", "lens", {
       parent: "lens-brands",
       values: [
@@ -125,7 +125,7 @@ const added = {
       parent: "lens-brands",
       values: ["XF18-135mmF3.5-5.6R LM OIS WR"],
     }),
-    metaGroupFile("lens-types", "Types", "lens"),
+    metaGroupFile("lens-types", "Types", "lens", { order: 0 }),
     metaGroupFile("lens-zoom", "Zoom", "lens", {
       parent: "lens-types",
       values: ["EF-S18-135mm f/3.5-5.6 IS STM", "XF18-135mmF3.5-5.6R LM OIS WR"],
@@ -133,10 +133,10 @@ const added = {
   ],
 };
 
-function metaGroupFile(id, name, field, { parent = "", values = [], range } = {}) {
+function metaGroupFile(id, name, field, { parent = "", order = 0, values = [], range } = {}) {
   return {
     path: `${FOLDER}/metainfo/${id}.json`,
-    data: { id, name, description: "", field, parent, values, ...(range && { range }) },
+    data: { id, name, description: "", field, parent, order, values, ...(range && { range }) },
   };
 }
 

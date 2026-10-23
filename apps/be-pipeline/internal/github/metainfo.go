@@ -35,6 +35,10 @@ type MetaGroup struct {
 	// Parent is the ID of the group of the same field this one is in, such
 	// as a "Canon" lens group for "Canon kit lenses"; "" for none.
 	Parent string `json:"parent"`
+	// Order is where the group goes among the groups in the same parent (or
+	// at the top level): lowest first, groups with the same order by name.
+	// Files from before it was added have none, which reads as 0.
+	Order int `json:"order"`
 	// Values are the field's values in the group, each a string or a number
 	// as the photo files have it, such as 11 for a focal length or
 	// "Canon EOS 80D" for a camera.
@@ -159,7 +163,7 @@ func validMetaGroup(group MetaGroup) (MetaGroup, *PublishError) {
 	g := MetaGroup{
 		ID: strings.TrimSpace(group.ID), Name: strings.TrimSpace(group.Name),
 		Description: strings.TrimSpace(group.Description), Field: strings.TrimSpace(group.Field),
-		Parent: strings.TrimSpace(group.Parent), Range: group.Range,
+		Parent: strings.TrimSpace(group.Parent), Order: group.Order, Range: group.Range,
 	}
 	if perr := validEntryID(MetaInfo.Name, g.ID); perr != nil {
 		return g, perr
@@ -185,6 +189,9 @@ func validMetaShape(g MetaGroup) *PublishError {
 		if perr := validEntryID("parent group", g.Parent); perr != nil {
 			return perr
 		}
+	}
+	if g.Order < 0 {
+		return publishErr(http.StatusBadRequest, "A group's order is 0 or more.")
 	}
 	if g.Range == nil {
 		return nil

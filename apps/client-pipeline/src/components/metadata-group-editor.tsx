@@ -35,7 +35,22 @@ interface MetaGroupEditorProps {
 }
 
 /** The group as typed, as it would be saved: a range for a ranged field, else its values. */
-function drafted(info: MetaFieldInfo, group: MetaGroup | undefined, draft: Draft): MetaGroup {
+/**
+ * Where the group goes among its siblings: its saved place while it stays in the same parent, else
+ * after the groups already in the new one.
+ */
+function orderFor(group: MetaGroup | undefined, parent: string, groups: MetaGroup[]) {
+  if (group && (group.parent ?? "") === parent) return group.order;
+  const siblings = groups.filter((g) => (g.parent ?? "") === parent && g.id !== group?.id);
+  return Math.max(-1, ...siblings.map((g) => g.order ?? 0)) + 1;
+}
+
+function drafted(
+  info: MetaFieldInfo,
+  group: MetaGroup | undefined,
+  draft: Draft,
+  groups: MetaGroup[],
+): MetaGroup {
   const name = draft.name.trim();
   const base = {
     id: group?.id ?? metaGroupId(info.field, name),
@@ -43,6 +58,7 @@ function drafted(info: MetaFieldInfo, group: MetaGroup | undefined, draft: Draft
     description: draft.description.trim(),
     field: info.field,
     parent: draft.parent,
+    order: orderFor(group, draft.parent, groups),
   };
   return info.ranged
     ? { ...base, values: [], range: draft.range }
@@ -107,7 +123,7 @@ export function MetaGroupEditor(props: MetaGroupEditorProps) {
           onChange={(parent) => setDraft({ ...draft, parent })}
         />
         <ValuesField {...props} draft={draft} onChange={setDraft} />
-        <EditorButtons {...props} next={drafted(info, group, draft)} />
+        <EditorButtons {...props} next={drafted(info, group, draft, props.groups)} />
       </CardContent>
     </Card>
   );

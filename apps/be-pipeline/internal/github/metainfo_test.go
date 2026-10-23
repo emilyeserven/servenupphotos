@@ -15,7 +15,7 @@ func TestSaveMetaGroup(t *testing.T) {
 		t.Fatalf("SaveMetaGroup() error = %v", err)
 	}
 	file := dataRoot + "/metainfo/wide-angle.json"
-	want := "{\n  \"id\": \"wide-angle\",\n  \"name\": \"Wide angle\",\n  \"description\": \"\",\n  \"field\": \"focalLength\",\n  \"parent\": \"\",\n  \"values\": [\n    10,\n    11,\n    4.5\n  ]\n}\n"
+	want := "{\n  \"id\": \"wide-angle\",\n  \"name\": \"Wide angle\",\n  \"description\": \"\",\n  \"field\": \"focalLength\",\n  \"parent\": \"\",\n  \"order\": 0,\n  \"values\": [\n    10,\n    11,\n    4.5\n  ]\n}\n"
 	if staged(t, c, file) != want || !got.Changed || got.Before != nil {
 		t.Errorf("SaveMetaGroup() = %+v, pending %q; want %q", got, staged(t, c, file), want)
 	}
@@ -40,6 +40,7 @@ func TestSaveMetaGroupRefuses(t *testing.T) {
 		{"name taken in the field", MetaGroup{ID: "other", Name: "ef-s 10-18MM", Field: "lens"}, http.StatusConflict},
 		{"range on a lens group", MetaGroup{ID: "a", Name: "A", Field: "lens", Range: &MetaRange{Min: 1, Max: 2}}, http.StatusBadRequest},
 		{"range backwards", MetaGroup{ID: "a", Name: "A", Field: "iso", Range: &MetaRange{Min: 800, Max: 100}}, http.StatusBadRequest},
+		{"order below 0", MetaGroup{ID: "a", Name: "A", Field: "lens", Order: -1}, http.StatusBadRequest},
 		{"parent missing", MetaGroup{ID: "a", Name: "A", Field: "lens", Parent: "nope"}, http.StatusBadRequest},
 		{"parent of another field", MetaGroup{ID: "a", Name: "A", Field: "camera", Parent: "ef-s-10-18"}, http.StatusBadRequest},
 		{"parent is itself", MetaGroup{ID: "ef-s-10-18", Name: "EF-S 10-18mm", Field: "lens", Parent: "ef-s-10-18"}, http.StatusBadRequest},
@@ -80,7 +81,7 @@ func TestSaveMetaGroupRangeAndParent(t *testing.T) {
 		dataRoot + "/metainfo/canon.json": `{"id":"canon","name":"Canon","description":"","field":"lens","parent":"","values":[]}`,
 	})
 	_, err := c.SaveMetaGroup(t.Context(), placesGH, MetaGroup{ID: "fast", Name: "Fast", Field: "exposure", Range: &MetaRange{Min: 0.0005, Max: 0.004}})
-	want := "{\n  \"id\": \"fast\",\n  \"name\": \"Fast\",\n  \"description\": \"\",\n  \"field\": \"exposure\",\n  \"parent\": \"\",\n  \"values\": [],\n  \"range\": {\n    \"min\": 0.0005,\n    \"max\": 0.004\n  }\n}\n"
+	want := "{\n  \"id\": \"fast\",\n  \"name\": \"Fast\",\n  \"description\": \"\",\n  \"field\": \"exposure\",\n  \"parent\": \"\",\n  \"order\": 0,\n  \"values\": [],\n  \"range\": {\n    \"min\": 0.0005,\n    \"max\": 0.004\n  }\n}\n"
 	if got := staged(t, c, dataRoot+"/metainfo/fast.json"); err != nil || got != want {
 		t.Errorf("SaveMetaGroup(range) error = %v, pending %q; want %q", err, got, want)
 	}

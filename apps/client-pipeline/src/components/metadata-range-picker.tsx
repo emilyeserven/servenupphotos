@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { MetaFieldInfo, MetaRange } from "@/api/metainfo";
 import { FieldLabel } from "@/components/field-label";
+import { STANDARD_STOPS } from "@/lib/meta-stops";
 import { Input } from "@/components/ui/input";
 import { type MetaValueCount, metaNumber, showRange, showValue, valuesIn } from "@/lib/meta-values";
 
@@ -20,24 +21,31 @@ export function rangeStops(values: MetaValueCount[], range?: MetaRange): number[
   return [...new Set(finite)].toSorted((a, b) => a - b);
 }
 
+/** The slider's stops: the photos' values and the range's ends, with the field's common values. */
+function sliderStops(field: MetaFieldInfo["field"], values: MetaValueCount[], range: MetaRange) {
+  const stops = new Set([...rangeStops(values, range), ...(STANDARD_STOPS[field] ?? [])]);
+  return [...stops].toSorted((a, b) => a - b);
+}
+
 /**
  * A focal length, aperture, exposure or ISO group's range: a slider with a handle for each end that
- * stops at each value the photos have, boxes to type either end, and the values the photos have in
- * it.
+ * stops at each value the photos have (marked under it) and the field's common values beyond them,
+ * boxes to type either end, and the values the photos have in it.
  */
 export function MetaRangePicker({ info, values, range, onChange }: MetaRangePickerProps) {
-  const stops = rangeStops(values, range);
+  const stops = sliderStops(info.field, values, range);
+  const marks = rangeStops(values);
   const inside = valuesIn(values, range);
   const photos = inside.reduce((sum, v) => sum + v.count, 0);
   return (
     <div className="flex flex-col gap-3">
       <FieldLabel
         id="meta-group-range"
-        help={`Drag either end, or type it, to choose every ${info.one} from one to the other. A ${info.one} a photo takes later is in the group when it's in the range.`}
+        help={`Drag either end, or type it, to choose every ${info.one} from one to the other. The slider goes past the photos' values (the marks under it) to the common ones, and a typed end can be anything. A ${info.one} a photo takes later is in the group when it's in the range.`}
       >
         Range: {showRange(info.field, range)} · {photos} {photos === 1 ? "photo" : "photos"}
       </FieldLabel>
-      <RangeSlider stops={stops} range={range} onChange={onChange} />
+      <RangeSlider stops={stops} marks={marks} range={range} onChange={onChange} />
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <EndInput
           label="From"
@@ -60,6 +68,8 @@ export function MetaRangePicker({ info, values, range, onChange }: MetaRangePick
 
 interface RangeSliderProps {
   stops: number[];
+  /** The stops the photos have a value at, marked under the track. */
+  marks: number[];
   range: MetaRange;
   onChange: (range: MetaRange) => void;
 }
@@ -70,30 +80,54 @@ function percent(stops: number[], at: number): number {
 }
 
 /** Two handles on one track, one for each end of the range, each stopping at the stops. */
-function RangeSlider({ stops, range, onChange }: RangeSliderProps) {
+/** A spot along the track, lined up with the handles' centers, which stay 8px inside its ends. */
+function along(p: number): string {
+  return `calc(8px + (100% - 16px) * ${p / 100})`;
+}
+
+/** Ticks under the track where the photos have values. */
+function Marks({ stops, marks }: { stops: number[]; marks: number[] }) {
+  return (
+    <div className="relative h-1.5" aria-hidden>
+      {marks.map((mark) => (
+        <span
+          key={mark}
+          className="bg-muted-foreground/60 absolute top-0 h-1.5 w-px"
+          style={{ left: along(percent(stops, mark)) }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function RangeSlider({ stops, marks, range, onChange }: RangeSliderProps) {
   if (stops.length < 2) return null;
   const last = stops.length - 1;
   const [low, high] = [stops.indexOf(range.min), stops.indexOf(range.max)];
   const left = percent(stops, range.min);
+  const right = percent(stops, range.max);
   return (
-    <div className="relative h-5">
-      <div className="bg-muted absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full" />
-      <div
-        className="bg-primary absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
-        style={{ left: `${left}%`, width: `${percent(stops, range.max) - left}%` }}
-      />
-      <Handle
-        label="Lowest"
-        index={low}
-        last={last}
-        onChange={(i) => onChange({ ...range, min: stops[Math.min(i, high)] ?? range.min })}
-      />
-      <Handle
-        label="Highest"
-        index={high}
-        last={last}
-        onChange={(i) => onChange({ ...range, max: stops[Math.max(i, low)] ?? range.max })}
-      />
+    <div className="flex flex-col gap-0.5">
+      <div className="relative h-5">
+        <div className="bg-muted absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full" />
+        <div
+          className="bg-primary absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
+          style={{ left: along(left), width: `calc((100% - 16px) * ${(right - left) / 100})` }}
+        />
+        <Handle
+          label="Lowest"
+          index={low}
+          last={last}
+          onChange={(i) => onChange({ ...range, min: stops[Math.min(i, high)] ?? range.min })}
+        />
+        <Handle
+          label="Highest"
+          index={high}
+          last={last}
+          onChange={(i) => onChange({ ...range, max: stops[Math.max(i, low)] ?? range.max })}
+        />
+      </div>
+      <Marks stops={stops} marks={marks} />
     </div>
   );
 }

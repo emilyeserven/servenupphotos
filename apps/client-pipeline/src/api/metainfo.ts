@@ -98,6 +98,8 @@ export interface MetaGroup {
   field: MetaField;
   /** The ID of the group of the same field this one is in, such as "Canon" for "Canon kit lenses"; "" for none. */
   parent?: string;
+  /** Where it goes among the groups in the same parent: lowest first, then by name; missing reads as 0. */
+  order?: number;
   /** The values in the group, as the photo files have them; empty for a range. */
   values: MetaValue[];
   /** For a focal length, aperture, exposure or ISO group, every value from min to max, both included. */
