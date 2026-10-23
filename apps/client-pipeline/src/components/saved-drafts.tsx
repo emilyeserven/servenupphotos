@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { publishedPhotosQuery, type PublishedResponse } from "@/api/photos";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import { undecidedPaths } from "@/lib/undecided";
@@ -8,7 +9,8 @@ import { useLocalEditsStore } from "@/stores/local-edits";
 /**
  * With nothing in flight, the drafts already on the base branch (photos without a title, which
  * ALLPHOTOS.json leaves out), in the Undecided queue or a list of drafts, so they can be named
- * from here. Nothing when there are none, or when untitled photos aren't kept as drafts.
+ * from here, with the page's filters. Nothing when there are none, or when untitled photos aren't
+ * kept as drafts.
  */
 export function SavedDrafts() {
   const published = useQuery(publishedPhotosQuery);
@@ -18,12 +20,15 @@ export function SavedDrafts() {
 
 function DraftsOnBase({ data }: { data: PublishedResponse }) {
   const edits = useLocalEditsStore((s) => s.edits);
-  const drafts = data.files.filter((file) => !file.error && isDraft(file.data));
-  if (drafts.length === 0) return null;
+  const { filters, filter } = usePhotoFilters();
+  const all = data.files.filter((file) => !file.error && isDraft(file.data));
+  if (all.length === 0) return null;
+  const drafts = filter(all);
   const undecided = undecidedPaths(drafts, edits);
   const listed = drafts.filter((file) => !undecided.has(file.path));
   return (
     <>
+      <PhotoFilterBar filters={filters} shown={drafts.length} total={all.length} />
       <UndecidedQueue
         files={drafts.filter((file) => undecided.has(file.path))}
         images={data.images}

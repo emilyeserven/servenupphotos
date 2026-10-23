@@ -12,7 +12,7 @@ interface PhotoFile {
 }
 
 /** The photo's data with its local edits made, as the next Commit will save it. */
-function editedData(file: PhotoFile, edits: Record<string, LocalEdit>): unknown {
+export function editedData(file: PhotoFile, edits: Record<string, LocalEdit>): unknown {
   const fields = edits[file.path]?.fields;
   return fields ? { ...(file.data as object), ...fields } : file.data;
 }

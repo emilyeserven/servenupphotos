@@ -9,7 +9,9 @@ without a title (a `title` that's null or blank) come first, so they're easy to 
 has **Next untitled photo** to open them one after another (see
 [Committing the combined files](combined-data-store.md#committing-the-combined-files)). An untitled photo is a
 [draft](drafts.md), marked **Draft, not on the portfolio** instead of the `ALLPHOTOS.json` check mark. A file with
-a change waiting for Commit is marked **Waiting for Commit** and has no GitHub link yet. With no pull request open, the
+a change waiting for Commit is marked **Waiting for Commit** and has no GitHub link yet. The summary shows the pull request, its branch, the photo count and **Synced**; how the files match
+`ALLPHOTOS.json` and the other combined files, and how many images R2 has, are under **File checks**, collapsed until
+it's opened. With no pull request open, the
 summary says how many files are waiting, with **Commit**, which opens one. **Refresh** asks GitHub again
 (`?refresh=1`), rather than using the backend's read from when it started, so a merge made on GitHub shows at once. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
 mark when its data is one of the entries in `ALLPHOTOS.json` at the pull request's head, as the
@@ -19,6 +21,20 @@ file's name), or a "no image" sign when there's none. Under the photo is its Squ
 `images.thumbnail`, or else the `-thumbnail.webp` next to the photo in R2, with a placeholder when R2 doesn't have one
 (as for photos uploaded before Square Thumbnails). Its Thumbnail Preview (`images.thumbnailpreview`, or the
 `-thumbnailpreview.webp` next to the photo) shows blurred behind it while it loads. Clicking it opens it at its full 500 × 500.
+
+### Filters
+
+Above the photos, a filter bar has **Any**, **With** and **Without** for each of: **Title** (a `title` that isn't
+blank), **Place** (any `places`, or a `placeName`), **GPS position** (a `customGpsPosition` or the EXIF
+`gpsPosition`), **Albums**, **Tags** and **Re-edit mark** (`reEdit`). The chosen filters all apply together, to the
+list, the Undecided queue and the drafts on the base branch, reading each photo's JSON with its
+[local edits](combined-data-store.md#local-edits) made. With any chosen, it says how many photos are shown, with
+**Clear filters**. A photo whose JSON couldn't be read is hidden while a filter is chosen. They're kept in the URL
+(such as `?title=without&place=with`), so a reload or a shared link keeps them. Album, tag and other files below the
+photos aren't filtered.
+
+> **Frontend analogy:** it's the faceted filter on a shop's product list, where each facet is a three-way toggle
+> stored in the query string.
 
 ### Undecided
 
