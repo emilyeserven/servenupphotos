@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, EyeOffIcon, XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
-import { type KeyboardEvent, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useRef, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,13 @@ export function PhotoLightbox({
   const opener = useRef<HTMLElement | null>(null);
   const content = useRef<HTMLDivElement>(null);
   const steps = useSteps(photos, photo, onShow);
+  // Set when the details and buttons are hidden, leaving only the photo, as large as the window.
+  const [bare, setBare] = useState(false);
+  function toggleBare() {
+    setBare(!bare);
+    // The hide button goes away, so the lightbox keeps the focus and still hears the keys.
+    content.current?.focus();
+  }
   return (
     <Dialog.Root open={openPhoto !== null} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
@@ -57,30 +64,103 @@ export function PhotoLightbox({
             // it's cut off, and focusing it would open it over the details.
             event.preventDefault();
             content.current?.focus();
+            setBare(false);
           }}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             opener.current?.focus();
           }}
-          onKeyDown={steps.onKeyDown}
+          onKeyDown={(event) => runKey(event, { ...steps.keys, h: toggleBare, H: toggleBare })}
           className={cn("fixed inset-0 z-50 flex flex-col text-white outline-none", FADE)}
         >
-          {photo && <LightboxBody photo={photo} steps={steps} />}
+          {photo && (
+            <LightboxBody photo={photo} steps={steps} bare={bare} onToggleBare={toggleBare} />
+          )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
 }
 
-/** The caption and close button over the photo, with the previous and next buttons beside it. */
-function LightboxBody({ photo, steps }: { photo: ImagePhoto; steps: Steps }) {
+/** Runs the step for the key pressed, if there is one, instead of what the key would do. */
+function runKey(event: KeyboardEvent, keys: Record<string, (() => void) | undefined>) {
+  const step = keys[event.key];
+  if (!step) return;
+  event.preventDefault();
+  step();
+}
+
+interface LightboxBodyProps {
+  photo: ImagePhoto;
+  steps: Steps;
+  /** Set when only the photo is shown, without the details and buttons. */
+  bare: boolean;
+  /** Hides the details and buttons, or shows them again, from the hide button or a click on the photo. */
+  onToggleBare: () => void;
+}
+
+/**
+ * The caption and buttons over the photo, with the previous and next buttons beside it, or just
+ * the photo, filling the window, when they're hidden.
+ */
+function LightboxBody({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
   return (
     <>
-      <div className="flex items-center gap-4 p-4">
-        <LightboxCaption photo={photo} />
-        <span className="shrink-0 text-sm text-white/60 tabular-nums empty:hidden">
-          {steps.position}
-        </span>
+      {!bare && <LightboxHeader photo={photo} position={steps.position} onHide={onToggleBare} />}
+      <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
+    </>
+  );
+}
+
+/**
+ * The photo, with the previous and next buttons over its sides while it's hovered, or on its own,
+ * filling the window, when bare.
+ */
+function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
+  return (
+    <div
+      className={cn("flex min-h-0 flex-1 items-center justify-center", bare ? "p-0" : "p-4 pt-0")}
+    >
+      {/* A size container, so the photo can be fitted to it with cqw and cqh. Clicking it hides
+          the details or shows them again. */}
+      <div
+        onClick={onToggleBare}
+        className="flex size-full items-center justify-center [container-type:size]"
+      >
+        <LightboxImage key={photo.id} image={photo.image} alt={photo.title}>
+          {!bare && <StepButton direction="previous" steps={steps} />}
+          {!bare && <StepButton direction="next" steps={steps} />}
+        </LightboxImage>
+      </div>
+    </div>
+  );
+}
+
+/** The photo's caption, where it is among the photos, and the hide and close buttons. */
+function LightboxHeader({
+  photo,
+  position,
+  onHide,
+}: {
+  photo: ImagePhoto;
+  position?: string;
+  onHide: () => void;
+}) {
+  return (
+    <div className="flex items-center gap-4 p-4">
+      <LightboxCaption photo={photo} />
+      <span className="shrink-0 text-sm text-white/60 tabular-nums empty:hidden">{position}</span>
+      <div className="flex shrink-0 items-center">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Hide details"
+          title="Hide details (H); click the photo to show them again"
+          onClick={onHide}
+          className="text-white hover:bg-white/10 hover:text-white"
+        >
+          <EyeOffIcon />
+        </Button>
         <Dialog.Close asChild>
           <Button
             variant="ghost"
@@ -92,15 +172,7 @@ function LightboxBody({ photo, steps }: { photo: ImagePhoto; steps: Steps }) {
           </Button>
         </Dialog.Close>
       </div>
-      <div className="flex min-h-0 flex-1 items-center justify-center gap-2 p-4 pt-0">
-        <StepButton direction="previous" steps={steps} />
-        {/* A size container, so the photo can be fitted to it with cqw and cqh. */}
-        <div className="flex size-full items-center justify-center [container-type:size]">
-          <LightboxImage key={photo.id} image={photo.image} alt={photo.title} />
-        </div>
-        <StepButton direction="next" steps={steps} />
-      </div>
-    </>
+    </div>
   );
 }
 
@@ -114,8 +186,8 @@ interface Steps {
   next?: () => void;
   /** Where the photo is among them, such as "3 / 20", when there's more than one. */
   position?: string;
-  /** Moves with the Left and Right arrow keys. */
-  onKeyDown: (event: KeyboardEvent) => void;
+  /** The Left and Right arrow keys' steps, by key name. */
+  keys: Record<string, (() => void) | undefined>;
 }
 
 /** The photos before and after shown's place among photos, by id, as each view makes its own copies. */
@@ -129,17 +201,11 @@ function useSteps(
   const stepTo = (to: number) => stepper(showable[to], onShow);
   const previous = stepTo(index - 1);
   const next = stepTo(index + 1);
-  const keys: Record<string, (() => void) | undefined> = { ArrowLeft: previous, ArrowRight: next };
   return {
     previous,
     next,
     position: positionText(index, showable.length),
-    onKeyDown: (event) => {
-      const step = keys[event.key];
-      if (!step) return;
-      event.preventDefault();
-      step();
-    },
+    keys: { ArrowLeft: previous, ArrowRight: next },
   };
 }
 
@@ -158,19 +224,35 @@ function positionText(index: number, count: number): string | undefined {
   return `${index + 1} / ${count}`;
 }
 
-/** The previous or next button beside the photo, disabled at that end and left out for a photo on its own. */
+/** Each step button's name, icon and side of the photo. */
+const STEP_LOOKS = {
+  previous: { label: "Previous photo", Icon: ChevronLeftIcon, side: "left-2" },
+  next: { label: "Next photo", Icon: ChevronRightIcon, side: "right-2" },
+};
+
+/**
+ * The previous or next button over the photo's side, shown while the photo is hovered or the
+ * button has the keyboard focus, and always on touch screens, which can't hover. It's left out at
+ * that end and for a photo on its own.
+ */
 function StepButton({ direction, steps }: { direction: "previous" | "next"; steps: Steps }) {
-  if (!steps.position) return null;
   const onStep = steps[direction];
-  const Icon = direction === "previous" ? ChevronLeftIcon : ChevronRightIcon;
+  if (!steps.position || !onStep) return null;
+  const { label, Icon, side } = STEP_LOOKS[direction];
   return (
     <Button
       variant="ghost"
       size="icon"
-      aria-label={direction === "previous" ? "Previous photo" : "Next photo"}
-      disabled={!onStep}
-      onClick={onStep}
-      className="shrink-0 text-white hover:bg-white/10 hover:text-white disabled:opacity-25"
+      aria-label={label}
+      onClick={(event) => {
+        // Not a click on the photo, which would hide the details.
+        event.stopPropagation();
+        onStep();
+      }}
+      className={cn(
+        "absolute top-1/2 size-10 -translate-y-1/2 rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/60 hover:text-white focus-visible:opacity-100 pointer-coarse:opacity-100",
+        side,
+      )}
     >
       <Icon className="size-6" />
     </Button>
@@ -224,12 +306,21 @@ function isLoaded(img: HTMLImageElement | null): boolean {
  * The browser picks the version from the srcset by how wide the photo is shown, roughly the
  * window's width or its height times the photo's aspect ratio, whichever is smaller.
  */
-function LightboxImage({ image, alt }: { image: PhotoImage; alt: string }) {
+function LightboxImage({
+  image,
+  alt,
+  children,
+}: {
+  image: PhotoImage;
+  alt: string;
+  /** Shown over the photo, such as the previous and next buttons. */
+  children?: ReactNode;
+}) {
   const [loaded, setLoaded] = useState(false);
   const ratio = image.width / image.height;
   return (
     <div
-      className="relative overflow-hidden"
+      className="group relative overflow-hidden"
       style={{
         aspectRatio: `${image.width} / ${image.height}`,
         width: `min(100cqw, 100cqh * ${ratio})`,
@@ -260,6 +351,7 @@ function LightboxImage({ image, alt }: { image: PhotoImage; alt: string }) {
           loaded ? "opacity-100" : "opacity-0",
         )}
       />
+      {children}
     </div>
   );
 }
