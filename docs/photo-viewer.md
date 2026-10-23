@@ -9,7 +9,7 @@ settings. Moving to another photo and closing the viewer replace the URL rather 
 leaves the page. The menu's links to the other views don't carry it. A photo opened from a link on the Map has no
 neighbors, as the group it was opened from isn't in the URL.
 
-For a photo the Map can place, from its EXIF GPS position or one of its places, **View on map** after its details opens
+For a photo the Map can place, from its EXIF GPS position or one of its places, **View on map**, at the bottom of the tooltip that hovering its place shows, opens
 the Map centered on it (`/map?lat=…&lng=…&zoom=…`), at zoom 17, a few streets around it, or zoom 15 when its position
 comes from a place and is only near where it was taken. The location, album and tag filters go along; the viewer closes.
 On the Map itself, the map flies there. It's `ViewOnMapLink` in `apps/portfolio/src/components/view-on-map-link.tsx`.

@@ -5,7 +5,7 @@ import { type KeyboardEvent, useRef, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
-import { ViewOnMapLink } from "@/components/view-on-map-link";
+import { viewOnMapLink } from "@/components/view-on-map-link";
 import { settingsText, type Photo, type PhotoImage } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
@@ -203,11 +203,12 @@ function LightboxCaption({ photo }: { photo: Photo }) {
               <PhotoLocation
                 location={photo.location}
                 detailsClassName="bg-neutral-800 text-white ring-1 ring-white/15"
-              />
+              >
+                {viewOnMapLink(photo)}
+              </PhotoLocation>
             </>
           )}
         </Dialog.Description>
-        <ViewOnMapLink photo={photo} />
       </div>
     </div>
   );
