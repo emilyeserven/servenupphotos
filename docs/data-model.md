@@ -17,6 +17,17 @@ An album's `parent` is the ID of the one album it sits inside, or `null` for a t
 lets an album end up inside itself. Albums and tags share one set of IDs and names, compared ignoring case, so a
 photo's `albums` and `tags` never mean the same thing.
 
+## Photo IDs
+
+Each photo JSON starts with an `id`: a whole number, unique among the photos, which the portfolio's links use to open a
+photo (`/grid?photo=12`). A new photo gets one more than the highest ID in the photo files as the next Commit will have
+them, pending changes included. Older files without one get theirs from **Missing fields** on
+[Update Data](update-data.md), counting up from the highest ID in the order the files were created. Until then the
+portfolio numbers them after the highest ID by their place in `ALLPHOTOS.json`, which changes as photos are added, so
+links to them don't last.
+
+## Places, spotlights and posts
+
 A photo's `places` list where it was taken, each a place ID and how the photo relates to it, and `LOCALIZATIONS.json`
 notes how countries, cities and places are written and said; see [Places and Localizations](places-and-localizations.md).
 

@@ -9,6 +9,7 @@ import { ViewPlaceholder } from "@/components/view-placeholder";
 import { PhotoLocation } from "@/components/photo-location";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { cn } from "@/lib/utils";
 
 /**
@@ -26,11 +27,22 @@ interface GridSearch {
   sort?: "oldest";
 }
 
-/** Reads the grid's view, info and sort settings and the filters from the URL, leaving out the defaults. */
-function validateGridSearch(search: Record<string, unknown>): GridSearch & PhotoFilters {
+/**
+ * Reads the grid's view, info and sort settings, the filters and the open photo from the URL,
+ * leaving out the defaults.
+ */
+function validateGridSearch(
+  search: Record<string, unknown>,
+): GridSearch & PhotoFilters & ShownPhotoSearch {
   const view: GridSearch = search.view === "natural" ? { view: "natural" } : {};
   const sort: GridSearch = search.sort === "oldest" ? { sort: "oldest" } : {};
-  return { ...view, ...infoOf(search), ...sort, ...parseFilters(search) };
+  return {
+    ...view,
+    ...infoOf(search),
+    ...sort,
+    ...parseFilters(search),
+    ...parseShownPhoto(search),
+  };
 }
 
 /** The info setting from the URL, which reads `info=true` and older `info=1` links alike. */
@@ -63,7 +75,7 @@ const TILE_SIZES =
   "(min-width: 1536px) 17vw, (min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw";
 
 function GridView() {
-  const [shown, setShown] = useState<ImagePhoto | null>(null);
+  const { shown, show, close } = useShownPhoto();
   const search = Route.useSearch();
   const mode: ViewMode = search.view ?? "square";
   const showInfo = search.info === true;
@@ -99,21 +111,11 @@ function GridView() {
       <ul className={listClass(mode, showInfo)}>
         {gridPhotos.map((photo) => (
           <li key={photo.id} style={mode === "natural" ? naturalTileStyle(photo.image) : {}}>
-            <PhotoTile
-              photo={photo}
-              mode={mode}
-              showInfo={showInfo}
-              onOpen={() => setShown(photo)}
-            />
+            <PhotoTile photo={photo} mode={mode} showInfo={showInfo} onOpen={() => show(photo)} />
           </li>
         ))}
       </ul>
-      <PhotoLightbox
-        photo={shown}
-        photos={gridPhotos}
-        onShow={setShown}
-        onClose={() => setShown(null)}
-      />
+      <PhotoLightbox photo={shown} photos={gridPhotos} onShow={show} onClose={close} />
     </div>
   );
 }
