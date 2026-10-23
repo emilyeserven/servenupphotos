@@ -71,3 +71,20 @@ export function unmappedPlacePhotos(photos: CombinedPhoto[], places: Place[]): M
   const unmapped = photos.filter((photo) => !isOnMap(photo, byId, places));
   return placePhotoCounts(unmapped);
 }
+
+/** One of exiftool's coordinates, such as `37 deg 34' 37.30" N`, as decimal degrees in text. */
+function decimalDegrees([, deg, min, sec, hemisphere]: RegExpMatchArray): string {
+  const value = Number(deg) + Number(min) / 60 + Number(sec) / 3600;
+  const signed = hemisphere === "S" || hemisphere === "W" ? -value : value;
+  return signed.toFixed(6).replace(/\.?0+$/, "");
+}
+
+/**
+ * The photo's EXIF GPS position, exiftool's `37 deg 34' 37.30" N, 126 deg 58' 36.88" E`, written
+ * the way the place form reads one ("37.577028, 126.976911"); "" when it can't be read.
+ */
+export function exifGpsText(exif: string | null): string {
+  const coordinate = /(\d+(?:\.\d+)?) deg (\d+(?:\.\d+)?)' (\d+(?:\.\d+)?)" ([NSEW])/g;
+  const parts = [...(exif ?? "").matchAll(coordinate)].map(decimalDegrees);
+  return parts.length === 2 ? parts.join(", ") : "";
+}

@@ -35,8 +35,8 @@ export function PhotoGpsStatus({ exifGps, rows, places }: PhotoGpsStatusProps) {
   }
   return (
     <Status icon={<CircleAlertIcon className="text-amber-600 dark:text-amber-400" />}>
-      No GPS position in the EXIF, and none of its places has one, so it isn't on the map. Give a
-      place one on the Places page.
+      No GPS position in the EXIF, and none of its places has one, so it isn't on the map. Give one
+      of its places a GPS position.
     </Status>
   );
 }

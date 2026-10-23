@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { PhotoGpsStatus } from "@/components/photo-gps-status";
+import { PlaceGpsAdders } from "@/components/place-gps-adder";
 import { PlaceLocalizationDialog } from "@/components/place-localization-dialog";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import {
@@ -177,6 +178,7 @@ export function PlaceFields({ value, onChange, disabled, exifCountry, exifGps }:
     <div className="flex flex-col gap-2">
       <PlaceLabel />
       <PhotoGpsStatus exifGps={exifGps} rows={rows} places={all.places} />
+      <PlaceGpsAdders rows={rows} places={all.places} exifGps={exifGps} disabled={disabled} />
       {oldName && <OldPlaceName name={oldName} />}
       {rows.map((row, index) => (
         <PlaceRow
