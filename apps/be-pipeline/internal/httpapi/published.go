@@ -32,7 +32,7 @@ func handlePublishedPhotos(store *settings.Store, gh *github.Client, findPhotos 
 		result, err := gh.Published(ctx, cfg)
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
-			writeError(w, perr.Status, perr.Message)
+			writePublishError(w, perr)
 			return
 		}
 		if err != nil {

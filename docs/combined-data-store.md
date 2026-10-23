@@ -51,13 +51,22 @@ When the pull request's branch is behind the base branch (another pull request m
 commit also merges the base branch in: it's made from the base branch's files with the pull request's own data files
 over them, and the combined lists rebuilt from that, so the pull request never conflicts over a combined list. When
 both changed the same data file, the pull request's version is kept. Commit does this even when nothing else is
-waiting, so pressing it fixes a pull request that has fallen behind.
+waiting, so pressing it fixes a pull request that has fallen behind. A file only the pull request added and since
+removed is simply left out of that merge, since the base branch never had it (GitHub refuses a commit that deletes a file
+that isn't there with a 422).
 
 > **Frontend analogy:** like a lockfile conflict you fix by reinstalling rather than merging by hand: the combined
 > lists are generated, so the merge regenerates them instead of merging their text.
 
-When a file can't be read or isn't valid JSON, nothing is committed and the error names it. The backend does this
-itself with GitHub's Git database API, so nothing waits for a CI runner.
+When a file can't be read or isn't valid JSON, nothing is committed and the error names it. When GitHub refuses one of
+Commit's calls, the error says which step it was and GitHub's message, and the In Flight page and the sync panel show
+GitHub's whole answer under it: the step, the request (such as `POST …/git/trees`), the status, GitHub's message, its
+`errors` list, the docs page it points to and its request ID, with a copyable JSON block. Every page's GitHub errors
+carry the same answer (`github` in the error body), and the backend logs it.
+
+> **Frontend analogy:** it's the Network tab's entry for the failed request, shown on the page instead of being boiled
+> down to "something went wrong". The backend does this
+> itself with GitHub's Git database API, so nothing waits for a CI runner.
 
 Whether the files are synced is checked once, when the app starts (`GET /api/photos/combined/status` →
 `GET /photos/combined/status`), without asking GitHub anything new: the backend compares each combined list at the

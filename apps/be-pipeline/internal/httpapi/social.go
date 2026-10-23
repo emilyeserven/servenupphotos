@@ -63,7 +63,7 @@ func githubSettings(w http.ResponseWriter, store *settings.Store) (settings.GitH
 func writeSocialResult(w http.ResponseWriter, result any, err error, failure string) {
 	var perr *github.PublishError
 	if errors.As(err, &perr) {
-		writeError(w, perr.Status, perr.Message)
+		writePublishError(w, perr)
 		return
 	}
 	if err != nil {

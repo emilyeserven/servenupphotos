@@ -67,3 +67,30 @@ func TestCommitCombinedUpToDateMakesNoMerge(t *testing.T) {
 		t.Errorf("read the pull request's files %d times, want 0", n)
 	}
 }
+
+// TestCommitCombinedCatchesUpDeletingPullOnlyFile removes a photo only the
+// pull request added while main has moved on. The merge's tree is made on
+// main's, which doesn't have the photo, so the tree mustn't delete it (GitHub
+// answers 422 to that); the photo is left out instead.
+func TestCommitCombinedCatchesUpDeletingPullOnlyFile(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, map[string]string{
+		dataRoot + "/photos/a.json":         `{"title":"A"}`,
+		dataRoot + "/photos/b.json":         `{"title":"B"}`,
+		dataRoot + "/photos/ALLPHOTOS.json": "[]\n",
+	})
+	f.moveMain(with(emptyLists, map[string]string{"README.md": "new code"}))
+	if _, err := c.Remove(t.Context(), pullGH, dataRoot+"/photos/b.json"); err != nil {
+		t.Fatal(err)
+	}
+	got, err := c.CommitCombined(t.Context(), pullGH, nil)
+	if err != nil || !got.Changed {
+		t.Fatalf("CommitCombined() = %+v, %v; want a merge commit", got, err)
+	}
+	if _, ok := f.file(prBranch, dataRoot+"/photos/b.json"); ok {
+		t.Error("b.json is still on the branch, want it removed")
+	}
+	if have, _ := f.file(prBranch, dataRoot+"/photos/a.json"); have != `{"title":"A"}` {
+		t.Errorf("a.json on the branch = %q, want the pull request's", have)
+	}
+}
