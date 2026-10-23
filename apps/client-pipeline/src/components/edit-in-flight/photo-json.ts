@@ -24,6 +24,7 @@ import {
 } from "@/components/photo-details";
 import { canonicalJson } from "@/lib/combined";
 import { type Crop, sameCrop } from "@/lib/crop";
+import { type ReEditDraft, reEditChanged, withReEdit } from "@/lib/re-edit";
 import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
 
@@ -182,27 +183,27 @@ function placesChanged(data: PhotoJson, details: PhotoDetails): boolean {
 }
 
 /**
- * What the Photo page edits besides the crop: the details, albums and tags, social media posts, and
- * the fields the camera overrides change once they're applied (null until they are).
+ * What the Photo page edits besides the crop: the details, albums and tags, social media posts, the
+ * re-edit mark, and the fields the camera overrides change once they're applied (null until they are).
  */
 export interface EditedFields {
   details: PhotoDetails;
   groups: PhotoGroups;
   socialPosts: SocialPostDraft[];
+  reEdit: ReEditDraft;
   overrides: Record<string, unknown> | null;
 }
 
-/** Whether the details, albums, tags or social media posts differ from the ones saved in data, or overrides were applied. */
-export function fieldsChanged(
-  data: PhotoJson,
-  { details, groups, socialPosts, overrides }: EditedFields,
-) {
-  return (
-    overrides !== null ||
-    detailsChanged(data, details) ||
-    !sameGroups(savedGroups(data), groups) ||
-    socialPostsChanged(data, socialPosts)
-  );
+/** Whether the details, albums, tags, social media posts or re-edit mark differ from the ones saved in data, or overrides were applied. */
+export function fieldsChanged(data: PhotoJson, fields: EditedFields) {
+  const checks = [
+    () => fields.overrides !== null,
+    () => detailsChanged(data, fields.details),
+    () => !sameGroups(savedGroups(data), fields.groups),
+    () => socialPostsChanged(data, fields.socialPosts),
+    () => reEditChanged(data, fields.reEdit),
+  ];
+  return checks.some((changed) => changed());
 }
 
 /**
@@ -235,12 +236,13 @@ export function photoFile(saved: PhotoJson): string {
  */
 export function saveRequest(
   saved: PhotoJson,
-  { details, groups, socialPosts, overrides }: EditedFields,
+  { details, groups, socialPosts, reEdit, overrides }: EditedFields,
   crop: Crop | null,
   baseline: Crop | null,
   remakeSquares: boolean,
 ): SaveRequest {
-  const edited = withSocialPosts(withGroups(withDetails(saved, details), groups), socialPosts);
+  const grouped = withGroups(withDetails(saved, details), groups);
+  const edited = withReEdit(withSocialPosts(grouped, socialPosts), reEdit);
   const data = { ...edited, ...overrides };
   return remakeSquares ? { crop, data } : { crop: null, data: withCropField(data, baseline) };
 }

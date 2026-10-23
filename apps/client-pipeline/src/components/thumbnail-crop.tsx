@@ -42,13 +42,19 @@ interface ThumbnailCropProps {
   locked: boolean;
   /** What to say while it's locked. */
   lockedNote?: string;
+  /** The card's title; "Square Thumbnail" unless set. */
+  title?: string;
 }
 
 /**
  * Picks the square of photo its thumbnail is cut from, starting from the middle, with a preview of
  * the thumbnail as the upload will make it.
  */
-export function ThumbnailCrop({ photo, ...editor }: ThumbnailCropProps) {
+export function ThumbnailCrop({
+  photo,
+  title = "Square Thumbnail",
+  ...editor
+}: ThumbnailCropProps) {
   const [objectUrl, setFile] = useObjectUrl();
   useEffect(() => setFile(typeof photo === "string" ? null : photo), [photo, setFile]);
   const url = typeof photo === "string" ? photo : objectUrl;
@@ -56,7 +62,7 @@ export function ThumbnailCrop({ photo, ...editor }: ThumbnailCropProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Square Thumbnail</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>
           Drag the square to pick the part of the photo used where every photo is a square tile,
           like the portfolio's Grid, and drag a corner to resize it. Uploading turns it into a{" "}

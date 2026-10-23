@@ -76,6 +76,19 @@ type photoJSON struct {
 	// SocialPosts are the photo's posts on social media, posted or
 	// scheduled, written on the Photo page.
 	SocialPosts []SocialPost `json:"socialPosts"`
+	// ReEdit marks a photo to edit again, such as in Lightroom, with why;
+	// nil when it isn't marked. It's set on the Photo page, and replacing the
+	// photo's image there clears it.
+	ReEdit *ReEdit `json:"reEdit"`
+}
+
+// ReEdit is a photo's mark for re-editing.
+type ReEdit struct {
+	// Reason is why the photo needs editing again, such as "Too warm"; ""
+	// when none was given.
+	Reason string `json:"reason"`
+	// Date is the day it was marked, as YYYY-MM-DD.
+	Date string `json:"date"`
 }
 
 // SocialPost is one post of a photo on social media, such as on Instagram.

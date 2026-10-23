@@ -87,7 +87,8 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
   "tags": [],
   "places": [],
   "spotlightZones": [],
-  "socialPosts": []
+  "socialPosts": [],
+  "reEdit": null
 }
 `
 	if string(saved) != wantJSON {

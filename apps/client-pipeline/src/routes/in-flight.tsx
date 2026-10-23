@@ -31,6 +31,7 @@ import {
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
+import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
@@ -381,6 +382,7 @@ function FileSection({
         <DraftMark data={file.status === "removed" ? undefined : file.data}>
           <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
         </DraftMark>
+        <ReEditMark data={file.status === "removed" ? undefined : file.data} />
         <MoveToUndecided file={file} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
