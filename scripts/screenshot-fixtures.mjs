@@ -44,6 +44,7 @@ const baseAlbums = readFolder("albums", "ALLALBUMS");
 const baseTags = readFolder("tags", "ALLTAGS");
 const basePlaces = readFolder("places", "PLACES");
 const baseLocalizations = readFolder("localizations", "LOCALIZATIONS");
+const baseMetaInfo = readFolder("metainfo", "METAINFO");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -105,7 +106,21 @@ const added = {
       "경복궁",
     ),
   ],
+  metainfo: [
+    metaGroupFile("focal-length-wide-angle", "Wide angle", "focalLength", [10, 11, 13, 14, 18, 24]),
+    metaGroupFile("lens-canon-18-135mm", "Canon EF-S 18-135mm", "lens", [
+      "EF-S18-135mm f/3.5-5.6 IS STM",
+      "EF-S18-135mm f/3.5-5.6 IS",
+    ]),
+  ],
 };
+
+function metaGroupFile(id, name, field, values) {
+  return {
+    path: `${FOLDER}/metainfo/${id}.json`,
+    data: { id, name, description: "", field, values },
+  };
+}
 
 function placeFile(id, name, description, { parent = "", city = "", country = "" } = {}) {
   return {
@@ -133,6 +148,7 @@ function withAdded(base, addedFiles) {
 
 const headPlaces = withAdded(basePlaces, added.places);
 const headLocalizations = withAdded(baseLocalizations, added.localizations);
+const headMetaInfo = withAdded(baseMetaInfo, added.metainfo);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -145,13 +161,14 @@ function combinedFile(kind, all, files, branch) {
   };
 }
 
-function combinedFiles([photos, albums, tags, places, localizations], branch) {
+function combinedFiles([photos, albums, tags, places, localizations, metainfo], branch) {
   return {
     photos: combinedFile("photos", "ALLPHOTOS.json", photos, branch),
     albums: combinedFile("albums", "ALLALBUMS.json", albums, branch),
     tags: combinedFile("tags", "ALLTAGS.json", tags, branch),
     places: combinedFile("places", "PLACES.json", places, branch),
     localizations: combinedFile("localizations", "LOCALIZATIONS.json", localizations, branch),
+    metainfo: combinedFile("metainfo", "METAINFO.json", metainfo, branch),
   };
 }
 
@@ -294,12 +311,19 @@ export function defaultFixtures() {
       repo: REPO,
       folder: FOLDER,
       base: {
-        ...combinedFiles([basePhotos, baseAlbums, baseTags, basePlaces, baseLocalizations]),
+        ...combinedFiles([
+          basePhotos,
+          baseAlbums,
+          baseTags,
+          basePlaces,
+          baseLocalizations,
+          baseMetaInfo,
+        ]),
         branch: BASE_BRANCH,
       },
       head: {
         ...combinedFiles(
-          [headPhotos, headAlbums, headTags, headPlaces, headLocalizations],
+          [headPhotos, headAlbums, headTags, headPlaces, headLocalizations, headMetaInfo],
           PULL_REQUEST.branch,
         ),
         pullRequest: PULL_REQUEST,
@@ -317,6 +341,7 @@ export function defaultFixtures() {
         folder: `${FOLDER}/localizations`,
         files: added.localizations.map(groupFile),
       },
+      metainfo: { folder: `${FOLDER}/metainfo`, files: added.metainfo.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },

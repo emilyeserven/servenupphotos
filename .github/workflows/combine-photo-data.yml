@@ -2,8 +2,8 @@ name: Combine photo data
 
 # Rebuilds the combined lists in apps/portfolio/src/data on the branch it's
 # started on, committed back to that branch: photos/ALLPHOTOS.json,
-# albums/ALLALBUMS.json, tags/ALLTAGS.json, places/PLACES.json and
-# localizations/LOCALIZATIONS.json, each every other JSON file in
+# albums/ALLALBUMS.json, tags/ALLTAGS.json, places/PLACES.json,
+# localizations/LOCALIZATIONS.json and metainfo/METAINFO.json, each every other JSON file in
 # its folder as one array sorted by file name. The pipeline's Commit button
 # does the same itself (CommitCombined in apps/be-pipeline), with the same
 # commit message, so this only runs when started by hand from the Actions
@@ -59,10 +59,11 @@ jobs:
           combine tags ALLTAGS.json
           combine places PLACES.json
           combine localizations LOCALIZATIONS.json
+          combine metainfo METAINFO.json
       - name: Commit the combined files
         run: |
           git add "$DATA_DIR/photos/ALLPHOTOS.json" "$DATA_DIR/albums/ALLALBUMS.json" "$DATA_DIR/tags/ALLTAGS.json" \
-            "$DATA_DIR/places/PLACES.json" "$DATA_DIR/localizations/LOCALIZATIONS.json"
+            "$DATA_DIR/places/PLACES.json" "$DATA_DIR/localizations/LOCALIZATIONS.json" "$DATA_DIR/metainfo/METAINFO.json"
           if git diff --cached --quiet; then
             echo "The combined files are already up to date."
             exit 0

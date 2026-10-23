@@ -2,13 +2,14 @@
 
 The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in Settings), one JSON file per thing:
 
-| What          | File                      | Combined by **Commit** into        |
-| ------------- | ------------------------- | ---------------------------------- |
-| Photos        | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json`            |
-| Albums        | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json`            |
-| Tags          | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`                |
-| Places        | `places/<PLACE_ID>.json`  | `places/PLACES.json`               |
-| Localizations | `localizations/<ID>.json` | `localizations/LOCALIZATIONS.json` |
+| What            | File                      | Combined by **Commit** into        |
+| --------------- | ------------------------- | ---------------------------------- |
+| Photos          | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json`            |
+| Albums          | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json`            |
+| Tags            | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`                |
+| Places          | `places/<PLACE_ID>.json`  | `places/PLACES.json`               |
+| Localizations   | `localizations/<ID>.json` | `localizations/LOCALIZATIONS.json` |
+| Metadata groups | `metainfo/<ID>.json`      | `metainfo/METAINFO.json`           |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
@@ -30,6 +31,8 @@ links to them don't last.
 
 A photo's `places` list where it was taken, each a place ID and how the photo relates to it, and `LOCALIZATIONS.json`
 notes how countries, cities and places are written and said; see [Places and Localizations](places-and-localizations.md).
+`METAINFO.json` names groups of the photos' camera, lens, focal length, aperture, exposure and ISO values; see
+[Metadata Groups](metadata-groups.md).
 
 A photo's `spotlightZones` lists the spots on the portfolio it's spotlighted in, by ID, such as `"homepage"`; see
 [Publish](publish.md#site-spotlight). Older files may be missing it, which means none.
