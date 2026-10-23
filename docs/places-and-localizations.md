@@ -90,9 +90,10 @@ When the photo's EXIF has no GPS position, each chosen place with none either (i
 **Add a GPS position for …** under that line, which opens a `latitude, longitude` field and **Save**. It saves the
 place's position as the Places page does, so the status line and the Places list show it at once.
 
-Likewise, each chosen place in no city (by itself or a place it's in) has **Set a city for …**, which opens the
-place's **City** combobox, starting at the city the photo shows (its custom one, or else its EXIF one), and **Save**.
-Saving gives the place that city, and the city's country (or the photo's) when the place has no country.
+Likewise, each chosen place in no city (by itself or a place it's in) gets a way to set one. When the photo shows a
+city (its custom one, or else its EXIF one), it's one click: **Use Seoul as Gyeongbokgung Palace's city**. When it
+shows none, **Set a city for …** opens the place's **City** combobox and **Save**. Either gives the place that city,
+and the city's country (or the photo's) when the place has no country.
 
 **Place** replaces the old place name text box. It's one row, or two after
 **Add a second place**, and each row is a relation (none, in, at, by, near, on, inside, outside, behind, in front of,
