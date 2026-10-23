@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
 import { ClearFilterButton } from "@/components/clear-filter-button";
+import { hiddenText } from "@/components/hidden-note";
 import { PlacesFilter } from "@/components/places-filter";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { Button } from "@/components/ui/button";
@@ -265,6 +266,9 @@ export function FilterSelect({
   onChange: (selected: string) => void;
 }) {
   const { script } = useScriptDisplay();
+  // Choices that would show no photos, given the other filters, are left out, unless chosen.
+  const shown = options.filter((option) => option.count > 0 || optionValue(option) === selected);
+  const hidden = options.length - shown.length;
   return (
     // The icon, X and chevron sit over the dropdown, inside its border, like the Places button's.
     <div className="relative inline-flex items-center text-sm text-muted-foreground">
@@ -280,11 +284,12 @@ export function FilterSelect({
           )}
         >
           <option value="">All {plural}</option>
-          {options.map((option, index) => (
+          {shown.map((option, index) => (
             <option key={`${index}-${optionValue(option)}`} value={optionValue(option)}>
               {optionText(option, option.label[script], optionValue(option) === selected)}
             </option>
           ))}
+          {hidden > 0 && <option disabled>{hiddenText(hidden, "choices")}</option>}
         </select>
       </label>
       {selected && (

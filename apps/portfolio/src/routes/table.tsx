@@ -22,6 +22,7 @@ import { NoMatchingPhotos, PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { TableViewMenu } from "@/components/table-view-menu";
 import { TableFilterControls } from "@/components/table-filters";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -34,6 +35,13 @@ import {
   type PhotoImage,
 } from "@/lib/photos";
 import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import {
+  DEFAULT_LOCATION_DETAIL,
+  LOCATION_DETAILS,
+  type LocationDetail,
+  locationText,
+  parseLocationDetail,
+} from "@/lib/location-detail";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
   exposureSeconds,
@@ -87,6 +95,14 @@ interface TableSearch {
   dir?: "asc" | "desc";
   /** The columns hidden from the Columns menu; left out when every column is shown. */
   hide?: HideableColumn[];
+  /** How much of each photo's location the Place column shows; left out for the most specific place. */
+  placeDetail?: LocationDetail;
+}
+
+/** How much of each location the URL asks the Place column to show, leaving out the default. */
+function parsePlaceDetail(search: Record<string, unknown>): TableSearch {
+  const placeDetail = parseLocationDetail(search.placeDetail);
+  return placeDetail ? { placeDetail } : {};
 }
 
 /** The sort the URL asks for, leaving it out when it names no column. */
@@ -109,6 +125,7 @@ export const Route = createFileRoute("/table")({
   ): TableSearch & PhotoFilters & TableFilters & ShownPhotoSearch => ({
     ...parseSort(search),
     ...parseHide(search),
+    ...parsePlaceDetail(search),
     ...parseFilters(search),
     ...parseTableFilters(search),
     ...parseShownPhoto(search),
@@ -125,50 +142,62 @@ const features = tableFeatures({
 
 const helper = createColumnHelper<typeof features, Photo>();
 
-// Missing values are undefined, rather than null, so they sort last whichever way the column goes.
-const columns = helper.columns([
-  helper.display({ id: "image", header: "", enableSorting: false }),
-  helper.accessor("title", { header: LABELS.title, sortFn: "text", enableHiding: false }),
-  helper.accessor("takenAt", { header: LABELS.takenAt, sortFn: "datetime", sortDescFirst: true }),
-  // Sorted by the English names, whichever way the menu shows them.
-  helper.accessor((photo) => photo.location?.english.label, {
-    id: "location",
-    header: LABELS.location,
-    sortFn: "text",
-    sortUndefined: "last",
-  }),
-  helper.accessor("camera", { header: LABELS.camera, sortFn: "text" }),
-  helper.accessor((photo) => photo.lens ?? undefined, {
-    id: "lens",
-    header: LABELS.lens,
-    sortFn: "text",
-    sortUndefined: "last",
-  }),
-  helper.accessor((photo) => photo.settings.aperture ?? undefined, {
-    id: "aperture",
-    header: LABELS.aperture,
-    sortFn: "basic",
-    sortUndefined: "last",
-  }),
-  helper.accessor((photo) => exposureSeconds(photo.settings.exposure), {
-    id: "exposure",
-    header: LABELS.exposure,
-    sortFn: "basic",
-    sortUndefined: "last",
-  }),
-  helper.accessor((photo) => photo.settings.iso ?? undefined, {
-    id: "iso",
-    header: LABELS.iso,
-    sortFn: "basic",
-    sortUndefined: "last",
-  }),
-  helper.accessor((photo) => photo.settings.focalLength ?? undefined, {
-    id: "focalLength",
-    header: LABELS.focalLength,
-    sortFn: "basic",
-    sortUndefined: "last",
-  }),
-]);
+/**
+ * The table's columns, with the Place column showing as much of each location as `detail` says.
+ * Missing values are undefined, rather than null, so they sort last whichever way the column goes.
+ */
+const columnsFor = (detail: LocationDetail) =>
+  helper.columns([
+    helper.display({ id: "image", header: "", enableSorting: false }),
+    helper.accessor("title", { header: LABELS.title, sortFn: "text", enableHiding: false }),
+    helper.accessor("takenAt", { header: LABELS.takenAt, sortFn: "datetime", sortDescFirst: true }),
+    // Sorted by the English names, whichever way the menu shows them.
+    helper.accessor(
+      (photo) => (photo.location ? locationText(photo.location.english, detail) : undefined),
+      {
+        id: "location",
+        header: LABELS.location,
+        sortFn: "text",
+        sortUndefined: "last",
+      },
+    ),
+    helper.accessor("camera", { header: LABELS.camera, sortFn: "text" }),
+    helper.accessor((photo) => photo.lens ?? undefined, {
+      id: "lens",
+      header: LABELS.lens,
+      sortFn: "text",
+      sortUndefined: "last",
+    }),
+    helper.accessor((photo) => photo.settings.aperture ?? undefined, {
+      id: "aperture",
+      header: LABELS.aperture,
+      sortFn: "basic",
+      sortUndefined: "last",
+    }),
+    helper.accessor((photo) => exposureSeconds(photo.settings.exposure), {
+      id: "exposure",
+      header: LABELS.exposure,
+      sortFn: "basic",
+      sortUndefined: "last",
+    }),
+    helper.accessor((photo) => photo.settings.iso ?? undefined, {
+      id: "iso",
+      header: LABELS.iso,
+      sortFn: "basic",
+      sortUndefined: "last",
+    }),
+    helper.accessor((photo) => photo.settings.focalLength ?? undefined, {
+      id: "focalLength",
+      header: LABELS.focalLength,
+      sortFn: "basic",
+      sortUndefined: "last",
+    }),
+  ]);
+
+/** The columns for each choice of the View menu, made once. */
+const COLUMNS = Object.fromEntries(
+  LOCATION_DETAILS.map((detail) => [detail, columnsFor(detail)]),
+) as Record<LocationDetail, ReturnType<typeof columnsFor>>;
 
 /** The columns of numbers, lined up on the right so their digits line up. */
 const NUMERIC = new Set(["aperture", "exposure", "iso", "focalLength"]);
@@ -203,13 +232,14 @@ function TableView() {
   const { shown, show, close } = useShownPhoto();
   const sorting = sortingOf(search);
   const columnVisibility = visibilityOf(search);
+  const placeDetail = search.placeDetail ?? DEFAULT_LOCATION_DETAIL;
   const shared = filterPhotos(photos, parseFilters(search));
   const own = parseTableFilters(search);
   const filtered = filterTable(shared, own);
 
   const table = useTable({
     features,
-    columns,
+    columns: COLUMNS[placeDetail],
     data: filtered,
     state: { sorting, columnVisibility },
     onSortingChange: (updater) => {
@@ -236,6 +266,15 @@ function TableView() {
           Table
         </h1>
         <p className="text-sm text-muted-foreground">{rows.length} photos</p>
+        <TableViewMenu
+          placeDetail={placeDetail}
+          onPlaceDetailChange={(detail) =>
+            navigate({
+              search: (prev) => ({ ...prev, placeDetail: parseLocationDetail(detail) }),
+              replace: true,
+            })
+          }
+        />
         <ColumnsMenu allColumns={table.getAllLeafColumns()} />
         <div className="mt-3 w-full">
           <PhotoFilterBar
@@ -264,7 +303,13 @@ function TableView() {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <PhotoRow key={row.id} photo={row.original} columnIds={visibleIds} onOpen={show} />
+              <PhotoRow
+                key={row.id}
+                photo={row.original}
+                columnIds={visibleIds}
+                placeDetail={placeDetail}
+                onOpen={show}
+              />
             ))}
           </tbody>
         </table>
@@ -288,7 +333,7 @@ function ColumnsMenu({ allColumns }: { allColumns: PhotoColumn[] }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="ml-auto self-center">
+        <Button variant="outline" size="sm" className="self-center">
           <Columns3 aria-hidden />
           Columns
           {hidden > 0 && <span className="text-muted-foreground">({hidden} hidden)</span>}
@@ -377,7 +422,10 @@ const NUMERIC_CELL = "px-3 py-2 text-right tabular-nums whitespace-nowrap";
 /** How each column's cell looks, given the photo and how to open it in the lightbox, if it can be. */
 const CELLS: Record<
   ColumnId,
-  { className: string; render: (photo: Photo, open?: () => void) => ReactNode }
+  {
+    className: string;
+    render: (photo: Photo, open: (() => void) | undefined, detail: LocationDetail) => ReactNode;
+  }
 > = {
   image: {
     className: "px-3 py-2",
@@ -402,7 +450,8 @@ const CELLS: Record<
   },
   location: {
     className: CELL,
-    render: (photo) => (photo.location ? <PhotoLocation location={photo.location} /> : DASH),
+    render: (photo, _open, detail) =>
+      photo.location ? <PhotoLocation location={photo.location} detail={detail} /> : DASH,
   },
   camera: { className: CELL, render: (photo) => photo.camera },
   lens: { className: CELL, render: (photo) => photo.lens ?? DASH },
@@ -422,10 +471,12 @@ const CELLS: Record<
 function PhotoRow({
   photo,
   columnIds,
+  placeDetail,
   onOpen,
 }: {
   photo: Photo;
   columnIds: ColumnId[];
+  placeDetail: LocationDetail;
   onOpen: (photo: ImagePhoto) => void;
 }) {
   const { image } = photo;
@@ -434,7 +485,7 @@ function PhotoRow({
     <tr className="border-t">
       {columnIds.map((id) => (
         <td key={id} className={CELLS[id].className}>
-          {CELLS[id].render(photo, open)}
+          {CELLS[id].render(photo, open, placeDetail)}
         </td>
       ))}
     </tr>

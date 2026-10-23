@@ -87,3 +87,7 @@ resized versions. The Timeline's counts leave out its time range, which still ap
 
 When the filters leave no photos, the view says so instead of its list; the Map shows no markers and moves out to the
 whole world. Changing a filter on the Map fits it to the photos it now shows.
+
+A choice that would show no photos, given the other filters, isn't listed, unless it's the one chosen (or, in
+**Places**, has a chosen one inside it). The dropdown ends with a greyed-out line saying how many were hidden, and the
+Places tree a note under it, such as "40 places hidden by the other filters".
