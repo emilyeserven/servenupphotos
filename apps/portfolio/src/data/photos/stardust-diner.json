@@ -1,0 +1,55 @@
+{
+  "title": "Stardust Diner",
+  "comment": null,
+  "id": 169,
+  "file": "IMG_4102.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+  "aperture": 3.5,
+  "exposure": "1/125",
+  "iso": 200,
+  "focalLength": 18,
+  "gpsPosition": "40 deg 45' 42.92\" N, 73 deg 59' 0.43\" W",
+  "createDate": "2017:09:23 18:12:14",
+  "placeName": "Midtown West",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
+  "country": "United States of America",
+  "city": "New York City",
+  "width": 5349,
+  "height": 3104,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102.jpg",
+    "key": "photos/ceb2388ae831-img-4102.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102-thumbnail.webp?crop=1602,267,2615",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ceb2388ae831-img-4102-thumbnailpreview.webp?crop=1602,267,2615",
+    "thumbnailcrop": {
+      "x": 1602,
+      "y": 267,
+      "size": 2615,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "midtown-west"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}
