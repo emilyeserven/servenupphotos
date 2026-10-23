@@ -12,6 +12,7 @@ import { regenerateVersionsMutation, thumbnailCropQuery } from "@/api/versions";
 import { useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { savedDetails } from "@/components/photo-details";
 import { type Crop } from "@/lib/crop";
+import { savedSocialPosts } from "@/lib/social-posts";
 import {
   type Editable,
   type PhotoJson,
@@ -30,7 +31,7 @@ import {
   withSquares,
 } from "@/components/edit-in-flight/photo-json";
 
-/** The crop, title, place name, comment, albums and tags being edited, against the last ones saved, and the JSON saving them would write. */
+/** The crop, title, place name, comment, albums, tags and social media posts being edited, against the last ones saved, and the JSON saving them would write. */
 export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
   const [crop, setCrop] = useState<Crop | null>(savedCrop);
   // The editor reports the middle first when no crop was saved, which then counts as saved.
@@ -38,10 +39,12 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
   const [savedData, setSavedData] = useState(data);
   const [details, setDetails] = useState(() => savedDetails(data));
   const [groups, setGroups] = useState(() => savedGroups(data));
+  const [socialPosts, setSocialPosts] = useState(() => savedSocialPosts(data));
+  const fields = { details, groups, socialPosts };
   const remakeSquares = cropChanged(crop, baseline, savedData);
-  const changed = remakeSquares || fieldsChanged(savedData, details, groups);
+  const changed = remakeSquares || fieldsChanged(savedData, fields);
   const request = {
-    ...saveRequest(savedData, details, groups, crop, baseline, remakeSquares),
+    ...saveRequest(savedData, fields, crop, baseline, remakeSquares),
     name: newFileName(file, savedData, details.title),
   };
   return {
@@ -52,6 +55,8 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
     setDetails,
     groups,
     setGroups,
+    socialPosts,
+    setSocialPosts,
     /** What saving would do, when there's anything to save. */
     request: changed ? request : null,
     /** The JSON saving would write, when there's anything to save. */
