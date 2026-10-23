@@ -5,7 +5,9 @@ import {
   type OverrideRule,
   type OverrideValue,
 } from "@/api/cameras";
+import type { CustomLens } from "@/api/lenses";
 import { canonicalJson } from "@/lib/combined";
+import { chosenLensFields } from "@/lib/custom-lens";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
 /** The photo JSON field that keeps the EXIF values of the fields a camera override changed. */
@@ -46,18 +48,20 @@ function exifValues(photo: CombinedPhoto): Record<string, OverrideValue> {
 }
 
 /**
- * Every override field of photo once the override for its camera is made over its EXIF values, and
- * its exifOriginals: the EXIF values the override replaced. A field no rule sets is its EXIF value,
- * as the backend applies them.
+ * Every override field of photo once the override for its camera is made over its EXIF values, then
+ * its custom lens's fields, and its exifOriginals: the EXIF values they replaced. A field neither
+ * sets is its EXIF value, as the backend applies them.
  */
 function overriddenFields(
   overrides: CameraOverride[],
+  lenses: CustomLens[],
   photo: CombinedPhoto,
 ): Record<string, unknown> {
   const exif = exifValues(photo);
   const override = overrides.find((o) => o.camera === exif.camera);
   const rules = (override?.rules ?? []).filter((rule) => applies(rule, exif));
-  const out: Record<string, unknown> = Object.assign({ ...exif }, ...rules.map((r) => r.set));
+  const sets = [...rules.map((r) => r.set), chosenLensFields(lenses, photo)];
+  const out: Record<string, unknown> = Object.assign({ ...exif }, ...sets);
   const kept = OVERRIDE_FIELDS.filter(({ field }) => !same(out[field], exif[field]));
   out[EXIF_ORIGINALS] = Object.fromEntries(kept.map(({ field }) => [field, exif[field]]));
   return out;
@@ -74,12 +78,16 @@ function changes(photo: CombinedPhoto, field: string, to: unknown): boolean {
   return !same(photo[field], to);
 }
 
-/** The fields applying the overrides to photo would change, with their new values; empty when none. */
+/**
+ * The fields applying the camera overrides and its custom lens to photo would change, with their
+ * new values; empty when none.
+ */
 export function overrideChanges(
   overrides: CameraOverride[],
+  lenses: CustomLens[],
   photo: CombinedPhoto,
 ): Record<string, unknown> {
-  const next = overriddenFields(overrides, photo);
+  const next = overriddenFields(overrides, lenses, photo);
   return Object.fromEntries(Object.entries(next).filter(([f, to]) => changes(photo, f, to)));
 }
 

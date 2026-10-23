@@ -11,6 +11,7 @@ The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in 
 | Localizations    | `localizations/<ID>.json` | `localizations/LOCALIZATIONS.json` |
 | Metadata groups  | `metainfo/<ID>.json`      | `metainfo/METAINFO.json`           |
 | Camera overrides | `cameras/<ID>.json`       | `cameras/CAMERAS.json`             |
+| Custom lenses    | `lenses/<ID>.json`        | `lenses/LENSES.json`               |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
@@ -35,6 +36,8 @@ notes how countries, cities and places are written and said; see [Places and Loc
 `METAINFO.json` names groups of the photos' camera, lens, focal length, aperture, exposure and ISO values; see
 [Metadata Groups](metadata-groups.md). `CAMERAS.json` holds per-camera rules that write other values over a photo's EXIF,
 and a photo's `exifOriginals` keeps the EXIF values they replaced; see [Camera Overrides](camera-overrides.md).
+`LENSES.json` holds the custom lenses a photo's `customLens` can name, and `manualAperture` marks a photo whose
+aperture is manual or unknown; see [Custom Lenses](custom-lenses.md).
 
 A photo's `spotlightZones` lists the spots on the portfolio it's spotlighted in, by ID, such as `"homepage"`; see
 [Publish](publish.md#site-spotlight). Older files may be missing it, which means none.

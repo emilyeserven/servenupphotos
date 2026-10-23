@@ -130,7 +130,7 @@ function SetFields({ rule, onChange }: RuleProps) {
           variant="outline"
           size="sm"
           className="self-start"
-          onClick={() => setAll([...entries, [unused[0]!.field, null]])}
+          onClick={() => setAll([...entries, newPair(unused[0]!.field)])}
         >
           <PlusIcon aria-hidden />
           Set another field
@@ -157,7 +157,7 @@ function SetRow({ field, value, choices, onChange }: SetRowProps) {
         aria-label="Field"
         className={selectClass}
         value={field}
-        onChange={(e) => onChange([e.target.value as OverrideField, null])}
+        onChange={(e) => onChange(newPair(e.target.value as OverrideField))}
       >
         {choices.map((f) => (
           <option key={f} value={f}>
@@ -179,6 +179,11 @@ function SetRow({ field, value, choices, onChange }: SetRowProps) {
   );
 }
 
+/** A field to set, starting with no value, or "yes" for a yes-or-no field. */
+function newPair(field: OverrideField): [OverrideField, OverrideValue] {
+  return [field, isBoolean(field) ? true : null];
+}
+
 /** Whether the photo files have field as a number. */
 function isNumeric(field: OverrideField): boolean {
   return OVERRIDE_FIELDS.find((f) => f.field === field)?.type === "number";
@@ -190,15 +195,37 @@ function typedValue(field: OverrideField, text: string): OverrideValue {
   return isNumeric(field) ? Number(text) : text;
 }
 
-function ValueInput({
-  field,
-  value,
-  onChange,
-}: {
+/** Whether the photo files have field as true or false. */
+function isBoolean(field: OverrideField): boolean {
+  return OVERRIDE_FIELDS.find((f) => f.field === field)?.type === "boolean";
+}
+
+interface ValueInputProps {
   field: OverrideField;
   value: OverrideValue;
   onChange: (value: OverrideValue) => void;
-}) {
+}
+
+function ValueInput(props: ValueInputProps) {
+  return isBoolean(props.field) ? <BooleanInput {...props} /> : <TypedInput {...props} />;
+}
+
+/** Yes or no, for a field such as Manual/unknown aperture. */
+function BooleanInput({ field, value, onChange }: ValueInputProps) {
+  return (
+    <select
+      aria-label={`${fieldLabel(field)} to write`}
+      className={selectClass}
+      value={value === true ? "true" : "false"}
+      onChange={(e) => onChange(e.target.value === "true")}
+    >
+      <option value="true">yes</option>
+      <option value="false">no</option>
+    </select>
+  );
+}
+
+function TypedInput({ field, value, onChange }: ValueInputProps) {
   return (
     <Input
       aria-label={`${fieldLabel(field)} to write`}
@@ -206,7 +233,7 @@ function ValueInput({
       type={isNumeric(field) ? "number" : "text"}
       step="any"
       placeholder="Empty clears it"
-      value={value ?? ""}
+      value={typeof value === "boolean" ? "" : (value ?? "")}
       onChange={(e) => onChange(typedValue(field, e.target.value))}
     />
   );

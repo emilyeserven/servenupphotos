@@ -28,6 +28,7 @@ var emptyLists = map[string]string{
 	dataRoot + "/localizations/LOCALIZATIONS.json": "[]\n",
 	dataRoot + "/metainfo/METAINFO.json":           "[]\n",
 	dataRoot + "/cameras/CAMERAS.json":             "[]\n",
+	dataRoot + "/lenses/LENSES.json":               "[]\n",
 }
 
 // with is files with more over them.
@@ -65,7 +66,7 @@ func TestCommitCombined(t *testing.T) {
 		t.Fatalf("CommitCombined() error = %v", err)
 	}
 	wantPhotos := "[\n  {\n    \"title\": \"A\"\n  },\n  {\n    \"title\": \"B\",\n    \"albums\": [\"x\"]\n  }\n]\n"
-	// ALLALBUMS.json is already up to date; the tags, places, localizations, metainfo and cameras folders
+	// ALLALBUMS.json is already up to date; the tags, places, localizations, metainfo, cameras and lenses folders
 	// aren't there, so their combined files are made empty.
 	want := map[string]string{
 		dataRoot + "/photos/ALLPHOTOS.json":            wantPhotos,
@@ -74,12 +75,13 @@ func TestCommitCombined(t *testing.T) {
 		dataRoot + "/localizations/LOCALIZATIONS.json": "[]\n",
 		dataRoot + "/metainfo/METAINFO.json":           "[]\n",
 		dataRoot + "/cameras/CAMERAS.json":             "[]\n",
+		dataRoot + "/lenses/LENSES.json":               "[]\n",
 	}
 	if tree := f.committedTree(); !maps.Equal(tree, want) {
 		t.Errorf("committed %q, want %q", tree, want)
 	}
-	if !got.Changed || got.CommitSHA != "commit-1" || len(got.Files) != 6 || got.NewPullRequest {
-		t.Errorf("CommitCombined() = %+v, want commit-1 with six files", got)
+	if !got.Changed || got.CommitSHA != "commit-1" || len(got.Files) != 7 || got.NewPullRequest {
+		t.Errorf("CommitCombined() = %+v, want commit-1 with seven files", got)
 	}
 	if got.Counts["photos"] != 2 || got.Counts["albums"] != 1 || got.Counts["tags"] != 0 {
 		t.Errorf("counts = %v, want 2 photos, 1 album, 0 tags", got.Counts)

@@ -96,21 +96,22 @@ type InFlightResult struct {
 	Folder      string               `json:"folder"`
 	PullRequest *InFlightPullRequest `json:"pullRequest"`
 	Files       []InFlightFile       `json:"files"`
-	// Albums, Tags, Places, Localizations, MetaInfo and Cameras are the
-	// album, tag, place, localization, metadata group and camera override
-	// files in the pull request.
+	// Albums, Tags, Places, Localizations, MetaInfo, Cameras and Lenses are
+	// the album, tag, place, localization, metadata group, camera override
+	// and custom lens files in the pull request.
 	Albums        InFlightGroups `json:"albums"`
 	Tags          InFlightGroups `json:"tags"`
 	Places        InFlightGroups `json:"places"`
 	Localizations InFlightGroups `json:"localizations"`
 	MetaInfo      InFlightGroups `json:"metainfo"`
 	Cameras       InFlightGroups `json:"cameras"`
+	Lenses        InFlightGroups `json:"lenses"`
 }
 
-// groups are r's album, tag, place, localization, metadata group and camera
-// override files.
+// groups are r's album, tag, place, localization, metadata group, camera
+// override and custom lens files.
 func (r *InFlightResult) groups() []*InFlightGroups {
-	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras}
+	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses}
 }
 
 // InFlightGroups is the files of one Kind in the pull request.
@@ -160,6 +161,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		Localizations: newInFlightGroups(w.root, Kind{Folder: Localizations.Folder, AllFile: Localizations.AllFile}),
 		MetaInfo:      newInFlightGroups(w.root, Kind{Folder: MetaInfo.Folder, AllFile: MetaInfo.AllFile}),
 		Cameras:       newInFlightGroups(w.root, Kind{Folder: Cameras.Folder, AllFile: Cameras.AllFile}),
+		Lenses:        newInFlightGroups(w.root, Kind{Folder: Lenses.Folder, AllFile: Lenses.AllFile}),
 	}
 	for _, p := range w.changed(folder, AllPhotosFile) {
 		if w.status(p) == statusRemoved {

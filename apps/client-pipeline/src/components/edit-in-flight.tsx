@@ -28,12 +28,15 @@ import {
 } from "@/components/edit-in-flight/photo-json";
 import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
-import { type Edit, useEdit, useSave } from "@/components/edit-in-flight/use-edit";
+import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
+import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-in-flight/use-edit";
+import { CustomLensCard } from "@/components/custom-lens-card";
+import { lensChanged, withLensChoice } from "@/lib/custom-lens";
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
  * Square Thumbnail crop, title, place name, comment and social media posts can be changed, its
- * camera overrides applied again, then saved by remaking the thumbnail in R2
+ * custom lens chosen and camera overrides applied again, then saved by remaking the thumbnail in R2
  * when the crop moved and updating its JSON in the pull request. A photo already in the portfolio is
  * read from the base branch until its first save puts it in the pull request.
  */
@@ -157,15 +160,35 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           calendarDate={calendarDate(edit.savedData)}
           disabled={pending}
         />
-        <CameraOverridesCard
-          saved={edit.savedData}
-          applied={edit.overrides}
-          onApply={edit.setOverrides}
-          disabled={pending}
-        />
+        <LensCards edit={edit} disabled={pending} />
         <JsonPreview file={editable.file} edit={edit} />
       </div>
     </div>
+  );
+}
+
+/** The photo's custom lens and manual aperture, then what its camera overrides and lens change. */
+function LensCards({ edit, disabled }: { edit: Edit; disabled: boolean }) {
+  const settings = useLensSettings();
+  const { savedData, lensEdit, setLensEdit } = edit;
+  return (
+    <>
+      <CustomLensCard
+        value={lensEdit}
+        onChange={(choice) => setLensEdit({ ...lensEdit, ...choice })}
+        lenses={settings.lenses}
+        description="Saving changes writes it, with the camera overrides, over the JSON."
+        disabled={disabled}
+      />
+      <CameraOverridesCard
+        photo={withLensChoice(savedData, lensEdit)}
+        settings={settings}
+        applied={overridesApplied(savedData, lensEdit)}
+        forced={lensChanged(savedData, lensEdit)}
+        onApply={(apply) => setLensEdit({ ...lensEdit, apply })}
+        disabled={disabled}
+      />
+    </>
   );
 }
 

@@ -77,3 +77,38 @@ func handleReapply(store *settings.Store, failure string, run func(context.Conte
 		writeSocialResult(w, result, err, failure)
 	}
 }
+
+// handleSaveCustomLens saves the body as the path's custom lens, new or
+// replacing the one there, as a change waiting for Commit.
+func handleSaveCustomLens(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var lens github.CustomLens
+		if !decodeEntry(w, r, &lens, "custom lens") {
+			return
+		}
+		lens.ID = r.PathValue("id")
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SaveCustomLens(ctx, cfg, lens)
+		writeSocialResult(w, result, err, "could not save the custom lens")
+	}
+}
+
+// handleDeleteCustomLens removes the path's custom lens as a change waiting
+// for Commit.
+func handleDeleteCustomLens(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.DeleteCustomLens(ctx, cfg, r.PathValue("id"))
+		writeSocialResult(w, result, err, "could not remove the custom lens")
+	}
+}

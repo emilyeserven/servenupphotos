@@ -46,6 +46,7 @@ const basePlaces = readFolder("places", "PLACES");
 const baseLocalizations = readFolder("localizations", "LOCALIZATIONS");
 const baseMetaInfo = readFolder("metainfo", "METAINFO");
 const baseCameras = readFolder("cameras", "CAMERAS");
+const baseLenses = readFolder("lenses", "LENSES");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -129,6 +130,19 @@ const added = {
       },
     },
   ],
+  lenses: [
+    {
+      path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
+      data: {
+        id: "7artisans-12mm-f2-8",
+        name: "7Artisans 12mm F2.8",
+        description: "Manual focus, adapted to the X-T5.",
+        focalLength: 12,
+        aperture: null,
+        manualAperture: true,
+      },
+    },
+  ],
   metainfo: [
     metaGroupFile("focal-length-wide-angle", "Wide angle", "focalLength", {
       range: { min: 10, max: 24 },
@@ -192,6 +206,7 @@ const headPlaces = withAdded(basePlaces, added.places);
 const headLocalizations = withAdded(baseLocalizations, added.localizations);
 const headMetaInfo = withAdded(baseMetaInfo, added.metainfo);
 const headCameras = withAdded(baseCameras, added.cameras);
+const headLenses = withAdded(baseLenses, added.lenses);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -204,7 +219,10 @@ function combinedFile(kind, all, files, branch) {
   };
 }
 
-function combinedFiles([photos, albums, tags, places, localizations, metainfo, cameras], branch) {
+function combinedFiles(
+  [photos, albums, tags, places, localizations, metainfo, cameras, lenses],
+  branch,
+) {
   return {
     photos: combinedFile("photos", "ALLPHOTOS.json", photos, branch),
     albums: combinedFile("albums", "ALLALBUMS.json", albums, branch),
@@ -213,6 +231,7 @@ function combinedFiles([photos, albums, tags, places, localizations, metainfo, c
     localizations: combinedFile("localizations", "LOCALIZATIONS.json", localizations, branch),
     metainfo: combinedFile("metainfo", "METAINFO.json", metainfo, branch),
     cameras: combinedFile("cameras", "CAMERAS.json", cameras, branch),
+    lenses: combinedFile("lenses", "LENSES.json", lenses, branch),
   };
 }
 
@@ -369,6 +388,7 @@ export function defaultFixtures() {
           baseLocalizations,
           baseMetaInfo,
           baseCameras,
+          baseLenses,
         ]),
         branch: BASE_BRANCH,
       },
@@ -382,6 +402,7 @@ export function defaultFixtures() {
             headLocalizations,
             headMetaInfo,
             headCameras,
+            headLenses,
           ],
           PULL_REQUEST.branch,
         ),
@@ -402,6 +423,7 @@ export function defaultFixtures() {
       },
       metainfo: { folder: `${FOLDER}/metainfo`, files: added.metainfo.map(groupFile) },
       cameras: { folder: `${FOLDER}/cameras`, files: added.cameras.map(groupFile) },
+      lenses: { folder: `${FOLDER}/lenses`, files: added.lenses.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -452,6 +474,13 @@ export function defaultFixtures() {
       path: `${FOLDER}/cameras/x-t5.json`,
       data: body,
       before: added.cameras[0].data,
+      changed: true,
+    }),
+    "PUT /api/lenses/7artisans-12mm-f2-8": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
+      data: body,
+      before: added.lenses[0].data,
       changed: true,
     }),
     "POST /api/photos/bucket/exif": {

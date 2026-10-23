@@ -112,6 +112,8 @@ export interface CombinedFiles {
   metainfo: CombinedFile;
   /** CAMERAS.json, the camera overrides. */
   cameras: CombinedFile;
+  /** LENSES.json, the custom lenses. */
+  lenses: CombinedFile;
 }
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */
@@ -150,6 +152,8 @@ export interface InFlightRead {
   metainfo: InFlightGroupsRead;
   /** The camera override files, combined into CAMERAS.json. */
   cameras: InFlightGroupsRead;
+  /** The custom lens files, combined into LENSES.json. */
+  lenses: InFlightGroupsRead;
   images: InFlightImages;
 }
 
@@ -162,18 +166,19 @@ interface InFlightGroupsRead {
 /** The photo data waiting in the pull request, checked against the combined lists at its head. */
 export interface InFlightResponse extends Omit<
   InFlightRead,
-  "files" | "albums" | "tags" | "places" | "localizations" | "metainfo" | "cameras"
+  "files" | "albums" | "tags" | "places" | "localizations" | "metainfo" | "cameras" | "lenses"
 > {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, place, localization, metadata group and camera override files in the pull request. */
+  /** The album, tag, place, localization, metadata group, camera override and custom lens files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
   places: InFlightGroups;
   localizations: InFlightGroups;
   metainfo: InFlightGroups;
   cameras: InFlightGroups;
+  lenses: InFlightGroups;
 }
 
 /** The album, tag, place or localization files in the pull request, and the combined file built from them. */

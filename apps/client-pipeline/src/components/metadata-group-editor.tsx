@@ -17,7 +17,7 @@ import { MetaValuePicker } from "@/components/metadata-value-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+import { Busy, RemoveEntryButton } from "@/components/entry-buttons";
 import { Textarea } from "@/components/ui/textarea";
 import { canonicalJson } from "@/lib/combined";
 import { uncoveredValues } from "@/lib/meta-groups";
@@ -271,18 +271,11 @@ function SaveNote({ error, why }: { error: Error | null; why: string }) {
 function RemoveButton({ id, onRemoved }: { id: string; onRemoved: () => void }) {
   const remove = useMutation({ ...deleteMetaGroupMutation, onSuccess: onRemoved });
   return (
-    <>
-      <Button variant="outline" disabled={remove.isPending} onClick={() => remove.mutate(id)}>
-        <Busy busy={remove.isPending} />
-        Remove group
-      </Button>
-      <SaveNote error={remove.error} why="" />
-    </>
+    <RemoveEntryButton
+      label="Remove group"
+      remove={{ ...remove, mutate: () => remove.mutate(id) }}
+    />
   );
-}
-
-function Busy({ busy }: { busy: boolean }) {
-  return busy ? <Spinner /> : null;
 }
 
 /** Why the group can't be saved, or why a save failed, beside the buttons. */

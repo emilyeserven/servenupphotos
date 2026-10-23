@@ -29,7 +29,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import {
   photos,
-  SETTING_FORMATS,
+  settingText,
+  type SettingKey,
   type CameraSettings,
   type Photo,
   type PhotoImage,
@@ -399,10 +400,8 @@ const DASH = <span className="text-muted-foreground">—</span>;
 type ColumnId = SortColumn | HideableColumn;
 
 /** One setting as a photographer writes it, such as "f/5.6", or a dash when its EXIF didn't say. */
-function settingCell(settings: CameraSettings, key: keyof CameraSettings): ReactNode {
-  const value = settings[key];
-  const write = SETTING_FORMATS.find(([name]) => name === key)?.[1];
-  return value === null || !write ? DASH : write(value);
+function settingCell(settings: CameraSettings, key: SettingKey): ReactNode {
+  return settingText(settings, key) ?? DASH;
 }
 
 const CELL = "px-3 py-2 whitespace-nowrap";

@@ -50,8 +50,8 @@ type OverridesResult struct {
 }
 
 // PreviewReapplyOverrides reads every photo JSON file, as PreviewBaseURL
-// does, and lists the fields the camera overrides would change in each,
-// starting from its EXIF values: its own, or the ones its exifOriginals
+// does, and lists the fields the camera overrides and its custom lens would
+// change in each, starting from its EXIF values: its own, or the ones its exifOriginals
 // kept. A field no override sets any more goes back to its EXIF value. It
 // only reads.
 func (c *Client) PreviewReapplyOverrides(ctx context.Context, gh settings.GitHub) (OverridesPreview, error) {
@@ -59,7 +59,7 @@ func (c *Client) PreviewReapplyOverrides(ctx context.Context, gh settings.GitHub
 	if perr != nil {
 		return OverridesPreview{}, perr
 	}
-	overrides := parseOverrides(scan.w.entries(Cameras))
+	overrides, lenses := parseOverrides(scan.w.entries(Cameras)), parseLenses(scan.w.entries(Lenses))
 	preview := OverridesPreview{
 		Repo: scan.t.repo.FullName, Folder: scan.folder, Branch: scan.branch, Overrides: len(overrides),
 		Files: []OverrideFile{}, Unreadable: []BaseURLUnreadable{},
@@ -73,7 +73,7 @@ func (c *Client) PreviewReapplyOverrides(ctx context.Context, gh settings.GitHub
 			continue
 		}
 		preview.PhotoFiles++
-		if file, ok := overrideFile(overrides, f); ok {
+		if file, ok := overrideFile(overrides, lenses, f); ok {
 			preview.Files = append(preview.Files, file)
 		}
 	}
@@ -88,7 +88,7 @@ func (c *Client) ReapplyOverrides(ctx context.Context, gh settings.GitHub) (Over
 	if perr != nil {
 		return OverridesResult{}, perr
 	}
-	overrides := parseOverrides(scan.w.entries(Cameras))
+	overrides, lenses := parseOverrides(scan.w.entries(Cameras)), parseLenses(scan.w.entries(Lenses))
 	var entries []map[string]string
 	result := OverridesResult{}
 	for _, f := range scan.files {
@@ -96,7 +96,7 @@ func (c *Client) ReapplyOverrides(ctx context.Context, gh settings.GitHub) (Over
 			return OverridesResult{}, publishErr(http.StatusConflict,
 				"%s couldn't be read (%s), so nothing was changed.", f.path, f.err)
 		}
-		file, ok := overrideFile(overrides, f)
+		file, ok := overrideFile(overrides, lenses, f)
 		if !ok {
 			continue
 		}
@@ -120,12 +120,12 @@ func (c *Client) ReapplyOverrides(ctx context.Context, gh settings.GitHub) (Over
 // overrideFile is the fields the overrides change in f, and whether they
 // change any. A field the file doesn't have is only added when it gets a
 // value, so files from before exifOriginals aren't changed just to add it.
-func overrideFile(overrides []CameraOverride, f photoFile) (OverrideFile, bool) {
+func overrideFile(overrides []CameraOverride, lenses []CustomLens, f photoFile) (OverrideFile, bool) {
 	var fields map[string]json.RawMessage
 	if json.Unmarshal(f.content, &fields) != nil {
 		return OverrideFile{}, false
 	}
-	next := overriddenFields(overrides, fields)
+	next := overriddenFields(overrides, lenses, fields)
 	file := OverrideFile{Path: f.path, FileURL: f.fileURL}
 	_ = json.Unmarshal(exifValues(fields)["camera"], &file.Camera)
 	for _, field := range append(slices.Clone(OverrideFields), exifOriginalsField) {

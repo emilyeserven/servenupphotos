@@ -33,7 +33,8 @@ on `images.thumbnail` when it has one, or, with that option on, from the crop sa
 **Camera overrides** applies the [camera overrides](camera-overrides.md) to every photo file again, after they've
 changed (`POST /api/data/camera-overrides/preview`, then `POST /api/data/camera-overrides`). Each file starts from its
 EXIF values (its own, with the ones its `exifOriginals` kept laid over them), so renaming a camera again, or removing a
-rule, reaches photos an older rule already changed; a field no rule sets any more goes back to its EXIF value. Only the
+rule, reaches photos an older rule already changed; a field no rule sets any more goes back to its EXIF value. Each
+photo's [custom lens](custom-lenses.md) is applied after the rules, so it's kept, and a changed lens reaches its photos. Only the
 changed top-level fields are rewritten, and nothing is saved while any photo file can't be read.
 
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before

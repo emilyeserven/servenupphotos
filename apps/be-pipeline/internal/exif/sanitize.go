@@ -61,6 +61,14 @@ type Sanitized struct {
 	// changed, by field, such as {"lens": "21.0 mm"}, so the overrides can be
 	// applied again after they change. Sanitize leaves it nil.
 	ExifOriginals map[string]json.RawMessage `json:"exifOriginals"`
+	// ManualAperture marks a photo taken at an aperture EXIF doesn't know,
+	// such as with a manual lens, which the portfolio shows as manual rather
+	// than leaving out. Its Aperture is nil. Sanitize leaves it false.
+	ManualAperture bool `json:"manualAperture"`
+	// CustomLens is the ID of the custom lens picked for the photo on the
+	// Photo page, from LENSES.json, whose name, focal length and aperture
+	// are written over its EXIF; nil for none. Sanitize leaves it nil.
+	CustomLens *string `json:"customLens"`
 }
 
 // Images are the links to a photo's published copies. Sanitize leaves them

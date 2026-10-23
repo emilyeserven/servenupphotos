@@ -74,7 +74,7 @@ function InFlightPage() {
     <Page
       wide
       title="Photos in Flight"
-      description="Photo, album, tag, place, localization, metadata group and camera override data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
+      description="Photo, album, tag, place, localization, metadata group, camera override and custom lens data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -587,7 +587,7 @@ function AllPhotosMark({
   );
 }
 
-type GroupKey = "albums" | "tags" | "places" | "localizations" | "metainfo" | "cameras";
+type GroupKey = "albums" | "tags" | "places" | "localizations" | "metainfo" | "cameras" | "lenses";
 
 /** The kinds of data files listed after the photos, in order, with their headings. */
 const GROUPS: [GroupKey, string][] = [
@@ -597,6 +597,7 @@ const GROUPS: [GroupKey, string][] = [
   ["localizations", "Localizations"],
   ["metainfo", "Metadata groups"],
   ["cameras", "Camera overrides"],
+  ["lenses", "Custom lenses"],
 ];
 
 /** The album, tag, place or localization files in the pull request, each with its JSON; nothing when there are none. */
@@ -742,6 +743,8 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dd>{groupsSummary(data.metainfo)}</dd>
       <dt className="text-muted-foreground">Camera override files</dt>
       <dd>{groupsSummary(data.cameras)}</dd>
+      <dt className="text-muted-foreground">Custom lens files</dt>
+      <dd>{groupsSummary(data.lenses)}</dd>
     </dl>
   );
 }

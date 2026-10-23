@@ -205,7 +205,7 @@ function UseFor({ tag, onPick }: { tag: string; onPick: (field: OverrideField) =
       onChange={(e) => onPick(e.target.value as OverrideField)}
     >
       <option value="">—</option>
-      {OVERRIDE_FIELDS.map((f) => (
+      {OVERRIDE_FIELDS.filter((f) => f.type !== "boolean").map((f) => (
         <option key={f.field} value={f.field}>
           {fieldLabel(f.field)}
         </option>

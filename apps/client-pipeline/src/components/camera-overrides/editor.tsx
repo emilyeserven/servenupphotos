@@ -12,10 +12,12 @@ import { OriginalExif } from "@/components/camera-overrides/original-exif";
 import { RuleCard } from "@/components/camera-overrides/rule-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
+import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
+import { customLenses } from "@/api/lenses";
 import { overrideChanges } from "@/lib/camera-overrides";
 import { canonicalJson } from "@/lib/combined";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { useCombinedData } from "@/stores/combined-data";
 
 interface OverrideEditorProps {
   /** The camera as its photos' EXIF names it. */
@@ -77,7 +79,8 @@ export function OverrideEditor({ camera, override, photos }: OverrideEditorProps
 
 /** How many of the camera's photos the rules, as written, would change. */
 function Effect({ next, photos }: { next: CameraOverride; photos: CombinedPhoto[] }) {
-  const changed = photos.filter((p) => Object.keys(overrideChanges([next], p)).length > 0);
+  const lenses = customLenses(useCombinedData().data);
+  const changed = photos.filter((p) => Object.keys(overrideChanges([next], lenses, p)).length > 0);
   return (
     <p className="text-muted-foreground text-sm">
       As written, these rules change {changed.length} of {photos.length} photos already saved
@@ -134,22 +137,9 @@ function SaveLabel({ isNew }: { isNew: boolean }) {
 function RemoveButton({ id }: { id: string }) {
   const remove = useMutation(deleteOverrideMutation);
   return (
-    <>
-      <Button variant="outline" disabled={remove.isPending} onClick={() => remove.mutate(id)}>
-        <Busy busy={remove.isPending} />
-        Remove override
-      </Button>
-      <SaveNote error={remove.error} why="" />
-    </>
+    <RemoveEntryButton
+      label="Remove override"
+      remove={{ ...remove, mutate: () => remove.mutate(id) }}
+    />
   );
-}
-
-function Busy({ busy }: { busy: boolean }) {
-  return busy ? <Spinner /> : null;
-}
-
-/** Why the last save failed, or else why the override can't be saved yet. */
-function SaveNote({ error, why }: { error: Error | null; why: string }) {
-  if (error) return <span className="text-destructive text-sm">{error.message}</span>;
-  return why ? <span className="text-muted-foreground text-sm">{why}</span> : null;
 }

@@ -124,7 +124,11 @@ export interface SanitizedExif {
    * The EXIF values of the fields a camera override changed, by field, such as `{ lens: "21.0 mm" }`,
    * so the overrides can be applied again after they change. Null before the backend applies them.
    */
-  exifOriginals: Record<string, string | number | null> | null;
+  exifOriginals: Record<string, string | number | boolean | null> | null;
+  /** Whether the photo has no aperture because it was set on the lens by hand or isn't known. */
+  manualAperture: boolean;
+  /** The ID of the custom lens chosen for the photo on the Photo page, or null for none. */
+  customLens: string | null;
 }
 
 export interface ExifResponse {

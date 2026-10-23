@@ -1,16 +1,20 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ScannedPhotos } from "@/api/data";
+import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 import { entryId } from "@/api/places";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
-import type { FileChange } from "@/lib/optimistic";
 
-/** A photo field a camera override can set: the ones read from EXIF, except the photo's size. */
+/**
+ * A photo field a camera override can set: the ones read from EXIF, except the photo's size, and
+ * whether its aperture is manual or unknown.
+ */
 export type OverrideField =
   | "camera"
   | "lens"
   | "aperture"
+  | "manualAperture"
   | "exposure"
   | "iso"
   | "focalLength"
@@ -19,16 +23,16 @@ export type OverrideField =
   | "country"
   | "city";
 
-/** One value a photo file has for a field: a string, a number, or null for none. */
-export type OverrideValue = string | number | null;
+/** One value a photo file has for a field: a string, a number, true or false, or null for none. */
+export type OverrideValue = string | number | boolean | null;
 
 /** A field a camera override can set, with how the Camera Overrides page writes it. */
 export interface OverrideFieldInfo {
   field: OverrideField;
   /** Its name, such as "Focal length". */
   label: string;
-  /** "number" for a field the photo files have as a number, such as 5.6 for f/5.6. */
-  type: "text" | "number";
+  /** "number" for a field the photo files have as a number, such as 5.6 for f/5.6; "boolean" for yes or no. */
+  type: "text" | "number" | "boolean";
 }
 
 /** The fields, in the order the page offers them. */
@@ -37,6 +41,7 @@ export const OVERRIDE_FIELDS: OverrideFieldInfo[] = [
   { field: "lens", label: "Lens", type: "text" },
   { field: "focalLength", label: "Focal length (mm)", type: "number" },
   { field: "aperture", label: "Aperture (f-number)", type: "number" },
+  { field: "manualAperture", label: "Manual/unknown aperture", type: "boolean" },
   { field: "exposure", label: "Exposure (s)", type: "text" },
   { field: "iso", label: "ISO", type: "number" },
   { field: "gpsPosition", label: "GPS position", type: "text" },
@@ -99,48 +104,13 @@ export function overrideId(camera: string): string {
   return entryId(camera).slice(0, 100).replace(/-+$/, "");
 }
 
-/** What saving or removing a camera override did; nothing is saved when it already had that content. */
-interface OverrideResult {
-  path: string;
-  /** The file as saved, or null when it was removed. */
-  data: CameraOverride | null;
-  /** The file before, or null when it's new. */
-  before: CameraOverride | null;
-  changed: boolean;
-}
-
-/** The change a save or removal made, for the combined lists; a new file has no `before`. */
-function overrideChange({ path, data, before }: OverrideResult): FileChange[] {
-  const change: FileChange = { kind: "cameras", path, after: data };
-  return [before === null ? change : { ...change, before }];
-}
-
-const overrideMeta = {
-  saves: (result: unknown) => (result as OverrideResult).changed,
-  changes: (result: unknown) => overrideChange(result as OverrideResult),
-};
+const overrideMutations = settingMutations<CameraOverride>("cameras");
 
 /** Saves a camera override, new or changed, as a change waiting for Commit. */
-export const saveOverrideMutation = mutationOptions({
-  mutationKey: ["cameras", "save"],
-  scope: { id: "photo-data-entries" },
-  meta: overrideMeta,
-  mutationFn: (override: CameraOverride) =>
-    requestJson<OverrideResult>(`/api/cameras/${encodeURIComponent(override.id)}`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(override),
-    }),
-});
+export const saveOverrideMutation = overrideMutations.save;
 
 /** Removes a camera override, as a change waiting for Commit. */
-export const deleteOverrideMutation = mutationOptions({
-  mutationKey: ["cameras", "delete"],
-  scope: { id: "photo-data-entries" },
-  meta: overrideMeta,
-  mutationFn: (id: string) =>
-    requestJson<OverrideResult>(`/api/cameras/${encodeURIComponent(id)}`, { method: "DELETE" }),
-});
+export const deleteOverrideMutation = overrideMutations.remove;
 
 /** One field applying the camera overrides again changes in a photo file. */
 export interface FieldChange {

@@ -1,9 +1,9 @@
 import { GripVerticalIcon, ImageIcon, XIcon } from "lucide-react";
-import { type DragEvent, useState } from "react";
 import type { SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
 import { Button } from "@/components/ui/button";
 import { photoName } from "@/lib/social-schedule";
+import { useDropTarget } from "@/hooks/use-drop-target";
 import { cn } from "@/lib/utils";
 
 /** Where a zone photo's "Draft" label goes: its bottom right corner. */
@@ -44,30 +44,6 @@ export function ZonePhotos({ photos, isUnsaved, onMove, onRemove }: ZonePhotosPr
   );
 }
 
-/** Drag handlers that take a photo dropped here, and whether one is being dragged over it. */
-function useDropTarget(onDropAt: (from: number) => void) {
-  const [over, setOver] = useState(false);
-  const handlers = {
-    onDragOver: (event: DragEvent) => {
-      if (!event.dataTransfer.types.includes(DRAG_TYPE)) return;
-      event.preventDefault();
-      event.dataTransfer.dropEffect = "move";
-      setOver(true);
-    },
-    onDragLeave: (event: DragEvent) => {
-      // Moving onto the photo's own image or buttons isn't leaving it.
-      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOver(false);
-    },
-    onDrop: (event: DragEvent) => {
-      event.preventDefault();
-      setOver(false);
-      const from = event.dataTransfer.getData(DRAG_TYPE);
-      if (from !== "") onDropAt(Number(from));
-    },
-  };
-  return { over, handlers };
-}
-
 interface ZonePhotoProps {
   photo: SocialPhoto;
   index: number;
@@ -79,7 +55,7 @@ interface ZonePhotoProps {
 /** A photo in a zone, with its place, which can be dragged to another place or taken out. */
 function ZonePhoto({ photo, index, unsaved, onDropAt, onRemove }: ZonePhotoProps) {
   const name = photoName(photo);
-  const { over, handlers } = useDropTarget(onDropAt);
+  const { over, handlers } = useDropTarget(DRAG_TYPE, (from) => onDropAt(Number(from)));
   return (
     <li
       draggable
