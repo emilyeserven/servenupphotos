@@ -203,6 +203,8 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
           <ParentField form={form} id={form.next.id} places={places} disabled={busy} />
           <PlaceJoinFields
             parent={places.find((p) => p.id === form.draft.parent)}
+            places={places}
+            id={form.next.id}
             name={form.draft.name}
             parentRelation={form.draft.parentRelation}
             childRelation={form.draft.childRelation}

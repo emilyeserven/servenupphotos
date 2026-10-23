@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { Place } from "@/api/places";
 import { FieldLabel } from "@/components/field-label";
-import { JOIN_WORDS, childJoin, joinLabel } from "@/lib/place-joins";
+import { JOIN_WORDS, chainPhrase, childJoin, joinLabel } from "@/lib/place-joins";
 import { cn } from "@/lib/utils";
 
 const SELECT = cn(
@@ -48,6 +48,9 @@ function JoinSelect({ id, label, help, value, fallback, disabled, onChange }: Jo
 interface PlaceJoinFieldsProps {
   /** The place it's in, if any. */
   parent: Place | undefined;
+  /** Every place, for the preview's places further up and the places in this one. */
+  places: Place[];
+  id: string;
   name: string;
   parentRelation: string;
   childRelation: string;
@@ -61,6 +64,8 @@ interface PlaceJoinFieldsProps {
  */
 export function PlaceJoinFields({
   parent,
+  places,
+  id,
   name,
   parentRelation,
   childRelation,
@@ -69,7 +74,7 @@ export function PlaceJoinFields({
 }: PlaceJoinFieldsProps) {
   const self = name.trim() || "this place";
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="flex flex-col gap-4">
       {parent && (
         <JoinSelect
           id="place-parent-relation"
@@ -90,6 +95,62 @@ export function PlaceJoinFields({
         disabled={disabled}
         onChange={(value) => onChange("childRelation", value)}
       />
+      <JoinPreview
+        parent={parent}
+        places={places}
+        id={id}
+        self={self}
+        parentRelation={parentRelation}
+        childRelation={childRelation}
+      />
+    </div>
+  );
+}
+
+/** The name of a place in the place `id`, for the preview, or a stand-in when there's none. */
+function childName(places: Place[], id: string): string {
+  const child = id ? places.find((p) => p.parent === id) : undefined;
+  return child?.name ?? "A place";
+}
+
+type JoinPreviewProps = Omit<PlaceJoinFieldsProps, "name" | "disabled" | "onChange"> & {
+  self: string;
+};
+
+/** How the place reads with every place it's in, and how a place in it reads, as whole phrases. */
+function JoinPreview({
+  parent,
+  places,
+  id,
+  self,
+  parentRelation,
+  childRelation,
+}: JoinPreviewProps) {
+  const asParent = {
+    id,
+    name: self,
+    description: "",
+    parent: parent?.id,
+    parentRelation,
+    childRelation,
+  };
+  return (
+    <dl className="bg-muted/50 flex flex-col gap-1 rounded-md px-3 py-2 text-sm">
+      <PreviewLine term="Reads as" text={chainPhrase(self, parentRelation, parent, places)} />
+      <PreviewLine
+        term="Places in it read as"
+        text={chainPhrase(childName(places, id), "", asParent, places)}
+      />
+    </dl>
+  );
+}
+
+/** One line of the preview: what it's of, and the whole phrase. */
+function PreviewLine({ term, text }: { term: string; text: string }) {
+  return (
+    <div className="flex flex-col">
+      <dt className="text-muted-foreground text-xs">{term}</dt>
+      <dd className="break-words">“{text}”</dd>
     </div>
   );
 }

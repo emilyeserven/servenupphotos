@@ -48,6 +48,25 @@ function rowChain(rows: PhotoPlace[], index: number, places: Place[]): Place[] {
   return index > 0 ? chainUp(byId(places, rows[index - 1]?.id), places) : [];
 }
 
+/**
+ * How a place reads with every place it's in, such as "Geunjeongmun Gate, Gyeongbokgung Palace":
+ * its name, then its word (or else its parent's default) and its parent, then each place above with
+ * its word. Just the name without a parent.
+ */
+export function chainPhrase(
+  name: string,
+  parentRelation: string,
+  parent: Place | undefined,
+  places: Place[],
+): string {
+  const chain = chainUp(parent, places);
+  const words = chain.map((place, index) => {
+    const below = chain[index - 1];
+    return below ? joinWord(below, places) : parentRelation || childJoin(place);
+  });
+  return chain.reduce((text, place, index) => joined(text, words[index] ?? "", place.name), name);
+}
+
 /** The word before each row's place: from the places when it's one the place before is in, else the row's own. */
 function rowWords(rows: PhotoPlace[], places: Place[]): string[] {
   return rows.map((row, index) => placesJoin(rows, index, places) ?? row.relation);
