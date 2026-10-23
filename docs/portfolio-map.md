@@ -13,6 +13,10 @@ A photo whose EXIF has no GPS position goes at one of its places' position (see
 border is softer, and so is a group's when every photo in it is placed that way. A place marked as an **Exact
 location** on the Places page keeps the solid border for its photos.
 
+Photos placed at the same place all sit on one spot, so zooming in never splits them apart. From zoom 16 in, a spot
+with up to 12 photos scatters them loosely around it, the oldest nearest the middle, never overlapping, so each can be seen
+and opened (`lib/map-fan.ts`, used by `markersInView` in `lib/map-markers.ts`). The scatter is random but seeded by the photos, so it's the same every time. A busier spot stays one group.
+
 Where the map is looking is kept in the URL as its center and zoom (`?lat=37.57&lng=126.98&zoom=12.5`), half a second
 after it stops moving, so a link opens the map there instead of on all the photos. When those change from outside the map, as with the photo viewer's **View on map**, the map flies there. Moving replaces the URL rather than
 adding to the history. Changing a filter still fits the map to the photos it shows, and that's saved the same way.
