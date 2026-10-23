@@ -26,6 +26,13 @@ export interface Place {
    * missing when it isn't, or the place has no GPS position.
    */
   exactLocation?: boolean;
+  /**
+   * The word between this place and the place it's in when a photo shows both, such as "in", or ","
+   * for "Astoria, Queens"; "" or missing for the parent's `childRelation`.
+   */
+  parentRelation?: string;
+  /** The word between each place in this one and this one, unless it sets its own; "" or missing for "in". */
+  childRelation?: string;
 }
 
 /** What a localization is of. */
@@ -221,16 +228,4 @@ export function savedPlaces(value: unknown): PhotoPlace[] {
 function isPhotoPlace(value: unknown): value is PhotoPlace {
   const v = value as Partial<PhotoPlace> | null;
   return typeof v?.id === "string" && typeof v.relation === "string";
-}
-
-/**
- * The photo's places as a phrase, such as "In Gyeongbokgung Palace by Geunjeongmun Gate", naming
- * each by its place's name, or its ID when it isn't a place.
- */
-export function placePhrase(places: PhotoPlace[], names: ReadonlyMap<string, string>): string {
-  const phrase = places
-    .filter((place) => place.id)
-    .map((place) => [place.relation, names.get(place.id) ?? place.id].filter(Boolean).join(" "))
-    .join(" ");
-  return phrase.charAt(0).toUpperCase() + phrase.slice(1);
 }
