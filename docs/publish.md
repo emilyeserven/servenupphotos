@@ -60,10 +60,12 @@ older files). The zones are listed in `apps/client-pipeline/src/lib/site-spotlig
 (`"homepage"`), the photos fading in and out behind the [portfolio homepage](portfolio-homepage.md). With none picked,
 the homepage shows the 5 newest photos instead.
 
-Each zone is a card of its photos, newest first, each with a button to take it out, and **Add photos** opens every
+Each zone is a card of its photos in their order, numbered from 1, each with a button to take it out. Dragging a
+photo onto another moves it to that place, shifting the ones between, and saves every photo in the zone's place as
+`websiteSpotlight` (1 first). Photos without one, such as ones just added, come after the rest, newest first, and
+taking a photo out of a zone clears its `websiteSpotlight`. The places are one order shared by every zone, so each
+zone shows its photos in that order. **Add photos** opens every
 photo file (read like the Instagram calendar, in flight ones included) to click in or out of it. Like the calendar's
 dates, changes are [local edits](combined-data-store.md#local-edits) until **Commit**, which replaces the
-`spotlightZones` list in each changed file. A list sent in an edit replaces the file's whole list; other fields are
+`spotlightZones` list and sets `websiteSpotlight` in each changed file. A list sent in an edit replaces the file's whole list; other fields are
 left as they are.
-
-`websiteSpotlight` isn't used yet; ways to change it will come later.
