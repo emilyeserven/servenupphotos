@@ -118,6 +118,14 @@
     "longitude": -74.00141720782541
   },
   {
+    "id": "citadel-of-salah-al-din-al-ayyubi",
+    "name": "Citadel of Salah al-Din al-Ayyubi",
+    "description": "",
+    "parent": "",
+    "city": "Al Khalifa",
+    "country": "Egypt"
+  },
+  {
     "id": "columbus-circle",
     "name": "Columbus Circle",
     "description": "",
@@ -371,6 +379,14 @@
     "country": "United States of America",
     "latitude": 26.42915437684975,
     "longitude": -80.15643210386787
+  },
+  {
+    "id": "muhammad-ali-mosque",
+    "name": "Muhammad Ali Mosque",
+    "description": "",
+    "parent": "citadel-of-salah-al-din-al-ayyubi",
+    "city": "",
+    "country": ""
   },
   {
     "id": "murray-hill",

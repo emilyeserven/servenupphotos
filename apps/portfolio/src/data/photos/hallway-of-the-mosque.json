@@ -1,0 +1,61 @@
+{
+  "title": "Hallway of the Mosque",
+  "comment": null,
+  "id": 273,
+  "file": "20250118_135226.jpg",
+  "camera": "Galaxy S24 Ultra",
+  "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
+  "aperture": 2.4,
+  "exposure": "1/2500",
+  "iso": 50,
+  "focalLength": 7.9,
+  "gpsPosition": "30 deg 1' 44.99\" N, 31 deg 15' 34.08\" E",
+  "customGpsPosition": null,
+  "createDate": "2025:01:18 13:52:26",
+  "placeName": "Muhammad Ali Mosque",
+  "customCity": "Al Khalifa",
+  "customCountry": "Egypt",
+  "country": "Egypt",
+  "city": "Al Khalifa",
+  "width": 3462,
+  "height": 1947,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226.jpg",
+    "key": "photos/50b756b1ea58-20250118-135226.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 757,
+      "y": 0,
+      "size": 1947,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "muhammad-ali-mosque"
+    },
+    {
+      "relation": "in",
+      "id": "citadel-of-salah-al-din-al-ayyubi"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": [],
+  "reEdit": null
+}
