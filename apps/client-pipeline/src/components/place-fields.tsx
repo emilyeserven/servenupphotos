@@ -22,6 +22,7 @@ import { PlaceCityAdders } from "@/components/place-city-adder";
 import { PlaceGpsAdders } from "@/components/place-gps-adder";
 import { PlacesJoinWord } from "@/components/place-join-fields";
 import { PlaceLocalizationDialog } from "@/components/place-localization-dialog";
+import { PlaceScopeNote, usePlaceScope } from "@/components/place-scope";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import {
   isUnitedStates,
@@ -197,6 +198,8 @@ export function PlaceFields({
     setRows(next, cityFor(value, next, all.places));
   };
   const country = photoCountry(value, exifCountry);
+  const city = photoCity(value, exifCity);
+  const scope = usePlaceScope({ city, country, ...all });
   return (
     <div className="flex flex-col gap-2">
       <PlaceLabel />
@@ -215,10 +218,11 @@ export function PlaceFields({
       <PlaceCityAdders
         rows={rows}
         places={all.places}
-        region={{ city: photoCity(value, exifCity), country }}
+        region={{ city, country }}
         disabled={disabled}
       />
       {oldName && <OldPlaceName name={oldName} />}
+      <PlaceScopeNote scope={scope.scope} showAll={scope.showAll} onShowAll={scope.setShowAll} />
       {rows.map((row, index) => (
         <PlaceRow
           key={index}
@@ -230,6 +234,7 @@ export function PlaceFields({
           onRemove={index > 0 ? () => setRows(rows.toSpliced(index, 1)) : undefined}
           country={country}
           joined={placesJoin(rows, index, all.places)}
+          menu={{ options: scope.optionsFor(row.id), emptyText: scope.emptyText }}
         />
       ))}
       <PlaceFooter
@@ -272,6 +277,14 @@ interface PlaceRowProps {
   country: string;
   /** The word from the places, when this row's place is one the row above's is in; it replaces the relation menu. */
   joined: string | undefined;
+  /** The places the menu lists, and what it says when none matches. */
+  menu: PlaceMenu;
+}
+
+/** The places a place menu lists, and what it says when none matches. */
+interface PlaceMenu {
+  options: ComboboxOption[];
+  emptyText: string;
 }
 
 /** How the photo relates to one place, and which place. */
@@ -284,6 +297,7 @@ function PlaceRow({
   onRemove,
   country,
   joined,
+  menu,
 }: PlaceRowProps) {
   const [error, setError] = useState<string>();
   const create = (name: string) => {
@@ -311,6 +325,7 @@ function PlaceRow({
           disabled={disabled}
           onChange={onChange}
           onCreate={create}
+          menu={menu}
         />
         <LocalizeButton id={row.id} all={all} country={country} disabled={disabled} />
         {onRemove && <RemoveButton disabled={disabled} onRemove={onRemove} />}
@@ -333,18 +348,19 @@ function PlaceCombobox({
   disabled,
   onChange,
   onCreate,
+  menu,
 }: Omit<PlaceRowProps, "onRemove" | "country" | "joined"> & { onCreate: (name: string) => void }) {
   return (
     <div className="min-w-0 flex-1">
       <SingleCombobox
         id={`photo-place-${index}`}
         aria-labelledby="photo-place-label"
-        options={all.options}
+        options={menu.options}
         value={row.id}
         onChange={(id) => chooseOrSave(id, row, onChange, onCreate)}
         disabled={disabled || all.busy}
         placeholder={placeholder(index, all)}
-        emptyText="No places yet. Type a name to add one."
+        emptyText={menu.emptyText}
         createLabel={(text) => `Add “${text}” as a place`}
         onCreate={onCreate}
       />

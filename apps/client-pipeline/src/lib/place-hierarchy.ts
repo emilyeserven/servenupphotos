@@ -13,7 +13,7 @@ function nextUp(places: Place[], place: Place | undefined, found: Place[]): Plac
 }
 
 /** The places id is in, nearest first, such as the palace a gate is in; stops at a loop. */
-function ancestors(places: Place[], id: string): Place[] {
+export function ancestors(places: Place[], id: string): Place[] {
   const found: Place[] = [];
   for (let up = nextUp(places, byId(places, id), found); up; up = nextUp(places, up, found)) {
     found.push(up);
