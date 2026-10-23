@@ -1,0 +1,54 @@
+{
+  "title": "Wave of Windows",
+  "comment": null,
+  "file": "IMG_8275.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+  "aperture": 14,
+  "exposure": "1/60",
+  "iso": 100,
+  "focalLength": 101,
+  "gpsPosition": null,
+  "createDate": "2017:10:15 15:31:15",
+  "placeName": "American Copper Building",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 5745,
+  "height": 3114,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275.jpg",
+    "key": "photos/95e58177cc38-img-8275.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275-thumbnail.webp?crop=1214,0,3114",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/95e58177cc38-img-8275-thumbnailpreview.webp?crop=1214,0,3114",
+    "thumbnailcrop": {
+      "x": 1214,
+      "y": 0,
+      "size": 3114,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "american-copper-building"
+    },
+    {
+      "relation": "in",
+      "id": "murray-hill"
+    }
+  ],
+  "spotlightZones": []
+}

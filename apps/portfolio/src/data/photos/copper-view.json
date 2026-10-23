@@ -1,0 +1,54 @@
+{
+  "title": "Copper View",
+  "comment": null,
+  "file": "IMG_8234-2.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+  "aperture": 9,
+  "exposure": "1/60",
+  "iso": 100,
+  "focalLength": 22,
+  "gpsPosition": null,
+  "createDate": "2017:10:15 15:13:42",
+  "placeName": "American Copper Building",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 6000,
+  "height": 3404,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2.jpg",
+    "key": "photos/6f352739e300-img-8234-2.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2-thumbnail.webp?crop=1057,0,3404",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6f352739e300-img-8234-2-thumbnailpreview.webp?crop=1057,0,3404",
+    "thumbnailcrop": {
+      "x": 1057,
+      "y": 0,
+      "size": 3404,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "american-copper-building"
+    },
+    {
+      "relation": "in",
+      "id": "murray-hill"
+    }
+  ],
+  "spotlightZones": []
+}

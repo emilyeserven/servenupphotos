@@ -1,0 +1,11 @@
+{
+  "id": "american-copper-building",
+  "name": "American Copper Building",
+  "description": "",
+  "parent": "murray-hill",
+  "city": "",
+  "country": "",
+  "latitude": 40.74440146500074,
+  "longitude": -73.97202002487988,
+  "exactLocation": true
+}

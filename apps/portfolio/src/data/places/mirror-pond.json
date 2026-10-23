@@ -1,5 +1,8 @@
 {
   "id": "mirror-pond",
   "name": "Mirror Pond",
-  "description": ""
+  "description": "",
+  "parent": "national-museum-of-korea",
+  "city": "",
+  "country": ""
 }

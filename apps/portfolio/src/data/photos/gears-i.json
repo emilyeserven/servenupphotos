@@ -1,0 +1,50 @@
+{
+  "title": "Gears I",
+  "comment": null,
+  "file": "IMG_6966.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+  "aperture": 4.5,
+  "exposure": "1/30",
+  "iso": 400,
+  "focalLength": 42,
+  "gpsPosition": null,
+  "createDate": "2017:10:14 14:50:59",
+  "placeName": "Fifth Avenue Presbyterian Church",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 6000,
+  "height": 3061,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966.jpg",
+    "key": "photos/00dbfd22e2a9-img-6966.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966-thumbnail.webp?crop=1920,0,3061",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/00dbfd22e2a9-img-6966-thumbnailpreview.webp?crop=1920,0,3061",
+    "thumbnailcrop": {
+      "x": 1920,
+      "y": 0,
+      "size": 3061,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "fifth-avenue-presbyterian-church"
+    }
+  ],
+  "spotlightZones": []
+}
