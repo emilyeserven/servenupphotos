@@ -1,6 +1,7 @@
 import { useMap } from "@vis.gl/react-maplibre";
 import { Maximize } from "lucide-react";
 import { type LngLatBoundsLike } from "maplibre-gl";
+import type { ReactNode } from "react";
 
 /** An area of the map to jump to, with the bounds to fit. */
 interface MapArea {
@@ -37,7 +38,14 @@ const CONTROL_BUTTON =
  * Buttons over the map's top left corner: one to go back to the view that shows every photo, and
  * one for each area in MAP_AREAS to zoom straight to it.
  */
-export function MapViewControls({ onReset }: { onReset: () => void }) {
+export function MapViewControls({
+  onReset,
+  children,
+}: {
+  onReset: () => void;
+  /** More controls for the same row, such as the day filter. */
+  children?: ReactNode;
+}) {
   const { current: map } = useMap();
   function showArea(bounds: LngLatBoundsLike) {
     map?.fitBounds(bounds, { padding: AREA_PADDING });
@@ -71,6 +79,7 @@ export function MapViewControls({ onReset }: { onReset: () => void }) {
           </button>
         ))}
       </div>
+      {children}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Layer,
   Map,
@@ -28,6 +28,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { MapDayFilter } from "@/components/map-day-filter";
 import { MapViewControls } from "@/components/map-view-controls";
 import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
@@ -40,15 +41,23 @@ import {
   boundsOf,
   placedById,
   placedPhotos,
+  useDayPhotos,
   useMapPhotos,
 } from "@/lib/map-photos";
+import { daysInView, isDay } from "@/lib/map-days";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
+/** The map's search: the shared filters, and the day only the map narrows to. */
+type MapSearch = PhotoFilters & { day?: string };
+
 export const Route = createFileRoute("/map")({
-  validateSearch: (search: Record<string, unknown>): PhotoFilters => parseFilters(search),
+  validateSearch: (search: Record<string, unknown>): MapSearch => ({
+    ...parseFilters(search),
+    ...(isDay(search.day) && { day: search.day }),
+  }),
   component: MapView,
 });
 
@@ -189,6 +198,24 @@ function useFitOnFilter(
   });
 }
 
+/**
+ * The photos the shared filters leave, which the map fits itself to, and of those the ones taken
+ * on the day in the URL, which it draws.
+ */
+function useMapFilters() {
+  const { day, ...filters } = Route.useSearch();
+  const mapPhotos = useMapPhotos(filters);
+  return { day, mapPhotos, dayPhotos: useDayPhotos(mapPhotos, day), setDay: useSetDay() };
+}
+
+/** Sets the day the map is narrowed to in the URL, keeping the other filters; undefined for all. */
+function useSetDay() {
+  const navigate = useNavigate({ from: "/map" });
+  return (day: string | undefined) => {
+    void navigate({ search: (prev) => ({ ...prev, day }), replace: true });
+  };
+}
+
 // Clicks on markers and in popups would otherwise reach the map too, which closes the popups.
 function stopAtMarker(event: MouseEvent) {
   event.stopPropagation();
@@ -202,7 +229,9 @@ function MapView() {
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
   const [shown, setShown] = useState<ImagePhoto | null>(null);
-  const mapPhotos = useMapPhotos(Route.useSearch());
+  const { day, mapPhotos, dayPhotos, setDay } = useMapFilters();
+  // What the map shows, for the day filter to list only the days of the photos in view.
+  const [view, setView] = useState<LngLatBounds | null>(null);
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds));
   useFitOnFilter(map, mapPhotos.bounds, () => {
     setSelected(null);
@@ -212,7 +241,9 @@ function MapView() {
   const [shownGroup, setShownGroup] = useState<PlacedPhoto[]>([]);
 
   function updateMarkers() {
-    if (map.current) setMarkers(markersInView(map.current));
+    if (!map.current) return;
+    setMarkers(markersInView(map.current));
+    setView(map.current.getBounds());
   }
 
   function openPhoto(photo: PlacedPhoto, group: PlacedPhoto[] = []) {
@@ -245,7 +276,7 @@ function MapView() {
           <MapPin className="size-8 text-muted-foreground" aria-hidden />
           Map
         </h1>
-        <p className="text-sm text-muted-foreground">{mapPhotos.placed.length} photos</p>
+        <p className="text-sm text-muted-foreground">{dayPhotos.placed.length} photos</p>
         <div className="w-full pt-2">
           <PhotoFilterBar photos={placedPhotos} />
         </div>
@@ -270,11 +301,13 @@ function MapView() {
             onReset={() => {
               if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
             }}
-          />
+          >
+            <MapDayFilter days={daysInView(mapPhotos.placed, view)} day={day} onChange={setDay} />
+          </MapViewControls>
           <Source
             id={SOURCE_ID}
             type="geojson"
-            data={mapPhotos.geoJson}
+            data={dayPhotos.geoJson}
             cluster
             clusterMaxZoom={17}
             clusterRadius={50}

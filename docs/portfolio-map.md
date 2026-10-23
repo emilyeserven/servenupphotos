@@ -21,3 +21,7 @@ Over the top left corner:
 - **All photos** goes back to the opening view.
 - **New York City** and **Seoul** zoom straight to that area. The areas and their bounds are `MAP_AREAS` in
   `apps/portfolio/src/components/map-view-controls.tsx`; add one there to add a button.
+- The **day** dropdown narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
+  the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
+  chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map, and it works
+  alongside the location, album and tag filters, which only the map's day leaves out when moving to another view.
