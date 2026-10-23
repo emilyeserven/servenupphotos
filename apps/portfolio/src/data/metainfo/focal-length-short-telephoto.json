@@ -1,0 +1,13 @@
+{
+  "id": "focal-length-short-telephoto",
+  "name": "Short Telephoto",
+  "description": "",
+  "field": "focalLength",
+  "parent": "",
+  "order": 3,
+  "values": [],
+  "range": {
+    "min": 59,
+    "max": 135
+  }
+}

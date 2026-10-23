@@ -1,0 +1,12 @@
+{
+  "id": "iso-low",
+  "name": "Low",
+  "description": "",
+  "field": "iso",
+  "parent": "",
+  "order": 0,
+  "values": [],
+  "range": {
+    "max": 99
+  }
+}

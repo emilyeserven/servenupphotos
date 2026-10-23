@@ -1,0 +1,13 @@
+{
+  "id": "exposure-long-exposure",
+  "name": "Long Exposure",
+  "description": "",
+  "field": "exposure",
+  "parent": "",
+  "order": 4,
+  "values": [],
+  "range": {
+    "min": 0.5,
+    "max": 30
+  }
+}

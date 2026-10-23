@@ -1,0 +1,13 @@
+{
+  "id": "exposure-slow",
+  "name": "Slow",
+  "description": "",
+  "field": "exposure",
+  "parent": "",
+  "order": 3,
+  "values": [],
+  "range": {
+    "min": 0.02,
+    "max": 0.5
+  }
+}

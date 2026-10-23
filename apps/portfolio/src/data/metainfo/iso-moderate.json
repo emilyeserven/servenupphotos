@@ -1,0 +1,13 @@
+{
+  "id": "iso-moderate",
+  "name": "Moderate",
+  "description": "",
+  "field": "iso",
+  "parent": "",
+  "order": 2,
+  "values": [],
+  "range": {
+    "min": 201,
+    "max": 1600
+  }
+}

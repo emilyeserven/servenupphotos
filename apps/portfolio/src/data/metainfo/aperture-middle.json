@@ -1,0 +1,13 @@
+{
+  "id": "aperture-middle",
+  "name": "Middle",
+  "description": "",
+  "field": "aperture",
+  "parent": "",
+  "order": 2,
+  "values": [],
+  "range": {
+    "min": 3.2,
+    "max": 8.9
+  }
+}

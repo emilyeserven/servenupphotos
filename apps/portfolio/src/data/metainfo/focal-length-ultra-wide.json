@@ -1,0 +1,13 @@
+{
+  "id": "focal-length-ultra-wide",
+  "name": "Ultra-wide",
+  "description": "",
+  "field": "focalLength",
+  "parent": "",
+  "order": 0,
+  "values": [],
+  "range": {
+    "min": 10,
+    "max": 22
+  }
+}

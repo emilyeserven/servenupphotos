@@ -1,0 +1,13 @@
+{
+  "id": "exposure-action-safe",
+  "name": "Action-safe",
+  "description": "",
+  "field": "exposure",
+  "parent": "",
+  "order": 1,
+  "values": [],
+  "range": {
+    "min": 0.00125,
+    "max": 0.004
+  }
+}

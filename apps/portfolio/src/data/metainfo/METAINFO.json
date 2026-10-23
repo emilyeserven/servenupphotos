@@ -1,1 +1,306 @@
-[]
+[
+  {
+    "id": "aperture-fast",
+    "name": "Fast",
+    "description": "",
+    "field": "aperture",
+    "parent": "",
+    "order": 1,
+    "values": [],
+    "range": {
+      "min": 2,
+      "max": 3.1
+    }
+  },
+  {
+    "id": "aperture-middle",
+    "name": "Middle",
+    "description": "",
+    "field": "aperture",
+    "parent": "",
+    "order": 2,
+    "values": [],
+    "range": {
+      "min": 3.2,
+      "max": 8.9
+    }
+  },
+  {
+    "id": "aperture-narrow",
+    "name": "Narrow",
+    "description": "",
+    "field": "aperture",
+    "parent": "",
+    "order": 3,
+    "values": [],
+    "range": {
+      "min": 9
+    }
+  },
+  {
+    "id": "aperture-very-fast",
+    "name": "Very fast",
+    "description": "",
+    "field": "aperture",
+    "parent": "",
+    "order": 0,
+    "values": [],
+    "range": {
+      "max": 1.9
+    }
+  },
+  {
+    "id": "exposure-action-safe",
+    "name": "Action-safe",
+    "description": "",
+    "field": "exposure",
+    "parent": "",
+    "order": 1,
+    "values": [],
+    "range": {
+      "min": 0.00125,
+      "max": 0.004
+    }
+  },
+  {
+    "id": "exposure-bulb",
+    "name": "Bulb",
+    "description": "",
+    "field": "exposure",
+    "parent": "",
+    "order": 5,
+    "values": [],
+    "range": {
+      "min": 30
+    }
+  },
+  {
+    "id": "exposure-fast",
+    "name": "Fast",
+    "description": "",
+    "field": "exposure",
+    "parent": "",
+    "order": 0,
+    "values": [],
+    "range": {
+      "max": 0.0012484394506866417
+    }
+  },
+  {
+    "id": "exposure-handheld",
+    "name": "Handheld",
+    "description": "",
+    "field": "exposure",
+    "parent": "",
+    "order": 2,
+    "values": [],
+    "range": {
+      "min": 0.004016064257028112,
+      "max": 0.0196078431372549
+    }
+  },
+  {
+    "id": "exposure-long-exposure",
+    "name": "Long Exposure",
+    "description": "",
+    "field": "exposure",
+    "parent": "",
+    "order": 4,
+    "values": [],
+    "range": {
+      "min": 0.5,
+      "max": 30
+    }
+  },
+  {
+    "id": "exposure-slow",
+    "name": "Slow",
+    "description": "",
+    "field": "exposure",
+    "parent": "",
+    "order": 3,
+    "values": [],
+    "range": {
+      "min": 0.02,
+      "max": 0.5
+    }
+  },
+  {
+    "id": "focal-length-short-telephoto",
+    "name": "Short Telephoto",
+    "description": "",
+    "field": "focalLength",
+    "parent": "",
+    "order": 3,
+    "values": [],
+    "range": {
+      "min": 59,
+      "max": 135
+    }
+  },
+  {
+    "id": "focal-length-standard",
+    "name": "Standard",
+    "description": "",
+    "field": "focalLength",
+    "parent": "",
+    "order": 2,
+    "values": [],
+    "range": {
+      "min": 40,
+      "max": 58
+    }
+  },
+  {
+    "id": "focal-length-super-telephoto",
+    "name": "Super telephoto",
+    "description": "",
+    "field": "focalLength",
+    "parent": "",
+    "order": 5,
+    "values": [],
+    "range": {
+      "min": 251
+    }
+  },
+  {
+    "id": "focal-length-telephoto",
+    "name": "Telephoto",
+    "description": "",
+    "field": "focalLength",
+    "parent": "",
+    "order": 4,
+    "values": [],
+    "range": {
+      "min": 136,
+      "max": 250
+    }
+  },
+  {
+    "id": "focal-length-ultra-wide",
+    "name": "Ultra-wide",
+    "description": "",
+    "field": "focalLength",
+    "parent": "",
+    "order": 0,
+    "values": [],
+    "range": {
+      "min": 10,
+      "max": 22
+    }
+  },
+  {
+    "id": "focal-length-wide-angle",
+    "name": "Wide-angle",
+    "description": "",
+    "field": "focalLength",
+    "parent": "",
+    "order": 1,
+    "values": [],
+    "range": {
+      "min": 23,
+      "max": 39
+    }
+  },
+  {
+    "id": "iso-base",
+    "name": "Base",
+    "description": "",
+    "field": "iso",
+    "parent": "",
+    "order": 1,
+    "values": [],
+    "range": {
+      "min": 100,
+      "max": 200
+    }
+  },
+  {
+    "id": "iso-extended-high",
+    "name": "Extended High",
+    "description": "",
+    "field": "iso",
+    "parent": "",
+    "order": 4,
+    "values": [],
+    "range": {
+      "min": 12801
+    }
+  },
+  {
+    "id": "iso-high",
+    "name": "High",
+    "description": "",
+    "field": "iso",
+    "parent": "",
+    "order": 3,
+    "values": [],
+    "range": {
+      "min": 1601,
+      "max": 12800
+    }
+  },
+  {
+    "id": "iso-low",
+    "name": "Low",
+    "description": "",
+    "field": "iso",
+    "parent": "",
+    "order": 0,
+    "values": [],
+    "range": {
+      "max": 99
+    }
+  },
+  {
+    "id": "iso-moderate",
+    "name": "Moderate",
+    "description": "",
+    "field": "iso",
+    "parent": "",
+    "order": 2,
+    "values": [],
+    "range": {
+      "min": 201,
+      "max": 1600
+    }
+  },
+  {
+    "id": "lens-brand",
+    "name": "Brand",
+    "description": "",
+    "field": "lens",
+    "parent": "",
+    "values": []
+  },
+  {
+    "id": "lens-canon",
+    "name": "Canon",
+    "description": "",
+    "field": "lens",
+    "parent": "lens-brand",
+    "values": [
+      "EF-S10-18mm f/4.5-5.6 IS STM",
+      "EF-S18-135mm f/3.5-5.6 IS",
+      "EF-S18-135mm f/3.5-5.6 IS STM",
+      "EF50mm f/1.8 II",
+      "EF-S55-250mm f/4-5.6 IS STM"
+    ]
+  },
+  {
+    "id": "lens-fujinon",
+    "name": "Fujinon",
+    "description": "",
+    "field": "lens",
+    "parent": "lens-brand",
+    "values": ["XF18-135mmF3.5-5.6R LM OIS WR"]
+  },
+  {
+    "id": "lens-type",
+    "name": "Type",
+    "description": "",
+    "field": "lens",
+    "parent": "",
+    "values": []
+  }
+]

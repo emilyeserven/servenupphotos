@@ -1,0 +1,8 @@
+{
+  "id": "lens-fujinon",
+  "name": "Fujinon",
+  "description": "",
+  "field": "lens",
+  "parent": "lens-brand",
+  "values": ["XF18-135mmF3.5-5.6R LM OIS WR"]
+}

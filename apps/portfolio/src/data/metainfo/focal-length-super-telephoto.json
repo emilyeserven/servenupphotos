@@ -1,0 +1,12 @@
+{
+  "id": "focal-length-super-telephoto",
+  "name": "Super telephoto",
+  "description": "",
+  "field": "focalLength",
+  "parent": "",
+  "order": 5,
+  "values": [],
+  "range": {
+    "min": 251
+  }
+}
