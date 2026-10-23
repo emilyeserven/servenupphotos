@@ -143,6 +143,13 @@ export function PhotoFilterBar({
 }
 
 /**
+ * How the filters look over the map: laid out in the map's row of controls, solid like its other
+ * controls rather than see-through in dark mode, and each dropdown only as wide as its choice.
+ */
+const OVER_MAP =
+  "contents [&_button]:bg-background dark:[&_button]:bg-background [&_select]:bg-background [&_select]:[field-sizing:content] dark:[&_select]:bg-background";
+
+/**
  * The Places combobox and the album and tag dropdowns always shown, with **Clear filters** after
  * them while any is set, for a view with no room to spare for the **Show filters** button, such as
  * the map.
@@ -152,10 +159,10 @@ export function PhotoFilterControls({ photos }: { photos: Photo[] }) {
   const setFilters = useSetFilters();
   const clearFilters = useClearFilters([]);
   return (
-    <>
+    <div className={OVER_MAP}>
       <FilterDropdowns photos={photos} facet={photos} filters={filters} setFilters={setFilters} />
       <ClearFilters count={filterCount(filters)} onClear={clearFilters} />
-    </>
+    </div>
   );
 }
 

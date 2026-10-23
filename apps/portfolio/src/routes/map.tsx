@@ -12,12 +12,7 @@ import {
 } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
 import { ZoomIn } from "lucide-react";
-import {
-  type LngLatBounds,
-  setWorkerUrl,
-  type GeoJSONSource,
-  type GeoJSONFeature,
-} from "maplibre-gl";
+import { type LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import {
@@ -37,15 +32,14 @@ import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { Button } from "@/components/ui/button";
 import {
-  type PhotoPoint,
   type PlacedPhoto,
   boundsOf,
-  placedById,
   placedPhotos,
   useDayPhotos,
   useMapPhotos,
 } from "@/lib/map-photos";
 import { type DayRange, daysInView, isDay } from "@/lib/map-days";
+import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
@@ -86,8 +80,6 @@ const MAP_STYLES = {
   light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
   dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
 };
-
-const SOURCE_ID = "photos";
 
 // The markers are HTML, drawn from the clusters MapLibre works out for the source. MapLibre only
 // clusters a source a layer uses, so this one draws nothing.
@@ -141,56 +133,6 @@ function useIsDark() {
   );
 }
 
-/** A marker on the map: one photo, or a cluster of photos too close together to tell apart. */
-type MapMarker =
-  | { kind: "photo"; key: string; photo: PlacedPhoto }
-  | {
-      kind: "cluster";
-      key: string;
-      clusterId: number;
-      count: number;
-      longitude: number;
-      latitude: number;
-    };
-
-/** The marker for one of the source's features, or null for a photo it doesn't know. */
-function markerOf(feature: GeoJSONFeature): MapMarker | null {
-  const properties = feature.properties ?? {};
-  if (typeof properties.cluster_id !== "number") {
-    const photo = placedById.get(properties.id);
-    return photo ? { kind: "photo", key: `photo-${photo.id}`, photo } : null;
-  }
-  const [longitude, latitude] = (feature.geometry as PhotoPoint).coordinates;
-  return {
-    kind: "cluster",
-    key: `cluster-${properties.cluster_id}`,
-    clusterId: properties.cluster_id,
-    count: properties.point_count,
-    longitude,
-    latitude,
-  };
-}
-
-/** The markers for the clusters and photos in view, once each, as tiles can repeat them. */
-function markersInView(map: MapRef): MapMarker[] {
-  const markers = new globalThis.Map<string, MapMarker>();
-  for (const feature of map.querySourceFeatures(SOURCE_ID)) {
-    const marker = markerOf(feature);
-    if (marker) markers.set(marker.key, marker);
-  }
-  return [...markers.values()];
-}
-
-/** The photos in a cluster, oldest first. */
-async function photosInCluster(map: MapRef, clusterId: number): Promise<PlacedPhoto[]> {
-  const source = map.getSource<GeoJSONSource>(SOURCE_ID);
-  if (!source) return [];
-  const leaves = await source.getClusterLeaves(clusterId, Infinity, 0);
-  return leaves
-    .flatMap((leaf) => placedById.get(leaf.properties?.id) ?? [])
-    .toSorted((a, b) => a.takenAt.getTime() - b.takenAt.getTime());
-}
-
 function hasImage(photo: Photo): photo is ImagePhoto {
   return photo.image !== null;
 }
@@ -240,6 +182,25 @@ function useSetDays() {
   };
 }
 
+/**
+ * The markers in view and what the map shows, for the day filter to list only the days of the
+ * photos in view, with `updateMarkers` to work them out again after the map moves.
+ */
+function useMarkersInView(map: RefObject<MapRef | null>) {
+  const [markers, setMarkers] = useState<MapMarker[]>([]);
+  const [view, setView] = useState<LngLatBounds | null>(null);
+  // Counts the updates, so a slower one finishing late doesn't replace a newer one's markers.
+  const latest = useRef(0);
+  async function updateMarkers() {
+    if (!map.current) return;
+    const update = ++latest.current;
+    setView(map.current.getBounds());
+    const next = await markersInView(map.current);
+    if (update === latest.current) setMarkers(next);
+  }
+  return { markers, view, updateMarkers };
+}
+
 // Clicks on markers and in popups would otherwise reach the map too, which closes the popups.
 function stopAtMarker(event: MouseEvent) {
   event.stopPropagation();
@@ -248,14 +209,12 @@ function stopAtMarker(event: MouseEvent) {
 function MapView() {
   const isDark = useIsDark();
   const map = useRef<MapRef>(null);
-  const [markers, setMarkers] = useState<MapMarker[]>([]);
+  const { markers, view, updateMarkers } = useMarkersInView(map);
   // A photo without an image, shown in a popup as the lightbox can't show it.
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
   const { shown, show, close } = useShownPhoto();
   const { search, mapPhotos, dayPhotos, setDays } = useMapFilters();
-  // What the map shows, for the day filter to list only the days of the photos in view.
-  const [view, setView] = useState<LngLatBounds | null>(null);
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
   const saveView = useMapViewInUrl(map, search);
   useFitOnFilter(map, mapPhotos.bounds, () => {
@@ -265,14 +224,8 @@ function MapView() {
   // The photos the lightbox steps through: the open group's, or none for a photo on its own.
   const [shownGroup, setShownGroup] = useState<PlacedPhoto[]>([]);
 
-  function updateMarkers() {
-    if (!map.current) return;
-    setMarkers(markersInView(map.current));
-    setView(map.current.getBounds());
-  }
-
   function onMoveEnd() {
-    updateMarkers();
+    void updateMarkers();
     if (map.current) saveView(map.current);
   }
 
@@ -308,7 +261,7 @@ function MapView() {
           mapStyle={isDark ? MAP_STYLES.dark : MAP_STYLES.light}
           onMoveEnd={onMoveEnd}
           onSourceData={(event) => {
-            if (event.sourceId === SOURCE_ID && event.isSourceLoaded) updateMarkers();
+            if (event.sourceId === SOURCE_ID && event.isSourceLoaded) void updateMarkers();
           }}
           // Clicking empty map closes the popups.
           onClick={() => {
@@ -398,7 +351,7 @@ function MapMarkerView({
   }
   const { photo } = marker;
   return (
-    <Marker longitude={photo.longitude} latitude={photo.latitude}>
+    <Marker longitude={photo.longitude} latitude={photo.latitude} offset={marker.offset}>
       <PhotoMarker photo={photo} onOpen={() => onOpenPhoto(photo)} />
     </Marker>
   );
