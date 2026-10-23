@@ -68,6 +68,20 @@ export interface PhotoLocation {
   label: string;
   /** The lines shown on hover: the GPS position, then the country when the label leaves it out. */
   details: string[];
+  /** Each part on its own, so a view can pick how much to show; each is null when there's none. */
+  parts: PhotoLocationParts;
+}
+
+/** The parts of where a photo was taken, written one way. */
+export interface PhotoLocationParts {
+  /** The most specific of its places, such as "Geunjeongmun Gate". */
+  specific: string | null;
+  /** Its places as a phrase, such as "In Gyeongbokgung Palace by Geunjeongmun Gate". */
+  places: string | null;
+  city: string | null;
+  country: string | null;
+  /** The GPS position, such as 37°31′21″ N, 126°58′46″ E. */
+  gps: string | null;
 }
 
 /** How the camera was set for the photo; each is null when its EXIF didn't say. */
@@ -357,6 +371,15 @@ function placeText(photo: PhotoData): Localized | null {
   return mapLocalized(parts, (p, script) => capitalized(p.map((part) => part[script]).join(" ")));
 }
 
+/** The most specific of the photo's places, the one inside the most others; null without any. */
+function specificPlace(photo: PhotoData): Localized | null {
+  const places = (photo.places ?? []).flatMap(({ id }) => placeAncestry(id).slice(0, 1));
+  const deepest = places.toSorted(
+    (a, b) => placeAncestry(b.id).length - placeAncestry(a.id).length,
+  )[0];
+  return deepest ? localizePlace(deepest) : null;
+}
+
 /** A city or country written each way, or null when there's none. */
 function localizedField(type: "country" | "city", name: string | null): Localized | null {
   return name ? localizeName(type, name) : null;
@@ -364,21 +387,33 @@ function localizedField(type: "country" | "city", name: string | null): Localize
 
 /** The parts of where the photo was taken, each written every way. */
 interface LocationParts {
+  specific: Localized | null;
   place: Localized | null;
   city: Localized | null;
   country: Localized | null;
   gps: string | null;
 }
 
+/** Each part of where the photo was taken, written one way. */
+function partsIn(parts: LocationParts, script: ScriptDisplay): PhotoLocationParts {
+  const write = (part: Localized | null) => part?.[script] ?? null;
+  return {
+    specific: write(parts.specific),
+    places: write(parts.place),
+    city: write(parts.city),
+    country: write(parts.country),
+    gps: parts.gps,
+  };
+}
+
 /** Where the photo was taken, written one way: see photoLocation. */
 function locationIn(parts: LocationParts, script: ScriptDisplay): PhotoLocation {
-  const [place, city, country] = [parts.place, parts.city, parts.country].map(
-    (part) => part?.[script],
-  );
-  const label = place ? joinParts(place, city) : joinParts(city, country);
+  const written = partsIn(parts, script);
+  const { places, city, country } = written;
+  const label = places ? joinParts(places, city) : joinParts(city, country);
   // The country goes on hover only when the label leaves it out for the place.
-  const details = [parts.gps, place ? country : null];
-  return { label, details: details.filter(Boolean) as string[] };
+  const details = [parts.gps, places ? country : null];
+  return { label, details: details.filter(Boolean) as string[], parts: written };
 }
 
 /**
@@ -388,6 +423,7 @@ function locationIn(parts: LocationParts, script: ScriptDisplay): PhotoLocation 
  */
 function photoLocation(photo: PhotoData): LocalizedLocation | null {
   const parts: LocationParts = {
+    specific: specificPlace(photo),
     place: placeText(photo),
     city: localizedField("city", custom(photo.customCity, photo.city)),
     country: localizedField("country", custom(photo.customCountry, photo.country)),

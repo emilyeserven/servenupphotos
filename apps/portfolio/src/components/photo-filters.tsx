@@ -8,6 +8,8 @@ import {
   X,
 } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
+import { ClearFilterButton } from "@/components/clear-filter-button";
+import { hiddenText } from "@/components/hidden-note";
 import { PlacesFilter } from "@/components/places-filter";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { Button } from "@/components/ui/button";
@@ -245,7 +247,8 @@ function optionText(option: FilterOption, name: string, chosen: boolean): string
 
 /**
  * A dropdown of one filter's choices, with "All" first; `selected` is the chosen one's value and
- * `plural` names them all, such as "lenses", when adding an "s" doesn't.
+ * `plural` names them all, such as "lenses", when adding an "s" doesn't. While one is chosen, an X
+ * beside it goes back to "All".
  */
 export function FilterSelect({
   label,
@@ -263,28 +266,44 @@ export function FilterSelect({
   onChange: (selected: string) => void;
 }) {
   const { script } = useScriptDisplay();
+  // Choices that would show no photos, given the other filters, are left out, unless chosen.
+  const shown = options.filter((option) => option.count > 0 || optionValue(option) === selected);
+  const hidden = options.length - shown.length;
   return (
-    // The icon and chevron sit over the dropdown, inside its border, like the Places button's.
-    <label className="relative inline-flex items-center text-sm text-muted-foreground">
+    // The icon, X and chevron sit over the dropdown, inside its border, like the Places button's.
+    <div className="relative inline-flex items-center text-sm text-muted-foreground">
       <Icon className="pointer-events-none absolute left-2.5 size-4" aria-hidden />
-      <span className="sr-only">{label}</span>
-      <select
-        value={selected}
-        onChange={(event) => onChange(event.target.value)}
-        className="h-8 max-w-56 cursor-pointer appearance-none truncate rounded-md border bg-background pr-8 pl-8 text-sm text-foreground shadow-xs outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30 dark:hover:bg-input/50"
-      >
-        <option value="">All {plural}</option>
-        {options.map((option, index) => (
-          <option key={`${index}-${optionValue(option)}`} value={optionValue(option)}>
-            {optionText(option, option.label[script], optionValue(option) === selected)}
-          </option>
-        ))}
-      </select>
+      <label className="contents">
+        <span className="sr-only">{label}</span>
+        <select
+          value={selected}
+          onChange={(event) => onChange(event.target.value)}
+          className={cn(
+            "h-8 max-w-56 cursor-pointer appearance-none truncate rounded-md border bg-background pl-8 text-sm text-foreground shadow-xs outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+            selected ? "pr-14" : "pr-8",
+          )}
+        >
+          <option value="">All {plural}</option>
+          {shown.map((option, index) => (
+            <option key={`${index}-${optionValue(option)}`} value={optionValue(option)}>
+              {optionText(option, option.label[script], optionValue(option) === selected)}
+            </option>
+          ))}
+          {hidden > 0 && <option disabled>{hiddenText(hidden, "choices")}</option>}
+        </select>
+      </label>
+      {selected && (
+        <ClearFilterButton
+          label={label}
+          onClear={() => onChange("")}
+          className="absolute right-7"
+        />
+      )}
       <ChevronsUpDown
         className="pointer-events-none absolute right-2.5 size-4 opacity-50"
         aria-hidden
       />
-    </label>
+    </div>
   );
 }
 

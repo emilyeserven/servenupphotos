@@ -166,16 +166,28 @@ function nameOptions(
   }));
 }
 
+/** The chosen camera or lens group's ID and the chosen camera or lens's name, when there are. */
+interface ChosenEquipment {
+  group?: string;
+  name?: string;
+}
+
+/** Whether the group, or a camera or lens it lists, is the one chosen. */
+function holdsChosen(group: MetaGroup, inGroup: Set<string>, chosen: ChosenEquipment): boolean {
+  return group.id === chosen.group || inGroup.has(chosen.name ?? "");
+}
+
 /**
  * A camera or lens metadata group as a choice, then the names it lists that the photos have; none
- * when it would show no photos, given the other filters, unless it's the one chosen.
+ * when it would show no photos, given the other filters, unless it's or it lists the one chosen,
+ * so the dropdown still shows it.
  */
 function equipmentGroupOptions(
   key: EquipmentKey,
   [group, depth]: [MetaGroup, number],
   names: Set<string>,
   facet: Photo[],
-  chosen: string | undefined,
+  chosen: ChosenEquipment,
 ): FilterOption[] {
   const inGroup = groupValues(group);
   const option = {
@@ -185,7 +197,7 @@ function equipmentGroupOptions(
     depth,
     count: facet.filter((photo) => inGroup.has(photo[key] ?? "")).length,
   };
-  if (option.count === 0 && group.id !== chosen) return [];
+  if (option.count === 0 && !holdsChosen(group, inGroup, chosen)) return [];
   const listed = [...new Set(group.values.map(String))].filter((name) => names.has(name));
   return [option, ...nameOptions(key, listed, depth + 1, facet)];
 }
@@ -194,19 +206,19 @@ function equipmentGroupOptions(
  * The camera or lens filter's choices: the metadata groups of cameras or lenses, each under the
  * group it's in and followed by the names it lists, then every other camera or lens the photos
  * were taken with, by name. A group that would show none of `facet` is left out, unless it's
- * `chosenGroup`. Photos whose EXIF didn't name a lens aren't under any.
+ * or it lists the one `chosen`. Photos whose EXIF didn't name a lens aren't under any.
  */
 export function equipmentOptions(
   key: EquipmentKey,
   list: Photo[],
   facet: Photo[],
-  chosenGroup?: string,
+  chosen: ChosenEquipment = {},
 ): FilterOption[] {
   const names = new Set(list.flatMap((photo) => photo[key] ?? []));
   const tree = groupTree(key);
   const grouped = new Set(tree.flatMap(([group]) => group.values.map(String)));
   return [
-    ...tree.flatMap((entry) => equipmentGroupOptions(key, entry, names, facet, chosenGroup)),
+    ...tree.flatMap((entry) => equipmentGroupOptions(key, entry, names, facet, chosen)),
     ...nameOptions(
       key,
       [...names].filter((name) => !grouped.has(name)),

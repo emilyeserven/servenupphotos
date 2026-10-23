@@ -140,7 +140,10 @@ function EquipmentSelect({
 }) {
   const own = [equipment, `${equipment}Group`] as const;
   const facet = filterTable(photos, withoutTableFilters(filters, own));
-  const options = equipmentOptions(equipment, allPhotos, facet, filters[`${equipment}Group`]);
+  const options = equipmentOptions(equipment, allPhotos, facet, {
+    group: filters[`${equipment}Group`],
+    name: filters[equipment],
+  });
   return (
     <FilterSelect
       {...EQUIPMENT[equipment]}

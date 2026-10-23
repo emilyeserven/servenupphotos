@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { LocalizedLocation } from "@/lib/photos";
+import { type LocationDetail, locationDetails, locationText } from "@/lib/location-detail";
+import type { LocalizedLocation, PhotoLocation as Location } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 interface PhotoLocationProps {
@@ -11,8 +12,16 @@ interface PhotoLocationProps {
   detailsClassName?: string;
   /** Which side of the text the details open on, to keep them off what's next to it. */
   side?: "top" | "right";
+  /** How much of the location to show, as the Table's View menu picks; its usual text when left out. */
+  detail?: LocationDetail;
   /** More to show under the details, such as the photo viewer's View on map link. */
   children?: ReactNode;
+}
+
+/** The location's text and the lines shown on hover, with as much as `detail` asks for. */
+function shownLocation(location: Location, detail?: LocationDetail) {
+  if (!detail) return location;
+  return { label: locationText(location, detail), details: locationDetails(location, detail) };
 }
 
 /**
@@ -26,9 +35,10 @@ export function PhotoLocation({
   className,
   detailsClassName,
   side,
+  detail,
   children,
 }: PhotoLocationProps) {
-  const location = localized[useScriptDisplay().script];
+  const location = shownLocation(localized[useScriptDisplay().script], detail);
   if (location.details.length === 0 && !children)
     return <span className={className}>{location.label}</span>;
   return (

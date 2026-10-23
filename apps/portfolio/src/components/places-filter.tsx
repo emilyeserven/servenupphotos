@@ -1,6 +1,8 @@
 import { ChevronRight, ChevronsUpDown, MapPin, Search } from "lucide-react";
 import { useState } from "react";
 import { useScriptDisplay } from "@/components/script-display-provider";
+import { ClearFilterButton } from "@/components/clear-filter-button";
+import { HiddenNote } from "@/components/hidden-note";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { LocationOption } from "@/lib/filter-options";
@@ -31,6 +33,18 @@ function idsAroundChosen(options: LocationOption[], selected: string[]): string[
       everyOption(option.children).some((inside) => selected.includes(valueOf(inside))),
     )
     .map((option) => option.id);
+}
+
+/**
+ * The choices that would show any photos, given the other filters, each with what's in it that
+ * would; a chosen one, or one with a chosen one inside, stays so it can be unchosen.
+ */
+function withPhotos(options: LocationOption[], selected: string[]): LocationOption[] {
+  return options.flatMap((option) => {
+    const children = withPhotos(option.children, selected);
+    const keep = option.count > 0 || selected.includes(valueOf(option)) || children.length > 0;
+    return keep ? [{ ...option, children }] : [];
+  });
 }
 
 /** Whether the choice's name, written the way it's shown or in English, has the search in it. */
@@ -84,7 +98,9 @@ export function PlacesFilter({
   const [expanded, setExpanded] = useState(() => new Set(idsAroundChosen(options, selected)));
   const searching = query.trim() !== "";
   const text = buttonText(options, selected, script);
-  const shown = matching(options, query.trim().toLowerCase(), script);
+  const available = withPhotos(options, selected);
+  const hidden = everyOption(options).length - everyOption(available).length;
+  const shown = matching(available, query.trim().toLowerCase(), script);
 
   /** Chooses the place, or unchooses it when it's chosen. */
   function toggle(value: string) {
@@ -104,19 +120,35 @@ export function PlacesFilter({
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          role="combobox"
-          aria-label={`Places: ${text}`}
-          className="max-w-56 font-normal"
-        >
-          <MapPin aria-hidden className="text-muted-foreground" />
-          <span className="truncate">{text}</span>
-          <ChevronsUpDown aria-hidden className="ml-auto opacity-50" />
-        </Button>
-      </PopoverTrigger>
+      {/* The X sits over the button, inside its border, as a button can't hold another. */}
+      <div className="relative inline-flex max-w-56 items-center">
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            role="combobox"
+            aria-label={`Places: ${text}`}
+            className={cn(
+              "w-full font-normal has-[>svg]:pr-8",
+              selected.length > 0 && "has-[>svg]:pr-14",
+            )}
+          >
+            <MapPin aria-hidden className="text-muted-foreground" />
+            <span className="truncate">{text}</span>
+          </Button>
+        </PopoverTrigger>
+        {selected.length > 0 && (
+          <ClearFilterButton
+            label="Places"
+            onClear={() => onChange([])}
+            className="absolute right-7"
+          />
+        )}
+        <ChevronsUpDown
+          aria-hidden
+          className="pointer-events-none absolute right-2.5 size-4 opacity-50"
+        />
+      </div>
       <PopoverContent align="start" className="flex w-[min(20rem,calc(100vw-2rem))] flex-col p-0">
         <label className="flex items-center gap-2 border-b px-3">
           <Search aria-hidden className="size-4 shrink-0 text-muted-foreground" />
@@ -132,7 +164,7 @@ export function PlacesFilter({
         <PlacesToolbar
           selectedCount={selected.length}
           searching={searching}
-          onExpandAll={() => setExpanded(new Set(expandableIds(options)))}
+          onExpandAll={() => setExpanded(new Set(expandableIds(available)))}
           onCollapseAll={() => setExpanded(new Set())}
           onClear={() => onChange([])}
         />
@@ -149,6 +181,7 @@ export function PlacesFilter({
               onToggleExpanded={toggleExpanded}
             />
           )}
+          <HiddenNote count={hidden} noun="places" />
         </div>
       </PopoverContent>
     </Popover>
