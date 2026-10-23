@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { type LocationDetail, locationDetails, locationText } from "@/lib/location-detail";
@@ -13,6 +14,8 @@ interface PhotoLocationProps {
   side?: "top" | "right";
   /** How much of the location to show, as the Table's View menu picks; its usual text when left out. */
   detail?: LocationDetail;
+  /** More to show under the details, such as the photo viewer's View on map link. */
+  children?: ReactNode;
 }
 
 /** The location's text and the lines shown on hover, with as much as `detail` asks for. */
@@ -24,7 +27,8 @@ function shownLocation(location: Location, detail?: LocationDetail) {
 /**
  * Where a photo was taken, as text that shows its GPS position on hover or focus, with its country
  * under it when the text leaves the country out, written as the menu's Script Display says. Just
- * the text when there's nothing more to show.
+ * the text when there's nothing more to show. `children` go under the details; the tooltip stays
+ * open while the pointer is over it, so they can be clicked.
  */
 export function PhotoLocation({
   location: localized,
@@ -32,9 +36,11 @@ export function PhotoLocation({
   detailsClassName,
   side,
   detail,
+  children,
 }: PhotoLocationProps) {
   const location = shownLocation(localized[useScriptDisplay().script], detail);
-  if (location.details.length === 0) return <span className={className}>{location.label}</span>;
+  if (location.details.length === 0 && !children)
+    return <span className={className}>{location.label}</span>;
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -52,6 +58,7 @@ export function PhotoLocation({
         {location.details.map((line) => (
           <span key={line}>{line}</span>
         ))}
+        {children}
       </TooltipContent>
     </Tooltip>
   );

@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { MapRef } from "@vis.gl/react-maplibre";
-import { useEffect, useRef } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 
 /**
  * Where the map is looking, as the URL keeps it: its center and zoom, such as
@@ -45,7 +45,7 @@ function viewOf(map: MapRef): Required<MapViewSearch> {
  * the map there. A run of moves, such as scrolling to zoom, saves once. It replaces the URL rather
  * than adding to the history.
  */
-export function useSaveMapView(): (map: MapRef) => void {
+function useSaveMapView(): (map: MapRef) => void {
   const navigate = useNavigate();
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -60,4 +60,35 @@ export function useSaveMapView(): (map: MapRef) => void {
       });
     }, SAVE_DELAY_MS);
   };
+}
+
+/** Whether the map is already looking where view says, as far as the URL rounds it. */
+function isShowing(map: MapRef, view: MapViewSearch): boolean {
+  const now = viewOf(map);
+  return now.lat === view.lat && now.lng === view.lng && now.zoom === view.zoom;
+}
+
+/**
+ * Moves the map when the URL's center and zoom change to somewhere it isn't looking, as when the
+ * photo viewer's **View on map** is used on the Map itself. The map's own saves already match it,
+ * so they don't move it.
+ */
+function useFollowMapView(map: RefObject<MapRef | null>, view: MapViewSearch) {
+  const { lat, lng, zoom } = view;
+  useEffect(() => {
+    if (!map.current || zoom === undefined || isShowing(map.current, { lat, lng, zoom })) return;
+    map.current.flyTo({ center: [lng as number, lat as number], zoom });
+  }, [map, lat, lng, zoom]);
+}
+
+/**
+ * Keeps the map and the URL's center and zoom together: the map follows the URL when it changes
+ * (useFollowMapView), and the returned function saves where the map is (useSaveMapView).
+ */
+export function useMapViewInUrl(
+  map: RefObject<MapRef | null>,
+  view: MapViewSearch,
+): (map: MapRef) => void {
+  useFollowMapView(map, view);
+  return useSaveMapView();
 }
