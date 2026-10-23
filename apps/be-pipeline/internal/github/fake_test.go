@@ -39,6 +39,9 @@ type fakeGitHub struct {
 	truncated map[string]bool
 	// limited answers every request as rate limited.
 	limited bool
+	// created are when each path was first committed, as RFC 3339, for the
+	// history query; a path without one has no commits.
+	created map[string]string
 }
 
 type fakePull struct {
@@ -60,6 +63,7 @@ func newFakeGitHub(t *testing.T) (*fakeGitHub, *Client) {
 	f := &fakeGitHub{
 		files: map[string]string{}, versions: map[string]int{"main": 1}, trees: map[string]fakeTree{},
 		commits: map[string]fakeCommit{}, fail: map[string]int{}, truncated: map[string]bool{},
+		created: map[string]string{},
 	}
 	srv := httptest.NewServer(http.HandlerFunc(f.serve))
 	t.Cleanup(srv.Close)
@@ -250,8 +254,11 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, r *http.Request) {
 	}
 	_ = json.NewDecoder(r.Body).Decode(&in)
 	kind := "snapshot"
-	if strings.Contains(in.Query, "pullRequests") {
+	switch {
+	case strings.Contains(in.Query, "pullRequests"):
 		kind = "state"
+	case strings.Contains(in.Query, "history("):
+		kind = "history"
 	}
 	f.calls = append(f.calls, "graphql "+kind)
 	if status := f.fail["graphql "+kind]; status != 0 {
@@ -267,11 +274,34 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, r *http.Request) {
 		writeBody(w, http.StatusOK, map[string]any{"data": map[string]any{"repository": f.state(in.Variables)}})
 		return
 	}
+	if kind == "history" {
+		writeBody(w, http.StatusOK, map[string]any{"data": map[string]any{"repository": f.history(in.Variables)}})
+		return
+	}
 	repo := map[string]any{"commit": map[string]any{"tree": map[string]any{"oid": "tree:" + in.Variables["commit"].(string)}}}
 	for _, alias := range []string{"photos", "albums", "tags", "places", "localizations"} {
 		repo[alias] = f.tree(in.Variables[alias].(string))
 	}
 	writeBody(w, http.StatusOK, map[string]any{"data": map[string]any{"repository": repo}})
+}
+
+// history answers the history query: a later edit, then the commit that
+// created each path in created, newest first as GitHub lists them.
+func (f *fakeGitHub) history(vars map[string]any) map[string]any {
+	object := map[string]any{}
+	for i := 0; ; i++ {
+		p, ok := vars["p"+strconv.Itoa(i)].(string)
+		if !ok {
+			break
+		}
+		nodes := []map[string]any{}
+		if created, ok := f.created[p]; ok {
+			nodes = append(nodes, map[string]any{"committedDate": "2030-01-01T00:00:00Z"},
+				map[string]any{"committedDate": created})
+		}
+		object["f"+strconv.Itoa(i)] = map[string]any{"nodes": nodes}
+	}
+	return map[string]any{"object": object}
 }
 
 func (f *fakeGitHub) state(vars map[string]any) map[string]any {

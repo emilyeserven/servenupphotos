@@ -51,6 +51,9 @@ type AddedField struct {
 	// FromThumbnail is true when Value was read from the photo's Square
 	// Thumbnail: the crop marked on its URL, or saved with it in R2.
 	FromThumbnail bool `json:"fromThumbnail"`
+	// Numbered is true when Value is the photo's new ID, counted in the
+	// order the photo files were created.
+	Numbered bool `json:"numbered"`
 }
 
 // BackfillFile is a photo file missing fields.
@@ -74,6 +77,8 @@ type MissingField struct {
 	FromExif int `json:"fromExif"`
 	// FromThumbnail is how many of them get it from the Square Thumbnail.
 	FromThumbnail int `json:"fromThumbnail"`
+	// Numbered is how many of them get a new photo ID.
+	Numbered int `json:"numbered"`
 }
 
 // BackfillPreview is what adding the missing fields would do to the photo
@@ -114,7 +119,7 @@ func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, read R
 	if perr != nil {
 		return BackfillPreview{}, perr
 	}
-	plans, perr := planBackfill(ctx, scan, read)
+	plans, perr := c.planBackfill(ctx, scan, read)
 	if perr != nil {
 		return BackfillPreview{}, perr
 	}
@@ -139,7 +144,7 @@ func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, read R
 		file := BackfillFile{Path: f.path, FileURL: f.fileURL, ExifError: plan.exifErr, CropError: plan.cropErr}
 		for _, g := range plan.gaps {
 			file.Added = append(file.Added, AddedField{
-				Field: g.field, Value: g.value, FromExif: g.fromExif, FromThumbnail: g.fromThumbnail,
+				Field: g.field, Value: g.value, FromExif: g.fromExif, FromThumbnail: g.fromThumbnail, Numbered: g.numbered,
 			})
 			n := counts[g.field]
 			if n == nil {
@@ -152,6 +157,9 @@ func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, read R
 			}
 			if g.fromThumbnail {
 				n.FromThumbnail++
+			}
+			if g.numbered {
+				n.Numbered++
 			}
 		}
 		preview.Files = append(preview.Files, file)
@@ -179,7 +187,7 @@ func (c *Client) Backfill(ctx context.Context, gh settings.GitHub, read Readers)
 				"%s couldn't be read (%s), so nothing was changed.", f.path, f.err)
 		}
 	}
-	plans, perr := planBackfill(ctx, scan, read)
+	plans, perr := c.planBackfill(ctx, scan, read)
 	if perr != nil {
 		return BackfillResult{}, perr
 	}
@@ -213,10 +221,23 @@ type backfillPlan struct {
 	cropErr string
 }
 
-// planBackfill finds the gaps in every readable file of scan, filling EXIF
+// planBackfill finds the gaps in every readable file of scan, as findPlans
+// does, and numbers the photos missing an ID (numberPhotos).
+func (c *Client) planBackfill(ctx context.Context, scan baseURLScan, read Readers) ([]backfillPlan, *PublishError) {
+	plans, perr := findPlans(ctx, scan, read)
+	if perr != nil {
+		return nil, perr
+	}
+	if perr := c.numberPhotos(ctx, scan, plans); perr != nil {
+		return nil, perr
+	}
+	return plans, nil
+}
+
+// findPlans finds the gaps in every readable file of scan, filling EXIF
 // fields with read.Exif and the thumbnail's crop from its URL or read.Crop,
 // when they are non-nil. Files are read from R2 a few at a time.
-func planBackfill(ctx context.Context, scan baseURLScan, read Readers) ([]backfillPlan, *PublishError) {
+func findPlans(ctx context.Context, scan baseURLScan, read Readers) ([]backfillPlan, *PublishError) {
 	tmpl := photoTemplate()
 	plans := make([]backfillPlan, len(scan.files))
 	var wg sync.WaitGroup
@@ -450,6 +471,8 @@ type gap struct {
 	fromExif bool
 	// fromThumbnail marks the thumbnail's crop read from its URL or R2.
 	fromThumbnail bool
+	// numbered marks the photo's new ID (numberPhotos).
+	numbered bool
 	// pos is the offset the field is inserted at: after the field before it,
 	// or after the object's opening brace when lead is set.
 	pos  int
