@@ -22,6 +22,7 @@ import {
   type RebuildWatch,
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { GroupCombobox } from "@/components/group-picker";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -379,25 +380,8 @@ function SavedGroup({
   return (
     <div className="flex flex-col gap-3 text-sm">
       <p>
-        Saved{" "}
-        <a
-          href={result.fileUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="underline underline-offset-4"
-        >
-          {result.path}
-        </a>{" "}
-        {result.newPullRequest ? "and opened" : "to the open pull request"}{" "}
-        <a
-          href={result.pullRequestUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="underline underline-offset-4"
-        >
-          #{result.pullRequestNumber}
-        </a>
-        .
+        Saved <code>{result.path}</code> in the app.{" "}
+        <WaitingForCommit pullRequestUrl={result.pullRequestUrl} />
       </p>
       <AllPhotosRebuild status={rebuild.status} file={allFile} />
       <Button variant="outline" size="sm" className="self-start" onClick={onAnother}>

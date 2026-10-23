@@ -5,13 +5,13 @@ import { type ReactNode, useRef, useState } from "react";
 import type { CombinedCommit } from "@/api/photos";
 import { githubIsSetUp, settingsQuery } from "@/api/settings";
 import { CommitButton } from "@/components/all-photos-rebuild";
+import { DiscardButton } from "@/components/discard-changes";
 import { UploadProgressBadge, UploadQueueSection } from "@/components/bulk-upload/upload-progress";
 import { Spinner } from "@/components/ui/spinner";
 import { FloatingActionsSlot } from "@/components/floating-actions";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { useCombinedData, useCombinedSync } from "@/stores/combined-data";
-import { useLocalEditsStore } from "@/stores/local-edits";
 
 type Sync = ReturnType<typeof useCombinedSync>;
 
@@ -24,10 +24,6 @@ interface Badge {
 
 const MUTED = "text-muted-foreground";
 const AMBER = "text-amber-700 dark:text-amber-400";
-
-function plural(count: number, one: string): string {
-  return `${count} ${one}${count === 1 ? "" : "s"}`;
-}
 
 function unsyncedBadge(sync: Sync): Badge {
   const label = sync.pending ? `Not synced · ${sync.pending}` : "Not synced";
@@ -148,7 +144,7 @@ function SyncPanel({
         >
           Photos in Flight
         </Link>
-        <DiscardButton count={sync.localEdits} />
+        <DiscardButton localEdits={sync.localEdits} savedFiles={sync.savedFiles} />
         {canCommit(sync) && <CommitButton variant={sync.unsynced ? "default" : "outline"} />}
       </div>
     </div>
@@ -157,7 +153,14 @@ function SyncPanel({
 
 function PullRequestLine({ sync }: { sync: Sync }) {
   const pr = sync.pullRequest;
-  if (!pr) return <p className={MUTED}>No open batch (“Add photo data” pull request).</p>;
+  if (!pr) {
+    return (
+      <p className={MUTED}>
+        No open batch (“Add photo data” pull request). Commit opens one with the changes waiting for
+        it.
+      </p>
+    );
+  }
   return (
     <p className="flex items-center gap-2">
       <GitPullRequestIcon className="size-4 shrink-0" aria-hidden />
@@ -168,9 +171,9 @@ function PullRequestLine({ sync }: { sync: Sync }) {
   );
 }
 
-/** Whether there's anything to commit: a pull request, or edits that would open one. */
+/** Whether there's anything to commit: a pull request, or changes that would open one. */
 function canCommit(sync: Sync): boolean {
-  return Boolean(sync.pullRequest) || sync.localEdits > 0;
+  return Boolean(sync.pullRequest) || sync.unsynced;
 }
 
 /** When everything is committed but the batch is still open, says it's waiting on a merge. */
@@ -180,24 +183,6 @@ function OpenBatchLine({ sync }: { sync: Sync }) {
     <p className="text-sky-700 dark:text-sky-400">
       Synced. The batch stays open until #{sync.pullRequest.number} is merged.
     </p>
-  );
-}
-
-/** Drops the edits only kept in the browser so far, after asking. */
-function DiscardButton({ count }: { count: number }) {
-  const discard = useLocalEditsStore((state) => state.discard);
-  if (count === 0) return null;
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        if (window.confirm(`Discard the uncommitted changes to ${plural(count, "image")}?`))
-          discard();
-      }}
-      className="text-muted-foreground underline underline-offset-4"
-    >
-      Discard
-    </button>
   );
 }
 

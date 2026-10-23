@@ -93,9 +93,10 @@ type BackfillPreview struct {
 	ReadExif bool `json:"readExif"`
 }
 
-// BackfillResult says where the added fields were committed.
+// BackfillResult says where the added fields were saved: in the pending
+// changes, for the next Commit.
 type BackfillResult struct {
-	scanCommit
+	pendingSave
 	Files  int `json:"files"`
 	Fields int `json:"fields"`
 }
@@ -164,9 +165,9 @@ func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, read R
 }
 
 // Backfill adds the fields PreviewBackfill lists to every photo file missing
-// them, as one commit as ReplaceBaseURL makes. Fields a file has, even null
+// them, in the pending changes as ReplaceBaseURL saves them. Fields a file has, even null
 // ones, are never changed, and the rest of each file is kept byte for byte.
-// Nothing is committed when any photo file can't be read.
+// Nothing is saved when any photo file can't be read.
 func (c *Client) Backfill(ctx context.Context, gh settings.GitHub, read Readers) (BackfillResult, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
@@ -199,8 +200,7 @@ func (c *Client) Backfill(ctx context.Context, gh settings.GitHub, read Readers)
 		return BackfillResult{}, publishErr(http.StatusConflict, "Every photo file has every field, so there's nothing to add.")
 	}
 
-	message := fmt.Sprintf("Add missing fields to %d photo %s", result.Files, plural(result.Files, "file"))
-	if result.scanCommit, perr = c.commitScan(ctx, scan, entries, message); perr != nil {
+	if result.pendingSave, perr = c.saveScan(scan, entries); perr != nil {
 		return BackfillResult{}, perr
 	}
 	return result, nil

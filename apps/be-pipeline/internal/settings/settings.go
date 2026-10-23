@@ -97,6 +97,12 @@ func NewStore(path string) *Store {
 	return &Store{path: path}
 }
 
+// Dir is the folder the settings file is in, where other local state, such
+// as the changes waiting for Commit, is kept next to it.
+func (s *Store) Dir() string {
+	return filepath.Dir(s.path)
+}
+
 // Get returns the client-safe view of the stored settings.
 func (s *Store) Get() (Public, error) {
 	s.mu.Lock()

@@ -3,7 +3,6 @@ package github
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"path"
@@ -12,42 +11,37 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// UpdatedFile is a photo JSON file Update changed.
+// UpdatedFile is a photo JSON file Update saved in the pending changes.
 type UpdatedFile struct {
-	Path    string `json:"path"`
-	FileURL string `json:"fileUrl"`
-	// CommitSHA is the commit that changed the file, the pull request's new
-	// head.
-	CommitSHA string `json:"commitSha"`
+	Path string `json:"path"`
 	// Changed is false when data was already the file's content, so nothing
-	// was committed and CommitSHA is empty.
+	// was saved.
 	Changed bool `json:"changed"`
-	// PullRequestURL is the photo data pull request, when saving a file
-	// already in the portfolio opened it.
+	// PullRequestURL is the open photo data pull request the next Commit
+	// commits to; empty when none is open and Commit will open one.
 	PullRequestURL string `json:"pullRequestUrl,omitempty"`
-	// NewPullRequest is true when the save opened the pull request.
-	NewPullRequest bool `json:"newPullRequest,omitempty"`
+	// Before is the file's data before the save, at its old path when it was
+	// renamed.
+	Before json.RawMessage `json:"before"`
+	// Data is the file's data as saved.
+	Data json.RawMessage `json:"data"`
 }
 
-// Update replaces the content of file, a photo JSON file in the open pull
-// request titled PullRequestTitle, with data, a JSON object, on the pull
-// request's branch. A file the pull request doesn't change yet, but that is
-// on the base branch, is saved on the pull request's branch too, so the edit
-// goes into the pull request; with no pull request open, one is opened for
-// it. A file the pull request removes can't be updated.
+// Update replaces the content of file, a photo JSON file in flight or already
+// in the portfolio, with data, a JSON object, in the pending changes, for the
+// next Commit. A file the photo data pull request removes can't be updated.
 //
 // When newName, a file name with or without the .json extension, differs from
-// file's, the file is moved to it in the same folder. Only files the pull
-// request adds can be renamed, since renaming one that is also on the base
-// branch would remove it there when the pull request merges.
+// file's, the file is moved to it in the same folder. Only files that aren't
+// on the base branch can be renamed, since renaming one that is would remove
+// it there when the pull request merges.
 func (c *Client) Update(ctx context.Context, gh settings.GitHub, file, newName string, data json.RawMessage) (UpdatedFile, error) {
 	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}
-	owner, name, ok := splitRepo(gh.Repo)
-	if !ok || gh.Token == "" {
-		return UpdatedFile{}, publishErr(http.StatusBadRequest, "Set the GitHub repository and token in Settings first.")
+	if perr := setUp(gh); perr != nil {
+		return UpdatedFile{}, perr
 	}
 	if !isPhotoData(folder, file) {
 		return UpdatedFile{}, publishErr(http.StatusBadRequest, "Only photo JSON files in %s can be edited.", folder)
@@ -60,44 +54,58 @@ func (c *Client) Update(ctx context.Context, gh settings.GitHub, file, newName s
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}
-	t := target{owner: owner, name: name, token: gh.Token}
-
-	pr, perr := c.findInFlightPull(ctx, t)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}
-	if pr == nil {
-		// Only a file already in the portfolio can be edited without one.
-		if t, perr = c.target(ctx, gh); perr != nil {
+	current, perr := w.editable(file)
+	if perr != nil {
+		return UpdatedFile{}, perr
+	}
+	result := UpdatedFile{Path: dest, Before: json.RawMessage(current), Data: json.RawMessage(content)}
+	if w.pr != nil {
+		result.PullRequestURL = w.pr.HTMLURL
+	}
+	changes := map[string][]byte{dest: content}
+	if dest != file {
+		if perr := w.renamable(file, dest); perr != nil {
 			return UpdatedFile{}, perr
 		}
-		return c.updatePublished(ctx, t, "", file, dest, content)
+		changes[file] = nil
+	} else if bytes.Equal(current, content) {
+		return result, nil
 	}
-	files, perr := c.listPullFiles(ctx, t, pr.Number)
-	if perr != nil {
+	if perr := c.save(w, changes); perr != nil {
 		return UpdatedFile{}, perr
 	}
-	changed, inPull, perr := checkEditable(files, file)
-	if perr != nil {
-		return UpdatedFile{}, perr
-	}
-	if !inPull {
-		t.base = pr.Base.Ref
-		return c.updatePublished(ctx, t, pr.Head.Ref, file, dest, content)
-	}
+	result.Changed = true
+	return result, nil
+}
 
-	// Read at the branch, so the SHA sent with the change is the file's latest.
-	current, sha, _, msg := c.readFileSHA(ctx, t, file, pr.Head.Ref)
-	if msg != "" {
-		return UpdatedFile{}, publishErr(http.StatusBadGateway, "%s", msg)
+// editable returns file's content, failing when it isn't there or the photo
+// data pull request removes it.
+func (w *workspace) editable(file string) ([]byte, *PublishError) {
+	if msg := w.readErr(file); msg != "" {
+		return nil, publishErr(http.StatusBadGateway, "%s", msg)
 	}
-	if dest != file {
-		return c.renameFile(ctx, t, pr, changed, dest, sha, content)
+	current, ok := w.file(file)
+	switch {
+	case ok:
+		return current, nil
+	case w.onBase(file):
+		return nil, publishErr(http.StatusConflict, "%s is removed in the pull request, so it can't be edited.", file)
 	}
-	if bytes.Equal(current, content) {
-		return UpdatedFile{Path: file, FileURL: changed.BlobURL}, nil
+	return nil, publishErr(http.StatusNotFound,
+		"%s isn't in the photo data pull request or on %s. Refresh to see what is.", file, w.t.base)
+}
+
+// renamable fails unless file can move to dest: it isn't in the portfolio
+// yet, and dest isn't taken.
+func (w *workspace) renamable(file, dest string) *PublishError {
+	if w.onBase(file) {
+		return publishErr(http.StatusConflict, "%s is already in the portfolio, so it keeps its name.", file)
 	}
-	return c.updateFile(ctx, t, file, sha, pr.Head.Ref, content)
+	return w.ensureAbsent(dest)
 }
 
 // renamedPath is file moved to name in the same folder, or file itself when
@@ -114,33 +122,6 @@ func renamedPath(file, name string) (string, *PublishError) {
 	return path.Join(path.Dir(file), name+".json"), nil
 }
 
-// renameFile saves content as dest on the pull request's branch, then
-// deletes file, whose blob is sha, there. dest must not exist on the
-// branch or on the base branch.
-func (c *Client) renameFile(ctx context.Context, t target, pr *inFlightPull, file pullFile, dest, sha string, content []byte) (UpdatedFile, error) {
-	if file.Status != "added" {
-		return UpdatedFile{}, publishErr(http.StatusConflict,
-			"%s is %s in the pull request, not added, so it's already in the portfolio and keeps its name.", file.Filename, file.Status)
-	}
-	for _, ref := range []string{pr.Base.Ref, pr.Head.Ref} {
-		if ref == "" {
-			continue
-		}
-		if perr := c.ensureAbsent(ctx, t, dest, ref); perr != nil {
-			return UpdatedFile{}, perr
-		}
-	}
-	fileURL, perr := c.createFile(ctx, t, dest, pr.Head.Ref, content, "Add photo data "+dest)
-	if perr != nil {
-		return UpdatedFile{}, perr
-	}
-	commit, perr := c.deleteFile(ctx, t, file.Filename, sha, pr.Head.Ref)
-	if perr != nil {
-		return UpdatedFile{}, publishErr(perr.Status, "Saved %s, but couldn't remove %s, so the pull request has both: %s", dest, file.Filename, perr.Message)
-	}
-	return UpdatedFile{Path: dest, FileURL: fileURL, CommitSHA: commit, Changed: true}, nil
-}
-
 // photoContent is data indented as Publish writes a photo's file, or an error
 // when data isn't a JSON object.
 func photoContent(data json.RawMessage) ([]byte, *PublishError) {
@@ -154,46 +135,4 @@ func photoContent(data json.RawMessage) ([]byte, *PublishError) {
 	}
 	out.WriteByte('\n')
 	return out.Bytes(), nil
-}
-
-// checkEditable returns file as the pull request changes it, and whether the
-// pull request changes it at all, failing when the pull request removes it.
-func checkEditable(files []pullFile, file string) (pullFile, bool, *PublishError) {
-	for _, f := range files {
-		if f.Filename != file {
-			continue
-		}
-		if f.Status == "removed" {
-			return pullFile{}, true, publishErr(http.StatusConflict, "%s is removed in the pull request, so it can't be edited.", file)
-		}
-		return f, true, nil
-	}
-	return pullFile{}, false, nil
-}
-
-// updateFile commits content over file, whose blob is sha, on branch.
-func (c *Client) updateFile(ctx context.Context, t target, file, sha, branch string, content []byte) (UpdatedFile, error) {
-	body := map[string]string{
-		"message": "Update photo data " + file,
-		"content": base64.StdEncoding.EncodeToString(content),
-		"sha":     sha,
-		"branch":  branch,
-	}
-	var out struct {
-		Content struct {
-			HTMLURL string `json:"html_url"`
-		} `json:"content"`
-		Commit struct {
-			SHA string `json:"sha"`
-		} `json:"commit"`
-	}
-	res, err := c.do(ctx, http.MethodPut, repoPath(t.owner, t.name)+"/contents/"+escapePath(file), t.token, body, &out)
-	// GitHub answers 409 or 422 when the file changed since it was read.
-	if err == nil && (res.Status == http.StatusConflict || res.Status == http.StatusUnprocessableEntity) {
-		return UpdatedFile{}, publishErr(http.StatusConflict, "%s changed on %s while it was being saved. Refresh and try again.", file, branch)
-	}
-	if perr := check(res, err, "saving the file"); perr != nil {
-		return UpdatedFile{}, perr
-	}
-	return UpdatedFile{Path: file, FileURL: out.Content.HTMLURL, CommitSHA: out.Commit.SHA, Changed: true}, nil
 }

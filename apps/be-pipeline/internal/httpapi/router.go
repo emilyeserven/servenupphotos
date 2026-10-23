@@ -3,6 +3,7 @@ package httpapi
 
 import (
 	"net/http"
+	"path/filepath"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
@@ -11,8 +12,18 @@ import (
 
 // NewRouter returns the HTTP handler for all be-pipeline routes. extractor may be
 // nil, in which case POST /exif responds with colors only and a null "exif".
+// The changes saved and not committed yet are kept in pending-changes.json
+// next to the settings.
 func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
-	return newRouter(extractor, store, github.New())
+	stage := github.NewStage("")
+	local := github.NewLocalCopy("")
+	if store != nil {
+		stage = github.NewStage(filepath.Join(store.Dir(), "pending-changes.json"))
+		local = github.NewLocalCopy(filepath.Join(store.Dir(), "github-cache.json"))
+	}
+	gh := github.New(stage)
+	gh.Local = local
+	return newRouter(extractor, store, gh)
 }
 
 // routeDeps is what the route handlers are built from.

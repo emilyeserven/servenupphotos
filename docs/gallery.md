@@ -7,15 +7,14 @@ linked to Photos in Flight. The list is read from the photos folder rather than 
 each photo's file path, which `ALLPHOTOS.json` entries don't carry.
 
 Each photo with its image in R2 has an **Edit** button that opens it on the Photo page (`/exif?edit=<path>&from=gallery`),
-the same editor Photos in Flight uses, and each tile lists the photo's album and tag names. Saving writes the JSON into
-the pull request: over the branch's copy when one is
-open (the branch must already have the file; update it from the base branch if it was made before the photo merged), or
-on a new `photo-data/` branch with a new pull request when none is open. From then on the photo is in Photos in Flight,
-and edits go to the pull request's copy. A new title doesn't rename the file, since the pull request would then delete
+the same editor Photos in Flight uses, and each tile lists the photo's album and tag names. Saving keeps the JSON as a
+[change waiting for Commit](pending-changes.md), which Commit sends to the open pull request (the branch must already
+have the file; update it from the base branch if it was made before the photo merged), or to a new one when none is
+open. From then on the photo is in Photos in Flight, and edits go to that copy. A new title doesn't rename the file, since the pull request would then delete
 the old file from the portfolio when it merges and the photo's file name would change under it.
 
 **Select** turns on choosing photos, with a checkbox on each tile (or click the tile), **Select all shown** for the
 filtered ones, and an **Add albums and tags** card with an album and a tag combobox. **Add to N photos**
 (`POST /api/photos/groups` with `paths`, `albums` and `tags`) adds them to each chosen photo's `albums` and `tags`
-after the ones it has, changing nothing else in the files, as one commit on the open pull request's branch (or a new
-one with its pull request), the way Update Data commits. It warns when a chosen photo is already in another album.
+after the ones it has, changing nothing else in the files, as [changes waiting for Commit](pending-changes.md), the
+way Update Data saves. It warns when a chosen photo is already in another album.

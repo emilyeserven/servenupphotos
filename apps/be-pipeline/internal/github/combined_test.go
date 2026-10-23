@@ -8,25 +8,26 @@ import (
 )
 
 func TestCombined(t *testing.T) {
-	const root = "apps/portfolio/src/data/"
-	gh := settings.GitHub{Repo: "owner/repo", Token: token}
-	c := newAllPhotosRepo(t, []map[string]any{photoPull}, nil, map[string]string{
-		root + "photos/ALLPHOTOS.json@main":  `[{"file":"A.jpg"}]`,
-		root + "albums/ALLALBUMS.json@main":  `{"not":"an array"}`,
-		root + "photos/ALLPHOTOS.json@head7": `[{"file":"A.jpg"},{"file":"B.jpg"}]`,
-		root + "tags/ALLTAGS.json@head7":     `[]`,
+	const root = dataRoot + "/"
+	f, c := newFakeGitHub(t)
+	f.files["main:"+root+"photos/ALLPHOTOS.json"] = `[{"file":"A.jpg"}]`
+	f.files["main:"+root+"albums/ALLALBUMS.json"] = `{"not":"an array"}`
+	f.openPull(prBranch, map[string]string{
+		root + "photos/ALLPHOTOS.json": `[{"file":"A.jpg"},{"file":"B.jpg"}]`,
+		root + "tags/ALLTAGS.json":     `[]`,
 	})
-	got, err := c.Combined(t.Context(), gh)
+	delete(f.files, prBranch+":"+root+"albums/ALLALBUMS.json")
+	got, err := c.Combined(t.Context(), pullGH)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got.Repo != "owner/repo" || got.Folder != "apps/portfolio/src/data" || got.Base.Branch != "main" {
+	if got.Repo != "owner/repo" || got.Folder != dataRoot || got.Base.Branch != "main" {
 		t.Errorf("Combined() = %+v, want owner/repo's data folder on main", got)
 	}
 
 	base := got.Base
 	if p := base.Photos; !p.Found || p.Count != 1 || string(p.Data) != `[{"file":"A.jpg"}]` ||
-		p.FileURL != "https://github.com/owner/repo/blob/main/apps/portfolio/src/data/photos/ALLPHOTOS.json" {
+		p.FileURL != "https://github.com/owner/repo/blob/main/"+root+"photos/ALLPHOTOS.json" {
 		t.Errorf("Base.Photos = %+v", p)
 	}
 	if a := base.Albums; !a.Found || a.Error != "The file isn't a JSON array." || a.Data != nil {
@@ -36,11 +37,11 @@ func TestCombined(t *testing.T) {
 		t.Errorf("Base.Tags = %+v, want not found", tags)
 	}
 
-	if got.Head == nil || got.Head.PullRequest.Number != 7 || got.Head.PullRequest.HeadSHA != "head7" {
-		t.Fatalf("Head = %+v, want pull request 7 at head7", got.Head)
+	if got.Head == nil || got.Head.PullRequest.Number != 1 || got.Head.PullRequest.HeadSHA != f.head(prBranch) {
+		t.Fatalf("Head = %+v, want pull request 1 at its head", got.Head)
 	}
 	if p := got.Head.Photos; p.Count != 2 ||
-		p.FileURL != "https://github.com/owner/repo/blob/photo-data/2026-10-15-024500/apps/portfolio/src/data/photos/ALLPHOTOS.json" {
+		p.FileURL != "https://github.com/owner/repo/blob/"+prBranch+"/"+root+"photos/ALLPHOTOS.json" {
 		t.Errorf("Head.Photos = %+v, want two photos linked on the branch", p)
 	}
 	if tags := got.Head.Tags; !tags.Found || tags.Count != 0 || string(tags.Data) != `[]` {
@@ -49,10 +50,13 @@ func TestCombined(t *testing.T) {
 	if a := got.Head.Albums; a.Found {
 		t.Errorf("Head.Albums = %+v, want not found", a)
 	}
+	if n := len(f.calls); n != 3 {
+		t.Errorf("Combined() made %d GitHub calls (%v), want 3: the state and two snapshots", n, f.calls)
+	}
 }
 
 func TestCombinedNoPullRequest(t *testing.T) {
-	c := newAllPhotosRepo(t, []map[string]any{}, nil, nil)
+	_, c := newFakeGitHub(t)
 	got, err := c.Combined(t.Context(), settings.GitHub{Repo: "owner/repo", Folder: "/data/", Token: token})
 	if err != nil {
 		t.Fatal(err)

@@ -3,7 +3,6 @@ package github
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,13 +12,9 @@ import (
 	"path"
 	"sort"
 	"strings"
-	"sync"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
-
-// readConcurrency is how many photo files BaseURL reads from GitHub at once.
-const readConcurrency = 8
 
 // skippedDataFiles are the JSON files in the data folder that aren't photos,
 // as the Combine photo data workflow skips them.
@@ -83,19 +78,12 @@ type BaseURLPreview struct {
 	Unreadable []BaseURLUnreadable `json:"unreadable"`
 }
 
-// BaseURLResult says where a base URL change was committed.
+// BaseURLResult says where a base URL change was saved: in the pending
+// changes, for the next Commit.
 type BaseURLResult struct {
-	Branch            string `json:"branch"`
-	CommitSHA         string `json:"commitSha"`
-	CommitURL         string `json:"commitUrl"`
-	PullRequestURL    string `json:"pullRequestUrl"`
-	PullRequestNumber int    `json:"pullRequestNumber"`
-	// NewPullRequest is true when the change opened the pull request.
-	NewPullRequest bool `json:"newPullRequest"`
-	Files          int  `json:"files"`
-	URLs           int  `json:"urls"`
-	// Changes are the files the commit changed, before and after.
-	Changes []ScanChange `json:"changes"`
+	pendingSave
+	Files int `json:"files"`
+	URLs  int `json:"urls"`
 }
 
 // photoFile is a photo JSON file read for a base URL change.
@@ -106,22 +94,22 @@ type photoFile struct {
 	err           string
 }
 
-// baseURLScan is a read of every photo file on one commit.
+// baseURLScan is every photo file as the next Commit will have it.
 type baseURLScan struct {
-	t       target
-	folder  string
-	branch  string
-	headSHA string
-	pr      *pullRequest
-	files   []photoFile
+	w      *workspace
+	t      target
+	folder string
+	// branch is where the next Commit commits, as workspace.branch says.
+	branch string
+	pr     *inFlightPull
+	files  []photoFile
 }
 
-// PreviewBaseURL reads every photo JSON file in gh's folder and reports the
-// origins of their image URLs, and, when from and to are given, which URLs
-// moving the images from base URL from to base URL to would rewrite. Files
-// are read on the open photo data pull request's branch when there is one,
-// so photos in flight are included, and on the base branch otherwise. It only
-// reads from GitHub.
+// PreviewBaseURL reads every photo JSON file in gh's folder, as the next
+// Commit will have it, and reports the origins of their image URLs, and, when
+// from and to are given, which URLs moving the images from base URL from to
+// base URL to would rewrite. Photos in flight and pending changes are
+// included. It changes nothing.
 func (c *Client) PreviewBaseURL(ctx context.Context, gh settings.GitHub, from, to string) (BaseURLPreview, error) {
 	from, to, perr := baseURLPair(from, to, false)
 	if perr != nil {
@@ -157,10 +145,8 @@ func (c *Client) PreviewBaseURL(ctx context.Context, gh settings.GitHub, from, t
 }
 
 // ReplaceBaseURL rewrites every image URL under base URL from to start with
-// base URL to instead, in all the photo JSON files PreviewBaseURL reads, as
-// one commit on the open photo data pull request's branch. With no such pull
-// request open, it commits to a new photo-data/ branch from the base branch
-// and opens one. Nothing is committed when any photo file can't be read.
+// base URL to instead, in all the photo JSON files PreviewBaseURL reads, in
+// the pending changes. Nothing is saved when any photo file can't be read.
 func (c *Client) ReplaceBaseURL(ctx context.Context, gh settings.GitHub, from, to string) (BaseURLResult, error) {
 	from, to, perr := baseURLPair(from, to, true)
 	if perr != nil {
@@ -192,40 +178,15 @@ func (c *Client) ReplaceBaseURL(ctx context.Context, gh settings.GitHub, from, t
 		return BaseURLResult{}, publishErr(http.StatusConflict, "No image URLs start with %s, so there's nothing to change.", from)
 	}
 
-	message := fmt.Sprintf("Change image base URL from %s to %s", from, to)
-	saved, perr := c.commitScan(ctx, scan, entries, message)
-	if perr != nil {
+	if result.pendingSave, perr = c.saveScan(scan, entries); perr != nil {
 		return BaseURLResult{}, perr
 	}
-	result.Branch, result.CommitSHA, result.CommitURL = saved.Branch, saved.CommitSHA, saved.CommitURL
-	result.PullRequestURL, result.PullRequestNumber = saved.PullRequestURL, saved.PullRequestNumber
-	result.NewPullRequest, result.Changes = saved.NewPullRequest, saved.Changes
 	return result, nil
 }
 
-// scanCommit says where commitScan committed.
-type scanCommit struct {
-	Branch            string `json:"branch"`
-	CommitSHA         string `json:"commitSha"`
-	CommitURL         string `json:"commitUrl"`
-	PullRequestURL    string `json:"pullRequestUrl"`
-	PullRequestNumber int    `json:"pullRequestNumber"`
-	// NewPullRequest is true when the commit opened the pull request.
-	NewPullRequest bool `json:"newPullRequest"`
-	// Changes are the files the commit changed, before and after, so the app
-	// can show them in the combined lists before they're committed there.
-	Changes []ScanChange `json:"changes"`
-}
-
-// ScanChange is one photo file commitScan changed: its data before and after.
-type ScanChange struct {
-	Path   string          `json:"path"`
-	Before json.RawMessage `json:"before"`
-	After  json.RawMessage `json:"after"`
-}
-
-// scanChanges pairs each entry with the file scan read at its path.
-func scanChanges(scan baseURLScan, entries []map[string]string) []ScanChange {
+// saveScan saves entries, each a file's "path" and new "content", in the
+// pending changes, with the content scan read as each one's before.
+func (c *Client) saveScan(scan baseURLScan, entries []map[string]string) (pendingSave, *PublishError) {
 	before := map[string][]byte{}
 	for _, f := range scan.files {
 		before[f.path] = f.content
@@ -234,40 +195,7 @@ func scanChanges(scan baseURLScan, entries []map[string]string) []ScanChange {
 	for _, e := range entries {
 		changes = append(changes, ScanChange{Path: e["path"], Before: before[e["path"]], After: json.RawMessage(e["content"])})
 	}
-	return changes
-}
-
-// commitScan commits entries on top of the commit scan read, on the open
-// photo data pull request's branch. With no such pull request open, it
-// commits to a new photo-data/ branch from the base branch and opens one.
-func (c *Client) commitScan(ctx context.Context, scan baseURLScan, entries []map[string]string, message string) (scanCommit, *PublishError) {
-	commit, perr := c.createCommit(ctx, scan.t, scan.headSHA, entries, message)
-	if perr != nil {
-		return scanCommit{}, perr
-	}
-	result := scanCommit{CommitSHA: commit.SHA, CommitURL: commit.HTMLURL, Changes: scanChanges(scan, entries)}
-
-	if scan.pr != nil {
-		if perr := c.moveBranch(ctx, scan.t, scan.branch, commit.SHA); perr != nil {
-			return scanCommit{}, perr
-		}
-		result.Branch = scan.branch
-		result.PullRequestURL, result.PullRequestNumber = scan.pr.HTMLURL, scan.pr.Number
-		return result, nil
-	}
-
-	result.Branch = BranchPrefix + c.now().UTC().Format("2006-01-02-150405")
-	body := map[string]string{"ref": "refs/heads/" + result.Branch, "sha": commit.SHA}
-	res, err := c.do(ctx, http.MethodPost, repoPath(scan.t.owner, scan.t.name)+"/git/refs", scan.t.token, body, nil)
-	if perr := check(res, err, "creating the branch"); perr != nil {
-		return scanCommit{}, perr
-	}
-	pr, perr := c.openPullRequest(ctx, scan.t, result.Branch)
-	if perr != nil {
-		return scanCommit{}, perr
-	}
-	result.PullRequestURL, result.PullRequestNumber, result.NewPullRequest = pr.HTMLURL, pr.Number, true
-	return result, nil
+	return c.saveFiles(scan.w, changes)
 }
 
 // baseURLPair cleans up from and to. They may both be empty unless required.
@@ -471,96 +399,34 @@ func origins(files []photoFile) []ImageOrigin {
 	return out
 }
 
-// scanPhotos reads every photo file in gh's folder at the head of the open
-// photo data pull request's branch, or of the base branch when none is open.
+// scanPhotos reads every photo file in gh's folder as the next Commit will
+// have it: at the open photo data pull request's head, or the base branch's
+// when none is open, with the pending changes.
 func (c *Client) scanPhotos(ctx context.Context, gh settings.GitHub) (baseURLScan, *PublishError) {
 	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
 		return baseURLScan{}, perr
 	}
-	t, perr := c.target(ctx, gh)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return baseURLScan{}, perr
 	}
-	scan := baseURLScan{t: t, folder: folder, branch: t.base}
-	if scan.pr, perr = c.findPullRequest(ctx, t); perr != nil {
-		return baseURLScan{}, perr
+	scan := baseURLScan{w: w, t: w.t, folder: folder, branch: w.branch(), pr: w.pr}
+	for _, p := range w.paths(folder, AllPhotosFile) {
+		if !skippedDataFiles[strings.ToLower(path.Base(p))] {
+			scan.files = append(scan.files, w.readPhoto(p))
+		}
 	}
-	if scan.pr != nil {
-		scan.branch = scan.pr.Head.Ref
-	}
-	if scan.headSHA, perr = c.branchHead(ctx, t, scan.branch); perr != nil {
-		return baseURLScan{}, perr
-	}
-	entries, perr := c.listFolder(ctx, t, folder, scan.headSHA)
-	if perr != nil {
-		return baseURLScan{}, perr
-	}
-
-	scan.files = make([]photoFile, len(entries))
-	var wg sync.WaitGroup
-	sem := make(chan struct{}, readConcurrency)
-	for i, e := range entries {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			sem <- struct{}{}
-			defer func() { <-sem }()
-			scan.files[i] = c.readPhoto(ctx, t, e)
-		}()
-	}
-	wg.Wait()
 	return scan, nil
 }
 
-// folderEntry is the part of a GET /contents directory listing entry used.
-type folderEntry struct {
-	Name    string `json:"name"`
-	Path    string `json:"path"`
-	Type    string `json:"type"`
-	SHA     string `json:"sha"`
-	HTMLURL string `json:"html_url"`
-}
-
-// listFolder lists the photo JSON files directly in folder at ref, by path.
-// GitHub lists up to 1,000 files in a folder.
-func (c *Client) listFolder(ctx context.Context, t target, folder, ref string) ([]folderEntry, *PublishError) {
-	var entries []folderEntry
-	p := repoPath(t.owner, t.name) + "/contents/" + escapePath(folder) + "?ref=" + url.QueryEscape(ref)
-	res, err := c.do(ctx, http.MethodGet, p, t.token, nil, &entries)
-	if err == nil && res.Status == http.StatusNotFound {
-		return nil, publishErr(http.StatusNotFound, "The folder %s wasn't found in %s.", folder, t.repo.FullName)
-	}
-	if perr := readCheck(res, err, "listing the photo data folder"); perr != nil {
-		return nil, perr
-	}
-	var photos []folderEntry
-	for _, e := range entries {
-		if e.Type == "file" && strings.EqualFold(path.Ext(e.Name), ".json") && !skippedDataFiles[strings.ToLower(e.Name)] {
-			photos = append(photos, e)
-		}
-	}
-	sort.Slice(photos, func(i, j int) bool { return photos[i].Path < photos[j].Path })
-	return photos, nil
-}
-
-// readPhoto reads the blob of e and finds its image URLs.
-func (c *Client) readPhoto(ctx context.Context, t target, e folderEntry) photoFile {
-	f := photoFile{path: e.Path, fileURL: e.HTMLURL}
-	var blob struct {
-		Content  string `json:"content"`
-		Encoding string `json:"encoding"`
-	}
-	res, err := c.do(ctx, http.MethodGet, repoPath(t.owner, t.name)+"/git/blobs/"+url.PathEscape(e.SHA), t.token, nil, &blob)
-	if perr := readCheck(res, err, "reading the file"); perr != nil {
-		f.err = perr.Message
+// readPhoto reads the photo file at p and finds its image URLs.
+func (w *workspace) readPhoto(p string) photoFile {
+	f := photoFile{path: p, fileURL: w.fileURL(p)}
+	if f.err = w.readErr(p); f.err != "" {
 		return f
 	}
-	content, err := base64.StdEncoding.DecodeString(strings.ReplaceAll(blob.Content, "\n", ""))
-	if blob.Encoding != "base64" || err != nil {
-		f.err = "GitHub returned content that couldn't be decoded."
-		return f
-	}
+	content, _ := w.file(p)
 	var fields map[string]json.RawMessage
 	if json.Unmarshal(content, &fields) != nil || fields == nil {
 		f.err = "The file isn't a JSON object."
@@ -573,67 +439,4 @@ func (c *Client) readPhoto(ctx context.Context, t target, e folderEntry) photoFi
 	}
 	f.content, f.leaves = content, leaves
 	return f
-}
-
-// branchHead returns the commit at the tip of branch.
-func (c *Client) branchHead(ctx context.Context, t target, branch string) (string, *PublishError) {
-	var ref struct {
-		Object struct {
-			SHA string `json:"sha"`
-		} `json:"object"`
-	}
-	res, err := c.do(ctx, http.MethodGet, repoPath(t.owner, t.name)+"/git/ref/heads/"+escapePath(branch), t.token, nil, &ref)
-	if err == nil && res.Status == http.StatusNotFound {
-		return "", publishErr(http.StatusBadGateway, "Branch %q wasn't found in %s.", branch, t.repo.FullName)
-	}
-	if perr := readCheck(res, err, "looking up the branch"); perr != nil {
-		return "", perr
-	}
-	return ref.Object.SHA, nil
-}
-
-// gitCommit is the part of a created commit used.
-type gitCommit struct {
-	SHA     string `json:"sha"`
-	HTMLURL string `json:"html_url"`
-	Tree    struct {
-		SHA string `json:"sha"`
-	} `json:"tree"`
-}
-
-// createCommit commits entries, Git tree entries with their content, on top
-// of parent, without moving any branch. See
-// https://docs.github.com/en/rest/git/trees#create-a-tree
-func (c *Client) createCommit(ctx context.Context, t target, parent string, entries []map[string]string, message string) (gitCommit, *PublishError) {
-	repo := repoPath(t.owner, t.name)
-	var base gitCommit
-	res, err := c.do(ctx, http.MethodGet, repo+"/git/commits/"+url.PathEscape(parent), t.token, nil, &base)
-	if perr := readCheck(res, err, "reading the branch's head commit"); perr != nil {
-		return gitCommit{}, perr
-	}
-	var tree struct {
-		SHA string `json:"sha"`
-	}
-	res, err = c.do(ctx, http.MethodPost, repo+"/git/trees", t.token, map[string]any{"base_tree": base.Tree.SHA, "tree": entries}, &tree)
-	if perr := check(res, err, "saving the changed files"); perr != nil {
-		return gitCommit{}, perr
-	}
-	var commit gitCommit
-	body := map[string]any{"message": message, "tree": tree.SHA, "parents": []string{parent}}
-	res, err = c.do(ctx, http.MethodPost, repo+"/git/commits", t.token, body, &commit)
-	if perr := check(res, err, "making the commit"); perr != nil {
-		return gitCommit{}, perr
-	}
-	return commit, nil
-}
-
-// moveBranch fast-forwards branch to sha.
-func (c *Client) moveBranch(ctx context.Context, t target, branch, sha string) *PublishError {
-	body := map[string]any{"sha": sha, "force": false}
-	res, err := c.do(ctx, http.MethodPatch, repoPath(t.owner, t.name)+"/git/refs/heads/"+escapePath(branch), t.token, body, nil)
-	// GitHub answers 422 when the branch moved since it was read.
-	if err == nil && (res.Status == http.StatusUnprocessableEntity || res.Status == http.StatusConflict) {
-		return publishErr(http.StatusConflict, "%s changed while the files were being saved. Try again.", branch)
-	}
-	return check(res, err, "updating the branch")
 }

@@ -29,7 +29,7 @@ narrows it to the names with the search text in them and what they're in.
 Each place row has a checkbox, and the one in the list's header checks every place shown (or unchecks them).
 While any are checked, a bar above the list sets a **City** (with its country, when known) and an **In** place on all
 of them; an empty field leaves each place's own. **In** doesn't offer the checked places or any place in one of them,
-so no place ends up in itself. **Save N places** saves each place it changes as its own queued commit, and the list
+so no place ends up in itself. **Save N places** saves each place it changes as its own queued save, and the list
 shows them moved at once; when they've all saved, the places are unchecked, and any that failed are named.
 
 Choosing a row edits it in the panel; **New place** empties the panel for a new place. A place's panel changes its
@@ -39,16 +39,16 @@ or country's panel shows where it is and how many cities, places and photos have
 since its name comes from the places and photos that have it. Each field's title has an ⓘ beside it whose tooltip says
 what to write, with an example. **Save changes**, or **Save** at the top right (the rightmost
 floating button, next to the sync button), saves the place when it changed and its localization when that did, each
-as its own commit. The list shows the change as soon as Save is pressed, before the commit is made, and reads the
+as its own save. The list shows the change as soon as Save is pressed, before the backend answers, and reads the
 files again if the save fails.
 
 > **Frontend analogy:** an optimistic update with TanStack Query: `onMutate` writes the new entry into the cached
 > query, `onSuccess` swaps in what the server saved, and `onError` invalidates the query to undo it.
 
 A place's **City** is a combobox of the list's cities, sorted by name, with inferred ones marked by how many photos
-show them, or a new one typed in. Choosing a city whose country is known fills in **Country**. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) commits the file to the
-open **Add photo data** pull request, or opens one, and the list reads the place files themselves
-(`GET /api/places` → `GET /places`, at the pull request's head), so a place shows before it's committed to
+show them, or a new one typed in. Choosing a city whose country is known fills in **Country**. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) keeps the file as a
+[change waiting for Commit](pending-changes.md), and the list reads the place files themselves
+(`GET /api/places` → `GET /places`, as the next Commit will have them), so a place shows before it's committed to
 `PLACES.json`.
 
 ### GPS position
@@ -159,13 +159,12 @@ place's ID. The Localizations page has a tab each for countries, cities and plac
 `ALLPHOTOS.json` (at the pull request's head, with saves not committed yet, from the
 [combined data store](combined-data-store.md)): each photo's custom country and city, or else its EXIF ones, with how
 many photos show each. Places come from the place files. Rows not saved yet say so; each row's **Save**
-(`PUT /api/localizations/<id>` → `PUT /localizations/{id}`) commits its file to the pull request, and **Save all**,
+(`PUT /api/localizations/<id>` → `PUT /localizations/{id}`) keeps its file waiting for Commit, and **Save all**,
 at the top right next to the sync button, saves every changed row on every tab. What's typed is kept while switching
 tabs.
 
-Saves of places and localizations go through one queue: each is its own commit on top of the pull request's head,
-so a save made while another runs waits its turn (its button says **Queued…**, then **Saving…**) instead of racing it
-to move the branch. A row already queued isn't queued again.
+Saves of places and localizations go through one queue: each checks the others' names and parents, so a save made
+while another runs waits its turn (its button says **Queued…**, then **Saving…**) instead of racing it. A row already queued isn't queued again.
 
 > **Frontend analogy:** it's TanStack Query's mutation `scope`: mutations sharing a scope ID run one after another,
 > like awaiting each `fetch` in a loop instead of `Promise.all`.

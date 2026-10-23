@@ -5,16 +5,15 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
 
-const token = "github_pat_abcdefgh1234"
-
-// fakeGitHub serves owner/repo with default branch main and branches main and
+// checkGitHub serves owner/repo with default branch main and branches main and
 // feature/x, and answers every request with status when status is non-zero.
-func fakeGitHub(t *testing.T, status int, header map[string]string) *Client {
+func checkGitHub(t *testing.T, status int, header map[string]string) *Client {
 	t.Helper()
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if got := r.Header.Get("Authorization"); got != "Bearer "+token {
@@ -38,7 +37,8 @@ func fakeGitHub(t *testing.T, status int, header map[string]string) *Client {
 		}
 	}))
 	t.Cleanup(srv.Close)
-	return &Client{BaseURL: srv.URL, Client: srv.Client()}
+	now := time.Date(2026, 10, 15, 2, 45, 0, 0, time.UTC)
+	return &Client{BaseURL: srv.URL, Client: srv.Client(), Now: func() time.Time { return now }}
 }
 
 func TestCheck(t *testing.T) {
@@ -87,8 +87,8 @@ func TestCheck(t *testing.T) {
 			name:    "rate limited",
 			gh:      settings.GitHub{Repo: "owner/repo", Token: token},
 			status:  http.StatusForbidden,
-			header:  map[string]string{"X-RateLimit-Remaining": "0"},
-			message: "GitHub's rate limit was hit. Try again in a few minutes.",
+			header:  map[string]string{"X-RateLimit-Remaining": "0", "X-RateLimit-Reset": "1792033500"},
+			message: "GitHub's rate limit was hit, so nothing was read or saved. Try again in 20 minutes (03:05 UTC); your changes are kept until then.",
 		},
 		{
 			name:    "no token",
@@ -103,7 +103,7 @@ func TestCheck(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := fakeGitHub(t, tt.status, tt.header).Check(t.Context(), tt.gh)
+			got := checkGitHub(t, tt.status, tt.header).Check(t.Context(), tt.gh)
 			if want := (storage.CheckResult{OK: tt.ok, Message: tt.message}); got != want {
 				t.Errorf("Check() = %+v, want %+v", got, want)
 			}

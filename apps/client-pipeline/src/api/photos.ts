@@ -16,13 +16,12 @@ export interface PhotoData {
   places: PhotoPlace[];
 }
 
+/** Where a photo's data was saved: as a change waiting for Commit, nothing on GitHub yet. */
 export interface PublishResult {
   path: string;
-  fileUrl: string;
-  pullRequestUrl: string;
-  pullRequestNumber: number;
-  /** False when the file was added to a photo data pull request that was already open. */
-  newPullRequest: boolean;
+  /** The open photo data pull request Commit will add it to; unset when Commit will open one. */
+  pullRequestUrl?: string;
+  pullRequestNumber?: number;
   /** The JSON saved. */
   data: unknown;
 }
@@ -30,7 +29,7 @@ export interface PublishResult {
 export const publishPhotoMutation = mutationOptions({
   mutationKey: ["photos", "github"],
   meta: {
-    pushes: true,
+    saves: true,
     changes: (result) => {
       const { path, data } = result as PublishResult;
       return [{ kind: "photos", path, after: data }];
@@ -68,7 +67,10 @@ export interface InFlightFileRead extends BaseFile {
   path: string;
   /** GitHub's change status, such as `added` or `modified`. */
   status: string;
+  /** The file's page on GitHub; empty while it has changes waiting for Commit. */
   fileUrl: string;
+  /** Whether the file has changes waiting for Commit. */
+  pending?: boolean;
   data?: unknown;
   error?: string;
   /** The photo's original file name, used to find its image in R2. */
@@ -119,10 +121,12 @@ export interface CombinedData {
 
 /**
  * Reads the combined lists. Pages keep them in the combined data store rather than reading them
- * with each page; see `useCombinedData`.
+ * with each page; see `useCombinedData`. The backend reads GitHub once when it starts and answers
+ * from that, to spare GitHub's rate limit; `refresh` makes it ask GitHub again, so every read
+ * after it sees a merge or a push made on GitHub.
  */
-export function readCombinedData(): Promise<CombinedData> {
-  return requestJson<CombinedData>("/api/photos/combined");
+export function readCombinedData(refresh = false): Promise<CombinedData> {
+  return requestJson<CombinedData>(`/api/photos/combined${refresh ? "?refresh=1" : ""}`);
 }
 
 /** The photo data waiting in the pull request, as the backend reads it, without the combined lists. */
@@ -172,7 +176,10 @@ export interface InFlightGroups {
 interface InFlightGroupFileRead extends BaseFile {
   path: string;
   status: string;
+  /** The file's page on GitHub; empty while it has changes waiting for Commit. */
   fileUrl: string;
+  /** Whether the file has changes waiting for Commit. */
+  pending?: boolean;
   data?: unknown;
   error?: string;
 }
@@ -192,41 +199,40 @@ export interface InFlightImages {
   byPath: Record<string, { key: string; url: string }>;
 }
 
-/** The photo data pull request's files; `useInFlight` checks them against the combined lists. */
+/**
+ * The photo data pull request's files and the changes waiting for Commit; `useInFlight` checks them
+ * against the combined lists.
+ */
 export const photosInFlightQuery = queryOptions({
   queryKey: ["photos", "in-flight"],
   queryFn: () => requestJson<InFlightRead>("/api/photos/in-flight"),
   retry: false,
 });
 
-/** What saving an edit of a photo JSON file in the pull request did. */
+/** What saving an edit of a photo JSON file did. */
 export interface UpdateResult {
   path: string;
-  fileUrl: string;
-  /** The commit that changed the file; empty when unchanged. */
-  commitSha: string;
-  /** False when the file already had this content, so nothing was committed. */
+  /** False when the file already had this content, so nothing was saved. */
   changed: boolean;
-  /** The photo data pull request, when saving a photo already in the portfolio opened it. */
+  /** The photo data pull request Commit will add it to; unset when Commit will open one. */
   pullRequestUrl?: string;
-  /** True when the save opened the pull request. */
-  newPullRequest?: boolean;
+  /** The file's data before, at its old path when renamed; null when it's new. */
+  before: unknown;
 }
 
 /**
- * Replaces the content of a photo JSON file in the open photo data pull request, moving it to
- * `name` (without .json) in the same folder when that's given. A photo already in the portfolio
- * that the pull request doesn't change yet is saved into it, opening one when none is open.
+ * Saves new content for a photo JSON file as a change waiting for Commit, moving it to `name`
+ * (without .json) in the same folder when that's given. A photo already in the portfolio can be
+ * edited too; Commit adds the change to the photo data pull request, opening one when none is open.
  */
 export const updateInFlightMutation = mutationOptions({
   mutationKey: ["photos", "in-flight", "update"],
   meta: {
-    pushes: (result) => (result as UpdateResult).changed,
-    changes: (result, variables, cached) => {
-      const { path, data } = variables as { path: string; data: unknown };
-      return [
-        { kind: "photos", path: (result as UpdateResult).path, before: cached(path), after: data },
-      ];
+    saves: (result) => (result as UpdateResult).changed,
+    changes: (result, variables) => {
+      const { data } = variables as { path: string; data: unknown };
+      const { path, before } = result as UpdateResult;
+      return [{ kind: "photos", path, ...(before === null ? {} : { before }), after: data }];
     },
   },
   mutationFn: (file: { path: string; data: unknown; name?: string }) =>
@@ -263,11 +269,11 @@ export const publishedPhotosQuery = queryOptions({
   retry: false,
 });
 
-/** What removing a photo JSON file did, including to its image in R2. */
+/** What removing a photo JSON file waiting for Commit did, including to its image in R2. */
 export interface RemoveResult {
   path: string;
-  /** The commit that removed the file. */
-  commitSha: string;
+  /** The file's data before it was removed. */
+  before: unknown;
   image: RemovedImage & {
     /** What happened to the image's resized WEBP versions, when its key was known. */
     versions?: RemovedImage[];
@@ -285,9 +291,14 @@ interface RemovedImage {
 export const removeInFlightMutation = mutationOptions({
   mutationKey: ["photos", "in-flight", "remove"],
   meta: {
-    pushes: true,
-    changes: (_result, path, cached) => [
-      { kind: "photos", path: path as string, before: cached(path as string), after: null },
+    saves: true,
+    changes: (result, path) => [
+      {
+        kind: "photos",
+        path: path as string,
+        before: (result as RemoveResult).before,
+        after: null,
+      },
     ],
   },
   mutationFn: (path: string) =>
@@ -319,15 +330,20 @@ export const bucketImagesQuery = queryOptions({
 });
 
 /**
- * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the photo data pull request have its
- * latest changes: `synced` when the newest commit to its data folder committed them, `stale` when
- * data changed after, and `none` with no pull request open.
+ * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the photo data pull request have every
+ * change: `synced` when they do, `stale` when changes are waiting for Commit or data files were
+ * committed without rebuilding them, and `none` with no pull request open and nothing waiting.
  */
 export interface CombinedStatus {
   state: "synced" | "stale" | "none";
   headSha?: string;
-  /** The data files the pull request changed after the combined lists were last rebuilt, when stale. */
+  /** The data files the combined lists don't have yet, when stale. */
   pending?: PendingFile[];
+  /**
+   * The changes waiting for Commit, kept by the backend so they survive a reload: each file's data
+   * at the pull request's head (null when it isn't there) and as saved (null when removed).
+   */
+  changes?: { kind: keyof CombinedFiles; path: string; before: unknown; after: unknown }[];
 }
 
 /** A data file the photo data pull request changed that the combined lists don't have yet. */
@@ -345,9 +361,9 @@ export const combinedStatusQuery = queryOptions({
   staleTime: Infinity,
 });
 
-/** What committing the combined files did. */
+/** What committing the changes waiting for Commit and the combined files did. */
 export interface CombinedCommit {
-  /** False when they were already up to date and there were no edits, so nothing was committed. */
+  /** False when nothing was waiting and the lists were up to date, so nothing was committed. */
   changed: boolean;
   commitSha?: string;
   commitUrl?: string;
@@ -359,6 +375,8 @@ export interface CombinedCommit {
   counts: { photos: number; albums: number; tags: number };
   /** True when the commit opened the photo data pull request. */
   newPullRequest: boolean;
+  /** The photo data pull request the commit went to. */
+  pullRequestUrl?: string;
 }
 
 /** Top-level fields of one data file to set when committing, such as a photo's publish date. */
@@ -368,14 +386,30 @@ export interface FieldEdit {
 }
 
 /**
- * Saves `edits` to their data files, rebuilds ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json from
- * every data file on the photo data pull request's branch and commits what changed, as one commit.
+ * Commits every change waiting for Commit and `edits` to their data files, with ALLPHOTOS.json,
+ * ALLALBUMS.json and ALLTAGS.json rebuilt from the result, as one commit on the photo data pull
+ * request's branch, opening the pull request when none is open. This is the app's only write to
+ * GitHub's photo data.
  */
 export function commitCombined(edits: FieldEdit[]): Promise<CombinedCommit> {
   return requestJson<CombinedCommit>("/api/photos/combined", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ edits }),
+  });
+}
+
+/** How many changes waiting for Commit were dropped. */
+interface DiscardResult {
+  discarded: number;
+}
+
+/** Drops every change waiting for Commit. Nothing on GitHub or in R2 changes. */
+export function discardPending(): Promise<DiscardResult> {
+  return requestJson<DiscardResult>("/api/photos/pending", {
+    method: "DELETE",
+    headers: { "content-type": "application/json" },
+    body: "{}",
   });
 }
 

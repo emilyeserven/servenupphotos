@@ -37,7 +37,7 @@ func (c *Client) Check(ctx context.Context, gh settings.GitHub) storage.CheckRes
 	}
 	switch {
 	case isRateLimited(res):
-		return fail(rateLimited)
+		return fail(rateLimitMessage(res.Header, c.now()))
 	case res.Status == http.StatusNotFound:
 		return fail(fmt.Sprintf("Branch %q wasn't found in %s.", branch, repo.FullName))
 	case res.Status != http.StatusOK:

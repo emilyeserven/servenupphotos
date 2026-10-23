@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { type ScanChange, photoChanges } from "@/api/scan-changes";
+import { type PendingSave, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
 
 /** Base URLs to move the photos' image URLs between; both empty to only list the origins. */
@@ -25,7 +25,7 @@ export interface UrlChange {
   to: string;
 }
 
-/** Where an Update Data preview read the photo files, which its change is committed to. */
+/** Where an Update Data preview read the photo files, as the next Commit will have them. */
 export interface ScannedPhotos {
   repo: string;
   folder: string;
@@ -37,19 +37,6 @@ export interface ScannedPhotos {
   photoFiles: number;
   /** Photo files that couldn't be read; while there are any, nothing can be changed. */
   unreadable: { path: string; error: string }[];
-}
-
-/** Where an Update Data change was committed. */
-export interface CommittedChange {
-  branch: string;
-  commitSha: string;
-  commitUrl: string;
-  pullRequestUrl: string;
-  pullRequestNumber: number;
-  /** True when the change opened the pull request. */
-  newPullRequest: boolean;
-  /** The photo files the commit changed, before and after. */
-  changes: ScanChange[];
 }
 
 export interface BaseUrlPreview extends ScannedPhotos {
@@ -64,7 +51,7 @@ export interface BaseUrlPreview extends ScannedPhotos {
   urls: number;
 }
 
-export interface BaseUrlResult extends CommittedChange {
+export interface BaseUrlResult extends PendingSave {
   files: number;
   urls: number;
 }
@@ -86,10 +73,10 @@ export const baseUrlPreviewQuery = (change: BaseUrlChange) =>
     refetchOnWindowFocus: false,
   });
 
-/** Moves the image URLs in every photo JSON file, as one commit in the photo data pull request. */
+/** Moves the image URLs in every photo JSON file, as changes waiting for Commit. */
 export const replaceBaseUrlMutation = mutationOptions({
   mutationKey: ["data", "image-base-url", "replace"],
-  meta: { pushes: true, changes: (result) => photoChanges(result as BaseUrlResult) },
+  meta: { saves: true, changes: (result) => photoChanges(result as BaseUrlResult) },
   mutationFn: (change: BaseUrlChange) => post<BaseUrlResult>("/api/data/image-base-url", change),
 });
 
@@ -120,7 +107,7 @@ export interface MissingFieldsPreview extends ScannedPhotos {
   readExif: boolean;
 }
 
-export interface MissingFieldsResult extends CommittedChange {
+export interface MissingFieldsResult extends PendingSave {
   files: number;
   /** How many fields were added, across the files. */
   fields: number;
@@ -135,10 +122,10 @@ export const missingFieldsQuery = (readExif: boolean) =>
     refetchOnWindowFocus: false,
   });
 
-/** Adds the missing fields to every photo JSON file, as one commit in the photo data pull request. */
+/** Adds the missing fields to every photo JSON file, as changes waiting for Commit. */
 export const addMissingFieldsMutation = mutationOptions({
   mutationKey: ["data", "missing-fields", "add"],
-  meta: { pushes: true, changes: (result) => photoChanges(result as MissingFieldsResult) },
+  meta: { saves: true, changes: (result) => photoChanges(result as MissingFieldsResult) },
   mutationFn: (readExif: boolean) =>
     post<MissingFieldsResult>("/api/data/missing-fields", { readExif }),
 });

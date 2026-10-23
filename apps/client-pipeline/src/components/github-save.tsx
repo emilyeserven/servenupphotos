@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { jsonFileName } from "@/lib/file-name";
 
 type GitHubSettings = SettingsResponse["github"];
@@ -40,7 +41,10 @@ interface GitHubSaveCardProps {
   onSaved?: () => void;
 }
 
-/** Saves a photo's sanitized EXIF as JSON in a pull request on the GitHub repository from Settings. */
+/**
+ * Saves a photo's sanitized EXIF as JSON, waiting for Commit to send it to a pull request on the
+ * GitHub repository from Settings.
+ */
 export function GitHubSaveCard({ file, sanitized, groups, onSaved }: GitHubSaveCardProps) {
   const settings = useQuery(settingsQuery);
 
@@ -49,8 +53,8 @@ export function GitHubSaveCard({ file, sanitized, groups, onSaved }: GitHubSaveC
       <CardHeader>
         <CardTitle>Add to Batch</CardTitle>
         <CardDescription>
-          Adds the sanitized EXIF as one JSON file to the open photo data pull request, or opens a
-          new one.
+          Adds the sanitized EXIF as one JSON file to the batch. It waits in the app until you
+          Commit, which sends the whole batch to GitHub at once.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -108,7 +112,7 @@ function GitHubSaveForm({
     form.setFieldValue("name", suggestedName, { dontUpdateMeta: true });
   }, [form, suggestedName]);
 
-  if (publish.isSuccess) return <PublishSuccess result={publish.data} repo={github.repo} />;
+  if (publish.isSuccess) return <PublishSuccess result={publish.data} />;
 
   return (
     <form
@@ -145,7 +149,8 @@ function GitHubSaveForm({
                 ) : (
                   <>
                     Saves <code>{jsonPath(github.folder, field.state.value)}</code> in {github.repo}
-                    , in a pull request against {github.branch.trim() || "the default branch"}.
+                    , waiting for Commit, which sends it in a pull request against{" "}
+                    {github.branch.trim() || "the default branch"}.
                   </>
                 )}
               </p>
@@ -168,31 +173,13 @@ function GitHubSaveForm({
   );
 }
 
-/** Where a save put the photo's JSON, and the pull request it went into. */
-export function PublishSuccess({ result, repo }: { result: PublishResult; repo: string }) {
-  const pr = `${repo}#${result.pullRequestNumber}`;
+/** Where a save put the photo's JSON, and where Commit will send it. */
+export function PublishSuccess({ result }: { result: PublishResult }) {
   return (
     <div className="flex flex-col gap-2 text-sm">
       <p>
-        Saved{" "}
-        <a
-          href={result.fileUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="underline underline-offset-4"
-        >
-          {result.path}
-        </a>{" "}
-        {result.newPullRequest ? "and opened" : "to the open pull request"}{" "}
-        <a
-          href={result.pullRequestUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="underline underline-offset-4"
-        >
-          {pr}
-        </a>
-        .
+        Saved <code>{result.path}</code> in the batch.{" "}
+        <WaitingForCommit pullRequestUrl={result.pullRequestUrl} />
       </p>
     </div>
   );

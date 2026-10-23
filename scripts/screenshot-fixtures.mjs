@@ -230,13 +230,12 @@ function bucketImages() {
     });
 }
 
-const commit = (branch = PULL_REQUEST.branch) => ({
+/** What a save answers: its changes wait for Commit, which adds them to the open pull request. */
+const pendingSave = (branch = PULL_REQUEST.branch) => ({
   branch,
-  commitSha: PULL_REQUEST.headSha,
-  commitUrl: `https://github.com/${REPO}/commit/${PULL_REQUEST.headSha}`,
   pullRequestUrl: PULL_REQUEST.url,
   pullRequestNumber: PULL_REQUEST.number,
-  newPullRequest: false,
+  changes: [],
 });
 
 /** The spotlight zones of the photo at index i: every fourth one is on the homepage. */
@@ -264,13 +263,12 @@ function socialPhoto({ path: filePath, data }, i) {
   };
 }
 
-/** What saving a new photo JSON file to the open pull request answers. */
-const savedPhoto = (filePath) => ({
+/** What saving a new photo JSON file answers: it waits for Commit, nothing on GitHub yet. */
+const savedPhoto = (filePath, data) => ({
   path: filePath,
-  fileUrl: fileUrl(filePath, PULL_REQUEST.branch),
   pullRequestUrl: PULL_REQUEST.url,
   pullRequestNumber: PULL_REQUEST.number,
-  newPullRequest: false,
+  data: data ?? {},
 });
 
 const secret = { set: true, last4: "a1b2" };
@@ -367,23 +365,28 @@ export function defaultFixtures() {
       photos: headPhotos.map(socialPhoto),
       unreadable: [],
     },
-    // Saves answer as if they committed to the open pull request.
+    // Saves answer as the backend does: their changes wait for Commit, for the open pull request.
     "POST /api/photos/github": ({ body }) => savedPhoto(`${FOLDER}/photos/${body?.name}.json`),
     "PUT /api/photos/in-flight": ({ body }) => ({
       path: body?.path,
-      fileUrl: fileUrl(body?.path ?? "", PULL_REQUEST.branch),
-      commitSha: PULL_REQUEST.headSha,
       changed: true,
+      pullRequestUrl: PULL_REQUEST.url,
+      before: null,
+      data: body?.data ?? {},
     }),
-    "POST /api/photos/groups": ({ body }) => ({ ...commit(), files: body?.paths?.length }),
+    "POST /api/photos/groups": ({ body }) => ({ ...pendingSave(), files: body?.paths?.length }),
+    "DELETE /api/photos/pending": { discarded: 1 },
     "POST /api/photos/combined": () => ({
       changed: true,
       commitSha: "c0mb1ned",
       commitUrl: `https://github.com/${REPO}/commit/c0mb1ned`,
       files: [`${FOLDER}/photos/ALLPHOTOS.json`],
+      edited: 0,
       counts: { photos: basePhotos.length + 1, albums: 1, tags: 1 },
+      newPullRequest: false,
+      pullRequestUrl: PULL_REQUEST.url,
     }),
-    "PUT /api/publish/instagram": ({ body }) => ({ ...commit(), files: body?.dates?.length }),
+    "PUT /api/publish/instagram": ({ body }) => ({ ...pendingSave(), files: body?.dates?.length }),
   };
 }
 

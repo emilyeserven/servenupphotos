@@ -11,82 +11,99 @@ import (
 
 var placesGH = settings.GitHub{Repo: "owner/repo", Token: token}
 
+// newMainRepo is a fake GitHub with files on main and no pull request open.
+func newMainRepo(t *testing.T, files map[string]string) (*fakeGitHub, *Client) {
+	t.Helper()
+	f, c := newFakeGitHub(t)
+	for p, v := range files {
+		f.files["main:"+p] = v
+	}
+	return f, c
+}
+
+// staged is path's pending content, or "" when it has none.
+func staged(t *testing.T, c *Client, path string) string {
+	t.Helper()
+	f, _ := stagedContent(t, c, path)
+	return f.Content
+}
+
 func TestSavePlace(t *testing.T) {
-	f, c := newCombinedRepo(t, map[string]string{})
+	f, c := newMainRepo(t, map[string]string{})
 	got, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gyeongbokgung-palace", Name: " Gyeongbokgung Palace "})
 	if err != nil {
 		t.Fatalf("SavePlace() error = %v", err)
 	}
 	file := dataRoot + "/places/gyeongbokgung-palace.json"
 	want := "{\n  \"id\": \"gyeongbokgung-palace\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\"\n}\n"
-	if f.committed[file] != want || len(f.committed) != 1 {
-		t.Errorf("committed %q, want %s as %q", f.committed, file, want)
+	if staged(t, c, file) != want || pendingCount(t, c) != 1 {
+		t.Errorf("pending %q, want %s as %q", staged(t, c, file), file, want)
 	}
-	if !got.Changed || got.Path != file || got.Before != nil || string(got.Data) != want || got.PullRequestNumber == 0 {
-		t.Errorf("SavePlace() = %+v, want a new file committed to the pull request", got)
+	if !got.Changed || got.Path != file || got.Before != nil || string(got.Data) != want || len(got.Changes) != 1 {
+		t.Errorf("SavePlace() = %+v, want a new file pending", got)
 	}
-	if f.commitMsg != "Add place "+file {
-		t.Errorf("commit message = %q", f.commitMsg)
+	if w := f.writes(); len(w) != 0 {
+		t.Errorf("SavePlace() wrote to GitHub: %v", w)
 	}
 }
 
 func TestSavePlaceUnchangedAndChanged(t *testing.T) {
 	file := dataRoot + "/places/gyeongbokgung-palace.json"
 	saved := "{\n  \"id\": \"gyeongbokgung-palace\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\"\n}\n"
-	f, c := newCombinedRepo(t, map[string]string{file: saved})
+	_, c := newMainRepo(t, map[string]string{file: saved})
 
 	got, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gyeongbokgung-palace", Name: "Gyeongbokgung Palace"})
-	if err != nil || got.Changed || f.committed != nil {
-		t.Errorf("SavePlace(same) = %+v, %v, committed %v; want nothing committed", got, err, f.committed)
+	if err != nil || got.Changed || pendingCount(t, c) != 0 {
+		t.Errorf("SavePlace(same) = %+v, %v; want nothing pending", got, err)
 	}
 
 	got, err = c.SavePlace(t.Context(), placesGH, Place{ID: "gyeongbokgung-palace", Name: "Gyeongbokgung Palace", Description: "Seoul"})
-	if err != nil || !got.Changed || string(got.Before) != saved || f.commitMsg != "Change place "+file {
-		t.Errorf("SavePlace(changed) = %+v, %v, message %q; want the old file as before", got, err, f.commitMsg)
+	if err != nil || !got.Changed || string(got.Before) != saved || !strings.Contains(staged(t, c, file), "Seoul") {
+		t.Errorf("SavePlace(changed) = %+v, %v; want the old file as before", got, err)
 	}
 }
 
 func TestSavePlaceWithParent(t *testing.T) {
-	f, c := newCombinedRepo(t, map[string]string{
+	_, c := newMainRepo(t, map[string]string{
 		dataRoot + "/places/gbg.json": `{"id":"gbg","name":"Gyeongbokgung Palace","description":""}`,
 	})
 	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gate", Name: "Geunjeongmun Gate", Parent: "gbg", City: " Seoul ", Country: "South Korea"})
 	want := "{\n  \"id\": \"gate\",\n  \"name\": \"Geunjeongmun Gate\",\n  \"description\": \"\",\n  \"parent\": \"gbg\",\n  \"city\": \"Seoul\",\n  \"country\": \"South Korea\"\n}\n"
-	if got := f.committed[dataRoot+"/places/gate.json"]; err != nil || got != want {
+	if got := staged(t, c, dataRoot+"/places/gate.json"); err != nil || got != want {
 		t.Errorf("SavePlace() error = %v, committed %q; want %q", err, got, want)
 	}
 }
 
 func TestSavePlaceWithCoordinates(t *testing.T) {
-	f, c := newCombinedRepo(t, map[string]string{})
+	_, c := newMainRepo(t, map[string]string{})
 	lat, lng := 37.5796, 126.977
 	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "gbg", Name: "Gyeongbokgung Palace", Latitude: &lat, Longitude: &lng})
 	want := "{\n  \"id\": \"gbg\",\n  \"name\": \"Gyeongbokgung Palace\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\",\n  \"latitude\": 37.5796,\n  \"longitude\": 126.977\n}\n"
-	if got := f.committed[dataRoot+"/places/gbg.json"]; err != nil || got != want {
+	if got := staged(t, c, dataRoot+"/places/gbg.json"); err != nil || got != want {
 		t.Errorf("SavePlace() error = %v, committed %q; want %q", err, got, want)
 	}
 }
 
 func TestSavePlaceExactLocation(t *testing.T) {
-	f, c := newCombinedRepo(t, map[string]string{})
+	_, c := newMainRepo(t, map[string]string{})
 	lat, lng := 37.5759, 126.9735
 	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "station", Name: "Gyeongbokgung Station", Latitude: &lat, Longitude: &lng, ExactLocation: true})
 	want := "{\n  \"id\": \"station\",\n  \"name\": \"Gyeongbokgung Station\",\n  \"description\": \"\",\n  \"parent\": \"\",\n  \"city\": \"\",\n  \"country\": \"\",\n  \"latitude\": 37.5759,\n  \"longitude\": 126.9735,\n  \"exactLocation\": true\n}\n"
-	if got := f.committed[dataRoot+"/places/station.json"]; err != nil || got != want {
+	if got := staged(t, c, dataRoot+"/places/station.json"); err != nil || got != want {
 		t.Errorf("SavePlace() error = %v, committed %q; want %q", err, got, want)
 	}
 }
 
 func TestSavePlaceExactLocationNeedsCoordinates(t *testing.T) {
-	f, c := newCombinedRepo(t, map[string]string{})
+	_, c := newMainRepo(t, map[string]string{})
 	_, err := c.SavePlace(t.Context(), placesGH, Place{ID: "station", Name: "Gyeongbokgung Station", ExactLocation: true})
-	if got := f.committed[dataRoot+"/places/station.json"]; err != nil || strings.Contains(got, "exactLocation") {
+	if got := staged(t, c, dataRoot+"/places/station.json"); err != nil || strings.Contains(got, "exactLocation") {
 		t.Errorf("SavePlace() error = %v, committed %q; want no exactLocation without a GPS position", err, got)
 	}
 }
 
 func TestSaveEntryRefuses(t *testing.T) {
-	_, c := newCombinedRepo(t, map[string]string{
+	_, c := newMainRepo(t, map[string]string{
 		dataRoot + "/places/gbg.json":  `{"id":"gbg","name":"Gyeongbokgung Palace","description":""}`,
 		dataRoot + "/places/gate.json": `{"id":"gate","name":"Geunjeongmun Gate","description":"","parent":"gbg"}`,
 	})
@@ -142,7 +159,7 @@ func TestSaveEntryRefuses(t *testing.T) {
 }
 
 func TestSaveLocalizationAndEntries(t *testing.T) {
-	f, c := newCombinedRepo(t, map[string]string{
+	_, c := newMainRepo(t, map[string]string{
 		dataRoot + "/places/gbg.json":    `{"id":"gbg","name":"Gyeongbokgung Palace","description":""}`,
 		dataRoot + "/places/PLACES.json": "[]\n",
 	})
@@ -154,7 +171,7 @@ func TestSaveLocalizationAndEntries(t *testing.T) {
 	}
 	want := "{\n  \"id\": \"country-south-korea\",\n  \"type\": \"country\",\n  \"name\": \"South Korea\",\n" +
 		"  \"romanization\": \"Hanguk\",\n  \"pronunciation\": \"\",\n  \"localScript\": \"한국\"\n}\n"
-	if got := f.committed[dataRoot+"/localizations/country-south-korea.json"]; got != want {
+	if got := staged(t, c, dataRoot+"/localizations/country-south-korea.json"); got != want {
 		t.Errorf("committed %q, want %q", got, want)
 	}
 
@@ -163,7 +180,7 @@ func TestSaveLocalizationAndEntries(t *testing.T) {
 		t.Fatalf("Entries() error = %v", err)
 	}
 	if len(entries.Places) != 1 || entries.Places[0].Path != dataRoot+"/places/gbg.json" || entries.Localizations == nil ||
-		entries.PullRequest == nil || entries.Branch == "" {
-		t.Errorf("Entries() = %+v, want the one place at the pull request's head, without PLACES.json", entries)
+		entries.PullRequest != nil || entries.Branch != "main" || len(entries.Localizations) != 1 {
+		t.Errorf("Entries() = %+v, want the place on main without PLACES.json, and the pending localization", entries)
 	}
 }

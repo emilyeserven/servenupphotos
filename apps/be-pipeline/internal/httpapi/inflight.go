@@ -31,9 +31,11 @@ type inFlightResponse struct {
 	Images inFlightImages `json:"images"`
 }
 
-// handlePhotosInFlight lists the photo JSON in the open "Add photo data" pull
-// request on the GitHub repository from Settings, with each photo's image in
-// R2, without changing anything.
+// handlePhotosInFlight lists the photo JSON in flight, in the open "Add photo
+// data" pull request on the GitHub repository from Settings and the changes
+// waiting for Commit, with each photo's image in R2, without changing
+// anything. With ?refresh=1 it asks GitHub where the pull request stands
+// even if it did a moment ago.
 func handlePhotosInFlight(store *settings.Store, gh *github.Client, findPhotos findPhotosFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cfg, err := store.GitHub()
@@ -45,7 +47,11 @@ func handlePhotosInFlight(store *settings.Store, gh *github.Client, findPhotos f
 
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		result, err := gh.InFlight(ctx, cfg)
+		var result github.InFlightResult
+		err = refreshIfAsked(ctx, r, gh, cfg)
+		if err == nil {
+			result, err = gh.InFlight(ctx, cfg)
+		}
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
 			writeError(w, perr.Status, perr.Message)
@@ -97,4 +103,14 @@ func findImages(ctx context.Context, store *settings.Store, findPhotos findPhoto
 		}
 	}
 	return images, nil
+}
+
+// refreshIfAsked asks GitHub again where the repository stands when the
+// request asks for ?refresh=1, as Photos in Flight's Refresh does; otherwise
+// the backend answers from what it read when it started.
+func refreshIfAsked(ctx context.Context, r *http.Request, gh *github.Client, cfg settings.GitHub) error {
+	if r.URL.Query().Get("refresh") == "" {
+		return nil
+	}
+	return gh.Refresh(ctx, cfg)
 }

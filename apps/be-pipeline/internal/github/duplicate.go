@@ -50,12 +50,11 @@ type AllPhotosCheck struct {
 }
 
 // FindInPullRequest looks for photo in the photo data files the photo data
-// pull request adds or changes, when one is open. Those files are read
-// directly rather than through the pull request's AllPhotosFile, which is only
-// rebuilt when Rebuild starts CI and may not have caught up with yet. AllPhotosFile
-// on the base branch isn't read: pages check it from Combined, which they
-// keep. An entry found more than once is listed once. It only reads from
-// GitHub.
+// pull request and the pending changes add or change, as the next Commit will
+// have them. Those files are read directly rather than through the pull
+// request's AllPhotosFile, which is only rebuilt by Commit. AllPhotosFile on
+// the base branch isn't read: pages check it from Combined, which they keep.
+// An entry found more than once is listed once. It changes nothing.
 func (c *Client) FindInPullRequest(ctx context.Context, gh settings.GitHub, photo PhotoIdentity) (AllPhotosCheck, error) {
 	if strings.TrimSpace(photo.File) == "" {
 		return AllPhotosCheck{}, publishErr(http.StatusBadRequest, "file is required")
@@ -64,21 +63,15 @@ func (c *Client) FindInPullRequest(ctx context.Context, gh settings.GitHub, phot
 	if perr != nil {
 		return AllPhotosCheck{}, perr
 	}
-	owner, name, ok := splitRepo(gh.Repo)
-	if !ok || gh.Token == "" {
-		return AllPhotosCheck{}, publishErr(http.StatusBadRequest, "Set the GitHub repository and token in Settings first.")
-	}
-	t := target{owner: owner, name: name, token: gh.Token}
-	check := AllPhotosCheck{Sources: []AllPhotosSource{}, Matches: []AllPhotosMatch{}}
-
-	pr, perr := c.findInFlightPull(ctx, t)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return AllPhotosCheck{}, perr
 	}
-	if pr == nil {
+	check := AllPhotosCheck{Sources: []AllPhotosSource{}, Matches: []AllPhotosMatch{}}
+	source, files := w.inFlightPhotos(folder)
+	if w.pr == nil && len(files) == 0 {
 		return check, nil
 	}
-	source, files := c.readPullPhotoFiles(ctx, t, folder, pr)
 	check.Sources = append(check.Sources, source)
 	seen := map[string]bool{}
 	for _, f := range files {
@@ -90,27 +83,26 @@ func (c *Client) FindInPullRequest(ctx context.Context, gh settings.GitHub, phot
 	return check, nil
 }
 
-// readPullPhotoFiles reads the photo data files pr adds or changes in folder,
-// at its head. The source's Error names the files that couldn't be read.
-func (c *Client) readPullPhotoFiles(ctx context.Context, t target, folder string, pr *inFlightPull) (AllPhotosSource, []InFlightFile) {
-	source := AllPhotosSource{Label: "pull request #" + strconv.Itoa(pr.Number), FileURL: pr.HTMLURL, Found: true}
-	listed, perr := c.listPullFiles(ctx, t, pr.Number)
-	if perr != nil {
-		source.Error = perr.Message
-		return source, nil
+// inFlightPhotos reads the photo data files in folder that w adds or changes
+// against the base branch. The source's Error names the files that couldn't
+// be read.
+func (w *workspace) inFlightPhotos(folder string) (AllPhotosSource, []InFlightFile) {
+	source := AllPhotosSource{Label: "the changes waiting for Commit", Found: true}
+	if w.pr != nil {
+		source.Label, source.FileURL = "pull request #"+strconv.Itoa(w.pr.Number), w.pr.HTMLURL
 	}
 	var files []InFlightFile
 	var unread []string
-	for _, f := range listed {
-		if f.Status == "removed" || !isPhotoData(folder, f.Filename) {
+	for _, p := range w.changed(folder, AllPhotosFile) {
+		if w.status(p) == statusRemoved {
 			continue
 		}
-		data, msg := c.readJSON(ctx, t, f.Filename, pr.Head.SHA)
+		data, msg := w.json(p)
 		if msg != "" {
-			unread = append(unread, path.Base(f.Filename))
+			unread = append(unread, path.Base(p))
 			continue
 		}
-		files = append(files, InFlightFile{Path: f.Filename, FileURL: f.BlobURL, Data: data})
+		files = append(files, InFlightFile{Path: p, FileURL: w.fileURL(p), Data: data})
 	}
 	if len(unread) > 0 {
 		source.Error = "couldn't read " + strings.Join(unread, ", ")

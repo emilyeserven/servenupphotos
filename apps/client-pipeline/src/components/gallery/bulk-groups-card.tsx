@@ -3,6 +3,7 @@ import { CheckIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { type PublishedFile, publishedPhotosQuery } from "@/api/photos";
 import { NO_GROUPS, type PhotoGroups, addPhotoGroupsMutation, savedGroups } from "@/api/organize";
+import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { PhotoGroupFields, Warning } from "@/components/group-picker";
 import { Button } from "@/components/ui/button";
@@ -165,25 +166,8 @@ function BulkOutcome({ add, rebuild }: BulkAdd) {
       <p className="flex items-start gap-2">
         <CheckIcon className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
         <span>
-          Added them to {photoCount(result.files)} in{" "}
-          <a
-            href={result.commitUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="underline underline-offset-4"
-          >
-            one commit
-          </a>{" "}
-          {result.newPullRequest ? "in a new pull request," : "to"}{" "}
-          <a
-            href={result.pullRequestUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="underline underline-offset-4"
-          >
-            #{result.pullRequestNumber}
-          </a>
-          . They wait in Photos in Flight until it merges.
+          Added them to {photoCount(result.files)} in the app.{" "}
+          <WaitingForCommit pullRequestUrl={result.pullRequestUrl} what="The changes" />
         </span>
       </p>
       <AllPhotosRebuild status={rebuild.status} />

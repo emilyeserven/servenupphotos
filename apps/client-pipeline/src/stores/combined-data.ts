@@ -14,12 +14,13 @@ import { type FileChange, pendingText, summarizeChanges, withChanges } from "@/l
 import { editChanges, fieldEdits, useLocalEditsStore } from "@/stores/local-edits";
 
 /**
- * ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, read once and kept for every page. They're only
- * rebuilt when committed by hand (see `commit`), so pushes to the photo data pull request don't
- * change them: the store keeps each push's changes instead, and pages see the lists with them made
- * (see `useCombinedData`), marked as not synced, until a commit that has them. The lists are read
- * again only then, when the app starts, when Photos in Flight sees another pull request than the
- * one they were read for, or on its Refresh.
+ * ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json, read once and kept for every page. Saves don't
+ * touch GitHub: the backend keeps them as changes waiting for Commit, and the store keeps the same
+ * changes, so pages see the lists with them made (see `useCombinedData`), marked as not synced,
+ * until Commit (see `commit`) writes them all, with the lists rebuilt, as one commit. After a reload
+ * the store gets them back from the backend (see `headChecked`). The lists are read again only after
+ * a commit, when the app starts, when Photos in Flight sees another pull request than the one they
+ * were read for, or on its Refresh.
  */
 interface CombinedDataState {
   /** `idle` until a page asks for the lists. */
@@ -29,18 +30,18 @@ interface CombinedDataState {
   error?: Error;
   /** True while a read is going, including a refresh that keeps the last data showing. */
   fetching: boolean;
-  /** The files pushes changed since the last commit, oldest first, made over `data` for pages. */
+  /** The changes waiting for Commit, oldest first, made over `data` for pages. */
   changes: FileChange[];
-  /** How many pushes since the last commit changed files the store can't make over `data`. */
+  /** How many saves since the last commit changed files the store can't make over `data`. */
   unknownChanges: number;
   /**
-   * The data files GitHub listed as changed since the last commit when the app started, so
-   * changes pushed before a reload are still counted.
+   * The data files the lists didn't have when the app started: changes waiting for Commit, and
+   * files committed without rebuilding the lists, so they're counted after a reload.
    */
   checked: PendingFile[];
   /**
-   * Whether the lists at the pull request's head have its latest changes, as last known: checked
-   * when the app starts, `synced` after a commit, `stale` after a push.
+   * Whether the lists at the pull request's head have every change, as last known: checked when
+   * the app starts, `synced` after a commit, `stale` after a save.
    */
   headState?: CombinedStatus["state"];
   /** True while the lists are being committed. */
@@ -52,20 +53,28 @@ interface CombinedDataState {
   syncedPull?: number | null;
   /** Reads the lists, unless they've been read or are being read. */
   load: () => Promise<void>;
-  /** Reads the lists again, keeping the ones there are until the new ones arrive. */
+  /**
+   * Reads the lists again from GitHub, not the backend's recent read, keeping the ones there are
+   * until the new ones arrive.
+   */
   refresh: () => Promise<void>;
   /**
-   * Notes a push to the photo data pull request and the files it changed, when known; until the
-   * lists are committed with them, pages see them made over the lists.
+   * Notes a save and the files it changed, when known; until they're committed, pages see them made
+   * over the lists.
    */
-  afterPush: (changes?: FileChange[]) => void;
-  /** Notes whether the lists at the pull request's head were synced when the app started. */
+  afterSave: (changes?: FileChange[]) => void;
+  /**
+   * Notes whether the lists at the pull request's head were synced when the app started, and the
+   * changes waiting for Commit that the backend kept, such as from before a reload.
+   */
   headChecked: (status: CombinedStatus) => void;
   /**
-   * Saves the local edits to their files, rebuilds the lists from the pull request's data files and
-   * commits them, then reads them again and drops the changes and edits the commit has.
+   * Commits every change waiting for Commit and the local edits, with the lists rebuilt, as one
+   * commit, then reads the lists again and drops the changes and edits the commit has.
    */
   commit: () => Promise<void>;
+  /** Forgets the changes waiting for Commit, once the backend has dropped them. */
+  discarded: () => void;
   /** Reads the lists again when the pull request isn't the one they were read for. */
   syncPullRequest: (pullRequest: InFlightPullRequest | null) => void;
   /** Forgets the lists, as when Settings point at another repository. */
@@ -88,15 +97,33 @@ let latestRead = 0;
 let rebuilt: Rebuilt | undefined;
 
 /**
- * The changes to keep over lists just read: without the ones a commit has, or none when
- * the pull request they were pushed to is gone, as after a merge. A pull request opened since the
- * last read was opened by those pushes, so it keeps them.
+ * The changes to keep over lists just read: without the ones a commit has. When the pull request
+ * the lists were read for is gone, as after a merge, what was committed to it is gone with it, and
+ * only the changes waiting for Commit are left.
  */
 function keptChanges(state: CombinedDataState, data: CombinedData, done: Rebuilt | undefined) {
+  const kept = withoutRebuilt(state, done);
   const before = pullOf(state.data);
-  if (before && before !== pullOf(data))
-    return { changes: [], unknownChanges: 0, checked: [], headState: undefined };
-  return withoutRebuilt(state, done);
+  if (before && before !== pullOf(data)) return { ...kept, checked: [], headState: undefined };
+  return kept;
+}
+
+/** A change waiting for Commit, as the backend keeps it, as a change made over the lists. */
+function fileChange({ kind, path, before, after }: StatusChange): FileChange {
+  return before === null ? { kind, path, after } : { kind, path, before, after };
+}
+
+type StatusChange = NonNullable<CombinedStatus["changes"]>[number];
+
+/**
+ * The changes waiting for Commit that the backend kept, before the ones the store already has. A
+ * commit since the check started has them, so then there are none to add.
+ */
+function seededChanges(state: CombinedDataState, status: CombinedStatus) {
+  if (state.lastCommit) return {};
+  const known = new Set(state.changes.map((change) => change.path));
+  const kept = (status.changes ?? []).filter((change) => !known.has(change.path));
+  return { changes: [...kept.map(fileChange), ...state.changes] };
 }
 
 /** Whether the lists should be read again for the pull request numbered number (null for none). */
@@ -148,11 +175,11 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
     }));
   };
 
-  const read = async () => {
+  const read = async (refresh = false) => {
     const id = ++latestRead;
     const done = rebuilt;
     set(startedRead);
-    const result = await readCombinedData().then(
+    const result = await readCombinedData(refresh).then(
       (data) => ({ data }),
       (error: unknown) => ({ error }),
     );
@@ -172,21 +199,19 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
     load: async () => {
       if (get().status === "idle") await read();
     },
-    refresh: read,
-    afterPush: (changes) => {
+    refresh: () => read(true),
+    afterSave: (changes) => {
       set((state) => ({
         changes: changes ? [...state.changes, ...changes] : state.changes,
         unknownChanges: state.unknownChanges + (changes ? 0 : 1),
         headState: "stale",
       }));
-      // A push with no pull request open opened one, whose lists the changes are made over.
-      const { status, data } = get();
-      if (status === "ready" && !data?.head) void read();
     },
     headChecked: (status) => {
+      set((state) => seededChanges(state, status));
       // A commit since the check started has the files it listed.
       if (get().lastCommit === undefined) set({ checked: status.pending ?? [] });
-      // A push or commit since the check started knows better.
+      // A save or commit since the check started knows better.
       if (get().headState === undefined) set({ headState: status.state });
     },
     commit: async () => {
@@ -204,6 +229,9 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
       } finally {
         set({ committing: false });
       }
+    },
+    discarded: () => {
+      set({ changes: [], unknownChanges: 0, checked: [], headState: undefined });
     },
     syncPullRequest: (pullRequest) => {
       const number = pullRequest ? pullRequest.number : null;
@@ -234,7 +262,7 @@ export const useCombinedDataStore = create<CombinedDataState>()((set, get) => {
 
 /**
  * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json at the pull request's head are missing
- * changes: local edits, ones pushed since the last commit, or ones found when the app started.
+ * changes: local edits, changes waiting for Commit, or ones found when the app started.
  */
 function isUnsynced(
   state: Pick<CombinedDataState, "changes" | "unknownChanges" | "headState">,
@@ -244,7 +272,7 @@ function isUnsynced(
   return state.unknownChanges > 0 || state.headState === "stale";
 }
 
-/** The pushed changes and the local edits, as changes made over the lists, pushed ones first. */
+/** The saved changes and the local edits, as changes made over the lists, saved ones first. */
 function useAllChanges(changes: FileChange[]): FileChange[] {
   const edits = useLocalEditsStore((s) => s.edits);
   return useMemo(() => [...changes, ...editChanges(edits)], [changes, edits]);
@@ -273,6 +301,8 @@ export function useCombinedSync() {
     unsynced: isUnsynced(state, localEdits),
     /** How many files have edits only kept in the browser so far. */
     localEdits,
+    /** How many files have changes waiting for Commit that the backend keeps. */
+    savedFiles: new Set(state.changes.map((change) => change.path)).size,
     /** What changed since the last commit, as "2 images, 1 album"; "" when nothing known. */
     pending: pendingText(summary),
     /** How many images were added, modified and deleted since the last commit. */
@@ -282,8 +312,8 @@ export function useCombinedSync() {
 
 /**
  * The combined lists, read the first time a page asks for them and kept after that. `data` has the
- * changes pushed since the last commit made over the lists at the pull request's head; `synced` is
- * the lists as GitHub has them.
+ * changes waiting for Commit made over the lists at the pull request's head, or over the base
+ * branch's when none is open; `synced` is the lists as GitHub has them.
  */
 export function useCombinedData(enabled = true) {
   const state = useCombinedDataStore(

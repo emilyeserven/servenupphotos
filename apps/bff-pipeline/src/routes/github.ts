@@ -1,8 +1,14 @@
 import type { FastifyPluginAsync } from "fastify";
 import { relayToBackend } from "../lib/backend.js";
 
+/** The backend path with the request's `?refresh=1`, which makes it ask GitHub again. */
+function withRefresh(path: string, query: { refresh?: string }): string {
+  return query.refresh ? `${path}?refresh=1` : path;
+}
+
 export const githubRoutes: FastifyPluginAsync = async (app) => {
-  // The backend gives GitHub 30s across its several calls, so this waits a little longer.
+  // Saves a photo's data as a change waiting for Commit. The backend may read GitHub first and
+  // gives it 30s, so this waits a little longer.
   app.post("/photos/github", async (request, reply) =>
     relayToBackend(reply, app.log, "/photos/github", {
       method: "POST",
@@ -23,13 +29,17 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     }),
   );
 
-  // Reads the photo JSON in the open "Add photo data" pull request; the backend gives GitHub 30s.
-  app.get("/photos/in-flight", async (_request, reply) =>
-    relayToBackend(reply, app.log, "/photos/in-flight", { timeoutMs: 35_000 }),
+  // Reads the photo JSON in the open "Add photo data" pull request and the changes waiting for
+  // Commit; the backend gives GitHub 30s. `?refresh=1` makes it ask GitHub instead of using what it
+  // read when it started.
+  app.get<{ Querystring: { refresh?: string } }>("/photos/in-flight", async (request, reply) =>
+    relayToBackend(reply, app.log, withRefresh("/photos/in-flight", request.query), {
+      timeoutMs: 35_000,
+    }),
   );
 
-  // Removes one photo JSON file from that pull request and its image from R2; the backend gives
-  // GitHub 30s, then R2 15s.
+  // Removes one photo JSON file waiting for Commit and its image from R2; the backend gives GitHub
+  // 30s, then R2 15s.
   app.delete<{ Querystring: { path?: string } }>("/photos/in-flight", async (request, reply) =>
     relayToBackend(
       reply,
@@ -39,8 +49,8 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     ),
   );
 
-  // Replaces one photo JSON file in that pull request with an edit from the Photo page; the backend
-  // gives GitHub 30s.
+  // Saves an edit of one photo JSON file from the Photo page as a change waiting for Commit; the
+  // backend gives GitHub 30s.
   app.put("/photos/in-flight", async (request, reply) =>
     relayToBackend(reply, app.log, "/photos/in-flight", {
       method: "PUT",
@@ -50,8 +60,8 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     }),
   );
 
-  // Adds albums and tags to several photo files as one commit, from the Gallery; the backend reads
-  // every photo file and gives GitHub 60s.
+  // Adds albums and tags to several photo files, from the Gallery, as changes waiting for Commit;
+  // the backend reads every photo file and gives GitHub 60s.
   app.post("/photos/groups", async (request, reply) =>
     relayToBackend(reply, app.log, "/photos/groups", {
       method: "POST",
@@ -69,18 +79,20 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
 
   // Reads ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the base branch and the photo data
   // pull request, which pages keep until they're committed again; the backend gives GitHub 30s.
-  app.get("/photos/combined", async (_request, reply) =>
-    relayToBackend(reply, app.log, "/photos/combined", { timeoutMs: 35_000 }),
+  app.get<{ Querystring: { refresh?: string } }>("/photos/combined", async (request, reply) =>
+    relayToBackend(reply, app.log, withRefresh("/photos/combined", request.query), {
+      timeoutMs: 35_000,
+    }),
   );
 
-  // Whether those lists on the pull request have its latest changes, from the newest commit to the
-  // data folder; the app checks it once when it starts. The backend gives GitHub 30s.
+  // Whether those lists on the pull request have its latest changes, and the changes waiting for
+  // Commit; the app checks it once when it starts. The backend gives GitHub 30s.
   app.get("/photos/combined/status", async (_request, reply) =>
     relayToBackend(reply, app.log, "/photos/combined/status", { timeoutMs: 35_000 }),
   );
 
-  // Saves the app's local edits (such as Instagram dates) to the data files, rebuilds those lists
-  // from every data file on the pull request's branch and commits what changed as one commit; the
+  // Commits every change waiting for Commit and the app's local edits (such as Instagram dates),
+  // with those lists rebuilt, as one commit, opening the pull request when none is open; the
   // backend gives GitHub 60s.
   app.post("/photos/combined", async (request, reply) =>
     relayToBackend(reply, app.log, "/photos/combined", {
@@ -88,6 +100,17 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify(request.body ?? {}),
       timeoutMs: 65_000,
+    }),
+  );
+
+  // Drops the changes waiting for Commit, all of them or the body's `paths`; only the backend's
+  // own file changes, so this is quick.
+  app.delete("/photos/pending", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/pending", {
+      method: "DELETE",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body ?? {}),
+      timeoutMs: 10_000,
     }),
   );
 

@@ -12,42 +12,45 @@ import (
 var organizeGH = settings.GitHub{Repo: "owner/repo", Folder: "data", Token: token}
 
 func TestCreateGroupOpensThenReusesPullRequest(t *testing.T) {
-	f, c := newFakeRepo(t)
+	f, c := newFakeGitHub(t)
 
 	got, err := c.CreateGroup(t.Context(), organizeGH, Albums, NewGroup{ID: "seoul", Name: " Seoul ", Description: "Spring 2026"})
 	if err != nil {
 		t.Fatalf("CreateGroup() error = %v", err)
 	}
-	if got.Path != "data/albums/seoul.json" || !got.NewPullRequest || got.PullRequestNumber != 1 {
-		t.Errorf("CreateGroup() = %+v, want data/albums/seoul.json in a new pull request", got)
+	if got.Path != "data/albums/seoul.json" || got.PullRequestNumber != 0 {
+		t.Errorf("CreateGroup() = %+v, want data/albums/seoul.json pending, with no pull request yet", got)
 	}
 	want := "{\n  \"id\": \"seoul\",\n  \"name\": \"Seoul\",\n  \"description\": \"Spring 2026\",\n  \"parent\": null\n}\n"
-	if content := f.files["photo-data/2026-10-15-024500:data/albums/seoul.json"]; content != want {
-		t.Errorf("file content = %q, want %q", content, want)
+	if content, _ := stagedContent(t, c, "data/albums/seoul.json"); content.Content != want {
+		t.Errorf("file content = %q, want %q", content.Content, want)
 	}
 
 	tag, err := c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "macro", Name: "Macro"})
 	if err != nil {
 		t.Fatalf("CreateGroup(tag) error = %v", err)
 	}
-	if tag.Path != "data/tags/macro.json" || tag.NewPullRequest || tag.PullRequestNumber != 1 {
-		t.Errorf("CreateGroup(tag) = %+v, want data/tags/macro.json added to pull request 1", tag)
+	if tag.Path != "data/tags/macro.json" {
+		t.Errorf("CreateGroup(tag) = %+v, want data/tags/macro.json", tag)
+	}
+	if w := f.writes(); len(w) != 0 {
+		t.Errorf("CreateGroup() wrote to GitHub: %v", w)
 	}
 	// Tags have no parent.
-	if content := f.files["photo-data/2026-10-15-024500:data/tags/macro.json"]; strings.Contains(content, "parent") {
-		t.Errorf("tag content = %q, want no parent", content)
+	if content, _ := stagedContent(t, c, "data/tags/macro.json"); strings.Contains(content.Content, "parent") {
+		t.Errorf("tag content = %q, want no parent", content.Content)
 	}
 }
 
 func TestCreateGroupWithParent(t *testing.T) {
-	f, c := newFakeRepo(t)
+	f, c := newFakeGitHub(t)
 	f.files["main:data/albums/korea.json"] = `{"id":"korea","name":"Korea","parent":null}`
 
 	if _, err := c.CreateGroup(t.Context(), organizeGH, Albums, NewGroup{ID: "seoul", Name: "Seoul", Parent: "korea"}); err != nil {
 		t.Fatalf("CreateGroup() error = %v", err)
 	}
-	if content := f.files["photo-data/2026-10-15-024500:data/albums/seoul.json"]; !strings.Contains(content, `"parent": "korea"`) {
-		t.Errorf("file content = %q, want parent korea", content)
+	if content, _ := stagedContent(t, c, "data/albums/seoul.json"); !strings.Contains(content.Content, `"parent": "korea"`) {
+		t.Errorf("file content = %q, want parent korea", content.Content)
 	}
 	got, err := c.Organize(t.Context(), organizeGH)
 	if err != nil {
@@ -92,7 +95,7 @@ func TestCheckParent(t *testing.T) {
 }
 
 func TestCreateGroupRefusesCollisions(t *testing.T) {
-	f, c := newFakeRepo(t)
+	f, c := newFakeGitHub(t)
 	f.files["main:data/albums/seoul.json"] = `{"id":"seoul","name":"Seoul"}`
 	f.files["main:data/albums/ALLALBUMS.json"] = `[{"id":"all","name":"All"}]`
 	f.files["main:data/tags/macro.json"] = `{"id":"macro","name":"Close Up"}`
@@ -120,13 +123,13 @@ func TestCreateGroupRefusesCollisions(t *testing.T) {
 	if _, err := c.CreateGroup(t.Context(), organizeGH, Albums, NewGroup{ID: "all", Name: "All"}); err != nil {
 		t.Errorf("CreateGroup(all) error = %v, want it saved", err)
 	}
-	if f.writes != 1 {
-		t.Errorf("wrote %d files, want only the album without a collision", f.writes)
+	if n := pendingCount(t, c); n != 1 {
+		t.Errorf("%d files pending, want only the album without a collision", n)
 	}
 }
 
 func TestCreateGroupChecksThePullRequest(t *testing.T) {
-	f, c := newFakeRepo(t)
+	_, c := newFakeGitHub(t)
 	if _, err := c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "night", Name: "Night"}); err != nil {
 		t.Fatal(err)
 	}
@@ -135,13 +138,13 @@ func TestCreateGroupChecksThePullRequest(t *testing.T) {
 	if !errors.As(err, &perr) || perr.Status != http.StatusConflict {
 		t.Errorf("CreateGroup() error = %v, want a conflict with the tag in flight", err)
 	}
-	if f.writes != 1 {
-		t.Errorf("wrote %d files, want 1", f.writes)
+	if n := pendingCount(t, c); n != 1 {
+		t.Errorf("%d files pending, want 1", n)
 	}
 }
 
 func TestCreateGroupValidates(t *testing.T) {
-	_, c := newFakeRepo(t)
+	_, c := newFakeGitHub(t)
 	tests := []struct {
 		name  string
 		group NewGroup
@@ -165,16 +168,13 @@ func TestCreateGroupValidates(t *testing.T) {
 }
 
 func TestOrganize(t *testing.T) {
-	f, c := newFakeRepo(t)
+	f, c := newFakeGitHub(t)
 	f.files["main:data/albums/seoul.json"] = `{"id":"seoul","name":"Seoul","description":"Spring"}`
 	f.files["main:data/albums/ALLALBUMS.json"] = `[]`
 	f.files["main:data/albums/broken.json"] = `{nope`
+	f.openPull(prBranch, nil)
 	if _, err := c.CreateGroup(t.Context(), organizeGH, Albums, NewGroup{ID: "busan", Name: "Busan"}); err != nil {
 		t.Fatal(err)
-	}
-	// The pull request's branch starts from main.
-	for _, p := range []string{"data/albums/seoul.json", "data/albums/ALLALBUMS.json", "data/albums/broken.json"} {
-		f.files["photo-data/2026-10-15-024500:"+p] = f.files["main:"+p]
 	}
 
 	got, err := c.Organize(t.Context(), organizeGH)
@@ -194,7 +194,7 @@ func TestOrganize(t *testing.T) {
 	if broken.ID != "broken" || broken.Error == "" {
 		t.Errorf("Albums[0] = %+v, want broken.json with an error", broken)
 	}
-	if busan.ID != "busan" || busan.Name != "Busan" || !busan.InFlight || busan.Path != "data/albums/busan.json" {
+	if busan.ID != "busan" || busan.Name != "Busan" || !busan.InFlight || busan.Path != "data/albums/busan.json" || busan.FileURL != "" {
 		t.Errorf("Albums[1] = %+v, want Busan in flight", busan)
 	}
 	if seoul.Name != "Seoul" || seoul.Description != "Spring" || seoul.InFlight {
@@ -202,20 +202,51 @@ func TestOrganize(t *testing.T) {
 	}
 }
 
+func TestSetAlbumParent(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.files["main:data/albums/korea.json"] = "{\n  \"id\": \"korea\",\n  \"name\": \"Korea\",\n  \"parent\": null\n}\n"
+	f.files["main:data/albums/seoul.json"] = "{\n  \"id\": \"seoul\",\n  \"name\": \"Seoul\",\n  \"parent\": null\n}\n"
+	got, err := c.SetAlbumParent(t.Context(), organizeGH, "seoul", "korea")
+	if err != nil {
+		t.Fatalf("SetAlbumParent() error = %v", err)
+	}
+	if !got.Changed || len(got.Changes) != 1 || !strings.Contains(string(got.Changes[0].After), `"parent": "korea"`) {
+		t.Errorf("SetAlbumParent() = %+v, want seoul.json moved into korea", got)
+	}
+	again, err := c.SetAlbumParent(t.Context(), organizeGH, "seoul", "korea")
+	if err != nil || again.Changed {
+		t.Errorf("SetAlbumParent() again = %+v, %v; want nothing changed", again, err)
+	}
+	_, err = c.SetAlbumParent(t.Context(), organizeGH, "korea", "seoul")
+	var perr *PublishError
+	if !errors.As(err, &perr) || perr.Status != http.StatusConflict {
+		t.Errorf("SetAlbumParent() into its own child: error = %v, want a conflict", err)
+	}
+	if w := f.writes(); len(w) != 0 {
+		t.Errorf("SetAlbumParent() wrote to GitHub: %v", w)
+	}
+}
+
+// pendingCount is how many files have pending changes.
+func pendingCount(t *testing.T, c *Client) int {
+	t.Helper()
+	files, err := c.stage().files(target{owner: "owner", name: "repo"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return len(files)
+}
+
 func TestInFlightAlbumsAndTags(t *testing.T) {
 	const dir = "apps/portfolio/src/data/"
-	c := newInFlightRepo(t, []map[string]any{photoPull},
-		[]map[string]any{
-			{"filename": dir + "albums/seoul.json", "status": "added", "blob_url": "https://github.com/blob/seoul"},
-			{"filename": dir + "albums/ALLALBUMS.json", "status": "added", "blob_url": "https://github.com/blob/allalbums"},
-			{"filename": dir + "tags/macro.json", "status": "added"},
-			{"filename": dir + "tags/old.json", "status": "removed"},
-		},
-		map[string]string{
-			dir + "albums/seoul.json":     `{"id":"seoul","name":"Seoul"}`,
-			dir + "albums/ALLALBUMS.json": `[{"name":"Seoul","id":"seoul"}]`,
-			dir + "tags/macro.json":       `{"id":"macro","name":"Macro"}`,
-		})
+	f, c := newFakeGitHub(t)
+	f.files["main:"+dir+"tags/old.json"] = `{"id":"old","name":"Old"}`
+	f.openPull(prBranch, map[string]string{
+		dir + "albums/seoul.json":     `{"id":"seoul","name":"Seoul"}`,
+		dir + "albums/ALLALBUMS.json": `[{"name":"Seoul","id":"seoul"}]`,
+		dir + "tags/macro.json":       `{"id":"macro","name":"Macro"}`,
+	})
+	delete(f.files, prBranch+":"+dir+"tags/old.json")
 	got, err := c.InFlight(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token})
 	if err != nil {
 		t.Fatalf("InFlight() error = %v", err)
@@ -224,7 +255,7 @@ func TestInFlightAlbumsAndTags(t *testing.T) {
 		t.Errorf("Files = %+v, want no photos", got.Files)
 	}
 	albums := got.Albums
-	if albums.Folder != dir+"albums" || len(albums.Files) != 1 || albums.Files[0].FileURL != "https://github.com/blob/seoul" {
+	if albums.Folder != dir+"albums" || len(albums.Files) != 1 || albums.Files[0].FileURL != "https://github.com/owner/repo/blob/"+prBranch+"/"+dir+"albums/seoul.json" {
 		t.Fatalf("Albums = %+v, want seoul.json", albums)
 	}
 	tags := got.Tags

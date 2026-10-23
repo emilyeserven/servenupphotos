@@ -1,200 +1,164 @@
 package github
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// updateRepo serves owner/repo with photoPull open, changing files, and
-// records the body of the one PUT it receives.
-type updateRepo struct {
-	files     []map[string]any
-	current   string
-	putStatus int
-	put       map[string]string
-	putPath   string
-	// existing are other paths that exist, on any ref.
-	existing  map[string]bool
-	deleted   string
-	deleteSHA string
-	reads     []string
-}
+const photosDir = dataRoot + "/photos/"
 
-func (f *updateRepo) start(t *testing.T) *Client {
+// stagedContent is path's pending content, and whether it has a pending change.
+func stagedContent(t *testing.T, c *Client, path string) (StagedFile, bool) {
 	t.Helper()
-	const dir = "apps/portfolio/src/data/photos/"
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		p := strings.TrimPrefix(r.URL.Path, "/repos/owner/repo")
-		switch {
-		case r.Method == http.MethodGet && p == "/pulls":
-			writeBody(w, http.StatusOK, []map[string]any{photoPull})
-		case r.Method == http.MethodGet && p == "/pulls/7/files":
-			writeBody(w, http.StatusOK, f.files)
-		case r.Method == http.MethodGet && p == "/contents/"+dir+"DSC0001.json":
-			if r.URL.Query().Get("ref") != "photo-data/2026-10-15-024500" {
-				t.Errorf("read at ref %q, want the branch", r.URL.Query().Get("ref"))
-			}
-			writeBody(w, http.StatusOK, map[string]any{
-				"encoding": "base64", "sha": "blob1",
-				"content": base64.StdEncoding.EncodeToString([]byte(f.current)),
-			})
-		case r.Method == http.MethodGet && strings.HasPrefix(p, "/contents/"):
-			f.reads = append(f.reads, strings.TrimPrefix(p, "/contents/")+"@"+r.URL.Query().Get("ref"))
-			if f.existing[strings.TrimPrefix(p, "/contents/")] {
-				writeBody(w, http.StatusOK, map[string]any{})
-				return
-			}
-			w.WriteHeader(http.StatusNotFound)
-		case r.Method == http.MethodDelete && strings.HasPrefix(p, "/contents/"):
-			f.deleted = strings.TrimPrefix(p, "/contents/")
-			var body map[string]string
-			_ = json.NewDecoder(r.Body).Decode(&body)
-			f.deleteSHA = body["sha"]
-			writeBody(w, http.StatusOK, map[string]any{"commit": map[string]any{"sha": "d0ne"}})
-		case r.Method == http.MethodPut && strings.HasPrefix(p, "/contents/"):
-			f.putPath = strings.TrimPrefix(p, "/contents/")
-			_ = json.NewDecoder(r.Body).Decode(&f.put)
-			writeBody(w, f.putStatus, map[string]any{
-				"content": map[string]any{"html_url": "https://github.com/owner/repo/blob/b/" + f.putPath},
-				"commit":  map[string]any{"sha": "c0ffee2"},
-			})
-		default:
-			t.Errorf("unexpected %s %s", r.Method, r.URL.Path)
-			w.WriteHeader(http.StatusNotFound)
-		}
-	}))
-	t.Cleanup(srv.Close)
-	return &Client{BaseURL: srv.URL, Client: srv.Client()}
+	files, err := c.stage().files(target{owner: "owner", name: "repo"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	f, ok := files[path]
+	return f, ok
 }
 
 func TestUpdate(t *testing.T) {
-	const file = "apps/portfolio/src/data/photos/DSC0001.json"
-	repo := &updateRepo{
-		files:     []map[string]any{{"filename": file, "status": "added", "blob_url": "https://github.com/blob"}},
-		current:   "{\n  \"file\": \"DSC0001.jpg\"\n}\n",
-		putStatus: http.StatusOK,
-	}
+	const file = photosDir + "DSC0001.json"
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, map[string]string{file: "{\n  \"file\": \"DSC0001.jpg\"\n}\n"})
 	data := json.RawMessage(`{"file":"DSC0001.jpg","images":{"thumbnail":"https://pub/t.webp?crop=1,2,3"}}`)
-	got, err := repo.start(t).Update(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token}, file, "", data)
+	got, err := c.Update(t.Context(), pullGH, file, "", data)
 	if err != nil {
 		t.Fatalf("Update() error = %v", err)
 	}
-	want := UpdatedFile{Path: file, FileURL: "https://github.com/owner/repo/blob/b/" + file, CommitSHA: "c0ffee2", Changed: true}
-	if got != want {
-		t.Errorf("Update() = %+v, want %+v", got, want)
-	}
-	if repo.putPath != file || repo.put["sha"] != "blob1" || repo.put["branch"] != "photo-data/2026-10-15-024500" {
-		t.Errorf("put %q with %v, want over the file's blob on the pull request's branch", repo.putPath, repo.put)
-	}
-	content, _ := base64.StdEncoding.DecodeString(repo.put["content"])
 	wantContent := "{\n  \"file\": \"DSC0001.jpg\",\n  \"images\": {\n    \"thumbnail\": \"https://pub/t.webp?crop=1,2,3\"\n  }\n}\n"
-	if string(content) != wantContent {
-		t.Errorf("content = %q, want %q", content, wantContent)
+	if !got.Changed || got.Path != file || string(got.Data) != wantContent || string(got.Before) != "{\n  \"file\": \"DSC0001.jpg\"\n}\n" {
+		t.Errorf("Update() = %+v, want it changed with its data before and after", got)
+	}
+	if got.PullRequestURL != "https://github.com/owner/repo/pull/1" {
+		t.Errorf("PullRequestURL = %q, want the open pull request", got.PullRequestURL)
+	}
+	if staged, ok := stagedContent(t, c, file); !ok || staged.Content != wantContent {
+		t.Errorf("pending %q, want %q", staged.Content, wantContent)
+	}
+	if w := f.writes(); len(w) != 0 {
+		t.Errorf("Update() wrote to GitHub: %v", w)
+	}
+
+	// Saving it back as it was drops the pending change.
+	if _, err := c.Update(t.Context(), pullGH, file, "", json.RawMessage(`{"file":"DSC0001.jpg"}`)); err != nil {
+		t.Fatalf("Update() back error = %v", err)
+	}
+	if _, ok := stagedContent(t, c, file); ok {
+		t.Error("the file is still pending after saving it back as it was")
 	}
 }
 
 func TestUpdateUnchanged(t *testing.T) {
-	const file = "apps/portfolio/src/data/photos/DSC0001.json"
-	repo := &updateRepo{
-		files:   []map[string]any{{"filename": file, "status": "added", "blob_url": "https://github.com/blob"}},
-		current: "{\n  \"file\": \"DSC0001.jpg\"\n}\n",
+	const file = photosDir + "DSC0001.json"
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, map[string]string{file: "{\n  \"file\": \"DSC0001.jpg\"\n}\n"})
+	got, err := c.Update(t.Context(), pullGH, file, "", json.RawMessage(`{"file": "DSC0001.jpg"}`))
+	if err != nil || got.Changed {
+		t.Errorf("Update() = %+v, %v; want nothing changed", got, err)
 	}
-	got, err := repo.start(t).Update(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token}, file, "", json.RawMessage(`{"file": "DSC0001.jpg"}`))
-	if err != nil {
-		t.Fatalf("Update() error = %v", err)
+	if _, ok := stagedContent(t, c, file); ok {
+		t.Error("an unchanged file is pending")
 	}
-	if want := (UpdatedFile{Path: file, FileURL: "https://github.com/blob"}); got != want {
-		t.Errorf("Update() = %+v, want %+v", got, want)
+}
+
+func TestUpdatePublishedPhoto(t *testing.T) {
+	const file = photosDir + "a.json"
+	f, c := newFakeGitHub(t)
+	f.files["main:"+file] = "{\"file\": \"A.jpg\"}\n"
+	got, err := c.Update(t.Context(), pullGH, file, "", json.RawMessage(`{"file":"A.jpg","title":"Pond"}`))
+	if err != nil || !got.Changed || got.PullRequestURL != "" {
+		t.Fatalf("Update() = %+v, %v; want it pending with no pull request yet", got, err)
 	}
-	if repo.putPath != "" {
-		t.Errorf("put %q, want nothing committed", repo.putPath)
+	commit, err := c.CommitCombined(t.Context(), pullGH, nil)
+	if err != nil || !commit.NewPullRequest {
+		t.Fatalf("CommitCombined() = %+v, %v; want a new pull request", commit, err)
+	}
+	if main, _ := f.file("main", file); main != "{\"file\": \"A.jpg\"}\n" {
+		t.Errorf("main changed to %q", main)
+	}
+	if branch, _ := f.file(prBranch, file); !strings.Contains(branch, "Pond") {
+		t.Errorf("the pull request's copy = %q, want the edit", branch)
 	}
 }
 
 func TestUpdateErrors(t *testing.T) {
-	const file = "apps/portfolio/src/data/photos/DSC0001.json"
+	const file = photosDir + "DSC0001.json"
 	tests := []struct {
-		name      string
-		file      string
-		rename    string
-		data      string
-		status    string
-		putStatus int
-		want      string
+		name   string
+		file   string
+		rename string
+		data   string
+		onMain bool
+		want   string
 	}{
-		{"outside the folder", "README.json", "", `{}`, "added", http.StatusOK, "Only photo JSON files"},
-		{"ALLPHOTOS.json", "apps/portfolio/src/data/photos/ALLPHOTOS.json", "", `{}`, "added", http.StatusOK, "Only photo JSON files"},
-		{"not an object", file, "", `[1]`, "added", http.StatusOK, "must be a JSON object"},
-		{"null", file, "", `null`, "added", http.StatusOK, "must be a JSON object"},
-		{"not in the pull request", "apps/portfolio/src/data/photos/other.json", "", `{}`, "added", http.StatusOK, "isn't in the photo data pull request"},
-		{"removed", file, "", `{}`, "removed", http.StatusOK, "can't be edited"},
-		{"changed meanwhile", file, "", `{}`, "added", http.StatusConflict, "changed on photo-data/"},
-		{"bad new name", file, "night market", `{}`, "added", http.StatusOK, "Use a file name"},
-		{"rename a modified file", file, "Night-market", `{}`, "modified", http.StatusOK, "keeps its name"},
+		{"outside the folder", "README.json", "", `{}`, false, "Only photo JSON files"},
+		{"ALLPHOTOS.json", photosDir + "ALLPHOTOS.json", "", `{}`, false, "Only photo JSON files"},
+		{"not an object", file, "", `[1]`, false, "must be a JSON object"},
+		{"null", file, "", `null`, false, "must be a JSON object"},
+		{"not in the pull request", photosDir + "other.json", "", `{}`, false, "isn't in the photo data pull request or on main"},
+		{"removed", photosDir + "gone.json", "", `{}`, false, "can't be edited"},
+		{"bad new name", file, "night market", `{}`, false, "Use a file name"},
+		{"rename a published file", file, "Night-market", `{}`, true, "keeps its name"},
+		{"rename taken", file, "taken", `{}`, false, "already exists on " + prBranch},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			repo := &updateRepo{files: []map[string]any{{"filename": file, "status": tt.status}}, current: "{\"a\":1}", putStatus: tt.putStatus}
-			_, err := repo.start(t).Update(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token}, tt.file, tt.rename, json.RawMessage(tt.data))
+			f, c := newFakeGitHub(t)
+			f.files["main:"+photosDir+"gone.json"] = "{}"
+			if tt.onMain {
+				f.files["main:"+file] = "{}"
+			}
+			f.openPull(prBranch, map[string]string{file: "{\"a\":1}", photosDir + "taken.json": "{}"})
+			delete(f.files, prBranch+":"+photosDir+"gone.json")
+			_, err := c.Update(t.Context(), pullGH, tt.file, tt.rename, json.RawMessage(tt.data))
 			var perr *PublishError
 			if !errors.As(err, &perr) || !strings.Contains(perr.Message, tt.want) {
 				t.Errorf("Update() error = %v, want one containing %q", err, tt.want)
-			}
-			if tt.putStatus == http.StatusOK && repo.putPath != "" {
-				t.Errorf("put %q, want nothing committed", repo.putPath)
 			}
 		})
 	}
 }
 
 func TestUpdateRenames(t *testing.T) {
-	const dir = "apps/portfolio/src/data/photos/"
-	repo := &updateRepo{
-		files:     []map[string]any{{"filename": dir + "DSC0001.json", "status": "added"}},
-		current:   "{\n  \"file\": \"DSC0001.jpg\"\n}\n",
-		putStatus: http.StatusCreated,
-	}
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, map[string]string{photosDir + "DSC0001.json": "{\n  \"file\": \"DSC0001.jpg\"\n}\n"})
 	data := json.RawMessage(`{"title":"Night market","file":"DSC0001.jpg"}`)
-	got, err := repo.start(t).Update(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token}, dir+"DSC0001.json", "Night-market.json", data)
+	got, err := c.Update(t.Context(), pullGH, photosDir+"DSC0001.json", "Night-market.json", data)
 	if err != nil {
 		t.Fatalf("Update() error = %v", err)
 	}
-	want := UpdatedFile{Path: dir + "Night-market.json", FileURL: "https://github.com/owner/repo/blob/b/" + dir + "Night-market.json", CommitSHA: "d0ne", Changed: true}
-	if got != want {
-		t.Errorf("Update() = %+v, want %+v", got, want)
+	if got.Path != photosDir+"Night-market.json" || !got.Changed {
+		t.Errorf("Update() = %+v, want it moved to Night-market.json", got)
 	}
-	if repo.putPath != dir+"Night-market.json" || repo.put["sha"] != "" {
-		t.Errorf("put %q with %v, want a new file", repo.putPath, repo.put)
+	if old, ok := stagedContent(t, c, photosDir+"DSC0001.json"); !ok || !old.Deleted {
+		t.Errorf("DSC0001.json pending = %+v, want it deleted", old)
 	}
-	if repo.deleted != dir+"DSC0001.json" || repo.deleteSHA != "blob1" {
-		t.Errorf("deleted %q at %q, want the old file's blob", repo.deleted, repo.deleteSHA)
+	if _, err := c.CommitCombined(t.Context(), pullGH, nil); err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
 	}
-	wantReads := []string{dir + "Night-market.json@main", dir + "Night-market.json@photo-data/2026-10-15-024500"}
-	if strings.Join(repo.reads, " ") != strings.Join(wantReads, " ") {
-		t.Errorf("checked %v, want the new name on both branches %v", repo.reads, wantReads)
+	if _, ok := f.file(prBranch, photosDir+"DSC0001.json"); ok {
+		t.Error("DSC0001.json is still on the branch")
+	}
+	if _, ok := f.file(prBranch, photosDir+"Night-market.json"); !ok {
+		t.Error("Night-market.json isn't on the branch")
+	}
+	if n := f.count("POST /git/commits"); n != 1 {
+		t.Errorf("made %d commits for a rename, want 1", n)
 	}
 }
 
 func TestUpdateRenameTaken(t *testing.T) {
-	const dir = "apps/portfolio/src/data/photos/"
-	repo := &updateRepo{
-		files:    []map[string]any{{"filename": dir + "DSC0001.json", "status": "added"}},
-		current:  "{}",
-		existing: map[string]bool{dir + "Night-market.json": true},
-	}
-	_, err := repo.start(t).Update(t.Context(), settings.GitHub{Repo: "owner/repo", Token: token}, dir+"DSC0001.json", "Night-market", json.RawMessage(`{}`))
+	f, c := newFakeGitHub(t)
+	f.files["main:"+photosDir+"Night-market.json"] = "{}"
+	f.openPull(prBranch, map[string]string{photosDir + "DSC0001.json": "{}"})
+	_, err := c.Update(t.Context(), pullGH, photosDir+"DSC0001.json", "Night-market", json.RawMessage(`{}`))
 	var perr *PublishError
-	if !errors.As(err, &perr) || perr.Status != http.StatusConflict || !strings.Contains(perr.Message, "already exists") {
+	if !errors.As(err, &perr) || perr.Status != http.StatusConflict || !strings.Contains(perr.Message, "already exists on main") {
 		t.Errorf("Update() error = %v, want a conflict", err)
-	}
-	if repo.putPath != "" || repo.deleted != "" {
-		t.Errorf("put %q and deleted %q, want nothing committed", repo.putPath, repo.deleted)
 	}
 }

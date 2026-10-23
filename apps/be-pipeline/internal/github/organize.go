@@ -6,12 +6,11 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"net/url"
 	"path"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
-	"sync"
 	"unicode/utf8"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
@@ -100,18 +99,19 @@ type Group struct {
 	Name        string `json:"name"`
 	Description string `json:"description,omitempty"`
 	// Parent is an album's parent album's ID, empty for a top-level album.
-	Parent  string `json:"parent,omitempty"`
-	Path    string `json:"path"`
+	Parent string `json:"parent,omitempty"`
+	Path   string `json:"path"`
+	// FileURL is the file's page on GitHub; empty while its latest change is
+	// only pending.
 	FileURL string `json:"fileUrl"`
-	// InFlight is true when the file is only on the photo data pull
-	// request's branch, not merged yet.
+	// InFlight is true when the file isn't on the base branch yet: it's on
+	// the photo data pull request's branch, or only pending.
 	InFlight bool `json:"inFlight"`
 	// Error says why the file couldn't be read; ID is then its file name.
 	Error string `json:"error,omitempty"`
 }
 
-// OrganizeResult is every album and tag on the base branch and the open
-// photo data pull request.
+// OrganizeResult is every album and tag on the base branch and in flight.
 type OrganizeResult struct {
 	Repo   string `json:"repo"`
 	Folder string `json:"folder"`
@@ -122,59 +122,32 @@ type OrganizeResult struct {
 	Tags        []Group              `json:"tags"`
 }
 
-// Organize lists the albums and tags on the base branch from Settings (or
-// the default branch) and on the open photo data pull request's branch,
-// sorted by name. It only reads from GitHub.
+// Organize lists the albums and tags as the next Commit will have them, with
+// the ones only on the base branch, sorted by name.
 func (c *Client) Organize(ctx context.Context, gh settings.GitHub) (OrganizeResult, error) {
-	root, perr := dataFolder(gh.Folder)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return OrganizeResult{}, perr
 	}
-	t, perr := c.target(ctx, gh)
-	if perr != nil {
-		return OrganizeResult{}, perr
-	}
-	open, perr := c.findPullRequest(ctx, t)
-	if perr != nil {
-		return OrganizeResult{}, perr
-	}
-	result := OrganizeResult{Repo: t.repo.FullName, Folder: root, Branch: t.base}
-	if open != nil {
-		result.PullRequest = &InFlightPullRequest{Number: open.Number, URL: open.HTMLURL, Branch: open.Head.Ref, Title: PullRequestTitle}
-	}
-	groups, perr := c.readGroups(ctx, t, root, open)
-	if perr != nil {
-		return OrganizeResult{}, perr
-	}
+	result := OrganizeResult{Repo: w.t.repo.FullName, Folder: w.root, Branch: w.t.base, PullRequest: w.inFlightPullRequest()}
+	groups := w.groups()
 	result.Albums, result.Tags = groups[Albums.Folder], groups[Tags.Folder]
 	return result, nil
 }
 
 // CreateGroup saves group as a new kind file, <folder>/<kind folder>/<id>.json,
-// in the open photo data pull request, or a new one, as Publish does. It fails
-// when an album or tag already has the same ID or name, ignoring case, on the
-// base branch or the pull request's branch.
+// in the pending changes, as Publish does. It fails when an album or tag
+// already has the same ID or name, ignoring case.
 func (c *Client) CreateGroup(ctx context.Context, gh settings.GitHub, kind Kind, group NewGroup) (PublishResult, error) {
 	content, perr := validGroup(kind, group)
 	if perr != nil {
 		return PublishResult{}, perr
 	}
-	root, perr := dataFolder(gh.Folder)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return PublishResult{}, perr
 	}
-	t, perr := c.target(ctx, gh)
-	if perr != nil {
-		return PublishResult{}, perr
-	}
-	open, perr := c.findPullRequest(ctx, t)
-	if perr != nil {
-		return PublishResult{}, perr
-	}
-	groups, perr := c.readGroups(ctx, t, root, open)
-	if perr != nil {
-		return PublishResult{}, perr
-	}
+	groups := w.groups()
 	if perr := checkCollision(groups, group); perr != nil {
 		return PublishResult{}, perr
 	}
@@ -183,12 +156,12 @@ func (c *Client) CreateGroup(ctx context.Context, gh settings.GitHub, kind Kind,
 			return PublishResult{}, perr
 		}
 	}
-	file := root + "/" + kind.Folder + "/" + content.ID + ".json"
+	file := w.root + "/" + kind.Folder + "/" + content.ID + ".json"
 	b, err := json.MarshalIndent(fileContent(kind, content), "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the %s.", kind.Name)
 	}
-	return c.saveNewFile(ctx, t, open, file, append(b, '\n'), "Add "+kind.Name+" "+file)
+	return c.saveNewFile(w, file, append(b, '\n'))
 }
 
 // validGroup checks group and returns it trimmed, as it will be saved.
@@ -241,43 +214,27 @@ func checkParent(albums []Group, id, parent string) *PublishError {
 	return nil
 }
 
-// AlbumParentResult says where an album's new parent was committed.
+// AlbumParentResult says where an album's new parent was saved.
 type AlbumParentResult struct {
-	scanCommit
-	Path    string `json:"path"`
-	FileURL string `json:"fileUrl"`
+	pendingSave
+	Path string `json:"path"`
 	// Changed is false when the album already had that parent, so nothing
-	// was committed.
+	// was saved.
 	Changed bool `json:"changed"`
 }
 
 // SetAlbumParent makes parent, an album ID, the parent of the album id, or
-// makes it a top-level album when parent is empty, as one commit on the open
-// photo data pull request's branch, or a new one with its pull request. Only
-// the file's "parent" changes. It fails when that would make an album its own
-// ancestor.
+// makes it a top-level album when parent is empty, in the pending changes.
+// Only the file's "parent" changes. It fails when that would make an album
+// its own ancestor.
 func (c *Client) SetAlbumParent(ctx context.Context, gh settings.GitHub, id, parent string) (AlbumParentResult, error) {
 	id, parent = strings.TrimSpace(id), strings.TrimSpace(parent)
-	root, perr := dataFolder(gh.Folder)
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return AlbumParentResult{}, perr
 	}
-	t, perr := c.target(ctx, gh)
-	if perr != nil {
-		return AlbumParentResult{}, perr
-	}
-	scan := baseURLScan{t: t, branch: t.base}
-	if scan.pr, perr = c.findPullRequest(ctx, t); perr != nil {
-		return AlbumParentResult{}, perr
-	}
-	if scan.pr != nil {
-		scan.branch = scan.pr.Head.Ref
-	}
-	groups, perr := c.readGroups(ctx, t, root, scan.pr)
-	if perr != nil {
-		return AlbumParentResult{}, perr
-	}
-	album, ok := findGroup(groups[Albums.Folder], id)
+	albums := w.groups()[Albums.Folder]
+	album, ok := findGroup(albums, id)
 	if !ok {
 		return AlbumParentResult{}, publishErr(http.StatusNotFound, "There's no album with the ID %q. Refresh to see what there is.", id)
 	}
@@ -286,39 +243,24 @@ func (c *Client) SetAlbumParent(ctx context.Context, gh settings.GitHub, id, par
 	}
 	value := []byte("null")
 	if parent != "" {
-		if perr := checkParent(groups[Albums.Folder], id, parent); perr != nil {
+		if perr := checkParent(albums, id, parent); perr != nil {
 			return AlbumParentResult{}, perr
 		}
 		value, _ = json.Marshal(parent)
 	}
-	if scan.headSHA, perr = c.branchHead(ctx, t, scan.branch); perr != nil {
-		return AlbumParentResult{}, perr
-	}
-	current, _, found, msg := c.readFileSHA(ctx, t, album.Path, scan.headSHA)
-	if !found {
-		return AlbumParentResult{}, publishErr(http.StatusConflict, "%s isn't on %s. Refresh and try again.", album.Path, scan.branch)
-	}
-	if msg != "" {
-		return AlbumParentResult{}, publishErr(http.StatusBadGateway, "%s", msg)
-	}
+	current, _ := w.groupFile(album.Path)
 	content, err := setTopLevel(current, parentKey, value)
 	if err != nil {
 		return AlbumParentResult{}, publishErr(http.StatusConflict, "%s: %s", album.Path, err)
 	}
-	result := AlbumParentResult{Path: album.Path, FileURL: album.FileURL}
+	result := AlbumParentResult{Path: album.Path, pendingSave: w.pendingSave(nil)}
 	if bytes.Equal(content, current) {
 		return result, nil
 	}
-	entries := []map[string]string{{"path": album.Path, "mode": "100644", "type": "blob", "content": string(content)}}
-	message := "Move album " + album.Path + " to the top level"
-	if parent != "" {
-		message = "Move album " + album.Path + " into " + parent
-	}
-	saved, perr := c.commitScan(ctx, scan, entries, message)
-	if perr != nil {
+	if result.pendingSave, perr = c.saveFiles(w, []ScanChange{{Path: album.Path, Before: current, After: content}}); perr != nil {
 		return AlbumParentResult{}, perr
 	}
-	result.scanCommit, result.Changed = saved, true
+	result.Changed = true
 	return result, nil
 }
 
@@ -352,70 +294,21 @@ func checkCollision(groups map[string][]Group, group NewGroup) *PublishError {
 	return nil
 }
 
-// readGroups reads every album and tag file on the base branch and, when
-// open isn't nil, on its branch, keyed by kind folder and sorted by name.
-func (c *Client) readGroups(ctx context.Context, t target, root string, open *pullRequest) (map[string][]Group, *PublishError) {
-	type listed struct {
-		entry folderEntry
-		ref   string
-		group *Group
-	}
-	var all []listed
-	byKind := map[string][]int{}
-	for _, k := range kinds {
-		folder := root + "/" + k.Folder
-		onBase, perr := c.listJSON(ctx, t, folder, t.base, k.AllFile)
-		if perr != nil {
-			return nil, perr
-		}
-		seen := map[string]bool{}
-		var onBranch []folderEntry
-		if open != nil {
-			if onBranch, perr = c.listJSON(ctx, t, folder, open.Head.Ref, k.AllFile); perr != nil {
-				return nil, perr
-			}
-		}
-		for _, e := range onBase {
-			seen[e.Path] = true
-		}
-		// The pull request's copy is read when there is one, since it may be newer.
-		ref := t.base
-		if open != nil {
-			ref = open.Head.Ref
-		}
-		branchPaths := map[string]bool{}
-		for _, e := range onBranch {
-			branchPaths[e.Path] = true
-			byKind[k.Folder] = append(byKind[k.Folder], len(all))
-			all = append(all, listed{entry: e, ref: ref, group: &Group{InFlight: !seen[e.Path]}})
-		}
-		for _, e := range onBase {
-			if branchPaths[e.Path] {
-				continue
-			}
-			byKind[k.Folder] = append(byKind[k.Folder], len(all))
-			all = append(all, listed{entry: e, ref: t.base, group: &Group{}})
-		}
-	}
-
-	var wg sync.WaitGroup
-	sem := make(chan struct{}, readConcurrency)
-	for _, l := range all {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			sem <- struct{}{}
-			defer func() { <-sem }()
-			c.readGroup(ctx, t, l.entry, l.ref, l.group)
-		}()
-	}
-	wg.Wait()
-
+// groups is every album and tag file as the next Commit will have it, and
+// the ones only on the base branch, keyed by kind folder and sorted by name.
+func (w *workspace) groups() map[string][]Group {
 	out := map[string][]Group{}
 	for _, k := range kinds {
-		groups := []Group{}
-		for _, i := range byKind[k.Folder] {
-			groups = append(groups, *all[i].group)
+		folder := w.root + "/" + k.Folder
+		paths := w.paths(folder, k.AllFile)
+		for _, p := range w.basePaths(folder, k.AllFile) {
+			if _, staged := w.staged[p]; !staged && !slices.Contains(paths, p) {
+				paths = append(paths, p)
+			}
+		}
+		groups := make([]Group, 0, len(paths))
+		for _, p := range paths {
+			groups = append(groups, w.readGroup(p))
 		}
 		sort.Slice(groups, func(i, j int) bool {
 			a, b := strings.ToLower(groups[i].Name), strings.ToLower(groups[j].Name)
@@ -426,22 +319,39 @@ func (c *Client) readGroups(ctx context.Context, t target, root string, open *pu
 		})
 		out[k.Folder] = groups
 	}
-	return out, nil
+	return out
 }
 
-// readGroup fills g from the file e at ref.
-func (c *Client) readGroup(ctx context.Context, t target, e folderEntry, ref string, g *Group) {
-	g.Path, g.FileURL = e.Path, e.HTMLURL
-	g.ID = strings.TrimSuffix(e.Name, path.Ext(e.Name))
-	data, msg := c.readJSON(ctx, t, e.Path, ref)
+// groupFile is p's content as the next Commit will have it, or as the base
+// branch has it when it's only there, or why it couldn't be read.
+func (w *workspace) groupFile(p string) ([]byte, string) {
+	if _, ok := w.file(p); ok {
+		data, msg := w.json(p)
+		return data, msg
+	}
+	f := w.base.files[p]
+	if f.err == "" && !json.Valid(f.content) {
+		return nil, "The file isn't valid JSON."
+	}
+	return f.content, f.err
+}
+
+// readGroup is the album or tag file at p.
+func (w *workspace) readGroup(p string) Group {
+	g := Group{Path: p, FileURL: w.fileURL(p), InFlight: !w.onBase(p)}
+	if _, ok := w.file(p); !ok {
+		g.FileURL = blobURL(w.t, w.t.base, p)
+	}
+	g.ID = strings.TrimSuffix(path.Base(p), path.Ext(p))
+	data, msg := w.groupFile(p)
 	if msg != "" {
 		g.Error = msg
-		return
+		return g
 	}
 	var content groupJSON
 	if json.Unmarshal(data, &content) != nil {
 		g.Error = "The file isn't a JSON object."
-		return
+		return g
 	}
 	if id := strings.TrimSpace(content.ID); id != "" {
 		g.ID = id
@@ -450,25 +360,5 @@ func (c *Client) readGroup(ctx context.Context, t target, e folderEntry, ref str
 	if content.Parent != nil {
 		g.Parent = strings.TrimSpace(*content.Parent)
 	}
-}
-
-// listJSON lists the .json files directly in folder at ref, except skip, or
-// none when the folder isn't there.
-func (c *Client) listJSON(ctx context.Context, t target, folder, ref, skip string) ([]folderEntry, *PublishError) {
-	var entries []folderEntry
-	p := repoPath(t.owner, t.name) + "/contents/" + escapePath(folder) + "?ref=" + url.QueryEscape(ref)
-	res, err := c.do(ctx, http.MethodGet, p, t.token, nil, &entries)
-	if err == nil && res.Status == http.StatusNotFound {
-		return nil, nil
-	}
-	if perr := readCheck(res, err, "listing "+folder); perr != nil {
-		return nil, perr
-	}
-	var files []folderEntry
-	for _, e := range entries {
-		if e.Type == "file" && strings.EqualFold(path.Ext(e.Name), ".json") && !strings.EqualFold(e.Name, skip) {
-			files = append(files, e)
-		}
-	}
-	return files, nil
+	return g
 }

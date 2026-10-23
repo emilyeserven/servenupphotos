@@ -91,7 +91,7 @@ interface SaveDetailsProps {
 
 function SaveDetails({ github, publish, ...rest }: SaveDetailsProps) {
   if (!github) return <GitHubNotSetUp />;
-  if (publish.isSuccess) return <PublishSuccess result={publish.data} repo={github.repo} />;
+  if (publish.isSuccess) return <PublishSuccess result={publish.data} />;
   return <SaveIntro github={github} error={publish.error} {...rest} />;
 }
 
