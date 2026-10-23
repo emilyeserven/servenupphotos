@@ -9,7 +9,7 @@ import {
 import { type FilterKey, type LocationKey, matchesFilters } from "@/lib/photo-filters";
 import { groupTree, groupValues, type MetaGroup } from "@/lib/metadata-groups";
 import type { Photo } from "@/lib/photos";
-import type { EquipmentKey } from "@/lib/table-filters";
+import type { EquipmentKey } from "@/lib/camera-filters";
 
 /** One choice of a filter's dropdown. */
 export interface FilterOption {

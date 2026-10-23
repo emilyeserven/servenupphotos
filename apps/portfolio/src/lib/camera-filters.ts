@@ -1,7 +1,8 @@
 import { groupAndInside, groupValues, metaGroupById, type MetaGroup } from "@/lib/metadata-groups";
 import type { CameraSettings, Photo } from "@/lib/photos";
+import { filterPhotos, parseFilters } from "@/lib/photo-filters";
 
-/** The camera settings the Table's range sliders narrow by, named as they are in the URL. */
+/** The camera settings the Table's and Grid's range sliders narrow by, named as they are in the URL. */
 export const RANGE_KEYS = ["iso", "exposure", "focalLength", "aperture"] as const;
 
 export type RangeKey = (typeof RANGE_KEYS)[number];
@@ -14,24 +15,24 @@ export type EquipmentKey = (typeof EQUIPMENT_KEYS)[number];
 /** The camera and lens group filters, each matching the values of one metadata group. */
 const EQUIPMENT_GROUP_KEYS = ["cameraGroup", "lensGroup"] as const;
 
-/** The Table's own filters as they're named in the URL; the other views don't have them. */
-export const TABLE_FILTER_KEYS = [
+/** The camera filters as they're named in the URL, which the Table and Grid have and the other views don't. */
+export const CAMERA_FILTER_KEYS = [
   ...EQUIPMENT_KEYS,
   ...EQUIPMENT_GROUP_KEYS,
   ...RANGE_KEYS,
 ] as const;
 
 /**
- * The Table's own filters, each left out when it isn't set: one camera or camera group, one lens
+ * The camera filters, each left out when it isn't set: one camera or camera group, one lens
  * or lens group (by its metadata group's ID), and a range of each setting written as its lowest
  * and highest value as the photos have them, such as "100-400" or "1/500-1/30".
  */
-export type TableFilters = Partial<Record<(typeof TABLE_FILTER_KEYS)[number], string>>;
+export type CameraFilters = Partial<Record<(typeof CAMERA_FILTER_KEYS)[number], string>>;
 
-/** The Table's own filters in the URL's search, leaving out anything empty or not text. */
-export function parseTableFilters(search: Record<string, unknown>): TableFilters {
+/** The camera filters in the URL's search, leaving out anything empty or not text. */
+export function parseCameraFilters(search: Record<string, unknown>): CameraFilters {
   return Object.fromEntries(
-    TABLE_FILTER_KEYS.flatMap((key) => {
+    CAMERA_FILTER_KEYS.flatMap((key) => {
       const value = search[key];
       return typeof value === "string" && value !== "" ? [[key, value]] : [];
     }),
@@ -125,14 +126,14 @@ function inEquipmentGroup(photo: Photo, key: EquipmentKey, id: string): boolean 
 }
 
 /** Whether the photo's camera or lens is the one chosen, or in the group chosen, or neither is. */
-function matchesEquipment(photo: Photo, key: EquipmentKey, filters: TableFilters): boolean {
+function matchesEquipment(photo: Photo, key: EquipmentKey, filters: CameraFilters): boolean {
   const [name, group] = [filters[key], filters[`${key}Group`]];
   if (name !== undefined && photo[key] !== name) return false;
   return group === undefined || inEquipmentGroup(photo, key, group);
 }
 
-/** Whether the photo matches every one of the Table's own filters that's set. */
-function matchesTableFilters(photo: Photo, filters: TableFilters): boolean {
+/** Whether the photo matches every one of the camera filters that's set. */
+function matchesCameraFilters(photo: Photo, filters: CameraFilters): boolean {
   return (
     EQUIPMENT_KEYS.every((key) => matchesEquipment(photo, key, filters)) &&
     RANGE_KEYS.every((key) => {
@@ -142,15 +143,23 @@ function matchesTableFilters(photo: Photo, filters: TableFilters): boolean {
   );
 }
 
-/** The photos matching every one of the Table's own filters that's set, in the same order. */
-export function filterTable(list: Photo[], filters: TableFilters): Photo[] {
-  return list.filter((photo) => matchesTableFilters(photo, filters));
+/** The photos matching every one of the camera filters that's set, in the same order. */
+export function filterByCamera<T extends Photo>(list: T[], filters: CameraFilters): T[] {
+  return list.filter((photo) => matchesCameraFilters(photo, filters));
 }
 
-/** The Table's filters with the ones named left out, so their choices count what the others leave. */
-export function withoutTableFilters(
-  filters: TableFilters,
-  keys: readonly (keyof TableFilters)[],
-): TableFilters {
+/** The camera filters with the ones named left out, so their choices count what the others leave. */
+export function withoutCameraFilters(
+  filters: CameraFilters,
+  keys: readonly (keyof CameraFilters)[],
+): CameraFilters {
   return { ...filters, ...Object.fromEntries(keys.map((key) => [key, undefined])) };
+}
+
+/**
+ * The photos the URL's shared filters and camera filters leave, in the same order: what the Table
+ * and Grid show.
+ */
+export function filterWithCamera<T extends Photo>(list: T[], search: Record<string, unknown>): T[] {
+  return filterByCamera(filterPhotos(list, parseFilters(search)), parseCameraFilters(search));
 }
