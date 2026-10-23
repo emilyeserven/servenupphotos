@@ -16,6 +16,8 @@ interface MetaValuePickerProps {
   groups: MetaGroup[];
   /** The group being edited; undefined for a new one. */
   groupId?: string;
+  /** The ID of the group it's in, or "" at the top level, where no value is noted. */
+  parent: string;
   onChange: (chosen: MetaValue[]) => void;
 }
 
@@ -36,7 +38,7 @@ function withAll(values: MetaValue[], more: MetaValue[]): MetaValue[] {
  * noting the other groups that already have it, with a way to add one no photo has yet.
  */
 export function MetaValuePicker(props: MetaValuePickerProps) {
-  const { info, values, chosen, groups, groupId, onChange } = props;
+  const { info, values, chosen, groups, groupId, parent, onChange } = props;
   const keys = new Set(chosen.map(valueKey));
   const extra = chosen.filter(
     (value) => !values.some((v) => valueKey(v.value) === valueKey(value)),
@@ -64,7 +66,7 @@ export function MetaValuePicker(props: MetaValuePickerProps) {
             label={showValue(info.field, value)}
             count={count}
             checked={keys.has(valueKey(value))}
-            others={otherGroupNames(groups, groupId, valueKey(value))}
+            others={otherGroupNames(groups, groupId, parent, valueKey(value))}
             onChange={(on) => onChange(toggled(chosen, value, on))}
           />
         ))}

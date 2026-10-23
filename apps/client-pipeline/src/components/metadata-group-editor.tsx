@@ -167,6 +167,7 @@ function ValuesField({
       values={values}
       groups={groups}
       groupId={group?.id}
+      parent={draft.parent}
       chosen={draft.values}
       onChange={(chosen) => onChange({ ...draft, values: chosen })}
     />

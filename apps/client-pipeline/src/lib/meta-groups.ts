@@ -72,14 +72,21 @@ export function groupPhotoCount(
     .reduce((sum, v) => sum + v.count, 0);
 }
 
-/** The names of the groups other than id that list the value with key as one of their values. */
+/**
+ * The names of the other groups in parent that list the value with key as one of their values. A
+ * top-level group (parent "") gets none: groups in separate trees, such as Brands and Types, are
+ * meant to overlap.
+ */
 export function otherGroupNames(
   groups: MetaGroup[],
   id: string | undefined,
+  parent: string,
   key: string,
 ): string[] {
+  if (!parent) return [];
   return groups
-    .filter((group) => group.id !== id && group.values.some((v) => valueKey(v) === key))
+    .filter((group) => group.id !== id && group.parent === parent)
+    .filter((group) => group.values.some((v) => valueKey(v) === key))
     .map((group) => group.name);
 }
 

@@ -94,7 +94,10 @@ deep, has it. So **Types** holding only **Zoom** shows the prime lenses as not i
 > no `case` for.
 
 **Cameras and lenses** get **Values**, a checkbox for every value the photos have, sorted by name, each with how many
-photos have it. A value another group already lists says **Also in …** under it, and can still be checked here. A
+photos have it. In a group that's inside another, a value one of its sibling groups (the other groups in the same
+parent) already lists says **Also in …** under it, and can still be checked here; so **Canon** and **Fujifilm** under
+**Brands** flag a shared lens, but **Canon** and **Zoom**, in separate trees, don't. A top-level group shows no such
+notes. A
 value only a group lists, with 0 photos, stays in the list so it can be unchecked. **Add** puts in a value no photo
 has yet, typed as EXIF writes it.
 
