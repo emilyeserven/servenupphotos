@@ -1,0 +1,52 @@
+{
+  "title": "Sunset over the Parc",
+  "comment": null,
+  "id": 94,
+  "file": "IMG_3355.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS",
+  "aperture": 6.3,
+  "exposure": "1/100",
+  "iso": 320,
+  "focalLength": 18,
+  "gpsPosition": "41 deg 3' 13.60\" N, 73 deg 32' 41.20\" W",
+  "createDate": "2019:03:26 19:15:18",
+  "placeName": "Mill River Park",
+  "customCity": "Stamford",
+  "customCountry": "United States of America",
+  "country": "United States of America",
+  "city": "Stamford",
+  "width": 3185,
+  "height": 5735,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355.jpg",
+    "key": "photos/828038efedd1-img-3355.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-thumbnail.webp?crop=0,1728,3185",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/828038efedd1-img-3355-thumbnailpreview.webp?crop=0,1728,3185",
+    "thumbnailcrop": {
+      "x": 0,
+      "y": 1728,
+      "size": 3185,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "mill-river-park"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

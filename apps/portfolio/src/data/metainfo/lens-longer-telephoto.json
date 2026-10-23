@@ -1,0 +1,9 @@
+{
+  "id": "lens-longer-telephoto",
+  "name": "Longer Telephoto",
+  "description": "",
+  "field": "lens",
+  "parent": "lens-type",
+  "order": 2,
+  "values": ["EF-S55-250mm f/4-5.6 IS STM"]
+}

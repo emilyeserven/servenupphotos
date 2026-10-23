@@ -1,0 +1,52 @@
+{
+  "title": "Snowy Stairs",
+  "comment": null,
+  "id": 106,
+  "file": "IMG_9118.jpg",
+  "camera": "Canon EOS 80D",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS",
+  "aperture": 11,
+  "exposure": "1/400",
+  "iso": 800,
+  "focalLength": 75,
+  "gpsPosition": null,
+  "createDate": "2021:02:07 13:15:10",
+  "placeName": "Mill River Park",
+  "customCity": "Stamford",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 2046,
+  "height": 1151,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118.jpg",
+    "key": "photos/d5a5f843af75-img-9118.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118-thumbnail.webp?crop=134,0,1151",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d5a5f843af75-img-9118-thumbnailpreview.webp?crop=134,0,1151",
+    "thumbnailcrop": {
+      "x": 134,
+      "y": 0,
+      "size": 1151,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "mill-river-park"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

@@ -103,6 +103,14 @@
     "longitude": -73.98188756888125
   },
   {
+    "id": "devil-s-den-state-park",
+    "name": "Devil's Den State Park",
+    "description": "",
+    "parent": "",
+    "city": "Weston",
+    "country": "United States"
+  },
+  {
     "id": "east-broadway-station",
     "name": "East Broadway Station",
     "description": "",
@@ -210,6 +218,14 @@
     "country": "South Korea"
   },
   {
+    "id": "itaewon",
+    "name": "Itaewon",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
     "id": "jacqueline-kennedy-onassis-reservoir",
     "name": "Jacqueline Kennedy Onassis Reservoir",
     "description": "",
@@ -218,6 +234,24 @@
     "country": "United States of America",
     "latitude": 40.785811799352814,
     "longitude": -73.96228768992302
+  },
+  {
+    "id": "kent-falls-state-park",
+    "name": "Kent Falls State Park",
+    "description": "",
+    "parent": "",
+    "city": "Cornwall Bridge",
+    "country": "United States of America"
+  },
+  {
+    "id": "little-italy",
+    "name": "Little Italy",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.71907424785082,
+    "longitude": -73.99753256884779
   },
   {
     "id": "lower-east-side",
@@ -235,7 +269,9 @@
     "description": "",
     "parent": "",
     "city": "New York City",
-    "country": "United States of America"
+    "country": "United States of America",
+    "latitude": 40.707435751117934,
+    "longitude": -73.99071342008598
   },
   {
     "id": "manhattan-chinatown",
@@ -264,6 +300,16 @@
     "country": "United States of America",
     "latitude": 40.75538764219708,
     "longitude": -73.96865957728706
+  },
+  {
+    "id": "mill-river-park",
+    "name": "Mill River Park",
+    "description": "",
+    "parent": "",
+    "city": "Stamford",
+    "country": "United States of America",
+    "latitude": 41.05426318074482,
+    "longitude": -73.54485465914334
   },
   {
     "id": "mirror-pond",
@@ -303,6 +349,30 @@
     "country": "South Korea"
   },
   {
+    "id": "new-canaan-historical-society",
+    "name": "New Canaan Historical Society",
+    "description": "",
+    "parent": "",
+    "city": "New Canaan",
+    "country": "United States of America"
+  },
+  {
+    "id": "new-canaan-nature-center",
+    "name": "New Canaan Nature Center",
+    "description": "",
+    "parent": "",
+    "city": "New Canaan",
+    "country": "United States of America"
+  },
+  {
+    "id": "new-haven-train-station",
+    "name": "New Haven Train Station",
+    "description": "",
+    "parent": "",
+    "city": "New Haven",
+    "country": "United States of America"
+  },
+  {
     "id": "noho",
     "name": "NoHo",
     "description": "",
@@ -311,6 +381,16 @@
     "country": "United States of America",
     "latitude": 40.72714461561978,
     "longitude": -73.99337287689791
+  },
+  {
+    "id": "paine-open",
+    "name": "Paine Open",
+    "description": "",
+    "parent": "",
+    "city": "Easton",
+    "country": "United States of America",
+    "latitude": 41.30900335742722,
+    "longitude": -73.30154847932147
   },
   {
     "id": "queens",
@@ -360,6 +440,22 @@
     "longitude": -73.99629758383907
   },
   {
+    "id": "st-mary-s-by-the-sea",
+    "name": "St. Mary's by the Sea",
+    "description": "",
+    "parent": "",
+    "city": "Bridgeport",
+    "country": "United States of America"
+  },
+  {
+    "id": "stamford-train-station",
+    "name": "Stamford Train Station",
+    "description": "",
+    "parent": "",
+    "city": "Stamford",
+    "country": "United States of America"
+  },
+  {
     "id": "the-high-line",
     "name": "The High Line",
     "description": "",
@@ -388,6 +484,14 @@
     "country": "United States of America",
     "latitude": 40.730818730352034,
     "longitude": -73.99746074931517
+  },
+  {
+    "id": "waveny-park",
+    "name": "Waveny Park",
+    "description": "",
+    "parent": "",
+    "city": "New Canaan",
+    "country": "United States of America"
   },
   {
     "id": "welling-court-mural-project",
