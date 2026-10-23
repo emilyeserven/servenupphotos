@@ -34,6 +34,7 @@ import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pend
 import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
 import { Page } from "@/components/page";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { SavedDrafts } from "@/components/saved-drafts";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
@@ -51,13 +52,14 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
+import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
 import { undecidedPaths } from "@/lib/undecided";
 import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
 import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
-interface InFlightSearch {
+interface InFlightSearch extends PhotoFilters {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */
   allPhotos?: true;
 }
@@ -65,8 +67,10 @@ interface InFlightSearch {
 export const Route = createFileRoute("/in-flight")({
   component: InFlightPage,
   staticData: { wide: true },
-  validateSearch: (search: Record<string, unknown>): InFlightSearch =>
-    search.allPhotos === true ? { allPhotos: true } : {},
+  validateSearch: (search: Record<string, unknown>): InFlightSearch => ({
+    ...(search.allPhotos === true ? { allPhotos: true } : {}),
+    ...parseFilters(search),
+  }),
 });
 
 function InFlightPage() {
@@ -166,9 +170,9 @@ function InFlightCard() {
 }
 
 /**
- * The photo files, with the ones without a title first so they're easy to find and name, after the
- * Undecided queue, which takes the photos set aside out of the list. With no photos in flight, the
- * drafts already on the base branch instead.
+ * The photo files that pass the filters, with the ones without a title first so they're easy to
+ * find and name, after the Undecided queue, which takes the photos set aside out of the list. With
+ * no photos in flight, the drafts already on the base branch instead.
  */
 function PhotoFiles({
   shown,
@@ -180,16 +184,19 @@ function PhotoFiles({
   onRemoved: (result: RemoveResult) => void;
 }) {
   const edits = useLocalEditsStore((s) => s.edits);
+  const { filters, filter } = usePhotoFilters();
   if (!shown) return null;
   if (shown.files.length === 0) return <SavedDrafts />;
-  const undecided = undecidedPaths(shown.files, edits);
+  const files = filter(shown.files);
+  const undecided = undecidedPaths(files, edits);
   return (
     <>
+      <PhotoFilterBar filters={filters} shown={files.length} total={shown.files.length} />
       <UndecidedQueue
-        files={shown.files.filter((file) => undecided.has(file.path))}
+        files={files.filter((file) => undecided.has(file.path))}
         images={shown.images}
       />
-      {untitledFirst(shown.files.filter((file) => !undecided.has(file.path))).map((file) => (
+      {untitledFirst(files.filter((file) => !undecided.has(file.path))).map((file) => (
         <FileSection key={file.path} file={file} images={shown.images} {...props} />
       ))}
     </>

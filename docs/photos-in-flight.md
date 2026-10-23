@@ -20,6 +20,20 @@ file's name), or a "no image" sign when there's none. Under the photo is its Squ
 (as for photos uploaded before Square Thumbnails). Its Thumbnail Preview (`images.thumbnailpreview`, or the
 `-thumbnailpreview.webp` next to the photo) shows blurred behind it while it loads. Clicking it opens it at its full 500 × 500.
 
+### Filters
+
+Above the photos, a filter bar has **Any**, **With** and **Without** for each of: **Title** (a `title` that isn't
+blank), **Place** (any `places`, or a `placeName`), **GPS position** (a `customGpsPosition` or the EXIF
+`gpsPosition`), **Albums**, **Tags** and **Re-edit mark** (`reEdit`). The chosen filters all apply together, to the
+list, the Undecided queue and the drafts on the base branch, reading each photo's JSON with its
+[local edits](combined-data-store.md#local-edits) made. With any chosen, it says how many photos are shown, with
+**Clear filters**. A photo whose JSON couldn't be read is hidden while a filter is chosen. They're kept in the URL
+(such as `?title=without&place=with`), so a reload or a shared link keeps them. Album, tag and other files below the
+photos aren't filtered.
+
+> **Frontend analogy:** it's the faceted filter on a shop's product list, where each facet is a three-way toggle
+> stored in the query string.
+
 ### Undecided
 
 An untitled photo's **Undecided** button sets it aside in the **Undecided** panel above the list, collapsed to how many it has until it is opened, out of the list of
