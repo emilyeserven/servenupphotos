@@ -44,6 +44,20 @@ func formatJSONArray(entries []json.RawMessage) ([]byte, error) {
 	return out.Bytes(), nil
 }
 
+// formatJSONFile prints one data file the way oxfmt formats it, by the same
+// rules as formatJSONArray, so a photo, album or tag file the app commits
+// passes the formatting check. JSON it can't read comes back as it is.
+func formatJSONFile(content []byte) []byte {
+	node, err := parseJSON(content)
+	if err != nil {
+		return content
+	}
+	var out bytes.Buffer
+	printJSON(&out, node, 0, 0, false)
+	out.WriteByte('\n')
+	return out.Bytes()
+}
+
 func parseJSON(data []byte) (jsonNode, error) {
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.UseNumber()
