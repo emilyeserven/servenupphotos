@@ -66,7 +66,7 @@ removal doesn't change `ALLPHOTOS.json` until Commit; see
 the combined files have every change, with a **Commit** button when they don't, and each file they don't have yet is
 marked "Not synced to ALLPHOTOS.json yet".
 
-Each photo whose JSON was read and whose image is in R2 has an **Edit** button, which opens it on the Photo page in
+Each photo whose JSON was read and whose image is in R2 has an **Edit** button at the left of its heading, before its title, which opens it on the Photo page in
 edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from, or to
 [replace its image](replace-image.md) with a re-edit. The crop editor starts from the
 crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=…`, else the JSON's
