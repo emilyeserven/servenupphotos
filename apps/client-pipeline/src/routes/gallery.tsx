@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { BulkGroupsCard } from "@/components/gallery/bulk-groups-card";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
+import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
+import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
 import {
   type Selection,
   fileName,
@@ -29,6 +31,7 @@ import {
 export const Route = createFileRoute("/gallery")({
   component: GalleryPage,
   staticData: { wide: true },
+  validateSearch: (search: Record<string, unknown>): PhotoFilters => parseFilters(search),
 });
 
 function GalleryPage() {
@@ -66,7 +69,7 @@ function PublishedPhotos() {
   const published = useQuery(publishedPhotosQuery);
   const [filter, setFilter] = useState("");
   const selection = useSelection();
-  const shown = published.data ? shownFiles(published.data, filter) : [];
+  const { shown, total, filters } = useShownFiles(published.data, filter);
   return (
     <>
       <GalleryHeader
@@ -76,6 +79,7 @@ function PublishedPhotos() {
         selecting={selection.selected !== null}
         onSelectingChange={selection.toggleSelecting}
       />
+      <PhotoFilterBar filters={filters} shown={shown.length} total={total} />
       {selection.selected && published.data && (
         <BulkGroupsCard
           files={published.data.files}
@@ -97,6 +101,13 @@ function PublishedPhotos() {
       </QueryResult>
     </>
   );
+}
+
+/** The photos that match the search text and the filters, newest first, out of how many there are. */
+function useShownFiles(data: PublishedResponse | undefined, filter: string) {
+  const { filters, filter: applyFilters } = usePhotoFilters();
+  if (!data) return { shown: [], total: 0, filters };
+  return { shown: applyFilters(shownFiles(data, filter)), total: data.files.length, filters };
 }
 
 /** The photos chosen to add albums and tags to, and turning choosing them on and off. */

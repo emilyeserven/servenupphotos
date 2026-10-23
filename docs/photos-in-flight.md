@@ -31,7 +31,7 @@ list, the Undecided queue and the drafts on the base branch, reading each photo'
 [local edits](combined-data-store.md#local-edits) made. With any chosen, it says how many photos are shown, with
 **Clear filters**. A photo whose JSON couldn't be read is hidden while a filter is chosen. They're kept in the URL
 (such as `?title=without&place=with`), so a reload or a shared link keeps them. Album, tag and other files below the
-photos aren't filtered.
+photos aren't filtered. The [Gallery](gallery.md) has the same filters.
 
 > **Frontend analogy:** it's the faceted filter on a shop's product list, where each facet is a three-way toggle
 > stored in the query string.
