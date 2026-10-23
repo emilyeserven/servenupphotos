@@ -45,5 +45,8 @@
       "relation": "",
       "id": "upper-east-side"
     }
+  ],
+  "spotlightZones": [
+    "homepage"
   ]
 }

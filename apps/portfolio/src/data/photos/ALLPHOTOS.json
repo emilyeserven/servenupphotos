@@ -95,7 +95,8 @@
         "relation": "",
         "id": "upper-east-side"
       }
-    ]
+    ],
+    "spotlightZones": ["homepage"]
   },
   {
     "title": "Always Watching...",
@@ -352,7 +353,7 @@
         "id": "lower-east-side"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": ["homepage"]
   },
   {
     "title": "Artery of Manhattan",
@@ -1652,7 +1653,7 @@
         "id": "the-high-line"
       }
     ],
-    "spotlightZones": []
+    "spotlightZones": ["homepage"]
   },
   {
     "title": "Colorful Storefront",
@@ -2156,7 +2157,8 @@
         "relation": "in",
         "id": "national-museum-of-korea"
       }
-    ]
+    ],
+    "spotlightZones": ["homepage"]
   },
   {
     "title": "Modern Art Interaction",
@@ -2757,7 +2759,8 @@
         "relation": "",
         "id": "jacqueline-kennedy-onassis-reservoir"
       }
-    ]
+    ],
+    "spotlightZones": ["homepage"]
   },
   {
     "title": "Snowy Tracks",

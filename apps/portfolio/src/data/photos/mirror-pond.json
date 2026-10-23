@@ -49,5 +49,8 @@
       "relation": "in",
       "id": "national-museum-of-korea"
     }
+  ],
+  "spotlightZones": [
+    "homepage"
   ]
 }
