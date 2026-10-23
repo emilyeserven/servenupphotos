@@ -9,7 +9,9 @@ without a title (a `title` that's null or blank) come first, so they're easy to 
 has **Next untitled photo** to open them one after another (see
 [Committing the combined files](combined-data-store.md#committing-the-combined-files)). An untitled photo is a
 [draft](drafts.md), marked **Draft, not on the portfolio** instead of the `ALLPHOTOS.json` check mark. A file with
-a change waiting for Commit is marked **Waiting for Commit** and has no GitHub link yet. With no pull request open, the
+a change waiting for Commit is marked **Waiting for Commit** and has no GitHub link yet. The summary shows the pull request, its branch, the photo count and **Synced**; how the files match
+`ALLPHOTOS.json` and the other combined files, and how many images R2 has, are under **File checks**, collapsed until
+it's opened. With no pull request open, the
 summary says how many files are waiting, with **Commit**, which opens one. **Refresh** asks GitHub again
 (`?refresh=1`), rather than using the backend's read from when it started, so a merge made on GitHub shows at once. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
 mark when its data is one of the entries in `ALLPHOTOS.json` at the pull request's head, as the

@@ -31,6 +31,7 @@ import {
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { FileChecks, fileName } from "@/components/in-flight-checks";
 import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
 import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
@@ -52,7 +53,6 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
-import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
 import { undecidedPaths } from "@/lib/undecided";
 import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
@@ -646,41 +646,6 @@ function GroupFiles({
   );
 }
 
-function fileName(path: string): string {
-  return path.split("/").pop() ?? path;
-}
-
-/** How many album, tag, place or localization files the pull request has, and how its combined file matches them. */
-function groupsSummary(groups: InFlightGroups): string {
-  const count = groups.files.length;
-  const files = count === 0 ? "None" : String(count);
-  const all = groups.all;
-  const allFile = fileName(all.path);
-  if (!all.found) return `${files}; ${allFile} not on the branch yet`;
-  if (all.error) return `${files}; ${allFile}: ${all.error}`;
-  const matched = groups.files.filter((file) => file.inAll).length;
-  return `${files}; ${allFile} lists ${all.count}, ${matched} of ${count} match`;
-}
-
-/**
- * How many entries ALLPHOTOS.json has and how many of the photo files match one, leaving out the
- * drafts, which it doesn't list, when untitled photos are kept as drafts.
- */
-function AllPhotosSummary({ all, files }: { all: CombinedFile; files: InFlightFile[] }) {
-  const listed = useUntitledDrafts() ? files.filter((file) => !isDraft(file.data)) : files;
-  if (!all.found) return "Not on the branch yet. Commit adds it.";
-  if (all.error) return all.error;
-  const matched = listed.filter((file) => file.inAllPhotos).length;
-  const drafts = files.length - listed.length;
-  return `Lists ${all.count}; ${matched} of ${listed.length} photo files match${draftsLeftOut(drafts)}`;
-}
-
-/** ", N drafts left out" after the ALLPHOTOS.json summary, when there are any. */
-function draftsLeftOut(drafts: number): string {
-  if (drafts === 0) return "";
-  return `, ${drafts} ${drafts === 1 ? "draft" : "drafts"} left out`;
-}
-
 /**
  * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json have every change, as checked when the
  * app started and known from the app's saves and commits since, with Commit to sync them.
@@ -713,11 +678,6 @@ function unsyncedText(pending: string): string {
   return `Not synced: ${since}. Commit sends them to GitHub.`;
 }
 
-function imagesSummary(images: InFlightImages, files: number): string {
-  if (!images.checked) return images.message ?? "Couldn't check R2.";
-  return `${Object.keys(images.byPath).length} of ${files} found in R2`;
-}
-
 function PullRequestSummary({ data }: { data: InFlightResponse }) {
   if (!data.pullRequest) return <NoPullRequest data={data} />;
   const pr = data.pullRequest;
@@ -738,26 +698,10 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dd>
         <SyncSummary />
       </dd>
-      <dt className="text-muted-foreground">ALLPHOTOS.json</dt>
+      <dt className="text-muted-foreground">File checks</dt>
       <dd>
-        <AllPhotosSummary all={data.allPhotos} files={data.files} />
+        <FileChecks data={data} />
       </dd>
-      <dt className="text-muted-foreground">Images</dt>
-      <dd>{imagesSummary(data.images, count)}</dd>
-      <dt className="text-muted-foreground">Album files</dt>
-      <dd>{groupsSummary(data.albums)}</dd>
-      <dt className="text-muted-foreground">Tag files</dt>
-      <dd>{groupsSummary(data.tags)}</dd>
-      <dt className="text-muted-foreground">Place files</dt>
-      <dd>{groupsSummary(data.places)}</dd>
-      <dt className="text-muted-foreground">Localization files</dt>
-      <dd>{groupsSummary(data.localizations)}</dd>
-      <dt className="text-muted-foreground">Metadata group files</dt>
-      <dd>{groupsSummary(data.metainfo)}</dd>
-      <dt className="text-muted-foreground">Camera override files</dt>
-      <dd>{groupsSummary(data.cameras)}</dd>
-      <dt className="text-muted-foreground">Custom lens files</dt>
-      <dd>{groupsSummary(data.lenses)}</dd>
     </dl>
   );
 }
