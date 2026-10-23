@@ -6,5 +6,6 @@
   "city": "",
   "country": "",
   "latitude": 40.714174155945194,
-  "longitude": -73.99009350299123
+  "longitude": -73.99009350299123,
+  "exactLocation": true
 }
