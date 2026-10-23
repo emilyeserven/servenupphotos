@@ -18,7 +18,7 @@ where it is, or `""`; older place files don't have these three, and read as empt
 
 The Places page is a list on the left and an edit panel on the right (on a phone, the panel comes first). The list is
 one tree of every country, the cities in it, and the places in each city, each with an icon on the left: a globe for a
-country, a building for a city and a pin for a place. A place is listed under the place it's in, or else its city (its
+country, a building for a city and a pin for a place (with a check inside for a place marked as an exact location). A place is listed under the place it's in, or else its city (its
 own, or a place above it's), or else its country; a city under its country; anything with nothing above it at the top,
 after the countries. Cities and countries come from the places' city and country and from the photos' (their custom
 city and country, or else their EXIF ones); a city only photos have says **Inferred from photos**. Each row has its
@@ -89,6 +89,10 @@ first place with one, or a place that place is in), with that position; else a w
 When the photo's EXIF has no GPS position, each chosen place with none either (its own or a place above it's) has
 **Add a GPS position for …** under that line, which opens a `latitude, longitude` field and **Save**. It saves the
 place's position as the Places page does, so the status line and the Places list show it at once.
+
+Likewise, each chosen place in no city (by itself or a place it's in) has **Set a city for …**, which opens the
+place's **City** combobox, starting at the city the photo shows (its custom one, or else its EXIF one), and **Save**.
+Saving gives the place that city, and the city's country (or the photo's) when the place has no country.
 
 **Place** replaces the old place name text box. It's one row, or two after
 **Add a second place**, and each row is a relation (none, in, at, by, near, on, inside, outside, behind, in front of,
