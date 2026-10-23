@@ -22,6 +22,14 @@
     "exactLocation": true
   },
   {
+    "id": "9-11-memorial",
+    "name": "9/11 Memorial",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
     "id": "american-copper-building",
     "name": "American Copper Building",
     "description": "",
@@ -41,6 +49,14 @@
     "country": "",
     "latitude": 40.76383083369049,
     "longitude": -73.92457375631997
+  },
+  {
+    "id": "bethesda-fountain",
+    "name": "Bethesda Fountain",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
   },
   {
     "id": "bowery",
@@ -81,6 +97,14 @@
     "country": "United States of America",
     "latitude": 40.69687786668569,
     "longitude": -73.99508072439512
+  },
+  {
+    "id": "central-park",
+    "name": "Central Park",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
   },
   {
     "id": "chelsea",
@@ -464,6 +488,14 @@
     "country": "United States of America",
     "latitude": 40.74797621532001,
     "longitude": -74.0047541744432
+  },
+  {
+    "id": "the-oculus",
+    "name": "The Oculus",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
   },
   {
     "id": "upper-east-side",
