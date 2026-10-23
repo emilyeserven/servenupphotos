@@ -254,6 +254,7 @@ function SquareTile({
           src={urls.preview}
           alt=""
           aria-hidden
+          loading="lazy"
           // Photos uploaded before Thumbnail Previews don't have one, so it hides itself.
           onError={(e) => (e.currentTarget.hidden = true)}
           className="absolute inset-0 size-full scale-110 object-cover blur-md"
