@@ -20,6 +20,7 @@ GitHub settings' `includeUntitled` (`false` by default) and changes what the nex
 
 ## Where drafts show
 
+- **Photos in Flight** can set an untitled photo aside in its [Undecided](photos-in-flight.md#undecided) queue.
 - **Photos in Flight** marks a draft **Draft, not on the portfolio** instead of the `ALLPHOTOS.json` check mark, and the
   sync button's panel counts it as synced, since `ALLPHOTOS.json` isn't missing anything.
 - **Gallery** lists drafts on the base branch too (it reads the photos folder, not `ALLPHOTOS.json`), marked **Draft**.
