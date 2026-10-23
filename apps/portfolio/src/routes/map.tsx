@@ -501,6 +501,7 @@ function ClusterMarker({
           src={src}
           alt=""
           aria-hidden
+          loading="lazy"
           className={cn(
             "absolute inset-0 size-full object-cover transition-opacity duration-1000",
             index === turn ? "opacity-100" : "opacity-0",

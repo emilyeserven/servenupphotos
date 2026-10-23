@@ -244,6 +244,7 @@ function ExistingPhoto({ image }: { image: BucketImage }) {
           <img
             src={image.url}
             alt={`Already in the bucket: ${image.key}`}
+            loading="lazy"
             onError={() => setFailed(true)}
             className="bg-muted aspect-square w-full rounded-lg border object-cover"
           />

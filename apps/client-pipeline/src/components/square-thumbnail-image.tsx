@@ -39,6 +39,7 @@ export function SquareThumbnailImage({ name, url, previewUrl }: SquareThumbnailI
               src={previewUrl}
               alt=""
               aria-hidden
+              loading="lazy"
               onError={(e) => (e.currentTarget.hidden = true)}
               className="absolute inset-0 size-full scale-110 object-cover blur-md"
             />

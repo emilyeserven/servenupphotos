@@ -247,6 +247,7 @@ function LightboxImage({ image, alt }: { image: PhotoImage; alt: string }) {
         width={image.width}
         height={image.height}
         alt={alt}
+        fetchPriority="high"
         ref={(img) => {
           if (isLoaded(img)) setLoaded(true);
         }}

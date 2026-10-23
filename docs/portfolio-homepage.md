@@ -11,7 +11,8 @@ the ones picked for the **Homepage** zone on the pipeline's [Site Spotlight](pub
 are shown.
 
 Only the showing photo and the ones on either side of it are on the page: the one before is still fading out, and the
-one after loads ahead, so a long list doesn't load every photo at once. A photo fades in only once it has loaded. With
+one after loads ahead, so a long list doesn't load every photo at once. The showing photo is fetched at high priority
+and the one loading ahead at low priority, so the first photo isn't slowed down by the next. A photo fades in only once it has loaded. With
 reduced motion turned on, the first photo just stays and nothing fades. The map's cluster markers turn through their
 photos with the same hook, `lib/use-turn.ts`.
 

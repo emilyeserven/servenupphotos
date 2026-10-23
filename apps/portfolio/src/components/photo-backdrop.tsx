@@ -29,18 +29,12 @@ export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
       {photos.map(
         (photo, index) =>
           isNear(index, turn, photos.length) && (
-            <img
+            <BackdropImage
               key={photo.id}
-              src={photo.image.src}
-              srcSet={photo.image.srcSet}
-              sizes="100vw"
-              alt=""
-              aria-hidden
+              photo={photo}
+              showing={index === turn}
+              loaded={loaded.has(photo.id)}
               onLoad={() => setLoaded((ids) => new Set(ids).add(photo.id))}
-              className={cn(
-                "absolute inset-0 size-full object-cover transition-opacity duration-2000 motion-reduce:transition-none",
-                index === turn && loaded.has(photo.id) ? "opacity-100" : "opacity-0",
-              )}
             />
           ),
       )}
@@ -51,5 +45,37 @@ export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
         </p>
       )}
     </div>
+  );
+}
+
+/**
+ * One photo of the backdrop, seen only while it's showing and has loaded. The showing photo is the
+ * page's largest image, so it's fetched first; the one loading ahead waits behind it.
+ */
+function BackdropImage({
+  photo,
+  showing,
+  loaded,
+  onLoad,
+}: {
+  photo: ImagePhoto;
+  showing: boolean;
+  loaded: boolean;
+  onLoad: () => void;
+}) {
+  return (
+    <img
+      src={photo.image.src}
+      srcSet={photo.image.srcSet}
+      sizes="100vw"
+      alt=""
+      aria-hidden
+      fetchPriority={showing ? "high" : "low"}
+      onLoad={onLoad}
+      className={cn(
+        "absolute inset-0 size-full object-cover transition-opacity duration-2000 motion-reduce:transition-none",
+        showing && loaded ? "opacity-100" : "opacity-0",
+      )}
+    />
   );
 }
