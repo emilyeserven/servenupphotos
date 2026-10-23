@@ -223,7 +223,7 @@ function PhotoRow({ photo, showTech, onOpen }: RowOptions & { photo: Photo }) {
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   return (
     <li className="flex items-center gap-3">
-      <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-12" />
+      <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-25" />
       <div className="flex min-w-0 flex-1 flex-col">
         <RowTitle title={photo.title} onOpen={open} />
         <RowDetails photo={photo} showTech={showTech} />
