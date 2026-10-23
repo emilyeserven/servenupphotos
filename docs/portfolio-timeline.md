@@ -12,13 +12,15 @@ The range picker chooses a quick range, such as **Last 30 days** (`?range=30d`),
 goes back to **All time**. The chart under the header picks a range too, and the buttons above it switch between two
 charts:
 
-| Chart           | Shows                                                                                      | URL              |
-| --------------- | ------------------------------------------------------------------------------------------ | ---------------- |
-| Graph (default) | Photos per day or per month across the selected range, as bars                             | left out         |
-| Heatmap         | Photos per day for every year, like GitHub's contribution graph, with the range's days lit | `?chart=heatmap` |
+| Chart           | Shows                                                                                        | URL              |
+| --------------- | -------------------------------------------------------------------------------------------- | ---------------- |
+| Graph (default) | Photos per day or per month across the selected range, as bars                               | left out         |
+| Heatmap         | Photos per week for every year, like GitHub's contribution graph, with the range's weeks lit | `?chart=heatmap` |
 
-On either chart, click a bar or day to select it, or click and drag across several to select the span between them. The
-graph zooms into the range it selects. The heatmap always shows every year from the oldest photo to today, newest year
-first, and fades the days outside the selected range. A day's square is darker the more photos were taken that day, in
-four steps up to the busiest day, and a run of years without photos is folded into one line. Both charts count only the
-photos the filters let through.
+On either chart, click a bar or week to select it, or click and drag across several to select the span between them. The
+graph zooms into the range it selects. The heatmap always shows every year from the oldest photo to today, side by side
+with the oldest on the left, and scrolls sideways through them, starting at the newest. Each year has a column per
+month holding one square for each week that starts (on Sunday) in that month. A week's square is darker the more photos
+were taken that week, in four steps up to the busiest week, weeks outside the selected range are faded, and a run of
+years without photos is folded into one narrow note. On a phone, swiping scrolls the years, so tap a week to select it.
+Both charts count only the photos the filters let through.

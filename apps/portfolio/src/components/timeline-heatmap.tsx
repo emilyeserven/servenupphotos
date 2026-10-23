@@ -1,6 +1,6 @@
-import { format, parseISO } from "date-fns";
-import { type PointerEvent, useState } from "react";
-import type { HeatmapDay, HeatmapLevel, HeatmapYear } from "@/lib/heatmap";
+import { endOfWeek, format, parseISO } from "date-fns";
+import { type PointerEvent, useEffect, useRef, useState } from "react";
+import type { HeatmapLevel, HeatmapWeek, HeatmapYear } from "@/lib/heatmap";
 import { cn } from "@/lib/utils";
 
 /** Two days' keys, `yyyy-MM-dd`, from the earlier to the later. */
@@ -23,58 +23,59 @@ const LEVEL_CLASS: Record<HeatmapLevel, string> = {
   4: "bg-chart-2",
 };
 
-const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
-
 function plural(count: number) {
   return `${count} ${count === 1 ? "photo" : "photos"}`;
 }
 
+/** The weeks dragged across, by their Sundays' keys, from the earlier to the later. */
 function sortedRange({ anchor, current }: Drag): DayRange {
   return anchor <= current ? { from: anchor, to: current } : { from: current, to: anchor };
 }
 
-function isBetween(key: string, range: DayRange | undefined): boolean {
-  return range !== undefined && key >= range.from && key <= range.to;
+/** Whether any of a week's days are in a range of days. */
+function overlaps(week: HeatmapWeek, range: DayRange | undefined): boolean {
+  return range !== undefined && week.endKey >= range.from && week.key <= range.to;
 }
 
-/** The day square under a point on the screen, by its key. */
-function dayAt(event: PointerEvent): string | undefined {
+/** The week square under a point on the screen, by its Sunday's key. */
+function weekAt(event: PointerEvent): string | undefined {
   const element = document.elementFromPoint(event.clientX, event.clientY);
-  return element?.closest<HTMLElement>("[data-day]")?.dataset.day;
+  return element?.closest<HTMLElement>("[data-week]")?.dataset.week;
 }
 
-/** How many photos were taken between two days, both included. */
+/** How many photos were taken in the weeks between two Sundays, both included. */
 function countBetween(years: HeatmapYear[], range: DayRange): number {
   return years
-    .flatMap((year) => year.weeks.flat())
-    .filter((day): day is HeatmapDay => day !== null && isBetween(day.key, range))
-    .reduce((sum, day) => sum + day.count, 0);
+    .flatMap((year) => year.months.flatMap((month) => month.weeks))
+    .filter((week) => week.key >= range.from && week.key <= range.to)
+    .reduce((sum, week) => sum + week.count, 0);
 }
 
-/** A run of years: one with photos to draw, or several in a row without any, to sum up in a line. */
+/** A run of years: one with photos to draw, or several in a row without any, to sum up. */
 type YearGroup =
   | { kind: "year"; year: HeatmapYear }
-  | { kind: "empty"; newest: number; oldest: number };
+  | { kind: "empty"; first: number; last: number };
 
 /** The groups so far with one more year: drawn if it has photos, else added to a run without any. */
 function addYear(groups: YearGroup[], year: HeatmapYear): YearGroup[] {
   if (year.total > 0) return [...groups, { kind: "year", year }];
   const last = groups.at(-1);
   if (last?.kind !== "empty")
-    return [...groups, { kind: "empty", newest: year.year, oldest: year.year }];
-  last.oldest = year.year;
+    return [...groups, { kind: "empty", first: year.year, last: year.year }];
+  last.last = year.year;
   return groups;
 }
 
-/** The years, with each run of years without photos folded into one line. */
+/** The years, with each run of years without photos folded into one narrow note. */
 function groupYears(years: HeatmapYear[]): YearGroup[] {
   return years.reduce(addYear, []);
 }
 
 /**
- * A GitHub-style heatmap of photos per day, one block per year, newest first. Click a day to
- * select it, or click and drag across days to select a span. Days outside the selected time range
- * are faded.
+ * A heatmap of photos per week, a block per year side by side, oldest on the left; it scrolls
+ * sideways through the years and starts at the newest. Each month is a column of the weeks that
+ * start in it. Click a week to select it, or click and drag across weeks to select a span. Weeks
+ * outside the selected time range are faded.
  */
 export function TimelineHeatmap({
   years,
@@ -82,74 +83,88 @@ export function TimelineHeatmap({
   onSelect,
 }: {
   years: HeatmapYear[];
-  /** The selected time range's days; left out for "All time", so no day is faded. */
+  /** The selected time range's days; left out for "All time", so no week is faded. */
   shown?: DayRange;
   onSelect: (from: Date, to: Date) => void;
 }) {
   const [drag, setDrag] = useState<Drag | null>(null);
   const dragged = drag ? sortedRange(drag) : undefined;
+  const scroller = useRef<HTMLDivElement>(null);
+
+  // Start at the newest year, on the right.
+  useEffect(() => {
+    scroller.current?.scrollTo({ left: scroller.current.scrollWidth });
+  }, []);
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
-    const key = dayAt(event);
+    const key = weekAt(event);
     if (!key) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     setDrag({ anchor: key, current: key });
   }
 
   function handlePointerMove(event: PointerEvent) {
-    const key = dayAt(event);
+    const key = weekAt(event);
     if (key) setDrag((current) => current && { ...current, current: key });
   }
 
   function handlePointerUp() {
     setDrag(null);
-    if (dragged) onSelect(parseISO(dragged.from), parseISO(dragged.to));
+    if (dragged) onSelect(parseISO(dragged.from), endOfWeek(parseISO(dragged.to)));
   }
 
   return (
     <figure className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-4 text-xs text-muted-foreground">
-        <figcaption>Photos per day</figcaption>
+        <figcaption>Photos per week</figcaption>
         <DragHint years={years} dragged={dragged} />
       </div>
-      <div
-        className="flex cursor-crosshair touch-pan-y flex-col gap-5 select-none"
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={() => setDrag(null)}
-      >
-        {groupYears(years).map((group) =>
-          group.kind === "year" ? (
-            <YearBlock key={group.year.year} year={group.year} shown={shown} dragged={dragged} />
-          ) : (
-            <EmptyYears key={group.newest} newest={group.newest} oldest={group.oldest} />
-          ),
-        )}
+      <div ref={scroller} className="overflow-x-auto pb-2">
+        <div
+          className="flex w-max cursor-crosshair items-start gap-6 select-none"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={() => setDrag(null)}
+        >
+          {groupYears(years).map((group) =>
+            group.kind === "year" ? (
+              <YearBlock key={group.year.year} year={group.year} shown={shown} dragged={dragged} />
+            ) : (
+              <EmptyYears key={group.first} first={group.first} last={group.last} />
+            ),
+          )}
+        </div>
       </div>
       <Legend />
     </figure>
   );
 }
 
-/** What dragging does, or while dragging, the span being dragged across and its photo count. */
+/** What dragging does, or while dragging, the weeks being dragged across and their photo count. */
 function DragHint({ years, dragged }: { years: HeatmapYear[]; dragged?: DayRange }) {
-  if (!dragged) return <span>Click a day or drag across days to select a range</span>;
-  const days = [dragged.from, dragged.to].map((key) => format(parseISO(key), "MMM d, yyyy"));
+  if (!dragged) return <span>Click a week or drag across weeks to select a range</span>;
+  const from = format(parseISO(dragged.from), "MMM d, yyyy");
+  const to = format(endOfWeek(parseISO(dragged.to)), "MMM d, yyyy");
   return (
     <span className="font-medium text-foreground">
-      {[...new Set(days)].join(" – ")} · {plural(countBetween(years, dragged))}
+      {from} – {to} · {plural(countBetween(years, dragged))}
     </span>
   );
 }
 
-/** One line for a run of years without photos, so they take no room. */
-function EmptyYears({ newest, oldest }: { newest: number; oldest: number }) {
-  const years = newest === oldest ? `${newest}` : `${oldest}–${newest}`;
-  return <p className="text-xs text-muted-foreground">{years}: no photos</p>;
+/** A narrow note for a run of years without photos, so they take little room. */
+function EmptyYears({ first, last }: { first: number; last: number }) {
+  const years = first === last ? `${first}` : `${first}–${last}`;
+  return (
+    <p className="flex w-16 flex-col self-stretch text-xs text-muted-foreground">
+      <span className="font-medium">{years}</span>
+      <span>No photos</span>
+    </p>
+  );
 }
 
-/** One year's squares: weeks as columns, Sunday to Saturday as rows, with the months above. */
+/** One year's squares: a column per month, the weeks that start in it from top to bottom. */
 function YearBlock({
   year,
   shown,
@@ -159,83 +174,59 @@ function YearBlock({
   shown?: DayRange;
   dragged?: DayRange;
 }) {
-  const columns = { gridTemplateColumns: `repeat(${year.weeks.length}, minmax(0, 1fr))` };
   return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-baseline justify-between text-xs">
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-baseline justify-between gap-2 text-xs">
         <span className="font-medium">{year.year}</span>
         <span className="text-muted-foreground">{plural(year.total)}</span>
       </div>
-      <div className="flex gap-1.5">
-        <WeekdayLabels />
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div className="grid text-[10px] text-muted-foreground" style={columns}>
-            {year.months.map((month) => (
-              <span key={month.label} style={{ gridColumnStart: month.week + 1 }}>
-                {month.label}
-              </span>
+      <div className="flex gap-[3px]">
+        {year.months.map((month) => (
+          <div key={month.label} className="flex w-3.5 flex-col items-center gap-[3px]">
+            <span className="text-[10px] leading-4 text-muted-foreground" title={month.label}>
+              {month.label[0]}
+            </span>
+            {month.weeks.map((week) => (
+              <WeekSquare key={week.key} week={week} shown={shown} dragged={dragged} />
             ))}
           </div>
-          <div className="grid grid-flow-col grid-rows-7 gap-px sm:gap-[2px]" style={columns}>
-            {year.weeks.flat().map((day, index) => (
-              <DaySquare
-                key={day?.key ?? `blank-${index}`}
-                day={day}
-                shown={shown}
-                dragged={dragged}
-              />
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 }
 
-/** Mon, Wed and Fri beside their rows, as on GitHub; hidden on phones, where room is short. */
-function WeekdayLabels() {
-  return (
-    <div className="mt-[15px] hidden grid-rows-7 gap-[2px] text-[10px] leading-none text-muted-foreground sm:grid">
-      {WEEKDAY_LABELS.map((label, index) => (
-        <span key={index} className="flex items-center">
-          {label}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-/** One day's square, colored by its photo count; blank for days outside the year or to come. */
-function DaySquare({
-  day,
+/** One week's square, colored by its photo count. */
+function WeekSquare({
+  week,
   shown,
   dragged,
 }: {
-  day: HeatmapDay | null;
+  week: HeatmapWeek;
   shown?: DayRange;
   dragged?: DayRange;
 }) {
-  if (!day) return <span className="aspect-square" />;
+  const days = `${format(week.start, "MMM d")} – ${format(week.end, "MMM d, yyyy")}`;
   return (
     <span
-      data-day={day.key}
-      title={`${plural(day.count)} on ${format(day.date, "EEE, MMM d, yyyy")}`}
-      className={squareClass(day, shown, dragged)}
+      data-week={week.key}
+      title={`${plural(week.count)}, ${days}`}
+      className={squareClass(week, shown, dragged)}
     />
   );
 }
 
-/** A day's square color, faded outside the selected range and outlined while dragged across. */
-function squareClass(day: HeatmapDay, shown?: DayRange, dragged?: DayRange): string {
+/** A week's square color, faded outside the selected range and outlined while dragged across. */
+function squareClass(week: HeatmapWeek, shown?: DayRange, dragged?: DayRange): string {
   return cn(
-    "aspect-square rounded-[2px]",
-    LEVEL_CLASS[day.level],
-    shown && !isBetween(day.key, shown) && "opacity-30",
-    isBetween(day.key, dragged) && "ring-1 ring-foreground ring-inset",
+    "size-3.5 rounded-[3px]",
+    LEVEL_CLASS[week.level],
+    shown && !overlaps(week, shown) && "opacity-30",
+    overlaps(week, dragged) && "ring-1 ring-foreground ring-inset",
   );
 }
 
-/** The squares' colors from no photos to the busiest days. */
+/** The squares' colors from no photos to the busiest weeks. */
 function Legend() {
   return (
     <div className="flex items-center justify-end gap-1 text-[10px] text-muted-foreground">
