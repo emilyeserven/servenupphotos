@@ -34,6 +34,7 @@ import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pend
 import { DraftMark } from "@/components/draft-mark";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
+import { SavedDrafts } from "@/components/saved-drafts";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { MoveToUndecided, UndecidedQueue } from "@/components/undecided-photos";
 import { QueryResult } from "@/components/query-result";
@@ -165,7 +166,8 @@ function InFlightCard() {
 
 /**
  * The photo files, with the ones without a title first so they're easy to find and name, after the
- * Undecided queue, which takes the photos set aside out of the list.
+ * Undecided queue, which takes the photos set aside out of the list. With no photos in flight, the
+ * drafts already on the base branch instead.
  */
 function PhotoFiles({
   shown,
@@ -178,6 +180,7 @@ function PhotoFiles({
 }) {
   const edits = useLocalEditsStore((s) => s.edits);
   if (!shown) return null;
+  if (shown.files.length === 0) return <SavedDrafts />;
   const undecided = undecidedPaths(shown.files, edits);
   return (
     <>
