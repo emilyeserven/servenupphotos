@@ -3,7 +3,9 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { ArrowRightIcon } from "lucide-react";
 import { type InFlightRead, photosInFlightQuery } from "@/api/photos";
 import { Button } from "@/components/ui/button";
+import { undecidedPaths } from "@/lib/undecided";
 import { editableUntitled, nextUntitledPath } from "@/lib/untitled-photos";
+import { useLocalEditsStore } from "@/stores/local-edits";
 
 /** The in-flight photo open on the Photo page, when one is. */
 function useOpenPhotoPath(): string | undefined {
@@ -15,7 +17,8 @@ function useOpenPhotoPath(): string | undefined {
 
 /**
  * Opens the next photo in flight without a title on the Photo page, after the one open there, so
- * untitled photos can be named one after another. Nothing when every photo in flight has a title.
+ * untitled photos can be named one after another, skipping the Undecided ones. Nothing when every
+ * photo in flight has a title or is Undecided.
  */
 export function NextUntitledPhoto({ onNavigate }: { onNavigate: () => void }) {
   const inFlight = useQuery(photosInFlightQuery);
@@ -33,9 +36,11 @@ function NextUntitledLink({
   current?: string;
   onNavigate: () => void;
 }) {
-  const next = nextUntitledPath(data, current);
+  const edits = useLocalEditsStore((s) => s.edits);
+  const skip = undecidedPaths(data.files, edits);
+  const next = nextUntitledPath(data, current, skip);
   if (!next) return null;
-  const count = editableUntitled(data).length;
+  const count = editableUntitled(data, skip).length;
   return (
     <Button variant="outline" size="sm" asChild>
       <Link to="/exif" search={{ edit: next }} onClick={onNavigate}>

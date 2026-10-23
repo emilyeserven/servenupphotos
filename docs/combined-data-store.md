@@ -66,7 +66,7 @@ between.
 A floating button at the top right of every page shows where things stand: **Synced · batch open** (everything is committed, but the photo data pull request, the batch, still waits to be merged), **Synced · no open batch**, **Not synced · 3 images** (every image added, modified or deleted since the last commit, each counted once, with albums, tags, places, localizations, metadata groups and camera overrides after them; the panel shows the images as three counts, Added, Modified and Deleted, and a file added and then deleted again doesn't count),
 **Committing…** or **Commit failed**. Clicking it opens a panel with the pull request, the counts, the last commit's link,
 **Discard** for everything waiting for Commit, and **Commit**. While a photo in flight has no title, the panel also has
-**Next untitled photo**, with how many there are, which opens the next one on the Photo page (`/exif?edit=<path>`):
+**Next untitled photo**, with how many there are (leaving out the [Undecided](photos-in-flight.md#undecided) ones), which opens the next one on the Photo page (`/exif?edit=<path>`):
 the first after the photo open there, in Photos in Flight's order, going back to the first after the last. Photos in Flight also says so in its **Synced** row, with the
 same button, and marks each file that isn't in the combined files with "Not synced to ALLPHOTOS.json yet". The lines
 that follow a save elsewhere, such as on the Photo page, link back to Photos in Flight to commit.

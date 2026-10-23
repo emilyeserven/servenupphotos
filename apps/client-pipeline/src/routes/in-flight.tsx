@@ -35,6 +35,7 @@ import { DraftMark } from "@/components/draft-mark";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
+import { MoveToUndecided, UndecidedQueue } from "@/components/undecided-photos";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,9 +49,11 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
+import { undecidedPaths } from "@/lib/undecided";
 import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
 import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
+import { useLocalEditsStore } from "@/stores/local-edits";
 
 interface InFlightSearch {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */
@@ -160,7 +163,10 @@ function InFlightCard() {
   );
 }
 
-/** The photo files, with the ones without a title first so they're easy to find and name. */
+/**
+ * The photo files, with the ones without a title first so they're easy to find and name, after the
+ * Undecided queue, which takes the photos set aside out of the list.
+ */
 function PhotoFiles({
   shown,
   ...props
@@ -170,10 +176,20 @@ function PhotoFiles({
   baseBranch?: string;
   onRemoved: (result: RemoveResult) => void;
 }) {
+  const edits = useLocalEditsStore((s) => s.edits);
   if (!shown) return null;
-  return untitledFirst(shown.files).map((file) => (
-    <FileSection key={file.path} file={file} images={shown.images} {...props} />
-  ));
+  const undecided = undecidedPaths(shown.files, edits);
+  return (
+    <>
+      <UndecidedQueue
+        files={shown.files.filter((file) => undecided.has(file.path))}
+        images={shown.images}
+      />
+      {untitledFirst(shown.files.filter((file) => !undecided.has(file.path))).map((file) => (
+        <FileSection key={file.path} file={file} images={shown.images} {...props} />
+      ))}
+    </>
+  );
 }
 
 /** What the last removal did, then whether ALLPHOTOS.json is synced with it. */
@@ -362,6 +378,7 @@ function FileSection({
         <DraftMark data={file.status === "removed" ? undefined : file.data}>
           <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
         </DraftMark>
+        <MoveToUndecided file={file} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
