@@ -11,7 +11,7 @@ import {
   type EquipmentKey,
   filterTable,
   groupRange,
-  groupSpan,
+  parseRange,
   RANGE_KEYS,
   type RangeKey,
   rangeValues,
@@ -41,21 +41,15 @@ const RANGE_VALUES = Object.fromEntries(
   RANGE_KEYS.map((key) => [key, rangeValues(allPhotos, key)]),
 ) as Record<RangeKey, string[]>;
 
-/** An exposure of a metadata group, in seconds, as the photos write it: 0.004 is "1/250". */
-function exposureText(seconds: number): string {
-  return seconds < 1 ? `1/${Math.round(1 / seconds)}` : String(seconds);
-}
-
 /**
- * A range group's ends as a photographer writes them, such as "10mm–24mm", the one value,
- * "≥ 12800" for one with no top, or "≤ 1/250s" for one from 0 or with no bottom.
+ * A quick pick's range as the photos write its ends, such as "11mm – 24mm" or "250 – 1600 ISO", or
+ * the one value when they're the same.
  */
-function spanText(key: RangeKey, [low, high]: [number, number]): string {
+function spanText(key: RangeKey, range: string): string {
   const write = writeSetting(key);
-  const text = (end: number) => write(key === "exposure" ? exposureText(end) : String(end));
-  if (high === Number.POSITIVE_INFINITY) return `≥ ${text(low)}`;
-  if (low <= 0) return `≤ ${text(high)}`;
-  return low === high ? text(low) : `${text(low)}–${text(high)}`;
+  const [low = "", high = ""] = parseRange(range) ?? [];
+  const text = low === high ? write(low) : `${write(low)} – ${write(high)}`;
+  return key === "iso" ? `${text} ISO` : text;
 }
 
 /** Each slider's quick picks: the metadata groups of its setting with photos in their range. */
@@ -63,11 +57,10 @@ const RANGE_PRESETS = Object.fromEntries(
   RANGE_KEYS.map((key) => [
     key,
     groupTree(key).flatMap(([group]): RangePreset[] => {
-      const span = groupSpan(key, group);
-      const range = span && groupRange(key, group, RANGE_VALUES[key]);
+      const range = groupRange(key, group, RANGE_VALUES[key]);
       // A group no photo is in isn't shown.
-      if (!span || !range) return [];
-      return [{ id: group.id, name: group.name, span: spanText(key, span), range }];
+      if (!range) return [];
+      return [{ id: group.id, name: group.name, span: spanText(key, range), range }];
     }),
   ]),
 ) as Record<RangeKey, RangePreset[]>;

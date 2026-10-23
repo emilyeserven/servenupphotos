@@ -67,12 +67,13 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
   chosen name and the other way round. A group that would show no photos, given the other filters, isn't listed,
   unless it's the one chosen.
 - **ISO**, **Exposure**, **Focal length** and **Aperture** each get a small dropdown to the right of the slider,
-  listing a quick pick for each of their groups, such as **Wide angle 10mm–24mm**. Choosing one moves the handles to
-  the lowest and highest values the photos have inside the group's range (so Wide angle's 10 to 24 mm becomes
-  `?focalLength=11-24` when no photo was taken at 10 mm) and closes the list; the list checks the one the slider is
-  set to, and choosing that one again clears the slider. A group's range runs from the lowest to the highest end of
-  its own range, its values and those of every group in it. A range with only a `min` runs up from it (**High ≥
-  12800**), and one with only a `max` up to it (**Fast ≤ 1/250s**). A group no photo is in isn't listed.
+  listing a quick pick for each of their groups. Each pick shows the lowest and highest values the photos actually have
+  inside the group's range, not the range as it's set: a **Moderate** ISO group of 201 to 1600 shows **250 – 1600 ISO**
+  when those are the photos' nearest values, and Wide angle's 10 to 24 mm shows **11mm – 24mm** when no photo was taken
+  at 10 mm. Choosing one moves the handles to those values (`?focalLength=11-24`) and closes the list; the list checks
+  the one the slider is set to, and choosing that one again clears the slider. A group's range runs from the lowest to
+  the highest end of its own range, its values and those of every group in it; a range with only a `min` runs up from
+  it, and one with only a `max` up to it. A group no photo is in isn't listed.
 
 > **Frontend analogy:** a quick pick is a preset that calls the same `onChange` as letting go of the handles, so the
 > URL only ever holds the plain range; the list works out which one to check by comparing its range to the URL's.

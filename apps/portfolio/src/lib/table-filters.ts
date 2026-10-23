@@ -89,7 +89,7 @@ export function groupRange(key: RangeKey, group: MetaGroup, values: string[]): s
 }
 
 /** The lowest and highest ends a range group covers, such as [10, 24]; undefined when it has none. */
-export function groupSpan(key: RangeKey, group: MetaGroup): [number, number] | undefined {
+function groupSpan(key: RangeKey, group: MetaGroup): [number, number] | undefined {
   const numbers = groupNumbers(key, group);
   return numbers.length > 0 ? [Math.min(...numbers), Math.max(...numbers)] : undefined;
 }

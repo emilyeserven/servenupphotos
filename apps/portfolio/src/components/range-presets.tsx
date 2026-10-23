@@ -8,7 +8,7 @@ export interface RangePreset {
   /** The metadata group's ID. */
   id: string;
   name: string;
-  /** The range the group covers as a photographer writes it, such as "10mm–24mm". */
+  /** The range it sets as a photographer writes it, such as "11mm – 24mm": the values the photos have. */
   span: string;
   /** The range it sets, as "low-high" of the values the photos have. */
   range: string;
