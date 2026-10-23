@@ -29,7 +29,12 @@ type Sanitized struct {
 	// 4.2, as the lens set it rather than its 35 mm equivalent.
 	FocalLength *float64 `json:"focalLength"`
 	GPSPosition *string  `json:"gpsPosition"`
-	CreateDate  *string  `json:"createDate"`
+	// CustomGPSPosition is a GPS position written on the Photo page, as
+	// "latitude, longitude" in decimal degrees, which the portfolio uses
+	// instead of GPSPosition. It leaves the EXIF one as it is. Sanitize
+	// leaves it nil.
+	CustomGPSPosition *string `json:"customGpsPosition"`
+	CreateDate        *string `json:"createDate"`
 	// PlaceName is the name of the place the photo was taken, such as a
 	// park or a building, which the portfolio shows before the city.
 	// Sanitize leaves it nil; it is written on the Photo page before saving.

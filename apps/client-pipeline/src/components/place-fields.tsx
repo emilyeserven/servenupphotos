@@ -46,6 +46,13 @@ interface PlaceValue {
   placeName: string;
   customCity: string;
   customCountry: string;
+  /** The photo's custom GPS position, which the map uses before its EXIF one or its places'. */
+  customGpsPosition?: string;
+}
+
+/** The photo's own GPS position, from its EXIF or else written on the page; null when it has neither. */
+function ownGps(exifGps: string | null, value: PlaceValue): string | null {
+  return exifGps || value.customGpsPosition?.trim() || null;
 }
 
 /** A place row with nothing chosen yet. */
@@ -193,8 +200,18 @@ export function PlaceFields({
   return (
     <div className="flex flex-col gap-2">
       <PlaceLabel />
-      <PhotoGpsStatus exifGps={exifGps} rows={rows} places={all.places} />
-      <PlaceGpsAdders rows={rows} places={all.places} exifGps={exifGps} disabled={disabled} />
+      <PhotoGpsStatus
+        exifGps={exifGps}
+        customGps={value.customGpsPosition}
+        rows={rows}
+        places={all.places}
+      />
+      <PlaceGpsAdders
+        rows={rows}
+        places={all.places}
+        exifGps={ownGps(exifGps, value)}
+        disabled={disabled}
+      />
       <PlaceCityAdders
         rows={rows}
         places={all.places}
