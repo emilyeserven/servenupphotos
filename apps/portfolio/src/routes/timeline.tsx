@@ -161,8 +161,9 @@ function MonthSection({
   const listId = useId();
   return (
     <li className="flex flex-col gap-1">
-      {/* Sticks to the top while the month's photos scroll under it. */}
-      <h2 className="sticky top-0 z-10 -mx-1 bg-background px-1 py-2">
+      {/* Sticks to the top while the month's photos scroll under it. Its fixed height (h-10) is
+          where each day's subheading sticks, just under it. */}
+      <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center bg-background px-1">
         <button
           type="button"
           aria-expanded={open}
@@ -198,8 +199,11 @@ function DaySection({
   ...options
 }: RowOptions & { day: string; dayPhotos: Photo[] }) {
   return (
-    <li className="flex flex-col gap-2">
-      <h3 className="text-xs font-medium text-muted-foreground">{day}</h3>
+    <li className="flex flex-col gap-1">
+      {/* Sticks just under the month's heading while the day's photos scroll under it. */}
+      <h3 className="sticky top-10 z-[5] -mx-1 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
+        {day}
+      </h3>
       <ul className="flex flex-col gap-3">
         {dayPhotos.map((photo) => (
           <PhotoRow key={photo.id} photo={photo} {...options} />
