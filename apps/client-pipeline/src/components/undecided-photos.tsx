@@ -56,18 +56,21 @@ export function UndecidedQueue({
   files,
   images,
   fromGallery,
+  title = "Undecided",
 }: {
   files: InFlightFileRead[];
   images: InFlightImages;
   /** True for photos on the base branch, which the Photo page opens as the Gallery does. */
   fromGallery?: boolean;
+  /** The panel's heading, such as "Undecided on main" beside the photos in flight's own. */
+  title?: string;
 }) {
   if (files.length === 0) return null;
   return (
     <details className="group bg-card rounded-xl border shadow-sm">
       <summary className="hover:bg-muted/50 flex cursor-pointer list-none items-center gap-2 rounded-xl px-6 py-4 [&::-webkit-details-marker]:hidden">
         <ChevronRightIcon className="text-muted-foreground size-4 transition-transform group-open:rotate-90" />
-        <span className="font-semibold">Undecided</span>
+        <span className="font-semibold">{title}</span>
         <span className="text-muted-foreground text-sm">
           {files.length} {files.length === 1 ? "photo" : "photos"} set aside
         </span>

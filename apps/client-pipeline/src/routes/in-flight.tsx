@@ -172,8 +172,8 @@ function InFlightCard() {
 
 /**
  * The photo files that pass the filters, with the ones without a title first so they're easy to
- * find and name, after the Undecided queue, which takes the photos set aside out of the list. With
- * no photos in flight, the drafts already on the base branch instead.
+ * find and name, after the Undecided queue, which takes the photos set aside out of the list, and
+ * then the drafts already on the base branch that aren't in flight.
  */
 function PhotoFiles({
   shown,
@@ -200,6 +200,7 @@ function PhotoFiles({
       {untitledFirst(files.filter((file) => !undecided.has(file.path))).map((file) => (
         <FileSection key={file.path} file={file} images={shown.images} {...props} />
       ))}
+      <SavedDrafts alongside />
     </>
   );
 }

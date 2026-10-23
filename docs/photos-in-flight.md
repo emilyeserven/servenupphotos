@@ -51,9 +51,10 @@ other untitled photo.
 
 ### Drafts on the base branch
 
-With no photos in flight, the page lists the [drafts](drafts.md) already on the base branch instead (read with the
-Gallery's `GET /api/photos/published`): the Undecided ones in the **Undecided** panel and the rest under **Drafts on
-`<branch>`**, each with **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
+After the photos in flight (or alone, when none are), the page lists the [drafts](drafts.md) already on the base
+branch that the pull request doesn't change (read with the
+Gallery's `GET /api/photos/published`): the Undecided ones in the **Undecided** panel (**Undecided on `<branch>`** when photos are in flight too, to tell it apart from theirs) and
+the rest under **Drafts on `<branch>`**, each with **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
 back**. Naming one and saving it puts it back in flight, and Commit sends it to a new pull request. Nothing is listed
 when untitled photos aren't kept as drafts.
 
