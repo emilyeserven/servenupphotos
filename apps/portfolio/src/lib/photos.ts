@@ -177,6 +177,8 @@ interface PhotoData {
   /** Entries saved before it was added don't have it. */
   lens?: string | null;
   gpsPosition: string | null;
+  /** A GPS position written on the Photo page, "latitude, longitude" in decimal degrees, used instead of the EXIF one. */
+  customGpsPosition?: string | null;
   createDate: string | null;
   /** A city and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
   customCity?: string | null;
@@ -227,7 +229,7 @@ function parseCreateDate(value: string | null): Date | null {
  * One coordinate of exiftool's `37 deg 31' 21.06" N, 126 deg 58' 46.24" E`, in decimal degrees.
  * `hemispheres` lists the positive hemisphere first: "NS" for latitude, "EW" for longitude.
  */
-function parseCoordinate(value: string, hemispheres: "NS" | "EW"): number | null {
+function exifCoordinate(value: string, hemispheres: "NS" | "EW"): number | null {
   const number = String.raw`(\d+(?:\.\d+)?)`;
   const match = value.match(new RegExp(`${number} deg ${number}' ${number}" ([${hemispheres}])`));
   if (!match) return null;
@@ -236,6 +238,20 @@ function parseCoordinate(value: string, hemispheres: "NS" | "EW"): number | null
   return hemisphere === hemispheres[0] ? degrees : -degrees;
 }
 
+/** One coordinate in decimal degrees, as a custom GPS position writes it, such as `-73.9634`. */
+function decimalCoordinate(value: string): number | null {
+  return /^\s*-?\d+(\.\d+)?\s*$/.test(value) ? Number(value) : null;
+}
+
+/** One coordinate, written in decimal degrees or as exiftool writes it. */
+function parseCoordinate(value: string, hemispheres: "NS" | "EW"): number | null {
+  return decimalCoordinate(value) ?? exifCoordinate(value, hemispheres);
+}
+
+/**
+ * A GPS position as exiftool writes it, or as a custom one is written on the Photo page
+ * ("40.7795, -73.9634"); both parts null when it can't be read.
+ */
 function parseGpsPosition(value: string | null) {
   const [lat = "", lng = ""] = value?.split(",") ?? [];
   const latitude = parseCoordinate(lat, "NS");
@@ -271,13 +287,19 @@ function ownPosition({ latitude, longitude }: Place): Position | undefined {
   return latitude === undefined || longitude === undefined ? undefined : { latitude, longitude };
 }
 
+/** The photo's own GPS position: the custom one written on the Photo page, or else its EXIF one. */
+function photoGps(photo: PhotoData): Position {
+  const written = parseGpsPosition(photo.customGpsPosition ?? null);
+  return written.latitude === null ? parseGpsPosition(photo.gpsPosition) : written;
+}
+
 /**
- * Where the photo goes on the map: its EXIF GPS position, or else the first of its places (or a
+ * Where the photo goes on the map: its custom or EXIF GPS position, or else the first of its places (or a
  * place it's in) with a GPS position set on the Places page. A place's position is approximate
  * unless that place is marked as an exact location.
  */
 function photoPosition(photo: PhotoData): Position & { approximatePosition: boolean } {
-  const exif = parseGpsPosition(photo.gpsPosition);
+  const exif = photoGps(photo);
   if (exif.latitude !== null) return { ...exif, approximatePosition: false };
   const found = (photo.places ?? []).map(({ id }) => placePosition(id));
   const position = found.find(({ latitude }) => latitude !== null);
@@ -487,7 +509,7 @@ function photoLocation(photo: PhotoData): LocalizedLocation | null {
     place: placeText(photo),
     city: localizedField("city", custom(photo.customCity, photo.city)),
     country: localizedField("country", custom(photo.customCountry, photo.country)),
-    gps: gpsText(parseGpsPosition(photo.gpsPosition)),
+    gps: gpsText(photoGps(photo)),
   };
   if (!parts.place && !parts.city && !parts.country) return null;
   return Object.fromEntries(

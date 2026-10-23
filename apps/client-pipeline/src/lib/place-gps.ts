@@ -26,6 +26,20 @@ export function parseGps(text: string): Coordinates | null {
   return isPosition(parts) ? { latitude: parts[0], longitude: parts[1] } : null;
 }
 
+/** Whether both parts of the position are there. */
+function hasPosition(position: Coordinates): position is Required<Coordinates> {
+  return position.latitude !== undefined && position.longitude !== undefined;
+}
+
+/**
+ * A GPS position written as "latitude, longitude", such as a photo's custom one, or null when none is
+ * written or it can't be read.
+ */
+export function writtenPosition(text: string | undefined): Required<Coordinates> | null {
+  const parsed = parseGps(text ?? "") ?? {};
+  return hasPosition(parsed) ? parsed : null;
+}
+
 /** Whether the numbers are a latitude and a longitude on the globe. */
 function isPosition(parts: number[]): parts is [number, number] {
   const [latitude = NaN, longitude = NaN] = parts;
@@ -48,14 +62,19 @@ export function gpsSource(place: Place, places: Place[]): Place | undefined {
   return placeChain(place, places).chain.find(hasOwnGps);
 }
 
-/** Whether the photo's EXIF has a GPS position. */
-function hasExifGps(photo: CombinedPhoto): boolean {
-  return typeof photo.gpsPosition === "string" && photo.gpsPosition.trim() !== "";
+/** Whether the photo has its own GPS position: in its EXIF, or a custom one written on the Photo page. */
+function hasOwnPhotoGps(photo: CombinedPhoto): boolean {
+  const custom = typeof photo.customGpsPosition === "string" ? photo.customGpsPosition : "";
+  return Boolean(writtenPosition(custom)) || hasText(photo.gpsPosition);
 }
 
-/** Whether the photo can go on the portfolio's map: by its EXIF, or one of its places' (or a place above them). */
+function hasText(value: unknown): boolean {
+  return typeof value === "string" && value.trim() !== "";
+}
+
+/** Whether the photo can go on the portfolio's map: by its own GPS position, or one of its places' (or a place above them). */
 function isOnMap(photo: CombinedPhoto, byId: Map<string, Place>, places: Place[]): boolean {
-  if (hasExifGps(photo)) return true;
+  if (hasOwnPhotoGps(photo)) return true;
   return savedPlaces(photo.places).some(({ id }) => {
     const place = byId.get(id);
     return place !== undefined && gpsSource(place, places) !== undefined;

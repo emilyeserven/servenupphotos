@@ -74,8 +74,8 @@ up, the word is the one of the place just under it on the way up. Older place fi
 A place can have a **GPS position**, written on the Places page as `latitude, longitude` in decimal degrees (such as
 `37.5796, 126.977`, which is what right-clicking a spot in Google Maps copies). It's saved as `latitude` and
 `longitude` numbers in the place file, left out when not set; saving refuses only one of them, or one off the globe.
-On the portfolio, a photo whose EXIF has no GPS position goes on the map at its first place's position, or else a
-place that place is in, or else its next place's. The hover text still shows only an EXIF position. Its map marker gets a
+On the portfolio, a photo with no GPS position of its own (a [custom one](#custom-gps-position) or its EXIF one) goes on the map at its first place's position, or else a
+place that place is in, or else its next place's. The hover text still shows only a photo's own (custom or EXIF) position. Its map marker gets a
 softer border, as the spot is only near where the photo was taken, unless the place is ticked as an **Exact location**
 (such as a subway station or a museum, where its photos were taken right at its GPS position): then the marker keeps the
 same solid white border as a photo with its own GPS position. It's saved as `"exactLocation": true`, only on a place
@@ -101,7 +101,8 @@ place (its ID made from its name, as for any new place) and then chooses it. Not
 
 On the Photo page and in Edit Photo, the title and comment are in one card and the photo's location in another:
 **Place**, then **City and country**. Under the **Place** title, a line says where the photo goes on the portfolio's
-map: a checkmark with the GPS position when its EXIF has one; else the place whose fallback GPS position it uses (its
+map: a checkmark with its custom GPS position when one is written (see below), or else with the GPS position when its
+EXIF has one; else the place whose fallback GPS position it uses (its
 first place with one, or a place that place is in), with that position; else a warning that it isn't on the map.
 Either position ends with **Open in Google Maps**, which opens it in a new tab
 (`https://www.google.com/maps/search/?api=1&query=lat,lng`, see
@@ -109,7 +110,21 @@ Either position ends with **Open in Google Maps**, which opens it in a new tab
 read from exiftool's `40 deg 46' 46.20" N, …` into decimal degrees by `parseExifGps` in
 `client-pipeline/src/lib/google-maps.ts`.
 
-When the photo's EXIF has no GPS position, each chosen place with none either (its own or a place above it's) has
+### Custom GPS position
+
+The Location card's **GPS position**, under the places, shows what the map uses (the custom position or the EXIF one)
+and opens to a **Custom GPS position** field, written as `latitude, longitude` in decimal degrees like a place's
+(`40.7795, -73.9634`, which right-clicking a spot in Google Maps copies). It starts open when the EXIF has no GPS
+position. It's saved as `"customGpsPosition": "40.7795, -73.9634"` next to `gpsPosition`, which keeps the EXIF value,
+and `null` when empty; a field it can't read as a position on the globe is marked in red. The portfolio's map and the
+photo's info use it instead of the EXIF position, and instead of its places', and it counts as the photo's own position
+for the Places page's (!) warning, so a photo with one is never missing from the map. New photos get
+`"customGpsPosition": null`, and **Update Data → Missing fields** adds it to older ones.
+
+> **Frontend analogy:** like `customCity`, it's a user override layered over a read-only source:
+> `customGpsPosition ?? gpsPosition`.
+
+When the photo has no GPS position of its own (EXIF or custom), each chosen place with none either (its own or a place above it's) has
 **Add a GPS position for …** under that line, which opens a `latitude, longitude` field and **Save**. It saves the
 place's position as the Places page does, so the status line and the Places list show it at once.
 

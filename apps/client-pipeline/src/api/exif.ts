@@ -77,6 +77,8 @@ export interface SanitizedExif {
   /** The lens's focal length in millimeters, such as 18 or 4.2. */
   focalLength: number | null;
   gpsPosition: string | null;
+  /** A GPS position written on the Photo page as "latitude, longitude", which the portfolio uses instead of the EXIF one. */
+  customGpsPosition?: string | null;
   createDate: string | null;
   /** The name of the place the photo was taken, such as a park or building, written on the Photo page. */
   placeName: string | null;

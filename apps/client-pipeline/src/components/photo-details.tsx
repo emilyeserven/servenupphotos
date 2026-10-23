@@ -4,6 +4,7 @@ import Markdown, { type ExtraProps } from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { type PhotoPlace, savedPlaces } from "@/api/places";
 import { RegionOverrideField } from "@/components/region-override-field";
+import { PhotoCustomGps } from "@/components/photo-custom-gps";
 import { PlaceFields } from "@/components/place-fields";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -28,6 +29,8 @@ interface PhotoText {
   placeName: string;
   customCity: string;
   customCountry: string;
+  /** A GPS position written as "latitude, longitude", which the map uses instead of the EXIF one. */
+  customGpsPosition: string;
   comment: string;
 }
 
@@ -43,6 +46,7 @@ const NO_TEXT: PhotoText = {
   placeName: "",
   customCity: "",
   customCountry: "",
+  customGpsPosition: "",
   comment: "",
 };
 
@@ -108,6 +112,7 @@ export function withDetails<T extends object>(data: T, details: PhotoDetails) {
     places: chosenPlaces(details.places),
     customCity: saved("customCity"),
     customCountry: saved("customCountry"),
+    customGpsPosition: saved("customGpsPosition"),
   };
 }
 
@@ -137,7 +142,7 @@ interface PhotoDetailsCardProps {
 /**
  * The photo's optional title on the portfolio and Markdown comment in one card, and its places,
  * custom city and country and where it goes on the map in another, saved as the JSON's "title", "places" (with the first place's name as "placeName"),
- * "customCity", "customCountry" and "comment".
+ * "customCity", "customCountry", "customGpsPosition" and "comment".
  */
 export function PhotoDetailsCard({
   value,
@@ -181,6 +186,12 @@ export function PhotoDetailsCard({
             exifGps={exifPlace.gpsPosition}
             exifCity={exifPlace.city}
             onChange={(place) => onChange({ ...value, ...place })}
+          />
+          <PhotoCustomGps
+            value={value.customGpsPosition}
+            exifGps={exifPlace.gpsPosition}
+            disabled={disabled}
+            onChange={(customGpsPosition) => onChange({ ...value, customGpsPosition })}
           />
           <CityAndCountry
             exifPlace={exifPlace}

@@ -8,7 +8,8 @@ viewer. Photos too close together to tell apart are one round marker with how ma
 photos fading in turn under a dark overlay. Clicking it opens a grid of their thumbnails above it, with **Zoom in**
 to split them apart. Photos without resized versions are a small dot that opens their details instead.
 
-A photo whose EXIF has no GPS position goes at one of its places' position (see
+A photo's [custom GPS position](places-and-localizations.md#custom-gps-position), written on the Photo page, wins over
+its EXIF one. A photo with neither goes at one of its places' position (see
 [Places](places-and-localizations.md#gps-position)). That spot is only near where it was taken, so its marker's white
 border is softer, and so is a group's when every photo in it is placed that way. A place marked as an **Exact
 location** on the Places page keeps the solid border for its photos.
