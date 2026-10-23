@@ -33,7 +33,7 @@
     }
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
+  "websiteSpotlight": 1,
   "socialMediaPublishDate": "2026-10-13",
   "albums": [],
   "tags": [],

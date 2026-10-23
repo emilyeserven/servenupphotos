@@ -36,7 +36,7 @@
     }
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
+  "websiteSpotlight": 4,
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],

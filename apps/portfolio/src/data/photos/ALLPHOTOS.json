@@ -86,7 +86,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 3,
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
@@ -343,7 +343,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 4,
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
@@ -1643,7 +1643,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 5,
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
@@ -2141,7 +2141,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 1,
     "socialMediaPublishDate": "2026-10-13",
     "albums": [],
     "tags": [],
@@ -2750,7 +2750,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 2,
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": [],
