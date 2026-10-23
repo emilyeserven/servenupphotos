@@ -7,8 +7,7 @@ homepage leaves them out.
 
 Behind the links, photos fill the screen and fade in and out one at a time, each for 7 seconds, under 60% black so the
 text stays readable (`components/photo-backdrop.tsx`). The showing photo's title is at the bottom left. The photos are
-the ones picked for the **Homepage** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page, newest
-first, or, with none picked, the 5 newest photos (`lib/homepage-photos.ts`). Only photos with resized versions in R2
+the ones picked for the **Homepage** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page, in the order they were dragged into there (ones without a place after, newest first), or, with none picked, the 5 newest photos (`lib/homepage-photos.ts`). Only photos with resized versions in R2
 are shown.
 
 Only the showing photo and the ones on either side of it are on the page: the one before is still fading out, and the

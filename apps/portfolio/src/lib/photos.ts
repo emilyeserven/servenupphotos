@@ -50,6 +50,8 @@ export interface Photo {
   tags: string[];
   /** The IDs of the spots on the site the photo is spotlighted in, such as "homepage". */
   spotlightZones: string[];
+  /** Its place among the spotlighted photos, 1 first, set on Site Spotlight; null without one. */
+  spotlightPlace: number | null;
 }
 
 /** Where the photo was taken, written each way the menu's Script Display can choose. */
@@ -411,9 +413,14 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums, tags and spotlight zones; older entries are missing them. */
-function groupFields({ albums = [], tags = [], spotlightZones = [] }: PhotoData) {
-  return { albums, tags, spotlightZones };
+/** The photo's albums, tags and spotlight zones, and its place in them; older entries are missing them. */
+function groupFields({
+  albums = [],
+  tags = [],
+  spotlightZones = [],
+  websiteSpotlight = null,
+}: PhotoData) {
+  return { albums, tags, spotlightZones, spotlightPlace: websiteSpotlight };
 }
 
 /** The ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */

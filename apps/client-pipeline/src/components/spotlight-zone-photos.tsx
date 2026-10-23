@@ -1,0 +1,137 @@
+import { GripVerticalIcon, ImageIcon, XIcon } from "lucide-react";
+import { type DragEvent, useState } from "react";
+import type { SocialPhoto } from "@/api/publish";
+import { Button } from "@/components/ui/button";
+import { photoName } from "@/lib/social-schedule";
+import { cn } from "@/lib/utils";
+
+/** The type the dragged photo's place in the zone is carried under. */
+const DRAG_TYPE = "application/x-spotlight-index";
+
+interface ZonePhotosProps {
+  /** The zone's photos, in their order. */
+  photos: SocialPhoto[];
+  /** Whether the photo's zones or place aren't committed yet. */
+  isUnsaved: (photo: SocialPhoto) => boolean;
+  /** Moves the photo at index from to index to. */
+  onMove: (from: number, to: number) => void;
+  onRemove: (photo: SocialPhoto) => void;
+}
+
+/**
+ * A zone's photos in their order, numbered from 1. Dragging a photo onto another moves it to that
+ * place, shifting the ones between.
+ */
+export function ZonePhotos({ photos, isUnsaved, onMove, onRemove }: ZonePhotosProps) {
+  return (
+    <ul className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-8">
+      {photos.map((photo, index) => (
+        <ZonePhoto
+          key={photo.path}
+          photo={photo}
+          index={index}
+          unsaved={isUnsaved(photo)}
+          onDropAt={(from) => onMove(from, index)}
+          onRemove={() => onRemove(photo)}
+        />
+      ))}
+    </ul>
+  );
+}
+
+/** Drag handlers that take a photo dropped here, and whether one is being dragged over it. */
+function useDropTarget(onDropAt: (from: number) => void) {
+  const [over, setOver] = useState(false);
+  const handlers = {
+    onDragOver: (event: DragEvent) => {
+      if (!event.dataTransfer.types.includes(DRAG_TYPE)) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      setOver(true);
+    },
+    onDragLeave: (event: DragEvent) => {
+      // Moving onto the photo's own image or buttons isn't leaving it.
+      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOver(false);
+    },
+    onDrop: (event: DragEvent) => {
+      event.preventDefault();
+      setOver(false);
+      const from = event.dataTransfer.getData(DRAG_TYPE);
+      if (from !== "") onDropAt(Number(from));
+    },
+  };
+  return { over, handlers };
+}
+
+interface ZonePhotoProps {
+  photo: SocialPhoto;
+  index: number;
+  unsaved: boolean;
+  onDropAt: (from: number) => void;
+  onRemove: () => void;
+}
+
+/** A photo in a zone, with its place, which can be dragged to another place or taken out. */
+function ZonePhoto({ photo, index, unsaved, onDropAt, onRemove }: ZonePhotoProps) {
+  const name = photoName(photo);
+  const { over, handlers } = useDropTarget(onDropAt);
+  return (
+    <li
+      draggable
+      onDragStart={(event) => {
+        event.dataTransfer.setData(DRAG_TYPE, String(index));
+        event.dataTransfer.effectAllowed = "move";
+      }}
+      {...handlers}
+      title={`${name}. Drag to move it`}
+      className={cn(
+        "relative aspect-square cursor-grab overflow-hidden rounded-md border active:cursor-grabbing",
+        over && "ring-ring ring-2",
+      )}
+    >
+      <Thumbnail photo={photo} />
+      <span className="bg-background/80 pointer-events-none absolute top-1 left-1 flex items-center rounded px-1 text-xs font-medium">
+        <GripVerticalIcon className="size-3" aria-hidden />
+        {index + 1}
+      </span>
+      <Button
+        variant="secondary"
+        size="icon"
+        className="absolute top-1 right-1 size-6"
+        aria-label={`Take ${name} out`}
+        onClick={onRemove}
+      >
+        <XIcon className="size-3.5" />
+      </Button>
+      {unsaved && <UnsavedDot />}
+    </li>
+  );
+}
+
+function UnsavedDot() {
+  return (
+    <span className="bg-primary absolute bottom-1 left-1 size-2 rounded-full">
+      <span className="sr-only">Not committed</span>
+    </span>
+  );
+}
+
+/** The photo's Square Thumbnail or smallest version, or an image icon without one. */
+export function Thumbnail({ photo }: { photo: SocialPhoto }) {
+  if (!photo.image) {
+    return (
+      <span className="bg-muted text-muted-foreground flex size-full items-center justify-center">
+        <ImageIcon className="size-5" />
+      </span>
+    );
+  }
+  return (
+    <img
+      src={photo.image}
+      alt=""
+      draggable={false}
+      loading="lazy"
+      className="size-full object-cover"
+    />
+  );
+}
