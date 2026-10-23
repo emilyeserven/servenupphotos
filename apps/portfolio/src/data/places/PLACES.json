@@ -383,6 +383,16 @@
     "longitude": -73.99337287689791
   },
   {
+    "id": "paine-open",
+    "name": "Paine Open",
+    "description": "",
+    "parent": "",
+    "city": "Easton",
+    "country": "United States of America",
+    "latitude": 41.30900335742722,
+    "longitude": -73.30154847932147
+  },
+  {
     "id": "queens",
     "name": "Queens",
     "description": "",

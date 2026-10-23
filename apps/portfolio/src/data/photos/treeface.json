@@ -1,7 +1,7 @@
 {
-  "id": 103,
-  "title": null,
+  "title": "Treeface",
   "comment": null,
+  "id": 103,
   "file": "IMG_7930.jpg",
   "camera": "Canon EOS 80D",
   "lens": "EF-S55-250mm f/4-5.6 IS STM",
@@ -11,9 +11,9 @@
   "focalLength": 55,
   "gpsPosition": null,
   "createDate": "2020:06:14 13:08:17",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "paine-open",
+  "customCity": "Easton",
+  "customCountry": "United States of America",
   "country": null,
   "city": null,
   "width": 2554,
@@ -41,7 +41,12 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "paine-open"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": []
 }

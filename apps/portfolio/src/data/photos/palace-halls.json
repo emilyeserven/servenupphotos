@@ -1,7 +1,7 @@
 {
-  "id": 129,
-  "title": null,
+  "title": "Palace Halls",
   "comment": null,
+  "id": 129,
   "file": "DSCF3086.jpg",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
@@ -11,8 +11,8 @@
   "focalLength": 18,
   "gpsPosition": "37 deg 34' 37.90\" N, 126 deg 58' 34.69\" E",
   "createDate": "2026:05:17 13:06:28",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Gyeongbokgung Palace",
+  "customCity": "Seoul",
   "customCountry": null,
   "country": "South Korea",
   "city": null,
@@ -27,12 +27,12 @@
     "small": "https://cdn.servenupphotos.net/photos/551fa7d2148c-dscf3086-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/551fa7d2148c-dscf3086-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/551fa7d2148c-dscf3086-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/551fa7d2148c-dscf3086-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/551fa7d2148c-dscf3086-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/551fa7d2148c-dscf3086-thumbnail.webp?crop=241,241,4591",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/551fa7d2148c-dscf3086-thumbnailpreview.webp?crop=241,241,4591",
     "thumbnailcrop": {
-      "x": 0,
-      "y": 966,
-      "size": 4832,
+      "x": 241,
+      "y": 241,
+      "size": 4591,
       "outputSize": 500
     }
   },
@@ -41,7 +41,12 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": []
 }
