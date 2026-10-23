@@ -18,12 +18,12 @@ import {
 import { format } from "date-fns";
 import { ArrowDown, ArrowUp, ArrowUpDown, Columns3, Table } from "lucide-react";
 import type { ReactNode } from "react";
-import { NoMatchingPhotos, PhotoFilterBar } from "@/components/photo-filters";
+import { NoMatchingPhotos } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
 import { TableViewMenu } from "@/components/table-view-menu";
-import { TableFilterControls } from "@/components/table-filters";
+import { CameraFilterBar } from "@/components/camera-filters";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ViewPlaceholder } from "@/components/view-placeholder";
@@ -34,7 +34,7 @@ import {
   type Photo,
   type PhotoImage,
 } from "@/lib/photos";
-import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import {
   DEFAULT_LOCATION_DETAIL,
   LOCATION_DETAILS,
@@ -45,11 +45,10 @@ import {
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
   exposureSeconds,
-  filterTable,
-  parseTableFilters,
-  TABLE_FILTER_KEYS,
-  type TableFilters,
-} from "@/lib/table-filters";
+  filterWithCamera,
+  parseCameraFilters,
+  type CameraFilters,
+} from "@/lib/camera-filters";
 import { cn } from "@/lib/utils";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
@@ -122,12 +121,12 @@ function parseHide(search: Record<string, unknown>): TableSearch {
 export const Route = createFileRoute("/table")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): TableSearch & PhotoFilters & TableFilters & ShownPhotoSearch => ({
+  ): TableSearch & PhotoFilters & CameraFilters & ShownPhotoSearch => ({
     ...parseSort(search),
     ...parseHide(search),
     ...parsePlaceDetail(search),
     ...parseFilters(search),
-    ...parseTableFilters(search),
+    ...parseCameraFilters(search),
     ...parseShownPhoto(search),
   }),
   component: TableView,
@@ -233,9 +232,7 @@ function TableView() {
   const sorting = sortingOf(search);
   const columnVisibility = visibilityOf(search);
   const placeDetail = search.placeDetail ?? DEFAULT_LOCATION_DETAIL;
-  const shared = filterPhotos(photos, parseFilters(search));
-  const own = parseTableFilters(search);
-  const filtered = filterTable(shared, own);
+  const filtered = filterWithCamera(photos, search);
 
   const table = useTable({
     features,
@@ -277,15 +274,7 @@ function TableView() {
         />
         <ColumnsMenu allColumns={table.getAllLeafColumns()} />
         <div className="mt-3 w-full">
-          <PhotoFilterBar
-            photos={photos}
-            facet={filterTable(photos, own)}
-            own={{
-              keys: TABLE_FILTER_KEYS,
-              count: Object.keys(own).length,
-              children: <TableFilterControls photos={shared} filters={own} />,
-            }}
-          />
+          <CameraFilterBar photos={photos} />
         </div>
       </header>
       <NoMatchingPhotos count={rows.length} />

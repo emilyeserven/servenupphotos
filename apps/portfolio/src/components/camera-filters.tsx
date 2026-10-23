@@ -1,23 +1,26 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Aperture, Camera } from "lucide-react";
-import { FilterSelect, selectedValue } from "@/components/photo-filters";
+import { FilterSelect, PhotoFilterBar, selectedValue } from "@/components/photo-filters";
 import { RangeFilter } from "@/components/range-filter";
 import type { RangePreset } from "@/components/range-presets";
 import { equipmentOptions } from "@/lib/filter-options";
 import { groupTree } from "@/lib/metadata-groups";
 import { photos as allPhotos, SETTING_FORMATS } from "@/lib/photos";
 import type { Photo } from "@/lib/photos";
+import { filterPhotos, parseFilters } from "@/lib/photo-filters";
 import {
+  CAMERA_FILTER_KEYS,
   type EquipmentKey,
-  filterTable,
+  filterByCamera,
   groupRange,
   parseRange,
   RANGE_KEYS,
   type RangeKey,
   rangeValues,
-  type TableFilters,
-  withoutTableFilters,
-} from "@/lib/table-filters";
+  type CameraFilters,
+  parseCameraFilters,
+  withoutCameraFilters,
+} from "@/lib/camera-filters";
 
 /** Each range slider's name. */
 const RANGE_LABELS: Record<RangeKey, string> = {
@@ -65,10 +68,10 @@ const RANGE_PRESETS = Object.fromEntries(
   ]),
 ) as Record<RangeKey, RangePreset[]>;
 
-/** Sets some of the Table's own filters in the URL, keeping everything else. */
-function useSetTableFilters() {
+/** Sets some of the camera filters in the URL, keeping everything else. */
+function useSetCameraFilters() {
   const navigate = useNavigate();
-  return (next: TableFilters) => {
+  return (next: CameraFilters) => {
     void navigate({
       to: ".",
       search: (prev: Record<string, unknown>) => ({ ...prev, ...next }),
@@ -77,19 +80,13 @@ function useSetTableFilters() {
 }
 
 /**
- * The Table's own filters, after the shared ones: **Camera** and **Lens** dropdowns, with the
+ * The camera filters, after the shared ones on the Table and Grid: **Camera** and **Lens** dropdowns, with the
  * metadata groups of each, and a range slider for each of ISO, exposure, focal length and
  * aperture, with its range groups as quick picks. `photos` is the photos the shared
  * filters leave, which the camera and lens counts are out of, given the other filters here.
  */
-export function TableFilterControls({
-  photos,
-  filters,
-}: {
-  photos: Photo[];
-  filters: TableFilters;
-}) {
-  const setFilters = useSetTableFilters();
+function CameraFilterControls({ photos, filters }: { photos: Photo[]; filters: CameraFilters }) {
+  const setFilters = useSetCameraFilters();
   return (
     <>
       <EquipmentSelect equipment="camera" photos={photos} filters={filters} onChange={setFilters} />
@@ -121,7 +118,7 @@ const EQUIPMENT = {
  * The filters a camera or lens dropdown's value sets, such as "lensGroup:lens-zoom" or
  * "lens:EF50mm f/1.8 II", clearing the other of the name and the group.
  */
-function equipmentFilters(equipment: EquipmentKey, selected: string): TableFilters {
+function equipmentFilters(equipment: EquipmentKey, selected: string): CameraFilters {
   const [key = "", value] = selected.split(/:(.*)/s, 2);
   return { [equipment]: undefined, [`${equipment}Group`]: undefined, [key]: value };
 }
@@ -135,11 +132,11 @@ function EquipmentSelect({
 }: {
   equipment: EquipmentKey;
   photos: Photo[];
-  filters: TableFilters;
-  onChange: (next: TableFilters) => void;
+  filters: CameraFilters;
+  onChange: (next: CameraFilters) => void;
 }) {
   const own = [equipment, `${equipment}Group`] as const;
-  const facet = filterTable(photos, withoutTableFilters(filters, own));
+  const facet = filterByCamera(photos, withoutCameraFilters(filters, own));
   const options = equipmentOptions(equipment, allPhotos, facet, {
     group: filters[`${equipment}Group`],
     name: filters[equipment],
@@ -150,6 +147,28 @@ function EquipmentSelect({
       options={options}
       selected={selectedValue(options, filters)}
       onChange={(selected) => onChange(equipmentFilters(equipment, selected))}
+    />
+  );
+}
+
+/**
+ * The filter bar of the Table and Grid: the shared filters every view has, then the camera
+ * filters, all in one **Show filters** panel, so both views always offer the same ones.
+ */
+export function CameraFilterBar({ photos }: { photos: Photo[] }) {
+  const search = useSearch({ strict: false });
+  const own = parseCameraFilters(search);
+  return (
+    <PhotoFilterBar
+      photos={photos}
+      facet={filterByCamera(photos, own)}
+      own={{
+        keys: CAMERA_FILTER_KEYS,
+        count: Object.keys(own).length,
+        children: (
+          <CameraFilterControls photos={filterPhotos(photos, parseFilters(search))} filters={own} />
+        ),
+      }}
     />
   );
 }

@@ -6,6 +6,7 @@ import { type Theme, useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { ScriptDisplay } from "@/lib/localize";
+import { parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters } from "@/lib/photo-filters";
 import { portfolioViews } from "@/lib/portfolio-views";
 import { cn } from "@/lib/utils";
@@ -56,7 +57,11 @@ export function SiteMenu() {
                 <Link
                   to={to}
                   // Only the filters go along: the other settings belong to the view they're on.
-                  search={(prev: Record<string, unknown>) => parseFilters(prev)}
+                  // The camera filters go too, kept by the views that have them (Table and Grid).
+                  search={(prev: Record<string, unknown>) => ({
+                    ...parseFilters(prev),
+                    ...parseCameraFilters(prev),
+                  })}
                   disabled={!enabled}
                   onClick={() => setOpen(false)}
                   className="flex flex-col items-center gap-1.5 rounded-md px-1 py-3 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40"

@@ -3,12 +3,14 @@ import { Grid3x3, LayoutDashboard, Square } from "lucide-react";
 import { type CSSProperties, type ImgHTMLAttributes, useState } from "react";
 import { type GridSort, GridSortSelect } from "@/components/grid-sort-select";
 import { PhotoComment } from "@/components/photo-comment";
-import { NoMatchingPhotos, PhotoFilterBar } from "@/components/photo-filters";
+import { CameraFilterBar } from "@/components/camera-filters";
+import { NoMatchingPhotos } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { PhotoLocation } from "@/components/photo-location";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
-import { filterPhotos, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
+import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +35,7 @@ interface GridSearch {
  */
 function validateGridSearch(
   search: Record<string, unknown>,
-): GridSearch & PhotoFilters & ShownPhotoSearch {
+): GridSearch & PhotoFilters & CameraFilters & ShownPhotoSearch {
   const view: GridSearch = search.view === "natural" ? { view: "natural" } : {};
   const sort: GridSearch = search.sort === "oldest" ? { sort: "oldest" } : {};
   return {
@@ -41,6 +43,7 @@ function validateGridSearch(
     ...infoOf(search),
     ...sort,
     ...parseFilters(search),
+    ...parseCameraFilters(search),
     ...parseShownPhoto(search),
   };
 }
@@ -81,7 +84,7 @@ function GridView() {
   const showInfo = search.info === true;
   const sort: GridSort = search.sort ?? "newest";
   if (newestFirst.length === 0) return <ViewPlaceholder to="/grid" />;
-  const gridPhotos = filterPhotos(SORTED[sort], parseFilters(search));
+  const gridPhotos = filterWithCamera(SORTED[sort], search);
 
   return (
     // The tiles use the whole window, less a little padding, so wider screens fit more photos; the
@@ -99,7 +102,7 @@ function GridView() {
           <ViewModeSwitcher mode={mode} />
         </div>
         <div className="mt-3 w-full">
-          <PhotoFilterBar photos={newestFirst} />
+          <CameraFilterBar photos={newestFirst} />
         </div>
       </header>
       <NoMatchingPhotos
