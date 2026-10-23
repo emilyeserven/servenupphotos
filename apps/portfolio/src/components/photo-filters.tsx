@@ -1,5 +1,12 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { FolderOpen, type LucideIcon, SlidersHorizontal, Tag, X } from "lucide-react";
+import {
+  ChevronsUpDown,
+  FolderOpen,
+  type LucideIcon,
+  SlidersHorizontal,
+  Tag,
+  X,
+} from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
 import { PlacesFilter } from "@/components/places-filter";
 import { useScriptDisplay } from "@/components/script-display-provider";
@@ -234,13 +241,14 @@ export function FilterSelect({
 }) {
   const { script } = useScriptDisplay();
   return (
-    <label className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-      <Icon className="size-4" aria-hidden />
+    // The icon and chevron sit over the dropdown, inside its border, like the Places button's.
+    <label className="relative inline-flex items-center text-sm text-muted-foreground">
+      <Icon className="pointer-events-none absolute left-2.5 size-4" aria-hidden />
       <span className="sr-only">{label}</span>
       <select
         value={selected}
         onChange={(event) => onChange(event.target.value)}
-        className="h-8 max-w-56 cursor-pointer rounded-md border bg-background px-2 text-sm text-foreground shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30"
+        className="h-8 max-w-56 cursor-pointer appearance-none truncate rounded-md border bg-background pr-8 pl-8 text-sm text-foreground shadow-xs outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30 dark:hover:bg-input/50"
       >
         <option value="">All {plural}</option>
         {options.map((option, index) => (
@@ -249,6 +257,10 @@ export function FilterSelect({
           </option>
         ))}
       </select>
+      <ChevronsUpDown
+        className="pointer-events-none absolute right-2.5 size-4 opacity-50"
+        aria-hidden
+      />
     </label>
   );
 }
