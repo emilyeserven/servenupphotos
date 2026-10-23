@@ -45,10 +45,13 @@ func handlePhotosInFlight(store *settings.Store, gh *github.Client, findPhotos f
 			return
 		}
 
-		forgetOnRefresh(r, gh, cfg)
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		result, err := gh.InFlight(ctx, cfg)
+		var result github.InFlightResult
+		err = refreshIfAsked(ctx, r, gh, cfg)
+		if err == nil {
+			result, err = gh.InFlight(ctx, cfg)
+		}
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
 			writeError(w, perr.Status, perr.Message)
@@ -102,10 +105,12 @@ func findImages(ctx context.Context, store *settings.Store, findPhotos findPhoto
 	return images, nil
 }
 
-// forgetOnRefresh drops what's cached of where the repository stands when the
-// request asks for ?refresh=1, as Photos in Flight's Refresh does.
-func forgetOnRefresh(r *http.Request, gh *github.Client, cfg settings.GitHub) {
-	if r.URL.Query().Get("refresh") != "" {
-		gh.Forget(cfg)
+// refreshIfAsked asks GitHub again where the repository stands when the
+// request asks for ?refresh=1, as Photos in Flight's Refresh does; otherwise
+// the backend answers from what it read when it started.
+func refreshIfAsked(ctx context.Context, r *http.Request, gh *github.Client, cfg settings.GitHub) error {
+	if r.URL.Query().Get("refresh") == "" {
+		return nil
 	}
+	return gh.Refresh(ctx, cfg)
 }

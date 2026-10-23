@@ -192,9 +192,13 @@ func TestCommitCombinedKeepsPendingChangesWhenTheBranchMoved(t *testing.T) {
 		t.Fatalf("CommitCombined() error = %v, want a conflict", err)
 	}
 	delete(f.fail, "PATCH /git/refs/heads/")
+	states := f.count("graphql state")
 	got, err := c.CommitCombined(t.Context(), pullGH, nil)
 	if err != nil || got.Edited != 1 {
 		t.Errorf("CommitCombined() again = %+v, %v; want the place committed", got, err)
+	}
+	if n := f.count("graphql state"); n != states+1 {
+		t.Errorf("state queries = %d, want %d: a refused move reads where the branch is again", n, states+1)
 	}
 }
 
@@ -261,7 +265,7 @@ func TestCombinedStatus(t *testing.T) {
 		dataRoot + "/photos/a.json":         "{\n  \"file\": \"a.jpg\"\n}\n",
 		dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"file\": \"a.jpg\"\n  }\n]\n",
 	}))
-	c.Forget(pullGH)
+	_ = c.Refresh(t.Context(), pullGH)
 	got, err = c.CombinedStatus(t.Context(), pullGH)
 	if err != nil || got.State != CombinedSynced || got.HeadSHA != prBranch+"@1" {
 		t.Errorf("CombinedStatus() = %+v, %v; want synced at the head", got, err)

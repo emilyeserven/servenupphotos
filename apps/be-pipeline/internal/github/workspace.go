@@ -34,17 +34,11 @@ type workspace struct {
 // workspace reads gh's workspace, from cached reads where they're recent
 // enough.
 func (c *Client) workspace(ctx context.Context, gh settings.GitHub) (*workspace, *PublishError) {
-	return c.openWorkspace(ctx, gh, false)
-}
-
-// openWorkspace reads gh's workspace; fresh asks GitHub where the repository
-// stands even when a recent answer is cached.
-func (c *Client) openWorkspace(ctx context.Context, gh settings.GitHub, fresh bool) (*workspace, *PublishError) {
 	root, perr := dataFolder(gh.Folder)
 	if perr != nil {
 		return nil, perr
 	}
-	s, perr := c.state(ctx, gh, fresh)
+	s, perr := c.state(ctx, gh, false)
 	if perr != nil {
 		return nil, perr
 	}

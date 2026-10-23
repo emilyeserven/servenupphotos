@@ -2,19 +2,13 @@ package github
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
-
-// stateTTL is how long a read of where the repository stands (its base
-// branch's head and the open photo data pull request) is used again before
-// GitHub is asked again. Nothing but Commit changes them from the app, and
-// Commit updates the cached read itself, so this only bounds how long a merge
-// or push made on GitHub takes to show.
-const stateTTL = 30 * time.Second
 
 // repoState is where the repository stands: its base branch's head commit and
 // the open photo data pull request, if any.
@@ -24,8 +18,9 @@ type repoState struct {
 	// pr is nil when no photo data pull request is open.
 	pr *inFlightPull
 	at time.Time
-	// key is what it's cached by (see stateKey).
-	key string
+	// key is what it's cached by (see stateKey), and local what the local
+	// copy keeps it by (see localKey).
+	key, local string
 }
 
 // stateQuery reads the repository, its base branch's head and its open pull
@@ -68,17 +63,53 @@ type gitObject struct {
 	OID string `json:"oid"`
 }
 
-// state returns where gh's repository stands, from a read at most stateTTL
-// old unless fresh is true.
+// state returns where gh's repository stands. GitHub is asked once a run, on
+// the first read, or again when fresh is true (Photos in Flight's Refresh);
+// after that the answer is kept, and only Commit changes it. When GitHub
+// can't be asked on the first read, as when the rate limit is spent, the
+// local copy's answer is used instead.
 func (c *Client) state(ctx context.Context, gh settings.GitHub, fresh bool) (repoState, *PublishError) {
 	if perr := setUp(gh); perr != nil {
 		return repoState{}, perr
 	}
-	owner, name, _ := splitRepo(gh.Repo)
 	key := stateKey(gh)
-	if s, ok := c.reads().state(key); ok && !fresh && c.now().Sub(s.at) < stateTTL {
+	// One read at a time, so pages loading together share the first one.
+	c.stateMu.Lock()
+	defer c.stateMu.Unlock()
+	if s, ok := c.reads().state(key); ok && !fresh {
 		return s, nil
 	}
+	s, perr := c.fetchState(ctx, gh, key)
+	if perr != nil {
+		return c.savedState(gh, key, fresh, perr)
+	}
+	c.keepState(s)
+	return s, nil
+}
+
+// savedState is the local copy's state for gh when GitHub couldn't be asked
+// (perr) on a first read, kept for the rest of the run; a fresh read, or one
+// the local copy has nothing for, fails with perr.
+func (c *Client) savedState(gh settings.GitHub, key string, fresh bool, perr *PublishError) (repoState, *PublishError) {
+	s, ok := c.localCopy().state(gh, key)
+	if fresh || !ok {
+		return repoState{}, perr
+	}
+	slog.Warn("using the local copy of the photo data", "reason", perr.Message)
+	s.at = c.now()
+	c.reads().setState(key, s)
+	return s, nil
+}
+
+// keepState keeps s for the rest of the run and in the local copy.
+func (c *Client) keepState(s repoState) {
+	c.reads().setState(s.key, s)
+	c.localCopy().saveState(s)
+}
+
+// fetchState asks GitHub where gh's repository stands.
+func (c *Client) fetchState(ctx context.Context, gh settings.GitHub, key string) (repoState, *PublishError) {
+	owner, name, _ := splitRepo(gh.Repo)
 	t := target{owner: owner, name: name, token: gh.Token, base: strings.TrimSpace(gh.Branch)}
 	var answer stateAnswer
 	vars := map[string]any{"owner": owner, "name": name, "base": "refs/heads/" + t.base, "hasBase": t.base != ""}
@@ -89,8 +120,7 @@ func (c *Client) state(ctx context.Context, gh settings.GitHub, fresh bool) (rep
 	if perr != nil {
 		return repoState{}, perr
 	}
-	s.at, s.key = c.now(), key
-	c.reads().setState(key, s)
+	s.at, s.key, s.local = c.now(), key, localKey(gh)
 	return s, nil
 }
 

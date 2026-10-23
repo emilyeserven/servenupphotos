@@ -126,34 +126,40 @@ func (s *Stage) load() error {
 	return nil
 }
 
-// save writes to a temp file and renames it over the old one, so a crash
-// mid-write never leaves a truncated file.
+// save writes the pending changes to the file.
 func (s *Stage) save() error {
 	if s.path == "" {
 		return nil
-	}
-	dir := filepath.Dir(s.path)
-	if err := os.MkdirAll(dir, 0o700); err != nil {
-		return fmt.Errorf("create pending changes dir: %w", err)
 	}
 	b, err := json.MarshalIndent(stageFile{Repos: s.repos}, "", "  ")
 	if err != nil {
 		return fmt.Errorf("encode pending changes: %w", err)
 	}
-	tmp, err := os.CreateTemp(dir, ".pending-*.json")
+	return writeFileAtomic(s.path, b, "pending changes")
+}
+
+// writeFileAtomic writes b to a temp file next to path and renames it over
+// path, so a crash mid-write never leaves a truncated file. what names the
+// file in errors.
+func writeFileAtomic(path string, b []byte, what string) error {
+	dir := filepath.Dir(path)
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return fmt.Errorf("create %s dir: %w", what, err)
+	}
+	tmp, err := os.CreateTemp(dir, ".tmp-*.json")
 	if err != nil {
-		return fmt.Errorf("create temp pending changes: %w", err)
+		return fmt.Errorf("create temp %s: %w", what, err)
 	}
 	defer os.Remove(tmp.Name()) //nolint:errcheck // gone after the rename
 	if _, err := tmp.Write(b); err != nil {
 		tmp.Close() //nolint:errcheck,gosec // the write failed already
-		return fmt.Errorf("write pending changes: %w", err)
+		return fmt.Errorf("write %s: %w", what, err)
 	}
 	if err := tmp.Close(); err != nil {
-		return fmt.Errorf("close pending changes: %w", err)
+		return fmt.Errorf("close %s: %w", what, err)
 	}
-	if err := os.Rename(tmp.Name(), s.path); err != nil {
-		return fmt.Errorf("save pending changes: %w", err)
+	if err := os.Rename(tmp.Name(), path); err != nil {
+		return fmt.Errorf("save %s: %w", what, err)
 	}
 	return nil
 }

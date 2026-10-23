@@ -16,10 +16,14 @@ import (
 // next to the settings.
 func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
 	stage := github.NewStage("")
+	local := github.NewLocalCopy("")
 	if store != nil {
 		stage = github.NewStage(filepath.Join(store.Dir(), "pending-changes.json"))
+		local = github.NewLocalCopy(filepath.Join(store.Dir(), "github-cache.json"))
 	}
-	return newRouter(extractor, store, github.New(stage))
+	gh := github.New(stage)
+	gh.Local = local
+	return newRouter(extractor, store, gh)
 }
 
 // routeDeps is what the route handlers are built from.

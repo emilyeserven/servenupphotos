@@ -31,7 +31,7 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
 
   // Reads the photo JSON in the open "Add photo data" pull request and the changes waiting for
   // Commit; the backend gives GitHub 30s. `?refresh=1` makes it ask GitHub instead of using what it
-  // read recently.
+  // read when it started.
   app.get<{ Querystring: { refresh?: string } }>("/photos/in-flight", async (request, reply) =>
     relayToBackend(reply, app.log, withRefresh("/photos/in-flight", request.query), {
       timeoutMs: 35_000,

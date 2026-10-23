@@ -249,12 +249,13 @@ func containsPath(paths []string, p string) bool {
 	return false
 }
 
-// Forget drops what's cached of where gh's repository stands, so the next
-// read asks GitHub, as after a merge on GitHub. Snapshots are kept, since a
-// commit never changes.
-func (c *Client) Forget(gh settings.GitHub) {
-	r := c.reads()
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	delete(r.states, stateKey(gh))
+// Refresh asks GitHub again where gh's repository stands, as Photos in
+// Flight's Refresh does after a merge or push made on GitHub. It's the only
+// read of GitHub after the first one besides Commit. Snapshots are kept,
+// since a commit never changes, and one is read only for a new head.
+func (c *Client) Refresh(ctx context.Context, gh settings.GitHub) error {
+	if _, perr := c.state(ctx, gh, true); perr != nil {
+		return perr
+	}
+	return nil
 }

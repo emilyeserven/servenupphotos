@@ -44,9 +44,10 @@ uploaded images stay in R2 for Explore Bucket.
 [Git database API](https://docs.github.com/en/rest/git/trees#create-a-tree): one tree with every changed file (a
 deletion is an entry with `sha: null`), one commit on top of the pull request's head, and the branch moved to it. With
 no pull request open it creates a `photo-data/<date>-<time>` branch at that commit from the Settings branch and opens
-the **Add photo data** pull request. Before committing it asks GitHub where the branch is now, so a push made on GitHub
-in the meantime isn't overwritten; when the branch moves while it commits, GitHub refuses the move and nothing is lost:
-the changes stay waiting, and Commit can be pressed again. Once committed, the changes it had are dropped (ones saved
+the **Add photo data** pull request. It commits on top of the head the backend read when it started (or at the last
+Refresh or Commit), without asking GitHub again; if the branch has moved on GitHub since, GitHub refuses the move and
+nothing is lost: the changes stay waiting, the backend forgets where it thought the branch was, and pressing Commit again
+reads it and commits. Once committed, the changes it had are dropped (ones saved
 while it ran stay for the next one).
 
 > **ELI5:** instead of mailing one letter per change, the app keeps every letter in a drawer and, when you press
@@ -59,25 +60,37 @@ GitHub allows 5,000 REST requests an hour and a separate 5,000 points an hour fo
 [GraphQL limits](https://docs.github.com/en/graphql/overview/rate-limits-and-node-limits-for-the-graphql-api)).
 The backend spends them like this:
 
-| When                                        | Calls                                                                                                                                                                                 |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Any read, at most every 30 seconds          | 1 GraphQL query: the repository, the Settings branch's head and the open pull requests. Pages loading together share it                                                               |
-| A commit not read before                    | 1 GraphQL query: every file in the five data folders with its content. Commits never change, so each is read once; the Settings branch and the pull request's head are kept in memory |
-| A file too big for GraphQL to return inline | 1 REST read of that file (`GET /git/blobs/<sha>`), such as a large `ALLPHOTOS.json`                                                                                                   |
-| Saves, edits, removals, Discard             | None, beyond the reads above when they're stale                                                                                                                                       |
-| **Commit**                                  | 1 GraphQL query for the latest heads, then 3 REST writes (tree, commit, branch move), plus 2 (branch, pull request) when it opens the pull request                                    |
-| Settings' **Test** button                   | 1 REST read of the repository, as before                                                                                                                                              |
+| When                                        | Calls                                                                                                                                                  |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| The first read after the pipeline starts    | 1 GraphQL query: the repository, the Settings branch's head and the open pull requests. Every later read reuses it; pages loading together share it    |
+| A commit not read before                    | 1 GraphQL query: every file in the five data folders with its content. Commits never change, so each is read once, and kept on disk for the next start |
+| A file too big for GraphQL to return inline | 1 REST read of that file (`GET /git/blobs/<sha>`), such as a large `ALLPHOTOS.json`                                                                    |
+| Every other read, save, edit, removal       | None: they're answered from memory                                                                                                                     |
+| **Commit**                                  | 3 REST writes (tree, commit, branch move), plus 2 (branch, pull request) when it opens the pull request                                                |
+| **Refresh** on Photos in Flight             | 1 GraphQL query for where the repository stands now, plus a snapshot of any commit not read before                                                     |
+| Settings' **Test** button                   | 1 REST read of the repository, as before                                                                                                               |
 
-**Refresh** on Photos in Flight sends `?refresh=1`, which drops the 30-second state so a merge or a push made on
-GitHub shows right away.
+So after a restart the pipeline usually spends one GraphQL query in all until you press Commit or Refresh. A merge or a
+push made on GitHub shows after **Refresh** (`?refresh=1`) or a restart.
+
+## The local copy
+
+What the backend reads from GitHub is also kept in `github-cache.json` next to the settings file: each repository's
+Settings branch head and open pull request, and the files at the commits it last used. It holds no token. A restart
+reads its snapshots from there instead of GitHub, and when the start-up read fails (the rate limit is spent, or GitHub
+can't be reached) the backend answers from this copy and logs a warning, so the pipeline still opens with your data.
+Refresh and Commit always ask GitHub, so they say so when it can't be reached. Deleting the file only costs the next
+start a full read.
 
 When GitHub says the limit is spent (HTTP 403 or 429 with `X-RateLimit-Remaining: 0` or `Retry-After`, or GraphQL's
 `RATE_LIMITED`), every endpoint answers 429 with "GitHub's rate limit was hit, so nothing was read or saved. Try again
 in 20 minutes (03:05 UTC); your changes are kept until then." The time comes from `X-RateLimit-Reset` or
 `Retry-After`.
 
-> **Frontend analogy:** the 30-second state is a `staleTime` for "where is the repository now", and the per-commit
-> snapshot is an immutable cache keyed by content hash, like a hashed asset filename that never needs revalidating.
+> **Frontend analogy:** it's TanStack Query with `staleTime: Infinity` and a persister: "where is the repository now" is
+> fetched once and kept until you call `refetch()` (Refresh), and the persisted cache (`github-cache.json`) fills the
+> page on the next load, even offline. The per-commit snapshot is like a hashed asset filename that never needs
+> revalidating.
 
 The token still needs **Contents: Read and write** and **Pull requests: Read and write**; fine-grained tokens can use
 GraphQL with those ([changelog](https://github.blog/changelog/2023-04-27-graphql-improvements-for-fine-grained-pats-and-github-apps)).

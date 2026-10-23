@@ -121,8 +121,8 @@ export interface CombinedData {
 
 /**
  * Reads the combined lists. Pages keep them in the combined data store rather than reading them
- * with each page; see `useCombinedData`. The backend reuses where the repository stood a few
- * seconds ago, to spare GitHub's rate limit; `refresh` makes it ask GitHub again, so every read
+ * with each page; see `useCombinedData`. The backend reads GitHub once when it starts and answers
+ * from that, to spare GitHub's rate limit; `refresh` makes it ask GitHub again, so every read
  * after it sees a merge or a push made on GitHub.
  */
 export function readCombinedData(refresh = false): Promise<CombinedData> {

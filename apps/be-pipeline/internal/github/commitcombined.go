@@ -72,14 +72,16 @@ func combinedKinds() []combinedKind {
 // request's branch. With none open, it commits to a new photo-data/ branch
 // from the base branch and opens one. Nothing is committed when a file can't
 // be read. It makes 3 GitHub calls (a tree, a commit and the branch moving to
-// it), plus 2 to open the pull request when it opens one, after making sure
-// it has the latest heads.
+// it), plus 2 to open the pull request when it opens one.
 func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits []FieldEdit) (CombinedCommit, error) {
 	byPath, perr := editsByPath(edits)
 	if perr != nil {
 		return CombinedCommit{}, perr
 	}
-	w, perr := c.openWorkspace(ctx, gh, true)
+	// Where the branch stands comes from the read when the app started, not a
+	// new one: GitHub refuses to move a branch that moved since, and then
+	// the next Commit reads it again.
+	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return CombinedCommit{}, perr
 	}
@@ -311,6 +313,7 @@ func (c *Client) commit(ctx context.Context, w *workspace, changes map[string][]
 	if w.pr != nil {
 		result.PullRequestURL = w.pr.HTMLURL
 		if perr := c.moveBranch(ctx, t, w.pr.Head.Ref, commit.SHA); perr != nil {
+			c.reads().forget(w.key)
 			return perr
 		}
 		pr := *w.pr
@@ -364,6 +367,6 @@ func (c *Client) committed(w *workspace) {
 	})
 	s := w.repoState
 	s.at = c.now()
-	c.reads().setState(s.key, s)
-	c.reads().setSnapshot(snapshotKey(w.t, w.root, w.head.commit), w.head)
+	c.keepState(s)
+	c.keepSnapshot(snapshotKey(w.t, w.root, w.head.commit), w.head)
 }

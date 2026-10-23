@@ -34,6 +34,11 @@ type Client struct {
 
 	mu    sync.Mutex
 	cache *readCache
+	// stateMu lets one read of where the repository stands run at a time.
+	stateMu sync.Mutex
+	// Local is the local copy of what was last read from GitHub; nil keeps
+	// none.
+	Local *LocalCopy
 }
 
 // New returns a Client for GitHub's public API that keeps pending changes in

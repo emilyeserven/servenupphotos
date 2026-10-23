@@ -83,10 +83,15 @@ func (a snapshotAnswer) folders() map[string]treeAnswer {
 	}
 }
 
-// snapshot returns the data folder root at commit, read once and then kept.
+// snapshot returns the data folder root at commit: from this run's reads, or
+// the local copy, or else read from GitHub once and kept in both.
 func (c *Client) snapshot(ctx context.Context, t target, root, commit string) (*snapshot, *PublishError) {
 	key := snapshotKey(t, root, commit)
 	if s, ok := c.reads().snapshot(key); ok {
+		return s, nil
+	}
+	if s, ok := c.localCopy().snapshot(key); ok {
+		c.reads().setSnapshot(key, s)
 		return s, nil
 	}
 	vars := map[string]any{"owner": t.owner, "name": t.name, "commit": commit}
@@ -104,8 +109,15 @@ func (c *Client) snapshot(ctx context.Context, t target, root, commit string) (*
 	for folder, tree := range answer.folders() {
 		c.addFolder(ctx, t, s, root+"/"+folder, tree)
 	}
-	c.reads().setSnapshot(key, s)
+	c.keepSnapshot(key, s)
 	return s, nil
+}
+
+// keepSnapshot keeps s for the rest of the run and in the local copy.
+func (c *Client) keepSnapshot(key string, s *snapshot) {
+	r := c.reads()
+	r.setSnapshot(key, s)
+	c.localCopy().saveSnapshots(r.allSnapshots())
 }
 
 // snapshotKey is what the snapshot of root at commit in t's repository is
@@ -176,8 +188,8 @@ func (s *snapshot) withChanges(commit, tree string, changes map[string][]byte) *
 // and a few pull request heads.
 const maxSnapshots = 6
 
-// readCache keeps the reads that don't need repeating: repoStates for a
-// little while and snapshots for good.
+// readCache keeps this run's reads: repoStates until Commit or a Refresh
+// changes them, and snapshots for good.
 type readCache struct {
 	mu        sync.Mutex
 	states    map[string]repoState
@@ -206,6 +218,24 @@ func (r *readCache) setState(key string, s repoState) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.states[key] = s
+}
+
+// forget drops the state kept by key, so the next read asks GitHub.
+func (r *readCache) forget(key string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	delete(r.states, key)
+}
+
+// allSnapshots is a copy of the snapshots kept.
+func (r *readCache) allSnapshots() map[string]*snapshot {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	out := make(map[string]*snapshot, len(r.snapshots))
+	for k, s := range r.snapshots {
+		out[k] = s
+	}
+	return out
 }
 
 func (r *readCache) snapshot(key string) (*snapshot, bool) {

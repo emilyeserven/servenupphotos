@@ -7,7 +7,7 @@
 (`apps/portfolio/src/data/photos` when the Settings data folder is blank), as the next Commit will have it. A file with
 a change waiting for Commit is marked **Waiting for Commit** and has no GitHub link yet. With no pull request open, the
 summary says how many files are waiting, with **Commit**, which opens one. **Refresh** asks GitHub again
-(`?refresh=1`), rather than the backend's read from the last 30 seconds, so a merge made on GitHub shows at once. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
+(`?refresh=1`), rather than using the backend's read from when it started, so a merge made on GitHub shows at once. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
 mark when its data is one of the entries in `ALLPHOTOS.json` at the pull request's head, as the
 [combined data store](combined-data-store.md) has it (compared as JSON, so formatting and key order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
 when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON

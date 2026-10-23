@@ -149,7 +149,7 @@ func TestInFlightNoPullRequest(t *testing.T) {
 	}
 }
 
-func TestInFlightSeesAMergeAfterForget(t *testing.T) {
+func TestInFlightSeesAMergeAfterRefresh(t *testing.T) {
 	f, c := newFakeGitHub(t)
 	f.openPull(prBranch, map[string]string{dataRoot + "/photos/a.json": `{}`})
 	if got, _ := c.InFlight(t.Context(), pullGH); got.PullRequest == nil {
@@ -159,9 +159,11 @@ func TestInFlightSeesAMergeAfterForget(t *testing.T) {
 	if got, _ := c.InFlight(t.Context(), pullGH); got.PullRequest == nil {
 		t.Error("InFlight() asked GitHub again right away")
 	}
-	c.Forget(pullGH)
+	if err := c.Refresh(t.Context(), pullGH); err != nil {
+		t.Fatal(err)
+	}
 	if got, _ := c.InFlight(t.Context(), pullGH); got.PullRequest != nil {
-		t.Errorf("InFlight() after Forget() = %+v, want the merge seen", got.PullRequest)
+		t.Errorf("InFlight() after Refresh() = %+v, want the merge seen", got.PullRequest)
 	}
 }
 

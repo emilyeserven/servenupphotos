@@ -124,10 +124,13 @@ func handleCombined(store *settings.Store, gh *github.Client) http.HandlerFunc {
 			return
 		}
 
-		forgetOnRefresh(r, gh, cfg)
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		result, err := gh.Combined(ctx, cfg)
+		var result github.CombinedResult
+		err = refreshIfAsked(ctx, r, gh, cfg)
+		if err == nil {
+			result, err = gh.Combined(ctx, cfg)
+		}
 		var perr *github.PublishError
 		if errors.As(err, &perr) {
 			writeError(w, perr.Status, perr.Message)
