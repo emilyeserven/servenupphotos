@@ -1,7 +1,8 @@
-import { CheckIcon, ImageIcon, PlusIcon, XIcon } from "lucide-react";
+import { CheckIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { PhotoFiles } from "@/components/photo-files";
+import { Thumbnail, ZonePhotos } from "@/components/spotlight-zone-photos";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,9 +23,15 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   type SpotlightZone,
+  type UnsavedOrder,
   type UnsavedZones,
+  SPOTLIGHT_ORDER,
   SPOTLIGHT_ZONES,
+  moveChanges,
+  newestFirst,
+  orderChange,
   spotlightZones,
+  unsavedOrderFromEdits,
   unsavedZonesFromEdits,
   zoneChange,
   zonePhotos,
@@ -43,28 +50,43 @@ export function SiteSpotlight() {
 /** Puts a photo in a zone or takes it out. */
 type Toggle = (photo: SocialPhoto, zone: string, on: boolean) => void;
 
+/** The zones and order as changed here, and how to change them. */
+interface Spotlight {
+  unsaved: UnsavedZones;
+  order: UnsavedOrder;
+  toggle: Toggle;
+  /** Saves list, a zone's photos in their order, with the photo at from moved to to. */
+  move: (list: SocialPhoto[], from: number, to: number) => void;
+}
+
 /**
- * The zones changed here and not committed yet, kept with the app's other local edits so the sync
- * button counts them and **Commit** saves them.
+ * The zones and order changed here and not committed yet, kept with the app's other local edits
+ * so the sync button counts them and **Commit** saves them. Taking a photo out of a zone also takes
+ * its place in the order away.
  */
-function useUnsavedZones() {
+function useSpotlight(): Spotlight {
   const edits = useLocalEditsStore((state) => state.edits);
   const setField = useLocalEditsStore((state) => state.setField);
   const unsaved = useMemo(() => unsavedZonesFromEdits(edits), [edits]);
-  const toggle: Toggle = (photo, zone, on) =>
+  const order = useMemo(() => unsavedOrderFromEdits(edits), [edits]);
+  const toggle: Toggle = (photo, zone, on) => {
     setField(SPOTLIGHT_ZONES, [zoneChange(unsaved, photo, zone, on)]);
-  return { unsaved, toggle };
+    if (!on) setField(SPOTLIGHT_ORDER, [orderChange(photo, null)]);
+  };
+  const move: Spotlight["move"] = (list, from, to) =>
+    setField(SPOTLIGHT_ORDER, moveChanges(list, from, to));
+  return { unsaved, order, toggle, move };
 }
 
 function Zones({ files }: { files: SocialCalendar }) {
-  const { unsaved, toggle } = useUnsavedZones();
+  const spotlight = useSpotlight();
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
         Photos to pick from are the {files.photos.length} photo files on <code>{files.branch}</code>
         , in flight ones included. Changes are kept in the app until you <strong>Commit</strong>{" "}
         from the sync button at the top right, which saves them to each photo&apos;s{" "}
-        <code>spotlightZones</code>.
+        <code>spotlightZones</code> and, for the order, <code>websiteSpotlight</code>.
       </p>
       {files.unreadable.length > 0 && (
         <p className="text-destructive text-sm">
@@ -73,13 +95,7 @@ function Zones({ files }: { files: SocialCalendar }) {
         </p>
       )}
       {spotlightZones.map((zone) => (
-        <ZoneCard
-          key={zone.id}
-          zone={zone}
-          photos={files.photos}
-          unsaved={unsaved}
-          onToggle={toggle}
-        />
+        <ZoneCard key={zone.id} zone={zone} photos={files.photos} spotlight={spotlight} />
       ))}
     </div>
   );
@@ -88,14 +104,17 @@ function Zones({ files }: { files: SocialCalendar }) {
 interface ZoneProps {
   zone: SpotlightZone;
   photos: SocialPhoto[];
-  unsaved: UnsavedZones;
-  onToggle: Toggle;
+  spotlight: Spotlight;
 }
 
-/** One zone: its photos, newest first, each with a button to take it out, and a picker to add more. */
-function ZoneCard({ zone, photos, unsaved, onToggle }: ZoneProps) {
+/**
+ * One zone: its photos in their order, to drag into another order or take out, and a picker to
+ * add more.
+ */
+function ZoneCard({ zone, photos, spotlight }: ZoneProps) {
   const [picking, setPicking] = useState(false);
-  const chosen = zonePhotos(photos, unsaved, zone.id);
+  const { unsaved, order, toggle, move } = spotlight;
+  const chosen = zonePhotos(photos, unsaved, order, zone.id);
   return (
     <Card>
       <CardHeader>
@@ -112,16 +131,12 @@ function ZoneCard({ zone, photos, unsaved, onToggle }: ZoneProps) {
         {chosen.length === 0 ? (
           <p className="text-muted-foreground text-sm">{zone.fallback}</p>
         ) : (
-          <ul className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-8">
-            {chosen.map((photo) => (
-              <ZonePhoto
-                key={photo.path}
-                photo={photo}
-                unsaved={zonesUnsaved(unsaved, photo)}
-                onRemove={() => onToggle(photo, zone.id, false)}
-              />
-            ))}
-          </ul>
+          <ZonePhotos
+            photos={chosen}
+            isUnsaved={(photo) => zonesUnsaved(unsaved, photo) || photo.path in order}
+            onMove={(from, to) => move(chosen, from, to)}
+            onRemove={(photo) => toggle(photo, zone.id, false)}
+          />
         )}
       </CardContent>
       <ZonePicker
@@ -129,57 +144,11 @@ function ZoneCard({ zone, photos, unsaved, onToggle }: ZoneProps) {
         zone={zone}
         photos={photos}
         unsaved={unsaved}
-        onToggle={onToggle}
+        onToggle={toggle}
         onClose={() => setPicking(false)}
       />
     </Card>
   );
-}
-
-interface ZonePhotoProps {
-  photo: SocialPhoto;
-  /** Whether the photo's zones aren't committed yet. */
-  unsaved: boolean;
-  onRemove: () => void;
-}
-
-/** A photo in a zone, with a button that takes it out. */
-function ZonePhoto({ photo, unsaved, onRemove }: ZonePhotoProps) {
-  const name = photoName(photo);
-  return (
-    <li className="relative aspect-square overflow-hidden rounded-md border" title={name}>
-      <Thumbnail photo={photo} />
-      <Button
-        variant="secondary"
-        size="icon"
-        className="absolute top-1 right-1 size-6"
-        aria-label={`Take ${name} out`}
-        onClick={onRemove}
-      >
-        <XIcon className="size-3.5" />
-      </Button>
-      {unsaved && <UnsavedDot />}
-    </li>
-  );
-}
-
-function UnsavedDot() {
-  return (
-    <span className="bg-primary absolute bottom-1 left-1 size-2 rounded-full">
-      <span className="sr-only">Not committed</span>
-    </span>
-  );
-}
-
-function Thumbnail({ photo }: { photo: SocialPhoto }) {
-  if (!photo.image) {
-    return (
-      <span className="bg-muted text-muted-foreground flex size-full items-center justify-center">
-        <ImageIcon className="size-5" />
-      </span>
-    );
-  }
-  return <img src={photo.image} alt="" loading="lazy" className="size-full object-cover" />;
 }
 
 /** The photos matching search, by title or file name, newest first. */
@@ -187,11 +156,15 @@ function matching(photos: SocialPhoto[], search: string): SocialPhoto[] {
   const query = search.trim().toLowerCase();
   return photos
     .filter((photo) => `${photoName(photo)} ${photo.file}`.toLowerCase().includes(query))
-    .toSorted((a, b) => (b.createDate ?? "").localeCompare(a.createDate ?? ""));
+    .toSorted(newestFirst);
 }
 
-interface ZonePickerProps extends ZoneProps {
+interface ZonePickerProps {
   open: boolean;
+  zone: SpotlightZone;
+  photos: SocialPhoto[];
+  unsaved: UnsavedZones;
+  onToggle: Toggle;
   onClose: () => void;
 }
 

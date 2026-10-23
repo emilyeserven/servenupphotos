@@ -45,16 +45,18 @@ import {
   useMapPhotos,
 } from "@/lib/map-photos";
 import { type DayRange, daysInView, isDay } from "@/lib/map-days";
+import { parseMapView, type MapViewSearch, useSaveMapView } from "@/lib/map-view";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
+import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
 /**
- * The map's search: the shared filters, and the day only the map narrows to, or the first day of a
- * range with `to` as its last.
+ * The map's search: the shared filters, the open photo, where the map is looking, and the day only
+ * the map narrows to, or the first day of a range with `to` as its last.
  */
-type MapSearch = PhotoFilters & { day?: string; to?: string };
+type MapSearch = PhotoFilters & ShownPhotoSearch & MapViewSearch & { day?: string; to?: string };
 
 /** The day, and the last day of the range when there's a day and it's after it. */
 function daysOf(search: Record<string, unknown>): Pick<MapSearch, "day" | "to"> {
@@ -68,6 +70,8 @@ export const Route = createFileRoute("/map")({
   validateSearch: (search: Record<string, unknown>): MapSearch => ({
     ...parseFilters(search),
     ...daysOf(search),
+    ...parseShownPhoto(search),
+    ...parseMapView(search),
   }),
   component: MapView,
 });
@@ -103,8 +107,12 @@ const FIT_PADDING = 80;
 // world without any.
 const ALL_PHOTOS_FIT = { padding: FIT_PADDING, maxZoom: 14 };
 const WORLD_VIEW = { center: [20, 25] as [number, number], zoom: 1.3 };
-/** Where the map opens: on the photos' bounds, or the whole world without any. */
-function initialViewOf(bounds: LngLatBounds | null) {
+/**
+ * Where the map opens: where the URL says, as a link keeps it, or else on the photos' bounds, or
+ * the whole world without any.
+ */
+function initialViewOf(bounds: LngLatBounds | null, view: MapViewSearch) {
+  if (view.zoom !== undefined) return { longitude: view.lng, latitude: view.lat, zoom: view.zoom };
   return bounds
     ? { bounds, fitBoundsOptions: ALL_PHOTOS_FIT }
     : { longitude: WORLD_VIEW.center[0], latitude: WORLD_VIEW.center[1], zoom: WORLD_VIEW.zoom };
@@ -214,10 +222,10 @@ function useFitOnFilter(
  * on the day in the URL, which it draws.
  */
 function useMapFilters() {
-  const { day, to, ...filters } = Route.useSearch();
-  const mapPhotos = useMapPhotos(filters);
-  const dayPhotos = useDayPhotos(mapPhotos, day, to);
-  return { range: { day, to }, mapPhotos, dayPhotos, setDays: useSetDays() };
+  const search = Route.useSearch();
+  const mapPhotos = useMapPhotos(parseFilters(search));
+  const dayPhotos = useDayPhotos(mapPhotos, search.day, search.to);
+  return { search, mapPhotos, dayPhotos, setDays: useSetDays() };
 }
 
 /** Sets the days the map is narrowed to in the URL, keeping the other filters; no day for all. */
@@ -240,11 +248,12 @@ function MapView() {
   // A photo without an image, shown in a popup as the lightbox can't show it.
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
-  const [shown, setShown] = useState<ImagePhoto | null>(null);
-  const { range, mapPhotos, dayPhotos, setDays } = useMapFilters();
+  const { shown, show, close } = useShownPhoto();
+  const { search, mapPhotos, dayPhotos, setDays } = useMapFilters();
   // What the map shows, for the day filter to list only the days of the photos in view.
   const [view, setView] = useState<LngLatBounds | null>(null);
-  const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds));
+  const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
+  const saveView = useSaveMapView();
   useFitOnFilter(map, mapPhotos.bounds, () => {
     setSelected(null);
     setCluster(null);
@@ -258,9 +267,14 @@ function MapView() {
     setView(map.current.getBounds());
   }
 
+  function onMoveEnd() {
+    updateMarkers();
+    if (map.current) saveView(map.current);
+  }
+
   function openPhoto(photo: PlacedPhoto, group: PlacedPhoto[] = []) {
     setShownGroup(group);
-    if (hasImage(photo)) setShown(photo);
+    if (hasImage(photo)) show(photo);
     else setSelected(photo);
   }
 
@@ -298,7 +312,7 @@ function MapView() {
           ref={map}
           initialViewState={initialViewState}
           mapStyle={isDark ? MAP_STYLES.dark : MAP_STYLES.light}
-          onMoveEnd={updateMarkers}
+          onMoveEnd={onMoveEnd}
           onSourceData={(event) => {
             if (event.sourceId === SOURCE_ID && event.isSourceLoaded) updateMarkers();
           }}
@@ -316,7 +330,7 @@ function MapView() {
           >
             <MapDayFilter
               days={daysInView(mapPhotos.placed, view)}
-              range={range}
+              range={search}
               onChange={setDays}
             />
           </MapViewControls>
@@ -358,12 +372,7 @@ function MapView() {
           {selected && <PhotoPopup photo={selected} onClose={() => setSelected(null)} />}
         </Map>
       </div>
-      <PhotoLightbox
-        photo={shown}
-        photos={shownGroup}
-        onShow={setShown}
-        onClose={() => setShown(null)}
-      />
+      <PhotoLightbox photo={shown} photos={shownGroup} onShow={show} onClose={close} />
     </div>
   );
 }

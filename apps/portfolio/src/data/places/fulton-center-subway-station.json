@@ -1,0 +1,11 @@
+{
+  "id": "fulton-center-subway-station",
+  "name": "Fulton Center Subway Station",
+  "description": "",
+  "parent": "financial-district",
+  "city": "",
+  "country": "",
+  "latitude": 40.71018720727101,
+  "longitude": -74.007705392159,
+  "exactLocation": true
+}

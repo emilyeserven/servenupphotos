@@ -1,4 +1,5 @@
 {
+  "id": 2,
   "title": "Gyeongbokgung Station on a (shockingly quiet) Saturday afternoon.",
   "comment": "One of the first things I did when I was in Seoul was get a Climate Card (the Metrocard/Oyster Card/SUICA etc equivalent). The public transit coverage was so good that I ended up only needing to get a taxi once! As a sort-of New Yorker, one of the obvious things I could say was that the stations in Korea were extremely clean. But I think the more interesting thing ended up being the amount of emergency equipment that was available in cabinets through every station I was in. From heatstroke recovery to earthquake supplies, it really added to my overall peace of mind and struck me as very thoughtful (and probably something that can't really exist in a less collectivist society, unfortunately).",
   "file": "DSCF2998.jpg",
@@ -45,5 +46,7 @@
       "relation": "",
       "id": "gyeongbokgung-station"
     }
-  ]
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
 }

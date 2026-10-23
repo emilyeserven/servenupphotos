@@ -1,0 +1,11 @@
+{
+  "id": "queensboro-plaza-subway-station",
+  "name": "Queensboro Plaza Subway Station",
+  "description": "",
+  "parent": "",
+  "city": "New York City",
+  "country": "United States of America",
+  "latitude": 40.750599152996145,
+  "longitude": -73.94022487116375,
+  "exactLocation": true
+}

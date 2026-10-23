@@ -7,7 +7,8 @@
     "city": "New York City",
     "country": "United States of America",
     "latitude": 40.767784544411064,
-    "longitude": -73.95909962262174
+    "longitude": -73.95909962262174,
+    "exactLocation": true
   },
   {
     "id": "86th-street-subway-station",
@@ -17,7 +18,19 @@
     "city": "New York City",
     "country": "United States of America",
     "latitude": 40.77790332014838,
-    "longitude": -73.95177906095061
+    "longitude": -73.95177906095061,
+    "exactLocation": true
+  },
+  {
+    "id": "american-copper-building",
+    "name": "American Copper Building",
+    "description": "",
+    "parent": "murray-hill",
+    "city": "",
+    "country": "",
+    "latitude": 40.74440146500074,
+    "longitude": -73.97202002487988,
+    "exactLocation": true
   },
   {
     "id": "astoria",
@@ -28,6 +41,46 @@
     "country": "",
     "latitude": 40.76383083369049,
     "longitude": -73.92457375631997
+  },
+  {
+    "id": "bowery",
+    "name": "Bowery",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.72156185477644,
+    "longitude": -73.99188291269398
+  },
+  {
+    "id": "brooklyn-bridge-park-pier-1",
+    "name": "Brooklyn Bridge Park Pier 1",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.70302493739026,
+    "longitude": -73.9956113071533
+  },
+  {
+    "id": "brooklyn-bridge",
+    "name": "Brooklyn Bridge",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.70613461238186,
+    "longitude": -73.99678895476676
+  },
+  {
+    "id": "brooklyn-heights",
+    "name": "Brooklyn Heights",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.69687786668569,
+    "longitude": -73.99508072439512
   },
   {
     "id": "chelsea",
@@ -44,10 +97,21 @@
     "name": "Columbus Circle",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": "",
+    "city": "New York City",
+    "country": "United States of America",
     "latitude": 40.76805659301781,
     "longitude": -73.98188756888125
+  },
+  {
+    "id": "east-broadway-station",
+    "name": "East Broadway Station",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.714174155945194,
+    "longitude": -73.99009350299123,
+    "exactLocation": true
   },
   {
     "id": "fifth-avenue-presbyterian-church",
@@ -57,7 +121,40 @@
     "city": "New York City",
     "country": "United States of America",
     "latitude": 40.76198521345793,
-    "longitude": -73.97500177444256
+    "longitude": -73.97500177444256,
+    "exactLocation": true
+  },
+  {
+    "id": "financial-district",
+    "name": "Financial District",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.70826155816336,
+    "longitude": -74.01012288560841
+  },
+  {
+    "id": "freeman-alley",
+    "name": "Freeman Alley",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.721588420173134,
+    "longitude": -73.99262771234002,
+    "exactLocation": true
+  },
+  {
+    "id": "fulton-center-subway-station",
+    "name": "Fulton Center Subway Station",
+    "description": "",
+    "parent": "financial-district",
+    "city": "",
+    "country": "",
+    "latitude": 40.71018720727101,
+    "longitude": -74.007705392159,
+    "exactLocation": true
   },
   {
     "id": "geunjeongjeon",
@@ -74,6 +171,27 @@
     "parent": "gyeongbokgung-palace",
     "city": "",
     "country": ""
+  },
+  {
+    "id": "grand-central-station",
+    "name": "Grand Central Station",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.752998986617456,
+    "longitude": -73.97712789341976,
+    "exactLocation": true
+  },
+  {
+    "id": "greene-street",
+    "name": "Greene Street",
+    "description": "",
+    "parent": "soho",
+    "city": "",
+    "country": "",
+    "latitude": 40.72579670990271,
+    "longitude": -73.9986812321167
   },
   {
     "id": "gyeongbokgung-palace",
@@ -96,8 +214,8 @@
     "name": "Jacqueline Kennedy Onassis Reservoir",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": "",
+    "city": "New York City",
+    "country": "United States of America",
     "latitude": 40.785811799352814,
     "longitude": -73.96228768992302
   },
@@ -116,16 +234,26 @@
     "name": "Manhattan Bridge",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "New York City",
+    "country": "United States of America"
   },
   {
     "id": "manhattan-chinatown",
     "name": "Manhattan Chinatown",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
+    "id": "midtown-west",
+    "name": "Midtown West",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.76049992893923,
+    "longitude": -73.9895302156512
   },
   {
     "id": "midtown",
@@ -140,17 +268,31 @@
   {
     "id": "mirror-pond",
     "name": "Mirror Pond",
-    "description": ""
+    "description": "",
+    "parent": "national-museum-of-korea",
+    "city": "",
+    "country": ""
+  },
+  {
+    "id": "murray-hill",
+    "name": "Murray Hill",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.747971914837755,
+    "longitude": -73.97549638328769
   },
   {
     "id": "museum-of-arts-and-design",
     "name": "Museum of Arts and Design",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": "",
+    "city": "New York City",
+    "country": "United States of America",
     "latitude": 40.76739122272109,
-    "longitude": -73.9819579321148
+    "longitude": -73.9819579321148,
+    "exactLocation": true
   },
   {
     "id": "national-museum-of-korea",
@@ -189,12 +331,43 @@
     "longitude": -73.95462146594694
   },
   {
+    "id": "queensboro-plaza-subway-station",
+    "name": "Queensboro Plaza Subway Station",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.750599152996145,
+    "longitude": -73.94022487116375,
+    "exactLocation": true
+  },
+  {
+    "id": "soho",
+    "name": "SoHo",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
+    "id": "squibb-park-bridge",
+    "name": "Squibb Park Bridge",
+    "description": "",
+    "parent": "brooklyn-heights",
+    "city": "",
+    "country": "",
+    "latitude": 40.70108298660439,
+    "longitude": -73.99629758383907
+  },
+  {
     "id": "the-high-line",
     "name": "The High Line",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.74797621532001,
+    "longitude": -74.0047541744432
   },
   {
     "id": "upper-east-side",
@@ -207,6 +380,16 @@
     "longitude": -73.95773421216752
   },
   {
+    "id": "washington-square-park",
+    "name": "Washington Square Park",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.730818730352034,
+    "longitude": -73.99746074931517
+  },
+  {
     "id": "welling-court-mural-project",
     "name": "Welling Court Mural Project",
     "description": "",
@@ -215,5 +398,15 @@
     "country": "",
     "latitude": 40.7718124785072,
     "longitude": -73.9311989162955
+  },
+  {
+    "id": "williamsburg-bridge",
+    "name": "Williamsburg Bridge",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.713571238577536,
+    "longitude": -73.97179563411781
   }
 ]

@@ -19,6 +19,10 @@ bucket in Cloudflare first, and set the R2 **Public URL** in Settings to it so n
 `images.thumbnail` (`POST /api/data/missing-fields/preview`, then `POST /api/data/missing-fields`). The list of fields
 and their defaults is `newPhotoJSON` in `be-pipeline/internal/github/publish.go`, the same function that builds a new
 photo file, so a field added there (with its default, such as `[]` for a list) is backfilled with no other change.
+A missing `id` isn't a default: each file gets the next photo ID, counting up from the highest ID any photo file has, in
+the order the files were created: when each was first committed on the branch the next Commit goes to (one GraphQL
+query asks every file's history, 50 files at a time), or, for a file only in the pending changes, when it was saved.
+Files created in the same commit go by file name. See [Photo IDs](data-model.md#photo-ids).
 Missing fields go where a new file has them, nested `images` fields included, and the rest of each file is kept byte
 for byte; a field a file already has, even `null`, is never changed. With **Read missing camera details from the
 originals in R2** on, a missing EXIF field (`exif.SanitizeFields`) is read from the photo's original at `images.key`,

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import {
+  type AddedField,
   type MissingFieldsPreview,
   type MissingFieldsResult,
   addMissingFieldsMutation,
@@ -45,7 +46,8 @@ export function MissingFieldsCard({ canReadExif }: MissingFieldsCardProps) {
           Gives older photo files the fields new ones have, such as the title, place name, comment
           and camera settings. A missing field gets the value a new photo starts with, usually
           empty, except the Square Thumbnail&apos;s crop, which is read from the <code>?crop=</code>{" "}
-          on its URL when it has one. Fields a file already has, even empty ones, aren&apos;t
+          on its URL when it has one, and the photo&apos;s ID, the next number counting up in the
+          order the files were created. Fields a file already has, even empty ones, aren&apos;t
           changed.
         </CardDescription>
       </CardHeader>
@@ -182,16 +184,31 @@ function FieldCounts({ fields }: { fields: MissingFieldsPreview["fields"] }) {
     <ul className="flex flex-wrap gap-2 text-sm">
       {fields.map((f) => (
         <li key={f.field} className="bg-muted rounded-md px-2 py-1">
-          <code>{f.field}</code>{" "}
-          <span className="text-muted-foreground">
-            {count(f.files, "file")}
-            {f.fromExif > 0 && `, ${f.fromExif} from EXIF`}
-            {f.fromThumbnail > 0 && `, ${f.fromThumbnail} from the Square Thumbnail`}
-          </span>
+          <code>{f.field}</code> <span className="text-muted-foreground">{fieldCountText(f)}</span>
         </li>
       ))}
     </ul>
   );
+}
+
+/** How many files miss a field, and where their values come from, such as "3 files, 2 from EXIF". */
+function fieldCountText(f: MissingFieldsPreview["fields"][number]): string {
+  const sources = [
+    [f.fromExif, "from EXIF"],
+    [f.fromThumbnail, "from the Square Thumbnail"],
+    [f.numbered, "numbered in the order they were created"],
+  ] as const;
+  return [
+    count(f.files, "file"),
+    ...sources.flatMap(([n, from]) => (n > 0 ? [`${n} ${from}`] : [])),
+  ].join(", ");
+}
+
+/** What a field's value is, beside it, when it isn't the field's default. */
+function addedSource(a: AddedField): string | null {
+  if (a.fromExif) return "from EXIF";
+  if (a.fromThumbnail) return "from the Square Thumbnail";
+  return a.numbered ? "the next ID, by when the file was created" : null;
 }
 
 /** Each file missing fields, collapsed to its name and count, with the values it gets inside. */
@@ -225,15 +242,7 @@ function FilesMissingFields({ files }: { files: MissingFieldsPreview["files"] })
                     <dt className="font-medium">{a.field}</dt>
                     <dd className="text-xs">
                       <span className="font-mono break-all">{JSON.stringify(a.value)}</span>
-                      {a.fromExif && (
-                        <span className="text-muted-foreground whitespace-nowrap"> from EXIF</span>
-                      )}
-                      {a.fromThumbnail && (
-                        <span className="text-muted-foreground whitespace-nowrap">
-                          {" "}
-                          from the Square Thumbnail
-                        </span>
-                      )}
+                      <AddedSource field={a} />
                     </dd>
                   </div>
                 ))}
@@ -244,6 +253,13 @@ function FilesMissingFields({ files }: { files: MissingFieldsPreview["files"] })
       ))}
     </ul>
   );
+}
+
+/** Where an added value came from, after it, when it isn't the field's default. */
+function AddedSource({ field }: { field: AddedField }) {
+  const source = addedSource(field);
+  if (!source) return null;
+  return <span className="text-muted-foreground whitespace-nowrap"> {source}</span>;
 }
 
 /** The button that adds the fields, held back while a photo file can't be read. */

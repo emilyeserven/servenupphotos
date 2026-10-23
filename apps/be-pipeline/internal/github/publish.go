@@ -51,9 +51,13 @@ type PhotoPlace struct {
 	ID string `json:"id"`
 }
 
-// photoJSON is the content of a published file. The title and comment come
-// first, where they're easy to find and edit, hiding the embedded ones.
+// photoJSON is the content of a published file. The ID, title and comment
+// come first, where they're easy to find and edit, hiding the embedded ones.
 type photoJSON struct {
+	// ID is the photo's number, unique among the photo files (see idField).
+	// It is nil in the list of fields Backfill adds, which numbers them
+	// itself.
+	ID      *int    `json:"id"`
 	Title   *string `json:"title"`
 	Comment *string `json:"comment"`
 	File    string  `json:"file"`
@@ -153,7 +157,8 @@ type target struct {
 
 // Publish saves photo as <folder>/photos/<name>.json in the pending changes,
 // for the next Commit to commit to the photo data pull request (opening one
-// when none is open). It never overwrites a file that already exists.
+// when none is open), with the next photo ID. It never overwrites a file that
+// already exists.
 func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (PublishResult, error) {
 	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
@@ -163,16 +168,18 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	if perr != nil {
 		return PublishResult{}, perr
 	}
+	w, perr := c.workspace(ctx, gh)
+	if perr != nil {
+		return PublishResult{}, perr
+	}
 	data := newPhotoJSON(photo.File, photo.Sanitized)
+	id := w.nextID(folder)
+	data.ID = &id
 	data.Albums, data.Tags = appendMissing(data.Albums, photo.Albums), appendMissing(data.Tags, photo.Tags)
 	data.Places = append(data.Places, photo.Places...)
 	content, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
-	}
-	w, perr := c.workspace(ctx, gh)
-	if perr != nil {
-		return PublishResult{}, perr
 	}
 	return c.saveNewFile(w, path, append(content, '\n'))
 }

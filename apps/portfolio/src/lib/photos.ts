@@ -12,6 +12,11 @@ import {
 } from "@/lib/localize";
 
 export interface Photo {
+  /**
+   * The photo's ID from its JSON file, which links to it use, such as `/grid?photo=12`. A photo
+   * saved before IDs gets one after the highest, by its place in ALLPHOTOS.json, until Update Data
+   * gives it its own; that one can change when photos are added.
+   */
   id: number;
   title: string;
   /** A note about the photo in Markdown, written on the pipeline's Photo page; null without one. */
@@ -50,6 +55,8 @@ export interface Photo {
   tags: string[];
   /** The IDs of the spots on the site the photo is spotlighted in, such as "homepage". */
   spotlightZones: string[];
+  /** Its place among the spotlighted photos, 1 first, set on Site Spotlight; null without one. */
+  spotlightPlace: number | null;
 }
 
 /** Where the photo was taken, written each way the menu's Script Display can choose. */
@@ -121,6 +128,8 @@ type Version = (typeof VERSIONS)[number][0];
 
 /** One entry of ALLPHOTOS.json: a photo's file name and sanitized EXIF, as the pipeline saves it. */
 interface PhotoData {
+  /** The photo's ID, unique among the photos; entries saved before IDs don't have it. */
+  id?: number | null;
   file: string;
   /** The name to show, when one was written; older entries don't have it. */
   title?: string | null;
@@ -411,18 +420,33 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums, tags and spotlight zones; older entries are missing them. */
-function groupFields({ albums = [], tags = [], spotlightZones = [] }: PhotoData) {
-  return { albums, tags, spotlightZones };
+/** The photo's albums, tags and spotlight zones, and its place in them; older entries are missing them. */
+function groupFields({
+  albums = [],
+  tags = [],
+  spotlightZones = [],
+  websiteSpotlight = null,
+}: PhotoData) {
+  return { albums, tags, spotlightZones, spotlightPlace: websiteSpotlight };
+}
+
+/**
+ * Each entry's ID: its own, or else one after the highest any entry has, by its place in the list,
+ * so every photo has a different one.
+ */
+function photoIds(data: PhotoData[]): number[] {
+  const highest = Math.max(0, ...data.map(({ id }) => id ?? 0));
+  return data.map(({ id }, index) => id ?? highest + index + 1);
 }
 
 /** The ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
 function fromPhotoData(data: PhotoData[]): Photo[] {
+  const ids = photoIds(data);
   return data.flatMap((photo, index) => {
     const takenAt = parseCreateDate(photo.createDate);
     if (!takenAt) return [];
     return {
-      id: index + 1,
+      id: ids[index] as number,
       title: photoTitle(photo),
       comment: photoComment(photo),
       settings: cameraSettings(photo),

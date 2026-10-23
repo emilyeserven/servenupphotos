@@ -52,7 +52,7 @@ func TestFindGapsAndFill(t *testing.T) {
 		fields = append(fields, g.field)
 	}
 	want := []string{
-		"title", "comment", "aperture", "exposure", "iso", "focalLength", "placeName",
+		"id", "title", "comment", "aperture", "exposure", "iso", "focalLength", "placeName",
 		"customCity", "customCountry",
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
 		"images.preview", "images.thumbnail", "images.thumbnailpreview", "images.thumbnailcrop",
@@ -65,6 +65,7 @@ func TestFindGapsAndFill(t *testing.T) {
 
 	got := string(fillGaps([]byte(oldPhoto), gaps))
 	wantContent := `{
+  "id": null,
   "title": null,
   "comment": null,
   "file": "DSC0001.jpg",
@@ -211,8 +212,11 @@ func TestPreviewBackfill(t *testing.T) {
 	if _, ok := byField["camera"]; ok {
 		t.Errorf("camera added, but the file already has it")
 	}
-	if got.Fields[0] != (MissingField{Field: "title", Files: 2}) {
-		t.Errorf("first missing field = %+v, want title in 2 files", got.Fields[0])
+	if got.Fields[0] != (MissingField{Field: "id", Files: 2, Numbered: 2}) {
+		t.Errorf("first missing field = %+v, want id numbered in 2 files", got.Fields[0])
+	}
+	if got.Fields[1] != (MissingField{Field: "title", Files: 2}) {
+		t.Errorf("second missing field = %+v, want title in 2 files", got.Fields[1])
 	}
 }
 
@@ -239,7 +243,7 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 25 || got.PullRequestNumber != 1 {
+	if got.Files != 1 || got.Fields != 26 || got.PullRequestNumber != 1 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	staged := repo.staged(t)
@@ -247,7 +251,7 @@ func TestBackfill(t *testing.T) {
 	if len(staged) != 1 || !ok {
 		t.Fatalf("pending = %v, want DSC0001.json only", staged)
 	}
-	if !strings.HasPrefix(content, "{\n  \"title\": null,\n  \"comment\": null,\n  \"file\"") {
+	if !strings.HasPrefix(content, "{\n  \"id\": 1,\n  \"title\": null,\n  \"comment\": null,\n  \"file\"") {
 		t.Errorf("content = %s", content)
 	}
 }

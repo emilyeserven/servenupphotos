@@ -1,0 +1,52 @@
+{
+  "id": 61,
+  "title": "Photographing the Photographer: Brooklyn Pier 1 Edition",
+  "comment": null,
+  "file": "IMG_8631.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+  "aperture": 7.1,
+  "exposure": "1/320",
+  "iso": 100,
+  "focalLength": 18,
+  "gpsPosition": null,
+  "createDate": "2017:10:21 11:56:31",
+  "placeName": "brooklyn-bridge-park-pier-1",
+  "customCity": null,
+  "customCountry": null,
+  "country": null,
+  "city": null,
+  "width": 5999,
+  "height": 3597,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631.jpg",
+    "key": "photos/0e4c40d39b8e-img-8631.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631-thumbnail.webp?crop=1132,0,3597",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0e4c40d39b8e-img-8631-thumbnailpreview.webp?crop=1132,0,3597",
+    "thumbnailcrop": {
+      "x": 1132,
+      "y": 0,
+      "size": 3597,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "brooklyn-bridge-park-pier-1"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

@@ -1,4 +1,5 @@
 {
+  "id": 31,
   "title": "Shrouded in Mist",
   "comment": null,
   "file": "IMG_6572.jpg",
@@ -36,7 +37,7 @@
     }
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
+  "websiteSpotlight": 2,
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
@@ -45,5 +46,7 @@
       "relation": "",
       "id": "jacqueline-kennedy-onassis-reservoir"
     }
-  ]
+  ],
+  "spotlightZones": ["homepage"],
+  "socialPosts": []
 }

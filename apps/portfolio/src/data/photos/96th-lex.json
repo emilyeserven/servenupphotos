@@ -1,4 +1,5 @@
 {
+  "id": 7,
   "title": "96th & Lex",
   "comment": null,
   "file": "IMG_3769.jpg",
@@ -36,7 +37,7 @@
     }
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
+  "websiteSpotlight": 3,
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
@@ -45,5 +46,7 @@
       "relation": "",
       "id": "upper-east-side"
     }
-  ]
+  ],
+  "spotlightZones": ["homepage"],
+  "socialPosts": []
 }

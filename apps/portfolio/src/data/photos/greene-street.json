@@ -1,0 +1,56 @@
+{
+  "id": 54,
+  "title": "Greene Street",
+  "comment": null,
+  "file": "IMG_8076.jpg",
+  "camera": "Canon EOS Rebel T6i",
+  "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+  "aperture": 5.6,
+  "exposure": "1/320",
+  "iso": 100,
+  "focalLength": 20,
+  "gpsPosition": null,
+  "createDate": "2017:10:15 13:28:20",
+  "placeName": "Greene Street",
+  "customCity": "New York City",
+  "customCountry": "United States of America",
+  "country": null,
+  "city": null,
+  "width": 6000,
+  "height": 3284,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076.jpg",
+    "key": "photos/3a153fc61779-img-8076.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076-thumbnail.webp?crop=1348,0,3284",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3a153fc61779-img-8076-thumbnailpreview.webp?crop=1348,0,3284",
+    "thumbnailcrop": {
+      "x": 1348,
+      "y": 0,
+      "size": 3284,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "albums": [],
+  "tags": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "greene-street"
+    },
+    {
+      "relation": "in",
+      "id": "soho"
+    }
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
+}

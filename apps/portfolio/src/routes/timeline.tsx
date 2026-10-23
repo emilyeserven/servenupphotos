@@ -14,6 +14,7 @@ import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { buildHistogram } from "@/lib/histogram";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { cn } from "@/lib/utils";
 import {
   absoluteTimeRange,
@@ -25,13 +26,17 @@ import {
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
 
-/** The time range and filters, plus whether each photo shows its technical info; left out when it doesn't. */
-type TimelineSearch = TimeRangeValue & PhotoFilters & { tech?: true };
+/**
+ * The time range, filters and open photo, plus whether each photo shows its technical info; left
+ * out when it doesn't.
+ */
+type TimelineSearch = TimeRangeValue & PhotoFilters & ShownPhotoSearch & { tech?: true };
 
 export const Route = createFileRoute("/timeline")({
   validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
     ...parseTimeRange(search),
     ...parseFilters(search),
+    ...parseShownPhoto(search),
     ...(search.tech === true ? { tech: true } : {}),
   }),
   component: TimelineView,
@@ -53,7 +58,7 @@ function TimelineView() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const [now] = useState(() => new Date());
-  const [shown, setShown] = useState<ImagePhoto | null>(null);
+  const { shown, show, close } = useShownPhoto();
   const filters = parseFilters(search);
   const timeRange = parseTimeRange(search);
   const { start = earliestPhoto, end } = resolveTimeRange(timeRange, now);
@@ -106,18 +111,8 @@ function TimelineView() {
         resolution={resolution}
         onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
       />
-      <PhotoMonths
-        photos={inRange}
-        filtered={hasFilters(filters)}
-        showTech={tech}
-        onOpen={setShown}
-      />
-      <PhotoLightbox
-        photo={shown}
-        photos={inRange}
-        onShow={setShown}
-        onClose={() => setShown(null)}
-      />
+      <PhotoMonths photos={inRange} filtered={hasFilters(filters)} showTech={tech} onOpen={show} />
+      <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
     </div>
   );
 }
@@ -223,7 +218,7 @@ function PhotoRow({ photo, showTech, onOpen }: RowOptions & { photo: Photo }) {
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   return (
     <li className="flex items-center gap-3">
-      <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-12" />
+      <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-25" />
       <div className="flex min-w-0 flex-1 flex-col">
         <RowTitle title={photo.title} onOpen={open} />
         <RowDetails photo={photo} showTech={showTech} />

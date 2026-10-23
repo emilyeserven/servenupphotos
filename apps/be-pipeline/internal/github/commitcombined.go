@@ -134,6 +134,10 @@ func (w *workspace) commitChanges(edits map[string]FieldEdit) (map[string][]byte
 		return nil, publishErr(http.StatusNotFound, "%s isn't a data file on %s, so nothing was committed.", strings.Join(missing, ", "), w.branch())
 	}
 	for p, content := range changes {
+		if content != nil && strings.HasSuffix(p, ".json") {
+			content = formatJSONFile(content)
+			changes[p] = content
+		}
 		head, onHead := w.head.files[p]
 		if (content == nil && !onHead) || (content != nil && onHead && bytes.Equal(content, head.content)) {
 			delete(changes, p)
