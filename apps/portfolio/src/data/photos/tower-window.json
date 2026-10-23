@@ -1,4 +1,5 @@
 {
+  "id": 70,
   "title": "Tower Window",
   "comment": null,
   "file": "IMG_6957.jpg",
@@ -46,5 +47,6 @@
       "id": "fifth-avenue-presbyterian-church"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

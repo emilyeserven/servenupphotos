@@ -1,4 +1,5 @@
 {
+  "id": 56,
   "title": "I like to imagine that it's just one mannequin",
   "comment": null,
   "file": "IMG_9617.jpg",
@@ -46,5 +47,6 @@
       "id": "the-high-line"
     }
   ],
-  "spotlightZones": ["homepage"]
+  "spotlightZones": ["homepage"],
+  "socialPosts": []
 }

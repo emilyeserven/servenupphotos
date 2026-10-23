@@ -1,4 +1,5 @@
 {
+  "id": 71,
   "title": "Transit Above Transit",
   "comment": null,
   "file": "IMG_1924.jpg",
@@ -46,5 +47,6 @@
       "id": "grand-central-station"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

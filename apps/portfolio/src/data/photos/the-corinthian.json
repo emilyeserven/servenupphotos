@@ -1,4 +1,5 @@
 {
+  "id": 67,
   "title": "The Corinthian",
   "comment": null,
   "file": "IMG_8168.jpg",
@@ -46,5 +47,6 @@
       "id": "murray-hill"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

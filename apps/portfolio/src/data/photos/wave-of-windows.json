@@ -1,4 +1,5 @@
 {
+  "id": 76,
   "title": "Wave of Windows",
   "comment": null,
   "file": "IMG_8275.jpg",
@@ -50,5 +51,6 @@
       "id": "murray-hill"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

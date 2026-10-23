@@ -1,4 +1,5 @@
 {
+  "id": 65,
   "title": "Station Blues",
   "comment": null,
   "file": "IMG_9886.jpg",
@@ -46,5 +47,6 @@
       "id": "queensboro-plaza-subway-station"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

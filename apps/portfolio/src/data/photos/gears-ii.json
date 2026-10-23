@@ -1,4 +1,5 @@
 {
+  "id": 50,
   "title": "Gears II",
   "comment": null,
   "file": "IMG_6967.jpg",
@@ -46,5 +47,6 @@
       "id": "fifth-avenue-presbyterian-church"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

@@ -1,4 +1,5 @@
 {
+  "id": 1,
   "title": "Mirror Pond",
   "comment": "The dancheong (단청) ceiling of the gazebo in the National Museum of Korea's Mirror Pond.\n\nThis ceiling is one of the first examples of Korean traditional architecture I had a chance to photograph. The bright colors and patterns really stuck out to me as something uniquely Korean, especially given my familiarity with Chinese and Japanese culture. (Turns out that \"dancheong\" is the specific term for that very Korean style.) I took a lot more dancheong photos during this trip, but I think this is the best ceiling photo I ended up getting... and I would attribute that to the reflections from the pond.",
   "file": "dscf2926.jpg",
@@ -50,5 +51,6 @@
       "id": "national-museum-of-korea"
     }
   ],
-  "spotlightZones": ["homepage"]
+  "spotlightZones": ["homepage"],
+  "socialPosts": []
 }

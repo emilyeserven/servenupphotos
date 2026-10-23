@@ -1,4 +1,5 @@
 {
+  "id": 47,
   "title": "Freeman Alley, Enough Hate",
   "comment": null,
   "file": "IMG_0180.jpg",
@@ -46,5 +47,6 @@
       "id": "freeman-alley"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

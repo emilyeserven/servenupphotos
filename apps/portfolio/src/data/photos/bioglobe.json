@@ -1,4 +1,5 @@
 {
+  "id": 37,
   "title": "Bioglobe",
   "comment": null,
   "file": "IMG_1235.jpg",
@@ -46,5 +47,6 @@
       "id": "midtown"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

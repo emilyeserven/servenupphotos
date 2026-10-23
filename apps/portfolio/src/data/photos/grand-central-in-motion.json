@@ -1,4 +1,5 @@
 {
+  "id": 52,
   "title": "Grand Central in Motion",
   "comment": null,
   "file": "IMG_1915.jpg",
@@ -46,5 +47,6 @@
       "id": "grand-central-station"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

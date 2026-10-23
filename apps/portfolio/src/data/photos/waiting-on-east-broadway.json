@@ -1,4 +1,5 @@
 {
+  "id": 74,
   "title": "Waiting on East Broadway",
   "comment": null,
   "file": "IMG_1750.jpg",
@@ -46,5 +47,6 @@
       "id": "east-broadway-station"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

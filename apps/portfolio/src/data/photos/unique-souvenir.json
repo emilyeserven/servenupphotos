@@ -1,4 +1,5 @@
 {
+  "id": 72,
   "title": "Unique Souvenir",
   "comment": null,
   "file": "IMG_9877-2.jpg",
@@ -46,5 +47,6 @@
       "id": "midtown-west"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }

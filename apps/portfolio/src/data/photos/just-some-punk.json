@@ -1,4 +1,5 @@
 {
+  "id": 27,
   "title": "Just Some Punk",
   "comment": null,
   "file": "IMG_6651.jpg",
@@ -45,5 +46,7 @@
       "relation": "",
       "id": "72nd-street-subway-station"
     }
-  ]
+  ],
+  "spotlightZones": [],
+  "socialPosts": []
 }

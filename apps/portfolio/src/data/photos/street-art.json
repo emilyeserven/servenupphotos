@@ -1,4 +1,5 @@
 {
+  "id": 66,
   "title": "Street Art",
   "comment": null,
   "file": "IMG_9087.jpg",
@@ -46,5 +47,6 @@
       "id": "washington-square-park"
     }
   ],
-  "spotlightZones": []
+  "spotlightZones": [],
+  "socialPosts": []
 }
