@@ -39,6 +39,8 @@ type fakeGitHub struct {
 	truncated map[string]bool
 	// limited answers every request as rate limited.
 	limited bool
+	// branchOfCommit are the branches commits were moved onto.
+	branchOfCommit map[string]string
 	// created are when each path was first committed, as RFC 3339, for the
 	// history query; a path without one has no commits.
 	created map[string]string
@@ -47,6 +49,10 @@ type fakeGitHub struct {
 type fakePull struct {
 	number              int
 	title, branch, base string
+	// mainAt is main's version the pull request last has, and changed the
+	// paths its commits wrote.
+	mainAt  int
+	changed map[string]bool
 }
 
 type fakeTree struct {
@@ -56,6 +62,8 @@ type fakeTree struct {
 
 type fakeCommit struct {
 	tree, parent, message string
+	// merges is a merge commit's second parent.
+	merges string
 }
 
 func newFakeGitHub(t *testing.T) (*fakeGitHub, *Client) {
@@ -63,7 +71,7 @@ func newFakeGitHub(t *testing.T) (*fakeGitHub, *Client) {
 	f := &fakeGitHub{
 		files: map[string]string{}, versions: map[string]int{"main": 1}, trees: map[string]fakeTree{},
 		commits: map[string]fakeCommit{}, fail: map[string]int{}, truncated: map[string]bool{},
-		created: map[string]string{},
+		created: map[string]string{}, branchOfCommit: map[string]string{},
 	}
 	srv := httptest.NewServer(http.HandlerFunc(f.serve))
 	t.Cleanup(srv.Close)
@@ -85,7 +93,12 @@ func (f *fakeGitHub) openPull(branch string, files map[string]string) {
 		f.files[branch+":"+p] = v
 	}
 	f.versions[branch] = 1
-	f.pulls = append(f.pulls, fakePull{number: len(f.pulls) + 1, title: PullRequestTitle, branch: branch, base: "main"})
+	changed := map[string]bool{}
+	for p := range files {
+		changed[p] = true
+	}
+	f.pulls = append(f.pulls, fakePull{number: len(f.pulls) + 1, title: PullRequestTitle, branch: branch, base: "main",
+		mainAt: f.versions["main"], changed: changed})
 }
 
 // count is how many calls had key.
@@ -148,8 +161,13 @@ func (f *fakeGitHub) serve(w http.ResponseWriter, r *http.Request) {
 	}
 	path := strings.TrimPrefix(r.URL.Path, "/repos/owner/repo")
 	key := r.Method + " " + path
-	if strings.HasPrefix(path, "/git/refs/heads/") {
+	switch {
+	case strings.HasPrefix(path, "/git/refs/heads/"):
 		key = r.Method + " /git/refs/heads/"
+	case strings.HasPrefix(path, "/compare/"):
+		key = r.Method + " /compare"
+	case strings.HasPrefix(path, "/pulls/") && strings.HasSuffix(path, "/files"):
+		key = r.Method + " /pulls/files"
 	}
 	f.calls = append(f.calls, key)
 	if status := f.fail[key]; status != 0 {
@@ -176,7 +194,11 @@ func (f *fakeGitHub) serve(w http.ResponseWriter, r *http.Request) {
 	case path == "/git/commits" && r.Method == http.MethodPost:
 		id := "commit-" + strconv.Itoa(len(f.commits)+1)
 		parents := in["parents"].([]any)
-		f.commits[id] = fakeCommit{tree: in["tree"].(string), parent: parents[0].(string), message: in["message"].(string)}
+		commit := fakeCommit{tree: in["tree"].(string), parent: parents[0].(string), message: in["message"].(string)}
+		if len(parents) > 1 {
+			commit.merges = parents[1].(string)
+		}
+		f.commits[id] = commit
 		writeBody(w, http.StatusCreated, map[string]any{"sha": id, "html_url": "https://github.com/owner/repo/commit/" + id})
 	case strings.HasPrefix(path, "/git/refs/heads/") && r.Method == http.MethodPatch:
 		branch := strings.TrimPrefix(path, "/git/refs/heads/")
@@ -186,6 +208,7 @@ func (f *fakeGitHub) serve(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		f.apply(branch, commit)
+		f.branchOfCommit[in["sha"].(string)] = branch
 		writeBody(w, http.StatusOK, map[string]any{})
 	case path == "/git/refs" && r.Method == http.MethodPost:
 		branch := strings.TrimPrefix(in["ref"].(string), "refs/heads/")
@@ -196,6 +219,10 @@ func (f *fakeGitHub) serve(w http.ResponseWriter, r *http.Request) {
 		n := len(f.pulls) + 1
 		f.pulls = append(f.pulls, fakePull{number: n, title: in["title"].(string), branch: in["head"].(string), base: in["base"].(string)})
 		writeBody(w, http.StatusCreated, map[string]any{"number": n, "html_url": "https://github.com/owner/repo/pull/" + strconv.Itoa(n)})
+	case key == "GET /compare":
+		f.compare(w, strings.TrimPrefix(path, "/compare/"))
+	case key == "GET /pulls/files":
+		f.pullFiles(w, r, strings.TrimSuffix(strings.TrimPrefix(path, "/pulls/"), "/files"))
 	case strings.HasPrefix(path, "/branches/"):
 		if _, ok := f.versions[strings.TrimPrefix(path, "/branches/")]; !ok {
 			w.WriteHeader(http.StatusNotFound)
@@ -233,8 +260,65 @@ func (f *fakeGitHub) apply(branch string, commit fakeCommit) {
 	for p, v := range next {
 		f.files[branch+":"+p] = v
 	}
+	for i := range f.pulls {
+		if f.pulls[i].branch != branch {
+			continue
+		}
+		for _, e := range tree.entries {
+			f.pulls[i].changed[e["path"].(string)] = true
+		}
+		if commit.merges != "" {
+			f.pulls[i].mainAt = f.versions["main"]
+		}
+	}
 	f.versions[branch]++
 	f.messages = append(f.messages, commit.message)
+}
+
+// moveMain commits files to main (an empty content deletes), as a pull
+// request merged there would.
+func (f *fakeGitHub) moveMain(files map[string]string) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	for p, v := range files {
+		if v == "" {
+			delete(f.files, "main:"+p)
+		} else {
+			f.files["main:"+p] = v
+		}
+	}
+	f.versions["main"]++
+}
+
+// compare answers "<pr head>...<main head>" with how many commits main has
+// that the pull request doesn't.
+func (f *fakeGitHub) compare(w http.ResponseWriter, spec string) {
+	head, _, _ := strings.Cut(spec, "...")
+	branch, ok := f.branchOfCommit[head]
+	if !ok {
+		branch = branchOf(head)
+	}
+	for _, pr := range f.pulls {
+		if pr.branch == branch {
+			writeBody(w, http.StatusOK, map[string]any{"ahead_by": f.versions["main"] - pr.mainAt})
+			return
+		}
+	}
+	w.WriteHeader(http.StatusNotFound)
+}
+
+// pullFiles answers a pull request's files, all on page 1.
+func (f *fakeGitHub) pullFiles(w http.ResponseWriter, r *http.Request, number string) {
+	files := []map[string]any{}
+	for _, pr := range f.pulls {
+		if strconv.Itoa(pr.number) != number || r.URL.Query().Get("page") != "1" {
+			continue
+		}
+		for p := range pr.changed {
+			files = append(files, map[string]any{"filename": p})
+		}
+	}
+	writeBody(w, http.StatusOK, files)
 }
 
 func (f *fakeGitHub) blob(w http.ResponseWriter, sha string) {

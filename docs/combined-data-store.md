@@ -47,6 +47,15 @@ line), so CI's `oxfmt --check` passes on what the app commits.
 
 > **Frontend analogy:** like running Prettier on save, except the backend is the one saving, so it formats the files itself.
 
+When the pull request's branch is behind the base branch (another pull request merged since it was opened), the
+commit also merges the base branch in: it's made from the base branch's files with the pull request's own data files
+over them, and the combined lists rebuilt from that, so the pull request never conflicts over a combined list. When
+both changed the same data file, the pull request's version is kept. Commit does this even when nothing else is
+waiting, so pressing it fixes a pull request that has fallen behind.
+
+> **Frontend analogy:** like a lockfile conflict you fix by reinstalling rather than merging by hand: the combined
+> lists are generated, so the merge regenerates them instead of merging their text.
+
 When a file can't be read or isn't valid JSON, nothing is committed and the error names it. The backend does this
 itself with GitHub's Git database API, so nothing waits for a CI runner.
 
