@@ -1,7 +1,7 @@
 {
-  "id": 273,
-  "title": null,
+  "title": "Hallway of the Mosque",
   "comment": null,
+  "id": 273,
   "file": "20250118_135226.jpg",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
@@ -12,9 +12,9 @@
   "gpsPosition": "30 deg 1' 44.99\" N, 31 deg 15' 34.08\" E",
   "customGpsPosition": null,
   "createDate": "2025:01:18 13:52:26",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "Muhammad Ali Mosque",
+  "customCity": "Al Khalifa",
+  "customCountry": "Egypt",
   "country": "Egypt",
   "city": "Al Khalifa",
   "width": 3462,
@@ -45,7 +45,16 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "muhammad-ali-mosque"
+    },
+    {
+      "relation": "in",
+      "id": "citadel-of-salah-al-din-al-ayyubi"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null

@@ -1971,6 +1971,67 @@
     "socialPosts": []
   },
   {
+    "title": "From the Mosque, Looking Over Cairo",
+    "comment": null,
+    "id": 276,
+    "file": "20250118_140437.jpg",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Super Telephoto Camera",
+    "aperture": 3.4,
+    "exposure": "1/1600",
+    "iso": 32,
+    "focalLength": 18.6,
+    "gpsPosition": "30 deg 1' 43.50\" N, 31 deg 15' 32.94\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:18 14:04:38",
+    "placeName": "Muhammad Ali Mosque",
+    "customCity": "Al Khalifa",
+    "customCountry": "Egypt",
+    "country": "Egypt",
+    "city": "Al Khalifa",
+    "width": 2252,
+    "height": 3153,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437.jpg",
+      "key": "photos/443221df3de5-20250118-140437.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437-thumbnail.webp?crop=0,264,2252",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/443221df3de5-20250118-140437-thumbnailpreview.webp?crop=0,264,2252",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 264,
+        "size": 2252,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "muhammad-ali-mosque"
+      },
+      {
+        "relation": "in",
+        "id": "citadel-of-salah-al-din-al-ayyubi"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "id": 49,
     "title": "Gears I",
     "comment": null,
@@ -2435,6 +2496,67 @@
     "places": [],
     "spotlightZones": [],
     "socialPosts": []
+  },
+  {
+    "title": "Hallway of the Mosque",
+    "comment": null,
+    "id": 273,
+    "file": "20250118_135226.jpg",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
+    "aperture": 2.4,
+    "exposure": "1/2500",
+    "iso": 50,
+    "focalLength": 7.9,
+    "gpsPosition": "30 deg 1' 44.99\" N, 31 deg 15' 34.08\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:18 13:52:26",
+    "placeName": "Muhammad Ali Mosque",
+    "customCity": "Al Khalifa",
+    "customCountry": "Egypt",
+    "country": "Egypt",
+    "city": "Al Khalifa",
+    "width": 3462,
+    "height": 1947,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226.jpg",
+      "key": "photos/50b756b1ea58-20250118-135226.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/50b756b1ea58-20250118-135226-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 757,
+        "y": 0,
+        "size": 1947,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "muhammad-ali-mosque"
+      },
+      {
+        "relation": "in",
+        "id": "citadel-of-salah-al-din-al-ayyubi"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "title": "Heron on a Stroll",
@@ -6794,6 +6916,67 @@
     ],
     "spotlightZones": ["homepage"],
     "socialPosts": []
+  },
+  {
+    "title": "Walking by a Window at Al Khalifa",
+    "comment": null,
+    "id": 272,
+    "file": "20250118_134703.jpg",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/1400",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "30 deg 1' 43.15\" N, 31 deg 15' 36.87\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:18 13:47:03",
+    "placeName": "Muhammad Ali Mosque",
+    "customCity": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "city": "Al Khalifa",
+    "width": 1998,
+    "height": 2797,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703.jpg",
+      "key": "photos/d4da1882c9f1-20250118-134703.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703-thumbnail.webp?crop=0,565,1998",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d4da1882c9f1-20250118-134703-thumbnailpreview.webp?crop=0,565,1998",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 565,
+        "size": 1998,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "muhammad-ali-mosque"
+      },
+      {
+        "relation": "in",
+        "id": "citadel-of-salah-al-din-al-ayyubi"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
   },
   {
     "title": "WATCH THE GAP",
