@@ -3,8 +3,8 @@
   "name": "Grand Central Station",
   "description": "",
   "parent": "",
-  "city": "",
-  "country": "",
+  "city": "New York City",
+  "country": "United States of America",
   "latitude": 40.752998986617456,
   "longitude": -73.97712789341976,
   "exactLocation": true
