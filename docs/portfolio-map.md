@@ -20,7 +20,11 @@ adding to the history. Changing a filter still fits the map to the photos it sho
 > **Frontend analogy:** the grouping is done by MapLibre on the map's data, like a virtualized list deciding which
 > rows to render: the page asks which groups and photos are in view after each move and draws a React marker for each.
 
-Over the top left corner:
+The map fills the page. The title and photo count, the controls below, and the site menu in the top right corner all
+float over it, and fitting the map leaves extra room at the top so photos aren't hidden under them. The map's zoom
+buttons are in the bottom right corner.
+
+Over the top left corner, under the title:
 
 - **All photos** goes back to the opening view.
 - **New York City** and **Seoul** zoom straight to that area. The areas and their bounds are `MAP_AREAS` in
@@ -28,7 +32,7 @@ Over the top left corner:
 - The **day** dropdown narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the
-  location, album and tag filters, but the menu doesn't carry it to the other views.
+  location, album and tag filters (always shown after it, rather than behind **Show filters**), but the menu doesn't carry it to the other views.
 - Once a day is chosen and another day is in view, a second **to** dropdown picks the last day of a range
   (`?day=2026-05-01&to=2026-05-17`), and the map shows every photo from the first day through the last. Either day can
   be the earlier one; the range is put in order. **Just this day** goes back to one day.

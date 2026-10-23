@@ -11,7 +11,7 @@ import {
   useMap,
 } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
-import { MapPin, ZoomIn } from "lucide-react";
+import { ZoomIn } from "lucide-react";
 import {
   type LngLatBounds,
   setWorkerUrl,
@@ -30,7 +30,8 @@ import {
 } from "react";
 import { MapDayFilter } from "@/components/map-day-filter";
 import { MapViewControls } from "@/components/map-view-controls";
-import { PhotoFilterBar } from "@/components/photo-filters";
+import { PhotoFilterControls } from "@/components/photo-filters";
+import { MAP_FILTERS, MapOverlay } from "@/components/map-overlay";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
@@ -100,8 +101,11 @@ const hiddenLayer: LayerProps = {
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
 
-/** How far from the photos' edges the map keeps them, in pixels. */
-const FIT_PADDING = 80;
+/**
+ * How far from the map's edges the map keeps the photos it fits to, in pixels; more at the top,
+ * where the title and controls cover it.
+ */
+const FIT_PADDING = { top: 140, right: 80, bottom: 80, left: 80 };
 
 // Opens on the photos, close enough to see the streets around one photo but no closer; the whole
 // world without any.
@@ -297,16 +301,6 @@ function MapView() {
 
   return (
     <div className="flex h-svh flex-col">
-      <header className="flex flex-wrap items-baseline gap-x-4 gap-y-1 px-4 py-6 pr-16 sm:px-6">
-        <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
-          <MapPin className="size-8 text-muted-foreground" aria-hidden />
-          Map
-        </h1>
-        <p className="text-sm text-muted-foreground">{dayPhotos.placed.length} photos</p>
-        <div className="w-full pt-2">
-          <PhotoFilterBar photos={placedPhotos} />
-        </div>
-      </header>
       <div className="min-h-0 flex-1">
         <Map
           ref={map}
@@ -322,18 +316,21 @@ function MapView() {
             setCluster(null);
           }}
         >
-          <NavigationControl position="top-right" />
-          <MapViewControls
-            onReset={() => {
-              if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
-            }}
-          >
-            <MapDayFilter
-              days={daysInView(mapPhotos.placed, view)}
-              range={search}
-              onChange={setDays}
-            />
-          </MapViewControls>
+          <NavigationControl position="bottom-right" />
+          <MapOverlay count={dayPhotos.placed.length}>
+            <MapViewControls
+              onReset={() => {
+                if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
+              }}
+            >
+              <MapDayFilter
+                days={daysInView(mapPhotos.placed, view)}
+                range={search}
+                onChange={setDays}
+              />
+              <PhotoFilterControls photos={placedPhotos} className={MAP_FILTERS} />
+            </MapViewControls>
+          </MapOverlay>
           <Source
             id={SOURCE_ID}
             type="geojson"

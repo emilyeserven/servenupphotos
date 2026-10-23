@@ -70,17 +70,49 @@ export function PhotoFilterBar({ photos }: { photos: Photo[] }) {
           {open ? "Hide filters" : "Show filters"}
           <FilterCount count={count} />
         </Button>
-        {count > 0 && (
-          <Button variant="ghost" size="sm" onClick={() => setFilters({})}>
-            <X aria-hidden />
-            Clear filters
-          </Button>
-        )}
+        <ClearFilters count={count} onClear={() => setFilters({})} />
       </div>
       <div id={listId} hidden={!open}>
         {open && <FilterDropdowns photos={photos} filters={filters} setFilters={setFilters} />}
       </div>
     </div>
+  );
+}
+
+/**
+ * The location, album and tag dropdowns always shown, with **Clear filters** after them while any
+ * is set, for a view with no room to spare for the **Show filters** button, such as the map.
+ */
+export function PhotoFilterControls({
+  photos,
+  className,
+}: {
+  photos: Photo[];
+  className?: string;
+}) {
+  const filters = useFilters();
+  const setFilters = useSetFilters();
+  return (
+    <>
+      <FilterDropdowns
+        photos={photos}
+        filters={filters}
+        setFilters={setFilters}
+        className={className}
+      />
+      <ClearFilters count={Object.keys(filters).length} onClear={() => setFilters({})} />
+    </>
+  );
+}
+
+/** A **Clear filters** button, shown only while `count` filters are set. */
+function ClearFilters({ count, onClear }: { count: number; onClear: () => void }) {
+  if (count === 0) return null;
+  return (
+    <Button variant="ghost" size="sm" onClick={onClear} className="bg-background/80">
+      <X aria-hidden />
+      Clear filters
+    </Button>
   );
 }
 
@@ -102,10 +134,12 @@ function FilterDropdowns({
   photos,
   filters,
   setFilters,
+  className,
 }: {
   photos: Photo[];
   filters: PhotoFilters;
   setFilters: (next: PhotoFilters) => void;
+  className?: string;
 }) {
   const groupFacet = filterPhotos(photos, withoutFilters(filters, LOCATION_KEYS));
   const albumFacet = filterPhotos(photos, withoutFilters(filters, ["album"]));
@@ -117,7 +151,11 @@ function FilterDropdowns({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-2" role="group" aria-label="Filters">
+    <div
+      className={cn("flex flex-wrap items-center gap-x-3 gap-y-2", className)}
+      role="group"
+      aria-label="Filters"
+    >
       <FilterSelect
         label="Location"
         Icon={MapPin}

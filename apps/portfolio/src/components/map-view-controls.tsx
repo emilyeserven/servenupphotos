@@ -35,8 +35,8 @@ const CONTROL_BUTTON =
   "inline-flex h-7 items-center gap-1.5 rounded-sm px-2.5 text-sm font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4";
 
 /**
- * Buttons over the map's top left corner: one to go back to the view that shows every photo, and
- * one for each area in MAP_AREAS to zoom straight to it.
+ * A row of buttons over the map: one to go back to the view that shows every photo, and one for
+ * each area in MAP_AREAS to zoom straight to it.
  */
 export function MapViewControls({
   onReset,
@@ -51,7 +51,7 @@ export function MapViewControls({
     map?.fitBounds(bounds, { padding: AREA_PADDING });
   }
   return (
-    <div className="absolute top-2.5 left-2.5 z-10 flex max-w-[calc(100%-4rem)] flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2">
       <div className="inline-flex rounded-md border bg-background p-0.5 shadow-xs dark:border-input">
         <button
           type="button"
