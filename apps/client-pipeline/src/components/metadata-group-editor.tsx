@@ -5,10 +5,13 @@ import {
   type MetaFieldInfo,
   type MetaGroup,
   metaGroupId,
+  type MetaRange,
   type MetaValue,
   saveMetaGroupMutation,
 } from "@/api/metainfo";
 import { FieldLabel } from "@/components/field-label";
+import { MetaParentField } from "@/components/metadata-parent-field";
+import { MetaRangePicker, rangeStops } from "@/components/metadata-range-picker";
 import { MetaValuePicker } from "@/components/metadata-value-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,34 +27,51 @@ interface MetaGroupEditorProps {
   group?: MetaGroup;
   /** Every value of the field, to choose from. */
   values: MetaValueCount[];
-  /** The field's groups, to keep two from sharing a name. */
+  /** The field's groups, to keep two from sharing a name and to put this one in. */
   groups: MetaGroup[];
   /** After a save, with the group's ID. */
   onSaved: (id: string) => void;
   onRemoved: () => void;
 }
 
-/** The group as typed, as it would be saved. */
+/** The group as typed, as it would be saved: a range for a ranged field, else its values. */
 function drafted(info: MetaFieldInfo, group: MetaGroup | undefined, draft: Draft): MetaGroup {
   const name = draft.name.trim();
-  const id = group?.id ?? metaGroupId(info.field, name);
-  return {
-    id,
+  const base = {
+    id: group?.id ?? metaGroupId(info.field, name),
     name,
     description: draft.description.trim(),
     field: info.field,
-    values: draft.values,
+    parent: draft.parent,
   };
+  return info.ranged
+    ? { ...base, values: [], range: draft.range }
+    : { ...base, values: draft.values };
 }
 
 interface Draft {
   name: string;
   description: string;
+  parent: string;
   values: MetaValue[];
+  range: MetaRange;
 }
 
-function startingDraft(group: MetaGroup | undefined): Draft {
-  return group ? { ...group } : { name: "", description: "", values: [] };
+/** A new group's range: every value the photos have, or 0 to 0 when none has one. */
+function wholeRange(values: MetaValueCount[]): MetaRange {
+  const stops = rangeStops(values);
+  return { min: stops[0] ?? 0, max: stops.at(-1) ?? 0 };
+}
+
+function startingDraft(group: MetaGroup | undefined, values: MetaValueCount[]): Draft {
+  if (!group)
+    return { name: "", description: "", parent: "", values: [], range: wholeRange(values) };
+  return { ...group, parent: group.parent ?? "", range: group.range ?? wholeRange(values) };
+}
+
+/** Why the range can't be saved, or "". */
+function rangeProblem(range: MetaRange | undefined): string {
+  return range && range.min > range.max ? "The range ends before it starts." : "";
 }
 
 /** Why the group can't be saved as typed, or "" when it can. */
@@ -60,7 +80,7 @@ function problem(next: MetaGroup, groups: MetaGroup[]): string {
   const taken = groups.find(
     (g) => g.id !== next.id && g.name.toLowerCase() === next.name.toLowerCase(),
   );
-  return taken ? `There's already a group named “${taken.name}”.` : "";
+  return taken ? `There's already a group named “${taken.name}”.` : rangeProblem(next.range);
 }
 
 /** The ID of the group a save wrote, from its file name. */
@@ -71,7 +91,7 @@ function savedId(result: { path: string }): string {
 /** Edits one metadata group's name, description and values, and saves or removes it. */
 export function MetaGroupEditor(props: MetaGroupEditorProps) {
   const { info, group, values } = props;
-  const [draft, setDraft] = useState(() => startingDraft(group));
+  const [draft, setDraft] = useState(() => startingDraft(group, values));
   return (
     <Card>
       <CardHeader>
@@ -79,15 +99,48 @@ export function MetaGroupEditor(props: MetaGroupEditorProps) {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <TextFields info={info} draft={draft} onChange={setDraft} />
-        <MetaValuePicker
+        <MetaParentField
           info={info}
-          values={values}
-          chosen={draft.values}
-          onChange={(chosen) => setDraft({ ...draft, values: chosen })}
+          groups={props.groups}
+          groupId={group?.id}
+          parent={draft.parent}
+          onChange={(parent) => setDraft({ ...draft, parent })}
         />
+        <ValuesField {...props} draft={draft} onChange={setDraft} />
         <EditorButtons {...props} next={drafted(info, group, draft)} />
       </CardContent>
     </Card>
+  );
+}
+
+/** A range for a focal length, aperture, exposure or ISO group, else a checkbox per value. */
+function ValuesField({
+  info,
+  group,
+  values,
+  groups,
+  draft,
+  onChange,
+}: MetaGroupEditorProps & TextFieldsProps) {
+  if (info.ranged) {
+    return (
+      <MetaRangePicker
+        info={info}
+        values={values}
+        range={draft.range}
+        onChange={(range) => onChange({ ...draft, range })}
+      />
+    );
+  }
+  return (
+    <MetaValuePicker
+      info={info}
+      values={values}
+      groups={groups}
+      groupId={group?.id}
+      chosen={draft.values}
+      onChange={(chosen) => onChange({ ...draft, values: chosen })}
+    />
   );
 }
 

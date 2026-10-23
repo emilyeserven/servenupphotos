@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { shownPhotos } from "@/lib/place-seeds";
-import { fieldValues, groupPhotoCount, type MetaValueCount } from "@/lib/meta-values";
+import { groupPhotoCount, groupTree } from "@/lib/meta-groups";
+import { fieldValues, type MetaValueCount, showRange } from "@/lib/meta-values";
 import { cn } from "@/lib/utils";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { useCombinedData } from "@/stores/combined-data";
@@ -101,11 +102,14 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
         {groups.length === 0 && (
           <p className="text-muted-foreground text-sm">No {info.one} groups yet.</p>
         )}
-        {groups.map((group) => (
+        {groupTree(groups).map(({ group, depth }) => (
           <GroupRow
             key={group.id}
+            info={info}
             group={group}
-            photos={groupPhotoCount(values, group)}
+            depth={depth}
+            subgroups={groups.filter((g) => g.parent === group.id).length}
+            photos={groupPhotoCount(values, groups, group)}
             chosen={group.id === chosen}
             onChoose={() => onChoose(group.id)}
           />
@@ -120,27 +124,54 @@ function GroupList({ info, groups, values, chosen, onChoose }: GroupListProps) {
 }
 
 interface GroupRowProps {
+  info: MetaFieldInfo;
   group: MetaGroup;
+  /** How far it's nested, to indent it. */
+  depth: number;
+  /** How many groups are directly in it. */
+  subgroups: number;
   photos: number;
   chosen: boolean;
   onChoose: () => void;
 }
 
-function GroupRow({ group, photos, chosen, onChoose }: GroupRowProps) {
-  const count = group.values.length;
+function plural(count: number, one: string): string {
+  return `${count} ${one}${count === 1 ? "" : "s"}`;
+}
+
+/** How many values the group lists, or how many groups are in it when it lists none. */
+function listed(group: MetaGroup, subgroups: number): string {
+  const values = group.values.length;
+  return values === 0 && subgroups > 0 ? plural(subgroups, "group") : plural(values, "value");
+}
+
+/** What the group covers: its range, such as "10–24 mm", or how many values or groups it has. */
+function coverage(info: MetaFieldInfo, group: MetaGroup, subgroups: number): string {
+  return group.range ? showRange(info.field, group.range) : listed(group, subgroups);
+}
+
+function GroupRow({ info, group, depth, subgroups, photos, chosen, onChoose }: GroupRowProps) {
   return (
     <button
       type="button"
       onClick={onChoose}
       aria-current={chosen}
+      style={{ paddingLeft: `${0.5 + depth * 1.25}rem` }}
       className={cn(
-        "hover:bg-muted flex items-baseline justify-between gap-3 rounded-md px-2 py-1.5 text-left text-sm",
+        "hover:bg-muted flex items-baseline justify-between gap-3 rounded-md py-1.5 pr-2 text-left text-sm",
         chosen && "bg-muted font-medium",
       )}
     >
-      <span className="min-w-0 truncate">{group.name}</span>
+      <span className="min-w-0 truncate">
+        {depth > 0 && (
+          <span className="text-muted-foreground" aria-hidden>
+            ↳{" "}
+          </span>
+        )}
+        {group.name}
+      </span>
       <span className="text-muted-foreground shrink-0 text-xs">
-        {count} {count === 1 ? "value" : "values"}, {photos} {photos === 1 ? "photo" : "photos"}
+        {coverage(info, group, subgroups)}, {plural(photos, "photo")}
       </span>
     </button>
   );

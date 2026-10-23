@@ -19,41 +19,76 @@ export interface MetaFieldInfo {
   one: string;
   /** Whether the photo files have its values as numbers. */
   numeric: boolean;
+  /**
+   * Whether its values read as numbers (an exposure such as "1/250" as seconds), so its groups are
+   * a range chosen with a slider rather than a list of values.
+   */
+  ranged: boolean;
   /** An example group, for the name field's help. */
   example: string;
 }
 
 /** The fields, in the order the page's tabs show them. */
 export const META_FIELDS: MetaFieldInfo[] = [
-  { field: "camera", title: "Cameras", one: "camera", numeric: false, example: "Canon bodies" },
+  {
+    field: "camera",
+    title: "Cameras",
+    one: "camera",
+    numeric: false,
+    ranged: false,
+    example: "Canon bodies",
+  },
   {
     field: "lens",
     title: "Lenses",
     one: "lens",
     numeric: false,
-    example: "EF-S 10-18mm, for each way EXIF spells it",
+    ranged: false,
+    example: "Canon lenses, or one lens for each way EXIF spells it",
   },
   {
     field: "focalLength",
     title: "Focal lengths",
     one: "focal length",
     numeric: true,
+    ranged: true,
     example: "Wide angle, for 10 to 24 mm",
   },
-  { field: "aperture", title: "Apertures", one: "aperture", numeric: true, example: "Wide open" },
+  {
+    field: "aperture",
+    title: "Apertures",
+    one: "aperture",
+    numeric: true,
+    ranged: true,
+    example: "Wide open, for f/1.4 to f/2.8",
+  },
   {
     field: "exposure",
     title: "Exposures",
     one: "exposure",
     numeric: false,
-    example: "Long exposure",
+    ranged: true,
+    example: "Long exposure, for 1 s and longer",
   },
-  { field: "iso", title: "ISO", one: "ISO", numeric: true, example: "Low light" },
+  {
+    field: "iso",
+    title: "ISO",
+    one: "ISO",
+    numeric: true,
+    ranged: true,
+    example: "Low light, for ISO 1600 and up",
+  },
 ];
+
+/** A range of numbers: focal lengths in mm, apertures as f-numbers, ISO, or exposures in seconds. */
+export interface MetaRange {
+  min: number;
+  max: number;
+}
 
 /**
  * A metadata group file: a named set of values of one photo field, such as "Wide angle" for focal
- * lengths 10 to 24, or every EXIF spelling of one lens. Commit combines them into METAINFO.json.
+ * lengths 10 to 24, or every EXIF spelling of one lens. A group can be inside another of its field. Commit combines them into METAINFO.json.
  */
 export interface MetaGroup {
   /** Made from the field and the name when the group is made, and kept after that. */
@@ -61,7 +96,12 @@ export interface MetaGroup {
   name: string;
   description: string;
   field: MetaField;
+  /** The ID of the group of the same field this one is in, such as "Canon" for "Canon kit lenses"; "" for none. */
+  parent?: string;
+  /** The values in the group, as the photo files have them; empty for a range. */
   values: MetaValue[];
+  /** For a focal length, aperture, exposure or ISO group, every value from min to max, both included. */
+  range?: MetaRange;
 }
 
 /** What saving or removing a metadata group did; nothing is saved when it already had that content. */

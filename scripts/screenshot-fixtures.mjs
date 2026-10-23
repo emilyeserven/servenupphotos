@@ -107,18 +107,36 @@ const added = {
     ),
   ],
   metainfo: [
-    metaGroupFile("focal-length-wide-angle", "Wide angle", "focalLength", [10, 11, 13, 14, 18, 24]),
-    metaGroupFile("lens-canon-18-135mm", "Canon EF-S 18-135mm", "lens", [
-      "EF-S18-135mm f/3.5-5.6 IS STM",
-      "EF-S18-135mm f/3.5-5.6 IS",
-    ]),
+    metaGroupFile("focal-length-wide-angle", "Wide angle", "focalLength", {
+      range: { min: 10, max: 24 },
+    }),
+    metaGroupFile("lens-brands", "Brands", "lens"),
+    metaGroupFile("lens-canon", "Canon", "lens", {
+      parent: "lens-brands",
+      values: [
+        "EF-S10-18mm f/4.5-5.6 IS STM",
+        "EF-S18-135mm f/3.5-5.6 IS STM",
+        "EF-S18-135mm f/3.5-5.6 IS",
+        "EF-S55-250mm f/4-5.6 IS STM",
+        "EF50mm f/1.8 II",
+      ],
+    }),
+    metaGroupFile("lens-fujifilm", "Fujifilm", "lens", {
+      parent: "lens-brands",
+      values: ["XF18-135mmF3.5-5.6R LM OIS WR"],
+    }),
+    metaGroupFile("lens-types", "Types", "lens"),
+    metaGroupFile("lens-zoom", "Zoom", "lens", {
+      parent: "lens-types",
+      values: ["EF-S18-135mm f/3.5-5.6 IS STM", "XF18-135mmF3.5-5.6R LM OIS WR"],
+    }),
   ],
 };
 
-function metaGroupFile(id, name, field, values) {
+function metaGroupFile(id, name, field, { parent = "", values = [], range } = {}) {
   return {
     path: `${FOLDER}/metainfo/${id}.json`,
-    data: { id, name, description: "", field, values },
+    data: { id, name, description: "", field, parent, values, ...(range && { range }) },
   };
 }
 
