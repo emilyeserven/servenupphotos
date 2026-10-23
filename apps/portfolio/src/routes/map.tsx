@@ -41,7 +41,7 @@ import {
 import { type DayRange, daysInView, isDay } from "@/lib/map-days";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
-import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { locationSelection, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useTurn } from "@/lib/use-turn";
@@ -144,21 +144,29 @@ interface OpenCluster {
   photos: PlacedPhoto[];
 }
 
+/** Whether the places chosen before were all unchosen, leaving none. */
+function placesCleared(before: string[], now: string[]): boolean {
+  return before.length > 0 && now.length === 0;
+}
+
 /**
  * Moves the map to show the photos again when the filters change which photos it shows, and runs
  * `onChange` to close what's open. It doesn't move when the map first opens, as the map opens on
- * them already.
+ * them already, or when every chosen place is unchosen, so the map stays on the place it showed
+ * rather than zooming out to every photo. `places` are the places chosen in the Places filter.
  */
 function useFitOnFilter(
   map: RefObject<MapRef | null>,
-  bounds: LngLatBounds | null,
+  { bounds, places }: { bounds: LngLatBounds | null; places: string[] },
   onChange: () => void,
 ) {
   const shownBounds = useRef(bounds);
+  const shownPlaces = useRef(places);
   useEffect(() => {
     if (shownBounds.current === bounds || !map.current) return;
     shownBounds.current = bounds;
-    showAllPhotos(map.current, bounds);
+    if (!placesCleared(shownPlaces.current, places)) showAllPhotos(map.current, bounds);
+    shownPlaces.current = places;
     onChange();
   });
 }
@@ -217,7 +225,7 @@ function MapView() {
   const { search, mapPhotos, dayPhotos, setDays } = useMapFilters();
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
   const saveView = useMapViewInUrl(map, search);
-  useFitOnFilter(map, mapPhotos.bounds, () => {
+  useFitOnFilter(map, { bounds: mapPhotos.bounds, places: locationSelection(search) }, () => {
     setSelected(null);
     setCluster(null);
   });
