@@ -47,8 +47,45 @@ interface PlaceCityAdderProps {
   disabled: boolean;
 }
 
-/** A button that opens a city field for a place in no city, saved to the place like on the Places page. */
+/**
+ * A way to give a place in no city one, saved to the place like on the Places page: the photo's city
+ * in one click when it shows one, or else a city field.
+ */
 function PlaceCityAdder({ place, places, region, disabled }: PlaceCityAdderProps) {
+  if (region.city) return <UsePhotoCity place={place} region={region} disabled={disabled} />;
+  return <PlaceCityOpener place={place} places={places} region={region} disabled={disabled} />;
+}
+
+interface UsePhotoCityProps {
+  place: Place;
+  region: PhotoRegion;
+  disabled: boolean;
+}
+
+/** One click that gives the place the city the photo shows, and its country when the place has none. */
+function UsePhotoCity({ place, region, disabled }: UsePhotoCityProps) {
+  const queryClient = useQueryClient();
+  const save = useMutation({ ...savePlaceMutation, ...optimisticEntry(queryClient, "places") });
+  return (
+    <div className="flex flex-col gap-1">
+      <Button
+        type="button"
+        variant="link"
+        size="sm"
+        className="h-auto justify-start p-0 text-xs"
+        disabled={disabled || save.isPending}
+        onClick={() => save.mutate(withCity(place, region))}
+      >
+        {save.isPending ? <Spinner /> : <Building2Icon />}
+        Use {region.city} as {place.name}'s city
+      </Button>
+      {save.error && <p className="text-destructive text-xs">{save.error.message}</p>}
+    </div>
+  );
+}
+
+/** A button that opens a city field, for a photo that shows no city to offer. */
+function PlaceCityOpener({ place, places, region, disabled }: PlaceCityAdderProps) {
   const [open, setOpen] = useState(false);
   if (!open) {
     return (
