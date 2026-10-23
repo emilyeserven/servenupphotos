@@ -179,6 +179,7 @@ export function PhotoDetailsCard({
             disabled={disabled}
             exifCountry={exifPlace.country}
             exifGps={exifPlace.gpsPosition}
+            exifCity={exifPlace.city}
             onChange={(place) => onChange({ ...value, ...place })}
           />
           <CityAndCountry

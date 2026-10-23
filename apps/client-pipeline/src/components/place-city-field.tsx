@@ -37,6 +37,8 @@ interface PlaceCityFieldProps {
   disabled: boolean;
   /** How to fill the field in, shown beside its title. */
   help: string;
+  /** The field's title; "City" when not given. */
+  label?: string;
   /** Starts the field's IDs, so two on a page don't clash; "place-city" when not given. */
   id?: string;
   /** Called with the chosen city, and its country when one is known for it. */
@@ -49,6 +51,7 @@ interface PlaceCityFieldProps {
  */
 export function PlaceCityField({
   id = "place-city",
+  label = "City",
   value,
   places,
   disabled,
@@ -63,7 +66,7 @@ export function PlaceCityField({
   return (
     <div className="flex flex-col gap-2">
       <FieldLabel id={`${id}-label`} help={help}>
-        City
+        {label}
       </FieldLabel>
       <SingleCombobox
         id={id}
