@@ -45,6 +45,7 @@ const baseTags = readFolder("tags", "ALLTAGS");
 const basePlaces = readFolder("places", "PLACES");
 const baseLocalizations = readFolder("localizations", "LOCALIZATIONS");
 const baseMetaInfo = readFolder("metainfo", "METAINFO");
+const baseCameras = readFolder("cameras", "CAMERAS");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -62,6 +63,12 @@ function newPhoto() {
       title: "Night market",
       comment: null,
       file: "DSCF3104.jpg",
+      // An adapted manual lens, which EXIF only knows by its focal length.
+      camera: "X-T5",
+      lens: "21.0 mm",
+      focalLength: 21,
+      aperture: null,
+      exifOriginals: {},
       createDate: "2026:05:19 20:41:12",
       placeName: "Gyeongbokgung Palace",
       places: [
@@ -105,6 +112,22 @@ const added = {
       "",
       "경복궁",
     ),
+  ],
+  cameras: [
+    {
+      path: `${FOLDER}/cameras/x-t5.json`,
+      data: {
+        id: "x-t5",
+        camera: "X-T5",
+        rules: [
+          { when: null, set: { camera: "Fujifilm X-T5" } },
+          {
+            when: { field: "lens", value: "21.0 mm" },
+            set: { lens: "7Artisans 21mm F1.4", aperture: 1.4 },
+          },
+        ],
+      },
+    },
   ],
   metainfo: [
     metaGroupFile("focal-length-wide-angle", "Wide angle", "focalLength", {
@@ -168,6 +191,7 @@ function withAdded(base, addedFiles) {
 const headPlaces = withAdded(basePlaces, added.places);
 const headLocalizations = withAdded(baseLocalizations, added.localizations);
 const headMetaInfo = withAdded(baseMetaInfo, added.metainfo);
+const headCameras = withAdded(baseCameras, added.cameras);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -180,7 +204,7 @@ function combinedFile(kind, all, files, branch) {
   };
 }
 
-function combinedFiles([photos, albums, tags, places, localizations, metainfo], branch) {
+function combinedFiles([photos, albums, tags, places, localizations, metainfo, cameras], branch) {
   return {
     photos: combinedFile("photos", "ALLPHOTOS.json", photos, branch),
     albums: combinedFile("albums", "ALLALBUMS.json", albums, branch),
@@ -188,6 +212,7 @@ function combinedFiles([photos, albums, tags, places, localizations, metainfo], 
     places: combinedFile("places", "PLACES.json", places, branch),
     localizations: combinedFile("localizations", "LOCALIZATIONS.json", localizations, branch),
     metainfo: combinedFile("metainfo", "METAINFO.json", metainfo, branch),
+    cameras: combinedFile("cameras", "CAMERAS.json", cameras, branch),
   };
 }
 
@@ -343,12 +368,21 @@ export function defaultFixtures() {
           basePlaces,
           baseLocalizations,
           baseMetaInfo,
+          baseCameras,
         ]),
         branch: BASE_BRANCH,
       },
       head: {
         ...combinedFiles(
-          [headPhotos, headAlbums, headTags, headPlaces, headLocalizations, headMetaInfo],
+          [
+            headPhotos,
+            headAlbums,
+            headTags,
+            headPlaces,
+            headLocalizations,
+            headMetaInfo,
+            headCameras,
+          ],
           PULL_REQUEST.branch,
         ),
         pullRequest: PULL_REQUEST,
@@ -367,6 +401,7 @@ export function defaultFixtures() {
         files: added.localizations.map(groupFile),
       },
       metainfo: { folder: `${FOLDER}/metainfo`, files: added.metainfo.map(groupFile) },
+      cameras: { folder: `${FOLDER}/cameras`, files: added.cameras.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -384,6 +419,59 @@ export function defaultFixtures() {
       const photo = headPhotos.find(({ data }) => data.images?.key === key);
       const crop = photo?.data.images?.thumbnailcrop;
       return { key, crop: crop ? { x: crop.x, y: crop.y, size: crop.size } : null };
+    },
+    "POST /api/data/camera-overrides/preview": {
+      repo: REPO,
+      folder: `${FOLDER}/photos`,
+      branch: PULL_REQUEST.branch,
+      pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+      photoFiles: headPhotos.length,
+      overrides: added.cameras.length,
+      unreadable: [],
+      files: [
+        {
+          path: added.photo.path,
+          fileUrl: "",
+          camera: "X-T5",
+          changes: [
+            { field: "camera", from: "X-T5", to: "Fujifilm X-T5" },
+            { field: "lens", from: "21.0 mm", to: "7Artisans 21mm F1.4" },
+            { field: "aperture", from: null, to: 1.4 },
+            {
+              field: "exifOriginals",
+              from: {},
+              to: { aperture: null, camera: "X-T5", lens: "21.0 mm" },
+            },
+          ],
+        },
+      ],
+    },
+    "POST /api/data/camera-overrides": () => ({ ...pendingSave(), files: 1, fields: 4 }),
+    "PUT /api/cameras/x-t5": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/cameras/x-t5.json`,
+      data: body,
+      before: added.cameras[0].data,
+      changed: true,
+    }),
+    "POST /api/photos/bucket/exif": {
+      file: "DSCF3104.jpg",
+      exif: {
+        Make: "FUJIFILM",
+        Model: "X-T5",
+        LensMake: "7Artisans",
+        LensModel: "",
+        Lens: "21.0 mm",
+        LensInfo: "21mm f/?",
+        FocalLength: "21.0 mm",
+        FocalLengthIn35mmFormat: "32 mm",
+        FNumber: 0,
+        ExposureTime: "1/250",
+        ISO: 400,
+        SerialNumber: "5CA12345",
+      },
+      sanitized: null,
+      colors: null,
     },
     "POST /api/photos/all-photos/check": {
       sources: [

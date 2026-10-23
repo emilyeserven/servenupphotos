@@ -2,8 +2,8 @@ import type { FastifyPluginAsync } from "fastify";
 import { relayToBackend } from "../lib/backend.js";
 
 /**
- * Places, localizations and metadata groups, kept as JSON on GitHub, for the Places,
- * Localizations and Metadata Groups pages.
+ * Places, localizations, metadata groups and camera overrides, kept as JSON on GitHub, for the
+ * Places, Localizations, Metadata Groups and Camera Overrides pages.
  */
 export const placesRoutes: FastifyPluginAsync = async (app) => {
   // Reads every place and localization file in the photo data pull request; the backend gives
@@ -12,9 +12,9 @@ export const placesRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/places", { timeoutMs: 35_000 }),
   );
 
-  // Saves a place, a localization or a metadata group (combined into METAINFO.json), new or
-  // changed, as a change waiting for Commit.
-  for (const kind of ["places", "localizations", "metainfo"]) {
+  // Saves a place, a localization, a metadata group (combined into METAINFO.json) or a camera
+  // override (CAMERAS.json), new or changed, as a change waiting for Commit.
+  for (const kind of ["places", "localizations", "metainfo", "cameras"]) {
     app.put<{ Params: { id: string } }>(`/${kind}/:id`, async (request, reply) =>
       relayToBackend(reply, app.log, `/${kind}/${encodeURIComponent(request.params.id)}`, {
         method: "PUT",
@@ -25,11 +25,13 @@ export const placesRoutes: FastifyPluginAsync = async (app) => {
     );
   }
 
-  // Removes a metadata group as a change waiting for Commit.
-  app.delete<{ Params: { id: string } }>("/metainfo/:id", async (request, reply) =>
-    relayToBackend(reply, app.log, `/metainfo/${encodeURIComponent(request.params.id)}`, {
-      method: "DELETE",
-      timeoutMs: 35_000,
-    }),
-  );
+  // Removes a metadata group or a camera override as a change waiting for Commit.
+  for (const kind of ["metainfo", "cameras"]) {
+    app.delete<{ Params: { id: string } }>(`/${kind}/:id`, async (request, reply) =>
+      relayToBackend(reply, app.log, `/${kind}/${encodeURIComponent(request.params.id)}`, {
+        method: "DELETE",
+        timeoutMs: 35_000,
+      }),
+    );
+  }
 };

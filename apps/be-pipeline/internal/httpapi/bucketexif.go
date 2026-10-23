@@ -26,7 +26,7 @@ type getPhotoFunc func(ctx context.Context, cfg settings.R2, key string) (io.Rea
 // bucket from Settings and responds as POST /exif does, so a photo already in
 // the bucket can get its photo data without being uploaded again. The file
 // name is the one the key keeps.
-func handleBucketExif(extractor exif.Extractor, r2 func() (settings.R2, error), get getPhotoFunc) http.HandlerFunc {
+func handleBucketExif(extractor exif.Extractor, r2 func() (settings.R2, error), get getPhotoFunc, overrides overridesFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var body struct {
 			Key string `json:"key"`
@@ -49,7 +49,7 @@ func handleBucketExif(extractor exif.Extractor, r2 func() (settings.R2, error), 
 		}
 		defer os.Remove(path) //nolint:errcheck // best-effort cleanup
 
-		res, status, msg := analyzePhoto(extractor, path, storage.OriginalName(body.Key))
+		res, status, msg := analyzePhoto(extractor, path, storage.OriginalName(body.Key), overrides.read(r.Context()))
 		if status != http.StatusOK {
 			writeError(w, status, msg)
 			return

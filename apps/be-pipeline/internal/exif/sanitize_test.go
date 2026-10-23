@@ -235,7 +235,11 @@ func checkPublishDefaults(t *testing.T, got map[string]any) {
 	}
 	delete(got, "isSocialMediaEligible")
 	delete(got, "websiteSpotlight")
+	if v, ok := got["exifOriginals"]; !ok || v != nil {
+		t.Errorf("exifOriginals = %#v, want null", v)
+	}
 	delete(got, "socialMediaPublishDate")
+	delete(got, "exifOriginals")
 }
 
 // checkNoImages checks that got has an images object whose links are all null,

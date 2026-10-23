@@ -1,6 +1,7 @@
 package exif
 
 import (
+	"encoding/json"
 	"math"
 	"strconv"
 	"strings"
@@ -56,6 +57,10 @@ type Sanitized struct {
 	// to social media, as YYYY-MM-DD, or nil when it isn't scheduled. It's
 	// set on the Instagram page; Sanitize leaves it nil.
 	SocialMediaPublishDate *string `json:"socialMediaPublishDate"`
+	// ExifOriginals are the EXIF values of the fields a camera override
+	// changed, by field, such as {"lens": "21.0 mm"}, so the overrides can be
+	// applied again after they change. Sanitize leaves it nil.
+	ExifOriginals map[string]json.RawMessage `json:"exifOriginals"`
 }
 
 // Images are the links to a photo's published copies. Sanitize leaves them

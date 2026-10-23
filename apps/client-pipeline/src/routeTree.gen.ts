@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BucketRouteImport } from './routes/bucket'
 import { Route as BulkUploadRouteImport } from './routes/bulk-upload'
+import { Route as CameraOverridesRouteImport } from './routes/camera-overrides'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
@@ -41,6 +42,11 @@ const BucketRoute = BucketRouteImport.update({
 const BulkUploadRoute = BulkUploadRouteImport.update({
   id: '/bulk-upload',
   path: '/bulk-upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CameraOverridesRoute = CameraOverridesRouteImport.update({
+  id: '/camera-overrides',
+  path: '/camera-overrides',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExifRoute = ExifRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bucket': typeof BucketRoute
   '/bulk-upload': typeof BulkUploadRoute
+  '/camera-overrides': typeof CameraOverridesRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bucket': typeof BucketRoute
   '/bulk-upload': typeof BulkUploadRoute
+  '/camera-overrides': typeof CameraOverridesRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/bucket': typeof BucketRoute
   '/bulk-upload': typeof BulkUploadRoute
+  '/camera-overrides': typeof CameraOverridesRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bucket'
     | '/bulk-upload'
+    | '/camera-overrides'
     | '/exif'
     | '/gallery'
     | '/in-flight'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bucket'
     | '/bulk-upload'
+    | '/camera-overrides'
     | '/exif'
     | '/gallery'
     | '/in-flight'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/'
     | '/bucket'
     | '/bulk-upload'
+    | '/camera-overrides'
     | '/exif'
     | '/gallery'
     | '/in-flight'
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BucketRoute: typeof BucketRoute
   BulkUploadRoute: typeof BulkUploadRoute
+  CameraOverridesRoute: typeof CameraOverridesRoute
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
   InFlightRoute: typeof InFlightRoute
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       path: '/bulk-upload'
       fullPath: '/bulk-upload'
       preLoaderRoute: typeof BulkUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/camera-overrides': {
+      id: '/camera-overrides'
+      path: '/camera-overrides'
+      fullPath: '/camera-overrides'
+      preLoaderRoute: typeof CameraOverridesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exif': {
@@ -399,6 +419,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BucketRoute: BucketRoute,
   BulkUploadRoute: BulkUploadRoute,
+  CameraOverridesRoute: CameraOverridesRoute,
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
   InFlightRoute: InFlightRoute,
