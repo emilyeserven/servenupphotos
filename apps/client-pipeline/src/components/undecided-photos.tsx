@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon, CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
-import type { InFlightFile, InFlightImages } from "@/api/photos";
+import type { InFlightFileRead, InFlightImages } from "@/api/photos";
 import { squareThumbnailUrl } from "@/api/versions";
 import { Button } from "@/components/ui/button";
 import { titleOf } from "@/lib/drafts";
@@ -10,7 +10,7 @@ import { useLocalEditsStore } from "@/stores/local-edits";
 /** Sets or clears the photo's `undecided` mark, as a local edit until Commit. */
 function useSetUndecided() {
   const setField = useLocalEditsStore((s) => s.setField);
-  return (file: InFlightFile, undecided: boolean) =>
+  return (file: InFlightFileRead, undecided: boolean) =>
     setField(UNDECIDED, [
       {
         path: file.path,
@@ -22,7 +22,7 @@ function useSetUndecided() {
 }
 
 /** Whether the photo can go in the Undecided queue: its JSON was read, it's kept, and it has no title. */
-function canMoveToUndecided(file: InFlightFile): boolean {
+function canMoveToUndecided(file: InFlightFileRead): boolean {
   return !file.error && file.status !== "removed" && titleOf(file.data) === undefined;
 }
 
@@ -30,7 +30,7 @@ function canMoveToUndecided(file: InFlightFile): boolean {
  * A button that moves an untitled photo to the Undecided queue, out of the list of photos in
  * flight, until it gets a title or is moved back. Nothing for a photo with a title.
  */
-export function MoveToUndecided({ file }: { file: InFlightFile }) {
+export function MoveToUndecided({ file }: { file: InFlightFileRead }) {
   const setUndecided = useSetUndecided();
   if (!canMoveToUndecided(file)) return null;
   return (
@@ -55,9 +55,12 @@ export function MoveToUndecided({ file }: { file: InFlightFile }) {
 export function UndecidedQueue({
   files,
   images,
+  fromGallery,
 }: {
-  files: InFlightFile[];
+  files: InFlightFileRead[];
   images: InFlightImages;
+  /** True for photos on the base branch, which the Photo page opens as the Gallery does. */
+  fromGallery?: boolean;
 }) {
   if (files.length === 0) return null;
   return (
@@ -77,7 +80,13 @@ export function UndecidedQueue({
         </p>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {files.map((file) => (
-            <UndecidedPhoto key={file.path} file={file} imageUrl={images.byPath[file.path]?.url} />
+            <DraftTile
+              key={file.path}
+              file={file}
+              imageUrl={images.byPath[file.path]?.url}
+              undecided
+              fromGallery={fromGallery}
+            />
           ))}
         </ul>
       </div>
@@ -85,41 +94,70 @@ export function UndecidedQueue({
   );
 }
 
-/** One photo in the queue: its Square Thumbnail, file name, Edit and Move back. */
-function UndecidedPhoto({ file, imageUrl }: { file: InFlightFile; imageUrl?: string }) {
-  const setUndecided = useSetUndecided();
+interface DraftTileProps {
+  file: InFlightFileRead;
+  imageUrl?: string;
+  /** Whether it's in the Undecided queue, so it gets Move back rather than Undecided. */
+  undecided?: boolean;
+  /** True for a photo on the base branch, which the Photo page opens as the Gallery does. */
+  fromGallery?: boolean;
+}
+
+/**
+ * An untitled photo as a tile: its Square Thumbnail, file name, Edit, and Move back when it's in
+ * the Undecided queue or Undecided when it isn't.
+ */
+export function DraftTile({ file, imageUrl, undecided, fromGallery }: DraftTileProps) {
   const name = file.path.split("/").pop() ?? file.path;
   return (
     <li className="flex min-w-0 flex-col gap-1.5">
       <span className="bg-muted flex aspect-square items-center justify-center overflow-hidden rounded-md border">
-        {imageUrl ? (
-          <img
-            src={squareThumbnailUrl(imageUrl)}
-            alt=""
-            loading="lazy"
-            className="size-full object-cover"
-          />
-        ) : (
-          <ImageIcon className="text-muted-foreground size-5" />
-        )}
+        <TileImage imageUrl={imageUrl} />
       </span>
       <span className="truncate text-xs" title={name}>
         {name}
       </span>
       <span className="flex flex-wrap gap-1">
-        {imageUrl && (
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/exif" search={{ edit: file.path }}>
-              <PencilIcon />
-              Edit
-            </Link>
-          </Button>
-        )}
-        <Button variant="ghost" size="sm" onClick={() => setUndecided(file, false)}>
-          <Undo2Icon />
-          Move back
-        </Button>
+        {imageUrl && <TileEdit path={file.path} fromGallery={fromGallery} />}
+        {undecided ? <MoveBack file={file} /> : <MoveToUndecided file={file} />}
       </span>
     </li>
+  );
+}
+
+/** The photo's Square Thumbnail, or an image icon without an image in R2. */
+function TileImage({ imageUrl }: { imageUrl?: string }) {
+  if (!imageUrl) return <ImageIcon className="text-muted-foreground size-5" />;
+  return (
+    <img
+      src={squareThumbnailUrl(imageUrl)}
+      alt=""
+      loading="lazy"
+      className="size-full object-cover"
+    />
+  );
+}
+
+/** Opens the photo on the Photo page, as the Gallery does for a photo on the base branch. */
+function TileEdit({ path, fromGallery }: { path: string; fromGallery?: boolean }) {
+  const search = fromGallery ? { edit: path, from: "gallery" as const } : { edit: path };
+  return (
+    <Button variant="outline" size="sm" asChild>
+      <Link to="/exif" search={search}>
+        <PencilIcon />
+        Edit
+      </Link>
+    </Button>
+  );
+}
+
+/** Takes the photo out of the Undecided queue. */
+function MoveBack({ file }: { file: InFlightFileRead }) {
+  const setUndecided = useSetUndecided();
+  return (
+    <Button variant="ghost" size="sm" onClick={() => setUndecided(file, false)}>
+      <Undo2Icon />
+      Move back
+    </Button>
   );
 }

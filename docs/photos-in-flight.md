@@ -8,7 +8,17 @@
 without a title (a `title` that's null or blank) come first, so they're easy to find and name; the sync button's panel
 has **Next untitled photo** to open them one after another (see
 [Committing the combined files](combined-data-store.md#committing-the-combined-files)). An untitled photo is a
-[draft](drafts.md), marked **Draft, not on the portfolio** instead of the `ALLPHOTOS.json` check mark.
+[draft](drafts.md), marked **Draft, not on the portfolio** instead of the `ALLPHOTOS.json` check mark. A file with
+a change waiting for Commit is marked **Waiting for Commit** and has no GitHub link yet. With no pull request open, the
+summary says how many files are waiting, with **Commit**, which opens one. **Refresh** asks GitHub again
+(`?refresh=1`), rather than using the backend's read from when it started, so a merge made on GitHub shows at once. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
+mark when its data is one of the entries in `ALLPHOTOS.json` at the pull request's head, as the
+[combined data store](combined-data-store.md) has it (compared as JSON, so formatting and key order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
+when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
+file's name), or a "no image" sign when there's none. Under the photo is its Square Thumbnail: the JSON's
+`images.thumbnail`, or else the `-thumbnail.webp` next to the photo in R2, with a placeholder when R2 doesn't have one
+(as for photos uploaded before Square Thumbnails). Its Thumbnail Preview (`images.thumbnailpreview`, or the
+`-thumbnailpreview.webp` next to the photo) shows blurred behind it while it loads. Clicking it opens it at its full 500 × 500.
 
 ### Undecided
 
@@ -21,17 +31,15 @@ still a draft, so the portfolio doesn't show it; with drafts turned off in Setti
 other untitled photo.
 
 > **Frontend analogy:** it's like archiving an email: the message is still there, it just leaves the inbox view until
-> you open the Archive folder or move it back. A file with
-> a change waiting for Commit is marked **Waiting for Commit** and has no GitHub link yet. With no pull request open, the
-> summary says how many files are waiting, with **Commit**, which opens one. **Refresh** asks GitHub again
-> (`?refresh=1`), rather than using the backend's read from when it started, so a merge made on GitHub shows at once. `ALLPHOTOS.json` isn't listed as a photo: instead each photo gets a check
-> mark when its data is one of the entries in `ALLPHOTOS.json` at the pull request's head, as the
-> [combined data store](combined-data-store.md) has it (compared as JSON, so formatting and key order don't matter). Next to each photo's JSON it shows the photo from R2: the object at the JSON's `images.key` (or `images.full` URL)
-> when it has one, or else the newest `photos/<hash>-<name>.jpg` upload whose name matches the JSON's `file` (or the JSON
-> file's name), or a "no image" sign when there's none. Under the photo is its Square Thumbnail: the JSON's
-> `images.thumbnail`, or else the `-thumbnail.webp` next to the photo in R2, with a placeholder when R2 doesn't have one
-> (as for photos uploaded before Square Thumbnails). Its Thumbnail Preview (`images.thumbnailpreview`, or the
-> `-thumbnailpreview.webp` next to the photo) shows blurred behind it while it loads. Clicking it opens it at its full 500 × 500.
+> you open the Archive folder or move it back.
+
+### Drafts on the base branch
+
+With no photos in flight, the page lists the [drafts](drafts.md) already on the base branch instead (read with the
+Gallery's `GET /api/photos/published`): the Undecided ones in the **Undecided** panel and the rest under **Drafts on
+`<branch>`**, each with **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
+back**. Naming one and saving it puts it back in flight, and Commit sends it to a new pull request. Nothing is listed
+when untitled photos aren't kept as drafts.
 
 Each added file has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it removes the JSON
 from the batch and deletes the image the page shows from R2 (skipped when R2 has none). A file only waiting for Commit
