@@ -54,7 +54,8 @@ reads as `{}` (their fields are still their EXIF values); Update Data's **Missin
 
 - **New photos.** Reading a photo's EXIF (`POST /exif` on the Photo page and Bulk Upload, `POST /photos/bucket/exif`
   in Explore Bucket) makes the overrides, as the next Commit will have them, over its sanitized EXIF, so the preview
-  and the saved JSON already have them. When GitHub isn't set up or can't be read, the photo keeps its EXIF values. The
+  and the saved JSON already have them, followed by the [location names](places-and-localizations.md#other-names) that
+  win over its country and city. When GitHub isn't set up or can't be read, the photo keeps its EXIF values. The
   full `exif` the endpoint returns is never changed.
 - **Update Data → Camera overrides** (`POST /data/camera-overrides/preview`, then `POST /data/camera-overrides`) lists,
   for every photo file, the fields applying the overrides again would change, then saves them as changes waiting for

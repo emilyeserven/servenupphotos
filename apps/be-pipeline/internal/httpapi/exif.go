@@ -18,36 +18,37 @@ import (
 // which reads GitHub only the first time after the pipeline starts.
 const overridesTimeout = 30 * time.Second
 
-// overridesFunc returns the camera overrides a photo's sanitized EXIF gets,
-// or none when they can't be read. A nil overridesFunc gives none.
-type overridesFunc func(ctx context.Context) []github.CameraOverride
+// overridesFunc returns the camera overrides and location names a photo's
+// sanitized EXIF gets, or none when they can't be read. A nil overridesFunc
+// gives none.
+type overridesFunc func(ctx context.Context) github.ExifOverrides
 
-// cameraOverrides reads the camera overrides as the next Commit will have
-// them, from the repository in Settings. Without one set up, or when GitHub
+// cameraOverrides reads the camera overrides and location names as the next
+// Commit will have them, from the repository in Settings. Without one set up, or when GitHub
 // can't be read, a photo keeps its EXIF values.
 func cameraOverrides(store *settings.Store, gh *github.Client) overridesFunc {
 	if store == nil || gh == nil {
 		return nil
 	}
-	return func(ctx context.Context) []github.CameraOverride {
+	return func(ctx context.Context) github.ExifOverrides {
 		cfg, err := store.GitHub()
 		if err != nil || cfg.Repo == "" || cfg.Token == "" {
-			return nil
+			return github.ExifOverrides{}
 		}
 		ctx, cancel := context.WithTimeout(ctx, overridesTimeout)
 		defer cancel()
-		overrides, err := gh.CameraOverrides(ctx, cfg)
+		overrides, err := gh.ExifOverrides(ctx, cfg)
 		if err != nil {
-			slog.Warn("camera overrides not applied", "err", err)
+			slog.Warn("camera overrides and location names not applied", "err", err)
 		}
 		return overrides
 	}
 }
 
 // read is the overrides f returns, or none when f is nil.
-func (f overridesFunc) read(ctx context.Context) []github.CameraOverride {
+func (f overridesFunc) read(ctx context.Context) github.ExifOverrides {
 	if f == nil {
-		return nil
+		return github.ExifOverrides{}
 	}
 	return f(ctx)
 }
@@ -63,7 +64,7 @@ type exifResponse struct {
 
 // handleExif reads the JPEG in the "photo" field of a multipart form and
 // responds with its EXIF metadata and color summary, its sanitized EXIF with
-// the camera overrides for its camera made over it.
+// the camera overrides for its camera and the location names made over it.
 func handleExif(extractor exif.Extractor, overrides overridesFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		photo, ok := receivePhoto(w, r)
@@ -84,7 +85,7 @@ func handleExif(extractor exif.Extractor, overrides overridesFunc) http.HandlerF
 // analyzePhoto reads the EXIF metadata and color summary of the JPEG at path,
 // returned under name, with overrides made over the sanitized EXIF. On
 // failure it returns the status and message to send.
-func analyzePhoto(extractor exif.Extractor, path, name string, overrides []github.CameraOverride) (exifResponse, int, string) {
+func analyzePhoto(extractor exif.Extractor, path, name string, overrides github.ExifOverrides) (exifResponse, int, string) {
 	res := exifResponse{File: name}
 	var err error
 	if extractor != nil {
@@ -92,7 +93,7 @@ func analyzePhoto(extractor exif.Extractor, path, name string, overrides []githu
 			slog.Error("exif extraction failed", "err", err)
 			return res, http.StatusInternalServerError, "could not read photo metadata"
 		}
-		sanitized := github.ApplyCameraOverrides(overrides, exif.Sanitize(res.Exif))
+		sanitized := overrides.Apply(exif.Sanitize(res.Exif))
 		res.Sanitized = &sanitized
 	}
 

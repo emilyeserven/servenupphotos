@@ -44,6 +44,11 @@ export interface Localization {
   pronunciation: string;
   /** The name in its own script, such as 경복궁 in hangeul. */
   localScript: string;
+  /**
+   * Other ways photos and places write a country or city, such as "United States" for "United
+   * States of America". Its name wins over them: Update Data's Location names rewrites them to it.
+   */
+  otherNames?: string[];
 }
 
 /** One place or localization file, as read; `data` is missing when it couldn't be. */

@@ -16,6 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { CombinedPhoto } from "@/lib/group-photos";
+import type { LocationNames } from "@/lib/location-names";
 import { cn } from "@/lib/utils";
 import {
   type RegionNode,
@@ -33,6 +35,10 @@ export interface RegionListData {
   localizations: ReadonlyMap<string, Localization>;
   /** How many photos listing each place can't go on the map, by place ID. */
   unmapped: ReadonlyMap<string, number>;
+  /** Every photo, as the next Commit will have it. */
+  photos: CombinedPhoto[];
+  /** The names that win over other names of a country or city, which the list counts them as. */
+  names: LocationNames;
 }
 
 interface RegionListProps {

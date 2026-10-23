@@ -172,6 +172,33 @@ many photos show each. Places come from the place files. Rows not saved yet say 
 at the top right next to the sync button, saves every changed row on every tab. What's typed is kept while switching
 tabs.
 
+### Other names
+
+A country or city can have **other names**: other ways the photos and places write it, such as `"United States"` and
+`"USA"` for `"United States of America"`. Its name wins over them. They're kept on its localization, as
+`"otherNames": ["United States", "USA"]` (left out when there are none), and matched ignoring case and spaces at the
+ends. Saving refuses another name that's already one of another country's (or city's), a name with other names of its
+own as another name, and other names for a name that's already another one's other name, so a name never wins over
+a name that wins over others. A place has no other names.
+
+On the Places page, a country's or city's panel has **Other names** above its localization: pick another country (or
+city) from the list, or type one. **Save changes** saves them with the localization. The list then counts each other
+name as the name that wins, so its photos, places and cities move under it at once, and the panel says how many photos
+and places still write another name, with a link to Update Data. The Photo page's **City** and **Country** comboboxes,
+and a place's **City**, offer only the winning names too. The Localizations page keeps a country's or city's other
+names when saving its row.
+
+The names are rewritten in the files, not only shown: **Update Data → Location names**
+(`POST /api/data/location-names/preview`, then `POST /api/data/location-names`) lists every photo file whose `country`,
+`city`, `customCountry` or `customCity`, and every place file whose `country` or `city`, is another name, then saves
+them written as the name that wins, as [changes waiting for Commit](pending-changes.md). Only those fields change, and
+nothing is saved while any photo or place file can't be read. A new photo's EXIF country and city get the winning
+names when it's read (with the [camera overrides](camera-overrides.md), after them). Removing another name doesn't
+change files already rewritten.
+
+> **Frontend analogy:** it's a redirect map, like `{ "/old-path": "/new-path" }` in a router: the list follows the
+> redirect as soon as it's saved, and Update Data rewrites the old links in the files themselves.
+
 Saves of places and localizations go through one queue: each checks the others' names and parents, so a save made
 while another runs waits its turn (its button says **Queued…**, then **Saving…**) instead of racing it. A row already queued isn't queued again.
 

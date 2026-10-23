@@ -81,19 +81,6 @@ func (c *Client) DeleteCameraOverride(ctx context.Context, gh settings.GitHub, i
 	return c.deleteEntry(ctx, gh, Cameras, id, func([]Entry) *PublishError { return nil })
 }
 
-// CameraOverrides are the camera overrides as the next Commit will have
-// them, so a photo read now gets the ones saved and not committed yet.
-func (c *Client) CameraOverrides(ctx context.Context, gh settings.GitHub) ([]CameraOverride, error) {
-	if perr := setUp(gh); perr != nil {
-		return nil, perr
-	}
-	w, perr := c.workspace(ctx, gh)
-	if perr != nil {
-		return nil, perr
-	}
-	return parseOverrides(w.entries(Cameras)), nil
-}
-
 // parseOverrides is the camera overrides in entries that can be read.
 func parseOverrides(entries []Entry) []CameraOverride {
 	var out []CameraOverride
