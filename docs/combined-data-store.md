@@ -1,6 +1,6 @@
 # Combined data store
 
-`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json`, `LOCALIZATIONS.json` and `METAINFO.json` are read once, on the Settings branch and at the open **Add photo
+`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json` and `LENSES.json` are read once, on the Settings branch and at the open **Add photo
 data** pull request's head (`GET /api/photos/combined` → `GET /photos/combined`), and kept in a Zustand store
 (`apps/client-pipeline/src/stores/combined-data.ts`) that every page shares: Photos in Flight, Explore Bucket, the Add
 Photo check and the Instagram calendar. Other endpoints don't read them anymore. They only change when you **Commit** them or the
@@ -10,7 +10,7 @@ pull request is merged, so the store reads them again only:
 - when Photos in Flight finds another pull request than the one the store read them for, such as after a merge,
 - on Photos in Flight's **Refresh**, after the GitHub settings change, and on a page reload.
 
-Saves (photo JSON, edits, removals, new albums and tags, moved albums, places, localizations and metadata groups, albums and tags added
+Saves (photo JSON, edits, removals, new albums and tags, moved albums, places, localizations, metadata groups, camera overrides and custom lenses, albums and tags added
 from the Gallery, Update Data) become [changes waiting for Commit](pending-changes.md), kept by the backend. Their
 mutations are marked `meta: { saves: true }` and give the files they changed as `meta.changes`: the file's path, its
 data before and after (`null` when removed). New files take theirs from the result's `data`; edits and removals get
@@ -38,7 +38,7 @@ Edits made while a commit runs are kept for the next one.
 ## Committing the combined files
 
 Saves don't touch GitHub or the combined files. **Commit** (`POST /api/photos/combined` →
-`POST /photos/combined`) takes every [change waiting for Commit](pending-changes.md) and any [local edits](#local-edits), builds all six (`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json`, `LOCALIZATIONS.json` and `METAINFO.json`) from the result and commits
+`POST /photos/combined`) takes every [change waiting for Commit](pending-changes.md) and any [local edits](#local-edits), builds all eight (`ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`, `PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json` and `LENSES.json`) from the result and commits
 everything that changed as one commit, "Combine photo, album and tag data", on the open **Add photo data** pull
 request's branch, or on a new `photo-data/` branch with a new pull request when none is open. Each is every other `.json` file directly in its folder,
 sorted by path, as one array, formatted as oxfmt formats it, so a list that's already up to date isn't committed again.
@@ -63,10 +63,10 @@ between.
 > **Frontend analogy:** it's hydrating a client cache from the server on load. The store's own list of saves lives in
 > memory, like React state, and a reload empties it; the status call refills it with what the server already has.
 
-A floating button at the top right of every page shows where things stand: **Synced · batch open** (everything is committed, but the photo data pull request, the batch, still waits to be merged), **Synced · no open batch**, **Not synced · 3 images** (every image added, modified or deleted since the last commit, each counted once, with albums, tags, places, localizations and metadata groups after them; the panel shows the images as three counts, Added, Modified and Deleted, and a file added and then deleted again doesn't count),
+A floating button at the top right of every page shows where things stand: **Synced · batch open** (everything is committed, but the photo data pull request, the batch, still waits to be merged), **Synced · no open batch**, **Not synced · 3 images** (every image added, modified or deleted since the last commit, each counted once, with albums, tags, places, localizations, metadata groups, camera overrides and custom lenses after them; the panel shows the images as three counts, Added, Modified and Deleted, and a file added and then deleted again doesn't count),
 **Committing…** or **Commit failed**. Clicking it opens a panel with the pull request, the counts, the last commit's link,
 **Discard** for everything waiting for Commit, and **Commit**. While a photo in flight has no title, the panel also has
-**Next untitled photo**, with how many there are, which opens the next one on the Photo page (`/exif?edit=<path>`):
+**Next untitled photo**, with how many there are (leaving out the [Undecided](photos-in-flight.md#undecided) ones), which opens the next one on the Photo page (`/exif?edit=<path>`):
 the first after the photo open there, in Photos in Flight's order, going back to the first after the last. Photos in Flight also says so in its **Synced** row, with the
 same button, and marks each file that isn't in the combined files with "Not synced to ALLPHOTOS.json yet". The lines
 that follow a save elsewhere, such as on the Photo page, link back to Photos in Flight to commit.

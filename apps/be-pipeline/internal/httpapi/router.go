@@ -39,7 +39,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", handleHealth)
 	mux.HandleFunc("GET /hello", handleHello)
-	mux.HandleFunc("POST /exif", handleExif(extractor))
+	mux.HandleFunc("POST /exif", handleExif(extractor, cameraOverrides(store, gh)))
 	d := routeDeps{extractor: extractor, store: store, gh: gh}
 	registerSettingsRoutes(mux, d)
 	registerPhotoRoutes(mux, d)
@@ -48,6 +48,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	registerOrganizeRoutes(mux, d)
 	registerPlacesRoutes(mux, d)
 	registerMetaInfoRoutes(mux, d)
+	registerCameraRoutes(mux, d)
 	registerDataRoutes(mux, d)
 	registerPublishRoutes(mux, d)
 	return mux

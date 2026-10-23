@@ -45,7 +45,7 @@ func TestBucketExif(t *testing.T) {
 			extractor := &fakeExtractor{}
 			req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/photos/bucket/exif", strings.NewReader(tt.body))
 			rec := httptest.NewRecorder()
-			handleBucketExif(extractor, cfg, tt.get)(rec, req)
+			handleBucketExif(extractor, cfg, tt.get, nil)(rec, req)
 			if rec.Code != tt.status || !strings.Contains(rec.Body.String(), tt.want) {
 				t.Fatalf("status = %d, body %s; want %d with %q", rec.Code, rec.Body, tt.status, tt.want)
 			}

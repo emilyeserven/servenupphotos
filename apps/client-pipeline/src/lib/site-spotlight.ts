@@ -90,7 +90,7 @@ function savedOrder(photo: SocialPhoto): number | null {
 }
 
 /** The photo's place in the order with the unsaved ones applied. */
-function orderOf(order: UnsavedOrder, photo: SocialPhoto): number | null {
+export function orderOf(order: UnsavedOrder, photo: SocialPhoto): number | null {
   return photo.path in order ? (order[photo.path] ?? null) : savedOrder(photo);
 }
 
@@ -102,6 +102,18 @@ export function unsavedOrderFromEdits(edits: Record<string, LocalEdit>): Unsaved
       order[edit.path] = edit.fields[SPOTLIGHT_ORDER] as number | null;
   }
   return order;
+}
+
+/** The photo's place in the order, counted from 1 among the photos in zone; null when it isn't in it. */
+export function placeInZone(
+  photos: SocialPhoto[],
+  unsaved: UnsavedZones,
+  order: UnsavedOrder,
+  zone: string,
+  path: string,
+) {
+  const index = zonePhotos(photos, unsaved, order, zone).findIndex((p) => p.path === path);
+  return index === -1 ? null : index + 1;
 }
 
 /** Ranks a photo without a place after every photo with one. */
@@ -139,5 +151,18 @@ export function moveChanges(list: SocialPhoto[], from: number, to: number): Fiel
   const moved = list[from];
   if (!moved || from === to) return [];
   const next = list.toSpliced(from, 1).toSpliced(to, 0, moved);
-  return next.map((photo, index) => orderChange(photo, index + 1));
+  return numbered(next);
+}
+
+/** The local edits that give each photo in list its place there, 1 first. */
+function numbered(list: SocialPhoto[]): FieldChange[] {
+  return list.map((photo, index) => orderChange(photo, index + 1));
+}
+
+/**
+ * The local edits that put photo at the end of list, a zone's photos in their order, numbering
+ * them all so photos without a place yet don't come after it.
+ */
+export function appendChanges(list: SocialPhoto[], photo: SocialPhoto): FieldChange[] {
+  return numbered([...list.filter((p) => p.path !== photo.path), photo]);
 }

@@ -35,6 +35,7 @@ import { DraftMark } from "@/components/draft-mark";
 import { Page } from "@/components/page";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
+import { MoveToUndecided, UndecidedQueue } from "@/components/undecided-photos";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,9 +49,11 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
+import { undecidedPaths } from "@/lib/undecided";
 import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
 import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
+import { useLocalEditsStore } from "@/stores/local-edits";
 
 interface InFlightSearch {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */
@@ -71,7 +74,7 @@ function InFlightPage() {
     <Page
       wide
       title="Photos in Flight"
-      description="Photo, album, tag, place, localization and metadata group data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
+      description="Photo, album, tag, place, localization, metadata group, camera override and custom lens data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -160,7 +163,10 @@ function InFlightCard() {
   );
 }
 
-/** The photo files, with the ones without a title first so they're easy to find and name. */
+/**
+ * The photo files, with the ones without a title first so they're easy to find and name, after the
+ * Undecided queue, which takes the photos set aside out of the list.
+ */
 function PhotoFiles({
   shown,
   ...props
@@ -170,10 +176,20 @@ function PhotoFiles({
   baseBranch?: string;
   onRemoved: (result: RemoveResult) => void;
 }) {
+  const edits = useLocalEditsStore((s) => s.edits);
   if (!shown) return null;
-  return untitledFirst(shown.files).map((file) => (
-    <FileSection key={file.path} file={file} images={shown.images} {...props} />
-  ));
+  const undecided = undecidedPaths(shown.files, edits);
+  return (
+    <>
+      <UndecidedQueue
+        files={shown.files.filter((file) => undecided.has(file.path))}
+        images={shown.images}
+      />
+      {untitledFirst(shown.files.filter((file) => !undecided.has(file.path))).map((file) => (
+        <FileSection key={file.path} file={file} images={shown.images} {...props} />
+      ))}
+    </>
+  );
 }
 
 /** What the last removal did, then whether ALLPHOTOS.json is synced with it. */
@@ -362,6 +378,7 @@ function FileSection({
         <DraftMark data={file.status === "removed" ? undefined : file.data}>
           <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
         </DraftMark>
+        <MoveToUndecided file={file} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
@@ -570,7 +587,7 @@ function AllPhotosMark({
   );
 }
 
-type GroupKey = "albums" | "tags" | "places" | "localizations" | "metainfo";
+type GroupKey = "albums" | "tags" | "places" | "localizations" | "metainfo" | "cameras" | "lenses";
 
 /** The kinds of data files listed after the photos, in order, with their headings. */
 const GROUPS: [GroupKey, string][] = [
@@ -579,6 +596,8 @@ const GROUPS: [GroupKey, string][] = [
   ["places", "Places"],
   ["localizations", "Localizations"],
   ["metainfo", "Metadata groups"],
+  ["cameras", "Camera overrides"],
+  ["lenses", "Custom lenses"],
 ];
 
 /** The album, tag, place or localization files in the pull request, each with its JSON; nothing when there are none. */
@@ -722,6 +741,10 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dd>{groupsSummary(data.localizations)}</dd>
       <dt className="text-muted-foreground">Metadata group files</dt>
       <dd>{groupsSummary(data.metainfo)}</dd>
+      <dt className="text-muted-foreground">Camera override files</dt>
+      <dd>{groupsSummary(data.cameras)}</dd>
+      <dt className="text-muted-foreground">Custom lens files</dt>
+      <dd>{groupsSummary(data.lenses)}</dd>
     </dl>
   );
 }

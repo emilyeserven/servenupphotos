@@ -181,16 +181,24 @@ function placesChanged(data: PhotoJson, details: PhotoDetails): boolean {
   return canonicalJson(chosenPlaces(details.places)) !== canonicalJson(saved);
 }
 
-/** What the Photo page edits besides the crop: the details, albums and tags, and social media posts. */
+/**
+ * What the Photo page edits besides the crop: the details, albums and tags, social media posts, and
+ * the fields the camera overrides change once they're applied (null until they are).
+ */
 export interface EditedFields {
   details: PhotoDetails;
   groups: PhotoGroups;
   socialPosts: SocialPostDraft[];
+  overrides: Record<string, unknown> | null;
 }
 
-/** Whether the details, albums, tags or social media posts differ from the ones saved in data. */
-export function fieldsChanged(data: PhotoJson, { details, groups, socialPosts }: EditedFields) {
+/** Whether the details, albums, tags or social media posts differ from the ones saved in data, or overrides were applied. */
+export function fieldsChanged(
+  data: PhotoJson,
+  { details, groups, socialPosts, overrides }: EditedFields,
+) {
   return (
+    overrides !== null ||
     detailsChanged(data, details) ||
     !sameGroups(savedGroups(data), groups) ||
     socialPostsChanged(data, socialPosts)
@@ -227,12 +235,13 @@ export function photoFile(saved: PhotoJson): string {
  */
 export function saveRequest(
   saved: PhotoJson,
-  { details, groups, socialPosts }: EditedFields,
+  { details, groups, socialPosts, overrides }: EditedFields,
   crop: Crop | null,
   baseline: Crop | null,
   remakeSquares: boolean,
 ): SaveRequest {
-  const data = withSocialPosts(withGroups(withDetails(saved, details), groups), socialPosts);
+  const edited = withSocialPosts(withGroups(withDetails(saved, details), groups), socialPosts);
+  const data = { ...edited, ...overrides };
   return remakeSquares ? { crop, data } : { crop: null, data: withCropField(data, baseline) };
 }
 

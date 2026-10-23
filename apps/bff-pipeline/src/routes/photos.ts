@@ -7,7 +7,8 @@ const VERSIONS = ["xlarge", "large", "medium", "small", "xsmall", "preview"] as 
 
 /** Routes that take a photo upload, with how long each may take on the backend. */
 const PHOTO_ROUTES = [
-  { path: "/exif", timeoutMs: 60_000 },
+  // The backend may first read the camera overrides from GitHub, given 30s, before reading the photo.
+  { path: "/exif", timeoutMs: 90_000 },
   // The backend gives resizing and R2 120s after receiving the photo, so this waits a little longer.
   { path: "/upload", timeoutMs: 150_000 },
   // A resized WEBP version of the photo, as an upload would put in R2.

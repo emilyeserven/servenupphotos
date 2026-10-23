@@ -1,8 +1,9 @@
 import { CheckIcon, PlusIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
 import { PhotoFiles } from "@/components/photo-files";
+import { type Spotlight, type Toggle, useSpotlight } from "@/components/use-spotlight";
 import { DRAFT_BADGE, Thumbnail, ZonePhotos } from "@/components/spotlight-zone-photos";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,63 +25,23 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   type SpotlightZone,
-  type UnsavedOrder,
   type UnsavedZones,
-  SPOTLIGHT_ORDER,
-  SPOTLIGHT_ZONES,
-  moveChanges,
   newestFirst,
-  orderChange,
   spotlightZones,
-  unsavedOrderFromEdits,
-  unsavedZonesFromEdits,
-  zoneChange,
   zonePhotos,
   zonesOf,
   zonesUnsaved,
 } from "@/lib/site-spotlight";
 import { photoName } from "@/lib/social-schedule";
 import { cn } from "@/lib/utils";
-import { useLocalEditsStore } from "@/stores/local-edits";
 
 /** Picks the photos each spotlight zone of the portfolio shows, such as the homepage's. */
 export function SiteSpotlight() {
   return <PhotoFiles>{(data) => <Zones files={data} />}</PhotoFiles>;
 }
 
-/** Puts a photo in a zone or takes it out. */
-type Toggle = (photo: SocialPhoto, zone: string, on: boolean) => void;
-
-/** The zones and order as changed here, and how to change them. */
-interface Spotlight {
-  unsaved: UnsavedZones;
-  order: UnsavedOrder;
-  toggle: Toggle;
-  /** Saves list, a zone's photos in their order, with the photo at from moved to to. */
-  move: (list: SocialPhoto[], from: number, to: number) => void;
-}
-
-/**
- * The zones and order changed here and not committed yet, kept with the app's other local edits
- * so the sync button counts them and **Commit** saves them. Taking a photo out of a zone also takes
- * its place in the order away.
- */
-function useSpotlight(): Spotlight {
-  const edits = useLocalEditsStore((state) => state.edits);
-  const setField = useLocalEditsStore((state) => state.setField);
-  const unsaved = useMemo(() => unsavedZonesFromEdits(edits), [edits]);
-  const order = useMemo(() => unsavedOrderFromEdits(edits), [edits]);
-  const toggle: Toggle = (photo, zone, on) => {
-    setField(SPOTLIGHT_ZONES, [zoneChange(unsaved, photo, zone, on)]);
-    if (!on) setField(SPOTLIGHT_ORDER, [orderChange(photo, null)]);
-  };
-  const move: Spotlight["move"] = (list, from, to) =>
-    setField(SPOTLIGHT_ORDER, moveChanges(list, from, to));
-  return { unsaved, order, toggle, move };
-}
-
 function Zones({ files }: { files: SocialCalendar }) {
-  const spotlight = useSpotlight();
+  const spotlight = useSpotlight(files.photos);
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">

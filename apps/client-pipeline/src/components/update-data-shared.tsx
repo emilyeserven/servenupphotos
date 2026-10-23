@@ -1,3 +1,4 @@
+import type { QueryClient } from "@tanstack/react-query";
 import { ExternalLinkIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import type { ScannedPhotos } from "@/api/data";
@@ -81,5 +82,34 @@ function ExternalLink({ href, children }: { href: string; children: ReactNode })
       {children}
       <ExternalLinkIcon className="size-3.5" />
     </a>
+  );
+}
+
+/** After a bulk change saved photo JSON: every preview and in-flight read is stale. */
+export function invalidatePhotoReads(queryClient: QueryClient) {
+  void queryClient.invalidateQueries({ queryKey: ["data"] });
+  void queryClient.invalidateQueries({ queryKey: ["photos"] });
+}
+
+/** One file a bulk change previews, collapsed to its name and a note, with the details inside. */
+export function FileDetails({
+  path,
+  note,
+  children,
+}: {
+  path: string;
+  note: string;
+  children: ReactNode;
+}) {
+  return (
+    <li>
+      <details>
+        <summary className="hover:bg-muted/50 flex cursor-pointer items-center justify-between gap-3 px-3 py-2">
+          <code className="min-w-0 truncate">{path.split("/").pop()}</code>
+          <span className="text-muted-foreground shrink-0">{note}</span>
+        </summary>
+        {children}
+      </details>
+    </li>
   );
 }

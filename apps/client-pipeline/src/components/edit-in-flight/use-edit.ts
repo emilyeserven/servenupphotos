@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { cameraOverrides } from "@/api/cameras";
+import { customLenses } from "@/api/lenses";
 import { savedGroups } from "@/api/organize";
 import {
   type UpdateResult,
@@ -30,8 +32,26 @@ import {
   squareUrls,
   withSquares,
 } from "@/components/edit-in-flight/photo-json";
+import {
+  type LensEdit,
+  type LensSettings,
+  lensEditFields,
+} from "@/components/edit-in-flight/lens-edit";
+import { savedLensChoice } from "@/lib/custom-lens";
+import { useCombinedData } from "@/stores/combined-data";
 
-/** The crop, title, place name, comment, albums, tags and social media posts being edited, against the last ones saved, and the JSON saving them would write. */
+/** A saved photo's lens edit before anything is changed. */
+function startingLensEdit(data: PhotoJson): LensEdit {
+  return { ...savedLensChoice(data), apply: false };
+}
+
+/** The camera overrides and custom lenses as the next Commit will have them. */
+export function useLensSettings(): LensSettings {
+  const { data } = useCombinedData();
+  return { overrides: cameraOverrides(data), lenses: customLenses(data) };
+}
+
+/** The crop, title, place name, comment, albums, tags, social media posts, custom lens and camera overrides being edited, against the last ones saved, and the JSON saving them would write. */
 export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null) {
   const [crop, setCrop] = useState<Crop | null>(savedCrop);
   // The editor reports the middle first when no crop was saved, which then counts as saved.
@@ -40,7 +60,10 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
   const [details, setDetails] = useState(() => savedDetails(data));
   const [groups, setGroups] = useState(() => savedGroups(data));
   const [socialPosts, setSocialPosts] = useState(() => savedSocialPosts(data));
-  const fields = { details, groups, socialPosts };
+  const [lensEdit, setLensEdit] = useState<LensEdit>(() => startingLensEdit(data));
+  const settings = useLensSettings();
+  const overrides = lensEditFields(savedData, lensEdit, settings);
+  const fields = { details, groups, socialPosts, overrides };
   const remakeSquares = cropChanged(crop, baseline, savedData);
   const changed = remakeSquares || fieldsChanged(savedData, fields);
   const request = {
@@ -57,6 +80,11 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
     setGroups,
     socialPosts,
     setSocialPosts,
+    /** The custom lens, manual aperture and camera overrides being applied. */
+    lensEdit,
+    setLensEdit,
+    /** The fields they change, or null when they change none. */
+    overrides,
     /** What saving would do, when there's anything to save. */
     request: changed ? request : null,
     /** The JSON saving would write, when there's anything to save. */
@@ -69,6 +97,7 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
     onSaved: (saved: Crop | null, json: PhotoJson) => {
       if (saved) setBaseline(saved);
       setSavedData(json);
+      setLensEdit(startingLensEdit(json));
     },
   };
 }

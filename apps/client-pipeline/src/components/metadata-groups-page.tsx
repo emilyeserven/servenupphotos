@@ -1,6 +1,7 @@
 import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { META_FIELDS, type MetaFieldInfo, type MetaGroup, metaGroups } from "@/api/metainfo";
+import { CustomLensesSection } from "@/components/custom-lenses/section";
 import { MetaGroupEditor } from "@/components/metadata-group-editor";
 import { MetaMoveButtons } from "@/components/metadata-move-buttons";
 import { MetaUncovered } from "@/components/metadata-uncovered";
@@ -22,7 +23,7 @@ export function MetadataGroupsPage() {
     <Page
       wide
       title="Metadata Groups"
-      description="Named groups of the photos' metadata values, such as the wide-angle focal lengths, or every way EXIF spells one lens. Each group is its own JSON file, combined into METAINFO.json. The portfolio doesn't use them yet."
+      description="Named groups of the photos' metadata values, such as the wide-angle focal lengths, or every way EXIF spells one lens, and custom lenses to pick on the Photo page. Each group is its own JSON file, combined into METAINFO.json. The portfolio doesn't use them yet."
     >
       <GitHubGate>{() => <MetaGroupTabs />}</GitHubGate>
     </Page>
@@ -47,10 +48,16 @@ function MetaGroupTabs() {
       {META_FIELDS.map((info) => (
         <TabsContent key={info.field} value={info.field}>
           <FieldGroups info={info} photos={photos} groups={groups} />
+          <FieldExtras field={info.field} />
         </TabsContent>
       ))}
     </Tabs>
   );
+}
+
+/** What a tab has besides its groups: the Lenses tab's custom lenses. */
+function FieldExtras({ field }: { field: MetaFieldInfo["field"] }) {
+  return field === "lens" ? <CustomLensesSection /> : null;
 }
 
 interface FieldGroupsProps {

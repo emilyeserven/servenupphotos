@@ -235,7 +235,19 @@ func checkPublishDefaults(t *testing.T, got map[string]any) {
 	}
 	delete(got, "isSocialMediaEligible")
 	delete(got, "websiteSpotlight")
+	if v, ok := got["exifOriginals"]; !ok || v != nil {
+		t.Errorf("exifOriginals = %#v, want null", v)
+	}
 	delete(got, "socialMediaPublishDate")
+	if v, ok := got["customLens"]; !ok || v != nil {
+		t.Errorf("customLens = %#v, want null", v)
+	}
+	delete(got, "exifOriginals")
+	if v, ok := got["manualAperture"]; !ok || v != false {
+		t.Errorf("manualAperture = %#v, want false", v)
+	}
+	delete(got, "customLens")
+	delete(got, "manualAperture")
 }
 
 // checkNoImages checks that got has an images object whose links are all null,

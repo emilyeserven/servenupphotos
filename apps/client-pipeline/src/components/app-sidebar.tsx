@@ -4,6 +4,7 @@ import {
   ActivityIcon,
   BookImageIcon,
   CalendarDaysIcon,
+  CameraIcon,
   Camera,
   DatabaseIcon,
   ImageIcon,
@@ -69,6 +70,7 @@ export const navGroups = [
       { title: "Places", url: "/places", icon: MapPinIcon },
       { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
       { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
+      { title: "Camera Overrides", url: "/camera-overrides", icon: CameraIcon },
     ],
   },
 ] as const;

@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { PhotoGpsStatus } from "@/components/photo-gps-status";
+import { PlaceCityAdders } from "@/components/place-city-adder";
 import { PlaceGpsAdders } from "@/components/place-gps-adder";
 import { PlaceLocalizationDialog } from "@/components/place-localization-dialog";
 import { SingleCombobox } from "@/components/ui/single-combobox";
@@ -134,6 +135,8 @@ interface PlaceFieldsProps {
   exifCountry: string | null;
   /** The GPS position in the photo's EXIF, or null when it has none. */
   exifGps: string | null;
+  /** The city from the photo's EXIF, offered as a place's city when its custom one is empty. */
+  exifCity: string | null;
 }
 
 /**
@@ -151,6 +154,11 @@ function cityFor(value: PlaceValue, rows: PhotoPlace[], places: Place[]) {
 }
 
 /** The country the photo was taken in, as far as is known: the custom one, or else the EXIF's. */
+/** The city the photo shows: its custom one, or else its EXIF one. */
+function photoCity(value: PlaceValue, exifCity: string | null): string {
+  return value.customCity.trim() || exifCity || "";
+}
+
 function photoCountry(value: PlaceValue, exifCountry: string | null): string {
   return value.customCountry.trim() || exifCountry || "";
 }
@@ -161,7 +169,14 @@ function photoCountry(value: PlaceValue, exifCountry: string | null): string {
  * Gyeongbokgung"). A place can be added from what's typed. The first place's name is kept as the
  * place name the portfolio shows.
  */
-export function PlaceFields({ value, onChange, disabled, exifCountry, exifGps }: PlaceFieldsProps) {
+export function PlaceFields({
+  value,
+  onChange,
+  disabled,
+  exifCountry,
+  exifGps,
+  exifCity,
+}: PlaceFieldsProps) {
   const all = usePlaces();
   // The place name as the photo was saved, kept while editing even once places replace it.
   const [oldName] = useState(() => (hasOldPlaceName(value) ? value.placeName.trim() : ""));
@@ -179,6 +194,12 @@ export function PlaceFields({ value, onChange, disabled, exifCountry, exifGps }:
       <PlaceLabel />
       <PhotoGpsStatus exifGps={exifGps} rows={rows} places={all.places} />
       <PlaceGpsAdders rows={rows} places={all.places} exifGps={exifGps} disabled={disabled} />
+      <PlaceCityAdders
+        rows={rows}
+        places={all.places}
+        region={{ city: photoCity(value, exifCity), country }}
+        disabled={disabled}
+      />
       {oldName && <OldPlaceName name={oldName} />}
       {rows.map((row, index) => (
         <PlaceRow

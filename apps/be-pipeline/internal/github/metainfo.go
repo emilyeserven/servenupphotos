@@ -79,20 +79,31 @@ func (c *Client) SaveMetaGroup(ctx context.Context, gh settings.GitHub, group Me
 // DeleteMetaGroup removes the metadata group file named id in the pending
 // changes. It fails when there's no such group, or other groups are in it.
 func (c *Client) DeleteMetaGroup(ctx context.Context, gh settings.GitHub, id string) (EntryResult, error) {
-	if perr := validEntryID(MetaInfo.Name, id); perr != nil {
+	return c.deleteEntry(ctx, gh, MetaInfo, id, func(others []Entry) *PublishError {
+		if child := metaChildOf(others, id); child != "" {
+			return publishErr(http.StatusConflict, "%q is in this group. Move it out or remove it first.", child)
+		}
+		return nil
+	})
+}
+
+// deleteEntry removes kind's file named id in the pending changes, after
+// check passes on the kind's other files. It fails when there's no such file.
+func (c *Client) deleteEntry(ctx context.Context, gh settings.GitHub, kind EntryKind, id string, check func(others []Entry) *PublishError) (EntryResult, error) {
+	if perr := validEntryID(kind.Name, id); perr != nil {
 		return EntryResult{}, perr
 	}
 	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return EntryResult{}, perr
 	}
-	file := w.root + "/" + MetaInfo.Folder + "/" + id + ".json"
-	before, others := splitEntry(w.entries(MetaInfo), file)
+	file := w.root + "/" + kind.Folder + "/" + id + ".json"
+	before, others := splitEntry(w.entries(kind), file)
 	if before == nil {
-		return EntryResult{}, publishErr(http.StatusNotFound, "There's no metadata group with the ID %q.", id)
+		return EntryResult{}, publishErr(http.StatusNotFound, "There's no %s with the ID %q.", kind.Name, id)
 	}
-	if child := metaChildOf(others, id); child != "" {
-		return EntryResult{}, publishErr(http.StatusConflict, "%q is in this group. Move it out or remove it first.", child)
+	if perr := check(others); perr != nil {
+		return EntryResult{}, perr
 	}
 	result := EntryResult{Path: file, Data: json.RawMessage("null"), Before: before}
 	if result.pendingSave, perr = c.saveFiles(w, []ScanChange{{Path: file, Before: before}}); perr != nil {

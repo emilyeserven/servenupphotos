@@ -100,6 +100,9 @@ type SocialPost struct {
 // the ones an older file is missing from newPhotoJSON("", exif.Sanitized{}).
 // Give a new field its default here, such as an empty list rather than nil.
 func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
+	if s.ExifOriginals == nil {
+		s.ExifOriginals = map[string]json.RawMessage{}
+	}
 	return photoJSON{
 		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
 		Places: []PhotoPlace{}, SpotlightZones: []string{}, SocialPosts: []SocialPost{},

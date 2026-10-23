@@ -4,7 +4,7 @@ import { type Localization, type Place, type PlacesResponse } from "@/api/places
 import { InferredPlaceList } from "@/components/inferred-place-list";
 import { PlaceBulkBar } from "@/components/place-bulk-bar";
 import { PlaceGpsCell } from "@/components/place-gps-cell";
-import { RegionIcon } from "@/components/region-icon";
+import { RegionIcon, type RegionIconKind } from "@/components/region-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -273,6 +273,11 @@ interface NameButtonProps {
   onSelect: () => void;
 }
 
+/** The row's kind, or "exact" for a place marked as an exact location. */
+function iconKind(node: RegionNode): RegionIconKind {
+  return node.place?.exactLocation ? "exact" : node.kind;
+}
+
 /** The row's icon and name, with its note under it, as a button that edits it. */
 function NameButton({ node, selected, onSelect }: NameButtonProps) {
   const note = rowNote(node);
@@ -283,7 +288,7 @@ function NameButton({ node, selected, onSelect }: NameButtonProps) {
       aria-current={selected ? "true" : undefined}
       onClick={onSelect}
     >
-      <RegionIcon kind={node.kind} className="mt-0.5" />
+      <RegionIcon kind={iconKind(node)} className="mt-0.5" />
       <span className="min-w-0">
         <span className={cn("block", node.kind !== "place" && "font-medium")}>{node.name}</span>
         {note && <span className="text-muted-foreground block text-xs">{note}</span>}
