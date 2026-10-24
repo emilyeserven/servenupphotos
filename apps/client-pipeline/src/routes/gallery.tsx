@@ -20,6 +20,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { BulkGroupsCard } from "@/components/gallery/bulk-groups-card";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
+import {
+  type UndecidedChoice,
+  UndecidedToggle,
+  parseUndecided,
+  useUndecidedFilter,
+} from "@/components/gallery/undecided-filter";
 import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
 import {
   type Selection,
@@ -28,10 +34,18 @@ import {
   savedString,
 } from "@/components/gallery/published-file";
 
+interface GallerySearch extends PhotoFilters {
+  /** Whether Undecided photos are shown too, or only they are; hidden when left out. */
+  undecided?: UndecidedChoice;
+}
+
 export const Route = createFileRoute("/gallery")({
   component: GalleryPage,
   staticData: { wide: true },
-  validateSearch: (search: Record<string, unknown>): PhotoFilters => parseFilters(search),
+  validateSearch: (search: Record<string, unknown>): GallerySearch => ({
+    ...parseFilters(search),
+    undecided: parseUndecided(search),
+  }),
 });
 
 function GalleryPage() {
@@ -69,7 +83,7 @@ function PublishedPhotos() {
   const published = useQuery(publishedPhotosQuery);
   const [filter, setFilter] = useState("");
   const selection = useSelection();
-  const { shown, total, filters } = useShownFiles(published.data, filter);
+  const { shown, total, filters, undecided } = useShownFiles(published.data, filter);
   return (
     <>
       <GalleryHeader
@@ -79,7 +93,15 @@ function PublishedPhotos() {
         selecting={selection.selected !== null}
         onSelectingChange={selection.toggleSelecting}
       />
-      <PhotoFilterBar filters={filters} shown={shown.length} total={total} />
+      <PhotoFilterBar
+        filters={filters}
+        shown={shown.length}
+        total={total}
+        hiding={shown.length < total}
+        extraChosen={undecided !== undefined}
+      >
+        <UndecidedToggle choice={undecided} />
+      </PhotoFilterBar>
       {selection.selected && published.data && (
         <BulkGroupsCard
           files={published.data.files}
@@ -106,8 +128,11 @@ function PublishedPhotos() {
 /** The photos that match the search text and the filters, newest first, out of how many there are. */
 function useShownFiles(data: PublishedResponse | undefined, filter: string) {
   const { filters, filter: applyFilters } = usePhotoFilters();
-  if (!data) return { shown: [], total: 0, filters };
-  return { shown: applyFilters(shownFiles(data, filter)), total: data.files.length, filters };
+  const { choice: undecided, apply: applyUndecided } = useUndecidedFilter();
+  const base = { filters, undecided };
+  if (!data) return { ...base, shown: [], total: 0 };
+  const shown = applyUndecided(applyFilters(shownFiles(data, filter)));
+  return { ...base, shown, total: data.files.length };
 }
 
 /** The photos chosen to add albums and tags to, and turning choosing them on and off. */

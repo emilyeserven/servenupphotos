@@ -1,5 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { FilterIcon, XIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { editedData } from "@/lib/undecided";
@@ -48,9 +49,12 @@ function useSetFilter() {
     });
 }
 
+/** The search params a page keeps filters in: each photo filter's, and the Gallery's `undecided`. */
+const FILTER_PARAMS = [...PHOTO_FILTERS.map(({ key }) => key), "undecided"];
+
 /** The search params with every filter cleared. */
 function withoutFilters<T extends object>(search: T): T {
-  return { ...search, ...Object.fromEntries(PHOTO_FILTERS.map(({ key }) => [key, undefined])) };
+  return { ...search, ...Object.fromEntries(FILTER_PARAMS.map((key) => [key, undefined])) };
 }
 
 /**
@@ -61,14 +65,22 @@ export function PhotoFilterBar({
   filters,
   shown,
   total,
+  children,
+  hiding,
+  extraChosen,
 }: {
   filters: PhotoFilters;
   shown: number;
   total: number;
+  /** More filters, after the photo filters, such as the Gallery's Undecided one. */
+  children?: ReactNode;
+  /** Whether something else is hiding photos, so the count shows with no filter chosen. */
+  hiding?: boolean;
+  /** Whether one of `children`'s filters is changed from where it starts, so Clear has work. */
+  extraChosen?: boolean;
 }) {
   const setFilter = useSetFilter();
   if (total === 0) return null;
-  const active = filterCount(filters) > 0;
   return (
     <Card className="py-4">
       <CardContent className="flex flex-col gap-3 px-4 text-sm">
@@ -82,61 +94,94 @@ export function PhotoFilterBar({
               onChange={(choice) => setFilter(key, choice)}
             />
           ))}
+          {children}
         </div>
-        {active && <FilterResult shown={shown} total={total} onClear={() => setFilter(null)} />}
+        <FilterResult
+          shown={shown}
+          total={total}
+          chosen={isChosen(filters, extraChosen)}
+          hiding={hiding}
+          onClear={() => setFilter(null)}
+        />
       </CardContent>
     </Card>
   );
 }
 
-/** How many photos the filters show, with a button that clears them. */
+/** Whether any filter is chosen: a photo filter, or one of the page's own. */
+function isChosen(filters: PhotoFilters, extraChosen?: boolean): boolean {
+  return filterCount(filters) > 0 || Boolean(extraChosen);
+}
+
+/**
+ * How many photos the filters show, while a filter is chosen or something else hides photos, with
+ * Clear filters when one is chosen.
+ */
 function FilterResult({
   shown,
   total,
+  chosen,
+  hiding,
   onClear,
 }: {
   shown: number;
   total: number;
+  chosen: boolean;
+  hiding?: boolean;
   onClear: () => void;
 }) {
+  if (!chosen && !hiding) return null;
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span
-        className={cn(shown === 0 ? "text-amber-700 dark:text-amber-400" : "text-muted-foreground")}
-      >
-        {shown === 0
-          ? "No photos match the filters"
-          : `Showing ${shown} of ${total} ${total === 1 ? "photo" : "photos"}`}
-      </span>
-      <Button variant="ghost" size="sm" onClick={onClear}>
-        <XIcon />
-        Clear filters
-      </Button>
+      <ResultText shown={shown} total={total} />
+      {chosen && (
+        <Button variant="ghost" size="sm" onClick={onClear}>
+          <XIcon />
+          Clear filters
+        </Button>
+      )}
     </div>
   );
 }
 
-const CHOICES: [FilterChoice | undefined, string][] = [
+/** "Showing N of M photos", or a warning that none match. */
+function ResultText({ shown, total }: { shown: number; total: number }) {
+  if (shown === 0) {
+    return <span className="text-amber-700 dark:text-amber-400">No photos match the filters</span>;
+  }
+  return (
+    <span className="text-muted-foreground">
+      Showing {shown} of {total} {total === 1 ? "photo" : "photos"}
+    </span>
+  );
+}
+
+/** A filter's choices, each with its button text; undefined is the one it starts on. */
+export type ToggleChoices<T extends string> = [T | undefined, string][];
+
+const CHOICES: ToggleChoices<FilterChoice> = [
   [undefined, "Any"],
   ["with", "With"],
   ["without", "Without"],
 ];
 
-/** One filter's Any, With and Without buttons, after its label. */
-function FilterToggle({
+/** One filter's buttons (Any, With and Without unless `choices` says), after its label. */
+export function FilterToggle<T extends string = FilterChoice>({
   label,
   choice,
   onChange,
+  choices = CHOICES as ToggleChoices<T>,
 }: {
   label: string;
-  choice?: FilterChoice;
-  onChange: (choice?: FilterChoice) => void;
+  choice?: T;
+  onChange: (choice?: T) => void;
+  choices?: ToggleChoices<T>;
 }) {
   return (
     <div className="flex items-center gap-1.5">
       <span className="text-muted-foreground text-xs">{label}</span>
       <div role="group" aria-label={label} className="bg-background flex rounded-md border p-0.5">
-        {CHOICES.map(([value, text]) => (
+        {choices.map(([value, text]) => (
           <button
             key={text}
             type="button"
