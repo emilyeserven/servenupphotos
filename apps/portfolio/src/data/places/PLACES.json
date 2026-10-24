@@ -351,6 +351,14 @@
     "country": "United States of America"
   },
   {
+    "id": "messe-basel",
+    "name": "Messe Basel",
+    "description": "",
+    "parent": "",
+    "city": "Basel",
+    "country": "Switzerland"
+  },
+  {
     "id": "metropolitan-museum-of-art",
     "name": "Metropolitan Museum of Art",
     "description": "",

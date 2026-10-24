@@ -1,5 +1,14 @@
 [
   {
+    "id": "country-united-states-of-america",
+    "type": "country",
+    "name": "United States of America",
+    "romanization": "",
+    "pronunciation": "",
+    "localScript": "",
+    "otherNames": ["United States"]
+  },
+  {
     "id": "place-geunjeongmun-gate",
     "type": "place",
     "name": "Geunjeongmun Gate",

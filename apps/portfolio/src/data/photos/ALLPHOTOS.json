@@ -388,7 +388,11 @@
       }
     ],
     "spotlightZones": ["homepage"],
-    "socialPosts": []
+    "socialPosts": [],
+    "spotlightFocus": {
+      "x": 77,
+      "y": 53
+    }
   },
   {
     "id": 23,
@@ -708,7 +712,11 @@
       }
     ],
     "spotlightZones": ["homepage"],
-    "socialPosts": []
+    "socialPosts": [],
+    "spotlightFocus": {
+      "x": 37,
+      "y": 34
+    }
   },
   {
     "id": 24,
@@ -2275,6 +2283,65 @@
     ],
     "spotlightZones": ["homepage"],
     "socialPosts": [],
+    "reEdit": null,
+    "spotlightFocus": {
+      "x": 46,
+      "y": 28
+    }
+  },
+  {
+    "id": 280,
+    "title": "Eye in the Sky",
+    "comment": null,
+    "file": "IMG_20161223_220739_041.jpg",
+    "camera": null,
+    "lens": null,
+    "aperture": null,
+    "exposure": null,
+    "iso": null,
+    "focalLength": null,
+    "gpsPosition": null,
+    "customGpsPosition": "47.56517029236117, 7.601182373583135",
+    "createDate": null,
+    "placeName": "messe-basel",
+    "customCity": "Basel",
+    "customState": null,
+    "customCountry": "Switzerland",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 4032,
+    "height": 2268,
+    "images": {
+      "full": null,
+      "key": null,
+      "xlarge": null,
+      "large": null,
+      "medium": null,
+      "small": null,
+      "xsmall": null,
+      "preview": null,
+      "thumbnail": null,
+      "thumbnailpreview": null,
+      "thumbnailcrop": null
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "messe-basel"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
     "reEdit": null
   },
   {
@@ -3346,7 +3413,11 @@
       }
     ],
     "spotlightZones": ["homepage"],
-    "socialPosts": []
+    "socialPosts": [],
+    "spotlightFocus": {
+      "x": 40,
+      "y": 47
+    }
   },
   {
     "title": "Icy Branches",
@@ -7759,7 +7830,11 @@
       }
     ],
     "spotlightZones": ["homepage"],
-    "socialPosts": []
+    "socialPosts": [],
+    "spotlightFocus": {
+      "x": 54,
+      "y": 56
+    }
   },
   {
     "title": "Walking by a Window at Al Khalifa",
