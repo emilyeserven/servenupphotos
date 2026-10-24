@@ -14,14 +14,20 @@ with a small vivid part, such as a red door on a gray street, scores high on pea
 before `peakChroma` was added use their average for peak until Update Data's **Colors** reads them again. Photos
 without `colors`, or without resized versions in R2, aren't shown; with none at all, the page shows its placeholder.
 
-Clicking a photo opens the photo viewer (`?photo=`). **Wheel / Black & white** picks the view; the Color page has no
+Clicking a photo opens the photo viewer (`?photo=`). The page fills the window, so the wheel or chart takes all the
+room under the header without scrolling. **Wheel / Black & white** picks the view. **Previews S / M / L**
+(`components/pin-size-control.tsx`, `lib/pin-scale.ts`) makes the pins 1×, 1.5× or 2× their usual size
+(`?pins=medium`, `?pins=large`, left out for small); bigger pins cluster sooner. **Filters** opens the **Average / Peak**
+and **Vividness at least** controls (`components/color-view-filters.tsx`), hidden at first and counted on the button
+while changed; the Color page has no
 grid of its own any more: the [Grid page](#on-the-grid-page) has the same color filters and sorts by color, and older
 `/color?view=grid` links go there, sorted by color, keeping their color filters.
 
 ## Wheel
 
 The **Wheel** (the default) shows the photos with color on a color wheel
-(`components/color-wheel.tsx`, `lib/color-wheel.ts`), with each photo as a thumbnail pin like the Map page's. A photo sits around the wheel by its
+(`components/color-wheel.tsx`, `lib/color-wheel.ts`), stretched to fill the space as an oval when it isn't square (the
+colors are drawn as a circle and squashed the same way, so pins stay over their colors), with each photo as a thumbnail pin like the Map page's. A photo sits around the wheel by its
 hue, red at the top and clockwise through orange and yellow: its biggest hue bucket, pulled toward its second biggest
 along the shorter way round, the more the more of it there is (by the second's share of the two), so a photo with as
 much orange as yellow sits halfway between them and one with a touch of yellow stays near orange (shades are left
@@ -34,13 +40,13 @@ they're one round cluster pin instead, like the Map page's, showing how many pho
 thumbnail (`lib/wheel-clusters.ts`, `lib/pin-markers.ts`, `components/wheel-cluster-pin.tsx`). The zooming,
 clustering and mini map are `components/pin-board.tsx`, which the Black & white chart shares. Clicking a cluster zooms in 2× on it, and
 zooming in splits clusters apart, as the same places are further apart on a bigger wheel; at the furthest zoom
-nothing is clustered, so every photo can be reached. The [color filters](#color-filters) narrow the wheel. Clicking a
-pin opens the photo viewer.
+nothing is clustered, so every photo can be reached. The vividness filters narrow the wheel; the color swatches are
+only on the Grid page now. Clicking a pin opens the photo viewer.
 
 The wheel zooms in up to 8× with its **+** and **−** buttons, a two-finger pinch, or ctrl + scroll (a trackpad pinch),
 and pans by dragging (`lib/use-wheel-zoom.ts`); the third button shows the whole wheel again. A drag that starts on a
 pin doesn't open it. Pins stay the same size as it zooms, and are spread apart again for the bigger wheel, so zooming
-in on a crowded patch separates them. Zoomed in, a mini map in the corner (`components/wheel-minimap.tsx`) shows the
+in on a crowded patch separates them. Zoomed in, a mini map floating at the bottom left of the screen (`components/wheel-minimap.tsx`) shows the
 whole wheel with a dot for each photo and a box around the part in view; clicking it moves the view there. The zoom
 isn't kept in the URL. On a phone, one finger scrolls the page over the whole wheel and drags it once it's zoomed in.
 
@@ -49,22 +55,24 @@ isn't kept in the URL. On a phone, one finger scrolls the page over the whole wh
 **Black & white** (`?view=mono`, `components/shade-spectrum.tsx`) shows the photos whose blacks, grays and whites make
 up at least 90% of them (`isBlackAndWhite` in `lib/photo-colors.ts`), which the wheel leaves out, as pins on a chart:
 left to right from black to white by average lightness (`Photo.lightness`, the mean of its neutral histogram, 0 to
-100), and bottom to top by vividness, by the **Average / Peak** measure, with the most vivid shown at the top (or 10,
-if none is more vivid), since even a black and white photo can have a slight tint. It's a pin board like the wheel
+100), and bottom to top by vividness, by the **Average / Peak** measure, since even a black and white photo can have a
+slight tint. The chart fits the photos: across from the darkest to the lightest one's lightness, rounded out to steps
+of 5 (at least 10 wide; `lightnessExtent`), and up from the least vivid photo shown to the most (at least 2 apart), so
+photos aren't bunched into one corner. It fills the space under the header. It's a pin board like the wheel
 (`components/pin-board.tsx`): pins that would overlap are pushed apart, kept inside the chart; crowded ones are
 clustered; and it zooms, pans and shows a mini map the same way, splitting clusters as it zooms in.
 
 The black-to-white bar under the chart is a slider (`components/lightness-slider.tsx`, `lib/lightness-range.ts`): drag
 its ends to show only the photos in that range of lightness, in steps of 5 (`?light=20-60`, left out for the whole
-spectrum). The **Vividness at least** slider works here too; the color swatches and match are hidden, as they're about
-color.
+chart); its ends are the chart's. The **Filters** vividness controls work here too.
 
 > **Frontend analogy:** the chart is a scatter plot of absolutely positioned buttons, `left` from lightness and `top`
 > from vividness, then nudged apart like a physics-based layout until none overlap.
 
 ## Color filters
 
-The swatches at the top of the wheel filter by one color (`?color=orange`, `?color=dark gray`; **All** clears it): the
+These are on the [Grid page](#on-the-grid-page); the Color page keeps only the vividness ones, behind **Filters**. The
+swatches filter by one color (`?color=orange`, `?color=dark gray`; **All** clears it): the
 12 hues, then the 5 shades after a divider. How a photo matches the color is picked under them (`lib/color-match.ts`),
 and each swatch's tooltip says how many photos it shows that way. A swatch that would show none is crossed out with an
 X and can't be picked, unless it's already the filter from a link, so it can still be cleared:

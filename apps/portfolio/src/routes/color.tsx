@@ -1,27 +1,22 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Palette } from "lucide-react";
-import type { ReactNode } from "react";
-import { ColorFilter } from "@/components/color-filter";
 import { type ColorLayout, ColorLayoutControl } from "@/components/color-layout-control";
-import { ColorMatchControl } from "@/components/color-match-control";
+import { ColorViewFilters } from "@/components/color-view-filters";
 import { ColorWheel } from "@/components/color-wheel";
+import { PinSizeControl } from "@/components/pin-size-control";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ShadeSpectrum } from "@/components/shade-spectrum";
 import { ViewPlaceholder } from "@/components/view-placeholder";
-import { VividnessControl } from "@/components/vividness-control";
-import { type ColorMatch, matchText } from "@/lib/color-match";
-import {
-  type ColorFilters,
-  countsFor,
-  DEFAULT_PERCENT,
-  filterByColors,
-  matchOf,
-  parseColorFilters,
-  vividEnough,
-} from "@/lib/color-search";
-import { type ColorName, isBlackAndWhite } from "@/lib/photo-colors";
+import { type ColorFilters, parseColorFilters, vividEnough } from "@/lib/color-search";
+import { isBlackAndWhite } from "@/lib/photo-colors";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
-import { inLightness, lightnessRange, parseLightness } from "@/lib/lightness-range";
+import {
+  inLightness,
+  lightnessExtent,
+  lightnessRange,
+  parseLightness,
+} from "@/lib/lightness-range";
+import { parsePinScale, pinFactor, type PinScale } from "@/lib/pin-scale";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 
 interface ColorSearch extends ColorFilters {
@@ -36,6 +31,8 @@ interface ColorSearch extends ColorFilters {
    * (white); left out for the whole spectrum.
    */
   light?: string;
+  /** How big the photo previews are: left out for small. */
+  pins?: Exclude<PinScale, "small">;
 }
 
 export const Route = createFileRoute("/color")({
@@ -43,6 +40,7 @@ export const Route = createFileRoute("/color")({
     ...parseColorFilters(search),
     ...viewOf(search.view),
     ...lightOf(search.light),
+    ...pinsOf(search.pins),
     ...parseShownPhoto(search),
   }),
   // The Color page's grid moved to the Grid page, sorted by color, with the same color filters.
@@ -67,6 +65,12 @@ function lightOf(value: unknown): ColorSearch {
   return light === undefined ? {} : { light };
 }
 
+/** The `?pins=` to keep, leaving it out when it's missing or not a size. */
+function pinsOf(value: unknown): ColorSearch {
+  const pins = parsePinScale(value);
+  return pins === undefined ? {} : { pins };
+}
+
 // Newest first.
 const colorPhotos = photos
   .filter(
@@ -86,57 +90,36 @@ function ColorView() {
   const { shown, show, close } = useShownPhoto();
   if (colorPhotos.length === 0) return <ViewPlaceholder to="/color" />;
   const layout = search.view === "mono" ? "mono" : "wheel";
-  const { photos: shownPhotos, count, filter, controls } = pageFor(search, layout);
+  const shownPhotos = photosFor(search, layout);
 
   return (
-    <div className="flex w-full flex-col gap-8 px-3 py-16 sm:px-4">
+    // The page fills the window, so the wheel or chart can take all the room under the header.
+    <div className="flex h-svh min-h-[34rem] w-full flex-col gap-4 px-3 pt-16 pb-4 sm:px-4">
       <header className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-1 sm:px-2">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
           <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
             <Palette className="size-8 text-muted-foreground" aria-hidden />
             Color
           </h1>
-          <p className="text-sm text-muted-foreground">{count}</p>
+          <p className="text-sm text-muted-foreground">{countText(shownPhotos.length)}</p>
         </div>
-        {filter}
-        <div className="flex flex-col items-start gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
           <ColorLayoutControl layout={layout} />
-          {controls}
+          <PinSizeControl scale={search.pins} />
+          <ColorViewFilters vivid={search.vivid} measure={search.measure} />
         </div>
       </header>
-      <ColorLayoutView layout={layout} photos={shownPhotos} search={search} onOpen={show} />
+      <div className="min-h-0 flex-1">
+        <ColorLayoutView layout={layout} photos={shownPhotos} search={search} onOpen={show} />
+      </div>
       <PhotoLightbox photo={shown} photos={shownPhotos} onShow={show} onClose={close} />
     </div>
   );
 }
 
-/** What the page shows for a layout: its photos, how many, its swatches and its other controls. */
-interface ColorPage {
-  photos: ColorPhoto[];
-  count: string;
-  filter: ReactNode;
-  controls: ReactNode;
-}
-
-/** What the page shows for the layout. */
-function pageFor(search: ColorSearch, layout: ColorLayout): ColorPage {
-  return layout === "mono" ? monoPage(search) : wheelPage(search);
-}
-
-/**
- * The wheel's page: the color photos matching the picked color and vividness, leaving out the
- * black and white ones, with the color swatches and their controls.
- */
-function wheelPage(search: ColorSearch): ColorPage {
-  const match = matchOf(search);
-  const pool = vividEnough(wheelPhotos, search);
-  const listed = filterByColors(wheelPhotos, search);
-  return {
-    photos: listed,
-    count: countText(listed.length, search.color, match),
-    filter: <ColorFilter color={search.color} counts={countsFor(pool, match)} />,
-    controls: <ColorControls search={search} match={match} />,
-  };
+/** The photos the layout shows: the color ones on the wheel, or the black and white ones on the chart. */
+function photosFor(search: ColorSearch, layout: ColorLayout): ColorPhoto[] {
+  return layout === "mono" ? monoShown(search) : vividEnough(wheelPhotos, search);
 }
 
 // The photos with color, for the wheel.
@@ -147,27 +130,18 @@ const monoPhotos = colorPhotos
   .filter((photo) => isBlackAndWhite(photo.palette))
   .toSorted((a, b) => lightnessOf(a) - lightnessOf(b));
 
+// The range of lightness the black and white photos cover, the Black & white chart's ends.
+const MONO_EXTENT = lightnessExtent(monoPhotos.map(lightnessOf));
+
 /** A photo's average lightness, the middle gray when it has none saved. */
 function lightnessOf(photo: ColorPhoto): number {
   return photo.lightness ?? 50;
 }
 
-/**
- * The Black & white view's page: the black and white photos as vivid as the slider asks, in the
- * picked range of lightness, with the vividness controls, as they place photos up the chart.
- */
-function monoPage(search: ColorSearch): ColorPage {
-  const range = lightnessRange(search.light);
-  const shown = vividEnough(monoPhotos, search).filter((photo) =>
-    inLightness(lightnessOf(photo), range),
-  );
-  const { vivid = 0, measure = "average" } = search;
-  return {
-    photos: shown,
-    count: countText(shown.length, undefined, { mode: "largest" }),
-    filter: null,
-    controls: <VividnessControl vivid={vivid} measure={measure} />,
-  };
+/** The black and white photos the Black & white chart shows: as vivid as the slider asks, in the picked range of lightness. */
+function monoShown(search: ColorSearch): ColorPhoto[] {
+  const range = lightnessRange(search.light, MONO_EXTENT);
+  return vividEnough(monoPhotos, search).filter((photo) => inLightness(lightnessOf(photo), range));
 }
 
 /** The photos on the color wheel, or the black-to-white chart. */
@@ -183,36 +157,23 @@ function ColorLayoutView({
   onOpen: (photo: ColorPhoto) => void;
 }) {
   const measure = search.measure ?? "average";
+  const scale = pinFactor(search.pins);
   if (layout === "mono") {
     return (
       <ShadeSpectrum
         photos={photos}
         measure={measure}
-        range={lightnessRange(search.light)}
+        range={lightnessRange(search.light, MONO_EXTENT)}
+        extent={MONO_EXTENT}
+        scale={scale}
         onOpen={onOpen}
       />
     );
   }
-  return <ColorWheel photos={photos} measure={measure} onOpen={onOpen} />;
+  return <ColorWheel photos={photos} measure={measure} scale={scale} onOpen={onOpen} />;
 }
 
-/** How photos match a color, and the least vividness. */
-function ColorControls({ search, match }: { search: ColorSearch; match: ColorMatch }) {
-  const { min = DEFAULT_PERCENT, vivid = 0, measure = "average" } = search;
-  return (
-    <div className="flex flex-col gap-3">
-      <ColorMatchControl
-        threshold={match.mode === "threshold"}
-        percent={min}
-        fallback={DEFAULT_PERCENT}
-      />
-      <VividnessControl vivid={vivid} measure={measure} />
-    </div>
-  );
-}
-
-/** "24 photos", or with a color, "8 photos mostly orange" or "8 photos at least 30% orange". */
-function countText(count: number, color: ColorName | undefined, match: ColorMatch): string {
-  const photosText = `${count} ${count === 1 ? "photo" : "photos"}`;
-  return color ? `${photosText} ${matchText(color, match)}` : photosText;
+/** "24 photos", or "1 photo". */
+function countText(count: number): string {
+  return `${count} ${count === 1 ? "photo" : "photos"}`;
 }

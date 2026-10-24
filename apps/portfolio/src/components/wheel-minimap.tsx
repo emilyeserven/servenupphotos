@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import type { WheelPoint } from "@/lib/color-wheel";
 import { centerOn, type WheelView } from "@/lib/use-wheel-zoom";
 import { cn } from "@/lib/utils";
@@ -44,7 +44,7 @@ export function WheelMinimap({
         "relative block w-24 cursor-pointer overflow-hidden border-2 border-background bg-background shadow-md outline-none focus-visible:ring-2 focus-visible:ring-ring sm:w-28",
         className,
       )}
-      style={{ aspectRatio: 1 / aspect }}
+      style={{ aspectRatio: 1 / aspect, "--board-aspect": aspect } as CSSProperties}
     >
       {background}
       {points.map((p, i) => (
