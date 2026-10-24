@@ -159,10 +159,10 @@ function ColorLayoutView({
 
 /**
  * Where each view sits: below the floating controls, which keep the page's background behind them.
- * The chart's top fades in from it (`fadeTop`); the wheel starts a little further down, after the
- * same fade's height and some padding.
+ * The chart's top fades in from it (`fadeTop`); the wheel starts a little further down, more on
+ * wider screens where there's room for it.
  */
 const VIEW_FRAME: Record<ColorLayout, string> = {
-  wheel: "absolute inset-x-0 bottom-0 top-40 pt-16 md:top-20",
-  mono: "absolute inset-x-0 bottom-0 top-40 md:top-20",
+  wheel: "absolute inset-x-0 bottom-0 top-38 pt-2 md:top-20 md:pt-8",
+  mono: "absolute inset-x-0 bottom-0 top-38 md:top-20",
 };
