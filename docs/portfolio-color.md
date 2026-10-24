@@ -13,7 +13,10 @@ Under each square thumbnail, a bar shows its hues, each as wide as its share, wi
 Clicking a photo opens the photo viewer (`?photo=`).
 
 The swatches at the top filter by one hue bucket (`?hue=orange`; **All** clears it), the photos with the most of it
-first; without a filter, the newest photos come first. Under the swatches, how a photo matches the hue is picked
+first. With **All**, every photo is sorted around the color wheel (`lib/color-sort.ts`): by its largest hue bucket,
+nudged toward whichever neighboring bucket it has more of so the colors run smoothly into each other, and newest first
+where they tie. **Ascending** (the default) runs red, orange, yellow, green, blue and on to rose; **Descending**
+(`?order=desc`) runs the other way. Under the swatches, how a photo matches the hue is picked
 (`lib/color-match.ts`), and each swatch's tooltip says how many photos it shows that way:
 
 - **Largest color** (the default): the hue is the biggest of the photo's colors.
