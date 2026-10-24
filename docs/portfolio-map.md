@@ -12,7 +12,7 @@ A photo's [custom GPS position](places-and-localizations.md#custom-gps-position)
 its EXIF one. A photo with neither goes at one of its places' position (see
 [Places](places-and-localizations.md#gps-position)). That spot is only near where it was taken, so its marker's white
 border is softer, and so is a group's when every photo in it is placed that way. A place marked as an **Exact
-location** on the Places page keeps the solid border for its photos.
+location** on the Places page keeps the solid border for its photos. Like every view, the map leaves out a photo with no date, EXIF or [custom](data-model.md#date-taken), even when it has a position.
 
 Photos placed at the same place all sit on one spot, so zooming in never splits them apart. From zoom 16 in, a spot
 with up to 12 photos scatters them loosely around it, the oldest nearest the middle, never overlapping, so each can be seen

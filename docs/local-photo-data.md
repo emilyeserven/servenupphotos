@@ -27,7 +27,7 @@ the portfolio shows them in the Table, Map, Timeline, Grid (with **Show info**) 
 
 While the file has at least one photo, the portfolio's Timeline, Map and Grid show those photos instead of the
 committed `apps/portfolio/src/data/photos/ALLPHOTOS.json` (the Map leaves out photos without a GPS position, the Grid photos without resized versions, and photos without a
-`createDate` are left out everywhere); with no photos, or no file, they fall back to the committed
+`createDate` or [`customCreateDate`](data-model.md#date-taken) are left out everywhere); with no photos, or no file, they fall back to the committed
 file, and the Grid shows its placeholder when that has no photos with resized versions either. The Grid loads each photo's resized versions from R2 through `srcset`, newest photo first, with the
 blurred `preview` behind each one until it loads (the `thumbnailpreview` behind a Square Thumbnail, falling back to the
 `preview` when it won't load). The real image fades in over it once it loads; a Square Thumbnail that won't load falls

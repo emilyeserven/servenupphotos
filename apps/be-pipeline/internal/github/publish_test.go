@@ -60,6 +60,7 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
   "gpsPosition": null,
   "customGpsPosition": null,
   "createDate": null,
+  "customCreateDate": null,
   "placeName": null,
   "customCity": null,
   "customState": null,

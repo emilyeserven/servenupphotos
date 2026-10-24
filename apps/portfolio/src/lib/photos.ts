@@ -191,6 +191,8 @@ interface PhotoData {
   /** A GPS position written on the Photo page, "latitude, longitude" in decimal degrees, used instead of the EXIF one. */
   customGpsPosition?: string | null;
   createDate: string | null;
+  /** When the photo was taken, written on the Photo page, used instead of the EXIF one; older entries don't have it. */
+  customCreateDate?: string | null;
   /** A city, state and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
   customCity?: string | null;
   customState?: string | null;
@@ -588,11 +590,11 @@ function photoIds(data: PhotoData[]): number[] {
   return data.map(({ id }, index) => id ?? highest + index + 1);
 }
 
-/** The ALLPHOTOS.json entries the portfolio can place in time; ones without a date are left out. */
+/** The ALLPHOTOS.json entries the portfolio can place in time: ones with no custom or EXIF date are left out. */
 function fromPhotoData(data: PhotoData[]): Photo[] {
   const ids = photoIds(data);
   return data.flatMap((photo, index) => {
-    const takenAt = parseCreateDate(photo.createDate);
+    const takenAt = parseCreateDate(custom(photo.customCreateDate, photo.createDate));
     if (!takenAt) return [];
     return {
       id: ids[index] as number,
