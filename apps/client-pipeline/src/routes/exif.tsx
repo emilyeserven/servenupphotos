@@ -361,6 +361,7 @@ function exifPlaceOf(sanitized: SanitizedExif): ExifPlace {
     state: sanitized.state ?? null,
     country: sanitized.country,
     gpsPosition: sanitized.gpsPosition,
+    createDate: sanitized.createDate,
   };
 }
 

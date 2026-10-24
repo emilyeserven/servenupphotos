@@ -80,6 +80,8 @@ export interface SanitizedExif {
   /** A GPS position written on the Photo page as "latitude, longitude", which the portfolio uses instead of the EXIF one. */
   customGpsPosition?: string | null;
   createDate: string | null;
+  /** When the photo was taken, written on the Photo page as exiftool writes dates, which the portfolio uses instead of the EXIF one. */
+  customCreateDate?: string | null;
   /** The name of the place the photo was taken, such as a park or building, written on the Photo page. */
   placeName: string | null;
   /**

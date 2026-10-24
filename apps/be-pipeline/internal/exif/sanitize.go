@@ -35,6 +35,11 @@ type Sanitized struct {
 	// leaves it nil.
 	CustomGPSPosition *string `json:"customGpsPosition"`
 	CreateDate        *string `json:"createDate"`
+	// CustomCreateDate is when the photo was taken, written on the Photo
+	// page as exiftool writes dates ("2016:12:23 22:07:39"), which the
+	// portfolio uses instead of CreateDate, as for a photo whose EXIF has no
+	// date. It leaves the EXIF one as it is. Sanitize leaves it nil.
+	CustomCreateDate *string `json:"customCreateDate"`
 	// PlaceName is the name of the place the photo was taken, such as a
 	// park or a building, which the portfolio shows before the city.
 	// Sanitize leaves it nil; it is written on the Photo page before saving.

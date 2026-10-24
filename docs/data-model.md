@@ -29,6 +29,21 @@ them, pending changes included. Older files without one get theirs from **Missin
 portfolio numbers them after the highest ID by their place in `ALLPHOTOS.json`, which changes as photos are added, so
 links to them don't last.
 
+## Date taken
+
+A photo's date is its EXIF `createDate` (as exiftool writes it, `"2016:12:23 22:07:39"`), or else `customCreateDate`,
+written on the Photo page and in Edit Photo under **Title** as **Date taken → Custom date**. The custom one wins, and the
+EXIF one is kept as it is. The portfolio leaves out photos with neither on every view (it orders and groups photos by
+date), so a photo whose EXIF has no date, such as a phone photo saved by an app that strips it, needs a custom one to
+show. The section starts open when the EXIF has no date. When the file name has the date in it, as phones write them
+(`IMG_20161223_220739_041`, `PXL_20230101_123456789`, `Screenshot_2016-12-23-22-07-39`), it offers
+**Use Dec 23, 2016, 10:07:39 PM from the file name** in one click. New photos get `"customCreateDate": null`, and
+**Update Data → Missing fields** adds it to older ones. The pipeline's own checks, such as a duplicate photo's
+`file`, `gpsPosition` and `createDate`, still use the EXIF date.
+
+> **Frontend analogy:** like a `defaultValue` the user can override: `customCreateDate ?? createDate`, with the file
+> name as a suggested value.
+
 ## Places, spotlights and posts
 
 A photo's `places` list where it was taken, each a place ID and how the photo relates to it, and `LOCALIZATIONS.json`

@@ -1,9 +1,11 @@
-import { ChevronRightIcon, InfoIcon } from "lucide-react";
-import { type ComponentProps, type ReactNode, useState } from "react";
+import { InfoIcon } from "lucide-react";
+import { type ComponentProps, type ReactNode } from "react";
 import Markdown, { type ExtraProps } from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { type PhotoPlace, savedPlaces } from "@/api/places";
 import { RegionOverrideField } from "@/components/region-override-field";
+import { FieldSection } from "@/components/field-section";
+import { PhotoCustomDate } from "@/components/photo-custom-date";
 import { PhotoCustomGps } from "@/components/photo-custom-gps";
 import { PlaceFields } from "@/components/place-fields";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +34,8 @@ interface PhotoText {
   customCountry: string;
   /** A GPS position written as "latitude, longitude", which the map uses instead of the EXIF one. */
   customGpsPosition: string;
+  /** When the photo was taken, as exiftool writes dates, which the portfolio uses instead of the EXIF one. */
+  customCreateDate: string;
   comment: string;
 }
 
@@ -49,6 +53,7 @@ const NO_TEXT: PhotoText = {
   customState: "",
   customCountry: "",
   customGpsPosition: "",
+  customCreateDate: "",
   comment: "",
 };
 
@@ -58,7 +63,7 @@ export const NO_DETAILS: PhotoDetails = { ...NO_TEXT, places: [] };
 /** The text fields of PhotoDetails, as the JSON names them. */
 export const TEXT_FIELDS = Object.keys(NO_TEXT) as (keyof PhotoText)[];
 
-/** The city and country read from the photo's EXIF, which the custom ones show instead of, and its GPS position. */
+/** The city, state and country read from the photo's EXIF, which the custom ones show instead of, and its GPS position and date. */
 export interface ExifPlace {
   city: string | null;
   /** The state, province or prefecture from the EXIF, between the city and the country. */
@@ -66,6 +71,8 @@ export interface ExifPlace {
   country: string | null;
   /** The GPS position from the EXIF, or null when it has none. */
   gpsPosition: string | null;
+  /** When the EXIF says the photo was taken, or null when it doesn't say. */
+  createDate: string | null;
 }
 
 /** A file name without its extension, which the portfolio uses as the title of a photo without one. */
@@ -79,7 +86,7 @@ export function savedDetails(data: Record<string, unknown>): PhotoDetails {
   return { ...(texts as unknown as PhotoText), places: savedPlaces(data.places) };
 }
 
-/** The EXIF city, country and GPS position saved in a photo's JSON. */
+/** The EXIF city, state, country, GPS position and date saved in a photo's JSON. */
 export function savedExifPlace(data: Record<string, unknown>): ExifPlace {
   const field = (name: string) => text(data[name]) || null;
   return {
@@ -87,6 +94,7 @@ export function savedExifPlace(data: Record<string, unknown>): ExifPlace {
     state: field("state"),
     country: field("country"),
     gpsPosition: field("gpsPosition"),
+    createDate: field("createDate"),
   };
 }
 
@@ -120,6 +128,7 @@ export function withDetails<T extends object>(data: T, details: PhotoDetails) {
     customState: saved("customState"),
     customCountry: saved("customCountry"),
     customGpsPosition: saved("customGpsPosition"),
+    customCreateDate: saved("customCreateDate"),
   };
 }
 
@@ -175,6 +184,13 @@ export function PhotoDetailsCard({
             placeholder={fallbackTitle}
             hint={<TitleHint fallbackTitle={fallbackTitle} />}
             {...field("title")}
+          />
+          <PhotoCustomDate
+            value={value.customCreateDate}
+            exifDate={exifPlace.createDate}
+            fileStem={fallbackTitle}
+            disabled={disabled}
+            onChange={(customCreateDate) => onChange({ ...value, customCreateDate })}
           />
           <CommentField
             value={value.comment}
@@ -284,58 +300,51 @@ function withCity(
  */
 function CityAndCountry({ exifPlace, value, field, onCity }: CityAndCountryProps) {
   const { summary, custom } = placeSummary(value, exifPlace);
-  const [open, setOpen] = useState(custom);
   return (
-    <details
-      open={open}
-      onToggle={(event) => setOpen(event.currentTarget.open)}
-      className="group rounded-md border"
+    <FieldSection
+      title="City, state and country"
+      summary={summary}
+      defaultOpen={custom}
+      className="grid gap-4 sm:grid-cols-2"
     >
-      <summary className="hover:bg-muted/50 flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-sm [&::-webkit-details-marker]:hidden">
-        <ChevronRightIcon className="size-4 shrink-0 transition-transform group-open:rotate-90" />
-        <span className="font-medium">City, state and country</span>
-        <span className="text-muted-foreground min-w-0 truncate">{summary}</span>
-      </summary>
-      <div className="grid gap-4 px-3 pt-1 pb-3 sm:grid-cols-2">
-        <LabeledHint
+      <LabeledHint
+        id="photo-custom-city"
+        label="City"
+        hint="Shown instead of the city from the photo's EXIF, which is kept as it is. Choose one places are in or other photos show, or type one. Saved as customCity; leave it empty to use the EXIF one."
+      >
+        <RegionOverrideField
           id="photo-custom-city"
-          label="City"
-          hint="Shown instead of the city from the photo's EXIF, which is kept as it is. Choose one places are in or other photos show, or type one. Saved as customCity; leave it empty to use the EXIF one."
-        >
-          <RegionOverrideField
-            id="photo-custom-city"
-            kind="city"
-            placeholder={exifPlace.city ?? "Not in the EXIF"}
-            {...field("customCity")}
-            onChange={onCity}
-          />
-        </LabeledHint>
-        <LabeledHint
+          kind="city"
+          placeholder={exifPlace.city ?? "Not in the EXIF"}
+          {...field("customCity")}
+          onChange={onCity}
+        />
+      </LabeledHint>
+      <LabeledHint
+        id="photo-custom-state"
+        label="State"
+        hint="The state, province, prefecture or other region between the city and the country. Shown instead of the EXIF's, which is kept as it is. Saved as customState; leave it empty to use the EXIF one."
+      >
+        <RegionOverrideField
           id="photo-custom-state"
-          label="State"
-          hint="The state, province, prefecture or other region between the city and the country. Shown instead of the EXIF's, which is kept as it is. Saved as customState; leave it empty to use the EXIF one."
-        >
-          <RegionOverrideField
-            id="photo-custom-state"
-            kind="state"
-            placeholder={exifPlace.state ?? "Not in the EXIF"}
-            {...field("customState")}
-          />
-        </LabeledHint>
-        <LabeledHint
+          kind="state"
+          placeholder={exifPlace.state ?? "Not in the EXIF"}
+          {...field("customState")}
+        />
+      </LabeledHint>
+      <LabeledHint
+        id="photo-custom-country"
+        label="Country"
+        hint="Shown instead of the country from the photo's EXIF, which is kept as it is. Choose one places are in or other photos show, or type one. Saved as customCountry; leave it empty to use the EXIF one."
+      >
+        <RegionOverrideField
           id="photo-custom-country"
-          label="Country"
-          hint="Shown instead of the country from the photo's EXIF, which is kept as it is. Choose one places are in or other photos show, or type one. Saved as customCountry; leave it empty to use the EXIF one."
-        >
-          <RegionOverrideField
-            id="photo-custom-country"
-            kind="country"
-            placeholder={exifPlace.country ?? "Not in the EXIF"}
-            {...field("customCountry")}
-          />
-        </LabeledHint>
-      </div>
-    </details>
+          kind="country"
+          placeholder={exifPlace.country ?? "Not in the EXIF"}
+          {...field("customCountry")}
+        />
+      </LabeledHint>
+    </FieldSection>
   );
 }
 
