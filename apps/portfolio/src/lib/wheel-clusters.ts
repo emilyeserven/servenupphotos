@@ -15,7 +15,7 @@ const CLUSTER_MIN = 3;
 
 /**
  * The places grouped into markers, like the Map page's clusters: each place, in order, takes every
- * place not yet taken within radius of it (a fraction of the wheel's width), and if that makes
+ * place not yet taken within radius of it (in the places' units), and if that makes
  * CLUSTER_MIN or more they're one cluster. A smaller radius, as when zoomed in, splits clusters
  * apart; a radius of 0 gives every place its own pin.
  */

@@ -31,7 +31,8 @@ from the gray middle by its vividness, by the **Average / Peak** measure, with t
 (`spreadPins`), so each stays as near its place as it can; with many photos on a small screen, the pins get smaller,
 down to 14px, so they fit. Where three or more photos' places are within one and a half pin widths of each other,
 they're one round cluster pin instead, like the Map page's, showing how many photos it covers over the first one's
-thumbnail (`lib/wheel-clusters.ts`, `components/wheel-cluster-pin.tsx`). Clicking a cluster zooms in 2× on it, and
+thumbnail (`lib/wheel-clusters.ts`, `lib/pin-markers.ts`, `components/wheel-cluster-pin.tsx`). The zooming,
+clustering and mini map are `components/pin-board.tsx`, which the Black & white chart shares. Clicking a cluster zooms in 2× on it, and
 zooming in splits clusters apart, as the same places are further apart on a bigger wheel; at the furthest zoom
 nothing is clustered, so every photo can be reached. The [color filters](#color-filters) narrow the wheel. Clicking a
 pin opens the photo viewer.
@@ -49,8 +50,9 @@ isn't kept in the URL. On a phone, one finger scrolls the page over the whole wh
 up at least 90% of them (`isBlackAndWhite` in `lib/photo-colors.ts`), which the wheel leaves out, as pins on a chart:
 left to right from black to white by average lightness (`Photo.lightness`, the mean of its neutral histogram, 0 to
 100), and bottom to top by vividness, by the **Average / Peak** measure, with the most vivid shown at the top (or 10,
-if none is more vivid), since even a black and white photo can have a slight tint. Pins that would overlap are pushed
-apart the same way as on the wheel, kept inside the chart.
+if none is more vivid), since even a black and white photo can have a slight tint. It's a pin board like the wheel
+(`components/pin-board.tsx`): pins that would overlap are pushed apart, kept inside the chart; crowded ones are
+clustered; and it zooms, pans and shows a mini map the same way, splitting clusters as it zooms in.
 
 The black-to-white bar under the chart is a slider (`components/lightness-slider.tsx`, `lib/lightness-range.ts`): drag
 its ends to show only the photos in that range of lightness, in steps of 5 (`?light=20-60`, left out for the whole
