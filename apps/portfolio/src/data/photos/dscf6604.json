@@ -38,7 +38,7 @@
     }
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
+  "websiteSpotlight": 8,
   "socialMediaPublishDate": null,
   "exifOriginals": {},
   "manualAperture": false,
@@ -51,7 +51,7 @@
       "id": "komfortabel-coffee-namsan"
     }
   ],
-  "spotlightZones": [],
+  "spotlightZones": ["homepage"],
   "socialPosts": [],
   "reEdit": null
 }

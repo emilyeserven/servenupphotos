@@ -1,7 +1,7 @@
 {
-  "id": 216,
-  "title": null,
+  "title": "Crowded Hanok Village",
   "comment": null,
+  "id": 216,
   "file": "DSCF3817.jpg",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
@@ -12,8 +12,8 @@
   "gpsPosition": "37 deg 34' 56.62\" N, 126 deg 59' 1.27\" E",
   "customGpsPosition": null,
   "createDate": "2026:05:17 16:12:31",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "bukchon-hanok-village",
+  "customCity": "Seoul",
   "customCountry": null,
   "country": "South Korea",
   "city": null,
@@ -28,10 +28,10 @@
     "small": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnail.webp?crop=1256,0,3995",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnailpreview.webp?crop=1256,0,3995",
     "thumbnailcrop": {
-      "x": 1553,
+      "x": 1256,
       "y": 0,
       "size": 3995,
       "outputSize": 500
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "bukchon-hanok-village"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null

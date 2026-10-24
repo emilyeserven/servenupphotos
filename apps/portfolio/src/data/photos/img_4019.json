@@ -1,7 +1,7 @@
 {
-  "id": 231,
-  "title": null,
+  "title": "One Way, Two Way",
   "comment": null,
+  "id": 231,
   "file": "IMG_4019.jpg",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
@@ -28,10 +28,10 @@
     "small": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-thumbnail.webp?crop=969,0,3713",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-thumbnailpreview.webp?crop=969,0,3713",
     "thumbnailcrop": {
-      "x": 928,
+      "x": 969,
       "y": 0,
       "size": 3713,
       "outputSize": 500

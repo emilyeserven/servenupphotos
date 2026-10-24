@@ -1,7 +1,7 @@
 {
-  "id": 278,
   "title": null,
   "comment": null,
+  "id": 278,
   "file": "20250118_143456.jpg",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
@@ -12,9 +12,9 @@
   "gpsPosition": null,
   "customGpsPosition": null,
   "createDate": "2025:01:18 14:34:55",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "Mosque-Madrasa of Sultan Hassan",
+  "customCity": "Cairo",
+  "customCountry": "Egypt",
   "country": null,
   "city": null,
   "width": 2031,
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "mosque-madrasa-of-sultan-hassan"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null

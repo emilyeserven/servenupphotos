@@ -1,7 +1,7 @@
 {
-  "id": 277,
-  "title": null,
+  "title": "Mosque's Lamp",
   "comment": null,
+  "id": 277,
   "file": "20250118_143432.jpg",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
@@ -12,9 +12,9 @@
   "gpsPosition": null,
   "customGpsPosition": null,
   "createDate": "2025:01:18 14:34:32",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "Mosque-Madrasa of Sultan Hassan",
+  "customCity": "Cairo",
+  "customCountry": "Egypt",
   "country": null,
   "city": null,
   "width": 2252,
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "mosque-madrasa-of-sultan-hassan"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null
