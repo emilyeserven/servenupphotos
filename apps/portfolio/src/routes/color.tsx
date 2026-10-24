@@ -43,8 +43,8 @@ interface ColorSearch {
   vivid?: number;
   /** Set to sort and filter by peak vividness; left out for the average. */
   measure?: VividMeasure;
-  /** Set to show the photos on a color wheel; left out for the grid. */
-  view?: "wheel";
+  /** Set to show the photos in a grid; left out for the color wheel. */
+  view?: "grid";
 }
 
 export const Route = createFileRoute("/color")({
@@ -101,7 +101,7 @@ function secondaryOf(main: ColorSort, secondary: unknown): ColorSearch {
 function displayOf({ measure, view }: Record<string, unknown>): ColorSearch {
   return {
     ...(measure === "peak" ? { measure: "peak" as const } : {}),
-    ...(view === "wheel" ? { view: "wheel" as const } : {}),
+    ...(view === "grid" ? { view: "grid" as const } : {}),
   };
 }
 
@@ -173,7 +173,7 @@ function ColorView() {
         <ColorFilter color={color} counts={countsFor(pool, match)} />
         <ColorControls search={search} match={match} />
       </header>
-      {search.view === "wheel" ? (
+      {search.view !== "grid" ? (
         <ColorWheel photos={listed} measure={search.measure ?? "average"} onOpen={show} />
       ) : (
         <ColorGrid photos={listed} onOpen={show} />
@@ -207,8 +207,8 @@ function ColorControls({ search, match }: { search: ColorSearch; match: ColorMat
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <ColorLayoutControl wheel={search.view === "wheel"} />
-        {search.view !== "wheel" && <ColorSortControl {...sortSpec(search)} />}
+        <ColorLayoutControl wheel={search.view !== "grid"} />
+        {search.view === "grid" && <ColorSortControl {...sortSpec(search)} />}
         <ColorMatchControl
           threshold={match.mode === "threshold"}
           percent={min}

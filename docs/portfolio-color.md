@@ -39,8 +39,8 @@ secondary sorts within each group: a color sort groups by each photo's largest c
 **Vividness at least** slider hides the photos less vivid than it, from 0 (every photo, left out of the URL) to 100
 in steps of 5 (`?vivid=20`), and the swatches' counts only count the photos it leaves.
 
-**Grid / Wheel** (`?view=wheel`) switches the photos from the grid to a color wheel (`components/color-wheel.tsx`,
-`lib/color-wheel.ts`), with each photo as a thumbnail pin like the Map page's. A photo sits around the wheel by its
+**Wheel / Grid** picks how the photos are shown. The **Wheel** (the default) shows them on a color wheel
+(`components/color-wheel.tsx`, `lib/color-wheel.ts`), with each photo as a thumbnail pin like the Map page's. A photo sits around the wheel by its
 hue, red at the top and clockwise through orange and yellow: its biggest hue bucket, pulled toward its second biggest
 along the shorter way round, the more the more of it there is (by the second's share of the two), so a photo with as
 much orange as yellow sits halfway between them and one with a touch of yellow stays near orange (shades are left
@@ -50,6 +50,15 @@ from the gray middle by its vividness, by the **Average / Peak** measure, with t
 (`spreadPins`), so each stays as near its place as it can; with many photos on a small screen, the pins get smaller,
 down to 14px, so they fit. The swatches, the match and the vividness slider narrow the wheel as they do the grid;
 the sort is hidden, since the wheel places photos itself. Clicking a pin opens the photo viewer.
+
+The wheel zooms in up to 8× with its **+** and **−** buttons, a two-finger pinch, or ctrl + scroll (a trackpad pinch),
+and pans by dragging (`lib/use-wheel-zoom.ts`); the third button shows the whole wheel again. A drag that starts on a
+pin doesn't open it. Pins stay the same size as it zooms, and are spread apart again for the bigger wheel, so zooming
+in on a crowded patch separates them. Zoomed in, a mini map in the corner (`components/wheel-minimap.tsx`) shows the
+whole wheel with a dot for each photo and a box around the part in view; clicking it moves the view there. The zoom
+isn't kept in the URL. On a phone, one finger scrolls the page over the whole wheel and drags it once it's zoomed in.
+
+The **Grid** (`?view=grid`) shows the photos as square tiles, sorted as above.
 
 Under the swatches, how a photo matches the color is picked (`lib/color-match.ts`), and each swatch's
 tooltip says how many photos it shows that way:
