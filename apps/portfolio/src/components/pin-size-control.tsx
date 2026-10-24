@@ -3,9 +3,9 @@ import type { PinScale } from "@/lib/pin-scale";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 
 const SIZES = [
-  { scale: "small", label: "S", title: "Small previews" },
-  { scale: "medium", label: "M", title: "Medium previews" },
-  { scale: "large", label: "L", title: "Large previews" },
+  { scale: "small", label: "Small", title: "Small previews" },
+  { scale: "medium", label: "Medium", title: "Medium previews" },
+  { scale: "large", label: "Large", title: "Large previews" },
 ] as const;
 
 /**
@@ -15,7 +15,6 @@ const SIZES = [
 export function PinSizeControl({ scale = "small" }: { scale?: PinScale }) {
   return (
     <div role="group" aria-label="Preview size" className={CONTROL_FRAME}>
-      <span className="flex items-center px-2 text-sm text-muted-foreground">Previews</span>
       {SIZES.map((option) => (
         <Link
           key={option.scale}
@@ -23,7 +22,6 @@ export function PinSizeControl({ scale = "small" }: { scale?: PinScale }) {
           search={(prev: Record<string, unknown>) => ({ ...prev, pins: pinsParam(option.scale) })}
           replace
           aria-pressed={scale === option.scale}
-          aria-label={option.title}
           title={option.title}
           className={controlButtonClass(scale === option.scale)}
         >

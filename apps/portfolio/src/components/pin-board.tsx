@@ -16,6 +16,9 @@ import type { WheelMarker } from "@/lib/wheel-clusters";
 import { useSize } from "@/lib/use-size";
 import { cn } from "@/lib/utils";
 
+/** The board's top fading in from transparent, as a mask. */
+const TOP_FADE = "linear-gradient(to bottom, transparent, black 3rem)";
+
 /** How much clicking a cluster zooms in on it. */
 const CLUSTER_ZOOM = 2;
 
@@ -33,6 +36,11 @@ export interface BoardLook {
   minimapClassName: string;
   /** What the button showing the whole board is called, such as "Show the whole wheel". */
   wholeLabel: string;
+  /**
+   * Whether the board's top always fades in from the page's background, as the Black & white
+   * chart's does; otherwise it only does while zoomed in, so what's cut off doesn't end sharply.
+   */
+  fadeTop: boolean;
 }
 
 /**
@@ -76,7 +84,7 @@ export function PinBoard<T extends PinPhoto>({
           "relative size-full cursor-grab overflow-hidden select-none active:cursor-grabbing [&_img]:pointer-events-none",
           look.className,
         )}
-        style={{ touchAction: view.zoom > 1 ? "none" : "pan-y" }}
+        style={viewportStyle(view.zoom > 1, look.fadeTop)}
       >
         <div className="absolute" style={{ ...canvasStyle(view, size), ...aspectVar(size) }}>
           {look.background}
@@ -110,6 +118,17 @@ export function PinBoard<T extends PinPhoto>({
       )}
     </div>
   );
+}
+
+/**
+ * The viewport's touch handling and top fade: zoomed in, a drag pans it rather than the page, and
+ * its top fades in so what's cut off doesn't end sharply.
+ */
+function viewportStyle(zoomed: boolean, fadeTop: boolean): CSSProperties {
+  return {
+    touchAction: zoomed ? "none" : "pan-y",
+    maskImage: zoomed || fadeTop ? TOP_FADE : undefined,
+  };
 }
 
 /** Where the zoomed canvas sits in the viewport, size pixels, so view's middle is in its middle. */

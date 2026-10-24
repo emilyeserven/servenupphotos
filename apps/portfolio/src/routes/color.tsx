@@ -4,19 +4,15 @@ import { type ColorLayout, ColorLayoutControl } from "@/components/color-layout-
 import { ColorViewFilters } from "@/components/color-view-filters";
 import { FloatingHeader } from "@/components/floating-header";
 import { ColorWheel } from "@/components/color-wheel";
-import { PinSizeControl } from "@/components/pin-size-control";
+import { ColorDisplayMenu } from "@/components/color-display-menu";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ShadeSpectrum } from "@/components/shade-spectrum";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { type ColorFilters, parseColorFilters, vividEnough } from "@/lib/color-search";
 import { isBlackAndWhite } from "@/lib/photo-colors";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
-import {
-  inLightness,
-  lightnessExtent,
-  lightnessRange,
-  parseLightness,
-} from "@/lib/lightness-range";
+import type { VividMeasure } from "@/lib/color-sort";
+import { lightnessExtent } from "@/lib/lightness-range";
 import { parsePinScale, pinFactor, type PinScale } from "@/lib/pin-scale";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 
@@ -27,11 +23,6 @@ interface ColorSearch extends ColorFilters {
    * Grid page.
    */
   view?: Exclude<ColorLayout, "wheel"> | "grid";
-  /**
-   * The range of lightness the Black & white view shows, such as "20-60", from 0 (black) to 100
-   * (white); left out for the whole spectrum.
-   */
-  light?: string;
   /** How big the photo previews are: left out for small. */
   pins?: Exclude<PinScale, "small">;
 }
@@ -40,7 +31,7 @@ export const Route = createFileRoute("/color")({
   validateSearch: (search: Record<string, unknown>): ColorSearch & ShownPhotoSearch => ({
     ...parseColorFilters(search),
     ...viewOf(search.view),
-    ...lightOf(search.light),
+    ...measureOf(search.measure),
     ...pinsOf(search.pins),
     ...parseShownPhoto(search),
   }),
@@ -60,10 +51,14 @@ function viewOf(view: unknown): ColorSearch {
   return view === "mono" || view === "grid" ? { view } : {};
 }
 
-/** The `?light=` to keep, leaving it out when it's missing or not a range the slider can set. */
-function lightOf(value: unknown): ColorSearch {
-  const light = parseLightness(value);
-  return light === undefined ? {} : { light };
+/** The `?measure=` to keep: average, since peak is this page's default and left out. */
+function measureOf(measure: unknown): ColorSearch {
+  return { measure: measure === "average" ? "average" : undefined };
+}
+
+/** The vividness measure the page uses: peak unless the URL says average. */
+function measureFor(search: ColorSearch): VividMeasure {
+  return search.measure ?? "peak";
 }
 
 /** The `?pins=` to keep, leaving it out when it's missing or not a size. */
@@ -94,14 +89,14 @@ function ColorView() {
   const shownPhotos = photosFor(search, layout);
 
   return (
-    // Like the Map, the wheel fills the window, with the title and controls floating over it;
-    // the Black & white chart sits inside some padding, below them.
+    // Like the Map, the page fills the window, with the title and controls floating at the top
+    // and the wheel or chart below them.
     <div className="relative h-svh min-h-[34rem] w-full">
       <FloatingHeader icon={Palette} title="Color" count={shownPhotos.length}>
         <div className="flex flex-wrap items-center gap-2">
           <ColorLayoutControl layout={layout} />
-          <PinSizeControl scale={search.pins} />
-          <ColorViewFilters vivid={search.vivid} measure={search.measure} />
+          <ColorDisplayMenu pins={search.pins} />
+          <ColorViewFilters vivid={search.vivid} measure={measureFor(search)} />
         </div>
       </FloatingHeader>
       <div className={VIEW_FRAME[layout]}>
@@ -114,7 +109,8 @@ function ColorView() {
 
 /** The photos the layout shows: the color ones on the wheel, or the black and white ones on the chart. */
 function photosFor(search: ColorSearch, layout: ColorLayout): ColorPhoto[] {
-  return layout === "mono" ? monoShown(search) : vividEnough(wheelPhotos, search);
+  const filters = { ...search, measure: measureFor(search) };
+  return vividEnough(layout === "mono" ? monoPhotos : wheelPhotos, filters);
 }
 
 // The photos with color, for the wheel.
@@ -133,12 +129,6 @@ function lightnessOf(photo: ColorPhoto): number {
   return photo.lightness ?? 50;
 }
 
-/** The black and white photos the Black & white chart shows: as vivid as the slider asks, in the picked range of lightness. */
-function monoShown(search: ColorSearch): ColorPhoto[] {
-  const range = lightnessRange(search.light, MONO_EXTENT);
-  return vividEnough(monoPhotos, search).filter((photo) => inLightness(lightnessOf(photo), range));
-}
-
 /** The photos on the color wheel, or the black-to-white chart. */
 function ColorLayoutView({
   layout,
@@ -151,14 +141,13 @@ function ColorLayoutView({
   search: ColorSearch;
   onOpen: (photo: ColorPhoto) => void;
 }) {
-  const measure = search.measure ?? "average";
+  const measure = measureFor(search);
   const scale = pinFactor(search.pins);
   if (layout === "mono") {
     return (
       <ShadeSpectrum
         photos={photos}
         measure={measure}
-        range={lightnessRange(search.light, MONO_EXTENT)}
         extent={MONO_EXTENT}
         scale={scale}
         onOpen={onOpen}
@@ -168,8 +157,12 @@ function ColorLayoutView({
   return <ColorWheel photos={photos} measure={measure} scale={scale} onOpen={onOpen} />;
 }
 
-/** Where each view sits: the wheel fills the page, the chart is padded below the controls. */
+/**
+ * Where each view sits: below the floating controls, which keep the page's background behind them.
+ * The chart's top fades in from it (`fadeTop`); the wheel starts a little further down, after the
+ * same fade's height and some padding.
+ */
 const VIEW_FRAME: Record<ColorLayout, string> = {
-  wheel: "size-full",
-  mono: "size-full px-4 pt-40 pb-6 sm:px-8 md:pt-24",
+  wheel: "absolute inset-x-0 bottom-0 top-40 pt-16 md:top-20",
+  mono: "absolute inset-x-0 bottom-0 top-40 md:top-20",
 };

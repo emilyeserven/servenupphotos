@@ -15,12 +15,15 @@ before `peakChroma` was added use their average for peak until Update Data's **C
 without `colors`, or without resized versions in R2, aren't shown; with none at all, the page shows its placeholder.
 
 Clicking a photo opens the photo viewer (`?photo=`). Like the Map, the page fills the window with no scrolling, and its
-title and controls float over its top left corner (`components/floating-header.tsx`, shared with the Map); the zoom
-buttons are at the bottom right. **Wheel / Black & white** picks the view. **Previews S / M / L**
+title and controls float at the top left (`components/floating-header.tsx`, shared with the Map), over the page's
+background; the wheel or chart starts below them, its top fading in from the background (a CSS mask on the board), and
+the wheel starts a little further down still. The zoom buttons are at the bottom right. **Wheel / Black & white** picks
+the view. **Display** (`components/color-display-menu.tsx`) holds **Preview size**: **Small**, **Medium** or **Large**
 (`components/pin-size-control.tsx`, `lib/pin-scale.ts`) makes the pins 1×, 1.5× or 2× their usual size
 (`?pins=medium`, `?pins=large`, left out for small); bigger pins cluster sooner. **Filters** opens the **Average / Peak**
 and **Vividness at least** controls (`components/color-view-filters.tsx`), hidden at first and counted on the button
-while changed; the Color page has no
+while changed. On this page **Peak** is the default (`?measure=average` picks average), since it spreads photos out
+more. The Color page has no
 grid of its own any more: the [Grid page](#on-the-grid-page) has the same color filters and sorts by color, and older
 `/color?view=grid` links go there, sorted by color, keeping their color filters.
 
@@ -59,13 +62,13 @@ left to right from black to white by average lightness (`Photo.lightness`, the m
 100), and bottom to top by vividness, by the **Average / Peak** measure, since even a black and white photo can have a
 slight tint. The chart fits the photos: across from the darkest to the lightest one's lightness, rounded out to steps
 of 5 (at least 10 wide; `lightnessExtent`), and up from the least vivid photo shown to the most (at least 2 apart), so
-photos aren't bunched into one corner. It sits below the floating controls, inset from the page's edges. It's a pin board like the wheel
+photos aren't bunched into one corner. Like the wheel, it fills the page below the floating controls, its gray
+background fading in at the top, with no slider, axis labels or caption: the grays show which way is light. It's a pin
+board like the wheel
 (`components/pin-board.tsx`): pins that would overlap are pushed apart, kept inside the chart; crowded ones are
 clustered; and it zooms, pans and shows a mini map the same way, splitting clusters as it zooms in.
 
-The black-to-white bar under the chart is a slider (`components/lightness-slider.tsx`, `lib/lightness-range.ts`): drag
-its ends to show only the photos in that range of lightness, in steps of 5 (`?light=20-60`, left out for the whole
-chart); its ends are the chart's. The **Filters** vividness controls work here too.
+The **Filters** vividness controls work here too. Older links' `?light=` range is ignored.
 
 > **Frontend analogy:** the chart is a scatter plot of absolutely positioned buttons, `left` from lightness and `top`
 > from vividness, then nudged apart like a physics-based layout until none overlap.
@@ -82,7 +85,8 @@ X and can't be picked, unless it's already the filter from a link, so it can sti
 - **At least…** (`?match=threshold`): the color is at least a share of the whole photo, 30% unless the slider beside
   it changes it, from 5% to 95% in steps of 5 (`?min=15`, left out at 30%; `DEFAULT_PERCENT` in `lib/color-search.ts`).
 
-**Average / Peak** picks which vividness the views and the slider use (`?measure=peak`, left out for average). A
+**Average / Peak** picks which vividness the views and the slider use (`?measure=peak`, left out for average, except
+on the Color page, where peak is the default and left out). A
 **Vividness at least** slider hides the photos less vivid than it, from 0 (every photo, left out of the URL) to 100
 in steps of 5 (`?vivid=20`), and the swatches' counts only count the photos it leaves. These are read and applied in
 `lib/color-search.ts`, which the Grid page shares.
