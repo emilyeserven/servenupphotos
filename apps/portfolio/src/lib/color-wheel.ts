@@ -59,20 +59,27 @@ export const WHEEL_BACKGROUND = [
 /** How many rounds spreadPins pushes overlapping pins apart. */
 const SPREAD_ROUNDS = 60;
 
+/** Moves a point of a pin size wide back inside the area pins are kept in. */
+export type KeepInside = (p: WheelPoint, size: number) => void;
+
 /**
- * The points moved apart so pins of size (a fraction of the wheel's width) overlap as little as
- * they can, each pair that's too close pushed apart along the line between them, a little each
- * round, and kept inside the wheel. Pins only move as far as they need to, so each stays near its
- * color and vividness.
+ * The points moved apart so pins of size (a fraction of the wheel's width, or any unit the points
+ * are in) overlap as little as they can, each pair that's too close pushed apart along the line
+ * between them, a little each round, and kept inside the wheel, or wherever keep keeps them. Pins
+ * only move as far as they need to, so each stays near its place.
  */
-export function spreadPins(points: WheelPoint[], size: number): WheelPoint[] {
+export function spreadPins(
+  points: WheelPoint[],
+  size: number,
+  keep: KeepInside = keepInside,
+): WheelPoint[] {
   const spread = points.map((p, i) => ({
     x: p.x + jitter(i, size),
     y: p.y + jitter(i + 0.5, size),
   }));
   for (let round = 0; round < SPREAD_ROUNDS; round++) {
     if (!pushApart(spread, size)) break;
-    for (const p of spread) keepInside(p, size);
+    for (const p of spread) keep(p, size);
   }
   return spread;
 }

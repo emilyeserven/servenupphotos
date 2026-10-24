@@ -1,12 +1,23 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpDown } from "lucide-react";
+import type { GridSort } from "@/lib/grid-sort";
 
-/** Which end of the Grid comes first: the newest photo taken, or the oldest. */
-export type GridSort = "newest" | "oldest";
+const SORTS: { sort: GridSort; label: string }[] = [
+  { sort: "newest", label: "Newest to Oldest" },
+  { sort: "oldest", label: "Oldest to Newest" },
+  { sort: "color", label: "Color" },
+  { sort: "vivid", label: "Vividness" },
+];
+
+/** The sort a dropdown value names, newest first for anything else. */
+function sortOf(value: string): GridSort {
+  return SORTS.find((option) => option.sort === value)?.sort ?? "newest";
+}
 
 /**
- * A dropdown to sort the Grid by when each photo was taken, kept in the URL so a link keeps it.
- * Newest to oldest is the default and is left out of the URL.
+ * A dropdown to sort the Grid by when each photo was taken, or by color or vividness, kept in the
+ * URL so a link keeps it. Newest to oldest is the default and is left out of the URL. Changing it
+ * clears the color sorts' order and secondary sort.
  */
 export function GridSortSelect({ sort }: { sort: GridSort }) {
   const navigate = useNavigate({ from: "/grid" });
@@ -17,13 +28,25 @@ export function GridSortSelect({ sort }: { sort: GridSort }) {
       <select
         value={sort}
         onChange={(event) => {
-          const next = event.target.value === "oldest" ? "oldest" : undefined;
-          void navigate({ search: (prev) => ({ ...prev, sort: next }), replace: true });
+          const next = sortOf(event.target.value);
+          void navigate({
+            search: (prev) => ({
+              ...prev,
+              sort: next === "newest" ? undefined : next,
+              order: undefined,
+              secondary: undefined,
+              secondaryOrder: undefined,
+            }),
+            replace: true,
+          });
         }}
         className="h-8 cursor-pointer rounded-md border bg-background px-2 text-sm text-foreground shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30"
       >
-        <option value="newest">Newest to Oldest</option>
-        <option value="oldest">Oldest to Newest</option>
+        {SORTS.map((option) => (
+          <option key={option.sort} value={option.sort}>
+            {option.label}
+          </option>
+        ))}
       </select>
     </label>
   );

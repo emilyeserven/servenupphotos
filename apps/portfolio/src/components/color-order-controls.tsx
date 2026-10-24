@@ -3,16 +3,6 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import type { ColorOrder, ColorSort } from "@/lib/color-sort";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 
-const SORTS = [
-  {
-    sort: "color",
-    label: "Color",
-    title:
-      "Sort by color: around the color wheel, secondary the shades, or by the picked color's share",
-  },
-  { sort: "vivid", label: "Vividness", title: "Sort by how vivid each photo's colors are" },
-] as const;
-
 /** Each sort's name in "Then by …". */
 const SORT_LABELS: Record<ColorSort, string> = { color: "Color", vivid: "Vividness" };
 
@@ -34,11 +24,11 @@ const ORDERS = [
 type OrderParam = "order" | "secondaryOrder";
 
 /**
- * What photos are sorted by, color (the default) or vividness, and which way, secondary optionally the
- * other one within the groups the first makes, with its own way. Kept in the URL as `?sort=vivid`,
- * `?order=desc`, `?secondary=` and `?secondaryOrder=desc`, each left out at its default, so a link keeps them.
+ * Which way the Grid's color or vividness sort runs, and optionally the other one as a secondary
+ * sort within the groups the first makes, with its own way. Kept in the URL as `?order=desc`,
+ * `?secondary=` and `?secondaryOrder=desc`, each left out at its default, so a link keeps them.
  */
-export function ColorSortControl({
+export function ColorOrderControls({
   sort,
   order,
   secondary,
@@ -52,28 +42,6 @@ export function ColorSortControl({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div role="group" aria-label="Sort by" className={CONTROL_FRAME}>
-        {SORTS.map((option) => (
-          <Link
-            key={option.sort}
-            from="/color"
-            to="/color"
-            search={(prev) => ({
-              ...prev,
-              sort: option.sort === "vivid" ? option.sort : undefined,
-              secondary: undefined,
-              secondaryOrder: undefined,
-              photo: undefined,
-            })}
-            replace
-            aria-pressed={sort === option.sort}
-            title={option.title}
-            className={controlButtonClass(sort === option.sort)}
-          >
-            {option.label}
-          </Link>
-        ))}
-      </div>
       <OrderToggle sort={sort} order={order} param="order" />
       <ThenToggle other={sort === "color" ? "vivid" : "color"} on={secondary !== undefined} />
       {secondary && <OrderToggle sort={secondary} order={secondaryOrder} param="secondaryOrder" />}
@@ -85,8 +53,7 @@ export function ColorSortControl({
 function ThenToggle({ other, on }: { other: ColorSort; on: boolean }) {
   return (
     <Link
-      from="/color"
-      to="/color"
+      to="."
       search={(prev) => ({
         ...prev,
         secondary: on ? undefined : other,
@@ -118,8 +85,7 @@ function OrderToggle({
       {ORDERS.map(({ order: option, label, Icon }) => (
         <Link
           key={option}
-          from="/color"
-          to="/color"
+          to="."
           search={(prev) => ({ ...prev, ...orderSearch(param, option), photo: undefined })}
           replace
           aria-pressed={order === option}

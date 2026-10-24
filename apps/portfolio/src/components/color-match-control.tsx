@@ -32,8 +32,7 @@ export function ColorMatchControl({
         {MODES.map(({ match, label, title }) => (
           <Link
             key={label}
-            from="/color"
-            to="/color"
+            to="."
             search={(prev) => ({ ...prev, match, photo: undefined })}
             replace
             aria-pressed={threshold === (match === "threshold")}
@@ -51,7 +50,7 @@ export function ColorMatchControl({
 
 /** A slider for how much of a photo the color needs, kept in the URL as `?min=`. */
 function ShareThreshold({ percent, fallback }: { percent: number; fallback: number }) {
-  const navigate = useNavigate({ from: "/color" });
+  const navigate = useNavigate();
   return (
     <SearchSlider
       id="share-threshold"
@@ -64,7 +63,11 @@ function ShareThreshold({ percent, fallback }: { percent: number; fallback: numb
       )}
       onCommit={(next) => {
         const min = next === fallback ? undefined : next;
-        void navigate({ search: (prev) => ({ ...prev, min, photo: undefined }), replace: true });
+        void navigate({
+          to: ".",
+          search: (prev: Record<string, unknown>) => ({ ...prev, min, photo: undefined }),
+          replace: true,
+        });
       }}
     />
   );
