@@ -10,25 +10,26 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// ColorsField is where a photo file keeps its color analysis (colors.Analysis):
-// its average color, hue buckets, neutrals and raw statistics, as the EXIF page shows them.
+// ColorsField is where a photo file keeps its color summary (colors.Summary):
+// its average color, hue buckets, neutrals, mean lightness and chroma, as
+// the EXIF page's Colors tab shows them.
 const ColorsField = "colors"
 
-// ColorReader returns the color analysis of the original photo at key in R2,
+// ColorReader returns the color summary of the original photo at key in R2,
 // or a message fit to show saying why it couldn't.
-type ColorReader func(ctx context.Context, key string) (colors.Analysis, string)
+type ColorReader func(ctx context.Context, key string) (colors.Summary, string)
 
-// ColorFile is a photo file Colors gives a color analysis to.
+// ColorFile is a photo file Colors gives a color summary to.
 type ColorFile struct {
 	Path    string `json:"path"`
 	FileURL string `json:"fileUrl"`
 	// Replaces is true when the file already has colors, which recomputing
 	// replaces.
 	Replaces bool `json:"replaces"`
-	// Colors is the photo's color analysis; nil when Error says why it
+	// Colors is the photo's color summary; nil when Error says why it
 	// couldn't be read, and the file is left as it is.
-	Colors *colors.Analysis `json:"colors"`
-	Error  string           `json:"error,omitempty"`
+	Colors *colors.Summary `json:"colors"`
+	Error  string          `json:"error,omitempty"`
 }
 
 // ColorsPreview is what adding color data would do to the photo files on
@@ -185,7 +186,7 @@ func hasColors(content []byte) bool {
 }
 
 // withColors is content with its "colors" set to analysis.
-func withColors(content []byte, analysis colors.Analysis) ([]byte, error) {
+func withColors(content []byte, analysis colors.Summary) ([]byte, error) {
 	value, err := json.Marshal(analysis)
 	if err != nil {
 		return nil, err

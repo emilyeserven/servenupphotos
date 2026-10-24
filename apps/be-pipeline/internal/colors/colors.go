@@ -85,8 +85,9 @@ type Bin struct {
 	Share float64 `json:"share"`
 }
 
-// Analysis is the color summary of a photo.
-type Analysis struct {
+// Summary is the color summary of a photo that its photo JSON file keeps,
+// under "colors": everything Analysis has but Raw.
+type Summary struct {
 	Average Color `json:"average"`
 	// Buckets always holds all 12 hue buckets in color-wheel order, so photos
 	// can be compared bucket by bucket. Their shares and Neutrals.Share sum to 1.
@@ -95,7 +96,13 @@ type Analysis struct {
 	Lightness float64  `json:"lightness"`
 	Chroma    float64  `json:"chroma"`
 	Samples   int      `json:"samples"`
-	Raw       Raw      `json:"raw"`
+}
+
+// Analysis is the color summary of a photo with its raw statistics. Its
+// JSON is Summary's fields followed by "raw".
+type Analysis struct {
+	Summary
+	Raw Raw `json:"raw"`
 }
 
 // Analyze decodes the image in r and summarises its colors.
@@ -155,13 +162,15 @@ func analyzeImage(img image.Image) (Analysis, error) {
 
 	mean := Lab{sum.L / n, sum.A / n, sum.B / n}
 	return Analysis{
-		Average:   toColor(mean),
-		Buckets:   buckets,
-		Neutrals:  neutrals,
-		Lightness: round(mean.L),
-		Chroma:    round(chroma / n),
-		Samples:   len(pixels),
-		Raw:       rawStats(pixels),
+		Summary: Summary{
+			Average:   toColor(mean),
+			Buckets:   buckets,
+			Neutrals:  neutrals,
+			Lightness: round(mean.L),
+			Chroma:    round(chroma / n),
+			Samples:   len(pixels),
+		},
+		Raw: rawStats(pixels),
 	}, nil
 }
 

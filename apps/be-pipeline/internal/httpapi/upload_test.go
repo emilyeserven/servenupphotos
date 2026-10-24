@@ -67,7 +67,7 @@ func TestUpload(t *testing.T) {
 			req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/upload", body)
 			req.Header.Set("Content-Type", contentType)
 			rec := httptest.NewRecorder()
-			cache := newKeyCache[colors.Analysis]()
+			cache := newKeyCache[colors.Summary]()
 			handleUpload(store.R2, upload, cache).ServeHTTP(rec, req)
 
 			if rec.Code != tt.want {
@@ -166,7 +166,7 @@ func TestUploadCrop(t *testing.T) {
 		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/upload", &buf)
 		req.Header.Set("Content-Type", mw.FormDataContentType())
 		rec := httptest.NewRecorder()
-		handleUpload(store.R2, upload, newKeyCache[colors.Analysis]()).ServeHTTP(rec, req)
+		handleUpload(store.R2, upload, newKeyCache[colors.Summary]()).ServeHTTP(rec, req)
 		return rec
 	}
 

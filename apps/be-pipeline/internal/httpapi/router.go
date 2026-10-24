@@ -32,7 +32,7 @@ type routeDeps struct {
 	extractor exif.Extractor
 	store     *settings.Store
 	gh        *github.Client
-	// colors keeps the color analysis of originals in R2 by key, filled
+	// colors keeps the color summary of originals in R2 by key, filled
 	// when a photo is uploaded and read when its JSON is saved or Update
 	// Data reads colors.
 	colors *colorCache
@@ -45,7 +45,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("GET /health", handleHealth)
 	mux.HandleFunc("GET /hello", handleHello)
 	mux.HandleFunc("POST /exif", handleExif(extractor, cameraOverrides(store, gh)))
-	d := routeDeps{extractor: extractor, store: store, gh: gh, colors: newKeyCache[colors.Analysis]()}
+	d := routeDeps{extractor: extractor, store: store, gh: gh, colors: newKeyCache[colors.Summary]()}
 	registerSettingsRoutes(mux, d)
 	registerPhotoRoutes(mux, d)
 	registerInFlightRoutes(mux, d)

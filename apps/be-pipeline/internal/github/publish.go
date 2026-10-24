@@ -39,9 +39,9 @@ type Photo struct {
 	// Places are where the photo was taken, as places from PLACES.json;
 	// none when they're left out.
 	Places []PhotoPlace `json:"places,omitempty"`
-	// Colors is the photo's color analysis, which the backend reads from its
+	// Colors is the photo's color summary, which the backend reads from its
 	// original in R2; nil when it couldn't, and the file has no "colors".
-	Colors *colors.Analysis `json:"-"`
+	Colors *colors.Summary `json:"-"`
 }
 
 // PhotoPlace is one place a photo was taken at, from PLACES.json, and how
@@ -88,10 +88,10 @@ type photoJSON struct {
 	// nil when it isn't marked. It's set on the Photo page, and replacing the
 	// photo's image there clears it.
 	ReEdit *ReEdit `json:"reEdit"`
-	// Colors is the photo's color analysis (see ColorsField), last as it's
+	// Colors is the photo's color summary (see ColorsField), last as it's
 	// long. It's left out of newPhotoJSON's defaults, so Backfill doesn't add
 	// it; Update Data's Colors does.
-	Colors *colors.Analysis `json:"colors,omitempty"`
+	Colors *colors.Summary `json:"colors,omitempty"`
 }
 
 // ReEdit is a photo's mark for re-editing.
