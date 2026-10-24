@@ -38,7 +38,7 @@ type uploadErrorResponse struct {
 // When the bucket already has a different photo under the same name it
 // responds 409 with those photos instead, unless a "sameName" field set to
 // "keep" comes before the photo.
-func handleUpload(loadR2 func() (settings.R2, error), upload uploadFunc) http.HandlerFunc {
+func handleUpload(loadR2 func() (settings.R2, error), upload uploadFunc, cache *colorCache) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		photo, ok := receivePhoto(w, r)
 		if !ok {
@@ -83,9 +83,22 @@ func handleUpload(loadR2 func() (settings.R2, error), upload uploadFunc) http.Ha
 			slog.Error("upload failed", "err", err)
 			writeError(w, http.StatusInternalServerError, "could not upload photo")
 		default:
+			cacheColors(cache, res.Key, photo.path)
 			writeJSON(w, http.StatusOK, res)
 		}
 	}
+}
+
+// cacheColors keeps the colors of the photo just uploaded to key, read from
+// its temp file at path, so saving its JSON doesn't download it again to
+// read them.
+func cacheColors(cache *colorCache, key, path string) {
+	analysis, err := analyzeColors(path)
+	if err != nil {
+		slog.Warn("color analysis failed", "key", key, "err", err)
+		return
+	}
+	cache.put(key, analysis)
 }
 
 // parseCrop reads the thumbnail's crop from the form's "cropX", "cropY" and

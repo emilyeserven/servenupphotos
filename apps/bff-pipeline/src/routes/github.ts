@@ -7,14 +7,14 @@ function withRefresh(path: string, query: { refresh?: string }): string {
 }
 
 export const githubRoutes: FastifyPluginAsync = async (app) => {
-  // Saves a photo's data as a change waiting for Commit. The backend may read GitHub first and
-  // gives it 30s, so this waits a little longer.
+  // Saves a photo's data as a change waiting for Commit. The backend may read the photo's colors
+  // from R2 first, given 20s, then read GitHub, given 30s, so this waits a little longer.
   app.post("/photos/github", async (request, reply) =>
     relayToBackend(reply, app.log, "/photos/github", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(request.body),
-      timeoutMs: 35_000,
+      timeoutMs: 55_000,
     }),
   );
 

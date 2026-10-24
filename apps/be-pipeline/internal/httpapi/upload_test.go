@@ -13,6 +13,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
@@ -66,7 +67,8 @@ func TestUpload(t *testing.T) {
 			req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/upload", body)
 			req.Header.Set("Content-Type", contentType)
 			rec := httptest.NewRecorder()
-			handleUpload(store.R2, upload).ServeHTTP(rec, req)
+			cache := newKeyCache[colors.Analysis]()
+			handleUpload(store.R2, upload, cache).ServeHTTP(rec, req)
 
 			if rec.Code != tt.want {
 				t.Fatalf("status = %d, want %d (body %s)", rec.Code, tt.want, rec.Body)
@@ -86,6 +88,9 @@ func TestUpload(t *testing.T) {
 			}
 			if gotName != "IMG_0001.jpg" || string(gotBody) != string(photo) {
 				t.Errorf("uploaded %q with %d bytes, want IMG_0001.jpg with %d", gotName, len(gotBody), len(photo))
+			}
+			if c, ok := cache.get("photos/k.jpg"); !ok || c.Buckets[0].Name != "red" || c.Buckets[0].Share < 0.99 {
+				t.Errorf("cached colors = %+v, %v; want the red photo's under its key", c, ok)
 			}
 		})
 	}
@@ -161,7 +166,7 @@ func TestUploadCrop(t *testing.T) {
 		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/upload", &buf)
 		req.Header.Set("Content-Type", mw.FormDataContentType())
 		rec := httptest.NewRecorder()
-		handleUpload(store.R2, upload).ServeHTTP(rec, req)
+		handleUpload(store.R2, upload, newKeyCache[colors.Analysis]()).ServeHTTP(rec, req)
 		return rec
 	}
 

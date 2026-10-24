@@ -50,7 +50,7 @@ A photo's `reEdit` marks it to edit again, with a reason and the day it was mark
 
 A photo's `colors` is its color analysis, as the EXIF page's Colors and Raw color data tabs show it: the `average` color (hex, CIELAB and
 HCL), the share of the photo in each of 12 hue `buckets`, the `neutrals` (blacks, grays and whites) by lightness, and
-the mean `lightness` and `chroma`, and the `raw` per-color-space statistics. Files only have it once Update Data's **Colors** has read it; see
+the mean `lightness` and `chroma`, and the `raw` per-color-space statistics. New photos get it when they're saved after uploading to R2 (see [Saving photo data to GitHub](saving-to-github.md)), and older files once Update Data's **Colors** has read it; see
 [Update Data](update-data.md).
 
 > **Frontend analogy:** it's a normalized store, like a Redux slice keyed by ID: photos hold only the IDs of their
