@@ -48,7 +48,11 @@ out). It sits out
 from the gray middle by its vividness, by the **Average / Peak** measure, with the most vivid photo shown at the edge
 (or 20, if none is more vivid). Pins that would overlap are pushed apart, a little at a time, until they don't
 (`spreadPins`), so each stays as near its place as it can; with many photos on a small screen, the pins get smaller,
-down to 14px, so they fit. The swatches, the match and the vividness slider narrow the wheel as they do the grid;
+down to 14px, so they fit. Where three or more photos' places are within one and a half pin widths of each other,
+they're one round cluster pin instead, like the Map page's, showing how many photos it covers over the first one's
+thumbnail (`lib/wheel-clusters.ts`, `components/wheel-cluster-pin.tsx`). Clicking a cluster zooms in 2× on it, and
+zooming in splits clusters apart, as the same places are further apart on a bigger wheel; at the furthest zoom
+nothing is clustered, so every photo can be reached. The swatches, the match and the vividness slider narrow the wheel as they do the grid;
 the sort is hidden, since the wheel places photos itself. Clicking a pin opens the photo viewer.
 
 The wheel zooms in up to 8× with its **+** and **−** buttons, a two-finger pinch, or ctrl + scroll (a trackpad pinch),
@@ -60,8 +64,21 @@ isn't kept in the URL. On a phone, one finger scrolls the page over the whole wh
 
 The **Grid** (`?view=grid`) shows the photos as square tiles, sorted as above.
 
+**Black & white** (`?view=mono`, `components/shade-spectrum.tsx`) shows the photos whose blacks, grays and whites make
+up at least 90% of them (`isBlackAndWhite` in `lib/photo-colors.ts`) as pins along a spectrum from black on the left to
+white on the right, each at its average lightness (`Photo.lightness`, the mean of its neutral histogram, 0 to 100).
+Photos at nearly the same lightness stack above each other (`lib/shade-spectrum.ts`), like a beeswarm chart. These
+photos are left off the wheel; the grid still shows every photo. In this view the color swatches give way to 10 steps of gray
+(`components/shade-step-filter.tsx`, `lib/shade-steps.ts`), one for each tenth of lightness from black to white, kept
+as `?shade=0` to `?shade=9`; picking one shows only the photos that light on average. The match and vividness controls
+are hidden here, as they're about color.
+
+> **Frontend analogy:** the stacking is a greedy flex-wrap turned sideways: each pin, from left to right, drops into
+> the lowest row that has room for it.
+
 Under the swatches, how a photo matches the color is picked (`lib/color-match.ts`), and each swatch's
-tooltip says how many photos it shows that way:
+tooltip says how many photos it shows that way. A swatch that would show none is crossed out with an X and can't
+be picked, unless it's already the filter from a link, so it can still be cleared:
 
 - **Largest color** (the default): the color is the biggest part of the photo.
 - **At least…** (`?match=threshold`): the color is at least a share of the whole photo, 30% unless the slider beside

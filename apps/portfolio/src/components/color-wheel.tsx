@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
+import { WheelClusterPin } from "@/components/wheel-cluster-pin";
 import { WheelMinimap } from "@/components/wheel-minimap";
 import { WheelZoomControls } from "@/components/wheel-zoom-controls";
 import { type VividMeasure, vividnessOf } from "@/lib/color-sort";
@@ -12,7 +13,9 @@ import {
 } from "@/lib/color-wheel";
 import type { ColorShare } from "@/lib/photo-colors";
 import type { PhotoImage } from "@/lib/photos";
-import { useWheelZoom, type WheelView } from "@/lib/use-wheel-zoom";
+import { centerOn, MAX_ZOOM, useWheelZoom, type WheelView, zoomAt } from "@/lib/use-wheel-zoom";
+import { clusterPlaces, type WheelMarker } from "@/lib/wheel-clusters";
+import { useWidth } from "@/lib/use-width";
 
 /** A photo the wheel can place: its thumbnail, colors and vividness. */
 interface WheelPhoto {
@@ -38,12 +41,20 @@ const PIN_GAP_PX = 3;
 /** How much of the wheel the pins may cover between them before they're made smaller to fit. */
 const PIN_COVER = 0.5;
 
+/** How close, in pin widths, photos' places are for them to be clustered together. */
+const CLUSTER_SPAN = 1.5;
+
+/** How much clicking a cluster zooms in on it. */
+const CLUSTER_ZOOM = 2;
+
 /**
  * The photos as pins on a color wheel, like the Map page's: around it by hue, red at the top, and
  * out from the gray middle by vividness (by measure), the most vivid at the edge. Clicking a pin
  * opens the photo. It zooms with its buttons, a pinch, or ctrl + scrolling, and pans by dragging;
  * zoomed in, a mini map shows where the view is. Pins stay the same size as it zooms, so zooming
- * in spreads crowded pins out.
+ * in spreads crowded pins out. Where three or more photos' places crowd together, they're one
+ * cluster pin showing how many there are, which splits apart as the wheel zooms in; clicking it
+ * zooms in on it.
  */
 export function ColorWheel<T extends WheelPhoto>({
   photos,
@@ -59,12 +70,17 @@ export function ColorWheel<T extends WheelPhoto>({
   const { view, setView } = useWheelZoom(viewport, width);
   const wheelPx = width * view.zoom;
   const pinPx = pinSize(wheelPx, photos.length);
-  const points = useMemo(() => {
-    const places = photos.map((photo) =>
-      wheelPoint(hueAngle(photo.palette), vividnessOf(photo, measure), mostVivid),
-    );
-    return wheelPx > 0 ? spreadPins(places, (pinPx + PIN_GAP_PX) / wheelPx) : places;
-  }, [photos, measure, mostVivid, wheelPx, pinPx]);
+  const places = useMemo(
+    () =>
+      photos.map((photo) =>
+        wheelPoint(hueAngle(photo.palette), vividnessOf(photo, measure), mostVivid),
+      ),
+    [photos, measure, mostVivid],
+  );
+  const markers = useMemo(
+    () => spreadMarkers(places, view.zoom, wheelPx, pinPx),
+    [places, view.zoom, wheelPx, pinPx],
+  );
   return (
     <figure className="mx-auto flex w-full max-w-3xl flex-col items-center gap-3">
       <div className="relative w-full">
@@ -79,13 +95,14 @@ export function ColorWheel<T extends WheelPhoto>({
               className="absolute inset-[3%] rounded-full opacity-70 shadow-inner"
               style={{ background: WHEEL_BACKGROUND }}
             />
-            {photos.map((photo, i) => (
-              <WheelPin
-                key={photo.id}
-                photo={photo}
-                at={points[i]!}
+            {markers.map((marker) => (
+              <WheelMarkerPin
+                key={photos[marker.members[0]!]!.id}
+                marker={marker}
+                photos={photos}
                 size={pinPx}
-                onOpen={() => onOpen(photo)}
+                onOpen={onOpen}
+                onZoomIn={() => setView(zoomInOn(view, marker))}
               />
             ))}
           </div>
@@ -94,7 +111,7 @@ export function ColorWheel<T extends WheelPhoto>({
         {view.zoom > 1 && (
           <WheelMinimap
             view={view}
-            points={points}
+            points={places}
             onChange={setView}
             className="absolute bottom-2 left-2"
           />
@@ -103,11 +120,67 @@ export function ColorWheel<T extends WheelPhoto>({
       <figcaption className="text-center text-sm text-muted-foreground">
         Around the wheel by color, red at the top, pulled toward each photo&apos;s second color. Out
         from the middle by {measure === "peak" ? "peak vividness" : "vividness"}: the most vivid
-        photo here, at {mostVivid}, is at the edge. Pins that would overlap are moved apart. Zoom
-        with the buttons, a pinch or ctrl + scroll, and drag to look around.
+        photo here, at {mostVivid}, is at the edge. Pins that would overlap are moved apart, and
+        crowded ones are clustered until you zoom in. Black and white photos are on their own
+        spectrum instead. Zoom with the buttons, a pinch or ctrl + scroll, and drag to look around.
       </figcaption>
     </figure>
   );
+}
+
+/**
+ * The photos' places as markers for a wheel wheelPx wide at zoom, with pins pinPx wide: clustered
+ * where they crowd together (not at the furthest zoom, so every photo can be reached), then spread
+ * apart so the pins don't overlap.
+ */
+function spreadMarkers(
+  places: WheelPoint[],
+  zoom: number,
+  wheelPx: number,
+  pinPx: number,
+): WheelMarker[] {
+  if (wheelPx <= 0) return places.map((at, i) => ({ members: [i], at }));
+  const radius = zoom >= MAX_ZOOM ? 0 : (pinPx * CLUSTER_SPAN) / wheelPx;
+  const markers = clusterPlaces(places, radius);
+  const spread = spreadPins(
+    markers.map((marker) => marker.at),
+    (pinPx + PIN_GAP_PX) / wheelPx,
+  );
+  return markers.map((marker, i) => ({ ...marker, at: spread[i]! }));
+}
+
+/** The view zoomed in on a cluster, with it in the middle. */
+function zoomInOn(view: WheelView, { at }: WheelMarker): WheelView {
+  return centerOn(zoomAt(view, CLUSTER_ZOOM, at), at);
+}
+
+/** A marker's pin: a cluster's, or its one photo's. */
+function WheelMarkerPin<T extends WheelPhoto>({
+  marker,
+  photos,
+  size,
+  onOpen,
+  onZoomIn,
+}: {
+  marker: WheelMarker;
+  photos: T[];
+  size: number;
+  onOpen: (photo: T) => void;
+  onZoomIn: () => void;
+}) {
+  const first = photos[marker.members[0]!]!;
+  if (marker.members.length > 1) {
+    return (
+      <WheelClusterPin
+        image={first.image}
+        count={marker.members.length}
+        at={marker.at}
+        size={size}
+        onZoomIn={onZoomIn}
+      />
+    );
+  }
+  return <WheelPin photo={first} at={marker.at} size={size} onOpen={() => onOpen(first)} />;
 }
 
 /** Where the zoomed wheel sits in the viewport, width pixels square, so view's middle is in its middle. */
@@ -155,18 +228,4 @@ function WheelPin({
       <PhotoThumbnail image={photo.image} />
     </button>
   );
-}
-
-/** A ref for an element and its width in pixels, kept up to date as it resizes; 0 until it's measured. */
-function useWidth() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(0);
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-    const observer = new ResizeObserver(([entry]) => setWidth(entry?.contentRect.width ?? 0));
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-  return [ref, width] as const;
 }
