@@ -525,6 +525,7 @@ export function defaultFixtures() {
       images: imagesByPath(basePhotos),
     },
     "GET /api/photos/bucket": { bucket: "servenupphotos", images: bucketImages() },
+    "POST /api/photos/bucket/delete": ({ body }) => ({ deleted: body.keys, failed: [] }),
     "GET /api/photos/bucket/thumbnail-crop": ({ url }) => {
       const key = url.searchParams.get("key") ?? "";
       const photo = headPhotos.find(({ data }) => data.images?.key === key);

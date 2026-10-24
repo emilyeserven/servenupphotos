@@ -108,7 +108,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Metadata Groups](docs/metadata-groups.md) (`/metadata-groups`): named groups of cameras, lenses, focal lengths, apertures, exposures and ISO values, kept in `METAINFO.json`
 - [Camera Overrides](docs/camera-overrides.md) (`/camera-overrides`): per-camera rules that write other values over a photo's EXIF, such as a lens's name for "21.0 mm", applied to new photos and again from Update Data and the Photo page, kept in `CAMERAS.json`
 - [Custom Lenses](docs/custom-lenses.md) (Metadata Groups → Lenses): lenses the EXIF doesn't name well, such as manual ones, picked for a photo on the Photo page, with a Manual/unknown aperture option, kept in `LENSES.json`
-- [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, and making JSON for an original
+- [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
 

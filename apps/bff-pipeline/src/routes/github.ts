@@ -130,6 +130,16 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/photos/bucket", { timeoutMs: 35_000 }),
   );
 
+  // Deletes images from the R2 bucket, for Explore Bucket; the backend gives R2 30s.
+  app.post("/photos/bucket/delete", async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/bucket/delete", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+      timeoutMs: 35_000,
+    }),
+  );
+
   // Reads the crop saved with a photo's Square Thumbnail in R2; the backend gives R2 15s.
   app.get<{ Querystring: { key?: string } }>(
     "/photos/bucket/thumbnail-crop",

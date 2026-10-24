@@ -117,7 +117,7 @@ function isChosen(filters: PhotoFilters, extraChosen?: boolean): boolean {
  * How many photos the filters show, while a filter is chosen or something else hides photos, with
  * Clear filters when one is chosen.
  */
-function FilterResult({
+export function FilterResult({
   shown,
   total,
   chosen,
