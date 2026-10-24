@@ -42,7 +42,7 @@ out). It sits in toward the middle by its vividness, by the **Average / Peak** m
 down to 14px, so they fit. Where three or more photos' places are within one and a half pin widths of each other,
 they're one round cluster pin instead, like the Map page's, showing how many photos it covers over the first one's
 thumbnail (`lib/wheel-clusters.ts`, `lib/pin-markers.ts`, `components/wheel-cluster-pin.tsx`). The zooming,
-clustering and mini map are `components/pin-board.tsx`, which the Black & white chart shares. Clicking a cluster zooms in 2× on it, and
+clustering and mini map are `components/pin-board.tsx`, which the Black & white chart shares. Clicking a cluster zooms in 2× on it, smoothly over about 0.7s (as the zoom buttons do; `lib/use-view-animation.ts`), so you can see where you are going, with the pins laid out for where it ends up and moving with the wheel as it zooms (at once with reduced motion), and
 zooming in splits clusters apart, as the same places are further apart on a bigger wheel; at the furthest zoom
 nothing is clustered, so every photo can be reached. The vividness filters narrow the wheel; the color swatches are
 only on the Grid page now. Clicking a pin opens the photo viewer.

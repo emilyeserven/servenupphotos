@@ -66,15 +66,17 @@ export function PinBoard<T extends PinPhoto>({
   onOpen: (photo: T) => void;
 }) {
   const [viewport, size] = useSize();
-  const { view, setView } = useWheelZoom(viewport, size);
+  const { view, setView, animateTo, layoutZoom } = useWheelZoom(viewport, size);
+  // Pins are laid out for where an animated zoom is heading, so they don't regroup every frame;
+  // as the canvas grows or shrinks they move with it.
   const canvas = useMemo(
-    () => ({ width: size.width * view.zoom, height: size.height * view.zoom }),
-    [size, view.zoom],
+    () => ({ width: size.width * layoutZoom, height: size.height * layoutZoom }),
+    [size, layoutZoom],
   );
   const pinPx = Math.round(look.pinSize(canvas, photos.length) * scale);
   const markers = useMemo(
-    () => pinMarkers(places, canvas, pinPx, view.zoom < MAX_ZOOM, look.keep(canvas)),
-    [places, canvas, pinPx, view.zoom, look],
+    () => pinMarkers(places, canvas, pinPx, layoutZoom < MAX_ZOOM, look.keep(canvas)),
+    [places, canvas, pinPx, layoutZoom, look],
   );
   return (
     <div className="relative size-full">
@@ -95,14 +97,14 @@ export function PinBoard<T extends PinPhoto>({
               photos={photos}
               size={pinPx}
               onOpen={onOpen}
-              onZoomIn={() => setView(zoomInOn(view, marker))}
+              onZoomIn={() => animateTo(zoomInOn(view, marker))}
             />
           ))}
         </div>
       </div>
       <WheelZoomControls
         view={view}
-        onChange={setView}
+        onChange={animateTo}
         wholeLabel={look.wholeLabel}
         className="absolute right-3 bottom-3"
       />
