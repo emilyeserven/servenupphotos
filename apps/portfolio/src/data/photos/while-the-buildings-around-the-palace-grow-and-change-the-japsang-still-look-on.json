@@ -48,5 +48,210 @@
     }
   ],
   "spotlightZones": [],
-  "socialPosts": []
+  "socialPosts": [],
+  "colors": {
+    "average": {
+      "hex": "#585f5e",
+      "lab": {
+        "l": 39.66,
+        "a": -2.82,
+        "b": -0.72
+      },
+      "hcl": {
+        "h": 194.31,
+        "c": 2.91,
+        "l": 39.66
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0268
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0118
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0325
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0548
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0009
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0022
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.001
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.2005
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0012
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0004
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.001
+      }
+    ],
+    "neutrals": {
+      "share": 0.6669,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.1148
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0941
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0694
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0683
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0297
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0243
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0146
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0121
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0131
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0112
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0091
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0115
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0117
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0116
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0128
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0134
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0134
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.016
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0753
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.0402
+        }
+      ]
+    },
+    "lightness": 39.66,
+    "chroma": 12.4,
+    "samples": 9975
+  }
 }

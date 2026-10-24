@@ -48,5 +48,210 @@
   "places": [],
   "spotlightZones": [],
   "socialPosts": [],
-  "reEdit": null
+  "reEdit": null,
+  "colors": {
+    "average": {
+      "hex": "#595c5a",
+      "lab": {
+        "l": 38.64,
+        "a": -1.33,
+        "b": 0.84
+      },
+      "hcl": {
+        "h": 147.87,
+        "c": 1.57,
+        "l": 38.64
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0016
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0129
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0974
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0557
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0002
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0001
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.1858
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0026
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0003
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0001
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.0002
+      }
+    ],
+    "neutrals": {
+      "share": 0.6431,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.0669
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0794
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0657
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0654
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0412
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0433
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0408
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0425
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0436
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.03
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0235
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0155
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.01
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0167
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0275
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0264
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0046
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0002
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.0001
+        }
+      ]
+    },
+    "lightness": 38.64,
+    "chroma": 11.17,
+    "samples": 10050
+  }
 }
