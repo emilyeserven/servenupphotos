@@ -56,8 +56,10 @@ and a photo's `exifOriginals` keeps the EXIF values they replaced; see [Camera O
 `LENSES.json` holds the custom lenses a photo's `customLens` can name, and `manualAperture` marks a photo whose
 aperture is manual or unknown; see [Custom Lenses](custom-lenses.md).
 
-A photo's `spotlightZones` and `websiteSpotlight` are left from when spotlight zones listed photos; nothing reads them
-now. The zones list albums instead; see [Publish](publish.md#site-spotlight).
+A photo's `spotlightZones` and `websiteSpotlight` are left from when spotlight zones listed photos. The zones list
+albums instead (see [Publish](publish.md#site-spotlight)), and the photos that were on the homepage were moved into the
+**Homepage Spotlight** album, which the Homepage zone shows. `websiteSpotlight` still puts those photos first in an
+album, in their old order; `spotlightZones` isn't read.
 
 A photo's `socialPosts` lists its posts on social media, each with its platform, status, date, link, caption and
 hashtags; see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.

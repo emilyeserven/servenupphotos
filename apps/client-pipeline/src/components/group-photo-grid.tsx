@@ -24,7 +24,7 @@ export function useGroupPhotos(kind: GroupKind, ids: ReadonlySet<string>) {
 export type GroupPhotos = ReturnType<typeof useGroupPhotos>;
 
 /**
- * The photos as Square Thumbnails, newest first, each opening full size, or why there are none:
+ * The photos as Square Thumbnails, in the album's order, each opening full size, or why there are none:
  * ALLPHOTOS.json still being read or unreadable, or no photo listing it.
  */
 export function GroupPhotoGrid({ combined, photos }: Pick<GroupPhotos, "combined" | "photos">) {
@@ -33,7 +33,7 @@ export function GroupPhotoGrid({ combined, photos }: Pick<GroupPhotos, "combined
   if (photos.length === 0) return <NoPhotos />;
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]">
-      {newestFirst(photos).map((photo, i) => (
+      {albumOrder(photos).map((photo, i) => (
         <li key={`${photoText(photo, "file") ?? ""}-${i}`}>
           <PhotoTile photo={photo} />
         </li>
@@ -60,9 +60,21 @@ function NoPhotos() {
   );
 }
 
-function newestFirst(photos: CombinedPhoto[]): CombinedPhoto[] {
-  return photos.toSorted((a, b) =>
-    (photoText(b, "createDate") ?? "").localeCompare(photoText(a, "createDate") ?? ""),
+/** The photo's old place among the homepage's photos, or after every photo with one. */
+function oldPlace(photo: CombinedPhoto): number {
+  const place = photo.websiteSpotlight;
+  return typeof place === "number" ? place : Number.MAX_SAFE_INTEGER;
+}
+
+/**
+ * The photos as the portfolio orders an album: ones with an old homepage place first, in that
+ * order, then the rest, newest first.
+ */
+function albumOrder(photos: CombinedPhoto[]): CombinedPhoto[] {
+  return photos.toSorted(
+    (a, b) =>
+      oldPlace(a) - oldPlace(b) ||
+      (photoText(b, "createDate") ?? "").localeCompare(photoText(a, "createDate") ?? ""),
   );
 }
 

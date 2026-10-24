@@ -36,7 +36,7 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": 1,
   "socialMediaPublishDate": "2026-10-13",
-  "albums": [],
+  "albums": ["homepage-spotlight"],
   "tags": [],
   "placeName": "Mirror Pond",
   "customCity": "Seoul",

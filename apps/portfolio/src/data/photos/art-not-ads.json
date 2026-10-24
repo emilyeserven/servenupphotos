@@ -39,7 +39,7 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": 4,
   "socialMediaPublishDate": null,
-  "albums": [],
+  "albums": ["homepage-spotlight"],
   "tags": [],
   "places": [
     {

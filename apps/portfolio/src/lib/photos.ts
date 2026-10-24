@@ -61,6 +61,11 @@ export interface Photo {
   placeIds: string[];
   /** The IDs of the albums and tags it's in; empty for older entries saved without them. */
   albums: string[];
+  /**
+   * Its place among the photos picked for the homepage before spotlight zones showed albums, 1
+   * first; null without one. An album lists the photos that have one first, in that order.
+   */
+  spotlightPlace: number | null;
   tags: string[];
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
   spotlightFocus: SpotlightFocus | null;
@@ -587,9 +592,14 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums, tags and focus point; older entries are missing them. */
-function groupFields({ albums = [], tags = [], spotlightFocus = null }: PhotoData) {
-  return { albums, tags, spotlightFocus };
+/** The photo's albums, tags, old spotlight place and focus point; older entries are missing them. */
+function groupFields({
+  albums = [],
+  tags = [],
+  websiteSpotlight = null,
+  spotlightFocus = null,
+}: PhotoData) {
+  return { albums, tags, spotlightPlace: websiteSpotlight, spotlightFocus };
 }
 
 /**

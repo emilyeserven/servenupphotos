@@ -6,7 +6,7 @@ import { albums, albumTree } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos } from "@/lib/spotlight-zones";
 
-export const Route = createFileRoute("/albums")({
+export const Route = createFileRoute("/albums/")({
   validateSearch: (search: Record<string, unknown>): ShownPhotoSearch => parseShownPhoto(search),
   component: AlbumsView,
 });
@@ -22,7 +22,10 @@ const strips = albumTree()
 // Every photo in an album once, for the lightbox to step through.
 const allInAlbums = [...new Map(strips.flatMap((s) => s.photos).map((p) => [p.id, p])).values()];
 
-/** Each album, in the order set on the pipeline, with a strip of its photos and its sub-albums'. */
+/**
+ * Each album, in the order set on the pipeline, with a strip of its photos and its sub-albums',
+ * linked to its own page.
+ */
 function AlbumsView() {
   const { shown, show, close } = useShownPhoto();
   return (
@@ -32,7 +35,9 @@ function AlbumsView() {
           <BookImage className="size-8 text-muted-foreground" aria-hidden />
           Albums
         </h1>
-        <p className="mt-2 text-muted-foreground">The photos in each album, newest first.</p>
+        <p className="mt-2 text-muted-foreground">
+          The photos in each album. Open one to see them full size.
+        </p>
       </header>
       {strips.length === 0 && <p className="text-muted-foreground">No albums have photos yet.</p>}
       {strips.map(({ album, parent, photos }) => (

@@ -73,11 +73,18 @@ export function spreadPins(points: WheelPoint[], size: number, keep: KeepInside)
     x: p.x + jitter(i, size),
     y: p.y + jitter(i + 0.5, size),
   }));
-  for (let round = 0; round < SPREAD_ROUNDS; round++) {
-    if (!pushApart(spread, size)) break;
-    for (const p of spread) keep(p, size);
-  }
+  pushApartRounds(spread, size, keep);
+  // Again at the end, for pins that never needed spreading but sit too near the edge.
+  for (const p of spread) keep(p, size);
   return spread;
+}
+
+/** Pushes the points apart, keeping them where keep keeps them, until none overlap or the rounds run out. */
+function pushApartRounds(points: WheelPoint[], size: number, keep: KeepInside) {
+  for (let round = 0; round < SPREAD_ROUNDS; round++) {
+    if (!pushApart(points, size)) return;
+    for (const p of points) keep(p, size);
+  }
 }
 
 /**
@@ -113,16 +120,19 @@ function separate(a: WheelPoint, b: WheelPoint, size: number): boolean {
   return true;
 }
 
-/** Brings a point back inside a wheel width pixels wide, so its pin doesn't hang over the edge. */
-export function keepInWheel(width: number): KeepInside {
+/**
+ * Brings a point back inside a wheel stretched to fill width by height pixels, an oval when
+ * they differ, so its pin doesn't hang over the edge.
+ */
+export function keepInWheel(width: number, height: number): KeepInside {
   return (p, size) => {
-    const middle = width / 2;
-    const limit = 0.48 * width - size / 2;
-    const dx = p.x - middle;
-    const dy = p.y - middle;
-    const distance = Math.hypot(dx, dy);
-    if (distance <= limit) return;
-    p.x = middle + (dx / distance) * limit;
-    p.y = middle + (dy / distance) * limit;
+    const rx = 0.48 * width - size / 2;
+    const ry = 0.48 * height - size / 2;
+    const dx = p.x - width / 2;
+    const dy = p.y - height / 2;
+    const out = Math.hypot(dx / rx, dy / ry);
+    if (out <= 1) return;
+    p.x = width / 2 + dx / out;
+    p.y = height / 2 + dy / out;
   };
 }

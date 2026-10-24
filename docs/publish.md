@@ -58,7 +58,7 @@ scheduled, the card says for which day and links to it; that day is still set on
 `/site-spotlight` picks the album each **spotlight zone** of the portfolio shows. The zones are listed in
 `apps/client-pipeline/src/lib/site-spotlight.ts`; the first is **Homepage** (`"homepage"`), the photos fading in and
 out behind the [portfolio homepage](portfolio-homepage.md). A zone shows every photo in its album and the album's
-sub-albums, newest first. With no album picked, the homepage shows the 5 newest photos instead.
+sub-albums, in the album's order (see [Portfolio Albums](portfolio-albums.md)). With no album picked, the homepage shows the 5 newest photos instead.
 
 Each zone is a card with an **Album** picker and the photos the zone will show, read from `ALLPHOTOS.json` in the
 [combined data store](combined-data-store.md). Picking an album (`PUT /api/organize/spotlight/<zone>` with

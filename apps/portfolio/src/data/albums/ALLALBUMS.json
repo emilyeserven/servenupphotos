@@ -1,5 +1,13 @@
 [
   {
+    "id": "homepage-spotlight",
+    "name": "Homepage Spotlight",
+    "description": "The photos that fade in and out behind the homepage.",
+    "parent": null,
+    "order": 1,
+    "spotlightZones": ["homepage"]
+  },
+  {
     "id": "test",
     "name": "test",
     "description": ""

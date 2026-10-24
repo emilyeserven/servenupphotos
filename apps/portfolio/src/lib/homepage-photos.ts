@@ -26,7 +26,7 @@ function arranged(list: ImagePhoto[], phone: boolean): ImagePhoto[] {
 
 /**
  * The photos behind the homepage: the ones in the album picked for its spotlight zone on the
- * pipeline's Site Spotlight page, sub-albums included, newest first, or else the 5 newest photos.
+ * pipeline's Site Spotlight page, sub-albums included, in the album's order, or else the 5 newest photos.
  * On a phone held upright, portrait photos come first, so with no album picked those are the 5
  * newest portrait photos where there are that many.
  */

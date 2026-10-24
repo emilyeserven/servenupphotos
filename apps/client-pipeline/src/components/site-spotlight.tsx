@@ -26,10 +26,10 @@ function Zones({ organize }: { organize: OrganizeResponse }) {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
-        Each spot shows the photos of one album, its sub-albums&apos; included, newest first.
-        Picking an album saves the spot in its file&apos;s <code>spotlightZones</code> as a change
-        waiting for <strong>Commit</strong>, from the sync button at the top right. Add photos to an
-        album on the Gallery or a photo&apos;s page.
+        Each spot shows the photos of one album, its sub-albums&apos; included, in the order the
+        portfolio gives the album. Picking an album saves the spot in its file&apos;s{" "}
+        <code>spotlightZones</code> as a change waiting for <strong>Commit</strong>, from the sync
+        button at the top right. Add photos to an album on the Gallery or a photo&apos;s page.
       </p>
       {spotlightZones.map((zone) => (
         <ZoneCard key={zone.id} zone={zone} albums={organize.albums} />

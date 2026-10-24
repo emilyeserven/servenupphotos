@@ -1,10 +1,12 @@
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import type { Group } from "@/lib/groups";
 import { albumSpots, type ImagePhoto } from "@/lib/spotlight-zones";
 
 /**
- * One album's photos as a strip, newest first, each at its own shape and scrolling sideways when
- * they don't fit, under its name, the album it's in, its description and where else on the site
- * it shows. Clicking a photo opens it.
+ * One album's photos as a strip, in its order, each at its own shape and scrolling sideways when
+ * they don't fit, under its name, linked to the album's page, the album it's in, its description
+ * and where else on the site it shows. Clicking a photo opens it.
  */
 export function AlbumStrip({
   album,
@@ -23,7 +25,14 @@ export function AlbumStrip({
       <div>
         <h2 id={`album-${album.id}`} className="text-xl font-semibold tracking-tight">
           {parent && <span className="text-muted-foreground">{parent.name} › </span>}
-          {album.name}
+          <Link
+            to="/albums/$id"
+            params={{ id: album.id }}
+            className="inline-flex items-center gap-1.5 underline-offset-4 hover:underline"
+          >
+            {album.name}
+            <ArrowRight className="size-4 text-muted-foreground" aria-hidden />
+          </Link>
         </h2>
         <p className="text-sm text-muted-foreground">
           {album.description} {photos.length} {photos.length === 1 ? "photo" : "photos"}.

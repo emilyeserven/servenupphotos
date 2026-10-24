@@ -9,8 +9,9 @@ Behind the links, photos fill the screen and fade in and out one at a time, each
 enough to see the photo's colors while the frosted title and tiles stay readable (`components/photo-backdrop.tsx`). The
 showing photo's title is at the bottom left on the same frosted glass (`components/backdrop-caption.tsx`), with a map pin
 button before it, for photos with a position, that opens the [Map](portfolio-map.md) already zoomed in where the photo
-was taken (`/map?lat=…&lng=…&zoom=…`, as the photo viewer's **View on map** link does). The photos are
-the ones in the album picked for the **Homepage** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page, sub-albums included, newest first, or, with no album picked, the 5 newest photos (`lib/homepage-photos.ts`, over the zones in `lib/spotlight-zones.ts`). Only photos with resized versions in R2
+was taken (`/map?lat=…&lng=…&zoom=…`, as the photo viewer's **View on map** link does). The title and button fade in and out with their photo, on the same
+2-second fade, and can't be clicked or tabbed to while hidden. The photos are
+the ones in the album picked for the **Homepage** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page, sub-albums included, in the album's order, or, with no album picked, the 5 newest photos (`lib/homepage-photos.ts`, over the zones in `lib/spotlight-zones.ts`). Only photos with resized versions in R2
 are shown.
 
 On a phone held upright (`(max-width: 767px) and (orientation: portrait)`), portrait photos come first, each part

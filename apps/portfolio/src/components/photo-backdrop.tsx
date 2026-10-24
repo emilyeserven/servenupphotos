@@ -20,7 +20,7 @@ function isNear(index: number, turn: number, count: number): boolean {
 
 /**
  * Photos filling the screen behind a page, fading in and out in turn under 20% black so the page
- * stays readable, with the showing photo's title and a link to it on the map at the bottom. Each
+ * stays readable, with the showing photo's title and a link to it on the map at the bottom, fading with it. Each
  * photo keeps its focus point in view when it's cropped. The left and right arrow keys show
  * the photo before or after, and the next one waits its full time again. With reduced motion the
  * first photo stays until an arrow key moves on. A photo fades in only once it has loaded.
@@ -29,7 +29,6 @@ export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
   const { turn, step } = useTurn(photos.length, BACKDROP_MS);
   useArrowKeys(step);
   const [loaded, setLoaded] = useState<ReadonlySet<number>>(new Set());
-  const current = photos[turn];
   return (
     <div className="fixed inset-0 z-0 overflow-hidden bg-black">
       {photos.map(
@@ -45,7 +44,16 @@ export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
           ),
       )}
       <div aria-hidden className="absolute inset-0 bg-black/20" />
-      {current && <BackdropCaption photo={current} />}
+      {photos.map(
+        (photo, index) =>
+          isNear(index, turn, photos.length) && (
+            <BackdropCaption
+              key={photo.id}
+              photo={photo}
+              seen={index === turn && loaded.has(photo.id)}
+            />
+          ),
+      )}
     </div>
   );
 }

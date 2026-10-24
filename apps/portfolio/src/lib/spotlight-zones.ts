@@ -17,10 +17,20 @@ export function newestWithImages(all: Photo[]): ImagePhoto[] {
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 }
 
-/** The photos with images in the album with the ID or one of its sub-albums, newest first. */
+/** Ranks a photo without an old spotlight place after every photo with one. */
+function rank({ spotlightPlace }: Photo): number {
+  return spotlightPlace ?? Number.MAX_SAFE_INTEGER;
+}
+
+/**
+ * The photos with images in the album with the ID or one of its sub-albums: the ones with an old
+ * spotlight place first, in that order, then the rest, newest first.
+ */
 export function albumPhotos(id: string, all: Photo[] = photos): ImagePhoto[] {
   const ids = albumAndSubAlbums(id);
-  return newestWithImages(all).filter((photo) => photo.albums.some((album) => ids.has(album)));
+  return newestWithImages(all)
+    .filter((photo) => photo.albums.some((album) => ids.has(album)))
+    .toSorted((a, b) => rank(a) - rank(b));
 }
 
 /** The album picked for the zone on the pipeline's Site Spotlight page, or undefined for none. */
@@ -30,7 +40,7 @@ function zoneAlbum(zone: string): Group | undefined {
 
 /**
  * The photos the zone shows: the ones in the album picked for it on the pipeline's Site Spotlight
- * page and its sub-albums, newest first; none when no album is picked.
+ * page and its sub-albums, in the album's order; none when no album is picked.
  */
 export function zonePhotos(zone: string, all: Photo[] = photos): ImagePhoto[] {
   const album = zoneAlbum(zone);

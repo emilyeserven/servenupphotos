@@ -1,14 +1,26 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
-import { LIGHTNESS_STEP, lightnessParam, type LightnessRange } from "@/lib/lightness-range";
+import type { CSSProperties } from "react";
+import {
+  LIGHTNESS_STEP,
+  lightnessGray,
+  lightnessParam,
+  type LightnessRange,
+} from "@/lib/lightness-range";
 
 /**
- * The Black & white view's spectrum from black to white, with a handle at each end to narrow it
- * to a range of lightness, kept in the URL as `?light=20-60` and left out for the whole spectrum.
- * The URL only changes once a handle is let go.
+ * The Black & white view's spectrum of grays across extent (the photos' range of lightness, the
+ * chart's ends), with a handle at each end to narrow it to range, kept in the URL as
+ * `?light=20-60` and left out for the whole extent. The URL only changes once a handle is let go.
  */
-export function LightnessSlider({ range }: { range: LightnessRange }) {
+export function LightnessSlider({
+  range,
+  extent,
+}: {
+  range: LightnessRange;
+  extent: LightnessRange;
+}) {
   const navigate = useNavigate({ from: "/color" });
   const [dragging, setDragging] = useState<LightnessRange | null>(null);
   const [low, high] = dragging ?? range;
@@ -16,28 +28,38 @@ export function LightnessSlider({ range }: { range: LightnessRange }) {
     <div className="flex flex-col gap-1">
       <Slider
         aria-label="Lightness"
-        min={0}
-        max={100}
+        min={extent[0]}
+        max={extent[1]}
         step={LIGHTNESS_STEP}
         minStepsBetweenThumbs={1}
         value={[low, high]}
-        onValueChange={([a = 0, b = 100]) => setDragging([a, b])}
-        onValueCommit={([a = 0, b = 100]) => {
+        onValueChange={([a = extent[0], b = extent[1]]) => setDragging([a, b])}
+        onValueCommit={([a = extent[0], b = extent[1]]) => {
           setDragging(null);
           void navigate({
-            search: (prev) => ({ ...prev, light: lightnessParam([a, b]), photo: undefined }),
+            search: (prev) => ({
+              ...prev,
+              light: lightnessParam([a, b], extent),
+              photo: undefined,
+            }),
             replace: true,
           });
         }}
-        className="py-2 [&_[data-slot=slider-range]]:bg-transparent [&_[data-slot=slider-range]]:ring-2 [&_[data-slot=slider-range]]:ring-sky-500 [&_[data-slot=slider-range]]:ring-inset [&_[data-slot=slider-thumb]]:size-5 [&_[data-slot=slider-track]]:h-6 [&_[data-slot=slider-track]]:bg-linear-to-r [&_[data-slot=slider-track]]:from-black [&_[data-slot=slider-track]]:to-white [&_[data-slot=slider-track]]:ring-1 [&_[data-slot=slider-track]]:ring-border"
+        style={{ "--grays": graysOf(extent) } as CSSProperties}
+        className="py-2 [&_[data-slot=slider-range]]:bg-transparent [&_[data-slot=slider-range]]:ring-2 [&_[data-slot=slider-range]]:ring-sky-500 [&_[data-slot=slider-range]]:ring-inset [&_[data-slot=slider-thumb]]:size-5 [&_[data-slot=slider-track]]:h-6 [&_[data-slot=slider-track]]:bg-(image:--grays) [&_[data-slot=slider-track]]:ring-1 [&_[data-slot=slider-track]]:ring-border"
       />
       <div className="flex justify-between text-xs text-muted-foreground">
-        <span>Black</span>
+        <span className="tabular-nums">{extent[0]}</span>
         <span className="tabular-nums">
           Lightness {low}–{high}
         </span>
-        <span>White</span>
+        <span className="tabular-nums">{extent[1]}</span>
       </div>
     </div>
   );
+}
+
+/** The grays from one end of extent to the other, as a CSS gradient. */
+export function graysOf([low, high]: LightnessRange): string {
+  return `linear-gradient(to right, ${lightnessGray(low)}, ${lightnessGray(high)})`;
 }
