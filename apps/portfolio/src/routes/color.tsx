@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Palette } from "lucide-react";
 import { ColorBar } from "@/components/color-bar";
 import { ColorFilter } from "@/components/color-filter";
+import { ColorLayoutControl } from "@/components/color-layout-control";
+import { ColorWheel } from "@/components/color-wheel";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ColorMatchControl, parseThreshold } from "@/components/color-match-control";
 import { ColorSortControl } from "@/components/color-sort-control";
@@ -41,6 +43,8 @@ interface ColorSearch {
   vivid?: number;
   /** Set to sort and filter by peak vividness; left out for the average. */
   measure?: VividMeasure;
+  /** Set to show the photos on a color wheel; left out for the grid. */
+  view?: "wheel";
 }
 
 export const Route = createFileRoute("/color")({
@@ -50,7 +54,7 @@ export const Route = createFileRoute("/color")({
     ...minOf(search.min),
     ...sortOf(search),
     ...vividOf(search.vivid),
-    ...(search.measure === "peak" ? { measure: "peak" as const } : {}),
+    ...displayOf(search),
     ...parseShownPhoto(search),
   }),
   component: ColorView,
@@ -91,6 +95,14 @@ function descOf(key: "order" | "secondaryOrder", value: unknown): ColorSearch {
 function secondaryOf(main: ColorSort, secondary: unknown): ColorSearch {
   const other: ColorSort = main === "vivid" ? "color" : "vivid";
   return secondary === other ? { secondary: other } : {};
+}
+
+/** The `?measure=` and `?view=` to keep, each left out at its default. */
+function displayOf({ measure, view }: Record<string, unknown>): ColorSearch {
+  return {
+    ...(measure === "peak" ? { measure: "peak" as const } : {}),
+    ...(view === "wheel" ? { view: "wheel" as const } : {}),
+  };
 }
 
 /** The `?vivid=` to keep, leaving it out when it's missing or not one the slider can set. */
@@ -161,13 +173,11 @@ function ColorView() {
         <ColorFilter color={color} counts={countsFor(pool, match)} />
         <ColorControls search={search} match={match} />
       </header>
-      <ul className={LIST_CLASS}>
-        {listed.map((photo) => (
-          <li key={photo.id}>
-            <ColorTile photo={photo} onOpen={() => show(photo)} />
-          </li>
-        ))}
-      </ul>
+      {search.view === "wheel" ? (
+        <ColorWheel photos={listed} measure={search.measure ?? "average"} onOpen={show} />
+      ) : (
+        <ColorGrid photos={listed} onOpen={show} />
+      )}
       <PhotoLightbox photo={shown} photos={listed} onShow={show} onClose={close} />
     </div>
   );
@@ -197,7 +207,8 @@ function ColorControls({ search, match }: { search: ColorSearch; match: ColorMat
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <ColorSortControl {...sortSpec(search)} />
+        <ColorLayoutControl wheel={search.view === "wheel"} />
+        {search.view !== "wheel" && <ColorSortControl {...sortSpec(search)} />}
         <ColorMatchControl
           threshold={match.mode === "threshold"}
           percent={min}
@@ -206,6 +217,25 @@ function ColorControls({ search, match }: { search: ColorSearch; match: ColorMat
       </div>
       <VividnessControl vivid={vivid} measure={measure} />
     </div>
+  );
+}
+
+/** The photos as square tiles, each with its colors and vividness under it. */
+function ColorGrid({
+  photos,
+  onOpen,
+}: {
+  photos: ColorPhoto[];
+  onOpen: (photo: ColorPhoto) => void;
+}) {
+  return (
+    <ul className={LIST_CLASS}>
+      {photos.map((photo) => (
+        <li key={photo.id}>
+          <ColorTile photo={photo} onOpen={() => onOpen(photo)} />
+        </li>
+      ))}
+    </ul>
   );
 }
 
