@@ -33,7 +33,9 @@ on `images.thumbnail` when it has one, or, with that option on, from the crop sa
 **Colors** reads each photo's colors from its original in R2 (at `images.key`) and saves them as the file's `colors`
 (`POST /api/data/colors/preview`, then `POST /api/data/colors`). It's the summary the EXIF page's Colors tab shows
 (`colors.Summary` in `be-pipeline/internal/colors`): the average color, the 12 hue buckets, the neutrals' lightness
-histogram, and the mean lightness and chroma. The Raw color data tab's statistics aren't saved. Only files without `colors` (or with `null`) are read, unless **Read the
+histogram, the mean lightness and chroma, and `peakChroma`, the chroma the most vivid tenth of the pixels reach. The
+Raw color data tab's statistics aren't saved. Only files without `colors` (or with `null`), or whose `colors` were
+saved before `peakChroma` was added, are read, unless **Read the
 colors of photos that already have them again** is on, such as after replacing photos' images. Each original is
 downloaded and decoded, four at a time, so a first run over every photo takes a few minutes; the backend keeps each
 original's colors in memory, so applying doesn't download them again after a preview. A photo whose original can't

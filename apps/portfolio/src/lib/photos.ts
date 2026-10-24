@@ -3,6 +3,7 @@ import {
   type ColorShare,
   type PhotoColorData,
   photoColors,
+  photoPeakVividness,
   photoVividness,
 } from "@/lib/photo-colors";
 import {
@@ -73,6 +74,8 @@ export interface Photo {
   palette: ColorShare[];
   /** How vivid its colors are, its mean CIELAB chroma rounded; null until the pipeline saves its colors. */
   vividness: number | null;
+  /** How vivid its most vivid tenth is, its peak CIELAB chroma rounded; null until the pipeline saves its colors. */
+  peakVividness: number | null;
 }
 
 /** A point of a photo, in percent across from the left and down from the top. */
@@ -626,6 +629,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       ...groupFields(photo),
       palette: photoColors(photo.colors),
       vividness: photoVividness(photo.colors),
+      peakVividness: photoPeakVividness(photo.colors),
     };
   });
 }

@@ -16,7 +16,8 @@ const coloredPhoto = `{
     "key": "photos/ab-DSC0002.jpg"
   },
   "colors": {
-    "lightness": 10
+    "lightness": 10,
+    "peakChroma": 40
   }
 }
 `
@@ -66,6 +67,20 @@ func TestPreviewColorsRecompute(t *testing.T) {
 	}
 	if len(got.Files) != 1 || !got.Files[0].Replaces || !got.Recompute {
 		t.Errorf("files = %+v, want DSC0002 recomputed", got.Files)
+	}
+}
+
+func TestPreviewColorsWithoutPeak(t *testing.T) {
+	repo := &baseURLRepo{files: map[string]string{
+		"DSC0002.json": `{"file":"DSC0002.jpg","images":{"key":"photos/ab-DSC0002.jpg"},"colors":{"chroma":10}}`,
+	}}
+	var keys []string
+	got, err := repo.start(t).PreviewColors(t.Context(), baseURLSettings, colorReader("", &keys), false)
+	if err != nil {
+		t.Fatalf("PreviewColors() error = %v", err)
+	}
+	if got.HaveColors != 0 || len(got.Files) != 1 || !got.Files[0].Replaces {
+		t.Errorf("preview = %+v, want DSC0002's colors read again for peakChroma", got)
 	}
 }
 

@@ -156,6 +156,24 @@ func TestAverage(t *testing.T) {
 	}
 }
 
+// TestPeakChroma checks that a gray photo with a red fifth has a low mean
+// chroma but a peak chroma as vivid as its red.
+func TestPeakChroma(t *testing.T) {
+	img := solid(color.RGBA{128, 128, 128, 255}, 50, 40)
+	for y := range 8 {
+		for x := range 50 {
+			img.Set(x, y, color.RGBA{255, 0, 0, 255})
+		}
+	}
+	a, err := analyzeImage(img)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if a.Chroma > 25 || a.PeakChroma < 100 {
+		t.Errorf("chroma = %v, peak = %v; want a low mean and a red peak", a.Chroma, a.PeakChroma)
+	}
+}
+
 func TestSampleCapsLargeImages(t *testing.T) {
 	pixels := sample(image.NewGray(image.Rect(0, 0, 4000, 3000)))
 	if len(pixels) > maxSamples*2 || len(pixels) < maxSamples/2 {

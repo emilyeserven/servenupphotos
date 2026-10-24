@@ -8,7 +8,14 @@ import { ColorSortControl } from "@/components/color-sort-control";
 import { parseVividness, VividnessControl } from "@/components/vividness-control";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { type ColorMatch, matchesColor, matchText } from "@/lib/color-match";
-import { type ColorOrder, type ColorSort, sortByColor, sortByVividness } from "@/lib/color-sort";
+import {
+  type ColorOrder,
+  type ColorSort,
+  sortByColor,
+  sortByVividness,
+  type VividMeasure,
+  vividnessOf,
+} from "@/lib/color-sort";
 import { COLORS, type ColorName, isColorName, shareOf } from "@/lib/photo-colors";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -24,8 +31,10 @@ interface ColorSearch {
   sort?: ColorSort;
   /** Set to sort the other way: white back to red, or the most vivid first; left out for red to white, or the least vivid first. */
   order?: ColorOrder;
-  /** The least vividness a photo needs to show, from 0 to 60; left out for 0, which shows every photo. */
+  /** The least vividness a photo needs to show, from 0 to 100; left out for 0, which shows every photo. */
   vivid?: number;
+  /** Set to sort and filter by peak vividness; left out for the average. */
+  measure?: VividMeasure;
 }
 
 export const Route = createFileRoute("/color")({
@@ -35,13 +44,14 @@ export const Route = createFileRoute("/color")({
     ...minOf(search.min),
     ...sortOf(search),
     ...vividOf(search.vivid),
+    ...(search.measure === "peak" ? { measure: "peak" as const } : {}),
     ...parseShownPhoto(search),
   }),
   component: ColorView,
 });
 
 /** A photo with resized versions in R2 and its colors saved, which is all this page can show. */
-type ColorPhoto = Photo & { image: PhotoImage; vividness: number };
+type ColorPhoto = Photo & { image: PhotoImage; vividness: number; peakVividness: number };
 
 /**
  * How much of a photo, in percent, a color needs by default to match by share, so a photo
@@ -73,13 +83,18 @@ function vividOf(value: unknown): ColorSearch {
 const colorPhotos = photos
   .filter(
     (photo): photo is ColorPhoto =>
-      photo.image !== null && photo.palette.length > 0 && photo.vividness !== null,
+      photo.image !== null && photo.palette.length > 0 && hasVividness(photo),
   )
   .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 
-/** The photos at least vivid as vivid. */
-function vividPhotos(vivid = 0): ColorPhoto[] {
-  return colorPhotos.filter((photo) => photo.vividness >= vivid);
+/** Whether the photo's colors were saved with how vivid they are. */
+function hasVividness(photo: Photo): boolean {
+  return photo.vividness !== null && photo.peakVividness !== null;
+}
+
+/** The photos at least as vivid as vivid, by the URL's measure. */
+function vividPhotos({ vivid = 0, measure = "average" }: ColorSearch): ColorPhoto[] {
+  return colorPhotos.filter((photo) => vividnessOf(photo, measure) >= vivid);
 }
 
 /** The photos of pool that match color, the most of it first. */
@@ -112,7 +127,7 @@ function ColorView() {
   if (colorPhotos.length === 0) return <ViewPlaceholder to="/color" />;
   const { color } = search;
   const match = matchOf(search);
-  const pool = vividPhotos(search.vivid);
+  const pool = vividPhotos(search);
   const listed = listedPhotos(pool, search, match);
 
   return (
@@ -152,15 +167,15 @@ function listedPhotos(pool: ColorPhoto[], search: ColorSearch, match: ColorMatch
 /** The listed photos in the order the URL asks for; photos of one color stay the most of it first, unless sorted by vividness. */
 function sortListed(
   matched: ColorPhoto[],
-  { color, sort, order = "asc" }: ColorSearch,
+  { color, sort, order = "asc", measure = "average" }: ColorSearch,
 ): ColorPhoto[] {
-  if (sort === "vivid") return sortByVividness(matched, order);
+  if (sort === "vivid") return sortByVividness(matched, order, measure);
   return color ? matched : sortByColor(matched, order);
 }
 
 /** What photos are sorted by and which way, how photos match a color, and the least vividness. */
 function ColorControls({ search, match }: { search: ColorSearch; match: ColorMatch }) {
-  const { min = DEFAULT_PERCENT, vivid = 0 } = search;
+  const { min = DEFAULT_PERCENT, vivid = 0, measure = "average" } = search;
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -171,7 +186,7 @@ function ColorControls({ search, match }: { search: ColorSearch; match: ColorMat
           fallback={DEFAULT_PERCENT}
         />
       </div>
-      <VividnessControl vivid={vivid} />
+      <VividnessControl vivid={vivid} measure={measure} />
     </div>
   );
 }
@@ -207,7 +222,9 @@ function ColorTile({ photo, onOpen }: { photo: ColorPhoto; onOpen: () => void })
       </button>
       <figcaption className="flex flex-col gap-0.5">
         <ColorBar palette={photo.palette} />
-        <p className="text-xs text-muted-foreground tabular-nums">Vividness {photo.vividness}</p>
+        <p className="text-xs text-muted-foreground tabular-nums">
+          Vividness {photo.vividness} · peak {photo.peakVividness}
+        </p>
       </figcaption>
     </figure>
   );

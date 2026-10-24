@@ -47,8 +47,10 @@ export function PhotoColorsCard({ canRead }: PhotoColorsCardProps) {
         <CardDescription>
           Reads each photo&apos;s colors from its original in R2, as the Colors tab on the EXIF page
           shows them, and saves them under <code>colors</code> in its photo file: the average color,
-          the share of the photo in each of 12 hue buckets, the blacks, grays and whites, and the
-          mean lightness and chroma. It downloads each of those photos, so it takes a while.
+          the share of the photo in each of 12 hue buckets, the blacks, grays and whites, the mean
+          lightness and chroma, and the peak chroma its most vivid tenth reaches. Photos whose
+          colors were saved before peak chroma was added get theirs read again. It downloads each of
+          those photos, so it takes a while.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -132,11 +134,11 @@ function PreviewBody({ preview, ...apply }: PreviewBodyProps) {
   );
 }
 
-/** What happens to the files, such as "don't have colors yet (3 already do)". */
+/** What happens to the files, such as "need their colors read (3 already have them)". */
 function headline(preview: ColorsPreview): string {
   if (preview.recompute) return "get their colors read again";
-  const have = preview.haveColors > 0 ? ` (${preview.haveColors} already do)` : "";
-  return `don't have colors yet${have}`;
+  const have = preview.haveColors > 0 ? ` (${preview.haveColors} already have them)` : "";
+  return `need their colors read${have}`;
 }
 
 /** Each file that gets colors, collapsed to its name and average color, with its colors inside. */

@@ -41,7 +41,8 @@ type ColorsPreview struct {
 	Branch      string              `json:"branch"`
 	PullRequest *BaseURLPullRequest `json:"pullRequest"`
 	PhotoFiles  int                 `json:"photoFiles"`
-	// HaveColors is how many photo files already have colors.
+	// HaveColors is how many photo files already have colors, counting
+	// only those saved with every field colors.Summary has now.
 	HaveColors int `json:"haveColors"`
 	// Recompute is true when files that have colors get them again.
 	Recompute  bool                `json:"recompute"`
@@ -80,7 +81,7 @@ func (c *Client) PreviewColors(ctx context.Context, gh settings.GitHub, read Col
 			continue
 		}
 		preview.PhotoFiles++
-		if hasColors(f.content) {
+		if hasCurrentColors(f.content) {
 			preview.HaveColors++
 		}
 	}
@@ -141,19 +142,19 @@ func noColorsErr(failed int) *PublishError {
 	return publishErr(http.StatusConflict, "Every photo file already has colors, so there's nothing to add.")
 }
 
-// readColors reads the colors of each readable file of scan that needs them,
-// a few at a time. Each entry lines up with scan.files, nil for a file that's
+// readColors reads the colors of each readable file of scan that needs them
+// (any without colors, or saved before peakChroma was added, or every file
+// with recompute), a few at a time. Each entry lines up with scan.files, nil for a file that's
 // left out.
 func readColors(ctx context.Context, scan baseURLScan, read ColorReader, recompute bool) []*ColorFile {
 	files := make([]*ColorFile, len(scan.files))
 	var wg sync.WaitGroup
 	sem := make(chan struct{}, exifConcurrency)
 	for i, f := range scan.files {
-		had := hasColors(f.content)
-		if f.err != "" || (had && !recompute) {
+		if f.err != "" || (hasCurrentColors(f.content) && !recompute) {
 			continue
 		}
-		file := &ColorFile{Path: f.path, FileURL: f.fileURL, Replaces: had}
+		file := &ColorFile{Path: f.path, FileURL: f.fileURL, Replaces: hasColors(f.content)}
 		files[i] = file
 		key := imageKey(f.content)
 		if key == "" {
@@ -183,6 +184,18 @@ func hasColors(content []byte) bool {
 		Colors json.RawMessage `json:"colors"`
 	}
 	return json.Unmarshal(content, &photo) == nil && !isEmptyJSON(photo.Colors)
+}
+
+// hasCurrentColors reports whether a photo file has colors saved with
+// peakChroma, the newest field of colors.Summary, so they needn't be read
+// again.
+func hasCurrentColors(content []byte) bool {
+	var photo struct {
+		Colors *struct {
+			PeakChroma *float64 `json:"peakChroma"`
+		} `json:"colors"`
+	}
+	return json.Unmarshal(content, &photo) == nil && photo.Colors != nil && photo.Colors.PeakChroma != nil
 }
 
 // withColors is content with its "colors" set to analysis.

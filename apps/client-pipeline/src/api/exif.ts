@@ -60,6 +60,8 @@ export interface ColorSummary {
   neutrals: { share: number; histogram: Bin[] };
   lightness: number;
   chroma: number;
+  /** The CIELAB chroma the most vivid tenth of the pixels reach; missing from colors saved before it was added. */
+  peakChroma?: number;
   samples: number;
 }
 

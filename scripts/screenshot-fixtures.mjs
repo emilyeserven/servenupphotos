@@ -352,6 +352,7 @@ function sampleColors(hex, bucket) {
     },
     lightness: 52,
     chroma: 23,
+    peakChroma: 61,
     samples: 9984,
   };
 }
