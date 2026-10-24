@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { X } from "lucide-react";
 import {
   type ColorName,
   colorLabel,
@@ -52,7 +53,11 @@ export function ColorFilter({
   );
 }
 
-/** One hue bucket's or shade's swatch, outlined when it's the filter. */
+/**
+ * One hue bucket's or shade's swatch, outlined when it's the filter. A color no photo has much of
+ * can't be picked, and is crossed out, unless it's already the filter (from a link), so it can be
+ * cleared.
+ */
 function ColorSwatch({
   color,
   active,
@@ -63,6 +68,7 @@ function ColorSwatch({
   count: number;
 }) {
   const label = `${colorLabel(color)}: ${count} photos`;
+  if (count === 0 && !active) return <UnavailableSwatch color={color} label={label} />;
   return (
     <Link
       from="/color"
@@ -74,15 +80,37 @@ function ColorSwatch({
       title={label}
       className={cn(SWATCH_CLASS, active ? "border-foreground" : "border-transparent")}
     >
-      <span
-        aria-hidden
-        className={cn(
-          "size-6 rounded-full",
-          isShade(color) && "ring-1 ring-border",
-          count === 0 && "opacity-30",
-        )}
-        style={{ backgroundColor: colorSwatch(color) }}
-      />
+      <SwatchDot color={color} />
     </Link>
+  );
+}
+
+/** A swatch that can't be picked, as no photo has much of its color: crossed out with an X. */
+function UnavailableSwatch({ color, label }: { color: ColorName; label: string }) {
+  return (
+    <span
+      role="img"
+      aria-label={`${label}, can't be picked`}
+      title={label}
+      className={cn(SWATCH_CLASS, "relative cursor-not-allowed border-transparent")}
+    >
+      <SwatchDot color={color} />
+      <X
+        aria-hidden
+        strokeWidth={3}
+        className="absolute size-5 text-white drop-shadow-[0_0_1.5px_black]"
+      />
+    </span>
+  );
+}
+
+/** The color's dot inside a swatch, ringed for shades so white and the light grays show. */
+function SwatchDot({ color }: { color: ColorName }) {
+  return (
+    <span
+      aria-hidden
+      className={cn("size-6 rounded-full", isShade(color) && "ring-1 ring-border")}
+      style={{ backgroundColor: colorSwatch(color) }}
+    />
   );
 }

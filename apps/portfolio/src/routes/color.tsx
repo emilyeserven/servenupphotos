@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Palette } from "lucide-react";
 import { ColorBar } from "@/components/color-bar";
 import { ColorFilter } from "@/components/color-filter";
-import { ColorLayoutControl } from "@/components/color-layout-control";
+import { type ColorLayout, ColorLayoutControl } from "@/components/color-layout-control";
 import { ColorWheel } from "@/components/color-wheel";
+import { ShadeSpectrum } from "@/components/shade-spectrum";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ColorMatchControl, parseThreshold } from "@/components/color-match-control";
 import { ColorSortControl } from "@/components/color-sort-control";
@@ -17,7 +18,7 @@ import {
   type VividMeasure,
   vividnessOf,
 } from "@/lib/color-sort";
-import { COLORS, type ColorName, isColorName } from "@/lib/photo-colors";
+import { COLORS, type ColorName, isBlackAndWhite, isColorName } from "@/lib/photo-colors";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 
@@ -43,8 +44,11 @@ interface ColorSearch {
   vivid?: number;
   /** Set to sort and filter by peak vividness; left out for the average. */
   measure?: VividMeasure;
-  /** Set to show the photos in a grid; left out for the color wheel. */
-  view?: "grid";
+  /**
+   * Set to show the black and white photos along a spectrum from black to white, or every photo
+   * in a grid; left out for the color photos on the color wheel.
+   */
+  view?: Exclude<ColorLayout, "wheel">;
 }
 
 export const Route = createFileRoute("/color")({
@@ -101,7 +105,7 @@ function secondaryOf(main: ColorSort, secondary: unknown): ColorSearch {
 function displayOf({ measure, view }: Record<string, unknown>): ColorSearch {
   return {
     ...(measure === "peak" ? { measure: "peak" as const } : {}),
-    ...(view === "grid" ? { view: "grid" as const } : {}),
+    ...(view === "grid" || view === "mono" ? { view } : {}),
   };
 }
 
@@ -159,6 +163,8 @@ function ColorView() {
   const match = matchOf(search);
   const pool = vividPhotos(search);
   const listed = listedPhotos(pool, search, match);
+  const layout = search.view ?? "wheel";
+  const shownPhotos = inLayout(listed, layout);
 
   return (
     <div className="flex w-full flex-col gap-8 px-3 py-16 sm:px-4">
@@ -168,19 +174,46 @@ function ColorView() {
             <Palette className="size-8 text-muted-foreground" aria-hidden />
             Color
           </h1>
-          <p className="text-sm text-muted-foreground">{countText(listed.length, color, match)}</p>
+          <p className="text-sm text-muted-foreground">
+            {countText(shownPhotos.length, color, match)}
+          </p>
         </div>
         <ColorFilter color={color} counts={countsFor(pool, match)} />
         <ColorControls search={search} match={match} />
       </header>
-      {search.view !== "grid" ? (
-        <ColorWheel photos={listed} measure={search.measure ?? "average"} onOpen={show} />
-      ) : (
-        <ColorGrid photos={listed} onOpen={show} />
-      )}
-      <PhotoLightbox photo={shown} photos={listed} onShow={show} onClose={close} />
+      <ColorLayoutView
+        layout={layout}
+        photos={shownPhotos}
+        measure={search.measure ?? "average"}
+        onOpen={show}
+      />
+      <PhotoLightbox photo={shown} photos={shownPhotos} onShow={show} onClose={close} />
     </div>
   );
+}
+
+/** The photos the layout shows: the color ones on the wheel, the black and white ones on the spectrum, or all in the grid. */
+function inLayout(list: ColorPhoto[], layout: ColorLayout): ColorPhoto[] {
+  if (layout === "grid") return list;
+  const mono = layout === "mono";
+  return list.filter((photo) => isBlackAndWhite(photo.palette) === mono);
+}
+
+/** The photos on the color wheel, the black-to-white spectrum, or in the grid. */
+function ColorLayoutView({
+  layout,
+  photos,
+  measure,
+  onOpen,
+}: {
+  layout: ColorLayout;
+  photos: ColorPhoto[];
+  measure: VividMeasure;
+  onOpen: (photo: ColorPhoto) => void;
+}) {
+  if (layout === "mono") return <ShadeSpectrum photos={photos} onOpen={onOpen} />;
+  if (layout === "grid") return <ColorGrid photos={photos} onOpen={onOpen} />;
+  return <ColorWheel photos={photos} measure={measure} onOpen={onOpen} />;
 }
 
 /** The photos of pool the page shows, those matching the picked color or every one, sorted as the URL asks. */
@@ -207,7 +240,7 @@ function ColorControls({ search, match }: { search: ColorSearch; match: ColorMat
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <ColorLayoutControl wheel={search.view !== "grid"} />
+        <ColorLayoutControl layout={search.view ?? "wheel"} />
         {search.view === "grid" && <ColorSortControl {...sortSpec(search)} />}
         <ColorMatchControl
           threshold={match.mode === "threshold"}

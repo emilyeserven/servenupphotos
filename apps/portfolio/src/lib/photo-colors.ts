@@ -42,7 +42,37 @@ export interface PhotoColorData {
   /** The CIELAB chroma the most vivid tenth of its pixels reach; missing from colors saved before it was added. */
   peakChroma?: number;
   /** The blacks, grays and whites, split into lightness bins from 0 (black) to 100 (white). */
-  neutrals?: { histogram?: { from: number; share: number }[] };
+  neutrals?: { histogram?: { from: number; to?: number; share: number }[] };
+}
+
+/**
+ * How light a photo's blacks, grays and whites are on average, as CIELAB lightness from 0 (black)
+ * to 100 (white), each lightness bin counted by its share; null when it has none.
+ */
+export function photoLightness(colors: PhotoColorData | null | undefined): number | null {
+  const bins = colors?.neutrals?.histogram ?? [];
+  const total = bins.reduce((sum, bin) => sum + bin.share, 0);
+  if (total <= 0) return null;
+  const weighted = bins.reduce((sum, bin) => sum + binMiddle(bin) * bin.share, 0);
+  return Math.round(weighted / total);
+}
+
+/** The middle of a lightness bin; bins without an end are taken as 5 wide, as the pipeline saves them. */
+function binMiddle({ from, to }: { from: number; to?: number }): number {
+  return (from + (to ?? from + 5)) / 2;
+}
+
+/** How much of a photo its shades need to make up for it to count as black and white. */
+const BLACK_AND_WHITE_SHARE = 0.9;
+
+/**
+ * Whether a photo is black and white, or close to it: its blacks, grays and whites make up at
+ * least BLACK_AND_WHITE_SHARE of it, so the Color page shows it on the black-to-white spectrum
+ * rather than the color wheel.
+ */
+export function isBlackAndWhite(palette: ColorShare[]): boolean {
+  const shades = palette.reduce((sum, c) => sum + (isShade(c.color) ? c.share : 0), 0);
+  return shades >= BLACK_AND_WHITE_SHARE;
 }
 
 /** How vivid a photo's colors are, its mean chroma rounded; null when the photo has no colors saved yet. */
