@@ -2,6 +2,7 @@ import { useMap } from "@vis.gl/react-maplibre";
 import { ChevronsUpDown, Maximize, Navigation } from "lucide-react";
 import { type LngLatBoundsLike } from "maplibre-gl";
 import type { ReactNode } from "react";
+import { fadeTo } from "@/lib/map-fade";
 
 /** An area of the map to jump to, with the bounds to fit. */
 interface MapArea {
@@ -46,7 +47,8 @@ export function MapViewControls({
 }) {
   const { current: map } = useMap();
   function showArea(bounds: LngLatBoundsLike) {
-    map?.fitBounds(bounds, { padding: AREA_PADDING });
+    if (map)
+      fadeTo(map, (faded) => faded.fitBounds(bounds, { padding: AREA_PADDING, animate: false }));
   }
   return (
     <div className="flex flex-wrap gap-2">
