@@ -1,35 +1,50 @@
-import { HUE_BUCKETS, type HueShare, hueShareOf } from "@/lib/photo-colors";
+import {
+  COLORS,
+  type ColorName,
+  type ColorShare,
+  HUE_BUCKETS,
+  isShade,
+  SHADES,
+  shareOf,
+} from "@/lib/photo-colors";
 
 /**
- * Which way the Color page sorts every photo around the color wheel: "asc" from red through
- * orange, yellow and green to rose, "desc" the other way.
+ * Which way the Color page sorts every photo by color: "asc" from red around the wheel to rose and
+ * then the shades from black to white, "desc" the other way.
  */
 export type ColorOrder = "asc" | "desc";
 
 /**
- * Where a photo's colors sit on the color wheel, from 0 (red) to just under 12 (rose): its largest
- * hue bucket's place, nudged toward whichever neighboring bucket it has more of, so photos with
- * the same largest color still run smoothly into the next one.
+ * Where a photo sits in the sort, from 0 (red) to just under 17 (white): its largest color's place,
+ * nudged toward whichever neighboring color it has more of, so photos with the same largest color
+ * still run smoothly into the next one.
  */
-function huePosition(hues: HueShare[]): number {
-  const top = hues[0];
+function colorPosition(palette: ColorShare[]): number {
+  const top = palette[0];
   if (!top) return 0;
-  const index = HUE_BUCKETS.indexOf(top.hue);
-  const prev = hueShareOf(hues, neighbor(index, -1));
-  const next = hueShareOf(hues, neighbor(index, 1));
-  return index + (next - prev) / (2 * (top.share + prev + next));
+  const prev = shareOf(palette, neighbor(top.color, -1));
+  const next = shareOf(palette, neighbor(top.color, 1));
+  return COLORS.indexOf(top.color) + (next - prev) / (2 * (top.share + prev + next));
 }
 
-/** The hue bucket step places from index around the wheel, wrapping from rose back to red. */
-function neighbor(index: number, step: number) {
-  return HUE_BUCKETS[(index + step + HUE_BUCKETS.length) % HUE_BUCKETS.length]!;
+/**
+ * The color step places from color: around the wheel for a hue bucket, wrapping from rose back to
+ * red, or the next darker or lighter shade, with none past black or white.
+ */
+function neighbor(color: ColorName, step: number): ColorName | undefined {
+  if (isShade(color)) return SHADES[SHADES.indexOf(color) + step];
+  const index = HUE_BUCKETS.indexOf(color);
+  return HUE_BUCKETS[(index + step + HUE_BUCKETS.length) % HUE_BUCKETS.length];
 }
 
-/** Photos sorted around the color wheel in order, keeping their order where they tie. */
-export function sortByColor<T extends { hues: HueShare[] }>(photos: T[], order: ColorOrder): T[] {
+/** Photos sorted by color in order, keeping their order where they tie. */
+export function sortByColor<T extends { palette: ColorShare[] }>(
+  photos: T[],
+  order: ColorOrder,
+): T[] {
   const sign = order === "asc" ? 1 : -1;
   return photos
-    .map((photo) => ({ photo, position: huePosition(photo.hues) }))
+    .map((photo) => ({ photo, position: colorPosition(photo.palette) }))
     .sort((a, b) => sign * (a.position - b.position))
     .map(({ photo }) => photo);
 }
