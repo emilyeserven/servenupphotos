@@ -1,14 +1,13 @@
 # Portfolio Filters
 
-The portfolio's Timeline, Table, Map and Grid each have a **Show filters** button under their title, which opens three
+The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens three
 filters that narrow the photos they show: **Places**, **Album** and **Tag** (**Hide filters** closes them again). The
-Table and Grid also have the camera filters (see [Camera filters](#camera-filters)), from the same component, so the two
-always offer the same ones. The Grid's panel also has a **Colors** section, the Color page's color filters (see
+Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** section, the Color page's color filters (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
 beside it. Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
 that one (a range slider's X sits beside its range). The filters are kept in the URL, so a link keeps them, and the menu's view
-links carry them to the other views (and nothing else: a view's own settings, such as the Grid's sort or the Table's
+links carry them to the other views (and nothing else: a view's own settings, such as the Grid's sort or its Table's
 columns, stay with that view).
 
 > **Frontend analogy:** like TanStack Router search params shared by sibling routes: each route's `validateSearch`
@@ -46,14 +45,13 @@ out while there are no tags.
 
 ## Camera filters
 
-The Table's and Grid's filters panel also has **Camera** and **Lens** dropdowns (`?camera=Fujifilm X-T5`,
+The Grid's filters panel also has **Camera** and **Lens** dropdowns (`?camera=Fujifilm X-T5`,
 `?lens=EF50mm f/1.8 II`; a photo whose EXIF didn't name a lens is under none) and a slider with a handle at each end
 for each of **ISO**, **Exposure**, **Focal length** and **Aperture**. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,
 `?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. A
-photo without the setting isn't in any range. The menu carries these filters between the Table and Grid; the other views
-don't have them and leave them out. They count toward the button's number, and **Clear filters** clears them too.
+photo without the setting isn't in any range. The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and **Clear filters** clears them too.
 
 > **Frontend analogy:** the slider's value is an index into a sorted array of the values, not the value itself, so
 > `1/4000` and `30` seconds sit one step apart when nothing's between them, like `<input type="range">` over
@@ -61,7 +59,7 @@ don't have them and leave them out. They count toward the button's number, and *
 
 ### Metadata groups
 
-The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in the Table's and Grid's filters, in their order
+The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in the Grid's filters, in their order
 (lowest `order` first, then by name, each group under the one it's in):
 
 - **Camera** and **Lens** list their groups first, each indented under the group it's in and followed by the cameras or
@@ -84,7 +82,7 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
 ## Counts
 
 Each choice says how many photos it would show in that view, given the other filters, so a place's count is out of the
-photos the chosen album and tag (and, on the Table, camera, lens and ranges) leave. The Map counts only photos it can place and the Grid only photos with
+photos the chosen album and tag (and, on the Grid, camera, lens and ranges) leave. The Map counts only photos it can place and the Grid only photos with
 resized versions. The Timeline's counts leave out its time range, which still applies on top of the filters.
 
 When the filters leave no photos, the view says so instead of its list; the Map shows no markers and moves out to the

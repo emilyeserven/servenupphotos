@@ -84,10 +84,10 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio with your own photo data](docs/local-photo-data.md): how `pnpm photos:local` and the portfolio's dev server build its local photo, place, localization, album and tag data, and what each portfolio view shows
 - [EXIF and color data](docs/exif-and-colors.md) (`/exif`): reading a photo's EXIF metadata and color analysis
 - [Portfolio homepage](docs/portfolio-homepage.md) (`/` on the portfolio): the ways to explore, over photos picked on Site Spotlight
-- [Portfolio Filters](docs/portfolio-filters.md): filtering the portfolio's views by place, album and tag (plus camera, lens and settings on the Table and Grid), kept in the URL across views
+- [Portfolio Filters](docs/portfolio-filters.md): filtering the portfolio's views by place, album and tag (plus camera, lens and settings on the Grid), kept in the URL across views
 - [Photo Viewer](docs/photo-viewer.md): the portfolio's full-window photo, and moving between photos with the arrow keys
 - [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, technical info, and picking a range on the graph or the heatmap
-- [Portfolio Table](docs/portfolio-table.md) (`/table` on the portfolio): sorting, the Columns menu, and the View menu's place names
+- [Portfolio Grid](docs/portfolio-grid.md) (`/grid` on the portfolio): square and natural tiles (vertical photos in rows of their own) and the Table view, with its sorting, Columns menu and place names
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
 - [Portfolio Spotlight](docs/portfolio-spotlight.md) (`/spotlight` on the portfolio): a strip of the photos picked for each spotlight zone
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors

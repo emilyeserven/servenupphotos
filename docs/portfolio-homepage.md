@@ -1,7 +1,7 @@
 # Portfolio homepage
 
 The portfolio's homepage (`/`, `apps/portfolio/src/routes/index.tsx`) is where a visitor picks a way to explore the
-photos: the site's name on frosted glass, then one small frosted tile for each view, with its icon and name, that's ready to visit (Timeline, Table, Map and Grid). [Spotlight](portfolio-spotlight.md) is left off the homepage but is in the site menu. A view is ready when its
+photos: the site's name on frosted glass, then one small frosted tile for each view, with its icon and name, that's ready to visit (Timeline, Map and Grid). [Spotlight](portfolio-spotlight.md) is left off the homepage but is in the site menu. A view is ready when its
 entry in `apps/portfolio/src/lib/portfolio-views.ts` has `enabled: true`; the site menu greys out the others, and the
 homepage leaves them out.
 
