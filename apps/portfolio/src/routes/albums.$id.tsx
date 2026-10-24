@@ -2,16 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { FittedPhoto } from "@/components/fitted-photo";
 import { PhotoLightbox } from "@/components/photo-lightbox";
-import { type AlbumSearch, parseAll, PREVIEW_COUNT } from "@/lib/album-page";
 import { albums, type Group } from "@/lib/groups";
-import { parseShownPhoto, useShownPhoto } from "@/lib/shown-photo";
+import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos } from "@/lib/spotlight-zones";
 
 export const Route = createFileRoute("/albums/$id")({
-  validateSearch: (search: Record<string, unknown>): AlbumSearch => ({
-    ...parseAll(search),
-    ...parseShownPhoto(search),
-  }),
+  validateSearch: (search: Record<string, unknown>): ShownPhotoSearch => parseShownPhoto(search),
   component: AlbumView,
 });
 
@@ -63,33 +59,22 @@ const PAGE = "flex w-full flex-col gap-8 py-16";
 /** The text's column, narrower than the photos. */
 const NARROW = "mx-auto w-full max-w-5xl px-4 sm:px-6";
 
-/** The album's photos, the first few unless the URL asks for all, each opening the viewer. */
+/** Every photo in the album, each opening the viewer. */
 function AlbumPhotos({ album }: { album: Group }) {
-  const { all } = Route.useSearch();
   const { shown, show, close } = useShownPhoto();
   const photos = albumPhotos(album.id);
-  const listed = all ? photos : photos.slice(0, PREVIEW_COUNT);
   return (
     <>
       <p className={`${NARROW} text-sm text-muted-foreground`}>
         {photos.length} {photos.length === 1 ? "photo" : "photos"}.
       </p>
       <ul className="flex flex-col gap-6">
-        {listed.map((photo) => (
+        {photos.map((photo) => (
           <li key={photo.id}>
             <FittedPhoto photo={photo} onOpen={() => show(photo)} />
           </li>
         ))}
       </ul>
-      {listed.length < photos.length && (
-        <Link
-          to="."
-          search={(prev) => ({ ...prev, all: true })}
-          className="mx-auto rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted"
-        >
-          Open the full album ({photos.length} photos)
-        </Link>
-      )}
       <PhotoLightbox photo={shown} photos={photos} onShow={show} onClose={close} />
     </>
   );
