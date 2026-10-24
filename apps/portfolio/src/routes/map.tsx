@@ -327,7 +327,9 @@ function MapView() {
             data={dayPhotos.geoJson}
             cluster
             clusterMaxZoom={17}
-            clusterRadius={50}
+            // Photos group when they're closer than this many pixels: a little under a marker's
+            // width, so groups split as soon as their markers would barely overlap.
+            clusterRadius={40}
           >
             <Layer {...hiddenLayer} />
           </Source>
