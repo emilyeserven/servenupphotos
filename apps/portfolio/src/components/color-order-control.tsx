@@ -4,17 +4,22 @@ import type { ColorOrder } from "@/lib/color-sort";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 
 const ORDERS = [
-  { order: "asc", label: "Ascending", title: "Red to rose around the color wheel", Icon: ArrowUp },
+  {
+    order: "asc",
+    label: "Ascending",
+    title: "Red around the color wheel to rose, then black to white",
+    Icon: ArrowUp,
+  },
   {
     order: "desc",
     label: "Descending",
-    title: "Rose to red around the color wheel",
+    title: "White to black, then rose around the color wheel to red",
     Icon: ArrowDown,
   },
 ] as const;
 
 /**
- * Which way every photo is sorted around the color wheel when no hue is picked: ascending (the
+ * Which way every photo is sorted by color when none is picked: ascending (the
  * default) or descending, kept in the URL as `?order=desc` so a link keeps it.
  */
 export function ColorOrderControl({ order }: { order: ColorOrder }) {
