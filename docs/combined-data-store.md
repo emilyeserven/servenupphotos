@@ -26,8 +26,8 @@ drops the changes it took in.
 
 ## Local edits
 
-Some changes aren't even kept by the backend: they're kept in the browser until **Commit**. The Instagram calendar's dates and Site
-Spotlight's zones are kept this way. `stores/local-edits.ts` keeps them in a Zustand store persisted to `localStorage`, each as a photo file's path,
+Some changes aren't even kept by the backend: they're kept in the browser until **Commit**. The Instagram calendar's dates and the Photo
+page's spotlight focus point are kept this way. `stores/local-edits.ts` keeps them in a Zustand store persisted to `localStorage`, each as a photo file's path,
 its data as read, and the top-level fields to set. Setting a field back to the file's own value drops it. They're
 made over the lists like saved changes (after them), counted by the sync button, and dropped with the rest by its
 panel's **Discard**. **Commit** sends them as `{"edits": [{"path", "fields"}]}`; the backend sets those fields in

@@ -55,34 +55,30 @@ scheduled, the card says for which day and links to it; that day is still set on
 
 ## Site Spotlight
 
-`/site-spotlight` picks the photos each **spotlight zone** of the portfolio shows, saved as each photo file's
-`spotlightZones`: a list of zone IDs, `[]` by default (new saves write it, and Update Data → Missing fields adds it to
-older files). The zones are listed in `apps/client-pipeline/src/lib/site-spotlight.ts`; the first is **Homepage**
-(`"homepage"`), the photos fading in and out behind the [portfolio homepage](portfolio-homepage.md). With none picked,
-the homepage shows the 5 newest photos instead.
+`/site-spotlight` picks the album each **spotlight zone** of the portfolio shows. The zones are listed in
+`apps/client-pipeline/src/lib/site-spotlight.ts`; the first is **Homepage** (`"homepage"`), the photos fading in and
+out behind the [portfolio homepage](portfolio-homepage.md). A zone shows every photo in its album and the album's
+sub-albums, newest first. With no album picked, the homepage shows the 5 newest photos instead.
 
-Each zone is a card of its photos in their order, numbered from 1, each with a button to take it out. Dragging a
-photo onto another moves it to that place, shifting the ones between, and saves every photo in the zone's place as
-`websiteSpotlight` (1 first). A photo put in a zone goes to the end of its order: when some of the zone's photos have
-no place yet (they come after the rest, newest first), adding one numbers them all in the order shown, so the sync
-button can count several photos for one add. Taking a photo out of its last zone clears its `websiteSpotlight`. The places are one order shared by every zone, so each
-zone shows its photos in that order. **Add photos** opens every
-photo file (read like the Instagram calendar, in flight ones included) to click in or out of it. A photo without a
-title is labeled **Draft**: it can be picked, but the portfolio skips it until it has one (see [Drafts](drafts.md)). Like the calendar's
-dates, changes are [local edits](combined-data-store.md#local-edits) until **Commit**, which replaces the
-`spotlightZones` list and sets `websiteSpotlight` in each changed file. A list sent in an edit replaces the file's whole list; other fields are
-left as they are.
+Each zone is a card with an **Album** picker and the photos the zone will show, read from `ALLPHOTOS.json` in the
+[combined data store](combined-data-store.md). Picking an album (`PUT /api/organize/spotlight/<zone>` with
+`{ "album": "<id>" | null }`) saves the zone in that album file's `spotlightZones`, a list of zone IDs, and takes it out
+of every other album's, so a zone has one album at a time. Like other album changes, it's a
+[change waiting for Commit](pending-changes.md). Photos are added to an album on the Gallery or a photo's page (see
+[Albums and Tags](albums-and-tags.md)).
+
+> **Frontend analogy:** it's like a radio group spread over several files: choosing one album unchecks the others, and
+> the backend writes every file whose checkbox changed.
 
 The Photo page in edit mode (`/exif?edit=<path>`) has a **Spotlight** card in its left column, under Albums and Tags,
-with a checkbox for each zone and the photo's number among the zone's photos while it's in one. It makes the same local
-edits as Site Spotlight, at once and apart from the page's **Save changes**, so they wait for **Commit** like the rest.
-The order is still set on Site Spotlight.
+linking to Site Spotlight.
 
-While the photo is in a zone, the card also has a **Focus point**: click the part of the photo to keep in view when it's
+The card has the photo's **Focus point**: click the part of the photo to keep in view when it's
 cropped to a screen of the other shape (a landscape photo on a phone, or a portrait one on a computer). Small phone and
 computer previews show the crop, and **Use the middle** clears it. It's saved as `spotlightFocus`, `{ "x": 30, "y": 70 }`
 in percent across from the left and down from the top, or `null` (the default, which new saves write and Update Data →
-Missing fields adds) for the middle. It's a local edit until **Commit** like the zones.
+Missing fields adds) for the middle. It's a [local edit](combined-data-store.md#local-edits) until **Commit**, apart
+from the page's **Save changes**.
 
 > **Frontend analogy:** the Go side writes an object or `null` into the JSON file the same way it writes a list: the
 > whole value is replaced, like `setState(next)` rather than merging.

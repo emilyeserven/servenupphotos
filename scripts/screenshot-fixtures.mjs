@@ -87,7 +87,13 @@ const added = {
   photo: newPhoto(),
   album: {
     path: `${FOLDER}/albums/seoul.json`,
-    data: { id: "seoul", name: "Seoul", description: "Two weeks in Seoul.", parent: null },
+    data: {
+      id: "seoul",
+      name: "Seoul",
+      description: "Two weeks in Seoul.",
+      parent: null,
+      spotlightZones: ["homepage"],
+    },
   },
   tag: {
     path: `${FOLDER}/tags/night.json`,
@@ -274,12 +280,16 @@ const groupFile = ({ path: filePath, data }) => ({
   data,
 });
 
+/** The fields of data out of keys that are set, as the backend leaves empty ones out. */
+const setFields = (data, keys) =>
+  Object.fromEntries(keys.filter((key) => data[key]).map((key) => [key, data[key]]));
+
 function group({ path: filePath, data }, inFlight) {
   return {
     id: data.id,
     name: data.name,
     description: data.description,
-    ...(data.parent ? { parent: data.parent } : {}),
+    ...setFields(data, ["parent", "order", "spotlightZones"]),
     path: filePath,
     fileUrl: fileUrl(filePath, inFlight ? PULL_REQUEST.branch : BASE_BRANCH),
     inFlight,
@@ -380,17 +390,13 @@ const pendingSave = (branch = PULL_REQUEST.branch) => ({
   changes: [],
 });
 
-/** The spotlight zones of the photo at index i: every fourth one is on the homepage. */
-const spotlightZonesOf = (i) => (i % 4 === 1 ? ["homepage"] : []);
-
 /**
- * A photo as the Instagram calendar and Site Spotlight read it: the first is scheduled, every other
+ * A photo as the Instagram calendar and the photo page's Spotlight card read it: the first is scheduled, every other
  * one eligible.
  */
 function socialPhoto({ path: filePath, data }, i) {
   const images = imagesOf(data);
   const socialMediaPublishDate = i === 0 ? "2026-10-23" : null;
-  const spotlightZones = spotlightZonesOf(i);
   return {
     path: filePath,
     fileUrl: fileUrl(filePath, PULL_REQUEST.branch),
@@ -401,7 +407,7 @@ function socialPhoto({ path: filePath, data }, i) {
     image: images.thumbnail ?? images.xsmall ?? null,
     isSocialMediaEligible: i % 2 === 0,
     socialMediaPublishDate,
-    data: { ...data, socialMediaPublishDate, spotlightZones },
+    data: { ...data, socialMediaPublishDate },
   };
 }
 
@@ -671,6 +677,11 @@ export function defaultFixtures() {
       before: null,
       data: body?.data ?? {},
     }),
+    "PUT /api/organize/albums/order": ({ body }) => ({
+      ...pendingSave(),
+      files: body?.ids?.length,
+    }),
+    "PUT /api/organize/spotlight/homepage": { ...pendingSave(), files: 2 },
     "POST /api/photos/groups": ({ body }) => ({ ...pendingSave(), files: body?.paths?.length }),
     "DELETE /api/photos/pending": { discarded: 1 },
     "POST /api/photos/combined": () => ({

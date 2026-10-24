@@ -9,7 +9,7 @@ export const Route = createFileRoute("/site-spotlight")({
   component: SiteSpotlightPage,
 });
 
-/** The photos each spotlight zone of the portfolio shows, saved as each photo's `spotlightZones`. */
+/** The album each spotlight zone of the portfolio shows, saved as each album's `spotlightZones`. */
 function SiteSpotlightPage() {
   const settings = useQuery(settingsQuery);
 
@@ -17,7 +17,7 @@ function SiteSpotlightPage() {
     <Page
       wide
       title="Site Spotlight"
-      description="Pick the photos shown in each spotlight zone of the portfolio, such as behind the homepage."
+      description="Pick the album shown in each spotlight zone of the portfolio, such as behind the homepage."
     >
       <QueryResult query={settings}>
         {(data) =>

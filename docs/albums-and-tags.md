@@ -17,6 +17,18 @@ Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its fi
 parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's
 `parent`, as a [change waiting for Commit](pending-changes.md), refusing a parent that's the album itself or inside it.
 
+## Order
+
+The Albums list has up and down arrows by each album that move it one place among the albums in the same parent. A move
+saves every album's place as its file's `order`, 1 first (`PUT /api/organize/albums/order` with `{ "ids": [...] }`, every
+album in its new order), rewriting only the files whose place changed, as changes waiting for Commit. Albums are listed
+by `order`, the ones without one after, by name, here, in every album picker and on the portfolio's
+[Albums](portfolio-albums.md) page. An album file can also list the spotlight zones that show it, in `spotlightZones`;
+see [Site Spotlight](publish.md#site-spotlight).
+
+> **Frontend analogy:** like a sortable list that saves the index of every item after a drag, rather than only the one
+> that moved, so the numbers never collide.
+
 Every album and tag picker, here, on the Photo page and in the Gallery, is a combobox: type to filter, arrow keys and
 Enter to choose, and each choice shows as a chip with a button to remove it (a chip is red when its ID isn't an album
 or tag on GitHub). The Photo page has an **Albums and tags** card for a new photo, saved with **Save**, and

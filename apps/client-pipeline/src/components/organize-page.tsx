@@ -22,6 +22,7 @@ import {
   type RebuildWatch,
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
+import { AlbumMoveButtons } from "@/components/album-move-buttons";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { GroupCombobox } from "@/components/group-picker";
 import { Page } from "@/components/page";
@@ -52,7 +53,7 @@ const PAGES: Record<GroupKind, { title: string; description: string }> = {
   albums: {
     title: "Albums",
     description:
-      "Collections of photos, like categories. A photo is usually in one album, an album can be inside one parent album, and each album is its own JSON file.",
+      "Collections of photos, like categories. A photo is usually in one album, an album can be inside one parent album, and each album is its own JSON file. The arrows by each album set the order the portfolio lists them in.",
   },
   tags: {
     title: "Tags",
@@ -453,7 +454,7 @@ function GroupTable({
   label: string;
 }) {
   const countOf = usePhotoCounts(kind);
-  // Albums list each one under its parent, sub-albums indented.
+  // Albums list each one under its parent in their order, sub-albums indented.
   const rows = kind === "albums" ? albumTree(groups) : groups.map((group) => ({ group, depth: 0 }));
   return (
     <Table aria-label={label}>
@@ -474,6 +475,7 @@ function GroupTable({
             depth={depth}
             count={countOf?.(group.id)}
             pullRequestUrl={pullRequestUrl}
+            albums={kind === "albums" ? groups : undefined}
           />
         ))}
       </TableBody>
@@ -496,6 +498,7 @@ function GroupRow({
   depth,
   count,
   pullRequestUrl,
+  albums,
 }: {
   kind: GroupKind;
   group: Group;
@@ -503,6 +506,8 @@ function GroupRow({
   /** How many photos list it; undefined until ALLPHOTOS.json is read. */
   count?: number;
   pullRequestUrl?: string;
+  /** Every album in its order, for an album's buttons to move it up or down. */
+  albums?: Group[];
 }) {
   return (
     <TableRow>
@@ -511,10 +516,11 @@ function GroupRow({
           {depth > 0 && (
             <CornerDownRightIcon className="text-muted-foreground mt-0.5 size-3.5 shrink-0" />
           )}
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <GroupName kind={kind} group={group} />
             <GroupNote group={group} />
           </div>
+          <AlbumMoveButtons album={group} albums={albums} />
         </div>
       </TableCell>
       <TableCell className="font-mono text-xs">{group.id}</TableCell>
