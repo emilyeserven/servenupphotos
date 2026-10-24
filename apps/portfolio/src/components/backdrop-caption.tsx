@@ -5,7 +5,8 @@ import type { Photo } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 /** The frosted glass the homepage's title, tiles and caption sit on. */
-export const FROSTED = "border border-white/20 bg-white/10 shadow-lg backdrop-blur-sm";
+export const FROSTED =
+  "border border-white/30 bg-white/20 shadow-xl backdrop-blur-xl backdrop-saturate-150";
 
 /**
  * The showing backdrop photo's title at the bottom left, on frosted glass, with a button before it
@@ -24,7 +25,7 @@ export function BackdropCaption({ photo }: { photo: Photo }) {
           title="Show on the map"
           className={cn(
             FROSTED,
-            "grid size-8 shrink-0 place-items-center rounded-md transition-colors outline-none hover:border-white/40 hover:bg-white/20 focus-visible:ring-[3px] focus-visible:ring-white/60",
+            "grid size-8 shrink-0 place-items-center rounded-md transition-colors outline-none hover:border-white/50 hover:bg-white/30 focus-visible:ring-[3px] focus-visible:ring-white/60",
           )}
         >
           <MapPin className="size-4" aria-hidden />

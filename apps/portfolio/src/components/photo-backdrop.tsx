@@ -19,7 +19,7 @@ function isNear(index: number, turn: number, count: number): boolean {
 }
 
 /**
- * Photos filling the screen behind a page, fading in and out in turn under 40% black so the page
+ * Photos filling the screen behind a page, fading in and out in turn under 20% black so the page
  * stays readable, with the showing photo's title and a link to it on the map at the bottom. Each
  * photo keeps its focus point in view when it's cropped. The left and right arrow keys show
  * the photo before or after, and the next one waits its full time again. With reduced motion the
@@ -44,7 +44,7 @@ export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
             />
           ),
       )}
-      <div aria-hidden className="absolute inset-0 bg-black/40" />
+      <div aria-hidden className="absolute inset-0 bg-black/20" />
       {current && <BackdropCaption photo={current} />}
     </div>
   );

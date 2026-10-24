@@ -5,7 +5,7 @@ photos: the site's name on frosted glass, then one small frosted tile for each v
 entry in `apps/portfolio/src/lib/portfolio-views.ts` has `enabled: true`; the site menu greys out the others, and the
 homepage leaves them out.
 
-Behind the links, photos fill the screen and fade in and out one at a time, each for 7 seconds, under 40% black, light
+Behind the links, photos fill the screen and fade in and out one at a time, each for 7 seconds, under 20% black, light
 enough to see the photo's colors while the frosted title and tiles stay readable (`components/photo-backdrop.tsx`). The
 showing photo's title is at the bottom left on the same frosted glass (`components/backdrop-caption.tsx`), with a map pin
 button before it, for photos with a position, that opens the [Map](portfolio-map.md) already zoomed in where the photo
