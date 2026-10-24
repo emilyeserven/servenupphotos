@@ -5,8 +5,11 @@ level, or on the whole world when there are none.
 
 Each photo is a marker with its Square Thumbnail (or its Small version, cropped square), which opens the photo
 viewer. Photos too close together to tell apart are one round marker with how many there are, over their three newest
-photos fading in turn under a dark overlay. Clicking it opens a grid of their thumbnails above it, with **Zoom in**
-to split them apart. Photos without resized versions are a small dot that opens their details instead.
+photos fading in turn under a dark overlay. Clicking it zooms the map in to fit its photos, which splits it apart, like
+a cluster pin on the Color page's wheel. A group that zooming in can't split (photos at one spot, or the map already as
+close as it goes) opens a grid of their thumbnails instead: in a popup above it, or on phones in a sheet along the
+bottom of the map, so it's never cut off at the top of the screen or hidden under the floating header
+(`components/map-cluster.tsx`). Photos without resized versions are a small dot that opens their details instead.
 
 A photo's [custom GPS position](places-and-localizations.md#custom-gps-position), written on the Photo page, wins over
 its EXIF one. A photo with neither goes at one of its places' position (see
