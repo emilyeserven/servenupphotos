@@ -40,6 +40,7 @@ import {
   useMapPhotos,
 } from "@/lib/map-photos";
 import { type DayRange, daysInView, isDay } from "@/lib/map-days";
+import { fadeTo } from "@/lib/map-fade";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import {
@@ -122,8 +123,10 @@ function initialViewOf(bounds: LngLatBounds | null, view: MapViewSearch) {
 
 /** Moves the map to show every photo in the bounds, as when it opened. */
 function showAllPhotos(map: MapRef, bounds: LngLatBounds | null) {
-  if (bounds) map.fitBounds(bounds, ALL_PHOTOS_FIT);
-  else map.flyTo(WORLD_VIEW);
+  fadeTo(map, (faded) => {
+    if (bounds) faded.fitBounds(bounds, { ...ALL_PHOTOS_FIT, animate: false });
+    else faded.jumpTo(WORLD_VIEW);
+  });
 }
 
 // The theme provider toggles the `dark` class on <html>; follow it so the basemap matches.

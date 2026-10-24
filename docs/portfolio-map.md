@@ -31,6 +31,10 @@ The map fills the page. The title and photo count, the controls below, and the s
 float over it, and fitting the map leaves extra room at the top so photos aren't hidden under them. The map's zoom
 buttons are in the bottom right corner.
 
+Jumping somewhere (**Jump to**, the zoom-out button, a filter that changes which photos show, or **View on map** from the
+photo viewer while on the map) fades the map out, moves it there and fades it back in once it's drawn, rather than flying
+out and back in (`fadeTo` in `lib/map-fade.ts`). Zooming into a group of photos still animates, as it's a short move.
+
 Over the top left corner, beside the title on wider screens and under it on phones:
 
 On phones, the day, Places and album filters sit behind a **Filters** button next to **Jump to**, so they don't cover the

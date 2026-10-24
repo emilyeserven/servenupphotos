@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { MapRef } from "@vis.gl/react-maplibre";
 import { type RefObject, useEffect, useRef } from "react";
+import { fadeTo } from "@/lib/map-fade";
 
 /**
  * Where the map is looking, as the URL keeps it: its center and zoom, such as
@@ -77,7 +78,7 @@ function useFollowMapView(map: RefObject<MapRef | null>, view: MapViewSearch) {
   const { lat, lng, zoom } = view;
   useEffect(() => {
     if (!map.current || zoom === undefined || isShowing(map.current, { lat, lng, zoom })) return;
-    map.current.flyTo({ center: [lng as number, lat as number], zoom });
+    fadeTo(map.current, (faded) => faded.jumpTo({ center: [lng as number, lat as number], zoom }));
   }, [map, lat, lng, zoom]);
 }
 
