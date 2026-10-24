@@ -1,5 +1,6 @@
-import { type RefObject, useEffect, useRef, useState } from "react";
+import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 import type { WheelPoint } from "@/lib/color-wheel";
+import { useViewAnimation } from "@/lib/use-view-animation";
 
 /**
  * What part of the color wheel is in view: how far it's zoomed in (1 shows the whole wheel), and
@@ -60,27 +61,43 @@ function wheelPointAt(view: WheelView, size: ViewportSize, px: number, py: numbe
 /**
  * The view of the wheel (or the Black & white chart) in viewport, size pixels, and the ways to
  * change it, as fractions of its width and height: dragging
- * pans it, pinching with two fingers or a trackpad (or ctrl + scrolling) zooms it, and `setView`
- * sets it, for the zoom buttons and the mini map. A drag doesn't also click the pin it started on.
+ * pans it, pinching with two fingers or a trackpad (or ctrl + scrolling) zooms it, `setView` sets
+ * it at once, for the mini map, and `animateTo` moves to it smoothly, for the zoom buttons and
+ * clusters, so the viewer can see where they're going. `layoutZoom` is the zoom pins are laid out
+ * for: where an animation is heading while it runs. A drag doesn't also click the pin it started on.
  */
 export function useWheelZoom(viewport: RefObject<HTMLDivElement | null>, size: ViewportSize) {
-  const [view, setView] = useState(WHOLE_WHEEL);
-  const latest = useRef({ view, size });
+  const [view, show] = useState(WHOLE_WHEEL);
+  // Each step of an animation is kept within the wheel, as zooming out from an edge would leave it.
+  const showWithin = useCallback((next: WheelView) => show(clampView(next)), []);
+  const { target, animate, stop } = useViewAnimation(showWithin);
+  const latest = useRef({ view, size, stop });
   useEffect(() => {
-    latest.current = { view, size };
-  }, [view, size]);
+    latest.current = { view, size, stop };
+  }, [view, size, stop]);
 
   useEffect(() => {
     const element = viewport.current;
     if (!element) return;
-    return listenForZoom(element, latest, (update) => setView((v) => update(v)));
+    return listenForZoom(element, latest, (update) => {
+      latest.current.stop();
+      show((v) => update(v));
+    });
   }, [viewport]);
 
-  return { view, setView };
+  const setView = useCallback(
+    (next: WheelView) => {
+      stop();
+      show(next);
+    },
+    [stop],
+  );
+  const animateTo = useCallback((next: WheelView) => animate(latest.current.view, next), [animate]);
+  return { view, setView, animateTo, layoutZoom: target?.zoom ?? view.zoom };
 }
 
-/** The view and viewport size when an event comes in. */
-type Latest = RefObject<{ view: WheelView; size: ViewportSize }>;
+/** The view and viewport size when an event comes in, and what stops an animated zoom. */
+type Latest = RefObject<{ view: WheelView; size: ViewportSize; stop: () => void }>;
 
 /** A change to the view, from the view as it is. */
 type ViewUpdate = (view: WheelView) => WheelView;
