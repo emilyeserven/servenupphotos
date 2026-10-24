@@ -24,8 +24,8 @@ and `thumbnail` the public URL of its Square Thumbnail, with `thumbnailpreview` 
 upload the photo with **Upload to R2**, so upload before saving if the JSON should link to the photo. The
 **JSON to Upload** tab shows exactly what **Save** will write, and picks up the URL as soon as the upload finishes.
 
-When the photo is in R2, the backend also adds its `colors`, the color analysis the EXIF page's Colors and Raw color
-data tabs show, as the last field (see [Data model](data-model.md)); the **JSON to Upload** tab doesn't show it. **Upload
+When the photo is in R2, the backend also adds its `colors`, the color summary the EXIF page's Colors tab
+shows, as the last field (see [Data model](data-model.md)); the **JSON to Upload** tab doesn't show it. **Upload
 to R2** reads the colors from the photo it just uploaded and keeps them in memory by its key, so saving doesn't
 download it again; after a backend restart, saving reads them from the original in R2 (given 20 seconds). A photo
 whose colors can't be read is saved without them, and Update Data's **Colors** can add them later. Bulk uploads save

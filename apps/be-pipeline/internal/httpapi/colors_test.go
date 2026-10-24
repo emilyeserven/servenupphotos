@@ -22,7 +22,7 @@ func TestColorReader(t *testing.T) {
 		}
 		return io.NopCloser(bytes.NewReader(photo)), nil
 	}
-	read := colorReader(cfg, get, newKeyCache[colors.Analysis]())
+	read := colorReader(cfg, get, newKeyCache[colors.Summary]())
 
 	for range 2 {
 		got, msg := read(t.Context(), "photos/ab-red.jpg")

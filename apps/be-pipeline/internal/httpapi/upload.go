@@ -98,7 +98,7 @@ func cacheColors(cache *colorCache, key, path string) {
 		slog.Warn("color analysis failed", "key", key, "err", err)
 		return
 	}
-	cache.put(key, analysis)
+	cache.put(key, analysis.Summary)
 }
 
 // parseCrop reads the thumbnail's crop from the form's "cropX", "cropY" and

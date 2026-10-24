@@ -63,7 +63,7 @@ func handlePublishPhoto(store *settings.Store, gh *github.Client, readColors git
 // photoColors reads the colors of the original at key, or nil when there's no
 // key or they can't be read, so the photo is saved without them; Update
 // Data's Colors can add them later.
-func photoColors(ctx context.Context, readColors github.ColorReader, key *string) *colors.Analysis {
+func photoColors(ctx context.Context, readColors github.ColorReader, key *string) *colors.Summary {
 	if key == nil || *key == "" {
 		return nil
 	}

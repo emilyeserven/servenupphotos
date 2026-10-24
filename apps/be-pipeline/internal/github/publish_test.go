@@ -272,13 +272,13 @@ func TestPublishErrors(t *testing.T) {
 func TestPublishSavesColors(t *testing.T) {
 	_, c := newFakeGitHub(t)
 	p := photo("DSC0001")
-	p.Colors = &colors.Analysis{Average: colors.Color{Hex: "#ff0000"}, Lightness: 54}
+	p.Colors = &colors.Summary{Average: colors.Color{Hex: "#ff0000"}, Lightness: 54}
 	got, err := c.Publish(t.Context(), gh, p)
 	if err != nil {
 		t.Fatalf("Publish() error = %v", err)
 	}
 	var data struct {
-		Colors *colors.Analysis `json:"colors"`
+		Colors *colors.Summary `json:"colors"`
 	}
 	if err := json.Unmarshal(got.Data, &data); err != nil || data.Colors == nil || data.Colors.Average.Hex != "#ff0000" {
 		t.Errorf("saved colors = %+v (%v), want the photo's", data.Colors, err)

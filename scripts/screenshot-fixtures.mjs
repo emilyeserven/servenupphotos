@@ -331,7 +331,7 @@ const HUE_BUCKETS = [
   "rose",
 ];
 
-/** A made-up color analysis, as POST /api/data/colors/preview reads one, mostly in one hue bucket. */
+/** A made-up color summary, as POST /api/data/colors/preview reads one, mostly in one hue bucket. */
 function sampleColors(hex, bucket) {
   const neutral = 0.3;
   return {
@@ -353,7 +353,6 @@ function sampleColors(hex, bucket) {
     lightness: 52,
     chroma: 23,
     samples: 9984,
-    raw: { spaces: [], histograms: { hue: [], lightness: [], chroma: [], saturation: [] } },
   };
 }
 
