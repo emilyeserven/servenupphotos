@@ -4,10 +4,11 @@ import { ColorBar } from "@/components/color-bar";
 import { ColorFilter } from "@/components/color-filter";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ColorMatchControl, parseThreshold } from "@/components/color-match-control";
-import { ColorOrderControl } from "@/components/color-order-control";
+import { ColorSortControl } from "@/components/color-sort-control";
+import { parseVividness, VividnessControl } from "@/components/vividness-control";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { type ColorMatch, matchesColor, matchText } from "@/lib/color-match";
-import { type ColorOrder, sortByColor } from "@/lib/color-sort";
+import { type ColorOrder, type ColorSort, sortByColor, sortByVividness } from "@/lib/color-sort";
 import { COLORS, type ColorName, isColorName, shareOf } from "@/lib/photo-colors";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -19,8 +20,12 @@ interface ColorSearch {
   match?: "threshold";
   /** How much of a photo, in percent, the color needs to match by share; left out for DEFAULT_PERCENT. */
   min?: number;
-  /** Set to sort every photo from white back to red when no color is picked; left out for red to white. */
-  order?: "desc";
+  /** Set to sort photos by vividness; left out to sort them by color. */
+  sort?: ColorSort;
+  /** Set to sort the other way: white back to red, or the most vivid first; left out for red to white, or the least vivid first. */
+  order?: ColorOrder;
+  /** The least vividness a photo needs to show, from 0 to 60; left out for 0, which shows every photo. */
+  vivid?: number;
 }
 
 export const Route = createFileRoute("/color")({
@@ -28,14 +33,15 @@ export const Route = createFileRoute("/color")({
     ...(isColorName(search.color) ? { color: search.color } : {}),
     ...(search.match === "threshold" ? { match: "threshold" as const } : {}),
     ...minOf(search.min),
-    ...(search.order === "desc" ? { order: "desc" as const } : {}),
+    ...sortOf(search),
+    ...vividOf(search.vivid),
     ...parseShownPhoto(search),
   }),
   component: ColorView,
 });
 
 /** A photo with resized versions in R2 and its colors saved, which is all this page can show. */
-type ColorPhoto = Photo & { image: PhotoImage };
+type ColorPhoto = Photo & { image: PhotoImage; vividness: number };
 
 /**
  * How much of a photo, in percent, a color needs by default to match by share, so a photo
@@ -49,28 +55,44 @@ function minOf(value: unknown): ColorSearch {
   return min === undefined ? {} : { min };
 }
 
+/** The `?sort=` and `?order=` to keep, each left out at its default. */
+function sortOf({ sort, order }: Record<string, unknown>): ColorSearch {
+  return {
+    ...(sort === "vivid" ? { sort: "vivid" as const } : {}),
+    ...(order === "desc" ? { order: "desc" as const } : {}),
+  };
+}
+
+/** The `?vivid=` to keep, leaving it out when it's missing or not one the slider can set. */
+function vividOf(value: unknown): ColorSearch {
+  const vivid = parseVividness(value);
+  return vivid === undefined ? {} : { vivid };
+}
+
 // Newest first, so photos of the same color stay newest first when sorted by color.
 const colorPhotos = photos
-  .filter((photo): photo is ColorPhoto => photo.image !== null && photo.palette.length > 0)
+  .filter(
+    (photo): photo is ColorPhoto =>
+      photo.image !== null && photo.palette.length > 0 && photo.vividness !== null,
+  )
   .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 
-/** Every photo sorted around the color wheel, each way. */
-const byColor: Record<ColorOrder, ColorPhoto[]> = {
-  asc: sortByColor(colorPhotos, "asc"),
-  desc: sortByColor(colorPhotos, "desc"),
-};
+/** The photos at least vivid as vivid. */
+function vividPhotos(vivid = 0): ColorPhoto[] {
+  return colorPhotos.filter((photo) => photo.vividness >= vivid);
+}
 
-/** The photos that match color, the most of it first. */
-function photosOf(color: ColorName, match: ColorMatch): ColorPhoto[] {
-  return colorPhotos
+/** The photos of pool that match color, the most of it first. */
+function photosOf(pool: ColorPhoto[], color: ColorName, match: ColorMatch): ColorPhoto[] {
+  return pool
     .filter((photo) => matchesColor(photo.palette, color, match))
     .sort((a, b) => shareOf(b.palette, color) - shareOf(a.palette, color));
 }
 
-/** How many photos each color's swatch would show. */
-function countsFor(match: ColorMatch): Record<ColorName, number> {
+/** How many photos of pool each color's swatch would show. */
+function countsFor(pool: ColorPhoto[], match: ColorMatch): Record<ColorName, number> {
   return Object.fromEntries(
-    COLORS.map((color) => [color, photosOf(color, match).length]),
+    COLORS.map((color) => [color, photosOf(pool, color, match).length]),
   ) as Record<ColorName, number>;
 }
 
@@ -90,7 +112,8 @@ function ColorView() {
   if (colorPhotos.length === 0) return <ViewPlaceholder to="/color" />;
   const { color } = search;
   const match = matchOf(search);
-  const listed = listedPhotos(search, match);
+  const pool = vividPhotos(search.vivid);
+  const listed = listedPhotos(pool, search, match);
 
   return (
     <div className="flex w-full flex-col gap-8 px-3 py-16 sm:px-4">
@@ -102,7 +125,7 @@ function ColorView() {
           </h1>
           <p className="text-sm text-muted-foreground">{countText(listed.length, color, match)}</p>
         </div>
-        <ColorFilter color={color} counts={countsFor(match)} />
+        <ColorFilter color={color} counts={countsFor(pool, match)} />
         <ColorControls search={search} match={match} />
       </header>
       <ul className={LIST_CLASS}>
@@ -117,23 +140,45 @@ function ColorView() {
   );
 }
 
-/** The photos the page shows: those matching the picked color, or every photo sorted by color. */
-function listedPhotos({ color, order }: ColorSearch, match: ColorMatch): ColorPhoto[] {
-  return color ? photosOf(color, match) : byColor[order ?? "asc"];
+/**
+ * The photos of pool the page shows: those matching the picked color, the most of it first, or
+ * every photo sorted by color; or either sorted by vividness.
+ */
+function listedPhotos(pool: ColorPhoto[], search: ColorSearch, match: ColorMatch): ColorPhoto[] {
+  const matched = search.color ? photosOf(pool, search.color, match) : pool;
+  return sortListed(matched, search);
 }
 
-/** Which way every photo is sorted by color, shown only without a color picked, and how photos match one. */
+/** The listed photos in the order the URL asks for; photos of one color stay the most of it first, unless sorted by vividness. */
+function sortListed(
+  matched: ColorPhoto[],
+  { color, sort, order = "asc" }: ColorSearch,
+): ColorPhoto[] {
+  if (sort === "vivid") return sortByVividness(matched, order);
+  return color ? matched : sortByColor(matched, order);
+}
+
+/** What photos are sorted by and which way, how photos match a color, and the least vividness. */
 function ColorControls({ search, match }: { search: ColorSearch; match: ColorMatch }) {
+  const { min = DEFAULT_PERCENT, vivid = 0 } = search;
   return (
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-      {!search.color && <ColorOrderControl order={search.order ?? "asc"} />}
-      <ColorMatchControl
-        threshold={match.mode === "threshold"}
-        percent={search.min ?? DEFAULT_PERCENT}
-        fallback={DEFAULT_PERCENT}
-      />
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <ColorSortControl {...sortProps(search)} />
+        <ColorMatchControl
+          threshold={match.mode === "threshold"}
+          percent={min}
+          fallback={DEFAULT_PERCENT}
+        />
+      </div>
+      <VividnessControl vivid={vivid} />
     </div>
   );
+}
+
+/** What the sort control shows: the way is hidden when photos of one color are sorted by how much of it they have. */
+function sortProps({ color, sort = "color", order = "asc" }: ColorSearch) {
+  return { sort, order, showOrder: sort === "vivid" || !color };
 }
 
 /** "24 photos", or with a color, "8 photos mostly orange" or "8 photos at least 30% orange". */
@@ -160,8 +205,9 @@ function ColorTile({ photo, onOpen }: { photo: ColorPhoto; onOpen: () => void })
           className="size-full object-cover"
         />
       </button>
-      <figcaption>
+      <figcaption className="flex flex-col gap-0.5">
         <ColorBar palette={photo.palette} />
+        <p className="text-xs text-muted-foreground tabular-nums">Vividness {photo.vividness}</p>
       </figcaption>
     </figure>
   );

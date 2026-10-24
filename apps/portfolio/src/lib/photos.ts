@@ -1,5 +1,10 @@
 import committedData from "@/data/photos/ALLPHOTOS.json";
-import { type ColorShare, type PhotoColorData, photoColors } from "@/lib/photo-colors";
+import {
+  type ColorShare,
+  type PhotoColorData,
+  photoColors,
+  photoVividness,
+} from "@/lib/photo-colors";
 import {
   type Localized,
   localizeName,
@@ -66,6 +71,8 @@ export interface Photo {
    * first; empty until the pipeline saves its colors.
    */
   palette: ColorShare[];
+  /** How vivid its colors are, its mean CIELAB chroma rounded; null until the pipeline saves its colors. */
+  vividness: number | null;
 }
 
 /** A point of a photo, in percent across from the left and down from the top. */
@@ -618,6 +625,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       ...locationFields(photo),
       ...groupFields(photo),
       palette: photoColors(photo.colors),
+      vividness: photoVividness(photo.colors),
     };
   });
 }

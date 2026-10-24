@@ -37,8 +37,16 @@ export interface ColorShare {
 /** A photo's `colors`, as the pipeline saves it: only the hue buckets and the neutral histogram are read here. */
 export interface PhotoColorData {
   buckets?: { name: string; share: number }[];
+  /** The mean CIELAB chroma of its pixels: 0 for a gray photo, about 50 or more for a very colorful one. */
+  chroma?: number;
   /** The blacks, grays and whites, split into lightness bins from 0 (black) to 100 (white). */
   neutrals?: { histogram?: { from: number; share: number }[] };
+}
+
+/** How vivid a photo's colors are, its mean chroma rounded; null when the photo has no colors saved yet. */
+export function photoVividness(colors: PhotoColorData | null | undefined): number | null {
+  const chroma = colors?.chroma;
+  return chroma === undefined ? null : Math.round(chroma);
 }
 
 /** Each shade's reference color: a gray at the middle of its lightness, and white. */
