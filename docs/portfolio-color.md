@@ -39,6 +39,14 @@ secondary sorts within each group: a color sort groups by each photo's largest c
 **Vividness at least** slider hides the photos less vivid than it, from 0 (every photo, left out of the URL) to 100
 in steps of 5 (`?vivid=20`), and the swatches' counts only count the photos it leaves.
 
+**Grid / Wheel** (`?view=wheel`) switches the photos from the grid to a color wheel (`components/color-wheel.tsx`,
+`lib/color-wheel.ts`), with each photo as a thumbnail pin like the Map page's. A photo sits around the wheel by its
+hue, red at the top and clockwise through orange and yellow: the average of its hue buckets around the wheel, each
+weighted by its share, so a photo half orange and half yellow sits between them (its shades are left out). It sits out
+from the gray middle by its vividness, by the **Average / Peak** measure, with the most vivid photo shown at the edge
+(or 20, if none is more vivid). The swatches, the match and the vividness slider narrow the wheel as they do the grid;
+the sort is hidden, since the wheel places photos itself. Clicking a pin opens the photo viewer.
+
 Under the swatches, how a photo matches the color is picked (`lib/color-match.ts`), and each swatch's
 tooltip says how many photos it shows that way:
 
