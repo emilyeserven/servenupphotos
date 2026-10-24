@@ -4,9 +4,10 @@ import type { Group } from "@/lib/groups";
 import { albumSpots, type ImagePhoto } from "@/lib/spotlight-zones";
 
 /**
- * One album's photos as a strip, in its order, each at its own shape and scrolling sideways when
- * they don't fit, under its name, linked to the album's page, the album it's in, its description
- * and where else on the site it shows. Clicking a photo opens it.
+ * One album's first 5 photos as a strip, in its order, each at its own shape and scrolling
+ * sideways when they don't fit, under its name, linked to the album's page, the album it's in, its
+ * description, how many photos it has and where else on the site it shows. Clicking a photo opens
+ * it; with more than 5, a link at the end opens the album's page.
  */
 export function AlbumStrip({
   album,
@@ -40,13 +41,39 @@ export function AlbumStrip({
         </p>
       </div>
       <ul className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 sm:-mx-6 sm:px-6">
-        {photos.map((photo) => (
+        {previewPhotos(photos).map((photo) => (
           <li key={photo.id} className="shrink-0 snap-start">
             <StripPhoto photo={photo} onOpen={() => onOpen(photo)} />
           </li>
         ))}
+        <SeeAll album={album} count={photos.length} />
       </ul>
     </section>
+  );
+}
+
+/** How many of an album's photos its strip shows. */
+const PREVIEW_COUNT = 5;
+
+/** The photos an album's strip shows: its first 5. */
+export function previewPhotos(photos: ImagePhoto[]): ImagePhoto[] {
+  return photos.slice(0, PREVIEW_COUNT);
+}
+
+/** The link at the end of the strip to the album's page, when it has more photos than it shows. */
+function SeeAll({ album, count }: { album: Group; count: number }) {
+  if (count <= PREVIEW_COUNT) return null;
+  return (
+    <li className="shrink-0 snap-start">
+      <Link
+        to="/albums/$id"
+        params={{ id: album.id }}
+        className="flex h-48 w-40 flex-col items-center justify-center gap-2 rounded-md border text-sm font-medium hover:bg-muted sm:h-64"
+      >
+        <ArrowRight className="size-5" aria-hidden />
+        See all {count} photos
+      </Link>
+    </li>
   );
 }
 

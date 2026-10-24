@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BookImage } from "lucide-react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
-import { AlbumStrip } from "@/components/album-strip";
+import { AlbumStrip, previewPhotos } from "@/components/album-strip";
 import { albums, albumTree } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos } from "@/lib/spotlight-zones";
@@ -19,8 +19,10 @@ const strips = albumTree()
     photos: albumPhotos(album.id),
   }))
   .filter((strip) => strip.photos.length > 0);
-// Every photo in an album once, for the lightbox to step through.
-const allInAlbums = [...new Map(strips.flatMap((s) => s.photos).map((p) => [p.id, p])).values()];
+// Every photo shown in a strip once, for the lightbox to step through.
+const allInAlbums = [
+  ...new Map(strips.flatMap((s) => previewPhotos(s.photos)).map((p) => [p.id, p])).values(),
+];
 
 /**
  * Each album, in the order set on the pipeline, with a strip of its photos and its sub-albums',
@@ -36,7 +38,7 @@ function AlbumsView() {
           Albums
         </h1>
         <p className="mt-2 text-muted-foreground">
-          The photos in each album. Open one to see them full size.
+          A few photos from each album. Open one to see them all, full size.
         </p>
       </header>
       {strips.length === 0 && <p className="text-muted-foreground">No albums have photos yet.</p>}
