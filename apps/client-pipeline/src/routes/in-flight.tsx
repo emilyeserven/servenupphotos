@@ -172,8 +172,8 @@ function InFlightCard() {
 
 /**
  * The photo files that pass the filters, with the ones without a title first so they're easy to
- * find and name, after the Undecided queue, which takes the photos set aside out of the list. With
- * no photos in flight, the drafts already on the base branch instead.
+ * find and name, after the Undecided queue, which takes the photos set aside out of the list, and
+ * then the drafts already on the base branch that aren't in flight.
  */
 function PhotoFiles({
   shown,
@@ -200,6 +200,7 @@ function PhotoFiles({
       {untitledFirst(files.filter((file) => !undecided.has(file.path))).map((file) => (
         <FileSection key={file.path} file={file} images={shown.images} {...props} />
       ))}
+      <SavedDrafts alongside />
     </>
   );
 }
@@ -384,6 +385,7 @@ function FileSection({
   return (
     <section className="@container flex flex-col gap-2">
       <h2 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
+        <EditLink file={file} images={images} />
         <PhotoTitle file={file} />
         <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
         <FileStatus status={file.status} pending={file.pending} />
@@ -438,17 +440,14 @@ function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightIma
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <PhotoImage name={photoName(file)} url={url} checked={images.checked} />
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        {square && (
-          <SquareThumbnailImage
-            key={square}
-            name={photoName(file)}
-            url={square}
-            previewUrl={squarePreviewUrl(file, url)}
-          />
-        )}
-        {canEdit(file, url) && <EditLink path={file.path} />}
-      </div>
+      {square && (
+        <SquareThumbnailImage
+          key={square}
+          name={photoName(file)}
+          url={square}
+          previewUrl={squarePreviewUrl(file, url)}
+        />
+      )}
     </div>
   );
 }
@@ -469,11 +468,15 @@ function canEdit(file: InFlightFile, imageUrl?: string): boolean {
   return Boolean(imageUrl) && !file.error && file.status !== "removed";
 }
 
-/** Opens the photo on the Photo page, to change its Square Thumbnail crop. */
-function EditLink({ path }: { path: string }) {
+/**
+ * Opens the photo on the Photo page, to change its Square Thumbnail crop; nothing when it can't be
+ * opened there.
+ */
+function EditLink({ file, images }: { file: InFlightFile; images: InFlightImages }) {
+  if (!canEdit(file, images.byPath[file.path]?.url)) return null;
   return (
     <Button variant="outline" size="sm" asChild>
-      <Link to="/exif" search={{ edit: path }}>
+      <Link to="/exif" search={{ edit: file.path }}>
         <PencilIcon />
         Edit
       </Link>

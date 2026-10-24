@@ -31,7 +31,7 @@ list, the Undecided queue and the drafts on the base branch, reading each photo'
 [local edits](combined-data-store.md#local-edits) made. With any chosen, it says how many photos are shown, with
 **Clear filters**. A photo whose JSON couldn't be read is hidden while a filter is chosen. They're kept in the URL
 (such as `?title=without&place=with`), so a reload or a shared link keeps them. Album, tag and other files below the
-photos aren't filtered.
+photos aren't filtered. The [Gallery](gallery.md) has the same filters.
 
 > **Frontend analogy:** it's the faceted filter on a shop's product list, where each facet is a three-way toggle
 > stored in the query string.
@@ -51,9 +51,10 @@ other untitled photo.
 
 ### Drafts on the base branch
 
-With no photos in flight, the page lists the [drafts](drafts.md) already on the base branch instead (read with the
-Gallery's `GET /api/photos/published`): the Undecided ones in the **Undecided** panel and the rest under **Drafts on
-`<branch>`**, each with **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
+After the photos in flight (or alone, when none are), the page lists the [drafts](drafts.md) already on the base
+branch that the pull request doesn't change (read with the
+Gallery's `GET /api/photos/published`): the Undecided ones in the **Undecided** panel (**Undecided on `<branch>`** when photos are in flight too, to tell it apart from theirs) and
+the rest under **Drafts on `<branch>`**, each with **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
 back**. Naming one and saving it puts it back in flight, and Commit sends it to a new pull request. Nothing is listed
 when untitled photos aren't kept as drafts.
 
@@ -66,7 +67,7 @@ removal doesn't change `ALLPHOTOS.json` until Commit; see
 the combined files have every change, with a **Commit** button when they don't, and each file they don't have yet is
 marked "Not synced to ALLPHOTOS.json yet".
 
-Each photo whose JSON was read and whose image is in R2 has an **Edit** button, which opens it on the Photo page in
+Each photo whose JSON was read and whose image is in R2 has an **Edit** button at the left of its heading, before its title, which opens it on the Photo page in
 edit mode (`/exif?edit=<path>`) to change the square its Square Thumbnail is cut from, or to
 [replace its image](replace-image.md) with a re-edit. The crop editor starts from the
 crop saved with the thumbnail in R2 (`GET /api/photos/bucket/thumbnail-crop?key=…`, else the JSON's

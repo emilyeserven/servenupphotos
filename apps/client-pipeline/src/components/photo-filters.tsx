@@ -23,11 +23,11 @@ interface FilteredFile {
 }
 
 /**
- * The filters chosen on the Photos in Flight page, kept in the URL so a reload keeps them, and the
- * files that pass them with the local edits made.
+ * The filters chosen on the page (Photos in Flight or the Gallery), kept in the URL so a reload
+ * keeps them, and the files that pass them with the local edits made.
  */
 export function usePhotoFilters() {
-  const filters = useSearch({ from: "/in-flight", select: parseFilters });
+  const filters = useSearch({ strict: false, select: parseFilters });
   const edits = useLocalEditsStore((s) => s.edits);
   return {
     filters,
@@ -38,10 +38,12 @@ export function usePhotoFilters() {
 
 /** Sets one filter, or clears it with undefined, or every filter with null. */
 function useSetFilter() {
-  const navigate = useNavigate({ from: "/in-flight" });
+  const navigate = useNavigate();
   return (key: FilterKey | null, choice?: FilterChoice) =>
     void navigate({
-      search: (prev) => (key ? { ...prev, [key]: choice } : withoutFilters(prev)),
+      to: ".",
+      search: (prev: Record<string, unknown>) =>
+        key ? { ...prev, [key]: choice } : withoutFilters(prev),
       replace: true,
     });
 }

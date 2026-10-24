@@ -32,6 +32,11 @@ interface PhotoGridProps {
   onToggle: (path: string) => void;
 }
 
+/** What the photos were filtered by, when none match: the search text, or else the filters. */
+function noMatch(filter: string): string {
+  return filter.trim() ? `“${filter.trim()}”` : "the filters";
+}
+
 /** The photos shown, as Square Thumbnail tiles with their names, albums, tags and Edit buttons. */
 export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGridProps) {
   if (data.files.length === 0) {
@@ -42,7 +47,7 @@ export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGri
     );
   }
   if (shown.length === 0) {
-    return <p className="text-muted-foreground text-sm">No photos match “{filter.trim()}”.</p>;
+    return <p className="text-muted-foreground text-sm">No photos match {noMatch(filter)}.</p>;
   }
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] sm:gap-4">
