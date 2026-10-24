@@ -59,7 +59,7 @@ function useClearFilters(ownKeys: readonly string[]) {
 }
 
 /** A view's own filters, shown after the shared ones, such as the Table's camera and settings. */
-interface OwnFilters {
+export interface OwnFilters {
   /** Their keys in the URL, which **Clear filters** clears too. */
   keys: readonly string[];
   /** How many are set, added to the button's count. */

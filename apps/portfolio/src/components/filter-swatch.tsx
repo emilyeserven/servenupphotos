@@ -3,10 +3,9 @@ import { X } from "lucide-react";
 import type { ColorName } from "@/lib/photo-colors";
 import { cn } from "@/lib/utils";
 
-/** What a swatch on the Color page sets in the URL: a color, or a gray step of the Black & white view. */
+/** What a swatch sets in the URL: a color, or none to clear it. */
 interface SwatchSearch {
   color?: ColorName;
-  shade?: number;
 }
 
 const SWATCH_CLASS =
@@ -16,8 +15,7 @@ const SWATCH_CLASS =
 export function AllSwatch({ active, clear }: { active: boolean; clear: SwatchSearch }) {
   return (
     <Link
-      from="/color"
-      to="/color"
+      to="."
       search={(prev) => ({ ...prev, ...clear, photo: undefined })}
       replace
       aria-pressed={active}
@@ -60,8 +58,7 @@ export function FilterSwatch({
   if (count === 0 && !active) return <UnavailableSwatch title={title}>{dot}</UnavailableSwatch>;
   return (
     <Link
-      from="/color"
-      to="/color"
+      to="."
       search={(prev) => ({ ...prev, ...(active ? clear : pick), photo: undefined })}
       replace
       aria-pressed={active}

@@ -1,7 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Grid3x3, LayoutDashboard, Square } from "lucide-react";
 import { type CSSProperties, type ImgHTMLAttributes, useState } from "react";
-import { type GridSort, GridSortSelect } from "@/components/grid-sort-select";
+import { ColorBar } from "@/components/color-bar";
+import { ColorOrderControls } from "@/components/color-order-controls";
+import { GridColorFilters } from "@/components/grid-color-filters";
+import { GridSortSelect } from "@/components/grid-sort-select";
 import { PhotoComment } from "@/components/photo-comment";
 import { CameraFilterBar } from "@/components/camera-filters";
 import { NoMatchingPhotos } from "@/components/photo-filters";
@@ -10,6 +13,17 @@ import { ViewPlaceholder } from "@/components/view-placeholder";
 import { PhotoLocation } from "@/components/photo-location";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
+import {
+  COLOR_FILTER_KEYS,
+  colorFilterCount,
+  type ColorFilters,
+  type ColorOrderSearch,
+  filterByColors,
+  parseColorFilters,
+  parseColorOrder,
+} from "@/lib/color-search";
+import type { ColorSort } from "@/lib/color-sort";
+import { type GridColorSpec, type GridSort, sortGrid } from "@/lib/grid-sort";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
@@ -21,13 +35,16 @@ import { cn } from "@/lib/utils";
  */
 type ViewMode = "square" | "natural";
 
-interface GridSearch {
+interface GridSearch extends ColorFilters, ColorOrderSearch {
   /** Left out for the default, square tiles. */
   view?: "natural";
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
   info?: true;
-  /** Set when the oldest photo comes first. Left out for the default, newest first. */
-  sort?: "oldest";
+  /**
+   * Set when the oldest photo comes first, or to sort by color or vividness. Left out for the
+   * default, newest first.
+   */
+  sort?: Exclude<GridSort, "newest">;
 }
 
 /**
@@ -38,15 +55,25 @@ function validateGridSearch(
   search: Record<string, unknown>,
 ): GridSearch & PhotoFilters & CameraFilters & ShownPhotoSearch {
   const view: GridSearch = search.view === "natural" ? { view: "natural" } : {};
-  const sort: GridSearch = search.sort === "oldest" ? { sort: "oldest" } : {};
   return {
     ...view,
     ...infoOf(search),
-    ...sort,
+    ...sortOf(search),
+    ...parseColorFilters(search),
     ...parseFilters(search),
     ...parseCameraFilters(search),
     ...parseShownPhoto(search),
   };
+}
+
+/** The sorts the URL can ask for, besides newest first. */
+const URL_SORTS: readonly string[] = ["oldest", "color", "vivid"];
+
+/** The sort from the URL, with the color sorts' order and secondary sort when it's one of them. */
+function sortOf(search: Record<string, unknown>): GridSearch {
+  if (!URL_SORTS.includes(search.sort as string)) return {};
+  const sort = search.sort as Exclude<GridSort, "newest">;
+  return sort === "oldest" ? { sort } : { sort, ...parseColorOrder(sort, search) };
 }
 
 /** The info setting from the URL, which reads `info=true` and older `info=1` links alike. */
@@ -67,11 +94,17 @@ const newestFirst = photos
   .filter((photo): photo is ImagePhoto => photo.image !== null)
   .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 
-/** The grid's photos in each sort order, worked out once. */
-const SORTED: Record<GridSort, ImagePhoto[]> = {
-  newest: newestFirst,
-  oldest: newestFirst.toReversed(),
-};
+/** How the URL asks for the color or vividness sort to run, with each default filled in. */
+function colorSpec(search: GridSearch): GridColorSpec {
+  const { order = "asc", secondary, secondaryOrder = "asc", measure = "average", color } = search;
+  return { order, secondary, secondaryOrder, measure, color };
+}
+
+/** The grid's photos: what every filter leaves, in the URL's sort. */
+function gridPhotosFor(search: GridSearch & Record<string, unknown>, sort: GridSort): ImagePhoto[] {
+  const filtered = filterByColors(filterWithCamera(newestFirst, search), search);
+  return sortGrid(filtered, sort, colorSpec(search));
+}
 
 // How wide a tile is at each breakpoint, matching the grid's columns, so the browser picks the
 // smallest version that's still sharp.
@@ -85,7 +118,7 @@ function GridView() {
   const showInfo = search.info === true;
   const sort: GridSort = search.sort ?? "newest";
   if (newestFirst.length === 0) return <ViewPlaceholder to="/grid" />;
-  const gridPhotos = filterWithCamera(SORTED[sort], search);
+  const gridPhotos = gridPhotosFor(search, sort);
 
   return (
     // The tiles use the whole window, less a little padding, so wider screens fit more photos; the
@@ -99,11 +132,21 @@ function GridView() {
         <p className="text-sm text-muted-foreground">{gridPhotos.length} photos</p>
         <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 self-center">
           <GridSortSelect sort={sort} />
+          <ColorOrder sort={sort} search={search} />
           <InfoToggle shown={showInfo} />
           <ViewModeSwitcher mode={mode} />
         </div>
         <div className="mt-3 w-full">
-          <CameraFilterBar photos={newestFirst} />
+          <CameraFilterBar
+            photos={newestFirst}
+            extra={{
+              keys: COLOR_FILTER_KEYS,
+              count: colorFilterCount(search),
+              children: (
+                <GridColorFilters photos={filterWithCamera(newestFirst, search)} filters={search} />
+              ),
+            }}
+          />
         </div>
       </header>
       <NoMatchingPhotos
@@ -121,6 +164,20 @@ function GridView() {
       </ul>
       <PhotoLightbox photo={shown} photos={gridPhotos} onShow={show} onClose={close} />
     </div>
+  );
+}
+
+/** The color or vividness sort's order and secondary sort, shown while the Grid is sorted by one. */
+function ColorOrder({ sort, search }: { sort: GridSort; search: GridSearch }) {
+  if (sort !== "color" && sort !== "vivid") return null;
+  const { order, secondary, secondaryOrder } = colorSpec(search);
+  return (
+    <ColorOrderControls
+      sort={sort satisfies ColorSort}
+      order={order}
+      secondary={secondary}
+      secondaryOrder={secondaryOrder}
+    />
   );
 }
 
@@ -305,6 +362,7 @@ function TileCaption({ photo }: { photo: ImagePhoto }) {
           className="w-fit max-w-full truncate text-xs text-muted-foreground"
         />
       )}
+      {photo.palette.length > 0 && <ColorBar palette={photo.palette} />}
       {/* The rest of its details are in the lightbox. */}
       {photo.comment && (
         <PhotoComment comment={photo.comment} className="text-xs text-muted-foreground" />

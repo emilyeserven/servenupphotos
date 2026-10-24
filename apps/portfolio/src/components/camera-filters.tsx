@@ -1,6 +1,11 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Aperture, Camera } from "lucide-react";
-import { FilterSelect, PhotoFilterBar, selectedValue } from "@/components/photo-filters";
+import {
+  FilterSelect,
+  type OwnFilters,
+  PhotoFilterBar,
+  selectedValue,
+} from "@/components/photo-filters";
 import { RangeFilter } from "@/components/range-filter";
 import type { RangePreset } from "@/components/range-presets";
 import { equipmentOptions } from "@/lib/filter-options";
@@ -151,11 +156,20 @@ function EquipmentSelect({
   );
 }
 
+const NO_EXTRA: OwnFilters = { keys: [], count: 0, children: null };
+
 /**
  * The filter bar of the Table and Grid: the shared filters every view has, then the camera
- * filters, all in one **Show filters** panel, so both views always offer the same ones.
+ * filters, all in one **Show filters** panel, so both views always offer the same ones. `extra`
+ * are a view's own filters after those, such as the Grid's **Colors**.
  */
-export function CameraFilterBar({ photos }: { photos: Photo[] }) {
+export function CameraFilterBar({
+  photos,
+  extra = NO_EXTRA,
+}: {
+  photos: Photo[];
+  extra?: OwnFilters;
+}) {
   const search = useSearch({ strict: false });
   const own = parseCameraFilters(search);
   return (
@@ -163,10 +177,16 @@ export function CameraFilterBar({ photos }: { photos: Photo[] }) {
       photos={photos}
       facet={filterByCamera(photos, own)}
       own={{
-        keys: CAMERA_FILTER_KEYS,
-        count: Object.keys(own).length,
+        keys: [...CAMERA_FILTER_KEYS, ...extra.keys],
+        count: Object.keys(own).length + extra.count,
         children: (
-          <CameraFilterControls photos={filterPhotos(photos, parseFilters(search))} filters={own} />
+          <>
+            <CameraFilterControls
+              photos={filterPhotos(photos, parseFilters(search))}
+              filters={own}
+            />
+            {extra.children}
+          </>
         ),
       }}
     />

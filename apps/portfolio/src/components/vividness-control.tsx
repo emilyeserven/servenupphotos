@@ -27,8 +27,7 @@ export function VividnessControl({ vivid, measure }: { vivid: number; measure: V
         {MEASURES.map((option) => (
           <Link
             key={option.measure}
-            from="/color"
-            to="/color"
+            to="."
             search={(prev) => ({
               ...prev,
               measure: option.measure === "peak" ? option.measure : undefined,
@@ -50,7 +49,7 @@ export function VividnessControl({ vivid, measure }: { vivid: number; measure: V
 
 /** The slider for the least vividness a photo needs to show. */
 function VividnessSlider({ vivid }: { vivid: number }) {
-  const navigate = useNavigate({ from: "/color" });
+  const navigate = useNavigate();
   return (
     <SearchSlider
       id="vividness-threshold"
@@ -65,7 +64,8 @@ function VividnessSlider({ vivid }: { vivid: number }) {
       onCommit={(next) => {
         const value = next === 0 ? undefined : next;
         void navigate({
-          search: (prev) => ({ ...prev, vivid: value, photo: undefined }),
+          to: ".",
+          search: (prev: Record<string, unknown>) => ({ ...prev, vivid: value, photo: undefined }),
           replace: true,
         });
       }}

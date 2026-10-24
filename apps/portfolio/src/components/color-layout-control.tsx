@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { CircleDot, Contrast, LayoutGrid } from "lucide-react";
+import { CircleDot, Contrast } from "lucide-react";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 
-/** How the Color page shows its photos: on the color wheel (left out of the URL), the black-to-white spectrum, or a grid. */
-export type ColorLayout = "wheel" | "mono" | "grid";
+/** How the Color page shows its photos: on the color wheel (left out of the URL), or the black-to-white spectrum. */
+export type ColorLayout = "wheel" | "mono";
 
 const LAYOUTS = [
   {
@@ -19,13 +19,12 @@ const LAYOUTS = [
     title: "The black and white photos along a spectrum from black to white",
     Icon: Contrast,
   },
-  { layout: "grid", label: "Grid", title: "Every photo in a grid, sorted", Icon: LayoutGrid },
 ] as const;
 
 /**
- * Whether the Color page shows its photos on a color wheel (the default), black and white ones
- * along a spectrum from black to white, or every photo in a grid, kept in the URL as
- * `?view=mono` or `?view=grid` so a link keeps it.
+ * Whether the Color page shows its color photos on a color wheel (the default) or its black and
+ * white ones along a spectrum from black to white, kept in the URL as `?view=mono` so a link
+ * keeps it. The Grid page lists photos by color with its **Colors** filter and color sorts.
  */
 export function ColorLayoutControl({ layout }: { layout: ColorLayout }) {
   return (
@@ -50,6 +49,6 @@ export function ColorLayoutControl({ layout }: { layout: ColorLayout }) {
 }
 
 /** The `?view=` for a layout, left out for the wheel. */
-function viewParam(layout: ColorLayout): Exclude<ColorLayout, "wheel"> | undefined {
+function viewParam(layout: ColorLayout): "mono" | undefined {
   return layout === "wheel" ? undefined : layout;
 }
