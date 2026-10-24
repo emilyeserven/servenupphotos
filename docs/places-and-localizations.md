@@ -92,7 +92,8 @@ the warning says how many photos; giving the place, or a place it's in, a positi
 
 An old free-text place name (`placeName`) written on two or more photos, ignoring case, that isn't a place's name or
 ID yet is an **inferred place**. The Places page lists them under the table, each with **Save as a place**, and the
-Photo page's place combobox offers them after the saved places ("Inferred from 3 photos"). Choosing one saves it as a
+Photo page's place combobox offers them after the saved places ("Inferred from 3 photos") while it lists every
+place. Choosing one saves it as a
 place (its ID made from its name, as for any new place) and then chooses it. Nothing is saved until one is chosen.
 
 > **Frontend analogy:** like a tag input that suggests tags other posts already use, before they're in the tag list.
@@ -143,6 +144,22 @@ Gyeongbokgung Palace. Typing a name that isn't a place offers **Add “…” as
 kept in the file but not used, so older photos need no change. With two
 places, **Swap places** swaps which place is first and which second, leaving each relation where it was: “In
 Gyeongbokgung Palace by Geunjeongmun Gate” becomes “In Geunjeongmun Gate by Gyeongbokgung Palace”.
+
+### Places listed by city or country
+
+When the photo has a city (its custom **City**, or else its EXIF one), the place comboboxes list only the places in
+that city; with no city but a country, only the places in that country. A place is in a city or country when it has
+it, or the nearest place it's in has it, and names compare by their [other names](#other-names) ignoring case, so a
+place in “USA” is listed for a photo in “United States” once “USA” is one of its other names. Places with no city or country, and inferred places, aren't
+listed. The place a row has chosen always stays in its list. A line above the rows says “Listing places in Seoul.”
+with **Show all places**, which lists every place until **Only matching places**; it's not saved. Choosing a place
+with a city fills in the photo's city, so the second row lists that city's places. A photo with neither lists every
+place. When the second (less specific) place is chosen, the first
+row lists only the places in it, at any depth, such as Geunjeongjeon and Geunjeongmun Gate for Gyeongbokgung Palace,
+and the line adds “places in Gyeongbokgung Palace for the first place”. **Show all places** lifts both.
+
+> **Frontend analogy:** like a cascading select, where picking a state narrows the city dropdown, with an escape
+> hatch to search everything.
 
 ### Place hierarchy and city
 
