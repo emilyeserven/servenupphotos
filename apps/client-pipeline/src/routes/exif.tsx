@@ -354,6 +354,16 @@ interface ResultsColumnProps {
 }
 
 /** The analyzed photo's title, place name, comment, albums, tags and lens unless it's already in ALLPHOTOS.json, then its results. */
+/** Where the uploaded photo's EXIF says it was taken, for the Location card. */
+function exifPlaceOf(sanitized: SanitizedExif): ExifPlace {
+  return {
+    city: sanitized.city,
+    state: sanitized.state ?? null,
+    country: sanitized.country,
+    gpsPosition: sanitized.gpsPosition,
+  };
+}
+
 function ResultsColumn({
   extract,
   sanitized,
@@ -375,11 +385,7 @@ function ResultsColumn({
         key={`details-${extract.submittedAt}`}
         identity={identity}
         file={extract.data.file}
-        exifPlace={{
-          city: sanitized.city,
-          country: sanitized.country,
-          gpsPosition: sanitized.gpsPosition,
-        }}
+        exifPlace={exifPlaceOf(sanitized)}
         details={details}
         onDetailsChange={onDetailsChange}
         saved={saved}

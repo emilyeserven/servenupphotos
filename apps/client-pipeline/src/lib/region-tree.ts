@@ -1,10 +1,17 @@
 import type { Place } from "@/api/places";
 import { type LocationNames, winningName } from "@/lib/location-names";
-import { type CityRow, type CountryRow, cityOfPlace, regionKey } from "@/lib/place-cities";
+import {
+  type CityRow,
+  type CountryRow,
+  type StateRow,
+  cityOfPlace,
+  regionKey,
+  stateOfPlace,
+} from "@/lib/place-cities";
 import { placeChain } from "@/lib/place-tree";
 
 /** What a row of the Places list is: a country, a city in it, or a place in a city or another place. */
-export type RegionKind = "country" | "city" | "place";
+export type RegionKind = "country" | "state" | "city" | "place";
 
 /** One country, city or place in the Places list, before it's placed in the tree. */
 export interface RegionNode {
@@ -16,8 +23,8 @@ export interface RegionNode {
   parentKey: string;
   /** How many photos show it. */
   photos: number;
-  /** The city or country row it's made from; missing for a place. */
-  region?: CityRow | CountryRow;
+  /** The city, state or country row it's made from; missing for a place. */
+  region?: CityRow | StateRow | CountryRow;
   /** The place it's made from; missing for a city or country. */
   place?: Place;
 }
@@ -29,8 +36,8 @@ export interface RegionTreeRow {
   hasChildren: boolean;
 }
 
-/** The key of the country or city with this name, or "" when the name is empty. */
-function regionNodeKey(kind: "country" | "city", name: string | undefined): string {
+/** The key of the country, state or city with this name, or "" when the name is empty. */
+function regionNodeKey(kind: "country" | "state" | "city", name: string | undefined): string {
   const key = regionKey(name);
   return key ? `${kind}:${key}` : "";
 }
@@ -47,33 +54,41 @@ function countryOfPlace(place: Place, places: Place[]): string {
 }
 
 /**
- * What a place is listed under: the place it's in, or else its city, or else its country, each
- * written as the name that wins over it.
+ * What a place is listed under: the place it's in, or else its city, or else its state, or else its
+ * country, each written as the name that wins over it.
  */
 function placeParentKey(place: Place, input: RegionTreeInput, ids: Set<string>): string {
-  const { places, names } = input;
   const parent = place.parent ?? "";
   if (ids.has(parent)) return placeNodeKey(parent);
+  return placeRegionKey(place, input);
+}
+
+/** The key of the city, state or country a place is in, when it's in no listed place. */
+function placeRegionKey(place: Place, { places, names }: RegionTreeInput): string {
+  const region = (kind: "city" | "state" | "country", name: string) =>
+    regionNodeKey(kind, winningName(names, kind, name));
   return (
-    regionNodeKey("city", winningName(names, "city", cityOfPlace(place, places))) ||
-    regionNodeKey("country", winningName(names, "country", countryOfPlace(place, places)))
+    region("city", cityOfPlace(place, places)) ||
+    region("state", stateOfPlace(place, places)) ||
+    region("country", countryOfPlace(place, places))
   );
 }
 
 /** The parts of the list the tree is made from. */
 export interface RegionTreeInput {
   countries: CountryRow[];
+  states: StateRow[];
   cities: CityRow[];
   places: Place[];
   /** How many photos list each place, by ID. */
   placePhotos: ReadonlyMap<string, number>;
-  /** The names that win over other names of a country or city, which the rows are counted as. */
+  /** The names that win over other names of a country, state or city, which the rows are counted as. */
   names: LocationNames;
 }
 
 /** Every country, city and place as a node, each with what it's listed under. */
 export function regionNodes(input: RegionTreeInput) {
-  const { countries, cities, places, placePhotos } = input;
+  const { countries, states, cities, places, placePhotos } = input;
   const ids = new Set(places.map((place) => place.id));
   const nodes: RegionNode[] = [
     ...countries.map((country) => ({
@@ -84,11 +99,19 @@ export function regionNodes(input: RegionTreeInput) {
       photos: country.photos,
       region: country,
     })),
+    ...states.map((state) => ({
+      key: regionNodeKey("state", state.name),
+      kind: "state" as const,
+      name: state.name,
+      parentKey: regionNodeKey("country", state.country),
+      photos: state.photos,
+      region: state,
+    })),
     ...cities.map((city) => ({
       key: regionNodeKey("city", city.name),
       kind: "city" as const,
       name: city.name,
-      parentKey: regionNodeKey("country", city.country),
+      parentKey: regionNodeKey("state", city.state) || regionNodeKey("country", city.country),
       photos: city.photos,
       region: city,
     })),
@@ -104,7 +127,7 @@ export function regionNodes(input: RegionTreeInput) {
   return nodes;
 }
 
-const KIND_ORDER: Record<RegionKind, number> = { country: 0, city: 1, place: 2 };
+const KIND_ORDER: Record<RegionKind, number> = { country: 0, state: 1, city: 2, place: 3 };
 
 /** Countries, then cities, then places, each by name. */
 function byKindThenName(a: RegionNode, b: RegionNode): number {

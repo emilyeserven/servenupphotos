@@ -42,8 +42,10 @@ function childOf(node: LocationNode, key: LocationKey, value: string): LocationN
 /** The country and city of the photo, then each of its places from the least specific down. */
 function locationPaths(photo: Photo): [LocationKey, string][][] {
   const top: [LocationKey, string][] = [];
-  if (photo.country) top.push(["country", photo.country]);
-  if (photo.city) top.push(["city", photo.city]);
+  const add = (key: LocationKey, value: string | null) => value && top.push([key, value]);
+  add("country", photo.country);
+  add("state", photo.state);
+  add("city", photo.city);
   const chains = photo.placeIds.map((id) =>
     placeAncestry(id)
       .toReversed()
@@ -52,7 +54,7 @@ function locationPaths(photo: Photo): [LocationKey, string][][] {
   return chains.length > 0 ? chains.map((chain) => [...top, ...chain]) : [top];
 }
 
-/** Every country, city and place the photos have, as a tree. */
+/** Every country, state, city and place the photos have, as a tree. */
 function locationTree(list: Photo[]): LocationNode {
   const root: LocationNode = { key: "country", value: "", children: new Map() };
   for (const path of list.flatMap(locationPaths)) {
@@ -111,8 +113,8 @@ function childOptions(node: LocationNode, facet: Photo[], path = ""): LocationOp
 }
 
 /**
- * The Places filter's choices: every country the photos were taken in, the cities in each and
- * the places in each city, each place under the place it's in. `facet` is the photos the other
+ * The Places filter's choices: every country the photos were taken in, the states in each, the
+ * cities in each and the places in each city, each place under the place it's in. `facet` is the photos the other
  * filters leave, which the counts are out of.
  */
 export function locationOptions(list: Photo[], facet: Photo[]): LocationOption[] {

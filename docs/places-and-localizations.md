@@ -101,7 +101,7 @@ place (its ID made from its name, as for any new place) and then chooses it. Not
 ## A photo's places
 
 On the Photo page and in Edit Photo, the title and comment are in one card and the photo's location in another:
-**Place**, then **City and country**. Under the **Place** title, a line says where the photo goes on the portfolio's
+**Place**, then **City, state and country**. Under the **Place** title, a line says where the photo goes on the portfolio's
 map: a checkmark with its custom GPS position when one is written (see below), or else with the GPS position when its
 EXIF has one; else the place whose fallback GPS position it uses (its
 first place with one, or a place that place is in), with that position; else a warning that it isn't on the map.
@@ -173,12 +173,17 @@ Choosing a place on Edit Photo or the Photo page follows the places' parents:
 - **Offering a parent.** When two places are chosen and neither is in the other, it asks “Is Gwanghwamun Square in
   Gyeongbokgung Palace?” with **Put it in Gyeongbokgung Palace**, which saves the first place with the second as its
   parent. It isn't offered when the first place already has a parent.
-- **City and country.** Choosing a place fills in the photo's custom city and country from the least specific chosen
-  place (the one the other is in, or else the second), or else a place it's in, or else the other chosen place: the
-  first of them with a city or country. They can still be changed by hand afterwards: the **City** and **Country**
-  boxes are comboboxes of the cities and countries on the Places page's tabs (inferred ones marked “Inferred from 3
-  photos”), or a new one typed in. Choosing a city whose country is known fills in the custom country when it's
-  empty and the EXIF country is different. Clearing either goes back to the EXIF one.
+- **City, state and country.** Choosing a place fills in the photo's custom city and country from the least specific
+  chosen place (the one the other is in, or else the second), or else a place it's in, or else the other chosen place:
+  the first of them with a city or country. They can still be changed by hand afterwards: the **City**, **State** and
+  **Country** boxes are comboboxes of the cities, states and countries on the Places page (inferred ones marked
+  “Inferred from 3 photos”), or a new one typed in. Choosing a city whose country is known fills in the custom country
+  when it's empty and the EXIF country is different. Clearing one goes back to the EXIF one.
+- **State, province or prefecture.** Between the city and the country, a **State** holds a state, province, prefecture
+  or other region. It's its own custom field (`customState`, over the EXIF's `state`, read from the EXIF's `State` or
+  `Province-State`) on the Photo page, its own field on a place, its own tab on the Localizations page, and its own
+  level in the Places list and the portfolio's **Places** filter, nested between the country and the city. It's
+  optional throughout: a photo or place with no state lists its city straight under its country, as before.
 - **Localizing.** A chosen place with no localization yet gets a button beside it that opens a dialog for its
   romanization, local pronunciation and local script, saved like a row on the Localizations page. It isn't shown
   when the place's country, or else the photo's, is the United States (“United States”, “United States of America”,
@@ -205,7 +210,7 @@ adds it to older ones.
 
 ## Localizations
 
-A localization notes how a country, city or place is written and said where it is: its **romanization**, its **local
+A localization notes how a country, state, city or place is written and said where it is: its **romanization**, its **local
 pronunciation** (such as furigana) and its **local script** (such as hangeul, or kanji and kana). Each is one file,
 `localizations/<id>.json`, combined into `localizations/LOCALIZATIONS.json`:
 
@@ -221,8 +226,8 @@ pronunciation** (such as furigana) and its **local script** (such as hangeul, or
 ```
 
 The ID is the type and the name as an ID (`country-south-korea`, `city-seoul`), or for a place, `place-` and the
-place's ID. The Localizations page has a tab each for countries, cities and places. Countries and cities come from
-`ALLPHOTOS.json` (at the pull request's head, with saves not committed yet, from the
+place's ID. The Localizations page has a tab each for countries, states, cities and places. Countries, states and cities come
+from `ALLPHOTOS.json` (at the pull request's head, with saves not committed yet, from the
 [combined data store](combined-data-store.md)): each photo's custom country and city, or else its EXIF ones, with how
 many photos show each. Places come from the place files. Rows not saved yet say so; each row's **Save**
 (`PUT /api/localizations/<id>` → `PUT /localizations/{id}`) keeps its file waiting for Commit, and **Save all**,
@@ -231,12 +236,13 @@ tabs.
 
 ### Other names
 
-A country or city can have **other names**: other ways the photos and places write it, such as `"United States"` and
+A country, state or city can have **other names**: other ways the photos and places write it, such as `"United States"` and
 `"USA"` for `"United States of America"`. Its name wins over them. They're kept on its localization, as
 `"otherNames": ["United States", "USA"]` (left out when there are none), and matched ignoring case and spaces at the
 ends. Saving refuses another name that's already one of another country's (or city's), a name with other names of its
 own as another name, and other names for a name that's already another one's other name, so a name never wins over
-a name that wins over others. A place has no other names.
+a name that wins over others. Other names are per type, so a state and a city can share a name without clashing. A
+place has no other names.
 
 On the Places page, a country's or city's panel has **Other names** above its localization: pick another country (or
 city) from the list, or type one. **Save changes** saves them with the localization. The list then counts each other
@@ -247,7 +253,8 @@ names when saving its row.
 
 The names are rewritten in the files, not only shown: **Update Data → Location names**
 (`POST /api/data/location-names/preview`, then `POST /api/data/location-names`) lists every photo file whose `country`,
-`city`, `customCountry` or `customCity`, and every place file whose `country` or `city`, is another name, then saves
+`state`, `city`, `customCountry`, `customState` or `customCity`, and every place file whose `country`, `state` or
+`city`, is another name, then saves
 them written as the name that wins, as [changes waiting for Commit](pending-changes.md). Only those fields change, and
 nothing is saved while any photo or place file can't be read. A new photo's EXIF country and city get the winning
 names when it's read (with the [camera overrides](camera-overrides.md), after them). Removing another name doesn't

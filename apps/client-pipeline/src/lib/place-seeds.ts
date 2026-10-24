@@ -25,8 +25,10 @@ function text(value: unknown): string {
 }
 
 /** The city or country a photo shows: the custom one written on the Photo page, or else its EXIF one. */
-export function shownField(photo: CombinedPhoto, field: "city" | "country"): string {
-  const custom = field === "city" ? photo.customCity : photo.customCountry;
+export function shownField(photo: CombinedPhoto, field: "city" | "state" | "country"): string {
+  const custom = { city: photo.customCity, state: photo.customState, country: photo.customCountry }[
+    field
+  ];
   return text(custom) || text(photo[field]);
 }
 
@@ -63,8 +65,10 @@ class RowSet {
 function addPhotos(set: RowSet, photos: CombinedPhoto[]) {
   for (const photo of photos) {
     const country = shownField(photo, "country");
+    const state = shownField(photo, "state");
     set.addPhoto("country", country);
-    set.addPhoto("city", shownField(photo, "city"), country);
+    set.addPhoto("state", state, country);
+    set.addPhoto("city", shownField(photo, "city"), state || country);
   }
 }
 

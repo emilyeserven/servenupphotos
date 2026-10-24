@@ -98,7 +98,7 @@ const added = {
       "gyeongbokgung-palace",
       "Gyeongbokgung Palace",
       "The main royal palace of the Joseon dynasty.",
-      { city: "Seoul", country: "South Korea" },
+      { city: "Seoul", state: "Seoul", country: "South Korea" },
     ),
     placeFile("geunjeongmun-gate", "Geunjeongmun Gate", "", { parent: "gyeongbokgung-palace" }),
     placeFile("gwanghwamun-square", "Gwanghwamun Square", ""),
@@ -178,10 +178,15 @@ function metaGroupFile(id, name, field, { parent = "", order = 0, values = [], r
   };
 }
 
-function placeFile(id, name, description, { parent = "", city = "", country = "" } = {}) {
+function placeFile(
+  id,
+  name,
+  description,
+  { parent = "", city = "", state = "", country = "" } = {},
+) {
   return {
     path: `${FOLDER}/places/${id}.json`,
-    data: { id, name, description, parent, city, country },
+    data: { id, name, description, parent, city, state, country },
   };
 }
 

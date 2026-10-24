@@ -19,7 +19,7 @@ import (
 // ones Sanitize reads from EXIF, except the photo's size, and manualAperture.
 var OverrideFields = []string{
 	"camera", "lens", "aperture", "manualAperture", "exposure", "iso", "focalLength", "gpsPosition", "createDate",
-	"country", "city",
+	"country", "state", "city",
 }
 
 // exifOriginalsField is the photo JSON field that keeps the EXIF values of

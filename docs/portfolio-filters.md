@@ -15,9 +15,9 @@ columns, stay with that view).
 
 ## Places
 
-A button that opens a searchable tree: each country the photos were taken in, the cities in it, and the places in each
+A button that opens a searchable tree: each country the photos were taken in, the states in it, the cities in each, and the places in each
 city, each place under the place it's in (see [Places](places-and-localizations.md#places)), each with a checkbox and
-how many photos it would show. The chevron beside a country, city or place with others in it expands or collapses it,
+how many photos it would show. The chevron beside a country, state, city or place with others in it expands or collapses it,
 and **Expand all** and **Collapse all** do every one at once; a search shows every match with what it's in, expanded.
 The tree starts with whatever's around the chosen ones expanded. Names are written the way the menu's **Script display**
 says, and a search matches them that way or in English. The button shows the one chosen name, or how many are chosen.

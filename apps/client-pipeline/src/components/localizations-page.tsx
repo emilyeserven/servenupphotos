@@ -30,13 +30,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { type LocalizationRow, localizationRows, shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
 
-/** The Localizations page: how each country, city and place is written and said where it is. */
+/** The Localizations page: how each country, state, city and place is written and said where it is. */
 export function LocalizationsPage() {
   return (
     <Page
       wide
       title="Localizations"
-      description="How each country, city and place is written and said where it is: its romanization, its local pronunciation (such as furigana) and its local script (such as hangeul or kanji). Countries and cities come from ALLPHOTOS.json, and places from the Places page. Each one is its own JSON file, combined into LOCALIZATIONS.json."
+      description="How each country, state, city and place is written and said where it is: its romanization, its local pronunciation (such as furigana) and its local script (such as hangeul or kanji). Countries, states and cities come from ALLPHOTOS.json, and places from the Places page. Each one is its own JSON file, combined into LOCALIZATIONS.json."
     >
       <GitHubGate>{() => <LocalizationTabs />}</GitHubGate>
     </Page>
@@ -45,6 +45,7 @@ export function LocalizationsPage() {
 
 const TABS: { type: LocalizationType; title: string }[] = [
   { type: "country", title: "Countries" },
+  { type: "state", title: "States" },
   { type: "city", title: "Cities" },
   { type: "place", title: "Places" },
 ];
@@ -162,6 +163,8 @@ function SaveAllButton({ drafts }: { drafts: Drafts }) {
 const DESCRIPTIONS: Record<LocalizationType, string> = {
   country:
     "Every country the photos show: the custom one written on the Photo page, or else the one from the EXIF.",
+  state:
+    "Every state, province or prefecture the photos show: the custom one written on the Photo page, or else the one from the EXIF.",
   city: "Every city the photos show: the custom one written on the Photo page, or else the one from the EXIF.",
   place: "Every place on the Places page.",
 };

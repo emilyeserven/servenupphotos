@@ -87,10 +87,13 @@ export interface SanitizedExif {
    * chosen on the Photo page. Saved as the JSON's "places", next to its albums and tags.
    */
   places?: PhotoPlace[];
-  /** A city and country written on the Photo page, which the portfolio shows instead of the EXIF ones. */
+  /** A city, state and country written on the Photo page, which the portfolio shows instead of the EXIF ones. */
   customCity: string | null;
+  customState?: string | null;
   customCountry: string | null;
   country: string | null;
+  /** The state, province or prefecture from the EXIF, between the city and the country. */
+  state?: string | null;
   city: string | null;
   /** The original photo's width and height in pixels, as shown (turned upright from its EXIF orientation). */
   width: number | null;
