@@ -13,8 +13,10 @@ Under each square thumbnail, a bar shows its hues, each as wide as its share, wi
 Clicking a photo opens the photo viewer (`?photo=`).
 
 The swatches at the top filter by one hue bucket (`?hue=orange`; **All** clears it). A photo shows under a hue when at
-least 15% of its colors are in it (`MIN_SHARE` in `routes/color.tsx`), the most first; without a filter, the newest
-photos come first. Each swatch's tooltip says how many photos it shows.
+least 30% of its colors are in it (`DEFAULT_PERCENT` in `routes/color.tsx`), the most first; without a filter, the
+newest photos come first. The **At least … of the colors** slider under the swatches changes that from 5% to 95% in
+steps of 5 (`?min=15`, left out at 30%), and each swatch's tooltip says how many photos it shows at the current
+setting.
 
 > **Frontend analogy:** each photo's `colors` is precomputed like a build-time asset hash: the pipeline does the
 > pixel work once, and the page only filters and sorts numbers it already has.
