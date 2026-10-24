@@ -45,10 +45,11 @@ export function PhotoColorsCard({ canRead }: PhotoColorsCardProps) {
       <CardHeader>
         <CardTitle>Colors</CardTitle>
         <CardDescription>
-          Reads each photo&apos;s colors from its original in R2, as the Colors tab on the EXIF page
-          shows them, and saves them under <code>colors</code> in its photo file: the average color,
-          the share of the photo in each of 12 hue buckets, the blacks, grays and whites, and the
-          mean lightness and chroma. It downloads each of those photos, so it takes a while.
+          Reads each photo&apos;s colors from its original in R2, as the Colors and Raw color data
+          tabs on the EXIF page show them, and saves them under <code>colors</code> in its photo
+          file: the average color, the share of the photo in each of 12 hue buckets, the blacks,
+          grays and whites, the mean lightness and chroma, and the raw statistics for each color
+          space. It downloads each of those photos, so it takes a while.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">

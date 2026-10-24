@@ -18,7 +18,7 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 	exifs := newExifCache()
 	mux.HandleFunc("POST /data/missing-fields/preview", handlePreviewBackfill(d.extractor, d.store, d.gh, storage.GetPhoto, storage.ThumbnailCrop, exifs))
 	mux.HandleFunc("POST /data/missing-fields", handleApplyBackfill(d.extractor, d.store, d.gh, storage.GetPhoto, storage.ThumbnailCrop, exifs))
-	colorsByKey := newKeyCache[colors.Summary]()
+	colorsByKey := newKeyCache[colors.Analysis]()
 	mux.HandleFunc("POST /data/colors/preview", handlePreviewColors(d.store, d.gh, storage.GetPhoto, colorsByKey))
 	mux.HandleFunc("POST /data/colors", handleWriteColors(d.store, d.gh, storage.GetPhoto, colorsByKey))
 }

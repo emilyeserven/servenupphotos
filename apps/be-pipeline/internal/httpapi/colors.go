@@ -23,8 +23,8 @@ type colorsRequest struct {
 	Recompute bool `json:"recompute"`
 }
 
-// colorCache keeps the color summary of originals in R2 by key.
-type colorCache = keyCache[colors.Summary]
+// colorCache keeps the color analysis of originals in R2 by key.
+type colorCache = keyCache[colors.Analysis]
 
 // handlePreviewColors reads the colors of each photo without them from its
 // original in R2, as the Update Data page previews adding them.
@@ -79,25 +79,25 @@ func handleColors(
 // colorReader reads an original's colors from R2 as POST /exif reads an
 // upload's, through cache.
 func colorReader(r2 func() (settings.R2, error), get getPhotoFunc, cache *colorCache) github.ColorReader {
-	return func(ctx context.Context, key string) (colors.Summary, string) {
+	return func(ctx context.Context, key string) (colors.Analysis, string) {
 		if s, ok := cache.get(key); ok {
 			return s, ""
 		}
 		cfg, err := r2()
 		if err != nil {
-			return colors.Summary{}, "Couldn't read the R2 settings."
+			return colors.Analysis{}, "Couldn't read the R2 settings."
 		}
 		path, status, msg := downloadPhoto(ctx, cfg, get, key)
 		if status != http.StatusOK {
-			return colors.Summary{}, msg
+			return colors.Analysis{}, msg
 		}
 		defer os.Remove(path) //nolint:errcheck // best-effort cleanup
 		analysis, err := analyzeColors(path)
 		if err != nil {
 			slog.Error("color analysis failed", "key", key, "err", err)
-			return colors.Summary{}, "Couldn't read the photo's colors."
+			return colors.Analysis{}, "Couldn't read the photo's colors."
 		}
-		cache.put(key, analysis.Summary)
-		return analysis.Summary, ""
+		cache.put(key, analysis)
+		return analysis, ""
 	}
 }

@@ -23,12 +23,12 @@ const coloredPhoto = `{
 
 // colorReader reads every photo as red, except failKey, and records the keys read.
 func colorReader(failKey string, keys *[]string) ColorReader {
-	return func(_ context.Context, key string) (colors.Summary, string) {
+	return func(_ context.Context, key string) (colors.Analysis, string) {
 		*keys = append(*keys, key)
 		if key == failKey {
-			return colors.Summary{}, "That photo isn't in the bucket anymore."
+			return colors.Analysis{}, "That photo isn't in the bucket anymore."
 		}
-		return colors.Summary{Average: colors.Color{Hex: "#ff0000"}, Lightness: 54}, ""
+		return colors.Analysis{Average: colors.Color{Hex: "#ff0000"}, Lightness: 54}, ""
 	}
 }
 

@@ -10,25 +10,25 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// ColorsField is where a photo file keeps its color summary (colors.Summary):
-// its average color, hue buckets and neutrals, as the Colors tab shows them.
+// ColorsField is where a photo file keeps its color analysis (colors.Analysis):
+// its average color, hue buckets, neutrals and raw statistics, as the EXIF page shows them.
 const ColorsField = "colors"
 
-// ColorReader returns the color summary of the original photo at key in R2,
+// ColorReader returns the color analysis of the original photo at key in R2,
 // or a message fit to show saying why it couldn't.
-type ColorReader func(ctx context.Context, key string) (colors.Summary, string)
+type ColorReader func(ctx context.Context, key string) (colors.Analysis, string)
 
-// ColorFile is a photo file Colors gives a color summary to.
+// ColorFile is a photo file Colors gives a color analysis to.
 type ColorFile struct {
 	Path    string `json:"path"`
 	FileURL string `json:"fileUrl"`
 	// Replaces is true when the file already has colors, which recomputing
 	// replaces.
 	Replaces bool `json:"replaces"`
-	// Colors is the photo's color summary; nil when Error says why it
+	// Colors is the photo's color analysis; nil when Error says why it
 	// couldn't be read, and the file is left as it is.
-	Colors *colors.Summary `json:"colors"`
-	Error  string          `json:"error,omitempty"`
+	Colors *colors.Analysis `json:"colors"`
+	Error  string           `json:"error,omitempty"`
 }
 
 // ColorsPreview is what adding color data would do to the photo files on
@@ -164,12 +164,12 @@ func readColors(ctx context.Context, scan baseURLScan, read ColorReader, recompu
 			defer wg.Done()
 			sem <- struct{}{}
 			defer func() { <-sem }()
-			summary, msg := read(ctx, key)
+			analysis, msg := read(ctx, key)
 			if msg != "" {
 				file.Error = msg
 				return
 			}
-			file.Colors = &summary
+			file.Colors = &analysis
 		}()
 	}
 	wg.Wait()
@@ -184,9 +184,9 @@ func hasColors(content []byte) bool {
 	return json.Unmarshal(content, &photo) == nil && !isEmptyJSON(photo.Colors)
 }
 
-// withColors is content with its "colors" set to summary.
-func withColors(content []byte, summary colors.Summary) ([]byte, error) {
-	value, err := json.Marshal(summary)
+// withColors is content with its "colors" set to analysis.
+func withColors(content []byte, analysis colors.Analysis) ([]byte, error) {
+	value, err := json.Marshal(analysis)
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 import type { FieldChange } from "@/api/cameras";
-import type { ColorSummary } from "@/api/exif";
+import type { ColorAnalysis } from "@/api/exif";
 import { requestJson } from "@/api/settings";
 
 /** Base URLs to move the photos' image URLs between; both empty to only list the origins. */
@@ -147,7 +147,7 @@ export interface ColorFile {
   /** True when the file already has colors, which these replace. */
   replaces: boolean;
   /** The photo's colors; null when `error` says why they couldn't be read, and the file is left as it is. */
-  colors: ColorSummary | null;
+  colors: ColorAnalysis | null;
   error?: string;
 }
 

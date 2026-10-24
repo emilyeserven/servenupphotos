@@ -51,8 +51,7 @@ export interface RawColorData {
   };
 }
 
-/** A photo's color summary, as its photo JSON file keeps it under `colors`. */
-export interface ColorSummary {
+export interface ColorAnalysis {
   average: Color;
   /** The 12 hue buckets in color-wheel order. */
   buckets: ColorBucket[];
@@ -61,10 +60,6 @@ export interface ColorSummary {
   lightness: number;
   chroma: number;
   samples: number;
-}
-
-/** A photo's color summary with its raw statistics. */
-export interface ColorAnalysis extends ColorSummary {
   raw: RawColorData;
 }
 
