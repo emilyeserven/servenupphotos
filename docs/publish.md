@@ -77,3 +77,12 @@ The Photo page in edit mode (`/exif?edit=<path>`) has a **Spotlight** card in it
 with a checkbox for each zone and the photo's number among the zone's photos while it's in one. It makes the same local
 edits as Site Spotlight, at once and apart from the page's **Save changes**, so they wait for **Commit** like the rest.
 The order is still set on Site Spotlight.
+
+While the photo is in a zone, the card also has a **Focus point**: click the part of the photo to keep in view when it's
+cropped to a screen of the other shape (a landscape photo on a phone, or a portrait one on a computer). Small phone and
+computer previews show the crop, and **Use the middle** clears it. It's saved as `spotlightFocus`, `{ "x": 30, "y": 70 }`
+in percent across from the left and down from the top, or `null` (the default, which new saves write and Update Data →
+Missing fields adds) for the middle. It's a local edit until **Commit** like the zones.
+
+> **Frontend analogy:** the Go side writes an object or `null` into the JSON file the same way it writes a list: the
+> whole value is replaced, like `setState(next)` rather than merging.

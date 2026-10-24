@@ -334,3 +334,24 @@ func TestApplyEditList(t *testing.T) {
 		t.Errorf("applyEdit without the field = %q, want %q", got, want)
 	}
 }
+
+func TestApplyEditObjectAndBack(t *testing.T) {
+	content := []byte("{\n  \"spotlightFocus\": null\n}\n")
+	set := FieldEdit{Fields: map[string]json.RawMessage{"spotlightFocus": json.RawMessage(`{"x":25,"y":50}`)}}
+	got, err := applyEdit(content, set)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := "{\n  \"spotlightFocus\": {\n    \"x\": 25,\n    \"y\": 50\n  }\n}\n"
+	if string(got) != want {
+		t.Fatalf("applyEdit = %q, want %q", got, want)
+	}
+	// An object goes back to null.
+	unset := FieldEdit{Fields: map[string]json.RawMessage{"spotlightFocus": json.RawMessage(`null`)}}
+	if got, err = applyEdit(got, unset); err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(content) {
+		t.Errorf("applyEdit back = %q, want %q", got, content)
+	}
+}

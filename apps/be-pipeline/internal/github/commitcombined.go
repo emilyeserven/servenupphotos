@@ -288,12 +288,13 @@ func applyEdit(content []byte, edit FieldEdit) ([]byte, error) {
 	return content, nil
 }
 
-// setField is setTopLevel for a scalar value, and setTopLevelList, indented
-// as a top-level value, for a list or object.
+// setField is setTopLevelList with value, indented as a top-level value when
+// it's a list or object, so a field can go between a scalar, such as null,
+// and a list or object.
 func setField(content []byte, key string, value json.RawMessage) ([]byte, error) {
 	trimmed := bytes.TrimSpace(value)
 	if len(trimmed) == 0 || (trimmed[0] != '[' && trimmed[0] != '{') {
-		return setTopLevel(content, key, value)
+		return setTopLevelList(content, key, value)
 	}
 	var indented bytes.Buffer
 	if err := json.Indent(&indented, trimmed, "  ", "  "); err != nil {

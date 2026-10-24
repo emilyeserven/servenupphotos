@@ -57,7 +57,7 @@ func TestFindGapsAndFill(t *testing.T) {
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
 		"images.preview", "images.thumbnail", "images.thumbnailpreview", "images.thumbnailcrop",
 		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate", "exifOriginals", "manualAperture", "customLens", "albums", "tags", "places",
-		"spotlightZones", "socialPosts", "reEdit",
+		"spotlightZones", "spotlightFocus", "socialPosts", "reEdit",
 	}
 	if !reflect.DeepEqual(fields, want) {
 		t.Fatalf("fields = %v, want %v", fields, want)
@@ -108,6 +108,7 @@ func TestFindGapsAndFill(t *testing.T) {
   "tags": [],
   "places": [],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null
 }
@@ -248,7 +249,7 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 31 || got.PullRequestNumber != 1 {
+	if got.Files != 1 || got.Fields != 32 || got.PullRequestNumber != 1 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	staged := repo.staged(t)

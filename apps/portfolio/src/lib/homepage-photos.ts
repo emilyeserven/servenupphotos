@@ -1,30 +1,37 @@
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
-
-/** The spotlight zone the homepage's background shows, as written in a photo's spotlightZones. */
-const HOMEPAGE_ZONE = "homepage";
+import { photos, type Photo } from "@/lib/photos";
+import {
+  HOMEPAGE_ZONE,
+  type ImagePhoto,
+  newestWithImages,
+  zonePhotos,
+} from "@/lib/spotlight-zones";
 
 /** How many of the newest photos the homepage shows when none are spotlighted on it. */
 const FALLBACK_COUNT = 5;
 
-/** A photo with resized versions in R2, which is all the homepage can show. */
-export type ImagePhoto = Photo & { image: PhotoImage };
+/** Whether the photo is taller than it's wide, as it's shown. */
+function isPortrait({ image }: ImagePhoto): boolean {
+  return image.height > image.width;
+}
 
-/** Ranks a photo without a place in the order after every photo with one. */
-function rank({ spotlightPlace }: Photo): number {
-  return spotlightPlace ?? Number.MAX_SAFE_INTEGER;
+/** The list with its portrait photos first, each part keeping its order. */
+function portraitsFirst(list: ImagePhoto[]): ImagePhoto[] {
+  return [...list.filter(isPortrait), ...list.filter((photo) => !isPortrait(photo))];
+}
+
+/** The list as a phone shows it, with portrait photos first, or as it is elsewhere. */
+function arranged(list: ImagePhoto[], phone: boolean): ImagePhoto[] {
+  return phone ? portraitsFirst(list) : list;
 }
 
 /**
  * The photos behind the homepage: the ones picked for its spotlight zone on the pipeline's Site
  * Spotlight page, in the order they were dragged into there (ones without a place after, newest
- * first), or else the 5 newest photos.
+ * first), or else the 5 newest photos. On a phone held upright, portrait photos come first, so with
+ * none picked those are the 5 newest portrait photos where there are that many.
  */
-export function homepagePhotos(all: Photo[] = photos): ImagePhoto[] {
-  const newest = all
-    .filter((photo): photo is ImagePhoto => photo.image !== null)
-    .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
-  const spotlighted = newest
-    .filter((photo) => photo.spotlightZones.includes(HOMEPAGE_ZONE))
-    .toSorted((a, b) => rank(a) - rank(b));
-  return spotlighted.length > 0 ? spotlighted : newest.slice(0, FALLBACK_COUNT);
+export function homepagePhotos(all: Photo[] = photos, phone = false): ImagePhoto[] {
+  const spotlighted = zonePhotos(HOMEPAGE_ZONE, all);
+  if (spotlighted.length > 0) return arranged(spotlighted, phone);
+  return arranged(newestWithImages(all), phone).slice(0, FALLBACK_COUNT);
 }

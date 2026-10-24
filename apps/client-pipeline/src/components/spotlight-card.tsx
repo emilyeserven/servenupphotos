@@ -1,9 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { PhotoFiles } from "@/components/photo-files";
+import { SpotlightFocus } from "@/components/spotlight-focus";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { type Spotlight, useSpotlight } from "@/components/use-spotlight";
-import { type SpotlightZone, placeInZone, spotlightZones, zonePhotos } from "@/lib/site-spotlight";
+import {
+  type SpotlightZone,
+  placeInZone,
+  spotlightZones,
+  zonePhotos,
+  zonesOf,
+} from "@/lib/site-spotlight";
 
 /**
  * The Photo page's card for the spotlight zones the photo at path is in, such as the homepage's,
@@ -43,17 +50,20 @@ function ZoneChoices({ files, path }: { files: SocialCalendar; path: string }) {
     );
   }
   return (
-    <ul className="flex flex-col gap-3">
-      {spotlightZones.map((zone) => (
-        <ZoneChoice
-          key={zone.id}
-          zone={zone}
-          photo={photo}
-          photos={files.photos}
-          spotlight={spotlight}
-        />
-      ))}
-    </ul>
+    <div className="flex flex-col gap-4">
+      <ul className="flex flex-col gap-3">
+        {spotlightZones.map((zone) => (
+          <ZoneChoice
+            key={zone.id}
+            zone={zone}
+            photo={photo}
+            photos={files.photos}
+            spotlight={spotlight}
+          />
+        ))}
+      </ul>
+      {zonesOf(spotlight.unsaved, photo).length > 0 && <SpotlightFocus photo={photo} />}
+    </div>
   );
 }
 

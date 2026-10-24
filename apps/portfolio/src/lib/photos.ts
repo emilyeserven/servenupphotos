@@ -57,6 +57,14 @@ export interface Photo {
   spotlightZones: string[];
   /** Its place among the spotlighted photos, 1 first, set on Site Spotlight; null without one. */
   spotlightPlace: number | null;
+  /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
+  spotlightFocus: SpotlightFocus | null;
+}
+
+/** A point of a photo, in percent across from the left and down from the top. */
+export interface SpotlightFocus {
+  x: number;
+  y: number;
 }
 
 /** Where the photo was taken, written each way the menu's Script Display can choose. */
@@ -200,6 +208,8 @@ interface PhotoData {
   socialMediaPublishDate?: string | null;
   /** The spots on the site the photo is spotlighted in, picked on Site Spotlight; older entries don't have them. */
   spotlightZones?: string[];
+  /** The point kept in view when the photo is cropped to the other shape of screen; null or missing for the middle. */
+  spotlightFocus?: SpotlightFocus | null;
   /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
   places?: PhotoPlaces;
   /** The IDs of the photo's albums and tags; older entries were saved without them. */
@@ -538,14 +548,15 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums, tags and spotlight zones, and its place in them; older entries are missing them. */
+/** The photo's albums, tags and spotlight zones, its place in them and its focus point; older entries are missing them. */
 function groupFields({
   albums = [],
   tags = [],
   spotlightZones = [],
   websiteSpotlight = null,
+  spotlightFocus = null,
 }: PhotoData) {
-  return { albums, tags, spotlightZones, spotlightPlace: websiteSpotlight };
+  return { albums, tags, spotlightZones, spotlightPlace: websiteSpotlight, spotlightFocus };
 }
 
 /**

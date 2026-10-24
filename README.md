@@ -89,6 +89,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, technical info, and picking a range on the graph or the heatmap
 - [Portfolio Table](docs/portfolio-table.md) (`/table` on the portfolio): sorting, the Columns menu, and the View menu's place names
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
+- [Portfolio Spotlight](docs/portfolio-spotlight.md) (`/spotlight` on the portfolio): a strip of the photos picked for each spotlight zone
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets
 - [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields)
