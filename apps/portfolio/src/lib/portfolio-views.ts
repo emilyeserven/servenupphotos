@@ -49,9 +49,9 @@ export const portfolioViews: PortfolioView[] = [
   {
     to: "/color",
     label: "Color",
-    description: "Photos grouped and browsed by dominant color.",
+    description: "Photos browsed by color and vividness.",
     icon: Palette,
-    enabled: false,
+    enabled: true,
   },
 ];
 

@@ -1,12 +1,9 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Slider } from "@/components/ui/slider";
+import { parseSliderValue, SearchSlider, type SliderRange } from "@/components/search-slider";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 
 /** The least a color's share can be set to, the most, and the step between, in percent. */
-const MIN = 5;
-const MAX = 95;
-const STEP = 5;
+const SHARE_RANGE: SliderRange = { min: 5, max: 95, step: 5 };
 
 const MODES = [
   { match: undefined, label: "Largest color", title: "Photos whose biggest color is the color" },
@@ -55,33 +52,25 @@ export function ColorMatchControl({
 /** A slider for how much of a photo the color needs, kept in the URL as `?min=`. */
 function ShareThreshold({ percent, fallback }: { percent: number; fallback: number }) {
   const navigate = useNavigate({ from: "/color" });
-  const [dragging, setDragging] = useState<number | null>(null);
-  const shown = dragging ?? percent;
   return (
-    <div className="flex w-full max-w-sm items-center gap-3 text-sm">
-      <span id="share-threshold" className="whitespace-nowrap text-muted-foreground">
-        <span className="font-medium text-foreground tabular-nums">{shown}%</span> of the colors
-      </span>
-      <Slider
-        aria-labelledby="share-threshold"
-        min={MIN}
-        max={MAX}
-        step={STEP}
-        value={[shown]}
-        onValueChange={([next]) => setDragging(next ?? null)}
-        onValueCommit={([next]) => {
-          setDragging(null);
-          const min = next === fallback ? undefined : next;
-          void navigate({ search: (prev) => ({ ...prev, min, photo: undefined }), replace: true });
-        }}
-        className="py-1"
-      />
-    </div>
+    <SearchSlider
+      id="share-threshold"
+      value={percent}
+      range={SHARE_RANGE}
+      label={(shown) => (
+        <>
+          <span className="font-medium text-foreground tabular-nums">{shown}%</span> of the photo
+        </>
+      )}
+      onCommit={(next) => {
+        const min = next === fallback ? undefined : next;
+        void navigate({ search: (prev) => ({ ...prev, min, photo: undefined }), replace: true });
+      }}
+    />
   );
 }
 
 /** The `?min=` from the URL, when it's a whole percent the slider can set. */
 export function parseThreshold(value: unknown): number | undefined {
-  const n = Number(value);
-  return Number.isInteger(n) && n >= MIN && n <= MAX ? n : undefined;
+  return parseSliderValue(value, SHARE_RANGE);
 }

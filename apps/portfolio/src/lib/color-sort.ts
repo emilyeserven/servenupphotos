@@ -14,6 +14,9 @@ import {
  */
 export type ColorOrder = "asc" | "desc";
 
+/** What the Color page sorts photos by: their color (the default) or how vivid they are. */
+export type ColorSort = "color" | "vivid";
+
 /**
  * Where a photo sits in the sort, from 0 (red) to just under 17 (white): its largest color's place,
  * nudged toward whichever neighboring color it has more of, so photos with the same largest color
@@ -35,6 +38,15 @@ function neighbor(color: ColorName, step: number): ColorName | undefined {
   if (isShade(color)) return SHADES[SHADES.indexOf(color) + step];
   const index = HUE_BUCKETS.indexOf(color);
   return HUE_BUCKETS[(index + step + HUE_BUCKETS.length) % HUE_BUCKETS.length];
+}
+
+/** Photos sorted by vividness in order, the least vivid first for "asc", keeping their order where they tie. */
+export function sortByVividness<T extends { vividness: number }>(
+  photos: T[],
+  order: ColorOrder,
+): T[] {
+  const sign = order === "asc" ? 1 : -1;
+  return photos.toSorted((a, b) => sign * (a.vividness - b.vividness));
 }
 
 /** Photos sorted by color in order, keeping their order where they tie. */
