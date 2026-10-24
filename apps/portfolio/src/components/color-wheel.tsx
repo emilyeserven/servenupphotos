@@ -31,30 +31,38 @@ const MIN_PIN_PX = 14;
 const PIN_COVER = 0.5;
 
 /**
- * How wide each pin is, in pixels, for count pins on a wheel canvas wide: as big as they can be
+ * How wide each pin is, in pixels, for count pins on a wheel canvas big: as big as they can be
  * while covering only PIN_COVER of the wheel between them, so a phone's smaller wheel still has
  * room to spread them out.
  */
-function pinSize({ width }: ViewportSize, count: number): number {
-  const wheelArea = Math.PI * (0.47 * width) ** 2;
+function pinSize({ width, height }: ViewportSize, count: number): number {
+  const wheelArea = Math.PI * (0.47 * width) * (0.47 * height);
   const fits = Math.sqrt((wheelArea * PIN_COVER) / Math.max(count, 1)) - PIN_GAP_PX;
   return Math.round(Math.min(MAX_PIN_PX, Math.max(MIN_PIN_PX, fits)));
 }
 
-/** The wheel as a pin board: square, its pins kept inside the circle of colors. */
+/**
+ * The wheel as a pin board, stretched to fill the space it's given, an oval when that isn't
+ * square, its pins kept inside the oval of colors. The colors are drawn as a circle, then squashed
+ * by the board's height over its width, so they stretch as the pins' places do.
+ */
 const WHEEL_LOOK: BoardLook = {
-  heightFor: (width) => width,
   pinSize,
-  keep: ({ width }) => keepInWheel(width),
+  keep: ({ width, height }) => keepInWheel(width, height),
   background: (
     <span
       aria-hidden
-      className="absolute inset-[3%] rounded-full opacity-70 shadow-inner"
-      style={{ background: WHEEL_BACKGROUND }}
-    />
+      className="absolute top-0 left-0 aspect-square w-full origin-top"
+      style={{ transform: "scaleY(var(--board-aspect))" }}
+    >
+      <span
+        className="absolute inset-[3%] rounded-full opacity-70"
+        style={{ background: WHEEL_BACKGROUND }}
+      />
+    </span>
   ),
   className: "rounded-xl",
-  minimapClassName: "rounded-full",
+  minimapClassName: "rounded-[50%]",
   wholeLabel: "Show the whole wheel",
 };
 
@@ -66,10 +74,13 @@ const WHEEL_LOOK: BoardLook = {
 export function ColorWheel<T extends WheelPhoto>({
   photos,
   measure,
+  scale,
   onOpen,
 }: {
   photos: T[];
   measure: VividMeasure;
+  /** How much bigger than small the pins are drawn. */
+  scale: number;
   onOpen: (photo: T) => void;
 }) {
   const mostVivid = Math.max(MIN_EDGE, ...photos.map((photo) => vividnessOf(photo, measure)));
@@ -81,14 +92,14 @@ export function ColorWheel<T extends WheelPhoto>({
     [photos, measure, mostVivid],
   );
   return (
-    <figure className="mx-auto flex w-full max-w-3xl flex-col items-center gap-3">
-      <PinBoard photos={photos} places={places} look={WHEEL_LOOK} onOpen={onOpen} />
-      <figcaption className="text-center text-sm text-muted-foreground">
-        Around the wheel by color, red at the top, pulled toward each photo&apos;s second color. Out
-        from the middle by {measure === "peak" ? "peak vividness" : "vividness"}: the most vivid
-        photo here, at {mostVivid}, is at the edge. Pins that would overlap are moved apart, and
-        crowded ones are clustered until you zoom in. Black and white photos are on their own chart
-        instead. Zoom with the buttons, a pinch or ctrl + scroll, and drag to look around.
+    <figure className="flex size-full flex-col gap-2">
+      <div className="min-h-0 flex-1">
+        <PinBoard photos={photos} places={places} look={WHEEL_LOOK} scale={scale} onOpen={onOpen} />
+      </div>
+      <figcaption className="text-center text-xs text-muted-foreground">
+        Around by color, red at the top, pulled toward each photo&apos;s second color; out from the
+        gray middle by {measure === "peak" ? "peak vividness" : "vividness"}, up to {mostVivid}.
+        Crowded pins are clustered until you zoom in.
       </figcaption>
     </figure>
   );
