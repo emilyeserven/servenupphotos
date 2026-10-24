@@ -73,6 +73,10 @@ type photoJSON struct {
 	// spotlighted in, such as "homepage", the homepage's background. They're
 	// picked on the Site Spotlight page.
 	SpotlightZones []string `json:"spotlightZones"`
+	// SpotlightFocus is the point of the photo to keep in view where a
+	// spotlight zone crops it to a screen of the other shape, such as a
+	// landscape photo behind the homepage on a phone; nil for its middle.
+	SpotlightFocus *SpotlightFocus `json:"spotlightFocus"`
 	// SocialPosts are the photo's posts on social media, posted or
 	// scheduled, written on the Photo page.
 	SocialPosts []SocialPost `json:"socialPosts"`
@@ -106,6 +110,13 @@ type SocialPost struct {
 	Caption string `json:"caption"`
 	// Hashtags are the post's hashtags, without their "#".
 	Hashtags []string `json:"hashtags"`
+}
+
+// SpotlightFocus is a point of a photo, as percentages of its width and
+// height from its top left corner.
+type SpotlightFocus struct {
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
 }
 
 // newPhotoJSON is the content of a new photo file. It is also the list of

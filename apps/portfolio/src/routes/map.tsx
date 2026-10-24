@@ -32,9 +32,11 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { Button } from "@/components/ui/button";
+import { mapViewOf } from "@/components/view-on-map-link";
 import {
   type PlacedPhoto,
   boundsOf,
+  placedById,
   placedPhotos,
   useDayPhotos,
   useMapPhotos,
@@ -110,11 +112,23 @@ const FIT_PADDING = { top: 140, right: 80, bottom: 80, left: 80 };
 const ALL_PHOTOS_FIT = { padding: FIT_PADDING, maxZoom: 14 };
 const WORLD_VIEW = { center: [20, 25] as [number, number], zoom: 1.3 };
 /**
- * Where the map opens: where the URL says, as a link keeps it, or else on the photos' bounds, or
- * the whole world without any.
+ * Where the URL says the map should open: its center and zoom as a link keeps them, or else
+ * zoomed in on the open photo, so a link to a photo doesn't fly in from every photo; null when it
+ * says neither.
  */
-function initialViewOf(bounds: LngLatBounds | null, view: MapViewSearch) {
-  if (view.zoom !== undefined) return { longitude: view.lng, latitude: view.lat, zoom: view.zoom };
+function linkedViewOf(search: MapViewSearch & ShownPhotoSearch): Required<MapViewSearch> | null {
+  if (search.zoom !== undefined) return search as Required<MapViewSearch>;
+  const photo = search.photo === undefined ? undefined : placedById.get(search.photo);
+  return photo ? mapViewOf(photo) : null;
+}
+
+/**
+ * Where the map opens: where the URL says (linkedViewOf), or else on the photos' bounds, or the
+ * whole world without any.
+ */
+function initialViewOf(bounds: LngLatBounds | null, search: MapViewSearch & ShownPhotoSearch) {
+  const view = linkedViewOf(search);
+  if (view) return { longitude: view.lng, latitude: view.lat, zoom: view.zoom };
   return bounds
     ? { bounds, fitBoundsOptions: ALL_PHOTOS_FIT }
     : { longitude: WORLD_VIEW.center[0], latitude: WORLD_VIEW.center[1], zoom: WORLD_VIEW.zoom };
@@ -493,7 +507,7 @@ function ClusterMarker({
   onOpen: () => void;
 }) {
   const { previews, approximate } = useClusterLook(clusterId);
-  const turn = useTurn(previews.length, CLUSTER_PREVIEW_MS);
+  const { turn } = useTurn(previews.length, CLUSTER_PREVIEW_MS);
   return (
     <button
       type="button"

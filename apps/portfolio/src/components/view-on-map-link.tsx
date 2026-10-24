@@ -10,7 +10,7 @@ const EXACT_ZOOM = 17;
 const APPROXIMATE_ZOOM = 15;
 
 /** Where the map should look to show the photo, or null for a photo it can't place. */
-function mapViewOf({ latitude, longitude, approximatePosition }: Photo) {
+export function mapViewOf({ latitude, longitude, approximatePosition }: Photo) {
   if (latitude === null || longitude === null) return null;
   return {
     lat: Number(latitude.toFixed(5)),

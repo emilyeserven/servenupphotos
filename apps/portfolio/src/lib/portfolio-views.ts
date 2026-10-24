@@ -35,9 +35,9 @@ export const portfolioViews: PortfolioView[] = [
   {
     to: "/spotlight",
     label: "Spotlight",
-    description: "One featured photo at a time, shown large.",
+    description: "The photos picked for each spot on the site, a strip for each.",
     icon: Sparkles,
-    enabled: false,
+    enabled: true,
   },
   {
     to: "/grid",
