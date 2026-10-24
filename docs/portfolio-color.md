@@ -18,16 +18,22 @@ Under each square thumbnail, a bar shows its colors, each as wide as its share, 
 and its vividness and peak vividness.
 Clicking a photo opens the photo viewer (`?photo=`).
 
-The swatches at the top filter by one color (`?color=orange`, `?color=dark gray`; **All** clears it), the photos with
-the most of it first: the 12 hues, then the 5 shades after a divider. Photos are sorted by **Color** (the default) or **Vividness** (`?sort=vivid`), each **Ascending** (the default) or
+The swatches at the top filter by one color (`?color=orange`, `?color=dark gray`; **All** clears it): the 12 hues,
+then the 5 shades after a divider. Photos are sorted by **Color** (the default) or **Vividness** (`?sort=vivid`), each **Ascending** (the default) or
 **Descending** (`?order=desc`), in `lib/color-sort.ts`:
 
 - **Color**, with **All**: by each photo's largest color, nudged toward whichever neighboring color it has more of so
   the colors run smoothly into each other, and newest first where they tie. Ascending runs red, orange, yellow,
   green, blue and on to rose, then the photos that are mostly shades, from black to white; descending runs the other
-  way. With a color picked, the photos with the most of it come first, and the Ascending/Descending toggle is hidden.
+  way. With a color picked, it sorts by that color's share instead: ascending puts the most of it first, descending
+  the least.
 - **Vividness**: ascending puts the least vivid first, descending the most vivid, with a color picked or not, by
   the measure picked below.
+
+**Then by** adds the other one as a secondary sort, with its own **Ascending** or **Descending**
+(`?secondary=vivid` or `?secondary=color`, `?secondaryOrder=desc`). The main sort then groups the photos and the
+secondary sorts within each group: a color sort groups by each photo's largest color (or, with a color picked, by
+10% bands of its share), and a vividness sort groups by bands of 10 vividness points. Changing the main sort clears it.
 
 **Average / Peak** picks which vividness the sort and the slider use (`?measure=peak`, left out for average). A
 **Vividness at least** slider hides the photos less vivid than it, from 0 (every photo, left out of the URL) to 100

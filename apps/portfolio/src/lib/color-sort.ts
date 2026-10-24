@@ -10,7 +10,7 @@ import {
 
 /**
  * Which way the Color page sorts every photo by color: "asc" from red around the wheel to rose and
- * then the shades from black to white, "desc" the other way.
+ * secondary the shades from black to white, "desc" the other way.
  */
 export type ColorOrder = "asc" | "desc";
 
@@ -57,24 +57,72 @@ export function vividnessOf(photo: Vivid, measure: VividMeasure): number {
   return measure === "peak" ? photo.peakVividness : photo.vividness;
 }
 
-/** Photos sorted by their vividness by measure, the least vivid first for "asc", keeping their order where they tie. */
-export function sortByVividness<T extends Vivid>(
-  photos: T[],
-  order: ColorOrder,
-  measure: VividMeasure,
-): T[] {
-  const sign = order === "asc" ? 1 : -1;
-  return photos.toSorted((a, b) => sign * (vividnessOf(a, measure) - vividnessOf(b, measure)));
+/** A photo the Color page can sort: its colors and both its vividness values. */
+type Sortable = Vivid & { palette: ColorShare[] };
+
+/** How the Color page sorts its photos. */
+export interface SortSpec {
+  sort: ColorSort;
+  order: ColorOrder;
+  /** The secondary sort, used within the groups the main sort makes; undefined for none. */
+  secondary?: ColorSort;
+  secondaryOrder: ColorOrder;
+  measure: VividMeasure;
+  /** The picked color, whose share the color sort uses instead of the color wheel: the most of it first. */
+  color?: ColorName;
 }
 
-/** Photos sorted by color in order, keeping their order where they tie. */
-export function sortByColor<T extends { palette: ColorShare[] }>(
-  photos: T[],
-  order: ColorOrder,
-): T[] {
-  const sign = order === "asc" ? 1 : -1;
+/**
+ * How wide a group of the main sort is when there's a secondary sort: 10 points of vividness, or
+ * 10% of the picked color. Without a picked color, a color group is each photo's largest color.
+ */
+const VIVID_BAND = 10;
+const SHARE_BAND = 0.1;
+
+/** A sort key for a photo, smaller first for ascending. */
+type SortKey = (photo: Sortable) => number;
+
+/**
+ * Photos sorted as spec asks, keeping their order where they tie. With a secondary sort, the main
+ * sort groups photos (by largest color, a band of the picked color's share, or a band of
+ * vividness) and the secondary sorts within each group.
+ */
+export function sortPhotos<T extends Sortable>(photos: T[], spec: SortSpec): T[] {
+  const primary = keyFor(spec.sort, spec, spec.secondary !== undefined);
+  const secondary = keyFor(spec.secondary ?? spec.sort, spec, false);
+  const first = signOf(spec.order);
+  const second = signOf(spec.secondaryOrder);
   return photos
-    .map((photo) => ({ photo, position: colorPosition(photo.palette) }))
-    .sort((a, b) => sign * (a.position - b.position))
+    .map((photo) => ({ photo, a: primary(photo), b: secondary(photo) }))
+    .sort((x, y) => first * (x.a - y.a) || second * (x.b - y.b))
     .map(({ photo }) => photo);
+}
+
+/** 1 for ascending, -1 for descending. */
+function signOf(order: ColorOrder): number {
+  return order === "asc" ? 1 : -1;
+}
+
+/** The key sort uses, grouped into bands when grouped. */
+function keyFor(sort: ColorSort, spec: SortSpec, grouped: boolean): SortKey {
+  return sort === "vivid" ? vividKey(spec.measure, grouped) : colorKey(spec.color, grouped);
+}
+
+/** A photo's vividness by measure, or which band of it the photo is in when grouped. */
+function vividKey(measure: VividMeasure, grouped: boolean): SortKey {
+  const key: SortKey = (photo) => vividnessOf(photo, measure);
+  return grouped ? (photo) => Math.floor(key(photo) / VIVID_BAND) : key;
+}
+
+/**
+ * Where a photo sits by color: its place around the wheel and through the shades, or with a
+ * picked color, how little of it the photo has, so the most comes first. When grouped, its largest
+ * color, or which band of the picked color's share it's in.
+ */
+function colorKey(color: ColorName | undefined, grouped: boolean): SortKey {
+  const key: SortKey = color
+    ? (photo) => 1 - shareOf(photo.palette, color)
+    : (photo) => colorPosition(photo.palette);
+  const band = color ? SHARE_BAND : 1;
+  return grouped ? (photo) => Math.round(key(photo) / band) : key;
 }

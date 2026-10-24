@@ -7,16 +7,20 @@ const SORTS = [
   {
     sort: "color",
     label: "Color",
-    title: "Sort by color: around the color wheel, then the shades",
+    title:
+      "Sort by color: around the color wheel, secondary the shades, or by the picked color's share",
   },
   { sort: "vivid", label: "Vividness", title: "Sort by how vivid each photo's colors are" },
 ] as const;
 
+/** Each sort's name in "Then by …". */
+const SORT_LABELS: Record<ColorSort, string> = { color: "Color", vivid: "Vividness" };
+
 /** What ascending and descending mean for each sort. */
 const ORDER_TITLES: Record<ColorSort, Record<ColorOrder, string>> = {
   color: {
-    asc: "Red around the color wheel to rose, then black to white",
-    desc: "White to black, then rose around the color wheel to red",
+    asc: "Red around the color wheel to rose, secondary black to white; or the most of the picked color first",
+    desc: "White to black, secondary rose around the color wheel to red; or the least of the picked color first",
   },
   vivid: { asc: "Least vivid first", desc: "Most vivid first" },
 };
@@ -26,19 +30,25 @@ const ORDERS = [
   { order: "desc", label: "Descending", Icon: ArrowDown },
 ] as const;
 
+/** The URL keys an order toggle sets: the main sort's way, or the secondary sort's. */
+type OrderParam = "order" | "secondaryOrder";
+
 /**
- * What every photo is sorted by, color (the default) or vividness, and which way, kept in the URL
- * as `?sort=vivid` and `?order=desc` so a link keeps them. The way is hidden when photos of one
- * color are sorted by how much of it they have.
+ * What photos are sorted by, color (the default) or vividness, and which way, secondary optionally the
+ * other one within the groups the first makes, with its own way. Kept in the URL as `?sort=vivid`,
+ * `?order=desc`, `?secondary=` and `?secondaryOrder=desc`, each left out at its default, so a link keeps them.
  */
 export function ColorSortControl({
   sort,
   order,
-  showOrder,
+  secondary,
+  secondaryOrder,
 }: {
   sort: ColorSort;
   order: ColorOrder;
-  showOrder: boolean;
+  /** The secondary sort, always the one sort isn't; undefined for none. */
+  secondary: ColorSort | undefined;
+  secondaryOrder: ColorOrder;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -50,7 +60,9 @@ export function ColorSortControl({
             to="/color"
             search={(prev) => ({
               ...prev,
-              sort: defaultless(option.sort, "color"),
+              sort: option.sort === "vivid" ? option.sort : undefined,
+              secondary: undefined,
+              secondaryOrder: undefined,
               photo: undefined,
             })}
             replace
@@ -62,21 +74,53 @@ export function ColorSortControl({
           </Link>
         ))}
       </div>
-      {showOrder && <OrderToggle sort={sort} order={order} />}
+      <OrderToggle sort={sort} order={order} param="order" />
+      <ThenToggle other={sort === "color" ? "vivid" : "color"} on={secondary !== undefined} />
+      {secondary && <OrderToggle sort={secondary} order={secondaryOrder} param="secondaryOrder" />}
     </div>
   );
 }
 
-/** Ascending or descending, each titled with what it means for sort. */
-function OrderToggle({ sort, order }: { sort: ColorSort; order: ColorOrder }) {
+/** Whether a secondary sort by other is on, kept in the URL as `?secondary=`. */
+function ThenToggle({ other, on }: { other: ColorSort; on: boolean }) {
   return (
-    <div role="group" aria-label="Sort order" className={CONTROL_FRAME}>
+    <Link
+      from="/color"
+      to="/color"
+      search={(prev) => ({
+        ...prev,
+        secondary: on ? undefined : other,
+        secondaryOrder: undefined,
+        photo: undefined,
+      })}
+      replace
+      aria-pressed={on}
+      title={`Within each group, also sort by ${SORT_LABELS[other].toLowerCase()}`}
+      className={`${CONTROL_FRAME} ${controlButtonClass(on)}`}
+    >
+      Then by {SORT_LABELS[other].toLowerCase()}
+    </Link>
+  );
+}
+
+/** Ascending or descending for sort, each titled with what it means, set on param. */
+function OrderToggle({
+  sort,
+  order,
+  param,
+}: {
+  sort: ColorSort;
+  order: ColorOrder;
+  param: OrderParam;
+}) {
+  return (
+    <div role="group" aria-label={`${SORT_LABELS[sort]} order`} className={CONTROL_FRAME}>
       {ORDERS.map(({ order: option, label, Icon }) => (
         <Link
           key={option}
           from="/color"
           to="/color"
-          search={(prev) => ({ ...prev, order: defaultless(option, "asc"), photo: undefined })}
+          search={(prev) => ({ ...prev, ...orderSearch(param, option), photo: undefined })}
           replace
           aria-pressed={order === option}
           title={ORDER_TITLES[sort][option]}
@@ -90,10 +134,8 @@ function OrderToggle({ sort, order }: { sort: ColorSort; order: ColorOrder }) {
   );
 }
 
-/** value, or undefined when it's the default, so the URL leaves it out. */
-function defaultless<T extends string>(
-  value: T,
-  fallback: string,
-): Exclude<T, typeof fallback> | undefined {
-  return value === fallback ? undefined : (value as Exclude<T, typeof fallback>);
+/** The URL change that sets param to order, leaving it out for ascending. */
+function orderSearch(param: OrderParam, order: ColorOrder) {
+  const value = order === "desc" ? order : undefined;
+  return param === "order" ? { order: value } : { secondaryOrder: value };
 }
