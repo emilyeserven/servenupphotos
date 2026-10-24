@@ -1,4 +1,5 @@
 import committedData from "@/data/photos/ALLPHOTOS.json";
+import { type HueShare, type PhotoColorData, photoHues } from "@/lib/photo-colors";
 import {
   type Localized,
   localizeName,
@@ -60,6 +61,11 @@ export interface Photo {
   spotlightPlace: number | null;
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
   spotlightFocus: SpotlightFocus | null;
+  /**
+   * How its colors split between the 12 hue buckets, biggest first, leaving out blacks, grays and
+   * whites; empty until the pipeline saves its colors.
+   */
+  hues: HueShare[];
 }
 
 /** A point of a photo, in percent across from the left and down from the top. */
@@ -223,6 +229,8 @@ interface PhotoData {
   /** The IDs of the photo's albums and tags; older entries were saved without them. */
   albums?: string[];
   tags?: string[];
+  /** The photo's color summary, saved by the pipeline; older entries don't have it. */
+  colors?: PhotoColorData | null;
 }
 
 // ALLPHOTOS.local.json is made by `pnpm photos:local` (which `pnpm dev` runs) and git-ignored, so
@@ -609,6 +617,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       image: parseImage(photo),
       ...locationFields(photo),
       ...groupFields(photo),
+      hues: photoHues(photo.colors),
     };
   });
 }
