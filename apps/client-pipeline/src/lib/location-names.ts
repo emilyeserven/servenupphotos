@@ -2,7 +2,7 @@ import type { Localization, Place } from "@/api/places";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
 /** A country or city, which can have other names. */
-export type RegionType = "country" | "city";
+export type RegionType = "country" | "state" | "city";
 
 /**
  * The names that win over other ways of writing a country or city, from the localizations' other
@@ -11,7 +11,11 @@ export type RegionType = "country" | "city";
 export type LocationNames = Record<RegionType, ReadonlyMap<string, string>>;
 
 /** No other names, so every name is its own. */
-export const NO_LOCATION_NAMES: LocationNames = { country: new Map(), city: new Map() };
+export const NO_LOCATION_NAMES: LocationNames = {
+  country: new Map(),
+  state: new Map(),
+  city: new Map(),
+};
 
 /** A name as other names are matched: trimmed, ignoring case. */
 function nameKey(name: string | undefined): string {
@@ -25,7 +29,11 @@ function addOtherNames(names: Map<string, string>, l: Localization) {
 
 /** The other names the country and city localizations list. */
 export function locationNames(localizations: Localization[]): LocationNames {
-  const names = { country: new Map<string, string>(), city: new Map<string, string>() };
+  const names = {
+    country: new Map<string, string>(),
+    state: new Map<string, string>(),
+    city: new Map<string, string>(),
+  };
   for (const l of localizations) {
     if (l.type !== "place") addOtherNames(names[l.type], l);
   }
@@ -44,7 +52,11 @@ function isOtherName(names: LocationNames, type: RegionType, winner: string, val
   );
 }
 
-const CUSTOM_FIELD = { country: "customCountry", city: "customCity" } as const;
+const CUSTOM_FIELD = {
+  country: "customCountry",
+  state: "customState",
+  city: "customCity",
+} as const;
 
 /** How many photos and places still write another name of winner, until Update Data rewrites them. */
 export function unrenamedCounts(

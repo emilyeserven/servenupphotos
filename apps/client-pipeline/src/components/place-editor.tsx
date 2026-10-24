@@ -66,15 +66,24 @@ function idTaken(id: string, places: Place[]): string | undefined {
 }
 
 /** A new place's fields, before anything is typed. */
-const NO_PLACE: Place = { id: "", name: "", description: "", parent: "", city: "", country: "" };
+const NO_PLACE: Place = {
+  id: "",
+  name: "",
+  description: "",
+  parent: "",
+  city: "",
+  state: "",
+  country: "",
+};
 
 /** The fields the place form edits, as typed, with the GPS position as one line of text. */
 type Draft = Required<Omit<Place, "id" | "latitude" | "longitude">> & { gps: string };
 
 function draftOf(place: Place): Draft {
   const { name, description, parent = "", city = "", country = "", exactLocation = false } = place;
+  const { state = "" } = place;
   const { parentRelation = "", childRelation = "" } = place;
-  const fields = { name, description, parent, city, country, exactLocation };
+  const fields = { name, description, parent, city, state, country, exactLocation };
   return { ...fields, parentRelation, childRelation, gps: gpsText(place) };
 }
 
@@ -162,7 +171,8 @@ const HELP = {
   description: "Optional, such as the palace's main gate.",
   parent:
     "Optional. The less specific place it's in, such as Gyeongbokgung Palace for Geunjeongmun Gate. Choosing this place on a photo adds that one as its second place.",
-  city: "Optional, such as Seoul. A photo given this place takes its city and country, from the less specific of its places. Choosing a known city fills in its country.",
+  city: "Optional, such as Seoul. A photo given this place takes its city, state and country, from the less specific of its places. Choosing a known city fills in its country.",
+  state: "Optional, such as the state, province or prefecture, between the city and the country.",
   country: "Optional, such as South Korea.",
   gps: "Optional. Latitude, longitude in degrees, such as 37.5796, 126.977; right-click a spot in Google Maps to copy one. Photos given this place whose EXIF has no GPS position go here on the portfolio's map.",
 };
@@ -218,6 +228,14 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
               disabled={busy}
               help={HELP.city}
               onChange={(city, country) => form.setCity(city, country)}
+            />
+            <LabeledInput
+              id="place-state"
+              label="State"
+              help={HELP.state}
+              value={form.draft.state}
+              disabled={busy}
+              onChange={(value) => form.set("state", value)}
             />
             <LabeledInput
               id="place-country"

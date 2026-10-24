@@ -11,8 +11,10 @@ export interface Place {
   description: string;
   /** The ID of the less specific place it's in, such as Gyeongbokgung Palace for Geunjeongmun Gate; "" or missing for none. */
   parent?: string;
-  /** Where it is, which a photo given the place takes as its city and country; "" or missing when not set. */
+  /** Where it is, which a photo given the place takes as its city, state and country; "" or missing when not set. */
   city?: string;
+  /** The state, province or prefecture it's in, between the city and the country. */
+  state?: string;
   country?: string;
   /**
    * The place's GPS position in decimal degrees, which a photo given the place uses on the portfolio's
@@ -36,7 +38,7 @@ export interface Place {
 }
 
 /** What a localization is of. */
-export type LocalizationType = "country" | "city" | "place";
+export type LocalizationType = "country" | "state" | "city" | "place";
 
 /** A localization file: how a country, city or place is written and said where it is. */
 export interface Localization {
@@ -52,7 +54,7 @@ export interface Localization {
   /** The name in its own script, such as 경복궁 in hangeul. */
   localScript: string;
   /**
-   * Other ways photos and places write a country or city, such as "United States" for "United
+   * Other ways photos and places write a country, state or city, such as "United States" for "United
    * States of America". Its name wins over them: Update Data's Location names rewrites them to it.
    */
   otherNames?: string[];

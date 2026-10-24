@@ -14,9 +14,10 @@ opens the photo viewer.
 | Most specific (default) | The most specific of its places, such as "Geunjeongmun Gate"                | left out               |
 | All place names         | Its places as a phrase, such as "Geunjeongmun Gate in Gyeongbokgung Palace" | `?placeDetail=places`  |
 | Include city            | Its places and its city                                                     | `?placeDetail=city`    |
-| Include country         | Its places, its city and its country                                        | `?placeDetail=country` |
+| Include state           | Its places, its city and its state                                          | `?placeDetail=state`   |
+| Include country         | Its places, its city, its state and its country                             | `?placeDetail=country` |
 
-A photo without places shows its city, or else its country. The most specific place is the one inside the most others
+A photo without places shows its city, state and country (whichever it has). The most specific place is the one inside the most others
 (see [Places](places-and-localizations.md#places)). Names are written the way the menu's **Script display** says, and
-hovering a place shows its GPS position, and its country when the text leaves it out. The column sorts by the text it
+hovering a place shows its GPS position, and its state and country when the text leaves them out. The column sorts by the text it
 shows, in English. The choice stays with the Table: the menu's links to other views don't carry it.

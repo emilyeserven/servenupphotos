@@ -28,6 +28,7 @@ interface PhotoText {
   title: string;
   placeName: string;
   customCity: string;
+  customState: string;
   customCountry: string;
   /** A GPS position written as "latitude, longitude", which the map uses instead of the EXIF one. */
   customGpsPosition: string;
@@ -45,6 +46,7 @@ const NO_TEXT: PhotoText = {
   title: "",
   placeName: "",
   customCity: "",
+  customState: "",
   customCountry: "",
   customGpsPosition: "",
   comment: "",
@@ -59,6 +61,8 @@ export const TEXT_FIELDS = Object.keys(NO_TEXT) as (keyof PhotoText)[];
 /** The city and country read from the photo's EXIF, which the custom ones show instead of, and its GPS position. */
 export interface ExifPlace {
   city: string | null;
+  /** The state, province or prefecture from the EXIF, between the city and the country. */
+  state: string | null;
   country: string | null;
   /** The GPS position from the EXIF, or null when it has none. */
   gpsPosition: string | null;
@@ -77,10 +81,12 @@ export function savedDetails(data: Record<string, unknown>): PhotoDetails {
 
 /** The EXIF city, country and GPS position saved in a photo's JSON. */
 export function savedExifPlace(data: Record<string, unknown>): ExifPlace {
+  const field = (name: string) => text(data[name]) || null;
   return {
-    city: text(data.city) || null,
-    country: text(data.country) || null,
-    gpsPosition: text(data.gpsPosition) || null,
+    city: field("city"),
+    state: field("state"),
+    country: field("country"),
+    gpsPosition: field("gpsPosition"),
   };
 }
 
@@ -111,6 +117,7 @@ export function withDetails<T extends object>(data: T, details: PhotoDetails) {
     placeName: saved("placeName"),
     places: chosenPlaces(details.places),
     customCity: saved("customCity"),
+    customState: saved("customState"),
     customCountry: saved("customCountry"),
     customGpsPosition: saved("customGpsPosition"),
   };
@@ -152,7 +159,7 @@ export function PhotoDetailsCard({
   description,
   disabled,
 }: PhotoDetailsCardProps) {
-  const field = (name: "title" | "customCity" | "customCountry") => ({
+  const field = (name: "title" | "customCity" | "customState" | "customCountry") => ({
     value: value[name],
     disabled,
     onChange: (next: string) => onChange({ ...value, [name]: next }),
@@ -248,7 +255,7 @@ interface FieldState {
 interface CityAndCountryProps {
   exifPlace: ExifPlace;
   value: PhotoDetails;
-  field: (name: "customCity" | "customCountry") => FieldState;
+  field: (name: "customCity" | "customState" | "customCountry") => FieldState;
   /** Sets the custom city, with the city's country when one is known. */
   onCity: (city: string, country: string | undefined) => void;
 }
@@ -286,7 +293,7 @@ function CityAndCountry({ exifPlace, value, field, onCity }: CityAndCountryProps
     >
       <summary className="hover:bg-muted/50 flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-sm [&::-webkit-details-marker]:hidden">
         <ChevronRightIcon className="size-4 shrink-0 transition-transform group-open:rotate-90" />
-        <span className="font-medium">City and country</span>
+        <span className="font-medium">City, state and country</span>
         <span className="text-muted-foreground min-w-0 truncate">{summary}</span>
       </summary>
       <div className="grid gap-4 px-3 pt-1 pb-3 sm:grid-cols-2">
@@ -301,6 +308,18 @@ function CityAndCountry({ exifPlace, value, field, onCity }: CityAndCountryProps
             placeholder={exifPlace.city ?? "Not in the EXIF"}
             {...field("customCity")}
             onChange={onCity}
+          />
+        </LabeledHint>
+        <LabeledHint
+          id="photo-custom-state"
+          label="State"
+          hint="The state, province, prefecture or other region between the city and the country. Shown instead of the EXIF's, which is kept as it is. Saved as customState; leave it empty to use the EXIF one."
+        >
+          <RegionOverrideField
+            id="photo-custom-state"
+            kind="state"
+            placeholder={exifPlace.state ?? "Not in the EXIF"}
+            {...field("customState")}
           />
         </LabeledHint>
         <LabeledHint
@@ -327,9 +346,12 @@ function shown(written: string, exif: string | null): string | null {
 
 /** The city and country the portfolio will show, saying whether either is custom. */
 function placeSummary(value: PhotoDetails, exifPlace: ExifPlace) {
-  const custom = [value.customCity, value.customCountry].some((written) => written.trim());
+  const custom = [value.customCity, value.customState, value.customCountry].some((written) =>
+    written.trim(),
+  );
   const place = [
     shown(value.customCity, exifPlace.city),
+    shown(value.customState, exifPlace.state),
     shown(value.customCountry, exifPlace.country),
   ]
     .filter(Boolean)

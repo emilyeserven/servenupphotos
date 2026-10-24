@@ -4,17 +4,18 @@ import { placesQuery } from "@/api/places";
 import { FieldChangesCard } from "@/components/field-changes-card";
 import { count } from "@/components/update-data-shared";
 
-/** Writes every country and city that's another name of one as the name that wins over it. */
+/** Writes every country, state and city that's another name of one as the name that wins over it. */
 export function LocationNamesCard() {
   return (
     <FieldChangesCard
       title="Location names"
       description={
         <>
-          Writes each country and city that&apos;s another name of one, such as “United States” for
-          “United States of America”, as the name that wins, in every photo file (its{" "}
-          <code>country</code>, <code>city</code>, <code>customCountry</code> and{" "}
-          <code>customCity</code>) and place file. Pick the other names on the{" "}
+          Writes each country, state and city that&apos;s another name of one, such as “United
+          States” for “United States of America”, as the name that wins, in every photo file (its{" "}
+          <code>country</code>, <code>state</code>, <code>city</code>, <code>customCountry</code>,{" "}
+          <code>customState</code> and <code>customCity</code>) and place file. Pick the other names
+          on the{" "}
           <Link to="/places" className="text-foreground underline underline-offset-4">
             Places
           </Link>{" "}

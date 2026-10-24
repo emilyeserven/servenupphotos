@@ -14,7 +14,7 @@ import { QueryResult } from "@/components/query-result";
 import { RegionEditor } from "@/components/region-editor";
 import { RegionList, type RegionListData } from "@/components/region-list";
 import { locationNames } from "@/lib/location-names";
-import { cityRows, countryRows } from "@/lib/place-cities";
+import { cityRows, countryRows, stateRows } from "@/lib/place-cities";
 import { unmappedPlacePhotos } from "@/lib/place-gps";
 import { placePhotoCounts, shownPhotos } from "@/lib/place-seeds";
 import { type RegionNode, regionNodes } from "@/lib/region-tree";
@@ -55,6 +55,7 @@ function useRegionList(data: PlacesResponse): RegionListData {
   const names = locationNames(savedLocalizations);
   const nodes = regionNodes({
     countries: countryRows(photos, places, names),
+    states: stateRows(photos, places, names),
     cities: cityRows(photos, places, names),
     places,
     placePhotos: placePhotoCounts(photos),
