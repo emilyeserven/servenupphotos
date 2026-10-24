@@ -4,8 +4,10 @@ import { HueBar } from "@/components/hue-bar";
 import { HueFilter } from "@/components/hue-filter";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ColorMatchControl, parseThreshold } from "@/components/color-match-control";
+import { ColorOrderControl } from "@/components/color-order-control";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { type ColorMatch, matchesHue, matchText } from "@/lib/color-match";
+import { type ColorOrder, sortByColor } from "@/lib/color-sort";
 import { HUE_BUCKETS, type HueBucket, hueShareOf, isHueBucket } from "@/lib/photo-colors";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -17,6 +19,8 @@ interface ColorSearch {
   match?: "threshold";
   /** How much of a photo's colors, in percent, the hue needs to match by share; left out for DEFAULT_PERCENT. */
   min?: number;
+  /** Set to sort every photo from rose back to red when no hue is picked; left out for red to rose. */
+  order?: "desc";
 }
 
 export const Route = createFileRoute("/color")({
@@ -24,6 +28,7 @@ export const Route = createFileRoute("/color")({
     ...(isHueBucket(search.hue) ? { hue: search.hue } : {}),
     ...(search.match === "threshold" ? { match: "threshold" as const } : {}),
     ...minOf(search.min),
+    ...(search.order === "desc" ? { order: "desc" as const } : {}),
     ...parseShownPhoto(search),
   }),
   component: ColorView,
@@ -44,10 +49,16 @@ function minOf(value: unknown): ColorSearch {
   return min === undefined ? {} : { min };
 }
 
-// Newest first.
+// Newest first, so photos of the same color stay newest first when sorted by color.
 const colorPhotos = photos
   .filter((photo): photo is ColorPhoto => photo.image !== null && photo.hues.length > 0)
   .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
+
+/** Every photo sorted around the color wheel, each way. */
+const byColor: Record<ColorOrder, ColorPhoto[]> = {
+  asc: sortByColor(colorPhotos, "asc"),
+  desc: sortByColor(colorPhotos, "desc"),
+};
 
 /** The photos that match hue, the most of it first. */
 function photosOf(hue: HueBucket, match: ColorMatch): ColorPhoto[] {
@@ -80,7 +91,7 @@ function ColorView() {
   if (colorPhotos.length === 0) return <ViewPlaceholder to="/color" />;
   const { hue } = search;
   const match = matchOf(search);
-  const listed = hue ? photosOf(hue, match) : colorPhotos;
+  const listed = listedPhotos(search, match);
 
   return (
     <div className="flex w-full flex-col gap-8 px-3 py-16 sm:px-4">
@@ -93,11 +104,7 @@ function ColorView() {
           <p className="text-sm text-muted-foreground">{countText(listed.length, hue, match)}</p>
         </div>
         <HueFilter hue={hue} counts={countsFor(match)} />
-        <ColorMatchControl
-          threshold={match.mode === "threshold"}
-          percent={search.min ?? DEFAULT_PERCENT}
-          fallback={DEFAULT_PERCENT}
-        />
+        <ColorControls search={search} match={match} />
       </header>
       <ul className={LIST_CLASS}>
         {listed.map((photo) => (
@@ -107,6 +114,25 @@ function ColorView() {
         ))}
       </ul>
       <PhotoLightbox photo={shown} photos={listed} onShow={show} onClose={close} />
+    </div>
+  );
+}
+
+/** The photos the page shows: those matching the picked hue, or every photo sorted by color. */
+function listedPhotos({ hue, order }: ColorSearch, match: ColorMatch): ColorPhoto[] {
+  return hue ? photosOf(hue, match) : byColor[order ?? "asc"];
+}
+
+/** Which way every photo is sorted by color, shown only without a hue, and how photos match one. */
+function ColorControls({ search, match }: { search: ColorSearch; match: ColorMatch }) {
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+      {!search.hue && <ColorOrderControl order={search.order ?? "asc"} />}
+      <ColorMatchControl
+        threshold={match.mode === "threshold"}
+        percent={search.min ?? DEFAULT_PERCENT}
+        fallback={DEFAULT_PERCENT}
+      />
     </div>
   );
 }
