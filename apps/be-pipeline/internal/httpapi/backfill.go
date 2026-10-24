@@ -21,8 +21,8 @@ import (
 // originals from R2 to read their EXIF.
 const backfillTimeout = 3 * time.Minute
 
-// maxCachedExif caps how many originals' EXIF exifCache keeps.
-const maxCachedExif = 2000
+// maxCached caps how many originals' EXIF or colors a keyCache keeps.
+const maxCached = 2000
 
 type backfillRequest struct {
 	// ReadExif fills missing EXIF fields from the originals in R2, and a
@@ -30,30 +30,35 @@ type backfillRequest struct {
 	ReadExif bool `json:"readExif"`
 }
 
-// exifCache keeps the sanitized EXIF of originals in R2 by key, so applying
-// a backfill doesn't download every original its preview just read. An
-// uploaded original's key never points at another photo.
-type exifCache struct {
+// keyCache keeps what was read from originals in R2 by key, such as their
+// EXIF, so applying a change doesn't download every original its preview
+// just read. An uploaded original's key never points at another photo.
+type keyCache[T any] struct {
 	mu    sync.Mutex
-	byKey map[string]exif.Sanitized
+	byKey map[string]T
 }
 
-func newExifCache() *exifCache { return &exifCache{byKey: map[string]exif.Sanitized{}} }
+// exifCache keeps the sanitized EXIF of originals in R2 by key.
+type exifCache = keyCache[exif.Sanitized]
 
-func (c *exifCache) get(key string) (exif.Sanitized, bool) {
+func newKeyCache[T any]() *keyCache[T] { return &keyCache[T]{byKey: map[string]T{}} }
+
+func newExifCache() *exifCache { return newKeyCache[exif.Sanitized]() }
+
+func (c *keyCache[T]) get(key string) (T, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	s, ok := c.byKey[key]
-	return s, ok
+	v, ok := c.byKey[key]
+	return v, ok
 }
 
-func (c *exifCache) put(key string, s exif.Sanitized) {
+func (c *keyCache[T]) put(key string, v T) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	if len(c.byKey) >= maxCachedExif {
+	if len(c.byKey) >= maxCached {
 		clear(c.byKey)
 	}
-	c.byKey[key] = s
+	c.byKey[key] = v
 }
 
 // handlePreviewBackfill lists the fields each photo JSON file is missing,

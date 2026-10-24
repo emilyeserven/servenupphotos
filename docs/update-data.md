@@ -30,6 +30,17 @@ as Explore Bucket reads it, instead of being added as `null`; the backend keeps 
 applying doesn't download them again after a preview. A missing `images.thumbnailcrop` is read from the `?crop=x,y,size`
 on `images.thumbnail` when it has one, or, with that option on, from the crop saved with the Square Thumbnail in R2.
 
+**Colors** reads each photo's colors from its original in R2 (at `images.key`) and saves them as the file's `colors`
+(`POST /api/data/colors/preview`, then `POST /api/data/colors`). It's the whole analysis the EXIF page's Colors and Raw
+color data tabs show (`colors.Analysis` in `be-pipeline/internal/colors`): the average color, the 12 hue buckets, the
+neutrals' lightness histogram, the mean lightness and chroma, and `raw`, the per-color-space statistics and
+histograms. Only files without `colors` (or with `null`) are read, unless **Read the
+colors of photos that already have them again** is on, such as after replacing photos' images. Each original is
+downloaded and decoded, four at a time, so a first run over every photo takes a few minutes; the backend keeps each
+original's colors in memory, so applying doesn't download them again after a preview. A photo whose original can't
+be read, or that has no `images.key`, is listed with why and left as it is, and the rest are still saved. Only
+`colors` is rewritten, and nothing is saved while any photo file can't be read.
+
 **Camera overrides** applies the [camera overrides](camera-overrides.md) to every photo file again, after they've
 changed (`POST /api/data/camera-overrides/preview`, then `POST /api/data/camera-overrides`). Each file starts from its
 EXIF values (its own, with the ones its `exifOriginals` kept laid over them), so renaming a camera again, or removing a

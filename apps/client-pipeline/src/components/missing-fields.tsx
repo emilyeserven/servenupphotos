@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useState } from "react";
 import {
   type AddedField,
   type MissingFieldsPreview,
@@ -10,13 +10,13 @@ import {
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
 import {
   CommitSuccess,
   FileDetails,
   invalidatePhotoReads,
-  PreviewDestination,
-  Unreadable,
+  OptionCheckbox,
+  SaveButton,
+  ScanPreviewBody,
   count,
 } from "@/components/update-data-shared";
 
@@ -94,30 +94,17 @@ interface ExifOptionProps {
   onChange: (checked: boolean) => void;
 }
 
-function ExifOption({ checked, disabled, onChange }: ExifOptionProps) {
-  const id = useId();
+function ExifOption(props: ExifOptionProps) {
   return (
-    <div className="flex items-start gap-3 text-sm">
-      <input
-        id={id}
-        type="checkbox"
-        className="accent-primary mt-0.5 size-4"
-        checked={checked}
-        disabled={disabled}
-        aria-describedby={`${id}-hint`}
-        onChange={(event) => onChange(event.target.checked)}
-      />
-      <div className="flex flex-col gap-1">
-        <label htmlFor={id} className="font-medium">
-          Read missing camera details from the originals in R2
-        </label>
-        <p id={`${id}-hint`} className="text-muted-foreground">
-          {disabled && !checked
-            ? "Set up Cloudflare R2 in Settings to read them. Until then they're added empty."
-            : "Fills a missing camera, lens, aperture, exposure, ISO, focal length, place, date or size from the photo's EXIF, and a missing Square Thumbnail crop from the one saved with the thumbnail. It downloads each of those photos, so it takes a little longer."}
-        </p>
-      </div>
-    </div>
+    <OptionCheckbox
+      label="Read missing camera details from the originals in R2"
+      hint={
+        props.disabled && !props.checked
+          ? "Set up Cloudflare R2 in Settings to read them. Until then they're added empty."
+          : "Fills a missing camera, lens, aperture, exposure, ISO, focal length, place, date or size from the photo's EXIF, and a missing Square Thumbnail crop from the one saved with the thumbnail. It downloads each of those photos, so it takes a little longer."
+      }
+      {...props}
+    />
   );
 }
 
@@ -146,35 +133,17 @@ function MissingFieldsResultView({ readExif, ...apply }: ResultViewProps) {
 type PreviewBodyProps = Omit<ResultViewProps, "readExif"> & { preview: MissingFieldsPreview };
 
 function PreviewBody({ preview, ...apply }: PreviewBodyProps) {
-  if (preview.files.length === 0) {
-    return (
-      <>
-        <p className="text-sm">
-          All {count(preview.photoFiles, "photo file")} on <code>{preview.branch}</code> have every
-          field, so there&apos;s nothing to add.
-        </p>
-        <Unreadable files={preview.unreadable} />
-      </>
-    );
-  }
   return (
-    <>
-      <div className="flex flex-col gap-1 text-sm">
-        <p>
-          <strong>
-            {preview.files.length} of {count(preview.photoFiles, "photo file")}
-          </strong>{" "}
-          {preview.files.length === 1 ? "is" : "are"} missing fields.
-        </p>
-        <p className="text-muted-foreground">
-          <PreviewDestination scan={preview} />
-        </p>
-      </div>
+    <ScanPreviewBody
+      scan={preview}
+      changed={preview.files.length}
+      nothing="have every field, so there's nothing to add"
+      headline={`${preview.files.length === 1 ? "is" : "are"} missing fields`}
+    >
       <FieldCounts fields={preview.fields} />
-      <Unreadable files={preview.unreadable} blocking />
       <FilesMissingFields files={preview.files} />
       <ApplyButton preview={preview} {...apply} />
-    </>
+    </ScanPreviewBody>
   );
 }
 
@@ -258,19 +227,13 @@ function AddedSource({ field }: { field: AddedField }) {
 function ApplyButton({ preview, pending, error, onApply }: PreviewBodyProps) {
   const fields = preview.files.reduce((sum, f) => sum + f.added.length, 0);
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button type="button" disabled={preview.unreadable.length > 0 || pending} onClick={onApply}>
-        {pending ? (
-          <>
-            <Spinner />
-            Saving…
-          </>
-        ) : (
-          `Add ${count(fields, "field")} to ${count(preview.files.length, "file")}`
-        )}
-      </Button>
-      {error && <p className="text-destructive text-sm">{error.message}</p>}
-    </div>
+    <SaveButton
+      label={`Add ${count(fields, "field")} to ${count(preview.files.length, "file")}`}
+      disabled={preview.unreadable.length > 0}
+      pending={pending}
+      error={error}
+      onClick={onApply}
+    />
   );
 }
 

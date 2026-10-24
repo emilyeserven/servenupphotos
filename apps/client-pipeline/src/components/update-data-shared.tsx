@@ -1,8 +1,10 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { ExternalLinkIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 import type { ScannedPhotos } from "@/api/data";
 import type { PendingSave } from "@/api/scan-changes";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 
 /** "1 file", "2 files". */
@@ -95,10 +97,13 @@ export function invalidatePhotoReads(queryClient: QueryClient) {
 export function FileDetails({
   path,
   note,
+  swatch,
   children,
 }: {
   path: string;
   note: string;
+  /** A color to show beside the note, such as the photo's average color. */
+  swatch?: string;
   children: ReactNode;
 }) {
   return (
@@ -106,10 +111,141 @@ export function FileDetails({
       <details>
         <summary className="hover:bg-muted/50 flex cursor-pointer items-center justify-between gap-3 px-3 py-2">
           <code className="min-w-0 truncate">{path.split("/").pop()}</code>
-          <span className="text-muted-foreground shrink-0">{note}</span>
+          <span className="text-muted-foreground flex shrink-0 items-center gap-2">
+            {swatch && (
+              <span
+                aria-hidden
+                className="size-4 rounded-sm border"
+                style={{ backgroundColor: swatch }}
+              />
+            )}
+            {note}
+          </span>
         </summary>
         {children}
       </details>
     </li>
+  );
+}
+
+/** A checkbox option of a bulk change, with its label and a hint under it. */
+export function OptionCheckbox({
+  label,
+  hint,
+  checked,
+  disabled,
+  onChange,
+}: {
+  label: string;
+  hint: string;
+  checked: boolean;
+  disabled: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  const id = useId();
+  return (
+    <div className="flex items-start gap-3 text-sm">
+      <input
+        id={id}
+        type="checkbox"
+        className="accent-primary mt-0.5 size-4"
+        checked={checked}
+        disabled={disabled}
+        aria-describedby={`${id}-hint`}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      <div className="flex flex-col gap-1">
+        <label htmlFor={id} className="font-medium">
+          {label}
+        </label>
+        <p id={`${id}-hint`} className="text-muted-foreground">
+          {hint}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A bulk change's preview: when no file changes, why not; otherwise how many do and where the
+ * change goes, the files that can't be read, then the rest of the preview.
+ */
+export function ScanPreviewBody({
+  scan,
+  changed,
+  nothing,
+  headline,
+  children,
+}: {
+  scan: ScannedPhotos;
+  /** How many files the change touches. */
+  changed: number;
+  /** Why there's nothing to change, after "All N photo files on <branch>". */
+  nothing: string;
+  /** What happens to the changed files, after "N of M photo files". */
+  headline: string;
+  children: ReactNode;
+}) {
+  if (changed === 0) {
+    return (
+      <>
+        <p className="text-sm">
+          All {count(scan.photoFiles, "photo file")} on <code>{scan.branch}</code> {nothing}.
+        </p>
+        <Unreadable files={scan.unreadable} />
+      </>
+    );
+  }
+  return (
+    <>
+      <div className="flex flex-col gap-1 text-sm">
+        <p>
+          <strong>
+            {changed} of {count(scan.photoFiles, "photo file")}
+          </strong>{" "}
+          {headline}.
+        </p>
+        <p className="text-muted-foreground">
+          <PreviewDestination scan={scan} />
+        </p>
+      </div>
+      <Unreadable files={scan.unreadable} blocking />
+      {children}
+    </>
+  );
+}
+
+/** A bulk change's save button, with a spinner while it saves and the error under it. */
+export function SaveButton({
+  label,
+  disabled,
+  pending,
+  error,
+  onClick,
+  children,
+}: {
+  label: string;
+  disabled: boolean;
+  pending: boolean;
+  error: Error | null;
+  onClick: () => void;
+  /** Shown beside the button, such as what it leaves out. */
+  children?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button type="button" disabled={disabled || pending} onClick={onClick}>
+        {pending ? (
+          <>
+            <Spinner />
+            Saving…
+          </>
+        ) : (
+          label
+        )}
+      </Button>
+      {children}
+      {error && <p className="text-destructive text-sm">{error.message}</p>}
+    </div>
   );
 }

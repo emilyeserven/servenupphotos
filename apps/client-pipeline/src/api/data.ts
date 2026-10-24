@@ -1,6 +1,7 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 import type { FieldChange } from "@/api/cameras";
+import type { ColorAnalysis } from "@/api/exif";
 import { requestJson } from "@/api/settings";
 
 /** Base URLs to move the photos' image URLs between; both empty to only list the origins. */
@@ -137,6 +138,47 @@ export const addMissingFieldsMutation = mutationOptions({
   meta: { saves: true, changes: (result) => photoChanges(result as MissingFieldsResult) },
   mutationFn: (readExif: boolean) =>
     post<MissingFieldsResult>("/api/data/missing-fields", { readExif }),
+});
+
+/** A photo file that gets a color summary, read from its original in R2. */
+export interface ColorFile {
+  path: string;
+  fileUrl: string;
+  /** True when the file already has colors, which these replace. */
+  replaces: boolean;
+  /** The photo's colors; null when `error` says why they couldn't be read, and the file is left as it is. */
+  colors: ColorAnalysis | null;
+  error?: string;
+}
+
+export interface ColorsPreview extends ScannedPhotos {
+  /** How many photo files already have colors. */
+  haveColors: number;
+  /** True when photos that already have colors get them again. */
+  recompute: boolean;
+  files: ColorFile[];
+}
+
+export interface ColorsResult extends PendingSave {
+  files: number;
+  /** How many photos' colors couldn't be read, so their files were left as they are. */
+  failed: number;
+}
+
+/** Reads the colors of every photo without them (or every photo, to recompute) from its original in R2. */
+export const colorsPreviewQuery = (recompute: boolean) =>
+  queryOptions({
+    queryKey: ["data", "colors", recompute],
+    queryFn: () => post<ColorsPreview>("/api/data/colors/preview", { recompute }),
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+/** Saves those colors in each photo JSON file, as changes waiting for Commit. */
+export const writeColorsMutation = mutationOptions({
+  mutationKey: ["data", "colors", "write"],
+  meta: { saves: true, changes: (result) => photoChanges(result as ColorsResult) },
+  mutationFn: (recompute: boolean) => post<ColorsResult>("/api/data/colors", { recompute }),
 });
 
 /** A photo or place file whose countries or cities are written as the name that wins over them. */
