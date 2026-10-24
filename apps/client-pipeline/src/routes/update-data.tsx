@@ -6,6 +6,7 @@ import { LocationNamesCard } from "@/components/location-names-card";
 import { MissingFieldsCard } from "@/components/missing-fields";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
 import { Page } from "@/components/page";
+import { PhotoColorsCard } from "@/components/photo-colors-card";
 import { QueryResult } from "@/components/query-result";
 
 export const Route = createFileRoute("/update-data")({
@@ -27,6 +28,7 @@ function UpdateDataPage() {
             <>
               <ImageBaseUrlCard publicUrl={data.r2.publicUrl} />
               <MissingFieldsCard canReadExif={r2IsSetUp(data.r2)} />
+              <PhotoColorsCard canRead={r2IsSetUp(data.r2)} />
               <ReapplyOverridesCard />
               <LocationNamesCard />
             </>

@@ -8,4 +8,5 @@ Open `/exif` in the pipeline UI (<http://localhost:5174/exif> with `pnpm dev:doc
 `{ file, exif, colors }`, where `colors` holds the average color, the share of the photo in each of 12 fixed hue
 buckets (every 30° around the color wheel), a lightness histogram of the neutral pixels (too dark or unsaturated to
 have a hue), the mean lightness and chroma, and `raw`: per-channel statistics in every color space go-colorful
-supports plus hue, lightness, chroma and saturation histograms. The UI shows these in Colors and Raw color data tabs.
+supports plus hue, lightness, chroma and saturation histograms. The UI shows these in Colors and Raw color data tabs. Update Data's **Colors** saves the same summary, without `raw`, in each photo's JSON file;
+see [Update Data](update-data.md).

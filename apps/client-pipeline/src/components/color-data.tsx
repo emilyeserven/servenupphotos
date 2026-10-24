@@ -1,8 +1,8 @@
 import type * as React from "react";
-import type { Bin, ColorAnalysis, RawColorData as RawData } from "@/api/exif";
+import type { Bin, ColorSummary, RawColorData as RawData } from "@/api/exif";
 import { JsonCodeBlock } from "@/components/json-code-block";
 
-export function ColorData({ colors }: { colors: ColorAnalysis }) {
+export function ColorData({ colors }: { colors: ColorSummary }) {
   return (
     <div className="flex flex-col gap-6">
       <Section title="Average">

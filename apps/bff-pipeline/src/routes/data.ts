@@ -34,4 +34,17 @@ export const dataRoutes: FastifyPluginAsync = async (app) => {
       }),
     );
   }
+
+  // Each reads every photo JSON file and downloads the originals from R2 to read their colors; the
+  // backend gives that 5 minutes.
+  for (const path of ["/data/colors/preview", "/data/colors"]) {
+    app.post(path, async (request, reply) =>
+      relayToBackend(reply, app.log, path, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(request.body),
+        timeoutMs: 310_000,
+      }),
+    );
+  }
 };

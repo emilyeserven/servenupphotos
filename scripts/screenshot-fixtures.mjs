@@ -311,6 +311,62 @@ function bucketImages() {
 }
 
 /** What a save answers: its changes wait for Commit, which adds them to the open pull request. */
+const HUE_BUCKETS = [
+  "red",
+  "orange",
+  "yellow",
+  "chartreuse",
+  "green",
+  "spring green",
+  "cyan",
+  "azure",
+  "blue",
+  "violet",
+  "magenta",
+  "rose",
+];
+
+/** A made-up color summary, as POST /api/data/colors/preview reads one, mostly in one hue bucket. */
+function sampleColors(hex, bucket) {
+  const neutral = 0.3;
+  return {
+    average: { hex, lab: { l: 52, a: 12, b: 20 }, hcl: { h: 59, c: 23, l: 52 } },
+    buckets: HUE_BUCKETS.map((name, i) => ({
+      name,
+      hex: `hsl(${i * 30} 100% 50%)`,
+      share: i === bucket ? 0.45 : (1 - neutral - 0.45) / 11,
+    })),
+    neutrals: {
+      share: neutral,
+      histogram: Array.from({ length: 20 }, (_, i) => ({
+        from: i * 5,
+        to: (i + 1) * 5,
+        hex: `hsl(0 0% ${i * 5 + 2.5}%)`,
+        share: neutral / 20,
+      })),
+    },
+    lightness: 52,
+    chroma: 23,
+    samples: 9984,
+  };
+}
+
+/** Sample colors for the first photo files, with one whose original isn't in R2. */
+function colorFiles() {
+  const palette = [
+    ["#8a6b4f", 1],
+    ["#4f6f8a", 7],
+    ["#6f8a4f", 4],
+  ];
+  const missing = { colors: null, error: "That photo isn't in the bucket anymore." };
+  return headPhotos.slice(0, 4).map((photo, i) => ({
+    path: photo.path,
+    fileUrl: "",
+    replaces: false,
+    ...(palette[i] ? { colors: sampleColors(...palette[i]) } : missing),
+  }));
+}
+
 const pendingSave = (branch = PULL_REQUEST.branch) => ({
   branch,
   pullRequestUrl: PULL_REQUEST.url,
@@ -515,6 +571,18 @@ export function defaultFixtures() {
         })),
     },
     "POST /api/data/location-names": () => ({ ...pendingSave(), files: 9, fields: 9 }),
+    "POST /api/data/colors/preview": ({ body }) => ({
+      repo: REPO,
+      folder: `${FOLDER}/photos`,
+      branch: PULL_REQUEST.branch,
+      pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+      photoFiles: headPhotos.length,
+      haveColors: headPhotos.length - 4,
+      recompute: Boolean(body?.recompute),
+      unreadable: [],
+      files: colorFiles(),
+    }),
+    "POST /api/data/colors": () => ({ ...pendingSave(), files: 3, failed: 1 }),
     "PUT /api/localizations/country-united-states-of-america": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/localizations/country-united-states-of-america.json`,
