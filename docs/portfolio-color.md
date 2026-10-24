@@ -68,7 +68,10 @@ The **Grid** (`?view=grid`) shows the photos as square tiles, sorted as above.
 up at least 90% of them (`isBlackAndWhite` in `lib/photo-colors.ts`) as pins along a spectrum from black on the left to
 white on the right, each at its average lightness (`Photo.lightness`, the mean of its neutral histogram, 0 to 100).
 Photos at nearly the same lightness stack above each other (`lib/shade-spectrum.ts`), like a beeswarm chart. These
-photos are left off the wheel; the grid still shows every photo.
+photos are left off the wheel; the grid still shows every photo. In this view the color swatches give way to 10 steps of gray
+(`components/shade-step-filter.tsx`, `lib/shade-steps.ts`), one for each tenth of lightness from black to white, kept
+as `?shade=0` to `?shade=9`; picking one shows only the photos that light on average. The match and vividness controls
+are hidden here, as they're about color.
 
 > **Frontend analogy:** the stacking is a greedy flex-wrap turned sideways: each pin, from left to right, drops into
 > the lowest row that has room for it.
