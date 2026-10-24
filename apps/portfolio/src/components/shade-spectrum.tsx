@@ -27,6 +27,12 @@ const MARGIN = 0.03;
  */
 const TOP_MARGIN = 0.12;
 
+/** How far up, as a fraction of the chart, the least vivid photos sit, clear of the screen's bottom. */
+const BOTTOM_MARGIN = 0.06;
+
+/** The least gap, in pixels, kept between a pin and the chart's edges. */
+const EDGE_PX = 12;
+
 /** The least span of vividness the chart's height stands for, so photos alike aren't spread up it. */
 const MIN_SPAN = 2;
 
@@ -38,10 +44,10 @@ function vividExtent(photos: SpectrumPhoto[], measure: VividMeasure): [number, n
   return [bottom, Math.max(bottom + MIN_SPAN, Math.ceil(Math.max(...values)))];
 }
 
-/** Keeps a pin inside a canvas of size pixels, so it doesn't hang over the edge. */
+/** Keeps a pin inside a canvas of size pixels, a little in from the edge. */
 function keepInChart({ width, height }: { width: number; height: number }): KeepInside {
   return (p, size) => {
-    const half = size / 2;
+    const half = size / 2 + EDGE_PX;
     p.x = Math.min(width - half, Math.max(half, p.x));
     p.y = Math.min(height - half, Math.max(half, p.y));
   };
@@ -111,7 +117,10 @@ function chartPoint(
 ): WheelPoint {
   return {
     x: MARGIN + fractionOf(photo.lightness ?? 50, extent) * (1 - 2 * MARGIN),
-    y: 1 - MARGIN - fractionOf(vividnessOf(photo, measure), vivid) * (1 - MARGIN - TOP_MARGIN),
+    y:
+      1 -
+      BOTTOM_MARGIN -
+      fractionOf(vividnessOf(photo, measure), vivid) * (1 - BOTTOM_MARGIN - TOP_MARGIN),
   };
 }
 
