@@ -5,14 +5,19 @@ import { cn } from "@/lib/utils";
 const BUTTON_CLASS =
   "flex size-8 items-center justify-center text-foreground outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-40 disabled:hover:bg-transparent [&_svg]:size-4";
 
-/** The buttons that zoom the color wheel in and out around the middle of the view, and back to all of it. */
+/**
+ * The buttons that zoom the color wheel (or Black & white chart) in and out around the middle of
+ * the view, and back to all of it; wholeLabel names that last one, such as "Show the whole wheel".
+ */
 export function WheelZoomControls({
   view,
   onChange,
+  wholeLabel,
   className,
 }: {
   view: WheelView;
   onChange: (view: WheelView) => void;
+  wholeLabel: string;
   className?: string;
 }) {
   const whole = view.zoom === 1;
@@ -47,8 +52,8 @@ export function WheelZoomControls({
       </button>
       <button
         type="button"
-        aria-label="Show the whole wheel"
-        title="Show the whole wheel"
+        aria-label={wholeLabel}
+        title={wholeLabel}
         disabled={whole}
         onClick={() => onChange(WHOLE_WHEEL)}
         className={BUTTON_CLASS}

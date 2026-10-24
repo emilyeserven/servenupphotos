@@ -63,16 +63,12 @@ const SPREAD_ROUNDS = 60;
 export type KeepInside = (p: WheelPoint, size: number) => void;
 
 /**
- * The points moved apart so pins of size (a fraction of the wheel's width, or any unit the points
- * are in) overlap as little as they can, each pair that's too close pushed apart along the line
- * between them, a little each round, and kept inside the wheel, or wherever keep keeps them. Pins
- * only move as far as they need to, so each stays near its place.
+ * The points moved apart so pins of size (in pixels, as the points are) overlap as little as they
+ * can, each pair that's too close pushed apart along the line between them, a little each round,
+ * and kept where keep keeps them, such as inside the wheel. Pins only move as far as they need
+ * to, so each stays near its place.
  */
-export function spreadPins(
-  points: WheelPoint[],
-  size: number,
-  keep: KeepInside = keepInside,
-): WheelPoint[] {
+export function spreadPins(points: WheelPoint[], size: number, keep: KeepInside): WheelPoint[] {
   const spread = points.map((p, i) => ({
     x: p.x + jitter(i, size),
     y: p.y + jitter(i + 0.5, size),
@@ -117,13 +113,16 @@ function separate(a: WheelPoint, b: WheelPoint, size: number): boolean {
   return true;
 }
 
-/** Brings a point back inside the wheel, so its pin doesn't hang over the edge. */
-function keepInside(p: WheelPoint, size: number): void {
-  const limit = 0.48 - size / 2;
-  const dx = p.x - 0.5;
-  const dy = p.y - 0.5;
-  const distance = Math.hypot(dx, dy);
-  if (distance <= limit) return;
-  p.x = 0.5 + (dx / distance) * limit;
-  p.y = 0.5 + (dy / distance) * limit;
+/** Brings a point back inside a wheel width pixels wide, so its pin doesn't hang over the edge. */
+export function keepInWheel(width: number): KeepInside {
+  return (p, size) => {
+    const middle = width / 2;
+    const limit = 0.48 * width - size / 2;
+    const dx = p.x - middle;
+    const dy = p.y - middle;
+    const distance = Math.hypot(dx, dy);
+    if (distance <= limit) return;
+    p.x = middle + (dx / distance) * limit;
+    p.y = middle + (dy / distance) * limit;
+  };
 }

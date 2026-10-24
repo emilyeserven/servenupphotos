@@ -43,22 +43,32 @@ export function centerOn(view: WheelView, point: WheelPoint): WheelView {
   return clampView({ ...view, ...point });
 }
 
-/** The point on the wheel under a pixel offset from the viewport's top left. */
-function wheelPointAt(view: WheelView, width: number, px: number, py: number): WheelPoint {
-  return { x: view.x + (px / width - 0.5) / view.zoom, y: view.y + (py / width - 0.5) / view.zoom };
+/** A viewport's size in pixels: the wheel's is square, the Black & white chart's wider than tall. */
+export interface ViewportSize {
+  width: number;
+  height: number;
+}
+
+/** The point on the wheel (or chart) under a pixel offset from the viewport's top left. */
+function wheelPointAt(view: WheelView, size: ViewportSize, px: number, py: number): WheelPoint {
+  return {
+    x: view.x + (px / size.width - 0.5) / view.zoom,
+    y: view.y + (py / size.height - 0.5) / view.zoom,
+  };
 }
 
 /**
- * The view of the wheel in viewport (width pixels square), and the ways to change it: dragging
+ * The view of the wheel (or the Black & white chart) in viewport, size pixels, and the ways to
+ * change it, as fractions of its width and height: dragging
  * pans it, pinching with two fingers or a trackpad (or ctrl + scrolling) zooms it, and `setView`
  * sets it, for the zoom buttons and the mini map. A drag doesn't also click the pin it started on.
  */
-export function useWheelZoom(viewport: RefObject<HTMLDivElement | null>, width: number) {
+export function useWheelZoom(viewport: RefObject<HTMLDivElement | null>, size: ViewportSize) {
   const [view, setView] = useState(WHOLE_WHEEL);
-  const latest = useRef({ view, width });
+  const latest = useRef({ view, size });
   useEffect(() => {
-    latest.current = { view, width };
-  }, [view, width]);
+    latest.current = { view, size };
+  }, [view, size]);
 
   useEffect(() => {
     const element = viewport.current;
@@ -69,8 +79,8 @@ export function useWheelZoom(viewport: RefObject<HTMLDivElement | null>, width: 
   return { view, setView };
 }
 
-/** The view and width when an event comes in. */
-type Latest = RefObject<{ view: WheelView; width: number }>;
+/** The view and viewport size when an event comes in. */
+type Latest = RefObject<{ view: WheelView; size: ViewportSize }>;
 
 /** A change to the view, from the view as it is. */
 type ViewUpdate = (view: WheelView) => WheelView;
@@ -94,9 +104,9 @@ function listenForZoom(
   function onWheel(event: WheelEvent) {
     if (!event.ctrlKey && !event.metaKey) return;
     event.preventDefault();
-    const { view, width } = latest.current;
+    const { view, size } = latest.current;
     const at = offset(event);
-    const point = wheelPointAt(view, width, at.x, at.y);
+    const point = wheelPointAt(view, size, at.x, at.y);
     update((v) => zoomAt(v, Math.exp(-event.deltaY / 200), point));
   }
 
@@ -114,8 +124,8 @@ function listenForZoom(
     pointers.set(event.pointerId, now);
     travel += Math.hypot(now.x - before.x, now.y - before.y);
     dragged ||= travel > DRAG_PX || other !== undefined;
-    const { width } = latest.current;
-    update((v) => follow(v, width, before, now, other));
+    const { size } = latest.current;
+    update((v) => follow(v, size, before, now, other));
   }
 
   // Where another finger is down, for a pinch.
@@ -154,20 +164,19 @@ function listenForZoom(
 /** The view following a pointer from before to now: pinched when another finger is down at other, else panned. */
 function follow(
   view: WheelView,
-  width: number,
+  size: ViewportSize,
   before: WheelPoint,
   now: WheelPoint,
   other: WheelPoint | undefined,
 ): WheelView {
-  return other ? pinch(view, width, before, now, other) : pan(view, width, before, now);
+  return other ? pinch(view, size, before, now, other) : pan(view, size, before, now);
 }
 
 /** The view panned so the wheel follows a pointer from before to now. */
-function pan(view: WheelView, width: number, before: WheelPoint, now: WheelPoint): WheelView {
-  const scale = width * view.zoom;
+function pan(view: WheelView, size: ViewportSize, before: WheelPoint, now: WheelPoint): WheelView {
   return centerOn(view, {
-    x: view.x - (now.x - before.x) / scale,
-    y: view.y - (now.y - before.y) / scale,
+    x: view.x - (now.x - before.x) / (size.width * view.zoom),
+    y: view.y - (now.y - before.y) / (size.height * view.zoom),
   });
 }
 
@@ -177,7 +186,7 @@ function pan(view: WheelView, width: number, before: WheelPoint, now: WheelPoint
  */
 function pinch(
   view: WheelView,
-  width: number,
+  size: ViewportSize,
   before: WheelPoint,
   now: WheelPoint,
   other: WheelPoint,
@@ -185,6 +194,6 @@ function pinch(
   const factor =
     Math.hypot(now.x - other.x, now.y - other.y) /
     Math.max(1, Math.hypot(before.x - other.x, before.y - other.y));
-  const middle = wheelPointAt(view, width, (now.x + other.x) / 2, (now.y + other.y) / 2);
+  const middle = wheelPointAt(view, size, (now.x + other.x) / 2, (now.y + other.y) / 2);
   return zoomAt(view, factor, middle);
 }
