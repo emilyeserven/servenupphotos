@@ -5,6 +5,14 @@ import { type ReactNode, useMemo, useState } from "react";
 import { type BucketImage, bucketImagesQuery } from "@/api/photos";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { type PUBLISHED, isSquare, keyStem, parseVersionKey } from "@/api/versions";
+import { DeleteImageButton } from "@/components/bucket-delete";
+import {
+  type BucketFilters,
+  BucketFilterBar,
+  matchesBucketFilters,
+  parseBucketFilters,
+  photoState,
+} from "@/components/bucket-filters";
 import { GenerateJsonButton } from "@/components/generate-json";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -24,6 +32,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/bucket")({
   component: BucketPage,
   staticData: { wide: true },
+  validateSearch: (search: Record<string, unknown>): BucketFilters => parseBucketFilters(search),
 });
 
 function BucketPage() {
@@ -33,7 +42,7 @@ function BucketPage() {
     <Page
       wide
       title="Explore Bucket"
-      description="Every image in the R2 bucket, newest first. Click a stack to see its resized copies, or generate JSON for a photo that isn't saved yet."
+      description="Every image in the R2 bucket, newest first. Click a stack to see its resized copies, generate JSON for a photo that isn't saved yet, or delete an image from R2."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -61,6 +70,9 @@ function BucketPage() {
 function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
   const bucket = useQuery(bucketImagesQuery);
   const marks = usePhotoMarks(githubIsSetUp, bucket.data);
+  const stacks = useMemo(() => stackImages(bucket.data?.images ?? []), [bucket.data]);
+  const filters = useBucketFilters(marks.checked);
+  const shown = stacks.filter((stack) => matchesBucketFilters(filterable(marks, stack), filters));
 
   return (
     <>
@@ -86,11 +98,34 @@ function BucketCard({ githubIsSetUp }: { githubIsSetUp: boolean }) {
         </CardHeader>
         <BucketEmpty />
         <MarksNote githubIsSetUp={githubIsSetUp} problem={marks.problem} />
+        {stacks.length > 0 && (
+          <BucketFilterBar
+            filters={filters}
+            shown={shown.length}
+            total={stacks.length}
+            stateKnown={marks.checked}
+          />
+        )}
       </Card>
 
-      {bucket.data ? <BucketGrid images={bucket.data.images} marks={marks} /> : null}
+      <BucketGrid stacks={shown} marks={marks} />
     </>
   );
+}
+
+/** The filters in the URL, without Photo data until the photo data has been checked. */
+function useBucketFilters(stateKnown: boolean): BucketFilters {
+  const filters = Route.useSearch();
+  return stateKnown ? filters : { ...filters, data: undefined };
+}
+
+/** What the filters read about a stack: its key, its copies, and where its photo's data is. */
+function filterable(marks: PhotoMarks, stack: Stack) {
+  return {
+    key: stack.image.key,
+    copyCount: stack.copies.length,
+    state: marks.checked ? photoState(tileStatus(marks, stack.image)) : undefined,
+  };
 }
 
 /** The listing's loading, error or empty state; nothing once there are images. */
@@ -213,8 +248,7 @@ function stackImages(images: BucketImage[]): Stack[] {
     }));
 }
 
-function BucketGrid({ images, marks }: { images: BucketImage[]; marks: PhotoMarks }) {
-  const stacks = useMemo(() => stackImages(images), [images]);
+function BucketGrid({ stacks, marks }: { stacks: Stack[]; marks: PhotoMarks }) {
   if (stacks.length === 0) return null;
   return (
     <ul className="grid grid-cols-2 gap-x-4 gap-y-6 pt-3 pr-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -235,12 +269,22 @@ function StackItems({ stack, marks }: { stack: Stack; marks: PhotoMarks }) {
   return (
     <>
       <li>
-        <BucketTile tile={stack} stack={toggle} status={originalStatus(marks, stack)} />
+        <BucketTile
+          tile={stack}
+          stack={toggle}
+          copies={stack.copies.map((copy) => copy.image)}
+          status={originalStatus(marks, stack)}
+          checked={marks.checked}
+        />
       </li>
       {expanded &&
         stack.copies.map((copy) => (
           <li key={copy.image.key}>
-            <BucketTile tile={copy} status={tileStatus(marks, copy.image)} />
+            <BucketTile
+              tile={copy}
+              status={tileStatus(marks, copy.image)}
+              checked={marks.checked}
+            />
           </li>
         ))}
     </>
@@ -277,7 +321,11 @@ interface BucketTileProps {
   tile: Tile;
   /** For an original with resized copies: clicking it shows or hides them. */
   stack?: StackToggle;
+  /** For an original: its resized copies, which can be deleted with it. */
+  copies?: BucketImage[];
   status: TileStatus;
+  /** Whether the photo data was checked, so the status is known. */
+  checked: boolean;
 }
 
 /**
@@ -285,7 +333,7 @@ interface BucketTileProps {
  * URL. An image whose photo data is still in the open pull request is faded with a PR badge, one
  * in ALLPHOTOS.json has its own badge, and an original saved in neither can generate its JSON.
  */
-function BucketTile({ tile, stack, status }: BucketTileProps) {
+function BucketTile({ tile, stack, copies = [], status, checked }: BucketTileProps) {
   const media = (
     <>
       <TileImage image={tile.image} faded={status.inFlightPullRequest !== undefined} />
@@ -303,8 +351,33 @@ function BucketTile({ tile, stack, status }: BucketTileProps) {
         </a>
       )}
       <TileCaption image={tile.image} />
-      {status.generate && <GenerateJsonButton original={tile.image} copies={status.generate} />}
+      <TileActions image={tile.image} copies={copies} status={status} checked={checked} />
     </figure>
+  );
+}
+
+/** Generate JSON, for an original saved nowhere, and Delete, under a tile. */
+function TileActions({
+  image,
+  copies,
+  status,
+  checked,
+}: {
+  image: BucketImage;
+  copies: BucketImage[];
+  status: TileStatus;
+  checked: boolean;
+}) {
+  return (
+    <div className="flex flex-wrap gap-1">
+      {status.generate && <GenerateJsonButton original={image} copies={status.generate} />}
+      <DeleteImageButton
+        image={image}
+        copies={copies}
+        state={checked ? photoState(status) : undefined}
+        pullRequest={status.inFlightPullRequest}
+      />
+    </div>
   );
 }
 

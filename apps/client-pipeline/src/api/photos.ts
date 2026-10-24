@@ -346,6 +346,26 @@ export const bucketImagesQuery = queryOptions({
   retry: false,
 });
 
+/** What deleting images from the bucket did: the keys now gone, and the ones that stayed, with why. */
+export interface DeleteBucketImagesResult {
+  deleted: string[];
+  failed: { key: string; message: string }[];
+}
+
+/**
+ * Deletes images from the R2 bucket for Explore Bucket, such as an original and its resized
+ * copies. Only R2 changes: photo data that points at them is left as it is.
+ */
+export const deleteBucketImagesMutation = mutationOptions({
+  mutationKey: ["photos", "bucket", "delete"],
+  mutationFn: (keys: string[]) =>
+    requestJson<DeleteBucketImagesResult>("/api/photos/bucket/delete", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ keys }),
+    }),
+});
+
 /**
  * Whether ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json on the photo data pull request have every
  * change: `synced` when they do, `stale` when changes are waiting for Commit or data files were

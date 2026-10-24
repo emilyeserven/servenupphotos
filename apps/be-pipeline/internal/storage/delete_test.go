@@ -65,3 +65,30 @@ func TestDeletePhotoProblems(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteImage(t *testing.T) {
+	var path string
+	const key = "archive/2019/beach.PNG"
+	if msg := deleteImage(t.Context(), validR2, fakeR2Delete(t, http.StatusNoContent, "", &path), key); msg != "" {
+		t.Fatalf("msg = %q", msg)
+	}
+	if path != "/photos/"+key {
+		t.Errorf("DELETE path = %q, want the key in the photos bucket", path)
+	}
+}
+
+func TestDeleteImageProblems(t *testing.T) {
+	tests := []struct{ name, key string }{
+		{"not an image", "notes.txt"},
+		{"climbs out", "photos/../a.jpg"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var path string
+			msg := deleteImage(t.Context(), validR2, fakeR2Delete(t, http.StatusNoContent, "", &path), tt.key)
+			if !strings.Contains(msg, "Only images") || path != "" {
+				t.Errorf("msg = %q, deleted %q; want a refusal and no request", msg, path)
+			}
+		})
+	}
+}
