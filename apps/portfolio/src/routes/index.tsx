@@ -43,7 +43,7 @@ function Homepage() {
                   to={to}
                   className={cn(
                     FROSTED,
-                    "flex w-20 flex-col items-center gap-1.5 rounded-lg px-2 py-3 transition-colors outline-none hover:border-white/40 hover:bg-white/20 focus-visible:ring-[3px] focus-visible:ring-white/60 sm:w-28",
+                    "flex w-20 flex-col items-center gap-1.5 rounded-lg px-2 py-3 transition-colors outline-none hover:border-white/50 hover:bg-white/30 focus-visible:ring-[3px] focus-visible:ring-white/60 sm:w-28",
                   )}
                 >
                   <Icon className="size-6" aria-hidden />
