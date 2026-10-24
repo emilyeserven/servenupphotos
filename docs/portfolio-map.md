@@ -4,7 +4,7 @@
 level, or on the whole world when there are none.
 
 Each photo is a marker with its Square Thumbnail (or its Small version, cropped square), which opens the photo
-viewer. Photos too close together to tell apart are one round marker with how many there are, over their three newest
+viewer. Photos too close together to tell apart (within 40 pixels, a little under a marker's width) are one round marker with how many there are, over their three newest
 photos fading in turn under a dark overlay. Clicking it zooms the map in to fit its photos, which splits it apart, like
 a cluster pin on the Color page's wheel. A group that zooming in can't split (photos at one spot, or the map already as
 close as it goes) opens a grid of their thumbnails instead: in a popup above it, or on phones in a sheet along the
