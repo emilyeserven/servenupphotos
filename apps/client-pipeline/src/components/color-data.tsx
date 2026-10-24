@@ -19,6 +19,8 @@ export function ColorData({ colors }: { colors: ColorSummary }) {
             <dd>{colors.lightness}</dd>
             <dt>Mean chroma</dt>
             <dd>{colors.chroma}</dd>
+            <dt>Peak chroma</dt>
+            <dd>{colors.peakChroma ?? "Not read yet"}</dd>
           </dl>
         </div>
       </Section>

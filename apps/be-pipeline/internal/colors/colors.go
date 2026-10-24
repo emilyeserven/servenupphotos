@@ -13,6 +13,7 @@ import (
 	_ "image/jpeg" // register the JPEG decoder
 	"io"
 	"math"
+	"slices"
 
 	"github.com/lucasb-eyer/go-colorful"
 )
@@ -26,6 +27,9 @@ const (
 	// Pixels darker than this CIELAB lightness are neutral whatever their
 	// chroma, since their hue is not visible.
 	darkLightness = 20
+	// peakPercentile is how far through a photo's pixels, sorted by chroma,
+	// PeakChroma is read: the most vivid tenth of them reach it.
+	peakPercentile = 0.9
 	// neutralBins is how many lightness bins the neutral histogram has.
 	neutralBins = 20
 )
@@ -95,7 +99,11 @@ type Summary struct {
 	Neutrals  Neutrals `json:"neutrals"`
 	Lightness float64  `json:"lightness"`
 	Chroma    float64  `json:"chroma"`
-	Samples   int      `json:"samples"`
+	// PeakChroma is the CIELAB chroma that the most vivid tenth of the
+	// pixels reach (the 90th percentile), so a mostly muted photo with a
+	// small vivid part still scores high, unlike Chroma, the mean.
+	PeakChroma float64 `json:"peakChroma"`
+	Samples    int     `json:"samples"`
 }
 
 // Analysis is the color summary of a photo with its raw statistics. Its
@@ -122,6 +130,7 @@ func analyzeImage(img image.Image) (Analysis, error) {
 
 	var sum Lab
 	var chroma float64
+	chromas := make([]float64, 0, len(pixels))
 	var hues [len(bucketNames)]int
 	var neutral [neutralBins]int
 	for _, c := range pixels {
@@ -129,7 +138,9 @@ func analyzeImage(img image.Image) (Analysis, error) {
 		sum.L += lab.L
 		sum.A += lab.A
 		sum.B += lab.B
-		chroma += math.Hypot(lab.A, lab.B)
+		ch := math.Hypot(lab.A, lab.B)
+		chroma += ch
+		chromas = append(chromas, ch)
 		if isNeutral(lab) {
 			neutral[binOf(lab.L, 100, neutralBins)]++
 			continue
@@ -163,15 +174,23 @@ func analyzeImage(img image.Image) (Analysis, error) {
 	mean := Lab{sum.L / n, sum.A / n, sum.B / n}
 	return Analysis{
 		Summary: Summary{
-			Average:   toColor(mean),
-			Buckets:   buckets,
-			Neutrals:  neutrals,
-			Lightness: round(mean.L),
-			Chroma:    round(chroma / n),
-			Samples:   len(pixels),
+			Average:    toColor(mean),
+			Buckets:    buckets,
+			Neutrals:   neutrals,
+			Lightness:  round(mean.L),
+			Chroma:     round(chroma / n),
+			PeakChroma: round(peak(chromas)),
+			Samples:    len(pixels),
 		},
 		Raw: rawStats(pixels),
 	}, nil
+}
+
+// peak returns the chroma the most vivid tenth of chromas reach, sorting
+// chromas in place.
+func peak(chromas []float64) float64 {
+	slices.Sort(chromas)
+	return percentile(chromas, peakPercentile)
 }
 
 // isNeutral reports whether a pixel is too dark or unsaturated to have a hue.

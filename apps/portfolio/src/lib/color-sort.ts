@@ -40,13 +40,31 @@ function neighbor(color: ColorName, step: number): ColorName | undefined {
   return HUE_BUCKETS[(index + step + HUE_BUCKETS.length) % HUE_BUCKETS.length];
 }
 
-/** Photos sorted by vividness in order, the least vivid first for "asc", keeping their order where they tie. */
-export function sortByVividness<T extends { vividness: number }>(
+/**
+ * Which vividness the Color page sorts and filters by: "average", the photo's mean chroma, or
+ * "peak", the chroma its most vivid tenth reaches.
+ */
+export type VividMeasure = "average" | "peak";
+
+/** A photo's two vividness values. */
+interface Vivid {
+  vividness: number;
+  peakVividness: number;
+}
+
+/** A photo's vividness by measure. */
+export function vividnessOf(photo: Vivid, measure: VividMeasure): number {
+  return measure === "peak" ? photo.peakVividness : photo.vividness;
+}
+
+/** Photos sorted by their vividness by measure, the least vivid first for "asc", keeping their order where they tie. */
+export function sortByVividness<T extends Vivid>(
   photos: T[],
   order: ColorOrder,
+  measure: VividMeasure,
 ): T[] {
   const sign = order === "asc" ? 1 : -1;
-  return photos.toSorted((a, b) => sign * (a.vividness - b.vividness));
+  return photos.toSorted((a, b) => sign * (vividnessOf(a, measure) - vividnessOf(b, measure)));
 }
 
 /** Photos sorted by color in order, keeping their order where they tie. */

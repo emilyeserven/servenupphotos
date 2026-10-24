@@ -39,6 +39,8 @@ export interface PhotoColorData {
   buckets?: { name: string; share: number }[];
   /** The mean CIELAB chroma of its pixels: 0 for a gray photo, about 50 or more for a very colorful one. */
   chroma?: number;
+  /** The CIELAB chroma the most vivid tenth of its pixels reach; missing from colors saved before it was added. */
+  peakChroma?: number;
   /** The blacks, grays and whites, split into lightness bins from 0 (black) to 100 (white). */
   neutrals?: { histogram?: { from: number; share: number }[] };
 }
@@ -47,6 +49,15 @@ export interface PhotoColorData {
 export function photoVividness(colors: PhotoColorData | null | undefined): number | null {
   const chroma = colors?.chroma;
   return chroma === undefined ? null : Math.round(chroma);
+}
+
+/**
+ * How vivid a photo's most vivid tenth is, its peak chroma rounded, so a muted photo with a small
+ * vivid part still scores high. Colors saved before peak chroma was added use their mean until
+ * Update Data reads them again; null when the photo has no colors saved yet.
+ */
+export function photoPeakVividness(colors: PhotoColorData | null | undefined): number | null {
+  return photoVividness(colors && { chroma: colors.peakChroma ?? colors.chroma });
 }
 
 /** Each shade's reference color: a gray at the middle of its lightness, and white. */
