@@ -3,7 +3,7 @@
 `/metadata-groups`, under **Configuration** in the sidebar, names groups of the photos' metadata values: cameras,
 lenses, focal lengths, apertures, exposures and ISO. A group can gather a range, such as **Wide angle** for focal
 lengths 10 to 24 mm, or every way EXIF spells one thing, such as the two names Canon's 18-135mm kit lens shows up
-under, and groups can sit inside other groups. The portfolio Table's and Grid's [filters](portfolio-filters.md#metadata-groups)
+under, and groups can sit inside other groups. The portfolio Grid's [filters](portfolio-filters.md#metadata-groups)
 list them. The **Lenses** tab also holds the [custom lenses](custom-lenses.md), under the lens groups.
 
 ## The file

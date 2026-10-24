@@ -96,7 +96,7 @@ export function PinBoard<T extends PinPhoto>({
         view={view}
         onChange={setView}
         wholeLabel={look.wholeLabel}
-        className="absolute top-2 right-2"
+        className="absolute right-3 bottom-3"
       />
       {view.zoom > 1 && (
         <WheelMinimap

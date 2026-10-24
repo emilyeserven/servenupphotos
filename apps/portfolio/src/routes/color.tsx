@@ -2,6 +2,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Palette } from "lucide-react";
 import { type ColorLayout, ColorLayoutControl } from "@/components/color-layout-control";
 import { ColorViewFilters } from "@/components/color-view-filters";
+import { FloatingHeader } from "@/components/floating-header";
 import { ColorWheel } from "@/components/color-wheel";
 import { PinSizeControl } from "@/components/pin-size-control";
 import { PhotoLightbox } from "@/components/photo-lightbox";
@@ -93,23 +94,17 @@ function ColorView() {
   const shownPhotos = photosFor(search, layout);
 
   return (
-    // The page fills the window, so the wheel or chart can take all the room under the header.
-    <div className="flex h-svh min-h-[34rem] w-full flex-col gap-4 px-3 pt-16 pb-4 sm:px-4">
-      <header className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-1 sm:px-2">
-        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-          <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
-            <Palette className="size-8 text-muted-foreground" aria-hidden />
-            Color
-          </h1>
-          <p className="text-sm text-muted-foreground">{countText(shownPhotos.length)}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
+    // Like the Map, the wheel fills the window, with the title and controls floating over it;
+    // the Black & white chart sits inside some padding, below them.
+    <div className="relative h-svh min-h-[34rem] w-full">
+      <FloatingHeader icon={Palette} title="Color" count={shownPhotos.length}>
+        <div className="flex flex-wrap items-center gap-2">
           <ColorLayoutControl layout={layout} />
           <PinSizeControl scale={search.pins} />
           <ColorViewFilters vivid={search.vivid} measure={search.measure} />
         </div>
-      </header>
-      <div className="min-h-0 flex-1">
+      </FloatingHeader>
+      <div className={VIEW_FRAME[layout]}>
         <ColorLayoutView layout={layout} photos={shownPhotos} search={search} onOpen={show} />
       </div>
       <PhotoLightbox photo={shown} photos={shownPhotos} onShow={show} onClose={close} />
@@ -173,7 +168,8 @@ function ColorLayoutView({
   return <ColorWheel photos={photos} measure={measure} scale={scale} onOpen={onOpen} />;
 }
 
-/** "24 photos", or "1 photo". */
-function countText(count: number): string {
-  return `${count} ${count === 1 ? "photo" : "photos"}`;
-}
+/** Where each view sits: the wheel fills the page, the chart is padded below the controls. */
+const VIEW_FRAME: Record<ColorLayout, string> = {
+  wheel: "size-full",
+  mono: "size-full px-4 pt-40 pb-6 sm:px-8 md:pt-24",
+};

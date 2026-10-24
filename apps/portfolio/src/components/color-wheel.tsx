@@ -56,12 +56,12 @@ const WHEEL_LOOK: BoardLook = {
       style={{ transform: "scaleY(var(--board-aspect))" }}
     >
       <span
-        className="absolute inset-[3%] rounded-full opacity-70"
+        className="absolute inset-0 rounded-full opacity-80"
         style={{ background: WHEEL_BACKGROUND }}
       />
     </span>
   ),
-  className: "rounded-xl",
+  className: "",
   minimapClassName: "rounded-[50%]",
   wholeLabel: "Show the whole wheel",
 };
@@ -92,15 +92,6 @@ export function ColorWheel<T extends WheelPhoto>({
     [photos, measure, mostVivid],
   );
   return (
-    <figure className="flex size-full flex-col gap-2">
-      <div className="min-h-0 flex-1">
-        <PinBoard photos={photos} places={places} look={WHEEL_LOOK} scale={scale} onOpen={onOpen} />
-      </div>
-      <figcaption className="text-center text-xs text-muted-foreground">
-        Around by color, red at the top, pulled toward each photo&apos;s second color; out from the
-        gray middle by {measure === "peak" ? "peak vividness" : "vividness"}, up to {mostVivid}.
-        Crowded pins are clustered until you zoom in.
-      </figcaption>
-    </figure>
+    <PinBoard photos={photos} places={places} look={WHEEL_LOOK} scale={scale} onOpen={onOpen} />
   );
 }

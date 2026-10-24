@@ -11,7 +11,7 @@ import {
   useMap,
 } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
-import { ZoomIn } from "lucide-react";
+import { MapPin, ZoomIn } from "lucide-react";
 import { type LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
@@ -27,7 +27,7 @@ import { MapDayFilter } from "@/components/map-day-filter";
 import { MapViewControls } from "@/components/map-view-controls";
 import { PhotoFilterControls } from "@/components/photo-filters";
 import { MapFilterToggle } from "@/components/map-filter-toggle";
-import { MapOverlay } from "@/components/map-overlay";
+import { FloatingHeader } from "@/components/floating-header";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
@@ -306,7 +306,7 @@ function MapView() {
           }}
         >
           <NavigationControl position="bottom-right" />
-          <MapOverlay count={dayPhotos.placed.length}>
+          <FloatingHeader icon={MapPin} title="Map" count={dayPhotos.placed.length}>
             <MapViewControls
               onReset={() => {
                 if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
@@ -321,7 +321,7 @@ function MapView() {
                 <PhotoFilterControls photos={placedPhotos} />
               </MapFilterToggle>
             </MapViewControls>
-          </MapOverlay>
+          </FloatingHeader>
           <Source
             id={SOURCE_ID}
             type="geojson"

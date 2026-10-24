@@ -14,8 +14,9 @@ with a small vivid part, such as a red door on a gray street, scores high on pea
 before `peakChroma` was added use their average for peak until Update Data's **Colors** reads them again. Photos
 without `colors`, or without resized versions in R2, aren't shown; with none at all, the page shows its placeholder.
 
-Clicking a photo opens the photo viewer (`?photo=`). The page fills the window, so the wheel or chart takes all the
-room under the header without scrolling. **Wheel / Black & white** picks the view. **Previews S / M / L**
+Clicking a photo opens the photo viewer (`?photo=`). Like the Map, the page fills the window with no scrolling, and its
+title and controls float over its top left corner (`components/floating-header.tsx`, shared with the Map); the zoom
+buttons are at the bottom right. **Wheel / Black & white** picks the view. **Previews S / M / L**
 (`components/pin-size-control.tsx`, `lib/pin-scale.ts`) makes the pins 1×, 1.5× or 2× their usual size
 (`?pins=medium`, `?pins=large`, left out for small); bigger pins cluster sooner. **Filters** opens the **Average / Peak**
 and **Vividness at least** controls (`components/color-view-filters.tsx`), hidden at first and counted on the button
@@ -26,14 +27,14 @@ grid of its own any more: the [Grid page](#on-the-grid-page) has the same color 
 ## Wheel
 
 The **Wheel** (the default) shows the photos with color on a color wheel
-(`components/color-wheel.tsx`, `lib/color-wheel.ts`), stretched to fill the space as an oval when it isn't square (the
-colors are drawn as a circle and squashed the same way, so pins stay over their colors), with each photo as a thumbnail pin like the Map page's. A photo sits around the wheel by its
+(`components/color-wheel.tsx`, `lib/color-wheel.ts`), filling the whole page as an oval when it isn't square (the
+colors are drawn as a circle and squashed the same way, so pins stay over their colors), brightest in the middle and
+fading out into the page's background at the edge, with no caption under it, and with each photo as a thumbnail pin like the Map page's. A photo sits around the wheel by its
 hue, red at the top and clockwise through orange and yellow: its biggest hue bucket, pulled toward its second biggest
 along the shorter way round, the more the more of it there is (by the second's share of the two), so a photo with as
 much orange as yellow sits halfway between them and one with a touch of yellow stays near orange (shades are left
-out). It sits out
-from the gray middle by its vividness, by the **Average / Peak** measure, with the most vivid photo shown at the edge
-(or 20, if none is more vivid). Pins that would overlap are pushed apart, a little at a time, until they don't
+out). It sits in toward the middle by its vividness, by the **Average / Peak** measure: the most vivid photo shown
+(or 20, if none is more vivid) in the middle and gray photos at the faded edge. Pins that would overlap are pushed apart, a little at a time, until they don't
 (`spreadPins`), so each stays as near its place as it can; with many photos on a small screen, the pins get smaller,
 down to 14px, so they fit. Where three or more photos' places are within one and a half pin widths of each other,
 they're one round cluster pin instead, like the Map page's, showing how many photos it covers over the first one's
@@ -58,7 +59,7 @@ left to right from black to white by average lightness (`Photo.lightness`, the m
 100), and bottom to top by vividness, by the **Average / Peak** measure, since even a black and white photo can have a
 slight tint. The chart fits the photos: across from the darkest to the lightest one's lightness, rounded out to steps
 of 5 (at least 10 wide; `lightnessExtent`), and up from the least vivid photo shown to the most (at least 2 apart), so
-photos aren't bunched into one corner. It fills the space under the header. It's a pin board like the wheel
+photos aren't bunched into one corner. It sits below the floating controls, inset from the page's edges. It's a pin board like the wheel
 (`components/pin-board.tsx`): pins that would overlap are pushed apart, kept inside the chart; crowded ones are
 clustered; and it zooms, pans and shows a mini map the same way, splitting clusters as it zooms in.
 
