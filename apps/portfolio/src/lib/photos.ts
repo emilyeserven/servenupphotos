@@ -42,11 +42,12 @@ export interface Photo {
   /** The photo's resized versions in R2; null for photos not uploaded yet. */
   image: PhotoImage | null;
   /**
-   * The country and city it was taken in, in English, as the location filter matches them: the
-   * custom ones, or else the EXIF ones, or else the first of its places (or a place it's in) that
-   * says. Null when none of them do.
+   * The country, state and city it was taken in, in English, as the location filter matches them:
+   * the custom ones, or else the EXIF ones, or else the first of its places (or a place it's in)
+   * that says. Null when none of them do.
    */
   country: string | null;
+  state: string | null;
   city: string | null;
   /** The IDs of the places it lists and every place those are in, for the location filter. */
   placeIds: string[];
@@ -87,6 +88,8 @@ export interface PhotoLocationParts {
   /** Its places as a phrase, such as "In Gyeongbokgung Palace by Geunjeongmun Gate". */
   places: string | null;
   city: string | null;
+  /** The state, province or prefecture, between the city and the country. */
+  state: string | null;
   country: string | null;
   /** The GPS position, such as 37°31′21″ N, 126°58′46″ E. */
   gps: string | null;
@@ -188,10 +191,13 @@ interface PhotoData {
   /** A GPS position written on the Photo page, "latitude, longitude" in decimal degrees, used instead of the EXIF one. */
   customGpsPosition?: string | null;
   createDate: string | null;
-  /** A city and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
+  /** A city, state and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
   customCity?: string | null;
+  customState?: string | null;
   customCountry?: string | null;
   country: string | null;
+  /** The state, province or prefecture from the EXIF, between the city and the country; older entries don't have it. */
+  state?: string | null;
   city: string | null;
   width: number | null;
   height: number | null;
@@ -473,7 +479,7 @@ function specificPlace(photo: PhotoData): Localized | null {
 }
 
 /** A city or country written each way, or null when there's none. */
-function localizedField(type: "country" | "city", name: string | null): Localized | null {
+function localizedField(type: "country" | "state" | "city", name: string | null): Localized | null {
   return name ? localizeName(type, name) : null;
 }
 
@@ -482,6 +488,7 @@ interface LocationParts {
   specific: Localized | null;
   place: Localized | null;
   city: Localized | null;
+  state: Localized | null;
   country: Localized | null;
   gps: string | null;
 }
@@ -493,6 +500,7 @@ function partsIn(parts: LocationParts, script: ScriptDisplay): PhotoLocationPart
     specific: write(parts.specific),
     places: write(parts.place),
     city: write(parts.city),
+    state: write(parts.state),
     country: write(parts.country),
     gps: parts.gps,
   };
@@ -501,10 +509,10 @@ function partsIn(parts: LocationParts, script: ScriptDisplay): PhotoLocationPart
 /** Where the photo was taken, written one way: see photoLocation. */
 function locationIn(parts: LocationParts, script: ScriptDisplay): PhotoLocation {
   const written = partsIn(parts, script);
-  const { places, city, country } = written;
-  const label = places ? joinParts(places, city) : joinParts(city, country);
-  // The country goes on hover only when the label leaves it out for the place.
-  const details = [parts.gps, places ? country : null];
+  const { places, city, state, country } = written;
+  const label = places ? joinParts(places, city) : joinParts(city, state, country);
+  // The state and country go on hover only when the label leaves them out for the place.
+  const details = [parts.gps, places ? state : null, places ? country : null];
   return { label, details: details.filter(Boolean) as string[], parts: written };
 }
 
@@ -518,13 +526,19 @@ function photoLocation(photo: PhotoData): LocalizedLocation | null {
     specific: specificPlace(photo),
     place: placeText(photo),
     city: localizedField("city", custom(photo.customCity, photo.city)),
+    state: localizedField("state", custom(photo.customState, photo.state ?? null)),
     country: localizedField("country", custom(photo.customCountry, photo.country)),
     gps: gpsText(photoGps(photo)),
   };
-  if (!parts.place && !parts.city && !parts.country) return null;
+  if (!hasLocation(parts)) return null;
   return Object.fromEntries(
     SCRIPT_DISPLAYS.map((script) => [script, locationIn(parts, script)]),
   ) as LocalizedLocation;
+}
+
+/** Whether the photo has any place, city, state or country to show; a GPS position alone isn't one. */
+function hasLocation(parts: LocationParts): boolean {
+  return Boolean(parts.place || parts.city || parts.state || parts.country);
 }
 
 /** The IDs of the photo's places and every place they're in, each once, its own places first. */
@@ -534,16 +548,22 @@ function placeIdsOf(photo: PhotoData): string[] {
 }
 
 /** The city or country the first of the places (or a place they're in) that says one is in. */
-function placeField(placeIds: string[], field: "city" | "country"): string | null {
+function placeField(placeIds: string[], field: "city" | "state" | "country"): string | null {
   return placeIds.map((id) => placeById(id)?.[field]?.trim()).find(Boolean) ?? null;
 }
 
 /** Where the photo was taken, as the location filter matches it: see Photo. */
 function locationFields(photo: PhotoData) {
   const placeIds = placeIdsOf(photo);
+  const field = (
+    own: string | null | undefined,
+    exif: string | null | undefined,
+    key: "city" | "state" | "country",
+  ) => custom(own ?? null, exif ?? null) ?? placeField(placeIds, key);
   return {
-    country: custom(photo.customCountry, photo.country) ?? placeField(placeIds, "country"),
-    city: custom(photo.customCity, photo.city) ?? placeField(placeIds, "city"),
+    country: field(photo.customCountry, photo.country, "country"),
+    state: field(photo.customState, photo.state, "state"),
+    city: field(photo.customCity, photo.city, "city"),
     placeIds,
   };
 }

@@ -53,7 +53,7 @@ func TestFindGapsAndFill(t *testing.T) {
 	}
 	want := []string{
 		"id", "title", "comment", "aperture", "exposure", "iso", "focalLength", "customGpsPosition", "placeName",
-		"customCity", "customCountry",
+		"customCity", "customState", "customCountry", "state",
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
 		"images.preview", "images.thumbnail", "images.thumbnailpreview", "images.thumbnailcrop",
 		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate", "exifOriginals", "manualAperture", "customLens", "albums", "tags", "places",
@@ -80,8 +80,10 @@ func TestFindGapsAndFill(t *testing.T) {
   "createDate": "2026:05:16 15:24:10",
   "placeName": null,
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": null,
+  "state": null,
   "city": "Tokyo",
   "width": 6240,
   "height": 4160,
@@ -249,7 +251,7 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 32 || got.PullRequestNumber != 1 {
+	if got.Files != 1 || got.Fields != 34 || got.PullRequestNumber != 1 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	staged := repo.staged(t)

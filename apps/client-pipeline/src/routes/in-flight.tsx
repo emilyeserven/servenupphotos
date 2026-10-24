@@ -35,6 +35,7 @@ import { FileChecks, fileName } from "@/components/in-flight-checks";
 import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
 import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
+import { CollapsiblePhotos } from "@/components/collapsible-photos";
 import { Page } from "@/components/page";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
@@ -197,11 +198,33 @@ function PhotoFiles({
         files={files.filter((file) => undecided.has(file.path))}
         images={shown.images}
       />
-      {untitledFirst(files.filter((file) => !undecided.has(file.path))).map((file) => (
-        <FileSection key={file.path} file={file} images={shown.images} {...props} />
-      ))}
+      <InFlightList
+        files={untitledFirst(files.filter((file) => !undecided.has(file.path)))}
+        images={shown.images}
+        {...props}
+      />
       <SavedDrafts alongside />
     </>
+  );
+}
+
+/** The photos in flight, each with its image and JSON, in a section that collapses. */
+function InFlightList({
+  files,
+  ...props
+}: {
+  files: InFlightFile[];
+  images: InFlightImages;
+  rebuilding: boolean;
+  baseBranch?: string;
+  onRemoved: (result: RemoveResult) => void;
+}) {
+  return (
+    <CollapsiblePhotos count={files.length}>
+      {files.map((file) => (
+        <FileSection key={file.path} file={file} {...props} />
+      ))}
+    </CollapsiblePhotos>
   );
 }
 

@@ -2,7 +2,7 @@ import { albumAndSubAlbums } from "@/lib/groups";
 import type { Photo } from "@/lib/photos";
 
 /** The location filter's keys: countries, cities (by their English names) and places (by their IDs). */
-export const LOCATION_KEYS = ["country", "city", "place"] as const;
+export const LOCATION_KEYS = ["country", "state", "city", "place"] as const;
 
 export type LocationKey = (typeof LOCATION_KEYS)[number];
 
@@ -76,6 +76,7 @@ function inAlbum(photo: Photo, id: string): boolean {
 /** How each filter matches a photo to one of its values. */
 const MATCHES: Record<FilterKey, (photo: Photo, value: string) => boolean> = {
   country: (photo, value) => photo.country === value,
+  state: (photo, value) => photo.state === value,
   city: (photo, value) => photo.city === value,
   place: (photo, value) => photo.placeIds.includes(value),
   album: inAlbum,

@@ -3,7 +3,14 @@ import { placesQuery, readEntries } from "@/api/places";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { locationNames } from "@/lib/location-names";
-import { type CityRow, type CountryRow, cityRows, countryRows } from "@/lib/place-cities";
+import {
+  type CityRow,
+  type CountryRow,
+  type StateRow,
+  cityRows,
+  countryRows,
+  stateRows,
+} from "@/lib/place-cities";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
 
@@ -27,6 +34,14 @@ function countryOption(country: CountryRow): ComboboxOption {
   return { value: country.name, label: country.name, detail: usedBy(country) };
 }
 
+function stateOption(state: StateRow): ComboboxOption {
+  return {
+    value: state.name,
+    label: state.name,
+    detail: [state.country, usedBy(state)].filter(Boolean).join(" · "),
+  };
+}
+
 /** The options, plus the written value when it's new, so it doesn't show as unknown. */
 function withWritten(options: ComboboxOption[], value: string): ComboboxOption[] {
   const isNew = value.trim() && !options.some((option) => option.value === value);
@@ -39,12 +54,16 @@ function useRegions() {
   const places = readEntries(read?.places);
   const names = locationNames(readEntries(read?.localizations));
   const photos = shownPhotos(useCombinedData().data);
-  return { cities: cityRows(photos, places, names), countries: countryRows(photos, places, names) };
+  return {
+    cities: cityRows(photos, places, names),
+    states: stateRows(photos, places, names),
+    countries: countryRows(photos, places, names),
+  };
 }
 
 interface RegionOverrideFieldProps {
   id: string;
-  kind: "city" | "country";
+  kind: "city" | "state" | "country";
   value: string;
   placeholder: string;
   disabled: boolean;
@@ -52,8 +71,25 @@ interface RegionOverrideFieldProps {
   onChange: (name: string, country?: string) => void;
 }
 
+/** The noun for the empty message, by kind. */
+const EMPTY_NOUN = {
+  city: "cities",
+  state: "states, provinces or prefectures",
+  country: "countries",
+};
+
+/** The options for the kind: cities, states or countries. */
+function regionOptions(
+  kind: "city" | "state" | "country",
+  rows: { cities: CityRow[]; states: StateRow[]; countries: CountryRow[] },
+): ComboboxOption[] {
+  if (kind === "city") return rows.cities.map(cityOption);
+  if (kind === "state") return rows.states.map(stateOption);
+  return rows.countries.map(countryOption);
+}
+
 /**
- * A photo's custom city or country, chosen from the ones places are in or photos show (marked
+ * A photo's custom city, state or country, chosen from the ones places are in or photos show (marked
  * inferred when only photos have it), or typed. Clearing it goes back to the EXIF one.
  */
 export function RegionOverrideField({
@@ -64,8 +100,8 @@ export function RegionOverrideField({
   disabled,
   onChange,
 }: RegionOverrideFieldProps) {
-  const { cities, countries } = useRegions();
-  const options = kind === "city" ? cities.map(cityOption) : countries.map(countryOption);
+  const { cities, states, countries } = useRegions();
+  const options = regionOptions(kind, { cities, states, countries });
   const choose = (name: string) => onChange(name, cities.find((c) => c.name === name)?.country);
   return (
     <SingleCombobox
@@ -75,7 +111,7 @@ export function RegionOverrideField({
       onChange={choose}
       disabled={disabled}
       placeholder={placeholder}
-      emptyText={`No ${kind === "city" ? "cities" : "countries"} yet. Type one to use it.`}
+      emptyText={`No ${EMPTY_NOUN[kind]} yet. Type one to use it.`}
       createLabel={(text) => `Use “${text}”`}
       onCreate={choose}
     />

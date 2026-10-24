@@ -39,13 +39,18 @@ type Sanitized struct {
 	// park or a building, which the portfolio shows before the city.
 	// Sanitize leaves it nil; it is written on the Photo page before saving.
 	PlaceName *string `json:"placeName"`
-	// CustomCity and CustomCountry are a city and country written on the
-	// Photo page, which the portfolio shows instead of City and Country.
-	// They leave the EXIF ones as they are. Sanitize leaves them nil.
+	// CustomCity, CustomState and CustomCountry are a city, state (or
+	// province, prefecture, …) and country written on the Photo page, which
+	// the portfolio shows instead of City, State and Country. They leave the
+	// EXIF ones as they are. Sanitize leaves them nil.
 	CustomCity    *string `json:"customCity"`
+	CustomState   *string `json:"customState"`
 	CustomCountry *string `json:"customCountry"`
 	Country       *string `json:"country"`
-	City          *string `json:"city"`
+	// State is the state, province, prefecture or other region between the
+	// city and the country, from the EXIF's State or Province-State.
+	State *string `json:"state"`
+	City  *string `json:"city"`
 	// Width and Height are the original photo's size in pixels, as it is
 	// shown: swapped from the stored size when EXIF says to turn it 90°.
 	Width  *int   `json:"width"`
@@ -122,7 +127,7 @@ type ThumbnailCrop struct {
 // photo's EXIF. Backfill reads a photo's EXIF only for these.
 var SanitizeFields = []string{
 	"camera", "lens", "aperture", "exposure", "iso", "focalLength",
-	"gpsPosition", "createDate", "country", "city", "width", "height",
+	"gpsPosition", "createDate", "country", "state", "city", "width", "height",
 }
 
 // Sanitize picks the publishable fields out of exiftool's output, taking the
@@ -141,6 +146,7 @@ func Sanitize(fields map[string]any) Sanitized {
 		GPSPosition: first(fields, "GPSPosition"),
 		CreateDate:  first(fields, "CreateDate"),
 		Country:     first(fields, "Country"),
+		State:       first(fields, "State", "Province-State"),
 		City:        first(fields, "City"),
 		Width:       width,
 		Height:      height,

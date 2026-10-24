@@ -62,9 +62,11 @@ type Place struct {
 	// Parent is the ID of the less specific place this one is in, such as
 	// Gyeongbokgung Palace for Geunjeongmun Gate; "" for none.
 	Parent string `json:"parent"`
-	// City and Country are where the place is, which a photo given the place
-	// takes as its city and country; "" when not set.
+	// City, State and Country are where the place is, which a photo given
+	// the place takes as its city, state and country; "" when not set. State
+	// is a state, province, prefecture or other region between the two.
 	City    string `json:"city"`
+	State   string `json:"state,omitempty"`
 	Country string `json:"country"`
 	// Latitude and Longitude are the place's GPS position in decimal degrees,
 	// which a photo given the place uses on the map when its EXIF has none;
@@ -97,17 +99,19 @@ var placeRelations = []string{
 const (
 	LocalizationCountry = "country"
 	LocalizationCity    = "city"
+	LocalizationState   = "state"
 	LocalizationPlace   = "place"
 )
 
-// Localization is a localization file: how a country, city or place is
-// written and said where it is.
+// Localization is a localization file: how a country, state, city or place
+// is written and said where it is.
 type Localization struct {
 	ID string `json:"id"`
-	// Type is LocalizationCountry, LocalizationCity or LocalizationPlace.
+	// Type is LocalizationCountry, LocalizationState, LocalizationCity or
+	// LocalizationPlace.
 	Type string `json:"type"`
-	// Name is the country's or city's name as photos list it, or the
-	// place's name.
+	// Name is the country's, state's or city's name as photos list it, or
+	// the place's name.
 	Name string `json:"name"`
 	// Romanization is the name in Latin letters, such as Gyeongbokgung.
 	Romanization string `json:"romanization"`
@@ -116,7 +120,7 @@ type Localization struct {
 	Pronunciation string `json:"pronunciation"`
 	// LocalScript is the name in its own script, such as 경복궁 in hangeul.
 	LocalScript string `json:"localScript"`
-	// OtherNames are other ways photos and places write a country or city,
+	// OtherNames are other ways photos and places write a country, state or city,
 	// such as "United States" for "United States of America". Name wins over
 	// them: Update Data's Location names rewrites them to it.
 	OtherNames []string `json:"otherNames,omitempty"`
@@ -308,7 +312,8 @@ func badCoordinates(p Place) *PublishError {
 func validPlace(place Place) (Place, *PublishError) {
 	p := Place{
 		ID: strings.TrimSpace(place.ID), Name: strings.TrimSpace(place.Name), Description: strings.TrimSpace(place.Description),
-		Parent: strings.TrimSpace(place.Parent), City: strings.TrimSpace(place.City), Country: strings.TrimSpace(place.Country),
+		Parent: strings.TrimSpace(place.Parent), City: strings.TrimSpace(place.City), State: strings.TrimSpace(place.State),
+		Country:  strings.TrimSpace(place.Country),
 		Latitude: place.Latitude, Longitude: place.Longitude,
 		ExactLocation: place.ExactLocation && place.Latitude != nil,
 		ChildRelation: strings.TrimSpace(place.ChildRelation),
@@ -330,8 +335,8 @@ func validPlace(place Place) (Place, *PublishError) {
 			return p, perr
 		}
 	}
-	if utf8.RuneCountInString(p.City) > maxGroupNameLength || utf8.RuneCountInString(p.Country) > maxGroupNameLength {
-		return p, publishErr(http.StatusBadRequest, "Keep the city and country to %d characters each.", maxGroupNameLength)
+	if perr := regionTooLong(p); perr != nil {
+		return p, perr
 	}
 	if p.Name == "" {
 		return p, publishErr(http.StatusBadRequest, "Give the place a name.")
@@ -343,6 +348,17 @@ func validPlace(place Place) (Place, *PublishError) {
 		return p, publishErr(http.StatusBadRequest, "Keep the description to %d characters.", maxGroupDescriptionLength)
 	}
 	return p, nil
+}
+
+// regionTooLong fails when p's city, state or country is over
+// maxGroupNameLength.
+func regionTooLong(p Place) *PublishError {
+	for _, s := range []string{p.City, p.State, p.Country} {
+		if utf8.RuneCountInString(s) > maxGroupNameLength {
+			return publishErr(http.StatusBadRequest, "Keep the city, state and country to %d characters each.", maxGroupNameLength)
+		}
+	}
+	return nil
 }
 
 // badRelations fails unless p's ParentRelation and ChildRelation are each
@@ -366,8 +382,8 @@ func validLocalization(l Localization) (Localization, *PublishError) {
 	if perr := validEntryID("localization", out.ID); perr != nil {
 		return out, perr
 	}
-	if !slices.Contains([]string{LocalizationCountry, LocalizationCity, LocalizationPlace}, out.Type) {
-		return out, publishErr(http.StatusBadRequest, "A localization's type is country, city or place.")
+	if !slices.Contains([]string{LocalizationCountry, LocalizationState, LocalizationCity, LocalizationPlace}, out.Type) {
+		return out, publishErr(http.StatusBadRequest, "A localization's type is country, state, city or place.")
 	}
 	if out.Name == "" {
 		return out, publishErr(http.StatusBadRequest, "Say which %s the localization is for.", out.Type)

@@ -28,6 +28,8 @@ export interface Place {
   /** The city and country it's in, or "" when it doesn't say; older places don't have them. */
   city?: string;
   country?: string;
+  /** The state, province or prefecture it's in, between the city and the country. */
+  state?: string;
   /** The place's GPS position in decimal degrees, for photos whose EXIF has none. */
   latitude?: number;
   longitude?: number;
@@ -42,7 +44,7 @@ export interface Place {
 /** One entry of LOCALIZATIONS.json: how a country, city or place is written and said where it is. */
 interface Localization {
   id: string;
-  type: "country" | "city" | "place";
+  type: "country" | "state" | "city" | "place";
   name: string;
   romanization?: string;
   pronunciation?: string;
@@ -128,7 +130,7 @@ function localized(name: string, found: Localization | undefined): Localized {
 }
 
 /** A country or city's name written each way, from LOCALIZATIONS.json. */
-export function localizeName(type: "country" | "city", name: string): Localized {
+export function localizeName(type: "country" | "state" | "city", name: string): Localized {
   return localized(name, byKey.get(key(type, name)));
 }
 

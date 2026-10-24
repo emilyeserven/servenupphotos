@@ -5,7 +5,7 @@ import type { PhotoLocation, PhotoLocationParts } from "@/lib/photos";
  * only the most specific place, all of its place names, those and its city, or those, its city
  * and its country.
  */
-export const LOCATION_DETAILS = ["specific", "places", "city", "country"] as const;
+export const LOCATION_DETAILS = ["specific", "places", "city", "state", "country"] as const;
 
 export type LocationDetail = (typeof LOCATION_DETAILS)[number];
 
@@ -17,6 +17,7 @@ export const LOCATION_DETAIL_LABELS: Record<LocationDetail, string> = {
   specific: "Most specific",
   places: "All place names",
   city: "Include city",
+  state: "Include state",
   country: "Include country",
 };
 
@@ -25,7 +26,8 @@ const SHOWN: Record<LocationDetail, (keyof PhotoLocationParts)[]> = {
   specific: ["specific"],
   places: ["places"],
   city: ["places", "city"],
-  country: ["places", "city", "country"],
+  state: ["places", "city", "state"],
+  country: ["places", "city", "state", "country"],
 };
 
 /** The location detail the URL names, or undefined for the default. */
@@ -48,8 +50,9 @@ export function locationText(location: PhotoLocation, detail: LocationDetail): s
 
 /** The lines shown on hover: the GPS position, then the country when the text leaves it out. */
 export function locationDetails(location: PhotoLocation, detail: LocationDetail): string[] {
-  const { gps, country } = location.parts;
+  const { gps, state, country } = location.parts;
   const text = locationText(location, detail);
-  const lines = [gps, country && !text.includes(country) ? country : null];
+  const missing = (value: string | null) => (value && !text.includes(value) ? value : null);
+  const lines = [gps, missing(state), missing(country)];
   return lines.filter((line): line is string => Boolean(line));
 }

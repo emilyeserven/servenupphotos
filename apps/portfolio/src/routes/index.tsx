@@ -14,6 +14,9 @@ export const Route = createFileRoute("/")({
 const backdropPhotos = homepagePhotos();
 const phoneBackdropPhotos = homepagePhotos(undefined, true);
 
+/** The views the homepage links to: every ready one but Spotlight, which the site menu still has. */
+const homepageViews = enabledViews.filter((view) => view.to !== "/spotlight");
+
 /** A phone held upright, which shows portrait photos first. */
 const PHONE_QUERY = "(max-width: 767px) and (orientation: portrait)";
 
@@ -34,7 +37,7 @@ function Homepage() {
         </h1>
         <nav aria-label="Ways to explore" className="mt-8">
           <ul className="flex flex-wrap justify-center gap-2 sm:gap-3">
-            {enabledViews.map(({ to, label, icon: Icon }) => (
+            {homepageViews.map(({ to, label, icon: Icon }) => (
               <li key={to}>
                 <Link
                   to={to}

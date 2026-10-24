@@ -1,10 +1,17 @@
-import { Building2Icon, GlobeIcon, MapPinCheckInsideIcon, MapPinIcon } from "lucide-react";
+import {
+  Building2Icon,
+  GlobeIcon,
+  LandmarkIcon,
+  MapPinCheckInsideIcon,
+  MapPinIcon,
+} from "lucide-react";
 import type { RegionKind } from "@/lib/region-tree";
 import { cn } from "@/lib/utils";
 
 /** Each kind's icon, and what it's called for screen readers and tooltips. */
 const ICONS = {
   country: { Icon: GlobeIcon, label: "Country", color: "text-sky-600 dark:text-sky-400" },
+  state: { Icon: LandmarkIcon, label: "State", color: "text-teal-600 dark:text-teal-400" },
   city: { Icon: Building2Icon, label: "City", color: "text-violet-600 dark:text-violet-400" },
   place: { Icon: MapPinIcon, label: "Place", color: "text-emerald-600 dark:text-emerald-400" },
   exact: {

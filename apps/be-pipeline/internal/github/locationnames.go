@@ -13,7 +13,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// maxOtherNames is how many other names one country or city can have.
+// maxOtherNames is how many other names one country, state or city can have.
 const maxOtherNames = 50
 
 // LocationNames are the names that win over other ways of writing a country
@@ -21,23 +21,26 @@ const maxOtherNames = 50
 // the other name (see nameKey), the name that wins.
 type LocationNames map[string]map[string]string
 
-// photoLocationFields are the photo JSON fields with a country or city in
+// photoLocationFields are the photo JSON fields with a country, state or city in
 // them, and which.
 var photoLocationFields = map[string]string{
 	"country": LocalizationCountry, "customCountry": LocalizationCountry,
+	"state": LocalizationState, "customState": LocalizationState,
 	"city": LocalizationCity, "customCity": LocalizationCity,
 }
 
-// placeLocationFields are the place file fields with a country or city in
+// placeLocationFields are the place file fields with a country, state or city in
 // them, and which.
-var placeLocationFields = map[string]string{"country": LocalizationCountry, "city": LocalizationCity}
+var placeLocationFields = map[string]string{
+	"country": LocalizationCountry, "state": LocalizationState, "city": LocalizationCity,
+}
 
 // nameKey is name as other names are matched: trimmed, ignoring case.
 func nameKey(name string) string {
 	return strings.ToLower(strings.TrimSpace(name))
 }
 
-// parseLocationNames is the other names of the country and city
+// parseLocationNames is the other names of the country, state and city
 // localizations in entries that can be read.
 func parseLocationNames(entries []Entry) LocationNames {
 	names := LocationNames{}
@@ -64,7 +67,7 @@ func parseLocalizations(entries []Entry) []Localization {
 	return out
 }
 
-// winner is the name that wins over name, a country or city as typ says,
+// winner is the name that wins over name, a country, state or city as typ says,
 // and whether name is another name of one.
 func (n LocationNames) winner(typ, name string) (string, bool) {
 	w, ok := n[typ][nameKey(name)]
@@ -80,7 +83,7 @@ func (n LocationNames) count() int {
 	return total
 }
 
-// Apply is s with each country and city that's another name of one written
+// Apply is s with each country, state and city that's another name of one written
 // as the name that wins, as a new photo's JSON gets them.
 func (n LocationNames) Apply(s exif.Sanitized) exif.Sanitized {
 	for _, f := range []struct {
@@ -88,6 +91,7 @@ func (n LocationNames) Apply(s exif.Sanitized) exif.Sanitized {
 		typ   string
 	}{
 		{&s.Country, LocalizationCountry}, {&s.CustomCountry, LocalizationCountry},
+		{&s.State, LocalizationState}, {&s.CustomState, LocalizationState},
 		{&s.City, LocalizationCity}, {&s.CustomCity, LocalizationCity},
 	} {
 		if *f.value == nil {
@@ -133,7 +137,7 @@ func cleanOtherNames(l Localization, names []string) ([]string, *PublishError) {
 	}
 	switch {
 	case len(out) > 0 && l.Type == LocalizationPlace:
-		return nil, publishErr(http.StatusBadRequest, "Only a country or city has other names.")
+		return nil, publishErr(http.StatusBadRequest, "Only a country, state or city has other names.")
 	case len(out) > maxOtherNames:
 		return nil, publishErr(http.StatusBadRequest, "Keep a %s to %d other names.", l.Type, maxOtherNames)
 	}
@@ -151,7 +155,7 @@ func otherNameTooLong(names []string) *PublishError {
 }
 
 // otherNamesTaken fails when one of l's other names is already another name
-// of a country or city in others, or has other names of its own, or l
+// of a country, state or city in others, or has other names of its own, or l
 // itself is another's other name while having its own.
 func otherNamesTaken(others []Entry, l Localization) *PublishError {
 	if len(l.OtherNames) == 0 {
@@ -188,7 +192,7 @@ func otherNameClash(o, l Localization, mine map[string]bool) *PublishError {
 	return nil
 }
 
-// LocationNameFile is a photo or place file whose countries or cities the
+// LocationNameFile is a photo or place file whose countries, states or cities the
 // location names rewrite.
 type LocationNameFile struct {
 	Path    string `json:"path"`
@@ -198,7 +202,7 @@ type LocationNameFile struct {
 	Changes []FieldChange `json:"changes"`
 }
 
-// LocationNamesPreview is what writing every country and city as the name
+// LocationNamesPreview is what writing every country, state and city as the name
 // that wins over it would do to the photo and place files on Branch.
 type LocationNamesPreview struct {
 	Repo   string `json:"repo"`
@@ -320,7 +324,7 @@ func (c *Client) ApplyLocationNames(ctx context.Context, gh settings.GitHub) (Lo
 			"%s couldn't be read (%s), so nothing was changed.", bad[0].Path, bad[0].Error)
 	}
 	if len(ls.files) == 0 {
-		return LocationNamesResult{}, publishErr(http.StatusConflict, "Every country and city is already written as the name that wins, so there's nothing to change.")
+		return LocationNamesResult{}, publishErr(http.StatusConflict, "Every country, state and city is already written as the name that wins, so there's nothing to change.")
 	}
 	result := LocationNamesResult{}
 	changes := make([]ScanChange, 0, len(ls.files))
@@ -342,7 +346,7 @@ func (c *Client) ApplyLocationNames(ctx context.Context, gh settings.GitHub) (Lo
 
 // ExifOverrides are what a new photo's sanitized EXIF gets made over it: the
 // camera overrides, then the names that win over other ways of writing its
-// country and city.
+// country, state and city.
 type ExifOverrides struct {
 	Cameras []CameraOverride
 	Names   LocationNames

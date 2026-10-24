@@ -22,6 +22,9 @@ file's name), or a "no image" sign when there's none. Under the photo is its Squ
 (as for photos uploaded before Square Thumbnails). Its Thumbnail Preview (`images.thumbnailpreview`, or the
 `-thumbnailpreview.webp` next to the photo) shows blurred behind it while it loads. Clicking it opens it at its full 500 × 500.
 
+The photos are listed under a **Photos in flight** heading with their count; clicking it collapses them (they start
+open), so the drafts and Undecided panels below are easy to reach.
+
 ### Filters
 
 Above the photos, a filter bar has **Any**, **With** and **Without** for each of: **Title** (a `title` that isn't
