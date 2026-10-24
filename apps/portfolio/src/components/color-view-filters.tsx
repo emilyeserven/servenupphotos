@@ -34,7 +34,11 @@ export function ColorViewFilters({
         <FilterCount count={count} />
       </Button>
       <div id={panelId} hidden={!open} className="w-full">
-        {open && <VividnessControl vivid={vivid} measure={measure} />}
+        {open && (
+          <div className="w-fit rounded-md border bg-background/90 p-2 shadow-xs backdrop-blur-sm dark:border-input">
+            <VividnessControl vivid={vivid} measure={measure} />
+          </div>
+        )}
       </div>
     </>
   );

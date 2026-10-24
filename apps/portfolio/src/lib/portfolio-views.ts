@@ -1,8 +1,8 @@
 import type { LucideIcon } from "lucide-react";
-import { CalendarClock, Grid3x3, MapPin, Palette, Sparkles, Table } from "lucide-react";
+import { CalendarClock, Grid3x3, MapPin, Palette, Sparkles } from "lucide-react";
 
 export interface PortfolioView {
-  to: "/timeline" | "/table" | "/map" | "/spotlight" | "/grid" | "/color";
+  to: "/timeline" | "/map" | "/spotlight" | "/grid" | "/color";
   label: string;
   description: string;
   icon: LucideIcon;
@@ -16,13 +16,6 @@ export const portfolioViews: PortfolioView[] = [
     label: "Timeline",
     description: "Photos arranged chronologically by when they were taken.",
     icon: CalendarClock,
-    enabled: true,
-  },
-  {
-    to: "/table",
-    label: "Table",
-    description: "A sortable list of photos with their metadata.",
-    icon: Table,
     enabled: true,
   },
   {
@@ -42,7 +35,7 @@ export const portfolioViews: PortfolioView[] = [
   {
     to: "/grid",
     label: "Grid",
-    description: "A gallery grid of every photo.",
+    description: "Every photo as a gallery grid, or as a sortable table of their details.",
     icon: Grid3x3,
     enabled: true,
   },
