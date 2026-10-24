@@ -11,12 +11,11 @@ import { type ColorMatch, matchesColor, matchText } from "@/lib/color-match";
 import {
   type ColorOrder,
   type ColorSort,
-  sortByColor,
-  sortByVividness,
+  sortPhotos,
   type VividMeasure,
   vividnessOf,
 } from "@/lib/color-sort";
-import { COLORS, type ColorName, isColorName, shareOf } from "@/lib/photo-colors";
+import { COLORS, type ColorName, isColorName } from "@/lib/photo-colors";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 
@@ -29,8 +28,15 @@ interface ColorSearch {
   min?: number;
   /** Set to sort photos by vividness; left out to sort them by color. */
   sort?: ColorSort;
-  /** Set to sort the other way: white back to red, or the most vivid first; left out for red to white, or the least vivid first. */
+  /**
+   * Set to sort the other way: white back to red, the least of the picked color first, or the most
+   * vivid first; left out for red to white, the most of the picked color first, or the least vivid first.
+   */
   order?: ColorOrder;
+  /** The secondary sort, always the one sort isn't; left out for none. */
+  secondary?: ColorSort;
+  /** Set to run the secondary sort the other way; left out for ascending. */
+  secondaryOrder?: ColorOrder;
   /** The least vividness a photo needs to show, from 0 to 100; left out for 0, which shows every photo. */
   vivid?: number;
   /** Set to sort and filter by peak vividness; left out for the average. */
@@ -65,12 +71,26 @@ function minOf(value: unknown): ColorSearch {
   return min === undefined ? {} : { min };
 }
 
-/** The `?sort=` and `?order=` to keep, each left out at its default. */
-function sortOf({ sort, order }: Record<string, unknown>): ColorSearch {
+/** The `?sort=`, `?order=`, `?secondary=` and `?secondaryOrder=` to keep, each left out at its default. */
+function sortOf({ sort, order, secondary, secondaryOrder }: Record<string, unknown>): ColorSearch {
+  const main: ColorSort = sort === "vivid" ? "vivid" : "color";
   return {
-    ...(sort === "vivid" ? { sort: "vivid" as const } : {}),
-    ...(order === "desc" ? { order: "desc" as const } : {}),
+    ...(main === "vivid" ? { sort: main } : {}),
+    ...descOf("order", order),
+    ...secondaryOf(main, secondary),
+    ...descOf("secondaryOrder", secondaryOrder),
   };
+}
+
+/** `{ [key]: "desc" }` when value is "desc", which is all an order keeps. */
+function descOf(key: "order" | "secondaryOrder", value: unknown): ColorSearch {
+  return value === "desc" ? { [key]: "desc" as const } : {};
+}
+
+/** The `?secondary=` to keep: only the sort that isn't main. */
+function secondaryOf(main: ColorSort, secondary: unknown): ColorSearch {
+  const other: ColorSort = main === "vivid" ? "color" : "vivid";
+  return secondary === other ? { secondary: other } : {};
 }
 
 /** The `?vivid=` to keep, leaving it out when it's missing or not one the slider can set. */
@@ -97,11 +117,9 @@ function vividPhotos({ vivid = 0, measure = "average" }: ColorSearch): ColorPhot
   return colorPhotos.filter((photo) => vividnessOf(photo, measure) >= vivid);
 }
 
-/** The photos of pool that match color, the most of it first. */
+/** The photos of pool that match color. */
 function photosOf(pool: ColorPhoto[], color: ColorName, match: ColorMatch): ColorPhoto[] {
-  return pool
-    .filter((photo) => matchesColor(photo.palette, color, match))
-    .sort((a, b) => shareOf(b.palette, color) - shareOf(a.palette, color));
+  return pool.filter((photo) => matchesColor(photo.palette, color, match));
 }
 
 /** How many photos of pool each color's swatch would show. */
@@ -155,22 +173,22 @@ function ColorView() {
   );
 }
 
-/**
- * The photos of pool the page shows: those matching the picked color, the most of it first, or
- * every photo sorted by color; or either sorted by vividness.
- */
+/** The photos of pool the page shows, those matching the picked color or every one, sorted as the URL asks. */
 function listedPhotos(pool: ColorPhoto[], search: ColorSearch, match: ColorMatch): ColorPhoto[] {
   const matched = search.color ? photosOf(pool, search.color, match) : pool;
-  return sortListed(matched, search);
+  return sortPhotos(matched, sortSpec(search));
 }
 
-/** The listed photos in the order the URL asks for; photos of one color stay the most of it first, unless sorted by vividness. */
-function sortListed(
-  matched: ColorPhoto[],
-  { color, sort, order = "asc", measure = "average" }: ColorSearch,
-): ColorPhoto[] {
-  if (sort === "vivid") return sortByVividness(matched, order, measure);
-  return color ? matched : sortByColor(matched, order);
+/** How the URL asks for the photos to be sorted, with each default filled in. */
+function sortSpec({
+  color,
+  sort = "color",
+  order = "asc",
+  secondary,
+  secondaryOrder = "asc",
+  measure = "average",
+}: ColorSearch) {
+  return { color, sort, order, secondary, secondaryOrder, measure };
 }
 
 /** What photos are sorted by and which way, how photos match a color, and the least vividness. */
@@ -179,7 +197,7 @@ function ColorControls({ search, match }: { search: ColorSearch; match: ColorMat
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <ColorSortControl {...sortProps(search)} />
+        <ColorSortControl {...sortSpec(search)} />
         <ColorMatchControl
           threshold={match.mode === "threshold"}
           percent={min}
@@ -189,11 +207,6 @@ function ColorControls({ search, match }: { search: ColorSearch; match: ColorMat
       <VividnessControl vivid={vivid} measure={measure} />
     </div>
   );
-}
-
-/** What the sort control shows: the way is hidden when photos of one color are sorted by how much of it they have. */
-function sortProps({ color, sort = "color", order = "asc" }: ColorSearch) {
-  return { sort, order, showOrder: sort === "vivid" || !color };
 }
 
 /** "24 photos", or with a color, "8 photos mostly orange" or "8 photos at least 30% orange". */
