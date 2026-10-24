@@ -252,6 +252,7 @@
     },
     "lightness": 39.74,
     "chroma": 11.39,
+    "peakChroma": 24.08,
     "samples": 10050
   }
 }
