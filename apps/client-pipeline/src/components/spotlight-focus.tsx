@@ -24,7 +24,7 @@ export function SpotlightFocus({ photo }: { photo: SocialPhoto }) {
   const src = wholePhoto(photo);
   if (!src) return null;
   return (
-    <div className="flex flex-col gap-3 border-t pt-4">
+    <div className="flex flex-col gap-3 pt-1">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-medium">Focus point</p>
         <Button variant="outline" size="sm" disabled={!focus} onClick={() => set(null)}>

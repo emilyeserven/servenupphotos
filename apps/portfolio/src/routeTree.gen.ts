@@ -16,6 +16,8 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as SpotlightRouteImport } from './routes/spotlight'
 import { Route as TableRouteImport } from './routes/table'
 import { Route as TimelineRouteImport } from './routes/timeline'
+import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
+import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +54,16 @@ const TimelineRoute = TimelineRouteImport.update({
   path: '/timeline',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AlbumsIndexRoute = AlbumsIndexRouteImport.update({
+  id: '/albums/',
+  path: '/albums/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AlbumsIdRoute = AlbumsIdRouteImport.update({
+  id: '/albums/$id',
+  path: '/albums/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +73,8 @@ export interface FileRoutesByFullPath {
   '/spotlight': typeof SpotlightRoute
   '/table': typeof TableRoute
   '/timeline': typeof TimelineRoute
+  '/albums/$id': typeof AlbumsIdRoute
+  '/albums/': typeof AlbumsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +84,8 @@ export interface FileRoutesByTo {
   '/spotlight': typeof SpotlightRoute
   '/table': typeof TableRoute
   '/timeline': typeof TimelineRoute
+  '/albums/$id': typeof AlbumsIdRoute
+  '/albums': typeof AlbumsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,13 +96,32 @@ export interface FileRoutesById {
   '/spotlight': typeof SpotlightRoute
   '/table': typeof TableRoute
   '/timeline': typeof TimelineRoute
+  '/albums/$id': typeof AlbumsIdRoute
+  '/albums/': typeof AlbumsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/color' | '/grid' | '/map' | '/spotlight' | '/table' | '/timeline'
+    | '/'
+    | '/color'
+    | '/grid'
+    | '/map'
+    | '/spotlight'
+    | '/table'
+    | '/timeline'
+    | '/albums/$id'
+    | '/albums/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/color' | '/grid' | '/map' | '/spotlight' | '/table' | '/timeline'
+  to:
+    | '/'
+    | '/color'
+    | '/grid'
+    | '/map'
+    | '/spotlight'
+    | '/table'
+    | '/timeline'
+    | '/albums/$id'
+    | '/albums'
   id:
     | '__root__'
     | '/'
@@ -96,6 +131,8 @@ export interface FileRouteTypes {
     | '/spotlight'
     | '/table'
     | '/timeline'
+    | '/albums/$id'
+    | '/albums/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,6 +143,8 @@ export interface RootRouteChildren {
   SpotlightRoute: typeof SpotlightRoute
   TableRoute: typeof TableRoute
   TimelineRoute: typeof TimelineRoute
+  AlbumsIdRoute: typeof AlbumsIdRoute
+  AlbumsIndexRoute: typeof AlbumsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -159,6 +198,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/albums/': {
+      id: '/albums/'
+      path: '/albums'
+      fullPath: '/albums/'
+      preLoaderRoute: typeof AlbumsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/albums/$id': {
+      id: '/albums/$id'
+      path: '/albums/$id'
+      fullPath: '/albums/$id'
+      preLoaderRoute: typeof AlbumsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -170,6 +223,8 @@ const rootRouteChildren: RootRouteChildren = {
   SpotlightRoute: SpotlightRoute,
   TableRoute: TableRoute,
   TimelineRoute: TimelineRoute,
+  AlbumsIdRoute: AlbumsIdRoute,
+  AlbumsIndexRoute: AlbumsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

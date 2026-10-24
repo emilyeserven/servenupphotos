@@ -14,8 +14,8 @@ export const Route = createFileRoute("/")({
 const backdropPhotos = homepagePhotos();
 const phoneBackdropPhotos = homepagePhotos(undefined, true);
 
-/** The views the homepage links to: every ready one but Spotlight, which the site menu still has. */
-const homepageViews = enabledViews.filter((view) => view.to !== "/spotlight");
+/** The views the homepage links to: every ready one but Albums, which the site menu still has. */
+const homepageViews = enabledViews.filter((view) => view.to !== "/albums");
 
 /** A phone held upright, which shows portrait photos first. */
 const PHONE_QUERY = "(max-width: 767px) and (orientation: portrait)";

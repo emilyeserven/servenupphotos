@@ -1615,7 +1615,7 @@
     "isSocialMediaEligible": false,
     "websiteSpotlight": 3,
     "socialMediaPublishDate": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "places": [
       {
@@ -3175,7 +3175,7 @@
     "isSocialMediaEligible": false,
     "websiteSpotlight": 4,
     "socialMediaPublishDate": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "places": [
       {
@@ -9930,7 +9930,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "places": [
       {
@@ -10719,7 +10719,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "places": [
       {
@@ -15976,7 +15976,7 @@
     "isSocialMediaEligible": false,
     "websiteSpotlight": 5,
     "socialMediaPublishDate": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "places": [
       {
@@ -22726,7 +22726,7 @@
     "isSocialMediaEligible": false,
     "websiteSpotlight": 1,
     "socialMediaPublishDate": "2026-10-13",
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "placeName": "Mirror Pond",
     "customCity": "Seoul",
@@ -29207,7 +29207,7 @@
     "isSocialMediaEligible": false,
     "websiteSpotlight": 2,
     "socialMediaPublishDate": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "places": [
       {
@@ -37491,7 +37491,7 @@
     "isSocialMediaEligible": false,
     "websiteSpotlight": 6,
     "socialMediaPublishDate": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "places": [
       {

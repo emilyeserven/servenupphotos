@@ -9,18 +9,33 @@ export interface Group {
   description?: string;
   /** For an album, the ID of the album it's a sub-album of; missing or "" at the top. */
   parent?: string;
+  /** For an album, its place among the albums, 1 first, set on the pipeline's Albums page. */
+  order?: number;
+  /** For an album, the spots on the site that show its photos, such as "homepage". */
+  spotlightZones?: string[];
+}
+
+/** Ranks an album without a place in the order after every album with one. */
+function rank({ order }: Group): number {
+  return order ?? Number.MAX_SAFE_INTEGER;
+}
+
+/** By place in the order, ones without one after, then by name. */
+function byOrder(a: Group, b: Group): number {
+  return rank(a) - rank(b) || a.name.localeCompare(b.name);
 }
 
 // Like ALLPHOTOS.local.json, these are git-ignored and only there locally; a glob doesn't fail
 // when they're missing.
-/** Every album, from ALLALBUMS.json. */
-export const albums: Group[] =
+/** Every album, from ALLALBUMS.json, in the order set on the pipeline's Albums page. */
+export const albums: Group[] = (
   localFile(
     import.meta.glob<Group[]>("../data/albums/ALLALBUMS.local.json", {
       eager: true,
       import: "default",
     }),
-  ) ?? (committedAlbums as Group[]);
+  ) ?? (committedAlbums as Group[])
+).toSorted(byOrder);
 
 /** Every tag, from ALLTAGS.json. */
 export const tags: Group[] =
@@ -31,7 +46,7 @@ export const tags: Group[] =
     }),
   ) ?? (committedTags as Group[]);
 
-/** The albums directly inside the album with the ID, or the top-level albums for "". */
+/** The albums directly inside the album with the ID, or the top-level albums for "", in order. */
 export function subAlbums(parent: string): Group[] {
   return albums.filter((album) => (album.parent ?? "") === parent && album.id !== parent);
 }
@@ -45,4 +60,19 @@ export function albumAndSubAlbums(id: string, found = new Set<string>()): Set<st
   found.add(id);
   for (const album of subAlbums(id)) albumAndSubAlbums(album.id, found);
   return found;
+}
+
+/** The top-level albums in order, counting ones whose parent isn't an album. */
+function topAlbums(): Group[] {
+  return albums.filter((album) => !albums.some((other) => other.id === album.parent));
+}
+
+/**
+ * Every album in order, each with its sub-albums right after it, from the top level or from the
+ * album with the ID parent. An album in a loop of parents is left out.
+ */
+export function albumTree(parent = "", seen = new Set<string>()): Group[] {
+  const fresh = (parent ? subAlbums(parent) : topAlbums()).filter((a) => !seen.has(a.id));
+  for (const album of fresh) seen.add(album.id);
+  return fresh.flatMap((album) => [album, ...albumTree(album.id, seen)]);
 }

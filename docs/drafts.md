@@ -24,8 +24,8 @@ GitHub settings' `includeUntitled` (`false` by default) and changes what the nex
 - **Photos in Flight** marks a draft **Draft, not on the portfolio** instead of the `ALLPHOTOS.json` check mark, and the
   sync button's panel counts it as synced, since `ALLPHOTOS.json` isn't missing anything.
 - **Gallery** lists drafts on the base branch too (it reads the photos folder, not `ALLPHOTOS.json`), marked **Draft**.
-- **Site Spotlight** and the **Instagram calendar** list drafts with a **Draft** label. A draft can be put in a
-  spotlight zone or scheduled, but the portfolio's spotlight skips it until it has a title. The calendar's count of
+- The **Instagram calendar** lists drafts with a **Draft** label. A draft can be scheduled, and can be in an album
+  a spotlight zone shows, but the portfolio skips it until it has a title. The calendar's count of
   photos in flight leaves drafts out and counts them on their own.
 - The **Photo page**'s Title hint says the photo stays a draft without one.
 - The **already saved** check (`POST /api/photos/all-photos/check`) also looks at the drafts on the base branch, since pages only

@@ -1,202 +1,87 @@
-import { CheckIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
-import type { SocialCalendar, SocialPhoto } from "@/api/publish";
-import { DraftBadge } from "@/components/draft-mark";
-import { PhotoFiles } from "@/components/photo-files";
-import { type Spotlight, type Toggle, useSpotlight } from "@/components/use-spotlight";
-import { DRAFT_BADGE, Thumbnail, ZonePhotos } from "@/components/spotlight-zone-photos";
-import { Button } from "@/components/ui/button";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import {
-  type SpotlightZone,
-  type UnsavedZones,
-  newestFirst,
-  spotlightZones,
-  zonePhotos,
-  zonesOf,
-  zonesUnsaved,
-} from "@/lib/site-spotlight";
-import { photoName } from "@/lib/social-schedule";
-import { cn } from "@/lib/utils";
+  type Group,
+  type OrganizeResponse,
+  albumDescendants,
+  organizeQuery,
+  setSpotlightAlbumMutation,
+} from "@/api/organize";
+import { GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
+import { GroupCombobox } from "@/components/group-picker";
+import { QueryResult } from "@/components/query-result";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { type SpotlightZone, spotlightZones, zoneAlbum } from "@/lib/site-spotlight";
 
-/** Picks the photos each spotlight zone of the portfolio shows, such as the homepage's. */
+/** Picks the album each spotlight zone of the portfolio shows, such as the homepage's. */
 export function SiteSpotlight() {
-  return <PhotoFiles>{(data) => <Zones files={data} />}</PhotoFiles>;
+  const organize = useQuery(organizeQuery);
+  return (
+    <QueryResult query={organize} pendingLabel="Reading albums from GitHub…">
+      {(data) => <Zones organize={data} />}
+    </QueryResult>
+  );
 }
 
-function Zones({ files }: { files: SocialCalendar }) {
-  const spotlight = useSpotlight(files.photos);
+function Zones({ organize }: { organize: OrganizeResponse }) {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
-        Photos to pick from are the {files.photos.length} photo files on <code>{files.branch}</code>
-        , in flight ones included. Changes are kept in the app until you <strong>Commit</strong>{" "}
-        from the sync button at the top right, which saves them to each photo&apos;s{" "}
-        <code>spotlightZones</code> and, for the order, <code>websiteSpotlight</code>. A photo
-        marked <strong>Draft</strong> has no title, so the portfolio skips it until it gets one.
+        Each spot shows the photos of one album, its sub-albums&apos; included, in the order the
+        portfolio gives the album. Picking an album saves the spot in its file&apos;s{" "}
+        <code>spotlightZones</code> as a change waiting for <strong>Commit</strong>, from the sync
+        button at the top right. Add photos to an album on the Gallery or a photo&apos;s page.
       </p>
-      {files.unreadable.length > 0 && (
-        <p className="text-destructive text-sm">
-          Some photo files couldn&apos;t be read, so nothing can be committed:{" "}
-          {files.unreadable.map((f) => f.path).join(", ")}
-        </p>
-      )}
       {spotlightZones.map((zone) => (
-        <ZoneCard key={zone.id} zone={zone} photos={files.photos} spotlight={spotlight} />
+        <ZoneCard key={zone.id} zone={zone} albums={organize.albums} />
       ))}
     </div>
   );
 }
 
-interface ZoneProps {
-  zone: SpotlightZone;
-  photos: SocialPhoto[];
-  spotlight: Spotlight;
-}
-
-/**
- * One zone: its photos in their order, to drag into another order or take out, and a picker to
- * add more.
- */
-function ZoneCard({ zone, photos, spotlight }: ZoneProps) {
-  const [picking, setPicking] = useState(false);
-  const { unsaved, order, toggle, move } = spotlight;
-  const chosen = zonePhotos(photos, unsaved, order, zone.id);
+/** One zone: a picker for its album, and the photos the zone shows from it. */
+function ZoneCard({ zone, albums }: { zone: SpotlightZone; albums: Group[] }) {
+  const queryClient = useQueryClient();
+  const save = useMutation({
+    ...setSpotlightAlbumMutation,
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: organizeQuery.queryKey }),
+  });
+  const album = zoneAlbum(albums, zone.id);
+  const id = `spotlight-${zone.id}`;
   return (
     <Card>
       <CardHeader>
         <CardTitle>{zone.label}</CardTitle>
         <CardDescription>{zone.description}</CardDescription>
-        <CardAction>
-          <Button variant="outline" onClick={() => setPicking(true)}>
-            <PlusIcon />
-            Add photos
-          </Button>
-        </CardAction>
       </CardHeader>
-      <CardContent>
-        {chosen.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{zone.fallback}</p>
-        ) : (
-          <ZonePhotos
-            photos={chosen}
-            isUnsaved={(photo) => zonesUnsaved(unsaved, photo) || photo.path in order}
-            onMove={(from, to) => move(chosen, from, to)}
-            onRemove={(photo) => toggle(photo, zone.id, false)}
+      <CardContent className="flex flex-col gap-4 text-sm">
+        <div className="flex max-w-md flex-col gap-1.5">
+          <label htmlFor={id} className="font-medium">
+            Album
+          </label>
+          <GroupCombobox
+            id={id}
+            kind="albums"
+            multiple={false}
+            value={album ? [album.id] : []}
+            disabled={save.isPending}
+            placeholder="No album"
+            onChange={(next) => save.mutate({ zone: zone.id, album: next[0] ?? null })}
           />
+          {save.isError && <p className="text-destructive">{save.error.message}</p>}
+        </div>
+        {album ? (
+          <AlbumPhotos album={album} albums={albums} />
+        ) : (
+          <p className="text-muted-foreground">{zone.fallback}</p>
         )}
       </CardContent>
-      <ZonePicker
-        open={picking}
-        zone={zone}
-        photos={photos}
-        unsaved={unsaved}
-        onToggle={toggle}
-        onClose={() => setPicking(false)}
-      />
     </Card>
   );
 }
 
-/** The photos matching search, by title or file name, newest first. */
-function matching(photos: SocialPhoto[], search: string): SocialPhoto[] {
-  const query = search.trim().toLowerCase();
-  return photos
-    .filter((photo) => `${photoName(photo)} ${photo.file}`.toLowerCase().includes(query))
-    .toSorted(newestFirst);
-}
-
-interface ZonePickerProps {
-  open: boolean;
-  zone: SpotlightZone;
-  photos: SocialPhoto[];
-  unsaved: UnsavedZones;
-  onToggle: Toggle;
-  onClose: () => void;
-}
-
-/** Every photo, to click in or out of a zone. */
-function ZonePicker({ open, zone, photos, unsaved, onToggle, onClose }: ZonePickerProps) {
-  const [search, setSearch] = useState("");
-  return (
-    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>{zone.label} photos</DialogTitle>
-          <DialogDescription>Click a photo to add it, and again to take it out.</DialogDescription>
-        </DialogHeader>
-        <Input
-          type="search"
-          placeholder="Search by title or file name"
-          aria-label="Search photos"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
-        <ul className="-mx-1 grid min-h-0 flex-1 grid-cols-3 gap-2 overflow-y-auto px-1 sm:grid-cols-5">
-          {matching(photos, search).map((photo) => (
-            <PickerPhoto
-              key={photo.path}
-              photo={photo}
-              chosen={zonesOf(unsaved, photo).includes(zone.id)}
-              onToggle={(on) => onToggle(photo, zone.id, on)}
-            />
-          ))}
-        </ul>
-        <DialogFooter>
-          <Button onClick={onClose}>Done</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-interface PickerPhotoProps {
-  photo: SocialPhoto;
-  chosen: boolean;
-  onToggle: (on: boolean) => void;
-}
-
-/** A photo in the picker, ringed and checked while it's in the zone. */
-function PickerPhoto({ photo, chosen, onToggle }: PickerPhotoProps) {
-  const name = photoName(photo);
-  return (
-    <li>
-      <button
-        type="button"
-        aria-pressed={chosen}
-        title={name}
-        onClick={() => onToggle(!chosen)}
-        className={cn(
-          "relative block aspect-square w-full overflow-hidden rounded-md border outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          chosen && "ring-primary ring-2",
-        )}
-      >
-        <Thumbnail photo={photo} />
-        <DraftBadge data={photo.data} className={DRAFT_BADGE} />
-        {chosen && (
-          <span className="bg-primary text-primary-foreground absolute top-1 right-1 rounded-full p-0.5">
-            <CheckIcon className="size-3.5" />
-          </span>
-        )}
-        <span className="sr-only">{name}</span>
-      </button>
-      <p className="mt-1 truncate text-xs">{name}</p>
-    </li>
-  );
+/** The photos in album and its sub-albums, as the zone shows them. */
+function AlbumPhotos({ album, albums }: { album: Group; albums: Group[] }) {
+  const ids = new Set([album.id, ...albumDescendants(albums, album.id)]);
+  const { combined, photos } = useGroupPhotos("albums", ids);
+  return <GroupPhotoGrid combined={combined} photos={photos} />;
 }

@@ -126,3 +126,52 @@ func handleAddPhotoGroups(store *settings.Store, gh *github.Client) http.Handler
 		writeSocialResult(w, result, err, "could not save the albums and tags")
 	}
 }
+
+// handleSetAlbumOrder gives each album in the body's ids its place there, 1
+// first, as a change waiting for Commit.
+func handleSetAlbumOrder(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			IDs []string `json:"ids"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid album order body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetAlbumOrder(ctx, cfg, req.IDs)
+		writeSocialResult(w, result, err, "could not save the albums' order")
+	}
+}
+
+// handleSetSpotlightAlbum makes the body's album the one the path's spotlight
+// spot shows, or leaves the spot without one when it's empty or null, as a
+// change waiting for Commit.
+func handleSetSpotlightAlbum(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Album *string `json:"album"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid spotlight album body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetSpotlightAlbum(ctx, cfg, r.PathValue("zone"), *cmp.Or(req.Album, new(string)))
+		writeSocialResult(w, result, err, "could not save the spot's album")
+	}
+}

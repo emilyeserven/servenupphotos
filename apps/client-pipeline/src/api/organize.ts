@@ -20,6 +20,10 @@ export interface Group {
   description?: string;
   /** An album's parent album's ID; absent for a top-level album, and for every tag. */
   parent?: string;
+  /** An album's place among the albums, 1 first; absent until the albums are reordered. */
+  order?: number;
+  /** The IDs of the portfolio's spotlight spots that show an album's photos, such as "homepage". */
+  spotlightZones?: string[];
   path: string;
   fileUrl: string;
   /** True when it's only in the photo data pull request, not merged yet. */
@@ -112,16 +116,17 @@ interface AlbumParentResult extends PendingSave {
   changed: boolean;
 }
 
+/** The album files a save changed, for the combined lists. */
+function albumChanges(result: unknown) {
+  return (result as PendingSave).changes.map((change) => ({ kind: "albums" as const, ...change }));
+}
+
 /** Moves the album `id` into the album `parent`, or to the top level when it's null. */
 export const setAlbumParentMutation = mutationOptions({
   mutationKey: ["organize", "albums", "parent"],
   meta: {
     saves: (result) => (result as AlbumParentResult).changed,
-    changes: (result) =>
-      (result as AlbumParentResult).changes.map((change) => ({
-        kind: "albums" as const,
-        ...change,
-      })),
+    changes: albumChanges,
   },
   mutationFn: ({ id, parent }: { id: string; parent: string | null }) =>
     requestJson<AlbumParentResult>(`/api/organize/albums/${encodeURIComponent(id)}/parent`, {
@@ -130,6 +135,44 @@ export const setAlbumParentMutation = mutationOptions({
       body: JSON.stringify({ parent }),
     }),
 });
+
+/** What a change to several albums did; nothing is saved when none of their files changed. */
+interface AlbumsResult extends PendingSave {
+  /** How many album files changed. */
+  files: number;
+}
+
+/** The mutation options that PUT a JSON body to `url` and save the album files it changes. */
+function albumsMutation<T>(key: string, url: (vars: T) => string, body: (vars: T) => unknown) {
+  return mutationOptions({
+    mutationKey: ["organize", "albums", key],
+    meta: { saves: (result) => (result as AlbumsResult).files > 0, changes: albumChanges },
+    mutationFn: (vars: T) =>
+      requestJson<AlbumsResult>(url(vars), {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body(vars)),
+      }),
+  });
+}
+
+/** Gives each album in `ids` its place there, 1 first, as changes waiting for Commit. */
+export const setAlbumOrderMutation = albumsMutation(
+  "order",
+  () => "/api/organize/albums/order",
+  (ids: string[]) => ({ ids }),
+);
+
+/**
+ * Makes `album` the one the spotlight spot `zone` shows, or leaves the spot without one when it's
+ * null, as changes waiting for Commit.
+ */
+export const setSpotlightAlbumMutation = albumsMutation(
+  "spotlight",
+  ({ zone }: { zone: string; album: string | null }) =>
+    `/api/organize/spotlight/${encodeURIComponent(zone)}`,
+  ({ album }) => ({ album }),
+);
 
 /** A photo's albums and tags, by ID, as its JSON lists them. */
 export interface PhotoGroups {

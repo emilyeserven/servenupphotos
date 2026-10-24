@@ -6,7 +6,7 @@ import {
   zonePhotos,
 } from "@/lib/spotlight-zones";
 
-/** How many of the newest photos the homepage shows when none are spotlighted on it. */
+/** How many of the newest photos the homepage shows when no album is picked for it. */
 const FALLBACK_COUNT = 5;
 
 /** Whether the photo is taller than it's wide, as it's shown. */
@@ -25,10 +25,10 @@ function arranged(list: ImagePhoto[], phone: boolean): ImagePhoto[] {
 }
 
 /**
- * The photos behind the homepage: the ones picked for its spotlight zone on the pipeline's Site
- * Spotlight page, in the order they were dragged into there (ones without a place after, newest
- * first), or else the 5 newest photos. On a phone held upright, portrait photos come first, so with
- * none picked those are the 5 newest portrait photos where there are that many.
+ * The photos behind the homepage: the ones in the album picked for its spotlight zone on the
+ * pipeline's Site Spotlight page, sub-albums included, in the album's order, or else the 5 newest photos.
+ * On a phone held upright, portrait photos come first, so with no album picked those are the 5
+ * newest portrait photos where there are that many.
  */
 export function homepagePhotos(all: Photo[] = photos, phone = false): ImagePhoto[] {
   const spotlighted = zonePhotos(HOMEPAGE_ZONE, all);

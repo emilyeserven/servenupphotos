@@ -5,6 +5,7 @@ import (
 	"cmp"
 	"context"
 	"encoding/json"
+	"math"
 	"net/http"
 	"path"
 	"regexp"
@@ -74,6 +75,11 @@ type groupJSON struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Parent      *string `json:"parent,omitempty"`
+	// Order is an album's place among the albums, 1 first.
+	Order *int `json:"order,omitempty"`
+	// SpotlightZones are the IDs of the portfolio's spots that show an
+	// album's photos, such as "homepage".
+	SpotlightZones []string `json:"spotlightZones,omitempty"`
 }
 
 // albumJSON is the content of an album file, as written: it always lists its
@@ -83,6 +89,12 @@ type albumJSON struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Parent      *string `json:"parent"`
+	// Order is the album's place among the albums, 1 first; missing until
+	// the albums are reordered.
+	Order *int `json:"order,omitempty"`
+	// SpotlightZones are the IDs of the portfolio's spots that show the
+	// album's photos; missing while it's in none.
+	SpotlightZones []string `json:"spotlightZones,omitempty"`
 }
 
 // fileContent is g as kind's files are written.
@@ -100,7 +112,13 @@ type Group struct {
 	Description string `json:"description,omitempty"`
 	// Parent is an album's parent album's ID, empty for a top-level album.
 	Parent string `json:"parent,omitempty"`
-	Path   string `json:"path"`
+	// Order is an album's place among the albums, 1 first, or 0 when it
+	// hasn't been given one, which puts it after the ones that have.
+	Order int `json:"order,omitempty"`
+	// SpotlightZones are the IDs of the portfolio's spots that show an
+	// album's photos, such as "homepage".
+	SpotlightZones []string `json:"spotlightZones,omitempty"`
+	Path           string   `json:"path"`
 	// FileURL is the file's page on GitHub; empty while its latest change is
 	// only pending.
 	FileURL string `json:"fileUrl"`
@@ -123,7 +141,7 @@ type OrganizeResult struct {
 }
 
 // Organize lists the albums and tags as the next Commit will have them, with
-// the ones only on the base branch, sorted by name.
+// the ones only on the base branch, sorted by their order and then by name.
 func (c *Client) Organize(ctx context.Context, gh settings.GitHub) (OrganizeResult, error) {
 	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
@@ -234,12 +252,9 @@ func (c *Client) SetAlbumParent(ctx context.Context, gh settings.GitHub, id, par
 		return AlbumParentResult{}, perr
 	}
 	albums := w.groups()[Albums.Folder]
-	album, ok := findGroup(albums, id)
-	if !ok {
-		return AlbumParentResult{}, publishErr(http.StatusNotFound, "There's no album with the ID %q. Refresh to see what there is.", id)
-	}
-	if album.Error != "" {
-		return AlbumParentResult{}, publishErr(http.StatusConflict, "%s couldn't be read (%s), so it wasn't changed.", album.Path, album.Error)
+	album, perr := readableAlbum(albums, id)
+	if perr != nil {
+		return AlbumParentResult{}, perr
 	}
 	value := []byte("null")
 	if parent != "" {
@@ -295,7 +310,8 @@ func checkCollision(groups map[string][]Group, group NewGroup) *PublishError {
 }
 
 // groups is every album and tag file as the next Commit will have it, and
-// the ones only on the base branch, keyed by kind folder and sorted by name.
+// the ones only on the base branch, keyed by kind folder and sorted by order
+// (ones without one after) and then by name.
 func (w *workspace) groups() map[string][]Group {
 	out := map[string][]Group{}
 	for _, k := range kinds {
@@ -310,16 +326,31 @@ func (w *workspace) groups() map[string][]Group {
 		for _, p := range paths {
 			groups = append(groups, w.readGroup(p))
 		}
-		sort.Slice(groups, func(i, j int) bool {
-			a, b := strings.ToLower(groups[i].Name), strings.ToLower(groups[j].Name)
-			if a != b {
-				return a < b
-			}
-			return groups[i].ID < groups[j].ID
-		})
+		sort.Slice(groups, func(i, j int) bool { return groupBefore(groups[i], groups[j]) })
 		out[k.Folder] = groups
 	}
 	return out
+}
+
+// groupBefore is whether a goes before b: by order, ones without one after,
+// then by name and ID.
+func groupBefore(a, b Group) bool {
+	if ra, rb := orderRank(a.Order), orderRank(b.Order); ra != rb {
+		return ra < rb
+	}
+	an, bn := strings.ToLower(a.Name), strings.ToLower(b.Name)
+	if an != bn {
+		return an < bn
+	}
+	return a.ID < b.ID
+}
+
+// orderRank ranks a group without an order, 0, after every group with one.
+func orderRank(order int) int {
+	if order <= 0 {
+		return math.MaxInt
+	}
+	return order
 }
 
 // groupFile is p's content as the next Commit will have it, or as the base
@@ -360,5 +391,9 @@ func (w *workspace) readGroup(p string) Group {
 	if content.Parent != nil {
 		g.Parent = strings.TrimSpace(*content.Parent)
 	}
+	if content.Order != nil {
+		g.Order = *content.Order
+	}
+	g.SpotlightZones = content.SpotlightZones
 	return g
 }

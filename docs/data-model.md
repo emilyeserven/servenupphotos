@@ -16,6 +16,8 @@ The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
 `{ "id", "name", "description" }` and an album file `{ "id", "name", "description", "parent" }`, each named by its ID.
+An album file may also have `order`, its place among the albums (1 first), and `spotlightZones`, the spots on the
+portfolio that show its photos, such as `["homepage"]`; see [Albums and Tags](albums-and-tags.md#order).
 An album's `parent` is the ID of the one album it sits inside, or `null` for a top-level album; the pipeline never
 lets an album end up inside itself. Albums and tags share one set of IDs and names, compared ignoring case, so a
 photo's `albums` and `tags` never mean the same thing.
@@ -54,8 +56,10 @@ and a photo's `exifOriginals` keeps the EXIF values they replaced; see [Camera O
 `LENSES.json` holds the custom lenses a photo's `customLens` can name, and `manualAperture` marks a photo whose
 aperture is manual or unknown; see [Custom Lenses](custom-lenses.md).
 
-A photo's `spotlightZones` lists the spots on the portfolio it's spotlighted in, by ID, such as `"homepage"`; see
-[Publish](publish.md#site-spotlight). Older files may be missing it, which means none.
+A photo's `spotlightZones` and `websiteSpotlight` are left from when spotlight zones listed photos. The zones list
+albums instead (see [Publish](publish.md#site-spotlight)), and the photos that were on the homepage were moved into the
+**Homepage Spotlight** album, which the Homepage zone shows. `websiteSpotlight` still puts those photos first in an
+album, in their old order; `spotlightZones` isn't read.
 
 A photo's `socialPosts` lists its posts on social media, each with its platform, status, date, link, caption and
 hashtags; see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
