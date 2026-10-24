@@ -1,7 +1,7 @@
 {
-  "id": 138,
-  "title": null,
+  "title": "Morning, Paddleboarder",
   "comment": null,
+  "id": 138,
   "file": "IMG_4355.jpg",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
@@ -11,9 +11,9 @@
   "focalLength": 126,
   "gpsPosition": null,
   "createDate": "2019:12:24 07:06:36",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "Delray Public Beach",
+  "customCity": "Delray Beach",
+  "customCountry": "United States of America",
   "country": null,
   "city": null,
   "width": 5769,
@@ -44,7 +44,14 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "delray-public-beach"
+    }
+  ],
   "spotlightZones": [],
-  "socialPosts": []
+  "socialPosts": [],
+  "customGpsPosition": null,
+  "reEdit": null
 }

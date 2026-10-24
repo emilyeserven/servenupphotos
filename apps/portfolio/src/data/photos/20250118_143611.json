@@ -12,8 +12,8 @@
   "gpsPosition": "30 deg 1' 56.09\" N, 31 deg 15' 22.52\" E",
   "customGpsPosition": null,
   "createDate": "2025:01:18 14:36:12",
-  "placeName": "Muhammad Ali Mosque",
-  "customCity": "Al Khalifa",
+  "placeName": "Mosque-Madrasa of Sultan Hassan",
+  "customCity": "Cairo",
   "customCountry": "Egypt",
   "country": "Egypt",
   "city": "Al Khalifa",
@@ -48,11 +48,7 @@
   "places": [
     {
       "relation": "",
-      "id": "muhammad-ali-mosque"
-    },
-    {
-      "relation": "in",
-      "id": "citadel-of-salah-al-din-al-ayyubi"
+      "id": "mosque-madrasa-of-sultan-hassan"
     }
   ],
   "spotlightZones": [],

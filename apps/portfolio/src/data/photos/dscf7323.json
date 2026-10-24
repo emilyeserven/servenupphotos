@@ -38,7 +38,7 @@
     }
   },
   "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
+  "websiteSpotlight": 7,
   "socialMediaPublishDate": null,
   "exifOriginals": {},
   "manualAperture": false,
@@ -51,7 +51,7 @@
       "id": "namsan-tower"
     }
   ],
-  "spotlightZones": [],
+  "spotlightZones": ["homepage"],
   "socialPosts": [],
   "reEdit": null
 }

@@ -1,5 +1,62 @@
 [
   {
+    "title": "A Decree from the Past",
+    "comment": null,
+    "id": 271,
+    "file": "20250118_114107.jpg",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/50",
+    "iso": 1600,
+    "focalLength": 6.3,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2025:01:18 11:41:07",
+    "placeName": "museum-of-egyptian-antiquities",
+    "customCity": "Cairo",
+    "customCountry": "Egypt",
+    "country": null,
+    "city": null,
+    "width": 4000,
+    "height": 2252,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107.jpg",
+      "key": "photos/82a8647ad54b-20250118-114107.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/82a8647ad54b-20250118-114107-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 874,
+        "y": 0,
+        "size": 2252,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "museum-of-egyptian-antiquities"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "title": "Door from the Mosque",
     "comment": null,
     "id": 275,
@@ -61,6 +118,63 @@
     "reEdit": null
   },
   {
+    "title": "Mosque's Lamp",
+    "comment": null,
+    "id": 277,
+    "file": "20250118_143432.jpg",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
+    "aperture": 2.4,
+    "exposure": "1/340",
+    "iso": 50,
+    "focalLength": 7.9,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2025:01:18 14:34:32",
+    "placeName": "Mosque-Madrasa of Sultan Hassan",
+    "customCity": "Cairo",
+    "customCountry": "Egypt",
+    "country": null,
+    "city": null,
+    "width": 2252,
+    "height": 3153,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432.jpg",
+      "key": "photos/e8f3670b72d6-20250118-143432.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e8f3670b72d6-20250118-143432-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 450,
+        "size": 2252,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "mosque-madrasa-of-sultan-hassan"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "title": "Mosque's Hanging Lights",
     "comment": null,
     "id": 279,
@@ -74,8 +188,8 @@
     "gpsPosition": "30 deg 1' 56.09\" N, 31 deg 15' 22.52\" E",
     "customGpsPosition": null,
     "createDate": "2025:01:18 14:36:12",
-    "placeName": "Muhammad Ali Mosque",
-    "customCity": "Al Khalifa",
+    "placeName": "Mosque-Madrasa of Sultan Hassan",
+    "customCity": "Cairo",
     "customCountry": "Egypt",
     "country": "Egypt",
     "city": "Al Khalifa",
@@ -110,11 +224,7 @@
     "places": [
       {
         "relation": "",
-        "id": "muhammad-ali-mosque"
-      },
-      {
-        "relation": "in",
-        "id": "citadel-of-salah-al-din-al-ayyubi"
+        "id": "mosque-madrasa-of-sultan-hassan"
       }
     ],
     "spotlightZones": [],
@@ -1826,6 +1936,63 @@
     "socialPosts": []
   },
   {
+    "title": "Crowded Hanok Village",
+    "comment": null,
+    "id": 216,
+    "file": "DSCF3817.jpg",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/350",
+    "iso": 125,
+    "focalLength": 36.6,
+    "gpsPosition": "37 deg 34' 56.62\" N, 126 deg 59' 1.27\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:05:17 16:12:31",
+    "placeName": "bukchon-hanok-village",
+    "customCity": "Seoul",
+    "customCountry": null,
+    "country": "South Korea",
+    "city": null,
+    "width": 7102,
+    "height": 3995,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817.jpg",
+      "key": "photos/f38b5d9f4265-dscf3817.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnail.webp?crop=1256,0,3995",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f38b5d9f4265-dscf3817-thumbnailpreview.webp?crop=1256,0,3995",
+      "thumbnailcrop": {
+        "x": 1256,
+        "y": 0,
+        "size": 3995,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "bukchon-hanok-village"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "title": "Busy Night in Myeongdong",
     "comment": null,
     "id": 251,
@@ -1922,7 +2089,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 8,
     "socialMediaPublishDate": null,
     "exifOriginals": {},
     "manualAperture": false,
@@ -1935,7 +2102,7 @@
         "id": "komfortabel-coffee-namsan"
       }
     ],
-    "spotlightZones": [],
+    "spotlightZones": ["homepage"],
     "socialPosts": [],
     "reEdit": null
   },
@@ -2093,7 +2260,7 @@
       }
     },
     "isSocialMediaEligible": false,
-    "websiteSpotlight": null,
+    "websiteSpotlight": 7,
     "socialMediaPublishDate": null,
     "exifOriginals": {},
     "manualAperture": false,
@@ -2106,7 +2273,7 @@
         "id": "namsan-tower"
       }
     ],
-    "spotlightZones": [],
+    "spotlightZones": ["homepage"],
     "socialPosts": [],
     "reEdit": null
   },
@@ -2905,7 +3072,7 @@
     "socialPosts": []
   },
   {
-    "title": "Hallway of the Mosque",
+    "title": "Domed Hallway of the Mosque",
     "comment": null,
     "id": 273,
     "file": "20250118_135226.jpg",
@@ -3290,6 +3457,167 @@
     "socialPosts": []
   },
   {
+    "title": "One Way, Two Way",
+    "comment": null,
+    "id": 231,
+    "file": "IMG_4019.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 13,
+    "exposure": "1/500",
+    "iso": 250,
+    "focalLength": 79,
+    "gpsPosition": "42 deg 30' 23.08\" N, 70 deg 50' 54.87\" W",
+    "customGpsPosition": null,
+    "createDate": "2020:09:17 15:20:48",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States",
+    "city": "Marblehead",
+    "width": 5569,
+    "height": 3713,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019.jpg",
+      "key": "photos/bf81936f6960-img-4019.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-thumbnail.webp?crop=969,0,3713",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bf81936f6960-img-4019-thumbnailpreview.webp?crop=969,0,3713",
+      "thumbnailcrop": {
+        "x": 969,
+        "y": 0,
+        "size": 3713,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
+    "title": "Morning, Paddleboarder",
+    "comment": null,
+    "id": 138,
+    "file": "IMG_4355.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 9,
+    "exposure": "1/400",
+    "iso": 500,
+    "focalLength": 126,
+    "gpsPosition": null,
+    "createDate": "2019:12:24 07:06:36",
+    "placeName": "Delray Public Beach",
+    "customCity": "Delray Beach",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 5769,
+    "height": 3245,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355.jpg",
+      "key": "photos/ee116603bdf5-img-4355.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ee116603bdf5-img-4355-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1262,
+        "y": 0,
+        "size": 3245,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "delray-public-beach"
+      }
+    ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "customGpsPosition": null,
+    "reEdit": null
+  },
+  {
+    "title": "Mechanic Street",
+    "comment": null,
+    "id": 232,
+    "file": "IMG_4382.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 11,
+    "exposure": "1/500",
+    "iso": 800,
+    "focalLength": 75,
+    "gpsPosition": "42 deg 30' 22.99\" N, 70 deg 50' 54.54\" W",
+    "customGpsPosition": null,
+    "createDate": "2020:09:17 16:15:23",
+    "placeName": null,
+    "customCity": null,
+    "customCountry": null,
+    "country": "United States",
+    "city": "Marblehead",
+    "width": 6000,
+    "height": 4000,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382.jpg",
+      "key": "photos/ac839f80c0a5-img-4382.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382-thumbnail.webp?crop=954,0,4000",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ac839f80c0a5-img-4382-thumbnailpreview.webp?crop=954,0,4000",
+      "thumbnailcrop": {
+        "x": 954,
+        "y": 0,
+        "size": 4000,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
     "id": 25,
     "title": "Photographing Photographers: 86th Street Subway Edition",
     "comment": null,
@@ -3394,6 +3722,58 @@
         "id": "lintilhac-park"
       }
     ],
+    "spotlightZones": [],
+    "socialPosts": [],
+    "reEdit": null
+  },
+  {
+    "title": "Time Marches On...",
+    "comment": null,
+    "id": 242,
+    "file": "IMG_8353.jpg",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 5.6,
+    "exposure": "1/2000",
+    "iso": 1250,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "customGpsPosition": "43.78189298356343, -72.47609086027276",
+    "createDate": "2022:12:30 11:37:36",
+    "placeName": null,
+    "customCity": "Sharon",
+    "customCountry": "United States of America",
+    "country": null,
+    "city": null,
+    "width": 2560,
+    "height": 1440,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353.jpg",
+      "key": "photos/a7c5cb04e323-img-8353.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353-thumbnail.webp?crop=195,122,1318",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a7c5cb04e323-img-8353-thumbnailpreview.webp?crop=195,122,1318",
+      "thumbnailcrop": {
+        "x": 195,
+        "y": 122,
+        "size": 1318,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "places": [],
     "spotlightZones": [],
     "socialPosts": [],
     "reEdit": null

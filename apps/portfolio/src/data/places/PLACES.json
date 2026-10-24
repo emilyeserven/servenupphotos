@@ -100,6 +100,14 @@
     "longitude": -73.99508072439512
   },
   {
+    "id": "bukchon-hanok-village",
+    "name": "Bukchon Hanok Village",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
     "id": "central-park",
     "name": "Central Park",
     "description": "",
@@ -399,6 +407,16 @@
     "longitude": -80.15643210386787
   },
   {
+    "id": "mosque-madrasa-of-sultan-hassan",
+    "name": "Mosque-Madrasa of Sultan Hassan",
+    "description": "",
+    "parent": "",
+    "city": "Cairo",
+    "country": "Egypt",
+    "latitude": 30.03224863796035,
+    "longitude": 31.256600451379867
+  },
+  {
     "id": "muhammad-ali-mosque",
     "name": "Muhammad Ali Mosque",
     "description": "",
@@ -428,6 +446,16 @@
     "latitude": 40.76739122272109,
     "longitude": -73.9819579321148,
     "exactLocation": true
+  },
+  {
+    "id": "museum-of-egyptian-antiquities",
+    "name": "Museum of Egyptian Antiquities",
+    "description": "",
+    "parent": "",
+    "city": "Cairo",
+    "country": "Egypt",
+    "latitude": 30.048288814067792,
+    "longitude": 31.233678125080555
   },
   {
     "id": "myeongdong-street",

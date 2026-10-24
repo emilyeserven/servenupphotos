@@ -1,7 +1,7 @@
 {
-  "id": 271,
-  "title": null,
+  "title": "A Decree from the Past",
   "comment": null,
+  "id": 271,
   "file": "20250118_114107.jpg",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
@@ -12,9 +12,9 @@
   "gpsPosition": null,
   "customGpsPosition": null,
   "createDate": "2025:01:18 11:41:07",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "museum-of-egyptian-antiquities",
+  "customCity": "Cairo",
+  "customCountry": "Egypt",
   "country": null,
   "city": null,
   "width": 4000,
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "museum-of-egyptian-antiquities"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null
