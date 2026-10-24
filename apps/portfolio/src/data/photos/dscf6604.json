@@ -1,7 +1,7 @@
 {
-  "id": 262,
-  "title": null,
+  "title": "Buddha's Birthday",
   "comment": null,
+  "id": 262,
   "file": "DSCF6604.jpg",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
@@ -12,9 +12,9 @@
   "gpsPosition": "37 deg 32' 57.29\" N, 126 deg 59' 0.31\" E",
   "customGpsPosition": null,
   "createDate": "2026:05:24 13:42:17",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "Komfortabel coffee Namsan",
+  "customCity": "Seoul",
+  "customCountry": "South Korea",
   "country": "South Korea",
   "city": null,
   "width": 5152,
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "komfortabel-coffee-namsan"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null

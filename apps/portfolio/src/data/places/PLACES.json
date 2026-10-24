@@ -287,6 +287,24 @@
     "country": "United States of America"
   },
   {
+    "id": "komfortabel-coffee-namsan",
+    "name": "Komfortabel coffee Namsan",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
+    "id": "lintilhac-park",
+    "name": "Lintilhac Park",
+    "description": "",
+    "parent": "",
+    "city": "Stowe",
+    "country": "",
+    "latitude": 44.466366205532466,
+    "longitude": -72.68541680318658
+  },
+  {
     "id": "little-italy",
     "name": "Little Italy",
     "description": "",
@@ -386,7 +404,9 @@
     "description": "",
     "parent": "citadel-of-salah-al-din-al-ayyubi",
     "city": "",
-    "country": ""
+    "country": "",
+    "latitude": 30.02901770865842,
+    "longitude": 31.25979659624385
   },
   {
     "id": "murray-hill",
@@ -408,6 +428,30 @@
     "latitude": 40.76739122272109,
     "longitude": -73.9819579321148,
     "exactLocation": true
+  },
+  {
+    "id": "myeongdong-street",
+    "name": "Myeongdong Street",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
+    "id": "namsan-dulle-gil-trail",
+    "name": "Namsan Dulle-gil Trail",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
+    "id": "namsan-tower",
+    "name": "Namsan Tower",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
   },
   {
     "id": "national-museum-of-korea",

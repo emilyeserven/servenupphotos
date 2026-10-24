@@ -1,7 +1,7 @@
 {
-  "id": 240,
-  "title": null,
+  "title": "The Town of Stowe, Vermont",
   "comment": null,
+  "id": 240,
   "file": "IMG_8026.jpg",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
@@ -12,9 +12,9 @@
   "gpsPosition": null,
   "customGpsPosition": null,
   "createDate": "2022:12:28 13:28:15",
-  "placeName": null,
-  "customCity": null,
-  "customCountry": null,
+  "placeName": "lintilhac-park",
+  "customCity": "Stowe",
+  "customCountry": "United States of America",
   "country": null,
   "city": null,
   "width": 2560,
@@ -28,10 +28,10 @@
     "small": "https://cdn.servenupphotos.net/photos/6696dec7db00-img-8026-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/6696dec7db00-img-8026-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/6696dec7db00-img-8026-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/6696dec7db00-img-8026-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6696dec7db00-img-8026-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/6696dec7db00-img-8026-thumbnail.webp?crop=1120,0,1440",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6696dec7db00-img-8026-thumbnailpreview.webp?crop=1120,0,1440",
     "thumbnailcrop": {
-      "x": 560,
+      "x": 1120,
       "y": 0,
       "size": 1440,
       "outputSize": 500
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "lintilhac-park"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null
