@@ -38,21 +38,22 @@ function shortestTurn(from: number, to: number): number {
 }
 
 /**
- * Where a photo sits on the wheel: around it by its hue, and out from the gray middle by how vivid
- * it is, the most vivid of the photos shown at the edge.
+ * Where a photo sits on the wheel: around it by its hue, and in toward the middle by how vivid it
+ * is, the most vivid of the photos shown in the middle and the most muted at the edge.
  */
 export function wheelPoint(angle: number, vividness: number, mostVivid: number): WheelPoint {
-  const radius = (Math.min(vividness, mostVivid) / mostVivid) * OUTER_RADIUS;
+  const radius = (1 - Math.min(vividness, mostVivid) / mostVivid) * OUTER_RADIUS;
   const radians = (angle * Math.PI) / 180;
   return { x: 0.5 + radius * Math.sin(radians), y: 0.5 - radius * Math.cos(radians) };
 }
 
 /**
  * The wheel's background: the hue buckets' colors around it from red at the top, clockwise as the
- * pins are placed, fading to gray in the middle where the least vivid photos sit.
+ * pins are placed, brightest in the middle where the most vivid photos sit and fading out into the
+ * page's background at the edge, where the most muted ones do.
  */
 export const WHEEL_BACKGROUND = [
-  "radial-gradient(circle closest-side, hsl(0 0% 62%), hsl(0 0% 62% / 0))",
+  "radial-gradient(circle closest-side, transparent 10%, var(--background))",
   `conic-gradient(${[...HUE_BUCKETS.map((_, i) => `hsl(${i * 30} 100% 50%)`), "hsl(360 100% 50%)"].join(", ")})`,
 ].join(", ");
 
