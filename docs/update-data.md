@@ -39,7 +39,8 @@ colors of photos that already have them again** is on, such as after replacing p
 downloaded and decoded, four at a time, so a first run over every photo takes a few minutes; the backend keeps each
 original's colors in memory, so applying doesn't download them again after a preview. A photo whose original can't
 be read, or that has no `images.key`, is listed with why and left as it is, and the rest are still saved. Only
-`colors` is rewritten, and nothing is saved while any photo file can't be read.
+`colors` is rewritten, and nothing is saved while any photo file can't be read. New photos get `colors` when they're
+saved, so this is for older ones and for recomputing.
 
 **Camera overrides** applies the [camera overrides](camera-overrides.md) to every photo file again, after they've
 changed (`POST /api/data/camera-overrides/preview`, then `POST /api/data/camera-overrides`). Each file starts from its

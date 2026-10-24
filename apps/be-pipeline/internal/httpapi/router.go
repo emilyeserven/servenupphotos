@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
@@ -31,6 +32,10 @@ type routeDeps struct {
 	extractor exif.Extractor
 	store     *settings.Store
 	gh        *github.Client
+	// colors keeps the color analysis of originals in R2 by key, filled
+	// when a photo is uploaded and read when its JSON is saved or Update
+	// Data reads colors.
+	colors *colorCache
 }
 
 // newRouter is NewRouter with the GitHub client injectable, so tests can point
@@ -40,7 +45,7 @@ func newRouter(extractor exif.Extractor, store *settings.Store, gh *github.Clien
 	mux.HandleFunc("GET /health", handleHealth)
 	mux.HandleFunc("GET /hello", handleHello)
 	mux.HandleFunc("POST /exif", handleExif(extractor, cameraOverrides(store, gh)))
-	d := routeDeps{extractor: extractor, store: store, gh: gh}
+	d := routeDeps{extractor: extractor, store: store, gh: gh, colors: newKeyCache[colors.Analysis]()}
 	registerSettingsRoutes(mux, d)
 	registerPhotoRoutes(mux, d)
 	registerInFlightRoutes(mux, d)

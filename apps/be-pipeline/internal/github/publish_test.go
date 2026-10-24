@@ -1,6 +1,7 @@
 package github
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"path/filepath"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
@@ -264,5 +266,24 @@ func TestPublishErrors(t *testing.T) {
 				t.Errorf("Publish() error = %v, want %d %q", err, tt.status, tt.message)
 			}
 		})
+	}
+}
+
+func TestPublishSavesColors(t *testing.T) {
+	_, c := newFakeGitHub(t)
+	p := photo("DSC0001")
+	p.Colors = &colors.Analysis{Average: colors.Color{Hex: "#ff0000"}, Lightness: 54}
+	got, err := c.Publish(t.Context(), gh, p)
+	if err != nil {
+		t.Fatalf("Publish() error = %v", err)
+	}
+	var data struct {
+		Colors *colors.Analysis `json:"colors"`
+	}
+	if err := json.Unmarshal(got.Data, &data); err != nil || data.Colors == nil || data.Colors.Average.Hex != "#ff0000" {
+		t.Errorf("saved colors = %+v (%v), want the photo's", data.Colors, err)
+	}
+	if saved := string(got.Data); strings.Index(saved, `"colors"`) < strings.Index(saved, `"reEdit"`) {
+		t.Errorf("colors aren't after reEdit in %s", saved)
 	}
 }

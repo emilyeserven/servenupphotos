@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
@@ -18,9 +19,14 @@ const maxPhotoDataBytes = 64 << 10
 // publishTimeout bounds a publish, which makes several GitHub calls in a row.
 const publishTimeout = 30 * time.Second
 
+// publishColorsTimeout bounds reading a photo's colors before a publish,
+// which downloads its original from R2 unless its upload just read them.
+const publishColorsTimeout = 20 * time.Second
+
 // handlePublishPhoto saves a photo's sanitized EXIF as JSON in a pull request
-// on the GitHub repository from Settings.
-func handlePublishPhoto(store *settings.Store, gh *github.Client) http.HandlerFunc {
+// on the GitHub repository from Settings, with its colors read from its
+// original in R2 by readColors when it's there.
+func handlePublishPhoto(store *settings.Store, gh *github.Client, readColors github.ColorReader) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var photo github.Photo
 		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
@@ -36,6 +42,7 @@ func handlePublishPhoto(store *settings.Store, gh *github.Client) http.HandlerFu
 			return
 		}
 
+		photo.Colors = photoColors(r.Context(), readColors, photo.Sanitized.Images.Key)
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
 		result, err := gh.Publish(ctx, cfg, photo)
@@ -51,6 +58,23 @@ func handlePublishPhoto(store *settings.Store, gh *github.Client) http.HandlerFu
 		}
 		writeJSON(w, http.StatusOK, result)
 	}
+}
+
+// photoColors reads the colors of the original at key, or nil when there's no
+// key or they can't be read, so the photo is saved without them; Update
+// Data's Colors can add them later.
+func photoColors(ctx context.Context, readColors github.ColorReader, key *string) *colors.Analysis {
+	if key == nil || *key == "" {
+		return nil
+	}
+	ctx, cancel := context.WithTimeout(ctx, publishColorsTimeout)
+	defer cancel()
+	analysis, msg := readColors(ctx, *key)
+	if msg != "" {
+		slog.Warn("could not read the photo's colors", "key", *key, "reason", msg)
+		return nil
+	}
+	return &analysis
 }
 
 // handleAllPhotosCheck looks for the photo in the body, identified by its file
