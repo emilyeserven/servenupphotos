@@ -48,5 +48,9 @@
     }
   ],
   "spotlightZones": ["homepage"],
-  "socialPosts": []
+  "socialPosts": [],
+  "spotlightFocus": {
+    "x": 77,
+    "y": 53
+  }
 }

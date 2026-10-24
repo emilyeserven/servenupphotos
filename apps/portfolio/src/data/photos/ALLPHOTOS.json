@@ -388,7 +388,11 @@
       }
     ],
     "spotlightZones": ["homepage"],
-    "socialPosts": []
+    "socialPosts": [],
+    "spotlightFocus": {
+      "x": 77,
+      "y": 53
+    }
   },
   {
     "id": 23,
@@ -708,7 +712,11 @@
       }
     ],
     "spotlightZones": ["homepage"],
-    "socialPosts": []
+    "socialPosts": [],
+    "spotlightFocus": {
+      "x": 37,
+      "y": 34
+    }
   },
   {
     "id": 24,
@@ -2275,7 +2283,11 @@
     ],
     "spotlightZones": ["homepage"],
     "socialPosts": [],
-    "reEdit": null
+    "reEdit": null,
+    "spotlightFocus": {
+      "x": 46,
+      "y": 28
+    }
   },
   {
     "title": "Feeding the Bird",
@@ -3346,7 +3358,11 @@
       }
     ],
     "spotlightZones": ["homepage"],
-    "socialPosts": []
+    "socialPosts": [],
+    "spotlightFocus": {
+      "x": 40,
+      "y": 47
+    }
   },
   {
     "title": "Icy Branches",
@@ -7759,7 +7775,11 @@
       }
     ],
     "spotlightZones": ["homepage"],
-    "socialPosts": []
+    "socialPosts": [],
+    "spotlightFocus": {
+      "x": 54,
+      "y": 56
+    }
   },
   {
     "title": "Walking by a Window at Al Khalifa",

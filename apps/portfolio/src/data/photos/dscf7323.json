@@ -53,5 +53,9 @@
   ],
   "spotlightZones": ["homepage"],
   "socialPosts": [],
-  "reEdit": null
+  "reEdit": null,
+  "spotlightFocus": {
+    "x": 46,
+    "y": 28
+  }
 }
