@@ -11,7 +11,7 @@ import {
   useMap,
 } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
-import { MapPin, ZoomIn } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { type LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
@@ -28,10 +28,10 @@ import { MapViewControls } from "@/components/map-view-controls";
 import { PhotoFilterControls } from "@/components/photo-filters";
 import { MapFilterToggle } from "@/components/map-filter-toggle";
 import { FloatingHeader } from "@/components/floating-header";
+import { ClusterGrid, ClusterSheet, type OpenCluster } from "@/components/map-cluster";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
-import { Button } from "@/components/ui/button";
 import { mapViewOf } from "@/components/view-on-map-link";
 import {
   type PlacedPhoto,
@@ -53,6 +53,7 @@ import {
 } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import { useMediaQuery } from "@/lib/use-media-query";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
@@ -160,13 +161,6 @@ function hasImage(photo: Photo): photo is ImagePhoto {
   return photo.image !== null;
 }
 
-/** A cluster that was clicked, with the photos it covers. */
-interface OpenCluster {
-  longitude: number;
-  latitude: number;
-  photos: PlacedPhoto[];
-}
-
 /** How many filters the map has set: the shared ones, and one more for a day or range of days. */
 function setFilterCount(search: MapSearch): number {
   return filterCount(search) + (search.day ? 1 : 0);
@@ -249,6 +243,7 @@ function MapView() {
   // A photo without an image, shown in a popup as the lightbox can't show it.
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
+  const phone = useMediaQuery(PHONE_QUERY);
   const { shown, show, close } = useShownPhoto();
   const { search, mapPhotos, dayPhotos, setDays } = useMapFilters();
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
@@ -271,21 +266,25 @@ function MapView() {
     else setSelected(photo);
   }
 
+  // Clicking a group zooms in to fit its photos, which splits it apart. A group that zooming in
+  // can't split, such as many photos at one place, shows its photos in a grid instead.
   async function openCluster(marker: ClusterMarkerData) {
     if (!map.current) return;
     const clusterPhotos = await photosInCluster(map.current, marker.clusterId);
     setSelected(null);
+    const zoom = zoomToFit(map.current, clusterPhotos);
+    if (zoom) {
+      setCluster(null);
+      map.current.fitBounds(zoom, CLUSTER_FIT);
+      return;
+    }
     setCluster({ longitude: marker.longitude, latitude: marker.latitude, photos: clusterPhotos });
-    // Brings the cluster to the middle, a little low, so its grid above it fits on a phone too.
-    map.current.easeTo({ center: [marker.longitude, marker.latitude], offset: [0, 150] });
-  }
-
-  // Fitting the map to the cluster's photos splits it apart.
-  function zoomIntoCluster(open: OpenCluster) {
-    const bounds = boundsOf(open.photos);
-    if (!bounds || !map.current) return;
-    setCluster(null);
-    map.current.fitBounds(bounds, { padding: FIT_PADDING, maxZoom: 18 });
+    // Brings the group to the middle: a little low so its popup fits above it, or on phones a
+    // little high so it stays clear of the sheet along the bottom.
+    map.current.easeTo({
+      center: [marker.longitude, marker.latitude],
+      offset: clusterOffset(phone),
+    });
   }
 
   return (
@@ -341,21 +340,12 @@ function MapView() {
             />
           ))}
           {cluster && (
-            <Popup
-              longitude={cluster.longitude}
-              latitude={cluster.latitude}
-              anchor="bottom"
-              offset={24}
-              maxWidth="none"
+            <OpenClusterView
+              cluster={cluster}
+              phone={phone}
+              onOpen={(photo) => openPhoto(photo, cluster.photos)}
               onClose={() => setCluster(null)}
-              className={MAP_POPUP}
-            >
-              <ClusterGrid
-                cluster={cluster}
-                onOpen={(photo) => openPhoto(photo, cluster.photos)}
-                onZoomIn={() => zoomIntoCluster(cluster)}
-              />
-            </Popup>
+            />
           )}
           {selected && <PhotoPopup photo={selected} onClose={() => setSelected(null)} />}
         </Map>
@@ -392,6 +382,61 @@ function MapMarkerView({
     <Marker longitude={photo.longitude} latitude={photo.latitude} offset={marker.offset}>
       <PhotoMarker photo={photo} onOpen={() => onOpenPhoto(photo)} />
     </Marker>
+  );
+}
+
+/** How the map fits a group's photos when it's clicked. */
+const CLUSTER_FIT = { padding: FIT_PADDING, maxZoom: 18 };
+
+/**
+ * The bounds to fit to show a group's photos split apart, or null when fitting them wouldn't zoom
+ * in noticeably, as they're all at one spot or the map is already as close as it goes.
+ */
+function zoomToFit(map: MapRef, clusterPhotos: PlacedPhoto[]): LngLatBounds | null {
+  const bounds = boundsOf(clusterPhotos);
+  if (!bounds) return null;
+  return fitZoom(map, bounds) > map.getZoom() + 0.5 ? bounds : null;
+}
+
+/** How far in the map would zoom to fit the bounds, or 0 when they can't be fitted. */
+function fitZoom(map: MapRef, bounds: LngLatBounds): number {
+  return map.cameraForBounds(bounds, CLUSTER_FIT)?.zoom ?? 0;
+}
+
+/** Phones, where the open cluster's grid is a sheet along the bottom of the map. */
+const PHONE_QUERY = "(max-width: 767px)";
+
+/** How far from the middle the map puts a cluster that's opened, in pixels. */
+function clusterOffset(phone: boolean): [number, number] {
+  return phone ? [0, -120] : [0, 150];
+}
+
+/** The open cluster's grid: a popup above it, or on phones a sheet along the bottom. */
+function OpenClusterView({
+  cluster,
+  phone,
+  onOpen,
+  onClose,
+}: {
+  cluster: OpenCluster;
+  phone: boolean;
+  onOpen: (photo: PlacedPhoto) => void;
+  onClose: () => void;
+}) {
+  const grid = { cluster, onOpen };
+  if (phone) return <ClusterSheet {...grid} onClose={onClose} />;
+  return (
+    <Popup
+      longitude={cluster.longitude}
+      latitude={cluster.latitude}
+      anchor="bottom"
+      offset={24}
+      maxWidth="none"
+      onClose={onClose}
+      className={MAP_POPUP}
+    >
+      <ClusterGrid {...grid} className="w-[19rem] [&>div:first-child]:pr-5" />
+    </Popup>
   );
 }
 
@@ -542,56 +587,5 @@ function ClusterMarker({
       {previews.length > 0 && <span aria-hidden className="absolute inset-0 bg-black/60" />}
       <span className="relative">{count}</span>
     </button>
-  );
-}
-
-/** The photos a cluster covers, as square thumbnails that open in the lightbox. */
-function ClusterGrid({
-  cluster,
-  onOpen,
-  onZoomIn,
-}: {
-  cluster: OpenCluster;
-  onOpen: (photo: PlacedPhoto) => void;
-  onZoomIn: () => void;
-}) {
-  return (
-    // Popup clicks would reach the map, which closes it.
-    <div className="flex w-[min(19rem,calc(100vw-4rem))] flex-col gap-2" onClick={stopAtMarker}>
-      <div className="flex items-center justify-between gap-2 pr-5">
-        <p className="font-medium">{cluster.photos.length} photos</p>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onZoomIn}
-          className="h-7 px-2 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
-        >
-          <ZoomIn aria-hidden />
-          Zoom in
-        </Button>
-      </div>
-      <ul className="grid max-h-72 grid-cols-3 gap-1.5 overflow-y-auto">
-        {cluster.photos.map((photo) => (
-          <li key={photo.id}>
-            <button
-              type="button"
-              title={photo.title}
-              aria-label={`Show ${photo.title}`}
-              disabled={!photo.image}
-              onClick={() => onOpen(photo)}
-              className="relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-sm bg-neutral-200 outline-none dark:bg-neutral-800 focus-visible:ring-2 focus-visible:ring-sky-500 disabled:cursor-default"
-            >
-              {photo.image ? (
-                <PhotoThumbnail image={photo.image} />
-              ) : (
-                <span className="absolute inset-0 flex items-center justify-center p-1 text-center text-[0.65rem] leading-tight text-neutral-600 dark:text-neutral-400">
-                  {photo.title}
-                </span>
-              )}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }
