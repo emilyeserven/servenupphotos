@@ -16,11 +16,20 @@ const MEASURES = [
 ] as const;
 
 /**
- * Which vividness the page sorts and filters by, average (the default) or peak, kept in the URL as
- * `?measure=peak`, and a slider for the least of it a photo needs to show, kept as `?vivid=` and
+ * Which vividness the page sorts and filters by, average or peak, kept in the URL as
+ * `?measure=peak` (or `?measure=average` on the Color page, where peak is the default), and a slider for the least of it a photo needs to show, kept as `?vivid=` and
  * left out at 0, which shows every photo.
  */
-export function VividnessControl({ vivid, measure }: { vivid: number; measure: VividMeasure }) {
+export function VividnessControl({
+  vivid,
+  measure,
+  defaultMeasure = "average",
+}: {
+  vivid: number;
+  measure: VividMeasure;
+  /** The measure left out of the URL: average, or peak on the Color page. */
+  defaultMeasure?: VividMeasure;
+}) {
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
       <div role="group" aria-label="Vividness measure" className={CONTROL_FRAME}>
@@ -30,7 +39,7 @@ export function VividnessControl({ vivid, measure }: { vivid: number; measure: V
             to="."
             search={(prev) => ({
               ...prev,
-              measure: option.measure === "peak" ? option.measure : undefined,
+              measure: option.measure === defaultMeasure ? undefined : option.measure,
               photo: undefined,
             })}
             replace

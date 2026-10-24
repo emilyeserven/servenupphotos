@@ -1,9 +1,8 @@
 import { useMemo } from "react";
-import { graysOf, LightnessSlider } from "@/components/lightness-slider";
 import { PinBoard, type BoardLook } from "@/components/pin-board";
 import type { KeepInside, WheelPoint } from "@/lib/color-wheel";
 import { type VividMeasure, vividnessOf } from "@/lib/color-sort";
-import type { LightnessRange } from "@/lib/lightness-range";
+import { graysOf, type LightnessRange } from "@/lib/lightness-range";
 import type { PhotoImage } from "@/lib/photos";
 
 /** A black and white photo the chart can place: its thumbnail, how light and how vivid it is. */
@@ -21,6 +20,12 @@ const PIN_PX = 32;
 
 /** How far in from each side, as a fraction of the chart, the darkest and lightest photos sit. */
 const MARGIN = 0.03;
+
+/**
+ * How far down, as a fraction of the chart, the most vivid photos sit, below where its top fades
+ * in from the page's background.
+ */
+const TOP_MARGIN = 0.12;
 
 /** The least span of vividness the chart's height stands for, so photos alike aren't spread up it. */
 const MIN_SPAN = 2;
@@ -57,30 +62,29 @@ function chartLook(extent: LightnessRange): BoardLook {
         style={{ backgroundImage: graysOf(extent) }}
       />
     ),
-    className: "rounded-xl ring-1 ring-border",
+    className: "",
     minimapClassName: "rounded-md",
     wholeLabel: "Show the whole chart",
+    fadeTop: true,
   };
 }
 
 /**
- * The black and white photos as pins on a chart, like the color wheel's, fitted to the photos:
- * left to right across extent (the darkest to the lightest black and white photo) by how light
- * their grays are on average, and bottom to top from the least vivid photo shown to the most (by
- * measure). It zooms, pans and clusters crowded pins as a PinBoard does. The lightness axis is a
- * slider whose handles narrow it to range; photos outside it aren't given.
+ * The black and white photos as pins on a chart filling the page, like the color wheel's, fitted to
+ * the photos: left to right across extent (the darkest to the lightest black and white photo) by
+ * how light their grays are on average, and bottom to top from the least vivid photo to the most
+ * (by measure). Its background shades from dark to light gray, so it needs no axis labels. It
+ * zooms, pans and clusters crowded pins as a PinBoard does.
  */
 export function ShadeSpectrum<T extends SpectrumPhoto>({
   photos,
   measure,
-  range,
   extent,
   scale,
   onOpen,
 }: {
   photos: T[];
   measure: VividMeasure;
-  range: LightnessRange;
   extent: LightnessRange;
   /** How much bigger than small the pins are drawn. */
   scale: number;
@@ -92,29 +96,7 @@ export function ShadeSpectrum<T extends SpectrumPhoto>({
     [photos, measure, extent, bottom, top],
   );
   const look = useMemo(() => chartLook(extent), [extent]);
-  return (
-    <figure className="flex size-full flex-col gap-2">
-      <div className="flex min-h-0 flex-1 gap-2">
-        <span className="shrink-0 rotate-180 text-center text-xs text-muted-foreground [writing-mode:vertical-rl]">
-          More vivid →
-        </span>
-        <div className="flex min-w-0 grow flex-col gap-2">
-          <div className="min-h-0 flex-1">
-            <PinBoard photos={photos} places={places} look={look} scale={scale} onOpen={onOpen} />
-          </div>
-          {/* Inset by the margin, so the slider's ends line up with the chart's. */}
-          <div style={{ paddingInline: `${MARGIN * 100}%` }}>
-            <LightnessSlider range={range} extent={extent} />
-          </div>
-        </div>
-      </div>
-      <figcaption className="text-center text-xs text-muted-foreground">
-        Black and white photos: across by how light they are, from {extent[0]} to {extent[1]}; up by{" "}
-        {measure === "peak" ? "peak vividness" : "vividness"}, from {bottom} to {top}. Drag the gray
-        bar&apos;s ends to narrow it.
-      </figcaption>
-    </figure>
-  );
+  return <PinBoard photos={photos} places={places} look={look} scale={scale} onOpen={onOpen} />;
 }
 
 /**
@@ -129,7 +111,7 @@ function chartPoint(
 ): WheelPoint {
   return {
     x: MARGIN + fractionOf(photo.lightness ?? 50, extent) * (1 - 2 * MARGIN),
-    y: 1 - MARGIN - fractionOf(vividnessOf(photo, measure), vivid) * (1 - 2 * MARGIN),
+    y: 1 - MARGIN - fractionOf(vividnessOf(photo, measure), vivid) * (1 - MARGIN - TOP_MARGIN),
   };
 }
 

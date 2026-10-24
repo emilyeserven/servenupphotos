@@ -64,6 +64,7 @@ const WHEEL_LOOK: BoardLook = {
   className: "",
   minimapClassName: "rounded-[50%]",
   wholeLabel: "Show the whole wheel",
+  fadeTop: false,
 };
 
 /**
