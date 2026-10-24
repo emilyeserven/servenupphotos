@@ -1,7 +1,7 @@
 {
-  "id": 251,
-  "title": null,
+  "title": "Busy Night in Myeongdong",
   "comment": null,
+  "id": 251,
   "file": "DSCF5675.jpg",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
@@ -12,8 +12,8 @@
   "gpsPosition": "37 deg 33' 42.29\" N, 126 deg 59' 9.03\" E",
   "customGpsPosition": null,
   "createDate": "2026:05:22 22:39:59",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "myeongdong-street",
+  "customCity": "Seoul",
   "customCountry": null,
   "country": "South Korea",
   "city": null,
@@ -28,10 +28,10 @@
     "small": "https://cdn.servenupphotos.net/photos/8841b8f47187-dscf5675-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/8841b8f47187-dscf5675-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/8841b8f47187-dscf5675-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/8841b8f47187-dscf5675-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8841b8f47187-dscf5675-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/8841b8f47187-dscf5675-thumbnail.webp?crop=885,0,3781",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8841b8f47187-dscf5675-thumbnailpreview.webp?crop=885,0,3781",
     "thumbnailcrop": {
-      "x": 1470,
+      "x": 885,
       "y": 0,
       "size": 3781,
       "outputSize": 500
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "myeongdong-street"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null

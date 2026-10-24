@@ -1,7 +1,7 @@
 {
-  "id": 267,
-  "title": null,
+  "title": "Namsan Park Overlook",
   "comment": null,
+  "id": 267,
   "file": "DSCF7116.jpg",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
@@ -12,8 +12,8 @@
   "gpsPosition": "37 deg 32' 59.72\" N, 126 deg 59' 10.05\" E",
   "customGpsPosition": null,
   "createDate": "2026:05:24 15:44:42",
-  "placeName": null,
-  "customCity": null,
+  "placeName": "namsan-dulle-gil-trail",
+  "customCity": "Seoul",
   "customCountry": null,
   "country": "South Korea",
   "city": null,
@@ -28,10 +28,10 @@
     "small": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnail.webp?crop=2379,0,3986",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6a45778199ce-dscf7116-thumbnailpreview.webp?crop=2379,0,3986",
     "thumbnailcrop": {
-      "x": 1550,
+      "x": 2379,
       "y": 0,
       "size": 3986,
       "outputSize": 500
@@ -45,7 +45,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "namsan-dulle-gil-trail"
+    }
+  ],
   "spotlightZones": [],
   "socialPosts": [],
   "reEdit": null
