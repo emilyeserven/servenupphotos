@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@fontsource-variable/manrope": "catalog:",
     "@tanstack/react-form": "1.33.5",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
