@@ -13,6 +13,13 @@ export interface LocalEdit {
   fields: Record<string, unknown>;
 }
 
+/** A file a save moved from one path to another, with its data as saved. */
+export interface FileMove {
+  from: string;
+  to: string;
+  data: Record<string, unknown>;
+}
+
 /** One field to set on a photo file, with the file's data as read. */
 export interface FieldChange {
   path: string;
@@ -25,6 +32,12 @@ interface LocalEditsState {
   edits: Record<string, LocalEdit>;
   /** Sets `key` on each file in changes; a value equal to the file's own drops the change. */
   setField: (key: string, changes: FieldChange[]) => void;
+  /**
+   * Moves the edit of the file at `from` to `to`, after a save renamed the file (a new title can
+   * rename a photo's file), so Commit sets its fields on the file as it's now named. `data` is the
+   * file's data as saved; a field that already has the edit's value is dropped.
+   */
+  moved: (from: string, to: string, data: Record<string, unknown>) => void;
   /** Drops the edits a commit saved, keeping ones made while it ran. */
   committed: (saved: Record<string, LocalEdit>) => void;
   /** Drops every edit. */
@@ -48,6 +61,21 @@ function withField(
   return { kind: "photos", path: change.path, before: change.before, fields };
 }
 
+/** edit moved to the file at path, whose data is now data, or undefined when nothing's left to change. */
+function movedEdit(
+  edit: LocalEdit,
+  path: string,
+  data: Record<string, unknown>,
+): LocalEdit | undefined {
+  const fields = Object.fromEntries(
+    Object.entries(edit.fields).filter(
+      ([key, value]) => JSON.stringify(data[key] ?? null) !== JSON.stringify(value),
+    ),
+  );
+  if (Object.keys(fields).length === 0) return undefined;
+  return { kind: "photos", path, before: data, fields };
+}
+
 /**
  * Edits made in the app and not committed yet, kept in localStorage so a reload doesn't lose them.
  * **Commit** saves them to their files with ALLPHOTOS.json, ALLALBUMS.json and ALLTAGS.json.
@@ -64,6 +92,16 @@ export const useLocalEditsStore = create<LocalEditsState>()(
             if (edit) edits[change.path] = edit;
             else delete edits[change.path];
           }
+          return { edits };
+        }),
+      moved: (from, to, data) =>
+        set((state) => {
+          const edit = state.edits[from];
+          if (!edit || from === to) return state;
+          const edits = { ...state.edits };
+          delete edits[from];
+          const moved = movedEdit(edit, to, data);
+          if (moved) edits[to] = moved;
           return { edits };
         }),
       committed: (saved) =>
