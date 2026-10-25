@@ -60,3 +60,8 @@ export function withLensChoice(photo: CombinedPhoto, choice: LensChoice): Combin
 export function lensChanged(photo: CombinedPhoto, choice: LensChoice): boolean {
   return choice.customLens !== chosenLens(photo);
 }
+
+/** Whether choice names a custom lens or a manual aperture, rather than going by the EXIF. */
+export function hasLensChoice(choice: LensChoice): boolean {
+  return choice.customLens !== null || choice.manualAperture;
+}
