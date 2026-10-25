@@ -43,16 +43,17 @@ function filteredNames({ albums, metaGroups }: TagPromptLists): string[] {
 
 /** The prompt to paste into a chat with an LLM, asking for tags for the photo at `imageUrl`. */
 export function tagPrompt(imageUrl: string, lists: TagPromptLists): string {
-  const existing = lists.tags.filter((tag) => !tag.error).map(groupLabel);
+  const existing = lists.tags.filter((tag) => !tag.error).map((tag) => tag.id);
   return `Suggest tags for the photo at this link: ${imageUrl}
 
 The tags are for a photography portfolio, where each tag gathers the photos that share a subject or an idea.
 
 Rules:
 - Reuse an existing tag (listed below) whenever one fits, spelled exactly as it is listed.
-- Keep tags general enough to fit other photos too: "temple" rather than "the main hall of Bulguksa".
-- Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "architecture", "street food" or "cats").
-- A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "Seoul", "Lake Biwa" or "Blue Mosque".
+- Write every tag in lowercase kebab-case: lowercase words joined by single dashes, such as "street-food" or "wabi-sabi".
+- Keep tags general enough to fit other photos too: "temple" rather than "bulguksa-main-hall".
+- Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "architecture", "street-food" or "cats").
+- A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
 - Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, and its albums. Don't suggest any of the names under "Already filtered" either.
 - Suggest 3 to 8 tags.
 - Answer with only the tags, as one comma-separated list, with nothing before or after it.
@@ -90,7 +91,7 @@ export function parseTagList(text: string): string[] {
 export interface PastedTags {
   /** The IDs of existing tags they name, without repeats. */
   existing: string[];
-  /** Names no album, tag or metadata group has, which can be made into new tags. */
+  /** New tags to make, in lowercase kebab-case, for names no album, tag or metadata group has. */
   fresh: string[];
   /** Names that can't be tags, with why. */
   skipped: { name: string; reason: string }[];
@@ -122,7 +123,7 @@ function sortName(
   const tag = organize.tags.find((t) => !t.error && isNamed(t, name));
   if (tag) return result.existing.push(tag.id);
   const reason = skipReason(name, organize, metaGroups);
-  return reason ? result.skipped.push({ name, reason }) : result.fresh.push(name);
+  return reason ? result.skipped.push({ name, reason }) : result.fresh.push(groupId(name));
 }
 
 /** Sorts each pasted name into an existing tag, a new one or a skipped one. */
@@ -133,14 +134,7 @@ export function matchTags(
 ): PastedTags {
   const result: PastedTags = { existing: [], fresh: [], skipped: [] };
   for (const name of pasted) sortName(result, name, organize, metaGroups);
-  return { ...result, existing: [...new Set(result.existing)], fresh: uniqueIds(result.fresh) };
-}
-
-/** names without the ones that would get the same ID as one before them, such as "Street food" and "street-food". */
-function uniqueIds(names: string[]): string[] {
-  return names.filter(
-    (name, i) => names.findIndex((other) => groupId(other) === groupId(name)) === i,
-  );
+  return { ...result, existing: [...new Set(result.existing)], fresh: [...new Set(result.fresh)] };
 }
 
 /** `tags` with `added` after them, leaving out any it already has. */

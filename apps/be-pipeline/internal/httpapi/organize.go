@@ -151,6 +151,21 @@ func handleSetAlbumOrder(store *settings.Store, gh *github.Client) http.HandlerF
 	}
 }
 
+// handleNormalizeTagNames names every tag in lowercase kebab-case, its ID, as
+// changes waiting for Commit.
+func handleNormalizeTagNames(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.NormalizeTagNames(ctx, cfg)
+		writeSocialResult(w, result, err, "could not rename the tags")
+	}
+}
+
 // handleSetSpotlightAlbum makes the body's album the one the path's spotlight
 // spot shows, or leaves the spot without one when it's empty or null, as a
 // change waiting for Commit.

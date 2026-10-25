@@ -5,7 +5,11 @@ on the Settings branch and in the open **Add photo data** pull request, marking 
 (`GET /api/organize` → `GET /organize`). **New album** (or **New tag**) asks for a name and an optional description. Its ID is
 made from the name (lowercase, accents dropped, anything other than a to z and 0 to 9 turned into dashes, so
 `Busan, South Korea` becomes `busan-south-korea`), and the form warns while you type when an album or tag already has
-that name or ID, or when the name has nothing to make an ID from (such as `東京` on its own). Saving
+that name or ID, or when the name has nothing to make an ID from (such as `東京` on its own). A tag's name is always
+its ID, in lowercase kebab-case: **New tag** saves `Street Food` as `street-food`, and the backend refuses a tag whose
+name isn't its ID. When older tags have other names, the Tags page lists them under **Tag names to fix**, whose
+**Rename** button saves each one's name as its ID (`PUT /api/organize/tags/names`), as changes waiting for Commit.
+Photos list tags by ID, so no photo changes. Saving
 (`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the
 open photo data pull request, or opens one, the same way photos are saved, and shows it in `ALLALBUMS.json`
 or `ALLTAGS.json` at once, until a **Commit** writes it there. A new album can have a **Parent album**. Albums are listed as a tree, sub-albums under their parent,
@@ -46,19 +50,19 @@ It has:
   X-Small (250px) loses too much detail. Sources: [Claude vision](https://platform.claude.com/docs/en/build-with-claude/vision),
   [OpenAI image costs](https://community.openai.com/t/how-do-i-calculate-image-tokens-in-gpt4-vision/492318),
   [Gemini tokens](https://ai.google.dev/gemini-api/docs/tokens).
-- Every tag, to reuse when one fits, spelled as listed.
+- Every tag's ID, to reuse when one fits, spelled as listed.
 - Every album and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
   filters by them.
-- The rules: tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
+- The rules: every tag in lowercase kebab-case (`street-food`); tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
   kind of place ("mosque", "temple", "lake", "city") but never a named one; nothing the site already filters by
   (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums); 3 to 8 tags; and
   only a comma-separated list in the answer.
 
 Once it's copied, a field takes the LLM's answer. **Add tags** splits it at commas and new lines, takes off quotes,
 bullets and trailing dots, drops repeats (ignoring case), and matches each name to a tag by its name or the ID made
-from it, ignoring case. Matching tags are added to the photo's tags in **Albums and tags**, as an edit that **Save
+from it, ignoring case, so `Street Food` matches `street-food`. Matching tags are added to the photo's tags in **Albums and tags**, as an edit that **Save
 changes** saves (and **Commit** sends to GitHub, like any other). A name an album or metadata group already has, or
-one with nothing to make an ID from, is left out, saying why. The rest are listed as new tags, each with a checkbox:
+one with nothing to make an ID from, is left out, saying why. The rest are listed as new tags in lowercase kebab-case, each with a checkbox:
 **Make N new tags and add them** saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for
 Commit, like **New tag** on `/tags`) and adds them to the photo.
 

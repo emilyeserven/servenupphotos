@@ -683,6 +683,7 @@ export function defaultFixtures() {
       ...pendingSave(),
       files: body?.ids?.length,
     }),
+    "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
     "PUT /api/organize/spotlight/homepage": { ...pendingSave(), files: 2 },
     "POST /api/photos/groups": ({ body }) => ({ ...pendingSave(), files: body?.paths?.length }),
     "DELETE /api/photos/pending": { discarded: 1 },

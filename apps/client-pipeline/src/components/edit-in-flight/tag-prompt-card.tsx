@@ -214,7 +214,10 @@ function NewTags({ names, onCreated, disabled }: NewTagsProps) {
   };
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">
-      <p>Not tags yet. Untick any you don&apos;t want, then make the rest:</p>
+      <p>
+        Not tags yet, written in lowercase kebab-case. Untick any you don&apos;t want, then make the
+        rest:
+      </p>
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {names.map((name) => (
           <label key={name} className="flex items-center gap-1.5">
@@ -277,7 +280,7 @@ function useCreateTags(onCreated: (ids: string[]) => void) {
       const ids: string[] = [];
       for (const name of names) {
         const id = groupId(name);
-        await createTag.mutateAsync({ id, name, description: "" });
+        await createTag.mutateAsync({ id, name: id, description: "" });
         ids.push(id);
       }
       return ids;
