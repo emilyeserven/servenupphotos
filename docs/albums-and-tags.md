@@ -51,9 +51,10 @@ for a photo being edited, saved with **Save changes**.
 
 ## Suggest tags
 
-When a photo is being edited, the Photo page's **Suggest tags** card (under **Albums, tags and genres**) helps an LLM pick its
-tags. **Copy tag prompt** copies a prompt to paste into a chat with any LLM that can see images (`lib/tag-prompt.ts`).
-It has:
+When a photo is being edited, the sparkle button in the Photo page's **Tags** field, left of its caret, helps an LLM
+pick its tags: it copies a prompt to paste into a chat with any LLM that can see images (`lib/tag-prompt.ts`), and
+shows a check for a moment once it has. The Photo page's fields don't link to the Albums, Tags, Genres or Places
+pages; those are in the sidebar. The prompt has:
 
 - A link to the photo's **Small** version (500px on its long edge), or its Medium one when it has no Small. At 500 ×
   333 that's about 220 tokens for Claude (width × height ÷ 750), one 512px tile for GPT-4o and about one 258-token
