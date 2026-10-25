@@ -1,9 +1,9 @@
 {
-  "id": 344,
-  "title": null,
+  "title": "Street View",
   "comment": null,
+  "id": 344,
   "file": "DSCF9608.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T17:08:59Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:23 10:12:10",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Former Kubota Family Residence",
+  "customCity": "Hagi",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Yamaguchi",
   "city": "Hagi",
@@ -48,9 +48,18 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["doors", "washitsu", "tatami", "shoji", "fusuma", "interior"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "former-kubota-family-residence"
+    },
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,7 +69,7 @@
       "hex": "#666666",
       "lab": {
         "l": 43.13,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {

@@ -1,9 +1,9 @@
 {
-  "id": 328,
-  "title": null,
+  "title": "Lanterns for Buddha's Birthday",
   "comment": null,
+  "id": 328,
   "file": "DSCF9706.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T17:13:41Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 22,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 11:52:57",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Jogyesa Temple",
+  "customCity": "Seoul",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": "South Korea",
   "state": "Seoul",
   "city": null,
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["lanterns", "yeondeung", "buddhism", "temple", "prayers", "patterns"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "jogyesa-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
