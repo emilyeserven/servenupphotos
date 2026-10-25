@@ -57,6 +57,14 @@
     "exactLocation": true
   },
   {
+    "id": "arima-onsen",
+    "name": "Arima Onsen",
+    "description": "",
+    "parent": "",
+    "city": "Kobe",
+    "country": "Japan"
+  },
+  {
     "id": "astoria",
     "name": "Astoria",
     "description": "",
@@ -294,6 +302,14 @@
     "latitude": 40.71018720727101,
     "longitude": -74.007705392159,
     "exactLocation": true
+  },
+  {
+    "id": "gamcheon-culture-village",
+    "name": "Gamcheon Culture Village",
+    "description": "",
+    "parent": "",
+    "city": "Busan",
+    "country": "South Korea"
   },
   {
     "id": "geunjeongjeon",
