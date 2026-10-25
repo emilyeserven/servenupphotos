@@ -54,6 +54,9 @@ type AddedField struct {
 	// Numbered is true when Value is the photo's new ID, counted in the
 	// order the photo files were created.
 	Numbered bool `json:"numbered"`
+	// FromHistory is true when Value is the photo's addedDate, read from
+	// when its file was first committed.
+	FromHistory bool `json:"fromHistory"`
 }
 
 // BackfillFile is a photo file missing fields.
@@ -79,6 +82,26 @@ type MissingField struct {
 	FromThumbnail int `json:"fromThumbnail"`
 	// Numbered is how many of them get a new photo ID.
 	Numbered int `json:"numbered"`
+	// FromHistory is how many of them get the date their file was first
+	// committed.
+	FromHistory int `json:"fromHistory"`
+}
+
+// count adds g, a missing field of one more file, to n.
+func (n *MissingField) count(g gap) {
+	n.Files++
+	n.FromExif += boolInt(g.fromExif)
+	n.FromThumbnail += boolInt(g.fromThumbnail)
+	n.Numbered += boolInt(g.numbered)
+	n.FromHistory += boolInt(g.fromHistory)
+}
+
+// boolInt is 1 for true and 0 for false.
+func boolInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
 }
 
 // BackfillPreview is what adding the missing fields would do to the photo
@@ -144,23 +167,15 @@ func (c *Client) PreviewBackfill(ctx context.Context, gh settings.GitHub, read R
 		file := BackfillFile{Path: f.path, FileURL: f.fileURL, ExifError: plan.exifErr, CropError: plan.cropErr}
 		for _, g := range plan.gaps {
 			file.Added = append(file.Added, AddedField{
-				Field: g.field, Value: g.value, FromExif: g.fromExif, FromThumbnail: g.fromThumbnail, Numbered: g.numbered,
+				Field: g.field, Value: g.value, FromExif: g.fromExif, FromThumbnail: g.fromThumbnail,
+				Numbered: g.numbered, FromHistory: g.fromHistory,
 			})
 			n := counts[g.field]
 			if n == nil {
 				n = &MissingField{Field: g.field}
 				counts[g.field] = n
 			}
-			n.Files++
-			if g.fromExif {
-				n.FromExif++
-			}
-			if g.fromThumbnail {
-				n.FromThumbnail++
-			}
-			if g.numbered {
-				n.Numbered++
-			}
+			n.count(g)
 		}
 		preview.Files = append(preview.Files, file)
 	}
@@ -222,16 +237,33 @@ type backfillPlan struct {
 }
 
 // planBackfill finds the gaps in every readable file of scan, as findPlans
-// does, and numbers the photos missing an ID (numberPhotos).
+// does, numbers the photos missing an ID (numberPhotos) and dates the ones
+// missing addedDate (datePhotos), asking GitHub once when their files were
+// created.
 func (c *Client) planBackfill(ctx context.Context, scan baseURLScan, read Readers) ([]backfillPlan, *PublishError) {
 	plans, perr := findPlans(ctx, scan, read)
 	if perr != nil {
 		return nil, perr
 	}
-	if perr := c.numberPhotos(ctx, scan, plans); perr != nil {
+	created, perr := c.createdTimes(ctx, scan.w, historyPaths(scan, plans))
+	if perr != nil {
 		return nil, perr
 	}
+	numberPhotos(scan, plans, created)
+	datePhotos(scan, plans, created)
 	return plans, nil
+}
+
+// historyPaths are the scanned files missing an ID or addedDate, which
+// planBackfill needs the creation time of.
+func historyPaths(scan baseURLScan, plans []backfillPlan) []string {
+	var paths []string
+	for i, f := range scan.files {
+		if fieldGap(plans[i].gaps, idField) != nil || fieldGap(plans[i].gaps, addedField) != nil {
+			paths = append(paths, f.path)
+		}
+	}
+	return paths
 }
 
 // findPlans finds the gaps in every readable file of scan, filling EXIF
@@ -473,6 +505,9 @@ type gap struct {
 	fromThumbnail bool
 	// numbered marks the photo's new ID (numberPhotos).
 	numbered bool
+	// fromHistory marks the photo's addedDate read from when its file was
+	// first committed (datePhotos).
+	fromHistory bool
 	// pos is the offset the field is inserted at: after the field before it,
 	// or after the object's opening brace when lead is set.
 	pos  int

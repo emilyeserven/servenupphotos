@@ -102,6 +102,19 @@ export function groupId(name: string): string {
 }
 
 /**
+ * name as a new album or tag is saved with: trimmed for an album, and in lowercase kebab-case for
+ * a tag, the same as its ID, so "Street Food" is saved as "street-food".
+ */
+export function groupName(kind: GroupKind, name: string): string {
+  return kind === "tags" ? groupId(name) : name.trim();
+}
+
+/** The tags whose names aren't their IDs, so aren't in lowercase kebab-case yet. */
+export function unnormalizedTags(organize: OrganizeResponse | undefined): Group[] {
+  return (organize?.tags ?? []).filter((tag) => !tag.error && tag.name !== tag.id);
+}
+
+/**
  * The album, tag or genre that already has `id` or `name`, ignoring case, since they all share
  * one set of names so a photo's never collide.
  */
@@ -171,6 +184,22 @@ export const setAlbumOrderMutation = albumsMutation(
   () => "/api/organize/albums/order",
   (ids: string[]) => ({ ids }),
 );
+
+/** Names every tag in lowercase kebab-case, its ID, as changes waiting for Commit. */
+export const normalizeTagNamesMutation = mutationOptions({
+  mutationKey: ["organize", "tags", "names"],
+  meta: {
+    saves: (result) => (result as AlbumsResult).files > 0,
+    changes: (result) =>
+      (result as PendingSave).changes.map((change) => ({ kind: "tags" as const, ...change })),
+  },
+  mutationFn: () =>
+    requestJson<AlbumsResult>("/api/organize/tags/names", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    }),
+});
 
 /**
  * Makes `album` the one the spotlight spot `zone` shows, or leaves the spot without one when it's

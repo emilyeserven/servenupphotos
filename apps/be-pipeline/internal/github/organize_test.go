@@ -26,7 +26,7 @@ func TestCreateGroupOpensThenReusesPullRequest(t *testing.T) {
 		t.Errorf("file content = %q, want %q", content.Content, want)
 	}
 
-	tag, err := c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "macro", Name: "Macro"})
+	tag, err := c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "macro", Name: "macro"})
 	if err != nil {
 		t.Fatalf("CreateGroup(tag) error = %v", err)
 	}
@@ -75,7 +75,7 @@ func TestCreateGroupWithParent(t *testing.T) {
 		status int
 	}{
 		{Albums, NewGroup{ID: "busan", Name: "Busan", Parent: "japan"}, http.StatusBadRequest},
-		{Tags, NewGroup{ID: "night", Name: "Night", Parent: "korea"}, http.StatusBadRequest},
+		{Tags, NewGroup{ID: "night", Name: "night", Parent: "korea"}, http.StatusBadRequest},
 	} {
 		_, err := c.CreateGroup(t.Context(), organizeGH, tt.kind, tt.group)
 		var perr *PublishError
@@ -115,7 +115,7 @@ func TestCreateGroupRefusesCollisions(t *testing.T) {
 		group NewGroup
 		want  string
 	}{
-		{"same ID as an album", Tags, NewGroup{ID: "seoul", Name: "Seoul tag"}, `album "Seoul" already has the ID "seoul"`},
+		{"same ID as an album", Tags, NewGroup{ID: "seoul", Name: "seoul"}, `album "Seoul" already has the ID "seoul"`},
 		{"same name as a tag, other case", Albums, NewGroup{ID: "close-up", Name: "close up"}, `already a tag named "Close Up"`},
 		{"same ID as a tag", Albums, NewGroup{ID: "macro", Name: "Macro"}, `tag "Close Up" already has the ID "macro"`},
 		{"genre with a tag's name", Genres, NewGroup{ID: "closeup", Name: "Close up"}, `already a tag named "Close Up"`},
@@ -140,7 +140,7 @@ func TestCreateGroupRefusesCollisions(t *testing.T) {
 
 func TestCreateGroupChecksThePullRequest(t *testing.T) {
 	_, c := newFakeGitHub(t)
-	if _, err := c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "night", Name: "Night"}); err != nil {
+	if _, err := c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "night", Name: "night"}); err != nil {
 		t.Fatal(err)
 	}
 	_, err := c.CreateGroup(t.Context(), organizeGH, Albums, NewGroup{ID: "night-time", Name: "NIGHT"})
@@ -174,6 +174,22 @@ func TestCreateGroupValidates(t *testing.T) {
 				t.Errorf("CreateGroup() error = %v, want a 400 containing %q", err, tt.want)
 			}
 		})
+	}
+}
+
+func TestCreateTagNeedsAKebabCaseName(t *testing.T) {
+	_, c := newFakeGitHub(t)
+	for _, name := range []string{"Street Food", "street food", "Street-Food", "streetfood"} {
+		t.Run(name, func(t *testing.T) {
+			_, err := c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "street-food", Name: name})
+			var perr *PublishError
+			if !errors.As(err, &perr) || perr.Status != http.StatusBadRequest || !strings.Contains(perr.Message, "kebab-case") {
+				t.Errorf("CreateGroup(%q) error = %v, want a 400 asking for kebab-case", name, err)
+			}
+		})
+	}
+	if _, err := c.CreateGroup(t.Context(), organizeGH, Tags, NewGroup{ID: "street-food", Name: "street-food"}); err != nil {
+		t.Errorf("CreateGroup(street-food) error = %v, want it saved", err)
 	}
 }
 

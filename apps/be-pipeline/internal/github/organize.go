@@ -204,6 +204,9 @@ func validGroup(kind Kind, group NewGroup) (groupJSON, *PublishError) {
 			"Use an ID of up to %d lowercase letters and numbers, with single dashes between words.", maxGroupIDLength)
 	case utf8.RuneCountInString(g.Description) > maxGroupDescriptionLength:
 		return g, publishErr(http.StatusBadRequest, "Keep the description to %d characters.", maxGroupDescriptionLength)
+	case kind == Tags && g.Name != g.ID:
+		return g, publishErr(http.StatusBadRequest,
+			"Write a tag's name in lowercase kebab-case, the same as its ID, such as %q.", g.ID)
 	}
 	if parent := strings.TrimSpace(group.Parent); parent != "" {
 		if kind != Albums {

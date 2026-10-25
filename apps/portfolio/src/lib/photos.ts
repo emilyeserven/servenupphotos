@@ -34,6 +34,11 @@ export interface Photo {
   lens: string | null;
   settings: CameraSettings;
   takenAt: Date;
+  /**
+   * When the photo went on the portfolio: when it stopped being a draft in the pipeline, or for
+   * older photos, when its file was first committed. Null until Update Data dates it.
+   */
+  addedAt: Date | null;
   /** Null when the photo has no places, city or country, so there's nothing to say. */
   location: LocalizedLocation | null;
   /**
@@ -213,6 +218,8 @@ interface PhotoData {
   /** A GPS position written on the Photo page, "latitude, longitude" in decimal degrees, used instead of the EXIF one. */
   customGpsPosition?: string | null;
   createDate: string | null;
+  /** When the photo went on the portfolio, an ISO time; null for a draft, and older entries don't have it. */
+  addedDate?: string | null;
   /** When the photo was taken, written on the Photo page, used instead of the EXIF one; older entries don't have it. */
   customCreateDate?: string | null;
   /** A city, state and country written on the Photo page, shown instead of the EXIF ones; older entries don't have them. */
@@ -266,6 +273,13 @@ function parseCreateDate(value: string | null): Date | null {
   // An ISO date and time without a time zone is read as local time.
   const [, year, month, day, time] = match;
   return new Date(`${year}-${month}-${day}T${time}`);
+}
+
+/** The pipeline's "2026-10-25T04:10:22Z", or null when there's none or it can't be read. */
+function parseAddedDate(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
 }
 
 /**
@@ -629,6 +643,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       camera: photo.camera ?? "Unknown camera",
       lens: photo.lens ?? null,
       takenAt,
+      addedAt: parseAddedDate(photo.addedDate),
       location: photoLocation(photo),
       ...photoPosition(photo),
       image: parseImage(photo),

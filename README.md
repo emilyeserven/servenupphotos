@@ -112,6 +112,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
+- [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 
 ## Checks (same as CI)
 

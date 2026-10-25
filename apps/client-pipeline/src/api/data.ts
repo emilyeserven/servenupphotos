@@ -93,6 +93,8 @@ export interface AddedField {
   fromThumbnail: boolean;
   /** True when the value is the photo's new ID, counted in the order the photo files were created. */
   numbered: boolean;
+  /** True when the value is the photo's date added, read from when its file was first committed. */
+  fromHistory: boolean;
 }
 
 export interface MissingFieldsPreview extends ScannedPhotos {
@@ -103,6 +105,7 @@ export interface MissingFieldsPreview extends ScannedPhotos {
     fromExif: number;
     fromThumbnail: number;
     numbered: number;
+    fromHistory: number;
   }[];
   files: {
     path: string;

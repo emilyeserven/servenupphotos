@@ -5,6 +5,7 @@ import { createRoot } from "react-dom/client";
 import { cachedFile, type FileChange } from "@/lib/optimistic";
 import { useCombinedDataStore } from "@/stores/combined-data";
 import { type FileMove, useLocalEditsStore } from "@/stores/local-edits";
+import { syncTheme } from "@/stores/theme";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 
@@ -72,6 +73,8 @@ declare module "@tanstack/react-router" {
     router: typeof router;
   }
 }
+
+syncTheme();
 
 const rootElement = document.getElementById("root");
 if (!rootElement) throw new Error("Root element #root not found");

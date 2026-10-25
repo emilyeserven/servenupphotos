@@ -149,7 +149,7 @@ func byCreation(paths []string, created map[string]time.Time) {
 // numberPhotos gives each plan missing an ID the next one, counting up from
 // the highest ID the scanned files have, in the order the files were
 // created.
-func (c *Client) numberPhotos(ctx context.Context, scan baseURLScan, plans []backfillPlan) *PublishError {
+func numberPhotos(scan baseURLScan, plans []backfillPlan, created map[string]time.Time) {
 	gapAt := map[string]*gap{}
 	var paths []string
 	highest := 0
@@ -157,17 +157,10 @@ func (c *Client) numberPhotos(ctx context.Context, scan baseURLScan, plans []bac
 		if id, ok := photoID(f.content); ok && id > highest {
 			highest = id
 		}
-		if g := idGap(plans[i].gaps); g != nil {
+		if g := fieldGap(plans[i].gaps, idField); g != nil {
 			gapAt[f.path] = g
 			paths = append(paths, f.path)
 		}
-	}
-	if len(paths) == 0 {
-		return nil
-	}
-	created, perr := c.createdTimes(ctx, scan.w, paths)
-	if perr != nil {
-		return perr
 	}
 	byCreation(paths, created)
 	for i, p := range paths {
@@ -175,13 +168,27 @@ func (c *Client) numberPhotos(ctx context.Context, scan baseURLScan, plans []bac
 		g.value = json.RawMessage(fmt.Sprint(highest + i + 1))
 		g.numbered = true
 	}
-	return nil
 }
 
-// idGap is the gap for the photo's ID among gaps, or nil when it has one.
-func idGap(gaps []gap) *gap {
+// datePhotos gives each plan missing addedDate the time its file was created,
+// when the photo is on the portfolio. A draft's stays null, and it's dated
+// when it gets a title (see stampAdded).
+func datePhotos(scan baseURLScan, plans []backfillPlan, created map[string]time.Time) {
+	for i, f := range scan.files {
+		g := fieldGap(plans[i].gaps, addedField)
+		if g == nil || !scan.w.onPortfolio(f.content) {
+			continue
+		}
+		g.value, _ = json.Marshal(addedTime(created[f.path]))
+		g.fromHistory = true
+	}
+}
+
+// fieldGap is the gap for the top-level field among gaps, or nil when the
+// file has it.
+func fieldGap(gaps []gap, field string) *gap {
 	for i := range gaps {
-		if gaps[i].field == idField {
+		if gaps[i].field == field {
 			return &gaps[i]
 		}
 	}

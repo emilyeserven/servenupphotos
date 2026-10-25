@@ -55,6 +55,7 @@ const LABELS: Record<SortColumn | HideableColumn, string> = {
   image: "Thumbnail",
   title: "Title",
   takenAt: "Taken",
+  addedAt: "Added",
   location: "Place",
   camera: "Camera",
   lens: "Lens",
@@ -82,6 +83,13 @@ const columnsFor = (detail: LocationDetail) =>
     helper.display({ id: "image", header: "", enableSorting: false }),
     helper.accessor("title", { header: LABELS.title, sortFn: "text", enableHiding: false }),
     helper.accessor("takenAt", { header: LABELS.takenAt, sortFn: "datetime", sortDescFirst: true }),
+    helper.accessor((photo) => photo.addedAt ?? undefined, {
+      id: "addedAt",
+      header: LABELS.addedAt,
+      sortFn: "datetime",
+      sortDescFirst: true,
+      sortUndefined: "last",
+    }),
     // Sorted by the English names, whichever way the menu shows them.
     helper.accessor(
       (photo) => (photo.location ? locationText(photo.location.english, detail) : undefined),
@@ -330,6 +338,11 @@ function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
   return <ArrowUpDown aria-hidden className="opacity-50" />;
 }
 
+/** A day, such as "Oct 25, 2026". */
+function DateCell({ date }: { date: Date }) {
+  return <time dateTime={date.toISOString()}>{format(date, "MMM d, yyyy")}</time>;
+}
+
 /** A dash for a value the photo doesn't have. */
 const DASH = <span className="text-muted-foreground">—</span>;
 
@@ -368,9 +381,11 @@ const CELLS: Record<
   },
   takenAt: {
     className: CELL,
-    render: (photo) => (
-      <time dateTime={photo.takenAt.toISOString()}>{format(photo.takenAt, "MMM d, yyyy")}</time>
-    ),
+    render: (photo) => <DateCell date={photo.takenAt} />,
+  },
+  addedAt: {
+    className: CELL,
+    render: (photo) => (photo.addedAt ? <DateCell date={photo.addedAt} /> : DASH),
   },
   location: {
     className: CELL,

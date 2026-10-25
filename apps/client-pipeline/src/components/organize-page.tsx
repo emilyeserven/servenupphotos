@@ -13,6 +13,7 @@ import {
   findCollision,
   groupId,
   groupLabel,
+  groupName,
   organizeQuery,
 } from "@/api/organize";
 import { type PublishResult, photosInFlightQuery } from "@/api/photos";
@@ -25,6 +26,7 @@ import {
 import { AlbumMoveButtons } from "@/components/album-move-buttons";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { GroupCombobox } from "@/components/group-picker";
+import { TagNamesCard } from "@/components/tag-names-card";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -125,6 +127,7 @@ function GroupCards({ kind, folder }: { kind: GroupKind; folder: string }) {
         rebuild={rebuild}
         onSaved={onSaved}
       />
+      {kind === "tags" && <TagNamesCard organize={organize.data} onSaved={onSaved} />}
       <GroupListCard kind={kind} organize={organize} />
     </>
   );
@@ -229,7 +232,7 @@ function NewGroupForm({
       await create
         .mutateAsync({
           id: groupId(value.name),
-          name: value.name.trim(),
+          name: groupName(kind, value.name),
           description: value.description.trim(),
           parent: value.parent[0],
         })
@@ -329,11 +332,19 @@ function NewGroupForm({
   );
 }
 
+/** How the ID hint says where the ID comes from: a tag's name is its ID too. */
+const ID_HINTS: Record<GroupKind, { lead: string; made: string }> = {
+  albums: { lead: "ID", made: ", made from the name" },
+  tags: { lead: "Saved as", made: ", in lowercase kebab-case, as its name and ID" },
+  genres: { lead: "ID", made: ", made from the name" },
+};
+
 /** The ID made from the name, which photos list it by, and the file it's saved as. */
 function IdHint({ folder, kind, id }: { folder: string; kind: GroupKind; id: string }) {
   return (
     <>
-      ID <code>{id || "…"}</code>, made from the name. Saves{" "}
+      {ID_HINTS[kind].lead} <code>{id || "…"}</code>
+      {ID_HINTS[kind].made}. Saves{" "}
       <code className="break-all">
         {folder}/{kind}/{id || "…"}.json
       </code>

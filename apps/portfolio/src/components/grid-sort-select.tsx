@@ -5,6 +5,7 @@ import type { GridSort } from "@/lib/grid-sort";
 const SORTS: { sort: GridSort; label: string }[] = [
   { sort: "newest", label: "Newest to Oldest" },
   { sort: "oldest", label: "Oldest to Newest" },
+  { sort: "added", label: "Recently Added" },
   { sort: "color", label: "Color" },
   { sort: "vivid", label: "Vividness" },
 ];
@@ -15,7 +16,7 @@ function sortOf(value: string): GridSort {
 }
 
 /**
- * A dropdown to sort the Grid by when each photo was taken, or by color or vividness, kept in the
+ * A dropdown to sort the Grid by when each photo was taken or added, or by color or vividness, kept in the
  * URL so a link keeps it. Newest to oldest is the default and is left out of the URL. Changing it
  * clears the color sorts' order and secondary sort.
  */
