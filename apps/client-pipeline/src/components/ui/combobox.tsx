@@ -1,5 +1,6 @@
-import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
+import { ChevronDownIcon, XIcon } from "lucide-react";
 import { type KeyboardEvent, useId, useRef, useState } from "react";
+import { ComboboxList } from "@/components/ui/combobox-list";
 import { cn } from "@/lib/utils";
 
 export interface ComboboxOption {
@@ -118,113 +119,82 @@ export function Combobox({
   };
 
   return (
-    <div
-      className="relative"
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
-      }}
+    <ComboboxList
+      open={open}
+      listId={listId}
+      shown={shown}
+      activeIndex={activeIndex}
+      optionId={optionId}
+      isSelected={(option) => value.includes(option.value)}
+      onActive={setActive}
+      onChoose={choose}
+      emptyText={emptyText}
+      multiple={multiple}
     >
-      {/* Clicking around the chips focuses the text box, as if it filled the field. */}
       <div
-        className={cn(
-          "bg-input/20 dark:bg-input/30 border-input flex min-h-7 w-full cursor-text flex-wrap items-center gap-1 rounded-md border py-0.5 pr-7 pl-1 transition-colors",
-          "focus-within:border-ring focus-within:ring-ring/30 focus-within:ring-2",
-          disabled && "pointer-events-none cursor-not-allowed opacity-50",
-        )}
-        onMouseDown={(event) => {
-          if (event.target === event.currentTarget) {
-            event.preventDefault();
-            input.current?.focus();
-            setOpen(true);
-          }
+        className="relative"
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
         }}
       >
-        {value.map((v) => (
-          <Chip
-            key={v}
-            label={byValue.get(v)?.label ?? v}
-            known={byValue.has(v)}
-            removeLabel={
-              byValue.has(v) ? `Remove ${byValue.get(v)!.label}` : `Remove ${unknownLabel(v)}`
+        {/* Clicking around the chips focuses the text box, as if it filled the field. */}
+        <div
+          className={cn(
+            "bg-input/20 dark:bg-input/30 border-input flex min-h-7 w-full cursor-text flex-wrap items-center gap-1 rounded-md border py-0.5 pr-7 pl-1 transition-colors",
+            "focus-within:border-ring focus-within:ring-ring/30 focus-within:ring-2",
+            disabled && "pointer-events-none cursor-not-allowed opacity-50",
+          )}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              event.preventDefault();
+              input.current?.focus();
+              setOpen(true);
             }
-            disabled={disabled}
-            onRemove={() => remove(v)}
-          />
-        ))}
-        <input
-          ref={input}
-          id={inputId}
-          role="combobox"
-          aria-expanded={open}
-          aria-controls={listId}
-          aria-autocomplete="list"
-          aria-activedescendant={open && shown[activeIndex] ? optionId(activeIndex) : undefined}
-          aria-describedby={aria["aria-describedby"]}
-          aria-labelledby={aria["aria-labelledby"]}
-          autoComplete="off"
-          disabled={disabled}
-          value={query}
-          placeholder={value.length === 0 ? placeholder : undefined}
-          className="placeholder:text-muted-foreground h-5 min-w-24 flex-1 bg-transparent px-1 text-sm outline-none md:text-xs/relaxed"
-          onChange={(event) => {
-            setQuery(event.target.value);
-            setActive(0);
-            setOpen(true);
           }}
-          onFocus={() => setOpen(true)}
-          onClick={() => setOpen(true)}
-          onKeyDown={onKeyDown}
+        >
+          {value.map((v) => (
+            <Chip
+              key={v}
+              label={byValue.get(v)?.label ?? v}
+              known={byValue.has(v)}
+              removeLabel={
+                byValue.has(v) ? `Remove ${byValue.get(v)!.label}` : `Remove ${unknownLabel(v)}`
+              }
+              disabled={disabled}
+              onRemove={() => remove(v)}
+            />
+          ))}
+          <input
+            ref={input}
+            id={inputId}
+            role="combobox"
+            aria-expanded={open}
+            aria-controls={listId}
+            aria-autocomplete="list"
+            aria-activedescendant={open && shown[activeIndex] ? optionId(activeIndex) : undefined}
+            aria-describedby={aria["aria-describedby"]}
+            aria-labelledby={aria["aria-labelledby"]}
+            autoComplete="off"
+            disabled={disabled}
+            value={query}
+            placeholder={value.length === 0 ? placeholder : undefined}
+            className="placeholder:text-muted-foreground h-5 min-w-24 flex-1 bg-transparent px-1 text-sm outline-none md:text-xs/relaxed"
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setActive(0);
+              setOpen(true);
+            }}
+            onFocus={() => setOpen(true)}
+            onClick={() => setOpen(true)}
+            onKeyDown={onKeyDown}
+          />
+        </div>
+        <ChevronDownIcon
+          className="text-muted-foreground pointer-events-none absolute top-2 right-2 size-3.5"
+          aria-hidden
         />
       </div>
-      <ChevronDownIcon
-        className="text-muted-foreground pointer-events-none absolute top-2 right-2 size-3.5"
-        aria-hidden
-      />
-      <ul
-        id={listId}
-        role="listbox"
-        aria-multiselectable={multiple || undefined}
-        hidden={!open}
-        className="bg-popover text-popover-foreground ring-foreground/10 absolute z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-lg p-1 shadow-md ring-1"
-      >
-        {shown.length === 0 ? (
-          <li className="text-muted-foreground px-2 py-1 text-xs/relaxed">{emptyText}</li>
-        ) : (
-          shown.map((option, index) => {
-            const selected = value.includes(option.value);
-            return (
-              <li
-                key={option.value}
-                id={optionId(index)}
-                role="option"
-                aria-selected={selected}
-                className={cn(
-                  "flex min-h-7 cursor-pointer items-start gap-2 rounded-md px-2 py-1 text-xs/relaxed",
-                  index === activeIndex && "bg-accent text-accent-foreground",
-                )}
-                // Keeps focus in the text box, so the list stays open for another choice.
-                onMouseDown={(event) => event.preventDefault()}
-                onMouseMove={() => setActive(index)}
-                onClick={() => choose(option)}
-              >
-                <CheckIcon
-                  className={cn("mt-1 size-3.5 shrink-0", !selected && "invisible")}
-                  aria-hidden
-                />
-                <span className="min-w-0">
-                  <span className="block truncate">{option.label}</span>
-                  {option.detail && (
-                    <span className="text-muted-foreground block truncate text-xs">
-                      {option.detail}
-                    </span>
-                  )}
-                </span>
-              </li>
-            );
-          })
-        )}
-      </ul>
-    </div>
+    </ComboboxList>
   );
 }
 
