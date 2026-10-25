@@ -249,14 +249,48 @@ func TestCommitCombinedEditsOpenThePullRequest(t *testing.T) {
 	}
 }
 
-func TestCommitCombinedEditMissingFile(t *testing.T) {
+func TestCommitCombinedSkipsAnEditOfAMissingFile(t *testing.T) {
 	f, c := newFakeGitHub(t)
-	f.openPull(prBranch, map[string]string{dataRoot + "/photos/a.json": `{"title":"A"}`})
-	edits := []FieldEdit{{Path: dataRoot + "/photos/gone.json", Fields: map[string]json.RawMessage{"title": json.RawMessage(`"B"`)}}}
-	_, err := c.CommitCombined(t.Context(), pullGH, edits)
-	var perr *PublishError
-	if !errors.As(err, &perr) || perr.Status != http.StatusNotFound || !strings.Contains(perr.Message, "gone.json") || len(f.writes()) != 0 {
-		t.Errorf("CommitCombined() error = %v, wrote %v; want gone.json named and nothing committed", err, f.writes())
+	photo := "{\n  \"title\": \"A\"\n}\n"
+	f.openPull(prBranch, with(emptyLists, map[string]string{dataRoot + "/photos/a.json": photo}))
+	edits := []FieldEdit{
+		{Path: dataRoot + "/photos/gone.json", Fields: map[string]json.RawMessage{"title": json.RawMessage(`"B"`)}},
+		{Path: dataRoot + "/photos/a.json", Fields: map[string]json.RawMessage{"title": json.RawMessage(`"C"`)}},
+	}
+	got, err := c.CommitCombined(t.Context(), pullGH, edits)
+	if err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
+	}
+	if len(got.Skipped) != 1 || got.Skipped[0].Path != dataRoot+"/photos/gone.json" || got.Edited != 1 {
+		t.Errorf("CommitCombined() = %+v; want gone.json skipped and a.json committed", got)
+	}
+	if tree := f.committedTree(); !strings.Contains(tree[dataRoot+"/photos/a.json"], `"C"`) {
+		t.Errorf("committed %q, want a.json with the new title", tree)
+	}
+	if n := f.count("graphql state"); n != 2 {
+		t.Errorf("state queries = %d, want 2: a missing file reads GitHub again once", n)
+	}
+}
+
+func TestCommitCombinedRereadsWhenAnEditedFileIsMissing(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	for p, v := range emptyLists {
+		f.files["main:"+p] = v
+	}
+	if _, err := c.CombinedStatus(t.Context(), pullGH); err != nil {
+		t.Fatalf("CombinedStatus() error = %v", err)
+	}
+	// The photo data pull request that added a.json was merged on GitHub
+	// after the pipeline read where main was.
+	photo := "{\n  \"title\": \"A\"\n}\n"
+	f.moveMain(map[string]string{dataRoot + "/photos/a.json": photo, dataRoot + "/photos/ALLPHOTOS.json": "[\n  {\n    \"title\": \"A\"\n  }\n]\n"})
+	edits := []FieldEdit{{Path: dataRoot + "/photos/a.json", Fields: map[string]json.RawMessage{"title": json.RawMessage(`"B"`)}}}
+	got, err := c.CommitCombined(t.Context(), pullGH, edits)
+	if err != nil || len(got.Skipped) != 0 || got.Edited != 1 || !got.NewPullRequest {
+		t.Fatalf("CommitCombined() = %+v, %v; want the edit committed on a new pull request", got, err)
+	}
+	if tree := f.committedTree(); !strings.Contains(tree[dataRoot+"/photos/a.json"], `"B"`) {
+		t.Errorf("committed %q, want a.json with the new title", tree)
 	}
 }
 

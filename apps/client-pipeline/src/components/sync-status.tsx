@@ -11,6 +11,7 @@ import { UploadProgressBadge, UploadQueueSection } from "@/components/bulk-uploa
 import { Spinner } from "@/components/ui/spinner";
 import { FloatingActionsSlot } from "@/components/floating-actions";
 import { NextUntitledPhoto } from "@/components/next-untitled-photo";
+import { SkippedEdits } from "@/components/skipped-edits";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils";
 import { useCombinedData, useCombinedSync } from "@/stores/combined-data";
@@ -214,7 +215,12 @@ function ImageCounts({ images }: { images: Sync["images"] }) {
 function CommitResult({ sync }: { sync: Sync }) {
   if (sync.commitError) return <CommitError error={sync.commitError} />;
   if (!sync.lastCommit || sync.committing) return null;
-  return <LastCommit commit={sync.lastCommit} />;
+  return (
+    <>
+      <LastCommit commit={sync.lastCommit} />
+      <SkippedEdits />
+    </>
+  );
 }
 
 function LastCommit({ commit }: { commit: CombinedCommit }) {

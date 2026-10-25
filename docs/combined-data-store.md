@@ -33,7 +33,8 @@ made over the lists like saved changes (after them), counted by the sync button,
 panel's **Discard**. **Commit** sends them as `{"edits": [{"path", "fields"}]}`; the backend sets those fields in
 each file (only those, so the rest of the file keeps its data), builds the combined lists from the edited files
 and commits them with everything else waiting. With no pull request open, that commit goes on a new `photo-data/` branch and opens one.
-Edits made while a commit runs are kept for the next one.
+Edits made while a commit runs are kept for the next one. An edit of a file that isn't on GitHub anymore is left out and shown
+after the commit instead of failing it (see [pending changes](pending-changes.md#commit)).
 
 ## Committing the combined files
 

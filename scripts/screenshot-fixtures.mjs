@@ -693,6 +693,7 @@ export function defaultFixtures() {
       counts: { photos: basePhotos.length + 1, albums: 1, tags: 1 },
       newPullRequest: false,
       pullRequestUrl: PULL_REQUEST.url,
+      skipped: [],
     }),
     "PUT /api/publish/instagram": ({ body }) => ({ ...pendingSave(), files: body?.dates?.length }),
   };
