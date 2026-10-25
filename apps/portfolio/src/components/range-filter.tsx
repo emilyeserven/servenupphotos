@@ -27,13 +27,15 @@ function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | unde
  * set of photos; `write` writes one the way a photographer does, such as "f/5.6". `range` is the
  * one set, as "low-high", and `onChange` gets the new one once a handle is let go, or undefined
  * when the handles are back at the ends or its X is clicked. `presets` are the metadata groups of the setting, listed in a
- * dropdown to the right of the slider as quick picks.
+ * dropdown to the right of the slider as quick picks. `writeHigh`, when given, writes the range's
+ * high end instead, such as the last minute of an hour.
  */
 export function RangeFilter({
   label,
   values,
   range,
   write,
+  writeHigh = write,
   presets,
   onChange,
 }: {
@@ -41,6 +43,7 @@ export function RangeFilter({
   values: string[];
   range: string | undefined;
   write: (value: string) => string;
+  writeHigh?: (value: string) => string;
   presets: RangePreset[];
   onChange: (range: string | undefined) => void;
 }) {
@@ -57,7 +60,11 @@ export function RangeFilter({
       <div className="flex h-5 items-center justify-between gap-2 text-xs">
         <span className="font-medium whitespace-nowrap text-muted-foreground">{label}</span>
         <span className="ml-auto whitespace-nowrap tabular-nums">
-          <RangeText values={values} low={low} high={high} write={write} />
+          <RangeText
+            from={endText(values, low, write)}
+            to={endText(values, high, writeHigh)}
+            empty={values.length === 0}
+          />
         </span>
         {range && (
           <ClearFilterButton label={label} onClear={() => onChange(undefined)} className="-mr-1" />
@@ -84,19 +91,17 @@ export function RangeFilter({
   );
 }
 
-/** The range's ends as a photographer writes them, or the one value when they're the same. */
-function RangeText({
-  values,
-  low,
-  high,
-  write,
-}: {
-  values: string[];
-  low: number;
-  high: number;
-  write: (value: string) => string;
-}) {
-  const [from = "", to = ""] = [values[low], values[high]];
-  if (values.length === 0) return <span className="text-muted-foreground">None</span>;
-  return <>{from === to ? write(from) : `${write(from)} – ${write(to)}`}</>;
+/** The value at a position as `write` writes it, or nothing when there's none. */
+function endText(values: string[], at: number, write: (value: string) => string): string {
+  const value = values[at];
+  return value === undefined ? "" : write(value);
+}
+
+/**
+ * The range's ends as a photographer writes them, `from` and `to`, or the one value when they're
+ * written the same; "None" when the photos have no values.
+ */
+function RangeText({ from, to, empty }: { from: string; to: string; empty: boolean }) {
+  if (empty) return <span className="text-muted-foreground">None</span>;
+  return <>{from === to ? from : `${from} – ${to}`}</>;
 }

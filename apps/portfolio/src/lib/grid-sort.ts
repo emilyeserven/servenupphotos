@@ -2,12 +2,17 @@ import { startOfDay } from "date-fns";
 import { type ColorOrder, type ColorSort, sortPhotos, type VividMeasure } from "@/lib/color-sort";
 import type { ColorName } from "@/lib/photo-colors";
 import type { Photo } from "@/lib/photos";
+import { minuteOfDay } from "@/lib/time-of-day";
 
 /**
  * What the Grid is sorted by: when each photo was taken, either way, when it was added to the
- * portfolio, most recent first, or its color or vividness.
+ * portfolio, most recent first, the time of day it was taken, earliest first, or its color or
+ * vividness.
  */
-export type GridSort = "newest" | "oldest" | "added" | ColorSort;
+export type GridSort = "newest" | "oldest" | "added" | "time" | ColorSort;
+
+/** The Grid's sorts that aren't by color or vividness. */
+type DateSort = Exclude<GridSort, ColorSort>;
 
 /** How the Grid's color or vividness sort runs, from the URL with its defaults filled in. */
 export interface GridColorSpec {
@@ -44,18 +49,37 @@ function addedDay(photo: Photo): number {
 }
 
 /**
+ * The photos, given newest first, by the time of day they were taken, from just after midnight
+ * to just before, photos taken at the same minute newest first.
+ */
+function byTimeOfDay<T extends Photo>(newestFirst: T[]): T[] {
+  return newestFirst.toSorted((a, b) => minuteOfDay(a) - minuteOfDay(b));
+}
+
+/** Each sort that isn't by color or vividness, given the photos newest first. */
+const DATE_SORTS: Record<DateSort, <T extends Photo>(newestFirst: T[]) => T[]> = {
+  newest: (newestFirst) => newestFirst,
+  oldest: (newestFirst) => newestFirst.toReversed(),
+  added: byAdded,
+  time: byTimeOfDay,
+};
+
+/** Whether the sort is by color or vividness. */
+function isColorSort(sort: GridSort): sort is ColorSort {
+  return !(sort in DATE_SORTS);
+}
+
+/**
  * The photos, given newest first, in the Grid's sort: newest or oldest first, most recently
- * added first, or by color or vividness as spec asks, with photos whose colors aren't saved yet
- * after the rest, newest first.
+ * added first, by time of day, or by color or vividness as spec asks, with photos whose colors
+ * aren't saved yet after the rest, newest first.
  */
 export function sortGrid<T extends Photo>(
   newestFirst: T[],
   sort: GridSort,
   spec: GridColorSpec,
 ): T[] {
-  if (sort === "newest") return newestFirst;
-  if (sort === "oldest") return newestFirst.toReversed();
-  if (sort === "added") return byAdded(newestFirst);
+  if (!isColorSort(sort)) return DATE_SORTS[sort](newestFirst);
   const colored = sortPhotos(newestFirst.filter(isColored), { ...spec, sort });
   return [...colored, ...newestFirst.filter((photo) => !isColored(photo))];
 }

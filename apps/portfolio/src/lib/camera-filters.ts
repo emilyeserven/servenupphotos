@@ -1,6 +1,7 @@
 import { groupAndInside, groupValues, metaGroupById, type MetaGroup } from "@/lib/metadata-groups";
 import type { CameraSettings, Photo } from "@/lib/photos";
 import { filterPhotos, parseFilters } from "@/lib/photo-filters";
+import { inHours } from "@/lib/time-of-day";
 
 /** The camera settings the Table's and Grid's range sliders narrow by, named as they are in the URL. */
 export const RANGE_KEYS = ["iso", "exposure", "focalLength", "aperture"] as const;
@@ -15,17 +16,22 @@ export type EquipmentKey = (typeof EQUIPMENT_KEYS)[number];
 /** The camera and lens group filters, each matching the values of one metadata group. */
 const EQUIPMENT_GROUP_KEYS = ["cameraGroup", "lensGroup"] as const;
 
+/** The filter for the time of day each photo was taken, a range of hours such as "6-18". */
+export const TIME_KEY = "time";
+
 /** The camera filters as they're named in the URL, which the Table and Grid have and the other views don't. */
 export const CAMERA_FILTER_KEYS = [
   ...EQUIPMENT_KEYS,
   ...EQUIPMENT_GROUP_KEYS,
   ...RANGE_KEYS,
+  TIME_KEY,
 ] as const;
 
 /**
  * The camera filters, each left out when it isn't set: one camera or camera group, one lens
  * or lens group (by its metadata group's ID), and a range of each setting written as its lowest
- * and highest value as the photos have them, such as "100-400" or "1/500-1/30".
+ * and highest value as the photos have them, such as "100-400" or "1/500-1/30", and a range of the
+ * hours of the day it was taken, such as "6-18".
  */
 export type CameraFilters = Partial<Record<(typeof CAMERA_FILTER_KEYS)[number], string>>;
 
@@ -132,6 +138,12 @@ function matchesEquipment(photo: Photo, key: EquipmentKey, filters: CameraFilter
   return group === undefined || inEquipmentGroup(photo, key, group);
 }
 
+/** Whether the photo was taken in the time of day chosen, or none is. */
+function matchesTime(photo: Photo, filters: CameraFilters): boolean {
+  const range = parseRange(filters[TIME_KEY]);
+  return !range || inHours(photo, range);
+}
+
 /** Whether the photo matches every one of the camera filters that's set. */
 function matchesCameraFilters(photo: Photo, filters: CameraFilters): boolean {
   return (
@@ -139,7 +151,8 @@ function matchesCameraFilters(photo: Photo, filters: CameraFilters): boolean {
     RANGE_KEYS.every((key) => {
       const range = parseRange(filters[key]);
       return !range || inRange(photo, key, range);
-    })
+    }) &&
+    matchesTime(photo, filters)
   );
 }
 

@@ -7,7 +7,7 @@ either and by the same **Title**, **Place**, **GPS position**, **Albums**, **Tag
 until the **Undecided** filter is changed from **Hidden** to **Shown** (with the rest) or **Only** (`?undecided=show` or
 `?undecided=only`); the count under the filters says how many are shown while any are hidden. **Sort** beside it
 switches from **Date taken** (newest first) to **Date added** (`?sort=added`): the photos most recently added to the
-portfolio first, by their [`addedDate`](data-model.md#date-added), then the ones without one by when they were taken. Photos the open **Add photo data** pull request changes are marked "Changes in flight" (or "Removed in flight"),
+portfolio first, by their [`addedDate`](data-model.md#date-added), then the ones without one by when they were taken. **Time of day** (`?sort=time`) orders them by the time of day they were taken, from just after midnight to just before, by the clock where they were taken (the custom date, or else the EXIF date), with photos that have no date at the end. Photos the open **Add photo data** pull request changes are marked "Changes in flight" (or "Removed in flight"),
 linked to Photos in Flight. A photo with no title on the base branch is a [draft](drafts.md), listed here but marked
 **Draft**, since `ALLPHOTOS.json` leaves it out. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
 each photo's file path, which `ALLPHOTOS.json` entries don't carry.
