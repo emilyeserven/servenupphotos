@@ -18,6 +18,8 @@ ring-based outlines on popovers instead of borders and shadows. It fits a contro
   `single-combobox.tsx` are the pipeline's own, sized to match Mira's inputs and lists.
 - `styles.css` imports `shadcn/tailwind.css`, which adds the `data-open:`, `data-closed:` and similar variants the
   Mira components use, plus the `scroll-fade-*` utilities.
+- Corners are tighter than shadcn's default: `--radius` in `styles.css` is `0.25rem` (4px) instead of `0.625rem`, and
+  every `rounded-sm` to `rounded-xl` is worked out from it.
 - Tooltips share one `TooltipProvider` around the whole app (`routes/__root.tsx`).
 
 > **Frontend analogy:** a shadcn style isn't a theme file you swap; it's a different set of Tailwind classes baked
