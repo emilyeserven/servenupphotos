@@ -46,7 +46,7 @@ see [Site Spotlight](publish.md#site-spotlight).
 
 Every album and tag picker, here, on the Photo page and in the Gallery, is a combobox: type to filter, arrow keys and
 Enter to choose, and each choice shows as a chip with a button to remove it (a chip is red when its ID isn't an album
-or tag on GitHub). The Photo page has an **Albums and tags** card for a new photo, saved with **Save**, and
+or tag on GitHub, and green when it's new, waiting for Commit, such as a tag just made from a paste). The Photo page has an **Albums and tags** card for a new photo, saved with **Save**, and
 for a photo being edited, saved with **Save changes**.
 
 ## Suggest tags

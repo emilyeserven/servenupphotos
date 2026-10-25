@@ -85,6 +85,15 @@ export const createGroupMutation = (kind: GroupKind) =>
       }),
   });
 
+/** The organize list with a just-made group in it, so it's named before the list is read again. */
+export function withNewGroup(
+  data: OrganizeResponse | undefined,
+  kind: GroupKind,
+  group: Group,
+): OrganizeResponse | undefined {
+  return data && { ...data, [kind]: [...data[kind], group] };
+}
+
 /**
  * name as an album, tag or genre ID, matching the backend's rule of lowercase letters and numbers with
  * single dashes between words: accents dropped, and runs of anything else turned into one dash.

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { createGroupMutation, organizeQuery } from "@/api/organize";
+import { createGroupMutation, organizeQuery, withNewGroup } from "@/api/organize";
 import { photosInFlightQuery } from "@/api/photos";
 import { Button } from "@/components/ui/button";
 import { toggled } from "@/lib/bulk-tags";
@@ -179,7 +179,12 @@ function useCreateTags(onCreated: (ids: string[]) => void) {
   return useMutation({
     mutationFn: async (tags: TagToMake[]) => {
       for (const { id, description, parent } of tags) {
-        await createTag.mutateAsync({ id, name: id, description, parent });
+        const group = { id, name: id, description, parent };
+        const result = await createTag.mutateAsync(group);
+        // Named at once, so its chip shows as new rather than unknown until the list is read again.
+        queryClient.setQueryData(organizeQuery.queryKey, (data) =>
+          withNewGroup(data, "tags", { ...group, path: result.path, fileUrl: "", inFlight: true }),
+        );
       }
       return tags.filter((tag) => tag.add).map((tag) => tag.id);
     },
