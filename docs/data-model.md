@@ -46,6 +46,19 @@ show. The section starts open when the EXIF has no date. When the file name has 
 > **Frontend analogy:** like a `defaultValue` the user can override: `customCreateDate ?? createDate`, with the file
 > name as a suggested value.
 
+## Date added
+
+A photo's `addedDate` is when it went on the portfolio, as a UTC time such as `"2026-10-25T04:10:22Z"`. It's set by the
+pipeline when the photo stops being a [draft](drafts.md): the save that gives it a title, or for a photo that's saved
+with a title (or with untitled photos kept out of drafts), the save that makes its file. A draft's is `null`. Once set
+it's kept, even if the photo becomes a draft again and gets a title later. Older files without it get it from
+**Update Data → Missing fields**, which dates each one by the commit that first added its file to the repository (a
+draft gets `null`, and is dated when it gets a title). The portfolio's Grid can sort by it (**Recently Added**), its
+Table has an **Added** column, and the pipeline's Gallery sorts by it with **Sort → Date added**.
+
+> **Frontend analogy:** like a `publishedAt` next to a post's `createdAt`: the post can exist for weeks as a draft,
+> but `publishedAt` is stamped the first time it goes live, and a "Recently added" list sorts by that.
+
 ## Places, spotlights and posts
 
 A photo's `places` list where it was taken, each a place ID and how the photo relates to it, and `LOCALIZATIONS.json`

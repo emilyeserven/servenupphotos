@@ -11,6 +11,10 @@ named.
 > public site's query filters it out. Here the "query" is the step that builds `ALLPHOTOS.json`, and the filter is
 > "has a title".
 
+The save that gives a draft its title also sets its `addedDate` to that moment (see
+[Date added](data-model.md#date-added)), which the portfolio's **Recently Added** sort uses. A draft's `addedDate` is
+`null`.
+
 ## The setting
 
 **Settings → GitHub → Keep untitled photos as drafts** is on by default. Turned off, every photo goes in

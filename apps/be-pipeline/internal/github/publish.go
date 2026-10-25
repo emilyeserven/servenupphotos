@@ -65,6 +65,9 @@ type photoJSON struct {
 	Title   *string `json:"title"`
 	Comment *string `json:"comment"`
 	File    string  `json:"file"`
+	// AddedDate is when the photo went on the portfolio (see addedField), or
+	// nil while it's a draft.
+	AddedDate *string `json:"addedDate"`
 	exif.Sanitized
 	// Albums and Tags are the IDs of the albums and tags the photo is in.
 	Albums []string `json:"albums"`
@@ -195,8 +198,8 @@ type target struct {
 
 // Publish saves photo as <folder>/photos/<name>.json in the pending changes,
 // for the next Commit to commit to the photo data pull request (opening one
-// when none is open), with the next photo ID. It never overwrites a file that
-// already exists.
+// when none is open), with the next photo ID, and dated as added now unless
+// it's a draft. It never overwrites a file that already exists.
 func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (PublishResult, error) {
 	folder, perr := photoFolder(gh.Folder)
 	if perr != nil {
@@ -220,7 +223,7 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
 	}
-	return c.saveNewFile(w, path, append(content, '\n'))
+	return c.saveNewFile(w, path, w.stampAdded(append(content, '\n'), c.now()))
 }
 
 // saveNewFile saves content as path, a new file, in the pending changes. It

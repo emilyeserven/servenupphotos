@@ -23,6 +23,9 @@ A missing `id` isn't a default: each file gets the next photo ID, counting up fr
 the order the files were created: when each was first committed on the branch the next Commit goes to (one GraphQL
 query asks every file's history, 50 files at a time), or, for a file only in the pending changes, when it was saved.
 Files created in the same commit go by file name. See [Photo IDs](data-model.md#photo-ids).
+A missing `addedDate` isn't a default either: from the same history, each file that isn't a [draft](drafts.md) gets
+the time of the commit that first added it (or, only in the pending changes, when it was saved), and a draft gets
+`null`, to be dated when it gets a title. See [Date added](data-model.md#date-added).
 Missing fields go where a new file has them, nested `images` fields included, and the rest of each file is kept byte
 for byte; a field a file already has, even `null`, is never changed. With **Read missing camera details from the
 originals in R2** on, a missing EXIF field (`exif.SanitizeFields`) is read from the photo's original at `images.key`,

@@ -30,6 +30,7 @@ type UpdatedFile struct {
 // Update replaces the content of file, a photo JSON file in flight or already
 // in the portfolio, with data, a JSON object, in the pending changes, for the
 // next Commit. A file the photo data pull request removes can't be updated.
+// A draft given a title is dated as added now (see stampAdded).
 //
 // When newName, a file name with or without the .json extension, differs from
 // file's, the file is moved to it in the same folder. Only files that aren't
@@ -62,6 +63,7 @@ func (c *Client) Update(ctx context.Context, gh settings.GitHub, file, newName s
 	if perr != nil {
 		return UpdatedFile{}, perr
 	}
+	content = w.stampAdded(content, c.now())
 	result := UpdatedFile{Path: dest, Before: json.RawMessage(current), Data: json.RawMessage(content)}
 	if w.pr != nil {
 		result.PullRequestURL = w.pr.HTMLURL

@@ -23,7 +23,13 @@ func isDraft(data json.RawMessage) bool {
 // leftOut reports whether a file of kind with data is left out of its
 // combined list: a photo draft, unless w includes untitled photos.
 func (w *workspace) leftOut(kind combinedKind, data json.RawMessage) bool {
-	return kind.name == "photos" && !w.includeUntitled && isDraft(data)
+	return kind.name == "photos" && !w.onPortfolio(data)
+}
+
+// onPortfolio reports whether the photo file with data goes in AllPhotosFile:
+// it isn't a draft, or w includes untitled photos.
+func (w *workspace) onPortfolio(data json.RawMessage) bool {
+	return w.includeUntitled || !isDraft(data)
 }
 
 // baseDrafts reads the photo files in folder on the base branch, unchanged

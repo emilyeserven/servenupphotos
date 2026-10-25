@@ -1,5 +1,5 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useSearch } from "@tanstack/react-router";
 import { CheckIcon, ListChecksIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { type PublishedFile, type PublishedResponse, publishedPhotosQuery } from "@/api/photos";
@@ -21,22 +21,25 @@ import { BulkGroupsCard } from "@/components/gallery/bulk-groups-card";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import {
+  type GallerySort,
+  GallerySortToggle,
+  parseGallerySort,
+  sortGallery,
+} from "@/components/gallery/gallery-sort";
+import {
   type UndecidedChoice,
   UndecidedToggle,
   parseUndecided,
   useUndecidedFilter,
 } from "@/components/gallery/undecided-filter";
 import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
-import {
-  type Selection,
-  fileName,
-  photoName,
-  savedString,
-} from "@/components/gallery/published-file";
+import { type Selection, fileName, photoName } from "@/components/gallery/published-file";
 
 interface GallerySearch extends PhotoFilters {
   /** Whether Undecided photos are shown too, or only they are; hidden when left out. */
   undecided?: UndecidedChoice;
+  /** Sorts by when each photo was added to the portfolio; by when it was taken when left out. */
+  sort?: GallerySort;
 }
 
 export const Route = createFileRoute("/gallery")({
@@ -45,6 +48,7 @@ export const Route = createFileRoute("/gallery")({
   validateSearch: (search: Record<string, unknown>): GallerySearch => ({
     ...parseFilters(search),
     undecided: parseUndecided(search),
+    sort: parseGallerySort(search),
   }),
 });
 
@@ -83,7 +87,7 @@ function PublishedPhotos() {
   const published = useQuery(publishedPhotosQuery);
   const [filter, setFilter] = useState("");
   const selection = useSelection();
-  const { shown, total, filters, undecided } = useShownFiles(published.data, filter);
+  const { shown, total, filters, undecided, sort } = useShownFiles(published.data, filter);
   return (
     <>
       <GalleryHeader
@@ -101,6 +105,7 @@ function PublishedPhotos() {
         extraChosen={undecided !== undefined}
       >
         <UndecidedToggle choice={undecided} />
+        <GallerySortToggle sort={sort} />
       </PhotoFilterBar>
       {selection.selected && published.data && (
         <BulkGroupsCard
@@ -125,13 +130,14 @@ function PublishedPhotos() {
   );
 }
 
-/** The photos that match the search text and the filters, newest first, out of how many there are. */
+/** The photos that match the search text and the filters, in the URL's sort, out of how many there are. */
 function useShownFiles(data: PublishedResponse | undefined, filter: string) {
   const { filters, filter: applyFilters } = usePhotoFilters();
   const { choice: undecided, apply: applyUndecided } = useUndecidedFilter();
-  const base = { filters, undecided };
+  const sort = useSearch({ from: "/gallery", select: parseGallerySort });
+  const base = { filters, undecided, sort };
   if (!data) return { ...base, shown: [], total: 0 };
-  const shown = applyUndecided(applyFilters(shownFiles(data, filter)));
+  const shown = applyUndecided(applyFilters(shownFiles(data, filter, sort)));
   return { ...base, shown, total: data.files.length };
 }
 
@@ -235,9 +241,13 @@ function SelectButton({
   );
 }
 
-/** The photos to show, newest first, that match filter. */
-function shownFiles(data: PublishedResponse, filter: string): PublishedFile[] {
-  return sortedNewestFirst(data.files).filter((file) => matches(file, filter));
+/** The photos to show, in sort, that match filter. */
+function shownFiles(
+  data: PublishedResponse,
+  filter: string,
+  sort: GallerySort | undefined,
+): PublishedFile[] {
+  return sortGallery(data.files, sort).filter((file) => matches(file, filter));
 }
 
 /** How many photos there are, and how many of them have changes waiting in the pull request. */
@@ -278,14 +288,4 @@ function matches(file: PublishedFile, filter: string): boolean {
   return [photoName(file), file.photoName, fileName(file.path)].some((text) =>
     text.toLowerCase().includes(query),
   );
-}
-
-/** files by when each photo was taken, newest first, then ones without a date by path. */
-function sortedNewestFirst(files: PublishedFile[]): PublishedFile[] {
-  return files.toSorted((a, b) => {
-    const da = savedString(a, "createDate") ?? "";
-    const db = savedString(b, "createDate") ?? "";
-    if (da !== db) return db.localeCompare(da);
-    return a.path.localeCompare(b.path);
-  });
 }

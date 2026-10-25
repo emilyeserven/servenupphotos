@@ -2,8 +2,11 @@ import { type ColorOrder, type ColorSort, sortPhotos, type VividMeasure } from "
 import type { ColorName } from "@/lib/photo-colors";
 import type { Photo } from "@/lib/photos";
 
-/** What the Grid is sorted by: when each photo was taken, either way, or its color or vividness. */
-export type GridSort = "newest" | "oldest" | ColorSort;
+/**
+ * What the Grid is sorted by: when each photo was taken, either way, when it was added to the
+ * portfolio, most recent first, or its color or vividness.
+ */
+export type GridSort = "newest" | "oldest" | "added" | ColorSort;
 
 /** How the Grid's color or vividness sort runs, from the URL with its defaults filled in. */
 export interface GridColorSpec {
@@ -23,8 +26,24 @@ function isColored<T extends Photo>(photo: T): photo is Colored<T> {
 }
 
 /**
- * The photos, given newest first, in the Grid's sort: newest or oldest first, or by color or
- * vividness as spec asks, with photos whose colors aren't saved yet after the rest, newest first.
+ * The photos, given newest first, most recently added first, with photos that have no date added
+ * after the rest, newest first.
+ */
+function byAdded<T extends Photo>(newestFirst: T[]): T[] {
+  const added = newestFirst.filter((photo) => photo.addedAt !== null);
+  const sorted = added.toSorted((a, b) => addedTime(b) - addedTime(a));
+  return [...sorted, ...newestFirst.filter((photo) => photo.addedAt === null)];
+}
+
+/** When the photo was added, in milliseconds, or 0 when it has no date added. */
+function addedTime(photo: Photo): number {
+  return photo.addedAt?.getTime() ?? 0;
+}
+
+/**
+ * The photos, given newest first, in the Grid's sort: newest or oldest first, most recently
+ * added first, or by color or vividness as spec asks, with photos whose colors aren't saved yet
+ * after the rest, newest first.
  */
 export function sortGrid<T extends Photo>(
   newestFirst: T[],
@@ -33,6 +52,7 @@ export function sortGrid<T extends Photo>(
 ): T[] {
   if (sort === "newest") return newestFirst;
   if (sort === "oldest") return newestFirst.toReversed();
+  if (sort === "added") return byAdded(newestFirst);
   const colored = sortPhotos(newestFirst.filter(isColored), { ...spec, sort });
   return [...colored, ...newestFirst.filter((photo) => !isColored(photo))];
 }

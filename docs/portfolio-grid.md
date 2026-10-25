@@ -6,8 +6,11 @@ three views picked at the top right (`?view=`): **Square** tiles (the default), 
 a **Colors** section (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
 photo opens the [photo viewer](photo-viewer.md).
 
-The tile views share the sort dropdown (newest, oldest, color, vividness) and **Show info**, which puts each photo's
+The tile views share the sort dropdown (newest, oldest, **Recently Added**, color, vividness) and **Show info**, which puts each photo's
 title, place, color bar and comment under its tile (`?info=true`).
+
+**Recently Added** (`?sort=added`) puts the photos most recently added to the portfolio first, by their
+[`addedDate`](data-model.md#date-added), with photos that have none yet after them, newest first.
 
 ## Square
 
@@ -30,7 +33,7 @@ all reach that is centered rather than stretched.
 ## Table
 
 The **Table** (`?view=table`, `components/photo-table.tsx`) lists every photo as a row, including photos without resized
-versions in R2: its thumbnail, title, when it was taken, its place, camera, lens and camera settings. Clicking a column's
+versions in R2: its thumbnail, title, when it was taken, when it was added to the portfolio (**Added**, a dash until Update Data dates it), its place, camera, lens and camera settings. Clicking a column's
 name sorts by it (`?column=…&dir=…`), the **Columns** menu hides columns (`?hide=…`), and the photo viewer moves through
 the rows in the table's sort. The tiles' sort and **Show info** are hidden here. Older `/table` links go to this view,
 keeping their sort (their `?sort=` becomes `?column=`), columns, filters and open photo (`routes/table.tsx`,
