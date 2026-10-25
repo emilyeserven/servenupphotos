@@ -89,6 +89,9 @@ are listed under the field as new tags in lowercase kebab-case, each with a chec
 saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for Commit, like **New tag** on
 `/tags`) and adds them to the field.
 
+To tag up to five related photos with one prompt, use [Bulk tagging](update-data.md#bulk-tagging) on Update Data,
+which shares these rules (`TAG_RULES` in `lib/tag-prompt.ts`).
+
 > **Frontend analogy:** it's a copy-to-clipboard "share" template plus an `onPaste` handler on a multi-select, like
 > pasting a CSV of labels into it: the handler normalizes and dedupes the strings, matches them against the select's options, and
 > offers to create the options that don't exist yet.

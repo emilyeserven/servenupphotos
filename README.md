@@ -94,7 +94,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets
-- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields)
+- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, bulk tagging)
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
 - [Saving photo data to GitHub](docs/saving-to-github.md): saving a photo's JSON to the Add photo data pull request, uploading to R2, resized versions and the Square Thumbnail
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails

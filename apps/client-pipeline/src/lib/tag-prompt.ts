@@ -38,7 +38,7 @@ function listed(names: string[], none: string): string {
 }
 
 /** The names the site already filters photos by, which the prompt asks the LLM not to suggest. */
-function filteredNames({ albums, genres, metaGroups }: TagPromptLists): string[] {
+function filteredNames({ albums, genres, metaGroups }: Omit<TagPromptLists, "known">): string[] {
   return [
     ...albums.filter((album) => !album.error).map((album) => `${groupLabel(album)} (album)`),
     ...genres.filter((genre) => !genre.error).map((genre) => `${groupLabel(genre)} (genre)`),
@@ -46,9 +46,28 @@ function filteredNames({ albums, genres, metaGroups }: TagPromptLists): string[]
   ];
 }
 
+/**
+ * The rules every tag prompt gives, for one photo or several: what makes a good tag, and what to
+ * leave out because the site already filters by it.
+ */
+export const TAG_RULES = `- Reuse an existing tag (listed below) whenever one fits, spelled exactly as it is listed.
+- Write every tag in lowercase kebab-case: lowercase words joined by single dashes, such as "street-food" or "wabi-sabi".
+- Keep tags general enough to fit other photos too: "temple" rather than "bulguksa-main-hall".
+- Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "lanterns", "street-food" or "cats").
+- Use what's known about where the photo was taken to pick terms that fit it: use a culture's own word (such as "shotengai", a Japanese shopping street, or "hanok", a traditional Korean house) only when the photo is from that culture, and otherwise use a general one (such as "covered-street" or "shopping-street"). Never turn what's known (its place, city or country) into a tag.
+- A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
+- Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, its albums, and its photographic genre (such as street, landscape or portrait). Don't suggest any of the names under "Already filtered" either.`;
+
+/** The end of every tag prompt: the tags to reuse, and the names not to make into tags. */
+export function tagListsSection(lists: Omit<TagPromptLists, "known">): string {
+  const existing = lists.tags.filter((tag) => !tag.error).map((tag) => tag.id);
+  return `Existing tags: ${listed(existing, "none yet")}
+
+Already filtered: ${listed(filteredNames(lists), "nothing else")}`;
+}
+
 /** The prompt to paste into a chat with an LLM, asking for tags for the photo at `imageUrl`. */
 export function tagPrompt(imageUrl: string, lists: TagPromptLists): string {
-  const existing = lists.tags.filter((tag) => !tag.error).map((tag) => tag.id);
   return `Suggest tags for the photo at this link: ${imageUrl}
 
 The tags are for a photography portfolio, where each tag gathers the photos that share a subject or an idea.
@@ -57,19 +76,11 @@ What's already known about the photo:
 ${lists.known.join("\n") || "- Nothing yet."}
 
 Rules:
-- Reuse an existing tag (listed below) whenever one fits, spelled exactly as it is listed.
-- Write every tag in lowercase kebab-case: lowercase words joined by single dashes, such as "street-food" or "wabi-sabi".
-- Keep tags general enough to fit other photos too: "temple" rather than "bulguksa-main-hall".
-- Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "lanterns", "street-food" or "cats").
-- Use what's known about where the photo was taken to pick terms that fit it: use a culture's own word (such as "shotengai", a Japanese shopping street, or "hanok", a traditional Korean house) only when the photo is from that culture, and otherwise use a general one (such as "covered-street" or "shopping-street"). Never turn what's known (its place, city or country) into a tag.
-- A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
-- Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, its albums, and its photographic genre (such as street, landscape or portrait). Don't suggest any of the names under "Already filtered" either.
+${TAG_RULES}
 - Suggest 3 to 8 tags.
 - Answer with the tags as one comma-separated list on the first line. Then, after a blank line, define each cultural term or concept among them, one per line, as "tag: a short definition". When the term is a local kind of something more general, end its line with the general tag it belongs under, as "(parent: general-tag)", reusing an existing tag when one fits, such as "shotengai: a Japanese shopping street, often under a covered arcade (parent: covered-street)". Don't add the parent to the first line. Write nothing else before or after.
 
-Existing tags: ${listed(existing, "none yet")}
-
-Already filtered: ${listed(filteredNames(lists), "nothing else")}`;
+${tagListsSection(lists)}`;
 }
 
 /** One tag the LLM answered with, as it's written, with its surrounding quotes, bullets and dots taken off. */

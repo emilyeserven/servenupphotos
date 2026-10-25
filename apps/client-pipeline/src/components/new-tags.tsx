@@ -3,6 +3,7 @@ import { useState } from "react";
 import { createGroupMutation, organizeQuery } from "@/api/organize";
 import { photosInFlightQuery } from "@/api/photos";
 import { Button } from "@/components/ui/button";
+import { toggled } from "@/lib/bulk-tags";
 import { type TagDefinition, type TagToMake, tagsToMake } from "@/lib/tag-prompt";
 
 interface NewTagsProps {
@@ -14,13 +15,6 @@ interface NewTagsProps {
   existing: ReadonlySet<string>;
   onCreated: (ids: string[]) => void;
   disabled: boolean;
-}
-
-/** `set` with `item` added when it's missing, or taken out when it's there. */
-function toggled(set: ReadonlySet<string>, item: string): Set<string> {
-  const next = new Set(set);
-  if (!next.delete(item)) next.add(item);
-  return next;
 }
 
 /**
