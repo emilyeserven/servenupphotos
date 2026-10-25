@@ -25,8 +25,18 @@
     "description": ""
   },
   {
+    "id": "buddhism",
+    "name": "buddhism",
+    "description": ""
+  },
+  {
     "id": "bukeyashiki",
     "name": "bukeyashiki",
+    "description": ""
+  },
+  {
+    "id": "byobu",
+    "name": "byobu",
     "description": ""
   },
   {
@@ -110,6 +120,11 @@
     "description": ""
   },
   {
+    "id": "fusuma",
+    "name": "fusuma",
+    "description": ""
+  },
+  {
     "id": "gates",
     "name": "gates",
     "description": ""
@@ -140,13 +155,28 @@
     "description": ""
   },
   {
+    "id": "interior",
+    "name": "interior",
+    "description": ""
+  },
+  {
     "id": "ivy",
     "name": "ivy",
     "description": ""
   },
   {
+    "id": "koshi",
+    "name": "koshi",
+    "description": ""
+  },
+  {
     "id": "lanterns",
     "name": "lanterns",
+    "description": ""
+  },
+  {
+    "id": "machiya",
+    "name": "machiya",
     "description": ""
   },
   {
@@ -185,6 +215,11 @@
     "description": ""
   },
   {
+    "id": "patterns",
+    "name": "patterns",
+    "description": ""
+  },
+  {
     "id": "pedestrians",
     "name": "pedestrians",
     "description": ""
@@ -197,6 +232,16 @@
   {
     "id": "power-lines",
     "name": "power-lines",
+    "description": ""
+  },
+  {
+    "id": "prayers",
+    "name": "prayers",
+    "description": ""
+  },
+  {
+    "id": "railway",
+    "name": "railway",
     "description": ""
   },
   {
@@ -240,6 +285,11 @@
     "description": ""
   },
   {
+    "id": "senjafuda",
+    "name": "senjafuda",
+    "description": ""
+  },
+  {
     "id": "shide",
     "name": "shide",
     "description": ""
@@ -252,6 +302,11 @@
   {
     "id": "shinto",
     "name": "shinto",
+    "description": ""
+  },
+  {
+    "id": "shoji",
+    "name": "shoji",
     "description": ""
   },
   {
@@ -280,6 +335,11 @@
     "description": ""
   },
   {
+    "id": "stamps",
+    "name": "stamps",
+    "description": ""
+  },
+  {
     "id": "stickers",
     "name": "stickers",
     "description": ""
@@ -292,6 +352,16 @@
   {
     "id": "suitorou",
     "name": "suitorou",
+    "description": ""
+  },
+  {
+    "id": "tatami",
+    "name": "tatami",
+    "description": ""
+  },
+  {
+    "id": "temple",
+    "name": "temple",
     "description": ""
   },
   {
@@ -320,6 +390,16 @@
     "description": ""
   },
   {
+    "id": "train",
+    "name": "train",
+    "description": ""
+  },
+  {
+    "id": "trees",
+    "name": "trees",
+    "description": ""
+  },
+  {
     "id": "umbrellas",
     "name": "umbrellas",
     "description": ""
@@ -337,6 +417,31 @@
   {
     "id": "walls",
     "name": "walls",
+    "description": ""
+  },
+  {
+    "id": "wanman",
+    "name": "wanman",
+    "description": ""
+  },
+  {
+    "id": "washitsu",
+    "name": "washitsu",
+    "description": ""
+  },
+  {
+    "id": "windows",
+    "name": "windows",
+    "description": ""
+  },
+  {
+    "id": "wood",
+    "name": "wood",
+    "description": ""
+  },
+  {
+    "id": "yeondeung",
+    "name": "yeondeung",
     "description": ""
   },
   {

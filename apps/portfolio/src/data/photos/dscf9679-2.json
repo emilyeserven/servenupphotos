@@ -1,9 +1,9 @@
 {
-  "id": 345,
-  "title": null,
+  "title": "Through the Lattice",
   "comment": null,
+  "id": 345,
   "file": "DSCF9679-2.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T17:11:46Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:23 10:25:58",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Former Kubota Family Residence",
+  "customCity": "Hagi",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Yamaguchi",
   "city": "Hagi",
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/cc42abfd366d-dscf9679-2-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/cc42abfd366d-dscf9679-2-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/cc42abfd366d-dscf9679-2-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/cc42abfd366d-dscf9679-2-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/cc42abfd366d-dscf9679-2-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/cc42abfd366d-dscf9679-2-thumbnail.webp?crop=1578,0,4113",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/cc42abfd366d-dscf9679-2-thumbnailpreview.webp?crop=1578,0,4113",
     "thumbnailcrop": {
-      "x": 1599,
+      "x": 1578,
       "y": 0,
       "size": 4113,
       "outputSize": 500
@@ -48,9 +48,18 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["washitsu", "tatami", "shoji", "interior", "machiya", "koshi", "byobu"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "former-kubota-family-residence"
+    },
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,8 +69,8 @@
       "hex": "#383838",
       "lab": {
         "l": 23.38,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,
