@@ -1,9 +1,9 @@
 {
-  "id": 301,
-  "title": null,
+  "title": "Grand Place",
   "comment": null,
+  "id": 301,
   "file": "20250704_141758.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:35:05Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:07:04 14:17:58",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "grand-place",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/f303eb1706e1-20250704-141758-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/f303eb1706e1-20250704-141758-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/f303eb1706e1-20250704-141758-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/f303eb1706e1-20250704-141758-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f303eb1706e1-20250704-141758-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/f303eb1706e1-20250704-141758-thumbnail.webp?crop=738,0,2213",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f303eb1706e1-20250704-141758-thumbnailpreview.webp?crop=738,0,2213",
     "thumbnailcrop": {
-      "x": 858,
+      "x": 738,
       "y": 0,
       "size": 2213,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "grand-place"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

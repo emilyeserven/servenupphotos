@@ -1,9 +1,9 @@
 {
-  "title": null,
+  "title": "Entrance of the Red Pyramid",
   "comment": null,
   "id": 289,
   "file": "20250119_102544.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:32:09Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:19 10:25:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "red-pyramid",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "red-pyramid"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

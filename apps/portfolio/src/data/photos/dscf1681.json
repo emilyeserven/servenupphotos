@@ -1,9 +1,9 @@
 {
-  "id": 310,
-  "title": null,
+  "title": "Gates & Lanterns",
   "comment": null,
+  "id": 310,
   "file": "DSCF1681.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:40:05Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 12:14:53",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "tokoji-temple",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/b136df6ae2e0-dscf1681-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/b136df6ae2e0-dscf1681-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/b136df6ae2e0-dscf1681-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/b136df6ae2e0-dscf1681-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b136df6ae2e0-dscf1681-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/b136df6ae2e0-dscf1681-thumbnail.webp?crop=403,0,3634",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b136df6ae2e0-dscf1681-thumbnailpreview.webp?crop=403,0,3634",
     "thumbnailcrop": {
-      "x": 1413,
+      "x": 403,
       "y": 0,
       "size": 3634,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "tokoji-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

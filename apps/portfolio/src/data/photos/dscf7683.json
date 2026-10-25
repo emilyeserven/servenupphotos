@@ -1,9 +1,9 @@
 {
-  "id": 324,
-  "title": null,
+  "title": "Flags & Lanterns",
   "comment": null,
+  "id": 324,
   "file": "DSCF7683.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:50:14Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:29 15:45:03",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Engyoji Temple",
+  "customCity": "Himeji",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Hyōgo",
   "city": "Himeji",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "engyoji-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

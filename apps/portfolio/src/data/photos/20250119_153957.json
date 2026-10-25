@@ -1,9 +1,9 @@
 {
-  "title": null,
+  "title": "Dwarfed",
   "comment": null,
   "id": 291,
   "file": "20250119_153957.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:30:07Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Super Telephoto Camera",
   "aperture": 3.4,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:19 15:39:57",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "step-pyramid-of-djoser",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "step-pyramid-of-djoser"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

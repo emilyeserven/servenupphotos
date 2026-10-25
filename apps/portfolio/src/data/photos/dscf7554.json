@@ -1,9 +1,9 @@
 {
-  "id": 320,
-  "title": null,
+  "title": "Old Busan Tower",
   "comment": null,
+  "id": 320,
   "file": "DSCF7554.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:49:08Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 9,
@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:09:20 18:04:21",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "busan-tower",
+  "customCity": "Busan",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/f2395dbdbe17-dscf7554-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/f2395dbdbe17-dscf7554-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/f2395dbdbe17-dscf7554-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/f2395dbdbe17-dscf7554-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f2395dbdbe17-dscf7554-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/f2395dbdbe17-dscf7554-thumbnail.webp?crop=0,0,4759",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f2395dbdbe17-dscf7554-thumbnailpreview.webp?crop=0,0,4759",
     "thumbnailcrop": {
       "x": 0,
-      "y": 952,
+      "y": 0,
       "size": 4759,
       "outputSize": 500
     }
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "busan-tower"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

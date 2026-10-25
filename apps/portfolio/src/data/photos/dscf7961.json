@@ -1,9 +1,9 @@
 {
-  "id": 327,
-  "title": null,
+  "title": "Watched from the Terminal",
   "comment": null,
+  "id": 327,
   "file": "DSCF7961.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:51:42Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:21 19:24:33",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "International Port of Busan",
+  "customCity": "Busan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": "South Korea",
   "state": "Busan",
   "city": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/9862208f7087-dscf7961-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/9862208f7087-dscf7961-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/9862208f7087-dscf7961-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9862208f7087-dscf7961-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9862208f7087-dscf7961-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/9862208f7087-dscf7961-thumbnail.webp?crop=436,0,1820",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9862208f7087-dscf7961-thumbnailpreview.webp?crop=436,0,1820",
     "thumbnailcrop": {
-      "x": 707,
+      "x": 436,
       "y": 0,
       "size": 1820,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "international-port-of-busan"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,8 +65,8 @@
       "hex": "#353535",
       "lab": {
         "l": 21.98,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

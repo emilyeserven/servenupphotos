@@ -1,9 +1,9 @@
 {
-  "id": 213,
-  "title": null,
+  "title": "Gyeongbokgung Girls",
   "comment": null,
+  "id": 213,
   "file": "DSCF3665.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:41:37Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 14:51:43",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Gyeongbokgung Palace",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/017897a8ccb9-dscf3665-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/017897a8ccb9-dscf3665-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/017897a8ccb9-dscf3665-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/017897a8ccb9-dscf3665-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/017897a8ccb9-dscf3665-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/017897a8ccb9-dscf3665-thumbnail.webp?crop=249,0,4099",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/017897a8ccb9-dscf3665-thumbnailpreview.webp?crop=249,0,4099",
     "thumbnailcrop": {
-      "x": 1594,
+      "x": 249,
       "y": 0,
       "size": 4099,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "gyeongbokgung-palace"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

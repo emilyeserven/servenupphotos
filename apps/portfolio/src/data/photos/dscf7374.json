@@ -1,9 +1,9 @@
 {
-  "id": 311,
-  "title": null,
+  "title": "Temple Trail",
   "comment": null,
+  "id": 311,
   "file": "DSCF7374.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:45:48Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 8,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:29 14:59:16",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "engyoji-temple",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/67136ecb144c-dscf7374-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/67136ecb144c-dscf7374-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/67136ecb144c-dscf7374-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/67136ecb144c-dscf7374-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/67136ecb144c-dscf7374-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/67136ecb144c-dscf7374-thumbnail.webp?crop=0,794,3835",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/67136ecb144c-dscf7374-thumbnailpreview.webp?crop=0,794,3835",
     "thumbnailcrop": {
       "x": 0,
-      "y": 767,
+      "y": 794,
       "size": 3835,
       "outputSize": 500
     }
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "engyoji-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

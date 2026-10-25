@@ -1,9 +1,9 @@
 {
-  "id": 170,
-  "title": null,
+  "title": "Times Square is for Tourists",
   "comment": null,
+  "id": 170,
   "file": "IMG_4297.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:53:37Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 3.5,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2017:09:23 20:30:14",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "times-square",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,12 +32,12 @@
     "small": "https://cdn.servenupphotos.net/photos/0f3497950efd-img-4297-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/0f3497950efd-img-4297-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/0f3497950efd-img-4297-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/0f3497950efd-img-4297-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0f3497950efd-img-4297-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/0f3497950efd-img-4297-thumbnail.webp?crop=1551,0,2351",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0f3497950efd-img-4297-thumbnailpreview.webp?crop=1551,0,2351",
     "thumbnailcrop": {
-      "x": 1432,
+      "x": 1551,
       "y": 0,
-      "size": 3135,
+      "size": 2351,
       "outputSize": 500
     }
   },
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "times-square"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,7 +65,7 @@
       "hex": "#474747",
       "lab": {
         "l": 29.99,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {

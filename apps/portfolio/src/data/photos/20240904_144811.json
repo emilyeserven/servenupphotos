@@ -1,9 +1,9 @@
 {
-  "id": 286,
-  "title": null,
+  "title": "Mushroom Nook",
   "comment": null,
+  "id": 286,
   "file": "20240904_144811.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:19:35Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2024:09:04 14:48:10",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "fairview-lookout-trail",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/e8d05ca6c4a7-20240904-144811-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/e8d05ca6c4a7-20240904-144811-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/e8d05ca6c4a7-20240904-144811-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/e8d05ca6c4a7-20240904-144811-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e8d05ca6c4a7-20240904-144811-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/e8d05ca6c4a7-20240904-144811-thumbnail.webp?crop=823,0,2017",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e8d05ca6c4a7-20240904-144811-thumbnailpreview.webp?crop=823,0,2017",
     "thumbnailcrop": {
-      "x": 783,
+      "x": 823,
       "y": 0,
       "size": 2017,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "fairview-lookout-trail"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
