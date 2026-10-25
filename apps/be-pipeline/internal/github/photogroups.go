@@ -13,11 +13,13 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// PhotoGroups adds albums and tags, by ID, to the photo files at Paths.
+// PhotoGroups adds albums, tags and genres, by ID, to the photo files at
+// Paths.
 type PhotoGroups struct {
 	Paths  []string `json:"paths"`
 	Albums []string `json:"albums"`
 	Tags   []string `json:"tags"`
+	Genres []string `json:"genres"`
 }
 
 // PhotoGroupsResult says where the albums and tags were saved: in the pending
@@ -31,8 +33,8 @@ type PhotoGroupsResult struct {
 // maxGroupsPerSave caps how many albums or tags one save adds.
 const maxGroupsPerSave = 100
 
-// AddPhotoGroups adds each of add's albums and tags that a photo file in
-// add.Paths doesn't list yet to its "albums" and "tags", in the pending
+// AddPhotoGroups adds each of add's albums, tags and genres that a photo file
+// in add.Paths doesn't list yet to its "albums", "tags" and "genres", in the pending
 // changes as ReplaceBaseURL saves them. Nothing else in the files changes, and
 // nothing is saved when one of them can't be read.
 func (c *Client) AddPhotoGroups(ctx context.Context, gh settings.GitHub, add PhotoGroups) (PhotoGroupsResult, error) {
@@ -58,7 +60,7 @@ func (c *Client) AddPhotoGroups(ctx context.Context, gh settings.GitHub, add Pho
 			return PhotoGroupsResult{}, publishErr(http.StatusConflict,
 				"%s couldn't be read (%s), so nothing was changed.", f.path, f.err)
 		}
-		content, err := withGroups(f.content, add.Albums, add.Tags)
+		content, err := withGroups(f.content, add)
 		if err != nil {
 			return PhotoGroupsResult{}, publishErr(http.StatusConflict, "%s: %s, so nothing was changed.", f.path, err)
 		}
@@ -76,7 +78,7 @@ func (c *Client) AddPhotoGroups(ctx context.Context, gh settings.GitHub, add Pho
 			"%s isn't a photo file on %s, so nothing was changed.", strings.Join(missing, ", "), scan.branch)
 	}
 	if len(entries) == 0 {
-		return PhotoGroupsResult{}, publishErr(http.StatusConflict, "Those photos already have those albums and tags, so there's nothing to change.")
+		return PhotoGroupsResult{}, publishErr(http.StatusConflict, "Those photos already have those albums, tags and genres, so there's nothing to change.")
 	}
 
 	saved, perr := c.saveScan(scan, entries)
@@ -86,17 +88,18 @@ func (c *Client) AddPhotoGroups(ctx context.Context, gh settings.GitHub, add Pho
 	return PhotoGroupsResult{pendingSave: saved, Files: len(entries)}, nil
 }
 
-// validPhotoGroups checks there are photos, and albums or tags with valid IDs
-// to add to them.
+// validPhotoGroups checks there are photos, and albums, tags or genres with
+// valid IDs to add to them.
 func validPhotoGroups(add PhotoGroups) *PublishError {
 	if len(add.Paths) == 0 {
-		return publishErr(http.StatusBadRequest, "Choose the photos to add albums and tags to.")
+		return publishErr(http.StatusBadRequest, "Choose the photos to add albums, tags or genres to.")
 	}
-	if len(add.Albums) == 0 && len(add.Tags) == 0 {
-		return publishErr(http.StatusBadRequest, "Choose albums or tags to add.")
+	ids := slices.Concat(add.Albums, add.Tags, add.Genres)
+	if len(ids) == 0 {
+		return publishErr(http.StatusBadRequest, "Choose albums, tags or genres to add.")
 	}
-	if len(add.Albums)+len(add.Tags) > maxGroupsPerSave {
-		return publishErr(http.StatusBadRequest, "Add up to %d albums and tags at a time.", maxGroupsPerSave)
+	if len(ids) > maxGroupsPerSave {
+		return publishErr(http.StatusBadRequest, "Add up to %d albums, tags and genres at a time.", maxGroupsPerSave)
 	}
 	seen := map[string]bool{}
 	for _, p := range add.Paths {
@@ -105,29 +108,31 @@ func validPhotoGroups(add PhotoGroups) *PublishError {
 		}
 		seen[p] = true
 	}
-	for _, id := range slices.Concat(add.Albums, add.Tags) {
+	for _, id := range ids {
 		if !groupIDPattern.MatchString(id) || len(id) > maxGroupIDLength {
-			return publishErr(http.StatusBadRequest, "%q isn't an album or tag ID.", id)
+			return publishErr(http.StatusBadRequest, "%q isn't an album, tag or genre ID.", id)
 		}
 	}
 	return nil
 }
 
-// withGroups is content, a photo file, with albums and tags added to its
-// "albums" and "tags" lists after the IDs they already have.
-func withGroups(content []byte, albums, tags []string) ([]byte, error) {
+// withGroups is content, a photo file, with add's albums, tags and genres
+// added to its "albums", "tags" and "genres" lists after the IDs they
+// already have.
+func withGroups(content []byte, add PhotoGroups) ([]byte, error) {
 	var current struct {
 		Albums []string `json:"albums"`
 		Tags   []string `json:"tags"`
+		Genres []string `json:"genres"`
 	}
 	if err := json.Unmarshal(content, &current); err != nil {
-		return nil, fmt.Errorf("its albums and tags aren't lists of IDs")
+		return nil, fmt.Errorf("its albums, tags and genres aren't lists of IDs")
 	}
 	out := content
 	for _, list := range []struct {
 		key        string
 		have, more []string
-	}{{"albums", current.Albums, albums}, {"tags", current.Tags, tags}} {
+	}{{"albums", current.Albums, add.Albums}, {"tags", current.Tags, add.Tags}, {"genres", current.Genres, add.Genres}} {
 		merged := appendMissing(list.have, list.more)
 		if len(list.more) == 0 || len(merged) == len(list.have) {
 			continue

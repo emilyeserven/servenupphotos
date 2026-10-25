@@ -96,11 +96,12 @@ type InFlightResult struct {
 	Folder      string               `json:"folder"`
 	PullRequest *InFlightPullRequest `json:"pullRequest"`
 	Files       []InFlightFile       `json:"files"`
-	// Albums, Tags, Places, Localizations, MetaInfo, Cameras and Lenses are
-	// the album, tag, place, localization, metadata group, camera override
-	// and custom lens files in the pull request.
+	// Albums, Tags, Genres, Places, Localizations, MetaInfo, Cameras and
+	// Lenses are the album, tag, genre, place, localization, metadata group,
+	// camera override and custom lens files in the pull request.
 	Albums        InFlightGroups `json:"albums"`
 	Tags          InFlightGroups `json:"tags"`
+	Genres        InFlightGroups `json:"genres"`
 	Places        InFlightGroups `json:"places"`
 	Localizations InFlightGroups `json:"localizations"`
 	MetaInfo      InFlightGroups `json:"metainfo"`
@@ -108,10 +109,10 @@ type InFlightResult struct {
 	Lenses        InFlightGroups `json:"lenses"`
 }
 
-// groups are r's album, tag, place, localization, metadata group, camera
+// groups are r's album, tag, genre, place, localization, metadata group, camera
 // override and custom lens files.
 func (r *InFlightResult) groups() []*InFlightGroups {
-	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses}
+	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Genres, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses}
 }
 
 // InFlightGroups is the files of one Kind in the pull request.
@@ -157,6 +158,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		Repo: w.t.repo.FullName, Folder: folder, Files: []InFlightFile{}, PullRequest: w.inFlightPullRequest(),
 		Albums:        newInFlightGroups(w.root, Albums),
 		Tags:          newInFlightGroups(w.root, Tags),
+		Genres:        newInFlightGroups(w.root, Genres),
 		Places:        newInFlightGroups(w.root, Kind{Folder: Places.Folder, AllFile: Places.AllFile}),
 		Localizations: newInFlightGroups(w.root, Kind{Folder: Localizations.Folder, AllFile: Localizations.AllFile}),
 		MetaInfo:      newInFlightGroups(w.root, Kind{Folder: MetaInfo.Folder, AllFile: MetaInfo.AllFile}),

@@ -42,6 +42,7 @@ function readFolder(kind, combined) {
 const basePhotos = readFolder("photos", "ALLPHOTOS");
 const baseAlbums = readFolder("albums", "ALLALBUMS");
 const baseTags = readFolder("tags", "ALLTAGS");
+const baseGenres = readFolder("genres", "ALLGENRES");
 const basePlaces = readFolder("places", "PLACES");
 const baseLocalizations = readFolder("localizations", "LOCALIZATIONS");
 const baseMetaInfo = readFolder("metainfo", "METAINFO");
@@ -79,6 +80,7 @@ function newPhoto() {
       images: { ...images, key: `photos/${stem}.jpg` },
       albums: ["seoul"],
       tags: ["night"],
+      genres: ["street"],
     },
   };
 }
@@ -99,6 +101,11 @@ const added = {
     path: `${FOLDER}/tags/night.json`,
     data: { id: "night", name: "Night", description: "" },
   },
+  genres: [
+    genreFile("street", "Street", "Candid photos of people and places in public."),
+    genreFile("architecture", "Architecture", ""),
+    genreFile("landscape", "Landscape", ""),
+  ],
   places: [
     placeFile(
       "gyeongbokgung-palace",
@@ -184,6 +191,11 @@ function metaGroupFile(id, name, field, { parent = "", order = 0, values = [], r
   };
 }
 
+/** A photographic genre file the pull request adds. */
+function genreFile(id, name, description) {
+  return { path: `${FOLDER}/genres/${id}.json`, data: { id, name, description } };
+}
+
 function placeFile(
   id,
   name,
@@ -207,6 +219,7 @@ function localizationFile(type, slug, name, romanization, pronunciation, localSc
 const headPhotos = [...basePhotos, added.photo];
 const headAlbums = [...baseAlbums, added.album];
 const headTags = [...baseTags, added.tag];
+const headGenres = [...baseGenres, ...added.genres];
 /** base with each of added's files in place of the base file at its path, or added at the end. */
 function withAdded(base, addedFiles) {
   const paths = new Set(addedFiles.map((file) => file.path));
@@ -231,13 +244,14 @@ function combinedFile(kind, all, files, branch) {
 }
 
 function combinedFiles(
-  [photos, albums, tags, places, localizations, metainfo, cameras, lenses],
+  [photos, albums, tags, genres, places, localizations, metainfo, cameras, lenses],
   branch,
 ) {
   return {
     photos: combinedFile("photos", "ALLPHOTOS.json", photos, branch),
     albums: combinedFile("albums", "ALLALBUMS.json", albums, branch),
     tags: combinedFile("tags", "ALLTAGS.json", tags, branch),
+    genres: combinedFile("genres", "ALLGENRES.json", genres, branch),
     places: combinedFile("places", "PLACES.json", places, branch),
     localizations: combinedFile("localizations", "LOCALIZATIONS.json", localizations, branch),
     metainfo: combinedFile("metainfo", "METAINFO.json", metainfo, branch),
@@ -479,6 +493,7 @@ export function defaultFixtures() {
           basePhotos,
           baseAlbums,
           baseTags,
+          baseGenres,
           basePlaces,
           baseLocalizations,
           baseMetaInfo,
@@ -493,6 +508,7 @@ export function defaultFixtures() {
             headPhotos,
             headAlbums,
             headTags,
+            headGenres,
             headPlaces,
             headLocalizations,
             headMetaInfo,
@@ -511,6 +527,7 @@ export function defaultFixtures() {
       files: [photoFile(added.photo, "added", PULL_REQUEST.branch)],
       albums: { folder: `${FOLDER}/albums`, files: [groupFile(added.album)] },
       tags: { folder: `${FOLDER}/tags`, files: [groupFile(added.tag)] },
+      genres: { folder: `${FOLDER}/genres`, files: added.genres.map(groupFile) },
       places: { folder: `${FOLDER}/places`, files: added.places.map(groupFile) },
       localizations: {
         folder: `${FOLDER}/localizations`,
@@ -651,6 +668,10 @@ export function defaultFixtures() {
       pullRequest: PULL_REQUEST,
       albums: [...baseAlbums.map((f) => group(f, false)), group(added.album, true)],
       tags: [...baseTags.map((f) => group(f, false)), group(added.tag, true)],
+      genres: [
+        ...baseGenres.map((f) => group(f, false)),
+        ...added.genres.map((f) => group(f, true)),
+      ],
     },
     "GET /api/places": {
       repo: REPO,

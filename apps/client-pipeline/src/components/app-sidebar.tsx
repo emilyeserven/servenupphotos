@@ -15,6 +15,7 @@ import {
   RefreshCwIcon,
   ScalingIcon,
   SettingsIcon,
+  ShapesIcon,
   SparklesIcon,
   TagsIcon,
 } from "lucide-react";
@@ -53,6 +54,7 @@ export const navGroups = [
     items: [
       { title: "Albums", url: "/albums", icon: BookImageIcon },
       { title: "Tags", url: "/tags", icon: TagsIcon },
+      { title: "Genres", url: "/genres", icon: ShapesIcon },
     ],
   },
   {

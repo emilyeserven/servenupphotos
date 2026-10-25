@@ -12,6 +12,8 @@ type CombinedFiles struct {
 	Photos InFlightAllPhotos `json:"photos"`
 	Albums InFlightAllPhotos `json:"albums"`
 	Tags   InFlightAllPhotos `json:"tags"`
+	// Genres is ALLGENRES.json, the photographic genres.
+	Genres InFlightAllPhotos `json:"genres"`
 	// Places and Localizations are PLACES.json and LOCALIZATIONS.json.
 	Places        InFlightAllPhotos `json:"places"`
 	Localizations InFlightAllPhotos `json:"localizations"`
@@ -36,8 +38,9 @@ type CombinedHead struct {
 	CombinedFiles
 }
 
-// CombinedResult is ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json, PLACES.json
-// and LOCALIZATIONS.json on the base branch and, when one is open, on the
+// CombinedResult is ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json,
+// ALLGENRES.json, PLACES.json and LOCALIZATIONS.json and the other combined
+// lists on the base branch and, when one is open, on the
 // photo data pull request.
 type CombinedResult struct {
 	Repo   string       `json:"repo"`
@@ -83,6 +86,7 @@ func combinedFiles(t target, root string, s *snapshot, branch string) CombinedFi
 		Photos:        read(PhotosFolder, AllPhotosFile),
 		Albums:        read(Albums.Folder, Albums.AllFile),
 		Tags:          read(Tags.Folder, Tags.AllFile),
+		Genres:        read(Genres.Folder, Genres.AllFile),
 		Places:        read(Places.Folder, Places.AllFile),
 		Localizations: read(Localizations.Folder, Localizations.AllFile),
 		MetaInfo:      read(MetaInfo.Folder, MetaInfo.AllFile),

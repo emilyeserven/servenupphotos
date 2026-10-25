@@ -66,7 +66,7 @@ function combinedFile(
   return files?.[kind] ?? { path, found: false, count: 0 };
 }
 
-/** The pull request's album or tag files, each checked against its combined file. */
+/** The pull request's album, tag or genre files, each checked against its combined file. */
 function checkedGroups(read: InFlightRead["albums"], all: CombinedFile) {
   const entries = entrySet(all);
   return {
@@ -95,6 +95,7 @@ export function withCombined(read: InFlightRead, view: CombinedView): InFlightRe
     files: read.files.map((f) => ({ ...f, inAllPhotos: inEntries(photoEntries, f.data) })),
     albums: checkedGroups(read.albums, file("albums", "ALLALBUMS.json")),
     tags: checkedGroups(read.tags, file("tags", "ALLTAGS.json")),
+    genres: checkedGroups(read.genres, file("genres", "ALLGENRES.json")),
     places: checkedGroups(read.places, file("places", "PLACES.json")),
     localizations: checkedGroups(read.localizations, file("localizations", "LOCALIZATIONS.json")),
     metainfo: checkedGroups(read.metainfo, file("metainfo", "METAINFO.json")),

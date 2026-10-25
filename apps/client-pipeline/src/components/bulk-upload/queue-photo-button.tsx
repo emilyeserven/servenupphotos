@@ -68,8 +68,9 @@ export function QueuePhotoButton({ photo, onQueued }: QueuePhotoButtonProps) {
 function QueueIntro() {
   return (
     <p className="text-muted-foreground">
-      Uploads the photo to R2 with this square, then saves its JSON with its title, albums and tags
-      to the batch. It keeps going after you leave this page; the Status page shows how it's doing.
+      Uploads the photo to R2 with this square, then saves its JSON with its title, albums, tags and
+      genres to the batch. It keeps going after you leave this page; the Status page shows how it's
+      doing.
     </p>
   );
 }

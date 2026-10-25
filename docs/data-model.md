@@ -1,4 +1,4 @@
-# Photo, album and tag data
+# Photo, album, tag and genre data
 
 The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in Settings), one JSON file per thing:
 
@@ -7,6 +7,7 @@ The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in 
 | Photos           | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json`            |
 | Albums           | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json`            |
 | Tags             | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`                |
+| Genres           | `genres/<GENRE_ID>.json`  | `genres/ALLGENRES.json`            |
 | Places           | `places/<PLACE_ID>.json`  | `places/PLACES.json`               |
 | Localizations    | `localizations/<ID>.json` | `localizations/LOCALIZATIONS.json` |
 | Metadata groups  | `metainfo/<ID>.json`      | `metainfo/METAINFO.json`           |
@@ -19,8 +20,9 @@ tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays o
 An album file may also have `order`, its place among the albums (1 first), and `spotlightZones`, the spots on the
 portfolio that show its photos, such as `["homepage"]`; see [Albums and Tags](albums-and-tags.md#order).
 An album's `parent` is the ID of the one album it sits inside, or `null` for a top-level album; the pipeline never
-lets an album end up inside itself. Albums and tags share one set of IDs and names, compared ignoring case, so a
-photo's `albums` and `tags` never mean the same thing.
+lets an album end up inside itself. A photo's `genres` lists its [photographic genres](photographic-genres.md), such as
+`["street"]`, each a file like a tag's. Albums, tags and genres share one set of IDs and names, compared ignoring case,
+so a photo's `albums`, `tags` and `genres` never mean the same thing.
 
 ## Photo IDs
 
