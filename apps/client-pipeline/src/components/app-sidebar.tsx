@@ -33,6 +33,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { SidebarCollapseButton } from "@/components/sidebar-collapse-button";
+import { ThemeButton } from "@/components/theme-button";
 import { UploadButtons } from "@/components/upload-buttons";
 
 /** Every page in the app, grouped the way the sidebar shows them, with the icon it has when collapsed. */
@@ -76,8 +77,8 @@ export const navGroups = [
 ] as const;
 
 /**
- * Floating sidebar navigation, adapted from shadcn's sidebar-04 block. Its button at the bottom collapses
- * it to a rail of icons, each naming its page in a tooltip.
+ * Floating sidebar navigation, adapted from shadcn's sidebar-04 block. Its buttons at the bottom switch
+ * the color theme and collapse it to a rail of icons, each naming its page in a tooltip.
  */
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = useLocation({ select: (location) => location.pathname });
@@ -129,6 +130,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
       <SidebarFooter>
+        <ThemeButton />
         <SidebarCollapseButton />
       </SidebarFooter>
       <SidebarRail />

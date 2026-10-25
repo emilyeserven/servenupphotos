@@ -24,4 +24,6 @@ stays collapsed or expanded after a reload.
 On a phone the sidebar is a sheet over the page instead. The button left of the breadcrumbs, shown only there, opens
 it; it always shows in full, so it has no collapse button.
 
+**Theme**, just above **Collapse sidebar**, switches between light, dark and system colors ([Theme](theme.md)).
+
 Each page's icon is set next to its title and URL in `navGroups`; a new page needs one.
