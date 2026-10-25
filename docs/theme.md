@@ -15,7 +15,8 @@ ring-based outlines on popovers instead of borders and shadows. It fits a contro
   components the same look. Icons stay Lucide and the font stays Manrope, rather than the preset's Hugeicons and
   Inter.
 - The files in `components/ui` are shadcn's Radix components with Mira's classes. `combobox.tsx` and
-  `single-combobox.tsx` are the pipeline's own, sized to match Mira's inputs and lists.
+  `single-combobox.tsx` are the pipeline's own, sized to match Mira's inputs and lists. Both open their list with
+  `combobox-list.tsx`, a Radix Popover drawn over the page, so a card's `overflow-hidden` doesn't cut it off.
 - `styles.css` imports `shadcn/tailwind.css`, which adds the `data-open:`, `data-closed:` and similar variants the
   Mira components use, plus the `scroll-fade-*` utilities.
 - Corners are tighter than shadcn's default: `--radius` in `styles.css` is `0.25rem` (4px) instead of `0.625rem`, and
