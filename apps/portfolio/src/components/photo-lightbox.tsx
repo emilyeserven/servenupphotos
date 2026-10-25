@@ -7,6 +7,7 @@ import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
 import { viewOnMapLink } from "@/components/view-on-map-link";
 import { settingsText, type Photo, type PhotoImage } from "@/lib/photos";
+import { useSwipe } from "@/lib/use-swipe";
 import { cn } from "@/lib/utils";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
@@ -16,12 +17,12 @@ interface PhotoLightboxProps {
   /** The photo to show, or null when the lightbox is closed. */
   photo: ImagePhoto | null;
   /**
-   * The photos the previous and next buttons and the Left and Right arrow keys move through, in
+   * The photos the previous and next buttons, the Left and Right arrow keys and swiping move through, in
    * the order the view shows them. Photos without an image are skipped. Left out, there's only the
    * one photo.
    */
   photos?: readonly Photo[];
-  /** Shows another photo from photos, when the previous or next button or arrow key is pressed. */
+  /** Shows another photo from photos, when the previous or next button or arrow key is pressed or the photo is swiped. */
   onShow?: (photo: ImagePhoto) => void;
   onClose: () => void;
 }
@@ -114,11 +115,13 @@ function LightboxBody({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
 
 /**
  * The photo, with the previous and next buttons over its sides while it's hovered, or on its own,
- * filling the window, when bare.
+ * filling the window, when bare. Swiping left or right on it moves to the next or previous photo.
  */
 function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
+  const swipe = useSwipe((by) => (by < 0 ? steps.previous : steps.next)?.());
   return (
     <div
+      {...swipe}
       className={cn("flex min-h-0 flex-1 items-center justify-center", bare ? "p-0" : "p-4 pt-0")}
     >
       {/* A size container, so the photo can be fitted to it with cqw and cqh. Clicking it hides
