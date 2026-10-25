@@ -127,8 +127,8 @@ export function Combobox({
       {/* Clicking around the chips focuses the text box, as if it filled the field. */}
       <div
         className={cn(
-          "border-input dark:bg-input/30 flex min-h-9 w-full cursor-text flex-wrap items-center gap-1 rounded-md border bg-transparent py-1 pr-8 pl-1.5 shadow-xs transition-[color,box-shadow]",
-          "focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
+          "bg-input/20 dark:bg-input/30 border-input flex min-h-7 w-full cursor-text flex-wrap items-center gap-1 rounded-md border py-0.5 pr-7 pl-1 transition-colors",
+          "focus-within:border-ring focus-within:ring-ring/30 focus-within:ring-2",
           disabled && "pointer-events-none cursor-not-allowed opacity-50",
         )}
         onMouseDown={(event) => {
@@ -165,7 +165,7 @@ export function Combobox({
           disabled={disabled}
           value={query}
           placeholder={value.length === 0 ? placeholder : undefined}
-          className="placeholder:text-muted-foreground h-7 min-w-24 flex-1 bg-transparent px-1.5 text-base outline-none md:text-sm"
+          className="placeholder:text-muted-foreground h-5 min-w-24 flex-1 bg-transparent px-1 text-sm outline-none md:text-xs/relaxed"
           onChange={(event) => {
             setQuery(event.target.value);
             setActive(0);
@@ -177,7 +177,7 @@ export function Combobox({
         />
       </div>
       <ChevronDownIcon
-        className="text-muted-foreground pointer-events-none absolute top-2.5 right-2.5 size-4"
+        className="text-muted-foreground pointer-events-none absolute top-2 right-2 size-3.5"
         aria-hidden
       />
       <ul
@@ -185,10 +185,10 @@ export function Combobox({
         role="listbox"
         aria-multiselectable={multiple || undefined}
         hidden={!open}
-        className="bg-popover text-popover-foreground absolute z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-md border p-1 shadow-md"
+        className="bg-popover text-popover-foreground ring-foreground/10 absolute z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-lg p-1 shadow-md ring-1"
       >
         {shown.length === 0 ? (
-          <li className="text-muted-foreground px-2 py-1.5 text-sm">{emptyText}</li>
+          <li className="text-muted-foreground px-2 py-1 text-xs/relaxed">{emptyText}</li>
         ) : (
           shown.map((option, index) => {
             const selected = value.includes(option.value);
@@ -199,7 +199,7 @@ export function Combobox({
                 role="option"
                 aria-selected={selected}
                 className={cn(
-                  "flex cursor-pointer items-start gap-2 rounded-sm px-2 py-1.5 text-sm",
+                  "flex min-h-7 cursor-pointer items-start gap-2 rounded-md px-2 py-1 text-xs/relaxed",
                   index === activeIndex && "bg-accent text-accent-foreground",
                 )}
                 // Keeps focus in the text box, so the list stays open for another choice.
@@ -208,7 +208,7 @@ export function Combobox({
                 onClick={() => choose(option)}
               >
                 <CheckIcon
-                  className={cn("mt-0.5 size-4 shrink-0", !selected && "invisible")}
+                  className={cn("mt-1 size-3.5 shrink-0", !selected && "invisible")}
                   aria-hidden
                 />
                 <span className="min-w-0">
@@ -265,9 +265,9 @@ function Chip({ label, known, removeLabel, disabled, onRemove }: ChipProps) {
   return (
     <span
       className={cn(
-        "inline-flex h-7 max-w-full items-center gap-1 rounded-md border pr-0.5 pl-2 text-xs font-medium",
+        "inline-flex h-5 max-w-full items-center gap-1 rounded-[calc(var(--radius-sm)-2px)] pr-0.5 pl-1.5 text-xs/relaxed font-medium",
         known
-          ? "bg-secondary text-secondary-foreground"
+          ? "bg-muted-foreground/10 text-foreground"
           : "border-destructive/40 bg-destructive/10 text-destructive",
       )}
       title={known ? label : `${label}: not found`}
@@ -277,10 +277,10 @@ function Chip({ label, known, removeLabel, disabled, onRemove }: ChipProps) {
         type="button"
         aria-label={removeLabel}
         disabled={disabled}
-        className="hover:bg-foreground/10 focus-visible:ring-ring/50 rounded-sm p-0.5 outline-none focus-visible:ring-[3px]"
+        className="focus-visible:ring-ring/30 rounded-sm p-0.5 opacity-50 outline-none hover:opacity-100 focus-visible:ring-2"
         onClick={onRemove}
       >
-        <XIcon className="size-3.5" aria-hidden />
+        <XIcon className="size-3" aria-hidden />
       </button>
     </span>
   );

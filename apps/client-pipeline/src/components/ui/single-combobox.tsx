@@ -108,8 +108,8 @@ export function SingleCombobox({
         value={shownText}
         placeholder={placeholder}
         className={cn(
-          "border-input dark:bg-input/30 placeholder:text-muted-foreground h-9 w-full min-w-0 rounded-md border bg-transparent py-1 pr-14 pl-3 text-base shadow-xs transition-[color,box-shadow] outline-none md:text-sm",
-          "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+          "bg-input/20 dark:bg-input/30 border-input placeholder:text-muted-foreground h-7 w-full min-w-0 rounded-md border py-0.5 pr-12 pl-2 text-sm transition-colors outline-none md:text-xs/relaxed",
+          "focus-visible:border-ring focus-visible:ring-ring/30 focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50",
           value && !chosen && "text-destructive",
         )}
         onChange={(event) => {
@@ -122,30 +122,33 @@ export function SingleCombobox({
         onClick={() => setOpen(true)}
         onKeyDown={onKeyDown}
       />
-      <div className="absolute top-0 right-0 flex h-9 items-center gap-0.5 pr-2">
+      <div className="absolute top-0 right-0 flex h-7 items-center gap-0.5 pr-2">
         {value && !disabled && (
           <button
             type="button"
             aria-label={`Clear ${chosen?.label ?? value}`}
-            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 rounded-sm p-0.5 outline-none focus-visible:ring-[3px]"
+            className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/30 rounded-sm p-0.5 outline-none focus-visible:ring-2"
             onClick={() => {
               onChange("");
               input.current?.focus();
             }}
           >
-            <XIcon className="size-4" aria-hidden />
+            <XIcon className="size-3.5" aria-hidden />
           </button>
         )}
-        <ChevronDownIcon className="text-muted-foreground pointer-events-none size-4" aria-hidden />
+        <ChevronDownIcon
+          className="text-muted-foreground pointer-events-none size-3.5"
+          aria-hidden
+        />
       </div>
       <ul
         id={listId}
         role="listbox"
         hidden={!open}
-        className="bg-popover text-popover-foreground absolute z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-md border p-1 shadow-md"
+        className="bg-popover text-popover-foreground ring-foreground/10 absolute z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-lg p-1 shadow-md ring-1"
       >
         {shown.length === 0 ? (
-          <li className="text-muted-foreground px-2 py-1.5 text-sm">{emptyText}</li>
+          <li className="text-muted-foreground px-2 py-1 text-xs/relaxed">{emptyText}</li>
         ) : (
           shown.map((option, index) => (
             <li
@@ -154,7 +157,7 @@ export function SingleCombobox({
               role="option"
               aria-selected={option.value === value}
               className={cn(
-                "flex cursor-pointer items-start gap-2 rounded-sm px-2 py-1.5 text-sm",
+                "flex min-h-7 cursor-pointer items-start gap-2 rounded-md px-2 py-1 text-xs/relaxed",
                 index === activeIndex && "bg-accent text-accent-foreground",
               )}
               // Keeps focus in the text box until the choice is made.
@@ -163,7 +166,7 @@ export function SingleCombobox({
               onClick={() => choose(option)}
             >
               <CheckIcon
-                className={cn("mt-0.5 size-4 shrink-0", option.value !== value && "invisible")}
+                className={cn("mt-1 size-3.5 shrink-0", option.value !== value && "invisible")}
                 aria-hidden
               />
               <span className="min-w-0">
