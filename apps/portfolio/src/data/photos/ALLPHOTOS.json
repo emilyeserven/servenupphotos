@@ -20722,6 +20722,270 @@
     }
   },
   {
+    "title": "Kobe Night Walk",
+    "comment": null,
+    "id": 353,
+    "file": "DSCF8051.jpg",
+    "addedDate": "2026-10-25T16:35:36Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 2,
+    "exposure": "1/250",
+    "iso": 125,
+    "focalLength": 35,
+    "gpsPosition": "34 deg 41' 36.07\" N, 135 deg 11' 28.55\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:29 18:59:10",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Japan",
+    "state": "Hyōgo",
+    "city": "Kobe",
+    "width": 4504,
+    "height": 6306,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051.jpg",
+      "key": "photos/3b47a6da152b-dscf8051.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-thumbnail.webp?crop=492,947,3620",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-thumbnailpreview.webp?crop=492,947,3620",
+      "thumbnailcrop": {
+        "x": 492,
+        "y": 947,
+        "size": 3620,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["alley", "signage", "night", "rain", "reflections", "umbrellas", "yokocho", "neon"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#2f2b2c",
+        "lab": {
+          "l": 18.03,
+          "a": 2.03,
+          "b": -0.11
+        },
+        "hcl": {
+          "h": 356.91,
+          "c": 2.03,
+          "l": 18.03
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0142
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0122
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0022
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0005
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0025
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0148
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.003
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0014
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.003
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.015
+        }
+      ],
+      "neutrals": {
+        "share": 0.9311,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.5395
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0914
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.065
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0535
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0341
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0202
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0121
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0061
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0042
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0025
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.003
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0033
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0031
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0033
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0026
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0039
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0068
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0082
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0182
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0502
+          }
+        ]
+      },
+      "lightness": 18.03,
+      "chroma": 4.48,
+      "peakChroma": 11.22,
+      "samples": 9828
+    }
+  },
+  {
     "title": "Edo Walls, Edo Doors",
     "comment": null,
     "id": 330,
