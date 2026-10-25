@@ -5,7 +5,7 @@ import { overrideChanges } from "@/lib/camera-overrides";
 import { type LensChoice, lensChanged, withLensChoice } from "@/lib/custom-lens";
 import type { CombinedPhoto } from "@/lib/group-photos";
 
-/** What the Photo page's Lens and Camera overrides cards change in a saved photo. */
+/** What the Photo page's Camera overrides card and its Lens section change in a saved photo. */
 export interface LensEdit extends LensChoice {
   /** Whether Apply overrides was pressed. */
   apply: boolean;

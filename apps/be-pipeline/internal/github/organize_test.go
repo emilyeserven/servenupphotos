@@ -76,6 +76,7 @@ func TestCreateGroupWithParent(t *testing.T) {
 	}{
 		{Albums, NewGroup{ID: "busan", Name: "Busan", Parent: "japan"}, http.StatusBadRequest},
 		{Tags, NewGroup{ID: "night", Name: "night", Parent: "korea"}, http.StatusBadRequest},
+		{Genres, NewGroup{ID: "street", Name: "Street", Parent: "korea"}, http.StatusBadRequest},
 	} {
 		_, err := c.CreateGroup(t.Context(), organizeGH, tt.kind, tt.group)
 		var perr *PublishError
@@ -96,7 +97,7 @@ func TestCheckParent(t *testing.T) {
 		{"seoul", "japan", `no album with the ID "japan"`},
 	}
 	for _, tt := range tests {
-		perr := checkParent(albums, tt.id, tt.parent)
+		perr := checkParent(Albums, albums, tt.id, tt.parent)
 		if tt.want == "" && perr != nil || tt.want != "" && (perr == nil || !strings.Contains(perr.Message, tt.want)) {
 			t.Errorf("checkParent(%s, %s) = %v, want %q", tt.id, tt.parent, perr, tt.want)
 		}
@@ -232,24 +233,24 @@ func TestSetAlbumParent(t *testing.T) {
 	f, c := newFakeGitHub(t)
 	f.files["main:data/albums/korea.json"] = "{\n  \"id\": \"korea\",\n  \"name\": \"Korea\",\n  \"parent\": null\n}\n"
 	f.files["main:data/albums/seoul.json"] = "{\n  \"id\": \"seoul\",\n  \"name\": \"Seoul\",\n  \"parent\": null\n}\n"
-	got, err := c.SetAlbumParent(t.Context(), organizeGH, "seoul", "korea")
+	got, err := c.SetGroupParent(t.Context(), organizeGH, Albums, "seoul", "korea")
 	if err != nil {
-		t.Fatalf("SetAlbumParent() error = %v", err)
+		t.Fatalf("SetGroupParent() error = %v", err)
 	}
 	if !got.Changed || len(got.Changes) != 1 || !strings.Contains(string(got.Changes[0].After), `"parent": "korea"`) {
-		t.Errorf("SetAlbumParent() = %+v, want seoul.json moved into korea", got)
+		t.Errorf("SetGroupParent() = %+v, want seoul.json moved into korea", got)
 	}
-	again, err := c.SetAlbumParent(t.Context(), organizeGH, "seoul", "korea")
+	again, err := c.SetGroupParent(t.Context(), organizeGH, Albums, "seoul", "korea")
 	if err != nil || again.Changed {
-		t.Errorf("SetAlbumParent() again = %+v, %v; want nothing changed", again, err)
+		t.Errorf("SetGroupParent() again = %+v, %v; want nothing changed", again, err)
 	}
-	_, err = c.SetAlbumParent(t.Context(), organizeGH, "korea", "seoul")
+	_, err = c.SetGroupParent(t.Context(), organizeGH, Albums, "korea", "seoul")
 	var perr *PublishError
 	if !errors.As(err, &perr) || perr.Status != http.StatusConflict {
-		t.Errorf("SetAlbumParent() into its own child: error = %v, want a conflict", err)
+		t.Errorf("SetGroupParent() into its own child: error = %v, want a conflict", err)
 	}
 	if w := f.writes(); len(w) != 0 {
-		t.Errorf("SetAlbumParent() wrote to GitHub: %v", w)
+		t.Errorf("SetGroupParent() wrote to GitHub: %v", w)
 	}
 }
 
@@ -287,5 +288,34 @@ func TestInFlightAlbumsAndTags(t *testing.T) {
 	tags := got.Tags
 	if len(tags.Files) != 1 || tags.Files[0].Path != dir+"tags/macro.json" {
 		t.Errorf("Tags.Files = %+v, want macro.json", tags.Files)
+	}
+}
+
+func TestTagParents(t *testing.T) {
+	_, c := newFakeGitHub(t)
+	for _, g := range []NewGroup{{ID: "covered-street", Name: "covered-street"}, {ID: "shotengai", Name: "shotengai", Parent: "covered-street"}} {
+		if _, err := c.CreateGroup(t.Context(), organizeGH, Tags, g); err != nil {
+			t.Fatalf("CreateGroup(%s) error = %v", g.ID, err)
+		}
+	}
+	if content, _ := stagedContent(t, c, "data/tags/shotengai.json"); !strings.Contains(content.Content, `"parent": "covered-street"`) {
+		t.Errorf("shotengai.json = %q, want parent covered-street", content.Content)
+	}
+	if content, _ := stagedContent(t, c, "data/tags/covered-street.json"); strings.Contains(content.Content, "parent") {
+		t.Errorf("covered-street.json = %q, want no parent", content.Content)
+	}
+
+	if _, err := c.SetGroupParent(t.Context(), organizeGH, Tags, "covered-street", "shotengai"); err == nil {
+		t.Error("SetGroupParent() under its own child: want an error")
+	}
+	got, err := c.SetGroupParent(t.Context(), organizeGH, Tags, "shotengai", "")
+	if err != nil || !got.Changed {
+		t.Fatalf("SetGroupParent(shotengai, none) = %+v, %v; want it changed", got, err)
+	}
+	if content, _ := stagedContent(t, c, "data/tags/shotengai.json"); !strings.Contains(content.Content, `"parent": null`) {
+		t.Errorf("shotengai.json = %q, want parent null", content.Content)
+	}
+	if _, err := c.SetGroupParent(t.Context(), organizeGH, Genres, "street", ""); err == nil {
+		t.Error("SetGroupParent(genre): want an error, genres have no parent")
 	}
 }

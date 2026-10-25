@@ -42,15 +42,16 @@ lens (their `customLens` stays, naming a lens that's gone, and the Photo page sh
 > the lens's fields are joined in when the photo's JSON is worked out, so changing the lens once changes every photo
 > that points at it.
 
-The Photo page's **Lens** card, for a new photo and for a saved one, picks the lens (or **As the EXIF and camera
-overrides say**) and lists what it writes. For a saved photo, picking another lens also applies the camera overrides,
-as Update Data would, and **Save changes** writes both.
+The Photo page picks the lens (or **As the EXIF and camera overrides say**) and lists what it writes: on a **Lens**
+card for a new photo, and in a collapsible **Lens** section of the **Camera overrides** card for a saved one. The
+section starts open when the photo has a custom lens or a manual aperture. For a saved photo, picking another lens also
+applies the camera overrides, as Update Data would, and **Save changes** writes both.
 
 ## Manual or unknown aperture
 
 `manualAperture: true` with `"aperture": null` means the photo's aperture was set on the lens or isn't known. It comes
 from a custom lens, from a camera override rule (**Manual/unknown aperture** is one of the fields a rule can set), or
-from the **Manual/unknown aperture** box on the Lens card, which writes it straight into the photo's JSON. Files from
+from the **Manual/unknown aperture** box under **Lens** on the Photo page, which writes it straight into the photo's JSON. Files from
 before it have no `manualAperture`, which reads as `false`; Update Data's **Missing fields** adds it, with
 `customLens`.
 

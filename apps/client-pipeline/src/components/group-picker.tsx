@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import {
@@ -13,6 +12,7 @@ import {
 } from "@/api/organize";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
+import { useTagPaste } from "@/components/pasted-tags";
 
 /** Where an album sits, such as “In Asia › Korea”, or undefined for a top-level one. */
 function albumPlace(albums: Group[], album: Group): string | undefined {
@@ -46,6 +46,8 @@ interface GroupComboboxProps {
   exclude?: ReadonlySet<string>;
   placeholder?: string;
   "aria-describedby"?: string;
+  /** A small button inside the field, left of its caret, such as the Tags field's prompt button. */
+  action?: ReactNode;
 }
 
 /** A combobox of every album, tag or genre on GitHub, read once with the Organize pages' query. */
@@ -97,6 +99,8 @@ interface PhotoGroupFieldsProps {
   disabled?: boolean;
   /** An extra warning about albums, such as photos already being in one. */
   albumWarning?: ReactNode;
+  /** The Tags field's sparkle button, which copies a tag prompt, when the photo has one. */
+  tagPrompt?: ReactNode;
 }
 
 /** The album, tag and genre comboboxes, warning when a photo would be in more than one album. */
@@ -106,6 +110,7 @@ export function PhotoGroupFields({
   onChange,
   disabled,
   albumWarning,
+  tagPrompt,
 }: PhotoGroupFieldsProps) {
   const organize = useQuery(organizeQuery);
   const albumsId = `${idPrefix}-albums`;
@@ -124,18 +129,59 @@ export function PhotoGroupFields({
         />
         <AlbumHint id={`${albumsId}-hint`} count={value.albums.length} warning={albumWarning} />
       </div>
-      {(["tags", "genres"] as const).map((kind) => (
-        <div key={kind} className="flex flex-col gap-2">
-          <FieldLabel htmlFor={`${idPrefix}-${kind}`} kind={kind} />
-          <GroupCombobox
-            id={`${idPrefix}-${kind}`}
-            kind={kind}
-            value={value[kind]}
-            disabled={disabled}
-            onChange={(ids) => onChange({ ...value, [kind]: ids })}
-          />
-        </div>
-      ))}
+      <TagsField
+        id={`${idPrefix}-tags`}
+        value={value.tags}
+        disabled={disabled}
+        action={tagPrompt}
+        onChange={(tags) => onChange({ ...value, tags })}
+      />
+      <div className="flex flex-col gap-2">
+        <FieldLabel htmlFor={`${idPrefix}-genres`} kind="genres" />
+        <GroupCombobox
+          id={`${idPrefix}-genres`}
+          kind="genres"
+          value={value.genres}
+          disabled={disabled}
+          onChange={(genres) => onChange({ ...value, genres })}
+        />
+      </div>
+    </div>
+  );
+}
+
+interface TagsFieldProps {
+  id: string;
+  value: string[];
+  onChange: (value: string[]) => void;
+  disabled?: boolean;
+  action?: ReactNode;
+}
+
+/**
+ * The tags combobox, which also takes a pasted comma-separated list, such as an LLM's answer to the
+ * tag prompt, adding the tags it names and offering to make the ones that aren't tags yet.
+ */
+function TagsField({ id, value, onChange, disabled, action }: TagsFieldProps) {
+  const paste = useTagPaste(value, onChange, disabled);
+  return (
+    <div className="flex flex-col gap-2">
+      <FieldLabel htmlFor={id} kind="tags" />
+      <div onPaste={paste.onPaste}>
+        <GroupCombobox
+          id={id}
+          kind="tags"
+          value={value}
+          disabled={disabled}
+          aria-describedby={`${id}-hint`}
+          action={action}
+          onChange={onChange}
+        />
+      </div>
+      <p id={`${id}-hint`} className="text-muted-foreground text-sm">
+        Paste a comma-separated list to add several at once.
+      </p>
+      {paste.summary}
     </div>
   );
 }
@@ -158,26 +204,18 @@ function AlbumHint({ id, count, warning }: { id: string; count: number; warning?
   );
 }
 
-/** Each kind's field label and the Organize page that manages it. */
-const FIELDS = {
-  albums: { label: "Albums", to: "/albums" },
-  tags: { label: "Tags", to: "/tags" },
-  genres: { label: "Photographic genres", to: "/genres" },
-} as const;
+/** Each kind's field label. */
+const LABELS: Record<GroupKind, string> = {
+  albums: "Albums",
+  tags: "Tags",
+  genres: "Photographic genres",
+};
 
 function FieldLabel({ htmlFor, kind }: { htmlFor: string; kind: GroupKind }) {
   return (
-    <div className="flex items-baseline justify-between gap-2">
-      <label htmlFor={htmlFor} className="text-sm font-medium">
-        {FIELDS[kind].label}
-      </label>
-      <Link
-        to={FIELDS[kind].to}
-        className="text-muted-foreground text-xs underline-offset-4 hover:underline"
-      >
-        Manage {kind}
-      </Link>
-    </div>
+    <label htmlFor={htmlFor} className="text-sm font-medium">
+      {LABELS[kind]}
+    </label>
   );
 }
 
@@ -197,10 +235,18 @@ interface PhotoGroupsCardProps {
   /** What happens to the albums, tags and genres when they're saved. */
   description: string;
   disabled: boolean;
+  /** The Tags field's sparkle button, which copies a tag prompt, when the photo has one. */
+  tagPrompt?: ReactNode;
 }
 
 /** The photo's albums, tags and genres, saved as the IDs in its JSON's "albums", "tags" and "genres". */
-export function PhotoGroupsCard({ value, onChange, description, disabled }: PhotoGroupsCardProps) {
+export function PhotoGroupsCard({
+  value,
+  onChange,
+  description,
+  disabled,
+  tagPrompt,
+}: PhotoGroupsCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -208,7 +254,13 @@ export function PhotoGroupsCard({ value, onChange, description, disabled }: Phot
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <PhotoGroupFields idPrefix="photo" value={value} onChange={onChange} disabled={disabled} />
+        <PhotoGroupFields
+          idPrefix="photo"
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          tagPrompt={tagPrompt}
+        />
       </CardContent>
     </Card>
   );

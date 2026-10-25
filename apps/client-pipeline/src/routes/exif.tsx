@@ -43,6 +43,7 @@ import { withNewLens } from "@/components/edit-in-flight/lens-edit";
 import { useLensSettings } from "@/components/edit-in-flight/use-edit";
 import type { LensChoice } from "@/lib/custom-lens";
 import type { CombinedPhoto } from "@/lib/group-photos";
+import { useTabSubject } from "@/stores/tab-title";
 
 interface PhotoSearch {
   /**
@@ -112,6 +113,7 @@ function PhotoPage() {
   const images = withImages(extract.data?.sanitized, r2.uploaded);
   const sanitized = images && withNewLens(withDetails(images, details), lens, lensSettings);
   const identity = photoIdentity(extract, sanitized);
+  useTabSubject(newPhotoName(extract, details));
 
   return (
     <Page
@@ -283,6 +285,12 @@ function lockedNote(saved: boolean): string {
   return saved
     ? "Saved to the batch with this square. Change it from the photo's Edit button in Photos in Flight."
     : "Uploading with this square…";
+}
+
+/** What to call the analyzed photo in the tab: its title, or else its file name; null until it's analyzed. */
+function newPhotoName(extract: ExifMutation, details: PhotoDetails): string | null {
+  if (!extract.isSuccess) return null;
+  return details.title.trim() || fileStem(extract.data.file);
 }
 
 /** What ALLPHOTOS.json is checked for, once the photo's EXIF has been read. */

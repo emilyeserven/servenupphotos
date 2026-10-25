@@ -27,3 +27,12 @@ it; it always shows in full, so it has no collapse button.
 **Theme**, just above **Collapse sidebar**, switches between light, dark and system colors ([Theme](theme.md)).
 
 Each page's icon is set next to its title and URL in `navGroups`; a new page needs one.
+
+## Tab titles
+
+Each page names the browser tab after itself, such as **Gallery · Photo Pipeline** (`components/page.tsx`). A page
+about one photo puts the photo's name first, so tabs open on different photos can be told apart: the photo editor
+(**Edit Photo**) shows **Amsterdam Canal · Edit Photo · Photo Pipeline**, following the title as it's typed, and the
+Photo page does the same once a new photo is analyzed. A photo without a title is named by its file name without the
+extension. The photo's name lives in `stores/tab-title.ts`: the page part sets it with `useTabSubject` and clears it
+when it unmounts.

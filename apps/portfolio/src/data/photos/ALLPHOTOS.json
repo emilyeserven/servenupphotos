@@ -20835,7 +20835,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["fire-alarm", "stickers", "graffiti", "urban-decay", "texture", "details"],
-    "genres": [],
+    "genres": ["macro"],
     "places": [
       {
         "relation": "",
@@ -31052,7 +31052,7 @@
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": ["chinatown", "city", "traffic", "cars", "signage", "storefronts"],
-    "genres": [],
+    "genres": ["tilt-shift"],
     "places": [
       {
         "relation": "",
@@ -45310,7 +45310,7 @@
     "socialMediaPublishDate": null,
     "albums": [],
     "tags": ["city", "storefronts", "signage", "crosswalk", "pedestrians", "skyscraper"],
-    "genres": [],
+    "genres": ["tilt-shift"],
     "places": [
       {
         "relation": "",

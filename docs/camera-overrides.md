@@ -63,7 +63,7 @@ reads as `{}` (their fields are still their EXIF values); Update Data's **Missin
   gets it when an override changes something.
 - **The Photo page**, editing a saved photo, has a **Camera overrides** card listing what the overrides would change in
   its JSON. **Apply overrides** puts those changes into the edit, and **Save changes** writes them with the rest. Picking
-  another custom lens on the **Lens** card above it applies them too.
+  another custom lens in the card's collapsible **Lens** section applies them too.
 
 Metadata groups and the portfolio's Camera and Lens filters use the values as the photo files have them, so after
 renaming a camera or lens here, add the new name to its [metadata groups](metadata-groups.md) (and drop the old one).

@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { tabTitle, useTabTitleStore } from "@/stores/tab-title";
 
 interface PageProps {
   title: string;
@@ -11,8 +12,9 @@ interface PageProps {
   action?: ReactNode;
 }
 
-/** Centered page column with a title and description. */
+/** Centered page column with a title and description, which also names the browser tab. */
 export function Page({ title, description, children, wide = false, action }: PageProps) {
+  useTabTitle(title);
   return (
     <div className={cn("mx-auto flex flex-col gap-6 p-6", wide ? "max-w-6xl" : "max-w-2xl")}>
       <header>
@@ -25,4 +27,12 @@ export function Page({ title, description, children, wide = false, action }: Pag
       {children}
     </div>
   );
+}
+
+/** Names the browser tab after the page, with the photo it shows first when there is one. */
+function useTabTitle(page: string) {
+  const subject = useTabTitleStore((state) => state.subject);
+  useEffect(() => {
+    document.title = tabTitle(page, subject);
+  }, [page, subject]);
 }

@@ -1,4 +1,4 @@
-import { albums, genres, type Group, subAlbums, tags } from "@/lib/groups";
+import { albums, genres, type Group, subAlbums, subTags, tags } from "@/lib/groups";
 import {
   localizeName,
   localizePlace,
@@ -8,7 +8,7 @@ import {
 } from "@/lib/localize";
 import { type FilterKey, type LocationKey, matchesFilters } from "@/lib/photo-filters";
 import { groupTree, groupValues, type MetaGroup } from "@/lib/metadata-groups";
-import type { Photo } from "@/lib/photos";
+import { distinctState, type Photo } from "@/lib/photos";
 import type { EquipmentKey } from "@/lib/camera-filters";
 
 /** One choice of a filter's dropdown. */
@@ -44,7 +44,8 @@ function locationPaths(photo: Photo): [LocationKey, string][][] {
   const top: [LocationKey, string][] = [];
   const add = (key: LocationKey, value: string | null) => value && top.push([key, value]);
   add("country", photo.country);
-  add("state", photo.state);
+  // A state named like its city, such as Seoul in Seoul, is left out so the name isn't nested in itself.
+  add("state", distinctState(photo.state, photo.city));
   add("city", photo.city);
   const chains = photo.placeIds.map((id) =>
     placeAncestry(id)
@@ -121,7 +122,10 @@ export function locationOptions(list: Photo[], facet: Photo[]): LocationOption[]
   return childOptions(locationTree(list), facet);
 }
 
-/** An album, tag or genre as a choice, and, for an album, its sub-albums after it. */
+/** The albums inside an album, or the tags under a tag; genres have none. */
+const CHILDREN = { album: subAlbums, tag: subTags, genre: () => [] } as const;
+
+/** An album, tag or genre as a choice, and the albums or tags inside it after it. */
 function groupOptions(
   key: "album" | "tag" | "genre",
   group: Group,
@@ -135,21 +139,24 @@ function groupOptions(
     depth,
     count: countOf(facet, key, group.id),
   };
-  const children = key === "album" ? subAlbums(group.id) : [];
-  return [option, ...children.flatMap((album) => groupOptions(key, album, facet, depth + 1))];
+  const inside: Group[] = CHILDREN[key](group.id);
+  return [option, ...inside.flatMap((child) => groupOptions(key, child, facet, depth + 1))];
+}
+
+/** The albums or tags in list at the top: ones without a parent in list, so none is lost. */
+function topLevel(list: Group[]): Group[] {
+  const known = new Set(list.map((group) => group.id));
+  return list.filter((group) => !known.has(group.parent ?? "") || group.parent === group.id);
 }
 
 /** The album filter's choices: every album, each sub-album under its parent. */
 export function albumOptions(facet: Photo[]): FilterOption[] {
-  const known = new Set(albums.map((album) => album.id));
-  // An album whose parent isn't an album goes at the top, so it isn't lost.
-  const top = albums.filter((album) => !known.has(album.parent ?? "") || album.parent === album.id);
-  return top.flatMap((album) => groupOptions("album", album, facet, 0));
+  return topLevel(albums).flatMap((album) => groupOptions("album", album, facet, 0));
 }
 
-/** The tag filter's choices: every tag. */
+/** The tag filter's choices: every tag, each under its parent tag. */
 export function tagOptions(facet: Photo[]): FilterOption[] {
-  return tags.flatMap((tag) => groupOptions("tag", tag, facet, 0));
+  return topLevel(tags).flatMap((tag) => groupOptions("tag", tag, facet, 0));
 }
 
 /** The genre filter's choices: every photographic genre. */

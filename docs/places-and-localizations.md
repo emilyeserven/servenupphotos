@@ -158,9 +158,9 @@ Gyeongbokgung Palace by Geunjeongmun Gate” becomes “In Geunjeongmun Gate by 
 
 ### Suggest a location
 
-When a photo is being edited, the Photo page's **Suggest a location** card (under the Location card) asks an LLM where
-it was taken, like [Suggest tags](albums-and-tags.md#suggest-tags) does for tags. **Copy location prompt** copies a
-prompt to paste into a chat with any LLM that can see images (`lib/location-prompt.ts`). It has:
+When a photo is being edited, the sparkle button beside the Location card's **Place** label asks an LLM where it was
+taken, like [Suggest tags](albums-and-tags.md#suggest-tags) does for tags. It copies a prompt to paste into a chat
+with any LLM that can see images (`lib/location-prompt.ts`). It has:
 
 - A link to the photo's **Small** version (500px on its long edge), or its Medium one when it has no Small, for the
   same token reasons as Suggest tags.
@@ -188,7 +188,7 @@ prompt to paste into a chat with any LLM that can see images (`lib/location-prom
 }
 ```
 
-Once it's copied, a field takes the LLM's answer, and **Read answer** reads the JSON from its first `{` to its last
+Once it's copied, a field under the **Place** label takes the LLM's answer, and **Read answer** reads the JSON from its first `{` to its last
 `}`, so a code fence or words around it don't matter. It shows the confidence and reasoning, then each field where the
 answer says something new, with what the photo shows there now (its custom value, else the EXIF one, else the city
 and country its places give it) and a checkbox, ticked when the photo has nothing there yet:
@@ -205,7 +205,7 @@ and country its places give it) and a checkbox, ticked when the photo has nothin
 
 **Fill in N ticked** puts them into the Location card as an edit that **Save changes** saves.
 
-> **Frontend analogy:** it's the Suggest tags import box with a JSON body instead of a CSV: parse, diff each field
+> **Frontend analogy:** it's the Tags field's paste handling with a JSON body instead of a CSV: parse, diff each field
 > against the form's current value, and show a "review changes" list of checkboxes before patching the form state.
 
 ### Places listed by city or country
@@ -247,6 +247,11 @@ Choosing a place on Edit Photo or the Photo page follows the places' parents:
   `Province-State`) on the Photo page, its own field on a place, its own tab on the Localizations page, and its own
   level in the Places list and the portfolio's **Places** filter, nested between the country and the city. It's
   optional throughout: a photo or place with no state lists its city straight under its country, as before.
+  A state with the same name as its city, such as Seoul in Seoul (ignoring case), isn't written twice: the portfolio
+  leaves the state out of the photo's location text and out of the **Places** filter (the city stands for both), and
+  the Places list shows them as one row with the state's and the city's icons. That row is the city's: choosing it
+  edits the city, and what was under the state is listed under it. The state's localization is still on the
+  Localizations page.
 - **Localizing.** A chosen place with no localization yet gets a button beside it that opens a dialog for its
   romanization, local pronunciation and local script, saved like a row on the Localizations page. It isn't shown
   when the place's country, or else the photo's, is the United States (“United States”, “United States of America”,

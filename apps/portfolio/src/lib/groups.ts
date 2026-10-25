@@ -8,7 +8,10 @@ export interface Group {
   id: string;
   name: string;
   description?: string;
-  /** For an album, the ID of the album it's a sub-album of; missing or "" at the top. */
+  /**
+   * For an album, the ID of the album it's a sub-album of; for a tag, the more general tag it's a
+   * kind of, such as "covered-street" for "shotengai". Missing or "" at the top.
+   */
   parent?: string;
   /** For an album, its place among the albums, 1 first, set on the pipeline's Albums page. */
   order?: number;
@@ -57,20 +60,43 @@ export const genres: Group[] = (
   ) ?? (committedGenres as Group[])
 ).toSorted((a, b) => a.name.localeCompare(b.name));
 
+/** The albums or tags in list directly inside the one with the ID, or the top-level ones for "". */
+function children(list: Group[], parent: string): Group[] {
+  return list.filter((group) => (group.parent ?? "") === parent && group.id !== parent);
+}
+
+/** The ID and the IDs of every album or tag in list inside it, however deep; a loop stops where it comes back round. */
+function withDescendants(list: Group[], id: string, found = new Set<string>()): Set<string> {
+  if (found.has(id)) return found;
+  found.add(id);
+  for (const child of children(list, id)) withDescendants(list, child.id, found);
+  return found;
+}
+
 /** The albums directly inside the album with the ID, or the top-level albums for "", in order. */
 export function subAlbums(parent: string): Group[] {
-  return albums.filter((album) => (album.parent ?? "") === parent && album.id !== parent);
+  return children(albums, parent);
 }
 
 /**
  * The album's ID and the IDs of every album inside it, however deep, so a photo in a sub-album
  * counts as in the album too. A loop of parents stops where it comes back round.
  */
-export function albumAndSubAlbums(id: string, found = new Set<string>()): Set<string> {
-  if (found.has(id)) return found;
-  found.add(id);
-  for (const album of subAlbums(id)) albumAndSubAlbums(album.id, found);
-  return found;
+export function albumAndSubAlbums(id: string): Set<string> {
+  return withDescendants(albums, id);
+}
+
+/** The tags whose parent is the tag with the ID, such as "shotengai" under "covered-street". */
+export function subTags(parent: string): Group[] {
+  return children(tags, parent);
+}
+
+/**
+ * The tag's ID and the IDs of every tag under it, however deep, so a photo tagged "shotengai"
+ * counts as tagged "covered-street" too.
+ */
+export function tagAndSubTags(id: string): Set<string> {
+  return withDescendants(tags, id);
 }
 
 /** The top-level albums in order, counting ones whose parent isn't an album. */

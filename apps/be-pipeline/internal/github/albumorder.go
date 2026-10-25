@@ -103,9 +103,15 @@ func zoneEdit(album Group, zone string, in bool) (albumEdit, bool) {
 // readableAlbum is the album in albums with id, failing when there's none or
 // its file couldn't be read.
 func readableAlbum(albums []Group, id string) (Group, *PublishError) {
-	album, ok := findGroup(albums, id)
+	return readableGroup(Albums, albums, id)
+}
+
+// readableGroup is the album, tag or genre of kind in groups with id, failing
+// when there's none or its file couldn't be read.
+func readableGroup(kind Kind, groups []Group, id string) (Group, *PublishError) {
+	album, ok := findGroup(groups, id)
 	if !ok {
-		return Group{}, publishErr(http.StatusNotFound, "There's no album with the ID %q. Refresh to see what there is.", id)
+		return Group{}, publishErr(http.StatusNotFound, "There's no %s with the ID %q. Refresh to see what there is.", kind.Name, id)
 	}
 	if album.Error != "" {
 		return Group{}, publishErr(http.StatusConflict, "%s couldn't be read (%s), so it wasn't changed.", album.Path, album.Error)

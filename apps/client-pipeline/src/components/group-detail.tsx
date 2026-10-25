@@ -12,7 +12,9 @@ import {
   albumTree,
   groupLabel,
   organizeQuery,
-  setAlbumParentMutation,
+  type ParentKind,
+  hasParents,
+  setGroupParentMutation,
 } from "@/api/organize";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
@@ -107,7 +109,9 @@ function GroupDetail({ kind, group, organize }: GroupDetailProps) {
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <div className="flex min-w-0 flex-col gap-6">
         <AboutCard kind={kind} group={group} organize={organize} />
-        {kind === "albums" && !group.error && <ParentCard album={group} organize={organize} />}
+        {hasParents(kind) && !group.error && (
+          <ParentCard kind={kind} group={group} organize={organize} />
+        )}
         {kind === "albums" && <SubAlbumsCard album={group} albums={organize.albums} />}
       </div>
       <GroupPhotos kind={kind} group={group} albums={organize.albums} />
@@ -144,36 +148,48 @@ function AboutCard({ kind, group, organize }: GroupDetailProps) {
           <dd>
             <GroupStatus inFlight={group.inFlight} pullRequestUrl={organize.pullRequest?.url} />
           </dd>
-          {kind === "albums" && <AlbumPlace album={group} albums={organize.albums} />}
+          {hasParents(kind) && <GroupPlace kind={kind} group={group} list={organize[kind]} />}
         </dl>
       </CardContent>
     </Card>
   );
 }
 
-/** The albums an album is inside, and the ones inside it, as rows of AboutCard's list. */
-function AlbumPlace({ album, albums }: { album: Group; albums: Group[] }) {
-  const parents = albumAncestry(albums, album.id).slice(0, -1);
+/** How each kind with parents names where one sits. */
+const PLACE_TEXT: Record<ParentKind, { label: string; top: string }> = {
+  albums: { label: "Inside", top: "Nothing: it's a top-level album" },
+  tags: { label: "Under", top: "Nothing: it's a top-level tag" },
+};
+
+/** The albums an album is inside, or the tags a tag is under, as rows of AboutCard's list. */
+function GroupPlace({ kind, group, list }: { kind: ParentKind; group: Group; list: Group[] }) {
+  const parents = albumAncestry(list, group.id).slice(0, -1);
   return (
     <>
-      <dt className="text-muted-foreground">Inside</dt>
+      <dt className="text-muted-foreground">{PLACE_TEXT[kind].label}</dt>
       <dd>
         {parents.length > 0 ? (
           parents.map((parent, i) => (
             <span key={parent.id}>
               {i > 0 && <span className="text-muted-foreground"> › </span>}
-              <AlbumLink album={parent} />
+              <GroupLink kind={kind} group={parent} />
             </span>
           ))
-        ) : album.parent ? (
-          <span className="text-destructive">
-            <code>{album.parent}</code>, which isn't an album
-          </span>
         ) : (
-          <span className="text-muted-foreground">Nothing: it's a top-level album</span>
+          <NoParent kind={kind} parent={group.parent} />
         )}
       </dd>
     </>
+  );
+}
+
+/** Says a group has no parent, or that the one it names isn't of its kind. */
+function NoParent({ kind, parent }: { kind: ParentKind; parent?: string }) {
+  if (!parent) return <span className="text-muted-foreground">{PLACE_TEXT[kind].top}</span>;
+  return (
+    <span className="text-destructive">
+      <code>{parent}</code>, which isn't {kind === "albums" ? "an album" : "a tag"}
+    </span>
   );
 }
 
@@ -230,7 +246,7 @@ function SubAlbumRow({ album, depth, count }: { album: Group; depth: number; cou
         <CornerDownRightIcon className="text-muted-foreground mt-0.5 size-3.5 shrink-0" />
       )}
       <div className="min-w-0 flex-1">
-        <AlbumLink album={album} />
+        <GroupLink kind="albums" group={album} />
         {album.description && (
           <p className="text-muted-foreground truncate text-xs">{album.description}</p>
         )}
@@ -247,51 +263,78 @@ function photoCountText(count?: number): string {
   return count === 1 ? "1 photo" : `${count} photos`;
 }
 
-function AlbumLink({ album }: { album: Group }) {
+function GroupLink({ kind, group }: { kind: ParentKind; group: Group }) {
   return (
-    <Link to="/albums/$id" params={{ id: album.id }} className="underline-offset-4 hover:underline">
-      {groupLabel(album)}
+    <Link
+      to={kind === "albums" ? "/albums/$id" : "/tags/$id"}
+      params={{ id: group.id }}
+      className="underline-offset-4 hover:underline"
+    >
+      {groupLabel(group)}
     </Link>
   );
 }
 
-/** Picks the album's one parent, leaving out itself and its sub-albums, and saves it. */
-function ParentCard({ album, organize }: { album: Group; organize: OrganizeResponse }) {
-  const saved = album.parent ? [album.parent] : [];
+/** How the parent card describes each kind's parent. */
+const PARENT_TEXT: Record<ParentKind, { title: string; description: string; none: string }> = {
+  albums: {
+    title: "Parent album",
+    description: "An album can be inside one other album.",
+    none: "None: a top-level album",
+  },
+  tags: {
+    title: "Parent tag",
+    description:
+      "A tag can be under one more general tag, such as shotengai under covered-street, so filtering by the parent shows its photos too.",
+    none: "None: a top-level tag",
+  },
+};
+
+/** Picks the album's or tag's one parent, leaving out itself and the ones under it, and saves it. */
+function ParentCard({
+  kind,
+  group,
+  organize,
+}: {
+  kind: ParentKind;
+  group: Group;
+  organize: OrganizeResponse;
+}) {
+  const saved = group.parent ? [group.parent] : [];
   const [parent, setParent] = useState<string[]>(saved);
-  const { save, rebuild } = useParentSave(Boolean(organize.pullRequest));
-  const exclude = new Set([album.id, ...albumDescendants(organize.albums, album.id)]);
+  const { save, rebuild } = useParentSave(kind, Boolean(organize.pullRequest));
+  const exclude = new Set([group.id, ...albumDescendants(organize[kind], group.id)]);
+  const text = PARENT_TEXT[kind];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Parent album</CardTitle>
+        <CardTitle>{text.title}</CardTitle>
         <CardDescription>
-          An album can be inside one other album. Saving changes its file in the open photo data
-          pull request, or opens a new one.
+          {text.description} Saving changes its file as a change waiting for Commit.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3 text-sm">
         <GroupCombobox
-          id="album-parent"
-          kind="albums"
+          id={`${kind}-parent`}
+          kind={kind}
           multiple={false}
           value={parent}
           exclude={exclude}
           disabled={save.isPending}
-          placeholder="None: a top-level album"
+          placeholder={text.none}
           onChange={(next) => {
             save.reset();
             setParent(next);
           }}
         />
         <ParentButtons
-          changed={parentChanged(parent, album)}
+          changed={parentChanged(parent, group)}
           pending={save.isPending}
-          onSave={() => save.mutate({ id: album.id, parent: parent[0] ?? null })}
+          onSave={() => save.mutate({ id: group.id, parent: parent[0] ?? null })}
           onUndo={() => setParent(saved)}
         />
-        <ParentOutcome save={save} rebuild={rebuild} />
+        <ParentOutcome save={save} rebuild={rebuild} kind={kind} />
       </CardContent>
     </Card>
   );
@@ -301,19 +344,19 @@ function parentChanged(parent: string[], album: Group): boolean {
   return (parent[0] ?? "") !== (album.parent ?? "");
 }
 
-/** Saves an album's parent, reading the albums again and following CI's rebuild after a change. */
-function useParentSave(hasPullRequest: boolean) {
+/** Saves an album's or tag's parent, reading them again and following CI's rebuild after a change. */
+function useParentSave(kind: ParentKind, hasPullRequest: boolean) {
   const { refetch } = useQuery(organizeQuery);
   const rebuild = useAllPhotosRebuild(hasPullRequest, () => {});
   const save = useMutation({
-    ...setAlbumParentMutation,
+    ...setGroupParentMutation(kind),
     onSuccess: (result) => {
       if (!result.changed) return;
       void refetch();
       rebuild.afterPush();
     },
   });
-  return { save, rebuild };
+  return { save, rebuild, kind };
 }
 
 type ParentSave = ReturnType<typeof useParentSave>;
@@ -342,7 +385,7 @@ function ParentButtons({ changed, pending, onSave, onUndo }: ParentButtonsProps)
 }
 
 /** What saving the parent did, or why it failed. */
-function ParentOutcome({ save, rebuild }: ParentSave) {
+function ParentOutcome({ save, rebuild, kind }: ParentSave) {
   if (save.isError) return <p className="text-destructive">{save.error.message}</p>;
   if (!save.isSuccess) return null;
   return (
@@ -354,7 +397,7 @@ function ParentOutcome({ save, rebuild }: ParentSave) {
         </span>
       </p>
       {save.data.changed && (
-        <AllPhotosRebuild status={rebuild.status} file={GROUP_KINDS.albums.allFile} />
+        <AllPhotosRebuild status={rebuild.status} file={GROUP_KINDS[kind].allFile} />
       )}
     </div>
   );
