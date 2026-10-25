@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckIcon, CopyIcon, SparklesIcon } from "lucide-react";
+import { SparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { metaGroups } from "@/api/metainfo";
 import { type OrganizeResponse, createGroupMutation, groupId, organizeQuery } from "@/api/organize";
 import { photosInFlightQuery } from "@/api/photos";
+import { CopyPromptButton } from "@/components/edit-in-flight/copy-prompt-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,7 +41,12 @@ export function TagPromptCard(props: TagPromptCardProps) {
         {organize.data ? (
           <TagPromptSteps {...props} organize={organize.data} />
         ) : (
-          <CopyPromptButton disabled prompt={() => ""} onCopied={() => {}} />
+          <CopyPromptButton
+            label="Copy tag prompt"
+            disabled
+            prompt={() => ""}
+            onCopied={() => {}}
+          />
         )}
       </CardContent>
     </Card>
@@ -59,6 +65,7 @@ function TagPromptSteps({
   return (
     <>
       <CopyPromptButton
+        label="Copy tag prompt"
         disabled={false}
         prompt={() => tagPrompt(imageUrl, { ...organize, metaGroups: groups })}
         onCopied={() => setCopied(true)}
@@ -71,35 +78,6 @@ function TagPromptSteps({
         />
       )}
     </>
-  );
-}
-
-interface CopyPromptButtonProps {
-  disabled: boolean;
-  prompt: () => string;
-  onCopied: () => void;
-}
-
-/** Copies the prompt, saying so for a moment. */
-function CopyPromptButton({ disabled, prompt, onCopied }: CopyPromptButtonProps) {
-  const [justCopied, setJustCopied] = useState(false);
-  return (
-    <Button
-      type="button"
-      variant="outline"
-      className="self-start"
-      disabled={disabled}
-      onClick={() => {
-        void navigator.clipboard.writeText(prompt()).then(() => {
-          onCopied();
-          setJustCopied(true);
-          setTimeout(() => setJustCopied(false), 2000);
-        });
-      }}
-    >
-      {justCopied ? <CheckIcon /> : <CopyIcon />}
-      {justCopied ? "Copied" : "Copy tag prompt"}
-    </Button>
   );
 }
 
