@@ -696,6 +696,8 @@ export function defaultFixtures() {
     "POST /api/photos/github": ({ body }) => savedPhoto(`${FOLDER}/photos/${body?.name}.json`),
     "POST /api/organize/tags": ({ body = {} }) =>
       savedPhoto(`${FOLDER}/tags/${body.id}.json`, { ...body, description: "" }),
+    "POST /api/organize/genres": ({ body = {} }) =>
+      savedPhoto(`${FOLDER}/genres/${body.id}.json`, { ...body, description: "" }),
     "PUT /api/photos/in-flight": ({ body = {} }) => ({
       path: savedPath(body),
       changed: true,

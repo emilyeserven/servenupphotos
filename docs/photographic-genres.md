@@ -16,7 +16,10 @@ tags, compared ignoring case, so a photo's `albums`, `tags` and `genres` never m
 A photo can have several genres. Its JSON lists their IDs in `genres`, after `tags`, and new photos get
 `"genres": []`. **Update Data → Missing fields** adds the empty list to older files. The Photo page's **Albums, tags
 and genres** card has a **Photographic genres** combobox, for a new photo (saved with **Save**) and for one being
-edited (saved with **Save changes**). In the Gallery, **Select** → **Add albums, tags and genres** adds genres to every
+edited (saved with **Save changes**). In that combobox, and in the Gallery's **Add albums, tags and genres**, typing a name that isn't a genre yet offers **Make “…” a new genre** at the
+end of the list: choosing it checks the name the same way **New genre** does, saves the genre file as a change waiting
+for Commit, and chooses it for the photo. When an album or tag already has that name or ID, it says so under the field
+instead. In the Gallery, **Select** → **Add albums, tags and genres** adds genres to every
 chosen photo (`POST /api/photos/groups` with `genres`), each tile lists its genres, and the **Genres** filter there and
 on Photos in Flight finds photos with or without any.
 
