@@ -74,12 +74,23 @@ up, the word is the one of the place just under it on the way up. Older place fi
 A place can have a **GPS position**, written on the Places page as `latitude, longitude` in decimal degrees (such as
 `37.5796, 126.977`, which is what right-clicking a spot in Google Maps copies). It's saved as `latitude` and
 `longitude` numbers in the place file, left out when not set; saving refuses only one of them, or one off the globe.
-On the portfolio, a photo with no GPS position of its own (a [custom one](#custom-gps-position) or its EXIF one) goes on the map at its first place's position, or else a
-place that place is in, or else its next place's. The hover text still shows only a photo's own (custom or EXIF) position. Its map marker gets a
-softer border, as the spot is only near where the photo was taken, unless the place is ticked as an **Exact location**
-(such as a subway station or a museum, where its photos were taken right at its GPS position): then the marker keeps the
-same solid white border as a photo with its own GPS position. It's saved as `"exactLocation": true`, only on a place
-with a GPS position, and a place that uses the position of a place it's in is never exact.
+
+Every GPS field (a place's, **Add a GPS position for …**, and a photo's custom one) also takes degrees, minutes and
+seconds with N, S, E or W, as Wikipedia writes them: `37°34′12″N 126°59′56″E`, `37° 34' 12.5" N, 126° 59' 56" E`,
+`33°51′S 151°12′E` (minutes and seconds optional), exiftool's `37 deg 34' 12.50" N`, and latitude and longitude in
+either order. Once what's typed or pasted reads as a whole position, the field rewrites it as decimal degrees
+(`37.57, 126.998889`, rounded to six places, about 10cm), so it's saved the same way as one copied from Google Maps
+(`decimalGps` in `lib/place-gps.ts`). A **Suggest a location** answer with its latitude and longitude written that way
+is read the same.
+
+> **Frontend analogy:** it's an input mask that normalizes on change, like a phone field turning `(555) 123-4567`
+> into `+15551234567` before it reaches form state.
+> On the portfolio, a photo with no GPS position of its own (a [custom one](#custom-gps-position) or its EXIF one) goes on the map at its first place's position, or else a
+> place that place is in, or else its next place's. The hover text still shows only a photo's own (custom or EXIF) position. Its map marker gets a
+> softer border, as the spot is only near where the photo was taken, unless the place is ticked as an **Exact location**
+> (such as a subway station or a museum, where its photos were taken right at its GPS position): then the marker keeps the
+> same solid white border as a photo with its own GPS position. It's saved as `"exactLocation": true`, only on a place
+> with a GPS position, and a place that uses the position of a place it's in is never exact.
 
 The list's GPS column shows a filled crosshair for a place with its own GPS position, a plain one for a place that uses
 the position of a place it's in (hover for which), and an amber (!) warning on a place with neither when photos
@@ -144,6 +155,58 @@ Gyeongbokgung Palace. Typing a name that isn't a place offers **Add “…” as
 kept in the file but not used, so older photos need no change. With two
 places, **Swap places** swaps which place is first and which second, leaving each relation where it was: “In
 Gyeongbokgung Palace by Geunjeongmun Gate” becomes “In Geunjeongmun Gate by Gyeongbokgung Palace”.
+
+### Suggest a location
+
+When a photo is being edited, the Photo page's **Suggest a location** card (under the Location card) asks an LLM where
+it was taken, like [Suggest tags](albums-and-tags.md#suggest-tags) does for tags. **Copy location prompt** copies a
+prompt to paste into a chat with any LLM that can see images (`lib/location-prompt.ts`). It has:
+
+- A link to the photo's **Small** version (500px on its long edge), or its Medium one when it has no Small, for the
+  same token reasons as Suggest tags.
+- Everything already known of where it was taken, one fact per line, leaving out what's empty: its title, its places
+  (with their relation, city, state, country and GPS position, and whether that position is exact), the place name
+  when it has no places, the EXIF GPS position and custom one, the EXIF and custom city, state and country, and the
+  comment.
+- Every place in `PLACES.json`, the same way, to reuse when the photo was taken at one.
+- The rules: trust what's known unless the photo contradicts it, name the most specific place it can, write names as
+  English does, give a best-estimate GPS position even when it only inferred the place or the area (with `exact`
+  false), and answer with only one JSON object:
+
+```json
+{
+  "place": "Gwangjang Market",
+  "relation": "at",
+  "city": "Seoul",
+  "state": "",
+  "country": "South Korea",
+  "latitude": 37.57,
+  "longitude": 127.0098,
+  "exact": false,
+  "confidence": "medium",
+  "reasoning": "…"
+}
+```
+
+Once it's copied, a field takes the LLM's answer, and **Read answer** reads the JSON from its first `{` to its last
+`}`, so a code fence or words around it don't matter. It shows the confidence and reasoning, then each field where the
+answer says something new, with what the photo shows there now (its custom value, else the EXIF one, else the city
+and country its places give it) and a checkbox, ticked when the photo has nothing there yet:
+
+- **Place**: the place, matched to one in `PLACES.json` by name or ID, ignoring case. Ticking it makes it the photo's
+  place (with the place it's in second, as choosing it in the Location card does). One that isn't a place yet is
+  saved as a new place file first (a change waiting for Commit), with the answer's city, state, country and GPS
+  position, and **Exact location** set from `exact`.
+- **City**, **State or province** and **Country**: saved as the custom ones, or left empty when the answer matches the
+  EXIF value.
+- **GPS position**: saved as the custom GPS position. It's offered, and ticked when the photo has no GPS position,
+  even when the LLM only inferred roughly where the photo is; it then says so. When the EXIF has a position, it says
+  the map would show this one instead.
+
+**Fill in N ticked** puts them into the Location card as an edit that **Save changes** saves.
+
+> **Frontend analogy:** it's the Suggest tags import box with a JSON body instead of a CSV: parse, diff each field
+> against the form's current value, and show a "review changes" list of checkboxes before patching the form state.
 
 ### Places listed by city or country
 

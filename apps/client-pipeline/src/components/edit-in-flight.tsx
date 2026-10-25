@@ -30,6 +30,7 @@ import {
 } from "@/components/edit-in-flight/photo-json";
 import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
 import { ReplaceImageCard } from "@/components/edit-in-flight/replace-image-card";
+import { LocationPromptCard } from "@/components/edit-in-flight/location-prompt-card";
 import { TagPromptCard } from "@/components/edit-in-flight/tag-prompt-card";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
 import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
@@ -171,6 +172,13 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           fallbackTitle={fileStem(photoFile(editable.data) || fileName(editable.file.path))}
           exifPlace={savedExifPlace(edit.savedData)}
           description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
+          disabled={pending}
+        />
+        <LocationPromptCard
+          imageUrl={promptImageUrl(edit.savedData.images, editable.image.url)}
+          details={edit.details}
+          exif={savedExifPlace(edit.savedData)}
+          onChange={edit.setDetails}
           disabled={pending}
         />
         <SocialPostsCard
