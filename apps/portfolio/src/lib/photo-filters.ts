@@ -11,10 +11,14 @@ const GROUP_KEYS = ["album", "tag", "genre"] as const;
 
 type GroupKey = (typeof GROUP_KEYS)[number];
 
-/** The location, album, tag and genre filters as they're named in the URL. */
-export const FILTER_KEYS = [...LOCATION_KEYS, ...GROUP_KEYS] as const;
+/** The location, album, tag and genre filters' keys. */
+export type FilterKey = LocationKey | GroupKey;
 
-export type FilterKey = (typeof FILTER_KEYS)[number];
+/**
+ * Every filter as it's named in the URL: the location, album, tag and genre filters, and `ids`, the
+ * photos chosen one by one, as the map's **View in grid** sets when no place covers just its photos.
+ */
+export const FILTER_KEYS = [...LOCATION_KEYS, ...GROUP_KEYS, "ids"] as const;
 
 /**
  * The filters every portfolio view shares, kept in the URL; each is left out when it isn't set.
@@ -22,7 +26,7 @@ export type FilterKey = (typeof FILTER_KEYS)[number];
  * place stays readable, and more as a list.
  */
 export type PhotoFilters = Partial<
-  Record<LocationKey, string | string[]> & Record<GroupKey, string>
+  Record<LocationKey, string | string[]> & Record<GroupKey, string> & { ids: number[] }
 >;
 
 /** A location filter's values as a list, however many there are. */
@@ -53,7 +57,13 @@ export function parseFilters(search: Record<string, unknown>): PhotoFilters {
     const value = search[key];
     return typeof value === "string" && value !== "" ? [[key, value]] : [];
   });
-  return Object.fromEntries([...locations, ...groups]);
+  return { ...Object.fromEntries([...locations, ...groups]), ...idsOf(search.ids) };
+}
+
+/** The photos chosen one by one in the URL, left out when there are none. */
+function idsOf(value: unknown): PhotoFilters {
+  const ids = (Array.isArray(value) ? value : [value]).filter(Number.isInteger);
+  return ids.length > 0 ? { ids } : {};
 }
 
 /** Whether any filter is set. */
@@ -61,10 +71,14 @@ export function hasFilters(filters: PhotoFilters): boolean {
   return Object.keys(filters).length > 0;
 }
 
-/** How many choices the filters make: each country, city and place counts, and the album, tag and genre. */
+/**
+ * How many choices the filters make: each country, city and place counts, and the album, tag,
+ * genre and photos chosen one by one.
+ */
 export function filterCount(filters: PhotoFilters): number {
   const locations = LOCATION_KEYS.flatMap((key) => locationValues(filters[key])).length;
-  return locations + GROUP_KEYS.filter((key) => filters[key] !== undefined).length;
+  const groups = GROUP_KEYS.filter((key) => filters[key] !== undefined).length;
+  return locations + groups + (filters.ids ? 1 : 0);
 }
 
 /** Whether the photo is in the album with the ID or one of its sub-albums. */
@@ -103,9 +117,15 @@ function matchesLocations(photo: Photo, filters: PhotoFilters): boolean {
   return chosen.length === 0 || chosen.some(([key, value]) => MATCHES[key](photo, value));
 }
 
+/** Whether the photo is one of the photos chosen one by one, or none are chosen. */
+function matchesIds(photo: Photo, ids: number[] | undefined): boolean {
+  return !ids || ids.includes(photo.id);
+}
+
 /** Whether the photo matches every filter that's set; it needs to match one of several locations. */
 export function matchesFilters(photo: Photo, filters: PhotoFilters): boolean {
   return (
+    matchesIds(photo, filters.ids) &&
     matchesLocations(photo, filters) &&
     GROUP_KEYS.every((key) => {
       const value = filters[key];
@@ -120,7 +140,10 @@ export function filterPhotos<T extends Photo>(list: T[], filters: PhotoFilters):
 }
 
 /** The filters with the ones named left out, so a filter's choices can count the photos the others leave. */
-export function withoutFilters(filters: PhotoFilters, keys: readonly FilterKey[]): PhotoFilters {
+export function withoutFilters(
+  filters: PhotoFilters,
+  keys: readonly (FilterKey | "ids")[],
+): PhotoFilters {
   return Object.fromEntries(
     Object.entries(filters).filter(([key]) => !keys.includes(key as FilterKey)),
   );
