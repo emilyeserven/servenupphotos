@@ -583,11 +583,16 @@ func objectLayout(content []byte, open int, members []member) gap {
 	return gap{pretty: true, indent: string(ws[nl+1:]), parentIndent: parentIndent}
 }
 
-// fillGaps returns content with every gap inserted.
+// fillGaps returns content with every gap inserted. Gaps are listed in a new
+// file's field order, which an older file's fields may not follow (such as
+// "images" before "file"), so they're inserted in the order they fall in
+// content, keeping their listed order where several go in one place.
 func fillGaps(content []byte, gaps []gap) []byte {
+	byPos := slices.Clone(gaps)
+	slices.SortStableFunc(byPos, func(a, b gap) int { return a.pos - b.pos })
 	var out bytes.Buffer
 	last := 0
-	for _, g := range gaps {
+	for _, g := range byPos {
 		out.Write(content[last:g.pos])
 		last = g.pos
 		out.WriteString(gapText(g))
