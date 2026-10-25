@@ -6,12 +6,20 @@ three views picked at the top right (`?view=`): **Square** tiles (the default), 
 a **Colors** section (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
 photo opens the [photo viewer](photo-viewer.md).
 
-The tile views share the sort dropdown (newest, oldest, **Recently Added**, color, vividness) and **Show info**, which puts each photo's
+The tile views share the sort dropdown (newest, oldest, **Recently Added**, **Time of Day**, color, vividness) and **Show info**, which puts each photo's
 title, place, color bar and comment under its tile (`?info=true`).
 
 **Recently Added** (`?sort=added`) puts the photos most recently added to the portfolio first, by their
 [`addedDate`](data-model.md#date-added). Photos added on the same day go by when they were taken, newest first,
 and photos that have no date added yet come after the rest, newest first.
+
+**Time of Day** (`?sort=time`) puts the photos in the order of the time of day they were taken, from just after
+midnight to just before, whatever the day, so sunrises gather at the start and night shots at the end. The time is
+the clock where the photo was taken (its custom date, or else its EXIF date, which has no time zone), not the
+viewer's. Photos taken in the same minute go newest first.
+
+> **Frontend analogy:** like sorting `Date`s by `getHours() * 60 + getMinutes()` instead of `getTime()`: the date
+> part is dropped, so a 7 AM photo from 2019 sits next to a 7 AM photo from last week.
 
 ## Square
 

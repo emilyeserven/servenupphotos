@@ -48,8 +48,8 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
   info?: true;
   /**
-   * Set when the oldest or most recently added photo comes first, or to sort by color or
-   * vividness. Left out for the
+   * Set when the oldest or most recently added photo comes first, to sort by time of day, or to
+   * sort by color or vividness. Left out for the
    * default, newest first.
    */
   sort?: Exclude<GridSort, "newest">;
@@ -80,7 +80,7 @@ function viewOf(view: unknown): GridSearch {
 }
 
 /** The sorts the URL can ask for by date, besides newest first, which have no order of their own. */
-const DATE_SORTS: readonly string[] = ["oldest", "added"];
+const DATE_SORTS: readonly string[] = ["oldest", "added", "time"];
 
 /** The sorts the URL can ask for, besides newest first. */
 const URL_SORTS: readonly string[] = [...DATE_SORTS, "color", "vivid"];
