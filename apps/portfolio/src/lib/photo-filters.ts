@@ -1,4 +1,4 @@
-import { albumAndSubAlbums } from "@/lib/groups";
+import { albumAndSubAlbums, tagAndSubTags } from "@/lib/groups";
 import type { Photo } from "@/lib/photos";
 
 /** The location filter's keys: countries, cities (by their English names) and places (by their IDs). */
@@ -73,6 +73,12 @@ function inAlbum(photo: Photo, id: string): boolean {
   return photo.albums.some((album) => ids.has(album));
 }
 
+/** Whether the photo has the tag or one of the tags under it. */
+function hasTag(photo: Photo, id: string): boolean {
+  const ids = tagAndSubTags(id);
+  return photo.tags.some((tag) => ids.has(tag));
+}
+
 /** How each filter matches a photo to one of its values. */
 const MATCHES: Record<FilterKey, (photo: Photo, value: string) => boolean> = {
   country: (photo, value) => photo.country === value,
@@ -80,7 +86,7 @@ const MATCHES: Record<FilterKey, (photo: Photo, value: string) => boolean> = {
   city: (photo, value) => photo.city === value,
   place: (photo, value) => photo.placeIds.includes(value),
   album: inAlbum,
-  tag: (photo, value) => photo.tags.includes(value),
+  tag: hasTag,
   genre: (photo, value) => photo.genres.includes(value),
 };
 

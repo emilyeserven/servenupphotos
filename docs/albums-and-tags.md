@@ -12,7 +12,7 @@ name isn't its ID. When older tags have other names, the Tags page lists them un
 Photos list tags by ID, so no photo changes. Saving
 (`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the
 open photo data pull request, or opens one, the same way photos are saved, and shows it in `ALLALBUMS.json`
-or `ALLTAGS.json` at once, until a **Commit** writes it there. A new album can have a **Parent album**. Albums are listed as a tree, sub-albums under their parent,
+or `ALLTAGS.json` at once, until a **Commit** writes it there. A new album can have a **Parent album**, and a new tag a **Parent tag**. Albums and tags are listed as a tree, each under its parent,
 with how many photos in `ALLPHOTOS.json` list each one.
 
 Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its file and status, an album's parents, a
@@ -20,6 +20,17 @@ Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its fi
 [combined data store](combined-data-store.md)), optionally with the ones in its sub-albums. An album's page can change its
 parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's
 `parent`, as a [change waiting for Commit](pending-changes.md), refusing a parent that's the album itself or inside it.
+
+## Parent tags
+
+A tag can have one parent tag: a more general tag it's a kind of, such as `shotengai` (a Japanese shopping street)
+under `covered-street`. That links a culture's own word to the general idea, so the portfolio's **Tag** filter for
+`covered-street` shows the `shotengai` photos too, and lists `shotengai` under it. A tag's page shows where it sits
+(**Under**) and has a **Parent tag** card that changes it (`PUT /api/organize/tags/<id>/parent`), the same way an
+album's parent changes; a genre has no parent.
+
+> **Frontend analogy:** it's a category tree like a shop's "Shoes › Sneakers": filtering by the parent category
+> includes every product in the categories under it.
 
 ## Order
 
@@ -58,7 +69,8 @@ It has:
 - Every album, [photographic genre](photographic-genres.md) and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
   filters by them.
 - The rules: answer with the tags on one comma-separated line, then a short definition of each cultural term among
-  them, one per line as `tag: definition`; every tag in lowercase kebab-case (`street-food`); tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
+  them, one per line as `tag: definition`, ending with `(parent: general-tag)` when the term is a local kind of
+  something more general (the parent isn't added to the tag line); every tag in lowercase kebab-case (`street-food`); tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
   kind of place ("mosque", "temple", "lake", "city") but never a named one; nothing the site already filters by
   (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums, genre); and 3 to 8 tags.
 
@@ -66,7 +78,9 @@ Paste the LLM's answer into the **Tags** field. Every Tags field (on the Photo p
 a pasted comma-separated list: text with a comma or a new line in it isn't typed into the search, but split at commas
 and new lines, with quotes, bullets and trailing dots taken off and repeats dropped (ignoring case). Lines that define a tag
 (`tag: definition`) aren't tags: a new tag a line defines is listed with its definition, which becomes its
-description when it's made. Each name is
+description when it's made. A parent a line suggests is shown under the new tag with a checkbox, ticked to start
+with: making the tag puts it under that parent, making the parent first when it isn't a tag yet (without adding it
+to the photo). Each name is
 matched to a tag by its name or the ID made from it, ignoring case, so `Street Food` matches `street-food`, and the
 matching tags are added to the field, as an edit saved like any other (and sent to GitHub by **Commit**). A name an
 album, genre or metadata group already has, or one with nothing to make an ID from, is left out, saying why. The rest

@@ -67,9 +67,16 @@ type NewGroup struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	// Parent is the ID of an album's parent album, or empty for none. Tags
-	// have no parent.
+	// Parent is the ID of an album's parent album, or of a tag's parent tag
+	// (the more general tag it's a kind of), or empty for none. Genres have
+	// no parent.
 	Parent string `json:"parent,omitempty"`
+}
+
+// HasParents says whether kind's files can name a parent of the same kind:
+// albums and tags can, genres can't.
+func HasParents(kind Kind) bool {
+	return kind == Albums || kind == Tags
 }
 
 // groupJSON is the content of an album or tag file, as read.
@@ -113,7 +120,8 @@ type Group struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description,omitempty"`
-	// Parent is an album's parent album's ID, empty for a top-level album.
+	// Parent is an album's parent album's ID, or a tag's parent tag's ID;
+	// empty at the top level.
 	Parent string `json:"parent,omitempty"`
 	// Order is an album's place among the albums, 1 first, or 0 when it
 	// hasn't been given one, which puts it after the ones that have.
@@ -175,7 +183,7 @@ func (c *Client) CreateGroup(ctx context.Context, gh settings.GitHub, kind Kind,
 		return PublishResult{}, perr
 	}
 	if content.Parent != nil {
-		if perr := checkParent(groups[Albums.Folder], content.ID, *content.Parent); perr != nil {
+		if perr := checkParent(kind, groups[kind.Folder], content.ID, *content.Parent); perr != nil {
 			return PublishResult{}, perr
 		}
 	}
@@ -209,24 +217,24 @@ func validGroup(kind Kind, group NewGroup) (groupJSON, *PublishError) {
 			"Write a tag's name in lowercase kebab-case, the same as its ID, such as %q.", g.ID)
 	}
 	if parent := strings.TrimSpace(group.Parent); parent != "" {
-		if kind != Albums {
-			return g, publishErr(http.StatusBadRequest, "Only albums can have a parent.")
+		if !HasParents(kind) {
+			return g, publishErr(http.StatusBadRequest, "Only albums and tags can have a parent.")
 		}
 		g.Parent = &parent
 	}
 	return g, nil
 }
 
-// checkParent fails unless parent is one of albums and making it id's parent
-// leaves no album its own ancestor.
-func checkParent(albums []Group, id, parent string) *PublishError {
+// checkParent fails unless parent is one of groups, kind's albums or tags,
+// and making it id's parent leaves none its own ancestor.
+func checkParent(kind Kind, groups []Group, id, parent string) *PublishError {
 	parents := map[string]string{}
 	names := map[string]string{}
-	for _, a := range albums {
-		parents[a.ID], names[a.ID] = a.Parent, a.Name
+	for _, g := range groups {
+		parents[g.ID], names[g.ID] = g.Parent, g.Name
 	}
 	if _, ok := parents[parent]; !ok {
-		return publishErr(http.StatusBadRequest, "There's no album with the ID %q to be the parent.", parent)
+		return publishErr(http.StatusBadRequest, "There's no %s with the ID %q to be the parent.", kind.Name, parent)
 	}
 	parents[id] = parent
 	seen := map[string]bool{}
@@ -240,33 +248,36 @@ func checkParent(albums []Group, id, parent string) *PublishError {
 	return nil
 }
 
-// AlbumParentResult says where an album's new parent was saved.
+// AlbumParentResult says where an album's or tag's new parent was saved.
 type AlbumParentResult struct {
 	pendingSave
 	Path string `json:"path"`
-	// Changed is false when the album already had that parent, so nothing
+	// Changed is false when it already had that parent, so nothing
 	// was saved.
 	Changed bool `json:"changed"`
 }
 
-// SetAlbumParent makes parent, an album ID, the parent of the album id, or
-// makes it a top-level album when parent is empty, in the pending changes.
-// Only the file's "parent" changes. It fails when that would make an album
-// its own ancestor.
-func (c *Client) SetAlbumParent(ctx context.Context, gh settings.GitHub, id, parent string) (AlbumParentResult, error) {
+// SetGroupParent makes parent, an album or tag ID of kind, the parent of the
+// album or tag id, or puts it at the top level when parent is empty, in the
+// pending changes. Only the file's "parent" changes. It fails for a kind
+// without parents, and when that would make one its own ancestor.
+func (c *Client) SetGroupParent(ctx context.Context, gh settings.GitHub, kind Kind, id, parent string) (AlbumParentResult, error) {
+	if !HasParents(kind) {
+		return AlbumParentResult{}, publishErr(http.StatusBadRequest, "Only albums and tags can have a parent.")
+	}
 	id, parent = strings.TrimSpace(id), strings.TrimSpace(parent)
 	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return AlbumParentResult{}, perr
 	}
-	albums := w.groups()[Albums.Folder]
-	album, perr := readableAlbum(albums, id)
+	groups := w.groups()[kind.Folder]
+	album, perr := readableGroup(kind, groups, id)
 	if perr != nil {
 		return AlbumParentResult{}, perr
 	}
 	value := []byte("null")
 	if parent != "" {
-		if perr := checkParent(albums, id, parent); perr != nil {
+		if perr := checkParent(kind, groups, id, parent); perr != nil {
 			return AlbumParentResult{}, perr
 		}
 		value, _ = json.Marshal(parent)
@@ -287,7 +298,7 @@ func (c *Client) SetAlbumParent(ctx context.Context, gh settings.GitHub, id, par
 	return result, nil
 }
 
-// parentKey is the album file field that holds its parent's ID.
+// parentKey is the album or tag file field that holds its parent's ID.
 const parentKey = "parent"
 
 // findGroup returns the album or tag in groups with id.

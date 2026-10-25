@@ -65,7 +65,7 @@ Rules:
 - A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
 - Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, its albums, and its photographic genre (such as street, landscape or portrait). Don't suggest any of the names under "Already filtered" either.
 - Suggest 3 to 8 tags.
-- Answer with the tags as one comma-separated list on the first line. Then, after a blank line, define each cultural term or concept among them, one per line, as "tag: a short definition", such as "shotengai: a Japanese shopping street, often under a covered arcade". Write nothing else before or after.
+- Answer with the tags as one comma-separated list on the first line. Then, after a blank line, define each cultural term or concept among them, one per line, as "tag: a short definition". When the term is a local kind of something more general, end its line with the general tag it belongs under, as "(parent: general-tag)", reusing an existing tag when one fits, such as "shotengai: a Japanese shopping street, often under a covered arcade (parent: covered-street)". Don't add the parent to the first line. Write nothing else before or after.
 
 Existing tags: ${listed(existing, "none yet")}
 
@@ -85,16 +85,81 @@ function cleanName(name: string): string {
 /** A line of the LLM's answer that defines a tag, such as "shotengai: a Japanese shopping street". */
 const DEFINITION = /^[\s\-*•]*([^:,]+?)\s*:\s*(.+?)\s*$/;
 
+/** What the LLM said of one of its tags: what it means, and the more general tag it belongs under. */
+export interface TagDefinition {
+  definition: string;
+  /** The parent tag's ID, such as "covered-street" for "shotengai"; absent when it gave none. */
+  parent?: string;
+}
+
+/** The "(parent: general-tag)" at the end of a definition line. */
+const PARENT = /\s*\(\s*parent\s*:\s*([^)]*)\)\s*$/i;
+
+/** A definition line's text, without its parent, and the parent's ID when it names one. */
+function readDefinition(text: string): TagDefinition {
+  const parent = groupId(PARENT.exec(text)?.[1] ?? "");
+  const definition = text.replace(PARENT, "").trim();
+  return parent ? { definition, parent } : { definition };
+}
+
 /**
  * The definitions the LLM gave under its tags, by the ID each defined tag gets, such as
- * `{ shotengai: "a Japanese shopping street" }`.
+ * `{ shotengai: { definition: "a Japanese shopping street", parent: "covered-street" } }`.
  */
-export function parseDefinitions(text: string): Record<string, string> {
+export function parseDefinitions(text: string): Record<string, TagDefinition> {
   const pairs = text.split("\n").flatMap((line) => {
     const match = DEFINITION.exec(line);
-    return match ? [[groupId(cleanName(match[1]!)), match[2]!] as const] : [];
+    return match ? [[groupId(cleanName(match[1]!)), readDefinition(match[2]!)] as const] : [];
   });
   return Object.fromEntries(pairs.filter(([id]) => id));
+}
+
+/** One tag to make: its ID, description and parent, and whether it goes on the photo. */
+export interface TagToMake {
+  id: string;
+  description: string;
+  parent?: string;
+  /** False for a parent made only so a new tag can be under it. */
+  add: boolean;
+}
+
+/**
+ * The tags to make, in the order to make them: each chosen name with its definition as its
+ * description and, when it's under one, its parent; any parent that isn't a tag and isn't being
+ * made comes first, so it's there when its child is made.
+ */
+export function tagsToMake(
+  chosen: string[],
+  definitions: Record<string, TagDefinition>,
+  underParent: ReadonlySet<string>,
+  existing: ReadonlySet<string>,
+): TagToMake[] {
+  const children = chosen.map((id) => ({
+    id,
+    description: describedAs(definitions[id]),
+    parent: underParent.has(id) ? parentOf(definitions[id]) : undefined,
+    add: true,
+  }));
+  const missing = [...new Set(children.flatMap((child) => child.parent ?? []))]
+    .filter((id) => !existing.has(id) && !chosen.includes(id))
+    .map((id) => ({ id, description: "", add: false }));
+  return [...missing, ...orderedChildren(children)];
+}
+
+/** A new tag's description: the LLM's definition of it, or "" when it gave none. */
+function describedAs(definition: TagDefinition | undefined): string {
+  return definition?.definition ?? "";
+}
+
+/** The parent the LLM suggests for a new tag, if any. */
+function parentOf(definition: TagDefinition | undefined): string | undefined {
+  return definition?.parent;
+}
+
+/** children with the ones that are another's parent first. */
+function orderedChildren(children: TagToMake[]): TagToMake[] {
+  const parents = new Set(children.flatMap((child) => child.parent ?? []));
+  return children.toSorted((a, b) => Number(parents.has(b.id)) - Number(parents.has(a.id)));
 }
 
 /**
