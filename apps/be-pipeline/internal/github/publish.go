@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -299,8 +300,10 @@ func check(res response, err error, doing string) *PublishError {
 // checkStatus is check's message for res, without GitHub's answer.
 func checkStatus(res response, err error, doing string) *PublishError {
 	switch {
+	case errors.Is(err, context.DeadlineExceeded):
+		return publishErr(http.StatusGatewayTimeout, "Ran out of time %s: GitHub didn't answer before the backend's time limit.", doing)
 	case err != nil:
-		return publishErr(http.StatusBadGateway, "Couldn't reach GitHub.")
+		return publishErr(http.StatusBadGateway, "Couldn't reach GitHub when %s: %v", doing, err)
 	case res.Status >= 200 && res.Status < 300:
 		return nil
 	case res.Status == http.StatusUnauthorized:
