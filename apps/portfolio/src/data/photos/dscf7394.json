@@ -1,9 +1,9 @@
 {
-  "id": 312,
-  "title": null,
+  "title": "Dragon fountain",
   "comment": null,
+  "id": 312,
   "file": "DSCF7394.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:46:27Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:29 15:03:11",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Engyoji Temple",
+  "customCity": "Himeji",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Hyōgo",
   "city": "Himeji",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "engyoji-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

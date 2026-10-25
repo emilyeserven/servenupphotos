@@ -1,9 +1,9 @@
 {
-  "id": 313,
-  "title": null,
+  "title": "To Engyoji",
   "comment": null,
+  "id": 313,
   "file": "DSCF7432.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:46:45Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:29 15:08:01",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Engyoji Temple",
+  "customCity": "Himeji",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Hyōgo",
   "city": "Himeji",
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/5985fa9366a6-dscf7432-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/5985fa9366a6-dscf7432-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/5985fa9366a6-dscf7432-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/5985fa9366a6-dscf7432-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5985fa9366a6-dscf7432-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/5985fa9366a6-dscf7432-thumbnail.webp?crop=0,271,4309",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5985fa9366a6-dscf7432-thumbnailpreview.webp?crop=0,271,4309",
     "thumbnailcrop": {
       "x": 0,
-      "y": 862,
+      "y": 271,
       "size": 4309,
       "outputSize": 500
     }
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "engyoji-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,8 +65,8 @@
       "hex": "#242424",
       "lab": {
         "l": 14.23,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

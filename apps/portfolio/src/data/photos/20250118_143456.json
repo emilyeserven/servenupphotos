@@ -1,9 +1,9 @@
 {
-  "title": null,
+  "title": "Into the Light",
   "comment": null,
   "id": 278,
   "file": "20250118_143456.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:25:42Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/afca41a16cf2-20250118-143456-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/afca41a16cf2-20250118-143456-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/afca41a16cf2-20250118-143456-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/afca41a16cf2-20250118-143456-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/afca41a16cf2-20250118-143456-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/afca41a16cf2-20250118-143456-thumbnail.webp?crop=0,370,2031",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/afca41a16cf2-20250118-143456-thumbnailpreview.webp?crop=0,370,2031",
     "thumbnailcrop": {
       "x": 0,
-      "y": 406,
+      "y": 370,
       "size": 2031,
       "outputSize": 500
     }

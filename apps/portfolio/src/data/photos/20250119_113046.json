@@ -1,9 +1,9 @@
 {
-  "id": 290,
-  "title": null,
+  "title": "Waiting at the Entrance",
   "comment": null,
+  "id": 290,
   "file": "20250119_113046.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:31:41Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:19 11:30:46",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "bent-pyramid-of-cairo",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/9f85fbb2c098-20250119-113046-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/9f85fbb2c098-20250119-113046-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/9f85fbb2c098-20250119-113046-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9f85fbb2c098-20250119-113046-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9f85fbb2c098-20250119-113046-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/9f85fbb2c098-20250119-113046-thumbnail.webp?crop=0,0,2173",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9f85fbb2c098-20250119-113046-thumbnailpreview.webp?crop=0,0,2173",
     "thumbnailcrop": {
       "x": 0,
-      "y": 434,
+      "y": 0,
       "size": 2173,
       "outputSize": 500
     }
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "bent-pyramid-of-cairo"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

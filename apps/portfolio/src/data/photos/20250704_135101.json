@@ -1,9 +1,9 @@
 {
-  "id": 299,
-  "title": null,
+  "title": "Stickered Sign",
   "comment": null,
+  "id": 299,
   "file": "20250704_135101.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:34:34Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -32,12 +32,12 @@
     "small": "https://cdn.servenupphotos.net/photos/6d8c07245f2b-20250704-135101-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/6d8c07245f2b-20250704-135101-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/6d8c07245f2b-20250704-135101-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/6d8c07245f2b-20250704-135101-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6d8c07245f2b-20250704-135101-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/6d8c07245f2b-20250704-135101-thumbnail.webp?crop=162,0,1939",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6d8c07245f2b-20250704-135101-thumbnailpreview.webp?crop=162,0,1939",
     "thumbnailcrop": {
-      "x": 0,
-      "y": 450,
-      "size": 2252,
+      "x": 162,
+      "y": 0,
+      "size": 1939,
       "outputSize": 500
     }
   },

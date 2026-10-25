@@ -1,9 +1,9 @@
 {
-  "id": 316,
-  "title": null,
+  "title": "Breather on Floor 98",
   "comment": null,
+  "id": 316,
   "file": "DSCF7476.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:47:50Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 8,
@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:09:20 16:49:52",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "busan-x-the-sky",
+  "customCity": "Busan",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/ca4aece1677b-dscf7476-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/ca4aece1677b-dscf7476-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/ca4aece1677b-dscf7476-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/ca4aece1677b-dscf7476-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ca4aece1677b-dscf7476-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ca4aece1677b-dscf7476-thumbnail.webp?crop=1771,0,3435",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ca4aece1677b-dscf7476-thumbnailpreview.webp?crop=1771,0,3435",
     "thumbnailcrop": {
-      "x": 1336,
+      "x": 1771,
       "y": 0,
       "size": 3435,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "busan-x-the-sky"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,7 +65,7 @@
       "hex": "#6b6b6b",
       "lab": {
         "l": 45.07,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {

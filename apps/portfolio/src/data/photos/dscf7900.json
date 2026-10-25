@@ -1,9 +1,9 @@
 {
-  "id": 325,
-  "title": null,
+  "title": "CAUTION THE FALL",
   "comment": null,
+  "id": 325,
   "file": "DSCF7900.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:50:44Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:09:21 18:59:45",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "international-port-of-busan",
+  "customCity": "Busan",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "international-port-of-busan"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
