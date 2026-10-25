@@ -1,18 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import {
   type Group,
   type GroupKind,
   type OrganizeResponse,
   type PhotoGroups,
   albumAncestry,
+  createGroupMutation,
+  groupId,
   groupLabel,
+  groupName,
   organizeQuery,
 } from "@/api/organize";
+import { photosInFlightQuery } from "@/api/photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
+import { validateGroupName } from "@/lib/group-name";
 
 /** Where an album sits, such as “In Asia › Korea”, or undefined for a top-level one. */
 function albumPlace(albums: Group[], album: Group): string | undefined {
@@ -46,6 +51,9 @@ interface GroupComboboxProps {
   exclude?: ReadonlySet<string>;
   placeholder?: string;
   "aria-describedby"?: string;
+  /** Offers what's typed as a new album, tag or genre; see the Combobox's `createLabel`. */
+  createLabel?: (text: string) => string;
+  onCreate?: (text: string) => void;
 }
 
 /** A combobox of every album, tag or genre on GitHub, read once with the Organize pages' query. */
@@ -124,20 +132,103 @@ export function PhotoGroupFields({
         />
         <AlbumHint id={`${albumsId}-hint`} count={value.albums.length} warning={albumWarning} />
       </div>
-      {(["tags", "genres"] as const).map((kind) => (
-        <div key={kind} className="flex flex-col gap-2">
-          <FieldLabel htmlFor={`${idPrefix}-${kind}`} kind={kind} />
-          <GroupCombobox
-            id={`${idPrefix}-${kind}`}
-            kind={kind}
-            value={value[kind]}
-            disabled={disabled}
-            onChange={(ids) => onChange({ ...value, [kind]: ids })}
-          />
-        </div>
-      ))}
+      <div className="flex flex-col gap-2">
+        <FieldLabel htmlFor={`${idPrefix}-tags`} kind="tags" />
+        <GroupCombobox
+          id={`${idPrefix}-tags`}
+          kind="tags"
+          value={value.tags}
+          disabled={disabled}
+          onChange={(tags) => onChange({ ...value, tags })}
+        />
+      </div>
+      <GenreField
+        id={`${idPrefix}-genres`}
+        value={value.genres}
+        disabled={disabled}
+        onChange={(genres) => onChange({ ...value, genres })}
+      />
     </div>
   );
+}
+
+interface GenreFieldProps {
+  id: string;
+  value: string[];
+  onChange: (value: string[]) => void;
+  disabled?: boolean;
+}
+
+/**
+ * The Photographic genres combobox, which also makes a new genre from a name that isn't one yet,
+ * saving it as a change waiting for Commit and choosing it for the photo.
+ */
+function GenreField({ id, value, onChange, disabled }: GenreFieldProps) {
+  const newGenre = useNewGroup("genres", (genre) => onChange([...value, genre]));
+  const hintId = `${id}-hint`;
+  return (
+    <div className="flex flex-col gap-2">
+      <FieldLabel htmlFor={id} kind="genres" />
+      <GroupCombobox
+        id={id}
+        kind="genres"
+        value={value}
+        disabled={disabled || newGenre.pending}
+        aria-describedby={hintId}
+        onChange={onChange}
+        createLabel={(text) => `Make “${text.trim()}” a new genre`}
+        onCreate={newGenre.make}
+      />
+      <NewGroupHint id={hintId} pending={newGenre.pending} problem={newGenre.problem} />
+    </div>
+  );
+}
+
+/** Saving a new genre, or why it couldn't be made. */
+function NewGroupHint({
+  id,
+  pending,
+  problem,
+}: {
+  id: string;
+  pending: boolean;
+  problem?: string;
+}) {
+  return (
+    <div id={id} aria-live="polite" className="text-sm">
+      {pending && <p className="text-muted-foreground">Saving the new genre…</p>}
+      {problem && <p className="text-destructive">{problem}</p>}
+    </div>
+  );
+}
+
+/**
+ * Makes a new album, tag or genre from a typed name, after checking no album, tag or genre has
+ * that name or the ID made from it, then calls `onCreated` with its ID.
+ */
+function useNewGroup(kind: GroupKind, onCreated: (id: string) => void) {
+  const queryClient = useQueryClient();
+  const organize = useQuery(organizeQuery);
+  const [invalid, setInvalid] = useState<string>();
+  const create = useMutation({
+    ...createGroupMutation(kind),
+    onSuccess: (result, group) => {
+      queryClient.setQueryData(organizeQuery.queryKey, (data) =>
+        withNewGroup(data, kind, { ...group, path: result.path, fileUrl: "", inFlight: true }),
+      );
+      onCreated(group.id);
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({ queryKey: organizeQuery.queryKey });
+      void queryClient.invalidateQueries({ queryKey: photosInFlightQuery.queryKey });
+    },
+  });
+  const make = (text: string) => {
+    const reason = validateGroupName(organize.data, text);
+    setInvalid(reason);
+    if (!reason) create.mutate({ id: groupId(text), name: groupName(kind, text), description: "" });
+  };
+  return { make, pending: create.isPending, problem: invalid ?? create.error?.message };
 }
 
 /** How many albums to choose, or warnings when a photo would be in more than one. */
@@ -212,4 +303,13 @@ export function PhotoGroupsCard({ value, onChange, description, disabled }: Phot
       </CardContent>
     </Card>
   );
+}
+
+/** The organize list with a just-made group in it, so it's named before the list is read again. */
+function withNewGroup(
+  data: OrganizeResponse | undefined,
+  kind: GroupKind,
+  group: Group,
+): OrganizeResponse | undefined {
+  return data && { ...data, [kind]: [...data[kind], group] };
 }

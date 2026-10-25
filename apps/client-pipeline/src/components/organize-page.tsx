@@ -10,7 +10,6 @@ import {
   type OrganizeResponse,
   albumTree,
   createGroupMutation,
-  findCollision,
   groupId,
   groupLabel,
   groupName,
@@ -27,6 +26,7 @@ import { AlbumMoveButtons } from "@/components/album-move-buttons";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { GroupCombobox } from "@/components/group-picker";
 import { TagNamesCard } from "@/components/tag-names-card";
+import { validateGroupName } from "@/lib/group-name";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
@@ -183,40 +183,6 @@ function NewGroupCard(props: NewGroupCardProps) {
   );
 }
 
-/** Per field, what to say when the album or tag `group`, of kind `what`, already has the value. */
-const COLLISIONS = {
-  id: (what: string, group: Group) =>
-    `The ${what} “${group.name || group.id}” already has the ID “${group.id}”, made from this name.`,
-  name: (what: string, group: Group) => `There's already a ${what} named “${group.name}”.`,
-};
-
-/** Why `value` can't be used for `field`, when an album or tag already has it. */
-function collisionMessage(
-  organize: OrganizeResponse | undefined,
-  field: "id" | "name",
-  value: string,
-): string | undefined {
-  const found = organize ? findCollision(organize, field, value) : undefined;
-  return found && COLLISIONS[field](GROUP_KINDS[found.kind].singular, found.group);
-}
-
-/** Why `name` itself can't be used, before checking it against the albums and tags. */
-function nameProblem(name: string): string | undefined {
-  if (!name.trim()) return "Give it a name.";
-  if (name.trim().length > 100) return "Keep the name to 100 characters.";
-  if (!groupId(name)) return "Include a letter or number from a to z or 0 to 9, so it gets an ID.";
-  return undefined;
-}
-
-/** Why `name` can't be used, including when an album or tag has it or the ID made from it. */
-function validateName(organize: OrganizeResponse | undefined, name: string): string | undefined {
-  return (
-    nameProblem(name) ??
-    collisionMessage(organize, "name", name) ??
-    collisionMessage(organize, "id", groupId(name))
-  );
-}
-
 function NewGroupForm({
   kind,
   folder,
@@ -227,7 +193,7 @@ function NewGroupForm({
 
   const form = useForm({
     defaultValues: { name: "", description: "", parent: [] as string[] },
-    validators: { onSubmit: ({ value }) => validateName(organize, value.name) },
+    validators: { onSubmit: ({ value }) => validateGroupName(organize, value.name) },
     onSubmit: async ({ value }) => {
       await create
         .mutateAsync({
@@ -250,7 +216,7 @@ function NewGroupForm({
     >
       <form.Field
         name="name"
-        validators={{ onChange: ({ value }) => validateName(organize, value) }}
+        validators={{ onChange: ({ value }) => validateGroupName(organize, value) }}
       >
         {(field) => {
           const error = field.state.meta.isTouched ? field.state.meta.errors[0] : undefined;
