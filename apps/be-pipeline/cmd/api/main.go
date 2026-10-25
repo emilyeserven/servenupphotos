@@ -30,10 +30,13 @@ func main() {
 	}
 
 	store := settings.NewStore(getenv("SETTINGS_FILE", "data/settings.json"))
+	// The repository's files on disk, whose photo data spares downloading it
+	// from GitHub: the repository root when run from apps/be-pipeline.
+	checkout := getenv("REPO_DIR", "../..")
 
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           httpapi.NewRouter(extractor, store),
+		Handler:           httpapi.NewRouterWithCheckout(extractor, store, checkout),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 

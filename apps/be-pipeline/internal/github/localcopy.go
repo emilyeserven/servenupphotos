@@ -131,6 +131,26 @@ func (l *LocalCopy) snapshot(key string) (*snapshot, bool) {
 	return s, true
 }
 
+// blobs is the content of every readable file in the snapshots whose key
+// starts with prefix, by blob SHA.
+func (l *LocalCopy) blobs(prefix string) map[string][]byte {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.load()
+	known := map[string][]byte{}
+	for key, saved := range l.file.Snapshots {
+		if !strings.HasPrefix(key, prefix) {
+			continue
+		}
+		for _, f := range saved.Files {
+			if f.Err == "" {
+				known[f.SHA] = []byte(f.Content)
+			}
+		}
+	}
+	return known
+}
+
 // saveState keeps state, by its local key.
 func (l *LocalCopy) saveState(state repoState) {
 	l.mu.Lock()

@@ -37,8 +37,16 @@ type Client struct {
 	// firstCommit is when each file was first committed, by repository key
 	// and path (see committedTimes), which never changes once known.
 	firstCommit map[string]time.Time
+	// reading are the snapshot reads running, by snapshot key (see
+	// sharedRead).
+	reading map[string]*sharedSnapshot
 	// stateMu lets one read of where the repository stands run at a time.
 	stateMu sync.Mutex
+	// Checkout is a copy of the repository on disk, such as the clone the
+	// pipeline runs from; "" uses none. Its photo data files are reused
+	// instead of downloaded whenever their content matches a file GitHub
+	// lists, even on the very first read.
+	Checkout string
 	// Local is the local copy of what was last read from GitHub; nil keeps
 	// none.
 	Local *LocalCopy
