@@ -1,6 +1,12 @@
 import type { MapRef } from "@vis.gl/react-maplibre";
 import type { GeoJSONFeature, GeoJSONSource } from "maplibre-gl";
-import { atOneSpot, FAN_MAX_PHOTOS, FAN_MIN_ZOOM, type FanOffset, fanOffsets } from "@/lib/map-fan";
+import {
+  FAN_MIN_ZOOM,
+  fanLimit,
+  type FanOffset,
+  fanOffsets,
+  type ScreenPoint,
+} from "@/lib/map-fan";
 import { type PhotoPoint, type PlacedPhoto, placedById } from "@/lib/map-photos";
 
 /** The ID of the map's source of photos, which MapLibre groups into clusters. */
@@ -12,7 +18,7 @@ export type MapMarker =
       kind: "photo";
       key: string;
       photo: PlacedPhoto;
-      /** How far it's moved from its spot, to sit around the other photos there. */
+      /** How far it's moved from its spot, so it doesn't cover the photos near it. */
       offset?: FanOffset;
     }
   | {
@@ -56,37 +62,50 @@ function photoMarker(photo: PlacedPhoto): MapMarker {
   return { kind: "photo", key: `photo-${photo.id}`, photo };
 }
 
-/**
- * A cluster's photos as markers of their own when it's a few photos at one spot, such as photos
- * placed at one of their places, as zooming in never splits those apart. Otherwise the marker.
- */
-async function splitAtOneSpot(map: MapRef, marker: MapMarker): Promise<MapMarker[]> {
-  if (marker.kind !== "cluster" || marker.count > FAN_MAX_PHOTOS) return [marker];
-  const clusterPhotos = await photosInCluster(map, marker.clusterId);
-  return atOneSpot(clusterPhotos) ? clusterPhotos.map(photoMarker) : [marker];
+/** A small cluster's photos as markers of their own, or a bigger cluster's marker as it is. */
+async function splitSmall(map: MapRef, marker: MapMarker): Promise<MapMarker[]> {
+  if (marker.kind !== "cluster" || marker.count > fanLimit(map.getZoom())) return [marker];
+  return (await photosInCluster(map, marker.clusterId)).map(photoMarker);
 }
 
-/** Moves photo markers at the same spot apart, into a circle around it. */
-function fanOut(markers: MapMarker[]): MapMarker[] {
-  const offsets = fanOffsets(
-    markers.flatMap((marker) => (marker.kind === "photo" ? marker.photo : [])),
+/** Where a spot on the map is on the screen. */
+function screenPoint(map: MapRef, longitude: number, latitude: number): ScreenPoint {
+  const { x, y } = map.project([longitude, latitude]);
+  return [x, y];
+}
+
+/** Moves photo markers apart so none overlap one another or a group's marker. */
+function fanOut(map: MapRef, markers: MapMarker[]): MapMarker[] {
+  const groups = markers.flatMap((marker) =>
+    marker.kind === "cluster" ? [screenPoint(map, marker.longitude, marker.latitude)] : [],
   );
+  const photos = markers.flatMap((marker) =>
+    marker.kind === "photo"
+      ? [
+          {
+            photo: marker.photo,
+            at: screenPoint(map, marker.photo.longitude, marker.photo.latitude),
+          },
+        ]
+      : [],
+  );
+  const offsets = fanOffsets(photos, groups);
   return markers.map((marker) =>
     marker.kind === "photo" ? { ...marker, offset: offsets.get(marker.photo.id) } : marker,
   );
 }
 
 /**
- * The markers in view. From FAN_MIN_ZOOM in, a few photos at one spot are spread around it so
- * each can be seen.
+ * The markers in view. From FAN_MIN_ZOOM in, small groups (see fanLimit) are split into photos of
+ * their own, and photos are moved apart just enough that each can be seen.
  */
 export async function markersInView(map: MapRef): Promise<MapMarker[]> {
   const markers = sourceMarkers(map);
   if (map.getZoom() < FAN_MIN_ZOOM) return markers;
-  const split = await Promise.all(markers.map((marker) => splitAtOneSpot(map, marker)));
+  const split = await Promise.all(markers.map((marker) => splitSmall(map, marker)));
   // While zooming, tiles from the old zoom and the new one can both be loaded, so a cluster split
   // here can repeat photos another tile already has on their own.
-  return fanOut(once(split.flat()));
+  return fanOut(map, once(split.flat()));
 }
 
 /** The photos in a cluster, oldest first. */
