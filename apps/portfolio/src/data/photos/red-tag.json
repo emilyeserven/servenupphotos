@@ -1,7 +1,7 @@
 {
-  "id": 308,
-  "title": null,
+  "title": "Red Tag",
   "comment": null,
+  "id": 308,
   "file": "DSCF1336.jpg",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
@@ -13,7 +13,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:25 20:43:35",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "jogyesa-temple",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -31,10 +31,10 @@
     "small": "https://cdn.servenupphotos.net/photos/84134d6aa8d3-dscf1336-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/84134d6aa8d3-dscf1336-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/84134d6aa8d3-dscf1336-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/84134d6aa8d3-dscf1336-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/84134d6aa8d3-dscf1336-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/84134d6aa8d3-dscf1336-thumbnail.webp?crop=375,0,3683",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/84134d6aa8d3-dscf1336-thumbnailpreview.webp?crop=375,0,3683",
     "thumbnailcrop": {
-      "x": 1432,
+      "x": 375,
       "y": 0,
       "size": 3683,
       "outputSize": 500
@@ -48,7 +48,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "jogyesa-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
