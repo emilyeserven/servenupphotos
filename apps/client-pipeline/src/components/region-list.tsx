@@ -259,7 +259,7 @@ function RegionRow({
       <TableCell className="whitespace-normal">
         <div className="flex items-start gap-1" style={{ paddingLeft: `${row.depth * 1.25}rem` }}>
           <ToggleButton row={row} open={open} onToggle={onToggle} />
-          <NameButton node={node} selected={selected} onSelect={onSelect} />
+          <NameButton node={node} state={row.state} selected={selected} onSelect={onSelect} />
         </div>
       </TableCell>
       <TableCell>
@@ -275,6 +275,8 @@ function RegionRow({
 
 interface NameButtonProps {
   node: RegionNode;
+  /** The state of the same name the city stands in for, whose icon shows before the city's. */
+  state?: RegionNode;
   selected: boolean;
   onSelect: () => void;
 }
@@ -285,7 +287,7 @@ function iconKind(node: RegionNode): RegionIconKind {
 }
 
 /** The row's icon and name, with its note under it, as a button that edits it. */
-function NameButton({ node, selected, onSelect }: NameButtonProps) {
+function NameButton({ node, state, selected, onSelect }: NameButtonProps) {
   const note = rowNote(node);
   return (
     <button
@@ -294,12 +296,23 @@ function NameButton({ node, selected, onSelect }: NameButtonProps) {
       aria-current={selected ? "true" : undefined}
       onClick={onSelect}
     >
-      <RegionIcon kind={iconKind(node)} className="mt-0.5" />
+      <NameIcons node={node} state={state} />
       <span className="min-w-0">
         <span className={cn("block", node.kind !== "place" && "font-medium")}>{node.name}</span>
         {note && <span className="text-muted-foreground block text-xs">{note}</span>}
       </span>
     </button>
+  );
+}
+
+/** The row's icon, after the state's when the city stands in for a state of its name. */
+function NameIcons({ node, state }: { node: RegionNode; state?: RegionNode }) {
+  if (!state) return <RegionIcon kind={iconKind(node)} className="mt-0.5" />;
+  return (
+    <span className="mt-0.5 flex shrink-0 gap-0.5">
+      <RegionIcon kind="state" />
+      <RegionIcon kind={iconKind(node)} />
+    </span>
   );
 }
 

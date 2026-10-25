@@ -247,6 +247,11 @@ Choosing a place on Edit Photo or the Photo page follows the places' parents:
   `Province-State`) on the Photo page, its own field on a place, its own tab on the Localizations page, and its own
   level in the Places list and the portfolio's **Places** filter, nested between the country and the city. It's
   optional throughout: a photo or place with no state lists its city straight under its country, as before.
+  A state with the same name as its city, such as Seoul in Seoul (ignoring case), isn't written twice: the portfolio
+  leaves the state out of the photo's location text and out of the **Places** filter (the city stands for both), and
+  the Places list shows them as one row with the state's and the city's icons. That row is the city's: choosing it
+  edits the city, and what was under the state is listed under it. The state's localization is still on the
+  Localizations page.
 - **Localizing.** A chosen place with no localization yet gets a button beside it that opens a dialog for its
   romanization, local pronunciation and local script, saved like a row on the Localizations page. It isn't shown
   when the place's country, or else the photo's, is the United States (“United States”, “United States of America”,
