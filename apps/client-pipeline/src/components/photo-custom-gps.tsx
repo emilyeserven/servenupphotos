@@ -1,11 +1,11 @@
 import { FieldSection } from "@/components/field-section";
 import { FieldLabel } from "@/components/field-label";
 import { Input } from "@/components/ui/input";
-import { parseGps } from "@/lib/place-gps";
+import { decimalGps, parseGps } from "@/lib/place-gps";
 
 /** How to fill in the custom GPS position, shown beside its title. */
 const HELP =
-  "Optional. Latitude, longitude in degrees, such as 40.7795, -73.9634; right-click a spot in Google Maps to copy one. The portfolio's map uses it instead of the GPS position in the photo's EXIF, which is kept as it is, and instead of its places'. Saved as customGpsPosition; leave it empty to use the EXIF one.";
+  "Optional. Latitude, longitude in degrees, such as 40.7795, -73.9634; right-click a spot in Google Maps to copy one. Degrees, minutes and seconds, such as 37°34′12″N 126°59′56″E, are turned into that as they're pasted. The portfolio's map uses it instead of the GPS position in the photo's EXIF, which is kept as it is, and instead of its places'. Saved as customGpsPosition; leave it empty to use the EXIF one.";
 
 interface PhotoCustomGpsProps {
   value: string;
@@ -44,11 +44,12 @@ export function PhotoCustomGps({ value, exifGps, disabled, onChange }: PhotoCust
         placeholder="Such as 40.7795, -73.9634"
         disabled={disabled}
         aria-invalid={invalid}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => onChange(decimalGps(event.target.value))}
       />
       {invalid && (
         <p className="text-destructive text-sm">
-          Write it as latitude, longitude in degrees, such as 40.7795, -73.9634.
+          Write it as latitude, longitude in degrees, such as 40.7795, -73.9634, or as 37°34′12″N
+          126°59′56″E.
         </p>
       )}
     </FieldSection>

@@ -5,7 +5,7 @@ import { optimisticEntry, type PhotoPlace, type Place, savePlaceMutation } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { gpsSource, parseGps } from "@/lib/place-gps";
+import { decimalGps, gpsSource, parseGps } from "@/lib/place-gps";
 
 interface PlaceGpsAddersProps {
   /** The photo's places, in order. */
@@ -78,7 +78,7 @@ function PlaceGpsForm({ place, onClose }: PlaceGpsFormProps) {
         value={text}
         placeholder="37.5796, 126.977"
         disabled={save.isPending}
-        onChange={(event) => setText(event.target.value)}
+        onChange={(event) => setText(decimalGps(event.target.value))}
       />
       <p className="text-muted-foreground text-xs">
         Latitude, longitude in degrees; right-click a spot in Google Maps to copy one. Photos given

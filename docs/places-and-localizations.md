@@ -74,12 +74,23 @@ up, the word is the one of the place just under it on the way up. Older place fi
 A place can have a **GPS position**, written on the Places page as `latitude, longitude` in decimal degrees (such as
 `37.5796, 126.977`, which is what right-clicking a spot in Google Maps copies). It's saved as `latitude` and
 `longitude` numbers in the place file, left out when not set; saving refuses only one of them, or one off the globe.
-On the portfolio, a photo with no GPS position of its own (a [custom one](#custom-gps-position) or its EXIF one) goes on the map at its first place's position, or else a
-place that place is in, or else its next place's. The hover text still shows only a photo's own (custom or EXIF) position. Its map marker gets a
-softer border, as the spot is only near where the photo was taken, unless the place is ticked as an **Exact location**
-(such as a subway station or a museum, where its photos were taken right at its GPS position): then the marker keeps the
-same solid white border as a photo with its own GPS position. It's saved as `"exactLocation": true`, only on a place
-with a GPS position, and a place that uses the position of a place it's in is never exact.
+
+Every GPS field (a place's, **Add a GPS position for …**, and a photo's custom one) also takes degrees, minutes and
+seconds with N, S, E or W, as Wikipedia writes them: `37°34′12″N 126°59′56″E`, `37° 34' 12.5" N, 126° 59' 56" E`,
+`33°51′S 151°12′E` (minutes and seconds optional), exiftool's `37 deg 34' 12.50" N`, and latitude and longitude in
+either order. Once what's typed or pasted reads as a whole position, the field rewrites it as decimal degrees
+(`37.57, 126.998889`, rounded to six places, about 10cm), so it's saved the same way as one copied from Google Maps
+(`decimalGps` in `lib/place-gps.ts`). A **Suggest a location** answer with its latitude and longitude written that way
+is read the same.
+
+> **Frontend analogy:** it's an input mask that normalizes on change, like a phone field turning `(555) 123-4567`
+> into `+15551234567` before it reaches form state.
+> On the portfolio, a photo with no GPS position of its own (a [custom one](#custom-gps-position) or its EXIF one) goes on the map at its first place's position, or else a
+> place that place is in, or else its next place's. The hover text still shows only a photo's own (custom or EXIF) position. Its map marker gets a
+> softer border, as the spot is only near where the photo was taken, unless the place is ticked as an **Exact location**
+> (such as a subway station or a museum, where its photos were taken right at its GPS position): then the marker keeps the
+> same solid white border as a photo with its own GPS position. It's saved as `"exactLocation": true`, only on a place
+> with a GPS position, and a place that uses the position of a place it's in is never exact.
 
 The list's GPS column shows a filled crosshair for a place with its own GPS position, a plain one for a place that uses
 the position of a place it's in (hover for which), and an amber (!) warning on a place with neither when photos

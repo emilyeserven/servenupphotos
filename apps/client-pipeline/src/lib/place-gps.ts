@@ -17,11 +17,70 @@ function within(value: number, limit: number): boolean {
 }
 
 /**
+ * One coordinate in degrees, minutes and seconds with its hemisphere, such as `37°34′12″N`,
+ * `37° 34' 12.5" N` or exiftool's `37 deg 34' 12.50" N`; the minutes and seconds are optional.
+ */
+const DMS_COORDINATE =
+  /(\d+(?:\.\d+)?)\s*(?:°|º|deg\b)\s*(?:(\d+(?:\.\d+)?)\s*['′’]\s*)?(?:(\d+(?:\.\d+)?)\s*(?:["″”]|''|′′)\s*)?([NSEW])/gi;
+
+/** A coordinate's degrees, minutes, seconds and hemisphere as decimal degrees, negative to the south and west. */
+function dmsDegrees(match: RegExpMatchArray): number {
+  const [deg, min, sec] = match.slice(1, 4).map((part) => Number(part ?? 0)) as [
+    number,
+    number,
+    number,
+  ];
+  const sign = /[SW]/i.test(match[4] ?? "") ? -1 : 1;
+  return Math.round(sign * (deg + min / 60 + sec / 3600) * 1e6) / 1e6;
+}
+
+/** Whether the coordinate is a latitude: north or south. */
+function isLatitude(match: RegExpMatchArray): boolean {
+  return /[NS]/i.test(match[4] ?? "");
+}
+
+/** Whether text is only the coordinates, with spaces, commas or semicolons between them. */
+function onlyCoordinates(text: string): boolean {
+  return /^[\s,;]*$/.test(text.replace(DMS_COORDINATE, ""));
+}
+
+/** The latitude and the longitude written in text, when it has exactly one of each. */
+function latLngMatches(text: string): [RegExpMatchArray, RegExpMatchArray] | null {
+  const matches = [...text.matchAll(DMS_COORDINATE)];
+  const lat = matches.find(isLatitude);
+  const lng = matches.find((match) => !isLatitude(match));
+  return matches.length === 2 && lat && lng ? [lat, lng] : null;
+}
+
+/**
+ * The GPS position written in degrees, minutes and seconds, such as `37°34′12″N 126°59′56″E` (how
+ * Wikipedia writes one), latitude and longitude in either order; null when it isn't written that way.
+ */
+function dmsPosition(text: string): Coordinates | null {
+  const pair = onlyCoordinates(text) ? latLngMatches(text) : null;
+  if (!pair) return null;
+  const parts = pair.map(dmsDegrees);
+  return isPosition(parts) ? { latitude: parts[0], longitude: parts[1] } : null;
+}
+
+/**
+ * text with a position written in degrees, minutes and seconds rewritten as "latitude, longitude" in
+ * decimal degrees, which is how GPS positions are saved; any other text as it is.
+ */
+export function decimalGps(text: string): string {
+  const position = dmsPosition(text);
+  return position ? gpsText(position) : text;
+}
+
+/**
  * The GPS position written as "latitude, longitude" in decimal degrees, such as "37.5796, 126.977"
- * (how Google Maps copies one): no coordinates for empty text, or null when it can't be read.
+ * (how Google Maps copies one), or in degrees, minutes and seconds, such as `37°34′12″N
+ * 126°59′56″E`: no coordinates for empty text, or null when it can't be read.
  */
 export function parseGps(text: string): Coordinates | null {
   if (!text.trim()) return {};
+  const dms = dmsPosition(text);
+  if (dms) return dms;
   const parts = text.split(",").map(degrees);
   return isPosition(parts) ? { latitude: parts[0], longitude: parts[1] } : null;
 }

@@ -1,6 +1,6 @@
 import { type Place, type PhotoPlace, entryId, RELATIONS } from "@/api/places";
 import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
-import { writtenPosition } from "@/lib/place-gps";
+import { gpsText, writtenPosition } from "@/lib/place-gps";
 import { placeCity, withParent } from "@/lib/place-hierarchy";
 
 /** What the location prompt tells the LLM about: what's already known of where the photo was taken. */
@@ -143,10 +143,16 @@ function coordinate(value: unknown): number {
   return Math.round(number * 1e6) / 1e6;
 }
 
-/** The answer's latitude and longitude as "latitude, longitude", or "" when they aren't a GPS position. */
+/**
+ * The answer's latitude and longitude as "latitude, longitude" in decimal degrees, also when it wrote
+ * them in degrees, minutes and seconds (`37°34′12″N`); "" when they aren't a GPS position.
+ */
 function answerGps(answer: Record<string, unknown>): string {
-  const text = `${coordinate(answer.latitude)}, ${coordinate(answer.longitude)}`;
-  return writtenPosition(text) ? text : "";
+  const decimal = `${coordinate(answer.latitude)}, ${coordinate(answer.longitude)}`;
+  const text = writtenPosition(decimal)
+    ? decimal
+    : `${str(answer.latitude)} ${str(answer.longitude)}`;
+  return gpsText(writtenPosition(text) ?? {});
 }
 
 /** The answer's relation, when it's one of RELATIONS. */

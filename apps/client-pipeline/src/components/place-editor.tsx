@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
-import { gpsText, parseGps } from "@/lib/place-gps";
+import { decimalGps, gpsText, parseGps } from "@/lib/place-gps";
 import { parentOptions } from "@/lib/place-bulk";
 import { notParentsOf } from "@/lib/place-hierarchy";
 
@@ -56,7 +56,7 @@ function placeProblem(draft: Place, places: Place[], isNew: boolean): string | u
 /** Why the GPS position can't be read, or undefined when it can or there's none. */
 function gpsProblem(gps: string): string | undefined {
   if (parseGps(gps)) return undefined;
-  return "Write the GPS position as latitude, longitude in degrees, such as 37.5796, 126.977.";
+  return "Write the GPS position as latitude, longitude in degrees, such as 37.5796, 126.977, or as 37°34′12″N 126°59′56″E.";
 }
 
 /** Why a new place can't have id, when another place has it. */
@@ -174,7 +174,7 @@ const HELP = {
   city: "Optional, such as Seoul. A photo given this place takes its city, state and country, from the less specific of its places. Choosing a known city fills in its country.",
   state: "Optional, such as the state, province or prefecture, between the city and the country.",
   country: "Optional, such as South Korea.",
-  gps: "Optional. Latitude, longitude in degrees, such as 37.5796, 126.977; right-click a spot in Google Maps to copy one. Photos given this place whose EXIF has no GPS position go here on the portfolio's map.",
+  gps: "Optional. Latitude, longitude in degrees, such as 37.5796, 126.977; right-click a spot in Google Maps to copy one, or paste one like 37°34′12″N 126°59′56″E. Photos given this place whose EXIF has no GPS position go here on the portfolio's map.",
 };
 
 /** Adds a place, or changes one's fields and localization; its ID stays as it was made. */
@@ -252,7 +252,7 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
             help={HELP.gps}
             value={form.draft.gps}
             disabled={busy}
-            onChange={(value) => form.set("gps", value)}
+            onChange={(value) => form.set("gps", decimalGps(value))}
           />
           <PlaceExactLocationField
             checked={form.draft.exactLocation}
