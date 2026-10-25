@@ -17,8 +17,8 @@ const token = "github_pat_abcdefgh1234"
 
 // fakeGitHub is an in-memory owner/repo with default branch main: the GraphQL
 // queries state and snapshot make, and the Git data API calls Commit makes.
-// Every request is counted in calls, as "graphql state", "graphql snapshot"
-// or "METHOD /path".
+// Every request is counted in calls, as "graphql state", "graphql snapshot",
+// "graphql tree", "graphql blobs" or "METHOD /path".
 type fakeGitHub struct {
 	mu sync.Mutex
 	// files are every branch's files, as "branch:path" → content.
@@ -37,6 +37,9 @@ type fakeGitHub struct {
 	// truncated are paths GraphQL leaves the text out of, as it does for
 	// large files.
 	truncated map[string]bool
+	// hold, when set, makes every GraphQL query wait until it's closed, as a
+	// slow GitHub would.
+	hold chan struct{}
 	// limited answers every request as rate limited.
 	limited bool
 	// branchOfCommit are the branches commits were moved onto.
@@ -155,6 +158,9 @@ func branchOf(oid string) string {
 }
 
 func (f *fakeGitHub) serve(w http.ResponseWriter, r *http.Request) {
+	if f.hold != nil && r.URL.Path == "/graphql" {
+		<-f.hold
+	}
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	if r.Header.Get("Authorization") != "Bearer "+token {
@@ -363,6 +369,10 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, r *http.Request) {
 		kind = "state"
 	case strings.Contains(in.Query, "history("):
 		kind = "history"
+	case strings.Contains(in.Query, "GitObjectID"):
+		kind = "blobs"
+	case !strings.Contains(in.Query, "isTruncated"):
+		kind = "tree"
 	}
 	f.calls = append(f.calls, "graphql "+kind)
 	if status := f.fail["graphql "+kind]; status != 0 {
@@ -382,9 +392,13 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, r *http.Request) {
 		writeBody(w, http.StatusOK, map[string]any{"data": map[string]any{"repository": f.history(in.Variables)}})
 		return
 	}
+	if kind == "blobs" {
+		writeBody(w, http.StatusOK, map[string]any{"data": map[string]any{"repository": f.blobs(in.Variables)}})
+		return
+	}
 	repo := map[string]any{"commit": map[string]any{"tree": map[string]any{"oid": "tree:" + in.Variables["commit"].(string)}}}
 	for _, alias := range []string{"photos", "albums", "tags", "genres", "places", "localizations", "metainfo", "cameras", "lenses"} {
-		repo[alias] = f.tree(in.Variables[alias].(string))
+		repo[alias] = f.tree(in.Variables[alias].(string), kind == "snapshot")
 	}
 	writeBody(w, http.StatusOK, map[string]any{"data": map[string]any{"repository": repo}})
 }
@@ -431,9 +445,37 @@ func (f *fakeGitHub) state(vars map[string]any) map[string]any {
 	return repo
 }
 
+// blobs answers the blobs query: each blob $b<i> by its SHA, with its text
+// left out when a path with that content is in truncated.
+func (f *fakeGitHub) blobs(vars map[string]any) map[string]any {
+	repo := map[string]any{}
+	for i := 0; ; i++ {
+		sha, ok := vars["b"+strconv.Itoa(i)].(string)
+		if !ok {
+			return repo
+		}
+		repo["b"+strconv.Itoa(i)] = f.blobObject(sha)
+	}
+}
+
+func (f *fakeGitHub) blobObject(sha string) any {
+	for k, v := range f.files {
+		if blobSHA([]byte(v)) != sha {
+			continue
+		}
+		_, p, _ := strings.Cut(k, ":")
+		if f.truncated[p] {
+			return map[string]any{"text": nil, "isTruncated": true, "isBinary": false}
+		}
+		return map[string]any{"text": v, "isTruncated": false, "isBinary": false}
+	}
+	return nil
+}
+
 // tree answers an expression "<oid>:<folder>" with the folder's files on the
-// oid's branch, or nil when it has none.
-func (f *fakeGitHub) tree(expr string) any {
+// oid's branch, or nil when it has none; with their content when withText is
+// set, as the snapshot query asks, and only names and SHAs for the tree query.
+func (f *fakeGitHub) tree(expr string, withText bool) any {
 	oid, folder, _ := strings.Cut(expr, ":")
 	prefix := branchOf(oid) + ":" + folder + "/"
 	var names []string
@@ -453,7 +495,11 @@ func (f *fakeGitHub) tree(expr string) any {
 		if f.truncated[folder+"/"+name] {
 			object = map[string]any{"text": nil, "isTruncated": true, "isBinary": false}
 		}
-		entries = append(entries, map[string]any{"name": name, "type": "blob", "oid": blobSHA([]byte(content)), "object": object})
+		entry := map[string]any{"name": name, "type": "blob", "oid": blobSHA([]byte(content))}
+		if withText {
+			entry["object"] = object
+		}
+		entries = append(entries, entry)
 	}
 	return map[string]any{"entries": entries}
 }

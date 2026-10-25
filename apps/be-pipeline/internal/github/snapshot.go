@@ -31,9 +31,10 @@ type snapFile struct {
 	err string
 }
 
-// snapshotQuery reads the commit's tree and each data subfolder's files with
-// their content. Each folder is an expression such as "<sha>:<folder>".
-const snapshotQuery = `query($owner: String!, $name: String!, $commit: String!, $photos: String!, $albums: String!,
+// snapshotFolders reads the commit's tree and each data subfolder's entries,
+// with the fields of the files fragment. Each folder is an expression such as
+// "<sha>:<folder>".
+const snapshotFolders = `query($owner: String!, $name: String!, $commit: String!, $photos: String!, $albums: String!,
   $tags: String!, $genres: String!, $places: String!, $localizations: String!, $metainfo: String!, $cameras: String!,
   $lenses: String!) {
   repository(owner: $owner, name: $name) {
@@ -49,7 +50,15 @@ const snapshotQuery = `query($owner: String!, $name: String!, $commit: String!, 
     lenses: object(expression: $lenses) { ...files }
   }
 }
-fragment files on Tree { entries { name type oid object { ... on Blob { text isTruncated isBinary } } } }`
+`
+
+// snapshotQuery reads every data subfolder's files with their content.
+const snapshotQuery = snapshotFolders +
+	`fragment files on Tree { entries { name type oid object { ... on Blob { text isTruncated isBinary } } } }`
+
+// treeQuery reads only the names and blob SHAs of every data subfolder's
+// files, which costs GitHub far less than their content (see readChanged).
+const treeQuery = snapshotFolders + `fragment files on Tree { entries { name type oid } }`
 
 // treeAnswer is a folder in snapshotQuery's answer; nil when the folder isn't
 // there.
@@ -95,33 +104,70 @@ func (a snapshotAnswer) folders() map[string]treeAnswer {
 }
 
 // snapshot returns the data folder root at commit: from this run's reads, or
-// the local copy, or else read from GitHub once and kept in both.
+// the local copy, or else read from GitHub once and kept in both. The read
+// carries on after ctx ends (see sharedRead), so a slow one is kept for the
+// next try rather than started again.
 func (c *Client) snapshot(ctx context.Context, t target, root, commit string) (*snapshot, *PublishError) {
 	key := snapshotKey(t, root, commit)
+	if s, ok := c.keptSnapshot(key); ok {
+		return s, nil
+	}
+	return c.sharedRead(ctx, key, func(ctx context.Context) (*snapshot, *PublishError) {
+		s, perr := c.readSnapshot(ctx, t, root, commit)
+		if perr == nil {
+			c.keepSnapshot(key, s)
+		}
+		return s, perr
+	})
+}
+
+// keptSnapshot is the snapshot kept by key in this run's reads or the local
+// copy, and false when neither has it.
+func (c *Client) keptSnapshot(key string) (*snapshot, bool) {
 	if s, ok := c.reads().snapshot(key); ok {
-		return s, nil
+		return s, true
 	}
-	if s, ok := c.localCopy().snapshot(key); ok {
+	s, ok := c.localCopy().snapshot(key)
+	if ok {
 		c.reads().setSnapshot(key, s)
-		return s, nil
 	}
-	vars := map[string]any{"owner": t.owner, "name": t.name, "commit": commit}
-	for _, k := range combinedKinds() {
-		vars[k.name] = commit + ":" + root + "/" + k.folder
+	return s, ok
+}
+
+// readSnapshot reads root at commit from GitHub: only the files that differ
+// from the snapshots kept, when there are few of them, as after a merge, or
+// else every file.
+func (c *Client) readSnapshot(ctx context.Context, t target, root, commit string) (*snapshot, *PublishError) {
+	if known := c.knownBlobs(t, root); len(known) > 0 {
+		if s, ok, perr := c.readChanged(ctx, t, root, commit, known); ok || perr != nil {
+			return s, perr
+		}
 	}
-	var answer snapshotAnswer
-	if perr := c.graphql(ctx, t, snapshotQuery, vars, &answer, "reading the photo data"); perr != nil {
+	answer, perr := c.readFolders(ctx, t, root, commit, snapshotQuery)
+	if perr != nil {
 		return nil, perr
-	}
-	if answer.Repository == nil || answer.Repository.Commit == nil {
-		return nil, publishErr(http.StatusBadGateway, "Commit %s wasn't found in %s.", commit, t.repo.FullName)
 	}
 	s := &snapshot{commit: commit, tree: answer.Repository.Commit.Tree.OID, files: map[string]snapFile{}}
 	for folder, tree := range answer.folders() {
 		c.addFolder(ctx, t, s, root+"/"+folder, tree)
 	}
-	c.keepSnapshot(key, s)
 	return s, nil
+}
+
+// readFolders runs query (snapshotQuery or treeQuery) for root at commit.
+func (c *Client) readFolders(ctx context.Context, t target, root, commit, query string) (snapshotAnswer, *PublishError) {
+	vars := map[string]any{"owner": t.owner, "name": t.name, "commit": commit}
+	for _, k := range combinedKinds() {
+		vars[k.name] = commit + ":" + root + "/" + k.folder
+	}
+	var answer snapshotAnswer
+	if perr := c.graphql(ctx, t, query, vars, &answer, "reading the photo data"); perr != nil {
+		return answer, perr
+	}
+	if answer.Repository == nil || answer.Repository.Commit == nil {
+		return answer, publishErr(http.StatusBadGateway, "Commit %s wasn't found in %s.", commit, t.repo.FullName)
+	}
+	return answer, nil
 }
 
 // keepSnapshot keeps s for the rest of the run and in the local copy.

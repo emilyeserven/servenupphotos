@@ -50,8 +50,9 @@ func TestCombined(t *testing.T) {
 	if a := got.Head.Albums; a.Found {
 		t.Errorf("Head.Albums = %+v, want not found", a)
 	}
-	if n := len(f.calls); n != 3 {
-		t.Errorf("Combined() made %d GitHub calls (%v), want 3: the state and two snapshots", n, f.calls)
+	// The pull request's head reuses the base branch's files and reads only its own.
+	if n := len(f.calls); n != 4 {
+		t.Errorf("Combined() made %d GitHub calls (%v), want 4: the state, the base branch, and the head's names and new files", n, f.calls)
 	}
 }
 

@@ -60,11 +60,12 @@ func TestInFlightReadsPhotoJSON(t *testing.T) {
 	if broken := got.Files[1]; broken.Data != nil || broken.Error != "The file isn't valid JSON." {
 		t.Errorf("Files[1] = %+v, want an invalid JSON error", broken)
 	}
-	if n := len(f.calls); n != 3 {
-		t.Errorf("InFlight() made %d GitHub calls (%v), want 3: the state and two snapshots", n, f.calls)
+	// The pull request's head reuses the base branch's files and reads only its own.
+	if n := len(f.calls); n != 4 {
+		t.Errorf("InFlight() made %d GitHub calls (%v), want 4: the state, the base branch, and the head's names and new files", n, f.calls)
 	}
-	if _, err := c.InFlight(t.Context(), pullGH); err != nil || len(f.calls) != 3 {
-		t.Errorf("InFlight() again called GitHub: %v, %v", f.calls[3:], err)
+	if _, err := c.InFlight(t.Context(), pullGH); err != nil || len(f.calls) != 4 {
+		t.Errorf("InFlight() again called GitHub: %v, %v", f.calls[4:], err)
 	}
 }
 

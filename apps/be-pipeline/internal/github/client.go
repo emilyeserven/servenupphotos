@@ -37,6 +37,9 @@ type Client struct {
 	// firstCommit is when each file was first committed, by repository key
 	// and path (see committedTimes), which never changes once known.
 	firstCommit map[string]time.Time
+	// reading are the snapshot reads running, by snapshot key (see
+	// sharedRead).
+	reading map[string]*sharedSnapshot
 	// stateMu lets one read of where the repository stands run at a time.
 	stateMu sync.Mutex
 	// Local is the local copy of what was last read from GitHub; nil keeps
