@@ -11,7 +11,7 @@ import (
 )
 
 // snapshot is every file directly in the data folder's subfolders (photos,
-// albums, tags, places, localizations, metadata groups, camera overrides and
+// albums, tags, genres, places, localizations, metadata groups, camera overrides and
 // custom lenses) at one commit. A commit never
 // changes, so a snapshot is read from GitHub once, with one GraphQL query, and
 // kept.
@@ -34,13 +34,14 @@ type snapFile struct {
 // snapshotQuery reads the commit's tree and each data subfolder's files with
 // their content. Each folder is an expression such as "<sha>:<folder>".
 const snapshotQuery = `query($owner: String!, $name: String!, $commit: String!, $photos: String!, $albums: String!,
-  $tags: String!, $places: String!, $localizations: String!, $metainfo: String!, $cameras: String!,
+  $tags: String!, $genres: String!, $places: String!, $localizations: String!, $metainfo: String!, $cameras: String!,
   $lenses: String!) {
   repository(owner: $owner, name: $name) {
     commit: object(expression: $commit) { ... on Commit { tree { oid } } }
     photos: object(expression: $photos) { ...files }
     albums: object(expression: $albums) { ...files }
     tags: object(expression: $tags) { ...files }
+    genres: object(expression: $genres) { ...files }
     places: object(expression: $places) { ...files }
     localizations: object(expression: $localizations) { ...files }
     metainfo: object(expression: $metainfo) { ...files }
@@ -74,6 +75,7 @@ type snapshotAnswer struct {
 		Photos        treeAnswer `json:"photos"`
 		Albums        treeAnswer `json:"albums"`
 		Tags          treeAnswer `json:"tags"`
+		Genres        treeAnswer `json:"genres"`
 		Places        treeAnswer `json:"places"`
 		Localizations treeAnswer `json:"localizations"`
 		MetaInfo      treeAnswer `json:"metainfo"`
@@ -86,7 +88,7 @@ type snapshotAnswer struct {
 func (a snapshotAnswer) folders() map[string]treeAnswer {
 	r := a.Repository
 	return map[string]treeAnswer{
-		PhotosFolder: r.Photos, Albums.Folder: r.Albums, Tags.Folder: r.Tags,
+		PhotosFolder: r.Photos, Albums.Folder: r.Albums, Tags.Folder: r.Tags, Genres.Folder: r.Genres,
 		Places.Folder: r.Places, Localizations.Folder: r.Localizations, MetaInfo.Folder: r.MetaInfo,
 		Cameras.Folder: r.Cameras, Lenses.Folder: r.Lenses,
 	}

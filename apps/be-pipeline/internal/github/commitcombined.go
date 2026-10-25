@@ -32,7 +32,7 @@ type CombinedCommit struct {
 	// Edited is how many data files the commit changed.
 	Edited int `json:"edited"`
 	// Counts are how many entries each combined list has: photos, albums,
-	// tags, places, localizations, metadata groups (metainfo), camera
+	// tags, genres, places, localizations, metadata groups (metainfo), camera
 	// overrides (cameras) and custom lenses (lenses), and how
 	// many photos were left out of ALLPHOTOS.json as drafts (drafts).
 	Counts map[string]int `json:"counts"`
@@ -66,6 +66,7 @@ func combinedKinds() []combinedKind {
 		{"photos", PhotosFolder, AllPhotosFile},
 		{"albums", Albums.Folder, Albums.AllFile},
 		{"tags", Tags.Folder, Tags.AllFile},
+		{"genres", Genres.Folder, Genres.AllFile},
 		{"places", Places.Folder, Places.AllFile},
 		{"localizations", Localizations.Folder, Localizations.AllFile},
 		{"metainfo", MetaInfo.Folder, MetaInfo.AllFile},

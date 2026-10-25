@@ -40,6 +40,15 @@ func TestCreateGroupOpensThenReusesPullRequest(t *testing.T) {
 	if content, _ := stagedContent(t, c, "data/tags/macro.json"); strings.Contains(content.Content, "parent") {
 		t.Errorf("tag content = %q, want no parent", content.Content)
 	}
+
+	genre, err := c.CreateGroup(t.Context(), organizeGH, Genres, NewGroup{ID: "street", Name: "Street"})
+	if err != nil || genre.Path != "data/genres/street.json" {
+		t.Errorf("CreateGroup(genre) = %+v, %v; want data/genres/street.json", genre, err)
+	}
+	wantGenre := "{\n  \"id\": \"street\",\n  \"name\": \"Street\",\n  \"description\": \"\"\n}\n"
+	if content, _ := stagedContent(t, c, "data/genres/street.json"); content.Content != wantGenre {
+		t.Errorf("genre content = %q, want %q", content.Content, wantGenre)
+	}
 }
 
 func TestCreateGroupWithParent(t *testing.T) {
@@ -109,6 +118,7 @@ func TestCreateGroupRefusesCollisions(t *testing.T) {
 		{"same ID as an album", Tags, NewGroup{ID: "seoul", Name: "seoul"}, `album "Seoul" already has the ID "seoul"`},
 		{"same name as a tag, other case", Albums, NewGroup{ID: "close-up", Name: "close up"}, `already a tag named "Close Up"`},
 		{"same ID as a tag", Albums, NewGroup{ID: "macro", Name: "Macro"}, `tag "Close Up" already has the ID "macro"`},
+		{"genre with a tag's name", Genres, NewGroup{ID: "closeup", Name: "Close up"}, `already a tag named "Close Up"`},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -200,8 +210,8 @@ func TestOrganize(t *testing.T) {
 	if got.PullRequest == nil || got.PullRequest.Number != 1 || got.Folder != "data" || got.Branch != "main" {
 		t.Errorf("Organize() = %+v, want pull request 1 in folder data", got)
 	}
-	if len(got.Tags) != 0 {
-		t.Errorf("Tags = %+v, want none", got.Tags)
+	if len(got.Tags) != 0 || len(got.Genres) != 0 {
+		t.Errorf("Tags = %+v, Genres = %+v, want none", got.Tags, got.Genres)
 	}
 	if len(got.Albums) != 3 {
 		t.Fatalf("Albums = %+v, want broken, Busan and Seoul", got.Albums)

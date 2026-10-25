@@ -158,7 +158,7 @@ func TestCreateGroupRoute(t *testing.T) {
 		status     int
 		want       string
 	}{
-		{"/organize/folders", `{"id":"a","name":"A"}`, http.StatusNotFound, "albums or tags"},
+		{"/organize/folders", `{"id":"a","name":"A"}`, http.StatusNotFound, "tags or genres"},
 		{"/organize/albums", `{"id":"a","name":"A","extra":1}`, http.StatusBadRequest, "invalid album body"},
 		{"/organize/tags", `{"id":"a","name":"a"}`, http.StatusBadRequest, "Settings first"},
 	}

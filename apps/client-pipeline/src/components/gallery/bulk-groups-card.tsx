@@ -2,7 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { type PublishedFile, publishedPhotosQuery } from "@/api/photos";
-import { NO_GROUPS, type PhotoGroups, addPhotoGroupsMutation, savedGroups } from "@/api/organize";
+import {
+  GROUP_KIND_LIST,
+  NO_GROUPS,
+  type PhotoGroups,
+  addPhotoGroupsMutation,
+  savedGroups,
+} from "@/api/organize";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { PhotoGroupFields, Warning } from "@/components/group-picker";
@@ -20,7 +26,7 @@ interface BulkGroupsCardProps {
 }
 
 /**
- * Adds albums and tags to every chosen photo, as one commit in the photo data pull request. Each
+ * Adds albums, tags and genres to every chosen photo, as one commit in the photo data pull request. Each
  * photo keeps the ones it has.
  */
 export function BulkGroupsCard({
@@ -39,10 +45,10 @@ export function BulkGroupsCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Add albums and tags</CardTitle>
+        <CardTitle>Add albums, tags and genres</CardTitle>
         <CardDescription>
-          Choose photos below, then the albums and tags to add to them. Each photo keeps the ones it
-          has, and the change goes into the photo data pull request as one commit.
+          Choose photos below, then the albums, tags and genres to add to them. Each photo keeps the
+          ones it has, and the change goes into the photo data pull request as one commit.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 text-sm">
@@ -81,10 +87,10 @@ function photoCount(n: number): string {
 }
 
 function canAdd(pending: boolean, chosen: number, groups: PhotoGroups): boolean {
-  return !pending && chosen > 0 && groups.albums.length + groups.tags.length > 0;
+  return !pending && chosen > 0 && GROUP_KIND_LIST.some((kind) => groups[kind].length > 0);
 }
 
-/** Adds albums and tags to photos, then reads the Gallery again and follows CI's rebuild. */
+/** Adds albums, tags and genres to photos, then reads the Gallery again and follows CI's rebuild. */
 function useBulkAdd(onAdded: () => void) {
   const queryClient = useQueryClient();
   const rebuild = useAllPhotosRebuild(true, () => {});
@@ -156,7 +162,7 @@ function AlreadyInAlbum({ count }: { count: number }) {
   );
 }
 
-/** What adding the albums and tags did, or why it failed. */
+/** What adding the albums, tags and genres did, or why it failed. */
 function BulkOutcome({ add, rebuild }: BulkAdd) {
   if (add.isError) return <p className="text-destructive">{add.error.message}</p>;
   if (!add.isSuccess) return null;

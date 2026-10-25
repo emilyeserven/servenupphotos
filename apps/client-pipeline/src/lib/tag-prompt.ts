@@ -20,6 +20,8 @@ export function promptImageUrl(images: Record<string, unknown> | undefined, fall
 export interface TagPromptLists {
   tags: Group[];
   albums: Group[];
+  /** The photographic genres, which the portfolio filters by too. */
+  genres: Group[];
   metaGroups: MetaGroup[];
 }
 
@@ -34,9 +36,10 @@ function listed(names: string[], none: string): string {
 }
 
 /** The names the site already filters photos by, which the prompt asks the LLM not to suggest. */
-function filteredNames({ albums, metaGroups }: TagPromptLists): string[] {
+function filteredNames({ albums, genres, metaGroups }: TagPromptLists): string[] {
   return [
     ...albums.filter((album) => !album.error).map((album) => `${groupLabel(album)} (album)`),
+    ...genres.filter((genre) => !genre.error).map((genre) => `${groupLabel(genre)} (genre)`),
     ...metaGroups.map((group) => `${group.name} (${metaFieldName(group)})`),
   ];
 }
@@ -54,7 +57,7 @@ Rules:
 - Keep tags general enough to fit other photos too: "temple" rather than "bulguksa-main-hall".
 - Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "architecture", "street-food" or "cats").
 - A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
-- Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, and its albums. Don't suggest any of the names under "Already filtered" either.
+- Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, its albums, and its photographic genre (such as street, landscape or portrait). Don't suggest any of the names under "Already filtered" either.
 - Suggest 3 to 8 tags.
 - Answer with only the tags, as one comma-separated list, with nothing before or after it.
 
@@ -91,7 +94,7 @@ export function parseTagList(text: string): string[] {
 export interface PastedTags {
   /** The IDs of existing tags they name, without repeats. */
   existing: string[];
-  /** New tags to make, in lowercase kebab-case, for names no album, tag or metadata group has. */
+  /** New tags to make, in lowercase kebab-case, for names no album, tag, genre or metadata group has. */
   fresh: string[];
   /** Names that can't be tags, with why. */
   skipped: { name: string; reason: string }[];
@@ -102,10 +105,20 @@ function isNamed(group: Group, name: string): boolean {
   return group.name.trim().toLowerCase() === name.toLowerCase() || group.id === groupId(name);
 }
 
+/** Which of the album and genre lists has a group named `name`, as a reason to skip it. */
+function namedGroupReason(name: string, organize: OrganizeResponse): string | undefined {
+  const lists = [
+    [organize.albums, "an album has that name"],
+    [organize.genres, "a genre has that name"],
+  ] as const;
+  return lists.find(([groups]) => groups.some((group) => isNamed(group, name)))?.[1];
+}
+
 /** Why a name that isn't an existing tag can't be made into one, if it can't. */
 function skipReason(name: string, organize: OrganizeResponse, metaGroups: MetaGroup[]) {
   if (!groupId(name)) return "it has no letter or number from a to z or 0 to 9 to make an ID from";
-  if (organize.albums.some((album) => isNamed(album, name))) return "an album has that name";
+  const named = namedGroupReason(name, organize);
+  if (named) return named;
   const lower = name.toLowerCase();
   if (metaGroups.some((group) => group.name.toLowerCase() === lower)) {
     return "a metadata group has that name";

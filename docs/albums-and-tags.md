@@ -40,7 +40,7 @@ for a photo being edited, saved with **Save changes**.
 
 ## Suggest tags
 
-When a photo is being edited, the Photo page's **Suggest tags** card (under **Albums and tags**) helps an LLM pick its
+When a photo is being edited, the Photo page's **Suggest tags** card (under **Albums, tags and genres**) helps an LLM pick its
 tags. **Copy tag prompt** copies a prompt to paste into a chat with any LLM that can see images (`lib/tag-prompt.ts`).
 It has:
 
@@ -51,17 +51,17 @@ It has:
   [OpenAI image costs](https://community.openai.com/t/how-do-i-calculate-image-tokens-in-gpt4-vision/492318),
   [Gemini tokens](https://ai.google.dev/gemini-api/docs/tokens).
 - Every tag's ID, to reuse when one fits, spelled as listed.
-- Every album and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
+- Every album, [photographic genre](photographic-genres.md) and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
   filters by them.
 - The rules: every tag in lowercase kebab-case (`street-food`); tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
   kind of place ("mosque", "temple", "lake", "city") but never a named one; nothing the site already filters by
-  (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums); 3 to 8 tags; and
+  (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums, genre); 3 to 8 tags; and
   only a comma-separated list in the answer.
 
 Once it's copied, a field takes the LLM's answer. **Add tags** splits it at commas and new lines, takes off quotes,
 bullets and trailing dots, drops repeats (ignoring case), and matches each name to a tag by its name or the ID made
-from it, ignoring case, so `Street Food` matches `street-food`. Matching tags are added to the photo's tags in **Albums and tags**, as an edit that **Save
-changes** saves (and **Commit** sends to GitHub, like any other). A name an album or metadata group already has, or
+from it, ignoring case, so `Street Food` matches `street-food`. Matching tags are added to the photo's tags in **Albums, tags and genres**, as an edit that **Save
+changes** saves (and **Commit** sends to GitHub, like any other). A name an album, genre or metadata group already has, or
 one with nothing to make an ID from, is left out, saying why. The rest are listed as new tags in lowercase kebab-case, each with a checkbox:
 **Make N new tags and add them** saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for
 Commit, like **New tag** on `/tags`) and adds them to the photo.

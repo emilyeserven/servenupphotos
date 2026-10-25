@@ -40,13 +40,13 @@ func handleOrganize(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	}
 }
 
-// handleCreateGroup saves a new album or tag, by the path's kind ("albums" or
-// "tags"), as JSON in the photo data pull request.
+// handleCreateGroup saves a new album, tag or genre, by the path's kind
+// ("albums", "tags" or "genres"), as JSON in the photo data pull request.
 func handleCreateGroup(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		kind, ok := github.KindByFolder(r.PathValue("kind"))
 		if !ok {
-			writeError(w, http.StatusNotFound, "kind must be albums or tags")
+			writeError(w, http.StatusNotFound, "kind must be albums, tags or genres")
 			return
 		}
 		var group github.NewGroup

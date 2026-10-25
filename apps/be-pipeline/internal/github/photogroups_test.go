@@ -9,7 +9,7 @@ import (
 
 func TestWithGroups(t *testing.T) {
 	content := "{\n  \"file\": \"a.jpg\",\n  \"albums\": [],\n  \"tags\": [\n    \"night\"\n  ],\n  \"images\": {}\n}\n"
-	got, err := withGroups([]byte(content), []string{"seoul"}, []string{"night", "macro"})
+	got, err := withGroups([]byte(content), PhotoGroups{Albums: []string{"seoul"}, Tags: []string{"night", "macro"}})
 	if err != nil {
 		t.Fatalf("withGroups() error = %v", err)
 	}
@@ -19,17 +19,23 @@ func TestWithGroups(t *testing.T) {
 	}
 
 	// An older file without the lists gets them at the end.
-	got, err = withGroups([]byte(`{"file":"a.jpg"}`), nil, []string{"macro"})
+	got, err = withGroups([]byte(`{"file":"a.jpg"}`), PhotoGroups{Tags: []string{"macro"}})
 	if err != nil || !json.Valid(got) || !strings.HasSuffix(string(got), "\"tags\": [\n    \"macro\"\n  ]}") {
 		t.Errorf("withGroups() = %s, %v; want tags added", got, err)
 	}
 
 	// Nothing to add leaves it byte for byte.
-	if got, _ := withGroups([]byte(content), nil, []string{"night"}); string(got) != content {
+	if got, _ := withGroups([]byte(content), PhotoGroups{Tags: []string{"night"}}); string(got) != content {
 		t.Errorf("withGroups() = %s, want it unchanged", got)
 	}
-	if _, err := withGroups([]byte(`{"albums":"seoul"}`), []string{"a"}, nil); err == nil {
+	if _, err := withGroups([]byte(`{"albums":"seoul"}`), PhotoGroups{Albums: []string{"a"}}); err == nil {
 		t.Error("withGroups() error = nil, want one for albums that isn't a list")
+	}
+
+	// Genres go in their own list, after the ones the photo already has.
+	got, err = withGroups([]byte(`{"genres":["street"]}`), PhotoGroups{Genres: []string{"street", "architecture"}})
+	if err != nil || !strings.Contains(string(got), "\"street\",\n    \"architecture\"") {
+		t.Errorf("withGroups() = %s, %v; want architecture added to genres", got, err)
 	}
 }
 
@@ -65,8 +71,8 @@ func TestAddPhotoGroupsErrors(t *testing.T) {
 		want string
 	}{
 		{"no photos", PhotoGroups{Albums: []string{"seoul"}}, "Choose the photos"},
-		{"nothing to add", PhotoGroups{Paths: []string{dir + "B.json"}}, "Choose albums or tags"},
-		{"bad ID", PhotoGroups{Paths: []string{dir + "B.json"}, Tags: []string{"Not An ID"}}, "isn't an album or tag ID"},
+		{"nothing to add", PhotoGroups{Paths: []string{dir + "B.json"}}, "Choose albums, tags or genres"},
+		{"bad ID", PhotoGroups{Paths: []string{dir + "B.json"}, Tags: []string{"Not An ID"}}, "isn't an album, tag or genre ID"},
 		{"listed twice", PhotoGroups{Paths: []string{dir + "B.json", dir + "B.json"}, Tags: []string{"a"}}, "more than once"},
 		{"not a photo file", PhotoGroups{Paths: []string{dir + "D.json"}, Tags: []string{"a"}}, "D.json isn't a photo file"},
 	}

@@ -62,9 +62,14 @@ const PAGES: Record<GroupKind, { title: string; description: string }> = {
     description:
       "Labels for photos. A photo can have several tags, and each tag is its own JSON file.",
   },
+  genres: {
+    title: "Photographic Genres",
+    description:
+      "The kinds of photography a photo is, such as street, landscape or portrait. A photo can have several genres, each genre is its own JSON file, and the portfolio can filter by them.",
+  },
 };
 
-/** The Albums or Tags page: a form to add one, then every one on GitHub. */
+/** The Albums, Tags or Photographic Genres page: a form to add one, then every one on GitHub. */
 export function GroupPage({ kind }: { kind: GroupKind }) {
   const page = PAGES[kind];
 
@@ -149,7 +154,7 @@ function NewGroupCard(props: NewGroupCardProps) {
         <CardTitle>New {singular}</CardTitle>
         <CardDescription>
           Saves the {singular} as one JSON file in the open photo data pull request, or opens a new
-          one. Its name and ID can't be used by another album or tag.
+          one. Its name and ID can't be used by another album, tag or genre.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -331,6 +336,7 @@ function NewGroupForm({
 const ID_HINTS: Record<GroupKind, { lead: string; made: string }> = {
   albums: { lead: "ID", made: ", made from the name" },
   tags: { lead: "Saved as", made: ", in lowercase kebab-case, as its name and ID" },
+  genres: { lead: "ID", made: ", made from the name" },
 };
 
 /** The ID made from the name, which photos list it by, and the file it's saved as. */
@@ -542,8 +548,8 @@ function GroupRow({
   );
 }
 
-/** Each kind's page for one album or tag. */
-const GROUP_ROUTES = { albums: "/albums/$id", tags: "/tags/$id" } as const;
+/** Each kind's page for one album, tag or genre. */
+const GROUP_ROUTES = { albums: "/albums/$id", tags: "/tags/$id", genres: "/genres/$id" } as const;
 
 /** The album or tag's name, linked to its page unless its file couldn't be read. */
 function GroupName({ kind, group }: { kind: GroupKind; group: Group }) {
