@@ -8,6 +8,7 @@ import {
   missingFieldsQuery,
 } from "@/api/data";
 import { QueryResult } from "@/components/query-result";
+import { ReadProgressView } from "@/components/read-progress";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -122,7 +123,7 @@ function MissingFieldsResultView({ readExif, ...apply }: ResultViewProps) {
     <section aria-label="Preview" className="flex flex-col gap-4 border-t pt-6">
       <QueryResult
         query={preview}
-        pendingLabel={readExif ? "Reading the photo JSON and EXIF…" : "Reading the photo JSON…"}
+        pending={<ReadProgressView task="missing-fields" label="Reading the photo JSON…" />}
       >
         {(data) => <PreviewBody preview={data} {...apply} />}
       </QueryResult>
@@ -240,7 +241,9 @@ function ApplyButton({ preview, pending, error, onApply }: PreviewBodyProps) {
       pending={pending}
       error={error}
       onClick={onApply}
-    />
+    >
+      {pending && <ReadProgressView task="missing-fields" label="Reading the photo JSON…" />}
+    </SaveButton>
   );
 }
 

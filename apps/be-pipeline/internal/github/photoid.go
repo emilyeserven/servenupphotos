@@ -99,6 +99,7 @@ func (c *Client) committedTimes(ctx context.Context, w *workspace, paths []strin
 	var failed *PublishError
 	var wg sync.WaitGroup
 	sem := make(chan struct{}, historyConcurrency)
+	progress := startProgress(ctx, ProgressHistory, len(ask))
 	for _, batch := range batches {
 		wg.Add(1)
 		go func() {
@@ -106,6 +107,7 @@ func (c *Client) committedTimes(ctx context.Context, w *workspace, paths []strin
 			sem <- struct{}{}
 			defer func() { <-sem }()
 			times, perr := c.historyBatch(ctx, w, batch)
+			progress.addN(len(batch))
 			mu.Lock()
 			defer mu.Unlock()
 			if perr != nil {

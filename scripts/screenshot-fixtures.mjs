@@ -613,6 +613,9 @@ export function defaultFixtures() {
       files: colorFiles(),
     }),
     "POST /api/data/colors": () => ({ ...pendingSave(), files: 3, failed: 1 }),
+    // No read running: the page shows its own label until a read reports how far it has got.
+    "GET /api/data/progress/colors": { running: false, step: "", done: 0, total: 0 },
+    "GET /api/data/progress/missing-fields": { running: false, step: "", done: 0, total: 0 },
     "PUT /api/localizations/country-united-states-of-america": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/localizations/country-united-states-of-america.json`,

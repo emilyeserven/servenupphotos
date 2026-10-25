@@ -82,6 +82,31 @@ export const replaceBaseUrlMutation = mutationOptions({
   mutationFn: (change: BaseUrlChange) => post<BaseUrlResult>("/api/data/image-base-url", change),
 });
 
+/** An Update Data read that reports how far it has got. */
+export type ReadTask = "missing-fields" | "colors";
+
+/** How far an Update Data read has got: `done` of `total` in `step`. */
+export interface ReadProgress {
+  /** False when no read of the task is running. */
+  running: boolean;
+  /** Reading the photo files from GitHub, asking GitHub when they were created, or reading originals in R2. */
+  step: "" | "github" | "history" | "r2";
+  done: number;
+  /** 0 when the step can't be counted, such as reading from GitHub. */
+  total: number;
+}
+
+/** How far the task's read has got, asked every half second while it's shown. */
+export const readProgressQuery = (task: ReadTask) =>
+  queryOptions({
+    queryKey: ["data", "progress", task],
+    queryFn: () => requestJson<ReadProgress>(`/api/data/progress/${task}`),
+    refetchInterval: 500,
+    retry: false,
+    staleTime: 0,
+    gcTime: 0,
+  });
+
 /** A field a photo file is missing, with the value it gets. */
 export interface AddedField {
   /** Such as `aperture`, or `images.thumbnail` for a nested one. */
