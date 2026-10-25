@@ -55,10 +55,7 @@ const WHEEL_LOOK: BoardLook = {
       className="absolute top-0 left-0 aspect-square w-full origin-top"
       style={{ transform: "scaleY(var(--board-aspect))" }}
     >
-      <span
-        className="absolute inset-0 rounded-full opacity-80"
-        style={{ background: WHEEL_BACKGROUND }}
-      />
+      <span className="absolute inset-0 rounded-full" style={{ background: WHEEL_BACKGROUND }} />
     </span>
   ),
   className: "",

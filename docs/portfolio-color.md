@@ -37,7 +37,8 @@ hue, red at the top and clockwise through orange and yellow: its biggest hue buc
 along the shorter way round, the more the more of it there is (by the second's share of the two), so a photo with as
 much orange as yellow sits halfway between them and one with a touch of yellow stays near orange (shades are left
 out). It sits in toward the middle by its vividness, by the **Average / Peak** measure: the most vivid photo shown
-(or 20, if none is more vivid) in the middle and gray photos at the faded edge. Pins that would overlap are pushed apart, a little at a time, until they don't
+(or 20, if none is more vivid) in the middle and gray photos at the faded edge. The hues are drawn at full strength, fading into the page only in the outer half of
+the wheel, and the **Black & white** chart's grays are at full strength too. Pins that would overlap are pushed apart, a little at a time, until they don't
 (`spreadPins`), so each stays as near its place as it can; with many photos on a small screen, the pins get smaller,
 down to 14px, so they fit. Where three or more photos' places are within one and a half pin widths of each other,
 they're one round cluster pin instead, like the Map page's, showing how many photos it covers over the first one's
@@ -93,8 +94,10 @@ in steps of 5 (`?vivid=20`), and the swatches' counts only count the photos it l
 
 ## On the Grid page
 
-The Grid's **Show filters** panel has a **Colors** section (`components/grid-color-filters.tsx`) with the same
-swatches, match and vividness controls and URL keys as above, counting the photos the Grid's other filters leave. Its
+The Grid's **Show filters** panel has a compact **Colors** box (`components/grid-color-filters.tsx`) in the camera
+sliders' row, the same height as them: small swatches (picking the chosen one again clears it), the picked color's name,
+an X clearing every color filter, and a **More** toggle opening the match and vividness controls below the swatches (open
+from the start when one of them is set). It uses the same URL keys as above, counting the photos the Grid's other filters leave. Its
 color and vividness filters count toward the filter button's number, and **Clear filters** clears them. Photos without
 saved colors don't match a color or a vividness above 0. With **Show info** on, each tile also shows its color bar
 (`components/color-bar.tsx`): each color as wide as its share, the biggest three named under it.

@@ -62,11 +62,7 @@ function chartLook(extent: LightnessRange): BoardLook {
     pinSize: () => PIN_PX,
     keep: keepInChart,
     background: (
-      <span
-        aria-hidden
-        className="absolute inset-0 opacity-30"
-        style={{ backgroundImage: graysOf(extent) }}
-      />
+      <span aria-hidden className="absolute inset-0" style={{ backgroundImage: graysOf(extent) }} />
     ),
     className: "",
     minimapClassName: "rounded-md",

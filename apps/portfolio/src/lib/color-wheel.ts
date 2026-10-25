@@ -53,7 +53,7 @@ export function wheelPoint(angle: number, vividness: number, mostVivid: number):
  * page's background at the edge, where the most muted ones do.
  */
 export const WHEEL_BACKGROUND = [
-  "radial-gradient(circle closest-side, transparent 10%, var(--background))",
+  "radial-gradient(circle closest-side, transparent 55%, var(--background))",
   `conic-gradient(${[...HUE_BUCKETS.map((_, i) => `hsl(${i * 30} 100% 50%)`), "hsl(360 100% 50%)"].join(", ")})`,
 ].join(", ");
 
