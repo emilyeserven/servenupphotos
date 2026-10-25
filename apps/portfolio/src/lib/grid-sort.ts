@@ -1,3 +1,4 @@
+import { startOfDay } from "date-fns";
 import { type ColorOrder, type ColorSort, sortPhotos, type VividMeasure } from "@/lib/color-sort";
 import type { ColorName } from "@/lib/photo-colors";
 import type { Photo } from "@/lib/photos";
@@ -26,18 +27,20 @@ function isColored<T extends Photo>(photo: T): photo is Colored<T> {
 }
 
 /**
- * The photos, given newest first, most recently added first, with photos that have no date added
- * after the rest, newest first.
+ * The photos, given newest first, most recently added first, photos added on the same day by when
+ * they were taken, newest first, and photos that have no date added after the rest, newest first.
  */
 function byAdded<T extends Photo>(newestFirst: T[]): T[] {
   const added = newestFirst.filter((photo) => photo.addedAt !== null);
-  const sorted = added.toSorted((a, b) => addedTime(b) - addedTime(a));
+  const sorted = added.toSorted(
+    (a, b) => addedDay(b) - addedDay(a) || b.takenAt.getTime() - a.takenAt.getTime(),
+  );
   return [...sorted, ...newestFirst.filter((photo) => photo.addedAt === null)];
 }
 
-/** When the photo was added, in milliseconds, or 0 when it has no date added. */
-function addedTime(photo: Photo): number {
-  return photo.addedAt?.getTime() ?? 0;
+/** The start of the day the photo was added, in milliseconds, or 0 when it has no date added. */
+function addedDay(photo: Photo): number {
+  return photo.addedAt ? startOfDay(photo.addedAt).getTime() : 0;
 }
 
 /**
