@@ -27,6 +27,7 @@ export function NewTags({ names, definitions, existing, onCreated, disabled }: N
   const [underParent, setUnderParent] = useState(() => new Set(names));
   const create = useCreateTags(onCreated);
   const busy = disabled || create.isPending;
+  if (create.data) return <MadeLine ids={create.data} />;
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">
       <p>
@@ -51,7 +52,6 @@ export function NewTags({ names, definitions, existing, onCreated, disabled }: N
       <MakeButton
         count={chosen.size}
         disabled={busy}
-        made={create.isSuccess}
         onClick={() =>
           create.mutate(
             tagsToMake(
@@ -141,25 +141,28 @@ interface MakeButtonProps {
   /** How many new tags are ticked. */
   count: number;
   disabled: boolean;
-  /** Whether they've been made already. */
-  made: boolean;
   onClick: () => void;
 }
 
-/** Makes the ticked new tags, and says so once it has. */
-function MakeButton({ count, disabled, made, onClick }: MakeButtonProps) {
+/** Makes the ticked new tags. */
+function MakeButton({ count, disabled, onClick }: MakeButtonProps) {
   return (
     <Button
       type="button"
       variant="outline"
       size="sm"
       className="self-start"
-      disabled={disabled || made || count === 0}
+      disabled={disabled || count === 0}
       onClick={onClick}
     >
-      {made ? "Made and added" : makeLabel(count)}
+      {makeLabel(count)}
     </Button>
   );
+}
+
+/** What's left of the new tags once they're made: one line saying which were added. */
+function MadeLine({ ids }: { ids: string[] }) {
+  return <p className="text-muted-foreground">Made and added {ids.join(", ")}.</p>;
 }
 
 function makeLabel(count: number): string {

@@ -87,7 +87,7 @@ matching tags are added to the field, as an edit saved like any other (and sent 
 album, genre or metadata group already has, or one with nothing to make an ID from, is left out, saying why. The rest
 are listed under the field as new tags in lowercase kebab-case, each with a checkbox: **Make N new tags and add them**
 saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for Commit, like **New tag** on
-`/tags`) and adds them to the field.
+`/tags`) and adds them to the field, then hides the list, leaving one line that names the tags it added.
 
 To tag up to five related photos with one prompt, use [Bulk tagging](update-data.md#bulk-tagging) on Update Data,
 which shares these rules (`TAG_RULES` in `lib/tag-prompt.ts`).

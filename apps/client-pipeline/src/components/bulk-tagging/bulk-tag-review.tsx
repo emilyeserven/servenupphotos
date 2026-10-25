@@ -40,7 +40,10 @@ export function BulkTagReview({ preview, pick }: BulkTagReviewProps) {
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
       <UnknownPhotos names={preview.unknown} />
-      <NewTagList preview={preview} choices={choices} onChange={setChoices} disabled={busy} />
+      {/* Once saved, the new tags are made, so only what was saved is left to say. */}
+      {!apply.isSuccess && (
+        <NewTagList preview={preview} choices={choices} onChange={setChoices} disabled={busy} />
+      )}
       <ul className="flex flex-col gap-3">
         {preview.photos.map((plan) => (
           <PhotoTags
