@@ -77,10 +77,12 @@ func (c *Client) startRead(ctx context.Context, key string, read func(context.Co
 }
 
 // knownBlobs is the content of every file in the snapshots of root kept for
-// t's repository, by blob SHA, leaving out files that couldn't be read.
+// t's repository, leaving out files that couldn't be read, and of root's data
+// files in the checkout, by blob SHA.
 func (c *Client) knownBlobs(t target, root string) map[string][]byte {
 	prefix := repoKey(t) + "\x00" + root + "\x00"
 	known := c.localCopy().blobs(prefix)
+	addCheckoutBlobs(known, c.Checkout, root)
 	for key, s := range c.reads().allSnapshots() {
 		if strings.HasPrefix(key, prefix) {
 			addBlobs(known, s)

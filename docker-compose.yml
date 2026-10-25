@@ -9,8 +9,11 @@ services:
         required: false
     environment:
       PORT: "8081"
+      REPO_DIR: /repo
     volumes:
       - pipeline-data:/data
+      # The photo data in this clone, reused instead of downloaded from GitHub when it matches.
+      - ./apps/portfolio/src/data:/repo/apps/portfolio/src/data:ro
     restart: unless-stopped
 
   bff-pipeline:

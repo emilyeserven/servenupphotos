@@ -16,6 +16,13 @@ import (
 // The changes saved and not committed yet are kept in pending-changes.json
 // next to the settings.
 func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
+	return NewRouterWithCheckout(extractor, store, "")
+}
+
+// NewRouterWithCheckout is NewRouter, with the photo data files in checkout,
+// a copy of the repository on disk, reused instead of downloaded from GitHub
+// when they match (see github.Client.Checkout); "" uses none.
+func NewRouterWithCheckout(extractor exif.Extractor, store *settings.Store, checkout string) http.Handler {
 	stage := github.NewStage("")
 	local := github.NewLocalCopy("")
 	if store != nil {
@@ -24,6 +31,7 @@ func NewRouter(extractor exif.Extractor, store *settings.Store) http.Handler {
 	}
 	gh := github.New(stage)
 	gh.Local = local
+	gh.Checkout = checkout
 	return newRouter(extractor, store, gh)
 }
 

@@ -3,6 +3,8 @@ package github
 import (
 	"context"
 	"errors"
+	"os"
+	"path/filepath"
 	"slices"
 	"testing"
 	"time"
@@ -54,5 +56,35 @@ func TestSnapshotReadOutlivesThePage(t *testing.T) {
 	}
 	if n := f.count("graphql snapshot"); n != 1 {
 		t.Errorf("read the base branch %d times, want once: the second page waits for the first read", n)
+	}
+}
+
+func TestFirstReadReusesTheCheckout(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	same, changed := `{"file":"a.jpg"}`, `{"file":"b.jpg","title":"New"}`
+	f.files["main:"+dataRoot+"/photos/a.json"] = same
+	f.files["main:"+dataRoot+"/photos/b.json"] = changed
+	c.Checkout = t.TempDir()
+	dir := filepath.Join(c.Checkout, filepath.FromSlash(dataRoot), "photos")
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		t.Fatal(err)
+	}
+	for name, content := range map[string]string{"a.json": same, "b.json": `{"file":"b.jpg"}`} {
+		if err := os.WriteFile(filepath.Join(dir, name), []byte(content), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	got, err := c.Combined(t.Context(), pullGH)
+	if err != nil {
+		t.Fatalf("Combined() error = %v", err)
+	}
+	if want := []string{"graphql state", "graphql tree", "graphql blobs"}; !slices.Equal(f.calls, want) {
+		t.Errorf("calls = %v, want %v: only b.json, changed since the checkout, is downloaded", f.calls, want)
+	}
+	s, _ := c.reads().snapshot(snapshotKey(target{owner: "owner", name: "repo"}, dataRoot, f.head("main")))
+	if s == nil || string(s.files[dataRoot+"/photos/a.json"].content) != same ||
+		string(s.files[dataRoot+"/photos/b.json"].content) != changed {
+		t.Errorf("snapshot = %+v, want a.json from the checkout and b.json from GitHub (Combined: %+v)", s, got.Base)
 	}
 }
