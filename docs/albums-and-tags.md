@@ -52,8 +52,8 @@ It has:
   [Gemini tokens](https://ai.google.dev/gemini-api/docs/tokens).
 - What's known of where the photo was taken (its title, places, place name, EXIF and hand-written city, state,
   country and GPS position, and comment), the same lines the [location prompt](places-and-localizations.md#suggest-a-location) sends,
-  so the LLM only uses a culture's own word (such as "shotengai") for a photo from that culture, without making a tag
-  of the place itself.
+  so the LLM only uses a culture's own word (such as "hanok") for a photo from that culture, without making a tag
+  of the place itself, or of a word that is also a place's name.
 - Every tag's ID, to reuse when one fits, spelled as listed.
 - Every album, [photographic genre](photographic-genres.md) and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
   filters by them.
