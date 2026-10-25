@@ -6,7 +6,7 @@ import "net/http"
 func registerOrganizeRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("GET /organize", handleOrganize(d.store, d.gh))
 	mux.HandleFunc("POST /organize/{kind}", handleCreateGroup(d.store, d.gh))
-	mux.HandleFunc("PUT /organize/albums/{id}/parent", handleSetAlbumParent(d.store, d.gh))
+	mux.HandleFunc("PUT /organize/{kind}/{id}/parent", handleSetGroupParent(d.store, d.gh))
 	mux.HandleFunc("PUT /organize/albums/order", handleSetAlbumOrder(d.store, d.gh))
 	mux.HandleFunc("PUT /organize/tags/names", handleNormalizeTagNames(d.store, d.gh))
 	mux.HandleFunc("PUT /organize/spotlight/{zone}", handleSetSpotlightAlbum(d.store, d.gh))

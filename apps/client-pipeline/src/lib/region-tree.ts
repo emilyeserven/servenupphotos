@@ -34,6 +34,8 @@ export interface RegionTreeRow {
   node: RegionNode;
   depth: number;
   hasChildren: boolean;
+  /** The state a city stands in for when they have the same name, such as Seoul in Seoul, shown in one row. */
+  state?: RegionNode;
 }
 
 /** The key of the country, state or city with this name, or "" when the name is empty. */
@@ -168,6 +170,48 @@ function shownForSearch(nodes: RegionNode[], search: string): Set<string> | unde
   return shown;
 }
 
+/** The state the node is listed under when it's a city with the state's name, such as Seoul in Seoul. */
+function sameNamedState(node: RegionNode, byKey: Map<string, RegionNode>): RegionNode | undefined {
+  if (node.kind !== "city") return undefined;
+  const state = byKey.get(node.parentKey);
+  return isStateNamed(state, node.name) ? state : undefined;
+}
+
+/** Whether the node is a state with the name, counted the way the list counts names. */
+function isStateNamed(node: RegionNode | undefined, name: string): node is RegionNode {
+  return node?.kind === "state" && regionKey(node.name) === regionKey(name);
+}
+
+/** A state and the city with its name that stands in for it. */
+interface MergedState {
+  state: RegionNode;
+  city: RegionNode;
+}
+
+/** The node listed under the city instead of the state, or the city listed where the state was. */
+function reparented(node: RegionNode, merged: Map<string, MergedState>): RegionNode {
+  const pair = merged.get(node.parentKey);
+  if (!pair) return node;
+  return { ...node, parentKey: pair.city === node ? pair.state.parentKey : pair.city.key };
+}
+
+/**
+ * The nodes with each state that has a city of its own name, such as Seoul in Seoul, folded into
+ * that city: the city takes the state's place, and what was under the state is under the city.
+ * `states` holds each such state by its city's key, so the city's row can show both.
+ */
+function mergeSameNamed(nodes: RegionNode[]) {
+  const byKey = new Map(nodes.map((node) => [node.key, node]));
+  const merged = new Map<string, MergedState>();
+  for (const city of nodes) {
+    const state = sameNamedState(city, byKey);
+    if (state) merged.set(state.key, { state, city });
+  }
+  const states = new Map([...merged.values()].map(({ state, city }) => [city.key, state]));
+  const kept = nodes.filter((node) => !merged.has(node.key));
+  return { nodes: kept.map((node) => reparented(node, merged)), states };
+}
+
 /** How the list is narrowed: which nodes are collapsed, and the search text. */
 export interface RegionTreeView {
   collapsed: ReadonlySet<string>;
@@ -184,13 +228,19 @@ class RowBuilder {
     private readonly children: Map<string, RegionNode[]>,
     private readonly collapsed: ReadonlySet<string>,
     private readonly isShown: (node: RegionNode) => boolean,
+    private readonly states: ReadonlyMap<string, RegionNode>,
   ) {}
 
   /** Adds the node's row, then the rows under it unless it's collapsed. */
   readonly visit = (node: RegionNode, depth: number) => {
     this.seen.add(node.key);
     const inside = this.shownUnder(node);
-    this.rows.push({ node, depth, hasChildren: inside.length > 0 });
+    this.rows.push({
+      node,
+      depth,
+      hasChildren: inside.length > 0,
+      state: this.states.get(node.key),
+    });
     const visit = this.collapsed.has(node.key) ? this.hide : this.visit;
     for (const child of inside) if (!this.seen.has(child.key)) visit(child, depth + 1);
   };
@@ -216,22 +266,24 @@ class RowBuilder {
 
 /**
  * Every node as a list row, each followed by what's under it: countries, then their cities, then the
- * places in each city and the places in those. What's under a collapsed node is left out, except
- * while searching. Nodes caught in a loop of parents, which saving refuses, still get a row at the
+ * places in each city and the places in those. A state with a city of its own name shares one row
+ * with it. What's under a collapsed node is left out, except while searching. Nodes caught in a loop of parents, which saving refuses, still get a row at the
  * top.
  */
-export function regionTreeRows(nodes: RegionNode[], view: RegionTreeView): RegionTreeRow[] {
+export function regionTreeRows(all: RegionNode[], view: RegionTreeView): RegionTreeRow[] {
+  const { nodes, states } = mergeSameNamed(all);
   const children = childrenByParent(nodes);
   const shown = shownForSearch(nodes, view.search.trim().toLowerCase());
   const isShown = (node: RegionNode) => !shown || shown.has(node.key);
-  const builder = new RowBuilder(children, shown ? new Set() : view.collapsed, isShown);
+  const builder = new RowBuilder(children, shown ? new Set() : view.collapsed, isShown, states);
   builder.visitLeft(children.get("") ?? []);
   builder.visitLeft(nodes);
   return builder.rows;
 }
 
 /** The keys of every node that has something under it, which Collapse all closes. */
-export function regionParentKeys(nodes: RegionNode[]): Set<string> {
+export function regionParentKeys(all: RegionNode[]): Set<string> {
+  const { nodes } = mergeSameNamed(all);
   const keys = new Set(nodes.map((node) => node.key));
   return new Set(nodes.map((node) => node.parentKey).filter((key) => keys.has(key)));
 }

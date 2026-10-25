@@ -1,5 +1,5 @@
 import { ChevronDownIcon, XIcon } from "lucide-react";
-import { type KeyboardEvent, useId, useRef, useState } from "react";
+import { type KeyboardEvent, type ReactNode, useId, useRef, useState } from "react";
 import { ComboboxList } from "@/components/ui/combobox-list";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +35,8 @@ interface ComboboxProps {
    */
   createLabel?: (text: string) => string;
   onCreate?: (text: string) => void;
+  /** A small button inside the field, left of its caret, such as one that copies an LLM prompt. */
+  action?: ReactNode;
 }
 
 /** The value of the option that offers what's typed as a new one. */
@@ -58,6 +60,7 @@ export function Combobox({
   unknownLabel = (v) => `${v}, which isn't one of the options`,
   createLabel,
   onCreate,
+  action,
   ...aria
 }: ComboboxProps) {
   const generatedId = useId();
@@ -141,6 +144,7 @@ export function Combobox({
         <div
           className={cn(
             "bg-input/20 dark:bg-input/30 border-input flex min-h-7 w-full cursor-text flex-wrap items-center gap-1 rounded-md border py-0.5 pr-7 pl-1 transition-colors",
+            action && "pr-13",
             "focus-within:border-ring focus-within:ring-ring/30 focus-within:ring-2",
             disabled && "pointer-events-none cursor-not-allowed opacity-50",
           )}
@@ -189,6 +193,7 @@ export function Combobox({
             onKeyDown={onKeyDown}
           />
         </div>
+        {action && <div className="absolute top-1 right-6.5">{action}</div>}
         <ChevronDownIcon
           className="text-muted-foreground pointer-events-none absolute top-2 right-2 size-3.5"
           aria-hidden

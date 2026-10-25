@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { exifCamera, overrideChanges } from "@/lib/camera-overrides";
@@ -15,11 +16,14 @@ interface CameraOverridesCardProps {
   forced: boolean;
   onApply: (apply: boolean) => void;
   disabled: boolean;
+  /** The Lens section, shown first in the card. */
+  children: ReactNode;
 }
 
 /**
  * What the camera overrides for the photo's camera would change in its JSON, as they stand now,
- * with a button putting those changes into the edit for Save changes to write.
+ * with a button putting those changes into the edit for Save changes to write, under the photo's
+ * collapsible Lens section.
  */
 export function CameraOverridesCard({
   photo,
@@ -28,6 +32,7 @@ export function CameraOverridesCard({
   forced,
   onApply,
   disabled,
+  children,
 }: CameraOverridesCardProps) {
   const changes = overrideChanges(settings.overrides, settings.lenses, photo);
   const fields = Object.entries(changes);
@@ -43,25 +48,28 @@ export function CameraOverridesCard({
           sets them for each camera.
         </CardDescription>
       </CardHeader>
-      {fields.length > 0 && (
-        <CardContent className="flex flex-col gap-3">
-          <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
-            {fields.map(([field, to]) => (
-              <div key={field} className="contents">
-                <dt className="font-medium">{field}</dt>
-                <dd className="font-mono text-xs break-all">
-                  {JSON.stringify(photo[field] ?? null)} → {JSON.stringify(to)}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <ApplyButton
-            applied={applied}
-            disabled={disabled || forced}
-            onClick={() => onApply(!applied)}
-          />
-        </CardContent>
-      )}
+      <CardContent className="flex flex-col gap-4">
+        {children}
+        {fields.length > 0 && (
+          <>
+            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+              {fields.map(([field, to]) => (
+                <div key={field} className="contents">
+                  <dt className="font-medium">{field}</dt>
+                  <dd className="font-mono text-xs break-all">
+                    {JSON.stringify(photo[field] ?? null)} → {JSON.stringify(to)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <ApplyButton
+              applied={applied}
+              disabled={disabled || forced}
+              onClick={() => onApply(!applied)}
+            />
+          </>
+        )}
+      </CardContent>
     </Card>
   );
 }

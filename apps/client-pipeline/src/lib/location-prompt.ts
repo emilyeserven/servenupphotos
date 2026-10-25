@@ -53,8 +53,8 @@ function placeNameLine(details: PhotoDetails): string[] {
   return details.places.some((row) => row.id) ? [] : line("Place name", details.placeName);
 }
 
-/** Everything already known of where the photo was taken, one fact per line. */
-function knownLines({ details, exif, places }: LocationClues): string[] {
+/** Everything already known of where the photo was taken, one fact per line, such as "- City from the EXIF: Cairo". */
+export function knownLines({ details, exif, places }: LocationClues): string[] {
   return [
     ...line("Title", details.title),
     ...placeLines(details.places, places),

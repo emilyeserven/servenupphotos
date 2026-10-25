@@ -566,8 +566,7 @@ function photoLocation(photo: PhotoData): LocalizedLocation | null {
   const parts: LocationParts = {
     specific: specificPlace(photo),
     place: placeText(photo),
-    city: localizedField("city", custom(photo.customCity, photo.city)),
-    state: localizedField("state", custom(photo.customState, photo.state ?? null)),
+    ...cityAndState(photo),
     country: localizedField("country", custom(photo.customCountry, photo.country)),
     gps: gpsText(photoGps(photo)),
   };
@@ -575,6 +574,21 @@ function photoLocation(photo: PhotoData): LocalizedLocation | null {
   return Object.fromEntries(
     SCRIPT_DISPLAYS.map((script) => [script, locationIn(parts, script)]),
   ) as LocalizedLocation;
+}
+
+/**
+ * The state, or null when it has the city's name too, such as Seoul in Seoul, so the name isn't
+ * written twice.
+ */
+export function distinctState(state: string | null, city: string | null): string | null {
+  return state && state.trim().toLowerCase() === city?.trim().toLowerCase() ? null : state;
+}
+
+/** The photo's custom or EXIF city and state, each written every way, leaving out a state named like the city. */
+function cityAndState(photo: PhotoData) {
+  const city = custom(photo.customCity, photo.city);
+  const state = distinctState(custom(photo.customState, photo.state ?? null), city);
+  return { city: localizedField("city", city), state: localizedField("state", state) };
 }
 
 /** Whether the photo has any place, city, state or country to show; a GPS position alone isn't one. */

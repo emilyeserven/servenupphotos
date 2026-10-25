@@ -39,14 +39,17 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/organize/tags/names", jsonBody("PUT", request.body ?? {})),
   );
 
-  // Moves an album into another, or to the top level, as a change waiting for Commit.
-  app.put<{ Params: { id: string } }>("/organize/albums/:id/parent", async (request, reply) =>
-    relayToBackend(
-      reply,
-      app.log,
-      `/organize/albums/${encodeURIComponent(request.params.id)}/parent`,
-      jsonBody("PUT", request.body),
-    ),
+  // Moves an album into another, or a tag under another, or either to the top level, as a change
+  // waiting for Commit.
+  app.put<{ Params: { kind: string; id: string } }>(
+    "/organize/:kind/:id/parent",
+    async (request, reply) =>
+      relayToBackend(
+        reply,
+        app.log,
+        `/organize/${encodeURIComponent(request.params.kind)}/${encodeURIComponent(request.params.id)}/parent`,
+        jsonBody("PUT", request.body),
+      ),
   );
 
   // Picks the album a spotlight spot shows, as changes waiting for Commit.

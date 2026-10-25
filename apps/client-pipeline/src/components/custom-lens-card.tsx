@@ -19,51 +19,67 @@ interface CustomLensCardProps {
  * The photo's custom lens, for a lens its EXIF doesn't name well, such as a manual one, and whether
  * its aperture is manual or unknown.
  */
-export function CustomLensCard({
-  value,
-  onChange,
-  lenses,
-  description,
-  disabled,
-}: CustomLensCardProps) {
-  const lens = lenses.find((l) => l.id === value.customLens);
+function CustomLensCard({ value, onChange, lenses, description, disabled }: CustomLensCardProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Lens</CardTitle>
         <CardDescription>
-          {description}{" "}
-          <Link to="/metadata-groups" className="text-foreground underline underline-offset-4">
-            Metadata Groups
-          </Link>{" "}
-          lists the custom lenses to pick from, on its Lenses tab.
+          {description} <MetadataGroupsNote />
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <select
-          aria-label="Custom lens"
-          className="border-input bg-background h-9 min-w-0 rounded-md border px-3 text-sm"
-          value={value.customLens ?? NO_LENS}
-          disabled={disabled}
-          onChange={(e) => onChange({ ...value, customLens: e.target.value || null })}
-        >
-          <option value={NO_LENS}>As the EXIF and camera overrides say</option>
-          {lenses.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.name}
-            </option>
-          ))}
-          <MissingLens id={value.customLens} known={lens !== undefined} />
-        </select>
-        <LensWrites lens={lens} />
-        <ManualAperture
-          checked={value.manualAperture}
-          byLens={lens?.manualAperture === true}
-          disabled={disabled}
-          onChange={(manualAperture) => onChange({ ...value, manualAperture })}
-        />
+      <CardContent>
+        <CustomLensFields value={value} onChange={onChange} lenses={lenses} disabled={disabled} />
       </CardContent>
     </Card>
+  );
+}
+
+/** Where the custom lenses to pick from are listed, with a link there. */
+export function MetadataGroupsNote() {
+  return (
+    <>
+      <Link to="/metadata-groups" className="text-foreground underline underline-offset-4">
+        Metadata Groups
+      </Link>{" "}
+      lists the custom lenses to pick from, on its Lenses tab.
+    </>
+  );
+}
+
+/** The custom lens dropdown, what the chosen lens writes, and the Manual/unknown aperture box. */
+export function CustomLensFields({
+  value,
+  onChange,
+  lenses,
+  disabled,
+}: Omit<CustomLensCardProps, "description">) {
+  const lens = lenses.find((l) => l.id === value.customLens);
+  return (
+    <div className="flex flex-col gap-3">
+      <select
+        aria-label="Custom lens"
+        className="border-input bg-background h-9 min-w-0 rounded-md border px-3 text-sm"
+        value={value.customLens ?? NO_LENS}
+        disabled={disabled}
+        onChange={(e) => onChange({ ...value, customLens: e.target.value || null })}
+      >
+        <option value={NO_LENS}>As the EXIF and camera overrides say</option>
+        {lenses.map((l) => (
+          <option key={l.id} value={l.id}>
+            {l.name}
+          </option>
+        ))}
+        <MissingLens id={value.customLens} known={lens !== undefined} />
+      </select>
+      <LensWrites lens={lens} />
+      <ManualAperture
+        checked={value.manualAperture}
+        byLens={lens?.manualAperture === true}
+        disabled={disabled}
+        onChange={(manualAperture) => onChange({ ...value, manualAperture })}
+      />
+    </div>
   );
 }
 

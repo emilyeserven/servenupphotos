@@ -29,15 +29,16 @@ import {
   photoFile,
 } from "@/components/edit-in-flight/photo-json";
 import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
+import { LensSection } from "@/components/edit-in-flight/lens-section";
 import { ReplaceImageCard } from "@/components/edit-in-flight/replace-image-card";
-import { LocationPromptCard } from "@/components/edit-in-flight/location-prompt-card";
-import { TagPromptCard } from "@/components/edit-in-flight/tag-prompt-card";
+import { useLocationPrompt } from "@/components/edit-in-flight/location-prompt";
+import { TagPromptButton } from "@/components/edit-in-flight/tag-prompt-button";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
 import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
 import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-in-flight/use-edit";
-import { CustomLensCard } from "@/components/custom-lens-card";
-import { lensChanged, withLensChoice } from "@/lib/custom-lens";
+import { hasLensChoice, lensChanged, savedLensChoice, withLensChoice } from "@/lib/custom-lens";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { useTabSubject } from "@/stores/tab-title";
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
@@ -131,6 +132,18 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
   const edit = useEdit(editable, savedCrop);
   const save = useSave(editable, edit.onSaved);
   const pending = save.mutation.isPending;
+  const fallbackTitle = fileStem(photoFile(editable.data) || fileName(editable.file.path));
+  // The title as it's being typed, so the tab follows it; the file name until it has one.
+  useTabSubject(edit.details.title.trim() || fallbackTitle);
+  const imageUrl = promptImageUrl(edit.savedData.images, editable.image.url);
+  const exif = savedExifPlace(edit.savedData);
+  const locationPrompt = useLocationPrompt({
+    imageUrl,
+    details: edit.details,
+    exif,
+    onChange: edit.setDetails,
+    disabled: pending,
+  });
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-2">
@@ -156,12 +169,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           onChange={edit.setGroups}
           description="Saving changes writes them over the ones in the JSON."
           disabled={pending}
-        />
-        <TagPromptCard
-          imageUrl={promptImageUrl(edit.savedData.images, editable.image.url)}
-          tags={edit.groups.tags}
-          onTagsChange={(tags) => edit.setGroups({ ...edit.groups, tags })}
-          disabled={pending}
+          tagPrompt={<TagPromptButton imageUrl={imageUrl} details={edit.details} exif={exif} />}
         />
         <SpotlightCard path={editable.file.path} />
       </div>
@@ -169,17 +177,11 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
         <PhotoDetailsCard
           value={edit.details}
           onChange={edit.setDetails}
-          fallbackTitle={fileStem(photoFile(editable.data) || fileName(editable.file.path))}
-          exifPlace={savedExifPlace(edit.savedData)}
+          fallbackTitle={fallbackTitle}
+          exifPlace={exif}
           description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
           disabled={pending}
-        />
-        <LocationPromptCard
-          imageUrl={promptImageUrl(edit.savedData.images, editable.image.url)}
-          details={edit.details}
-          exif={savedExifPlace(edit.savedData)}
-          onChange={edit.setDetails}
-          disabled={pending}
+          locationPrompt={locationPrompt}
         />
         <SocialPostsCard
           value={edit.socialPosts}
@@ -195,28 +197,27 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
   );
 }
 
-/** The photo's custom lens and manual aperture, then what its camera overrides and lens change. */
+/** What the photo's camera overrides and lens change, with its custom lens and manual aperture. */
 function LensCards({ edit, disabled }: { edit: Edit; disabled: boolean }) {
   const settings = useLensSettings();
   const { savedData, lensEdit, setLensEdit } = edit;
   return (
-    <>
-      <CustomLensCard
+    <CameraOverridesCard
+      photo={withLensChoice(savedData, lensEdit)}
+      settings={settings}
+      applied={overridesApplied(savedData, lensEdit)}
+      forced={lensChanged(savedData, lensEdit)}
+      onApply={(apply) => setLensEdit({ ...lensEdit, apply })}
+      disabled={disabled}
+    >
+      <LensSection
         value={lensEdit}
         onChange={(choice) => setLensEdit({ ...lensEdit, ...choice })}
         lenses={settings.lenses}
-        description="Saving changes writes it, with the camera overrides, over the JSON."
+        defaultOpen={hasLensChoice(savedLensChoice(savedData))}
         disabled={disabled}
       />
-      <CameraOverridesCard
-        photo={withLensChoice(savedData, lensEdit)}
-        settings={settings}
-        applied={overridesApplied(savedData, lensEdit)}
-        forced={lensChanged(savedData, lensEdit)}
-        onApply={(apply) => setLensEdit({ ...lensEdit, apply })}
-        disabled={disabled}
-      />
-    </>
+    </CameraOverridesCard>
   );
 }
 
