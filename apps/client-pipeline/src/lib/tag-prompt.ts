@@ -61,7 +61,7 @@ Rules:
 - Write every tag in lowercase kebab-case: lowercase words joined by single dashes, such as "street-food" or "wabi-sabi".
 - Keep tags general enough to fit other photos too: "temple" rather than "bulguksa-main-hall".
 - Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "lanterns", "street-food" or "cats").
-- Use what's known about where the photo was taken to pick terms that fit it: only use a culture's own word (such as "hanok", a traditional Korean house) when the photo is from that culture, and otherwise use a general one (such as "covered-street" or "shopping-street"). Never turn what's known (its place, city or country) into a tag, and leave out any word that is also the name of a place, street or district.
+- Use what's known about where the photo was taken to pick terms that fit it: use a culture's own word (such as "shotengai", a Japanese shopping street, or "hanok", a traditional Korean house) only when the photo is from that culture, and otherwise use a general one (such as "covered-street" or "shopping-street"). Never turn what's known (its place, city or country) into a tag.
 - A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
 - Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, its albums, and its photographic genre (such as street, landscape or portrait). Don't suggest any of the names under "Already filtered" either.
 - Suggest 3 to 8 tags.
