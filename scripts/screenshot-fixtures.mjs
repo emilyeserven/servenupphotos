@@ -670,12 +670,12 @@ export function defaultFixtures() {
     },
     // Saves answer as the backend does: their changes wait for Commit, for the open pull request.
     "POST /api/photos/github": ({ body }) => savedPhoto(`${FOLDER}/photos/${body?.name}.json`),
-    "PUT /api/photos/in-flight": ({ body }) => ({
-      path: body?.path,
+    "PUT /api/photos/in-flight": ({ body = {} }) => ({
+      path: savedPath(body),
       changed: true,
       pullRequestUrl: PULL_REQUEST.url,
       before: null,
-      data: body?.data ?? {},
+      data: body.data ?? {},
     }),
     "PUT /api/organize/albums/order": ({ body }) => ({
       ...pendingSave(),
@@ -709,4 +709,9 @@ export function photoSizes() {
         { width: data.width, height: data.height },
       ]),
   );
+}
+
+/** Where a photo editor save puts the file: moved to `name` in its folder when that's given. */
+function savedPath({ path, name }) {
+  return name ? path.replace(/[^/]+$/, `${name}.json`) : path;
 }
