@@ -17,7 +17,7 @@ function BulkUploadPage() {
         <CardHeader>
           <CardTitle>Photos</CardTitle>
           <CardDescription>
-            For one photo with its title, crop, albums and tags set first, use the{" "}
+            For one photo with its title, crop, albums, tags and genres set first, use the{" "}
             <Link to="/exif" className="text-foreground underline underline-offset-4">
               Photo
             </Link>{" "}

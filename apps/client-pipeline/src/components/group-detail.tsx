@@ -60,7 +60,7 @@ export function GroupDetailPage({ kind, id }: { kind: GroupKind; id: string }) {
   );
 }
 
-const LIST_ROUTES = { albums: "/albums", tags: "/tags" } as const;
+const LIST_ROUTES = { albums: "/albums", tags: "/tags", genres: "/genres" } as const;
 
 /** The page's title and description: the album or tag's, once it's found. */
 function pageHeading(kind: GroupKind, id: string, group?: Group) {

@@ -37,7 +37,7 @@ function noMatch(filter: string): string {
   return filter.trim() ? `“${filter.trim()}”` : "the filters";
 }
 
-/** The photos shown, as Square Thumbnail tiles with their names, albums, tags and Edit buttons. */
+/** The photos shown, as Square Thumbnail tiles with their names, albums, tags, genres and Edit buttons. */
 export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGridProps) {
   if (data.files.length === 0) {
     return (
@@ -165,10 +165,10 @@ function SelectBox({
   );
 }
 
-/** The names of the albums and tags the photo's JSON lists, as the base branch has it. */
+/** The names of the albums, tags and genres the photo's JSON lists, as the base branch has it. */
 function GroupNames({ file }: { file: PublishedFile }) {
   const organize = useQuery(organizeQuery);
-  const { albums, tags } = savedGroups(fileData(file));
+  const { albums, tags, genres } = savedGroups(fileData(file));
   return (
     <div className="text-muted-foreground flex flex-col gap-0.5 text-xs empty:hidden">
       <GroupLine
@@ -176,13 +176,14 @@ function GroupNames({ file }: { file: PublishedFile }) {
         names={groupNames(organize.data, "albums", albums)}
       />
       <GroupLine label="Tags" names={groupNames(organize.data, "tags", tags)} />
+      <GroupLine label="Genres" names={groupNames(organize.data, "genres", genres)} />
     </div>
   );
 }
 
-/** The names of the albums or tags with ids, or the IDs of ones that aren't read or found. */
+/** The names of the albums, tags or genres with ids, or the IDs of ones that aren't read or found. */
 function groupNames(data: OrganizeResponse | undefined, kind: GroupKind, ids: string[]): string[] {
-  const groups = data ? data[kind] : [];
+  const groups = data?.[kind] ?? [];
   const names = new Map(groups.map((group) => [group.id, groupLabel(group)]));
   return ids.map((id) => names.get(id) ?? id);
 }

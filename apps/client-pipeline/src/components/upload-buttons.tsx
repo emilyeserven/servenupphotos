@@ -80,8 +80,8 @@ function SingleUploadDialog({
         <DialogHeader>
           <DialogTitle>Upload a photo</DialogTitle>
           <DialogDescription>
-            Choose one JPEG to analyze, then set its title, crop, albums and tags before adding it
-            to the batch.
+            Choose one JPEG to analyze, then set its title, crop, albums, tags and genres before
+            adding it to the batch.
           </DialogDescription>
         </DialogHeader>
         <DropZone

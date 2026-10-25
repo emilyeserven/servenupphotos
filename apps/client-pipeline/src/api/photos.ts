@@ -9,9 +9,10 @@ export interface PhotoData {
   /** The photo's original file name. */
   file: string;
   sanitized: SanitizedExif;
-  /** The IDs of the albums and tags to save the photo in. */
+  /** The IDs of the albums, tags and photographic genres to save the photo in. */
   albums: string[];
   tags: string[];
+  genres: string[];
   /** Where the photo was taken, as places from PLACES.json. */
   places: PhotoPlace[];
 }
@@ -101,11 +102,13 @@ export interface CombinedFile {
   error?: string;
 }
 
-/** ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json, PLACES.json and LOCALIZATIONS.json, read at one ref. */
+/** ALLPHOTOS.json, ALLALBUMS.json, ALLTAGS.json, ALLGENRES.json, PLACES.json and the other combined lists, read at one ref. */
 export interface CombinedFiles {
   photos: CombinedFile;
   albums: CombinedFile;
   tags: CombinedFile;
+  /** ALLGENRES.json, the photographic genres. */
+  genres: CombinedFile;
   places: CombinedFile;
   localizations: CombinedFile;
   /** METAINFO.json, the metadata groups. */
@@ -146,6 +149,8 @@ export interface InFlightRead {
   files: InFlightFileRead[];
   albums: InFlightGroupsRead;
   tags: InFlightGroupsRead;
+  /** The photographic genre files, combined into ALLGENRES.json. */
+  genres: InFlightGroupsRead;
   places: InFlightGroupsRead;
   localizations: InFlightGroupsRead;
   /** The metadata group files, combined into METAINFO.json. */
@@ -166,14 +171,23 @@ interface InFlightGroupsRead {
 /** The photo data waiting in the pull request, checked against the combined lists at its head. */
 export interface InFlightResponse extends Omit<
   InFlightRead,
-  "files" | "albums" | "tags" | "places" | "localizations" | "metainfo" | "cameras" | "lenses"
+  | "files"
+  | "albums"
+  | "tags"
+  | "genres"
+  | "places"
+  | "localizations"
+  | "metainfo"
+  | "cameras"
+  | "lenses"
 > {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, place, localization, metadata group, camera override and custom lens files in the pull request. */
+  /** The album, tag, genre, place, localization, metadata group, camera override and custom lens files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
+  genres: InFlightGroups;
   places: InFlightGroups;
   localizations: InFlightGroups;
   metainfo: InFlightGroups;

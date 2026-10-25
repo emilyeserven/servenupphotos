@@ -3,22 +3,29 @@ import type { InFlightPullRequest, PublishResult } from "@/api/photos";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
 
-/** A way of organizing photos. Each album or tag is one JSON file, and photos list them by ID. */
-export type GroupKind = "albums" | "tags";
+/**
+ * A way of organizing photos: albums, tags and photographic genres. Each one is one JSON file, and
+ * photos list them by ID.
+ */
+export type GroupKind = "albums" | "tags" | "genres";
+
+/** Every kind, in the order the pages list them. */
+export const GROUP_KIND_LIST: readonly GroupKind[] = ["albums", "tags", "genres"];
 
 /** How each kind is named and where CI combines its files. */
 export const GROUP_KINDS: Record<GroupKind, { singular: string; plural: string; allFile: string }> =
   {
     albums: { singular: "album", plural: "albums", allFile: "ALLALBUMS.json" },
     tags: { singular: "tag", plural: "tags", allFile: "ALLTAGS.json" },
+    genres: { singular: "genre", plural: "genres", allFile: "ALLGENRES.json" },
   };
 
-/** One album or tag file. */
+/** One album, tag or genre file. */
 export interface Group {
   id: string;
   name: string;
   description?: string;
-  /** An album's parent album's ID; absent for a top-level album, and for every tag. */
+  /** An album's parent album's ID; absent for a top-level album, and for every tag and genre. */
   parent?: string;
   /** An album's place among the albums, 1 first; absent until the albums are reordered. */
   order?: number;
@@ -32,7 +39,7 @@ export interface Group {
   error?: string;
 }
 
-/** Every album and tag on the base branch and in the open photo data pull request. */
+/** Every album, tag and genre on the base branch and in the open photo data pull request. */
 export interface OrganizeResponse {
   repo: string;
   folder: string;
@@ -40,6 +47,8 @@ export interface OrganizeResponse {
   pullRequest: Pick<InFlightPullRequest, "number" | "url" | "branch" | "title"> | null;
   albums: Group[];
   tags: Group[];
+  /** The photographic genres, such as street or landscape. */
+  genres: Group[];
 }
 
 export const organizeQuery = queryOptions({
@@ -48,7 +57,7 @@ export const organizeQuery = queryOptions({
   retry: false,
 });
 
-/** A new album or tag. */
+/** A new album, tag or genre. */
 interface NewGroup {
   id: string;
   name: string;
@@ -57,7 +66,7 @@ interface NewGroup {
   parent?: string;
 }
 
-/** Saves a new album or tag as JSON, as a change waiting for Commit. */
+/** Saves a new album, tag or genre as JSON, as a change waiting for Commit. */
 export const createGroupMutation = (kind: GroupKind) =>
   mutationOptions({
     mutationKey: ["organize", kind, "create"],
@@ -77,7 +86,7 @@ export const createGroupMutation = (kind: GroupKind) =>
   });
 
 /**
- * name as an album or tag ID, matching the backend's rule of lowercase letters and numbers with
+ * name as an album, tag or genre ID, matching the backend's rule of lowercase letters and numbers with
  * single dashes between words: accents dropped, and runs of anything else turned into one dash.
  * Empty when the name has no letter or number from a to z or 0 to 9.
  */
@@ -93,7 +102,20 @@ export function groupId(name: string): string {
 }
 
 /**
- * The album or tag that already has `id` or `name`, ignoring case, since albums and tags share
+ * name as a new album or tag is saved with: trimmed for an album, and in lowercase kebab-case for
+ * a tag, the same as its ID, so "Street Food" is saved as "street-food".
+ */
+export function groupName(kind: GroupKind, name: string): string {
+  return kind === "tags" ? groupId(name) : name.trim();
+}
+
+/** The tags whose names aren't their IDs, so aren't in lowercase kebab-case yet. */
+export function unnormalizedTags(organize: OrganizeResponse | undefined): Group[] {
+  return (organize?.tags ?? []).filter((tag) => !tag.error && tag.name !== tag.id);
+}
+
+/**
+ * The album, tag or genre that already has `id` or `name`, ignoring case, since they all share
  * one set of names so a photo's never collide.
  */
 export function findCollision(
@@ -103,7 +125,7 @@ export function findCollision(
 ): { kind: GroupKind; group: Group } | undefined {
   const wanted = value.trim().toLowerCase();
   if (!wanted) return undefined;
-  for (const kind of ["albums", "tags"] as const) {
+  for (const kind of GROUP_KIND_LIST) {
     const group = data[kind].find((g) => g[field].trim().toLowerCase() === wanted);
     if (group) return { kind, group };
   }
@@ -163,6 +185,22 @@ export const setAlbumOrderMutation = albumsMutation(
   (ids: string[]) => ({ ids }),
 );
 
+/** Names every tag in lowercase kebab-case, its ID, as changes waiting for Commit. */
+export const normalizeTagNamesMutation = mutationOptions({
+  mutationKey: ["organize", "tags", "names"],
+  meta: {
+    saves: (result) => (result as AlbumsResult).files > 0,
+    changes: (result) =>
+      (result as PendingSave).changes.map((change) => ({ kind: "tags" as const, ...change })),
+  },
+  mutationFn: () =>
+    requestJson<AlbumsResult>("/api/organize/tags/names", {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    }),
+});
+
 /**
  * Makes `album` the one the spotlight spot `zone` shows, or leaves the spot without one when it's
  * null, as changes waiting for Commit.
@@ -174,31 +212,33 @@ export const setSpotlightAlbumMutation = albumsMutation(
   ({ album }) => ({ album }),
 );
 
-/** A photo's albums and tags, by ID, as its JSON lists them. */
+/** A photo's albums, tags and genres, by ID, as its JSON lists them. */
 export interface PhotoGroups {
   albums: string[];
   tags: string[];
+  /** The photographic genres, such as "street". */
+  genres: string[];
 }
 
-export const NO_GROUPS: PhotoGroups = { albums: [], tags: [] };
+export const NO_GROUPS: PhotoGroups = { albums: [], tags: [], genres: [] };
 
-/** The albums and tags saved in a photo's JSON; ones that aren't lists of IDs count as none. */
+/** The albums, tags and genres saved in a photo's JSON; ones that aren't lists of IDs count as none. */
 export function savedGroups(data: Record<string, unknown> | undefined): PhotoGroups {
-  return { albums: idList(data?.albums), tags: idList(data?.tags) };
+  return { albums: idList(data?.albums), tags: idList(data?.tags), genres: idList(data?.genres) };
 }
 
 function idList(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((id): id is string => typeof id === "string") : [];
 }
 
-/** data with groups as its "albums" and "tags", where it has them, or else last. */
+/** data with groups as its "albums", "tags" and "genres", where it has them, or else last. */
 export function withGroups<T extends object>(data: T, groups: PhotoGroups) {
-  return { ...data, albums: groups.albums, tags: groups.tags };
+  return { ...data, albums: groups.albums, tags: groups.tags, genres: groups.genres };
 }
 
-/** Whether a and b list the same albums and tags in the same order. */
+/** Whether a and b list the same albums, tags and genres in the same order. */
 export function sameGroups(a: PhotoGroups, b: PhotoGroups): boolean {
-  return sameIds(a.albums, b.albums) && sameIds(a.tags, b.tags);
+  return GROUP_KIND_LIST.every((kind) => sameIds(a[kind], b[kind]));
 }
 
 function sameIds(a: string[], b: string[]): boolean {
@@ -206,11 +246,11 @@ function sameIds(a: string[], b: string[]): boolean {
 }
 
 interface PhotoGroupsResult extends PendingSave {
-  /** How many photo files changed; the others already had the albums and tags. */
+  /** How many photo files changed; the others already had the albums, tags and genres. */
   files: number;
 }
 
-/** Adds albums and tags to the photo files at `paths`, as changes waiting for Commit. */
+/** Adds albums, tags and genres to the photo files at `paths`, as changes waiting for Commit. */
 export const addPhotoGroupsMutation = mutationOptions({
   mutationKey: ["photos", "groups"],
   meta: { saves: true, changes: (result) => photoChanges(result as PhotoGroupsResult) },
@@ -281,7 +321,7 @@ function isTopLevel(album: Group, ids: ReadonlySet<string>): boolean {
   return !album.parent || !ids.has(album.parent);
 }
 
-/** What to call an album or tag: its name, or its ID when it has none. */
+/** What to call an album, tag or genre: its name, or its ID when it has none. */
 export function groupLabel(group: Group): string {
   return group.name || group.id;
 }

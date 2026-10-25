@@ -34,6 +34,9 @@ type Client struct {
 
 	mu    sync.Mutex
 	cache *readCache
+	// firstCommit is when each file was first committed, by repository key
+	// and path (see committedTimes), which never changes once known.
+	firstCommit map[string]time.Time
 	// stateMu lets one read of where the repository stands run at a time.
 	stateMu sync.Mutex
 	// Local is the local copy of what was last read from GitHub; nil keeps

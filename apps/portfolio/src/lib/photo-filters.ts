@@ -6,12 +6,12 @@ export const LOCATION_KEYS = ["country", "state", "city", "place"] as const;
 
 export type LocationKey = (typeof LOCATION_KEYS)[number];
 
-/** The album and tag filters' keys; an album also matches the photos in its sub-albums. */
-const GROUP_KEYS = ["album", "tag"] as const;
+/** The album, tag and genre filters' keys; an album also matches the photos in its sub-albums. */
+const GROUP_KEYS = ["album", "tag", "genre"] as const;
 
 type GroupKey = (typeof GROUP_KEYS)[number];
 
-/** The location, album and tag filters as they're named in the URL. */
+/** The location, album, tag and genre filters as they're named in the URL. */
 export const FILTER_KEYS = [...LOCATION_KEYS, ...GROUP_KEYS] as const;
 
 export type FilterKey = (typeof FILTER_KEYS)[number];
@@ -61,7 +61,7 @@ export function hasFilters(filters: PhotoFilters): boolean {
   return Object.keys(filters).length > 0;
 }
 
-/** How many choices the filters make: each country, city and place counts, and the album and tag. */
+/** How many choices the filters make: each country, city and place counts, and the album, tag and genre. */
 export function filterCount(filters: PhotoFilters): number {
   const locations = LOCATION_KEYS.flatMap((key) => locationValues(filters[key])).length;
   return locations + GROUP_KEYS.filter((key) => filters[key] !== undefined).length;
@@ -81,6 +81,7 @@ const MATCHES: Record<FilterKey, (photo: Photo, value: string) => boolean> = {
   place: (photo, value) => photo.placeIds.includes(value),
   album: inAlbum,
   tag: (photo, value) => photo.tags.includes(value),
+  genre: (photo, value) => photo.genres.includes(value),
 };
 
 /** The chosen countries, cities and places, as pairs of a key and a value. */

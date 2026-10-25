@@ -77,6 +77,9 @@ func startProgress(ctx context.Context, step string, total int) *progressCounter
 }
 
 // add counts one more read done.
-func (p *progressCounter) add() {
-	reportProgress(p.ctx, p.step, int(p.done.Add(1)), p.total)
+func (p *progressCounter) add() { p.addN(1) }
+
+// addN counts n more reads done, such as a batch of files.
+func (p *progressCounter) addN(n int) {
+	reportProgress(p.ctx, p.step, int(p.done.Add(int64(n))), p.total)
 }

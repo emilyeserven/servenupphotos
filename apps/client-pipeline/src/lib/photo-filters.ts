@@ -4,7 +4,7 @@ import { titleOf } from "@/lib/drafts";
 export type FilterChoice = "with" | "without";
 
 /** The things the Photos in Flight page can filter photos by. */
-export type FilterKey = "title" | "place" | "gps" | "albums" | "tags" | "reEdit";
+export type FilterKey = "title" | "place" | "gps" | "albums" | "tags" | "genres" | "reEdit";
 
 /** The filters chosen, by what they filter on; a thing left out isn't filtered on. */
 export type PhotoFilters = Partial<Record<FilterKey, FilterChoice>>;
@@ -37,6 +37,7 @@ export const PHOTO_FILTERS: { key: FilterKey; label: string; has: (data: PhotoDa
     { key: "gps", label: "GPS position", has: hasGps },
     { key: "albums", label: "Albums", has: (data) => hasEntries(data.albums) },
     { key: "tags", label: "Tags", has: (data) => hasEntries(data.tags) },
+    { key: "genres", label: "Genres", has: (data) => hasEntries(data.genres) },
     { key: "reEdit", label: "Re-edit mark", has: (data) => Boolean(data.reEdit) },
   ];
 

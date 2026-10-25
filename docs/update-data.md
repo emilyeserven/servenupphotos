@@ -61,7 +61,7 @@ changed top-level fields are rewritten, and nothing is saved while any photo fil
 
 **Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
 how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
-asking GitHub when the files were created (50 files a query), then reading the originals in R2 one photo at a time,
+asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,
 such as "Reading each photo's colors from its original in R2: 42 of 150". The backend keeps each task's latest progress
 in memory (`github.WithProgress`, kept by `readProgress` in `be-pipeline/internal/httpapi/progress.go`), and the page
 asks `GET /api/data/progress/{task}` (`missing-fields` or `colors`) every half second until the read answers.

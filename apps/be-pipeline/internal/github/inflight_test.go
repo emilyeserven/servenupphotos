@@ -120,7 +120,7 @@ func TestInFlightListsPendingChanges(t *testing.T) {
 	if _, err := c.Publish(t.Context(), pullGH, photo("DSC0001")); err != nil {
 		t.Fatalf("Publish() error = %v", err)
 	}
-	if _, err := c.CreateGroup(t.Context(), pullGH, Tags, NewGroup{ID: "night", Name: "Night"}); err != nil {
+	if _, err := c.CreateGroup(t.Context(), pullGH, Tags, NewGroup{ID: "night", Name: "night"}); err != nil {
 		t.Fatalf("CreateGroup() error = %v", err)
 	}
 	got, err := c.InFlight(t.Context(), pullGH)

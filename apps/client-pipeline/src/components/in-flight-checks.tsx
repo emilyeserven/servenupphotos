@@ -75,6 +75,8 @@ export function FileChecks({ data }: { data: InFlightResponse }) {
         <dd>{groupsSummary(data.albums)}</dd>
         <dt className="text-muted-foreground">Tag files</dt>
         <dd>{groupsSummary(data.tags)}</dd>
+        <dt className="text-muted-foreground">Genre files</dt>
+        <dd>{groupsSummary(data.genres)}</dd>
         <dt className="text-muted-foreground">Place files</dt>
         <dd>{groupsSummary(data.places)}</dd>
         <dt className="text-muted-foreground">Localization files</dt>

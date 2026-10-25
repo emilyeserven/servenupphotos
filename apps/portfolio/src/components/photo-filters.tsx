@@ -3,6 +3,7 @@ import {
   ChevronsUpDown,
   FolderOpen,
   type LucideIcon,
+  Shapes,
   SlidersHorizontal,
   Tag,
   X,
@@ -13,7 +14,13 @@ import { hiddenText } from "@/components/hidden-note";
 import { PlacesFilter } from "@/components/places-filter";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { Button } from "@/components/ui/button";
-import { albumOptions, type FilterOption, locationOptions, tagOptions } from "@/lib/filter-options";
+import {
+  albumOptions,
+  type FilterOption,
+  genreOptions,
+  locationOptions,
+  tagOptions,
+} from "@/lib/filter-options";
 import {
   FILTER_KEYS,
   filterCount,
@@ -188,8 +195,9 @@ export function FilterCount({ count }: { count: number }) {
 }
 
 /**
- * The Places combobox and the album and tag dropdowns. Each choice says how many of `facet` it
- * would show, given the other filters. The tag dropdown is left out while there are no tags.
+ * The Places combobox and the album, tag and genre dropdowns. Each choice says how many of `facet`
+ * it would show, given the other filters. The tag and genre dropdowns are left out while there are
+ * none.
  */
 function FilterDropdowns({
   photos,
@@ -205,6 +213,7 @@ function FilterDropdowns({
   const placeFacet = filterPhotos(facet, withoutFilters(filters, LOCATION_KEYS));
   const albums = albumOptions(filterPhotos(facet, withoutFilters(filters, ["album"])));
   const tags = tagOptions(filterPhotos(facet, withoutFilters(filters, ["tag"])));
+  const genres = genreOptions(filterPhotos(facet, withoutFilters(filters, ["genre"])));
 
   /** Replaces the filters `keys` name with the ones chosen. */
   function choose(keys: readonly FilterKey[], chosen: PhotoFilters) {
@@ -232,6 +241,15 @@ function FilterDropdowns({
           options={tags}
           selected={selectedValue(tags, filters)}
           onChange={(selected) => choose(["tag"], filterOf(selected))}
+        />
+      )}
+      {genres.length > 0 && (
+        <FilterSelect
+          label="Genre"
+          Icon={Shapes}
+          options={genres}
+          selected={selectedValue(genres, filters)}
+          onChange={(selected) => choose(["genre"], filterOf(selected))}
         />
       )}
     </>

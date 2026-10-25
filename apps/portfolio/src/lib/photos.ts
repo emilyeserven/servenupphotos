@@ -72,6 +72,8 @@ export interface Photo {
    */
   spotlightPlace: number | null;
   tags: string[];
+  /** The IDs of the photographic genres it's in, such as "street"; empty for older entries. */
+  genres: string[];
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
   spotlightFocus: SpotlightFocus | null;
   /**
@@ -247,9 +249,10 @@ interface PhotoData {
   spotlightFocus?: SpotlightFocus | null;
   /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
   places?: PhotoPlaces;
-  /** The IDs of the photo's albums and tags; older entries were saved without them. */
+  /** The IDs of the photo's albums, tags and genres; older entries were saved without them. */
   albums?: string[];
   tags?: string[];
+  genres?: string[];
   /** The photo's color summary, saved by the pipeline; older entries don't have it. */
   colors?: PhotoColorData | null;
 }
@@ -606,14 +609,15 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums, tags, old spotlight place and focus point; older entries are missing them. */
+/** The photo's albums, tags, genres, old spotlight place and focus point; older entries are missing them. */
 function groupFields({
   albums = [],
   tags = [],
+  genres = [],
   websiteSpotlight = null,
   spotlightFocus = null,
 }: PhotoData) {
-  return { albums, tags, spotlightPlace: websiteSpotlight, spotlightFocus };
+  return { albums, tags, genres, spotlightPlace: websiteSpotlight, spotlightFocus };
 }
 
 /**

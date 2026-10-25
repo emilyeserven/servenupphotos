@@ -1,4 +1,4 @@
-import { albums, type Group, subAlbums, tags } from "@/lib/groups";
+import { albums, genres, type Group, subAlbums, tags } from "@/lib/groups";
 import {
   localizeName,
   localizePlace,
@@ -63,7 +63,7 @@ function locationTree(list: Photo[]): LocationNode {
   return root;
 }
 
-/** The same name every way, for albums and tags, which aren't localized. */
+/** The same name every way, for albums, tags and genres, which aren't localized. */
 function sameEveryWay(name: string): Localized {
   return { english: name, romanized: name, phonetic: name, native: name };
 }
@@ -121,9 +121,9 @@ export function locationOptions(list: Photo[], facet: Photo[]): LocationOption[]
   return childOptions(locationTree(list), facet);
 }
 
-/** An album or tag as a choice, and, for an album, its sub-albums after it. */
+/** An album, tag or genre as a choice, and, for an album, its sub-albums after it. */
 function groupOptions(
-  key: "album" | "tag",
+  key: "album" | "tag" | "genre",
   group: Group,
   facet: Photo[],
   depth: number,
@@ -150,6 +150,11 @@ export function albumOptions(facet: Photo[]): FilterOption[] {
 /** The tag filter's choices: every tag. */
 export function tagOptions(facet: Photo[]): FilterOption[] {
   return tags.flatMap((tag) => groupOptions("tag", tag, facet, 0));
+}
+
+/** The genre filter's choices: every photographic genre. */
+export function genreOptions(facet: Photo[]): FilterOption[] {
+  return genres.flatMap((genre) => groupOptions("genre", genre, facet, 0));
 }
 
 /** Camera or lens names as choices at the depth, each counting the photos taken with it. */

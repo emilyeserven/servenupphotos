@@ -146,7 +146,7 @@ function PhotoJson({ file, sanitized, onSaved }: PhotoJsonProps) {
   return (
     <>
       <JsonCodeBlock
-        value={{ file, ...sanitized, albums: [], tags: [] }}
+        value={{ file, ...sanitized, albums: [], tags: [], genres: [] }}
         title="JSON to Upload"
         contentClassName="max-h-80"
       />

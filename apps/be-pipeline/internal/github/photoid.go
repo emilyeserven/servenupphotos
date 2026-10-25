@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -15,8 +17,13 @@ import (
 // /grid?photo=12.
 const idField = "id"
 
-// historyBatch is how many files one GraphQL query asks the history of.
-const historyBatch = 50
+// historyBatch is how many files one GraphQL query asks the history of. Each
+// path's history is a walk back through the branch's commits, so a query of
+// many can run past GitHub's time limit for one query.
+const historyBatch = 25
+
+// historyConcurrency is how many history queries run at once.
+const historyConcurrency = 4
 
 // photoID is a photo file's ID, and false when it has none.
 func photoID(content []byte) (int, bool) {
@@ -78,31 +85,98 @@ type historyAnswer struct {
 
 // committedTimes asks GitHub when each of paths was first committed, as far
 // back as the history of the next Commit's branch goes. A path without
-// commits there is left out.
+// commits there is left out. A file's first commit never changes, so each
+// answer is kept (see firstCommits) and only paths not asked before are
+// asked, a few batches at once: Update Data's preview pays for them, and
+// applying it doesn't.
 func (c *Client) committedTimes(ctx context.Context, w *workspace, paths []string) (map[string]time.Time, *PublishError) {
-	out := map[string]time.Time{}
-	for start := 0; start < len(paths); start += historyBatch {
-		reportProgress(ctx, ProgressHistory, start, len(paths))
-		batch := paths[start:min(start+historyBatch, len(paths))]
-		vars := map[string]any{"owner": w.t.owner, "name": w.t.name, "ref": w.head.commit}
-		for i, p := range batch {
-			vars[fmt.Sprintf("p%d", i)] = p
-		}
-		var answer historyAnswer
-		if perr := c.graphql(ctx, w.t, historyQuery(len(batch)), vars, &answer, "reading when the photo files were created"); perr != nil {
-			return nil, perr
-		}
-		if answer.Repository == nil {
-			continue
-		}
-		for i, p := range batch {
-			nodes := answer.Repository.Object[fmt.Sprintf("f%d", i)].Nodes
-			if len(nodes) > 0 {
-				out[p] = nodes[len(nodes)-1].CommittedDate
+	out, ask := c.firstCommits(w.t, paths)
+	var batches [][]string
+	for start := 0; start < len(ask); start += historyBatch {
+		batches = append(batches, ask[start:min(start+historyBatch, len(ask))])
+	}
+	var mu sync.Mutex
+	var failed *PublishError
+	var wg sync.WaitGroup
+	sem := make(chan struct{}, historyConcurrency)
+	progress := startProgress(ctx, ProgressHistory, len(ask))
+	for _, batch := range batches {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			sem <- struct{}{}
+			defer func() { <-sem }()
+			times, perr := c.historyBatch(ctx, w, batch)
+			progress.addN(len(batch))
+			mu.Lock()
+			defer mu.Unlock()
+			if perr != nil {
+				failed = perr
+				return
 			}
+			maps.Copy(out, times)
+		}()
+	}
+	wg.Wait()
+	if failed != nil {
+		return nil, failed
+	}
+	c.keepFirstCommits(w.t, out)
+	return out, nil
+}
+
+// historyBatch asks GitHub, in one query, when each of paths was first
+// committed on the next Commit's branch, leaving out paths without commits.
+func (c *Client) historyBatch(ctx context.Context, w *workspace, paths []string) (map[string]time.Time, *PublishError) {
+	vars := map[string]any{"owner": w.t.owner, "name": w.t.name, "ref": w.head.commit}
+	for i, p := range paths {
+		vars[fmt.Sprintf("p%d", i)] = p
+	}
+	var answer historyAnswer
+	if perr := c.graphql(ctx, w.t, historyQuery(len(paths)), vars, &answer, "reading when the photo files were created"); perr != nil {
+		return nil, perr
+	}
+	out := map[string]time.Time{}
+	if answer.Repository == nil {
+		return out, nil
+	}
+	for i, p := range paths {
+		nodes := answer.Repository.Object[fmt.Sprintf("f%d", i)].Nodes
+		if len(nodes) > 0 {
+			out[p] = nodes[len(nodes)-1].CommittedDate
 		}
 	}
 	return out, nil
+}
+
+// firstCommits returns the first commit times kept for t's paths, and the
+// paths it has none for.
+func (c *Client) firstCommits(t target, paths []string) (map[string]time.Time, []string) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	known := map[string]time.Time{}
+	var ask []string
+	for _, p := range paths {
+		if when, ok := c.firstCommit[repoKey(t)+"\x00"+p]; ok {
+			known[p] = when
+		} else {
+			ask = append(ask, p)
+		}
+	}
+	return known, ask
+}
+
+// keepFirstCommits keeps times, the first commit of each of t's paths, for
+// committedTimes to reuse.
+func (c *Client) keepFirstCommits(t target, times map[string]time.Time) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.firstCommit == nil {
+		c.firstCommit = map[string]time.Time{}
+	}
+	for p, when := range times {
+		c.firstCommit[repoKey(t)+"\x00"+p] = when
+	}
 }
 
 // createdTimes is when each of paths was created: its first commit, or for a
