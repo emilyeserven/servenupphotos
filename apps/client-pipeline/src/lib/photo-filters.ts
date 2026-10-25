@@ -45,14 +45,35 @@ function isChoice(value: unknown): value is FilterChoice {
   return value === "with" || value === "without";
 }
 
-/** The filters in a page's search params, such as `?title=without&place=with`, ignoring anything else. */
-export function parseFilters(search: Record<string, unknown>): PhotoFilters {
+/**
+ * The search param a filter is kept in: its key, such as `place`, or with a prefix for a second
+ * filter bar on the same page, such as `draftPlace` for the drafts on Photos in Flight.
+ */
+export function filterParam(key: FilterKey, prefix = ""): string {
+  if (!prefix) return key;
+  return prefix + key.charAt(0).toUpperCase() + key.slice(1);
+}
+
+/**
+ * The filters in a page's search params, such as `?title=without&place=with`, ignoring anything
+ * else; with a prefix, the ones kept under it, such as `?draftPlace=with`.
+ */
+export function parseFilters(search: Record<string, unknown>, prefix = ""): PhotoFilters {
   const filters: PhotoFilters = {};
   for (const { key } of PHOTO_FILTERS) {
-    const value = search[key];
+    const value = search[filterParam(key, prefix)];
     if (isChoice(value)) filters[key] = value;
   }
   return filters;
+}
+
+/**
+ * The filters under a prefix as search params to keep, such as `{ draftPlace: "with" }`, for a
+ * route's `validateSearch`.
+ */
+export function prefixedFilters(search: Record<string, unknown>, prefix: string) {
+  const entries = Object.entries(parseFilters(search, prefix)) as [FilterKey, FilterChoice][];
+  return Object.fromEntries(entries.map(([key, choice]) => [filterParam(key, prefix), choice]));
 }
 
 /** How many filters are chosen. */

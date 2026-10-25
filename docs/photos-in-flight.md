@@ -30,7 +30,7 @@ open), so the drafts and Undecided panels below are easy to reach.
 Above the photos, a filter bar has **Any**, **With** and **Without** for each of: **Title** (a `title` that isn't
 blank), **Place** (any `places`, or a `placeName`), **GPS position** (a `customGpsPosition` or the EXIF
 `gpsPosition`), **Albums**, **Tags**, **Genres** and **Re-edit mark** (`reEdit`). The chosen filters all apply together, to the
-list, the Undecided queue and the drafts on the base branch, reading each photo's JSON with its
+list and the Undecided queue (the [drafts on the base branch](#drafts-on-the-base-branch) have their own), reading each photo's JSON with its
 [local edits](combined-data-store.md#local-edits) made. With any chosen, it says how many photos are shown, with
 **Clear filters**. A photo whose JSON couldn't be read is hidden while a filter is chosen. They're kept in the URL
 (such as `?title=without&place=with`), so a reload or a shared link keeps them. Album, tag and other files below the
@@ -60,6 +60,16 @@ Gallery's `GET /api/photos/published`): the Undecided ones in the **Undecided** 
 the rest under **Drafts on `<branch>`**, each with **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
 back**. Naming one and saving it puts it back in flight, and Commit sends it to a new pull request. Nothing is listed
 when untitled photos aren't kept as drafts.
+
+The drafts have their own filter bar, with the same filters as the photos in flight, kept in the URL under a `draft`
+prefix (such as `?draftPlace=without`), so filtering one list doesn't hide photos in the other. They apply to the
+drafts' Undecided panel too. Its **Sort** sets the order: **File name** (the JSON file's name, with numbers in order,
+the default), **Date taken** (newest first, as the Gallery's) or **Recently saved** (newest first). Drafts have no
+date added, so Recently saved goes by photo ID, which is given out in order as each file is made. It's kept as
+`?draftSort=taken` or `?draftSort=saved`.
+
+> **Frontend analogy:** two independent faceted lists on one page, each with its own namespaced query-string keys,
+> like `?productColor=red&reviewRating=5`.
 
 Each added file has a **Remove** button (`DELETE /api/photos/in-flight?path=…`). After asking, it removes the JSON
 from the batch and deletes the image the page shows from R2 (skipped when R2 has none). A file only waiting for Commit
