@@ -1,8 +1,8 @@
 import type { LucideIcon } from "lucide-react";
-import { BookImage, CalendarClock, Grid3x3, MapPin, Palette } from "lucide-react";
+import { BookImage, CalendarClock, Grid3x3, MapPin, Palette, Tags } from "lucide-react";
 
 export interface PortfolioView {
-  to: "/timeline" | "/map" | "/albums" | "/grid" | "/color";
+  to: "/timeline" | "/map" | "/albums" | "/tags" | "/grid" | "/color";
   label: string;
   description: string;
   icon: LucideIcon;
@@ -30,6 +30,13 @@ export const portfolioViews: PortfolioView[] = [
     label: "Albums",
     description: "The photos in each album, a strip for each.",
     icon: BookImage,
+    enabled: true,
+  },
+  {
+    to: "/tags",
+    label: "Tags",
+    description: "Every tag with a few of its photos, each tag under its parent tag.",
+    icon: Tags,
     enabled: true,
   },
   {
