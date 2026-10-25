@@ -1,9 +1,9 @@
 {
-  "id": 306,
-  "title": null,
+  "title": "I miss the countryside",
   "comment": null,
+  "id": 306,
   "file": "DSCF0532.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:38:51Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:01 18:07:35",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "dotonbori",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "dotonbori"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

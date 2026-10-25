@@ -1,9 +1,9 @@
 {
-  "id": 302,
-  "title": null,
+  "title": "Under the Covered Road",
   "comment": null,
+  "id": 302,
   "file": "DSCF0063.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:36:33Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.6,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:10:01 15:46:42",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "namba",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,12 +32,12 @@
     "small": "https://cdn.servenupphotos.net/photos/2af3141f305d-dscf0063-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/2af3141f305d-dscf0063-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/2af3141f305d-dscf0063-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/2af3141f305d-dscf0063-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2af3141f305d-dscf0063-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/2af3141f305d-dscf0063-thumbnail.webp?crop=183,899,2890",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2af3141f305d-dscf0063-thumbnailpreview.webp?crop=183,899,2890",
     "thumbnailcrop": {
-      "x": 0,
-      "y": 625,
-      "size": 3125,
+      "x": 183,
+      "y": 899,
+      "size": 2890,
       "outputSize": 500
     }
   },
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "namba"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

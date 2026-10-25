@@ -1,9 +1,9 @@
 {
-  "id": 294,
-  "title": null,
+  "title": "Giza Crowd",
   "comment": null,
+  "id": 294,
   "file": "20250123_135732.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:32:52Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:23 13:57:32",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "the-great-pyramid-of-giza",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/17137164fd21-20250123-135732-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/17137164fd21-20250123-135732-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/17137164fd21-20250123-135732-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/17137164fd21-20250123-135732-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/17137164fd21-20250123-135732-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/17137164fd21-20250123-135732-thumbnail.webp?crop=0,0,1976",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/17137164fd21-20250123-135732-thumbnailpreview.webp?crop=0,0,1976",
     "thumbnailcrop": {
-      "x": 766,
+      "x": 0,
       "y": 0,
       "size": 1976,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "the-great-pyramid-of-giza"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

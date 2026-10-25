@@ -269,8 +269,8 @@ func TestCommitCombinedSkipsAnEditOfAMissingFile(t *testing.T) {
 	if tree := f.committedTree(); !strings.Contains(tree[dataRoot+"/photos/a.json"], `"C"`) {
 		t.Errorf("committed %q, want a.json with the new title", tree)
 	}
-	if n := f.count("graphql state"); n != 2 {
-		t.Errorf("state queries = %d, want 2: a missing file reads GitHub again once", n)
+	if n := f.count("graphql state"); n != 1 {
+		t.Errorf("state queries = %d, want 1", n)
 	}
 }
 
@@ -293,6 +293,28 @@ func TestCommitCombinedRereadsWhenAnEditedFileIsMissing(t *testing.T) {
 	}
 	if tree := f.committedTree(); !strings.Contains(tree[dataRoot+"/photos/a.json"], `"B"`) {
 		t.Errorf("committed %q, want a.json with the new title", tree)
+	}
+}
+
+func TestCommitCombinedOpensANewPullRequestWhenTheOldOneWasMerged(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, emptyLists)
+	if _, err := c.CombinedStatus(t.Context(), pullGH); err != nil {
+		t.Fatalf("CombinedStatus() error = %v", err)
+	}
+	// The photo data pull request was merged on GitHub after the pipeline
+	// read it; its branch is still there.
+	f.pulls = nil
+	f.moveMain(emptyLists)
+	if _, err := c.SavePlace(t.Context(), pullGH, Place{ID: "seoul-station", Name: "Seoul Station"}); err != nil {
+		t.Fatalf("SavePlace() error = %v", err)
+	}
+	got, err := c.CommitCombined(t.Context(), pullGH, nil)
+	if err != nil || !got.NewPullRequest || got.Edited != 1 {
+		t.Fatalf("CommitCombined() = %+v, %v; want the place on a new pull request", got, err)
+	}
+	if f.versions[prBranch] != 1 {
+		t.Errorf("the merged pull request's branch was moved to %s", f.head(prBranch))
 	}
 }
 

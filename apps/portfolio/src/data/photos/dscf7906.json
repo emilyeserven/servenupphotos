@@ -1,9 +1,9 @@
 {
-  "id": 326,
-  "title": null,
+  "title": "View from the Ferry",
   "comment": null,
+  "id": 326,
   "file": "DSCF7906.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:51:12Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:21 19:00:51",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "International Port of Busan",
+  "customCity": "Busan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": "South Korea",
   "state": "Busan",
   "city": null,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/ae33c55fdb30-dscf7906-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/ae33c55fdb30-dscf7906-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/ae33c55fdb30-dscf7906-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/ae33c55fdb30-dscf7906-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ae33c55fdb30-dscf7906-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ae33c55fdb30-dscf7906-thumbnail.webp?crop=0,1927,4819",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ae33c55fdb30-dscf7906-thumbnailpreview.webp?crop=0,1927,4819",
     "thumbnailcrop": {
       "x": 0,
-      "y": 963,
+      "y": 1927,
       "size": 4819,
       "outputSize": 500
     }
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "international-port-of-busan"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,8 +65,8 @@
       "hex": "#2e2e2e",
       "lab": {
         "l": 19.02,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

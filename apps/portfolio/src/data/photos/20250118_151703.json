@@ -1,9 +1,9 @@
 {
-  "id": 288,
-  "title": null,
+  "title": "Geometric Window",
   "comment": null,
+  "id": 288,
   "file": "20250118_151703.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:29:20Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:18 15:17:03",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "al-rifa-i-mosque",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/d0a11276ca9e-20250118-151703-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/d0a11276ca9e-20250118-151703-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/d0a11276ca9e-20250118-151703-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/d0a11276ca9e-20250118-151703-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d0a11276ca9e-20250118-151703-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/d0a11276ca9e-20250118-151703-thumbnail.webp?crop=603,0,1598",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d0a11276ca9e-20250118-151703-thumbnailpreview.webp?crop=603,0,1598",
     "thumbnailcrop": {
-      "x": 621,
+      "x": 603,
       "y": 0,
       "size": 1598,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "al-rifa-i-mosque"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

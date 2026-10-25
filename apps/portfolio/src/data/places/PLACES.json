@@ -30,6 +30,14 @@
     "country": "United States of America"
   },
   {
+    "id": "al-rifa-i-mosque",
+    "name": "Al-Rifa'i Mosque",
+    "description": "",
+    "parent": "",
+    "city": "Al Khalifa",
+    "country": "Egypt"
+  },
+  {
     "id": "am-bollwerk",
     "name": "Am Bollwerk",
     "description": "",
@@ -58,6 +66,14 @@
     "latitude": 40.76383083369049,
     "longitude": -73.92457375631997,
     "parentRelation": ","
+  },
+  {
+    "id": "bent-pyramid-of-cairo",
+    "name": "Bent Pyramid of Cairo",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "bethesda-fountain",
@@ -116,6 +132,22 @@
     "country": "South Korea"
   },
   {
+    "id": "busan-tower",
+    "name": "Busan Tower",
+    "description": "",
+    "parent": "",
+    "city": "Busan",
+    "country": "South Korea"
+  },
+  {
+    "id": "busan-x-the-sky",
+    "name": "BUSAN X the SKY",
+    "description": "",
+    "parent": "",
+    "city": "Busan",
+    "country": "South Korea"
+  },
+  {
     "id": "central-park",
     "name": "Central Park",
     "description": "",
@@ -132,6 +164,14 @@
     "country": "United States of America",
     "latitude": 40.74628748518012,
     "longitude": -74.00141720782541
+  },
+  {
+    "id": "cheonggyecheon",
+    "name": "Cheonggyecheon",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "citadel-of-salah-al-din-al-ayyubi",
@@ -170,6 +210,14 @@
     "country": "United States"
   },
   {
+    "id": "dotonbori",
+    "name": "Dotonbori",
+    "description": "",
+    "parent": "",
+    "city": "Osaka-shi",
+    "country": "Japan"
+  },
+  {
     "id": "east-broadway-station",
     "name": "East Broadway Station",
     "description": "",
@@ -179,6 +227,22 @@
     "latitude": 40.714174155945194,
     "longitude": -73.99009350299123,
     "exactLocation": true
+  },
+  {
+    "id": "engyoji-temple",
+    "name": "Engyoji Temple",
+    "description": "",
+    "parent": "",
+    "city": "Himeji",
+    "country": "Japan"
+  },
+  {
+    "id": "fairview-lookout-trail",
+    "name": "Fairview Lookout Trail",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "fifth-avenue-presbyterian-church",
@@ -259,6 +323,14 @@
     "country": "Egypt"
   },
   {
+    "id": "grand-place",
+    "name": "Grand Place",
+    "description": "",
+    "parent": "",
+    "city": "Brussels",
+    "country": "Belgium"
+  },
+  {
     "id": "greene-street",
     "name": "Greene Street",
     "description": "",
@@ -282,6 +354,14 @@
     "description": "",
     "parent": "",
     "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
+    "id": "international-port-of-busan",
+    "name": "International Port of Busan",
+    "description": "",
+    "parent": "",
+    "city": "Busan",
     "country": "South Korea"
   },
   {
@@ -383,6 +463,14 @@
     "parent": "",
     "city": "New York City",
     "country": "United States of America"
+  },
+  {
+    "id": "marblehead-harbor",
+    "name": "Marblehead Harbor",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "messe-basel",
@@ -508,6 +596,14 @@
     "country": "South Korea"
   },
   {
+    "id": "namba",
+    "name": "Namba",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
     "id": "namsan-dulle-gil-trail",
     "name": "Namsan Dulle-gil Trail",
     "description": "",
@@ -605,12 +701,28 @@
     "exactLocation": true
   },
   {
+    "id": "red-pyramid",
+    "name": "Red Pyramid",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
     "id": "rockefeller-center",
     "name": "Rockefeller Center",
     "description": "",
     "parent": "",
     "city": "New York City",
     "country": "United States of America"
+  },
+  {
+    "id": "saladin-citadel",
+    "name": "Saladin Citadel",
+    "description": "",
+    "parent": "",
+    "city": "Al Khalifa",
+    "country": "Egypt"
   },
   {
     "id": "soho",
@@ -647,12 +759,28 @@
     "country": "United States of America"
   },
   {
+    "id": "step-pyramid-of-djoser",
+    "name": "Step Pyramid of Djoser",
+    "description": "",
+    "parent": "",
+    "city": "Markaz al Badrashayn",
+    "country": "Egypt"
+  },
+  {
     "id": "surfside-beach",
     "name": "Surfside Beach",
     "description": "",
     "parent": "",
     "city": "Nantucket",
     "country": "United States of America"
+  },
+  {
+    "id": "the-great-pyramid-of-giza",
+    "name": "The Great Pyramid of Giza",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "the-high-line",
@@ -671,6 +799,22 @@
     "parent": "",
     "city": "New York City",
     "country": "United States of America"
+  },
+  {
+    "id": "times-square",
+    "name": "Times Square",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America"
+  },
+  {
+    "id": "tokoji-temple",
+    "name": "Tokoji Temple",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "country": "Japan"
   },
   {
     "id": "upper-east-side",

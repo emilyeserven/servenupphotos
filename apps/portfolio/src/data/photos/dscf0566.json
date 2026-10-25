@@ -1,9 +1,9 @@
 {
-  "id": 307,
-  "title": null,
+  "title": "Night in Dotonbori",
   "comment": null,
+  "id": 307,
   "file": "DSCF0566.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T05:39:17Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:10:01 18:15:23",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Dotonbori",
+  "customCity": "Osaka-shi",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Osaka",
   "city": "Osaka-shi",
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/c2585e290316-dscf0566-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/c2585e290316-dscf0566-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/c2585e290316-dscf0566-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/c2585e290316-dscf0566-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c2585e290316-dscf0566-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/c2585e290316-dscf0566-thumbnail.webp?crop=0,1491,4228",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c2585e290316-dscf0566-thumbnailpreview.webp?crop=0,1491,4228",
     "thumbnailcrop": {
       "x": 0,
-      "y": 845,
+      "y": 1491,
       "size": 4228,
       "outputSize": 500
     }
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "dotonbori"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
