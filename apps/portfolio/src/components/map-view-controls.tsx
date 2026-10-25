@@ -3,31 +3,44 @@ import { ChevronsUpDown, Maximize, Navigation } from "lucide-react";
 import { type LngLatBoundsLike } from "maplibre-gl";
 import type { ReactNode } from "react";
 import { fadeTo } from "@/lib/map-fade";
+import { boundsOf, placedPhotos } from "@/lib/map-photos";
 
 /** An area of the map to jump to, with the bounds to fit. */
 interface MapArea {
   name: string;
-  /** South-west then north-east corners, as [longitude, latitude]. */
-  bounds: [[number, number], [number, number]];
+  /** The corners to fit: south-west then north-east as [longitude, latitude], or a box worked out from photos. */
+  bounds: LngLatBoundsLike;
+}
+
+/**
+ * A country to jump to, fitted to the photos taken there rather than the whole country, or null
+ * when there are none on the map.
+ */
+function countryArea(country: string): MapArea | null {
+  const bounds = boundsOf(placedPhotos.filter((photo) => photo.country === country));
+  return bounds && { name: country, bounds };
 }
 
 /** The areas the map can jump to. */
-const MAP_AREAS: MapArea[] = [
-  {
-    name: "New York City",
-    bounds: [
-      [-74.26, 40.49],
-      [-73.7, 40.92],
-    ],
-  },
-  {
-    name: "Seoul",
-    bounds: [
-      [126.76, 37.41],
-      [127.18, 37.7],
-    ],
-  },
-];
+const MAP_AREAS = (
+  [
+    {
+      name: "New York City",
+      bounds: [
+        [-74.26, 40.49],
+        [-73.7, 40.92],
+      ],
+    },
+    {
+      name: "Seoul",
+      bounds: [
+        [126.76, 37.41],
+        [127.18, 37.7],
+      ],
+    },
+    countryArea("Japan"),
+  ] satisfies (MapArea | null)[]
+).filter((area) => area !== null);
 
 /** How far from the edges of the map an area is kept, in pixels. */
 const AREA_PADDING = 40;
