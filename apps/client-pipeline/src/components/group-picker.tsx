@@ -13,6 +13,7 @@ import {
 } from "@/api/organize";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
+import { useTagPaste } from "@/components/pasted-tags";
 
 /** Where an album sits, such as “In Asia › Korea”, or undefined for a top-level one. */
 function albumPlace(albums: Group[], album: Group): string | undefined {
@@ -124,18 +125,56 @@ export function PhotoGroupFields({
         />
         <AlbumHint id={`${albumsId}-hint`} count={value.albums.length} warning={albumWarning} />
       </div>
-      {(["tags", "genres"] as const).map((kind) => (
-        <div key={kind} className="flex flex-col gap-2">
-          <FieldLabel htmlFor={`${idPrefix}-${kind}`} kind={kind} />
-          <GroupCombobox
-            id={`${idPrefix}-${kind}`}
-            kind={kind}
-            value={value[kind]}
-            disabled={disabled}
-            onChange={(ids) => onChange({ ...value, [kind]: ids })}
-          />
-        </div>
-      ))}
+      <TagsField
+        id={`${idPrefix}-tags`}
+        value={value.tags}
+        disabled={disabled}
+        onChange={(tags) => onChange({ ...value, tags })}
+      />
+      <div className="flex flex-col gap-2">
+        <FieldLabel htmlFor={`${idPrefix}-genres`} kind="genres" />
+        <GroupCombobox
+          id={`${idPrefix}-genres`}
+          kind="genres"
+          value={value.genres}
+          disabled={disabled}
+          onChange={(genres) => onChange({ ...value, genres })}
+        />
+      </div>
+    </div>
+  );
+}
+
+interface TagsFieldProps {
+  id: string;
+  value: string[];
+  onChange: (value: string[]) => void;
+  disabled?: boolean;
+}
+
+/**
+ * The tags combobox, which also takes a pasted comma-separated list, such as an LLM's answer to the
+ * tag prompt, adding the tags it names and offering to make the ones that aren't tags yet.
+ */
+function TagsField({ id, value, onChange, disabled }: TagsFieldProps) {
+  const paste = useTagPaste(value, onChange, disabled);
+  return (
+    <div className="flex flex-col gap-2">
+      <FieldLabel htmlFor={id} kind="tags" />
+      <div onPaste={paste.onPaste}>
+        <GroupCombobox
+          id={id}
+          kind="tags"
+          value={value}
+          disabled={disabled}
+          aria-describedby={`${id}-hint`}
+          onChange={onChange}
+        />
+      </div>
+      <p id={`${id}-hint`} className="text-muted-foreground text-sm">
+        Paste a comma-separated list to add several at once.
+      </p>
+      {paste.summary}
     </div>
   );
 }

@@ -157,12 +157,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           description="Saving changes writes them over the ones in the JSON."
           disabled={pending}
         />
-        <TagPromptCard
-          imageUrl={promptImageUrl(edit.savedData.images, editable.image.url)}
-          tags={edit.groups.tags}
-          onTagsChange={(tags) => edit.setGroups({ ...edit.groups, tags })}
-          disabled={pending}
-        />
+        <TagPromptCard imageUrl={promptImageUrl(edit.savedData.images, editable.image.url)} />
         <SpotlightCard path={editable.file.path} />
       </div>
       <div className="flex min-w-0 flex-col gap-6">

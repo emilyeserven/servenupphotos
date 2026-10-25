@@ -58,14 +58,16 @@ It has:
   (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums, genre); 3 to 8 tags; and
   only a comma-separated list in the answer.
 
-Once it's copied, a field takes the LLM's answer. **Add tags** splits it at commas and new lines, takes off quotes,
-bullets and trailing dots, drops repeats (ignoring case), and matches each name to a tag by its name or the ID made
-from it, ignoring case, so `Street Food` matches `street-food`. Matching tags are added to the photo's tags in **Albums, tags and genres**, as an edit that **Save
-changes** saves (and **Commit** sends to GitHub, like any other). A name an album, genre or metadata group already has, or
-one with nothing to make an ID from, is left out, saying why. The rest are listed as new tags in lowercase kebab-case, each with a checkbox:
-**Make N new tags and add them** saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for
-Commit, like **New tag** on `/tags`) and adds them to the photo.
+Paste the LLM's answer into the **Tags** field. Every Tags field (on the Photo page and the Gallery's bulk card) takes
+a pasted comma-separated list: text with a comma or a new line in it isn't typed into the search, but split at commas
+and new lines, with quotes, bullets and trailing dots taken off and repeats dropped (ignoring case). Each name is
+matched to a tag by its name or the ID made from it, ignoring case, so `Street Food` matches `street-food`, and the
+matching tags are added to the field, as an edit saved like any other (and sent to GitHub by **Commit**). A name an
+album, genre or metadata group already has, or one with nothing to make an ID from, is left out, saying why. The rest
+are listed under the field as new tags in lowercase kebab-case, each with a checkbox: **Make N new tags and add them**
+saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for Commit, like **New tag** on
+`/tags`) and adds them to the field.
 
-> **Frontend analogy:** it's a copy-to-clipboard "share" template plus an import box, like pasting a CSV of labels
-> into a multi-select: the box normalizes and dedupes the strings, matches them against the select's options, and
+> **Frontend analogy:** it's a copy-to-clipboard "share" template plus an `onPaste` handler on a multi-select, like
+> pasting a CSV of labels into it: the handler normalizes and dedupes the strings, matches them against the select's options, and
 > offers to create the options that don't exist yet.
