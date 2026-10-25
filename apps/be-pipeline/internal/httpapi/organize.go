@@ -80,18 +80,23 @@ func handleCreateGroup(store *settings.Store, gh *github.Client) http.HandlerFun
 	}
 }
 
-// handleSetAlbumParent moves the path's album into the body's parent album,
-// or to the top level when it's empty or null, as one commit in the photo
-// data pull request.
-func handleSetAlbumParent(store *settings.Store, gh *github.Client) http.HandlerFunc {
+// handleSetGroupParent moves the path's album or tag under the body's parent
+// of the same kind, or to the top level when it's empty or null, as a change
+// waiting for Commit.
+func handleSetGroupParent(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		kind, ok := github.KindByFolder(r.PathValue("kind"))
+		if !ok || !github.HasParents(kind) {
+			writeError(w, http.StatusNotFound, "only albums and tags have a parent")
+			return
+		}
 		var req struct {
 			Parent *string `json:"parent"`
 		}
 		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
 		dec.DisallowUnknownFields()
 		if err := dec.Decode(&req); err != nil {
-			writeError(w, http.StatusBadRequest, "invalid album parent body")
+			writeError(w, http.StatusBadRequest, "invalid parent body")
 			return
 		}
 		cfg, ok := githubSettings(w, store)
@@ -100,8 +105,8 @@ func handleSetAlbumParent(store *settings.Store, gh *github.Client) http.Handler
 		}
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		result, err := gh.SetAlbumParent(ctx, cfg, r.PathValue("id"), *cmp.Or(req.Parent, new(string)))
-		writeSocialResult(w, result, err, "could not save the album's parent")
+		result, err := gh.SetGroupParent(ctx, cfg, kind, r.PathValue("id"), *cmp.Or(req.Parent, new(string)))
+		writeSocialResult(w, result, err, "could not save the parent")
 	}
 }
 

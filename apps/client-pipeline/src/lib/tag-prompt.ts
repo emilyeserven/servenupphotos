@@ -23,6 +23,8 @@ export interface TagPromptLists {
   /** The photographic genres, which the portfolio filters by too. */
   genres: Group[];
   metaGroups: MetaGroup[];
+  /** What's known of where the photo was taken, one "- Label: value" line per fact. */
+  known: string[];
 }
 
 /** The field a metadata group is of, as the prompt names it, such as "focal length". */
@@ -51,15 +53,19 @@ export function tagPrompt(imageUrl: string, lists: TagPromptLists): string {
 
 The tags are for a photography portfolio, where each tag gathers the photos that share a subject or an idea.
 
+What's already known about the photo:
+${lists.known.join("\n") || "- Nothing yet."}
+
 Rules:
 - Reuse an existing tag (listed below) whenever one fits, spelled exactly as it is listed.
 - Write every tag in lowercase kebab-case: lowercase words joined by single dashes, such as "street-food" or "wabi-sabi".
 - Keep tags general enough to fit other photos too: "temple" rather than "bulguksa-main-hall".
-- Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "architecture", "street-food" or "cats").
+- Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "lanterns", "street-food" or "cats").
+- Use what's known about where the photo was taken to pick terms that fit it: use a culture's own word (such as "shotengai", a Japanese shopping street, or "hanok", a traditional Korean house) only when the photo is from that culture, and otherwise use a general one (such as "covered-street" or "shopping-street"). Never turn what's known (its place, city or country) into a tag.
 - A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
 - Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, its albums, and its photographic genre (such as street, landscape or portrait). Don't suggest any of the names under "Already filtered" either.
 - Suggest 3 to 8 tags.
-- Answer with only the tags, as one comma-separated list, with nothing before or after it.
+- Answer with the tags as one comma-separated list on the first line. Then, after a blank line, define each cultural term or concept among them, one per line, as "tag: a short definition". When the term is a local kind of something more general, end its line with the general tag it belongs under, as "(parent: general-tag)", reusing an existing tag when one fits, such as "shotengai: a Japanese shopping street, often under a covered arcade (parent: covered-street)". Don't add the parent to the first line. Write nothing else before or after.
 
 Existing tags: ${listed(existing, "none yet")}
 
@@ -76,10 +82,96 @@ function cleanName(name: string): string {
     .trim();
 }
 
-/** The tags in the LLM's answer, split at commas and new lines, without blanks or repeats (ignoring case). */
+/** A line of the LLM's answer that defines a tag, such as "shotengai: a Japanese shopping street". */
+const DEFINITION = /^[\s\-*•]*([^:,]+?)\s*:\s*(.+?)\s*$/;
+
+/** What the LLM said of one of its tags: what it means, and the more general tag it belongs under. */
+export interface TagDefinition {
+  definition: string;
+  /** The parent tag's ID, such as "covered-street" for "shotengai"; absent when it gave none. */
+  parent?: string;
+}
+
+/** The "(parent: general-tag)" at the end of a definition line. */
+const PARENT = /\s*\(\s*parent\s*:\s*([^)]*)\)\s*$/i;
+
+/** A definition line's text, without its parent, and the parent's ID when it names one. */
+function readDefinition(text: string): TagDefinition {
+  const parent = groupId(PARENT.exec(text)?.[1] ?? "");
+  const definition = text.replace(PARENT, "").trim();
+  return parent ? { definition, parent } : { definition };
+}
+
+/**
+ * The definitions the LLM gave under its tags, by the ID each defined tag gets, such as
+ * `{ shotengai: { definition: "a Japanese shopping street", parent: "covered-street" } }`.
+ */
+export function parseDefinitions(text: string): Record<string, TagDefinition> {
+  const pairs = text.split("\n").flatMap((line) => {
+    const match = DEFINITION.exec(line);
+    return match ? [[groupId(cleanName(match[1]!)), readDefinition(match[2]!)] as const] : [];
+  });
+  return Object.fromEntries(pairs.filter(([id]) => id));
+}
+
+/** One tag to make: its ID, description and parent, and whether it goes on the photo. */
+export interface TagToMake {
+  id: string;
+  description: string;
+  parent?: string;
+  /** False for a parent made only so a new tag can be under it. */
+  add: boolean;
+}
+
+/**
+ * The tags to make, in the order to make them: each chosen name with its definition as its
+ * description and, when it's under one, its parent; any parent that isn't a tag and isn't being
+ * made comes first, so it's there when its child is made.
+ */
+export function tagsToMake(
+  chosen: string[],
+  definitions: Record<string, TagDefinition>,
+  underParent: ReadonlySet<string>,
+  existing: ReadonlySet<string>,
+): TagToMake[] {
+  const children = chosen.map((id) => ({
+    id,
+    description: describedAs(definitions[id]),
+    parent: underParent.has(id) ? parentOf(definitions[id]) : undefined,
+    add: true,
+  }));
+  const missing = [...new Set(children.flatMap((child) => child.parent ?? []))]
+    .filter((id) => !existing.has(id) && !chosen.includes(id))
+    .map((id) => ({ id, description: "", add: false }));
+  return [...missing, ...orderedChildren(children)];
+}
+
+/** A new tag's description: the LLM's definition of it, or "" when it gave none. */
+function describedAs(definition: TagDefinition | undefined): string {
+  return definition?.definition ?? "";
+}
+
+/** The parent the LLM suggests for a new tag, if any. */
+function parentOf(definition: TagDefinition | undefined): string | undefined {
+  return definition?.parent;
+}
+
+/** children with the ones that are another's parent first. */
+function orderedChildren(children: TagToMake[]): TagToMake[] {
+  const parents = new Set(children.flatMap((child) => child.parent ?? []));
+  return children.toSorted((a, b) => Number(parents.has(b.id)) - Number(parents.has(a.id)));
+}
+
+/**
+ * The tags in the LLM's answer, split at commas and new lines, without blanks or repeats (ignoring
+ * case). Lines that define a tag ("tag: definition") are left out.
+ */
 export function parseTagList(text: string): string[] {
   const seen = new Set<string>();
   return text
+    .split("\n")
+    .filter((line) => !DEFINITION.test(line))
+    .join("\n")
     .split(/[,\n]/)
     .map(cleanName)
     .filter((name) => {

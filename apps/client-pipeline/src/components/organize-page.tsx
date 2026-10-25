@@ -14,6 +14,8 @@ import {
   groupId,
   groupLabel,
   groupName,
+  hasParents,
+  type ParentKind,
   organizeQuery,
 } from "@/api/organize";
 import { type PublishResult, photosInFlightQuery } from "@/api/photos";
@@ -295,21 +297,17 @@ function NewGroupForm({
         )}
       </form.Field>
 
-      {kind === "albums" && (
+      {hasParents(kind) && (
         <form.Field name="parent">
           {(field) => (
-            <FormField
-              id={field.name}
-              label="Parent album"
-              hint="Optional. Puts this album inside another, as one of its sub-albums."
-            >
+            <FormField id={field.name} label={NEW_PARENT[kind].label} hint={NEW_PARENT[kind].hint}>
               <GroupCombobox
                 id={field.name}
-                kind="albums"
+                kind={kind}
                 multiple={false}
                 value={field.state.value}
                 disabled={create.isPending}
-                placeholder="None: a top-level album"
+                placeholder={NEW_PARENT[kind].none}
                 aria-describedby={`${field.name}-hint`}
                 onChange={(parent) => field.handleChange(parent)}
               />
@@ -331,6 +329,20 @@ function NewGroupForm({
     </form>
   );
 }
+
+/** The new album or tag form's parent field, for each kind with parents. */
+const NEW_PARENT: Record<ParentKind, { label: string; hint: string; none: string }> = {
+  albums: {
+    label: "Parent album",
+    hint: "Optional. Puts this album inside another, as one of its sub-albums.",
+    none: "None: a top-level album",
+  },
+  tags: {
+    label: "Parent tag",
+    hint: "Optional. A more general tag this one is a kind of, such as covered-street for shotengai, so filtering by it shows this tag's photos too.",
+    none: "None: a top-level tag",
+  },
+};
 
 /** How the ID hint says where the ID comes from: a tag's name is its ID too. */
 const ID_HINTS: Record<GroupKind, { lead: string; made: string }> = {
@@ -470,8 +482,8 @@ function GroupTable({
   label: string;
 }) {
   const countOf = usePhotoCounts(kind);
-  // Albums list each one under its parent in their order, sub-albums indented.
-  const rows = kind === "albums" ? albumTree(groups) : groups.map((group) => ({ group, depth: 0 }));
+  // Albums and tags list each one under its parent, the ones under it indented.
+  const rows = hasParents(kind) ? albumTree(groups) : groups.map((group) => ({ group, depth: 0 }));
   return (
     <Table aria-label={label}>
       <TableHeader>

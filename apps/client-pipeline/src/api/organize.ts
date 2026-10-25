@@ -62,7 +62,7 @@ interface NewGroup {
   id: string;
   name: string;
   description: string;
-  /** An album's parent album's ID. */
+  /** An album's parent album's ID, or a tag's parent tag's ID. */
   parent?: string;
 }
 
@@ -143,20 +143,32 @@ function albumChanges(result: unknown) {
   return (result as PendingSave).changes.map((change) => ({ kind: "albums" as const, ...change }));
 }
 
-/** Moves the album `id` into the album `parent`, or to the top level when it's null. */
-export const setAlbumParentMutation = mutationOptions({
-  mutationKey: ["organize", "albums", "parent"],
-  meta: {
-    saves: (result) => (result as AlbumParentResult).changed,
-    changes: albumChanges,
-  },
-  mutationFn: ({ id, parent }: { id: string; parent: string | null }) =>
-    requestJson<AlbumParentResult>(`/api/organize/albums/${encodeURIComponent(id)}/parent`, {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ parent }),
-    }),
-});
+/** The kinds whose files can name a parent of the same kind: an album's album, or a tag's more general tag. */
+export type ParentKind = "albums" | "tags";
+
+/** Whether kind's albums or tags can have a parent; genres can't. */
+export function hasParents(kind: GroupKind): kind is ParentKind {
+  return kind === "albums" || kind === "tags";
+}
+
+/**
+ * Moves the album or tag `id` under the one `parent` of the same kind, or to the top level when
+ * it's null, as a change waiting for Commit.
+ */
+export const setGroupParentMutation = (kind: ParentKind) =>
+  mutationOptions({
+    mutationKey: ["organize", kind, "parent"],
+    meta: {
+      saves: (result) => (result as AlbumParentResult).changed,
+      changes: (result) => (result as PendingSave).changes.map((change) => ({ kind, ...change })),
+    },
+    mutationFn: ({ id, parent }: { id: string; parent: string | null }) =>
+      requestJson<AlbumParentResult>(`/api/organize/${kind}/${encodeURIComponent(id)}/parent`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ parent }),
+      }),
+  });
 
 /** What a change to several albums did; nothing is saved when none of their files changed. */
 interface AlbumsResult extends PendingSave {

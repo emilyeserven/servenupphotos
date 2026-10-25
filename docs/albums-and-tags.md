@@ -12,7 +12,7 @@ name isn't its ID. When older tags have other names, the Tags page lists them un
 Photos list tags by ID, so no photo changes. Saving
 (`POST /api/organize/{albums,tags}`) checks again on GitHub, then adds `<folder>/albums/<id>.json` (or `tags/`) to the
 open photo data pull request, or opens one, the same way photos are saved, and shows it in `ALLALBUMS.json`
-or `ALLTAGS.json` at once, until a **Commit** writes it there. A new album can have a **Parent album**. Albums are listed as a tree, sub-albums under their parent,
+or `ALLTAGS.json` at once, until a **Commit** writes it there. A new album can have a **Parent album**, and a new tag a **Parent tag**. Albums and tags are listed as a tree, each under its parent,
 with how many photos in `ALLPHOTOS.json` list each one.
 
 Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its file and status, an album's parents, a
@@ -20,6 +20,17 @@ Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its fi
 [combined data store](combined-data-store.md)), optionally with the ones in its sub-albums. An album's page can change its
 parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's
 `parent`, as a [change waiting for Commit](pending-changes.md), refusing a parent that's the album itself or inside it.
+
+## Parent tags
+
+A tag can have one parent tag: a more general tag it's a kind of, such as `shotengai` (a Japanese shopping street)
+under `covered-street`. That links a culture's own word to the general idea, so the portfolio's **Tag** filter for
+`covered-street` shows the `shotengai` photos too, and lists `shotengai` under it. A tag's page shows where it sits
+(**Under**) and has a **Parent tag** card that changes it (`PUT /api/organize/tags/<id>/parent`), the same way an
+album's parent changes; a genre has no parent.
+
+> **Frontend analogy:** it's a category tree like a shop's "Shoes › Sneakers": filtering by the parent category
+> includes every product in the categories under it.
 
 ## Order
 
@@ -50,22 +61,33 @@ It has:
   X-Small (250px) loses too much detail. Sources: [Claude vision](https://platform.claude.com/docs/en/build-with-claude/vision),
   [OpenAI image costs](https://community.openai.com/t/how-do-i-calculate-image-tokens-in-gpt4-vision/492318),
   [Gemini tokens](https://ai.google.dev/gemini-api/docs/tokens).
+- What's known of where the photo was taken (its title, places, place name, EXIF and hand-written city, state,
+  country and GPS position, and comment), the same lines the [location prompt](places-and-localizations.md#suggest-a-location) sends,
+  so the LLM only uses a culture's own word (such as "shotengai", a Japanese shopping street) for a photo from that culture, without making a tag
+  of the place itself.
 - Every tag's ID, to reuse when one fits, spelled as listed.
 - Every album, [photographic genre](photographic-genres.md) and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
   filters by them.
-- The rules: every tag in lowercase kebab-case (`street-food`); tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
+- The rules: answer with the tags on one comma-separated line, then a short definition of each cultural term among
+  them, one per line as `tag: definition`, ending with `(parent: general-tag)` when the term is a local kind of
+  something more general (the parent isn't added to the tag line); every tag in lowercase kebab-case (`street-food`); tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
   kind of place ("mosque", "temple", "lake", "city") but never a named one; nothing the site already filters by
-  (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums, genre); 3 to 8 tags; and
-  only a comma-separated list in the answer.
+  (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums, genre); and 3 to 8 tags.
 
-Once it's copied, a field takes the LLM's answer. **Add tags** splits it at commas and new lines, takes off quotes,
-bullets and trailing dots, drops repeats (ignoring case), and matches each name to a tag by its name or the ID made
-from it, ignoring case, so `Street Food` matches `street-food`. Matching tags are added to the photo's tags in **Albums, tags and genres**, as an edit that **Save
-changes** saves (and **Commit** sends to GitHub, like any other). A name an album, genre or metadata group already has, or
-one with nothing to make an ID from, is left out, saying why. The rest are listed as new tags in lowercase kebab-case, each with a checkbox:
-**Make N new tags and add them** saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for
-Commit, like **New tag** on `/tags`) and adds them to the photo.
+Paste the LLM's answer into the **Tags** field. Every Tags field (on the Photo page and the Gallery's bulk card) takes
+a pasted comma-separated list: text with a comma or a new line in it isn't typed into the search, but split at commas
+and new lines, with quotes, bullets and trailing dots taken off and repeats dropped (ignoring case). Lines that define a tag
+(`tag: definition`) aren't tags: a new tag a line defines is listed with its definition, which becomes its
+description when it's made. A parent a line suggests is shown under the new tag with a checkbox, ticked to start
+with: making the tag puts it under that parent, making the parent first when it isn't a tag yet (without adding it
+to the photo). Each name is
+matched to a tag by its name or the ID made from it, ignoring case, so `Street Food` matches `street-food`, and the
+matching tags are added to the field, as an edit saved like any other (and sent to GitHub by **Commit**). A name an
+album, genre or metadata group already has, or one with nothing to make an ID from, is left out, saying why. The rest
+are listed under the field as new tags in lowercase kebab-case, each with a checkbox: **Make N new tags and add them**
+saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for Commit, like **New tag** on
+`/tags`) and adds them to the field.
 
-> **Frontend analogy:** it's a copy-to-clipboard "share" template plus an import box, like pasting a CSV of labels
-> into a multi-select: the box normalizes and dedupes the strings, matches them against the select's options, and
+> **Frontend analogy:** it's a copy-to-clipboard "share" template plus an `onPaste` handler on a multi-select, like
+> pasting a CSV of labels into it: the handler normalizes and dedupes the strings, matches them against the select's options, and
 > offers to create the options that don't exist yet.

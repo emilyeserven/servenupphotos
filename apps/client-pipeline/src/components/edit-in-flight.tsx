@@ -159,9 +159,8 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
         />
         <TagPromptCard
           imageUrl={promptImageUrl(edit.savedData.images, editable.image.url)}
-          tags={edit.groups.tags}
-          onTagsChange={(tags) => edit.setGroups({ ...edit.groups, tags })}
-          disabled={pending}
+          details={edit.details}
+          exif={savedExifPlace(edit.savedData)}
         />
         <SpotlightCard path={editable.file.path} />
       </div>
