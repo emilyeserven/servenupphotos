@@ -4,6 +4,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { cachedFile, type FileChange } from "@/lib/optimistic";
 import { useCombinedDataStore } from "@/stores/combined-data";
+import { type FileMove, useLocalEditsStore } from "@/stores/local-edits";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 
@@ -26,6 +27,11 @@ declare module "@tanstack/react-query" {
         variables: unknown,
         cached: (path: string) => unknown,
       ) => FileChange[];
+      /**
+       * The file a save renamed, from its old path to its new one, with its data as saved, so the
+       * local edits of it move along; undefined when it didn't rename one.
+       */
+      moves?: (result: unknown, variables: unknown) => FileMove | undefined;
     };
   }
 }
@@ -40,11 +46,17 @@ function saved(saves: boolean | ((result: unknown) => boolean) | undefined, resu
   return typeof saves === "function" ? saves(result) : Boolean(saves);
 }
 
+/** Moves the local edits of a file a save renamed to its new path. */
+function followMove(move: FileMove | undefined) {
+  if (move) useLocalEditsStore.getState().moved(move.from, move.to, move.data);
+}
+
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onSuccess: (result, variables, _context, { meta = {} }) => {
       if (!saved(meta.saves, result)) return;
       useCombinedDataStore.getState().afterSave(meta.changes?.(result, variables, cached));
+      followMove(meta.moves?.(result, variables));
     },
   }),
 });

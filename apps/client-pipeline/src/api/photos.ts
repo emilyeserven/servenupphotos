@@ -251,6 +251,11 @@ export const updateInFlightMutation = mutationOptions({
       const { path, before } = result as UpdateResult;
       return [{ kind: "photos", path, ...(before === null ? {} : { before }), after: data }];
     },
+    moves: (result, variables) => {
+      const { path: from, data } = variables as { path: string; data: Record<string, unknown> };
+      const { path: to } = result as UpdateResult;
+      return from === to ? undefined : { from, to, data };
+    },
   },
   mutationFn: (file: { path: string; data: unknown; name?: string }) =>
     requestJson<UpdateResult>("/api/photos/in-flight", {
