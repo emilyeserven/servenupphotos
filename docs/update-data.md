@@ -97,7 +97,7 @@ The review lists the new tags, each with a checkbox and one for its parent, then
 to add, marking the new ones, and the tags it already had. **Save tags for N photos** (`POST /api/data/bulk-tags`)
 makes the ticked new tags, parents first, and adds the ticked tags to each photo's `tags` after the ones it has, all
 in one save of [changes waiting for Commit](pending-changes.md). Each new tag is checked as **New tag** on `/tags`
-checks it, and nothing is saved when one can't be made or a photo can't be read.
+checks it, and nothing is saved when one can't be made or a photo can't be read. Once saved, the list of new tags is hidden, since they're made.
 
 > **Frontend analogy:** it's the single-photo paste flow batched: a "dry run" mutation that returns a diff for the
 > user to edit (like a form's preview step), then one mutation that commits the edited diff.
