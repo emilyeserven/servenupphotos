@@ -15,7 +15,7 @@ func TestReadProgress(t *testing.T) {
 	mux.HandleFunc("GET /data/progress/{task}", handleReadProgress(progress))
 	ask := func() taskProgress {
 		rec := httptest.NewRecorder()
-		mux.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/data/progress/colors", nil))
+		mux.ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/data/progress/colors", nil))
 		var got taskProgress
 		if err := json.NewDecoder(rec.Body).Decode(&got); err != nil {
 			t.Fatal(err)
@@ -29,7 +29,7 @@ func TestReadProgress(t *testing.T) {
 		}
 		w.WriteHeader(http.StatusOK)
 	})
-	run(httptest.NewRecorder(), httptest.NewRequest(http.MethodPost, "/data/colors", nil))
+	run(httptest.NewRecorder(), httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/data/colors", nil))
 
 	if got := ask(); got.Running {
 		t.Errorf("after: %+v, want not running", got)
