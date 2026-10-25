@@ -10,7 +10,8 @@ The tile views share the sort dropdown (newest, oldest, **Recently Added**, colo
 title, place, color bar and comment under its tile (`?info=true`).
 
 **Recently Added** (`?sort=added`) puts the photos most recently added to the portfolio first, by their
-[`addedDate`](data-model.md#date-added), with photos that have none yet after them, newest first.
+[`addedDate`](data-model.md#date-added). Photos added on the same day go by when they were taken, newest first,
+and photos that have no date added yet come after the rest, newest first.
 
 ## Square
 
