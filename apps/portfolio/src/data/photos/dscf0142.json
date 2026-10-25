@@ -1,9 +1,9 @@
 {
-  "id": 303,
-  "title": null,
+  "title": "Lantern Rows",
   "comment": null,
+  "id": 303,
   "file": "DSCF0142.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T15:28:44Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:10:01 15:49:23",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Namba",
+  "customCity": "Osaka-shi",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Osaka",
   "city": "Osaka-shi",
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["signage", "chochin", "shotengai", "lanterns", "arcade", "calligraphy"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "namba"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

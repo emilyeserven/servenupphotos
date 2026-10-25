@@ -1,1 +1,127 @@
-[]
+[
+  {
+    "id": "ancient-egypt",
+    "name": "ancient-egypt",
+    "description": ""
+  },
+  {
+    "id": "arcade",
+    "name": "arcade",
+    "description": ""
+  },
+  {
+    "id": "calligraphy",
+    "name": "calligraphy",
+    "description": ""
+  },
+  {
+    "id": "cars",
+    "name": "cars",
+    "description": ""
+  },
+  {
+    "id": "carvings",
+    "name": "carvings",
+    "description": ""
+  },
+  {
+    "id": "chinatown",
+    "name": "chinatown",
+    "description": ""
+  },
+  {
+    "id": "chochin",
+    "name": "chochin",
+    "description": ""
+  },
+  {
+    "id": "city",
+    "name": "city",
+    "description": ""
+  },
+  {
+    "id": "crosswalk",
+    "name": "crosswalk",
+    "description": ""
+  },
+  {
+    "id": "details",
+    "name": "details",
+    "description": ""
+  },
+  {
+    "id": "fire-alarm",
+    "name": "fire-alarm",
+    "description": ""
+  },
+  {
+    "id": "graffiti",
+    "name": "graffiti",
+    "description": ""
+  },
+  {
+    "id": "hieroglyphs",
+    "name": "hieroglyphs",
+    "description": ""
+  },
+  {
+    "id": "inscriptions",
+    "name": "inscriptions",
+    "description": ""
+  },
+  {
+    "id": "lanterns",
+    "name": "lanterns",
+    "description": ""
+  },
+  {
+    "id": "pedestrians",
+    "name": "pedestrians",
+    "description": ""
+  },
+  {
+    "id": "ruins",
+    "name": "ruins",
+    "description": ""
+  },
+  {
+    "id": "shotengai",
+    "name": "shotengai",
+    "description": ""
+  },
+  {
+    "id": "signage",
+    "name": "signage",
+    "description": ""
+  },
+  {
+    "id": "skyscraper",
+    "name": "skyscraper",
+    "description": ""
+  },
+  {
+    "id": "stickers",
+    "name": "stickers",
+    "description": ""
+  },
+  {
+    "id": "storefronts",
+    "name": "storefronts",
+    "description": ""
+  },
+  {
+    "id": "texture",
+    "name": "texture",
+    "description": ""
+  },
+  {
+    "id": "traffic",
+    "name": "traffic",
+    "description": ""
+  },
+  {
+    "id": "urban-decay",
+    "name": "urban-decay",
+    "description": ""
+  }
+]
