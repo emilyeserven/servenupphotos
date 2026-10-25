@@ -160,7 +160,7 @@ func TestCreateGroupRoute(t *testing.T) {
 	}{
 		{"/organize/folders", `{"id":"a","name":"A"}`, http.StatusNotFound, "albums or tags"},
 		{"/organize/albums", `{"id":"a","name":"A","extra":1}`, http.StatusBadRequest, "invalid album body"},
-		{"/organize/tags", `{"id":"a","name":"A"}`, http.StatusBadRequest, "Settings first"},
+		{"/organize/tags", `{"id":"a","name":"a"}`, http.StatusBadRequest, "Settings first"},
 	}
 	for _, tt := range tests {
 		req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, tt.path, strings.NewReader(tt.body))
