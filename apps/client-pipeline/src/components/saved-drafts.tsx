@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
 import { type PublishedFile, publishedPhotosQuery, type PublishedResponse } from "@/api/photos";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
+import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
@@ -19,13 +20,39 @@ export const DRAFT_FILTERS = "draft";
 /**
  * The drafts already on the base branch and not in flight (photos without a title, which
  * ALLPHOTOS.json leaves out), in an Undecided queue or a list of drafts, so they can be named
- * from here, with their own filters and sort. Nothing when there are none, or when untitled
- * photos aren't kept as drafts.
+ * from here, with their own filters and sort. Placeholders while they're read, and nothing when
+ * untitled photos aren't kept as drafts.
  */
 export function SavedDrafts(props: SavedDraftsProps) {
   const published = useQuery(publishedPhotosQuery);
-  if (!useUntitledDrafts() || !published.data) return null;
+  if (!useUntitledDrafts()) return null;
+  if (published.isPending) return <DraftsSkeleton />;
+  if (published.isError) return <DraftsError message={published.error.message} />;
   return <DraftsOnBase data={published.data} {...props} />;
+}
+
+/** Why the drafts on the base branch couldn't be read. */
+function DraftsError({ message }: { message: string }) {
+  return (
+    <section className="flex flex-col gap-1">
+      <h2 className="text-lg font-semibold">Drafts</h2>
+      <p className="text-destructive text-sm">
+        Couldn&apos;t read the drafts on the base branch: {message}
+      </p>
+    </section>
+  );
+}
+
+/** The drafts heading with a note that the base branch has none, so the section doesn't just vanish. */
+function NoDrafts({ branch }: { branch: string }) {
+  return (
+    <section className="flex flex-col gap-1">
+      <h2 className="text-lg font-semibold">Drafts on {branch}</h2>
+      <p className="text-muted-foreground text-sm">
+        None: every photo on {branch} has a title, or is in flight above.
+      </p>
+    </section>
+  );
 }
 
 /** Whether the file is a draft on the base branch that the pull request doesn't change. */
@@ -38,7 +65,7 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
   const { filters, filter } = usePhotoFilters(DRAFT_FILTERS);
   const sort = useSearch({ strict: false, select: parseDraftSort });
   const all = data.files.filter(isBaseDraft);
-  if (all.length === 0) return null;
+  if (all.length === 0) return <NoDrafts branch={data.branch} />;
   const drafts = sortDrafts(filter(all), sort);
   const undecided = undecidedPaths(drafts, edits);
   return (

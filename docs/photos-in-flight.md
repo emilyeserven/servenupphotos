@@ -22,6 +22,15 @@ file's name), or a "no image" sign when there's none. Under the photo is its Squ
 (as for photos uploaded before Square Thumbnails). Its Thumbnail Preview (`images.thumbnailpreview`, or the
 `-thumbnailpreview.webp` next to the photo) shows blurred behind it while it loads. Clicking it opens it at its full 500 × 500.
 
+While the page reads Settings, the pull request and the drafts, it shows gray placeholders in the shape of what's
+coming (the summary's rows, the filter bar, a photo with its JSON, a row of draft tiles, and the `ALLPHOTOS.json`
+panel), so nothing jumps when they arrive. With no photo files in flight it says **No photos in flight** in a dashed
+box, and with no drafts on the base branch it says so under **Drafts on `<branch>`** rather than leaving the section
+out; if the drafts can't be read, it says why.
+
+> **Frontend analogy:** these are skeleton screens, like a feed that draws gray cards before its posts load, so the
+> layout is reserved and the content fills it in place.
+
 The photos are listed under a **Photos in flight** heading with their count; clicking it collapses them (they start
 open), so the drafts and Undecided panels below are easy to reach.
 

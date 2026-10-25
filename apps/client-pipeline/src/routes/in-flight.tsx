@@ -32,6 +32,12 @@ import {
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { FileChecks, fileName } from "@/components/in-flight-checks";
+import {
+  EmptySection,
+  PhotoFilesSkeleton,
+  PullRequestCardSkeleton,
+  PullRequestSummarySkeleton,
+} from "@/components/in-flight-loading";
 import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
 import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
@@ -54,6 +60,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
 import { type PhotoFilters, parseFilters, prefixedFilters } from "@/lib/photo-filters";
@@ -91,7 +98,15 @@ function InFlightPage() {
       title="Photos in Flight"
       description="Photo, album, tag, genre, place, localization, metadata group, camera override and custom lens data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
     >
-      <QueryResult query={settings} pendingLabel="Loading settings…">
+      <QueryResult
+        query={settings}
+        pending={
+          <>
+            <PullRequestCardSkeleton />
+            <PhotoFilesSkeleton />
+          </>
+        }
+      >
         {(data) =>
           data.github.repo && data.github.token.set ? (
             <InFlightCard />
@@ -148,6 +163,7 @@ function InFlightCard() {
         rebuild={rebuild.status}
         onDismiss={() => setRemoved(null)}
       />
+      <PhotoFilesSkeleton shown={inFlight.isPending} />
       <PhotoFiles
         shown={shown}
         rebuilding={rebuild.rebuilding}
@@ -195,7 +211,17 @@ function PhotoFiles({
   const edits = useLocalEditsStore((s) => s.edits);
   const { filters, filter } = usePhotoFilters();
   if (!shown) return null;
-  if (shown.files.length === 0) return <SavedDrafts />;
+  if (shown.files.length === 0) {
+    return (
+      <>
+        <EmptySection title="No photos in flight">
+          Photos saved from the Photo page wait here until Commit sends them to the “Add photo data”
+          pull request.
+        </EmptySection>
+        <SavedDrafts />
+      </>
+    );
+  }
   const files = filter(shown.files);
   const undecided = undecidedPaths(files, edits);
   return (
@@ -304,7 +330,7 @@ function PullRequestCard({
         </CardAction>
       </CardHeader>
       <CardContent>
-        <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
+        <QueryResult query={inFlight} pending={<PullRequestSummarySkeleton />}>
           {(data) => <PullRequestSummary data={shown ?? data} />}
         </QueryResult>
       </CardContent>
@@ -340,9 +366,11 @@ function AllPhotosPanel({ data }: { data?: InFlightResponse }) {
     return (
       <>
         <AllPhotosHeading />
-        <PanelNote>
-          {data ? "No pull request to read it from." : "Waiting for the pull request."}
-        </PanelNote>
+        {data ? (
+          <PanelNote>No pull request to read it from.</PanelNote>
+        ) : (
+          <Skeleton aria-label="Waiting for the pull request" className="h-96 rounded-xl" />
+        )}
       </>
     );
   }
