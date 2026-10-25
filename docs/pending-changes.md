@@ -45,23 +45,26 @@ uploaded images stay in R2 for Explore Bucket.
 [Git database API](https://docs.github.com/en/rest/git/trees#create-a-tree): one tree with every changed file (a
 deletion is an entry with `sha: null`), one commit on top of the pull request's head, and the branch moved to it. With
 no pull request open it creates a `photo-data/<date>-<time>` branch at that commit from the Settings branch and opens
-the **Add photo data** pull request. It commits on top of the head the backend read when it started (or at the last
-Refresh or Commit), without asking GitHub again; if the branch has moved on GitHub since, GitHub refuses the move and
-nothing is lost: the changes stay waiting, the backend forgets where it thought the branch was, and pressing Commit again
-reads it and commits. Once committed, the changes it had are dropped (ones saved
-while it ran stay for the next one).
+the **Add photo data** pull request. Commit always asks GitHub first where the repository stands (1 GraphQL query, plus
+a snapshot of any new commit), since the pull request may have been merged or closed on GitHub since the backend last
+read it. Its branch usually stays behind after a merge and would still take a commit, but nothing would ever bring that
+commit to the Settings branch, so a merged pull request means Commit opens a new one. If the branch moves on GitHub
+between that read and the commit, GitHub refuses the move and nothing is lost: the changes stay waiting, and pressing
+Commit again reads it and commits. Once committed, the changes it had are dropped (ones saved while it ran stay for the
+next one).
 
-A [local edit](combined-data-store.md#local-edits) whose file isn't there doesn't stop the commit. That usually means
-the backend's read is out of date, such as when the **Add photo data** pull request was merged on GitHub after the
-backend last read it, so Commit reads GitHub again once (1 GraphQL query, plus a snapshot of the new commit) and
-commits on that. An edit whose file still isn't there (it was deleted or renamed since) is left out, the rest is
+> **Frontend analogy:** like refetching a record right before a mutation instead of trusting a cache entry from page
+> load, so a save never goes to a record someone else already closed.
+
+A [local edit](combined-data-store.md#local-edits) whose file isn't there doesn't stop the commit. An edit whose file
+isn't there (it was deleted or renamed since) is left out, the rest is
 committed, and the answer lists it under `skipped` with the fields it set. The sync panel and Photos in Flight show
 those file names and fields, so the edit can be made again on the photo's new file; the browser drops it like the
 committed ones. A file GitHub's answer couldn't be read for still stops the commit, saying so, since trying again
 usually reads it.
 
-> **Frontend analogy:** like a form whose submit refetches once on a 404 and then drops the field for a record that's
-> really gone, showing a toast, instead of rejecting the whole form.
+> **Frontend analogy:** like a form whose submit drops the field for a record that's really gone, showing a toast,
+> instead of rejecting the whole form.
 
 > **ELI5:** instead of mailing one letter per change, the app keeps every letter in a drawer and, when you press
 > Commit, puts them all in one envelope.
@@ -79,7 +82,7 @@ The backend spends them like this:
 | A commit not read before                    | 1 GraphQL query: every file in the data folders with its content. Commits never change, so each is read once, and kept on disk for the next start   |
 | A file too big for GraphQL to return inline | 1 REST read of that file (`GET /git/blobs/<sha>`), such as a large `ALLPHOTOS.json`                                                                 |
 | Every other read, save, edit, removal       | None: they're answered from memory                                                                                                                  |
-| **Commit**                                  | 3 REST writes (tree, commit, branch move), plus 2 (branch, pull request) when it opens the pull request                                             |
+| **Commit**                                  | 1 GraphQL query for where the repository stands, then 3 REST writes (tree, commit, branch move), plus 2 (branch, pull request) when it opens one    |
 | **Refresh** on Photos in Flight             | 1 GraphQL query for where the repository stands now, plus a snapshot of any commit not read before                                                  |
 | Settings' **Test** button                   | 1 REST read of the repository, as before                                                                                                            |
 

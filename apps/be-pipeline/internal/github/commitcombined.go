@@ -85,8 +85,8 @@ func combinedKinds() []combinedKind {
 // base branch, the commit also merges the base branch in (see catchUp), even
 // with nothing else to commit. Nothing is committed when a file can't be
 // read. An edit whose file isn't there is left out (see commitWorkspace).
-// It makes 3 GitHub calls (a tree, a commit and the branch moving to
-// it), plus 1 to compare an open pull request with its base branch, 1 for
+// It makes 4 GitHub calls (where the repository stands, a tree, a commit and
+// the branch moving to it), plus 1 to compare an open pull request with its base branch, 1 for
 // each 100 files it changes when it's behind, and 2 to open the pull request
 // when it opens one.
 func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits []FieldEdit) (CombinedCommit, error) {
@@ -119,22 +119,18 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits [
 
 // commitWorkspace is the workspace Commit commits on, caught up with its
 // base branch, the files it changes besides the combined lists, and the edits
-// left out. Where the branch stands comes from the read when the app
-// started, not a new one: GitHub refuses to move a branch that moved since,
-// and then the next Commit reads it again. But an edit naming a file that
-// isn't there usually means that read is out of date, as when the photo data
-// pull request was merged on GitHub since, so GitHub is read again once
-// (1 GraphQL query, plus a snapshot of any new commit). Edits whose file still
-// isn't there are left out rather than failing the whole commit.
+// left out. GitHub is read again first (1 GraphQL query, plus a snapshot of
+// any new commit), since the photo data pull request may have been merged or
+// closed on GitHub since the last read: its branch is usually still there and
+// would take the commit, but nothing would ever bring it to the base branch.
+// Edits whose file isn't there, as when it was deleted or renamed since, are
+// left out rather than failing the whole commit.
 func (c *Client) commitWorkspace(ctx context.Context, gh settings.GitHub, edits map[string]FieldEdit) (*workspace, map[string][]byte, []FieldEdit, *PublishError) {
-	w, changes, missing, perr := c.prepareCommit(ctx, gh, edits)
-	if perr != nil || len(missing) == 0 {
-		return w, changes, []FieldEdit{}, perr
-	}
 	if _, perr := c.state(ctx, gh, true); perr != nil {
 		return nil, nil, nil, perr
 	}
-	if w, changes, missing, perr = c.prepareCommit(ctx, gh, edits); perr != nil {
+	w, changes, missing, perr := c.prepareCommit(ctx, gh, edits)
+	if perr != nil {
 		return nil, nil, nil, perr
 	}
 	return w, changes, editsAt(edits, missing), nil
