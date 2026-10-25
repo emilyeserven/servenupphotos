@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MapPinIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import {
   type Place,
   cacheSavedEntry,
@@ -8,10 +8,9 @@ import {
   readEntries,
   savePlaceMutation,
 } from "@/api/places";
-import { CopyPromptButton } from "@/components/edit-in-flight/copy-prompt-button";
+import { PromptCopyButton } from "@/components/edit-in-flight/prompt-copy-button";
 import type { ExifPlace, PhotoDetails } from "@/components/photo-details";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import {
   type LocationClues,
@@ -26,7 +25,7 @@ import {
   withLocation,
 } from "@/lib/location-prompt";
 
-interface LocationPromptCardProps {
+interface LocationPromptProps {
   /** The public URL of the photo's version the prompt links to. */
   imageUrl: string;
   /** The photo's details being edited, whose location the answer fills in. */
@@ -37,12 +36,20 @@ interface LocationPromptCardProps {
   disabled: boolean;
 }
 
+/** The Place field's location prompt: its sparkle button, and where its answer is pasted. */
+export interface LocationPrompt {
+  button: ReactNode;
+  /** The field for the LLM's answer, once the prompt has been copied, or null before. */
+  answer: ReactNode;
+}
+
 /**
- * Copies a prompt that asks an LLM where the photo was taken, with everything already known of its
- * location, then reads the JSON it answers with and offers to fill in the photo's place, city,
- * state, country and GPS position from it. Save changes then saves them like any other edit.
+ * The location prompt for the Place field: a sparkle button that copies a prompt asking an LLM where
+ * the photo was taken, with everything already known of its location and every place to reuse, and
+ * once it's copied, a field that reads the JSON it answers with and offers to fill in the photo's
+ * place, city, state, country and GPS position. Save changes then saves them like any other edit.
  */
-export function LocationPromptCard(props: LocationPromptCardProps) {
+export function useLocationPrompt(props: LocationPromptProps): LocationPrompt {
   const read = useQuery(placesQuery);
   const [copied, setCopied] = useState(false);
   const clues: LocationClues = {
@@ -50,39 +57,27 @@ export function LocationPromptCard(props: LocationPromptCardProps) {
     exif: props.exif,
     places: readEntries(read.data?.places),
   };
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Suggest a location</CardTitle>
-        <CardDescription>
-          Copies a prompt for a chat with an LLM, with a link to the photo&apos;s Small version,
-          what&apos;s already known of where it was taken, and every place to reuse. Paste its
-          answer to fill in the location.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <CopyPromptButton
-          label="Copy location prompt"
-          disabled={!read.data}
-          prompt={() => locationPrompt(props.imageUrl, clues)}
-          onCopied={() => setCopied(true)}
-        />
-        {copied && <PasteLocation {...props} clues={clues} />}
-      </CardContent>
-    </Card>
+  const button = (
+    <PromptCopyButton
+      label="Copy a location prompt for an LLM"
+      disabled={!read.data}
+      prompt={() => locationPrompt(props.imageUrl, clues)}
+      onCopied={() => setCopied(true)}
+    />
   );
+  return { button, answer: copied && <PasteLocation {...props} clues={clues} /> };
 }
 
-type PasteLocationProps = LocationPromptCardProps & { clues: LocationClues };
+type PasteLocationProps = LocationPromptProps & { clues: LocationClues };
 
 /** The field to paste the LLM's answer into, and what it suggests. */
 function PasteLocation({ clues, onChange, disabled }: PasteLocationProps) {
   const [text, setText] = useState("");
   const [pasted, setPasted] = useState<PastedLocation | null | undefined>(undefined);
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 rounded-md border p-3">
       <label htmlFor="location-prompt-answer" className="text-sm font-medium">
-        The LLM&apos;s answer
+        The LLM&apos;s answer to the location prompt
       </label>
       <Textarea
         id="location-prompt-answer"

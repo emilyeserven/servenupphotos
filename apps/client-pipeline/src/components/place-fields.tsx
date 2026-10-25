@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { ArrowUpDownIcon, FolderTreeIcon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import {
@@ -14,6 +13,7 @@ import {
   readEntries,
   savePlaceMutation,
 } from "@/api/places";
+import type { LocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import { Button } from "@/components/ui/button";
 import { type ComboboxOption } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
@@ -146,6 +146,8 @@ interface PlaceFieldsProps {
   exifGps: string | null;
   /** The city from the photo's EXIF, offered as a place's city when its custom one is empty. */
   exifCity: string | null;
+  /** The location prompt's sparkle button and answer field, when the photo has one. */
+  prompt?: LocationPrompt;
 }
 
 /**
@@ -185,6 +187,7 @@ export function PlaceFields({
   exifCountry,
   exifGps,
   exifCity,
+  prompt,
 }: PlaceFieldsProps) {
   const all = usePlaces();
   // The place name as the photo was saved, kept while editing even once places replace it.
@@ -202,7 +205,7 @@ export function PlaceFields({
   const scope = usePlaceScope({ city, country, rows, ...all });
   return (
     <div className="flex flex-col gap-2">
-      <PlaceLabel />
+      <PlaceLabel prompt={prompt} />
       <PhotoGpsStatus
         exifGps={exifGps}
         customGps={value.customGpsPosition}
@@ -249,19 +252,18 @@ export function PlaceFields({
   );
 }
 
-function PlaceLabel() {
+/** The Place label, with the location prompt's sparkle button and, once it's copied, its answer field. */
+function PlaceLabel({ prompt }: { prompt?: LocationPrompt }) {
   return (
-    <div className="flex items-baseline justify-between gap-2">
-      <span id="photo-place-label" className="text-sm font-medium">
-        Place
-      </span>
-      <Link
-        to="/places"
-        className="text-muted-foreground text-xs underline-offset-4 hover:underline"
-      >
-        Manage places
-      </Link>
-    </div>
+    <>
+      <div className="flex items-center justify-between gap-2">
+        <span id="photo-place-label" className="text-sm font-medium">
+          Place
+        </span>
+        {prompt?.button}
+      </div>
+      {prompt?.answer}
+    </>
   );
 }
 

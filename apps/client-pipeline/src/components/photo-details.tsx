@@ -7,6 +7,7 @@ import { RegionOverrideField } from "@/components/region-override-field";
 import { FieldSection } from "@/components/field-section";
 import { PhotoCustomDate } from "@/components/photo-custom-date";
 import { PhotoCustomGps } from "@/components/photo-custom-gps";
+import type { LocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import { PlaceFields } from "@/components/place-fields";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -153,6 +154,8 @@ interface PhotoDetailsCardProps {
   description: string;
   /** Saving is underway or done, so changing them now would not change the file. */
   disabled: boolean;
+  /** The Place field's location prompt, when the photo has one. */
+  locationPrompt?: LocationPrompt;
 }
 
 /**
@@ -167,6 +170,7 @@ export function PhotoDetailsCard({
   exifPlace,
   description,
   disabled,
+  locationPrompt,
 }: PhotoDetailsCardProps) {
   const field = (name: "title" | "customCity" | "customState" | "customCountry") => ({
     value: value[name],
@@ -208,6 +212,7 @@ export function PhotoDetailsCard({
             exifCountry={exifPlace.country}
             exifGps={exifPlace.gpsPosition}
             exifCity={exifPlace.city}
+            prompt={locationPrompt}
             onChange={(place) => onChange({ ...value, ...place })}
           />
           <PhotoCustomGps
