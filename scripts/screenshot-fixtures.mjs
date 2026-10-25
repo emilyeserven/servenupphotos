@@ -460,6 +460,51 @@ function uploadAnswer(key) {
   return { key, url: `${CDN}/${key}`, versions };
 }
 
+/** The photos Bulk Tagging picks: five of the pull request's photos, the first with no tags. */
+function bulkTagPick() {
+  const photos = headPhotos.slice(0, 5).map(({ path, data }, i) => ({
+    path,
+    fileUrl: "",
+    name: path
+      .split("/")
+      .pop()
+      .replace(/\.json$/, ""),
+    data,
+    related: i === 0 ? [] : ["same city: kyoto", "taken the same day"].slice(0, (i % 2) + 1),
+  }));
+  return {
+    branch: PULL_REQUEST.branch,
+    pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+    photoFiles: headPhotos.length,
+    untagged: 12,
+    photos,
+  };
+}
+
+/** What reading a pasted Bulk Tagging answer finds for the picked photos. */
+function bulkTagsPreview() {
+  const photos = bulkTagPick().photos.map(({ path, name }, i) => ({
+    path,
+    name,
+    add: i === 0 ? ["shotengai", "lanterns"] : ["lanterns", "night"],
+    already: i === 2 ? ["temple"] : [],
+    skipped: i === 0 ? [{ name: "street", reason: "a genre has that name" }] : [],
+  }));
+  return {
+    photos,
+    newTags: [
+      { id: "covered-street", description: "", parent: "", parentOnly: true },
+      {
+        id: "shotengai",
+        description: "a Japanese shopping street, often under a covered arcade",
+        parent: "covered-street",
+        parentOnly: false,
+      },
+    ],
+    unknown: [],
+  };
+}
+
 const secret = { set: true, last4: "a1b2" };
 
 /** The default answers: everything set up, and one photo data pull request open. */
@@ -601,6 +646,9 @@ export function defaultFixtures() {
         })),
     },
     "POST /api/data/location-names": () => ({ ...pendingSave(), files: 9, fields: 9 }),
+    "POST /api/data/bulk-tags/pick": () => bulkTagPick(),
+    "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
+    "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,

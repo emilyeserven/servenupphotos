@@ -59,6 +59,49 @@ changed top-level fields are rewritten, and nothing is saved while any photo fil
 `POST /api/data/location-names`). The other names are picked on the Places page; see
 [Other names](places-and-localizations.md#other-names).
 
+## Bulk tagging
+
+**Bulk tagging** tags up to five related photos with one LLM prompt. **Pick photos** (`POST /api/data/bulk-tags/pick`)
+reads every photo file as the next Commit will have it and picks the one with the fewest tags (by path among equals),
+then up to four that share the most with it: each shared [place](places-and-localizations.md) counts 5, the same
+city 3 (or else the same country 1), each shared [genre](photographic-genres.md) 2, and being taken the same day 3
+(or else the same month 1), using the hand-written city, country and date over the EXIF ones. Photos that share
+nothing aren't picked, and among equals the one with fewer tags goes first. Each card says what it shares with the
+first photo. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out;
+**Start over** picks from every photo again.
+
+**Copy the tag prompt** (`lib/bulk-tag-prompt.ts`) copies one prompt for all of them: each photo by its file name
+(without `.json`), with a link to its Small version, what's known of where it was taken, and the tags it already has,
+then the same rules, existing tags and **Already filtered** list as one photo's [tag prompt](albums-and-tags.md#suggest-tags)
+(`TAG_RULES` and `tagListsSection` in `lib/tag-prompt.ts`), asking for 3 to 8 new tags each and for the answer as
+JSON:
+
+```json
+{
+  "photos": [{ "photo": "20161216_092741", "tags": ["shotengai", "lanterns"] }],
+  "definitions": [
+    { "tag": "shotengai", "definition": "a Japanese shopping street", "parent": "covered-street" }
+  ]
+}
+```
+
+Paste the answer and **Review the tags** (`POST /api/data/bulk-tags/preview`, which saves nothing). The backend reads
+the JSON object in it (from the first `{` to the last `}`, so a code block or words around it are fine) and sorts
+each photo's names as pasting into a Tags field does (`github/bulktags_answer.go`): a name matching a tag's ID or name
+(ignoring case, or by the ID made from it) is that tag; one an album, genre or metadata group has, or with nothing to
+make an ID from, is left out saying why; the rest are new tags in lowercase kebab-case, with their definitions as
+descriptions. A parent that isn't a tag yet is made too, before the tag under it. Photos the answer names that weren't
+picked are listed and left out.
+
+The review lists the new tags, each with a checkbox and one for its parent, then each photo with a checkbox per tag
+to add, marking the new ones, and the tags it already had. **Save tags for N photos** (`POST /api/data/bulk-tags`)
+makes the ticked new tags, parents first, and adds the ticked tags to each photo's `tags` after the ones it has, all
+in one save of [changes waiting for Commit](pending-changes.md). Each new tag is checked as **New tag** on `/tags`
+checks it, and nothing is saved when one can't be made or a photo can't be read.
+
+> **Frontend analogy:** it's the single-photo paste flow batched: a "dry run" mutation that returns a diff for the
+> user to edit (like a form's preview step), then one mutation that commits the edited diff.
+
 **Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
 how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
 asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,

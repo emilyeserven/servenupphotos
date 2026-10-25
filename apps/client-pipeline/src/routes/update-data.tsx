@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
+import { BulkTaggingCard } from "@/components/bulk-tagging/bulk-tagging-card";
 import { ImageBaseUrlCard } from "@/components/image-base-url";
 import { LocationNamesCard } from "@/components/location-names-card";
 import { MissingFieldsCard } from "@/components/missing-fields";
@@ -31,6 +32,7 @@ function UpdateDataPage() {
               <PhotoColorsCard canRead={r2IsSetUp(data.r2)} />
               <ReapplyOverridesCard />
               <LocationNamesCard />
+              <BulkTaggingCard />
             </>
           ) : (
             <p className="text-muted-foreground text-sm">
