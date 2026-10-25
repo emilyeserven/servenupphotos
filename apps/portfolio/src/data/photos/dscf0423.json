@@ -1,0 +1,262 @@
+{
+  "id": 305,
+  "title": null,
+  "comment": null,
+  "file": "DSCF0423.jpg",
+  "camera": "Fujifilm X-T5",
+  "lens": "XF35mmF2 R WR",
+  "aperture": 2.2,
+  "exposure": "1/250",
+  "iso": 125,
+  "focalLength": 35,
+  "gpsPosition": "34 deg 40' 9.70\" N, 135 deg 30' 12.14\" E",
+  "customGpsPosition": null,
+  "createDate": "2026:10:01 17:19:10",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "Japan",
+  "state": "Osaka",
+  "city": "Osaka-shi",
+  "width": 3874,
+  "height": 5424,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423.jpg",
+    "key": "photos/a6ec4545d2ad-dscf0423.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a6ec4545d2ad-dscf0423-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 0,
+      "y": 775,
+      "size": 3874,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "places": [],
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "colors": {
+    "average": {
+      "hex": "#5e595c",
+      "lab": {
+        "l": 38.27,
+        "a": 3.02,
+        "b": -1.3
+      },
+      "hcl": {
+        "h": 336.68,
+        "c": 3.29,
+        "l": 38.27
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0424
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0468
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0026
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0002
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0002
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0004
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0002
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.0399
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.003
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0009
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0005
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.0067
+      }
+    ],
+    "neutrals": {
+      "share": 0.8563,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.1415
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0579
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0581
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0639
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0462
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0337
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0339
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0448
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0637
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0613
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0304
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0345
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0435
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.023
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0106
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0179
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0109
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0063
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0019
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.0724
+        }
+      ]
+    },
+    "lightness": 38.27,
+    "chroma": 8.62,
+    "peakChroma": 16.9,
+    "samples": 10030
+  }
+}

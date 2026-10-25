@@ -1,0 +1,262 @@
+{
+  "id": 322,
+  "title": null,
+  "comment": null,
+  "file": "DSCF7577.jpg",
+  "camera": "Fujifilm X-T5",
+  "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "aperture": 9,
+  "exposure": "1/125",
+  "iso": 8000,
+  "focalLength": 98.6,
+  "gpsPosition": "35 deg 6' 10.47\" N, 129 deg 1' 57.03\" E",
+  "customGpsPosition": null,
+  "createDate": "2026:09:20 18:08:06",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "South Korea",
+  "state": "Busan",
+  "city": null,
+  "width": 6728,
+  "height": 3784,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577.jpg",
+    "key": "photos/6fb94846a912-dscf7577.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6fb94846a912-dscf7577-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1472,
+      "y": 0,
+      "size": 3784,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "places": [],
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "colors": {
+    "average": {
+      "hex": "#585357",
+      "lab": {
+        "l": 35.75,
+        "a": 2.92,
+        "b": -1.59
+      },
+      "hcl": {
+        "h": 331.47,
+        "c": 3.32,
+        "l": 35.75
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0001
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0282
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.003
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.0005
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0005
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0
+      }
+    ],
+    "neutrals": {
+      "share": 0.9677,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.012
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0172
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0263
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.044
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0806
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.1226
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.1676
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.177
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.1544
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0904
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.044
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0184
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0082
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0028
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0009
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.001
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0001
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0001
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0
+        }
+      ]
+    },
+    "lightness": 35.75,
+    "chroma": 6.83,
+    "peakChroma": 9.32,
+    "samples": 9900
+  }
+}

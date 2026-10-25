@@ -1,0 +1,262 @@
+{
+  "id": 300,
+  "title": null,
+  "comment": null,
+  "file": "20250704_140357.jpg",
+  "camera": "Galaxy S24 Ultra",
+  "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
+  "aperture": 2.4,
+  "exposure": "1/1500",
+  "iso": 50,
+  "focalLength": 7.9,
+  "gpsPosition": "50 deg 50' 52.48\" N, 4 deg 21' 31.36\" E",
+  "customGpsPosition": null,
+  "createDate": "2025:07:04 14:03:57",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "Belgium",
+  "state": "Brussels-Capital",
+  "city": "Brussels",
+  "width": 3731,
+  "height": 2099,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357.jpg",
+    "key": "photos/061e792bcedd-20250704-140357.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/061e792bcedd-20250704-140357-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 816,
+      "y": 0,
+      "size": 2099,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "places": [],
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "colors": {
+    "average": {
+      "hex": "#918479",
+      "lab": {
+        "l": 55.98,
+        "a": 2.85,
+        "b": 7.77
+      },
+      "hcl": {
+        "h": 69.84,
+        "c": 8.28,
+        "l": 55.98
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0484
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.2353
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0292
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0362
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0026
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0001
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0
+      }
+    ],
+    "neutrals": {
+      "share": 0.6483,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.0217
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0188
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0101
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0133
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0069
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0087
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0114
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0086
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0067
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0094
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0186
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0525
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.1573
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.1624
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0731
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0277
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0194
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.01
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0087
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.003
+        }
+      ]
+    },
+    "lightness": 55.98,
+    "chroma": 11.95,
+    "peakChroma": 32.12,
+    "samples": 10050
+  }
+}
