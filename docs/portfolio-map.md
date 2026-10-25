@@ -17,9 +17,12 @@ its EXIF one. A photo with neither goes at one of its places' position (see
 border is softer, and so is a group's when every photo in it is placed that way. A place marked as an **Exact
 location** on the Places page keeps the solid border for its photos. Like every view, the map leaves out a photo with no date, EXIF or [custom](data-model.md#date-taken), even when it has a position.
 
-Photos placed at the same place all sit on one spot, so zooming in never splits them apart. From zoom 16 in, a spot
-with up to 12 photos scatters them loosely around it, the oldest nearest the middle, never overlapping, so each can be seen
-and opened (`lib/map-fan.ts`, used by `markersInView` in `lib/map-markers.ts`). The scatter is random but seeded by the photos, so it's the same every time. A busier spot stays one group.
+From city zoom (12) in, small groups split into photos of their own, so a sparse area shows each photo rather than a
+count: up to 3 photos at zoom 12, growing to 12 by zoom 16 (`fanLimit` in `lib/map-fan.ts`). Bigger groups stay one
+marker until closer. Each photo then sits on its own spot when there's room. When it would overlap another marker, such
+as photos placed at the same place, it's moved a little to a random spot nearby that's clear, the oldest photos placed
+first so they stay nearest their spots (`fanOffsets`, used by `markersInView` in `lib/map-markers.ts`). The randomness
+is seeded by each photo's ID, so it lands in the same place every time.
 
 Where the map is looking is kept in the URL as its center and zoom (`?lat=37.57&lng=126.98&zoom=12.5`), half a second
 after it stops moving, so a link opens the map there instead of on all the photos. A link with only an open photo (`?photo=<id>`) opens zoomed in on that photo instead, so it doesn't fly in from every photo; the homepage's map pin links straight to a photo's center and zoom. When those change from outside the map, as with the photo viewer's **View on map**, the map flies there. Moving replaces the URL rather than
