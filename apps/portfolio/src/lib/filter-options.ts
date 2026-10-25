@@ -8,7 +8,7 @@ import {
 } from "@/lib/localize";
 import { type FilterKey, type LocationKey, matchesFilters } from "@/lib/photo-filters";
 import { groupTree, groupValues, type MetaGroup } from "@/lib/metadata-groups";
-import type { Photo } from "@/lib/photos";
+import { distinctState, type Photo } from "@/lib/photos";
 import type { EquipmentKey } from "@/lib/camera-filters";
 
 /** One choice of a filter's dropdown. */
@@ -44,7 +44,8 @@ function locationPaths(photo: Photo): [LocationKey, string][][] {
   const top: [LocationKey, string][] = [];
   const add = (key: LocationKey, value: string | null) => value && top.push([key, value]);
   add("country", photo.country);
-  add("state", photo.state);
+  // A state named like its city, such as Seoul in Seoul, is left out so the name isn't nested in itself.
+  add("state", distinctState(photo.state, photo.city));
   add("city", photo.city);
   const chains = photo.placeIds.map((id) =>
     placeAncestry(id)
