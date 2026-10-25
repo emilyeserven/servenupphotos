@@ -46,9 +46,11 @@ Over the top left corner, beside the title on wider screens and under it on phon
 On phones, the day, Places and album filters sit behind a **Filters** button next to **Jump to**, so they don't cover the
 map. The button shows how many filters are set while they're hidden.
 
-- **Jump to** is a dropdown that zooms straight to an area, for now New York City or Seoul. The areas and their bounds
-  are `MAP_AREAS` in `apps/portfolio/src/components/map-view-controls.tsx`; add one there to add it to the dropdown. The
-  icon button beside it zooms back out to every photo.
+- **Jump to** is a dropdown that zooms straight to an area, for now New York City, Seoul or Japan. The areas and their
+  bounds are `MAP_AREAS` in `apps/portfolio/src/components/map-view-controls.tsx`; add one there to add it to the
+  dropdown. A country (`countryArea`) fits the photos taken there, by their country, rather than the whole country, so
+  Japan shows the west of Japan where the photos are; it's left out while there are none. The icon button beside it
+  zooms back out to every photo.
 - The **day** dropdown narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the
