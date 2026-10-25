@@ -50,6 +50,10 @@ It has:
   X-Small (250px) loses too much detail. Sources: [Claude vision](https://platform.claude.com/docs/en/build-with-claude/vision),
   [OpenAI image costs](https://community.openai.com/t/how-do-i-calculate-image-tokens-in-gpt4-vision/492318),
   [Gemini tokens](https://ai.google.dev/gemini-api/docs/tokens).
+- What's known of where the photo was taken (its title, places, place name, EXIF and hand-written city, state,
+  country and GPS position, and comment), the same lines the [location prompt](places-and-localizations.md#suggest-a-location) sends,
+  so the LLM only uses a culture's own word (such as "shotengai") for a photo from that culture, without making a tag
+  of the place itself.
 - Every tag's ID, to reuse when one fits, spelled as listed.
 - Every album, [photographic genre](photographic-genres.md) and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
   filters by them.

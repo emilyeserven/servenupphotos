@@ -23,6 +23,8 @@ export interface TagPromptLists {
   /** The photographic genres, which the portfolio filters by too. */
   genres: Group[];
   metaGroups: MetaGroup[];
+  /** What's known of where the photo was taken, one "- Label: value" line per fact. */
+  known: string[];
 }
 
 /** The field a metadata group is of, as the prompt names it, such as "focal length". */
@@ -51,11 +53,15 @@ export function tagPrompt(imageUrl: string, lists: TagPromptLists): string {
 
 The tags are for a photography portfolio, where each tag gathers the photos that share a subject or an idea.
 
+What's already known about the photo:
+${lists.known.join("\n") || "- Nothing yet."}
+
 Rules:
 - Reuse an existing tag (listed below) whenever one fits, spelled exactly as it is listed.
 - Write every tag in lowercase kebab-case: lowercase words joined by single dashes, such as "street-food" or "wabi-sabi".
 - Keep tags general enough to fit other photos too: "temple" rather than "bulguksa-main-hall".
-- Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "architecture", "street-food" or "cats").
+- Put cultural terms and concepts first (such as "hanok", "matsuri" or "wabi-sabi"), then the photo's main subjects (such as "lanterns", "street-food" or "cats").
+- Use what's known about where the photo was taken to pick terms that fit it: only use a culture's own word (such as "shotengai", a Japanese shopping street, or "hanok", a Korean house) when the photo is from that culture, and otherwise use a general one (such as "shopping-street"). Never turn what's known (its place, city or country) into a tag.
 - A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
 - Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, its albums, and its photographic genre (such as street, landscape or portrait). Don't suggest any of the names under "Already filtered" either.
 - Suggest 3 to 8 tags.
