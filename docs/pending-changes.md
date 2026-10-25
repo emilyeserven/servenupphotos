@@ -51,6 +51,18 @@ nothing is lost: the changes stay waiting, the backend forgets where it thought 
 reads it and commits. Once committed, the changes it had are dropped (ones saved
 while it ran stay for the next one).
 
+A [local edit](combined-data-store.md#local-edits) whose file isn't there doesn't stop the commit. That usually means
+the backend's read is out of date, such as when the **Add photo data** pull request was merged on GitHub after the
+backend last read it, so Commit reads GitHub again once (1 GraphQL query, plus a snapshot of the new commit) and
+commits on that. An edit whose file still isn't there (it was deleted or renamed since) is left out, the rest is
+committed, and the answer lists it under `skipped` with the fields it set. The sync panel and Photos in Flight show
+those file names and fields, so the edit can be made again on the photo's new file; the browser drops it like the
+committed ones. A file GitHub's answer couldn't be read for still stops the commit, saying so, since trying again
+usually reads it.
+
+> **Frontend analogy:** like a form whose submit refetches once on a 404 and then drops the field for a record that's
+> really gone, showing a toast, instead of rejecting the whole form.
+
 > **ELI5:** instead of mailing one letter per change, the app keeps every letter in a drawer and, when you press
 > Commit, puts them all in one envelope.
 

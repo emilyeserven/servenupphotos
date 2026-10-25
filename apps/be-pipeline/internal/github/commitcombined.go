@@ -41,6 +41,10 @@ type CombinedCommit struct {
 	NewPullRequest bool `json:"newPullRequest"`
 	// PullRequestURL is the photo data pull request the commit went to.
 	PullRequestURL string `json:"pullRequestUrl,omitempty"`
+	// Skipped are the edits left out because their file isn't there, even
+	// after reading GitHub again: it was deleted or renamed since the edit
+	// was made. The rest of the commit goes ahead without them.
+	Skipped []FieldEdit `json:"skipped"`
 }
 
 // FieldEdit sets top-level fields of the data file at Path, such as a photo's
@@ -79,7 +83,8 @@ func combinedKinds() []combinedKind {
 // from the base branch and opens one. When the pull request is behind its
 // base branch, the commit also merges the base branch in (see catchUp), even
 // with nothing else to commit. Nothing is committed when a file can't be
-// read. It makes 3 GitHub calls (a tree, a commit and the branch moving to
+// read. An edit whose file isn't there is left out (see commitWorkspace).
+// It makes 3 GitHub calls (a tree, a commit and the branch moving to
 // it), plus 1 to compare an open pull request with its base branch, 1 for
 // each 100 files it changes when it's behind, and 2 to open the pull request
 // when it opens one.
@@ -88,21 +93,11 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits [
 	if perr != nil {
 		return CombinedCommit{}, perr
 	}
-	// Where the branch stands comes from the read when the app started, not a
-	// new one: GitHub refuses to move a branch that moved since, and then
-	// the next Commit reads it again.
-	w, perr := c.workspace(ctx, gh)
+	w, changes, skipped, perr := c.commitWorkspace(ctx, gh, byPath)
 	if perr != nil {
 		return CombinedCommit{}, perr
 	}
-	if perr := c.catchUp(ctx, w); perr != nil {
-		return CombinedCommit{}, perr
-	}
-	changes, perr := w.commitChanges(byPath)
-	if perr != nil {
-		return CombinedCommit{}, perr
-	}
-	result := CombinedCommit{Files: []string{}, Counts: map[string]int{}}
+	result := CombinedCommit{Files: []string{}, Counts: map[string]int{}, Skipped: skipped}
 	for _, kind := range combinedKinds() {
 		if perr := w.addCombined(kind, changes, result.Counts); perr != nil {
 			return CombinedCommit{}, perr
@@ -121,30 +116,65 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits [
 	return result, nil
 }
 
+// commitWorkspace is the workspace Commit commits on, caught up with its
+// base branch, the files it changes besides the combined lists, and the edits
+// left out. Where the branch stands comes from the read when the app
+// started, not a new one: GitHub refuses to move a branch that moved since,
+// and then the next Commit reads it again. But an edit naming a file that
+// isn't there usually means that read is out of date, as when the photo data
+// pull request was merged on GitHub since, so GitHub is read again once
+// (1 GraphQL query, plus a snapshot of any new commit). Edits whose file still
+// isn't there are left out rather than failing the whole commit.
+func (c *Client) commitWorkspace(ctx context.Context, gh settings.GitHub, edits map[string]FieldEdit) (*workspace, map[string][]byte, []FieldEdit, *PublishError) {
+	w, changes, missing, perr := c.prepareCommit(ctx, gh, edits)
+	if perr != nil || len(missing) == 0 {
+		return w, changes, []FieldEdit{}, perr
+	}
+	if _, perr := c.state(ctx, gh, true); perr != nil {
+		return nil, nil, nil, perr
+	}
+	if w, changes, missing, perr = c.prepareCommit(ctx, gh, edits); perr != nil {
+		return nil, nil, nil, perr
+	}
+	return w, changes, editsAt(edits, missing), nil
+}
+
+// prepareCommit reads the workspace, catches it up with its base branch and
+// makes edits over its pending changes (see commitChanges).
+func (c *Client) prepareCommit(ctx context.Context, gh settings.GitHub, edits map[string]FieldEdit) (*workspace, map[string][]byte, []string, *PublishError) {
+	w, perr := c.workspace(ctx, gh)
+	if perr != nil {
+		return nil, nil, nil, perr
+	}
+	if perr := c.catchUp(ctx, w); perr != nil {
+		return nil, nil, nil, perr
+	}
+	changes, missing, perr := w.commitChanges(edits)
+	return w, changes, missing, perr
+}
+
+// editsAt is the edits of paths, sorted by path.
+func editsAt(edits map[string]FieldEdit, paths []string) []FieldEdit {
+	sort.Strings(paths)
+	out := make([]FieldEdit, 0, len(paths))
+	for _, p := range paths {
+		out = append(out, edits[p])
+	}
+	return out
+}
+
 // commitChanges is every file the commit changes besides the combined lists:
 // the pending changes, with edits made over them, by path (nil content
-// deletes). It fails when an edit names a file that isn't there.
-func (w *workspace) commitChanges(edits map[string]FieldEdit) (map[string][]byte, *PublishError) {
+// deletes), and the paths of the edits whose file isn't there, which are left
+// out. It fails when an edited file can't be read or edited.
+func (w *workspace) commitChanges(edits map[string]FieldEdit) (map[string][]byte, []string, *PublishError) {
 	changes := map[string][]byte{}
 	for p, f := range w.staged {
 		changes[p] = f.data()
 	}
-	var missing []string
-	for p, edit := range edits {
-		content, ok := w.file(p)
-		if !ok || w.readErr(p) != "" {
-			missing = append(missing, p)
-			continue
-		}
-		edited, err := applyEdit(content, edit)
-		if err != nil {
-			return nil, publishErr(http.StatusConflict, "%s: %s, so nothing was committed.", p, err)
-		}
-		changes[p] = edited
-	}
-	if len(missing) > 0 {
-		sort.Strings(missing)
-		return nil, publishErr(http.StatusNotFound, "%s isn't a data file on %s, so nothing was committed.", strings.Join(missing, ", "), w.branch())
+	missing, perr := w.applyEdits(edits, changes)
+	if perr != nil {
+		return nil, nil, perr
 	}
 	for p, content := range changes {
 		if content != nil && strings.HasSuffix(p, ".json") {
@@ -156,7 +186,29 @@ func (w *workspace) commitChanges(edits map[string]FieldEdit) (map[string][]byte
 			delete(changes, p)
 		}
 	}
-	return changes, nil
+	return changes, missing, nil
+}
+
+// applyEdits adds each edited file to changes, and returns the paths of the
+// edits whose file isn't there.
+func (w *workspace) applyEdits(edits map[string]FieldEdit, changes map[string][]byte) ([]string, *PublishError) {
+	var missing []string
+	for p, edit := range edits {
+		content, ok := w.file(p)
+		if !ok {
+			missing = append(missing, p)
+			continue
+		}
+		if msg := w.readErr(p); msg != "" {
+			return nil, publishErr(http.StatusBadGateway, "%s couldn't be read from GitHub (%s), so nothing was committed. Try again.", p, msg)
+		}
+		edited, err := applyEdit(content, edit)
+		if err != nil {
+			return nil, publishErr(http.StatusConflict, "%s: %s, so nothing was committed.", p, err)
+		}
+		changes[p] = edited
+	}
+	return missing, nil
 }
 
 // addCombined builds kind's combined list from its data files with changes

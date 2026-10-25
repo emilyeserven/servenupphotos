@@ -40,6 +40,7 @@ import { Page } from "@/components/page";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { SavedDrafts } from "@/components/saved-drafts";
+import { SkippedEdits } from "@/components/skipped-edits";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { MoveToUndecided, UndecidedQueue } from "@/components/undecided-photos";
 import { QueryResult } from "@/components/query-result";
@@ -721,8 +722,9 @@ function PullRequestSummary({ data }: { data: InFlightResponse }) {
       <dt className="text-muted-foreground">Photo files</dt>
       <dd>{count === 0 ? "None in the data folder" : count}</dd>
       <dt className="text-muted-foreground">Synced</dt>
-      <dd>
+      <dd className="flex flex-col items-start gap-2">
         <SyncSummary />
+        <SkippedEdits />
       </dd>
       <dt className="text-muted-foreground">File checks</dt>
       <dd>

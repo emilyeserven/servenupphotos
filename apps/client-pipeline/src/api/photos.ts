@@ -414,6 +414,11 @@ export interface CombinedCommit {
   newPullRequest: boolean;
   /** The photo data pull request the commit went to. */
   pullRequestUrl?: string;
+  /**
+   * The local edits left out because their file isn't on GitHub anymore, even after reading it
+   * again: it was deleted or renamed since. The rest was committed without them.
+   */
+  skipped?: FieldEdit[];
 }
 
 /** Top-level fields of one data file to set when committing, such as a photo's publish date. */
