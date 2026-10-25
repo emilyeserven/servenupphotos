@@ -21,3 +21,17 @@ are parent tags above. Tags without photos are left out, and a loop of parents s
 > **Frontend analogy:** the page is a static tree render worked out once at build time, like a `useMemo` with no
 > dependencies: `lib/tag-list.ts` walks `ALLTAGS.json` (`lib/groups.ts`) from the top-level tags down, and each card is
 > just a `<Link to="/grid" search={{ tag }}>`.
+
+## Sorting and top level only
+
+Two rows of buttons under the title change what the page shows, and are kept in the URL so a link keeps them:
+
+- **A–Z** (the default) or **Most photos** (`?sort=count`): orders the parent tags' sections, the tags in each
+  section (each among the tags beside it, so a tag's own tags still come right after it) and the **More tags** grid.
+  **Most photos** puts the tags with the most photos first, and tags with as many photos by name.
+- **All tags** (the default) or **Top level only** (`?top=true`): hides every tag that has a parent and drops the
+  sections, leaving one grid of the top-level tags. A parent tag's count there still counts the photos of the tags
+  under it, as its link to the Grid does.
+
+The page works out both orders once at build time (`tagSections("name")` and `tagSections("count")`), so switching is
+instant.
