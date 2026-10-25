@@ -3,6 +3,7 @@
   "comment": null,
   "id": 98,
   "file": "IMG_4623.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 5.6,
@@ -10,11 +11,15 @@
   "iso": 200,
   "focalLength": 135,
   "gpsPosition": "41 deg 8' 37.77\" N, 73 deg 13' 55.36\" W",
+  "customGpsPosition": null,
   "createDate": "2018:06:24 14:27:23",
+  "customCreateDate": null,
   "placeName": "St. Mary's by the Sea",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "United States of America",
+  "state": "Connecticut",
   "city": "Bridgeport",
   "width": 5184,
   "height": 3056,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#636737",

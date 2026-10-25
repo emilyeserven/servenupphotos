@@ -3,6 +3,7 @@
   "title": "Mirror Pond",
   "comment": "The dancheong (단청) ceiling of the gazebo in the National Museum of Korea's Mirror Pond.\n\nThis ceiling is one of the first examples of Korean traditional architecture I had a chance to photograph. The bright colors and patterns really stuck out to me as something uniquely Korean, especially given my familiarity with Chinese and Japanese culture. (Turns out that \"dancheong\" is the specific term for that very Korean style.) I took a lot more dancheong photos during this trip, but I think this is the best ceiling photo I ended up getting... and I would attribute that to the reflections from the pond.",
   "file": "dscf2926.jpg",
+  "addedDate": "2026-10-22T03:18:29Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -10,8 +11,11 @@
   "iso": 125,
   "focalLength": 18,
   "gpsPosition": "37 deg 31' 21.06\" N, 126 deg 58' 46.24\" E",
+  "customGpsPosition": null,
   "createDate": "2026:05:16 15:24:10",
+  "customCreateDate": null,
   "country": "South Korea",
+  "state": "Seoul",
   "city": null,
   "width": 7503,
   "height": 4220,
@@ -36,10 +40,15 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": 1,
   "socialMediaPublishDate": "2026-10-13",
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": ["homepage-spotlight"],
   "tags": [],
+  "genres": [],
   "placeName": "Mirror Pond",
   "customCity": "Seoul",
+  "customState": null,
   "customCountry": null,
   "places": [
     {
@@ -52,7 +61,9 @@
     }
   ],
   "spotlightZones": ["homepage"],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#4b4c45",

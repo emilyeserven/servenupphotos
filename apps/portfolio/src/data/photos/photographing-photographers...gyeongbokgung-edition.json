@@ -3,6 +3,7 @@
   "title": "Photographing photographers... Gyeongbokgung edition.",
   "comment": "The one thing that can be frustrating about popular destinations is that you're kind of... damned if you do, damned if you don't. Like, yes, I definitely have to go see that palace. But also, everyone else does too. So of course, it gets really crowded. As a photographer, I try to do my best to make the presence of people \"work\" with a photo, but sometimes there's just too many people. In a case like this, sometimes it's just more fun to take photos of other photographers.",
   "file": "DSCF3097.jpg",
+  "addedDate": "2026-10-22T15:45:19Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -10,11 +11,15 @@
   "iso": 125,
   "focalLength": 26.6,
   "gpsPosition": "37 deg 34' 40.13\" N, 126 deg 58' 36.74\" E",
+  "customGpsPosition": null,
   "createDate": "2026:05:17 13:14:28",
+  "customCreateDate": null,
   "placeName": "Geunjeongmun Gate",
   "customCity": "Seoul",
+  "customState": null,
   "customCountry": null,
   "country": "South Korea",
+  "state": "Seoul",
   "city": null,
   "width": 7692,
   "height": 4327,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -52,7 +61,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#545253",

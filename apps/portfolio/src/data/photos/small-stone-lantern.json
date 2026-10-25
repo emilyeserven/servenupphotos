@@ -3,6 +3,7 @@
   "comment": null,
   "id": 157,
   "file": "IMG_2923.jpg",
+  "addedDate": "2026-10-23T21:17:29Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 10,
@@ -10,11 +11,15 @@
   "iso": 800,
   "focalLength": 18,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2019:12:20 12:52:50",
+  "customCreateDate": null,
   "placeName": "Morikami Museum and Japanese Gardens",
   "customCity": "Delray Beach",
+  "customState": null,
   "customCountry": "United States of America",
   "country": null,
+  "state": null,
   "city": null,
   "width": 6000,
   "height": 3375,
@@ -44,6 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -51,6 +57,7 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {

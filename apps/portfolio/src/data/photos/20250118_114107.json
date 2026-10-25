@@ -3,6 +3,7 @@
   "comment": null,
   "id": 271,
   "file": "20250118_114107.jpg",
+  "addedDate": "2026-10-23T23:42:14Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -12,10 +13,13 @@
   "gpsPosition": null,
   "customGpsPosition": null,
   "createDate": "2025:01:18 11:41:07",
+  "customCreateDate": null,
   "placeName": "museum-of-egyptian-antiquities",
   "customCity": "Cairo",
+  "customState": null,
   "customCountry": "Egypt",
   "country": null,
+  "state": null,
   "city": null,
   "width": 4000,
   "height": 2252,
@@ -45,6 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -52,6 +57,7 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {

@@ -3,6 +3,7 @@
   "comment": null,
   "id": 106,
   "file": "IMG_9118.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 11,
@@ -10,11 +11,15 @@
   "iso": 800,
   "focalLength": 75,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2021:02:07 13:15:10",
+  "customCreateDate": null,
   "placeName": "Mill River Park",
   "customCity": "Stamford",
+  "customState": null,
   "customCountry": "United States of America",
   "country": null,
+  "state": null,
   "city": null,
   "width": 2046,
   "height": 1151,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#a9aab0",

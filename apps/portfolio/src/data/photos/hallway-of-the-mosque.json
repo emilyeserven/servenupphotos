@@ -3,6 +3,7 @@
   "comment": null,
   "id": 273,
   "file": "20250118_135226.jpg",
+  "addedDate": "2026-10-23T23:42:14Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
   "aperture": 2.4,
@@ -12,10 +13,13 @@
   "gpsPosition": "30 deg 1' 44.99\" N, 31 deg 15' 34.08\" E",
   "customGpsPosition": null,
   "createDate": "2025:01:18 13:52:26",
+  "customCreateDate": null,
   "placeName": "Muhammad Ali Mosque",
   "customCity": "Al Khalifa",
+  "customState": null,
   "customCountry": "Egypt",
   "country": "Egypt",
+  "state": "Cairo",
   "city": "Al Khalifa",
   "width": 3462,
   "height": 1947,
@@ -45,6 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -56,6 +61,7 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {

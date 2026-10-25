@@ -3,6 +3,7 @@
   "comment": null,
   "id": 263,
   "file": "DSCF6609.jpg",
+  "addedDate": "2026-10-23T23:42:14Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -12,10 +13,13 @@
   "gpsPosition": "37 deg 32' 57.47\" N, 126 deg 59' 0.34\" E",
   "customGpsPosition": null,
   "createDate": "2026:05:24 13:44:52",
+  "customCreateDate": null,
   "placeName": "komfortabel-coffee-namsan",
   "customCity": "Seoul",
+  "customState": null,
   "customCountry": null,
   "country": "South Korea",
+  "state": "Seoul",
   "city": null,
   "width": 7254,
   "height": 4080,
@@ -45,6 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -52,6 +57,7 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {
