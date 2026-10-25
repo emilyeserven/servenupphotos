@@ -30,11 +30,13 @@ import {
 } from "@/components/edit-in-flight/photo-json";
 import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
 import { ReplaceImageCard } from "@/components/edit-in-flight/replace-image-card";
+import { TagPromptCard } from "@/components/edit-in-flight/tag-prompt-card";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
 import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
 import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-in-flight/use-edit";
 import { CustomLensCard } from "@/components/custom-lens-card";
 import { lensChanged, withLensChoice } from "@/lib/custom-lens";
+import { promptImageUrl } from "@/lib/tag-prompt";
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
@@ -152,6 +154,12 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           value={edit.groups}
           onChange={edit.setGroups}
           description="Saving changes writes them over the ones in the JSON."
+          disabled={pending}
+        />
+        <TagPromptCard
+          imageUrl={promptImageUrl(edit.savedData.images, editable.image.url)}
+          tags={edit.groups.tags}
+          onTagsChange={(tags) => edit.setGroups({ ...edit.groups, tags })}
           disabled={pending}
         />
         <SpotlightCard path={editable.file.path} />

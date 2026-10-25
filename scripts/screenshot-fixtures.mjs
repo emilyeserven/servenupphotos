@@ -670,6 +670,8 @@ export function defaultFixtures() {
     },
     // Saves answer as the backend does: their changes wait for Commit, for the open pull request.
     "POST /api/photos/github": ({ body }) => savedPhoto(`${FOLDER}/photos/${body?.name}.json`),
+    "POST /api/organize/tags": ({ body = {} }) =>
+      savedPhoto(`${FOLDER}/tags/${body.id}.json`, { ...body, description: "" }),
     "PUT /api/photos/in-flight": ({ body = {} }) => ({
       path: savedPath(body),
       changed: true,

@@ -33,3 +33,35 @@ Every album and tag picker, here, on the Photo page and in the Gallery, is a com
 Enter to choose, and each choice shows as a chip with a button to remove it (a chip is red when its ID isn't an album
 or tag on GitHub). The Photo page has an **Albums and tags** card for a new photo, saved with **Save**, and
 for a photo being edited, saved with **Save changes**.
+
+## Suggest tags
+
+When a photo is being edited, the Photo page's **Suggest tags** card (under **Albums and tags**) helps an LLM pick its
+tags. **Copy tag prompt** copies a prompt to paste into a chat with any LLM that can see images (`lib/tag-prompt.ts`).
+It has:
+
+- A link to the photo's **Small** version (500px on its long edge), or its Medium one when it has no Small. At 500 ×
+  333 that's about 220 tokens for Claude (width × height ÷ 750), one 512px tile for GPT-4o and about one 258-token
+  tile for Gemini, against roughly 1,300 for Claude at Medium's 1200px, and it still shows the subject clearly. The
+  X-Small (250px) loses too much detail. Sources: [Claude vision](https://platform.claude.com/docs/en/build-with-claude/vision),
+  [OpenAI image costs](https://community.openai.com/t/how-do-i-calculate-image-tokens-in-gpt4-vision/492318),
+  [Gemini tokens](https://ai.google.dev/gemini-api/docs/tokens).
+- Every tag, to reuse when one fits, spelled as listed.
+- Every album and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
+  filters by them.
+- The rules: tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
+  kind of place ("mosque", "temple", "lake", "city") but never a named one; nothing the site already filters by
+  (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums); 3 to 8 tags; and
+  only a comma-separated list in the answer.
+
+Once it's copied, a field takes the LLM's answer. **Add tags** splits it at commas and new lines, takes off quotes,
+bullets and trailing dots, drops repeats (ignoring case), and matches each name to a tag by its name or the ID made
+from it, ignoring case. Matching tags are added to the photo's tags in **Albums and tags**, as an edit that **Save
+changes** saves (and **Commit** sends to GitHub, like any other). A name an album or metadata group already has, or
+one with nothing to make an ID from, is left out, saying why. The rest are listed as new tags, each with a checkbox:
+**Make N new tags and add them** saves the ticked ones as tag files (`POST /api/organize/tags`, changes waiting for
+Commit, like **New tag** on `/tags`) and adds them to the photo.
+
+> **Frontend analogy:** it's a copy-to-clipboard "share" template plus an import box, like pasting a CSV of labels
+> into a multi-select: the box normalizes and dedupes the strings, matches them against the select's options, and
+> offers to create the options that don't exist yet.
