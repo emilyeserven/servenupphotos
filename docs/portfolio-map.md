@@ -51,10 +51,19 @@ map. The button shows how many filters are set while they're hidden.
   dropdown. A country (`countryArea`) fits the photos taken there, by their country, rather than the whole country, so
   Japan shows the west of Japan where the photos are; it's left out while there are none. The icon button beside it
   zooms back out to every photo.
+- **Places** is always shown, and the album, tag and genre dropdowns sit behind **More filters** beside it, which
+  shows how many of them are set.
+- **View in grid** opens the Grid on the photos in view (`gridFiltersFor` in `lib/map-grid-link.ts`). It keeps the
+  album, tag and genre filters and looks for the fewest countries, states, cities and places, biggest first, that show
+  just those photos, so a view of Seoul opens `/grid?state=Seoul` and one of New York City `/grid?city=New York City`.
+  When none fit, such as a city only partly in view or a day filter that leaves out some of its photos, it chooses
+  the photos one by one instead (`?ids=[…]`, see [Chosen photos](portfolio-filters.md#chosen-photos)). A place filter
+  also shows that place's photos with no GPS position, which the map can't show. It can't be pressed while no photos
+  are in view.
 - The **day** dropdown narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the
-  Places, album and tag filters (always shown after it, each in its own box, rather than behind **Show filters**), but the menu doesn't carry it to the other views.
+  Places, album and tag filters (shown after it rather than behind **Show filters**), but the menu doesn't carry it to the other views.
 - Once a day is chosen and another day is in view, a second **to** dropdown picks the last day of a range
   (`?day=2026-05-01&to=2026-05-17`), and the map shows every photo from the first day through the last. Either day can
   be the earlier one; the range is put in order. **Just this day** goes back to one day.

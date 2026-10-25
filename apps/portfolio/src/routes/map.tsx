@@ -33,6 +33,7 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { mapViewOf } from "@/components/view-on-map-link";
+import { ViewInGridButton } from "@/components/view-in-grid-button";
 import {
   type PlacedPhoto,
   boundsOf,
@@ -43,6 +44,7 @@ import {
 } from "@/lib/map-photos";
 import { type DayRange, daysInView, isDay } from "@/lib/map-days";
 import { fadeTo } from "@/lib/map-fade";
+import { gridFiltersFor } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import {
@@ -317,7 +319,11 @@ function MapView() {
                   range={search}
                   onChange={setDays}
                 />
-                <PhotoFilterControls photos={placedPhotos} />
+                <PhotoFilterControls photos={placedPhotos}>
+                  <ViewInGridButton
+                    filters={gridFiltersFor(dayPhotos.placed, view, parseFilters(search))}
+                  />
+                </PhotoFilterControls>
               </MapFilterToggle>
             </MapViewControls>
           </FloatingHeader>

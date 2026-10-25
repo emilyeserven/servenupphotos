@@ -11,6 +11,7 @@ import {
 import { type ReactNode, useId, useState } from "react";
 import { ClearFilterButton } from "@/components/clear-filter-button";
 import { hiddenText } from "@/components/hidden-note";
+import { MoreFilters } from "@/components/more-filters";
 import { PlacesFilter } from "@/components/places-filter";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { Button } from "@/components/ui/button";
@@ -157,18 +158,30 @@ const OVER_MAP =
   "contents [&_button]:bg-background dark:[&_button]:bg-background [&_select]:bg-background [&_select]:[field-sizing:content] dark:[&_select]:bg-background";
 
 /**
- * The Places combobox and the album and tag dropdowns always shown, with **Clear filters** after
- * them while any is set, for a view with no room to spare for the **Show filters** button, such as
- * the map.
+ * The Places combobox always shown and the album, tag and genre dropdowns behind a **More filters**
+ * button, then `children` and **Clear filters** while any filter is set, for a view with no room to
+ * spare for the **Show filters** button, such as the map.
  */
-export function PhotoFilterControls({ photos }: { photos: Photo[] }) {
-  const filters = useFilters();
-  const setFilters = useSetFilters();
+export function PhotoFilterControls({
+  photos,
+  children,
+}: {
+  photos: Photo[];
+  /** More controls after the filters, such as the map's **View in grid**. */
+  children?: ReactNode;
+}) {
+  const props = { photos, facet: photos, filters: useFilters(), setFilters: useSetFilters() };
   const clearFilters = useClearFilters([]);
   return (
     <div className={OVER_MAP}>
-      <FilterDropdowns photos={photos} facet={photos} filters={filters} setFilters={setFilters} />
-      <ClearFilters count={filterCount(filters)} onClear={clearFilters} />
+      <PlacesDropdown {...props} />
+      <MoreFilters
+        badge={<FilterCount count={filterCount(withoutFilters(props.filters, LOCATION_KEYS))} />}
+      >
+        <GroupDropdowns {...props} />
+      </MoreFilters>
+      {children}
+      <ClearFilters count={filterCount(props.filters)} onClear={clearFilters} />
     </div>
   );
 }
@@ -194,23 +207,45 @@ export function FilterCount({ count }: { count: number }) {
   );
 }
 
-/**
- * The Places combobox and the album, tag and genre dropdowns. Each choice says how many of `facet`
- * it would show, given the other filters. The tag and genre dropdowns are left out while there are
- * none.
- */
-function FilterDropdowns({
-  photos,
-  facet,
-  filters,
-  setFilters,
-}: {
+/** What the filter dropdowns choose from and change. */
+interface DropdownProps {
+  /** The photos the choices are listed from. */
   photos: Photo[];
+  /** The photos each choice's count is out of. */
   facet: Photo[];
   filters: PhotoFilters;
   setFilters: (next: PhotoFilters) => void;
-}) {
+}
+
+/**
+ * The Places combobox and the album, tag and genre dropdowns. Each choice says how many of `facet`
+ * it would show, given the other filters.
+ */
+function FilterDropdowns(props: DropdownProps) {
+  return (
+    <>
+      <PlacesDropdown {...props} />
+      <GroupDropdowns {...props} />
+    </>
+  );
+}
+
+/** The Places combobox, which chooses any number of countries, cities and places. */
+function PlacesDropdown({ photos, facet, filters, setFilters }: DropdownProps) {
   const placeFacet = filterPhotos(facet, withoutFilters(filters, LOCATION_KEYS));
+  return (
+    <PlacesFilter
+      options={locationOptions(photos, placeFacet)}
+      selected={locationSelection(filters)}
+      onChange={(selection) =>
+        setFilters({ ...withoutFilters(filters, LOCATION_KEYS), ...locationFilters(selection) })
+      }
+    />
+  );
+}
+
+/** The album, tag and genre dropdowns; the tag and genre ones are left out while there are none. */
+function GroupDropdowns({ facet, filters, setFilters }: DropdownProps) {
   const albums = albumOptions(filterPhotos(facet, withoutFilters(filters, ["album"])));
   const tags = tagOptions(filterPhotos(facet, withoutFilters(filters, ["tag"])));
   const genres = genreOptions(filterPhotos(facet, withoutFilters(filters, ["genre"])));
@@ -222,11 +257,6 @@ function FilterDropdowns({
 
   return (
     <>
-      <PlacesFilter
-        options={locationOptions(photos, placeFacet)}
-        selected={locationSelection(filters)}
-        onChange={(selection) => choose(LOCATION_KEYS, locationFilters(selection))}
-      />
       <FilterSelect
         label="Album"
         Icon={FolderOpen}

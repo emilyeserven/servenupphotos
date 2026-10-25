@@ -37,6 +37,12 @@ places (or a place they're in) that has one. A photo with a city but no country 
 city have, so it's listed under, and matched by, that country too. Countries and cities are matched by their English
 names, whichever way they're shown.
 
+## Chosen photos
+
+The map's **View in grid** can open the Grid on photos chosen one by one (`?ids=[316,317,319]`) when no places cover
+just the photos in view (see [Portfolio Map](portfolio-map.md)). There's no dropdown for it: it counts as one filter on
+the **Show filters** button, and **Clear filters** clears it.
+
 ## Album, Tag and Genre
 
 **Album** lists every album in `ALLALBUMS.json`, each sub-album under its parent. Choosing an album (`?album=<id>`)
