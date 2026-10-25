@@ -237,6 +237,14 @@
     "country": "Japan"
   },
   {
+    "id": "enseiji-temple",
+    "name": "Enseiji Temple",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "country": "Japan"
+  },
+  {
     "id": "fairview-lookout-trail",
     "name": "Fairview Lookout Trail",
     "description": "",
@@ -365,6 +373,14 @@
     "country": "South Korea"
   },
   {
+    "id": "hagi-castle-town",
+    "name": "Hagi Castle Town",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "country": "Japan"
+  },
+  {
     "id": "international-port-of-busan",
     "name": "International Port of Busan",
     "description": "",
@@ -379,6 +395,14 @@
     "parent": "",
     "city": "Seoul",
     "country": "South Korea"
+  },
+  {
+    "id": "izumo-shrine",
+    "name": "Izumo Shrine",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "country": "Japan"
   },
   {
     "id": "jacqueline-kennedy-onassis-reservoir",
@@ -479,6 +503,14 @@
     "parent": "",
     "city": "",
     "country": ""
+  },
+  {
+    "id": "matsue-castle",
+    "name": "Matsue Castle",
+    "description": "",
+    "parent": "",
+    "city": "Matsue",
+    "country": "Japan"
   },
   {
     "id": "messe-basel",

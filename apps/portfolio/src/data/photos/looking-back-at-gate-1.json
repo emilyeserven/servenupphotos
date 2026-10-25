@@ -1,43 +1,43 @@
 {
-  "id": 332,
-  "title": null,
+  "title": "Looking Back at Gate 1",
   "comment": null,
-  "file": "DSCF1675.jpg",
-  "addedDate": null,
+  "id": 333,
+  "file": "DSCF2424.jpg",
+  "addedDate": "2026-10-25T16:10:34Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
-  "aperture": 3.5,
-  "exposure": "1/250",
-  "iso": 250,
-  "focalLength": 18,
-  "gpsPosition": "34 deg 24' 43.41\" N, 131 deg 25' 4.08\" E",
+  "aperture": 5.6,
+  "exposure": "1/125",
+  "iso": 320,
+  "focalLength": 135,
+  "gpsPosition": "35 deg 23' 47.83\" N, 132 deg 41' 10.77\" E",
   "customGpsPosition": null,
-  "createDate": "2026:09:25 12:13:39",
+  "createDate": "2026:09:26 09:05:43",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "izumo-shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
   "country": "Japan",
-  "state": "Yamaguchi",
-  "city": "Hagi",
-  "width": 7728,
-  "height": 4347,
+  "state": "Shimane",
+  "city": "Izumo",
+  "width": 4928,
+  "height": 7392,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675.jpg",
-    "key": "photos/9b3a3f6686ab-dscf1675.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-thumbnailpreview.webp",
+    "full": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424.jpg",
+    "key": "photos/ee017a88d8c7-dscf2424.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-thumbnailpreview.webp",
     "thumbnailcrop": {
-      "x": 1690,
-      "y": 0,
-      "size": 4347,
+      "x": 0,
+      "y": 1232,
+      "size": 4928,
       "outputSize": 500
     }
   },
@@ -48,67 +48,72 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["torii", "shinto", "pedestrians", "sando", "road", "mountains", "pine-trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "izumo-shrine"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {
     "average": {
-      "hex": "#465142",
+      "hex": "#595b5c",
       "lab": {
-        "l": 33.03,
-        "a": -7.7,
-        "b": 7.11
+        "l": 38.66,
+        "a": -0.57,
+        "b": -0.88
       },
       "hcl": {
-        "h": 137.26,
-        "c": 10.48,
-        "l": 33.03
+        "h": 236.97,
+        "c": 1.05,
+        "l": 38.66
       }
     },
     "buckets": [
       {
         "name": "red",
         "hex": "#ff0000",
-        "share": 0
+        "share": 0.0048
       },
       {
         "name": "orange",
         "hex": "#ff8000",
-        "share": 0.0001
+        "share": 0.0124
       },
       {
         "name": "yellow",
         "hex": "#ffff00",
-        "share": 0.0762
+        "share": 0.0001
       },
       {
         "name": "chartreuse",
         "hex": "#80ff00",
-        "share": 0.1103
+        "share": 0.0009
       },
       {
         "name": "green",
         "hex": "#00ff00",
-        "share": 0.0991
+        "share": 0.0001
       },
       {
         "name": "spring green",
         "hex": "#00ff80",
-        "share": 0.01
+        "share": 0
       },
       {
         "name": "cyan",
         "hex": "#00ffff",
-        "share": 0.0005
+        "share": 0
       },
       {
         "name": "azure",
         "hex": "#0080ff",
-        "share": 0
+        "share": 0.0012
       },
       {
         "name": "blue",
@@ -132,133 +137,133 @@
       }
     ],
     "neutrals": {
-      "share": 0.7037,
+      "share": 0.9805,
       "histogram": [
         {
           "from": 0,
           "to": 5,
           "hex": "#090909",
-          "share": 0.1664
+          "share": 0.1921
         },
         {
           "from": 5,
           "to": 10,
           "hex": "#171717",
-          "share": 0.1006
+          "share": 0.0539
         },
         {
           "from": 10,
           "to": 15,
           "hex": "#212121",
-          "share": 0.0754
+          "share": 0.0302
         },
         {
           "from": 15,
           "to": 20,
           "hex": "#2b2b2b",
-          "share": 0.0672
+          "share": 0.0414
         },
         {
           "from": 20,
           "to": 25,
           "hex": "#363636",
-          "share": 0.0267
+          "share": 0.0455
         },
         {
           "from": 25,
           "to": 30,
           "hex": "#414141",
-          "share": 0.0251
+          "share": 0.0383
         },
         {
           "from": 30,
           "to": 35,
           "hex": "#4c4c4c",
-          "share": 0.0221
+          "share": 0.0435
         },
         {
           "from": 35,
           "to": 40,
           "hex": "#585858",
-          "share": 0.0182
+          "share": 0.0627
         },
         {
           "from": 40,
           "to": 45,
           "hex": "#646464",
-          "share": 0.0109
+          "share": 0.0419
         },
         {
           "from": 45,
           "to": 50,
           "hex": "#717171",
-          "share": 0.0093
+          "share": 0.0271
         },
         {
           "from": 50,
           "to": 55,
           "hex": "#7d7d7d",
-          "share": 0.006
+          "share": 0.0246
         },
         {
           "from": 55,
           "to": 60,
           "hex": "#8a8a8a",
-          "share": 0.0079
+          "share": 0.0544
         },
         {
           "from": 60,
           "to": 65,
           "hex": "#979797",
-          "share": 0.0176
+          "share": 0.0447
         },
         {
           "from": 65,
           "to": 70,
           "hex": "#a4a4a4",
-          "share": 0.0399
+          "share": 0.068
         },
         {
           "from": 70,
           "to": 75,
           "hex": "#b2b2b2",
-          "share": 0.0577
+          "share": 0.1921
         },
         {
           "from": 75,
           "to": 80,
           "hex": "#bfbfbf",
-          "share": 0.0331
+          "share": 0.0172
         },
         {
           "from": 80,
           "to": 85,
           "hex": "#cdcdcd",
-          "share": 0.0041
+          "share": 0.0026
         },
         {
           "from": 85,
           "to": 90,
           "hex": "#dbdbdb",
-          "share": 0.0018
+          "share": 0.0002
         },
         {
           "from": 90,
           "to": 95,
           "hex": "#e9e9e9",
-          "share": 0.0006
+          "share": 0
         },
         {
           "from": 95,
           "to": 100,
           "hex": "#f8f8f8",
-          "share": 0.0132
+          "share": 0
         }
       ]
     },
-    "lightness": 33.03,
-    "chroma": 11.09,
-    "peakChroma": 22.7,
-    "samples": 10050
+    "lightness": 38.66,
+    "chroma": 3.18,
+    "peakChroma": 9.53,
+    "samples": 9882
   }
 }
