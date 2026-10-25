@@ -8,8 +8,18 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import type { ScriptDisplay } from "@/lib/localize";
 import { parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters } from "@/lib/photo-filters";
-import { portfolioViews } from "@/lib/portfolio-views";
+import { type PortfolioView, portfolioViews } from "@/lib/portfolio-views";
 import { cn } from "@/lib/utils";
+
+/**
+ * What a view link carries from the page it's on. Only the filters go along: the other settings
+ * belong to the view they're on. The camera filters go too, kept by the views that have them (Table
+ * and Grid). The Map always opens with no filters, so it doesn't keep ones set before.
+ */
+function carriedSearch(to: PortfolioView["to"], prev: Record<string, unknown>) {
+  if (to === "/map") return {};
+  return { ...parseFilters(prev), ...parseCameraFilters(prev) };
+}
 
 interface Option<T> {
   value: T;
@@ -56,12 +66,7 @@ export function SiteMenu() {
               <li key={to}>
                 <Link
                   to={to}
-                  // Only the filters go along: the other settings belong to the view they're on.
-                  // The camera filters go too, kept by the views that have them (Table and Grid).
-                  search={(prev: Record<string, unknown>) => ({
-                    ...parseFilters(prev),
-                    ...parseCameraFilters(prev),
-                  })}
+                  search={(prev: Record<string, unknown>) => carriedSearch(to, prev)}
                   disabled={!enabled}
                   onClick={() => setOpen(false)}
                   className="flex flex-col items-center gap-1.5 rounded-md px-1 py-3 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40"
