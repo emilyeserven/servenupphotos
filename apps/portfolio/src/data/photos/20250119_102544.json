@@ -1,7 +1,7 @@
 {
-  "id": 289,
   "title": null,
   "comment": null,
+  "id": 289,
   "file": "20250119_102544.jpg",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
@@ -31,10 +31,10 @@
     "small": "https://cdn.servenupphotos.net/photos/303abb7d97fe-20250119-102544-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/303abb7d97fe-20250119-102544-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/303abb7d97fe-20250119-102544-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/303abb7d97fe-20250119-102544-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/303abb7d97fe-20250119-102544-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/303abb7d97fe-20250119-102544-thumbnail.webp?crop=1172,0,1714",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/303abb7d97fe-20250119-102544-thumbnailpreview.webp?crop=1172,0,1714",
     "thumbnailcrop": {
-      "x": 666,
+      "x": 1172,
       "y": 0,
       "size": 1714,
       "outputSize": 500

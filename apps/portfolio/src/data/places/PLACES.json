@@ -251,6 +251,14 @@
     "exactLocation": true
   },
   {
+    "id": "grand-egyptian-museum",
+    "name": "Grand Egyptian Museum",
+    "description": "",
+    "parent": "",
+    "city": "Al Ahram",
+    "country": "Egypt"
+  },
+  {
     "id": "greene-street",
     "name": "Greene Street",
     "description": "",
