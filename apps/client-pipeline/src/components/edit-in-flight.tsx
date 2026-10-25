@@ -38,6 +38,7 @@ import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-
 import { CustomLensCard } from "@/components/custom-lens-card";
 import { lensChanged, withLensChoice } from "@/lib/custom-lens";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { useTabSubject } from "@/stores/tab-title";
 
 /**
  * The Photo page for a photo in the photo data pull request, or already in the portfolio: its
@@ -131,6 +132,9 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
   const edit = useEdit(editable, savedCrop);
   const save = useSave(editable, edit.onSaved);
   const pending = save.mutation.isPending;
+  const fallbackTitle = fileStem(photoFile(editable.data) || fileName(editable.file.path));
+  // The title as it's being typed, so the tab follows it; the file name until it has one.
+  useTabSubject(edit.details.title.trim() || fallbackTitle);
 
   return (
     <div className="grid items-start gap-6 lg:grid-cols-2">
@@ -169,7 +173,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
         <PhotoDetailsCard
           value={edit.details}
           onChange={edit.setDetails}
-          fallbackTitle={fileStem(photoFile(editable.data) || fileName(editable.file.path))}
+          fallbackTitle={fallbackTitle}
           exifPlace={savedExifPlace(edit.savedData)}
           description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
           disabled={pending}
