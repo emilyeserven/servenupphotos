@@ -237,6 +237,14 @@
     "country": "Japan"
   },
   {
+    "id": "enseiji-temple",
+    "name": "Enseiji Temple",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "country": "Japan"
+  },
+  {
     "id": "fairview-lookout-trail",
     "name": "Fairview Lookout Trail",
     "description": "",
@@ -341,6 +349,14 @@
     "longitude": -73.9986812321167
   },
   {
+    "id": "gwangjang-market",
+    "name": "Gwangjang Market",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
     "id": "gyeongbokgung-palace",
     "name": "Gyeongbokgung Palace",
     "description": "",
@@ -357,6 +373,14 @@
     "country": "South Korea"
   },
   {
+    "id": "hagi-castle-town",
+    "name": "Hagi Castle Town",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "country": "Japan"
+  },
+  {
     "id": "international-port-of-busan",
     "name": "International Port of Busan",
     "description": "",
@@ -371,6 +395,14 @@
     "parent": "",
     "city": "Seoul",
     "country": "South Korea"
+  },
+  {
+    "id": "izumo-shrine",
+    "name": "Izumo Shrine",
+    "description": "",
+    "parent": "",
+    "city": "Izumo",
+    "country": "Japan"
   },
   {
     "id": "jacqueline-kennedy-onassis-reservoir",
@@ -471,6 +503,14 @@
     "parent": "",
     "city": "",
     "country": ""
+  },
+  {
+    "id": "matsue-castle",
+    "name": "Matsue Castle",
+    "description": "",
+    "parent": "",
+    "city": "Matsue",
+    "country": "Japan"
   },
   {
     "id": "messe-basel",
@@ -600,16 +640,16 @@
     "name": "Namba",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "Osaka-shi",
+    "country": "Japan"
   },
   {
     "id": "namsan-dulle-gil-trail",
     "name": "Namsan Dulle-gil Trail",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "Seoul",
+    "country": "South Korea"
   },
   {
     "id": "namsan-tower",
@@ -817,6 +857,14 @@
     "country": "Japan"
   },
   {
+    "id": "tomb-of-tutankhamun",
+    "name": "Tomb of Tutankhamun",
+    "description": "",
+    "parent": "valley-of-the-kings",
+    "city": "",
+    "country": ""
+  },
+  {
     "id": "upper-east-side",
     "name": "Upper East Side",
     "description": "",
@@ -825,6 +873,14 @@
     "country": "United States of America",
     "latitude": 40.77416765599665,
     "longitude": -73.95773421216752
+  },
+  {
+    "id": "valley-of-the-kings",
+    "name": "Valley of the Kings",
+    "description": "",
+    "parent": "",
+    "city": "Qena Desert",
+    "country": "Egypt"
   },
   {
     "id": "washington-square-park",

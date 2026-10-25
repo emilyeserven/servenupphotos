@@ -1,0 +1,269 @@
+{
+  "title": "Looking Back at Gate 1",
+  "comment": null,
+  "id": 333,
+  "file": "DSCF2424.jpg",
+  "addedDate": "2026-10-25T16:10:34Z",
+  "camera": "Fujifilm X-T5",
+  "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "aperture": 5.6,
+  "exposure": "1/125",
+  "iso": 320,
+  "focalLength": 135,
+  "gpsPosition": "35 deg 23' 47.83\" N, 132 deg 41' 10.77\" E",
+  "customGpsPosition": null,
+  "createDate": "2026:09:26 09:05:43",
+  "customCreateDate": null,
+  "placeName": "izumo-shrine",
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "Japan",
+  "state": "Shimane",
+  "city": "Izumo",
+  "width": 4928,
+  "height": 7392,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424.jpg",
+    "key": "photos/ee017a88d8c7-dscf2424.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 0,
+      "y": 1232,
+      "size": 4928,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": ["torii", "shinto", "pedestrians", "sando", "road", "mountains", "pine-trees"],
+  "genres": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "izumo-shrine"
+    }
+  ],
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "colors": {
+    "average": {
+      "hex": "#595b5c",
+      "lab": {
+        "l": 38.66,
+        "a": -0.57,
+        "b": -0.88
+      },
+      "hcl": {
+        "h": 236.97,
+        "c": 1.05,
+        "l": 38.66
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0048
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0124
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0001
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0009
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0001
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.0012
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0
+      }
+    ],
+    "neutrals": {
+      "share": 0.9805,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.1921
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0539
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0302
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0414
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0455
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0383
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0435
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0627
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0419
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0271
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0246
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0544
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0447
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.068
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.1921
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0172
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0026
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0002
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0
+        }
+      ]
+    },
+    "lightness": 38.66,
+    "chroma": 3.18,
+    "peakChroma": 9.53,
+    "samples": 9882
+  }
+}

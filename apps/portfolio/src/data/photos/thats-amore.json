@@ -45,8 +45,8 @@
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
   "albums": [],
-  "tags": [],
-  "genres": [],
+  "tags": ["city", "storefronts", "signage", "crosswalk", "pedestrians", "skyscraper"],
+  "genres": ["tilt-shift"],
   "places": [
     {
       "relation": "",

@@ -3491,6 +3491,283 @@
     }
   },
   {
+    "title": "Unfinished Glyphs",
+    "comment": null,
+    "id": 292,
+    "file": "20250120_143106.jpg",
+    "addedDate": "2026-10-25T15:16:41Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/60",
+    "iso": 640,
+    "focalLength": 6.3,
+    "gpsPosition": null,
+    "customGpsPosition": "25.740389, 32.601583",
+    "createDate": "2025:01:20 14:31:06",
+    "customCreateDate": null,
+    "placeName": "Valley of the Kings",
+    "customCity": "Qena Desert",
+    "customState": "Qena Governante",
+    "customCountry": "Egypt",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 3782,
+    "height": 2129,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106.jpg",
+      "key": "photos/efc55f31841e-20250120-143106.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106-thumbnail.webp?crop=1005,0,2129",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/efc55f31841e-20250120-143106-thumbnailpreview.webp?crop=1005,0,2129",
+      "thumbnailcrop": {
+        "x": 1005,
+        "y": 0,
+        "size": 2129,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [
+      "texture",
+      "details",
+      "hieroglyphs",
+      "ancient-egypt",
+      "ruins",
+      "carvings",
+      "inscriptions"
+    ],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "valley-of-the-kings"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#a28564",
+        "lab": {
+          "l": 57.31,
+          "a": 6.33,
+          "b": 21.86
+        },
+        "hcl": {
+          "h": 73.84,
+          "c": 22.76,
+          "l": 57.31
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.938
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0001
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.0619,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0038
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0106
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0137
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0162
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0071
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.005
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0028
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0011
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0009
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0002
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0003
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0001
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 57.31,
+      "chroma": 22.83,
+      "peakChroma": 28,
+      "samples": 9694
+    }
+  },
+  {
     "title": "Giza Crowd",
     "comment": null,
     "id": 294,
@@ -13722,6 +13999,275 @@
     }
   },
   {
+    "title": "Lantern Rows",
+    "comment": null,
+    "id": 303,
+    "file": "DSCF0142.jpg",
+    "addedDate": "2026-10-25T15:28:44Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4,
+    "exposure": "1/125",
+    "iso": 800,
+    "focalLength": 25.4,
+    "gpsPosition": "34 deg 39' 58.98\" N, 135 deg 30' 7.00\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:10:01 15:49:23",
+    "customCreateDate": null,
+    "placeName": "Namba",
+    "customCity": "Osaka-shi",
+    "customState": null,
+    "customCountry": "Japan",
+    "country": "Japan",
+    "state": "Osaka",
+    "city": "Osaka-shi",
+    "width": 5496,
+    "height": 3092,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142.jpg",
+      "key": "photos/8dc1714fad91-dscf0142.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8dc1714fad91-dscf0142-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1202,
+        "y": 0,
+        "size": 3092,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["signage", "chochin", "shotengai", "lanterns", "arcade", "calligraphy"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "namba"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#735e53",
+        "lab": {
+          "l": 41.53,
+          "a": 6.56,
+          "b": 9.47
+        },
+        "hcl": {
+          "h": 55.3,
+          "c": 11.52,
+          "l": 41.53
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0521
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.2854
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.005
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0033
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0001
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0019
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0027
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0024
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.002
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0231
+        }
+      ],
+      "neutrals": {
+        "share": 0.6221,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1982
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0917
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0431
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0456
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.012
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0079
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0046
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0036
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0031
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0056
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.007
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.009
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0106
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0123
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0094
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0058
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0031
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0085
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0209
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.1202
+          }
+        ]
+      },
+      "lightness": 41.53,
+      "chroma": 15.4,
+      "peakChroma": 37.4,
+      "samples": 9694
+    }
+  },
+  {
     "title": "I miss the countryside",
     "comment": null,
     "id": 306,
@@ -15064,6 +15610,275 @@
       "chroma": 7.2,
       "peakChroma": 16.79,
       "samples": 9768
+    }
+  },
+  {
+    "title": "Gwangjang",
+    "comment": null,
+    "id": 219,
+    "file": "DSCF3910.jpg",
+    "addedDate": "2026-10-25T15:01:21Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/280",
+    "iso": 800,
+    "focalLength": 18,
+    "gpsPosition": "37 deg 34' 49.40\" N, 126 deg 59' 5.82\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:05:17 17:34:44",
+    "customCreateDate": null,
+    "placeName": "gwangjang-market",
+    "customCity": "Seoul",
+    "customState": null,
+    "customCountry": null,
+    "country": "South Korea",
+    "state": "Seoul",
+    "city": null,
+    "width": 6800,
+    "height": 3825,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910.jpg",
+      "key": "photos/93d5e40e38a1-dscf3910.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-thumbnail.webp?crop=2975,0,3825",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-thumbnailpreview.webp?crop=2975,0,3825",
+      "thumbnailcrop": {
+        "x": 2975,
+        "y": 0,
+        "size": 3825,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "gwangjang-market"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#554b49",
+        "lab": {
+          "l": 32.74,
+          "a": 4.02,
+          "b": 2.53
+        },
+        "hcl": {
+          "h": 32.15,
+          "c": 4.75,
+          "l": 32.74
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0385
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0647
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0055
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0222
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0019
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.051
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0095
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0041
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0052
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0067
+        }
+      ],
+      "neutrals": {
+        "share": 0.7906,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1373
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0803
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0765
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0776
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0625
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0531
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0332
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0405
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0471
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0407
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0187
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.016
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0111
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0125
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0089
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0096
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0076
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0109
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0303
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0161
+          }
+        ]
+      },
+      "lightness": 32.74,
+      "chroma": 10.01,
+      "peakChroma": 21.97,
+      "samples": 10050
     }
   },
   {
@@ -19638,6 +20453,275 @@
     }
   },
   {
+    "title": "Edo Walls, Edo Doors",
+    "comment": null,
+    "id": 330,
+    "file": "DSCF0078.jpg",
+    "addedDate": "2026-10-25T16:02:38Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 6.4,
+    "exposure": "1/250",
+    "iso": 125,
+    "focalLength": 18.5,
+    "gpsPosition": "34 deg 24' 40.65\" N, 131 deg 23' 39.68\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:23 13:22:10",
+    "customCreateDate": null,
+    "placeName": "hagi-castle-town",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Japan",
+    "state": "Yamaguchi",
+    "city": "Hagi",
+    "width": 7583,
+    "height": 4265,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078.jpg",
+      "key": "photos/9073271f2253-dscf0078.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9073271f2253-dscf0078-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1659,
+        "y": 0,
+        "size": 4265,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["texture", "bukeyashiki", "dobei", "wabi-sabi", "walls", "doors", "gates", "ivy"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "hagi-castle-town"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#645e58",
+        "lab": {
+          "l": 40.34,
+          "a": 1.42,
+          "b": 4.33
+        },
+        "hcl": {
+          "h": 71.87,
+          "c": 4.56,
+          "l": 40.34
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0048
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0998
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0124
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0163
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0042
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0004
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0003
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0021
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0005
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0013
+        }
+      ],
+      "neutrals": {
+        "share": 0.8577,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1312
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0425
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0327
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0466
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0449
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0581
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0592
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0628
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0555
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0577
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0473
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0375
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0309
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0262
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.019
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0155
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0124
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0116
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.008
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.058
+          }
+        ]
+      },
+      "lightness": 40.34,
+      "chroma": 6.72,
+      "peakChroma": 16.05,
+      "samples": 10050
+    }
+  },
+  {
     "title": "Eye in the Sky",
     "comment": null,
     "id": 280,
@@ -20019,8 +21103,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
-    "genres": [],
+    "tags": ["fire-alarm", "stickers", "graffiti", "urban-decay", "texture", "details"],
+    "genres": ["macro"],
     "places": [
       {
         "relation": "",
@@ -30236,8 +31320,8 @@
     "websiteSpotlight": null,
     "socialMediaPublishDate": null,
     "albums": [],
-    "tags": [],
-    "genres": [],
+    "tags": ["chinatown", "city", "traffic", "cars", "signage", "storefronts"],
+    "genres": ["tilt-shift"],
     "places": [
       {
         "relation": "",
@@ -31536,6 +32620,544 @@
     }
   },
   {
+    "title": "Looking at the Castle",
+    "comment": null,
+    "id": 334,
+    "file": "DSCF4439.jpg",
+    "addedDate": "2026-10-25T16:11:41Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.3,
+    "exposure": "1/125",
+    "iso": 500,
+    "focalLength": 34.5,
+    "gpsPosition": "35 deg 28' 42.56\" N, 133 deg 3' 0.94\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:27 13:52:21",
+    "customCreateDate": null,
+    "placeName": "matsue-castle",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Japan",
+    "state": "Shimane",
+    "city": "Matsue",
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439.jpg",
+      "key": "photos/bf47acf2bf1e-dscf4439.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439-thumbnail.webp?crop=1012,0,4347",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bf47acf2bf1e-dscf4439-thumbnailpreview.webp?crop=1012,0,4347",
+      "thumbnailcrop": {
+        "x": 1012,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["pine-trees", "tenshu", "castle", "moat", "bridge", "reflections"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "matsue-castle"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#55594d",
+        "lab": {
+          "l": 37.12,
+          "a": -4.34,
+          "b": 6.52
+        },
+        "hcl": {
+          "h": 123.67,
+          "c": 7.83,
+          "l": 37.12
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0036
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0699
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.1643
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0007
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0003
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0012
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.76,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0304
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0705
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.103
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1593
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0612
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0339
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0222
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0124
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.011
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0077
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0056
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0047
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0036
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0047
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0058
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0531
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0475
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0136
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0307
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.079
+          }
+        ]
+      },
+      "lightness": 37.12,
+      "chroma": 9.99,
+      "peakChroma": 19.9,
+      "samples": 10050
+    }
+  },
+  {
+    "title": "Looking Back at Gate 1",
+    "comment": null,
+    "id": 333,
+    "file": "DSCF2424.jpg",
+    "addedDate": "2026-10-25T16:10:34Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/125",
+    "iso": 320,
+    "focalLength": 135,
+    "gpsPosition": "35 deg 23' 47.83\" N, 132 deg 41' 10.77\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:26 09:05:43",
+    "customCreateDate": null,
+    "placeName": "izumo-shrine",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Japan",
+    "state": "Shimane",
+    "city": "Izumo",
+    "width": 4928,
+    "height": 7392,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424.jpg",
+      "key": "photos/ee017a88d8c7-dscf2424.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ee017a88d8c7-dscf2424-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1232,
+        "size": 4928,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["torii", "shinto", "pedestrians", "sando", "road", "mountains", "pine-trees"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "izumo-shrine"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#595b5c",
+        "lab": {
+          "l": 38.66,
+          "a": -0.57,
+          "b": -0.88
+        },
+        "hcl": {
+          "h": 236.97,
+          "c": 1.05,
+          "l": 38.66
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0048
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0124
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0001
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0009
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0012
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.9805,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1921
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0539
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0302
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0414
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0455
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0383
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0435
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0627
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0419
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0271
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0246
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0544
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0447
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.068
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.1921
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0172
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0026
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0002
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 38.66,
+      "chroma": 3.18,
+      "peakChroma": 9.53,
+      "samples": 9882
+    }
+  },
+  {
     "title": "Looking from the High Line",
     "comment": null,
     "id": 158,
@@ -32609,6 +34231,275 @@
       "chroma": 8.68,
       "peakChroma": 22.96,
       "samples": 9975
+    }
+  },
+  {
+    "title": "Matsue Castle x Suitorou",
+    "comment": null,
+    "id": 335,
+    "file": "DSCF5159.jpg",
+    "addedDate": "2026-10-25T16:12:51Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF35mmF2 R WR",
+    "aperture": 2,
+    "exposure": "1/125",
+    "iso": 1250,
+    "focalLength": 35,
+    "gpsPosition": "35 deg 28' 25.79\" N, 133 deg 3' 2.73\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:27 19:03:56",
+    "customCreateDate": null,
+    "placeName": "Matsue Castle",
+    "customCity": "Matsue",
+    "customState": null,
+    "customCountry": "Japan",
+    "country": "Japan",
+    "state": "Shimane",
+    "city": "Matsue",
+    "width": 5152,
+    "height": 7213,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159.jpg",
+      "key": "photos/1aded13ee2ca-dscf5159.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159-thumbnail.webp?crop=0,0,5152",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/1aded13ee2ca-dscf5159-thumbnailpreview.webp?crop=0,0,5152",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 5152,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["tenshu", "castle", "lanterns", "matsuri", "andon", "night", "suitorou"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "matsue-castle"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#0f0c0b",
+        "lab": {
+          "l": 3.41,
+          "a": 0.76,
+          "b": 0.69
+        },
+        "hcl": {
+          "h": 42.25,
+          "c": 1.03,
+          "l": 3.41
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0059
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0095
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0007
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0002
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.9837,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.9083
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0139
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0113
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0086
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.004
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0037
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0045
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0033
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0033
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.002
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0022
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0045
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0029
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0026
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0019
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0009
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0018
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0017
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0024
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0002
+          }
+        ]
+      },
+      "lightness": 3.41,
+      "chroma": 1.15,
+      "peakChroma": 2.28,
+      "samples": 10115
     }
   },
   {
@@ -36913,6 +38804,275 @@
     }
   },
   {
+    "title": "Path in Tokoji Temple",
+    "comment": null,
+    "id": 331,
+    "file": "DSCF1600.jpg",
+    "addedDate": "2026-10-25T16:10:23Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.5,
+    "exposure": "1/250",
+    "iso": 640,
+    "focalLength": 18,
+    "gpsPosition": "34 deg 24' 43.41\" N, 131 deg 25' 4.08\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:25 12:07:44",
+    "customCreateDate": null,
+    "placeName": "Tokoji Temple",
+    "customCity": "Hagi",
+    "customState": null,
+    "customCountry": "Japan",
+    "country": "Japan",
+    "state": "Yamaguchi",
+    "city": "Hagi",
+    "width": 6804,
+    "height": 3827,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600.jpg",
+      "key": "photos/4475e6dd9534-dscf1600.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600-thumbnail.webp?crop=1566,0,3827",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4475e6dd9534-dscf1600-thumbnailpreview.webp?crop=1566,0,3827",
+      "thumbnailcrop": {
+        "x": 1566,
+        "y": 0,
+        "size": 3827,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["lanterns", "gates", "toro", "torii", "cemetery", "path", "forest"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "tokoji-temple"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#3c4633",
+        "lab": {
+          "l": 28.17,
+          "a": -7.92,
+          "b": 10.23
+        },
+        "hcl": {
+          "h": 127.76,
+          "c": 12.94,
+          "l": 28.17
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0002
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0461
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.1994
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0803
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0071
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.6669,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1555
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1372
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1181
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0898
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0217
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0222
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0162
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.015
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0095
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0057
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.004
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0056
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0074
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0095
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0089
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0086
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0065
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.007
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0055
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0132
+          }
+        ]
+      },
+      "lightness": 28.17,
+      "chroma": 13.29,
+      "peakChroma": 26.57,
+      "samples": 9694
+    }
+  },
+  {
     "id": 4,
     "title": "Photographing photographers... Gyeongbokgung edition.",
     "comment": "The one thing that can be frustrating about popular destinations is that you're kind of... damned if you do, damned if you don't. Like, yes, I definitely have to go see that palace. But also, everyone else does too. So of course, it gets really crowded. As a photographer, I try to do my best to make the presence of people \"work\" with a photo, but sometimes there's just too many people. In a case like this, sometimes it's just more fun to take photos of other photographers.",
@@ -39611,6 +41771,275 @@
       "chroma": 16.37,
       "peakChroma": 32.15,
       "samples": 10001
+    }
+  },
+  {
+    "title": "Sacred Paper",
+    "comment": null,
+    "id": 329,
+    "file": "DSCF0024.jpg",
+    "addedDate": "2026-10-25T16:08:25Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 8,
+    "exposure": "1/250",
+    "iso": 125,
+    "focalLength": 135,
+    "gpsPosition": "34 deg 24' 40.83\" N, 131 deg 23' 39.40\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:23 13:02:49",
+    "customCreateDate": null,
+    "placeName": "enseiji-temple",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Japan",
+    "state": "Yamaguchi",
+    "city": "Hagi",
+    "width": 4486,
+    "height": 6280,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024.jpg",
+      "key": "photos/9434678424b5-dscf0024.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9434678424b5-dscf0024-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 897,
+        "size": 4486,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["details", "shide", "shimenawa", "shinto", "shrine", "rope"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "enseiji-temple"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#241f1e",
+        "lab": {
+          "l": 12.21,
+          "a": 2.01,
+          "b": 1.31
+        },
+        "hcl": {
+          "h": 33.07,
+          "c": 2.39,
+          "l": 12.21
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0106
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0012
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0005
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.9876,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.6817
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0755
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0431
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.039
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0248
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.013
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0073
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0079
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0059
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0051
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0048
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0026
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0044
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.003
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0034
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0042
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0049
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0092
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0163
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0315
+          }
+        ]
+      },
+      "lightness": 12.21,
+      "chroma": 2.7,
+      "peakChroma": 7.1,
+      "samples": 9828
     }
   },
   {
@@ -44494,8 +46923,8 @@
     "websiteSpotlight": null,
     "socialMediaPublishDate": null,
     "albums": [],
-    "tags": [],
-    "genres": [],
+    "tags": ["city", "storefronts", "signage", "crosswalk", "pedestrians", "skyscraper"],
+    "genres": ["tilt-shift"],
     "places": [
       {
         "relation": "",
@@ -45791,6 +48220,275 @@
       "chroma": 1.93,
       "peakChroma": 3.66,
       "samples": 9728
+    }
+  },
+  {
+    "title": "Tokoji Temple - Heading Back",
+    "comment": null,
+    "id": 332,
+    "file": "DSCF1675.jpg",
+    "addedDate": "2026-10-25T16:09:51Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.5,
+    "exposure": "1/250",
+    "iso": 250,
+    "focalLength": 18,
+    "gpsPosition": "34 deg 24' 43.41\" N, 131 deg 25' 4.08\" E",
+    "customGpsPosition": null,
+    "createDate": "2026:09:25 12:13:39",
+    "customCreateDate": null,
+    "placeName": "Tokoji Temple",
+    "customCity": "Hagi",
+    "customState": null,
+    "customCountry": "Japan",
+    "country": "Japan",
+    "state": "Yamaguchi",
+    "city": "Hagi",
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675.jpg",
+      "key": "photos/9b3a3f6686ab-dscf1675.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9b3a3f6686ab-dscf1675-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1690,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["torii", "toro", "lanterns", "cemetery", "gates", "path", "forest"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "tokoji-temple"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#465142",
+        "lab": {
+          "l": 33.03,
+          "a": -7.7,
+          "b": 7.11
+        },
+        "hcl": {
+          "h": 137.26,
+          "c": 10.48,
+          "l": 33.03
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0001
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0762
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.1103
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0991
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.01
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0005
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.7037,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1664
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1006
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0754
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0672
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0267
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0251
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0221
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0182
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0109
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0093
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.006
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0079
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0176
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0399
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0577
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0331
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0041
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0018
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0006
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0132
+          }
+        ]
+      },
+      "lightness": 33.03,
+      "chroma": 11.09,
+      "peakChroma": 22.7,
+      "samples": 10050
     }
   },
   {

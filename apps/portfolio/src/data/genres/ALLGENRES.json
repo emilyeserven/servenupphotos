@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "id": "macro",
+    "name": "Macro",
+    "description": ""
+  },
+  {
+    "id": "street",
+    "name": "Street",
+    "description": ""
+  },
+  {
+    "id": "tilt-shift",
+    "name": "Tilt-Shift",
+    "description": ""
+  }
+]

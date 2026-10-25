@@ -1,9 +1,9 @@
 {
-  "id": 219,
-  "title": null,
+  "title": "Gwangjang",
   "comment": null,
+  "id": 219,
   "file": "DSCF3910.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-25T15:01:21Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -14,8 +14,8 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 17:34:44",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "gwangjang-market",
+  "customCity": "Seoul",
   "customState": null,
   "customCountry": null,
   "country": "South Korea",
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-thumbnail.webp?crop=2975,0,3825",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/93d5e40e38a1-dscf3910-thumbnailpreview.webp?crop=2975,0,3825",
     "thumbnailcrop": {
-      "x": 1487,
+      "x": 2975,
       "y": 0,
       "size": 3825,
       "outputSize": 500
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": [],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "gwangjang-market"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

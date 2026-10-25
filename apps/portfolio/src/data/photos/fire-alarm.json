@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
-  "genres": [],
+  "tags": ["fire-alarm", "stickers", "graffiti", "urban-decay", "texture", "details"],
+  "genres": ["macro"],
   "places": [
     {
       "relation": "",

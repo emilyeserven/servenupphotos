@@ -45,8 +45,8 @@
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
   "albums": [],
-  "tags": [],
-  "genres": [],
+  "tags": ["chinatown", "city", "traffic", "cars", "signage", "storefronts"],
+  "genres": ["tilt-shift"],
   "places": [
     {
       "relation": "",
