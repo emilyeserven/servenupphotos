@@ -10,6 +10,7 @@ import {
   type PhotoFilters,
   PHOTO_FILTERS,
   filterCount,
+  filterParam,
   matchesFilters,
   parseFilters,
 } from "@/lib/photo-filters";
@@ -25,10 +26,14 @@ interface FilteredFile {
 
 /**
  * The filters chosen on the page (Photos in Flight or the Gallery), kept in the URL so a reload
- * keeps them, and the files that pass them with the local edits made.
+ * keeps them, and the files that pass them with the local edits made. A prefix reads a second
+ * filter bar's, such as "draft" for the drafts on Photos in Flight.
  */
-export function usePhotoFilters() {
-  const filters = useSearch({ strict: false, select: parseFilters });
+export function usePhotoFilters(prefix?: string) {
+  const filters = useSearch({
+    strict: false,
+    select: (search: Record<string, unknown>) => parseFilters(search, prefix),
+  });
   const edits = useLocalEditsStore((s) => s.edits);
   return {
     filters,
@@ -37,24 +42,30 @@ export function usePhotoFilters() {
   };
 }
 
-/** Sets one filter, or clears it with undefined, or every filter with null. */
-function useSetFilter() {
+/** Sets one filter, or clears it with undefined, or every filter under the prefix with null. */
+function useSetFilter(prefix?: string) {
   const navigate = useNavigate();
   return (key: FilterKey | null, choice?: FilterChoice) =>
     void navigate({
       to: ".",
       search: (prev: Record<string, unknown>) =>
-        key ? { ...prev, [key]: choice } : withoutFilters(prev),
+        key ? { ...prev, [filterParam(key, prefix)]: choice } : withoutFilters(prev, prefix),
       replace: true,
     });
 }
 
-/** The search params a page keeps filters in: each photo filter's, and the Gallery's `undecided`. */
-const FILTER_PARAMS = [...PHOTO_FILTERS.map(({ key }) => key), "undecided"];
+/**
+ * The search params a filter bar keeps filters in: each photo filter's, and the Gallery's
+ * `undecided`; with a prefix, only the photo filters kept under it.
+ */
+function filterParams(prefix?: string): string[] {
+  const params = PHOTO_FILTERS.map(({ key }) => filterParam(key, prefix));
+  return prefix ? params : [...params, "undecided"];
+}
 
-/** The search params with every filter cleared. */
-function withoutFilters<T extends object>(search: T): T {
-  return { ...search, ...Object.fromEntries(FILTER_PARAMS.map((key) => [key, undefined])) };
+/** The search params with every filter under the prefix cleared. */
+function withoutFilters<T extends object>(search: T, prefix?: string): T {
+  return { ...search, ...Object.fromEntries(filterParams(prefix).map((key) => [key, undefined])) };
 }
 
 /**
@@ -68,6 +79,7 @@ export function PhotoFilterBar({
   children,
   hiding,
   extraChosen,
+  prefix,
 }: {
   filters: PhotoFilters;
   shown: number;
@@ -78,8 +90,10 @@ export function PhotoFilterBar({
   hiding?: boolean;
   /** Whether one of `children`'s filters is changed from where it starts, so Clear has work. */
   extraChosen?: boolean;
+  /** The prefix its filters are kept under in the URL, as given to `usePhotoFilters`. */
+  prefix?: string;
 }) {
-  const setFilter = useSetFilter();
+  const setFilter = useSetFilter(prefix);
   if (total === 0) return null;
   return (
     <Card className="py-4">

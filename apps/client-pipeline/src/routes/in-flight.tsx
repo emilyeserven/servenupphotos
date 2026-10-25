@@ -35,11 +35,12 @@ import { FileChecks, fileName } from "@/components/in-flight-checks";
 import { FileLink, FileStatus, NoPullRequest } from "@/components/in-flight-pending";
 import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
+import { type DraftSort, parseDraftSort } from "@/components/draft-sort";
 import { CollapsiblePhotos } from "@/components/collapsible-photos";
 import { Page } from "@/components/page";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
-import { SavedDrafts } from "@/components/saved-drafts";
+import { DRAFT_FILTERS, SavedDrafts } from "@/components/saved-drafts";
 import { SkippedEdits } from "@/components/skipped-edits";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { MoveToUndecided, UndecidedQueue } from "@/components/undecided-photos";
@@ -55,7 +56,7 @@ import {
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
-import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
+import { type PhotoFilters, parseFilters, prefixedFilters } from "@/lib/photo-filters";
 import { undecidedPaths } from "@/lib/undecided";
 import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
@@ -65,6 +66,9 @@ import { useLocalEditsStore } from "@/stores/local-edits";
 interface InFlightSearch extends PhotoFilters {
   /** Shows ALLPHOTOS.json in a panel beside the photo files. */
   allPhotos?: true;
+  /** How the drafts on the base branch are sorted; their filters are kept as `draftPlace` and so on. */
+  draftSort?: DraftSort;
+  [draftFilter: string]: unknown;
 }
 
 export const Route = createFileRoute("/in-flight")({
@@ -73,6 +77,8 @@ export const Route = createFileRoute("/in-flight")({
   validateSearch: (search: Record<string, unknown>): InFlightSearch => ({
     ...(search.allPhotos === true ? { allPhotos: true } : {}),
     ...parseFilters(search),
+    ...prefixedFilters(search, DRAFT_FILTERS),
+    ...(parseDraftSort(search) ? { draftSort: parseDraftSort(search) } : {}),
   }),
 });
 
