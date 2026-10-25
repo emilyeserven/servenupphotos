@@ -65,7 +65,7 @@ Rules:
 - A kind of place is a good tag (such as "mosque", "temple", "lake" or "city"), but a named one isn't: leave out "seoul", "lake-biwa" or "blue-mosque".
 - Leave out anything else the site already filters photos by: where it was taken (its country, state, city or named place), the camera, lens, focal length, aperture, exposure and ISO, the date it was taken, its colors and how vivid they are, its albums, and its photographic genre (such as street, landscape or portrait). Don't suggest any of the names under "Already filtered" either.
 - Suggest 3 to 8 tags.
-- Answer with only the tags, as one comma-separated list, with nothing before or after it.
+- Answer with the tags as one comma-separated list on the first line. Then, after a blank line, define each cultural term or concept among them, one per line, as "tag: a short definition", such as "shotengai: a Japanese shopping street, often under a covered arcade". Write nothing else before or after.
 
 Existing tags: ${listed(existing, "none yet")}
 
@@ -82,10 +82,31 @@ function cleanName(name: string): string {
     .trim();
 }
 
-/** The tags in the LLM's answer, split at commas and new lines, without blanks or repeats (ignoring case). */
+/** A line of the LLM's answer that defines a tag, such as "shotengai: a Japanese shopping street". */
+const DEFINITION = /^[\s\-*•]*([^:,]+?)\s*:\s*(.+?)\s*$/;
+
+/**
+ * The definitions the LLM gave under its tags, by the ID each defined tag gets, such as
+ * `{ shotengai: "a Japanese shopping street" }`.
+ */
+export function parseDefinitions(text: string): Record<string, string> {
+  const pairs = text.split("\n").flatMap((line) => {
+    const match = DEFINITION.exec(line);
+    return match ? [[groupId(cleanName(match[1]!)), match[2]!] as const] : [];
+  });
+  return Object.fromEntries(pairs.filter(([id]) => id));
+}
+
+/**
+ * The tags in the LLM's answer, split at commas and new lines, without blanks or repeats (ignoring
+ * case). Lines that define a tag ("tag: definition") are left out.
+ */
 export function parseTagList(text: string): string[] {
   const seen = new Set<string>();
   return text
+    .split("\n")
+    .filter((line) => !DEFINITION.test(line))
+    .join("\n")
     .split(/[,\n]/)
     .map(cleanName)
     .filter((name) => {

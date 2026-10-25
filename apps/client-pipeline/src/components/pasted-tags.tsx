@@ -4,7 +4,13 @@ import { metaGroups } from "@/api/metainfo";
 import { type OrganizeResponse, createGroupMutation, groupId, organizeQuery } from "@/api/organize";
 import { photosInFlightQuery } from "@/api/photos";
 import { Button } from "@/components/ui/button";
-import { type PastedTags, matchTags, parseTagList, withTags } from "@/lib/tag-prompt";
+import {
+  type PastedTags,
+  matchTags,
+  parseDefinitions,
+  parseTagList,
+  withTags,
+} from "@/lib/tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** "a, b and c" */
@@ -12,8 +18,8 @@ function joined(names: string[]): string {
   return names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
 }
 
-/** The tags pasted, with the photo's tags before they were added. */
-type Pasted = PastedTags & { before: string[] };
+/** The tags pasted, with the photo's tags before they were added and the LLM's definitions, by ID. */
+type Pasted = PastedTags & { before: string[]; definitions: Record<string, string> };
 
 /** Which existing tags were added, and which the photo already had. */
 function existingLine({ existing, before }: Pasted, names: Map<string, string>): string {
@@ -47,7 +53,7 @@ export function useTagPaste(
     event.preventDefault();
     const found = matchTags(parseTagList(text), organize.data, groups);
     onTagsChange(withTags(tags, found.existing));
-    setPasted({ ...found, before: tags });
+    setPasted({ ...found, before: tags, definitions: parseDefinitions(text) });
   };
   const summary = pasted && organize.data && (
     <PastedSummary
@@ -75,7 +81,12 @@ function PastedSummary({ pasted, organize, onCreated, disabled }: PastedSummaryP
     <div className="flex flex-col gap-2 text-sm">
       <p className="text-muted-foreground">{existingLine(pasted, names)}</p>
       {pasted.fresh.length > 0 && (
-        <NewTags names={pasted.fresh} onCreated={onCreated} disabled={disabled} />
+        <NewTags
+          names={pasted.fresh}
+          definitions={pasted.definitions}
+          onCreated={onCreated}
+          disabled={disabled}
+        />
       )}
       {pasted.skipped.map(({ name, reason }) => (
         <p key={name} className="text-muted-foreground">
@@ -88,14 +99,16 @@ function PastedSummary({ pasted, organize, onCreated, disabled }: PastedSummaryP
 
 interface NewTagsProps {
   names: string[];
+  /** The LLM's definitions of the cultural terms among them, by ID, saved as their descriptions. */
+  definitions: Record<string, string>;
   onCreated: (ids: string[]) => void;
   disabled: boolean;
 }
 
 /** The names that aren't tags yet, each of which can be left out, and a button that makes them. */
-function NewTags({ names, onCreated, disabled }: NewTagsProps) {
+function NewTags({ names, definitions, onCreated, disabled }: NewTagsProps) {
   const [chosen, setChosen] = useState(() => new Set(names));
-  const create = useCreateTags(onCreated);
+  const create = useCreateTags(definitions, onCreated);
   const toggle = (name: string) => {
     const next = new Set(chosen);
     if (!next.delete(name)) next.add(name);
@@ -107,16 +120,22 @@ function NewTags({ names, onCreated, disabled }: NewTagsProps) {
         Not tags yet, written in lowercase kebab-case. Untick any you don&apos;t want, then make the
         rest:
       </p>
-      <div className="flex flex-wrap gap-x-4 gap-y-1">
+      <div className="flex flex-col gap-1">
         {names.map((name) => (
-          <label key={name} className="flex items-center gap-1.5">
+          <label key={name} className="flex items-start gap-1.5">
             <input
               type="checkbox"
+              className="mt-1"
               checked={chosen.has(name)}
               disabled={disabled || create.isPending}
               onChange={() => toggle(name)}
             />
-            {name}
+            <span>
+              {name}
+              {definitions[name] && (
+                <span className="text-muted-foreground">: {definitions[name]}</span>
+              )}
+            </span>
           </label>
         ))}
       </div>
@@ -160,8 +179,8 @@ function makeLabel(count: number): string {
   return count === 1 ? "Make 1 new tag and add it" : `Make ${count} new tags and add them`;
 }
 
-/** Makes a new tag for each name, one at a time, as changes waiting for Commit, then adds them. */
-function useCreateTags(onCreated: (ids: string[]) => void) {
+/** Makes a new tag for each name, with its definition as its description, one at a time, as changes waiting for Commit, then adds them. */
+function useCreateTags(definitions: Record<string, string>, onCreated: (ids: string[]) => void) {
   const queryClient = useQueryClient();
   const createTag = useMutation(createGroupMutation("tags"));
   return useMutation({
@@ -169,7 +188,7 @@ function useCreateTags(onCreated: (ids: string[]) => void) {
       const ids: string[] = [];
       for (const name of names) {
         const id = groupId(name);
-        await createTag.mutateAsync({ id, name: id, description: "" });
+        await createTag.mutateAsync({ id, name: id, description: definitions[id] ?? "" });
         ids.push(id);
       }
       return ids;

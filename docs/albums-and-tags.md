@@ -57,14 +57,16 @@ It has:
 - Every tag's ID, to reuse when one fits, spelled as listed.
 - Every album, [photographic genre](photographic-genres.md) and [metadata group](metadata-groups.md) name, under **Already filtered**, since the portfolio already
   filters by them.
-- The rules: every tag in lowercase kebab-case (`street-food`); tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
+- The rules: answer with the tags on one comma-separated line, then a short definition of each cultural term among
+  them, one per line as `tag: definition`; every tag in lowercase kebab-case (`street-food`); tags general enough to fit other photos; cultural terms and concepts first, then the main subjects; a
   kind of place ("mosque", "temple", "lake", "city") but never a named one; nothing the site already filters by
-  (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums, genre); 3 to 8 tags; and
-  only a comma-separated list in the answer.
+  (place, camera, lens, focal length, aperture, exposure, ISO, date, colors and vividness, albums, genre); and 3 to 8 tags.
 
 Paste the LLM's answer into the **Tags** field. Every Tags field (on the Photo page and the Gallery's bulk card) takes
 a pasted comma-separated list: text with a comma or a new line in it isn't typed into the search, but split at commas
-and new lines, with quotes, bullets and trailing dots taken off and repeats dropped (ignoring case). Each name is
+and new lines, with quotes, bullets and trailing dots taken off and repeats dropped (ignoring case). Lines that define a tag
+(`tag: definition`) aren't tags: a new tag a line defines is listed with its definition, which becomes its
+description when it's made. Each name is
 matched to a tag by its name or the ID made from it, ignoring case, so `Street Food` matches `street-food`, and the
 matching tags are added to the field, as an edit saved like any other (and sent to GitHub by **Commit**). A name an
 album, genre or metadata group already has, or one with nothing to make an ID from, is left out, saying why. The rest
