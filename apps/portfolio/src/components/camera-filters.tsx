@@ -1,5 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Aperture, Camera } from "lucide-react";
+import type { ReactNode } from "react";
 import {
   FilterSelect,
   type OwnFilters,
@@ -89,14 +90,23 @@ function useSetCameraFilters() {
  * metadata groups of each, and a range slider for each of ISO, exposure, focal length and
  * aperture, with its range groups as quick picks. `photos` is the photos the shared
  * filters leave, which the camera and lens counts are out of, given the other filters here.
+ * `children` go after the sliders, in the same row, such as the Grid's **Colors**.
  */
-function CameraFilterControls({ photos, filters }: { photos: Photo[]; filters: CameraFilters }) {
+function CameraFilterControls({
+  photos,
+  filters,
+  children,
+}: {
+  photos: Photo[];
+  filters: CameraFilters;
+  children: ReactNode;
+}) {
   const setFilters = useSetCameraFilters();
   return (
     <>
       <EquipmentSelect equipment="camera" photos={photos} filters={filters} onChange={setFilters} />
       <EquipmentSelect equipment="lens" photos={photos} filters={filters} onChange={setFilters} />
-      <div className="flex w-full flex-wrap gap-2">
+      <div className="flex w-full flex-wrap items-start gap-2">
         {RANGE_KEYS.map((key) => (
           <RangeFilter
             key={key}
@@ -108,6 +118,7 @@ function CameraFilterControls({ photos, filters }: { photos: Photo[]; filters: C
             onChange={(range) => setFilters({ [key]: range })}
           />
         ))}
+        {children}
       </div>
     </>
   );
@@ -161,7 +172,7 @@ const NO_EXTRA: OwnFilters = { keys: [], count: 0, children: null };
 /**
  * The filter bar of the Table and Grid: the shared filters every view has, then the camera
  * filters, all in one **Show filters** panel, so both views always offer the same ones. `extra`
- * are a view's own filters after those, such as the Grid's **Colors**.
+ * are a view's own filters after those, in the sliders' row, such as the Grid's **Colors**.
  */
 export function CameraFilterBar({
   photos,
@@ -180,13 +191,9 @@ export function CameraFilterBar({
         keys: [...CAMERA_FILTER_KEYS, ...extra.keys],
         count: Object.keys(own).length + extra.count,
         children: (
-          <>
-            <CameraFilterControls
-              photos={filterPhotos(photos, parseFilters(search))}
-              filters={own}
-            />
+          <CameraFilterControls photos={filterPhotos(photos, parseFilters(search))} filters={own}>
             {extra.children}
-          </>
+          </CameraFilterControls>
         ),
       }}
     />

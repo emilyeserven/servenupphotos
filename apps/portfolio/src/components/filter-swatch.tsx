@@ -9,25 +9,7 @@ interface SwatchSearch {
 }
 
 const SWATCH_CLASS =
-  "flex size-8 items-center justify-center rounded-full border-2 outline-none transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
-
-/** The **All** button before a row of swatches, which clears them. */
-export function AllSwatch({ active, clear }: { active: boolean; clear: SwatchSearch }) {
-  return (
-    <Link
-      to="."
-      search={(prev) => ({ ...prev, ...clear, photo: undefined })}
-      replace
-      aria-pressed={active}
-      className={cn(
-        "inline-flex h-8 items-center rounded-full border px-3 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
-      )}
-    >
-      All
-    </Link>
-  );
-}
+  "flex size-6 items-center justify-center rounded-full border-2 p-px outline-none transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 /**
  * A round swatch of fill that sets pick in the URL, or clears it with clear when it's already
@@ -84,7 +66,7 @@ function UnavailableSwatch({ title, children }: { title: string; children: React
       <X
         aria-hidden
         strokeWidth={3}
-        className="absolute size-5 text-white drop-shadow-[0_0_1.5px_black]"
+        className="absolute size-4 text-white drop-shadow-[0_0_1.5px_black]"
       />
     </span>
   );
@@ -95,7 +77,7 @@ function SwatchDot({ fill, ringed }: { fill: string; ringed: boolean }) {
   return (
     <span
       aria-hidden
-      className={cn("size-6 rounded-full", ringed && "ring-1 ring-border")}
+      className={cn("size-full rounded-full", ringed && "ring-1 ring-border")}
       style={{ backgroundColor: fill }}
     />
   );

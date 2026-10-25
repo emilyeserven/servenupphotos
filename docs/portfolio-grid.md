@@ -17,11 +17,12 @@ Each photo as the square picked on the pipeline's Photo page, in a grid of 2 to 
 
 Each photo at its own aspect ratio (`?view=natural`), in justified rows (`components/natural-grid.tsx`,
 `lib/natural-rows.ts`): a row's tiles are all the same height, and a full row's tiles grow together to fill its width.
-Vertical photos (narrower than 0.9 of their height) are gathered into rows of their own, which start 400px tall rather
-than 250px, so they show larger instead of being squeezed between wide photos. Each row starts with the next photo in
+Vertical photos (narrower than 0.9 of their height) are gathered into rows of their own, which start tall enough for
+each photo to be at least 400px wide (rows of wide photos start 250px tall), so they show larger instead of being squeezed between wide photos. Each row starts with the next photo in
 the sort and takes the next photos of the same kind until another wouldn't fit, so photos stay close to their place in
 the sort, moved at most a row or so. When too few photos of one kind are left to fill a row, the rest share rows of the
-wide height. The last row isn't stretched.
+wide height. The last row isn't stretched. No tile grows taller than 90% of the window (`90vh`); a row whose tiles
+all reach that is centered rather than stretched.
 
 > **Frontend analogy:** like a CSS `flex-wrap` gallery, but the line breaks are worked out in JavaScript from the
 > measured width (a `ResizeObserver`), so each line can hold only one kind of photo and have its own height.

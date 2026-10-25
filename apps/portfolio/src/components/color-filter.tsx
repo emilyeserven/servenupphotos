@@ -1,4 +1,4 @@
-import { AllSwatch, FilterSwatch } from "@/components/filter-swatch";
+import { FilterSwatch } from "@/components/filter-swatch";
 import {
   type ColorName,
   colorLabel,
@@ -10,7 +10,7 @@ import {
 
 /**
  * A swatch for each hue bucket and then each shade, to show only the photos with much of that
- * color, and one to show every photo again, kept in the URL as `?color=` so a link keeps it.
+ * color, kept in the URL as `?color=` so a link keeps it. Picking the chosen one again clears it.
  */
 export function ColorFilter({
   color,
@@ -21,12 +21,11 @@ export function ColorFilter({
   counts: Record<ColorName, number>;
 }) {
   return (
-    <div role="group" aria-label="Filter by color" className="flex flex-wrap items-center gap-2">
-      <AllSwatch active={!color} clear={{ color: undefined }} />
+    <div role="group" aria-label="Filter by color" className="flex flex-wrap items-center gap-1">
       {HUE_BUCKETS.map((option) => (
         <ColorSwatch key={option} color={option} active={color === option} count={counts[option]} />
       ))}
-      <span aria-hidden className="mx-1 h-6 w-px bg-border" />
+      <span aria-hidden className="mx-1 h-4 w-px bg-border" />
       {SHADES.map((option) => (
         <ColorSwatch key={option} color={option} active={color === option} count={counts[option]} />
       ))}
