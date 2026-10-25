@@ -29,14 +29,14 @@ import {
   photoFile,
 } from "@/components/edit-in-flight/photo-json";
 import { CameraOverridesCard } from "@/components/edit-in-flight/camera-overrides-card";
+import { LensSection } from "@/components/edit-in-flight/lens-section";
 import { ReplaceImageCard } from "@/components/edit-in-flight/replace-image-card";
 import { LocationPromptCard } from "@/components/edit-in-flight/location-prompt-card";
 import { TagPromptCard } from "@/components/edit-in-flight/tag-prompt-card";
 import { SaveActions, SaveStatus } from "@/components/edit-in-flight/save-actions";
 import { overridesApplied } from "@/components/edit-in-flight/lens-edit";
 import { type Edit, useEdit, useLensSettings, useSave } from "@/components/edit-in-flight/use-edit";
-import { CustomLensCard } from "@/components/custom-lens-card";
-import { lensChanged, withLensChoice } from "@/lib/custom-lens";
+import { hasLensChoice, lensChanged, savedLensChoice, withLensChoice } from "@/lib/custom-lens";
 import { promptImageUrl } from "@/lib/tag-prompt";
 import { useTabSubject } from "@/stores/tab-title";
 
@@ -198,28 +198,27 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
   );
 }
 
-/** The photo's custom lens and manual aperture, then what its camera overrides and lens change. */
+/** What the photo's camera overrides and lens change, with its custom lens and manual aperture. */
 function LensCards({ edit, disabled }: { edit: Edit; disabled: boolean }) {
   const settings = useLensSettings();
   const { savedData, lensEdit, setLensEdit } = edit;
   return (
-    <>
-      <CustomLensCard
+    <CameraOverridesCard
+      photo={withLensChoice(savedData, lensEdit)}
+      settings={settings}
+      applied={overridesApplied(savedData, lensEdit)}
+      forced={lensChanged(savedData, lensEdit)}
+      onApply={(apply) => setLensEdit({ ...lensEdit, apply })}
+      disabled={disabled}
+    >
+      <LensSection
         value={lensEdit}
         onChange={(choice) => setLensEdit({ ...lensEdit, ...choice })}
         lenses={settings.lenses}
-        description="Saving changes writes it, with the camera overrides, over the JSON."
+        defaultOpen={hasLensChoice(savedLensChoice(savedData))}
         disabled={disabled}
       />
-      <CameraOverridesCard
-        photo={withLensChoice(savedData, lensEdit)}
-        settings={settings}
-        applied={overridesApplied(savedData, lensEdit)}
-        forced={lensChanged(savedData, lensEdit)}
-        onApply={(apply) => setLensEdit({ ...lensEdit, apply })}
-        disabled={disabled}
-      />
-    </>
+    </CameraOverridesCard>
   );
 }
 
