@@ -13,7 +13,7 @@
   "customGpsPosition": null,
   "createDate": "2016:12:23 10:55:43",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Lake Brienz",
   "customCity": "Brienz",
   "customState": null,
   "customCountry": "Switzerland",
@@ -48,7 +48,12 @@
   "customLens": null,
   "albums": [],
   "tags": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "lake-brienz"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
