@@ -354,3 +354,24 @@ func TestBackfillThumbnailCropFromURL(t *testing.T) {
 		t.Errorf("content = %s", content)
 	}
 }
+
+func TestFillGapsInFileOrder(t *testing.T) {
+	// "images" comes before "file" here, unlike in new files, so its missing
+	// fields go earlier in the file than addedDate, after "file".
+	content := []byte("{\n  \"id\": 1,\n  \"title\": \"Tokyo\",\n  \"images\": {\n    \"full\": \"f\"\n  },\n  \"file\": \"A.jpg\"\n}\n")
+	gaps, err := findGaps(content, photoTemplate())
+	if err != nil {
+		t.Fatalf("findGaps() error = %v", err)
+	}
+	got := fillGaps(content, gaps)
+	var parsed map[string]any
+	if err := json.Unmarshal(got, &parsed); err != nil {
+		t.Fatalf("filled file isn't JSON (%v):\n%s", err, got)
+	}
+	if _, ok := parsed["addedDate"]; !ok {
+		t.Errorf("filled file has no addedDate:\n%s", got)
+	}
+	if images, _ := parsed["images"].(map[string]any); images["thumbnail"] != nil || len(images) < 2 {
+		t.Errorf("images = %v, want its missing fields added", images)
+	}
+}
