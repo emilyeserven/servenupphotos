@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useMatchRoute } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
 import type { ReactNode } from "react";
 import { parseFilters } from "@/lib/photo-filters";
@@ -24,7 +24,8 @@ type MapView = NonNullable<ReturnType<typeof mapViewOf>>;
 
 /**
  * A **View on map** link for the photo viewer's place tooltip, opening the Map zoomed in on where
- * the photo was taken, as `/map?lat=…&lng=…&zoom=…`, keeping the location, album and tag filters.
+ * the photo was taken, as `/map?lat=…&lng=…&zoom=…`. On the Map it keeps the filters; from other
+ * views it opens the Map with none, as the Map doesn't keep filters set before.
  * Null for a photo the map can't place, so the tooltip isn't shown just for it.
  */
 export function viewOnMapLink(photo: Photo): ReactNode {
@@ -33,10 +34,14 @@ export function viewOnMapLink(photo: Photo): ReactNode {
 }
 
 function ViewOnMapLink({ view }: { view: MapView }) {
+  const onMap = Boolean(useMatchRoute()({ to: "/map" }));
   return (
     <Link
       to="/map"
-      search={(prev: Record<string, unknown>) => ({ ...parseFilters(prev), ...view })}
+      search={(prev: Record<string, unknown>) => ({
+        ...(onMap ? parseFilters(prev) : {}),
+        ...view,
+      })}
       className="mt-1 inline-flex items-center gap-1 self-start rounded-sm font-medium underline underline-offset-4 outline-none hover:opacity-80 focus-visible:ring-2 focus-visible:ring-white/60"
     >
       <MapPin className="size-3.5" aria-hidden />

@@ -26,7 +26,7 @@ is seeded by each photo's ID, so it lands in the same place every time.
 
 Where the map is looking is kept in the URL as its center and zoom (`?lat=37.57&lng=126.98&zoom=12.5`), half a second
 after it stops moving, so a link opens the map there instead of on all the photos. A link with only an open photo (`?photo=<id>`) opens zoomed in on that photo instead, so it doesn't fly in from every photo; the homepage's map pin links straight to a photo's center and zoom. When those change from outside the map, as with the photo viewer's **View on map**, the map flies there. Moving replaces the URL rather than
-adding to the history. Changing a filter still fits the map to the photos it shows, and that's saved the same way. Unchoosing every place in the
+adding to the history. The menu and other views' **View on map** open the map with no filters, so ones set on an earlier visit, or on another view, are gone; a link with filters in its URL keeps them (see [Portfolio Filters](portfolio-filters.md)). Changing a filter still fits the map to the photos it shows, and that's saved the same way. Unchoosing every place in the
 Places filter (or clearing the filters while places were chosen) is the exception: the map stays where it is rather
 than zooming out to every photo.
 
