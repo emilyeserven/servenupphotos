@@ -30,6 +30,14 @@
     "country": "United States of America"
   },
   {
+    "id": "am-bollwerk",
+    "name": "Am Bollwerk",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
+  },
+  {
     "id": "american-copper-building",
     "name": "American Copper Building",
     "description": "",
@@ -287,6 +295,14 @@
     "longitude": -73.96228768992302
   },
   {
+    "id": "jogyesa-temple",
+    "name": "Jogyesa Temple",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
     "id": "kent-falls-state-park",
     "name": "Kent Falls State Park",
     "description": "",
@@ -301,6 +317,16 @@
     "parent": "",
     "city": "Seoul",
     "country": "South Korea"
+  },
+  {
+    "id": "lake-brienz",
+    "name": "Lake Brienz",
+    "description": "",
+    "parent": "",
+    "city": "Brienz",
+    "country": "Switzerland",
+    "latitude": 46.75296690432046,
+    "longitude": 8.033297631815541
   },
   {
     "id": "lintilhac-park",
