@@ -20,27 +20,33 @@ interface ReadProgressViewProps {
  */
 export function ReadProgressView({ task, label }: ReadProgressViewProps) {
   const { data } = useQuery(readProgressQuery(task));
-  const progress = data?.running ? data : undefined;
   return (
     <div className="flex basis-full flex-col gap-2" aria-live="polite">
       <p className="flex items-center gap-2 text-sm">
         <Spinner />
-        {progress ? stepLabel(task, progress) : label}
+        {stepLabel(task, label, data)}
       </p>
-      {progress && progress.total > 0 && (
-        <ProgressBar done={progress.done} total={progress.total} />
-      )}
+      <ProgressBar progress={data} />
     </div>
   );
 }
 
-/** The step the read is on, with how far it has got when it can count. */
-function stepLabel(task: ReadTask, progress: ReadProgress): string {
-  if (progress.step === "history") {
-    return `Asking GitHub when the photo files were created: ${counted(progress)}`;
-  }
-  if (progress.step === "r2") return `${R2_LABELS[task]}: ${counted(progress)}`;
-  return "Reading the photo files from GitHub…";
+/** What each step says, given the task and how far it has got. */
+const STEP_LABELS: Record<
+  ReadProgress["step"],
+  (task: ReadTask, progress: ReadProgress) => string
+> = {
+  "": () => "Reading the photo files…",
+  github: () => "Reading the photo files from GitHub…",
+  history: (_task, progress) =>
+    `Asking GitHub when the photo files were created: ${counted(progress)}`,
+  r2: (task, progress) => `${R2_LABELS[task]}: ${counted(progress)}`,
+};
+
+/** The step the read is on, with how far it has got when it can count, or `label` until it says. */
+function stepLabel(task: ReadTask, label: string, progress: ReadProgress | undefined): string {
+  if (!progress?.running) return label;
+  return STEP_LABELS[progress.step](task, progress);
 }
 
 /** Such as "42 of 150". */
@@ -48,7 +54,10 @@ function counted({ done, total }: ReadProgress): string {
   return `${done} of ${total}`;
 }
 
-function ProgressBar({ done, total }: { done: number; total: number }) {
+/** How far a counted step has got; nothing while no read is running or the step can't count. */
+function ProgressBar({ progress }: { progress: ReadProgress | undefined }) {
+  if (!progress?.running || progress.total === 0) return null;
+  const { done, total } = progress;
   return (
     <div
       role="progressbar"
