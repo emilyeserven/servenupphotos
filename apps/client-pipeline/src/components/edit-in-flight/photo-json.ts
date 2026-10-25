@@ -55,14 +55,16 @@ export function findEditable(data: InFlightRead, path: string): Editable | strin
   return { file, data: file.data as PhotoJson, image: data.images.byPath[path]! };
 }
 
-/** Why the file at path can't be edited, or undefined when it can. */
+/**
+ * Why the file at path can't be edited, or undefined when it can. A file only waiting for Commit,
+ * with no pull request open yet, is edited like one in the pull request.
+ */
 function editProblem(
   data: InFlightRead,
   file: InFlightFileRead | undefined,
   path: string,
 ): string | undefined {
-  if (!data.pullRequest) return "No photo data pull request is open.";
-  if (!file) return `${path} isn't in the photo data pull request anymore.`;
+  if (!file) return `${path} isn't in the photo data pull request or waiting for Commit anymore.`;
   return fileProblem(file) ?? imageProblem(data.images, path);
 }
 

@@ -71,7 +71,7 @@ function PhotoRoute() {
   return (
     <Page
       title="Edit Photo"
-      description="Change a photo saved to the open “Add photo data” pull request or already in the portfolio, such as the square its Square Thumbnail is cut from. Changes go into the pull request."
+      description="Change a photo waiting for Commit, in the open “Add photo data” pull request, or already in the portfolio, such as the square its Square Thumbnail is cut from. Changes wait for Commit."
       wide
       action={<ChangePhotoButton />}
     >
