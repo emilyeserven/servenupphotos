@@ -4,6 +4,7 @@ import { parseLocationDetail, type LocationDetail } from "@/lib/location-detail"
 const SORTABLE = [
   "title",
   "takenAt",
+  "addedAt",
   "location",
   "camera",
   "lens",

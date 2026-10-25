@@ -48,7 +48,8 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
   info?: true;
   /**
-   * Set when the oldest photo comes first, or to sort by color or vividness. Left out for the
+   * Set when the oldest or most recently added photo comes first, or to sort by color or
+   * vividness. Left out for the
    * default, newest first.
    */
   sort?: Exclude<GridSort, "newest">;
@@ -78,14 +79,22 @@ function viewOf(view: unknown): GridSearch {
   return view === "natural" || view === "table" ? { view } : {};
 }
 
+/** The sorts the URL can ask for by date, besides newest first, which have no order of their own. */
+const DATE_SORTS: readonly string[] = ["oldest", "added"];
+
 /** The sorts the URL can ask for, besides newest first. */
-const URL_SORTS: readonly string[] = ["oldest", "color", "vivid"];
+const URL_SORTS: readonly string[] = [...DATE_SORTS, "color", "vivid"];
 
 /** The sort from the URL, with the color sorts' order and secondary sort when it's one of them. */
 function sortOf(search: Record<string, unknown>): GridSearch {
   if (!URL_SORTS.includes(search.sort as string)) return {};
   const sort = search.sort as Exclude<GridSort, "newest">;
-  return sort === "oldest" ? { sort } : { sort, ...parseColorOrder(sort, search) };
+  return isColorSort(sort) ? { sort, ...parseColorOrder(sort, search) } : { sort };
+}
+
+/** Whether the sort is by color or vividness, rather than by a date. */
+function isColorSort(sort: Exclude<GridSort, "newest">): sort is ColorSort {
+  return !DATE_SORTS.includes(sort);
 }
 
 /** The info setting from the URL, which reads `info=true` and older `info=1` links alike. */

@@ -166,6 +166,7 @@ function fieldCountText(f: MissingFieldsPreview["fields"][number]): string {
     [f.fromExif, "from EXIF"],
     [f.fromThumbnail, "from the Square Thumbnail"],
     [f.numbered, "numbered in the order they were created"],
+    [f.fromHistory, "dated by their first commit"],
   ] as const;
   return [
     count(f.files, "file"),
@@ -175,10 +176,16 @@ function fieldCountText(f: MissingFieldsPreview["fields"][number]): string {
 
 /** What a field's value is, beside it, when it isn't the field's default. */
 function addedSource(a: AddedField): string | null {
-  if (a.fromExif) return "from EXIF";
-  if (a.fromThumbnail) return "from the Square Thumbnail";
-  return a.numbered ? "the next ID, by when the file was created" : null;
+  return ADDED_SOURCES.find(([key]) => a[key])?.[1] ?? null;
 }
+
+/** Each way a field's value can come from somewhere other than its default, and how it's named. */
+const ADDED_SOURCES: [Exclude<keyof AddedField, "field" | "value">, string][] = [
+  ["fromExif", "from EXIF"],
+  ["fromThumbnail", "from the Square Thumbnail"],
+  ["fromHistory", "when the file was first committed"],
+  ["numbered", "the next ID, by when the file was created"],
+];
 
 /** Each file missing fields, collapsed to its name and count, with the values it gets inside. */
 function FilesMissingFields({ files }: { files: MissingFieldsPreview["files"] }) {
