@@ -82,6 +82,7 @@ type historyAnswer struct {
 func (c *Client) committedTimes(ctx context.Context, w *workspace, paths []string) (map[string]time.Time, *PublishError) {
 	out := map[string]time.Time{}
 	for start := 0; start < len(paths); start += historyBatch {
+		reportProgress(ctx, ProgressHistory, start, len(paths))
 		batch := paths[start:min(start+historyBatch, len(paths))]
 		vars := map[string]any{"owner": w.t.owner, "name": w.t.name, "ref": w.head.commit}
 		for i, p := range batch {

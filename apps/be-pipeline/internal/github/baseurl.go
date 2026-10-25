@@ -407,6 +407,7 @@ func (c *Client) scanPhotos(ctx context.Context, gh settings.GitHub) (baseURLSca
 	if perr != nil {
 		return baseURLScan{}, perr
 	}
+	reportProgress(ctx, ProgressGitHub, 0, 0)
 	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
 		return baseURLScan{}, perr

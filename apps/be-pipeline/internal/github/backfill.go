@@ -272,8 +272,7 @@ func historyPaths(scan baseURLScan, plans []backfillPlan) []string {
 func findPlans(ctx context.Context, scan baseURLScan, read Readers) ([]backfillPlan, *PublishError) {
 	tmpl := photoTemplate()
 	plans := make([]backfillPlan, len(scan.files))
-	var wg sync.WaitGroup
-	sem := make(chan struct{}, exifConcurrency)
+	var reads []func()
 	var bad error
 	var mu sync.Mutex
 	for i, f := range scan.files {
@@ -298,20 +297,16 @@ func findPlans(ctx context.Context, scan baseURLScan, read Readers) ([]backfillP
 		if key == "" || (!needExif && !needCrop) {
 			continue
 		}
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			sem <- struct{}{}
-			defer func() { <-sem }()
+		reads = append(reads, func() {
 			if needExif {
 				plans[i].exifErr = fillFromExif(ctx, read.Exif, key, plans[i].gaps)
 			}
 			if needCrop {
 				plans[i].cropErr = fillCropFromR2(ctx, read.Crop, key, &plans[i].gaps[cropGap])
 			}
-		}()
+		})
 	}
-	wg.Wait()
+	readOriginals(ctx, reads)
 	if bad != nil {
 		return nil, publishErr(http.StatusBadGateway, "Couldn't read %v.", bad)
 	}

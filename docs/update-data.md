@@ -59,5 +59,16 @@ changed top-level fields are rewritten, and nothing is saved while any photo fil
 `POST /api/data/location-names`). The other names are picked on the Places page; see
 [Other names](places-and-localizations.md#other-names).
 
+**Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
+how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
+asking GitHub when the files were created (50 files a query), then reading the originals in R2 one photo at a time,
+such as "Reading each photo's colors from its original in R2: 42 of 150". The backend keeps each task's latest progress
+in memory (`github.WithProgress`, kept by `readProgress` in `be-pipeline/internal/httpapi/progress.go`), and the page
+asks `GET /api/data/progress/{task}` (`missing-fields` or `colors`) every half second until the read answers.
+
+> **Frontend analogy:** the progress is polled, like a `useQuery` with `refetchInterval: 500` next to the slow
+> request, rather than streamed. The slow request stays an ordinary JSON answer; a second, cheap endpoint just reads a
+> variable the first one keeps updating.
+
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.
