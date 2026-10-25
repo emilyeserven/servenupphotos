@@ -10,6 +10,8 @@ export interface ComboboxOption {
   detail?: string;
   /** More text to match what's typed against, not shown, such as a name in another script. */
   keywords?: string;
+  /** Shows its chip in green, for one that's new, such as a tag waiting for Commit. */
+  fresh?: boolean;
 }
 
 interface ComboboxProps {
@@ -161,6 +163,7 @@ export function Combobox({
               key={v}
               label={byValue.get(v)?.label ?? v}
               known={byValue.has(v)}
+              fresh={byValue.get(v)?.fresh}
               removeLabel={
                 byValue.has(v) ? `Remove ${byValue.get(v)!.label}` : `Remove ${unknownLabel(v)}`
               }
@@ -231,21 +234,28 @@ interface ChipProps {
   label: string;
   /** False when the value isn't one of the options. */
   known: boolean;
+  /** True when the option is new, shown in green. */
+  fresh?: boolean;
   removeLabel: string;
   disabled: boolean;
   onRemove: () => void;
 }
 
-function Chip({ label, known, removeLabel, disabled, onRemove }: ChipProps) {
+/** A chip's colors: red when its value isn't an option, green when the option is new. */
+function chipTone(known: boolean, fresh?: boolean): string {
+  if (!known) return "border-destructive/40 bg-destructive/10 text-destructive";
+  if (fresh) return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400";
+  return "bg-muted-foreground/10 text-foreground";
+}
+
+function Chip({ label, known, fresh, removeLabel, disabled, onRemove }: ChipProps) {
   return (
     <span
       className={cn(
         "inline-flex h-5 max-w-full items-center gap-1 rounded-[calc(var(--radius-sm)-2px)] pr-0.5 pl-1.5 text-xs/relaxed font-medium",
-        known
-          ? "bg-muted-foreground/10 text-foreground"
-          : "border-destructive/40 bg-destructive/10 text-destructive",
+        chipTone(known, fresh),
       )}
-      title={known ? label : `${label}: not found`}
+      title={known ? `${label}${fresh ? ": new" : ""}` : `${label}: not found`}
     >
       <span className="truncate">{label}</span>
       <button

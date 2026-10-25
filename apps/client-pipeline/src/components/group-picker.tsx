@@ -12,6 +12,7 @@ import {
   groupLabel,
   groupName,
   organizeQuery,
+  withNewGroup,
 } from "@/api/organize";
 import { photosInFlightQuery } from "@/api/photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +38,13 @@ function groupOptions(
       value: group.id,
       label: groupLabel(group),
       detail: kind === "albums" ? albumPlace(groups, group) : undefined,
+      fresh: waitingForCommit(group),
     }));
+}
+
+/** Whether the group's file is only a change waiting for Commit, with no page on GitHub yet. */
+function waitingForCommit(group: Group): boolean {
+  return group.inFlight && !group.fileUrl;
 }
 
 interface GroupComboboxProps {
@@ -231,15 +238,6 @@ function useNewGroup(kind: GroupKind, onCreated: (id: string) => void) {
     if (!reason) create.mutate({ id: groupId(text), name: groupName(kind, text), description: "" });
   };
   return { make, pending: create.isPending, problem: invalid ?? create.error?.message };
-}
-
-/** The organize list with a just-made group in it, so it's named before the list is read again. */
-function withNewGroup(
-  data: OrganizeResponse | undefined,
-  kind: GroupKind,
-  group: Group,
-): OrganizeResponse | undefined {
-  return data && { ...data, [kind]: [...data[kind], group] };
 }
 
 interface TagsFieldProps {
