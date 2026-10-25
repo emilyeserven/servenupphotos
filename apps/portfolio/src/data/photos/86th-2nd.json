@@ -3,6 +3,7 @@
   "title": "86th & 2nd",
   "comment": null,
   "file": "IMG_4848.jpg",
+  "addedDate": "2026-10-22T19:36:17Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S10-18mm f/4.5-5.6 IS STM",
   "aperture": 14,
@@ -10,11 +11,15 @@
   "iso": 500,
   "focalLength": 11,
   "gpsPosition": "40 deg 46' 46.20\" N, 73 deg 57' 20.20\" W",
+  "customGpsPosition": null,
   "createDate": "2019:03:30 11:31:01",
+  "customCreateDate": null,
   "placeName": "Upper East Side",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "United States of America",
+  "state": "New York",
   "city": "New York City",
   "width": 6000,
   "height": 3543,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#424242",

@@ -3,6 +3,7 @@
   "title": "Kura",
   "comment": null,
   "file": "IMG_0179.jpg",
+  "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 3.5,
@@ -10,11 +11,15 @@
   "iso": 100,
   "focalLength": 18,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2017:11:04 11:19:56",
+  "customCreateDate": null,
   "placeName": "freeman-alley",
   "customCity": "New York City",
+  "customState": null,
   "customCountry": "United States of America",
   "country": null,
+  "state": null,
   "city": null,
   "width": 6000,
   "height": 3210,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#847371",

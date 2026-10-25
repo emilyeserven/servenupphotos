@@ -3,6 +3,7 @@
   "comment": null,
   "id": 150,
   "file": "IMG_1976.jpg",
+  "addedDate": "2026-10-23T21:17:29Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": null,
   "aperture": null,
@@ -10,11 +11,15 @@
   "iso": 100,
   "focalLength": null,
   "gpsPosition": "40 deg 42' 42.60\" N, 74 deg 0' 42.63\" W",
+  "customGpsPosition": null,
   "createDate": "2017:09:09 13:21:41",
+  "customCreateDate": null,
   "placeName": "the-oculus",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "United States of America",
+  "state": "New York",
   "city": "New York City",
   "width": 5975,
   "height": 3315,
@@ -44,6 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -51,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#51504f",

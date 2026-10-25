@@ -3,6 +3,7 @@
   "comment": null,
   "id": 117,
   "file": "post-7701.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-55mm f/3.5-5.6 IS II",
   "aperture": 3.5,
@@ -10,11 +11,15 @@
   "iso": 100,
   "focalLength": 18,
   "gpsPosition": "41 deg 2' 47.02\" N, 73 deg 32' 33.37\" W",
+  "customGpsPosition": null,
   "createDate": "2016:10:12 01:28:39",
+  "customCreateDate": null,
   "placeName": "stamford-train-station",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "United States of America",
+  "state": "Connecticut",
   "city": "Stamford",
   "width": 5042,
   "height": 3361,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#627187",

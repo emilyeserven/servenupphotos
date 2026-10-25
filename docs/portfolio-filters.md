@@ -1,7 +1,7 @@
 # Portfolio Filters
 
 The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens three
-filters that narrow the photos they show: **Places**, **Album** and **Tag** (**Hide filters** closes them again). The
+filters that narrow the photos they show: **Places**, **Album**, **Tag** and **Genre** (**Hide filters** closes them again). The
 Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** section, the Color page's color filters (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
@@ -37,11 +37,12 @@ places (or a place they're in) that has one. A photo with a city but no country 
 city have, so it's listed under, and matched by, that country too. Countries and cities are matched by their English
 names, whichever way they're shown.
 
-## Album and Tag
+## Album, Tag and Genre
 
 **Album** lists every album in `ALLALBUMS.json`, each sub-album under its parent. Choosing an album (`?album=<id>`)
 shows the photos in it and in any album inside it. **Tag** lists every tag in `ALLTAGS.json` (`?tag=<id>`), and is left
-out while there are no tags.
+out while there are no tags. **Genre** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, by
+name (`?genre=<id>`), and is likewise left out while there are none.
 
 ## Camera filters
 

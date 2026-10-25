@@ -40,6 +40,7 @@ function pendingCount(data: InFlightResponse): number {
   const groups = [
     data.albums,
     data.tags,
+    data.genres,
     data.places,
     data.localizations,
     data.metainfo,

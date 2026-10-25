@@ -2,6 +2,7 @@ package github
 
 import (
 	"encoding/json"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -93,5 +94,23 @@ func TestBackfillDatesPhotosByTheirFirstCommit(t *testing.T) {
 		if field.Field == addedField && (field.Files != 2 || field.FromHistory != 1) {
 			t.Errorf("addedDate count = %+v, want 2 files, 1 from history", field)
 		}
+	}
+}
+
+func TestBackfillAsksTheHistoryOnce(t *testing.T) {
+	repo := &baseURLRepo{pull: true, files: map[string]string{"A.json": `{"title":"Tokyo","file":"A.jpg"}`}}
+	c := repo.start(t)
+	repo.f.created[photosDir+"A.json"] = "2024-03-01T10:00:00Z"
+	if _, err := c.PreviewBackfill(t.Context(), baseURLSettings, Readers{}); err != nil {
+		t.Fatalf("PreviewBackfill() error = %v", err)
+	}
+	if _, err := c.Backfill(t.Context(), baseURLSettings, Readers{}); err != nil {
+		t.Fatalf("Backfill() error = %v", err)
+	}
+	if n := slices.Index(repo.f.calls, "graphql history"); n < 0 || slices.Contains(repo.f.calls[n+1:], "graphql history") {
+		t.Errorf("calls = %v, want one history query, kept for applying after the preview", repo.f.calls)
+	}
+	if got := repo.staged(t)[photosDir+"A.json"]; !strings.Contains(got, `"addedDate":"2024-03-01T10:00:00Z"`) {
+		t.Errorf("A.json = %s, want its first commit's time", got)
 	}
 }

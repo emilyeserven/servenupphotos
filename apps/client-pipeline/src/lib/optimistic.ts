@@ -35,6 +35,7 @@ function inFlightFiles(read: InFlightRead | undefined): CachedFile[] {
   const groups = [
     read.albums,
     read.tags,
+    read.genres,
     read.places,
     read.localizations,
     read.metainfo,
@@ -48,7 +49,7 @@ function publishedFiles(read: PublishedResponse | undefined): CachedFile[] {
   return read ? read.files : [];
 }
 
-/** The data the pages last read for the photo, album or tag file at path, if any did. */
+/** The data the pages last read for the photo, album, tag or genre file at path, if any did. */
 export function cachedFile(queryClient: QueryClient, path: string): unknown {
   const files = [
     ...inFlightFiles(queryClient.getQueryData<InFlightRead>(photosInFlightQuery.queryKey)),
@@ -125,6 +126,7 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
       photos: changedFile(head.photos, photoChanges(of("photos"), data.includeUntitled)),
       albums: changedFile(head.albums, of("albums")),
       tags: changedFile(head.tags, of("tags")),
+      genres: changedFile(head.genres, of("genres")),
       places: changedFile(head.places, of("places")),
       localizations: changedFile(head.localizations, of("localizations")),
       metainfo: changedFile(head.metainfo, of("metainfo")),
@@ -180,6 +182,7 @@ export interface PendingSummary {
   images: Record<Exclude<NetChange, undefined>, number>;
   albums: number;
   tags: number;
+  genres: number;
   places: number;
   localizations: number;
   metainfo: number;
@@ -209,6 +212,7 @@ export function summarizeChanges(
     images: { added: 0, modified: 0, deleted: 0 },
     albums: 0,
     tags: 0,
+    genres: 0,
     places: 0,
     localizations: 0,
     metainfo: 0,
@@ -250,6 +254,7 @@ export function pendingText(summary: PendingSummary): string {
     [imageCount(summary), "image"],
     [summary.albums, "album"],
     [summary.tags, "tag"],
+    [summary.genres, "genre"],
     [summary.places, "place"],
     [summary.localizations, "localization"],
     [summary.metainfo, "metadata group"],

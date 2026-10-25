@@ -83,7 +83,7 @@ function InFlightPage() {
     <Page
       wide
       title="Photos in Flight"
-      description="Photo, album, tag, place, localization, metadata group, camera override and custom lens data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
+      description="Photo, album, tag, genre, place, localization, metadata group, camera override and custom lens data waiting for Commit, or in the open “Add photo data” pull request and not merged yet."
     >
       <QueryResult query={settings} pendingLabel="Loading settings…">
         {(data) =>
@@ -627,12 +627,21 @@ function AllPhotosMark({
   );
 }
 
-type GroupKey = "albums" | "tags" | "places" | "localizations" | "metainfo" | "cameras" | "lenses";
+type GroupKey =
+  | "albums"
+  | "tags"
+  | "genres"
+  | "places"
+  | "localizations"
+  | "metainfo"
+  | "cameras"
+  | "lenses";
 
 /** The kinds of data files listed after the photos, in order, with their headings. */
 const GROUPS: [GroupKey, string][] = [
   ["albums", "Albums"],
   ["tags", "Tags"],
+  ["genres", "Photographic genres"],
   ["places", "Places"],
   ["localizations", "Localizations"],
   ["metainfo", "Metadata groups"],

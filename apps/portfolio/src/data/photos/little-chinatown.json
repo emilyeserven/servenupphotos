@@ -3,6 +3,7 @@
   "comment": null,
   "id": 132,
   "file": "DSCF1244.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Fujifilm X-T5",
   "lens": "TTARTISAN Tilt 50mm f/1.4",
   "aperture": null,
@@ -10,11 +11,15 @@
   "iso": 200,
   "focalLength": 50,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2026:10:18 01:56:33",
+  "customCreateDate": null,
   "placeName": "Manhattan Bridge",
   "customCity": "New York City",
+  "customState": null,
   "customCountry": "United States of America",
   "country": null,
+  "state": null,
   "city": null,
   "width": 7728,
   "height": 4347,
@@ -41,6 +46,7 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +54,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "exifOriginals": {
     "camera": "X-T5",
     "lens": "21.0 mm",

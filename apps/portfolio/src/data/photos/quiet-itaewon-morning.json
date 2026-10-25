@@ -3,6 +3,7 @@
   "comment": null,
   "id": 120,
   "file": "DSCF2753.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -10,11 +11,15 @@
   "iso": 125,
   "focalLength": 18,
   "gpsPosition": "37 deg 32' 6.09\" N, 126 deg 59' 38.90\" E",
+  "customGpsPosition": null,
   "createDate": "2026:05:15 21:24:28",
+  "customCreateDate": null,
   "placeName": "itaewon",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "South Korea",
+  "state": "Seoul",
   "city": null,
   "width": 7652,
   "height": 4304,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#484949",

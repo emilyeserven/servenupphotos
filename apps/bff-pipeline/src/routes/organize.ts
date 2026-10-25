@@ -11,15 +11,15 @@ function jsonBody(method: "POST" | "PUT", body: unknown) {
   };
 }
 
-/** Albums and tags, kept as JSON on GitHub, for the Organize pages. */
+/** Albums, tags and genres, kept as JSON on GitHub, for the Organize pages. */
 export const organizeRoutes: FastifyPluginAsync = async (app) => {
-  // Reads every album and tag file on the base branch and the photo data pull request; the backend
+  // Reads every album, tag and genre file on the base branch and the photo data pull request; the backend
   // gives GitHub 30s.
   app.get("/organize", async (_request, reply) =>
     relayToBackend(reply, app.log, "/organize", { timeoutMs: 35_000 }),
   );
 
-  // Saves a new album or tag as a change waiting for Commit.
+  // Saves a new album, tag or genre as a change waiting for Commit.
   app.post<{ Params: { kind: string } }>("/organize/:kind", async (request, reply) =>
     relayToBackend(
       reply,
@@ -32,6 +32,11 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
   // Gives each album its place in the order, as changes waiting for Commit.
   app.put("/organize/albums/order", async (request, reply) =>
     relayToBackend(reply, app.log, "/organize/albums/order", jsonBody("PUT", request.body)),
+  );
+
+  // Names every tag in lowercase kebab-case, its ID, as changes waiting for Commit.
+  app.put("/organize/tags/names", async (request, reply) =>
+    relayToBackend(reply, app.log, "/organize/tags/names", jsonBody("PUT", request.body ?? {})),
   );
 
   // Moves an album into another, or to the top level, as a change waiting for Commit.

@@ -3,6 +3,7 @@
   "title": "While the buildings around the palace grow and change, the japsang still look on...",
   "comment": null,
   "file": "DSCF3094.jpg",
+  "addedDate": "2026-10-22T15:45:19Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -10,11 +11,15 @@
   "iso": 125,
   "focalLength": 55.6,
   "gpsPosition": "37 deg 34' 39.38\" N, 126 deg 58' 35.94\" E",
+  "customGpsPosition": null,
   "createDate": "2026:05:17 13:08:42",
+  "customCreateDate": null,
   "placeName": "Gyeongbokgung Palace",
   "customCity": "Seoul",
+  "customState": null,
   "customCountry": null,
   "country": "South Korea",
+  "state": "Seoul",
   "city": null,
   "width": 7675,
   "height": 4317,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": "2026-10-16",
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#585f5e",

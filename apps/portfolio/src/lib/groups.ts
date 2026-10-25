@@ -1,8 +1,9 @@
 import committedAlbums from "@/data/albums/ALLALBUMS.json";
+import committedGenres from "@/data/genres/ALLGENRES.json";
 import committedTags from "@/data/tags/ALLTAGS.json";
 import { localFile } from "@/lib/localize";
 
-/** An album or tag from ALLALBUMS.json or ALLTAGS.json, which photos list by ID. */
+/** An album, tag or genre from ALLALBUMS.json, ALLTAGS.json or ALLGENRES.json, which photos list by ID. */
 export interface Group {
   id: string;
   name: string;
@@ -45,6 +46,16 @@ export const tags: Group[] =
       import: "default",
     }),
   ) ?? (committedTags as Group[]);
+
+/** Every photographic genre, such as street or landscape, from ALLGENRES.json, by name. */
+export const genres: Group[] = (
+  localFile(
+    import.meta.glob<Group[]>("../data/genres/ALLGENRES.local.json", {
+      eager: true,
+      import: "default",
+    }),
+  ) ?? (committedGenres as Group[])
+).toSorted((a, b) => a.name.localeCompare(b.name));
 
 /** The albums directly inside the album with the ID, or the top-level albums for "", in order. */
 export function subAlbums(parent: string): Group[] {

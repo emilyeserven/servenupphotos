@@ -3,6 +3,7 @@
   "title": "Overthrow?",
   "comment": null,
   "file": "IMG_5747.jpg",
+  "addedDate": "2026-10-22T19:36:17Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 5,
@@ -10,11 +11,15 @@
   "iso": 100,
   "focalLength": 18,
   "gpsPosition": "40 deg 43' 31.66\" N, 73 deg 59' 34.35\" W",
+  "customGpsPosition": null,
   "createDate": "2019:03:30 13:45:45",
+  "customCreateDate": null,
   "placeName": "noho",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "United States of America",
+  "state": "New York",
   "city": "New York City",
   "width": 5469,
   "height": 3389,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#4e4e4e",

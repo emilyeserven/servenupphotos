@@ -26,6 +26,8 @@ import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
 import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
 import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
+import { Route as GenresIndexRouteImport } from './routes/genres.index'
+import { Route as GenresIdRouteImport } from './routes/genres.$id'
 import { Route as TagsIndexRouteImport } from './routes/tags.index'
 import { Route as TagsIdRouteImport } from './routes/tags.$id'
 
@@ -114,6 +116,16 @@ const AlbumsIdRoute = AlbumsIdRouteImport.update({
   path: '/albums/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenresIndexRoute = GenresIndexRouteImport.update({
+  id: '/genres/',
+  path: '/genres/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenresIdRoute = GenresIdRouteImport.update({
+  id: '/genres/$id',
+  path: '/genres/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TagsIndexRoute = TagsIndexRouteImport.update({
   id: '/tags/',
   path: '/tags/',
@@ -142,8 +154,10 @@ export interface FileRoutesByFullPath {
   '/sizes': typeof SizesRoute
   '/update-data': typeof UpdateDataRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
   '/albums/': typeof AlbumsIndexRoute
+  '/genres/': typeof GenresIndexRoute
   '/tags/': typeof TagsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -163,8 +177,10 @@ export interface FileRoutesByTo {
   '/sizes': typeof SizesRoute
   '/update-data': typeof UpdateDataRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
   '/albums': typeof AlbumsIndexRoute
+  '/genres': typeof GenresIndexRoute
   '/tags': typeof TagsIndexRoute
 }
 export interface FileRoutesById {
@@ -185,8 +201,10 @@ export interface FileRoutesById {
   '/sizes': typeof SizesRoute
   '/update-data': typeof UpdateDataRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
   '/albums/': typeof AlbumsIndexRoute
+  '/genres/': typeof GenresIndexRoute
   '/tags/': typeof TagsIndexRoute
 }
 export interface FileRouteTypes {
@@ -208,8 +226,10 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/update-data'
     | '/albums/$id'
+    | '/genres/$id'
     | '/tags/$id'
     | '/albums/'
+    | '/genres/'
     | '/tags/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -229,8 +249,10 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/update-data'
     | '/albums/$id'
+    | '/genres/$id'
     | '/tags/$id'
     | '/albums'
+    | '/genres'
     | '/tags'
   id:
     | '__root__'
@@ -250,8 +272,10 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/update-data'
     | '/albums/$id'
+    | '/genres/$id'
     | '/tags/$id'
     | '/albums/'
+    | '/genres/'
     | '/tags/'
   fileRoutesById: FileRoutesById
 }
@@ -272,8 +296,10 @@ export interface RootRouteChildren {
   SizesRoute: typeof SizesRoute
   UpdateDataRoute: typeof UpdateDataRoute
   AlbumsIdRoute: typeof AlbumsIdRoute
+  GenresIdRoute: typeof GenresIdRoute
   TagsIdRoute: typeof TagsIdRoute
   AlbumsIndexRoute: typeof AlbumsIndexRoute
+  GenresIndexRoute: typeof GenresIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
 }
 
@@ -398,6 +424,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlbumsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/genres/': {
+      id: '/genres/'
+      path: '/genres'
+      fullPath: '/genres/'
+      preLoaderRoute: typeof GenresIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/genres/$id': {
+      id: '/genres/$id'
+      path: '/genres/$id'
+      fullPath: '/genres/$id'
+      preLoaderRoute: typeof GenresIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tags/': {
       id: '/tags/'
       path: '/tags'
@@ -432,8 +472,10 @@ const rootRouteChildren: RootRouteChildren = {
   SizesRoute: SizesRoute,
   UpdateDataRoute: UpdateDataRoute,
   AlbumsIdRoute: AlbumsIdRoute,
+  GenresIdRoute: GenresIdRoute,
   TagsIdRoute: TagsIdRoute,
   AlbumsIndexRoute: AlbumsIndexRoute,
+  GenresIndexRoute: GenresIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
 }
 export const routeTree = rootRouteImport

@@ -9,6 +9,7 @@ import {
 } from "@/api/data";
 import { ColorData } from "@/components/color-data";
 import { QueryResult } from "@/components/query-result";
+import { ReadProgressView } from "@/components/read-progress";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -111,7 +112,10 @@ function ColorsResultView({ recompute, ...apply }: ResultViewProps) {
   const preview = useQuery(colorsPreviewQuery(recompute));
   return (
     <section aria-label="Preview" className="flex flex-col gap-4 border-t pt-6">
-      <QueryResult query={preview} pendingLabel="Reading the photo JSON and the originals' colors…">
+      <QueryResult
+        query={preview}
+        pending={<ReadProgressView task="colors" label="Reading the photo JSON…" />}
+      >
         {(data) => <PreviewBody preview={data} {...apply} />}
       </QueryResult>
     </section>
@@ -187,6 +191,7 @@ function ApplyButton({ preview, pending, error, onApply }: PreviewBodyProps) {
       onClick={onApply}
     >
       <FailedNote failed={preview.files.length - ready} />
+      {pending && <ReadProgressView task="colors" label="Reading the photo JSON…" />}
     </SaveButton>
   );
 }

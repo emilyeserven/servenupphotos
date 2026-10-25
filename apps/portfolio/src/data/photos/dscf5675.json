@@ -3,6 +3,7 @@
   "comment": null,
   "id": 251,
   "file": "DSCF5675.jpg",
+  "addedDate": "2026-10-23T23:42:14Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -12,10 +13,13 @@
   "gpsPosition": "37 deg 33' 42.29\" N, 126 deg 59' 9.03\" E",
   "customGpsPosition": null,
   "createDate": "2026:05:22 22:39:59",
+  "customCreateDate": null,
   "placeName": "myeongdong-street",
   "customCity": "Seoul",
+  "customState": null,
   "customCountry": null,
   "country": "South Korea",
+  "state": "Seoul",
   "city": null,
   "width": 6721,
   "height": 3781,
@@ -45,6 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -52,6 +57,7 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {

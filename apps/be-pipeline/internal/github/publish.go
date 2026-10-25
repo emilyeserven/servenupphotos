@@ -3,6 +3,7 @@ package github
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -32,10 +33,11 @@ type Photo struct {
 	// File is the photo's original file name.
 	File      string         `json:"file"`
 	Sanitized exif.Sanitized `json:"sanitized"`
-	// Albums and Tags are the IDs of the albums and tags to save the photo
-	// in; none when they're left out.
+	// Albums, Tags and Genres are the IDs of the albums, tags and
+	// photographic genres to save the photo in; none when they're left out.
 	Albums []string `json:"albums,omitempty"`
 	Tags   []string `json:"tags,omitempty"`
+	Genres []string `json:"genres,omitempty"`
 	// Places are where the photo was taken, as places from PLACES.json;
 	// none when they're left out.
 	Places []PhotoPlace `json:"places,omitempty"`
@@ -72,6 +74,9 @@ type photoJSON struct {
 	// Albums and Tags are the IDs of the albums and tags the photo is in.
 	Albums []string `json:"albums"`
 	Tags   []string `json:"tags"`
+	// Genres are the IDs of the photographic genres the photo is in, such
+	// as "street".
+	Genres []string `json:"genres"`
 	// Places are where the photo was taken, by place ID, each with how the
 	// photo relates to it. The place name is kept in PlaceName too, for the
 	// portfolio.
@@ -140,6 +145,7 @@ func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 	}
 	return photoJSON{
 		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
+		Genres: []string{},
 		Places: []PhotoPlace{}, SpotlightZones: []string{}, SocialPosts: []SocialPost{},
 	}
 }
@@ -217,6 +223,7 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	id := w.nextID(folder)
 	data.ID = &id
 	data.Albums, data.Tags = appendMissing(data.Albums, photo.Albums), appendMissing(data.Tags, photo.Tags)
+	data.Genres = appendMissing(data.Genres, photo.Genres)
 	data.Places = append(data.Places, photo.Places...)
 	data.Colors = photo.Colors
 	content, err := json.MarshalIndent(data, "", "  ")
@@ -299,8 +306,10 @@ func check(res response, err error, doing string) *PublishError {
 // checkStatus is check's message for res, without GitHub's answer.
 func checkStatus(res response, err error, doing string) *PublishError {
 	switch {
+	case errors.Is(err, context.DeadlineExceeded):
+		return publishErr(http.StatusGatewayTimeout, "Ran out of time %s: GitHub didn't answer before the backend's time limit.", doing)
 	case err != nil:
-		return publishErr(http.StatusBadGateway, "Couldn't reach GitHub.")
+		return publishErr(http.StatusBadGateway, "Couldn't reach GitHub when %s: %v", doing, err)
 	case res.Status >= 200 && res.Status < 300:
 		return nil
 	case res.Status == http.StatusUnauthorized:

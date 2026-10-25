@@ -15,8 +15,12 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("POST /data/location-names/preview", handlePreviewLocationNames(d.store, d.gh))
 	mux.HandleFunc("POST /data/location-names", handleApplyLocationNames(d.store, d.gh))
 	exifs := newExifCache()
-	mux.HandleFunc("POST /data/missing-fields/preview", handlePreviewBackfill(d.extractor, d.store, d.gh, storage.GetPhoto, storage.ThumbnailCrop, exifs))
-	mux.HandleFunc("POST /data/missing-fields", handleApplyBackfill(d.extractor, d.store, d.gh, storage.GetPhoto, storage.ThumbnailCrop, exifs))
-	mux.HandleFunc("POST /data/colors/preview", handlePreviewColors(d.store, d.gh, storage.GetPhoto, d.colors))
-	mux.HandleFunc("POST /data/colors", handleWriteColors(d.store, d.gh, storage.GetPhoto, d.colors))
+	progress := newReadProgress()
+	mux.HandleFunc("GET /data/progress/{task}", handleReadProgress(progress))
+	mux.HandleFunc("POST /data/missing-fields/preview", progress.tracked("missing-fields",
+		handlePreviewBackfill(d.extractor, d.store, d.gh, storage.GetPhoto, storage.ThumbnailCrop, exifs)))
+	mux.HandleFunc("POST /data/missing-fields", progress.tracked("missing-fields",
+		handleApplyBackfill(d.extractor, d.store, d.gh, storage.GetPhoto, storage.ThumbnailCrop, exifs)))
+	mux.HandleFunc("POST /data/colors/preview", progress.tracked("colors", handlePreviewColors(d.store, d.gh, storage.GetPhoto, d.colors)))
+	mux.HandleFunc("POST /data/colors", progress.tracked("colors", handleWriteColors(d.store, d.gh, storage.GetPhoto, d.colors)))
 }

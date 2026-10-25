@@ -56,7 +56,7 @@ func TestFindGapsAndFill(t *testing.T) {
 		"customCity", "customState", "customCountry", "state",
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
 		"images.preview", "images.thumbnail", "images.thumbnailpreview", "images.thumbnailcrop",
-		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate", "exifOriginals", "manualAperture", "customLens", "albums", "tags", "places",
+		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate", "exifOriginals", "manualAperture", "customLens", "albums", "tags", "genres", "places",
 		"spotlightZones", "spotlightFocus", "socialPosts", "reEdit",
 	}
 	if !reflect.DeepEqual(fields, want) {
@@ -110,6 +110,7 @@ func TestFindGapsAndFill(t *testing.T) {
   "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -253,7 +254,7 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 36 || got.PullRequestNumber != 1 {
+	if got.Files != 1 || got.Fields != 37 || got.PullRequestNumber != 1 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	staged := repo.staged(t)
@@ -351,5 +352,26 @@ func TestBackfillThumbnailCropFromURL(t *testing.T) {
   },`
 	if content := repo.staged(t)[photosDir+"DSC0004.json"]; !strings.Contains(content, want) {
 		t.Errorf("content = %s", content)
+	}
+}
+
+func TestFillGapsInFileOrder(t *testing.T) {
+	// "images" comes before "file" here, unlike in new files, so its missing
+	// fields go earlier in the file than addedDate, after "file".
+	content := []byte("{\n  \"id\": 1,\n  \"title\": \"Tokyo\",\n  \"images\": {\n    \"full\": \"f\"\n  },\n  \"file\": \"A.jpg\"\n}\n")
+	gaps, err := findGaps(content, photoTemplate())
+	if err != nil {
+		t.Fatalf("findGaps() error = %v", err)
+	}
+	got := fillGaps(content, gaps)
+	var parsed map[string]any
+	if err := json.Unmarshal(got, &parsed); err != nil {
+		t.Fatalf("filled file isn't JSON (%v):\n%s", err, got)
+	}
+	if _, ok := parsed["addedDate"]; !ok {
+		t.Errorf("filled file has no addedDate:\n%s", got)
+	}
+	if images, _ := parsed["images"].(map[string]any); images["thumbnail"] != nil || len(images) < 2 {
+		t.Errorf("images = %v, want its missing fields added", images)
 	}
 }

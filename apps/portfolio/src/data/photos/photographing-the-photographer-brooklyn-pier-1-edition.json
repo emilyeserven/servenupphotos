@@ -3,6 +3,7 @@
   "title": "Photographing the Photographer: Brooklyn Pier 1 Edition",
   "comment": null,
   "file": "IMG_8631.jpg",
+  "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 7.1,
@@ -10,11 +11,15 @@
   "iso": 100,
   "focalLength": 18,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2017:10:21 11:56:31",
+  "customCreateDate": null,
   "placeName": "brooklyn-bridge-park-pier-1",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": null,
+  "state": null,
   "city": null,
   "width": 5999,
   "height": 3597,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#7e8690",

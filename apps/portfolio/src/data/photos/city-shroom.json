@@ -3,6 +3,7 @@
   "title": "City Shroom",
   "comment": null,
   "file": "IMG_4231.jpg",
+  "addedDate": "2026-10-22T19:36:17Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S55-250mm f/4-5.6 IS STM",
   "aperture": 5.6,
@@ -10,11 +11,15 @@
   "iso": 400,
   "focalLength": 250,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2018:10:13 16:13:18",
+  "customCreateDate": null,
   "placeName": "Midtown",
   "customCity": "New York City",
+  "customState": null,
   "customCountry": null,
   "country": null,
+  "state": null,
   "city": null,
   "width": 5118,
   "height": 2918,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#56593d",

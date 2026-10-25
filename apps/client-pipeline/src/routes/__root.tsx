@@ -47,7 +47,7 @@ function RootLayout() {
         open={sidebarOpen}
         onOpenChange={setSidebarOpen}
         // Just wide enough for the widest line, "Local control panel" beside its icon, plus a little room.
-        style={{ "--sidebar-width": "12rem" } as React.CSSProperties}
+        style={{ "--sidebar-width": "13rem" } as React.CSSProperties}
       >
         <CombinedDataSync />
         <SyncStatus />

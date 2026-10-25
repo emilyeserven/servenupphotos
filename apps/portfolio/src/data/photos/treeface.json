@@ -3,6 +3,7 @@
   "comment": null,
   "id": 103,
   "file": "IMG_7930.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S55-250mm f/4-5.6 IS STM",
   "aperture": 7.1,
@@ -10,11 +11,15 @@
   "iso": 1600,
   "focalLength": 55,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2020:06:14 13:08:17",
+  "customCreateDate": null,
   "placeName": "paine-open",
   "customCity": "Easton",
+  "customState": null,
   "customCountry": "United States of America",
   "country": null,
+  "state": null,
   "city": null,
   "width": 2554,
   "height": 1440,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#7c9054",

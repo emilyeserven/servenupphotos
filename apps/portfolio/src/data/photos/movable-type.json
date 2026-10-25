@@ -3,6 +3,7 @@
   "comment": null,
   "id": 84,
   "file": "IMG_1630.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Canon EOS REBEL T3i",
   "lens": "EF-S18-55mm f/3.5-5.6 IS II",
   "aperture": 5,
@@ -10,11 +11,15 @@
   "iso": 500,
   "focalLength": 43,
   "gpsPosition": "41 deg 9' 1.66\" N, 73 deg 29' 51.12\" W",
+  "customGpsPosition": null,
   "createDate": "2016:06:05 03:35:46",
+  "customCreateDate": null,
   "placeName": "new-canaan-historical-society",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "United States of America",
+  "state": "Connecticut",
   "city": "New Canaan",
   "width": 5184,
   "height": 2905,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#494948",

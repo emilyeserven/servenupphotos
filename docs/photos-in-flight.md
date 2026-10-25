@@ -29,7 +29,7 @@ open), so the drafts and Undecided panels below are easy to reach.
 
 Above the photos, a filter bar has **Any**, **With** and **Without** for each of: **Title** (a `title` that isn't
 blank), **Place** (any `places`, or a `placeName`), **GPS position** (a `customGpsPosition` or the EXIF
-`gpsPosition`), **Albums**, **Tags** and **Re-edit mark** (`reEdit`). The chosen filters all apply together, to the
+`gpsPosition`), **Albums**, **Tags**, **Genres** and **Re-edit mark** (`reEdit`). The chosen filters all apply together, to the
 list, the Undecided queue and the drafts on the base branch, reading each photo's JSON with its
 [local edits](combined-data-store.md#local-edits) made. With any chosen, it says how many photos are shown, with
 **Clear filters**. A photo whose JSON couldn't be read is hidden while a filter is chosen. They're kept in the URL
@@ -85,6 +85,6 @@ Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores th
 new square. Saving any other change to a file without `images.thumbnailcrop` adds it too. The new square is in R2 at
 once; the JSON goes to GitHub with the next **Commit**.
 
-Under the photos it lists the album, tag, place, localization, metadata group, camera override and custom lens files the pull request or the changes waiting for
-Commit add or change, each with its JSON and a check mark when it's an entry of `ALLALBUMS.json`, `ALLTAGS.json`,
+Under the photos it lists the album, tag, genre, place, localization, metadata group, camera override and custom lens files the pull request or the changes waiting for
+Commit add or change, each with its JSON and a check mark when it's an entry of `ALLALBUMS.json`, `ALLTAGS.json`, `ALLGENRES.json`,
 `PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json` or `LENSES.json` at the same head, and the pull request summary counts them.

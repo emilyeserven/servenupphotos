@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"sync"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
@@ -148,8 +147,7 @@ func noColorsErr(failed int) *PublishError {
 // left out.
 func readColors(ctx context.Context, scan baseURLScan, read ColorReader, recompute bool) []*ColorFile {
 	files := make([]*ColorFile, len(scan.files))
-	var wg sync.WaitGroup
-	sem := make(chan struct{}, exifConcurrency)
+	var reads []func()
 	for i, f := range scan.files {
 		if f.err != "" || (hasCurrentColors(f.content) && !recompute) {
 			continue
@@ -161,20 +159,16 @@ func readColors(ctx context.Context, scan baseURLScan, read ColorReader, recompu
 			file.Error = "It has no images.key, so its original can't be found in R2."
 			continue
 		}
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			sem <- struct{}{}
-			defer func() { <-sem }()
+		reads = append(reads, func() {
 			analysis, msg := read(ctx, key)
 			if msg != "" {
 				file.Error = msg
 				return
 			}
 			file.Colors = &analysis
-		}()
+		})
 	}
-	wg.Wait()
+	readOriginals(ctx, reads)
 	return files
 }
 

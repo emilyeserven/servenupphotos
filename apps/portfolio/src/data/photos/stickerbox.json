@@ -3,6 +3,7 @@
   "title": "Stickerbox",
   "comment": null,
   "file": "IMG_5647.jpg",
+  "addedDate": "2026-10-22T19:36:17Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 6.3,
@@ -10,11 +11,15 @@
   "iso": 100,
   "focalLength": 47,
   "gpsPosition": "40 deg 42' 57.40\" N, 73 deg 59' 22.79\" W",
+  "customGpsPosition": null,
   "createDate": "2019:03:30 13:41:15",
+  "customCreateDate": null,
   "placeName": "lower-east-side",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "United States of America",
+  "state": "New York",
   "city": "New York City",
   "width": 6000,
   "height": 3688,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#5f555a",

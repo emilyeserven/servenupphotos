@@ -17,12 +17,13 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// Kind is a way of organizing photos: albums or tags. Each album or tag is
-// one JSON file in its kind's folder, named by its ID, and CI combines them
-// into the kind's AllFile. A photo lists the IDs of its albums and tags in
-// its "albums" and "tags" keys. An album may have one parent album, by ID.
+// Kind is a way of organizing photos: albums, tags or photographic genres.
+// Each album, tag or genre is one JSON file in its kind's folder, named by
+// its ID, and CI combines them into the kind's AllFile. A photo lists the IDs
+// of its albums, tags and genres in its "albums", "tags" and "genres" keys.
+// An album may have one parent album, by ID.
 type Kind struct {
-	// Name is the kind's singular name, as shown: "album" or "tag".
+	// Name is the kind's singular name, as shown: "album", "tag" or "genre".
 	Name string
 	// Folder is the data folder's subfolder of the kind's files.
 	Folder string
@@ -30,12 +31,14 @@ type Kind struct {
 	AllFile string
 }
 
-// The kinds, which share one namespace of IDs and names so a photo's albums
-// and tags never collide.
+// The kinds, which share one namespace of IDs and names so a photo's albums,
+// tags and genres never collide.
 var (
 	Albums = Kind{Name: "album", Folder: "albums", AllFile: "ALLALBUMS.json"}
 	Tags   = Kind{Name: "tag", Folder: "tags", AllFile: "ALLTAGS.json"}
-	kinds  = []Kind{Albums, Tags}
+	// Genres are the photographic genres, such as street or landscape.
+	Genres = Kind{Name: "genre", Folder: "genres", AllFile: "ALLGENRES.json"}
+	kinds  = []Kind{Albums, Tags, Genres}
 )
 
 // KindByFolder returns the kind whose folder is folder, such as "albums".
@@ -129,7 +132,8 @@ type Group struct {
 	Error string `json:"error,omitempty"`
 }
 
-// OrganizeResult is every album and tag on the base branch and in flight.
+// OrganizeResult is every album, tag and genre on the base branch and in
+// flight.
 type OrganizeResult struct {
 	Repo   string `json:"repo"`
 	Folder string `json:"folder"`
@@ -138,9 +142,10 @@ type OrganizeResult struct {
 	PullRequest *InFlightPullRequest `json:"pullRequest"`
 	Albums      []Group              `json:"albums"`
 	Tags        []Group              `json:"tags"`
+	Genres      []Group              `json:"genres"`
 }
 
-// Organize lists the albums and tags as the next Commit will have them, with
+// Organize lists the albums, tags and genres as the next Commit will have them, with
 // the ones only on the base branch, sorted by their order and then by name.
 func (c *Client) Organize(ctx context.Context, gh settings.GitHub) (OrganizeResult, error) {
 	w, perr := c.workspace(ctx, gh)
@@ -149,13 +154,13 @@ func (c *Client) Organize(ctx context.Context, gh settings.GitHub) (OrganizeResu
 	}
 	result := OrganizeResult{Repo: w.t.repo.FullName, Folder: w.root, Branch: w.t.base, PullRequest: w.inFlightPullRequest()}
 	groups := w.groups()
-	result.Albums, result.Tags = groups[Albums.Folder], groups[Tags.Folder]
+	result.Albums, result.Tags, result.Genres = groups[Albums.Folder], groups[Tags.Folder], groups[Genres.Folder]
 	return result, nil
 }
 
 // CreateGroup saves group as a new kind file, <folder>/<kind folder>/<id>.json,
-// in the pending changes, as Publish does. It fails when an album or tag
-// already has the same ID or name, ignoring case.
+// in the pending changes, as Publish does. It fails when an album, tag or
+// genre already has the same ID or name, ignoring case.
 func (c *Client) CreateGroup(ctx context.Context, gh settings.GitHub, kind Kind, group NewGroup) (PublishResult, error) {
 	content, perr := validGroup(kind, group)
 	if perr != nil {
@@ -199,6 +204,9 @@ func validGroup(kind Kind, group NewGroup) (groupJSON, *PublishError) {
 			"Use an ID of up to %d lowercase letters and numbers, with single dashes between words.", maxGroupIDLength)
 	case utf8.RuneCountInString(g.Description) > maxGroupDescriptionLength:
 		return g, publishErr(http.StatusBadRequest, "Keep the description to %d characters.", maxGroupDescriptionLength)
+	case kind == Tags && g.Name != g.ID:
+		return g, publishErr(http.StatusBadRequest,
+			"Write a tag's name in lowercase kebab-case, the same as its ID, such as %q.", g.ID)
 	}
 	if parent := strings.TrimSpace(group.Parent); parent != "" {
 		if kind != Albums {

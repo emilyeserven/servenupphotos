@@ -405,7 +405,7 @@ function ResultsColumn({
   );
 }
 
-/** The new photo's albums and tags, saved in its JSON with Save. */
+/** The new photo's albums, tags and genres, saved in its JSON with Save. */
 function NewPhotoGroups({
   groups,
   onGroupsChange,
@@ -635,7 +635,7 @@ function ExifResultBody({ mutation, sanitized, groups }: ExifResultProps) {
   );
 }
 
-/** The JSON Save writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload, then its albums and tags. */
+/** The JSON Save writes: the photo's file name and its sanitized EXIF, with the images' URLs and key after an upload, then its albums, tags and genres. */
 function UploadJson({
   file,
   sanitized,
@@ -646,13 +646,10 @@ function UploadJson({
   groups: PhotoGroups;
 }) {
   if (!sanitized) return <ExifData exif={null} />;
-  // The title and comment first, and the albums and tags last, as Save writes them.
+  // The title and comment first, and the albums, tags and genres last, as Save writes them.
   const { title, comment, ...rest } = sanitized;
   return (
-    <JsonCodeBlock
-      value={{ title, comment, file, ...rest, albums: groups.albums, tags: groups.tags }}
-      title="JSON to Upload"
-    />
+    <JsonCodeBlock value={{ title, comment, file, ...rest, ...groups }} title="JSON to Upload" />
   );
 }
 

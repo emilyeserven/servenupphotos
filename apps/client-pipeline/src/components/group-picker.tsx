@@ -42,13 +42,13 @@ interface GroupComboboxProps {
   onChange: (value: string[]) => void;
   multiple?: boolean;
   disabled?: boolean;
-  /** Albums or tags that can't be chosen, such as an album's own sub-albums for its parent. */
+  /** Albums, tags or genres that can't be chosen, such as an album's own sub-albums for its parent. */
   exclude?: ReadonlySet<string>;
   placeholder?: string;
   "aria-describedby"?: string;
 }
 
-/** A combobox of every album or tag on GitHub, read once with the Organize pages' query. */
+/** A combobox of every album, tag or genre on GitHub, read once with the Organize pages' query. */
 export function GroupCombobox({
   kind,
   exclude,
@@ -71,8 +71,8 @@ export function GroupCombobox({
   );
 }
 
-/** One album or tag, as a placeholder or message says it. */
-const ONE: Record<GroupKind, string> = { albums: "an album", tags: "a tag" };
+/** One album, tag or genre, as a placeholder or message says it. */
+const ONE: Record<GroupKind, string> = { albums: "an album", tags: "a tag", genres: "a genre" };
 
 function groupPlaceholder(
   kind: GroupKind,
@@ -99,7 +99,7 @@ interface PhotoGroupFieldsProps {
   albumWarning?: ReactNode;
 }
 
-/** The album and tag comboboxes, warning when a photo would be in more than one album. */
+/** The album, tag and genre comboboxes, warning when a photo would be in more than one album. */
 export function PhotoGroupFields({
   idPrefix,
   value,
@@ -109,7 +109,6 @@ export function PhotoGroupFields({
 }: PhotoGroupFieldsProps) {
   const organize = useQuery(organizeQuery);
   const albumsId = `${idPrefix}-albums`;
-  const tagsId = `${idPrefix}-tags`;
   return (
     <div className="flex flex-col gap-4">
       {organize.isError && <p className="text-destructive text-sm">{organize.error.message}</p>}
@@ -125,16 +124,18 @@ export function PhotoGroupFields({
         />
         <AlbumHint id={`${albumsId}-hint`} count={value.albums.length} warning={albumWarning} />
       </div>
-      <div className="flex flex-col gap-2">
-        <FieldLabel htmlFor={tagsId} kind="tags" />
-        <GroupCombobox
-          id={tagsId}
-          kind="tags"
-          value={value.tags}
-          disabled={disabled}
-          onChange={(tags) => onChange({ ...value, tags })}
-        />
-      </div>
+      {(["tags", "genres"] as const).map((kind) => (
+        <div key={kind} className="flex flex-col gap-2">
+          <FieldLabel htmlFor={`${idPrefix}-${kind}`} kind={kind} />
+          <GroupCombobox
+            id={`${idPrefix}-${kind}`}
+            kind={kind}
+            value={value[kind]}
+            disabled={disabled}
+            onChange={(ids) => onChange({ ...value, [kind]: ids })}
+          />
+        </div>
+      ))}
     </div>
   );
 }
@@ -157,14 +158,21 @@ function AlbumHint({ id, count, warning }: { id: string; count: number; warning?
   );
 }
 
+/** Each kind's field label and the Organize page that manages it. */
+const FIELDS = {
+  albums: { label: "Albums", to: "/albums" },
+  tags: { label: "Tags", to: "/tags" },
+  genres: { label: "Photographic genres", to: "/genres" },
+} as const;
+
 function FieldLabel({ htmlFor, kind }: { htmlFor: string; kind: GroupKind }) {
   return (
     <div className="flex items-baseline justify-between gap-2">
       <label htmlFor={htmlFor} className="text-sm font-medium">
-        {kind === "albums" ? "Albums" : "Tags"}
+        {FIELDS[kind].label}
       </label>
       <Link
-        to={kind === "albums" ? "/albums" : "/tags"}
+        to={FIELDS[kind].to}
         className="text-muted-foreground text-xs underline-offset-4 hover:underline"
       >
         Manage {kind}
@@ -186,17 +194,17 @@ export function Warning({ children }: { children: ReactNode }) {
 interface PhotoGroupsCardProps {
   value: PhotoGroups;
   onChange: (value: PhotoGroups) => void;
-  /** What happens to the albums and tags when they're saved. */
+  /** What happens to the albums, tags and genres when they're saved. */
   description: string;
   disabled: boolean;
 }
 
-/** The photo's albums and tags, saved as the IDs in its JSON's "albums" and "tags". */
+/** The photo's albums, tags and genres, saved as the IDs in its JSON's "albums", "tags" and "genres". */
 export function PhotoGroupsCard({ value, onChange, description, disabled }: PhotoGroupsCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Albums and tags</CardTitle>
+        <CardTitle>Albums, tags and genres</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>

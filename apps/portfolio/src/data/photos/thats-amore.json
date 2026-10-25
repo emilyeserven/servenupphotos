@@ -3,6 +3,7 @@
   "comment": null,
   "id": 131,
   "file": "DSCF0848.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Fujifilm X-T5",
   "lens": "TTARTISAN Tilt 50mm f/1.4",
   "aperture": null,
@@ -10,11 +11,15 @@
   "iso": 125,
   "focalLength": 50,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2026:10:17 23:01:54",
+  "customCreateDate": null,
   "placeName": "little-italy",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": null,
+  "state": null,
   "city": null,
   "width": 7728,
   "height": 4347,
@@ -41,6 +46,7 @@
   "socialMediaPublishDate": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +54,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "exifOriginals": {
     "camera": "X-T5",
     "lens": "21.0 mm",

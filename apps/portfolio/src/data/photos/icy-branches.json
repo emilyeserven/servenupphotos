@@ -3,6 +3,7 @@
   "comment": null,
   "id": 77,
   "file": "IMG_0010.jpg",
+  "addedDate": "2026-10-23T19:01:30Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 5.6,
@@ -10,11 +11,15 @@
   "iso": 320,
   "focalLength": 135,
   "gpsPosition": "41 deg 3' 16.50\" N, 73 deg 32' 41.53\" W",
+  "customGpsPosition": null,
   "createDate": "2019:01:26 16:17:20",
+  "customCreateDate": null,
   "placeName": "mill-river-park",
   "customCity": null,
+  "customState": null,
   "customCountry": null,
   "country": "United States of America",
+  "state": "Connecticut",
   "city": "Stamford",
   "width": 6000,
   "height": 3718,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -48,7 +57,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#585a62",

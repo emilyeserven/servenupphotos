@@ -3,6 +3,7 @@
   "title": "Just Passing By",
   "comment": null,
   "file": "IMG_3526.jpg",
+  "addedDate": "2026-10-22T20:14:52Z",
   "camera": "Canon EOS 80D",
   "lens": "EF50mm f/1.8 II",
   "aperture": 5.6,
@@ -10,11 +11,15 @@
   "iso": 100,
   "focalLength": 50,
   "gpsPosition": null,
+  "customGpsPosition": null,
   "createDate": "2018:10:12 12:34:58",
+  "customCreateDate": null,
   "placeName": "Welling Court Mural Project",
   "customCity": "New York City",
+  "customState": null,
   "customCountry": "United States of America",
   "country": null,
+  "state": null,
   "city": null,
   "width": 6000,
   "height": 3447,
@@ -39,8 +44,12 @@
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -52,7 +61,9 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
+  "reEdit": null,
   "colors": {
     "average": {
       "hex": "#6d4d41",

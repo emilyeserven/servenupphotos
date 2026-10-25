@@ -3,6 +3,7 @@
   "comment": null,
   "id": 240,
   "file": "IMG_8026.jpg",
+  "addedDate": "2026-10-23T23:42:14Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 5.6,
@@ -12,10 +13,13 @@
   "gpsPosition": null,
   "customGpsPosition": null,
   "createDate": "2022:12:28 13:28:15",
+  "customCreateDate": null,
   "placeName": "lintilhac-park",
   "customCity": "Stowe",
+  "customState": null,
   "customCountry": "United States of America",
   "country": null,
+  "state": null,
   "city": null,
   "width": 2560,
   "height": 1440,
@@ -45,6 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": [],
+  "genres": [],
   "places": [
     {
       "relation": "",
@@ -52,6 +57,7 @@
     }
   ],
   "spotlightZones": [],
+  "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {
