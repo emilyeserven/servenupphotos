@@ -1,7 +1,7 @@
 {
-  "id": 353,
   "title": null,
   "comment": null,
+  "id": 353,
   "file": "DSCF8051.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-thumbnail.webp?crop=0,525,4504",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b47a6da152b-dscf8051-thumbnailpreview.webp?crop=0,525,4504",
     "thumbnailcrop": {
       "x": 0,
-      "y": 901,
+      "y": 525,
       "size": 4504,
       "outputSize": 500
     }
@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["alley", "signage", "night", "rain", "reflections", "umbrellas", "yokocho", "neon"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
