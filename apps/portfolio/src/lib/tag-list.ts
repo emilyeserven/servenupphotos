@@ -16,6 +16,8 @@ export interface TagEntry {
 /** A parent tag on the Tags page with every tag under it, however deep. */
 export interface TagSection {
   parent: TagEntry;
+  /** The newest few photos tagged with the parent tag itself rather than a tag under it. */
+  own: ImagePhoto[];
   children: TagEntry[];
 }
 
@@ -32,6 +34,12 @@ function entryOf(tag: Group, between: Group[], all: Photo[]): TagEntry {
     count: tagged.length,
     previews: newestWithImages(tagged).slice(0, PREVIEW_COUNT),
   };
+}
+
+/** The newest few photos with images tagged with the tag itself, not counting the tags under it. */
+function ownPreviews(tag: Group, all: Photo[]): ImagePhoto[] {
+  const tagged = all.filter((photo) => photo.tags.includes(tag.id));
+  return newestWithImages(tagged).slice(0, PREVIEW_COUNT);
 }
 
 /** By name. */
@@ -75,6 +83,7 @@ export function tagSections(all: Photo[] = photos): TagSection[] {
   return topTags()
     .map((tag) => ({
       parent: entryOf(tag, [], all),
+      own: ownPreviews(tag, all),
       children: withPhotos(descendants(tag, [], new Set([tag.id]), all)),
     }))
     .filter((section) => section.parent.count > 0);
