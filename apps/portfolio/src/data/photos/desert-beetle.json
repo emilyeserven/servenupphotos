@@ -1,43 +1,43 @@
 {
-  "id": 361,
-  "title": null,
+  "title": "Desert Beetle",
   "comment": null,
-  "file": "20250120_133004.jpg",
-  "addedDate": null,
+  "id": 365,
+  "file": "20250124_142744.jpg",
+  "addedDate": "2026-10-26T01:04:14Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
-  "exposure": "1/640",
+  "exposure": "1/1900",
   "iso": 12,
   "focalLength": 6.3,
-  "gpsPosition": "25 deg 43' 26.17\" N, 32 deg 36' 19.34\" E",
+  "gpsPosition": "29 deg 15' 51.27\" N, 30 deg 1' 19.76\" E",
   "customGpsPosition": null,
-  "createDate": "2025:01:20 13:30:04",
+  "createDate": "2025:01:24 14:27:44",
   "customCreateDate": null,
   "placeName": null,
-  "customCity": null,
+  "customCity": "Wadi El-Hitan",
   "customState": null,
   "customCountry": null,
   "country": "Egypt",
-  "state": "Luxor",
-  "city": "Markaz al Uqşur",
-  "width": 3478,
-  "height": 1958,
+  "state": "Giza",
+  "city": "6th of October",
+  "width": 3622,
+  "height": 2039,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004.jpg",
-    "key": "photos/9d1f55510ba4-20250120-133004.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-thumbnailpreview.webp",
+    "full": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744.jpg",
+    "key": "photos/70a9a18ba4af-20250124-142744.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnail.webp?crop=930,278,1761",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnailpreview.webp?crop=930,278,1761",
     "thumbnailcrop": {
-      "x": 760,
-      "y": 0,
-      "size": 1958,
+      "x": 930,
+      "y": 278,
+      "size": 1761,
       "outputSize": 500
     }
   },
@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "cars",
+    "desert",
+    "vintage-cars",
+    "van",
+    "rock-formations",
+    "mud-brick",
+    "domes",
+    "clouds"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -57,63 +66,63 @@
   "reEdit": null,
   "colors": {
     "average": {
-      "hex": "#c3b6a6",
+      "hex": "#978778",
       "lab": {
-        "l": 74.81,
-        "a": 1.98,
-        "b": 9.75
+        "l": 57.35,
+        "a": 3.62,
+        "b": 10.09
       },
       "hcl": {
-        "h": 78.54,
-        "c": 9.95,
-        "l": 74.81
+        "h": 70.24,
+        "c": 10.72,
+        "l": 57.35
       }
     },
     "buckets": [
       {
         "name": "red",
         "hex": "#ff0000",
-        "share": 0.0004
+        "share": 0.0012
       },
       {
         "name": "orange",
         "hex": "#ff8000",
-        "share": 0.5538
+        "share": 0.4802
       },
       {
         "name": "yellow",
         "hex": "#ffff00",
-        "share": 0.0018
+        "share": 0.0263
       },
       {
         "name": "chartreuse",
         "hex": "#80ff00",
-        "share": 0.0002
+        "share": 0
       },
       {
         "name": "green",
         "hex": "#00ff00",
-        "share": 0.0001
+        "share": 0
       },
       {
         "name": "spring green",
         "hex": "#00ff80",
-        "share": 0.0003
+        "share": 0
       },
       {
         "name": "cyan",
         "hex": "#00ffff",
-        "share": 0.0001
+        "share": 0.0015
       },
       {
         "name": "azure",
         "hex": "#0080ff",
-        "share": 0.104
+        "share": 0.1564
       },
       {
         "name": "blue",
         "hex": "#0000ff",
-        "share": 0
+        "share": 0.0042
       },
       {
         "name": "violet",
@@ -132,133 +141,133 @@
       }
     ],
     "neutrals": {
-      "share": 0.3393,
+      "share": 0.3302,
       "histogram": [
         {
           "from": 0,
           "to": 5,
           "hex": "#090909",
-          "share": 0.0001
+          "share": 0.0021
         },
         {
           "from": 5,
           "to": 10,
           "hex": "#171717",
-          "share": 0.0004
+          "share": 0.0077
         },
         {
           "from": 10,
           "to": 15,
           "hex": "#212121",
-          "share": 0.0018
+          "share": 0.0099
         },
         {
           "from": 15,
           "to": 20,
           "hex": "#2b2b2b",
-          "share": 0.0034
+          "share": 0.0117
         },
         {
           "from": 20,
           "to": 25,
           "hex": "#363636",
-          "share": 0.004
+          "share": 0.0062
         },
         {
           "from": 25,
           "to": 30,
           "hex": "#414141",
-          "share": 0.0065
+          "share": 0.0039
         },
         {
           "from": 30,
           "to": 35,
           "hex": "#4c4c4c",
-          "share": 0.0092
+          "share": 0.0024
         },
         {
           "from": 35,
           "to": 40,
           "hex": "#585858",
-          "share": 0.0093
+          "share": 0.0031
         },
         {
           "from": 40,
           "to": 45,
           "hex": "#646464",
-          "share": 0.0078
+          "share": 0.0021
         },
         {
           "from": 45,
           "to": 50,
           "hex": "#717171",
-          "share": 0.0044
+          "share": 0.0071
         },
         {
           "from": 50,
           "to": 55,
           "hex": "#7d7d7d",
-          "share": 0.0022
+          "share": 0.0311
         },
         {
           "from": 55,
           "to": 60,
           "hex": "#8a8a8a",
-          "share": 0.0023
+          "share": 0.049
         },
         {
           "from": 60,
           "to": 65,
           "hex": "#979797",
-          "share": 0.0034
+          "share": 0.0571
         },
         {
           "from": 65,
           "to": 70,
           "hex": "#a4a4a4",
-          "share": 0.0089
+          "share": 0.0538
         },
         {
           "from": 70,
           "to": 75,
           "hex": "#b2b2b2",
-          "share": 0.009
+          "share": 0.0452
         },
         {
           "from": 75,
           "to": 80,
           "hex": "#bfbfbf",
-          "share": 0.0189
+          "share": 0.0224
         },
         {
           "from": 80,
           "to": 85,
           "hex": "#cdcdcd",
-          "share": 0.0149
+          "share": 0.0057
         },
         {
           "from": 85,
           "to": 90,
           "hex": "#dbdbdb",
-          "share": 0.083
+          "share": 0.0062
         },
         {
           "from": 90,
           "to": 95,
           "hex": "#e9e9e9",
-          "share": 0.1481
+          "share": 0.0035
         },
         {
           "from": 95,
           "to": 100,
           "hex": "#f8f8f8",
-          "share": 0.0015
+          "share": 0
         }
       ]
     },
-    "lightness": 74.81,
-    "chroma": 15.28,
-    "peakChroma": 24.13,
-    "samples": 9417
+    "lightness": 57.35,
+    "chroma": 21.23,
+    "peakChroma": 36.91,
+    "samples": 9490
   }
 }

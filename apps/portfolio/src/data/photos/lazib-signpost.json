@@ -1,43 +1,43 @@
 {
-  "id": 370,
-  "title": null,
+  "title": "Lazib Signpost",
   "comment": null,
-  "file": "20250125_210953.jpg",
-  "addedDate": null,
+  "id": 364,
+  "file": "20250124_123521.jpg",
+  "addedDate": "2026-10-26T01:02:09Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
-  "exposure": "1/6",
-  "iso": 3200,
+  "exposure": "1/950",
+  "iso": 12,
   "focalLength": 6.3,
-  "gpsPosition": "29 deg 24' 5.40\" N, 30 deg 29' 14.18\" E",
+  "gpsPosition": "29 deg 24' 5.32\" N, 30 deg 29' 12.61\" E",
   "customGpsPosition": null,
-  "createDate": "2025:01:25 21:09:54",
+  "createDate": "2025:01:24 12:35:20",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "lazib-inn",
   "customCity": null,
   "customState": null,
   "customCountry": null,
   "country": "Egypt",
   "state": "Faiyum",
   "city": "Youssief Al Sedik",
-  "width": 3447,
-  "height": 1939,
+  "width": 3439,
+  "height": 1934,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953.jpg",
-    "key": "photos/a5a4b6933c49-20250125-210953.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-thumbnailpreview.webp",
+    "full": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521.jpg",
+    "key": "photos/7f3b8d4fdd15-20250124-123521.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-thumbnailpreview.webp",
     "thumbnailcrop": {
-      "x": 754,
+      "x": 752,
       "y": 0,
-      "size": 1939,
+      "size": 1934,
       "outputSize": 500
     }
   },
@@ -48,217 +48,222 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["signage", "palm-trees", "hotel", "walls", "garden", "signpost"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "lazib-inn"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {
     "average": {
-      "hex": "#322728",
+      "hex": "#646168",
       "lab": {
-        "l": 16.78,
-        "a": 5.62,
-        "b": 1.45
+        "l": 41.49,
+        "a": 2.8,
+        "b": -3.83
       },
       "hcl": {
-        "h": 14.51,
-        "c": 5.8,
-        "l": 16.78
+        "h": 306.21,
+        "c": 4.74,
+        "l": 41.49
       }
     },
     "buckets": [
       {
         "name": "red",
         "hex": "#ff0000",
-        "share": 0.0061
+        "share": 0.0125
       },
       {
         "name": "orange",
         "hex": "#ff8000",
-        "share": 0.1766
+        "share": 0.1703
       },
       {
         "name": "yellow",
         "hex": "#ffff00",
-        "share": 0.0363
+        "share": 0.1064
       },
       {
         "name": "chartreuse",
         "hex": "#80ff00",
-        "share": 0.0015
+        "share": 0.0096
       },
       {
         "name": "green",
         "hex": "#00ff00",
-        "share": 0.0006
+        "share": 0.0021
       },
       {
         "name": "spring green",
         "hex": "#00ff80",
-        "share": 0.0001
+        "share": 0.0064
       },
       {
         "name": "cyan",
         "hex": "#00ffff",
-        "share": 0.0003
+        "share": 0.0359
       },
       {
         "name": "azure",
         "hex": "#0080ff",
-        "share": 0.0108
+        "share": 0.2786
       },
       {
         "name": "blue",
         "hex": "#0000ff",
-        "share": 0.0016
+        "share": 0.006
       },
       {
         "name": "violet",
         "hex": "#8000ff",
-        "share": 0.0003
+        "share": 0.0001
       },
       {
         "name": "magenta",
         "hex": "#ff00ff",
-        "share": 0.0003
+        "share": 0.0001
       },
       {
         "name": "rose",
         "hex": "#ff0080",
-        "share": 0
+        "share": 0.0004
       }
     ],
     "neutrals": {
-      "share": 0.7654,
+      "share": 0.3715,
       "histogram": [
         {
           "from": 0,
           "to": 5,
           "hex": "#090909",
-          "share": 0.253
+          "share": 0.0615
         },
         {
           "from": 5,
           "to": 10,
           "hex": "#171717",
-          "share": 0.2822
+          "share": 0.0668
         },
         {
           "from": 10,
           "to": 15,
           "hex": "#212121",
-          "share": 0.1394
+          "share": 0.0593
         },
         {
           "from": 15,
           "to": 20,
           "hex": "#2b2b2b",
-          "share": 0.0643
+          "share": 0.0489
         },
         {
           "from": 20,
           "to": 25,
           "hex": "#363636",
-          "share": 0.0058
+          "share": 0.0175
         },
         {
           "from": 25,
           "to": 30,
           "hex": "#414141",
-          "share": 0.0034
+          "share": 0.0147
         },
         {
           "from": 30,
           "to": 35,
           "hex": "#4c4c4c",
-          "share": 0.0028
+          "share": 0.0111
         },
         {
           "from": 35,
           "to": 40,
           "hex": "#585858",
-          "share": 0.0013
+          "share": 0.0087
         },
         {
           "from": 40,
           "to": 45,
           "hex": "#646464",
-          "share": 0.0012
+          "share": 0.0089
         },
         {
           "from": 45,
           "to": 50,
           "hex": "#717171",
-          "share": 0.0007
+          "share": 0.0091
         },
         {
           "from": 50,
           "to": 55,
           "hex": "#7d7d7d",
-          "share": 0.0007
+          "share": 0.0063
         },
         {
           "from": 55,
           "to": 60,
           "hex": "#8a8a8a",
-          "share": 0.0009
+          "share": 0.0055
         },
         {
           "from": 60,
           "to": 65,
           "hex": "#979797",
-          "share": 0.0013
+          "share": 0.0066
         },
         {
           "from": 65,
           "to": 70,
           "hex": "#a4a4a4",
-          "share": 0.0011
+          "share": 0.0054
         },
         {
           "from": 70,
           "to": 75,
           "hex": "#b2b2b2",
-          "share": 0.0011
+          "share": 0.0082
         },
         {
           "from": 75,
           "to": 80,
           "hex": "#bfbfbf",
-          "share": 0.0011
+          "share": 0.0084
         },
         {
           "from": 80,
           "to": 85,
           "hex": "#cdcdcd",
-          "share": 0.0004
+          "share": 0.0063
         },
         {
           "from": 85,
           "to": 90,
           "hex": "#dbdbdb",
-          "share": 0.0005
+          "share": 0.0036
         },
         {
           "from": 90,
           "to": 95,
           "hex": "#e9e9e9",
-          "share": 0.0008
+          "share": 0.0038
         },
         {
           "from": 95,
           "to": 100,
           "hex": "#f8f8f8",
-          "share": 0.0033
+          "share": 0.0106
         }
       ]
     },
-    "lightness": 16.78,
-    "chroma": 19.27,
-    "peakChroma": 34.12,
+    "lightness": 41.49,
+    "chroma": 25.03,
+    "peakChroma": 53.81,
     "samples": 9975
   }
 }

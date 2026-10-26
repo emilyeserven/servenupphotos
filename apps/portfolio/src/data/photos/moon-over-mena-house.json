@@ -1,43 +1,43 @@
 {
-  "id": 358,
-  "title": null,
+  "title": "Moon Over Mena House",
   "comment": null,
-  "file": "20250120_104305.jpg",
-  "addedDate": null,
+  "id": 363,
+  "file": "20250124_062922(0).jpg",
+  "addedDate": "2026-10-26T01:01:58Z",
   "camera": "Galaxy S24 Ultra",
-  "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
-  "aperture": 1.7,
-  "exposure": "1/310",
-  "iso": 12,
-  "focalLength": 6.3,
-  "gpsPosition": "25 deg 43' 8.30\" N, 32 deg 39' 29.35\" E",
+  "lens": "Samsung Galaxy S24 Ultra Rear Ultrawide Camera",
+  "aperture": 2.2,
+  "exposure": "1/60",
+  "iso": 500,
+  "focalLength": 2.2,
+  "gpsPosition": "29 deg 59' 10.15\" N, 31 deg 7' 56.57\" E",
   "customGpsPosition": null,
-  "createDate": "2025:01:20 10:43:05",
+  "createDate": "2025:01:24 06:29:22",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "mena-house",
   "customCity": null,
   "customState": null,
   "customCountry": null,
   "country": "Egypt",
-  "state": "Luxor",
-  "city": "Luxor",
-  "width": 3508,
-  "height": 1973,
+  "state": "Giza",
+  "city": "Al Ahram",
+  "width": 3381,
+  "height": 1904,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305.jpg",
-    "key": "photos/611220b85d19-20250120-104305.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-thumbnailpreview.webp",
+    "full": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0.jpg",
+    "key": "photos/5f377ed0a4e6-20250124-062922-0.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-thumbnail.webp?crop=1304,0,1904",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-thumbnailpreview.webp?crop=1304,0,1904",
     "thumbnailcrop": {
-      "x": 767,
+      "x": 1304,
       "y": 0,
-      "size": 1973,
+      "size": 1904,
       "outputSize": 500
     }
   },
@@ -48,47 +48,52 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["ancient-egypt", "pyramids", "palm-trees", "garden", "hotel", "moon", "twilight"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "mena-house"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
   "reEdit": null,
   "colors": {
     "average": {
-      "hex": "#644f3c",
+      "hex": "#605a5e",
       "lab": {
-        "l": 35.19,
-        "a": 5.7,
-        "b": 14.68
+        "l": 38.85,
+        "a": 3.41,
+        "b": -1.24
       },
       "hcl": {
-        "h": 68.79,
-        "c": 15.75,
-        "l": 35.19
+        "h": 340.04,
+        "c": 3.63,
+        "l": 38.85
       }
     },
     "buckets": [
       {
         "name": "red",
         "hex": "#ff0000",
-        "share": 0.0162
+        "share": 0.0009
       },
       {
         "name": "orange",
         "hex": "#ff8000",
-        "share": 0.5353
+        "share": 0.1282
       },
       {
         "name": "yellow",
         "hex": "#ffff00",
-        "share": 0.0162
+        "share": 0.0066
       },
       {
         "name": "chartreuse",
         "hex": "#80ff00",
-        "share": 0.0019
+        "share": 0
       },
       {
         "name": "green",
@@ -103,22 +108,22 @@
       {
         "name": "cyan",
         "hex": "#00ffff",
-        "share": 0.0017
+        "share": 0
       },
       {
         "name": "azure",
         "hex": "#0080ff",
-        "share": 0.0227
+        "share": 0.2213
       },
       {
         "name": "blue",
         "hex": "#0000ff",
-        "share": 0.0004
+        "share": 0.0979
       },
       {
         "name": "violet",
         "hex": "#8000ff",
-        "share": 0.0002
+        "share": 0.0008
       },
       {
         "name": "magenta",
@@ -128,137 +133,137 @@
       {
         "name": "rose",
         "hex": "#ff0080",
-        "share": 0.0011
+        "share": 0
       }
     ],
     "neutrals": {
-      "share": 0.4043,
+      "share": 0.5443,
       "histogram": [
         {
           "from": 0,
           "to": 5,
           "hex": "#090909",
-          "share": 0.0762
+          "share": 0.1511
         },
         {
           "from": 5,
           "to": 10,
           "hex": "#171717",
-          "share": 0.0627
+          "share": 0.108
         },
         {
           "from": 10,
           "to": 15,
           "hex": "#212121",
-          "share": 0.0858
+          "share": 0.061
         },
         {
           "from": 15,
           "to": 20,
           "hex": "#2b2b2b",
-          "share": 0.1201
+          "share": 0.0284
         },
         {
           "from": 20,
           "to": 25,
           "hex": "#363636",
-          "share": 0.0075
+          "share": 0.0084
         },
         {
           "from": 25,
           "to": 30,
           "hex": "#414141",
-          "share": 0.0052
+          "share": 0.0075
         },
         {
           "from": 30,
           "to": 35,
           "hex": "#4c4c4c",
-          "share": 0.0047
+          "share": 0.0078
         },
         {
           "from": 35,
           "to": 40,
           "hex": "#585858",
-          "share": 0.0038
+          "share": 0.0061
         },
         {
           "from": 40,
           "to": 45,
           "hex": "#646464",
-          "share": 0.003
+          "share": 0.0051
         },
         {
           "from": 45,
           "to": 50,
           "hex": "#717171",
-          "share": 0.0023
+          "share": 0.0059
         },
         {
           "from": 50,
           "to": 55,
           "hex": "#7d7d7d",
-          "share": 0.0037
+          "share": 0.0099
         },
         {
           "from": 55,
           "to": 60,
           "hex": "#8a8a8a",
-          "share": 0.0031
+          "share": 0.0099
         },
         {
           "from": 60,
           "to": 65,
           "hex": "#979797",
-          "share": 0.0026
+          "share": 0.0199
         },
         {
           "from": 65,
           "to": 70,
           "hex": "#a4a4a4",
-          "share": 0.0024
+          "share": 0.0493
         },
         {
           "from": 70,
           "to": 75,
           "hex": "#b2b2b2",
-          "share": 0.0017
+          "share": 0.042
         },
         {
           "from": 75,
           "to": 80,
           "hex": "#bfbfbf",
-          "share": 0.0024
+          "share": 0.0222
         },
         {
           "from": 80,
           "to": 85,
           "hex": "#cdcdcd",
-          "share": 0.0024
+          "share": 0.0014
         },
         {
           "from": 85,
           "to": 90,
           "hex": "#dbdbdb",
-          "share": 0.0026
+          "share": 0.0001
         },
         {
           "from": 90,
           "to": 95,
           "hex": "#e9e9e9",
-          "share": 0.0046
+          "share": 0.0001
         },
         {
           "from": 95,
           "to": 100,
           "hex": "#f8f8f8",
-          "share": 0.0076
+          "share": 0.0002
         }
       ]
     },
-    "lightness": 35.19,
-    "chroma": 17.7,
-    "peakChroma": 28.58,
-    "samples": 9620
+    "lightness": 38.85,
+    "chroma": 13.66,
+    "peakChroma": 23.82,
+    "samples": 9694
   }
 }
