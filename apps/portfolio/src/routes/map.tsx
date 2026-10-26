@@ -14,38 +14,26 @@ import { type LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import { type RefObject, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { MapDayFilter } from "@/components/map-day-filter";
-import { MapViewControls } from "@/components/map-view-controls";
-import { PhotoFilterControls } from "@/components/photo-filters";
-import { MapFilterToggle } from "@/components/map-filter-toggle";
 import { FloatingHeader } from "@/components/floating-header";
+import { MapControls } from "@/components/map-controls";
 import { ClusterGrid, ClusterSheet, type OpenCluster } from "@/components/map-cluster";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { mapViewOf } from "@/components/view-on-map-link";
-import { ViewInGridButton } from "@/components/view-in-grid-button";
-import { MapDisplayOptions } from "@/components/map-display-options";
 import { type ClusterMarkerData, MapMarkerView } from "@/components/map-marker-view";
 import {
   type PlacedPhoto,
   boundsOf,
   placedById,
-  placedPhotos,
   useDayPhotos,
   useMapPhotos,
 } from "@/lib/map-photos";
-import { type DayRange, daysInView, isDay } from "@/lib/map-days";
+import { type DayRange, isDay } from "@/lib/map-days";
 import { type MapDisplay, pinSpacing, useMapDisplay } from "@/lib/map-display";
 import { fadeTo } from "@/lib/map-fade";
-import { gridFiltersFor } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
-import {
-  filterCount,
-  locationSelection,
-  parseFilters,
-  type PhotoFilters,
-} from "@/lib/photo-filters";
+import { locationSelection, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -153,11 +141,6 @@ function useIsDark() {
 
 function hasImage(photo: Photo): photo is ImagePhoto {
   return photo.image !== null;
-}
-
-/** How many filters the map has set: the shared ones, and one more for a day or range of days. */
-function setFilterCount(search: MapSearch): number {
-  return filterCount(search) + (search.day ? 1 : 0);
 }
 
 /** Whether the places chosen before were all unchosen, leaving none. */
@@ -310,25 +293,18 @@ function MapView() {
         >
           <NavigationControl position="bottom-right" />
           <FloatingHeader icon={MapPin} title="Map" count={dayPhotos.placed.length}>
-            <MapViewControls
+            <MapControls
+              search={search}
+              filtered={mapPhotos.placed}
+              drawn={dayPhotos.placed}
+              view={view}
+              display={display}
+              onDisplayChange={changeDisplay}
+              onDaysChange={setDays}
               onReset={() => {
                 if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
               }}
-            >
-              <MapDisplayOptions display={display} onChange={changeDisplay} />
-              <MapFilterToggle count={setFilterCount(search)}>
-                <MapDayFilter
-                  days={daysInView(mapPhotos.placed, view)}
-                  range={search}
-                  onChange={setDays}
-                />
-                <PhotoFilterControls photos={placedPhotos}>
-                  <ViewInGridButton
-                    filters={gridFiltersFor(dayPhotos.placed, view, parseFilters(search))}
-                  />
-                </PhotoFilterControls>
-              </MapFilterToggle>
-            </MapViewControls>
+            />
           </FloatingHeader>
           <Source
             // Grouping differently needs a new source, as MapLibre can't change it on one.

@@ -49,6 +49,11 @@ interface Localization {
   romanization?: string;
   pronunciation?: string;
   localScript?: string;
+  /**
+   * Other names a country, state or city goes by, such as "United States" for the United States of
+   * America, which the portfolio counts as this one.
+   */
+  otherNames?: string[];
 }
 
 /** The PLACES.local.json or other local combined file `pnpm photos:local` makes, when it's there. */
@@ -129,9 +134,24 @@ function localized(name: string, found: Localization | undefined): Localized {
   return written;
 }
 
-/** A country or city's name written each way, from LOCALIZATIONS.json. */
+/** Each country, state and city's other names, by type and name, to the name they go by. */
+const byOtherName = new Map(
+  localizations.flatMap((l) => (l.otherNames ?? []).map((other) => [key(l.type, other), l.name])),
+);
+
+/**
+ * The name a country, state or city goes by: the one LOCALIZATIONS.json lists it under when the
+ * name is one of its **Other names**, such as "United States of America" for "United States", or
+ * else the name as it is. Photos under either name are then shown, listed and filtered as one.
+ */
+export function mainName(type: "country" | "state" | "city", name: string): string {
+  return byOtherName.get(key(type, name)) ?? name;
+}
+
+/** A country or city's name written each way, from LOCALIZATIONS.json, under its main name. */
 export function localizeName(type: "country" | "state" | "city", name: string): Localized {
-  return localized(name, byKey.get(key(type, name)));
+  const main = mainName(type, name);
+  return localized(main, byKey.get(key(type, main)));
 }
 
 /** A place's name written each way, from LOCALIZATIONS.json. */

@@ -13,9 +13,10 @@ export function MoreFilters({ badge, children }: { badge: ReactNode; children: R
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="font-normal">
           <ListFilter className="text-muted-foreground" aria-hidden />
-          More filters
+          {/* Just the icon on phones, so the map's controls fit on one row. */}
+          <span className="max-md:sr-only">More filters</span>
           {badge}
-          <ChevronsUpDown className="opacity-50" aria-hidden />
+          <ChevronsUpDown className="opacity-50 max-md:hidden" aria-hidden />
         </Button>
       </PopoverTrigger>
       <PopoverContent
