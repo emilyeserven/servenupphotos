@@ -35,3 +35,11 @@ Two rows of buttons under the title change what the page shows, and are kept in 
 
 The page works out both orders once at build time (`tagSections("name")` and `tagSections("count")`), so switching is
 instant.
+
+## Search
+
+The **Search tags…** box beside the buttons narrows the page to the tags with its text in their name or description,
+ignoring case (`lib/tag-search.ts`). A parent tag that matches keeps its whole section; one that doesn't stays only to
+head the tags under it that match, without the box of its own photos. In **Top level only**, a top-level tag shows when
+it or a tag under it matches. With nothing matching, the page says `No tags match "…"`. The search isn't kept in the URL
+or remembered, unlike the sort and **Top level only**.

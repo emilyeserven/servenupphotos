@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Tags } from "lucide-react";
+import { useState } from "react";
 import { CARD_GRID, ParentTagSection, TagCard } from "@/components/tag-card";
 import { parseTagsSearch, TagControls } from "@/components/tag-controls";
+import { TagSearchBox } from "@/components/tag-search-box";
 import { type TagEntry, type TagSection, type TagSort, tagSections } from "@/lib/tag-list";
+import { searchTags } from "@/lib/tag-search";
 import { useRememberViewOptions } from "@/lib/view-options";
 
 export const Route = createFileRoute("/tags")({
@@ -20,14 +23,16 @@ const SECTIONS: Record<TagSort, TagSection[]> = {
 /**
  * Every tag with photos, each linking to the Grid filtered to it, by name or by how many photos
  * it has: parent tags first, each with the tags under it, then the rest; or only the top-level
- * tags, as one grid.
+ * tags, as one grid. The search box narrows them to the tags with its text in their name or
+ * description.
  */
 function TagsView() {
   const search = Route.useSearch();
   useRememberViewOptions("/tags", search);
   const sort = search.sort ?? "name";
   const top = search.top === true;
-  const sections = SECTIONS[sort];
+  const [query, setQuery] = useState("");
+  const sections = searchTags(SECTIONS[sort], query);
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-16 sm:px-6">
       <header className="flex flex-col gap-4">
@@ -40,9 +45,12 @@ function TagsView() {
             What's in the photos. Open a tag to see its photos on the Grid.
           </p>
         </div>
-        <TagControls sort={sort} top={top} />
+        <div className="flex flex-wrap items-center gap-2">
+          <TagSearchBox value={query} onChange={setQuery} />
+          <TagControls sort={sort} top={top} />
+        </div>
       </header>
-      {sections.length === 0 && <p className="text-muted-foreground">No tags have photos yet.</p>}
+      {sections.length === 0 && <NoTags query={query} />}
       {top ? <CardList entries={sections.map((s) => s.parent)} /> : <Grouped sections={sections} />}
     </div>
   );
@@ -79,5 +87,15 @@ function CardList({ entries }: { entries: TagEntry[] }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/** What the page says when no tags are shown: none have photos, or none match the search. */
+function NoTags({ query }: { query: string }) {
+  const text = query.trim();
+  return (
+    <p className="text-muted-foreground">
+      {text ? `No tags match “${text}”.` : "No tags have photos yet."}
+    </p>
   );
 }
