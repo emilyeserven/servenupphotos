@@ -67,7 +67,7 @@ interface RegionOverrideFieldProps {
   value: string;
   placeholder: string;
   disabled: boolean;
-  /** Called with the chosen name, and for a city, its country when one is known. */
+  /** Called with the chosen name, and for a city or state, its country when one is known. */
   onChange: (name: string, country?: string) => void;
 }
 
@@ -88,9 +88,23 @@ function regionOptions(
   return rows.countries.map(countryOption);
 }
 
+/** The rows whose countries choosing one fills in, by kind; a country has none. */
+function rowsWithCountry(
+  kind: "city" | "state" | "country",
+  rows: { cities: CityRow[]; states: StateRow[] },
+): { name: string; country: string }[] {
+  if (kind === "city") return rows.cities;
+  return kind === "state" ? rows.states : [];
+}
+
+/** The country of the city or state named name, when it's known. */
+function knownCountry(rows: { name: string; country: string }[], name: string) {
+  return rows.find((row) => row.name === name)?.country || undefined;
+}
+
 /**
- * A photo's custom city, state or country, chosen from the ones places are in or photos show (marked
- * inferred when only photos have it), or typed. Clearing it goes back to the EXIF one.
+ * A photo's or place's custom city, state or country, chosen from the ones places are in or photos show (marked
+ * inferred when only photos have it), or typed. On a photo, clearing it goes back to the EXIF one.
  */
 export function RegionOverrideField({
   id,
@@ -102,7 +116,8 @@ export function RegionOverrideField({
 }: RegionOverrideFieldProps) {
   const { cities, states, countries } = useRegions();
   const options = regionOptions(kind, { cities, states, countries });
-  const choose = (name: string) => onChange(name, cities.find((c) => c.name === name)?.country);
+  const choose = (name: string) =>
+    onChange(name, knownCountry(rowsWithCountry(kind, { cities, states }), name));
   return (
     <SingleCombobox
       id={id}
