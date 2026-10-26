@@ -80,10 +80,35 @@ function GroupingSlider({
         }}
         className="py-1"
       />
-      <div className="flex justify-between text-xs text-muted-foreground">
+      <div className="relative flex justify-between text-xs text-muted-foreground">
+        <DefaultTick />
         <span>Less</span>
         <span>More</span>
       </div>
     </div>
+  );
+}
+
+/** Half the slider thumb's width, in pixels, which Radix keeps inside the track at either end. */
+const THUMB_HALF = 8;
+
+/**
+ * A small tick under the Grouping slider where the default sits, so it's easy to get back to. It's
+ * placed where the thumb's center would be at that value: Radix moves the thumb in from each end by
+ * up to half its width so it stays inside the track.
+ */
+function DefaultTick() {
+  const percent =
+    ((DEFAULT_MAP_DISPLAY.grouping - GROUPING_RANGE.min) /
+      (GROUPING_RANGE.max - GROUPING_RANGE.min)) *
+    100;
+  const inset = THUMB_HALF * (1 - percent / 50);
+  return (
+    <span
+      aria-hidden
+      title="Default"
+      className="absolute -top-1.5 h-2 w-0.5 -translate-x-1/2 rounded-full bg-muted-foreground/70"
+      style={{ left: `calc(${percent}% + ${inset}px)` }}
+    />
   );
 }

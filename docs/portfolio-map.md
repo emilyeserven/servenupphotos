@@ -57,7 +57,7 @@ fits without covering the map:
   `lib/map-display.ts`):
   - **Grouping** is how close photos are, in pixels on the screen, before they're one round marker (MapLibre's
     `clusterRadius`, 40 by default at Medium pins, from 10 to 100). Less shows more photos on their own; set well
-    below the pin size, groups can overlap each other.
+    below the pin size, groups can overlap each other. A small tick under the slider marks the default.
   - **Pin size** is Small, Medium (the default) or Large, for photo and group markers alike. Grouping scales with it
     (`clusterRadius` in `lib/map-display.ts`), and fewer photos are split out of a group at each zoom (`fanLimit`,
     shrinking with the room a pin takes), so big pins group sooner rather than being pushed far from their spots to
