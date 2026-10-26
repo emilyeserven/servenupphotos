@@ -74,8 +74,11 @@ function screenPoint(map: MapRef, longitude: number, latitude: number): ScreenPo
   return [x, y];
 }
 
-/** Moves photo markers apart so none overlap one another or a group's marker. */
-function fanOut(map: MapRef, markers: MapMarker[]): MapMarker[] {
+/**
+ * Moves photo markers apart so none overlap one another or a group's marker, keeping them
+ * `spacing` pixels apart.
+ */
+function fanOut(map: MapRef, markers: MapMarker[], spacing: number): MapMarker[] {
   const groups = markers.flatMap((marker) =>
     marker.kind === "cluster" ? [screenPoint(map, marker.longitude, marker.latitude)] : [],
   );
@@ -89,7 +92,7 @@ function fanOut(map: MapRef, markers: MapMarker[]): MapMarker[] {
         ]
       : [],
   );
-  const offsets = fanOffsets(photos, groups);
+  const offsets = fanOffsets(photos, groups, spacing);
   return markers.map((marker) =>
     marker.kind === "photo" ? { ...marker, offset: offsets.get(marker.photo.id) } : marker,
   );
@@ -97,15 +100,15 @@ function fanOut(map: MapRef, markers: MapMarker[]): MapMarker[] {
 
 /**
  * The markers in view. From FAN_MIN_ZOOM in, small groups (see fanLimit) are split into photos of
- * their own, and photos are moved apart just enough that each can be seen.
+ * their own, and photos are moved apart just enough that each can be seen, `spacing` pixels apart.
  */
-export async function markersInView(map: MapRef): Promise<MapMarker[]> {
+export async function markersInView(map: MapRef, spacing: number): Promise<MapMarker[]> {
   const markers = sourceMarkers(map);
   if (map.getZoom() < FAN_MIN_ZOOM) return markers;
   const split = await Promise.all(markers.map((marker) => splitSmall(map, marker)));
   // While zooming, tiles from the old zoom and the new one can both be loaded, so a cluster split
   // here can repeat photos another tile already has on their own.
-  return fanOut(map, once(split.flat()));
+  return fanOut(map, once(split.flat()), spacing);
 }
 
 /** The photos in a cluster, oldest first. */

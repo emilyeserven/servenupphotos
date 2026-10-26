@@ -20,7 +20,8 @@ export function ViewInGridButton({ filters }: { filters: PhotoFilters | null }) 
       )}
     >
       <Grid3x3 className="size-4 text-muted-foreground" aria-hidden />
-      View in grid
+      {/* Just the icon on phones, so the map's controls fit on one row. */}
+      <span className="max-md:sr-only">View in grid</span>
     </Link>
   );
 }

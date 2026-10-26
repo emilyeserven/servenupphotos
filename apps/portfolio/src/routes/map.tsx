@@ -2,61 +2,41 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   Layer,
   Map,
-  Marker,
   NavigationControl,
   Popup,
   Source,
   type LayerProps,
   type MapRef,
-  useMap,
 } from "@vis.gl/react-maplibre";
 import { format } from "date-fns";
 import { MapPin } from "lucide-react";
 import { type LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import {
-  type MouseEvent,
-  type RefObject,
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
-import { MapDayFilter } from "@/components/map-day-filter";
-import { MapViewControls } from "@/components/map-view-controls";
-import { PhotoFilterControls } from "@/components/photo-filters";
-import { MapFilterToggle } from "@/components/map-filter-toggle";
+import { type RefObject, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { FloatingHeader } from "@/components/floating-header";
+import { MapControls } from "@/components/map-controls";
 import { ClusterGrid, ClusterSheet, type OpenCluster } from "@/components/map-cluster";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
-import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { mapViewOf } from "@/components/view-on-map-link";
-import { ViewInGridButton } from "@/components/view-in-grid-button";
+import { type ClusterMarkerData, MapMarkerView } from "@/components/map-marker-view";
 import {
   type PlacedPhoto,
   boundsOf,
   placedById,
-  placedPhotos,
   useDayPhotos,
   useMapPhotos,
 } from "@/lib/map-photos";
-import { type DayRange, daysInView, isDay } from "@/lib/map-days";
+import { type DayRange, isDay } from "@/lib/map-days";
+import { type MapDisplay, pinSpacing, useMapDisplay } from "@/lib/map-display";
 import { fadeTo } from "@/lib/map-fade";
-import { gridFiltersFor } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
-import {
-  filterCount,
-  locationSelection,
-  parseFilters,
-  type PhotoFilters,
-} from "@/lib/photo-filters";
+import { locationSelection, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useMediaQuery } from "@/lib/use-media-query";
-import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
 /**
@@ -163,11 +143,6 @@ function hasImage(photo: Photo): photo is ImagePhoto {
   return photo.image !== null;
 }
 
-/** How many filters the map has set: the shared ones, and one more for a day or range of days. */
-function setFilterCount(search: MapSearch): number {
-  return filterCount(search) + (search.day ? 1 : 0);
-}
-
 /** Whether the places chosen before were all unchosen, leaving none. */
 function placesCleared(before: string[], now: string[]): boolean {
   return before.length > 0 && now.length === 0;
@@ -216,32 +191,42 @@ function useSetDays() {
 
 /**
  * The markers in view and what the map shows, for the day filter to list only the days of the
- * photos in view, with `updateMarkers` to work them out again after the map moves.
+ * photos in view, with `updateMarkers` to work them out again after the map moves. Photo markers
+ * are kept `spacing` pixels apart, or as far as `updateMarkers` is told.
  */
-function useMarkersInView(map: RefObject<MapRef | null>) {
+function useMarkersInView(map: RefObject<MapRef | null>, spacing: number) {
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [view, setView] = useState<LngLatBounds | null>(null);
   // Counts the updates, so a slower one finishing late doesn't replace a newer one's markers.
   const latest = useRef(0);
-  async function updateMarkers() {
+  async function updateMarkers(apart = spacing) {
     if (!map.current) return;
     const update = ++latest.current;
     setView(map.current.getBounds());
-    const next = await markersInView(map.current);
+    const next = await markersInView(map.current, apart);
     if (update === latest.current) setMarkers(next);
   }
   return { markers, view, updateMarkers };
 }
 
-// Clicks on markers and in popups would otherwise reach the map too, which closes the popups.
-function stopAtMarker(event: MouseEvent) {
-  event.stopPropagation();
+/**
+ * The markers in view, drawn as the display options say, with `changeDisplay` to change those;
+ * changing the pin size moves the photo markers apart by the new size.
+ */
+function useMarkersOnDisplay(map: RefObject<MapRef | null>) {
+  const [display, setDisplay] = useMapDisplay();
+  const inView = useMarkersInView(map, pinSpacing(display.pinSize));
+  function changeDisplay(change: Partial<MapDisplay>) {
+    setDisplay(change);
+    if (change.pinSize) void inView.updateMarkers(pinSpacing(change.pinSize));
+  }
+  return { ...inView, display, changeDisplay };
 }
 
 function MapView() {
   const isDark = useIsDark();
   const map = useRef<MapRef>(null);
-  const { markers, view, updateMarkers } = useMarkersInView(map);
+  const { markers, view, updateMarkers, display, changeDisplay } = useMarkersOnDisplay(map);
   // A photo without an image, shown in a popup as the lightbox can't show it.
   const [selected, setSelected] = useState<PlacedPhoto | null>(null);
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
@@ -308,34 +293,30 @@ function MapView() {
         >
           <NavigationControl position="bottom-right" />
           <FloatingHeader icon={MapPin} title="Map" count={dayPhotos.placed.length}>
-            <MapViewControls
+            <MapControls
+              search={search}
+              filtered={mapPhotos.placed}
+              drawn={dayPhotos.placed}
+              view={view}
+              display={display}
+              onDisplayChange={changeDisplay}
+              onDaysChange={setDays}
               onReset={() => {
                 if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
               }}
-            >
-              <MapFilterToggle count={setFilterCount(search)}>
-                <MapDayFilter
-                  days={daysInView(mapPhotos.placed, view)}
-                  range={search}
-                  onChange={setDays}
-                />
-                <PhotoFilterControls photos={placedPhotos}>
-                  <ViewInGridButton
-                    filters={gridFiltersFor(dayPhotos.placed, view, parseFilters(search))}
-                  />
-                </PhotoFilterControls>
-              </MapFilterToggle>
-            </MapViewControls>
+            />
           </FloatingHeader>
           <Source
+            // Grouping differently needs a new source, as MapLibre can't change it on one.
+            key={display.grouping}
             id={SOURCE_ID}
             type="geojson"
             data={dayPhotos.geoJson}
             cluster
             clusterMaxZoom={17}
-            // Photos group when they're closer than this many pixels: a little under a marker's
-            // width, so groups split as soon as their markers would barely overlap.
-            clusterRadius={40}
+            // Photos group when they're closer than this many pixels: by default a little under a
+            // marker's width, so groups split as soon as their markers would barely overlap.
+            clusterRadius={display.grouping}
           >
             <Layer {...hiddenLayer} />
           </Source>
@@ -343,6 +324,7 @@ function MapView() {
             <MapMarkerView
               key={marker.key}
               marker={marker}
+              display={display}
               onOpenPhoto={openPhoto}
               onOpenCluster={(open) => void openCluster(open)}
             />
@@ -360,36 +342,6 @@ function MapView() {
       </div>
       <PhotoLightbox photo={shown} photos={shownGroup} onShow={show} onClose={close} />
     </div>
-  );
-}
-
-type ClusterMarkerData = Extract<MapMarker, { kind: "cluster" }>;
-
-function MapMarkerView({
-  marker,
-  onOpenPhoto,
-  onOpenCluster,
-}: {
-  marker: MapMarker;
-  onOpenPhoto: (photo: PlacedPhoto) => void;
-  onOpenCluster: (marker: ClusterMarkerData) => void;
-}) {
-  if (marker.kind === "cluster") {
-    return (
-      <Marker longitude={marker.longitude} latitude={marker.latitude}>
-        <ClusterMarker
-          clusterId={marker.clusterId}
-          count={marker.count}
-          onOpen={() => onOpenCluster(marker)}
-        />
-      </Marker>
-    );
-  }
-  const { photo } = marker;
-  return (
-    <Marker longitude={photo.longitude} latitude={photo.latitude} offset={marker.offset}>
-      <PhotoMarker photo={photo} onOpen={() => onOpenPhoto(photo)} />
-    </Marker>
   );
 }
 
@@ -482,118 +434,3 @@ const MAP_POPUP = cn(
   "dark:[&_.maplibregl-popup-tip]:border-t-neutral-900!",
   "dark:[&_.maplibregl-popup-close-button:hover]:bg-white/10!",
 );
-
-const MARKER_RING =
-  "outline-none ring-2 ring-white shadow-md shadow-black/30 transition-transform hover:scale-110 focus-visible:scale-110 focus-visible:ring-sky-500";
-
-/** A photo's marker: its square thumbnail, or a dot for a photo without an image yet. */
-function PhotoMarker({ photo, onOpen }: { photo: PlacedPhoto; onOpen: () => void }) {
-  return (
-    <button
-      type="button"
-      title={photo.title}
-      aria-label={`Show ${photo.title}`}
-      onClick={(event) => {
-        stopAtMarker(event);
-        onOpen();
-      }}
-      className={cn(
-        "block cursor-zoom-in overflow-hidden rounded-md bg-muted",
-        photo.image ? "size-11" : "size-3.5 cursor-pointer rounded-full bg-sky-300",
-        MARKER_RING,
-        // A softer border for a photo placed at one of its places, as that spot is only near it.
-        photo.approximatePosition && "ring-white/40",
-      )}
-    >
-      {photo.image && <PhotoThumbnail image={photo.image} />}
-    </button>
-  );
-}
-
-/** How many of a cluster's photos its marker shows in turn, newest first. */
-const CLUSTER_PREVIEWS = 3;
-/** How long each of them shows, in milliseconds. */
-const CLUSTER_PREVIEW_MS = 3000;
-
-/** What a cluster's marker shows of the photos it covers. */
-interface ClusterLook {
-  /** The thumbnails of its newest photos with images, newest first. */
-  previews: string[];
-  /** Whether every photo in it is placed at one of its places, rather than its own GPS position. */
-  approximate: boolean;
-}
-
-/** The newest thumbnails of a cluster, newest first, and whether all its photos are approximate. */
-function clusterLook(clusterPhotos: PlacedPhoto[]): ClusterLook {
-  const previews = clusterPhotos
-    .flatMap(({ image }) => (image ? [image.thumbnail || image.small] : []))
-    .toReversed()
-    .slice(0, CLUSTER_PREVIEWS);
-  return { previews, approximate: clusterPhotos.every((photo) => photo.approximatePosition) };
-}
-
-/** How a cluster's marker looks, once its photos have been read from the map. */
-function useClusterLook(clusterId: number): ClusterLook {
-  const { current: map } = useMap();
-  const [look, setLook] = useState<ClusterLook>({ previews: [], approximate: false });
-  useEffect(() => {
-    if (!map) return;
-    let current = true;
-    void photosInCluster(map, clusterId).then((clusterPhotos) => {
-      if (current) setLook(clusterLook(clusterPhotos));
-    });
-    return () => {
-      current = false;
-    };
-  }, [map, clusterId]);
-  return look;
-}
-
-/**
- * A cluster's marker: how many photos it covers, over its newest photos fading in and out in
- * turn, darkened so the number stays readable.
- */
-function ClusterMarker({
-  clusterId,
-  count,
-  onOpen,
-}: {
-  clusterId: number;
-  count: number;
-  onOpen: () => void;
-}) {
-  const { previews, approximate } = useClusterLook(clusterId);
-  const { turn } = useTurn(previews.length, CLUSTER_PREVIEW_MS);
-  return (
-    <button
-      type="button"
-      title={`Show these ${count} photos`}
-      onClick={(event) => {
-        stopAtMarker(event);
-        onOpen();
-      }}
-      className={cn(
-        "relative flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-sky-300 text-sm font-semibold text-blue-950",
-        previews.length > 0 && "bg-neutral-900 text-white",
-        MARKER_RING,
-        approximate && "ring-white/40",
-      )}
-    >
-      {previews.map((src, index) => (
-        <img
-          key={src}
-          src={src}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          className={cn(
-            "absolute inset-0 size-full object-cover transition-opacity duration-1000",
-            index === turn ? "opacity-100" : "opacity-0",
-          )}
-        />
-      ))}
-      {previews.length > 0 && <span aria-hidden className="absolute inset-0 bg-black/60" />}
-      <span className="relative">{count}</span>
-    </button>
-  );
-}

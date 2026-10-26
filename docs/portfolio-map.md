@@ -4,7 +4,7 @@
 level, or on the whole world when there are none.
 
 Each photo is a marker with its Square Thumbnail (or its Small version, cropped square), which opens the photo
-viewer. Photos too close together to tell apart (within 40 pixels, a little under a marker's width) are one round marker with how many there are, over their three newest
+viewer. Photos too close together to tell apart (within 40 pixels by default, a little under a marker's width; see **display options** below) are one round marker with how many there are, over their three newest
 photos fading in turn under a dark overlay. Clicking it zooms the map in to fit its photos, which splits it apart, like
 a cluster pin on the Color page's wheel. A group that zooming in can't split (photos at one spot, or the map already as
 close as it goes) opens a grid of their thumbnails instead: in a popup above it, or on phones in a sheet along the
@@ -37,22 +37,37 @@ The map fills the page. The title and photo count, the controls below, and the s
 float over it, and fitting the map leaves extra room at the top so photos aren't hidden under them. The map's zoom
 buttons are in the bottom right corner.
 
-Jumping somewhere (**Jump to**, the zoom-out button, a filter that changes which photos show, or **View on map** from the
+Jumping somewhere (the zoom-out button, a filter that changes which photos show, or **View on map** from the
 photo viewer while on the map) fades the map out, moves it there and fades it back in once it's drawn, rather than flying
 out and back in (`fadeTo` in `lib/map-fade.ts`). Zooming into a group of photos still animates, as it's a short move.
 
-Over the top left corner, beside the title on wider screens and under it on phones:
+Over the top left corner, beside the title on wider screens and under it on phones, in one row
+(`components/map-controls.tsx`). On phones, **More filters** and **View in grid** are just their icons, so the row
+fits without covering the map:
 
-On phones, the day, Places and album filters sit behind a **Filters** button next to **Jump to**, so they don't cover the
-map. The button shows how many filters are set while they're hidden.
+- **Places** comes first, with the icon button beside it that zooms back out to every photo. The United States of
+  America starts expanded, so its states show without a click (see
+  [Portfolio Filters](portfolio-filters.md#places)).
+- The eye button opens the map's **display options** (`components/map-display-options.tsx`, kept in
+  `lib/map-display.ts`):
+  - **Grouping** is how close photos are, in pixels on the screen, before they're one round marker (MapLibre's
+    `clusterRadius`, 40 by default, from 10 to 100). Less shows more photos on their own; set below the pin size,
+    groups can overlap each other.
+  - **Pin size** is Small, Medium (the default) or Large, for photo and group markers alike; photos moved apart so they
+    don't overlap are kept that much further apart.
+  - **Show counts on groups** hides the number on group markers when unticked.
+  - **Darken photos under counts**, when unticked, shows a group's photos as they are, with its count in a small dark
+    badge instead.
+  - **Reset to defaults** goes back to these defaults.
 
-- **Jump to** is a dropdown that zooms straight to an area, for now New York City, Seoul or Japan. The areas and their
-  bounds are `MAP_AREAS` in `apps/portfolio/src/components/map-view-controls.tsx`; add one there to add it to the
-  dropdown. A country (`countryArea`) fits the photos taken there, by their country, rather than the whole country, so
-  Japan shows the west of Japan where the photos are; it's left out while there are none. The icon button beside it
-  zooms back out to every photo.
-- **Places** is always shown, and the album, tag and genre dropdowns sit behind **More filters** beside it, which
-  shows how many of them are set.
+  They're remembered in this browser, like the theme, rather than in the URL, so they stay the same on the next visit
+  without changing a shared link.
+
+  > **Frontend analogy:** MapLibre can't change how a source groups its points once it's made, so changing
+  > **Grouping** remounts the `<Source>` with a new `key`, like resetting a component's state by changing its key.
+
+- **More filters** opens the day dropdowns (below), then the album, tag and genre dropdowns, and shows how many of them
+  are set.
 - **View in grid** opens the Grid on the photos in view (`gridFiltersFor` in `lib/map-grid-link.ts`). It keeps the
   album, tag and genre filters and looks for the fewest countries, states, cities and places, biggest first, that show
   just those photos, so a view of Seoul opens `/grid?state=Seoul` and one of New York City `/grid?city=New York City`.
@@ -60,10 +75,10 @@ map. The button shows how many filters are set while they're hidden.
   the photos one by one instead (`?ids=[…]`, see [Chosen photos](portfolio-filters.md#chosen-photos)). A place filter
   also shows that place's photos with no GPS position, which the map can't show. It can't be pressed while no photos
   are in view.
-- The **day** dropdown narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
+- The **day** dropdown, in **More filters**, narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the
-  Places, album and tag filters (shown after it rather than behind **Show filters**), but the menu doesn't carry it to the other views.
+  Places, album and tag filters, but the menu doesn't carry it to the other views.
 - Once a day is chosen and another day is in view, a second **to** dropdown picks the last day of a range
   (`?day=2026-05-01&to=2026-05-17`), and the map shows every photo from the first day through the last. Either day can
   be the earlier one; the range is put in order. **Just this day** goes back to one day.

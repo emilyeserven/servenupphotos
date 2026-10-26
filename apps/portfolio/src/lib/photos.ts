@@ -10,6 +10,7 @@ import {
 import {
   type Localized,
   localizeName,
+  mainName,
   localizePlace,
   mapLocalized,
   type Place,
@@ -607,6 +608,11 @@ function placeField(placeIds: string[], field: "city" | "state" | "country"): st
   return placeIds.map((id) => placeById(id)?.[field]?.trim()).find(Boolean) ?? null;
 }
 
+/** The name a country, state or city goes by, rather than one of its other names; null stays null. */
+function mainNameOf(type: "country" | "state" | "city", name: string | null): string | null {
+  return name && mainName(type, name);
+}
+
 /** Where the photo was taken, as the location filter matches it: see Photo. */
 function locationFields(photo: PhotoData) {
   const placeIds = placeIdsOf(photo);
@@ -614,7 +620,7 @@ function locationFields(photo: PhotoData) {
     own: string | null | undefined,
     exif: string | null | undefined,
     key: "city" | "state" | "country",
-  ) => custom(own ?? null, exif ?? null) ?? placeField(placeIds, key);
+  ) => mainNameOf(key, custom(own ?? null, exif ?? null) ?? placeField(placeIds, key));
   return {
     country: field(photo.customCountry, photo.country, "country"),
     state: field(photo.customState, photo.state, "state"),

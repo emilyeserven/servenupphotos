@@ -1,108 +1,32 @@
-import { useMap } from "@vis.gl/react-maplibre";
-import { ChevronsUpDown, Maximize, Navigation } from "lucide-react";
-import { type LngLatBoundsLike } from "maplibre-gl";
+import { Maximize } from "lucide-react";
 import type { ReactNode } from "react";
-import { fadeTo } from "@/lib/map-fade";
-import { boundsOf, placedPhotos } from "@/lib/map-photos";
-
-/** An area of the map to jump to, with the bounds to fit. */
-interface MapArea {
-  name: string;
-  /** The corners to fit: south-west then north-east as [longitude, latitude], or a box worked out from photos. */
-  bounds: LngLatBoundsLike;
-}
 
 /**
- * A country to jump to, fitted to the photos taken there rather than the whole country, or null
- * when there are none on the map.
- */
-function countryArea(country: string): MapArea | null {
-  const bounds = boundsOf(placedPhotos.filter((photo) => photo.country === country));
-  return bounds && { name: country, bounds };
-}
-
-/** The areas the map can jump to. */
-const MAP_AREAS = (
-  [
-    {
-      name: "New York City",
-      bounds: [
-        [-74.26, 40.49],
-        [-73.7, 40.92],
-      ],
-    },
-    {
-      name: "Seoul",
-      bounds: [
-        [126.76, 37.41],
-        [127.18, 37.7],
-      ],
-    },
-    countryArea("Japan"),
-  ] satisfies (MapArea | null)[]
-).filter((area) => area !== null);
-
-/** How far from the edges of the map an area is kept, in pixels. */
-const AREA_PADDING = 40;
-
-/**
- * A row of controls over the map, starting with a button group: a **Jump to** dropdown that zooms
- * straight to one of the areas in MAP_AREAS, and an icon button that goes back to the view that
- * shows every photo.
+ * A row of controls over the map: `places` (the Places filter), an icon button that goes back to
+ * the view that shows every photo, then the other controls.
  */
 export function MapViewControls({
   onReset,
+  places,
   children,
 }: {
   onReset: () => void;
-  /** More controls for the same row, such as the day filter. */
+  places: ReactNode;
+  /** More controls for the same row, such as the display options and More filters. */
   children?: ReactNode;
 }) {
-  const { current: map } = useMap();
-  function showArea(bounds: LngLatBoundsLike) {
-    if (map)
-      fadeTo(map, (faded) => faded.fitBounds(bounds, { padding: AREA_PADDING, animate: false }));
-  }
   return (
     <div className="flex flex-wrap gap-2">
-      <div className="inline-flex h-8 divide-x overflow-hidden rounded-md border bg-background text-sm text-muted-foreground shadow-xs dark:divide-input dark:border-input">
-        <label className="relative inline-flex items-center">
-          <Navigation className="pointer-events-none absolute left-2.5 size-4" aria-hidden />
-          <span className="sr-only">Jump to an area</span>
-          <select
-            // Always back on "Jump to", as it's an action rather than a setting.
-            value=""
-            onChange={(event) => {
-              const area = MAP_AREAS.find((choice) => choice.name === event.target.value);
-              if (area) showArea(area.bounds);
-            }}
-            // Only as wide as "Jump to", rather than its longest area.
-            className="h-full cursor-pointer appearance-none bg-transparent pr-8 pl-8 text-foreground outline-none [field-sizing:content] hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-          >
-            <option value="" disabled>
-              Jump to
-            </option>
-            {MAP_AREAS.map((area) => (
-              <option key={area.name} value={area.name}>
-                {area.name}
-              </option>
-            ))}
-          </select>
-          <ChevronsUpDown
-            className="pointer-events-none absolute right-2.5 size-4 opacity-50"
-            aria-hidden
-          />
-        </label>
-        <button
-          type="button"
-          onClick={onReset}
-          title="Zoom out to every photo"
-          aria-label="Zoom out to every photo"
-          className="inline-flex w-8 items-center justify-center outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-        >
-          <Maximize className="size-4" aria-hidden />
-        </button>
-      </div>
+      {places}
+      <button
+        type="button"
+        onClick={onReset}
+        title="Zoom out to every photo"
+        aria-label="Zoom out to every photo"
+        className="inline-flex size-8 items-center justify-center rounded-md border bg-background text-muted-foreground shadow-xs outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring dark:border-input"
+      >
+        <Maximize className="size-4" aria-hidden />
+      </button>
       {children}
     </div>
   );

@@ -21,7 +21,8 @@ A button that opens a searchable tree: each country the photos were taken in, th
 city, each place under the place it's in (see [Places](places-and-localizations.md#places)), each with a checkbox and
 how many photos it would show. The chevron beside a country, state, city or place with others in it expands or collapses it,
 and **Expand all** and **Collapse all** do every one at once; a search shows every match with what it's in, expanded.
-The tree starts with whatever's around the chosen ones expanded. Names are written the way the menu's **Script display**
+The tree starts with whatever's around the chosen ones expanded, and the United States of America always expanded
+one level, to its states (`START_EXPANDED` in `components/places-filter.tsx`). Names are written the way the menu's **Script display**
 says, and a search matches them that way or in English. The button shows the one chosen name, or how many are chosen.
 
 Any number can be chosen, and the view shows the photos taken in **any** of them:
@@ -37,7 +38,9 @@ One of a kind is kept as text, as above, so a link to one place stays readable; 
 A photo's country and city are its custom ones from the Photo page, or else its EXIF ones, or else the first of its
 places (or a place they're in) that has one. A photo with a city but no country gets the country other photos in that
 city have, so it's listed under, and matched by, that country too. Countries and cities are matched by their English
-names, whichever way they're shown.
+names, whichever way they're shown. A name listed in another one's **Other names** in the pipeline's localizations
+counts as that one (`mainName` in `lib/localize.ts`), so photos whose EXIF says "United States" are shown, listed and
+filtered as the United States of America.
 
 ## Chosen photos
 

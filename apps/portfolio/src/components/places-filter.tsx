@@ -36,6 +36,12 @@ function idsAroundChosen(options: LocationOption[], selected: string[]): string[
 }
 
 /**
+ * The choices expanded every time the tree opens, besides those around the chosen ones: the
+ * United States of America, so its states show without a click, as it has photos in several.
+ */
+const START_EXPANDED = ["/country:United States of America"];
+
+/**
  * The choices that would show any photos, given the other filters, each with what's in it that
  * would; a chosen one, or one with a chosen one inside, stays so it can be unchosen.
  */
@@ -95,7 +101,9 @@ export function PlacesFilter({
 }) {
   const { script } = useScriptDisplay();
   const [query, setQuery] = useState("");
-  const [expanded, setExpanded] = useState(() => new Set(idsAroundChosen(options, selected)));
+  const [expanded, setExpanded] = useState(
+    () => new Set([...START_EXPANDED, ...idsAroundChosen(options, selected)]),
+  );
   const searching = query.trim() !== "";
   const text = buttonText(options, selected, script);
   const available = withPhotos(options, selected);

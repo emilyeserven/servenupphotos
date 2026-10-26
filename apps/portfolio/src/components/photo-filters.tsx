@@ -157,27 +157,43 @@ export function PhotoFilterBar({
 const OVER_MAP =
   "contents [&_button]:bg-background dark:[&_button]:bg-background [&_select]:bg-background [&_select]:[field-sizing:content] dark:[&_select]:bg-background";
 
+/** The Places combobox on its own, for a view that shows it apart from its other filters, such as the map. */
+export function MapPlacesFilter({ photos }: { photos: Photo[] }) {
+  return (
+    <div className={OVER_MAP}>
+      <PlacesDropdown
+        photos={photos}
+        facet={photos}
+        filters={useFilters()}
+        setFilters={useSetFilters()}
+      />
+    </div>
+  );
+}
+
 /**
- * The Places combobox always shown and the album, tag and genre dropdowns behind a **More filters**
- * button, then `children` and **Clear filters** while any filter is set, for a view with no room to
- * spare for the **Show filters** button, such as the map.
+ * The album, tag and genre dropdowns behind a **More filters** button, after the view's own
+ * filters (`own`, such as the map's days), then `children` and **Clear filters** while any filter
+ * is set, for a view with no room to spare for the **Show filters** button, such as the map.
  */
-export function PhotoFilterControls({
+export function MoreFilterControls({
   photos,
+  own,
   children,
 }: {
   photos: Photo[];
+  /** The view's own filters shown first in **More filters**, and how many of them are set. */
+  own: { count: number; children: ReactNode };
   /** More controls after the filters, such as the map's **View in grid**. */
   children?: ReactNode;
 }) {
   const props = { photos, facet: photos, filters: useFilters(), setFilters: useSetFilters() };
   const clearFilters = useClearFilters([]);
+  const groupCount = filterCount(withoutFilters(props.filters, LOCATION_KEYS));
   return (
     <div className={OVER_MAP}>
-      <PlacesDropdown {...props} />
-      <MoreFilters
-        badge={<FilterCount count={filterCount(withoutFilters(props.filters, LOCATION_KEYS))} />}
-      >
+      <MoreFilters badge={<FilterCount count={groupCount + own.count} />}>
+        {own.children}
         <GroupDropdowns {...props} />
       </MoreFilters>
       {children}
