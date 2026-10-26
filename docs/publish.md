@@ -68,7 +68,7 @@ of every other album's, so a zone has one album at a time. Like other album chan
 [Albums and Tags](albums-and-tags.md)).
 
 Above the photos, **Preview** shows them one at a time as the homepage would, on a phone held upright and on a
-computer, with buttons for the photo before and after. With no album picked, it previews the 5 newest photos. Each
+computer, with buttons for the photo before and after. With no album picked, there's no preview. Each
 screen is the homepage drawn at its real size (390 × 844 and 1440 × 900) and scaled down to fit: the photo cropped
 around its focus point under the same 20% black, the frosted site name and view tiles, and the photo's title at the
 bottom left, after a map button when it has a GPS position or a place (`components/spotlight-preview.tsx`). It reads
@@ -87,8 +87,8 @@ linking to Site Spotlight.
 
 The card has the photo's **Focus point**: click the part of the photo to keep in view when it's
 cropped to a screen of the other shape (a landscape photo on a phone, or a portrait one on a computer). Under it,
-**Behind the homepage** shows the same phone and computer preview as Site Spotlight, updating as the point moves, and
-**Use the middle** clears it. It's saved as `spotlightFocus`, `{ "x": 30, "y": 70 }`
+**Behind the homepage** shows the same phone and computer preview as Site Spotlight, updating as the point moves,
+once an album is picked for a zone on Site Spotlight. **Use the middle** clears it. It's saved as `spotlightFocus`, `{ "x": 30, "y": 70 }`
 in percent across from the left and down from the top, or `null` (the default, which new saves write and Update Data →
 Missing fields adds) for the middle. It's a [local edit](combined-data-store.md#local-edits) until **Commit**, apart
 from the page's **Save changes**.
