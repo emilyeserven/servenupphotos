@@ -1,9 +1,9 @@
 {
-  "id": 193,
-  "title": null,
+  "title": "Master of his Universe",
   "comment": null,
+  "id": 193,
   "file": "IMG_5639.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T01:36:00Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 5.6,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2017:09:30 15:54:40",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Central Park",
+  "customCity": "New York City",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["trees", "lamppost", "juggling", "street-performer", "park"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "central-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,8 +65,8 @@
       "hex": "#2f2f2f",
       "lab": {
         "l": 19.35,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

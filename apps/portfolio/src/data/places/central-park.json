@@ -4,5 +4,7 @@
   "description": "",
   "parent": "",
   "city": "New York City",
-  "country": "United States of America"
+  "country": "United States of America",
+  "latitude": 40.78258706164638,
+  "longitude": -73.96560105308485
 }

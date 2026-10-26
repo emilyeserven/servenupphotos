@@ -1,5 +1,10 @@
 [
   {
+    "id": "architecture",
+    "name": "Architecture",
+    "description": ""
+  },
+  {
     "id": "macro",
     "name": "Macro",
     "description": ""

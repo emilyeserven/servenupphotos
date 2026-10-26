@@ -20,8 +20,23 @@
     "description": ""
   },
   {
+    "id": "beach",
+    "name": "beach",
+    "description": ""
+  },
+  {
     "id": "bench",
     "name": "bench",
+    "description": ""
+  },
+  {
+    "id": "bicycles",
+    "name": "bicycles",
+    "description": ""
+  },
+  {
+    "id": "birds",
+    "name": "birds",
     "description": ""
   },
   {
@@ -150,13 +165,38 @@
     "description": ""
   },
   {
+    "id": "facade",
+    "name": "facade",
+    "description": ""
+  },
+  {
     "id": "farmland",
     "name": "farmland",
     "description": ""
   },
   {
+    "id": "fence",
+    "name": "fence",
+    "description": ""
+  },
+  {
     "id": "fire-alarm",
     "name": "fire-alarm",
+    "description": ""
+  },
+  {
+    "id": "flight",
+    "name": "flight",
+    "description": ""
+  },
+  {
+    "id": "fog",
+    "name": "fog",
+    "description": ""
+  },
+  {
+    "id": "folk-art",
+    "name": "folk-art",
     "description": ""
   },
   {
@@ -180,6 +220,11 @@
     "description": ""
   },
   {
+    "id": "glass",
+    "name": "glass",
+    "description": ""
+  },
+  {
     "id": "graffiti",
     "name": "graffiti",
     "description": ""
@@ -197,6 +242,11 @@
   {
     "id": "hieroglyphs",
     "name": "hieroglyphs",
+    "description": ""
+  },
+  {
+    "id": "horse",
+    "name": "horse",
     "description": ""
   },
   {
@@ -220,6 +270,11 @@
     "description": ""
   },
   {
+    "id": "insects",
+    "name": "insects",
+    "description": ""
+  },
+  {
     "id": "interior",
     "name": "interior",
     "description": ""
@@ -227,6 +282,11 @@
   {
     "id": "ivy",
     "name": "ivy",
+    "description": ""
+  },
+  {
+    "id": "juggling",
+    "name": "juggling",
     "description": ""
   },
   {
@@ -260,6 +320,11 @@
     "description": ""
   },
   {
+    "id": "milky-way",
+    "name": "milky-way",
+    "description": ""
+  },
+  {
     "id": "minimalism",
     "name": "minimalism",
     "description": ""
@@ -267,6 +332,11 @@
   {
     "id": "moat",
     "name": "moat",
+    "description": ""
+  },
+  {
+    "id": "monument",
+    "name": "monument",
     "description": ""
   },
   {
@@ -305,6 +375,11 @@
     "description": ""
   },
   {
+    "id": "ocean",
+    "name": "ocean",
+    "description": ""
+  },
+  {
     "id": "onsen",
     "name": "onsen",
     "description": ""
@@ -312,6 +387,11 @@
   {
     "id": "palm-trees",
     "name": "palm-trees",
+    "description": ""
+  },
+  {
+    "id": "park",
+    "name": "park",
     "description": ""
   },
   {
@@ -410,6 +490,16 @@
     "description": ""
   },
   {
+    "id": "sailboats",
+    "name": "sailboats",
+    "description": ""
+  },
+  {
+    "id": "sand",
+    "name": "sand",
+    "description": ""
+  },
+  {
     "id": "sando",
     "name": "sando",
     "description": ""
@@ -420,8 +510,38 @@
     "description": ""
   },
   {
+    "id": "sculpture",
+    "name": "sculpture",
+    "description": ""
+  },
+  {
+    "id": "sea-glass",
+    "name": "sea-glass",
+    "description": ""
+  },
+  {
+    "id": "seagulls",
+    "name": "seagulls",
+    "description": ""
+  },
+  {
+    "id": "seaweed",
+    "name": "seaweed",
+    "description": ""
+  },
+  {
     "id": "senjafuda",
     "name": "senjafuda",
+    "description": ""
+  },
+  {
+    "id": "shadows",
+    "name": "shadows",
+    "description": ""
+  },
+  {
+    "id": "shells",
+    "name": "shells",
     "description": ""
   },
   {
@@ -432,6 +552,11 @@
   {
     "id": "shimenawa",
     "name": "shimenawa",
+    "description": ""
+  },
+  {
+    "id": "shingles",
+    "name": "shingles",
     "description": ""
   },
   {
@@ -455,6 +580,11 @@
     "description": ""
   },
   {
+    "id": "sidewalk",
+    "name": "sidewalk",
+    "description": ""
+  },
+  {
     "id": "signage",
     "name": "signage",
     "description": ""
@@ -462,6 +592,11 @@
   {
     "id": "signpost",
     "name": "signpost",
+    "description": ""
+  },
+  {
+    "id": "silhouettes",
+    "name": "silhouettes",
     "description": ""
   },
   {
@@ -480,8 +615,28 @@
     "description": ""
   },
   {
+    "id": "stars",
+    "name": "stars",
+    "description": ""
+  },
+  {
+    "id": "statue",
+    "name": "statue",
+    "description": ""
+  },
+  {
+    "id": "steel",
+    "name": "steel",
+    "description": ""
+  },
+  {
     "id": "stickers",
     "name": "stickers",
+    "description": ""
+  },
+  {
+    "id": "stones",
+    "name": "stones",
     "description": ""
   },
   {
@@ -490,8 +645,18 @@
     "description": ""
   },
   {
+    "id": "street-performer",
+    "name": "street-performer",
+    "description": ""
+  },
+  {
     "id": "suitorou",
     "name": "suitorou",
+    "description": ""
+  },
+  {
+    "id": "surfing",
+    "name": "surfing",
     "description": ""
   },
   {
@@ -595,8 +760,18 @@
     "description": ""
   },
   {
+    "id": "waves",
+    "name": "waves",
+    "description": ""
+  },
+  {
     "id": "windows",
     "name": "windows",
+    "description": ""
+  },
+  {
+    "id": "wipeout",
+    "name": "wipeout",
     "description": ""
   },
   {

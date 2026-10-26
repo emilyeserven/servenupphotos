@@ -1,9 +1,9 @@
 {
-  "id": 176,
-  "title": null,
+  "title": "Samsung Spires",
   "comment": null,
+  "id": 176,
   "file": "IMG_5015.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T01:31:51Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 5.6,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2017:09:30 09:50:53",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "samsung-837",
+  "customCity": "New York City",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-thumbnail.webp?crop=1155,0,3084",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-thumbnailpreview.webp?crop=1155,0,3084",
     "thumbnailcrop": {
-      "x": 1280,
+      "x": 1155,
       "y": 0,
       "size": 3084,
       "outputSize": 500
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
-  "genres": [],
-  "places": [],
+  "tags": ["windows", "patterns", "reflections", "facade", "steel", "glass"],
+  "genres": ["architecture"],
+  "places": [
+    {
+      "relation": "",
+      "id": "samsung-837"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,8 +65,8 @@
       "hex": "#393939",
       "lab": {
         "l": 23.88,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

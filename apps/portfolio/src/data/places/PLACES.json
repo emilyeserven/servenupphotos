@@ -161,7 +161,19 @@
     "description": "",
     "parent": "",
     "city": "New York City",
-    "country": "United States of America"
+    "country": "United States of America",
+    "latitude": 40.78258706164638,
+    "longitude": -73.96560105308485
+  },
+  {
+    "id": "chelsea-market",
+    "name": "Chelsea Market",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.74246333270192,
+    "longitude": -74.00613611356052
   },
   {
     "id": "chelsea",
@@ -198,6 +210,14 @@
     "country": "United States of America",
     "latitude": 40.76805659301781,
     "longitude": -73.98188756888125
+  },
+  {
+    "id": "cook-s-cycle-shop",
+    "name": "Cook's Cycle Shop",
+    "description": "",
+    "parent": "",
+    "city": "Nantucket",
+    "country": "United States of America"
   },
   {
     "id": "delray-public-beach",
@@ -318,6 +338,14 @@
     "parent": "",
     "city": "Busan",
     "country": "South Korea"
+  },
+  {
+    "id": "general-william-tecumseh-sherman-monument",
+    "name": "General William Tecumseh Sherman Monument",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "geunjeongjeon",
@@ -835,6 +863,16 @@
     "parent": "",
     "city": "Al Khalifa",
     "country": "Egypt"
+  },
+  {
+    "id": "samsung-837",
+    "name": "Samsung 837",
+    "description": "",
+    "parent": "",
+    "city": "New York City",
+    "country": "United States of America",
+    "latitude": 40.74064705262195,
+    "longitude": -74.00734805268478
   },
   {
     "id": "soho",
