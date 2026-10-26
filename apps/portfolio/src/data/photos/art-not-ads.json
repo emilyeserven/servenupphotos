@@ -1,7 +1,7 @@
 {
-  "id": 36,
   "title": "Art not Ads",
   "comment": null,
+  "id": 36,
   "file": "IMG_0173.jpg",
   "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": ["homepage-spotlight"],
+  "albums": [],
   "tags": [],
   "genres": [],
   "places": [

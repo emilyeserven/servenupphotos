@@ -47,12 +47,15 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["homepage-spotlight"],
   "tags": ["city", "night", "road", "cars", "traffic", "skyscraper", "city-lights"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
-  "spotlightFocus": null,
+  "spotlightFocus": {
+    "x": 53,
+    "y": 70
+  },
   "socialPosts": [],
   "reEdit": null,
   "colors": {

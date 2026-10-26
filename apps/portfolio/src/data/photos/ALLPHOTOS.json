@@ -6997,9 +6997,9 @@
     }
   },
   {
-    "id": 36,
     "title": "Art not Ads",
     "comment": null,
+    "id": 36,
     "file": "IMG_0173.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -7045,7 +7045,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": [],
     "genres": [],
     "places": [
@@ -8335,6 +8335,284 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 10087
+    }
+  },
+  {
+    "title": "Between Pillars",
+    "comment": null,
+    "id": 359,
+    "file": "20250120_104317.jpg",
+    "addedDate": "2026-10-26T00:57:53Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/180",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "25 deg 43' 8.21\" N, 32 deg 39' 29.20\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:20 10:43:17",
+    "customCreateDate": null,
+    "placeName": "Karnak",
+    "customCity": "Luxor",
+    "customState": null,
+    "customCountry": "Egypt",
+    "country": "Egypt",
+    "state": "Luxor",
+    "city": "Luxor",
+    "width": 1268,
+    "height": 1775,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317.jpg",
+      "key": "photos/7e4f955f7049-20250120-104317.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317-thumbnail.webp?crop=0,507,1268",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7e4f955f7049-20250120-104317-thumbnailpreview.webp?crop=0,507,1268",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 507,
+        "size": 1268,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [
+      "ancient-egypt",
+      "hieroglyphs",
+      "carvings",
+      "temple",
+      "ruins",
+      "hypostyle",
+      "columns",
+      "tourists"
+    ],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "karnak"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#81684f",
+        "lab": {
+          "l": 45.74,
+          "a": 6.5,
+          "b": 17.79
+        },
+        "hcl": {
+          "h": 69.93,
+          "c": 18.94,
+          "l": 45.74
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0033
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.8663
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0204
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0009
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0001
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.1087,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0055
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0041
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.008
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0167
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.002
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0028
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0028
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0043
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0042
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0097
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0091
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0088
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0086
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0068
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0029
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0012
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0007
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0003
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0003
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0099
+          }
+        ]
+      },
+      "lightness": 45.74,
+      "chroma": 19.33,
+      "peakChroma": 25.89,
+      "samples": 8880
     }
   },
   {
@@ -13457,6 +13735,543 @@
     }
   },
   {
+    "title": "Desert Beetle",
+    "comment": null,
+    "id": 365,
+    "file": "20250124_142744.jpg",
+    "addedDate": "2026-10-26T01:04:14Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/1900",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "29 deg 15' 51.27\" N, 30 deg 1' 19.76\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:24 14:27:44",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": "Wadi El-Hitan",
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Giza",
+    "city": "6th of October",
+    "width": 3622,
+    "height": 2039,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744.jpg",
+      "key": "photos/70a9a18ba4af-20250124-142744.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnail.webp?crop=930,278,1761",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnailpreview.webp?crop=930,278,1761",
+      "thumbnailcrop": {
+        "x": 930,
+        "y": 278,
+        "size": 1761,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [
+      "cars",
+      "desert",
+      "vintage-cars",
+      "van",
+      "rock-formations",
+      "mud-brick",
+      "domes",
+      "clouds"
+    ],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#978778",
+        "lab": {
+          "l": 57.35,
+          "a": 3.62,
+          "b": 10.09
+        },
+        "hcl": {
+          "h": 70.24,
+          "c": 10.72,
+          "l": 57.35
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0012
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.4802
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0263
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0015
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1564
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0042
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.3302,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0021
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0077
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0099
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0117
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0062
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0039
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0024
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0031
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0021
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0071
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0311
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.049
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0571
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0538
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0452
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0224
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0057
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0062
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0035
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 57.35,
+      "chroma": 21.23,
+      "peakChroma": 36.91,
+      "samples": 9490
+    }
+  },
+  {
+    "title": "Desert Lunch",
+    "comment": null,
+    "id": 368,
+    "file": "20250125_140643.jpg",
+    "addedDate": "2026-10-26T01:08:44Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/2000",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "29 deg 38' 6.37\" N, 30 deg 37' 57.28\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:25 14:06:43",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Faiyum",
+    "city": "Sinnuris",
+    "width": 3529,
+    "height": 1985,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643.jpg",
+      "key": "photos/8b0e62f8326b-20250125-140643.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnail.webp?crop=651,0,1985",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnailpreview.webp?crop=651,0,1985",
+      "thumbnailcrop": {
+        "x": 651,
+        "y": 0,
+        "size": 1985,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#998570",
+        "lab": {
+          "l": 56.75,
+          "a": 4.32,
+          "b": 13.85
+        },
+        "hcl": {
+          "h": 72.67,
+          "c": 14.51,
+          "l": 56.75
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0071
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.7085
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0014
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0096
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0003
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.273,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0087
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0087
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0144
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0238
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0129
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0128
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0112
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0096
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0073
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0064
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0034
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0038
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.003
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0021
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0019
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0019
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0012
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0252
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0567
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.058
+          }
+        ]
+      },
+      "lightness": 56.75,
+      "chroma": 16.88,
+      "peakChroma": 26.38,
+      "samples": 9694
+    }
+  },
+  {
     "id": 45,
     "title": "Diamonds",
     "comment": null,
@@ -17816,7 +18631,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "genres": [],
     "places": [
@@ -21298,7 +22113,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["doors", "washitsu", "tatami", "shoji", "fusuma", "interior"],
     "genres": [],
     "places": [
@@ -23206,6 +24021,275 @@
     "socialPosts": [],
     "reEdit": null,
     "customCreateDate": "2016:12:23 22:07:39"
+  },
+  {
+    "title": "Fayoum Night",
+    "comment": null,
+    "id": 370,
+    "file": "20250125_210953.jpg",
+    "addedDate": "2026-10-26T01:07:13Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/6",
+    "iso": 3200,
+    "focalLength": 6.3,
+    "gpsPosition": "29 deg 24' 5.40\" N, 30 deg 29' 14.18\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:25 21:09:54",
+    "customCreateDate": null,
+    "placeName": "Lazib Inn",
+    "customCity": "Youssief Al Sedik",
+    "customState": null,
+    "customCountry": "Egypt",
+    "country": "Egypt",
+    "state": "Faiyum",
+    "city": "Youssief Al Sedik",
+    "width": 3447,
+    "height": 1939,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953.jpg",
+      "key": "photos/a5a4b6933c49-20250125-210953.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a5a4b6933c49-20250125-210953-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 754,
+        "y": 0,
+        "size": 1939,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["hotel", "night", "palm-trees", "garden", "rooftops", "city-lights"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "lazib-inn"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#322728",
+        "lab": {
+          "l": 16.78,
+          "a": 5.62,
+          "b": 1.45
+        },
+        "hcl": {
+          "h": 14.51,
+          "c": 5.8,
+          "l": 16.78
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0061
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1766
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0363
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0015
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0006
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0003
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0108
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0016
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0003
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0003
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.7654,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.253
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.2822
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1394
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0643
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0058
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0034
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0028
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0013
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0012
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0007
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0007
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0009
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0013
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0011
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0011
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0011
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0004
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0005
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0008
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0033
+          }
+        ]
+      },
+      "lightness": 16.78,
+      "chroma": 19.27,
+      "peakChroma": 34.12,
+      "samples": 9975
+    }
   },
   {
     "title": "Feeding the Bird",
@@ -28859,9 +29943,9 @@
     }
   },
   {
-    "id": 56,
     "title": "I like to imagine that it's just one mannequin",
     "comment": null,
+    "id": 56,
     "file": "IMG_9617.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -28907,7 +29991,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": [],
     "genres": [],
     "places": [
@@ -28928,7 +30012,7 @@
         "hex": "#686868",
         "lab": {
           "l": 43.83,
-          "a": -0,
+          "a": 0,
           "b": -0.01
         },
         "hcl": {
@@ -33428,6 +34512,275 @@
     }
   },
   {
+    "title": "Karnak Scaffolding",
+    "comment": null,
+    "id": 358,
+    "file": "20250120_104305.jpg",
+    "addedDate": "2026-10-26T00:55:53Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/310",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "25 deg 43' 8.30\" N, 32 deg 39' 29.35\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:20 10:43:05",
+    "customCreateDate": null,
+    "placeName": "karnak",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Luxor",
+    "city": "Luxor",
+    "width": 3508,
+    "height": 1973,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305.jpg",
+      "key": "photos/611220b85d19-20250120-104305.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-thumbnail.webp?crop=0,0,1973",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/611220b85d19-20250120-104305-thumbnailpreview.webp?crop=0,0,1973",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 1973,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["ancient-egypt", "temple", "ruins", "stairs", "scaffolding", "restoration", "workers"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "karnak"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#644f3c",
+        "lab": {
+          "l": 35.19,
+          "a": 5.7,
+          "b": 14.68
+        },
+        "hcl": {
+          "h": 68.79,
+          "c": 15.75,
+          "l": 35.19
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0162
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.5353
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0162
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0019
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0017
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0227
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0004
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0002
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0011
+        }
+      ],
+      "neutrals": {
+        "share": 0.4043,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0762
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0627
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0858
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1201
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0075
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0052
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0047
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0038
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.003
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0023
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0037
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0031
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0026
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0024
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0017
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0024
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0024
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0026
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0046
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0076
+          }
+        ]
+      },
+      "lightness": 35.19,
+      "chroma": 17.7,
+      "peakChroma": 28.58,
+      "samples": 9620
+    }
+  },
+  {
     "id": 57,
     "title": "Kura",
     "comment": null,
@@ -33962,6 +35315,275 @@
       "lightness": 48.15,
       "chroma": 17.86,
       "peakChroma": 40.18,
+      "samples": 9975
+    }
+  },
+  {
+    "title": "Lazib Signpost",
+    "comment": null,
+    "id": 364,
+    "file": "20250124_123521.jpg",
+    "addedDate": "2026-10-26T01:02:09Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/950",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "29 deg 24' 5.32\" N, 30 deg 29' 12.61\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:24 12:35:20",
+    "customCreateDate": null,
+    "placeName": "lazib-inn",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Faiyum",
+    "city": "Youssief Al Sedik",
+    "width": 3439,
+    "height": 1934,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521.jpg",
+      "key": "photos/7f3b8d4fdd15-20250124-123521.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7f3b8d4fdd15-20250124-123521-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 752,
+        "y": 0,
+        "size": 1934,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["signage", "palm-trees", "hotel", "walls", "garden", "signpost"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "lazib-inn"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#646168",
+        "lab": {
+          "l": 41.49,
+          "a": 2.8,
+          "b": -3.83
+        },
+        "hcl": {
+          "h": 306.21,
+          "c": 4.74,
+          "l": 41.49
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0125
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1703
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.1064
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0096
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0021
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0064
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0359
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.2786
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.006
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0001
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0004
+        }
+      ],
+      "neutrals": {
+        "share": 0.3715,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0615
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0668
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0593
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0489
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0175
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0147
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0111
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0087
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0089
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0091
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0063
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0055
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0066
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0054
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0082
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0084
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0063
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0036
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0038
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0106
+          }
+        ]
+      },
+      "lightness": 41.49,
+      "chroma": 25.03,
+      "peakChroma": 53.81,
       "samples": 9975
     }
   },
@@ -35629,7 +37251,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["torii", "shinto", "pedestrians", "sando", "road", "mountains", "pine-trees"],
     "genres": [],
     "places": [
@@ -36657,6 +38279,275 @@
     }
   },
   {
+    "title": "Luxor Lunch",
+    "comment": null,
+    "id": 360,
+    "file": "20250120_122221.jpg",
+    "addedDate": "2026-10-26T00:58:58Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/1150",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "25 deg 43' 26.67\" N, 32 deg 36' 24.10\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:20 12:22:21",
+    "customCreateDate": null,
+    "placeName": "marsam-hotel",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Luxor",
+    "city": "Markaz al Uqşur",
+    "width": 3451,
+    "height": 1943,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221.jpg",
+      "key": "photos/96725b617bb5-20250120-122221.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221-thumbnail.webp?crop=1446,0,1943",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/96725b617bb5-20250120-122221-thumbnailpreview.webp?crop=1446,0,1943",
+      "thumbnailcrop": {
+        "x": 1446,
+        "y": 0,
+        "size": 1943,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["walls", "palm-trees", "farmland", "garden", "countryside", "pottery"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "marsam-hotel"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#82877b",
+        "lab": {
+          "l": 55.68,
+          "a": -4.62,
+          "b": 6.18
+        },
+        "hcl": {
+          "h": 126.77,
+          "c": 7.72,
+          "l": 55.68
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0015
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1439
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.1164
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.098
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.198
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0011
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0005
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.4396,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0041
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0151
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.035
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0569
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0126
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0118
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0099
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0091
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0101
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0068
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0065
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0049
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0061
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0047
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0207
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0308
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0356
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.1252
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0277
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0058
+          }
+        ]
+      },
+      "lightness": 55.68,
+      "chroma": 17.48,
+      "peakChroma": 34.52,
+      "samples": 9975
+    }
+  },
+  {
     "title": "Masterpiece",
     "comment": null,
     "id": 121,
@@ -36974,7 +38865,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["tenshu", "castle", "lanterns", "matsuri", "andon", "night", "suitorou"],
     "genres": [],
     "places": [
@@ -38003,6 +39894,275 @@
       "chroma": 11.13,
       "peakChroma": 30.09,
       "samples": 10001
+    }
+  },
+  {
+    "title": "Moon Over Mena House",
+    "comment": null,
+    "id": 363,
+    "file": "20250124_062922(0).jpg",
+    "addedDate": "2026-10-26T01:01:58Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Ultrawide Camera",
+    "aperture": 2.2,
+    "exposure": "1/60",
+    "iso": 500,
+    "focalLength": 2.2,
+    "gpsPosition": "29 deg 59' 10.15\" N, 31 deg 7' 56.57\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:24 06:29:22",
+    "customCreateDate": null,
+    "placeName": "mena-house",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Giza",
+    "city": "Al Ahram",
+    "width": 3381,
+    "height": 1904,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0.jpg",
+      "key": "photos/5f377ed0a4e6-20250124-062922-0.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-thumbnail.webp?crop=1304,0,1904",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5f377ed0a4e6-20250124-062922-0-thumbnailpreview.webp?crop=1304,0,1904",
+      "thumbnailcrop": {
+        "x": 1304,
+        "y": 0,
+        "size": 1904,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["ancient-egypt", "pyramids", "palm-trees", "garden", "hotel", "moon", "twilight"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "mena-house"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#605a5e",
+        "lab": {
+          "l": 38.85,
+          "a": 3.41,
+          "b": -1.24
+        },
+        "hcl": {
+          "h": 340.04,
+          "c": 3.63,
+          "l": 38.85
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0009
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1282
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0066
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.2213
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0979
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0008
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.5443,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1511
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.108
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.061
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0284
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0084
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0075
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0078
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0061
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0051
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0059
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0099
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0099
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0199
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0493
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.042
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0222
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0014
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0001
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0001
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0002
+          }
+        ]
+      },
+      "lightness": 38.85,
+      "chroma": 13.66,
+      "peakChroma": 23.82,
+      "samples": 9694
     }
   },
   {
@@ -40425,6 +42585,270 @@
     }
   },
   {
+    "title": "Open Air Museum",
+    "comment": null,
+    "id": 369,
+    "file": "20250125_155948.jpg",
+    "addedDate": "2026-10-26T01:06:20Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/850",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "29 deg 35' 42.61\" N, 30 deg 40' 40.29\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:25 15:59:48",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Faiyum",
+    "city": "Sinnuris",
+    "width": 3073,
+    "height": 1729,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948.jpg",
+      "key": "photos/4e462a6691f0-20250125-155948.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948-thumbnail.webp?crop=0,0,1729",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4e462a6691f0-20250125-155948-thumbnailpreview.webp?crop=0,0,1729",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 1729,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["ancient-egypt", "ruins", "desert", "tourists", "clouds", "dogs"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#968872",
+        "lab": {
+          "l": 57.4,
+          "a": 1.39,
+          "b": 14.03
+        },
+        "hcl": {
+          "h": 84.34,
+          "c": 14.1,
+          "l": 57.4
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0008
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.5323
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0073
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0184
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.4411,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0061
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0095
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0181
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0252
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0115
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0093
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0065
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0041
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.007
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0092
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0172
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.017
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0299
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0297
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0612
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0924
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0614
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.025
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.001
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 57.4,
+      "chroma": 19.29,
+      "peakChroma": 36.25,
+      "samples": 9417
+    }
+  },
+  {
     "title": "Osakan Street",
     "comment": null,
     "id": 304,
@@ -41544,7 +43968,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["lanterns", "gates", "toro", "torii", "cemetery", "path", "forest"],
     "genres": [],
     "places": [
@@ -42307,6 +44731,270 @@
     }
   },
   {
+    "title": "Promenade Bench",
+    "comment": null,
+    "id": 371,
+    "file": "20250126_092028.jpg",
+    "addedDate": "2026-10-26T01:08:14Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/750",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "29 deg 28' 15.79\" N, 30 deg 44' 43.10\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:26 09:20:28",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Faiyum",
+    "city": "Sinnuris",
+    "width": 3269,
+    "height": 1839,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028.jpg",
+      "key": "photos/cde660e062e5-20250126-092028.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/cde660e062e5-20250126-092028-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 715,
+        "y": 0,
+        "size": 1839,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["road", "minimalism", "lake", "promenade", "bench", "lamppost", "haze", "mural"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#a0aab0",
+        "lab": {
+          "l": 68.97,
+          "a": -2.36,
+          "b": -4.17
+        },
+        "hcl": {
+          "h": 240.45,
+          "c": 4.79,
+          "l": 68.97
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.2989
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0275
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.003
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0024
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0023
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0026
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.4396
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.2237,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0012
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0006
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.002
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0034
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0022
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0024
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0037
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0045
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0034
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0072
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0094
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0059
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0151
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0247
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0527
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0657
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0181
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0008
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0006
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0002
+          }
+        ]
+      },
+      "lightness": 68.97,
+      "chroma": 19.23,
+      "peakChroma": 30.08,
+      "samples": 9694
+    }
+  },
+  {
     "id": 19,
     "title": "Protect and Serve",
     "comment": null,
@@ -42849,6 +45537,275 @@
     }
   },
   {
+    "title": "Pyramid Camel Ride",
+    "comment": null,
+    "id": 362,
+    "file": "20250123_151220.jpg",
+    "addedDate": "2026-10-26T01:01:17Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/620",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "29 deg 58' 14.91\" N, 31 deg 7' 20.84\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:23 15:12:20",
+    "customCreateDate": null,
+    "placeName": "giza-necropolis",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Giza",
+    "city": "Al Ahram",
+    "width": 2964,
+    "height": 1667,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220.jpg",
+      "key": "photos/422504dfd0b9-20250123-151220.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220-thumbnail.webp?crop=1297,0,1667",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/422504dfd0b9-20250123-151220-thumbnailpreview.webp?crop=1297,0,1667",
+      "thumbnailcrop": {
+        "x": 1297,
+        "y": 0,
+        "size": 1667,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["ancient-egypt", "necropolis", "desert", "tourists", "pyramids", "camels"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "giza-necropolis"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#999897",
+        "lab": {
+          "l": 62.85,
+          "a": 0.2,
+          "b": 0.78
+        },
+        "hcl": {
+          "h": 75.26,
+          "c": 0.8,
+          "l": 62.85
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0002
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.4723
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0008
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.3798
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.1466,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0017
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.001
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0012
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0031
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0027
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0025
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0036
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0052
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0027
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0021
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0021
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0013
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0004
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0004
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0027
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0476
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0528
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0091
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0039
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0006
+          }
+        ]
+      },
+      "lightness": 62.85,
+      "chroma": 28.79,
+      "peakChroma": 44.57,
+      "samples": 9417
+    }
+  },
+  {
     "title": "Quiet Itaewon Morning",
     "comment": null,
     "id": 120,
@@ -43166,12 +46123,15 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["city", "night", "road", "cars", "traffic", "skyscraper", "city-lights"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
-    "spotlightFocus": null,
+    "spotlightFocus": {
+      "x": 53,
+      "y": 70
+    },
     "socialPosts": [],
     "reEdit": null,
     "colors": {
@@ -45806,9 +48766,9 @@
     }
   },
   {
-    "id": 31,
     "title": "Shrouded in Mist",
     "comment": null,
+    "id": 31,
     "file": "IMG_6572.jpg",
     "addedDate": "2026-10-22T20:41:31Z",
     "camera": "Canon EOS Rebel T6i",
@@ -45854,7 +48814,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": [],
     "genres": [],
     "places": [
@@ -50643,6 +53603,283 @@
       "chroma": 4.09,
       "peakChroma": 6.84,
       "samples": 9975
+    }
+  },
+  {
+    "title": "The Necropolis",
+    "comment": null,
+    "id": 361,
+    "file": "20250120_133004.jpg",
+    "addedDate": "2026-10-26T00:59:16Z",
+    "camera": "Galaxy S24 Ultra",
+    "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+    "aperture": 1.7,
+    "exposure": "1/640",
+    "iso": 12,
+    "focalLength": 6.3,
+    "gpsPosition": "25 deg 43' 26.17\" N, 32 deg 36' 19.34\" E",
+    "customGpsPosition": null,
+    "createDate": "2025:01:20 13:30:04",
+    "customCreateDate": null,
+    "placeName": "qurnet-murai-necropolis",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "Egypt",
+    "state": "Luxor",
+    "city": "Markaz al Uqşur",
+    "width": 3478,
+    "height": 1958,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004.jpg",
+      "key": "photos/9d1f55510ba4-20250120-133004.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-thumbnail.webp?crop=530,0,1958",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/9d1f55510ba4-20250120-133004-thumbnailpreview.webp?crop=530,0,1958",
+      "thumbnailcrop": {
+        "x": 530,
+        "y": 0,
+        "size": 1958,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [
+      "ancient-egypt",
+      "houses",
+      "mountains",
+      "power-lines",
+      "necropolis",
+      "village",
+      "desert"
+    ],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "qurnet-murai-necropolis"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#c3b6a6",
+        "lab": {
+          "l": 74.81,
+          "a": 1.98,
+          "b": 9.75
+        },
+        "hcl": {
+          "h": 78.54,
+          "c": 9.95,
+          "l": 74.81
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0004
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.5538
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0018
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0002
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0003
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0001
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.104
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.3393,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0001
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0004
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0018
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0034
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.004
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0065
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0092
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0093
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0078
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0044
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0022
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0023
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0034
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0089
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.009
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0189
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0149
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.083
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.1481
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0015
+          }
+        ]
+      },
+      "lightness": 74.81,
+      "chroma": 15.28,
+      "peakChroma": 24.13,
+      "samples": 9417
     }
   },
   {

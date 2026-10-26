@@ -1,0 +1,273 @@
+{
+  "title": "Desert Beetle",
+  "comment": null,
+  "id": 365,
+  "file": "20250124_142744.jpg",
+  "addedDate": "2026-10-26T01:04:14Z",
+  "camera": "Galaxy S24 Ultra",
+  "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
+  "aperture": 1.7,
+  "exposure": "1/1900",
+  "iso": 12,
+  "focalLength": 6.3,
+  "gpsPosition": "29 deg 15' 51.27\" N, 30 deg 1' 19.76\" E",
+  "customGpsPosition": null,
+  "createDate": "2025:01:24 14:27:44",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": "Wadi El-Hitan",
+  "customState": null,
+  "customCountry": null,
+  "country": "Egypt",
+  "state": "Giza",
+  "city": "6th of October",
+  "width": 3622,
+  "height": 2039,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744.jpg",
+    "key": "photos/70a9a18ba4af-20250124-142744.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnail.webp?crop=930,278,1761",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70a9a18ba4af-20250124-142744-thumbnailpreview.webp?crop=930,278,1761",
+    "thumbnailcrop": {
+      "x": 930,
+      "y": 278,
+      "size": 1761,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [
+    "cars",
+    "desert",
+    "vintage-cars",
+    "van",
+    "rock-formations",
+    "mud-brick",
+    "domes",
+    "clouds"
+  ],
+  "genres": [],
+  "places": [],
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "colors": {
+    "average": {
+      "hex": "#978778",
+      "lab": {
+        "l": 57.35,
+        "a": 3.62,
+        "b": 10.09
+      },
+      "hcl": {
+        "h": 70.24,
+        "c": 10.72,
+        "l": 57.35
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.0012
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.4802
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0263
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0015
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.1564
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.0042
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0
+      }
+    ],
+    "neutrals": {
+      "share": 0.3302,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.0021
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0077
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0099
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0117
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0062
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0039
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0024
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0031
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0021
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0071
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0311
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.049
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0571
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0538
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.0452
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0224
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0057
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0062
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0035
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0
+        }
+      ]
+    },
+    "lightness": 57.35,
+    "chroma": 21.23,
+    "peakChroma": 36.91,
+    "samples": 9490
+  }
+}

@@ -18,6 +18,11 @@ function isFocus(value: unknown): value is Focus {
   return isObject(value) && typeof value.x === "number" && typeof value.y === "number";
 }
 
+/** A spotlightFocus value as a focus, or null for the photo's middle when it isn't one. */
+export function asFocus(value: unknown): Focus | null {
+  return isFocus(value) ? value : null;
+}
+
 /** The value the photo's focus has: its local edit's when it has one, or else its file's. */
 function focusValue(edit: LocalEdit | undefined, photo: SocialPhoto): unknown {
   if (edit && SPOTLIGHT_FOCUS in edit.fields) return edit.fields[SPOTLIGHT_FOCUS];
@@ -26,8 +31,7 @@ function focusValue(edit: LocalEdit | undefined, photo: SocialPhoto): unknown {
 
 /** The photo's focus with its local edit applied, or null for its middle. */
 export function focusOf(edits: Record<string, LocalEdit>, photo: SocialPhoto): Focus | null {
-  const value = focusValue(edits[photo.path], photo);
-  return isFocus(value) ? value : null;
+  return asFocus(focusValue(edits[photo.path], photo));
 }
 
 /** The local edit that sets the photo's focus, or puts it back in the middle with null. */
@@ -50,9 +54,14 @@ export function clickedFocus(clientX: number, clientY: number, box: DOMRect): Fo
   return { x: percent(clientX - box.left, box.width), y: percent(clientY - box.top, box.height) };
 }
 
+/** The Medium version in a photo's data, or a smaller one; undefined when it has none. */
+export function resizedPhoto(data: Record<string, unknown>): string | undefined {
+  const images = isObject(data.images) ? data.images : {};
+  const found = [images.medium, images.small, images.xsmall].find((url) => typeof url === "string");
+  return found as string | undefined;
+}
+
 /** The photo's Medium version, or a smaller one, or else its Square Thumbnail. */
 export function wholePhoto(photo: SocialPhoto): string | null {
-  const images = isObject(photo.data.images) ? photo.data.images : {};
-  const found = [images.medium, images.small, images.xsmall].find((url) => typeof url === "string");
-  return (found as string | undefined) ?? photo.image;
+  return resizedPhoto(photo.data) ?? photo.image;
 }
