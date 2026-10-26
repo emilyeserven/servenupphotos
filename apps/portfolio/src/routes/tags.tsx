@@ -3,6 +3,7 @@ import { Tags } from "lucide-react";
 import { CARD_GRID, ParentTagSection, TagCard } from "@/components/tag-card";
 import { parseTagsSearch, TagControls } from "@/components/tag-controls";
 import { type TagEntry, type TagSection, type TagSort, tagSections } from "@/lib/tag-list";
+import { useRememberViewOptions } from "@/lib/view-options";
 
 export const Route = createFileRoute("/tags")({
   validateSearch: parseTagsSearch,
@@ -23,6 +24,7 @@ const SECTIONS: Record<TagSort, TagSection[]> = {
  */
 function TagsView() {
   const search = Route.useSearch();
+  useRememberViewOptions("/tags", search);
   const sort = search.sort ?? "name";
   const top = search.top === true;
   const sections = SECTIONS[sort];

@@ -32,6 +32,7 @@ import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 import { cn } from "@/lib/utils";
+import { useRememberViewOptions } from "@/lib/view-options";
 
 /**
  * How tiles are shaped: the square picked on the pipeline's Photo page, or the whole photo at its
@@ -63,14 +64,24 @@ function validateGridSearch(
   search: Record<string, unknown>,
 ): GridSearch & PhotoFilters & CameraFilters & ShownPhotoSearch {
   return {
-    ...viewOf(search.view),
-    ...parseTableSearch(search),
-    ...infoOf(search),
-    ...sortOf(search),
+    ...gridViewOptions(search),
     ...parseColorFilters(search),
     ...parseFilters(search),
     ...parseCameraFilters(search),
     ...parseShownPhoto(search),
+  };
+}
+
+/**
+ * The Grid's own settings from the URL: its view, info, sort and Table settings, which are
+ * remembered for the next time it's opened from another page. The filters aren't among them.
+ */
+function gridViewOptions(search: Record<string, unknown>): GridSearch {
+  return {
+    ...viewOf(search.view),
+    ...parseTableSearch(search),
+    ...infoOf(search),
+    ...sortOf(search),
   };
 }
 
@@ -135,6 +146,7 @@ const TILE_SIZES =
 function GridView() {
   const search = Route.useSearch();
   const mode: ViewMode = search.view ?? "square";
+  useRememberViewOptions("/grid", gridViewOptions(search));
   if (newestFirst.length === 0) return <ViewPlaceholder to="/grid" />;
   const shownPhotos = photosFor(search, mode);
 
