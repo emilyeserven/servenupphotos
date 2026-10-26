@@ -1,16 +1,19 @@
 import { useMemo } from "react";
+import type { ColorDisplay } from "@/lib/color-display";
 import { PinBoard, type BoardLook } from "@/components/pin-board";
 import type { KeepInside, WheelPoint } from "@/lib/color-wheel";
+import type { ChartUp } from "@/lib/color-display";
 import { type VividMeasure, vividnessOf } from "@/lib/color-sort";
 import { graysOf, type LightnessRange } from "@/lib/lightness-range";
 import type { PhotoImage } from "@/lib/photos";
 
-/** A black and white photo the chart can place: its thumbnail, how light and how vivid it is. */
+/** A black and white photo the chart can place: its thumbnail, how light, contrasty and vivid it is. */
 interface SpectrumPhoto {
   id: number;
   title: string;
   image: PhotoImage;
   lightness: number | null;
+  contrast: number | null;
   vividness: number;
   peakVividness: number;
 }
@@ -33,12 +36,19 @@ const BOTTOM_MARGIN = 0.06;
 /** The least gap, in pixels, kept between a pin and the chart's edges. */
 const EDGE_PX = 12;
 
-/** The least span of vividness the chart's height stands for, so photos alike aren't spread up it. */
+/** The least span the chart's height stands for, so photos alike aren't spread up it. */
 const MIN_SPAN = 2;
 
-/** The range of vividness the chart's height stands for: the photos' least to their most, rounded out. */
-function vividExtent(photos: SpectrumPhoto[], measure: VividMeasure): [number, number] {
-  const values = photos.map((photo) => vividnessOf(photo, measure));
+/**
+ * How high a photo sits on the chart, before it's fitted to the chart: its contrast, or its
+ * vividness by measure. A photo without its contrast saved sits at the middling 20.
+ */
+function heightOf(photo: SpectrumPhoto, up: ChartUp, measure: VividMeasure): number {
+  return up === "contrast" ? (photo.contrast ?? 20) : vividnessOf(photo, measure);
+}
+
+/** The range of values the chart's height stands for: the photos' least to their most, rounded out. */
+function heightExtent(values: number[]): [number, number] {
   if (values.length === 0) return [0, MIN_SPAN];
   const bottom = Math.floor(Math.min(...values));
   return [bottom, Math.max(bottom + MIN_SPAN, Math.ceil(Math.max(...values)))];
@@ -74,49 +84,48 @@ function chartLook(extent: LightnessRange): BoardLook {
 /**
  * The black and white photos as pins on a chart filling the page, like the color wheel's, fitted to
  * the photos: left to right across extent (the darkest to the lightest black and white photo) by
- * how light their grays are on average, and bottom to top from the least vivid photo to the most
- * (by measure). Its background shades from dark to light gray, so it needs no axis labels. It
- * zooms, pans and clusters crowded pins as a PinBoard does.
+ * how light their grays are on average, and bottom to top from the flattest photo to the most
+ * contrasty, or from the least vivid to the most (by measure), as the display options' chartUp
+ * says. Its background shades from dark to light gray, so it needs no axis labels. It zooms, pans
+ * and clusters crowded pins as a PinBoard does.
  */
 export function ShadeSpectrum<T extends SpectrumPhoto>({
   photos,
   measure,
   extent,
-  scale,
+  display,
   onOpen,
 }: {
   photos: T[];
   measure: VividMeasure;
   extent: LightnessRange;
-  /** How much bigger than small the pins are drawn. */
-  scale: number;
+  /** The display options: the pins' size, how readily they're grouped, how groups look, and what's up. */
+  display: ColorDisplay;
   onOpen: (photo: T) => void;
 }) {
-  const [bottom, top] = vividExtent(photos, measure);
-  const places = useMemo(
-    () => photos.map((photo) => chartPoint(photo, measure, extent, [bottom, top])),
-    [photos, measure, extent, bottom, top],
-  );
+  const up = display.chartUp;
+  const places = useMemo(() => {
+    const heights = photos.map((photo) => heightOf(photo, up, measure));
+    const range = heightExtent(heights);
+    return photos.map((photo, i) => chartPoint(photo.lightness, heights[i]!, extent, range));
+  }, [photos, up, measure, extent]);
   const look = useMemo(() => chartLook(extent), [extent]);
-  return <PinBoard photos={photos} places={places} look={look} scale={scale} onOpen={onOpen} />;
+  return <PinBoard photos={photos} places={places} look={look} display={display} onOpen={onOpen} />;
 }
 
 /**
  * A photo's place on the chart, as fractions of its width and height: across by its lightness
- * within extent, and up by its vividness within vivid.
+ * within extent, and up by its height within range.
  */
 function chartPoint(
-  photo: SpectrumPhoto,
-  measure: VividMeasure,
+  lightness: number | null,
+  height: number,
   extent: LightnessRange,
-  vivid: [number, number],
+  range: [number, number],
 ): WheelPoint {
   return {
-    x: MARGIN + fractionOf(photo.lightness ?? 50, extent) * (1 - 2 * MARGIN),
-    y:
-      1 -
-      BOTTOM_MARGIN -
-      fractionOf(vividnessOf(photo, measure), vivid) * (1 - BOTTOM_MARGIN - TOP_MARGIN),
+    x: MARGIN + fractionOf(lightness ?? 50, extent) * (1 - 2 * MARGIN),
+    y: 1 - BOTTOM_MARGIN - fractionOf(height, range) * (1 - BOTTOM_MARGIN - TOP_MARGIN),
   };
 }
 

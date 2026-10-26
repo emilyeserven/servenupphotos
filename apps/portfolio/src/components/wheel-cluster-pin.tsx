@@ -1,17 +1,21 @@
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import type { WheelPoint } from "@/lib/color-wheel";
 import type { PhotoImage } from "@/lib/photos";
+import { cn } from "@/lib/utils";
 
 /**
  * A cluster's pin on the color wheel, like the Map page's: how many photos it covers, over the
- * first one's thumbnail, darkened so the number stays readable. Clicking it zooms in on it, which
- * splits it apart.
+ * first one's thumbnail, darkened so the number stays readable. The display options can hide the
+ * count, and show the thumbnail as it is, with the count in a small dark badge instead. Clicking it
+ * zooms in on it, which splits it apart.
  */
 export function WheelClusterPin({
   image,
   count,
   at,
   size,
+  showCount,
+  dimmed,
   onZoomIn,
 }: {
   /** The first of its photos' images. */
@@ -20,6 +24,10 @@ export function WheelClusterPin({
   at: WheelPoint;
   /** Its width in pixels. */
   size: number;
+  /** Whether the count is shown. */
+  showCount: boolean;
+  /** Whether the thumbnail is darkened under the count. */
+  dimmed: boolean;
   onZoomIn: () => void;
 }) {
   return (
@@ -40,8 +48,23 @@ export function WheelClusterPin({
       <span aria-hidden className="absolute inset-0">
         <PhotoThumbnail image={image} />
       </span>
-      <span aria-hidden className="absolute inset-0 bg-black/60" />
-      <span className="relative">{count}</span>
+      {dimmed && <span aria-hidden className="absolute inset-0 bg-black/60" />}
+      {showCount && <ClusterCount count={count} badge={!dimmed} />}
     </button>
+  );
+}
+
+/** The cluster's count, in a dark badge when the thumbnail behind it isn't darkened. */
+function ClusterCount({ count, badge }: { count: number; badge: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "relative",
+        badge && "rounded-full bg-black/70 px-1 leading-tight tabular-nums",
+      )}
+    >
+      {count}
+    </span>
   );
 }

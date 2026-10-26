@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { ColorDisplay } from "@/lib/color-display";
 import { PinBoard, type BoardLook } from "@/components/pin-board";
 import { type VividMeasure, vividnessOf } from "@/lib/color-sort";
 import { hueAngle, keepInWheel, WHEEL_BACKGROUND, wheelPoint } from "@/lib/color-wheel";
@@ -72,13 +73,13 @@ const WHEEL_LOOK: BoardLook = {
 export function ColorWheel<T extends WheelPhoto>({
   photos,
   measure,
-  scale,
+  display,
   onOpen,
 }: {
   photos: T[];
   measure: VividMeasure;
-  /** How much bigger than small the pins are drawn. */
-  scale: number;
+  /** The display options: the pins' size, how readily they're grouped, how groups look. */
+  display: ColorDisplay;
   onOpen: (photo: T) => void;
 }) {
   const mostVivid = Math.max(MIN_EDGE, ...photos.map((photo) => vividnessOf(photo, measure)));
@@ -90,6 +91,6 @@ export function ColorWheel<T extends WheelPhoto>({
     [photos, measure, mostVivid],
   );
   return (
-    <PinBoard photos={photos} places={places} look={WHEEL_LOOK} scale={scale} onOpen={onOpen} />
+    <PinBoard photos={photos} places={places} look={WHEEL_LOOK} display={display} onOpen={onOpen} />
   );
 }

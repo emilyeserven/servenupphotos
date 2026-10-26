@@ -4,28 +4,26 @@ import { type ColorLayout, ColorLayoutControl } from "@/components/color-layout-
 import { ColorViewFilters } from "@/components/color-view-filters";
 import { FloatingHeader } from "@/components/floating-header";
 import { ColorWheel } from "@/components/color-wheel";
-import { ColorDisplayMenu } from "@/components/color-display-menu";
+import { ColorDisplayOptions } from "@/components/color-display-options";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { ShadeSpectrum } from "@/components/shade-spectrum";
 import { ViewPlaceholder } from "@/components/view-placeholder";
+import { colorDisplay, type ColorDisplaySearch, parseColorDisplay } from "@/lib/color-display";
 import { type ColorFilters, parseColorFilters, vividEnough } from "@/lib/color-search";
 import { isBlackAndWhite } from "@/lib/photo-colors";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import type { VividMeasure } from "@/lib/color-sort";
 import { lightnessExtent } from "@/lib/lightness-range";
-import { parsePinScale, pinFactor, type PinScale } from "@/lib/pin-scale";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useRememberViewOptions } from "@/lib/view-options";
 
-interface ColorSearch extends ColorFilters {
+interface ColorSearch extends ColorFilters, ColorDisplaySearch {
   /**
    * Set to show the black and white photos along a spectrum from black to white; left out for
    * the color photos on the color wheel. "grid" is only read from older links, which go to the
    * Grid page.
    */
   view?: Exclude<ColorLayout, "wheel"> | "grid";
-  /** How big the photo previews are: left out for small. */
-  pins?: Exclude<PinScale, "small">;
 }
 
 export const Route = createFileRoute("/color")({
@@ -33,7 +31,7 @@ export const Route = createFileRoute("/color")({
     ...parseColorFilters(search),
     ...viewOf(search.view),
     ...measureOf(search.measure),
-    ...pinsOf(search.pins),
+    ...parseColorDisplay(search),
     ...parseShownPhoto(search),
   }),
   // The Color page's grid moved to the Grid page, sorted by color, with the same color filters.
@@ -62,12 +60,6 @@ function measureFor(search: ColorSearch): VividMeasure {
   return search.measure ?? "peak";
 }
 
-/** The `?pins=` to keep, leaving it out when it's missing or not a size. */
-function pinsOf(value: unknown): ColorSearch {
-  const pins = parsePinScale(value);
-  return pins === undefined ? {} : { pins };
-}
-
 // Newest first.
 const colorPhotos = photos
   .filter(
@@ -85,7 +77,7 @@ function hasVividness(photo: Photo): boolean {
 function ColorView() {
   const search = Route.useSearch();
   const { shown, show, close } = useShownPhoto();
-  useRememberViewOptions("/color", { ...viewOf(search.view), ...pinsOf(search.pins) });
+  useRememberViewOptions("/color", { ...viewOf(search.view), ...parseColorDisplay(search) });
   if (colorPhotos.length === 0) return <ViewPlaceholder to="/color" />;
   const layout = search.view === "mono" ? "mono" : "wheel";
   const shownPhotos = photosFor(search, layout);
@@ -97,7 +89,7 @@ function ColorView() {
       <FloatingHeader icon={Palette} title="Color" count={shownPhotos.length}>
         <div className="flex flex-wrap items-center gap-2">
           <ColorLayoutControl layout={layout} />
-          <ColorDisplayMenu pins={search.pins} />
+          <ColorDisplayOptions display={colorDisplay(search)} mono={layout === "mono"} />
           <ColorViewFilters vivid={search.vivid} measure={measureFor(search)} />
         </div>
       </FloatingHeader>
@@ -144,19 +136,19 @@ function ColorLayoutView({
   onOpen: (photo: ColorPhoto) => void;
 }) {
   const measure = measureFor(search);
-  const scale = pinFactor(search.pins);
+  const display = colorDisplay(search);
   if (layout === "mono") {
     return (
       <ShadeSpectrum
         photos={photos}
         measure={measure}
         extent={MONO_EXTENT}
-        scale={scale}
+        display={display}
         onOpen={onOpen}
       />
     );
   }
-  return <ColorWheel photos={photos} measure={measure} scale={scale} onOpen={onOpen} />;
+  return <ColorWheel photos={photos} measure={measure} display={display} onOpen={onOpen} />;
 }
 
 /**

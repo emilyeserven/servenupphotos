@@ -18,14 +18,28 @@ Clicking a photo opens the photo viewer (`?photo=`). Like the Map, the page fill
 title and controls float at the top left (`components/floating-header.tsx`, shared with the Map), over the page's
 background; the wheel or chart starts below them, its top fading in from the background (a CSS mask on the board), and
 the wheel starts a little further down still. The zoom buttons are at the bottom right. **Wheel / Black & white** picks
-the view. **Display** (`components/color-display-menu.tsx`) holds **Preview size**: **Small**, **Medium** or **Large**
-(`components/pin-size-control.tsx`, `lib/pin-scale.ts`) makes the pins 1×, 1.5× or 2× their usual size
-(`?pins=medium`, `?pins=large`, left out for small); bigger pins cluster sooner. **Filters** opens the **Average / Peak**
-and **Vividness at least** controls (`components/color-view-filters.tsx`), hidden at first and counted on the button
-while changed. On this page **Peak** is the default (`?measure=average` picks average), since it spreads photos out
-more. The Color page has no
-grid of its own any more: the [Grid page](#on-the-grid-page) has the same color filters and sorts by color, and older
-`/color?view=grid` links go there, sorted by color, keeping their color filters.
+the view. The eye button opens the **display options** (`components/color-display-options.tsx`, kept in
+`lib/color-display.ts`), the same pin options as the [Map's](portfolio-map.md) (`components/pin-display-fields.tsx`,
+shared with it), for the wheel and the Black & white chart alike. Unlike the Map's, they're kept in the URL, each left
+out at its default, and remembered with the page's other settings (`lib/view-options.ts`):
+
+- **Grouping** (`?grouping=`, 40 by default, from 10 to 100, with a tick under the slider at the default) is how close
+  photos are before they're one cluster pin: one and a half pin widths at the default, scaled with it
+  (`clusterSpan` in `lib/pin-markers.ts`), so **Less** shows more photos on their own and **More** groups them sooner.
+  It changes the view once the slider is let go.
+- **Pin size**: **Small** (the default), **Medium** or **Large** (`?pins=medium`, `?pins=large`; `lib/pin-scale.ts`)
+  makes the pins 1×, 1.5× or 2× their usual size; bigger pins cluster sooner.
+- **Show counts on groups** (`?counts=false` when unticked) hides the number on cluster pins.
+- **Darken photos under counts** (`?dim=false` when unticked) shows a cluster's photo as it is, with its count in a
+  small dark badge instead.
+- **Up the chart**, only in the Black & white view, picks what the chart's height stands for: **Contrast** (the
+  default) or **Vividness** (`?up=vividness`). See [Black & white](#black--white).
+- **Reset to defaults** goes back to all of these. **Filters** opens the **Average / Peak**
+  and **Vividness at least** controls (`components/color-view-filters.tsx`), hidden at first and counted on the button
+  while changed. On this page **Peak** is the default (`?measure=average` picks average), since it spreads photos out
+  more. The Color page has no
+  grid of its own any more: the [Grid page](#on-the-grid-page) has the same color filters and sorts by color, and older
+  `/color?view=grid` links go there, sorted by color, keeping their color filters.
 
 ## Wheel
 
@@ -60,10 +74,14 @@ isn't kept in the URL. On a phone, one finger scrolls the page over the whole wh
 **Black & white** (`?view=mono`, `components/shade-spectrum.tsx`) shows the photos whose blacks, grays and whites make
 up at least 90% of them (`isBlackAndWhite` in `lib/photo-colors.ts`), which the wheel leaves out, as pins on a chart:
 left to right from black to white by average lightness (`Photo.lightness`, the mean of its neutral histogram, 0 to
-100), and bottom to top by vividness, by the **Average / Peak** measure, since even a black and white photo can have a
-slight tint. The chart fits the photos: across from the darkest to the lightest one's lightness, rounded out to steps
-of 5 (at least 10 wide; `lightnessExtent`), and up from the least vivid photo shown to the most (at least 2 apart), so
-photos aren't bunched into one corner. Like the wheel, it fills the page below the floating controls, its gray
+100), and bottom to top by contrast: how far its blacks, grays and whites spread from that average
+(`Photo.contrast`, the standard deviation of the same histogram, `photoContrast`), from about 10 for a flat, misty photo
+to 30 or more for one with deep blacks and bright whites. It needs nothing new from the pipeline. The display options'
+**Up the chart** can switch the height to vividness instead, by the **Average / Peak** measure, since even a black and
+white photo can have a slight tint; but about half the black and white photos have no tint at all, so by vividness they
+all sit in one dense row along the bottom, which contrast spreads out. The chart fits the photos: across from the
+darkest to the lightest one's lightness, rounded out to steps of 5 (at least 10 wide; `lightnessExtent`), and up from
+the lowest photo shown to the highest (at least 2 apart), so photos aren't bunched into one corner. Like the wheel, it fills the page below the floating controls, its gray
 background fading in at the top, with no slider, axis labels or caption: the grays show which way is light. It's a pin
 board like the wheel
 (`components/pin-board.tsx`): pins that would overlap are pushed apart, kept inside the chart; crowded ones are
@@ -72,7 +90,7 @@ clustered; and it zooms, pans and shows a mini map the same way, splitting clust
 The **Filters** vividness controls work here too. Older links' `?light=` range is ignored.
 
 > **Frontend analogy:** the chart is a scatter plot of absolutely positioned buttons, `left` from lightness and `top`
-> from vividness, then nudged apart like a physics-based layout until none overlap.
+> from contrast (or vividness), then nudged apart like a physics-based layout until none overlap.
 
 ## Color filters
 

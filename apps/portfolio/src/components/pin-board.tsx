@@ -3,7 +3,9 @@ import { MarkerPin, type PinPhoto } from "@/components/marker-pin";
 import { WheelMinimap } from "@/components/wheel-minimap";
 import { WheelZoomControls } from "@/components/wheel-zoom-controls";
 import type { KeepInside, WheelPoint } from "@/lib/color-wheel";
-import { pinMarkers } from "@/lib/pin-markers";
+import type { ColorDisplay } from "@/lib/color-display";
+import { clusterSpan, pinMarkers } from "@/lib/pin-markers";
+import { pinFactor } from "@/lib/pin-scale";
 import {
   centerOn,
   MAX_ZOOM,
@@ -55,14 +57,14 @@ export function PinBoard<T extends PinPhoto>({
   photos,
   places,
   look,
-  scale,
+  display,
   onOpen,
 }: {
   photos: T[];
   places: WheelPoint[];
   look: BoardLook;
-  /** How much bigger than the look's size the pins are drawn, 1 for as it says. */
-  scale: number;
+  /** The display options: how big the pins are drawn, how readily they're grouped, and how groups look. */
+  display: ColorDisplay;
   onOpen: (photo: T) => void;
 }) {
   const [viewport, size] = useSize();
@@ -73,10 +75,11 @@ export function PinBoard<T extends PinPhoto>({
     () => ({ width: size.width * layoutZoom, height: size.height * layoutZoom }),
     [size, layoutZoom],
   );
-  const pinPx = Math.round(look.pinSize(canvas, photos.length) * scale);
+  const pinPx = Math.round(look.pinSize(canvas, photos.length) * pinFactor(display.pinSize));
+  const span = spanAt(layoutZoom, display.grouping);
   const markers = useMemo(
-    () => pinMarkers(places, canvas, pinPx, layoutZoom < MAX_ZOOM, look.keep(canvas)),
-    [places, canvas, pinPx, layoutZoom, look],
+    () => pinMarkers(places, canvas, pinPx, span, look.keep(canvas)),
+    [places, canvas, pinPx, span, look],
   );
   return (
     <div className="relative size-full">
@@ -96,6 +99,7 @@ export function PinBoard<T extends PinPhoto>({
               marker={marker}
               photos={photos}
               size={pinPx}
+              display={display}
               onOpen={onOpen}
               onZoomIn={() => animateTo(zoomInOn(view, marker))}
             />
@@ -120,6 +124,11 @@ export function PinBoard<T extends PinPhoto>({
       )}
     </div>
   );
+}
+
+/** How close, in pin widths, pins cluster at zoom: not at all at the furthest zoom, so every photo can be reached. */
+function spanAt(zoom: number, grouping: number): number {
+  return zoom < MAX_ZOOM ? clusterSpan(grouping) : 0;
 }
 
 /**

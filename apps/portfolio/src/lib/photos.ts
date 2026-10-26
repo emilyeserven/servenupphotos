@@ -3,6 +3,7 @@ import {
   type ColorShare,
   type PhotoColorData,
   photoColors,
+  photoContrast,
   photoLightness,
   photoPeakVividness,
   photoVividness,
@@ -88,6 +89,11 @@ export interface Photo {
   peakVividness: number | null;
   /** How light its blacks, grays and whites are on average, from 0 to 100; null until the pipeline saves its colors. */
   lightness: number | null;
+  /**
+   * How far its blacks, grays and whites spread from that average, from about 10 for a flat photo to
+   * 30 or more for a contrasty one; null until the pipeline saves its colors.
+   */
+  contrast: number | null;
 }
 
 /** A point of a photo, in percent across from the left and down from the top. */
@@ -673,6 +679,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       vividness: photoVividness(photo.colors),
       peakVividness: photoPeakVividness(photo.colors),
       lightness: photoLightness(photo.colors),
+      contrast: photoContrast(photo.colors),
     };
   });
 }
