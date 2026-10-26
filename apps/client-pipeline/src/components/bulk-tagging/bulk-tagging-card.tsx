@@ -33,10 +33,10 @@ export function BulkTaggingCard() {
       <CardHeader>
         <CardTitle>Bulk tagging</CardTitle>
         <CardDescription>
-          Picks up to five photos that go together, starting with the one with the fewest tags and
-          adding the ones that share its places, city or country, genres or date. Copy one prompt
-          for all of them into a chat with an LLM, paste its JSON answer back, and review the tags
-          before they&apos;re saved, waiting for Commit.
+          Picks up to five photos without tags that go together: one, then the ones that share its
+          places, city or country, genres or date. Photos that already have tags are left out. Copy
+          one prompt for all of them into a chat with an LLM, paste its JSON answer back, and review
+          the tags before they&apos;re saved, waiting for Commit.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">

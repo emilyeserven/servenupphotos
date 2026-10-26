@@ -62,11 +62,12 @@ changed top-level fields are rewritten, and nothing is saved while any photo fil
 ## Bulk tagging
 
 **Bulk tagging** tags up to five related photos with one LLM prompt. **Pick photos** (`POST /api/data/bulk-tags/pick`)
-reads every photo file as the next Commit will have it and picks the one with the fewest tags (by path among equals),
-then up to four that share the most with it: each shared [place](places-and-localizations.md) counts 5, the same
+reads every photo file as the next Commit will have it and only considers photos without tags (an empty or missing
+`tags`), so a photo that already has tags is never picked. It picks the first of those by path, then up to four that
+share the most with it: each shared [place](places-and-localizations.md) counts 5, the same
 city 3 (or else the same country 1), each shared [genre](photographic-genres.md) 2, and being taken the same day 3
 (or else the same month 1), using the hand-written city, country and date over the EXIF ones. Photos that share
-nothing aren't picked, and among equals the one with fewer tags goes first. Each card says what it shares with the
+nothing aren't picked. Each card says what it shares with the
 first photo. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out;
 **Start over** picks from every photo again.
 

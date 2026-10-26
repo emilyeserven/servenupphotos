@@ -6,17 +6,12 @@ function title(data: Record<string, unknown>): string {
   return typeof data.title === "string" ? data.title : "";
 }
 
-/** The tags the photo has now, as its JSON lists them. */
-function tagCount(data: Record<string, unknown>): number {
-  return Array.isArray(data.tags) ? data.tags.length : 0;
-}
-
 /** What the photo shares with the first one, or that it's the one the others were picked for. */
 function relatedText(photo: BulkTagPhoto, first: boolean): string {
-  return first ? "Fewest tags; the others go with it" : photo.related.join(", ");
+  return first ? "The others go with it" : photo.related.join(", ");
 }
 
-/** The picked photos, each with its name, how many tags it has and what it shares with the first. */
+/** The picked photos, each with its name and what it shares with the first. */
 export function PickedPhotos({ photos }: { photos: BulkTagPhoto[] }) {
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -31,10 +26,7 @@ export function PickedPhotos({ photos }: { photos: BulkTagPhoto[] }) {
             {photo.name}
           </code>
           {title(photo.data) && <span className="truncate">{title(photo.data)}</span>}
-          <span className="text-muted-foreground">
-            {tagCount(photo.data) === 1 ? "1 tag" : `${tagCount(photo.data)} tags`} ·{" "}
-            {relatedText(photo, i === 0)}
-          </span>
+          <span className="text-muted-foreground">{relatedText(photo, i === 0)}</span>
         </li>
       ))}
     </ul>

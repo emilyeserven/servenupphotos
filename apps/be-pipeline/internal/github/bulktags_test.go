@@ -30,7 +30,8 @@ func TestPickBulkTagPhotos(t *testing.T) {
 	_, c := bulkTagRepo(t, map[string]string{
 		"a.json": `{"tags":[],"customCity":"Kyoto","createDate":"2024:04:01 10:00:00"}`,
 		"b.json": `{"tags":["temple"],"city":"Kyoto","createDate":"2024:04:01 12:00:00"}`,
-		"c.json": `{"tags":[],"city":"Osaka","country":"Japan","createDate":"2019:01:01 00:00:00"}`,
+		"c.json": `{"tags":[],"city":"Kyoto","createDate":"2019:01:01 00:00:00"}`,
+		"g.json": `{"tags":[],"customCity":"Kyoto","createDate":"2024:04:01 18:00:00"}`,
 		"d.json": `{"tags":["temple","lanterns"],"customCity":"kyoto","genres":["street"]}`,
 		"e.json": `{"tags":[],"city":"Paris"}`,
 		"f.json": `{"file":`,
@@ -43,16 +44,16 @@ func TestPickBulkTagPhotos(t *testing.T) {
 	for _, p := range got.Photos {
 		names = append(names, p.Name)
 	}
-	// a has no tags and is first; b shares its city and day, d its city;
-	// c and e share nothing with it.
-	if want := []string{"a", "b", "d"}; !slices.Equal(names, want) {
+	// Photos with tags (b, d) are never picked. a is first; g shares its
+	// city and day, c its city; e shares nothing with it.
+	if want := []string{"a", "g", "c"}; !slices.Equal(names, want) {
 		t.Errorf("picked %v, want %v", names, want)
 	}
-	if got.Untagged != 3 || got.PhotoFiles != 6 || got.PullRequest == nil {
-		t.Errorf("PickBulkTagPhotos() = %+v, want 3 untagged of 6 photo files", got)
+	if got.Untagged != 4 || got.PhotoFiles != 7 || got.PullRequest == nil {
+		t.Errorf("PickBulkTagPhotos() = %+v, want 4 untagged of 7 photo files", got)
 	}
 	if r := got.Photos[1].Related; !slices.Equal(r, []string{"same city: kyoto", "taken the same day"}) {
-		t.Errorf("b related = %v", r)
+		t.Errorf("g related = %v", r)
 	}
 
 	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, []string{photosDir + "a.json"})

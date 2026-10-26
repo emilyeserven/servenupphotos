@@ -14,7 +14,7 @@ export interface BulkTagPhoto {
   related: string[];
 }
 
-/** Up to five related photos to tag together: the one with the fewest tags, then the ones most like it. */
+/** Up to five related photos without tags to tag together: one, then the ones most like it. */
 export interface BulkTagPick {
   branch: string;
   pullRequest: { number: number; url: string } | null;
