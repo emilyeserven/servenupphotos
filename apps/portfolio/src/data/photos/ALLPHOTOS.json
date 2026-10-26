@@ -6997,9 +6997,9 @@
     }
   },
   {
-    "id": 36,
     "title": "Art not Ads",
     "comment": null,
+    "id": 36,
     "file": "IMG_0173.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -7045,7 +7045,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": [],
     "genres": [],
     "places": [
@@ -18631,7 +18631,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": [],
     "genres": [],
     "places": [
@@ -22113,7 +22113,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["doors", "washitsu", "tatami", "shoji", "fusuma", "interior"],
     "genres": [],
     "places": [
@@ -29943,9 +29943,9 @@
     }
   },
   {
-    "id": 56,
     "title": "I like to imagine that it's just one mannequin",
     "comment": null,
+    "id": 56,
     "file": "IMG_9617.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -29991,7 +29991,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": [],
     "genres": [],
     "places": [
@@ -30012,7 +30012,7 @@
         "hex": "#686868",
         "lab": {
           "l": 43.83,
-          "a": -0,
+          "a": 0,
           "b": -0.01
         },
         "hcl": {
@@ -37251,7 +37251,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["torii", "shinto", "pedestrians", "sando", "road", "mountains", "pine-trees"],
     "genres": [],
     "places": [
@@ -38865,7 +38865,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["tenshu", "castle", "lanterns", "matsuri", "andon", "night", "suitorou"],
     "genres": [],
     "places": [
@@ -43968,7 +43968,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["lanterns", "gates", "toro", "torii", "cemetery", "path", "forest"],
     "genres": [],
     "places": [
@@ -46123,12 +46123,15 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["city", "night", "road", "cars", "traffic", "skyscraper", "city-lights"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
-    "spotlightFocus": null,
+    "spotlightFocus": {
+      "x": 53,
+      "y": 70
+    },
     "socialPosts": [],
     "reEdit": null,
     "colors": {
@@ -48763,9 +48766,9 @@
     }
   },
   {
-    "id": 31,
     "title": "Shrouded in Mist",
     "comment": null,
+    "id": 31,
     "file": "IMG_6572.jpg",
     "addedDate": "2026-10-22T20:41:31Z",
     "camera": "Canon EOS Rebel T6i",
@@ -48811,7 +48814,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": [],
     "genres": [],
     "places": [
