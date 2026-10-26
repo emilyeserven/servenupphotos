@@ -31,6 +31,7 @@ import {
 import { type DayRange, isDay } from "@/lib/map-days";
 import { type MapDisplay, pinSpacing, useMapDisplay } from "@/lib/map-display";
 import { fadeTo } from "@/lib/map-fade";
+import { photosInView } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import { locationSelection, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
@@ -223,6 +224,19 @@ function useMarkersOnDisplay(map: RefObject<MapRef | null>) {
   return { ...inView, display, changeDisplay };
 }
 
+/** The photos in view the photo viewer can step through, newest first; none before the map is drawn. */
+function browsableIn(drawn: PlacedPhoto[], view: LngLatBounds | null): PlacedPhoto[] {
+  return view ? photosInView(drawn, view) : [];
+}
+
+/**
+ * The photos the viewer steps through from a photo: the group, with the photo first when it isn't
+ * in it, such as a photo whose spot is just outside the view while its marker is still showing.
+ */
+function groupWith(photo: PlacedPhoto, group: PlacedPhoto[]): PlacedPhoto[] {
+  return group.includes(photo) ? group : [photo, ...group];
+}
+
 function MapView() {
   const isDark = useIsDark();
   const map = useRef<MapRef>(null);
@@ -239,16 +253,17 @@ function MapView() {
     setSelected(null);
     setCluster(null);
   });
-  // The photos the lightbox steps through: the open group's, or none for a photo on its own.
+  // The photos the lightbox steps through: the open group's, or else the photos in view.
   const [shownGroup, setShownGroup] = useState<PlacedPhoto[]>([]);
+  const browsable = browsableIn(dayPhotos.placed, view);
 
   function onMoveEnd() {
     void updateMarkers();
     if (map.current) saveView(map.current);
   }
 
-  function openPhoto(photo: PlacedPhoto, group: PlacedPhoto[] = []) {
-    setShownGroup(group);
+  function openPhoto(photo: PlacedPhoto, group: PlacedPhoto[] = browsable) {
+    setShownGroup(groupWith(photo, group));
     if (hasImage(photo)) show(photo);
     else setSelected(photo);
   }
@@ -301,6 +316,8 @@ function MapView() {
               display={display}
               onDisplayChange={changeDisplay}
               onDaysChange={setDays}
+              browsable={browsable}
+              onBrowse={openPhoto}
               onReset={() => {
                 if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
               }}

@@ -42,7 +42,7 @@ photo viewer while on the map) fades the map out, moves it there and fades it ba
 out and back in (`fadeTo` in `lib/map-fade.ts`). Zooming into a group of photos still animates, as it's a short move.
 
 Over the top left corner, beside the title on wider screens and under it on phones, in one row
-(`components/map-controls.tsx`). On phones, **More filters** and **View in grid** are just their icons, so the row
+(`components/map-controls.tsx`). On phones, **More filters**, **View in grid** and **Browse** are just their icons, so the row
 fits without covering the map:
 
 - **Places** comes first, with the icon button beside it that zooms back out to every photo. The United States of
@@ -75,6 +75,9 @@ fits without covering the map:
   the photos one by one instead (`?ids=[…]`, see [Chosen photos](portfolio-filters.md#chosen-photos)). A place filter
   also shows that place's photos with no GPS position, which the map can't show. It can't be pressed while no photos
   are in view.
+- **Browse** opens the photo viewer on the newest photo in view, and its arrows, keys and swipes step through every
+  photo in view, newest first. Opening a photo's own marker steps through them the same way, starting on that photo;
+  a group's grid still steps through just that group's photos. It can't be pressed while no photos are in view.
 - The **day** dropdown, in **More filters**, narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the

@@ -60,11 +60,14 @@ function hasImage(photo: PlacedPhoto): boolean {
   return photo.image !== null;
 }
 
-/** The photos with resized versions inside the bounds. */
-function photosInView(drawn: PlacedPhoto[], bounds: LngLatBounds): PlacedPhoto[] {
-  return drawn.filter(
-    (photo) => hasImage(photo) && bounds.contains([photo.longitude, photo.latitude]),
-  );
+/**
+ * The photos with resized versions inside the bounds, newest first: the ones the Grid and the
+ * photo viewer can show, out of those the map has in view.
+ */
+export function photosInView(drawn: PlacedPhoto[], bounds: LngLatBounds): PlacedPhoto[] {
+  return drawn
+    .filter((photo) => hasImage(photo) && bounds.contains([photo.longitude, photo.latitude]))
+    .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 }
 
 /**

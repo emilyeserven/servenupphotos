@@ -1,4 +1,5 @@
 import type { LngLatBounds } from "maplibre-gl";
+import { BrowseInViewButton } from "@/components/browse-in-view-button";
 import { MapDayFilter } from "@/components/map-day-filter";
 import { MapDisplayOptions } from "@/components/map-display-options";
 import { MapViewControls } from "@/components/map-view-controls";
@@ -12,7 +13,7 @@ import { parseFilters } from "@/lib/photo-filters";
 
 /**
  * The map's controls under its title: **Places**, the zoom-out button, the display options, then
- * **More filters** (the days in view, album, tag and genre) and **View in grid**.
+ * **More filters** (the days in view, album, tag and genre), **View in grid** and **Browse**.
  */
 export function MapControls({
   search,
@@ -23,6 +24,8 @@ export function MapControls({
   onDisplayChange,
   onDaysChange,
   onReset,
+  browsable,
+  onBrowse,
 }: {
   /** The map's URL search, with its filters and days. */
   search: Record<string, unknown> & DayRange;
@@ -36,6 +39,9 @@ export function MapControls({
   onDisplayChange: (change: Partial<MapDisplay>) => void;
   onDaysChange: (range: DayRange) => void;
   onReset: () => void;
+  /** The photos in view the photo viewer can step through, newest first. */
+  browsable: PlacedPhoto[];
+  onBrowse: (photo: PlacedPhoto, photos: PlacedPhoto[]) => void;
 }) {
   return (
     <MapViewControls onReset={onReset} places={<MapPlacesFilter photos={placedPhotos} />}>
@@ -54,6 +60,7 @@ export function MapControls({
         }}
       >
         <ViewInGridButton filters={gridFiltersFor(drawn, view, parseFilters(search))} />
+        <BrowseInViewButton photos={browsable} onOpen={onBrowse} />
       </MoreFilterControls>
     </MapViewControls>
   );
