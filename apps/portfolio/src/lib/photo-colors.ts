@@ -57,6 +57,20 @@ export function photoLightness(colors: PhotoColorData | null | undefined): numbe
   return Math.round(weighted / total);
 }
 
+/**
+ * How much a photo's blacks, grays and whites spread out from their average lightness: the
+ * standard deviation of its lightness bins, each counted by its share, rounded. A flat, misty photo
+ * scores about 10; one with deep blacks and bright whites 30 or more. Null when it has none.
+ */
+export function photoContrast(colors: PhotoColorData | null | undefined): number | null {
+  const bins = colors?.neutrals?.histogram ?? [];
+  const mean = photoLightness(colors);
+  if (mean === null) return null;
+  const total = bins.reduce((sum, bin) => sum + bin.share, 0);
+  const spread = bins.reduce((sum, bin) => sum + (binMiddle(bin) - mean) ** 2 * bin.share, 0);
+  return Math.round(Math.sqrt(spread / total));
+}
+
 /** The middle of a lightness bin; bins without an end are taken as 5 wide, as the pipeline saves them. */
 function binMiddle({ from, to }: { from: number; to?: number }): number {
   return (from + (to ?? from + 5)) / 2;

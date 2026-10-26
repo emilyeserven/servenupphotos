@@ -1,5 +1,6 @@
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import { WheelClusterPin } from "@/components/wheel-cluster-pin";
+import type { ColorDisplay } from "@/lib/color-display";
 import type { WheelPoint } from "@/lib/color-wheel";
 import type { PhotoImage } from "@/lib/photos";
 import type { WheelMarker } from "@/lib/wheel-clusters";
@@ -16,6 +17,7 @@ export function MarkerPin<T extends PinPhoto>({
   marker,
   photos,
   size,
+  display,
   onOpen,
   onZoomIn,
 }: {
@@ -23,6 +25,8 @@ export function MarkerPin<T extends PinPhoto>({
   photos: T[];
   /** Its width in pixels. */
   size: number;
+  /** Whether a cluster's pin shows its count, and darkens its photo under it. */
+  display: Pick<ColorDisplay, "showCounts" | "dimGroups">;
   onOpen: (photo: T) => void;
   onZoomIn: () => void;
 }) {
@@ -34,6 +38,8 @@ export function MarkerPin<T extends PinPhoto>({
         count={marker.members.length}
         at={marker.at}
         size={size}
+        showCount={display.showCounts}
+        dimmed={display.dimGroups}
         onZoomIn={onZoomIn}
       />
     );
