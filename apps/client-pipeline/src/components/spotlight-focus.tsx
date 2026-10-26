@@ -1,4 +1,5 @@
 import type { SocialPhoto } from "@/api/publish";
+import { SpotlightPreview } from "@/components/spotlight-preview";
 import { Button } from "@/components/ui/button";
 import {
   type Focus,
@@ -6,15 +7,16 @@ import {
   clickedFocus,
   focusChange,
   focusOf,
-  objectPosition,
   wholePhoto,
 } from "@/lib/spotlight-focus";
+import { previewOf } from "@/lib/spotlight-preview";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /**
  * The photo's focus point: where to click on it to keep that part in view when a spotlight zone
  * crops it to a screen of the other shape, such as a landscape photo behind the homepage on a phone.
- * It's a local edit until **Commit**, like the zones, with previews of a phone and a computer.
+ * It's a local edit until **Commit**, like the zones, with a preview of the photo behind the
+ * homepage on a phone and a computer.
  */
 export function SpotlightFocus({ photo }: { photo: SocialPhoto }) {
   const edits = useLocalEditsStore((state) => state.edits);
@@ -36,7 +38,8 @@ export function SpotlightFocus({ photo }: { photo: SocialPhoto }) {
         photo, or a computer a portrait one.
       </p>
       <FocusPicker src={src} focus={focus} onPick={set} />
-      <FocusPreviews src={src} focus={focus} />
+      <p className="pt-1 text-sm font-medium">Behind the homepage</p>
+      <SpotlightPreview photo={previewOf(photo.data, src, focus)} />
     </div>
   );
 }
@@ -68,32 +71,5 @@ function FocusPicker({ src, focus, onPick }: FocusPickerProps) {
         style={{ left: `${at.x}%`, top: `${at.y}%` }}
       />
     </button>
-  );
-}
-
-/** How the photo is cropped with the focus, on a phone held upright and on a computer. */
-function FocusPreviews({ src, focus }: { src: string; focus: Focus | null }) {
-  const style = { objectPosition: objectPosition(focus) };
-  return (
-    <div className="flex items-end gap-3">
-      <figure className="flex flex-col gap-1">
-        <img
-          src={src}
-          alt=""
-          style={style}
-          className="aspect-[9/19] w-14 rounded-sm object-cover"
-        />
-        <figcaption className="text-muted-foreground text-xs">Phone</figcaption>
-      </figure>
-      <figure className="flex flex-col gap-1">
-        <img
-          src={src}
-          alt=""
-          style={style}
-          className="aspect-[16/10] w-44 rounded-sm object-cover"
-        />
-        <figcaption className="text-muted-foreground text-xs">Computer</figcaption>
-      </figure>
-    </div>
   );
 }
