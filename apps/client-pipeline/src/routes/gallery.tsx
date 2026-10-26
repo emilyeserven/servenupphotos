@@ -32,10 +32,16 @@ import {
   parseUndecided,
   useUndecidedFilter,
 } from "@/components/gallery/undecided-filter";
+import {
+  type PlaceSearch,
+  PlaceFilterToggles,
+  parsePlaceSearch,
+  usePlaceFilter,
+} from "@/components/gallery/place-filter";
 import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
 import { type Selection, fileName, photoName } from "@/components/gallery/published-file";
 
-interface GallerySearch extends PhotoFilters {
+interface GallerySearch extends PhotoFilters, PlaceSearch {
   /** Whether Undecided photos are shown too, or only they are; hidden when left out. */
   undecided?: UndecidedChoice;
   /** Sorts by when each photo was added to the portfolio; by when it was taken when left out. */
@@ -47,6 +53,7 @@ export const Route = createFileRoute("/gallery")({
   staticData: { wide: true },
   validateSearch: (search: Record<string, unknown>): GallerySearch => ({
     ...parseFilters(search),
+    ...parsePlaceSearch(search),
     undecided: parseUndecided(search),
     sort: parseGallerySort(search),
   }),
@@ -87,7 +94,7 @@ function PublishedPhotos() {
   const published = useQuery(publishedPhotosQuery);
   const [filter, setFilter] = useState("");
   const selection = useSelection();
-  const { shown, total, filters, undecided, sort } = useShownFiles(published.data, filter);
+  const { shown, total, filters, undecided, sort, place } = useShownFiles(published.data, filter);
   return (
     <>
       <GalleryHeader
@@ -102,8 +109,9 @@ function PublishedPhotos() {
         shown={shown.length}
         total={total}
         hiding={shown.length < total}
-        extraChosen={undecided !== undefined}
+        extraChosen={undecided !== undefined || place.placeId !== undefined}
       >
+        <PlaceFilterToggles filter={place} />
         <UndecidedToggle choice={undecided} />
         <GallerySortToggle sort={sort} />
       </PhotoFilterBar>
@@ -130,14 +138,18 @@ function PublishedPhotos() {
   );
 }
 
-/** The photos that match the search text and the filters, in the URL's sort, out of how many there are. */
+/**
+ * The photos that match the search text, the filters and the place chosen, in the URL's sort, out
+ * of how many there are.
+ */
 function useShownFiles(data: PublishedResponse | undefined, filter: string) {
   const { filters, filter: applyFilters } = usePhotoFilters();
   const { choice: undecided, apply: applyUndecided } = useUndecidedFilter();
   const sort = useSearch({ from: "/gallery", select: parseGallerySort });
-  const base = { filters, undecided, sort };
+  const place = usePlaceFilter();
+  const base = { filters, undecided, sort, place };
   if (!data) return { ...base, shown: [], total: 0 };
-  const shown = applyUndecided(applyFilters(shownFiles(data, filter, sort)));
+  const shown = place.apply(applyUndecided(applyFilters(shownFiles(data, filter, sort))));
   return { ...base, shown, total: data.files.length };
 }
 

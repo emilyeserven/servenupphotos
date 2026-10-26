@@ -14,6 +14,7 @@ import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 import { DraftMark } from "@/components/draft-mark";
 import { ReEditMark } from "@/components/re-edit-card";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { PlaceGpsMark } from "@/components/gallery/place-filter";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -106,6 +107,7 @@ function PhotoCard({ file, images, selected, onToggle }: PhotoCardProps) {
           </a>
         </div>
         <GroupNames file={file} />
+        <PlaceGpsMark file={file} />
         <InFlightMark status={file.inFlight} />
         <DraftMark data={file.data} />
         <ReEditMark data={file.data} />

@@ -131,13 +131,28 @@ function hasText(value: unknown): boolean {
   return typeof value === "string" && value.trim() !== "";
 }
 
-/** Whether the photo can go on the portfolio's map: by its own GPS position, or one of its places' (or a place above them). */
-function isOnMap(photo: CombinedPhoto, byId: Map<string, Place>, places: Place[]): boolean {
-  if (hasOwnPhotoGps(photo)) return true;
-  return savedPlaces(photo.places).some(({ id }) => {
+/**
+ * Where a photo's spot on the portfolio's map comes from: its own GPS position (EXIF or custom), the
+ * position of one of its places (or of a place that place is in), or nowhere, so it isn't on the map.
+ */
+export type PhotoGpsSource = { kind: "own" } | { kind: "place"; place: Place } | { kind: "none" };
+
+/** The place whose GPS position the photo goes on the map at: its first place with one, or a place above it. */
+function placeGpsSource(photo: CombinedPhoto, places: Place[]): Place | undefined {
+  const byId = new Map(places.map((place) => [place.id, place]));
+  for (const { id } of savedPlaces(photo.places)) {
     const place = byId.get(id);
-    return place !== undefined && gpsSource(place, places) !== undefined;
-  });
+    const source = place && gpsSource(place, places);
+    if (source) return source;
+  }
+  return undefined;
+}
+
+/** Where the photo's spot on the portfolio's map comes from, the way the portfolio picks it. */
+export function photoGpsSource(photo: CombinedPhoto, places: Place[]): PhotoGpsSource {
+  if (hasOwnPhotoGps(photo)) return { kind: "own" };
+  const place = placeGpsSource(photo, places);
+  return place ? { kind: "place", place } : { kind: "none" };
 }
 
 /**
@@ -145,7 +160,6 @@ function isOnMap(photo: CombinedPhoto, byId: Map<string, Place>, places: Place[]
  * position, and none from their places. Giving one of those places a GPS position puts them there.
  */
 export function unmappedPlacePhotos(photos: CombinedPhoto[], places: Place[]): Map<string, number> {
-  const byId = new Map(places.map((place) => [place.id, place]));
-  const unmapped = photos.filter((photo) => !isOnMap(photo, byId, places));
+  const unmapped = photos.filter((photo) => photoGpsSource(photo, places).kind === "none");
   return placePhotoCounts(unmapped);
 }
