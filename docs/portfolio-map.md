@@ -19,10 +19,15 @@ location** on the Places page keeps the solid border for its photos. Like every 
 
 From city zoom (12) in, small groups split into photos of their own, so a sparse area shows each photo rather than a
 count: up to 3 photos at zoom 12, growing to 12 by zoom 16 (`fanLimit` in `lib/map-fan.ts`). Bigger groups stay one
-marker until closer. Each photo then sits on its own spot when there's room. When it would overlap another marker, such
-as photos placed at the same place, it's moved a little to a random spot nearby that's clear, the oldest photos placed
-first so they stay nearest their spots (`fanOffsets`, used by `markersInView` in `lib/map-markers.ts`). The randomness
-is seeded by each photo's ID, so it lands in the same place every time.
+marker until closer.
+
+At every zoom, each marker, a photo's or a group's, sits on its own spot when there's room. When it would cover too much
+of another, it's moved a little to a random spot nearby that's clear (`fanOffsets`, used by `markersInView` in
+`lib/map-markers.ts`). Groups are placed first, biggest first, then photos, oldest first, so those stay nearest their
+spots. How much one may cover another depends on the zoom (`fanSpacing`): from city zoom (12) in, none overlap; zoomed
+out to 8 or further, markers may overlap, but none is more than half covered by another; in between, the allowed
+overlap shrinks. The randomness is seeded by each photo's ID or group's, so a marker lands in the same place every time.
+A pin under the pointer, or focused, comes to the front, so a partly covered one can be seen whole.
 
 Where the map is looking is kept in the URL as its center and zoom (`?lat=37.57&lng=126.98&zoom=12.5`), half a second
 after it stops moving, so a link opens the map there instead of on all the photos. A link with only an open photo (`?photo=<id>`) opens zoomed in on that photo instead, so it doesn't fly in from every photo; the homepage's map pin links straight to a photo's center and zoom. When those change from outside the map, as with the photo viewer's **View on map**, the map flies there. Moving replaces the URL rather than

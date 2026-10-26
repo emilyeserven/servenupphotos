@@ -1,5 +1,3 @@
-import type { PlacedPhoto } from "@/lib/map-photos";
-
 /** The zoom from which small groups of photos are split into photos of their own, spread apart. */
 export const FAN_MIN_ZOOM = 12;
 
@@ -12,20 +10,38 @@ const FAN_MAX_PHOTOS = 12;
 /** The most photos in a group that are split apart at FAN_MIN_ZOOM. */
 const FAN_MIN_PHOTOS = 3;
 
-/** How far apart markers are kept at the default pin size, which the photo counts above are for. */
-const FAN_DEFAULT_SPACING = 50;
+/** How wide a pin is at the default size, in pixels, which the photo counts above are for. */
+const FAN_DEFAULT_PIN = 44;
+
+/** The gap kept between markers from FAN_MIN_ZOOM in, in pixels. */
+const FAN_GAP = 6;
+
+/** The zoom at and below which markers may cover up to half of one another. */
+const FAN_LOOSE_ZOOM = 8;
 
 /**
- * The most photos in a group that are split apart at a zoom, for markers kept `spacing` pixels
- * apart; a bigger group stays one group marker. It grows from FAN_MIN_PHOTOS at FAN_MIN_ZOOM to
+ * How far apart markers are kept at least, in pixels across or down, for pins `pin` pixels wide.
+ * From FAN_MIN_ZOOM in, a pin's width and a gap, so none overlap. Zoomed out to FAN_LOOSE_ZOOM,
+ * half a pin, so markers may overlap but none is more than half covered by another; in between,
+ * it grows from one to the other. Two square markers this far apart across or down overlap by at
+ * most `pin - spacing` that way, and not at all the other.
+ */
+export function fanSpacing(zoom: number, pin: number): number {
+  const along = Math.min(Math.max((zoom - FAN_LOOSE_ZOOM) / (FAN_MIN_ZOOM - FAN_LOOSE_ZOOM), 0), 1);
+  return pin / 2 + along * (pin / 2 + FAN_GAP);
+}
+
+/**
+ * The most photos in a group that are split apart at a zoom, for pins `pin` pixels wide; a bigger
+ * group stays one group marker. It grows from FAN_MIN_PHOTOS at FAN_MIN_ZOOM to
  * FAN_MAX_PHOTOS at FAN_FULL_ZOOM, so a city shows its sparser photos on their own while busy
  * neighborhoods stay grouped until closer. Bigger pins split fewer, as each takes more room and
  * would have to be moved further from its spot: the limit shrinks with the room a pin takes.
  */
-export function fanLimit(zoom: number, spacing: number): number {
+export function fanLimit(zoom: number, pin: number): number {
   const along = Math.min(Math.max((zoom - FAN_MIN_ZOOM) / (FAN_FULL_ZOOM - FAN_MIN_ZOOM), 0), 1);
   const limit = FAN_MIN_PHOTOS + along * (FAN_MAX_PHOTOS - FAN_MIN_PHOTOS);
-  return Math.max(1, Math.round(limit * (FAN_DEFAULT_SPACING / spacing) ** 2));
+  return Math.max(1, Math.round(limit * (FAN_DEFAULT_PIN / pin) ** 2));
 }
 
 /** How much further out each failed try may land, in pixels, so a crowded spot still finds room. */
@@ -34,12 +50,15 @@ const FAN_GROWTH = 2;
 /** A point on the screen, in pixels, as [right, down]. */
 export type ScreenPoint = [number, number];
 
-/** How far a photo's marker is moved from its spot, in pixels, as [right, down]. */
+/** How far a marker is moved from its spot, in pixels, as [right, down]. */
 export type FanOffset = [number, number];
 
-/** A photo and where its spot is on the screen. */
-export interface PhotoOnScreen {
-  photo: PlacedPhoto;
+/** A marker, a photo's or a group's, and where its spot is on the screen. */
+export interface MarkerOnScreen {
+  /** The marker's key, which its offset is found by. */
+  key: string;
+  /** A number of its own, such as its photo's ID, that seeds where it's moved to. */
+  seed: number;
   at: ScreenPoint;
 }
 
@@ -65,18 +84,18 @@ function hasRoom(point: ScreenPoint, placed: ScreenPoint[], spacing: number): bo
 }
 
 /**
- * Where a photo's marker goes: on its spot when there's room, otherwise a random point near it
- * that keeps clear of the placed markers. Each try may land a little further out than the last, so
- * the markers stay close to their spots without overlapping. The photo's ID seeds the tries, so it
- * lands in the same place every time.
+ * Where a marker goes: on its spot when there's room, otherwise a random point near it that keeps
+ * clear of the placed markers. Each try may land a little further out than the last, so the
+ * markers stay close to their spots without overlapping. Its seed seeds the tries, so it lands in
+ * the same place every time.
  */
 function pointNear(
-  { photo, at }: PhotoOnScreen,
+  { seed, at }: MarkerOnScreen,
   placed: ScreenPoint[],
   spacing: number,
 ): ScreenPoint {
   if (hasRoom(at, placed, spacing)) return at;
-  const random = seededRandom(photo.id);
+  const random = seededRandom(seed);
   for (let reach = spacing; ; reach += FAN_GROWTH) {
     const angle = random() * 2 * Math.PI;
     const distance = Math.sqrt(random()) * reach;
@@ -89,28 +108,20 @@ function pointNear(
 }
 
 /**
- * How far to move each photo's marker by its ID so no two markers overlap, each kept as near its
- * own spot as there's room for: photos at the same spot, or close together, are scattered loosely
- * around it. `taken` are the points other markers, such as groups, already cover, and `spacing`
- * how far apart markers are kept, in pixels: a marker and a gap. The oldest
- * photos are placed first, so they stay nearest their spots.
+ * How far to move each marker, by its key, so every two are at least `spacing` pixels apart across
+ * or down, each kept as near its own spot as there's room for: markers at the same spot, or close
+ * together, are scattered loosely around it. They're placed in the order given, so the first stay
+ * nearest their spots.
  */
-export function fanOffsets(
-  photos: PhotoOnScreen[],
-  taken: ScreenPoint[],
-  spacing: number,
-): Map<number, FanOffset> {
-  const placed = [...taken];
-  const offsets = new Map<number, FanOffset>();
-  const oldestFirst = photos.toSorted(
-    (a, b) => a.photo.takenAt.getTime() - b.photo.takenAt.getTime() || a.photo.id - b.photo.id,
-  );
-  for (const onScreen of oldestFirst) {
-    const point = pointNear(onScreen, placed, spacing);
+export function fanOffsets(markers: MarkerOnScreen[], spacing: number): Map<string, FanOffset> {
+  const placed: ScreenPoint[] = [];
+  const offsets = new Map<string, FanOffset>();
+  for (const marker of markers) {
+    const point = pointNear(marker, placed, spacing);
     placed.push(point);
-    offsets.set(onScreen.photo.id, [
-      Math.round(point[0] - onScreen.at[0]),
-      Math.round(point[1] - onScreen.at[1]),
+    offsets.set(marker.key, [
+      Math.round(point[0] - marker.at[0]),
+      Math.round(point[1] - marker.at[1]),
     ]);
   }
   return offsets;

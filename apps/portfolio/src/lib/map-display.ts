@@ -40,11 +40,6 @@ export function clusterRadius(display: MapDisplay): number {
   return Math.round((display.grouping * PIN_PIXELS[display.pinSize]) / PIN_PIXELS.medium);
 }
 
-/** How far apart photo markers are kept at least, in pixels: a marker and a gap. */
-export function pinSpacing(pinSize: PinSize): number {
-  return PIN_PIXELS[pinSize] + 6;
-}
-
 const STORAGE_KEY = "servenup-map-display";
 
 /** The display options saved in this browser, filled in from the defaults. */
