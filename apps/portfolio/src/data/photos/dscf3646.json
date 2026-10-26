@@ -1,9 +1,9 @@
 {
-  "id": 212,
-  "title": null,
+  "title": "Another Palace Section",
   "comment": null,
+  "id": 212,
   "file": "DSCF3646.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T15:27:09Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:05:17 14:49:36",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Gyeongbokgung Station",
+  "customCity": "Seoul",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": "South Korea",
   "state": "Seoul",
   "city": null,
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["giwa", "gates", "doorway", "tourists", "children", "silhouettes", "walls", "palace"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "gyeongbokgung-station"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,8 +65,8 @@
       "hex": "#2f2f2f",
       "lab": {
         "l": 19.45,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

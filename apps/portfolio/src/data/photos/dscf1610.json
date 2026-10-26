@@ -1,9 +1,9 @@
 {
-  "id": 309,
-  "title": null,
+  "title": "Stone Lanterns Standing",
   "comment": null,
+  "id": 309,
   "file": "DSCF1610.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T15:27:32Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:25 12:09:19",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Tokoji Temple",
+  "customCity": "Hagi",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Yamaguchi",
   "city": "Hagi",
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/caf22f62c1fd-dscf1610-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/caf22f62c1fd-dscf1610-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/caf22f62c1fd-dscf1610-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/caf22f62c1fd-dscf1610-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/caf22f62c1fd-dscf1610-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/caf22f62c1fd-dscf1610-thumbnail.webp?crop=621,0,4344",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/caf22f62c1fd-dscf1610-thumbnailpreview.webp?crop=621,0,4344",
     "thumbnailcrop": {
-      "x": 1689,
+      "x": 621,
       "y": 0,
       "size": 4344,
       "outputSize": 500
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["toro", "buddhism", "wabi-sabi", "temple", "cemetery", "moss", "repetition", "stones"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "tokoji-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

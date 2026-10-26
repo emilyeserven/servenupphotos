@@ -1,9 +1,9 @@
 {
-  "id": 337,
-  "title": null,
+  "title": "Countryside Waterways",
   "comment": null,
+  "id": 337,
   "file": "DSCF9400.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T15:29:03Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/5f5d3fb5876c-dscf9400-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/5f5d3fb5876c-dscf9400-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/5f5d3fb5876c-dscf9400-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/5f5d3fb5876c-dscf9400-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5f5d3fb5876c-dscf9400-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/5f5d3fb5876c-dscf9400-thumbnail.webp?crop=0,62,4748",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5f5d3fb5876c-dscf9400-thumbnailpreview.webp?crop=0,62,4748",
     "thumbnailcrop": {
       "x": 0,
-      "y": 949,
+      "y": 62,
       "size": 4748,
       "outputSize": 500
     }
@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "canal",
+    "houses",
+    "power-lines",
+    "reflections",
+    "stones",
+    "walls",
+    "pine-trees",
+    "village"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],
