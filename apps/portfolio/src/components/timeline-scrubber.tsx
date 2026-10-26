@@ -150,7 +150,7 @@ function ScrubberTicks({ marks, trackHeight }: { marks: ScrubberMark[]; trackHei
 function ScrubberThumb({ at }: { at: number }) {
   return (
     <span
-      className="absolute right-1 h-0.5 w-4 -translate-y-1/2 rounded-full bg-primary"
+      className="absolute right-1 h-1 w-5 -translate-y-1/2 rounded-full bg-primary"
       style={{ top: `${at * 100}%` }}
     />
   );
