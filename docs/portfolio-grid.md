@@ -10,13 +10,15 @@ The tile views share the sort dropdown (newest, oldest, **Recently Added**, **Ti
 the eye button's display options (`components/grid-view-options.tsx`, using the flyout shared with the Map and Timeline,
 `components/view-options-button.tsx`):
 
-- **Size** (`?size=`, `lib/grid-size.ts`): how big the tiles are. **Medium** is the default and is left out of the URL;
-  **Large** (`large`) and **X-Large** (`xlarge`) make them bigger, and Natural tiles can also be **Small** (`small`).
-  Square tiles get bigger by using fewer columns (see [Square](#square)); Natural rows by starting 100px bigger or
-  smaller at each step (see [Natural](#natural)). Square tiles left at Small show at Medium.
+- **Size** (`?size=small|medium|large|xlarge`, `lib/grid-size.ts`): how big the tiles are. Square tiles come in
+  Small, Medium (their default) and Large, by using more or fewer columns (see [Square](#square)). Natural tiles come
+  in Small, Medium, Large (their default) and X-Large, by starting rows smaller or bigger (see [Natural](#natural)).
 - **Show info** puts each photo's title, place, color bar and comment under its tile (`?info=true`).
 
-**Reset to defaults** goes back to Medium with info hidden. Both are remembered with the Grid's other settings.
+The Table has a **Size** too, in its [View menu](#view-menu). The URL leaves `size` out when it's the view's own
+default, and the one `size` is shared by the three views: switching views keeps it, showing X-Large as Large where a
+view has no X-Large. **Reset to defaults** goes back to the view's default size with info hidden. Both are remembered
+with the Grid's other settings.
 
 **Recently Added** (`?sort=added`) puts the photos most recently added to the portfolio first, by their
 [`addedDate`](data-model.md#date-added). Photos added on the same day go by when they were taken, newest first,
@@ -36,11 +38,11 @@ Each photo as the square picked on the pipeline's Photo page, in a grid whose co
 
 | Size             | Phone | `sm` (640px) | `lg` (1024px) | `xl` (1280px) | `2xl` (1536px) |
 | ---------------- | ----- | ------------ | ------------- | ------------- | -------------- |
+| Small            | 3     | 4            | 5             | 6             | 8              |
 | Medium (default) | 2     | 3            | 4             | 5             | 6              |
 | Large            | 1     | 2            | 3             | 4             | 5              |
-| X-Large          | 1     | 2            | 2             | 3             | 4              |
 
-The square is a 500px image, so at the bigger sizes it can look a little soft on high-density screens.
+The square is a 500px image, so at Large it can look a little soft on high-density screens.
 
 ## Natural
 
@@ -52,17 +54,17 @@ the sort and takes the next photos of the same kind until another wouldn't fit, 
 the sort, moved at most a row or so. When too few photos of one kind are left to fill a row, the rest share rows of the
 wide height. The last row isn't stretched.
 
-Those starting sizes are for **Medium**. Each **Size** step moves both by 100px:
+Those starting sizes are for **Large**, the default. The other sizes move them:
 
-| Size             | Rows of wide photos start | Vertical photos start |
-| ---------------- | ------------------------- | --------------------- |
-| Small            | 150px tall                | 300px wide            |
-| Medium (default) | 250px tall                | 400px wide            |
-| Large            | 350px tall                | 500px wide            |
-| X-Large          | 450px tall                | 600px wide            |
+| Size            | Rows of wide photos start | Vertical photos start |
+| --------------- | ------------------------- | --------------------- |
+| Small           | 100px tall                | 200px wide            |
+| Medium          | 150px tall                | 300px wide            |
+| Large (default) | 250px tall                | 400px wide            |
+| X-Large         | 350px tall                | 500px wide            |
 
 Since a full row's tiles grow to fill it, a bigger size means fewer photos per row rather than exactly that height:
-at X-Large on a laptop, a row of wide photos often holds just one. No tile grows taller than 90% of the window (`90vh`); a row whose tiles
+at X-Large on a laptop, a row of wide photos often holds two. No tile grows taller than 90% of the window (`90vh`); a row whose tiles
 all reach that is centered rather than stretched.
 
 > **Frontend analogy:** like a CSS `flex-wrap` gallery, but the line breaks are worked out in JavaScript from the
@@ -79,7 +81,10 @@ keeping their sort (their `?sort=` becomes `?column=`), columns, filters and ope
 
 ### View menu
 
-**View** picks how much of each photo's location the **Place** column shows, under **Place names**:
+**View** picks how big the thumbnails are, under **Size**: **Small** (40px, the default), **Medium** (80px) or
+**Large** (128px), kept as `?size=medium` or `?size=large`.
+
+It also picks how much of each photo's location the **Place** column shows, under **Place names**:
 
 | Choice                  | Shows                                                                       | URL                    |
 | ----------------------- | --------------------------------------------------------------------------- | ---------------------- |

@@ -25,6 +25,7 @@ import { TableViewMenu } from "@/components/table-view-menu";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { exposureSeconds } from "@/lib/camera-filters";
+import { type CommonSize, sizeParam, TABLE_THUMBNAILS } from "@/lib/grid-size";
 import {
   DEFAULT_LOCATION_DETAIL,
   LOCATION_DETAILS,
@@ -174,12 +175,15 @@ function hideSearchOf(visibility: ColumnVisibilityState): TableSearch {
 export function PhotoTable({
   photos,
   search,
+  size,
   shown,
   onShow,
   onClose,
 }: {
   photos: Photo[];
   search: TableSearch;
+  /** How big the thumbnails are, from the View menu's **Size** (`?size=`). */
+  size: CommonSize;
   shown: ImagePhoto | null;
   onShow: (photo: ImagePhoto) => void;
   onClose: () => void;
@@ -213,6 +217,13 @@ export function PhotoTable({
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
       <div className="flex flex-wrap justify-end gap-2">
         <TableViewMenu
+          size={size}
+          onSizeChange={(next) =>
+            void navigate({
+              search: (prev) => ({ ...prev, size: sizeParam("table", next) }),
+              replace: true,
+            })
+          }
           placeDetail={placeDetail}
           onPlaceDetailChange={(detail) =>
             void navigate({
@@ -241,7 +252,7 @@ export function PhotoTable({
                 key={row.id}
                 photo={row.original}
                 columnIds={visibleIds}
-                placeDetail={placeDetail}
+                cell={{ detail: placeDetail, thumbnail: TABLE_THUMBNAILS[size] }}
                 onOpen={onShow}
               />
             ))}
@@ -353,6 +364,12 @@ function settingCell(settings: CameraSettings, key: SettingKey): ReactNode {
   return settingText(settings, key) ?? DASH;
 }
 
+/** What the cells need besides the photo: how much of its place to name, and the thumbnail's size class. */
+interface CellOptions {
+  detail: LocationDetail;
+  thumbnail: string;
+}
+
 const CELL = "px-3 py-2 whitespace-nowrap";
 const NUMERIC_CELL = "px-3 py-2 text-right tabular-nums whitespace-nowrap";
 
@@ -361,17 +378,17 @@ const CELLS: Record<
   ColumnId,
   {
     className: string;
-    render: (photo: Photo, open: (() => void) | undefined, detail: LocationDetail) => ReactNode;
+    render: (photo: Photo, open: (() => void) | undefined, options: CellOptions) => ReactNode;
   }
 > = {
   image: {
     className: "px-3 py-2",
-    render: (photo, open) => (
+    render: (photo, open, { thumbnail }) => (
       <PhotoThumbnailButton
         image={photo.image}
         title={photo.title}
         onOpen={open}
-        className="size-10"
+        className={thumbnail}
       />
     ),
   },
@@ -389,7 +406,7 @@ const CELLS: Record<
   },
   location: {
     className: CELL,
-    render: (photo, _open, detail) =>
+    render: (photo, _open, { detail }) =>
       photo.location ? <PhotoLocation location={photo.location} detail={detail} /> : DASH,
   },
   camera: { className: CELL, render: (photo) => photo.camera },
@@ -410,12 +427,12 @@ const CELLS: Record<
 function PhotoRow({
   photo,
   columnIds,
-  placeDetail,
+  cell,
   onOpen,
 }: {
   photo: Photo;
   columnIds: ColumnId[];
-  placeDetail: LocationDetail;
+  cell: CellOptions;
   onOpen: (photo: ImagePhoto) => void;
 }) {
   const { image } = photo;
@@ -424,7 +441,7 @@ function PhotoRow({
     <tr className="border-t">
       {columnIds.map((id) => (
         <td key={id} className={CELLS[id].className}>
-          {CELLS[id].render(photo, open, placeDetail)}
+          {CELLS[id].render(photo, open, cell)}
         </td>
       ))}
     </tr>
