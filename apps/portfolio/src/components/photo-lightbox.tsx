@@ -235,8 +235,8 @@ const STEP_LOOKS = {
 
 /**
  * The previous or next button over the photo's side, shown while the photo is hovered or the
- * button has the keyboard focus, and always on touch screens, which can't hover. It's left out at
- * that end and for a photo on its own.
+ * button has the keyboard focus. Touch screens, which can't hover, swipe instead and don't show it.
+ * It's left out at that end and for a photo on its own.
  */
 function StepButton({ direction, steps }: { direction: "previous" | "next"; steps: Steps }) {
   const onStep = steps[direction];
@@ -253,7 +253,7 @@ function StepButton({ direction, steps }: { direction: "previous" | "next"; step
         onStep();
       }}
       className={cn(
-        "absolute top-1/2 size-10 -translate-y-1/2 rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/60 hover:text-white focus-visible:opacity-100 pointer-coarse:opacity-100",
+        "absolute top-1/2 size-10 -translate-y-1/2 rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-black/60 hover:text-white focus-visible:opacity-100 pointer-coarse:hidden",
         side,
       )}
     >

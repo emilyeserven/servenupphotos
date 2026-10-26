@@ -18,8 +18,8 @@ On the Map itself, the map flies there. It's `ViewOnMapLink` in `apps/portfolio/
 > `apps/portfolio/src/lib/shown-photo.ts` reads `?photo=` with `useSearch` and sets it with `navigate`, like a modal
 > route.
 
-The **‹** and **›** buttons over the photo's left and right edges, which show while the pointer is over the photo (always on touch screens), the **Left** and **Right** arrow keys, and swiping the photo right or left on a touch screen, move to the previous and next
-photo in the order the page shows them, with where the photo is among them (such as "3 / 20") beside the close button.
+The **‹** and **›** buttons over the photo's left and right edges, which show while the pointer is over the photo, the **Left** and **Right** arrow keys, and swiping the photo right or left on a touch screen, move to the previous and next
+photo in the order the page shows them (touch screens have swiping instead of the buttons), with where the photo is among them (such as "3 / 20") beside the close button.
 They stop at the first and last photo rather than going round. Photos without resized versions in R2 are skipped.
 A swipe is a quick one-finger move of at least 50px that's mostly sideways, so scrolling up or down, pinch-zooming, and
 panning around a pinch-zoomed page don't change the photo.
