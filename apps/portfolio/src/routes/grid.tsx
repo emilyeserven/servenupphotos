@@ -1,10 +1,11 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Grid3x3, LayoutDashboard, Square, Table } from "lucide-react";
 import { type ImgHTMLAttributes, useState } from "react";
 import { ColorBar } from "@/components/color-bar";
 import { ColorOrderControls } from "@/components/color-order-controls";
 import { GridColorFilters } from "@/components/grid-color-filters";
 import { GridSortSelect } from "@/components/grid-sort-select";
+import { GridViewOptions } from "@/components/grid-view-options";
 import { NaturalGrid } from "@/components/natural-grid";
 import { PhotoTable } from "@/components/photo-table";
 import { PhotoComment } from "@/components/photo-comment";
@@ -26,7 +27,15 @@ import {
 } from "@/lib/color-search";
 import type { ColorSort } from "@/lib/color-sort";
 import { type GridColorSpec, type GridSort, sortGrid } from "@/lib/grid-sort";
-import { ratioOf, rowHeightOf } from "@/lib/natural-rows";
+import {
+  type GridSize,
+  naturalRowSizes,
+  parseGridSize,
+  SQUARE_COLUMNS,
+  SQUARE_TILE_SIZES,
+  squareSize,
+} from "@/lib/grid-size";
+import { ratioOf, rowHeightOf, type RowSizes } from "@/lib/natural-rows";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -48,6 +57,8 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
   view?: Exclude<ViewMode, "square">;
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
   info?: true;
+  /** How big the tiles are. Left out for the default, Medium. */
+  size?: Exclude<GridSize, "medium">;
   /**
    * Set when the oldest or most recently added photo comes first, to sort by time of day, or to
    * sort by color or vividness. Left out for the
@@ -73,7 +84,7 @@ function validateGridSearch(
 }
 
 /**
- * The Grid's own settings from the URL: its view, info, sort and Table settings, which are
+ * The Grid's own settings from the URL: its view, info, size, sort and Table settings, which are
  * remembered for the next time it's opened from another page. The filters aren't among them.
  */
 function gridViewOptions(search: Record<string, unknown>): GridSearch {
@@ -81,6 +92,7 @@ function gridViewOptions(search: Record<string, unknown>): GridSearch {
     ...viewOf(search.view),
     ...parseTableSearch(search),
     ...infoOf(search),
+    ...parseGridSize(search.size),
     ...sortOf(search),
   };
 }
@@ -138,11 +150,6 @@ function gridPhotosFor(search: GridSearch & Record<string, unknown>, sort: GridS
   return sortGrid(filtered, sort, colorSpec(search));
 }
 
-// How wide a tile is at each breakpoint, matching the grid's columns, so the browser picks the
-// smallest version that's still sharp.
-const TILE_SIZES =
-  "(min-width: 1536px) 17vw, (min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw";
-
 function GridView() {
   const search = Route.useSearch();
   const mode: ViewMode = search.view ?? "square";
@@ -161,7 +168,7 @@ function GridView() {
         </h1>
         <p className="text-sm text-muted-foreground">{shownPhotos.length} photos</p>
         <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 self-center">
-          {mode !== "table" && <TileControls search={search} />}
+          {mode !== "table" && <TileControls search={search} mode={mode} />}
           <ViewModeSwitcher mode={mode} />
         </div>
         <div className="mt-3 w-full">
@@ -219,44 +226,77 @@ function GridBody({
   const tiles = photos.filter(hasImage);
   return (
     <>
-      <GridTiles photos={tiles} mode={mode} showInfo={search.info === true} onOpen={show} />
+      <GridTiles
+        photos={tiles}
+        mode={mode}
+        size={search.size ?? "medium"}
+        showInfo={search.info === true}
+        onOpen={show}
+      />
       <PhotoLightbox photo={shown} photos={tiles} onShow={show} onClose={close} />
     </>
   );
 }
 
-/** The tiles' sort, its color order and the Show info toggle, which the table doesn't use. */
-function TileControls({ search }: { search: GridSearch }) {
+/** The tiles' sort, its color order and their display options, which the table doesn't use. */
+function TileControls({ search, mode }: { search: GridSearch; mode: TileMode }) {
   const sort: GridSort = search.sort ?? "newest";
   return (
     <>
       <GridSortSelect sort={sort} />
       <ColorOrder sort={sort} search={search} />
-      <InfoToggle shown={search.info === true} />
+      <GridViewOptions
+        natural={mode === "natural"}
+        size={search.size ?? "medium"}
+        info={search.info === true}
+      />
     </>
   );
+}
+
+/** How the tiles are shaped and how big they are, from the view and the Size option. */
+interface TileSizes {
+  mode: TileMode;
+  /** How wide a Square tile is at each breakpoint, as an `<img sizes>`. */
+  square: string;
+  /** How big Natural rows start out. */
+  rows: RowSizes;
+}
+
+/** The tiles' shape and sizes for the view and the Size option. */
+function tileSizesOf(mode: TileMode, size: GridSize): TileSizes {
+  return { mode, square: SQUARE_TILE_SIZES[squareSize(size)], rows: naturalRowSizes(size) };
 }
 
 /** The photos as tiles: square ones in a grid, or natural ones in justified rows. */
 function GridTiles({
   photos,
   mode,
+  size,
   showInfo,
   onOpen,
 }: {
   photos: ImagePhoto[];
   mode: TileMode;
+  size: GridSize;
   showInfo: boolean;
   onOpen: (photo: ImagePhoto) => void;
 }) {
+  const sizes = tileSizesOf(mode, size);
   const tile = (photo: ImagePhoto) => (
-    <PhotoTile photo={photo} mode={mode} showInfo={showInfo} onOpen={() => onOpen(photo)} />
+    <PhotoTile photo={photo} sizes={sizes} showInfo={showInfo} onOpen={() => onOpen(photo)} />
   );
   if (mode === "natural") {
-    return <NaturalGrid photos={photos} showInfo={showInfo} renderTile={tile} />;
+    return <NaturalGrid photos={photos} showInfo={showInfo} sizes={sizes.rows} renderTile={tile} />;
   }
   return (
-    <ul className={showInfo ? SQUARE_INFO_CLASS : SQUARE_CLASS}>
+    <ul
+      className={cn(
+        "grid",
+        SQUARE_COLUMNS[squareSize(size)],
+        showInfo ? "gap-x-3 gap-y-6" : "gap-3",
+      )}
+    >
       {photos.map((photo) => (
         <li key={photo.id}>{tile(photo)}</li>
       ))}
@@ -282,16 +322,10 @@ function ColorOrder({ sort, search }: { sort: GridSort; search: GridSearch }) {
  * About how wide a natural tile is, for picking a sharp version: its starting width in its row
  * plus some room for growing to fill it, and never more than the window.
  */
-function naturalSizes(photo: { image: PhotoImage }): string {
-  const width = Math.round(ratioOf(photo) * rowHeightOf(photo) * 1.3);
+function naturalSizes(photo: { image: PhotoImage }, rows: RowSizes): string {
+  const width = Math.round(ratioOf(photo) * rowHeightOf(photo, rows) * 1.3);
   return `(max-width: ${width}px) 100vw, ${width}px`;
 }
-
-/** The square tiles' grid; rows sit further apart when tiles show their captions. */
-const SQUARE_CLASS =
-  "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6";
-const SQUARE_INFO_CLASS =
-  "grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6";
 
 const VIEW_MODES = [
   { mode: "square", label: "Square", title: "Square thumbnails", Icon: Square },
@@ -308,31 +342,6 @@ const VIEW_MODES = [
     Icon: Table,
   },
 ] as const;
-
-/**
- * A checkbox to show or hide each tile's title and comment, kept in the URL so a link keeps it.
- * Hidden by default, so the grid is only photos.
- */
-function InfoToggle({ shown }: { shown: boolean }) {
-  const navigate = useNavigate({ from: "/grid" });
-  return (
-    <label
-      title="Show each photo's title, place and comment under it"
-      className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-muted-foreground select-none hover:text-foreground"
-    >
-      <input
-        type="checkbox"
-        checked={shown}
-        onChange={(event) => {
-          const info = event.target.checked ? true : undefined;
-          void navigate({ search: (prev) => ({ ...prev, info }), replace: true });
-        }}
-        className="size-4 cursor-pointer accent-primary"
-      />
-      Show info
-    </label>
-  );
-}
 
 /** Buttons to switch between square tiles, natural tiles and the table, kept in the URL so a link keeps the view. */
 function ViewModeSwitcher({ mode }: { mode: ViewMode }) {
@@ -376,15 +385,15 @@ function placeholdersOf(image: PhotoImage, mode: TileMode): string[] {
  * thumbnails or when the thumbnail won't load. Natural tiles pick from the resized versions by how
  * wide the tile is, since at a row's height or taller the Small version is too soft.
  */
-function sourcesOf(image: PhotoImage, mode: TileMode): ImgHTMLAttributes<HTMLImageElement>[] {
+function sourcesOf(image: PhotoImage, sizes: TileSizes): ImgHTMLAttributes<HTMLImageElement>[] {
   const middle = {
     src: image.src,
     srcSet: image.srcSet,
-    sizes: TILE_SIZES,
+    sizes: sizes.square,
     width: image.width,
     height: image.height,
   };
-  if (mode === "natural") return [{ ...middle, sizes: naturalSizes({ image }) }];
+  if (sizes.mode === "natural") return [{ ...middle, sizes: naturalSizes({ image }, sizes.rows) }];
   if (!image.thumbnail) return [middle];
   return [{ src: image.thumbnail, width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE }, middle];
 }
@@ -402,15 +411,16 @@ function isLoaded(img: HTMLImageElement | null): boolean {
 
 function PhotoTile({
   photo,
-  mode,
+  sizes,
   showInfo,
   onOpen,
 }: {
   photo: ImagePhoto;
-  mode: TileMode;
+  sizes: TileSizes;
   showInfo: boolean;
   onOpen: () => void;
 }) {
+  const { mode } = sizes;
   return (
     <figure className="flex flex-col gap-2">
       <button
@@ -425,7 +435,7 @@ function PhotoTile({
       >
         {/* Keyed by mode so switching starts each image's fallbacks over. */}
         <TilePlaceholder key={`placeholder-${mode}`} image={photo.image} mode={mode} />
-        <TileImage key={`image-${mode}`} image={photo.image} mode={mode} alt={photo.title} />
+        <TileImage key={`image-${mode}`} image={photo.image} sizes={sizes} alt={photo.title} />
       </button>
       {showInfo && <TileCaption photo={photo} />}
     </figure>
@@ -474,10 +484,10 @@ function TilePlaceholder({ image, mode }: { image: PhotoImage; mode: TileMode })
  * The tile's image, fading in over the placeholder once it loads. When none of its sources load,
  * nothing covers the placeholder, so the tile stays blurred rather than showing a broken image.
  */
-function TileImage({ image, mode, alt }: { image: PhotoImage; mode: TileMode; alt: string }) {
+function TileImage({ image, sizes, alt }: { image: PhotoImage; sizes: TileSizes; alt: string }) {
   const fallback = useFallback();
   const [loaded, setLoaded] = useState(false);
-  const source = sourcesOf(image, mode)[fallback.index];
+  const source = sourcesOf(image, sizes)[fallback.index];
   if (!source) return null;
   return (
     <img

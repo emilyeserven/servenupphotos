@@ -6,8 +6,17 @@ three views picked at the top right (`?view=`): **Square** tiles (the default), 
 a **Colors** section (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
 photo opens the [photo viewer](photo-viewer.md).
 
-The tile views share the sort dropdown (newest, oldest, **Recently Added**, **Time of Day**, color, vividness) and **Show info**, which puts each photo's
-title, place, color bar and comment under its tile (`?info=true`).
+The tile views share the sort dropdown (newest, oldest, **Recently Added**, **Time of Day**, color, vividness) and
+the eye button's display options (`components/grid-view-options.tsx`, using the flyout shared with the Map and Timeline,
+`components/view-options-button.tsx`):
+
+- **Size** (`?size=`, `lib/grid-size.ts`): how big the tiles are. **Medium** is the default and is left out of the URL;
+  **Large** (`large`) and **X-Large** (`xlarge`) make them bigger, and Natural tiles can also be **Small** (`small`).
+  Square tiles get bigger by using fewer columns (see [Square](#square)); Natural rows by starting 100px bigger or
+  smaller at each step (see [Natural](#natural)). Square tiles left at Small show at Medium.
+- **Show info** puts each photo's title, place, color bar and comment under its tile (`?info=true`).
+
+**Reset to defaults** goes back to Medium with info hidden. Both are remembered with the Grid's other settings.
 
 **Recently Added** (`?sort=added`) puts the photos most recently added to the portfolio first, by their
 [`addedDate`](data-model.md#date-added). Photos added on the same day go by when they were taken, newest first,
@@ -23,7 +32,15 @@ viewer's. Photos taken in the same minute go newest first.
 
 ## Square
 
-Each photo as the square picked on the pipeline's Photo page, in a grid of 2 to 6 columns as the window widens.
+Each photo as the square picked on the pipeline's Photo page, in a grid whose columns grow as the window widens:
+
+| Size             | Phone | `sm` (640px) | `lg` (1024px) | `xl` (1280px) | `2xl` (1536px) |
+| ---------------- | ----- | ------------ | ------------- | ------------- | -------------- |
+| Medium (default) | 2     | 3            | 4             | 5             | 6              |
+| Large            | 1     | 2            | 3             | 4             | 5              |
+| X-Large          | 1     | 2            | 2             | 3             | 4              |
+
+The square is a 500px image, so at the bigger sizes it can look a little soft on high-density screens.
 
 ## Natural
 
@@ -33,7 +50,19 @@ Vertical photos (narrower than 0.9 of their height) are gathered into rows of th
 each photo to be at least 400px wide (rows of wide photos start 250px tall), so they show larger instead of being squeezed between wide photos. Each row starts with the next photo in
 the sort and takes the next photos of the same kind until another wouldn't fit, so photos stay close to their place in
 the sort, moved at most a row or so. When too few photos of one kind are left to fill a row, the rest share rows of the
-wide height. The last row isn't stretched. No tile grows taller than 90% of the window (`90vh`); a row whose tiles
+wide height. The last row isn't stretched.
+
+Those starting sizes are for **Medium**. Each **Size** step moves both by 100px:
+
+| Size             | Rows of wide photos start | Vertical photos start |
+| ---------------- | ------------------------- | --------------------- |
+| Small            | 150px tall                | 300px wide            |
+| Medium (default) | 250px tall                | 400px wide            |
+| Large            | 350px tall                | 500px wide            |
+| X-Large          | 450px tall                | 600px wide            |
+
+Since a full row's tiles grow to fill it, a bigger size means fewer photos per row rather than exactly that height:
+at X-Large on a laptop, a row of wide photos often holds just one. No tile grows taller than 90% of the window (`90vh`); a row whose tiles
 all reach that is centered rather than stretched.
 
 > **Frontend analogy:** like a CSS `flex-wrap` gallery, but the line breaks are worked out in JavaScript from the

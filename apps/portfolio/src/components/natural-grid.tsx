@@ -1,5 +1,5 @@
 import { type ReactNode, useMemo } from "react";
-import { naturalRows, ratioOf } from "@/lib/natural-rows";
+import { naturalRows, ratioOf, type RowSizes } from "@/lib/natural-rows";
 import type { PhotoImage } from "@/lib/photos";
 import { useSize } from "@/lib/use-size";
 import { cn } from "@/lib/utils";
@@ -19,9 +19,12 @@ const MAX_HEIGHT_SHARE = 0.9;
 export function NaturalGrid<T extends { id: number; image: PhotoImage }>({
   photos,
   showInfo,
+  sizes,
   renderTile,
 }: {
   photos: T[];
+  /** How big the rows start out, from the Grid's **Size** option. */
+  sizes: RowSizes;
   /** Whether tiles show their captions, which puts rows further apart. */
   showInfo: boolean;
   renderTile: (photo: T) => ReactNode;
@@ -29,8 +32,8 @@ export function NaturalGrid<T extends { id: number; image: PhotoImage }>({
   const [ref, size] = useSize();
   const width = size.width || UNMEASURED_WIDTH;
   const rows = useMemo(
-    () => naturalRows(photos, width, window.innerHeight * MAX_HEIGHT_SHARE),
-    [photos, width],
+    () => naturalRows(photos, width, window.innerHeight * MAX_HEIGHT_SHARE, sizes),
+    [photos, width, sizes],
   );
   return (
     <div ref={ref} className={cn("flex flex-col", showInfo ? "gap-6" : "gap-3")}>
