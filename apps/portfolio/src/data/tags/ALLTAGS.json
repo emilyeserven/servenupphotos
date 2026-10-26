@@ -20,6 +20,11 @@
     "description": ""
   },
   {
+    "id": "bench",
+    "name": "bench",
+    "description": ""
+  },
+  {
     "id": "bridge",
     "name": "bridge",
     "description": ""
@@ -42,6 +47,11 @@
   {
     "id": "calligraphy",
     "name": "calligraphy",
+    "description": ""
+  },
+  {
+    "id": "camels",
+    "name": "camels",
     "description": ""
   },
   {
@@ -85,6 +95,21 @@
     "description": ""
   },
   {
+    "id": "clouds",
+    "name": "clouds",
+    "description": ""
+  },
+  {
+    "id": "columns",
+    "name": "columns",
+    "description": ""
+  },
+  {
+    "id": "countryside",
+    "name": "countryside",
+    "description": ""
+  },
+  {
     "id": "crosswalk",
     "name": "crosswalk",
     "description": ""
@@ -92,6 +117,11 @@
   {
     "id": "daldongne",
     "name": "daldongne",
+    "description": ""
+  },
+  {
+    "id": "desert",
+    "name": "desert",
     "description": ""
   },
   {
@@ -105,8 +135,23 @@
     "description": ""
   },
   {
+    "id": "dogs",
+    "name": "dogs",
+    "description": ""
+  },
+  {
+    "id": "domes",
+    "name": "domes",
+    "description": ""
+  },
+  {
     "id": "doors",
     "name": "doors",
+    "description": ""
+  },
+  {
+    "id": "farmland",
+    "name": "farmland",
     "description": ""
   },
   {
@@ -125,6 +170,11 @@
     "description": ""
   },
   {
+    "id": "garden",
+    "name": "garden",
+    "description": ""
+  },
+  {
     "id": "gates",
     "name": "gates",
     "description": ""
@@ -140,13 +190,28 @@
     "description": ""
   },
   {
+    "id": "haze",
+    "name": "haze",
+    "description": ""
+  },
+  {
     "id": "hieroglyphs",
     "name": "hieroglyphs",
     "description": ""
   },
   {
+    "id": "hotel",
+    "name": "hotel",
+    "description": ""
+  },
+  {
     "id": "houses",
     "name": "houses",
+    "description": ""
+  },
+  {
+    "id": "hypostyle",
+    "name": "hypostyle",
     "description": ""
   },
   {
@@ -170,6 +235,16 @@
     "description": ""
   },
   {
+    "id": "lake",
+    "name": "lake",
+    "description": ""
+  },
+  {
+    "id": "lamppost",
+    "name": "lamppost",
+    "description": ""
+  },
+  {
     "id": "lanterns",
     "name": "lanterns",
     "description": ""
@@ -185,13 +260,38 @@
     "description": ""
   },
   {
+    "id": "minimalism",
+    "name": "minimalism",
+    "description": ""
+  },
+  {
     "id": "moat",
     "name": "moat",
     "description": ""
   },
   {
+    "id": "moon",
+    "name": "moon",
+    "description": ""
+  },
+  {
     "id": "mountains",
     "name": "mountains",
+    "description": ""
+  },
+  {
+    "id": "mud-brick",
+    "name": "mud-brick",
+    "description": ""
+  },
+  {
+    "id": "mural",
+    "name": "mural",
+    "description": ""
+  },
+  {
+    "id": "necropolis",
+    "name": "necropolis",
     "description": ""
   },
   {
@@ -207,6 +307,11 @@
   {
     "id": "onsen",
     "name": "onsen",
+    "description": ""
+  },
+  {
+    "id": "palm-trees",
+    "name": "palm-trees",
     "description": ""
   },
   {
@@ -230,6 +335,11 @@
     "description": ""
   },
   {
+    "id": "pottery",
+    "name": "pottery",
+    "description": ""
+  },
+  {
     "id": "power-lines",
     "name": "power-lines",
     "description": ""
@@ -237,6 +347,16 @@
   {
     "id": "prayers",
     "name": "prayers",
+    "description": ""
+  },
+  {
+    "id": "promenade",
+    "name": "promenade",
+    "description": ""
+  },
+  {
+    "id": "pyramids",
+    "name": "pyramids",
     "description": ""
   },
   {
@@ -255,6 +375,11 @@
     "description": ""
   },
   {
+    "id": "restoration",
+    "name": "restoration",
+    "description": ""
+  },
+  {
     "id": "river",
     "name": "river",
     "description": ""
@@ -262,6 +387,11 @@
   {
     "id": "road",
     "name": "road",
+    "description": ""
+  },
+  {
+    "id": "rock-formations",
+    "name": "rock-formations",
     "description": ""
   },
   {
@@ -282,6 +412,11 @@
   {
     "id": "sando",
     "name": "sando",
+    "description": ""
+  },
+  {
+    "id": "scaffolding",
+    "name": "scaffolding",
     "description": ""
   },
   {
@@ -322,6 +457,11 @@
   {
     "id": "signage",
     "name": "signage",
+    "description": ""
+  },
+  {
+    "id": "signpost",
+    "name": "signpost",
     "description": ""
   },
   {
@@ -385,6 +525,11 @@
     "description": ""
   },
   {
+    "id": "tourists",
+    "name": "tourists",
+    "description": ""
+  },
+  {
     "id": "traffic",
     "name": "traffic",
     "description": ""
@@ -400,6 +545,11 @@
     "description": ""
   },
   {
+    "id": "twilight",
+    "name": "twilight",
+    "description": ""
+  },
+  {
     "id": "umbrellas",
     "name": "umbrellas",
     "description": ""
@@ -407,6 +557,21 @@
   {
     "id": "urban-decay",
     "name": "urban-decay",
+    "description": ""
+  },
+  {
+    "id": "van",
+    "name": "van",
+    "description": ""
+  },
+  {
+    "id": "village",
+    "name": "village",
+    "description": ""
+  },
+  {
+    "id": "vintage-cars",
+    "name": "vintage-cars",
     "description": ""
   },
   {
@@ -437,6 +602,11 @@
   {
     "id": "wood",
     "name": "wood",
+    "description": ""
+  },
+  {
+    "id": "workers",
+    "name": "workers",
     "description": ""
   },
   {
