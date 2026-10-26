@@ -35,7 +35,7 @@ export function MapMarkerView({
 }) {
   if (marker.kind === "cluster") {
     return (
-      <Marker longitude={marker.longitude} latitude={marker.latitude}>
+      <Marker longitude={marker.longitude} latitude={marker.latitude} offset={marker.offset}>
         <ClusterMarker
           clusterId={marker.clusterId}
           count={marker.count}

@@ -29,7 +29,7 @@ import {
   useMapPhotos,
 } from "@/lib/map-photos";
 import { type DayRange, isDay } from "@/lib/map-days";
-import { clusterRadius, type MapDisplay, pinSpacing, useMapDisplay } from "@/lib/map-display";
+import { clusterRadius, type MapDisplay, PIN_PIXELS, useMapDisplay } from "@/lib/map-display";
 import { fadeTo } from "@/lib/map-fade";
 import { photosInView } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
@@ -192,19 +192,19 @@ function useSetDays() {
 
 /**
  * The markers in view and what the map shows, for the day filter to list only the days of the
- * photos in view, with `updateMarkers` to work them out again after the map moves. Photo markers
- * are kept `spacing` pixels apart, or as far as `updateMarkers` is told.
+ * photos in view, with `updateMarkers` to work them out again after the map moves. Markers are
+ * spaced for pins `pin` pixels wide, or as wide as `updateMarkers` is told.
  */
-function useMarkersInView(map: RefObject<MapRef | null>, spacing: number) {
+function useMarkersInView(map: RefObject<MapRef | null>, pin: number) {
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [view, setView] = useState<LngLatBounds | null>(null);
   // Counts the updates, so a slower one finishing late doesn't replace a newer one's markers.
   const latest = useRef(0);
-  async function updateMarkers(apart = spacing) {
+  async function updateMarkers(width = pin) {
     if (!map.current) return;
     const update = ++latest.current;
     setView(map.current.getBounds());
-    const next = await markersInView(map.current, apart);
+    const next = await markersInView(map.current, width);
     if (update === latest.current) setMarkers(next);
   }
   return { markers, view, updateMarkers };
@@ -212,14 +212,14 @@ function useMarkersInView(map: RefObject<MapRef | null>, spacing: number) {
 
 /**
  * The markers in view, drawn as the display options say, with `changeDisplay` to change those;
- * changing the pin size moves the photo markers apart by the new size.
+ * changing the pin size spaces the markers for the new size.
  */
 function useMarkersOnDisplay(map: RefObject<MapRef | null>) {
   const [display, setDisplay] = useMapDisplay();
-  const inView = useMarkersInView(map, pinSpacing(display.pinSize));
+  const inView = useMarkersInView(map, PIN_PIXELS[display.pinSize]);
   function changeDisplay(change: Partial<MapDisplay>) {
     setDisplay(change);
-    if (change.pinSize) void inView.updateMarkers(pinSpacing(change.pinSize));
+    if (change.pinSize) void inView.updateMarkers(PIN_PIXELS[change.pinSize]);
   }
   return { ...inView, display, changeDisplay };
 }
@@ -291,7 +291,8 @@ function MapView() {
 
   return (
     <div className="flex h-svh flex-col">
-      <div className="min-h-0 flex-1">
+      {/* A pin under the pointer or focused comes to the front, so one partly covered can be seen. */}
+      <div className="min-h-0 flex-1 [&_.maplibregl-marker:focus-within]:z-1 [&_.maplibregl-marker:hover]:z-1">
         <Map
           ref={map}
           initialViewState={initialViewState}
@@ -445,6 +446,8 @@ function PhotoPopup({ photo, onClose }: { photo: PlacedPhoto; onClose: () => voi
 // Its CSS isn't in a layer, so it beats Tailwind's utilities unless they're important. An outline,
 // which MapLibre doesn't set, sets the box apart from the map.
 const MAP_POPUP = cn(
+  // Above a pin brought to the front.
+  "z-2",
   "text-neutral-900 dark:text-neutral-100",
   "[&_.maplibregl-popup-content]:outline [&_.maplibregl-popup-content]:outline-black/20 dark:[&_.maplibregl-popup-content]:outline-white/25",
   "dark:[&_.maplibregl-popup-content]:bg-neutral-900!",

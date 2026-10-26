@@ -5,6 +5,8 @@ import {
   fanLimit,
   type FanOffset,
   fanOffsets,
+  fanSpacing,
+  type MarkerOnScreen,
   type ScreenPoint,
 } from "@/lib/map-fan";
 import { type PhotoPoint, type PlacedPhoto, placedById } from "@/lib/map-photos";
@@ -18,7 +20,7 @@ export type MapMarker =
       kind: "photo";
       key: string;
       photo: PlacedPhoto;
-      /** How far it's moved from its spot, so it doesn't cover the photos near it. */
+      /** How far it's moved from its spot, so it doesn't cover the markers near it. */
       offset?: FanOffset;
     }
   | {
@@ -28,6 +30,8 @@ export type MapMarker =
       count: number;
       longitude: number;
       latitude: number;
+      /** How far it's moved from its spot, so it doesn't cover the markers near it. */
+      offset?: FanOffset;
     };
 
 /** The marker for one of the source's features, or null for a photo it doesn't know. */
@@ -63,8 +67,8 @@ function photoMarker(photo: PlacedPhoto): MapMarker {
 }
 
 /** A small cluster's photos as markers of their own, or a bigger cluster's marker as it is. */
-async function splitSmall(map: MapRef, marker: MapMarker, spacing: number): Promise<MapMarker[]> {
-  if (marker.kind !== "cluster" || marker.count > fanLimit(map.getZoom(), spacing)) return [marker];
+async function splitSmall(map: MapRef, marker: MapMarker, pin: number): Promise<MapMarker[]> {
+  if (marker.kind !== "cluster" || marker.count > fanLimit(map.getZoom(), pin)) return [marker];
   return (await photosInCluster(map, marker.clusterId)).map(photoMarker);
 }
 
@@ -74,41 +78,56 @@ function screenPoint(map: MapRef, longitude: number, latitude: number): ScreenPo
   return [x, y];
 }
 
-/**
- * Moves photo markers apart so none overlap one another or a group's marker, keeping them
- * `spacing` pixels apart.
- */
-function fanOut(map: MapRef, markers: MapMarker[], spacing: number): MapMarker[] {
-  const groups = markers.flatMap((marker) =>
-    marker.kind === "cluster" ? [screenPoint(map, marker.longitude, marker.latitude)] : [],
-  );
-  const photos = markers.flatMap((marker) =>
-    marker.kind === "photo"
-      ? [
-          {
-            photo: marker.photo,
-            at: screenPoint(map, marker.photo.longitude, marker.photo.latitude),
-          },
-        ]
-      : [],
-  );
-  const offsets = fanOffsets(photos, groups, spacing);
-  return markers.map((marker) =>
-    marker.kind === "photo" ? { ...marker, offset: offsets.get(marker.photo.id) } : marker,
-  );
+/** A marker's spot on the screen, and the number that seeds where it's moved to. */
+function onScreen(map: MapRef, marker: MapMarker): MarkerOnScreen {
+  if (marker.kind === "cluster") {
+    const at = screenPoint(map, marker.longitude, marker.latitude);
+    return { key: marker.key, seed: marker.clusterId, at };
+  }
+  const { photo } = marker;
+  return { key: marker.key, seed: photo.id, at: screenPoint(map, photo.longitude, photo.latitude) };
 }
 
 /**
- * The markers in view. From FAN_MIN_ZOOM in, small groups (see fanLimit) are split into photos of
- * their own, and photos are moved apart just enough that each can be seen, `spacing` pixels apart.
+ * Which of two markers keeps its spot first: groups before photos, bigger groups first, and the
+ * older of two photos, so the markers standing for more photos, and the oldest photos, move least.
  */
-export async function markersInView(map: MapRef, spacing: number): Promise<MapMarker[]> {
+function placedFirst(a: MapMarker, b: MapMarker): number {
+  return weightOf(b) - weightOf(a) || takenOf(a) - takenOf(b);
+}
+
+/** How many photos a marker stands for, with groups always ahead of a photo on its own. */
+function weightOf(marker: MapMarker): number {
+  return marker.kind === "cluster" ? 1 + marker.count : 1;
+}
+
+/** When a photo marker's photo was taken, in milliseconds; 0 for a group. */
+function takenOf(marker: MapMarker): number {
+  return marker.kind === "photo" ? marker.photo.takenAt.getTime() : 0;
+}
+
+/**
+ * Moves the markers apart, groups included, so none covers more than the zoom allows of another
+ * (see fanSpacing) for pins `pin` pixels wide.
+ */
+function fanOut(map: MapRef, markers: MapMarker[], pin: number): MapMarker[] {
+  const order = markers.toSorted(placedFirst).map((marker) => onScreen(map, marker));
+  const offsets = fanOffsets(order, fanSpacing(map.getZoom(), pin));
+  return markers.map((marker) => ({ ...marker, offset: offsets.get(marker.key) }));
+}
+
+/**
+ * The markers in view, for pins `pin` pixels wide. From FAN_MIN_ZOOM in, small groups (see
+ * fanLimit) are split into photos of their own. At every zoom, markers are moved apart just enough
+ * that none is more than half covered, and from FAN_MIN_ZOOM in that none overlap.
+ */
+export async function markersInView(map: MapRef, pin: number): Promise<MapMarker[]> {
   const markers = sourceMarkers(map);
-  if (map.getZoom() < FAN_MIN_ZOOM) return markers;
-  const split = await Promise.all(markers.map((marker) => splitSmall(map, marker, spacing)));
+  if (map.getZoom() < FAN_MIN_ZOOM) return fanOut(map, markers, pin);
+  const split = await Promise.all(markers.map((marker) => splitSmall(map, marker, pin)));
   // While zooming, tiles from the old zoom and the new one can both be loaded, so a cluster split
   // here can repeat photos another tile already has on their own.
-  return fanOut(map, once(split.flat()), spacing);
+  return fanOut(map, once(split.flat()), pin);
 }
 
 /** The photos in a cluster, oldest first. */
