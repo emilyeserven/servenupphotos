@@ -3,6 +3,7 @@ import { useState } from "react";
 import { type Localization, type Place, type PlacesResponse } from "@/api/places";
 import { InferredPlaceList } from "@/components/inferred-place-list";
 import { PlaceBulkBar } from "@/components/place-bulk-bar";
+import { PlacePhotoCount } from "@/components/place-gallery-link";
 import { PlaceGpsCell } from "@/components/place-gps-cell";
 import { RegionIcon, type RegionIconKind } from "@/components/region-icon";
 import { Button } from "@/components/ui/button";
@@ -268,7 +269,9 @@ function RegionRow({
       <TableCell className="text-center">
         <GpsCell node={node} list={list} />
       </TableCell>
-      <TableCell className="text-right tabular-nums">{node.photos}</TableCell>
+      <TableCell className="text-right tabular-nums">
+        <PlacePhotoCount node={node} />
+      </TableCell>
     </TableRow>
   );
 }

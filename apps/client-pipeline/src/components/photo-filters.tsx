@@ -56,11 +56,11 @@ function useSetFilter(prefix?: string) {
 
 /**
  * The search params a filter bar keeps filters in: each photo filter's, and the Gallery's
- * `undecided`; with a prefix, only the photo filters kept under it.
+ * `undecided` and place filter; with a prefix, only the photo filters kept under it.
  */
 function filterParams(prefix?: string): string[] {
   const params = PHOTO_FILTERS.map(({ key }) => filterParam(key, prefix));
-  return prefix ? params : [...params, "undecided"];
+  return prefix ? params : [...params, "undecided", "placeId", "placeGps"];
 }
 
 /** The search params with every filter under the prefix cleared. */

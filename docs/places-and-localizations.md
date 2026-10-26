@@ -22,7 +22,9 @@ country, a building for a city and a pin for a place (with a check inside for a 
 own, or a place above it's), or else its country; a city under its country; anything with nothing above it at the top,
 after the countries. Cities and countries come from the places' city and country and from the photos' (their custom
 city and country, or else their EXIF ones); a city only photos have says **Inferred from photos**. Each row has its
-local script, a GPS icon (see [GPS position](#gps-position)) and how many photos have it. A row with rows under it has
+local script, a GPS icon (see [GPS position](#gps-position)) and how many photos have it; a place's count links to
+the [Gallery showing its photos](gallery.md#a-places-photos), which also opens from **See photos in Gallery** at the
+top of its panel. A row with rows under it has
 an arrow to collapse or expand them; **Expand all** and **Collapse all** sit above the list, next to **Search**, which
 narrows it to the names with the search text in them and what they're in.
 

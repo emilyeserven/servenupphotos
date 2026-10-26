@@ -12,6 +12,26 @@ linked to Photos in Flight. A photo with no title on the base branch is a [draft
 **Draft**, since `ALLPHOTOS.json` leaves it out. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
 each photo's file path, which `ALLPHOTOS.json` entries don't carry.
 
+### A place's photos
+
+On the [Places page](places-and-localizations.md#places), a place's photo count and **See photos in Gallery** at the
+top of its panel open the Gallery showing only the photos that list that place (`?placeId=<id>`). The filter bar then
+shows the place, with an × that shows every photo again, and a **Coordinates** filter for where each of its photos
+goes on the portfolio's map (`?placeGps=`):
+
+- **Own** (`own`): the photo has its own GPS position, its custom one or its EXIF one, so it's placed exactly.
+- **From a place** (`place`): it has none, so it inherits the position of its first place that has one (or a place
+  that place is in), the way the portfolio's map picks it.
+- **None** (`none`): neither it nor any of its places has a position, so it isn't on the map.
+
+While a place is chosen, each tile says which: a green **Own GPS position**, a blue **GPS from Mill River Park**
+(with "(exact location)" when that place is marked as one), or an amber **Not on the map**. **Clear filters** clears
+the place too. The count can be lower than the Places page's, since the Gallery lists only the photos already on the
+base branch and hides Undecided ones until shown.
+
+> **Frontend analogy:** the tile marks are like DevTools' computed styles showing whether a value is set on the
+> element itself or inherited from a parent: `customGpsPosition ?? gpsPosition ?? place.gps`.
+
 Each photo with its image in R2 has an **Edit** button that opens it on the Photo page (`/exif?edit=<path>&from=gallery`),
 the same editor Photos in Flight uses, and each tile lists the photo's album, tag and genre names. Saving keeps the JSON as a
 [change waiting for Commit](pending-changes.md), which Commit sends to the open pull request (the branch must already

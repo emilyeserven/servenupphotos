@@ -15,11 +15,19 @@ import {
   useLocalizationDraft,
 } from "@/components/localization-fields";
 import { PlaceCityField } from "@/components/place-city-field";
+import { PlaceGalleryButton } from "@/components/place-gallery-link";
 import { PlaceExactLocationField } from "@/components/place-exact-location-field";
 import { PlaceJoinFields } from "@/components/place-join-fields";
 import { RegionIcon } from "@/components/region-icon";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { Spinner } from "@/components/ui/spinner";
@@ -322,6 +330,11 @@ function PlaceEditorHeader({ folder, place, id }: PlaceEditorHeaderProps) {
         Saves the place as <code className="break-all">{`${folder}/places/${id || "…"}.json`}</code>{" "}
         in the open photo data pull request, or opens a new one.
       </CardDescription>
+      {place && (
+        <CardAction>
+          <PlaceGalleryButton place={place} />
+        </CardAction>
+      )}
     </CardHeader>
   );
 }
