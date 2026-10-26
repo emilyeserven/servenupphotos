@@ -1,9 +1,9 @@
 {
-  "id": 264,
-  "title": null,
+  "title": "Go with the Flow",
   "comment": null,
+  "id": 264,
   "file": "DSCF6920.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T15:41:21Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:05:24 15:16:40",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Namsan Dulle-gil Trail",
+  "customCity": "Seoul",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "South Korea",
   "country": "South Korea",
   "state": "Seoul",
   "city": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/2b902c6c40aa-dscf6920-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/2b902c6c40aa-dscf6920-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/2b902c6c40aa-dscf6920-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/2b902c6c40aa-dscf6920-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2b902c6c40aa-dscf6920-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/2b902c6c40aa-dscf6920-thumbnail.webp?crop=2152,0,4270",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/2b902c6c40aa-dscf6920-thumbnailpreview.webp?crop=2152,0,4270",
     "thumbnailcrop": {
-      "x": 1660,
+      "x": 2152,
       "y": 0,
       "size": 4270,
       "outputSize": 500
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["boardwalk", "hiking-trail", "trees", "branches", "fence", "forest", "shadows", "path"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "namsan-dulle-gil-trail"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
