@@ -1,9 +1,9 @@
 {
-  "id": 368,
-  "title": null,
+  "title": "Desert Lunch",
   "comment": null,
+  "id": 368,
   "file": "20250125_140643.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T01:08:44Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnail.webp?crop=651,0,1985",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8b0e62f8326b-20250125-140643-thumbnailpreview.webp?crop=651,0,1985",
     "thumbnailcrop": {
-      "x": 772,
+      "x": 651,
       "y": 0,
       "size": 1985,
       "outputSize": 500
