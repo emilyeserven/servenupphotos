@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["bicycles", "sidewalk", "brick", "fence", "wood", "cars", "road"],
   "genres": [],
   "places": [],
   "spotlightZones": [],

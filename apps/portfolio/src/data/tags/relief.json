@@ -1,0 +1,6 @@
+{
+  "id": "relief",
+  "name": "relief",
+  "description": "a sculpture carved so its figures project from a flat background surface",
+  "parent": "sculpture"
+}
