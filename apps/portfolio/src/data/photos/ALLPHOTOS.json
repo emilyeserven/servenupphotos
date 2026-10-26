@@ -49,7 +49,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["grachtenpand", "canal", "houses", "facade", "bicycles", "fence", "windows"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -313,7 +313,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["doors", "castle", "walls", "stones", "stairs", "texture", "details"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -846,7 +846,15 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "ancient-egypt",
+      "hieroglyphs",
+      "inscriptions",
+      "carvings",
+      "stones",
+      "texture",
+      "details"
+    ],
     "genres": [],
     "places": [
       {
@@ -1115,7 +1123,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["riwaq", "mosque", "arches", "arcade", "columns", "windows", "pedestrians"],
     "genres": [],
     "places": [
       {
@@ -1384,7 +1392,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "mosque",
+      "doorway",
+      "silhouettes",
+      "stained-glass",
+      "arches",
+      "lamps",
+      "shadows",
+      "interior"
+    ],
     "genres": [],
     "places": [
       {
@@ -1657,7 +1674,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mishkat", "mosque", "calligraphy", "lamps", "chains", "walls", "details"],
     "genres": [],
     "places": [
       {
@@ -1926,7 +1943,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mosque", "silhouettes", "doorway", "lamps", "carpet", "walls", "shadows"],
     "genres": [],
     "places": [
       {
@@ -2195,7 +2212,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mishkat", "mosque", "lamps", "chains", "walls", "patterns"],
     "genres": [],
     "places": [
       {
@@ -2464,7 +2481,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mashrabiya", "girih", "mosque", "windows", "wood", "patterns", "silhouettes"],
     "genres": [],
     "places": [
       {
@@ -3817,7 +3834,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["ancient-egypt", "necropolis", "pyramids", "tourists", "monument", "stones", "clouds"],
     "genres": [],
     "places": [
       {
@@ -12166,7 +12183,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "cobblestones",
+      "outdoor-dining",
+      "pedestrians",
+      "umbrellas",
+      "signage",
+      "storefronts",
+      "stairs",
+      "trees"
+    ],
     "genres": [],
     "places": [
       {
@@ -24011,7 +24037,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["oculus", "patterns", "minimalism", "night", "texture"],
     "genres": [],
     "places": [
       {
@@ -25689,7 +25715,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["minaret", "city", "rooftops", "pyramids", "haze", "skyline"],
     "genres": [],
     "places": [
       {
@@ -26769,7 +26795,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "museum",
+      "interior",
+      "silhouettes",
+      "windows",
+      "reflections",
+      "glass",
+      "pyramids",
+      "shadows"
+    ],
     "genres": [],
     "places": [
       {
@@ -28915,7 +28950,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["riwaq", "mosque", "domes", "arches", "arcade", "columns", "windows"],
     "genres": [],
     "places": [
       {
@@ -43154,7 +43189,19 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["ancient-egypt", "pyramids", "palm-trees", "garden", "hotel", "moon", "twilight"],
+    "tags": [
+      "ancient-egypt",
+      "pyramids",
+      "palm-trees",
+      "garden",
+      "hotel",
+      "moon",
+      "twilight",
+      "sunrise",
+      "silhouettes",
+      "path",
+      "lamppost"
+    ],
     "genres": [],
     "places": [
       {
@@ -48794,7 +48841,18 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["ancient-egypt", "necropolis", "desert", "tourists", "pyramids", "camels"],
+    "tags": [
+      "ancient-egypt",
+      "necropolis",
+      "desert",
+      "tourists",
+      "pyramids",
+      "camels",
+      "sand",
+      "clouds",
+      "horse",
+      "skyline"
+    ],
     "genres": [],
     "places": [
       {
@@ -61453,7 +61511,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mosque", "windows", "pedestrians", "tourists", "facade", "carvings", "patterns"],
     "genres": [],
     "places": [
       {

@@ -20,6 +20,11 @@
     "description": ""
   },
   {
+    "id": "arches",
+    "name": "arches",
+    "description": ""
+  },
+  {
     "id": "beach",
     "name": "beach",
     "description": ""
@@ -70,6 +75,16 @@
     "description": ""
   },
   {
+    "id": "canal",
+    "name": "canal",
+    "description": ""
+  },
+  {
+    "id": "carpet",
+    "name": "carpet",
+    "description": ""
+  },
+  {
     "id": "cars",
     "name": "cars",
     "description": ""
@@ -90,6 +105,11 @@
     "description": ""
   },
   {
+    "id": "chains",
+    "name": "chains",
+    "description": ""
+  },
+  {
     "id": "chinatown",
     "name": "chinatown",
     "description": ""
@@ -97,6 +117,11 @@
   {
     "id": "chochin",
     "name": "chochin",
+    "description": ""
+  },
+  {
+    "id": "christmas-lights",
+    "name": "christmas-lights",
     "description": ""
   },
   {
@@ -112,6 +137,11 @@
   {
     "id": "clouds",
     "name": "clouds",
+    "description": ""
+  },
+  {
+    "id": "cobblestones",
+    "name": "cobblestones",
     "description": ""
   },
   {
@@ -162,6 +192,11 @@
   {
     "id": "doors",
     "name": "doors",
+    "description": ""
+  },
+  {
+    "id": "doorway",
+    "name": "doorway",
     "description": ""
   },
   {
@@ -220,9 +255,21 @@
     "description": ""
   },
   {
+    "id": "girih",
+    "name": "girih",
+    "description": "Islamic geometric ornament built from interlacing star and polygon patterns",
+    "parent": "patterns"
+  },
+  {
     "id": "glass",
     "name": "glass",
     "description": ""
+  },
+  {
+    "id": "grachtenpand",
+    "name": "grachtenpand",
+    "description": "a tall, narrow Dutch canal house with a decorative gable",
+    "parent": "houses"
   },
   {
     "id": "graffiti",
@@ -305,6 +352,11 @@
     "description": ""
   },
   {
+    "id": "lamps",
+    "name": "lamps",
+    "description": ""
+  },
+  {
     "id": "lanterns",
     "name": "lanterns",
     "description": ""
@@ -313,6 +365,12 @@
     "id": "machiya",
     "name": "machiya",
     "description": ""
+  },
+  {
+    "id": "mashrabiya",
+    "name": "mashrabiya",
+    "description": "a carved wooden lattice screen or window found in traditional Islamic and Middle Eastern architecture",
+    "parent": "windows"
   },
   {
     "id": "matsuri",
@@ -325,9 +383,20 @@
     "description": ""
   },
   {
+    "id": "minaret",
+    "name": "minaret",
+    "description": ""
+  },
+  {
     "id": "minimalism",
     "name": "minimalism",
     "description": ""
+  },
+  {
+    "id": "mishkat",
+    "name": "mishkat",
+    "description": "a hanging mosque lamp, traditionally of glass or metal and often inscribed with Quranic calligraphy",
+    "parent": "lamps"
   },
   {
     "id": "moat",
@@ -342,6 +411,11 @@
   {
     "id": "moon",
     "name": "moon",
+    "description": ""
+  },
+  {
+    "id": "mosque",
+    "name": "mosque",
     "description": ""
   },
   {
@@ -360,6 +434,11 @@
     "description": ""
   },
   {
+    "id": "museum",
+    "name": "museum",
+    "description": ""
+  },
+  {
     "id": "necropolis",
     "name": "necropolis",
     "description": ""
@@ -375,13 +454,28 @@
     "description": ""
   },
   {
+    "id": "oasis",
+    "name": "oasis",
+    "description": ""
+  },
+  {
     "id": "ocean",
     "name": "ocean",
     "description": ""
   },
   {
+    "id": "oculus",
+    "name": "oculus",
+    "description": ""
+  },
+  {
     "id": "onsen",
     "name": "onsen",
+    "description": ""
+  },
+  {
+    "id": "outdoor-dining",
+    "name": "outdoor-dining",
     "description": ""
   },
   {
@@ -463,6 +557,12 @@
     "id": "river",
     "name": "river",
     "description": ""
+  },
+  {
+    "id": "riwaq",
+    "name": "riwaq",
+    "description": "an arcaded gallery or portico surrounding the courtyard of a mosque",
+    "parent": "arcade"
   },
   {
     "id": "road",
@@ -600,8 +700,18 @@
     "description": ""
   },
   {
+    "id": "skyline",
+    "name": "skyline",
+    "description": ""
+  },
+  {
     "id": "skyscraper",
     "name": "skyscraper",
+    "description": ""
+  },
+  {
+    "id": "stained-glass",
+    "name": "stained-glass",
     "description": ""
   },
   {
@@ -652,6 +762,11 @@
   {
     "id": "suitorou",
     "name": "suitorou",
+    "description": ""
+  },
+  {
+    "id": "sunrise",
+    "name": "sunrise",
     "description": ""
   },
   {
