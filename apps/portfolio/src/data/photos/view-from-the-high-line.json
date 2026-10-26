@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "fire-escape",
+    "apartments",
+    "windows",
+    "facade",
+    "balconies",
+    "air-conditioners",
+    "urban-decay"
+  ],
   "genres": [],
   "places": [
     {

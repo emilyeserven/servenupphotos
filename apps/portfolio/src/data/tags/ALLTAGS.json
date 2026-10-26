@@ -1,5 +1,10 @@
 [
   {
+    "id": "air-conditioners",
+    "name": "air-conditioners",
+    "description": ""
+  },
+  {
     "id": "alley",
     "name": "alley",
     "description": ""
@@ -35,6 +40,16 @@
     "description": ""
   },
   {
+    "id": "artist",
+    "name": "artist",
+    "description": ""
+  },
+  {
+    "id": "attic",
+    "name": "attic",
+    "description": ""
+  },
+  {
     "id": "autumn",
     "name": "autumn",
     "description": ""
@@ -55,6 +70,11 @@
     "description": ""
   },
   {
+    "id": "beams",
+    "name": "beams",
+    "description": ""
+  },
+  {
     "id": "bench",
     "name": "bench",
     "description": ""
@@ -67,6 +87,11 @@
   {
     "id": "birds",
     "name": "birds",
+    "description": ""
+  },
+  {
+    "id": "board-games",
+    "name": "board-games",
     "description": ""
   },
   {
@@ -110,8 +135,19 @@
     "description": ""
   },
   {
+    "id": "busking",
+    "name": "busking",
+    "description": "performing music, dance or other acts in public places for voluntary donations",
+    "parent": "street-performer"
+  },
+  {
     "id": "byobu",
     "name": "byobu",
+    "description": ""
+  },
+  {
+    "id": "cables",
+    "name": "cables",
     "description": ""
   },
   {
@@ -160,6 +196,17 @@
     "description": ""
   },
   {
+    "id": "chalk-art",
+    "name": "chalk-art",
+    "description": "drawings or paintings made on pavement with chalk or pastels, often temporary",
+    "parent": "street-art"
+  },
+  {
+    "id": "chess",
+    "name": "chess",
+    "description": ""
+  },
+  {
     "id": "children",
     "name": "children",
     "description": ""
@@ -180,6 +227,11 @@
     "description": ""
   },
   {
+    "id": "church",
+    "name": "church",
+    "description": ""
+  },
+  {
     "id": "city-lights",
     "name": "city-lights",
     "description": ""
@@ -192,6 +244,11 @@
   {
     "id": "clock",
     "name": "clock",
+    "description": ""
+  },
+  {
+    "id": "clockwork",
+    "name": "clockwork",
     "description": ""
   },
   {
@@ -222,6 +279,11 @@
   {
     "id": "confucianism",
     "name": "confucianism",
+    "description": ""
+  },
+  {
+    "id": "costumes",
+    "name": "costumes",
     "description": ""
   },
   {
@@ -295,6 +357,11 @@
     "description": ""
   },
   {
+    "id": "elderly",
+    "name": "elderly",
+    "description": ""
+  },
+  {
     "id": "facade",
     "name": "facade",
     "description": ""
@@ -332,6 +399,16 @@
   {
     "id": "fire-alarm",
     "name": "fire-alarm",
+    "description": ""
+  },
+  {
+    "id": "fire-escape",
+    "name": "fire-escape",
+    "description": ""
+  },
+  {
+    "id": "flags",
+    "name": "flags",
     "description": ""
   },
   {
@@ -395,6 +472,16 @@
     "description": ""
   },
   {
+    "id": "gears",
+    "name": "gears",
+    "description": ""
+  },
+  {
+    "id": "geese",
+    "name": "geese",
+    "description": ""
+  },
+  {
     "id": "girih",
     "name": "girih",
     "description": "Islamic geometric ornament built from interlacing star and polygon patterns",
@@ -437,6 +524,12 @@
     "description": "an ornate building where a medieval or early-modern trade guild met, typical of Flemish and Dutch market squares"
   },
   {
+    "id": "hanfu",
+    "name": "hanfu",
+    "description": "traditional Han Chinese clothing with flowing robes, wide sleeves and wrapped collars",
+    "parent": "costumes"
+  },
+  {
     "id": "harbor",
     "name": "harbor",
     "description": ""
@@ -454,6 +547,11 @@
   {
     "id": "hearts",
     "name": "hearts",
+    "description": ""
+  },
+  {
+    "id": "herons",
+    "name": "herons",
     "description": ""
   },
   {
@@ -502,6 +600,11 @@
     "description": ""
   },
   {
+    "id": "iguanas",
+    "name": "iguanas",
+    "description": ""
+  },
+  {
     "id": "inscriptions",
     "name": "inscriptions",
     "description": ""
@@ -530,6 +633,12 @@
     "id": "juggling",
     "name": "juggling",
     "description": ""
+  },
+  {
+    "id": "karesansui",
+    "name": "karesansui",
+    "description": "a Japanese dry rock garden of raked gravel and stones, often called a zen garden",
+    "parent": "garden"
   },
   {
     "id": "koshi",
@@ -571,6 +680,16 @@
     "id": "love-locks",
     "name": "love-locks",
     "description": "padlocks that couples fasten to bridges, fences or railings as a symbol of lasting love"
+  },
+  {
+    "id": "lunar-new-year",
+    "name": "lunar-new-year",
+    "description": "the Chinese and East Asian New Year festival, celebrated with parades, lion dances and red decorations"
+  },
+  {
+    "id": "machinery",
+    "name": "machinery",
+    "description": ""
   },
   {
     "id": "machiya",
@@ -720,6 +839,11 @@
     "description": ""
   },
   {
+    "id": "parade",
+    "name": "parade",
+    "description": ""
+  },
+  {
     "id": "park",
     "name": "park",
     "description": ""
@@ -777,6 +901,11 @@
   {
     "id": "plaza",
     "name": "plaza",
+    "description": ""
+  },
+  {
+    "id": "police",
+    "name": "police",
     "description": ""
   },
   {
@@ -843,6 +972,11 @@
   {
     "id": "repetition",
     "name": "repetition",
+    "description": ""
+  },
+  {
+    "id": "reptiles",
+    "name": "reptiles",
     "description": ""
   },
   {
@@ -1009,6 +1143,11 @@
   {
     "id": "signage",
     "name": "signage",
+    "description": ""
+  },
+  {
+    "id": "signatures",
+    "name": "signatures",
     "description": ""
   },
   {
@@ -1202,6 +1341,12 @@
     "description": ""
   },
   {
+    "id": "tracery",
+    "name": "tracery",
+    "description": "ornamental stone ribs dividing a window into decorative shapes, typical of Gothic churches",
+    "parent": "windows"
+  },
+  {
     "id": "traffic",
     "name": "traffic",
     "description": ""
@@ -1244,6 +1389,11 @@
   {
     "id": "umbrellas",
     "name": "umbrellas",
+    "description": ""
+  },
+  {
+    "id": "uniforms",
+    "name": "uniforms",
     "description": ""
   },
   {

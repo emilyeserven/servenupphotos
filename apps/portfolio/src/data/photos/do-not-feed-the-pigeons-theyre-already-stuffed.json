@@ -48,7 +48,19 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["humor", "art-installation", "pigeons", "birds", "signage", "toys", "shadows"],
+  "tags": [
+    "humor",
+    "art-installation",
+    "pigeons",
+    "birds",
+    "signage",
+    "toys",
+    "shadows",
+    "street-art",
+    "sidewalk",
+    "park",
+    "typography"
+  ],
   "genres": [],
   "places": [
     {
