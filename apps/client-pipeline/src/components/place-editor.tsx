@@ -19,6 +19,7 @@ import { PlaceGalleryButton } from "@/components/place-gallery-link";
 import { PlaceExactLocationField } from "@/components/place-exact-location-field";
 import { PlaceJoinFields } from "@/components/place-join-fields";
 import { RegionIcon } from "@/components/region-icon";
+import { RegionOverrideField } from "@/components/region-override-field";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -143,10 +144,10 @@ function usePlaceForm(place: Place | null, places: Place[]) {
     save.reset();
     setDraft((d) => ({ ...d, [field]: value }));
   };
-  /** Sets the city, and the country too when the city's is known. */
-  const setCity = (city: string, country: string | undefined) => {
+  /** Sets the city or state, and the country too when the city's or state's is known. */
+  const setRegion = (field: "city" | "state", name: string, country: string | undefined) => {
     save.reset();
-    setDraft((d) => ({ ...d, city, country: country || d.country }));
+    setDraft((d) => ({ ...d, [field]: name, country: country || d.country }));
   };
   const setExactLocation = (exactLocation: boolean) => {
     save.reset();
@@ -154,7 +155,7 @@ function usePlaceForm(place: Place | null, places: Place[]) {
   };
   const problem = formProblem(save, next, draft.gps, places, !place);
   const changed = isChanged(draft, draftOf(initial));
-  return { draft, set, setCity, setExactLocation, save, next, problem, changed };
+  return { draft, set, setRegion, setExactLocation, save, next, problem, changed };
 }
 
 type PlaceForm = ReturnType<typeof usePlaceForm>;
@@ -180,8 +181,9 @@ const HELP = {
   parent:
     "Optional. The less specific place it's in, such as Gyeongbokgung Palace for Geunjeongmun Gate. Choosing this place on a photo adds that one as its second place.",
   city: "Optional, such as Seoul. A photo given this place takes its city, state and country, from the less specific of its places. Choosing a known city fills in its country.",
-  state: "Optional, such as the state, province or prefecture, between the city and the country.",
-  country: "Optional, such as South Korea.",
+  state:
+    "Optional, such as the state, province or prefecture, between the city and the country. Choose one places are in or photos show, or type one; choosing a known state fills in its country.",
+  country: "Optional, such as South Korea. Choose one places are in or photos show, or type one.",
   gps: "Optional. Latitude, longitude in degrees, such as 37.5796, 126.977; right-click a spot in Google Maps to copy one, or paste one like 37°34′12″N 126°59′56″E. Photos given this place whose EXIF has no GPS position go here on the portfolio's map.",
 };
 
@@ -235,23 +237,21 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
               places={places}
               disabled={busy}
               help={HELP.city}
-              onChange={(city, country) => form.setCity(city, country)}
+              onChange={(city, country) => form.setRegion("city", city, country)}
             />
-            <LabeledInput
-              id="place-state"
+            <LabeledRegion
+              kind="state"
               label="State"
-              help={HELP.state}
               value={form.draft.state}
               disabled={busy}
-              onChange={(value) => form.set("state", value)}
+              onChange={(state, country) => form.setRegion("state", state, country)}
             />
-            <LabeledInput
-              id="place-country"
+            <LabeledRegion
+              kind="country"
               label="Country"
-              help={HELP.country}
               value={form.draft.country}
               disabled={busy}
-              onChange={(value) => form.set("country", value)}
+              onChange={(country) => form.set("country", country)}
             />
           </div>
           <LabeledInput
@@ -434,6 +434,38 @@ function LabeledInput({ id, label, help, value, disabled, onChange }: LabeledInp
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
+  );
+}
+
+interface LabeledRegionProps {
+  kind: "state" | "country";
+  label: string;
+  value: string;
+  disabled: boolean;
+  /** Called with the chosen name, and for a state, its country when one is known. */
+  onChange: (name: string, country?: string) => void;
+}
+
+/**
+ * The place's state or country, chosen from the ones places are in or photos show, or typed, so it
+ * can be set whether or not the place has a city.
+ */
+function LabeledRegion({ kind, label, value, disabled, onChange }: LabeledRegionProps) {
+  const id = `place-${kind}`;
+  return (
+    <div className="flex flex-col gap-2">
+      <FieldLabel htmlFor={id} help={HELP[kind]}>
+        {label}
+      </FieldLabel>
+      <RegionOverrideField
+        id={id}
+        kind={kind}
+        value={value}
+        placeholder=""
+        disabled={disabled}
+        onChange={onChange}
       />
     </div>
   );

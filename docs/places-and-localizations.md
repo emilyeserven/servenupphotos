@@ -48,7 +48,9 @@ files again if the save fails.
 > query, `onSuccess` swaps in what the server saved, and `onError` invalidates the query to undo it.
 
 A place's **City** is a combobox of the list's cities, sorted by name, with inferred ones marked by how many photos
-show them, or a new one typed in. Choosing a city whose country is known fills in **Country**. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) keeps the file as a
+show them, or a new one typed in. Choosing a city whose country is known fills in **Country**. **State** and
+**Country** are comboboxes the same way, of the states and countries places are in or photos show, so a place with
+no city can still have them chosen; choosing a state whose country is known fills in **Country** too. Saving (`PUT /api/places/<id>` → `PUT /places/{id}`) keeps the file as a
 [change waiting for Commit](pending-changes.md), and the list reads the place files themselves
 (`GET /api/places` → `GET /places`, as the next Commit will have them), so a place shows before it's committed to
 `PLACES.json`.
