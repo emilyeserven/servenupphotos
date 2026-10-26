@@ -51,10 +51,12 @@ fits without covering the map:
 - The eye button opens the map's **display options** (`components/map-display-options.tsx`, kept in
   `lib/map-display.ts`):
   - **Grouping** is how close photos are, in pixels on the screen, before they're one round marker (MapLibre's
-    `clusterRadius`, 40 by default, from 10 to 100). Less shows more photos on their own; set below the pin size,
-    groups can overlap each other.
-  - **Pin size** is Small, Medium (the default) or Large, for photo and group markers alike; photos moved apart so they
-    don't overlap are kept that much further apart.
+    `clusterRadius`, 40 by default at Medium pins, from 10 to 100). Less shows more photos on their own; set well
+    below the pin size, groups can overlap each other.
+  - **Pin size** is Small, Medium (the default) or Large, for photo and group markers alike. Grouping scales with it
+    (`clusterRadius` in `lib/map-display.ts`), and fewer photos are split out of a group at each zoom (`fanLimit`,
+    shrinking with the room a pin takes), so big pins group sooner rather than being pushed far from their spots to
+    keep from overlapping. Photos moved apart are kept a pin's width and a gap apart.
   - **Show counts on groups** hides the number on group markers when unticked.
   - **Darken photos under counts**, when unticked, shows a group's photos as they are, with its count in a small dark
     badge instead.

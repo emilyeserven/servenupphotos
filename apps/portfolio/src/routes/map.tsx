@@ -29,7 +29,7 @@ import {
   useMapPhotos,
 } from "@/lib/map-photos";
 import { type DayRange, isDay } from "@/lib/map-days";
-import { type MapDisplay, pinSpacing, useMapDisplay } from "@/lib/map-display";
+import { clusterRadius, type MapDisplay, pinSpacing, useMapDisplay } from "@/lib/map-display";
 import { fadeTo } from "@/lib/map-fade";
 import { photosInView } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
@@ -325,7 +325,7 @@ function MapView() {
           </FloatingHeader>
           <Source
             // Grouping differently needs a new source, as MapLibre can't change it on one.
-            key={display.grouping}
+            key={clusterRadius(display)}
             id={SOURCE_ID}
             type="geojson"
             data={dayPhotos.geoJson}
@@ -333,7 +333,7 @@ function MapView() {
             clusterMaxZoom={17}
             // Photos group when they're closer than this many pixels: by default a little under a
             // marker's width, so groups split as soon as their markers would barely overlap.
-            clusterRadius={display.grouping}
+            clusterRadius={clusterRadius(display)}
           >
             <Layer {...hiddenLayer} />
           </Source>
