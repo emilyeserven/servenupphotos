@@ -1,42 +1,45 @@
 import { useNavigate } from "@tanstack/react-router";
 import { OptionCheckbox, OptionChoices, ViewOptionsButton } from "@/components/view-options-button";
-import { type GridSize, sizeChoices, squareSize } from "@/lib/grid-size";
+import { type GridSize, type SizedView, sizeChoices, sizeParam } from "@/lib/grid-size";
 
 /**
  * The Grid's display options, behind an eye button: how big the tiles are (`?size=`) and whether
  * each shows its title, place and comment (`?info=true`), both kept in the URL so a link keeps
- * them. Natural tiles can also be Small.
+ * them. Natural tiles also come in X-Large.
  */
 export function GridViewOptions({
-  natural,
+  view,
   size,
   info,
 }: {
-  natural: boolean;
+  view: Exclude<SizedView, "table">;
+  /** The size the tiles show at. */
   size: GridSize;
   info: boolean;
 }) {
   const navigate = useNavigate({ from: "/grid" });
-  const change = (options: { size?: GridSize; info?: true }) =>
-    void navigate({ search: (prev) => ({ ...prev, ...urlOptions(options) }), replace: true });
+  const change = (next: GridSize | undefined, nextInfo: boolean) =>
+    void navigate({
+      search: (prev) => ({
+        ...prev,
+        size: next && sizeParam(view, next),
+        info: nextInfo || undefined,
+      }),
+      replace: true,
+    });
   return (
-    <ViewOptionsButton contentClassName="w-80" onReset={() => change({ size: "medium" })}>
+    <ViewOptionsButton contentClassName="w-80" onReset={() => change(undefined, false)}>
       <OptionChoices
         label="Size"
-        choices={sizeChoices(natural)}
-        value={natural ? size : squareSize(size)}
-        onChange={(next) => change({ size: next, info: info || undefined })}
+        choices={sizeChoices(view)}
+        value={size}
+        onChange={(next) => change(next, info)}
       />
       <OptionCheckbox
         label="Show info"
         checked={info}
-        onChange={(checked) => change({ size, info: checked || undefined })}
+        onChange={(checked) => change(size, checked)}
       />
     </ViewOptionsButton>
   );
-}
-
-/** The options as the URL keeps them, leaving out Medium and hidden info. */
-function urlOptions({ size, info }: { size?: GridSize; info?: true }) {
-  return { size: size === "medium" ? undefined : size, info };
 }

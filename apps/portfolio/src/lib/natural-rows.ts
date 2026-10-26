@@ -23,9 +23,6 @@ export interface RowSizes {
   tall: number;
 }
 
-/** The rows' sizes at the Grid's default **Medium** size. */
-export const DEFAULT_ROW_SIZES: RowSizes = { wide: 250, tall: 400 };
-
 /** The width over height below which a photo counts as vertical. */
 const TALL_RATIO = 0.9;
 
@@ -40,7 +37,7 @@ function isTall(photo: Shaped): boolean {
 }
 
 /** How tall a photo's row is at least, for picking a sharp enough version of it. */
-export function rowHeightOf(photo: Shaped, sizes: RowSizes = DEFAULT_ROW_SIZES): number {
+export function rowHeightOf(photo: Shaped, sizes: RowSizes): number {
   return isTall(photo) ? sizes.tall / ratioOf(photo) : sizes.wide;
 }
 
@@ -50,13 +47,13 @@ export function rowHeightOf(photo: Shaped, sizes: RowSizes = DEFAULT_ROW_SIZES):
  * starts with the first photo not yet placed and takes the next photos of the same kind until
  * another wouldn't fit. When too few of that kind are left to fill a row, the rest are mixed into
  * rows of the wide height. A row of vertical photos is tall enough for its first photo to be
- * `sizes.tall` pixels wide (400px at the default size), but never taller than maxHeight pixels.
+ * `sizes.tall` pixels wide (400px at the Natural tiles' starting size, Large), but never taller than maxHeight pixels.
  */
 export function naturalRows<T extends Shaped>(
   photos: T[],
   width: number,
   maxHeight: number,
-  sizes: RowSizes = DEFAULT_ROW_SIZES,
+  sizes: RowSizes,
 ): NaturalRow<T>[] {
   const rows: NaturalRow<T>[] = [];
   let remaining = photos;

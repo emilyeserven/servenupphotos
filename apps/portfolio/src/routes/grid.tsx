@@ -29,11 +29,13 @@ import type { ColorSort } from "@/lib/color-sort";
 import { type GridColorSpec, type GridSort, sortGrid } from "@/lib/grid-sort";
 import {
   type GridSize,
-  naturalRowSizes,
+  NATURAL_ROW_SIZES,
+  naturalSize,
   parseGridSize,
   SQUARE_COLUMNS,
   SQUARE_TILE_SIZES,
   squareSize,
+  tableSize,
 } from "@/lib/grid-size";
 import { ratioOf, rowHeightOf, type RowSizes } from "@/lib/natural-rows";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
@@ -57,8 +59,11 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
   view?: Exclude<ViewMode, "square">;
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
   info?: true;
-  /** How big the tiles are. Left out for the default, Medium. */
-  size?: Exclude<GridSize, "medium">;
+  /**
+   * How big the tiles or the Table's thumbnails are. Left out for the size each view starts at:
+   * Medium for Square tiles, Large for Natural tiles and Small for the Table.
+   */
+  size?: GridSize;
   /**
    * Set when the oldest or most recently added photo comes first, to sort by time of day, or to
    * sort by color or vividness. Left out for the
@@ -220,7 +225,14 @@ function GridBody({
   const { shown, show, close } = useShownPhoto();
   if (mode === "table") {
     return (
-      <PhotoTable photos={photos} search={search} shown={shown} onShow={show} onClose={close} />
+      <PhotoTable
+        photos={photos}
+        search={search}
+        size={tableSize(search.size)}
+        shown={shown}
+        onShow={show}
+        onClose={close}
+      />
     );
   }
   const tiles = photos.filter(hasImage);
@@ -229,7 +241,7 @@ function GridBody({
       <GridTiles
         photos={tiles}
         mode={mode}
-        size={search.size ?? "medium"}
+        size={search.size}
         showInfo={search.info === true}
         onOpen={show}
       />
@@ -246,8 +258,8 @@ function TileControls({ search, mode }: { search: GridSearch; mode: TileMode }) 
       <GridSortSelect sort={sort} />
       <ColorOrder sort={sort} search={search} />
       <GridViewOptions
-        natural={mode === "natural"}
-        size={search.size ?? "medium"}
+        view={mode}
+        size={mode === "natural" ? naturalSize(search.size) : squareSize(search.size)}
         info={search.info === true}
       />
     </>
@@ -264,8 +276,12 @@ interface TileSizes {
 }
 
 /** The tiles' shape and sizes for the view and the Size option. */
-function tileSizesOf(mode: TileMode, size: GridSize): TileSizes {
-  return { mode, square: SQUARE_TILE_SIZES[squareSize(size)], rows: naturalRowSizes(size) };
+function tileSizesOf(mode: TileMode, size: GridSize | undefined): TileSizes {
+  return {
+    mode,
+    square: SQUARE_TILE_SIZES[squareSize(size)],
+    rows: NATURAL_ROW_SIZES[naturalSize(size)],
+  };
 }
 
 /** The photos as tiles: square ones in a grid, or natural ones in justified rows. */
@@ -278,7 +294,8 @@ function GridTiles({
 }: {
   photos: ImagePhoto[];
   mode: TileMode;
-  size: GridSize;
+  /** The URL's size, left out for each view's own starting size. */
+  size: GridSize | undefined;
   showInfo: boolean;
   onOpen: (photo: ImagePhoto) => void;
 }) {
