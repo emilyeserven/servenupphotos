@@ -70,7 +70,7 @@ function oldPlace(photo: CombinedPhoto): number {
  * The photos as the portfolio orders an album: ones with an old homepage place first, in that
  * order, then the rest, newest first.
  */
-function albumOrder(photos: CombinedPhoto[]): CombinedPhoto[] {
+export function albumOrder(photos: CombinedPhoto[]): CombinedPhoto[] {
   return photos.toSorted(
     (a, b) =>
       oldPlace(a) - oldPlace(b) ||

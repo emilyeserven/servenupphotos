@@ -6,10 +6,12 @@ import {
   organizeQuery,
   setSpotlightAlbumMutation,
 } from "@/api/organize";
-import { GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
+import { GroupPhotoGrid, albumOrder, useGroupPhotos } from "@/components/group-photo-grid";
 import { GroupCombobox } from "@/components/group-picker";
 import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { NewestPreview } from "@/components/newest-preview";
+import { ZonePreview } from "@/components/zone-preview";
 import { type SpotlightZone, spotlightZones, zoneAlbum } from "@/lib/site-spotlight";
 
 /** Picks the album each spotlight zone of the portfolio shows, such as the homepage's. */
@@ -72,16 +74,24 @@ function ZoneCard({ zone, albums }: { zone: SpotlightZone; albums: Group[] }) {
         {album ? (
           <AlbumPhotos album={album} albums={albums} />
         ) : (
-          <p className="text-muted-foreground">{zone.fallback}</p>
+          <>
+            <p className="text-muted-foreground">{zone.fallback}</p>
+            <NewestPreview />
+          </>
         )}
       </CardContent>
     </Card>
   );
 }
 
-/** The photos in album and its sub-albums, as the zone shows them. */
+/** The photos in album and its sub-albums, as the zone shows them, with a preview of each. */
 function AlbumPhotos({ album, albums }: { album: Group; albums: Group[] }) {
   const ids = new Set([album.id, ...albumDescendants(albums, album.id)]);
   const { combined, photos } = useGroupPhotos("albums", ids);
-  return <GroupPhotoGrid combined={combined} photos={photos} />;
+  return (
+    <>
+      {photos && <ZonePreview photos={albumOrder(photos)} />}
+      <GroupPhotoGrid combined={combined} photos={photos} />
+    </>
+  );
 }
