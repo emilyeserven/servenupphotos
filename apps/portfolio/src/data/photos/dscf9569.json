@@ -1,9 +1,9 @@
 {
-  "id": 342,
-  "title": null,
+  "title": "Country Road",
   "comment": null,
+  "id": 342,
   "file": "DSCF9569.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T15:39:35Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 7.1,
@@ -32,12 +32,12 @@
     "small": "https://cdn.servenupphotos.net/photos/4ba81b1b98ba-dscf9569-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/4ba81b1b98ba-dscf9569-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/4ba81b1b98ba-dscf9569-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/4ba81b1b98ba-dscf9569-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4ba81b1b98ba-dscf9569-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/4ba81b1b98ba-dscf9569-thumbnail.webp?crop=0,1239,3743",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4ba81b1b98ba-dscf9569-thumbnailpreview.webp?crop=0,1239,3743",
     "thumbnailcrop": {
       "x": 0,
-      "y": 835,
-      "size": 4179,
+      "y": 1239,
+      "size": 3743,
       "outputSize": 500
     }
   },
@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["power-lines", "cables", "alley", "houses", "mountains", "twilight", "haze", "village"],
   "genres": [],
   "places": [],
   "spotlightZones": [],

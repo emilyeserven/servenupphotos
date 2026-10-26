@@ -65,6 +65,11 @@
     "description": ""
   },
   {
+    "id": "bay-windows",
+    "name": "bay-windows",
+    "description": ""
+  },
+  {
     "id": "beach",
     "name": "beach",
     "description": ""
@@ -307,6 +312,11 @@
     "description": ""
   },
   {
+    "id": "dancheong",
+    "name": "dancheong",
+    "description": ""
+  },
+  {
     "id": "dancing",
     "name": "dancing",
     "description": ""
@@ -528,6 +538,11 @@
     "name": "hanfu",
     "description": "traditional Han Chinese clothing with flowing robes, wide sleeves and wrapped collars",
     "parent": "costumes"
+  },
+  {
+    "id": "hangul",
+    "name": "hangul",
+    "description": ""
   },
   {
     "id": "harbor",
@@ -759,6 +774,11 @@
     "description": ""
   },
   {
+    "id": "motorcycles",
+    "name": "motorcycles",
+    "description": ""
+  },
+  {
     "id": "mountains",
     "name": "mountains",
     "description": ""
@@ -804,6 +824,11 @@
     "description": ""
   },
   {
+    "id": "noraebang",
+    "name": "noraebang",
+    "description": ""
+  },
+  {
     "id": "oasis",
     "name": "oasis",
     "description": ""
@@ -834,6 +859,11 @@
     "description": ""
   },
   {
+    "id": "palace",
+    "name": "palace",
+    "description": ""
+  },
+  {
     "id": "palm-trees",
     "name": "palm-trees",
     "description": ""
@@ -861,6 +891,11 @@
   {
     "id": "pedestrians",
     "name": "pedestrians",
+    "description": ""
+  },
+  {
+    "id": "phoenixes",
+    "name": "phoenixes",
     "description": ""
   },
   {
@@ -1103,6 +1138,11 @@
   {
     "id": "shimenawa",
     "name": "shimenawa",
+    "description": ""
+  },
+  {
+    "id": "shinbutsu-shugo",
+    "name": "shinbutsu-shugo",
     "description": ""
   },
   {

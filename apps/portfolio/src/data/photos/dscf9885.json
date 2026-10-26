@@ -1,9 +1,9 @@
 {
-  "id": 348,
-  "title": null,
+  "title": "Enseiji Entrance",
   "comment": null,
+  "id": 348,
   "file": "DSCF9885.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T15:43:12Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:09:23 12:33:04",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Enseiji Temple",
+  "customCity": "Hagi",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "Japan",
   "country": "Japan",
   "state": "Yamaguchi",
   "city": "Hagi",
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["torii", "sando", "toro", "temple", "shrine", "signage", "stones", "shinbutsu-shugo"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "enseiji-temple"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
