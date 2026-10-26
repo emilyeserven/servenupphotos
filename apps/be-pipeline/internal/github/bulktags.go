@@ -145,9 +145,9 @@ func shared(a, b []string) []string {
 
 // PickBulkTagPhotos picks up to five related photos to tag together, from the
 // photo files as the next Commit will have them, leaving out skip's paths.
-// The first is the photo with the fewest tags; the rest are the ones most
-// like it (sharing its places, city or country, genres and date), fewest tags
-// first among equals. It only reads.
+// Only photos without tags are picked: the first by path, then the ones most
+// like it (sharing its places, city or country, genres and date). It only
+// reads.
 func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip []string) (BulkTagPick, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
@@ -163,25 +163,26 @@ func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip
 			continue
 		}
 		p := readBulkPhoto(f)
-		if len(p.tags) == 0 {
-			pick.Untagged++
+		if len(p.tags) > 0 {
+			continue
 		}
+		pick.Untagged++
 		if !slices.Contains(skip, f.path) {
 			photos = append(photos, p)
 		}
 	}
 	if len(photos) == 0 {
-		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos to pick from. Start over to pick from every photo again.")
+		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos without tags to pick from. Start over to pick from every one again.")
 	}
 	pick.Photos = pickRelated(photos)
 	return pick, nil
 }
 
-// pickRelated is the photo in photos with the fewest tags, then the ones
-// most like it.
+// pickRelated is the first photo in photos by path, then the ones most like
+// it.
 func pickRelated(photos []bulkPhoto) []BulkTagPhoto {
 	seed := slices.MinFunc(photos, func(a, b bulkPhoto) int {
-		return cmp.Or(cmp.Compare(len(a.tags), len(b.tags)), cmp.Compare(a.file.path, b.file.path))
+		return cmp.Compare(a.file.path, b.file.path)
 	})
 	type ranked struct {
 		photo bulkPhoto
@@ -194,7 +195,7 @@ func pickRelated(photos []bulkPhoto) []BulkTagPhoto {
 		}
 	}
 	slices.SortStableFunc(others, func(a, b ranked) int {
-		return cmp.Or(cmp.Compare(b.rel.score, a.rel.score), cmp.Compare(len(a.photo.tags), len(b.photo.tags)))
+		return cmp.Compare(b.rel.score, a.rel.score)
 	})
 	out := []BulkTagPhoto{bulkTagPhoto(seed, nil)}
 	names := map[string]bool{seed.name: true}
