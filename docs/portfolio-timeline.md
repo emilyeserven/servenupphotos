@@ -2,9 +2,24 @@
 
 The portfolio's Timeline (`/timeline`) lists the photos in a time range, newest first, grouped by month and then by day.
 The month and day headings stay at the top of the window while their photos scroll past, and clicking a month's heading
-folds it away. Clicking a photo's thumbnail or title opens the photo viewer. **Show Technical Info** (`?tech=true`)
-adds each photo's aperture, exposure, ISO, focal length, lens and camera under its comment. The filters are described in
+folds it away. Clicking a photo's thumbnail or title opens the photo viewer. The filters are described in
 [Portfolio Filters](portfolio-filters.md).
+
+## Display options
+
+The eye button at the end of the header opens the display options. Each is kept in the URL, left out at its default, and
+remembered in the browser with the rest of the Timeline's settings, so links to the Timeline from other pages open it the
+same way.
+
+| Option              | Choices                                                                   | URL                        |
+| ------------------- | ------------------------------------------------------------------------- | -------------------------- |
+| Thumbnail size      | Small (100px, the default), Medium (160px), Large (240px) or Huge (320px) | `?thumbs=medium` and so on |
+| Show technical info | Each photo's aperture, exposure, ISO, focal length, lens and camera; off  | `?tech=true`               |
+| Show comments       | Each photo's comment, on one line; on                                     | `?comments=false`          |
+| Show places         | Where each photo was taken; on                                            | `?places=false`            |
+
+On a phone, Large and Huge thumbnails sit above their photo's title instead of beside it.
+**Reset to defaults** puts every option back.
 
 ## Time range
 

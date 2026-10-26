@@ -7,7 +7,8 @@ import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
-import { TechnicalInfo, TechnicalInfoToggle } from "@/components/technical-info";
+import { TechnicalInfo } from "@/components/technical-info";
+import { TimelineDisplayOptions } from "@/components/timeline-display-options";
 import { TimelineChart } from "@/components/timeline-chart";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
@@ -15,6 +16,14 @@ import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { dayKey } from "@/lib/heatmap";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import {
+  parseTimelineDisplay,
+  resolveTimelineDisplay,
+  THUMB_LAYOUT,
+  timelineDisplaySearch,
+  type TimelineDisplay,
+  type TimelineDisplaySearch,
+} from "@/lib/timeline-display";
 import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
 import {
@@ -28,19 +37,20 @@ import {
 type ImagePhoto = Photo & { image: PhotoImage };
 
 /**
- * The time range, filters and open photo, plus whether each photo shows its technical info and
- * whether the chart is the heatmap; each left out when it isn't.
+ * The time range, filters and open photo, plus the display options and whether the chart is the
+ * heatmap; each left out when it's the default.
  */
 type TimelineSearch = TimeRangeValue &
   PhotoFilters &
-  ShownPhotoSearch & { tech?: true; chart?: "heatmap" };
+  ShownPhotoSearch &
+  TimelineDisplaySearch & { chart?: "heatmap" };
 
 export const Route = createFileRoute("/timeline")({
   validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
     ...parseTimeRange(search),
     ...parseFilters(search),
     ...parseShownPhoto(search),
-    ...(search.tech === true ? { tech: true } : {}),
+    ...parseTimelineDisplay(search),
     ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
   }),
   component: TimelineView,
@@ -72,8 +82,8 @@ function TimelineView() {
     .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
   const isAllTime = Object.keys(timeRange).length === 0;
-  const tech = search.tech === true;
-  useRememberViewOptions("/timeline", { tech: search.tech, chart: search.chart });
+  const display = resolveTimelineDisplay(search);
+  useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
 
   /** Shows the time range, keeping the filters and the rest of the view's options. */
   function showRange(next: TimeRangeValue) {
@@ -96,16 +106,23 @@ function TimelineView() {
             onChange={showRange}
           />
           <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
-          <TechnicalInfoToggle
-            shown={tech}
-            onChange={(show) =>
-              navigate({ search: (prev) => ({ ...prev, tech: show ? true : undefined }) })
-            }
-          />
           <Button variant="outline" size="sm" disabled={isAllTime} onClick={() => showRange({})}>
             <RotateCcw aria-hidden />
             Reset
           </Button>
+          <div className="ml-auto">
+            <TimelineDisplayOptions
+              display={display}
+              onChange={(change) =>
+                navigate({
+                  search: (prev) => ({
+                    ...prev,
+                    ...timelineDisplaySearch({ ...display, ...change }),
+                  }),
+                })
+              }
+            />
+          </div>
         </div>
         <PhotoFilterBar photos={photos} />
       </header>
@@ -119,15 +136,20 @@ function TimelineView() {
         shown={isAllTime ? undefined : { from: dayKey(start), to: dayKey(end) }}
         onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
       />
-      <PhotoMonths photos={inRange} filtered={hasFilters(filters)} showTech={tech} onOpen={show} />
+      <PhotoMonths
+        photos={inRange}
+        filtered={hasFilters(filters)}
+        display={display}
+        onOpen={show}
+      />
       <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
     </div>
   );
 }
 
-/** What each photo row needs from the page: whether to show technical info, and how to open it. */
+/** What each photo row needs from the page: the display options, and how to open a photo. */
 interface RowOptions {
-  showTech: boolean;
+  display: TimelineDisplay;
   onOpen: (photo: ImagePhoto) => void;
 }
 
@@ -217,39 +239,55 @@ function DaySection({
 }
 
 /**
- * A photo's square thumbnail, title, comment, technical info when shown, and place; its day is in
- * the subheading above. The thumbnail and the title open the photo in the lightbox; photos without
- * resized versions in R2 have nothing to open.
+ * A photo's square thumbnail at the chosen size, title, and the details the display options show;
+ * its day is in the subheading above. The thumbnail and the title open the photo in the lightbox;
+ * photos without resized versions in R2 have nothing to open.
  */
-function PhotoRow({ photo, showTech, onOpen }: RowOptions & { photo: Photo }) {
+function PhotoRow({ photo, display, onOpen }: RowOptions & { photo: Photo }) {
   const { image } = photo;
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
+  const layout = THUMB_LAYOUT[display.thumbs];
   return (
-    <li className="flex items-center gap-3">
-      <PhotoThumbnailButton image={image} title={photo.title} onOpen={open} className="size-25" />
-      <div className="flex min-w-0 flex-1 flex-col">
+    <li className={cn("flex gap-3", layout.row)}>
+      <PhotoThumbnailButton
+        image={image}
+        title={photo.title}
+        onOpen={open}
+        className={layout.thumbnail}
+      />
+      <div className="flex w-full min-w-0 flex-1 flex-col">
         <RowTitle title={photo.title} onOpen={open} />
-        <RowDetails photo={photo} showTech={showTech} />
+        <RowDetails photo={photo} display={display} />
       </div>
     </li>
   );
 }
 
-/** What's under the photo's title: its comment, its technical info when shown, then its place. */
-function RowDetails({ photo, showTech }: { photo: Photo; showTech: boolean }) {
+/** What's under the photo's title, each when shown: its comment, technical info, then place. */
+function RowDetails({ photo, display }: { photo: Photo; display: TimelineDisplay }) {
   return (
     <>
-      {photo.comment && (
-        <PhotoComment comment={photo.comment} lines={1} className="text-xs text-muted-foreground" />
-      )}
-      {showTech && <TechnicalInfo photo={photo} />}
-      {photo.location && (
-        <p className="truncate text-xs text-muted-foreground">
-          {/* Beside it, so the details cover neither this title nor the next. */}
-          <PhotoLocation location={photo.location} side="right" />
-        </p>
-      )}
+      {display.comments && <RowComment comment={photo.comment} />}
+      {display.tech && <TechnicalInfo photo={photo} />}
+      {display.places && <RowPlace location={photo.location} />}
     </>
+  );
+}
+
+/** The photo's comment on one line, when it has one. */
+function RowComment({ comment }: { comment: Photo["comment"] }) {
+  if (!comment) return null;
+  return <PhotoComment comment={comment} lines={1} className="text-xs text-muted-foreground" />;
+}
+
+/** Where the photo was taken, when it says. */
+function RowPlace({ location }: { location: Photo["location"] }) {
+  if (!location) return null;
+  return (
+    <p className="truncate text-xs text-muted-foreground">
+      {/* Beside it, so the details cover neither this title nor the next. */}
+      <PhotoLocation location={location} side="right" />
+    </p>
   );
 }
 
