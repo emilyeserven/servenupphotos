@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "lunar-new-year",
+    "hanfu",
+    "chinatown",
+    "parade",
+    "costumes",
+    "lanterns",
+    "crowd",
+    "signage"
+  ],
   "genres": [],
   "places": [
     {

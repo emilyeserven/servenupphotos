@@ -48,7 +48,19 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["relief", "sculpture", "carvings", "walls", "stones", "shadows", "minimalism"],
+  "tags": [
+    "relief",
+    "sculpture",
+    "carvings",
+    "walls",
+    "stones",
+    "shadows",
+    "minimalism",
+    "statue",
+    "monument",
+    "park",
+    "texture"
+  ],
   "genres": [],
   "places": [
     {

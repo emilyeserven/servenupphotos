@@ -10036,7 +10036,19 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["street-performer", "dancing", "crowd", "pedestrians", "park", "bench", "trees"],
+    "tags": [
+      "street-performer",
+      "dancing",
+      "crowd",
+      "pedestrians",
+      "park",
+      "bench",
+      "trees",
+      "busking",
+      "lamppost",
+      "sidewalk",
+      "shadows"
+    ],
     "genres": [],
     "places": [
       {
@@ -11125,7 +11137,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["chess", "board-games", "elderly", "bench", "park", "pedestrians"],
     "genres": [],
     "places": [
       {
@@ -11394,7 +11406,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["sculpture", "garden", "lake", "stones", "trees", "clouds", "plants"],
     "genres": [],
     "places": [
       {
@@ -11932,7 +11944,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["clockwork", "clock", "gears", "machinery", "steel", "details"],
     "genres": [],
     "places": [
       {
@@ -12479,7 +12491,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "lunar-new-year",
+      "hanfu",
+      "chinatown",
+      "parade",
+      "costumes",
+      "lanterns",
+      "crowd",
+      "signage"
+    ],
     "genres": [],
     "places": [
       {
@@ -13559,7 +13580,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["geese", "birds", "grass", "park"],
     "genres": [],
     "places": [
       {
@@ -14365,7 +14386,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "skylight",
+      "patterns",
+      "glass",
+      "steel",
+      "repetition",
+      "symmetry",
+      "subway",
+      "minimalism"
+    ],
     "genres": [],
     "places": [
       {
@@ -14638,7 +14668,19 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["humor", "art-installation", "pigeons", "birds", "signage", "toys", "shadows"],
+    "tags": [
+      "humor",
+      "art-installation",
+      "pigeons",
+      "birds",
+      "signage",
+      "toys",
+      "shadows",
+      "street-art",
+      "sidewalk",
+      "park",
+      "typography"
+    ],
     "genres": [],
     "places": [
       {
@@ -25195,7 +25237,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["birds", "flight", "silhouettes", "ocean", "sunrise", "seagulls"],
     "genres": [],
     "places": [
       {
@@ -26544,7 +26586,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["clockwork", "gears", "machinery", "steel", "cables", "details"],
     "genres": [],
     "places": [
       {
@@ -26813,7 +26855,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["clockwork", "gears", "machinery", "steel", "symmetry", "details"],
     "genres": [],
     "places": [
       {
@@ -29510,7 +29552,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["herons", "birds", "pond", "stones", "water"],
     "genres": [],
     "places": [
       {
@@ -30048,7 +30090,19 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["relief", "sculpture", "carvings", "walls", "stones", "shadows", "minimalism"],
+    "tags": [
+      "relief",
+      "sculpture",
+      "carvings",
+      "walls",
+      "stones",
+      "shadows",
+      "minimalism",
+      "statue",
+      "monument",
+      "park",
+      "texture"
+    ],
     "genres": [],
     "places": [
       {
@@ -36473,7 +36527,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["tracery", "church", "attic", "windows", "beams", "interior", "shadows"],
     "genres": [],
     "places": [
       {
@@ -37011,7 +37065,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["iguanas", "reptiles", "stones", "plants", "water", "details"],
     "genres": [],
     "places": [
       {
@@ -48594,7 +48648,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["lunar-new-year", "parade", "police", "uniforms", "flags", "repetition"],
     "genres": [],
     "places": [
       {
@@ -52645,7 +52699,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["karesansui", "toro", "garden", "sand", "patterns", "trees", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -55056,7 +55110,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["chalk-art", "street-art", "artist", "faces", "sidewalk", "park"],
     "genres": [],
     "places": [
       {
@@ -58581,7 +58635,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["church", "attic", "windows", "inscriptions", "signatures", "wood", "interior"],
     "genres": [],
     "places": [
       {
@@ -59926,7 +59980,15 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "fire-escape",
+      "apartments",
+      "windows",
+      "facade",
+      "balconies",
+      "air-conditioners",
+      "urban-decay"
+    ],
     "genres": [],
     "places": [
       {

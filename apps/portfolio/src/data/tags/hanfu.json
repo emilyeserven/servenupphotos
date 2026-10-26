@@ -1,0 +1,6 @@
+{
+  "id": "hanfu",
+  "name": "hanfu",
+  "description": "traditional Han Chinese clothing with flowing robes, wide sleeves and wrapped collars",
+  "parent": "costumes"
+}
