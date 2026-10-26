@@ -22,12 +22,6 @@ export function fanLimit(zoom: number): number {
   return Math.round(FAN_MIN_PHOTOS + along * (FAN_MAX_PHOTOS - FAN_MIN_PHOTOS));
 }
 
-/**
- * How far apart markers are at least, in pixels, across or down: a marker and a gap. Two square
- * markers overlap only when they're closer than a marker's width both across and down.
- */
-const FAN_SPACING = 50;
-
 /** How much further out each failed try may land, in pixels, so a crowded spot still finds room. */
 const FAN_GROWTH = 2;
 
@@ -54,10 +48,13 @@ function seededRandom(seed: number): () => number {
   };
 }
 
-/** Whether a marker at `point` is at least FAN_SPACING across or down from each placed one. */
-function hasRoom(point: ScreenPoint, placed: ScreenPoint[]): boolean {
+/**
+ * Whether a marker at `point` is at least `spacing` pixels across or down from each placed one.
+ * Two square markers overlap only when they're closer than a marker's width both across and down.
+ */
+function hasRoom(point: ScreenPoint, placed: ScreenPoint[], spacing: number): boolean {
   return placed.every(
-    ([x, y]) => Math.max(Math.abs(point[0] - x), Math.abs(point[1] - y)) >= FAN_SPACING,
+    ([x, y]) => Math.max(Math.abs(point[0] - x), Math.abs(point[1] - y)) >= spacing,
   );
 }
 
@@ -67,29 +64,35 @@ function hasRoom(point: ScreenPoint, placed: ScreenPoint[]): boolean {
  * the markers stay close to their spots without overlapping. The photo's ID seeds the tries, so it
  * lands in the same place every time.
  */
-function pointNear({ photo, at }: PhotoOnScreen, placed: ScreenPoint[]): ScreenPoint {
-  if (hasRoom(at, placed)) return at;
+function pointNear(
+  { photo, at }: PhotoOnScreen,
+  placed: ScreenPoint[],
+  spacing: number,
+): ScreenPoint {
+  if (hasRoom(at, placed, spacing)) return at;
   const random = seededRandom(photo.id);
-  for (let reach = FAN_SPACING; ; reach += FAN_GROWTH) {
+  for (let reach = spacing; ; reach += FAN_GROWTH) {
     const angle = random() * 2 * Math.PI;
     const distance = Math.sqrt(random()) * reach;
     const point: ScreenPoint = [
       at[0] + distance * Math.cos(angle),
       at[1] + distance * Math.sin(angle),
     ];
-    if (hasRoom(point, placed)) return point;
+    if (hasRoom(point, placed, spacing)) return point;
   }
 }
 
 /**
  * How far to move each photo's marker by its ID so no two markers overlap, each kept as near its
  * own spot as there's room for: photos at the same spot, or close together, are scattered loosely
- * around it. `taken` are the points other markers, such as groups, already cover. The oldest
+ * around it. `taken` are the points other markers, such as groups, already cover, and `spacing`
+ * how far apart markers are kept, in pixels: a marker and a gap. The oldest
  * photos are placed first, so they stay nearest their spots.
  */
 export function fanOffsets(
   photos: PhotoOnScreen[],
-  taken: ScreenPoint[] = [],
+  taken: ScreenPoint[],
+  spacing: number,
 ): Map<number, FanOffset> {
   const placed = [...taken];
   const offsets = new Map<number, FanOffset>();
@@ -97,7 +100,7 @@ export function fanOffsets(
     (a, b) => a.photo.takenAt.getTime() - b.photo.takenAt.getTime() || a.photo.id - b.photo.id,
   );
   for (const onScreen of oldestFirst) {
-    const point = pointNear(onScreen, placed);
+    const point = pointNear(onScreen, placed, spacing);
     placed.push(point);
     offsets.set(onScreen.photo.id, [
       Math.round(point[0] - onScreen.at[0]),
