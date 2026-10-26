@@ -15948,7 +15948,10 @@
       }
     ],
     "spotlightZones": [],
-    "spotlightFocus": null,
+    "spotlightFocus": {
+      "x": 32,
+      "y": 28
+    },
     "socialPosts": [],
     "reEdit": null,
     "colors": {
@@ -25958,7 +25961,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["mountains", "city", "daldongne", "houses", "rooftops", "harbor"],
     "genres": [],
     "places": [
@@ -37251,7 +37254,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": ["torii", "shinto", "pedestrians", "sando", "road", "mountains", "pine-trees"],
     "genres": [],
     "places": [
@@ -43968,7 +43971,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": ["lanterns", "gates", "toro", "torii", "cemetery", "path", "forest"],
     "genres": [],
     "places": [
