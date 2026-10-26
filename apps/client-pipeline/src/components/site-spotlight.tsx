@@ -11,7 +11,6 @@ import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { GroupCombobox } from "@/components/group-picker";
 import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { NewestPreview } from "@/components/newest-preview";
 import { ZonePreview } from "@/components/zone-preview";
 import { type SpotlightZone, spotlightZones, zoneAlbum } from "@/lib/site-spotlight";
 
@@ -75,10 +74,7 @@ function ZoneCard({ zone, albums }: { zone: SpotlightZone; albums: Group[] }) {
         {album ? (
           <AlbumPhotos album={album} albums={albums} />
         ) : (
-          <>
-            <p className="text-muted-foreground">{zone.fallback}</p>
-            <NewestPreview />
-          </>
+          <p className="text-muted-foreground">{zone.fallback}</p>
         )}
       </CardContent>
     </Card>

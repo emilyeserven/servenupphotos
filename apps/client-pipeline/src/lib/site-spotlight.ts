@@ -25,3 +25,8 @@ export const spotlightZones: SpotlightZone[] = [
 export function zoneAlbum(albums: Group[], zone: string): Group | undefined {
   return albums.find((album) => !album.error && album.spotlightZones?.includes(zone));
 }
+
+/** Whether any spotlight zone has an album picked for it. */
+export function hasSpotlightAlbum(albums: Group[]): boolean {
+  return spotlightZones.some((zone) => zoneAlbum(albums, zone.id) !== undefined);
+}

@@ -1,5 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+import { organizeQuery } from "@/api/organize";
 import type { SocialPhoto } from "@/api/publish";
-import { SpotlightPreview } from "@/components/spotlight-preview";
+import { type PreviewPhoto, SpotlightPreview } from "@/components/spotlight-preview";
 import { Button } from "@/components/ui/button";
 import {
   type Focus,
@@ -9,6 +11,7 @@ import {
   focusOf,
   wholePhoto,
 } from "@/lib/spotlight-focus";
+import { hasSpotlightAlbum } from "@/lib/site-spotlight";
 import { previewOf } from "@/lib/spotlight-preview";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
@@ -16,7 +19,7 @@ import { useLocalEditsStore } from "@/stores/local-edits";
  * The photo's focus point: where to click on it to keep that part in view when a spotlight zone
  * crops it to a screen of the other shape, such as a landscape photo behind the homepage on a phone.
  * It's a local edit until **Commit**, like the zones, with a preview of the photo behind the
- * homepage on a phone and a computer.
+ * homepage on a phone and a computer once an album is picked for a zone on Site Spotlight.
  */
 export function SpotlightFocus({ photo }: { photo: SocialPhoto }) {
   const edits = useLocalEditsStore((state) => state.edits);
@@ -38,8 +41,7 @@ export function SpotlightFocus({ photo }: { photo: SocialPhoto }) {
         photo, or a computer a portrait one.
       </p>
       <FocusPicker src={src} focus={focus} onPick={set} />
-      <p className="pt-1 text-sm font-medium">Behind the homepage</p>
-      <SpotlightPreview photo={previewOf(photo.data, src, focus)} />
+      <HomepagePreview photo={previewOf(photo.data, src, focus)} />
     </div>
   );
 }
@@ -71,5 +73,17 @@ function FocusPicker({ src, focus, onPick }: FocusPickerProps) {
         style={{ left: `${at.x}%`, top: `${at.y}%` }}
       />
     </button>
+  );
+}
+
+/** The photo behind the homepage, shown only once an album is picked for a spotlight zone. */
+function HomepagePreview({ photo }: { photo: PreviewPhoto }) {
+  const organize = useQuery(organizeQuery);
+  if (!organize.data || !hasSpotlightAlbum(organize.data.albums)) return null;
+  return (
+    <>
+      <p className="pt-1 text-sm font-medium">Behind the homepage</p>
+      <SpotlightPreview photo={photo} />
+    </>
   );
 }
