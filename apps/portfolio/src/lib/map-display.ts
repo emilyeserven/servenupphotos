@@ -31,6 +31,15 @@ export const GROUPING_RANGE = { min: 10, max: 100, step: 5 } as const;
 /** Each pin size's width, in pixels. */
 export const PIN_PIXELS: Record<PinSize, number> = { small: 32, medium: 44, large: 60 };
 
+/**
+ * How close photos are, in pixels, before MapLibre groups them: the Grouping option, scaled with
+ * the pin size, so bigger pins group sooner rather than being moved far from their spots to keep
+ * from overlapping, and smaller ones later.
+ */
+export function clusterRadius(display: MapDisplay): number {
+  return Math.round((display.grouping * PIN_PIXELS[display.pinSize]) / PIN_PIXELS.medium);
+}
+
 /** How far apart photo markers are kept at least, in pixels: a marker and a gap. */
 export function pinSpacing(pinSize: PinSize): number {
   return PIN_PIXELS[pinSize] + 6;

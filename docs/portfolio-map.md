@@ -42,7 +42,7 @@ photo viewer while on the map) fades the map out, moves it there and fades it ba
 out and back in (`fadeTo` in `lib/map-fade.ts`). Zooming into a group of photos still animates, as it's a short move.
 
 Over the top left corner, beside the title on wider screens and under it on phones, in one row
-(`components/map-controls.tsx`). On phones, **More filters** and **View in grid** are just their icons, so the row
+(`components/map-controls.tsx`). On phones, **More filters**, **View in grid** and **Browse** are just their icons, so the row
 fits without covering the map:
 
 - **Places** comes first, with the icon button beside it that zooms back out to every photo. The United States of
@@ -51,10 +51,12 @@ fits without covering the map:
 - The eye button opens the map's **display options** (`components/map-display-options.tsx`, kept in
   `lib/map-display.ts`):
   - **Grouping** is how close photos are, in pixels on the screen, before they're one round marker (MapLibre's
-    `clusterRadius`, 40 by default, from 10 to 100). Less shows more photos on their own; set below the pin size,
-    groups can overlap each other.
-  - **Pin size** is Small, Medium (the default) or Large, for photo and group markers alike; photos moved apart so they
-    don't overlap are kept that much further apart.
+    `clusterRadius`, 40 by default at Medium pins, from 10 to 100). Less shows more photos on their own; set well
+    below the pin size, groups can overlap each other.
+  - **Pin size** is Small, Medium (the default) or Large, for photo and group markers alike. Grouping scales with it
+    (`clusterRadius` in `lib/map-display.ts`), and fewer photos are split out of a group at each zoom (`fanLimit`,
+    shrinking with the room a pin takes), so big pins group sooner rather than being pushed far from their spots to
+    keep from overlapping. Photos moved apart are kept a pin's width and a gap apart.
   - **Show counts on groups** hides the number on group markers when unticked.
   - **Darken photos under counts**, when unticked, shows a group's photos as they are, with its count in a small dark
     badge instead.
@@ -75,6 +77,9 @@ fits without covering the map:
   the photos one by one instead (`?ids=[…]`, see [Chosen photos](portfolio-filters.md#chosen-photos)). A place filter
   also shows that place's photos with no GPS position, which the map can't show. It can't be pressed while no photos
   are in view.
+- **Browse** opens the photo viewer on the newest photo in view, and its arrows, keys and swipes step through every
+  photo in view, newest first. Opening a photo's own marker steps through them the same way, starting on that photo;
+  a group's grid still steps through just that group's photos. It can't be pressed while no photos are in view.
 - The **day** dropdown, in **More filters**, narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the

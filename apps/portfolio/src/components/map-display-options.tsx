@@ -100,10 +100,7 @@ function GroupingSlider({
   const [dragging, setDragging] = useState<number | null>(null);
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between text-xs">
-        <span className="font-medium text-muted-foreground">Grouping</span>
-        <span className="tabular-nums">{dragging ?? grouping} px</span>
-      </div>
+      <span className="text-xs font-medium text-muted-foreground">Grouping</span>
       <Slider
         min={GROUPING_RANGE.min}
         max={GROUPING_RANGE.max}

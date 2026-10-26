@@ -12,14 +12,20 @@ const FAN_MAX_PHOTOS = 12;
 /** The most photos in a group that are split apart at FAN_MIN_ZOOM. */
 const FAN_MIN_PHOTOS = 3;
 
+/** How far apart markers are kept at the default pin size, which the photo counts above are for. */
+const FAN_DEFAULT_SPACING = 50;
+
 /**
- * The most photos in a group that are split apart at a zoom; a bigger group stays one group
- * marker. It grows from FAN_MIN_PHOTOS at FAN_MIN_ZOOM to FAN_MAX_PHOTOS at FAN_FULL_ZOOM, so a
- * city shows its sparser photos on their own while busy neighborhoods stay grouped until closer.
+ * The most photos in a group that are split apart at a zoom, for markers kept `spacing` pixels
+ * apart; a bigger group stays one group marker. It grows from FAN_MIN_PHOTOS at FAN_MIN_ZOOM to
+ * FAN_MAX_PHOTOS at FAN_FULL_ZOOM, so a city shows its sparser photos on their own while busy
+ * neighborhoods stay grouped until closer. Bigger pins split fewer, as each takes more room and
+ * would have to be moved further from its spot: the limit shrinks with the room a pin takes.
  */
-export function fanLimit(zoom: number): number {
+export function fanLimit(zoom: number, spacing: number): number {
   const along = Math.min(Math.max((zoom - FAN_MIN_ZOOM) / (FAN_FULL_ZOOM - FAN_MIN_ZOOM), 0), 1);
-  return Math.round(FAN_MIN_PHOTOS + along * (FAN_MAX_PHOTOS - FAN_MIN_PHOTOS));
+  const limit = FAN_MIN_PHOTOS + along * (FAN_MAX_PHOTOS - FAN_MIN_PHOTOS);
+  return Math.max(1, Math.round(limit * (FAN_DEFAULT_SPACING / spacing) ** 2));
 }
 
 /** How much further out each failed try may land, in pixels, so a crowded spot still finds room. */

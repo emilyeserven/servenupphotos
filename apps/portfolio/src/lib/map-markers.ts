@@ -63,8 +63,8 @@ function photoMarker(photo: PlacedPhoto): MapMarker {
 }
 
 /** A small cluster's photos as markers of their own, or a bigger cluster's marker as it is. */
-async function splitSmall(map: MapRef, marker: MapMarker): Promise<MapMarker[]> {
-  if (marker.kind !== "cluster" || marker.count > fanLimit(map.getZoom())) return [marker];
+async function splitSmall(map: MapRef, marker: MapMarker, spacing: number): Promise<MapMarker[]> {
+  if (marker.kind !== "cluster" || marker.count > fanLimit(map.getZoom(), spacing)) return [marker];
   return (await photosInCluster(map, marker.clusterId)).map(photoMarker);
 }
 
@@ -105,7 +105,7 @@ function fanOut(map: MapRef, markers: MapMarker[], spacing: number): MapMarker[]
 export async function markersInView(map: MapRef, spacing: number): Promise<MapMarker[]> {
   const markers = sourceMarkers(map);
   if (map.getZoom() < FAN_MIN_ZOOM) return markers;
-  const split = await Promise.all(markers.map((marker) => splitSmall(map, marker)));
+  const split = await Promise.all(markers.map((marker) => splitSmall(map, marker, spacing)));
   // While zooming, tiles from the old zoom and the new one can both be loaded, so a cluster split
   // here can repeat photos another tile already has on their own.
   return fanOut(map, once(split.flat()), spacing);
