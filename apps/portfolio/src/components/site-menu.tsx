@@ -10,15 +10,17 @@ import { parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters } from "@/lib/photo-filters";
 import { type PortfolioView, portfolioViews } from "@/lib/portfolio-views";
 import { cn } from "@/lib/utils";
+import { rememberedViewOptions } from "@/lib/view-options";
 
 /**
- * What a view link carries from the page it's on. Only the filters go along: the other settings
- * belong to the view they're on. The camera filters go too, kept by the views that have them (Table
- * and Grid). The Map always opens with no filters, so it doesn't keep ones set before.
+ * What a view link carries: the filters from the page it's on, and the view's own settings as it
+ * was last left, such as the Grid's Table view. The camera filters go too, kept by the views that
+ * have them (Table and Grid). The Map always opens with no filters, so it doesn't keep ones set
+ * before.
  */
 function carriedSearch(to: PortfolioView["to"], prev: Record<string, unknown>) {
   if (to === "/map") return {};
-  return { ...parseFilters(prev), ...parseCameraFilters(prev) };
+  return { ...rememberedViewOptions(to), ...parseFilters(prev), ...parseCameraFilters(prev) };
 }
 
 interface Option<T> {

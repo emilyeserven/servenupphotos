@@ -5,6 +5,7 @@ import { homepagePhotos } from "@/lib/homepage-photos";
 import { enabledViews } from "@/lib/portfolio-views";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
+import { rememberedViewOptions } from "@/lib/view-options";
 
 export const Route = createFileRoute("/")({
   component: Homepage,
@@ -41,6 +42,7 @@ function Homepage() {
               <li key={to}>
                 <Link
                   to={to}
+                  search={() => rememberedViewOptions(to)}
                   className={cn(
                     FROSTED,
                     "flex w-20 flex-col items-center gap-1.5 rounded-lg px-2 py-3 transition-colors outline-none hover:border-white/50 hover:bg-white/30 focus-visible:ring-[3px] focus-visible:ring-white/60 sm:w-28",

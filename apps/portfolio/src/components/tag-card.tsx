@@ -3,6 +3,12 @@ import { ArrowRight } from "lucide-react";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 import type { TagEntry, TagSection } from "@/lib/tag-list";
+import { rememberedViewOptions } from "@/lib/view-options";
+
+/** The Grid filtered to the tag, in the view and sort the Grid was last left with. */
+function gridSearchFor(tag: string) {
+  return { ...rememberedViewOptions("/grid"), tag };
+}
 
 /** "1 photo" or "N photos", in small grey type after a tag's name. */
 function PhotoCount({ count }: { count: number }) {
@@ -48,7 +54,7 @@ const CARD =
 export function TagCard({ entry }: { entry: TagEntry }) {
   const { tag, between, count, previews } = entry;
   return (
-    <Link to="/grid" search={{ tag: tag.id }} className={CARD}>
+    <Link to="/grid" search={() => gridSearchFor(tag.id)} className={CARD}>
       <Thumbnails previews={previews} />
       <div>
         <p className="font-medium">
@@ -82,7 +88,7 @@ export function ParentTagSection({ section }: { section: TagSection }) {
         <h2 id={`tag-${tag.id}`} className="text-xl font-semibold tracking-tight">
           <Link
             to="/grid"
-            search={{ tag: tag.id }}
+            search={() => gridSearchFor(tag.id)}
             className="group inline-flex items-center gap-1.5"
           >
             <span>
@@ -116,7 +122,7 @@ function OwnPhotosCard({ tag, previews }: { tag: TagEntry["tag"]; previews: Imag
     <li>
       <Link
         to="/grid"
-        search={{ tag: tag.id }}
+        search={() => gridSearchFor(tag.id)}
         aria-label={`Photos tagged ${tag.name}`}
         className={CARD}
       >

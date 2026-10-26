@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Grid3x3 } from "lucide-react";
 import type { PhotoFilters } from "@/lib/photo-filters";
 import { cn } from "@/lib/utils";
+import { rememberedViewOptions } from "@/lib/view-options";
 
 /**
  * A **View in grid** button that opens the Grid on the filters given, such as the ones showing the
@@ -11,7 +12,7 @@ export function ViewInGridButton({ filters }: { filters: PhotoFilters | null }) 
   return (
     <Link
       to="/grid"
-      search={filters ?? {}}
+      search={() => ({ ...rememberedViewOptions("/grid"), ...filters })}
       disabled={!filters}
       title={filters ? "See the photos in view in the Grid" : "No photos in view"}
       className={cn(

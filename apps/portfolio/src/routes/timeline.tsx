@@ -15,6 +15,7 @@ import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { dayKey } from "@/lib/heatmap";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
 import {
   absoluteTimeRange,
@@ -72,6 +73,7 @@ function TimelineView() {
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
   const isAllTime = Object.keys(timeRange).length === 0;
   const tech = search.tech === true;
+  useRememberViewOptions("/timeline", { tech: search.tech, chart: search.chart });
 
   /** Shows the time range, keeping the filters and the rest of the view's options. */
   function showRange(next: TimeRangeValue) {

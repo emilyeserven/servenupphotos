@@ -7,8 +7,9 @@ Grid also has the camera filters (see [Camera filters](#camera-filters)), in eac
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
 beside it. Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
 that one (a range slider's X sits beside its range). The filters are kept in the URL, so a link keeps them, and the menu's view
-links carry them to the other views (and nothing else: a view's own settings, such as the Grid's sort or its Table's
-columns, stay with that view). The Map is the exception: it always opens with no filters from the menu, or from the photo viewer's
+links carry them to the other views. A view's own settings, such as the Grid's sort or its Table's
+columns, stay with that view, and are remembered in this browser: the menu's links, the homepage's, the Tags page's
+cards and the Map's **View in grid** open a view the way it was last left (see [Remembered view settings](#remembered-view-settings)). The Map is the exception: it always opens with no filters from the menu, or from the photo viewer's
 **View on map** on another view, so filters set earlier don't follow you back to it. A link to the Map with filters in
 its URL still opens with them.
 
@@ -109,3 +110,23 @@ whole world. Changing a filter on the Map fits it to the photos it now shows.
 A choice that would show no photos, given the other filters, isn't listed, unless it's the one chosen (or, in
 **Places**, has a chosen one inside it). The dropdown ends with a greyed-out line saying how many were hidden, and the
 Places tree a note under it, such as "40 places hidden by the other filters".
+
+## Remembered view settings
+
+Each of these views remembers its own settings in this browser (`lib/view-options.ts`, saved under
+`servenup-view-options` in `localStorage`), so leaving it and coming back from another page opens it the same way:
+
+- **Grid:** square, natural or Table view, **info** under the tiles, the sort (with a color sort's order and secondary
+  sort), and the Table's sorted column, hidden columns and Place detail.
+- **Color:** the color wheel or Black & white view, and the preview size.
+- **Timeline:** technical info shown, and the chart or heatmap.
+- **Tags:** the sort, and all tags or the top level only.
+
+Filters, the open photo, the Timeline's time range and where the Map is looking aren't remembered this way. The Map's
+display options are remembered on their own (see [Portfolio Map](portfolio-map.md)). A link with settings in its URL
+still opens with them, and a URL without any opens the view's defaults: only links within the site add the remembered
+ones.
+
+> **Frontend analogy:** each view's route component writes its settings slice of the search params to `localStorage`
+> in a `useEffect`, and links to it build their `search` from that saved slice plus the filters, like restoring a
+> tab's last state.

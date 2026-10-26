@@ -15,6 +15,7 @@ import type { VividMeasure } from "@/lib/color-sort";
 import { lightnessExtent } from "@/lib/lightness-range";
 import { parsePinScale, pinFactor, type PinScale } from "@/lib/pin-scale";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import { useRememberViewOptions } from "@/lib/view-options";
 
 interface ColorSearch extends ColorFilters {
   /**
@@ -84,6 +85,7 @@ function hasVividness(photo: Photo): boolean {
 function ColorView() {
   const search = Route.useSearch();
   const { shown, show, close } = useShownPhoto();
+  useRememberViewOptions("/color", { ...viewOf(search.view), ...pinsOf(search.pins) });
   if (colorPhotos.length === 0) return <ViewPlaceholder to="/color" />;
   const layout = search.view === "mono" ? "mono" : "wheel";
   const shownPhotos = photosFor(search, layout);
