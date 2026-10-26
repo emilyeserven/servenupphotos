@@ -48,7 +48,19 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["ancient-egypt", "pyramids", "palm-trees", "garden", "hotel", "moon", "twilight"],
+  "tags": [
+    "ancient-egypt",
+    "pyramids",
+    "palm-trees",
+    "garden",
+    "hotel",
+    "moon",
+    "twilight",
+    "sunrise",
+    "silhouettes",
+    "path",
+    "lamppost"
+  ],
   "genres": [],
   "places": [
     {

@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "cobblestones",
+    "outdoor-dining",
+    "pedestrians",
+    "umbrellas",
+    "signage",
+    "storefronts",
+    "stairs",
+    "trees"
+  ],
   "genres": [],
   "places": [
     {

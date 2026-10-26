@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "ancient-egypt",
+    "hieroglyphs",
+    "inscriptions",
+    "carvings",
+    "stones",
+    "texture",
+    "details"
+  ],
   "genres": [],
   "places": [
     {

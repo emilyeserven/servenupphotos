@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "christmas-lights",
+    "night",
+    "alley",
+    "cobblestones",
+    "lamppost",
+    "storefronts",
+    "bicycles"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],

@@ -48,7 +48,18 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["ancient-egypt", "necropolis", "desert", "tourists", "pyramids", "camels"],
+  "tags": [
+    "ancient-egypt",
+    "necropolis",
+    "desert",
+    "tourists",
+    "pyramids",
+    "camels",
+    "sand",
+    "clouds",
+    "horse",
+    "skyline"
+  ],
   "genres": [],
   "places": [
     {
