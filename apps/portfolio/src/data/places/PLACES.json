@@ -483,6 +483,14 @@
     "country": "South Korea"
   },
   {
+    "id": "jongmyo-shrine",
+    "name": "Jongmyo Shrine",
+    "description": "",
+    "parent": "",
+    "city": "Seoul",
+    "country": "South Korea"
+  },
+  {
     "id": "karnak",
     "name": "Karnak",
     "description": "",

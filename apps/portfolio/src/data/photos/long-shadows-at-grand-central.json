@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "train-station",
+    "commuters",
+    "pedestrians",
+    "shadows",
+    "silhouettes",
+    "interior",
+    "clock"
+  ],
   "genres": [],
   "places": [
     {

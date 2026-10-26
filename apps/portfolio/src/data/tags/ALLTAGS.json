@@ -15,6 +15,11 @@
     "description": ""
   },
   {
+    "id": "apartments",
+    "name": "apartments",
+    "description": ""
+  },
+  {
     "id": "arcade",
     "name": "arcade",
     "description": ""
@@ -22,6 +27,26 @@
   {
     "id": "arches",
     "name": "arches",
+    "description": ""
+  },
+  {
+    "id": "art-installation",
+    "name": "art-installation",
+    "description": ""
+  },
+  {
+    "id": "autumn",
+    "name": "autumn",
+    "description": ""
+  },
+  {
+    "id": "balconies",
+    "name": "balconies",
+    "description": ""
+  },
+  {
+    "id": "barn",
+    "name": "barn",
     "description": ""
   },
   {
@@ -45,8 +70,33 @@
     "description": ""
   },
   {
+    "id": "boardwalk",
+    "name": "boardwalk",
+    "description": ""
+  },
+  {
+    "id": "boats",
+    "name": "boats",
+    "description": ""
+  },
+  {
+    "id": "branches",
+    "name": "branches",
+    "description": ""
+  },
+  {
+    "id": "brick",
+    "name": "brick",
+    "description": ""
+  },
+  {
     "id": "bridge",
     "name": "bridge",
+    "description": ""
+  },
+  {
+    "id": "bubbles",
+    "name": "bubbles",
     "description": ""
   },
   {
@@ -110,6 +160,11 @@
     "description": ""
   },
   {
+    "id": "children",
+    "name": "children",
+    "description": ""
+  },
+  {
     "id": "chinatown",
     "name": "chinatown",
     "description": ""
@@ -135,8 +190,18 @@
     "description": ""
   },
   {
+    "id": "clock",
+    "name": "clock",
+    "description": ""
+  },
+  {
     "id": "clouds",
     "name": "clouds",
+    "description": ""
+  },
+  {
+    "id": "coastline",
+    "name": "coastline",
     "description": ""
   },
   {
@@ -150,6 +215,16 @@
     "description": ""
   },
   {
+    "id": "commuters",
+    "name": "commuters",
+    "description": ""
+  },
+  {
+    "id": "confucianism",
+    "name": "confucianism",
+    "description": ""
+  },
+  {
     "id": "countryside",
     "name": "countryside",
     "description": ""
@@ -160,8 +235,18 @@
     "description": ""
   },
   {
+    "id": "crowd",
+    "name": "crowd",
+    "description": ""
+  },
+  {
     "id": "daldongne",
     "name": "daldongne",
+    "description": ""
+  },
+  {
+    "id": "dancing",
+    "name": "dancing",
     "description": ""
   },
   {
@@ -190,6 +275,11 @@
     "description": ""
   },
   {
+    "id": "door-knocker",
+    "name": "door-knocker",
+    "description": ""
+  },
+  {
     "id": "doors",
     "name": "doors",
     "description": ""
@@ -200,8 +290,28 @@
     "description": ""
   },
   {
+    "id": "ducks",
+    "name": "ducks",
+    "description": ""
+  },
+  {
     "id": "facade",
     "name": "facade",
+    "description": ""
+  },
+  {
+    "id": "faces",
+    "name": "faces",
+    "description": ""
+  },
+  {
+    "id": "fallen-leaves",
+    "name": "fallen-leaves",
+    "description": ""
+  },
+  {
+    "id": "farm-animals",
+    "name": "farm-animals",
     "description": ""
   },
   {
@@ -215,6 +325,11 @@
     "description": ""
   },
   {
+    "id": "figurines",
+    "name": "figurines",
+    "description": ""
+  },
+  {
     "id": "fire-alarm",
     "name": "fire-alarm",
     "description": ""
@@ -222,6 +337,11 @@
   {
     "id": "flight",
     "name": "flight",
+    "description": ""
+  },
+  {
+    "id": "flowers",
+    "name": "flowers",
     "description": ""
   },
   {
@@ -235,8 +355,23 @@
     "description": ""
   },
   {
+    "id": "footbridge",
+    "name": "footbridge",
+    "description": ""
+  },
+  {
     "id": "forest",
     "name": "forest",
+    "description": ""
+  },
+  {
+    "id": "fountain",
+    "name": "fountain",
+    "description": ""
+  },
+  {
+    "id": "fungi",
+    "name": "fungi",
     "description": ""
   },
   {
@@ -255,14 +390,29 @@
     "description": ""
   },
   {
+    "id": "gazebo",
+    "name": "gazebo",
+    "description": ""
+  },
+  {
     "id": "girih",
     "name": "girih",
     "description": "Islamic geometric ornament built from interlacing star and polygon patterns",
     "parent": "patterns"
   },
   {
+    "id": "giwa",
+    "name": "giwa",
+    "description": ""
+  },
+  {
     "id": "glass",
     "name": "glass",
+    "description": ""
+  },
+  {
+    "id": "goats",
+    "name": "goats",
     "description": ""
   },
   {
@@ -277,8 +427,23 @@
     "description": ""
   },
   {
+    "id": "grass",
+    "name": "grass",
+    "description": ""
+  },
+  {
+    "id": "guildhall",
+    "name": "guildhall",
+    "description": "an ornate building where a medieval or early-modern trade guild met, typical of Flemish and Dutch market squares"
+  },
+  {
     "id": "harbor",
     "name": "harbor",
+    "description": ""
+  },
+  {
+    "id": "hay",
+    "name": "hay",
     "description": ""
   },
   {
@@ -287,8 +452,18 @@
     "description": ""
   },
   {
+    "id": "hearts",
+    "name": "hearts",
+    "description": ""
+  },
+  {
     "id": "hieroglyphs",
     "name": "hieroglyphs",
+    "description": ""
+  },
+  {
+    "id": "hiking-trail",
+    "name": "hiking-trail",
     "description": ""
   },
   {
@@ -307,8 +482,23 @@
     "description": ""
   },
   {
+    "id": "humor",
+    "name": "humor",
+    "description": ""
+  },
+  {
     "id": "hypostyle",
     "name": "hypostyle",
+    "description": ""
+  },
+  {
+    "id": "ice",
+    "name": "ice",
+    "description": ""
+  },
+  {
+    "id": "icicles",
+    "name": "icicles",
     "description": ""
   },
   {
@@ -324,6 +514,11 @@
   {
     "id": "interior",
     "name": "interior",
+    "description": ""
+  },
+  {
+    "id": "ironwork",
+    "name": "ironwork",
     "description": ""
   },
   {
@@ -362,6 +557,22 @@
     "description": ""
   },
   {
+    "id": "letterpress",
+    "name": "letterpress",
+    "description": "relief printing from inked, hand-set movable metal or wood type",
+    "parent": "typography"
+  },
+  {
+    "id": "letters",
+    "name": "letters",
+    "description": ""
+  },
+  {
+    "id": "love-locks",
+    "name": "love-locks",
+    "description": "padlocks that couples fasten to bridges, fences or railings as a symbol of lasting love"
+  },
+  {
     "id": "machiya",
     "name": "machiya",
     "description": ""
@@ -375,6 +586,11 @@
   {
     "id": "matsuri",
     "name": "matsuri",
+    "description": ""
+  },
+  {
+    "id": "memorial",
+    "name": "memorial",
     "description": ""
   },
   {
@@ -419,6 +635,11 @@
     "description": ""
   },
   {
+    "id": "moss",
+    "name": "moss",
+    "description": ""
+  },
+  {
     "id": "mountains",
     "name": "mountains",
     "description": ""
@@ -439,6 +660,11 @@
     "description": ""
   },
   {
+    "id": "mushrooms",
+    "name": "mushrooms",
+    "description": ""
+  },
+  {
     "id": "necropolis",
     "name": "necropolis",
     "description": ""
@@ -446,6 +672,11 @@
   {
     "id": "neon",
     "name": "neon",
+    "description": ""
+  },
+  {
+    "id": "newsstand",
+    "name": "newsstand",
     "description": ""
   },
   {
@@ -479,6 +710,11 @@
     "description": ""
   },
   {
+    "id": "padlocks",
+    "name": "padlocks",
+    "description": ""
+  },
+  {
     "id": "palm-trees",
     "name": "palm-trees",
     "description": ""
@@ -504,8 +740,53 @@
     "description": ""
   },
   {
+    "id": "pier",
+    "name": "pier",
+    "description": ""
+  },
+  {
+    "id": "pigeons",
+    "name": "pigeons",
+    "description": ""
+  },
+  {
+    "id": "pilings",
+    "name": "pilings",
+    "description": ""
+  },
+  {
     "id": "pine-trees",
     "name": "pine-trees",
+    "description": ""
+  },
+  {
+    "id": "planter",
+    "name": "planter",
+    "description": ""
+  },
+  {
+    "id": "plants",
+    "name": "plants",
+    "description": ""
+  },
+  {
+    "id": "platform",
+    "name": "platform",
+    "description": ""
+  },
+  {
+    "id": "plaza",
+    "name": "plaza",
+    "description": ""
+  },
+  {
+    "id": "pond",
+    "name": "pond",
+    "description": ""
+  },
+  {
+    "id": "posters",
+    "name": "posters",
     "description": ""
   },
   {
@@ -549,6 +830,22 @@
     "description": ""
   },
   {
+    "id": "relief",
+    "name": "relief",
+    "description": "a sculpture carved so its figures project from a flat background surface",
+    "parent": "sculpture"
+  },
+  {
+    "id": "remembrance",
+    "name": "remembrance",
+    "description": "the act of honoring and keeping alive the memory of people who have died"
+  },
+  {
+    "id": "repetition",
+    "name": "repetition",
+    "description": ""
+  },
+  {
     "id": "restoration",
     "name": "restoration",
     "description": ""
@@ -585,9 +882,24 @@
     "description": ""
   },
   {
+    "id": "rose",
+    "name": "rose",
+    "description": ""
+  },
+  {
     "id": "ruins",
     "name": "ruins",
     "description": ""
+  },
+  {
+    "id": "rust",
+    "name": "rust",
+    "description": ""
+  },
+  {
+    "id": "rustic",
+    "name": "rustic",
+    "description": "built in a deliberately rough, natural style from unhewn branches, logs or stone"
   },
   {
     "id": "sailboats",
@@ -607,6 +919,11 @@
   {
     "id": "scaffolding",
     "name": "scaffolding",
+    "description": ""
+  },
+  {
+    "id": "scale",
+    "name": "scale",
     "description": ""
   },
   {
@@ -665,6 +982,11 @@
     "description": ""
   },
   {
+    "id": "shoes",
+    "name": "shoes",
+    "description": ""
+  },
+  {
     "id": "shoji",
     "name": "shoji",
     "description": ""
@@ -700,6 +1022,11 @@
     "description": ""
   },
   {
+    "id": "skylight",
+    "name": "skylight",
+    "description": ""
+  },
+  {
     "id": "skyline",
     "name": "skyline",
     "description": ""
@@ -707,6 +1034,16 @@
   {
     "id": "skyscraper",
     "name": "skyscraper",
+    "description": ""
+  },
+  {
+    "id": "snakes",
+    "name": "snakes",
+    "description": ""
+  },
+  {
+    "id": "splash",
+    "name": "splash",
     "description": ""
   },
   {
@@ -755,13 +1092,38 @@
     "description": ""
   },
   {
+    "id": "stream",
+    "name": "stream",
+    "description": ""
+  },
+  {
+    "id": "street-art",
+    "name": "street-art",
+    "description": "art made in public spaces, such as murals, paste-ups, stencils and stickers"
+  },
+  {
     "id": "street-performer",
     "name": "street-performer",
     "description": ""
   },
   {
+    "id": "strings",
+    "name": "strings",
+    "description": ""
+  },
+  {
+    "id": "subway",
+    "name": "subway",
+    "description": ""
+  },
+  {
     "id": "suitorou",
     "name": "suitorou",
+    "description": ""
+  },
+  {
+    "id": "sunglasses",
+    "name": "sunglasses",
     "description": ""
   },
   {
@@ -772,6 +1134,26 @@
   {
     "id": "surfing",
     "name": "surfing",
+    "description": ""
+  },
+  {
+    "id": "suspension-cables",
+    "name": "suspension-cables",
+    "description": ""
+  },
+  {
+    "id": "swimming",
+    "name": "swimming",
+    "description": ""
+  },
+  {
+    "id": "symmetry",
+    "name": "symmetry",
+    "description": ""
+  },
+  {
+    "id": "tall-grass",
+    "name": "tall-grass",
     "description": ""
   },
   {
@@ -795,6 +1177,11 @@
     "description": ""
   },
   {
+    "id": "topiary",
+    "name": "topiary",
+    "description": ""
+  },
+  {
     "id": "torii",
     "name": "torii",
     "description": ""
@@ -810,13 +1197,28 @@
     "description": ""
   },
   {
+    "id": "toys",
+    "name": "toys",
+    "description": ""
+  },
+  {
     "id": "traffic",
     "name": "traffic",
     "description": ""
   },
   {
+    "id": "train-station",
+    "name": "train-station",
+    "description": ""
+  },
+  {
     "id": "train",
     "name": "train",
+    "description": ""
+  },
+  {
+    "id": "tree-stump",
+    "name": "tree-stump",
     "description": ""
   },
   {
@@ -827,6 +1229,16 @@
   {
     "id": "twilight",
     "name": "twilight",
+    "description": ""
+  },
+  {
+    "id": "typewriter",
+    "name": "typewriter",
+    "description": ""
+  },
+  {
+    "id": "typography",
+    "name": "typography",
     "description": ""
   },
   {
@@ -855,9 +1267,20 @@
     "description": ""
   },
   {
+    "id": "vintage",
+    "name": "vintage",
+    "description": ""
+  },
+  {
     "id": "wabi-sabi",
     "name": "wabi-sabi",
     "description": ""
+  },
+  {
+    "id": "wadi",
+    "name": "wadi",
+    "description": "an Arabic term for a dry desert valley or riverbed that holds water only after rare rains",
+    "parent": "desert"
   },
   {
     "id": "walls",
@@ -875,6 +1298,11 @@
     "description": ""
   },
   {
+    "id": "water",
+    "name": "water",
+    "description": ""
+  },
+  {
     "id": "waves",
     "name": "waves",
     "description": ""
@@ -882,6 +1310,11 @@
   {
     "id": "windows",
     "name": "windows",
+    "description": ""
+  },
+  {
+    "id": "winter",
+    "name": "winter",
     "description": ""
   },
   {

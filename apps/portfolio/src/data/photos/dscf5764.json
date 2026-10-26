@@ -1,9 +1,9 @@
 {
-  "id": 252,
-  "title": null,
+  "title": "Jongmyo Entrance",
   "comment": null,
+  "id": 252,
   "file": "DSCF5764.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T02:28:45Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:05:23 13:43:16",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "jongmyo-shrine",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["gates", "shrine", "mountains", "walls", "trees", "tourists", "confucianism", "giwa"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "jongmyo-shrine"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
