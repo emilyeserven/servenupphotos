@@ -22,15 +22,28 @@ function rank({ spotlightPlace }: Photo): number {
   return spotlightPlace ?? Number.MAX_SAFE_INTEGER;
 }
 
+/** The photo's place in the album's photo order, or after every photo it lists. */
+function placeIn(order: readonly number[], { id }: Photo): number {
+  const place = order.indexOf(id);
+  return place === -1 ? Number.MAX_SAFE_INTEGER : place;
+}
+
+/** The photo order set for the album with the ID on the pipeline's album page; empty for none. */
+function photoOrder(id: string): number[] {
+  return albums.find((album) => album.id === id)?.photoOrder ?? [];
+}
+
 /**
- * The photos with images in the album with the ID or one of its sub-albums: the ones with an old
- * spotlight place first, in that order, then the rest, newest first.
+ * The photos with images in the album with the ID or one of its sub-albums, in the album's order:
+ * the ones its photo order lists first, in that order, then the ones with an old spotlight place,
+ * in that order, then the rest, newest first.
  */
 export function albumPhotos(id: string, all: Photo[] = photos): ImagePhoto[] {
   const ids = albumAndSubAlbums(id);
+  const order = photoOrder(id);
   return newestWithImages(all)
     .filter((photo) => photo.albums.some((album) => ids.has(album)))
-    .toSorted((a, b) => rank(a) - rank(b));
+    .toSorted((a, b) => placeIn(order, a) - placeIn(order, b) || rank(a) - rank(b));
 }
 
 /** The album picked for the zone on the pipeline's Site Spotlight page, or undefined for none. */

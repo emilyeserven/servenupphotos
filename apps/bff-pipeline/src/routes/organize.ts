@@ -34,6 +34,16 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/organize/albums/order", jsonBody("PUT", request.body)),
   );
 
+  // Saves the order of an album's photos, as a change waiting for Commit.
+  app.put<{ Params: { id: string } }>("/organize/albums/:id/photo-order", async (request, reply) =>
+    relayToBackend(
+      reply,
+      app.log,
+      `/organize/albums/${encodeURIComponent(request.params.id)}/photo-order`,
+      jsonBody("PUT", request.body),
+    ),
+  );
+
   // Names every tag in lowercase kebab-case, its ID, as changes waiting for Commit.
   app.put("/organize/tags/names", async (request, reply) =>
     relayToBackend(reply, app.log, "/organize/tags/names", jsonBody("PUT", request.body ?? {})),

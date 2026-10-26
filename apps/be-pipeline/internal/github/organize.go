@@ -90,6 +90,9 @@ type groupJSON struct {
 	// SpotlightZones are the IDs of the portfolio's spots that show an
 	// album's photos, such as "homepage".
 	SpotlightZones []string `json:"spotlightZones,omitempty"`
+	// PhotoOrder is the IDs of an album's photos in the order the portfolio
+	// shows them.
+	PhotoOrder []int `json:"photoOrder,omitempty"`
 }
 
 // albumJSON is the content of an album file, as written: it always lists its
@@ -105,6 +108,9 @@ type albumJSON struct {
 	// SpotlightZones are the IDs of the portfolio's spots that show the
 	// album's photos; missing while it's in none.
 	SpotlightZones []string `json:"spotlightZones,omitempty"`
+	// PhotoOrder is the IDs of the album's photos in the order the portfolio
+	// shows them; missing or empty while they're in the default order.
+	PhotoOrder []int `json:"photoOrder,omitempty"`
 }
 
 // fileContent is g as kind's files are written.
@@ -129,7 +135,10 @@ type Group struct {
 	// SpotlightZones are the IDs of the portfolio's spots that show an
 	// album's photos, such as "homepage".
 	SpotlightZones []string `json:"spotlightZones,omitempty"`
-	Path           string   `json:"path"`
+	// PhotoOrder is the IDs of an album's photos in the order the portfolio
+	// shows them, set on its page; empty for the default order.
+	PhotoOrder []int  `json:"photoOrder,omitempty"`
+	Path       string `json:"path"`
 	// FileURL is the file's page on GitHub; empty while its latest change is
 	// only pending.
 	FileURL string `json:"fileUrl"`
@@ -413,6 +422,6 @@ func (w *workspace) readGroup(p string) Group {
 	if content.Order != nil {
 		g.Order = *content.Order
 	}
-	g.SpotlightZones = content.SpotlightZones
+	g.SpotlightZones, g.PhotoOrder = content.SpotlightZones, content.PhotoOrder
 	return g
 }

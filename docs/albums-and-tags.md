@@ -21,6 +21,21 @@ Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its fi
 parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's
 `parent`, as a [change waiting for Commit](pending-changes.md), refusing a parent that's the album itself or inside it.
 
+## Photo order
+
+An album's page shows its photos in the album's order, the one the portfolio uses. **Reorder**, on the **Photos** card
+of an album with more than one photo, turns the photos into tiles to drag into a new order, each numbered with its
+place and with arrows that move it one place earlier or later (for a keyboard or a touch screen). **Save order** saves
+the photo IDs in their new order as the album file's `photoOrder` (`PUT /api/organize/albums/<id>/photo-order` with
+`{ "photoIds": [...] }`), a [change waiting for Commit](pending-changes.md); **Cancel** leaves it as it was. With
+**Include sub-albums** ticked, the sub-albums' photos are put in order too; with it unticked, the IDs the order already
+lists that aren't shown are kept after the others. A photo the order doesn't list, such as one added to the album
+later, comes after the ones it lists, in the default order: photos with an old homepage place (`websiteSpotlight`)
+first, then the rest, newest first. **Use the default order** saves an empty `photoOrder`, putting them all back.
+
+> **Frontend analogy:** like a sortable list that saves an array of IDs rather than an index on each item, so a photo
+> can be in several albums with a different place in each, and a new item simply goes on the end.
+
 ## Parent tags
 
 A tag can have one parent tag: a more general tag it's a kind of, such as `shotengai` (a Japanese shopping street)

@@ -1,9 +1,11 @@
 # Portfolio Albums
 
 The portfolio's Albums page (`/albums`, `apps/portfolio/src/routes/albums.index.tsx`) shows each album with a strip of its
-first 5 photos in the album's order, counting the photos in its sub-albums too (as the album filter does). An album's order
-lists the photos that kept a place from the old photo-by-photo spotlight (`websiteSpotlight`, 1 first) before the
-rest, which come newest first. Albums come in the order
+first 5 photos in the album's order, counting the photos in its sub-albums too (as the album filter does). An album's order is
+the one set by dragging its photos on the pipeline's album page ([Photo order](albums-and-tags.md#photo-order),
+its file's `photoOrder`), with the photos it doesn't list after. Without one, or after those, it lists the photos that
+kept a place from the old photo-by-photo spotlight (`websiteSpotlight`, 1 first) before the rest, which come newest
+first. Albums come in the order
 set with the arrows on the pipeline's [Albums](albums-and-tags.md#order) page, each followed by its sub-albums, whose
 headings name their parent (`New York › Brooklyn`). Albums without an order come after the rest, by name, and albums
 with no photos are left out. Under each name are its description, how many photos it has and, for an album a

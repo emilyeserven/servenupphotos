@@ -75,3 +75,46 @@ func TestSetSpotlightAlbum(t *testing.T) {
 		t.Error("SetSpotlightAlbum(bad spot) error = nil, want one")
 	}
 }
+
+func TestSetAlbumPhotoOrder(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.files["main:data/albums/korea.json"] = "{\n  \"id\": \"korea\",\n  \"name\": \"Korea\",\n  \"parent\": null\n}\n"
+
+	got, err := c.SetAlbumPhotoOrder(t.Context(), organizeGH, "korea", []int{12, 3, 40})
+	if err != nil {
+		t.Fatalf("SetAlbumPhotoOrder() error = %v", err)
+	}
+	if got.Files != 1 || !strings.Contains(string(got.Changes[0].After), `"photoOrder": [12,3,40]`) {
+		t.Errorf("SetAlbumPhotoOrder() = %+v, want korea.json given the order", got)
+	}
+	organized, err := c.Organize(t.Context(), organizeGH)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if order := organized.Albums[0].PhotoOrder; len(order) != 3 || order[0] != 12 {
+		t.Errorf("Organize() photo order = %v, want [12 3 40]", order)
+	}
+
+	again, err := c.SetAlbumPhotoOrder(t.Context(), organizeGH, "korea", []int{12, 3, 40})
+	if err != nil || again.Files != 0 {
+		t.Errorf("SetAlbumPhotoOrder(same order) = %+v, %v; want nothing changed", again, err)
+	}
+	reset, err := c.SetAlbumPhotoOrder(t.Context(), organizeGH, "korea", nil)
+	if err != nil || reset.Files != 1 || !strings.Contains(string(reset.Changes[0].After), `"photoOrder": []`) {
+		t.Errorf("SetAlbumPhotoOrder(none) = %+v, %v; want the order emptied", reset, err)
+	}
+
+	for _, ids := range [][]int{{3, 3}, {0}} {
+		if _, err := c.SetAlbumPhotoOrder(t.Context(), organizeGH, "korea", ids); err == nil {
+			t.Errorf("SetAlbumPhotoOrder(%v) error = nil, want one", ids)
+		}
+	}
+	_, err = c.SetAlbumPhotoOrder(t.Context(), organizeGH, "peru", []int{1})
+	var perr *PublishError
+	if !errors.As(err, &perr) || perr.Status != http.StatusNotFound {
+		t.Errorf("SetAlbumPhotoOrder(peru) error = %v, want not found", err)
+	}
+	if w := f.writes(); len(w) != 0 {
+		t.Errorf("SetAlbumPhotoOrder() wrote to GitHub: %v", w)
+	}
+}

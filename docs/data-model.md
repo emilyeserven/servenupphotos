@@ -18,7 +18,9 @@ A photo can have several tags and is usually in one album (more is allowed, but 
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
 `{ "id", "name", "description" }` and an album file `{ "id", "name", "description", "parent" }`, each named by its ID.
 An album file may also have `order`, its place among the albums (1 first), and `spotlightZones`, the spots on the
-portfolio that show its photos, such as `["homepage"]`; see [Albums and Tags](albums-and-tags.md#order).
+portfolio that show its photos, such as `["homepage"]`; see [Albums and Tags](albums-and-tags.md#order). Its
+`photoOrder` lists photo IDs in the order the portfolio shows the album's photos, such as `[12, 3, 40]`; see
+[Photo order](albums-and-tags.md#photo-order).
 An album's `parent` is the ID of the one album it sits inside, or `null` for a top-level album; the pipeline never
 lets an album end up inside itself. A tag file may have a `parent` too: the ID of a more general tag it's a kind of
 (see [Parent tags](albums-and-tags.md#parent-tags)), missing or `null` at the top. A photo's `genres` lists its [photographic genres](photographic-genres.md), such as
@@ -75,7 +77,7 @@ aperture is manual or unknown; see [Custom Lenses](custom-lenses.md).
 A photo's `spotlightZones` and `websiteSpotlight` are left from when spotlight zones listed photos. The zones list
 albums instead (see [Publish](publish.md#site-spotlight)), and the photos that were on the homepage were moved into the
 **Homepage Spotlight** album, which the Homepage zone shows. `websiteSpotlight` still puts those photos first in an
-album, in their old order; `spotlightZones` isn't read.
+album without a [photo order](albums-and-tags.md#photo-order), in their old order; `spotlightZones` isn't read.
 
 A photo's `socialPosts` lists its posts on social media, each with its platform, status, date, link, caption and
 hashtags; see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
