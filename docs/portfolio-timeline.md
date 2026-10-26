@@ -5,6 +5,16 @@ The month and day headings stay at the top of the window while their photos scro
 folds it away. Clicking a photo's thumbnail or title opens the photo viewer. The filters are described in
 [Portfolio Filters](portfolio-filters.md).
 
+## Scrubber
+
+Once the chart has scrolled up out of the window, a scrubber appears down the right edge, like the one in Google Photos.
+It has a short tick for each month in the list and a label for each year at its first month, leaving out a year whose
+label would crowd the one above. Each tick sits as far down the scrubber as its month is down the list, so a busy month
+takes up more of it. A line marks the month now at the top of the window. Pointing at the scrubber shows a bubble naming
+the month there, and clicking or dragging along it scrolls the list to that month; on a phone, touch and drag. With the
+scrubber focused, the up and down arrow keys move a month at a time. It measures the list again whenever it changes
+size, such as when a month is folded away or the thumbnail size changes.
+
 ## Display options
 
 The eye button at the end of the header opens the display options. Each is kept in the URL, left out at its default, and

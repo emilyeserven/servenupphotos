@@ -9,6 +9,7 @@ import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
+import { TimelineScrubber } from "@/components/timeline-scrubber";
 import { TimelineChart } from "@/components/timeline-chart";
 import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
@@ -83,6 +84,8 @@ function TimelineView() {
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
   const isAllTime = Object.keys(timeRange).length === 0;
   const display = resolveTimelineDisplay(search);
+  const [chart, setChart] = useState<HTMLDivElement | null>(null);
+  const [list, setList] = useState<HTMLOListElement | null>(null);
   useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
 
   /** Shows the time range, keeping the filters and the rest of the view's options. */
@@ -126,22 +129,26 @@ function TimelineView() {
         </div>
         <PhotoFilterBar photos={photos} />
       </header>
-      <TimelineChart
-        mode={search.chart ?? "graph"}
-        inRange={inRange.map((photo) => photo.takenAt)}
-        all={matching.map((photo) => photo.takenAt)}
-        start={start}
-        end={end}
-        now={now}
-        shown={isAllTime ? undefined : { from: dayKey(start), to: dayKey(end) }}
-        onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
-      />
+      <div ref={setChart}>
+        <TimelineChart
+          mode={search.chart ?? "graph"}
+          inRange={inRange.map((photo) => photo.takenAt)}
+          all={matching.map((photo) => photo.takenAt)}
+          start={start}
+          end={end}
+          now={now}
+          shown={isAllTime ? undefined : { from: dayKey(start), to: dayKey(end) }}
+          onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
+        />
+      </div>
       <PhotoMonths
         photos={inRange}
         filtered={hasFilters(filters)}
         display={display}
         onOpen={show}
+        listRef={setList}
       />
+      <TimelineScrubber list={list} chart={chart} />
       <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
     </div>
   );
@@ -156,9 +163,12 @@ interface RowOptions {
 function PhotoMonths({
   photos,
   filtered,
+  listRef,
   ...options
 }: RowOptions & {
   photos: Photo[];
+  /** Given the list of months, for the scrubber to measure. */
+  listRef: (list: HTMLOListElement | null) => void;
   /** Whether any filter is set, so an empty range can say the filters may be why. */
   filtered: boolean;
 }) {
@@ -168,7 +178,7 @@ function PhotoMonths({
   }
 
   return (
-    <ol className="flex flex-col gap-4">
+    <ol ref={listRef} className="flex flex-col gap-4">
       {groupByDate(photos, "MMMM yyyy").map(([month, monthPhotos]) => (
         <MonthSection key={month} month={month} monthPhotos={monthPhotos} {...options} />
       ))}
@@ -185,7 +195,7 @@ function MonthSection({
   const [open, setOpen] = useState(true);
   const listId = useId();
   return (
-    <li className="flex flex-col gap-1">
+    <li data-month={month} className="flex flex-col gap-1">
       {/* Sticks to the top while the month's photos scroll under it. Its fixed height (h-10) is
           where each day's subheading sticks, just under it. */}
       <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center bg-background px-1">
