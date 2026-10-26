@@ -15948,7 +15948,10 @@
       }
     ],
     "spotlightZones": [],
-    "spotlightFocus": null,
+    "spotlightFocus": {
+      "x": 32,
+      "y": 28
+    },
     "socialPosts": [],
     "reEdit": null,
     "colors": {
@@ -25958,7 +25961,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["homepage-spotlight"],
     "tags": ["mountains", "city", "daldongne", "houses", "rooftops", "harbor"],
     "genres": [],
     "places": [
@@ -32092,6 +32095,1622 @@
     }
   },
   {
+    "title": "Samsung Spires",
+    "comment": null,
+    "id": 176,
+    "file": "IMG_5015.jpg",
+    "addedDate": "2026-10-26T01:31:51Z",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/500",
+    "iso": 100,
+    "focalLength": 89,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2017:09:30 09:50:53",
+    "customCreateDate": null,
+    "placeName": "samsung-837",
+    "customCity": "New York City",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 5644,
+    "height": 3084,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015.jpg",
+      "key": "photos/ded22715bebe-img-5015.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-thumbnail.webp?crop=1155,0,3084",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/ded22715bebe-img-5015-thumbnailpreview.webp?crop=1155,0,3084",
+      "thumbnailcrop": {
+        "x": 1155,
+        "y": 0,
+        "size": 3084,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["windows", "patterns", "reflections", "facade", "steel", "glass"],
+    "genres": ["architecture"],
+    "places": [
+      {
+        "relation": "",
+        "id": "samsung-837"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#393939",
+        "lab": {
+          "l": 23.88,
+          "a": 0,
+          "b": 0
+        },
+        "hcl": {
+          "h": 259.96,
+          "c": 0,
+          "l": 23.88
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 1,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.4597
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0615
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.045
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0498
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0375
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0316
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0267
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0203
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0119
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0133
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0208
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.033
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.03
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0309
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0339
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0517
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0319
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0092
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0007
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0003
+          }
+        ]
+      },
+      "lightness": 23.88,
+      "chroma": 0,
+      "peakChroma": 0.01,
+      "samples": 9990
+    }
+  },
+  {
+    "title": "Chelsea Market Self Portrait",
+    "comment": null,
+    "id": 179,
+    "file": "IMG_5035.jpg",
+    "addedDate": "2026-10-26T01:30:04Z",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 4.5,
+    "exposure": "1/15",
+    "iso": 400,
+    "focalLength": 35,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2017:09:30 10:02:35",
+    "customCreateDate": null,
+    "placeName": "chelsea-market",
+    "customCity": "New York City",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 5448,
+    "height": 3344,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035.jpg",
+      "key": "photos/7c58c0b46734-img-5035.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035-thumbnail.webp?crop=943,0,3344",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7c58c0b46734-img-5035-thumbnailpreview.webp?crop=943,0,3344",
+      "thumbnailcrop": {
+        "x": 943,
+        "y": 0,
+        "size": 3344,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "chelsea-market"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#3c3c3c",
+        "lab": {
+          "l": 25.16,
+          "a": 0,
+          "b": 0
+        },
+        "hcl": {
+          "h": 259.96,
+          "c": 0,
+          "l": 25.16
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 1,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.3214
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1078
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0657
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0595
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0491
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0457
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0486
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0451
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0428
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0365
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0313
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0258
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0224
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0187
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0142
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0109
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0116
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.01
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0118
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.021
+          }
+        ]
+      },
+      "lightness": 25.16,
+      "chroma": 0,
+      "peakChroma": 0.01,
+      "samples": 9906
+    }
+  },
+  {
+    "title": "Reaching Out",
+    "comment": null,
+    "id": 190,
+    "file": "IMG_5455.jpg",
+    "addedDate": "2026-10-26T01:33:09Z",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/250",
+    "iso": 100,
+    "focalLength": 59,
+    "gpsPosition": null,
+    "customGpsPosition": "40.76480286523895, -73.97308125038906",
+    "createDate": "2017:09:30 15:01:21",
+    "customCreateDate": null,
+    "placeName": "general-william-tecumseh-sherman-monument",
+    "customCity": "New York City",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 5999,
+    "height": 3105,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455.jpg",
+      "key": "photos/f47f5f140d66-img-5455.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455-thumbnail.webp?crop=0,0,3105",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f47f5f140d66-img-5455-thumbnailpreview.webp?crop=0,0,3105",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 3105,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["clouds", "monument", "statue", "sculpture", "horse", "birds"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "general-william-tecumseh-sherman-monument"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#c5bab3",
+        "lab": {
+          "l": 76.32,
+          "a": 2.4,
+          "b": 5.16
+        },
+        "hcl": {
+          "h": 65.1,
+          "c": 5.69,
+          "l": 76.32
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0001
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.156
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0002
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.8436,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0256
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0306
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0315
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0344
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0005
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0002
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0004
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0006
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0003
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0002
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0003
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0001
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0001
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0003
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0009
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0004
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0004
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0451
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.2493
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.4222
+          }
+        ]
+      },
+      "lightness": 76.32,
+      "chroma": 7.13,
+      "peakChroma": 26.43,
+      "samples": 9727
+    }
+  },
+  {
+    "title": "Rockman",
+    "comment": null,
+    "id": 233,
+    "file": "IMG_5493.jpg",
+    "addedDate": "2026-10-26T01:29:52Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 9,
+    "exposure": "1/400",
+    "iso": 200,
+    "focalLength": 135,
+    "gpsPosition": "42 deg 30' 18.65\" N, 70 deg 50' 58.19\" W",
+    "customGpsPosition": null,
+    "createDate": "2020:09:19 14:48:44",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States",
+    "state": "Massachusetts",
+    "city": "Marblehead",
+    "width": 6000,
+    "height": 4000,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493.jpg",
+      "key": "photos/badc3f660e8a-img-5493.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/badc3f660e8a-img-5493-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1000,
+        "y": 0,
+        "size": 4000,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": [
+      "windows",
+      "texture",
+      "details",
+      "folk-art",
+      "stones",
+      "sea-glass",
+      "shells",
+      "shadows"
+    ],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "mask",
+      "date": "2026-10-25"
+    },
+    "colors": {
+      "average": {
+        "hex": "#9c9c9b",
+        "lab": {
+          "l": 64.32,
+          "a": -0.02,
+          "b": 0.64
+        },
+        "hcl": {
+          "h": 91.93,
+          "c": 0.64,
+          "l": 64.32
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0008
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0267
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0024
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0012
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0007
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0002
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0014
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0193
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0007
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.9467,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0219
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.008
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0062
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0083
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.007
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0103
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0184
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0292
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0477
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0775
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0615
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0494
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0684
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0999
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.097
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.1155
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0576
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0333
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0364
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0929
+          }
+        ]
+      },
+      "lightness": 64.32,
+      "chroma": 4.06,
+      "peakChroma": 8.88,
+      "samples": 10086
+    }
+  },
+  {
+    "title": "Vermont Night",
+    "comment": null,
+    "id": 196,
+    "file": "IMG_5512.jpg",
+    "addedDate": "2026-10-26T01:36:23Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S10-18mm f/4.5-5.6 IS STM",
+    "aperture": 5,
+    "exposure": "30",
+    "iso": 6400,
+    "focalLength": 11,
+    "gpsPosition": "43 deg 26' 58.80\" N, 72 deg 42' 18.73\" W",
+    "customGpsPosition": null,
+    "createDate": "2019:05:26 23:21:03",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Vermont",
+    "city": "Ludlow",
+    "width": 5654,
+    "height": 3180,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512.jpg",
+      "key": "photos/dd1fa22991f9-img-5512.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/dd1fa22991f9-img-5512-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1237,
+        "y": 0,
+        "size": 3180,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["night", "clouds", "countryside", "stars", "milky-way", "fence", "silhouettes"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#181a16",
+        "lab": {
+          "l": 8.69,
+          "a": -1.94,
+          "b": 2.28
+        },
+        "hcl": {
+          "h": 130.35,
+          "c": 2.99,
+          "l": 8.69
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0137
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0086
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0006
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0002
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0004
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.001
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0004
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0002
+        }
+      ],
+      "neutrals": {
+        "share": 0.9747,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.4456
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.2152
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1439
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0926
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0451
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0173
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0081
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0034
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.001
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0005
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0004
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0001
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0001
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0002
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0002
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0002
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0006
+          }
+        ]
+      },
+      "lightness": 8.69,
+      "chroma": 4,
+      "peakChroma": 8.46,
+      "samples": 9768
+    }
+  },
+  {
+    "title": "Master of his Universe",
+    "comment": null,
+    "id": 193,
+    "file": "IMG_5639.jpg",
+    "addedDate": "2026-10-26T01:36:00Z",
+    "camera": "Canon EOS Rebel T6i",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
+    "aperture": 5.6,
+    "exposure": "1/200",
+    "iso": 200,
+    "focalLength": 85,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2017:09:30 15:54:40",
+    "customCreateDate": null,
+    "placeName": "Central Park",
+    "customCity": "New York City",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 6000,
+    "height": 3232,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639.jpg",
+      "key": "photos/b8d726120eef-img-5639.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b8d726120eef-img-5639-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1384,
+        "y": 0,
+        "size": 3232,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["trees", "lamppost", "juggling", "street-performer", "park"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "central-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#2f2f2f",
+        "lab": {
+          "l": 19.35,
+          "a": 0,
+          "b": 0
+        },
+        "hcl": {
+          "h": 259.96,
+          "c": 0,
+          "l": 19.35
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 1,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1265
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1183
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1446
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1652
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.1499
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.1159
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0841
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0425
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0238
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0129
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0067
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0037
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0021
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0009
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0012
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0005
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0006
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0003
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0003
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 19.35,
+      "chroma": 0,
+      "peakChroma": 0.01,
+      "samples": 9648
+    }
+  },
+  {
     "id": 25,
     "title": "Photographing Photographers: 86th Street Subway Edition",
     "comment": null,
@@ -32358,6 +33977,798 @@
       "chroma": 6.49,
       "peakChroma": 27.58,
       "samples": 9727
+    }
+  },
+  {
+    "title": "High Tide, Dude",
+    "comment": null,
+    "id": 199,
+    "file": "IMG_7023.jpg",
+    "addedDate": "2026-10-26T01:35:02Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 5.6,
+    "exposure": "1/2500",
+    "iso": 400,
+    "focalLength": 135,
+    "gpsPosition": "41 deg 14' 40.86\" N, 70 deg 4' 38.68\" W",
+    "customGpsPosition": null,
+    "createDate": "2019:07:13 10:24:35",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Nantucket",
+    "width": 6000,
+    "height": 3374,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023.jpg",
+      "key": "photos/8c6438b702e5-img-7023.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023-thumbnail.webp?crop=1095,0,3374",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/8c6438b702e5-img-7023-thumbnailpreview.webp?crop=1095,0,3374",
+      "thumbnailcrop": {
+        "x": 1095,
+        "y": 0,
+        "size": 3374,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["beach", "surfing", "waves", "ocean", "wipeout"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#959ba1",
+        "lab": {
+          "l": 63.65,
+          "a": -0.6,
+          "b": -4.1
+        },
+        "hcl": {
+          "h": 261.69,
+          "c": 4.14,
+          "l": 63.65
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0021
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0003
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0001
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0004
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0097
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0059
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0009
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0002
+        }
+      ],
+      "neutrals": {
+        "share": 0.9804,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0014
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0021
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0009
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0014
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0006
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0018
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0077
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0246
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0855
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0885
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0705
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0881
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0916
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.1396
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.1446
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0816
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0774
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.055
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0171
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0005
+          }
+        ]
+      },
+      "lightness": 63.65,
+      "chroma": 5.07,
+      "peakChroma": 10.29,
+      "samples": 10050
+    }
+  },
+  {
+    "title": "Center Conch",
+    "comment": null,
+    "id": 141,
+    "file": "IMG_7210.jpg",
+    "addedDate": "2026-10-26T01:34:46Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S35mm f/2.8 MACRO IS STM",
+    "aperture": 6.3,
+    "exposure": "1/320",
+    "iso": 100,
+    "focalLength": 35,
+    "gpsPosition": "26 deg 17' 26.11\" N, 81 deg 49' 54.58\" W",
+    "customGpsPosition": null,
+    "createDate": "2018:11:18 15:44:12",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States",
+    "state": "Florida",
+    "city": "Bonita Springs",
+    "width": 6000,
+    "height": 3687,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210.jpg",
+      "key": "photos/f31ca218f632-img-7210.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f31ca218f632-img-7210-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1156,
+        "y": 0,
+        "size": 3687,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["shells", "beach", "sand", "details", "seaweed"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#604f45",
+        "lab": {
+          "l": 34.92,
+          "a": 5.38,
+          "b": 8.71
+        },
+        "hcl": {
+          "h": 58.28,
+          "c": 10.24,
+          "l": 34.92
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0316
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.2189
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0009
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0001
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0002
+        }
+      ],
+      "neutrals": {
+        "share": 0.7483,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0882
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0665
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0574
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0578
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.013
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0171
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0208
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0375
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0599
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.1201
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.1105
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0448
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0231
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0177
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0072
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0056
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0011
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 34.92,
+      "chroma": 10.95,
+      "peakChroma": 20.3,
+      "samples": 9625
+    }
+  },
+  {
+    "title": "It's a Big World Out There",
+    "comment": null,
+    "id": 143,
+    "file": "IMG_7337.jpg",
+    "addedDate": "2026-10-26T01:34:17Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S35mm f/2.8 MACRO IS STM",
+    "aperture": 6.3,
+    "exposure": "1/400",
+    "iso": 100,
+    "focalLength": 35,
+    "gpsPosition": "26 deg 17' 26.11\" N, 81 deg 49' 54.58\" W",
+    "customGpsPosition": null,
+    "createDate": "2018:11:18 15:52:07",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States",
+    "state": "Florida",
+    "city": "Bonita Springs",
+    "width": 6000,
+    "height": 3674,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337.jpg",
+      "key": "photos/bbe8ea4ef1f6-img-7337.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337-thumbnail.webp?crop=213,0,3674",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bbe8ea4ef1f6-img-7337-thumbnailpreview.webp?crop=213,0,3674",
+      "thumbnailcrop": {
+        "x": 213,
+        "y": 0,
+        "size": 3674,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["shells", "stones", "insects", "beach", "sand"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#8b847c",
+        "lab": {
+          "l": 55.5,
+          "a": 1.14,
+          "b": 5.49
+        },
+        "hcl": {
+          "h": 78.22,
+          "c": 5.61,
+          "l": 55.5
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0002
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.028
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0002
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.9716,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0094
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0165
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0192
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0293
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0259
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0234
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0222
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0186
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0213
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0412
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0684
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.1182
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.185
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.2905
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0553
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0223
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0044
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0006
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 55.5,
+      "chroma": 6.04,
+      "peakChroma": 9.15,
+      "samples": 10112
     }
   },
   {
@@ -32891,6 +35302,803 @@
       "chroma": 5.11,
       "peakChroma": 12.18,
       "samples": 9216
+    }
+  },
+  {
+    "title": "Cook's Cycle Shop",
+    "comment": null,
+    "id": 203,
+    "file": "IMG_8597.jpg",
+    "addedDate": "2026-10-26T01:37:14Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 7.1,
+    "exposure": "1/160",
+    "iso": 100,
+    "focalLength": 36,
+    "gpsPosition": "41 deg 17' 12.84\" N, 70 deg 5' 55.53\" W",
+    "customGpsPosition": null,
+    "createDate": "2019:07:16 11:57:44",
+    "customCreateDate": null,
+    "placeName": "cook-s-cycle-shop",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Nantucket",
+    "width": 5966,
+    "height": 3355,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597.jpg",
+      "key": "photos/fea3e611118d-img-8597.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-thumbnail.webp?crop=152,0,3355",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-thumbnailpreview.webp?crop=152,0,3355",
+      "thumbnailcrop": {
+        "x": 152,
+        "y": 0,
+        "size": 3355,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["storefronts", "signage", "doors", "windows", "bicycles", "shingles", "sidewalk"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "cook-s-cycle-shop"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#515050",
+        "lab": {
+          "l": 34.28,
+          "a": 0.14,
+          "b": 0.45
+        },
+        "hcl": {
+          "h": 72.39,
+          "c": 0.47,
+          "l": 34.28
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0058
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0816
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0161
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0249
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0051
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0016
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0038
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0419
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0081
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0029
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0004
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0009
+        }
+      ],
+      "neutrals": {
+        "share": 0.8068,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1472
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0836
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1045
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0702
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0336
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0242
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0301
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0478
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0534
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0498
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0377
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0208
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0128
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0152
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.017
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.021
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0219
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0056
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0048
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0057
+          }
+        ]
+      },
+      "lightness": 34.28,
+      "chroma": 8.81,
+      "peakChroma": 19.45,
+      "samples": 9975
+    }
+  },
+  {
+    "title": "Kickoff",
+    "comment": null,
+    "id": 206,
+    "file": "IMG_9024.jpg",
+    "addedDate": "2026-10-26T01:37:28Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 6.3,
+    "exposure": "1/250",
+    "iso": 100,
+    "focalLength": 135,
+    "gpsPosition": "41 deg 15' 57.85\" N, 70 deg 6' 51.93\" W",
+    "customGpsPosition": null,
+    "createDate": "2019:07:17 12:06:50",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Nantucket",
+    "width": 5542,
+    "height": 3117,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024.jpg",
+      "key": "photos/0d9556ff8830-img-9024.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024-thumbnail.webp?crop=711,0,3117",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0d9556ff8830-img-9024-thumbnailpreview.webp?crop=711,0,3117",
+      "thumbnailcrop": {
+        "x": 711,
+        "y": 0,
+        "size": 3117,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["birds", "waves", "ocean", "beach", "seagulls", "flight"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#838384",
+        "lab": {
+          "l": 54.82,
+          "a": -0.03,
+          "b": -0.59
+        },
+        "hcl": {
+          "h": 266.8,
+          "c": 0.59,
+          "l": 54.82
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0006
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0008
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0003
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.9983,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0001
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0005
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0004
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0042
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0073
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0221
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0442
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0714
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0896
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0947
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.1216
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.1587
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.1409
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.1214
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.08
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.037
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.004
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 54.82,
+      "chroma": 2.52,
+      "peakChroma": 4.94,
+      "samples": 9900
+    }
+  },
+  {
+    "title": "Gull's Armada",
+    "comment": null,
+    "id": 207,
+    "file": "IMG_9144.jpg",
+    "addedDate": "2026-10-26T01:37:55Z",
+    "camera": "Canon EOS 80D",
+    "lens": "EF-S18-135mm f/3.5-5.6 IS",
+    "aperture": 5.6,
+    "exposure": "1/160",
+    "iso": 800,
+    "focalLength": 126,
+    "gpsPosition": "41 deg 17' 23.83\" N, 70 deg 5' 27.33\" W",
+    "customGpsPosition": null,
+    "createDate": "2019:07:17 20:01:28",
+    "customCreateDate": null,
+    "placeName": null,
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Massachusetts",
+    "city": "Nantucket",
+    "width": 6000,
+    "height": 3374,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144.jpg",
+      "key": "photos/fbf965847fa9-img-9144.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144-thumbnail.webp?crop=1373,0,3374",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/fbf965847fa9-img-9144-thumbnailpreview.webp?crop=1373,0,3374",
+      "thumbnailcrop": {
+        "x": 1373,
+        "y": 0,
+        "size": 3374,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["seagulls", "birds", "harbor", "beach", "sailboats", "fog"],
+    "genres": [],
+    "places": [],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#8b8f93",
+        "lab": {
+          "l": 59.27,
+          "a": -0.66,
+          "b": -2.63
+        },
+        "hcl": {
+          "h": 255.89,
+          "c": 2.71,
+          "l": 59.27
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0004
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0004
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0002
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0001
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.9988,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0003
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0012
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0044
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0089
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0156
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0186
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0228
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0358
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0531
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0873
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.1894
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.2013
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.2322
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.126
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.002
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 59.27,
+      "chroma": 6.7,
+      "peakChroma": 8.22,
+      "samples": 10050
     }
   },
   {
@@ -37251,7 +40459,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": ["torii", "shinto", "pedestrians", "sando", "road", "mountains", "pine-trees"],
     "genres": [],
     "places": [
@@ -43968,7 +47176,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": [],
     "tags": ["lanterns", "gates", "toro", "torii", "cemetery", "path", "forest"],
     "genres": [],
     "places": [

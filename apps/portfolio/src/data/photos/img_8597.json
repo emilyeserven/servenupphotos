@@ -1,9 +1,9 @@
 {
-  "id": 203,
-  "title": null,
+  "title": "Cook's Cycle Shop",
   "comment": null,
+  "id": 203,
   "file": "IMG_8597.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T01:37:14Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 7.1,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2019:07:16 11:57:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "cook-s-cycle-shop",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-thumbnail.webp?crop=152,0,3355",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/fea3e611118d-img-8597-thumbnailpreview.webp?crop=152,0,3355",
     "thumbnailcrop": {
-      "x": 1305,
+      "x": 152,
       "y": 0,
       "size": 3355,
       "outputSize": 500
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["storefronts", "signage", "doors", "windows", "bicycles", "shingles", "sidewalk"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "cook-s-cycle-shop"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

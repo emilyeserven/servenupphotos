@@ -5,7 +5,8 @@
     "description": "The photos that fade in and out behind the homepage.",
     "parent": null,
     "order": 1,
-    "spotlightZones": ["homepage"]
+    "spotlightZones": ["homepage"],
+    "photoOrder": [1, 344, 356, 7, 118, 268, 262, 335, 355, 311]
   },
   {
     "id": "test",

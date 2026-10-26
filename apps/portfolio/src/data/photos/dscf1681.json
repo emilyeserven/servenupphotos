@@ -57,7 +57,10 @@
     }
   ],
   "spotlightZones": [],
-  "spotlightFocus": null,
+  "spotlightFocus": {
+    "x": 32,
+    "y": 28
+  },
   "socialPosts": [],
   "reEdit": null,
   "colors": {

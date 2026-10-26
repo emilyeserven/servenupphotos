@@ -1,9 +1,9 @@
 {
-  "id": 233,
-  "title": null,
+  "title": "Rockman",
   "comment": null,
+  "id": 233,
   "file": "IMG_5493.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-26T01:29:52Z",
   "camera": "Canon EOS 80D",
   "lens": "EF-S18-135mm f/3.5-5.6 IS",
   "aperture": 9,
@@ -48,13 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["windows", "texture", "details", "folk-art", "stones", "sea-glass", "shells", "shadows"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "mask",
+    "date": "2026-10-25"
+  },
   "colors": {
     "average": {
       "hex": "#9c9c9b",
