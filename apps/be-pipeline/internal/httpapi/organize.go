@@ -156,6 +156,31 @@ func handleSetAlbumOrder(store *settings.Store, gh *github.Client) http.HandlerF
 	}
 }
 
+// handleSetAlbumPhotoOrder saves the body's photoIds, photo IDs in the order
+// the portfolio shows them, as the path's album's photo order, a change
+// waiting for Commit. An empty list puts its photos back in the default order.
+func handleSetAlbumPhotoOrder(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			PhotoIDs []int `json:"photoIds"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid photo order body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetAlbumPhotoOrder(ctx, cfg, r.PathValue("id"), req.PhotoIDs)
+		writeSocialResult(w, result, err, "could not save the album's photo order")
+	}
+}
+
 // handleNormalizeTagNames names every tag in lowercase kebab-case, its ID, as
 // changes waiting for Commit.
 func handleNormalizeTagNames(store *settings.Store, gh *github.Client) http.HandlerFunc {

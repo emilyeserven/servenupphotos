@@ -10,6 +10,7 @@ import {
   photoIn,
   photoText,
 } from "@/lib/group-photos";
+import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** ALLPHOTOS.json from the combined data store, and its photos listing any of ids under kind. */
@@ -24,16 +25,21 @@ export function useGroupPhotos(kind: GroupKind, ids: ReadonlySet<string>) {
 export type GroupPhotos = ReturnType<typeof useGroupPhotos>;
 
 /**
- * The photos as Square Thumbnails, in the album's order, each opening full size, or why there are none:
+ * The photos as Square Thumbnails, in the album's order (its photo order, when it has one, then
+ * the default order), each opening full size, or why there are none:
  * ALLPHOTOS.json still being read or unreadable, or no photo listing it.
  */
-export function GroupPhotoGrid({ combined, photos }: Pick<GroupPhotos, "combined" | "photos">) {
+export function GroupPhotoGrid({
+  combined,
+  photos,
+  order,
+}: Pick<GroupPhotos, "combined" | "photos"> & { order?: number[] }) {
   if (combined.isPending) return <p>Reading ALLPHOTOS.json…</p>;
   if (!photos) return <ReadError error={combined.error} />;
   if (photos.length === 0) return <NoPhotos />;
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]">
-      {albumOrder(photos).map((photo, i) => (
+      {albumPhotoOrder(photos, order).map((photo, i) => (
         <li key={`${photoText(photo, "file") ?? ""}-${i}`}>
           <PhotoTile photo={photo} />
         </li>
@@ -60,31 +66,13 @@ function NoPhotos() {
   );
 }
 
-/** The photo's old place among the homepage's photos, or after every photo with one. */
-function oldPlace(photo: CombinedPhoto): number {
-  const place = photo.websiteSpotlight;
-  return typeof place === "number" ? place : Number.MAX_SAFE_INTEGER;
-}
-
-/**
- * The photos as the portfolio orders an album: ones with an old homepage place first, in that
- * order, then the rest, newest first.
- */
-export function albumOrder(photos: CombinedPhoto[]): CombinedPhoto[] {
-  return photos.toSorted(
-    (a, b) =>
-      oldPlace(a) - oldPlace(b) ||
-      (photoText(b, "createDate") ?? "").localeCompare(photoText(a, "createDate") ?? ""),
-  );
-}
-
 /** What to call a photo: its title, or else its original file name. */
-function photoName(photo: CombinedPhoto): string {
+export function photoName(photo: CombinedPhoto): string {
   return photoText(photo, "title") ?? photoText(photo, "file") ?? "Untitled";
 }
 
 /** The photo's Square Thumbnail, or else its smallest version. */
-function squareUrl(photo: CombinedPhoto): string | undefined {
+export function squareUrl(photo: CombinedPhoto): string | undefined {
   return photoImage(photo, "thumbnail") ?? photoImage(photo, "small");
 }
 

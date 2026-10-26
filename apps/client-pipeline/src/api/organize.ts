@@ -31,6 +31,11 @@ export interface Group {
   order?: number;
   /** The IDs of the portfolio's spotlight spots that show an album's photos, such as "homepage". */
   spotlightZones?: string[];
+  /**
+   * The IDs of an album's photos in the order the portfolio shows them, set on its page; absent or
+   * empty for the default order. Photos it leaves out come after the ones it lists.
+   */
+  photoOrder?: number[];
   path: string;
   fileUrl: string;
   /** True when it's only in the photo data pull request, not merged yet. */
@@ -204,6 +209,17 @@ export const setAlbumOrderMutation = albumsMutation(
   "order",
   () => "/api/organize/albums/order",
   (ids: string[]) => ({ ids }),
+);
+
+/**
+ * Saves `photoIds`, photo IDs in the order the portfolio shows them, as the album's photo order, a
+ * change waiting for Commit. An empty list puts its photos back in the default order.
+ */
+export const setAlbumPhotoOrderMutation = albumsMutation(
+  "photo-order",
+  ({ id }: { id: string; photoIds: number[] }) =>
+    `/api/organize/albums/${encodeURIComponent(id)}/photo-order`,
+  ({ photoIds }) => ({ photoIds }),
 );
 
 /** Names every tag in lowercase kebab-case, its ID, as changes waiting for Commit. */

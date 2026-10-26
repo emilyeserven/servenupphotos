@@ -12,11 +12,12 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// The album file fields that hold its place among the albums and the
-// portfolio's spots that show its photos.
+// The album file fields that hold its place among the albums, the
+// portfolio's spots that show its photos, and its photos' order.
 const (
 	orderKey          = "order"
 	spotlightZonesKey = "spotlightZones"
+	photoOrderKey     = "photoOrder"
 )
 
 // AlbumsResult says which album files a change to several albums saved.
@@ -56,6 +57,43 @@ func (c *Client) SetAlbumOrder(ctx context.Context, gh settings.GitHub, ids []st
 		edits = append(edits, albumEdit{album: album, key: orderKey, value: []byte(strconv.Itoa(i + 1))})
 	}
 	return c.saveAlbumEdits(w, edits)
+}
+
+// SetAlbumPhotoOrder saves photoIDs, photo IDs in the order the portfolio
+// shows them, as the album's "photoOrder" in the pending changes. Its photos
+// left out come after the listed ones, in the default order, and an empty
+// list puts them all back in the default order. It fails when an ID isn't a
+// photo ID or is listed twice.
+func (c *Client) SetAlbumPhotoOrder(ctx context.Context, gh settings.GitHub, id string, photoIDs []int) (AlbumsResult, error) {
+	if perr := checkPhotoOrder(photoIDs); perr != nil {
+		return AlbumsResult{}, perr
+	}
+	w, perr := c.workspace(ctx, gh)
+	if perr != nil {
+		return AlbumsResult{}, perr
+	}
+	album, perr := readableAlbum(w.groups()[Albums.Folder], strings.TrimSpace(id))
+	if perr != nil {
+		return AlbumsResult{}, perr
+	}
+	value, _ := json.Marshal(append([]int{}, photoIDs...))
+	return c.saveAlbumEdits(w, []albumEdit{{album: album, key: photoOrderKey, value: value}})
+}
+
+// checkPhotoOrder fails when an ID in photoIDs isn't a photo ID, a whole
+// number from 1, or is listed twice.
+func checkPhotoOrder(photoIDs []int) *PublishError {
+	seen := map[int]bool{}
+	for _, id := range photoIDs {
+		if id < 1 {
+			return publishErr(http.StatusBadRequest, "%d isn't a photo ID.", id)
+		}
+		if seen[id] {
+			return publishErr(http.StatusBadRequest, "Photo %d is in the order twice.", id)
+		}
+		seen[id] = true
+	}
+	return nil
 }
 
 // SetSpotlightAlbum makes album the one whose photos the portfolio's spot

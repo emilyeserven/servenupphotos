@@ -6,7 +6,8 @@ import {
   organizeQuery,
   setSpotlightAlbumMutation,
 } from "@/api/organize";
-import { GroupPhotoGrid, albumOrder, useGroupPhotos } from "@/components/group-photo-grid";
+import { GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
+import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { GroupCombobox } from "@/components/group-picker";
 import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,8 +91,8 @@ function AlbumPhotos({ album, albums }: { album: Group; albums: Group[] }) {
   const { combined, photos } = useGroupPhotos("albums", ids);
   return (
     <>
-      {photos && <ZonePreview photos={albumOrder(photos)} />}
-      <GroupPhotoGrid combined={combined} photos={photos} />
+      {photos && <ZonePreview photos={albumPhotoOrder(photos, album.photoOrder)} />}
+      <GroupPhotoGrid combined={combined} photos={photos} order={album.photoOrder} />
     </>
   );
 }

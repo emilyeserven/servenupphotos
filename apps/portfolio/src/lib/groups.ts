@@ -17,6 +17,11 @@ export interface Group {
   order?: number;
   /** For an album, the spots on the site that show its photos, such as "homepage". */
   spotlightZones?: string[];
+  /**
+   * For an album, the IDs of its photos in the order they're shown, set on the pipeline's album
+   * page; missing or empty for the default order. Photos it leaves out come after the ones it lists.
+   */
+  photoOrder?: number[];
 }
 
 /** Ranks an album without a place in the order after every album with one. */

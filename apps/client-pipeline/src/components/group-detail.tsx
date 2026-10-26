@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeftIcon, CheckIcon, CornerDownRightIcon } from "lucide-react";
+import { ArrowDownUpIcon, ArrowLeftIcon, CheckIcon, CornerDownRightIcon } from "lucide-react";
 import { useState } from "react";
 import {
   GROUP_KINDS,
@@ -17,6 +17,7 @@ import {
   setGroupParentMutation,
 } from "@/api/organize";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { AlbumPhotoReorder } from "@/components/album-photo-reorder";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { type GroupPhotos, GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
 import { GroupCombobox } from "@/components/group-picker";
@@ -413,12 +414,13 @@ function ParentSavedText({ result }: { result: NonNullable<ParentSave["save"]["d
 }
 
 /**
- * The photos ALLPHOTOS.json lists in the album or tag, newest first; for an album, optionally with
- * the ones in its sub-albums too.
+ * The photos ALLPHOTOS.json lists in the album or tag, in the album's order; for an album,
+ * optionally with the ones in its sub-albums too, and a way to put them in order.
  */
 function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; albums: Group[] }) {
-  const subAlbums = kind === "albums" ? albumDescendants(albums, group.id) : new Set<string>();
+  const subAlbums = subAlbumIds(kind, group, albums);
   const [withSubAlbums, setWithSubAlbums] = useState(false);
+  const [reordering, setReordering] = useState(false);
   const ids = new Set([group.id, ...(withSubAlbums ? subAlbums : [])]);
   const { combined, current, photos } = useGroupPhotos(kind, ids);
 
@@ -429,16 +431,64 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
         <CardDescription>
           <PhotosSource current={current} />
         </CardDescription>
-        <SubAlbumsToggle
-          show={subAlbums.size > 0}
-          checked={withSubAlbums}
-          onChange={setWithSubAlbums}
-        />
+        {!reordering && (
+          <CardAction className="flex flex-col items-end gap-2">
+            <ReorderButton
+              show={canReorder(kind, group, photos)}
+              onClick={() => setReordering(true)}
+            />
+            <SubAlbumsToggle
+              show={subAlbums.size > 0}
+              checked={withSubAlbums}
+              onChange={setWithSubAlbums}
+            />
+          </CardAction>
+        )}
       </CardHeader>
       <CardContent className="text-sm">
-        <GroupPhotoGrid combined={combined} photos={photos} />
+        <PhotosOrReorder
+          group={group}
+          combined={combined}
+          photos={photos}
+          reordering={reordering}
+          onDone={() => setReordering(false)}
+        />
       </CardContent>
     </Card>
+  );
+}
+
+/** The albums inside the album, at any depth; none for a tag or genre. */
+function subAlbumIds(kind: GroupKind, group: Group, albums: Group[]): Set<string> {
+  return kind === "albums" ? albumDescendants(albums, group.id) : new Set<string>();
+}
+
+/** Whether the group is an album, readable, with more than one photo to put in order. */
+function canReorder(kind: GroupKind, group: Group, photos: unknown[] = []): boolean {
+  return kind === "albums" && !group.error && photos.length > 1;
+}
+
+interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> {
+  group: Group;
+  reordering: boolean;
+  onDone: () => void;
+}
+
+/** The photos in the album's order, or, while reordering, the tiles to drag into a new one. */
+function PhotosOrReorder({ group, combined, photos, reordering, onDone }: PhotosOrReorderProps) {
+  if (reordering && photos) {
+    return <AlbumPhotoReorder album={group} photos={photos} onDone={onDone} />;
+  }
+  return <GroupPhotoGrid combined={combined} photos={photos} order={group.photoOrder} />;
+}
+
+function ReorderButton({ show, onClick }: { show: boolean; onClick: () => void }) {
+  if (!show) return null;
+  return (
+    <Button size="sm" variant="outline" onClick={onClick}>
+      <ArrowDownUpIcon aria-hidden />
+      Reorder
+    </Button>
   );
 }
 
@@ -470,16 +520,14 @@ interface SubAlbumsToggleProps {
 function SubAlbumsToggle({ show, checked, onChange }: SubAlbumsToggleProps) {
   if (!show) return null;
   return (
-    <CardAction>
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          className="accent-primary size-4"
-          checked={checked}
-          onChange={(event) => onChange(event.target.checked)}
-        />
-        Include sub-albums
-      </label>
-    </CardAction>
+    <label className="flex items-center gap-2 text-sm">
+      <input
+        type="checkbox"
+        className="accent-primary size-4"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      Include sub-albums
+    </label>
   );
 }
