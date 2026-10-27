@@ -70,7 +70,7 @@ of every other album's, so a zone has one album at a time. Like other album chan
 Above the photos, **Preview** shows them one at a time as the homepage would, on a phone held upright and on a
 computer, with buttons for the photo before and after. With no album picked, there's no preview. Each
 screen is the homepage drawn at its real size (390 × 844 and 1440 × 900) and scaled down to fit: the photo cropped
-around its focus point under the same 20% black, the frosted site name and view tiles, and the photo's title at the
+around its focus point with no tint, the frosted site name and view tiles, and the photo's title at the
 bottom left, after a map button when it has a GPS position or a place (`components/spotlight-preview.tsx`). It reads
 `ALLPHOTOS.json` with local edits applied, so a focus point set but not committed already shows. Photos without
 resized versions are left out, as the portfolio leaves them out. The homepage's real order on a phone, portrait photos
@@ -92,6 +92,18 @@ once an album is picked for a zone on Site Spotlight. **Use the middle** clears 
 in percent across from the left and down from the top, or `null` (the default, which new saves write and Update Data →
 Missing fields adds) for the middle. It's a [local edit](combined-data-store.md#local-edits) until **Commit**, apart
 from the page's **Save changes**.
+
+Under the photo, a three by three grid picks **where on the screen the focus point goes**: the middle (the default), or
+a side or corner, such as the bottom middle to have it low on the screen (`components/spotlight-placement.tsx`). The
+spots are 20%, 50% and 80% across and down. The crop moves the photo to get the point there, as near as the photo's
+edges allow, so it never leaves a gap; on a side the photo already fills, nothing moves. It's saved as
+`spotlightPlacement`, the same shape as `spotlightFocus` in percent of the screen, or `null` for the middle, the same way
+(a local edit until Commit, `null` by default and added by Missing fields). The preview shows it.
+
+> **Frontend analogy:** `object-position: 30% 70%` lines up the image's 30% point with the box's 30% point. To put the
+> image's point `f` at the box's point `a` instead, the position is `(a·box − f·drawn) / (box − drawn)`, where `drawn` is
+> the image's size after `object-fit: cover` scales it, clamped to 0–100% so no gap shows
+> (`objectPosition` in `lib/spotlight-focus.ts`, the same in the pipeline and the portfolio).
 
 > **Frontend analogy:** the Go side writes an object or `null` into the JSON file the same way it writes a list: the
 > whole value is replaced, like `setState(next)` rather than merging.

@@ -1,6 +1,6 @@
 import { CalendarClock, Grid3x3, MapPin } from "lucide-react";
 import { type CSSProperties, useLayoutEffect, useRef, useState } from "react";
-import { type Focus, objectPosition } from "@/lib/spotlight-focus";
+import { type Focus, type Size, objectPosition } from "@/lib/spotlight-focus";
 import { cn } from "@/lib/utils";
 
 /** What a spotlight preview shows: one photo, as the portfolio's homepage would. */
@@ -11,6 +11,8 @@ export interface PreviewPhoto {
   title: string;
   /** The point kept in view where the photo is cropped, or null for its middle. */
   focus: Focus | null;
+  /** Where on the screen the focus point goes, or null for the screen's middle. */
+  placement: Focus | null;
   /** Whether the photo has a position, so the homepage shows a map button before its title. */
   onMap: boolean;
 }
@@ -40,7 +42,7 @@ const VIEWS = [
 
 /**
  * The photo behind the portfolio's homepage on a phone held upright and on a computer: cropped to
- * fill the screen around its focus point under the same 20% black, with the site's name, the
+ * fill the screen around its focus point with no tint, as the homepage has, with the site's name, the
  * view tiles and the photo's caption on frosted glass. Each screen is drawn at its real size and
  * scaled down, so the crop and the glass match the live page.
  */
@@ -100,7 +102,10 @@ function useWidth<T extends HTMLElement>() {
 
 /** The homepage at the screen's size, with the photo behind it. */
 function Homepage({ screen, photo }: { screen: Screen; photo: PreviewPhoto }) {
-  const style: CSSProperties = { objectPosition: objectPosition(photo.focus) };
+  const [image, setImage] = useState<Size>({ width: 1, height: 1 });
+  const style: CSSProperties = {
+    objectPosition: objectPosition(photo.focus, photo.placement, image, screen),
+  };
   return (
     <div
       aria-hidden
@@ -110,9 +115,14 @@ function Homepage({ screen, photo }: { screen: Screen; photo: PreviewPhoto }) {
         src={photo.src}
         alt=""
         style={style}
+        onLoad={(event) =>
+          setImage({
+            width: event.currentTarget.naturalWidth,
+            height: event.currentTarget.naturalHeight,
+          })
+        }
         className="absolute inset-0 size-full object-cover"
       />
-      <div className="absolute inset-0 bg-black/20" />
       <Front phone={screen.phone} />
       <Caption photo={photo} />
     </div>

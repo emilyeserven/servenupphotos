@@ -21,20 +21,23 @@ function hasPosition(data: Record<string, unknown>): boolean {
   return gps !== undefined || (Array.isArray(data.places) && data.places.length > 0);
 }
 
-/** A photo's data as a spotlight preview shows it, with src as its image and the focus given. */
+/** A photo's data as a spotlight preview shows it, with src as its image and the focus and placement given. */
 export function previewOf(
   data: Record<string, unknown>,
   src: string,
   focus: Focus | null,
+  placement: Focus | null,
 ): PreviewPhoto {
-  return { src, title: titleOf(data), focus, onMap: hasPosition(data) };
+  return { src, title: titleOf(data), focus, placement, onMap: hasPosition(data) };
 }
 
 /**
- * An ALLPHOTOS.json entry as a spotlight preview shows it, with its focus point; undefined when
+ * An ALLPHOTOS.json entry as a spotlight preview shows it, with its focus point and placement; undefined when
  * it has no resized versions, which a spotlight zone can't show.
  */
 export function combinedPreview(photo: Record<string, unknown>): PreviewPhoto | undefined {
   const src = resizedPhoto(photo);
-  return src ? previewOf(photo, src, asFocus(photo.spotlightFocus)) : undefined;
+  return src
+    ? previewOf(photo, src, asFocus(photo.spotlightFocus), asFocus(photo.spotlightPlacement))
+    : undefined;
 }

@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { organizeQuery } from "@/api/organize";
 import type { SocialPhoto } from "@/api/publish";
+import { SpotlightPlacement } from "@/components/spotlight-placement";
 import { type PreviewPhoto, SpotlightPreview } from "@/components/spotlight-preview";
 import { Button } from "@/components/ui/button";
 import {
   type Focus,
   SPOTLIGHT_FOCUS,
+  SPOTLIGHT_PLACEMENT,
   clickedFocus,
   focusChange,
   focusOf,
@@ -17,7 +19,8 @@ import { useLocalEditsStore } from "@/stores/local-edits";
 
 /**
  * The photo's focus point: where to click on it to keep that part in view when a spotlight zone
- * crops it to a screen of the other shape, such as a landscape photo behind the homepage on a phone.
+ * crops it to a screen of the other shape, such as a landscape photo behind the homepage on a phone,
+ * and where on the screen that point goes.
  * It's a local edit until **Commit**, like the zones, with a preview of the photo behind the
  * homepage on a phone and a computer once an album is picked for a zone on Site Spotlight.
  */
@@ -25,7 +28,9 @@ export function SpotlightFocus({ photo }: { photo: SocialPhoto }) {
   const edits = useLocalEditsStore((state) => state.edits);
   const setField = useLocalEditsStore((state) => state.setField);
   const focus = focusOf(edits, photo);
+  const placement = focusOf(edits, photo, SPOTLIGHT_PLACEMENT);
   const set = (next: Focus | null) => setField(SPOTLIGHT_FOCUS, [focusChange(photo, next)]);
+  const place = (next: Focus | null) => setField(SPOTLIGHT_PLACEMENT, [focusChange(photo, next)]);
   const src = wholePhoto(photo);
   if (!src) return null;
   return (
@@ -41,7 +46,8 @@ export function SpotlightFocus({ photo }: { photo: SocialPhoto }) {
         photo, or a computer a portrait one.
       </p>
       <FocusPicker src={src} focus={focus} onPick={set} />
-      <HomepagePreview photo={previewOf(photo.data, src, focus)} />
+      <SpotlightPlacement placement={placement} onPick={place} />
+      <HomepagePreview photo={previewOf(photo.data, src, focus, placement)} />
     </div>
   );
 }
