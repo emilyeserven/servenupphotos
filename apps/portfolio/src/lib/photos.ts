@@ -78,6 +78,8 @@ export interface Photo {
   genres: string[];
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
   spotlightFocus: SpotlightFocus | null;
+  /** Where on the screen the focus point goes, in percent across and down, set on its Photo page; null for the middle. */
+  spotlightPlacement: SpotlightFocus | null;
   /**
    * How its colors split between the 12 hue buckets and the shades from black to white, biggest
    * first; empty until the pipeline saves its colors.
@@ -254,6 +256,8 @@ interface PhotoData {
   spotlightZones?: string[];
   /** The point kept in view when the photo is cropped to the other shape of screen; null or missing for the middle. */
   spotlightFocus?: SpotlightFocus | null;
+  /** Where on the screen the focus point goes; null or missing for the middle. */
+  spotlightPlacement?: SpotlightFocus | null;
   /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
   places?: PhotoPlaces;
   /** The IDs of the photo's albums, tags and genres; older entries were saved without them. */
@@ -635,15 +639,23 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums, tags, genres, old spotlight place and focus point; older entries are missing them. */
+/** The photo's albums, tags, genres, old spotlight place, focus point and its placement; older entries are missing them. */
 function groupFields({
   albums = [],
   tags = [],
   genres = [],
   websiteSpotlight = null,
   spotlightFocus = null,
+  spotlightPlacement = null,
 }: PhotoData) {
-  return { albums, tags, genres, spotlightPlace: websiteSpotlight, spotlightFocus };
+  return {
+    albums,
+    tags,
+    genres,
+    spotlightPlace: websiteSpotlight,
+    spotlightFocus,
+    spotlightPlacement,
+  };
 }
 
 /**

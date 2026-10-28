@@ -3,6 +3,7 @@ import { BackdropCaption } from "@/components/backdrop-caption";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 import { objectPosition } from "@/lib/spotlight-focus";
 import { useArrowKeys } from "@/lib/use-arrow-keys";
+import { useSize } from "@/lib/use-size";
 import { useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
@@ -19,9 +20,8 @@ function isNear(index: number, turn: number, count: number): boolean {
 }
 
 /**
- * Photos filling the screen behind a page, fading in and out in turn under 20% black so the page
- * stays readable, with the showing photo's title and a link to it on the map at the bottom, fading with it. Each
- * photo keeps its focus point in view when it's cropped. The left and right arrow keys show
+ * Photos filling the screen behind a page, fading in and out in turn with no tint over them, with the showing photo's title and a link to it on the map at the bottom, fading with it. Each
+ * photo is cropped to put its focus point where its placement says on the screen, the middle by default. The left and right arrow keys show
  * the photo before or after, and the next one waits its full time again. With reduced motion the
  * first photo stays until an arrow key moves on. A photo fades in only once it has loaded.
  */
@@ -29,8 +29,9 @@ export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
   const { turn, step } = useTurn(photos.length, BACKDROP_MS);
   useArrowKeys(step);
   const [loaded, setLoaded] = useState<ReadonlySet<number>>(new Set());
+  const [ref, size] = useSize();
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden bg-black">
+    <div ref={ref} className="fixed inset-0 z-0 overflow-hidden bg-black">
       {photos.map(
         (photo, index) =>
           isNear(index, turn, photos.length) && (
@@ -38,12 +39,12 @@ export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
               key={photo.id}
               photo={photo}
               showing={index === turn}
+              screen={size}
               loaded={loaded.has(photo.id)}
               onLoad={() => setLoaded((ids) => new Set(ids).add(photo.id))}
             />
           ),
       )}
-      <div aria-hidden className="absolute inset-0 bg-black/20" />
       {photos.map(
         (photo, index) =>
           isNear(index, turn, photos.length) && (
@@ -65,11 +66,14 @@ export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
 function BackdropImage({
   photo,
   showing,
+  screen,
   loaded,
   onLoad,
 }: {
   photo: ImagePhoto;
   showing: boolean;
+  /** The backdrop's size, which the photo is cropped to fill. */
+  screen: { width: number; height: number };
   loaded: boolean;
   onLoad: () => void;
 }) {
@@ -82,7 +86,14 @@ function BackdropImage({
       aria-hidden
       fetchPriority={showing ? "high" : "low"}
       onLoad={onLoad}
-      style={{ objectPosition: objectPosition(photo.spotlightFocus) }}
+      style={{
+        objectPosition: objectPosition(
+          photo.spotlightFocus,
+          photo.spotlightPlacement,
+          photo.image,
+          screen,
+        ),
+      }}
       className={cn(
         "absolute inset-0 size-full object-cover transition-opacity duration-2000 motion-reduce:transition-none",
         showing && loaded ? "opacity-100" : "opacity-0",

@@ -89,6 +89,11 @@ type photoJSON struct {
 	// spotlight zone crops it to a screen of the other shape, such as a
 	// landscape photo behind the homepage on a phone; nil for its middle.
 	SpotlightFocus *SpotlightFocus `json:"spotlightFocus"`
+	// SpotlightPlacement is where on the screen a spotlight zone puts the
+	// focus point, as percentages of the screen's width and height from its
+	// top left corner, such as {50, 80} for low in the middle; nil for the
+	// screen's middle.
+	SpotlightPlacement *SpotlightFocus `json:"spotlightPlacement"`
 	// SocialPosts are the photo's posts on social media, posted or
 	// scheduled, written on the Photo page.
 	SocialPosts []SocialPost `json:"socialPosts"`

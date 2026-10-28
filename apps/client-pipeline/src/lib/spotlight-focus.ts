@@ -4,6 +4,9 @@ import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 /** The photo JSON field that holds the point to keep in view where a spotlight zone crops it. */
 export const SPOTLIGHT_FOCUS = "spotlightFocus";
 
+/** The photo JSON field that holds where on the screen a spotlight zone puts the focus point. */
+export const SPOTLIGHT_PLACEMENT = "spotlightPlacement";
+
 /** A point of a photo, as percentages of its width and height from its top left corner. */
 export interface Focus {
   x: number;
@@ -23,25 +26,63 @@ export function asFocus(value: unknown): Focus | null {
   return isFocus(value) ? value : null;
 }
 
-/** The value the photo's focus has: its local edit's when it has one, or else its file's. */
-function focusValue(edit: LocalEdit | undefined, photo: SocialPhoto): unknown {
-  if (edit && SPOTLIGHT_FOCUS in edit.fields) return edit.fields[SPOTLIGHT_FOCUS];
-  return photo.data[SPOTLIGHT_FOCUS];
+/** The value the photo's field has: its local edit's when it has one, or else its file's. */
+function fieldValue(edit: LocalEdit | undefined, photo: SocialPhoto, field: string): unknown {
+  if (edit && field in edit.fields) return edit.fields[field];
+  return photo.data[field];
 }
 
-/** The photo's focus with its local edit applied, or null for its middle. */
-export function focusOf(edits: Record<string, LocalEdit>, photo: SocialPhoto): Focus | null {
-  return asFocus(focusValue(edits[photo.path], photo));
+/**
+ * The photo's focus, or with SPOTLIGHT_PLACEMENT its placement, with its local edit applied; null
+ * for the middle.
+ */
+export function focusOf(
+  edits: Record<string, LocalEdit>,
+  photo: SocialPhoto,
+  field = SPOTLIGHT_FOCUS,
+): Focus | null {
+  return asFocus(fieldValue(edits[photo.path], photo, field));
 }
 
-/** The local edit that sets the photo's focus, or puts it back in the middle with null. */
+/** The local edit that sets the photo's focus or placement, or puts it back in the middle with null. */
 export function focusChange(photo: SocialPhoto, focus: Focus | null): FieldChange {
   return { path: photo.path, before: photo.data, value: focus };
 }
 
-/** The focus as CSS's object-position, the middle without one. */
-export function objectPosition(focus: Focus | null): string {
-  return focus ? `${focus.x}% ${focus.y}%` : "50% 50%";
+/** A width and a height in pixels. */
+export interface Size {
+  width: number;
+  height: number;
+}
+
+/**
+ * Where along one side, as a percent for `object-position`, an image `drawn` long must sit in a
+ * box `box` long so its point at `focus` percent lands at `place` percent of the box, as close as
+ * it can without leaving a gap at either end.
+ */
+function sidePercent(focus: number, place: number, drawn: number, box: number): number {
+  if (drawn - box < 0.5) return 50;
+  const at = ((place / 100) * box - (focus / 100) * drawn) / (box - drawn);
+  return Math.round(Math.min(1, Math.max(0, at)) * 1000) / 10;
+}
+
+/**
+ * The CSS `object-position` that crops an image of `image`'s size to fill `box` with its focus
+ * (its middle without one) at the placement on the screen (its middle without one), or as near as
+ * the photo's edges allow. The portfolio's homepage crops its photos the same way.
+ */
+export function objectPosition(
+  focus: Focus | null,
+  placement: Focus | null,
+  image: Size,
+  box: Size,
+): string {
+  const at = focus ?? { x: 50, y: 50 };
+  const place = placement ?? { x: 50, y: 50 };
+  const scale = Math.max(box.width / image.width, box.height / image.height);
+  const x = sidePercent(at.x, place.x, image.width * scale, box.width);
+  const y = sidePercent(at.y, place.y, image.height * scale, box.height);
+  return `${x}% ${y}%`;
 }
 
 /** A percentage from 0 to 100, rounded to a whole one. */
