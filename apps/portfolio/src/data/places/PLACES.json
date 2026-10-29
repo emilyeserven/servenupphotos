@@ -951,6 +951,14 @@
     "longitude": -74.0047541744432
   },
   {
+    "id": "the-oberoi",
+    "name": "The Oberoi",
+    "description": "",
+    "parent": "",
+    "city": "Hurghada",
+    "country": "Egypt"
+  },
+  {
     "id": "the-oculus",
     "name": "The Oculus",
     "description": "",

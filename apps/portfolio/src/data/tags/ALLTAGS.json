@@ -1,5 +1,10 @@
 [
   {
+    "id": "aerial-view",
+    "name": "aerial-view",
+    "description": ""
+  },
+  {
     "id": "air-conditioners",
     "name": "air-conditioners",
     "description": ""
@@ -137,6 +142,11 @@
   {
     "id": "bukeyashiki",
     "name": "bukeyashiki",
+    "description": ""
+  },
+  {
+    "id": "buoys",
+    "name": "buoys",
     "description": ""
   },
   {
@@ -294,6 +304,11 @@
   {
     "id": "countryside",
     "name": "countryside",
+    "description": ""
+  },
+  {
+    "id": "crabs",
+    "name": "crabs",
     "description": ""
   },
   {
@@ -492,6 +507,11 @@
     "description": ""
   },
   {
+    "id": "ginkgo",
+    "name": "ginkgo",
+    "description": ""
+  },
+  {
     "id": "girih",
     "name": "girih",
     "description": "Islamic geometric ornament built from interlacing star and polygon patterns",
@@ -640,6 +660,11 @@
     "description": ""
   },
   {
+    "id": "islands",
+    "name": "islands",
+    "description": ""
+  },
+  {
     "id": "ivy",
     "name": "ivy",
     "description": ""
@@ -650,10 +675,20 @@
     "description": ""
   },
   {
+    "id": "karahafu",
+    "name": "karahafu",
+    "description": ""
+  },
+  {
     "id": "karesansui",
     "name": "karesansui",
     "description": "a Japanese dry rock garden of raked gravel and stones, often called a zen garden",
     "parent": "garden"
+  },
+  {
+    "id": "katomado",
+    "name": "katomado",
+    "description": ""
   },
   {
     "id": "koshi",
@@ -709,6 +744,11 @@
   {
     "id": "machiya",
     "name": "machiya",
+    "description": ""
+  },
+  {
+    "id": "manhole-cover",
+    "name": "manhole-cover",
     "description": ""
   },
   {
@@ -841,6 +881,11 @@
   {
     "id": "oculus",
     "name": "oculus",
+    "description": ""
+  },
+  {
+    "id": "office-building",
+    "name": "office-building",
     "description": ""
   },
   {
