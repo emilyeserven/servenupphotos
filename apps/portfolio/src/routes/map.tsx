@@ -34,7 +34,12 @@ import { fadeTo } from "@/lib/map-fade";
 import { photosInView } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
-import { locationSelection, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import {
+  LOCATION_KEYS,
+  parseFilters,
+  type PhotoFilters,
+  withoutFilters,
+} from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -56,7 +61,8 @@ function daysOf(search: Record<string, unknown>): Pick<MapSearch, "day" | "to"> 
 
 export const Route = createFileRoute("/map")({
   validateSearch: (search: Record<string, unknown>): MapSearch => ({
-    ...parseFilters(search),
+    // Places only move the map here, rather than filtering it.
+    ...withoutFilters(parseFilters(search), LOCATION_KEYS),
     ...daysOf(search),
     ...parseShownPhoto(search),
     ...parseMapView(search),
@@ -144,29 +150,21 @@ function hasImage(photo: Photo): photo is ImagePhoto {
   return photo.image !== null;
 }
 
-/** Whether the places chosen before were all unchosen, leaving none. */
-function placesCleared(before: string[], now: string[]): boolean {
-  return before.length > 0 && now.length === 0;
-}
-
 /**
  * Moves the map to show the photos again when the filters change which photos it shows, and runs
  * `onChange` to close what's open. It doesn't move when the map first opens, as the map opens on
- * them already, or when every chosen place is unchosen, so the map stays on the place it showed
- * rather than zooming out to every photo. `places` are the places chosen in the Places filter.
+ * them already.
  */
 function useFitOnFilter(
   map: RefObject<MapRef | null>,
-  { bounds, places }: { bounds: LngLatBounds | null; places: string[] },
+  bounds: LngLatBounds | null,
   onChange: () => void,
 ) {
   const shownBounds = useRef(bounds);
-  const shownPlaces = useRef(places);
   useEffect(() => {
     if (shownBounds.current === bounds || !map.current) return;
     shownBounds.current = bounds;
-    if (!placesCleared(shownPlaces.current, places)) showAllPhotos(map.current, bounds);
-    shownPlaces.current = places;
+    showAllPhotos(map.current, bounds);
     onChange();
   });
 }
@@ -249,7 +247,7 @@ function MapView() {
   const { search, mapPhotos, dayPhotos, setDays } = useMapFilters();
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
   const saveView = useMapViewInUrl(map, search);
-  useFitOnFilter(map, { bounds: mapPhotos.bounds, places: locationSelection(search) }, () => {
+  useFitOnFilter(map, mapPhotos.bounds, () => {
     setSelected(null);
     setCluster(null);
   });
@@ -321,6 +319,9 @@ function MapView() {
               onBrowse={openPhoto}
               onReset={() => {
                 if (map.current) showAllPhotos(map.current, mapPhotos.bounds);
+              }}
+              onGoTo={(placePhotos) => {
+                if (map.current) showAllPhotos(map.current, boundsOf(placePhotos));
               }}
             />
           </FloatingHeader>

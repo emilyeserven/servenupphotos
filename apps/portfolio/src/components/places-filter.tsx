@@ -100,15 +100,7 @@ export function PlacesFilter({
   onChange: (selection: string[]) => void;
 }) {
   const { script } = useScriptDisplay();
-  const [query, setQuery] = useState("");
-  const [expanded, setExpanded] = useState(
-    () => new Set([...START_EXPANDED, ...idsAroundChosen(options, selected)]),
-  );
-  const searching = query.trim() !== "";
   const text = buttonText(options, selected, script);
-  const available = withPhotos(options, selected);
-  const hidden = everyOption(options).length - everyOption(available).length;
-  const shown = matching(available, query.trim().toLowerCase(), script);
 
   /** Chooses the place, or unchooses it when it's chosen. */
   function toggle(value: string) {
@@ -117,13 +109,6 @@ export function PlacesFilter({
         ? selected.filter((chosen) => chosen !== value)
         : [...selected, value],
     );
-  }
-
-  /** Expands the choice, or collapses it when it's expanded. */
-  function toggleExpanded(id: string) {
-    const next = new Set(expanded);
-    if (!next.delete(id)) next.add(id);
-    setExpanded(next);
   }
 
   return (
@@ -157,42 +142,89 @@ export function PlacesFilter({
           className="pointer-events-none absolute right-2.5 size-4 opacity-50"
         />
       </div>
-      <PopoverContent align="start" className="flex w-[min(20rem,calc(100vw-2rem))] flex-col p-0">
-        <label className="flex items-center gap-2 border-b px-3">
-          <Search aria-hidden className="size-4 shrink-0 text-muted-foreground" />
-          <span className="sr-only">Search places</span>
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search places…"
-            className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-          />
-        </label>
-        <PlacesToolbar
-          selectedCount={selected.length}
-          searching={searching}
-          onExpandAll={() => setExpanded(new Set(expandableIds(available)))}
-          onCollapseAll={() => setExpanded(new Set())}
-          onClear={() => onChange([])}
-        />
-        <div className="max-h-80 overflow-y-auto p-1">
-          {shown.length === 0 ? (
-            <p className="px-2 py-6 text-center text-sm text-muted-foreground">No places found.</p>
-          ) : (
-            <PlaceList
-              options={shown}
-              depth={0}
-              isExpanded={(id) => searching || expanded.has(id)}
-              isChosen={(option) => selected.includes(valueOf(option))}
-              onToggle={(option) => toggle(valueOf(option))}
-              onToggleExpanded={toggleExpanded}
-            />
-          )}
-          <HiddenNote count={hidden} noun="places" />
-        </div>
-      </PopoverContent>
+      <PlacesPanel
+        options={options}
+        selected={selected}
+        onChoose={toggle}
+        onClear={() => onChange([])}
+      />
     </Popover>
+  );
+}
+
+/**
+ * The flyout of a Places button: a search, **Expand all** and **Collapse all**, and the tree of
+ * places. Each place has a checkbox, or, without `selected`, is a button that picks just it, as
+ * on the map, where picking a place moves the map there. `onChoose` gets the place's value, such
+ * as "city:Seoul".
+ */
+export function PlacesPanel({
+  options,
+  selected,
+  onChoose,
+  onClear,
+}: {
+  options: LocationOption[];
+  /** The chosen places' values, for a tree with checkboxes; left out for one that picks a place. */
+  selected?: string[];
+  onChoose: (value: string) => void;
+  /** Unchooses every place, from the toolbar's **Clear**. */
+  onClear?: () => void;
+}) {
+  const { script } = useScriptDisplay();
+  const chosen = selected ?? [];
+  const [query, setQuery] = useState("");
+  const [expanded, setExpanded] = useState(
+    () => new Set([...START_EXPANDED, ...idsAroundChosen(options, chosen)]),
+  );
+  const searching = query.trim() !== "";
+  const available = withPhotos(options, chosen);
+  const hidden = everyOption(options).length - everyOption(available).length;
+  const shown = matching(available, query.trim().toLowerCase(), script);
+
+  /** Expands the choice, or collapses it when it's expanded. */
+  function toggleExpanded(id: string) {
+    const next = new Set(expanded);
+    if (!next.delete(id)) next.add(id);
+    setExpanded(next);
+  }
+
+  return (
+    <PopoverContent align="start" className="flex w-[min(20rem,calc(100vw-2rem))] flex-col p-0">
+      <label className="flex items-center gap-2 border-b px-3">
+        <Search aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+        <span className="sr-only">Search places</span>
+        <input
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search places…"
+          className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        />
+      </label>
+      <PlacesToolbar
+        selectedCount={chosen.length}
+        searching={searching}
+        onExpandAll={() => setExpanded(new Set(expandableIds(available)))}
+        onCollapseAll={() => setExpanded(new Set())}
+        onClear={onClear}
+      />
+      <div className="max-h-80 overflow-y-auto p-1">
+        {shown.length === 0 ? (
+          <p className="px-2 py-6 text-center text-sm text-muted-foreground">No places found.</p>
+        ) : (
+          <PlaceList
+            options={shown}
+            depth={0}
+            isExpanded={(id) => searching || expanded.has(id)}
+            isChosen={selected && ((option) => chosen.includes(valueOf(option)))}
+            onToggle={(option) => onChoose(valueOf(option))}
+            onToggleExpanded={toggleExpanded}
+          />
+        )}
+        <HiddenNote count={hidden} noun="places" />
+      </div>
+    </PopoverContent>
   );
 }
 
@@ -208,7 +240,7 @@ function PlacesToolbar({
   searching: boolean;
   onExpandAll: () => void;
   onCollapseAll: () => void;
-  onClear: () => void;
+  onClear?: () => void;
 }) {
   const button = "h-7 px-2 text-xs";
   return (
@@ -237,7 +269,8 @@ interface PlaceListProps {
   /** How deep the list is in the tree, which indents it. */
   depth: number;
   isExpanded: (id: string) => boolean;
-  isChosen: (option: LocationOption) => boolean;
+  /** Whether the place is chosen, for a tree with checkboxes; left out for one that picks a place. */
+  isChosen?: (option: LocationOption) => boolean;
   onToggle: (option: LocationOption) => void;
   onToggleExpanded: (id: string) => void;
 }
@@ -269,21 +302,52 @@ function PlaceItem({ option, ...props }: PlaceListProps & { option: LocationOpti
           open={open}
           onClick={() => props.onToggleExpanded(option.id)}
         />
-        <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-sm px-1.5 py-1.5 text-sm select-none hover:bg-accent">
-          <input
-            type="checkbox"
-            checked={props.isChosen(option)}
-            onChange={() => props.onToggle(option)}
-            className="size-4 shrink-0 cursor-pointer accent-primary"
-          />
-          <span className="truncate">{name}</span>
-          <span className="ml-auto text-xs text-muted-foreground tabular-nums">{option.count}</span>
-        </label>
+        <PlaceChoice option={option} name={name} {...props} />
       </div>
       {open && option.children.length > 0 && (
         <PlaceList {...props} options={option.children} depth={props.depth + 1} />
       )}
     </li>
+  );
+}
+
+const CHOICE_CLASS =
+  "flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-sm px-1.5 py-1.5 text-left text-sm select-none hover:bg-accent";
+
+/** A place's name and count: with a checkbox, or as a button that picks it without `isChosen`. */
+function PlaceChoice({
+  option,
+  name,
+  isChosen,
+  onToggle,
+}: PlaceListProps & { option: LocationOption; name: string }) {
+  const label = (
+    <>
+      <span className="truncate">{name}</span>
+      <span className="ml-auto text-xs text-muted-foreground tabular-nums">{option.count}</span>
+    </>
+  );
+  if (!isChosen) {
+    return (
+      <button
+        type="button"
+        onClick={() => onToggle(option)}
+        className={cn(CHOICE_CLASS, "outline-none focus-visible:ring-2 focus-visible:ring-ring")}
+      >
+        {label}
+      </button>
+    );
+  }
+  return (
+    <label className={CHOICE_CLASS}>
+      <input
+        type="checkbox"
+        checked={isChosen(option)}
+        onChange={() => onToggle(option)}
+        className="size-4 shrink-0 cursor-pointer accent-primary"
+      />
+      {label}
+    </label>
   );
 }
 

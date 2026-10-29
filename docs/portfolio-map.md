@@ -4,8 +4,8 @@
 level, or on the whole world when there are none.
 
 Each photo is a marker with its Square Thumbnail (or its Small version, cropped square), which opens the photo
-viewer. Photos too close together to tell apart (within 40 pixels by default, a little under a marker's width; see **display options** below) are one round marker with how many there are, over their three newest
-photos fading in turn under a dark overlay. Clicking it zooms the map in to fit its photos, which splits it apart, like
+viewer. Photos too close together to tell apart (within 40 pixels by default, a little under a marker's width; see **display options** below) are one round marker with how many there are, over three of their photos, the latest added by default,
+fading in turn under a dark overlay. Clicking it zooms the map in to fit its photos, which splits it apart, like
 a cluster pin on the Color page's wheel. A group that zooming in can't split (photos at one spot, or the map already as
 close as it goes) opens a grid of their thumbnails instead: in a popup above it, or on phones in a sheet along the
 bottom of the map, so it's never cut off at the top of the screen or hidden under the floating header
@@ -31,9 +31,7 @@ A pin under the pointer, or focused, comes to the front, so a partly covered one
 
 Where the map is looking is kept in the URL as its center and zoom (`?lat=37.57&lng=126.98&zoom=12.5`), half a second
 after it stops moving, so a link opens the map there instead of on all the photos. A link with only an open photo (`?photo=<id>`) opens zoomed in on that photo instead, so it doesn't fly in from every photo; the homepage's map pin links straight to a photo's center and zoom. When those change from outside the map, as with the photo viewer's **View on map**, the map flies there. Moving replaces the URL rather than
-adding to the history. The menu and other views' **View on map** open the map with no filters, so ones set on an earlier visit, or on another view, are gone; a link with filters in its URL keeps them (see [Portfolio Filters](portfolio-filters.md)). Changing a filter still fits the map to the photos it shows, and that's saved the same way. Unchoosing every place in the
-Places filter (or clearing the filters while places were chosen) is the exception: the map stays where it is rather
-than zooming out to every photo.
+adding to the history. The menu and other views' **View on map** open the map with no filters, so ones set on an earlier visit, or on another view, are gone; a link with filters in its URL keeps them (see [Portfolio Filters](portfolio-filters.md)). Changing a filter still fits the map to the photos it shows, and that's saved the same way.
 
 > **Frontend analogy:** the grouping is done by MapLibre on the map's data, like a virtualized list deciding which
 > rows to render: the page asks which groups and photos are in view after each move and draws a React marker for each.
@@ -50,9 +48,11 @@ Over the top left corner, beside the title on wider screens and under it on phon
 (`components/map-controls.tsx`). On phones, **More filters**, **View in grid** and **Browse** are just their icons, so the row
 fits without covering the map:
 
-- **Places** comes first, with the icon button beside it that zooms back out to every photo. The United States of
-  America starts expanded, so its states show without a click (see
-  [Portfolio Filters](portfolio-filters.md#places)).
+- **Places** comes first, with the icon button beside it that zooms back out to every photo. It opens the same tree as
+  the [Places filter](portfolio-filters.md#places), with the United States of America expanded, but it doesn't filter:
+  picking a country, state, city or place closes the tree and moves the map to that place's photos, the way the
+  zoom-out button moves it to every photo (`components/map-place-picker.tsx`). Its counts are out of the photos the
+  other filters leave. A link with a place filter in its URL opens the map on every photo, as the map ignores it.
 - The eye button opens the map's **display options** (`components/map-display-options.tsx`, kept in
   `lib/map-display.ts`):
   - **Grouping** is how close photos are, in pixels on the screen, before they're one round marker (MapLibre's
@@ -65,9 +65,13 @@ fits without covering the map:
   - **Show counts on groups** hides the number on group markers when unticked.
   - **Darken photos under counts**, when unticked, shows a group's photos as they are, with its count in a small dark
     badge instead.
+  - **Groups show the latest** picks which three photos a group's marker fades through: **Added** (the default), the
+    ones added to the portfolio last, or **Captured**, the ones taken last. Photos with no added date count as
+    the oldest added.
   - **Reset to defaults** goes back to these defaults.
 
-  These options are `components/pin-display-fields.tsx`, which the [Color page](portfolio-color.md) shares.
+  These options, but for the group photos, are `components/pin-display-fields.tsx`, which the
+  [Color page](portfolio-color.md) shares.
 
   They're remembered in this browser, like the theme, rather than in the URL, so they stay the same on the next visit
   without changing a shared link.
@@ -90,7 +94,7 @@ fits without covering the map:
 - The **day** dropdown, in **More filters**, narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
   the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
   chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the
-  Places, album and tag filters, but the menu doesn't carry it to the other views.
+  album, tag and genre filters, but the menu doesn't carry it to the other views.
 - Once a day is chosen and another day is in view, a second **to** dropdown picks the last day of a range
   (`?day=2026-05-01&to=2026-05-17`), and the map shows every photo from the first day through the last. Either day can
   be the earlier one; the range is put in order. **Just this day** goes back to one day.

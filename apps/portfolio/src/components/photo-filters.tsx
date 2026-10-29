@@ -157,20 +157,6 @@ export function PhotoFilterBar({
 const OVER_MAP =
   "contents [&_button]:bg-background dark:[&_button]:bg-background [&_select]:bg-background [&_select]:[field-sizing:content] dark:[&_select]:bg-background";
 
-/** The Places combobox on its own, for a view that shows it apart from its other filters, such as the map. */
-export function MapPlacesFilter({ photos }: { photos: Photo[] }) {
-  return (
-    <div className={OVER_MAP}>
-      <PlacesDropdown
-        photos={photos}
-        facet={photos}
-        filters={useFilters()}
-        setFilters={useSetFilters()}
-      />
-    </div>
-  );
-}
-
 /**
  * The album, tag and genre dropdowns behind a **More filters** button, after the view's own
  * filters (`own`, such as the map's days), then `children` and **Clear filters** while any filter

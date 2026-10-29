@@ -3,7 +3,8 @@ import { BrowseInViewButton } from "@/components/browse-in-view-button";
 import { MapDayFilter } from "@/components/map-day-filter";
 import { MapDisplayOptions } from "@/components/map-display-options";
 import { MapViewControls } from "@/components/map-view-controls";
-import { MapPlacesFilter, MoreFilterControls } from "@/components/photo-filters";
+import { MapPlacePicker } from "@/components/map-place-picker";
+import { MoreFilterControls } from "@/components/photo-filters";
 import { ViewInGridButton } from "@/components/view-in-grid-button";
 import type { MapDisplay } from "@/lib/map-display";
 import { type DayRange, daysInView } from "@/lib/map-days";
@@ -12,7 +13,7 @@ import { type PlacedPhoto, placedPhotos } from "@/lib/map-photos";
 import { parseFilters } from "@/lib/photo-filters";
 
 /**
- * The map's controls under its title: **Places**, the zoom-out button, the display options, then
+ * The map's controls under its title: **Places**, which moves the map to a place, the zoom-out button, the display options, then
  * **More filters** (the days in view, album, tag and genre), **View in grid** and **Browse**.
  */
 export function MapControls({
@@ -24,6 +25,7 @@ export function MapControls({
   onDisplayChange,
   onDaysChange,
   onReset,
+  onGoTo,
   browsable,
   onBrowse,
 }: {
@@ -39,12 +41,17 @@ export function MapControls({
   onDisplayChange: (change: Partial<MapDisplay>) => void;
   onDaysChange: (range: DayRange) => void;
   onReset: () => void;
+  /** Moves the map to show the photos, those of a place picked in **Places**. */
+  onGoTo: (photos: PlacedPhoto[]) => void;
   /** The photos in view the photo viewer can step through, newest first. */
   browsable: PlacedPhoto[];
   onBrowse: (photo: PlacedPhoto, photos: PlacedPhoto[]) => void;
 }) {
   return (
-    <MapViewControls onReset={onReset} places={<MapPlacesFilter photos={placedPhotos} />}>
+    <MapViewControls
+      onReset={onReset}
+      places={<MapPlacePicker photos={filtered} onPick={onGoTo} />}
+    >
       <MapDisplayOptions display={display} onChange={onDisplayChange} />
       <MoreFilterControls
         photos={placedPhotos}

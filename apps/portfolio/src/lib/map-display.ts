@@ -3,6 +3,12 @@ import { useState } from "react";
 /** How big the map's markers are. */
 export type PinSize = "small" | "medium" | "large";
 
+/**
+ * Which of a group's photos its marker shows: the ones added to the portfolio last, or the ones
+ * taken last.
+ */
+export type GroupPhotos = "added" | "taken";
+
 /** How the map draws its markers, as chosen in its display options. */
 export interface MapDisplay {
   /**
@@ -15,6 +21,7 @@ export interface MapDisplay {
   showCounts: boolean;
   /** Whether a group's photos are darkened under its count, rather than shown as they are. */
   dimGroups: boolean;
+  groupPhotos: GroupPhotos;
 }
 
 /** The display options a first visit starts with. */
@@ -23,6 +30,7 @@ export const DEFAULT_MAP_DISPLAY: MapDisplay = {
   pinSize: "medium",
   showCounts: true,
   dimGroups: true,
+  groupPhotos: "added",
 };
 
 /** The grouping slider's range and step, in pixels. */
@@ -60,6 +68,7 @@ const VALID: Record<keyof MapDisplay, (value: unknown) => boolean> = {
   pinSize: (value) => typeof value === "string" && value in PIN_PIXELS,
   showCounts: (value) => typeof value === "boolean",
   dimGroups: (value) => typeof value === "boolean",
+  groupPhotos: (value) => value === "added" || value === "taken",
 };
 
 /** The options in a saved value that are still valid, leaving out the rest. */
