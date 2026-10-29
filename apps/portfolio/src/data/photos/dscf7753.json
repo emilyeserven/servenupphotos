@@ -1,9 +1,9 @@
 {
-  "id": 270,
-  "title": null,
+  "title": "View from the Overpass",
   "comment": null,
+  "id": 270,
   "file": "DSCF7753.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-29T15:00:46Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/d439fd959e1f-dscf7753-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/d439fd959e1f-dscf7753-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/d439fd959e1f-dscf7753-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/d439fd959e1f-dscf7753-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d439fd959e1f-dscf7753-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/d439fd959e1f-dscf7753-thumbnail.webp?crop=1801,0,4347",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/d439fd959e1f-dscf7753-thumbnailpreview.webp?crop=1801,0,4347",
     "thumbnailcrop": {
-      "x": 1690,
+      "x": 1801,
       "y": 0,
       "size": 4347,
       "outputSize": 500
@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["road", "traffic", "cars", "typography", "trees", "sidewalk", "symmetry", "city"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -60,8 +60,8 @@
       "hex": "#404040",
       "lab": {
         "l": 26.92,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

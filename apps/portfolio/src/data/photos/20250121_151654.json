@@ -1,9 +1,9 @@
 {
-  "id": 293,
-  "title": null,
+  "title": "Red Sea Waves",
   "comment": null,
+  "id": 293,
   "file": "20250121_151654.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-28T22:38:29Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Telephoto Camera",
   "aperture": 2.4,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:21 15:16:55",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "the-oberoi",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/375c561579f8-20250121-151654-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/375c561579f8-20250121-151654-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/375c561579f8-20250121-151654-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/375c561579f8-20250121-151654-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/375c561579f8-20250121-151654-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/375c561579f8-20250121-151654-thumbnail.webp?crop=1453,0,1873",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/375c561579f8-20250121-151654-thumbnailpreview.webp?crop=1453,0,1873",
     "thumbnailcrop": {
-      "x": 726,
+      "x": 1453,
       "y": 0,
       "size": 1873,
       "outputSize": 500
@@ -50,9 +50,17 @@
   "albums": [],
   "tags": ["ocean", "waves", "coastline", "palm-trees", "statue", "stones"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "the-oberoi"
+    }
+  ],
   "spotlightZones": [],
-  "spotlightFocus": null,
+  "spotlightFocus": {
+    "x": 61,
+    "y": 55
+  },
   "socialPosts": [],
   "reEdit": null,
   "colors": {
@@ -260,5 +268,9 @@
     "chroma": 23.11,
     "peakChroma": 33.79,
     "samples": 10050
+  },
+  "spotlightPlacement": {
+    "x": 80,
+    "y": 50
   }
 }
