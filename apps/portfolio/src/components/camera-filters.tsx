@@ -7,6 +7,7 @@ import {
   PhotoFilterBar,
   selectedValue,
 } from "@portfolio/components/photo-filters";
+import { OrientationFilter } from "@portfolio/components/orientation-filter";
 import { RangeFilter } from "@portfolio/components/range-filter";
 import type { RangePreset } from "@portfolio/components/range-presets";
 import { equipmentOptions } from "@portfolio/lib/filter-options";
@@ -28,6 +29,7 @@ import {
   TIME_KEY,
   withoutCameraFilters,
 } from "@portfolio/lib/camera-filters";
+import { ORIENTATION_KEY, orientationCounts } from "@portfolio/lib/orientation";
 import { hourEnd, hourStart, photoHours } from "@portfolio/lib/time-of-day";
 
 /** Each range slider's name. */
@@ -94,7 +96,8 @@ function useSetCameraFilters() {
 /**
  * The camera filters, after the shared ones on the Table and Grid: **Camera** and **Lens** dropdowns, with the
  * metadata groups of each, a range slider for each of ISO, exposure, focal length and
- * aperture, with its range groups as quick picks, and one for the time of day. `photos` is the photos the shared
+ * aperture, with its range groups as quick picks, one for the time of day, and the **Orientation**
+ * buttons. `photos` is the photos the shared
  * filters leave, which the camera and lens counts are out of, given the other filters here.
  * `children` go after the sliders, in the same row, such as the Grid's **Colors**.
  */
@@ -132,6 +135,13 @@ function CameraFilterControls({
           writeHigh={hourEnd}
           presets={[]}
           onChange={(range) => setFilters({ [TIME_KEY]: range })}
+        />
+        <OrientationFilter
+          orientation={filters[ORIENTATION_KEY]}
+          counts={orientationCounts(
+            filterByCamera(photos, withoutCameraFilters(filters, [ORIENTATION_KEY])),
+          )}
+          onChange={(orientation) => setFilters({ [ORIENTATION_KEY]: orientation })}
         />
         {children}
       </div>
