@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:22 15:57:23",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Castle Town",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["bukeyashiki", "dobei", "alley", "walls", "power-lines", "trees", "village"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

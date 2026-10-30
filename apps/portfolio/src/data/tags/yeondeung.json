@@ -1,5 +1,6 @@
 {
   "id": "yeondeung",
   "name": "yeondeung",
-  "description": ""
+  "description": "",
+  "parent": "lanterns"
 }

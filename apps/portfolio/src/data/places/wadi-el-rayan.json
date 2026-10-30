@@ -1,0 +1,12 @@
+{
+  "id": "wadi-el-rayan",
+  "name": "Wadi El Rayan",
+  "description": "",
+  "parent": "",
+  "city": "Youssief Al Sedik",
+  "state": "Faiyum",
+  "country": "Egypt",
+  "latitude": 29.179025,
+  "longitude": 30.351567,
+  "exactLocation": true
+}

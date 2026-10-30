@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["riwaq", "mosque", "arches", "arcade", "columns", "windows", "pedestrians"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [
     {
       "relation": "",

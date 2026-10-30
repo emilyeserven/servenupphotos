@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:22 16:48:52",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Station",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["houses", "power-lines", "road", "wanman", "train", "railway"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "hagi-station"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

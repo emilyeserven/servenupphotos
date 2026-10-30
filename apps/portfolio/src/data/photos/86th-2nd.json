@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["subway", "commuters", "platform", "pedestrians", "signage", "newsstand"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2019:07:17 20:01:28",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Children's Beach",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["seagulls", "birds", "harbor", "beach", "sailboats", "fog"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "on",
+      "id": "children-s-beach"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

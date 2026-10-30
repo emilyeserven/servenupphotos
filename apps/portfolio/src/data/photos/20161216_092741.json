@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["grachtenpand", "canal", "houses", "facade", "bicycles", "fence", "windows"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

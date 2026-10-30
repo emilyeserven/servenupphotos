@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["footbridge", "bridge", "steel", "symmetry", "repetition", "train-station", "windows"],
-  "genres": [],
+  "genres": ["architecture", "abstract"],
   "places": [
     {
       "relation": "",

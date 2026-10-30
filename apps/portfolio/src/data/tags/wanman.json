@@ -1,5 +1,6 @@
 {
   "id": "wanman",
   "name": "wanman",
-  "description": ""
+  "description": "",
+  "parent": "train"
 }

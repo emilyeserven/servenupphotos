@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:29 19:01:50",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Sannomiya",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["yokocho", "alley", "night", "signage", "rain", "reflections"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "sannomiya"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

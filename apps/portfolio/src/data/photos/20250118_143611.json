@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["mishkat", "mosque", "lamps", "chains", "walls", "patterns"],
-  "genres": [],
+  "genres": ["architecture", "abstract"],
   "places": [
     {
       "relation": "",

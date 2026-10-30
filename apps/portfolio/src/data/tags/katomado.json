@@ -1,5 +1,6 @@
 {
   "id": "katomado",
   "name": "katomado",
-  "description": ""
+  "description": "",
+  "parent": "windows"
 }

@@ -1,5 +1,6 @@
 {
   "id": "gazebo",
   "name": "gazebo",
-  "description": ""
+  "description": "",
+  "parent": "pavilion"
 }

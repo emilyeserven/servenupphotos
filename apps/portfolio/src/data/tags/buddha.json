@@ -1,5 +1,6 @@
 {
   "id": "buddha",
   "name": "buddha",
-  "description": ""
+  "description": "",
+  "parent": "buddhism"
 }

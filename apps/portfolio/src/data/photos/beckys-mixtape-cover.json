@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["sunglasses", "tall-grass", "boardwalk", "path", "fence", "trees"],
-  "genres": [],
+  "genres": ["portrait"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -58,7 +58,7 @@
     "fence",
     "tourists"
   ],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [
     {
       "relation": "",

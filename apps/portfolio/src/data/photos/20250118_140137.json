@@ -58,7 +58,7 @@
     "shadows",
     "interior"
   ],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [
     {
       "relation": "",

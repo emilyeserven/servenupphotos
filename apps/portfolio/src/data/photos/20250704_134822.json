@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:07:04 13:48:22",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Cathedral of St. Michael and St. Gudula",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -49,8 +49,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["bicycles", "signage", "fence", "sidewalk", "windows", "walls"],
-  "genres": [],
-  "places": [],
+  "genres": ["street", "architecture"],
+  "places": [
+    {
+      "relation": "outside",
+      "id": "cathedral-of-st-michael-and-st-gudula"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

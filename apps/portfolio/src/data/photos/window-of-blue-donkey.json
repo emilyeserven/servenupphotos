@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:26 07:21:13",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Lazib Inn",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["fanous", "windows", "interior", "palm-trees", "garden", "silhouettes", "hotel", "cafe"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "inside",
+      "id": "lazib-inn"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

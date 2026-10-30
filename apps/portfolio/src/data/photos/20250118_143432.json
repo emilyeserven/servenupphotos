@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mishkat", "mosque", "calligraphy", "lamps", "chains", "walls", "details"],
-  "genres": [],
+  "tags": ["mishkat", "mosque", "calligraphy", "lamps", "chains", "walls"],
+  "genres": ["architecture"],
   "places": [
     {
       "relation": "",

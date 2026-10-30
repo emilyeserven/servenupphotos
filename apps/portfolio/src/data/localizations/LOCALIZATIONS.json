@@ -1,12 +1,108 @@
 [
   {
+    "id": "city-al-khalifa",
+    "type": "city",
+    "name": "Al Khalifa",
+    "romanization": "Al-Khalīfah",
+    "pronunciation": "",
+    "localScript": "الخليفة"
+  },
+  {
+    "id": "city-busan",
+    "type": "city",
+    "name": "Busan",
+    "romanization": "Busan",
+    "pronunciation": "",
+    "localScript": "부산"
+  },
+  {
+    "id": "city-delray-beach",
+    "type": "city",
+    "name": "Delray Beach",
+    "romanization": "Delray Beach",
+    "pronunciation": "",
+    "localScript": "Delray Beach"
+  },
+  {
+    "id": "city-hagi",
+    "type": "city",
+    "name": "Hagi",
+    "romanization": "Hagi",
+    "pronunciation": "はぎ",
+    "localScript": "萩"
+  },
+  {
+    "id": "city-nantucket",
+    "type": "city",
+    "name": "Nantucket",
+    "romanization": "Nantucket",
+    "pronunciation": "",
+    "localScript": "Nantucket"
+  },
+  {
+    "id": "city-new-york-city",
+    "type": "city",
+    "name": "New York City",
+    "romanization": "New York City",
+    "pronunciation": "",
+    "localScript": "New York City"
+  },
+  {
+    "id": "city-seoul",
+    "type": "city",
+    "name": "Seoul",
+    "romanization": "Seoul",
+    "pronunciation": "",
+    "localScript": "서울"
+  },
+  {
+    "id": "city-stamford",
+    "type": "city",
+    "name": "Stamford",
+    "romanization": "Stamford",
+    "pronunciation": "",
+    "localScript": "Stamford"
+  },
+  {
+    "id": "country-egypt",
+    "type": "country",
+    "name": "Egypt",
+    "romanization": "Miṣr",
+    "pronunciation": "",
+    "localScript": "مصر"
+  },
+  {
+    "id": "country-japan",
+    "type": "country",
+    "name": "Japan",
+    "romanization": "Nihon",
+    "pronunciation": "にほん",
+    "localScript": "日本"
+  },
+  {
+    "id": "country-south-korea",
+    "type": "country",
+    "name": "South Korea",
+    "romanization": "Daehan Minguk",
+    "pronunciation": "",
+    "localScript": "대한민국"
+  },
+  {
     "id": "country-united-states-of-america",
     "type": "country",
     "name": "United States of America",
-    "romanization": "",
+    "romanization": "United States of America",
     "pronunciation": "",
-    "localScript": "",
+    "localScript": "United States of America",
     "otherNames": ["United States"]
+  },
+  {
+    "id": "country-united-states",
+    "type": "country",
+    "name": "United States",
+    "romanization": "United States",
+    "pronunciation": "",
+    "localScript": "United States"
   },
   {
     "id": "place-geunjeongmun-gate",
@@ -23,5 +119,101 @@
     "romanization": "Gyeongbokgung",
     "pronunciation": "",
     "localScript": "경복궁"
+  },
+  {
+    "id": "place-midtown",
+    "type": "place",
+    "name": "Midtown East",
+    "romanization": "Midtown East",
+    "pronunciation": "",
+    "localScript": "Midtown East"
+  },
+  {
+    "id": "place-murray-hill",
+    "type": "place",
+    "name": "Murray Hill",
+    "romanization": "Murray Hill",
+    "pronunciation": "",
+    "localScript": "Murray Hill"
+  },
+  {
+    "id": "state-busan",
+    "type": "state",
+    "name": "Busan",
+    "romanization": "Busan-gwangyeoksi",
+    "pronunciation": "",
+    "localScript": "부산광역시"
+  },
+  {
+    "id": "state-cairo",
+    "type": "state",
+    "name": "Cairo",
+    "romanization": "Muḥāfaẓat al-Qāhirah",
+    "pronunciation": "",
+    "localScript": "محافظة القاهرة"
+  },
+  {
+    "id": "state-connecticut",
+    "type": "state",
+    "name": "Connecticut",
+    "romanization": "Connecticut",
+    "pronunciation": "",
+    "localScript": "Connecticut"
+  },
+  {
+    "id": "state-faiyum",
+    "type": "state",
+    "name": "Faiyum",
+    "romanization": "Muḥāfaẓat al-Fayyūm",
+    "pronunciation": "",
+    "localScript": "محافظة الفيوم"
+  },
+  {
+    "id": "state-giza",
+    "type": "state",
+    "name": "Giza",
+    "romanization": "Muḥāfaẓat al-Jīzah",
+    "pronunciation": "",
+    "localScript": "محافظة الجيزة"
+  },
+  {
+    "id": "state-hyogo",
+    "type": "state",
+    "name": "Hyōgo",
+    "romanization": "Hyōgo-ken",
+    "pronunciation": "ひょうごけん",
+    "localScript": "兵庫県"
+  },
+  {
+    "id": "state-massachusetts",
+    "type": "state",
+    "name": "Massachusetts",
+    "romanization": "Massachusetts",
+    "pronunciation": "",
+    "localScript": "Massachusetts"
+  },
+  {
+    "id": "state-new-york",
+    "type": "state",
+    "name": "New York",
+    "romanization": "New York",
+    "pronunciation": "",
+    "localScript": "New York"
+  },
+  {
+    "id": "state-seoul",
+    "type": "state",
+    "name": "Seoul",
+    "romanization": "Seoul-teukbyeolsi",
+    "pronunciation": "",
+    "localScript": "서울특별시"
+  },
+  {
+    "id": "state-yamaguchi",
+    "type": "state",
+    "name": "Yamaguchi",
+    "romanization": "Yamaguchi-ken",
+    "pronunciation": "やまぐちけん",
+    "localScript": "山口県"
   }
 ]

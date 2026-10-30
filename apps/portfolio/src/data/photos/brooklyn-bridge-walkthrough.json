@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["suspension-cables", "bridge", "skyline", "skyscraper", "city", "steel", "patterns"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [
     {
       "relation": "",

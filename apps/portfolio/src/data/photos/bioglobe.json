@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["sculpture", "planter", "topiary", "plants", "texture", "stones"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

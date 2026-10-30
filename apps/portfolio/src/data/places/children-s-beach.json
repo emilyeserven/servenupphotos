@@ -1,0 +1,12 @@
+{
+  "id": "children-s-beach",
+  "name": "Children's Beach",
+  "description": "",
+  "parent": "",
+  "city": "Nantucket",
+  "state": "Massachusetts",
+  "country": "United States of America",
+  "latitude": 41.289953,
+  "longitude": -70.090925,
+  "exactLocation": true
+}

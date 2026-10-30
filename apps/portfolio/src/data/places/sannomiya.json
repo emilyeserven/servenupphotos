@@ -1,0 +1,12 @@
+{
+  "id": "sannomiya",
+  "name": "Sannomiya",
+  "description": "",
+  "parent": "",
+  "city": "Kobe",
+  "state": "Hyōgo",
+  "country": "Japan",
+  "latitude": 34.693353,
+  "longitude": 135.191264,
+  "exactLocation": true
+}

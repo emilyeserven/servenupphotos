@@ -1,13 +1,33 @@
 [
   {
+    "id": "abstract",
+    "name": "Abstract",
+    "description": "Photos built around pattern, texture, line or repetition rather than a recognizable scene."
+  },
+  {
     "id": "architecture",
     "name": "Architecture",
     "description": ""
   },
   {
+    "id": "landscape",
+    "name": "Landscape",
+    "description": "Wide views of natural or open scenery, such as deserts, seas, lakes and mountains."
+  },
+  {
     "id": "macro",
     "name": "Macro",
     "description": ""
+  },
+  {
+    "id": "nature",
+    "name": "Nature",
+    "description": "Close looks at the natural world, such as plants, fungi, moss and forest floors."
+  },
+  {
+    "id": "portrait",
+    "name": "Portrait",
+    "description": "Photos centered on a person, posed or candid, where the subject is the point of the picture."
   },
   {
     "id": "street",
@@ -18,5 +38,10 @@
     "id": "tilt-shift",
     "name": "Tilt-Shift",
     "description": ""
+  },
+  {
+    "id": "wildlife",
+    "name": "Wildlife",
+    "description": "Photos of animals, from birds in the city to creatures in the wild."
   }
 ]

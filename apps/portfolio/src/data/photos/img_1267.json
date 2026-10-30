@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2016:05:22 02:28:30",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Kent Falls State Park",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["river", "water", "stones", "forest", "mountains", "clouds", "trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "near",
+      "id": "kent-falls-state-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["apartments", "windows", "facade", "patterns", "skyscraper", "repetition"],
-  "genres": [],
+  "genres": ["architecture", "abstract"],
   "places": [
     {
       "relation": "",

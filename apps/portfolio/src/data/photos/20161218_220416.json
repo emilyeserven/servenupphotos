@@ -57,7 +57,7 @@
     "storefronts",
     "bicycles"
   ],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

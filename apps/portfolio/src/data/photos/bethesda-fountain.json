@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["fountain", "plaza", "tourists", "pedestrians", "park", "trees", "shadows"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [
     {
       "relation": "",

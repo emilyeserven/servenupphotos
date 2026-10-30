@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["street-art", "posters", "graffiti", "faces", "urban-decay", "walls"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

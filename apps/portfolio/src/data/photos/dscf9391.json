@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:22 15:41:16",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Castle Town",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["stones", "rock-formations", "texture", "details", "crabs"],
+  "tags": ["stones", "rock-formations", "texture", "crabs"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

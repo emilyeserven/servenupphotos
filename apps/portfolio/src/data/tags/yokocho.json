@@ -1,5 +1,6 @@
 {
   "id": "yokocho",
   "name": "yokocho",
-  "description": ""
+  "description": "",
+  "parent": "alley"
 }

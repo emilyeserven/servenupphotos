@@ -1,5 +1,6 @@
 {
   "id": "hangul",
   "name": "hangul",
-  "description": ""
+  "description": "",
+  "parent": "letters"
 }

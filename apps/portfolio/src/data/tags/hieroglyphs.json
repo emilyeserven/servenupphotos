@@ -1,5 +1,6 @@
 {
   "id": "hieroglyphs",
   "name": "hieroglyphs",
-  "description": ""
+  "description": "",
+  "parent": "inscriptions"
 }

@@ -48,16 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "texture",
-    "details",
-    "hieroglyphs",
-    "ancient-egypt",
-    "ruins",
-    "carvings",
-    "inscriptions"
-  ],
-  "genres": [],
+  "tags": ["texture", "hieroglyphs", "ancient-egypt", "ruins", "carvings", "inscriptions"],
+  "genres": ["abstract", "architecture"],
   "places": [
     {
       "relation": "",

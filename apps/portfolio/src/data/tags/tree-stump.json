@@ -1,5 +1,6 @@
 {
   "id": "tree-stump",
   "name": "tree-stump",
-  "description": ""
+  "description": "",
+  "parent": "trees"
 }

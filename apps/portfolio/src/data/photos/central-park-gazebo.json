@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["gazebo", "rustic", "wood", "trees", "park", "bench", "shadows"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [
     {
       "relation": "",

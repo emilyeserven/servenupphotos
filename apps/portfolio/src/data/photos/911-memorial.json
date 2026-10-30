@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["memorial", "remembrance", "flowers", "rose", "monument", "details"],
-  "genres": [],
+  "tags": ["memorial", "remembrance", "flowers", "rose", "monument"],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

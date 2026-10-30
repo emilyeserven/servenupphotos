@@ -2,127 +2,128 @@
   {
     "id": "abandoned",
     "name": "abandoned",
-    "description": ""
+    "description": "places and objects left disused or neglected, slowly overtaken by weeds, weather and decay"
   },
   {
     "id": "acrobatics",
     "name": "acrobatics",
-    "description": ""
+    "description": "flips, balancing acts and other feats of agility and strength, often performed for an audience"
   },
   {
     "id": "aerial-view",
     "name": "aerial-view",
-    "description": ""
+    "description": "scenes seen from high above, such as cities, roads, forests and mountains from a tower, plane or peak"
   },
   {
     "id": "air-conditioners",
     "name": "air-conditioners",
-    "description": ""
+    "description": "air-conditioning units mounted on walls, windows and rooftops, often cluttering building exteriors"
   },
   {
     "id": "alley",
     "name": "alley",
-    "description": ""
+    "description": "narrow lanes and passageways between buildings, often lined with signs, power lines and street art"
   },
   {
     "id": "amphibians",
     "name": "amphibians",
-    "description": ""
+    "description": "frogs, toads, newts, salamanders and other cold-blooded animals that live both in water and on land"
   },
   {
     "id": "ancient-egypt",
     "name": "ancient-egypt",
-    "description": ""
+    "description": "the monuments and remains of pharaonic Egypt, from pyramids and temples to tombs and hieroglyphs"
   },
   {
     "id": "andon",
     "name": "andon",
-    "description": ""
+    "description": "a traditional Japanese lantern of paper stretched over a wooden or bamboo frame",
+    "parent": "lanterns"
   },
   {
     "id": "apartments",
     "name": "apartments",
-    "description": ""
+    "description": "residential buildings divided into many units, often showing repeating windows and balconies"
   },
   {
     "id": "arcade",
     "name": "arcade",
-    "description": ""
+    "description": "a row of arches on columns or piers, often forming a covered walkway along a building"
   },
   {
     "id": "arches",
     "name": "arches",
-    "description": ""
+    "description": "curved structures spanning an opening, found in doorways, windows, bridges and colonnades"
   },
   {
     "id": "art-installation",
     "name": "art-installation",
-    "description": ""
+    "description": "large-scale or site-specific artworks placed in public or gallery spaces, often playful or immersive"
   },
   {
     "id": "artist",
     "name": "artist",
-    "description": ""
+    "description": "painters, sketchers and other artists at work, often creating in streets, parks or studios"
   },
   {
     "id": "attic",
     "name": "attic",
-    "description": ""
+    "description": "the space just under a roof, often showing exposed beams, slanted ceilings and small windows"
   },
   {
     "id": "autumn",
     "name": "autumn",
-    "description": ""
+    "description": "the fall season, with changing red and gold leaves, falling foliage and cooler light"
   },
   {
     "id": "balconies",
     "name": "balconies",
-    "description": ""
+    "description": "platforms projecting from building facades, enclosed by railings, often repeating across apartment blocks"
   },
   {
     "id": "banjos",
     "name": "banjos",
-    "description": ""
+    "description": "stringed instruments with a round drum-like body and long neck, associated with folk and bluegrass music"
   },
   {
     "id": "barn",
     "name": "barn",
-    "description": ""
+    "description": "farm buildings used to house animals, hay, crops or equipment, often built of wood"
   },
   {
     "id": "barnacles",
     "name": "barnacles",
-    "description": ""
+    "description": "small shelled sea creatures that cling in clusters to rocks, piers, hulls and shells"
   },
   {
     "id": "bay-windows",
     "name": "bay-windows",
-    "description": ""
+    "description": "windows projecting outward from a building's wall, forming a bay, common on row houses"
   },
   {
     "id": "beach",
     "name": "beach",
-    "description": ""
+    "description": "sandy or pebbly shores along the sea, with waves, seabirds and washed-up seaweed"
   },
   {
     "id": "beams",
     "name": "beams",
-    "description": ""
+    "description": "exposed structural beams of wood, steel or concrete supporting ceilings, roofs and canopies"
   },
   {
     "id": "bench",
     "name": "bench",
-    "description": ""
+    "description": "benches in parks, streets and plazas, whether occupied by people resting or standing empty"
   },
   {
     "id": "bicycles",
     "name": "bicycles",
-    "description": ""
+    "description": "people riding bicycles, or bicycles parked along sidewalks, racks and storefronts"
   },
   {
     "id": "birds",
     "name": "birds",
-    "description": ""
+    "description": "wild and urban birds perched, foraging or in flight, from seagulls to pigeons"
   },
   {
     "id": "board-games",
@@ -142,7 +143,8 @@
   {
     "id": "bracket-fungi",
     "name": "bracket-fungi",
-    "description": ""
+    "description": "",
+    "parent": "fungi"
   },
   {
     "id": "branches",
@@ -167,7 +169,8 @@
   {
     "id": "buddha",
     "name": "buddha",
-    "description": ""
+    "description": "",
+    "parent": "buddhism"
   },
   {
     "id": "buddhism",
@@ -177,7 +180,8 @@
   {
     "id": "bukeyashiki",
     "name": "bukeyashiki",
-    "description": ""
+    "description": "",
+    "parent": "houses"
   },
   {
     "id": "buoys",
@@ -281,12 +285,14 @@
   {
     "id": "cherry-blossoms",
     "name": "cherry-blossoms",
-    "description": ""
+    "description": "",
+    "parent": "flowers"
   },
   {
     "id": "chess",
     "name": "chess",
-    "description": ""
+    "description": "",
+    "parent": "board-games"
   },
   {
     "id": "children",
@@ -301,7 +307,8 @@
   {
     "id": "chochin",
     "name": "chochin",
-    "description": ""
+    "description": "",
+    "parent": "lanterns"
   },
   {
     "id": "chozuya",
@@ -312,7 +319,8 @@
   {
     "id": "christmas-lights",
     "name": "christmas-lights",
-    "description": ""
+    "description": "",
+    "parent": "string-lights"
   },
   {
     "id": "church",
@@ -407,7 +415,8 @@
   {
     "id": "dancheong",
     "name": "dancheong",
-    "description": ""
+    "description": "",
+    "parent": "patterns"
   },
   {
     "id": "dancing",
@@ -420,14 +429,10 @@
     "description": ""
   },
   {
-    "id": "details",
-    "name": "details",
-    "description": ""
-  },
-  {
     "id": "dobei",
     "name": "dobei",
-    "description": ""
+    "description": "",
+    "parent": "walls"
   },
   {
     "id": "dogs",
@@ -462,7 +467,8 @@
   {
     "id": "ducks",
     "name": "ducks",
-    "description": ""
+    "description": "",
+    "parent": "birds"
   },
   {
     "id": "elderly",
@@ -523,7 +529,8 @@
   {
     "id": "fire-escape",
     "name": "fire-escape",
-    "description": ""
+    "description": "",
+    "parent": "stairs"
   },
   {
     "id": "fire-hydrant",
@@ -543,7 +550,8 @@
   {
     "id": "flowers",
     "name": "flowers",
-    "description": ""
+    "description": "",
+    "parent": "plants"
   },
   {
     "id": "fog",
@@ -558,7 +566,8 @@
   {
     "id": "footbridge",
     "name": "footbridge",
-    "description": ""
+    "description": "",
+    "parent": "bridge"
   },
   {
     "id": "forest",
@@ -578,7 +587,8 @@
   {
     "id": "fusuma",
     "name": "fusuma",
-    "description": ""
+    "description": "",
+    "parent": "doors"
   },
   {
     "id": "garden",
@@ -593,22 +603,26 @@
   {
     "id": "gazebo",
     "name": "gazebo",
-    "description": ""
+    "description": "",
+    "parent": "pavilion"
   },
   {
     "id": "gears",
     "name": "gears",
-    "description": ""
+    "description": "",
+    "parent": "machinery"
   },
   {
     "id": "geese",
     "name": "geese",
-    "description": ""
+    "description": "",
+    "parent": "birds"
   },
   {
     "id": "ginkgo",
     "name": "ginkgo",
-    "description": ""
+    "description": "",
+    "parent": "trees"
   },
   {
     "id": "girih",
@@ -619,7 +633,8 @@
   {
     "id": "giwa",
     "name": "giwa",
-    "description": ""
+    "description": "",
+    "parent": "shingles"
   },
   {
     "id": "glass",
@@ -629,7 +644,8 @@
   {
     "id": "goats",
     "name": "goats",
-    "description": ""
+    "description": "",
+    "parent": "farm-animals"
   },
   {
     "id": "grachtenpand",
@@ -640,7 +656,8 @@
   {
     "id": "graffiti",
     "name": "graffiti",
-    "description": ""
+    "description": "",
+    "parent": "street-art"
   },
   {
     "id": "grass",
@@ -667,7 +684,8 @@
   {
     "id": "hangul",
     "name": "hangul",
-    "description": ""
+    "description": "",
+    "parent": "letters"
   },
   {
     "id": "hanja",
@@ -678,7 +696,8 @@
   {
     "id": "hanok",
     "name": "hanok",
-    "description": ""
+    "description": "",
+    "parent": "houses"
   },
   {
     "id": "harbor",
@@ -703,12 +722,14 @@
   {
     "id": "herons",
     "name": "herons",
-    "description": ""
+    "description": "",
+    "parent": "birds"
   },
   {
     "id": "hieroglyphs",
     "name": "hieroglyphs",
-    "description": ""
+    "description": "",
+    "parent": "inscriptions"
   },
   {
     "id": "highway",
@@ -718,7 +739,8 @@
   {
     "id": "hiking-trail",
     "name": "hiking-trail",
-    "description": ""
+    "description": "",
+    "parent": "path"
   },
   {
     "id": "horse",
@@ -748,7 +770,8 @@
   {
     "id": "hypostyle",
     "name": "hypostyle",
-    "description": ""
+    "description": "",
+    "parent": "columns"
   },
   {
     "id": "ice-cream",
@@ -763,12 +786,14 @@
   {
     "id": "icicles",
     "name": "icicles",
-    "description": ""
+    "description": "",
+    "parent": "ice"
   },
   {
     "id": "iguanas",
     "name": "iguanas",
-    "description": ""
+    "description": "",
+    "parent": "lizards"
   },
   {
     "id": "inscriptions",
@@ -798,7 +823,8 @@
   {
     "id": "ivy",
     "name": "ivy",
-    "description": ""
+    "description": "",
+    "parent": "plants"
   },
   {
     "id": "japsang",
@@ -835,7 +861,8 @@
   {
     "id": "katomado",
     "name": "katomado",
-    "description": ""
+    "description": "",
+    "parent": "windows"
   },
   {
     "id": "kawara",
@@ -887,12 +914,14 @@
   {
     "id": "lizards",
     "name": "lizards",
-    "description": ""
+    "description": "",
+    "parent": "reptiles"
   },
   {
     "id": "love-locks",
     "name": "love-locks",
-    "description": "padlocks that couples fasten to bridges, fences or railings as a symbol of lasting love"
+    "description": "padlocks that couples fasten to bridges, fences or railings as a symbol of lasting love",
+    "parent": "padlocks"
   },
   {
     "id": "lunar-new-year",
@@ -907,7 +936,8 @@
   {
     "id": "machiya",
     "name": "machiya",
-    "description": ""
+    "description": "",
+    "parent": "houses"
   },
   {
     "id": "manhole-cover",
@@ -948,7 +978,8 @@
   {
     "id": "minaret",
     "name": "minaret",
-    "description": ""
+    "description": "",
+    "parent": "mosque"
   },
   {
     "id": "minimalism",
@@ -994,7 +1025,8 @@
   {
     "id": "moss",
     "name": "moss",
-    "description": ""
+    "description": "",
+    "parent": "plants"
   },
   {
     "id": "motion-blur",
@@ -1019,7 +1051,8 @@
   {
     "id": "mural",
     "name": "mural",
-    "description": ""
+    "description": "",
+    "parent": "street-art"
   },
   {
     "id": "museum",
@@ -1029,7 +1062,8 @@
   {
     "id": "mushrooms",
     "name": "mushrooms",
-    "description": ""
+    "description": "",
+    "parent": "fungi"
   },
   {
     "id": "musicians",
@@ -1039,7 +1073,8 @@
   {
     "id": "necropolis",
     "name": "necropolis",
-    "description": ""
+    "description": "",
+    "parent": "cemetery"
   },
   {
     "id": "neon",
@@ -1054,7 +1089,8 @@
   {
     "id": "newts",
     "name": "newts",
-    "description": ""
+    "description": "",
+    "parent": "amphibians"
   },
   {
     "id": "night",
@@ -1080,7 +1116,8 @@
   {
     "id": "oasis",
     "name": "oasis",
-    "description": ""
+    "description": "",
+    "parent": "desert"
   },
   {
     "id": "observation-tower",
@@ -1095,7 +1132,8 @@
   {
     "id": "oculus",
     "name": "oculus",
-    "description": ""
+    "description": "",
+    "parent": "skylight"
   },
   {
     "id": "office-building",
@@ -1125,7 +1163,8 @@
   {
     "id": "pagoda",
     "name": "pagoda",
-    "description": ""
+    "description": "",
+    "parent": "temple"
   },
   {
     "id": "palace",
@@ -1135,7 +1174,8 @@
   {
     "id": "palm-trees",
     "name": "palm-trees",
-    "description": ""
+    "description": "",
+    "parent": "trees"
   },
   {
     "id": "parade",
@@ -1190,7 +1230,8 @@
   {
     "id": "pigeons",
     "name": "pigeons",
-    "description": ""
+    "description": "",
+    "parent": "birds"
   },
   {
     "id": "pilings",
@@ -1200,7 +1241,8 @@
   {
     "id": "pine-trees",
     "name": "pine-trees",
-    "description": ""
+    "description": "",
+    "parent": "trees"
   },
   {
     "id": "planter",
@@ -1215,7 +1257,8 @@
   {
     "id": "platform",
     "name": "platform",
-    "description": ""
+    "description": "",
+    "parent": "train-station"
   },
   {
     "id": "plaza",
@@ -1363,7 +1406,8 @@
   {
     "id": "rose",
     "name": "rose",
-    "description": ""
+    "description": "",
+    "parent": "flowers"
   },
   {
     "id": "ruins",
@@ -1383,7 +1427,8 @@
   {
     "id": "sailboats",
     "name": "sailboats",
-    "description": ""
+    "description": "",
+    "parent": "boats"
   },
   {
     "id": "sand",
@@ -1393,7 +1438,8 @@
   {
     "id": "sando",
     "name": "sando",
-    "description": ""
+    "description": "",
+    "parent": "path"
   },
   {
     "id": "scaffolding",
@@ -1413,12 +1459,14 @@
   {
     "id": "sea-glass",
     "name": "sea-glass",
-    "description": ""
+    "description": "",
+    "parent": "glass"
   },
   {
     "id": "seagulls",
     "name": "seagulls",
-    "description": ""
+    "description": "",
+    "parent": "birds"
   },
   {
     "id": "seaweed",
@@ -1449,12 +1497,14 @@
   {
     "id": "shide",
     "name": "shide",
-    "description": ""
+    "description": "",
+    "parent": "shrine"
   },
   {
     "id": "shimenawa",
     "name": "shimenawa",
-    "description": ""
+    "description": "",
+    "parent": "shrine"
   },
   {
     "id": "shinbutsu-shugo",
@@ -1509,7 +1559,8 @@
   {
     "id": "signpost",
     "name": "signpost",
-    "description": ""
+    "description": "",
+    "parent": "signage"
   },
   {
     "id": "silhouettes",
@@ -1539,7 +1590,8 @@
   {
     "id": "snakes",
     "name": "snakes",
-    "description": ""
+    "description": "",
+    "parent": "reptiles"
   },
   {
     "id": "snow",
@@ -1549,7 +1601,8 @@
   {
     "id": "snowman",
     "name": "snowman",
-    "description": ""
+    "description": "",
+    "parent": "snow"
   },
   {
     "id": "splash",
@@ -1564,7 +1617,8 @@
   {
     "id": "stained-glass",
     "name": "stained-glass",
-    "description": ""
+    "description": "",
+    "parent": "glass"
   },
   {
     "id": "stairs",
@@ -1584,7 +1638,8 @@
   {
     "id": "statue",
     "name": "statue",
-    "description": ""
+    "description": "",
+    "parent": "sculpture"
   },
   {
     "id": "steel",
@@ -1594,7 +1649,8 @@
   {
     "id": "steeple",
     "name": "steeple",
-    "description": ""
+    "description": "",
+    "parent": "church"
   },
   {
     "id": "stickers",
@@ -1669,7 +1725,8 @@
   {
     "id": "suspension-cables",
     "name": "suspension-cables",
-    "description": ""
+    "description": "",
+    "parent": "cables"
   },
   {
     "id": "swimming",
@@ -1689,7 +1746,8 @@
   {
     "id": "tall-grass",
     "name": "tall-grass",
-    "description": ""
+    "description": "",
+    "parent": "grass"
   },
   {
     "id": "tatami",
@@ -1704,7 +1762,8 @@
   {
     "id": "tenshu",
     "name": "tenshu",
-    "description": ""
+    "description": "",
+    "parent": "castle"
   },
   {
     "id": "texture",
@@ -1720,17 +1779,20 @@
   {
     "id": "topiary",
     "name": "topiary",
-    "description": ""
+    "description": "",
+    "parent": "garden"
   },
   {
     "id": "torii",
     "name": "torii",
-    "description": ""
+    "description": "",
+    "parent": "shrine"
   },
   {
     "id": "toro",
     "name": "toro",
-    "description": ""
+    "description": "",
+    "parent": "lanterns"
   },
   {
     "id": "tourists",
@@ -1771,7 +1833,8 @@
   {
     "id": "tree-stump",
     "name": "tree-stump",
-    "description": ""
+    "description": "",
+    "parent": "trees"
   },
   {
     "id": "trees",
@@ -1821,7 +1884,8 @@
   {
     "id": "vintage-cars",
     "name": "vintage-cars",
-    "description": ""
+    "description": "",
+    "parent": "cars"
   },
   {
     "id": "vintage",
@@ -1852,12 +1916,14 @@
   {
     "id": "wanman",
     "name": "wanman",
-    "description": ""
+    "description": "",
+    "parent": "train"
   },
   {
     "id": "washitsu",
     "name": "washitsu",
-    "description": ""
+    "description": "",
+    "parent": "interior"
   },
   {
     "id": "water",
@@ -1907,11 +1973,13 @@
   {
     "id": "yeondeung",
     "name": "yeondeung",
-    "description": ""
+    "description": "",
+    "parent": "lanterns"
   },
   {
     "id": "yokocho",
     "name": "yokocho",
-    "description": ""
+    "description": "",
+    "parent": "alley"
   }
 ]

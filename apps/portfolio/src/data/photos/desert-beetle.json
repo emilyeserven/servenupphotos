@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:24 14:27:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Wadi El-Hitan",
   "customCity": "Wadi El-Hitan",
   "customState": null,
   "customCountry": null,
@@ -59,7 +59,12 @@
     "clouds"
   ],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "wadi-el-hitan"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

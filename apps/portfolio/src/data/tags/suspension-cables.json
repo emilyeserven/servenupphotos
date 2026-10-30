@@ -1,5 +1,6 @@
 {
   "id": "suspension-cables",
   "name": "suspension-cables",
-  "description": ""
+  "description": "",
+  "parent": "cables"
 }

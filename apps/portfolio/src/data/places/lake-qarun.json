@@ -1,0 +1,12 @@
+{
+  "id": "lake-qarun",
+  "name": "Lake Qarun",
+  "description": "",
+  "parent": "",
+  "city": "Sinnuris",
+  "state": "Faiyum",
+  "country": "Egypt",
+  "latitude": 29.471053,
+  "longitude": 30.745306,
+  "exactLocation": true
+}

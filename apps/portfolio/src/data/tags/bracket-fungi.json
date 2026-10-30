@@ -1,5 +1,6 @@
 {
   "id": "bracket-fungi",
   "name": "bracket-fungi",
-  "description": ""
+  "description": "",
+  "parent": "fungi"
 }

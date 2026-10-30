@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["street-art", "graffiti", "hearts", "stickers", "typography", "minimalism"],
-  "genres": [],
+  "genres": ["street", "abstract"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

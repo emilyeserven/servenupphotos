@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:07:04 13:49:45",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Cathedral of St. Michael and St. Gudula",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["doors", "door-knocker", "details", "carvings", "wood", "patterns"],
-  "genres": [],
-  "places": [],
+  "tags": ["doors", "door-knocker", "carvings", "wood", "patterns"],
+  "genres": ["architecture", "abstract"],
+  "places": [
+    {
+      "relation": "near",
+      "id": "cathedral-of-st-michael-and-st-gudula"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

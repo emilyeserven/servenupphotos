@@ -1,5 +1,6 @@
 {
   "id": "andon",
   "name": "andon",
-  "description": ""
+  "description": "a traditional Japanese lantern of paper stretched over a wooden or bamboo frame",
+  "parent": "lanterns"
 }

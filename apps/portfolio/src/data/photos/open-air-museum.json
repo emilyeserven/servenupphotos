@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:25 15:59:48",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Qasr el-Sagha",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["ancient-egypt", "ruins", "desert", "tourists", "clouds", "dogs"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "qasr-el-sagha"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

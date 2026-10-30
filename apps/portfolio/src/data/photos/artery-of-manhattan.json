@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["railway", "train", "city", "cars", "trees", "walls", "lamppost"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

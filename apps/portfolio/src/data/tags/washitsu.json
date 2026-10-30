@@ -1,5 +1,6 @@
 {
   "id": "washitsu",
   "name": "washitsu",
-  "description": ""
+  "description": "",
+  "parent": "interior"
 }

@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2019:07:16 11:17:39",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Nantucket Harbor",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["harbor", "boats", "pier", "water", "reflections", "houses", "shingles"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "nantucket-harbor"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

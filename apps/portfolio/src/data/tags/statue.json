@@ -1,5 +1,6 @@
 {
   "id": "statue",
   "name": "statue",
-  "description": ""
+  "description": "",
+  "parent": "sculpture"
 }

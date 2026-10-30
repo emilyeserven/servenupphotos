@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["silhouettes", "windows", "river", "skyline", "interior", "lamps", "skyscraper"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [
     {
       "relation": "",

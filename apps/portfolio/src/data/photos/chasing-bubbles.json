@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["bubbles", "children", "street-performer", "tourists", "park", "arches"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",
