@@ -10,12 +10,12 @@ import {
   organizeQuery,
   savedGroups,
 } from "@/api/organize";
-import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 import { DraftMark } from "@/components/draft-mark";
 import { ReEditMark } from "@/components/re-edit-card";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { PlaceGpsMark } from "@/components/gallery/place-filter";
 import { Button } from "@/components/ui/button";
+import { squareImages } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";
 import {
   type Selection,
@@ -262,15 +262,17 @@ function SquareTile({
           className,
         )}
       >
-        <img
-          src={urls.preview}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          // Photos uploaded before Thumbnail Previews don't have one, so it hides itself.
-          onError={(e) => (e.currentTarget.hidden = true)}
-          className="absolute inset-0 size-full scale-110 object-cover blur-md"
-        />
+        {urls.preview && (
+          <img
+            src={urls.preview}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            // Photos uploaded before Thumbnail Previews don't have one, so it hides itself.
+            onError={(e) => (e.currentTarget.hidden = true)}
+            className="absolute inset-0 size-full scale-110 object-cover blur-md"
+          />
+        )}
         <img
           src={urls.square}
           alt={name}
@@ -313,19 +315,11 @@ function MissingTile() {
 }
 
 /**
- * The tile's Square Thumbnail and Thumbnail Preview, as saved in the photo's JSON or else next to
- * its image in R2, and the image itself; undefined without an image in R2.
+ * The tile's Square Thumbnail and Thumbnail Preview from the offline copy, as saved in the photo's
+ * JSON or else next to its image in R2, and the image itself; undefined without an image in R2.
  */
 function tileUrls(file: PublishedFile, imageUrl?: string) {
   if (!imageUrl) return undefined;
-  return {
-    square: savedImageUrl(file, "thumbnail") ?? squareThumbnailUrl(imageUrl),
-    preview: savedImageUrl(file, "thumbnailpreview") ?? thumbnailPreviewUrl(imageUrl),
-    full: imageUrl,
-  };
-}
-
-function savedImageUrl(file: PublishedFile, name: string): string | undefined {
-  const saved = (file.data as { images?: Record<string, unknown> } | undefined)?.images?.[name];
-  return typeof saved === "string" && saved ? saved : undefined;
+  const square = squareImages(fileData(file), imageUrl);
+  return square && { ...square, full: imageUrl };
 }
