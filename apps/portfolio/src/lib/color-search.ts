@@ -1,8 +1,8 @@
-import { parseThreshold } from "@/components/color-match-control";
-import { parseVividness } from "@/components/vividness-control";
-import { type ColorMatch, matchesColor } from "@/lib/color-match";
-import type { ColorOrder, ColorSort, VividMeasure } from "@/lib/color-sort";
-import { COLORS, type ColorName, type ColorShare, isColorName } from "@/lib/photo-colors";
+import { parseThreshold } from "@portfolio/components/color-match-control";
+import { parseVividness } from "@portfolio/components/vividness-control";
+import { type ColorMatch, matchesColor } from "@portfolio/lib/color-match";
+import type { ColorOrder, ColorSort, VividMeasure } from "@portfolio/lib/color-sort";
+import { COLORS, type ColorName, type ColorShare, isColorName } from "@portfolio/lib/photo-colors";
 
 /**
  * The color filters the Color page and the Grid's **Colors** filter keep in the URL, each left out

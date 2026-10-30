@@ -1,7 +1,12 @@
-import { groupAndInside, groupValues, metaGroupById, type MetaGroup } from "@/lib/metadata-groups";
-import type { CameraSettings, Photo } from "@/lib/photos";
-import { filterPhotos, parseFilters } from "@/lib/photo-filters";
-import { inHours } from "@/lib/time-of-day";
+import {
+  groupAndInside,
+  groupValues,
+  metaGroupById,
+  type MetaGroup,
+} from "@portfolio/lib/metadata-groups";
+import type { CameraSettings, Photo } from "@portfolio/lib/photos";
+import { filterPhotos, parseFilters } from "@portfolio/lib/photo-filters";
+import { inHours } from "@portfolio/lib/time-of-day";
 
 /** The camera settings the Table's and Grid's range sliders narrow by, named as they are in the URL. */
 export const RANGE_KEYS = ["iso", "exposure", "focalLength", "aperture"] as const;

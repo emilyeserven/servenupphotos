@@ -6,7 +6,7 @@ import {
   isShade,
   SHADES,
   shareOf,
-} from "@/lib/photo-colors";
+} from "@portfolio/lib/photo-colors";
 
 /**
  * Which way the Color page sorts every photo by color: "asc" from red around the wheel to rose and

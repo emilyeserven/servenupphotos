@@ -1,5 +1,5 @@
-import committedLocalizations from "@/data/localizations/LOCALIZATIONS.json";
-import committedPlaces from "@/data/places/PLACES.json";
+import committedLocalizations from "@portfolio/data/localizations/LOCALIZATIONS.json";
+import committedPlaces from "@portfolio/data/places/PLACES.json";
 
 /**
  * How place, city and country names are written: as named in English, romanized, as they're said

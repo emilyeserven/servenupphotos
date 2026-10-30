@@ -42,30 +42,31 @@ export function usePhotoFilters(prefix?: string) {
   };
 }
 
-/** Sets one filter, or clears it with undefined, or every filter under the prefix with null. */
-function useSetFilter(prefix?: string) {
+/**
+ * Sets one filter, or clears it with undefined, or with null clears every filter under the prefix
+ * and the page's own (`extraParams`).
+ */
+function useSetFilter(prefix?: string, extraParams: readonly string[] = []) {
   const navigate = useNavigate();
   return (key: FilterKey | null, choice?: FilterChoice) =>
     void navigate({
       to: ".",
       search: (prev: Record<string, unknown>) =>
-        key ? { ...prev, [filterParam(key, prefix)]: choice } : withoutFilters(prev, prefix),
+        key
+          ? { ...prev, [filterParam(key, prefix)]: choice }
+          : withoutFilters(prev, filterParams(prefix, extraParams)),
       replace: true,
     });
 }
 
-/**
- * The search params a filter bar keeps filters in: each photo filter's, and the Gallery's
- * `undecided` and place filter; with a prefix, only the photo filters kept under it.
- */
-function filterParams(prefix?: string): string[] {
-  const params = PHOTO_FILTERS.map(({ key }) => filterParam(key, prefix));
-  return prefix ? params : [...params, "undecided", "placeId", "placeGps"];
+/** The search params a filter bar keeps filters in: each photo filter's, and the page's own. */
+function filterParams(prefix: string | undefined, extraParams: readonly string[]): string[] {
+  return [...PHOTO_FILTERS.map(({ key }) => filterParam(key, prefix)), ...extraParams];
 }
 
-/** The search params with every filter under the prefix cleared. */
-function withoutFilters<T extends object>(search: T, prefix?: string): T {
-  return { ...search, ...Object.fromEntries(filterParams(prefix).map((key) => [key, undefined])) };
+/** The search params with the ones named cleared. */
+function withoutFilters<T extends object>(search: T, params: string[]): T {
+  return { ...search, ...Object.fromEntries(params.map((key) => [key, undefined])) };
 }
 
 /**
@@ -79,6 +80,7 @@ export function PhotoFilterBar({
   children,
   hiding,
   extraChosen,
+  extraParams,
   prefix,
 }: {
   filters: PhotoFilters;
@@ -90,10 +92,12 @@ export function PhotoFilterBar({
   hiding?: boolean;
   /** Whether one of `children`'s filters is changed from where it starts, so Clear has work. */
   extraChosen?: boolean;
+  /** The search params the page's own filters are kept in, which Clear clears too. */
+  extraParams?: readonly string[];
   /** The prefix its filters are kept under in the URL, as given to `usePhotoFilters`. */
   prefix?: string;
 }) {
-  const setFilter = useSetFilter(prefix);
+  const setFilter = useSetFilter(prefix, extraParams);
   if (total === 0) return null;
   return (
     <Card className="py-4">

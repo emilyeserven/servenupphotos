@@ -38,11 +38,29 @@ import {
   parsePlaceSearch,
   usePlaceFilter,
 } from "@/components/gallery/place-filter";
-import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
+import {
+  type GridFilters,
+  GRID_FILTER_PARAMS,
+  GridFilterBar,
+  parseGridFilters,
+  useGridFilters,
+} from "@/components/gallery/grid-filters";
+import { prefixedFilters } from "@/lib/photo-filters";
 import { type Selection, fileName, photoName } from "@/components/gallery/published-file";
 import { OfflineNotice } from "@/components/offline-notice";
 
-interface GallerySearch extends PhotoFilters, PlaceSearch {
+/**
+ * The prefix of the Gallery's With and Without filters in the URL, such as `?hasTitle=without`, so
+ * they don't clash with the portfolio Grid's filters, such as `?place=<id>`.
+ */
+const HAS_FILTERS = "has";
+
+/** The search params of the Gallery's own filters besides the With and Without ones. */
+const GALLERY_FILTER_PARAMS = ["undecided", "placeId", "placeGps", ...GRID_FILTER_PARAMS];
+
+type GallerySearch = GalleryOwnSearch & GridFilters;
+
+interface GalleryOwnSearch extends PlaceSearch {
   /** Whether Undecided photos are shown too, or only they are; hidden when left out. */
   undecided?: UndecidedChoice;
   /** Sorts by when each photo was added to the portfolio; by when it was taken when left out. */
@@ -53,7 +71,8 @@ export const Route = createFileRoute("/gallery")({
   component: GalleryPage,
   staticData: { wide: true },
   validateSearch: (search: Record<string, unknown>): GallerySearch => ({
-    ...parseFilters(search),
+    ...prefixedFilters(search, HAS_FILTERS),
+    ...parseGridFilters(search),
     ...parsePlaceSearch(search),
     undecided: parseUndecided(search),
     sort: parseGallerySort(search),
@@ -95,7 +114,8 @@ function PublishedPhotos() {
   const published = useQuery(publishedPhotosQuery);
   const [filter, setFilter] = useState("");
   const selection = useSelection();
-  const { shown, total, filters, undecided, sort, place } = useShownFiles(published.data, filter);
+  const files = useShownFiles(published.data, filter);
+  const { shown } = files;
   return (
     <>
       <GalleryHeader
@@ -105,17 +125,7 @@ function PublishedPhotos() {
         selecting={selection.selected !== null}
         onSelectingChange={selection.toggleSelecting}
       />
-      <PhotoFilterBar
-        filters={filters}
-        shown={shown.length}
-        total={total}
-        hiding={shown.length < total}
-        extraChosen={undecided !== undefined || place.placeId !== undefined}
-      >
-        <PlaceFilterToggles filter={place} />
-        <UndecidedToggle choice={undecided} />
-        <GallerySortToggle sort={sort} />
-      </PhotoFilterBar>
+      <GalleryFilters files={files} />
       {selection.selected && published.data && (
         <BulkGroupsCard
           files={published.data.files}
@@ -140,18 +150,65 @@ function PublishedPhotos() {
 }
 
 /**
- * The photos that match the search text, the filters and the place chosen, in the URL's sort, out
- * of how many there are.
+ * The Gallery's filters: its With and Without ones with its place, Undecided and sort, then the
+ * portfolio Grid's.
+ */
+function GalleryFilters({ files }: { files: ShownFiles }) {
+  const { shown, total, filters, undecided, sort, place, grid } = files;
+  return (
+    <>
+      <PhotoFilterBar
+        filters={filters}
+        shown={shown.length}
+        total={total}
+        hiding={shown.length < total}
+        extraChosen={files.extraChosen}
+        extraParams={GALLERY_FILTER_PARAMS}
+        prefix={HAS_FILTERS}
+      >
+        <PlaceFilterToggles filter={place} />
+        <UndecidedToggle choice={undecided} />
+        <GallerySortToggle sort={sort} />
+      </PhotoFilterBar>
+      <GridFilterBar photos={grid.photos} />
+    </>
+  );
+}
+
+const NO_FILES: PublishedFile[] = [];
+
+type ShownFiles = ReturnType<typeof useShownFiles>;
+
+/** Whether one of the Gallery's filters besides the With and Without ones is set. */
+function otherChosen(undecided: unknown, placeId: unknown, gridCount: number): boolean {
+  return undecided !== undefined || placeId !== undefined || gridCount > 0;
+}
+
+/**
+ * The photos that match the search text, the filters, the place chosen and the portfolio Grid's
+ * filters, in the URL's sort, out of how many there are. The Grid filters' counts are out of what
+ * the others leave.
  */
 function useShownFiles(data: PublishedResponse | undefined, filter: string) {
-  const { filters, filter: applyFilters } = usePhotoFilters();
+  const { filters, filter: applyFilters } = usePhotoFilters(HAS_FILTERS);
   const { choice: undecided, apply: applyUndecided } = useUndecidedFilter();
   const sort = useSearch({ from: "/gallery", select: parseGallerySort });
   const place = usePlaceFilter();
-  const base = { filters, undecided, sort, place };
-  if (!data) return { ...base, shown: [], total: 0 };
-  const shown = place.apply(applyUndecided(applyFilters(shownFiles(data, filter, sort))));
-  return { ...base, shown, total: data.files.length };
+  const all = data?.files ?? NO_FILES;
+  const grid = useGridFilters(
+    all,
+    place.apply(applyUndecided(applyFilters(shownFiles(all, filter, sort)))),
+  );
+  return {
+    filters,
+    undecided,
+    sort,
+    place,
+    grid,
+    extraChosen: otherChosen(undecided, place.placeId, grid.count),
+    shown: grid.shown,
+    total: all.length,
+  };
 }
 
 /** The photos chosen to add albums and tags to, and turning choosing them on and off. */
@@ -256,11 +313,11 @@ function SelectButton({
 
 /** The photos to show, in sort, that match filter. */
 function shownFiles(
-  data: PublishedResponse,
+  files: PublishedFile[],
   filter: string,
   sort: GallerySort | undefined,
 ): PublishedFile[] {
-  return sortGallery(data.files, sort).filter((file) => matches(file, filter));
+  return sortGallery(files, sort).filter((file) => matches(file, filter));
 }
 
 /**

@@ -9,19 +9,19 @@ import {
   X,
 } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
-import { ClearFilterButton } from "@/components/clear-filter-button";
-import { hiddenText } from "@/components/hidden-note";
-import { MoreFilters } from "@/components/more-filters";
-import { PlacesFilter } from "@/components/places-filter";
-import { useScriptDisplay } from "@/components/script-display-provider";
-import { Button } from "@/components/ui/button";
+import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
+import { hiddenText } from "@portfolio/components/hidden-note";
+import { MoreFilters } from "@portfolio/components/more-filters";
+import { PlacesFilter } from "@portfolio/components/places-filter";
+import { useScriptDisplay } from "@portfolio/components/script-display-provider";
+import { Button } from "@portfolio/components/ui/button";
 import {
   albumOptions,
   type FilterOption,
   genreOptions,
   locationOptions,
   tagOptions,
-} from "@/lib/filter-options";
+} from "@portfolio/lib/filter-options";
 import {
   FILTER_KEYS,
   filterCount,
@@ -33,9 +33,9 @@ import {
   parseFilters,
   type PhotoFilters,
   withoutFilters,
-} from "@/lib/photo-filters";
-import type { Photo } from "@/lib/photos";
-import { cn } from "@/lib/utils";
+} from "@portfolio/lib/photo-filters";
+import type { Photo } from "@portfolio/lib/photos";
+import { cn } from "@portfolio/lib/utils";
 
 /** The filters in the current URL, for any portfolio view. */
 function useFilters(): PhotoFilters {

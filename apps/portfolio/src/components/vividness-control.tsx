@@ -1,7 +1,11 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { parseSliderValue, SearchSlider, type SliderRange } from "@/components/search-slider";
-import type { VividMeasure } from "@/lib/color-sort";
-import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
+import {
+  parseSliderValue,
+  SearchSlider,
+  type SliderRange,
+} from "@portfolio/components/search-slider";
+import type { VividMeasure } from "@portfolio/lib/color-sort";
+import { CONTROL_FRAME, controlButtonClass } from "@portfolio/lib/segmented-control";
 
 /**
  * The vividness a photo can be asked to have at least, from 0 (any photo) up, in CIELAB chroma:

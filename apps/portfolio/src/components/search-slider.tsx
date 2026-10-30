@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Slider } from "@/components/ui/slider";
+import { Slider } from "@portfolio/components/ui/slider";
 
 /** The range a slider kept in the URL can be set in: its least, its most, and the step between. */
 export interface SliderRange {

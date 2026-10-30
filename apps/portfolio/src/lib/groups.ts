@@ -1,7 +1,7 @@
-import committedAlbums from "@/data/albums/ALLALBUMS.json";
-import committedGenres from "@/data/genres/ALLGENRES.json";
-import committedTags from "@/data/tags/ALLTAGS.json";
-import { localFile } from "@/lib/localize";
+import committedAlbums from "@portfolio/data/albums/ALLALBUMS.json";
+import committedGenres from "@portfolio/data/genres/ALLGENRES.json";
+import committedTags from "@portfolio/data/tags/ALLTAGS.json";
+import { localFile } from "@portfolio/lib/localize";
 
 /** An album, tag or genre from ALLALBUMS.json, ALLTAGS.json or ALLGENRES.json, which photos list by ID. */
 export interface Group {

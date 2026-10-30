@@ -1,10 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { ClearFilterButton } from "@/components/clear-filter-button";
-import { ColorFilter } from "@/components/color-filter";
-import { ColorMatchControl } from "@/components/color-match-control";
-import { VividnessControl } from "@/components/vividness-control";
+import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
+import { ColorFilter } from "@portfolio/components/color-filter";
+import { ColorMatchControl } from "@portfolio/components/color-match-control";
+import { VividnessControl } from "@portfolio/components/vividness-control";
 import {
   COLOR_FILTER_KEYS,
   type ColorFilters,
@@ -13,10 +13,10 @@ import {
   DEFAULT_PERCENT,
   matchOf,
   vividEnough,
-} from "@/lib/color-search";
-import { colorLabel } from "@/lib/photo-colors";
-import type { Photo } from "@/lib/photos";
-import { cn } from "@/lib/utils";
+} from "@portfolio/lib/color-search";
+import { colorLabel } from "@portfolio/lib/photo-colors";
+import type { Photo } from "@portfolio/lib/photos";
+import { cn } from "@portfolio/lib/utils";
 
 /**
  * The Grid's **Colors** filter, in its filter panel beside the camera sliders and the same size as

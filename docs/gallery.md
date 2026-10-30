@@ -3,7 +3,8 @@
 `/gallery` shows the photos already in the portfolio: every photo `.json` on the base branch (`GET /api/photos/published`
 → `GET /photos/published`), newest first, as Square Thumbnail tiles (from the [offline copy](offline-mode.md)) with their title and file name, filterable by
 either and by the same **Title**, **Place**, **GPS position**, **Albums**, **Tags**, **Genres** and **Re-edit mark** filters as
-[Photos in Flight](photos-in-flight.md#filters), kept in the URL too. [Undecided](photos-in-flight.md#undecided) photos are hidden
+[Photos in Flight](photos-in-flight.md#filters), kept in the URL with a `has` prefix (`?hasTitle=without`,
+`?hasPlace=with`) so they don't clash with the [portfolio Grid's filters](#the-portfolio-grids-filters) below them. [Undecided](photos-in-flight.md#undecided) photos are hidden
 until the **Undecided** filter is changed from **Hidden** to **Shown** (with the rest) or **Only** (`?undecided=show` or
 `?undecided=only`); the count under the filters says how many are shown while any are hidden. **Sort** beside it
 switches from **Date taken** (newest first) to **Date added** (`?sort=added`): the photos most recently added to the
@@ -11,6 +12,30 @@ portfolio first, by their [`addedDate`](data-model.md#date-added), then the ones
 linked to Photos in Flight. A photo with no title on the base branch is a [draft](drafts.md), listed here but marked
 **Draft**, since `ALLPHOTOS.json` leaves it out. The list is read from the photos folder rather than `ALLPHOTOS.json`, since editing needs
 each photo's file path, which `ALLPHOTOS.json` entries don't carry.
+
+### The portfolio Grid's filters
+
+Under those, **Show filters** opens the same filters as the portfolio's [Grid and Table](portfolio-filters.md):
+**Places** (any number of countries, cities and places), **Album**, **Tag** and **Genre**, **Camera** and **Lens** (with
+their metadata groups), the **ISO**, **Exposure**, **Focal length**, **Aperture** and **Time of day** sliders, and
+**Colors**, kept in the URL under the portfolio's own names (`?album=`, `?camera=`, `?color=`, …), so a filtered Grid
+link's search works here too. Each choice counts the photos the Gallery's other filters leave, and the Gallery's
+**Clear filters** clears these as well.
+
+They're the portfolio's own code, not a copy: the Gallery imports `CameraFilterBar` and `GridColorFilters` from
+`apps/portfolio/src` through the `@portfolio/*` alias (in both apps' `tsconfig.json` and `vite.config.ts`), and reads
+each photo's JSON (with local edits) with the portfolio's `photosFromData`. The files those import each other with
+`@portfolio/` rather than `@/`, since `@/` means a different folder in each app; a new import in one of them must do the
+same. A photo with no date can't be placed in time by the portfolio, so it's hidden while any of these is set.
+
+The choices the dropdowns and sliders list (albums, tags, cameras, setting ranges, metadata groups, places) come from
+the photo data in this clone when the pipeline was built, the `.local.json` files `pnpm photos:local` makes or else the
+committed JSON, the same way the portfolio gets them; the counts and the filtering use the Gallery's live photos. An
+album or camera that's only in GitHub shows up once the clone has it.
+
+> **Frontend analogy:** it's like importing a component from a sibling package in a monorepo without publishing it:
+> the alias points both apps at the same source files, and Vite's `resolve.dedupe` makes them share one React and one
+> TanStack Router.
 
 ### A place's photos
 

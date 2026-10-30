@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { ClearFilterButton } from "@/components/clear-filter-button";
-import { type RangePreset, RangePresets } from "@/components/range-presets";
-import { Slider } from "@/components/ui/slider";
-import { parseRange } from "@/lib/camera-filters";
+import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
+import { type RangePreset, RangePresets } from "@portfolio/components/range-presets";
+import { Slider } from "@portfolio/components/ui/slider";
+import { parseRange } from "@portfolio/lib/camera-filters";
 /** The value's position among the values, or `fallback` when it isn't one of them. */
 function positionOf(values: string[], value: string | undefined, fallback: number): number {
   const at = value === undefined ? -1 : values.indexOf(value);

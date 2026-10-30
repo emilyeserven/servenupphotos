@@ -1,4 +1,4 @@
-import type { Photo } from "@/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 
 /**
  * Minutes since midnight when the photo was taken, by the clock where it was taken, since its

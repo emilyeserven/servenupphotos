@@ -1,5 +1,5 @@
-import { albumAndSubAlbums, tagAndSubTags } from "@/lib/groups";
-import type { Photo } from "@/lib/photos";
+import { albumAndSubAlbums, tagAndSubTags } from "@portfolio/lib/groups";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** The location filter's keys: countries, cities (by their English names) and places (by their IDs). */
 export const LOCATION_KEYS = ["country", "state", "city", "place"] as const;

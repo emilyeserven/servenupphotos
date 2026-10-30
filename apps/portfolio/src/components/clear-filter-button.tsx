@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@portfolio/lib/utils";
 
 /**
  * A small X button clearing one filter, set inside that filter's border, to the right of its
