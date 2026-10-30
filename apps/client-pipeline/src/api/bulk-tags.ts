@@ -74,7 +74,8 @@ interface BulkTagsResult extends PendingSave {
   photos: number;
 }
 
-function post<T>(url: string, body: unknown) {
+/** Posts `body` as JSON to `url` and reads the JSON answer. */
+export function postJson<T>(url: string, body: unknown) {
   return requestJson<T>(url, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -86,20 +87,23 @@ function post<T>(url: string, body: unknown) {
 export const pickBulkTagPhotosMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "pick"],
   mutationFn: (body: { skip: string[]; count: number }) =>
-    post<BulkTagPick>("/api/data/bulk-tags/pick", body),
+    postJson<BulkTagPick>("/api/data/bulk-tags/pick", body),
 });
 
 /** Reads the LLM's pasted answer for the picked photos and says what it would add, saving nothing. */
 export const previewBulkTagsMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "preview"],
   mutationFn: (body: { paths: string[]; answer: string }) =>
-    post<BulkTagsPreview>("/api/data/bulk-tags/preview", body),
+    postJson<BulkTagsPreview>("/api/data/bulk-tags/preview", body),
 });
 
-/** The tag and photo files a Bulk Tagging save changed, as changes over the combined lists. */
-function bulkTagChanges(result: BulkTagsResult) {
+/**
+ * The album or tag files (`kind`'s) and photo files a save changed, as changes over the combined
+ * lists.
+ */
+export function groupAndPhotoChanges(result: PendingSave, kind: "albums" | "tags") {
   return result.changes.map((change) => ({
-    kind: change.path.includes("/tags/") ? ("tags" as const) : ("photos" as const),
+    kind: change.path.includes(`/${kind}/`) ? kind : ("photos" as const),
     ...change,
   }));
 }
@@ -107,6 +111,6 @@ function bulkTagChanges(result: BulkTagsResult) {
 /** Makes the new tags and adds the tags to each photo, as changes waiting for Commit. */
 export const applyBulkTagsMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "apply"],
-  meta: { saves: true, changes: (result) => bulkTagChanges(result as BulkTagsResult) },
-  mutationFn: (bulk: BulkTags) => post<BulkTagsResult>("/api/data/bulk-tags", bulk),
+  meta: { saves: true, changes: (result) => groupAndPhotoChanges(result as PendingSave, "tags") },
+  mutationFn: (bulk: BulkTags) => postJson<BulkTagsResult>("/api/data/bulk-tags", bulk),
 });

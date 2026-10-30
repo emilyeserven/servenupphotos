@@ -29,17 +29,27 @@ type bulkTagAnswer struct {
 // may be inside a code block or have words around it.
 func parseBulkTagAnswer(text string) (bulkTagAnswer, *PublishError) {
 	var answer bulkTagAnswer
-	start, end := strings.Index(text, "{"), strings.LastIndex(text, "}")
-	if start < 0 || end < start {
-		return answer, publishErr(http.StatusBadRequest, "Paste the LLM's whole answer: the JSON object it wrote, from { to }.")
-	}
-	if err := json.Unmarshal([]byte(text[start:end+1]), &answer); err != nil {
-		return answer, publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
+	if perr := readAnswerJSON(text, &answer); perr != nil {
+		return answer, perr
 	}
 	if len(answer.Photos) == 0 {
 		return answer, publishErr(http.StatusBadRequest, "The answer has no photos in it. Ask the LLM to answer with tags for each photo.")
 	}
 	return answer, nil
+}
+
+// readAnswerJSON reads the JSON object in text, an LLM's answer, into answer:
+// from the first "{" to the last "}", so a code block or words around it are
+// fine.
+func readAnswerJSON(text string, answer any) *PublishError {
+	start, end := strings.Index(text, "{"), strings.LastIndex(text, "}")
+	if start < 0 || end < start {
+		return publishErr(http.StatusBadRequest, "Paste the LLM's whole answer: the JSON object it wrote, from { to }.")
+	}
+	if err := json.Unmarshal([]byte(text[start:end+1]), answer); err != nil {
+		return publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
+	}
+	return nil
 }
 
 // BulkTagSkipped is a name in the answer that can't be a tag, with why.
@@ -80,26 +90,28 @@ type BulkTagsPreview struct {
 	Unknown []string `json:"unknown"`
 }
 
-// tagNamer sorts the names in an answer into existing tags, new ones and ones
-// that can't be tags, as pasting into a photo's Tags field does.
+// tagNamer sorts the names in an answer into existing tags (or albums), new
+// ones and ones that can't be, as pasting into a photo's Tags field does.
 type tagNamer struct {
-	tags     map[string]string // ID or lowercase name → tag ID
-	taken    map[string]string // ID or lowercase name of an album, genre or metadata group → why
+	own      map[string]string // ID or lowercase name of one of the kind's own → its ID
+	taken    map[string]string // ID or lowercase name of another kind or a metadata group → why
 	defs     map[string]BulkTagNew
 	newOrder []string
 }
 
-// newTagNamer is a tagNamer for groups and the metadata groups in meta.
+// newTagNamer is a tagNamer for tags, among groups and the metadata groups in
+// meta.
 func newTagNamer(groups map[string][]Group, meta []Entry) *tagNamer {
-	n := &tagNamer{tags: map[string]string{}, taken: map[string]string{}, defs: map[string]BulkTagNew{}}
-	for _, g := range groups[Tags.Folder] {
-		if g.Error == "" {
-			n.tags[g.ID], n.tags[strings.ToLower(strings.TrimSpace(g.Name))] = g.ID, g.ID
-		}
-	}
-	for _, k := range []Kind{Albums, Genres} {
+	return newGroupNamer(Tags, groups, meta)
+}
+
+// newGroupNamer is a tagNamer for kind's names, among groups and the metadata
+// groups in meta: the other kinds' names and the metadata groups' are taken.
+func newGroupNamer(kind Kind, groups map[string][]Group, meta []Entry) *tagNamer {
+	n := &tagNamer{own: map[string]string{}, taken: map[string]string{}, defs: map[string]BulkTagNew{}}
+	for _, k := range kinds {
 		for _, g := range groups[k.Folder] {
-			n.taken[g.ID], n.taken[strings.ToLower(strings.TrimSpace(g.Name))] = "a "+k.Name+" has that name", "a "+k.Name+" has that name"
+			n.addKnown(kind, k, g)
 		}
 	}
 	for _, e := range meta {
@@ -111,15 +123,27 @@ func newTagNamer(groups map[string][]Group, meta []Entry) *tagNamer {
 	return n
 }
 
+// addKnown adds g, one of k's, as one of the namer's own when k is kind, or
+// else as a name that's taken.
+func (n *tagNamer) addKnown(kind, k Kind, g Group) {
+	name := strings.ToLower(strings.TrimSpace(g.Name))
+	switch {
+	case k != kind:
+		n.taken[g.ID], n.taken[name] = "a "+k.Name+" has that name", "a "+k.Name+" has that name"
+	case g.Error == "":
+		n.own[g.ID], n.own[name] = g.ID, g.ID
+	}
+}
+
 // sort says what name is: an existing tag's ID, a new tag's ID, or why it
 // can't be a tag.
 func (n *tagNamer) sort(name string) (id string, fresh bool, reason string) {
 	name = cleanTagName(name)
-	if id, ok := n.tags[strings.ToLower(name)]; ok {
+	if id, ok := n.own[strings.ToLower(name)]; ok {
 		return id, false, ""
 	}
 	id = tagID(name)
-	if existing, ok := n.tags[id]; ok {
+	if existing, ok := n.own[id]; ok {
 		return existing, false, ""
 	}
 	if id == "" {
@@ -212,7 +236,7 @@ func (n *tagNamer) newTags() []BulkTagNew {
 
 // isMissing is whether id, a parent's ID, is neither a tag nor a new one.
 func (n *tagNamer) isMissing(id string) bool {
-	_, isTag := n.tags[id]
+	_, isTag := n.own[id]
 	_, isNew := n.defs[id]
 	return id != "" && !isTag && !isNew
 }

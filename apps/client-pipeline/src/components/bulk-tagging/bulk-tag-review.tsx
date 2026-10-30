@@ -1,20 +1,13 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   type BulkTagNew,
   type BulkTagPhotoPlan,
   type BulkTagPick,
-  type BulkTags,
   type BulkTagsPreview,
   applyBulkTagsMutation,
 } from "@/api/bulk-tags";
-import { organizeQuery } from "@/api/organize";
-import {
-  CommitSuccess,
-  SaveButton,
-  count,
-  invalidatePhotoReads,
-} from "@/components/update-data-shared";
+import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/prompt-steps";
+import { count } from "@/components/update-data-shared";
 import {
   type BulkTagChoices,
   NO_CHOICES,
@@ -34,12 +27,13 @@ interface BulkTagReviewProps {
  */
 export function BulkTagReview({ preview, pick }: BulkTagReviewProps) {
   const [choices, setChoices] = useState<BulkTagChoices>(NO_CHOICES);
-  const apply = useApplyBulkTags();
+  const apply = useReviewedSave(applyBulkTagsMutation);
   const busy = apply.isPending || apply.isSuccess;
   const fresh = new Set(preview.newTags.map((tag) => tag.id));
+  const save = bulkTagsToSave(preview, choices);
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={preview.unknown} />
+      <UnknownPhotos names={preview.unknown} what="tags" />
       {/* Once saved, the new tags are made, so only what was saved is left to say. */}
       {!apply.isSuccess && (
         <NewTagList preview={preview} choices={choices} onChange={setChoices} disabled={busy} />
@@ -57,57 +51,30 @@ export function BulkTagReview({ preview, pick }: BulkTagReviewProps) {
           />
         ))}
       </ul>
-      <SaveTags apply={apply} save={bulkTagsToSave(preview, choices)} busy={busy} />
+      <SaveReviewed
+        what="tags"
+        apply={apply}
+        save={save}
+        busy={busy}
+        saved={(result) =>
+          `Made ${count(result.newTags, "new tag")} and tagged ${count(result.photos, "photo")}`
+        }
+      />
     </div>
   );
 }
 
-/** Saves the reviewed tags, then refreshes the photo reads and the tags. */
-function useApplyBulkTags() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    ...applyBulkTagsMutation,
-    onSuccess: () => {
-      invalidatePhotoReads(queryClient);
-      void queryClient.invalidateQueries({ queryKey: organizeQuery.queryKey });
-    },
-  });
-}
-
-/** Says which photos the answer named that weren't picked, when it named any. */
-function UnknownPhotos({ names }: { names: string[] }) {
+/**
+ * Says which photos the answer named that weren't picked, when it named any, leaving out `what` it
+ * gave them, such as "tags".
+ */
+export function UnknownPhotos({ names, what }: { names: string[]; what: string }) {
   if (names.length === 0) return null;
   return (
     <p className="text-muted-foreground">
-      Left out the answer&apos;s tags for {names.map((name) => `“${name}”`).join(", ")}, which{" "}
+      Left out the answer&apos;s {what} for {names.map((name) => `“${name}”`).join(", ")}, which{" "}
       {names.length === 1 ? "isn’t one" : "aren’t any"} of the picked photos.
     </p>
-  );
-}
-
-interface SaveTagsProps {
-  apply: ReturnType<typeof useApplyBulkTags>;
-  save: BulkTags;
-  busy: boolean;
-}
-
-/** The button that saves the ticked tags, and what it saved once it has. */
-function SaveTags({ apply, save, busy }: SaveTagsProps) {
-  return (
-    <>
-      <SaveButton
-        label={`Save tags for ${count(save.photos.length, "photo")}`}
-        disabled={busy || save.photos.length === 0}
-        pending={apply.isPending}
-        error={apply.error}
-        onClick={() => apply.mutate(save)}
-      />
-      {apply.data && (
-        <CommitSuccess result={apply.data}>
-          Made {count(apply.data.newTags, "new tag")} and tagged {count(apply.data.photos, "photo")}
-        </CommitSuccess>
-      )}
-    </>
   );
 }
 

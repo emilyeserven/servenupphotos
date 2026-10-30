@@ -26,7 +26,7 @@ type bulkTagAnswer struct {
 // handlePickBulkTagPhotos picks up to the asked number of related photos for
 // Bulk Tagging, leaving out the photos already shown.
 func handlePickBulkTagPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "photo pick", "could not pick the photos",
+	return handlePromptStep(store, "photo pick", "could not pick the photos",
 		func(ctx context.Context, cfg settings.GitHub, req bulkTagPick) (any, error) {
 			return gh.PickBulkTagPhotos(ctx, cfg, req.Skip, req.Count)
 		})
@@ -35,7 +35,7 @@ func handlePickBulkTagPhotos(store *settings.Store, gh *github.Client) http.Hand
 // handlePreviewBulkTags reads the LLM's pasted answer for the picked photos
 // and says which tags each would get, without saving anything.
 func handlePreviewBulkTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "bulk tags answer", "could not read the answer",
+	return handlePromptStep(store, "bulk tags answer", "could not read the answer",
 		func(ctx context.Context, cfg settings.GitHub, req bulkTagAnswer) (any, error) {
 			return gh.PreviewBulkTags(ctx, cfg, req.Paths, req.Answer)
 		})
@@ -44,7 +44,7 @@ func handlePreviewBulkTags(store *settings.Store, gh *github.Client) http.Handle
 // handleApplyBulkTags makes the reviewed new tags and adds the tags to each
 // photo, as changes waiting for Commit.
 func handleApplyBulkTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return handleBulkTags(store, "bulk tags", "could not save the tags",
+	return handlePromptStep(store, "bulk tags", "could not save the tags",
 		func(ctx context.Context, cfg settings.GitHub, req github.BulkTags) (any, error) {
 			return gh.ApplyBulkTags(ctx, cfg, req)
 		})
@@ -52,7 +52,7 @@ func handleApplyBulkTags(store *settings.Store, gh *github.Client) http.HandlerF
 
 // handleBulkTags decodes a Bulk Tagging step's body, a T named kind, runs the
 // step and writes its result.
-func handleBulkTags[T any](store *settings.Store, kind, failure string, run func(context.Context, settings.GitHub, T) (any, error)) http.HandlerFunc {
+func handlePromptStep[T any](store *settings.Store, kind, failure string, run func(context.Context, settings.GitHub, T) (any, error)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req T
 		if !decodeEntry(w, r, &req, kind) {

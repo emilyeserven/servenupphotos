@@ -57,6 +57,7 @@ type BulkTagPick struct {
 type bulkPhoto struct {
 	file    photoFile
 	name    string
+	albums  []string
 	tags    []string
 	genres  []string
 	places  []string
@@ -69,7 +70,7 @@ type bulkPhoto struct {
 // readBulkPhoto reads what Bulk Tagging compares from f, a readable photo file.
 func readBulkPhoto(f photoFile) bulkPhoto {
 	var data struct {
-		Tags, Genres                 []string
+		Albums, Tags, Genres         []string
 		Places                       []struct{ ID string }
 		City, CustomCity             *string
 		Country, CustomCountry       *string
@@ -77,7 +78,7 @@ func readBulkPhoto(f photoFile) bulkPhoto {
 	}
 	_ = json.Unmarshal(f.content, &data)
 	p := bulkPhoto{
-		file: f, name: strings.TrimSuffix(path.Base(f.path), path.Ext(f.path)), tags: data.Tags, genres: data.Genres,
+		file: f, name: strings.TrimSuffix(path.Base(f.path), path.Ext(f.path)), albums: data.Albums, tags: data.Tags, genres: data.Genres,
 		city:    strings.ToLower(firstText(data.CustomCity, data.City)),
 		country: strings.ToLower(firstText(data.CustomCountry, data.Country)),
 		date:    firstText(data.CustomCreateDate, data.CreateDate),
@@ -167,34 +168,44 @@ func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip
 	if perr != nil {
 		return BulkTagPick{}, perr
 	}
-	pick := BulkTagPick{Branch: scan.branch, PhotoFiles: len(scan.files), Photos: []BulkTagPhoto{}}
+	pick := BulkTagPick{Branch: scan.branch, PhotoFiles: len(scan.files)}
 	if scan.pr != nil {
 		pick.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
 	}
+	photos, without := photosWithout(scan, skip, func(p bulkPhoto) []string { return p.tags })
+	pick.Untagged = without
+	if len(photos) == 0 {
+		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos without tags to pick from. Start over to pick from every one again.")
+	}
+	pick.Photos = pickRelated(photos, bulkTagCount(count), relate)
+	return pick, nil
+}
+
+// photosWithout is the readable photo files in scan whose list (their tags
+// or albums) is empty, leaving out skip's paths, and how many there are with
+// skip's counted.
+func photosWithout(scan baseURLScan, skip []string, list func(bulkPhoto) []string) ([]bulkPhoto, int) {
 	var photos []bulkPhoto
+	without := 0
 	for _, f := range scan.files {
 		if f.err != "" {
 			continue
 		}
 		p := readBulkPhoto(f)
-		if len(p.tags) > 0 {
+		if len(list(p)) > 0 {
 			continue
 		}
-		pick.Untagged++
+		without++
 		if !slices.Contains(skip, f.path) {
 			photos = append(photos, p)
 		}
 	}
-	if len(photos) == 0 {
-		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos without tags to pick from. Start over to pick from every one again.")
-	}
-	pick.Photos = pickRelated(photos, bulkTagCount(count))
-	return pick, nil
+	return photos, without
 }
 
 // pickRelated is the first photo in photos by path, then the ones most like
-// it, count in all at most.
-func pickRelated(photos []bulkPhoto, count int) []BulkTagPhoto {
+// it as rel ranks them, count in all at most.
+func pickRelated(photos []bulkPhoto, count int, rel func(seed, other bulkPhoto) relation) []BulkTagPhoto {
 	seed := slices.MinFunc(photos, func(a, b bulkPhoto) int {
 		return cmp.Compare(a.file.path, b.file.path)
 	})
@@ -204,8 +215,8 @@ func pickRelated(photos []bulkPhoto, count int) []BulkTagPhoto {
 	}
 	var others []ranked
 	for _, p := range photos {
-		if rel := relate(seed, p); p.file.path != seed.file.path && p.name != seed.name && rel.score > 0 {
-			others = append(others, ranked{p, rel})
+		if r := rel(seed, p); p.file.path != seed.file.path && p.name != seed.name && r.score > 0 {
+			others = append(others, ranked{p, r})
 		}
 	}
 	slices.SortStableFunc(others, func(a, b ranked) int {

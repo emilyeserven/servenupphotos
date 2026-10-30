@@ -4,24 +4,24 @@ import { savedDetails, savedExifPlace } from "@/components/photo-details";
 import { knownLines } from "@/lib/location-prompt";
 import { TAG_RULES, type TagPromptLists, promptImageUrl, tagListsSection } from "@/lib/tag-prompt";
 
-/** The URL of the photo's full image, for when it has no Small or Medium version. */
-function fullImage(data: Record<string, unknown>): string {
+/** The link to the photo the prompt gives: its Small or Medium version, or else its full image. */
+export function photoLink(data: Record<string, unknown>): string {
   const images = data.images as Record<string, unknown> | undefined;
-  return typeof images?.full === "string" ? images.full : "";
+  return promptImageUrl(images, typeof images?.full === "string" ? images.full : "");
 }
 
-/** The tags a photo already has, as its JSON lists them. */
-function savedTags(data: Record<string, unknown>): string[] {
-  return Array.isArray(data.tags) ? data.tags.filter((tag) => typeof tag === "string") : [];
+/** The IDs a photo's JSON lists under `field`, such as its tags or genres. */
+export function savedList(data: Record<string, unknown>, field: "tags" | "genres"): string[] {
+  const list = data[field];
+  return Array.isArray(list) ? list.filter((id) => typeof id === "string") : [];
 }
 
 /** One photo's part of the prompt: its name and link, what's known of it, and its tags. */
 function photoSection(photo: BulkTagPhoto, places: Place[]): string {
   const { data } = photo;
-  const images = data.images as Record<string, unknown> | undefined;
   const known = knownLines({ details: savedDetails(data), exif: savedExifPlace(data), places });
-  const tags = savedTags(data);
-  return `Photo "${photo.name}": ${promptImageUrl(images, fullImage(data))}
+  const tags = savedList(data, "tags");
+  return `Photo "${photo.name}": ${photoLink(data)}
 What's already known about it:
 ${known.join("\n") || "- Nothing yet."}
 Tags it already has: ${tags.length > 0 ? tags.join(", ") : "none"}`;
