@@ -1,34 +1,20 @@
-import {
-  type QueryClient,
-  useIsMutating,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useIsMutating } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import {
-  cacheSavedEntry,
-  type LocalizationType,
-  placesQuery,
-  readEntries,
-  saveLocalizationMutation,
-} from "@/api/places";
+import type { LocalizationType } from "@/api/places";
 import { FloatingAction } from "@/components/floating-actions";
 import {
-  type Fields,
-  isChanged,
-  LocalizationRowForm,
-  savedFields,
-} from "@/components/localization-row";
+  type LocalizationDrafts as Drafts,
+  useLocalizationDrafts,
+  useLocalizationRows,
+} from "@/components/localization-drafts";
+import { LocalizationRowForms } from "@/components/localization-row";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { type LocalizationRow, localizationRows, shownPhotos } from "@/lib/place-seeds";
-import { useCombinedData } from "@/stores/combined-data";
+import type { LocalizationRow } from "@/lib/place-seeds";
 
 /** The Localizations page: how each country, state, city and place is written and said where it is. */
 export function LocalizationsPage() {
@@ -50,67 +36,9 @@ const TABS: { type: LocalizationType; title: string }[] = [
   { type: "place", title: "Places" },
 ];
 
-/** Every country, city and place to localize, read from the combined lists and the place files. */
-function useRows() {
-  const read = useQuery(placesQuery);
-  const combined = useCombinedData();
-  const rows = localizationRows(
-    shownPhotos(combined.data),
-    readEntries(read.data && read.data.places),
-    readEntries(read.data && read.data.localizations),
-  );
-  return { rows, pending: read.isPending || combined.isPending, error: firstError(read, combined) };
-}
-
-function firstError(...reads: { error: Error | null | undefined }[]): Error | undefined {
-  return reads.find((read) => read.error)?.error ?? undefined;
-}
-
-/**
- * The rows' fields as typed, kept here so they survive switching tabs, and saving them: each Save,
- * or Save all, queues a save that runs once the ones before it are done.
- */
-function useDrafts(rows: LocalizationRow[]) {
-  const queryClient = useQueryClient();
-  const [drafts, setDrafts] = useState<Record<string, Fields>>({});
-  const save = useMutation({
-    ...saveLocalizationMutation,
-    onSuccess: (result) => cacheSavedEntry(queryClient, "localizations", result),
-  });
-  const fieldsOf = (row: LocalizationRow) => drafts[row.id] ?? savedFields(row.saved);
-  const changed = rows.filter((row) => isChanged(row, fieldsOf(row)));
-  return {
-    fieldsOf,
-    changed,
-    set: (row: LocalizationRow, fields: Fields) => setDrafts((d) => ({ ...d, [row.id]: fields })),
-    save: (row: LocalizationRow, fields: Fields) => {
-      // A row already queued or saving isn't queued again, as when Save all is pressed twice.
-      if (isSaving(queryClient, row.id)) return;
-      save.mutate({
-        id: row.id,
-        type: row.type,
-        name: row.name,
-        otherNames: row.saved?.otherNames,
-        ...fields,
-      });
-    },
-  };
-}
-
-type Drafts = ReturnType<typeof useDrafts>;
-
-/** Whether a save of the localization `id` is queued or running. */
-function isSaving(queryClient: QueryClient, id: string): boolean {
-  const pending = queryClient.getMutationCache().findAll({
-    mutationKey: saveLocalizationMutation.mutationKey,
-    status: "pending",
-  });
-  return pending.some((m) => (m.state.variables as { id?: string } | undefined)?.id === id);
-}
-
 function LocalizationTabs() {
-  const { rows, pending, error } = useRows();
-  const drafts = useDrafts(rows);
+  const { rows, pending, error } = useLocalizationRows();
+  const drafts = useLocalizationDrafts(rows);
   if (pending) return <p>Reading photos, places and localizations from GitHub…</p>;
   return (
     <>
@@ -151,7 +79,7 @@ function SaveAllButton({ drafts }: { drafts: Drafts }) {
       <Button
         className="h-9 rounded-full shadow-md"
         disabled={count === 0}
-        onClick={() => drafts.changed.forEach((row) => drafts.save(row, drafts.fieldsOf(row)))}
+        onClick={drafts.saveAll}
       >
         {busy > 0 && <Spinner />}
         Save all{count > 0 && ` (${count})`}
@@ -190,15 +118,7 @@ function LocalizationCard({ type, title, rows, drafts }: LocalizationCardProps) 
         {rows.length === 0 ? (
           <EmptyRows type={type} />
         ) : (
-          rows.map((row) => (
-            <LocalizationRowForm
-              key={row.id}
-              row={row}
-              fields={drafts.fieldsOf(row)}
-              onChange={(fields) => drafts.set(row, fields)}
-              onSave={(fields) => drafts.save(row, fields)}
-            />
-          ))
+          <LocalizationRowForms rows={rows} drafts={drafts} />
         )}
       </CardContent>
     </Card>
