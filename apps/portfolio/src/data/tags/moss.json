@@ -1,5 +1,6 @@
 {
   "id": "moss",
   "name": "moss",
-  "description": ""
+  "description": "",
+  "parent": "plants"
 }

@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": ["homepage-spotlight"],
   "tags": ["subway", "commuters", "platform", "train", "railway", "reflections", "lamps"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

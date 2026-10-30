@@ -1,5 +1,6 @@
 {
   "id": "graffiti",
   "name": "graffiti",
-  "description": ""
+  "description": "",
+  "parent": "street-art"
 }

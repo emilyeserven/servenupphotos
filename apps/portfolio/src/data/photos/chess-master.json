@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["chess", "board-games", "elderly", "bench", "park", "pedestrians"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

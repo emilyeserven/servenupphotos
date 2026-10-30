@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["ancient-egypt", "pyramids", "stairs", "scaffolding", "wood", "stones", "walls"],
-  "genres": [],
+  "genres": ["architecture", "abstract"],
   "places": [
     {
       "relation": "",

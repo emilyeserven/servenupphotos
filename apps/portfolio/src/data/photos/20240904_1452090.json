@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mushrooms", "fungi", "moss", "plants", "forest", "hiking-trail", "details"],
-  "genres": [],
+  "tags": ["mushrooms", "fungi", "moss", "plants", "forest", "hiking-trail"],
+  "genres": ["nature", "macro"],
   "places": [
     {
       "relation": "",

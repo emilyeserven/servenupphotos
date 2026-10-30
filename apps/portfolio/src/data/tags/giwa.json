@@ -1,5 +1,6 @@
 {
   "id": "giwa",
   "name": "giwa",
-  "description": ""
+  "description": "",
+  "parent": "shingles"
 }

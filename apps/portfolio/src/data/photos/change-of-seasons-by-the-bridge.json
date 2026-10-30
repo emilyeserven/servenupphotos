@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["autumn", "footbridge", "skyline", "skyscraper", "ivy", "fence", "pedestrians", "trees"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [
     {
       "relation": "",

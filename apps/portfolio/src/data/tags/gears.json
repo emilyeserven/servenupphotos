@@ -1,5 +1,6 @@
 {
   "id": "gears",
   "name": "gears",
-  "description": ""
+  "description": "",
+  "parent": "machinery"
 }

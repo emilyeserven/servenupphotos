@@ -50,7 +50,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["grachtenpand", "canal", "houses", "facade", "bicycles", "fence", "windows"],
-    "genres": [],
+    "genres": ["architecture", "street"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -313,8 +313,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["doors", "castle", "walls", "stones", "stairs", "texture", "details"],
-    "genres": [],
+    "tags": ["doors", "castle", "walls", "stones", "stairs", "texture"],
+    "genres": ["architecture", "abstract"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -577,8 +577,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["mushrooms", "fungi", "moss", "roots", "forest", "hiking-trail", "details"],
-    "genres": [],
+    "tags": ["mushrooms", "fungi", "moss", "roots", "forest", "hiking-trail"],
+    "genres": ["nature", "macro"],
     "places": [
       {
         "relation": "",
@@ -846,8 +846,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["mushrooms", "fungi", "moss", "plants", "forest", "hiking-trail", "details"],
-    "genres": [],
+    "tags": ["mushrooms", "fungi", "moss", "plants", "forest", "hiking-trail"],
+    "genres": ["nature", "macro"],
     "places": [
       {
         "relation": "",
@@ -1115,16 +1115,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [
-      "ancient-egypt",
-      "hieroglyphs",
-      "inscriptions",
-      "carvings",
-      "stones",
-      "texture",
-      "details"
-    ],
-    "genres": [],
+    "tags": ["ancient-egypt", "hieroglyphs", "inscriptions", "carvings", "stones", "texture"],
+    "genres": ["abstract", "architecture"],
     "places": [
       {
         "relation": "",
@@ -1393,7 +1385,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["riwaq", "mosque", "arches", "arcade", "columns", "windows", "pedestrians"],
-    "genres": [],
+    "genres": ["architecture", "street"],
     "places": [
       {
         "relation": "",
@@ -1671,7 +1663,7 @@
       "shadows",
       "interior"
     ],
-    "genres": [],
+    "genres": ["architecture", "street"],
     "places": [
       {
         "relation": "",
@@ -1943,8 +1935,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["mishkat", "mosque", "calligraphy", "lamps", "chains", "walls", "details"],
-    "genres": [],
+    "tags": ["mishkat", "mosque", "calligraphy", "lamps", "chains", "walls"],
+    "genres": ["architecture"],
     "places": [
       {
         "relation": "",
@@ -2213,7 +2205,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["mosque", "silhouettes", "doorway", "lamps", "carpet", "walls", "shadows"],
-    "genres": [],
+    "genres": ["architecture", "street"],
     "places": [
       {
         "relation": "",
@@ -2482,7 +2474,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["mishkat", "mosque", "lamps", "chains", "walls", "patterns"],
-    "genres": [],
+    "genres": ["architecture", "abstract"],
     "places": [
       {
         "relation": "",
@@ -2751,7 +2743,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["mashrabiya", "girih", "mosque", "windows", "wood", "patterns", "silhouettes"],
-    "genres": [],
+    "genres": ["architecture", "abstract"],
     "places": [
       {
         "relation": "",
@@ -3029,7 +3021,7 @@
       "fence",
       "tourists"
     ],
-    "genres": [],
+    "genres": ["architecture"],
     "places": [
       {
         "relation": "",
@@ -3298,7 +3290,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["ancient-egypt", "pyramids", "stairs", "scaffolding", "wood", "stones", "walls"],
-    "genres": [],
+    "genres": ["architecture", "abstract"],
     "places": [
       {
         "relation": "",
@@ -3567,7 +3559,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["ancient-egypt", "necropolis", "pyramids", "monument", "stones", "tourists", "scale"],
-    "genres": [],
+    "genres": ["architecture", "landscape"],
     "places": [
       {
         "relation": "",
@@ -3835,16 +3827,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [
-      "texture",
-      "details",
-      "hieroglyphs",
-      "ancient-egypt",
-      "ruins",
-      "carvings",
-      "inscriptions"
-    ],
-    "genres": [],
+    "tags": ["texture", "hieroglyphs", "ancient-egypt", "ruins", "carvings", "inscriptions"],
+    "genres": ["abstract", "architecture"],
     "places": [
       {
         "relation": "",
@@ -4113,7 +4097,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["ocean", "waves", "coastline", "palm-trees", "statue", "stones"],
-    "genres": [],
+    "genres": ["landscape"],
     "places": [
       {
         "relation": "",
@@ -4389,7 +4373,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["ancient-egypt", "necropolis", "pyramids", "tourists", "monument", "stones", "clouds"],
-    "genres": [],
+    "genres": ["architecture", "street"],
     "places": [
       {
         "relation": "",
@@ -4623,7 +4607,7 @@
     "customGpsPosition": null,
     "createDate": "2025:07:04 13:48:22",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Cathedral of St. Michael and St. Gudula",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -4658,8 +4642,13 @@
     "customLens": null,
     "albums": [],
     "tags": ["bicycles", "signage", "fence", "sidewalk", "windows", "walls"],
-    "genres": [],
-    "places": [],
+    "genres": ["street", "architecture"],
+    "places": [
+      {
+        "relation": "outside",
+        "id": "cathedral-of-st-michael-and-st-gudula"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -4887,7 +4876,7 @@
     "customGpsPosition": null,
     "createDate": "2025:07:04 13:49:45",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Cathedral of St. Michael and St. Gudula",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -4921,9 +4910,14 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["doors", "door-knocker", "details", "carvings", "wood", "patterns"],
-    "genres": [],
-    "places": [],
+    "tags": ["doors", "door-knocker", "carvings", "wood", "patterns"],
+    "genres": ["architecture", "abstract"],
+    "places": [
+      {
+        "relation": "near",
+        "id": "cathedral-of-st-michael-and-st-gudula"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -5151,7 +5145,7 @@
     "customGpsPosition": null,
     "createDate": "2025:07:04 13:51:01",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Cathedral of St. Michael and St. Gudula",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -5186,8 +5180,13 @@
     "customLens": null,
     "albums": [],
     "tags": ["signage", "stickers", "cobblestones", "cars", "lamppost", "sidewalk"],
-    "genres": [],
-    "places": [],
+    "genres": ["street"],
+    "places": [
+      {
+        "relation": "near",
+        "id": "cathedral-of-st-michael-and-st-gudula"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -5450,7 +5449,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["planter", "graffiti", "rust", "steel", "road", "sidewalk", "crosswalk"],
-    "genres": [],
+    "genres": ["street"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -5714,7 +5713,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["guildhall", "facade", "statue", "tourists", "umbrellas", "windows", "pedestrians"],
-    "genres": [],
+    "genres": ["architecture", "street"],
     "places": [
       {
         "relation": "",
@@ -5983,7 +5982,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["subway", "commuters", "platform", "pedestrians", "signage", "newsstand"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -6251,8 +6250,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["memorial", "remembrance", "flowers", "rose", "monument", "details"],
-    "genres": [],
+    "tags": ["memorial", "remembrance", "flowers", "rose", "monument"],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -6521,7 +6520,7 @@
     "customLens": null,
     "albums": ["homepage-spotlight"],
     "tags": ["subway", "commuters", "platform", "train", "railway", "reflections", "lamps"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -6793,7 +6792,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["pigeons", "birds", "fountain", "water", "park"],
-    "genres": [],
+    "genres": ["wildlife", "street"],
     "places": [
       {
         "relation": "",
@@ -7061,8 +7060,8 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["patterns", "texture", "wood", "interior", "details"],
-    "genres": [],
+    "tags": ["patterns", "texture", "wood", "interior"],
+    "genres": ["abstract", "architecture"],
     "places": [
       {
         "relation": "",
@@ -7335,7 +7334,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["silhouettes", "windows", "river", "skyline", "interior", "lamps", "skyscraper"],
-    "genres": [],
+    "genres": ["architecture", "street"],
     "places": [
       {
         "relation": "",
@@ -7608,7 +7607,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["apartments", "windows", "facade", "patterns", "skyscraper", "repetition"],
-    "genres": [],
+    "genres": ["architecture", "abstract"],
     "places": [
       {
         "relation": "",
@@ -7877,7 +7876,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["hiking-trail", "tree-stump", "carvings", "wood", "moss", "forest", "texture"],
-    "genres": [],
+    "genres": ["nature"],
     "places": [
       {
         "relation": "",
@@ -8146,7 +8145,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["street-art", "posters", "graffiti", "faces", "urban-decay", "walls"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -8418,7 +8417,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["railway", "train", "city", "cars", "trees", "walls", "lamppost"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -8687,7 +8686,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["street-art", "graffiti", "hearts", "stickers", "typography", "minimalism"],
-    "genres": [],
+    "genres": ["street", "abstract"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -8951,7 +8950,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["sunglasses", "tall-grass", "boardwalk", "path", "fence", "trees"],
-    "genres": [],
+    "genres": ["portrait"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -9218,7 +9217,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["fountain", "plaza", "tourists", "pedestrians", "park", "trees", "shadows"],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [
       {
         "relation": "",
@@ -9496,7 +9495,7 @@
       "columns",
       "tourists"
     ],
-    "genres": [],
+    "genres": ["architecture"],
     "places": [
       {
         "relation": "",
@@ -9765,7 +9764,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["sculpture", "planter", "topiary", "plants", "texture", "stones"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -10034,7 +10033,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["street-art", "mural", "faces", "bicycles", "sidewalk", "storefronts"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -10303,7 +10302,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["footbridge", "bridge", "steel", "symmetry", "repetition", "train-station", "windows"],
-    "genres": [],
+    "genres": ["architecture", "abstract"],
     "places": [
       {
         "relation": "",
@@ -10572,7 +10571,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["daldongne", "alley", "rooftops", "houses", "power-lines", "stairs"],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [
       {
         "relation": "",
@@ -10841,7 +10840,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["suspension-cables", "bridge", "skyline", "skyscraper", "city", "steel", "patterns"],
-    "genres": [],
+    "genres": ["architecture", "street"],
     "places": [
       {
         "relation": "",
@@ -11122,7 +11121,7 @@
       "sidewalk",
       "shadows"
     ],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -11391,7 +11390,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["gazebo", "rustic", "wood", "trees", "park", "bench", "shadows"],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [
       {
         "relation": "",
@@ -11669,7 +11668,7 @@
       "pedestrians",
       "trees"
     ],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [
       {
         "relation": "",
@@ -11942,7 +11941,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["bubbles", "children", "street-performer", "tourists", "park", "arches"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -12211,7 +12210,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["chess", "board-games", "elderly", "bench", "park", "pedestrians"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -12480,7 +12479,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["sculpture", "garden", "lake", "stones", "trees", "clouds", "plants"],
-    "genres": [],
+    "genres": ["landscape"],
     "places": [
       {
         "relation": "",
@@ -12748,7 +12747,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["mushrooms", "fungi", "grass", "plants", "details"],
+    "tags": ["mushrooms", "fungi", "grass", "plants"],
     "genres": [],
     "places": [
       {
@@ -13017,7 +13016,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["clockwork", "clock", "gears", "machinery", "steel", "details"],
+    "tags": ["clockwork", "clock", "gears", "machinery", "steel"],
     "genres": [],
     "places": [
       {
@@ -14115,7 +14114,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["crabs", "seaweed", "stones", "beach", "details"],
+    "tags": ["crabs", "seaweed", "stones", "beach"],
     "genres": [],
     "places": [
       {
@@ -14888,7 +14887,7 @@
     "customGpsPosition": null,
     "createDate": "2025:01:24 14:27:44",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Wadi El-Hitan",
     "customCity": "Wadi El-Hitan",
     "customState": null,
     "customCountry": null,
@@ -14933,7 +14932,12 @@
       "clouds"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "wadi-el-hitan"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -16526,7 +16530,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:01 17:19:10",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Dotonbori",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -16562,7 +16566,12 @@
     "albums": [],
     "tags": ["signage", "bridge", "crowd", "tourists", "storefronts", "twilight"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "dotonbori"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -19242,7 +19251,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["water", "stones", "moss", "minimalism", "texture", "details"],
+    "tags": ["water", "stones", "moss", "minimalism", "texture"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -22198,7 +22207,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["gates", "wood", "patterns", "texture", "details", "dancheong", "phoenixes"],
+    "tags": ["gates", "wood", "patterns", "texture", "dancheong", "phoenixes"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -26512,7 +26521,6 @@
       "ironwork",
       "patterns",
       "texture",
-      "details",
       "manhole-cover",
       "ginkgo"
     ],
@@ -28358,7 +28366,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:29 18:59:10",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Sannomiya",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -28394,7 +28402,12 @@
     "albums": [],
     "tags": ["alley", "signage", "night", "rain", "reflections", "umbrellas", "yokocho", "neon"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "sannomiya"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -28622,7 +28635,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:22 15:41:16",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle Town",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -28656,9 +28669,14 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["stones", "rock-formations", "texture", "details", "crabs"],
+    "tags": ["stones", "rock-formations", "texture", "crabs"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hagi-castle-town"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -28886,7 +28904,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:22 15:47:36",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle Town",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -28931,7 +28949,12 @@
       "village"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hagi-castle-town"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -29159,7 +29182,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:22 15:57:23",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Castle Town",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -29195,7 +29218,12 @@
     "albums": [],
     "tags": ["bukeyashiki", "dobei", "alley", "walls", "power-lines", "trees", "village"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "hagi-castle-town"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -29687,7 +29715,7 @@
     "customGpsPosition": null,
     "createDate": "2026:09:22 16:48:52",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Hagi Station",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -29723,7 +29751,12 @@
     "albums": [],
     "tags": ["houses", "power-lines", "road", "wanman", "train", "railway"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "near",
+        "id": "hagi-station"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -31888,7 +31921,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["buddhism", "temple", "wood", "details", "stamps"],
+    "tags": ["buddhism", "temple", "wood", "stamps"],
     "genres": [],
     "places": [
       {
@@ -32157,7 +32190,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["buddhism", "wabi-sabi", "temple", "texture", "details", "senjafuda", "wood"],
+    "tags": ["buddhism", "wabi-sabi", "temple", "texture", "senjafuda", "wood"],
     "genres": [],
     "places": [
       {
@@ -33296,7 +33329,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["fire-alarm", "stickers", "graffiti", "urban-decay", "texture", "details"],
+    "tags": ["fire-alarm", "stickers", "graffiti", "urban-decay", "texture"],
     "genres": ["macro"],
     "places": [
       {
@@ -34914,7 +34947,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["clockwork", "gears", "machinery", "steel", "cables", "details"],
+    "tags": ["clockwork", "gears", "machinery", "steel", "cables"],
     "genres": [],
     "places": [
       {
@@ -35183,7 +35216,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["clockwork", "gears", "machinery", "steel", "symmetry", "details"],
+    "tags": ["clockwork", "gears", "machinery", "steel", "symmetry"],
     "genres": [],
     "places": [
       {
@@ -36263,7 +36296,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["doors", "ironwork", "patterns", "details", "rust", "symmetry"],
+    "tags": ["doors", "ironwork", "patterns", "rust", "symmetry"],
     "genres": [],
     "places": [
       {
@@ -38987,7 +39020,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["ice", "icicles", "winter", "branches", "details", "texture"],
+    "tags": ["ice", "icicles", "winter", "branches", "texture"],
     "genres": [],
     "places": [
       {
@@ -42208,16 +42241,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [
-      "windows",
-      "texture",
-      "details",
-      "folk-art",
-      "stones",
-      "sea-glass",
-      "shells",
-      "shadows"
-    ],
+    "tags": ["windows", "texture", "folk-art", "stones", "sea-glass", "shells", "shadows"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -43550,7 +43574,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["shells", "beach", "sand", "details", "seaweed"],
+    "tags": ["shells", "beach", "sand", "seaweed"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -45110,7 +45134,7 @@
     "customGpsPosition": null,
     "createDate": "2019:07:17 20:01:28",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Children's Beach",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -45146,7 +45170,12 @@
     "albums": [],
     "tags": ["seagulls", "birds", "harbor", "beach", "sailboats", "fog"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "on",
+        "id": "children-s-beach"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -45946,7 +45975,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["iguanas", "reptiles", "stones", "plants", "water", "details"],
+    "tags": ["iguanas", "reptiles", "stones", "plants", "water"],
     "genres": [],
     "places": [
       {
@@ -48377,7 +48406,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["padlocks", "chains", "rust", "fence", "gates", "urban-decay", "details"],
+    "tags": ["padlocks", "chains", "rust", "fence", "gates", "urban-decay"],
     "genres": [],
     "places": [
       {
@@ -48646,7 +48675,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["love-locks", "padlocks", "fence", "city", "details"],
+    "tags": ["love-locks", "padlocks", "fence", "city"],
     "genres": [],
     "places": [
       {
@@ -52155,7 +52184,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["homepage-spotlight"],
-    "tags": ["dancheong", "gazebo", "birds", "patterns", "symmetry", "reflections", "details"],
+    "tags": ["dancheong", "gazebo", "birds", "patterns", "symmetry", "reflections"],
     "genres": [],
     "placeName": "Mirror Pond",
     "customCity": "Seoul",
@@ -52982,7 +53011,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["letterpress", "typography", "letters", "vintage", "museum", "repetition", "details"],
+    "tags": ["letterpress", "typography", "letters", "vintage", "museum", "repetition"],
     "genres": [],
     "places": [
       {
@@ -53217,7 +53246,7 @@
     "customGpsPosition": null,
     "createDate": "2019:07:16 20:28:37",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Nantucket Harbor",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -53253,7 +53282,12 @@
     "albums": [],
     "tags": ["harbor", "pier", "pilings", "boats", "sailboats", "reflections", "twilight"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "nantucket-harbor"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -53515,7 +53549,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["newts", "amphibians", "wood", "moss", "forest", "details"],
+    "tags": ["newts", "amphibians", "wood", "moss", "forest"],
     "genres": [],
     "places": [
       {
@@ -55367,7 +55401,7 @@
     "customGpsPosition": null,
     "createDate": "2025:01:25 15:59:48",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Qasr el-Sagha",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -55403,7 +55437,12 @@
     "albums": [],
     "tags": ["ancient-egypt", "ruins", "desert", "tourists", "clouds", "dogs"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "at",
+        "id": "qasr-el-sagha"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -55631,7 +55670,7 @@
     "customGpsPosition": null,
     "createDate": "2026:10:01 16:13:49",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Namba",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -55667,7 +55706,12 @@
     "albums": [],
     "tags": ["chochin", "alley", "power-lines", "cables", "signage", "storefronts", "pedestrians"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "in",
+        "id": "namba"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -57513,7 +57557,7 @@
     "customGpsPosition": null,
     "createDate": "2025:01:26 09:20:28",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Lake Qarun",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -57549,7 +57593,12 @@
     "albums": [],
     "tags": ["road", "minimalism", "lake", "promenade", "bench", "lamppost", "haze", "mural"],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "by",
+        "id": "lake-qarun"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],
@@ -59707,7 +59756,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["mushrooms", "fungi", "texture", "forest", "details"],
+    "tags": ["mushrooms", "fungi", "texture", "forest"],
     "genres": [],
     "places": [
       {
@@ -60248,7 +60297,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["doors", "patterns", "symmetry", "repetition", "details", "minimalism"],
+    "tags": ["doors", "patterns", "symmetry", "repetition", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -60517,7 +60566,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["rust", "steel", "texture", "patterns", "urban-decay", "details"],
+    "tags": ["rust", "steel", "texture", "patterns", "urban-decay"],
     "genres": [],
     "places": [
       {
@@ -60786,7 +60835,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["details", "shide", "shimenawa", "shinto", "shrine", "rope"],
+    "tags": ["shide", "shimenawa", "shinto", "shrine", "rope"],
     "genres": [],
     "places": [
       {
@@ -61324,7 +61373,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": ["crabs", "seaweed", "stones", "beach", "details"],
+    "tags": ["crabs", "seaweed", "stones", "beach"],
     "genres": [],
     "places": [
       {
@@ -73186,7 +73235,7 @@
     "customGpsPosition": null,
     "createDate": "2025:01:26 07:21:13",
     "customCreateDate": null,
-    "placeName": null,
+    "placeName": "Lazib Inn",
     "customCity": null,
     "customState": null,
     "customCountry": null,
@@ -73231,7 +73280,12 @@
       "cafe"
     ],
     "genres": [],
-    "places": [],
+    "places": [
+      {
+        "relation": "inside",
+        "id": "lazib-inn"
+      }
+    ],
     "spotlightZones": [],
     "spotlightFocus": null,
     "socialPosts": [],

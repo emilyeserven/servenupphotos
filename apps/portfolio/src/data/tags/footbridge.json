@@ -1,5 +1,6 @@
 {
   "id": "footbridge",
   "name": "footbridge",
-  "description": ""
+  "description": "",
+  "parent": "bridge"
 }

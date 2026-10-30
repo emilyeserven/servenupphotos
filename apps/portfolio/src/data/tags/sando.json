@@ -1,5 +1,6 @@
 {
   "id": "sando",
   "name": "sando",
-  "description": ""
+  "description": "",
+  "parent": "path"
 }

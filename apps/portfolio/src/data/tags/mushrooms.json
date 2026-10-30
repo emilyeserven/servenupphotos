@@ -1,5 +1,6 @@
 {
   "id": "mushrooms",
   "name": "mushrooms",
-  "description": ""
+  "description": "",
+  "parent": "fungi"
 }

@@ -1,5 +1,6 @@
 {
   "id": "palm-trees",
   "name": "palm-trees",
-  "description": ""
+  "description": "",
+  "parent": "trees"
 }

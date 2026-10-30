@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:23 10:11:56",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Former Kubota Family Residence",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,16 @@
   "albums": [],
   "tags": ["tokonoma", "kakejiku", "washitsu", "tatami", "shoji", "flowers", "interior"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "inside",
+      "id": "former-kubota-family-residence"
+    },
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

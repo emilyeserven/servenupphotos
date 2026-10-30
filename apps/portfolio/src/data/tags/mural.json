@@ -1,5 +1,6 @@
 {
   "id": "mural",
   "name": "mural",
-  "description": ""
+  "description": "",
+  "parent": "street-art"
 }

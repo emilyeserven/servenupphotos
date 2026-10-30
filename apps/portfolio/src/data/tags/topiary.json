@@ -1,5 +1,6 @@
 {
   "id": "topiary",
   "name": "topiary",
-  "description": ""
+  "description": "",
+  "parent": "garden"
 }

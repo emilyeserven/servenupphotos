@@ -165,6 +165,18 @@
     "country": "South Korea"
   },
   {
+    "id": "cathedral-of-st-michael-and-st-gudula",
+    "name": "Cathedral of St. Michael and St. Gudula",
+    "description": "",
+    "parent": "",
+    "city": "Brussels",
+    "state": "Brussels-Capital",
+    "country": "Belgium",
+    "latitude": 50.847689,
+    "longitude": 4.361039,
+    "exactLocation": true
+  },
+  {
     "id": "central-park",
     "name": "Central Park",
     "description": "",
@@ -201,6 +213,18 @@
     "parent": "",
     "city": "",
     "country": ""
+  },
+  {
+    "id": "children-s-beach",
+    "name": "Children's Beach",
+    "description": "",
+    "parent": "",
+    "city": "Nantucket",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 41.289953,
+    "longitude": -70.090925,
+    "exactLocation": true
   },
   {
     "id": "citadel-of-salah-al-din-al-ayyubi",
@@ -451,6 +475,18 @@
     "country": "Japan"
   },
   {
+    "id": "hagi-station",
+    "name": "Hagi Station",
+    "description": "",
+    "parent": "",
+    "city": "Hagi",
+    "state": "Yamaguchi",
+    "country": "Japan",
+    "latitude": 34.395228,
+    "longitude": 131.394733,
+    "exactLocation": true
+  },
+  {
     "id": "international-port-of-busan",
     "name": "International Port of Busan",
     "description": "",
@@ -533,6 +569,18 @@
     "country": "Switzerland",
     "latitude": 46.75296690432046,
     "longitude": 8.033297631815541
+  },
+  {
+    "id": "lake-qarun",
+    "name": "Lake Qarun",
+    "description": "",
+    "parent": "",
+    "city": "Sinnuris",
+    "state": "Faiyum",
+    "country": "Egypt",
+    "latitude": 29.471053,
+    "longitude": 30.745306,
+    "exactLocation": true
   },
   {
     "id": "lazib-inn",
@@ -770,6 +818,17 @@
     "country": "South Korea"
   },
   {
+    "id": "nantucket-harbor",
+    "name": "Nantucket Harbor",
+    "description": "",
+    "parent": "",
+    "city": "Nantucket",
+    "state": "Massachusetts",
+    "country": "United States of America",
+    "latitude": 41.285,
+    "longitude": -70.0955
+  },
+  {
     "id": "national-museum-of-korea",
     "name": "National Museum of Korea",
     "description": "",
@@ -820,6 +879,18 @@
     "country": "United States of America",
     "latitude": 41.30900335742722,
     "longitude": -73.30154847932147
+  },
+  {
+    "id": "qasr-el-sagha",
+    "name": "Qasr el-Sagha",
+    "description": "",
+    "parent": "",
+    "city": "Sinnuris",
+    "state": "Faiyum",
+    "country": "Egypt",
+    "latitude": 29.595169,
+    "longitude": 30.677858,
+    "exactLocation": true
   },
   {
     "id": "queens",
@@ -891,6 +962,18 @@
     "country": "United States of America",
     "latitude": 40.74064705262195,
     "longitude": -74.00734805268478
+  },
+  {
+    "id": "sannomiya",
+    "name": "Sannomiya",
+    "description": "",
+    "parent": "",
+    "city": "Kobe",
+    "state": "Hyōgo",
+    "country": "Japan",
+    "latitude": 34.693353,
+    "longitude": 135.191264,
+    "exactLocation": true
   },
   {
     "id": "soho",
@@ -1033,6 +1116,18 @@
     "parent": "",
     "city": "",
     "country": ""
+  },
+  {
+    "id": "wadi-el-rayan",
+    "name": "Wadi El Rayan",
+    "description": "",
+    "parent": "",
+    "city": "Youssief Al Sedik",
+    "state": "Faiyum",
+    "country": "Egypt",
+    "latitude": 29.179025,
+    "longitude": 30.351567,
+    "exactLocation": true
   },
   {
     "id": "washington-square-park",

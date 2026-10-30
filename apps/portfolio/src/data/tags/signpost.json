@@ -1,5 +1,6 @@
 {
   "id": "signpost",
   "name": "signpost",
-  "description": ""
+  "description": "",
+  "parent": "signage"
 }

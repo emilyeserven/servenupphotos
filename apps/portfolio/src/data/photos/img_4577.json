@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2018:06:24 14:16:16",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "St. Mary's by the Sea",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["crabs", "seaweed", "stones", "beach", "camouflage"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "at",
+      "id": "st-mary-s-by-the-sea"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

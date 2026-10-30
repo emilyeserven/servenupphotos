@@ -1,5 +1,6 @@
 {
   "id": "minaret",
   "name": "minaret",
-  "description": ""
+  "description": "",
+  "parent": "mosque"
 }

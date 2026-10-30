@@ -1,5 +1,6 @@
 {
   "id": "pagoda",
   "name": "pagoda",
-  "description": ""
+  "description": "",
+  "parent": "temple"
 }

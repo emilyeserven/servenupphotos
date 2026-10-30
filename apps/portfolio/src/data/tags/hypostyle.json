@@ -1,5 +1,6 @@
 {
   "id": "hypostyle",
   "name": "hypostyle",
-  "description": ""
+  "description": "",
+  "parent": "columns"
 }

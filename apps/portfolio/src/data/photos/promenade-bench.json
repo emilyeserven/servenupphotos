@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:26 09:20:28",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Lake Qarun",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["road", "minimalism", "lake", "promenade", "bench", "lamppost", "haze", "mural"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "by",
+      "id": "lake-qarun"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

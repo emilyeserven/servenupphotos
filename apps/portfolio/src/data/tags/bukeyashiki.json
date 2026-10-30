@@ -1,5 +1,6 @@
 {
   "id": "bukeyashiki",
   "name": "bukeyashiki",
-  "description": ""
+  "description": "",
+  "parent": "houses"
 }

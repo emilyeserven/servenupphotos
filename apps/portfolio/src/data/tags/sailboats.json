@@ -1,5 +1,6 @@
 {
   "id": "sailboats",
   "name": "sailboats",
-  "description": ""
+  "description": "",
+  "parent": "boats"
 }

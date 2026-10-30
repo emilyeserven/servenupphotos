@@ -1,0 +1,12 @@
+{
+  "id": "cathedral-of-st-michael-and-st-gudula",
+  "name": "Cathedral of St. Michael and St. Gudula",
+  "description": "",
+  "parent": "",
+  "city": "Brussels",
+  "state": "Brussels-Capital",
+  "country": "Belgium",
+  "latitude": 50.847689,
+  "longitude": 4.361039,
+  "exactLocation": true
+}

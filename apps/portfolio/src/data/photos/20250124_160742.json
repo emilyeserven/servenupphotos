@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:24 16:07:42",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Wadi El Rayan",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -49,8 +49,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["oasis", "desert", "lake", "sand", "clouds"],
-  "genres": [],
-  "places": [],
+  "genres": ["landscape"],
+  "places": [
+    {
+      "relation": "overlooking",
+      "id": "wadi-el-rayan"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

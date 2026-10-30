@@ -1,5 +1,6 @@
 {
   "id": "goats",
   "name": "goats",
-  "description": ""
+  "description": "",
+  "parent": "farm-animals"
 }

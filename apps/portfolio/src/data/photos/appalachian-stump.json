@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hiking-trail", "tree-stump", "carvings", "wood", "moss", "forest", "texture"],
-  "genres": [],
+  "genres": ["nature"],
   "places": [
     {
       "relation": "",

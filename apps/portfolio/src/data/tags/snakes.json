@@ -1,5 +1,6 @@
 {
   "id": "snakes",
   "name": "snakes",
-  "description": ""
+  "description": "",
+  "parent": "reptiles"
 }

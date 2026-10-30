@@ -1,5 +1,6 @@
 {
   "id": "torii",
   "name": "torii",
-  "description": ""
+  "description": "",
+  "parent": "shrine"
 }

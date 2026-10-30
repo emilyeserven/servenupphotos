@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["ancient-egypt", "necropolis", "pyramids", "tourists", "monument", "stones", "clouds"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [
     {
       "relation": "",

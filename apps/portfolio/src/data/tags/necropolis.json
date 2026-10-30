@@ -1,5 +1,6 @@
 {
   "id": "necropolis",
   "name": "necropolis",
-  "description": ""
+  "description": "",
+  "parent": "cemetery"
 }

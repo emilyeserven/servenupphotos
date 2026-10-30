@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:09:22 15:47:36",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Hagi Castle Town",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -59,7 +59,12 @@
     "village"
   ],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "in",
+      "id": "hagi-castle-town"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

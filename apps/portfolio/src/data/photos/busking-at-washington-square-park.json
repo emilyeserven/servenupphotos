@@ -61,7 +61,7 @@
     "sidewalk",
     "shadows"
   ],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

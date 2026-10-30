@@ -1,5 +1,6 @@
 {
   "id": "vintage-cars",
   "name": "vintage-cars",
-  "description": ""
+  "description": "",
+  "parent": "cars"
 }

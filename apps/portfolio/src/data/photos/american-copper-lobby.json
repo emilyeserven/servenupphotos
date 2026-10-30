@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["patterns", "texture", "wood", "interior", "details"],
-  "genres": [],
+  "tags": ["patterns", "texture", "wood", "interior"],
+  "genres": ["abstract", "architecture"],
   "places": [
     {
       "relation": "",

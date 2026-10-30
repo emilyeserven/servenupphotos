@@ -1,5 +1,6 @@
 {
   "id": "oasis",
   "name": "oasis",
-  "description": ""
+  "description": "",
+  "parent": "desert"
 }

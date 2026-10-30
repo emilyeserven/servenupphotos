@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2025:01:24 15:06:02",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "Wadi El-Hitan",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -49,8 +49,13 @@
   "customLens": null,
   "albums": [],
   "tags": ["wadi", "desert", "sand", "clouds", "rock-formations", "tourists"],
-  "genres": [],
-  "places": [],
+  "genres": ["landscape"],
+  "places": [
+    {
+      "relation": "in",
+      "id": "wadi-el-hitan"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],

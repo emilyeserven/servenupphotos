@@ -1,5 +1,6 @@
 {
   "id": "christmas-lights",
   "name": "christmas-lights",
-  "description": ""
+  "description": "",
+  "parent": "string-lights"
 }

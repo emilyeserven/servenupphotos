@@ -1,5 +1,6 @@
 {
   "id": "dancheong",
   "name": "dancheong",
-  "description": ""
+  "description": "",
+  "parent": "patterns"
 }

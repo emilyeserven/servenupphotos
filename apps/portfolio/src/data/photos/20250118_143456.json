@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["mosque", "silhouettes", "doorway", "lamps", "carpet", "walls", "shadows"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [
     {
       "relation": "",
