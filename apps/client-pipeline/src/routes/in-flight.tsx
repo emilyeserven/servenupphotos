@@ -21,7 +21,6 @@ import {
   type RemoveResult,
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
-import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 import { CommitError } from "@/components/commit-error";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { JsonDiffBlock } from "@/components/json-diff-block";
@@ -49,9 +48,11 @@ import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
 import { DRAFT_FILTERS, SavedDrafts } from "@/components/saved-drafts";
 import { SkippedEdits } from "@/components/skipped-edits";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
+import { OfflineNotice } from "@/components/offline-notice";
 import { MoveToUndecided, UndecidedQueue } from "@/components/undecided-photos";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
+import { squareImages } from "@/lib/offline-thumbnails";
 import {
   Card,
   CardAction,
@@ -226,6 +227,7 @@ function PhotoFiles({
   const undecided = undecidedPaths(files, edits);
   return (
     <>
+      <OfflineNotice images={shown.images} />
       <PhotoFilterBar filters={filters} shown={files.length} total={shown.files.length} />
       <UndecidedQueue
         files={files.filter((file) => undecided.has(file.path))}
@@ -494,16 +496,16 @@ function FileJson({
 /** The photo's image from R2, with its Square Thumbnail under it when it has an image. */
 function PhotoImages({ file, images }: { file: InFlightFile; images: InFlightImages }) {
   const url = images.byPath[file.path]?.url;
-  const square = squareUrl(file, url);
+  const square = squareImages(file.data, url);
   return (
     <div className="flex min-w-0 flex-col gap-3">
       <PhotoImage name={photoName(file)} url={url} checked={images.checked} />
       {square && (
         <SquareThumbnailImage
-          key={square}
+          key={square.square}
           name={photoName(file)}
-          url={square}
-          previewUrl={squarePreviewUrl(file, url)}
+          url={square.square}
+          previewUrl={square.preview}
         />
       )}
     </div>
@@ -540,30 +542,6 @@ function EditLink({ file, images }: { file: InFlightFile; images: InFlightImages
       </Link>
     </Button>
   );
-}
-
-/**
- * The Square Thumbnail URL saved in the photo's JSON, or else the one next to its image in R2, or
- * undefined when it has neither.
- */
-function squareUrl(file: InFlightFile, imageUrl?: string): string | undefined {
-  return savedSquareUrl(file.data) ?? (imageUrl && squareThumbnailUrl(imageUrl));
-}
-
-/** The Thumbnail Preview URL saved in the photo's JSON, or else the one next to its image in R2. */
-function squarePreviewUrl(file: InFlightFile, imageUrl?: string): string | undefined {
-  return (
-    savedImageUrl(file.data, "thumbnailpreview") ?? (imageUrl && thumbnailPreviewUrl(imageUrl))
-  );
-}
-
-function savedSquareUrl(data: unknown): string | undefined {
-  return savedImageUrl(data, "thumbnail");
-}
-
-function savedImageUrl(data: unknown, name: string): string | undefined {
-  const saved = (data as { images?: Record<string, unknown> } | undefined)?.images?.[name];
-  return typeof saved === "string" ? saved || undefined : undefined;
 }
 
 const MISSING_IMAGE = {

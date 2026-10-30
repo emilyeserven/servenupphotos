@@ -40,6 +40,7 @@ import {
 } from "@/components/gallery/place-filter";
 import { type PhotoFilters, parseFilters } from "@/lib/photo-filters";
 import { type Selection, fileName, photoName } from "@/components/gallery/published-file";
+import { OfflineNotice } from "@/components/offline-notice";
 
 interface GallerySearch extends PhotoFilters, PlaceSearch {
   /** Whether Undecided photos are shown too, or only they are; hidden when left out. */
@@ -262,16 +263,28 @@ function shownFiles(
   return sortGallery(data.files, sort).filter((file) => matches(file, filter));
 }
 
-/** How many photos there are, and how many of them have changes waiting in the pull request. */
+/**
+ * How many photos there are, and how many of them have changes waiting in the pull request, under
+ * the offline notice when R2 couldn't be reached.
+ */
 function Summary({ data }: { data: PublishedResponse }) {
   const count = data.files.length;
   return (
-    <p className="text-muted-foreground">
-      {count === 1 ? "1 photo" : `${count} photos`}
-      <InFlightCount data={data} />
-      {!data.images.checked && `. ${data.images.message ?? "Couldn't check R2."}`}
-    </p>
+    <>
+      <OfflineNotice images={data.images} />
+      <p className="text-muted-foreground">
+        {count === 1 ? "1 photo" : `${count} photos`}
+        <InFlightCount data={data} />
+        {r2Problem(data.images)}
+      </p>
+    </>
   );
+}
+
+/** Why R2 couldn't be checked, after the count; nothing when it was, or the offline notice says so. */
+function r2Problem(images: PublishedResponse["images"]): string {
+  if (images.checked || images.offline) return "";
+  return `. ${images.message ?? "Couldn't check R2."}`;
 }
 
 /** How many of the photos the pull request changes, linked to it, when it changes any. */

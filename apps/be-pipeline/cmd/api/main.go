@@ -34,9 +34,10 @@ func main() {
 	// from GitHub: the repository root when run from apps/be-pipeline.
 	checkout := getenv("REPO_DIR", "../..")
 
+	pipeline := httpapi.NewPipeline(extractor, store, checkout)
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           httpapi.NewRouterWithCheckout(extractor, store, checkout),
+		Handler:           pipeline.Handler,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
@@ -50,6 +51,10 @@ func main() {
 			os.Exit(1)
 		}
 	}()
+
+	// Fetch the Square Thumbnails added since the last start, so the Gallery,
+	// the Undecided queue and drafts can be looked through offline.
+	go pipeline.WarmOffline(ctx)
 
 	<-ctx.Done()
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

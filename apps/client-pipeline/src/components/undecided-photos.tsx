@@ -1,9 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon, CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
 import type { InFlightFileRead, InFlightImages } from "@/api/photos";
-import { squareThumbnailUrl } from "@/api/versions";
 import { Button } from "@/components/ui/button";
 import { titleOf } from "@/lib/drafts";
+import { squareImages } from "@/lib/offline-thumbnails";
 import { UNDECIDED } from "@/lib/undecided";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
@@ -115,7 +115,7 @@ export function DraftTile({ file, imageUrl, undecided, fromGallery }: DraftTileP
   return (
     <li className="flex min-w-0 flex-col gap-1.5">
       <span className="bg-muted flex aspect-square items-center justify-center overflow-hidden rounded-md border">
-        <TileImage imageUrl={imageUrl} />
+        <TileImage data={file.data} imageUrl={imageUrl} />
       </span>
       <span className="truncate text-xs" title={name}>
         {name}
@@ -128,17 +128,11 @@ export function DraftTile({ file, imageUrl, undecided, fromGallery }: DraftTileP
   );
 }
 
-/** The photo's Square Thumbnail, or an image icon without an image in R2. */
-function TileImage({ imageUrl }: { imageUrl?: string }) {
-  if (!imageUrl) return <ImageIcon className="text-muted-foreground size-5" />;
-  return (
-    <img
-      src={squareThumbnailUrl(imageUrl)}
-      alt=""
-      loading="lazy"
-      className="size-full object-cover"
-    />
-  );
+/** The photo's Square Thumbnail from the offline copy, or an image icon without an image in R2. */
+function TileImage({ data, imageUrl }: { data: unknown; imageUrl?: string }) {
+  const square = imageUrl && squareImages(data, imageUrl);
+  if (!square) return <ImageIcon className="text-muted-foreground size-5" />;
+  return <img src={square.square} alt="" loading="lazy" className="size-full object-cover" />;
 }
 
 /** Opens the photo on the Photo page, as the Gallery does for a photo on the base branch. */

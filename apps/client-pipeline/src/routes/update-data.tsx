@@ -3,6 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { BulkTaggingCard } from "@/components/bulk-tagging/bulk-tagging-card";
 import { ImageBaseUrlCard } from "@/components/image-base-url";
+import { LocalizationFillCard } from "@/components/localization-fill/localization-fill-card";
 import { LocationNamesCard } from "@/components/location-names-card";
 import { MissingFieldsCard } from "@/components/missing-fields";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
@@ -35,6 +36,7 @@ function UpdateDataPage() {
               <LocationNamesCard />
               <BulkTaggingCard />
               <TagDescriptionsCard />
+              <LocalizationFillCard />
             </>
           ) : (
             <p className="text-muted-foreground text-sm">

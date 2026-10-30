@@ -16,17 +16,17 @@ export function bulkTagCount(typed: string, fallback = defaultBulkTagCount) {
 interface PickCountProps {
   /** What's counted, such as "Photos to pick". */
   label?: string;
-  /** The count a typed value that isn't a number goes back to. */
+  /** The count when what's typed isn't a number. */
   fallback?: number;
   value: string;
   disabled: boolean;
   onChange: (value: string) => void;
 }
 
-/** Chooses how many photos (or tags) the next pick finds, from 1 to 50. */
+/** Chooses how many photos the next pick finds, or names the next prompt asks about, from 1 to 50. */
 export function PickCount({
   label = "Photos to pick",
-  fallback,
+  fallback = defaultBulkTagCount,
   value,
   disabled,
   onChange,
