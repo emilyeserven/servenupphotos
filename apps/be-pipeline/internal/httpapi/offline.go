@@ -42,7 +42,7 @@ func handleThumbnail(store *settings.Store, kept *offline.Copy) http.HandlerFunc
 		w.Header().Set("Content-Type", "image/webp")
 		// A remade Square Thumbnail gets a new URL (its crop mark), so a day is safe.
 		w.Header().Set("Cache-Control", "private, max-age=86400")
-		http.ServeFile(w, r, path)
+		http.ServeFile(w, r, path) //nolint:gosec // a file in the offline folder, named from a key IsThumbnailKey allowed and a hash
 	}
 }
 
