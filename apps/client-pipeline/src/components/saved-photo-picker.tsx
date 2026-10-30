@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ImageOffIcon, SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { savedGroups } from "@/api/organize";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { type InFlightFileRead, photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
@@ -19,6 +19,8 @@ export interface SavedPhoto {
   published: boolean;
   /** The IDs of the albums its JSON lists. */
   albums: string[];
+  /** Its photo JSON file, as the filters and sorts read it. */
+  file: InFlightFileRead;
 }
 
 /** The photo JSON's `images` URL for version, when it has one. */
@@ -31,7 +33,7 @@ function imageOf(file: InFlightFileRead, version: string): string | undefined {
 function savedPhoto(file: InFlightFileRead, published: boolean): SavedPhoto {
   const image = imageOf(file, "thumbnail") ?? imageOf(file, "xsmall");
   const albums = savedGroups(file.data as Record<string, unknown> | undefined).albums;
-  return { path: file.path, name: photoName(file), image, published, albums };
+  return { path: file.path, name: photoName(file), image, published, albums, file };
 }
 
 /** The files that could be read and aren't being removed, leaving out the paths given. */
@@ -45,13 +47,23 @@ function readable(files: InFlightFileRead[] | undefined, except = new Set<string
 export function useSavedPhotos() {
   const inFlight = useQuery(photosInFlightQuery);
   const published = useQuery(publishedPhotosQuery);
-  const waiting = readable(inFlight.data?.files);
-  const portfolio = readable(published.data?.files, new Set(waiting.map((file) => file.path)));
-  const photos = [
+  const photos = useMemo(
+    () => savedPhotos(inFlight.data?.files, published.data?.files),
+    [inFlight.data, published.data],
+  );
+  return { photos, pending: inFlight.isPending || published.isPending };
+}
+
+function savedPhotos(
+  inFlight: InFlightFileRead[] | undefined,
+  published: InFlightFileRead[] | undefined,
+): SavedPhoto[] {
+  const waiting = readable(inFlight);
+  const portfolio = readable(published, new Set(waiting.map((file) => file.path)));
+  return [
     ...waiting.map((file) => savedPhoto(file, false)),
     ...portfolio.map((file) => savedPhoto(file, true)),
   ];
-  return { photos, pending: inFlight.isPending || published.isPending };
 }
 
 /** Whether the photo's title or file name has the search text in it, ignoring case. */

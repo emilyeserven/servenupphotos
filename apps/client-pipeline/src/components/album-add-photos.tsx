@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { type Group, addPhotoGroupsMutation, groupLabel } from "@/api/organize";
 import { photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
+import { AddPhotoFilters, useAddChoices } from "@/components/album-add-filters";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import {
   type SavedPhoto,
   SavedPhotoSearch,
   SavedPhotoSquare,
-  matchesSearch,
   useSavedPhotos,
 } from "@/components/saved-photo-picker";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
@@ -73,7 +73,7 @@ export function AlbumAddPhotos({ album, add }: AlbumAddPhotosProps) {
           Add photos
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="max-h-[92dvh] overflow-y-auto sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>Add photos to {groupLabel(album)}</DialogTitle>
           <DialogDescription>
@@ -88,7 +88,10 @@ export function AlbumAddPhotos({ album, add }: AlbumAddPhotosProps) {
           onChange={setPicked}
         />
         {add.isError && <p className="text-destructive text-sm">{add.error.message}</p>}
-        <DialogFooter>
+        <DialogFooter className="bg-popover sticky -bottom-4 -mx-4 -mb-4 items-center border-t px-4 py-3">
+          <span className="text-muted-foreground mr-auto text-sm" aria-live="polite">
+            {photoCount(picked.size)} picked
+          </span>
           <Button disabled={picked.size === 0 || add.isPending} onClick={save}>
             {add.isPending && <Spinner />}
             {addText(picked.size)}
@@ -115,13 +118,20 @@ interface PhotoChoicesProps {
   onChange: (picked: ReadonlySet<string>) => void;
 }
 
-/** The saved photos not in the album, with a search, each a tile to pick or unpick. */
+/**
+ * The saved photos not in the album, with a search, the Gallery's filters and sort, each a tile to
+ * pick or unpick.
+ */
 function PhotoChoices({ albumId, picked, disabled, onChange }: PhotoChoicesProps) {
   const { photos, pending } = useSavedPhotos();
   const [search, setSearch] = useState("");
+  const outside = useMemo(
+    () => photos.filter((photo) => !photo.albums.includes(albumId)),
+    [photos, albumId],
+  );
+  const choices = useAddChoices(outside, search);
   if (pending) return <Spinner className="size-6" />;
-  const outside = photos.filter((photo) => !photo.albums.includes(albumId));
-  const shown = outside.filter((photo) => matchesSearch(photo, search));
+  const { shown } = choices;
   const toggle = (path: string) => {
     const next = new Set(picked);
     if (!next.delete(path)) next.add(path);
@@ -131,13 +141,11 @@ function PhotoChoices({ albumId, picked, disabled, onChange }: PhotoChoicesProps
   return (
     <div className="flex flex-col gap-3">
       <SavedPhotoSearch value={search} onChange={setSearch} />
-      <p className="text-muted-foreground text-sm" aria-live="polite">
-        {photoCount(picked.size)} picked, of {outside.length} not in this album
-      </p>
+      <AddPhotoFilters choices={choices} />
       {shown.length === 0 ? (
         <p className="text-muted-foreground text-sm">No saved photos match.</p>
       ) : (
-        <ul className="grid max-h-[50dvh] grid-cols-3 gap-2 overflow-y-auto p-1 sm:grid-cols-4">
+        <ul className="grid max-h-[50dvh] grid-cols-3 gap-2 overflow-y-auto p-1 sm:grid-cols-5">
           {shown.map((photo) => (
             <li key={photo.path}>
               <ChoiceTile
