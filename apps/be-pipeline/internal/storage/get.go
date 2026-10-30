@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"path"
+	"regexp"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -40,6 +41,37 @@ func getPhoto(ctx context.Context, cfg settings.R2, endpoint, key string) (io.Re
 	if !strings.HasPrefix(key, "photos/") || strings.Contains(key, "..") || (ext != ".jpg" && ext != ".jpeg") {
 		return nil, &GetError{Message: "Only uploaded JPEG photos can be read from R2.", BadKey: true}
 	}
+	return getObject(ctx, cfg, endpoint, key)
+}
+
+// thumbnailKeyPattern matches the keys of the Square Thumbnails and Thumbnail
+// Previews UploadPhoto writes next to an original.
+var thumbnailKeyPattern = regexp.MustCompile(`^photos/[a-z0-9-]+-thumbnail(?:preview)?\.webp$`)
+
+// IsThumbnailKey reports whether key is a Square Thumbnail's or a Thumbnail
+// Preview's, the only WEBPs GetThumbnail reads.
+func IsThumbnailKey(key string) bool {
+	return thumbnailKeyPattern.MatchString(key)
+}
+
+// GetThumbnail opens the Square Thumbnail or Thumbnail Preview at key in the
+// configured bucket. The caller closes the body. Failures are *GetError.
+func GetThumbnail(ctx context.Context, cfg settings.R2, key string) (io.ReadCloser, error) {
+	return getThumbnail(ctx, cfg, r2Endpoint(cfg), key)
+}
+
+func getThumbnail(ctx context.Context, cfg settings.R2, endpoint, key string) (io.ReadCloser, error) {
+	if msg := validateR2(cfg); msg != "" {
+		return nil, &GetError{Message: msg}
+	}
+	if !IsThumbnailKey(key) {
+		return nil, &GetError{Message: "Only Square Thumbnails can be read from R2 here.", BadKey: true}
+	}
+	return getObject(ctx, cfg, endpoint, key)
+}
+
+// getObject opens the object at key, a key the caller has already checked.
+func getObject(ctx context.Context, cfg settings.R2, endpoint, key string) (io.ReadCloser, error) {
 	out, err := newR2Client(cfg, endpoint).GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(strings.TrimSpace(cfg.Bucket)),
 		Key:    aws.String(key),

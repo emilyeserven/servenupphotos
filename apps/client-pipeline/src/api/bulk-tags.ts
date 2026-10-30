@@ -1,6 +1,6 @@
-import { mutationOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { post } from "@/api/data";
 import type { PendingSave } from "@/api/scan-changes";
-import { requestJson } from "@/api/settings";
 
 /** One photo Bulk Tagging picked to tag with the others. */
 export interface BulkTagPhoto {
@@ -74,36 +74,40 @@ interface BulkTagsResult extends PendingSave {
   photos: number;
 }
 
-/** Posts `body` as JSON to `url` and reads the JSON answer. */
-export function postJson<T>(url: string, body: unknown) {
-  return requestJson<T>(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
+/** What a Bulk Tagging pick asks for. */
+interface BulkTagPickOptions {
+  /** The photos already shown, to leave out. */
+  skip: string[];
+  /** How many photos to pick, 1 to 50. */
+  count: number;
+  /** True picks the first photos without tags by file name, whether or not they go together. */
+  any: boolean;
 }
 
-/** Picks up to `count` related photos (1 to 50) to tag together, leaving out the ones already shown. */
+/** How many photo files there are and how many have no tags, with no photos picked. */
+export const untaggedPhotosQuery = queryOptions({
+  queryKey: ["data", "bulk-tags", "untagged"],
+  queryFn: () => post<BulkTagPick>("/api/data/bulk-tags/untagged", {}),
+  retry: false,
+});
+
+/** Picks up to `count` photos (1 to 50) to tag together, leaving out the ones already shown. */
 export const pickBulkTagPhotosMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "pick"],
-  mutationFn: (body: { skip: string[]; count: number }) =>
-    postJson<BulkTagPick>("/api/data/bulk-tags/pick", body),
+  mutationFn: (body: BulkTagPickOptions) => post<BulkTagPick>("/api/data/bulk-tags/pick", body),
 });
 
 /** Reads the LLM's pasted answer for the picked photos and says what it would add, saving nothing. */
 export const previewBulkTagsMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "preview"],
   mutationFn: (body: { paths: string[]; answer: string }) =>
-    postJson<BulkTagsPreview>("/api/data/bulk-tags/preview", body),
+    post<BulkTagsPreview>("/api/data/bulk-tags/preview", body),
 });
 
-/**
- * The album or tag files (`kind`'s) and photo files a save changed, as changes over the combined
- * lists.
- */
-export function groupAndPhotoChanges(result: PendingSave, kind: "albums" | "tags") {
+/** The tag and photo files a Bulk Tagging save changed, as changes over the combined lists. */
+function bulkTagChanges(result: BulkTagsResult) {
   return result.changes.map((change) => ({
-    kind: change.path.includes(`/${kind}/`) ? kind : ("photos" as const),
+    kind: change.path.includes("/tags/") ? ("tags" as const) : ("photos" as const),
     ...change,
   }));
 }
@@ -111,6 +115,6 @@ export function groupAndPhotoChanges(result: PendingSave, kind: "albums" | "tags
 /** Makes the new tags and adds the tags to each photo, as changes waiting for Commit. */
 export const applyBulkTagsMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "apply"],
-  meta: { saves: true, changes: (result) => groupAndPhotoChanges(result as PendingSave, "tags") },
-  mutationFn: (bulk: BulkTags) => postJson<BulkTagsResult>("/api/data/bulk-tags", bulk),
+  meta: { saves: true, changes: (result) => bulkTagChanges(result as BulkTagsResult) },
+  mutationFn: (bulk: BulkTags) => post<BulkTagsResult>("/api/data/bulk-tags", bulk),
 });

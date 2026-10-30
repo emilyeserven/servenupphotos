@@ -1,5 +1,15 @@
 [
   {
+    "id": "abandoned",
+    "name": "abandoned",
+    "description": ""
+  },
+  {
+    "id": "acrobatics",
+    "name": "acrobatics",
+    "description": ""
+  },
+  {
     "id": "aerial-view",
     "name": "aerial-view",
     "description": ""
@@ -12,6 +22,11 @@
   {
     "id": "alley",
     "name": "alley",
+    "description": ""
+  },
+  {
+    "id": "amphibians",
+    "name": "amphibians",
     "description": ""
   },
   {
@@ -65,8 +80,18 @@
     "description": ""
   },
   {
+    "id": "banjos",
+    "name": "banjos",
+    "description": ""
+  },
+  {
     "id": "barn",
     "name": "barn",
+    "description": ""
+  },
+  {
+    "id": "barnacles",
+    "name": "barnacles",
     "description": ""
   },
   {
@@ -115,6 +140,11 @@
     "description": ""
   },
   {
+    "id": "bracket-fungi",
+    "name": "bracket-fungi",
+    "description": ""
+  },
+  {
     "id": "branches",
     "name": "branches",
     "description": ""
@@ -132,6 +162,11 @@
   {
     "id": "bubbles",
     "name": "bubbles",
+    "description": ""
+  },
+  {
+    "id": "buddha",
+    "name": "buddha",
     "description": ""
   },
   {
@@ -166,6 +201,11 @@
     "description": ""
   },
   {
+    "id": "cafe",
+    "name": "cafe",
+    "description": ""
+  },
+  {
     "id": "calligraphy",
     "name": "calligraphy",
     "description": ""
@@ -173,6 +213,16 @@
   {
     "id": "camels",
     "name": "camels",
+    "description": ""
+  },
+  {
+    "id": "cameras",
+    "name": "cameras",
+    "description": ""
+  },
+  {
+    "id": "camouflage",
+    "name": "camouflage",
     "description": ""
   },
   {
@@ -196,6 +246,12 @@
     "description": ""
   },
   {
+    "id": "cast-iron-architecture",
+    "name": "cast-iron-architecture",
+    "description": "19th-century buildings with ornate facades made of prefabricated cast-iron panels, typical of New York's SoHo",
+    "parent": "facade"
+  },
+  {
     "id": "castle",
     "name": "castle",
     "description": ""
@@ -215,6 +271,17 @@
     "name": "chalk-art",
     "description": "drawings or paintings made on pavement with chalk or pastels, often temporary",
     "parent": "street-art"
+  },
+  {
+    "id": "changsal",
+    "name": "changsal",
+    "description": "the wooden latticework of traditional Korean doors and windows, backed with hanji paper",
+    "parent": "windows"
+  },
+  {
+    "id": "cherry-blossoms",
+    "name": "cherry-blossoms",
+    "description": ""
   },
   {
     "id": "chess",
@@ -237,6 +304,12 @@
     "description": ""
   },
   {
+    "id": "chozuya",
+    "name": "chozuya",
+    "description": "a water basin at a Japanese temple or shrine where visitors purify their hands and mouth, often fed by a dragon spout",
+    "parent": "fountain"
+  },
+  {
     "id": "christmas-lights",
     "name": "christmas-lights",
     "description": ""
@@ -249,6 +322,11 @@
   {
     "id": "city-lights",
     "name": "city-lights",
+    "description": ""
+  },
+  {
+    "id": "city-walls",
+    "name": "city-walls",
     "description": ""
   },
   {
@@ -377,6 +455,11 @@
     "description": ""
   },
   {
+    "id": "dragons",
+    "name": "dragons",
+    "description": ""
+  },
+  {
     "id": "ducks",
     "name": "ducks",
     "description": ""
@@ -402,6 +485,12 @@
     "description": ""
   },
   {
+    "id": "fanous",
+    "name": "fanous",
+    "description": "a traditional Egyptian lantern of pierced metal and colored glass, iconic during Ramadan",
+    "parent": "lanterns"
+  },
+  {
     "id": "farm-animals",
     "name": "farm-animals",
     "description": ""
@@ -414,6 +503,11 @@
   {
     "id": "fence",
     "name": "fence",
+    "description": ""
+  },
+  {
+    "id": "ferry-terminal",
+    "name": "ferry-terminal",
     "description": ""
   },
   {
@@ -559,6 +653,12 @@
     "description": "an ornate building where a medieval or early-modern trade guild met, typical of Flemish and Dutch market squares"
   },
   {
+    "id": "hanbok",
+    "name": "hanbok",
+    "description": "traditional Korean clothing, with a high-waisted, full skirt or loose trousers and a short jacket",
+    "parent": "costumes"
+  },
+  {
     "id": "hanfu",
     "name": "hanfu",
     "description": "traditional Han Chinese clothing with flowing robes, wide sleeves and wrapped collars",
@@ -568,6 +668,12 @@
     "id": "hangul",
     "name": "hangul",
     "description": ""
+  },
+  {
+    "id": "hanja",
+    "name": "hanja",
+    "description": "Chinese characters as used in writing Korean",
+    "parent": "letters"
   },
   {
     "id": "hanok",
@@ -605,6 +711,11 @@
     "description": ""
   },
   {
+    "id": "highway",
+    "name": "highway",
+    "description": ""
+  },
+  {
     "id": "hiking-trail",
     "name": "hiking-trail",
     "description": ""
@@ -622,6 +733,11 @@
   {
     "id": "houses",
     "name": "houses",
+    "description": ""
+  },
+  {
+    "id": "hula-hoop",
+    "name": "hula-hoop",
     "description": ""
   },
   {
@@ -685,6 +801,12 @@
     "description": ""
   },
   {
+    "id": "japsang",
+    "name": "japsang",
+    "description": "small clay guardian figurines lined along the roof ridges of Korean palace buildings to ward off evil",
+    "parent": "figurines"
+  },
+  {
     "id": "jingeomdari",
     "name": "jingeomdari",
     "description": ""
@@ -693,6 +815,11 @@
     "id": "juggling",
     "name": "juggling",
     "description": ""
+  },
+  {
+    "id": "kakejiku",
+    "name": "kakejiku",
+    "description": "a Japanese hanging scroll of painting or calligraphy, displayed in a tokonoma"
   },
   {
     "id": "karahafu",
@@ -709,6 +836,12 @@
     "id": "katomado",
     "name": "katomado",
     "description": ""
+  },
+  {
+    "id": "kawara",
+    "name": "kawara",
+    "description": "traditional Japanese fired-clay roof tiles laid in interlocking wavy rows",
+    "parent": "shingles"
   },
   {
     "id": "koshi",
@@ -747,6 +880,16 @@
     "description": ""
   },
   {
+    "id": "lighthouse",
+    "name": "lighthouse",
+    "description": ""
+  },
+  {
+    "id": "lizards",
+    "name": "lizards",
+    "description": ""
+  },
+  {
     "id": "love-locks",
     "name": "love-locks",
     "description": "padlocks that couples fasten to bridges, fences or railings as a symbol of lasting love"
@@ -769,6 +912,16 @@
   {
     "id": "manhole-cover",
     "name": "manhole-cover",
+    "description": ""
+  },
+  {
+    "id": "mannequins",
+    "name": "mannequins",
+    "description": ""
+  },
+  {
+    "id": "market",
+    "name": "market",
     "description": ""
   },
   {
@@ -803,6 +956,11 @@
     "description": ""
   },
   {
+    "id": "mirror",
+    "name": "mirror",
+    "description": ""
+  },
+  {
     "id": "mishkat",
     "name": "mishkat",
     "description": "a hanging mosque lamp, traditionally of glass or metal and often inscribed with Quranic calligraphy",
@@ -824,6 +982,11 @@
     "description": ""
   },
   {
+    "id": "mosaic",
+    "name": "mosaic",
+    "description": ""
+  },
+  {
     "id": "mosque",
     "name": "mosque",
     "description": ""
@@ -831,6 +994,11 @@
   {
     "id": "moss",
     "name": "moss",
+    "description": ""
+  },
+  {
+    "id": "motion-blur",
+    "name": "motion-blur",
     "description": ""
   },
   {
@@ -864,6 +1032,11 @@
     "description": ""
   },
   {
+    "id": "musicians",
+    "name": "musicians",
+    "description": ""
+  },
+  {
     "id": "necropolis",
     "name": "necropolis",
     "description": ""
@@ -879,9 +1052,20 @@
     "description": ""
   },
   {
+    "id": "newts",
+    "name": "newts",
+    "description": ""
+  },
+  {
     "id": "night",
     "name": "night",
     "description": ""
+  },
+  {
+    "id": "nobori",
+    "name": "nobori",
+    "description": "tall, narrow Japanese banners hung on poles at temples, shrines, shops and festivals",
+    "parent": "flags"
   },
   {
     "id": "noraebang",
@@ -889,8 +1073,18 @@
     "description": ""
   },
   {
+    "id": "numbers",
+    "name": "numbers",
+    "description": ""
+  },
+  {
     "id": "oasis",
     "name": "oasis",
+    "description": ""
+  },
+  {
+    "id": "observation-tower",
+    "name": "observation-tower",
     "description": ""
   },
   {
@@ -916,6 +1110,11 @@
   {
     "id": "outdoor-dining",
     "name": "outdoor-dining",
+    "description": ""
+  },
+  {
+    "id": "paddleboarding",
+    "name": "paddleboarding",
     "description": ""
   },
   {
@@ -959,6 +1158,11 @@
     "description": ""
   },
   {
+    "id": "pavilion",
+    "name": "pavilion",
+    "description": ""
+  },
+  {
     "id": "pedestrians",
     "name": "pedestrians",
     "description": ""
@@ -966,6 +1170,16 @@
   {
     "id": "phoenixes",
     "name": "phoenixes",
+    "description": ""
+  },
+  {
+    "id": "piano",
+    "name": "piano",
+    "description": ""
+  },
+  {
+    "id": "picnic",
+    "name": "picnic",
     "description": ""
   },
   {
@@ -1039,8 +1253,24 @@
     "description": ""
   },
   {
+    "id": "produce",
+    "name": "produce",
+    "description": ""
+  },
+  {
     "id": "promenade",
     "name": "promenade",
+    "description": ""
+  },
+  {
+    "id": "pumgyeseok",
+    "name": "pumgyeseok",
+    "description": "rank stones in a Korean palace courtyard marking where officials of each grade stood during ceremonies",
+    "parent": "stones"
+  },
+  {
+    "id": "pumpkins",
+    "name": "pumpkins",
     "description": ""
   },
   {
@@ -1121,6 +1351,11 @@
     "description": ""
   },
   {
+    "id": "roots",
+    "name": "roots",
+    "description": ""
+  },
+  {
     "id": "rope",
     "name": "rope",
     "description": ""
@@ -1194,6 +1429,12 @@
     "id": "senjafuda",
     "name": "senjafuda",
     "description": ""
+  },
+  {
+    "id": "seokdeung",
+    "name": "seokdeung",
+    "description": "a Korean stone lantern, traditionally placed before temple halls and tombs",
+    "parent": "lanterns"
   },
   {
     "id": "shadows",
@@ -1291,13 +1532,33 @@
     "description": ""
   },
   {
+    "id": "smartphones",
+    "name": "smartphones",
+    "description": ""
+  },
+  {
     "id": "snakes",
     "name": "snakes",
     "description": ""
   },
   {
+    "id": "snow",
+    "name": "snow",
+    "description": ""
+  },
+  {
+    "id": "snowman",
+    "name": "snowman",
+    "description": ""
+  },
+  {
     "id": "splash",
     "name": "splash",
+    "description": ""
+  },
+  {
+    "id": "spring",
+    "name": "spring",
     "description": ""
   },
   {
@@ -1331,6 +1592,11 @@
     "description": ""
   },
   {
+    "id": "steeple",
+    "name": "steeple",
+    "description": ""
+  },
+  {
     "id": "stickers",
     "name": "stickers",
     "description": ""
@@ -1356,8 +1622,18 @@
     "description": "art made in public spaces, such as murals, paste-ups, stencils and stickers"
   },
   {
+    "id": "street-food",
+    "name": "street-food",
+    "description": ""
+  },
+  {
     "id": "street-performer",
     "name": "street-performer",
+    "description": ""
+  },
+  {
+    "id": "string-lights",
+    "name": "string-lights",
     "description": ""
   },
   {
@@ -1406,6 +1682,11 @@
     "description": ""
   },
   {
+    "id": "table-tennis",
+    "name": "table-tennis",
+    "description": ""
+  },
+  {
     "id": "tall-grass",
     "name": "tall-grass",
     "description": ""
@@ -1429,6 +1710,12 @@
     "id": "texture",
     "name": "texture",
     "description": ""
+  },
+  {
+    "id": "tokonoma",
+    "name": "tokonoma",
+    "description": "a recessed alcove in a Japanese room for displaying a hanging scroll and flower arrangement",
+    "parent": "interior"
   },
   {
     "id": "topiary",
@@ -1460,6 +1747,11 @@
     "name": "tracery",
     "description": "ornamental stone ribs dividing a window into decorative shapes, typical of Gothic churches",
     "parent": "windows"
+  },
+  {
+    "id": "traffic-lights",
+    "name": "traffic-lights",
+    "description": ""
   },
   {
     "id": "traffic",
@@ -1537,6 +1829,11 @@
     "description": ""
   },
   {
+    "id": "violin",
+    "name": "violin",
+    "description": ""
+  },
+  {
     "id": "wabi-sabi",
     "name": "wabi-sabi",
     "description": ""
@@ -1568,6 +1865,11 @@
     "description": ""
   },
   {
+    "id": "watermelons",
+    "name": "watermelons",
+    "description": ""
+  },
+  {
     "id": "waves",
     "name": "waves",
     "description": ""
@@ -1595,6 +1897,11 @@
   {
     "id": "workers",
     "name": "workers",
+    "description": ""
+  },
+  {
+    "id": "wreath",
+    "name": "wreath",
     "description": ""
   },
   {

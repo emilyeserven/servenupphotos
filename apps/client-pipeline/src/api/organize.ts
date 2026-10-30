@@ -222,21 +222,35 @@ export const setAlbumPhotoOrderMutation = albumsMutation(
   ({ photoIds }) => ({ photoIds }),
 );
 
+/** The mutation options that PUT `body` to `/api/organize/tags/<key>` and save the tag files it changes. */
+function tagsMutation<T>(key: string, body: (vars: T) => unknown) {
+  return mutationOptions({
+    mutationKey: ["organize", "tags", key],
+    meta: {
+      saves: (result) => (result as AlbumsResult).files > 0,
+      changes: (result) =>
+        (result as PendingSave).changes.map((change) => ({ kind: "tags" as const, ...change })),
+    },
+    mutationFn: (vars: T) =>
+      requestJson<AlbumsResult>(`/api/organize/tags/${key}`, {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body(vars)),
+      }),
+  });
+}
+
 /** Names every tag in lowercase kebab-case, its ID, as changes waiting for Commit. */
-export const normalizeTagNamesMutation = mutationOptions({
-  mutationKey: ["organize", "tags", "names"],
-  meta: {
-    saves: (result) => (result as AlbumsResult).files > 0,
-    changes: (result) =>
-      (result as PendingSave).changes.map((change) => ({ kind: "tags" as const, ...change })),
-  },
-  mutationFn: () =>
-    requestJson<AlbumsResult>("/api/organize/tags/names", {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: "{}",
-    }),
-});
+export const normalizeTagNamesMutation = tagsMutation<void>("names", () => ({}));
+
+/**
+ * Saves each description in `descriptions`, by tag ID, as that tag's description, as changes
+ * waiting for Commit. Nothing is saved when an ID isn't a tag.
+ */
+export const setTagDescriptionsMutation = tagsMutation(
+  "descriptions",
+  (descriptions: Record<string, string>) => ({ descriptions }),
+);
 
 /**
  * Makes `album` the one the spotlight spot `zone` shows, or leaves the spot without one when it's

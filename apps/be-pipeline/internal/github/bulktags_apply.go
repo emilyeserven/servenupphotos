@@ -40,61 +40,96 @@ func (c *Client) ApplyBulkTags(ctx context.Context, gh settings.GitHub, bulk Bul
 	if len(bulk.Photos) == 0 || len(bulk.Photos) > maxBulkTagPhotos {
 		return BulkTagsResult{}, publishErr(http.StatusBadRequest, "Tag 1 to %d photos at a time.", maxBulkTagPhotos)
 	}
-	scan, perr := c.scanPhotos(ctx, gh)
-	if perr != nil {
-		return BulkTagsResult{}, perr
-	}
-	groups := scan.w.groups()
-	tagChanges, perr := newGroupFiles(scan.w, groups, Tags, bulk.NewTags)
-	if perr != nil {
-		return BulkTagsResult{}, perr
-	}
-	adds := make([]photoAdd, 0, len(bulk.Photos))
+	adds := make([]photoAdds, 0, len(bulk.Photos))
 	for _, p := range bulk.Photos {
-		adds = append(adds, photoAdd{path: p.Path, ids: p.Tags})
+		adds = append(adds, photoAdds{path: p.Path, ids: p.Tags})
 	}
-	photoChanges, perr := groupedPhotos(scan, Tags, groups[Tags.Folder], adds)
-	if perr != nil {
-		return BulkTagsResult{}, perr
+	saved, err := c.saveGroupsOnPhotos(ctx, gh, Tags, bulk.NewTags, adds)
+	if err != nil {
+		return BulkTagsResult{}, err
 	}
-	if len(tagChanges)+len(photoChanges) == 0 {
-		return BulkTagsResult{}, publishErr(http.StatusConflict, "Those photos already have those tags, so there's nothing to change.")
-	}
-	saved, perr := c.saveFiles(scan.w, slices.Concat(tagChanges, photoChanges))
-	if perr != nil {
-		return BulkTagsResult{}, perr
-	}
-	return BulkTagsResult{pendingSave: saved, NewTags: len(tagChanges), Photos: len(photoChanges)}, nil
+	return BulkTagsResult{pendingSave: saved.pendingSave, NewTags: saved.made, Photos: saved.photos}, nil
 }
 
-// newGroupFiles is a new file for each of list, kind's albums or tags, as
-// CreateGroup checks and writes them, parents first. groups gets each one as
-// it's made, so a later one can be under it. A tag's name is its ID.
-func newGroupFiles(w *workspace, groups map[string][]Group, kind Kind, list []NewGroup) ([]ScanChange, *PublishError) {
+// photoAdds is the IDs of one kind's groups to add to one photo file.
+type photoAdds struct {
+	path string
+	ids  []string
+}
+
+// groupsSaved is what saveGroupsOnPhotos saved.
+type groupsSaved struct {
+	pendingSave
+	// made is how many group files were made, and photos how many photo
+	// files changed.
+	made, photos int
+}
+
+// saveGroupsOnPhotos makes made, new groups of kind, and adds each of adds'
+// IDs to its photo, all as one save in the pending changes. Nothing is saved
+// when a group can't be made or a photo can't be read.
+func (c *Client) saveGroupsOnPhotos(ctx context.Context, gh settings.GitHub, kind Kind, made []NewGroup, adds []photoAdds) (groupsSaved, *PublishError) {
+	scan, perr := c.scanPhotos(ctx, gh)
+	if perr != nil {
+		return groupsSaved{}, perr
+	}
+	groups := scan.w.groups()
+	groupChanges, perr := newGroupFiles(scan.w, kind, groups, made)
+	if perr != nil {
+		return groupsSaved{}, perr
+	}
+	photoChanges, perr := groupedPhotos(scan, kind, groups[kind.Folder], adds)
+	if perr != nil {
+		return groupsSaved{}, perr
+	}
+	if len(groupChanges)+len(photoChanges) == 0 {
+		return groupsSaved{}, publishErr(http.StatusConflict, "Those photos already have those %ss, so there's nothing to change.", kind.Name)
+	}
+	saved, perr := c.saveFiles(scan.w, slices.Concat(groupChanges, photoChanges))
+	if perr != nil {
+		return groupsSaved{}, perr
+	}
+	return groupsSaved{pendingSave: saved, made: len(groupChanges), photos: len(photoChanges)}, nil
+}
+
+// newGroupFiles is a new file of kind for each of made, as CreateGroup checks
+// and writes them, parents first. A tag's name is its ID. groups gets each
+// one as it's made, so a later one can be under it.
+func newGroupFiles(w *workspace, kind Kind, groups map[string][]Group, made []NewGroup) ([]ScanChange, *PublishError) {
 	var changes []ScanChange
-	for _, t := range parentsFirst(list) {
+	for _, t := range parentsFirst(made) {
 		if kind == Tags {
 			t.Name = t.ID
 		}
-		content, perr := validGroup(kind, t)
-		if perr == nil {
-			perr = checkCollision(groups, t)
-		}
-		if perr == nil && content.Parent != nil {
-			perr = checkParent(kind, groups[kind.Folder], content.ID, *content.Parent)
-		}
+		change, perr := newGroupFile(w, kind, groups, t)
 		if perr != nil {
-			return nil, publishErr(perr.Status, "%s: %s Nothing was changed.", t.ID, perr.Message)
-		}
-		file := w.root + "/" + kind.Folder + "/" + content.ID + ".json"
-		if perr := w.ensureAbsent(file); perr != nil {
 			return nil, perr
 		}
-		b, _ := json.MarshalIndent(fileContent(kind, content), "", "  ")
-		changes = append(changes, ScanChange{Path: file, After: append(b, '\n')})
-		groups[kind.Folder] = append(groups[kind.Folder], Group{ID: content.ID, Name: content.Name, Parent: t.Parent, Path: file})
+		changes = append(changes, change)
 	}
 	return changes, nil
+}
+
+// newGroupFile is the file of t, a new group of kind, checked as CreateGroup
+// checks it, and adds t to groups.
+func newGroupFile(w *workspace, kind Kind, groups map[string][]Group, t NewGroup) (ScanChange, *PublishError) {
+	content, perr := validGroup(kind, t)
+	if perr == nil {
+		perr = checkCollision(groups, t)
+	}
+	if perr == nil && content.Parent != nil {
+		perr = checkParent(kind, groups[kind.Folder], content.ID, *content.Parent)
+	}
+	if perr != nil {
+		return ScanChange{}, publishErr(perr.Status, "%s: %s Nothing was changed.", t.ID, perr.Message)
+	}
+	file := w.root + "/" + kind.Folder + "/" + content.ID + ".json"
+	if perr := w.ensureAbsent(file); perr != nil {
+		return ScanChange{}, perr
+	}
+	b, _ := json.MarshalIndent(fileContent(kind, content), "", "  ")
+	groups[kind.Folder] = append(groups[kind.Folder], Group{ID: content.ID, Name: content.Name, Parent: t.Parent, Path: file})
+	return ScanChange{Path: file, After: append(b, '\n')}, nil
 }
 
 // parentsFirst is tags with each one after the new tag it's under, when that's
@@ -122,16 +157,10 @@ func isNewTag(tags []NewGroup, id string) bool {
 	return id != "" && slices.ContainsFunc(tags, func(t NewGroup) bool { return t.ID == id })
 }
 
-// photoAdd is the albums or tags, by ID, to add to the photo file at path.
-type photoAdd struct {
-	path string
-	ids  []string
-}
-
-// groupedPhotos is each of adds' photos with its albums or tags (kind's)
-// added, leaving out the ones that already have them. Each ID must be one of
-// list, which has the new ones too.
-func groupedPhotos(scan baseURLScan, kind Kind, list []Group, adds []photoAdd) ([]ScanChange, *PublishError) {
+// groupedPhotos is each of adds' photos with its IDs added, leaving out the
+// ones that already have them. Each ID must be one of known, kind's groups,
+// which has the new ones too.
+func groupedPhotos(scan baseURLScan, kind Kind, known []Group, adds []photoAdds) ([]ScanChange, *PublishError) {
 	var changes []ScanChange
 	seen := map[string]bool{}
 	for _, p := range adds {
@@ -139,7 +168,7 @@ func groupedPhotos(scan baseURLScan, kind Kind, list []Group, adds []photoAdd) (
 			return nil, publishErr(http.StatusBadRequest, "%s is listed more than once.", p.path)
 		}
 		seen[p.path] = true
-		change, perr := groupedPhoto(scan, kind, list, p)
+		change, perr := groupedPhoto(scan, kind, known, p)
 		if perr != nil {
 			return nil, perr
 		}
@@ -150,11 +179,11 @@ func groupedPhotos(scan baseURLScan, kind Kind, list []Group, adds []photoAdd) (
 	return changes, nil
 }
 
-// groupedPhoto is the photo file at p.path with p.ids added to its albums or
-// tags (kind's), or nil when it already has them.
-func groupedPhoto(scan baseURLScan, kind Kind, list []Group, p photoAdd) (*ScanChange, *PublishError) {
+// groupedPhoto is the photo file at p.path with p.ids added, or nil when it
+// already has them.
+func groupedPhoto(scan baseURLScan, kind Kind, known []Group, p photoAdds) (*ScanChange, *PublishError) {
 	for _, id := range p.ids {
-		if !slices.ContainsFunc(list, func(g Group) bool { return g.ID == id && g.Error == "" }) {
+		if !slices.ContainsFunc(known, func(g Group) bool { return g.ID == id && g.Error == "" }) {
 			return nil, publishErr(http.StatusBadRequest, "%q isn't one of the %ss, so nothing was changed.", id, kind.Name)
 		}
 	}
@@ -173,10 +202,13 @@ func groupedPhoto(scan baseURLScan, kind Kind, list []Group, p photoAdd) (*ScanC
 	return &ScanChange{Path: p.path, Before: before, After: after}, nil
 }
 
-// photoGroupsOf is ids as the albums, or else the tags, to add to a photo.
+// photoGroupsOf is ids as the albums, tags or genres of kind to add.
 func photoGroupsOf(kind Kind, ids []string) PhotoGroups {
-	if kind == Albums {
+	switch kind {
+	case Albums:
 		return PhotoGroups{Albums: ids}
+	case Genres:
+		return PhotoGroups{Genres: ids}
 	}
 	return PhotoGroups{Tags: ids}
 }

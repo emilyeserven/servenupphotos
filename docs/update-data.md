@@ -61,16 +61,18 @@ changed top-level fields are rewritten, and nothing is saved while any photo fil
 
 ## Bulk tagging
 
-**Bulk tagging** tags up to 50 related photos with one LLM prompt. **Photos to pick** next to the buttons sets how
+**Bulk tagging** tags up to 50 photos with one LLM prompt. The card first says how many photo files have no tags yet
+(`POST /api/data/bulk-tags/untagged`, read again after each save). **Photos to pick** next to the buttons sets how
 many each pick finds (5 at first, 1 to 50; the backend treats a missing `count` as 5 and caps it at 50, and the
-preview and save take at most 50 photos too). **Pick photos** (`POST /api/data/bulk-tags/pick`, `{ skip, count }`)
+preview and save take at most 50 photos too). **Pick photos** (`POST /api/data/bulk-tags/pick`, `{ skip, count, any }`)
 reads every photo file as the next Commit will have it and only considers photos without tags (an empty or missing
 `tags`), so a photo that already has tags is never picked. It picks the first of those by path, then up to `count` − 1 more
 that share the most with it: each shared [place](places-and-localizations.md) counts 5, the same
 city 3 (or else the same country 1), each shared [genre](photographic-genres.md) 2, and being taken the same day 3
 (or else the same month 1), using the hand-written city, country and date over the EXIF ones. Photos that share
 nothing aren't picked. Each card says what it shares with the
-first photo. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out;
+first photo. With **Pick photos that go together** turned off (`any: true`), it picks the first `count` photos without
+tags by path instead, whatever they share. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out;
 **Start over** picks from every photo again.
 
 **Copy the tag prompt** (`lib/bulk-tag-prompt.ts`) copies one prompt for all of them: each photo by its file name
@@ -97,13 +99,129 @@ descriptions. A parent that isn't a tag yet is made too, before the tag under it
 picked are listed and left out.
 
 The review lists the new tags, each with a checkbox and one for its parent, then each photo with a checkbox per tag
-to add, marking the new ones, and the tags it already had. **Save tags for N photos** (`POST /api/data/bulk-tags`)
+to add, marking the new ones, and the tags it already has. **Save tags for N photos** (`POST /api/data/bulk-tags`)
 makes the ticked new tags, parents first, and adds the ticked tags to each photo's `tags` after the ones it has, all
 in one save of [changes waiting for Commit](pending-changes.md). Each new tag is checked as **New tag** on `/tags`
 checks it, and nothing is saved when one can't be made or a photo can't be read. Once saved, the list of new tags is hidden, since they're made.
 
 > **Frontend analogy:** it's the single-photo paste flow batched: a "dry run" mutation that returns a diff for the
 > user to edit (like a form's preview step), then one mutation that commits the edited diff.
+
+## Localizations
+
+**Localizations** fills in the [localizations](places-and-localizations.md#localizations) of up to 50 countries,
+states, cities and places with one LLM prompt. It lists the names the Localizations page does (from the combined
+data store and the place files) and counts the ones with no localization, or one without a romanization or local
+script, the two every name has; pronunciation is only for scripts that don't show it, such as kanji. **Names to ask
+about** (25 at first, 1 to 50) sets how many **Copy the prompt** (`lib/localization-prompt.ts`) asks about, the ones
+the most photos show first. Each is listed by its localization ID, with where it is and the fields already saved,
+asking for the romanization the country uses officially (Revised Romanization, Hepburn with macrons, Pinyin with tone
+marks), the pronunciation in kana or bopomofo when the script needs it, and the local script, as JSON:
+
+```json
+{
+  "localizations": [
+    { "id": "city-seoul", "romanization": "Seoul", "pronunciation": "", "localScript": "서울" }
+  ]
+}
+```
+
+Paste the answer and **Review the names**. The page reads it itself (`lib/localization-answer.ts`, from the first
+`{` to the last `}`, so a code block or words around it are fine), with no backend call: each name asked about gets a
+row like the Localizations page's, with the answer in the fields that are empty and the saved ones kept, to change
+before saving. The names the answer left out, and the IDs it gave that weren't asked about, are listed under them.
+Each row's **Save**, or **Save N localizations** for all of them, saves through the same queue as the Localizations
+page (`PUT /api/localizations/<id>`), as [changes waiting for Commit](pending-changes.md). Saved names drop out of
+the count, so copying the prompt again asks about the next ones.
+
+> **Frontend analogy:** it's machine translation for your i18n files: export the keys missing a locale, let a
+> translator fill them in, then import the file back through the same form a person would use.
+
+**Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
+
+## Genre suggestions
+
+**Genre suggestions** suggests [photographic genres](photographic-genres.md) for a batch of up to 50 photos with one
+LLM prompt. It works like Bulk tagging, and shares its pick controls, paste box and review. **Photos to pick** starts
+at 50 (1 to 50; the backend treats a missing `count` as 50). **Pick photos** (`POST /api/data/genre-suggestions/pick`,
+`{ skip, count }`) reads every photo file as the next Commit will have it and picks the first `count` photos without
+genres (an empty or missing `genres`) by file name, which for camera files is the order they were taken, as Bulk
+tagging does with **Pick photos that go together** off: a genre is judged one photo at a time. **Pick other photos** leaves out
+the ones already shown; **Start over** picks from the start again.
+
+**Copy the genre prompt** (`lib/genre-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a
+link to its Small version, its title and what's known of where it was taken, and its tags, then every genre there is
+with its description. It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new
+genre that photographers would recognize (such as Night or Food, never a subject or a place), in Title Case, described
+once in `newGenres`:
+
+```json
+{
+  "photos": [{ "photo": "20161216_092741", "genres": ["Street", "Night"] }],
+  "newGenres": [{ "genre": "Night", "description": "Photos taken after dark." }]
+}
+```
+
+Paste the answer and **Review the genres** (`POST /api/data/genre-suggestions/preview`, which saves nothing). The
+backend reads it as it reads a Bulk tagging answer (`github/genresuggest.go`): a name matching a genre's ID or name
+(ignoring case, or by the ID made from it) is that genre; one an album, tag or metadata group has is left out saying
+why; the rest are new genres, named as the answer first wrote them, with their descriptions. The review lists the new
+genres with a checkbox each, then each photo with a checkbox per genre, by name, marking the new ones. **Save genres
+for N photos** (`POST /api/data/genre-suggestions`) makes the ticked new genres (checked as **New genre** on `/genres`
+checks one) and adds the ticked genres to each photo's `genres` after the ones it has, in one save of
+[changes waiting for Commit](pending-changes.md). Nothing is saved when a genre can't be made or a photo can't be read.
+
+**Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
+how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
+asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,
+such as "Reading each photo's colors from its original in R2: 42 of 150". The backend keeps each task's latest progress
+in memory (`github.WithProgress`, kept by `readProgress` in `be-pipeline/internal/httpapi/progress.go`), and the page
+asks `GET /api/data/progress/{task}` (`missing-fields` or `colors`) every half second until the read answers.
+
+> **Frontend analogy:** the progress is polled, like a `useQuery` with `refetchInterval: 500` next to the slow
+> request, rather than streamed. The slow request stays an ordinary JSON answer; a second, cheap endpoint just reads a
+> variable the first one keeps updating.
+
+> **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
+> it opens (or adds to) a pull request.
+
+## Tag descriptions
+
+**Tag descriptions** writes descriptions for the tags that have none (an empty or missing `description`), with one LLM
+prompt for a batch of them. The batch is the first tags without a description by ID; **Tags per batch** sets its size
+(25 at first, 1 to 50), **Skip these N** moves on to the next ones without saving, and **Start over** brings the skipped
+ones back. Everything it reads is already in the app: the tags from `GET /api/organize`, and the photos from the
+[combined data store](combined-data-store.md), with the changes waiting for Commit.
+
+**Copy the description prompt** (`lib/tag-description-prompt.ts`) lists each tag by its ID with what's known of it:
+its parent tag and the tags under it, how many photos have it, the three countries they're most often from, and the
+six tags most often beside it, so the LLM can tell which meaning a word has. It asks for one short lowercase phrase per
+tag, saying which culture a cultural term comes from, and shows up to 8 tags that have descriptions as examples of the
+style. The answer is JSON:
+
+```json
+{
+  "descriptions": [
+    {
+      "tag": "shotengai",
+      "description": "a Japanese shopping street, often under a covered arcade"
+    }
+  ]
+}
+```
+
+Paste the answer and **Review the descriptions**. It's read in the page, from the first `{` to the last `}`, so a code
+block or words around it are fine. Each name is matched to a tag by its ID or name (ignoring case, or by the ID made
+from it), the first description of a tag wins, and names that aren't tags are listed and left out. A tag outside the
+batch can be described too. Each description can be edited or unticked; one for a tag that already has a description
+starts unticked, showing the one it has. **Save N descriptions** (`PUT /api/organize/tags/descriptions`,
+`{ "descriptions": { "<tag ID>": "<text>" } }`) rewrites only each tag file's `description`, trimmed, as
+[changes waiting for Commit](pending-changes.md); nothing is saved when an ID isn't a tag, a tag file can't be read, or
+a description is empty or over 1000 characters. Once saved, the tags are read again, so the batch moves on to the next
+tags without one.
+
+> **Frontend analogy:** the same paste-back flow as Bulk tagging, but the "dry run" is a pure function in the page
+> instead of a backend call, since every tag is already in the query cache. Only the save goes to the backend.
 
 ## Album suggestions
 
@@ -136,7 +254,7 @@ general home for it, and to put each photo in one album at most. The answer is J
 ```
 
 Paste the answer and **Review the albums** (`POST /api/data/album-suggestions/preview`, which saves nothing). The
-backend reads it as it reads a Bulk tagging answer (`readAnswerJSON` in `github/bulktags_answer.go`) and sorts each
+backend reads it as it reads a Bulk tagging answer (`parseLLMAnswer` in `github/bulktags_answer.go`) and sorts each
 album's name the same way (`github/albumsuggest.go`): a name matching an album's ID or name (ignoring case, or by the ID
 made from it) is that album; one a tag, genre or metadata group has, or with nothing to make an ID from, is left out
 saying why; the rest are new albums, named as the answer writes them, with an ID made from the name and the answer's
@@ -153,17 +271,3 @@ and nothing is saved when one can't be made or a photo can't be read.
 > **Frontend analogy:** the same "dry run, then commit the edited diff" flow as Bulk tagging, with a different
 > ranking function for which photos go in the batch: like sorting search results by a score where a shared tag is
 > worth more than a shared city.
-
-**Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
-how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
-asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,
-such as "Reading each photo's colors from its original in R2: 42 of 150". The backend keeps each task's latest progress
-in memory (`github.WithProgress`, kept by `readProgress` in `be-pipeline/internal/httpapi/progress.go`), and the page
-asks `GET /api/data/progress/{task}` (`missing-fields` or `colors`) every half second until the read answers.
-
-> **Frontend analogy:** the progress is polled, like a `useQuery` with `refetchInterval: 500` next to the slow
-> request, rather than streamed. The slow request stays an ordinary JSON answer; a second, cheap endpoint just reads a
-> variable the first one keeps updating.
-
-> **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
-> it opens (or adds to) a pull request.

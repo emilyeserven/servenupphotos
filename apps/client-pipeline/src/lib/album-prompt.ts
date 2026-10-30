@@ -2,9 +2,7 @@ import type { BulkTagPhoto } from "@/api/bulk-tags";
 import type { MetaGroup } from "@/api/metainfo";
 import { type Group, albumTree, groupLabel } from "@/api/organize";
 import type { Place } from "@/api/places";
-import { savedDetails, savedExifPlace } from "@/components/photo-details";
-import { photoLink, savedList } from "@/lib/bulk-tag-prompt";
-import { knownLines } from "@/lib/location-prompt";
+import { photoBasics, savedTags } from "@/lib/bulk-tag-prompt";
 
 /** What the album prompt tells the LLM about: the albums to reuse, and the names that are taken. */
 export interface AlbumPromptLists {
@@ -21,6 +19,11 @@ function takenDate(data: Record<string, unknown>): string {
   return typeof data.createDate === "string" ? data.createDate : "";
 }
 
+/** The genres a photo has, as its JSON lists them. */
+function savedGenres(data: Record<string, unknown>): string[] {
+  return Array.isArray(data.genres) ? data.genres.filter((id) => typeof id === "string") : [];
+}
+
 /** ids as the prompt lists them, or "none". */
 function listed(ids: string[]): string {
   return ids.length > 0 ? ids.join(", ") : "none";
@@ -29,13 +32,13 @@ function listed(ids: string[]): string {
 /** One photo's part of the prompt: its name and link, what's known of it, its date, tags and genres. */
 function photoSection(photo: BulkTagPhoto, places: Place[]): string {
   const { data } = photo;
-  const known = knownLines({ details: savedDetails(data), exif: savedExifPlace(data), places });
-  return `Photo "${photo.name}": ${photoLink(data)}
+  const { heading, known } = photoBasics(photo, places);
+  return `${heading}
 What's already known about it:
 ${known.join("\n") || "- Nothing yet."}
 - Taken: ${takenDate(data) || "unknown"}
-Tags: ${listed(savedList(data, "tags"))}
-Genres: ${listed(savedList(data, "genres"))}`;
+Tags: ${listed(savedTags(data))}
+Genres: ${listed(savedGenres(data))}`;
 }
 
 /** Every album as the prompt lists it, each under its parent, with its description. */

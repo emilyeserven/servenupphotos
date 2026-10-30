@@ -49,6 +49,11 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
     relayToBackend(reply, app.log, "/organize/tags/names", jsonBody("PUT", request.body ?? {})),
   );
 
+  // Saves tags' descriptions, by tag ID, as changes waiting for Commit.
+  app.put("/organize/tags/descriptions", async (request, reply) =>
+    relayToBackend(reply, app.log, "/organize/tags/descriptions", jsonBody("PUT", request.body)),
+  );
+
   // Moves an album into another, or a tag under another, or either to the top level, as a change
   // waiting for Commit.
   app.put<{ Params: { kind: string; id: string } }>(

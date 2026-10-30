@@ -5,8 +5,11 @@ import {
   type AlbumSuggestionsPreview,
   applyAlbumSuggestionsMutation,
 } from "@/api/album-suggestions";
-import { UnknownPhotos } from "@/components/bulk-tagging/bulk-tag-review";
-import { SaveReviewed, useReviewedSave } from "@/components/bulk-tagging/prompt-steps";
+import {
+  SaveReviewed,
+  UnknownPhotos,
+  useReviewedSave,
+} from "@/components/bulk-tagging/review-parts";
 import { count } from "@/components/update-data-shared";
 import { type AlbumChoices, albumSuggestionsToSave } from "@/lib/album-suggestions";
 import { NO_CHOICES, photoTagKey, toggled } from "@/lib/bulk-tags";
@@ -28,7 +31,7 @@ export function AlbumSuggestionReview({ preview, pick }: AlbumSuggestionReviewPr
   const save = albumSuggestionsToSave(preview, choices);
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={preview.unknown} what="albums" />
+      <UnknownPhotos names={preview.unknown} noun="albums" />
       <ul className="flex flex-col gap-3">
         {preview.albums.map((album) => (
           <SuggestedAlbum
@@ -42,11 +45,11 @@ export function AlbumSuggestionReview({ preview, pick }: AlbumSuggestionReviewPr
         ))}
       </ul>
       <SaveReviewed
-        what="albums"
+        noun="albums"
         apply={apply}
         save={save}
         busy={busy}
-        saved={(result) =>
+        done={(result) =>
           `Made ${count(result.newAlbums, "new album")} and put ${count(result.photos, "photo")} in albums`
         }
       />

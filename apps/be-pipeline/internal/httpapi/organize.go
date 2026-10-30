@@ -196,6 +196,30 @@ func handleNormalizeTagNames(store *settings.Store, gh *github.Client) http.Hand
 	}
 }
 
+// handleSetTagDescriptions saves the body's descriptions, by tag ID, as those
+// tags' descriptions, as changes waiting for Commit.
+func handleSetTagDescriptions(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Descriptions map[string]string `json:"descriptions"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil || len(req.Descriptions) == 0 {
+			writeError(w, http.StatusBadRequest, "invalid tag descriptions body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetTagDescriptions(ctx, cfg, req.Descriptions)
+		writeSocialResult(w, result, err, "could not save the tag descriptions")
+	}
+}
+
 // handleSetSpotlightAlbum makes the body's album the one the path's spotlight
 // spot shows, or leaves the spot without one when it's empty or null, as a
 // change waiting for Commit.

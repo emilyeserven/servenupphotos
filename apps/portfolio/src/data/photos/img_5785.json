@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "abandoned",
+    "houses",
+    "urban-decay",
+    "shingles",
+    "tall-grass",
+    "trees",
+    "fence",
+    "countryside"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],

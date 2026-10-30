@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   type AlbumPick,
@@ -7,16 +7,20 @@ import {
 } from "@/api/album-suggestions";
 import { AlbumSuggestionReview } from "@/components/album-suggestions/album-suggestion-review";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
+import { metaGroups } from "@/api/metainfo";
+import { organizeQuery } from "@/api/organize";
+import { placesQuery, readEntries } from "@/api/places";
 import {
-  AnswerBox,
   CopyPromptButton,
   ErrorText,
-  PickControls,
+  PasteAnswer,
+  PickBar,
   usePhotoPick,
-  usePromptLists,
-} from "@/components/bulk-tagging/prompt-steps";
+} from "@/components/bulk-tagging/pick-controls";
+import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { albumPrompt } from "@/lib/album-prompt";
+import { useCombinedData } from "@/stores/combined-data";
 
 /**
  * Album Suggestions: picks up to the chosen number of related photos without an album (5 at first,
@@ -24,7 +28,7 @@ import { albumPrompt } from "@/lib/album-prompt";
  * LLM's JSON answer back into a review of the albums before they're saved.
  */
 export function AlbumSuggestionsCard() {
-  const { pick, controls } = usePhotoPick(pickAlbumPhotosMutation);
+  const { pick, bar } = usePhotoPick(pickAlbumPhotosMutation, defaultBulkTagCount);
   return (
     <Card>
       <CardHeader>
@@ -38,7 +42,7 @@ export function AlbumSuggestionsCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        <PickControls {...controls} />
+        <PickBar {...bar} />
         <ErrorText error={pick.error} />
         {pick.data && <PickedAlbums key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
@@ -58,10 +62,10 @@ function PickedAlbums({ pick }: { pick: AlbumPick }) {
       </p>
       <PickedPhotos photos={pick.photos} />
       <CopyAlbumPromptButton pick={pick} />
-      <AnswerBox
-        answer={answer}
+      <PasteAnswer
+        value={answer}
         onChange={setAnswer}
-        review="Review the albums"
+        label="Review the albums"
         pending={preview.isPending}
         onReview={() => preview.mutate({ paths, answer })}
       />
@@ -79,12 +83,22 @@ function PickedAlbums({ pick }: { pick: AlbumPick }) {
 
 /** Copies the prompt for every picked photo, with the albums to reuse and the names that are taken. */
 function CopyAlbumPromptButton({ pick }: { pick: AlbumPick }) {
-  const known = usePromptLists();
-  const prompt = () => known && albumPrompt(pick.photos, known.lists, known.places);
+  const organize = useQuery(organizeQuery);
+  const places = useQuery(placesQuery);
+  const combined = useCombinedData();
+  const data = organize.data;
+  const prompt = () =>
+    data
+      ? albumPrompt(
+          pick.photos,
+          { ...data, metaGroups: metaGroups(combined.data) },
+          readEntries(places.data?.places),
+        )
+      : "";
   return (
     <CopyPromptButton
       label={`Copy the album prompt for ${pick.photos.length} photos`}
-      disabled={!known}
+      disabled={!data}
       prompt={prompt}
     />
   );

@@ -35,8 +35,13 @@ func (c *Client) PickAlbumPhotos(ctx context.Context, gh settings.GitHub, skip [
 	if scan.pr != nil {
 		pick.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
 	}
-	photos, without := photosWithout(scan, skip, func(p bulkPhoto) []string { return p.albums })
-	pick.WithoutAlbum = without
+	var photos []bulkPhoto
+	for _, f := range scan.files {
+		if p := readBulkPhoto(f); f.err == "" && len(p.albums) == 0 {
+			pick.WithoutAlbum++
+			photos = appendUnskipped(photos, p, skip)
+		}
+	}
 	if len(photos) == 0 {
 		return AlbumPick{}, publishErr(http.StatusNotFound, "There are no more photos without an album to pick from. Start over to pick from every one again.")
 	}
@@ -101,7 +106,7 @@ type AlbumSuggestionsPreview struct {
 // which albums are new and which names can't be albums. It only reads.
 func (c *Client) PreviewAlbumSuggestions(ctx context.Context, gh settings.GitHub, paths []string, answer string) (AlbumSuggestionsPreview, error) {
 	var parsed albumAnswer
-	if perr := readAnswerJSON(answer, &parsed); perr != nil {
+	if perr := parseLLMAnswer(answer, &parsed); perr != nil {
 		return AlbumSuggestionsPreview{}, perr
 	}
 	if len(parsed.Albums) == 0 {
@@ -129,7 +134,7 @@ func (c *Client) PreviewAlbumSuggestions(ctx context.Context, gh settings.GitHub
 
 // suggestion is the album the answer names: an existing one, a new one with
 // its description and parent, or one that can't be an album, saying why.
-func (n *tagNamer) suggestion(name, description, parent string) AlbumSuggestion {
+func (n *groupNamer) suggestion(name, description, parent string) AlbumSuggestion {
 	id, fresh, reason := n.sort(name)
 	s := AlbumSuggestion{ID: id, Name: cleanTagName(name), New: fresh, Photos: []string{}, Reason: reason}
 	if fresh {
@@ -140,7 +145,7 @@ func (n *tagNamer) suggestion(name, description, parent string) AlbumSuggestion 
 }
 
 // existing is the ID of the existing album named name, or "".
-func (n *tagNamer) existing(name string) string {
+func (n *groupNamer) existing(name string) string {
 	if id, fresh, reason := n.sort(name); !fresh && reason == "" {
 		return id
 	}
@@ -198,29 +203,13 @@ func (c *Client) ApplyAlbumSuggestions(ctx context.Context, gh settings.GitHub, 
 	if len(s.Photos) == 0 || len(s.Photos) > maxBulkTagPhotos {
 		return AlbumSuggestionsResult{}, publishErr(http.StatusBadRequest, "Put 1 to %d photos in albums at a time.", maxBulkTagPhotos)
 	}
-	scan, perr := c.scanPhotos(ctx, gh)
-	if perr != nil {
-		return AlbumSuggestionsResult{}, perr
-	}
-	groups := scan.w.groups()
-	albumChanges, perr := newGroupFiles(scan.w, groups, Albums, s.NewAlbums)
-	if perr != nil {
-		return AlbumSuggestionsResult{}, perr
-	}
-	adds := make([]photoAdd, 0, len(s.Photos))
+	adds := make([]photoAdds, 0, len(s.Photos))
 	for _, p := range s.Photos {
-		adds = append(adds, photoAdd{path: p.Path, ids: p.Albums})
+		adds = append(adds, photoAdds{path: p.Path, ids: p.Albums})
 	}
-	photoChanges, perr := groupedPhotos(scan, Albums, groups[Albums.Folder], adds)
-	if perr != nil {
-		return AlbumSuggestionsResult{}, perr
+	saved, err := c.saveGroupsOnPhotos(ctx, gh, Albums, s.NewAlbums, adds)
+	if err != nil {
+		return AlbumSuggestionsResult{}, err
 	}
-	if len(albumChanges)+len(photoChanges) == 0 {
-		return AlbumSuggestionsResult{}, publishErr(http.StatusConflict, "Those photos are already in those albums, so there's nothing to change.")
-	}
-	saved, perr := c.saveFiles(scan.w, slices.Concat(albumChanges, photoChanges))
-	if perr != nil {
-		return AlbumSuggestionsResult{}, perr
-	}
-	return AlbumSuggestionsResult{pendingSave: saved, NewAlbums: len(albumChanges), Photos: len(photoChanges)}, nil
+	return AlbumSuggestionsResult{pendingSave: saved.pendingSave, NewAlbums: saved.made, Photos: saved.photos}, nil
 }

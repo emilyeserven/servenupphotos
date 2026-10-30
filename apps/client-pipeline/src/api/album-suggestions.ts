@@ -1,5 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
-import { type BulkTagPhoto, groupAndPhotoChanges, postJson } from "@/api/bulk-tags";
+import type { BulkTagPhoto } from "@/api/bulk-tags";
+import { post } from "@/api/data";
 import type { PendingSave } from "@/api/scan-changes";
 
 /** Up to the chosen number of related photos without an album: one, then the ones most like it. */
@@ -54,23 +55,31 @@ interface AlbumSuggestionsResult extends PendingSave {
 export const pickAlbumPhotosMutation = mutationOptions({
   mutationKey: ["data", "album-suggestions", "pick"],
   mutationFn: (body: { skip: string[]; count: number }) =>
-    postJson<AlbumPick>("/api/data/album-suggestions/pick", body),
+    post<AlbumPick>("/api/data/album-suggestions/pick", body),
 });
 
 /** Reads the LLM's pasted answer for the picked photos and says which albums they'd go in, saving nothing. */
 export const previewAlbumSuggestionsMutation = mutationOptions({
   mutationKey: ["data", "album-suggestions", "preview"],
   mutationFn: (body: { paths: string[]; answer: string }) =>
-    postJson<AlbumSuggestionsPreview>("/api/data/album-suggestions/preview", body),
+    post<AlbumSuggestionsPreview>("/api/data/album-suggestions/preview", body),
 });
+
+/** The album and photo files an Album Suggestions save changed, as changes over the combined lists. */
+function albumChanges(result: PendingSave) {
+  return result.changes.map((change) => ({
+    kind: change.path.includes("/albums/") ? ("albums" as const) : ("photos" as const),
+    ...change,
+  }));
+}
 
 /** Makes the new albums and puts each photo in its albums, as changes waiting for Commit. */
 export const applyAlbumSuggestionsMutation = mutationOptions({
   mutationKey: ["data", "album-suggestions", "apply"],
   meta: {
     saves: true,
-    changes: (result) => groupAndPhotoChanges(result as PendingSave, "albums"),
+    changes: (result) => albumChanges(result as PendingSave),
   },
   mutationFn: (save: AlbumSuggestions) =>
-    postJson<AlbumSuggestionsResult>("/api/data/album-suggestions", save),
+    post<AlbumSuggestionsResult>("/api/data/album-suggestions", save),
 });
