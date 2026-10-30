@@ -75,3 +75,24 @@ func TestOriginalName(t *testing.T) {
 		}
 	}
 }
+
+func TestGetThumbnail(t *testing.T) {
+	endpoint := fakeR2Get(t, http.StatusOK, "", "webp bytes")
+	for _, key := range []string{"photos/233d38afbc8e-img-0001-thumbnail.webp", "photos/233d38afbc8e-thumbnailpreview.webp"} {
+		body, err := getThumbnail(t.Context(), validR2, endpoint, key)
+		if err != nil {
+			t.Fatalf("%s: %v", key, err)
+		}
+		got, _ := io.ReadAll(body)
+		_ = body.Close()
+		if string(got) != "webp bytes" {
+			t.Errorf("%s: body = %q", key, got)
+		}
+	}
+	for _, key := range []string{"photos/a.jpg", "photos/a-large.webp", "photos/../a-thumbnail.webp", "other/a-thumbnail.webp"} {
+		var gerr *GetError
+		if _, err := getThumbnail(t.Context(), validR2, endpoint, key); !errors.As(err, &gerr) || !gerr.BadKey {
+			t.Errorf("%s: err = %v, want a bad key", key, err)
+		}
+	}
+}

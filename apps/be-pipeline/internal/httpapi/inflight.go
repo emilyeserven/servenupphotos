@@ -21,8 +21,11 @@ type findPhotosFunc func(ctx context.Context, cfg settings.R2, refs []storage.Ph
 // inFlightImages is each in-flight photo's image in R2, by JSON file path.
 type inFlightImages struct {
 	// Checked is false when R2 couldn't be searched, and Message says why.
-	Checked bool                        `json:"checked"`
-	Message string                      `json:"message,omitempty"`
+	Checked bool   `json:"checked"`
+	Message string `json:"message,omitempty"`
+	// Offline is true when R2 couldn't be searched and ByPath has the images
+	// found the last time it could, from the offline copy.
+	Offline bool                        `json:"offline,omitempty"`
 	ByPath  map[string]storage.Uploaded `json:"byPath"`
 }
 
@@ -92,11 +95,9 @@ func findImages(ctx context.Context, store *settings.Store, findPhotos findPhoto
 	ctx, cancel := context.WithTimeout(ctx, findPhotosTimeout)
 	defer cancel()
 	found, problem := findPhotos(ctx, cfg, refs)
-	if problem != "" {
-		images.Message = problem
-		return images, nil
-	}
-	images.Checked = true
+	images.Message = problem
+	images.Checked = problem == ""
+	images.Offline = problem != "" && len(found) > 0
 	for i, f := range files {
 		if u, ok := found[refs[i]]; ok {
 			images.ByPath[f.Path] = u

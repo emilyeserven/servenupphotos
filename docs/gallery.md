@@ -1,7 +1,7 @@
 # Gallery
 
 `/gallery` shows the photos already in the portfolio: every photo `.json` on the base branch (`GET /api/photos/published`
-→ `GET /photos/published`), newest first, as Square Thumbnail tiles with their title and file name, filterable by
+→ `GET /photos/published`), newest first, as Square Thumbnail tiles (from the [offline copy](offline-mode.md)) with their title and file name, filterable by
 either and by the same **Title**, **Place**, **GPS position**, **Albums**, **Tags**, **Genres** and **Re-edit mark** filters as
 [Photos in Flight](photos-in-flight.md#filters), kept in the URL too. [Undecided](photos-in-flight.md#undecided) photos are hidden
 until the **Undecided** filter is changed from **Hidden** to **Shown** (with the rest) or **Only** (`?undecided=show` or
