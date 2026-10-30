@@ -11,7 +11,8 @@ The pipeline can be used without the internet to look through the [Gallery](gall
 
 ## Where thumbnails come from
 
-The Gallery, Photos in Flight, its Undecided queue and the drafts lists show each photo's Square Thumbnail and
+The Gallery, Photos in Flight, its Undecided queue, the drafts lists and the album and tag pages (their photos, the
+**Reorder** tiles and the [Layout and covers](album-layouts.md) editor and its photo pickers) show each photo's Square Thumbnail and
 Thumbnail Preview through `GET /api/thumbnails?url=<its R2 URL>` (→ `GET /thumbnails`) instead of straight from the
 CDN. The backend serves it from the offline copy, or downloads it from R2 first (with the R2 settings, like other
 reads) when the copy doesn't have it yet. Only Square Thumbnails and Thumbnail Previews under `photos/` are kept; any
@@ -40,6 +41,9 @@ can't be searched, they get the images found the last time it could be from `off
 `images.offline: true`, and the Gallery and Photos in Flight show an **Offline** notice above their filters. Tiles and
 **Edit** links work as usual for those photos. Saves still wait for [Commit](pending-changes.md), and Commit, uploads
 and full-size images still need the internet.
+
+Making albums and tags, and saving an album's parent, photo order, covers and layout, work offline too: they're
+saved as changes waiting for Commit against the local copy, and Commit sends them once GitHub can be reached.
 
 Deleting the `offline` folder only costs the next start a full download of the thumbnails.
 
