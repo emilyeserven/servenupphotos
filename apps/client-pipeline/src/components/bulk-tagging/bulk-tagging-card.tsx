@@ -8,14 +8,18 @@ import {
 import { metaGroups } from "@/api/metainfo";
 import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
-import { BulkPickCard, ErrorText } from "@/components/bulk-tagging/bulk-pick-card";
 import { BulkTagReview } from "@/components/bulk-tagging/bulk-tag-review";
-import { CopyPrompt } from "@/components/bulk-tagging/copy-prompt";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
+import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
+import {
+  CopyPromptButton,
+  ErrorText,
+  PasteAnswer,
+  PickBar,
+  usePhotoPick,
+} from "@/components/bulk-tagging/pick-controls";
 import { UntaggedCount } from "@/components/bulk-tagging/untagged-count";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { OptionCheckbox } from "@/components/update-data-shared";
 import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
@@ -26,27 +30,34 @@ import { useCombinedData } from "@/stores/combined-data";
  */
 export function BulkTaggingCard() {
   const [related, setRelated] = useState(true);
+  const { pick, bar } = usePhotoPick(pickBulkTagPhotosMutation, defaultBulkTagCount, {
+    any: !related,
+  });
   return (
-    <BulkPickCard
-      title="Bulk tagging"
-      description="Picks up to the chosen number of photos (up to 50) without tags: ones that go together, or any of them. Photos that already have tags are left out. Copy one prompt for all of them into a chat with an LLM, paste its JSON answer back, and review the tags before they're saved, waiting for Commit."
-      options={pickBulkTagPhotosMutation}
-      body={(skip, count) => ({ skip, count, any: !related })}
-      before={(pending) => (
-        <>
-          <UntaggedCount />
-          <OptionCheckbox
-            label="Pick photos that go together"
-            hint="On, one photo and then the ones that share its places, city or country, genres or date. Off, the first photos without tags by file name, whatever they share."
-            checked={related}
-            disabled={pending}
-            onChange={setRelated}
-          />
-        </>
-      )}
-    >
-      {(pick) => <PickedTagging pick={pick} />}
-    </BulkPickCard>
+    <Card>
+      <CardHeader>
+        <CardTitle>Bulk tagging</CardTitle>
+        <CardDescription>
+          Picks up to the chosen number of photos (up to 50) without tags: ones that go together, or
+          any of them. Photos that already have tags are left out. Copy one prompt for all of them
+          into a chat with an LLM, paste its JSON answer back, and review the tags before
+          they&apos;re saved, waiting for Commit.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-6">
+        <UntaggedCount />
+        <OptionCheckbox
+          label="Pick photos that go together"
+          hint="On, one photo and then the ones that share its places, city or country, genres or date. Off, the first photos without tags by file name, whatever they share."
+          checked={related}
+          disabled={pick.isPending}
+          onChange={setRelated}
+        />
+        <PickBar {...bar} />
+        <ErrorText error={pick.error} />
+        {pick.data && <PickedTagging key={pick.submittedAt} pick={pick.data} />}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -58,23 +69,14 @@ function PickedTagging({ pick }: { pick: BulkTagPick }) {
   return (
     <div className="flex flex-col gap-4">
       <PickedPhotos photos={pick.photos} />
-      <CopyPromptButton pick={pick} />
-      <Textarea
-        aria-label="The LLM's answer"
-        placeholder="Paste the LLM's JSON answer here"
-        className="min-h-32 font-mono text-xs"
+      <CopyTagPromptButton pick={pick} />
+      <PasteAnswer
         value={answer}
-        onChange={(event) => setAnswer(event.target.value)}
+        onChange={setAnswer}
+        pending={preview.isPending}
+        label="Review the tags"
+        onReview={() => preview.mutate({ paths, answer })}
       />
-      <Button
-        type="button"
-        className="self-start"
-        disabled={answer.trim() === "" || preview.isPending}
-        onClick={() => preview.mutate({ paths, answer })}
-      >
-        {preview.isPending && <Spinner />}
-        Review the tags
-      </Button>
       <ErrorText error={preview.error} />
       {preview.data && (
         <BulkTagReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
@@ -84,21 +86,24 @@ function PickedTagging({ pick }: { pick: BulkTagPick }) {
 }
 
 /** Copies the prompt for every picked photo, with the tags to reuse and the names to leave out. */
-function CopyPromptButton({ pick }: { pick: BulkTagPick }) {
+function CopyTagPromptButton({ pick }: { pick: BulkTagPick }) {
   const organize = useQuery(organizeQuery);
   const places = useQuery(placesQuery);
   const combined = useCombinedData();
   const data = organize.data;
-  const prompt = () => {
-    if (!data) return null;
-    const lists = { ...data, metaGroups: metaGroups(combined.data) };
-    return bulkTagPrompt(pick.photos, lists, readEntries(places.data?.places));
-  };
   return (
-    <CopyPrompt
+    <CopyPromptButton
       label={`Copy the tag prompt for ${pick.photos.length} photos`}
       disabled={!data}
-      prompt={prompt}
+      prompt={() =>
+        data
+          ? bulkTagPrompt(
+              pick.photos,
+              { ...data, metaGroups: metaGroups(combined.data) },
+              readEntries(places.data?.places),
+            )
+          : ""
+      }
     />
   );
 }

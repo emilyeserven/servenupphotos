@@ -1,6 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { post } from "@/api/data";
 import type { PendingSave } from "@/api/scan-changes";
-import { requestJson } from "@/api/settings";
 
 /** One photo Bulk Tagging picked to tag with the others. */
 export interface BulkTagPhoto {
@@ -72,14 +72,6 @@ interface BulkTagsResult extends PendingSave {
   newTags: number;
   /** How many photo files got tags. */
   photos: number;
-}
-
-function post<T>(url: string, body: unknown) {
-  return requestJson<T>(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
 }
 
 /** What a Bulk Tagging pick asks for. */

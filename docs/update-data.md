@@ -99,7 +99,7 @@ descriptions. A parent that isn't a tag yet is made too, before the tag under it
 picked are listed and left out.
 
 The review lists the new tags, each with a checkbox and one for its parent, then each photo with a checkbox per tag
-to add, marking the new ones, and the tags it already had. **Save tags for N photos** (`POST /api/data/bulk-tags`)
+to add, marking the new ones, and the tags it already has. **Save tags for N photos** (`POST /api/data/bulk-tags`)
 makes the ticked new tags, parents first, and adds the ticked tags to each photo's `tags` after the ones it has, all
 in one save of [changes waiting for Commit](pending-changes.md). Each new tag is checked as **New tag** on `/tags`
 checks it, and nothing is saved when one can't be made or a photo can't be read. Once saved, the list of new tags is hidden, since they're made.
@@ -192,6 +192,38 @@ the count, so copying the prompt again asks about the next ones.
 > **Frontend analogy:** it's machine translation for your i18n files: export the keys missing a locale, let a
 > translator fill them in, then import the file back through the same form a person would use.
 
+## Genre suggestions
+
+**Genre suggestions** suggests [photographic genres](photographic-genres.md) for a batch of up to 50 photos with one
+LLM prompt. It works like Bulk tagging, and shares its pick controls, paste box and review. **Photos to pick** starts
+at 50 (1 to 50; the backend treats a missing `count` as 50). **Pick photos** (`POST /api/data/genre-suggestions/pick`,
+`{ skip, count }`) reads every photo file as the next Commit will have it and picks the first `count` photos without
+genres (an empty or missing `genres`) by file name, which for camera files is the order they were taken, as Bulk
+tagging does with **Pick photos that go together** off: a genre is judged one photo at a time. **Pick other photos** leaves out
+the ones already shown; **Start over** picks from the start again.
+
+**Copy the genre prompt** (`lib/genre-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a
+link to its Small version, its title and what's known of where it was taken, and its tags, then every genre there is
+with its description. It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new
+genre that photographers would recognize (such as Night or Food, never a subject or a place), in Title Case, described
+once in `newGenres`:
+
+```json
+{
+  "photos": [{ "photo": "20161216_092741", "genres": ["Street", "Night"] }],
+  "newGenres": [{ "genre": "Night", "description": "Photos taken after dark." }]
+}
+```
+
+Paste the answer and **Review the genres** (`POST /api/data/genre-suggestions/preview`, which saves nothing). The
+backend reads it as it reads a Bulk tagging answer (`github/genresuggest.go`): a name matching a genre's ID or name
+(ignoring case, or by the ID made from it) is that genre; one an album, tag or metadata group has is left out saying
+why; the rest are new genres, named as the answer first wrote them, with their descriptions. The review lists the new
+genres with a checkbox each, then each photo with a checkbox per genre, by name, marking the new ones. **Save genres
+for N photos** (`POST /api/data/genre-suggestions`) makes the ticked new genres (checked as **New genre** on `/genres`
+checks one) and adds the ticked genres to each photo's `genres` after the ones it has, in one save of
+[changes waiting for Commit](pending-changes.md). Nothing is saved when a genre can't be made or a photo can't be read.
+
 **Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
 how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
 asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,
@@ -205,3 +237,41 @@ asks `GET /api/data/progress/{task}` (`missing-fields` or `colors`) every half s
 
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.
+
+## Tag descriptions
+
+**Tag descriptions** writes descriptions for the tags that have none (an empty or missing `description`), with one LLM
+prompt for a batch of them. The batch is the first tags without a description by ID; **Tags per batch** sets its size
+(25 at first, 1 to 50), **Skip these N** moves on to the next ones without saving, and **Start over** brings the skipped
+ones back. Everything it reads is already in the app: the tags from `GET /api/organize`, and the photos from the
+[combined data store](combined-data-store.md), with the changes waiting for Commit.
+
+**Copy the description prompt** (`lib/tag-description-prompt.ts`) lists each tag by its ID with what's known of it:
+its parent tag and the tags under it, how many photos have it, the three countries they're most often from, and the
+six tags most often beside it, so the LLM can tell which meaning a word has. It asks for one short lowercase phrase per
+tag, saying which culture a cultural term comes from, and shows up to 8 tags that have descriptions as examples of the
+style. The answer is JSON:
+
+```json
+{
+  "descriptions": [
+    {
+      "tag": "shotengai",
+      "description": "a Japanese shopping street, often under a covered arcade"
+    }
+  ]
+}
+```
+
+Paste the answer and **Review the descriptions**. It's read in the page, from the first `{` to the last `}`, so a code
+block or words around it are fine. Each name is matched to a tag by its ID or name (ignoring case, or by the ID made
+from it), the first description of a tag wins, and names that aren't tags are listed and left out. A tag outside the
+batch can be described too. Each description can be edited or unticked; one for a tag that already has a description
+starts unticked, showing the one it has. **Save N descriptions** (`PUT /api/organize/tags/descriptions`,
+`{ "descriptions": { "<tag ID>": "<text>" } }`) rewrites only each tag file's `description`, trimmed, as
+[changes waiting for Commit](pending-changes.md); nothing is saved when an ID isn't a tag, a tag file can't be read, or
+a description is empty or over 1000 characters. Once saved, the tags are read again, so the batch moves on to the next
+tags without one.
+
+> **Frontend analogy:** the same paste-back flow as Bulk tagging, but the "dry run" is a pure function in the page
+> instead of a backend call, since every tag is already in the query cache. Only the save goes to the backend.

@@ -2,7 +2,11 @@ import { ExternalLinkIcon } from "lucide-react";
 import { useState } from "react";
 import { applyBulkPlacesMutation } from "@/api/bulk-places";
 import { type Place, placesQuery } from "@/api/places";
-import { BulkSaveButton, UnknownPhotos, useBulkSave } from "@/components/bulk-tagging/bulk-save";
+import {
+  SaveReviewed,
+  UnknownPhotos,
+  useReviewedSave,
+} from "@/components/bulk-tagging/review-parts";
 import { count } from "@/components/update-data-shared";
 import {
   type BulkPlacePlan,
@@ -34,13 +38,13 @@ function toggled(paths: ReadonlySet<string>, path: string): Set<string> {
  */
 export function BulkPlaceReview({ review }: { review: BulkPlacesReview }) {
   const [ticked, setTicked] = useState(() => firstTicked(review));
-  const apply = useBulkSave(applyBulkPlacesMutation, placesQuery.queryKey);
+  const apply = useReviewedSave(applyBulkPlacesMutation, placesQuery.queryKey);
   const busy = apply.isPending || apply.isSuccess;
   const save = bulkPlacesToSave(review, ticked);
   const fresh = new Set(review.newPlaces.map((place) => place.id));
   return (
     <div className="flex flex-col gap-4 border-t pt-6 text-sm">
-      <UnknownPhotos names={review.unknown} what="places" />
+      <UnknownPhotos names={review.unknown} noun="places" />
       {/* Once saved, the new places are made, so only what was saved is left to say. */}
       {!apply.isSuccess && <NewPlaceList places={save.newPlaces} names={review.names} />}
       <ul className="flex flex-col gap-3">
@@ -56,13 +60,13 @@ export function BulkPlaceReview({ review }: { review: BulkPlacesReview }) {
           />
         ))}
       </ul>
-      <BulkSaveButton
+      <SaveReviewed
         apply={apply}
-        body={save}
-        label={`Save places for ${count(save.photos.length, "photo")}`}
+        save={save}
+        noun="places"
         busy={busy}
-        saved={(result) =>
-          `Made ${count(result.newPlaces, "new place")} and gave places to ${count(result.photos, "photo")}`
+        done={(data) =>
+          `Made ${count(data.newPlaces, "new place")} and gave places to ${count(data.photos, "photo")}`
         }
       />
     </div>

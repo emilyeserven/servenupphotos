@@ -58,7 +58,7 @@ export interface BaseUrlResult extends PendingSave {
   urls: number;
 }
 
-/** POSTs body as JSON to url and reads the JSON answer. */
+/** POSTs `body` as JSON to `url` and reads the JSON answer. */
 export function post<T>(url: string, body: unknown) {
   return requestJson<T>(url, {
     method: "POST",
