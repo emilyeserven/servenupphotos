@@ -78,7 +78,7 @@ func TestOriginalName(t *testing.T) {
 
 func TestGetThumbnail(t *testing.T) {
 	endpoint := fakeR2Get(t, http.StatusOK, "", "webp bytes")
-	for _, key := range []string{"photos/233d38afbc8e-img-0001-thumbnail.webp", "photos/233d38afbc8e-thumbnailpreview.webp"} {
+	for _, key := range []string{"photos/233d38afbc8e-img-0001-thumbnail.webp", "photos/233d38afbc8e-thumbnailpreview.webp", "photos/233d38afbc8e-img-0001-xsmall.webp"} {
 		body, err := getThumbnail(t.Context(), validR2, endpoint, key)
 		if err != nil {
 			t.Fatalf("%s: %v", key, err)

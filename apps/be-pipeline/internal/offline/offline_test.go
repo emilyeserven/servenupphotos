@@ -36,6 +36,7 @@ func TestThumbnailKey(t *testing.T) {
 		"https://pub-1.r2.dev/photos/233d38afbc8e-thumbnailpreview.webp?crop=1,2,3": "photos/233d38afbc8e-thumbnailpreview.webp",
 		"https://cdn.example.net/photos/233d38afbc8e-img-0001.jpg":                  "",
 		"https://cdn.example.net/photos/233d38afbc8e-large.webp":                    "",
+		"https://cdn.example.net/photos/233d38afbc8e-xsmall.webp":                   "photos/233d38afbc8e-xsmall.webp",
 		"https://cdn.example.net/other/a-thumbnail.webp":                            "",
 		"file:///photos/a-thumbnail.webp":                                           "",
 	}
