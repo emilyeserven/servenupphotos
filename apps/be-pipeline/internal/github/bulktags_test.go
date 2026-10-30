@@ -36,7 +36,7 @@ func TestPickBulkTagPhotos(t *testing.T) {
 		"e.json": `{"tags":[],"city":"Paris"}`,
 		"f.json": `{"file":`,
 	})
-	got, err := c.PickBulkTagPhotos(t.Context(), baseURLSettings, nil, 0)
+	got, err := c.PickBulkTagPhotos(t.Context(), baseURLSettings, BulkTagPickOptions{})
 	if err != nil {
 		t.Fatalf("PickBulkTagPhotos() error = %v", err)
 	}
@@ -56,14 +56,30 @@ func TestPickBulkTagPhotos(t *testing.T) {
 		t.Errorf("g related = %v", r)
 	}
 
-	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, []string{photosDir + "a.json"}, 0)
+	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, BulkTagPickOptions{Skip: []string{photosDir + "a.json"}})
 	if err != nil || got.Photos[0].Name != "c" {
 		t.Errorf("PickBulkTagPhotos(skip a) = %+v, %v; want c first", got.Photos, err)
 	}
 
-	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, nil, 2)
+	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, BulkTagPickOptions{Count: 2})
 	if err != nil || len(got.Photos) != 2 {
 		t.Errorf("PickBulkTagPhotos(count 2) = %+v, %v; want 2 photos", got.Photos, err)
+	}
+
+	// Any picks the first untagged photos by path, e included though it
+	// shares nothing with a.
+	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, BulkTagPickOptions{Any: true})
+	names = nil
+	for _, p := range got.Photos {
+		names = append(names, p.Name)
+	}
+	if want := []string{"a", "c", "e", "g"}; err != nil || !slices.Equal(names, want) {
+		t.Errorf("PickBulkTagPhotos(any) = %v, %v; want %v", names, err, want)
+	}
+
+	count, err := c.CountUntaggedPhotos(t.Context(), baseURLSettings)
+	if err != nil || count.Untagged != 4 || count.PhotoFiles != 7 || len(count.Photos) != 0 {
+		t.Errorf("CountUntaggedPhotos() = %+v, %v; want 4 untagged of 7, no photos", count, err)
 	}
 }
 

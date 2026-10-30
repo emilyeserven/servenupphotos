@@ -19,6 +19,7 @@ export const dataRoutes: FastifyPluginAsync = async (app) => {
     "/data/camera-overrides",
     "/data/location-names/preview",
     "/data/location-names",
+    "/data/bulk-tags/untagged",
     "/data/bulk-tags/pick",
     "/data/bulk-tags/preview",
     "/data/bulk-tags",

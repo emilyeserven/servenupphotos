@@ -14,6 +14,7 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("POST /data/camera-overrides", handleReapplyOverrides(d.store, d.gh))
 	mux.HandleFunc("POST /data/location-names/preview", handlePreviewLocationNames(d.store, d.gh))
 	mux.HandleFunc("POST /data/location-names", handleApplyLocationNames(d.store, d.gh))
+	mux.HandleFunc("POST /data/bulk-tags/untagged", handleCountUntaggedPhotos(d.store, d.gh))
 	mux.HandleFunc("POST /data/bulk-tags/pick", handlePickBulkTagPhotos(d.store, d.gh))
 	mux.HandleFunc("POST /data/bulk-tags/preview", handlePreviewBulkTags(d.store, d.gh))
 	mux.HandleFunc("POST /data/bulk-tags", handleApplyBulkTags(d.store, d.gh))
