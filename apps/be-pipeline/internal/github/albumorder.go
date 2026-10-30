@@ -83,17 +83,7 @@ func (c *Client) SetAlbumPhotoOrder(ctx context.Context, gh settings.GitHub, id 
 // checkPhotoOrder fails when an ID in photoIDs isn't a photo ID, a whole
 // number from 1, or is listed twice.
 func checkPhotoOrder(photoIDs []int) *PublishError {
-	seen := map[int]bool{}
-	for _, id := range photoIDs {
-		if id < 1 {
-			return publishErr(http.StatusBadRequest, "%d isn't a photo ID.", id)
-		}
-		if seen[id] {
-			return publishErr(http.StatusBadRequest, "Photo %d is in the order twice.", id)
-		}
-		seen[id] = true
-	}
-	return nil
+	return checkPhotoIDs(photoIDs, "the order")
 }
 
 // SetSpotlightAlbum makes album the one whose photos the portfolio's spot
@@ -160,16 +150,9 @@ func readableGroup(kind Kind, groups []Group, id string) (Group, *PublishError) 
 // saveAlbumEdits saves the album files that edits change as pending changes,
 // skipping the ones that already have their value.
 func (c *Client) saveAlbumEdits(w *workspace, edits []albumEdit) (AlbumsResult, error) {
-	var changes []ScanChange
-	for _, e := range edits {
-		current, _ := w.groupFile(e.album.Path)
-		content, err := setTopLevelList(current, e.key, e.value)
-		if err != nil {
-			return AlbumsResult{}, publishErr(http.StatusConflict, "%s: %s", e.album.Path, err)
-		}
-		if !bytes.Equal(content, current) {
-			changes = append(changes, ScanChange{Path: e.album.Path, Before: current, After: content})
-		}
+	changes, perr := albumChanges(w, edits)
+	if perr != nil {
+		return AlbumsResult{}, perr
 	}
 	result := AlbumsResult{pendingSave: w.pendingSave(nil), Files: len(changes)}
 	if len(changes) == 0 {
@@ -181,4 +164,25 @@ func (c *Client) saveAlbumEdits(w *workspace, edits []albumEdit) (AlbumsResult, 
 	}
 	result.pendingSave = saved
 	return result, nil
+}
+
+// albumChanges is each album file with every one of edits made to it, in
+// order, leaving out the files they don't change.
+func albumChanges(w *workspace, edits []albumEdit) ([]ScanChange, *PublishError) {
+	var changes []ScanChange
+	at := map[string]int{}
+	for _, e := range edits {
+		i, ok := at[e.album.Path]
+		if !ok {
+			current, _ := w.groupFile(e.album.Path)
+			i, at[e.album.Path] = len(changes), len(changes)
+			changes = append(changes, ScanChange{Path: e.album.Path, Before: current, After: current})
+		}
+		content, err := setTopLevelList(changes[i].After, e.key, e.value)
+		if err != nil {
+			return nil, publishErr(http.StatusConflict, "%s: %s", e.album.Path, err)
+		}
+		changes[i].After = content
+	}
+	return slices.DeleteFunc(changes, func(ch ScanChange) bool { return bytes.Equal(ch.Before, ch.After) }), nil
 }

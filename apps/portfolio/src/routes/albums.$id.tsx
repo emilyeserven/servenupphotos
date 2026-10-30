@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { AlbumRows } from "@/components/album-rows";
 import { FittedPhoto } from "@/components/fitted-photo";
 import { PhotoLightbox } from "@/components/photo-lightbox";
+import { albumRows } from "@/lib/album-layout";
 import { albums, type Group } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos } from "@/lib/spotlight-zones";
@@ -59,23 +61,30 @@ const PAGE = "flex w-full flex-col gap-8 py-16";
 /** The text's column, narrower than the photos. */
 const NARROW = "mx-auto w-full max-w-5xl px-4 sm:px-6";
 
-/** Every photo in the album, each opening the viewer. */
+/**
+ * Every photo in the album, each opening the viewer: its layout's rows, with their text, then the
+ * photos no row has, one under another.
+ */
 function AlbumPhotos({ album }: { album: Group }) {
   const { shown, show, close } = useShownPhoto();
   const photos = albumPhotos(album.id);
+  const { rows, rest } = albumRows(album, photos);
+  // The viewer steps through them in the order the page shows them.
+  const inOrder = [...rows.flatMap((row) => row.photos), ...rest];
   return (
     <>
       <p className={`${NARROW} text-sm text-muted-foreground`}>
         {photos.length} {photos.length === 1 ? "photo" : "photos"}.
       </p>
+      <AlbumRows rows={rows} onOpen={show} />
       <ul className="flex flex-col gap-6">
-        {photos.map((photo) => (
+        {rest.map((photo) => (
           <li key={photo.id}>
             <FittedPhoto photo={photo} onOpen={() => show(photo)} />
           </li>
         ))}
       </ul>
-      <PhotoLightbox photo={shown} photos={photos} onShow={show} onClose={close} />
+      <PhotoLightbox photo={shown} photos={inOrder} onShow={show} onClose={close} />
     </>
   );
 }

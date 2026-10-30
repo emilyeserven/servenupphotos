@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BookImage } from "lucide-react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
-import { AlbumStrip, previewPhotos } from "@/components/album-strip";
+import { AlbumStrip } from "@/components/album-strip";
+import { coverPhotos } from "@/lib/album-layout";
 import { albums, albumTree } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos } from "@/lib/spotlight-zones";
@@ -21,7 +22,7 @@ const strips = albumTree()
   .filter((strip) => strip.photos.length > 0);
 // Every photo shown in a strip once, for the lightbox to step through.
 const allInAlbums = [
-  ...new Map(strips.flatMap((s) => previewPhotos(s.photos)).map((p) => [p.id, p])).values(),
+  ...new Map(strips.flatMap((s) => coverPhotos(s.album, s.photos)).map((p) => [p.id, p])).values(),
 ];
 
 /**

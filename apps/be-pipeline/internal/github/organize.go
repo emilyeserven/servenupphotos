@@ -93,6 +93,12 @@ type groupJSON struct {
 	// PhotoOrder is the IDs of an album's photos in the order the portfolio
 	// shows them.
 	PhotoOrder []int `json:"photoOrder,omitempty"`
+	// Covers is the IDs of up to 5 photos that stand for an album on the
+	// portfolio's Albums page.
+	Covers []int `json:"covers,omitempty"`
+	// Layout is an album's rows of photos, each with Markdown text above and
+	// below it, as its portfolio page shows them.
+	Layout []AlbumRow `json:"layout,omitempty"`
 }
 
 // albumJSON is the content of an album file, as written: it always lists its
@@ -111,6 +117,12 @@ type albumJSON struct {
 	// PhotoOrder is the IDs of the album's photos in the order the portfolio
 	// shows them; missing or empty while they're in the default order.
 	PhotoOrder []int `json:"photoOrder,omitempty"`
+	// Covers is the IDs of up to 5 photos that stand for the album on the
+	// portfolio's Albums page; missing or empty for its first 5 photos.
+	Covers []int `json:"covers,omitempty"`
+	// Layout is the album's rows of photos with Markdown text above and below
+	// each; missing or empty for one photo after another.
+	Layout []AlbumRow `json:"layout,omitempty"`
 }
 
 // fileContent is g as kind's files are written.
@@ -137,8 +149,14 @@ type Group struct {
 	SpotlightZones []string `json:"spotlightZones,omitempty"`
 	// PhotoOrder is the IDs of an album's photos in the order the portfolio
 	// shows them, set on its page; empty for the default order.
-	PhotoOrder []int  `json:"photoOrder,omitempty"`
-	Path       string `json:"path"`
+	PhotoOrder []int `json:"photoOrder,omitempty"`
+	// Covers is the IDs of up to 5 photos that stand for an album on the
+	// portfolio's Albums page; empty for its first 5 photos.
+	Covers []int `json:"covers,omitempty"`
+	// Layout is an album's rows of photos with Markdown text above and below
+	// each, set on its page; empty for one photo after another.
+	Layout []AlbumRow `json:"layout,omitempty"`
+	Path   string     `json:"path"`
 	// FileURL is the file's page on GitHub; empty while its latest change is
 	// only pending.
 	FileURL string `json:"fileUrl"`
@@ -423,5 +441,6 @@ func (w *workspace) readGroup(p string) Group {
 		g.Order = *content.Order
 	}
 	g.SpotlightZones, g.PhotoOrder = content.SpotlightZones, content.PhotoOrder
+	g.Covers, g.Layout = content.Covers, content.Layout
 	return g
 }

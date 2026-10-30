@@ -303,7 +303,7 @@ function group({ path: filePath, data }, inFlight) {
     id: data.id,
     name: data.name,
     description: data.description,
-    ...setFields(data, ["parent", "order", "spotlightZones"]),
+    ...setFields(data, ["parent", "order", "spotlightZones", "photoOrder", "covers", "layout"]),
     path: filePath,
     fileUrl: fileUrl(filePath, inFlight ? PULL_REQUEST.branch : BASE_BRANCH),
     inFlight,
@@ -889,6 +889,7 @@ export function defaultFixtures() {
       files: body?.ids?.length,
     }),
     "PUT /api/organize/albums/homepage-spotlight/photo-order": { ...pendingSave(), files: 1 },
+    "PUT /api/organize/albums/homepage-spotlight/layout": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/descriptions": ({ body }) => ({
       ...pendingSave(),

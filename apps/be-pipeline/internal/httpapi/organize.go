@@ -181,6 +181,33 @@ func handleSetAlbumPhotoOrder(store *settings.Store, gh *github.Client) http.Han
 	}
 }
 
+// maxAlbumLayoutBytes is the largest album layout body read, room for
+// many rows of Markdown text; the BFF's own limit is the same 1 MiB.
+const maxAlbumLayoutBytes = 1 << 20
+
+// handleSetAlbumLayout saves the body's covers and layout, the album's cover
+// photos and its rows of photos with Markdown text above and below each, as
+// the path's album's, a change waiting for Commit.
+func handleSetAlbumLayout(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req github.AlbumLayout
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxAlbumLayoutBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid album layout body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetAlbumLayout(ctx, cfg, r.PathValue("id"), req)
+		writeSocialResult(w, result, err, "could not save the album's layout")
+	}
+}
+
 // handleNormalizeTagNames names every tag in lowercase kebab-case, its ID, as
 // changes waiting for Commit.
 func handleNormalizeTagNames(store *settings.Store, gh *github.Client) http.HandlerFunc {

@@ -20,7 +20,9 @@ tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays o
 An album file may also have `order`, its place among the albums (1 first), and `spotlightZones`, the spots on the
 portfolio that show its photos, such as `["homepage"]`; see [Albums and Tags](albums-and-tags.md#order). Its
 `photoOrder` lists photo IDs in the order the portfolio shows the album's photos, such as `[12, 3, 40]`; see
-[Photo order](albums-and-tags.md#photo-order).
+[Photo order](albums-and-tags.md#photo-order). Its `covers` lists up to 5 photo IDs that stand for it on the
+portfolio's Albums page, and its `layout` lists its page's rows, each `{ "textAbove", "photos", "textBelow" }` with
+Markdown text; see [Album Layouts and Covers](album-layouts.md#the-schema).
 An album's `parent` is the ID of the one album it sits inside, or `null` for a top-level album; the pipeline never
 lets an album end up inside itself. A tag file may have a `parent` too: the ID of a more general tag it's a kind of
 (see [Parent tags](albums-and-tags.md#parent-tags)), missing or `null` at the top. A photo's `genres` lists its [photographic genres](photographic-genres.md), such as

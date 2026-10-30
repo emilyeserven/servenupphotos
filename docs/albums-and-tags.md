@@ -36,6 +36,9 @@ first, then the rest, newest first. **Use the default order** saves an empty `ph
 > **Frontend analogy:** like a sortable list that saves an array of IDs rather than an index on each item, so a photo
 > can be in several albums with a different place in each, and a new item simply goes on the end.
 
+To lay the album's page out in rows with text above and below them, and to pick its cover photos, use the
+**Layout and covers** card under it; see [Album Layouts and Covers](album-layouts.md).
+
 ## Parent tags
 
 A tag can have one parent tag: a more general tag it's a kind of, such as `shotengai` (a Japanese shopping street)
