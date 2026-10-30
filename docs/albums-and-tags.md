@@ -25,7 +25,12 @@ parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }
 
 **Add photos**, on the **Photos** card of an album's page, opens the saved photos that aren't in the album yet (in
 the photo data pull request or the portfolio, the same ones the Photo page's **Choose a saved photo** lists), with a
-search by title or file name. Each tile says whether the photo is only in the batch and how many albums it's in already.
+search by title or file name, the [Gallery](gallery.md)'s **Title**, **Place**, **GPS position**, **Albums**,
+**Tags**, **Genres** and **Re-edit mark** filters and its **Sort** (**Date taken**, **Date added**, **Time of day**),
+and under those the portfolio Grid's **Show filters** (places, album, tag, genre, camera, lens, the setting sliders
+and colors). They're the Gallery's own components, kept in the album page's URL the same way (`?hasTitle=with`,
+`?sort=added`, `?camera=…`), so they're still set the next time the modal opens; **Clear filters** clears them all.
+Each tile says whether the photo is only in the batch and how many albums it's in already.
 Click as many as you like, then **Add N photos**: it adds the album to each one's `albums` (`POST /api/photos/groups`,
 the same save as the Gallery's **Add albums, tags and genres** card), keeping the albums each is in, as one change
 waiting for Commit. The photos show on the page at once; a draft (a photo with no title) doesn't, since

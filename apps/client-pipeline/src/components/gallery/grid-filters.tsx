@@ -23,7 +23,7 @@ import {
   parseFilters,
 } from "@portfolio/lib/photo-filters";
 import { type Photo, photosFromData } from "@portfolio/lib/photos";
-import type { PublishedFile } from "@/api/photos";
+import type { InFlightFileRead } from "@/api/photos";
 import { Card, CardContent } from "@/components/ui/card";
 import { editedData } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
@@ -72,7 +72,7 @@ function uniqueId(id: unknown, index: number, seen: Set<number>): number {
  * The files as the portfolio reads its photos, with the local edits made. A file whose JSON
  * couldn't be read, or that has no date, has no photo, so the Grid's filters never show it.
  */
-function galleryPhotos(files: PublishedFile[], edits: Record<string, LocalEdit>): GalleryPhotos {
+function galleryPhotos(files: InFlightFileRead[], edits: Record<string, LocalEdit>): GalleryPhotos {
   const seen = new Set<number>();
   const entries = files.flatMap((file, index) => {
     const data = editedData(file, edits);
@@ -91,7 +91,7 @@ function galleryPhotos(files: PublishedFile[], edits: Record<string, LocalEdit>)
  * every file), which the filters' counts are out of, and the files the URL's filters leave, in the
  * same order. While none is set, every file is left, even one the portfolio couldn't place in time.
  */
-export function useGridFilters(all: PublishedFile[], files: PublishedFile[]) {
+export function useGridFilters<T extends InFlightFileRead>(all: T[], files: T[]) {
   const search = useSearch({ strict: false }) as Record<string, unknown>;
   const edits = useLocalEditsStore((s) => s.edits);
   const { photos: every, paths } = useMemo(() => galleryPhotos(all, edits), [all, edits]);
