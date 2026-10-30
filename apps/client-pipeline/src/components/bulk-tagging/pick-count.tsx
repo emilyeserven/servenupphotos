@@ -6,24 +6,34 @@ const maxBulkTagCount = 50;
 /** How many photos Bulk Tagging picks until another number is chosen. */
 export const defaultBulkTagCount = 5;
 
-/** The typed count as a whole number from 1 to 50, or the default when it isn't a number. */
-export function bulkTagCount(typed: string) {
+/** The typed count as a whole number from 1 to 50, or `fallback` when it isn't a number. */
+export function bulkTagCount(typed: string, fallback = defaultBulkTagCount) {
   const count = Math.round(Number(typed));
-  if (!Number.isFinite(count) || count < 1) return defaultBulkTagCount;
+  if (!Number.isFinite(count) || count < 1) return fallback;
   return Math.min(count, maxBulkTagCount);
 }
 
 interface PickCountProps {
+  /** What's counted, such as "Photos to pick". */
+  label?: string;
+  /** The count a typed value that isn't a number goes back to. */
+  fallback?: number;
   value: string;
   disabled: boolean;
   onChange: (value: string) => void;
 }
 
-/** Chooses how many photos the next pick finds, from 1 to 50. */
-export function PickCount({ value, disabled, onChange }: PickCountProps) {
+/** Chooses how many photos (or tags) the next pick finds, from 1 to 50. */
+export function PickCount({
+  label = "Photos to pick",
+  fallback,
+  value,
+  disabled,
+  onChange,
+}: PickCountProps) {
   return (
     <label className="flex items-center gap-2 text-sm">
-      Photos to pick
+      {label}
       <Input
         type="number"
         min={1}
@@ -33,7 +43,7 @@ export function PickCount({ value, disabled, onChange }: PickCountProps) {
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
-        onBlur={() => onChange(String(bulkTagCount(value)))}
+        onBlur={() => onChange(String(bulkTagCount(value, fallback)))}
       />
     </label>
   );
