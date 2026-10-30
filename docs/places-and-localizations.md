@@ -209,6 +209,8 @@ and country its places give it) and a checkbox, ticked when the photo has nothin
 
 **Fill in N ticked** puts them into the Location card as an edit that **Save changes** saves.
 
+To ask about many photos without places at once, use [Update Data → Bulk places](update-data.md#bulk-places).
+
 > **Frontend analogy:** it's the Tags field's paste handling with a JSON body instead of a CSV: parse, diff each field
 > against the form's current value, and show a "review changes" list of checkboxes before patching the form state.
 

@@ -68,3 +68,21 @@ func handleBulkTags[T any](store *settings.Store, kind, failure string, run func
 		writeSocialResult(w, result, err, failure)
 	}
 }
+
+// handlePickBulkPlacePhotos picks up to the asked number of related photos
+// without places for Bulk Places, leaving out the photos already shown.
+func handlePickBulkPlacePhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "photo pick", "could not pick the photos",
+		func(ctx context.Context, cfg settings.GitHub, req bulkTagPick) (any, error) {
+			return gh.PickBulkPlacePhotos(ctx, cfg, req.Skip, req.Count)
+		})
+}
+
+// handleApplyBulkPlaces makes the reviewed new places and gives each photo
+// its places, as changes waiting for Commit.
+func handleApplyBulkPlaces(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "bulk places", "could not save the places",
+		func(ctx context.Context, cfg settings.GitHub, req github.BulkPlaces) (any, error) {
+			return gh.ApplyBulkPlaces(ctx, cfg, req)
+		})
+}

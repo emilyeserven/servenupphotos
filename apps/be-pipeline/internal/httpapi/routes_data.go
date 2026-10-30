@@ -17,6 +17,8 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("POST /data/bulk-tags/pick", handlePickBulkTagPhotos(d.store, d.gh))
 	mux.HandleFunc("POST /data/bulk-tags/preview", handlePreviewBulkTags(d.store, d.gh))
 	mux.HandleFunc("POST /data/bulk-tags", handleApplyBulkTags(d.store, d.gh))
+	mux.HandleFunc("POST /data/bulk-places/pick", handlePickBulkPlacePhotos(d.store, d.gh))
+	mux.HandleFunc("POST /data/bulk-places", handleApplyBulkPlaces(d.store, d.gh))
 	exifs := newExifCache()
 	progress := newReadProgress()
 	mux.HandleFunc("GET /data/progress/{task}", handleReadProgress(progress))

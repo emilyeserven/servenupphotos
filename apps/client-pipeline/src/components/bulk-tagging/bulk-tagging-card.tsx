@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import {
   type BulkTagPick,
@@ -9,11 +8,11 @@ import {
 import { metaGroups } from "@/api/metainfo";
 import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
+import { BulkPickCard, ErrorText } from "@/components/bulk-tagging/bulk-pick-card";
 import { BulkTagReview } from "@/components/bulk-tagging/bulk-tag-review";
+import { CopyPrompt } from "@/components/bulk-tagging/copy-prompt";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
-import { bulkTagCount, defaultBulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
@@ -24,65 +23,14 @@ import { useCombinedData } from "@/stores/combined-data";
  * the LLM's JSON answer back into a review of the tags each photo gets and the new tags to make.
  */
 export function BulkTaggingCard() {
-  const [shown, setShown] = useState<string[]>([]);
-  const [count, setCount] = useState(String(defaultBulkTagCount));
-  const pick = useMutation({
-    ...pickBulkTagPhotosMutation,
-    onSuccess: (result) => setShown((paths) => [...paths, ...result.photos.map((p) => p.path)]),
-  });
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Bulk tagging</CardTitle>
-        <CardDescription>
-          Picks up to the chosen number of photos (up to 50) without tags that go together: one,
-          then the ones that share its places, city or country, genres or date. Photos that already
-          have tags are left out. Copy one prompt for all of them into a chat with an LLM, paste its
-          JSON answer back, and review the tags before they&apos;re saved, waiting for Commit.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-center gap-3">
-          <PickCount value={count} disabled={pick.isPending} onChange={setCount} />
-          <PickButtons
-            picked={pick.data !== undefined}
-            pending={pick.isPending}
-            onPick={() => pick.mutate({ skip: shown, count: bulkTagCount(count) })}
-            onRestart={() => {
-              setShown([]);
-              pick.mutate({ skip: [], count: bulkTagCount(count) });
-            }}
-          />
-        </div>
-        <ErrorText error={pick.error} />
-        {pick.data && <PickedTagging key={pick.submittedAt} pick={pick.data} />}
-      </CardContent>
-    </Card>
-  );
-}
-
-interface PickButtonsProps {
-  /** Whether photos have been picked already, so the next pick leaves them out. */
-  picked: boolean;
-  pending: boolean;
-  onPick: () => void;
-  onRestart: () => void;
-}
-
-/** Picks photos, then other photos, or starts over from every photo. */
-function PickButtons({ picked, pending, onPick, onRestart }: PickButtonsProps) {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button type="button" variant="outline" disabled={pending} onClick={onPick}>
-        {pending && <Spinner />}
-        {picked ? "Pick other photos" : "Pick photos"}
-      </Button>
-      {picked && (
-        <Button type="button" variant="ghost" disabled={pending} onClick={onRestart}>
-          Start over
-        </Button>
-      )}
-    </div>
+    <BulkPickCard
+      title="Bulk tagging"
+      description="Picks up to the chosen number of photos (up to 50) without tags that go together: one, then the ones that share its places, city or country, genres or date. Photos that already have tags are left out. Copy one prompt for all of them into a chat with an LLM, paste its JSON answer back, and review the tags before they're saved, waiting for Commit."
+      options={pickBulkTagPhotosMutation}
+    >
+      {(pick) => <PickedTagging pick={pick} />}
+    </BulkPickCard>
   );
 }
 
@@ -122,31 +70,22 @@ function PickedTagging({ pick }: { pick: BulkTagPick }) {
   );
 }
 
-/** What went wrong, when something did. */
-function ErrorText({ error }: { error: Error | null }) {
-  return error && <p className="text-destructive text-sm">{error.message}</p>;
-}
-
 /** Copies the prompt for every picked photo, with the tags to reuse and the names to leave out. */
 function CopyPromptButton({ pick }: { pick: BulkTagPick }) {
   const organize = useQuery(organizeQuery);
   const places = useQuery(placesQuery);
   const combined = useCombinedData();
-  const [copied, setCopied] = useState(false);
   const data = organize.data;
-  const copy = () => {
-    if (!data) return;
+  const prompt = () => {
+    if (!data) return null;
     const lists = { ...data, metaGroups: metaGroups(combined.data) };
-    const prompt = bulkTagPrompt(pick.photos, lists, readEntries(places.data?.places));
-    void navigator.clipboard.writeText(prompt).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+    return bulkTagPrompt(pick.photos, lists, readEntries(places.data?.places));
   };
   return (
-    <Button type="button" variant="outline" className="self-start" disabled={!data} onClick={copy}>
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied ? "Copied" : `Copy the tag prompt for ${pick.photos.length} photos`}
-    </Button>
+    <CopyPrompt
+      label={`Copy the tag prompt for ${pick.photos.length} photos`}
+      disabled={!data}
+      prompt={prompt}
+    />
   );
 }

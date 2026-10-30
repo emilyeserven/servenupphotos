@@ -105,6 +105,61 @@ checks it, and nothing is saved when one can't be made or a photo can't be read.
 > **Frontend analogy:** it's the single-photo paste flow batched: a "dry run" mutation that returns a diff for the
 > user to edit (like a form's preview step), then one mutation that commits the edited diff.
 
+## Bulk places
+
+**Bulk places** gives [places](places-and-localizations.md) to up to 50 related photos with one LLM prompt, the way
+[Suggest a location](places-and-localizations.md#suggest-a-location) does for one photo. It picks like Bulk tagging,
+with the same **Photos to pick**, **Pick other photos** and **Start over** (`POST /api/data/bulk-places/pick`,
+`{ skip, count }`, `PickBulkPlacePhotos` in `github/bulkplaces.go`), but only considers photos without places (an empty
+or missing `places`, or only rows without an ID), and ranks them by their city or country, genres and date, as they
+have no places to share.
+
+**Copy the place prompt** (`lib/bulk-place-prompt.ts`) copies one prompt for all of them: each photo by its file name,
+with a link to its Small version and what's known of where it was taken (`knownLines` in `lib/location-prompt.ts`),
+then every existing place and the same naming and GPS rules as one photo's prompt. It asks the LLM to check each place
+on Google Maps, or on Naver Map or Kakao Map for a place in South Korea (where Google Maps shows little), and to give
+that link, the existing place it's in, and the same fields as one photo's answer, as JSON:
+
+```json
+{
+  "photos": [
+    {
+      "photo": "20161216_092741",
+      "place": "Hyangwonjeong Pavilion",
+      "parent": "Gyeongbokgung Palace",
+      "relation": "by",
+      "city": "Seoul",
+      "state": "",
+      "country": "South Korea",
+      "latitude": 37.5826,
+      "longitude": 126.977,
+      "exact": true,
+      "mapUrl": "https://map.naver.com/p/search/향원정",
+      "confidence": "medium",
+      "reasoning": "…"
+    }
+  ]
+}
+```
+
+Paste the answer and **Review the places**. Unlike Bulk tagging, the page reads it itself (`lib/bulk-places.ts`),
+from its first `{` to its last `}`: each place is matched to an existing one by name or ID, ignoring case, as one
+photo's answer is; the others are new places, each made once however many photos name it, with the answer's city,
+state, country and GPS position (`exactLocation` from `exact`), in the parent when that's an existing place. The
+review lists the new places the ticked photos use, then each photo with its place (and the place it's in, as
+choosing it on the Photo page adds), where it is, the LLM's confidence and reasoning, and links to check it: the
+answer's own map link, a search for it on Naver Map (in South Korea) or Google Maps, and its GPS position on Google
+Maps. A photo starts ticked unless the LLM's confidence is low. When a photo shows no city or country (custom or EXIF),
+its place's are written in as its custom ones.
+
+**Save places for N photos** (`POST /api/data/bulk-places`, `ApplyBulkPlaces`) makes the new places, each checked as
+saving one on the Places page checks it, and replaces each ticked photo's `places`, sets its `placeName` to the first
+place's name and writes in the custom city and country, keeping the rest of the file byte for byte, all in one save of
+[changes waiting for Commit](pending-changes.md). Nothing is saved when a place can't be made or a photo can't be read.
+
+> **Frontend analogy:** the same dry run and commit as Bulk tagging, with the dry run done client-side: parsing the
+> answer is a pure function of the pasted text and the cached places query, like a `useMemo` over form input.
+
 **Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
 how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
 asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,

@@ -42,15 +42,21 @@ type BulkTagPhoto struct {
 	Related []string `json:"related"`
 }
 
-// BulkTagPick is the photos Bulk Tagging picked to tag together.
-type BulkTagPick struct {
+// bulkPick is the photos a bulk pick found to go together, such as Bulk
+// Tagging's or Bulk Places'.
+type bulkPick struct {
 	// Branch and PullRequest are as in BaseURLPreview.
 	Branch      string              `json:"branch"`
 	PullRequest *BaseURLPullRequest `json:"pullRequest"`
 	PhotoFiles  int                 `json:"photoFiles"`
+	Photos      []BulkTagPhoto      `json:"photos"`
+}
+
+// BulkTagPick is the photos Bulk Tagging picked to tag together.
+type BulkTagPick struct {
+	bulkPick
 	// Untagged is how many photo files have no tags.
-	Untagged int            `json:"untagged"`
-	Photos   []BulkTagPhoto `json:"photos"`
+	Untagged int `json:"untagged"`
 }
 
 // bulkPhoto is what Bulk Tagging compares of a photo file.
@@ -83,7 +89,9 @@ func readBulkPhoto(f photoFile) bulkPhoto {
 		date:    firstText(data.CustomCreateDate, data.CreateDate),
 	}
 	for _, place := range data.Places {
-		p.places = append(p.places, place.ID)
+		if place.ID != "" {
+			p.places = append(p.places, place.ID)
+		}
 	}
 	return p
 }
@@ -163,33 +171,45 @@ func shared(a, b []string) []string {
 // like it (sharing its places, city or country, genres and date). It only
 // reads.
 func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip []string, count int) (BulkTagPick, error) {
+	pick, untagged, err := c.pickBulk(ctx, gh, skip, count,
+		func(p bulkPhoto) bool { return len(p.tags) == 0 },
+		"There are no more photos without tags to pick from. Start over to pick from every one again.")
+	return BulkTagPick{bulkPick: pick, Untagged: untagged}, err
+}
+
+// pickBulk picks up to count related photos (1 to 50, 5 when unset) among
+// the readable photo files want keeps, leaving out skip's paths, and says how
+// many photo files want keeps in all. none is the error when there are none
+// left to pick. It only reads.
+func (c *Client) pickBulk(ctx context.Context, gh settings.GitHub, skip []string, count int, want func(bulkPhoto) bool, none string) (bulkPick, int, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
-		return BulkTagPick{}, perr
+		return bulkPick{}, 0, perr
 	}
-	pick := BulkTagPick{Branch: scan.branch, PhotoFiles: len(scan.files), Photos: []BulkTagPhoto{}}
+	pick := bulkPick{Branch: scan.branch, PhotoFiles: len(scan.files), Photos: []BulkTagPhoto{}}
 	if scan.pr != nil {
 		pick.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
 	}
 	var photos []bulkPhoto
+	wanted := 0
 	for _, f := range scan.files {
 		if f.err != "" {
 			continue
 		}
 		p := readBulkPhoto(f)
-		if len(p.tags) > 0 {
+		if !want(p) {
 			continue
 		}
-		pick.Untagged++
+		wanted++
 		if !slices.Contains(skip, f.path) {
 			photos = append(photos, p)
 		}
 	}
 	if len(photos) == 0 {
-		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos without tags to pick from. Start over to pick from every one again.")
+		return bulkPick{}, 0, publishErr(http.StatusNotFound, "%s", none)
 	}
 	pick.Photos = pickRelated(photos, bulkTagCount(count))
-	return pick, nil
+	return pick, wanted, nil
 }
 
 // pickRelated is the first photo in photos by path, then the ones most like

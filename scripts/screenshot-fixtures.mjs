@@ -649,6 +649,11 @@ export function defaultFixtures() {
     "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count),
     "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
     "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
+    "POST /api/data/bulk-places/pick": ({ body }) => {
+      const { untagged, ...pick } = bulkTagPick(body?.count);
+      return { ...pick, unplaced: untagged };
+    },
+    "POST /api/data/bulk-places": () => ({ ...pendingSave(), newPlaces: 1, photos: 4 }),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,
