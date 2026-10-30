@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@portfolio/lib/utils";
 
 /** The outline around a row of buttons that switch between views, such as the Grid's tile shape. */
 export const CONTROL_FRAME =

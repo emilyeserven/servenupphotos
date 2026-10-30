@@ -1,6 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { parseSliderValue, SearchSlider, type SliderRange } from "@/components/search-slider";
-import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
+import {
+  parseSliderValue,
+  SearchSlider,
+  type SliderRange,
+} from "@portfolio/components/search-slider";
+import { CONTROL_FRAME, controlButtonClass } from "@portfolio/lib/segmented-control";
 
 /** The least a color's share can be set to, the most, and the step between, in percent. */
 const SHARE_RANGE: SliderRange = { min: 5, max: 95, step: 5 };

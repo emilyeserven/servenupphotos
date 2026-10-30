@@ -1,4 +1,4 @@
-import { type ColorName, type ColorShare, shareOf } from "@/lib/photo-colors";
+import { type ColorName, type ColorShare, shareOf } from "@portfolio/lib/photo-colors";
 
 /**
  * How a photo matches a color on the Color page: "largest" when the color is the biggest part of

@@ -1,5 +1,5 @@
-import committedGroups from "@/data/metainfo/METAINFO.json";
-import { localFile } from "@/lib/localize";
+import committedGroups from "@portfolio/data/metainfo/METAINFO.json";
+import { localFile } from "@portfolio/lib/localize";
 
 /** The photo fields a metadata group can be of, as the photo files name them. */
 export type MetaField = "camera" | "lens" | "focalLength" | "aperture" | "exposure" | "iso";

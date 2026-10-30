@@ -1,15 +1,15 @@
-import { albums, genres, type Group, subAlbums, subTags, tags } from "@/lib/groups";
+import { albums, genres, type Group, subAlbums, subTags, tags } from "@portfolio/lib/groups";
 import {
   localizeName,
   localizePlace,
   placeAncestry,
   placeById,
   type Localized,
-} from "@/lib/localize";
-import { type FilterKey, type LocationKey, matchesFilters } from "@/lib/photo-filters";
-import { groupTree, groupValues, type MetaGroup } from "@/lib/metadata-groups";
-import { distinctState, type Photo } from "@/lib/photos";
-import type { EquipmentKey } from "@/lib/camera-filters";
+} from "@portfolio/lib/localize";
+import { type FilterKey, type LocationKey, matchesFilters } from "@portfolio/lib/photo-filters";
+import { groupTree, groupValues, type MetaGroup } from "@portfolio/lib/metadata-groups";
+import { distinctState, type Photo } from "@portfolio/lib/photos";
+import type { EquipmentKey } from "@portfolio/lib/camera-filters";
 
 /** One choice of a filter's dropdown. */
 export interface FilterOption {

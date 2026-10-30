@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
-import type { ColorName } from "@/lib/photo-colors";
-import { cn } from "@/lib/utils";
+import type { ColorName } from "@portfolio/lib/photo-colors";
+import { cn } from "@portfolio/lib/utils";
 
 /** What a swatch sets in the URL: a color, or none to clear it. */
 interface SwatchSearch {

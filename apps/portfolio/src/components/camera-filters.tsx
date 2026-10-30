@@ -6,14 +6,14 @@ import {
   type OwnFilters,
   PhotoFilterBar,
   selectedValue,
-} from "@/components/photo-filters";
-import { RangeFilter } from "@/components/range-filter";
-import type { RangePreset } from "@/components/range-presets";
-import { equipmentOptions } from "@/lib/filter-options";
-import { groupTree } from "@/lib/metadata-groups";
-import { photos as allPhotos, SETTING_FORMATS } from "@/lib/photos";
-import type { Photo } from "@/lib/photos";
-import { filterPhotos, parseFilters } from "@/lib/photo-filters";
+} from "@portfolio/components/photo-filters";
+import { RangeFilter } from "@portfolio/components/range-filter";
+import type { RangePreset } from "@portfolio/components/range-presets";
+import { equipmentOptions } from "@portfolio/lib/filter-options";
+import { groupTree } from "@portfolio/lib/metadata-groups";
+import { photos as allPhotos, SETTING_FORMATS } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
+import { filterPhotos, parseFilters } from "@portfolio/lib/photo-filters";
 import {
   CAMERA_FILTER_KEYS,
   type EquipmentKey,
@@ -27,8 +27,8 @@ import {
   parseCameraFilters,
   TIME_KEY,
   withoutCameraFilters,
-} from "@/lib/camera-filters";
-import { hourEnd, hourStart, photoHours } from "@/lib/time-of-day";
+} from "@portfolio/lib/camera-filters";
+import { hourEnd, hourStart, photoHours } from "@portfolio/lib/time-of-day";
 
 /** Each range slider's name. */
 const RANGE_LABELS: Record<RangeKey, string> = {

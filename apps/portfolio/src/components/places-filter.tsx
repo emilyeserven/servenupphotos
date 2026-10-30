@@ -1,13 +1,13 @@
 import { ChevronRight, ChevronsUpDown, MapPin, Search } from "lucide-react";
 import { useState } from "react";
-import { useScriptDisplay } from "@/components/script-display-provider";
-import { ClearFilterButton } from "@/components/clear-filter-button";
-import { HiddenNote } from "@/components/hidden-note";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { LocationOption } from "@/lib/filter-options";
-import type { ScriptDisplay } from "@/lib/localize";
-import { cn } from "@/lib/utils";
+import { useScriptDisplay } from "@portfolio/components/script-display-provider";
+import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
+import { HiddenNote } from "@portfolio/components/hidden-note";
+import { Button } from "@portfolio/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
+import type { LocationOption } from "@portfolio/lib/filter-options";
+import type { ScriptDisplay } from "@portfolio/lib/localize";
+import { cn } from "@portfolio/lib/utils";
 
 /** A choice's value as the Places filter keeps it: its key and value, such as "city:Seoul". */
 function valueOf(option: LocationOption): string {

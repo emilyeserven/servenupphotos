@@ -1,7 +1,7 @@
 import { Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
+import { cn } from "@portfolio/lib/utils";
 
 /** A range a slider can be set to in one click, from a metadata group such as **Wide angle**. */
 export interface RangePreset {

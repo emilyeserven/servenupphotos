@@ -1,7 +1,7 @@
 import { ChevronsUpDown, ListFilter } from "lucide-react";
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@portfolio/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 
 /**
  * A **More filters** button that opens the filters it holds in a popup, such as the map's album,

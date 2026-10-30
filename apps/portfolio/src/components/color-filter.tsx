@@ -1,4 +1,4 @@
-import { FilterSwatch } from "@/components/filter-swatch";
+import { FilterSwatch } from "@portfolio/components/filter-swatch";
 import {
   type ColorName,
   colorLabel,
@@ -6,7 +6,7 @@ import {
   HUE_BUCKETS,
   isShade,
   SHADES,
-} from "@/lib/photo-colors";
+} from "@portfolio/lib/photo-colors";
 
 /**
  * A swatch for each hue bucket and then each shade, to show only the photos with much of that

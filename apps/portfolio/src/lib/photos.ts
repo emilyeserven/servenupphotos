@@ -1,4 +1,4 @@
-import committedData from "@/data/photos/ALLPHOTOS.json";
+import committedData from "@portfolio/data/photos/ALLPHOTOS.json";
 import {
   type ColorShare,
   type PhotoColorData,
@@ -7,7 +7,7 @@ import {
   photoLightness,
   photoPeakVividness,
   photoVividness,
-} from "@/lib/photo-colors";
+} from "@portfolio/lib/photo-colors";
 import {
   type Localized,
   localizeName,
@@ -19,7 +19,7 @@ import {
   placeById,
   SCRIPT_DISPLAYS,
   type ScriptDisplay,
-} from "@/lib/localize";
+} from "@portfolio/lib/localize";
 
 export interface Photo {
   /**
@@ -706,13 +706,19 @@ function withCityCountries(list: Photo[]): Photo[] {
   );
 }
 
-const localPhotos = localData ? withCityCountries(fromPhotoData(localData)) : [];
+/**
+ * Photo JSON entries as the portfolio reads them, leaving out the ones with no date. The pipeline's
+ * Gallery reads its photos this way so the portfolio's filters can narrow them.
+ */
+export function photosFromData(data: PhotoData[]): Photo[] {
+  return withCityCountries(fromPhotoData(data));
+}
+
+const localPhotos = localData ? photosFromData(localData) : [];
 
 /**
  * The photos in ALLPHOTOS.local.json when there are any (the photos in flight, locally), or else
  * the photos in data/photos/ALLPHOTOS.json, which the "Combine photo data" workflow builds.
  */
 export const photos: Photo[] =
-  localPhotos.length > 0
-    ? localPhotos
-    : withCityCountries(fromPhotoData(committedData as PhotoData[]));
+  localPhotos.length > 0 ? localPhotos : photosFromData(committedData as PhotoData[]);

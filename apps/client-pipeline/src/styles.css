@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/manrope";
 
+/* The portfolio's Grid filters, which the Gallery shows too. */
+@source "../../portfolio/src/components";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

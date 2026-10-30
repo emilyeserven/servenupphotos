@@ -51,6 +51,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
+      // The files the pipeline's Gallery shares (its filters) import each other by this name, which
+      // means the same folder in both apps; see docs/gallery.md.
+      "@portfolio": path.resolve(import.meta.dirname, "./src"),
     },
   },
 });

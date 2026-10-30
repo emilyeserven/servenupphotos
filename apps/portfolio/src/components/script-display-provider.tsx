@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useContext, useState } from "react";
-import { SCRIPT_DISPLAYS, type ScriptDisplay } from "@/lib/localize";
+import { SCRIPT_DISPLAYS, type ScriptDisplay } from "@portfolio/lib/localize";
 
 const STORAGE_KEY = "servenup-script-display";
 
