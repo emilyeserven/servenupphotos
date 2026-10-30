@@ -69,3 +69,30 @@ func handleBulkTags[T any](store *settings.Store, kind, failure string, run func
 		writeSocialResult(w, result, err, failure)
 	}
 }
+
+// handlePickGenrePhotos picks up to the asked number of photos without
+// genres for Genre Suggestions, leaving out the photos already shown.
+func handlePickGenrePhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "photo pick", "could not pick the photos",
+		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
+			return gh.PickGenrePhotos(ctx, cfg, req.Skip, req.Count)
+		})
+}
+
+// handlePreviewGenreSuggestions reads the LLM's pasted answer for the picked
+// photos and says which genres each would get, without saving anything.
+func handlePreviewGenreSuggestions(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "genre suggestions answer", "could not read the answer",
+		func(ctx context.Context, cfg settings.GitHub, req bulkTagAnswer) (any, error) {
+			return gh.PreviewGenreSuggestions(ctx, cfg, req.Paths, req.Answer)
+		})
+}
+
+// handleApplyGenreSuggestions makes the reviewed new genres and adds the
+// genres to each photo, as changes waiting for Commit.
+func handleApplyGenreSuggestions(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "genre suggestions", "could not save the genres",
+		func(ctx context.Context, cfg settings.GitHub, req github.GenreSuggestions) (any, error) {
+			return gh.ApplyGenreSuggestions(ctx, cfg, req)
+		})
+}

@@ -23,6 +23,9 @@ instead. In the Gallery, **Select** → **Add albums, tags and genres** adds gen
 chosen photo (`POST /api/photos/groups` with `genres`), each tile lists its genres, and the **Genres** filter there and
 on Photos in Flight finds photos with or without any.
 
+**Update Data → Genre suggestions** suggests genres for up to 50 photos without any at a time, with one LLM prompt,
+and makes the new genres it suggests once they're reviewed. See [Update Data](update-data.md#genre-suggestions).
+
 ## On the portfolio
 
 The Timeline, Map and Grid have a **Genre** dropdown in their filters, after **Tag** (`?genre=street`), which shows the
