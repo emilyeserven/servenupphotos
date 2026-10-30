@@ -9,9 +9,11 @@ import (
 )
 
 // bulkTagPick is the body of a Bulk Tagging pick: the photos already shown,
-// to leave out.
+// to leave out, and how many to pick.
 type bulkTagPick struct {
 	Skip []string `json:"skip"`
+	// Count is how many photos to pick, 1 to 50; 0 picks the default 5.
+	Count int `json:"count"`
 }
 
 // bulkTagAnswer is the body of a Bulk Tagging preview: the picked photos and
@@ -21,12 +23,12 @@ type bulkTagAnswer struct {
 	Answer string   `json:"answer"`
 }
 
-// handlePickBulkTagPhotos picks up to five related photos for Bulk Tagging,
-// leaving out the photos already shown.
+// handlePickBulkTagPhotos picks up to the asked number of related photos for
+// Bulk Tagging, leaving out the photos already shown.
 func handlePickBulkTagPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return handleBulkTags(store, "photo pick", "could not pick the photos",
 		func(ctx context.Context, cfg settings.GitHub, req bulkTagPick) (any, error) {
-			return gh.PickBulkTagPhotos(ctx, cfg, req.Skip)
+			return gh.PickBulkTagPhotos(ctx, cfg, req.Skip, req.Count)
 		})
 }
 

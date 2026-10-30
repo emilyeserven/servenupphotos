@@ -14,7 +14,7 @@ export interface BulkTagPhoto {
   related: string[];
 }
 
-/** Up to five related photos without tags to tag together: one, then the ones most like it. */
+/** Up to the chosen number of related photos without tags to tag together: one, then the ones most like it. */
 export interface BulkTagPick {
   branch: string;
   pullRequest: { number: number; url: string } | null;
@@ -82,10 +82,11 @@ function post<T>(url: string, body: unknown) {
   });
 }
 
-/** Picks up to five related photos to tag together, leaving out the ones already shown. */
+/** Picks up to `count` related photos (1 to 50) to tag together, leaving out the ones already shown. */
 export const pickBulkTagPhotosMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "pick"],
-  mutationFn: (skip: string[]) => post<BulkTagPick>("/api/data/bulk-tags/pick", { skip }),
+  mutationFn: (body: { skip: string[]; count: number }) =>
+    post<BulkTagPick>("/api/data/bulk-tags/pick", body),
 });
 
 /** Reads the LLM's pasted answer for the picked photos and says what it would add, saving nothing. */

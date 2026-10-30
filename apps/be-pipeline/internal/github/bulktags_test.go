@@ -36,7 +36,7 @@ func TestPickBulkTagPhotos(t *testing.T) {
 		"e.json": `{"tags":[],"city":"Paris"}`,
 		"f.json": `{"file":`,
 	})
-	got, err := c.PickBulkTagPhotos(t.Context(), baseURLSettings, nil)
+	got, err := c.PickBulkTagPhotos(t.Context(), baseURLSettings, nil, 0)
 	if err != nil {
 		t.Fatalf("PickBulkTagPhotos() error = %v", err)
 	}
@@ -56,9 +56,14 @@ func TestPickBulkTagPhotos(t *testing.T) {
 		t.Errorf("g related = %v", r)
 	}
 
-	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, []string{photosDir + "a.json"})
+	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, []string{photosDir + "a.json"}, 0)
 	if err != nil || got.Photos[0].Name != "c" {
 		t.Errorf("PickBulkTagPhotos(skip a) = %+v, %v; want c first", got.Photos, err)
+	}
+
+	got, err = c.PickBulkTagPhotos(t.Context(), baseURLSettings, nil, 2)
+	if err != nil || len(got.Photos) != 2 {
+		t.Errorf("PickBulkTagPhotos(count 2) = %+v, %v; want 2 photos", got.Photos, err)
 	}
 }
 
@@ -182,6 +187,14 @@ func TestTagID(t *testing.T) {
 	} {
 		if got := tagID(in); got != want {
 			t.Errorf("tagID(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
+
+func TestBulkTagCount(t *testing.T) {
+	for count, want := range map[int]int{0: 5, -3: 5, 1: 1, 12: 12, 50: 50, 80: 50} {
+		if got := bulkTagCount(count); got != want {
+			t.Errorf("bulkTagCount(%d) = %d, want %d", count, got, want)
 		}
 	}
 }

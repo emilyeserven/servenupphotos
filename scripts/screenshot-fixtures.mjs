@@ -460,9 +460,9 @@ function uploadAnswer(key) {
   return { key, url: `${CDN}/${key}`, versions };
 }
 
-/** The photos Bulk Tagging picks: five of the pull request's photos, the first with no tags. */
-function bulkTagPick() {
-  const photos = headPhotos.slice(0, 5).map(({ path, data }, i) => ({
+/** The photos Bulk Tagging picks: `count` of the pull request's photos, the first with no tags. */
+function bulkTagPick(count = 5) {
+  const photos = headPhotos.slice(0, count).map(({ path, data }, i) => ({
     path,
     fileUrl: "",
     name: path
@@ -646,7 +646,7 @@ export function defaultFixtures() {
         })),
     },
     "POST /api/data/location-names": () => ({ ...pendingSave(), files: 9, fields: 9 }),
-    "POST /api/data/bulk-tags/pick": () => bulkTagPick(),
+    "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count),
     "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
     "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
     "POST /api/data/colors/preview": ({ body }) => ({

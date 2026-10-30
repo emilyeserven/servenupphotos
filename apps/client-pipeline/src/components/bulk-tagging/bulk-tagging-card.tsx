@@ -11,6 +11,7 @@ import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
 import { BulkTagReview } from "@/components/bulk-tagging/bulk-tag-review";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
+import { bulkTagCount, defaultBulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -19,11 +20,12 @@ import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
 
 /**
- * Bulk Tagging: picks up to five related photos, copies one tag prompt for all of them, and reads
+ * Bulk Tagging: picks up to the chosen number of related photos (5 at first, up to 50), copies one tag prompt for all of them, and reads
  * the LLM's JSON answer back into a review of the tags each photo gets and the new tags to make.
  */
 export function BulkTaggingCard() {
   const [shown, setShown] = useState<string[]>([]);
+  const [count, setCount] = useState(String(defaultBulkTagCount));
   const pick = useMutation({
     ...pickBulkTagPhotosMutation,
     onSuccess: (result) => setShown((paths) => [...paths, ...result.photos.map((p) => p.path)]),
@@ -33,22 +35,25 @@ export function BulkTaggingCard() {
       <CardHeader>
         <CardTitle>Bulk tagging</CardTitle>
         <CardDescription>
-          Picks up to five photos without tags that go together: one, then the ones that share its
-          places, city or country, genres or date. Photos that already have tags are left out. Copy
-          one prompt for all of them into a chat with an LLM, paste its JSON answer back, and review
-          the tags before they&apos;re saved, waiting for Commit.
+          Picks up to the chosen number of photos (up to 50) without tags that go together: one,
+          then the ones that share its places, city or country, genres or date. Photos that already
+          have tags are left out. Copy one prompt for all of them into a chat with an LLM, paste its
+          JSON answer back, and review the tags before they&apos;re saved, waiting for Commit.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        <PickButtons
-          picked={pick.data !== undefined}
-          pending={pick.isPending}
-          onPick={() => pick.mutate(shown)}
-          onRestart={() => {
-            setShown([]);
-            pick.mutate([]);
-          }}
-        />
+        <div className="flex flex-wrap items-center gap-3">
+          <PickCount value={count} disabled={pick.isPending} onChange={setCount} />
+          <PickButtons
+            picked={pick.data !== undefined}
+            pending={pick.isPending}
+            onPick={() => pick.mutate({ skip: shown, count: bulkTagCount(count) })}
+            onRestart={() => {
+              setShown([]);
+              pick.mutate({ skip: [], count: bulkTagCount(count) });
+            }}
+          />
+        </div>
         <ErrorText error={pick.error} />
         {pick.data && <PickedTagging key={pick.submittedAt} pick={pick.data} />}
       </CardContent>

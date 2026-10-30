@@ -12,8 +12,21 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// maxBulkTagPhotos is how many photos Bulk Tagging picks, and tags, at a time.
-const maxBulkTagPhotos = 5
+// maxBulkTagPhotos is the most photos Bulk Tagging picks, and tags, at a time.
+const maxBulkTagPhotos = 50
+
+// defaultBulkTagPhotos is how many photos Bulk Tagging picks when the pick
+// doesn't say.
+const defaultBulkTagPhotos = 5
+
+// bulkTagCount is count kept between 1 and maxBulkTagPhotos, or
+// defaultBulkTagPhotos when it isn't set.
+func bulkTagCount(count int) int {
+	if count <= 0 {
+		return defaultBulkTagPhotos
+	}
+	return min(count, maxBulkTagPhotos)
+}
 
 // BulkTagPhoto is one photo Bulk Tagging picked: its file, its JSON for the
 // prompt to read what's known of it, and why it goes with the first one.
@@ -143,12 +156,13 @@ func shared(a, b []string) []string {
 	return out
 }
 
-// PickBulkTagPhotos picks up to five related photos to tag together, from the
-// photo files as the next Commit will have them, leaving out skip's paths.
+// PickBulkTagPhotos picks up to count related photos (1 to 50, 5 when unset)
+// to tag together, from the photo files as the next Commit will have them,
+// leaving out skip's paths.
 // Only photos without tags are picked: the first by path, then the ones most
 // like it (sharing its places, city or country, genres and date). It only
 // reads.
-func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip []string) (BulkTagPick, error) {
+func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip []string, count int) (BulkTagPick, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
 		return BulkTagPick{}, perr
@@ -174,13 +188,13 @@ func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip
 	if len(photos) == 0 {
 		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos without tags to pick from. Start over to pick from every one again.")
 	}
-	pick.Photos = pickRelated(photos)
+	pick.Photos = pickRelated(photos, bulkTagCount(count))
 	return pick, nil
 }
 
 // pickRelated is the first photo in photos by path, then the ones most like
-// it.
-func pickRelated(photos []bulkPhoto) []BulkTagPhoto {
+// it, count in all at most.
+func pickRelated(photos []bulkPhoto, count int) []BulkTagPhoto {
 	seed := slices.MinFunc(photos, func(a, b bulkPhoto) int {
 		return cmp.Compare(a.file.path, b.file.path)
 	})
@@ -200,7 +214,7 @@ func pickRelated(photos []bulkPhoto) []BulkTagPhoto {
 	out := []BulkTagPhoto{bulkTagPhoto(seed, nil)}
 	names := map[string]bool{seed.name: true}
 	for _, o := range others {
-		if len(out) < maxBulkTagPhotos && !names[o.photo.name] {
+		if len(out) < count && !names[o.photo.name] {
 			names[o.photo.name] = true
 			out = append(out, bulkTagPhoto(o.photo, o.rel.reasons))
 		}
