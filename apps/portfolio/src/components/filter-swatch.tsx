@@ -40,6 +40,7 @@ export function FilterSwatch({
   if (count === 0 && !active) return <UnavailableSwatch title={title}>{dot}</UnavailableSwatch>;
   return (
     <Link
+      resetScroll={false}
       to="."
       search={(prev) => ({ ...prev, ...(active ? clear : pick), photo: undefined })}
       replace

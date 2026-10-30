@@ -51,6 +51,7 @@ function useSetFilter(prefix?: string, extraParams: readonly string[] = []) {
   return (key: FilterKey | null, choice?: FilterChoice) =>
     void navigate({
       to: ".",
+      resetScroll: false,
       search: (prev: Record<string, unknown>) =>
         key
           ? { ...prev, [filterParam(key, prefix)]: choice }

@@ -53,7 +53,11 @@ export function UndecidedToggle({ choice }: { choice?: UndecidedChoice }) {
       choice={choice}
       choices={UNDECIDED_CHOICES}
       onChange={(undecided) =>
-        void navigate({ search: (prev) => ({ ...prev, undecided }), replace: true })
+        void navigate({
+          search: (prev) => ({ ...prev, undecided }),
+          replace: true,
+          resetScroll: false,
+        })
       }
     />
   );

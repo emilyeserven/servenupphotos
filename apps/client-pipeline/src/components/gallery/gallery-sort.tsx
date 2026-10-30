@@ -86,7 +86,11 @@ export function GallerySortToggle({ sort }: { sort?: GallerySort }) {
       choice={sort}
       choices={SORT_CHOICES}
       onChange={(next) =>
-        void navigate({ search: (prev) => ({ ...prev, sort: next }), replace: true })
+        void navigate({
+          search: (prev) => ({ ...prev, sort: next }),
+          replace: true,
+          resetScroll: false,
+        })
       }
     />
   );

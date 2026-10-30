@@ -78,6 +78,7 @@ function VividnessSlider({ vivid }: { vivid: number }) {
         const value = next === 0 ? undefined : next;
         void navigate({
           to: ".",
+          resetScroll: false,
           search: (prev: Record<string, unknown>) => ({ ...prev, vivid: value, photo: undefined }),
           replace: true,
         });

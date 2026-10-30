@@ -62,6 +62,7 @@ function ColorsHeader({
   const clear = () =>
     void navigate({
       to: ".",
+      resetScroll: false,
       search: (prev: Record<string, unknown>) => ({
         ...prev,
         ...Object.fromEntries(COLOR_FILTER_KEYS.map((key) => [key, undefined])),

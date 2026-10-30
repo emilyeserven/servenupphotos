@@ -82,7 +82,7 @@ export function usePlaceFilter() {
 export function PlaceFilterToggles({ filter }: { filter: ReturnType<typeof usePlaceFilter> }) {
   const navigate = useNavigate({ from: "/gallery" });
   const set = (next: PlaceSearch) =>
-    void navigate({ search: (prev) => ({ ...prev, ...next }), replace: true });
+    void navigate({ search: (prev) => ({ ...prev, ...next }), replace: true, resetScroll: false });
   if (!filter.placeId) return null;
   return (
     <>
