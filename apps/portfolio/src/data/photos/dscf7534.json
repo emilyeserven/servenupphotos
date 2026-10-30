@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "hangul",
+    "signage",
+    "storefronts",
+    "power-lines",
+    "traffic",
+    "pedestrians",
+    "motorcycles"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],

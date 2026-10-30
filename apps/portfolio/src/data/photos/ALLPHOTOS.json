@@ -577,7 +577,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mushrooms", "fungi", "moss", "roots", "forest", "hiking-trail", "details"],
     "genres": [],
     "places": [
       {
@@ -14115,7 +14115,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["crabs", "seaweed", "stones", "beach", "details"],
     "genres": [],
     "places": [
       {
@@ -15195,7 +15195,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["desert", "rock-formations", "sand", "cars", "picnic", "carpet", "shadows"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -16022,7 +16022,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["shotengai", "arcade", "silhouettes", "pedestrians", "signage", "skylight"],
     "genres": [],
     "places": [
       {
@@ -16824,7 +16824,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["crowd", "pedestrians", "tourists", "humor", "signage", "storefronts"],
     "genres": [],
     "places": [
       {
@@ -17093,7 +17093,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["canal", "neon", "night", "city-lights", "signage", "boats", "crowd", "reflections"],
     "genres": [],
     "places": [
       {
@@ -17631,7 +17631,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["toro", "torii", "wabi-sabi", "buddhism", "cemetery", "moss", "repetition", "stones"],
     "genres": [],
     "places": [
       {
@@ -18700,7 +18700,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["hanbok", "palace", "pine-trees", "tourists", "costumes", "shadows"],
     "genres": [],
     "places": [
       {
@@ -19506,7 +19506,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["hanok", "giwa", "alley", "crowd", "tourists", "umbrellas", "walls"],
     "genres": [],
     "places": [
       {
@@ -20039,7 +20039,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["market", "arcade", "street-food", "storefronts", "signage", "pedestrians"],
     "genres": [],
     "places": [
       {
@@ -20308,7 +20308,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["stream", "silhouettes", "pedestrians", "stones", "reflections", "trees", "walls"],
     "genres": [],
     "places": [
       {
@@ -21660,7 +21660,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["hangul", "neon", "signage", "storefronts", "crowd", "night"],
     "genres": [],
     "places": [
       {
@@ -22462,7 +22462,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["homepage-spotlight"],
-    "tags": [],
+    "tags": ["yeondeung", "buddhism", "lanterns", "repetition", "patterns", "shadows"],
     "genres": [],
     "places": [
       {
@@ -22731,7 +22731,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["cafe", "silhouettes", "windows", "interior", "skyline", "city"],
     "genres": [],
     "places": [
       {
@@ -23278,7 +23278,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["skyline", "city", "apartments", "pine-trees", "tourists", "fence"],
     "genres": [],
     "places": [
       {
@@ -23547,7 +23547,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["homepage-spotlight"],
-    "tags": [],
+    "tags": ["skyline", "skyscraper", "mountains", "city", "haze", "aerial-view"],
     "genres": [],
     "places": [
       {
@@ -23819,7 +23819,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["homepage-spotlight"],
-    "tags": [],
+    "tags": ["kawara", "temple", "rooftops", "houses", "road", "forest", "aerial-view"],
     "genres": [],
     "places": [
       {
@@ -24088,7 +24088,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["chozuya", "buddhism", "temple", "dragons", "fountain", "water", "trees"],
     "genres": [],
     "places": [
       {
@@ -24357,7 +24357,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["temple", "hiking-trail", "path", "forest", "fog", "lamppost", "trees"],
     "genres": [],
     "places": [
       {
@@ -24899,7 +24899,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["silhouettes", "windows", "fog", "ocean", "islands", "minimalism", "skyscraper"],
     "genres": [],
     "places": [
       {
@@ -25168,7 +25168,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["harbor", "boats", "pier", "water", "aerial-view", "repetition"],
     "genres": [],
     "places": [
       {
@@ -25701,7 +25701,15 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "hangul",
+      "signage",
+      "storefronts",
+      "power-lines",
+      "traffic",
+      "pedestrians",
+      "motorcycles"
+    ],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -25965,7 +25973,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["observation-tower", "moon", "power-lines", "cables", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -27044,7 +27052,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["nobori", "toro", "buddhism", "temple", "flags", "statue", "moss", "path"],
     "genres": [],
     "places": [
       {
@@ -27577,7 +27585,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["hangul", "hanja", "signage", "typography", "fence", "humor"],
     "genres": [],
     "places": [
       {
@@ -27846,7 +27854,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["skyscraper", "apartments", "night", "city-lights", "harbor", "water", "reflections"],
     "genres": [],
     "places": [
       {
@@ -28115,7 +28123,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["hangul", "ferry-terminal", "signage", "typography", "facade", "windows", "night"],
     "genres": [],
     "places": [
       {
@@ -33826,7 +33834,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["street-art", "graffiti", "posters", "stickers", "faces", "alley", "walls"],
     "genres": [],
     "places": [
       {
@@ -34095,7 +34103,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["produce", "storefronts", "umbrellas", "pumpkins", "autumn", "signage", "repetition"],
     "genres": [],
     "places": [
       {
@@ -35722,7 +35730,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["subway", "train", "commuters", "windows", "reflections", "faces"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -35986,7 +35994,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["train-station", "commuters", "crowd", "motion-blur", "windows", "clock", "interior"],
     "genres": [],
     "places": [
       {
@@ -36524,7 +36532,15 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "cast-iron-architecture",
+      "cobblestones",
+      "facade",
+      "cars",
+      "pedestrians",
+      "bicycles",
+      "clouds"
+    ],
     "genres": [],
     "places": [
       {
@@ -36797,7 +36813,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["seagulls", "birds", "beach", "waves", "sand"],
     "genres": [],
     "places": [
       {
@@ -37062,7 +37078,15 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "seokdeung",
+      "subway",
+      "train-station",
+      "arches",
+      "platform",
+      "pedestrians",
+      "symmetry"
+    ],
     "genres": [],
     "placeName": "gyeongbokgung-station",
     "customCity": "Seoul",
@@ -37335,7 +37359,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["giwa", "palace", "pavilion", "pond", "pine-trees", "reflections", "trees"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -38141,7 +38165,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["pedestrians", "tourists", "beams", "columns", "windows", "bench", "park"],
     "genres": [],
     "places": [
       {
@@ -38691,7 +38715,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mannequins", "humor", "windows", "brick", "repetition"],
     "genres": [],
     "places": [
       {
@@ -39232,7 +39256,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["harbor", "boats", "sailboats", "water", "repetition", "humor"],
     "genres": [],
     "places": [
       {
@@ -39501,7 +39525,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["storefronts", "produce", "watermelons", "signage", "repetition", "patterns"],
     "genres": [],
     "places": [
       {
@@ -39774,7 +39798,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["signage", "typography", "humor", "trees", "ivy", "fence"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -40038,7 +40062,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["street-performer", "acrobatics", "crowd", "tourists", "dancing", "plaza"],
     "genres": [],
     "places": [
       {
@@ -40306,7 +40330,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["paddleboarding", "silhouettes", "ocean", "sunrise", "birds", "clouds"],
     "genres": [],
     "places": [
       {
@@ -40576,7 +40600,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["signage", "typography", "houses", "windows", "power-lines", "trees"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -41646,7 +41670,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mirror", "reflections", "cameras", "pedestrians", "motion-blur", "interior"],
     "genres": [],
     "places": [
       {
@@ -42993,7 +43017,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["subway", "platform", "cameras", "typography", "patterns", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -44054,7 +44078,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["church", "steeple", "winter", "snow", "village", "river", "mountains", "houses"],
     "genres": [],
     "places": [
       {
@@ -44323,7 +44347,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["highway", "bridge", "columns", "steel", "houses", "snow", "winter"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -45653,7 +45677,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["japsang", "giwa", "palace", "rooftops", "silhouettes", "figurines", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -46191,7 +46215,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["street-art", "mural", "graffiti", "brick", "walls", "pedestrians"],
     "genres": [],
     "places": [
       {
@@ -46464,7 +46488,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mosaic", "art-installation", "subway", "faces", "fence", "patterns"],
     "genres": [],
     "places": [
       {
@@ -47540,7 +47564,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["hanbok", "dancheong", "giwa", "palace", "windows", "columns", "tourists", "trees"],
     "genres": [],
     "places": [
       {
@@ -48891,7 +48915,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "bench",
+      "abandoned",
+      "road",
+      "grass",
+      "tall-grass",
+      "forest",
+      "countryside",
+      "clouds"
+    ],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -49970,7 +50003,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["silhouettes", "road", "apartments", "city", "trees", "pedestrians"],
     "genres": [],
     "places": [
       {
@@ -50508,7 +50541,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["lake", "mountains", "snow", "walls", "stones", "reflections", "scale", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -51319,7 +51352,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["storefronts", "signage", "typography", "pedestrians", "sidewalk", "posters"],
     "genres": [],
     "places": [
       {
@@ -51857,7 +51890,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mirror", "reflections", "subway", "platform", "repetition", "pedestrians"],
     "genres": [],
     "places": [
       {
@@ -52122,7 +52155,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["homepage-spotlight"],
-    "tags": [],
+    "tags": ["dancheong", "gazebo", "birds", "patterns", "symmetry", "reflections", "details"],
     "genres": [],
     "placeName": "Mirror Pond",
     "customCity": "Seoul",
@@ -52399,7 +52432,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mosaic", "art-installation", "subway", "faces", "smartphones", "humor"],
     "genres": [],
     "places": [
       {
@@ -53218,7 +53251,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["harbor", "pier", "pilings", "boats", "sailboats", "reflections", "twilight"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -53482,7 +53515,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["newts", "amphibians", "wood", "moss", "forest", "details"],
     "genres": [],
     "places": [
       {
@@ -54020,7 +54053,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["ice-cream", "van", "signage", "crosswalk", "sidewalk"],
     "genres": [],
     "places": [
       {
@@ -54561,7 +54594,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["bridge", "steel", "graffiti", "signage", "symmetry", "path", "fence"],
     "genres": [],
     "places": [
       {
@@ -54830,7 +54863,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["street-art", "graffiti", "stickers", "typography", "alley", "walls"],
     "genres": [],
     "places": [
       {
@@ -55632,7 +55665,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["chochin", "alley", "power-lines", "cables", "signage", "storefronts", "pedestrians"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -56434,7 +56467,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["dancheong", "hanbok", "palace", "columns", "path", "repetition", "symmetry"],
     "genres": [],
     "places": [
       {
@@ -56972,7 +57005,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["palace", "cameras", "tourists", "humor", "gates", "skyscraper", "windows"],
     "genres": [],
     "places": [
       {
@@ -57245,7 +57278,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["pilings", "skyline", "skyscraper", "river", "cameras", "tourists", "stones"],
     "genres": [],
     "places": [
       {
@@ -58047,7 +58080,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["pumgyeseok", "hanja", "hanbok", "palace", "stones", "inscriptions", "repetition"],
     "genres": [],
     "places": [
       {
@@ -58600,7 +58633,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["hangul", "storefronts", "signage", "road", "stairs", "plants"],
     "genres": [],
     "places": [
       {
@@ -59405,7 +59438,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["yeondeung", "buddhism", "temple", "prayers", "lanterns", "repetition", "patterns"],
     "genres": [],
     "places": [
       {
@@ -59674,7 +59707,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["mushrooms", "fungi", "texture", "forest", "details"],
     "genres": [],
     "places": [
       {
@@ -59943,7 +59976,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["lanterns", "art-installation", "night", "city-lights", "repetition", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -60215,7 +60248,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["doors", "patterns", "symmetry", "repetition", "details", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -61022,7 +61055,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["cherry-blossoms", "park", "path", "trees", "stones", "pedestrians", "spring"],
     "genres": [],
     "places": [
       {
@@ -61291,7 +61324,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["crabs", "seaweed", "stones", "beach", "details"],
     "genres": [],
     "places": [
       {
@@ -61833,7 +61866,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["fog", "skyline", "skyscraper", "lake", "reflections", "trees"],
     "genres": [],
     "places": [
       {
@@ -62640,7 +62673,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["road", "snow", "winter", "forest", "trees", "power-lines"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -62904,7 +62937,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["snow", "winter", "stairs", "lamppost", "park", "smartphones", "repetition"],
     "genres": [],
     "places": [
       {
@@ -63173,7 +63206,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["railway", "train", "snow", "winter", "numbers", "repetition"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -63437,7 +63470,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["queue", "crowd", "tourists", "storefronts", "signage", "crosswalk"],
     "genres": [],
     "places": [
       {
@@ -63706,7 +63739,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["railway", "subway", "platform", "steel", "beams", "minimalism"],
     "genres": [],
     "places": [
       {
@@ -64244,7 +64277,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["snow", "winter", "pond", "park", "pedestrians", "lamppost", "trees"],
     "genres": [],
     "places": [
       {
@@ -65051,7 +65084,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["seagulls", "birds", "flight", "beach", "ocean", "sunrise", "silhouettes", "waves"],
     "genres": [],
     "places": [
       {
@@ -65323,7 +65356,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["skyscraper", "apartments", "reflections", "ice", "twilight"],
     "genres": [],
     "places": [
       {
@@ -65592,7 +65625,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["signage", "typography", "humor", "urban-decay", "rust", "storefronts"],
     "genres": [],
     "places": [
       {
@@ -65865,7 +65898,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["birds", "flight", "apartments", "balconies", "repetition"],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -67500,7 +67533,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["snowman", "snow", "winter", "humor", "park", "fence"],
     "genres": [],
     "places": [
       {
@@ -68307,7 +68340,15 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "train-station",
+      "silhouettes",
+      "windows",
+      "commuters",
+      "patterns",
+      "symmetry",
+      "minimalism"
+    ],
     "genres": [],
     "places": [
       {
@@ -68576,7 +68617,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["carvings", "faces", "trees", "moss", "humor"],
     "genres": [],
     "places": [
       {
@@ -68845,7 +68886,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["artist", "mirror", "faces", "night", "elderly", "sidewalk", "humor"],
     "genres": [],
     "places": [
       {
@@ -69114,7 +69155,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["graffiti", "pedestrians", "shadows", "walls", "sidewalk", "fence"],
     "genres": [],
     "places": [
       {
@@ -69660,7 +69701,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["silhouettes", "skyline", "skyscraper", "twilight", "trees"],
     "genres": [],
     "places": [
       {
@@ -70205,7 +70246,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["platform", "railway", "train", "subway", "commuters", "signage", "shadows"],
     "genres": [],
     "places": [
       {
@@ -70478,7 +70519,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["subway", "platform", "commuters", "railway", "signage", "pedestrians"],
     "genres": [],
     "places": [
       {
@@ -70747,7 +70788,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["bridge", "steel", "pedestrians", "bicycles", "commuters", "symmetry", "path"],
     "genres": [],
     "places": [
       {
@@ -71016,7 +71057,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": ["homepage-spotlight"],
-    "tags": [],
+    "tags": ["train-station", "commuters", "bench", "interior", "lamps", "clock", "symmetry"],
     "genres": [],
     "places": [
       {
@@ -72910,7 +72951,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["japsang", "dancheong", "giwa", "palace", "office-building", "glass", "tourists"],
     "genres": [],
     "places": [
       {
@@ -73179,7 +73220,16 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": [
+      "fanous",
+      "windows",
+      "interior",
+      "palm-trees",
+      "garden",
+      "silhouettes",
+      "hotel",
+      "cafe"
+    ],
     "genres": [],
     "places": [],
     "spotlightZones": [],
@@ -73443,7 +73493,7 @@
     "manualAperture": false,
     "customLens": null,
     "albums": [],
-    "tags": [],
+    "tags": ["stickers", "street-art", "posters", "typography", "texture", "urban-decay"],
     "genres": [],
     "places": [
       {
