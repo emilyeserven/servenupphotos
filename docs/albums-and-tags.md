@@ -21,6 +21,19 @@ Each name links to its page (`/albums/<id>` or `/tags/<id>`), which shows its fi
 parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }`), which rewrites only the file's
 `parent`, as a [change waiting for Commit](pending-changes.md), refusing a parent that's the album itself or inside it.
 
+## Adding photos
+
+**Add photos**, on the **Photos** card of an album's page, opens the saved photos that aren't in the album yet (in
+the photo data pull request or the portfolio, the same ones the Photo page's **Choose a saved photo** lists), with a
+search by title or file name. Each tile says whether the photo is only in the batch and how many albums it's in already.
+Click as many as you like, then **Add N photos**: it adds the album to each one's `albums` (`POST /api/photos/groups`,
+the same save as the Gallery's **Add albums, tags and genres** card), keeping the albums each is in, as one change
+waiting for Commit. The photos show on the page at once; a draft (a photo with no title) doesn't, since
+`ALLPHOTOS.json` leaves drafts out.
+
+> **Frontend analogy:** it's a multi-select modal whose "Done" button sends one batched `PATCH` for every chosen row,
+> rather than a request per click.
+
 ## Photo order
 
 An album's page shows its photos in the album's order, the one the portfolio uses. **Reorder**, on the **Photos** card
