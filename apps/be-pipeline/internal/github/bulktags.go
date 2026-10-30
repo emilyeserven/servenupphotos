@@ -156,17 +156,56 @@ func shared(a, b []string) []string {
 	return out
 }
 
-// PickBulkTagPhotos picks up to count related photos (1 to 50, 5 when unset)
-// to tag together, from the photo files as the next Commit will have them,
-// leaving out skip's paths.
-// Only photos without tags are picked: the first by path, then the ones most
-// like it (sharing its places, city or country, genres and date). It only
+// BulkTagPickOptions is what a Bulk Tagging pick asks for.
+type BulkTagPickOptions struct {
+	// Skip is the photos already shown, to leave out.
+	Skip []string `json:"skip"`
+	// Count is how many photos to pick, 1 to 50; 0 picks 5.
+	Count int `json:"count"`
+	// Any picks the first untagged photos by path, whether or not they go
+	// together, instead of one photo and the ones most like it.
+	Any bool `json:"any"`
+}
+
+// CountUntaggedPhotos says how many photo files there are and how many have
+// no tags, as the next Commit will have them, without picking any. It only
 // reads.
-func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip []string, count int) (BulkTagPick, error) {
+func (c *Client) CountUntaggedPhotos(ctx context.Context, gh settings.GitHub) (BulkTagPick, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
 		return BulkTagPick{}, perr
 	}
+	pick, _ := untaggedPhotos(scan, nil)
+	return pick, nil
+}
+
+// PickBulkTagPhotos picks up to opts.Count photos (1 to 50, 5 when unset) to
+// tag together, from the photo files as the next Commit will have them,
+// leaving out opts.Skip's paths.
+// Only photos without tags are picked: the first by path, then the ones most
+// like it (sharing its places, city or country, genres and date), or with
+// opts.Any the first ones by path. It only reads.
+func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, opts BulkTagPickOptions) (BulkTagPick, error) {
+	scan, perr := c.scanPhotos(ctx, gh)
+	if perr != nil {
+		return BulkTagPick{}, perr
+	}
+	pick, photos := untaggedPhotos(scan, opts.Skip)
+	if len(photos) == 0 {
+		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos without tags to pick from. Start over to pick from every one again.")
+	}
+	if opts.Any {
+		pick.Photos = pickFirst(photos, bulkTagCount(opts.Count))
+	} else {
+		pick.Photos = pickRelated(photos, bulkTagCount(opts.Count))
+	}
+	return pick, nil
+}
+
+// untaggedPhotos is scan's branch, pull request and counts as a pick with no
+// photos yet, and its readable photo files without tags, leaving out skip's
+// paths.
+func untaggedPhotos(scan baseURLScan, skip []string) (BulkTagPick, []bulkPhoto) {
 	pick := BulkTagPick{Branch: scan.branch, PhotoFiles: len(scan.files), Photos: []BulkTagPhoto{}}
 	if scan.pr != nil {
 		pick.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
@@ -185,11 +224,23 @@ func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, skip
 			photos = append(photos, p)
 		}
 	}
-	if len(photos) == 0 {
-		return BulkTagPick{}, publishErr(http.StatusNotFound, "There are no more photos without tags to pick from. Start over to pick from every one again.")
+	return pick, photos
+}
+
+// pickFirst is the first count photos in photos by path, one per name.
+func pickFirst(photos []bulkPhoto, count int) []BulkTagPhoto {
+	sorted := slices.SortedFunc(slices.Values(photos), func(a, b bulkPhoto) int {
+		return cmp.Compare(a.file.path, b.file.path)
+	})
+	var out []BulkTagPhoto
+	names := map[string]bool{}
+	for _, p := range sorted {
+		if len(out) < count && !names[p.name] {
+			names[p.name] = true
+			out = append(out, bulkTagPhoto(p, nil))
+		}
 	}
-	pick.Photos = pickRelated(photos, bulkTagCount(count))
-	return pick, nil
+	return out
 }
 
 // pickRelated is the first photo in photos by path, then the ones most like

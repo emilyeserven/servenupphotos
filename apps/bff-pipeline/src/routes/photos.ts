@@ -16,6 +16,17 @@ const PHOTO_ROUTES = [
 ];
 
 export const photoRoutes: FastifyPluginAsync = async (app) => {
+  // A Square Thumbnail or Thumbnail Preview from the backend's offline copy, downloaded from R2 first
+  // when it isn't kept yet; the backend gives R2 20s.
+  app.get<{ Querystring: { url?: string } }>("/thumbnails", async (request, reply) =>
+    relayToBackend(
+      reply,
+      app.log,
+      `/thumbnails?${new URLSearchParams({ url: request.query.url ?? "" })}`,
+      { timeoutMs: 25_000, relayHeaders: ["cache-control", "last-modified"] },
+    ),
+  );
+
   // Leave multipart bodies unparsed so the upload streams straight through to the Go backend.
   app.addContentTypeParser("multipart/form-data", (_request, _payload, done) => done(null));
 

@@ -1,5 +1,6 @@
 import { type MutationState, useMutationState } from "@tanstack/react-query";
 import type { Localization } from "@/api/places";
+import type { LocalizationDrafts } from "@/components/localization-drafts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -63,7 +64,7 @@ interface LocalizationRowFormProps {
 }
 
 /** One country, city or place, with its three fields and a button to save them. */
-export function LocalizationRowForm({ row, fields, onChange, onSave }: LocalizationRowFormProps) {
+function LocalizationRowForm({ row, fields, onChange, onSave }: LocalizationRowFormProps) {
   const state = useSaveState(row.id);
   const busy = state.status === "queued" || state.status === "saving";
   return (
@@ -89,6 +90,25 @@ export function LocalizationRowForm({ row, fields, onChange, onSave }: Localizat
       {state.error && <p className="text-destructive text-sm lg:col-span-5">{state.error}</p>}
     </form>
   );
+}
+
+/** A form for each row, with its fields as typed in `drafts`. */
+export function LocalizationRowForms({
+  rows,
+  drafts,
+}: {
+  rows: LocalizationRow[];
+  drafts: LocalizationDrafts;
+}) {
+  return rows.map((row) => (
+    <LocalizationRowForm
+      key={row.id}
+      row={row}
+      fields={drafts.fieldsOf(row)}
+      onChange={(fields) => drafts.set(row, fields)}
+      onSave={(fields) => drafts.save(row, fields)}
+    />
+  ));
 }
 
 /** What the row's button says for each save state, when it isn't plain Save. */

@@ -1,6 +1,6 @@
-import { mutationOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { post } from "@/api/data";
 import type { PendingSave } from "@/api/scan-changes";
-import { postJson as post } from "@/api/settings";
 
 /** One photo Bulk Tagging picked to tag with the others. */
 export interface BulkTagPhoto {
@@ -74,11 +74,27 @@ interface BulkTagsResult extends PendingSave {
   photos: number;
 }
 
-/** Picks up to `count` related photos (1 to 50) to tag together, leaving out the ones already shown. */
+/** What a Bulk Tagging pick asks for. */
+interface BulkTagPickOptions {
+  /** The photos already shown, to leave out. */
+  skip: string[];
+  /** How many photos to pick, 1 to 50. */
+  count: number;
+  /** True picks the first photos without tags by file name, whether or not they go together. */
+  any: boolean;
+}
+
+/** How many photo files there are and how many have no tags, with no photos picked. */
+export const untaggedPhotosQuery = queryOptions({
+  queryKey: ["data", "bulk-tags", "untagged"],
+  queryFn: () => post<BulkTagPick>("/api/data/bulk-tags/untagged", {}),
+  retry: false,
+});
+
+/** Picks up to `count` photos (1 to 50) to tag together, leaving out the ones already shown. */
 export const pickBulkTagPhotosMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "pick"],
-  mutationFn: (body: { skip: string[]; count: number }) =>
-    post<BulkTagPick>("/api/data/bulk-tags/pick", body),
+  mutationFn: (body: BulkTagPickOptions) => post<BulkTagPick>("/api/data/bulk-tags/pick", body),
 });
 
 /** Reads the LLM's pasted answer for the picked photos and says what it would add, saving nothing. */

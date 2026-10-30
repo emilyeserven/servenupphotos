@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { BulkTaggingCard } from "@/components/bulk-tagging/bulk-tagging-card";
+import { GenreSuggestionsCard } from "@/components/genre-suggestions/genre-suggestions-card";
 import { ImageBaseUrlCard } from "@/components/image-base-url";
+import { LocalizationFillCard } from "@/components/localization-fill/localization-fill-card";
 import { LocationNamesCard } from "@/components/location-names-card";
 import { MissingFieldsCard } from "@/components/missing-fields";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
@@ -10,6 +12,7 @@ import { Page } from "@/components/page";
 import { PhotoColorsCard } from "@/components/photo-colors-card";
 import { PruneTagsCard } from "@/components/prune-tags/prune-tags-card";
 import { QueryResult } from "@/components/query-result";
+import { TagDescriptionsCard } from "@/components/tag-descriptions/tag-descriptions-card";
 
 export const Route = createFileRoute("/update-data")({
   component: UpdateDataPage,
@@ -35,6 +38,9 @@ function UpdateDataPage() {
               <LocationNamesCard />
               <BulkTaggingCard />
               <PruneTagsCard />
+              <TagDescriptionsCard />
+              <LocalizationFillCard />
+              <GenreSuggestionsCard />
             </>
           ) : (
             <p className="text-muted-foreground text-sm">

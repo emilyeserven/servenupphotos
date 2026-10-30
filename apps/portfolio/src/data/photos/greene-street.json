@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "cast-iron-architecture",
+    "cobblestones",
+    "facade",
+    "cars",
+    "pedestrians",
+    "bicycles",
+    "clouds"
+  ],
   "genres": [],
   "places": [
     {

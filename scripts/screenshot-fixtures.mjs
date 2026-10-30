@@ -460,8 +460,11 @@ function uploadAnswer(key) {
   return { key, url: `${CDN}/${key}`, versions };
 }
 
-/** The photos Bulk Tagging picks: `count` of the pull request's photos, the first with no tags. */
-function bulkTagPick(count = 5) {
+/**
+ * The photos Bulk Tagging picks: `count` of the pull request's photos, the first with no tags,
+ * each saying what it shares with the first unless `any` picked them whatever they share.
+ */
+function bulkTagPick(count = 5, any = false) {
   const photos = headPhotos.slice(0, count).map(({ path, data }, i) => ({
     path,
     fileUrl: "",
@@ -470,7 +473,7 @@ function bulkTagPick(count = 5) {
       .pop()
       .replace(/\.json$/, ""),
     data,
-    related: i === 0 ? [] : ["same city: kyoto", "taken the same day"].slice(0, (i % 2) + 1),
+    related: i === 0 || any ? [] : ["same city: kyoto", "taken the same day"].slice(0, (i % 2) + 1),
   }));
   return {
     branch: PULL_REQUEST.branch,
@@ -531,6 +534,38 @@ function pruneTagsPreview() {
       { tag: "chochin", from: "", parent: "lanterns", reason: "a Japanese paper lantern" },
     ],
     skipped: [{ change: "merge cats into animals", reason: '"cats" isn\'t a tag' }],
+  };
+}
+
+/** Up to `count` photos without genres that Genre Suggestions picked. */
+function genrePick(count = 50) {
+  const pick = bulkTagPick(Math.min(count, 6));
+  return {
+    ...pick,
+    withoutGenres: 18,
+    photos: pick.photos.map((photo) => ({ ...photo, related: [] })),
+  };
+}
+
+/** What reading a pasted Genre Suggestions answer finds for the picked photos. */
+function genreSuggestionsPreview() {
+  const photos = genrePick().photos.map(({ path, name }, i) => ({
+    path,
+    name,
+    add: [["street", "night"], ["architecture"], ["street"], ["macro"], ["night"], ["street"]][i],
+    already: [],
+    skipped: i === 1 ? [{ name: "temple", reason: "a tag has that name" }] : [],
+  }));
+  return {
+    photos,
+    newGenres: [
+      {
+        id: "night",
+        name: "Night",
+        description: "Photos taken after dark, lit by streetlights, signs or the moon.",
+      },
+    ],
+    unknown: [],
   };
 }
 
@@ -675,7 +710,8 @@ export function defaultFixtures() {
         })),
     },
     "POST /api/data/location-names": () => ({ ...pendingSave(), files: 9, fields: 9 }),
-    "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count),
+    "POST /api/data/bulk-tags/untagged": () => ({ ...bulkTagPick(), photos: [] }),
+    "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count, body?.any),
     "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
     "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
     "POST /api/data/prune-tags/preview": () => pruneTagsPreview(),
@@ -685,6 +721,9 @@ export function defaultFixtures() {
       reparented: 2,
       photos: 10,
     }),
+    "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count),
+    "POST /api/data/genre-suggestions/preview": () => genreSuggestionsPreview(),
+    "POST /api/data/genre-suggestions": () => ({ ...pendingSave(), newGenres: 1, photos: 6 }),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,
@@ -795,6 +834,10 @@ export function defaultFixtures() {
     }),
     "PUT /api/organize/albums/homepage-spotlight/photo-order": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
+    "PUT /api/organize/tags/descriptions": ({ body }) => ({
+      ...pendingSave(),
+      files: Object.keys(body?.descriptions ?? {}).length,
+    }),
     "PUT /api/organize/spotlight/homepage": { ...pendingSave(), files: 2 },
     "POST /api/photos/groups": ({ body }) => ({ ...pendingSave(), files: body?.paths?.length }),
     "DELETE /api/photos/pending": { discarded: 1 },

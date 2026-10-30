@@ -94,7 +94,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets
-- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, bulk tagging)
+- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, bulk tagging, tag descriptions)
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
 - [Saving photo data to GitHub](docs/saving-to-github.md): saving a photo's JSON to the Add photo data pull request, uploading to R2, resized versions and the Square Thumbnail
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
@@ -102,6 +102,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
 - [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
+- [Offline mode](docs/offline-mode.md): the Gallery, Undecided queue and drafts without the internet, from Square Thumbnails kept on disk and fetched from R2 when the pipeline starts
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
 - [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes
 - [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages
