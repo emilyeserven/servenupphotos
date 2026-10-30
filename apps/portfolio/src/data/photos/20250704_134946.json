@@ -1,9 +1,9 @@
 {
-  "id": 298,
-  "title": null,
+  "title": "Brussels Door",
   "comment": null,
+  "id": 298,
   "file": "20250704_134946.jpg",
-  "addedDate": null,
+  "addedDate": "2026-10-30T05:11:30Z",
   "camera": "Galaxy S24 Ultra",
   "lens": "Samsung Galaxy S24 Ultra Rear Wide Camera",
   "aperture": 1.7,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/e2b00e0a4139-20250704-134946-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/e2b00e0a4139-20250704-134946-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/e2b00e0a4139-20250704-134946-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/e2b00e0a4139-20250704-134946-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e2b00e0a4139-20250704-134946-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/e2b00e0a4139-20250704-134946-thumbnail.webp?crop=870,0,2154",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/e2b00e0a4139-20250704-134946-thumbnailpreview.webp?crop=870,0,2154",
     "thumbnailcrop": {
-      "x": 838,
+      "x": 870,
       "y": 0,
       "size": 2154,
       "outputSize": 500

@@ -432,6 +432,11 @@
     "description": ""
   },
   {
+    "id": "fire-hydrant",
+    "name": "fire-hydrant",
+    "description": ""
+  },
+  {
     "id": "flags",
     "name": "flags",
     "description": ""
@@ -565,6 +570,11 @@
     "description": ""
   },
   {
+    "id": "hanok",
+    "name": "hanok",
+    "description": ""
+  },
+  {
     "id": "harbor",
     "name": "harbor",
     "description": ""
@@ -625,6 +635,11 @@
     "description": ""
   },
   {
+    "id": "ice-cream",
+    "name": "ice-cream",
+    "description": ""
+  },
+  {
     "id": "ice",
     "name": "ice",
     "description": ""
@@ -667,6 +682,11 @@
   {
     "id": "ivy",
     "name": "ivy",
+    "description": ""
+  },
+  {
+    "id": "jingeomdari",
+    "name": "jingeomdari",
     "description": ""
   },
   {
@@ -904,6 +924,11 @@
     "description": ""
   },
   {
+    "id": "pagoda",
+    "name": "pagoda",
+    "description": ""
+  },
+  {
     "id": "palace",
     "name": "palace",
     "description": ""
@@ -1021,6 +1046,11 @@
   {
     "id": "pyramids",
     "name": "pyramids",
+    "description": ""
+  },
+  {
+    "id": "queue",
+    "name": "queue",
     "description": ""
   },
   {
