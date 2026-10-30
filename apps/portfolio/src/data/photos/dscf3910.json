@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["market", "arcade", "street-food", "storefronts", "signage", "pedestrians"],
   "genres": [],
   "places": [
     {
