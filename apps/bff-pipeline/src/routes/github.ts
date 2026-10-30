@@ -114,6 +114,23 @@ export const githubRoutes: FastifyPluginAsync = async (app) => {
     }),
   );
 
+  // The changes waiting for Commit as an in-flight backup; only the backend's own file, so it works
+  // offline and is quick.
+  app.get("/photos/pending", async (_request, reply) =>
+    relayToBackend(reply, app.log, "/photos/pending", { timeoutMs: 10_000 }),
+  );
+
+  // Keeps the files in an in-flight backup as changes waiting for Commit; the backend gives GitHub 30s
+  // to find the head they're compared with. A backup of many photos is larger than Fastify's 1 MB default.
+  app.post("/photos/pending", { bodyLimit: 32 * 1024 * 1024 }, async (request, reply) =>
+    relayToBackend(reply, app.log, "/photos/pending", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(request.body),
+      timeoutMs: 35_000,
+    }),
+  );
+
   // Reads the EXIF and colors of an original already in R2; the backend gives R2 30s to send it,
   // then reads it as POST /exif does, camera overrides included.
   app.post("/photos/bucket/exif", async (request, reply) =>

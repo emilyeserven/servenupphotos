@@ -102,7 +102,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
 - [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
-- [Offline mode](docs/offline-mode.md): the Gallery, Undecided queue and drafts without the internet, from Square Thumbnails kept on disk and fetched from R2 when the pipeline starts
+- [Offline mode](docs/offline-mode.md): the Gallery, Undecided queue and drafts without the internet, from Square Thumbnails kept on disk and fetched from R2 when the pipeline starts; in-flight work kept in the browser, and exported or imported as JSON
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
 - [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes
 - [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages

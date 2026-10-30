@@ -42,6 +42,8 @@ interface LocalEditsState {
   committed: (saved: Record<string, LocalEdit>) => void;
   /** Drops every edit. */
   discard: () => void;
+  /** Adds edits loaded from an in-flight backup, over any edits of the same files. */
+  imported: (edits: Record<string, LocalEdit>) => void;
 }
 
 /** Whether change sets key to the value the file already has. */
@@ -111,6 +113,7 @@ export const useLocalEditsStore = create<LocalEditsState>()(
           ),
         })),
       discard: () => set({ edits: {} }),
+      imported: (edits) => set((state) => ({ edits: { ...state.edits, ...edits } })),
     }),
     { name: "pipeline-local-edits", storage: createJSONStorage(() => localStorage) },
   ),

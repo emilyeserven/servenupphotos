@@ -10,6 +10,7 @@ import { DiscardButton } from "@/components/discard-changes";
 import { UploadProgressBadge, UploadQueueSection } from "@/components/bulk-upload/upload-progress";
 import { Spinner } from "@/components/ui/spinner";
 import { FloatingActionsSlot } from "@/components/floating-actions";
+import { InFlightBackupSection } from "@/components/in-flight-backup";
 import { NextUntitledPhoto } from "@/components/next-untitled-photo";
 import { SkippedEdits } from "@/components/skipped-edits";
 import { useDismiss } from "@/hooks/use-dismiss";
@@ -140,6 +141,7 @@ function SyncPanel({
       <ImageCounts images={sync.images} />
       <OpenBatchLine sync={sync} />
       <CommitResult sync={sync} />
+      <InFlightBackupSection />
       <div className="flex items-center gap-3">
         <Link
           to="/in-flight"

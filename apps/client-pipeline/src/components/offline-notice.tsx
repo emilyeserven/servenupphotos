@@ -1,11 +1,17 @@
 import { WifiOffIcon } from "lucide-react";
+import { useEffect } from "react";
 import type { InFlightImages } from "@/api/photos";
+import { useInFlightBackupStore } from "@/stores/in-flight-backup";
 
 /**
  * Says the page is showing the offline copy, when R2 couldn't be reached: the images found the last
  * time it could be, with the Square Thumbnails kept on this computer. Nothing without one.
  */
 export function OfflineNotice({ images }: { images: InFlightImages }) {
+  // Seen offline, so the in-flight work is kept in the browser from now on.
+  useEffect(() => {
+    if (images.offline) useInFlightBackupStore.getState().markOffline();
+  }, [images.offline]);
   if (!images.offline) return null;
   return (
     <p
