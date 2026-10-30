@@ -1,12 +1,37 @@
 import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 
 /**
- * The address of a Square Thumbnail or Thumbnail Preview in the backend's offline copy: the
- * backend serves it from disk, downloading it from R2 the first time, so it still shows when the
- * internet can't be reached.
+ * The address of a Square Thumbnail, Thumbnail Preview, Small or X-Small version in the backend's offline
+ * copy: the backend serves it from disk, downloading it from R2 the first time, so it still shows
+ * when the internet can't be reached.
  */
 function offlineThumbnailUrl(url: string): string {
   return `/api/thumbnails?${new URLSearchParams({ url })}`;
+}
+
+/**
+ * The images the offline copy keeps: the Square Thumbnail, its Thumbnail Preview, and the Small and
+ * X-Small versions.
+ */
+const KEPT_OFFLINE = /-(?:thumbnail|thumbnailpreview|small|xsmall)\.webp(?:\?.*)?$/;
+
+/** url from the offline copy when it's an image the copy keeps, or else url itself, straight from R2. */
+export function offlineImageUrl(url: string): string {
+  return KEPT_OFFLINE.test(url) ? offlineThumbnailUrl(url) : url;
+}
+
+/** A resized WEBP version's name at the end of its URL, or an original's extension. */
+const VERSION_ENDING =
+  /(?:-(?:xlarge|large|medium|small|xsmall|preview)\.webp|\.jpe?g)(?:[?#].*)?$/i;
+
+/**
+ * The Small version (500 px on its long edge, in the photo's own proportions) from the offline copy,
+ * for a photo whose original or resized version is at url; undefined for any other URL. Pages show
+ * it when the larger image can't be loaded, such as offline.
+ */
+export function offlineSmallUrl(url: string): string | undefined {
+  if (!VERSION_ENDING.test(url)) return undefined;
+  return offlineThumbnailUrl(url.replace(VERSION_ENDING, "-small.webp"));
 }
 
 /** The image the photo's JSON saves as `images.<name>`, when it saves one. */
@@ -38,6 +63,14 @@ export function squareImages(
   const square = offlineUrl(pickedUrl(data, imageUrl, "thumbnail"));
   if (!square) return undefined;
   return { square, preview: offlineUrl(pickedUrl(data, imageUrl, "thumbnailpreview")) };
+}
+
+/**
+ * A small square tile's image for the photo with data, from the offline copy: its Square Thumbnail,
+ * or else its Small version; undefined when its JSON saves neither.
+ */
+export function tileImageUrl(data: unknown): string | undefined {
+  return offlineUrl(savedImageUrl(data, "thumbnail") ?? savedImageUrl(data, "small"));
 }
 
 /**

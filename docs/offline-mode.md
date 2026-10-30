@@ -5,7 +5,8 @@ The pipeline can be used without the internet to look through the [Gallery](gall
 
 - **The photo data** comes from the backend's [local copy](pending-changes.md#the-local-copy) of GitHub
   (`github-cache.json`), which it already answers from when GitHub can't be reached at start-up.
-- **The thumbnails** come from the **offline copy**: every Square Thumbnail and Thumbnail Preview, kept on disk in
+- **The thumbnails** come from the **offline copy**: every Square Thumbnail, Thumbnail Preview and Small version (500 px on
+  the long edge, in the photo's own proportions), kept on disk in
   `offline/thumbnails/` next to the settings file (`/data/offline` in Docker, on the `pipeline-data` volume), with
   `offline/images.json` saying where each photo's image was found in R2 the last time R2 could be searched.
 
@@ -15,18 +16,37 @@ The Gallery, Photos in Flight, its Undecided queue, the drafts lists and the alb
 **Reorder** tiles and the [Layout and covers](album-layouts.md) editor and its photo pickers) show each photo's Square Thumbnail and
 Thumbnail Preview through `GET /api/thumbnails?url=<its R2 URL>` (→ `GET /thumbnails`) instead of straight from the
 CDN. The backend serves it from the offline copy, or downloads it from R2 first (with the R2 settings, like other
-reads) when the copy doesn't have it yet. Only Square Thumbnails, Thumbnail Previews and X-Small versions (for the
-[album layout preview](album-layouts.md#preview)) under `photos/` are kept; any other URL is refused with a 400. The file name keeps the URL's crop mark (`?crop=…`), so a Square Thumbnail remade from
+reads) when the copy doesn't have it yet. Only Square Thumbnails, Thumbnail Previews, Small versions and X-Small versions (for the
+[album layout preview](album-layouts.md#preview)) under `photos/` are kept; any
+other URL is refused with a 400. The file name keeps the URL's crop mark (`?crop=…`), so a Square Thumbnail remade from
 a new crop is downloaded again rather than shown stale.
 
 > **Frontend analogy:** it's a service worker's cache-first strategy, run on the backend: look in the cache, else
 > fetch from the network and put it in the cache. The crop mark works like a content hash in an asset's file name.
 
+### Elsewhere in the pipeline
+
+Other pages preview photos from the offline copy too:
+
+- **Square tiles**: album and tag pages, the album layout editor and its pickers, Reorder, the Instagram calendar and its
+  picker, the saved-photo picker, Bulk Tagging's and Album Suggestions' picked photos, and Bulk Places' review show
+  the Square Thumbnail, or else the Small version, from the offline copy (`tileImageUrl`, `offlineImageUrl` in
+  `lib/offline-thumbnails.ts`).
+- **Larger images**: Photos in Flight's photo, the Site Spotlight preview and every lightbox still load the full or
+  Medium image from R2, and switch to the Small version from the offline copy when it doesn't load
+  (`FallbackImage` with `offlineSmallUrl`), so they show something offline instead of a broken image.
+
+Pages that work on R2 itself (Explore Bucket, Manage Sizes, uploading, and the Photo page's crop editor, which needs
+the original) still need the internet.
+
+> **Frontend analogy:** `FallbackImage` is `<picture>` with a fallback `<source>`, except the switch happens on the
+> image's `error` event rather than on a media query.
+
 ## Fetching new ones on start
 
 Each time the backend starts (such as `docker compose up`), it reads the Gallery's and Photos in Flight's photos in
-the background, the same reads those pages make, looks their images up in R2, and downloads every Square Thumbnail and
-Thumbnail Preview the offline copy is missing, four at a time. The log says how many it downloaded
+the background, the same reads those pages make, looks their images up in R2, and downloads every Square Thumbnail, Thumbnail
+Preview and Small version the offline copy is missing, four at a time. The log says how many it downloaded
 (`offline copy: thumbnails ready`). Ones already on disk are never downloaded again. When GitHub or R2 can't be
 reached, it logs why and downloads nothing; the pipeline starts as usual. Photos uploaded after that are kept the first
 time a page shows them.

@@ -49,10 +49,11 @@ import { DRAFT_FILTERS, SavedDrafts } from "@/components/saved-drafts";
 import { SkippedEdits } from "@/components/skipped-edits";
 import { SquareThumbnailImage } from "@/components/square-thumbnail-image";
 import { OfflineNotice } from "@/components/offline-notice";
+import { FallbackImage } from "@/components/fallback-image";
 import { MoveToUndecided, UndecidedQueue } from "@/components/undecided-photos";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
-import { squareImages } from "@/lib/offline-thumbnails";
+import { offlineSmallUrl, squareImages } from "@/lib/offline-thumbnails";
 import {
   Card,
   CardAction,
@@ -562,8 +563,9 @@ function PhotoImage({ name, url, checked }: { name: string; url?: string; checke
           onClick={() => setOpen(true)}
           className="focus-visible:ring-ring cursor-zoom-in rounded-xl outline-none focus-visible:ring-2"
         >
-          <img
+          <FallbackImage
             src={url}
+            fallback={offlineSmallUrl(url)}
             alt={name}
             loading="lazy"
             onError={() => setFailed(true)}

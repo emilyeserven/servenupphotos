@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ImageOffIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { savedGroups } from "@/api/organize";
+import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { type InFlightFileRead, photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
 import { photoName } from "@/components/gallery/published-file";
 import { Input } from "@/components/ui/input";
@@ -132,7 +133,12 @@ export function SavedPhotoSquare({ photo }: { photo: SavedPhoto }) {
   return (
     <span className="bg-muted flex aspect-square w-full items-center justify-center overflow-hidden rounded-md border">
       {photo.image ? (
-        <img src={photo.image} alt="" loading="lazy" className="size-full object-cover" />
+        <img
+          src={offlineImageUrl(photo.image)}
+          alt=""
+          loading="lazy"
+          className="size-full object-cover"
+        />
       ) : (
         <ImageOffIcon className="text-muted-foreground size-5" aria-hidden />
       )}
