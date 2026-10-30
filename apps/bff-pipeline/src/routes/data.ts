@@ -25,9 +25,14 @@ export const dataRoutes: FastifyPluginAsync = async (app) => {
     "/data/bulk-tags",
     "/data/bulk-places/pick",
     "/data/bulk-places",
+    "/data/prune-tags/preview",
+    "/data/prune-tags",
     "/data/genre-suggestions/pick",
     "/data/genre-suggestions/preview",
     "/data/genre-suggestions",
+    "/data/album-suggestions/pick",
+    "/data/album-suggestions/preview",
+    "/data/album-suggestions",
   ]) {
     app.post(path, async (request, reply) =>
       relayToBackend(reply, app.log, path, {

@@ -508,6 +508,35 @@ function bulkTagsPreview() {
   };
 }
 
+/** A Tag pruning review: one change of each kind, and one the backend can't make. */
+function pruneTagsPreview() {
+  return {
+    tags: 320,
+    merge: [
+      {
+        tag: "lamppost",
+        into: "lamps",
+        reason: "a lamppost is a kind of lamp, and few photos tell them apart",
+        photos: 4,
+        children: [],
+      },
+    ],
+    remove: [
+      {
+        tag: "details",
+        reason: "too vague to gather photos that share anything",
+        photos: 6,
+        children: [],
+      },
+    ],
+    reparent: [
+      { tag: "torii", from: "", parent: "shrine", reason: "a torii is a shrine gate" },
+      { tag: "chochin", from: "", parent: "lanterns", reason: "a Japanese paper lantern" },
+    ],
+    skipped: [{ change: "merge cats into animals", reason: '"cats" isn\'t a tag' }],
+  };
+}
+
 /** Up to `count` photos without genres that Genre Suggestions picked. */
 function genrePick(count = 50) {
   const pick = bulkTagPick(Math.min(count, 6));
@@ -534,6 +563,54 @@ function genreSuggestionsPreview() {
         id: "night",
         name: "Night",
         description: "Photos taken after dark, lit by streetlights, signs or the moon.",
+      },
+    ],
+    unknown: [],
+  };
+}
+
+/** The photos Album Suggestions picks: Bulk Tagging's pick, as photos without an album. */
+function albumPick(count = 5) {
+  const { untagged, photos, ...rest } = bulkTagPick(count);
+  const related = ["same tag: lanterns", "same city: kyoto", "taken the same day"];
+  return {
+    ...rest,
+    withoutAlbum: untagged + 7,
+    photos: photos.map((photo, i) => ({ ...photo, related: i === 0 ? [] : related.slice(i % 2) })),
+  };
+}
+
+/** What reading a pasted Album Suggestions answer finds for the picked photos. */
+function albumSuggestionsPreview() {
+  const paths = albumPick().photos.map((photo) => photo.path);
+  return {
+    albums: [
+      {
+        id: "kyoto-lantern-nights",
+        name: "Kyoto Lantern Nights",
+        description: "Lanterns and lit-up streets after dark in Kyoto.",
+        parent: "test",
+        new: true,
+        photos: paths.slice(0, 3),
+        reason: "",
+      },
+      {
+        id: "homepage-spotlight",
+        name: "Homepage Spotlight",
+        description: "",
+        parent: "",
+        new: false,
+        photos: paths.slice(3),
+        reason: "",
+      },
+      {
+        id: "",
+        name: "Street",
+        description: "",
+        parent: "",
+        new: false,
+        photos: [],
+        reason: "a genre has that name",
       },
     ],
     unknown: [],
@@ -690,9 +767,19 @@ export function defaultFixtures() {
       return { ...pick, unplaced: untagged };
     },
     "POST /api/data/bulk-places": () => ({ ...pendingSave(), newPlaces: 1, photos: 4 }),
+    "POST /api/data/prune-tags/preview": () => pruneTagsPreview(),
+    "POST /api/data/prune-tags": () => ({
+      ...pendingSave(),
+      deleted: 2,
+      reparented: 2,
+      photos: 10,
+    }),
     "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count),
     "POST /api/data/genre-suggestions/preview": () => genreSuggestionsPreview(),
     "POST /api/data/genre-suggestions": () => ({ ...pendingSave(), newGenres: 1, photos: 6 }),
+    "POST /api/data/album-suggestions/pick": ({ body }) => albumPick(body?.count),
+    "POST /api/data/album-suggestions/preview": () => albumSuggestionsPreview(),
+    "POST /api/data/album-suggestions": () => ({ ...pendingSave(), newAlbums: 1, photos: 5 }),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,

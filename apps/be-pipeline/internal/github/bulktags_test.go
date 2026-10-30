@@ -178,7 +178,7 @@ func TestApplyBulkTagsErrors(t *testing.T) {
 		want string
 	}{
 		{"no photos", BulkTags{}, "Tag 1 to 5"},
-		{"not a tag", BulkTags{Photos: []BulkTagsPhoto{{Path: a, Tags: []string{"nope"}}}}, "isn't a tag"},
+		{"not a tag", BulkTags{Photos: []BulkTagsPhoto{{Path: a, Tags: []string{"nope"}}}}, "isn't one of the tags"},
 		{"taken name", BulkTags{NewTags: []NewGroup{{ID: "street"}}, Photos: []BulkTagsPhoto{{Path: a, Tags: []string{"street"}}}}, "already has the ID"},
 		{"missing parent", BulkTags{NewTags: []NewGroup{{ID: "x", Parent: "y"}}, Photos: []BulkTagsPhoto{{Path: a, Tags: []string{"x"}}}}, "to be the parent"},
 		{"nothing new", BulkTags{Photos: []BulkTagsPhoto{{Path: a, Tags: []string{"temple"}}}}, "nothing to change"},

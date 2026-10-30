@@ -38,7 +38,11 @@ function listed(names: string[], none: string): string {
 }
 
 /** The names the site already filters photos by, which the prompt asks the LLM not to suggest. */
-function filteredNames({ albums, genres, metaGroups }: Omit<TagPromptLists, "known">): string[] {
+export function filteredNames({
+  albums,
+  genres,
+  metaGroups,
+}: Omit<TagPromptLists, "known">): string[] {
   return [
     ...albums.filter((album) => !album.error).map((album) => `${groupLabel(album)} (album)`),
     ...genres.filter((genre) => !genre.error).map((genre) => `${groupLabel(genre)} (genre)`),

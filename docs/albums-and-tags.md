@@ -42,7 +42,8 @@ A tag can have one parent tag: a more general tag it's a kind of, such as `shote
 under `covered-street`. That links a culture's own word to the general idea, so the portfolio's **Tag** filter for
 `covered-street` shows the `shotengai` photos too, and lists `shotengai` under it. A tag's page shows where it sits
 (**Under**) and has a **Parent tag** card that changes it (`PUT /api/organize/tags/<id>/parent`), the same way an
-album's parent changes; a genre has no parent.
+album's parent changes; a genre has no parent. To tidy the whole tree at once, with an LLM suggesting tags to merge,
+remove or put under another, use [Tag pruning](update-data.md#tag-pruning) on Update Data.
 
 > **Frontend analogy:** it's a category tree like a shop's "Shoes › Sneakers": filtering by the parent category
 > includes every product in the categories under it.

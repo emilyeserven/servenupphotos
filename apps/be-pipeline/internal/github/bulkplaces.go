@@ -37,7 +37,7 @@ func (c *Client) PickBulkPlacePhotos(ctx context.Context, gh settings.GitHub, sk
 	if len(photos) == 0 {
 		return BulkPlacePick{}, publishErr(http.StatusNotFound, "There are no more photos without places to pick from. Start over to pick from every one again.")
 	}
-	pick := BulkPlacePick{Branch: scan.branch, PhotoFiles: len(scan.files), Unplaced: unplaced, Photos: pickRelated(photos, bulkTagCount(count))}
+	pick := BulkPlacePick{Branch: scan.branch, PhotoFiles: len(scan.files), Unplaced: unplaced, Photos: pickRelated(photos, bulkTagCount(count), relate)}
 	if scan.pr != nil {
 		pick.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
 	}

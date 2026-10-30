@@ -184,7 +184,7 @@ func groupedPhotos(scan baseURLScan, kind Kind, known []Group, adds []photoAdds)
 func groupedPhoto(scan baseURLScan, kind Kind, known []Group, p photoAdds) (*ScanChange, *PublishError) {
 	for _, id := range p.ids {
 		if !slices.ContainsFunc(known, func(g Group) bool { return g.ID == id && g.Error == "" }) {
-			return nil, publishErr(http.StatusBadRequest, "%q isn't a %s, so nothing was changed.", id, kind.Name)
+			return nil, publishErr(http.StatusBadRequest, "%q isn't one of the %ss, so nothing was changed.", id, kind.Name)
 		}
 	}
 	photos, perr := picked(scan, []string{p.path})
