@@ -76,6 +76,15 @@
     "parentRelation": ","
   },
   {
+    "id": "banff",
+    "name": "Banff",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "state": "Alberta",
+    "country": "Canada"
+  },
+  {
     "id": "bent-pyramid-of-cairo",
     "name": "Bent Pyramid of Cairo",
     "description": "",
@@ -277,8 +286,9 @@
     "name": "Fairview Lookout Trail",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "Banff",
+    "state": "Alberta",
+    "country": "Canada"
   },
   {
     "id": "fifth-avenue-presbyterian-church",
@@ -949,6 +959,14 @@
     "country": "United States of America",
     "latitude": 40.74797621532001,
     "longitude": -74.0047541744432
+  },
+  {
+    "id": "the-juice-bar",
+    "name": "The Juice Bar",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": ""
   },
   {
     "id": "the-oberoi",

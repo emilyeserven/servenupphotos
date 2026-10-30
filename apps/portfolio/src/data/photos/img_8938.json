@@ -1,7 +1,7 @@
 {
-  "id": 205,
   "title": null,
   "comment": null,
+  "id": 205,
   "file": "IMG_8938.jpg",
   "addedDate": null,
   "camera": "Canon EOS 80D",
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2019:07:16 20:59:44",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "the-juice-bar",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -48,9 +48,23 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "night",
+    "crowd",
+    "storefronts",
+    "shingles",
+    "signage",
+    "sidewalk",
+    "ice-cream",
+    "queue"
+  ],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "the-juice-bar"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,8 +74,8 @@
       "hex": "#262626",
       "lab": {
         "l": 15.27,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,
