@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { r2IsSetUp, settingsQuery } from "@/api/settings";
 import { BulkTaggingCard } from "@/components/bulk-tagging/bulk-tagging-card";
+import { GenreSuggestionsCard } from "@/components/genre-suggestions/genre-suggestions-card";
 import { ImageBaseUrlCard } from "@/components/image-base-url";
 import { LocalizationFillCard } from "@/components/localization-fill/localization-fill-card";
 import { LocationNamesCard } from "@/components/location-names-card";
@@ -35,6 +36,7 @@ function UpdateDataPage() {
               <LocationNamesCard />
               <BulkTaggingCard />
               <LocalizationFillCard />
+              <GenreSuggestionsCard />
             </>
           ) : (
             <p className="text-muted-foreground text-sm">

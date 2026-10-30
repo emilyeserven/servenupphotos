@@ -25,16 +25,24 @@ type bulkTagAnswer struct {
 	} `json:"definitions"`
 }
 
-// parseBulkTagAnswer reads the JSON object in text, the LLM's answer, which
-// may be inside a code block or have words around it.
-func parseBulkTagAnswer(text string) (bulkTagAnswer, *PublishError) {
-	var answer bulkTagAnswer
+// parseLLMAnswer reads the JSON object in text, an LLM's answer, into
+// answer. The object may be inside a code block or have words around it.
+func parseLLMAnswer(text string, answer any) *PublishError {
 	start, end := strings.Index(text, "{"), strings.LastIndex(text, "}")
 	if start < 0 || end < start {
-		return answer, publishErr(http.StatusBadRequest, "Paste the LLM's whole answer: the JSON object it wrote, from { to }.")
+		return publishErr(http.StatusBadRequest, "Paste the LLM's whole answer: the JSON object it wrote, from { to }.")
 	}
-	if err := json.Unmarshal([]byte(text[start:end+1]), &answer); err != nil {
-		return answer, publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
+	if err := json.Unmarshal([]byte(text[start:end+1]), answer); err != nil {
+		return publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
+	}
+	return nil
+}
+
+// parseBulkTagAnswer reads the Bulk Tagging JSON in text, the LLM's answer.
+func parseBulkTagAnswer(text string) (bulkTagAnswer, *PublishError) {
+	var answer bulkTagAnswer
+	if perr := parseLLMAnswer(text, &answer); perr != nil {
+		return answer, perr
 	}
 	if len(answer.Photos) == 0 {
 		return answer, publishErr(http.StatusBadRequest, "The answer has no photos in it. Ask the LLM to answer with tags for each photo.")
@@ -42,20 +50,22 @@ func parseBulkTagAnswer(text string) (bulkTagAnswer, *PublishError) {
 	return answer, nil
 }
 
-// BulkTagSkipped is a name in the answer that can't be a tag, with why.
+// BulkTagSkipped is a name in the answer that can't be a tag (or, for Genre
+// Suggestions, a genre), with why.
 type BulkTagSkipped struct {
 	Name   string `json:"name"`
 	Reason string `json:"reason"`
 }
 
-// BulkTagPhotoPlan is what the answer adds to one photo.
+// BulkTagPhotoPlan is what the answer adds to one photo: tags for Bulk
+// Tagging, genres for Genre Suggestions.
 type BulkTagPhotoPlan struct {
 	Path string `json:"path"`
 	Name string `json:"name"`
-	// Add is the IDs of the tags to add to it, existing and new, in the
-	// answer's order.
+	// Add is the IDs of the tags (or genres) to add to it, existing and new,
+	// in the answer's order.
 	Add []string `json:"add"`
-	// Already is the IDs of the tags the answer names that it already has.
+	// Already is the IDs of the ones the answer names that it already has.
 	Already []string         `json:"already"`
 	Skipped []BulkTagSkipped `json:"skipped"`
 }
@@ -80,24 +90,29 @@ type BulkTagsPreview struct {
 	Unknown []string `json:"unknown"`
 }
 
-// tagNamer sorts the names in an answer into existing tags, new ones and ones
-// that can't be tags, as pasting into a photo's Tags field does.
-type tagNamer struct {
-	tags     map[string]string // ID or lowercase name → tag ID
-	taken    map[string]string // ID or lowercase name of an album, genre or metadata group → why
+// groupNamer sorts the names in an answer into existing tags (or genres), new
+// ones and ones that can't be used, as pasting into a photo's Tags field does.
+// The new tags and their definitions are kept for Bulk Tagging.
+type groupNamer struct {
+	own      map[string]string // ID or lowercase name → ID, of the kind being named
+	taken    map[string]string // ID or lowercase name of another kind's group or a metadata group → why
 	defs     map[string]BulkTagNew
 	newOrder []string
 }
 
-// newTagNamer is a tagNamer for groups and the metadata groups in meta.
-func newTagNamer(groups map[string][]Group, meta []Entry) *tagNamer {
-	n := &tagNamer{tags: map[string]string{}, taken: map[string]string{}, defs: map[string]BulkTagNew{}}
-	for _, g := range groups[Tags.Folder] {
+// newGroupNamer is a groupNamer for kind, among groups and the metadata
+// groups in meta.
+func newGroupNamer(kind Kind, groups map[string][]Group, meta []Entry) *groupNamer {
+	n := &groupNamer{own: map[string]string{}, taken: map[string]string{}, defs: map[string]BulkTagNew{}}
+	for _, g := range groups[kind.Folder] {
 		if g.Error == "" {
-			n.tags[g.ID], n.tags[strings.ToLower(strings.TrimSpace(g.Name))] = g.ID, g.ID
+			n.own[g.ID], n.own[strings.ToLower(strings.TrimSpace(g.Name))] = g.ID, g.ID
 		}
 	}
-	for _, k := range []Kind{Albums, Genres} {
+	for _, k := range kinds {
+		if k == kind {
+			continue
+		}
 		for _, g := range groups[k.Folder] {
 			n.taken[g.ID], n.taken[strings.ToLower(strings.TrimSpace(g.Name))] = "a "+k.Name+" has that name", "a "+k.Name+" has that name"
 		}
@@ -111,15 +126,15 @@ func newTagNamer(groups map[string][]Group, meta []Entry) *tagNamer {
 	return n
 }
 
-// sort says what name is: an existing tag's ID, a new tag's ID, or why it
-// can't be a tag.
-func (n *tagNamer) sort(name string) (id string, fresh bool, reason string) {
+// sort says what name is: an existing tag's (or genre's) ID, a new one's ID,
+// or why it can't be one.
+func (n *groupNamer) sort(name string) (id string, fresh bool, reason string) {
 	name = cleanTagName(name)
-	if id, ok := n.tags[strings.ToLower(name)]; ok {
+	if id, ok := n.own[strings.ToLower(name)]; ok {
 		return id, false, ""
 	}
 	id = tagID(name)
-	if existing, ok := n.tags[id]; ok {
+	if existing, ok := n.own[id]; ok {
 		return existing, false, ""
 	}
 	if id == "" {
@@ -174,7 +189,7 @@ func tagID(name string) string {
 }
 
 // addNew lists id as a new tag, once, with the answer's definition of it.
-func (n *tagNamer) addNew(id string, def BulkTagNew) {
+func (n *groupNamer) addNew(id string, def BulkTagNew) {
 	if _, ok := n.defs[id]; ok {
 		return
 	}
@@ -184,7 +199,7 @@ func (n *tagNamer) addNew(id string, def BulkTagNew) {
 }
 
 // definitions reads the answer's definitions by the ID each defined tag gets.
-func (n *tagNamer) definitions(answer bulkTagAnswer) map[string]BulkTagNew {
+func (n *groupNamer) definitions(answer bulkTagAnswer) map[string]BulkTagNew {
 	out := map[string]BulkTagNew{}
 	for _, d := range answer.Definitions {
 		if id := tagID(cleanTagName(d.Tag)); id != "" {
@@ -196,7 +211,7 @@ func (n *tagNamer) definitions(answer bulkTagAnswer) map[string]BulkTagNew {
 
 // newTags is the new tags, each parent that isn't a tag yet first, made only
 // to be under it, with the answer's definitions as their descriptions.
-func (n *tagNamer) newTags() []BulkTagNew {
+func (n *groupNamer) newTags() []BulkTagNew {
 	var parents, children []BulkTagNew
 	for _, id := range n.newOrder {
 		def := n.defs[id]
@@ -211,15 +226,15 @@ func (n *tagNamer) newTags() []BulkTagNew {
 }
 
 // isMissing is whether id, a parent's ID, is neither a tag nor a new one.
-func (n *tagNamer) isMissing(id string) bool {
-	_, isTag := n.tags[id]
+func (n *groupNamer) isMissing(id string) bool {
+	_, isTag := n.own[id]
 	_, isNew := n.defs[id]
 	return id != "" && !isTag && !isNew
 }
 
 // parentOf is the ID of the tag def says it goes under, or "" when it gives
 // none, or one that can't be a tag or is itself.
-func (n *tagNamer) parentOf(def BulkTagNew) string {
+func (n *groupNamer) parentOf(def BulkTagNew) string {
 	if def.Parent == "" {
 		return ""
 	}
@@ -231,7 +246,7 @@ func (n *tagNamer) parentOf(def BulkTagNew) string {
 }
 
 // parentRank is 1 when t is another new tag's parent, so it's made first.
-func (n *tagNamer) parentRank(t BulkTagNew, all []BulkTagNew) int {
+func (n *groupNamer) parentRank(t BulkTagNew, all []BulkTagNew) int {
 	if slices.ContainsFunc(all, func(o BulkTagNew) bool { return o.Parent == t.ID }) {
 		return 1
 	}
@@ -254,7 +269,7 @@ func (c *Client) PreviewBulkTags(ctx context.Context, gh settings.GitHub, paths 
 	if perr != nil {
 		return BulkTagsPreview{}, perr
 	}
-	n := newTagNamer(scan.w.groups(), scan.w.entries(MetaInfo))
+	n := newGroupNamer(Tags, scan.w.groups(), scan.w.entries(MetaInfo))
 	defs := n.definitions(parsed)
 	preview := BulkTagsPreview{Photos: []BulkTagPhotoPlan{}, Unknown: []string{}}
 	for _, p := range photos {
@@ -272,7 +287,7 @@ func (c *Client) PreviewBulkTags(ctx context.Context, gh settings.GitHub, paths 
 // picked is the readable photo files at paths, in that order.
 func picked(scan baseURLScan, paths []string) ([]bulkPhoto, *PublishError) {
 	if len(paths) == 0 || len(paths) > maxBulkTagPhotos {
-		return nil, publishErr(http.StatusBadRequest, "Pick 1 to %d photos to tag.", maxBulkTagPhotos)
+		return nil, publishErr(http.StatusBadRequest, "Pick 1 to %d photos.", maxBulkTagPhotos)
 	}
 	var out []bulkPhoto
 	for _, p := range paths {
@@ -289,31 +304,34 @@ func picked(scan baseURLScan, paths []string) ([]bulkPhoto, *PublishError) {
 }
 
 // plan is the tags the answer gives p.
-func (n *tagNamer) plan(p bulkPhoto, answer bulkTagAnswer, defs map[string]BulkTagNew) BulkTagPhotoPlan {
-	plan := BulkTagPhotoPlan{Path: p.file.path, Name: p.name, Add: []string{}, Already: []string{}, Skipped: []BulkTagSkipped{}}
+func (n *groupNamer) plan(p bulkPhoto, answer bulkTagAnswer, defs map[string]BulkTagNew) BulkTagPhotoPlan {
+	var names []string
 	for _, a := range answer.Photos {
-		if strings.TrimSpace(a.Photo) != p.name {
-			continue
+		if strings.TrimSpace(a.Photo) == p.name {
+			names = append(names, a.Tags...)
 		}
-		for _, name := range a.Tags {
-			n.planTag(&plan, p, name, defs)
+	}
+	return n.planNames(p, p.tags, names, func(id, _ string) { n.addNew(id, defs[id]) })
+}
+
+// planNames is what names, the answer's names for p, add to it, where have
+// is the IDs it lists already. onFresh is told each new ID and the name it
+// was made from, every time one comes up.
+func (n *groupNamer) planNames(p bulkPhoto, have, names []string, onFresh func(id, name string)) BulkTagPhotoPlan {
+	plan := BulkTagPhotoPlan{Path: p.file.path, Name: p.name, Add: []string{}, Already: []string{}, Skipped: []BulkTagSkipped{}}
+	for _, name := range names {
+		id, fresh, reason := n.sort(name)
+		switch {
+		case reason != "":
+			plan.Skipped = append(plan.Skipped, BulkTagSkipped{Name: cleanTagName(name), Reason: reason})
+		case slices.Contains(have, id):
+			plan.Already = appendMissing(plan.Already, []string{id})
+		default:
+			plan.Add = appendMissing(plan.Add, []string{id})
+		}
+		if fresh {
+			onFresh(id, cleanTagName(name))
 		}
 	}
 	return plan
-}
-
-// planTag puts one of the answer's names for p into plan.
-func (n *tagNamer) planTag(plan *BulkTagPhotoPlan, p bulkPhoto, name string, defs map[string]BulkTagNew) {
-	id, fresh, reason := n.sort(name)
-	switch {
-	case reason != "":
-		plan.Skipped = append(plan.Skipped, BulkTagSkipped{Name: cleanTagName(name), Reason: reason})
-	case slices.Contains(p.tags, id):
-		plan.Already = appendMissing(plan.Already, []string{id})
-	default:
-		plan.Add = appendMissing(plan.Add, []string{id})
-	}
-	if fresh {
-		n.addNew(id, defs[id])
-	}
 }

@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import {
   type BulkTagPick,
@@ -11,12 +10,16 @@ import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
 import { BulkTagReview } from "@/components/bulk-tagging/bulk-tag-review";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
+import { defaultBulkTagCount } from "@/components/bulk-tagging/pick-count";
+import {
+  CopyPromptButton,
+  ErrorText,
+  PasteAnswer,
+  PickBar,
+  usePhotoPick,
+} from "@/components/bulk-tagging/pick-controls";
 import { UntaggedCount } from "@/components/bulk-tagging/untagged-count";
-import { bulkTagCount, defaultBulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 import { OptionCheckbox } from "@/components/update-data-shared";
 import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
@@ -26,15 +29,10 @@ import { useCombinedData } from "@/stores/combined-data";
  * or any, copies one tag prompt for all of them, and reads the LLM's JSON answer back into a review of the tags each photo gets and the new tags to make.
  */
 export function BulkTaggingCard() {
-  const [shown, setShown] = useState<string[]>([]);
-  const [count, setCount] = useState(String(defaultBulkTagCount));
   const [related, setRelated] = useState(true);
-  const pick = useMutation({
-    ...pickBulkTagPhotosMutation,
-    onSuccess: (result) => setShown((paths) => [...paths, ...result.photos.map((p) => p.path)]),
+  const { pick, bar } = usePhotoPick(pickBulkTagPhotosMutation, defaultBulkTagCount, {
+    any: !related,
   });
-  const pickFrom = (skip: string[]) =>
-    pick.mutate({ skip, count: bulkTagCount(count), any: !related });
   return (
     <Card>
       <CardHeader>
@@ -55,47 +53,11 @@ export function BulkTaggingCard() {
           disabled={pick.isPending}
           onChange={setRelated}
         />
-        <div className="flex flex-wrap items-center gap-3">
-          <PickCount value={count} disabled={pick.isPending} onChange={setCount} />
-          <PickButtons
-            picked={pick.data !== undefined}
-            pending={pick.isPending}
-            onPick={() => pickFrom(shown)}
-            onRestart={() => {
-              setShown([]);
-              pickFrom([]);
-            }}
-          />
-        </div>
+        <PickBar {...bar} />
         <ErrorText error={pick.error} />
         {pick.data && <PickedTagging key={pick.submittedAt} pick={pick.data} />}
       </CardContent>
     </Card>
-  );
-}
-
-interface PickButtonsProps {
-  /** Whether photos have been picked already, so the next pick leaves them out. */
-  picked: boolean;
-  pending: boolean;
-  onPick: () => void;
-  onRestart: () => void;
-}
-
-/** Picks photos, then other photos, or starts over from every photo. */
-function PickButtons({ picked, pending, onPick, onRestart }: PickButtonsProps) {
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button type="button" variant="outline" disabled={pending} onClick={onPick}>
-        {pending && <Spinner />}
-        {picked ? "Pick other photos" : "Pick photos"}
-      </Button>
-      {picked && (
-        <Button type="button" variant="ghost" disabled={pending} onClick={onRestart}>
-          Start over
-        </Button>
-      )}
-    </div>
   );
 }
 
@@ -107,23 +69,14 @@ function PickedTagging({ pick }: { pick: BulkTagPick }) {
   return (
     <div className="flex flex-col gap-4">
       <PickedPhotos photos={pick.photos} />
-      <CopyPromptButton pick={pick} />
-      <Textarea
-        aria-label="The LLM's answer"
-        placeholder="Paste the LLM's JSON answer here"
-        className="min-h-32 font-mono text-xs"
+      <CopyTagPromptButton pick={pick} />
+      <PasteAnswer
         value={answer}
-        onChange={(event) => setAnswer(event.target.value)}
+        onChange={setAnswer}
+        pending={preview.isPending}
+        label="Review the tags"
+        onReview={() => preview.mutate({ paths, answer })}
       />
-      <Button
-        type="button"
-        className="self-start"
-        disabled={answer.trim() === "" || preview.isPending}
-        onClick={() => preview.mutate({ paths, answer })}
-      >
-        {preview.isPending && <Spinner />}
-        Review the tags
-      </Button>
       <ErrorText error={preview.error} />
       {preview.data && (
         <BulkTagReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
@@ -132,31 +85,25 @@ function PickedTagging({ pick }: { pick: BulkTagPick }) {
   );
 }
 
-/** What went wrong, when something did. */
-function ErrorText({ error }: { error: Error | null }) {
-  return error && <p className="text-destructive text-sm">{error.message}</p>;
-}
-
 /** Copies the prompt for every picked photo, with the tags to reuse and the names to leave out. */
-function CopyPromptButton({ pick }: { pick: BulkTagPick }) {
+function CopyTagPromptButton({ pick }: { pick: BulkTagPick }) {
   const organize = useQuery(organizeQuery);
   const places = useQuery(placesQuery);
   const combined = useCombinedData();
-  const [copied, setCopied] = useState(false);
   const data = organize.data;
-  const copy = () => {
-    if (!data) return;
-    const lists = { ...data, metaGroups: metaGroups(combined.data) };
-    const prompt = bulkTagPrompt(pick.photos, lists, readEntries(places.data?.places));
-    void navigator.clipboard.writeText(prompt).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
   return (
-    <Button type="button" variant="outline" className="self-start" disabled={!data} onClick={copy}>
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied ? "Copied" : `Copy the tag prompt for ${pick.photos.length} photos`}
-    </Button>
+    <CopyPromptButton
+      label={`Copy the tag prompt for ${pick.photos.length} photos`}
+      disabled={!data}
+      prompt={() =>
+        data
+          ? bulkTagPrompt(
+              pick.photos,
+              { ...data, metaGroups: metaGroups(combined.data) },
+              readEntries(places.data?.places),
+            )
+          : ""
+      }
+    />
   );
 }

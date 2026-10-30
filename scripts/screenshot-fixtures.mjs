@@ -508,6 +508,38 @@ function bulkTagsPreview() {
   };
 }
 
+/** Up to `count` photos without genres that Genre Suggestions picked. */
+function genrePick(count = 50) {
+  const pick = bulkTagPick(Math.min(count, 6));
+  return {
+    ...pick,
+    withoutGenres: 18,
+    photos: pick.photos.map((photo) => ({ ...photo, related: [] })),
+  };
+}
+
+/** What reading a pasted Genre Suggestions answer finds for the picked photos. */
+function genreSuggestionsPreview() {
+  const photos = genrePick().photos.map(({ path, name }, i) => ({
+    path,
+    name,
+    add: [["street", "night"], ["architecture"], ["street"], ["macro"], ["night"], ["street"]][i],
+    already: [],
+    skipped: i === 1 ? [{ name: "temple", reason: "a tag has that name" }] : [],
+  }));
+  return {
+    photos,
+    newGenres: [
+      {
+        id: "night",
+        name: "Night",
+        description: "Photos taken after dark, lit by streetlights, signs or the moon.",
+      },
+    ],
+    unknown: [],
+  };
+}
+
 const secret = { set: true, last4: "a1b2" };
 
 /** The default answers: everything set up, and one photo data pull request open. */
@@ -653,6 +685,9 @@ export function defaultFixtures() {
     "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count, body?.any),
     "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
     "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
+    "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count),
+    "POST /api/data/genre-suggestions/preview": () => genreSuggestionsPreview(),
+    "POST /api/data/genre-suggestions": () => ({ ...pendingSave(), newGenres: 1, photos: 6 }),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,

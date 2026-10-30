@@ -99,7 +99,7 @@ descriptions. A parent that isn't a tag yet is made too, before the tag under it
 picked are listed and left out.
 
 The review lists the new tags, each with a checkbox and one for its parent, then each photo with a checkbox per tag
-to add, marking the new ones, and the tags it already had. **Save tags for N photos** (`POST /api/data/bulk-tags`)
+to add, marking the new ones, and the tags it already has. **Save tags for N photos** (`POST /api/data/bulk-tags`)
 makes the ticked new tags, parents first, and adds the ticked tags to each photo's `tags` after the ones it has, all
 in one save of [changes waiting for Commit](pending-changes.md). Each new tag is checked as **New tag** on `/tags`
 checks it, and nothing is saved when one can't be made or a photo can't be read. Once saved, the list of new tags is hidden, since they're made.
@@ -138,6 +138,40 @@ the count, so copying the prompt again asks about the next ones.
 > translator fill them in, then import the file back through the same form a person would use.
 
 **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
+
+## Genre suggestions
+
+**Genre suggestions** suggests [photographic genres](photographic-genres.md) for a batch of up to 50 photos with one
+LLM prompt. It works like Bulk tagging, and shares its pick controls, paste box and review. **Photos to pick** starts
+at 50 (1 to 50; the backend treats a missing `count` as 50). **Pick photos** (`POST /api/data/genre-suggestions/pick`,
+`{ skip, count }`) reads every photo file as the next Commit will have it and picks the first `count` photos without
+genres (an empty or missing `genres`) by file name, which for camera files is the order they were taken, as Bulk
+tagging does with **Pick photos that go together** off: a genre is judged one photo at a time. **Pick other photos** leaves out
+the ones already shown; **Start over** picks from the start again.
+
+**Copy the genre prompt** (`lib/genre-prompt.ts`) copies one prompt for all of them: each photo by its file name, with a
+link to its Small version, its title and what's known of where it was taken, and its tags, then every genre there is
+with its description. It asks for 1 to 3 genres a photo, from that list when one fits, and only otherwise for a new
+genre that photographers would recognize (such as Night or Food, never a subject or a place), in Title Case, described
+once in `newGenres`:
+
+```json
+{
+  "photos": [{ "photo": "20161216_092741", "genres": ["Street", "Night"] }],
+  "newGenres": [{ "genre": "Night", "description": "Photos taken after dark." }]
+}
+```
+
+Paste the answer and **Review the genres** (`POST /api/data/genre-suggestions/preview`, which saves nothing). The
+backend reads it as it reads a Bulk tagging answer (`github/genresuggest.go`): a name matching a genre's ID or name
+(ignoring case, or by the ID made from it) is that genre; one an album, tag or metadata group has is left out saying
+why; the rest are new genres, named as the answer first wrote them, with their descriptions. The review lists the new
+genres with a checkbox each, then each photo with a checkbox per genre, by name, marking the new ones. **Save genres
+for N photos** (`POST /api/data/genre-suggestions`) makes the ticked new genres (checked as **New genre** on `/genres`
+checks one) and adds the ticked genres to each photo's `genres` after the ones it has, in one save of
+[changes waiting for Commit](pending-changes.md). Nothing is saved when a genre can't be made or a photo can't be read.
+
+**Progress.** While **Missing fields** or **Colors** reads (its preview, or saving), the card says what it's doing and
 how far it has got, with a bar once it can count: reading the photo files from GitHub (one query, so no count),
 asking GitHub when the files were created (50 files a query, only files not asked before), then reading the originals in R2,
 such as "Reading each photo's colors from its original in R2: 42 of 150". The backend keeps each task's latest progress
