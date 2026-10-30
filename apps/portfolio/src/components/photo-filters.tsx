@@ -49,6 +49,7 @@ function useSetFilters() {
     const cleared = Object.fromEntries(FILTER_KEYS.map((key) => [key, undefined]));
     void navigate({
       to: ".",
+      resetScroll: false,
       search: (prev: Record<string, unknown>) => ({ ...prev, ...cleared, ...next }),
     });
   };
@@ -61,6 +62,7 @@ function useClearFilters(ownKeys: readonly string[]) {
     const cleared = Object.fromEntries([...FILTER_KEYS, ...ownKeys].map((key) => [key, undefined]));
     void navigate({
       to: ".",
+      resetScroll: false,
       search: (prev: Record<string, unknown>) => ({ ...prev, ...cleared }),
     });
   };

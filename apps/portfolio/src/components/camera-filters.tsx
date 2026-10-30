@@ -85,6 +85,7 @@ function useSetCameraFilters() {
   return (next: CameraFilters) => {
     void navigate({
       to: ".",
+      resetScroll: false,
       search: (prev: Record<string, unknown>) => ({ ...prev, ...next }),
     });
   };

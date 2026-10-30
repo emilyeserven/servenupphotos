@@ -95,6 +95,7 @@ export function GallerySortToggle({ sort }: { sort?: GallerySort }) {
           to: ".",
           search: (prev: Record<string, unknown>) => ({ ...prev, sort: next }),
           replace: true,
+          resetScroll: false,
         })
       }
     />

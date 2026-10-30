@@ -69,6 +69,7 @@ function ShareThreshold({ percent, fallback }: { percent: number; fallback: numb
         const min = next === fallback ? undefined : next;
         void navigate({
           to: ".",
+          resetScroll: false,
           search: (prev: Record<string, unknown>) => ({ ...prev, min, photo: undefined }),
           replace: true,
         });
