@@ -54,6 +54,15 @@ export async function requestJson<T>(url: string, init?: RequestInit): Promise<T
   return json as T;
 }
 
+/** POSTs body as JSON to url and reads the JSON answer. */
+export function postJson<T>(url: string, body: unknown): Promise<T> {
+  return requestJson<T>(url, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
 export const settingsQuery = queryOptions({
   queryKey: ["settings"],
   queryFn: () => requestJson<SettingsResponse>("/api/settings"),

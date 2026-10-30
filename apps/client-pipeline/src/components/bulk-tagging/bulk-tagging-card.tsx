@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { CheckIcon, CopyIcon } from "lucide-react";
 import { useState } from "react";
 import {
   type BulkTagPick,
@@ -10,12 +9,12 @@ import { metaGroups } from "@/api/metainfo";
 import { organizeQuery } from "@/api/organize";
 import { placesQuery, readEntries } from "@/api/places";
 import { BulkTagReview } from "@/components/bulk-tagging/bulk-tag-review";
+import { AnswerBox, CopyPromptButton } from "@/components/llm-answer";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
 import { bulkTagCount, defaultBulkTagCount, PickCount } from "@/components/bulk-tagging/pick-count";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { Textarea } from "@/components/ui/textarea";
 import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
 
@@ -88,7 +87,6 @@ function PickButtons({ picked, pending, onPick, onRestart }: PickButtonsProps) {
 
 /** The picked photos, their prompt, the box to paste the answer into, and its review. */
 function PickedTagging({ pick }: { pick: BulkTagPick }) {
-  const [answer, setAnswer] = useState("");
   const paths = pick.photos.map((photo) => photo.path);
   const preview = useMutation(previewBulkTagsMutation);
   return (
@@ -97,24 +95,13 @@ function PickedTagging({ pick }: { pick: BulkTagPick }) {
         {pick.untagged} of {pick.photoFiles} photos have no tags yet.
       </p>
       <PickedPhotos photos={pick.photos} />
-      <CopyPromptButton pick={pick} />
-      <Textarea
-        aria-label="The LLM's answer"
-        placeholder="Paste the LLM's JSON answer here"
-        className="min-h-32 font-mono text-xs"
-        value={answer}
-        onChange={(event) => setAnswer(event.target.value)}
+      <BulkPromptButton pick={pick} />
+      <AnswerBox
+        label="Review the tags"
+        pending={preview.isPending}
+        error={preview.error}
+        onReview={(answer) => preview.mutate({ paths, answer })}
       />
-      <Button
-        type="button"
-        className="self-start"
-        disabled={answer.trim() === "" || preview.isPending}
-        onClick={() => preview.mutate({ paths, answer })}
-      >
-        {preview.isPending && <Spinner />}
-        Review the tags
-      </Button>
-      <ErrorText error={preview.error} />
       {preview.data && (
         <BulkTagReview key={JSON.stringify(preview.data)} preview={preview.data} pick={pick} />
       )}
@@ -128,25 +115,23 @@ function ErrorText({ error }: { error: Error | null }) {
 }
 
 /** Copies the prompt for every picked photo, with the tags to reuse and the names to leave out. */
-function CopyPromptButton({ pick }: { pick: BulkTagPick }) {
+function BulkPromptButton({ pick }: { pick: BulkTagPick }) {
   const organize = useQuery(organizeQuery);
   const places = useQuery(placesQuery);
   const combined = useCombinedData();
-  const [copied, setCopied] = useState(false);
   const data = organize.data;
-  const copy = () => {
-    if (!data) return;
-    const lists = { ...data, metaGroups: metaGroups(combined.data) };
-    const prompt = bulkTagPrompt(pick.photos, lists, readEntries(places.data?.places));
-    void navigator.clipboard.writeText(prompt).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+  const prompt = data
+    ? () =>
+        bulkTagPrompt(
+          pick.photos,
+          { ...data, metaGroups: metaGroups(combined.data) },
+          readEntries(places.data?.places),
+        )
+    : undefined;
   return (
-    <Button type="button" variant="outline" className="self-start" disabled={!data} onClick={copy}>
-      {copied ? <CheckIcon /> : <CopyIcon />}
-      {copied ? "Copied" : `Copy the tag prompt for ${pick.photos.length} photos`}
-    </Button>
+    <CopyPromptButton
+      label={`Copy the tag prompt for ${pick.photos.length} photos`}
+      prompt={prompt}
+    />
   );
 }

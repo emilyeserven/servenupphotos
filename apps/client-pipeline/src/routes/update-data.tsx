@@ -8,6 +8,7 @@ import { MissingFieldsCard } from "@/components/missing-fields";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
 import { Page } from "@/components/page";
 import { PhotoColorsCard } from "@/components/photo-colors-card";
+import { PruneTagsCard } from "@/components/prune-tags/prune-tags-card";
 import { QueryResult } from "@/components/query-result";
 
 export const Route = createFileRoute("/update-data")({
@@ -33,6 +34,7 @@ function UpdateDataPage() {
               <ReapplyOverridesCard />
               <LocationNamesCard />
               <BulkTaggingCard />
+              <PruneTagsCard />
             </>
           ) : (
             <p className="text-muted-foreground text-sm">

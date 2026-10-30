@@ -505,6 +505,35 @@ function bulkTagsPreview() {
   };
 }
 
+/** A Tag pruning review: one change of each kind, and one the backend can't make. */
+function pruneTagsPreview() {
+  return {
+    tags: 320,
+    merge: [
+      {
+        tag: "lamppost",
+        into: "lamps",
+        reason: "a lamppost is a kind of lamp, and few photos tell them apart",
+        photos: 4,
+        children: [],
+      },
+    ],
+    remove: [
+      {
+        tag: "details",
+        reason: "too vague to gather photos that share anything",
+        photos: 6,
+        children: [],
+      },
+    ],
+    reparent: [
+      { tag: "torii", from: "", parent: "shrine", reason: "a torii is a shrine gate" },
+      { tag: "chochin", from: "", parent: "lanterns", reason: "a Japanese paper lantern" },
+    ],
+    skipped: [{ change: "merge cats into animals", reason: '"cats" isn\'t a tag' }],
+  };
+}
+
 const secret = { set: true, last4: "a1b2" };
 
 /** The default answers: everything set up, and one photo data pull request open. */
@@ -649,6 +678,13 @@ export function defaultFixtures() {
     "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count),
     "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
     "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
+    "POST /api/data/prune-tags/preview": () => pruneTagsPreview(),
+    "POST /api/data/prune-tags": () => ({
+      ...pendingSave(),
+      deleted: 2,
+      reparented: 2,
+      photos: 10,
+    }),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,

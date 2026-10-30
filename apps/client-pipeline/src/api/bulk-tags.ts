@@ -1,6 +1,6 @@
 import { mutationOptions } from "@tanstack/react-query";
 import type { PendingSave } from "@/api/scan-changes";
-import { requestJson } from "@/api/settings";
+import { postJson as post } from "@/api/settings";
 
 /** One photo Bulk Tagging picked to tag with the others. */
 export interface BulkTagPhoto {
@@ -74,14 +74,6 @@ interface BulkTagsResult extends PendingSave {
   photos: number;
 }
 
-function post<T>(url: string, body: unknown) {
-  return requestJson<T>(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  });
-}
-
 /** Picks up to `count` related photos (1 to 50) to tag together, leaving out the ones already shown. */
 export const pickBulkTagPhotosMutation = mutationOptions({
   mutationKey: ["data", "bulk-tags", "pick"],
@@ -96,8 +88,8 @@ export const previewBulkTagsMutation = mutationOptions({
     post<BulkTagsPreview>("/api/data/bulk-tags/preview", body),
 });
 
-/** The tag and photo files a Bulk Tagging save changed, as changes over the combined lists. */
-function bulkTagChanges(result: BulkTagsResult) {
+/** The tag and photo files a Bulk Tagging or Tag pruning save changed, as changes over the combined lists. */
+export function bulkTagChanges(result: PendingSave) {
   return result.changes.map((change) => ({
     kind: change.path.includes("/tags/") ? ("tags" as const) : ("photos" as const),
     ...change,
