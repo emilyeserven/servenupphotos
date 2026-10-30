@@ -22,6 +22,7 @@ export function BulkPlacesCard() {
       title="Bulk places"
       description="Picks up to the chosen number of photos (up to 50) without places that go together: one, then the ones that share its city or country, genres or date. Copy one prompt for all of them into a chat with an LLM, which finds each photo's place on Google Maps (or Naver Map or Kakao Map in South Korea), paste its JSON answer back, and review the places before they're saved, waiting for Commit."
       options={pickBulkPlacePhotosMutation}
+      body={(skip, count) => ({ skip, count })}
     >
       {(pick) => <PickedPlaces pick={pick} />}
     </BulkPickCard>

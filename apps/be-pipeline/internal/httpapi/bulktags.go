@@ -8,14 +8,6 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// bulkTagPick is the body of a Bulk Tagging pick: the photos already shown,
-// to leave out, and how many to pick.
-type bulkTagPick struct {
-	Skip []string `json:"skip"`
-	// Count is how many photos to pick, 1 to 50; 0 picks the default 5.
-	Count int `json:"count"`
-}
-
 // bulkTagAnswer is the body of a Bulk Tagging preview: the picked photos and
 // the LLM's answer pasted for them.
 type bulkTagAnswer struct {
@@ -23,12 +15,21 @@ type bulkTagAnswer struct {
 	Answer string   `json:"answer"`
 }
 
-// handlePickBulkTagPhotos picks up to the asked number of related photos for
-// Bulk Tagging, leaving out the photos already shown.
+// handleCountUntaggedPhotos says how many photo files have no tags yet, for
+// Bulk Tagging to show before anything is picked.
+func handleCountUntaggedPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "untagged count", "could not count the photos without tags",
+		func(ctx context.Context, cfg settings.GitHub, _ struct{}) (any, error) {
+			return gh.CountUntaggedPhotos(ctx, cfg)
+		})
+}
+
+// handlePickBulkTagPhotos picks up to the asked number of photos for Bulk
+// Tagging, related ones or any, leaving out the photos already shown.
 func handlePickBulkTagPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return handleBulkTags(store, "photo pick", "could not pick the photos",
-		func(ctx context.Context, cfg settings.GitHub, req bulkTagPick) (any, error) {
-			return gh.PickBulkTagPhotos(ctx, cfg, req.Skip, req.Count)
+		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
+			return gh.PickBulkTagPhotos(ctx, cfg, req)
 		})
 }
 
@@ -73,7 +74,7 @@ func handleBulkTags[T any](store *settings.Store, kind, failure string, run func
 // without places for Bulk Places, leaving out the photos already shown.
 func handlePickBulkPlacePhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return handleBulkTags(store, "photo pick", "could not pick the photos",
-		func(ctx context.Context, cfg settings.GitHub, req bulkTagPick) (any, error) {
+		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
 			return gh.PickBulkPlacePhotos(ctx, cfg, req.Skip, req.Count)
 		})
 }

@@ -306,7 +306,8 @@ from `ALLPHOTOS.json` (at the pull request's head, with saves not committed yet,
 many photos show each. Places come from the place files. Rows not saved yet say so; each row's **Save**
 (`PUT /api/localizations/<id>` → `PUT /localizations/{id}`) keeps its file waiting for Commit, and **Save all**,
 at the top right next to the sync button, saves every changed row on every tab. What's typed is kept while switching
-tabs.
+tabs. **Update Data → Localizations** asks an LLM to fill in the ones still missing, up to 50 at a time (see
+[Update Data](update-data.md#localizations)).
 
 ### Other names
 

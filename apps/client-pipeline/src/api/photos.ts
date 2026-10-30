@@ -226,6 +226,11 @@ export interface InFlightImages {
   /** False when R2 couldn't be searched; `message` says why. */
   checked: boolean;
   message?: string;
+  /**
+   * True when R2 couldn't be searched and `byPath` has the images found the last time it could,
+   * from the backend's offline copy.
+   */
+  offline?: boolean;
   /** Keyed by the JSON file's path; a path that's missing has no image in R2. */
   byPath: Record<string, { key: string; url: string }>;
 }

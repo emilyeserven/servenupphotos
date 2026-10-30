@@ -133,9 +133,14 @@ async function fixtureAnswer(fixture, url, request) {
 }
 
 /** Answers a pipeline /api request from the fixtures, or says which fixture is missing. */
-async function answerApi(route, fixtures) {
+async function answerApi(route, fixtures, sizes) {
   const request = route.request();
   const url = new URL(request.url());
+  // The offline copy's thumbnails are drawn like the R2 photos they stand for.
+  if (url.pathname === "/api/thumbnails") {
+    const photo = url.searchParams.get("url") ?? "";
+    return route.fulfill({ contentType: "image/svg+xml", body: placeholderImage(photo, sizes) });
+  }
   const key = `${request.method()} ${url.pathname}`;
   if (!(key in fixtures)) {
     console.warn(`No fixture for ${key}; answering 501. Add one with --fixtures.`);
@@ -222,12 +227,12 @@ async function addDarkClass(context) {
 }
 
 /** Answers the pipeline's /api requests from the fixtures, unless they go to the real BFF. */
-async function routeApi(context, base) {
+async function routeApi(context, base, sizes) {
   if (opts.live) return;
   const fixtures = await loadFixtures();
   await context.route(
     (url) => url.origin === base && url.pathname.startsWith("/api/"),
-    (route) => answerApi(route, fixtures),
+    (route) => answerApi(route, fixtures, sizes),
   );
 }
 
@@ -246,7 +251,7 @@ async function newContext(browser, base) {
     (url) => url.origin !== base,
     (route) => answerOutside(route, sizes),
   );
-  if (app === "pipeline") await routeApi(context, base);
+  if (app === "pipeline") await routeApi(context, base, sizes);
   return context;
 }
 

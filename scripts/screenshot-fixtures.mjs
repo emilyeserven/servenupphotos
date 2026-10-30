@@ -460,8 +460,11 @@ function uploadAnswer(key) {
   return { key, url: `${CDN}/${key}`, versions };
 }
 
-/** The photos Bulk Tagging picks: `count` of the pull request's photos, the first with no tags. */
-function bulkTagPick(count = 5) {
+/**
+ * The photos Bulk Tagging picks: `count` of the pull request's photos, the first with no tags,
+ * each saying what it shares with the first unless `any` picked them whatever they share.
+ */
+function bulkTagPick(count = 5, any = false) {
   const photos = headPhotos.slice(0, count).map(({ path, data }, i) => ({
     path,
     fileUrl: "",
@@ -470,7 +473,7 @@ function bulkTagPick(count = 5) {
       .pop()
       .replace(/\.json$/, ""),
     data,
-    related: i === 0 ? [] : ["same city: kyoto", "taken the same day"].slice(0, (i % 2) + 1),
+    related: i === 0 || any ? [] : ["same city: kyoto", "taken the same day"].slice(0, (i % 2) + 1),
   }));
   return {
     branch: PULL_REQUEST.branch,
@@ -646,7 +649,8 @@ export function defaultFixtures() {
         })),
     },
     "POST /api/data/location-names": () => ({ ...pendingSave(), files: 9, fields: 9 }),
-    "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count),
+    "POST /api/data/bulk-tags/untagged": () => ({ ...bulkTagPick(), photos: [] }),
+    "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count, body?.any),
     "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
     "POST /api/data/bulk-tags": () => ({ ...pendingSave(), newTags: 2, photos: 5 }),
     "POST /api/data/bulk-places/pick": ({ body }) => {

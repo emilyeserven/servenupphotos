@@ -15,20 +15,33 @@ import (
 
 // BulkPlacePick is the photos Bulk Places picked to find places for together.
 type BulkPlacePick struct {
-	bulkPick
+	// Branch and PullRequest are as in BaseURLPreview.
+	Branch      string              `json:"branch"`
+	PullRequest *BaseURLPullRequest `json:"pullRequest"`
+	PhotoFiles  int                 `json:"photoFiles"`
 	// Unplaced is how many photo files have no places.
-	Unplaced int `json:"unplaced"`
+	Unplaced int            `json:"unplaced"`
+	Photos   []BulkTagPhoto `json:"photos"`
 }
 
 // PickBulkPlacePhotos picks up to count related photos (1 to 50, 5 when
-// unset) without places, as PickBulkTagPhotos picks photos without tags: the
-// first by path, then the ones that share its city or country, genres and
-// date. It only reads.
+// unset) without places, leaving out skip's paths, as PickBulkTagPhotos picks
+// photos without tags: the first by path, then the ones that share its city
+// or country, genres and date. It only reads.
 func (c *Client) PickBulkPlacePhotos(ctx context.Context, gh settings.GitHub, skip []string, count int) (BulkPlacePick, error) {
-	pick, unplaced, err := c.pickBulk(ctx, gh, skip, count,
-		func(p bulkPhoto) bool { return len(p.places) == 0 },
-		"There are no more photos without places to pick from. Start over to pick from every one again.")
-	return BulkPlacePick{bulkPick: pick, Unplaced: unplaced}, err
+	scan, perr := c.scanPhotos(ctx, gh)
+	if perr != nil {
+		return BulkPlacePick{}, perr
+	}
+	photos, unplaced := photosWhere(scan, skip, func(p bulkPhoto) bool { return len(p.places) == 0 })
+	if len(photos) == 0 {
+		return BulkPlacePick{}, publishErr(http.StatusNotFound, "There are no more photos without places to pick from. Start over to pick from every one again.")
+	}
+	pick := BulkPlacePick{Branch: scan.branch, PhotoFiles: len(scan.files), Unplaced: unplaced, Photos: pickRelated(photos, bulkTagCount(count))}
+	if scan.pr != nil {
+		pick.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
+	}
+	return pick, nil
 }
 
 // BulkPlacesPhoto is the places to give one photo file, and the city, state

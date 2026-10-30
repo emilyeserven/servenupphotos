@@ -1,0 +1,6 @@
+{
+  "id": "hanja",
+  "name": "hanja",
+  "description": "Chinese characters as used in writing Korean",
+  "parent": "letters"
+}

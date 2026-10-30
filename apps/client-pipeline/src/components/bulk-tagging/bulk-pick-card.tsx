@@ -5,17 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
-/** What a bulk pick asks for: the photos already shown, to leave out, and how many to pick. */
-interface PickBody {
-  skip: string[];
-  count: number;
-}
-
-interface BulkPickCardProps<T extends { photos: { path: string }[] }> {
+interface BulkPickCardProps<T extends { photos: { path: string }[] }, B> {
   title: string;
   description: ReactNode;
   /** The pick's mutation, such as Bulk Tagging's. */
-  options: UseMutationOptions<T, Error, PickBody>;
+  options: UseMutationOptions<T, Error, B>;
+  /** The pick's body: the photos already shown, to leave out, and how many to pick. */
+  body: (skip: string[], count: number) => B;
+  /** Shown above the pick buttons, such as how many photos there are to pick from, or an option. */
+  before?: (pending: boolean) => ReactNode;
   /** What's shown for the picked photos, such as their prompt and the answer's review. */
   children: (pick: T) => ReactNode;
 }
@@ -25,18 +23,21 @@ interface BulkPickCardProps<T extends { photos: { path: string }[] }> {
  * up to 50), then other photos leaving out the ones shown, or starts over, and shows `children` for
  * each pick.
  */
-export function BulkPickCard<T extends { photos: { path: string }[] }>({
+export function BulkPickCard<T extends { photos: { path: string }[] }, B>({
   title,
   description,
   options,
+  body,
+  before,
   children,
-}: BulkPickCardProps<T>) {
+}: BulkPickCardProps<T, B>) {
   const [shown, setShown] = useState<string[]>([]);
   const [count, setCount] = useState(String(defaultBulkTagCount));
   const pick = useMutation({
     ...options,
     onSuccess: (result) => setShown((paths) => [...paths, ...result.photos.map((p) => p.path)]),
   });
+  const pickFrom = (skip: string[]) => pick.mutate(body(skip, bulkTagCount(count)));
   return (
     <Card>
       <CardHeader>
@@ -44,15 +45,16 @@ export function BulkPickCard<T extends { photos: { path: string }[] }>({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
+        {before?.(pick.isPending)}
         <div className="flex flex-wrap items-center gap-3">
           <PickCount value={count} disabled={pick.isPending} onChange={setCount} />
           <PickButtons
             picked={pick.data !== undefined}
             pending={pick.isPending}
-            onPick={() => pick.mutate({ skip: shown, count: bulkTagCount(count) })}
+            onPick={() => pickFrom(shown)}
             onRestart={() => {
               setShown([]);
-              pick.mutate({ skip: [], count: bulkTagCount(count) });
+              pickFrom([]);
             }}
           />
         </div>

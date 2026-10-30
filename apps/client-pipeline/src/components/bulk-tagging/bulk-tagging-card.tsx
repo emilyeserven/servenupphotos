@@ -12,22 +12,38 @@ import { BulkPickCard, ErrorText } from "@/components/bulk-tagging/bulk-pick-car
 import { BulkTagReview } from "@/components/bulk-tagging/bulk-tag-review";
 import { CopyPrompt } from "@/components/bulk-tagging/copy-prompt";
 import { PickedPhotos } from "@/components/bulk-tagging/picked-photos";
+import { UntaggedCount } from "@/components/bulk-tagging/untagged-count";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { OptionCheckbox } from "@/components/update-data-shared";
 import { bulkTagPrompt } from "@/lib/bulk-tag-prompt";
 import { useCombinedData } from "@/stores/combined-data";
 
 /**
- * Bulk Tagging: picks up to the chosen number of related photos (5 at first, up to 50), copies one tag prompt for all of them, and reads
- * the LLM's JSON answer back into a review of the tags each photo gets and the new tags to make.
+ * Bulk Tagging: picks up to the chosen number of photos without tags (5 at first, up to 50), related
+ * or any, copies one tag prompt for all of them, and reads the LLM's JSON answer back into a review of the tags each photo gets and the new tags to make.
  */
 export function BulkTaggingCard() {
+  const [related, setRelated] = useState(true);
   return (
     <BulkPickCard
       title="Bulk tagging"
-      description="Picks up to the chosen number of photos (up to 50) without tags that go together: one, then the ones that share its places, city or country, genres or date. Photos that already have tags are left out. Copy one prompt for all of them into a chat with an LLM, paste its JSON answer back, and review the tags before they're saved, waiting for Commit."
+      description="Picks up to the chosen number of photos (up to 50) without tags: ones that go together, or any of them. Photos that already have tags are left out. Copy one prompt for all of them into a chat with an LLM, paste its JSON answer back, and review the tags before they're saved, waiting for Commit."
       options={pickBulkTagPhotosMutation}
+      body={(skip, count) => ({ skip, count, any: !related })}
+      before={(pending) => (
+        <>
+          <UntaggedCount />
+          <OptionCheckbox
+            label="Pick photos that go together"
+            hint="On, one photo and then the ones that share its places, city or country, genres or date. Off, the first photos without tags by file name, whatever they share."
+            checked={related}
+            disabled={pending}
+            onChange={setRelated}
+          />
+        </>
+      )}
     >
       {(pick) => <PickedTagging pick={pick} />}
     </BulkPickCard>
@@ -41,9 +57,6 @@ function PickedTagging({ pick }: { pick: BulkTagPick }) {
   const preview = useMutation(previewBulkTagsMutation);
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-muted-foreground text-sm">
-        {pick.untagged} of {pick.photoFiles} photos have no tags yet.
-      </p>
       <PickedPhotos photos={pick.photos} />
       <CopyPromptButton pick={pick} />
       <Textarea
