@@ -61,16 +61,18 @@ changed top-level fields are rewritten, and nothing is saved while any photo fil
 
 ## Bulk tagging
 
-**Bulk tagging** tags up to 50 related photos with one LLM prompt. **Photos to pick** next to the buttons sets how
+**Bulk tagging** tags up to 50 photos with one LLM prompt. The card first says how many photo files have no tags yet
+(`POST /api/data/bulk-tags/untagged`, read again after each save). **Photos to pick** next to the buttons sets how
 many each pick finds (5 at first, 1 to 50; the backend treats a missing `count` as 5 and caps it at 50, and the
-preview and save take at most 50 photos too). **Pick photos** (`POST /api/data/bulk-tags/pick`, `{ skip, count }`)
+preview and save take at most 50 photos too). **Pick photos** (`POST /api/data/bulk-tags/pick`, `{ skip, count, any }`)
 reads every photo file as the next Commit will have it and only considers photos without tags (an empty or missing
 `tags`), so a photo that already has tags is never picked. It picks the first of those by path, then up to `count` − 1 more
 that share the most with it: each shared [place](places-and-localizations.md) counts 5, the same
 city 3 (or else the same country 1), each shared [genre](photographic-genres.md) 2, and being taken the same day 3
 (or else the same month 1), using the hand-written city, country and date over the EXIF ones. Photos that share
 nothing aren't picked. Each card says what it shares with the
-first photo. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out;
+first photo. With **Pick photos that go together** turned off (`any: true`), it picks the first `count` photos without
+tags by path instead, whatever they share. **Pick other photos** sends the photos already shown as `skip`, so the next pick leaves them out;
 **Start over** picks from every photo again.
 
 **Copy the tag prompt** (`lib/bulk-tag-prompt.ts`) copies one prompt for all of them: each photo by its file name

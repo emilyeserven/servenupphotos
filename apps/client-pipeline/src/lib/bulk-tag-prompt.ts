@@ -27,6 +27,13 @@ ${known.join("\n") || "- Nothing yet."}
 Tags it already has: ${tags.length > 0 ? tags.join(", ") : "none"}`;
 }
 
+/** ", which were picked to go together" when they were, or "" when they were picked whatever they share. */
+function pickedTogether(photos: BulkTagPhoto[]): string {
+  return photos.some((photo) => photo.related.length > 0)
+    ? ", which were picked to go together"
+    : "";
+}
+
 /**
  * The prompt to paste into a chat with an LLM, asking for tags for several photos at once, with the
  * same rules as one photo's tag prompt, and for the answer as JSON the backend reads.
@@ -36,7 +43,7 @@ export function bulkTagPrompt(
   lists: Omit<TagPromptLists, "known">,
   places: Place[],
 ): string {
-  return `Suggest tags for each of these ${photos.length} photos, which were picked to go together.
+  return `Suggest tags for each of these ${photos.length} photos${pickedTogether(photos)}.
 
 The tags are for a photography portfolio, where each tag gathers the photos that share a subject or an idea.
 
