@@ -17,6 +17,12 @@ import {
   setGroupParentMutation,
 } from "@/api/organize";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
+import {
+  type AlbumAdd,
+  AlbumAddOutcome,
+  AlbumAddPhotos,
+  useAlbumAdd,
+} from "@/components/album-add-photos";
 import { AlbumLayoutCard } from "@/components/album-layout/album-layout-card";
 import { AlbumPhotoReorder } from "@/components/album-photo-reorder";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
@@ -435,6 +441,7 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
   const [reordering, setReordering] = useState(false);
   const ids = new Set([group.id, ...(withSubAlbums ? subAlbums : [])]);
   const { combined, current, photos } = useGroupPhotos(kind, ids);
+  const adding = useAlbumAdd();
 
   return (
     <Card className="min-w-0">
@@ -445,6 +452,7 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
         </CardDescription>
         {!reordering && (
           <CardAction className="flex flex-col items-end gap-2">
+            <AddPhotosButton kind={kind} group={group} add={adding.add} />
             <ReorderButton
               show={canReorder(kind, group, photos)}
               onClick={() => setReordering(true)}
@@ -457,7 +465,8 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
           </CardAction>
         )}
       </CardHeader>
-      <CardContent className="text-sm">
+      <CardContent className="flex flex-col gap-4 text-sm">
+        <AlbumAddOutcome {...adding} />
         <PhotosOrReorder
           group={group}
           combined={combined}
@@ -492,6 +501,16 @@ function PhotosOrReorder({ group, combined, photos, reordering, onDone }: Photos
     return <AlbumPhotoReorder album={group} photos={photos} onDone={onDone} />;
   }
   return <GroupPhotoGrid combined={combined} photos={photos} order={group.photoOrder} />;
+}
+
+/** An album's Add photos button; none for a tag or genre, or an album that couldn't be read. */
+function AddPhotosButton({
+  kind,
+  group,
+  add,
+}: { kind: GroupKind; group: Group } & Pick<AlbumAdd, "add">) {
+  if (kind !== "albums" || group.error) return null;
+  return <AlbumAddPhotos album={group} add={add} />;
 }
 
 function ReorderButton({ show, onClick }: { show: boolean; onClick: () => void }) {

@@ -404,6 +404,27 @@ const pendingSave = (branch = PULL_REQUEST.branch) => ({
   changes: [],
 });
 
+/** What adding albums, tags and genres to photos saves: each photo file before and after. */
+function groupsAdded({ paths = [], ...add } = {}) {
+  const changes = headPhotos
+    .filter((file) => paths.includes(file.path))
+    .map(({ path: filePath, data }) => ({
+      path: filePath,
+      before: data,
+      after: withGroupsAdded(data, add),
+    }));
+  return { ...pendingSave(), changes, files: changes.length };
+}
+
+/** The photo's data with each album, tag and genre in add that it doesn't list yet. */
+function withGroupsAdded(data, add) {
+  const next = { ...data };
+  for (const kind of ["albums", "tags", "genres"]) {
+    next[kind] = [...new Set([...(data[kind] ?? []), ...(add[kind] ?? [])])];
+  }
+  return next;
+}
+
 /**
  * A photo as the Instagram calendar and the photo page's Spotlight card read it: the first is scheduled, every other
  * one eligible.
@@ -896,7 +917,7 @@ export function defaultFixtures() {
       files: Object.keys(body?.descriptions ?? {}).length,
     }),
     "PUT /api/organize/spotlight/homepage": { ...pendingSave(), files: 2 },
-    "POST /api/photos/groups": ({ body }) => ({ ...pendingSave(), files: body?.paths?.length }),
+    "POST /api/photos/groups": ({ body }) => groupsAdded(body),
     "DELETE /api/photos/pending": { discarded: 1 },
     "GET /api/photos/pending": {
       version: 1,

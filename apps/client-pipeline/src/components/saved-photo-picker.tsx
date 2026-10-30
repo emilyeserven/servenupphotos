@@ -2,19 +2,22 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { ImageOffIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
+import { savedGroups } from "@/api/organize";
 import { type InFlightFileRead, photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
 import { photoName } from "@/components/gallery/published-file";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 
 /** A saved photo to pick: one in the photo data pull request, or one already in the portfolio. */
-interface SavedPhoto {
+export interface SavedPhoto {
   path: string;
   name: string;
   /** Its Square Thumbnail, or else its smallest version, when it has one. */
   image?: string;
   /** Whether it's in the portfolio rather than only in the pull request, so Edit Photo goes back to the Gallery. */
   published: boolean;
+  /** The IDs of the albums its JSON lists. */
+  albums: string[];
 }
 
 /** The photo JSON's `images` URL for version, when it has one. */
@@ -26,16 +29,19 @@ function imageOf(file: InFlightFileRead, version: string): string | undefined {
 
 function savedPhoto(file: InFlightFileRead, published: boolean): SavedPhoto {
   const image = imageOf(file, "thumbnail") ?? imageOf(file, "xsmall");
-  return { path: file.path, name: photoName(file), image, published };
+  const albums = savedGroups(file.data as Record<string, unknown> | undefined).albums;
+  return { path: file.path, name: photoName(file), image, published, albums };
 }
 
-/** The files that could be read, leaving out the paths given. */
+/** The files that could be read and aren't being removed, leaving out the paths given. */
 function readable(files: InFlightFileRead[] | undefined, except = new Set<string>()) {
-  return (files ?? []).filter((file) => !file.error && !except.has(file.path));
+  return (files ?? []).filter(
+    (file) => !file.error && file.status !== "removed" && !except.has(file.path),
+  );
 }
 
 /** The photos in the pull request, then the portfolio's that it doesn't change, each listed once. */
-function useSavedPhotos() {
+export function useSavedPhotos() {
   const inFlight = useQuery(photosInFlightQuery);
   const published = useQuery(publishedPhotosQuery);
   const waiting = readable(inFlight.data?.files);
@@ -47,7 +53,8 @@ function useSavedPhotos() {
   return { photos, pending: inFlight.isPending || published.isPending };
 }
 
-function matches(photo: SavedPhoto, search: string): boolean {
+/** Whether the photo's title or file name has the search text in it, ignoring case. */
+export function matchesSearch(photo: SavedPhoto, search: string): boolean {
   const text = `${photo.name} ${photo.path}`.toLowerCase();
   return text.includes(search.trim().toLowerCase());
 }
@@ -59,22 +66,12 @@ function matches(photo: SavedPhoto, search: string): boolean {
 export function SavedPhotoPicker({ onPicked }: { onPicked?: () => void }) {
   const { photos, pending } = useSavedPhotos();
   const [search, setSearch] = useState("");
-  const shown = photos.filter((photo) => matches(photo, search));
+  const shown = photos.filter((photo) => matchesSearch(photo, search));
   if (pending) return <Spinner className="size-6" />;
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="relative">
-        <SearchIcon className="text-muted-foreground absolute top-2.5 left-2.5 size-4" />
-        <Input
-          type="search"
-          placeholder="Search by title or file name"
-          aria-label="Search saved photos"
-          className="pl-8"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
-      </div>
+      <SavedPhotoSearch value={search} onChange={setSearch} />
       {shown.length === 0 ? (
         <p className="text-muted-foreground text-sm">No saved photos match.</p>
       ) : (
@@ -90,6 +87,29 @@ export function SavedPhotoPicker({ onPicked }: { onPicked?: () => void }) {
   );
 }
 
+/** A search box for saved photos, by title or file name. */
+export function SavedPhotoSearch({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (search: string) => void;
+}) {
+  return (
+    <div className="relative">
+      <SearchIcon className="text-muted-foreground absolute top-2.5 left-2.5 size-4" />
+      <Input
+        type="search"
+        placeholder="Search by title or file name"
+        aria-label="Search saved photos"
+        className="pl-8"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
+  );
+}
+
 function SavedPhotoTile({ photo, onPicked }: { photo: SavedPhoto; onPicked?: () => void }) {
   return (
     <Link
@@ -98,17 +118,24 @@ function SavedPhotoTile({ photo, onPicked }: { photo: SavedPhoto; onPicked?: () 
       onClick={onPicked}
       className="hover:bg-muted/60 focus-visible:ring-ring/50 flex flex-col gap-1 rounded-md p-1 outline-none focus-visible:ring-[3px]"
     >
-      <span className="bg-muted flex aspect-square items-center justify-center overflow-hidden rounded-md border">
-        {photo.image ? (
-          <img src={photo.image} alt="" loading="lazy" className="size-full object-cover" />
-        ) : (
-          <ImageOffIcon className="text-muted-foreground size-5" aria-hidden />
-        )}
-      </span>
+      <SavedPhotoSquare photo={photo} />
       <span className="truncate text-xs" title={photo.name}>
         {photo.name}
       </span>
       {!photo.published && <span className="text-muted-foreground text-xs">In the batch</span>}
     </Link>
+  );
+}
+
+/** The saved photo's Square Thumbnail, or an icon when it has none. */
+export function SavedPhotoSquare({ photo }: { photo: SavedPhoto }) {
+  return (
+    <span className="bg-muted flex aspect-square w-full items-center justify-center overflow-hidden rounded-md border">
+      {photo.image ? (
+        <img src={photo.image} alt="" loading="lazy" className="size-full object-cover" />
+      ) : (
+        <ImageOffIcon className="text-muted-foreground size-5" aria-hidden />
+      )}
+    </span>
   );
 }
