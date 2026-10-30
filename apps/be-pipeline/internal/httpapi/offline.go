@@ -19,8 +19,8 @@ const thumbnailTimeout = 20 * time.Second
 // warmTimeout bounds the start-up download of the thumbnails the offline copy is missing.
 const warmTimeout = 15 * time.Minute
 
-// handleThumbnail serves the Square Thumbnail, Thumbnail Preview or Small
-// version at ?url=,
+// handleThumbnail serves the Square Thumbnail, Thumbnail Preview, Small or
+// X-Small version at ?url=,
 // its R2 URL, from the offline copy, downloading it from R2 first when the
 // copy doesn't have it yet. So pages show it whether or not the internet can
 // be reached, once it has been downloaded.
@@ -52,7 +52,7 @@ func writeThumbnailError(w http.ResponseWriter, err error) {
 	var gerr *storage.GetError
 	switch {
 	case errors.Is(err, offline.ErrNotThumbnail):
-		writeError(w, http.StatusBadRequest, "Only Square Thumbnails, Thumbnail Previews and Small versions in R2 are kept offline.")
+		writeError(w, http.StatusBadRequest, "Only Square Thumbnails, Thumbnail Previews, Small and X-Small versions in R2 are kept offline.")
 	case errors.As(err, &gerr) && gerr.NotFound:
 		writeError(w, http.StatusNotFound, "That thumbnail isn't in R2.")
 	case errors.As(err, &gerr):

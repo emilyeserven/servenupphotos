@@ -16,7 +16,8 @@ The Gallery, Photos in Flight, its Undecided queue, the drafts lists and the alb
 **Reorder** tiles and the [Layout and covers](album-layouts.md) editor and its photo pickers) show each photo's Square Thumbnail and
 Thumbnail Preview through `GET /api/thumbnails?url=<its R2 URL>` (→ `GET /thumbnails`) instead of straight from the
 CDN. The backend serves it from the offline copy, or downloads it from R2 first (with the R2 settings, like other
-reads) when the copy doesn't have it yet. Only Square Thumbnails, Thumbnail Previews and Small versions under `photos/` are kept; any
+reads) when the copy doesn't have it yet. Only Square Thumbnails, Thumbnail Previews, Small versions and X-Small versions (for the
+[album layout preview](album-layouts.md#preview)) under `photos/` are kept; any
 other URL is refused with a 400. The file name keeps the URL's crop mark (`?crop=…`), so a Square Thumbnail remade from
 a new crop is downloaded again rather than shown stale.
 

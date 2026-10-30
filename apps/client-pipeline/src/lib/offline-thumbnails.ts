@@ -1,7 +1,7 @@
 import { squareThumbnailUrl, thumbnailPreviewUrl } from "@/api/versions";
 
 /**
- * The address of a Square Thumbnail, Thumbnail Preview or Small version in the backend's offline
+ * The address of a Square Thumbnail, Thumbnail Preview, Small or X-Small version in the backend's offline
  * copy: the backend serves it from disk, downloading it from R2 the first time, so it still shows
  * when the internet can't be reached.
  */
@@ -9,8 +9,11 @@ function offlineThumbnailUrl(url: string): string {
   return `/api/thumbnails?${new URLSearchParams({ url })}`;
 }
 
-/** The images the offline copy keeps: the Square Thumbnail, its Thumbnail Preview and the Small version. */
-const KEPT_OFFLINE = /-(?:thumbnail|thumbnailpreview|small)\.webp(?:\?.*)?$/;
+/**
+ * The images the offline copy keeps: the Square Thumbnail, its Thumbnail Preview, and the Small and
+ * X-Small versions.
+ */
+const KEPT_OFFLINE = /-(?:thumbnail|thumbnailpreview|small|xsmall)\.webp(?:\?.*)?$/;
 
 /** url from the offline copy when it's an image the copy keeps, or else url itself, straight from R2. */
 export function offlineImageUrl(url: string): string {
@@ -68,4 +71,12 @@ export function squareImages(
  */
 export function tileImageUrl(data: unknown): string | undefined {
   return offlineUrl(savedImageUrl(data, "thumbnail") ?? savedImageUrl(data, "small"));
+}
+
+/**
+ * A photo's X-Small version (250px on its long edge, in its own shape) from the offline copy, for the
+ * album layout preview; undefined when its JSON saves none.
+ */
+export function offlineXSmallUrl(data: unknown): string | undefined {
+  return offlineUrl(savedImageUrl(data, "xsmall"));
 }
