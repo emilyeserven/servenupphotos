@@ -32,6 +32,9 @@ waiting and that Commit opens one. The sync button counts them with the rest.
 asking (`DELETE /api/photos/pending`, body `{}` for all or `{"paths": [...]}`). GitHub and R2 aren't touched, so
 uploaded images stay in R2 for Explore Bucket.
 
+The sync button's panel can also export them, with the browser-only edits, as a JSON file and import one back, and
+the browser keeps a copy of them once the pipeline has been offline (see [Offline mode](offline-mode.md#in-flight-work-in-the-browser)).
+
 > **Frontend analogy:** the backend is the source of truth, like a server-side draft in a CMS. The app's store is a
 > cache of it (an optimistic one), refilled from the status call on load, the same way TanStack Query hydrates from a
 > loader.

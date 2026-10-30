@@ -2,6 +2,7 @@ import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { combinedStatusQuery, discardPending } from "@/api/photos";
 import { useCombinedDataStore } from "@/stores/combined-data";
+import { useInFlightBackupStore } from "@/stores/in-flight-backup";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 function plural(count: number, one: string): string {
@@ -21,6 +22,14 @@ function question(localEdits: number, savedFiles: number): string {
 async function discardSaved(queryClient: QueryClient) {
   await discardPending();
   useCombinedDataStore.getState().discarded();
+  await rereadPending(queryClient);
+}
+
+/**
+ * Has every page read its data again after the changes waiting for Commit changed other than by a
+ * save, such as a discard or a restore from a backup.
+ */
+export async function rereadPending(queryClient: QueryClient) {
   await queryClient.invalidateQueries({ queryKey: combinedStatusQuery.queryKey });
   for (const area of ["photos", "publish", "data", "organize", "places"]) {
     void queryClient.invalidateQueries({ queryKey: [area] });
@@ -45,6 +54,8 @@ export function DiscardButton({
   const discard = async () => {
     if (!window.confirm(question(localEdits, savedFiles))) return;
     discardEdits();
+    // Discarded for good, so the browser's copy goes too.
+    useInFlightBackupStore.getState().clear();
     if (savedFiles === 0) return;
     await discardSaved(queryClient).catch((e: unknown) => setError(String(e)));
   };

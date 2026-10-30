@@ -2,6 +2,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet, useLocation } from "@tanstack/react-router";
 import type * as React from "react";
 import { AppSidebar, navGroups } from "@/components/app-sidebar";
+import { InFlightBackupKeeper } from "@/components/in-flight-backup-keeper";
 import { CombinedDataSync } from "@/components/combined-data-sync";
 import { SyncStatus } from "@/components/sync-status";
 import {
@@ -50,6 +51,7 @@ function RootLayout() {
         style={{ "--sidebar-width": "13rem" } as React.CSSProperties}
       >
         <CombinedDataSync />
+        <InFlightBackupKeeper />
         <SyncStatus />
         <AppSidebar />
         {/* min-w-0 lets wide content, like a table, scroll inside the page instead of widening it. */}

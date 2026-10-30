@@ -897,6 +897,16 @@ export function defaultFixtures() {
     "PUT /api/organize/spotlight/homepage": { ...pendingSave(), files: 2 },
     "POST /api/photos/groups": ({ body }) => ({ ...pendingSave(), files: body?.paths?.length }),
     "DELETE /api/photos/pending": { discarded: 1 },
+    "GET /api/photos/pending": {
+      version: 1,
+      repo: REPO,
+      exported: "2026-10-30T06:44:08Z",
+      files: [],
+    },
+    "POST /api/photos/pending": ({ body }) => ({
+      restored: body?.files?.length ?? 0,
+      unchanged: 0,
+    }),
     "POST /api/photos/combined": () => ({
       changed: true,
       commitSha: "c0mb1ned",

@@ -34,3 +34,31 @@ func TestDiscardPending(t *testing.T) {
 		t.Errorf("status = %d, body %s; want nothing discarded", rec.Code, rec.Body)
 	}
 }
+
+func TestExportAndImportPending(t *testing.T) {
+	store := settings.NewStore(filepath.Join(t.TempDir(), "settings.json"))
+	router := NewRouter(nil, store)
+	send := func(method, body string) *httptest.ResponseRecorder {
+		req := httptest.NewRequestWithContext(t.Context(), method, "/photos/pending", strings.NewReader(body))
+		rec := httptest.NewRecorder()
+		router.ServeHTTP(rec, req)
+		return rec
+	}
+	if _, err := store.UpdateGitHub(settings.GitHubUpdate{Repo: "owner/repo"}); err != nil {
+		t.Fatal(err)
+	}
+	// Exporting reads only what's kept, so no token or GitHub is needed.
+	if rec := send(http.MethodGet, ""); rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"repo":"owner/repo"`) || !strings.Contains(rec.Body.String(), `"files":[]`) {
+		t.Errorf("export: status = %d, body %s; want an empty backup of owner/repo", rec.Code, rec.Body)
+	}
+	tests := map[string]string{
+		"not json":           "{nope",
+		"another repository": `{"version":1,"repo":"someone/else","files":[]}`,
+		"a newer version":    `{"version":99,"repo":"owner/repo","files":[]}`,
+	}
+	for name, body := range tests {
+		if rec := send(http.MethodPost, body); rec.Code != http.StatusBadRequest {
+			t.Errorf("import %s: status = %d, body %s; want 400", name, rec.Code, rec.Body)
+		}
+	}
+}

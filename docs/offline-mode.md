@@ -42,3 +42,33 @@ can't be searched, they get the images found the last time it could be from `off
 and full-size images still need the internet.
 
 Deleting the `offline` folder only costs the next start a full download of the thumbnails.
+
+## In-flight work in the browser
+
+The backend keeps the changes waiting for Commit in `pending-changes.json`, which survives a restart. Once the
+pipeline has been offline (the browser reported `offline`, or a page got the **Offline** notice), the app also keeps a
+copy of all the in-flight work in `localStorage` (`pipeline-in-flight-backup`): the backend's changes, read from
+`GET /api/photos/pending` (→ `GET /photos/pending`, which reads nothing from GitHub), and the browser-only
+[local edits](combined-data-store.md#local-edits). It copies them when the app starts, after every save and edit, and
+after a Commit. A copy with changes is never replaced by an empty one, so a backend that lost its volume can't wipe it;
+once a Commit leaves nothing waiting while online, the copy is dropped and the app stops keeping one until the next
+time it's offline. **Discard** drops it too.
+
+> **Frontend analogy:** it's a `persist`ed Zustand store mirroring a server resource, like an offline-first app keeping
+> its outbox in IndexedDB until the server confirms it.
+
+### Export and Import
+
+The sync button's panel has an **In-flight work** row:
+
+- **Export** downloads everything waiting for Commit and the browser-only edits as one JSON file named with the time,
+  such as `in-flight-work-2026-10-30T06-44-08Z.json`: `{ version, repo, exported, files: [{ path, data | deleted,
+  saved }], localEdits }`.
+- **Import** loads such a file back, after asking (`POST /api/photos/pending` → `POST /photos/pending` with the file).
+  Each file becomes a change waiting for Commit, as a save would make it: formatted like the app formats data files,
+  replacing any change waiting for the same file, and dropped when the pull request's head already has it. A file
+  outside the data folders, a combined list such as `ALLPHOTOS.json`, data that isn't JSON, a backup of another
+  repository or of a newer version is refused, and then nothing is kept. Its browser-only edits are added over any of
+  the same photos.
+- **Kept in this browser while offline** shows the browser's copy, when it has changes, with **Restore** (the same as
+  Import) and **Download**.
