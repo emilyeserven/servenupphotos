@@ -27,7 +27,7 @@ function placeGps(place: Place): string {
 }
 
 /** A place as the prompt describes it: its name, where it is, and its GPS position. */
-function describePlace(place: Place): string {
+export function describePlace(place: Place): string {
   const where = [...new Set([place.city, place.state, place.country].filter(Boolean))].join(", ");
   return [place.name || place.id, where && `in ${where}`, placeGps(place)]
     .filter(Boolean)
@@ -72,9 +72,20 @@ export function knownLines({ details, exif, places }: LocationClues): string[] {
 }
 
 /** lines as the prompt lists them, or `none` when there are none. */
-function listed(lines: string[], none: string): string {
+export function listed(lines: string[], none: string): string {
   return lines.length > 0 ? lines.join("\n") : none;
 }
+
+/** The rules for naming a place, which every location prompt gives. */
+export const PLACE_NAME_RULES = `- Write names as they're usually written in English, such as "Gyeongbokgung Palace", "Seoul" and "South Korea".
+- Leave a name empty ("") rather than guess.
+- "relation" is how the photo relates to the place, one of: ${RELATIONS.join(", ")}; or "" for none.`;
+
+/** The rules for the GPS position, how sure the LLM is, and why, which every location prompt gives. */
+export const POSITION_RULES = `- "latitude" and "longitude" are in decimal degrees, where the photo was taken from. Give your best estimate even when you've only inferred the place or the area, such as the middle of the place, and set "exact" to false; use null only when you can't tell even roughly.
+- "exact" is true only when that GPS position is where the photo was taken from to within about 50 meters, not just somewhere in the area.
+- "confidence" is "high", "medium" or "low".
+- "reasoning" is one or two sentences on what in the photo, or in what's known, gives the location away.`;
 
 /** The prompt to paste into a chat with an LLM, asking where the photo at `imageUrl` was taken. */
 export function locationPrompt(imageUrl: string, clues: LocationClues): string {
@@ -89,13 +100,8 @@ ${listed(knownLines(clues), "- Nothing yet.")}
 Rules:
 - Trust what's already known unless the photo clearly contradicts it, and say so in "reasoning" when it does.
 - Name the most specific place you can recognize, such as a building, temple, park, station, bridge or viewpoint. If it's one of the existing places listed below, spell it exactly as it's listed.
-- Write names as they're usually written in English, such as "Gyeongbokgung Palace", "Seoul" and "South Korea".
-- Leave a name empty ("") rather than guess.
-- "relation" is how the photo relates to the place, one of: ${RELATIONS.join(", ")}; or "" for none.
-- "latitude" and "longitude" are in decimal degrees, where the photo was taken from. Give your best estimate even when you've only inferred the place or the area, such as the middle of the place, and set "exact" to false; use null only when you can't tell even roughly.
-- "exact" is true only when that GPS position is where the photo was taken from to within about 50 meters, not just somewhere in the area.
-- "confidence" is "high", "medium" or "low".
-- "reasoning" is one or two sentences on what in the photo, or in what's known, gives the location away.
+${PLACE_NAME_RULES}
+${POSITION_RULES}
 - Answer with only one JSON object in this shape, with nothing before or after it:
 
 {"place": "", "relation": "", "city": "", "state": "", "country": "", "latitude": null, "longitude": null, "exact": false, "confidence": "", "reasoning": ""}
@@ -121,7 +127,7 @@ export interface PastedLocation {
 }
 
 /** The JSON object in the answer, from its first { to its last }, which skips a code fence or words around it. */
-function jsonObject(text: string): Record<string, unknown> | null {
+export function jsonObject(text: string): Record<string, unknown> | null {
   const json = text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
   try {
     const value: unknown = JSON.parse(json);
@@ -133,7 +139,8 @@ function jsonObject(text: string): Record<string, unknown> | null {
   }
 }
 
-function str(value: unknown): string {
+/** value trimmed when it's text, or else "". */
+export function str(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
@@ -164,7 +171,11 @@ function answerRelation(value: unknown): string {
 /** The location in the LLM's answer, or null when it has no JSON object to read. */
 export function parseLocationAnswer(text: string): PastedLocation | null {
   const answer = jsonObject(text);
-  if (!answer) return null;
+  return answer && readLocation(answer);
+}
+
+/** The location in one JSON object of an LLM's answer, with "" for each field it leaves out. */
+export function readLocation(answer: Record<string, unknown>): PastedLocation {
   return {
     place: str(answer.place),
     relation: answerRelation(answer.relation),

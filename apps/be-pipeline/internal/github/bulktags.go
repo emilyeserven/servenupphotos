@@ -84,7 +84,9 @@ func readBulkPhoto(f photoFile) bulkPhoto {
 		date:    firstText(data.CustomCreateDate, data.CreateDate),
 	}
 	for _, place := range data.Places {
-		p.places = append(p.places, place.ID)
+		if place.ID != "" {
+			p.places = append(p.places, place.ID)
+		}
 	}
 	return p
 }
@@ -211,21 +213,30 @@ func untaggedPhotos(scan baseURLScan, skip []string) (BulkTagPick, []bulkPhoto) 
 	if scan.pr != nil {
 		pick.PullRequest = &BaseURLPullRequest{Number: scan.pr.Number, URL: scan.pr.HTMLURL}
 	}
+	photos, untagged := photosWhere(scan, skip, func(p bulkPhoto) bool { return len(p.tags) == 0 })
+	pick.Untagged = untagged
+	return pick, photos
+}
+
+// photosWhere is scan's readable photo files that want keeps, leaving out
+// skip's paths, and how many want keeps in all.
+func photosWhere(scan baseURLScan, skip []string, want func(bulkPhoto) bool) ([]bulkPhoto, int) {
 	var photos []bulkPhoto
+	wanted := 0
 	for _, f := range scan.files {
 		if f.err != "" {
 			continue
 		}
 		p := readBulkPhoto(f)
-		if len(p.tags) > 0 {
+		if !want(p) {
 			continue
 		}
-		pick.Untagged++
+		wanted++
 		if !slices.Contains(skip, f.path) {
 			photos = append(photos, p)
 		}
 	}
-	return pick, photos
+	return photos, wanted
 }
 
 // pickFirst is the first count photos in photos by path, one per name.

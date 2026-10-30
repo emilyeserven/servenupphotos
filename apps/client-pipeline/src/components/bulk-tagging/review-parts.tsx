@@ -1,4 +1,5 @@
 import {
+  type QueryKey,
   type UseMutationOptions,
   type UseMutationResult,
   useMutation,
@@ -16,16 +17,20 @@ import {
 } from "@/components/update-data-shared";
 import { photoTagKey } from "@/lib/bulk-tags";
 
-/** A save of a reviewed answer that refreshes the photo reads and the albums, tags and genres once it's done. */
+/**
+ * A save of a reviewed answer that refreshes the photo reads and `refresh` once it's done: the
+ * albums, tags and genres unless it says otherwise, such as the places.
+ */
 export function useReviewedSave<TData, TVariables>(
   options: UseMutationOptions<TData, Error, TVariables>,
+  refresh: QueryKey = organizeQuery.queryKey,
 ) {
   const queryClient = useQueryClient();
   return useMutation({
     ...options,
     onSuccess: () => {
       invalidatePhotoReads(queryClient);
-      void queryClient.invalidateQueries({ queryKey: organizeQuery.queryKey });
+      void queryClient.invalidateQueries({ queryKey: refresh });
     },
   });
 }

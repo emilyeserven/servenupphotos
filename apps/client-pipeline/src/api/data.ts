@@ -232,8 +232,8 @@ interface LocationNamesResult extends PendingSave {
   fields: number;
 }
 
-/** The photo and place files a location names save changed, as changes over the combined lists. */
-function locationChanges(result: LocationNamesResult) {
+/** The photo and place files a save changed, such as Location names', as changes over the combined lists. */
+export function locationChanges(result: PendingSave) {
   return result.changes.map((change) => ({
     kind: change.path.includes("/places/") ? ("places" as const) : ("photos" as const),
     ...change,

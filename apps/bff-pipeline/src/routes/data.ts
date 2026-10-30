@@ -23,6 +23,8 @@ export const dataRoutes: FastifyPluginAsync = async (app) => {
     "/data/bulk-tags/pick",
     "/data/bulk-tags/preview",
     "/data/bulk-tags",
+    "/data/bulk-places/pick",
+    "/data/bulk-places",
     "/data/prune-tags/preview",
     "/data/prune-tags",
     "/data/genre-suggestions/pick",

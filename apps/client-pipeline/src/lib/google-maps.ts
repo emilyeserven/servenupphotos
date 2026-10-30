@@ -31,3 +31,31 @@ export function googleMapsUrl({ latitude, longitude }: LatLng): string {
   const query = `${latitude.toFixed(6)},${longitude.toFixed(6)}`;
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
+
+/** Whether the country is South Korea, where Naver Map shows much more than Google Maps does. */
+function isSouthKorea(country: string): boolean {
+  return /korea|대한민국|한국/i.test(country) && !/north|dprk|조선/i.test(country);
+}
+
+/** A link to search a map for a place. */
+export interface MapSearch {
+  label: string;
+  url: string;
+}
+
+/**
+ * A map searching for the place by its name and where it is: Naver Map in South Korea
+ * (`https://map.naver.com/p/search/…`), or else Google Maps, see
+ * https://developers.google.com/maps/documentation/urls/get-started#search-action
+ */
+export function placeSearch(name: string, city: string, country: string): MapSearch {
+  const query = [name, city, country].filter(Boolean).join(", ");
+  if (isSouthKorea(country)) {
+    const url = `https://map.naver.com/p/search/${encodeURIComponent([name, city].filter(Boolean).join(" "))}`;
+    return { label: "Search Naver Map", url };
+  }
+  return {
+    label: "Search Google Maps",
+    url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+  };
+}
