@@ -9,6 +9,7 @@ import {
 } from "@/api/organize";
 import { AlbumImportDialog } from "@/components/album-layout/album-import-dialog";
 import { CoverPicker } from "@/components/album-layout/cover-picker";
+import { LayoutPreview } from "@/components/album-layout/layout-preview";
 import { LayoutRows } from "@/components/album-layout/layout-rows";
 import { useGroupPhotos } from "@/components/group-photo-grid";
 import { Button } from "@/components/ui/button";
@@ -68,25 +69,28 @@ export function AlbumLayoutCard({ album, albums }: { album: Group; albums: Group
           <AlbumImportDialog album={album} inAlbum={pool.ids} onImport={edit} />
         </CardAction>
       </CardHeader>
-      <CardContent className="flex flex-col gap-6 text-sm">
-        <CoverPicker
-          covers={draft.covers}
-          photos={pool.photos}
-          byId={pool.byId}
-          onChange={(covers) => edit({ ...draft, covers })}
-        />
-        <LayoutRows
-          layout={draft.layout}
-          photos={pool.photos}
-          byId={pool.byId}
-          onChange={(layout) => edit({ ...draft, layout })}
-        />
-        <LayoutSaveBar
-          album={album}
-          draft={draft}
-          save={save}
-          onUndo={() => edit(savedLayout(album))}
-        />
+      <CardContent className="grid gap-6 text-sm lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="flex min-w-0 flex-col gap-6">
+          <CoverPicker
+            covers={draft.covers}
+            photos={pool.photos}
+            byId={pool.byId}
+            onChange={(covers) => edit({ ...draft, covers })}
+          />
+          <LayoutRows
+            layout={draft.layout}
+            photos={pool.photos}
+            byId={pool.byId}
+            onChange={(layout) => edit({ ...draft, layout })}
+          />
+          <LayoutSaveBar
+            album={album}
+            draft={draft}
+            save={save}
+            onUndo={() => edit(savedLayout(album))}
+          />
+        </div>
+        <LayoutPreview draft={draft} photos={pool.photos} byId={pool.byId} />
       </CardContent>
     </Card>
   );

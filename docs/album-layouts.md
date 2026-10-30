@@ -22,6 +22,18 @@ can't be saved. Empty lists put the album back to its first 5 photos and one pho
 > holding references to media by ID rather than the media itself, so a photo's own data can change without touching
 > the layout.
 
+## Preview
+
+Right of the editor (under it on a narrow screen), **Preview** draws what's in the editor as the portfolio will show
+it, as you type: the Albums page's strip of covers (or the first 5 photos), then each row's text and photos at their
+own shapes, then the first few photos no row has. It draws each photo from its X-Small version (250px on its long
+edge) through the backend's [offline copy](offline-mode.md) (`GET /api/thumbnails`), so a photo it has shown once
+shows again without the internet. **Keep offline** downloads the X-Small version of every photo the album's layout can
+use into the offline copy, four at a time, and says how many it kept, so the whole preview works offline.
+
+> **Frontend analogy:** like a CMS's live preview pane bound to the same form state as the editor, with its images
+> pre-cached the way a PWA precaches assets for offline use.
+
 ## The schema
 
 Both fields sit at the top level of `albums/<id>.json`, next to `id`, `name`, `description` and the rest

@@ -39,3 +39,11 @@ export function squareImages(
   if (!square) return undefined;
   return { square, preview: offlineUrl(pickedUrl(data, imageUrl, "thumbnailpreview")) };
 }
+
+/**
+ * A photo's X-Small version (250px on its long edge, in its own shape) from the offline copy, for the
+ * album layout preview; undefined when its JSON saves none.
+ */
+export function offlineXSmallUrl(data: unknown): string | undefined {
+  return offlineUrl(savedImageUrl(data, "xsmall"));
+}
