@@ -11,6 +11,7 @@ import { ReapplyOverridesCard } from "@/components/reapply-overrides";
 import { Page } from "@/components/page";
 import { PhotoColorsCard } from "@/components/photo-colors-card";
 import { QueryResult } from "@/components/query-result";
+import { TagDescriptionsCard } from "@/components/tag-descriptions/tag-descriptions-card";
 
 export const Route = createFileRoute("/update-data")({
   component: UpdateDataPage,
@@ -35,6 +36,7 @@ function UpdateDataPage() {
               <ReapplyOverridesCard />
               <LocationNamesCard />
               <BulkTaggingCard />
+              <TagDescriptionsCard />
               <LocalizationFillCard />
               <GenreSuggestionsCard />
             </>

@@ -798,6 +798,10 @@ export function defaultFixtures() {
     }),
     "PUT /api/organize/albums/homepage-spotlight/photo-order": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
+    "PUT /api/organize/tags/descriptions": ({ body }) => ({
+      ...pendingSave(),
+      files: Object.keys(body?.descriptions ?? {}).length,
+    }),
     "PUT /api/organize/spotlight/homepage": { ...pendingSave(), files: 2 },
     "POST /api/photos/groups": ({ body }) => ({ ...pendingSave(), files: body?.paths?.length }),
     "DELETE /api/photos/pending": { discarded: 1 },
