@@ -70,6 +70,31 @@ func handleBulkTags[T any](store *settings.Store, kind, failure string, run func
 	}
 }
 
+// pruneTagAnswer is the body of a Tag pruning preview: the LLM's pasted
+// answer.
+type pruneTagAnswer struct {
+	Answer string `json:"answer"`
+}
+
+// handlePreviewPruneTags reads the LLM's pasted answer suggesting tags to
+// merge, remove and put under others, and says what each would do, without
+// saving anything.
+func handlePreviewPruneTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "tag pruning answer", "could not read the answer",
+		func(ctx context.Context, cfg settings.GitHub, req pruneTagAnswer) (any, error) {
+			return gh.PreviewPruneTags(ctx, cfg, req.Answer)
+		})
+}
+
+// handleApplyPruneTags merges, removes and reparents the reviewed tags, as
+// changes waiting for Commit.
+func handleApplyPruneTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "tag pruning", "could not change the tags",
+		func(ctx context.Context, cfg settings.GitHub, req github.PruneTags) (any, error) {
+			return gh.ApplyPruneTags(ctx, cfg, req)
+		})
+}
+
 // handlePickGenrePhotos picks up to the asked number of photos without
 // genres for Genre Suggestions, leaving out the photos already shown.
 func handlePickGenrePhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {

@@ -104,8 +104,8 @@ export const previewBulkTagsMutation = mutationOptions({
     post<BulkTagsPreview>("/api/data/bulk-tags/preview", body),
 });
 
-/** The tag and photo files a Bulk Tagging save changed, as changes over the combined lists. */
-function bulkTagChanges(result: BulkTagsResult) {
+/** The tag and photo files a Bulk Tagging or Tag pruning save changed, as changes over the combined lists. */
+export function bulkTagChanges(result: PendingSave) {
   return result.changes.map((change) => ({
     kind: change.path.includes("/tags/") ? ("tags" as const) : ("photos" as const),
     ...change,
