@@ -17,6 +17,7 @@ import {
   setGroupParentMutation,
 } from "@/api/organize";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { AlbumLayoutCard } from "@/components/album-layout/album-layout-card";
 import { AlbumPhotoReorder } from "@/components/album-photo-reorder";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { type GroupPhotos, GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
@@ -106,6 +107,17 @@ interface GroupDetailProps {
 }
 
 function GroupDetail({ kind, group, organize }: GroupDetailProps) {
+  return (
+    <>
+      <GroupColumns kind={kind} group={group} organize={organize} />
+      {kind === "albums" && !group.error && (
+        <AlbumLayoutCard album={group} albums={organize.albums} />
+      )}
+    </>
+  );
+}
+
+function GroupColumns({ kind, group, organize }: GroupDetailProps) {
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <div className="flex min-w-0 flex-col gap-6">

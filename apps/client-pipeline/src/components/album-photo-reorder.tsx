@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeftIcon, ArrowRightIcon, GripVerticalIcon, ImageOffIcon } from "lucide-react";
+import { GripVerticalIcon, ImageOffIcon } from "lucide-react";
 import { type DragEvent, useState } from "react";
 import { type Group, organizeQuery, setAlbumPhotoOrderMutation } from "@/api/organize";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
+import { MoveArrows } from "@/components/move-arrows";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { albumPhotoOrder, moved, photoId, savedPhotoOrder } from "@/lib/album-photo-order";
@@ -128,24 +129,7 @@ function ReorderTile({ photo, place, last, dragging, onMove, drag }: ReorderTile
         <span className="min-w-0 flex-1 truncate text-xs" title={name}>
           {name}
         </span>
-        <Button
-          size="icon-xs"
-          variant="ghost"
-          aria-label={`Move ${name} earlier`}
-          disabled={place === 0}
-          onClick={() => onMove(place, place - 1)}
-        >
-          <ArrowLeftIcon aria-hidden />
-        </Button>
-        <Button
-          size="icon-xs"
-          variant="ghost"
-          aria-label={`Move ${name} later`}
-          disabled={last}
-          onClick={() => onMove(place, place + 1)}
-        >
-          <ArrowRightIcon aria-hidden />
-        </Button>
+        <MoveArrows name={name} place={place} last={last} onMove={onMove} />
       </div>
     </li>
   );

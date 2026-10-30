@@ -22,6 +22,26 @@ export interface Group {
    * page; missing or empty for the default order. Photos it leaves out come after the ones it lists.
    */
   photoOrder?: number[];
+  /**
+   * For an album, the IDs of up to 5 photos that stand for it on the Albums page, in order; missing
+   * or empty for its first 5 photos.
+   */
+  covers?: number[];
+  /**
+   * For an album, its rows of photos with Markdown text above and below each, as its page shows
+   * them; missing or empty for one photo after another.
+   */
+  layout?: AlbumRow[];
+}
+
+/** One row of an album's layout: Markdown text above, its photos side by side, and text below. */
+export interface AlbumRow {
+  /** Markdown shown above the row's photos; "" for none. */
+  textAbove: string;
+  /** The IDs of the row's photos, left to right; empty for a row that's only text. */
+  photos: number[];
+  /** Markdown shown below the row's photos; "" for none. */
+  textBelow: string;
 }
 
 /** Ranks an album without a place in the order after every album with one. */

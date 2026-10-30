@@ -44,6 +44,16 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
     ),
   );
 
+  // Saves an album's cover photos and its rows of photos and text, as a change waiting for Commit.
+  app.put<{ Params: { id: string } }>("/organize/albums/:id/layout", async (request, reply) =>
+    relayToBackend(
+      reply,
+      app.log,
+      `/organize/albums/${encodeURIComponent(request.params.id)}/layout`,
+      jsonBody("PUT", request.body),
+    ),
+  );
+
   // Names every tag in lowercase kebab-case, its ID, as changes waiting for Commit.
   app.put("/organize/tags/names", async (request, reply) =>
     relayToBackend(reply, app.log, "/organize/tags/names", jsonBody("PUT", request.body ?? {})),

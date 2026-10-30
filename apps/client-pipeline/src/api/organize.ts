@@ -36,12 +36,32 @@ export interface Group {
    * empty for the default order. Photos it leaves out come after the ones it lists.
    */
   photoOrder?: number[];
+  /**
+   * The IDs of up to 5 photos that stand for an album on the portfolio's Albums page; absent or
+   * empty for its first 5 photos.
+   */
+  covers?: number[];
+  /**
+   * An album's rows of photos, each with Markdown text above and below it, as its portfolio page
+   * shows them; absent or empty for one photo after another.
+   */
+  layout?: AlbumRow[];
   path: string;
   fileUrl: string;
   /** True when it's only in the photo data pull request, not merged yet. */
   inFlight: boolean;
   /** Why the file couldn't be read; `id` is then its file name. */
   error?: string;
+}
+
+/** One row of an album's layout: Markdown text above, up to 4 photos side by side, and text below. */
+export interface AlbumRow {
+  /** Markdown shown above the row's photos; empty for none. */
+  textAbove: string;
+  /** The IDs of the row's photos, left to right; empty for a row that's only text. */
+  photos: number[];
+  /** Markdown shown below the row's photos; empty for none. */
+  textBelow: string;
 }
 
 /** Every album, tag and genre on the base branch and in the open photo data pull request. */
@@ -220,6 +240,18 @@ export const setAlbumPhotoOrderMutation = albumsMutation(
   ({ id }: { id: string; photoIds: number[] }) =>
     `/api/organize/albums/${encodeURIComponent(id)}/photo-order`,
   ({ photoIds }) => ({ photoIds }),
+);
+
+/**
+ * Saves the album's `covers` and `layout`, its cover photos and its rows of photos and text, as a
+ * change waiting for Commit. Empty lists put it back to its first 5 photos and one photo after
+ * another.
+ */
+export const setAlbumLayoutMutation = albumsMutation(
+  "layout",
+  ({ id }: { id: string; covers: number[]; layout: AlbumRow[] }) =>
+    `/api/organize/albums/${encodeURIComponent(id)}/layout`,
+  ({ covers, layout }) => ({ covers, layout }),
 );
 
 /** The mutation options that PUT `body` to `/api/organize/tags/<key>` and save the tag files it changes. */
