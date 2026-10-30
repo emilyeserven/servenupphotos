@@ -540,6 +540,54 @@ function genreSuggestionsPreview() {
   };
 }
 
+/** The photos Album Suggestions picks: Bulk Tagging's pick, as photos without an album. */
+function albumPick(count = 5) {
+  const { untagged, photos, ...rest } = bulkTagPick(count);
+  const related = ["same tag: lanterns", "same city: kyoto", "taken the same day"];
+  return {
+    ...rest,
+    withoutAlbum: untagged + 7,
+    photos: photos.map((photo, i) => ({ ...photo, related: i === 0 ? [] : related.slice(i % 2) })),
+  };
+}
+
+/** What reading a pasted Album Suggestions answer finds for the picked photos. */
+function albumSuggestionsPreview() {
+  const paths = albumPick().photos.map((photo) => photo.path);
+  return {
+    albums: [
+      {
+        id: "kyoto-lantern-nights",
+        name: "Kyoto Lantern Nights",
+        description: "Lanterns and lit-up streets after dark in Kyoto.",
+        parent: "test",
+        new: true,
+        photos: paths.slice(0, 3),
+        reason: "",
+      },
+      {
+        id: "homepage-spotlight",
+        name: "Homepage Spotlight",
+        description: "",
+        parent: "",
+        new: false,
+        photos: paths.slice(3),
+        reason: "",
+      },
+      {
+        id: "",
+        name: "Street",
+        description: "",
+        parent: "",
+        new: false,
+        photos: [],
+        reason: "a genre has that name",
+      },
+    ],
+    unknown: [],
+  };
+}
+
 const secret = { set: true, last4: "a1b2" };
 
 /** The default answers: everything set up, and one photo data pull request open. */
@@ -688,6 +736,9 @@ export function defaultFixtures() {
     "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count),
     "POST /api/data/genre-suggestions/preview": () => genreSuggestionsPreview(),
     "POST /api/data/genre-suggestions": () => ({ ...pendingSave(), newGenres: 1, photos: 6 }),
+    "POST /api/data/album-suggestions/pick": ({ body }) => albumPick(body?.count),
+    "POST /api/data/album-suggestions/preview": () => albumSuggestionsPreview(),
+    "POST /api/data/album-suggestions": () => ({ ...pendingSave(), newAlbums: 1, photos: 5 }),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,

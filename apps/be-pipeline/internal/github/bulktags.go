@@ -57,6 +57,7 @@ type BulkTagPick struct {
 type bulkPhoto struct {
 	file    photoFile
 	name    string
+	albums  []string
 	tags    []string
 	genres  []string
 	places  []string
@@ -69,7 +70,7 @@ type bulkPhoto struct {
 // readBulkPhoto reads what Bulk Tagging compares from f, a readable photo file.
 func readBulkPhoto(f photoFile) bulkPhoto {
 	var data struct {
-		Tags, Genres                 []string
+		Albums, Tags, Genres         []string
 		Places                       []struct{ ID string }
 		City, CustomCity             *string
 		Country, CustomCountry       *string
@@ -77,7 +78,7 @@ func readBulkPhoto(f photoFile) bulkPhoto {
 	}
 	_ = json.Unmarshal(f.content, &data)
 	p := bulkPhoto{
-		file: f, name: strings.TrimSuffix(path.Base(f.path), path.Ext(f.path)), tags: data.Tags, genres: data.Genres,
+		file: f, name: strings.TrimSuffix(path.Base(f.path), path.Ext(f.path)), albums: data.Albums, tags: data.Tags, genres: data.Genres,
 		city:    strings.ToLower(firstText(data.CustomCity, data.City)),
 		country: strings.ToLower(firstText(data.CustomCountry, data.Country)),
 		date:    firstText(data.CustomCreateDate, data.CreateDate),
@@ -197,7 +198,7 @@ func (c *Client) PickBulkTagPhotos(ctx context.Context, gh settings.GitHub, opts
 	if opts.Any {
 		pick.Photos = pickFirst(photos, bulkTagCount(opts.Count))
 	} else {
-		pick.Photos = pickRelated(photos, bulkTagCount(opts.Count))
+		pick.Photos = pickRelated(photos, bulkTagCount(opts.Count), relate)
 	}
 	return pick, nil
 }
@@ -245,7 +246,7 @@ func pickFirst(photos []bulkPhoto, count int) []BulkTagPhoto {
 
 // pickRelated is the first photo in photos by path, then the ones most like
 // it, count in all at most.
-func pickRelated(photos []bulkPhoto, count int) []BulkTagPhoto {
+func pickRelated(photos []bulkPhoto, count int, rate func(seed, other bulkPhoto) relation) []BulkTagPhoto {
 	seed := slices.MinFunc(photos, func(a, b bulkPhoto) int {
 		return cmp.Compare(a.file.path, b.file.path)
 	})
@@ -255,7 +256,7 @@ func pickRelated(photos []bulkPhoto, count int) []BulkTagPhoto {
 	}
 	var others []ranked
 	for _, p := range photos {
-		if rel := relate(seed, p); p.file.path != seed.file.path && p.name != seed.name && rel.score > 0 {
+		if rel := rate(seed, p); p.file.path != seed.file.path && p.name != seed.name && rel.score > 0 {
 			others = append(others, ranked{p, rel})
 		}
 	}
