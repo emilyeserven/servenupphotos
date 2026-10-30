@@ -43,6 +43,9 @@ names, whichever way they're shown. A name listed in another one's **Other names
 counts as that one (`mainName` in `lib/localize.ts`), so photos whose EXIF says "United States" are shown, listed and
 filtered as the United States of America.
 
+On the Map, **Places** doesn't filter: picking one moves the map to it instead (see
+[Portfolio Map](portfolio-map.md)).
+
 ## Chosen photos
 
 The map's **View in grid** can open the Grid on photos chosen one by one (`?ids=[316,317,319]`) when no places cover

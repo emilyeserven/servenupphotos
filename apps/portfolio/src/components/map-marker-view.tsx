@@ -1,7 +1,7 @@
 import { Marker, useMap } from "@vis.gl/react-maplibre";
 import { type CSSProperties, type MouseEvent, useEffect, useState } from "react";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
-import { type MapDisplay, PIN_PIXELS } from "@/lib/map-display";
+import { type GroupPhotos, type MapDisplay, PIN_PIXELS } from "@/lib/map-display";
 import { type MapMarker, photosInCluster } from "@/lib/map-markers";
 import type { PlacedPhoto } from "@/lib/map-photos";
 import { useTurn } from "@/lib/use-turn";
@@ -109,29 +109,43 @@ interface ClusterLook {
   approximate: boolean;
 }
 
-/** The newest thumbnails of a cluster, newest first, and whether all its photos are approximate. */
-function clusterLook(clusterPhotos: PlacedPhoto[]): ClusterLook {
+/** When the photo was added to the portfolio, with ones from before that was kept as the oldest. */
+function addedTime(photo: PlacedPhoto): number {
+  return photo.addedAt?.getTime() ?? -Infinity;
+}
+
+/** How a cluster's photos are put newest first, by when they were added or when they were taken. */
+const NEWEST_FIRST: Record<GroupPhotos, (a: PlacedPhoto, b: PlacedPhoto) => number> = {
+  added: (a, b) => addedTime(b) - addedTime(a) || b.takenAt.getTime() - a.takenAt.getTime(),
+  taken: (a, b) => b.takenAt.getTime() - a.takenAt.getTime(),
+};
+
+/**
+ * The newest thumbnails of a cluster, newest first by when they were added or taken as `order`
+ * says, and whether all its photos are approximate.
+ */
+function clusterLook(clusterPhotos: PlacedPhoto[], order: GroupPhotos): ClusterLook {
   const previews = clusterPhotos
+    .toSorted(NEWEST_FIRST[order])
     .flatMap(({ image }) => (image ? [image.thumbnail || image.small] : []))
-    .toReversed()
     .slice(0, CLUSTER_PREVIEWS);
   return { previews, approximate: clusterPhotos.every((photo) => photo.approximatePosition) };
 }
 
 /** How a cluster's marker looks, once its photos have been read from the map. */
-function useClusterLook(clusterId: number): ClusterLook {
+function useClusterLook(clusterId: number, order: GroupPhotos): ClusterLook {
   const { current: map } = useMap();
   const [look, setLook] = useState<ClusterLook>({ previews: [], approximate: false });
   useEffect(() => {
     if (!map) return;
     let current = true;
     void photosInCluster(map, clusterId).then((clusterPhotos) => {
-      if (current) setLook(clusterLook(clusterPhotos));
+      if (current) setLook(clusterLook(clusterPhotos, order));
     });
     return () => {
       current = false;
     };
-  }, [map, clusterId]);
+  }, [map, clusterId, order]);
   return look;
 }
 
@@ -151,7 +165,7 @@ function ClusterMarker({
   display: MapDisplay;
   onOpen: () => void;
 }) {
-  const { previews, approximate } = useClusterLook(clusterId);
+  const { previews, approximate } = useClusterLook(clusterId, display.groupPhotos);
   const { turn } = useTurn(previews.length, CLUSTER_PREVIEW_MS);
   return (
     <button
