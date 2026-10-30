@@ -18,6 +18,7 @@ import {
   whereText,
 } from "@/lib/bulk-places";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { tileImageUrl } from "@/lib/offline-thumbnails";
 
 /** The paths of the photos that start ticked: those with a place the LLM isn't unsure of. */
 function firstTicked(review: BulkPlacesReview): Set<string> {
@@ -112,7 +113,9 @@ function title(data: Record<string, unknown>): string {
 /** One photo with the place the answer gives it, and a checkbox to give it that place. */
 function PhotoPlaceRow(props: PhotoPlaceRowProps) {
   const { photo, place } = props.plan;
-  const image = promptImageUrl(photo.data.images as Record<string, unknown> | undefined, "");
+  const image =
+    tileImageUrl(photo.data) ??
+    promptImageUrl(photo.data.images as Record<string, unknown> | undefined, "");
   return (
     <li className="flex gap-3 rounded-md border p-3">
       <img src={image} alt="" className="bg-muted size-16 shrink-0 rounded object-cover" />

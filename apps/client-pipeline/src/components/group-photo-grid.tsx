@@ -11,7 +11,7 @@ import {
   photoText,
 } from "@/lib/group-photos";
 import { albumPhotoOrder } from "@/lib/album-photo-order";
-import { squareImages } from "@/lib/offline-thumbnails";
+import { squareImages, tileImageUrl } from "@/lib/offline-thumbnails";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** ALLPHOTOS.json from the combined data store, and its photos listing any of ids under kind. */
@@ -74,10 +74,10 @@ export function photoName(photo: CombinedPhoto): string {
 
 /**
  * The photo's Square Thumbnail from the offline copy, so it still shows without the internet, or
- * else its smallest version.
+ * else its Small version, from the offline copy too.
  */
 export function squareUrl(photo: CombinedPhoto): string | undefined {
-  return squareImages(photo)?.square ?? photoImage(photo, "small");
+  return squareImages(photo)?.square ?? tileImageUrl(photo);
 }
 
 /** The photo at the largest size worth opening in a lightbox. */

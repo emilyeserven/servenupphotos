@@ -1,7 +1,7 @@
-// Package offline keeps what the pipeline needs to show the Gallery, the
-// Undecided queue and drafts without the internet: each photo's Square
-// Thumbnail and Thumbnail Preview on disk (and the X-Small versions the album
-// layout preview has shown), and where each photo's image was
+// Package offline keeps what the pipeline needs to preview photos without the
+// internet: each photo's Square Thumbnail, Thumbnail Preview and Small
+// version on disk (and the X-Small versions the album layout preview has
+// shown), and where each photo's image was
 // found in R2 the last time R2 could be searched.
 package offline
 
@@ -27,8 +27,8 @@ import (
 type GetFunc func(ctx context.Context, cfg settings.R2, key string) (io.ReadCloser, error)
 
 // ErrNotThumbnail is returned for a URL that isn't a Square Thumbnail's, a
-// Thumbnail Preview's or an X-Small version's in the photos folder.
-var ErrNotThumbnail = errors.New("only Square Thumbnails, Thumbnail Previews and X-Small versions are kept offline")
+// Thumbnail Preview's, a Small or an X-Small version's in the photos folder.
+var ErrNotThumbnail = errors.New("only Square Thumbnails, Thumbnail Previews, Small and X-Small versions are kept offline")
 
 // errNoFolder is returned when the copy has no folder to keep files in.
 var errNoFolder = errors.New("the offline copy has no folder")
@@ -51,8 +51,8 @@ func New(dir string, get GetFunc) *Copy {
 	return &Copy{dir: dir, get: get}
 }
 
-// ThumbnailKey is the R2 key of the Square Thumbnail, Thumbnail Preview or X-Small version at
-// raw, its public URL, whatever the host. ok is false for any other URL.
+// ThumbnailKey is the R2 key of the Square Thumbnail, Thumbnail Preview,
+// Small or X-Small version at raw, its public URL, whatever the host. ok is false for any other URL.
 func ThumbnailKey(raw string) (key string, ok bool) {
 	u, err := url.Parse(raw)
 	if err != nil || (u.Scheme != "https" && u.Scheme != "http") {

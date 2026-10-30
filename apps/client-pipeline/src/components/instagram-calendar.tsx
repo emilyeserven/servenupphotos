@@ -28,6 +28,7 @@ import {
 } from "@/lib/social-schedule";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { cn } from "@/lib/utils";
+import { offlineImageUrl } from "@/lib/offline-thumbnails";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /** How many weeks the calendar shows, this week first. */
@@ -358,7 +359,7 @@ function PhotoImage({ photo }: { photo: SocialPhoto }) {
   }
   return (
     <img
-      src={photo.image}
+      src={offlineImageUrl(photo.image)}
       alt=""
       draggable={false}
       loading="lazy"

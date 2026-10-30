@@ -14,6 +14,7 @@ import { count } from "@/components/update-data-shared";
 import { type AlbumChoices, albumSuggestionsToSave } from "@/lib/album-suggestions";
 import { NO_CHOICES, photoTagKey, toggled } from "@/lib/bulk-tags";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { tileImageUrl } from "@/lib/offline-thumbnails";
 
 interface AlbumSuggestionReviewProps {
   preview: AlbumSuggestionsPreview;
@@ -184,10 +185,11 @@ function photoName(pick: AlbumPick, path: string): string {
 
 /** A small square of the picked photo at path. */
 function PhotoThumb({ pick, path }: { pick: AlbumPick; path: string }) {
-  const images = pick.photos.find((photo) => photo.path === path)?.data.images;
+  const data = pick.photos.find((photo) => photo.path === path)?.data;
+  const images = data?.images as Record<string, unknown> | undefined;
   return (
     <img
-      src={promptImageUrl(images as Record<string, unknown> | undefined, "")}
+      src={tileImageUrl(data) ?? promptImageUrl(images, "")}
       alt={photoName(pick, path)}
       className="bg-muted aspect-square w-full rounded-md object-cover"
     />

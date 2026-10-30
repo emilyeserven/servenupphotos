@@ -1,5 +1,5 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
-import { Link, createFileRoute, useSearch } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { CheckIcon, ListChecksIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { type PublishedFile, type PublishedResponse, publishedPhotosQuery } from "@/api/photos";
@@ -25,6 +25,7 @@ import {
   GallerySortToggle,
   parseGallerySort,
   sortGallery,
+  useGallerySort,
 } from "@/components/gallery/gallery-sort";
 import {
   type UndecidedChoice,
@@ -192,7 +193,7 @@ function otherChosen(undecided: unknown, placeId: unknown, gridCount: number): b
 function useShownFiles(data: PublishedResponse | undefined, filter: string) {
   const { filters, filter: applyFilters } = usePhotoFilters(HAS_FILTERS);
   const { choice: undecided, apply: applyUndecided } = useUndecidedFilter();
-  const sort = useSearch({ from: "/gallery", select: parseGallerySort });
+  const sort = useGallerySort();
   const place = usePlaceFilter();
   const all = data?.files ?? NO_FILES;
   const grid = useGridFilters(
