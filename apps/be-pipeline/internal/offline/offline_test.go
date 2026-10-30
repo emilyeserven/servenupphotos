@@ -36,6 +36,7 @@ func TestThumbnailKey(t *testing.T) {
 		"https://pub-1.r2.dev/photos/233d38afbc8e-thumbnailpreview.webp?crop=1,2,3": "photos/233d38afbc8e-thumbnailpreview.webp",
 		"https://cdn.example.net/photos/233d38afbc8e-img-0001.jpg":                  "",
 		"https://cdn.example.net/photos/233d38afbc8e-large.webp":                    "",
+		"https://cdn.example.net/photos/233d38afbc8e-img-0001-small.webp":           "photos/233d38afbc8e-img-0001-small.webp",
 		"https://cdn.example.net/other/a-thumbnail.webp":                            "",
 		"file:///photos/a-thumbnail.webp":                                           "",
 	}
@@ -126,7 +127,7 @@ func TestFindKeepsImagesForOffline(t *testing.T) {
 func TestThumbnailURLs(t *testing.T) {
 	saved := json.RawMessage(`{"images":{"thumbnail":"https://cdn/photos/a-thumbnail.webp?crop=1,2,3"}}`)
 	got := ThumbnailURLs(saved, "https://cdn/photos/a.jpg")
-	want := []string{"https://cdn/photos/a-thumbnail.webp?crop=1,2,3", "https://cdn/photos/a-thumbnailpreview.webp"}
+	want := []string{"https://cdn/photos/a-thumbnail.webp?crop=1,2,3", "https://cdn/photos/a-thumbnailpreview.webp", "https://cdn/photos/a-small.webp"}
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("ThumbnailURLs = %v, want %v", got, want)
 	}

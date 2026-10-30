@@ -1,6 +1,8 @@
 import { XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
+import { FallbackImage } from "@/components/fallback-image";
 import { Button } from "@/components/ui/button";
+import { offlineSmallUrl } from "@/lib/offline-thumbnails";
 
 interface ImageLightboxProps {
   open: boolean;
@@ -11,7 +13,10 @@ interface ImageLightboxProps {
   description: string;
 }
 
-/** A full-window overlay showing one image, scaled down only to fit the window. */
+/**
+ * A full-window overlay showing one image, scaled down only to fit the window. When the image can't
+ * be loaded, such as offline, it shows the photo's Small version from the offline copy instead.
+ */
 export function ImageLightbox({ open, onClose, title, src, description }: ImageLightboxProps) {
   return (
     <Dialog.Root open={open} onOpenChange={(next) => !next && onClose()}>
@@ -33,7 +38,12 @@ export function ImageLightbox({ open, onClose, title, src, description }: ImageL
             </Dialog.Close>
           </div>
           <div className="flex min-h-0 flex-1 items-center justify-center p-4 pt-0">
-            <img src={src} alt="" className="max-h-full max-w-full object-contain" />
+            <FallbackImage
+              src={src}
+              fallback={offlineSmallUrl(src)}
+              alt=""
+              className="max-h-full max-w-full object-contain"
+            />
           </div>
         </Dialog.Content>
       </Dialog.Portal>

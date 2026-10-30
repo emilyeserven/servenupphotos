@@ -1,5 +1,6 @@
 import type { BulkTagPhoto } from "@/api/bulk-tags";
 import { promptImageUrl } from "@/lib/tag-prompt";
+import { tileImageUrl } from "@/lib/offline-thumbnails";
 
 /** The photo's title, or "" when it's a draft without one. */
 function title(data: Record<string, unknown>): string {
@@ -22,7 +23,10 @@ export function PickedPhotos({ photos }: { photos: BulkTagPhoto[] }) {
       {photos.map((photo, i) => (
         <li key={photo.path} className="flex min-w-0 flex-col gap-1 text-xs">
           <img
-            src={promptImageUrl(photo.data.images as Record<string, unknown> | undefined, "")}
+            src={
+              tileImageUrl(photo.data) ??
+              promptImageUrl(photo.data.images as Record<string, unknown> | undefined, "")
+            }
             alt={title(photo.data) || photo.name}
             className="bg-muted aspect-square w-full rounded-md object-cover"
           />

@@ -44,17 +44,18 @@ func getPhoto(ctx context.Context, cfg settings.R2, endpoint, key string) (io.Re
 	return getObject(ctx, cfg, endpoint, key)
 }
 
-// thumbnailKeyPattern matches the keys of the Square Thumbnails and Thumbnail
-// Previews UploadPhoto writes next to an original.
-var thumbnailKeyPattern = regexp.MustCompile(`^photos/[a-z0-9-]+-thumbnail(?:preview)?\.webp$`)
+// thumbnailKeyPattern matches the keys of the Square Thumbnails, Thumbnail
+// Previews and Small versions UploadPhoto writes next to an original.
+var thumbnailKeyPattern = regexp.MustCompile(`^photos/[a-z0-9-]+-(?:thumbnail|thumbnailpreview|small)\.webp$`)
 
-// IsThumbnailKey reports whether key is a Square Thumbnail's or a Thumbnail
-// Preview's, the only WEBPs GetThumbnail reads.
+// IsThumbnailKey reports whether key is a Square Thumbnail's, a Thumbnail
+// Preview's or a Small version's, the only WEBPs GetThumbnail reads: the
+// small images pages preview photos with, kept for offline use.
 func IsThumbnailKey(key string) bool {
 	return thumbnailKeyPattern.MatchString(key)
 }
 
-// GetThumbnail opens the Square Thumbnail or Thumbnail Preview at key in the
+// GetThumbnail opens the Square Thumbnail, Thumbnail Preview or Small version at key in the
 // configured bucket. The caller closes the body. Failures are *GetError.
 func GetThumbnail(ctx context.Context, cfg settings.R2, key string) (io.ReadCloser, error) {
 	return getThumbnail(ctx, cfg, r2Endpoint(cfg), key)
@@ -65,7 +66,7 @@ func getThumbnail(ctx context.Context, cfg settings.R2, endpoint, key string) (i
 		return nil, &GetError{Message: msg}
 	}
 	if !IsThumbnailKey(key) {
-		return nil, &GetError{Message: "Only Square Thumbnails can be read from R2 here.", BadKey: true}
+		return nil, &GetError{Message: "Only Square Thumbnails and Small versions can be read from R2 here.", BadKey: true}
 	}
 	return getObject(ctx, cfg, endpoint, key)
 }

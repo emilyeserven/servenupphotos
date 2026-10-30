@@ -2,6 +2,8 @@ import { CalendarClock, Grid3x3, MapPin } from "lucide-react";
 import { type CSSProperties, useLayoutEffect, useRef, useState } from "react";
 import { type Focus, type Size, objectPosition } from "@/lib/spotlight-focus";
 import { cn } from "@/lib/utils";
+import { FallbackImage } from "@/components/fallback-image";
+import { offlineSmallUrl } from "@/lib/offline-thumbnails";
 
 /** What a spotlight preview shows: one photo, as the portfolio's homepage would. */
 export interface PreviewPhoto {
@@ -111,8 +113,9 @@ function Homepage({ screen, photo }: { screen: Screen; photo: PreviewPhoto }) {
       aria-hidden
       className="relative flex size-full flex-col items-center justify-center px-4 py-20 text-white"
     >
-      <img
+      <FallbackImage
         src={photo.src}
+        fallback={offlineSmallUrl(photo.src)}
         alt=""
         style={style}
         onLoad={(event) =>

@@ -19,7 +19,8 @@ const thumbnailTimeout = 20 * time.Second
 // warmTimeout bounds the start-up download of the thumbnails the offline copy is missing.
 const warmTimeout = 15 * time.Minute
 
-// handleThumbnail serves the Square Thumbnail or Thumbnail Preview at ?url=,
+// handleThumbnail serves the Square Thumbnail, Thumbnail Preview or Small
+// version at ?url=,
 // its R2 URL, from the offline copy, downloading it from R2 first when the
 // copy doesn't have it yet. So pages show it whether or not the internet can
 // be reached, once it has been downloaded.
@@ -51,7 +52,7 @@ func writeThumbnailError(w http.ResponseWriter, err error) {
 	var gerr *storage.GetError
 	switch {
 	case errors.Is(err, offline.ErrNotThumbnail):
-		writeError(w, http.StatusBadRequest, "Only Square Thumbnails and Thumbnail Previews in R2 are kept offline.")
+		writeError(w, http.StatusBadRequest, "Only Square Thumbnails, Thumbnail Previews and Small versions in R2 are kept offline.")
 	case errors.As(err, &gerr) && gerr.NotFound:
 		writeError(w, http.StatusNotFound, "That thumbnail isn't in R2.")
 	case errors.As(err, &gerr):
@@ -62,7 +63,8 @@ func writeThumbnailError(w http.ResponseWriter, err error) {
 	}
 }
 
-// warmOffline downloads the Square Thumbnails and Thumbnail Previews of every
+// warmOffline downloads the Square Thumbnails, Thumbnail Previews and Small
+// versions of every
 // photo in the Gallery and Photos in Flight that the offline copy doesn't
 // have yet, so they show later without the internet. It reads the photos the
 // way those pages do, so the read GitHub answers is the one they'll reuse.
@@ -112,7 +114,7 @@ func offlinePhotos(ctx context.Context, d routeDeps) ([]github.InFlightFile, err
 	return append(files, inFlight.Files...), nil
 }
 
-// offlineThumbnailURLs are the thumbnails the pages show for files.
+// offlineThumbnailURLs are the small images the pages preview files with.
 func offlineThumbnailURLs(files []github.InFlightFile, images inFlightImages) []string {
 	var urls []string
 	for _, f := range files {
