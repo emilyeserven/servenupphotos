@@ -1,6 +1,7 @@
 package github
 
 import (
+	"bytes"
 	"encoding/json"
 	"strings"
 )
@@ -20,6 +21,21 @@ func isDraft(data json.RawMessage) bool {
 	return !ok || strings.TrimSpace(title) == ""
 }
 
+// isUnselected reports a photo file's JSON marked as not chosen in a compare
+// group: its "unselected" is an object. An unselected photo may have lost its
+// images in R2, so it's always left out of AllPhotosFile, whatever Settings
+// say about untitled photos.
+func isUnselected(data json.RawMessage) bool {
+	var photo struct {
+		Unselected json.RawMessage `json:"unselected"`
+	}
+	if json.Unmarshal(data, &photo) != nil {
+		return false
+	}
+	trimmed := bytes.TrimSpace(photo.Unselected)
+	return len(trimmed) > 0 && trimmed[0] == '{'
+}
+
 // leftOut reports whether a file of kind with data is left out of its
 // combined list: a photo draft, unless w includes untitled photos.
 func (w *workspace) leftOut(kind combinedKind, data json.RawMessage) bool {
@@ -27,9 +43,10 @@ func (w *workspace) leftOut(kind combinedKind, data json.RawMessage) bool {
 }
 
 // onPortfolio reports whether the photo file with data goes in AllPhotosFile:
-// it isn't a draft, or w includes untitled photos.
+// it isn't unselected (see isUnselected), and it isn't a draft or w includes
+// untitled photos.
 func (w *workspace) onPortfolio(data json.RawMessage) bool {
-	return w.includeUntitled || !isDraft(data)
+	return !isUnselected(data) && (w.includeUntitled || !isDraft(data))
 }
 
 // baseDrafts reads the photo files in folder on the base branch, unchanged

@@ -66,6 +66,9 @@ have the file; update it from the base branch if it was made before the photo me
 open. From then on the photo is in Photos in Flight, and edits go to that copy, whether or not a pull request is open yet. A new title doesn't rename the file, since the pull request would then delete
 the old file from the portfolio when it merges and the photo's file name would change under it.
 
+Each tile's **Compare** puts the photo in a [compare group](compare-groups.md), to weigh it against others on the
+Compare page before deciding which gets posted.
+
 **Select** turns on choosing photos, with a checkbox on each tile (or click the tile), **Select all shown** for the
 filtered ones, and an **Add albums, tags and genres** card with an album, a tag and a genre combobox. **Add to N photos**
 (`POST /api/photos/groups` with `paths`, `albums`, `tags` and `genres`) adds them to each chosen photo's `albums`, `tags` and `genres`

@@ -11,7 +11,7 @@ import {
   publishedPhotosQuery,
 } from "@/api/photos";
 import { canonicalJson } from "@/lib/combined";
-import { isDraft } from "@/lib/drafts";
+import { leftOffPortfolio } from "@/lib/drafts";
 
 /**
  * One file a save changed, waiting for Commit, which the combined lists won't have until it's
@@ -85,11 +85,12 @@ function changedFile(file: CombinedFile, changes: FileChange[]): CombinedFile {
 
 /**
  * The photo changes as they change ALLPHOTOS.json: a photo saved without a title is left out, as a
- * draft, unless untitled photos are included.
+ * draft, unless untitled photos are included, and an unselected photo always is.
  */
 function photoChanges(changes: FileChange[], includeUntitled = false): FileChange[] {
-  if (includeUntitled) return changes;
-  return changes.map((change) => (isDraft(change.after) ? { ...change, after: null } : change));
+  return changes.map((change) =>
+    leftOffPortfolio(change.after, includeUntitled) ? { ...change, after: null } : change,
+  );
 }
 
 /**
