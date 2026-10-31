@@ -39,6 +39,35 @@ waiting for Commit. The photos show on the page at once; a draft (a photo with n
 > **Frontend analogy:** it's a multi-select modal whose "Done" button sends one batched `PATCH` for every chosen row,
 > rather than a request per click.
 
+## Removing photos
+
+**Remove photos**, on the **Photos** card of an album with photos, turns the album's own photos into tiles to pick
+(photos only in one of its sub-albums aren't listed; remove them on that album's page). **Remove N photos** takes the
+album out of each picked photo's `albums`, keeping its other albums, and takes the photos out of the album file's
+`photoOrder`, `covers` and `layout`, dropping a row left with neither photos nor text, all as one
+[change waiting for Commit](pending-changes.md) (`DELETE /api/organize/albums/<id>/photos` with
+`{ "photoIds": [...] }`). The backend refuses an ID that isn't a photo's, or a photo that isn't in the album itself.
+**Cancel** leaves them as they were.
+
+> **Frontend analogy:** like removing items from a list that other state points at by ID: the same save also filters
+> the IDs out of every derived array (the order, the covers, the rows), so nothing is left pointing at a removed item.
+
+## Deleting an album
+
+**Delete album**, in its own card on an album's page, asks first in a dialog that says what goes with it: how many
+photos list the album, where its sub-albums move, and which of the portfolio's spotlight spots it leaves without an
+album. Confirming saves, as one change waiting for Commit (`DELETE /api/organize/albums/<id>`):
+
+- its file deleted, with its photo order, covers, layout and spotlight spots;
+- the album taken out of every photo file that lists it, drafts included, each keeping its other albums;
+- each album directly inside it moved up to its parent, or to the top level.
+
+The page then goes back to the Albums list. Nothing is saved when a photo file can't be read, since it might list the
+album. Until Commit, **Discard** in the sync button's panel brings it back (along with every other waiting change).
+
+> **Frontend analogy:** a cascading delete, like removing a folder whose files move up a level, done as one batched
+> mutation rather than a request per photo.
+
 ## Photo order
 
 An album's page shows its photos in the album's order, the one the portfolio uses. **Reorder**, on the **Photos** card

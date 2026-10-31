@@ -911,6 +911,15 @@ export function defaultFixtures() {
     }),
     "PUT /api/organize/albums/homepage-spotlight/photo-order": { ...pendingSave(), files: 1 },
     "PUT /api/organize/albums/homepage-spotlight/layout": { ...pendingSave(), files: 1 },
+    "DELETE /api/organize/albums/homepage-spotlight": {
+      ...pendingSave(),
+      photos: 10,
+      reparented: 0,
+    },
+    "DELETE /api/organize/albums/homepage-spotlight/photos": ({ body }) => ({
+      ...pendingSave(),
+      photos: body?.photoIds?.length ?? 0,
+    }),
     "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/descriptions": ({ body }) => ({
       ...pendingSave(),
