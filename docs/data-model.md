@@ -87,6 +87,9 @@ hashtags; see [Publish](publish.md#social-media-posts). Older files may be missi
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).
 
+A photo's `compareGroup` names the [compare group](compare-groups.md) it's in, and `compareWinner: true` marks the one
+picked to post; both are left out or `null` otherwise. Only the pipeline reads them.
+
 A photo's `colors` is its color summary, as the EXIF page's Colors tab shows it: the `average` color (hex, CIELAB and
 HCL), the share of the photo in each of 12 hue `buckets`, the `neutrals` (blacks, grays and whites) by lightness, and
 the mean `lightness` and `chroma`, and `peakChroma`, the chroma the most vivid tenth of its pixels reach (the 90th

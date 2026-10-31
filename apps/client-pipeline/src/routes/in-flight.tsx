@@ -22,6 +22,7 @@ import {
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { CommitError } from "@/components/commit-error";
+import { CompareButton } from "@/components/compare/compare-button";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { JsonDiffBlock } from "@/components/json-diff-block";
 import {
@@ -455,6 +456,7 @@ function FileSection({
         </DraftMark>
         <ReEditMark data={file.status === "removed" ? undefined : file.data} />
         <MoveToUndecided file={file} />
+        <CompareButton file={file} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">

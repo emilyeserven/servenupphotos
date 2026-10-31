@@ -100,6 +100,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
+- [Compare groups](docs/compare-groups.md) (`/compare`): putting Gallery and in-flight photos in groups to weigh them side by side and pick the one to post, only in the pipeline
 - [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
 - [Offline mode](docs/offline-mode.md): the Gallery, Undecided queue and drafts without the internet, from Square Thumbnails kept on disk and fetched from R2 when the pipeline starts; in-flight work kept in the browser, and exported or imported as JSON

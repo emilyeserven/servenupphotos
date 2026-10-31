@@ -10,6 +10,7 @@ import {
   organizeQuery,
   savedGroups,
 } from "@/api/organize";
+import { CompareButton } from "@/components/compare/compare-button";
 import { DraftMark } from "@/components/draft-mark";
 import { ReEditMark } from "@/components/re-edit-card";
 import { ImageLightbox } from "@/components/image-lightbox";
@@ -111,7 +112,7 @@ function PhotoCard({ file, images, selected, onToggle }: PhotoCardProps) {
         <InFlightMark status={file.inFlight} />
         <DraftMark data={file.data} />
         <ReEditMark data={file.data} />
-        <div className="mt-auto flex items-center gap-2">
+        <div className="mt-auto flex flex-wrap items-center gap-2">
           {problem ? (
             <p className="text-muted-foreground text-xs">{problem}</p>
           ) : (
@@ -122,6 +123,7 @@ function PhotoCard({ file, images, selected, onToggle }: PhotoCardProps) {
               </Link>
             </Button>
           )}
+          <CompareButton file={file} />
         </div>
       </div>
     </article>
