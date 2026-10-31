@@ -46,6 +46,11 @@ export interface Group {
    * shows them; absent or empty for one photo after another.
    */
   layout?: AlbumRow[];
+  /**
+   * True for an album the portfolio doesn't list or give a page, along with the albums inside it;
+   * absent while it's shown.
+   */
+  hidden?: boolean;
   path: string;
   fileUrl: string;
   /** True when it's only in the photo data pull request, not merged yet. */
@@ -252,6 +257,17 @@ export const setAlbumLayoutMutation = albumsMutation(
   ({ id }: { id: string; covers: number[]; layout: AlbumRow[] }) =>
     `/api/organize/albums/${encodeURIComponent(id)}/layout`,
   ({ covers, layout }) => ({ covers, layout }),
+);
+
+/**
+ * Hides the album on the portfolio, or shows it again, as a change waiting for Commit. A hidden
+ * album and the albums inside it aren't on the Albums page, the album filter or their own pages.
+ */
+export const setAlbumHiddenMutation = albumsMutation(
+  "visibility",
+  ({ id }: { id: string; hidden: boolean }) =>
+    `/api/organize/albums/${encodeURIComponent(id)}/visibility`,
+  ({ hidden }) => ({ hidden }),
 );
 
 /** The mutation options that PUT `body` to `/api/organize/tags/<key>` and save the tag files it changes. */

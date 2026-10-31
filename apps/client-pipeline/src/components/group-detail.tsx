@@ -25,6 +25,7 @@ import {
 } from "@/components/album-add-photos";
 import { AlbumLayoutCard } from "@/components/album-layout/album-layout-card";
 import { AlbumPhotoReorder } from "@/components/album-photo-reorder";
+import { AlbumVisibilityCard } from "@/components/album-visibility-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { type GroupPhotos, GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
 import { GroupCombobox } from "@/components/group-picker";
@@ -131,7 +132,7 @@ function GroupColumns({ kind, group, organize }: GroupDetailProps) {
         {hasParents(kind) && !group.error && (
           <ParentCard kind={kind} group={group} organize={organize} />
         )}
-        {kind === "albums" && <SubAlbumsCard album={group} albums={organize.albums} />}
+        {kind === "albums" && <AlbumSideCards album={group} albums={organize.albums} />}
       </div>
       <GroupPhotos kind={kind} group={group} albums={organize.albums} />
     </div>
@@ -179,6 +180,16 @@ const PLACE_TEXT: Record<ParentKind, { label: string; top: string }> = {
   albums: { label: "Inside", top: "Nothing: it's a top-level album" },
   tags: { label: "Under", top: "Nothing: it's a top-level tag" },
 };
+
+/** An album's cards under its parent: whether the portfolio shows it, and its sub-albums. */
+function AlbumSideCards({ album, albums }: { album: Group; albums: Group[] }) {
+  return (
+    <>
+      {!album.error && <AlbumVisibilityCard album={album} albums={albums} />}
+      <SubAlbumsCard album={album} albums={albums} />
+    </>
+  );
+}
 
 /** The albums an album is inside, or the tags a tag is under, as rows of AboutCard's list. */
 function GroupPlace({ kind, group, list }: { kind: ParentKind; group: Group; list: Group[] }) {

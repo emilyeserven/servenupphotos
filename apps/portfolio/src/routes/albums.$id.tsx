@@ -4,7 +4,7 @@ import { AlbumRows } from "@/components/album-rows";
 import { FittedPhoto } from "@/components/fitted-photo";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { albumRows } from "@/lib/album-layout";
-import { albums, type Group } from "@/lib/groups";
+import { albums, albumShown, type Group } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos } from "@/lib/spotlight-zones";
 
@@ -16,7 +16,8 @@ export const Route = createFileRoute("/albums/$id")({
 /** One album's page: its first photos as large as they fit, then a link to show every one. */
 function AlbumView() {
   const { id } = Route.useParams();
-  const album = albums.find((a) => a.id === id);
+  // A hidden album has no page, the same as one that isn't there.
+  const album = albumShown(id) ? albums.find((a) => a.id === id) : undefined;
   return album ? <AlbumFound album={album} /> : <NoAlbum id={id} />;
 }
 

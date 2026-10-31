@@ -3,7 +3,7 @@ import { BookImage } from "lucide-react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { AlbumStrip } from "@/components/album-strip";
 import { coverPhotos } from "@/lib/album-layout";
-import { albums, albumTree } from "@/lib/groups";
+import { albums, albumShown, albumTree } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { albumPhotos } from "@/lib/spotlight-zones";
 
@@ -12,8 +12,10 @@ export const Route = createFileRoute("/albums/")({
   component: AlbumsView,
 });
 
-// Worked out once: the photos only change with a new build. Albums without photos are left out.
+// Worked out once: the photos only change with a new build. Albums without photos, and hidden
+// ones, are left out.
 const strips = albumTree()
+  .filter((album) => albumShown(album.id))
   .map((album) => ({
     album,
     parent: albums.find((other) => other.id === album.parent),
