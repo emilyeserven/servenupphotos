@@ -6,19 +6,14 @@ import { FallbackImage } from "@/components/fallback-image";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { Button } from "@/components/ui/button";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
-import {
-  type CompareGroup,
-  type ComparePhoto,
-  comparePhotoName,
-  isWinner,
-} from "@/lib/compare-groups";
+import { type ComparePhoto, comparePhotoName, isWinner } from "@/lib/compare-groups";
 import { offlineSmallUrl } from "@/lib/offline-thumbnails";
 import { SETTING_FORMATS } from "@portfolio/lib/photos";
 import { readableDate } from "@/lib/photo-date";
 import { cn } from "@/lib/utils";
 
 /** One photo of a compare group: large, with what it was taken with, and Pick as winner. */
-export function ComparePhotoCard({ photo, group }: { photo: ComparePhoto; group: CompareGroup }) {
+export function ComparePhotoCard({ photo }: { photo: ComparePhoto }) {
   const winner = isWinner(photo);
   return (
     <article
@@ -32,7 +27,7 @@ export function ComparePhotoCard({ photo, group }: { photo: ComparePhoto; group:
         <PhotoHeading photo={photo} winner={winner} />
         <PhotoDetails data={photo.data} />
         <div className="mt-auto flex flex-wrap gap-2">
-          <WinnerButton photo={photo} group={group} winner={winner} />
+          <WinnerButton photo={photo} winner={winner} />
           <EditButton photo={photo} />
           <TakeOut photo={photo} />
         </div>
@@ -171,23 +166,16 @@ function PhotoDetails({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-/** Picks the photo as the group's winner, or unpicks it when it is. */
-function WinnerButton({
-  photo,
-  group,
-  winner,
-}: {
-  photo: ComparePhoto;
-  group: CompareGroup;
-  winner: boolean;
-}) {
-  const { pickWinner } = useCompareEdits();
+/** Picks the photo as one of the group's winners, or unpicks it when it is one. */
+function WinnerButton({ photo, winner }: { photo: ComparePhoto; winner: boolean }) {
+  const { setWinner } = useCompareEdits();
   return (
     <Button
       size="sm"
       variant={winner ? "default" : "outline"}
       aria-pressed={winner}
-      onClick={() => pickWinner(group, winner ? null : photo.file.path)}
+      title={winner ? "Unpick it" : "Pick it to post; a group can have several winners"}
+      onClick={() => setWinner(photo, !winner)}
     >
       <TrophyIcon />
       {winner ? "Winner" : "Pick as winner"}

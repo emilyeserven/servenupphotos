@@ -17,6 +17,23 @@ export function isDraft(data: unknown): boolean {
 }
 
 /**
+ * Whether a photo's JSON is marked as not chosen in a compare group: its `unselected` is an object.
+ * Its images in R2 may be gone, so Commit always leaves it out of ALLPHOTOS.json.
+ */
+export function isUnselected(data: unknown): boolean {
+  const unselected = (data as { unselected?: unknown } | null | undefined)?.unselected;
+  return typeof unselected === "object" && unselected !== null && !Array.isArray(unselected);
+}
+
+/**
+ * Whether Commit leaves a photo out of ALLPHOTOS.json: it's unselected, or it's a draft and untitled
+ * photos aren't included.
+ */
+export function leftOffPortfolio(data: unknown, includeUntitled = false): boolean {
+  return isUnselected(data) || (!includeUntitled && isDraft(data));
+}
+
+/**
  * Whether untitled photos are kept as drafts, as Settings say (on unless "Keep untitled photos as
  * drafts" is turned off). True until the settings are read, since that's the default.
  */

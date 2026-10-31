@@ -10,7 +10,7 @@ import type { LocalEdit } from "@/stores/local-edits";
 /** The photo JSON field naming the compare group a photo is in, or left out (or `null`) when it's in none. */
 export const COMPARE_GROUP = "compareGroup";
 
-/** The photo JSON field marking the photo picked as its compare group's winner: `true`, or left out. */
+/** The photo JSON field marking a photo picked as one of its compare group's winners: `true`, or left out. */
 export const COMPARE_WINNER = "compareWinner";
 
 /** A photo that can go in a compare group, from the Gallery or Photos in Flight. */
@@ -37,7 +37,7 @@ export function compareGroupOf(data: unknown): string | undefined {
   return typeof group === "string" && group.trim() ? group.trim() : undefined;
 }
 
-/** Whether the photo is picked as its compare group's winner. */
+/** Whether the photo is picked as one of its compare group's winners. */
 export function isWinner(photo: ComparePhoto): boolean {
   return photo.data[COMPARE_WINNER] === true;
 }
@@ -109,7 +109,19 @@ function byPhotoName(a: ComparePhoto, b: ComparePhoto): number {
   return comparePhotoName(a).localeCompare(comparePhotoName(b), undefined, { numeric: true });
 }
 
-/** The group's winner, when one is picked. */
-export function winnerOf(group: CompareGroup): ComparePhoto | undefined {
-  return group.photos.find(isWinner);
+/** The group's winners: the photos picked to post, none until one is. */
+export function winnersOf(group: CompareGroup): ComparePhoto[] {
+  return group.photos.filter(isWinner);
+}
+
+/** The group's photos that aren't winners. */
+export function losersOf(group: CompareGroup): ComparePhoto[] {
+  return group.photos.filter((photo) => !isWinner(photo));
+}
+
+/** The names of photos, joined for reading, such as "A, B and C". */
+export function photoNames(photos: ComparePhoto[]): string {
+  const names = photos.map(comparePhotoName);
+  if (names.length < 2) return names.join("");
+  return `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
 }

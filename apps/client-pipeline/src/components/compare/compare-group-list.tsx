@@ -1,16 +1,18 @@
 import { Link } from "@tanstack/react-router";
 import { ImageIcon, ScaleIcon, TrophyIcon } from "lucide-react";
+import { UnselectedPhotos } from "@/components/compare/unselected-photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { useCompareGroups } from "@/hooks/use-compare-groups";
 import {
   type CompareGroup,
   type ComparePhoto,
-  comparePhotoName,
   isWinner,
-  winnerOf,
+  photoNames,
+  winnersOf,
 } from "@/lib/compare-groups";
 import { squareImages } from "@/lib/offline-thumbnails";
+import { unselectedPhotos } from "@/lib/unselected";
 import { cn } from "@/lib/utils";
 
 /** The photos and compare groups, as `useCompareGroups` reads them. */
@@ -19,7 +21,10 @@ export type CompareRead = ReturnType<typeof useCompareGroups>;
 /** How many tiles a group's card previews. */
 const PREVIEW_COUNT = 4;
 
-/** Every compare group as a card with its first photos, opening it head-to-head, or how to start one. */
+/**
+ * Every compare group as a card with its first photos, opening it head-to-head, or how to start one,
+ * then Unselected Photos.
+ */
 export function CompareGroupList({ compare }: { compare: CompareRead }) {
   if (compare.pending) return <ListSkeleton />;
   return (
@@ -36,6 +41,7 @@ export function CompareGroupList({ compare }: { compare: CompareRead }) {
           ))}
         </ul>
       )}
+      <UnselectedPhotos unselected={unselectedPhotos(compare.photos)} photos={compare.photos} />
     </>
   );
 }
@@ -103,19 +109,22 @@ function GroupCard({ group }: { group: CompareGroup }) {
   );
 }
 
-/** The winner's name, after the count, when one is picked. */
+/** The winners' names, after the count, when any are picked. */
 function WinnerLine({ group }: { group: CompareGroup }) {
-  const winner = winnerOf(group);
-  if (!winner) return <>, no winner yet</>;
+  const winners = winnersOf(group);
+  if (winners.length === 0) return <>, no winner yet</>;
+  const names = photoNames(winners);
   return (
     <span className="mt-1 flex items-center gap-1 text-amber-700 dark:text-amber-400">
       <TrophyIcon className="size-3.5 shrink-0" aria-hidden />
-      <span className="truncate">{comparePhotoName(winner)}</span>
+      <span className="truncate" title={names}>
+        {names}
+      </span>
     </span>
   );
 }
 
-/** The photo's Square Thumbnail from the offline copy, outlined when it's the winner. */
+/** The photo's Square Thumbnail from the offline copy, outlined when it's a winner. */
 function PreviewTile({ photo }: { photo: ComparePhoto }) {
   const square = photo.imageUrl && squareImages(photo.data, photo.imageUrl);
   return (

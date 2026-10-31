@@ -5,7 +5,7 @@ name: Combine photo data
 # albums/ALLALBUMS.json, tags/ALLTAGS.json, genres/ALLGENRES.json, places/PLACES.json,
 # localizations/LOCALIZATIONS.json, metainfo/METAINFO.json, cameras/CAMERAS.json and lenses/LENSES.json, each every other JSON file in
 # its folder as one array sorted by file name. Photos without a title are drafts and are left out
-# of ALLPHOTOS.json, unless include_untitled is checked (see docs/drafts.md). The pipeline's Commit button
+# of ALLPHOTOS.json, unless include_untitled is checked (see docs/drafts.md); unselected photos always are (see docs/compare-groups.md). The pipeline's Commit button
 # does the same itself (CommitCombined in apps/be-pipeline), with the same
 # commit message, so this only runs when started by hand from the Actions
 # tab, as a fallback.
@@ -62,8 +62,8 @@ jobs:
             pnpm exec oxfmt "$out"
             echo "Combined ${#files[@]} file(s) into $out"
           }
-          drafts='map(select((.title | type) == "string" and (.title | test("\\S"))))'
-          if [ "$INCLUDE_UNTITLED" = "true" ]; then drafts='.'; fi
+          drafts='map(select((.title | type) == "string" and (.title | test("\\S"))) | select((.unselected | type) != "object"))'
+          if [ "$INCLUDE_UNTITLED" = "true" ]; then drafts='map(select((.unselected | type) != "object"))'; fi
           combine photos ALLPHOTOS.json "$drafts"
           combine albums ALLALBUMS.json
           combine tags ALLTAGS.json

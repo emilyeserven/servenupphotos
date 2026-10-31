@@ -24,6 +24,37 @@ func TestIsDraft(t *testing.T) {
 	}
 }
 
+func TestIsUnselected(t *testing.T) {
+	tests := map[string]bool{
+		`{"title":"A","unselected":{"reason":"Blurry"}}`: true,
+		`{"title":"A","unselected":{}}`:                  true,
+		`{"title":"A","unselected":null}`:                false,
+		`{"title":"A"}`:                                  false,
+		`not json`:                                       false,
+	}
+	for data, want := range tests {
+		if got := isUnselected(json.RawMessage(data)); got != want {
+			t.Errorf("isUnselected(%s) = %v, want %v", data, got, want)
+		}
+	}
+}
+
+func TestCommitCombinedLeavesOutUnselected(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, with(emptyLists, map[string]string{
+		dataRoot + "/photos/a.json":         `{"file":"a.jpg","title":"A"}`,
+		dataRoot + "/photos/b.json":         `{"file":"b.jpg","title":"B","unselected":{"reason":"A won"}}`,
+		dataRoot + "/photos/ALLPHOTOS.json": "[]\n",
+	}))
+	if _, err := c.CommitCombined(t.Context(), pullGH, nil); err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
+	}
+	want := "[\n  {\n    \"file\": \"a.jpg\",\n    \"title\": \"A\"\n  }\n]\n"
+	if all, _ := f.file(prBranch, dataRoot+"/photos/ALLPHOTOS.json"); all != want {
+		t.Errorf("ALLPHOTOS.json = %q, want the unselected photo left out", all)
+	}
+}
+
 func TestCommitCombinedLeavesOutDrafts(t *testing.T) {
 	f, c := newFakeGitHub(t)
 	f.openPull(prBranch, with(emptyLists, map[string]string{

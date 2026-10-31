@@ -6,7 +6,7 @@ import { FinishComparing } from "@/components/compare/finish-comparing";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { type CompareGroup, comparePhotoName, winnerOf } from "@/lib/compare-groups";
+import { type CompareGroup, photoNames, winnersOf } from "@/lib/compare-groups";
 import { cn } from "@/lib/utils";
 
 /** Columns for a group of two, or three for a larger one, so photos sit side by side. */
@@ -36,7 +36,7 @@ function GroupPhotos({ group }: { group: CompareGroup }) {
       <ul className={cn("grid items-start gap-4", columns(group.photos.length))}>
         {group.photos.map((photo) => (
           <li key={photo.file.path} className="h-full">
-            <ComparePhotoCard photo={photo} group={group} />
+            <ComparePhotoCard photo={photo} />
           </li>
         ))}
       </ul>
@@ -44,12 +44,13 @@ function GroupPhotos({ group }: { group: CompareGroup }) {
   );
 }
 
-/** What the winner is, or that none is picked yet. */
+/** Who won, or that none is picked yet. */
 function winnerText(group: CompareGroup): string {
-  const winner = winnerOf(group);
-  return winner
-    ? `Winner: ${comparePhotoName(winner)}. Finish comparing once you're sure.`
-    : "Pick the photo to post. Picking another one changes the winner.";
+  const winners = winnersOf(group);
+  if (winners.length === 0)
+    return "Pick the photo to post, or several. Clicking a winner again unpicks it.";
+  const label = winners.length === 1 ? "Winner" : "Winners";
+  return `${label}: ${photoNames(winners)}. Finish comparing once you're sure.`;
 }
 
 function GroupHeader({ group }: { group: CompareGroup }) {

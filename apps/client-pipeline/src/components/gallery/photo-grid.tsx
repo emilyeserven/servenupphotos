@@ -11,6 +11,7 @@ import {
   savedGroups,
 } from "@/api/organize";
 import { CompareButton } from "@/components/compare/compare-button";
+import { UnselectedMark } from "@/components/compare/unselected-mark";
 import { DraftMark } from "@/components/draft-mark";
 import { ReEditMark } from "@/components/re-edit-card";
 import { ImageLightbox } from "@/components/image-lightbox";
@@ -110,7 +111,9 @@ function PhotoCard({ file, images, selected, onToggle }: PhotoCardProps) {
         <GroupNames file={file} />
         <PlaceGpsMark file={file} />
         <InFlightMark status={file.inFlight} />
-        <DraftMark data={file.data} />
+        <UnselectedMark file={file}>
+          <DraftMark data={file.data} />
+        </UnselectedMark>
         <ReEditMark data={file.data} />
         <div className="mt-auto flex flex-wrap items-center gap-2">
           {problem ? (
