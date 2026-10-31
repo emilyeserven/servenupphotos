@@ -1,64 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { r2IsSetUp, settingsQuery } from "@/api/settings";
-import { BulkPlacesCard } from "@/components/bulk-places/bulk-places-card";
-import { AlbumSuggestionsCard } from "@/components/album-suggestions/album-suggestions-card";
-import { BulkTaggingCard } from "@/components/bulk-tagging/bulk-tagging-card";
-import { GenreSuggestionsCard } from "@/components/genre-suggestions/genre-suggestions-card";
-import { ImageBaseUrlCard } from "@/components/image-base-url";
-import { ImageNamesCard } from "@/components/image-names-card";
-import { LocalizationFillCard } from "@/components/localization-fill/localization-fill-card";
-import { LocationNamesCard } from "@/components/location-names-card";
-import { MissingFieldsCard } from "@/components/missing-fields";
-import { ReapplyOverridesCard } from "@/components/reapply-overrides";
+import { Outlet, createFileRoute, useParams } from "@tanstack/react-router";
 import { Page } from "@/components/page";
-import { PhotoColorsCard } from "@/components/photo-colors-card";
-import { PruneTagsCard } from "@/components/prune-tags/prune-tags-card";
-import { QueryResult } from "@/components/query-result";
-import { TagDescriptionsCard } from "@/components/tag-descriptions/tag-descriptions-card";
+import { UpdateDataNav } from "@/components/update-data/section-nav";
 
 export const Route = createFileRoute("/update-data")({
   component: UpdateDataPage,
+  staticData: { wide: true },
 });
 
-/** Bulk changes to the photo JSON on GitHub, one card each. */
+/** Bulk changes to the photo JSON on GitHub, one subpage each, picked from a side navigation. */
 function UpdateDataPage() {
-  const settings = useQuery(settingsQuery);
+  const current = useParams({ strict: false, select: (params) => params.section });
 
   return (
     <Page
       title="Update Data"
       description="Bulk changes to every photo's JSON on GitHub. Each one previews what it will change, then saves it as one commit in the photo data pull request."
+      wide
     >
-      <QueryResult query={settings}>
-        {(data) =>
-          data.github.repo && data.github.token.set ? (
-            <>
-              <ImageBaseUrlCard publicUrl={data.r2.publicUrl} />
-              <ImageNamesCard />
-              <MissingFieldsCard canReadExif={r2IsSetUp(data.r2)} />
-              <PhotoColorsCard canRead={r2IsSetUp(data.r2)} />
-              <ReapplyOverridesCard />
-              <LocationNamesCard />
-              <BulkTaggingCard />
-              <BulkPlacesCard />
-              <PruneTagsCard />
-              <TagDescriptionsCard />
-              <LocalizationFillCard />
-              <GenreSuggestionsCard />
-              <AlbumSuggestionsCard />
-            </>
-          ) : (
-            <p className="text-muted-foreground text-sm">
-              Set the GitHub repository and token in{" "}
-              <Link to="/settings" className="text-foreground underline underline-offset-4">
-                Settings
-              </Link>{" "}
-              first.
-            </p>
-          )
-        }
-      </QueryResult>
+      <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-6">
+        <UpdateDataNav current={current} />
+        <div className="flex min-w-0 max-w-3xl flex-1 flex-col gap-6">
+          <Outlet />
+        </div>
+      </div>
     </Page>
   );
 }
