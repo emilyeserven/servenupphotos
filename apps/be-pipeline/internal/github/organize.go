@@ -99,6 +99,8 @@ type groupJSON struct {
 	// Layout is an album's rows of photos, each with Markdown text above and
 	// below it, as its portfolio page shows them.
 	Layout []AlbumRow `json:"layout,omitempty"`
+	// Hidden is true for an album the portfolio doesn't list or give a page.
+	Hidden bool `json:"hidden,omitempty"`
 }
 
 // albumJSON is the content of an album file, as written: it always lists its
@@ -123,6 +125,9 @@ type albumJSON struct {
 	// Layout is the album's rows of photos with Markdown text above and below
 	// each; missing or empty for one photo after another.
 	Layout []AlbumRow `json:"layout,omitempty"`
+	// Hidden is true for an album the portfolio doesn't list or give a page;
+	// missing or false while it's shown.
+	Hidden bool `json:"hidden,omitempty"`
 }
 
 // fileContent is g as kind's files are written.
@@ -156,7 +161,10 @@ type Group struct {
 	// Layout is an album's rows of photos with Markdown text above and below
 	// each, set on its page; empty for one photo after another.
 	Layout []AlbumRow `json:"layout,omitempty"`
-	Path   string     `json:"path"`
+	// Hidden is true for an album the portfolio doesn't list or give a page,
+	// along with the albums inside it.
+	Hidden bool   `json:"hidden,omitempty"`
+	Path   string `json:"path"`
 	// FileURL is the file's page on GitHub; empty while its latest change is
 	// only pending.
 	FileURL string `json:"fileUrl"`
@@ -441,6 +449,6 @@ func (w *workspace) readGroup(p string) Group {
 		g.Order = *content.Order
 	}
 	g.SpotlightZones, g.PhotoOrder = content.SpotlightZones, content.PhotoOrder
-	g.Covers, g.Layout = content.Covers, content.Layout
+	g.Covers, g.Layout, g.Hidden = content.Covers, content.Layout, content.Hidden
 	return g
 }
