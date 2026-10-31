@@ -9,6 +9,12 @@
     "photoOrder": [1, 344, 356, 7, 118, 268, 262, 335, 355, 311]
   },
   {
+    "id": "japan",
+    "name": "Japan",
+    "description": "",
+    "parent": null
+  },
+  {
     "id": "test",
     "name": "test",
     "description": ""
