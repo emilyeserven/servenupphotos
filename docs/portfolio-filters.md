@@ -73,7 +73,15 @@ A **Time of day** slider sits after them, stepping through each hour of the day 
 the range as clock times, from the start of the first hour to the end of the last, such as "6 AM – 7 PM"
 (`?time=6-18`, the hours on a 24-hour clock). The time is the clock where the photo was taken, as its custom or EXIF date
 writes it, so a photo taken at 7 PM in Seoul is a 7 PM photo wherever it's viewed. A range can't wrap past midnight;
-pick the evening and early morning hours separately. The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and **Clear filters** clears them too.
+pick the evening and early morning hours separately.
+
+**Orientation** sits after the sliders: a horizontal and a vertical rectangle button, each with how many photos the
+other filters leave have that orientation. Clicking one shows only the photos wider than they're tall
+(`?orientation=horizontal`) or taller than they're wide (`?orientation=vertical`); clicking it again, or its X, clears
+it. A square photo is neither, so it's only shown while no orientation is chosen. The photo's size is the one its JSON
+file saves (`width` and `height`), so a photo not uploaded to R2 yet has no orientation either.
+
+The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and **Clear filters** clears them too.
 
 > **Frontend analogy:** the slider's value is an index into a sorted array of the values, not the value itself, so
 > `1/4000` and `30` seconds sit one step apart when nothing's between them, like `<input type="range">` over

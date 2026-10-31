@@ -7,6 +7,7 @@ import {
 import type { CameraSettings, Photo } from "@portfolio/lib/photos";
 import { filterPhotos, parseFilters } from "@portfolio/lib/photo-filters";
 import { inHours } from "@portfolio/lib/time-of-day";
+import { matchesOrientation, ORIENTATION_KEY } from "@portfolio/lib/orientation";
 
 /** The camera settings the Table's and Grid's range sliders narrow by, named as they are in the URL. */
 export const RANGE_KEYS = ["iso", "exposure", "focalLength", "aperture"] as const;
@@ -24,19 +25,23 @@ const EQUIPMENT_GROUP_KEYS = ["cameraGroup", "lensGroup"] as const;
 /** The filter for the time of day each photo was taken, a range of hours such as "6-18". */
 export const TIME_KEY = "time";
 
-/** The camera filters as they're named in the URL, which the Table and Grid have and the other views don't. */
+/**
+ * The camera filters as they're named in the URL, which the Table and Grid have and the other views
+ * don't, with the photo's orientation among them.
+ */
 export const CAMERA_FILTER_KEYS = [
   ...EQUIPMENT_KEYS,
   ...EQUIPMENT_GROUP_KEYS,
   ...RANGE_KEYS,
   TIME_KEY,
+  ORIENTATION_KEY,
 ] as const;
 
 /**
  * The camera filters, each left out when it isn't set: one camera or camera group, one lens
  * or lens group (by its metadata group's ID), and a range of each setting written as its lowest
- * and highest value as the photos have them, such as "100-400" or "1/500-1/30", and a range of the
- * hours of the day it was taken, such as "6-18".
+ * and highest value as the photos have them, such as "100-400" or "1/500-1/30", a range of the
+ * hours of the day it was taken, such as "6-18", and its orientation, "horizontal" or "vertical".
  */
 export type CameraFilters = Partial<Record<(typeof CAMERA_FILTER_KEYS)[number], string>>;
 
@@ -157,7 +162,8 @@ function matchesCameraFilters(photo: Photo, filters: CameraFilters): boolean {
       const range = parseRange(filters[key]);
       return !range || inRange(photo, key, range);
     }) &&
-    matchesTime(photo, filters)
+    matchesTime(photo, filters) &&
+    matchesOrientation(photo, filters[ORIENTATION_KEY])
   );
 }
 

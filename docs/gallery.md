@@ -17,8 +17,8 @@ each photo's file path, which `ALLPHOTOS.json` entries don't carry.
 
 Under those, **Show filters** opens the same filters as the portfolio's [Grid and Table](portfolio-filters.md):
 **Places** (any number of countries, cities and places), **Album**, **Tag** and **Genre**, **Camera** and **Lens** (with
-their metadata groups), the **ISO**, **Exposure**, **Focal length**, **Aperture** and **Time of day** sliders, and
-**Colors**, kept in the URL under the portfolio's own names (`?album=`, `?camera=`, `?color=`, …), so a filtered Grid
+their metadata groups), the **ISO**, **Exposure**, **Focal length**, **Aperture** and **Time of day** sliders,
+**Orientation**, and **Colors**, kept in the URL under the portfolio's own names (`?album=`, `?camera=`, `?color=`, …), so a filtered Grid
 link's search works here too. Each choice counts the photos the Gallery's other filters leave, and the Gallery's
 **Clear filters** clears these as well. Changing any Gallery filter keeps the page where it's scrolled to: each
 filter's `navigate` passes `resetScroll: false`, since TanStack Router scrolls to the top on every navigation
