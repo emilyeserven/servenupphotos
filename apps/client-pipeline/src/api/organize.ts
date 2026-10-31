@@ -1,6 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { InFlightPullRequest, PublishResult } from "@/api/photos";
-import { type PendingSave, photoChanges } from "@/api/scan-changes";
+import { type PendingSave, changesByFolder, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
 
 /**
@@ -258,6 +258,48 @@ export const setAlbumLayoutMutation = albumsMutation(
     `/api/organize/albums/${encodeURIComponent(id)}/layout`,
   ({ covers, layout }) => ({ covers, layout }),
 );
+
+/** What deleting an album did. */
+interface DeleteAlbumResult extends PendingSave {
+  /** How many photo files had the album taken out of their albums. */
+  photos: number;
+  /** How many albums directly inside it moved up to its parent. */
+  reparented: number;
+}
+
+/**
+ * Deletes the album `id`, takes it out of every photo that lists it and moves the albums inside it
+ * up to its parent, as changes waiting for Commit. Its photo order, covers and layout go with it.
+ */
+export const deleteAlbumMutation = mutationOptions({
+  mutationKey: ["organize", "albums", "delete"],
+  meta: { saves: true, changes: (result) => changesByFolder(result as PendingSave, "albums") },
+  mutationFn: (id: string) =>
+    requestJson<DeleteAlbumResult>(`/api/organize/albums/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    }),
+});
+
+/** What taking photos out of an album did. */
+interface RemovedPhotosResult extends PendingSave {
+  /** How many photo files had the album taken out of their albums. */
+  photos: number;
+}
+
+/**
+ * Takes the photos with `photoIds` out of the album `id`, and out of its photo order, covers and
+ * layout, as changes waiting for Commit. Each photo keeps its other albums.
+ */
+export const removeAlbumPhotosMutation = mutationOptions({
+  mutationKey: ["organize", "albums", "remove-photos"],
+  meta: { saves: true, changes: (result) => changesByFolder(result as PendingSave, "albums") },
+  mutationFn: ({ id, photoIds }: { id: string; photoIds: number[] }) =>
+    requestJson<RemovedPhotosResult>(`/api/organize/albums/${encodeURIComponent(id)}/photos`, {
+      method: "DELETE",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ photoIds }),
+    }),
+});
 
 /**
  * Hides the album on the portfolio, or shows it again, as a change waiting for Commit. A hidden
