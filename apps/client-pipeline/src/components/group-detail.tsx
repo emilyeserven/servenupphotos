@@ -38,6 +38,7 @@ import {
   AlbumRemovePhotos,
   useAlbumRemove,
 } from "@/components/album-remove-photos";
+import { AlbumVisibilityCard } from "@/components/album-visibility-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { type GroupPhotos, GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
 import { GroupCombobox } from "@/components/group-picker";
@@ -193,6 +194,20 @@ const PLACE_TEXT: Record<ParentKind, { label: string; top: string }> = {
   tags: { label: "Under", top: "Nothing: it's a top-level tag" },
 };
 
+/**
+ * An album's cards under its parent: whether the portfolio shows it, its sub-albums, and deleting
+ * it.
+ */
+function AlbumSideCards({ album, albums }: { album: Group; albums: Group[] }) {
+  return (
+    <>
+      {!album.error && <AlbumVisibilityCard album={album} albums={albums} />}
+      <SubAlbumsCard album={album} albums={albums} />
+      {!album.error && <AlbumDelete album={album} albums={albums} />}
+    </>
+  );
+}
+
 /** The albums an album is inside, or the tags a tag is under, as rows of AboutCard's list. */
 function GroupPlace({ kind, group, list }: { kind: ParentKind; group: Group; list: Group[] }) {
   const parents = albumAncestry(list, group.id).slice(0, -1);
@@ -259,17 +274,10 @@ function SubAlbumsCard({ album, albums }: { album: Group; albums: Group[] }) {
   );
 }
 
-/** An album's Sub-albums card, and its Delete album card when its file could be read. */
-function AlbumSideCards({ album, albums }: { album: Group; albums: Group[] }) {
+/** The album's Delete album card, with how many photos list it. */
+function AlbumDelete({ album, albums }: { album: Group; albums: Group[] }) {
   const countOf = useAlbumPhotoCounts();
-  return (
-    <>
-      <SubAlbumsCard album={album} albums={albums} />
-      {!album.error && (
-        <AlbumDeleteCard album={album} albums={albums} photoCount={countOf?.(album.id)} />
-      )}
-    </>
-  );
+  return <AlbumDeleteCard album={album} albums={albums} photoCount={countOf?.(album.id)} />;
 }
 
 /** How many photos in ALLPHOTOS.json list an album, by ID; undefined until it's read. */

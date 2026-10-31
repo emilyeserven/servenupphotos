@@ -32,6 +32,11 @@ export interface Group {
    * them; missing or empty for one photo after another.
    */
   layout?: AlbumRow[];
+  /**
+   * For an album, true when it's hidden on the pipeline: it and the albums inside it aren't on the
+   * Albums page, the album filter or their own pages, though a spotlight zone still shows it.
+   */
+  hidden?: boolean;
 }
 
 /** One row of an album's layout: Markdown text above, its photos side by side, and text below. */
@@ -137,4 +142,20 @@ export function albumTree(parent = "", seen = new Set<string>()): Group[] {
   const fresh = (parent ? subAlbums(parent) : topAlbums()).filter((a) => !seen.has(a.id));
   for (const album of fresh) seen.add(album.id);
   return fresh.flatMap((album) => [album, ...albumTree(album.id, seen)]);
+}
+
+/** The album with the ID and every album it's inside, nearest first; a loop stops where it comes back round. */
+function albumAncestry(id: string): Group[] {
+  const chain: Group[] = [];
+  const byId = (at?: string) => albums.find((album) => album.id === at);
+  for (let at = byId(id); at && !chain.includes(at); at = byId(at.parent)) chain.push(at);
+  return chain;
+}
+
+/**
+ * Whether the site lists the album with the ID and gives it a page: false when it, or an album
+ * it's inside, is hidden on the pipeline.
+ */
+export function albumShown(id: string): boolean {
+  return !albumAncestry(id).some((album) => album.hidden);
 }

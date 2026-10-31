@@ -86,6 +86,19 @@ first, then the rest, newest first. **Use the default order** saves an empty `ph
 To lay the album's page out in rows with text above and below them, and to pick its cover photos, use the
 **Layout and covers** card under it; see [Album Layouts and Covers](album-layouts.md).
 
+## Showing or hiding on the portfolio
+
+The **On the portfolio** card, on an album's page, hides the album on the portfolio or shows it again
+(`PUT /api/organize/albums/<id>/visibility` with `{ "hidden": true | false }`), writing only the file's `hidden`, as a
+[change waiting for Commit](pending-changes.md). A hidden album, and every album inside it, isn't on the portfolio's
+[Albums](portfolio-albums.md) page or in the Grid's **Album** filter, and its own page says there's no such album. Its
+photos still show everywhere else, and a [spotlight zone](publish.md#site-spotlight) that shows it still does, so an
+album like **Homepage Spotlight** can feed the homepage without being listed. The card says when an album is hidden
+because one it's inside is, and the Albums list marks each hidden album with **Hidden on the portfolio**.
+
+> **Frontend analogy:** like a `published: false` flag on a CMS entry: the entry and its data stay, and only the
+> public list and detail routes skip it, the same as a filtered-out row rather than a deleted one.
+
 ## Parent tags
 
 A tag can have one parent tag: a more general tag it's a kind of, such as `shotengai` (a Japanese shopping street)

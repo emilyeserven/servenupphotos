@@ -271,3 +271,27 @@ func handleSetSpotlightAlbum(store *settings.Store, gh *github.Client) http.Hand
 		writeSocialResult(w, result, err, "could not save the spot's album")
 	}
 }
+
+// handleSetAlbumHidden saves whether the portfolio hides the path's album,
+// from the body's hidden, as a change waiting for Commit.
+func handleSetAlbumHidden(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Hidden *bool `json:"hidden"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil || req.Hidden == nil {
+			writeError(w, http.StatusBadRequest, "invalid album visibility body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetAlbumHidden(ctx, cfg, r.PathValue("id"), *req.Hidden)
+		writeSocialResult(w, result, err, "could not save the album's visibility")
+	}
+}

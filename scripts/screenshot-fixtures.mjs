@@ -920,6 +920,7 @@ export function defaultFixtures() {
       ...pendingSave(),
       photos: body?.photoIds?.length ?? 0,
     }),
+    "PUT /api/organize/albums/homepage-spotlight/visibility": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/descriptions": ({ body }) => ({
       ...pendingSave(),

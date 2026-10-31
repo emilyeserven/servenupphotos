@@ -8,7 +8,7 @@ kept a place from the old photo-by-photo spotlight (`websiteSpotlight`, 1 first)
 first. Albums come in the order
 set with the arrows on the pipeline's [Albums](albums-and-tags.md#order) page, each followed by its sub-albums, whose
 headings name their parent (`New York › Brooklyn`). Albums without an order come after the rest, by name, and albums
-with no photos are left out. Under each name are its description, how many photos it has and, for an album a
+with no photos are left out, as are albums [hidden](albums-and-tags.md#showing-or-hiding-on-the-portfolio) on the pipeline and the albums inside them. Under each name are its description, how many photos it has and, for an album a
 [spotlight zone](publish.md#site-spotlight) shows, where (`Also shown on the homepage.`).
 
 Each photo is as tall as the strip and as wide as its own shape, and the strip scrolls sideways when they don't fit
@@ -21,7 +21,7 @@ The old `/spotlight` address redirects here.
 Each album's name links to its own page, `/albums/<id>` (`routes/albums.$id.tsx`), with its description, then the
 rows of its [layout](album-layouts.md#on-the-portfolio) with their Markdown text (`components/album-rows.tsx`), when it
 has one, then every photo no row has, one under another, each as large as it fits: the full width, or the full height of the screen when that's
-smaller (`components/fitted-photo.tsx`). Clicking a photo opens the photo viewer, which steps through the whole album.
+smaller (`components/fitted-photo.tsx`). Clicking a photo opens the photo viewer, which steps through the whole album. A hidden album's page says there's no album with its ID.
 
 The album order and the zones come from `ALLALBUMS.json` (`lib/groups.ts`), and an album's photos from
 `lib/spotlight-zones.ts`, which the [homepage](portfolio-homepage.md) uses too.

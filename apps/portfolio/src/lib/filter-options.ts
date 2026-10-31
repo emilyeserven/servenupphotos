@@ -123,7 +123,12 @@ export function locationOptions(list: Photo[], facet: Photo[]): LocationOption[]
 }
 
 /** The albums inside an album, or the tags under a tag; genres have none. */
-const CHILDREN = { album: subAlbums, tag: subTags, genre: () => [] } as const;
+const CHILDREN = { album: shownSubAlbums, tag: subTags, genre: () => [] } as const;
+
+/** The albums inside an album, without the hidden ones. */
+function shownSubAlbums(parent: string): Group[] {
+  return subAlbums(parent).filter((album) => !album.hidden);
+}
 
 /** An album, tag or genre as a choice, and the albums or tags inside it after it. */
 function groupOptions(
@@ -149,9 +154,10 @@ function topLevel(list: Group[]): Group[] {
   return list.filter((group) => !known.has(group.parent ?? "") || group.parent === group.id);
 }
 
-/** The album filter's choices: every album, each sub-album under its parent. */
+/** The album filter's choices: every album, each sub-album under its parent, leaving out hidden ones. */
 export function albumOptions(facet: Photo[]): FilterOption[] {
-  return topLevel(albums).flatMap((album) => groupOptions("album", album, facet, 0));
+  const shown = topLevel(albums).filter((album) => !album.hidden);
+  return shown.flatMap((album) => groupOptions("album", album, facet, 0));
 }
 
 /** The tag filter's choices: every tag, each under its parent tag. */
