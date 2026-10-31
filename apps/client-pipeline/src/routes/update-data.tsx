@@ -6,6 +6,7 @@ import { AlbumSuggestionsCard } from "@/components/album-suggestions/album-sugge
 import { BulkTaggingCard } from "@/components/bulk-tagging/bulk-tagging-card";
 import { GenreSuggestionsCard } from "@/components/genre-suggestions/genre-suggestions-card";
 import { ImageBaseUrlCard } from "@/components/image-base-url";
+import { ImageNamesCard } from "@/components/image-names-card";
 import { LocalizationFillCard } from "@/components/localization-fill/localization-fill-card";
 import { LocationNamesCard } from "@/components/location-names-card";
 import { MissingFieldsCard } from "@/components/missing-fields";
@@ -34,6 +35,7 @@ function UpdateDataPage() {
           data.github.repo && data.github.token.set ? (
             <>
               <ImageBaseUrlCard publicUrl={data.r2.publicUrl} />
+              <ImageNamesCard />
               <MissingFieldsCard canReadExif={r2IsSetUp(data.r2)} />
               <PhotoColorsCard canRead={r2IsSetUp(data.r2)} />
               <ReapplyOverridesCard />

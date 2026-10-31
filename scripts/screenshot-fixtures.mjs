@@ -481,6 +481,43 @@ function uploadAnswer(key) {
   return { key, url: `${CDN}/${key}`, versions };
 }
 
+/** Update Data's Image names preview: the first few titled photos, renamed after their titles. */
+function imageNamesPreview() {
+  const stem = (title) =>
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60);
+  const files = headPhotos
+    .filter(({ data }) => data.title && /^photos\/[0-9a-f]{12}-/.test(data.images?.key ?? ""))
+    .slice(0, 6)
+    .map(({ path, data }) => {
+      const from = data.images.key;
+      const to = `${from.slice(0, 20)}${stem(data.title)}.jpg`;
+      const changes = Object.entries(data.images)
+        .filter(([, v]) => typeof v === "string" && v.includes(from.replace(/\.jpg$/, "")))
+        .map(([field, v]) => ({
+          field: `images.${field}`,
+          from: v,
+          to: v.replace(from.replace(/\.jpg$/, ""), to.replace(/\.jpg$/, "")),
+        }));
+      return { path, fileUrl: "", title: data.title, from, to, changes };
+    });
+  return {
+    repo: REPO,
+    folder: `${FOLDER}/photos`,
+    branch: PULL_REQUEST.branch,
+    pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+    photoFiles: headPhotos.length,
+    named: 3,
+    untitled: headPhotos.filter(({ data }) => !data.title).length,
+    elsewhere: 0,
+    unreadable: [],
+    files,
+  };
+}
+
 /**
  * The photos Bulk Tagging picks: `count` of the pull request's photos, the first with no tags,
  * each saying what it shares with the first unless `any` picked them whatever they share.
@@ -779,6 +816,8 @@ export function defaultFixtures() {
         })),
     },
     "POST /api/data/location-names": () => ({ ...pendingSave(), files: 9, fields: 9 }),
+    "POST /api/data/image-names/preview": () => imageNamesPreview(),
+    "POST /api/data/image-names": () => ({ ...pendingSave(), files: 6, fields: 66 }),
     "POST /api/data/bulk-tags/untagged": () => ({ ...bulkTagPick(), photos: [] }),
     "POST /api/data/bulk-tags/pick": ({ body }) => bulkTagPick(body?.count, body?.any),
     "POST /api/data/bulk-tags/preview": () => bulkTagsPreview(),
