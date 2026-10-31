@@ -31,6 +31,8 @@ import { Route as GenresIndexRouteImport } from './routes/genres.index'
 import { Route as GenresIdRouteImport } from './routes/genres.$id'
 import { Route as TagsIndexRouteImport } from './routes/tags.index'
 import { Route as TagsIdRouteImport } from './routes/tags.$id'
+import { Route as UpdateDataIndexRouteImport } from './routes/update-data.index'
+import { Route as UpdateDataSectionRouteImport } from './routes/update-data.$section'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -142,6 +144,16 @@ const TagsIdRoute = TagsIdRouteImport.update({
   path: '/tags/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UpdateDataIndexRoute = UpdateDataIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UpdateDataRoute,
+} as any)
+const UpdateDataSectionRoute = UpdateDataSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => UpdateDataRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -159,13 +171,15 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/update-data': typeof UpdateDataRoute
+  '/update-data': typeof UpdateDataRouteWithChildren
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
+  '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
   '/genres/': typeof GenresIndexRoute
   '/tags/': typeof TagsIndexRoute
+  '/update-data/': typeof UpdateDataIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -183,13 +197,14 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/update-data': typeof UpdateDataRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
+  '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums': typeof AlbumsIndexRoute
   '/genres': typeof GenresIndexRoute
   '/tags': typeof TagsIndexRoute
+  '/update-data': typeof UpdateDataIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -208,13 +223,15 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/update-data': typeof UpdateDataRoute
+  '/update-data': typeof UpdateDataRouteWithChildren
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
+  '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
   '/genres/': typeof GenresIndexRoute
   '/tags/': typeof TagsIndexRoute
+  '/update-data/': typeof UpdateDataIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -238,9 +255,11 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
+    | '/update-data/$section'
     | '/albums/'
     | '/genres/'
     | '/tags/'
+    | '/update-data/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -258,13 +277,14 @@ export interface FileRouteTypes {
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
-    | '/update-data'
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
+    | '/update-data/$section'
     | '/albums'
     | '/genres'
     | '/tags'
+    | '/update-data'
   id:
     | '__root__'
     | '/'
@@ -286,9 +306,11 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
+    | '/update-data/$section'
     | '/albums/'
     | '/genres/'
     | '/tags/'
+    | '/update-data/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -307,7 +329,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
-  UpdateDataRoute: typeof UpdateDataRoute
+  UpdateDataRoute: typeof UpdateDataRouteWithChildren
   AlbumsIdRoute: typeof AlbumsIdRoute
   GenresIdRoute: typeof GenresIdRoute
   TagsIdRoute: typeof TagsIdRoute
@@ -472,8 +494,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/update-data/': {
+      id: '/update-data/'
+      path: '/'
+      fullPath: '/update-data/'
+      preLoaderRoute: typeof UpdateDataIndexRouteImport
+      parentRoute: typeof UpdateDataRoute
+    }
+    '/update-data/$section': {
+      id: '/update-data/$section'
+      path: '/$section'
+      fullPath: '/update-data/$section'
+      preLoaderRoute: typeof UpdateDataSectionRouteImport
+      parentRoute: typeof UpdateDataRoute
+    }
   }
 }
+
+interface UpdateDataRouteChildren {
+  UpdateDataSectionRoute: typeof UpdateDataSectionRoute
+  UpdateDataIndexRoute: typeof UpdateDataIndexRoute
+}
+
+const UpdateDataRouteChildren: UpdateDataRouteChildren = {
+  UpdateDataSectionRoute: UpdateDataSectionRoute,
+  UpdateDataIndexRoute: UpdateDataIndexRoute,
+}
+
+const UpdateDataRouteWithChildren = UpdateDataRoute._addFileChildren(
+  UpdateDataRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -491,7 +541,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
-  UpdateDataRoute: UpdateDataRoute,
+  UpdateDataRoute: UpdateDataRouteWithChildren,
   AlbumsIdRoute: AlbumsIdRoute,
   GenresIdRoute: GenresIdRoute,
   TagsIdRoute: TagsIdRoute,

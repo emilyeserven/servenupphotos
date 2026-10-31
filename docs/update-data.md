@@ -5,6 +5,11 @@ previews what it will change, then saves every changed file as a [change waiting
 so one **Commit** sends them to the open **Add photo data** pull request (or opens one) together with `ALLPHOTOS.json`
 rebuilt.
 
+Each bulk change has its own subpage, `/update-data/<name>` (such as `/update-data/image-names`), picked from a side
+navigation beside the card; on a phone the navigation is a dropdown above it. `/update-data` on its own opens the first,
+**Image base URL**, and the main sidebar keeps **Update Data** highlighted on every subpage. The list and each subpage's
+card are in `components/update-data/sections.tsx`, so a new bulk change is one entry there.
+
 **Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
 development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder
 (except `ALLPHOTOS.json`) as the next Commit will have it, and lists the

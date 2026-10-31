@@ -121,7 +121,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenu>
               {group.items.map((item) => (
                 <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url} tooltip={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isUnder(pathname, item.url)}
+                    tooltip={item.title}
+                  >
                     <Link to={item.url} onClick={closeOnMobile}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -140,4 +144,9 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail />
     </Sidebar>
   );
+}
+
+/** Whether the open page is this sidebar page or one under it, such as an Update Data subpage. */
+function isUnder(pathname: string, url: string) {
+  return pathname === url || pathname.startsWith(`${url}/`);
 }

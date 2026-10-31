@@ -162,7 +162,11 @@ function UnrenamedNote({ node, list }: { node: RegionNode; list: RegionListData 
   return (
     <p className="text-muted-foreground text-sm">
       {stillWriting(left)} still write another name, and are counted as {node.name} here.{" "}
-      <Link to="/update-data" className="text-foreground underline underline-offset-4">
+      <Link
+        to="/update-data/$section"
+        params={{ section: "location-names" }}
+        className="text-foreground underline underline-offset-4"
+      >
         Rewrite them in Update Data
       </Link>
       .
