@@ -23827,7 +23827,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": ["homepage-spotlight"],
+    "albums": ["homepage-spotlight", "test"],
     "tags": ["kawara", "temple", "rooftops", "houses", "road", "forest", "aerial-view"],
     "genres": [],
     "places": [
@@ -24096,7 +24096,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["test"],
     "tags": ["chozuya", "buddhism", "temple", "dragons", "fountain", "water", "trees"],
     "genres": [],
     "places": [
@@ -29215,7 +29215,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["japan"],
     "tags": ["bukeyashiki", "dobei", "alley", "walls", "power-lines", "trees", "village"],
     "genres": [],
     "places": [
@@ -55703,7 +55703,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["japan"],
     "tags": ["chochin", "alley", "power-lines", "cables", "signage", "storefronts", "pedestrians"],
     "genres": [],
     "places": [
