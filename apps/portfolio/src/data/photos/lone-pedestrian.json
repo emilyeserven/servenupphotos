@@ -1,54 +1,65 @@
 {
-  "title": null,
+  "title": "Lone Pedestrian",
   "comment": null,
-  "id": 438,
-  "file": "DSCF2893.jpg",
-  "addedDate": null,
+  "id": 444,
+  "file": "DSCF3133.jpg",
+  "addedDate": "2026-11-02T04:57:44Z",
   "camera": "Fujifilm X-T5",
-  "lens": "XF35mmF2 R WR",
-  "aperture": 2,
-  "exposure": "1/250",
-  "iso": 500,
-  "focalLength": 35,
-  "gpsPosition": "37 deg 47' 23.15\" N, 122 deg 24' 13.78\" W",
-  "customGpsPosition": null,
-  "createDate": "2026:10:25 20:26:02",
+  "lens": "21.0 mm",
+  "aperture": 1,
+  "exposure": "1/640",
+  "iso": 125,
+  "focalLength": 21,
+  "gpsPosition": null,
+  "customGpsPosition": "37.800380515730225, -122.40051199635835",
+  "createDate": "2026:10:26 13:34:38",
   "customCreateDate": null,
   "placeName": null,
   "customCity": null,
   "customState": null,
   "customCountry": null,
-  "country": "United States of America",
-  "state": "California",
-  "city": "San Francisco",
-  "width": 6173,
-  "height": 3472,
+  "country": null,
+  "state": null,
+  "city": null,
+  "width": 6485,
+  "height": 3648,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893.jpg",
-    "key": "photos/6645cacf5fda-dscf2893.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893-thumbnail.webp?crop=2701,0,3472",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/6645cacf5fda-dscf2893-thumbnailpreview.webp?crop=2701,0,3472",
+    "full": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133.jpg",
+    "key": "photos/7e9996cf6d3e-dscf3133.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133-thumbnail.webp?crop=1942,0,3648",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7e9996cf6d3e-dscf3133-thumbnailpreview.webp?crop=1942,0,3648",
     "thumbnailcrop": {
-      "x": 2701,
+      "x": 1942,
       "y": 0,
-      "size": 3472,
+      "size": 3648,
       "outputSize": 500
     }
   },
   "isSocialMediaEligible": false,
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
-  "exifOriginals": {},
+  "exifOriginals": {
+    "camera": "X-T5"
+  },
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "apartments",
+    "road",
+    "crosswalk",
+    "pedestrians",
+    "cars",
+    "trees",
+    "rooftops",
+    "lamppost"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -58,43 +69,43 @@
   "reEdit": null,
   "colors": {
     "average": {
-      "hex": "#160a07",
+      "hex": "#4b4a4f",
       "lab": {
-        "l": 3.69,
-        "a": 4.03,
-        "b": 2.68
+        "l": 31.52,
+        "a": 1.61,
+        "b": -3.05
       },
       "hcl": {
-        "h": 33.63,
-        "c": 4.84,
-        "l": 3.69
+        "h": 297.83,
+        "c": 3.45,
+        "l": 31.52
       }
     },
     "buckets": [
       {
         "name": "red",
         "hex": "#ff0000",
-        "share": 0.0466
+        "share": 0.0331
       },
       {
         "name": "orange",
         "hex": "#ff8000",
-        "share": 0.0061
+        "share": 0.0146
       },
       {
         "name": "yellow",
         "hex": "#ffff00",
-        "share": 0.0007
+        "share": 0.0282
       },
       {
         "name": "chartreuse",
         "hex": "#80ff00",
-        "share": 0.0001
+        "share": 0.0033
       },
       {
         "name": "green",
         "hex": "#00ff00",
-        "share": 0.0001
+        "share": 0
       },
       {
         "name": "spring green",
@@ -104,162 +115,162 @@
       {
         "name": "cyan",
         "hex": "#00ffff",
-        "share": 0.0003
+        "share": 0.0002
       },
       {
         "name": "azure",
         "hex": "#0080ff",
-        "share": 0.0016
+        "share": 0.0994
       },
       {
         "name": "blue",
         "hex": "#0000ff",
-        "share": 0.0005
+        "share": 0.0066
       },
       {
         "name": "violet",
         "hex": "#8000ff",
-        "share": 0.0002
+        "share": 0.0005
       },
       {
         "name": "magenta",
         "hex": "#ff00ff",
-        "share": 0
+        "share": 0.0001
       },
       {
         "name": "rose",
         "hex": "#ff0080",
-        "share": 0
+        "share": 0.0002
       }
     ],
     "neutrals": {
-      "share": 0.9437,
+      "share": 0.8137,
       "histogram": [
         {
           "from": 0,
           "to": 5,
           "hex": "#090909",
-          "share": 0.8736
+          "share": 0.1866
         },
         {
           "from": 5,
           "to": 10,
           "hex": "#171717",
-          "share": 0.0298
+          "share": 0.1144
         },
         {
           "from": 10,
           "to": 15,
           "hex": "#212121",
-          "share": 0.0175
+          "share": 0.0586
         },
         {
           "from": 15,
           "to": 20,
           "hex": "#2b2b2b",
-          "share": 0.0154
+          "share": 0.0576
         },
         {
           "from": 20,
           "to": 25,
           "hex": "#363636",
-          "share": 0.0015
+          "share": 0.0315
         },
         {
           "from": 25,
           "to": 30,
           "hex": "#414141",
-          "share": 0.0013
+          "share": 0.0289
         },
         {
           "from": 30,
           "to": 35,
           "hex": "#4c4c4c",
-          "share": 0.0008
+          "share": 0.0311
         },
         {
           "from": 35,
           "to": 40,
           "hex": "#585858",
-          "share": 0.0007
+          "share": 0.023
         },
         {
           "from": 40,
           "to": 45,
           "hex": "#646464",
-          "share": 0.0004
+          "share": 0.0154
         },
         {
           "from": 45,
           "to": 50,
           "hex": "#717171",
-          "share": 0.0002
+          "share": 0.0164
         },
         {
           "from": 50,
           "to": 55,
           "hex": "#7d7d7d",
-          "share": 0.0002
+          "share": 0.0195
         },
         {
           "from": 55,
           "to": 60,
           "hex": "#8a8a8a",
-          "share": 0
+          "share": 0.0287
         },
         {
           "from": 60,
           "to": 65,
           "hex": "#979797",
-          "share": 0.0001
+          "share": 0.0594
         },
         {
           "from": 65,
           "to": 70,
           "hex": "#a4a4a4",
-          "share": 0.0001
+          "share": 0.0526
         },
         {
           "from": 70,
           "to": 75,
           "hex": "#b2b2b2",
-          "share": 0
+          "share": 0.036
         },
         {
           "from": 75,
           "to": 80,
           "hex": "#bfbfbf",
-          "share": 0
+          "share": 0.0141
         },
         {
           "from": 80,
           "to": 85,
           "hex": "#cdcdcd",
-          "share": 0.0001
+          "share": 0.0168
         },
         {
           "from": 85,
           "to": 90,
           "hex": "#dbdbdb",
-          "share": 0
+          "share": 0.0124
         },
         {
           "from": 90,
           "to": 95,
           "hex": "#e9e9e9",
-          "share": 0
+          "share": 0.0091
         },
         {
           "from": 95,
           "to": 100,
           "hex": "#f8f8f8",
-          "share": 0.0019
+          "share": 0.0014
         }
       ]
     },
-    "lightness": 3.69,
-    "chroma": 5.34,
-    "peakChroma": 8.81,
-    "samples": 9768
+    "lightness": 31.52,
+    "chroma": 8.78,
+    "peakChroma": 16.92,
+    "samples": 9975
   }
 }

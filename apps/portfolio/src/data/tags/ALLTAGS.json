@@ -670,6 +670,11 @@
     "description": "an ornate building where a medieval or early-modern trade guild met, typical of Flemish and Dutch market squares"
   },
   {
+    "id": "halloween",
+    "name": "halloween",
+    "description": ""
+  },
+  {
     "id": "hanbok",
     "name": "hanbok",
     "description": "traditional Korean clothing, with a high-waisted, full skirt or loose trousers and a short jacket",
@@ -1570,6 +1575,11 @@
   {
     "id": "silhouettes",
     "name": "silhouettes",
+    "description": ""
+  },
+  {
+    "id": "skeletons",
+    "name": "skeletons",
     "description": ""
   },
   {
