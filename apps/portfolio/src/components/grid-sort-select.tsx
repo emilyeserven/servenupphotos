@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowUpDown } from "lucide-react";
 import type { GridSort } from "@/lib/grid-sort";
+import { SELECT_CLASS } from "@/lib/segmented-control";
 
 const SORTS: { sort: GridSort; label: string }[] = [
   { sort: "newest", label: "Newest to Oldest" },
@@ -42,7 +43,7 @@ export function GridSortSelect({ sort }: { sort: GridSort }) {
             replace: true,
           });
         }}
-        className="h-8 cursor-pointer rounded-md border bg-background px-2 text-sm text-foreground shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30"
+        className={SELECT_CLASS}
       >
         {SORTS.map((option) => (
           <option key={option.sort} value={option.sort}>
