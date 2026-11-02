@@ -10,3 +10,12 @@ buckets (every 30° around the color wheel), a lightness histogram of the neutra
 have a hue), the mean lightness and chroma, the peak chroma its most vivid tenth reaches, and `raw`: per-channel statistics in every color space go-colorful
 supports plus hue, lightness, chroma and saturation histograms. The UI shows these in Colors and Raw color data tabs. Update Data's **Colors** saves the same `colors`, without `raw`, in each photo's JSON file;
 see [Update Data](update-data.md).
+
+exiftool runs as one long-lived process that every photo shares. A photo's metadata can be up to 64 MB of exiftool
+output: a Lightroom edit with brush or AI masks stores every brush stroke in its XMP, which on its own can pass
+go-exiftool's default 64 KB limit. When a read still fails partway, the backend starts a new exiftool process, so that
+photo shows **could not read photo metadata** and the photos after it are read as usual.
+
+> **Frontend analogy:** the exiftool process is like one shared `ReadableStream` reader. If one chunk is too big for
+> the buffer, the reader is left mid-stream and every later `read()` fails, so the fix is a bigger buffer plus a fresh
+> reader whenever one breaks.

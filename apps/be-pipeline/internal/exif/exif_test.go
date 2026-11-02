@@ -1,7 +1,11 @@
 package exif
 
 import (
+	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -26,5 +30,69 @@ func TestExiftoolExtract(t *testing.T) {
 		if _, ok := fields[k]; ok {
 			t.Errorf("field %s should be removed", k)
 		}
+	}
+}
+
+// TestExiftoolExtractLargeMetadata reads a photo whose metadata is larger than
+// go-exiftool's default 64 KB, like a Lightroom edit with brush masks, and then
+// a normal photo with the same process.
+func TestExiftoolExtractLargeMetadata(t *testing.T) {
+	if _, err := exec.LookPath("exiftool"); err != nil {
+		t.Skip("exiftool not installed")
+	}
+	big := filepath.Join(t.TempDir(), "big.jpg")
+	src, err := os.ReadFile("testdata/sample.jpg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(big, src, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	desc := strings.Repeat("x", 200_000)
+	descFile := filepath.Join(t.TempDir(), "desc.txt")
+	if err := os.WriteFile(descFile, []byte(desc), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	//nolint:gosec // test-only exiftool call on temp files
+	if out, err := exec.CommandContext(t.Context(), "exiftool", "-q", "-overwrite_original", "-XMP-dc:Description<="+descFile, big).CombinedOutput(); err != nil {
+		t.Fatalf("write metadata: %v: %s", err, out)
+	}
+
+	et, err := NewExiftool()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = et.Close() })
+
+	fields, err := et.Extract(big)
+	if err != nil {
+		t.Fatalf("large metadata: %v", err)
+	}
+	if fields["Description"] != desc {
+		t.Errorf("Description has %d characters, want %d", len(fmt.Sprint(fields["Description"])), len(desc))
+	}
+	if _, err := et.Extract("testdata/sample.jpg"); err != nil {
+		t.Fatalf("photo after large metadata: %v", err)
+	}
+}
+
+// TestExiftoolRestartsAfterFailedRead checks that a read that breaks the
+// exiftool process doesn't make the next photo fail too.
+func TestExiftoolRestartsAfterFailedRead(t *testing.T) {
+	if _, err := exec.LookPath("exiftool"); err != nil {
+		t.Skip("exiftool not installed")
+	}
+	et, err := NewExiftool()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = et.Close() })
+
+	_ = et.et.Close() // as if the process had died
+	if _, err := et.Extract("testdata/sample.jpg"); err == nil {
+		t.Fatal("want an error from a stopped exiftool")
+	}
+	if _, err := et.Extract("testdata/sample.jpg"); err != nil {
+		t.Fatalf("after restart: %v", err)
 	}
 }
