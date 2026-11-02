@@ -1,7 +1,7 @@
 {
-  "id": 442,
   "title": null,
   "comment": null,
+  "id": 442,
   "file": "DSCF2952.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -11,7 +11,7 @@
   "iso": 4000,
   "focalLength": 35,
   "gpsPosition": "37 deg 47' 23.15\" N, 122 deg 24' 13.78\" W",
-  "customGpsPosition": null,
+  "customGpsPosition": "37.790656104270134, -122.40543981982262",
   "createDate": "2026:10:25 20:34:01",
   "customCreateDate": null,
   "placeName": null,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/4eeea4dfc5b8-dscf2952-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/4eeea4dfc5b8-dscf2952-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/4eeea4dfc5b8-dscf2952-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/4eeea4dfc5b8-dscf2952-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4eeea4dfc5b8-dscf2952-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/4eeea4dfc5b8-dscf2952-thumbnail.webp?crop=0,818,2794",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4eeea4dfc5b8-dscf2952-thumbnailpreview.webp?crop=0,818,2794",
     "thumbnailcrop": {
       "x": 0,
-      "y": 559,
+      "y": 818,
       "size": 2794,
       "outputSize": 500
     }

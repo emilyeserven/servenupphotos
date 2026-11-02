@@ -1,7 +1,7 @@
 {
-  "id": 441,
   "title": null,
   "comment": null,
+  "id": 441,
   "file": "DSCF2942.jpg",
   "addedDate": null,
   "camera": "Fujifilm X-T5",
@@ -11,7 +11,7 @@
   "iso": 12800,
   "focalLength": 35,
   "gpsPosition": "37 deg 47' 23.15\" N, 122 deg 24' 13.78\" W",
-  "customGpsPosition": null,
+  "customGpsPosition": "37.790656104270134, -122.40543981982262",
   "createDate": "2026:10:25 20:32:24",
   "customCreateDate": null,
   "placeName": null,
@@ -61,8 +61,8 @@
       "hex": "#2b2b2b",
       "lab": {
         "l": 17.42,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,

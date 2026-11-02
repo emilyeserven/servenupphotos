@@ -1,43 +1,43 @@
 {
-  "id": 431,
-  "title": null,
+  "title": "Birds Over the Bridge",
   "comment": null,
-  "file": "DSCF2727.jpg",
-  "addedDate": null,
+  "id": 402,
+  "file": "DSCF2346.jpg",
+  "addedDate": "2026-11-02T04:42:01Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
-  "aperture": 5.6,
+  "aperture": 5.3,
   "exposure": "1/500",
-  "iso": 160,
-  "focalLength": 46.6,
-  "gpsPosition": "37 deg 46' 30.30\" N, 122 deg 30' 36.97\" W",
-  "customGpsPosition": null,
-  "createDate": "2026:10:25 13:06:28",
+  "iso": 125,
+  "focalLength": 70.2,
+  "gpsPosition": null,
+  "customGpsPosition": "37.804303751801356, -122.45373212016419",
+  "createDate": "2026:10:25 07:47:10",
   "customCreateDate": null,
   "placeName": null,
   "customCity": null,
   "customState": null,
   "customCountry": null,
-  "country": "United States of America",
-  "state": "California",
-  "city": "San Francisco",
-  "width": 5246,
-  "height": 2951,
+  "country": null,
+  "state": null,
+  "city": null,
+  "width": 7728,
+  "height": 4347,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727.jpg",
-    "key": "photos/53f0f4057fe5-dscf2727.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/53f0f4057fe5-dscf2727-thumbnailpreview.webp",
+    "full": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346.jpg",
+    "key": "photos/a1364069c2c1-dscf2346.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346-thumbnail.webp?crop=2720,0,4347",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/a1364069c2c1-dscf2346-thumbnailpreview.webp?crop=2720,0,4347",
     "thumbnailcrop": {
-      "x": 1147,
+      "x": 2720,
       "y": 0,
-      "size": 2951,
+      "size": 4347,
       "outputSize": 500
     }
   },
@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "suspension-cables",
+    "bridge",
+    "footbridge",
+    "birds",
+    "flight",
+    "pine-trees",
+    "mountains",
+    "water"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -58,196 +67,196 @@
   "reEdit": null,
   "colors": {
     "average": {
-      "hex": "#37362d",
+      "hex": "#54778a",
       "lab": {
-        "l": 22.48,
-        "a": -1.35,
-        "b": 5.59
+        "l": 48.05,
+        "a": -7,
+        "b": -14.75
       },
       "hcl": {
-        "h": 103.57,
-        "c": 5.75,
-        "l": 22.48
+        "h": 244.61,
+        "c": 16.33,
+        "l": 48.05
       }
     },
     "buckets": [
       {
         "name": "red",
         "hex": "#ff0000",
-        "share": 0.0011
+        "share": 0.0002
       },
       {
         "name": "orange",
         "hex": "#ff8000",
-        "share": 0.0377
+        "share": 0.0005
       },
       {
         "name": "yellow",
         "hex": "#ffff00",
-        "share": 0.094
+        "share": 0.0136
       },
       {
         "name": "chartreuse",
         "hex": "#80ff00",
-        "share": 0.0647
+        "share": 0.0012
       },
       {
         "name": "green",
         "hex": "#00ff00",
-        "share": 0.0039
+        "share": 0
       },
       {
         "name": "spring green",
         "hex": "#00ff80",
-        "share": 0.0005
+        "share": 0
       },
       {
         "name": "cyan",
         "hex": "#00ffff",
-        "share": 0.0002
+        "share": 0.0005
       },
       {
         "name": "azure",
         "hex": "#0080ff",
-        "share": 0.0097
+        "share": 0.6708
       },
       {
         "name": "blue",
         "hex": "#0000ff",
-        "share": 0.0008
+        "share": 0.0002
       },
       {
         "name": "violet",
         "hex": "#8000ff",
-        "share": 0.0001
+        "share": 0
       },
       {
         "name": "magenta",
         "hex": "#ff00ff",
-        "share": 0.0002
+        "share": 0
       },
       {
         "name": "rose",
         "hex": "#ff0080",
-        "share": 0
+        "share": 0.001
       }
     ],
     "neutrals": {
-      "share": 0.7871,
+      "share": 0.3119,
       "histogram": [
         {
           "from": 0,
           "to": 5,
           "hex": "#090909",
-          "share": 0.1199
+          "share": 0.0795
         },
         {
           "from": 5,
           "to": 10,
           "hex": "#171717",
-          "share": 0.0971
+          "share": 0.0731
         },
         {
           "from": 10,
           "to": 15,
           "hex": "#212121",
-          "share": 0.0974
+          "share": 0.0622
         },
         {
           "from": 15,
           "to": 20,
           "hex": "#2b2b2b",
-          "share": 0.14
+          "share": 0.0586
         },
         {
           "from": 20,
           "to": 25,
           "hex": "#363636",
-          "share": 0.0863
+          "share": 0.0199
         },
         {
           "from": 25,
           "to": 30,
           "hex": "#414141",
-          "share": 0.0744
+          "share": 0.0093
         },
         {
           "from": 30,
           "to": 35,
           "hex": "#4c4c4c",
-          "share": 0.0593
+          "share": 0.0044
         },
         {
           "from": 35,
           "to": 40,
           "hex": "#585858",
-          "share": 0.045
+          "share": 0.0016
         },
         {
           "from": 40,
           "to": 45,
           "hex": "#646464",
-          "share": 0.0303
+          "share": 0.0013
         },
         {
           "from": 45,
           "to": 50,
           "hex": "#717171",
-          "share": 0.0126
+          "share": 0.0004
         },
         {
           "from": 50,
           "to": 55,
           "hex": "#7d7d7d",
-          "share": 0.0062
+          "share": 0.0002
         },
         {
           "from": 55,
           "to": 60,
           "hex": "#8a8a8a",
-          "share": 0.0046
+          "share": 0.0004
         },
         {
           "from": 60,
           "to": 65,
           "hex": "#979797",
-          "share": 0.006
+          "share": 0.0001
         },
         {
           "from": 65,
           "to": 70,
           "hex": "#a4a4a4",
-          "share": 0.0015
+          "share": 0.0002
         },
         {
           "from": 70,
           "to": 75,
           "hex": "#b2b2b2",
-          "share": 0.0014
+          "share": 0.0003
         },
         {
           "from": 75,
           "to": 80,
           "hex": "#bfbfbf",
-          "share": 0.0007
+          "share": 0.0003
         },
         {
           "from": 80,
           "to": 85,
           "hex": "#cdcdcd",
-          "share": 0.001
+          "share": 0.0001
         },
         {
           "from": 85,
           "to": 90,
           "hex": "#dbdbdb",
-          "share": 0.0026
+          "share": 0
         },
         {
           "from": 90,
           "to": 95,
           "hex": "#e9e9e9",
-          "share": 0.0006
+          "share": 0.0001
         },
         {
           "from": 95,
@@ -257,9 +266,9 @@
         }
       ]
     },
-    "lightness": 22.48,
-    "chroma": 8.87,
-    "peakChroma": 18.3,
-    "samples": 9768
+    "lightness": 48.05,
+    "chroma": 18.24,
+    "peakChroma": 29.26,
+    "samples": 10050
   }
 }

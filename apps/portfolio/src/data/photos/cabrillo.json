@@ -1,43 +1,43 @@
 {
-  "id": 416,
-  "title": null,
+  "title": "Cabrillo",
   "comment": null,
-  "file": "DSCF2507.jpg",
-  "addedDate": null,
+  "id": 436,
+  "file": "DSCF2857.jpg",
+  "addedDate": "2026-11-02T04:52:07Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
-  "aperture": 3.5,
-  "exposure": "1/500",
-  "iso": 200,
-  "focalLength": 18,
-  "gpsPosition": null,
-  "customGpsPosition": null,
-  "createDate": "2026:10:26 03:43:06",
+  "aperture": 5.6,
+  "exposure": "1/160",
+  "iso": 125,
+  "focalLength": 52.4,
+  "gpsPosition": "37 deg 46' 30.30\" N, 122 deg 30' 36.97\" W",
+  "customGpsPosition": "37.773351570312826, -122.51014740153771",
+  "createDate": "2026:10:25 13:21:50",
   "customCreateDate": null,
   "placeName": null,
   "customCity": null,
   "customState": null,
   "customCountry": null,
-  "country": null,
-  "state": null,
-  "city": null,
-  "width": 6332,
-  "height": 3562,
+  "country": "United States of America",
+  "state": "California",
+  "city": "San Francisco",
+  "width": 5152,
+  "height": 7213,
   "images": {
-    "full": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507.jpg",
-    "key": "photos/0d62a4c8ced7-dscf2507.jpg",
-    "xlarge": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507-xlarge.webp",
-    "large": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507-large.webp",
-    "medium": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507-medium.webp",
-    "small": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507-small.webp",
-    "xsmall": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507-xsmall.webp",
-    "preview": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0d62a4c8ced7-dscf2507-thumbnailpreview.webp",
+    "full": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857.jpg",
+    "key": "photos/af6e288de38e-dscf2857.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857-thumbnail.webp?crop=0,1535,5152",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/af6e288de38e-dscf2857-thumbnailpreview.webp?crop=0,1535,5152",
     "thumbnailcrop": {
-      "x": 1385,
-      "y": 0,
-      "size": 3562,
+      "x": 0,
+      "y": 1535,
+      "size": 5152,
       "outputSize": 500
     }
   },
@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": [
+    "bay-windows",
+    "houses",
+    "repetition",
+    "signage",
+    "power-lines",
+    "sidewalk",
+    "cars",
+    "trees"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -58,73 +67,73 @@
   "reEdit": null,
   "colors": {
     "average": {
-      "hex": "#565656",
+      "hex": "#505d65",
       "lab": {
-        "l": 36.37,
-        "a": -0,
-        "b": -0.01
+        "l": 38.62,
+        "a": -2.94,
+        "b": -6.41
       },
       "hcl": {
-        "h": 259.96,
-        "c": 0.01,
-        "l": 36.37
+        "h": 245.37,
+        "c": 7.05,
+        "l": 38.62
       }
     },
     "buckets": [
       {
         "name": "red",
         "hex": "#ff0000",
-        "share": 0
+        "share": 0.0007
       },
       {
         "name": "orange",
         "hex": "#ff8000",
-        "share": 0
+        "share": 0.0105
       },
       {
         "name": "yellow",
         "hex": "#ffff00",
-        "share": 0
+        "share": 0.0321
       },
       {
         "name": "chartreuse",
         "hex": "#80ff00",
-        "share": 0
+        "share": 0.009
       },
       {
         "name": "green",
         "hex": "#00ff00",
-        "share": 0
+        "share": 0.0004
       },
       {
         "name": "spring green",
         "hex": "#00ff80",
-        "share": 0
+        "share": 0.0001
       },
       {
         "name": "cyan",
         "hex": "#00ffff",
-        "share": 0
+        "share": 0.0098
       },
       {
         "name": "azure",
         "hex": "#0080ff",
-        "share": 0
+        "share": 0.2496
       },
       {
         "name": "blue",
         "hex": "#0000ff",
-        "share": 0
+        "share": 0.0001
       },
       {
         "name": "violet",
         "hex": "#8000ff",
-        "share": 0
+        "share": 0.0003
       },
       {
         "name": "magenta",
         "hex": "#ff00ff",
-        "share": 0
+        "share": 0.0001
       },
       {
         "name": "rose",
@@ -133,133 +142,133 @@
       }
     ],
     "neutrals": {
-      "share": 1,
+      "share": 0.6873,
       "histogram": [
         {
           "from": 0,
           "to": 5,
           "hex": "#090909",
-          "share": 0.2996
+          "share": 0.1463
         },
         {
           "from": 5,
           "to": 10,
           "hex": "#171717",
-          "share": 0.0562
+          "share": 0.057
         },
         {
           "from": 10,
           "to": 15,
           "hex": "#212121",
-          "share": 0.0347
+          "share": 0.0386
         },
         {
           "from": 15,
           "to": 20,
           "hex": "#2b2b2b",
-          "share": 0.0288
+          "share": 0.0479
         },
         {
           "from": 20,
           "to": 25,
           "hex": "#363636",
-          "share": 0.0282
+          "share": 0.0222
         },
         {
           "from": 25,
           "to": 30,
           "hex": "#414141",
-          "share": 0.0297
+          "share": 0.0213
         },
         {
           "from": 30,
           "to": 35,
           "hex": "#4c4c4c",
-          "share": 0.037
+          "share": 0.0142
         },
         {
           "from": 35,
           "to": 40,
           "hex": "#585858",
-          "share": 0.0418
+          "share": 0.0161
         },
         {
           "from": 40,
           "to": 45,
           "hex": "#646464",
-          "share": 0.0358
+          "share": 0.017
         },
         {
           "from": 45,
           "to": 50,
           "hex": "#717171",
-          "share": 0.0293
+          "share": 0.0397
         },
         {
           "from": 50,
           "to": 55,
           "hex": "#7d7d7d",
-          "share": 0.0287
+          "share": 0.1097
         },
         {
           "from": 55,
           "to": 60,
           "hex": "#8a8a8a",
-          "share": 0.0352
+          "share": 0.0419
         },
         {
           "from": 60,
           "to": 65,
           "hex": "#979797",
-          "share": 0.0388
+          "share": 0.0322
         },
         {
           "from": 65,
           "to": 70,
           "hex": "#a4a4a4",
-          "share": 0.0513
+          "share": 0.0347
         },
         {
           "from": 70,
           "to": 75,
           "hex": "#b2b2b2",
-          "share": 0.0605
+          "share": 0.0118
         },
         {
           "from": 75,
           "to": 80,
           "hex": "#bfbfbf",
-          "share": 0.0694
+          "share": 0.022
         },
         {
           "from": 80,
           "to": 85,
           "hex": "#cdcdcd",
-          "share": 0.0445
+          "share": 0.0046
         },
         {
           "from": 85,
           "to": 90,
           "hex": "#dbdbdb",
-          "share": 0.0293
+          "share": 0.0045
         },
         {
           "from": 90,
           "to": 95,
           "hex": "#e9e9e9",
-          "share": 0.0176
+          "share": 0.0034
         },
         {
           "from": 95,
           "to": 100,
           "hex": "#f8f8f8",
-          "share": 0.0037
+          "share": 0.0019
         }
       ]
     },
-    "lightness": 36.37,
-    "chroma": 0.01,
-    "peakChroma": 0.01,
-    "samples": 9900
+    "lightness": 38.62,
+    "chroma": 12.16,
+    "peakChroma": 30,
+    "samples": 10115
   }
 }
