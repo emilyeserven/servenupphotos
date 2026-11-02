@@ -1,5 +1,11 @@
-import { type ReactNode, useMemo } from "react";
-import { naturalRows, ratioOf, type RowSizes } from "@/lib/natural-rows";
+import { type ReactNode, type Ref, useMemo } from "react";
+import {
+  type NaturalRow,
+  naturalRows,
+  ratioOf,
+  type RowSizes,
+  type Shaped,
+} from "@/lib/natural-rows";
 import type { PhotoImage } from "@/lib/photos";
 import { useSize } from "@/lib/use-size";
 import { cn } from "@/lib/utils";
@@ -29,12 +35,42 @@ export function NaturalGrid<T extends { id: number; image: PhotoImage }>({
   showInfo: boolean;
   renderTile: (photo: T) => ReactNode;
 }) {
+  const [ref, width] = useMeasuredWidth();
+  const rows = useMemo(() => layoutNaturalRows(photos, width, sizes), [photos, width, sizes]);
+  return <NaturalRows ref={ref} rows={rows} showInfo={showInfo} renderTile={renderTile} />;
+}
+
+/** A ref for an element and its width in pixels, taken to be 1200px until it's measured. */
+export function useMeasuredWidth() {
   const [ref, size] = useSize();
-  const width = size.width || UNMEASURED_WIDTH;
-  const rows = useMemo(
-    () => naturalRows(photos, width, window.innerHeight * MAX_HEIGHT_SHARE, sizes),
-    [photos, width, sizes],
-  );
+  return [ref, size.width || UNMEASURED_WIDTH] as const;
+}
+
+/**
+ * The photos in justified rows across width pixels at the starting sizes, with no tile taller
+ * than 90% of the window (`lib/natural-rows.ts`).
+ */
+export function layoutNaturalRows<T extends Shaped>(
+  photos: T[],
+  width: number,
+  sizes: RowSizes,
+): NaturalRow<T>[] {
+  return naturalRows(photos, width, window.innerHeight * MAX_HEIGHT_SHARE, sizes);
+}
+
+/** Natural rows already laid out, each tile as tall as its row and the full rows filling their width. */
+export function NaturalRows<T extends { id: number; image: PhotoImage }>({
+  ref,
+  rows,
+  showInfo,
+  renderTile,
+}: {
+  ref?: Ref<HTMLDivElement>;
+  rows: NaturalRow<T>[];
+  /** Whether tiles show their captions, which puts rows further apart. */
+  showInfo: boolean;
+  renderTile: (photo: T) => ReactNode;
+}) {
   return (
     <div ref={ref} className={cn("flex flex-col", showInfo ? "gap-6" : "gap-3")}>
       {rows.map((row) => (

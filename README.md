@@ -88,6 +88,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Photo Viewer](docs/photo-viewer.md): the portfolio's full-window photo, and moving between photos with the arrow keys
 - [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, technical info, and picking a range on the graph or the heatmap
 - [Portfolio Grid](docs/portfolio-grid.md) (`/grid` on the portfolio): square and natural tiles (vertical photos in rows of their own) and the Table view, with its sorting, Columns menu and place names
+- [Portfolio Lucky](docs/portfolio-lucky.md) (`/lucky` on the portfolio): whole rows of photos picked at random from the ones the filters leave, with Shuffle
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
 - [Portfolio Albums](docs/portfolio-albums.md) (`/albums` on the portfolio): a strip of each album's photos, in the order set on the pipeline
 - [Portfolio Tags](docs/portfolio-tags.md) (`/tags` on the portfolio): every tag with a few of its photos, grouped under parent tags, each linking to the Grid

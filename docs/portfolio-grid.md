@@ -1,8 +1,7 @@
 # Portfolio Grid
 
 The portfolio's Grid (`/grid`, `routes/grid.tsx`) shows every photo with resized versions in R2, newest first, in one of
-four views picked at the top right (`?view=`): **Square** tiles (the default), **Natural** tiles, a **Table**, or
-**Lucky**, a few photos at random. Its
+three views picked at the top right (`?view=`): **Square** tiles (the default), **Natural** tiles, or a **Table**. Its
 **Show filters** panel has the filters in [Portfolio Filters](portfolio-filters.md), including the camera filters, and
 a **Colors** section (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
 photo opens the [photo viewer](photo-viewer.md).
@@ -70,26 +69,6 @@ all reach that is centered rather than stretched.
 
 > **Frontend analogy:** like a CSS `flex-wrap` gallery, but the line breaks are worked out in JavaScript from the
 > measured width (a `ResizeObserver`), so each line can hold only one kind of photo and have its own height.
-
-## Lucky
-
-**Lucky** (`?view=lucky`, `lib/lucky.ts`, `components/lucky-controls.tsx`) shows a handful of photos picked at random
-from the ones the filters leave, as square tiles. Narrowing the filters narrows the pool, so "Japan, 2023, mostly
-blue" gives random blue photos from that trip. The count beside the title says how many were drawn out of how many,
-such as "12 random of 320 photos".
-
-- **How many**: 1, 6, 12 (the default), 24 or 48 photos, kept as `?count=` (left out for 12).
-- **Shuffle** draws again. Opening the page draws afresh too, while opening a photo, changing the size or showing
-  info keeps the same draw. Changing a filter draws from the new pool.
-- The eye button's **Size** and **Show info** work as they do for Square tiles; the sort is hidden, since the order is
-  the draw's.
-
-The draw isn't kept in the URL, so a link to Lucky gives whoever opens it their own draw. Lucky isn't remembered as the
-Grid's view either: a **View in grid** link from another page opens the view the Grid was in before, showing every
-matching photo.
-
-> **Frontend analogy:** the draw is a seeded shuffle, like `lodash.sampleSize` with a fixed random generator kept in
-> `useState`. Re-rendering with the same seed and pool gives the same photos, and **Shuffle** just swaps in a new seed.
 
 ## Table
 

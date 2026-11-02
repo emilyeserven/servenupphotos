@@ -1,22 +1,18 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Dices, Grid3x3, LayoutDashboard, Square, Table } from "lucide-react";
-import { type ImgHTMLAttributes, useState } from "react";
-import { ColorBar } from "@/components/color-bar";
+import { createFileRoute } from "@tanstack/react-router";
+import { Grid3x3, Table } from "lucide-react";
 import { ColorOrderControls } from "@/components/color-order-controls";
 import { GridColorFilters } from "@/components/grid-color-filters";
 import { GridSortSelect } from "@/components/grid-sort-select";
 import { GridViewOptions } from "@/components/grid-view-options";
-import { LuckyControls } from "@/components/lucky-controls";
-import { NaturalGrid } from "@/components/natural-grid";
+import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-tiles";
 import { PhotoTable } from "@/components/photo-table";
-import { PhotoComment } from "@/components/photo-comment";
 import { CameraFilterBar } from "@/components/camera-filters";
 import { NoMatchingPhotos } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { ViewPlaceholder } from "@/components/view-placeholder";
-import { PhotoLocation } from "@/components/photo-location";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { TILE_SHAPES, type ViewChoice, ViewSwitcher } from "@/components/view-switcher";
+import { photos, type Photo } from "@/lib/photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import {
   COLOR_FILTER_KEYS,
@@ -29,42 +25,14 @@ import {
 } from "@/lib/color-search";
 import type { ColorSort } from "@/lib/color-sort";
 import { type GridColorSpec, type GridSort, sortGrid } from "@/lib/grid-sort";
-import {
-  type GridSize,
-  NATURAL_ROW_SIZES,
-  naturalSize,
-  parseGridSize,
-  SQUARE_COLUMNS,
-  SQUARE_TILE_SIZES,
-  squareSize,
-  tableSize,
-} from "@/lib/grid-size";
-import {
-  DEFAULT_LUCKY_COUNT,
-  drawLucky,
-  type LuckyCount,
-  newLuckySeed,
-  parseLuckyCount,
-} from "@/lib/lucky";
-import { ratioOf, rowHeightOf, type RowSizes } from "@/lib/natural-rows";
+import { type GridSize, naturalSize, parseGridSize, squareSize, tableSize } from "@/lib/grid-size";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
-import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
-import { cn } from "@/lib/utils";
-import { rememberedViewOptions, useRememberViewOptions } from "@/lib/view-options";
+import { useRememberViewOptions } from "@/lib/view-options";
 
-/**
- * How tiles are shaped: the square picked on the pipeline's Photo page, or the whole photo at its
- * own aspect ratio.
- */
-type TileMode = "square" | "natural";
-
-/**
- * How the Grid shows its photos: as tiles of either shape, as a table, or as a handful of square
- * tiles picked at random from the photos the filters leave (Lucky).
- */
-type ViewMode = TileMode | "table" | "lucky";
+/** How the Grid shows its photos: as tiles of either shape, or as a table. */
+type ViewMode = TileMode | "table";
 
 interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
   /** Left out for the default, square tiles. */
@@ -82,8 +50,6 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
    * default, newest first.
    */
   sort?: Exclude<GridSort, "newest">;
-  /** How many photos the Lucky view draws. Left out for the default, 12. */
-  count?: LuckyCount;
 }
 
 /**
@@ -113,26 +79,12 @@ function gridViewOptions(search: Record<string, unknown>): GridSearch {
     ...infoOf(search),
     ...parseGridSize(search.size),
     ...sortOf(search),
-    ...parseLuckyCount(search.count),
   };
 }
 
-/**
- * The Grid's settings to remember. Lucky isn't remembered as the view, so a **View in grid** link
- * from another page shows every matching photo: the view the Grid was in before stays remembered.
- */
-function rememberedGridOptions(search: Record<string, unknown>): GridSearch {
-  const options = gridViewOptions(search);
-  if (options.view !== "lucky") return options;
-  return { ...options, view: viewOf(rememberedViewOptions("/grid").view).view };
-}
-
-/** The views the URL can ask for, besides square tiles. */
-const URL_VIEWS: readonly string[] = ["natural", "table", "lucky"];
-
 /** The view from the URL, left out for square tiles. */
 function viewOf(view: unknown): GridSearch {
-  return URL_VIEWS.includes(view as string) ? { view: view as GridSearch["view"] } : {};
+  return view === "natural" || view === "table" ? { view } : {};
 }
 
 /** The sorts the URL can ask for by date, besides newest first, which have no order of their own. */
@@ -163,9 +115,6 @@ export const Route = createFileRoute("/grid")({
   component: GridView,
 });
 
-/** A photo with resized versions in R2, which is all the grid can show. */
-type ImagePhoto = Photo & { image: PhotoImage };
-
 // Newest first. Only photos with resized versions in R2 have images.
 const newestFirst = photos
   .filter((photo): photo is ImagePhoto => photo.image !== null)
@@ -186,11 +135,9 @@ function gridPhotosFor(search: GridSearch & Record<string, unknown>, sort: GridS
 function GridView() {
   const search = Route.useSearch();
   const mode: ViewMode = search.view ?? "square";
-  // Picks the Lucky view's photos: a new one on each visit and each Shuffle.
-  const [seed, setSeed] = useState(newLuckySeed);
-  useRememberViewOptions("/grid", rememberedGridOptions(search));
+  useRememberViewOptions("/grid", gridViewOptions(search));
   if (newestFirst.length === 0) return <ViewPlaceholder to="/grid" />;
-  const { shown: shownPhotos, pool } = photosFor(search, mode, seed);
+  const shownPhotos = photosFor(search, mode);
 
   return (
     // The tiles use the whole window, less a little padding, so wider screens fit more photos; the
@@ -202,12 +149,10 @@ function GridView() {
           <Grid3x3 className="size-8 text-muted-foreground" aria-hidden />
           Grid
         </h1>
-        <p className="text-sm text-muted-foreground">
-          {photoCount(shownPhotos.length, pool, mode)}
-        </p>
+        <p className="text-sm text-muted-foreground">{shownPhotos.length} photos</p>
         <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 self-center">
-          <ViewControls search={search} mode={mode} onShuffle={() => setSeed(newLuckySeed())} />
-          <ViewModeSwitcher mode={mode} />
+          {mode !== "table" && <TileControls search={search} mode={mode} />}
+          <ViewSwitcher choices={VIEW_MODES} mode={mode} />
         </div>
         <div className="mt-3 w-full">
           <CameraFilterBar
@@ -231,72 +176,13 @@ function GridView() {
   );
 }
 
-/** The photos the view shows, and how many photos they were picked from. */
-interface ShownPhotos {
-  shown: Photo[];
-  /** How many photos the filters leave: more than are shown in the Lucky view. */
-  pool: number;
-}
-
-/** Every photo in the list is shown. */
-function showAll(list: Photo[]): ShownPhotos {
-  return { shown: list, pool: list.length };
-}
-
 /**
  * The photos the view shows: what every filter leaves, as tiles in the URL's sort, or for the
  * table, every photo (even those without resized versions in R2), which the table sorts itself.
- * The Lucky view shows a few of the tiles at random, picked by the seed.
  */
-function photosFor(
-  search: GridSearch & Record<string, unknown>,
-  mode: ViewMode,
-  seed: number,
-): ShownPhotos {
-  if (mode === "table") return showAll(filterByColors(filterWithCamera(photos, search), search));
-  if (mode === "lucky") return luckyPhotos(search, seed);
-  return showAll(gridPhotosFor(search, search.sort ?? "newest"));
-}
-
-/** The Lucky view's photos: the URL's count of them, drawn from what every filter leaves. */
-function luckyPhotos(search: GridSearch & Record<string, unknown>, seed: number): ShownPhotos {
-  const pool = gridPhotosFor(search, "newest");
-  return { shown: drawLucky(pool, seed, search.count ?? DEFAULT_LUCKY_COUNT), pool: pool.length };
-}
-
-/** The count beside the title: how many photos are shown, and in Lucky, out of how many. */
-function photoCount(shown: number, pool: number, mode: ViewMode): string {
-  return mode === "lucky" ? `${shown} random of ${pool} photos` : `${shown} photos`;
-}
-
-/** The controls for the view: Lucky's, or the tiles' sort and display options. The Table has its own. */
-function ViewControls({
-  search,
-  mode,
-  onShuffle,
-}: {
-  search: GridSearch;
-  mode: ViewMode;
-  onShuffle: () => void;
-}) {
-  if (mode === "table") return null;
-  if (mode === "lucky") {
-    const count = search.count ?? DEFAULT_LUCKY_COUNT;
-    return (
-      <LuckyControls
-        count={count}
-        size={search.size}
-        info={search.info === true}
-        onShuffle={onShuffle}
-      />
-    );
-  }
-  return <TileControls search={search} mode={mode} />;
-}
-
-/** The tiles' shape for the view: Lucky's are square. */
-function tileModeOf(mode: TileMode | "lucky"): TileMode {
-  return mode === "lucky" ? "square" : mode;
+function photosFor(search: GridSearch & Record<string, unknown>, mode: ViewMode): Photo[] {
+  if (mode === "table") return filterByColors(filterWithCamera(photos, search), search);
+  return gridPhotosFor(search, search.sort ?? "newest");
 }
 
 /** Whether a photo has resized versions in R2, so it can be a tile. */
@@ -332,7 +218,7 @@ function GridBody({
     <>
       <GridTiles
         photos={tiles}
-        mode={tileModeOf(mode)}
+        mode={mode}
         size={search.size}
         showInfo={search.info === true}
         onOpen={show}
@@ -358,61 +244,6 @@ function TileControls({ search, mode }: { search: GridSearch; mode: TileMode }) 
   );
 }
 
-/** How the tiles are shaped and how big they are, from the view and the Size option. */
-interface TileSizes {
-  mode: TileMode;
-  /** How wide a Square tile is at each breakpoint, as an `<img sizes>`. */
-  square: string;
-  /** How big Natural rows start out. */
-  rows: RowSizes;
-}
-
-/** The tiles' shape and sizes for the view and the Size option. */
-function tileSizesOf(mode: TileMode, size: GridSize | undefined): TileSizes {
-  return {
-    mode,
-    square: SQUARE_TILE_SIZES[squareSize(size)],
-    rows: NATURAL_ROW_SIZES[naturalSize(size)],
-  };
-}
-
-/** The photos as tiles: square ones in a grid, or natural ones in justified rows. */
-function GridTiles({
-  photos,
-  mode,
-  size,
-  showInfo,
-  onOpen,
-}: {
-  photos: ImagePhoto[];
-  mode: TileMode;
-  /** The URL's size, left out for each view's own starting size. */
-  size: GridSize | undefined;
-  showInfo: boolean;
-  onOpen: (photo: ImagePhoto) => void;
-}) {
-  const sizes = tileSizesOf(mode, size);
-  const tile = (photo: ImagePhoto) => (
-    <PhotoTile photo={photo} sizes={sizes} showInfo={showInfo} onOpen={() => onOpen(photo)} />
-  );
-  if (mode === "natural") {
-    return <NaturalGrid photos={photos} showInfo={showInfo} sizes={sizes.rows} renderTile={tile} />;
-  }
-  return (
-    <ul
-      className={cn(
-        "grid",
-        SQUARE_COLUMNS[squareSize(size)],
-        showInfo ? "gap-x-3 gap-y-6" : "gap-3",
-      )}
-    >
-      {photos.map((photo) => (
-        <li key={photo.id}>{tile(photo)}</li>
-      ))}
-    </ul>
-  );
-}
-
 /** The color or vividness sort's order and secondary sort, shown while the Grid is sorted by one. */
 function ColorOrder({ sort, search }: { sort: GridSort; search: GridSearch }) {
   if (sort !== "color" && sort !== "vivid") return null;
@@ -427,201 +258,13 @@ function ColorOrder({ sort, search }: { sort: GridSort; search: GridSearch }) {
   );
 }
 
-/**
- * About how wide a natural tile is, for picking a sharp version: its starting width in its row
- * plus some room for growing to fill it, and never more than the window.
- */
-function naturalSizes(photo: { image: PhotoImage }, rows: RowSizes): string {
-  const width = Math.round(ratioOf(photo) * rowHeightOf(photo, rows) * 1.3);
-  return `(max-width: ${width}px) 100vw, ${width}px`;
-}
-
-const VIEW_MODES = [
-  { mode: "square", label: "Square", title: "Square thumbnails", Icon: Square },
-  {
-    mode: "natural",
-    label: "Natural",
-    title: "Each photo at its own aspect ratio",
-    Icon: LayoutDashboard,
-  },
+/** The Grid's views: the two tile shapes and the table. */
+const VIEW_MODES: ViewChoice<ViewMode>[] = [
+  ...TILE_SHAPES,
   {
     mode: "table",
     label: "Table",
     title: "A sortable table of the photos and their details",
     Icon: Table,
   },
-  {
-    mode: "lucky",
-    label: "Lucky",
-    title: "A few photos at random from the ones the filters leave",
-    Icon: Dices,
-  },
-] as const;
-
-/** Buttons to switch between square tiles, natural tiles, the table and Lucky, kept in the URL so a link keeps the view. */
-function ViewModeSwitcher({ mode }: { mode: ViewMode }) {
-  return (
-    <div role="group" aria-label="Show photos as" className={CONTROL_FRAME}>
-      {VIEW_MODES.map(({ mode: option, label, title, Icon }) => (
-        <Link
-          key={option}
-          from="/grid"
-          to="/grid"
-          search={(prev) => ({ ...prev, view: option === "square" ? undefined : option })}
-          replace
-          aria-pressed={mode === option}
-          title={title}
-          className={controlButtonClass(mode === option)}
-        >
-          <Icon aria-hidden />
-          {label}
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-/** The thumbnail's size, which the pipeline makes square. */
-const THUMBNAIL_SIZE = 500;
-
-/**
- * The tiny images to show blurred while the tile's image loads, or in its place when it can't:
- * the thumbnail's own preview, which matches its square, then the photo's, for photos saved before
- * they had one or when the thumbnail's preview won't load.
- */
-function placeholdersOf(image: PhotoImage, mode: TileMode): string[] {
-  const square = mode === "square" && image.thumbnail ? [image.thumbnailPreview] : [];
-  return [...square, image.preview].filter((url): url is string => Boolean(url));
-}
-
-/**
- * What the tile shows, best first. Square tiles show the square picked on the pipeline's Photo
- * page, sharp at every tile size, then the middle of the resized versions, for photos saved before
- * thumbnails or when the thumbnail won't load. Natural tiles pick from the resized versions by how
- * wide the tile is, since at a row's height or taller the Small version is too soft.
- */
-function sourcesOf(image: PhotoImage, sizes: TileSizes): ImgHTMLAttributes<HTMLImageElement>[] {
-  const middle = {
-    src: image.src,
-    srcSet: image.srcSet,
-    sizes: sizes.square,
-    width: image.width,
-    height: image.height,
-  };
-  if (sizes.mode === "natural") return [{ ...middle, sizes: naturalSizes({ image }, sizes.rows) }];
-  if (!image.thumbnail) return [middle];
-  return [{ src: image.thumbnail, width: THUMBNAIL_SIZE, height: THUMBNAIL_SIZE }, middle];
-}
-
-/** The index of the first of a list of images that hasn't failed to load, moved on by `next`. */
-function useFallback() {
-  const [index, setIndex] = useState(0);
-  return { index, next: () => setIndex((i) => i + 1) };
-}
-
-/** Whether img has already loaded, as a cached image can before React listens for it. */
-function isLoaded(img: HTMLImageElement | null): boolean {
-  return Boolean(img?.complete && img.naturalWidth > 0);
-}
-
-function PhotoTile({
-  photo,
-  sizes,
-  showInfo,
-  onOpen,
-}: {
-  photo: ImagePhoto;
-  sizes: TileSizes;
-  showInfo: boolean;
-  onOpen: () => void;
-}) {
-  const { mode } = sizes;
-  return (
-    <figure className="flex flex-col gap-2">
-      <button
-        type="button"
-        title="Show the whole photo"
-        onClick={onOpen}
-        style={mode === "natural" ? { aspectRatio: photo.image.width / photo.image.height } : {}}
-        className={cn(
-          "relative block w-full cursor-zoom-in overflow-hidden rounded-md bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          mode === "square" && "aspect-square",
-        )}
-      >
-        {/* Keyed by mode so switching starts each image's fallbacks over. */}
-        <TilePlaceholder key={`placeholder-${mode}`} image={photo.image} mode={mode} />
-        <TileImage key={`image-${mode}`} image={photo.image} sizes={sizes} alt={photo.title} />
-      </button>
-      {showInfo && <TileCaption photo={photo} />}
-    </figure>
-  );
-}
-
-/** The title, place and comment under a tile, shown when the grid's Info toggle is on. */
-function TileCaption({ photo }: { photo: ImagePhoto }) {
-  return (
-    <figcaption className="flex flex-col">
-      <span className="truncate text-sm font-medium">{photo.title}</span>
-      {photo.location && (
-        <PhotoLocation
-          location={photo.location}
-          className="w-fit max-w-full truncate text-xs text-muted-foreground"
-        />
-      )}
-      {photo.palette.length > 0 && <ColorBar palette={photo.palette} />}
-      {/* The rest of its details are in the lightbox. */}
-      {photo.comment && (
-        <PhotoComment comment={photo.comment} className="text-xs text-muted-foreground" />
-      )}
-    </figcaption>
-  );
-}
-
-/** The blurred placeholder, under the tile's image, trying the next one when one won't load. */
-function TilePlaceholder({ image, mode }: { image: PhotoImage; mode: TileMode }) {
-  const fallback = useFallback();
-  const src = placeholdersOf(image, mode)[fallback.index];
-  if (!src) return null;
-  return (
-    <img
-      key={src}
-      src={src}
-      alt=""
-      aria-hidden
-      loading="lazy"
-      onError={fallback.next}
-      className="absolute inset-0 size-full scale-110 object-cover blur-md"
-    />
-  );
-}
-
-/**
- * The tile's image, fading in over the placeholder once it loads. When none of its sources load,
- * nothing covers the placeholder, so the tile stays blurred rather than showing a broken image.
- */
-function TileImage({ image, sizes, alt }: { image: PhotoImage; sizes: TileSizes; alt: string }) {
-  const fallback = useFallback();
-  const [loaded, setLoaded] = useState(false);
-  const source = sourcesOf(image, sizes)[fallback.index];
-  if (!source) return null;
-  return (
-    <img
-      key={source.src}
-      {...source}
-      ref={(img) => {
-        if (isLoaded(img)) setLoaded(true);
-      }}
-      alt={alt}
-      loading="lazy"
-      onLoad={() => setLoaded(true)}
-      onError={() => {
-        setLoaded(false);
-        fallback.next();
-      }}
-      className={cn(
-        "relative size-full object-cover transition-opacity duration-500",
-        loaded ? "opacity-100" : "opacity-0",
-      )}
-    />
-  );
-}
+];
