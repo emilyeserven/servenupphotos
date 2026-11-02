@@ -1,3 +1,4 @@
+import { SiteHomeLink } from "@/components/site-home-link";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPortfolioView, type PortfolioView } from "@/lib/portfolio-views";
 
@@ -8,6 +9,7 @@ export function ViewPlaceholder({ to }: { to: PortfolioView["to"] }) {
     <div className="flex min-h-svh items-center justify-center p-6">
       <Card className="w-full max-w-md text-center">
         <CardHeader className="items-center gap-3">
+          <SiteHomeLink className="mx-auto" />
           <Icon className="mx-auto size-10 text-muted-foreground" aria-hidden />
           <CardTitle className="text-3xl tracking-tight">{label}</CardTitle>
           <CardDescription>{description}</CardDescription>

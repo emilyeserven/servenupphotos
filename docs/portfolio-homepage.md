@@ -22,6 +22,14 @@ where its **placement**, set there too, says on the screen: the middle by defaul
 The crop gets as near as the photo's edges allow; without a focus point, the photo's middle is used. It's worked out
 from the photo's size and the screen's, measured as the window resizes (`objectPosition` in `lib/spotlight-focus.ts`).
 
+Each visit starts on the photo after the one this browser showed last, going back to the first after the last one,
+so returning visitors don't always see the same photo first. The showing photo's id is saved in `localStorage`
+(`servenup-last-homepage-photo`, `lib/last-homepage-photo.ts`) each time a new one comes up, including by arrow key.
+With storage blocked, or when the saved photo is no longer on the homepage, a visit starts on the first photo.
+
+> **Frontend analogy:** it's a bookmark: the carousel's starting index comes from `useState(() => …)` reading the
+> saved id once, and an effect writes the id back whenever the index changes.
+
 The left and right arrow keys show the photo before or after, and the next one then waits its full 7 seconds again
 (`lib/use-arrow-keys.ts`). Keys pressed while typing in a field, or with a modifier such as ⌘, are left alone.
 
@@ -37,3 +45,10 @@ photos with the same hook, `lib/use-turn.ts`.
 > The focus point is CSS `object-position` on each `object-cover` image. Plain `30% 70%` would line the photo's point
 > 30% across and 70% down up with the same spot on the screen; the position is worked out instead so the point lands
 > at its placement, the middle by default, as the browser crops the rest.
+
+## Home link
+
+Every other page shows the site's name, **Serven Up Photos**, in small text at its top left above its title, linking
+back here (`components/site-home-link.tsx`). On the Map and Color pages it's inside the floating title box. It's also
+the first item in the site menu, above the view links, and closes the menu when clicked. The homepage itself leaves it
+out, since its big title is the same name.

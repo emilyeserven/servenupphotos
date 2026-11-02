@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BackdropCaption } from "@/components/backdrop-caption";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 import { objectPosition } from "@/lib/spotlight-focus";
@@ -23,11 +23,27 @@ function isNear(index: number, turn: number, count: number): boolean {
  * Photos filling the screen behind a page, fading in and out in turn with no tint over them, with the showing photo's title and a link to it on the map at the bottom, fading with it. Each
  * photo is cropped to put its focus point where its placement says on the screen, the middle by default. The left and right arrow keys show
  * the photo before or after, and the next one waits its full time again. With reduced motion the
- * first photo stays until an arrow key moves on. A photo fades in only once it has loaded.
+ * photo it starts on stays until an arrow key moves on. A photo fades in only once it has loaded.
+ * It starts on the photo at `start`, the first by default, and calls `onShow` with each photo as
+ * it comes up.
  */
-export function PhotoBackdrop({ photos }: { photos: ImagePhoto[] }) {
-  const { turn, step } = useTurn(photos.length, BACKDROP_MS);
+export function PhotoBackdrop({
+  photos,
+  start,
+  onShow,
+}: {
+  photos: ImagePhoto[];
+  /** The index of the photo to show first. */
+  start?: number;
+  /** Called with each photo as it starts showing. */
+  onShow?: (photo: ImagePhoto) => void;
+}) {
+  const { turn, step } = useTurn(photos.length, BACKDROP_MS, start);
   useArrowKeys(step);
+  const showing = photos.at(turn);
+  useEffect(() => {
+    if (showing) onShow?.(showing);
+  }, [showing, onShow]);
   const [loaded, setLoaded] = useState<ReadonlySet<number>>(new Set());
   const [ref, size] = useSize();
   return (

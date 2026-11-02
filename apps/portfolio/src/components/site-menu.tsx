@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { MenuIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useState } from "react";
+import { SiteHomeLink } from "@/components/site-home-link";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { type Theme, useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,10 @@ export function SiteMenu() {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-[min(18rem,calc(100vw-2rem))] p-2">
+        <SiteHomeLink
+          onClick={() => setOpen(false)}
+          className="mb-1 block rounded-md px-2 py-1.5 text-base text-foreground hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:no-underline"
+        />
         <nav aria-label="Portfolio views">
           <ul className="grid grid-cols-3 gap-1">
             {portfolioViews.map(({ to, label, icon: Icon, enabled }) => (
