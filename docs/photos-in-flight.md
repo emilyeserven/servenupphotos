@@ -45,6 +45,13 @@ list and the Undecided queue (the [drafts on the base branch](#drafts-on-the-bas
 (such as `?title=without&place=with`), so a reload or a shared link keeps them. Album, tag and other files below the
 photos aren't filtered. The [Gallery](gallery.md) has the same filters.
 
+The bar's **Sort** sets the order of the photos in flight: **Untitled first** (the default: untitled photos, then the
+rest, each in the pull request's order), **Date taken** (newest first, as the Gallery's), **Date added** (when it went
+on the portfolio, most recent first, then the ones not added yet by date taken), **Recently saved** (by photo ID,
+newest first), **Title** (A to Z, then the untitled ones by file name) or **File name** (the JSON file's name, with
+numbers in order). It's kept as `?sort=taken` and so on. The Undecided queue and **Next untitled photo** keep their own
+order.
+
 > **Frontend analogy:** it's the faceted filter on a shop's product list, where each facet is a three-way toggle
 > stored in the query string.
 
