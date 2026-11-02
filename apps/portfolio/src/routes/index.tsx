@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { FROSTED } from "@/components/backdrop-caption";
 import { PhotoBackdrop } from "@/components/photo-backdrop";
 import { homepagePhotos } from "@/lib/homepage-photos";
+import { homepageStart, rememberHomepagePhoto } from "@/lib/last-homepage-photo";
 import { enabledViews } from "@/lib/portfolio-views";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
@@ -24,9 +26,12 @@ const PHONE_QUERY = "(max-width: 767px) and (orientation: portrait)";
 /** The portfolio's front door: each way to explore the photos, over photos fading in and out. */
 function Homepage() {
   const phone = useMediaQuery(PHONE_QUERY);
+  const photos = phone ? phoneBackdropPhotos : backdropPhotos;
+  // Picked once per visit, from the photo this browser showed last, so each visit starts on a new one.
+  const [start] = useState(() => homepageStart(photos));
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center px-4 py-20 text-white">
-      <PhotoBackdrop photos={phone ? phoneBackdropPhotos : backdropPhotos} />
+      <PhotoBackdrop photos={photos} start={start} onShow={rememberHomepagePhoto} />
       <div className="relative z-10 w-full max-w-5xl text-center">
         <h1
           className={cn(

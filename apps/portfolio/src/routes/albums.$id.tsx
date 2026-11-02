@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { AlbumRows } from "@/components/album-rows";
 import { FittedPhoto } from "@/components/fitted-photo";
 import { PhotoLightbox } from "@/components/photo-lightbox";
+import { SiteHomeLink } from "@/components/site-home-link";
 import { albumRows } from "@/lib/album-layout";
 import { albums, albumShown, type Group } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -34,6 +35,7 @@ function AlbumFound({ album }: { album: Group }) {
 function AlbumHeader({ name, description }: { name: string; description?: string }) {
   return (
     <header className={NARROW}>
+      <SiteHomeLink className="mb-2 block w-fit" />
       <Link
         to="/albums"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"

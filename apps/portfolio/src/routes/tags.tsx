@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Tags } from "lucide-react";
 import { useState } from "react";
+import { SiteHomeLink } from "@/components/site-home-link";
 import { CARD_GRID, ParentTagSection, TagCard } from "@/components/tag-card";
 import { parseTagsSearch, TagControls } from "@/components/tag-controls";
 import { TagSearchBox } from "@/components/tag-search-box";
@@ -37,6 +38,7 @@ function TagsView() {
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-16 sm:px-6">
       <header className="flex flex-col gap-4">
         <div>
+          <SiteHomeLink className="mb-1" />
           <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
             <Tags className="size-8 text-muted-foreground" aria-hidden />
             Tags

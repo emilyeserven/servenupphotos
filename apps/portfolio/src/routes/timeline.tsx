@@ -7,6 +7,7 @@ import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { SiteHomeLink } from "@/components/site-home-link";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
 import { TimelineScrubber } from "@/components/timeline-scrubber";
@@ -98,10 +99,13 @@ function TimelineView() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-16 sm:px-6">
       <header className="flex flex-col gap-4">
-        <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
-          <CalendarClock className="size-8 text-muted-foreground" aria-hidden />
-          Timeline
-        </h1>
+        <div>
+          <SiteHomeLink className="mb-1" />
+          <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
+            <CalendarClock className="size-8 text-muted-foreground" aria-hidden />
+            Timeline
+          </h1>
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <TimeRangePicker
             value={timeRange}

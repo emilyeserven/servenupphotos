@@ -15,11 +15,11 @@ function reducedMotion(): boolean {
 
 /**
  * Which of `count` images to show, moving on to the next one every `ms` milliseconds, for images
- * that fade in and out in turn. A step starts the wait again. With reduced motion, the first one
- * stays until stepped.
+ * that fade in and out in turn, starting at `start` (the first by default). A step starts the wait
+ * again. With reduced motion, the one it starts at stays until stepped.
  */
-export function useTurn(count: number, ms: number): Turn {
-  const [turn, setTurn] = useState(0);
+export function useTurn(count: number, ms: number, start = 0): Turn {
+  const [turn, setTurn] = useState(start);
   useEffect(() => {
     if (count < 2 || reducedMotion()) return;
     const timer = setTimeout(() => setTurn((t) => t + 1), ms);

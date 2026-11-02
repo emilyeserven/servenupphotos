@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { BookImage } from "lucide-react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { AlbumStrip } from "@/components/album-strip";
+import { SiteHomeLink } from "@/components/site-home-link";
 import { coverPhotos } from "@/lib/album-layout";
 import { albums, albumShown, albumTree } from "@/lib/groups";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
@@ -36,6 +37,7 @@ function AlbumsView() {
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-16 sm:px-6">
       <header>
+        <SiteHomeLink className="mb-1" />
         <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
           <BookImage className="size-8 text-muted-foreground" aria-hidden />
           Albums

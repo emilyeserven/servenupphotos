@@ -12,6 +12,7 @@ import { PhotoComment } from "@/components/photo-comment";
 import { CameraFilterBar } from "@/components/camera-filters";
 import { NoMatchingPhotos } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
+import { SiteHomeLink } from "@/components/site-home-link";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { PhotoLocation } from "@/components/photo-location";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
@@ -167,6 +168,7 @@ function GridView() {
     // header stays in the same centered column as the other pages.
     <div className="flex w-full flex-col gap-8 px-3 py-16 sm:px-4">
       <header className="mx-auto flex w-full max-w-6xl flex-wrap items-baseline gap-x-4 gap-y-1 px-1 sm:px-2">
+        <SiteHomeLink className="basis-full" />
         <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
           <Grid3x3 className="size-8 text-muted-foreground" aria-hidden />
           Grid
