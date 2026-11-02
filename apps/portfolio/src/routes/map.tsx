@@ -267,12 +267,13 @@ function MapView() {
   }
 
   // Clicking a group zooms in to fit its photos, which splits it apart. A group that zooming in
-  // can't split, such as many photos at one place, shows its photos in a grid instead.
-  async function openCluster(marker: ClusterMarkerData) {
+  // can't split, such as many photos at one place, shows its photos in a grid instead, as does a
+  // ⌘- or Ctrl-click (`listPhotos`) on any group.
+  async function openCluster(marker: ClusterMarkerData, listPhotos: boolean) {
     if (!map.current) return;
     const clusterPhotos = await photosInCluster(map.current, marker.clusterId);
     setSelected(null);
-    const zoom = zoomToFit(map.current, clusterPhotos);
+    const zoom = listPhotos ? null : zoomToFit(map.current, clusterPhotos);
     if (zoom) {
       setCluster(null);
       map.current.fitBounds(zoom, CLUSTER_FIT);
@@ -345,7 +346,7 @@ function MapView() {
               marker={marker}
               display={display}
               onOpenPhoto={openPhoto}
-              onOpenCluster={(open) => void openCluster(open)}
+              onOpenCluster={(open, listPhotos) => void openCluster(open, listPhotos)}
             />
           ))}
           {cluster && (
