@@ -1,7 +1,6 @@
 package exif
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -40,21 +39,15 @@ func TestExiftoolExtractLargeMetadata(t *testing.T) {
 	if _, err := exec.LookPath("exiftool"); err != nil {
 		t.Skip("exiftool not installed")
 	}
-	big := filepath.Join(t.TempDir(), "big.jpg")
-	src, err := os.ReadFile("testdata/sample.jpg")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(big, src, 0o600); err != nil {
-		t.Fatal(err)
-	}
+	dir := t.TempDir()
+	big := filepath.Join(dir, "big.jpg")
 	desc := strings.Repeat("x", 200_000)
-	descFile := filepath.Join(t.TempDir(), "desc.txt")
+	descFile := filepath.Join(dir, "desc.txt")
 	if err := os.WriteFile(descFile, []byte(desc), 0o600); err != nil {
 		t.Fatal(err)
 	}
 	//nolint:gosec // test-only exiftool call on temp files
-	if out, err := exec.CommandContext(t.Context(), "exiftool", "-q", "-overwrite_original", "-XMP-dc:Description<="+descFile, big).CombinedOutput(); err != nil {
+	if out, err := exec.CommandContext(t.Context(), "exiftool", "-q", "-o", big, "-XMP-dc:Description<="+descFile, "testdata/sample.jpg").CombinedOutput(); err != nil {
 		t.Fatalf("write metadata: %v: %s", err, out)
 	}
 
@@ -68,8 +61,11 @@ func TestExiftoolExtractLargeMetadata(t *testing.T) {
 	if err != nil {
 		t.Fatalf("large metadata: %v", err)
 	}
-	if fields["Description"] != desc {
-		t.Errorf("Description has %d characters, want %d", len(fmt.Sprint(fields["Description"])), len(desc))
+	if _, ok := fields["Description"]; ok {
+		t.Error("Description is longer than maxValueLength and should be left out")
+	}
+	if fields["Make"] != "Servenup" {
+		t.Errorf("Make = %v, want Servenup", fields["Make"])
 	}
 	if _, err := et.Extract("testdata/sample.jpg"); err != nil {
 		t.Fatalf("photo after large metadata: %v", err)
@@ -94,5 +90,27 @@ func TestExiftoolRestartsAfterFailedRead(t *testing.T) {
 	}
 	if _, err := et.Extract("testdata/sample.jpg"); err != nil {
 		t.Fatalf("after restart: %v", err)
+	}
+}
+
+func TestDropLongValues(t *testing.T) {
+	long := strings.Repeat("x", maxValueLength+1)
+	fields := map[string]any{
+		"Make":     "Fujifilm",
+		"ISO":      float64(400),
+		"Mask":     long,
+		"Strokes":  []any{long[:maxValueLength], "xx"},
+		"Keywords": []any{"autumn", "leaves"},
+	}
+	dropLongValues(fields)
+	for _, k := range []string{"Mask", "Strokes"} {
+		if _, ok := fields[k]; ok {
+			t.Errorf("%s should be left out", k)
+		}
+	}
+	for _, k := range []string{"Make", "ISO", "Keywords"} {
+		if _, ok := fields[k]; !ok {
+			t.Errorf("%s should be kept", k)
+		}
 	}
 }

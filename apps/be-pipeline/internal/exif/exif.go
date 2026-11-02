@@ -18,6 +18,12 @@ import (
 // can pass on its own.
 const maxOutputSize = 64 << 20
 
+// maxValueLength is the longest a field's value can be, in characters, before
+// Extract leaves the field out. No field the pipeline uses comes close; the
+// ones that pass it are blobs such as a Lightroom brush mask's strokes, which
+// would only bloat the photo's EXIF in the browser.
+const maxValueLength = 2000
+
 // Fields that describe the (temporary) file rather than the photo.
 var tempFileFields = []string{
 	"SourceFile",
@@ -84,6 +90,7 @@ func (e *Exiftool) Extract(path string) (map[string]any, error) {
 	for _, k := range tempFileFields {
 		delete(fields, k)
 	}
+	dropLongValues(fields)
 	return fields, nil
 }
 
@@ -102,4 +109,30 @@ func (e *Exiftool) restartAfter(err error) {
 		return
 	}
 	e.et = et
+}
+
+// dropLongValues removes the fields whose value is longer than maxValueLength.
+func dropLongValues(fields map[string]any) {
+	for k, v := range fields {
+		if valueLength(v) > maxValueLength {
+			delete(fields, k)
+		}
+	}
+}
+
+// valueLength is the length of v as text: a string's length, or a list's
+// items added up. Numbers and other short values count as 0.
+func valueLength(v any) int {
+	switch v := v.(type) {
+	case string:
+		return len(v)
+	case []any:
+		n := 0
+		for _, item := range v {
+			n += valueLength(item)
+		}
+		return n
+	default:
+		return 0
+	}
 }
