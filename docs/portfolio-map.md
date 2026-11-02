@@ -9,7 +9,8 @@ fading in turn under a dark overlay. Clicking it zooms the map in to fit its pho
 a cluster pin on the Color page's wheel. A group that zooming in can't split (photos at one spot, or the map already as
 close as it goes) opens a grid of their thumbnails instead: in a popup above it, or on phones in a sheet along the
 bottom of the map, so it's never cut off at the top of the screen or hidden under the floating header
-(`components/map-cluster.tsx`). Photos without resized versions are a small dot that opens their details instead.
+(`components/map-cluster.tsx`). Holding ⌘ (or Ctrl on Windows and Linux) while clicking any group opens that grid
+straight away instead of zooming in. Photos without resized versions are a small dot that opens their details instead.
 
 A photo's [custom GPS position](places-and-localizations.md#custom-gps-position), written on the Photo page, wins over
 its EXIF one. A photo with neither goes at one of its places' position (see

@@ -16,7 +16,12 @@ import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&ur
 import { type RefObject, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { FloatingHeader } from "@/components/floating-header";
 import { MapControls } from "@/components/map-controls";
-import { ClusterGrid, ClusterSheet, type OpenCluster } from "@/components/map-cluster";
+import {
+  ClusterCloseButton,
+  ClusterGrid,
+  ClusterSheet,
+  type OpenCluster,
+} from "@/components/map-cluster";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { mapViewOf } from "@/components/view-on-map-link";
@@ -267,12 +272,13 @@ function MapView() {
   }
 
   // Clicking a group zooms in to fit its photos, which splits it apart. A group that zooming in
-  // can't split, such as many photos at one place, shows its photos in a grid instead.
-  async function openCluster(marker: ClusterMarkerData) {
+  // can't split, such as many photos at one place, shows its photos in a grid instead, as does a
+  // ⌘- or Ctrl-click (`listPhotos`) on any group.
+  async function openCluster(marker: ClusterMarkerData, listPhotos: boolean) {
     if (!map.current) return;
     const clusterPhotos = await photosInCluster(map.current, marker.clusterId);
     setSelected(null);
-    const zoom = zoomToFit(map.current, clusterPhotos);
+    const zoom = listPhotos ? null : zoomToFit(map.current, clusterPhotos);
     if (zoom) {
       setCluster(null);
       map.current.fitBounds(zoom, CLUSTER_FIT);
@@ -345,7 +351,7 @@ function MapView() {
               marker={marker}
               display={display}
               onOpenPhoto={openPhoto}
-              onOpenCluster={(open) => void openCluster(open)}
+              onOpenCluster={(open, listPhotos) => void openCluster(open, listPhotos)}
             />
           ))}
           {cluster && (
@@ -412,9 +418,13 @@ function OpenClusterView({
       offset={24}
       maxWidth="none"
       onClose={onClose}
-      className={MAP_POPUP}
+      closeButton={false}
+      className={cn(MAP_POPUP, "[&_.maplibregl-popup-content]:p-3!")}
     >
-      <ClusterGrid {...grid} className="w-[19rem] [&>div:first-child]:pr-5" />
+      {/* Its own close button rather than MapLibre's, which sits in the very corner of the box. */}
+      <ClusterGrid {...grid} className="w-[19rem]">
+        <ClusterCloseButton onClose={onClose} />
+      </ClusterGrid>
     </Popup>
   );
 }

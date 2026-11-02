@@ -31,7 +31,7 @@ export function MapMarkerView({
   marker: MapMarker;
   display: MapDisplay;
   onOpenPhoto: (photo: PlacedPhoto) => void;
-  onOpenCluster: (marker: ClusterMarkerData) => void;
+  onOpenCluster: (marker: ClusterMarkerData, listPhotos: boolean) => void;
 }) {
   if (marker.kind === "cluster") {
     return (
@@ -40,7 +40,7 @@ export function MapMarkerView({
           clusterId={marker.clusterId}
           count={marker.count}
           display={display}
-          onOpen={() => onOpenCluster(marker)}
+          onOpen={(listPhotos) => onOpenCluster(marker, listPhotos)}
         />
       </Marker>
     );
@@ -163,18 +163,18 @@ function ClusterMarker({
   clusterId: number;
   count: number;
   display: MapDisplay;
-  onOpen: () => void;
+  onOpen: (listPhotos: boolean) => void;
 }) {
   const { previews, approximate } = useClusterLook(clusterId, display.groupPhotos);
   const { turn } = useTurn(previews.length, CLUSTER_PREVIEW_MS);
   return (
     <button
       type="button"
-      title={`Show these ${count} photos`}
+      title={`Show these ${count} photos (⌘ or Ctrl-click to list them)`}
       aria-label={`Show these ${count} photos`}
       onClick={(event) => {
         stopAtMarker(event);
-        onOpen();
+        onOpen(listsPhotos(event));
       }}
       style={pinStyle(display)}
       className={clusterClass(display, previews.length > 0, approximate)}
@@ -183,6 +183,14 @@ function ClusterMarker({
       <ClusterCount count={count} display={display} hasPreviews={previews.length > 0} />
     </button>
   );
+}
+
+/**
+ * Whether a click on a cluster asks for its photos as a grid rather than zooming in: a click with
+ * ⌘ held, or Ctrl on Windows and Linux.
+ */
+function listsPhotos(event: MouseEvent): boolean {
+  return event.metaKey || event.ctrlKey;
 }
 
 /** A cluster marker's classes, for its pin size, whether it has photos and how sure its spot is. */
