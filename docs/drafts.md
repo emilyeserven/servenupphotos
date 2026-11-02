@@ -1,19 +1,23 @@
 # Drafts
 
-A photo without a title (a `title` that's missing, `null` or only spaces) is a **draft**. Its JSON file is saved and
+A photo without a title (a `title` that's missing, `null` or only spaces) is a **draft**, and so is one set aside as
+[Undecided](photos-in-flight.md#undecided) (`undecided: true`), whatever its title: that's how a photo with a title is
+unpublished. Its JSON file is saved and
 committed like any other, but **Commit** leaves it out of `ALLPHOTOS.json`, so the portfolio, which only reads
 `ALLPHOTOS.json`, doesn't show it. Giving it a title on the Photo page and committing puts it in `ALLPHOTOS.json`, and
-the portfolio shows it once the pull request merges. Taking a title away makes it a draft again, and the next Commit
-takes its entry out. Photos from [Bulk Upload](bulk-upload.md) start without a title, so they're drafts until they're
+the portfolio shows it once the pull request merges. Taking a title away, or setting a titled photo aside as
+Undecided, makes it a draft again, and the next Commit takes its entry out. Moving it back from Undecided puts it in
+again. Photos from [Bulk Upload](bulk-upload.md) start without a title, so they're drafts until they're
 named.
 
 > **Frontend analogy:** it's like a CMS post with `published: false`. The post is saved in the database, but the
 > public site's query filters it out. Here the "query" is the step that builds `ALLPHOTOS.json`, and the filter is
 > "has a title".
 
-The save that gives a draft its title also sets its `addedDate` to that moment (see
-[Date added](data-model.md#date-added)), which the portfolio's **Recently Added** sort uses. A draft's `addedDate` is
-`null`.
+The save that gives a draft its title (or the Commit that moves a titled photo back from Undecided) also sets its
+`addedDate` to that moment, unless it already has one (see
+[Date added](data-model.md#date-added)), which the portfolio's **Recently Added** sort uses. A draft that has never been on
+the portfolio has a `null` `addedDate`.
 
 ## The setting
 
@@ -24,7 +28,7 @@ GitHub settings' `includeUntitled` (`false` by default) and changes what the nex
 
 ## Where drafts show
 
-- **Photos in Flight** can set an untitled photo aside in its [Undecided](photos-in-flight.md#undecided) queue.
+- **Photos in Flight** can set any photo aside in its [Undecided](photos-in-flight.md#undecided) queue, titled or not.
 - **Photos in Flight** marks a draft **Draft, not on the portfolio** instead of the `ALLPHOTOS.json` check mark, and the
   sync button's panel counts it as synced, since `ALLPHOTOS.json` isn't missing anything.
 - **Gallery** lists drafts on the base branch too (it reads the photos folder, not `ALLPHOTOS.json`), marked **Draft**.
@@ -42,7 +46,7 @@ to a draft opens nothing until it has a title and is merged, and then opens it w
 
 ## Outside the pipeline
 
-- The **Combine photo data** workflow leaves drafts out too, unless it's started with **include_untitled** checked.
+- The **Combine photo data** workflow leaves drafts (untitled or Undecided) out too, unless it's started with **include_untitled** checked.
 - `pnpm photos:local` follows the pipeline's setting when the pipeline is running, and otherwise leaves drafts out of
   the local `ALLPHOTOS.local.json` it builds from the data folders.
 

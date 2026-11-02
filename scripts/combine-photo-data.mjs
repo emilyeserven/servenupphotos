@@ -70,11 +70,16 @@ function inFlightFiles(inFlight, kind) {
 }
 
 /**
- * Whether a photo is a draft: it has no title, so the pipeline's Commit leaves it out of
- * ALLPHOTOS.json unless Settings include untitled photos (see docs/drafts.md).
+ * Whether a photo is a draft: it has no title or is set aside as Undecided, so the pipeline's
+ * Commit leaves it out of ALLPHOTOS.json unless Settings include untitled photos (see docs/drafts.md).
  */
 function isDraft(photo) {
-  return typeof photo?.title !== "string" || photo.title.trim() === "";
+  return photo?.undecided === true || isUntitled(photo?.title);
+}
+
+/** Whether a photo's title is missing, not text, or only spaces. */
+function isUntitled(title) {
+  return typeof title !== "string" || title.trim() === "";
 }
 
 /**

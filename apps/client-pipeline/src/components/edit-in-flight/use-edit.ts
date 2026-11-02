@@ -12,6 +12,7 @@ import {
 } from "@/api/photos";
 import { regenerateVersionsMutation, thumbnailCropQuery } from "@/api/versions";
 import { useAllPhotosRebuild } from "@/components/all-photos-rebuild";
+import { useLeaveUndecided } from "@/components/undecided-photos";
 import { savedDetails } from "@/components/photo-details";
 import { type Crop } from "@/lib/crop";
 import { savedReEditDraft } from "@/lib/re-edit";
@@ -26,6 +27,7 @@ import {
   fieldsChanged,
   madeUrls,
   markedUrls,
+  namesUntitled,
   newFileName,
   nextJson,
   renamedInFlight,
@@ -71,6 +73,7 @@ export function useEdit({ file, data, image }: Editable, savedCrop: Crop | null)
   const request = {
     ...saveRequest(savedData, fields, crop, baseline, remakeSquares),
     name: newFileName(file, savedData, details.title),
+    named: namesUntitled(savedData, details.title),
   };
   return {
     crop,
@@ -133,6 +136,7 @@ export function useSave(
   });
   const regenerate = useMutation(regenerateVersionsMutation);
   const update = useMutation(updateInFlightMutation);
+  const leaveUndecided = useLeaveUndecided();
   const mutation = useMutation({
     mutationFn: async ({ crop, data, name }: SaveRequest): Promise<SaveResult> => {
       if (!crop) {
@@ -145,8 +149,9 @@ export function useSave(
       const updated = await update.mutateAsync({ path: file.path, data: next, name });
       return { crop, data: next, squares: markedUrls(urls, crop), update: updated };
     },
-    onSuccess: (result) => {
+    onSuccess: (result, request) => {
       onSaved(result.crop, result.data);
+      if (request.named) leaveUndecided(result.update.path, result.data);
       if (result.update.path !== file.path) {
         // Follow the file to its new name, in the cache until the pull request is read again.
         queryClient.setQueryData(

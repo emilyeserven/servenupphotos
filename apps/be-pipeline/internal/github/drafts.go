@@ -6,19 +6,21 @@ import (
 	"strings"
 )
 
-// isDraft reports a photo file's JSON without a title: none, null, not text,
-// or only spaces. Unless Settings say otherwise, a draft keeps its own file
-// but is left out of AllPhotosFile, so the portfolio doesn't show it until
-// it gets a title.
+// isDraft reports a photo file's JSON without a title (none, null, not text,
+// or only spaces), or set aside as Undecided ("undecided": true), whatever its
+// title. Unless Settings say otherwise, a draft keeps its own file but is left
+// out of AllPhotosFile, so the portfolio doesn't show it until it gets a title
+// and isn't Undecided.
 func isDraft(data json.RawMessage) bool {
 	var photo struct {
-		Title any `json:"title"`
+		Title     any `json:"title"`
+		Undecided any `json:"undecided"`
 	}
 	if json.Unmarshal(data, &photo) != nil {
 		return false
 	}
 	title, ok := photo.Title.(string)
-	return !ok || strings.TrimSpace(title) == ""
+	return photo.Undecided == true || !ok || strings.TrimSpace(title) == ""
 }
 
 // isUnselected reports a photo file's JSON marked as not chosen in a compare
