@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["shinto", "torii", "shimenawa", "toro", "shrine", "pond", "footbridge", "reflections"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 11.76,
     "peakChroma": 21.84,
     "samples": 9975
-  }
+  },
+  "undecided": true
 }
