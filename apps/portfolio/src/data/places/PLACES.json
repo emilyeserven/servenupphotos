@@ -871,6 +871,16 @@
     "longitude": -73.99337287689791
   },
   {
+    "id": "outer-richmond",
+    "name": "Outer Richmond",
+    "description": "",
+    "parent": "",
+    "city": "",
+    "country": "",
+    "latitude": 37.78128935154147,
+    "longitude": -122.49987454149979
+  },
+  {
     "id": "paine-open",
     "name": "Paine Open",
     "description": "",

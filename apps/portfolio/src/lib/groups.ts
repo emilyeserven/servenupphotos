@@ -10,9 +10,9 @@ export interface Group {
   description?: string;
   /**
    * For an album, the ID of the album it's a sub-album of; for a tag, the more general tag it's a
-   * kind of, such as "covered-street" for "shotengai". Missing or "" at the top.
+   * kind of, such as "covered-street" for "shotengai". Missing, "" or null at the top.
    */
-  parent?: string;
+  parent?: string | null;
   /** For an album, its place among the albums, 1 first, set on the pipeline's Albums page. */
   order?: number;
   /** For an album, the spots on the site that show its photos, such as "homepage". */
@@ -147,7 +147,7 @@ export function albumTree(parent = "", seen = new Set<string>()): Group[] {
 /** The album with the ID and every album it's inside, nearest first; a loop stops where it comes back round. */
 function albumAncestry(id: string): Group[] {
   const chain: Group[] = [];
-  const byId = (at?: string) => albums.find((album) => album.id === at);
+  const byId = (at?: string | null) => albums.find((album) => album.id === at);
   for (let at = byId(id); at && !chain.includes(at); at = byId(at.parent)) chain.push(at);
   return chain;
 }

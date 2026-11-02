@@ -1,0 +1,265 @@
+{
+  "id": 396,
+  "title": null,
+  "comment": null,
+  "file": "DSCF1286.jpg",
+  "addedDate": null,
+  "camera": "Fujifilm X-T5",
+  "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+  "aperture": 5.6,
+  "exposure": "1/250",
+  "iso": 3200,
+  "focalLength": 88.2,
+  "gpsPosition": "34 deg 24' 53.61\" N, 131 deg 25' 8.94\" E",
+  "customGpsPosition": null,
+  "createDate": "2026:09:25 07:12:31",
+  "customCreateDate": null,
+  "placeName": null,
+  "customCity": null,
+  "customState": null,
+  "customCountry": null,
+  "country": "Japan",
+  "state": "Yamaguchi",
+  "city": "Hagi",
+  "width": 7419,
+  "height": 4173,
+  "images": {
+    "full": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286.jpg",
+    "key": "photos/bf0e8d5eef17-dscf1286.jpg",
+    "xlarge": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286-xlarge.webp",
+    "large": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286-large.webp",
+    "medium": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286-medium.webp",
+    "small": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286-small.webp",
+    "xsmall": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286-xsmall.webp",
+    "preview": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286-preview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286-thumbnail.webp",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/bf0e8d5eef17-dscf1286-thumbnailpreview.webp",
+    "thumbnailcrop": {
+      "x": 1623,
+      "y": 0,
+      "size": 4173,
+      "outputSize": 500
+    }
+  },
+  "isSocialMediaEligible": false,
+  "websiteSpotlight": null,
+  "socialMediaPublishDate": null,
+  "exifOriginals": {},
+  "manualAperture": false,
+  "customLens": null,
+  "albums": [],
+  "tags": [],
+  "genres": [],
+  "places": [],
+  "spotlightZones": [],
+  "spotlightFocus": null,
+  "spotlightPlacement": null,
+  "socialPosts": [],
+  "reEdit": null,
+  "colors": {
+    "average": {
+      "hex": "#656e77",
+      "lab": {
+        "l": 46.14,
+        "a": -1.54,
+        "b": -6.15
+      },
+      "hcl": {
+        "h": 255.93,
+        "c": 6.34,
+        "l": 46.14
+      }
+    },
+    "buckets": [
+      {
+        "name": "red",
+        "hex": "#ff0000",
+        "share": 0.004
+      },
+      {
+        "name": "orange",
+        "hex": "#ff8000",
+        "share": 0.0045
+      },
+      {
+        "name": "yellow",
+        "hex": "#ffff00",
+        "share": 0.0744
+      },
+      {
+        "name": "chartreuse",
+        "hex": "#80ff00",
+        "share": 0.0306
+      },
+      {
+        "name": "green",
+        "hex": "#00ff00",
+        "share": 0.0058
+      },
+      {
+        "name": "spring green",
+        "hex": "#00ff80",
+        "share": 0.0005
+      },
+      {
+        "name": "cyan",
+        "hex": "#00ffff",
+        "share": 0.0002
+      },
+      {
+        "name": "azure",
+        "hex": "#0080ff",
+        "share": 0.3369
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff",
+        "share": 0.038
+      },
+      {
+        "name": "violet",
+        "hex": "#8000ff",
+        "share": 0.0321
+      },
+      {
+        "name": "magenta",
+        "hex": "#ff00ff",
+        "share": 0.0051
+      },
+      {
+        "name": "rose",
+        "hex": "#ff0080",
+        "share": 0.0055
+      }
+    ],
+    "neutrals": {
+      "share": 0.4624,
+      "histogram": [
+        {
+          "from": 0,
+          "to": 5,
+          "hex": "#090909",
+          "share": 0.0094
+        },
+        {
+          "from": 5,
+          "to": 10,
+          "hex": "#171717",
+          "share": 0.0171
+        },
+        {
+          "from": 10,
+          "to": 15,
+          "hex": "#212121",
+          "share": 0.0269
+        },
+        {
+          "from": 15,
+          "to": 20,
+          "hex": "#2b2b2b",
+          "share": 0.0441
+        },
+        {
+          "from": 20,
+          "to": 25,
+          "hex": "#363636",
+          "share": 0.0221
+        },
+        {
+          "from": 25,
+          "to": 30,
+          "hex": "#414141",
+          "share": 0.0212
+        },
+        {
+          "from": 30,
+          "to": 35,
+          "hex": "#4c4c4c",
+          "share": 0.0281
+        },
+        {
+          "from": 35,
+          "to": 40,
+          "hex": "#585858",
+          "share": 0.0246
+        },
+        {
+          "from": 40,
+          "to": 45,
+          "hex": "#646464",
+          "share": 0.0237
+        },
+        {
+          "from": 45,
+          "to": 50,
+          "hex": "#717171",
+          "share": 0.0254
+        },
+        {
+          "from": 50,
+          "to": 55,
+          "hex": "#7d7d7d",
+          "share": 0.0173
+        },
+        {
+          "from": 55,
+          "to": 60,
+          "hex": "#8a8a8a",
+          "share": 0.0121
+        },
+        {
+          "from": 60,
+          "to": 65,
+          "hex": "#979797",
+          "share": 0.0131
+        },
+        {
+          "from": 65,
+          "to": 70,
+          "hex": "#a4a4a4",
+          "share": 0.0095
+        },
+        {
+          "from": 70,
+          "to": 75,
+          "hex": "#b2b2b2",
+          "share": 0.006
+        },
+        {
+          "from": 75,
+          "to": 80,
+          "hex": "#bfbfbf",
+          "share": 0.0081
+        },
+        {
+          "from": 80,
+          "to": 85,
+          "hex": "#cdcdcd",
+          "share": 0.0078
+        },
+        {
+          "from": 85,
+          "to": 90,
+          "hex": "#dbdbdb",
+          "share": 0.0089
+        },
+        {
+          "from": 90,
+          "to": 95,
+          "hex": "#e9e9e9",
+          "share": 0.0274
+        },
+        {
+          "from": 95,
+          "to": 100,
+          "hex": "#f8f8f8",
+          "share": 0.1096
+        }
+      ]
+    },
+    "lightness": 46.14,
+    "chroma": 14.18,
+    "peakChroma": 25.77,
+    "samples": 9975
+  }
+}
