@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["chinatown", "mural", "street-art", "typography", "brick", "sidewalk", "night"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 15.42,
     "peakChroma": 43.78,
     "samples": 9975
-  }
+  },
+  "undecided": true
 }

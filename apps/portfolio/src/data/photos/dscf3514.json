@@ -1,9 +1,9 @@
 {
-  "id": 485,
-  "title": null,
+  "title": "Pond Reflections",
   "comment": null,
+  "id": 485,
   "file": "DSCF3514.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:57:11Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 10:38:57",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Waveny Park",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-thumbnail.webp?crop=0,1705,4717",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-thumbnailpreview.webp?crop=0,1705,4717",
     "thumbnailcrop": {
       "x": 0,
-      "y": 943,
+      "y": 1705,
       "size": 4717,
       "outputSize": 500
     }
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "pond", "reflections", "trees", "forest", "water"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "waveny-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

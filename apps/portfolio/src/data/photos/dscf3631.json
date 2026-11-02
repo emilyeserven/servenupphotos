@@ -1,9 +1,9 @@
 {
-  "id": 487,
-  "title": null,
+  "title": "Autumn Reflection",
   "comment": null,
+  "id": 487,
   "file": "DSCF3631.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:55:51Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 10:43:26",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Waveny Park",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "pond", "reflections", "trees", "park", "water"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "waveny-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

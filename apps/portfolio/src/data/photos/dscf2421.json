@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["bridge", "suspension-cables", "sailboats", "park", "tall-grass", "picnic", "mountains"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 24.64,
     "peakChroma": 41.28,
     "samples": 10115
-  }
+  },
+  "undecided": true
 }

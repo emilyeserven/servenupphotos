@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["bridge", "harbor", "pier", "sailboats", "park", "lamppost", "mountains", "pedestrians"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 16.09,
     "peakChroma": 24.97,
     "samples": 9900
-  }
+  },
+  "undecided": true
 }

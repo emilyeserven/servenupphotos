@@ -20558,6 +20558,276 @@
     }
   },
   {
+    "title": "Distant Dock II",
+    "comment": null,
+    "id": 481,
+    "file": "DSCF3441.jpg",
+    "addedDate": "2026-11-02T13:57:55Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/240",
+    "iso": 320,
+    "focalLength": 135,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 10:31:50",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 5760,
+    "height": 3240,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441.jpg",
+      "key": "photos/062eabc78373-dscf3441.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/062eabc78373-dscf3441-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1260,
+        "y": 0,
+        "size": 3240,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "pond", "pier", "reflections", "bench", "trees", "fallen-leaves", "park"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#352a24",
+        "lab": {
+          "l": 18.15,
+          "a": 3.66,
+          "b": 5.73
+        },
+        "hcl": {
+          "h": 57.43,
+          "c": 6.8,
+          "l": 18.15
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0477
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1114
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0259
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0111
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0021
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0011
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.8004,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.3928
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1468
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0723
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0537
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0238
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0172
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0159
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0137
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0127
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0109
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0088
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0072
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0071
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0062
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.004
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0023
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0018
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0012
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0012
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0006
+          }
+        ]
+      },
+      "lightness": 18.15,
+      "chroma": 8.51,
+      "peakChroma": 20.01,
+      "samples": 9694
+    }
+  },
+  {
     "title": "Pagoda in the Pond",
     "comment": null,
     "id": 211,
@@ -20819,6 +21089,1629 @@
       "chroma": 15.35,
       "peakChroma": 26.95,
       "samples": 9975
+    }
+  },
+  {
+    "title": "Fall Into Reading",
+    "comment": null,
+    "id": 482,
+    "file": "DSCF3454.jpg",
+    "addedDate": "2026-11-02T13:57:44Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/1000",
+    "iso": 320,
+    "focalLength": 24.3,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 10:33:59",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 5919,
+    "height": 3329,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454.jpg",
+      "key": "photos/03410a922c61-dscf3454.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454-thumbnail.webp?crop=2590,0,3329",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/03410a922c61-dscf3454-thumbnailpreview.webp?crop=2590,0,3329",
+      "thumbnailcrop": {
+        "x": 2590,
+        "y": 0,
+        "size": 3329,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "park", "bench", "trees", "grass", "brick"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#46463b",
+        "lab": {
+          "l": 29.43,
+          "a": -2.17,
+          "b": 6.92
+        },
+        "hcl": {
+          "h": 107.44,
+          "c": 7.25,
+          "l": 29.43
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.007
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1624
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0495
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.2138
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0005
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0002
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0009
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1709
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0025
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0004
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0004
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0001
+        }
+      ],
+      "neutrals": {
+        "share": 0.3915,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1034
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0717
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0683
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0799
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.013
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0109
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0134
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0104
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0058
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0054
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0035
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.004
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0012
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0001
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0001
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0002
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0001
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0001
+          }
+        ]
+      },
+      "lightness": 29.43,
+      "chroma": 23.03,
+      "peakChroma": 41.52,
+      "samples": 9768
+    }
+  },
+  {
+    "title": "Distant Dock",
+    "comment": null,
+    "id": 484,
+    "file": "DSCF3493.jpg",
+    "addedDate": "2026-11-02T13:57:22Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/550",
+    "iso": 320,
+    "focalLength": 41.3,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 10:37:23",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 7021,
+    "height": 3949,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493.jpg",
+      "key": "photos/35a9ecbbe1c3-dscf3493.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/35a9ecbbe1c3-dscf3493-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1536,
+        "y": 0,
+        "size": 3949,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "pond", "trees", "reflections", "pier", "park"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#4b3524",
+        "lab": {
+          "l": 24.12,
+          "a": 7.89,
+          "b": 14.15
+        },
+        "hcl": {
+          "h": 60.86,
+          "c": 16.21,
+          "l": 24.12
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.076
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.2841
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0933
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0059
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.5407,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.2349
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1049
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0682
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0738
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0098
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0102
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.008
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0071
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0064
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0048
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0046
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0034
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.002
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0013
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0006
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0004
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0001
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0001
+          }
+        ]
+      },
+      "lightness": 24.12,
+      "chroma": 17.61,
+      "peakChroma": 34.72,
+      "samples": 9975
+    }
+  },
+  {
+    "title": "Pond Reflections",
+    "comment": null,
+    "id": 485,
+    "file": "DSCF3514.jpg",
+    "addedDate": "2026-11-02T13:57:11Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5,
+    "exposure": "1/140",
+    "iso": 320,
+    "focalLength": 20.1,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 10:38:57",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 4717,
+    "height": 6604,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514.jpg",
+      "key": "photos/58082e348677-dscf3514.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-thumbnail.webp?crop=0,1705,4717",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/58082e348677-dscf3514-thumbnailpreview.webp?crop=0,1705,4717",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1705,
+        "size": 4717,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "pond", "reflections", "trees", "forest", "water"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#2d241f",
+        "lab": {
+          "l": 15.02,
+          "a": 3.51,
+          "b": 5.07
+        },
+        "hcl": {
+          "h": 55.31,
+          "c": 6.16,
+          "l": 15.02
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0271
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1061
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0201
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0034
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0005
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0002
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0008
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0176
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0027
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0007
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0008
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.001
+        }
+      ],
+      "neutrals": {
+        "share": 0.8189,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.3789
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1601
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1096
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0797
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0261
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0186
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.009
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0086
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0061
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0051
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0039
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0034
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0027
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0029
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0019
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0016
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0004
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0003
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0001
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0001
+          }
+        ]
+      },
+      "lightness": 15.02,
+      "chroma": 8.95,
+      "peakChroma": 23.95,
+      "samples": 10030
+    }
+  },
+  {
+    "title": "Looking at Leaves",
+    "comment": null,
+    "id": 486,
+    "file": "DSCF3628-2.jpg",
+    "addedDate": "2026-11-02T13:56:31Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.5,
+    "exposure": "1/250",
+    "iso": 800,
+    "focalLength": 36.6,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 10:42:48",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2.jpg",
+      "key": "photos/3b713ec20029-dscf3628-2.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-thumbnail.webp?crop=0,0,4347",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-thumbnailpreview.webp?crop=0,0,4347",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "forest", "path", "fence", "pedestrians", "trees", "fallen-leaves"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "brighten",
+      "date": "2026-11-02"
+    },
+    "colors": {
+      "average": {
+        "hex": "#54473a",
+        "lab": {
+          "l": 31.09,
+          "a": 3.2,
+          "b": 10.05
+        },
+        "hcl": {
+          "h": 72.37,
+          "c": 10.55,
+          "l": 31.09
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0172
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1863
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.1392
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0086
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0008
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0002
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0006
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0215
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0705
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0121
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0039
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.004
+        }
+      ],
+      "neutrals": {
+        "share": 0.5351,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0206
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0579
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1091
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1445
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0607
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0436
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.031
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0184
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0148
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0068
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0056
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0046
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0031
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0026
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0016
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0021
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0014
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0017
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0021
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0031
+          }
+        ]
+      },
+      "lightness": 31.09,
+      "chroma": 18.88,
+      "peakChroma": 42.14,
+      "samples": 10050
+    }
+  },
+  {
+    "title": "Autumn Reflection",
+    "comment": null,
+    "id": 487,
+    "file": "DSCF3631.jpg",
+    "addedDate": "2026-11-02T13:55:51Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.5,
+    "exposure": "1/250",
+    "iso": 125,
+    "focalLength": 18,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 10:43:26",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631.jpg",
+      "key": "photos/c551b9ae4d19-dscf3631.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c551b9ae4d19-dscf3631-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1690,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "pond", "reflections", "trees", "park", "water"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#3f2f25",
+        "lab": {
+          "l": 20.84,
+          "a": 6.15,
+          "b": 8.85
+        },
+        "hcl": {
+          "h": 55.19,
+          "c": 10.78,
+          "l": 20.84
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0516
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1999
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0209
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0058
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0006
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0005
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0003
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0408
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0038
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0018
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0007
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0016
+        }
+      ],
+      "neutrals": {
+        "share": 0.6717,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.2528
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1408
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1026
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0871
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.022
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0138
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.012
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0098
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.006
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0051
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0033
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0039
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0022
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0032
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0026
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.002
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0013
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.001
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0004
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 20.84,
+      "chroma": 15.2,
+      "peakChroma": 36.98,
+      "samples": 10050
+    }
+  },
+  {
+    "title": "Autumn Pond",
+    "comment": null,
+    "id": 488,
+    "file": "DSCF3640.jpg",
+    "addedDate": "2026-11-02T13:53:01Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5,
+    "exposure": "1/250",
+    "iso": 125,
+    "focalLength": 29.3,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 10:43:39",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 4208,
+    "height": 5891,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640.jpg",
+      "key": "photos/f0989f56c250-dscf3640.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-thumbnail.webp?crop=0,0,4208",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-thumbnailpreview.webp?crop=0,0,4208",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 4208,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "pond", "reflections", "trees", "pier", "pedestrians"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#271d17",
+        "lab": {
+          "l": 11.83,
+          "a": 3.8,
+          "b": 6.02
+        },
+        "hcl": {
+          "h": 57.73,
+          "c": 7.13,
+          "l": 11.83
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0274
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0966
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0122
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0034
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0002
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.8601,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.5428
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1236
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0724
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0536
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.015
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.01
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0098
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0071
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0047
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.005
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0041
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0047
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0026
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0013
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0021
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.001
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0004
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0001
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 11.83,
+      "chroma": 8.11,
+      "peakChroma": 23.75,
+      "samples": 10030
     }
   },
   {
@@ -22968,6 +24861,276 @@
     }
   },
   {
+    "title": "Trailheads",
+    "comment": null,
+    "id": 469,
+    "file": "DSCF3938.jpg",
+    "addedDate": "2026-11-02T13:53:50Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.5,
+    "exposure": "1/250",
+    "iso": 1000,
+    "focalLength": 36.6,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 11:03:02",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938.jpg",
+      "key": "photos/0d4d5a6c38e9-dscf3938.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0d4d5a6c38e9-dscf3938-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "hiking-trail", "signage", "trees", "forest"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#504530",
+        "lab": {
+          "l": 29.81,
+          "a": 1.32,
+          "b": 14.61
+        },
+        "hcl": {
+          "h": 84.86,
+          "c": 14.67,
+          "l": 29.81
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0058
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.232
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.171
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0162
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.004
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0004
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.5702,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1513
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1447
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1085
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0664
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0286
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0167
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0121
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0087
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0058
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0058
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0074
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0053
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0019
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0019
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0012
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.001
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0014
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0008
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0009
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0001
+          }
+        ]
+      },
+      "lightness": 29.81,
+      "chroma": 16.44,
+      "peakChroma": 39.29,
+      "samples": 10050
+    }
+  },
+  {
     "title": "Under the Bridge",
     "comment": null,
     "id": 221,
@@ -23238,6 +25401,276 @@
       "chroma": 8.1,
       "peakChroma": 21.4,
       "samples": 9975
+    }
+  },
+  {
+    "title": "Ivy Takeover",
+    "comment": null,
+    "id": 470,
+    "file": "DSCF3961.jpg",
+    "addedDate": "2026-11-02T13:54:40Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.6,
+    "exposure": "1/250",
+    "iso": 1000,
+    "focalLength": 135,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 11:04:57",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 5152,
+    "height": 7728,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961.jpg",
+      "key": "photos/5cba7bcea0ed-dscf3961.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-thumbnail.webp?crop=0,934,5152",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-thumbnailpreview.webp?crop=0,934,5152",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 934,
+        "size": 5152,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["ivy", "hiking-trail", "signage", "trees", "texture", "lichen"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#272120",
+        "lab": {
+          "l": 13.28,
+          "a": 2.52,
+          "b": 1.83
+        },
+        "hcl": {
+          "h": 36.06,
+          "c": 3.12,
+          "l": 13.28
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0002
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0271
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0285
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0081
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0
+        }
+      ],
+      "neutrals": {
+        "share": 0.936,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.4154
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1906
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1201
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.083
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.047
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0273
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0144
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0069
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0037
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0023
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0018
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0031
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0051
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0089
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0053
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0011
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 13.28,
+      "chroma": 4.91,
+      "peakChroma": 9.72,
+      "samples": 9801
     }
   },
   {
@@ -23775,6 +26208,2442 @@
       "chroma": 9.04,
       "peakChroma": 21.9,
       "samples": 9975
+    }
+  },
+  {
+    "title": "Explosion of Autumnal Color",
+    "comment": null,
+    "id": 475,
+    "file": "DSCF4133.jpg",
+    "addedDate": "2026-11-02T13:55:39Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.3,
+    "exposure": "1/250",
+    "iso": 800,
+    "focalLength": 29.3,
+    "gpsPosition": null,
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 11:21:15",
+    "customCreateDate": null,
+    "placeName": "Waveny Park",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": null,
+    "state": null,
+    "city": null,
+    "width": 6579,
+    "height": 3701,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133.jpg",
+      "key": "photos/15565b2b68bd-dscf4133.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/15565b2b68bd-dscf4133-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1439,
+        "y": 0,
+        "size": 3701,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "trees", "branches", "park"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "waveny-park"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#854828",
+        "lab": {
+          "l": 37.38,
+          "a": 23.1,
+          "b": 30.09
+        },
+        "hcl": {
+          "h": 52.49,
+          "c": 37.94,
+          "l": 37.38
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.2303
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.4695
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0413
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0039
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0014
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0002
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0003
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0238
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.004
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0022
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0024
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0058
+        }
+      ],
+      "neutrals": {
+        "share": 0.2147,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0137
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0298
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0541
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0887
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0044
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0032
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0024
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0031
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0016
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0023
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0022
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0015
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0011
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.001
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0004
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0004
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0003
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0006
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0014
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0022
+          }
+        ]
+      },
+      "lightness": 37.38,
+      "chroma": 41.63,
+      "peakChroma": 67.81,
+      "samples": 9900
+    }
+  },
+  {
+    "title": "Boardwalk in the Bird Sanctuary",
+    "comment": null,
+    "id": 471,
+    "file": "DSCF4406.jpg",
+    "addedDate": "2026-11-02T13:52:26Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.5,
+    "exposure": "1/250",
+    "iso": 1000,
+    "focalLength": 18,
+    "gpsPosition": "41 deg 8' 25.65\" N, 73 deg 29' 47.29\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 14:03:33",
+    "customCreateDate": null,
+    "placeName": "bristow-bird-sanctuary",
+    "customCity": null,
+    "customState": null,
+    "customCountry": null,
+    "country": "United States of America",
+    "state": "Connecticut",
+    "city": "New Canaan",
+    "width": 6205,
+    "height": 3490,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406.jpg",
+      "key": "photos/7a9c9a8f4333-dscf4406.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-thumbnail.webp?crop=1484,0,3490",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-thumbnailpreview.webp?crop=1484,0,3490",
+      "thumbnailcrop": {
+        "x": 1484,
+        "y": 0,
+        "size": 3490,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "boardwalk", "forest", "fallen-leaves", "hiking-trail", "trees"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "bristow-bird-sanctuary"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#5b5345",
+        "lab": {
+          "l": 35.61,
+          "a": 0.9,
+          "b": 9.04
+        },
+        "hcl": {
+          "h": 84.33,
+          "c": 9.08,
+          "l": 35.61
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0205
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.1215
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.1656
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0477
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0065
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0027
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.005
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1091
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0197
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0054
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0028
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0033
+        }
+      ],
+      "neutrals": {
+        "share": 0.4901,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0496
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0628
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0661
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0816
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0544
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0426
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0352
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0211
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0135
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0083
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0065
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0055
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0039
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0041
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.006
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0077
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0057
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0059
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0038
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0057
+          }
+        ]
+      },
+      "lightness": 35.61,
+      "chroma": 17.29,
+      "peakChroma": 37.73,
+      "samples": 9975
+    }
+  },
+  {
+    "title": "Wooden Lookout Point",
+    "comment": null,
+    "id": 472,
+    "file": "DSCF4634.jpg",
+    "addedDate": "2026-11-02T13:51:55Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.3,
+    "exposure": "1/250",
+    "iso": 2500,
+    "focalLength": 29.3,
+    "gpsPosition": "41 deg 9' 10.36\" N, 73 deg 30' 9.06\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 14:37:09",
+    "customCreateDate": null,
+    "placeName": "New Canaan Nature Center",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Connecticut",
+    "city": "New Canaan",
+    "width": 4706,
+    "height": 6588,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634.jpg",
+      "key": "photos/598329af5b75-dscf4634.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-thumbnail.webp?crop=0,1011,4706",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-thumbnailpreview.webp?crop=0,1011,4706",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1011,
+        "size": 4706,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "observation-tower", "wood", "stairs", "pine-trees", "forest"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-nature-center"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#414449",
+        "lab": {
+          "l": 28.62,
+          "a": 0.26,
+          "b": -3.55
+        },
+        "hcl": {
+          "h": 274.13,
+          "c": 3.56,
+          "l": 28.62
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0056
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.031
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0125
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0053
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0013
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0009
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.001
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1364
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0157
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0015
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0006
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0005
+        }
+      ],
+      "neutrals": {
+        "share": 0.7878,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1083
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1179
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1263
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1182
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0794
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0564
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0436
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0306
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0175
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0083
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0041
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0028
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0031
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.002
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0013
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0012
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0017
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0024
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0146
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0482
+          }
+        ]
+      },
+      "lightness": 28.62,
+      "chroma": 8.99,
+      "peakChroma": 17.71,
+      "samples": 10030
+    }
+  },
+  {
+    "title": "Window Into Nature II",
+    "comment": null,
+    "id": 474,
+    "file": "DSCF4663.jpg",
+    "addedDate": "2026-11-02T13:51:31Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.5,
+    "exposure": "1/250",
+    "iso": 2000,
+    "focalLength": 18,
+    "gpsPosition": "41 deg 9' 10.36\" N, 73 deg 30' 9.06\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 14:40:34",
+    "customCreateDate": null,
+    "placeName": "New Canaan Nature Center",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Connecticut",
+    "city": "New Canaan",
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663.jpg",
+      "key": "photos/0d686ae6c9f4-dscf4663.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/0d686ae6c9f4-dscf4663-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1690,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["framing", "autumn", "marsh", "observation-tower", "branches", "wood", "trees"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-nature-center"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "Brighten",
+      "date": "2026-11-02"
+    },
+    "colors": {
+      "average": {
+        "hex": "#514d4d",
+        "lab": {
+          "l": 33.18,
+          "a": 1.63,
+          "b": 0.71
+        },
+        "hcl": {
+          "h": 23.49,
+          "c": 1.78,
+          "l": 33.18
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0082
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0552
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0574
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0137
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0033
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0006
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0758
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0206
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0063
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0039
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0025
+        }
+      ],
+      "neutrals": {
+        "share": 0.7515,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1193
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0626
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0596
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0688
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0552
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0612
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.061
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.058
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0527
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0406
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0301
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0215
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0173
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0099
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0095
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0065
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0044
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.003
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0041
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0064
+          }
+        ]
+      },
+      "lightness": 33.18,
+      "chroma": 9.45,
+      "peakChroma": 19.64,
+      "samples": 10050
+    }
+  },
+  {
+    "title": "Nature Walk",
+    "comment": null,
+    "id": 476,
+    "file": "DSCF4673.jpg",
+    "addedDate": "2026-11-02T13:51:24Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.6,
+    "exposure": "1/250",
+    "iso": 2000,
+    "focalLength": 19,
+    "gpsPosition": "41 deg 9' 10.36\" N, 73 deg 30' 9.06\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 14:41:51",
+    "customCreateDate": null,
+    "placeName": "New Canaan Nature Center",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Connecticut",
+    "city": "New Canaan",
+    "width": 6828,
+    "height": 3841,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673.jpg",
+      "key": "photos/70629193be2a-dscf4673.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-thumbnail.webp?crop=2987,0,3841",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-thumbnailpreview.webp?crop=2987,0,3841",
+      "thumbnailcrop": {
+        "x": 2987,
+        "y": 0,
+        "size": 3841,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "boardwalk", "hiking-trail", "forest", "fence", "fallen-leaves"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-nature-center"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": {
+      "reason": "Brighten",
+      "date": "2026-11-02"
+    },
+    "colors": {
+      "average": {
+        "hex": "#4f4c4a",
+        "lab": {
+          "l": 32.66,
+          "a": 0.55,
+          "b": 2.1
+        },
+        "hcl": {
+          "h": 75.32,
+          "c": 2.17,
+          "l": 32.66
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0057
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.079
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0558
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.038
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0143
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0089
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0013
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.1135
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0401
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0084
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0026
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0029
+        }
+      ],
+      "neutrals": {
+        "share": 0.6294,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.0222
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0466
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0698
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0993
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0952
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.095
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0779
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0502
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0272
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0136
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0091
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0072
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0056
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0032
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0011
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0012
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0006
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0011
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0017
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0014
+          }
+        ]
+      },
+      "lightness": 32.66,
+      "chroma": 12.71,
+      "peakChroma": 24.58,
+      "samples": 9768
+    }
+  },
+  {
+    "title": "Lichen Bench",
+    "comment": null,
+    "id": 477,
+    "file": "DSCF4748.jpg",
+    "addedDate": "2026-11-02T13:50:05Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 4.5,
+    "exposure": "1/250",
+    "iso": 1600,
+    "focalLength": 41.3,
+    "gpsPosition": "41 deg 9' 10.36\" N, 73 deg 30' 9.06\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 14:46:34",
+    "customCreateDate": null,
+    "placeName": "New Canaan Nature Center",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Connecticut",
+    "city": "New Canaan",
+    "width": 4421,
+    "height": 6189,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748.jpg",
+      "key": "photos/777f0e7a6366-dscf4748.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/777f0e7a6366-dscf4748-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 884,
+        "size": 4421,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "bench", "lichen", "wood", "fallen-leaves", "texture"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-nature-center"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#493e34",
+        "lab": {
+          "l": 27.01,
+          "a": 3.31,
+          "b": 7.61
+        },
+        "hcl": {
+          "h": 66.51,
+          "c": 8.29,
+          "l": 27.01
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0134
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.147
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.057
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0272
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0004
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0318
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0538
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0021
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0001
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0006
+        }
+      ],
+      "neutrals": {
+        "share": 0.6665,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.1103
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.0999
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1089
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1211
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0179
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0217
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.023
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.025
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.022
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0211
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0179
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0161
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0197
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0157
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0096
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0106
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0044
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0016
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0001
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 27.01,
+      "chroma": 14.76,
+      "peakChroma": 27.73,
+      "samples": 9828
+    }
+  },
+  {
+    "title": "One Red Leaf",
+    "comment": null,
+    "id": 478,
+    "file": "DSCF4789.jpg",
+    "addedDate": "2026-11-02T13:49:44Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5.3,
+    "exposure": "1/250",
+    "iso": 1000,
+    "focalLength": 66.2,
+    "gpsPosition": "41 deg 9' 20.68\" N, 73 deg 30' 12.28\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 14:52:57",
+    "customCreateDate": null,
+    "placeName": "New Canaan Nature Center",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Connecticut",
+    "city": "New Canaan",
+    "width": 5152,
+    "height": 7213,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789.jpg",
+      "key": "photos/95b52da4a94b-dscf4789.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/95b52da4a94b-dscf4789-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 1030,
+        "size": 5152,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "fallen-leaves", "boardwalk", "patterns", "texture"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-nature-center"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#443638",
+        "lab": {
+          "l": 24.13,
+          "a": 6.38,
+          "b": 1.35
+        },
+        "hcl": {
+          "h": 11.97,
+          "c": 6.52,
+          "l": 24.13
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0337
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.129
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0011
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0001
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0218
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0458
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0236
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0132
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0181
+        }
+      ],
+      "neutrals": {
+        "share": 0.7135,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.147
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1307
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1134
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1008
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0548
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.042
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0307
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0234
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0142
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0125
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0084
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.009
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0082
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0052
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0056
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.005
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0017
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0007
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0
+          }
+        ]
+      },
+      "lightness": 24.13,
+      "chroma": 10.93,
+      "peakChroma": 23.72,
+      "samples": 10115
+    }
+  },
+  {
+    "title": "Autumn Path",
+    "comment": null,
+    "id": 479,
+    "file": "DSCF4800.jpg",
+    "addedDate": "2026-11-02T13:49:34Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 5,
+    "exposure": "1/250",
+    "iso": 800,
+    "focalLength": 55.6,
+    "gpsPosition": "41 deg 9' 20.68\" N, 73 deg 30' 12.28\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 14:55:05",
+    "customCreateDate": null,
+    "placeName": "New Canaan Nature Center",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Connecticut",
+    "city": "New Canaan",
+    "width": 4764,
+    "height": 6669,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800.jpg",
+      "key": "photos/b95da36707ca-dscf4800.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b95da36707ca-dscf4800-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 0,
+        "y": 952,
+        "size": 4764,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["autumn", "boardwalk", "fallen-leaves", "forest", "footbridge", "shadows"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-nature-center"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#514345",
+        "lab": {
+          "l": 30.03,
+          "a": 6.11,
+          "b": 1.1
+        },
+        "hcl": {
+          "h": 10.21,
+          "c": 6.21,
+          "l": 30.03
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0847
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.0683
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.017
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0007
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0002
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0202
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0098
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0103
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0111
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0184
+        }
+      ],
+      "neutrals": {
+        "share": 0.7593,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.071
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1174
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1153
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.1296
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.093
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0567
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0304
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0186
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0123
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0116
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0078
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0079
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0084
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0092
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0101
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0107
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0121
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0119
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0122
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0129
+          }
+        ]
+      },
+      "lightness": 30.03,
+      "chroma": 11.29,
+      "peakChroma": 24.01,
+      "samples": 9828
+    }
+  },
+  {
+    "title": "Window Into Nature",
+    "comment": null,
+    "id": 480,
+    "file": "DSCF4901.jpg",
+    "addedDate": "2026-11-02T13:49:13Z",
+    "camera": "Fujifilm X-T5",
+    "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
+    "aperture": 3.5,
+    "exposure": "1/250",
+    "iso": 200,
+    "focalLength": 18,
+    "gpsPosition": "41 deg 9' 20.68\" N, 73 deg 30' 12.28\" W",
+    "customGpsPosition": null,
+    "createDate": "2026:11:01 15:08:30",
+    "customCreateDate": null,
+    "placeName": "New Canaan Nature Center",
+    "customCity": "New Canaan",
+    "customState": null,
+    "customCountry": "United States of America",
+    "country": "United States of America",
+    "state": "Connecticut",
+    "city": "New Canaan",
+    "width": 7728,
+    "height": 4347,
+    "images": {
+      "full": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901.jpg",
+      "key": "photos/cc278e414129-dscf4901.jpg",
+      "xlarge": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901-xlarge.webp",
+      "large": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901-large.webp",
+      "medium": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901-medium.webp",
+      "small": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901-small.webp",
+      "xsmall": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901-xsmall.webp",
+      "preview": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901-preview.webp",
+      "thumbnail": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901-thumbnail.webp",
+      "thumbnailpreview": "https://cdn.servenupphotos.net/photos/cc278e414129-dscf4901-thumbnailpreview.webp",
+      "thumbnailcrop": {
+        "x": 1690,
+        "y": 0,
+        "size": 4347,
+        "outputSize": 500
+      }
+    },
+    "isSocialMediaEligible": false,
+    "websiteSpotlight": null,
+    "socialMediaPublishDate": null,
+    "exifOriginals": {},
+    "manualAperture": false,
+    "customLens": null,
+    "albums": [],
+    "tags": ["framing", "autumn", "pavilion", "trees", "columns", "marsh"],
+    "genres": [],
+    "places": [
+      {
+        "relation": "",
+        "id": "new-canaan-nature-center"
+      }
+    ],
+    "spotlightZones": [],
+    "spotlightFocus": null,
+    "spotlightPlacement": null,
+    "socialPosts": [],
+    "reEdit": null,
+    "colors": {
+      "average": {
+        "hex": "#4d4340",
+        "lab": {
+          "l": 29.28,
+          "a": 3.57,
+          "b": 3.62
+        },
+        "hcl": {
+          "h": 45.37,
+          "c": 5.08,
+          "l": 29.28
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0311
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.2141
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0267
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0.0016
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0.0007
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0004
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0.0008
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0.0722
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0.0039
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0013
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0.0006
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.0012
+        }
+      ],
+      "neutrals": {
+        "share": 0.6454,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.2711
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.1108
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.0626
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0499
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0228
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.018
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0167
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.017
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0093
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0075
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0067
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0075
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0055
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0062
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0042
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0026
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0028
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0032
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0058
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0154
+          }
+        ]
+      },
+      "lightness": 29.28,
+      "chroma": 13.13,
+      "peakChroma": 36.28,
+      "samples": 10050
     }
   },
   {

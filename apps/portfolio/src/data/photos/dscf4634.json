@@ -1,9 +1,9 @@
 {
-  "id": 472,
-  "title": null,
+  "title": "Wooden Lookout Point",
   "comment": null,
+  "id": 472,
   "file": "DSCF4634.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:51:55Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.3,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 14:37:09",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "New Canaan Nature Center",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Connecticut",
   "city": "New Canaan",
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-thumbnail.webp?crop=0,1011,4706",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/598329af5b75-dscf4634-thumbnailpreview.webp?crop=0,1011,4706",
     "thumbnailcrop": {
       "x": 0,
-      "y": 941,
+      "y": 1011,
       "size": 4706,
       "outputSize": 500
     }
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "observation-tower", "wood", "stairs", "pine-trees", "forest"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "new-canaan-nature-center"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

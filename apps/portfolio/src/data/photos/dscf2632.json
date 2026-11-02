@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["volleyball", "beach", "sand", "promenade", "cars", "crowd", "shadows"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 3.9,
     "peakChroma": 6.31,
     "samples": 10050
-  }
+  },
+  "undecided": true
 }

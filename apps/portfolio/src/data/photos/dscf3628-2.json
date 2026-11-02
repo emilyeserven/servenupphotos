@@ -1,9 +1,9 @@
 {
-  "id": 486,
-  "title": null,
+  "title": "Looking at Leaves",
   "comment": null,
+  "id": 486,
   "file": "DSCF3628-2.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:56:31Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 10:42:48",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Waveny Park",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-thumbnail.webp?crop=0,0,4347",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3b713ec20029-dscf3628-2-thumbnailpreview.webp?crop=0,0,4347",
     "thumbnailcrop": {
-      "x": 1690,
+      "x": 0,
       "y": 0,
       "size": 4347,
       "outputSize": 500
@@ -48,14 +48,22 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "forest", "path", "fence", "pedestrians", "trees", "fallen-leaves"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "waveny-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "brighten",
+    "date": "2026-11-02"
+  },
   "colors": {
     "average": {
       "hex": "#54473a",
