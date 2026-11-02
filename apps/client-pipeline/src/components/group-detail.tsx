@@ -1,6 +1,12 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowDownUpIcon, ArrowLeftIcon, CheckIcon, CornerDownRightIcon } from "lucide-react";
+import {
+  ArrowDownUpIcon,
+  ArrowLeftIcon,
+  CheckIcon,
+  CornerDownRightIcon,
+  MinusIcon,
+} from "lucide-react";
 import { useState } from "react";
 import {
   GROUP_KINDS,
@@ -23,8 +29,15 @@ import {
   AlbumAddPhotos,
   useAlbumAdd,
 } from "@/components/album-add-photos";
+import { AlbumDeleteCard } from "@/components/album-delete";
 import { AlbumLayoutCard } from "@/components/album-layout/album-layout-card";
 import { AlbumPhotoReorder } from "@/components/album-photo-reorder";
+import {
+  type AlbumRemove,
+  AlbumRemoveOutcome,
+  AlbumRemovePhotos,
+  useAlbumRemove,
+} from "@/components/album-remove-photos";
 import { AlbumVisibilityCard } from "@/components/album-visibility-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { type GroupPhotos, GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
@@ -181,12 +194,16 @@ const PLACE_TEXT: Record<ParentKind, { label: string; top: string }> = {
   tags: { label: "Under", top: "Nothing: it's a top-level tag" },
 };
 
-/** An album's cards under its parent: whether the portfolio shows it, and its sub-albums. */
+/**
+ * An album's cards under its parent: whether the portfolio shows it, its sub-albums, and deleting
+ * it.
+ */
 function AlbumSideCards({ album, albums }: { album: Group; albums: Group[] }) {
   return (
     <>
       {!album.error && <AlbumVisibilityCard album={album} albums={albums} />}
       <SubAlbumsCard album={album} albums={albums} />
+      {!album.error && <AlbumDelete album={album} albums={albums} />}
     </>
   );
 }
@@ -255,6 +272,12 @@ function SubAlbumsCard({ album, albums }: { album: Group; albums: Group[] }) {
       </CardContent>
     </Card>
   );
+}
+
+/** The album's Delete album card, with how many photos list it. */
+function AlbumDelete({ album, albums }: { album: Group; albums: Group[] }) {
+  const countOf = useAlbumPhotoCounts();
+  return <AlbumDeleteCard album={album} albums={albums} photoCount={countOf?.(album.id)} />;
 }
 
 /** How many photos in ALLPHOTOS.json list an album, by ID; undefined until it's read. */
@@ -449,10 +472,11 @@ function ParentSavedText({ result }: { result: NonNullable<ParentSave["save"]["d
 function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; albums: Group[] }) {
   const subAlbums = subAlbumIds(kind, group, albums);
   const [withSubAlbums, setWithSubAlbums] = useState(false);
-  const [reordering, setReordering] = useState(false);
+  const [mode, setMode] = useState<PhotosMode>("view");
   const ids = new Set([group.id, ...(withSubAlbums ? subAlbums : [])]);
   const { combined, current, photos } = useGroupPhotos(kind, ids);
   const adding = useAlbumAdd();
+  const removing = useAlbumRemove();
 
   return (
     <Card className="min-w-0">
@@ -461,12 +485,19 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
         <CardDescription>
           <PhotosSource current={current} />
         </CardDescription>
-        {!reordering && (
+        {mode === "view" && (
           <CardAction className="flex flex-col items-end gap-2">
             <AddPhotosButton kind={kind} group={group} add={adding.add} />
             <ReorderButton
               show={canReorder(kind, group, photos)}
-              onClick={() => setReordering(true)}
+              onClick={() => setMode("reorder")}
+            />
+            <RemoveButton
+              show={canRemove(kind, group, photos)}
+              onClick={() => {
+                removing.reset();
+                setMode("remove");
+              }}
             />
             <SubAlbumsToggle
               show={subAlbums.size > 0}
@@ -478,12 +509,14 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
       </CardHeader>
       <CardContent className="flex flex-col gap-4 text-sm">
         <AlbumAddOutcome {...adding} />
+        <AlbumRemoveOutcome remove={removing} />
         <PhotosOrReorder
           group={group}
           combined={combined}
           photos={photos}
-          reordering={reordering}
-          onDone={() => setReordering(false)}
+          mode={mode}
+          remove={removing}
+          onDone={() => setMode("view")}
         />
       </CardContent>
     </Card>
@@ -500,18 +533,33 @@ function canReorder(kind: GroupKind, group: Group, photos: unknown[] = []): bool
   return kind === "albums" && !group.error && photos.length > 1;
 }
 
+/** Whether an album's Photos card shows its photos, the tiles to reorder, or the ones to remove. */
+type PhotosMode = "view" | "reorder" | "remove";
+
+/** Whether the group is an album, readable, with photos to take out of it. */
+function canRemove(kind: GroupKind, group: Group, photos: unknown[] = []): boolean {
+  return kind === "albums" && !group.error && photos.length > 0;
+}
+
 interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> {
   group: Group;
-  reordering: boolean;
+  mode: PhotosMode;
+  remove: AlbumRemove;
   onDone: () => void;
 }
 
-/** The photos in the album's order, or, while reordering, the tiles to drag into a new one. */
-function PhotosOrReorder({ group, combined, photos, reordering, onDone }: PhotosOrReorderProps) {
-  if (reordering && photos) {
+/**
+ * The photos in the album's order, or, while reordering, the tiles to drag into a new one, or,
+ * while removing, the tiles to pick.
+ */
+function PhotosOrReorder({ group, combined, photos, mode, remove, onDone }: PhotosOrReorderProps) {
+  if (mode === "view" || !photos) {
+    return <GroupPhotoGrid combined={combined} photos={photos} order={group.photoOrder} />;
+  }
+  if (mode === "reorder") {
     return <AlbumPhotoReorder album={group} photos={photos} onDone={onDone} />;
   }
-  return <GroupPhotoGrid combined={combined} photos={photos} order={group.photoOrder} />;
+  return <AlbumRemovePhotos album={group} photos={photos} remove={remove} onDone={onDone} />;
 }
 
 /** An album's Add photos button; none for a tag or genre, or an album that couldn't be read. */
@@ -530,6 +578,16 @@ function ReorderButton({ show, onClick }: { show: boolean; onClick: () => void }
     <Button size="sm" variant="outline" onClick={onClick}>
       <ArrowDownUpIcon aria-hidden />
       Reorder
+    </Button>
+  );
+}
+
+function RemoveButton({ show, onClick }: { show: boolean; onClick: () => void }) {
+  if (!show) return null;
+  return (
+    <Button size="sm" variant="outline" onClick={onClick}>
+      <MinusIcon aria-hidden />
+      Remove photos
     </Button>
   );
 }

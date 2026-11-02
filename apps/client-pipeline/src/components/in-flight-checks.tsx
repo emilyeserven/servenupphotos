@@ -6,7 +6,7 @@ import type {
   InFlightImages,
   InFlightResponse,
 } from "@/api/photos";
-import { isDraft, useUntitledDrafts } from "@/lib/drafts";
+import { leftOffPortfolio, useUntitledDrafts } from "@/lib/drafts";
 
 /** The last part of a file's path, such as `night-market.json`. */
 export function fileName(path: string): string {
@@ -27,10 +27,11 @@ function groupsSummary(groups: InFlightGroups): string {
 
 /**
  * How many entries ALLPHOTOS.json has and how many of the photo files match one, leaving out the
- * drafts, which it doesn't list, when untitled photos are kept as drafts.
+ * drafts, which it doesn't list when untitled photos are kept as drafts, and unselected photos.
  */
 function AllPhotosSummary({ all, files }: { all: CombinedFile; files: InFlightFile[] }) {
-  const listed = useUntitledDrafts() ? files.filter((file) => !isDraft(file.data)) : files;
+  const includeUntitled = !useUntitledDrafts();
+  const listed = files.filter((file) => !leftOffPortfolio(file.data, includeUntitled));
   if (!all.found) return "Not on the branch yet. Commit adds it.";
   if (all.error) return all.error;
   const matched = listed.filter((file) => file.inAllPhotos).length;
@@ -38,10 +39,10 @@ function AllPhotosSummary({ all, files }: { all: CombinedFile; files: InFlightFi
   return `Lists ${all.count}; ${matched} of ${listed.length} photo files match${draftsLeftOut(drafts)}`;
 }
 
-/** ", N drafts left out" after the ALLPHOTOS.json summary, when there are any. */
+/** ", N left out as drafts or unselected" after the ALLPHOTOS.json summary, when there are any. */
 function draftsLeftOut(drafts: number): string {
   if (drafts === 0) return "";
-  return `, ${drafts} ${drafts === 1 ? "draft" : "drafts"} left out`;
+  return `, ${drafts} left out as drafts or unselected`;
 }
 
 /** How many of the photo files' images were found in R2, or why R2 couldn't be checked. */

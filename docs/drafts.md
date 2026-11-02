@@ -46,5 +46,8 @@ to a draft opens nothing until it has a title and is merged, and then opens it w
 - `pnpm photos:local` follows the pipeline's setting when the pipeline is running, and otherwise leaves drafts out of
   the local `ALLPHOTOS.local.json` it builds from the data folders.
 
+An [unselected photo](compare-groups.md#off-the-portfolio) is left out of `ALLPHOTOS.json` too, whatever this setting
+says.
+
 The rule lives in `isDraft` (`apps/be-pipeline/internal/github/drafts.go`) and `isDraft`
 (`apps/client-pipeline/src/lib/drafts.ts`), which the workflow's `jq` filter and the local script match.

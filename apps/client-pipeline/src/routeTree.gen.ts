@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BucketRouteImport } from './routes/bucket'
 import { Route as BulkUploadRouteImport } from './routes/bulk-upload'
 import { Route as CameraOverridesRouteImport } from './routes/camera-overrides'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
@@ -30,6 +31,8 @@ import { Route as GenresIndexRouteImport } from './routes/genres.index'
 import { Route as GenresIdRouteImport } from './routes/genres.$id'
 import { Route as TagsIndexRouteImport } from './routes/tags.index'
 import { Route as TagsIdRouteImport } from './routes/tags.$id'
+import { Route as UpdateDataIndexRouteImport } from './routes/update-data.index'
+import { Route as UpdateDataSectionRouteImport } from './routes/update-data.$section'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -49,6 +52,11 @@ const BulkUploadRoute = BulkUploadRouteImport.update({
 const CameraOverridesRoute = CameraOverridesRouteImport.update({
   id: '/camera-overrides',
   path: '/camera-overrides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExifRoute = ExifRouteImport.update({
@@ -136,12 +144,23 @@ const TagsIdRoute = TagsIdRouteImport.update({
   path: '/tags/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UpdateDataIndexRoute = UpdateDataIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => UpdateDataRoute,
+} as any)
+const UpdateDataSectionRoute = UpdateDataSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => UpdateDataRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bucket': typeof BucketRoute
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
+  '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
@@ -152,19 +171,22 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/update-data': typeof UpdateDataRoute
+  '/update-data': typeof UpdateDataRouteWithChildren
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
+  '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
   '/genres/': typeof GenresIndexRoute
   '/tags/': typeof TagsIndexRoute
+  '/update-data/': typeof UpdateDataIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bucket': typeof BucketRoute
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
+  '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
@@ -175,13 +197,14 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/update-data': typeof UpdateDataRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
+  '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums': typeof AlbumsIndexRoute
   '/genres': typeof GenresIndexRoute
   '/tags': typeof TagsIndexRoute
+  '/update-data': typeof UpdateDataIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -189,6 +212,7 @@ export interface FileRoutesById {
   '/bucket': typeof BucketRoute
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
+  '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
@@ -199,13 +223,15 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
-  '/update-data': typeof UpdateDataRoute
+  '/update-data': typeof UpdateDataRouteWithChildren
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
+  '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
   '/genres/': typeof GenresIndexRoute
   '/tags/': typeof TagsIndexRoute
+  '/update-data/': typeof UpdateDataIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -214,6 +240,7 @@ export interface FileRouteTypes {
     | '/bucket'
     | '/bulk-upload'
     | '/camera-overrides'
+    | '/compare'
     | '/exif'
     | '/gallery'
     | '/in-flight'
@@ -228,15 +255,18 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
+    | '/update-data/$section'
     | '/albums/'
     | '/genres/'
     | '/tags/'
+    | '/update-data/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/bucket'
     | '/bulk-upload'
     | '/camera-overrides'
+    | '/compare'
     | '/exif'
     | '/gallery'
     | '/in-flight'
@@ -247,19 +277,21 @@ export interface FileRouteTypes {
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
-    | '/update-data'
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
+    | '/update-data/$section'
     | '/albums'
     | '/genres'
     | '/tags'
+    | '/update-data'
   id:
     | '__root__'
     | '/'
     | '/bucket'
     | '/bulk-upload'
     | '/camera-overrides'
+    | '/compare'
     | '/exif'
     | '/gallery'
     | '/in-flight'
@@ -274,9 +306,11 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
+    | '/update-data/$section'
     | '/albums/'
     | '/genres/'
     | '/tags/'
+    | '/update-data/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,6 +318,7 @@ export interface RootRouteChildren {
   BucketRoute: typeof BucketRoute
   BulkUploadRoute: typeof BulkUploadRoute
   CameraOverridesRoute: typeof CameraOverridesRoute
+  CompareRoute: typeof CompareRoute
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
   InFlightRoute: typeof InFlightRoute
@@ -294,7 +329,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
-  UpdateDataRoute: typeof UpdateDataRoute
+  UpdateDataRoute: typeof UpdateDataRouteWithChildren
   AlbumsIdRoute: typeof AlbumsIdRoute
   GenresIdRoute: typeof GenresIdRoute
   TagsIdRoute: typeof TagsIdRoute
@@ -331,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/camera-overrides'
       fullPath: '/camera-overrides'
       preLoaderRoute: typeof CameraOverridesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/exif': {
@@ -452,14 +494,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/update-data/': {
+      id: '/update-data/'
+      path: '/'
+      fullPath: '/update-data/'
+      preLoaderRoute: typeof UpdateDataIndexRouteImport
+      parentRoute: typeof UpdateDataRoute
+    }
+    '/update-data/$section': {
+      id: '/update-data/$section'
+      path: '/$section'
+      fullPath: '/update-data/$section'
+      preLoaderRoute: typeof UpdateDataSectionRouteImport
+      parentRoute: typeof UpdateDataRoute
+    }
   }
 }
+
+interface UpdateDataRouteChildren {
+  UpdateDataSectionRoute: typeof UpdateDataSectionRoute
+  UpdateDataIndexRoute: typeof UpdateDataIndexRoute
+}
+
+const UpdateDataRouteChildren: UpdateDataRouteChildren = {
+  UpdateDataSectionRoute: UpdateDataSectionRoute,
+  UpdateDataIndexRoute: UpdateDataIndexRoute,
+}
+
+const UpdateDataRouteWithChildren = UpdateDataRoute._addFileChildren(
+  UpdateDataRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BucketRoute: BucketRoute,
   BulkUploadRoute: BulkUploadRoute,
   CameraOverridesRoute: CameraOverridesRoute,
+  CompareRoute: CompareRoute,
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
   InFlightRoute: InFlightRoute,
@@ -470,7 +541,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
-  UpdateDataRoute: UpdateDataRoute,
+  UpdateDataRoute: UpdateDataRouteWithChildren,
   AlbumsIdRoute: AlbumsIdRoute,
   GenresIdRoute: GenresIdRoute,
   TagsIdRoute: TagsIdRoute,

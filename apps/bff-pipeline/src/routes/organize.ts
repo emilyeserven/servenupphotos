@@ -2,7 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { relayToBackend } from "../lib/backend.js";
 
 /** The request options that relay a JSON body with method; the backend gives GitHub 30s. */
-function jsonBody(method: "POST" | "PUT", body: unknown) {
+function jsonBody(method: "POST" | "PUT" | "DELETE", body: unknown) {
   return {
     method,
     headers: { "content-type": "application/json" },
@@ -51,6 +51,25 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
       app.log,
       `/organize/albums/${encodeURIComponent(request.params.id)}/layout`,
       jsonBody("PUT", request.body),
+    ),
+  );
+
+  // Deletes an album, takes it out of its photos and moves its sub-albums up, as changes waiting
+  // for Commit.
+  app.delete<{ Params: { id: string } }>("/organize/albums/:id", async (request, reply) =>
+    relayToBackend(reply, app.log, `/organize/albums/${encodeURIComponent(request.params.id)}`, {
+      method: "DELETE",
+      timeoutMs: 35_000,
+    }),
+  );
+
+  // Takes photos out of an album, its photo order, covers and layout, as changes waiting for Commit.
+  app.delete<{ Params: { id: string } }>("/organize/albums/:id/photos", async (request, reply) =>
+    relayToBackend(
+      reply,
+      app.log,
+      `/organize/albums/${encodeURIComponent(request.params.id)}/photos`,
+      jsonBody("DELETE", request.body),
     ),
   );
 

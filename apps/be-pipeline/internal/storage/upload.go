@@ -264,8 +264,13 @@ func photoKey(name string, body io.ReadSeeker) (string, int64, error) {
 
 // keyStem is the part of an object key photoKey takes from the photo's name.
 func keyStem(name string) string {
-	stem := strings.TrimSuffix(path.Base(strings.ReplaceAll(name, `\`, "/")), path.Ext(name))
-	stem = strings.Trim(unsafeKeyChars.ReplaceAllString(strings.ToLower(stem), "-"), "-")
+	return cleanStem(strings.TrimSuffix(path.Base(strings.ReplaceAll(name, `\`, "/")), path.Ext(name)))
+}
+
+// cleanStem lowercases s and joins its runs of letters and numbers with "-",
+// at most 60 characters, for a key's name stem.
+func cleanStem(s string) string {
+	stem := strings.Trim(unsafeKeyChars.ReplaceAllString(strings.ToLower(s), "-"), "-")
 	if len(stem) > 60 {
 		stem = strings.TrimRight(stem[:60], "-")
 	}

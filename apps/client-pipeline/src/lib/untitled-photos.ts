@@ -1,5 +1,5 @@
 import type { InFlightFileRead, InFlightRead } from "@/api/photos";
-import { titleOf } from "@/lib/drafts";
+import { isUnselected, titleOf } from "@/lib/drafts";
 
 /** The title saved in the photo's JSON, or undefined without one. */
 export function savedTitle(file: InFlightFileRead): string | undefined {
@@ -17,15 +17,17 @@ export function untitledFirst<T extends InFlightFileRead>(files: T[]): T[] {
 }
 
 /**
- * The untitled photos that can be opened on the Photo page: not removed, with an image in R2, and
- * not in `skip`, such as the Undecided queue.
+ * The untitled photos that can be opened on the Photo page: not removed or unselected, with an
+ * image in R2, and not in `skip`, such as the Undecided queue.
  */
 export function editableUntitled(
   data: Pick<InFlightRead, "files" | "images">,
   skip: ReadonlySet<string> = new Set(),
 ): InFlightFileRead[] {
   const editable = (file: InFlightFileRead) =>
-    file.status !== "removed" && Boolean(data.images.byPath[file.path]?.url);
+    file.status !== "removed" &&
+    !isUnselected(file.data) &&
+    Boolean(data.images.byPath[file.path]?.url);
   return data.files.filter((file) => isUntitled(file) && !skip.has(file.path) && editable(file));
 }
 

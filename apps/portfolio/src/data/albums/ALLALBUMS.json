@@ -13,10 +13,5 @@
     "name": "Japan",
     "description": "",
     "parent": null
-  },
-  {
-    "id": "test",
-    "name": "test",
-    "description": ""
   }
 ]

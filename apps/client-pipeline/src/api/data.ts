@@ -1,5 +1,5 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
-import { type PendingSave, photoChanges } from "@/api/scan-changes";
+import { type PendingSave, changesByFolder, photoChanges } from "@/api/scan-changes";
 import type { FieldChange } from "@/api/cameras";
 import type { ColorSummary } from "@/api/exif";
 import { requestJson } from "@/api/settings";
@@ -234,10 +234,7 @@ interface LocationNamesResult extends PendingSave {
 
 /** The photo and place files a save changed, such as Location names', as changes over the combined lists. */
 export function locationChanges(result: PendingSave) {
-  return result.changes.map((change) => ({
-    kind: change.path.includes("/places/") ? ("places" as const) : ("photos" as const),
-    ...change,
-  }));
+  return changesByFolder(result, "places");
 }
 
 /** Reads every photo and place file and lists the countries and cities that are another name of one. */

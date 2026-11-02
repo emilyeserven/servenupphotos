@@ -37,7 +37,7 @@ func (c *Client) ApplyPruneTags(ctx context.Context, gh settings.GitHub, req Pru
 	if perr != nil {
 		return PruneTagsResult{}, perr
 	}
-	if perr := allReadable(scan); perr != nil {
+	if perr := allReadable(scan, "the tags weren't changed"); perr != nil {
 		return PruneTagsResult{}, perr
 	}
 	p := newTagPruner(scan.w.groups()[Tags.Folder])
@@ -62,11 +62,12 @@ func (c *Client) ApplyPruneTags(ctx context.Context, gh settings.GitHub, req Pru
 }
 
 // allReadable fails when a photo file in scan couldn't be read, since it may
-// list a tag that's pruned.
-func allReadable(scan baseURLScan) *PublishError {
+// list a tag or album that's changed. so ends its message, such as "the tags
+// weren't changed".
+func allReadable(scan baseURLScan, so string) *PublishError {
 	for _, f := range scan.files {
 		if f.err != "" {
-			return publishErr(http.StatusConflict, "%s couldn't be read (%s), so the tags weren't changed.", f.path, f.err)
+			return publishErr(http.StatusConflict, "%s couldn't be read (%s), so %s.", f.path, f.err, so)
 		}
 	}
 	return nil

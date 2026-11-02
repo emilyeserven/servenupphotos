@@ -25,3 +25,14 @@ export interface ScanChange {
 export function photoChanges(result: { changes?: ScanChange[] }) {
   return (result.changes ?? []).map((change) => ({ kind: "photos" as const, ...change }));
 }
+
+/**
+ * The files a save changed, each as a `kind` file when its path is in that kind's folder (such as
+ * "/tags/"), or else as a photo file.
+ */
+export function changesByFolder<K extends string>(result: PendingSave, kind: K) {
+  return result.changes.map((change) => ({
+    kind: change.path.includes(`/${kind}/`) ? kind : ("photos" as const),
+    ...change,
+  }));
+}

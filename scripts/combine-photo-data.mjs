@@ -97,9 +97,22 @@ function withFile(entries, data, identity, leftOut) {
   else entries.splice(at, 1, ...replacement);
 }
 
-/** What the kind's combined list leaves out: drafts, for photos, unless untitled photos are included. */
+/**
+ * Whether a photo is unselected: not chosen in a compare group, so the pipeline's Commit always
+ * leaves it out of ALLPHOTOS.json (see docs/compare-groups.md).
+ */
+function isUnselected(photo) {
+  const unselected = photo?.unselected;
+  return typeof unselected === "object" && unselected !== null && !Array.isArray(unselected);
+}
+
+/**
+ * What the kind's combined list leaves out: for photos, unselected ones, and drafts unless untitled
+ * photos are included.
+ */
 function leftOutOf(kind, includeUntitled) {
-  return kind.folder === "photos" && !includeUntitled ? isDraft : () => false;
+  if (kind.folder !== "photos") return () => false;
+  return (photo) => isUnselected(photo) || (!includeUntitled && isDraft(photo));
 }
 
 /** entries without the ones that pending changes waiting for Commit remove. */

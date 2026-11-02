@@ -22,6 +22,8 @@ import {
 } from "@/api/photos";
 import { settingsQuery } from "@/api/settings";
 import { CommitError } from "@/components/commit-error";
+import { CompareButton } from "@/components/compare/compare-button";
+import { UnselectedMark } from "@/components/compare/unselected-mark";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { JsonDiffBlock } from "@/components/json-diff-block";
 import {
@@ -450,11 +452,14 @@ function FileSection({
         <PhotoTitle file={file} />
         <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
         <FileStatus status={file.status} pending={file.pending} />
-        <DraftMark data={file.status === "removed" ? undefined : file.data}>
-          <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
-        </DraftMark>
+        <UnselectedMark file={file}>
+          <DraftMark data={file.status === "removed" ? undefined : file.data}>
+            <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
+          </DraftMark>
+        </UnselectedMark>
         <ReEditMark data={file.status === "removed" ? undefined : file.data} />
         <MoveToUndecided file={file} />
+        <CompareButton file={file} />
         <RemoveFile file={file} images={images} onRemoved={onRemoved} />
       </h2>
       <div className="grid items-start gap-4 @2xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">

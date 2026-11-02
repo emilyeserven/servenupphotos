@@ -61,6 +61,9 @@ other untitled photo.
 > **Frontend analogy:** it's like archiving an email: the message is still there, it just leaves the inbox view until
 > you open the Archive folder or move it back.
 
+**Compare**, beside **Undecided** on each photo and on each draft tile, puts the photo in a
+[compare group](compare-groups.md), to weigh it head-to-head against others before deciding which gets posted.
+
 ### Drafts on the base branch
 
 After the photos in flight (or alone, when none are), the page lists the [drafts](drafts.md) already on the base

@@ -5,6 +5,11 @@ previews what it will change, then saves every changed file as a [change waiting
 so one **Commit** sends them to the open **Add photo data** pull request (or opens one) together with `ALLPHOTOS.json`
 rebuilt.
 
+Each bulk change has its own subpage, `/update-data/<name>` (such as `/update-data/image-names`), picked from a side
+navigation beside the card; on a phone the navigation is a dropdown above it. `/update-data` on its own opens the first,
+**Image base URL**, and the main sidebar keeps **Update Data** highlighted on every subpage. The list and each subpage's
+card are in `components/update-data/sections.tsx`, so a new bulk change is one entry there.
+
 **Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
 development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder
 (except `ALLPHOTOS.json`) as the next Commit will have it, and lists the
@@ -14,6 +19,29 @@ lists each URL under `images` that starts with `from` (followed by nothing, `/`,
 the rest of each URL (query strings such as `?crop=` included) and every other byte of the file as it was. Nothing is
 saved while any photo file can't be read. The images in R2 aren't touched, so connect the custom domain to the
 bucket in Cloudflare first, and set the R2 **Public URL** in Settings to it so new uploads use it too.
+
+**Image names** names each titled photo's image in R2 after its title, so camera file names that repeat (`DSC0001`,
+`IMG_0001`) stop clashing: `photos/59124cb186a8-dsc0001.jpg` becomes `photos/59124cb186a8-amsterdam-canal.jpg`, and
+each resized version, the Square Thumbnail and the Thumbnail Preview move with it (`…-amsterdam-canal-large.webp`). The
+hash stays, so it's still the same photo. The name is the title as `storage.TitleStem` writes it: lowercase, letters
+and numbers joined by `-`, common accents dropped (“Café” gives `cafe`), at most 60 characters. A name another photo
+already has, in the bucket or in a photo file, gets `-2`, `-3` and so on; a photo already named after its title (with
+or without such a suffix) keeps its name. Photos without a title, or with one that has no letters or numbers in it,
+and images the pipeline didn't upload are left as they are.
+
+**Check files** lists the bucket and reads every photo file as the next Commit will have it
+(`POST /api/data/image-names/preview`), and shows each photo that would be renamed with every `images` value that
+changes. **Apply** (`POST /api/data/image-names`) first copies each photo's original and versions to their new keys in
+R2 (`storage.CopyPhoto`, a server-side copy that keeps each object's metadata, such as the Square Thumbnail's crop),
+then saves its photo file with the new key and URLs, query strings such as `?crop=` kept, as a [change waiting for
+Commit](pending-changes.md). Nothing is saved while any photo file can't be read or any copy fails; the copies already
+made are harmless, and applying again copies over them. Nothing is deleted: the old images stay in R2, because the
+portfolio keeps showing them until the pull request merges. Once it has, they show as **Not saved** in
+[Explore Bucket](explore-bucket.md#filters), where they can be deleted.
+
+> **Frontend analogy:** it's renaming a file that other modules import: copy it to the new path, update every import
+> (here, the links in each photo's JSON), ship that, and only then delete the old file, so nothing ever points at a
+> path that isn't there.
 
 **Missing fields** gives older photo files the fields new ones have, such as `title`, `comment`, `aperture` or
 `images.thumbnail` (`POST /api/data/missing-fields/preview`, then `POST /api/data/missing-fields`). The list of fields
