@@ -1,9 +1,9 @@
 {
-  "id": 470,
-  "title": null,
+  "title": "Ivy Takeover",
   "comment": null,
+  "id": 470,
   "file": "DSCF3961.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:54:40Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 11:04:57",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Waveny Park",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-thumbnail.webp?crop=0,934,5152",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/5cba7bcea0ed-dscf3961-thumbnailpreview.webp?crop=0,934,5152",
     "thumbnailcrop": {
       "x": 0,
-      "y": 1288,
+      "y": 934,
       "size": 5152,
       "outputSize": 500
     }
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["ivy", "hiking-trail", "signage", "trees", "texture", "lichen"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "waveny-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

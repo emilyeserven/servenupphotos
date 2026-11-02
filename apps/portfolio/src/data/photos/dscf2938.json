@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["paifang", "chinatown", "gates", "lamppost", "trees", "night"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9975
-  }
+  },
+  "undecided": true
 }

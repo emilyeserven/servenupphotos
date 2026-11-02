@@ -1,9 +1,9 @@
 {
-  "id": 476,
-  "title": null,
+  "title": "Nature Walk",
   "comment": null,
+  "id": 476,
   "file": "DSCF4673.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:51:24Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.6,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 14:41:51",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "New Canaan Nature Center",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Connecticut",
   "city": "New Canaan",
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-thumbnail.webp?crop=2987,0,3841",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/70629193be2a-dscf4673-thumbnailpreview.webp?crop=2987,0,3841",
     "thumbnailcrop": {
-      "x": 1493,
+      "x": 2987,
       "y": 0,
       "size": 3841,
       "outputSize": 500
@@ -48,14 +48,22 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "boardwalk", "hiking-trail", "forest", "fence", "fallen-leaves"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "new-canaan-nature-center"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null,
+  "reEdit": {
+    "reason": "Brighten",
+    "date": "2026-11-02"
+  },
   "colors": {
     "average": {
       "hex": "#4f4c4a",

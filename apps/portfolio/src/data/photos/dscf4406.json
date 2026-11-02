@@ -1,9 +1,9 @@
 {
-  "id": 471,
-  "title": null,
+  "title": "Boardwalk in the Bird Sanctuary",
   "comment": null,
+  "id": 471,
   "file": "DSCF4406.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:52:26Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 3.5,
@@ -14,7 +14,7 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 14:03:33",
   "customCreateDate": null,
-  "placeName": null,
+  "placeName": "bristow-bird-sanctuary",
   "customCity": null,
   "customState": null,
   "customCountry": null,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-thumbnail.webp?crop=1484,0,3490",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/7a9c9a8f4333-dscf4406-thumbnailpreview.webp?crop=1484,0,3490",
     "thumbnailcrop": {
-      "x": 1357,
+      "x": 1484,
       "y": 0,
       "size": 3490,
       "outputSize": 500
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "boardwalk", "forest", "fallen-leaves", "hiking-trail", "trees"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "bristow-bird-sanctuary"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

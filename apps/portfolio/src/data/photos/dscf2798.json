@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["volleyball", "beach", "walls", "promenade", "pedestrians", "clouds"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 7.6,
     "peakChroma": 14.55,
     "samples": 10050
-  }
+  },
+  "undecided": true
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["city", "mountains", "rooftops", "houses", "clouds"],
   "genres": [],
   "places": [],
   "spotlightZones": [],

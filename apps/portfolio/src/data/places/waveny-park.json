@@ -4,5 +4,7 @@
   "description": "",
   "parent": "",
   "city": "New Canaan",
-  "country": "United States of America"
+  "country": "United States of America",
+  "latitude": 41.121431372620364,
+  "longitude": -73.49020965509716
 }

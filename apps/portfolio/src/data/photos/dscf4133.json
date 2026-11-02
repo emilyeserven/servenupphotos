@@ -1,9 +1,9 @@
 {
-  "id": 475,
-  "title": null,
+  "title": "Explosion of Autumnal Color",
   "comment": null,
+  "id": 475,
   "file": "DSCF4133.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:55:39Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.3,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 11:21:15",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Waveny Park",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "trees", "branches", "park"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "waveny-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

@@ -162,6 +162,11 @@
     "description": ""
   },
   {
+    "id": "bronze",
+    "name": "bronze",
+    "description": ""
+  },
+  {
     "id": "bubbles",
     "name": "bubbles",
     "description": ""
@@ -476,6 +481,11 @@
     "description": ""
   },
   {
+    "id": "fabric",
+    "name": "fabric",
+    "description": ""
+  },
+  {
     "id": "facade",
     "name": "facade",
     "description": ""
@@ -578,6 +588,11 @@
     "id": "fountain",
     "name": "fountain",
     "description": ""
+  },
+  {
+    "id": "framing",
+    "name": "framing",
+    "description": "a composition that uses a foreground structure, such as a window, posts or beams, to frame the main scene"
   },
   {
     "id": "fungi",
@@ -821,6 +836,12 @@
     "description": ""
   },
   {
+    "id": "ishigaki",
+    "name": "ishigaki",
+    "description": "the dry-stacked stone walls of a Japanese castle",
+    "parent": "walls"
+  },
+  {
     "id": "islands",
     "name": "islands",
     "description": ""
@@ -851,6 +872,16 @@
     "id": "kakejiku",
     "name": "kakejiku",
     "description": "a Japanese hanging scroll of painting or calligraphy, displayed in a tokonoma"
+  },
+  {
+    "id": "kamon",
+    "name": "kamon",
+    "description": "a Japanese family or temple crest, often printed on curtains, roof tiles and lanterns"
+  },
+  {
+    "id": "kanji",
+    "name": "kanji",
+    "description": "the Chinese-derived characters used in written Japanese"
   },
   {
     "id": "karahafu",
@@ -912,6 +943,11 @@
     "description": ""
   },
   {
+    "id": "lichen",
+    "name": "lichen",
+    "description": ""
+  },
+  {
     "id": "lighthouse",
     "name": "lighthouse",
     "description": ""
@@ -960,10 +996,20 @@
     "description": ""
   },
   {
+    "id": "marsh",
+    "name": "marsh",
+    "description": ""
+  },
+  {
     "id": "mashrabiya",
     "name": "mashrabiya",
     "description": "a carved wooden lattice screen or window found in traditional Islamic and Middle Eastern architecture",
     "parent": "windows"
+  },
+  {
+    "id": "masks",
+    "name": "masks",
+    "description": ""
   },
   {
     "id": "matsuri",
@@ -1146,6 +1192,11 @@
     "description": ""
   },
   {
+    "id": "omikuji",
+    "name": "omikuji",
+    "description": "paper fortunes drawn at Japanese temples and shrines, tied to branches or racks to leave bad luck behind"
+  },
+  {
     "id": "onsen",
     "name": "onsen",
     "description": ""
@@ -1172,6 +1223,12 @@
     "parent": "temple"
   },
   {
+    "id": "paifang",
+    "name": "paifang",
+    "description": "a traditional Chinese ceremonial archway gate with tiled roofs, often marking the entrance to a Chinatown",
+    "parent": "gates"
+  },
+  {
     "id": "palace",
     "name": "palace",
     "description": ""
@@ -1181,6 +1238,11 @@
     "name": "palm-trees",
     "description": "",
     "parent": "trees"
+  },
+  {
+    "id": "paper",
+    "name": "paper",
+    "description": ""
   },
   {
     "id": "parade",
@@ -1386,6 +1448,11 @@
   {
     "id": "road",
     "name": "road",
+    "description": ""
+  },
+  {
+    "id": "roadwork",
+    "name": "roadwork",
     "description": ""
   },
   {
@@ -1775,6 +1842,11 @@
     "description": ""
   },
   {
+    "id": "tengu",
+    "name": "tengu",
+    "description": "a long-nosed mountain goblin of Japanese folklore, often shown as a carved mask at temples and shrines"
+  },
+  {
     "id": "tenshu",
     "name": "tenshu",
     "description": "",
@@ -1892,6 +1964,11 @@
     "description": ""
   },
   {
+    "id": "vending-machines",
+    "name": "vending-machines",
+    "description": ""
+  },
+  {
     "id": "village",
     "name": "village",
     "description": ""
@@ -1934,6 +2011,11 @@
     "description": ""
   },
   {
+    "id": "wanikuchi",
+    "name": "wanikuchi",
+    "description": "a flat bronze gong hung at the front of a Japanese temple or shrine hall and struck by swinging a rope"
+  },
+  {
     "id": "wanman",
     "name": "wanman",
     "description": "",
@@ -1948,6 +2030,11 @@
   {
     "id": "water",
     "name": "water",
+    "description": ""
+  },
+  {
+    "id": "waterfall",
+    "name": "waterfall",
     "description": ""
   },
   {
@@ -1995,6 +2082,12 @@
     "name": "yeondeung",
     "description": "",
     "parent": "lanterns"
+  },
+  {
+    "id": "yokan",
+    "name": "yokan",
+    "description": "a Western-style house or mansion built in Japan, mostly from the Meiji to early Showa eras",
+    "parent": "houses"
   },
   {
     "id": "yokocho",

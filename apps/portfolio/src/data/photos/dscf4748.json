@@ -1,9 +1,9 @@
 {
-  "id": 477,
-  "title": null,
+  "title": "Lichen Bench",
   "comment": null,
+  "id": 477,
   "file": "DSCF4748.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:50:05Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 14:46:34",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "New Canaan Nature Center",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": "United States of America",
   "state": "Connecticut",
   "city": "New Canaan",
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "bench", "lichen", "wood", "fallen-leaves", "texture"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "new-canaan-nature-center"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

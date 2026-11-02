@@ -111,6 +111,14 @@
     "longitude": -73.99188291269398
   },
   {
+    "id": "bristow-bird-sanctuary",
+    "name": "Bristow Bird Sanctuary",
+    "description": "",
+    "parent": "",
+    "city": "New Canaan",
+    "country": "United States of America"
+  },
+  {
     "id": "brooklyn-bridge-park-pier-1",
     "name": "Brooklyn Bridge Park Pier 1",
     "description": "",
@@ -1155,7 +1163,9 @@
     "description": "",
     "parent": "",
     "city": "New Canaan",
-    "country": "United States of America"
+    "country": "United States of America",
+    "latitude": 41.121431372620364,
+    "longitude": -73.49020965509716
   },
   {
     "id": "welling-court-mural-project",

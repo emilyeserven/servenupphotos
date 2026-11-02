@@ -50,7 +50,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["highway", "apartments", "cars", "beach", "city", "haze"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -263,5 +263,6 @@
     "chroma": 8.74,
     "peakChroma": 15.16,
     "samples": 9694
-  }
+  },
+  "undecided": true
 }

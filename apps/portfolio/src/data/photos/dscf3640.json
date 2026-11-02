@@ -1,9 +1,9 @@
 {
-  "id": 488,
-  "title": null,
+  "title": "Autumn Pond",
   "comment": null,
+  "id": 488,
   "file": "DSCF3640.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-02T13:53:01Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2026:11:01 10:43:39",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Waveny Park",
+  "customCity": "New Canaan",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -32,11 +32,11 @@
     "small": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-thumbnail.webp?crop=0,0,4208",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/f0989f56c250-dscf3640-thumbnailpreview.webp?crop=0,0,4208",
     "thumbnailcrop": {
       "x": 0,
-      "y": 841,
+      "y": 0,
       "size": 4208,
       "outputSize": 500
     }
@@ -48,9 +48,14 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [],
+  "tags": ["autumn", "pond", "reflections", "trees", "pier", "pedestrians"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "waveny-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,
