@@ -96,6 +96,11 @@
     "description": "small shelled sea creatures that cling in clusters to rocks, piers, hulls and shells"
   },
   {
+    "id": "baseball",
+    "name": "baseball",
+    "description": ""
+  },
+  {
     "id": "bay-windows",
     "name": "bay-windows",
     "description": "windows projecting outward from a building's wall, forming a bay, common on row houses"
@@ -548,6 +553,11 @@
     "description": ""
   },
   {
+    "id": "fish",
+    "name": "fish",
+    "description": ""
+  },
+  {
     "id": "flags",
     "name": "flags",
     "description": ""
@@ -763,6 +773,11 @@
     "parent": "path"
   },
   {
+    "id": "hills",
+    "name": "hills",
+    "description": ""
+  },
+  {
     "id": "horse",
     "name": "horse",
     "description": ""
@@ -905,6 +920,12 @@
     "name": "kawara",
     "description": "traditional Japanese fired-clay roof tiles laid in interlocking wavy rows",
     "parent": "shingles"
+  },
+  {
+    "id": "koi",
+    "name": "koi",
+    "description": "ornamental colored carp bred in Japan and kept in ponds and canals",
+    "parent": "fish"
   },
   {
     "id": "koshi",
@@ -1503,6 +1524,12 @@
     "parent": "boats"
   },
   {
+    "id": "saisen-bako",
+    "name": "saisen-bako",
+    "description": "the offering box at a Japanese shrine or temple where visitors toss coins before praying",
+    "parent": "prayers"
+  },
+  {
     "id": "sand-dunes",
     "name": "sand-dunes",
     "description": ""
@@ -1526,6 +1553,11 @@
   {
     "id": "scale",
     "name": "scale",
+    "description": ""
+  },
+  {
+    "id": "scoreboard",
+    "name": "scoreboard",
     "description": ""
   },
   {

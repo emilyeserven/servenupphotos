@@ -1,0 +1,6 @@
+{
+  "id": "koi",
+  "name": "koi",
+  "description": "ornamental colored carp bred in Japan and kept in ponds and canals",
+  "parent": "fish"
+}
