@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 
 /** What a draft is, for the mark's tooltip. */
 const DRAFT_HELP =
-  "No title yet, so Commit leaves it out of ALLPHOTOS.json and the portfolio doesn't show it. Give it a title to publish it.";
+  "No title yet, or set aside as Undecided, so Commit leaves it out of ALLPHOTOS.json and the portfolio doesn't show it. Give it a title, or move it back from Undecided, to publish it.";
 
 /**
- * "Draft" when the photo's JSON has no title and untitled photos are kept as drafts (see Settings);
+ * "Draft" when the photo's JSON has no title or is Undecided, and untitled photos are kept as drafts (see Settings);
  * otherwise `children`, such as whether it's in ALLPHOTOS.json, or nothing.
  */
 export function DraftMark({

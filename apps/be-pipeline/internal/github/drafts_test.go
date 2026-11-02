@@ -3,19 +3,24 @@ package github
 import (
 	"encoding/json"
 	"slices"
+	"strings"
 	"testing"
 )
 
 func TestIsDraft(t *testing.T) {
 	tests := map[string]bool{
-		`{"title":"A"}`:    false,
-		`{"title":" A "}`:  false,
-		`{"title":""}`:     true,
-		`{"title":"  "}`:   true,
-		`{"title":null}`:   true,
-		`{"title":3}`:      true,
-		`{"file":"a.jpg"}`: true,
-		`not json`:         false,
+		`{"title":"A"}`:                   false,
+		`{"title":" A "}`:                 false,
+		`{"title":""}`:                    true,
+		`{"title":"  "}`:                  true,
+		`{"title":null}`:                  true,
+		`{"title":3}`:                     true,
+		`{"file":"a.jpg"}`:                true,
+		`not json`:                        false,
+		`{"title":"A","undecided":true}`:  true,
+		`{"title":"A","undecided":null}`:  false,
+		`{"title":"A","undecided":false}`: false,
+		`{"title":"A","undecided":"yes"}`: false,
 	}
 	for data, want := range tests {
 		if got := isDraft(json.RawMessage(data)); got != want {
@@ -61,6 +66,7 @@ func TestCommitCombinedLeavesOutDrafts(t *testing.T) {
 		dataRoot + "/photos/a.json":         `{"file":"a.jpg","title":"A"}`,
 		dataRoot + "/photos/b.json":         `{"file":"b.jpg","title":null}`,
 		dataRoot + "/photos/c.json":         `{"file":"c.jpg","title":" "}`,
+		dataRoot + "/photos/d.json":         `{"file":"d.jpg","title":"D","undecided":true}`,
 		dataRoot + "/photos/ALLPHOTOS.json": "[]\n",
 	}))
 	got, err := c.CommitCombined(t.Context(), pullGH, nil)
@@ -69,10 +75,10 @@ func TestCommitCombinedLeavesOutDrafts(t *testing.T) {
 	}
 	want := "[\n  {\n    \"file\": \"a.jpg\",\n    \"title\": \"A\"\n  }\n]\n"
 	if all, _ := f.file(prBranch, dataRoot+"/photos/ALLPHOTOS.json"); all != want {
-		t.Errorf("ALLPHOTOS.json = %q, want only the titled photo", all)
+		t.Errorf("ALLPHOTOS.json = %q, want only the titled photo that isn't Undecided", all)
 	}
-	if got.Counts["photos"] != 1 || got.Counts["drafts"] != 2 {
-		t.Errorf("counts = %v, want 1 photo and 2 drafts", got.Counts)
+	if got.Counts["photos"] != 1 || got.Counts["drafts"] != 3 {
+		t.Errorf("counts = %v, want 1 photo and 3 drafts", got.Counts)
 	}
 	status, err := c.CombinedStatus(t.Context(), pullGH)
 	if err != nil || status.State != CombinedSynced {
@@ -110,5 +116,25 @@ func TestCombinedStatusTitleRemoved(t *testing.T) {
 	want := []PendingFile{{"photos", dataRoot + "/photos/a.json", PendingModified}}
 	if err != nil || status.State != CombinedStale || !slices.Equal(status.Pending, want) {
 		t.Errorf("CombinedStatus() = %+v, %v; want a.json's entry still to be taken out", status, err)
+	}
+}
+
+func TestCommitCombinedMovedBackFromUndecided(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.openPull(prBranch, with(emptyLists, map[string]string{
+		dataRoot + "/photos/a.json":         "{\n  \"title\": \"A\",\n  \"undecided\": true,\n  \"addedDate\": null\n}\n",
+		dataRoot + "/photos/ALLPHOTOS.json": "[]\n",
+	}))
+	edits := []FieldEdit{{Path: dataRoot + "/photos/a.json", Fields: map[string]json.RawMessage{"undecided": json.RawMessage(`null`)}}}
+	if _, err := c.CommitCombined(t.Context(), pullGH, edits); err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
+	}
+	want := "{\n  \"title\": \"A\",\n  \"undecided\": null,\n  \"addedDate\": \"2026-10-15T02:45:00Z\"\n}\n"
+	tree := f.committedTree()
+	if tree[dataRoot+"/photos/a.json"] != want {
+		t.Errorf("a.json = %q, want it dated as added when it's moved back", tree[dataRoot+"/photos/a.json"])
+	}
+	if all := tree[dataRoot+"/photos/ALLPHOTOS.json"]; !strings.Contains(all, `"title": "A"`) {
+		t.Errorf("ALLPHOTOS.json = %q, want the photo moved back in it", all)
 	}
 }

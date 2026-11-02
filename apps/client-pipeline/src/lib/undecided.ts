@@ -1,4 +1,4 @@
-import { titleOf } from "@/lib/drafts";
+import { isSetAside } from "@/lib/drafts";
 import type { LocalEdit } from "@/stores/local-edits";
 
 /** The photo JSON field marking a photo as Undecided: `true`, or left out (or `null`) when it isn't. */
@@ -18,12 +18,12 @@ export function editedData(file: PhotoFile, edits: Record<string, LocalEdit>): u
 }
 
 /**
- * Whether the photo is in the Undecided queue: marked `undecided` and still without a title, with
- * the local edits made. Giving it a title takes it out of the queue.
+ * Whether the photo is in the Undecided queue: marked `undecided`, with the local edits made,
+ * whether it has a title or not. Moving it back, or naming an untitled one on the Photo page, takes
+ * it out of the queue.
  */
 function isUndecided(file: PhotoFile, edits: Record<string, LocalEdit>): boolean {
-  const data = editedData(file, edits) as Record<string, unknown> | undefined;
-  return !file.error && data?.[UNDECIDED] === true && titleOf(data) === undefined;
+  return !file.error && isSetAside(editedData(file, edits));
 }
 
 /** The paths of the photos in the Undecided queue. */

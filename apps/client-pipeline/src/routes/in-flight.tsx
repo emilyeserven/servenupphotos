@@ -44,6 +44,12 @@ import { ReEditMark } from "@/components/re-edit-card";
 import { DraftMark } from "@/components/draft-mark";
 import { type DraftSort, parseDraftSort } from "@/components/draft-sort";
 import { CollapsiblePhotos } from "@/components/collapsible-photos";
+import {
+  type InFlightSort,
+  InFlightSortToggle,
+  parseInFlightSort,
+  sortInFlight,
+} from "@/components/in-flight-sort";
 import { Page } from "@/components/page";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { RemoveFile, RemovedNotice } from "@/components/remove-in-flight-file";
@@ -69,7 +75,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useInFlight } from "@/hooks/use-in-flight";
 import { type PhotoFilters, parseFilters, prefixedFilters } from "@/lib/photo-filters";
 import { undecidedPaths } from "@/lib/undecided";
-import { savedTitle, untitledFirst } from "@/lib/untitled-photos";
+import { savedTitle } from "@/lib/untitled-photos";
 import { cn } from "@/lib/utils";
 import { useCombinedDataStore, useCombinedSync } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
@@ -79,6 +85,8 @@ interface InFlightSearch extends PhotoFilters {
   allPhotos?: true;
   /** How the drafts on the base branch are sorted; their filters are kept as `draftPlace` and so on. */
   draftSort?: DraftSort;
+  /** How the photos in flight are sorted; untitled first when unset. */
+  sort?: InFlightSort;
   [draftFilter: string]: unknown;
 }
 
@@ -90,6 +98,7 @@ export const Route = createFileRoute("/in-flight")({
     ...parseFilters(search),
     ...prefixedFilters(search, DRAFT_FILTERS),
     ...(parseDraftSort(search) ? { draftSort: parseDraftSort(search) } : {}),
+    ...(parseInFlightSort(search) ? { sort: parseInFlightSort(search) } : {}),
   }),
 });
 
@@ -199,8 +208,8 @@ function InFlightCard() {
 }
 
 /**
- * The photo files that pass the filters, with the ones without a title first so they're easy to
- * find and name, after the Undecided queue, which takes the photos set aside out of the list, and
+ * The photo files that pass the filters, in the chosen sort (by default the ones without a title
+ * first, so they're easy to find and name), after the Undecided queue, which takes the photos set aside out of the list, and
  * then the drafts already on the base branch that aren't in flight.
  */
 function PhotoFiles({
@@ -214,6 +223,7 @@ function PhotoFiles({
 }) {
   const edits = useLocalEditsStore((s) => s.edits);
   const { filters, filter } = usePhotoFilters();
+  const sort = Route.useSearch({ select: (search) => search.sort });
   if (!shown) return null;
   if (shown.files.length === 0) {
     return (
@@ -231,13 +241,18 @@ function PhotoFiles({
   return (
     <>
       <OfflineNotice images={shown.images} />
-      <PhotoFilterBar filters={filters} shown={files.length} total={shown.files.length} />
+      <PhotoFilterBar filters={filters} shown={files.length} total={shown.files.length}>
+        <InFlightSortToggle sort={sort} />
+      </PhotoFilterBar>
       <UndecidedQueue
         files={files.filter((file) => undecided.has(file.path))}
         images={shown.images}
       />
       <InFlightList
-        files={untitledFirst(files.filter((file) => !undecided.has(file.path)))}
+        files={sortInFlight(
+          files.filter((file) => !undecided.has(file.path)),
+          sort,
+        )}
         images={shown.images}
         {...props}
       />

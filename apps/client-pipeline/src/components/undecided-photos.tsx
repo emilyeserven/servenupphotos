@@ -3,7 +3,6 @@ import { ChevronRightIcon, CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } fr
 import type { InFlightFileRead, InFlightImages } from "@/api/photos";
 import { CompareButton } from "@/components/compare/compare-button";
 import { Button } from "@/components/ui/button";
-import { titleOf } from "@/lib/drafts";
 import { squareImages } from "@/lib/offline-thumbnails";
 import { UNDECIDED } from "@/lib/undecided";
 import { useLocalEditsStore } from "@/stores/local-edits";
@@ -22,14 +21,25 @@ function useSetUndecided() {
     ]);
 }
 
-/** Whether the photo can go in the Undecided queue: its JSON was read, it's kept, and it has no title. */
+/**
+ * Takes a photo just named on the Photo page out of the Undecided queue, by dropping an Undecided
+ * mark kept as a local edit, so naming a photo set aside still puts it on the portfolio. `data` is
+ * the file's JSON as saved.
+ */
+export function useLeaveUndecided() {
+  const setField = useLocalEditsStore((s) => s.setField);
+  return (path: string, data: Record<string, unknown>) =>
+    setField(UNDECIDED, [{ path, before: data, value: data[UNDECIDED] ?? null }]);
+}
+
+/** Whether the photo can go in the Undecided queue: its JSON was read and it's kept, with or without a title. */
 function canMoveToUndecided(file: InFlightFileRead): boolean {
-  return !file.error && file.status !== "removed" && titleOf(file.data) === undefined;
+  return !file.error && file.status !== "removed";
 }
 
 /**
- * A button that moves an untitled photo to the Undecided queue, out of the list of photos in
- * flight, until it gets a title or is moved back. Nothing for a photo with a title.
+ * A button that moves a photo to the Undecided queue, out of the list of photos in flight, as a
+ * draft the portfolio doesn't show, whether it has a title or not, until it's moved back.
  */
 export function MoveToUndecided({ file }: { file: InFlightFileRead }) {
   const setUndecided = useSetUndecided();
@@ -39,7 +49,7 @@ export function MoveToUndecided({ file }: { file: InFlightFileRead }) {
       variant="ghost"
       size="sm"
       className="text-muted-foreground"
-      title="Set this photo aside until you decide on it. It stays saved, as a draft."
+      title="Set this photo aside until you decide on it. It stays saved, as a draft the portfolio doesn't show, even with a title."
       onClick={() => setUndecided(file, true)}
     >
       <CircleHelpIcon />
@@ -49,9 +59,9 @@ export function MoveToUndecided({ file }: { file: InFlightFileRead }) {
 }
 
 /**
- * The Undecided queue, a panel collapsed to its count until it's opened: the untitled photos set
- * aside from the list of photos in flight, each with Edit, to name it on the Photo page, and Move
- * back. Nothing while it's empty.
+ * The Undecided queue, a panel collapsed to its count until it's opened: the photos set aside from
+ * the list of photos in flight, titled or not, each with Edit, to name it on the Photo page, and
+ * Move back. Nothing while it's empty.
  */
 export function UndecidedQueue({
   files,
@@ -78,9 +88,9 @@ export function UndecidedQueue({
       </summary>
       <div className="flex flex-col gap-4 px-6 pb-6">
         <p className="text-muted-foreground text-sm">
-          Untitled photos set aside. They stay saved as drafts the portfolio doesn&apos;t show, and
-          Next untitled photo skips them. Giving one a title, or moving it back, returns it to the
-          list.
+          Photos set aside. They stay saved as drafts the portfolio doesn&apos;t show, even with a
+          title, and Next untitled photo skips them. Moving one back, or naming an untitled one,
+          returns it to the list.
         </p>
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
           {files.map((file) => (
@@ -108,7 +118,7 @@ interface DraftTileProps {
 }
 
 /**
- * An untitled photo as a tile: its Square Thumbnail, file name, Edit, Move back when it's in
+ * A draft as a tile: its Square Thumbnail, file name, Edit, Move back when it's in
  * the Undecided queue or Undecided when it isn't, and Compare.
  */
 export function DraftTile({ file, imageUrl, undecided, fromGallery }: DraftTileProps) {

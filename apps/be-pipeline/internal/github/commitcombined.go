@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
@@ -146,7 +147,7 @@ func (c *Client) prepareCommit(ctx context.Context, gh settings.GitHub, edits ma
 	if perr := c.catchUp(ctx, w); perr != nil {
 		return nil, nil, nil, perr
 	}
-	changes, missing, perr := w.commitChanges(edits)
+	changes, missing, perr := w.commitChanges(edits, c.now())
 	return w, changes, missing, perr
 }
 
@@ -163,13 +164,14 @@ func editsAt(edits map[string]FieldEdit, paths []string) []FieldEdit {
 // commitChanges is every file the commit changes besides the combined lists:
 // the pending changes, with edits made over them, by path (nil content
 // deletes), and the paths of the edits whose file isn't there, which are left
-// out. It fails when an edited file can't be read or edited.
-func (w *workspace) commitChanges(edits map[string]FieldEdit) (map[string][]byte, []string, *PublishError) {
+// out. It fails when an edited file can't be read or edited. now dates a photo
+// an edit puts on the portfolio (see stampAdded).
+func (w *workspace) commitChanges(edits map[string]FieldEdit, now time.Time) (map[string][]byte, []string, *PublishError) {
 	changes := map[string][]byte{}
 	for p, f := range w.staged {
 		changes[p] = f.data()
 	}
-	missing, perr := w.applyEdits(edits, changes)
+	missing, perr := w.applyEdits(edits, changes, now)
 	if perr != nil {
 		return nil, nil, perr
 	}
@@ -187,8 +189,9 @@ func (w *workspace) commitChanges(edits map[string]FieldEdit) (map[string][]byte
 }
 
 // applyEdits adds each edited file to changes, and returns the paths of the
-// edits whose file isn't there.
-func (w *workspace) applyEdits(edits map[string]FieldEdit, changes map[string][]byte) ([]string, *PublishError) {
+// edits whose file isn't there. A photo an edit puts on the portfolio, such as
+// one moved back from Undecided, is dated as added at now (see stampAdded).
+func (w *workspace) applyEdits(edits map[string]FieldEdit, changes map[string][]byte, now time.Time) ([]string, *PublishError) {
 	var missing []string
 	for p, edit := range edits {
 		content, ok := w.file(p)
@@ -203,7 +206,7 @@ func (w *workspace) applyEdits(edits map[string]FieldEdit, changes map[string][]
 		if err != nil {
 			return nil, publishErr(http.StatusConflict, "%s: %s, so nothing was committed.", p, err)
 		}
-		changes[p] = edited
+		changes[p] = w.stampAdded(edited, now)
 	}
 	return missing, nil
 }

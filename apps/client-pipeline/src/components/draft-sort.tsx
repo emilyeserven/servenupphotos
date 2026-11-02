@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import type { PublishedFile } from "@/api/photos";
+import type { InFlightFileRead, PublishedFile } from "@/api/photos";
 import { sortGallery } from "@/components/gallery/gallery-sort";
 import { fileName } from "@/components/gallery/published-file";
 import { FilterToggle, type ToggleChoices } from "@/components/photo-filters";
@@ -22,14 +22,14 @@ export function parseDraftSort(search: Record<string, unknown>): DraftSort | und
 }
 
 /** files by their JSON file's name, with numbers in order, so "dsc-9" comes before "dsc-10". */
-function byFileName(files: PublishedFile[]): PublishedFile[] {
+export function byFileName<T extends InFlightFileRead>(files: T[]): T[] {
   return files.toSorted((a, b) =>
     fileName(a.path).localeCompare(fileName(b.path), undefined, { numeric: true }),
   );
 }
 
 /** The photo's ID, which grows with each file made; -1 without one. */
-function photoId(file: PublishedFile): number {
+function photoId(file: InFlightFileRead): number {
   const id = (file.data as Record<string, unknown> | undefined)?.id;
   return typeof id === "number" ? id : -1;
 }
@@ -38,7 +38,7 @@ function photoId(file: PublishedFile): number {
  * files by when they were saved, newest first. Drafts have no date added, so this goes by their
  * photo ID, given out in order as each file is made.
  */
-function bySaved(files: PublishedFile[]): PublishedFile[] {
+export function bySaved<T extends InFlightFileRead>(files: T[]): T[] {
   return byFileName(files).toSorted((a, b) => photoId(b) - photoId(a));
 }
 
