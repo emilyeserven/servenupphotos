@@ -27,6 +27,7 @@ import { type Crop, sameCrop } from "@/lib/crop";
 import { type ReEditDraft, reEditChanged, withReEdit } from "@/lib/re-edit";
 import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
+import { UNDECIDED } from "@/lib/undecided";
 
 /**
  * A photo JSON file in the pull request, or one already in the portfolio that the pull request
@@ -227,6 +228,17 @@ export function titleChanged(saved: PhotoJson, title: string): boolean {
   return title.trim() !== savedDetails(saved).title.trim();
 }
 
+/** Whether saving gives an untitled photo its title, which also takes it out of the Undecided queue. */
+export function namesUntitled(saved: PhotoJson, title: string): boolean {
+  return !savedDetails(saved).title.trim() && title.trim() !== "";
+}
+
+/** data out of the Undecided queue when the save names an untitled photo that was set aside in its file. */
+function withNamed(saved: PhotoJson, title: string, data: PhotoJson): PhotoJson {
+  if (saved[UNDECIDED] === undefined || !namesUntitled(saved, title)) return data;
+  return { ...data, [UNDECIDED]: null };
+}
+
 /** The photo's original file name, as saved in its JSON. */
 export function photoFile(saved: PhotoJson): string {
   return typeof saved.file === "string" ? saved.file : "";
@@ -245,7 +257,7 @@ export function saveRequest(
 ): SaveRequest {
   const grouped = withGroups(withDetails(saved, details), groups);
   const edited = withReEdit(withSocialPosts(grouped, socialPosts), reEdit);
-  const data = { ...edited, ...overrides };
+  const data = withNamed(saved, details.title, { ...edited, ...overrides });
   return remakeSquares ? { crop, data } : { crop: null, data: withCropField(data, baseline) };
 }
 
@@ -262,6 +274,8 @@ export interface SaveRequest {
   data: PhotoJson;
   /** A new file name, without .json, to move the file to. */
   name?: string;
+  /** Whether it names an untitled photo, so its Undecided mark is cleared too. */
+  named?: boolean;
 }
 
 /** data with the file at `from` moved to the updated file's path. */

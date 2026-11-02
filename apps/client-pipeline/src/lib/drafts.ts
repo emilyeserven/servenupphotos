@@ -8,12 +8,18 @@ export function titleOf(data: unknown): string | undefined {
 }
 
 /**
- * Whether a photo's JSON is a draft when untitled photos are kept as drafts: it has no title, so
- * Commit leaves it out of ALLPHOTOS.json and the portfolio doesn't show it. Undefined data (a file
- * that couldn't be read) isn't one.
+ * Whether a photo's JSON is a draft when untitled photos are kept as drafts: it has no title, or
+ * it's set aside as Undecided (`undecided: true`) whatever its title, so Commit leaves it out of
+ * ALLPHOTOS.json and the portfolio doesn't show it. Undefined data (a file that couldn't be read)
+ * isn't one.
  */
 export function isDraft(data: unknown): boolean {
-  return data !== undefined && data !== null && titleOf(data) === undefined;
+  return data !== undefined && data !== null && (isSetAside(data) || titleOf(data) === undefined);
+}
+
+/** Whether a photo's JSON is marked Undecided: its `undecided` is `true`. */
+export function isSetAside(data: unknown): boolean {
+  return (data as { undecided?: unknown } | null | undefined)?.undecided === true;
 }
 
 /**

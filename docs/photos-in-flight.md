@@ -50,13 +50,15 @@ photos aren't filtered. The [Gallery](gallery.md) has the same filters.
 
 ### Undecided
 
-An untitled photo's **Undecided** button sets it aside in the **Undecided** panel above the list, collapsed to how many it has until it is opened, out of the list of
+A photo's **Undecided** button sets it aside in the **Undecided** panel above the list, collapsed to how many it has until it is opened, out of the list of
 photos in flight, and **Next untitled photo** skips it. Each photo there has **Edit**, to name it on the Photo page,
 and **Move back**. The mark is the photo JSON's `undecided: true`, kept as a
 [local edit](combined-data-store.md#local-edits) until **Commit** saves it to the file (moving a photo back sets it to
-`null`). Only untitled photos are in the queue, so giving one a title puts it back in the list. An Undecided photo is
-still a draft, so the portfolio doesn't show it; with drafts turned off in Settings it goes in `ALLPHOTOS.json` like any
-other untitled photo.
+`null`). A photo with a title can be set aside too, which is how a titled photo is unpublished: an Undecided photo is a
+[draft](drafts.md) whatever its title, so the next Commit takes it out of `ALLPHOTOS.json` and the portfolio stops
+showing it once the pull request merges. It stays in the queue until it's moved back, except that naming an untitled one
+on the Photo page takes it out too (the save clears its mark), so naming a photo set aside still publishes it. With
+drafts turned off in Settings an Undecided photo goes in `ALLPHOTOS.json` like any other.
 
 > **Frontend analogy:** it's like archiving an email: the message is still there, it just leaves the inbox view until
 > you open the Archive folder or move it back.
