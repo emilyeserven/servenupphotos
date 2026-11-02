@@ -85,16 +85,23 @@ export function ClusterSheet({ onClose, ...grid }: ClusterGridProps & { onClose:
   return (
     <div className="absolute inset-x-0 bottom-0 z-20 rounded-t-xl border-t bg-background/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-4px_16px_rgb(0_0_0/0.2)] backdrop-blur-sm dark:border-input">
       <ClusterGrid {...grid}>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Close"
-          onClick={onClose}
-          className="size-7 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
-        >
-          <X aria-hidden />
-        </Button>
+        <ClusterCloseButton onClose={onClose} />
       </ClusterGrid>
     </div>
+  );
+}
+
+/** The button in the open cluster's header that closes its popup or sheet, in light and dark mode. */
+export function ClusterCloseButton({ onClose }: { onClose: () => void }) {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      aria-label="Close"
+      onClick={onClose}
+      className="size-7 shrink-0 text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
+    >
+      <X aria-hidden />
+    </Button>
   );
 }

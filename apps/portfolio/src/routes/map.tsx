@@ -16,7 +16,12 @@ import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&ur
 import { type RefObject, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { FloatingHeader } from "@/components/floating-header";
 import { MapControls } from "@/components/map-controls";
-import { ClusterGrid, ClusterSheet, type OpenCluster } from "@/components/map-cluster";
+import {
+  ClusterCloseButton,
+  ClusterGrid,
+  ClusterSheet,
+  type OpenCluster,
+} from "@/components/map-cluster";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { mapViewOf } from "@/components/view-on-map-link";
@@ -413,9 +418,13 @@ function OpenClusterView({
       offset={24}
       maxWidth="none"
       onClose={onClose}
-      className={MAP_POPUP}
+      closeButton={false}
+      className={cn(MAP_POPUP, "[&_.maplibregl-popup-content]:p-3!")}
     >
-      <ClusterGrid {...grid} className="w-[19rem] [&>div:first-child]:pr-5" />
+      {/* Its own close button rather than MapLibre's, which sits in the very corner of the box. */}
+      <ClusterGrid {...grid} className="w-[19rem]">
+        <ClusterCloseButton onClose={onClose} />
+      </ClusterGrid>
     </Popup>
   );
 }
