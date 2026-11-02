@@ -11,3 +11,7 @@ export function controlButtonClass(active: boolean): string {
     active ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
   );
 }
+
+/** How a dropdown beside those buttons looks, such as the Grid's sort. */
+export const SELECT_CLASS =
+  "h-8 cursor-pointer rounded-md border bg-background px-2 text-sm text-foreground shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30";

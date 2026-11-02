@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Grid3x3, LayoutDashboard, Square, Table } from "lucide-react";
+import { Dices, Grid3x3, LayoutDashboard, Square, Table } from "lucide-react";
 import { type ImgHTMLAttributes, useState } from "react";
 import { ColorBar } from "@/components/color-bar";
 import { ColorOrderControls } from "@/components/color-order-controls";
 import { GridColorFilters } from "@/components/grid-color-filters";
 import { GridSortSelect } from "@/components/grid-sort-select";
 import { GridViewOptions } from "@/components/grid-view-options";
+import { LuckyControls } from "@/components/lucky-controls";
 import { NaturalGrid } from "@/components/natural-grid";
 import { PhotoTable } from "@/components/photo-table";
 import { PhotoComment } from "@/components/photo-comment";
@@ -38,13 +39,20 @@ import {
   squareSize,
   tableSize,
 } from "@/lib/grid-size";
+import {
+  DEFAULT_LUCKY_COUNT,
+  drawLucky,
+  type LuckyCount,
+  newLuckySeed,
+  parseLuckyCount,
+} from "@/lib/lucky";
 import { ratioOf, rowHeightOf, type RowSizes } from "@/lib/natural-rows";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 import { cn } from "@/lib/utils";
-import { useRememberViewOptions } from "@/lib/view-options";
+import { rememberedViewOptions, useRememberViewOptions } from "@/lib/view-options";
 
 /**
  * How tiles are shaped: the square picked on the pipeline's Photo page, or the whole photo at its
@@ -52,8 +60,11 @@ import { useRememberViewOptions } from "@/lib/view-options";
  */
 type TileMode = "square" | "natural";
 
-/** How the Grid shows its photos: as tiles of either shape, or as a table. */
-type ViewMode = TileMode | "table";
+/**
+ * How the Grid shows its photos: as tiles of either shape, as a table, or as a handful of square
+ * tiles picked at random from the photos the filters leave (Lucky).
+ */
+type ViewMode = TileMode | "table" | "lucky";
 
 interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
   /** Left out for the default, square tiles. */
@@ -71,6 +82,8 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
    * default, newest first.
    */
   sort?: Exclude<GridSort, "newest">;
+  /** How many photos the Lucky view draws. Left out for the default, 12. */
+  count?: LuckyCount;
 }
 
 /**
@@ -100,12 +113,26 @@ function gridViewOptions(search: Record<string, unknown>): GridSearch {
     ...infoOf(search),
     ...parseGridSize(search.size),
     ...sortOf(search),
+    ...parseLuckyCount(search.count),
   };
 }
 
+/**
+ * The Grid's settings to remember. Lucky isn't remembered as the view, so a **View in grid** link
+ * from another page shows every matching photo: the view the Grid was in before stays remembered.
+ */
+function rememberedGridOptions(search: Record<string, unknown>): GridSearch {
+  const options = gridViewOptions(search);
+  if (options.view !== "lucky") return options;
+  return { ...options, view: viewOf(rememberedViewOptions("/grid").view).view };
+}
+
+/** The views the URL can ask for, besides square tiles. */
+const URL_VIEWS: readonly string[] = ["natural", "table", "lucky"];
+
 /** The view from the URL, left out for square tiles. */
 function viewOf(view: unknown): GridSearch {
-  return view === "natural" || view === "table" ? { view } : {};
+  return URL_VIEWS.includes(view as string) ? { view: view as GridSearch["view"] } : {};
 }
 
 /** The sorts the URL can ask for by date, besides newest first, which have no order of their own. */
@@ -159,9 +186,11 @@ function gridPhotosFor(search: GridSearch & Record<string, unknown>, sort: GridS
 function GridView() {
   const search = Route.useSearch();
   const mode: ViewMode = search.view ?? "square";
-  useRememberViewOptions("/grid", gridViewOptions(search));
+  // Picks the Lucky view's photos: a new one on each visit and each Shuffle.
+  const [seed, setSeed] = useState(newLuckySeed);
+  useRememberViewOptions("/grid", rememberedGridOptions(search));
   if (newestFirst.length === 0) return <ViewPlaceholder to="/grid" />;
-  const shownPhotos = photosFor(search, mode);
+  const { shown: shownPhotos, pool } = photosFor(search, mode, seed);
 
   return (
     // The tiles use the whole window, less a little padding, so wider screens fit more photos; the
@@ -173,9 +202,11 @@ function GridView() {
           <Grid3x3 className="size-8 text-muted-foreground" aria-hidden />
           Grid
         </h1>
-        <p className="text-sm text-muted-foreground">{shownPhotos.length} photos</p>
+        <p className="text-sm text-muted-foreground">
+          {photoCount(shownPhotos.length, pool, mode)}
+        </p>
         <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 self-center">
-          {mode !== "table" && <TileControls search={search} mode={mode} />}
+          <ViewControls search={search} mode={mode} onShuffle={() => setSeed(newLuckySeed())} />
           <ViewModeSwitcher mode={mode} />
         </div>
         <div className="mt-3 w-full">
@@ -200,13 +231,72 @@ function GridView() {
   );
 }
 
+/** The photos the view shows, and how many photos they were picked from. */
+interface ShownPhotos {
+  shown: Photo[];
+  /** How many photos the filters leave: more than are shown in the Lucky view. */
+  pool: number;
+}
+
+/** Every photo in the list is shown. */
+function showAll(list: Photo[]): ShownPhotos {
+  return { shown: list, pool: list.length };
+}
+
 /**
  * The photos the view shows: what every filter leaves, as tiles in the URL's sort, or for the
  * table, every photo (even those without resized versions in R2), which the table sorts itself.
+ * The Lucky view shows a few of the tiles at random, picked by the seed.
  */
-function photosFor(search: GridSearch & Record<string, unknown>, mode: ViewMode): Photo[] {
-  if (mode === "table") return filterByColors(filterWithCamera(photos, search), search);
-  return gridPhotosFor(search, search.sort ?? "newest");
+function photosFor(
+  search: GridSearch & Record<string, unknown>,
+  mode: ViewMode,
+  seed: number,
+): ShownPhotos {
+  if (mode === "table") return showAll(filterByColors(filterWithCamera(photos, search), search));
+  if (mode === "lucky") return luckyPhotos(search, seed);
+  return showAll(gridPhotosFor(search, search.sort ?? "newest"));
+}
+
+/** The Lucky view's photos: the URL's count of them, drawn from what every filter leaves. */
+function luckyPhotos(search: GridSearch & Record<string, unknown>, seed: number): ShownPhotos {
+  const pool = gridPhotosFor(search, "newest");
+  return { shown: drawLucky(pool, seed, search.count ?? DEFAULT_LUCKY_COUNT), pool: pool.length };
+}
+
+/** The count beside the title: how many photos are shown, and in Lucky, out of how many. */
+function photoCount(shown: number, pool: number, mode: ViewMode): string {
+  return mode === "lucky" ? `${shown} random of ${pool} photos` : `${shown} photos`;
+}
+
+/** The controls for the view: Lucky's, or the tiles' sort and display options. The Table has its own. */
+function ViewControls({
+  search,
+  mode,
+  onShuffle,
+}: {
+  search: GridSearch;
+  mode: ViewMode;
+  onShuffle: () => void;
+}) {
+  if (mode === "table") return null;
+  if (mode === "lucky") {
+    const count = search.count ?? DEFAULT_LUCKY_COUNT;
+    return (
+      <LuckyControls
+        count={count}
+        size={search.size}
+        info={search.info === true}
+        onShuffle={onShuffle}
+      />
+    );
+  }
+  return <TileControls search={search} mode={mode} />;
+}
+
+/** The tiles' shape for the view: Lucky's are square. */
+function tileModeOf(mode: TileMode | "lucky"): TileMode {
+  return mode === "lucky" ? "square" : mode;
 }
 
 /** Whether a photo has resized versions in R2, so it can be a tile. */
@@ -242,7 +332,7 @@ function GridBody({
     <>
       <GridTiles
         photos={tiles}
-        mode={mode}
+        mode={tileModeOf(mode)}
         size={search.size}
         showInfo={search.info === true}
         onOpen={show}
@@ -360,9 +450,15 @@ const VIEW_MODES = [
     title: "A sortable table of the photos and their details",
     Icon: Table,
   },
+  {
+    mode: "lucky",
+    label: "Lucky",
+    title: "A few photos at random from the ones the filters leave",
+    Icon: Dices,
+  },
 ] as const;
 
-/** Buttons to switch between square tiles, natural tiles and the table, kept in the URL so a link keeps the view. */
+/** Buttons to switch between square tiles, natural tiles, the table and Lucky, kept in the URL so a link keeps the view. */
 function ViewModeSwitcher({ mode }: { mode: ViewMode }) {
   return (
     <div role="group" aria-label="Show photos as" className={CONTROL_FRAME}>

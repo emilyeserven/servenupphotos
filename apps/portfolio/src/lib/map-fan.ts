@@ -1,3 +1,5 @@
+import { seededRandom } from "@/lib/seeded-random";
+
 /** The zoom from which small groups of photos are split into photos of their own, spread apart. */
 export const FAN_MIN_ZOOM = 12;
 
@@ -60,17 +62,6 @@ export interface MarkerOnScreen {
   /** A number of its own, such as its photo's ID, that seeds where it's moved to. */
   seed: number;
   at: ScreenPoint;
-}
-
-/** A random number generator that gives the same numbers for the same seed, from 0 up to 1. */
-function seededRandom(seed: number): () => number {
-  let state = seed >>> 0;
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let t = Math.imul(state ^ (state >>> 15), 1 | state);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }
 
 /**
