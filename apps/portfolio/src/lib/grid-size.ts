@@ -83,6 +83,22 @@ export const SQUARE_COLUMNS: Record<CommonSize, string> = {
   large: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5",
 };
 
+/** The window widths, in pixels, at which `SQUARE_COLUMNS` changes: Tailwind's `sm`, `lg`, `xl` and `2xl`. */
+const COLUMN_BREAKPOINTS = [640, 1024, 1280, 1536];
+
+/** How many columns `SQUARE_COLUMNS` has at each size, from phones up through each breakpoint. */
+const SQUARE_COLUMN_COUNTS: Record<CommonSize, number[]> = {
+  small: [3, 4, 5, 6, 8],
+  medium: [2, 3, 4, 5, 6],
+  large: [1, 2, 3, 4, 5],
+};
+
+/** How many Square tiles fit in a row at a size in a window windowWidth pixels wide. */
+export function squareColumnCount(size: CommonSize, windowWidth: number): number {
+  const reached = COLUMN_BREAKPOINTS.filter((min) => windowWidth >= min).length;
+  return SQUARE_COLUMN_COUNTS[size][reached]!;
+}
+
 /**
  * How wide a Square tile is at each breakpoint and size, matching its columns, so the browser picks
  * the smallest version that's still sharp.

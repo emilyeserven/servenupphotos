@@ -17,8 +17,10 @@ export const Route = createFileRoute("/")({
 const backdropPhotos = homepagePhotos();
 const phoneBackdropPhotos = homepagePhotos(undefined, true);
 
-/** The views the homepage links to: every ready one but Albums and Tags, which the site menu still has. */
-const homepageViews = enabledViews.filter((view) => view.to !== "/albums" && view.to !== "/tags");
+/** The views with a card on the homepage: Albums, Tags and Lucky are only in the menu. */
+const MENU_ONLY: readonly string[] = ["/albums", "/tags", "/lucky"];
+
+const homepageViews = enabledViews.filter((view) => !MENU_ONLY.includes(view.to));
 
 /** A phone held upright, which shows portrait photos first. */
 const PHONE_QUERY = "(max-width: 767px) and (orientation: portrait)";

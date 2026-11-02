@@ -1,18 +1,24 @@
 import { seededRandom } from "@/lib/seeded-random";
 
-/** How many photos the Grid's Lucky view can draw at once, picked in its dropdown. */
-export const LUCKY_COUNTS = [1, 6, 12, 24, 48] as const;
+/** How many rows of photos the Lucky page can draw, picked in its dropdown. */
+export const LUCKY_ROWS = [1, 2, 3, 4, 6, 8] as const;
 
-/** How many photos the Lucky view draws. */
-export type LuckyCount = (typeof LUCKY_COUNTS)[number];
+/** How many rows of photos the Lucky page draws. */
+export type LuckyRows = (typeof LUCKY_ROWS)[number];
 
-/** How many photos the Lucky view draws when the URL doesn't say. */
-export const DEFAULT_LUCKY_COUNT: LuckyCount = 12;
+/** How many rows the Lucky page draws when the URL doesn't say. */
+export const DEFAULT_LUCKY_ROWS: LuckyRows = 3;
 
-/** The Lucky view's `?count=` from the URL, left out when it isn't one of the choices or is the default. */
-export function parseLuckyCount(count: unknown): { count?: LuckyCount } {
-  const known = LUCKY_COUNTS.find((choice) => choice === Number(count));
-  return known && known !== DEFAULT_LUCKY_COUNT ? { count: known } : {};
+/** The Lucky page's `?rows=` from the URL, left out when it isn't one of the choices or is the default. */
+export function parseLuckyRows(rows: unknown): { rows?: LuckyRows } {
+  const known = LUCKY_ROWS.find((choice) => choice === Number(rows));
+  return known && known !== DEFAULT_LUCKY_ROWS ? { rows: known } : {};
+}
+
+/** One choice in the Lucky page's dropdown: a number of rows and how many photos they hold. */
+export interface LuckyChoice {
+  rows: LuckyRows;
+  photos: number;
 }
 
 /** A new seed for a draw, so each Shuffle (and each visit) picks different photos. */
@@ -21,15 +27,14 @@ export function newLuckySeed(): number {
 }
 
 /**
- * Up to `count` photos picked at random from the pool, in the order they were picked. The same
- * seed and pool always give the same photos, so the draw stays put while the photo viewer is open,
- * and a new seed gives a new draw.
+ * The pool in a random order, picked by the seed. The same seed and pool always give the same
+ * order, so the draw stays put while the photo viewer is open, and a new seed gives a new one.
  */
-export function drawLucky<T>(pool: readonly T[], seed: number, count: number): T[] {
+export function shuffled<T>(pool: readonly T[], seed: number): T[] {
   const random = seededRandom(seed);
   const rest = [...pool];
   const drawn: T[] = [];
-  while (drawn.length < count && rest.length > 0) {
+  while (rest.length > 0) {
     const index = Math.floor(random() * rest.length);
     drawn.push(...rest.splice(index, 1));
   }

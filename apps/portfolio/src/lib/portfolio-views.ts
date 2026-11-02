@@ -1,8 +1,8 @@
 import type { LucideIcon } from "lucide-react";
-import { BookImage, CalendarClock, Grid3x3, MapPin, Palette, Tags } from "lucide-react";
+import { BookImage, CalendarClock, Dices, Grid3x3, MapPin, Palette, Tags } from "lucide-react";
 
 export interface PortfolioView {
-  to: "/timeline" | "/map" | "/albums" | "/tags" | "/grid" | "/color";
+  to: "/timeline" | "/map" | "/albums" | "/tags" | "/grid" | "/color" | "/lucky";
   label: string;
   description: string;
   icon: LucideIcon;
@@ -51,6 +51,14 @@ export const portfolioViews: PortfolioView[] = [
     label: "Color",
     description: "Photos browsed by color and vividness.",
     icon: Palette,
+    enabled: true,
+  },
+  {
+    to: "/lucky",
+    label: "Lucky",
+    description:
+      "A few rows of photos picked at random, from all of them or the ones the filters leave.",
+    icon: Dices,
     enabled: true,
   },
 ];

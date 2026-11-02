@@ -3,7 +3,7 @@ import { OptionCheckbox, OptionChoices, ViewOptionsButton } from "@/components/v
 import { type GridSize, type SizedView, sizeChoices, sizeParam } from "@/lib/grid-size";
 
 /**
- * The Grid's display options, behind an eye button: how big the tiles are (`?size=`) and whether
+ * The display options of the Grid's tiles and the Lucky page, behind an eye button: how big the tiles are (`?size=`) and whether
  * each shows its title, place and comment (`?info=true`), both kept in the URL so a link keeps
  * them. Natural tiles also come in X-Large.
  */
@@ -17,10 +17,11 @@ export function GridViewOptions({
   size: GridSize;
   info: boolean;
 }) {
-  const navigate = useNavigate({ from: "/grid" });
+  const navigate = useNavigate();
   const change = (next: GridSize | undefined, nextInfo: boolean) =>
     void navigate({
-      search: (prev) => ({
+      to: ".",
+      search: (prev: Record<string, unknown>) => ({
         ...prev,
         size: next && sizeParam(view, next),
         info: nextInfo || undefined,

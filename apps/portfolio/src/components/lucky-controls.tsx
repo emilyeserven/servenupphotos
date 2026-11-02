@@ -1,38 +1,42 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Shuffle } from "lucide-react";
-import { GridViewOptions } from "@/components/grid-view-options";
-import { type GridSize, squareSize } from "@/lib/grid-size";
-import { DEFAULT_LUCKY_COUNT, LUCKY_COUNTS, type LuckyCount } from "@/lib/lucky";
+import { DEFAULT_LUCKY_ROWS, type LuckyChoice, LUCKY_ROWS, type LuckyRows } from "@/lib/lucky";
 import { SELECT_CLASS } from "@/lib/segmented-control";
 
-/** How many photos a dropdown value names, the default for anything else. */
-function countOf(value: string): LuckyCount {
-  return LUCKY_COUNTS.find((choice) => choice === Number(value)) ?? DEFAULT_LUCKY_COUNT;
+/** How many rows a dropdown value names, the default for anything else. */
+function rowsOf(value: string): LuckyRows {
+  return LUCKY_ROWS.find((choice) => choice === Number(value)) ?? DEFAULT_LUCKY_ROWS;
+}
+
+/** A choice's label, such as "15 photos (3 rows)". */
+function choiceLabel({ rows, photos }: LuckyChoice): string {
+  const photoText = photos === 1 ? "1 photo" : `${photos} photos`;
+  return `${photoText} (${rows === 1 ? "1 row" : `${rows} rows`})`;
 }
 
 /**
- * A dropdown picking how many random photos the Lucky view draws, kept in the URL as `?count=`
- * (left out for the default, 12).
+ * A dropdown picking how many photos the Lucky page draws, offered in whole rows so every row is
+ * full, kept in the URL as `?rows=` (left out for the default, 3 rows).
  */
-function LuckyCountSelect({ count }: { count: LuckyCount }) {
-  const navigate = useNavigate({ from: "/grid" });
+export function LuckyRowsSelect({ rows, choices }: { rows: LuckyRows; choices: LuckyChoice[] }) {
+  const navigate = useNavigate({ from: "/lucky" });
   return (
     <label className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
       <span className="sr-only">How many photos</span>
       <select
-        value={count}
+        value={rows}
         onChange={(event) => {
-          const next = countOf(event.target.value);
+          const next = rowsOf(event.target.value);
           void navigate({
-            search: (prev) => ({ ...prev, count: next === DEFAULT_LUCKY_COUNT ? undefined : next }),
+            search: (prev) => ({ ...prev, rows: next === DEFAULT_LUCKY_ROWS ? undefined : next }),
             replace: true,
           });
         }}
         className={SELECT_CLASS}
       >
-        {LUCKY_COUNTS.map((choice) => (
-          <option key={choice} value={choice}>
-            {choice === 1 ? "1 photo" : `${choice} photos`}
+        {choices.map((choice) => (
+          <option key={choice.rows} value={choice.rows}>
+            {choiceLabel(choice)}
           </option>
         ))}
       </select>
@@ -40,35 +44,17 @@ function LuckyCountSelect({ count }: { count: LuckyCount }) {
   );
 }
 
-/**
- * The Lucky view's controls: how many photos to draw, a **Shuffle** button that draws again from
- * the photos the filters leave, and the square tiles' display options.
- */
-export function LuckyControls({
-  count,
-  size,
-  info,
-  onShuffle,
-}: {
-  count: LuckyCount;
-  /** The URL's size, left out for Square tiles' own starting size. */
-  size: GridSize | undefined;
-  info: boolean;
-  onShuffle: () => void;
-}) {
+/** A **Shuffle** button that draws again from the photos the filters leave. */
+export function ShuffleButton({ onShuffle }: { onShuffle: () => void }) {
   return (
-    <>
-      <LuckyCountSelect count={count} />
-      <button
-        type="button"
-        onClick={onShuffle}
-        title="Draw different random photos"
-        className="inline-flex h-8 items-center gap-1.5 rounded-md border bg-background px-2.5 text-sm font-medium shadow-xs outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30 [&_svg]:size-4"
-      >
-        <Shuffle aria-hidden />
-        Shuffle
-      </button>
-      <GridViewOptions view="square" size={squareSize(size)} info={info} />
-    </>
+    <button
+      type="button"
+      onClick={onShuffle}
+      title="Draw different random photos"
+      className="inline-flex h-8 items-center gap-1.5 rounded-md border bg-background px-2.5 text-sm font-medium shadow-xs outline-none transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30 [&_svg]:size-4"
+    >
+      <Shuffle aria-hidden />
+      Shuffle
+    </button>
   );
 }

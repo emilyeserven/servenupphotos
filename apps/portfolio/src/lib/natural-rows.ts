@@ -1,5 +1,5 @@
 /** A photo the Grid's natural rows can place: all they need is its shape. */
-interface Shaped {
+export interface Shaped {
   image: { width: number; height: number };
 }
 

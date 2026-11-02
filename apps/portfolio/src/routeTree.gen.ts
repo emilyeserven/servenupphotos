@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ColorRouteImport } from './routes/color'
 import { Route as GridRouteImport } from './routes/grid'
+import { Route as LuckyRouteImport } from './routes/lucky'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as SpotlightRouteImport } from './routes/spotlight'
 import { Route as TableRouteImport } from './routes/table'
@@ -33,6 +34,11 @@ const ColorRoute = ColorRouteImport.update({
 const GridRoute = GridRouteImport.update({
   id: '/grid',
   path: '/grid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LuckyRoute = LuckyRouteImport.update({
+  id: '/lucky',
+  path: '/lucky',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
   '/grid': typeof GridRoute
+  '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
   '/table': typeof TableRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
   '/grid': typeof GridRoute
+  '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
   '/table': typeof TableRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
   '/grid': typeof GridRoute
+  '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
   '/table': typeof TableRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/color'
     | '/grid'
+    | '/lucky'
     | '/map'
     | '/spotlight'
     | '/table'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/color'
     | '/grid'
+    | '/lucky'
     | '/map'
     | '/spotlight'
     | '/table'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/color'
     | '/grid'
+    | '/lucky'
     | '/map'
     | '/spotlight'
     | '/table'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ColorRoute: typeof ColorRoute
   GridRoute: typeof GridRoute
+  LuckyRoute: typeof LuckyRoute
   MapRoute: typeof MapRoute
   SpotlightRoute: typeof SpotlightRoute
   TableRoute: typeof TableRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/grid'
       fullPath: '/grid'
       preLoaderRoute: typeof GridRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lucky': {
+      id: '/lucky'
+      path: '/lucky'
+      fullPath: '/lucky'
+      preLoaderRoute: typeof LuckyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ColorRoute: ColorRoute,
   GridRoute: GridRoute,
+  LuckyRoute: LuckyRoute,
   MapRoute: MapRoute,
   SpotlightRoute: SpotlightRoute,
   TableRoute: TableRoute,
