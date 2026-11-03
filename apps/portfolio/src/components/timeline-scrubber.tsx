@@ -8,7 +8,7 @@ import {
   type ScrubberMark,
   scrollFor,
   scrollFraction,
-  yearLabels,
+  groupLabels,
 } from "@/lib/timeline-scrubber";
 import { useSize } from "@/lib/use-size";
 import { cn } from "@/lib/utils";
@@ -22,13 +22,16 @@ import { cn } from "@/lib/utils";
 export function TimelineScrubber({
   list,
   chart,
+  byDay = false,
 }: {
+  /** Whether each tick is a day, with the months labeled, rather than a month with the years. */
+  byDay?: boolean;
   /** The list of months, whose sections carry their heading in `data-month`. */
   list: HTMLElement | null;
   /** The chart above the list; the scrubber shows once it's scrolled above the window. */
   chart: HTMLElement | null;
 }) {
-  const layout = useMonthLayout(list);
+  const layout = useMonthLayout(list, byDay);
   const fraction = useScrollFraction(layout);
   const shown = useScrolledPast(chart);
   if (!layout || layout.marks.length < 2) return null;
@@ -51,7 +54,7 @@ function ScrubberTrack({
     <div
       ref={trackRef}
       role="slider"
-      aria-label="Scroll through the months"
+      aria-label="Scroll through the timeline"
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(fraction * 100)}
@@ -123,7 +126,7 @@ function stepMonth(event: KeyboardEvent, layout: MonthLayout, fraction: number) 
   if (next) window.scrollTo({ top: scrollFor(layout, next.at) + 1, behavior: "instant" });
 }
 
-/** A short tick for each month, and each year's label at its first month. */
+/** A short tick for each month or day, and each year's or month's label at its first one. */
 function ScrubberTicks({ marks, trackHeight }: { marks: ScrubberMark[]; trackHeight: number }) {
   return (
     <>
@@ -134,13 +137,13 @@ function ScrubberTicks({ marks, trackHeight }: { marks: ScrubberMark[]; trackHei
           style={{ top: `${mark.at * 100}%` }}
         />
       ))}
-      {yearLabels(marks, trackHeight).map((label) => (
+      {groupLabels(marks, trackHeight).map((label) => (
         <span
-          key={label.year}
+          key={label.group}
           className="absolute right-4 -translate-y-1/2 rounded-sm bg-background/80 px-1 text-[11px] font-medium text-muted-foreground tabular-nums"
           style={{ top: `${label.at * 100}%` }}
         >
-          {label.year}
+          {label.group}
         </span>
       ))}
     </>
@@ -176,16 +179,16 @@ function ScrubberBubble({ at, layout }: { at: number | null; layout: MonthLayout
 }
 
 /** Where the list's months are, measured again whenever the list or the page changes size. */
-function useMonthLayout(list: HTMLElement | null): MonthLayout | null {
+function useMonthLayout(list: HTMLElement | null, byDay: boolean): MonthLayout | null {
   const [layout, setLayout] = useState<MonthLayout | null>(null);
   useEffect(() => {
     if (!list) return;
     // The page too, as the filters opening above move the list down without resizing it.
-    const observer = new ResizeObserver(() => setLayout(measureMonths(list)));
+    const observer = new ResizeObserver(() => setLayout(measureMonths(list, byDay)));
     observer.observe(list);
     observer.observe(document.body);
     return () => observer.disconnect();
-  }, [list]);
+  }, [list, byDay]);
   return layout;
 }
 

@@ -10,7 +10,7 @@ thumbnail or title opens the photo viewer. The filters are described in
 ## Scrubber
 
 Once the chart has scrolled up out of the window, a scrubber appears down the right edge, like the one in Google Photos.
-It has a short tick for each month in the list and a label for each year at its first month, leaving out a year whose
+It has a short tick for each month in the list (or each day, with a label chosen) and a label for each year at its first month, leaving out a year whose
 label would crowd the one above. Each tick sits as far down the scrubber as its month is down the list, so a busy month
 takes up more of it. A line marks the month now at the top of the window. Pointing at the scrubber shows a bubble naming
 the month there, with the [timeline label](timeline-labels.md) of the days there under it, and clicking or dragging along it scrolls the list to that month; on a phone, touch and drag. With the
@@ -35,8 +35,11 @@ On a phone, Large and Huge thumbnails sit above their photo's title instead of b
 
 ## Time range
 
-The range picker chooses a quick range, such as **Last 30 days** (`?range=30d`), or two dates (`?from=…&to=…`). **Reset**
-goes back to **All time**. The chart under the header picks a range too, and the buttons above it switch between two
+The range picker chooses a quick range, such as **Last 30 days** (`?range=30d`), or two dates (`?from=…&to=…`). Beside
+it, the label picker (shown once there are [timeline labels](timeline-labels.md)) shows only one label's days, such as
+**Japan** (`?label=japan-2026-09-22`); the range picker then shows those dates, and picking a range or **Any label**
+lets the label go. While a label is chosen, the scrubber has a tick for each day, with each month's short name at its
+first day, and its bubble names the day. **Reset** goes back to **All time**. The chart under the header picks a range too, and the buttons above it switch between two
 charts:
 
 | Chart           | Shows                                                                                        | URL              |
