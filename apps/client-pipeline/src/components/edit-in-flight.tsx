@@ -189,6 +189,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           path={editable.file.path}
           calendarDate={calendarDate(edit.savedData)}
           disabled={pending}
+          photo={edit.next ?? edit.savedData}
         />
         <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
         <LensCards edit={edit} disabled={pending} />

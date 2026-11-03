@@ -11,6 +11,7 @@ import {
   LanguagesIcon,
   LayoutGridIcon,
   MapPinIcon,
+  MessageSquareTextIcon,
   PlaneIcon,
   RefreshCwIcon,
   ScaleIcon,
@@ -76,6 +77,7 @@ export const navGroups = [
       { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
       { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
       { title: "Camera Overrides", url: "/camera-overrides", icon: CameraIcon },
+      { title: "Caption Templates", url: "/caption-templates", icon: MessageSquareTextIcon },
     ],
   },
 ] as const;

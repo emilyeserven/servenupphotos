@@ -73,6 +73,10 @@ which photos already post that day.
 > **Frontend analogy:** it's a `disabledDays`-style lookup built from data the app already has, except the days are
 > only styled with a `modifiers` class instead of `disabled`, so the click still goes through.
 
+Above each post's caption, **Generate** writes the caption from a [caption template](caption-templates.md) and the
+photo's data as it's being edited, asking first when the caption already has text. The template picked starts as the
+first one for the post's platform.
+
 The card is saved with the rest of the page's changes by **Save changes**, as a change waiting for Commit, so nothing
 goes to GitHub until **Commit**. Saving writes the whole list over the file's. When the Instagram calendar has the photo
 scheduled, the card says for which day and links to it; that day is still set on the calendar

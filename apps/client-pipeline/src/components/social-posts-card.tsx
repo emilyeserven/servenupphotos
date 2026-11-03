@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { CalendarIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
 import { FieldLabel } from "@/components/field-label";
+import { GenerateCaption } from "@/components/generate-caption";
 import { SocialPostDatePicker, usePostedPhotoFiles } from "@/components/social-post-date-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,8 @@ interface SocialPostsCardProps {
   calendarDate: string | null;
   /** Saving is underway, so changing them now would not change the file. */
   disabled: boolean;
+  /** The photo's JSON as it's being edited, which Generate makes captions from. */
+  photo: Record<string, unknown>;
 }
 
 /**
@@ -40,6 +43,7 @@ export function SocialPostsCard({
   path,
   calendarDate,
   disabled,
+  photo,
 }: SocialPostsCardProps) {
   const files = usePostedPhotoFiles();
   const update = (id: string, next: Partial<SocialPostDraft>) =>
@@ -62,6 +66,7 @@ export function SocialPostsCard({
             post={post}
             number={index + 1}
             disabled={disabled}
+            photo={photo}
             files={files}
             path={path}
             onChange={(next) => update(post.id, next)}
@@ -104,6 +109,7 @@ interface SocialPostFieldsProps {
   /** The post's place in the list, counted from 1, for its heading. */
   number: number;
   disabled: boolean;
+  photo: Record<string, unknown>;
   /** Every photo file, for the days other photos already post on, grayed out on the date picker. */
   files: PostedPhotoFile[];
   /** The photo file's path, left out of those days. */
@@ -117,6 +123,7 @@ function SocialPostFields({
   post,
   number,
   disabled,
+  photo,
   files,
   path,
   onChange,
@@ -188,10 +195,20 @@ function SocialPostFields({
       <Field id={id("url")} label="Link" help="The post's address, once it's up.">
         <Input type="url" placeholder="https://…" {...input("url")} />
       </Field>
-      <Field id={id("caption")} label="Caption" help="The post's text, without its hashtags.">
+      <Field
+        id={id("caption")}
+        label="Caption"
+        help="The post's text. Generate writes it from a caption template and the photo's data."
+      >
+        <GenerateCaption
+          post={post}
+          photo={photo}
+          disabled={disabled}
+          onGenerate={(caption) => onChange({ caption })}
+        />
         <Textarea
           id={id("caption")}
-          rows={3}
+          rows={post.caption.includes("\n") ? 8 : 3}
           value={post.caption}
           disabled={disabled}
           onChange={(event) => onChange({ caption: event.target.value })}
