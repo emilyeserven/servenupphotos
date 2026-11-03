@@ -52,7 +52,7 @@ func TestFindGapsAndFill(t *testing.T) {
 		fields = append(fields, g.field)
 	}
 	want := []string{
-		"id", "title", "comment", "addedDate", "aperture", "exposure", "iso", "focalLength", "customGpsPosition", "customCreateDate", "placeName",
+		"id", "title", "comment", "notes", "addedDate", "aperture", "exposure", "iso", "focalLength", "customGpsPosition", "customCreateDate", "placeName",
 		"customCity", "customState", "customCountry", "state",
 		"images.xlarge", "images.large", "images.small", "images.xsmall",
 		"images.preview", "images.thumbnail", "images.thumbnailpreview", "images.thumbnailcrop",
@@ -68,6 +68,7 @@ func TestFindGapsAndFill(t *testing.T) {
   "id": null,
   "title": null,
   "comment": null,
+  "notes": null,
   "file": "DSC0001.jpg",
   "addedDate": null,
   "camera": "X-T5",
@@ -255,7 +256,7 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 38 || got.PullRequestNumber != 1 {
+	if got.Files != 1 || got.Fields != 39 || got.PullRequestNumber != 1 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	staged := repo.staged(t)
@@ -263,7 +264,7 @@ func TestBackfill(t *testing.T) {
 	if len(staged) != 1 || !ok {
 		t.Fatalf("pending = %v, want DSC0001.json only", staged)
 	}
-	if !strings.HasPrefix(content, "{\n  \"id\": 1,\n  \"title\": null,\n  \"comment\": null,\n  \"file\"") {
+	if !strings.HasPrefix(content, "{\n  \"id\": 1,\n  \"title\": null,\n  \"comment\": null,\n  \"notes\": null,\n  \"file\"") {
 		t.Errorf("content = %s", content)
 	}
 }

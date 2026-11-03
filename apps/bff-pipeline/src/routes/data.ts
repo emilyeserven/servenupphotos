@@ -29,6 +29,7 @@ export const dataRoutes: FastifyPluginAsync = async (app) => {
       "/data/bulk-places",
       "/data/prune-tags/preview",
       "/data/prune-tags",
+      "/data/tag-library/export",
       "/data/genre-suggestions/pick",
       "/data/genre-suggestions/preview",
       "/data/genre-suggestions",
@@ -38,6 +39,10 @@ export const dataRoutes: FastifyPluginAsync = async (app) => {
     ],
     65_000,
   );
+
+  // The Tag library's answer and save can list a change for every tag and photo, so they may be
+  // larger than Fastify's 1 MB default; the backend takes up to 4 MB.
+  relayPosts(app, ["/data/tag-library/preview", "/data/tag-library"], 65_000, 4 * 1024 * 1024);
 
   // Each reads every photo JSON file, and may download originals from R2 to read their EXIF; the
   // backend gives that 3 minutes.
@@ -52,10 +57,13 @@ export const dataRoutes: FastifyPluginAsync = async (app) => {
   relayPosts(app, ["/data/colors/preview", "/data/colors"], 310_000);
 };
 
-/** Relays a JSON POST to each of paths on the backend, waiting up to timeoutMs for its answer. */
-function relayPosts(app: FastifyInstance, paths: string[], timeoutMs: number) {
+/**
+ * Relays a JSON POST to each of paths on the backend, waiting up to timeoutMs for its answer, with
+ * a body of up to bodyLimit bytes (Fastify's 1 MB when not given).
+ */
+function relayPosts(app: FastifyInstance, paths: string[], timeoutMs: number, bodyLimit?: number) {
   for (const path of paths) {
-    app.post(path, async (request, reply) =>
+    app.post(path, { bodyLimit }, async (request, reply) =>
       relayToBackend(reply, app.log, path, {
         method: "POST",
         headers: { "content-type": "application/json" },

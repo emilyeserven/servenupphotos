@@ -13,6 +13,7 @@ import { PhotoColorsCard } from "@/components/photo-colors-card";
 import { PruneTagsCard } from "@/components/prune-tags/prune-tags-card";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
 import { TagDescriptionsCard } from "@/components/tag-descriptions/tag-descriptions-card";
+import { TagLibraryCard } from "@/components/tag-library/tag-library-card";
 
 /** One of Update Data's subpages: a single bulk change, shown as its card. */
 export interface UpdateDataSection {
@@ -42,6 +43,7 @@ export const updateDataSections: readonly UpdateDataSection[] = [
   { slug: "location-names", title: "Location names", render: () => <LocationNamesCard /> },
   { slug: "bulk-tagging", title: "Bulk tagging", render: () => <BulkTaggingCard /> },
   { slug: "bulk-places", title: "Bulk places", render: () => <BulkPlacesCard /> },
+  { slug: "tag-library", title: "Tag library", render: () => <TagLibraryCard /> },
   { slug: "tag-pruning", title: "Tag pruning", render: () => <PruneTagsCard /> },
   { slug: "tag-descriptions", title: "Tag descriptions", render: () => <TagDescriptionsCard /> },
   { slug: "localizations", title: "Localizations", render: () => <LocalizationFillCard /> },

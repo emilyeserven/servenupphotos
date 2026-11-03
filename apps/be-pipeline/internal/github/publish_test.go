@@ -50,6 +50,7 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
   "id": 1,
   "title": "Tokyo at night",
   "comment": "Shot from the **bridge**.",
+  "notes": null,
   "file": "DSC0001.jpg",
   "addedDate": "2026-10-15T02:45:00Z",
   "camera": "X-T5",

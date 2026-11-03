@@ -67,7 +67,12 @@ func handleSaveLocalization(store *settings.Store, gh *github.Client) http.Handl
 // decodeEntry reads the request's JSON body into out, writing an error and
 // returning false when it isn't a kind with only known fields.
 func decodeEntry(w http.ResponseWriter, r *http.Request, out any, kind string) bool {
-	dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+	return decodeEntryUpTo(w, r, out, kind, maxPhotoDataBytes)
+}
+
+// decodeEntryUpTo is decodeEntry for a body of up to limit bytes.
+func decodeEntryUpTo(w http.ResponseWriter, r *http.Request, out any, kind string, limit int64) bool {
+	dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, limit))
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(out); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid "+kind+" body")

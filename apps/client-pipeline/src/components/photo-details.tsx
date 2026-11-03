@@ -7,6 +7,7 @@ import { RegionOverrideField } from "@/components/region-override-field";
 import { FieldSection } from "@/components/field-section";
 import { PhotoCustomDate } from "@/components/photo-custom-date";
 import { PhotoCustomGps } from "@/components/photo-custom-gps";
+import { PhotoNotesField } from "@/components/photo-notes-field";
 import type { LocationPrompt } from "@/components/edit-in-flight/location-prompt";
 import { PlaceFields } from "@/components/place-fields";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +39,8 @@ interface PhotoText {
   /** When the photo was taken, as exiftool writes dates, which the portfolio uses instead of the EXIF one. */
   customCreateDate: string;
   comment: string;
+  /** The photographer-only notes, which the portfolio leaves out. */
+  notes: string;
 }
 
 /** The photo's text details, and where it was taken as places from PLACES.json. */
@@ -56,6 +59,7 @@ const NO_TEXT: PhotoText = {
   customGpsPosition: "",
   customCreateDate: "",
   comment: "",
+  notes: "",
 };
 
 /** No details or places, which a new photo starts with. */
@@ -130,6 +134,7 @@ export function withDetails<T extends object>(data: T, details: PhotoDetails) {
     customCountry: saved("customCountry"),
     customGpsPosition: saved("customGpsPosition"),
     customCreateDate: saved("customCreateDate"),
+    notes: saved("notes"),
   };
 }
 
@@ -161,7 +166,7 @@ interface PhotoDetailsCardProps {
 /**
  * The photo's optional title on the portfolio and Markdown comment in one card, and its places,
  * custom city and country and where it goes on the map in another, saved as the JSON's "title", "places" (with the first place's name as "placeName"),
- * "customCity", "customCountry", "customGpsPosition" and "comment".
+ * "customCity", "customCountry", "customGpsPosition", "comment" and the photographer-only "notes".
  */
 export function PhotoDetailsCard({
   value,
@@ -200,6 +205,11 @@ export function PhotoDetailsCard({
             value={value.comment}
             disabled={disabled}
             onChange={(comment) => onChange({ ...value, comment })}
+          />
+          <PhotoNotesField
+            value={value.notes}
+            disabled={disabled}
+            onChange={(notes) => onChange({ ...value, notes })}
           />
         </CardContent>
       </Card>

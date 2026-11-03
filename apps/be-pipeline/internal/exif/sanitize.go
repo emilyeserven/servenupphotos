@@ -17,8 +17,12 @@ type Sanitized struct {
 	// Comment is the photographer's note about the photo, in Markdown.
 	// Sanitize leaves it nil; it is written on the Photo page before saving.
 	Comment *string `json:"comment"`
-	Camera  *string `json:"camera"`
-	Lens    *string `json:"lens"`
+	// Notes is the photographer-only notes, plain text for the pipeline that
+	// the portfolio's build leaves out. Sanitize leaves it nil; it is written
+	// on the Photo page or by the Tag library.
+	Notes  *string `json:"notes"`
+	Camera *string `json:"camera"`
+	Lens   *string `json:"lens"`
 	// Aperture is the f-number, such as 5.6 for f/5.6.
 	Aperture *float64 `json:"aperture"`
 	// Exposure is the exposure time in seconds as exiftool writes it, such

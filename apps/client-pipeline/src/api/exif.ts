@@ -109,6 +109,8 @@ export interface SanitizedExif {
   height: number | null;
   /** The photographer's note about the photo, in Markdown, written on the Photo page. */
   comment: string | null;
+  /** The photographer-only notes, written on the Photo page or by the Tag library; the portfolio's build leaves them out. */
+  notes?: string | null;
   images: {
     /** The original photo's public R2 URL, once it has been uploaded. */
     full: string | null;
