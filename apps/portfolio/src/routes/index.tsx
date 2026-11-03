@@ -17,8 +17,8 @@ export const Route = createFileRoute("/")({
 const backdropPhotos = homepagePhotos();
 const phoneBackdropPhotos = homepagePhotos(undefined, true);
 
-/** The views with a card on the homepage: Albums, Tags and Lucky are only in the menu. */
-const MENU_ONLY: readonly string[] = ["/albums", "/tags", "/lucky"];
+/** The views with a card on the homepage: Albums, Tags, Lucky and My Likes are only in the menu. */
+const MENU_ONLY: readonly string[] = ["/albums", "/tags", "/lucky", "/likes"];
 
 const homepageViews = enabledViews.filter((view) => !MENU_ONLY.includes(view.to));
 

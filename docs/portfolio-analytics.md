@@ -16,6 +16,8 @@ script tag is in `apps/portfolio/index.html`, so every page the portfolio serves
   seconds, so dragging a slider or panning the map sends one event, not one per step. Explore them on Umami's
   **Events** tab: pick `query`, then break it down by a property to see, for example, which sorts or albums people
   choose. ([Umami event data](https://umami.is/docs/event-data))
+- **Likes.** Liking or unliking a photo sends a `like` or `unlike` event with the photo's id as `photo` (see
+  [Portfolio Likes](portfolio-likes.md)). `sendEvent` in `page-views.ts` sends any custom event.
 - **Photo pages** (`/photos/<id>/`, see [photo-viewer.md](photo-viewer.md)) and map pages (`/maps/…/`) are copies of
   the built `index.html` with their own preview tags, so they carry the script too. A visit that arrives from a
   shared link is counted under that page's path, then under the app's URL after it opens the photo or view.

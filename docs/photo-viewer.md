@@ -25,9 +25,12 @@ A swipe is a quick one-finger move of at least 50px that's mostly sideways, so s
 panning around a pinch-zoomed page don't change the photo.
 
 To see the whole photo with nothing over or around it, the **eye** button beside the close button (or the **H** key)
-hides the details, the count and the ‹ › buttons, and the photo grows to fill the window. Clicking or tapping the photo,
-or pressing **H** again, brings them back. The arrow keys, swiping and **Esc** keep working while they're hidden, and the viewer
-opens with them shown each time.
+hides the details, the count and the ‹ › buttons, and the photo grows to fill the window. Only the eye button and **H**
+hide them: tapping the photo while they're shown does nothing, as a double tap likes it (see
+[Portfolio Likes](portfolio-likes.md)). Clicking or tapping the photo, or pressing **H** again, brings them back. The
+arrow keys, swiping and **Esc** keep working while they're hidden, and the viewer opens with them shown each time.
+
+The **heart** button, left of the eye button, likes the photo or takes the like back.
 
 | Page         | The photos it moves through                                                                                              |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------ |
