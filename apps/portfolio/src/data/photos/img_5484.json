@@ -1,9 +1,9 @@
 {
-  "id": 192,
-  "title": null,
+  "title": "Show for the Kids",
   "comment": null,
+  "id": 192,
   "file": "IMG_5484.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:10:33Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 4.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2017:09:30 15:13:09",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Central Park",
+  "customCity": "New York City",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["street-performer", "children", "park", "bench", "trees", "rock-formations"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "central-park"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
@@ -60,7 +65,7 @@
       "hex": "#4f4f4f",
       "lab": {
         "l": 33.81,
-        "a": -0,
+        "a": 0,
         "b": -0.01
       },
       "hcl": {

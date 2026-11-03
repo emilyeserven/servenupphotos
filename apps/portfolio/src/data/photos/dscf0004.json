@@ -1,9 +1,9 @@
 {
-  "id": 377,
-  "title": null,
+  "title": "Late Night in Kobe",
   "comment": null,
+  "id": 377,
   "file": "DSCF0004.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:15:26Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 2,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/21937bcaafbe-dscf0004-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/21937bcaafbe-dscf0004-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/21937bcaafbe-dscf0004-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/21937bcaafbe-dscf0004-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/21937bcaafbe-dscf0004-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/21937bcaafbe-dscf0004-thumbnail.webp?crop=1285,0,3698",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/21937bcaafbe-dscf0004-thumbnailpreview.webp?crop=1285,0,3698",
     "thumbnailcrop": {
-      "x": 1438,
+      "x": 1285,
       "y": 0,
       "size": 3698,
       "outputSize": 500

@@ -1,9 +1,9 @@
 {
-  "id": 383,
-  "title": null,
+  "title": "Passing Train",
   "comment": null,
+  "id": 383,
   "file": "DSCF0040.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:14:49Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF35mmF2 R WR",
   "aperture": 8,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/844b78b9b53b-dscf0040-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/844b78b9b53b-dscf0040-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/844b78b9b53b-dscf0040-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/844b78b9b53b-dscf0040-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/844b78b9b53b-dscf0040-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/844b78b9b53b-dscf0040-thumbnail.webp?crop=2636,0,4342",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/844b78b9b53b-dscf0040-thumbnailpreview.webp?crop=2636,0,4342",
     "thumbnailcrop": {
-      "x": 1688,
+      "x": 2636,
       "y": 0,
       "size": 4342,
       "outputSize": 500
