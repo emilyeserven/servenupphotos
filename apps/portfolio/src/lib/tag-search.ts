@@ -26,3 +26,10 @@ export function searchTags(sections: TagSection[], query: string): TagSection[] 
   if (text === "") return sections;
   return sections.flatMap((section) => searchSection(section, text));
 }
+
+/** The tags with the search text in their name or description, ignoring case; all of them for an empty search. */
+export function searchTagEntries(entries: TagEntry[], query: string): TagEntry[] {
+  const text = query.trim().toLowerCase();
+  if (text === "") return entries;
+  return entries.filter((entry) => matches(entry, text));
+}

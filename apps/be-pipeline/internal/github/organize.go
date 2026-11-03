@@ -104,6 +104,8 @@ type groupJSON struct {
 	// Rules makes an album a Smart Album: the portfolio Grid's filters, as
 	// its URL names them, that pick its photos.
 	Rules json.RawMessage `json:"rules,omitempty"`
+	// Favorite is true for a tag pinned to the top of the tag lists.
+	Favorite bool `json:"favorite,omitempty"`
 }
 
 // albumJSON is the content of an album file, as written: it always lists its
@@ -134,6 +136,8 @@ type albumJSON struct {
 	// Rules makes the album a Smart Album, whose photos are the ones these
 	// filters match; missing or null for an album of chosen photos.
 	Rules json.RawMessage `json:"rules,omitempty"`
+	// Favorite is only for tags; albums never set it.
+	Favorite bool `json:"favorite,omitempty"`
 }
 
 // fileContent is g as kind's files are written.
@@ -174,7 +178,10 @@ type Group struct {
 	// gives them, such as {"tag": "night", "orientation": "vertical"}; empty
 	// for an album of chosen photos.
 	Rules map[string]any `json:"rules,omitempty"`
-	Path  string         `json:"path"`
+	// Favorite is true for a favorite tag, which the pipeline's and the
+	// portfolio's tag lists show first.
+	Favorite bool   `json:"favorite,omitempty"`
+	Path     string `json:"path"`
 	// FileURL is the file's page on GitHub; empty while its latest change is
 	// only pending.
 	FileURL string `json:"fileUrl"`
@@ -461,5 +468,6 @@ func (w *workspace) readGroup(p string) Group {
 	g.SpotlightZones, g.PhotoOrder = content.SpotlightZones, content.PhotoOrder
 	g.Covers, g.Layout, g.Hidden = content.Covers, content.Layout, content.Hidden
 	g.Rules = smartRules(content.Rules)
+	g.Favorite = content.Favorite
 	return g
 }

@@ -16,6 +16,7 @@ import { DraftMark } from "@/components/draft-mark";
 import { ReEditMark } from "@/components/re-edit-card";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { PlaceGpsMark } from "@/components/gallery/place-filter";
+import { LikesMark, useLikeCounts } from "@/components/viewer-likes/likes-mark";
 import { Button } from "@/components/ui/button";
 import { squareImages } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ function noMatch(filter: string): string {
 
 /** The photos shown, as Square Thumbnail tiles with their names, albums, tags, genres and Edit buttons. */
 export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGridProps) {
+  const likes = useLikeCounts();
   if (data.files.length === 0) {
     return (
       <p className="text-muted-foreground rounded-xl border border-dashed p-4 text-sm">
@@ -59,6 +61,7 @@ export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGri
           <PhotoCard
             file={file}
             images={data.images}
+            likes={likes}
             selected={selection ? selection.has(file.path) : null}
             onToggle={() => onToggle(file.path)}
           />
@@ -71,12 +74,14 @@ export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGri
 interface PhotoCardProps {
   file: PublishedFile;
   images: InFlightImages;
+  /** How many people liked each photo on the Viewer Likes page, by photo ID. */
+  likes: Map<number, number>;
   /** Whether the photo is chosen; null when photos aren't being chosen. */
   selected: boolean | null;
   onToggle: () => void;
 }
 
-function PhotoCard({ file, images, selected, onToggle }: PhotoCardProps) {
+function PhotoCard({ file, images, likes, selected, onToggle }: PhotoCardProps) {
   const image = images.byPath[file.path];
   const name = photoName(file);
   const problem = editProblem(file, images);
@@ -96,9 +101,12 @@ function PhotoCard({ file, images, selected, onToggle }: PhotoCardProps) {
       />
       <div className="flex flex-1 flex-col gap-2 p-3">
         <div className="min-w-0">
-          <h2 className="truncate text-sm font-medium" title={name}>
-            {name}
-          </h2>
+          <div className="flex items-baseline justify-between gap-2">
+            <h2 className="truncate text-sm font-medium" title={name}>
+              {name}
+            </h2>
+            <LikesMark data={fileData(file)} counts={likes} />
+          </div>
           <a
             href={file.fileUrl}
             target="_blank"

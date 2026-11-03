@@ -10,6 +10,7 @@ import {
   createGroupMutation,
   groupId,
   groupLabel,
+  favoritesFirst,
   groupName,
   organizeQuery,
   withNewGroup,
@@ -32,14 +33,21 @@ function groupOptions(
   groups: Group[],
   exclude: ReadonlySet<string> = new Set(),
 ): ComboboxOption[] {
-  return groups
+  // Favorite tags come first, so they're at the top of the Tags field's list.
+  return favoritesFirst(groups)
     .filter((group) => !group.error && !exclude.has(group.id))
     .map((group) => ({
       value: group.id,
       label: groupLabel(group),
-      detail: kind === "albums" ? albumPlace(groups, group) : undefined,
+      detail: optionDetail(kind, groups, group),
       fresh: waitingForCommit(group),
     }));
+}
+
+/** The line under an option: where an album sits, or "★ Favorite" for a favorite tag. */
+function optionDetail(kind: GroupKind, groups: Group[], group: Group): string | undefined {
+  if (kind === "albums") return albumPlace(groups, group);
+  return group.favorite ? "★ Favorite" : undefined;
 }
 
 /** Whether the group's file is only a change waiting for Commit, with no page on GitHub yet. */

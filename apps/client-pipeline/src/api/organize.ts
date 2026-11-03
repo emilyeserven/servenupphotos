@@ -56,6 +56,8 @@ export interface Group {
    * as `{ "tag": "night" }`; missing for an album of chosen photos.
    */
   rules?: Record<string, unknown>;
+  /** True for a favorite tag, listed first on the Tags page and in the Tags field; absent otherwise. */
+  favorite?: boolean;
   path: string;
   fileUrl: string;
   /** True when it's only in the photo data pull request, not merged yet. */
@@ -357,6 +359,20 @@ export const setTagDescriptionsMutation = tagsMutation(
   "descriptions",
   (descriptions: Record<string, string>) => ({ descriptions }),
 );
+
+/**
+ * Saves whether each tag in `favorites`, by tag ID, is a favorite tag, as changes waiting for
+ * Commit. Nothing is saved when an ID isn't a tag.
+ */
+export const setTagFavoritesMutation = tagsMutation(
+  "favorites",
+  (favorites: Record<string, boolean>) => ({ favorites }),
+);
+
+/** The tags with favorites first, keeping the order of each. */
+export function favoritesFirst<T extends { favorite?: boolean }>(tags: T[]): T[] {
+  return [...tags.filter((tag) => tag.favorite), ...tags.filter((tag) => !tag.favorite)];
+}
 
 /**
  * Makes `album` the one the spotlight spot `zone` shows, or leaves the spot without one when it's

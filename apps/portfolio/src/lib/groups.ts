@@ -43,6 +43,11 @@ export interface Group {
    * or null for an album of chosen photos. See `lib/smart-albums.ts`.
    */
   rules?: Record<string, unknown> | null;
+  /**
+   * For a tag, true when it's a favorite, set on the pipeline's Tags page: the Tags page shows it
+   * at the top, under Spotlight Tags.
+   */
+  favorite?: boolean;
 }
 
 /** One row of an album's layout: Markdown text above, its photos side by side, and text below. */

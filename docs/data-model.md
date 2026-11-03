@@ -15,6 +15,7 @@ The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in 
 | Custom lenses     | `lenses/<ID>.json`        | `lenses/LENSES.json`               |
 | Caption templates | `captions/<ID>.json`      | `captions/CAPTIONS.json`           |
 | Timeline labels   | `timeline/<ID>.json`      | `timeline/TIMELINE.json`           |
+| Viewer likes      | `likes/<ID>.json`         | `likes/LIKES.json`                 |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
@@ -30,7 +31,8 @@ the albums inside it off the portfolio's album lists and pages; see
 [Smart Album](smart-albums.md): the Grid's filters, by their URL names, that pick its photos.
 An album's `parent` is the ID of the one album it sits inside, or `null` for a top-level album; the pipeline never
 lets an album end up inside itself. A tag file may have a `parent` too: the ID of a more general tag it's a kind of
-(see [Parent tags](albums-and-tags.md#parent-tags)), missing or `null` at the top. A photo's `genres` lists its [photographic genres](photographic-genres.md), such as
+(see [Parent tags](albums-and-tags.md#parent-tags)), missing or `null` at the top, and a `favorite`, `true` for a
+[favorite tag](albums-and-tags.md#favorite-tags) and missing or `false` otherwise. A photo's `genres` lists its [photographic genres](photographic-genres.md), such as
 `["street"]`, each a file like a tag's. Albums, tags and genres share one set of IDs and names, compared ignoring case,
 so a photo's `albums`, `tags` and `genres` never mean the same thing.
 

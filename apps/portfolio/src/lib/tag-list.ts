@@ -16,30 +16,77 @@ export interface TagEntry {
 /** A parent tag on the Tags page with every tag under it, however deep. */
 export interface TagSection {
   parent: TagEntry;
-  /** The newest few photos tagged with the parent tag itself rather than a tag under it. */
+  /**
+   * The newest few photos tagged with the parent tag itself rather than a tag under it, leaving
+   * out the ones a card for a tag under it already previews.
+   */
   own: ImagePhoto[];
+  /**
+   * The tags under it. Each one's previews leave out the photos a card for a tag under that one
+   * already previews, so a photo shows once in the section where others can fill its place.
+   */
   children: TagEntry[];
 }
 
 /** How many photos a tag's card previews. */
 const PREVIEW_COUNT = 3;
 
-/** The tag with its photo count and previews, from the photos given. */
-function entryOf(tag: Group, between: Group[], all: Photo[]): TagEntry {
+/** How many photos a Spotlight Tags card previews: twice as many, as it's twice as wide. */
+const SPOTLIGHT_PREVIEW_COUNT = 6;
+
+/** The photos with the tag or a tag under it. */
+function taggedUnder(tag: Group, all: Photo[]): Photo[] {
   const ids = tagAndSubTags(tag.id);
-  const tagged = all.filter((photo) => photo.tags.some((id) => ids.has(id)));
-  return {
-    tag,
-    between,
-    count: tagged.length,
-    previews: newestWithImages(tagged).slice(0, PREVIEW_COUNT),
-  };
+  return all.filter((photo) => photo.tags.some((id) => ids.has(id)));
 }
 
-/** The newest few photos with images tagged with the tag itself, not counting the tags under it. */
-function ownPreviews(tag: Group, all: Photo[]): ImagePhoto[] {
+/** The newest few of the photos with images, skipping the ones already shown elsewhere. */
+function newestFew(
+  tagged: Photo[],
+  shown: ReadonlySet<number> = new Set(),
+  few = PREVIEW_COUNT,
+): ImagePhoto[] {
+  return newestWithImages(tagged)
+    .filter((photo) => !shown.has(photo.id))
+    .slice(0, few);
+}
+
+/** The tag with its photo count and previews, from the photos given. */
+function entryOf(tag: Group, between: Group[], all: Photo[], few = PREVIEW_COUNT): TagEntry {
+  const tagged = taggedUnder(tag, all);
+  return { tag, between, count: tagged.length, previews: newestFew(tagged, new Set(), few) };
+}
+
+/** The ids of the photos the entries preview. */
+function previewedIds(entries: TagEntry[]): Set<number> {
+  return new Set(entries.flatMap((entry) => entry.previews.map((photo) => photo.id)));
+}
+
+/** The entries under the tag: the ones that name it among the tags between. */
+function entriesUnder(tag: Group, entries: TagEntry[]): TagEntry[] {
+  return entries.filter((entry) => entry.between.some((group) => group.id === tag.id));
+}
+
+/**
+ * The section's entries with each one's previews leaving out the photos the entries under it
+ * preview. The deepest come first, so a tag's card keeps its newest photos and the cards above it
+ * fill with the next ones.
+ */
+function withoutRepeats(entries: TagEntry[], all: Photo[]): TagEntry[] {
+  return entries.reduceRight<TagEntry[]>((after, entry) => {
+    const shown = previewedIds(entriesUnder(entry.tag, after));
+    const previews = newestFew(taggedUnder(entry.tag, all), shown);
+    return [{ ...entry, previews }, ...after];
+  }, []);
+}
+
+/**
+ * The newest few photos with images tagged with the tag itself, not counting the tags under it,
+ * leaving out the ones the cards for the tags under it preview.
+ */
+function ownPreviews(tag: Group, all: Photo[], children: TagEntry[]): ImagePhoto[] {
   const tagged = all.filter((photo) => photo.tags.includes(tag.id));
-  return newestWithImages(tagged).slice(0, PREVIEW_COUNT);
+  return newestFew(tagged, previewedIds(children));
 }
 
 /** How the Tags page orders tags: by name, or by how many photos they have, most first. */
@@ -99,11 +146,23 @@ function withPhotos(entries: TagEntry[]): TagEntry[] {
  */
 export function tagSections(sort: TagSort = "name", all: Photo[] = photos): TagSection[] {
   const tops = withPhotos(topTags().map((tag) => entryOf(tag, [], all))).toSorted(COMPARE[sort]);
-  return tops.map((parent) => ({
-    parent,
-    own: ownPreviews(parent.tag, all),
-    children: withPhotos(
-      descendants(parent.tag, [], { sort, all, seen: new Set([parent.tag.id]) }),
-    ),
-  }));
+  return tops.map((parent) => sectionOf(parent, sort, all));
+}
+
+/** The parent tag's section, its cards' previews without repeats. */
+function sectionOf(parent: TagEntry, sort: TagSort, all: Photo[]): TagSection {
+  const walk = { sort, all, seen: new Set([parent.tag.id]) };
+  const children = withoutRepeats(withPhotos(descendants(parent.tag, [], walk)), all);
+  return { parent, own: ownPreviews(parent.tag, all, children), children };
+}
+
+/**
+ * Every favorite tag with photos, in the sort's order, for the Spotlight Tags at the top of the
+ * Tags page, each with up to 6 previews.
+ */
+export function favoriteTags(sort: TagSort = "name", all: Photo[] = photos): TagEntry[] {
+  const favorites = tags
+    .filter((tag) => tag.favorite)
+    .map((tag) => entryOf(tag, [], all, SPOTLIGHT_PREVIEW_COUNT));
+  return withPhotos(favorites).toSorted(COMPARE[sort]);
 }

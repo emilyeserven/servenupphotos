@@ -92,6 +92,8 @@ export function FileChecks({ data }: { data: InFlightResponse }) {
         <dd>{groupsSummary(data.captions)}</dd>
         <dt className="text-muted-foreground">Timeline label files</dt>
         <dd>{groupsSummary(data.timeline)}</dd>
+        <dt className="text-muted-foreground">Viewer likes files</dt>
+        <dd>{groupsSummary(data.likes)}</dd>
       </dl>
     </details>
   );

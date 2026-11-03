@@ -247,6 +247,30 @@ func handleSetTagDescriptions(store *settings.Store, gh *github.Client) http.Han
 	}
 }
 
+// handleSetTagFavorites saves whether each tag in the body's favorites, by
+// tag ID, is a favorite tag, as changes waiting for Commit.
+func handleSetTagFavorites(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Favorites map[string]bool `json:"favorites"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil || len(req.Favorites) == 0 {
+			writeError(w, http.StatusBadRequest, "invalid favorite tags body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetTagFavorites(ctx, cfg, req.Favorites)
+		writeSocialResult(w, result, err, "could not save the favorite tags")
+	}
+}
+
 // handleSetSpotlightAlbum makes the body's album the one the path's spotlight
 // spot shows, or leaves the spot without one when it's empty or null, as a
 // change waiting for Commit.
