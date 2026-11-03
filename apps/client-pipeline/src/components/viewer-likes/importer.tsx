@@ -119,8 +119,8 @@ function ListField({ text, onText }: { text: string; onText: (text: string) => v
         onChange={(e) => onText(e.target.value)}
       />
       <span className="text-muted-foreground text-xs">
-        The photo IDs from My Likes' “Send to photographer”, separated by commas, or a JSON array
-        such as [281, 284].
+        What My Likes' “Send to photographer” makes: the Discord list of photo links, or the photo
+        IDs separated by commas. A JSON array such as [281, 284] works too.
       </span>
     </div>
   );
@@ -139,7 +139,8 @@ function ParsedNote({ text, parsed, titles }: ParsedNoteProps) {
   return (
     <ul className="text-muted-foreground flex flex-col gap-0.5 text-sm">
       <li>
-        {parsed.ids.length} {parsed.ids.length === 1 ? "photo" : "photos"} in the list.
+        {parsed.ids.length} {parsed.ids.length === 1 ? "photo" : "photos"} in the list
+        {parsed.fromLinks ? ", read from its photo links. Titles and comments are ignored." : "."}
       </li>
       <Warning label="Not a saved photo, kept anyway" items={unknown} />
       <Warning label="Not photo IDs, left out" items={parsed.skipped} />

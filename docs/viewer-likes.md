@@ -1,8 +1,13 @@
 # Viewer Likes
 
 `/viewer-likes`, under **Publish** in the sidebar, collects the photos people liked on the portfolio. A visitor likes
-photos on the portfolio's **My Likes** page, checks **Send to photographer**, and sends you the text it makes: the liked
-photos' IDs joined with commas, such as `281, 284, 286`. On Viewer Likes you name who sent it and paste the text (or
+photos on the portfolio's **My Likes** page and sends you the text **Send to photographer** makes, in one of two forms:
+
+- **Discord:** a Markdown list of photo links with their titles and comments, such as
+  `- [Castle Door](https://servenupphotos.net/photos/284/) – love the stones`.
+- **Messenger / Text:** the liked photos' IDs joined with commas, such as `281, 284, 286`.
+
+On Viewer Likes you name who sent it and paste the text (or
 upload it as a `.txt` or `.json` file), and the pipeline adds one like to each of those photos.
 
 Each list belongs to a **person**. Importing a new list for someone who already sent one replaces their old list
@@ -39,7 +44,10 @@ are committed to the repository, so use a first name, initials or a nickname if 
 The left side lists everyone who sent a list, with how many photos they liked and when their list was imported.
 The right side imports for the chosen person, or a new one after **New person**:
 
-- **Their list** takes the text from **Send to photographer**. A JSON array, such as `[281, 284]`, works too. Before
+- **Their list** takes the text from **Send to photographer**, in either form. When it has photo links in it
+  (`/photos/284/`, or a `?photo=284` link such as the Grid's), the IDs are read from the links only, so numbers in the
+  titles and comments don't count as photos. Otherwise it's read as IDs separated by commas or spaces, and a JSON
+  array, such as `[281, 284]`, works too. Before
   saving it says how many photos the list has, which IDs don't match a saved photo (they're kept, in case the photo is
   only waiting for Commit elsewhere), and anything that isn't a photo ID (left out).
 - **Import likes** saves a new person; **Save and replace likes** replaces the chosen person's list, or saves a new
