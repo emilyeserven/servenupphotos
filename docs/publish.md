@@ -23,18 +23,60 @@ page doesn't use it.)
 > **Frontend analogy:** it's a draft kept in a client-side store (persisted to `localStorage`) instead of component
 > state, so it survives a reload and other pages can see it; Commit is the one "Save all" request.
 
+The calendar also shows the Instagram posts saved on photos under **Social media posts** (below): a day with one gets
+a check in its corner when every post that day is up, or a clock while one is scheduled (with a count when there's
+more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts** lists
+the posts on the days shown, each with its photo, **Posted** or **Scheduled**, whether the photo is **In flight** or as
+the **Gallery** has it, a link to the post and a link to edit the photo. Gallery and in flight photos are both
+included, and nothing more is fetched for them: the posts come from the photo files the calendar already read, with
+the changes waiting for Commit and local edits the app keeps (`useChangedPhotoFiles` in the combined data store) made
+over them, so a post saved on the Photo page shows here before **Commit**. `apps/client-pipeline/src/lib/social-post-days.ts`
+does the merging (`postedPhotoFiles`, `postsByDay`), for any page that needs each day's posts.
+
+> **Frontend analogy:** it's an optimistic UI: the list is the last server response with the store's unsent mutations
+> replayed over it, rather than a refetch.
+
+### Suggested photos
+
+When a day is picked, the picker's first section, **Suggested**, holds up to 8 unused photos most like the 3 photos on
+Instagram on the days just before it (on the calendar, or with an Instagram post under **Social media posts**). Below
+it, **All photos** lists the rest as before. "Unused" means not on the calendar and with no Instagram post, scheduled
+or posted. Each pair of photos is scored from 0 to 1 and a photo's score is its average against the 3:
+
+- **Place (40%):** by distance when both have a GPS position (custom or EXIF), halving every 25 km; else 0.8 for a
+  shared place or city, 0.3 for the same country.
+- **Date (40%):** by days between when they were taken (custom date or EXIF), halving every 14 days.
+- **Tags (20%):** the share of their tags they have in common.
+
+Photos under 0.2 aren't suggested. Each suggestion says why, against the closest of the 3, such as "2 km away · Same
+day · 3 tags in common". Suggestions read the photo files with changes waiting for Commit and local edits made over
+them, and are hidden while searching. The scoring is in `apps/client-pipeline/src/lib/social-suggestions.ts`; its
+constants at the top set the weights and distances.
+
+> **Frontend analogy:** it's a "related items" sort done in the browser: every candidate gets a weighted score
+> against the last few items, like ranking search results by several fields at once.
+
+### Focus
+
+**Focus**, folded above the calendar, sets the filters the picker starts with each time it opens: dates taken from and
+to, a place (text in the photo's city, state, country or place name), tags and genres (any of several, with commas),
+and only photos eligible for social media. Both **Suggested** and **All photos** follow it, and a photo without a
+date is left out while dates are set. In the picker, a **Focus** box shows what it filters and can be unticked to see
+every photo for that one pick. The Focus is kept in this browser (`localStorage`, `stores/social-focus.ts`), not on
+GitHub; the filters are in `lib/social-focus.ts`.
+
+> **Frontend analogy:** it's saved default filters, like a persisted Zustand slice for a table's filter bar.
+
 ## Social media posts
 
 The Photo page in edit mode (`/exif?edit=<path>`) has a **Social media posts** card, for keeping track of where the
-photo is posted or scheduled to post. Each post has a platform, a status (`scheduled` or `posted`), a day, a link, a
-caption and hashtags, saved as the photo file's `socialPosts` list, `[]` by default (new saves write it, and Update
+photo is posted or scheduled to post. Each post has a platform, a day, a link, a caption and hashtags, saved as the photo file's `socialPosts` list, `[]` by default (new saves write it, and Update
 Data → Missing fields adds it to older files):
 
 ```json
 "socialPosts": [
   {
     "platform": "instagram",
-    "status": "posted",
     "date": "2026-10-20",
     "url": "https://www.instagram.com/p/…",
     "caption": "Late light over the river.",
@@ -43,10 +85,30 @@ Data → Missing fields adds it to older files):
 ]
 ```
 
-`date` is `YYYY-MM-DD`, or `null` when it's left empty. Hashtags are typed separated by spaces or commas, with or
+`date` is `YYYY-MM-DD`, or `null` when it's left empty. Whether a post is **Posted** or **Scheduled** isn't saved: it's
+worked out from its day each time it's shown (`postStatus` in `social-posts.ts`), posted on or before today and
+scheduled after it or without a day, so a post moves to posted by itself once its day comes. The card shows it next to
+the post's heading, and the Instagram calendar's marks and **Instagram posts** list use the same. A `status` saved
+by older versions is ignored and dropped the next time the posts are saved. Hashtags are typed separated by spaces or commas, with or
 without the `#`, and saved without it. The platforms offered are listed in
 `apps/client-pipeline/src/lib/social-posts.ts` (Instagram, Threads, Bluesky, Facebook and Other); add one there to offer
 it. A post with a platform that isn't listed, such as one typed into the JSON, keeps it.
+
+A post's day is picked on a calendar (shadcn's `Calendar` in a `Popover`, in
+`apps/client-pipeline/src/components/social-post-date-picker.tsx`), with **Clear** to leave it empty. Days other photos
+already post on, on the same platform, are grayed out: the days of their `socialPosts` on that platform, and for
+Instagram their Instagram calendar day (`socialMediaPublishDate`) too. The photos are the ones the Instagram calendar
+reads (`GET /api/publish/instagram`, gallery and in flight alike), with the changes waiting for Commit and local edits
+made over them (`postedPhotoFiles` and `useChangedPhotoFiles`, shared with the calendar's posts); the photo being
+edited is left out. A grayed day can still be picked, since two posts on one day is rare but fine; the field then says
+which photos already post that day.
+
+> **Frontend analogy:** it's a `disabledDays`-style lookup built from data the app already has, except the days are
+> only styled with a `modifiers` class instead of `disabled`, so the click still goes through.
+
+Above each post's caption, **Generate** writes the caption from a [caption template](caption-templates.md) and the
+photo's data as it's being edited, asking first when the caption already has text. The template picked starts as the
+first one for the post's platform.
 
 The card is saved with the rest of the page's changes by **Save changes**, as a change waiting for Commit, so nothing
 goes to GitHub until **Commit**. Saving writes the whole list over the file's. When the Instagram calendar has the photo

@@ -30,16 +30,19 @@ type EntryKind struct {
 // metadata group names a set of values of one EXIF field, such as wide-angle
 // focal lengths; a camera override renames one camera's EXIF values, such as
 // its lens, in the photos taken with it; a custom lens is one EXIF doesn't
-// name, such as a manual lens, which a photo can be given on the Photo page.
+// name, such as a manual lens, which a photo can be given on the Photo page; a
+// caption template is a social media caption with placeholders for a photo's
+// fields, which the Photo page fills in.
 var (
 	Places        = EntryKind{Name: "place", Folder: "places", AllFile: "PLACES.json"}
 	Localizations = EntryKind{Name: "localization", Folder: "localizations", AllFile: "LOCALIZATIONS.json"}
 	MetaInfo      = EntryKind{Name: "metadata group", Folder: "metainfo", AllFile: "METAINFO.json"}
 	Cameras       = EntryKind{Name: "camera override", Folder: "cameras", AllFile: "CAMERAS.json"}
 	Lenses        = EntryKind{Name: "custom lens", Folder: "lenses", AllFile: "LENSES.json"}
+	Captions      = EntryKind{Name: "caption template", Folder: "captions", AllFile: "CAPTIONS.json"}
 	// TimelineLabels name runs of days, such as a trip, on the portfolio's Timeline.
 	TimelineLabels = EntryKind{Name: "timeline label", Folder: "timeline", AllFile: "TIMELINE.json"}
-	entryKinds     = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, TimelineLabels}
+	entryKinds     = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, TimelineLabels}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

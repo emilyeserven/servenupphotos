@@ -1,19 +1,12 @@
-import { ChevronLeftIcon, ChevronRightIcon, ImageIcon, PlusIcon } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
-import { DraftBadge } from "@/components/draft-mark";
+import { DayPostBackdrop, DayPostMark, InstagramPosts } from "@/components/instagram-posts";
+import { InstagramFocus } from "@/components/instagram-focus";
+import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { calendarDays, isoDate, parseIsoDate } from "@/lib/calendar";
+import { calendarDays, dayFormat, isoDate, longDayFormat, parseIsoDate } from "@/lib/calendar";
 import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import {
   type Unsaved,
@@ -23,12 +16,12 @@ import {
   moveToDay,
   photoName,
   photosByDay,
-  pickerChoices,
   unsavedFromEdits,
 } from "@/lib/social-schedule";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { cn } from "@/lib/utils";
-import { offlineImageUrl } from "@/lib/offline-thumbnails";
+import { type DayPost, postedPhotoFiles, postsByDay } from "@/lib/social-post-days";
+import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /** How many weeks the calendar shows, this week first. */
@@ -38,13 +31,6 @@ const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 /** The type the dragged photo's file path is carried under. */
 const DRAG_TYPE = "application/x-photo-path";
-
-const dayFormat = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" });
-const longDayFormat = new Intl.DateTimeFormat(undefined, {
-  weekday: "long",
-  month: "long",
-  day: "numeric",
-});
 
 /** "1 photo", "2 photos". */
 function count(n: number, word: string): string {
@@ -76,26 +62,42 @@ function useUnsavedDates(photos: SocialPhoto[]) {
   return { unsaved, update };
 }
 
+/**
+ * Each day's Instagram posts from the photos' Social media posts, gallery and in flight photos
+ * alike, with the changes the app keeps for Commit made over the files read for the calendar.
+ */
+function useInstagramPosts(photos: SocialPhoto[]) {
+  const changed = useChangedPhotoFiles();
+  return useMemo(
+    () => postsByDay(postedPhotoFiles(photos, changed), "instagram"),
+    [photos, changed],
+  );
+}
+
 function Schedule({ calendar }: { calendar: SocialCalendar }) {
   const { unsaved, update } = useUnsavedDates(calendar.photos);
+  const posts = useInstagramPosts(calendar.photos);
   const [weekOffset, setWeekOffset] = useState(0);
   const [picking, setPicking] = useState<string | null>(null);
   // Read the clock once, so the calendar doesn't shift under a drag at midnight.
   const [now] = useState(() => new Date());
 
   const byDay = photosByDay(calendar.photos, unsaved);
+  const days = calendarDays(now, weekOffset, WEEKS);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
 
   return (
     <div className="flex flex-col gap-4">
       <SourceNote calendar={calendar} />
+      <InstagramFocus photos={calendar.photos} />
       <CalendarGrid
-        days={calendarDays(now, weekOffset, WEEKS)}
+        days={days}
         today={isoDate(now)}
         weekOffset={weekOffset}
         onWeekOffset={setWeekOffset}
         byDay={byDay}
+        posts={posts}
         unsaved={unsaved}
         onOpen={setPicking}
         onDropPhoto={(path, day) => {
@@ -103,6 +105,7 @@ function Schedule({ calendar }: { calendar: SocialCalendar }) {
           if (dropped) schedule(dropped, day);
         }}
       />
+      <InstagramPosts days={days} postsByDay={posts} />
       <PhotoPicker
         day={picking}
         byDay={byDay}
@@ -183,13 +186,15 @@ interface CalendarGridProps {
   weekOffset: number;
   onWeekOffset: (offset: number) => void;
   byDay: Map<string, SocialPhoto>;
+  /** Each day's posts from the photos' Social media posts. */
+  posts: Map<string, DayPost[]>;
   unsaved: Unsaved;
   onOpen: (day: string) => void;
   onDropPhoto: (path: string, day: string) => void;
 }
 
 function CalendarGrid(props: CalendarGridProps) {
-  const { days, today, byDay, unsaved, onOpen, onDropPhoto } = props;
+  const { days, today, byDay, posts, unsaved, onOpen, onDropPhoto } = props;
   return (
     <>
       <WeekNav {...props} />
@@ -207,6 +212,7 @@ function CalendarGrid(props: CalendarGridProps) {
               day={day}
               today={today}
               photo={photo}
+              posts={posts.get(day)}
               unsaved={
                 photo !== undefined && dateOf(unsaved, photo) !== photo.socialMediaPublishDate
               }
@@ -218,7 +224,8 @@ function CalendarGrid(props: CalendarGridProps) {
       </div>
       <p className="text-muted-foreground text-sm">
         Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
-        to another day to move it there; dropping it on another photo swaps the two.
+        to another day to move it there; dropping it on another photo swaps the two. A check or a
+        clock in a day&apos;s corner marks Instagram posts saved on photos, posted or scheduled.
       </p>
     </>
   );
@@ -262,6 +269,8 @@ interface DayProps {
   day: string;
   today: string;
   photo: SocialPhoto | undefined;
+  /** The day's posts from the photos' Social media posts, if any. */
+  posts: DayPost[] | undefined;
   /** Whether the photo on this day isn't saved there yet. */
   unsaved: boolean;
   onOpen: () => void;
@@ -279,22 +288,28 @@ function dayClass(day: string, today: string, over: boolean) {
 }
 
 /** One day of the calendar: a drop target holding its photo, or a button to pick one. */
-function Day({ day, today, photo, unsaved, onOpen, onDropPhoto }: DayProps) {
+function Day({ day, today, photo, posts, unsaved, onOpen, onDropPhoto }: DayProps) {
   const { over, handlers } = useDropTarget(DRAG_TYPE, onDropPhoto);
   const label = longDayFormat.format(parseIsoDate(day));
   return (
     <div role="gridcell" className={dayClass(day, today, over)} {...handlers}>
-      <DayNumber day={day} today={today} onPhoto={photo !== undefined} />
+      <DayNumber
+        day={day}
+        today={today}
+        onPhoto={photo !== undefined || !!posts?.[0]?.photo.image}
+      />
+      <DayPostMark posts={posts} />
       {photo ? (
         <ScheduledPhoto photo={photo} label={label} unsaved={unsaved} onOpen={onOpen} />
       ) : (
         <button
           type="button"
           onClick={onOpen}
-          className="text-muted-foreground hover:bg-accent hover:text-accent-foreground flex size-full items-center justify-center transition-colors"
+          className="text-muted-foreground hover:bg-accent hover:text-accent-foreground relative flex size-full items-center justify-center transition-colors"
           aria-label={`${label}: pick a photo`}
         >
-          <PlusIcon className="size-4" />
+          <DayPostBackdrop posts={posts} />
+          <PlusIcon className="relative size-4" />
         </button>
       )}
     </div>
@@ -345,195 +360,6 @@ function ScheduledPhoto({ photo, label, unsaved, onOpen }: ScheduledPhotoProps) 
           <span className="sr-only">Not saved</span>
         </span>
       )}
-    </button>
-  );
-}
-
-function PhotoImage({ photo }: { photo: SocialPhoto }) {
-  if (!photo.image) {
-    return (
-      <span className="bg-muted text-muted-foreground flex size-full items-center justify-center">
-        <ImageIcon className="size-5" />
-      </span>
-    );
-  }
-  return (
-    <img
-      src={offlineImageUrl(photo.image)}
-      alt=""
-      draggable={false}
-      loading="lazy"
-      className="size-full object-cover"
-    />
-  );
-}
-
-interface PhotoPickerProps {
-  /** The day being picked for, or null when the picker is closed. */
-  day: string | null;
-  byDay: Map<string, SocialPhoto>;
-  photos: SocialPhoto[];
-  unsaved: Unsaved;
-  onClose: () => void;
-  /** Puts photo on day, or takes it off the calendar when day is null. */
-  onSchedule: (photo: SocialPhoto, day: string | null) => void;
-}
-
-/** Picks a photo for a day, or takes the day's photo off it. */
-function PhotoPicker({ day, byDay, photos, unsaved, onClose, onSchedule }: PhotoPickerProps) {
-  const [search, setSearch] = useState("");
-  // Kept between days, so opting in once shows them every time the picker opens.
-  const [showScheduled, setShowScheduled] = useState(false);
-  const current = day === null ? undefined : byDay.get(day);
-  /** Clears the search for the next day before closing. */
-  const close = () => {
-    setSearch("");
-    onClose();
-  };
-  const choose = (photo: SocialPhoto, to: string | null) => {
-    setSearch("");
-    onSchedule(photo, to);
-  };
-
-  return (
-    <Dialog open={day !== null} onOpenChange={(open) => !open && close()}>
-      <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-2xl">
-        <PickerHeader day={day} current={current} />
-        <Input
-          type="search"
-          placeholder="Search by title or file name"
-          aria-label="Search photos"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-        />
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            className="accent-primary size-4"
-            checked={showScheduled}
-            onChange={(event) => setShowScheduled(event.target.checked)}
-          />
-          Show already scheduled photos
-        </label>
-        <div className="-mx-1 min-h-0 flex-1 overflow-y-auto px-1">
-          <PickerChoices
-            choices={pickerChoices(photos, unsaved, search, showScheduled)}
-            searching={search.trim() !== ""}
-            hidingScheduled={!showScheduled && photos.some((p) => dateOf(unsaved, p) !== null)}
-            current={current}
-            unsaved={unsaved}
-            onPick={(photo) => choose(photo, day)}
-          />
-        </div>
-        {current && (
-          <DialogFooter>
-            <Button variant="outline" onClick={() => choose(current, null)}>
-              Remove from this day
-            </Button>
-          </DialogFooter>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function PickerHeader({ day, current }: { day: string | null; current: SocialPhoto | undefined }) {
-  const intro = current
-    ? `${photoName(current)} is posted this day. Pick another photo to swap it out.`
-    : "Pick a photo to post this day.";
-  return (
-    <DialogHeader>
-      <DialogTitle>{day ? longDayFormat.format(parseIsoDate(day)) : ""}</DialogTitle>
-      <DialogDescription>{intro} A photo already on another day moves here.</DialogDescription>
-    </DialogHeader>
-  );
-}
-
-interface PickerChoicesProps {
-  choices: SocialPhoto[];
-  searching: boolean;
-  /** Whether scheduled photos are left out, so an empty list can say so. */
-  hidingScheduled: boolean;
-  current: SocialPhoto | undefined;
-  unsaved: Unsaved;
-  onPick: (photo: SocialPhoto) => void;
-}
-
-/** What an empty list of choices says. */
-function noChoices(searching: boolean, hidingScheduled: boolean): string {
-  if (searching) return hidingScheduled ? "No unscheduled photos match." : "No photos match.";
-  return hidingScheduled ? "Every photo is already scheduled." : "There are no photo files yet.";
-}
-
-function PickerChoices(props: PickerChoicesProps) {
-  const { choices, searching, hidingScheduled, current, unsaved, onPick } = props;
-  if (choices.length === 0) {
-    return (
-      <p className="text-muted-foreground py-6 text-center text-sm">
-        {noChoices(searching, hidingScheduled)}
-      </p>
-    );
-  }
-  return (
-    <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-      {choices.map((photo) => (
-        <li key={photo.path}>
-          <PickerChoice
-            photo={photo}
-            scheduled={dateOf(unsaved, photo)}
-            isCurrent={photo.path === current?.path}
-            onPick={() => onPick(photo)}
-          />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-interface PickerChoiceProps {
-  photo: SocialPhoto;
-  /** The day the photo is on now, if any. */
-  scheduled: string | null;
-  isCurrent: boolean;
-  onPick: () => void;
-}
-
-const BADGE = "rounded px-1 text-[10px] font-medium";
-
-/** Whether the photo is eligible for social media, and whether it's a draft or still in flight. */
-function PhotoBadges({ photo }: { photo: SocialPhoto }) {
-  return (
-    <span className="absolute top-1 left-1 flex flex-wrap gap-1">
-      {photo.isSocialMediaEligible && (
-        <span className={cn(BADGE, "bg-background/85")}>Eligible</span>
-      )}
-      <DraftBadge data={photo.data} className={cn(BADGE, "bg-violet-600 text-white")}>
-        {!photo.inAllPhotos && <span className={cn(BADGE, "bg-background/85")}>In flight</span>}
-      </DraftBadge>
-    </span>
-  );
-}
-
-function PickerChoice({ photo, scheduled, isCurrent, onPick }: PickerChoiceProps) {
-  return (
-    <button
-      type="button"
-      disabled={isCurrent}
-      onClick={onPick}
-      className="group focus-visible:ring-ring flex w-full flex-col gap-1 rounded-md text-left outline-none focus-visible:ring-2 disabled:opacity-50"
-    >
-      <span className="relative aspect-square overflow-hidden rounded-md border">
-        <PhotoImage photo={photo} />
-        <PhotoBadges photo={photo} />
-        {scheduled && (
-          <span
-            className={cn(BADGE, "bg-primary text-primary-foreground absolute right-1 bottom-1")}
-          >
-            {isCurrent ? "This day" : dayFormat.format(parseIsoDate(scheduled))}
-          </span>
-        )}
-      </span>
-      <span className="truncate text-xs group-hover:underline">{photoName(photo)}</span>
     </button>
   );
 }

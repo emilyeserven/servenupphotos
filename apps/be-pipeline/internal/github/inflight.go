@@ -97,9 +97,9 @@ type InFlightResult struct {
 	PullRequest *InFlightPullRequest `json:"pullRequest"`
 	Files       []InFlightFile       `json:"files"`
 	// Albums, Tags, Genres, Places, Localizations, MetaInfo, Cameras, Lenses
-	// and Timeline are the album, tag, genre, place, localization, metadata
-	// group, camera override, custom lens and timeline label files in the
-	// pull request.
+	// Captions and Timeline are the album, tag, genre, place, localization,
+	// metadata group, camera override, custom lens, caption template and
+	// timeline label files in the pull request.
 	Albums        InFlightGroups `json:"albums"`
 	Tags          InFlightGroups `json:"tags"`
 	Genres        InFlightGroups `json:"genres"`
@@ -108,13 +108,14 @@ type InFlightResult struct {
 	MetaInfo      InFlightGroups `json:"metainfo"`
 	Cameras       InFlightGroups `json:"cameras"`
 	Lenses        InFlightGroups `json:"lenses"`
+	Captions      InFlightGroups `json:"captions"`
 	Timeline      InFlightGroups `json:"timeline"`
 }
 
 // groups are r's album, tag, genre, place, localization, metadata group, camera
-// override, custom lens and timeline label files.
+// override, custom lens, caption template and timeline label files.
 func (r *InFlightResult) groups() []*InFlightGroups {
-	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Genres, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses, &r.Timeline}
+	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Genres, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses, &r.Captions, &r.Timeline}
 }
 
 // InFlightGroups is the files of one Kind in the pull request.
@@ -166,6 +167,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		MetaInfo:      newInFlightGroups(w.root, Kind{Folder: MetaInfo.Folder, AllFile: MetaInfo.AllFile}),
 		Cameras:       newInFlightGroups(w.root, Kind{Folder: Cameras.Folder, AllFile: Cameras.AllFile}),
 		Lenses:        newInFlightGroups(w.root, Kind{Folder: Lenses.Folder, AllFile: Lenses.AllFile}),
+		Captions:      newInFlightGroups(w.root, Kind{Folder: Captions.Folder, AllFile: Captions.AllFile}),
 		Timeline:      newInFlightGroups(w.root, Kind{Folder: TimelineLabels.Folder, AllFile: TimelineLabels.AllFile}),
 	}
 	for _, p := range w.changed(folder, AllPhotosFile) {
