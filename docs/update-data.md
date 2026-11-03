@@ -318,10 +318,12 @@ with each tag followed to where a merge or rename took it), then notes. A change
 The review lists each change with a checkbox: new tags, renames (with how many photos), Tag pruning's three lists,
 descriptions (with the one there now), each photo's tags as **+added** and **−removed** with the tags it had, and the
 notes. Below them, a box lists every tag that would have fewer than 3 photos once everything listed is made (from the
-preview's `fewPhotos`, each with the file names of the photos that would have it). **Copy the follow-up prompt**
-(`tagLibraryFollowUpPrompt` in `lib/tag-library-prompt.ts`) copies those tags and their photos, for the same chat,
-asking the LLM to add each one to more photos or remove it (or not make it) with a note on each of its photos, and
-to send its whole answer again. Paste the new answer over the old one and review the changes again. **Save N changes** (`POST /api/data/tag-library`, `{ newTags: [{ id, description, parent }],
+preview's `fewPhotos`, each with the file names of the photos that would have it), and every tag that would have
+subtags, but fewer than 3 of them (`fewSubtags`, each with its subtags). The library prompt asks for both rules up
+front. **Copy the follow-up prompt** (`tagLibraryFollowUpPrompt` in `lib/tag-library-prompt.ts`) copies those tags,
+for the same chat, asking the LLM to add each small tag to more photos or remove it (or not make it) with a note on
+each of its photos, to give each tag with too few subtags more of them or merge them into it (or move them to
+another parent), and to send its whole answer again. Paste the new answer over the old one and review the changes again. **Save N changes** (`POST /api/data/tag-library`, `{ newTags: [{ id, description, parent }],
 rename: [{ tag, to }], merge, remove, reparent, describe: [{ tag, description }], photos: [{ path, add, remove }],
 notes: [{ path, note }] }`, `github/taglibrary_apply.go`) checks them again and saves, in one save of [changes
 waiting for Commit](pending-changes.md): each new tag's file (with its parent and description after the changes,

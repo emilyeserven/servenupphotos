@@ -118,6 +118,14 @@ type TagLibraryFewPhotos struct {
 	PhotoNames []string `json:"photoNames"`
 }
 
+// TagLibraryFewSubtags is a tag that would have some subtags, but fewer
+// than a tag with subtags should, after every change in the answer.
+type TagLibraryFewSubtags struct {
+	Tag string `json:"tag"`
+	// Subtags is the IDs of the tags under it, sorted.
+	Subtags []string `json:"subtags"`
+}
+
 // TagLibraryPreview is what pasting the LLM's answer would do to the whole
 // tag library, each change checked against the ones before it.
 type TagLibraryPreview struct {
@@ -134,6 +142,9 @@ type TagLibraryPreview struct {
 	Notes    []TagLibraryNote      `json:"notes"`
 	// FewPhotos is every tag left with fewer than MinPhotos photos.
 	FewPhotos []TagLibraryFewPhotos `json:"fewPhotos"`
+	// FewSubtags is every tag left with at least one but fewer than
+	// MinPhotos subtags.
+	FewSubtags []TagLibraryFewSubtags `json:"fewSubtags"`
 	// MinPhotos is the fewest photos a tag should have.
 	MinPhotos int               `json:"minPhotos"`
 	Skipped   []PruneTagSkipped `json:"skipped"`
@@ -255,6 +266,7 @@ func (c *Client) PreviewTagLibrary(ctx context.Context, gh settings.GitHub, answ
 		preview.add(l, req, s, at(reasons[s.kind], s.index), counts, names, before)
 	}
 	preview.FewPhotos = l.fewPhotos(names)
+	preview.FewSubtags = l.fewSubtags()
 	return preview, nil
 }
 
@@ -266,7 +278,8 @@ func emptyLibraryPreview(tags, photos int) TagLibraryPreview {
 		NewTags: []TagLibraryNewTag{}, Rename: []TagLibraryRename{}, Merge: []PruneTagMerge{},
 		Remove: []PruneTagRemoval{}, Reparent: []PruneTagReparent{}, Describe: []TagLibraryDescribe{},
 		Edits: []TagLibraryPhotoEdit{}, Notes: []TagLibraryNote{}, FewPhotos: []TagLibraryFewPhotos{},
-		Skipped: []PruneTagSkipped{},
+		FewSubtags: []TagLibraryFewSubtags{},
+		Skipped:    []PruneTagSkipped{},
 	}
 }
 
@@ -377,6 +390,31 @@ func (l *tagLibrarian) photoNamesByTag(names map[string]string) map[string][]str
 	}
 	for _, list := range out {
 		slices.Sort(list)
+	}
+	return out
+}
+
+// fewSubtags is every kept tag that has subtags after the changes, but fewer
+// than minTagPhotos of them, sorted by ID.
+func (l *tagLibrarian) fewSubtags() []TagLibraryFewSubtags {
+	out := []TagLibraryFewSubtags{}
+	subtags := l.keptSubtags()
+	for _, id := range l.sortedIDs() {
+		if n := len(subtags[id]); n > 0 && n < minTagPhotos {
+			out = append(out, TagLibraryFewSubtags{Tag: id, Subtags: subtags[id]})
+		}
+	}
+	return out
+}
+
+// keptSubtags is the sorted IDs of the kept tags under each tag after the
+// changes, by the parent's ID.
+func (l *tagLibrarian) keptSubtags() map[string][]string {
+	out := map[string][]string{}
+	for _, id := range l.sortedIDs() {
+		if parent := l.parentOf(id); parent != "" && !l.isGone(id) {
+			out[parent] = append(out[parent], id)
+		}
 	}
 	return out
 }

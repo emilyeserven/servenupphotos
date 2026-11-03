@@ -93,6 +93,13 @@ export interface TagLibraryFewPhotos {
   photoNames: string[];
 }
 
+/** A tag that would have some subtags, but fewer than a tag with subtags should. */
+export interface TagLibraryFewSubtags {
+  tag: string;
+  /** The IDs of the tags under it. */
+  subtags: string[];
+}
+
 /** What pasting the answer would do to the whole tag library, and what can't be made. */
 export interface TagLibraryPreview extends Omit<PruneTagsPreview, "tags"> {
   /** How many tags and readable photo files there are. */
@@ -105,6 +112,8 @@ export interface TagLibraryPreview extends Omit<PruneTagsPreview, "tags"> {
   notes: TagLibraryNote[];
   /** Every tag left with fewer than `minPhotos` photos after the changes. */
   fewPhotos: TagLibraryFewPhotos[];
+  /** Every tag left with at least one but fewer than `minPhotos` subtags after the changes. */
+  fewSubtags: TagLibraryFewSubtags[];
   minPhotos: number;
 }
 
