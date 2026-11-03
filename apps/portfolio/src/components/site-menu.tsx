@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { MenuIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { type Theme, useTheme } from "@/components/theme-provider";
@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import type { ScriptDisplay } from "@/lib/localize";
 import { parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters } from "@/lib/photo-filters";
-import { type PortfolioView, portfolioViews } from "@/lib/portfolio-views";
+import { mainViews, minorViews, type PortfolioView } from "@/lib/portfolio-views";
 import { cn } from "@/lib/utils";
 import { rememberedViewOptions } from "@/lib/view-options";
 
@@ -69,22 +69,30 @@ export function SiteMenu() {
         />
         <nav aria-label="Portfolio views">
           <ul className="grid grid-cols-3 gap-1">
-            {portfolioViews.map(({ to, label, icon: Icon, enabled }) => (
-              <li key={to}>
-                <Link
-                  to={to}
-                  search={(prev: Record<string, unknown>) => carriedSearch(to, prev)}
-                  disabled={!enabled}
+            {mainViews.map((view) => (
+              <li key={view.to}>
+                <ViewLink
+                  view={view}
                   onClick={() => setOpen(false)}
-                  className="flex flex-col items-center gap-1.5 rounded-md px-1 py-3 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40"
-                  activeProps={{
-                    className: "bg-accent text-accent-foreground",
-                    "aria-current": "page",
-                  }}
+                  className="flex-col gap-1.5 px-1 py-3 text-xs"
                 >
-                  <Icon className="size-6" aria-hidden />
-                  {label}
-                </Link>
+                  <view.icon className="size-6" aria-hidden />
+                  {view.label}
+                </ViewLink>
+              </li>
+            ))}
+          </ul>
+          <ul className="mt-1 grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] gap-1 border-y py-1">
+            {minorViews.map((view) => (
+              <li key={view.to}>
+                <ViewLink
+                  view={view}
+                  onClick={() => setOpen(false)}
+                  className="gap-2 px-2 py-1.5 text-xs"
+                >
+                  <view.icon className="size-3.5" aria-hidden />
+                  {view.label}
+                </ViewLink>
               </li>
             ))}
           </ul>
@@ -110,6 +118,35 @@ export function SiteMenu() {
         />
       </PopoverContent>
     </Popover>
+  );
+}
+
+interface ViewLinkProps {
+  view: PortfolioView;
+  onClick: () => void;
+  className: string;
+  children: ReactNode;
+}
+
+/** A link in the site menu to one of the portfolio's views, highlighted on the view's own page. */
+function ViewLink({ view, onClick, className, children }: ViewLinkProps) {
+  return (
+    <Link
+      to={view.to}
+      search={(prev: Record<string, unknown>) => carriedSearch(view.to, prev)}
+      disabled={!view.enabled}
+      onClick={onClick}
+      className={cn(
+        "flex items-center rounded-md font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40",
+        className,
+      )}
+      activeProps={{
+        className: "bg-accent text-accent-foreground",
+        "aria-current": "page",
+      }}
+    >
+      {children}
+    </Link>
   );
 }
 
