@@ -5,6 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
+import { photoPreviewPages } from "./photo-previews";
 
 const root = path.resolve(import.meta.dirname, "../..");
 /** How long after one refresh the next page load waits before refreshing again. */
@@ -47,6 +48,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
     localPhotoData(),
+    // Pages at /photos/<id>/ whose link previews show the photo; see docs/photo-viewer.md.
+    photoPreviewPages(path.join(import.meta.dirname, "src/data/photos/ALLPHOTOS.json")),
   ],
   resolve: {
     alias: {

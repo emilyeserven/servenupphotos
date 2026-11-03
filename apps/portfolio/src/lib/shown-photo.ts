@@ -16,6 +16,14 @@ const showableById = new Map(
   ),
 );
 
+/**
+ * The full link to a photo's own page, `/photos/<id>/`, which the build writes with the photo as
+ * its social media preview (photo-previews.ts) and which opens the photo on the Grid.
+ */
+export function photoPageUrl(id: number): string {
+  return new URL(`/photos/${id}/`, window.location.origin).href;
+}
+
 /** The open photo's ID from the URL's search, leaving it out unless it's a whole number. */
 export function parseShownPhoto(search: Record<string, unknown>): ShownPhotoSearch {
   const id = Number(search.photo);

@@ -41,6 +41,24 @@ opens with them shown each time.
 
 Each page passes `photos` and `onShow` to `PhotoLightbox` in `apps/portfolio/src/components/photo-lightbox.tsx`.
 
+## Sharing a photo
+
+The **link** button beside the eye button copies the photo's own link, `https://servenupphotos.net/photos/<id>/`. Shared
+on social media or in a chat, it shows the photo as the link's preview, with its title, and its comment (cut to 200
+characters) or else where it was taken as the description. Opening it shows the photo on the Grid. The page's own
+address, `/grid?photo=12`, still opens the photo but previews as the plain site.
+
+The preview uses the photo's Medium version (1200px on its longest edge) as `og:image`, with `twitter:card` set to
+`summary_large_image` so X shows it full width ([Open Graph protocol](https://ogp.me/),
+[X's summary card with large image](https://developer.x.com/en/docs/x-for-websites/cards/overview/summary-card-with-large-image)).
+After each build, `photoPreviewPages` in `apps/portfolio/photo-previews.ts` writes `dist/photos/<id>/index.html` for
+every photo in the committed `ALLPHOTOS.json`: the built `index.html` with those tags. In the app,
+`routes/photos.$id.tsx` redirects to `/grid?photo=<id>`.
+
+> **Frontend analogy:** link previews are made by bots that read a page's HTML but never run its JavaScript, so tags
+> that React adds after load are invisible to them. Writing one HTML file per photo at build time is static site
+> generation for just the `<head>`; the rest of each file is the same SPA shell, so it still boots the app.
+
 ## Image loading
 
 Every thumbnail on the portfolio (Grid tiles and their blurred placeholders, Timeline, Table, the Map's markers and
