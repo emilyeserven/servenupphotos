@@ -8,9 +8,14 @@ export interface PortfolioView {
   icon: LucideIcon;
   /** False for a view that's linked but not ready to visit yet. */
   enabled: boolean;
+  /**
+   * True for a lesser view (Albums, Tags, Lucky): the site menu lists it in small text under the
+   * big icon tiles, and the homepage leaves it out.
+   */
+  minor?: boolean;
 }
 
-export const portfolioViews: PortfolioView[] = [
+const portfolioViews: PortfolioView[] = [
   {
     to: "/timeline",
     label: "Timeline",
@@ -31,6 +36,7 @@ export const portfolioViews: PortfolioView[] = [
     description: "The photos in each album, a strip for each.",
     icon: BookImage,
     enabled: true,
+    minor: true,
   },
   {
     to: "/tags",
@@ -38,6 +44,7 @@ export const portfolioViews: PortfolioView[] = [
     description: "Every tag with a few of its photos, each tag under its parent tag.",
     icon: Tags,
     enabled: true,
+    minor: true,
   },
   {
     to: "/grid",
@@ -60,11 +67,15 @@ export const portfolioViews: PortfolioView[] = [
       "A few rows of photos picked at random, from all of them or the ones the filters leave.",
     icon: Dices,
     enabled: true,
+    minor: true,
   },
 ];
 
-/** The views ready to visit, in menu order. */
-export const enabledViews = portfolioViews.filter((view) => view.enabled);
+/** The main views, shown as big icon tiles in the site menu and on the homepage. */
+export const mainViews = portfolioViews.filter((view) => !view.minor);
+
+/** The lesser views, listed in small text under the site menu's tiles. */
+export const minorViews = portfolioViews.filter((view) => view.minor);
 
 export function getPortfolioView(to: PortfolioView["to"]): PortfolioView {
   const view = portfolioViews.find((v) => v.to === to);
