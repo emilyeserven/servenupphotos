@@ -102,18 +102,18 @@ function SpotlightTags({ entries }: { entries: TagEntry[] }) {
   return (
     <section aria-label="Spotlight tags" className="flex flex-col gap-3 border-b pb-10">
       <h2 className="text-xl font-semibold tracking-tight">Spotlight Tags</h2>
-      <CardList entries={entries} grid={SPOTLIGHT_GRID} />
+      <CardList entries={entries} wide />
     </section>
   );
 }
 
-/** The tags as one grid of cards, the usual grid unless another is given. */
-function CardList({ entries, grid = CARD_GRID }: { entries: TagEntry[]; grid?: string }) {
+/** The tags as one grid of cards; wide ones, two to a row, for Spotlight Tags. */
+function CardList({ entries, wide = false }: { entries: TagEntry[]; wide?: boolean }) {
   return (
-    <ul className={grid}>
+    <ul className={wide ? SPOTLIGHT_GRID : CARD_GRID}>
       {entries.map((entry) => (
         <li key={entry.tag.id}>
-          <TagCard entry={entry} />
+          <TagCard entry={entry} wide={wide} />
         </li>
       ))}
     </ul>

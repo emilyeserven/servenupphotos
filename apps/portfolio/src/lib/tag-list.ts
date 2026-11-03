@@ -24,15 +24,18 @@ export interface TagSection {
 /** How many photos a tag's card previews. */
 const PREVIEW_COUNT = 3;
 
+/** How many photos a Spotlight Tags card previews: twice as many, as it's twice as wide. */
+const SPOTLIGHT_PREVIEW_COUNT = 6;
+
 /** The tag with its photo count and previews, from the photos given. */
-function entryOf(tag: Group, between: Group[], all: Photo[]): TagEntry {
+function entryOf(tag: Group, between: Group[], all: Photo[], previews = PREVIEW_COUNT): TagEntry {
   const ids = tagAndSubTags(tag.id);
   const tagged = all.filter((photo) => photo.tags.some((id) => ids.has(id)));
   return {
     tag,
     between,
     count: tagged.length,
-    previews: newestWithImages(tagged).slice(0, PREVIEW_COUNT),
+    previews: newestWithImages(tagged).slice(0, previews),
   };
 }
 
@@ -108,8 +111,13 @@ export function tagSections(sort: TagSort = "name", all: Photo[] = photos): TagS
   }));
 }
 
-/** Every favorite tag with photos, in the sort's order, for the top of the Tags page. */
+/**
+ * Every favorite tag with photos, in the sort's order, for the Spotlight Tags at the top of the
+ * Tags page, each with up to 6 previews.
+ */
 export function favoriteTags(sort: TagSort = "name", all: Photo[] = photos): TagEntry[] {
-  const favorites = tags.filter((tag) => tag.favorite).map((tag) => entryOf(tag, [], all));
+  const favorites = tags
+    .filter((tag) => tag.favorite)
+    .map((tag) => entryOf(tag, [], all, SPOTLIGHT_PREVIEW_COUNT));
   return withPhotos(favorites).toSorted(COMPARE[sort]);
 }

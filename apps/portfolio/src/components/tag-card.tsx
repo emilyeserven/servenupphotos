@@ -29,11 +29,15 @@ function Description({ text, className }: { text?: string; className?: string })
 /** The squares a card always shows, filled with its previews and empty after them. */
 const SLOTS = [0, 1, 2];
 
+/** The squares a wide Spotlight Tags card shows: twice as many, so each stays about as big. */
+const WIDE_SLOTS = [0, 1, 2, 3, 4, 5];
+
 /** A card's row of square thumbnails, empty squares after the photos it has. */
-function Thumbnails({ previews }: { previews: ImagePhoto[] }) {
+function Thumbnails({ previews, wide }: { previews: ImagePhoto[]; wide: boolean }) {
+  const slots = wide ? WIDE_SLOTS : SLOTS;
   return (
-    <div className="grid grid-cols-3 gap-1.5">
-      {SLOTS.map((slot) => (
+    <div className={`grid gap-1.5 ${wide ? "grid-cols-6" : "grid-cols-3"}`}>
+      {slots.map((slot) => (
         <div key={slot} className="aspect-square overflow-hidden rounded-md bg-muted">
           {previews[slot] && <PhotoThumbnail image={previews[slot].image} />}
         </div>
@@ -49,13 +53,13 @@ const CARD =
 /**
  * A tag as a card linking to the Grid filtered to it: its newest photos as square thumbnails, its
  * name after the tags between it and its section's parent with how many photos it has, and its
- * description when one is written.
+ * description when one is written. A wide card, for Spotlight Tags, shows 6 thumbnails, not 3.
  */
-export function TagCard({ entry }: { entry: TagEntry }) {
+export function TagCard({ entry, wide = false }: { entry: TagEntry; wide?: boolean }) {
   const { tag, between, count, previews } = entry;
   return (
     <Link to="/grid" search={() => gridSearchFor(tag.id)} className={CARD}>
-      <Thumbnails previews={previews} />
+      <Thumbnails previews={previews} wide={wide} />
       <div>
         <p className="font-medium">
           {between.map((group) => (
@@ -132,7 +136,7 @@ function OwnPhotosCard({ tag, previews }: { tag: TagEntry["tag"]; previews: Imag
         aria-label={`Photos tagged ${tag.name}`}
         className={CARD}
       >
-        <Thumbnails previews={previews} />
+        <Thumbnails previews={previews} wide={false} />
       </Link>
     </li>
   );

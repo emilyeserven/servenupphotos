@@ -11,7 +11,8 @@ like Albums, the homepage doesn't link to it.
 
 The [favorite tags](albums-and-tags.md#favorite-tags), starred on the pipeline's Tags page, come first under
 **Spotlight Tags**, with a divider below them. Their cards are wider than the rest: one per row on a phone and two on a
-wider screen, where the other grids have two, three or four. They're still in their usual places further down too. The
+wider screen, where the other grids have two, three or four. Each shows its 6 newest photos instead of 3, so the
+thumbnails stay about the same size. They're still in their usual places further down too. The
 section follows the sort and the search like the rest of the page, shows in **Top level only** as well (a favorite with
 a parent included), and leaves out favorites without photos; with no favorites, it isn't there.
 
