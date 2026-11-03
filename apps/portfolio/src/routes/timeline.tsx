@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { dayKey } from "@/lib/heatmap";
+import { labelOn } from "@/lib/timeline-labels";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
@@ -239,9 +240,11 @@ function DaySection({
 }: RowOptions & { day: string; dayPhotos: Photo[] }) {
   return (
     <li className="flex flex-col gap-1">
-      {/* Sticks just under the month's heading while the day's photos scroll under it. */}
-      <h3 className="sticky top-10 z-[5] -mx-1 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
-        {day}
+      {/* Sticks just under the month's heading while the day's photos scroll under it, so the
+          label on its right reads as the label of the month's days now in view. */}
+      <h3 className="sticky top-10 z-[5] -mx-1 flex items-center justify-between gap-3 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
+        <span className="min-w-0 truncate">{day}</span>
+        <DayLabel dayPhotos={dayPhotos} />
       </h3>
       <ul className="flex flex-col gap-3">
         {dayPhotos.map((photo) => (
@@ -249,6 +252,18 @@ function DaySection({
         ))}
       </ul>
     </li>
+  );
+}
+
+/** The timeline label of the day the photos were taken, on the right of its heading; nothing without one. */
+function DayLabel({ dayPhotos }: { dayPhotos: Photo[] }) {
+  const [first] = dayPhotos;
+  const label = first ? labelOn(dayKey(first.takenAt)) : "";
+  if (!label) return null;
+  return (
+    <span className="mr-12 max-w-1/2 shrink-0 truncate rounded-full sm:mr-0 bg-muted px-2 py-0.5 font-semibold text-foreground">
+      {label}
+    </span>
   );
 }
 

@@ -23,6 +23,8 @@ type CombinedFiles struct {
 	Cameras InFlightAllPhotos `json:"cameras"`
 	// Lenses is LENSES.json, the custom lenses.
 	Lenses InFlightAllPhotos `json:"lenses"`
+	// Timeline is TIMELINE.json, the timeline labels.
+	Timeline InFlightAllPhotos `json:"timeline"`
 }
 
 // CombinedBase is CombinedFiles on the base branch: what the portfolio has.
@@ -92,6 +94,7 @@ func combinedFiles(t target, root string, s *snapshot, branch string) CombinedFi
 		MetaInfo:      read(MetaInfo.Folder, MetaInfo.AllFile),
 		Cameras:       read(Cameras.Folder, Cameras.AllFile),
 		Lenses:        read(Lenses.Folder, Lenses.AllFile),
+		Timeline:      read(TimelineLabels.Folder, TimelineLabels.AllFile),
 	}
 }
 

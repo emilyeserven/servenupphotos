@@ -2,7 +2,9 @@
 
 The portfolio's Timeline (`/timeline`) lists the photos in a time range, newest first, grouped by month and then by day.
 The month and day headings stay at the top of the window while their photos scroll past, and clicking a month's heading
-folds it away. Clicking a photo's thumbnail or title opens the photo viewer. The filters are described in
+folds it away. A day covered by a [timeline label](timeline-labels.md), such as **Japan** for a trip, shows the label on
+the right of its heading, so the label of the days in view sits just under the month's heading. Clicking a photo's
+thumbnail or title opens the photo viewer. The filters are described in
 [Portfolio Filters](portfolio-filters.md).
 
 ## Scrubber

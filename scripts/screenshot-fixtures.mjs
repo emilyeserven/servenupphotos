@@ -48,6 +48,7 @@ const baseLocalizations = readFolder("localizations", "LOCALIZATIONS");
 const baseMetaInfo = readFolder("metainfo", "METAINFO");
 const baseCameras = readFolder("cameras", "CAMERAS");
 const baseLenses = readFolder("lenses", "LENSES");
+const baseTimeline = readFolder("timeline", "TIMELINE");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -156,6 +157,16 @@ const added = {
       },
     },
   ],
+  timeline: [
+    {
+      path: `${FOLDER}/timeline/japan-2026-09-22.json`,
+      data: { id: "japan-2026-09-22", name: "Japan", start: "2026-09-22", end: "2026-10-02" },
+    },
+    {
+      path: `${FOLDER}/timeline/korea-2026-09-20.json`,
+      data: { id: "korea-2026-09-20", name: "Korea", start: "2026-09-20", end: "2026-09-21" },
+    },
+  ],
   metainfo: [
     metaGroupFile("focal-length-wide-angle", "Wide angle", "focalLength", {
       range: { min: 10, max: 24 },
@@ -231,6 +242,7 @@ const headLocalizations = withAdded(baseLocalizations, added.localizations);
 const headMetaInfo = withAdded(baseMetaInfo, added.metainfo);
 const headCameras = withAdded(baseCameras, added.cameras);
 const headLenses = withAdded(baseLenses, added.lenses);
+const headTimeline = withAdded(baseTimeline, added.timeline);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -244,7 +256,7 @@ function combinedFile(kind, all, files, branch) {
 }
 
 function combinedFiles(
-  [photos, albums, tags, genres, places, localizations, metainfo, cameras, lenses],
+  [photos, albums, tags, genres, places, localizations, metainfo, cameras, lenses, timeline],
   branch,
 ) {
   return {
@@ -257,6 +269,7 @@ function combinedFiles(
     metainfo: combinedFile("metainfo", "METAINFO.json", metainfo, branch),
     cameras: combinedFile("cameras", "CAMERAS.json", cameras, branch),
     lenses: combinedFile("lenses", "LENSES.json", lenses, branch),
+    timeline: combinedFile("timeline", "TIMELINE.json", timeline, branch),
   };
 }
 
@@ -714,6 +727,7 @@ export function defaultFixtures() {
           baseMetaInfo,
           baseCameras,
           baseLenses,
+          baseTimeline,
         ]),
         branch: BASE_BRANCH,
       },
@@ -729,6 +743,7 @@ export function defaultFixtures() {
             headMetaInfo,
             headCameras,
             headLenses,
+            headTimeline,
           ],
           PULL_REQUEST.branch,
         ),
@@ -751,6 +766,7 @@ export function defaultFixtures() {
       metainfo: { folder: `${FOLDER}/metainfo`, files: added.metainfo.map(groupFile) },
       cameras: { folder: `${FOLDER}/cameras`, files: added.cameras.map(groupFile) },
       lenses: { folder: `${FOLDER}/lenses`, files: added.lenses.map(groupFile) },
+      timeline: { folder: `${FOLDER}/timeline`, files: added.timeline.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -874,6 +890,13 @@ export function defaultFixtures() {
       path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
       data: body,
       before: added.lenses[0].data,
+      changed: true,
+    }),
+    "PUT /api/timeline/japan-2026-09-22": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/timeline/japan-2026-09-22.json`,
+      data: body,
+      before: added.timeline[0].data,
       changed: true,
     }),
     "POST /api/photos/bucket/exif": {

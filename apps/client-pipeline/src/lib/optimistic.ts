@@ -41,6 +41,7 @@ function inFlightFiles(read: InFlightRead | undefined): CachedFile[] {
     read.metainfo,
     read.cameras,
     read.lenses,
+    read.timeline,
   ];
   return [...read.files, ...groups.flatMap((group) => group.files)];
 }
@@ -133,6 +134,7 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
       metainfo: changedFile(head.metainfo, of("metainfo")),
       cameras: changedFile(head.cameras, of("cameras")),
       lenses: changedFile(head.lenses, of("lenses")),
+      timeline: changedFile(head.timeline, of("timeline")),
     },
   };
 }
@@ -189,6 +191,7 @@ export interface PendingSummary {
   metainfo: number;
   cameras: number;
   lenses: number;
+  timeline: number;
   /** Saves whose files aren't known. */
   other: number;
 }
@@ -219,6 +222,7 @@ export function summarizeChanges(
     metainfo: 0,
     cameras: 0,
     lenses: 0,
+    timeline: 0,
     other: unknownChanges,
   };
   const byKey = new Map(checked.map((file) => [fileKey(file), file]));
@@ -261,6 +265,7 @@ export function pendingText(summary: PendingSummary): string {
     [summary.metainfo, "metadata group"],
     [summary.cameras, "camera override"],
     [summary.lenses, "custom lens file"],
+    [summary.timeline, "timeline label"],
     [summary.other, "other save"],
   ]);
 }
