@@ -8,6 +8,7 @@ import {
   CameraIcon,
   Camera,
   DatabaseIcon,
+  HeartIcon,
   ImageIcon,
   LanguagesIcon,
   LayoutGridIcon,
@@ -67,6 +68,7 @@ export const navGroups = [
     items: [
       { title: "Instagram", url: "/instagram", icon: CalendarDaysIcon },
       { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
+      { title: "Fan Likes", url: "/fan-likes", icon: HeartIcon },
     ],
   },
   {

@@ -2,9 +2,9 @@ import type { FastifyPluginAsync } from "fastify";
 import { relayToBackend } from "../lib/backend.js";
 
 /**
- * Places, localizations, metadata groups, camera overrides, custom lenses, caption templates and
- * timeline labels, kept as JSON on GitHub, for the Places, Localizations, Metadata Groups, Camera
- * Overrides, Custom Lenses, Caption Templates and Timeline Labels pages.
+ * Places, localizations, metadata groups, camera overrides, custom lenses, caption templates,
+ * timeline labels and fan likes, kept as JSON on GitHub, for the Places, Localizations, Metadata
+ * Groups, Camera Overrides, Custom Lenses, Caption Templates, Timeline Labels and Fan Likes pages.
  */
 export const placesRoutes: FastifyPluginAsync = async (app) => {
   // Reads every place and localization file in the photo data pull request; the backend gives
@@ -14,8 +14,8 @@ export const placesRoutes: FastifyPluginAsync = async (app) => {
   );
 
   // Saves a place, a localization, a metadata group (combined into METAINFO.json), a camera
-  // override (CAMERAS.json), a custom lens (LENSES.json), a caption template (CAPTIONS.json) or a
-  // timeline label (TIMELINE.json), new or changed, as a change waiting for Commit.
+  // override (CAMERAS.json), a custom lens (LENSES.json), a caption template (CAPTIONS.json), a
+  // timeline label (TIMELINE.json) or a fan's likes (LIKES.json), new or changed, as a change waiting for Commit.
   for (const kind of [
     "places",
     "localizations",
@@ -24,6 +24,7 @@ export const placesRoutes: FastifyPluginAsync = async (app) => {
     "lenses",
     "captions",
     "timeline",
+    "likes",
   ]) {
     app.put<{ Params: { id: string } }>(`/${kind}/:id`, async (request, reply) =>
       relayToBackend(reply, app.log, `/${kind}/${encodeURIComponent(request.params.id)}`, {
@@ -35,9 +36,9 @@ export const placesRoutes: FastifyPluginAsync = async (app) => {
     );
   }
 
-  // Removes a metadata group, a camera override, a custom lens, a caption template or a timeline
-  // label as a change waiting for Commit.
-  for (const kind of ["metainfo", "cameras", "lenses", "captions", "timeline"]) {
+  // Removes a metadata group, a camera override, a custom lens, a caption template, a timeline
+  // label or a fan's likes as a change waiting for Commit.
+  for (const kind of ["metainfo", "cameras", "lenses", "captions", "timeline", "likes"]) {
     app.delete<{ Params: { id: string } }>(`/${kind}/:id`, async (request, reply) =>
       relayToBackend(reply, app.log, `/${kind}/${encodeURIComponent(request.params.id)}`, {
         method: "DELETE",

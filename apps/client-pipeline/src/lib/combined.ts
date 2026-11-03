@@ -103,6 +103,7 @@ export function withCombined(read: InFlightRead, view: CombinedView): InFlightRe
     lenses: checkedGroups(read.lenses, file("lenses", "LENSES.json")),
     captions: checkedGroups(read.captions, file("captions", "CAPTIONS.json")),
     timeline: checkedGroups(read.timeline, file("timeline", "TIMELINE.json")),
+    likes: checkedGroups(read.likes, file("likes", "LIKES.json")),
   };
 }
 

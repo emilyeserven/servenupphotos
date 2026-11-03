@@ -16,6 +16,7 @@ import { Route as CameraOverridesRouteImport } from './routes/camera-overrides'
 import { Route as CaptionTemplatesRouteImport } from './routes/caption-templates'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExifRouteImport } from './routes/exif'
+import { Route as FanLikesRouteImport } from './routes/fan-likes'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
@@ -69,6 +70,11 @@ const CompareRoute = CompareRouteImport.update({
 const ExifRoute = ExifRouteImport.update({
   id: '/exif',
   path: '/exif',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FanLikesRoute = FanLikesRouteImport.update({
+  id: '/fan-likes',
+  path: '/fan-likes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
+  '/fan-likes': typeof FanLikesRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
@@ -203,6 +210,7 @@ export interface FileRoutesByTo {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
+  '/fan-likes': typeof FanLikesRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
+  '/fan-likes': typeof FanLikesRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/compare'
     | '/exif'
+    | '/fan-likes'
     | '/gallery'
     | '/in-flight'
     | '/instagram'
@@ -289,6 +299,7 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/compare'
     | '/exif'
+    | '/fan-likes'
     | '/gallery'
     | '/in-flight'
     | '/instagram'
@@ -316,6 +327,7 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/compare'
     | '/exif'
+    | '/fan-likes'
     | '/gallery'
     | '/in-flight'
     | '/instagram'
@@ -345,6 +357,7 @@ export interface RootRouteChildren {
   CaptionTemplatesRoute: typeof CaptionTemplatesRoute
   CompareRoute: typeof CompareRoute
   ExifRoute: typeof ExifRoute
+  FanLikesRoute: typeof FanLikesRoute
   GalleryRoute: typeof GalleryRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
@@ -413,6 +426,13 @@ declare module '@tanstack/react-router' {
       path: '/exif'
       fullPath: '/exif'
       preLoaderRoute: typeof ExifRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fan-likes': {
+      id: '/fan-likes'
+      path: '/fan-likes'
+      fullPath: '/fan-likes'
+      preLoaderRoute: typeof FanLikesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -573,6 +593,7 @@ const rootRouteChildren: RootRouteChildren = {
   CaptionTemplatesRoute: CaptionTemplatesRoute,
   CompareRoute: CompareRoute,
   ExifRoute: ExifRoute,
+  FanLikesRoute: FanLikesRoute,
   GalleryRoute: GalleryRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
