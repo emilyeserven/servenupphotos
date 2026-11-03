@@ -23,6 +23,8 @@ parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }
 
 ## Adding photos
 
+To have an album pick its own photos from filters instead, make it a [Smart Album](smart-albums.md).
+
 **Add photos**, on the **Photos** card of an album's page, opens the saved photos that aren't in the album yet (in
 the photo data pull request or the portfolio, the same ones the Photo page's **Choose a saved photo** lists), with a
 search by title or file name, the [Gallery](gallery.md)'s **Title**, **Place**, **GPS position**, **Albums**,

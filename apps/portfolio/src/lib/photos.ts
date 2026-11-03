@@ -1,4 +1,5 @@
 import committedData from "@portfolio/data/photos/ALLPHOTOS.json";
+import type { Group } from "@portfolio/lib/groups";
 import {
   type ColorShare,
   type PhotoColorData,
@@ -20,6 +21,8 @@ import {
   SCRIPT_DISPLAYS,
   type ScriptDisplay,
 } from "@portfolio/lib/localize";
+import { withSmartAlbums } from "@portfolio/lib/smart-albums";
+import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 
 export interface Photo {
   /**
@@ -707,11 +710,17 @@ function withCityCountries(list: Photo[]): Photo[] {
 }
 
 /**
- * Photo JSON entries as the portfolio reads them, leaving out the ones with no date. The pipeline's
- * Gallery reads its photos this way so the portfolio's filters can narrow them.
+ * Photo JSON entries as the portfolio reads them, leaving out the ones with no date, each in the
+ * Smart Albums its rules match too. The pipeline's Gallery reads its photos this way so the
+ * portfolio's filters can narrow them, and its album pages pass the albums and timeline labels on
+ * GitHub, which may be newer than the portfolio's own.
  */
-export function photosFromData(data: PhotoData[]): Photo[] {
-  return withCityCountries(fromPhotoData(data));
+export function photosFromData(
+  data: PhotoData[],
+  albums?: Group[],
+  labels?: TimelineLabel[],
+): Photo[] {
+  return withSmartAlbums(withCityCountries(fromPhotoData(data)), albums, labels);
 }
 
 const localPhotos = localData ? photosFromData(localData) : [];

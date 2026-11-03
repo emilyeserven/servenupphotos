@@ -26,6 +26,7 @@ import {
 } from "@/components/all-photos-rebuild";
 import { AlbumMoveButtons } from "@/components/album-move-buttons";
 import { HiddenMark } from "@/components/album-visibility-card";
+import { SmartMark } from "@/components/smart-album/smart-album-card";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { GroupCombobox } from "@/components/group-picker";
 import { TagNamesCard } from "@/components/tag-names-card";
@@ -514,6 +515,7 @@ function GroupRow({
           <div className="min-w-0 flex-1">
             <GroupName kind={kind} group={group} />
             <HiddenMark album={group} />
+            <SmartMark album={group} />
             <GroupNote group={group} />
           </div>
           <AlbumMoveButtons album={group} albums={albums} />

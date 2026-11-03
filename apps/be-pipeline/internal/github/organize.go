@@ -101,6 +101,9 @@ type groupJSON struct {
 	Layout []AlbumRow `json:"layout,omitempty"`
 	// Hidden is true for an album the portfolio doesn't list or give a page.
 	Hidden bool `json:"hidden,omitempty"`
+	// Rules makes an album a Smart Album: the portfolio Grid's filters, as
+	// its URL names them, that pick its photos.
+	Rules json.RawMessage `json:"rules,omitempty"`
 }
 
 // albumJSON is the content of an album file, as written: it always lists its
@@ -128,6 +131,9 @@ type albumJSON struct {
 	// Hidden is true for an album the portfolio doesn't list or give a page;
 	// missing or false while it's shown.
 	Hidden bool `json:"hidden,omitempty"`
+	// Rules makes the album a Smart Album, whose photos are the ones these
+	// filters match; missing or null for an album of chosen photos.
+	Rules json.RawMessage `json:"rules,omitempty"`
 }
 
 // fileContent is g as kind's files are written.
@@ -163,8 +169,12 @@ type Group struct {
 	Layout []AlbumRow `json:"layout,omitempty"`
 	// Hidden is true for an album the portfolio doesn't list or give a page,
 	// along with the albums inside it.
-	Hidden bool   `json:"hidden,omitempty"`
-	Path   string `json:"path"`
+	Hidden bool `json:"hidden,omitempty"`
+	// Rules is a Smart Album's filters, by the names the portfolio's URL
+	// gives them, such as {"tag": "night", "orientation": "vertical"}; empty
+	// for an album of chosen photos.
+	Rules map[string]any `json:"rules,omitempty"`
+	Path  string         `json:"path"`
 	// FileURL is the file's page on GitHub; empty while its latest change is
 	// only pending.
 	FileURL string `json:"fileUrl"`
@@ -450,5 +460,6 @@ func (w *workspace) readGroup(p string) Group {
 	}
 	g.SpotlightZones, g.PhotoOrder = content.SpotlightZones, content.PhotoOrder
 	g.Covers, g.Layout, g.Hidden = content.Covers, content.Layout, content.Hidden
+	g.Rules = smartRules(content.Rules)
 	return g
 }

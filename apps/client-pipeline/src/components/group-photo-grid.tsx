@@ -86,7 +86,7 @@ function fullUrl(photo: CombinedPhoto): string | undefined {
 }
 
 /** A photo's Square Thumbnail and title, opening the photo full size. */
-function PhotoTile({ photo }: { photo: CombinedPhoto }) {
+export function PhotoTile({ photo }: { photo: CombinedPhoto }) {
   const [open, setOpen] = useState(false);
   const [failed, setFailed] = useState(false);
   const name = photoName(photo);

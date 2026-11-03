@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CheckIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { albumAncestry, type Group, organizeQuery, setAlbumHiddenMutation } from "@/api/organize";
-import { WaitingForCommit } from "@/components/waiting-for-commit";
+import { SavedInApp } from "@/components/waiting-for-commit";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -69,14 +69,7 @@ function VisibilityButton({
 function VisibilityOutcome({ save }: { save: ReturnType<typeof useHiddenSave> }) {
   if (save.isError) return <p className="text-destructive">{save.error.message}</p>;
   if (!save.data?.files) return null;
-  return (
-    <p className="flex items-start gap-2">
-      <CheckIcon className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-      <span>
-        Saved the change in the app. <WaitingForCommit pullRequestUrl={save.data.pullRequestUrl} />
-      </span>
-    </p>
-  );
+  return <SavedInApp what="the change" pullRequestUrl={save.data.pullRequestUrl} />;
 }
 
 /** Whether the album shows on the portfolio, and which album hides it when one it's inside does. */

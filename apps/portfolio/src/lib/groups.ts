@@ -37,6 +37,12 @@ export interface Group {
    * Albums page, the album filter or their own pages, though a spotlight zone still shows it.
    */
   hidden?: boolean;
+  /**
+   * For a Smart Album, the portfolio Grid's filters that pick its photos, by their URL names, such
+   * as `{ "tag": "night", "orientation": "vertical" }`, set on the pipeline's album page; missing
+   * or null for an album of chosen photos. See `lib/smart-albums.ts`.
+   */
+  rules?: Record<string, unknown> | null;
 }
 
 /** One row of an album's layout: Markdown text above, its photos side by side, and text below. */

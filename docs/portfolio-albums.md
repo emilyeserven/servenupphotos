@@ -1,7 +1,7 @@
 # Portfolio Albums
 
 The portfolio's Albums page (`/albums`, `apps/portfolio/src/routes/albums.index.tsx`) shows each album with a strip of its
-[covers](album-layouts.md), up to 5 photos picked on the pipeline, or else its first 5 photos in the album's order, counting the photos in its sub-albums too (as the album filter does). An album's order is
+[covers](album-layouts.md), up to 5 photos picked on the pipeline, or else its first 5 photos in the album's order, counting the photos in its sub-albums too (as the album filter does). A [Smart Album](smart-albums.md)'s photos are the ones its rules match. An album's order is
 the one set by dragging its photos on the pipeline's album page ([Photo order](albums-and-tags.md#photo-order),
 its file's `photoOrder`), with the photos it doesn't list after. Without one, or after those, it lists the photos that
 kept a place from the old photo-by-photo spotlight (`websiteSpotlight`, 1 first) before the rest, which come newest

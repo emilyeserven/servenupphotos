@@ -83,6 +83,16 @@ export const organizeRoutes: FastifyPluginAsync = async (app) => {
     ),
   );
 
+  // Saves an album's Smart Album rules, or clears them, as a change waiting for Commit.
+  app.put<{ Params: { id: string } }>("/organize/albums/:id/rules", async (request, reply) =>
+    relayToBackend(
+      reply,
+      app.log,
+      `/organize/albums/${encodeURIComponent(request.params.id)}/rules`,
+      jsonBody("PUT", request.body),
+    ),
+  );
+
   // Names every tag in lowercase kebab-case, its ID, as changes waiting for Commit.
   app.put("/organize/tags/names", async (request, reply) =>
     relayToBackend(reply, app.log, "/organize/tags/names", jsonBody("PUT", request.body ?? {})),

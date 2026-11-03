@@ -8,6 +8,7 @@ import {
   MinusIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { isSmartAlbum } from "@portfolio/lib/smart-albums";
 import {
   GROUP_KINDS,
   type Group,
@@ -39,6 +40,7 @@ import {
   useAlbumRemove,
 } from "@/components/album-remove-photos";
 import { AlbumVisibilityCard } from "@/components/album-visibility-card";
+import { SmartAlbumCard } from "@/components/smart-album/smart-album-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
 import { type GroupPhotos, GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
 import { GroupCombobox } from "@/components/group-picker";
@@ -127,14 +129,19 @@ interface GroupDetailProps {
 }
 
 function GroupDetail({ kind, group, organize }: GroupDetailProps) {
+  const album = isReadableAlbum(kind, group);
   return (
     <>
+      {album && <SmartAlbumCard album={group} />}
       <GroupColumns kind={kind} group={group} organize={organize} />
-      {kind === "albums" && !group.error && (
-        <AlbumLayoutCard album={group} albums={organize.albums} />
-      )}
+      {album && <AlbumLayoutCard album={group} albums={organize.albums} />}
     </>
   );
+}
+
+/** Whether the group is an album whose file could be read. */
+function isReadableAlbum(kind: GroupKind, group: Group): boolean {
+  return kind === "albums" && !group.error;
 }
 
 function GroupColumns({ kind, group, organize }: GroupDetailProps) {
@@ -538,7 +545,12 @@ type PhotosMode = "view" | "reorder" | "remove";
 
 /** Whether the group is an album, readable, with photos to take out of it. */
 function canRemove(kind: GroupKind, group: Group, photos: unknown[] = []): boolean {
-  return kind === "albums" && !group.error && photos.length > 0;
+  return byHand(kind, group) && photos.length > 0;
+}
+
+/** Whether the group is a readable album whose photos are chosen by hand, not a Smart Album. */
+function byHand(kind: GroupKind, group: Group): boolean {
+  return isReadableAlbum(kind, group) && !isSmartAlbum(group);
 }
 
 interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> {
@@ -568,7 +580,7 @@ function AddPhotosButton({
   group,
   add,
 }: { kind: GroupKind; group: Group } & Pick<AlbumAdd, "add">) {
-  if (kind !== "albums" || group.error) return null;
+  if (!byHand(kind, group)) return null;
   return <AlbumAddPhotos album={group} add={add} />;
 }
 
