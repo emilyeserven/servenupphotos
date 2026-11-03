@@ -1,5 +1,6 @@
 {
   "id": "trees",
   "name": "trees",
-  "description": ""
+  "description": "trees of all kinds, alone or in groups",
+  "parent": "plants"
 }

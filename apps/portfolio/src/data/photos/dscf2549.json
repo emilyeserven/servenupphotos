@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["trees", "silhouettes", "branches", "coastline", "highway", "beach", "city"],
-  "genres": [],
+  "genres": ["landscape", "cityscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

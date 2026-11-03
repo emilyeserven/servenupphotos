@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["houses", "brick", "road", "power-lines", "gates", "walls"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

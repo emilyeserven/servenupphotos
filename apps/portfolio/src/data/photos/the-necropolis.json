@@ -48,15 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "ancient-egypt",
-    "houses",
-    "mountains",
-    "power-lines",
-    "necropolis",
-    "village",
-    "desert"
-  ],
+  "tags": ["houses", "mountains", "power-lines", "necropolis", "village", "desert"],
   "genres": [],
   "places": [
     {

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["trees", "lamppost", "juggling", "street-performer", "park"],
+  "tags": ["trees", "street-lights", "street-performers", "park"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9648
-  }
+  },
+  "notes": "Shows a juggler; 'juggling' isn't a tag, since only 1 photo has it."
 }

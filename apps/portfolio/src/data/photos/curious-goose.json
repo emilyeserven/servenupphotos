@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["geese", "birds", "grass", "park"],
-  "genres": [],
+  "tags": ["birds", "grass", "park"],
+  "genres": ["wildlife"],
   "places": [
     {
       "relation": "",
@@ -265,5 +265,6 @@
     "chroma": 26.83,
     "peakChroma": 38.18,
     "samples": 10087
-  }
+  },
+  "notes": "Shows a goose; 'geese' isn't a tag, since only 1 photo has one."
 }

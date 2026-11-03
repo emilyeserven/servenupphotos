@@ -1,6 +1,6 @@
 {
   "id": "platform",
   "name": "platform",
-  "description": "",
+  "description": "train and subway platforms",
   "parent": "train-station"
 }

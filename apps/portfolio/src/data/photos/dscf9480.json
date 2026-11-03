@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["buddhism", "temple", "gates", "doors", "stairs", "wood", "katomado", "karahafu"],
+  "tags": ["buddhism", "temple", "gates", "doors", "stairs", "wood", "windows"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 9.22,
     "peakChroma": 19.88,
     "samples": 9912
-  }
+  },
+  "notes": "Shows a karahafu gable and katomado window; 'karahafu' and 'katomado' aren't tags, since only 1 photo has them."
 }

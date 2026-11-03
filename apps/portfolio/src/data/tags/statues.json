@@ -1,0 +1,6 @@
+{
+  "id": "statues",
+  "name": "statues",
+  "description": "statues of people and animals",
+  "parent": "sculpture"
+}

@@ -48,15 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "fire-escape",
-    "apartments",
-    "windows",
-    "facade",
-    "balconies",
-    "air-conditioners",
-    "urban-decay"
-  ],
+  "tags": ["fire-escapes", "apartments", "windows", "facade", "balconies", "urban-decay"],
   "genres": [],
   "places": [
     {
@@ -273,5 +265,6 @@
     "chroma": 3.49,
     "peakChroma": 7.36,
     "samples": 9828
-  }
+  },
+  "notes": "Shows air conditioners on the facade; 'air-conditioners' isn't a tag, since only 2 photos have it."
 }

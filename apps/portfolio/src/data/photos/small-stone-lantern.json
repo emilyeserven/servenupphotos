@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["karesansui", "toro", "garden", "sand", "patterns", "trees", "minimalism"],
+  "tags": ["toro", "garden", "sand", "patterns", "trees", "minimalism"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 6.69,
     "peakChroma": 15.82,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a karesansui dry garden; 'karesansui' isn't a tag, since only 1 photo has one."
 }

@@ -48,17 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "lunar-new-year",
-    "hanfu",
-    "chinatown",
-    "parade",
-    "costumes",
-    "lanterns",
-    "crowd",
-    "signage"
-  ],
-  "genres": [],
+  "tags": ["festivals", "chinatown", "traditional-clothing", "lanterns", "crowd", "signage"],
+  "genres": ["portrait", "street"],
   "places": [
     {
       "relation": "",
@@ -274,5 +265,6 @@
     "chroma": 29.37,
     "peakChroma": 63.84,
     "samples": 9856
-  }
+  },
+  "notes": "Shows hanfu at a Lunar New Year parade; 'hanfu' isn't a tag, since only 1 photo has it."
 }

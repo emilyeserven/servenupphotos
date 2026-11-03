@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["pine-trees", "tenshu", "castle", "moat", "bridge", "reflections"],
+  "tags": ["pine-trees", "castle", "moat", "bridges", "reflections"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 9.99,
     "peakChroma": 19.9,
     "samples": 10050
-  }
+  },
+  "notes": "Shows the castle keep (tenshu); 'tenshu' isn't a tag, since only 2 photos have one."
 }

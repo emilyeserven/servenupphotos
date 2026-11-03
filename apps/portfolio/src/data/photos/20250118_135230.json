@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["riwaq", "mosque", "arches", "arcade", "columns", "windows", "pedestrians"],
+  "tags": ["mosque", "arches", "columns", "windows", "pedestrians"],
   "genres": ["architecture", "street"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 14.51,
     "peakChroma": 20.73,
     "samples": 9768
-  }
+  },
+  "notes": "Shows the arcaded gallery (riwaq) around a mosque courtyard; 'arcade' and 'riwaq' aren't tags, since only 2 photos have them."
 }

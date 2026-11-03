@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mishkat", "mosque", "calligraphy", "lamps", "chains", "walls"],
+  "tags": ["mosque", "calligraphy", "lamps", "chains", "walls"],
   "genres": ["architecture"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 31.3,
     "peakChroma": 54.39,
     "samples": 9828
-  }
+  },
+  "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them."
 }

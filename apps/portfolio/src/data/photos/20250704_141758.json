@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["guildhall", "facade", "statue", "tourists", "umbrellas", "windows", "pedestrians"],
+  "tags": ["facade", "statues", "tourists", "umbrellas", "windows", "pedestrians"],
   "genres": ["architecture", "street"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 10.49,
     "peakChroma": 23.74,
     "samples": 9694
-  }
+  },
+  "notes": "Shows the Grand Place guildhalls; 'guildhall' isn't a tag, since only 1 photo has one."
 }

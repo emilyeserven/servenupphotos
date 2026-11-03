@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["fanous", "windows", "interior", "palm-trees", "garden", "silhouettes", "hotel", "cafe"],
+  "tags": [
+    "windows",
+    "interior",
+    "palm-trees",
+    "garden",
+    "silhouettes",
+    "hotel",
+    "cafe",
+    "lanterns"
+  ],
   "genres": [],
   "places": [
     {
@@ -265,5 +274,6 @@
     "chroma": 8.76,
     "peakChroma": 23.55,
     "samples": 9768
-  }
+  },
+  "notes": "Shows an Egyptian fanous lantern; 'fanous' isn't a tag, since only 1 photo has one."
 }

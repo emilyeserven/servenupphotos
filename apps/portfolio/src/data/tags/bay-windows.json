@@ -1,5 +1,6 @@
 {
   "id": "bay-windows",
   "name": "bay-windows",
-  "description": "windows projecting outward from a building's wall, forming a bay, common on row houses"
+  "description": "windows projecting outward from a building's wall, forming a bay, common on row houses",
+  "parent": "windows"
 }

@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["signage", "bridge", "crowd", "tourists", "storefronts", "twilight"],
-  "genres": [],
+  "tags": ["signage", "bridges", "crowd", "tourists", "storefronts", "twilight"],
+  "genres": ["street"],
   "places": [
     {
       "relation": "in",

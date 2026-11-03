@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["apartments", "bay-windows", "beach", "cars", "path", "ocean"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

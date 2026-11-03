@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["chozuya", "buddhism", "temple", "dragons", "fountain", "water", "trees"],
+  "tags": ["buddhism", "temple", "fountains", "water", "trees"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 16.44,
     "peakChroma": 36.66,
     "samples": 9828
-  }
+  },
+  "notes": "Shows a chozuya basin with a dragon spout; 'chozuya' and 'dragons' aren't tags, since only 1 photo has them."
 }

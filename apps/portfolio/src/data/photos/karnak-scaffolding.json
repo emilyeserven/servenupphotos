@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["ancient-egypt", "temple", "ruins", "stairs", "scaffolding", "restoration", "workers"],
+  "tags": ["temple", "ruins", "stairs"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 17.7,
     "peakChroma": 28.58,
     "samples": 9620
-  }
+  },
+  "notes": "Shows workers restoring the temple on scaffolding; 'restoration', 'workers' and 'scaffolding' aren't tags, since only 1–2 photos have them."
 }

@@ -48,18 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "ancient-egypt",
-    "necropolis",
-    "desert",
-    "tourists",
-    "pyramids",
-    "camels",
-    "sand",
-    "clouds",
-    "horse",
-    "skyline"
-  ],
+  "tags": ["necropolis", "desert", "tourists", "pyramids", "sand", "clouds", "skyline"],
   "genres": [],
   "places": [
     {
@@ -276,5 +265,6 @@
     "chroma": 28.79,
     "peakChroma": 44.57,
     "samples": 9417
-  }
+  },
+  "notes": "Shows camels and horses; 'camels' and 'horse' aren't tags, since only 1–2 photos have them."
 }

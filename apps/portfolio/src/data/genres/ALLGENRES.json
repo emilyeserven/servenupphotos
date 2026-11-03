@@ -10,6 +10,11 @@
     "description": ""
   },
   {
+    "id": "cityscape",
+    "name": "Cityscape",
+    "description": "Wide views of a city or town as a whole, such as skylines, rooftops and urban sprawl."
+  },
+  {
     "id": "landscape",
     "name": "Landscape",
     "description": "Wide views of natural or open scenery, such as deserts, seas, lakes and mountains."

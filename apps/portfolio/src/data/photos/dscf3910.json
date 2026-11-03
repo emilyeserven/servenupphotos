@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["market", "arcade", "street-food", "storefronts", "signage", "pedestrians"],
-  "genres": [],
+  "tags": ["market", "storefronts", "signage", "pedestrians", "covered-street"],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",
@@ -274,5 +274,6 @@
     "chroma": 10.01,
     "peakChroma": 21.97,
     "samples": 10050
-  }
+  },
+  "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it."
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["shinto", "shimenawa", "shide", "saisen-bako", "shrine", "wood", "pine-trees"],
+  "tags": ["shinto", "shimenawa", "shide", "shrine", "wood", "pine-trees", "prayers"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 12.05,
     "peakChroma": 27.04,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a saisen-bako offering box; 'saisen-bako' isn't a tag, since only 1 photo has one."
 }

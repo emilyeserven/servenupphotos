@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["sculpture", "planter", "topiary", "plants", "texture", "stones"],
+  "tags": ["sculpture", "plants", "texture", "stones"],
   "genres": ["street"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 5.53,
     "peakChroma": 9.44,
     "samples": 9727
-  }
+  },
+  "notes": "Shows a topiary planter; 'planter' and 'topiary' aren't tags, since only 2 photos have each."
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["autumn", "fallen-leaves", "shoes", "texture", "patterns"],
+  "tags": ["autumn", "fallen-leaves", "texture", "patterns"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 38.07,
     "peakChroma": 58.4,
     "samples": 9842
-  }
+  },
+  "notes": "Shows shoes; 'shoes' isn't a tag, since only 1 photo has them."
 }

@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["volleyball", "beach", "walls", "promenade", "pedestrians", "clouds"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

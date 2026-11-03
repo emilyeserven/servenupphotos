@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["japsang", "giwa", "palace", "rooftops", "silhouettes", "figurines", "minimalism"],
+  "tags": ["giwa", "palace", "rooftops", "silhouettes", "figurines", "minimalism"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 13.74,
     "peakChroma": 21.03,
     "samples": 10050
-  }
+  },
+  "notes": "Shows japsang roof guardians; 'japsang' isn't a tag, since only 2 photos have them."
 }

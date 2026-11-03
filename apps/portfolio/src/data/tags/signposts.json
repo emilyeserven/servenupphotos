@@ -1,0 +1,6 @@
+{
+  "id": "signposts",
+  "name": "signposts",
+  "description": "posts with direction or trail signs",
+  "parent": "signage"
+}

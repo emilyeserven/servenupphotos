@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["canal", "neon", "night", "city-lights", "signage", "boats", "crowd", "reflections"],
-  "genres": [],
+  "genres": ["street", "cityscape"],
   "places": [
     {
       "relation": "",

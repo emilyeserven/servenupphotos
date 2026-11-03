@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["toro", "buddhism", "wabi-sabi", "temple", "cemetery", "moss", "repetition", "stones"],
-  "genres": [],
+  "genres": ["abstract", "architecture"],
   "places": [
     {
       "relation": "",

@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["tengu", "wanikuchi", "kamon", "koshi", "buddhism", "temple", "masks", "rope"],
-  "genres": [],
+  "tags": ["wanikuchi", "kamon", "koshi", "buddhism", "temple", "rope"],
+  "genres": ["architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 10.48,
     "peakChroma": 21.19,
     "samples": 10115
-  }
+  },
+  "notes": "Shows a tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them."
 }

@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["volleyball", "beach", "ocean", "waves", "cars", "crowd", "road"],
-  "genres": [],
+  "genres": ["street", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

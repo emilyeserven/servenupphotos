@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["suspension-cables", "bridge", "harbor", "sailboats", "twilight", "clouds", "mountains"],
+  "tags": [
+    "suspension-cables",
+    "bridges",
+    "harbor",
+    "sailboats",
+    "twilight",
+    "clouds",
+    "mountains"
+  ],
   "genres": [],
   "places": [],
   "spotlightZones": [],

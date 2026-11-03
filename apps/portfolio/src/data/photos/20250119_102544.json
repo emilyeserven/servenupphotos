@@ -48,16 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "ancient-egypt",
-    "necropolis",
-    "pyramids",
-    "doorway",
-    "stairs",
-    "stones",
-    "fence",
-    "tourists"
-  ],
+  "tags": ["necropolis", "pyramids", "doorways", "stairs", "stones", "fence", "tourists"],
   "genres": ["architecture"],
   "places": [
     {

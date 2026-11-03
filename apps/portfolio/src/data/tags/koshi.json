@@ -1,5 +1,6 @@
 {
   "id": "koshi",
   "name": "koshi",
-  "description": ""
+  "description": "Japanese wooden lattice screens on windows and storefronts",
+  "parent": "windows"
 }

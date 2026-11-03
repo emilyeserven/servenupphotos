@@ -1,0 +1,6 @@
+{
+  "id": "water-sports",
+  "name": "water-sports",
+  "description": "surfing, swimming, paddleboarding and other sports in the water",
+  "parent": "sports"
+}

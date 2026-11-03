@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["street-performer", "acrobatics", "crowd", "tourists", "dancing", "plaza"],
+  "tags": ["street-performers", "crowd", "tourists", "plaza"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9864
-  }
+  },
+  "notes": "Shows acrobats and dancing in Times Square; 'acrobatics' and 'dancing' aren't tags, since only 1–2 photos have them."
 }

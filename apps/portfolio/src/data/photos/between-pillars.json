@@ -48,16 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "ancient-egypt",
-    "hieroglyphs",
-    "carvings",
-    "temple",
-    "ruins",
-    "hypostyle",
-    "columns",
-    "tourists"
-  ],
+  "tags": ["hieroglyphs", "carvings", "temple", "ruins", "columns", "tourists"],
   "genres": ["architecture"],
   "places": [
     {
@@ -274,5 +265,6 @@
     "chroma": 19.33,
     "peakChroma": 25.89,
     "samples": 8880
-  }
+  },
+  "notes": "Shows Karnak's hypostyle hall; 'hypostyle' isn't a tag, since only 1 photo has it."
 }

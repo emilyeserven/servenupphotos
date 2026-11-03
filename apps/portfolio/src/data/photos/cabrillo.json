@@ -58,7 +58,7 @@
     "cars",
     "trees"
   ],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

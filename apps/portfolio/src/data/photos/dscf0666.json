@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["torii", "shinto", "sando", "trees", "path", "pedestrians"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

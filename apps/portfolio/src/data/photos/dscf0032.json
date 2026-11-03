@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["shinto", "torii", "shimenawa", "shide", "shrine", "koshi", "wood"],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["autumn", "forest", "path", "fence", "pedestrians", "trees", "fallen-leaves"],
-  "genres": [],
+  "genres": ["landscape", "street"],
   "places": [
     {
       "relation": "",

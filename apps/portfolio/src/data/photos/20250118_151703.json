@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mashrabiya", "girih", "mosque", "windows", "wood", "patterns", "silhouettes"],
+  "tags": ["mosque", "windows", "wood", "patterns", "silhouettes"],
   "genres": ["architecture", "abstract"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 4.44,
     "peakChroma": 12.7,
     "samples": 9490
-  }
+  },
+  "notes": "Shows a mashrabiya screen with girih patterns; 'mashrabiya' and 'girih' aren't tags, since only 1 photo has them."
 }

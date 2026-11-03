@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mosaic", "art-installation", "subway", "faces", "smartphones", "humor"],
+  "tags": ["art-installations", "subway", "faces", "smartphones", "humor"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 11.13,
     "peakChroma": 30.09,
     "samples": 10001
-  }
+  },
+  "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one."
 }

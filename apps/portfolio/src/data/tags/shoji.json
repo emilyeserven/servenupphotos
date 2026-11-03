@@ -1,5 +1,6 @@
 {
   "id": "shoji",
   "name": "shoji",
-  "description": ""
+  "description": "Japanese sliding doors and screens of paper on a wooden lattice",
+  "parent": "doors"
 }

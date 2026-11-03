@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["minaret", "city", "rooftops", "pyramids", "haze", "skyline"],
+  "tags": ["city", "rooftops", "pyramids", "haze", "skyline", "mosque"],
   "genres": [],
   "places": [
     {
@@ -269,5 +269,6 @@
     "chroma": 5.63,
     "peakChroma": 12.27,
     "samples": 9828
-  }
+  },
+  "notes": "Shows a minaret; 'minaret' isn't a tag, since only 1 photo has one."
 }

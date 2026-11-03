@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["beach", "surfing", "waves", "ocean", "wipeout"],
+  "tags": ["beach", "water-sports", "waves", "ocean"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 5.07,
     "peakChroma": 10.29,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a surfing wipeout; 'wipeout' isn't a tag, since only 1 photo has one."
 }

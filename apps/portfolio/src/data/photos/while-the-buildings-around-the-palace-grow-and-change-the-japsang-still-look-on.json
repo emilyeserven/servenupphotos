@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["japsang", "dancheong", "giwa", "palace", "office-building", "glass", "tourists"],
+  "tags": ["dancheong", "giwa", "palace", "office-buildings", "glass", "tourists", "figurines"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 12.4,
     "peakChroma": 23.41,
     "samples": 9975
-  }
+  },
+  "notes": "Shows japsang roof guardians; 'japsang' isn't a tag, since only 2 photos have them."
 }

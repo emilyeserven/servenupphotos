@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["ancient-egypt", "ruins", "desert", "tourists", "clouds", "dogs"],
+  "tags": ["ruins", "desert", "tourists", "clouds"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 19.29,
     "peakChroma": 36.25,
     "samples": 9417
-  }
+  },
+  "notes": "Shows a dog; 'dogs' isn't a tag, since only 2 photos have one."
 }
