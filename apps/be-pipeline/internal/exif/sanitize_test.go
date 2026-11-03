@@ -35,6 +35,7 @@ func TestSanitize(t *testing.T) {
 			"width":             7503.0,
 			"height":            4220.0,
 			"comment":           nil,
+			"notes":             nil,
 		}},
 		{"samsung-s7.json", map[string]any{
 			"title":             nil,
@@ -58,6 +59,7 @@ func TestSanitize(t *testing.T) {
 			"width":             2560.0,
 			"height":            1440.0,
 			"comment":           nil,
+			"notes":             nil,
 		}},
 		{"sony-a65.json", map[string]any{
 			"title":             nil,
@@ -81,6 +83,7 @@ func TestSanitize(t *testing.T) {
 			"width":             6000.0,
 			"height":            3376.0,
 			"comment":           nil,
+			"notes":             nil,
 		}},
 		{"canon-80d.json", map[string]any{
 			"title":             nil,
@@ -104,6 +107,7 @@ func TestSanitize(t *testing.T) {
 			"width":             4467.0,
 			"height":            2701.0,
 			"comment":           nil,
+			"notes":             nil,
 		}},
 		{"canon-t6i.json", map[string]any{
 			"title":             nil,
@@ -127,6 +131,7 @@ func TestSanitize(t *testing.T) {
 			"width":             5999.0,
 			"height":            3396.0,
 			"comment":           nil,
+			"notes":             nil,
 		}},
 	}
 

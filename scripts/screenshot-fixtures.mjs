@@ -644,7 +644,128 @@ function pruneTagsPreview() {
       { tag: "torii", from: "", parent: "shrine", reason: "a torii is a shrine gate" },
       { tag: "chochin", from: "", parent: "lanterns", reason: "a Japanese paper lantern" },
     ],
+    notes: [
+      {
+        photo: headPhotos[0].path
+          .split("/")
+          .pop()
+          .replace(/\.json$/, ""),
+        path: headPhotos[0].path,
+        note: "Shows the details of a carved door; 'details' isn't a tag, since it's too vague.",
+      },
+    ],
     skipped: [{ change: "merge cats into animals", reason: '"cats" isn\'t a tag' }],
+  };
+}
+
+/** The first of values that isn't missing, or "". */
+const firstOr = (...values) => values.find((v) => typeof v === "string") ?? "";
+
+/** list, or [] when it's missing. */
+const listOr = (list) => list ?? [];
+
+/** How many head photos list each tag. */
+function headTagCounts() {
+  const counts = new Map();
+  for (const tag of headPhotos.flatMap(({ data }) => listOr(data.tags))) {
+    counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/** One head photo as the Tag library exports it. */
+const libraryPhoto = ({ path: filePath, data }) => ({
+  photo: filePath
+    .split("/")
+    .pop()
+    .replace(/\.json$/, ""),
+  title: firstOr(data.title),
+  city: firstOr(data.customCity, data.city),
+  country: firstOr(data.customCountry, data.country),
+  places: listOr(data.places).map((place) => place.id),
+  genres: listOr(data.genres),
+  albums: listOr(data.albums),
+  tags: listOr(data.tags),
+  notes: firstOr(data.notes),
+});
+
+/** Every tag and photo with its tags, as the Tag library reads them. */
+function tagLibraryExport() {
+  const counts = headTagCounts();
+  const tags = headTags.map(({ data }) => ({
+    tag: data.id,
+    description: firstOr(data.description),
+    parent: firstOr(data.parent),
+    photos: counts.get(data.id) ?? 0,
+  }));
+  return {
+    tags: tags.toSorted((x, y) => x.tag.localeCompare(y.tag)),
+    photos: headPhotos.map(libraryPhoto),
+    unreadable: [],
+    minPhotos: 3,
+  };
+}
+
+/** What a Tag library answer would do: one of each kind of change. */
+function tagLibraryPreview() {
+  const prune = pruneTagsPreview();
+  const stem = (i) =>
+    headPhotos[i].path
+      .split("/")
+      .pop()
+      .replace(/\.json$/, "");
+  const edit = (i, add, remove, reason) => ({
+    photo: stem(i),
+    path: headPhotos[i].path,
+    add,
+    remove,
+    reason,
+    tags: headPhotos[i].data.tags ?? [],
+  });
+  return {
+    ...prune,
+    photos: headPhotos.length,
+    newTags: [
+      {
+        tag: "paper-lanterns",
+        description: "lanterns made of paper, often hung outside shops",
+        parent: "lanterns",
+        reason: "4 photos show them",
+      },
+    ],
+    rename: [
+      {
+        tag: "lamppost",
+        to: "street-lights",
+        reason: "matches how the others are named",
+        photos: 4,
+      },
+    ],
+    merge: [],
+    describe: [{ tag: "shotengai", from: "", description: "a covered Japanese shopping street" }],
+    edits: [
+      edit(1, ["paper-lanterns"], ["details"], "paper lanterns hang over the street"),
+      edit(2, ["street-lights"], [], "a row of lampposts lines the canal"),
+    ],
+    notes: [
+      ...prune.notes,
+      {
+        photo: stem(3),
+        path: headPhotos[3].path,
+        note: "Has a koi pond; 'koi' wasn't made a tag, since only 2 photos have one.",
+      },
+    ],
+    fewPhotos: [
+      { tag: "chochin", photos: 2, parent: "lanterns" },
+      { tag: "torii", photos: 1, parent: "shrine" },
+    ],
+    minPhotos: 3,
+    skipped: [
+      {
+        change: "make temple",
+        reason: 'The tag "temple" already has the ID "temple". Pick another ID',
+      },
+    ],
   };
 }
 
@@ -892,6 +1013,15 @@ export function defaultFixtures() {
       deleted: 2,
       reparented: 2,
       photos: 10,
+    }),
+    "POST /api/data/tag-library/export": () => tagLibraryExport(),
+    "POST /api/data/tag-library/preview": () => tagLibraryPreview(),
+    "POST /api/data/tag-library": () => ({
+      ...pendingSave(),
+      made: 2,
+      deleted: 2,
+      edited: 3,
+      photos: 12,
     }),
     "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count),
     "POST /api/data/genre-suggestions/preview": () => genreSuggestionsPreview(),

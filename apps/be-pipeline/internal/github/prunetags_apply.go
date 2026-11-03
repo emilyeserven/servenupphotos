@@ -1,7 +1,6 @@
 package github
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -23,14 +22,15 @@ type PruneTagsResult struct {
 	Photos int `json:"photos"`
 }
 
-// ApplyPruneTags merges, removes and reparents tags as req says, all as one
-// save in the pending changes: a merged or removed tag's file is deleted, the
-// photos listing it get the tag it went into (or lose it), and the tags under
-// it go under that tag (or its parent). Nothing is saved when a change can't
-// be made or a photo file can't be read.
-func (c *Client) ApplyPruneTags(ctx context.Context, gh settings.GitHub, req PruneTags) (PruneTagsResult, error) {
+// ApplyPruneTags merges, removes and reparents tags as req says, and adds
+// notes to photos, all as one save in the pending changes: a merged or
+// removed tag's file is deleted, the photos listing it get the tag it went
+// into (or lose it), and the tags under it go under that tag (or its
+// parent). Nothing is saved when a change can't be made or a photo file
+// can't be read.
+func (c *Client) ApplyPruneTags(ctx context.Context, gh settings.GitHub, req PruneTags, notes []PhotoNote) (PruneTagsResult, error) {
 	req = cleanPrune(req)
-	if req.size() == 0 {
+	if req.size()+len(notes) == 0 {
 		return PruneTagsResult{}, publishErr(http.StatusBadRequest, "Pick at least one change to make to the tags.")
 	}
 	scan, perr := c.scanPhotos(ctx, gh)
@@ -40,17 +40,15 @@ func (c *Client) ApplyPruneTags(ctx context.Context, gh settings.GitHub, req Pru
 	if perr := allReadable(scan, "the tags weren't changed"); perr != nil {
 		return PruneTagsResult{}, perr
 	}
-	p := newTagPruner(scan.w.groups()[Tags.Folder])
-	for _, s := range p.steps(req) {
-		if why := s.run(); why != "" {
-			return PruneTagsResult{}, publishErr(http.StatusConflict, "Couldn't %s: %s. Nothing was changed.", s.said, why)
-		}
+	l := newTagLibrarian(scan)
+	if perr := l.run(l.steps(TagLibrary{PruneTags: req, Notes: notes}, photoNames(scan))); perr != nil {
+		return PruneTagsResult{}, perr
 	}
-	tagChanges, reparented, perr := p.tagFileChanges(scan.w)
+	tagChanges, counts, perr := l.tagFileChanges(scan.w)
 	if perr != nil {
 		return PruneTagsResult{}, perr
 	}
-	photoChanges, perr := p.photoChanges(scan)
+	photoChanges, perr := l.photoFileChanges(scan)
 	if perr != nil {
 		return PruneTagsResult{}, perr
 	}
@@ -58,7 +56,7 @@ func (c *Client) ApplyPruneTags(ctx context.Context, gh settings.GitHub, req Pru
 	if perr != nil {
 		return PruneTagsResult{}, perr
 	}
-	return PruneTagsResult{pendingSave: saved, Deleted: len(p.gone), Reparented: reparented, Photos: len(photoChanges)}, nil
+	return PruneTagsResult{pendingSave: saved, Deleted: counts.Deleted, Reparented: counts.Edited, Photos: len(photoChanges)}, nil
 }
 
 // allReadable fails when a photo file in scan couldn't be read, since it may
@@ -71,32 +69,6 @@ func allReadable(scan baseURLScan, so string) *PublishError {
 		}
 	}
 	return nil
-}
-
-// tagFileChanges is each pruned tag's file deleted and each kept tag's file
-// with its new parent, sorted by path, and how many got a new parent.
-func (p *tagPruner) tagFileChanges(w *workspace) ([]ScanChange, int, *PublishError) {
-	var changes []ScanChange
-	reparented := 0
-	for _, id := range p.sortedIDs() {
-		g := p.tags[id]
-		current, _ := w.groupFile(g.Path)
-		if _, gone := p.gone[id]; gone {
-			changes = append(changes, ScanChange{Path: g.Path, Before: current})
-			continue
-		}
-		parent := p.parentOf(id)
-		if parent == g.Parent {
-			continue
-		}
-		content, err := setTopLevel(current, parentKey, parentValue(parent))
-		if err != nil {
-			return nil, 0, publishErr(http.StatusConflict, "%s: %s", g.Path, err)
-		}
-		changes = append(changes, ScanChange{Path: g.Path, Before: current, After: content})
-		reparented++
-	}
-	return changes, reparented, nil
 }
 
 // sortedIDs is every tag's ID, sorted.
@@ -123,26 +95,4 @@ func parentValue(parent string) []byte {
 func (p *tagPruner) isGone(id string) bool {
 	_, gone := p.gone[id]
 	return gone
-}
-
-// photoChanges is each photo file whose tags pruning changes, with its new
-// "tags".
-func (p *tagPruner) photoChanges(scan baseURLScan) ([]ScanChange, *PublishError) {
-	var changes []ScanChange
-	for _, f := range scan.files {
-		tags := readBulkPhoto(f).tags
-		if !slices.ContainsFunc(tags, p.isGone) {
-			continue
-		}
-		pruned := p.prunedTags(tags)
-		value, _ := json.MarshalIndent(pruned, "  ", "  ")
-		after, err := setTopLevelList(f.content, "tags", value)
-		if err != nil {
-			return nil, publishErr(http.StatusConflict, "%s: %s, so nothing was changed.", f.path, err)
-		}
-		if !bytes.Equal(after, f.content) {
-			changes = append(changes, ScanChange{Path: f.path, Before: f.content, After: after})
-		}
-	}
-	return changes, nil
 }

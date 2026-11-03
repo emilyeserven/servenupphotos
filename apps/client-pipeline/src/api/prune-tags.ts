@@ -41,6 +41,8 @@ export interface PruneTagsPreview {
   merge: PruneTagMerge[];
   remove: PruneTagRemoval[];
   reparent: PruneTagReparent[];
+  /** The notes the answer adds to photos' photographer-only notes. */
+  notes: { photo: string; path: string; note: string }[];
   skipped: { change: string; reason: string }[];
 }
 
@@ -71,5 +73,6 @@ export const previewPruneTagsMutation = mutationOptions({
 export const applyPruneTagsMutation = mutationOptions({
   mutationKey: ["data", "prune-tags", "apply"],
   meta: { saves: true, changes: (result) => bulkTagChanges(result as PruneTagsResult) },
-  mutationFn: (prune: PruneTags) => post<PruneTagsResult>("/api/data/prune-tags", prune),
+  mutationFn: (prune: PruneTags & { notes: { path: string; note: string }[] }) =>
+    post<PruneTagsResult>("/api/data/prune-tags", prune),
 });

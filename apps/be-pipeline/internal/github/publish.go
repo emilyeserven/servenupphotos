@@ -66,7 +66,11 @@ type photoJSON struct {
 	ID      *int    `json:"id"`
 	Title   *string `json:"title"`
 	Comment *string `json:"comment"`
-	File    string  `json:"file"`
+	// Notes is the photographer-only notes: text kept for the pipeline, such
+	// as what a photo shows that isn't a tag. The portfolio's build leaves it
+	// out.
+	Notes *string `json:"notes"`
+	File  string  `json:"file"`
 	// AddedDate is when the photo went on the portfolio (see addedField), or
 	// nil while it's a draft.
 	AddedDate *string `json:"addedDate"`
@@ -149,7 +153,7 @@ func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 		s.ExifOriginals = map[string]json.RawMessage{}
 	}
 	return photoJSON{
-		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
+		Title: s.Title, Comment: s.Comment, Notes: s.Notes, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
 		Genres: []string{},
 		Places: []PhotoPlace{}, SpotlightZones: []string{}, SocialPosts: []SocialPost{},
 	}

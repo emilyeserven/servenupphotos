@@ -54,9 +54,14 @@ func handleApplyBulkTags(store *settings.Store, gh *github.Client) http.HandlerF
 // handleBulkTags decodes a Bulk Tagging step's body, a T named kind, runs the
 // step and writes its result.
 func handleBulkTags[T any](store *settings.Store, kind, failure string, run func(context.Context, settings.GitHub, T) (any, error)) http.HandlerFunc {
+	return handleBulkTagsUpTo(store, maxPhotoDataBytes, kind, failure, run)
+}
+
+// handleBulkTagsUpTo is handleBulkTags for a body of up to limit bytes.
+func handleBulkTagsUpTo[T any](store *settings.Store, limit int64, kind, failure string, run func(context.Context, settings.GitHub, T) (any, error)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req T
-		if !decodeEntry(w, r, &req, kind) {
+		if !decodeEntryUpTo(w, r, &req, kind, limit) {
 			return
 		}
 		cfg, ok := githubSettings(w, store)
@@ -104,12 +109,19 @@ func handlePreviewPruneTags(store *settings.Store, gh *github.Client) http.Handl
 		})
 }
 
+// pruneTagsSave is the body of a Tag pruning save: the reviewed changes, and
+// the notes to add to photos.
+type pruneTagsSave struct {
+	github.PruneTags
+	Notes []github.PhotoNote `json:"notes"`
+}
+
 // handleApplyPruneTags merges, removes and reparents the reviewed tags, as
 // changes waiting for Commit.
 func handleApplyPruneTags(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return handleBulkTags(store, "tag pruning", "could not change the tags",
-		func(ctx context.Context, cfg settings.GitHub, req github.PruneTags) (any, error) {
-			return gh.ApplyPruneTags(ctx, cfg, req)
+		func(ctx context.Context, cfg settings.GitHub, req pruneTagsSave) (any, error) {
+			return gh.ApplyPruneTags(ctx, cfg, req.PruneTags, req.Notes)
 		})
 }
 

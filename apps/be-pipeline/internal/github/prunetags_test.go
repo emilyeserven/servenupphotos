@@ -98,7 +98,7 @@ func TestApplyPruneTags(t *testing.T) {
 	got, err := c.ApplyPruneTags(t.Context(), baseURLSettings, PruneTags{
 		Merge:  []TagMerge{{Tag: "lanterns", Into: "lamps"}},
 		Remove: []string{"shrine"},
-	})
+	}, nil)
 	if err != nil {
 		t.Fatalf("ApplyPruneTags() error = %v", err)
 	}
@@ -154,7 +154,7 @@ func TestApplyPruneTagsErrors(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, c := pruneTagRepo(t, prunePhotos)
-			_, err := c.ApplyPruneTags(t.Context(), baseURLSettings, tt.req)
+			_, err := c.ApplyPruneTags(t.Context(), baseURLSettings, tt.req, nil)
 			if err == nil || !strings.Contains(err.Error(), tt.want) {
 				t.Errorf("ApplyPruneTags() error = %v, want %q", err, tt.want)
 			}
@@ -165,7 +165,7 @@ func TestApplyPruneTagsErrors(t *testing.T) {
 	}
 
 	_, c := pruneTagRepo(t, map[string]string{"a.json": `{"tags":`})
-	if _, err := c.ApplyPruneTags(t.Context(), baseURLSettings, PruneTags{Remove: []string{"lamps"}}); err == nil || !strings.Contains(err.Error(), "couldn't be read") {
+	if _, err := c.ApplyPruneTags(t.Context(), baseURLSettings, PruneTags{Remove: []string{"lamps"}}, nil); err == nil || !strings.Contains(err.Error(), "couldn't be read") {
 		t.Errorf("ApplyPruneTags() with an unreadable photo error = %v", err)
 	}
 }
@@ -176,7 +176,7 @@ func TestApplyPruneTagsChains(t *testing.T) {
 	// end up temple, once.
 	_, err := c.ApplyPruneTags(t.Context(), baseURLSettings, PruneTags{
 		Merge: []TagMerge{{Tag: "lanterns", Into: "lamps"}, {Tag: "lamps", Into: "temple"}},
-	})
+	}, nil)
 	if err != nil {
 		t.Fatalf("ApplyPruneTags() error = %v", err)
 	}
@@ -185,4 +185,24 @@ func TestApplyPruneTagsChains(t *testing.T) {
 		t.Errorf("a.json = %q, want temple and shrine", a.Content)
 	}
 	wantParent(t, c, "chochin", "temple")
+}
+
+func TestPruneTagsNotes(t *testing.T) {
+	_, c := pruneTagRepo(t, prunePhotos)
+	answer := `{"remove": [{"tag": "torii", "reason": "1 photo"}], "notes": [{"photo": "b", "note": "Shows a torii gate; torii isn't a tag, since only 1 photo has one."}, {"photo": "zz", "note": "x"}]}`
+	got, err := c.PreviewPruneTags(t.Context(), baseURLSettings, answer)
+	if err != nil {
+		t.Fatalf("PreviewPruneTags() error = %v", err)
+	}
+	if len(got.Notes) != 1 || got.Notes[0].Photo != "b" || len(got.Skipped) != 1 {
+		t.Fatalf("Notes, Skipped = %+v, %+v, want b's note and zz left out", got.Notes, got.Skipped)
+	}
+	_, err = c.ApplyPruneTags(t.Context(), baseURLSettings, PruneTags{Remove: []string{"torii"}}, []PhotoNote{{Path: got.Notes[0].Path, Note: got.Notes[0].Note}})
+	if err != nil {
+		t.Fatalf("ApplyPruneTags() error = %v", err)
+	}
+	b, _ := stagedContent(t, c, photosDir+"b.json")
+	if !strings.Contains(b.Content, `"notes": "Shows a torii gate`) || strings.Contains(b.Content, `"torii"`) {
+		t.Errorf("b.json = %q, want the note and torii taken off", b.Content)
+	}
 }
