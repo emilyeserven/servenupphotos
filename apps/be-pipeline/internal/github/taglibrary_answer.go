@@ -113,6 +113,9 @@ type TagLibraryFewPhotos struct {
 	Photos int    `json:"photos"`
 	// Parent is the tag it's under, "" at the top level.
 	Parent string `json:"parent"`
+	// PhotoNames is the file names of the photos that have it after the
+	// changes, sorted, so a follow-up prompt can name them.
+	PhotoNames []string `json:"photoNames"`
 }
 
 // TagLibraryPreview is what pasting the LLM's answer would do to the whole
@@ -251,7 +254,7 @@ func (c *Client) PreviewTagLibrary(ctx context.Context, gh settings.GitHub, answ
 		}
 		preview.add(l, req, s, at(reasons[s.kind], s.index), counts, names, before)
 	}
-	preview.FewPhotos = l.fewPhotos()
+	preview.FewPhotos = l.fewPhotos(names)
 	return preview, nil
 }
 
@@ -346,14 +349,34 @@ func photoEdit(l *tagLibrarian, e TagLibraryPhoto, names map[string]string, befo
 }
 
 // fewPhotos is every kept tag that has fewer than minTagPhotos photos after
-// the changes, sorted by ID.
-func (l *tagLibrarian) fewPhotos() []TagLibraryFewPhotos {
+// the changes, sorted by ID, with the file names (from names) of its photos.
+func (l *tagLibrarian) fewPhotos(names map[string]string) []TagLibraryFewPhotos {
 	out := []TagLibraryFewPhotos{}
 	counts := l.photoCounts()
+	photos := l.photoNamesByTag(names)
 	for _, id := range l.sortedIDs() {
 		if n, kept := counts[id]; kept && n < minTagPhotos {
-			out = append(out, TagLibraryFewPhotos{Tag: id, Photos: n, Parent: l.parentOf(id)})
+			out = append(out, TagLibraryFewPhotos{Tag: id, Photos: n, Parent: l.parentOf(id), PhotoNames: photos[id]})
 		}
+	}
+	return out
+}
+
+// photoNamesByTag is the sorted file names (from names) of the photos that
+// have each tag after the changes, by ID, with an empty list for a tag none
+// have.
+func (l *tagLibrarian) photoNamesByTag(names map[string]string) map[string][]string {
+	out := map[string][]string{}
+	for id := range l.tags {
+		out[id] = []string{}
+	}
+	for path := range l.photos {
+		for _, id := range l.tagsOf(path) {
+			out[id] = append(out[id], names[path])
+		}
+	}
+	for _, list := range out {
+		slices.Sort(list)
 	}
 	return out
 }

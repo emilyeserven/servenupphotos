@@ -1,4 +1,4 @@
-import type { TagLibraryExport, TagLibraryPhotoInfo } from "@/api/tag-library";
+import type { TagLibraryExport, TagLibraryFewPhotos, TagLibraryPhotoInfo } from "@/api/tag-library";
 
 /** A photo's export with its empty fields left out, so the prompt stays short. */
 function shortPhoto(photo: TagLibraryPhotoInfo): Record<string, unknown> {
@@ -83,4 +83,28 @@ export function fewPhotoTagLines(library: TagLibraryExport): string[] {
     const title = photo.title ? ` "${photo.title}"` : "";
     return [`- ${photo.photo}${title}: ${tags.join(", ")}`];
   });
+}
+
+/** One line for a tag left with too few photos: its ID, parent, count and photos. */
+function fewPhotosLine(few: TagLibraryFewPhotos): string {
+  const parent = few.parent ? `, under ${few.parent}` : "";
+  const photos = few.photoNames.length > 0 ? few.photoNames.join(", ") : "no photos";
+  return `- ${few.tag}${parent} (${few.photos}): ${photos}`;
+}
+
+/**
+ * The follow-up prompt to paste into the same chat when the LLM's answer leaves tags with fewer
+ * than `min` photos: each of those tags with the photos that would have it, asking for the whole
+ * answer again with each tag added to more photos or removed with a note on its photos.
+ */
+export function tagLibraryFollowUpPrompt(few: TagLibraryFewPhotos[], min: number): string {
+  return `With every change in your answer made, these tags would have fewer than ${min} photos (each with its parent, how many photos would have it, and those photos by file name):
+${few.map(fewPhotosLine).join("\n")}
+
+For each of them, either:
+- add it to more photos that clearly should have it, under "photos", so it has at least ${min}, or
+- remove it (or, if it's one of your newTags, don't make it, and take it out of "photos"), and add a note to each of its photos under "notes" saying which tag it was, what in the photo it described, and why it isn't a tag (such as "Shows a koi pond; 'koi' isn't a tag, since only 2 photos have one.").
+
+Keep the rest of your answer as it is, with the same rules as before. Answer with your whole answer again, with these changes in it, as only the same JSON, with nothing before or after it.
+`;
 }

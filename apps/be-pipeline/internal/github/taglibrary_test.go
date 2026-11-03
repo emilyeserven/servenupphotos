@@ -77,6 +77,12 @@ func TestPreviewTagLibrary(t *testing.T) {
 	if !slices.Equal(few, []string{"lamp", "lanterns", "paper-lanterns", "shrine", "temple"}) {
 		t.Errorf("FewPhotos = %v", few)
 	}
+	if got.FewPhotos[1].Tag != "lanterns" || !slices.Equal(got.FewPhotos[1].PhotoNames, []string{"a", "c"}) {
+		t.Errorf("lanterns' PhotoNames = %v, want a and c", got.FewPhotos[1].PhotoNames)
+	}
+	if got.FewPhotos[3].PhotoNames == nil || len(got.FewPhotos[3].PhotoNames) != 0 {
+		t.Errorf("shrine's PhotoNames = %#v, want empty", got.FewPhotos[3].PhotoNames)
+	}
 }
 
 func TestApplyTagLibrary(t *testing.T) {

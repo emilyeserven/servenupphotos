@@ -83,6 +83,16 @@ export interface TagLibraryNote {
   note: string;
 }
 
+/** A tag that would have fewer photos than a tag should, once every change in the answer is made. */
+export interface TagLibraryFewPhotos {
+  tag: string;
+  photos: number;
+  /** The tag it's under, "" at the top level. */
+  parent: string;
+  /** The file names of the photos that would have it. */
+  photoNames: string[];
+}
+
 /** What pasting the answer would do to the whole tag library, and what can't be made. */
 export interface TagLibraryPreview extends Omit<PruneTagsPreview, "tags"> {
   /** How many tags and readable photo files there are. */
@@ -94,7 +104,7 @@ export interface TagLibraryPreview extends Omit<PruneTagsPreview, "tags"> {
   edits: TagLibraryPhotoEdit[];
   notes: TagLibraryNote[];
   /** Every tag left with fewer than `minPhotos` photos after the changes. */
-  fewPhotos: { tag: string; photos: number; parent: string }[];
+  fewPhotos: TagLibraryFewPhotos[];
   minPhotos: number;
 }
 
