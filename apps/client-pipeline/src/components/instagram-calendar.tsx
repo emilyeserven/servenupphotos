@@ -2,6 +2,7 @@ import { ChevronLeftIcon, ChevronRightIcon, ImageIcon, PlusIcon } from "lucide-r
 import { type ReactNode, useMemo, useState } from "react";
 import type { SocialCalendar, SocialPhoto } from "@/api/publish";
 import { DraftBadge } from "@/components/draft-mark";
+import { DayPostBackdrop, DayPostMark, InstagramPosts } from "@/components/instagram-posts";
 import { PhotoFiles } from "@/components/photo-files";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,8 @@ import {
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { cn } from "@/lib/utils";
 import { offlineImageUrl } from "@/lib/offline-thumbnails";
+import { type DayPost, postedPhotoFiles, postsByDay } from "@/lib/social-post-days";
+import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /** How many weeks the calendar shows, this week first. */
@@ -76,14 +79,28 @@ function useUnsavedDates(photos: SocialPhoto[]) {
   return { unsaved, update };
 }
 
+/**
+ * Each day's Instagram posts from the photos' Social media posts, gallery and in flight photos
+ * alike, with the changes the app keeps for Commit made over the files read for the calendar.
+ */
+function useInstagramPosts(photos: SocialPhoto[]) {
+  const changed = useChangedPhotoFiles();
+  return useMemo(
+    () => postsByDay(postedPhotoFiles(photos, changed), "instagram"),
+    [photos, changed],
+  );
+}
+
 function Schedule({ calendar }: { calendar: SocialCalendar }) {
   const { unsaved, update } = useUnsavedDates(calendar.photos);
+  const posts = useInstagramPosts(calendar.photos);
   const [weekOffset, setWeekOffset] = useState(0);
   const [picking, setPicking] = useState<string | null>(null);
   // Read the clock once, so the calendar doesn't shift under a drag at midnight.
   const [now] = useState(() => new Date());
 
   const byDay = photosByDay(calendar.photos, unsaved);
+  const days = calendarDays(now, weekOffset, WEEKS);
   const schedule = (photo: SocialPhoto, day: string | null) =>
     update(moveToDay(unsaved, byDay, photo, day));
 
@@ -91,11 +108,12 @@ function Schedule({ calendar }: { calendar: SocialCalendar }) {
     <div className="flex flex-col gap-4">
       <SourceNote calendar={calendar} />
       <CalendarGrid
-        days={calendarDays(now, weekOffset, WEEKS)}
+        days={days}
         today={isoDate(now)}
         weekOffset={weekOffset}
         onWeekOffset={setWeekOffset}
         byDay={byDay}
+        posts={posts}
         unsaved={unsaved}
         onOpen={setPicking}
         onDropPhoto={(path, day) => {
@@ -103,6 +121,7 @@ function Schedule({ calendar }: { calendar: SocialCalendar }) {
           if (dropped) schedule(dropped, day);
         }}
       />
+      <InstagramPosts days={days} postsByDay={posts} />
       <PhotoPicker
         day={picking}
         byDay={byDay}
@@ -183,13 +202,15 @@ interface CalendarGridProps {
   weekOffset: number;
   onWeekOffset: (offset: number) => void;
   byDay: Map<string, SocialPhoto>;
+  /** Each day's posts from the photos' Social media posts. */
+  posts: Map<string, DayPost[]>;
   unsaved: Unsaved;
   onOpen: (day: string) => void;
   onDropPhoto: (path: string, day: string) => void;
 }
 
 function CalendarGrid(props: CalendarGridProps) {
-  const { days, today, byDay, unsaved, onOpen, onDropPhoto } = props;
+  const { days, today, byDay, posts, unsaved, onOpen, onDropPhoto } = props;
   return (
     <>
       <WeekNav {...props} />
@@ -207,6 +228,7 @@ function CalendarGrid(props: CalendarGridProps) {
               day={day}
               today={today}
               photo={photo}
+              posts={posts.get(day)}
               unsaved={
                 photo !== undefined && dateOf(unsaved, photo) !== photo.socialMediaPublishDate
               }
@@ -218,7 +240,8 @@ function CalendarGrid(props: CalendarGridProps) {
       </div>
       <p className="text-muted-foreground text-sm">
         Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
-        to another day to move it there; dropping it on another photo swaps the two.
+        to another day to move it there; dropping it on another photo swaps the two. A check or a
+        clock in a day&apos;s corner marks Instagram posts saved on photos, posted or scheduled.
       </p>
     </>
   );
@@ -262,6 +285,8 @@ interface DayProps {
   day: string;
   today: string;
   photo: SocialPhoto | undefined;
+  /** The day's posts from the photos' Social media posts, if any. */
+  posts: DayPost[] | undefined;
   /** Whether the photo on this day isn't saved there yet. */
   unsaved: boolean;
   onOpen: () => void;
@@ -279,22 +304,28 @@ function dayClass(day: string, today: string, over: boolean) {
 }
 
 /** One day of the calendar: a drop target holding its photo, or a button to pick one. */
-function Day({ day, today, photo, unsaved, onOpen, onDropPhoto }: DayProps) {
+function Day({ day, today, photo, posts, unsaved, onOpen, onDropPhoto }: DayProps) {
   const { over, handlers } = useDropTarget(DRAG_TYPE, onDropPhoto);
   const label = longDayFormat.format(parseIsoDate(day));
   return (
     <div role="gridcell" className={dayClass(day, today, over)} {...handlers}>
-      <DayNumber day={day} today={today} onPhoto={photo !== undefined} />
+      <DayNumber
+        day={day}
+        today={today}
+        onPhoto={photo !== undefined || !!posts?.[0]?.photo.image}
+      />
+      <DayPostMark posts={posts} />
       {photo ? (
         <ScheduledPhoto photo={photo} label={label} unsaved={unsaved} onOpen={onOpen} />
       ) : (
         <button
           type="button"
           onClick={onOpen}
-          className="text-muted-foreground hover:bg-accent hover:text-accent-foreground flex size-full items-center justify-center transition-colors"
+          className="text-muted-foreground hover:bg-accent hover:text-accent-foreground relative flex size-full items-center justify-center transition-colors"
           aria-label={`${label}: pick a photo`}
         >
-          <PlusIcon className="size-4" />
+          <DayPostBackdrop posts={posts} />
+          <PlusIcon className="relative size-4" />
         </button>
       )}
     </div>
