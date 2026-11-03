@@ -58,7 +58,7 @@
     "subway",
     "minimalism"
   ],
-  "genres": [],
+  "genres": ["abstract", "architecture"],
   "places": [
     {
       "relation": "",

@@ -1,6 +1,6 @@
 {
   "id": "sailboats",
   "name": "sailboats",
-  "description": "",
+  "description": "boats with masts and sails",
   "parent": "boats"
 }

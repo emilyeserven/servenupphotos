@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hills", "road", "crosswalk", "cars", "bay-windows", "houses", "trees"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

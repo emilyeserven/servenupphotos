@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["love-locks", "padlocks", "hearts", "repetition", "patterns"],
+  "tags": ["padlocks", "hearts", "repetition", "patterns"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 17.08,
     "peakChroma": 41.18,
     "samples": 10050
-  }
+  },
+  "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them."
 }

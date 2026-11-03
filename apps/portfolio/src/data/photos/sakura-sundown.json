@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["cherry-blossoms", "park", "path", "trees", "stones", "pedestrians", "spring"],
+  "tags": ["flowers", "park", "path", "trees", "stones", "pedestrians"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 14.27,
     "peakChroma": 24.27,
     "samples": 9605
-  }
+  },
+  "notes": "Shows spring cherry blossoms; 'spring' isn't a tag, since only 1 photo has it."
 }

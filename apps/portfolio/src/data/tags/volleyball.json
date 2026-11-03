@@ -1,5 +1,6 @@
 {
   "id": "volleyball",
   "name": "volleyball",
-  "description": ""
+  "description": "people playing volleyball, often on the beach",
+  "parent": "sports"
 }

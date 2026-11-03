@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["church", "steeple", "winter", "snow", "village", "river", "mountains", "houses"],
+  "tags": ["church", "winter", "snow", "village", "river", "mountains", "houses"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 4.62,
     "peakChroma": 6.11,
     "samples": 9216
-  }
+  },
+  "notes": "Shows a steeple; 'steeple' isn't a tag, since only 1 photo has one."
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["grachtenpand", "canal", "houses", "facade", "bicycles", "fence", "windows"],
+  "tags": ["canal", "houses", "facade", "bicycles", "fence", "windows"],
   "genres": ["architecture", "street"],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 5.79,
     "peakChroma": 12.75,
     "samples": 9490
-  }
+  },
+  "notes": "Shows a Dutch canal house (grachtenpand); 'grachtenpand' isn't a tag, since only 1 photo has one."
 }

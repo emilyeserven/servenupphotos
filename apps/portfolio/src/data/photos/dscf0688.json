@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["ishigaki", "castle", "moat", "ruins", "mountains", "clouds", "water"],
-  "genres": [],
+  "genres": ["landscape", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

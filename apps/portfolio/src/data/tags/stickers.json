@@ -1,5 +1,6 @@
 {
   "id": "stickers",
   "name": "stickers",
-  "description": ""
+  "description": "stickers layered on signs, poles and walls",
+  "parent": "street-art"
 }

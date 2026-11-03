@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["road", "power-lines", "roadwork", "signage", "cars", "mountains"],
-  "genres": [],
+  "tags": ["road", "power-lines", "signage", "cars", "mountains"],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -262,5 +262,6 @@
     "peakChroma": 17.58,
     "samples": 10115
   },
-  "undecided": true
+  "undecided": true,
+  "notes": "Shows roadwork; 'roadwork' isn't a tag, since only 2 photos have it."
 }

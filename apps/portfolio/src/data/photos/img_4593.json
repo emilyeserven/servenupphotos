@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["crabs", "barnacles", "stones", "shells", "beach", "camouflage"],
+  "tags": ["crabs", "stones", "shells", "beach", "camouflage"],
   "genres": [],
   "places": [
     {
@@ -266,5 +266,6 @@
     "chroma": 18.56,
     "peakChroma": 31.24,
     "samples": 10001
-  }
+  },
+  "notes": "Shows barnacles; 'barnacles' isn't a tag, since only 1 photo has them."
 }

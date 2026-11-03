@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["ishigaki", "castle", "ruins", "gates", "inscriptions", "stones", "path"],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

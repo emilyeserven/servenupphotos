@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city", "mountains", "rooftops", "apartments", "coastline", "trees"],
-  "genres": [],
+  "genres": ["cityscape", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

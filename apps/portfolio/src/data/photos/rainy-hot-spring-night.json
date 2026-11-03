@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["onsen", "rain", "umbrellas", "night", "bridge", "pedestrians", "city", "river"],
+  "tags": ["rain", "umbrellas", "night", "bridges", "pedestrians", "city", "river"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 2.89,
     "peakChroma": 8.88,
     "samples": 10050
-  }
+  },
+  "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered."
 }

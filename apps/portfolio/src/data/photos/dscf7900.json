@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hangul", "hanja", "signage", "typography", "fence", "humor"],
+  "tags": ["hangul", "signage", "typography", "fence", "humor"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 6.47,
     "peakChroma": 16.9,
     "samples": 9975
-  }
+  },
+  "notes": "Shows hanja characters; 'hanja' isn't a tag, since only 2 photos have them."
 }

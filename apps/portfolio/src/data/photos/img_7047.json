@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["lizards", "reptiles", "camouflage", "fallen-leaves", "plants"],
+  "tags": ["reptiles", "camouflage", "fallen-leaves", "plants"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 22.86,
     "peakChroma": 44.66,
     "samples": 9728
-  }
+  },
+  "notes": "Shows a lizard; 'lizards' isn't a tag, since only 1 photo has one."
 }

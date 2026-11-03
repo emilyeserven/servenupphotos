@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mannequins", "humor", "windows", "brick", "repetition"],
+  "tags": ["humor", "windows", "brick", "repetition"],
   "genres": [],
   "places": [
     {
@@ -268,5 +268,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9936
-  }
+  },
+  "notes": "Shows mannequins; 'mannequins' isn't a tag, since only 1 photo has them."
 }

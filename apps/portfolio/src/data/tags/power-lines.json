@@ -1,5 +1,6 @@
 {
   "id": "power-lines",
   "name": "power-lines",
-  "description": ""
+  "description": "",
+  "parent": "cables"
 }

@@ -48,16 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "night",
-    "crowd",
-    "storefronts",
-    "shingles",
-    "signage",
-    "sidewalk",
-    "ice-cream",
-    "queue"
-  ],
+  "tags": ["night", "crowd", "storefronts", "shingles", "signage", "sidewalk"],
   "genres": [],
   "places": [
     {
@@ -274,5 +265,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 10050
-  }
+  },
+  "notes": "Shows an ice cream queue; 'ice-cream' and 'queue' aren't tags, since only 2 photos have each."
 }

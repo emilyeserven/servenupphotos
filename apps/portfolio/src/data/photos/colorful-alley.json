@@ -51,14 +51,14 @@
   "tags": [
     "alley",
     "street-art",
-    "mural",
-    "fire-escape",
+    "murals",
+    "fire-escapes",
     "balconies",
     "ironwork",
     "string-lights",
     "night"
   ],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["houses", "bay-windows", "facade", "fire-escape", "power-lines", "cars", "lamppost"],
+  "tags": [
+    "houses",
+    "bay-windows",
+    "facade",
+    "fire-escapes",
+    "power-lines",
+    "cars",
+    "street-lights"
+  ],
   "genres": [],
   "places": [
     {

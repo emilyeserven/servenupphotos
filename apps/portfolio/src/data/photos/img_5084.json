@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["typewriter", "typography", "letters", "vintage", "repetition", "rust"],
+  "tags": ["typography", "letters", "vintage", "repetition", "rust"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 5.11,
     "peakChroma": 10.1,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a typewriter; 'typewriter' isn't a tag, since only 1 photo has one."
 }

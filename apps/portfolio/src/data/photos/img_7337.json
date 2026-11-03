@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["shells", "stones", "insects", "beach", "sand"],
+  "tags": ["shells", "stones", "beach", "sand"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 6.04,
     "peakChroma": 9.15,
     "samples": 10112
-  }
+  },
+  "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one."
 }

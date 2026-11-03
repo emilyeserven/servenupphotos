@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["giwa", "gates", "doorway", "tourists", "children", "silhouettes", "walls", "palace"],
-  "genres": [],
+  "tags": ["giwa", "gates", "doorways", "tourists", "children", "silhouettes", "walls", "palace"],
+  "genres": ["architecture", "street"],
   "places": [
     {
       "relation": "",

@@ -1,0 +1,6 @@
+{
+  "id": "street-lights",
+  "name": "street-lights",
+  "description": "",
+  "parent": "lamps"
+}

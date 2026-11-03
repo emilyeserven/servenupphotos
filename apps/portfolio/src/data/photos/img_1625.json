@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["rust", "typography", "numbers", "texture", "urban-decay"],
+  "tags": ["rust", "typography", "texture", "urban-decay"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 8.7,
     "peakChroma": 23.72,
     "samples": 10050
-  }
+  },
+  "notes": "Shows painted numbers; 'numbers' isn't a tag, since only 2 photos have them."
 }

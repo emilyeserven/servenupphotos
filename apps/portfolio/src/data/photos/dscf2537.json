@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["coastline", "beach", "highway", "cars", "waves", "mountains", "haze"],
-  "genres": [],
+  "genres": ["landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

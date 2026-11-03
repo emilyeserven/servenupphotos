@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["crowd", "pedestrians", "tourists", "humor", "signage", "storefronts"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

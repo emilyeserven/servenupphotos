@@ -1,5 +1,6 @@
 {
   "id": "highway",
   "name": "highway",
-  "description": ""
+  "description": "multi-lane highways and major roads",
+  "parent": "road"
 }

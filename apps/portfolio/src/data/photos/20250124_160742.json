@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["oasis", "desert", "lake", "sand", "clouds"],
+  "tags": ["desert", "lake", "sand", "clouds"],
   "genres": ["landscape"],
   "places": [
     {
@@ -266,5 +266,6 @@
     "peakChroma": 41.3,
     "samples": 9417
   },
-  "undecided": true
+  "undecided": true,
+  "notes": "Shows an oasis; 'oasis' isn't a tag, since only 1 photo has one."
 }

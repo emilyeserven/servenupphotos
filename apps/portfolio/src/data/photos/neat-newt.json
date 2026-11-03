@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["newts", "amphibians", "wood", "moss", "forest"],
+  "tags": ["wood", "moss", "forest"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 10.8,
     "peakChroma": 31.1,
     "samples": 9804
-  }
+  },
+  "notes": "Shows a newt; 'newts' and 'amphibians' aren't tags, since only 1–2 photos have them."
 }

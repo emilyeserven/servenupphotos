@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hanbok", "giwa", "palace", "tourists", "mountains", "umbrellas", "clouds"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

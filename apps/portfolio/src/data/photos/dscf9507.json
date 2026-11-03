@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["houses", "power-lines", "road", "wanman", "train", "railway"],
+  "tags": ["houses", "power-lines", "road", "trains", "railway"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 11.18,
     "peakChroma": 28.79,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a one-man (wanman) train; 'wanman' isn't a tag, since only 1 photo has one."
 }

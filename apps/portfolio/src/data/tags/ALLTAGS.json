@@ -1,23 +1,8 @@
 [
   {
-    "id": "abandoned",
-    "name": "abandoned",
-    "description": "places and objects left disused or neglected, slowly overtaken by weeds, weather and decay"
-  },
-  {
-    "id": "acrobatics",
-    "name": "acrobatics",
-    "description": "flips, balancing acts and other feats of agility and strength, often performed for an audience"
-  },
-  {
     "id": "aerial-view",
     "name": "aerial-view",
     "description": "scenes seen from high above, such as cities, roads, forests and mountains from a tower, plane or peak"
-  },
-  {
-    "id": "air-conditioners",
-    "name": "air-conditioners",
-    "description": "air-conditioning units mounted on walls, windows and rooftops, often cluttering building exteriors"
   },
   {
     "id": "alley",
@@ -25,30 +10,9 @@
     "description": "narrow lanes and passageways between buildings, often lined with signs, power lines and street art"
   },
   {
-    "id": "amphibians",
-    "name": "amphibians",
-    "description": "frogs, toads, newts, salamanders and other cold-blooded animals that live both in water and on land"
-  },
-  {
-    "id": "ancient-egypt",
-    "name": "ancient-egypt",
-    "description": "the monuments and remains of pharaonic Egypt, from pyramids and temples to tombs and hieroglyphs"
-  },
-  {
-    "id": "andon",
-    "name": "andon",
-    "description": "a traditional Japanese lantern of paper stretched over a wooden or bamboo frame",
-    "parent": "lanterns"
-  },
-  {
     "id": "apartments",
     "name": "apartments",
     "description": "residential buildings divided into many units, often showing repeating windows and balconies"
-  },
-  {
-    "id": "arcade",
-    "name": "arcade",
-    "description": "a row of arches on columns or piers, often forming a covered walkway along a building"
   },
   {
     "id": "arches",
@@ -56,19 +20,14 @@
     "description": "curved structures spanning an opening, found in doorways, windows, bridges and colonnades"
   },
   {
-    "id": "art-installation",
-    "name": "art-installation",
+    "id": "art-installations",
+    "name": "art-installations",
     "description": "large-scale or site-specific artworks placed in public or gallery spaces, often playful or immersive"
   },
   {
-    "id": "artist",
-    "name": "artist",
+    "id": "artists",
+    "name": "artists",
     "description": "painters, sketchers and other artists at work, often creating in streets, parks or studios"
-  },
-  {
-    "id": "attic",
-    "name": "attic",
-    "description": "the space just under a roof, often showing exposed beams, slanted ceilings and small windows"
   },
   {
     "id": "autumn",
@@ -81,29 +40,10 @@
     "description": "platforms projecting from building facades, enclosed by railings, often repeating across apartment blocks"
   },
   {
-    "id": "banjos",
-    "name": "banjos",
-    "description": "stringed instruments with a round drum-like body and long neck, associated with folk and bluegrass music"
-  },
-  {
-    "id": "barn",
-    "name": "barn",
-    "description": "farm buildings used to house animals, hay, crops or equipment, often built of wood"
-  },
-  {
-    "id": "barnacles",
-    "name": "barnacles",
-    "description": "small shelled sea creatures that cling in clusters to rocks, piers, hulls and shells"
-  },
-  {
-    "id": "baseball",
-    "name": "baseball",
-    "description": ""
-  },
-  {
     "id": "bay-windows",
     "name": "bay-windows",
-    "description": "windows projecting outward from a building's wall, forming a bay, common on row houses"
+    "description": "windows projecting outward from a building's wall, forming a bay, common on row houses",
+    "parent": "windows"
   },
   {
     "id": "beach",
@@ -116,8 +56,8 @@
     "description": "exposed structural beams of wood, steel or concrete supporting ceilings, roofs and canopies"
   },
   {
-    "id": "bench",
-    "name": "bench",
+    "id": "benches",
+    "name": "benches",
     "description": "benches in parks, streets and plazas, whether occupied by people resting or standing empty"
   },
   {
@@ -131,473 +71,308 @@
     "description": "wild and urban birds perched, foraging or in flight, from seagulls to pigeons"
   },
   {
-    "id": "board-games",
-    "name": "board-games",
-    "description": ""
-  },
-  {
     "id": "boardwalk",
     "name": "boardwalk",
-    "description": ""
+    "description": "raised wooden walkways over marshes, forests and sand",
+    "parent": "path"
   },
   {
     "id": "boats",
     "name": "boats",
-    "description": ""
-  },
-  {
-    "id": "bracket-fungi",
-    "name": "bracket-fungi",
-    "description": "",
-    "parent": "fungi"
+    "description": "boats of all kinds, moored in harbors or out on the water"
   },
   {
     "id": "branches",
     "name": "branches",
-    "description": ""
+    "description": "tree branches, bare or leafy, often reaching across the sky"
   },
   {
     "id": "brick",
     "name": "brick",
-    "description": ""
+    "description": "walls, buildings and paving made of brick"
   },
   {
-    "id": "bridge",
-    "name": "bridge",
-    "description": ""
-  },
-  {
-    "id": "bronze",
-    "name": "bronze",
-    "description": ""
-  },
-  {
-    "id": "bubbles",
-    "name": "bubbles",
-    "description": ""
-  },
-  {
-    "id": "buddha",
-    "name": "buddha",
-    "description": "",
-    "parent": "buddhism"
+    "id": "bridges",
+    "name": "bridges",
+    "description": "bridges spanning rivers, roads, rail lines and valleys"
   },
   {
     "id": "buddhism",
     "name": "buddhism",
-    "description": ""
-  },
-  {
-    "id": "bukeyashiki",
-    "name": "bukeyashiki",
-    "description": "",
-    "parent": "houses"
-  },
-  {
-    "id": "buoys",
-    "name": "buoys",
-    "description": ""
-  },
-  {
-    "id": "busking",
-    "name": "busking",
-    "description": "performing music, dance or other acts in public places for voluntary donations",
-    "parent": "street-performer"
-  },
-  {
-    "id": "byobu",
-    "name": "byobu",
-    "description": ""
+    "description": "Buddhist temples, statues, lanterns, offerings and rituals"
   },
   {
     "id": "cables",
     "name": "cables",
-    "description": ""
+    "description": "cables and wires strung between poles, towers, bridges and buildings"
   },
   {
     "id": "cafe",
     "name": "cafe",
-    "description": ""
+    "description": "cafes and coffee shops, seen inside or from the street"
   },
   {
     "id": "calligraphy",
     "name": "calligraphy",
-    "description": ""
-  },
-  {
-    "id": "camels",
-    "name": "camels",
-    "description": ""
+    "description": "brush-written characters on signs, walls, lanterns and lamps"
   },
   {
     "id": "cameras",
     "name": "cameras",
-    "description": ""
+    "description": "cameras in the frame, often photographers taking photos"
   },
   {
     "id": "camouflage",
     "name": "camouflage",
-    "description": ""
+    "description": "animals blending into the rocks, sand or leaves around them"
   },
   {
     "id": "canal",
     "name": "canal",
-    "description": ""
-  },
-  {
-    "id": "carpet",
-    "name": "carpet",
-    "description": ""
+    "description": "man-made waterways running through towns and cities"
   },
   {
     "id": "cars",
     "name": "cars",
-    "description": ""
+    "description": "cars parked along or driving down streets and roads"
   },
   {
     "id": "carvings",
     "name": "carvings",
-    "description": ""
-  },
-  {
-    "id": "cast-iron-architecture",
-    "name": "cast-iron-architecture",
-    "description": "19th-century buildings with ornate facades made of prefabricated cast-iron panels, typical of New York's SoHo",
-    "parent": "facade"
+    "description": "figures, text and designs carved into wood or stone"
   },
   {
     "id": "castle",
     "name": "castle",
-    "description": ""
+    "description": "castles and their keeps, gates, walls and moats"
   },
   {
     "id": "cemetery",
     "name": "cemetery",
-    "description": ""
+    "description": "graveyards and burial grounds with tombs and grave markers"
   },
   {
     "id": "chains",
     "name": "chains",
-    "description": ""
-  },
-  {
-    "id": "chalk-art",
-    "name": "chalk-art",
-    "description": "drawings or paintings made on pavement with chalk or pastels, often temporary",
-    "parent": "street-art"
-  },
-  {
-    "id": "changsal",
-    "name": "changsal",
-    "description": "the wooden latticework of traditional Korean doors and windows, backed with hanji paper",
-    "parent": "windows"
-  },
-  {
-    "id": "cherry-blossoms",
-    "name": "cherry-blossoms",
-    "description": "",
-    "parent": "flowers"
-  },
-  {
-    "id": "chess",
-    "name": "chess",
-    "description": "",
-    "parent": "board-games"
+    "description": "metal chains hanging, linking or locking things"
   },
   {
     "id": "children",
     "name": "children",
-    "description": ""
+    "description": "children playing, watching or exploring"
   },
   {
     "id": "chinatown",
     "name": "chinatown",
-    "description": ""
+    "description": "Chinese neighborhoods in cities outside China, with lanterns and bilingual signs"
   },
   {
     "id": "chochin",
     "name": "chochin",
-    "description": "",
+    "description": "Japanese collapsible paper lanterns hung outside shops, bars and temples",
     "parent": "lanterns"
-  },
-  {
-    "id": "chozuya",
-    "name": "chozuya",
-    "description": "a water basin at a Japanese temple or shrine where visitors purify their hands and mouth, often fed by a dragon spout",
-    "parent": "fountain"
-  },
-  {
-    "id": "christmas-lights",
-    "name": "christmas-lights",
-    "description": "",
-    "parent": "string-lights"
   },
   {
     "id": "church",
     "name": "church",
-    "description": ""
+    "description": "churches, with their towers, attics and windows"
   },
   {
     "id": "city-lights",
     "name": "city-lights",
-    "description": ""
+    "description": "the glow of a city's windows, streets and signs after dark"
   },
   {
     "id": "city-walls",
     "name": "city-walls",
-    "description": ""
+    "description": "historic defensive walls and gates around a city",
+    "parent": "walls"
   },
   {
     "id": "city",
     "name": "city",
-    "description": ""
+    "description": "dense urban scenes of streets, buildings and traffic"
   },
   {
-    "id": "clock",
-    "name": "clock",
-    "description": ""
+    "id": "clocks",
+    "name": "clocks",
+    "description": "clocks on walls, towers and in stations"
   },
   {
     "id": "clockwork",
     "name": "clockwork",
-    "description": ""
+    "description": "the inner gears and mechanisms of clocks"
   },
   {
     "id": "clouds",
     "name": "clouds",
-    "description": ""
+    "description": "clouds filling or drifting across the sky"
   },
   {
     "id": "coastline",
     "name": "coastline",
-    "description": ""
+    "description": "where land meets the sea, along shores, cliffs and coastal roads"
   },
   {
     "id": "cobblestones",
     "name": "cobblestones",
-    "description": ""
+    "description": "streets and squares paved with cobblestones"
   },
   {
     "id": "columns",
     "name": "columns",
-    "description": ""
+    "description": "columns and pillars holding up buildings, halls and porches"
   },
   {
     "id": "commuters",
     "name": "commuters",
-    "description": ""
+    "description": "people traveling to and from work, especially by train and subway"
   },
   {
     "id": "confucianism",
     "name": "confucianism",
-    "description": ""
-  },
-  {
-    "id": "costumes",
-    "name": "costumes",
-    "description": ""
+    "description": "Confucian shrines and rites, such as Korea's royal ancestral shrines"
   },
   {
     "id": "countryside",
     "name": "countryside",
-    "description": ""
+    "description": "rural landscapes of fields, farms, woods and quiet roads"
+  },
+  {
+    "id": "covered-street",
+    "name": "covered-street",
+    "description": "shopping streets and market lanes roofed over from end to end"
   },
   {
     "id": "crabs",
     "name": "crabs",
-    "description": ""
+    "description": "crabs among rocks, sand and seaweed"
   },
   {
     "id": "crosswalk",
     "name": "crosswalk",
-    "description": ""
+    "description": "marked pedestrian crossings on streets"
   },
   {
     "id": "crowd",
     "name": "crowd",
-    "description": ""
+    "description": "large groups of people packed together"
   },
   {
     "id": "daldongne",
     "name": "daldongne",
-    "description": ""
+    "description": "Korean hillside neighborhoods of small, closely packed houses, literally 'moon villages'",
+    "parent": "village"
   },
   {
     "id": "dancheong",
     "name": "dancheong",
-    "description": "",
+    "description": "colorful painted patterns decorating traditional Korean wooden buildings",
     "parent": "patterns"
-  },
-  {
-    "id": "dancing",
-    "name": "dancing",
-    "description": ""
   },
   {
     "id": "desert",
     "name": "desert",
-    "description": ""
+    "description": "dry sandy or rocky desert landscapes"
   },
   {
     "id": "dobei",
     "name": "dobei",
-    "description": "",
+    "description": "Japanese earthen walls with plaster and tiled tops, typical of old samurai districts",
     "parent": "walls"
-  },
-  {
-    "id": "dogs",
-    "name": "dogs",
-    "description": ""
-  },
-  {
-    "id": "domes",
-    "name": "domes",
-    "description": ""
-  },
-  {
-    "id": "door-knocker",
-    "name": "door-knocker",
-    "description": ""
   },
   {
     "id": "doors",
     "name": "doors",
-    "description": ""
+    "description": "doors of all kinds, from carved wooden doors to sliding paper panels"
   },
   {
-    "id": "doorway",
-    "name": "doorway",
-    "description": ""
-  },
-  {
-    "id": "dragons",
-    "name": "dragons",
-    "description": ""
-  },
-  {
-    "id": "ducks",
-    "name": "ducks",
-    "description": "",
-    "parent": "birds"
+    "id": "doorways",
+    "name": "doorways",
+    "description": "open entrances and passages through walls"
   },
   {
     "id": "elderly",
     "name": "elderly",
-    "description": ""
-  },
-  {
-    "id": "fabric",
-    "name": "fabric",
-    "description": ""
+    "description": "older people going about their day"
   },
   {
     "id": "facade",
     "name": "facade",
-    "description": ""
+    "description": "the outer faces of buildings, often seen straight on"
   },
   {
     "id": "faces",
     "name": "faces",
-    "description": ""
+    "description": "human faces, real or depicted in art, carvings and posters"
   },
   {
     "id": "fallen-leaves",
     "name": "fallen-leaves",
-    "description": ""
-  },
-  {
-    "id": "fanous",
-    "name": "fanous",
-    "description": "a traditional Egyptian lantern of pierced metal and colored glass, iconic during Ramadan",
-    "parent": "lanterns"
-  },
-  {
-    "id": "farm-animals",
-    "name": "farm-animals",
-    "description": ""
-  },
-  {
-    "id": "farmland",
-    "name": "farmland",
-    "description": ""
+    "description": "leaves lying on the ground, paths and water"
   },
   {
     "id": "fence",
     "name": "fence",
-    "description": ""
+    "description": "fences and railings of wood, metal or chain-link"
   },
   {
-    "id": "ferry-terminal",
-    "name": "ferry-terminal",
-    "description": ""
+    "id": "festivals",
+    "name": "festivals",
+    "description": "festivals, holidays and parades, with their processions, costumes and decorations"
   },
   {
     "id": "figurines",
     "name": "figurines",
-    "description": ""
+    "description": "small figures, toys and models of people and animals"
   },
   {
-    "id": "fire-alarm",
-    "name": "fire-alarm",
-    "description": ""
-  },
-  {
-    "id": "fire-escape",
-    "name": "fire-escape",
-    "description": "",
+    "id": "fire-escapes",
+    "name": "fire-escapes",
+    "description": "metal exterior stairways zigzagging down apartment buildings",
     "parent": "stairs"
-  },
-  {
-    "id": "fire-hydrant",
-    "name": "fire-hydrant",
-    "description": ""
   },
   {
     "id": "fish",
     "name": "fish",
-    "description": ""
+    "description": "fish swimming in ponds, canals and the sea"
   },
   {
     "id": "flags",
     "name": "flags",
-    "description": ""
+    "description": "flags and banners flown from poles and buildings"
   },
   {
     "id": "flight",
     "name": "flight",
-    "description": ""
+    "description": "birds caught in flight"
   },
   {
     "id": "flowers",
     "name": "flowers",
-    "description": "",
+    "description": "blooming flowers, from blossoming trees to bouquets",
     "parent": "plants"
   },
   {
     "id": "fog",
     "name": "fog",
-    "description": ""
+    "description": "thick mist and fog hiding part of the scene"
   },
   {
-    "id": "folk-art",
-    "name": "folk-art",
-    "description": ""
-  },
-  {
-    "id": "footbridge",
-    "name": "footbridge",
-    "description": "",
-    "parent": "bridge"
+    "id": "footbridges",
+    "name": "footbridges",
+    "description": "bridges for people on foot, from small wooden crossings to skybridges",
+    "parent": "bridges"
   },
   {
     "id": "forest",
     "name": "forest",
-    "description": ""
+    "description": "woods and forests, from dense trees to forest floors"
   },
   {
-    "id": "fountain",
-    "name": "fountain",
-    "description": ""
+    "id": "fountains",
+    "name": "fountains",
+    "description": "decorative fountains and flowing water basins"
   },
   {
     "id": "framing",
@@ -607,248 +382,126 @@
   {
     "id": "fungi",
     "name": "fungi",
-    "description": ""
-  },
-  {
-    "id": "fusuma",
-    "name": "fusuma",
-    "description": "",
-    "parent": "doors"
+    "description": "mushrooms, bracket fungi and other fungi"
   },
   {
     "id": "garden",
     "name": "garden",
-    "description": ""
+    "description": "planned gardens of plants, stones, paths and water"
   },
   {
     "id": "gates",
     "name": "gates",
-    "description": ""
-  },
-  {
-    "id": "gazebo",
-    "name": "gazebo",
-    "description": "",
-    "parent": "pavilion"
+    "description": "gates and gateways into palaces, temples, shrines and grounds"
   },
   {
     "id": "gears",
     "name": "gears",
-    "description": "",
+    "description": "interlocking toothed wheels in machines and clocks",
     "parent": "machinery"
-  },
-  {
-    "id": "geese",
-    "name": "geese",
-    "description": "",
-    "parent": "birds"
-  },
-  {
-    "id": "ginkgo",
-    "name": "ginkgo",
-    "description": "",
-    "parent": "trees"
-  },
-  {
-    "id": "girih",
-    "name": "girih",
-    "description": "Islamic geometric ornament built from interlacing star and polygon patterns",
-    "parent": "patterns"
   },
   {
     "id": "giwa",
     "name": "giwa",
-    "description": "",
-    "parent": "shingles"
+    "description": "traditional Korean clay roof tiles on curved, upturned roofs",
+    "parent": "rooftops"
   },
   {
     "id": "glass",
     "name": "glass",
-    "description": ""
-  },
-  {
-    "id": "goats",
-    "name": "goats",
-    "description": "",
-    "parent": "farm-animals"
-  },
-  {
-    "id": "grachtenpand",
-    "name": "grachtenpand",
-    "description": "a tall, narrow Dutch canal house with a decorative gable",
-    "parent": "houses"
+    "description": "glass facades, windows and objects"
   },
   {
     "id": "graffiti",
     "name": "graffiti",
-    "description": "",
+    "description": "spray-painted tags and pieces on walls, signs and doors",
     "parent": "street-art"
   },
   {
     "id": "grass",
     "name": "grass",
-    "description": ""
-  },
-  {
-    "id": "guildhall",
-    "name": "guildhall",
-    "description": "an ornate building where a medieval or early-modern trade guild met, typical of Flemish and Dutch market squares"
-  },
-  {
-    "id": "halloween",
-    "name": "halloween",
-    "description": ""
+    "description": "lawns, meadows and grassy ground",
+    "parent": "plants"
   },
   {
     "id": "hanbok",
     "name": "hanbok",
     "description": "traditional Korean clothing, with a high-waisted, full skirt or loose trousers and a short jacket",
-    "parent": "costumes"
-  },
-  {
-    "id": "hanfu",
-    "name": "hanfu",
-    "description": "traditional Han Chinese clothing with flowing robes, wide sleeves and wrapped collars",
-    "parent": "costumes"
+    "parent": "traditional-clothing"
   },
   {
     "id": "hangul",
     "name": "hangul",
-    "description": "",
+    "description": "the Korean alphabet on signs, posters and street art",
     "parent": "letters"
-  },
-  {
-    "id": "hanja",
-    "name": "hanja",
-    "description": "Chinese characters as used in writing Korean",
-    "parent": "letters"
-  },
-  {
-    "id": "hanok",
-    "name": "hanok",
-    "description": "",
-    "parent": "houses"
   },
   {
     "id": "harbor",
     "name": "harbor",
-    "description": ""
-  },
-  {
-    "id": "hay",
-    "name": "hay",
-    "description": ""
+    "description": "sheltered waters where boats are moored"
   },
   {
     "id": "haze",
     "name": "haze",
-    "description": ""
+    "description": "hazy air softening distant cities, coasts and mountains"
   },
   {
     "id": "hearts",
     "name": "hearts",
-    "description": ""
-  },
-  {
-    "id": "herons",
-    "name": "herons",
-    "description": "",
-    "parent": "birds"
+    "description": "heart shapes in art, locks and decorations"
   },
   {
     "id": "hieroglyphs",
     "name": "hieroglyphs",
-    "description": "",
+    "description": "ancient Egyptian picture writing carved into stone",
     "parent": "inscriptions"
   },
   {
     "id": "highway",
     "name": "highway",
-    "description": ""
+    "description": "multi-lane highways and major roads",
+    "parent": "road"
   },
   {
     "id": "hiking-trail",
     "name": "hiking-trail",
-    "description": "",
+    "description": "marked trails through forests and hills",
     "parent": "path"
   },
   {
     "id": "hills",
     "name": "hills",
-    "description": ""
-  },
-  {
-    "id": "horse",
-    "name": "horse",
-    "description": ""
+    "description": "hilly terrain and steep streets"
   },
   {
     "id": "hotel",
     "name": "hotel",
-    "description": ""
+    "description": "hotels and inns, with their gardens, rooms and grounds"
   },
   {
     "id": "houses",
     "name": "houses",
-    "description": ""
-  },
-  {
-    "id": "hula-hoop",
-    "name": "hula-hoop",
-    "description": ""
+    "description": "single-family homes and townhouses"
   },
   {
     "id": "humor",
     "name": "humor",
-    "description": ""
-  },
-  {
-    "id": "hypostyle",
-    "name": "hypostyle",
-    "description": "",
-    "parent": "columns"
-  },
-  {
-    "id": "ice-cream",
-    "name": "ice-cream",
-    "description": ""
-  },
-  {
-    "id": "ice",
-    "name": "ice",
-    "description": ""
-  },
-  {
-    "id": "icicles",
-    "name": "icicles",
-    "description": "",
-    "parent": "ice"
-  },
-  {
-    "id": "iguanas",
-    "name": "iguanas",
-    "description": "",
-    "parent": "lizards"
+    "description": "funny, ironic or absurd scenes"
   },
   {
     "id": "inscriptions",
     "name": "inscriptions",
-    "description": ""
-  },
-  {
-    "id": "insects",
-    "name": "insects",
-    "description": ""
+    "description": "text carved or written on stone, wood or metal"
   },
   {
     "id": "interior",
     "name": "interior",
-    "description": ""
+    "description": "scenes inside buildings"
   },
   {
     "id": "ironwork",
     "name": "ironwork",
-    "description": ""
+    "description": "decorative wrought or cast iron in gates, doors, railings and grates"
   },
   {
     "id": "ishigaki",
@@ -859,34 +512,13 @@
   {
     "id": "islands",
     "name": "islands",
-    "description": ""
+    "description": "islands seen from shore or from above"
   },
   {
     "id": "ivy",
     "name": "ivy",
-    "description": "",
+    "description": "ivy and other climbing vines covering walls, trees and fences",
     "parent": "plants"
-  },
-  {
-    "id": "japsang",
-    "name": "japsang",
-    "description": "small clay guardian figurines lined along the roof ridges of Korean palace buildings to ward off evil",
-    "parent": "figurines"
-  },
-  {
-    "id": "jingeomdari",
-    "name": "jingeomdari",
-    "description": ""
-  },
-  {
-    "id": "juggling",
-    "name": "juggling",
-    "description": ""
-  },
-  {
-    "id": "kakejiku",
-    "name": "kakejiku",
-    "description": "a Japanese hanging scroll of painting or calligraphy, displayed in a tokonoma"
   },
   {
     "id": "kamon",
@@ -896,30 +528,14 @@
   {
     "id": "kanji",
     "name": "kanji",
-    "description": "the Chinese-derived characters used in written Japanese"
-  },
-  {
-    "id": "karahafu",
-    "name": "karahafu",
-    "description": ""
-  },
-  {
-    "id": "karesansui",
-    "name": "karesansui",
-    "description": "a Japanese dry rock garden of raked gravel and stones, often called a zen garden",
-    "parent": "garden"
-  },
-  {
-    "id": "katomado",
-    "name": "katomado",
-    "description": "",
-    "parent": "windows"
+    "description": "the Chinese-derived characters used in written Japanese",
+    "parent": "letters"
   },
   {
     "id": "kawara",
     "name": "kawara",
     "description": "traditional Japanese fired-clay roof tiles laid in interlocking wavy rows",
-    "parent": "shingles"
+    "parent": "rooftops"
   },
   {
     "id": "koi",
@@ -930,287 +546,149 @@
   {
     "id": "koshi",
     "name": "koshi",
-    "description": ""
+    "description": "Japanese wooden lattice screens on windows and storefronts",
+    "parent": "windows"
   },
   {
     "id": "lake",
     "name": "lake",
-    "description": ""
-  },
-  {
-    "id": "lamppost",
-    "name": "lamppost",
-    "description": ""
+    "description": "lakes and reservoirs"
   },
   {
     "id": "lamps",
     "name": "lamps",
-    "description": ""
+    "description": "lamps and light fixtures, from hanging lamps to street lights"
   },
   {
     "id": "lanterns",
     "name": "lanterns",
-    "description": ""
-  },
-  {
-    "id": "letterpress",
-    "name": "letterpress",
-    "description": "relief printing from inked, hand-set movable metal or wood type",
-    "parent": "typography"
+    "description": "lanterns of paper, stone, metal or glass, hung or standing"
   },
   {
     "id": "letters",
     "name": "letters",
-    "description": ""
+    "description": "individual letters and characters of any script",
+    "parent": "typography"
   },
   {
     "id": "lichen",
     "name": "lichen",
-    "description": ""
-  },
-  {
-    "id": "lighthouse",
-    "name": "lighthouse",
-    "description": ""
-  },
-  {
-    "id": "lizards",
-    "name": "lizards",
-    "description": "",
-    "parent": "reptiles"
-  },
-  {
-    "id": "love-locks",
-    "name": "love-locks",
-    "description": "padlocks that couples fasten to bridges, fences or railings as a symbol of lasting love",
-    "parent": "padlocks"
-  },
-  {
-    "id": "lunar-new-year",
-    "name": "lunar-new-year",
-    "description": "the Chinese and East Asian New Year festival, celebrated with parades, lion dances and red decorations"
+    "description": "crusty lichen growing on wood, stone and bark"
   },
   {
     "id": "machinery",
     "name": "machinery",
-    "description": ""
-  },
-  {
-    "id": "machiya",
-    "name": "machiya",
-    "description": "",
-    "parent": "houses"
-  },
-  {
-    "id": "manhole-cover",
-    "name": "manhole-cover",
-    "description": ""
-  },
-  {
-    "id": "mannequins",
-    "name": "mannequins",
-    "description": ""
+    "description": "machines and their moving parts"
   },
   {
     "id": "market",
     "name": "market",
-    "description": ""
+    "description": "markets and market halls with stalls and shops"
   },
   {
     "id": "marsh",
     "name": "marsh",
-    "description": ""
-  },
-  {
-    "id": "mashrabiya",
-    "name": "mashrabiya",
-    "description": "a carved wooden lattice screen or window found in traditional Islamic and Middle Eastern architecture",
-    "parent": "windows"
-  },
-  {
-    "id": "masks",
-    "name": "masks",
-    "description": ""
-  },
-  {
-    "id": "matsuri",
-    "name": "matsuri",
-    "description": ""
-  },
-  {
-    "id": "memorial",
-    "name": "memorial",
-    "description": ""
-  },
-  {
-    "id": "milky-way",
-    "name": "milky-way",
-    "description": ""
-  },
-  {
-    "id": "minaret",
-    "name": "minaret",
-    "description": "",
-    "parent": "mosque"
+    "description": "wetlands of reeds, tall grass and shallow water"
   },
   {
     "id": "minimalism",
     "name": "minimalism",
-    "description": ""
+    "description": "simple, sparse compositions with lots of empty space"
   },
   {
-    "id": "mirror",
-    "name": "mirror",
-    "description": ""
-  },
-  {
-    "id": "mishkat",
-    "name": "mishkat",
-    "description": "a hanging mosque lamp, traditionally of glass or metal and often inscribed with Quranic calligraphy",
-    "parent": "lamps"
+    "id": "mirrors",
+    "name": "mirrors",
+    "description": "mirrors and the reflections they hold"
   },
   {
     "id": "moat",
     "name": "moat",
-    "description": ""
+    "description": "water-filled ditches around a castle"
   },
   {
-    "id": "monument",
-    "name": "monument",
-    "description": ""
-  },
-  {
-    "id": "moon",
-    "name": "moon",
-    "description": ""
-  },
-  {
-    "id": "mosaic",
-    "name": "mosaic",
-    "description": ""
+    "id": "monuments",
+    "name": "monuments",
+    "description": "monuments, memorials and landmark structures"
   },
   {
     "id": "mosque",
     "name": "mosque",
-    "description": ""
+    "description": "mosques, with their halls, courtyards, lamps and minarets"
   },
   {
     "id": "moss",
     "name": "moss",
-    "description": "",
+    "description": "moss covering stones, wood and the forest floor",
     "parent": "plants"
   },
   {
     "id": "motion-blur",
     "name": "motion-blur",
-    "description": ""
-  },
-  {
-    "id": "motorcycles",
-    "name": "motorcycles",
-    "description": ""
+    "description": "moving people or vehicles blurred by a slow shutter"
   },
   {
     "id": "mountains",
     "name": "mountains",
-    "description": ""
+    "description": "mountains and mountain ranges, near or on the horizon"
   },
   {
-    "id": "mud-brick",
-    "name": "mud-brick",
-    "description": ""
-  },
-  {
-    "id": "mural",
-    "name": "mural",
-    "description": "",
+    "id": "murals",
+    "name": "murals",
+    "description": "large paintings on walls and buildings",
     "parent": "street-art"
   },
   {
     "id": "museum",
     "name": "museum",
-    "description": ""
+    "description": "museums and the exhibits inside them"
   },
   {
     "id": "mushrooms",
     "name": "mushrooms",
-    "description": "",
+    "description": "capped mushrooms and toadstools",
     "parent": "fungi"
   },
   {
     "id": "musicians",
     "name": "musicians",
-    "description": ""
+    "description": "people playing music",
+    "parent": "street-performers"
   },
   {
     "id": "necropolis",
     "name": "necropolis",
-    "description": "",
+    "description": "ancient burial grounds and city-like clusters of tombs",
     "parent": "cemetery"
   },
   {
     "id": "neon",
     "name": "neon",
-    "description": ""
+    "description": "glowing neon signs and lights"
   },
   {
-    "id": "newsstand",
-    "name": "newsstand",
-    "description": ""
-  },
-  {
-    "id": "newts",
-    "name": "newts",
-    "description": "",
-    "parent": "amphibians"
+    "id": "night-sky",
+    "name": "night-sky",
+    "description": "the moon, stars and Milky Way seen in the sky"
   },
   {
     "id": "night",
     "name": "night",
-    "description": ""
+    "description": "scenes after dark"
   },
   {
-    "id": "nobori",
-    "name": "nobori",
-    "description": "tall, narrow Japanese banners hung on poles at temples, shrines, shops and festivals",
-    "parent": "flags"
-  },
-  {
-    "id": "noraebang",
-    "name": "noraebang",
-    "description": ""
-  },
-  {
-    "id": "numbers",
-    "name": "numbers",
-    "description": ""
-  },
-  {
-    "id": "oasis",
-    "name": "oasis",
-    "description": "",
-    "parent": "desert"
-  },
-  {
-    "id": "observation-tower",
-    "name": "observation-tower",
-    "description": ""
+    "id": "observation-towers",
+    "name": "observation-towers",
+    "description": "towers built for viewing, and the views from them"
   },
   {
     "id": "ocean",
     "name": "ocean",
-    "description": ""
+    "description": "the open sea and its horizon"
   },
   {
-    "id": "oculus",
-    "name": "oculus",
-    "description": "",
-    "parent": "skylight"
-  },
-  {
-    "id": "office-building",
-    "name": "office-building",
-    "description": ""
+    "id": "office-buildings",
+    "name": "office-buildings",
+    "description": "office towers and commercial buildings"
   },
   {
     "id": "omikuji",
@@ -1218,573 +696,354 @@
     "description": "paper fortunes drawn at Japanese temples and shrines, tied to branches or racks to leave bad luck behind"
   },
   {
-    "id": "onsen",
-    "name": "onsen",
-    "description": ""
-  },
-  {
-    "id": "outdoor-dining",
-    "name": "outdoor-dining",
-    "description": ""
-  },
-  {
-    "id": "paddleboarding",
-    "name": "paddleboarding",
-    "description": ""
-  },
-  {
     "id": "padlocks",
     "name": "padlocks",
-    "description": ""
-  },
-  {
-    "id": "pagoda",
-    "name": "pagoda",
-    "description": "",
-    "parent": "temple"
-  },
-  {
-    "id": "paifang",
-    "name": "paifang",
-    "description": "a traditional Chinese ceremonial archway gate with tiled roofs, often marking the entrance to a Chinatown",
-    "parent": "gates"
+    "description": "padlocks on fences, gates and chains"
   },
   {
     "id": "palace",
     "name": "palace",
-    "description": ""
+    "description": "royal palaces, with their halls, gates and courtyards"
   },
   {
     "id": "palm-trees",
     "name": "palm-trees",
-    "description": "",
+    "description": "palm trees lining streets, gardens and beaches",
     "parent": "trees"
   },
   {
     "id": "paper",
     "name": "paper",
-    "description": ""
-  },
-  {
-    "id": "parade",
-    "name": "parade",
-    "description": ""
+    "description": "paper slips, sheets and objects"
   },
   {
     "id": "park",
     "name": "park",
-    "description": ""
+    "description": "city parks and their lawns, paths and benches"
   },
   {
     "id": "path",
     "name": "path",
-    "description": ""
+    "description": "paths and walkways for people on foot"
   },
   {
     "id": "patterns",
     "name": "patterns",
-    "description": ""
+    "description": "repeating shapes, lines and motifs"
   },
   {
     "id": "pavilion",
     "name": "pavilion",
-    "description": ""
+    "description": "open-sided garden and palace buildings, including gazebos"
   },
   {
     "id": "pedestrians",
     "name": "pedestrians",
-    "description": ""
-  },
-  {
-    "id": "phoenixes",
-    "name": "phoenixes",
-    "description": ""
-  },
-  {
-    "id": "piano",
-    "name": "piano",
-    "description": ""
-  },
-  {
-    "id": "picnic",
-    "name": "picnic",
-    "description": ""
+    "description": "people walking through streets and public spaces"
   },
   {
     "id": "pier",
     "name": "pier",
-    "description": ""
+    "description": "piers and docks reaching out over the water"
   },
   {
     "id": "pigeons",
     "name": "pigeons",
-    "description": "",
+    "description": "pigeons in streets, parks and plazas",
     "parent": "birds"
   },
   {
     "id": "pilings",
     "name": "pilings",
-    "description": ""
+    "description": "wooden or concrete posts standing in water, often remains of old piers"
   },
   {
     "id": "pine-trees",
     "name": "pine-trees",
-    "description": "",
+    "description": "pine trees in forests, gardens and temple grounds",
     "parent": "trees"
-  },
-  {
-    "id": "planter",
-    "name": "planter",
-    "description": ""
   },
   {
     "id": "plants",
     "name": "plants",
-    "description": ""
+    "description": "plants of all kinds, from moss and grass to trees"
   },
   {
     "id": "platform",
     "name": "platform",
-    "description": "",
+    "description": "train and subway platforms",
     "parent": "train-station"
   },
   {
     "id": "plaza",
     "name": "plaza",
-    "description": ""
-  },
-  {
-    "id": "police",
-    "name": "police",
-    "description": ""
+    "description": "open public squares and plazas"
   },
   {
     "id": "pond",
     "name": "pond",
-    "description": ""
+    "description": "ponds in parks, gardens and palaces"
   },
   {
     "id": "posters",
     "name": "posters",
-    "description": ""
-  },
-  {
-    "id": "pottery",
-    "name": "pottery",
-    "description": ""
+    "description": "posters and paste-ups on walls and storefronts"
   },
   {
     "id": "power-lines",
     "name": "power-lines",
-    "description": ""
+    "description": "",
+    "parent": "cables"
   },
   {
     "id": "prayers",
     "name": "prayers",
-    "description": ""
-  },
-  {
-    "id": "produce",
-    "name": "produce",
-    "description": ""
+    "description": "prayers, offerings and wishes left at temples and shrines"
   },
   {
     "id": "promenade",
     "name": "promenade",
-    "description": ""
-  },
-  {
-    "id": "pumgyeseok",
-    "name": "pumgyeseok",
-    "description": "rank stones in a Korean palace courtyard marking where officials of each grade stood during ceremonies",
-    "parent": "stones"
-  },
-  {
-    "id": "pumpkins",
-    "name": "pumpkins",
-    "description": ""
+    "description": "wide walkways along a waterfront",
+    "parent": "path"
   },
   {
     "id": "pyramids",
     "name": "pyramids",
-    "description": ""
-  },
-  {
-    "id": "queue",
-    "name": "queue",
-    "description": ""
+    "description": "the pyramids of ancient Egypt"
   },
   {
     "id": "railway",
     "name": "railway",
-    "description": ""
+    "description": "railway tracks and the trains on them"
   },
   {
     "id": "rain",
     "name": "rain",
-    "description": ""
+    "description": "rainy scenes with wet streets and umbrellas"
   },
   {
     "id": "reflections",
     "name": "reflections",
-    "description": ""
-  },
-  {
-    "id": "relief",
-    "name": "relief",
-    "description": "a sculpture carved so its figures project from a flat background surface",
-    "parent": "sculpture"
-  },
-  {
-    "id": "remembrance",
-    "name": "remembrance",
-    "description": "the act of honoring and keeping alive the memory of people who have died"
+    "description": "scenes mirrored in water, glass or other shiny surfaces"
   },
   {
     "id": "repetition",
     "name": "repetition",
-    "description": ""
+    "description": "the same element repeated many times in the frame"
   },
   {
     "id": "reptiles",
     "name": "reptiles",
-    "description": ""
-  },
-  {
-    "id": "restoration",
-    "name": "restoration",
-    "description": ""
+    "description": "lizards, snakes and other reptiles"
   },
   {
     "id": "river",
     "name": "river",
-    "description": ""
-  },
-  {
-    "id": "riwaq",
-    "name": "riwaq",
-    "description": "an arcaded gallery or portico surrounding the courtyard of a mosque",
-    "parent": "arcade"
+    "description": "rivers and the land along them"
   },
   {
     "id": "road",
     "name": "road",
-    "description": ""
-  },
-  {
-    "id": "roadwork",
-    "name": "roadwork",
-    "description": ""
+    "description": "streets and roads, in cities or out in the country"
   },
   {
     "id": "rock-formations",
     "name": "rock-formations",
-    "description": ""
+    "description": "striking natural rocks, cliffs and outcrops"
   },
   {
     "id": "rooftops",
     "name": "rooftops",
-    "description": ""
-  },
-  {
-    "id": "roots",
-    "name": "roots",
-    "description": ""
+    "description": "roofs seen from above or along a skyline"
   },
   {
     "id": "rope",
     "name": "rope",
-    "description": ""
-  },
-  {
-    "id": "rose",
-    "name": "rose",
-    "description": "",
-    "parent": "flowers"
+    "description": "ropes and cords, hanging, tied or coiled"
   },
   {
     "id": "ruins",
     "name": "ruins",
-    "description": ""
+    "description": "the remains of ancient or abandoned structures"
   },
   {
     "id": "rust",
     "name": "rust",
-    "description": ""
-  },
-  {
-    "id": "rustic",
-    "name": "rustic",
-    "description": "built in a deliberately rough, natural style from unhewn branches, logs or stone"
+    "description": "rusted metal surfaces"
   },
   {
     "id": "sailboats",
     "name": "sailboats",
-    "description": "",
+    "description": "boats with masts and sails",
     "parent": "boats"
-  },
-  {
-    "id": "saisen-bako",
-    "name": "saisen-bako",
-    "description": "the offering box at a Japanese shrine or temple where visitors toss coins before praying",
-    "parent": "prayers"
-  },
-  {
-    "id": "sand-dunes",
-    "name": "sand-dunes",
-    "description": ""
   },
   {
     "id": "sand",
     "name": "sand",
-    "description": ""
+    "description": "sandy ground on beaches, deserts and gardens"
   },
   {
     "id": "sando",
     "name": "sando",
-    "description": "",
+    "description": "the approach path leading to a Japanese shrine or temple",
     "parent": "path"
-  },
-  {
-    "id": "scaffolding",
-    "name": "scaffolding",
-    "description": ""
   },
   {
     "id": "scale",
     "name": "scale",
-    "description": ""
-  },
-  {
-    "id": "scoreboard",
-    "name": "scoreboard",
-    "description": ""
+    "description": "people or objects dwarfed by their surroundings, showing their size"
   },
   {
     "id": "sculpture",
     "name": "sculpture",
-    "description": ""
-  },
-  {
-    "id": "sea-glass",
-    "name": "sea-glass",
-    "description": "",
-    "parent": "glass"
+    "description": "sculptures and statues in public spaces"
   },
   {
     "id": "seagulls",
     "name": "seagulls",
-    "description": "",
+    "description": "gulls on beaches, piers and in flight",
     "parent": "birds"
   },
   {
     "id": "seaweed",
     "name": "seaweed",
-    "description": ""
+    "description": "seaweed washed up or clinging to rocks"
   },
   {
     "id": "senjafuda",
     "name": "senjafuda",
-    "description": ""
-  },
-  {
-    "id": "seokdeung",
-    "name": "seokdeung",
-    "description": "a Korean stone lantern, traditionally placed before temple halls and tombs",
-    "parent": "lanterns"
+    "description": "name slips pasted by pilgrims on Japanese temple and shrine buildings"
   },
   {
     "id": "shadows",
     "name": "shadows",
-    "description": ""
+    "description": "strong shadows that shape the composition"
   },
   {
     "id": "shells",
     "name": "shells",
-    "description": ""
+    "description": "seashells on sand and rocks"
   },
   {
     "id": "shide",
     "name": "shide",
-    "description": "",
+    "description": "zigzag paper streamers hung at Shinto shrines to mark sacred spaces",
     "parent": "shrine"
   },
   {
     "id": "shimenawa",
     "name": "shimenawa",
-    "description": "",
+    "description": "sacred straw ropes marking holy places at Shinto shrines",
     "parent": "shrine"
-  },
-  {
-    "id": "shinbutsu-shugo",
-    "name": "shinbutsu-shugo",
-    "description": ""
   },
   {
     "id": "shingles",
     "name": "shingles",
-    "description": ""
+    "description": "wooden shingles covering walls and roofs"
   },
   {
     "id": "shinto",
     "name": "shinto",
-    "description": ""
-  },
-  {
-    "id": "shoes",
-    "name": "shoes",
-    "description": ""
+    "description": "Shinto shrines, gates, ropes and rituals"
   },
   {
     "id": "shoji",
     "name": "shoji",
-    "description": ""
-  },
-  {
-    "id": "shotengai",
-    "name": "shotengai",
-    "description": ""
+    "description": "Japanese sliding doors and screens of paper on a wooden lattice",
+    "parent": "doors"
   },
   {
     "id": "shrine",
     "name": "shrine",
-    "description": ""
+    "description": "shrines of any faith, such as Shinto shrines and Korean royal ancestral shrines"
   },
   {
     "id": "sidewalk",
     "name": "sidewalk",
-    "description": ""
+    "description": "sidewalks and the life along them"
   },
   {
     "id": "signage",
     "name": "signage",
-    "description": ""
+    "description": "shop signs, street signs, notices and labels"
   },
   {
-    "id": "signatures",
-    "name": "signatures",
-    "description": ""
-  },
-  {
-    "id": "signpost",
-    "name": "signpost",
-    "description": "",
+    "id": "signposts",
+    "name": "signposts",
+    "description": "posts with direction or trail signs",
     "parent": "signage"
   },
   {
     "id": "silhouettes",
     "name": "silhouettes",
-    "description": ""
-  },
-  {
-    "id": "skeletons",
-    "name": "skeletons",
-    "description": ""
+    "description": "people or objects seen as dark shapes against light"
   },
   {
     "id": "skylight",
     "name": "skylight",
-    "description": ""
+    "description": "windows set into roofs and ceilings, including round oculi"
   },
   {
     "id": "skyline",
     "name": "skyline",
-    "description": ""
+    "description": "a city's outline of buildings against the sky"
   },
   {
-    "id": "skyscraper",
-    "name": "skyscraper",
-    "description": ""
+    "id": "skyscrapers",
+    "name": "skyscrapers",
+    "description": "very tall towers"
   },
   {
     "id": "smartphones",
     "name": "smartphones",
-    "description": ""
-  },
-  {
-    "id": "snakes",
-    "name": "snakes",
-    "description": "",
-    "parent": "reptiles"
+    "description": "people using their phones"
   },
   {
     "id": "snow",
     "name": "snow",
-    "description": ""
+    "description": "snow-covered scenes and falling snow"
   },
   {
-    "id": "snowman",
-    "name": "snowman",
-    "description": "",
-    "parent": "snow"
-  },
-  {
-    "id": "splash",
-    "name": "splash",
-    "description": ""
-  },
-  {
-    "id": "spring",
-    "name": "spring",
-    "description": ""
-  },
-  {
-    "id": "stained-glass",
-    "name": "stained-glass",
-    "description": "",
-    "parent": "glass"
+    "id": "sports",
+    "name": "sports",
+    "description": "people playing or watching sports, and the courts, fields and gear they use"
   },
   {
     "id": "stairs",
     "name": "stairs",
-    "description": ""
+    "description": "staircases and steps, indoors or out"
   },
   {
-    "id": "stamps",
-    "name": "stamps",
-    "description": ""
-  },
-  {
-    "id": "stars",
-    "name": "stars",
-    "description": ""
-  },
-  {
-    "id": "statue",
-    "name": "statue",
-    "description": "",
+    "id": "statues",
+    "name": "statues",
+    "description": "statues of people and animals",
     "parent": "sculpture"
   },
   {
     "id": "steel",
     "name": "steel",
-    "description": ""
-  },
-  {
-    "id": "steeple",
-    "name": "steeple",
-    "description": "",
-    "parent": "church"
+    "description": "steel structures, beams and surfaces"
   },
   {
     "id": "stickers",
     "name": "stickers",
-    "description": ""
+    "description": "stickers layered on signs, poles and walls",
+    "parent": "street-art"
   },
   {
     "id": "stones",
     "name": "stones",
-    "description": ""
+    "description": "stones and rocks, natural or worked"
   },
   {
     "id": "storefronts",
     "name": "storefronts",
-    "description": ""
+    "description": "shop fronts, windows and displays"
   },
   {
     "id": "stream",
     "name": "stream",
-    "description": ""
+    "description": "small streams and creeks"
   },
   {
     "id": "street-art",
@@ -1792,255 +1051,151 @@
     "description": "art made in public spaces, such as murals, paste-ups, stencils and stickers"
   },
   {
-    "id": "street-food",
-    "name": "street-food",
-    "description": ""
+    "id": "street-lights",
+    "name": "street-lights",
+    "description": "",
+    "parent": "lamps"
   },
   {
-    "id": "street-performer",
-    "name": "street-performer",
-    "description": ""
+    "id": "street-performers",
+    "name": "street-performers",
+    "description": "buskers and performers entertaining crowds in public"
   },
   {
     "id": "string-lights",
     "name": "string-lights",
-    "description": ""
-  },
-  {
-    "id": "strings",
-    "name": "strings",
-    "description": ""
+    "description": "strands of small lights or lanterns strung overhead"
   },
   {
     "id": "subway",
     "name": "subway",
-    "description": ""
-  },
-  {
-    "id": "suitorou",
-    "name": "suitorou",
-    "description": ""
-  },
-  {
-    "id": "sunglasses",
-    "name": "sunglasses",
-    "description": ""
+    "description": "subway stations, platforms and trains"
   },
   {
     "id": "sunrise",
     "name": "sunrise",
-    "description": ""
-  },
-  {
-    "id": "surfing",
-    "name": "surfing",
-    "description": ""
+    "description": "the sun rising, and the light of early morning"
   },
   {
     "id": "suspension-cables",
     "name": "suspension-cables",
-    "description": "",
+    "description": "the main cables and hangers of suspension bridges",
     "parent": "cables"
-  },
-  {
-    "id": "swimming",
-    "name": "swimming",
-    "description": ""
   },
   {
     "id": "symmetry",
     "name": "symmetry",
-    "description": ""
-  },
-  {
-    "id": "table-tennis",
-    "name": "table-tennis",
-    "description": ""
+    "description": "compositions balanced around a central line"
   },
   {
     "id": "tall-grass",
     "name": "tall-grass",
-    "description": "",
+    "description": "tall grasses and reeds",
     "parent": "grass"
   },
   {
     "id": "tatami",
     "name": "tatami",
-    "description": ""
+    "description": "Japanese woven straw floor mats"
   },
   {
     "id": "temple",
     "name": "temple",
-    "description": ""
-  },
-  {
-    "id": "tengu",
-    "name": "tengu",
-    "description": "a long-nosed mountain goblin of Japanese folklore, often shown as a carved mask at temples and shrines"
-  },
-  {
-    "id": "tenshu",
-    "name": "tenshu",
-    "description": "",
-    "parent": "castle"
+    "description": "temples and their halls, gates and grounds"
   },
   {
     "id": "texture",
     "name": "texture",
-    "description": ""
-  },
-  {
-    "id": "tokonoma",
-    "name": "tokonoma",
-    "description": "a recessed alcove in a Japanese room for displaying a hanging scroll and flower arrangement",
-    "parent": "interior"
-  },
-  {
-    "id": "topiary",
-    "name": "topiary",
-    "description": "",
-    "parent": "garden"
+    "description": "close views of rough, worn or detailed surfaces"
   },
   {
     "id": "torii",
     "name": "torii",
-    "description": "",
+    "description": "the gate marking the entrance to a Shinto shrine",
     "parent": "shrine"
   },
   {
     "id": "toro",
     "name": "toro",
-    "description": "",
+    "description": "Japanese stone or metal lanterns lining temple and shrine grounds",
     "parent": "lanterns"
   },
   {
     "id": "tourists",
     "name": "tourists",
-    "description": ""
+    "description": "visitors sightseeing, posing and taking photos"
   },
   {
-    "id": "toys",
-    "name": "toys",
-    "description": ""
-  },
-  {
-    "id": "tracery",
-    "name": "tracery",
-    "description": "ornamental stone ribs dividing a window into decorative shapes, typical of Gothic churches",
-    "parent": "windows"
-  },
-  {
-    "id": "traffic-lights",
-    "name": "traffic-lights",
-    "description": ""
+    "id": "traditional-clothing",
+    "name": "traditional-clothing",
+    "description": "people wearing their culture's traditional dress"
   },
   {
     "id": "traffic",
     "name": "traffic",
-    "description": ""
+    "description": "streams of cars and buses on busy roads"
   },
   {
     "id": "train-station",
     "name": "train-station",
-    "description": ""
+    "description": "train stations, their halls and platforms"
   },
   {
-    "id": "train",
-    "name": "train",
-    "description": ""
-  },
-  {
-    "id": "tree-stump",
-    "name": "tree-stump",
-    "description": "",
-    "parent": "trees"
+    "id": "trains",
+    "name": "trains",
+    "description": "trains and subway cars"
   },
   {
     "id": "trees",
     "name": "trees",
-    "description": ""
+    "description": "trees of all kinds, alone or in groups",
+    "parent": "plants"
   },
   {
     "id": "twilight",
     "name": "twilight",
-    "description": ""
-  },
-  {
-    "id": "typewriter",
-    "name": "typewriter",
-    "description": ""
+    "description": "the soft light around sunset and dusk"
   },
   {
     "id": "typography",
     "name": "typography",
-    "description": ""
+    "description": "lettering and type on signs, objects and walls"
   },
   {
     "id": "umbrellas",
     "name": "umbrellas",
-    "description": ""
-  },
-  {
-    "id": "uniforms",
-    "name": "uniforms",
-    "description": ""
+    "description": "umbrellas and parasols, against rain or sun"
   },
   {
     "id": "urban-decay",
     "name": "urban-decay",
-    "description": ""
-  },
-  {
-    "id": "van",
-    "name": "van",
-    "description": ""
-  },
-  {
-    "id": "vending-machines",
-    "name": "vending-machines",
-    "description": ""
+    "description": "worn, grimy and neglected city surfaces"
   },
   {
     "id": "village",
     "name": "village",
-    "description": ""
-  },
-  {
-    "id": "vintage-cars",
-    "name": "vintage-cars",
-    "description": "",
-    "parent": "cars"
+    "description": "small towns and villages"
   },
   {
     "id": "vintage",
     "name": "vintage",
-    "description": ""
-  },
-  {
-    "id": "violin",
-    "name": "violin",
-    "description": ""
+    "description": "old objects and fixtures from past decades"
   },
   {
     "id": "volleyball",
     "name": "volleyball",
-    "description": ""
+    "description": "people playing volleyball, often on the beach",
+    "parent": "sports"
   },
   {
     "id": "wabi-sabi",
     "name": "wabi-sabi",
-    "description": ""
-  },
-  {
-    "id": "wadi",
-    "name": "wadi",
-    "description": "an Arabic term for a dry desert valley or riverbed that holds water only after rare rains",
-    "parent": "desert"
+    "description": "the Japanese beauty of weathered, imperfect and aging things"
   },
   {
     "id": "walls",
     "name": "walls",
-    "description": ""
+    "description": "walls of stone, brick, plaster or concrete"
   },
   {
     "id": "wanikuchi",
@@ -2048,83 +1203,52 @@
     "description": "a flat bronze gong hung at the front of a Japanese temple or shrine hall and struck by swinging a rope"
   },
   {
-    "id": "wanman",
-    "name": "wanman",
-    "description": "",
-    "parent": "train"
-  },
-  {
     "id": "washitsu",
     "name": "washitsu",
-    "description": "",
+    "description": "a traditional Japanese room with tatami floors and sliding doors",
     "parent": "interior"
+  },
+  {
+    "id": "water-sports",
+    "name": "water-sports",
+    "description": "surfing, swimming, paddleboarding and other sports in the water",
+    "parent": "sports"
   },
   {
     "id": "water",
     "name": "water",
-    "description": ""
-  },
-  {
-    "id": "waterfall",
-    "name": "waterfall",
-    "description": ""
-  },
-  {
-    "id": "watermelons",
-    "name": "watermelons",
-    "description": ""
+    "description": "water of all kinds, still or moving"
   },
   {
     "id": "waves",
     "name": "waves",
-    "description": ""
+    "description": "waves breaking on shores and rocks"
   },
   {
     "id": "windows",
     "name": "windows",
-    "description": ""
+    "description": "windows of all kinds, seen from inside or out"
   },
   {
     "id": "winter",
     "name": "winter",
-    "description": ""
-  },
-  {
-    "id": "wipeout",
-    "name": "wipeout",
-    "description": ""
+    "description": "the winter season, with snow, bare trees and cold light"
   },
   {
     "id": "wood",
     "name": "wood",
-    "description": ""
-  },
-  {
-    "id": "workers",
-    "name": "workers",
-    "description": ""
-  },
-  {
-    "id": "wreath",
-    "name": "wreath",
-    "description": ""
+    "description": "wooden structures, surfaces and objects"
   },
   {
     "id": "yeondeung",
     "name": "yeondeung",
-    "description": "",
+    "description": "Korean lotus lanterns hung for Buddha's Birthday",
     "parent": "lanterns"
-  },
-  {
-    "id": "yokan",
-    "name": "yokan",
-    "description": "a Western-style house or mansion built in Japan, mostly from the Meiji to early Showa eras",
-    "parent": "houses"
   },
   {
     "id": "yokocho",
     "name": "yokocho",
-    "description": "",
+    "description": "narrow Japanese alleys packed with small bars and eateries",
     "parent": "alley"
   }
 ]

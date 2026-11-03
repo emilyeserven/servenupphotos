@@ -1,5 +1,6 @@
 {
   "id": "city-walls",
   "name": "city-walls",
-  "description": ""
+  "description": "historic defensive walls and gates around a city",
+  "parent": "walls"
 }

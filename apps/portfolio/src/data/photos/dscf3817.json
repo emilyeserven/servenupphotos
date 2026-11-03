@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hanok", "giwa", "alley", "crowd", "tourists", "umbrellas", "walls"],
-  "genres": [],
+  "tags": ["giwa", "alley", "crowd", "tourists", "umbrellas", "walls", "houses"],
+  "genres": ["street", "architecture"],
   "places": [
     {
       "relation": "",
@@ -274,5 +274,6 @@
     "chroma": 7.2,
     "peakChroma": 16.79,
     "samples": 9768
-  }
+  },
+  "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it."
 }
