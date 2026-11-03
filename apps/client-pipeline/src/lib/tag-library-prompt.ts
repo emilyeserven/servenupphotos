@@ -1,9 +1,4 @@
-import type {
-  TagLibraryExport,
-  TagLibraryFewPhotos,
-  TagLibraryFewSubtags,
-  TagLibraryPhotoInfo,
-} from "@/api/tag-library";
+import type { TagLibraryExport, TagLibraryFewPhotos, TagLibraryPhotoInfo } from "@/api/tag-library";
 
 /** A photo's export with its empty fields left out, so the prompt stays short. */
 function shortPhoto(photo: TagLibraryPhotoInfo): Record<string, unknown> {
@@ -62,7 +57,6 @@ Below is every tag (with its parent, description and how many photos have it) an
 
 Rules:
 - Every tag should have at least ${min} photos, and a tag under another (a subtag) especially. Don't make a tag that fewer than ${min} photos would have, and remove or merge a tag left with fewer, unless more photos clearly should have it (then add it to them under "photos").
-- A tag with subtags should have at least ${min} of them. When a tag would have only one or two, merge them into it, or move them to another parent, unless more of your tags clearly belong under it.
 - Whenever a tag is removed, or a tag you considered isn't made, because too few photos would have it, add a note to each photo it was or would have been on, saying which tag it was, what in the photo it described, and why it isn't a tag (such as "Shows a koi pond; 'koi' isn't a tag, since only 2 photos have one."). Keep notes to one or two sentences.
 - Write tag IDs in lowercase kebab-case, such as "street-lights". Use existing tags spelled exactly as listed.
 - Keep a culture's own word (such as "hanok" or "shotengai"): rather than merging it into a general tag, put it under one.
@@ -100,40 +94,17 @@ function fewPhotosLine(few: TagLibraryFewPhotos): string {
 
 /**
  * The follow-up prompt to paste into the same chat when the LLM's answer leaves tags with fewer
- * than `min` photos or subtags: each of those tags with its photos or subtags, asking for the whole
- * answer again with each one fixed.
+ * than `min` photos: each of those tags with the photos that would have it, asking for the whole
+ * answer again with each tag added to more photos or removed with a note on its photos.
  */
-export function tagLibraryFollowUpPrompt(
-  few: TagLibraryFewPhotos[],
-  subtags: TagLibraryFewSubtags[],
-  min: number,
-): string {
-  const parts = [
-    few.length > 0 ? fewPhotosAsk(few, min) : "",
-    subtags.length > 0 ? fewSubtagsAsk(subtags, min) : "",
-  ];
-  return `With every change in your answer made, some tags still break the rules.
-
-${parts.filter(Boolean).join("\n\n")}
-
-Keep the rest of your answer as it is, with the same rules as before. Answer with your whole answer again, with these changes in it, as only the same JSON, with nothing before or after it.
-`;
-}
-
-/** The follow-up prompt's ask about tags with fewer than min photos. */
-function fewPhotosAsk(few: TagLibraryFewPhotos[], min: number): string {
-  return `These tags would have fewer than ${min} photos (each with its parent, how many photos would have it, and those photos by file name):
+export function tagLibraryFollowUpPrompt(few: TagLibraryFewPhotos[], min: number): string {
+  return `With every change in your answer made, these tags would have fewer than ${min} photos (each with its parent, how many photos would have it, and those photos by file name):
 ${few.map(fewPhotosLine).join("\n")}
 
 For each of them, either:
 - add it to more photos that clearly should have it, under "photos", so it has at least ${min}, or
-- remove it (or, if it's one of your newTags, don't make it, and take it out of "photos"), and add a note to each of its photos under "notes" saying which tag it was, what in the photo it described, and why it isn't a tag (such as "Shows a koi pond; 'koi' isn't a tag, since only 2 photos have one.").`;
-}
+- remove it (or, if it's one of your newTags, don't make it, and take it out of "photos"), and add a note to each of its photos under "notes" saying which tag it was, what in the photo it described, and why it isn't a tag (such as "Shows a koi pond; 'koi' isn't a tag, since only 2 photos have one.").
 
-/** The follow-up prompt's ask about tags with fewer than min subtags. */
-function fewSubtagsAsk(subtags: TagLibraryFewSubtags[], min: number): string {
-  return `These tags would have fewer than ${min} subtags (each with the tags under it):
-${subtags.map((s) => `- ${s.tag}: ${s.subtags.join(", ")}`).join("\n")}
-
-For each of them, either put more of the library's tags (or new ones that ${min} photos would have) under it so it has at least ${min}, or merge its subtags into it, or move them to another parent where they fit better.`;
+Keep the rest of your answer as it is, with the same rules as before. Answer with your whole answer again, with these changes in it, as only the same JSON, with nothing before or after it.
+`;
 }

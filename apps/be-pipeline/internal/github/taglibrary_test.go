@@ -83,12 +83,6 @@ func TestPreviewTagLibrary(t *testing.T) {
 	if got.FewPhotos[3].PhotoNames == nil || len(got.FewPhotos[3].PhotoNames) != 0 {
 		t.Errorf("shrine's PhotoNames = %#v, want empty", got.FewPhotos[3].PhotoNames)
 	}
-	// lanterns keeps one subtag, paper-lanterns (chochin merged into it);
-	// temple has none once shrine moves to the top level.
-	wantSub := []TagLibraryFewSubtags{{Tag: "lanterns", Subtags: []string{"paper-lanterns"}}}
-	if len(got.FewSubtags) != 1 || got.FewSubtags[0].Tag != wantSub[0].Tag || !slices.Equal(got.FewSubtags[0].Subtags, wantSub[0].Subtags) {
-		t.Errorf("FewSubtags = %+v, want %+v", got.FewSubtags, wantSub)
-	}
 }
 
 func TestApplyTagLibrary(t *testing.T) {

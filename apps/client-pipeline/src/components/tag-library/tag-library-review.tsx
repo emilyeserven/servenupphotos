@@ -12,8 +12,11 @@ import {
   useChangeToggle,
   useTagSave,
 } from "@/components/prune-tags/change-list";
-import { FewWarnings } from "@/components/tag-library/few-warnings";
-import { NewTagSections, PhotoSections } from "@/components/tag-library/library-sections";
+import {
+  FewPhotos,
+  NewTagSections,
+  PhotoSections,
+} from "@/components/tag-library/library-sections";
 import { CommitSuccess, count } from "@/components/update-data-shared";
 
 /** The ticked changes of preview, as the save takes them. */
@@ -42,7 +45,7 @@ function changeCount(save: TagLibrary): number {
 
 /**
  * The review of the LLM's answer for the whole tag library: every change, each of which can be
- * unticked, the tags left with too few photos or subtags, the changes that can't be made and why, then a
+ * unticked, the tags left with too few photos, the changes that can't be made and why, then a
  * button that saves the rest.
  */
 export function TagLibraryReview({ preview }: { preview: TagLibraryPreview }) {
@@ -54,7 +57,7 @@ export function TagLibraryReview({ preview }: { preview: TagLibraryPreview }) {
       <NewTagSections preview={preview} toggle={toggle} />
       <PruneSections preview={preview} toggle={toggle} />
       <PhotoSections preview={preview} toggle={toggle} />
-      <FewWarnings preview={preview} />
+      <FewPhotos preview={preview} />
       <ReviewSave
         skipped={preview.skipped}
         save={save}

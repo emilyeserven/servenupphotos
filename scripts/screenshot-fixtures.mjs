@@ -795,7 +795,6 @@ function tagLibraryPreview() {
       { tag: "chochin", photos: 2, parent: "lanterns", photoNames: [stem(1), stem(3)] },
       { tag: "torii", photos: 1, parent: "shrine", photoNames: [stem(2)] },
     ],
-    fewSubtags: [{ tag: "lanterns", subtags: ["chochin", "paper-lanterns"] }],
     minPhotos: 3,
     skipped: [
       {
