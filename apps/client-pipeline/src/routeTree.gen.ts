@@ -25,6 +25,7 @@ import { Route as PlacesRouteImport } from './routes/places'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
+import { Route as SmallTagsRouteImport } from './routes/small-tags'
 import { Route as TimelineLabelsRouteImport } from './routes/timeline-labels'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
 import { Route as ViewerLikesRouteImport } from './routes/viewer-likes'
@@ -117,6 +118,11 @@ const SizesRoute = SizesRouteImport.update({
   path: '/sizes',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SmallTagsRoute = SmallTagsRouteImport.update({
+  id: '/small-tags',
+  path: '/small-tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TimelineLabelsRoute = TimelineLabelsRouteImport.update({
   id: '/timeline-labels',
   path: '/timeline-labels',
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
+  '/small-tags': typeof SmallTagsRoute
   '/timeline-labels': typeof TimelineLabelsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
+  '/small-tags': typeof SmallTagsRoute
   '/timeline-labels': typeof TimelineLabelsRoute
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
@@ -248,6 +256,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
+  '/small-tags': typeof SmallTagsRoute
   '/timeline-labels': typeof TimelineLabelsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
+    | '/small-tags'
     | '/timeline-labels'
     | '/update-data'
     | '/viewer-likes'
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
+    | '/small-tags'
     | '/timeline-labels'
     | '/viewer-likes'
     | '/albums/$id'
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
+    | '/small-tags'
     | '/timeline-labels'
     | '/update-data'
     | '/viewer-likes'
@@ -366,6 +378,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
+  SmallTagsRoute: typeof SmallTagsRoute
   TimelineLabelsRoute: typeof TimelineLabelsRoute
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
   ViewerLikesRoute: typeof ViewerLikesRoute
@@ -491,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SizesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/small-tags': {
+      id: '/small-tags'
+      path: '/small-tags'
+      fullPath: '/small-tags'
+      preLoaderRoute: typeof SmallTagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/timeline-labels': {
       id: '/timeline-labels'
       path: '/timeline-labels'
@@ -602,6 +622,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
+  SmallTagsRoute: SmallTagsRoute,
   TimelineLabelsRoute: TimelineLabelsRoute,
   UpdateDataRoute: UpdateDataRouteWithChildren,
   ViewerLikesRoute: ViewerLikesRoute,

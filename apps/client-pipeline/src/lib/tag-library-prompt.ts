@@ -1,7 +1,14 @@
 import type { TagLibraryExport, TagLibraryFewPhotos, TagLibraryPhotoInfo } from "@/api/tag-library";
 
-/** A photo's export with its empty fields left out, so the prompt stays short. */
-function shortPhoto(photo: TagLibraryPhotoInfo): Record<string, unknown> {
+/**
+ * A photo's export with its empty fields left out, and its path and ID, which the LLM names it
+ * by its file name instead of, so the prompt stays short.
+ */
+function shortPhoto({
+  path: _path,
+  id: _id,
+  ...photo
+}: TagLibraryPhotoInfo): Record<string, unknown> {
   const filled = Object.entries(photo).filter(([, value]) =>
     Array.isArray(value) ? value.length > 0 : value !== "",
   );
@@ -86,7 +93,7 @@ export function fewPhotoTagLines(library: TagLibraryExport): string[] {
 }
 
 /** One line for a tag left with too few photos: its ID, parent, count and photos. */
-function fewPhotosLine(few: TagLibraryFewPhotos): string {
+export function fewPhotosLine(few: TagLibraryFewPhotos): string {
   const parent = few.parent ? `, under ${few.parent}` : "";
   const photos = few.photoNames.length > 0 ? few.photoNames.join(", ") : "no photos";
   return `- ${few.tag}${parent} (${few.photos}): ${photos}`;

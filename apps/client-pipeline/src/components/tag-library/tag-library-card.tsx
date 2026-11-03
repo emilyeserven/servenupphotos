@@ -1,23 +1,14 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { DownloadIcon } from "lucide-react";
-import { useState } from "react";
-import { metaGroups } from "@/api/metainfo";
-import { organizeQuery } from "@/api/organize";
-import {
-  type TagLibraryExport,
-  previewTagLibraryMutation,
-  tagLibraryQuery,
-} from "@/api/tag-library";
-import { CopyPromptButton, ErrorText, PasteAnswer } from "@/components/bulk-tagging/pick-controls";
-import { TagLibraryReview } from "@/components/tag-library/tag-library-review";
+import { type TagLibraryExport, tagLibraryQuery } from "@/api/tag-library";
+import { CopyPromptButton, ErrorText } from "@/components/bulk-tagging/pick-controls";
+import { LibraryAnswer, useFilteredNames } from "@/components/tag-library/library-answer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { count } from "@/components/update-data-shared";
 import { downloadFile } from "@/lib/album-layout";
 import { tagLibraryJson, tagLibraryPrompt } from "@/lib/tag-library-prompt";
-import { filteredNames } from "@/lib/tag-prompt";
-import { useCombinedData } from "@/stores/combined-data";
 
 /**
  * Tag library: reads every tag and every photo with its tags, copies them into one prompt (or
@@ -25,9 +16,7 @@ import { useCombinedData } from "@/stores/combined-data";
  * into a review of every change before it's saved, waiting for Commit.
  */
 export function TagLibraryCard() {
-  const [answer, setAnswer] = useState("");
   const library = useQuery(tagLibraryQuery);
-  const preview = useMutation(previewTagLibraryMutation);
   return (
     <Card>
       <CardHeader>
@@ -37,17 +26,7 @@ export function TagLibraryCard() {
       <CardContent className="flex flex-col gap-4">
         <LibraryStatus pending={library.isPending} error={library.error} data={library.data} />
         {library.data && <LibraryButtons data={library.data} />}
-        <PasteAnswer
-          value={answer}
-          onChange={setAnswer}
-          pending={preview.isPending}
-          label="Review the changes"
-          onReview={() => preview.mutate({ answer })}
-        />
-        <ErrorText error={preview.error} />
-        {preview.data && (
-          <TagLibraryReview key={JSON.stringify(preview.data)} preview={preview.data} />
-        )}
+        <LibraryAnswer />
       </CardContent>
     </Card>
   );
@@ -99,15 +78,12 @@ function LibraryStatus({ pending, error, data }: LibraryStatusProps) {
 
 /** Copies the prompt with the whole library, or downloads the library as JSON. */
 function LibraryButtons({ data }: { data: TagLibraryExport }) {
-  const organize = useQuery(organizeQuery);
-  const combined = useCombinedData();
-  const filtered = () =>
-    organize.data ? filteredNames({ ...organize.data, metaGroups: metaGroups(combined.data) }) : [];
+  const { ready, filtered } = useFilteredNames();
   return (
     <div className="flex flex-wrap gap-2">
       <CopyPromptButton
         label="Copy the library prompt"
-        disabled={!organize.data}
+        disabled={!ready}
         prompt={() => tagLibraryPrompt(data, filtered())}
       />
       <Button

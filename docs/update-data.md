@@ -273,11 +273,13 @@ tag and every photo file as the next Commit will have them (`POST /api/data/tag-
 `github/taglibrary_export.go`) and says how many there are, listing any photo file it couldn't read. **Copy the
 library prompt** (`lib/tag-library-prompt.ts`) copies the whole library as JSON, one line per tag (its parent,
 description and photo count) and one per photo (its file name without `.json`, title, city and country, places,
-genres, albums, tags and [photographer notes](photo-notes.md), leaving out the empty ones), with the **Already
+genres, albums, tags and [photographer notes](photo-notes.md), leaving out the empty ones, and leaving out its
+`path` and `id`, which the export has for [Small Tags](small-tags.md)), with the **Already
 filtered** names. **Download the library JSON** saves that same JSON as `tag-library.json`, to attach to a chat or
 look over. The prompt asks for at least 3 photos per tag (`minTagPhotos`), subtags especially, and, whenever a tag is
 removed or one isn't made because too few photos would have it, a note on each of its photos saying which tag it was,
-what it described and why it isn't one. The answer has Tag pruning's three lists plus five more:
+what it described and why it isn't one. The [Small Tags](small-tags.md) page asks for the same answer, narrowed to the tags with too few photos, and saves
+with the same request. The answer has Tag pruning's three lists plus five more:
 
 ```json
 {
