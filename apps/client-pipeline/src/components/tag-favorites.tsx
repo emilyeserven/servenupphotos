@@ -73,8 +73,8 @@ export function FavoriteTagsCard({ organize }: { organize?: OrganizeResponse }) 
       <CardHeader>
         <CardTitle>Favorite tags</CardTitle>
         <CardDescription>
-          Pinned first here, in the Tags field and on the portfolio's Tags page. Star a tag below to
-          pin it.
+          Pinned first here and in the Tags field, and shown as Spotlight Tags at the top of the
+          portfolio's Tags page. Star a tag below to pin it.
         </CardDescription>
       </CardHeader>
       <CardContent>

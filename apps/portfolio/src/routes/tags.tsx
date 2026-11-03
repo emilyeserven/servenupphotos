@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Star, Tags } from "lucide-react";
+import { Tags } from "lucide-react";
 import { useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
-import { CARD_GRID, ParentTagSection, TagCard } from "@/components/tag-card";
+import { CARD_GRID, ParentTagSection, SPOTLIGHT_GRID, TagCard } from "@/components/tag-card";
 import { parseTagsSearch, TagControls } from "@/components/tag-controls";
 import { TagSearchBox } from "@/components/tag-search-box";
 import {
@@ -36,7 +36,7 @@ const FAVORITES: Record<TagSort, TagEntry[]> = {
 /**
  * Every tag with photos, each linking to the Grid filtered to it, by name or by how many photos
  * it has: parent tags first, each with the tags under it, then the rest; or only the top-level
- * tags, as one grid. Favorite tags come first, under Favorites. The search box narrows them to the tags with its text in their name or
+ * tags, as one grid. Favorite tags come first, under Spotlight Tags. The search box narrows them to the tags with its text in their name or
  * description.
  */
 function TagsView() {
@@ -66,7 +66,7 @@ function TagsView() {
         </div>
       </header>
       {sections.length === 0 && <NoTags query={query} />}
-      <Favorites entries={favorites} />
+      <SpotlightTags entries={favorites} />
       {top ? <CardList entries={sections.map((s) => s.parent)} /> : <Grouped sections={sections} />}
     </div>
   );
@@ -93,24 +93,24 @@ function Grouped({ sections }: { sections: TagSection[] }) {
   );
 }
 
-/** The favorite tags as one grid of cards, headed Favorites; nothing when there are none. */
-function Favorites({ entries }: { entries: TagEntry[] }) {
+/**
+ * The favorite tags, set on the pipeline, as wider cards headed Spotlight Tags, with a divider
+ * under them; nothing when there are none.
+ */
+function SpotlightTags({ entries }: { entries: TagEntry[] }) {
   if (entries.length === 0) return null;
   return (
-    <section aria-label="Favorite tags" className="flex flex-col gap-3">
-      <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
-        <Star className="size-5 fill-amber-400 text-amber-500" aria-hidden />
-        Favorites
-      </h2>
-      <CardList entries={entries} />
+    <section aria-label="Spotlight tags" className="flex flex-col gap-3 border-b pb-10">
+      <h2 className="text-xl font-semibold tracking-tight">Spotlight Tags</h2>
+      <CardList entries={entries} grid={SPOTLIGHT_GRID} />
     </section>
   );
 }
 
-/** The tags as one grid of cards. */
-function CardList({ entries }: { entries: TagEntry[] }) {
+/** The tags as one grid of cards, the usual grid unless another is given. */
+function CardList({ entries, grid = CARD_GRID }: { entries: TagEntry[]; grid?: string }) {
   return (
-    <ul className={CARD_GRID}>
+    <ul className={grid}>
       {entries.map((entry) => (
         <li key={entry.tag.id}>
           <TagCard entry={entry} />

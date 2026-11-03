@@ -39,7 +39,7 @@ export interface Group {
   hidden?: boolean;
   /**
    * For a tag, true when it's a favorite, set on the pipeline's Tags page: the Tags page shows it
-   * at the top, under Favorites.
+   * at the top, under Spotlight Tags.
    */
   favorite?: boolean;
 }

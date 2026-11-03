@@ -76,6 +76,12 @@ export function TagCard({ entry }: { entry: TagEntry }) {
 export const CARD_GRID = "grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4";
 
 /**
+ * The Spotlight Tags' grid, with wider cards: one column on a phone, where the usual grid has two,
+ * and two on a wider screen, where it has three or four.
+ */
+export const SPOTLIGHT_GRID = "grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4";
+
+/**
  * A parent tag as a heading linking to the Grid filtered to it and every tag under it, with its
  * photo count (counting the tags under it) and its description when one is written, then a card
  * for each tag under it.
