@@ -39,15 +39,13 @@ does the merging (`postedPhotoFiles`, `postsByDay`), for any page that needs eac
 ## Social media posts
 
 The Photo page in edit mode (`/exif?edit=<path>`) has a **Social media posts** card, for keeping track of where the
-photo is posted or scheduled to post. Each post has a platform, a status (`scheduled` or `posted`), a day, a link, a
-caption and hashtags, saved as the photo file's `socialPosts` list, `[]` by default (new saves write it, and Update
+photo is posted or scheduled to post. Each post has a platform, a day, a link, a caption and hashtags, saved as the photo file's `socialPosts` list, `[]` by default (new saves write it, and Update
 Data → Missing fields adds it to older files):
 
 ```json
 "socialPosts": [
   {
     "platform": "instagram",
-    "status": "posted",
     "date": "2026-10-20",
     "url": "https://www.instagram.com/p/…",
     "caption": "Late light over the river.",
@@ -56,7 +54,11 @@ Data → Missing fields adds it to older files):
 ]
 ```
 
-`date` is `YYYY-MM-DD`, or `null` when it's left empty. Hashtags are typed separated by spaces or commas, with or
+`date` is `YYYY-MM-DD`, or `null` when it's left empty. Whether a post is **Posted** or **Scheduled** isn't saved: it's
+worked out from its day each time it's shown (`postStatus` in `social-posts.ts`), posted on or before today and
+scheduled after it or without a day, so a post moves to posted by itself once its day comes. The card shows it next to
+the post's heading, and the Instagram calendar's marks and **Instagram posts** list use the same. A `status` saved
+by older versions is ignored and dropped the next time the posts are saved. Hashtags are typed separated by spaces or commas, with or
 without the `#`, and saved without it. The platforms offered are listed in
 `apps/client-pipeline/src/lib/social-posts.ts` (Instagram, Threads, Bluesky, Facebook and Other); add one there to offer
 it. A post with a platform that isn't listed, such as one typed into the JSON, keeps it.
