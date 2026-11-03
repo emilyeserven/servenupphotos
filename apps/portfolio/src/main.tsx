@@ -4,6 +4,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ScriptDisplayProvider } from "@/components/script-display-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { trackPageViews } from "@/lib/page-views";
 import { routeTree } from "./routeTree.gen";
 import "./styles.css";
 
@@ -15,6 +16,8 @@ const router = createRouter({
   context: { queryClient },
   defaultPreload: "intent",
 });
+
+trackPageViews(router);
 
 declare module "@tanstack/react-router" {
   interface Register {
