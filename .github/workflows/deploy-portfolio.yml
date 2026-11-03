@@ -30,7 +30,17 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile --filter @servenup/portfolio...
+      # The map's place pages and their preview images (docs/map-link-previews.md). The cache
+      # keeps drawn images and CARTO's tiles between deploys, so only changed views are drawn.
+      - uses: actions/cache@v4
+        with:
+          path: apps/portfolio/node_modules/.cache/map-previews
+          key: map-previews-${{ github.run_id }}
+          restore-keys: map-previews-
       - run: pnpm --filter @servenup/portfolio build
+        env:
+          MAP_PREVIEWS: "1"
+          CARTO_KEY: ${{ secrets.CARTO_KEY }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

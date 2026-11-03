@@ -1,5 +1,6 @@
 import type { LngLatBounds } from "maplibre-gl";
 import { BrowseInViewButton } from "@/components/browse-in-view-button";
+import { CopyMapLinkButton } from "@/components/copy-map-link-button";
 import { MapDayFilter } from "@/components/map-day-filter";
 import { MapDisplayOptions } from "@/components/map-display-options";
 import { MapViewControls } from "@/components/map-view-controls";
@@ -14,7 +15,8 @@ import { parseFilters } from "@/lib/photo-filters";
 
 /**
  * The map's controls under its title: **Places**, which moves the map to a place, the zoom-out button, the display options, then
- * **More filters** (the days in view, album, tag and genre), **View in grid** and **Browse**.
+ * **More filters** (the days in view, album, tag and genre), **View in grid**, **Browse** and
+ * **Copy link**.
  */
 export function MapControls({
   search,
@@ -68,6 +70,7 @@ export function MapControls({
       >
         <ViewInGridButton filters={gridFiltersFor(drawn, view, parseFilters(search))} />
         <BrowseInViewButton photos={browsable} onOpen={onBrowse} />
+        <CopyMapLinkButton drawn={drawn} view={view} />
       </MoreFilterControls>
     </MapViewControls>
   );

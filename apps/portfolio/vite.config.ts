@@ -5,6 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
+import { mapPreviewPages } from "./map-preview/pages";
 import { photoPreviewPages } from "./photo-previews";
 
 const root = path.resolve(import.meta.dirname, "../..");
@@ -50,6 +51,9 @@ export default defineConfig({
     localPhotoData(),
     // Pages at /photos/<id>/ whose link previews show the photo; see docs/photo-viewer.md.
     photoPreviewPages(path.join(import.meta.dirname, "src/data/photos/ALLPHOTOS.json")),
+    // Pages at /maps/<kind>/<place>/ whose link previews show a map of the place, when
+    // MAP_PREVIEWS=1; see docs/map-link-previews.md.
+    mapPreviewPages(),
   ],
   resolve: {
     alias: {

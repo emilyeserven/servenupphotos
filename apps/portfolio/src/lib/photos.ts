@@ -2,6 +2,7 @@ import committedData from "@portfolio/data/photos/ALLPHOTOS.json";
 import {
   type ColorShare,
   type PhotoColorData,
+  photoAverageColor,
   photoColors,
   photoContrast,
   photoLightness,
@@ -85,6 +86,8 @@ export interface Photo {
    * first; empty until the pipeline saves its colors.
    */
   palette: ColorShare[];
+  /** Its average color as a hex string, such as "#514d48"; null until the pipeline saves its colors. */
+  averageColor: string | null;
   /** How vivid its colors are, its mean CIELAB chroma rounded; null until the pipeline saves its colors. */
   vividness: number | null;
   /** How vivid its most vivid tenth is, its peak CIELAB chroma rounded; null until the pipeline saves its colors. */
@@ -688,6 +691,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
       ...locationFields(photo),
       ...groupFields(photo),
       palette: photoColors(photo.colors),
+      averageColor: photoAverageColor(photo.colors),
       vividness: photoVividness(photo.colors),
       peakVividness: photoPeakVividness(photo.colors),
       lightness: photoLightness(photo.colors),
