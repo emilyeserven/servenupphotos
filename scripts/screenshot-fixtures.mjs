@@ -50,6 +50,7 @@ const baseCameras = readFolder("cameras", "CAMERAS");
 const baseLenses = readFolder("lenses", "LENSES");
 const baseCaptions = readFolder("captions", "CAPTIONS");
 const baseTimeline = readFolder("timeline", "TIMELINE");
+const baseLikes = readFolder("likes", "LIKES");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -183,6 +184,30 @@ const added = {
       },
     },
   ],
+  likes: [
+    {
+      path: `${FOLDER}/likes/jane.json`,
+      data: {
+        id: "jane",
+        name: "Jane",
+        photos: [271, 277, 281, 284, 286, 288],
+        importedAt: "2026-11-01T18:20:00Z",
+      },
+    },
+    {
+      path: `${FOLDER}/likes/sam-k.json`,
+      data: {
+        id: "sam-k",
+        name: "Sam K.",
+        photos: [274, 281, 284, 289],
+        importedAt: "2026-11-02T09:05:00Z",
+      },
+    },
+    {
+      path: `${FOLDER}/likes/mom.json`,
+      data: { id: "mom", name: "Mom", photos: [281, 286, 287], importedAt: "2026-10-30T22:41:00Z" },
+    },
+  ],
   timeline: [
     {
       path: `${FOLDER}/timeline/japan-2026-09-22.json`,
@@ -270,6 +295,7 @@ const headCameras = withAdded(baseCameras, added.cameras);
 const headLenses = withAdded(baseLenses, added.lenses);
 const headCaptions = withAdded(baseCaptions, added.captions);
 const headTimeline = withAdded(baseTimeline, added.timeline);
+const headLikes = withAdded(baseLikes, added.likes);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -295,6 +321,7 @@ function combinedFiles(
     lenses,
     captions,
     timeline,
+    likes,
   ],
   branch,
 ) {
@@ -310,6 +337,7 @@ function combinedFiles(
     lenses: combinedFile("lenses", "LENSES.json", lenses, branch),
     captions: combinedFile("captions", "CAPTIONS.json", captions, branch),
     timeline: combinedFile("timeline", "TIMELINE.json", timeline, branch),
+    likes: combinedFile("likes", "LIKES.json", likes, branch),
   };
 }
 
@@ -769,6 +797,7 @@ export function defaultFixtures() {
           baseLenses,
           baseCaptions,
           baseTimeline,
+          baseLikes,
         ]),
         branch: BASE_BRANCH,
       },
@@ -786,6 +815,7 @@ export function defaultFixtures() {
             headLenses,
             headCaptions,
             headTimeline,
+            headLikes,
           ],
           PULL_REQUEST.branch,
         ),
@@ -810,6 +840,7 @@ export function defaultFixtures() {
       lenses: { folder: `${FOLDER}/lenses`, files: added.lenses.map(groupFile) },
       captions: { folder: `${FOLDER}/captions`, files: added.captions.map(groupFile) },
       timeline: { folder: `${FOLDER}/timeline`, files: added.timeline.map(groupFile) },
+      likes: { folder: `${FOLDER}/likes`, files: added.likes.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -940,6 +971,13 @@ export function defaultFixtures() {
       path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
       data: body,
       before: added.lenses[0].data,
+      changed: true,
+    }),
+    "PUT /api/likes/jane": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/likes/jane.json`,
+      data: { ...body, importedAt: "2026-11-03T03:32:11Z" },
+      before: added.likes[0].data,
       changed: true,
     }),
     "PUT /api/timeline/japan-2026-09-22": ({ body }) => ({

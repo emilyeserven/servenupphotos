@@ -27,6 +27,7 @@ import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as TimelineLabelsRouteImport } from './routes/timeline-labels'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
+import { Route as ViewerLikesRouteImport } from './routes/viewer-likes'
 import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
 import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
 import { Route as GenresIndexRouteImport } from './routes/genres.index'
@@ -126,6 +127,11 @@ const UpdateDataRoute = UpdateDataRouteImport.update({
   path: '/update-data',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ViewerLikesRoute = ViewerLikesRouteImport.update({
+  id: '/viewer-likes',
+  path: '/viewer-likes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AlbumsIndexRoute = AlbumsIndexRouteImport.update({
   id: '/albums/',
   path: '/albums/',
@@ -186,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/sizes': typeof SizesRoute
   '/timeline-labels': typeof TimelineLabelsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
+  '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/timeline-labels': typeof TimelineLabelsRoute
+  '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/sizes': typeof SizesRoute
   '/timeline-labels': typeof TimelineLabelsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
+  '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/timeline-labels'
     | '/update-data'
+    | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/site-spotlight'
     | '/sizes'
     | '/timeline-labels'
+    | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/timeline-labels'
     | '/update-data'
+    | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
@@ -356,6 +368,7 @@ export interface RootRouteChildren {
   SizesRoute: typeof SizesRoute
   TimelineLabelsRoute: typeof TimelineLabelsRoute
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
+  ViewerLikesRoute: typeof ViewerLikesRoute
   AlbumsIdRoute: typeof AlbumsIdRoute
   GenresIdRoute: typeof GenresIdRoute
   TagsIdRoute: typeof TagsIdRoute
@@ -492,6 +505,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpdateDataRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/viewer-likes': {
+      id: '/viewer-likes'
+      path: '/viewer-likes'
+      fullPath: '/viewer-likes'
+      preLoaderRoute: typeof ViewerLikesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/albums/': {
       id: '/albums/'
       path: '/albums'
@@ -584,6 +604,7 @@ const rootRouteChildren: RootRouteChildren = {
   SizesRoute: SizesRoute,
   TimelineLabelsRoute: TimelineLabelsRoute,
   UpdateDataRoute: UpdateDataRouteWithChildren,
+  ViewerLikesRoute: ViewerLikesRoute,
   AlbumsIdRoute: AlbumsIdRoute,
   GenresIdRoute: GenresIdRoute,
   TagsIdRoute: TagsIdRoute,
