@@ -36,6 +36,37 @@ does the merging (`postedPhotoFiles`, `postsByDay`), for any page that needs eac
 > **Frontend analogy:** it's an optimistic UI: the list is the last server response with the store's unsent mutations
 > replayed over it, rather than a refetch.
 
+### Suggested photos
+
+When a day is picked, the picker's first section, **Suggested**, holds up to 8 unused photos most like the 3 photos on
+Instagram on the days just before it (on the calendar, or with an Instagram post under **Social media posts**). Below
+it, **All photos** lists the rest as before. "Unused" means not on the calendar and with no Instagram post, scheduled
+or posted. Each pair of photos is scored from 0 to 1 and a photo's score is its average against the 3:
+
+- **Place (40%):** by distance when both have a GPS position (custom or EXIF), halving every 25 km; else 0.8 for a
+  shared place or city, 0.3 for the same country.
+- **Date (40%):** by days between when they were taken (custom date or EXIF), halving every 14 days.
+- **Tags (20%):** the share of their tags they have in common.
+
+Photos under 0.2 aren't suggested. Each suggestion says why, against the closest of the 3, such as "2 km away · Same
+day · 3 tags in common". Suggestions read the photo files with changes waiting for Commit and local edits made over
+them, and are hidden while searching. The scoring is in `apps/client-pipeline/src/lib/social-suggestions.ts`; its
+constants at the top set the weights and distances.
+
+> **Frontend analogy:** it's a "related items" sort done in the browser: every candidate gets a weighted score
+> against the last few items, like ranking search results by several fields at once.
+
+### Focus
+
+**Focus**, folded above the calendar, sets the filters the picker starts with each time it opens: dates taken from and
+to, a place (text in the photo's city, state, country or place name), tags and genres (any of several, with commas),
+and only photos eligible for social media. Both **Suggested** and **All photos** follow it, and a photo without a
+date is left out while dates are set. In the picker, a **Focus** box shows what it filters and can be unticked to see
+every photo for that one pick. The Focus is kept in this browser (`localStorage`, `stores/social-focus.ts`), not on
+GitHub; the filters are in `lib/social-focus.ts`.
+
+> **Frontend analogy:** it's saved default filters, like a persisted Zustand slice for a table's filter bar.
+
 ## Social media posts
 
 The Photo page in edit mode (`/exif?edit=<path>`) has a **Social media posts** card, for keeping track of where the
