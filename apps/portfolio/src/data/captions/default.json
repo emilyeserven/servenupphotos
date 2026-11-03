@@ -1,0 +1,6 @@
+{
+  "id": "default",
+  "name": "Default",
+  "platform": "",
+  "template": "{title}\n\n{date}\n{camera}[, {lensShort} @ {focalLength}mm][, {exposure}sec][, ƒ {aperture}][, ISO {iso}]\n{places|cityLocalized}\n\n{comment}\n\n{hashtags}"
+}

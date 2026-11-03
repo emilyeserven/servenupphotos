@@ -1,9 +1,9 @@
 {
-  "id": 226,
-  "title": null,
+  "title": "Still the Gate Stands",
   "comment": null,
+  "id": 226,
   "file": "DSCF4147.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T01:02:40Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 16,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/b3e6f4590752-dscf4147-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/b3e6f4590752-dscf4147-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/b3e6f4590752-dscf4147-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/b3e6f4590752-dscf4147-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b3e6f4590752-dscf4147-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/b3e6f4590752-dscf4147-thumbnail.webp?crop=2384,0,3866",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/b3e6f4590752-dscf4147-thumbnailpreview.webp?crop=2384,0,3866",
     "thumbnailcrop": {
-      "x": 1503,
+      "x": 2384,
       "y": 0,
       "size": 3866,
       "outputSize": 500
@@ -53,7 +53,16 @@
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "posted",
+      "date": "2026-11-02",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

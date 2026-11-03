@@ -1,9 +1,9 @@
 {
-  "id": 225,
-  "title": null,
+  "title": "Apartments by the River",
   "comment": null,
+  "id": 225,
   "file": "DSCF4132.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T01:02:50Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -53,7 +53,16 @@
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "posted",
+      "date": "2026-11-01",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {

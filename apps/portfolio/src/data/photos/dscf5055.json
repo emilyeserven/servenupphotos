@@ -1,9 +1,9 @@
 {
-  "id": 249,
-  "title": null,
+  "title": "Staircase by the Wall",
   "comment": null,
+  "id": 249,
   "file": "DSCF5055.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:52:48Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5,
@@ -53,15 +53,24 @@
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-11-08",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
       "hex": "#3a3a3a",
       "lab": {
         "l": 24.52,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,
