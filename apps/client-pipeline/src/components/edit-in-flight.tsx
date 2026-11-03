@@ -186,6 +186,7 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
         <SocialPostsCard
           value={edit.socialPosts}
           onChange={edit.setSocialPosts}
+          path={editable.file.path}
           calendarDate={calendarDate(edit.savedData)}
           disabled={pending}
           photo={edit.next ?? edit.savedData}

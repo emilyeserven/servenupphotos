@@ -23,6 +23,19 @@ page doesn't use it.)
 > **Frontend analogy:** it's a draft kept in a client-side store (persisted to `localStorage`) instead of component
 > state, so it survives a reload and other pages can see it; Commit is the one "Save all" request.
 
+The calendar also shows the Instagram posts saved on photos under **Social media posts** (below): a day with one gets
+a check in its corner when every post that day is up, or a clock while one is scheduled (with a count when there's
+more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts** lists
+the posts on the days shown, each with its photo, **Posted** or **Scheduled**, whether the photo is **In flight** or as
+the **Gallery** has it, a link to the post and a link to edit the photo. Gallery and in flight photos are both
+included, and nothing more is fetched for them: the posts come from the photo files the calendar already read, with
+the changes waiting for Commit and local edits the app keeps (`useChangedPhotoFiles` in the combined data store) made
+over them, so a post saved on the Photo page shows here before **Commit**. `apps/client-pipeline/src/lib/social-post-days.ts`
+does the merging (`postedPhotoFiles`, `postsByDay`), for any page that needs each day's posts.
+
+> **Frontend analogy:** it's an optimistic UI: the list is the last server response with the store's unsent mutations
+> replayed over it, rather than a refetch.
+
 ## Social media posts
 
 The Photo page in edit mode (`/exif?edit=<path>`) has a **Social media posts** card, for keeping track of where the
@@ -47,6 +60,18 @@ Data → Missing fields adds it to older files):
 without the `#`, and saved without it. The platforms offered are listed in
 `apps/client-pipeline/src/lib/social-posts.ts` (Instagram, Threads, Bluesky, Facebook and Other); add one there to offer
 it. A post with a platform that isn't listed, such as one typed into the JSON, keeps it.
+
+A post's day is picked on a calendar (shadcn's `Calendar` in a `Popover`, in
+`apps/client-pipeline/src/components/social-post-date-picker.tsx`), with **Clear** to leave it empty. Days other photos
+already post on, on the same platform, are grayed out: the days of their `socialPosts` on that platform, and for
+Instagram their Instagram calendar day (`socialMediaPublishDate`) too. The photos are the ones the Instagram calendar
+reads (`GET /api/publish/instagram`, gallery and in flight alike), with the changes waiting for Commit and local edits
+made over them (`postedPhotoFiles` and `useChangedPhotoFiles`, shared with the calendar's posts); the photo being
+edited is left out. A grayed day can still be picked, since two posts on one day is rare but fine; the field then says
+which photos already post that day.
+
+> **Frontend analogy:** it's a `disabledDays`-style lookup built from data the app already has, except the days are
+> only styled with a `modifiers` class instead of `disabled`, so the click still goes through.
 
 Above each post's caption, **Generate** writes the caption from a [caption template](caption-templates.md) and the
 photo's data as it's being edited, asking first when the caption already has text. The template picked starts as the
