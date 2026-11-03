@@ -31,6 +31,9 @@ export interface TagSection {
 /** How many photos a tag's card previews. */
 const PREVIEW_COUNT = 3;
 
+/** How many photos a Spotlight Tags card previews: twice as many, as it's twice as wide. */
+const SPOTLIGHT_PREVIEW_COUNT = 6;
+
 /** The photos with the tag or a tag under it. */
 function taggedUnder(tag: Group, all: Photo[]): Photo[] {
   const ids = tagAndSubTags(tag.id);
@@ -38,16 +41,20 @@ function taggedUnder(tag: Group, all: Photo[]): Photo[] {
 }
 
 /** The newest few of the photos with images, skipping the ones already shown elsewhere. */
-function newestFew(tagged: Photo[], shown: ReadonlySet<number> = new Set()): ImagePhoto[] {
+function newestFew(
+  tagged: Photo[],
+  shown: ReadonlySet<number> = new Set(),
+  few = PREVIEW_COUNT,
+): ImagePhoto[] {
   return newestWithImages(tagged)
     .filter((photo) => !shown.has(photo.id))
-    .slice(0, PREVIEW_COUNT);
+    .slice(0, few);
 }
 
 /** The tag with its photo count and previews, from the photos given. */
-function entryOf(tag: Group, between: Group[], all: Photo[]): TagEntry {
+function entryOf(tag: Group, between: Group[], all: Photo[], few = PREVIEW_COUNT): TagEntry {
   const tagged = taggedUnder(tag, all);
-  return { tag, between, count: tagged.length, previews: newestFew(tagged) };
+  return { tag, between, count: tagged.length, previews: newestFew(tagged, new Set(), few) };
 }
 
 /** The ids of the photos the entries preview. */
@@ -147,4 +154,15 @@ function sectionOf(parent: TagEntry, sort: TagSort, all: Photo[]): TagSection {
   const walk = { sort, all, seen: new Set([parent.tag.id]) };
   const children = withoutRepeats(withPhotos(descendants(parent.tag, [], walk)), all);
   return { parent, own: ownPreviews(parent.tag, all, children), children };
+}
+
+/**
+ * Every favorite tag with photos, in the sort's order, for the Spotlight Tags at the top of the
+ * Tags page, each with up to 6 previews.
+ */
+export function favoriteTags(sort: TagSort = "name", all: Photo[] = photos): TagEntry[] {
+  const favorites = tags
+    .filter((tag) => tag.favorite)
+    .map((tag) => entryOf(tag, [], all, SPOTLIGHT_PREVIEW_COUNT));
+  return withPhotos(favorites).toSorted(COMPARE[sort]);
 }

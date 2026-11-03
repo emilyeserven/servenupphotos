@@ -2,11 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Tags } from "lucide-react";
 import { useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
-import { CARD_GRID, ParentTagSection, TagCard } from "@/components/tag-card";
+import { CARD_GRID, ParentTagSection, SPOTLIGHT_GRID, TagCard } from "@/components/tag-card";
 import { parseTagsSearch, TagControls } from "@/components/tag-controls";
 import { TagSearchBox } from "@/components/tag-search-box";
-import { type TagEntry, type TagSection, type TagSort, tagSections } from "@/lib/tag-list";
-import { searchTags } from "@/lib/tag-search";
+import {
+  favoriteTags,
+  type TagEntry,
+  type TagSection,
+  type TagSort,
+  tagSections,
+} from "@/lib/tag-list";
+import { searchTagEntries, searchTags } from "@/lib/tag-search";
 import { useRememberViewOptions } from "@/lib/view-options";
 
 export const Route = createFileRoute("/tags")({
@@ -21,10 +27,16 @@ const SECTIONS: Record<TagSort, TagSection[]> = {
   count: tagSections("count"),
 };
 
+// The favorite tags, set on the pipeline, for the top of the page, in each sort's order.
+const FAVORITES: Record<TagSort, TagEntry[]> = {
+  name: favoriteTags("name"),
+  count: favoriteTags("count"),
+};
+
 /**
  * Every tag with photos, each linking to the Grid filtered to it, by name or by how many photos
  * it has: parent tags first, each with the tags under it, then the rest; or only the top-level
- * tags, as one grid. The search box narrows them to the tags with its text in their name or
+ * tags, as one grid. Favorite tags come first, under Spotlight Tags. The search box narrows them to the tags with its text in their name or
  * description.
  */
 function TagsView() {
@@ -34,6 +46,7 @@ function TagsView() {
   const top = search.top === true;
   const [query, setQuery] = useState("");
   const sections = searchTags(SECTIONS[sort], query);
+  const favorites = searchTagEntries(FAVORITES[sort], query);
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-16 sm:px-6">
       <header className="flex flex-col gap-4">
@@ -53,6 +66,7 @@ function TagsView() {
         </div>
       </header>
       {sections.length === 0 && <NoTags query={query} />}
+      <SpotlightTags entries={favorites} />
       {top ? <CardList entries={sections.map((s) => s.parent)} /> : <Grouped sections={sections} />}
     </div>
   );
@@ -79,13 +93,27 @@ function Grouped({ sections }: { sections: TagSection[] }) {
   );
 }
 
-/** The tags as one grid of cards. */
-function CardList({ entries }: { entries: TagEntry[] }) {
+/**
+ * The favorite tags, set on the pipeline, as wider cards headed Spotlight Tags, with a divider
+ * under them; nothing when there are none.
+ */
+function SpotlightTags({ entries }: { entries: TagEntry[] }) {
+  if (entries.length === 0) return null;
   return (
-    <ul className={CARD_GRID}>
+    <section aria-label="Spotlight tags" className="flex flex-col gap-3 border-b pb-10">
+      <h2 className="text-xl font-semibold tracking-tight">Spotlight Tags</h2>
+      <CardList entries={entries} wide />
+    </section>
+  );
+}
+
+/** The tags as one grid of cards; wide ones, two to a row, for Spotlight Tags. */
+function CardList({ entries, wide = false }: { entries: TagEntry[]; wide?: boolean }) {
+  return (
+    <ul className={wide ? SPOTLIGHT_GRID : CARD_GRID}>
       {entries.map((entry) => (
         <li key={entry.tag.id}>
-          <TagCard entry={entry} />
+          <TagCard entry={entry} wide={wide} />
         </li>
       ))}
     </ul>
