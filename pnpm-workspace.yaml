@@ -3,7 +3,6 @@ packages:
   - apps/portfolio
   - apps/client-pipeline
   - apps/bff-pipeline
-  - apps/map-preview-worker
 
 catalog:
   "@fontsource-variable/manrope": 5.3.0

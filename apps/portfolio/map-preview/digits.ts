@@ -1,5 +1,5 @@
 /**
- * The numbers on group pins, drawn as strokes, since a Worker has no fonts. Each digit is lines
+ * The numbers on group pins, drawn as strokes, so the build needs no fonts. Each digit is lines
  * through points in a box 1 wide and 1 tall, from its top left.
  */
 import { type Canvas, type Color, strokeLine } from "./draw.ts";

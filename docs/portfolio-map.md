@@ -34,7 +34,7 @@ Where the map is looking is kept in the URL as its center and zoom (`?lat=37.57&
 after it stops moving, so a link opens the map there instead of on all the photos. A link with only an open photo (`?photo=<id>`) opens zoomed in on that photo instead, so it doesn't fly in from every photo; the homepage's map pin links straight to a photo's center and zoom. When those change from outside the map, as with the photo viewer's **View on map**, the map flies there. Moving replaces the URL rather than
 adding to the history. The menu and other views' **View on map** open the map with no filters, so ones set on an earlier visit, or on another view, are gone; a link with filters in its URL keeps them (see [Portfolio Filters](portfolio-filters.md)). Changing a filter still fits the map to the photos it shows, and that's saved the same way.
 
-Shared, a map link previews as a picture of its view with the photo pins (see [Map Link Previews](map-link-previews.md)).
+**Copy link**, after **Browse**, copies a link to the place in view that previews as a picture of the map when shared (see [Map Link Previews](map-link-previews.md)).
 
 > **Frontend analogy:** the grouping is done by MapLibre on the map's data, like a virtualized list deciding which
 > rows to render: the page asks which groups and photos are in view after each move and draws a React marker for each.

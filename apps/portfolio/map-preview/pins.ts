@@ -5,7 +5,7 @@
  */
 import { drawNumber } from "./digits.ts";
 import { type Canvas, type Color, fillCircle, fillRoundedSquare, hexColor } from "./draw.ts";
-import { type Frame, IMAGE, pointIn, SCALE } from "./view.ts";
+import { type Frame, IMAGE, pointIn, SCALE } from "../src/lib/map-preview-view.ts";
 
 /** One photo on the map, as `map-pins.json` lists it: longitude, latitude, and average color. */
 export type Pin = [number, number, string | null];

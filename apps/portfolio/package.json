@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "vite build && cp dist/index.html dist/404.html",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test map-preview/*.test.ts",
+    "map-attribution": "node map-preview/make-attribution.mjs"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "catalog:",

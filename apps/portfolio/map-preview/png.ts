@@ -1,7 +1,7 @@
 /**
  * Just enough PNG reading and writing for the map preview: reading CARTO's tiles and the
- * attribution, and writing the finished image. Workers have no canvas, so this works on raw pixels,
- * and uses the runtime's own zlib (`CompressionStream`) for the compressed part of the file.
+ * attribution, and writing the finished image. Node has no canvas, so this works on raw pixels,
+ * and uses the built-in `CompressionStream` (zlib) for the compressed part of the file.
  *
  * > **Frontend analogy:** like drawing into an `ImageData` and calling `canvas.toBlob()`, with the
  * > `toBlob()` part written out by hand.
@@ -37,7 +37,7 @@ interface Chunks {
 
 /** Runs bytes through a compression or decompression stream and gives back the result. */
 async function pipe(bytes: Uint8Array, stream: CompressionStream | DecompressionStream) {
-  const out = new Response(bytes).body!.pipeThrough(stream);
+  const out = new Response(bytes as BodyInit).body!.pipeThrough(stream);
   return new Uint8Array(await new Response(out).arrayBuffer());
 }
 

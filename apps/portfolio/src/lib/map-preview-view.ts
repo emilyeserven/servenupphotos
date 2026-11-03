@@ -1,12 +1,13 @@
 /**
- * Where a map link is looking, and how that becomes pixels in the preview image.
+ * Where a map page's preview image looks (see docs/map-link-previews.md), and how that becomes
+ * pixels in the image. The build draws the image from it, and the app opens the map there.
  *
  * The image is 1200 × 630, the size link previews use, drawn as a 600 × 315 view of the map at
  * twice the pixels (like a phone's screen), so the map's labels are a readable size once the
  * preview is shrunk into a chat or a feed.
  */
 
-/** A map link's center and zoom, as the map keeps them in its URL (`?lat=…&lng=…&zoom=…`). */
+/** A map view's center and zoom, as the map keeps them in its URL (`?lat=…&lng=…&zoom=…`). */
 export interface MapView {
   lat: number;
   lng: number;
@@ -25,43 +26,16 @@ const MAX_ZOOM = 17;
 /** Where the map opens with no photos: the whole world (WORLD_VIEW in the portfolio's map). */
 const WORLD_VIEW: MapView = { lat: 25, lng: 20, zoom: 1 };
 
-/** The value as a number from min to max, or undefined. */
-function numberIn(value: string | null, min: number, max: number): number | undefined {
-  const n = value ? Number(value) : Number.NaN;
-  return n >= min && n <= max ? n : undefined;
-}
-
 /**
- * The view a map link's search asks for, with the same limits as the map (`parseMapView` in the
- * portfolio), or null when it doesn't give all three.
+ * The view rounded for a link: the center to 4 decimal places (about 10 meters) and the zoom down
+ * to a whole number, which never shows less, and no closer than MAX_ZOOM.
  */
-export function parseView(search: URLSearchParams): MapView | null {
-  const lat = numberIn(search.get("lat"), -90, 90);
-  const lng = numberIn(search.get("lng"), -180, 180);
-  const zoom = numberIn(search.get("zoom"), 0, 24);
-  return lat === undefined || lng === undefined || zoom === undefined ? null : { lat, lng, zoom };
-}
-
-/**
- * The view as the preview draws it, so links that look nearly the same share one image: the center
- * rounded to 4 decimal places (about 10 meters) and the zoom down to a whole number, which never
- * shows less than the link does, and no closer than MAX_ZOOM.
- */
-export function previewView(view: MapView): MapView {
+function rounded(view: MapView): MapView {
   return {
     lat: Number(view.lat.toFixed(4)),
     lng: Number(view.lng.toFixed(4)),
     zoom: Math.min(MAX_ZOOM, Math.max(0, Math.floor(view.zoom))),
   };
-}
-
-/** The view's search, such as `lat=37.5665&lng=126.978&zoom=12`. */
-export function viewSearch(view: MapView): string {
-  return new URLSearchParams({
-    lat: String(view.lat),
-    lng: String(view.lng),
-    zoom: String(view.zoom),
-  }).toString();
 }
 
 /** How far across the world a longitude is, from 0 at 180° W to 1 at 180° E. */
@@ -125,11 +99,16 @@ function extent(values: number[]): [number, number] {
 }
 
 /**
- * The view that fits every photo, as the map opens on a link with no center and zoom; the whole
- * world when there are none. Each pin is [longitude, latitude].
+ * The view that fits the photos, rounded for a link, like the map's opening view; the whole world
+ * when there are none. Each pin is [longitude, latitude].
  */
 export function fitView(pins: [number, number][]): MapView {
   if (pins.length === 0) return WORLD_VIEW;
+  return rounded(fitted(pins));
+}
+
+/** The view that just fits the pins inside the padding. */
+function fitted(pins: [number, number][]): MapView {
   const [x0, x1] = extent(pins.map(([lng]) => mercatorX(lng)));
   const [y0, y1] = extent(pins.map(([, lat]) => mercatorY(lat)));
   const room = {

@@ -4,7 +4,7 @@
  * edges blend into what's under them instead of looking jagged.
  *
  * > **Frontend analogy:** the same idea as CSS `border-radius` and anti-aliasing, done by hand per
- * > pixel because a Worker has no canvas.
+ * > pixel because Node has no canvas, and this keeps the build free of native packages.
  */
 import type { Rgba } from "./png.ts";
 

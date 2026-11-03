@@ -1,111 +1,73 @@
 # Map Link Previews
 
-A link to the portfolio's map, such as `https://servenupphotos.net/map?lat=37.57&lng=126.98&zoom=12.5`, shows a picture
-of that part of the map as its preview when it's shared on social media or in a chat: the map's light style with the
-photo pins on it, titled **Map · Serven Up Photos** and described as how many photos are in view ("34 photos in this
-part of the map."). A map link without a center and zoom shows every photo, as the map opens on them.
+The map's **Copy link** button (after **Browse**, just its icon on phones) copies a link that shows a picture of
+the map when it's shared on social media or in a chat: the map's light style with the photo pins on it, titled such as
+**Seoul on the map** and described as "24 photos in Seoul." Opening the link opens the map on that view.
 
-A link to any page with an open photo, such as `/timeline?thumbs=large&photo=512` or `/grid?photo=12`, shows that
-photo as its preview, the same as its photo page at `/photos/<id>/` (see
-[Sharing a photo](photo-viewer.md#sharing-a-photo)). When a map link has both, the photo wins.
+The link is to a **map page**, built with the site, as GitHub Pages can only serve files that already exist. There's
+one for every country, state, city and place on the Places page with photos on the map, such as `/maps/city/seoul/`,
+`/maps/state/new-york/` or `/maps/place/<place id>/`, and one for the whole map, `/maps/all/`
+(`src/lib/map-pages.ts`). **Copy link** picks the most specific one that the photos in view are all in: their place,
+or else their city, state or country, or else the whole map when they're in more than one country or none are in
+view. So the link shows the place being looked at, not exactly the view on the screen.
 
-Both are done by a Cloudflare Worker in front of the site, `apps/map-preview-worker`, so they only work once it's set
-up (below). Without it the site works as before, and these links preview as the plain site.
+> **Frontend analogy:** link previews are made by bots that read a page's HTML but never run its JavaScript, and
+> GitHub Pages sends the same `index.html` for every `/map?…` link. So like the
+> [photo pages](photo-viewer.md#sharing-a-photo), each map page is the built `index.html` with its own `<head>`, plus
+> one image, made at build time: static site generation for just the preview.
 
-> **Frontend analogy:** link previews come from bots that read a page's HTML but never run its JavaScript, and GitHub
-> Pages sends the same `index.html` for every map link, whatever comes after the `?`. The Worker is like a service
-> worker that runs on Cloudflare instead of in the browser: it sees each request before GitHub Pages does, and for
-> these links adds the `<meta>` tags to the HTML on its way back.
+In the app, `routes/maps.$kind.$slug.tsx` and `routes/maps.all.tsx` redirect to `/map?lat=…&lng=…&zoom=…` with the
+page's view (the same one its picture shows), or to `/map` for the whole map, which fits every photo.
 
-## What the Worker does
+## The picture
 
-Every request to `servenupphotos.net` goes through it (`src/index.ts`):
+Each page's `preview.png` is 1200 × 630, the size link previews use, drawn as a 600 × 315 view of the map at twice the
+pixels, like a phone's screen, so labels are readable once a chat shrinks it (`map-preview/render.ts`):
 
-- **A page with `?photo=<id>`:** it reads the title and the Open Graph and Twitter tags from the photo's page,
-  `/photos/<id>/`, and puts them in the page asked for, with `og:url` set to the link itself (`src/tags.ts`). A photo
-  with no page (no ID or Medium version yet) leaves the page as it is.
-- **`/map`:** it adds tags pointing `og:image` at `/og/map.png?lat=…&lng=…&zoom=…&v=…`, a 1200 × 630 image of the view.
-- **`/og/map.png`:** it answers with that image (`src/map.ts`).
-- **Anything else** (files, other pages) goes to GitHub Pages untouched. If the Worker fails, the request goes to
-  GitHub Pages too (`passThroughOnException`).
-
-Every app route is GitHub Pages' "not found" page (`404.html`, a copy of `index.html`), so a page the Worker adds tags to
-is sent as found (200), since link preview bots skip pages that aren't.
-
-### Drawing the map image
-
-Workers have no canvas or fonts, so the image is drawn pixel by pixel (`src/render.ts`):
-
-1. **The view** (`src/view.ts`): the link's center and zoom, with the same limits as the map, rounded so links that
-   look nearly the same share one image: the center to 4 decimal places (about 10 meters), and the zoom down to a whole
-   number, so the image never shows less than the link. It's drawn as a 600 × 315 view of the map at twice the
-   pixels, like a phone's screen, so labels are readable once a chat shrinks the preview. The closest it zooms is 17.
-2. **The tiles:** CARTO's Positron raster tiles, with the `CARTO_KEY` secret as their `?key=`, at twice the pixels (`light_all/{z}/{x}/{y}@2x.png`), the raster
-   version of the map's light style, fetched all at once and kept in Cloudflare's cache for a week. A tile that can't be
-   fetched leaves its square blank. They're decoded by a small PNG reader (`src/png.ts`) using the runtime's own zlib.
-3. **The pins** (`src/pins.ts`): every photo the map would show, grouped like the map (photos within 40 of the map's
-   pixels of a group join it) and drawn like Medium pins with their white border and shadow: a single photo is a
-   rounded square in **the photo's average color** (the Worker can't decode the WEBP thumbnails), and a group is a dark
-   circle with its count (`src/digits.ts` draws the numbers as strokes).
+1. **The view** (`src/lib/map-preview-view.ts`): fitted to the page's photos with some room around them, no closer than
+   street level (zoom 14), the zoom rounded down to a whole number.
+2. **The tiles:** CARTO's Positron raster tiles at twice the pixels (`light_all/{z}/{x}/{y}@2x.png`), the raster
+   version of the map's light style. They're decoded by a small PNG reader (`map-preview/png.ts`).
+3. **The pins** (`map-preview/pins.ts`): every photo in view, not just the page's, grouped like the map (photos
+   within 40 of the map's pixels of a group join it) and drawn like Medium pins with their white border and shadow: a
+   single photo is a rounded square in **the photo's average color**, and a group is a dark circle with its count
+   (`map-preview/digits.ts` draws the numbers as strokes).
 4. **The credit:** "© OpenStreetMap contributors © CARTO" in the bottom right corner, as the map shows it, which
-   CARTO's free basemaps ask for ([CARTO basemap terms](https://carto.com/legal/basemap-terms/)). It's a PNG made once by
-   `scripts/make-attribution.mjs` with a headless browser and kept in `src/attribution.ts`.
+   CARTO's basemaps ask for ([CARTO basemap terms](https://carto.com/legal/basemap-terms/)). It's a PNG made once by
+   `pnpm --filter @servenup/portfolio map-attribution` with a headless browser and kept in `map-preview/attribution.ts`,
+   so the build needs no fonts.
 
-> **Frontend analogy:** drawing into a `Uint8Array` of pixels is `ImageData` without the canvas, and each pin's edge is
-> a distance function, the idea behind CSS `border-radius` anti-aliasing.
+> **Frontend analogy:** Node has no canvas, so the picture is drawn into a `Uint8Array` of pixels, like `ImageData`
+> without the canvas, and each pin's edge is a distance function, the idea behind anti-aliased `border-radius`.
 
-### Where the pins come from
+## When it's built
 
-Each portfolio build writes `map-pins.json` next to `index.html` (`mapPins` in `apps/portfolio/map-pins.ts`): every
-photo with a map position as `[longitude, latitude, averageColor]`. It reads the photos through `src/lib/photos.ts`,
-like the map, so custom GPS positions and place positions count, and photos with no date are left out. Filters in a map
-link (albums, tags, days) aren't applied to the preview.
+`mapPreviewPages` (`map-preview/pages.ts`) runs after the build only when `MAP_PREVIEWS=1`, which the **Deploy
+portfolio** workflow sets, so `pnpm build` and CI stay quick. It writes `dist/maps/<kind>/<place>/index.html` and
+`preview.png` for every page (about 200 now).
 
-### Keeping each image
+Drawn images and fetched tiles are kept in `apps/portfolio/node_modules/.cache/map-previews`, which the workflow
+saves between deploys with `actions/cache`. An image's name is a hash of its view and the pins drawn in it, so a
+deploy only draws the pages whose photos changed, and only fetches tiles it hasn't fetched before. An image missing a
+tile isn't kept, so the next deploy tries again. Change `STYLE_VERSION` in `map-preview/pages.ts` to draw every image
+again after changing how they look.
 
-The first request for a view draws its image and saves it to the R2 bucket `servenup-map-previews` after answering;
-later requests read it from there. Its key is the rounded view plus a fingerprint of `map-pins.json`
-(`v1/<pins>/<zoom>/<lat>/<lng>.png`), so new photos give every view a new image (and a new `v=` in `og:image`, so link
-preview services fetch it again). Change `STYLE_VERSION` in `src/map.ts` to draw every image again after changing how
-they look. Old images are never read again; an R2 lifecycle rule can delete them after 30 days.
+> **Frontend analogy:** the image cache is keyed by content, like a TanStack Query `queryKey`: the same view and the
+> same pins give the same name, so it's drawn once.
 
-> **Frontend analogy:** the key works like a TanStack Query `queryKey`: the same view and the same photos give the
-> same key, so the image is drawn once and served from R2 after that.
+To build them locally: `MAP_PREVIEWS=1 CARTO_KEY=<key> pnpm --filter @servenup/portfolio build`. Drawing them all
+from an empty cache takes about half a minute plus the tiles' download.
 
 ## Setting it up
 
-The `servenupphotos.net` zone is already on Cloudflare (R2's `cdn.servenupphotos.net` needs it). Run the `wrangler`
-commands from `apps/map-preview-worker`. One-time steps:
-
-1. **Workers plan.** Drawing an image takes about 100 to 200 ms of CPU, more than the Free plan's 10 ms limit, so the
-   Worker needs **Workers Paid** ($5 a month, which includes 10 million requests)
-   ([limits](https://developers.cloudflare.com/workers/platform/limits/),
-   [pricing](https://developers.cloudflare.com/workers/platform/pricing/)). Waiting on tiles doesn't count, and
-   images already in R2 and the HTML tags take far less.
-2. **CARTO API key.** CARTO's raster tiles now need a key; without one they carry an "API key required" watermark. Keys
-   are free for non-commercial use up to 5 million tile requests a month, and each view only fetches its tiles once
-   ([CARTO basemap styles](https://github.com/CartoDB/basemap-styles),
-   [API keys](https://www.carto.com/basemaps/apikey/)). Store it as a secret:
-   `pnpm dlx wrangler@4.150.0 secret put CARTO_KEY`.
-3. **R2 bucket.** `pnpm dlx wrangler@4.150.0 r2 bucket create servenup-map-previews`, or create it in the dashboard
-   under **R2**. Optionally add a lifecycle rule to delete objects after 30 days.
-4. **Send the site through Cloudflare.** In **DNS → Records**, turn the proxy on (orange cloud) for the apex
-   `servenupphotos.net` records that point at GitHub Pages, after GitHub's HTTPS certificate is issued (**Enforce
-   HTTPS** on), and set **SSL/TLS → Overview** to **Full (strict)**. GitHub can't issue a certificate while the proxy
-   hides its DNS records; if one ever fails to renew, turn the proxy off until it's reissued
-   ([GitHub Community discussion](https://github.com/orgs/community/discussions/22790)).
-5. **Deploy.** `pnpm --filter @servenup/map-preview-worker run deploy` (it asks to log in to Cloudflare the first
-   time). `wrangler.toml` routes `servenupphotos.net/*` to the Worker and binds the bucket. Deploy again after changing
-   anything in `apps/map-preview-worker`; portfolio deploys don't need it.
-6. **Check it** with a link preview debugger, such as [opengraph.xyz](https://www.opengraph.xyz/) or Facebook's
-   [Sharing Debugger](https://developers.facebook.com/tools/debug/), on a map link and a `?photo=` link.
-
-To run it locally against the built site: `pnpm --filter @servenup/portfolio build`, serve `apps/portfolio/dist` (for
-example `python3 -m http.server 8788` in it), then
-`pnpm --filter @servenup/map-preview-worker run dev --local-upstream localhost:8788 --var SITE_ORIGIN:http://localhost:8788`
-and open `http://localhost:8787/map`. R2 is simulated locally.
+CARTO's raster tiles need an API key; without one they carry an "API key required" watermark. Keys are free for
+non-commercial use up to 5 million tile requests a month
+([CARTO basemap styles](https://github.com/CartoDB/basemap-styles), [API keys](https://www.carto.com/basemaps/apikey/)),
+and a deploy fetches only the tiles it hasn't kept (about 2,000 the first time, few after). Add it as a repository
+secret named `CARTO_KEY` under **Settings → Secrets and variables → Actions**. Until it's there, the pictures are drawn
+with the watermark, and adding it draws them all again.
 
 ## Tests
 
-`pnpm --filter @servenup/map-preview-worker test` runs the PNG reader and writer, the view math, the grouping, and a
-whole image drawn from fake tiles (`PREVIEW_OUT=/some/file.png` saves it to look at). CI runs them.
+`pnpm --filter @servenup/portfolio test` runs the PNG reader and writer, the view math, the grouping, and a whole
+picture drawn from fake tiles (`PREVIEW_OUT=/some/file.png` saves it to look at). CI runs them.

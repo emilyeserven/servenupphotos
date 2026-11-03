@@ -3,8 +3,8 @@ import path from "node:path";
 import type { Plugin } from "vite";
 
 /** The portfolio's address, which link previews need in full. */
-const SITE_URL = "https://servenupphotos.net";
-const SITE_NAME = "Serven Up Photos";
+export const SITE_URL = "https://servenupphotos.net";
+export const SITE_NAME = "Serven Up Photos";
 /** The longest edge of the Medium version, the one link previews show. */
 const MEDIUM_EDGE = 1200;
 /** How much of a photo's comment a link preview's description keeps. */
@@ -79,8 +79,8 @@ function imageSizeTags(photo: PreviewPhoto): [string, string][] {
   ];
 }
 
-/** The Open Graph and Twitter card tags that make a link to the photo show the photo. */
-function previewTags(photo: PagePhoto, title: string): string {
+/** The Open Graph tags that make a link to the photo show the photo, and its description. */
+function previewTags(photo: PagePhoto, title: string): Omit<PreviewTags, "title"> {
   const description = descriptionOf(photo);
   const properties: [string, string][] = [
     ["og:type", "article"],
@@ -92,6 +92,18 @@ function previewTags(photo: PagePhoto, title: string): string {
     ["og:image:alt", title],
     ...imageSizeTags(photo),
   ];
+  return { properties, description };
+}
+
+/** Link preview tags: Open Graph ones by `property`, and `description` and Twitter's by `name`. */
+export interface PreviewTags {
+  title: string;
+  description: string;
+  properties: [string, string][];
+}
+
+/** The tags as HTML, with `description` and `twitter:card` added after the Open Graph ones. */
+function tagsHtml({ description, properties }: PreviewTags): string {
   const names: [string, string][] = [
     ["description", description],
     ["twitter:card", "summary_large_image"],
@@ -104,12 +116,20 @@ function previewTags(photo: PagePhoto, title: string): string {
   ].join("\n    ");
 }
 
-/** The built index.html for one photo: its title, and its preview tags in place of the description. */
+/**
+ * The built index.html as a page with its own link preview: the title (followed by the site's
+ * name), and the preview tags in place of the description. The map's place pages use it too.
+ */
+export function previewPage(html: string, tags: PreviewTags): string {
+  return html
+    .replace(/<title>.*?<\/title>/, `<title>${escapeHtml(`${tags.title} · ${SITE_NAME}`)}</title>`)
+    .replace(/<meta name="description"[^>]*>/, tagsHtml(tags));
+}
+
+/** The built index.html for one photo, with its preview tags. */
 function photoPage(html: string, photo: PagePhoto): string {
   const title = photo.title?.trim() || SITE_NAME;
-  return html
-    .replace(/<title>.*?<\/title>/, `<title>${escapeHtml(`${title} · ${SITE_NAME}`)}</title>`)
-    .replace(/<meta name="description"[^>]*>/, previewTags(photo, title));
+  return previewPage(html, { title, ...previewTags(photo, title) });
 }
 
 /** Whether the photo can have a photo page: it has an ID and a Medium version to show. */

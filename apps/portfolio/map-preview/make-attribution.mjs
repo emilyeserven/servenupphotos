@@ -1,12 +1,12 @@
 // Draws the map credit the preview image carries ("© OpenStreetMap contributors © CARTO", as the
-// portfolio's map shows it) and writes it to src/attribution.ts as a PNG, since a Worker has no
-// fonts to draw text with. Run it again only to change the wording:
-//   pnpm --filter @servenup/map-preview-worker attribution
+// portfolio's map shows it) and writes it to attribution.ts as a PNG, so the build needs no fonts
+// to draw text with. Run it again only to change the wording:
+//   pnpm --filter @servenup/portfolio map-attribution
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { chromium } from "playwright-core";
 
-const out = path.join(import.meta.dirname, "../src/attribution.ts");
+const out = path.join(import.meta.dirname, "attribution.ts");
 // CHROMIUM_PATH picks a browser other than the one playwright-core expects.
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
 const page = await browser.newPage({ deviceScaleFactor: 2 });

@@ -6,10 +6,10 @@ import { ATTRIBUTION_PNG } from "./attribution.ts";
 import { type Canvas, canvasOf, paste } from "./draw.ts";
 import { decodePng, encodePng, type Rgba } from "./png.ts";
 import { drawMarkers, markersOf, type Pin } from "./pins.ts";
-import { type Frame, frameOf, IMAGE, type MapView } from "./view.ts";
+import { type Frame, frameOf, IMAGE, type MapView } from "../src/lib/map-preview-view.ts";
 
-/** Fetches a URL; the Worker's own `fetch`, or a fake in tests. */
-export type Fetch = (url: string) => Promise<Response>;
+/** Gets one map tile's PNG file by its zoom and position, or null when it can't. */
+export type TileSource = (z: number, x: number, y: number) => Promise<Uint8Array | null>;
 
 /** CARTO's tiles are 512 pixels at twice the pixels ("@2x"), matching the image's scale. */
 const TILE = 512;
@@ -20,7 +20,7 @@ const BACKGROUND = [250, 250, 248] as const;
  * The address of one CARTO Positron tile, the raster version of the map's light style
  * (`MAP_STYLES.light` in the portfolio).
  */
-function tileUrl(z: number, x: number, y: number): string {
+export function tileUrl(z: number, x: number, y: number): string {
   return `https://basemaps.cartocdn.com/light_all/${z}/${x}/${y}@2x.png`;
 }
 
@@ -60,26 +60,26 @@ export function tilesFor(frame: Frame): Placed[] {
 }
 
 /** One tile's pixels, or null when it can't be fetched or read, which leaves its square blank. */
-async function loadTile(fetchUrl: Fetch, tile: Placed): Promise<Rgba | null> {
+async function loadTile(source: TileSource, tile: Placed): Promise<Rgba | null> {
   try {
-    const response = await fetchUrl(tileUrl(tile.z, tile.x, tile.y));
-    if (!response.ok) return null;
-    return await decodePng(new Uint8Array(await response.arrayBuffer()));
+    const file = await source(tile.z, tile.x, tile.y);
+    return file && (await decodePng(file));
   } catch {
     return null;
   }
 }
 
-/** Draws every tile, fetched all at once. */
-async function drawTiles(canvas: Canvas, frame: Frame, fetchUrl: Fetch) {
+/** Draws every tile, fetched all at once; false when any is left blank. */
+async function drawTiles(canvas: Canvas, frame: Frame, source: TileSource): Promise<boolean> {
   const tiles = tilesFor(frame);
-  const images = await Promise.all(tiles.map((tile) => loadTile(fetchUrl, tile)));
+  const images = await Promise.all(tiles.map((tile) => loadTile(source, tile)));
   images.forEach((image, i) => {
     if (image) paste(canvas, image, tiles[i]!.left, tiles[i]!.top);
   });
+  return images.every(Boolean);
 }
 
-/** The map credit, read once per Worker. */
+/** The map credit, read once per build. */
 let attribution: Promise<Rgba> | undefined;
 
 /** Draws the map credit in the bottom right corner. */
@@ -89,16 +89,22 @@ async function drawAttribution(canvas: Canvas) {
   paste(canvas, image, canvas.width - image.width, canvas.height - image.height);
 }
 
+/** A drawn preview image, and whether every tile made it in. */
+export interface Rendered {
+  png: Uint8Array;
+  complete: boolean;
+}
+
 /** Draws the preview image of the view with the pins, as a PNG file. */
 export async function renderPreview(
   view: MapView,
   pins: Pin[],
-  fetchUrl: Fetch,
-): Promise<Uint8Array> {
+  source: TileSource,
+): Promise<Rendered> {
   const frame = frameOf(view);
   const canvas = canvasOf(IMAGE.width, IMAGE.height, [...BACKGROUND]);
-  await drawTiles(canvas, frame, fetchUrl);
+  const complete = await drawTiles(canvas, frame, source);
   drawMarkers(canvas, markersOf(frame, pins));
   await drawAttribution(canvas);
-  return encodePng(canvas.rgb, canvas.width, canvas.height);
+  return { png: await encodePng(canvas.rgb, canvas.width, canvas.height), complete };
 }
