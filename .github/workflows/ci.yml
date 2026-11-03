@@ -59,6 +59,8 @@ jobs:
         run: pnpm typecheck
       - name: fallow
         run: pnpm fallow
+      - name: map preview Worker tests
+        run: pnpm --filter @servenup/map-preview-worker test
       # bff-pipeline's build is the same tsc pass as its typecheck, so only
       # the Vite apps are built.
       - name: build

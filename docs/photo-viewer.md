@@ -46,7 +46,8 @@ Each page passes `photos` and `onShow` to `PhotoLightbox` in `apps/portfolio/src
 The **link** button beside the eye button copies the photo's own link, `https://servenupphotos.net/photos/<id>/`. Shared
 on social media or in a chat, it shows the photo as the link's preview, with its title, and its comment (cut to 200
 characters) or else where it was taken as the description. Opening it shows the photo on the Grid. The page's own
-address, `/grid?photo=12`, still opens the photo but previews as the plain site.
+address, `/grid?photo=12`, still opens the photo, and previews it too once the
+[link preview Worker](map-link-previews.md) is set up; without it, it previews as the plain site.
 
 The preview uses the photo's Medium version (1200px on its longest edge) as `og:image`, with `twitter:card` set to
 `summary_large_image` so X shows it full width ([Open Graph protocol](https://ogp.me/),
