@@ -1,9 +1,9 @@
 {
-  "id": 456,
-  "title": null,
+  "title": "Artery of the City",
   "comment": null,
+  "id": 456,
   "file": "DSCF7212.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:05:19Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/c1319fd451e2-dscf7212-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/c1319fd451e2-dscf7212-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/c1319fd451e2-dscf7212-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/c1319fd451e2-dscf7212-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c1319fd451e2-dscf7212-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/c1319fd451e2-dscf7212-thumbnail.webp?crop=1315,0,3916",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/c1319fd451e2-dscf7212-thumbnailpreview.webp?crop=1315,0,3916",
     "thumbnailcrop": {
-      "x": 1522,
+      "x": 1315,
       "y": 0,
       "size": 3916,
       "outputSize": 500

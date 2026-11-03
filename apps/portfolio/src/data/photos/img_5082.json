@@ -1,9 +1,9 @@
 {
-  "id": 180,
-  "title": null,
+  "title": "Chelsea III",
   "comment": null,
+  "id": 180,
   "file": "IMG_5082.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:10:08Z",
   "camera": "Canon EOS Rebel T6i",
   "lens": "EF-S18-135mm f/3.5-5.6 IS STM",
   "aperture": 3.5,
@@ -14,10 +14,10 @@
   "customGpsPosition": null,
   "createDate": "2017:09:30 10:18:36",
   "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
+  "placeName": "Chelsea Market",
+  "customCity": "New York City",
   "customState": null,
-  "customCountry": null,
+  "customCountry": "United States of America",
   "country": null,
   "state": null,
   "city": null,
@@ -50,7 +50,12 @@
   "albums": [],
   "tags": ["market", "signage", "typography", "steel", "rust", "texture"],
   "genres": [],
-  "places": [],
+  "places": [
+    {
+      "relation": "",
+      "id": "chelsea-market"
+    }
+  ],
   "spotlightZones": [],
   "spotlightFocus": null,
   "socialPosts": [],
