@@ -82,7 +82,7 @@ export function SiteMenu() {
               </li>
             ))}
           </ul>
-          <ul className="mt-1 border-t pt-1">
+          <ul className="mt-1 grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] gap-1 border-t pt-1">
             {minorViews.map((view) => (
               <li key={view.to}>
                 <ViewLink
