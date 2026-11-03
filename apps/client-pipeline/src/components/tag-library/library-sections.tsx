@@ -8,7 +8,9 @@ import {
   changeKey,
   placeName,
 } from "@/components/prune-tags/change-list";
+import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { count } from "@/components/update-data-shared";
+import { tagLibraryFollowUpPrompt } from "@/lib/tag-library-prompt";
 
 interface SectionsProps {
   preview: TagLibraryPreview;
@@ -86,7 +88,10 @@ function TagDiff({ add, remove }: { add: string[]; remove: string[] }) {
   );
 }
 
-/** The tags left with fewer photos than a tag should have, once every listed change is made. */
+/**
+ * The tags left with fewer photos than a tag should have, once every listed change is made, and a
+ * button that copies a follow-up prompt asking the LLM to fix them in a new answer.
+ */
 export function FewPhotos({ preview }: { preview: TagLibraryPreview }) {
   if (preview.fewPhotos.length === 0) return null;
   return (
@@ -95,8 +100,9 @@ export function FewPhotos({ preview }: { preview: TagLibraryPreview }) {
         {count(preview.fewPhotos.length, "tag")} would have fewer than {preview.minPhotos} photos
       </p>
       <p className="text-muted-foreground text-xs">
-        With every change above made. Ask the LLM to add them to more photos, or to remove them with
-        a note on their photos.
+        With every change above made. Copy the follow-up prompt into the same chat: it asks the LLM
+        to add each one to more photos, or to remove it with a note on its photos, and to send its
+        whole answer again. Paste the new answer above and review the changes again.
       </p>
       <ul className="flex flex-wrap gap-1 pt-1 font-mono text-xs">
         {preview.fewPhotos.map((f) => (
@@ -105,6 +111,13 @@ export function FewPhotos({ preview }: { preview: TagLibraryPreview }) {
           </li>
         ))}
       </ul>
+      <div className="pt-2">
+        <CopyPromptButton
+          label="Copy the follow-up prompt"
+          disabled={false}
+          prompt={() => tagLibraryFollowUpPrompt(preview.fewPhotos, preview.minPhotos)}
+        />
+      </div>
     </div>
   );
 }
