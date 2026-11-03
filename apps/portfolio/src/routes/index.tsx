@@ -4,7 +4,7 @@ import { FROSTED } from "@/components/backdrop-caption";
 import { PhotoBackdrop } from "@/components/photo-backdrop";
 import { homepagePhotos } from "@/lib/homepage-photos";
 import { homepageStart, rememberHomepagePhoto } from "@/lib/last-homepage-photo";
-import { enabledViews } from "@/lib/portfolio-views";
+import { mainViews } from "@/lib/portfolio-views";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { rememberedViewOptions } from "@/lib/view-options";
@@ -17,10 +17,8 @@ export const Route = createFileRoute("/")({
 const backdropPhotos = homepagePhotos();
 const phoneBackdropPhotos = homepagePhotos(undefined, true);
 
-/** The views with a card on the homepage: Albums, Tags and Lucky are only in the menu. */
-const MENU_ONLY: readonly string[] = ["/albums", "/tags", "/lucky"];
-
-const homepageViews = enabledViews.filter((view) => !MENU_ONLY.includes(view.to));
+/** The views with a card on the homepage: the minor ones (Albums, Tags, Lucky, My Likes) are only in the menu. */
+const homepageViews = mainViews.filter((view) => view.enabled);
 
 /** A phone held upright, which shows portrait photos first. */
 const PHONE_QUERY = "(max-width: 767px) and (orientation: portrait)";

@@ -1,4 +1,5 @@
 import type { SocialPhoto } from "@/api/publish";
+import { isSetAside } from "@/lib/drafts";
 import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 
 /** Photo file path → its unsaved publish date; a path that's missing keeps its saved one. */
@@ -84,4 +85,19 @@ export function pickerChoices(
         scheduled(a) - scheduled(b) ||
         photoName(a).localeCompare(photoName(b)),
     );
+}
+
+/** The photo's JSON with its last change waiting for Commit or local edit made, if any. */
+function currentData(photo: SocialPhoto, changed: Map<string, unknown>): unknown {
+  return changed.has(photo.path) ? changed.get(photo.path) : photo.data;
+}
+
+/**
+ * The photos the Instagram page offers: every one but those set aside as Undecided, with the
+ * changes not committed yet (changed, by path) counted, so a photo marked Undecided on Photos in
+ * Flight leaves the page right away. undecided is how many were left out.
+ */
+export function withoutUndecided(photos: SocialPhoto[], changed: Map<string, unknown>) {
+  const shown = photos.filter((photo) => !isSetAside(currentData(photo, changed)));
+  return { photos: shown, undecided: photos.length - shown.length };
 }

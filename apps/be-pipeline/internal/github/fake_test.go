@@ -397,7 +397,7 @@ func (f *fakeGitHub) graphql(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	repo := map[string]any{"commit": map[string]any{"tree": map[string]any{"oid": "tree:" + in.Variables["commit"].(string)}}}
-	for _, alias := range []string{"photos", "albums", "tags", "genres", "places", "localizations", "metainfo", "cameras", "lenses", "captions", "timeline"} {
+	for _, alias := range []string{"photos", "albums", "tags", "genres", "places", "localizations", "metainfo", "cameras", "lenses", "captions", "timeline", "likes"} {
 		repo[alias] = f.tree(in.Variables[alias].(string), kind == "snapshot")
 	}
 	writeBody(w, http.StatusOK, map[string]any{"data": map[string]any{"repository": repo}})

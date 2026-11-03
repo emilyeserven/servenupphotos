@@ -24,6 +24,12 @@ tag under it too, as the Tag filter does, then its description when one is writt
 name, linking to the Grid filtered to the parent tag; then cards for every tag under it, however deep, by name, each one's own
 tags right after it. A tag more than one level down names the tags in between (`shimenawa › shide`).
 
+A photo shows once in a section where it can: a card leaves out the photos already previewed by the cards for the tags
+under it and fills those squares with its next newest photos, and the parent tag's own card leaves out every photo the
+cards below it preview. So a photo tagged both `amphibians` and `newts` shows only on the **newts** card, and the
+parent's own card is left out when all its photos are already shown below. The counts aren't changed, and in **Top level
+only** each card still previews its newest photos.
+
 The tags with none under them come after the parent tags as one grid of cards, by name, headed **More tags** when there
 are parent tags above. Tags without photos are left out, and a loop of parents stops where it comes back round.
 

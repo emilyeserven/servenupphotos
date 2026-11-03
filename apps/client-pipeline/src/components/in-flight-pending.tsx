@@ -48,6 +48,7 @@ function pendingCount(data: InFlightResponse): number {
     data.lenses,
     data.captions,
     data.timeline,
+    data.likes,
   ];
   const files = [...data.files, ...groups.flatMap((group) => group.files)];
   return files.filter((file) => file.pending).length;
