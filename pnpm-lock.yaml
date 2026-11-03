@@ -147,6 +147,9 @@ importers:
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
+      date-fns:
+        specifier: 'catalog:'
+        version: 4.4.0
       lucide-react:
         specifier: 'catalog:'
         version: 1.57.0(@types/react@19.3.0)(react@19.3.1)
@@ -156,6 +159,9 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.3.1
+      react-day-picker:
+        specifier: 'catalog:'
+        version: 9.14.0(react@19.3.1)
       react-dom:
         specifier: 'catalog:'
         version: 19.3.1(react@19.3.1)

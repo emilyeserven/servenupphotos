@@ -34,7 +34,8 @@ type CombinedCommit struct {
 	Edited int `json:"edited"`
 	// Counts are how many entries each combined list has: photos, albums,
 	// tags, genres, places, localizations, metadata groups (metainfo), camera
-	// overrides (cameras) and custom lenses (lenses), and how
+	// overrides (cameras), custom lenses (lenses), caption templates
+	// (captions) and timeline labels (timeline), and how
 	// many photos were left out of ALLPHOTOS.json as drafts (drafts).
 	Counts map[string]int `json:"counts"`
 	// NewPullRequest is true when the commit opened the photo data pull
@@ -73,6 +74,8 @@ func combinedKinds() []combinedKind {
 		{"metainfo", MetaInfo.Folder, MetaInfo.AllFile},
 		{"cameras", Cameras.Folder, Cameras.AllFile},
 		{"lenses", Lenses.Folder, Lenses.AllFile},
+		{"captions", Captions.Folder, Captions.AllFile},
+		{"timeline", TimelineLabels.Folder, TimelineLabels.AllFile},
 	}
 }
 

@@ -1,5 +1,6 @@
 import { type KeyboardEvent, type PointerEvent, useEffect, useState } from "react";
 import {
+  labelAt,
   markAt,
   measureMonths,
   type MonthLayout,
@@ -61,7 +62,7 @@ function ScrubberTrack({
     >
       <ScrubberTicks marks={layout.marks} trackHeight={height} />
       <ScrubberThumb at={fraction} />
-      <ScrubberBubble at={pointer} marks={layout.marks} />
+      <ScrubberBubble at={pointer} layout={layout} />
     </div>
   );
 }
@@ -156,15 +157,20 @@ function ScrubberThumb({ at }: { at: number }) {
   );
 }
 
-/** The bubble beside the track naming the month under the pointer, while there is one. */
-function ScrubberBubble({ at, marks }: { at: number | null; marks: ScrubberMark[] }) {
+/**
+ * The bubble beside the track naming the month under the pointer, while there is one, with the
+ * timeline label of the days there under it.
+ */
+function ScrubberBubble({ at, layout }: { at: number | null; layout: MonthLayout }) {
   if (at === null) return null;
+  const label = labelAt(layout, at);
   return (
     <span
-      className="absolute right-full mr-1 -translate-y-1/2 rounded-md bg-foreground px-2 py-1 text-xs font-medium whitespace-nowrap text-background shadow-md"
+      className="absolute right-full mr-1 flex -translate-y-1/2 flex-col rounded-md bg-foreground px-2 py-1 text-xs font-medium whitespace-nowrap text-background shadow-md"
       style={{ top: `${Math.min(1, Math.max(0, at)) * 100}%` }}
     >
-      {markAt(marks, at)?.month}
+      {markAt(layout.marks, at)?.month}
+      {label && <span className="font-normal opacity-80">{label}</span>}
     </span>
   );
 }

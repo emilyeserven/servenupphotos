@@ -2,17 +2,19 @@
 
 The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in Settings), one JSON file per thing:
 
-| What             | File                      | Combined by **Commit** into        |
-| ---------------- | ------------------------- | ---------------------------------- |
-| Photos           | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json`            |
-| Albums           | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json`            |
-| Tags             | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`                |
-| Genres           | `genres/<GENRE_ID>.json`  | `genres/ALLGENRES.json`            |
-| Places           | `places/<PLACE_ID>.json`  | `places/PLACES.json`               |
-| Localizations    | `localizations/<ID>.json` | `localizations/LOCALIZATIONS.json` |
-| Metadata groups  | `metainfo/<ID>.json`      | `metainfo/METAINFO.json`           |
-| Camera overrides | `cameras/<ID>.json`       | `cameras/CAMERAS.json`             |
-| Custom lenses    | `lenses/<ID>.json`        | `lenses/LENSES.json`               |
+| What              | File                      | Combined by **Commit** into        |
+| ----------------- | ------------------------- | ---------------------------------- |
+| Photos            | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json`            |
+| Albums            | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json`            |
+| Tags              | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`                |
+| Genres            | `genres/<GENRE_ID>.json`  | `genres/ALLGENRES.json`            |
+| Places            | `places/<PLACE_ID>.json`  | `places/PLACES.json`               |
+| Localizations     | `localizations/<ID>.json` | `localizations/LOCALIZATIONS.json` |
+| Metadata groups   | `metainfo/<ID>.json`      | `metainfo/METAINFO.json`           |
+| Camera overrides  | `cameras/<ID>.json`       | `cameras/CAMERAS.json`             |
+| Custom lenses     | `lenses/<ID>.json`        | `lenses/LENSES.json`               |
+| Caption templates | `captions/<ID>.json`      | `captions/CAPTIONS.json`           |
+| Timeline labels   | `timeline/<ID>.json`      | `timeline/TIMELINE.json`           |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
@@ -76,15 +78,16 @@ notes how countries, cities and places are written and said; see [Places and Loc
 [Metadata Groups](metadata-groups.md). `CAMERAS.json` holds per-camera rules that write other values over a photo's EXIF,
 and a photo's `exifOriginals` keeps the EXIF values they replaced; see [Camera Overrides](camera-overrides.md).
 `LENSES.json` holds the custom lenses a photo's `customLens` can name, and `manualAperture` marks a photo whose
-aperture is manual or unknown; see [Custom Lenses](custom-lenses.md).
+aperture is manual or unknown; see [Custom Lenses](custom-lenses.md). `CAPTIONS.json` holds the templates the Photo
+page's **Generate** fills in to write a social media post's caption; see [Caption Templates](caption-templates.md).
 
 A photo's `spotlightZones` and `websiteSpotlight` are left from when spotlight zones listed photos. The zones list
 albums instead (see [Publish](publish.md#site-spotlight)), and the photos that were on the homepage were moved into the
 **Homepage Spotlight** album, which the Homepage zone shows. `websiteSpotlight` still puts those photos first in an
 album without a [photo order](albums-and-tags.md#photo-order), in their old order; `spotlightZones` isn't read.
 
-A photo's `socialPosts` lists its posts on social media, each with its platform, status, date, link, caption and
-hashtags; see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
+A photo's `socialPosts` lists its posts on social media, each with its platform, date, link, caption and
+hashtags (whether it's posted is worked out from its date); see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
 
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).

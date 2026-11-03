@@ -1,35 +1,51 @@
 import { Link } from "@tanstack/react-router";
 import { CalendarIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { type ReactNode } from "react";
+import { type ReactNode, useMemo } from "react";
 import { FieldLabel } from "@/components/field-label";
+import { GenerateCaption } from "@/components/generate-caption";
+import { SocialPostDatePicker, usePostedPhotoFiles } from "@/components/social-post-date-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { usedPostDays } from "@/lib/social-post-dates";
+import { type PostedPhotoFile } from "@/lib/social-post-days";
 import { cn } from "@/lib/utils";
 import {
   type SocialPostDraft,
-  type SocialPostStatus,
   newSocialPost,
   parseHashtags,
   platformLabel,
+  postStatus,
   socialPlatforms,
 } from "@/lib/social-posts";
 
 interface SocialPostsCardProps {
   value: SocialPostDraft[];
   onChange: (value: SocialPostDraft[]) => void;
+  /** The photo file's path, so its own days aren't grayed out as another photo's. */
+  path: string;
   /** The day the Instagram calendar has the photo scheduled for, as YYYY-MM-DD, or null. */
   calendarDate: string | null;
   /** Saving is underway, so changing them now would not change the file. */
   disabled: boolean;
+  /** The photo's JSON as it's being edited, which Generate makes captions from. */
+  photo: Record<string, unknown>;
 }
 
 /**
  * The photo's posts on social media, each with its platform, whether it's scheduled or posted, its
  * day, link, caption and hashtags, saved as the JSON's "socialPosts".
  */
-export function SocialPostsCard({ value, onChange, calendarDate, disabled }: SocialPostsCardProps) {
+export function SocialPostsCard({
+  value,
+  onChange,
+  path,
+  calendarDate,
+  disabled,
+  photo,
+}: SocialPostsCardProps) {
+  const files = usePostedPhotoFiles();
   const update = (id: string, next: Partial<SocialPostDraft>) =>
     onChange(value.map((post) => (post.id === id ? { ...post, ...next } : post)));
   return (
@@ -50,6 +66,9 @@ export function SocialPostsCard({ value, onChange, calendarDate, disabled }: Soc
             post={post}
             number={index + 1}
             disabled={disabled}
+            photo={photo}
+            files={files}
+            path={path}
             onChange={(next) => update(post.id, next)}
             onRemove={() => onChange(value.filter((p) => p.id !== post.id))}
           />
@@ -90,12 +109,30 @@ interface SocialPostFieldsProps {
   /** The post's place in the list, counted from 1, for its heading. */
   number: number;
   disabled: boolean;
+  photo: Record<string, unknown>;
+  /** Every photo file, for the days other photos already post on, grayed out on the date picker. */
+  files: PostedPhotoFile[];
+  /** The photo file's path, left out of those days. */
+  path: string;
   onChange: (next: Partial<SocialPostDraft>) => void;
   onRemove: () => void;
 }
 
 /** One post's fields, with a button to take it out of the list. */
-function SocialPostFields({ post, number, disabled, onChange, onRemove }: SocialPostFieldsProps) {
+function SocialPostFields({
+  post,
+  number,
+  disabled,
+  photo,
+  files,
+  path,
+  onChange,
+  onRemove,
+}: SocialPostFieldsProps) {
+  const usedDays = useMemo(
+    () => usedPostDays(files, post.platform, path),
+    [files, post.platform, path],
+  );
   const id = (field: string) => `${post.id}-${field}`;
   const input = (field: "url" | "hashtags") => ({
     id: id(field),
@@ -112,6 +149,7 @@ function SocialPostFields({ post, number, disabled, onChange, onRemove }: Social
       <div className="flex items-center justify-between gap-2">
         <p id={id("heading")} className="text-sm font-medium">
           Post {number} · {platformLabel(post.platform)}
+          <StatusNote date={post.date} />
         </p>
         <Button
           variant="ghost"
@@ -133,35 +171,37 @@ function SocialPostFields({ post, number, disabled, onChange, onRemove }: Social
             onChange={(platform) => onChange({ platform })}
           />
         </Field>
-        <Field id={id("status")} label="Status" help="Scheduled until it's up, then posted.">
-          <StatusSelect
-            id={id("status")}
-            value={post.status}
-            disabled={disabled}
-            onChange={(status) => onChange({ status })}
-          />
-        </Field>
         <Field
           id={id("date")}
           label="Date"
-          help="The day it's posted, or scheduled to post. Saved as YYYY-MM-DD."
+          help="The day it's posted, or scheduled to post. Days other photos already post on, on the same platform, are grayed out. Saved as YYYY-MM-DD."
         >
-          <Input
+          <SocialPostDatePicker
             id={id("date")}
-            type="date"
             value={post.date}
             disabled={disabled}
-            onChange={(event) => onChange({ date: event.target.value })}
+            usedDays={usedDays}
+            onChange={(date) => onChange({ date })}
           />
         </Field>
       </div>
       <Field id={id("url")} label="Link" help="The post's address, once it's up.">
         <Input type="url" placeholder="https://…" {...input("url")} />
       </Field>
-      <Field id={id("caption")} label="Caption" help="The post's text, without its hashtags.">
+      <Field
+        id={id("caption")}
+        label="Caption"
+        help="The post's text. Generate writes it from a caption template and the photo's data."
+      >
+        <GenerateCaption
+          post={post}
+          photo={photo}
+          disabled={disabled}
+          onGenerate={(caption) => onChange({ caption })}
+        />
         <Textarea
           id={id("caption")}
-          rows={3}
+          rows={post.caption.includes("\n") ? 8 : 3}
           value={post.caption}
           disabled={disabled}
           onChange={(event) => onChange({ caption: event.target.value })}
@@ -176,6 +216,15 @@ function SocialPostFields({ post, number, disabled, onChange, onRemove }: Social
         <HashtagCount typed={post.hashtags} />
       </Field>
     </div>
+  );
+}
+
+/** Whether the post is up yet, from its day compared with today; nothing before it has a day. */
+function StatusNote({ date }: { date: string }) {
+  if (!date) return null;
+  const posted = postStatus(date) === "posted";
+  return (
+    <span className="text-muted-foreground font-normal"> · {posted ? "Posted" : "Scheduled"}</span>
   );
 }
 
@@ -240,21 +289,6 @@ function PlatformSelect({ id, value, disabled, onChange }: SelectProps<string>) 
           {platform.label}
         </option>
       ))}
-    </select>
-  );
-}
-
-function StatusSelect({ id, value, disabled, onChange }: SelectProps<SocialPostStatus>) {
-  return (
-    <select
-      id={id}
-      value={value}
-      disabled={disabled}
-      onChange={(event) => onChange(event.target.value as SocialPostStatus)}
-      className={SELECT_CLASSES}
-    >
-      <option value="scheduled">Scheduled</option>
-      <option value="posted">Posted</option>
     </select>
   );
 }

@@ -48,6 +48,8 @@ const baseLocalizations = readFolder("localizations", "LOCALIZATIONS");
 const baseMetaInfo = readFolder("metainfo", "METAINFO");
 const baseCameras = readFolder("cameras", "CAMERAS");
 const baseLenses = readFolder("lenses", "LENSES");
+const baseCaptions = readFolder("captions", "CAPTIONS");
+const baseTimeline = readFolder("timeline", "TIMELINE");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -143,6 +145,31 @@ const added = {
       },
     },
   ],
+  captions: [
+    {
+      path: `${FOLDER}/captions/instagram.json`,
+      data: {
+        id: "instagram",
+        name: "Instagram",
+        platform: "instagram",
+        template: [
+          "{title}",
+          "",
+          "{date}",
+          "{camera}[, {lensShort} @ {focalLength}mm][, {exposure}sec][, ƒ {aperture}][, ISO {iso}]",
+          "{places|cityLocalized}",
+          "",
+          "{comment}",
+          "",
+          "{hashtags}",
+        ].join("\n"),
+      },
+    },
+    {
+      path: `${FOLDER}/captions/short.json`,
+      data: { id: "short", name: "Short", platform: "", template: "{title} · {city}, {country}" },
+    },
+  ],
   lenses: [
     {
       path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
@@ -154,6 +181,16 @@ const added = {
         aperture: null,
         manualAperture: true,
       },
+    },
+  ],
+  timeline: [
+    {
+      path: `${FOLDER}/timeline/japan-2026-09-22.json`,
+      data: { id: "japan-2026-09-22", name: "Japan", start: "2026-09-22", end: "2026-10-02" },
+    },
+    {
+      path: `${FOLDER}/timeline/korea-2026-09-20.json`,
+      data: { id: "korea-2026-09-20", name: "Korea", start: "2026-09-20", end: "2026-09-21" },
     },
   ],
   metainfo: [
@@ -231,6 +268,8 @@ const headLocalizations = withAdded(baseLocalizations, added.localizations);
 const headMetaInfo = withAdded(baseMetaInfo, added.metainfo);
 const headCameras = withAdded(baseCameras, added.cameras);
 const headLenses = withAdded(baseLenses, added.lenses);
+const headCaptions = withAdded(baseCaptions, added.captions);
+const headTimeline = withAdded(baseTimeline, added.timeline);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -244,7 +283,19 @@ function combinedFile(kind, all, files, branch) {
 }
 
 function combinedFiles(
-  [photos, albums, tags, genres, places, localizations, metainfo, cameras, lenses],
+  [
+    photos,
+    albums,
+    tags,
+    genres,
+    places,
+    localizations,
+    metainfo,
+    cameras,
+    lenses,
+    captions,
+    timeline,
+  ],
   branch,
 ) {
   return {
@@ -257,6 +308,8 @@ function combinedFiles(
     metainfo: combinedFile("metainfo", "METAINFO.json", metainfo, branch),
     cameras: combinedFile("cameras", "CAMERAS.json", cameras, branch),
     lenses: combinedFile("lenses", "LENSES.json", lenses, branch),
+    captions: combinedFile("captions", "CAPTIONS.json", captions, branch),
+    timeline: combinedFile("timeline", "TIMELINE.json", timeline, branch),
   };
 }
 
@@ -714,6 +767,8 @@ export function defaultFixtures() {
           baseMetaInfo,
           baseCameras,
           baseLenses,
+          baseCaptions,
+          baseTimeline,
         ]),
         branch: BASE_BRANCH,
       },
@@ -729,6 +784,8 @@ export function defaultFixtures() {
             headMetaInfo,
             headCameras,
             headLenses,
+            headCaptions,
+            headTimeline,
           ],
           PULL_REQUEST.branch,
         ),
@@ -751,6 +808,8 @@ export function defaultFixtures() {
       metainfo: { folder: `${FOLDER}/metainfo`, files: added.metainfo.map(groupFile) },
       cameras: { folder: `${FOLDER}/cameras`, files: added.cameras.map(groupFile) },
       lenses: { folder: `${FOLDER}/lenses`, files: added.lenses.map(groupFile) },
+      captions: { folder: `${FOLDER}/captions`, files: added.captions.map(groupFile) },
+      timeline: { folder: `${FOLDER}/timeline`, files: added.timeline.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -869,11 +928,25 @@ export function defaultFixtures() {
       before: added.cameras[0].data,
       changed: true,
     }),
+    "PUT /api/captions/instagram": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/captions/instagram.json`,
+      data: body,
+      before: added.captions[0].data,
+      changed: true,
+    }),
     "PUT /api/lenses/7artisans-12mm-f2-8": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
       data: body,
       before: added.lenses[0].data,
+      changed: true,
+    }),
+    "PUT /api/timeline/japan-2026-09-22": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/timeline/japan-2026-09-22.json`,
+      data: body,
+      before: added.timeline[0].data,
       changed: true,
     }),
     "POST /api/photos/bucket/exif": {

@@ -11,8 +11,8 @@ import (
 )
 
 // snapshot is every file directly in the data folder's subfolders (photos,
-// albums, tags, genres, places, localizations, metadata groups, camera overrides and
-// custom lenses) at one commit. A commit never
+// albums, tags, genres, places, localizations, metadata groups, camera overrides,
+// custom lenses, caption templates and timeline labels) at one commit. A commit never
 // changes, so a snapshot is read from GitHub once, with one GraphQL query, and
 // kept.
 type snapshot struct {
@@ -36,7 +36,7 @@ type snapFile struct {
 // "<sha>:<folder>".
 const snapshotFolders = `query($owner: String!, $name: String!, $commit: String!, $photos: String!, $albums: String!,
   $tags: String!, $genres: String!, $places: String!, $localizations: String!, $metainfo: String!, $cameras: String!,
-  $lenses: String!) {
+  $lenses: String!, $captions: String!, $timeline: String!) {
   repository(owner: $owner, name: $name) {
     commit: object(expression: $commit) { ... on Commit { tree { oid } } }
     photos: object(expression: $photos) { ...files }
@@ -48,6 +48,8 @@ const snapshotFolders = `query($owner: String!, $name: String!, $commit: String!
     metainfo: object(expression: $metainfo) { ...files }
     cameras: object(expression: $cameras) { ...files }
     lenses: object(expression: $lenses) { ...files }
+    captions: object(expression: $captions) { ...files }
+    timeline: object(expression: $timeline) { ...files }
   }
 }
 `
@@ -90,6 +92,8 @@ type snapshotAnswer struct {
 		MetaInfo      treeAnswer `json:"metainfo"`
 		Cameras       treeAnswer `json:"cameras"`
 		Lenses        treeAnswer `json:"lenses"`
+		Captions      treeAnswer `json:"captions"`
+		Timeline      treeAnswer `json:"timeline"`
 	} `json:"repository"`
 }
 
@@ -99,7 +103,8 @@ func (a snapshotAnswer) folders() map[string]treeAnswer {
 	return map[string]treeAnswer{
 		PhotosFolder: r.Photos, Albums.Folder: r.Albums, Tags.Folder: r.Tags, Genres.Folder: r.Genres,
 		Places.Folder: r.Places, Localizations.Folder: r.Localizations, MetaInfo.Folder: r.MetaInfo,
-		Cameras.Folder: r.Cameras, Lenses.Folder: r.Lenses,
+		Cameras.Folder: r.Cameras, Lenses.Folder: r.Lenses, Captions.Folder: r.Captions,
+		TimelineLabels.Folder: r.Timeline,
 	}
 }
 

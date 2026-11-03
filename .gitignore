@@ -19,5 +19,6 @@ apps/portfolio/src/data/albums/ALLALBUMS.local.json
 apps/portfolio/src/data/tags/ALLTAGS.local.json
 apps/portfolio/src/data/genres/ALLGENRES.local.json
 apps/portfolio/src/data/metainfo/METAINFO.local.json
+apps/portfolio/src/data/timeline/TIMELINE.local.json
 # Made by `pnpm shot`.
 screenshots/
