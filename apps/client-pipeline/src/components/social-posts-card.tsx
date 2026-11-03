@@ -2,10 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { CalendarIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { type ReactNode } from "react";
 import { FieldLabel } from "@/components/field-label";
+import { SocialPostDatePicker, useUsedPostDays } from "@/components/social-post-date-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { type UsedPostDays } from "@/lib/social-post-dates";
 import { cn } from "@/lib/utils";
 import {
   type SocialPostDraft,
@@ -19,6 +21,8 @@ import {
 interface SocialPostsCardProps {
   value: SocialPostDraft[];
   onChange: (value: SocialPostDraft[]) => void;
+  /** The photo file's path, so its own days aren't grayed out as another photo's. */
+  path: string;
   /** The day the Instagram calendar has the photo scheduled for, as YYYY-MM-DD, or null. */
   calendarDate: string | null;
   /** Saving is underway, so changing them now would not change the file. */
@@ -29,7 +33,14 @@ interface SocialPostsCardProps {
  * The photo's posts on social media, each with its platform, whether it's scheduled or posted, its
  * day, link, caption and hashtags, saved as the JSON's "socialPosts".
  */
-export function SocialPostsCard({ value, onChange, calendarDate, disabled }: SocialPostsCardProps) {
+export function SocialPostsCard({
+  value,
+  onChange,
+  path,
+  calendarDate,
+  disabled,
+}: SocialPostsCardProps) {
+  const usedDays = useUsedPostDays(path);
   const update = (id: string, next: Partial<SocialPostDraft>) =>
     onChange(value.map((post) => (post.id === id ? { ...post, ...next } : post)));
   return (
@@ -50,6 +61,7 @@ export function SocialPostsCard({ value, onChange, calendarDate, disabled }: Soc
             post={post}
             number={index + 1}
             disabled={disabled}
+            usedDays={usedDays}
             onChange={(next) => update(post.id, next)}
             onRemove={() => onChange(value.filter((p) => p.id !== post.id))}
           />
@@ -90,12 +102,21 @@ interface SocialPostFieldsProps {
   /** The post's place in the list, counted from 1, for its heading. */
   number: number;
   disabled: boolean;
+  /** The days other photos already post on, grayed out on the date picker. */
+  usedDays: UsedPostDays;
   onChange: (next: Partial<SocialPostDraft>) => void;
   onRemove: () => void;
 }
 
 /** One post's fields, with a button to take it out of the list. */
-function SocialPostFields({ post, number, disabled, onChange, onRemove }: SocialPostFieldsProps) {
+function SocialPostFields({
+  post,
+  number,
+  disabled,
+  usedDays,
+  onChange,
+  onRemove,
+}: SocialPostFieldsProps) {
   const id = (field: string) => `${post.id}-${field}`;
   const input = (field: "url" | "hashtags") => ({
     id: id(field),
@@ -144,14 +165,14 @@ function SocialPostFields({ post, number, disabled, onChange, onRemove }: Social
         <Field
           id={id("date")}
           label="Date"
-          help="The day it's posted, or scheduled to post. Saved as YYYY-MM-DD."
+          help="The day it's posted, or scheduled to post. Days other photos already post on are grayed out. Saved as YYYY-MM-DD."
         >
-          <Input
+          <SocialPostDatePicker
             id={id("date")}
-            type="date"
             value={post.date}
             disabled={disabled}
-            onChange={(event) => onChange({ date: event.target.value })}
+            usedDays={usedDays}
+            onChange={(date) => onChange({ date })}
           />
         </Field>
       </div>

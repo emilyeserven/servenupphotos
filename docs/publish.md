@@ -48,6 +48,18 @@ without the `#`, and saved without it. The platforms offered are listed in
 `apps/client-pipeline/src/lib/social-posts.ts` (Instagram, Threads, Bluesky, Facebook and Other); add one there to offer
 it. A post with a platform that isn't listed, such as one typed into the JSON, keeps it.
 
+A post's day is picked on a calendar (shadcn's `Calendar` in a `Popover`, in
+`apps/client-pipeline/src/components/social-post-date-picker.tsx`), with **Clear** to leave it empty. Days other photos
+already post on are grayed out and struck through: any day in another photo's `socialPosts`, on any platform, or its
+Instagram calendar day (`socialMediaPublishDate`). They're read from the Gallery's photos (`GET /api/photos/published`)
+with the photo data pull request's (`GET /api/photos/in-flight`) over them, so a photo the pull request changes counts
+with its days there; the photo being edited is left out. A grayed day can still be picked, since two photos can share
+a day on different platforms; the field then says which photos already post that day. Unsaved changes on the
+Instagram calendar and changes not yet saved on other Photo pages aren't counted.
+
+> **Frontend analogy:** it's a `disabledDays`-style lookup built from two cached queries, except the days are only
+> styled with a `modifiers` class instead of `disabled`, so the click still goes through.
+
 The card is saved with the rest of the page's changes by **Save changes**, as a change waiting for Commit, so nothing
 goes to GitHub until **Commit**. Saving writes the whole list over the file's. When the Instagram calendar has the photo
 scheduled, the card says for which day and links to it; that day is still set on the calendar
