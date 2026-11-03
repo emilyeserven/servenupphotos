@@ -1,5 +1,17 @@
 [
   {
+    "id": "banff-canada-2024-08-31",
+    "name": "Banff, Canada",
+    "start": "2024-08-31",
+    "end": "2024-09-05"
+  },
+  {
+    "id": "egypt-2025-01-18",
+    "name": "Egypt",
+    "start": "2025-01-18",
+    "end": "2025-01-27"
+  },
+  {
     "id": "japan-2026-09-22",
     "name": "Japan",
     "start": "2026-09-22",
@@ -16,5 +28,17 @@
     "name": "Korea",
     "start": "2026-09-12",
     "end": "2026-09-21"
+  },
+  {
+    "id": "open-house-ny-2017-10-14",
+    "name": "Open House NY",
+    "start": "2017-10-14",
+    "end": "2017-10-15"
+  },
+  {
+    "id": "san-francisco-2026-10-24",
+    "name": "San Francisco",
+    "start": "2026-10-24",
+    "end": "2026-10-30"
   }
 ]
