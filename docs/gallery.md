@@ -39,6 +39,11 @@ album or camera that's only in GitHub shows up once the clone has it.
 > the alias points both apps at the same source files, and Vite's `resolve.dedupe` makes them share one React and one
 > TanStack Router.
 
+A package that a shared portfolio file imports (React, `date-fns`, `lucide-react`, …) has to be in client-pipeline's
+`package.json` **and** in `resolve.dedupe` in its `vite.config.ts`. The Docker build installs only the pipeline's
+packages, so without `dedupe` Vite looks for the package next to the portfolio's file, finds no `node_modules` there,
+and the build fails with "failed to resolve import".
+
 ### A place's photos
 
 On the [Places page](places-and-localizations.md#places), a place's photo count and **See photos in Gallery** at the
