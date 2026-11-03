@@ -32,16 +32,26 @@ let settling: ReturnType<typeof setTimeout> | undefined;
 /** The location whose query event is waiting to be sent. */
 let unsentQuery: ParsedLocation | undefined;
 
+/**
+ * Umami's tracker once its script has loaded. Until then, and when an ad blocker stops the script,
+ * `window.umami` is the script tag itself, as the browser names elements with an id on `window`.
+ */
+function loadedUmami(): Umami | undefined {
+  return typeof window.umami?.track === "function" ? window.umami : undefined;
+}
+
 /** Runs the send now, or once Umami's script has loaded. */
 function withUmami(sendTo: (umami: Umami) => void) {
-  if (window.umami) sendTo(window.umami);
+  const umami = loadedUmami();
+  if (umami) sendTo(umami);
   else waiting.push(sendTo);
 }
 
 /** Runs the sends that came before Umami's script finished loading. */
 function sendWaiting() {
-  for (const sendTo of waiting) withUmami(sendTo);
+  const sends = waiting;
   waiting = [];
+  for (const sendTo of sends) withUmami(sendTo);
 }
 
 /** The query as event properties: each value as text, plus the page it's on. */
@@ -59,6 +69,14 @@ function flushQuery() {
   const location = unsentQuery;
   unsentQuery = undefined;
   if (location) withUmami((umami) => umami.track(QUERY_EVENT, queryProperties(location)));
+}
+
+/**
+ * Sends a custom Umami event, such as `like` with the photo's id, now or once Umami's script has
+ * loaded. Off the real site, where the script stays quiet, nothing is counted.
+ */
+export function sendEvent(name: string, data: Record<string, string>) {
+  withUmami((umami) => umami.track(name, data));
 }
 
 /** Sends the page view, with its query, for a page the visitor just moved to. */

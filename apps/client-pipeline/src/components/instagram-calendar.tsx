@@ -7,7 +7,7 @@ import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
 import { Button } from "@/components/ui/button";
 import { calendarDays, dayFormat, isoDate, longDayFormat, parseIsoDate } from "@/lib/calendar";
-import { isDraft, useUntitledDrafts } from "@/lib/drafts";
+import { isDraft, isSetAside, useUntitledDrafts } from "@/lib/drafts";
 import {
   type Unsaved,
   PUBLISH_DATE,
@@ -17,6 +17,7 @@ import {
   photoName,
   photosByDay,
   unsavedFromEdits,
+  withoutUndecided,
 } from "@/lib/social-schedule";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { cn } from "@/lib/utils";
@@ -47,7 +48,17 @@ function ExternalLink({ href, children }: { href: string; children: ReactNode })
 
 /** Schedules photos to post to Instagram, one a day, on a calendar of the coming weeks. */
 export function InstagramCalendar() {
-  return <PhotoFiles>{(data) => <Schedule calendar={data} />}</PhotoFiles>;
+  return <PhotoFiles>{(data) => <DecidedSchedule calendar={data} />}</PhotoFiles>;
+}
+
+/** The calendar without the photos set aside as Undecided, which the page doesn't show. */
+function DecidedSchedule({ calendar }: { calendar: SocialCalendar }) {
+  const changed = useChangedPhotoFiles();
+  const { photos, undecided } = useMemo(
+    () => withoutUndecided(calendar.photos, changed),
+    [calendar.photos, changed],
+  );
+  return <Schedule calendar={{ ...calendar, photos }} undecided={undecided} />;
 }
 
 /**
@@ -69,12 +80,16 @@ function useUnsavedDates(photos: SocialPhoto[]) {
 function useInstagramPosts(photos: SocialPhoto[]) {
   const changed = useChangedPhotoFiles();
   return useMemo(
-    () => postsByDay(postedPhotoFiles(photos, changed), "instagram"),
+    () =>
+      postsByDay(
+        postedPhotoFiles(photos, changed).filter((file) => !isSetAside(file.data)),
+        "instagram",
+      ),
     [photos, changed],
   );
 }
 
-function Schedule({ calendar }: { calendar: SocialCalendar }) {
+function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided: number }) {
   const { unsaved, update } = useUnsavedDates(calendar.photos);
   const posts = useInstagramPosts(calendar.photos);
   const [weekOffset, setWeekOffset] = useState(0);
@@ -89,7 +104,7 @@ function Schedule({ calendar }: { calendar: SocialCalendar }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <SourceNote calendar={calendar} />
+      <SourceNote calendar={calendar} undecided={undecided} />
       <InstagramFocus photos={calendar.photos} />
       <CalendarGrid
         days={days}
@@ -139,8 +154,16 @@ function DraftCount({ drafts }: { drafts: number }) {
   return <>, and {count(drafts, "draft")} without a title, which the portfolio doesn't show</>;
 }
 
+/** " Undecided photos (N) aren't shown." after the photo counts, when there are any. */
+function UndecidedCount({ undecided }: { undecided: number }) {
+  if (undecided === 0) return null;
+  return (
+    <> {count(undecided, "Undecided photo")} set aside on Photos in Flight aren&apos;t shown.</>
+  );
+}
+
 /** Where the photos come from, and anything that keeps saving from working. */
-function SourceNote({ calendar }: { calendar: SocialCalendar }) {
+function SourceNote({ calendar, undecided }: { calendar: SocialCalendar; undecided: number }) {
   const { pullRequest } = calendar;
   const { inFlight, drafts } = photoCounts(calendar.photos, useUntitledDrafts());
   return (
@@ -159,6 +182,7 @@ function SourceNote({ calendar }: { calendar: SocialCalendar }) {
         <DraftCount drafts={drafts} />. Moving a photo is kept in the app until you{" "}
         <strong>Commit</strong> from the sync button at the top right, which saves the dates to the
         same files.
+        <UndecidedCount undecided={undecided} />
       </p>
       <Unreadable calendar={calendar} />
     </div>

@@ -1,15 +1,24 @@
 import type { LucideIcon } from "lucide-react";
-import { BookImage, CalendarClock, Dices, Grid3x3, MapPin, Palette, Tags } from "lucide-react";
+import {
+  BookImage,
+  CalendarClock,
+  Dices,
+  Grid3x3,
+  Heart,
+  MapPin,
+  Palette,
+  Tags,
+} from "lucide-react";
 
 export interface PortfolioView {
-  to: "/timeline" | "/map" | "/albums" | "/tags" | "/grid" | "/color" | "/lucky";
+  to: "/timeline" | "/map" | "/albums" | "/tags" | "/grid" | "/color" | "/lucky" | "/likes";
   label: string;
   description: string;
   icon: LucideIcon;
   /** False for a view that's linked but not ready to visit yet. */
   enabled: boolean;
   /**
-   * True for a lesser view (Albums, Tags, Lucky): the site menu lists it in small text under the
+   * True for a lesser view (Albums, Tags, Lucky, My Likes): the site menu lists it in small text under the
    * big icon tiles, and the homepage leaves it out.
    */
   minor?: boolean;
@@ -66,6 +75,14 @@ const portfolioViews: PortfolioView[] = [
     description:
       "A few rows of photos picked at random, from all of them or the ones the filters leave.",
     icon: Dices,
+    enabled: true,
+    minor: true,
+  },
+  {
+    to: "/likes",
+    label: "My Likes",
+    description: "The photos liked in this browser, with a list of their titles to copy.",
+    icon: Heart,
     enabled: true,
     minor: true,
   },

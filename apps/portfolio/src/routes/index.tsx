@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
 const backdropPhotos = homepagePhotos();
 const phoneBackdropPhotos = homepagePhotos(undefined, true);
 
-/** The views with a card on the homepage: the minor ones (Albums, Tags, Lucky) are only in the menu. */
+/** The views with a card on the homepage: the minor ones (Albums, Tags, Lucky, My Likes) are only in the menu. */
 const homepageViews = mainViews.filter((view) => view.enabled);
 
 /** A phone held upright, which shows portrait photos first. */
