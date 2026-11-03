@@ -11,6 +11,7 @@ import {
   readCombinedData,
 } from "@/api/photos";
 import { type FileChange, pendingText, summarizeChanges, withChanges } from "@/lib/optimistic";
+import { changedPhotoFiles } from "@/lib/social-post-days";
 import { editChanges, fieldEdits, useLocalEditsStore } from "@/stores/local-edits";
 
 /**
@@ -276,6 +277,15 @@ function isUnsynced(
 function useAllChanges(changes: FileChange[]): FileChange[] {
   const edits = useLocalEditsStore((s) => s.edits);
   return useMemo(() => [...changes, ...editChanges(edits)], [changes, edits]);
+}
+
+/**
+ * The photo files changed since the last commit, saved for Commit or edited in the browser, each as
+ * its last change left it: path → its JSON, or null when it was removed.
+ */
+export function useChangedPhotoFiles(): Map<string, unknown> {
+  const changes = useAllChanges(useCombinedDataStore((s) => s.changes));
+  return useMemo(() => changedPhotoFiles(changes), [changes]);
 }
 
 /** Where the lists stand against the pull request, for the pages that note it. */
