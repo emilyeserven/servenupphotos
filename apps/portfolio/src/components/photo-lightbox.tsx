@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { ChevronLeftIcon, ChevronRightIcon, EyeOffIcon, XIcon } from "lucide-react";
 import { Dialog } from "radix-ui";
 import { type KeyboardEvent, type ReactNode, useRef, useState } from "react";
+import { CopyPhotoLinkButton } from "@/components/copy-photo-link-button";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
@@ -154,6 +155,7 @@ function LightboxHeader({
       <LightboxCaption photo={photo} />
       <span className="shrink-0 text-sm text-white/60 tabular-nums empty:hidden">{position}</span>
       <div className="flex shrink-0 items-center">
+        <CopyPhotoLinkButton id={photo.id} />
         <Button
           variant="ghost"
           size="icon"
