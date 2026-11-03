@@ -14,6 +14,11 @@ scheduled, but aren't on the portfolio; clicking a scheduled photo changes or re
 day moves it there, and dropping it on another photo swaps the two. The page reads the photo files with
 `GET /api/publish/instagram`, each with its whole JSON as `data`.
 
+Photos set aside as [Undecided](photos-in-flight.md#undecided) (`undecided: true`) aren't on the page at all: not in
+the picker or its suggestions, not on the calendar, and not under **Instagram posts**. A change not committed yet
+counts, so marking a photo Undecided on Photos in Flight takes it off right away; the note at the top says how many
+are hidden (`withoutUndecided` in `lib/social-schedule.ts`). Untitled drafts are still offered.
+
 Each change is kept in the app as a [local edit](combined-data-store.md#local-edits) right away: the sync button at the
 top right counts the photo, and `ALLPHOTOS.json` in the app shows the new date. Nothing goes to GitHub until
 **Commit**, which sets `socialMediaPublishDate` in each changed photo file in the same commit as `ALLPHOTOS.json`. Only
