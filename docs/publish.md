@@ -63,15 +63,15 @@ it. A post with a platform that isn't listed, such as one typed into the JSON, k
 
 A post's day is picked on a calendar (shadcn's `Calendar` in a `Popover`, in
 `apps/client-pipeline/src/components/social-post-date-picker.tsx`), with **Clear** to leave it empty. Days other photos
-already post on are grayed out: any day in another photo's `socialPosts`, on any platform, or its
-Instagram calendar day (`socialMediaPublishDate`). They're read from the Gallery's photos (`GET /api/photos/published`)
-with the photo data pull request's (`GET /api/photos/in-flight`) over them, so a photo the pull request changes counts
-with its days there; the photo being edited is left out. A grayed day can still be picked, since two photos can share
-a day on different platforms; the field then says which photos already post that day. Unsaved changes on the
-Instagram calendar and changes not yet saved on other Photo pages aren't counted.
+already post on, on the same platform, are grayed out: the days of their `socialPosts` on that platform, and for
+Instagram their Instagram calendar day (`socialMediaPublishDate`) too. The photos are the ones the Instagram calendar
+reads (`GET /api/publish/instagram`, gallery and in flight alike), with the changes waiting for Commit and local edits
+made over them (`postedPhotoFiles` and `useChangedPhotoFiles`, shared with the calendar's posts); the photo being
+edited is left out. A grayed day can still be picked, since two posts on one day is rare but fine; the field then says
+which photos already post that day.
 
-> **Frontend analogy:** it's a `disabledDays`-style lookup built from two cached queries, except the days are only
-> styled with a `modifiers` class instead of `disabled`, so the click still goes through.
+> **Frontend analogy:** it's a `disabledDays`-style lookup built from data the app already has, except the days are
+> only styled with a `modifiers` class instead of `disabled`, so the click still goes through.
 
 The card is saved with the rest of the page's changes by **Save changes**, as a change waiting for Commit, so nothing
 goes to GitHub until **Commit**. Saving writes the whole list over the file's. When the Instagram calendar has the photo

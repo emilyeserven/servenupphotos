@@ -2,22 +2,30 @@ import { useQuery } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { photosInFlightQuery, publishedPhotosQuery } from "@/api/photos";
+import { socialCalendarQuery } from "@/api/publish";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { type UsedPostDays, usedPostDays } from "@/lib/social-post-dates";
+import { type UsedPostDays } from "@/lib/social-post-dates";
+import { type PostedPhotoFile, postedPhotoFiles } from "@/lib/social-post-days";
+import { useChangedPhotoFiles } from "@/stores/combined-data";
 
 /**
- * The days other photos already post on, from the Gallery and the photo data pull request, leaving
- * out the photo at path. Empty until both are read.
+ * Every photo file as the app has it now, gallery and in flight alike, with the changes waiting for
+ * Commit and local edits made over them; empty until the photo files are read. The Photo page's
+ * Spotlight card reads the same files, so this doesn't fetch anything more.
  */
-export function useUsedPostDays(path: string): UsedPostDays {
-  const published = useQuery(publishedPhotosQuery).data?.files;
-  const inFlight = useQuery(photosInFlightQuery).data?.files;
+export function usePostedPhotoFiles(): PostedPhotoFile[] {
+  const read = useQuery(socialCalendarQuery).data?.photos;
+  const changed = useChangedPhotoFiles();
   return useMemo(
-    () => usedPostDays([...(published ?? []), ...(inFlight ?? [])], path),
-    [published, inFlight, path],
+    // Whether a photo is in ALLPHOTOS.json only sets `inFlight`, which the date picker doesn't use.
+    () =>
+      postedPhotoFiles(
+        (read ?? []).map((photo) => ({ ...photo, inAllPhotos: true })),
+        changed,
+      ),
+    [read, changed],
   );
 }
 
@@ -41,8 +49,8 @@ function chosenDate(value: string): Date | undefined {
 }
 
 /**
- * A post's day, picked on a calendar. Days other photos already post on are grayed out but can
- * still be picked, since one photo can share its day with another on a different platform.
+ * A post's day, picked on a calendar. Days other photos already post on, on the same platform, are
+ * grayed out but can still be picked, since two posts on one day is rare but fine.
  */
 export function SocialPostDatePicker({
   id,
@@ -96,7 +104,7 @@ function CalendarFooter({ hasValue, onClear }: { hasValue: boolean; onClear: () 
   return (
     <div className="flex items-center justify-between gap-2 border-t px-3 py-2">
       <p className="text-muted-foreground max-w-48 text-xs">
-        Grayed days already have a post from another photo.
+        Grayed days already have a post on this platform from another photo.
       </p>
       <Button variant="ghost" size="sm" disabled={!hasValue} onClick={onClear}>
         Clear

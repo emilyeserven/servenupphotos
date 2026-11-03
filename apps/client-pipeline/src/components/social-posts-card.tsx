@@ -1,13 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { CalendarIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { type ReactNode } from "react";
+import { type ReactNode, useMemo } from "react";
 import { FieldLabel } from "@/components/field-label";
-import { SocialPostDatePicker, useUsedPostDays } from "@/components/social-post-date-picker";
+import { SocialPostDatePicker, usePostedPhotoFiles } from "@/components/social-post-date-picker";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { type UsedPostDays } from "@/lib/social-post-dates";
+import { usedPostDays } from "@/lib/social-post-dates";
+import { type PostedPhotoFile } from "@/lib/social-post-days";
 import { cn } from "@/lib/utils";
 import {
   type SocialPostDraft,
@@ -40,7 +41,7 @@ export function SocialPostsCard({
   calendarDate,
   disabled,
 }: SocialPostsCardProps) {
-  const usedDays = useUsedPostDays(path);
+  const files = usePostedPhotoFiles();
   const update = (id: string, next: Partial<SocialPostDraft>) =>
     onChange(value.map((post) => (post.id === id ? { ...post, ...next } : post)));
   return (
@@ -61,7 +62,8 @@ export function SocialPostsCard({
             post={post}
             number={index + 1}
             disabled={disabled}
-            usedDays={usedDays}
+            files={files}
+            path={path}
             onChange={(next) => update(post.id, next)}
             onRemove={() => onChange(value.filter((p) => p.id !== post.id))}
           />
@@ -102,8 +104,10 @@ interface SocialPostFieldsProps {
   /** The post's place in the list, counted from 1, for its heading. */
   number: number;
   disabled: boolean;
-  /** The days other photos already post on, grayed out on the date picker. */
-  usedDays: UsedPostDays;
+  /** Every photo file, for the days other photos already post on, grayed out on the date picker. */
+  files: PostedPhotoFile[];
+  /** The photo file's path, left out of those days. */
+  path: string;
   onChange: (next: Partial<SocialPostDraft>) => void;
   onRemove: () => void;
 }
@@ -113,10 +117,15 @@ function SocialPostFields({
   post,
   number,
   disabled,
-  usedDays,
+  files,
+  path,
   onChange,
   onRemove,
 }: SocialPostFieldsProps) {
+  const usedDays = useMemo(
+    () => usedPostDays(files, post.platform, path),
+    [files, post.platform, path],
+  );
   const id = (field: string) => `${post.id}-${field}`;
   const input = (field: "url" | "hashtags") => ({
     id: id(field),
@@ -165,7 +174,7 @@ function SocialPostFields({
         <Field
           id={id("date")}
           label="Date"
-          help="The day it's posted, or scheduled to post. Days other photos already post on are grayed out. Saved as YYYY-MM-DD."
+          help="The day it's posted, or scheduled to post. Days other photos already post on, on the same platform, are grayed out. Saved as YYYY-MM-DD."
         >
           <SocialPostDatePicker
             id={id("date")}
