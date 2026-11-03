@@ -99,7 +99,7 @@ type InFlightResult struct {
 	// Albums, Tags, Genres, Places, Localizations, MetaInfo, Cameras, Lenses
 	// Captions, Timeline and Likes are the album, tag, genre, place,
 	// localization, metadata group, camera override, custom lens, caption
-	// template, timeline label and fan likes files in the pull request.
+	// template, timeline label and viewer likes files in the pull request.
 	Albums        InFlightGroups `json:"albums"`
 	Tags          InFlightGroups `json:"tags"`
 	Genres        InFlightGroups `json:"genres"`
@@ -114,7 +114,7 @@ type InFlightResult struct {
 }
 
 // groups are r's album, tag, genre, place, localization, metadata group, camera
-// override, custom lens, caption template, timeline label and fan likes files.
+// override, custom lens, caption template, timeline label and viewer likes files.
 func (r *InFlightResult) groups() []*InFlightGroups {
 	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Genres, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses, &r.Captions, &r.Timeline, &r.Likes}
 }
@@ -170,7 +170,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		Lenses:        newInFlightGroups(w.root, Kind{Folder: Lenses.Folder, AllFile: Lenses.AllFile}),
 		Captions:      newInFlightGroups(w.root, Kind{Folder: Captions.Folder, AllFile: Captions.AllFile}),
 		Timeline:      newInFlightGroups(w.root, Kind{Folder: TimelineLabels.Folder, AllFile: TimelineLabels.AllFile}),
-		Likes:         newInFlightGroups(w.root, Kind{Folder: FanLikesKind.Folder, AllFile: FanLikesKind.AllFile}),
+		Likes:         newInFlightGroups(w.root, Kind{Folder: ViewerLikesKind.Folder, AllFile: ViewerLikesKind.AllFile}),
 	}
 	for _, p := range w.changed(folder, AllPhotosFile) {
 		if w.status(p) == statusRemoved {

@@ -16,7 +16,7 @@ import { DraftMark } from "@/components/draft-mark";
 import { ReEditMark } from "@/components/re-edit-card";
 import { ImageLightbox } from "@/components/image-lightbox";
 import { PlaceGpsMark } from "@/components/gallery/place-filter";
-import { LikesMark, useLikeCounts } from "@/components/fan-likes/likes-mark";
+import { LikesMark, useLikeCounts } from "@/components/viewer-likes/likes-mark";
 import { Button } from "@/components/ui/button";
 import { squareImages } from "@/lib/offline-thumbnails";
 import { cn } from "@/lib/utils";
@@ -74,7 +74,7 @@ export function PhotoGrid({ data, shown, filter, selection, onToggle }: PhotoGri
 interface PhotoCardProps {
   file: PublishedFile;
   images: InFlightImages;
-  /** How many people liked each photo on the Fan Likes page, by photo ID. */
+  /** How many people liked each photo on the Viewer Likes page, by photo ID. */
   likes: Map<number, number>;
   /** Whether the photo is chosen; null when photos aren't being chosen. */
   selected: boolean | null;

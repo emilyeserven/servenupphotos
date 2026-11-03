@@ -3,11 +3,11 @@ import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 
 /**
- * A fan likes file: one person and the photos they liked on the portfolio's My Likes page and
+ * A viewer likes file: one person and the photos they liked on the portfolio's My Likes page and
  * sent with "Send to photographer". Importing their list again replaces it. Commit combines them
  * into LIKES.json.
  */
-export interface FanLikes {
+export interface ViewerLikes {
   /** Made from the name when the person is added, and kept after that. */
   id: string;
   /** Who sent the list, such as "Jane". */
@@ -18,19 +18,19 @@ export interface FanLikes {
   importedAt?: string;
 }
 
-function isFan(value: unknown): value is FanLikes {
-  const fan = value as Partial<FanLikes> | null;
-  return typeof fan?.name === "string" && Array.isArray(fan.photos);
+function isViewer(value: unknown): value is ViewerLikes {
+  const viewer = value as Partial<ViewerLikes> | null;
+  return typeof viewer?.name === "string" && Array.isArray(viewer.photos);
 }
 
 /** The people who sent likes, as the next Commit will have them: LIKES.json with the changes since, by name. */
-export function fanLikes(data: CombinedData | undefined): FanLikes[] {
+export function viewerLikes(data: CombinedData | undefined): ViewerLikes[] {
   const entries = data ? (data.head ?? data.base).likes.data : undefined;
-  return (entries ?? []).filter(isFan).toSorted((a, b) => a.name.localeCompare(b.name));
+  return (entries ?? []).filter(isViewer).toSorted((a, b) => a.name.localeCompare(b.name));
 }
 
 /** The ID a new person gets, such as `jane-doe`. */
-export function fanId(name: string): string {
+export function viewerId(name: string): string {
   return overrideId(name);
 }
 
@@ -69,9 +69,10 @@ export function parseLikes(text: string): ParsedLikes {
 }
 
 /** How many people liked each photo, by photo ID. */
-export function likeCounts(fans: FanLikes[]): Map<number, number> {
+export function likeCounts(viewers: ViewerLikes[]): Map<number, number> {
   const counts = new Map<number, number>();
-  for (const id of fans.flatMap((fan) => fan.photos)) counts.set(id, (counts.get(id) ?? 0) + 1);
+  for (const id of viewers.flatMap((viewer) => viewer.photos))
+    counts.set(id, (counts.get(id) ?? 0) + 1);
   return counts;
 }
 
@@ -83,10 +84,10 @@ export function importedText(importedAt: string | undefined): string {
   return `Imported ${date.toLocaleDateString(undefined, { dateStyle: "medium" })}`;
 }
 
-const fanMutations = settingMutations<FanLikes>("likes");
+const viewerMutations = settingMutations<ViewerLikes>("likes");
 
 /** Saves a person's likes, replacing the list they sent before, as a change waiting for Commit. */
-export const saveFanMutation = fanMutations.save;
+export const saveViewerMutation = viewerMutations.save;
 
 /** Removes a person and their likes, as a change waiting for Commit. */
-export const deleteFanMutation = fanMutations.remove;
+export const deleteViewerMutation = viewerMutations.remove;

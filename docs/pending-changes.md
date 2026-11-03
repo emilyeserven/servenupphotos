@@ -1,7 +1,7 @@
 # Changes waiting for Commit
 
 Nothing the pipeline saves goes to GitHub on its own. Saving a photo (Photo page, Bulk Upload, Explore Bucket), editing
-or removing one (Photos in Flight, Gallery), making or moving an album or tag, deleting an album or removing photos from one, saving a place, localization, metadata group, camera override, custom lens, timeline label or fan's likes,
+or removing one (Photos in Flight, Gallery), making or moving an album or tag, deleting an album or removing photos from one, saving a place, localization, metadata group, camera override, custom lens, timeline label or viewer's likes,
 adding albums and tags to photos from the Gallery, Update Data and Instagram dates all keep their files in the app as
 **changes waiting for Commit**. The only button that writes photo data to GitHub is **Commit**, on Photos in Flight and
 in the sync button's panel at the top right. Uploads to R2 still happen right away, since the JSON points at them.

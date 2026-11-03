@@ -16,7 +16,6 @@ import { Route as CameraOverridesRouteImport } from './routes/camera-overrides'
 import { Route as CaptionTemplatesRouteImport } from './routes/caption-templates'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExifRouteImport } from './routes/exif'
-import { Route as FanLikesRouteImport } from './routes/fan-likes'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
@@ -28,6 +27,7 @@ import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as TimelineLabelsRouteImport } from './routes/timeline-labels'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
+import { Route as ViewerLikesRouteImport } from './routes/viewer-likes'
 import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
 import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
 import { Route as GenresIndexRouteImport } from './routes/genres.index'
@@ -70,11 +70,6 @@ const CompareRoute = CompareRouteImport.update({
 const ExifRoute = ExifRouteImport.update({
   id: '/exif',
   path: '/exif',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FanLikesRoute = FanLikesRouteImport.update({
-  id: '/fan-likes',
-  path: '/fan-likes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -132,6 +127,11 @@ const UpdateDataRoute = UpdateDataRouteImport.update({
   path: '/update-data',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ViewerLikesRoute = ViewerLikesRouteImport.update({
+  id: '/viewer-likes',
+  path: '/viewer-likes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AlbumsIndexRoute = AlbumsIndexRouteImport.update({
   id: '/albums/',
   path: '/albums/',
@@ -181,7 +181,6 @@ export interface FileRoutesByFullPath {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
-  '/fan-likes': typeof FanLikesRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
@@ -193,6 +192,7 @@ export interface FileRoutesByFullPath {
   '/sizes': typeof SizesRoute
   '/timeline-labels': typeof TimelineLabelsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
+  '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
@@ -210,7 +210,6 @@ export interface FileRoutesByTo {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
-  '/fan-likes': typeof FanLikesRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
@@ -221,6 +220,7 @@ export interface FileRoutesByTo {
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/timeline-labels': typeof TimelineLabelsRoute
+  '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
@@ -239,7 +239,6 @@ export interface FileRoutesById {
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
-  '/fan-likes': typeof FanLikesRoute
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
@@ -251,6 +250,7 @@ export interface FileRoutesById {
   '/sizes': typeof SizesRoute
   '/timeline-labels': typeof TimelineLabelsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
+  '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/tags/$id': typeof TagsIdRoute
@@ -270,7 +270,6 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/compare'
     | '/exif'
-    | '/fan-likes'
     | '/gallery'
     | '/in-flight'
     | '/instagram'
@@ -282,6 +281,7 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/timeline-labels'
     | '/update-data'
+    | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
@@ -299,7 +299,6 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/compare'
     | '/exif'
-    | '/fan-likes'
     | '/gallery'
     | '/in-flight'
     | '/instagram'
@@ -310,6 +309,7 @@ export interface FileRouteTypes {
     | '/site-spotlight'
     | '/sizes'
     | '/timeline-labels'
+    | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
@@ -327,7 +327,6 @@ export interface FileRouteTypes {
     | '/caption-templates'
     | '/compare'
     | '/exif'
-    | '/fan-likes'
     | '/gallery'
     | '/in-flight'
     | '/instagram'
@@ -339,6 +338,7 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/timeline-labels'
     | '/update-data'
+    | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
     | '/tags/$id'
@@ -357,7 +357,6 @@ export interface RootRouteChildren {
   CaptionTemplatesRoute: typeof CaptionTemplatesRoute
   CompareRoute: typeof CompareRoute
   ExifRoute: typeof ExifRoute
-  FanLikesRoute: typeof FanLikesRoute
   GalleryRoute: typeof GalleryRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
@@ -369,6 +368,7 @@ export interface RootRouteChildren {
   SizesRoute: typeof SizesRoute
   TimelineLabelsRoute: typeof TimelineLabelsRoute
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
+  ViewerLikesRoute: typeof ViewerLikesRoute
   AlbumsIdRoute: typeof AlbumsIdRoute
   GenresIdRoute: typeof GenresIdRoute
   TagsIdRoute: typeof TagsIdRoute
@@ -426,13 +426,6 @@ declare module '@tanstack/react-router' {
       path: '/exif'
       fullPath: '/exif'
       preLoaderRoute: typeof ExifRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/fan-likes': {
-      id: '/fan-likes'
-      path: '/fan-likes'
-      fullPath: '/fan-likes'
-      preLoaderRoute: typeof FanLikesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -510,6 +503,13 @@ declare module '@tanstack/react-router' {
       path: '/update-data'
       fullPath: '/update-data'
       preLoaderRoute: typeof UpdateDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/viewer-likes': {
+      id: '/viewer-likes'
+      path: '/viewer-likes'
+      fullPath: '/viewer-likes'
+      preLoaderRoute: typeof ViewerLikesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/albums/': {
@@ -593,7 +593,6 @@ const rootRouteChildren: RootRouteChildren = {
   CaptionTemplatesRoute: CaptionTemplatesRoute,
   CompareRoute: CompareRoute,
   ExifRoute: ExifRoute,
-  FanLikesRoute: FanLikesRoute,
   GalleryRoute: GalleryRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
@@ -605,6 +604,7 @@ const rootRouteChildren: RootRouteChildren = {
   SizesRoute: SizesRoute,
   TimelineLabelsRoute: TimelineLabelsRoute,
   UpdateDataRoute: UpdateDataRouteWithChildren,
+  ViewerLikesRoute: ViewerLikesRoute,
   AlbumsIdRoute: AlbumsIdRoute,
   GenresIdRoute: GenresIdRoute,
   TagsIdRoute: TagsIdRoute,

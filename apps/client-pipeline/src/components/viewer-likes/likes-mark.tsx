@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { fanLikes, likeCounts } from "@/api/fan-likes";
-import { LikeCount } from "@/components/fan-likes/most-liked";
+import { viewerLikes, likeCounts } from "@/api/viewer-likes";
+import { LikeCount } from "@/components/viewer-likes/most-liked";
 import { useCombinedData } from "@/stores/combined-data";
 
-/** How many people liked each photo, by photo ID, as the next Commit will have the fan likes. */
+/** How many people liked each photo, by photo ID, as the next Commit will have the viewer likes. */
 export function useLikeCounts(): Map<number, number> {
   const { data } = useCombinedData();
-  return useMemo(() => likeCounts(fanLikes(data)), [data]);
+  return useMemo(() => likeCounts(viewerLikes(data)), [data]);
 }
 
 /** How many people liked the photo whose JSON is data, by its photo ID. */
@@ -21,7 +21,7 @@ interface LikesMarkProps {
   counts: Map<number, number>;
 }
 
-/** The photo's likes from the Fan Likes page, by its photo ID; nothing when nobody liked it. */
+/** The photo's likes from the Viewer Likes page, by its photo ID; nothing when nobody liked it. */
 export function LikesMark({ data, counts }: LikesMarkProps) {
   const count = likesOf(data, counts);
   if (count === 0) return null;

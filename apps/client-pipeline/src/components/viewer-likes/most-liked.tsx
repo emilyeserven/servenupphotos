@@ -1,5 +1,5 @@
 import { HeartIcon } from "lucide-react";
-import { type FanLikes, likeCounts } from "@/api/fan-likes";
+import { type ViewerLikes, likeCounts } from "@/api/viewer-likes";
 import type { CombinedData } from "@/api/photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { shownPhotos } from "@/lib/place-seeds";
@@ -22,20 +22,24 @@ function photoTitle(photo: Record<string, unknown>): string {
 }
 
 interface MostLikedProps {
-  fans: FanLikes[];
+  viewers: ViewerLikes[];
   titles: Map<number, string>;
 }
 
 /** The photos with the most likes, summed across everyone who sent a list. */
-export function MostLiked({ fans, titles }: MostLikedProps) {
-  const counts = [...likeCounts(fans)].toSorted(([a, ca], [b, cb]) => cb - ca || a - b);
+export function MostLiked({ viewers, titles }: MostLikedProps) {
+  const counts = [...likeCounts(viewers)].toSorted(([a, ca], [b, cb]) => cb - ca || a - b);
   const known = counts.filter(([id]) => titles.has(id));
   return (
     <Card>
       <CardHeader>
         <CardTitle>Most liked</CardTitle>
         <CardDescription>
-          <LikesSummary fans={fans} photos={known.length} missing={counts.length - known.length} />
+          <LikesSummary
+            viewers={viewers}
+            photos={known.length}
+            missing={counts.length - known.length}
+          />
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -59,15 +63,15 @@ export function MostLiked({ fans, titles }: MostLikedProps) {
 }
 
 function LikesSummary({
-  fans,
+  viewers,
   photos,
   missing,
 }: {
-  fans: FanLikes[];
+  viewers: ViewerLikes[];
   photos: number;
   missing: number;
 }) {
-  const people = fans.length === 1 ? "1 person" : `${fans.length} people`;
+  const people = viewers.length === 1 ? "1 person" : `${viewers.length} people`;
   const note =
     missing > 0 ? ` ${missing} liked IDs don't match a saved photo, so they're left out.` : "";
   return (

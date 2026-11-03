@@ -686,7 +686,7 @@ const GROUPS: [GroupKey, string][] = [
   ["lenses", "Custom lenses"],
   ["captions", "Caption templates"],
   ["timeline", "Timeline labels"],
-  ["likes", "Fan likes"],
+  ["likes", "Viewer likes"],
 ];
 
 /** The album, tag, place or localization files in the pull request, each with its JSON; nothing when there are none. */

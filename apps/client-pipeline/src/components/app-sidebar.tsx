@@ -68,7 +68,7 @@ export const navGroups = [
     items: [
       { title: "Instagram", url: "/instagram", icon: CalendarDaysIcon },
       { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
-      { title: "Fan Likes", url: "/fan-likes", icon: HeartIcon },
+      { title: "Viewer Likes", url: "/viewer-likes", icon: HeartIcon },
     ],
   },
   {

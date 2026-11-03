@@ -275,7 +275,7 @@ export function pendingText(summary: PendingSummary): string {
     [summary.lenses, "custom lens file"],
     [summary.captions, "caption template"],
     [summary.timeline, "timeline label"],
-    [summary.likes, "fan likes list"],
+    [summary.likes, "viewer likes list"],
     [summary.other, "other save"],
   ]);
 }

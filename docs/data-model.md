@@ -15,7 +15,7 @@ The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in 
 | Custom lenses     | `lenses/<ID>.json`        | `lenses/LENSES.json`               |
 | Caption templates | `captions/<ID>.json`      | `captions/CAPTIONS.json`           |
 | Timeline labels   | `timeline/<ID>.json`      | `timeline/TIMELINE.json`           |
-| Fan likes         | `likes/<ID>.json`         | `likes/LIKES.json`                 |
+| Viewer likes      | `likes/<ID>.json`         | `likes/LIKES.json`                 |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is

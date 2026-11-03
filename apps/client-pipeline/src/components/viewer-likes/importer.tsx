@@ -2,14 +2,14 @@ import { useMutation } from "@tanstack/react-query";
 import { UploadIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import {
-  deleteFanMutation,
-  type FanLikes,
-  fanId,
+  deleteViewerMutation,
+  type ViewerLikes,
+  viewerId,
   importedText,
   type ParsedLikes,
   parseLikes,
-  saveFanMutation,
-} from "@/api/fan-likes";
+  saveViewerMutation,
+} from "@/api/viewer-likes";
 import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,11 +17,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { canonicalJson } from "@/lib/combined";
 
-interface FanImporterProps {
+interface ViewerImporterProps {
   /** The saved person; undefined for a new one. */
-  fan?: FanLikes;
+  viewer?: ViewerLikes;
   /** Everyone saved, so a new person can't take someone's ID. */
-  fans: FanLikes[];
+  viewers: ViewerLikes[];
   /** The saved photos' titles by ID, to say which pasted IDs aren't saved photos. */
   titles: Map<number, string>;
   /** With the saved person's ID. */
@@ -29,26 +29,26 @@ interface FanImporterProps {
 }
 
 /** The photos saving would write: the pasted list, or else the person's saved one. */
-function nextPhotos(parsed: ParsedLikes, text: string, fan?: FanLikes): number[] {
+function nextPhotos(parsed: ParsedLikes, text: string, viewer?: ViewerLikes): number[] {
   if (text.trim() !== "") return parsed.ids;
-  return fan ? fan.photos : [];
+  return viewer ? viewer.photos : [];
 }
 
 /** What saving would write: the typed name and the photos, keeping a saved person's ID. */
-function nextFan(name: string, photos: number[], fan?: FanLikes): FanLikes {
+function nextViewer(name: string, photos: number[], viewer?: ViewerLikes): ViewerLikes {
   const trimmed = name.trim();
-  return { id: fan ? fan.id : fanId(trimmed), name: trimmed, photos };
+  return { id: viewer ? viewer.id : viewerId(trimmed), name: trimmed, photos };
 }
 
 /** Pastes or uploads one person's list of liked photos, new or replacing the one they sent before. */
-export function FanImporter({ fan, fans, titles, onSaved }: FanImporterProps) {
-  const [name, setName] = useState(() => (fan ? fan.name : ""));
+export function ViewerImporter({ viewer, viewers, titles, onSaved }: ViewerImporterProps) {
+  const [name, setName] = useState(() => (viewer ? viewer.name : ""));
   const [text, setText] = useState("");
   const parsed = parseLikes(text);
-  const next = nextFan(name, nextPhotos(parsed, text, fan), fan);
+  const next = nextViewer(name, nextPhotos(parsed, text, viewer), viewer);
   return (
     <Card>
-      <ImporterHeader fan={fan} />
+      <ImporterHeader viewer={viewer} />
       <CardContent className="flex flex-col gap-4">
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="font-medium">Name</span>
@@ -59,34 +59,34 @@ export function FanImporter({ fan, fans, titles, onSaved }: FanImporterProps) {
         <div className="flex flex-wrap items-center gap-2">
           <SaveButton
             next={next}
-            fan={fan}
-            fans={fans}
+            viewer={viewer}
+            viewers={viewers}
             onSaved={(id) => {
               setText("");
               onSaved(id);
             }}
           />
-          <RemoveButton fan={fan} />
+          <RemoveButton viewer={viewer} />
         </div>
       </CardContent>
     </Card>
   );
 }
 
-function ImporterHeader({ fan }: { fan?: FanLikes }) {
+function ImporterHeader({ viewer }: { viewer?: ViewerLikes }) {
   return (
     <CardHeader>
-      <CardTitle>{fan ? fan.name : "New person"}</CardTitle>
-      <CardDescription>{fanNote(fan)}</CardDescription>
+      <CardTitle>{viewer ? viewer.name : "New person"}</CardTitle>
+      <CardDescription>{viewerNote(viewer)}</CardDescription>
     </CardHeader>
   );
 }
 
 /** How many photos the saved person liked and when, or how to add a new one. */
-function fanNote(fan?: FanLikes): string {
-  if (!fan) return "Name who sent the list, then paste or upload it.";
-  const photos = fan.photos.length === 1 ? "photo" : "photos";
-  return `${fan.photos.length} liked ${photos}. ${importedText(fan.importedAt)}. Paste their new list to replace it.`;
+function viewerNote(viewer?: ViewerLikes): string {
+  if (!viewer) return "Name who sent the list, then paste or upload it.";
+  const photos = viewer.photos.length === 1 ? "photo" : "photos";
+  return `${viewer.photos.length} liked ${photos}. ${importedText(viewer.importedAt)}. Paste their new list to replace it.`;
 }
 
 /** The pasted list, with a button that reads it from a .txt or .json file instead. */
@@ -95,7 +95,7 @@ function ListField({ text, onText }: { text: string; onText: (text: string) => v
   return (
     <div className="flex flex-col gap-1.5 text-sm">
       <div className="flex items-center justify-between gap-2">
-        <label htmlFor="fan-likes-list" className="font-medium">
+        <label htmlFor="viewer-likes-list" className="font-medium">
           Their list
         </label>
         <Button variant="outline" size="sm" onClick={() => file.current?.click()}>
@@ -111,7 +111,7 @@ function ListField({ text, onText }: { text: string; onText: (text: string) => v
         />
       </div>
       <Textarea
-        id="fan-likes-list"
+        id="viewer-likes-list"
         rows={4}
         value={text}
         placeholder="281, 284, 286"
@@ -157,44 +157,48 @@ function Warning({ label, items }: { label: string; items: (string | number)[] }
 }
 
 /** Why the person can't be saved yet, or "" when they can. */
-function whyNot(next: FanLikes, fan: FanLikes | undefined, fans: FanLikes[]): string {
+function whyNot(
+  next: ViewerLikes,
+  viewer: ViewerLikes | undefined,
+  viewers: ViewerLikes[],
+): string {
   if (next.name === "") return "Give the person a name.";
-  return fan ? "" : newFanProblem(next, fans);
+  return viewer ? "" : newViewerProblem(next, viewers);
 }
 
 /** Why a new person can't be saved yet: they have no list, or someone saved has their ID. */
-function newFanProblem(next: FanLikes, fans: FanLikes[]): string {
+function newViewerProblem(next: ViewerLikes, viewers: ViewerLikes[]): string {
   if (next.photos.length === 0) return "Paste or upload their list.";
-  const taken = fans.find((f) => f.id === next.id);
+  const taken = viewers.find((f) => f.id === next.id);
   return taken
     ? `“${taken.name}” is already here. Pick them on the left to replace their likes.`
     : "";
 }
 
 /** Whether saving would change nothing: the same name and the same photos. */
-function unchanged(next: FanLikes, fan?: FanLikes): boolean {
-  if (!fan) return false;
-  return canonicalJson(next) === canonicalJson({ ...fan, importedAt: undefined });
+function unchanged(next: ViewerLikes, viewer?: ViewerLikes): boolean {
+  if (!viewer) return false;
+  return canonicalJson(next) === canonicalJson({ ...viewer, importedAt: undefined });
 }
 
 interface SaveButtonProps {
-  next: FanLikes;
-  fan?: FanLikes;
-  fans: FanLikes[];
+  next: ViewerLikes;
+  viewer?: ViewerLikes;
+  viewers: ViewerLikes[];
   onSaved: (id: string) => void;
 }
 
-function SaveButton({ next, fan, fans, onSaved }: SaveButtonProps) {
-  const save = useMutation(saveFanMutation);
-  const why = whyNot(next, fan, fans);
+function SaveButton({ next, viewer, viewers, onSaved }: SaveButtonProps) {
+  const save = useMutation(saveViewerMutation);
+  const why = whyNot(next, viewer, viewers);
   return (
     <>
       <Button
-        disabled={why !== "" || unchanged(next, fan) || save.isPending}
+        disabled={why !== "" || unchanged(next, viewer) || save.isPending}
         onClick={() => save.mutate(next, { onSuccess: () => onSaved(next.id) })}
       >
         <Busy busy={save.isPending} />
-        {fan ? "Save and replace likes" : "Import likes"}
+        {viewer ? "Save and replace likes" : "Import likes"}
       </Button>
       <SaveNote error={save.error} why={why} />
     </>
@@ -202,13 +206,13 @@ function SaveButton({ next, fan, fans, onSaved }: SaveButtonProps) {
 }
 
 /** Removes a saved person and their likes; nothing for a new one. */
-function RemoveButton({ fan }: { fan?: FanLikes }) {
-  const remove = useMutation(deleteFanMutation);
-  if (!fan) return null;
+function RemoveButton({ viewer }: { viewer?: ViewerLikes }) {
+  const remove = useMutation(deleteViewerMutation);
+  if (!viewer) return null;
   return (
     <RemoveEntryButton
       label="Remove person"
-      remove={{ ...remove, mutate: () => remove.mutate(fan.id) }}
+      remove={{ ...remove, mutate: () => remove.mutate(viewer.id) }}
     />
   );
 }

@@ -10,15 +10,15 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// maxFanLikes is the most photos one fan's list can like.
-const maxFanLikes = 10000
+// maxViewerLikes is the most photos one viewer's list can like.
+const maxViewerLikes = 10000
 
-// FanLikes is a fan likes file: one person and the photos they liked on the
+// ViewerLikes is a viewer likes file: one person and the photos they liked on the
 // portfolio's My Likes page and sent with "Send to photographer". Importing a
 // person's list again replaces it, so each person's likes count once.
-type FanLikes struct {
+type ViewerLikes struct {
 	ID string `json:"id"`
-	// Name is who sent the list, as the Fan Likes page shows it.
+	// Name is who sent the list, as the Viewer Likes page shows it.
 	Name string `json:"name"`
 	// Photos are the IDs of the photos they liked, lowest first, each once.
 	Photos []int `json:"photos"`
@@ -27,28 +27,28 @@ type FanLikes struct {
 	ImportedAt string `json:"importedAt"`
 }
 
-// SaveFanLikes saves fan as <folder>/likes/<id>.json, replacing the list
+// SaveViewerLikes saves viewer as <folder>/likes/<id>.json, replacing the list
 // already there for that person, in the pending changes, stamped with the
 // time it was imported.
-func (c *Client) SaveFanLikes(ctx context.Context, gh settings.GitHub, fan FanLikes) (EntryResult, error) {
-	fan, perr := validFanLikes(fan)
+func (c *Client) SaveViewerLikes(ctx context.Context, gh settings.GitHub, viewer ViewerLikes) (EntryResult, error) {
+	viewer, perr := validViewerLikes(viewer)
 	if perr != nil {
 		return EntryResult{}, perr
 	}
-	fan.ImportedAt = addedTime(c.now())
-	return c.saveEntry(ctx, gh, FanLikesKind, fan.ID, fan, func([]Entry) *PublishError { return nil })
+	viewer.ImportedAt = addedTime(c.now())
+	return c.saveEntry(ctx, gh, ViewerLikesKind, viewer.ID, viewer, func([]Entry) *PublishError { return nil })
 }
 
-// DeleteFanLikes removes the fan likes file named id in the pending changes.
-func (c *Client) DeleteFanLikes(ctx context.Context, gh settings.GitHub, id string) (EntryResult, error) {
-	return c.deleteEntry(ctx, gh, FanLikesKind, id, func([]Entry) *PublishError { return nil })
+// DeleteViewerLikes removes the viewer likes file named id in the pending changes.
+func (c *Client) DeleteViewerLikes(ctx context.Context, gh settings.GitHub, id string) (EntryResult, error) {
+	return c.deleteEntry(ctx, gh, ViewerLikesKind, id, func([]Entry) *PublishError { return nil })
 }
 
-// validFanLikes checks f and returns it as it will be saved: its name trimmed
+// validViewerLikes checks f and returns it as it will be saved: its name trimmed
 // and its photos sorted, each once.
-func validFanLikes(f FanLikes) (FanLikes, *PublishError) {
-	out := FanLikes{ID: strings.TrimSpace(f.ID), Name: strings.TrimSpace(f.Name), Photos: likedPhotos(f.Photos)}
-	if perr := validEntryID(FanLikesKind.Name, out.ID); perr != nil {
+func validViewerLikes(f ViewerLikes) (ViewerLikes, *PublishError) {
+	out := ViewerLikes{ID: strings.TrimSpace(f.ID), Name: strings.TrimSpace(f.Name), Photos: likedPhotos(f.Photos)}
+	if perr := validEntryID(ViewerLikesKind.Name, out.ID); perr != nil {
 		return out, perr
 	}
 	if out.Name == "" {
@@ -75,8 +75,8 @@ func validLikedPhotos(ids []int) *PublishError {
 	if len(ids) > 0 && ids[0] < 1 {
 		return publishErr(http.StatusBadRequest, "Photo IDs are whole numbers from 1, such as 12.")
 	}
-	if len(ids) > maxFanLikes {
-		return publishErr(http.StatusBadRequest, "Keep the list to %d photos.", maxFanLikes)
+	if len(ids) > maxViewerLikes {
+		return publishErr(http.StatusBadRequest, "Keep the list to %d photos.", maxViewerLikes)
 	}
 	return nil
 }

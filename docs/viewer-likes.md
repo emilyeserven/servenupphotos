@@ -1,8 +1,8 @@
-# Fan Likes
+# Viewer Likes
 
-`/fan-likes`, under **Publish** in the sidebar, collects the photos people liked on the portfolio. A visitor likes
+`/viewer-likes`, under **Publish** in the sidebar, collects the photos people liked on the portfolio. A visitor likes
 photos on the portfolio's **My Likes** page, checks **Send to photographer**, and sends you the text it makes: the liked
-photos' IDs joined with commas, such as `281, 284, 286`. On Fan Likes you name who sent it and paste the text (or
+photos' IDs joined with commas, such as `281, 284, 286`. On Viewer Likes you name who sent it and paste the text (or
 upload it as a `.txt` or `.json` file), and the pipeline adds one like to each of those photos.
 
 Each list belongs to a **person**. Importing a new list for someone who already sent one replaces their old list
@@ -46,7 +46,7 @@ The right side imports for the chosen person, or a new one after **New person**:
   name with the same list when nothing is pasted. **Remove person** removes them and their likes.
 
 Saving (`PUT /api/likes/<id>` → `PUT /likes/{id}`) and removing (`DELETE /api/likes/<id>` → `DELETE /likes/{id}`)
-keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as a fan likes list.
+keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as a viewer likes list.
 The page reads the lists from the [combined data store](combined-data-store.md)'s `LIKES.json` with those changes
 made over it, so a saved list counts at once.
 
