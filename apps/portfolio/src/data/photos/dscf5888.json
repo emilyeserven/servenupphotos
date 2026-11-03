@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["footbridge", "stream", "stairs", "waterfall", "stones", "promenade"],
+  "tags": ["footbridges", "stream", "stairs", "stones", "promenade"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 5.04,
     "peakChroma": 8.34,
     "samples": 9711
-  }
+  },
+  "notes": "Shows a waterfall; 'waterfall' isn't a tag, since only 1 photo has one."
 }

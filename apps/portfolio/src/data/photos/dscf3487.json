@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["autumn", "park", "trees", "grass", "fallen-leaves", "pedestrians", "shadows"],
-  "genres": [],
+  "genres": ["landscape", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -1,5 +1,6 @@
 {
   "id": "promenade",
   "name": "promenade",
-  "description": ""
+  "description": "wide walkways along a waterfront",
+  "parent": "path"
 }

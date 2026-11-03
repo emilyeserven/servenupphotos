@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["windows", "texture", "folk-art", "stones", "sea-glass", "shells", "shadows"],
+  "tags": ["windows", "texture", "stones", "shells", "shadows", "glass"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -263,5 +263,6 @@
     "chroma": 4.06,
     "peakChroma": 8.88,
     "samples": 10086
-  }
+  },
+  "notes": "Shows folk art with sea glass; 'folk-art' and 'sea-glass' aren't tags, since only 1 photo has them."
 }

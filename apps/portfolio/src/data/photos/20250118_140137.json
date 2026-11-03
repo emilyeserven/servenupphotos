@@ -48,16 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "mosque",
-    "doorway",
-    "silhouettes",
-    "stained-glass",
-    "arches",
-    "lamps",
-    "shadows",
-    "interior"
-  ],
+  "tags": ["mosque", "doorways", "silhouettes", "arches", "lamps", "shadows", "interior", "glass"],
   "genres": ["architecture", "street"],
   "places": [
     {
@@ -278,5 +269,6 @@
     "chroma": 2.25,
     "peakChroma": 4.91,
     "samples": 9694
-  }
+  },
+  "notes": "Shows stained glass; 'stained-glass' isn't a tag, since only 1 photo has it."
 }

@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["beach", "road", "cars", "apartments", "coastline", "promenade", "crosswalk", "sand"],
-  "genres": [],
+  "genres": ["street", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

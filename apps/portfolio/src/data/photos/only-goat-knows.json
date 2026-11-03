@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["goats", "farm-animals", "hay", "barn", "wood"],
+  "tags": ["wood"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 16.5,
     "peakChroma": 27,
     "samples": 9728
-  }
+  },
+  "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them."
 }

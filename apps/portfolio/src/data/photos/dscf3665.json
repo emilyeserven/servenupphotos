@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hanbok", "palace", "pine-trees", "tourists", "costumes", "shadows"],
-  "genres": [],
+  "tags": ["hanbok", "palace", "pine-trees", "tourists", "traditional-clothing", "shadows"],
+  "genres": ["portrait", "street"],
   "places": [
     {
       "relation": "",

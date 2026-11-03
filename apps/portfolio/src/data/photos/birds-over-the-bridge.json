@@ -50,15 +50,15 @@
   "albums": [],
   "tags": [
     "suspension-cables",
-    "bridge",
-    "footbridge",
+    "bridges",
+    "footbridges",
     "birds",
     "flight",
     "pine-trees",
     "mountains",
     "water"
   ],
-  "genres": [],
+  "genres": ["landscape", "architecture", "wildlife"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

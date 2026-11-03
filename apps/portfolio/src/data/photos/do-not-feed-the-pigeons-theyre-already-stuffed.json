@@ -50,18 +50,18 @@
   "albums": [],
   "tags": [
     "humor",
-    "art-installation",
+    "art-installations",
     "pigeons",
     "birds",
     "signage",
-    "toys",
+    "figurines",
     "shadows",
     "street-art",
     "sidewalk",
     "park",
     "typography"
   ],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",

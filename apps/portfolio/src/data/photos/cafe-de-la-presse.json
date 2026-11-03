@@ -48,17 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "cafe",
-    "storefronts",
-    "night",
-    "signage",
-    "typography",
-    "windows",
-    "fire-hydrant",
-    "sidewalk"
-  ],
-  "genres": [],
+  "tags": ["cafe", "storefronts", "night", "signage", "typography", "windows", "sidewalk"],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -270,5 +261,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a fire hydrant; 'fire-hydrant' isn't a tag, since only 2 photos have one."
 }

@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["yokocho", "chochin", "alley", "vending-machines", "signage", "pedestrians", "night"],
-  "genres": [],
+  "tags": ["yokocho", "chochin", "alley", "signage", "pedestrians", "night"],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 6.33,
     "peakChroma": 17.63,
     "samples": 9768
-  }
+  },
+  "notes": "Shows vending machines; 'vending-machines' isn't a tag, since only 1 photo has them."
 }

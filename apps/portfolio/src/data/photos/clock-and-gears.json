@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["clockwork", "clock", "gears", "machinery", "steel"],
-  "genres": [],
+  "tags": ["clockwork", "clocks", "gears", "machinery", "steel"],
+  "genres": ["abstract", "architecture"],
   "places": [
     {
       "relation": "",

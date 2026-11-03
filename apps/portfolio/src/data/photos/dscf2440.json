@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["road", "crosswalk", "power-lines", "roadwork", "signage", "cars", "dogs", "mountains"],
-  "genres": [],
+  "tags": ["road", "crosswalk", "power-lines", "signage", "cars", "mountains"],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -262,5 +262,6 @@
     "peakChroma": 14.55,
     "samples": 9975
   },
-  "undecided": true
+  "undecided": true,
+  "notes": "Shows a dog and roadwork; 'dogs' and 'roadwork' aren't tags, since only 2 photos have each."
 }

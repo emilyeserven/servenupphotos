@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["pumgyeseok", "hanja", "hanbok", "palace", "stones", "inscriptions", "repetition"],
+  "tags": ["hanbok", "palace", "stones", "inscriptions", "repetition"],
   "genres": [],
   "places": [
     {
@@ -269,5 +269,6 @@
     "chroma": 6.43,
     "peakChroma": 10.63,
     "samples": 9900
-  }
+  },
+  "notes": "Shows pumgyeseok rank stones inscribed in hanja; 'pumgyeseok' and 'hanja' aren't tags, since only 1–2 photos have them."
 }

@@ -1,5 +1,6 @@
 {
   "id": "daldongne",
   "name": "daldongne",
-  "description": ""
+  "description": "Korean hillside neighborhoods of small, closely packed houses, literally 'moon villages'",
+  "parent": "village"
 }

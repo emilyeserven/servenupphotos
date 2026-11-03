@@ -1,6 +1,6 @@
 {
   "id": "flowers",
   "name": "flowers",
-  "description": "",
+  "description": "blooming flowers, from blossoming trees to bouquets",
   "parent": "plants"
 }

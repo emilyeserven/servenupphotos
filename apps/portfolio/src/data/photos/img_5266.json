@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["busking", "street-performer", "piano", "park", "pedestrians", "bench"],
+  "tags": ["street-performers", "park", "pedestrians", "benches", "musicians"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9856
-  }
+  },
+  "notes": "Shows a piano; 'piano' isn't a tag, since only 1 photo has one."
 }

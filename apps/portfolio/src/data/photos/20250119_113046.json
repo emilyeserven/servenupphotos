@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["ancient-egypt", "pyramids", "stairs", "scaffolding", "wood", "stones", "walls"],
+  "tags": ["pyramids", "stairs", "wood", "stones", "walls"],
   "genres": ["architecture", "abstract"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 13.92,
     "peakChroma": 23.61,
     "samples": 9828
-  }
+  },
+  "notes": "Shows scaffolding; 'scaffolding' isn't a tag, since only 2 photos have it."
 }

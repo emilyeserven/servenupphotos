@@ -48,17 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "street-art",
-    "faces",
-    "humor",
-    "hangul",
-    "walls",
-    "sidewalk",
-    "shadows",
-    "fire-hydrant"
-  ],
-  "genres": [],
+  "tags": ["street-art", "faces", "humor", "hangul", "walls", "sidewalk", "shadows"],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -278,5 +269,6 @@
     "chroma": 6.27,
     "peakChroma": 8.35,
     "samples": 9801
-  }
+  },
+  "notes": "Shows a painted fire hydrant; 'fire-hydrant' isn't a tag, since only 2 photos have one."
 }

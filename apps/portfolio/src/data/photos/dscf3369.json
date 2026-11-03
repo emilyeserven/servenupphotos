@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city", "rooftops", "houses", "apartments", "hills", "twilight", "palm-trees"],
-  "genres": [],
+  "genres": ["cityscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -42,18 +42,20 @@ viewer, moving through the liked photos), its title and date, a box for the visi
 and a red heart that unlikes it. Unliking from the viewer leaves the photo in place until the viewer closes, so the
 ‹ › buttons don't jump.
 
-Above the rows is a list to copy, with a **Copy** button and three checkboxes, each kept in the URL:
+Above the rows is **Send to the photographer**: text to copy with a **Copy** button, and a toggle for the message
+service it's going through, kept in the URL:
 
-| Checkbox                 | URL                  | The text                                                                   |
-| ------------------------ | -------------------- | -------------------------------------------------------------------------- |
-| (none)                   |                      | One title per line                                                         |
-| **Include links**        | `?links=true`        | A Markdown list: `- [Castle Door](https://servenupphotos.net/photos/284/)` |
-| **Include my comments**  | `?comments=true`     | Each title with a comment is followed by it: `Castle Door: love the light` |
-| **Send to photographer** | `?photographer=true` | Only the ids, comma separated: `281, 284, 286`                             |
+| Service               | URL             | The text                                                                                   |
+| --------------------- | --------------- | ------------------------------------------------------------------------------------------ |
+| **Discord** (default) |                 | A Markdown list of titles linking to each photo, then the visitor's comment, if it has one |
+| **Messenger / Text**  | `?service=text` | Only the ids, comma separated: `281, 284, 286`                                             |
 
-The links go to each photo's own page (see [Sharing a photo](photo-viewer.md#sharing-a-photo)), on whichever host the
-page is served from. **Send to photographer** turns the other two off: its text is meant to be pasted into the
-pipeline, so it's just the ids, joined with `, `, with no other words.
+A Discord line looks like `- [Castle Door](https://servenupphotos.net/photos/284/): love the light`. Discord shows the
+title as a link; Messenger and text messages don't render Markdown, so they get just the ids. The links go to each
+photo's own page (see [Sharing a photo](photo-viewer.md#sharing-a-photo)), on whichever host the page is served from.
+
+The photographer pastes either one into the pipeline's likes import, which reads the ids from the `/photos/<id>/`
+links or the comma separated list, so both formats need to stay as they are.
 
 ## Analytics
 

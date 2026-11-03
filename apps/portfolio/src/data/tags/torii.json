@@ -1,6 +1,6 @@
 {
   "id": "torii",
   "name": "torii",
-  "description": "",
+  "description": "the gate marking the entrance to a Shinto shrine",
   "parent": "shrine"
 }

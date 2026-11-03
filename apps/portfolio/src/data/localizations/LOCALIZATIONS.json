@@ -1,11 +1,83 @@
 [
   {
+    "id": "city-6th-of-october",
+    "type": "city",
+    "name": "6th of October",
+    "romanization": "Al-Sadis min Uktubar",
+    "pronunciation": "",
+    "localScript": "السادس من أكتوبر"
+  },
+  {
+    "id": "city-al-ahram",
+    "type": "city",
+    "name": "Al Ahram",
+    "romanization": "Al-Ahram",
+    "pronunciation": "",
+    "localScript": "الأهرام"
+  },
+  {
     "id": "city-al-khalifa",
     "type": "city",
     "name": "Al Khalifa",
     "romanization": "Al-Khalīfah",
     "pronunciation": "",
     "localScript": "الخليفة"
+  },
+  {
+    "id": "city-amsterdam",
+    "type": "city",
+    "name": "Amsterdam",
+    "romanization": "Amsterdam",
+    "pronunciation": "",
+    "localScript": "Amsterdam"
+  },
+  {
+    "id": "city-banff",
+    "type": "city",
+    "name": "Banff",
+    "romanization": "Banff",
+    "pronunciation": "",
+    "localScript": "Banff"
+  },
+  {
+    "id": "city-basel",
+    "type": "city",
+    "name": "Basel",
+    "romanization": "Basel",
+    "pronunciation": "",
+    "localScript": "Basel"
+  },
+  {
+    "id": "city-bonita-springs",
+    "type": "city",
+    "name": "Bonita Springs",
+    "romanization": "Bonita Springs",
+    "pronunciation": "",
+    "localScript": "Bonita Springs"
+  },
+  {
+    "id": "city-bridgeport",
+    "type": "city",
+    "name": "Bridgeport",
+    "romanization": "Bridgeport",
+    "pronunciation": "",
+    "localScript": "Bridgeport"
+  },
+  {
+    "id": "city-brienz",
+    "type": "city",
+    "name": "Brienz",
+    "romanization": "Brienz",
+    "pronunciation": "",
+    "localScript": "Brienz"
+  },
+  {
+    "id": "city-brussels",
+    "type": "city",
+    "name": "Brussels",
+    "romanization": "Bruxelles / Brussel",
+    "pronunciation": "",
+    "localScript": "Bruxelles / Brussel"
   },
   {
     "id": "city-busan",
@@ -16,12 +88,44 @@
     "localScript": "부산"
   },
   {
+    "id": "city-cairo",
+    "type": "city",
+    "name": "Cairo",
+    "romanization": "Al-Qahira",
+    "pronunciation": "",
+    "localScript": "القاهرة"
+  },
+  {
+    "id": "city-cologne",
+    "type": "city",
+    "name": "Cologne",
+    "romanization": "Köln",
+    "pronunciation": "",
+    "localScript": "Köln"
+  },
+  {
+    "id": "city-cornwall-bridge",
+    "type": "city",
+    "name": "Cornwall Bridge",
+    "romanization": "Cornwall Bridge",
+    "pronunciation": "",
+    "localScript": "Cornwall Bridge"
+  },
+  {
     "id": "city-delray-beach",
     "type": "city",
     "name": "Delray Beach",
     "romanization": "Delray Beach",
     "pronunciation": "",
     "localScript": "Delray Beach"
+  },
+  {
+    "id": "city-easton",
+    "type": "city",
+    "name": "Easton",
+    "romanization": "Easton",
+    "pronunciation": "",
+    "localScript": "Easton"
   },
   {
     "id": "city-hagi",
@@ -32,12 +136,108 @@
     "localScript": "萩"
   },
   {
+    "id": "city-himeji",
+    "type": "city",
+    "name": "Himeji",
+    "romanization": "Himeji",
+    "pronunciation": "ひめじ",
+    "localScript": "姫路"
+  },
+  {
+    "id": "city-hurghada",
+    "type": "city",
+    "name": "Hurghada",
+    "romanization": "Al-Ghardaqa",
+    "pronunciation": "",
+    "localScript": "الغردقة"
+  },
+  {
+    "id": "city-izumo",
+    "type": "city",
+    "name": "Izumo",
+    "romanization": "Izumo",
+    "pronunciation": "いずも",
+    "localScript": "出雲"
+  },
+  {
+    "id": "city-kobe",
+    "type": "city",
+    "name": "Kobe",
+    "romanization": "Kōbe",
+    "pronunciation": "こうべ",
+    "localScript": "神戸"
+  },
+  {
+    "id": "city-ludlow",
+    "type": "city",
+    "name": "Ludlow",
+    "romanization": "Ludlow",
+    "pronunciation": "",
+    "localScript": "Ludlow"
+  },
+  {
+    "id": "city-luxor",
+    "type": "city",
+    "name": "Luxor",
+    "romanization": "Al-Uqsur",
+    "pronunciation": "",
+    "localScript": "الأقصر"
+  },
+  {
+    "id": "city-marblehead",
+    "type": "city",
+    "name": "Marblehead",
+    "romanization": "Marblehead",
+    "pronunciation": "",
+    "localScript": "Marblehead"
+  },
+  {
+    "id": "city-markaz-al-badrashayn",
+    "type": "city",
+    "name": "Markaz al Badrashayn",
+    "romanization": "Markaz al-Badrashayn",
+    "pronunciation": "",
+    "localScript": "مركز البدرشين"
+  },
+  {
+    "id": "city-markaz-al-uqsur",
+    "type": "city",
+    "name": "Markaz al Uqşur",
+    "romanization": "Markaz al-Uqsur",
+    "pronunciation": "",
+    "localScript": "مركز الأقصر"
+  },
+  {
+    "id": "city-matsue",
+    "type": "city",
+    "name": "Matsue",
+    "romanization": "Matsue",
+    "pronunciation": "まつえ",
+    "localScript": "松江"
+  },
+  {
     "id": "city-nantucket",
     "type": "city",
     "name": "Nantucket",
     "romanization": "Nantucket",
     "pronunciation": "",
     "localScript": "Nantucket"
+  },
+  {
+    "id": "city-new-canaan",
+    "type": "city",
+    "name": "New Canaan",
+    "romanization": "New Canaan",
+    "pronunciation": "",
+    "localScript": "New Canaan"
+  },
+  {
+    "id": "city-new-haven",
+    "type": "city",
+    "name": "New Haven",
+    "romanization": "New Haven",
+    "pronunciation": "",
+    "localScript": "New Haven"
   },
   {
     "id": "city-new-york-city",
@@ -48,12 +248,52 @@
     "localScript": "New York City"
   },
   {
+    "id": "city-osaka-shi",
+    "type": "city",
+    "name": "Osaka-shi",
+    "romanization": "Ōsaka-shi",
+    "pronunciation": "おおさかし",
+    "localScript": "大阪市"
+  },
+  {
+    "id": "city-qena-desert",
+    "type": "city",
+    "name": "Qena Desert",
+    "romanization": "Sahraʾ Qina",
+    "pronunciation": "",
+    "localScript": "صحراء قنا"
+  },
+  {
+    "id": "city-san-francisco",
+    "type": "city",
+    "name": "San Francisco",
+    "romanization": "San Francisco",
+    "pronunciation": "",
+    "localScript": "San Francisco"
+  },
+  {
     "id": "city-seoul",
     "type": "city",
     "name": "Seoul",
     "romanization": "Seoul",
     "pronunciation": "",
     "localScript": "서울"
+  },
+  {
+    "id": "city-sharon",
+    "type": "city",
+    "name": "Sharon",
+    "romanization": "Sharon",
+    "pronunciation": "",
+    "localScript": "Sharon"
+  },
+  {
+    "id": "city-sinnuris",
+    "type": "city",
+    "name": "Sinnuris",
+    "romanization": "Sinnuris",
+    "pronunciation": "",
+    "localScript": "سنورس"
   },
   {
     "id": "city-stamford",
@@ -64,12 +304,68 @@
     "localScript": "Stamford"
   },
   {
+    "id": "city-stowe",
+    "type": "city",
+    "name": "Stowe",
+    "romanization": "Stowe",
+    "pronunciation": "",
+    "localScript": "Stowe"
+  },
+  {
+    "id": "city-wadi-el-hitan",
+    "type": "city",
+    "name": "Wadi El-Hitan",
+    "romanization": "Wadi al-Hitan",
+    "pronunciation": "",
+    "localScript": "وادي الحيتان"
+  },
+  {
+    "id": "city-weston",
+    "type": "city",
+    "name": "Weston",
+    "romanization": "Weston",
+    "pronunciation": "",
+    "localScript": "Weston"
+  },
+  {
+    "id": "city-youssief-al-sedik",
+    "type": "city",
+    "name": "Youssief Al Sedik",
+    "romanization": "Yusuf al-Siddiq",
+    "pronunciation": "",
+    "localScript": "يوسف الصديق"
+  },
+  {
+    "id": "country-belgium",
+    "type": "country",
+    "name": "Belgium",
+    "romanization": "België / Belgique",
+    "pronunciation": "",
+    "localScript": "België / Belgique"
+  },
+  {
+    "id": "country-canada",
+    "type": "country",
+    "name": "Canada",
+    "romanization": "Canada",
+    "pronunciation": "",
+    "localScript": "Canada"
+  },
+  {
     "id": "country-egypt",
     "type": "country",
     "name": "Egypt",
     "romanization": "Miṣr",
     "pronunciation": "",
     "localScript": "مصر"
+  },
+  {
+    "id": "country-germany",
+    "type": "country",
+    "name": "Germany",
+    "romanization": "Deutschland",
+    "pronunciation": "",
+    "localScript": "Deutschland"
   },
   {
     "id": "country-japan",
@@ -80,12 +376,28 @@
     "localScript": "日本"
   },
   {
+    "id": "country-netherlands",
+    "type": "country",
+    "name": "Netherlands",
+    "romanization": "Nederland",
+    "pronunciation": "",
+    "localScript": "Nederland"
+  },
+  {
     "id": "country-south-korea",
     "type": "country",
     "name": "South Korea",
     "romanization": "Daehan Minguk",
     "pronunciation": "",
     "localScript": "대한민국"
+  },
+  {
+    "id": "country-switzerland",
+    "type": "country",
+    "name": "Switzerland",
+    "romanization": "Schweiz / Suisse / Svizzera / Svizra",
+    "pronunciation": "",
+    "localScript": "Schweiz / Suisse / Svizzera / Svizra"
   },
   {
     "id": "country-united-states-of-america",
@@ -105,12 +417,404 @@
     "localScript": "United States"
   },
   {
+    "id": "place-72nd-street-subway-station",
+    "type": "place",
+    "name": "72nd Street Subway Station",
+    "romanization": "72nd Street Subway Station",
+    "pronunciation": "",
+    "localScript": "72nd Street Subway Station"
+  },
+  {
+    "id": "place-86th-street-subway-station",
+    "type": "place",
+    "name": "86th Street Subway Station",
+    "romanization": "86th Street Subway Station",
+    "pronunciation": "",
+    "localScript": "86th Street Subway Station"
+  },
+  {
+    "id": "place-9-11-memorial",
+    "type": "place",
+    "name": "9/11 Memorial",
+    "romanization": "9/11 Memorial",
+    "pronunciation": "",
+    "localScript": "9/11 Memorial"
+  },
+  {
+    "id": "place-al-rifa-i-mosque",
+    "type": "place",
+    "name": "Al-Rifa'i Mosque",
+    "romanization": "Masjid al-Rifaʿi",
+    "pronunciation": "",
+    "localScript": "مسجد الرفاعي"
+  },
+  {
+    "id": "place-am-bollwerk",
+    "type": "place",
+    "name": "Am Bollwerk",
+    "romanization": "Am Bollwerk",
+    "pronunciation": "",
+    "localScript": "Am Bollwerk"
+  },
+  {
+    "id": "place-american-copper-building",
+    "type": "place",
+    "name": "American Copper Building",
+    "romanization": "American Copper Building",
+    "pronunciation": "",
+    "localScript": "American Copper Building"
+  },
+  {
+    "id": "place-arima-onsen",
+    "type": "place",
+    "name": "Arima Onsen",
+    "romanization": "Arima Onsen",
+    "pronunciation": "ありまおんせん",
+    "localScript": "有馬温泉"
+  },
+  {
+    "id": "place-astoria",
+    "type": "place",
+    "name": "Astoria",
+    "romanization": "Astoria",
+    "pronunciation": "",
+    "localScript": "Astoria"
+  },
+  {
+    "id": "place-banff",
+    "type": "place",
+    "name": "Banff",
+    "romanization": "Banff",
+    "pronunciation": "",
+    "localScript": "Banff"
+  },
+  {
+    "id": "place-bent-pyramid-of-cairo",
+    "type": "place",
+    "name": "Bent Pyramid of Cairo",
+    "romanization": "Al-Haram al-Munhani",
+    "pronunciation": "",
+    "localScript": "الهرم المنحني"
+  },
+  {
+    "id": "place-bethesda-fountain",
+    "type": "place",
+    "name": "Bethesda Fountain",
+    "romanization": "Bethesda Fountain",
+    "pronunciation": "",
+    "localScript": "Bethesda Fountain"
+  },
+  {
+    "id": "place-bowery",
+    "type": "place",
+    "name": "Bowery",
+    "romanization": "Bowery",
+    "pronunciation": "",
+    "localScript": "Bowery"
+  },
+  {
+    "id": "place-bristow-bird-sanctuary",
+    "type": "place",
+    "name": "Bristow Bird Sanctuary",
+    "romanization": "Bristow Bird Sanctuary",
+    "pronunciation": "",
+    "localScript": "Bristow Bird Sanctuary"
+  },
+  {
+    "id": "place-brooklyn-bridge-park-pier-1",
+    "type": "place",
+    "name": "Brooklyn Bridge Park Pier 1",
+    "romanization": "Brooklyn Bridge Park Pier 1",
+    "pronunciation": "",
+    "localScript": "Brooklyn Bridge Park Pier 1"
+  },
+  {
+    "id": "place-brooklyn-bridge",
+    "type": "place",
+    "name": "Brooklyn Bridge",
+    "romanization": "Brooklyn Bridge",
+    "pronunciation": "",
+    "localScript": "Brooklyn Bridge"
+  },
+  {
+    "id": "place-brooklyn-heights",
+    "type": "place",
+    "name": "Brooklyn Heights",
+    "romanization": "Brooklyn Heights",
+    "pronunciation": "",
+    "localScript": "Brooklyn Heights"
+  },
+  {
+    "id": "place-bukchon-hanok-village",
+    "type": "place",
+    "name": "Bukchon Hanok Village",
+    "romanization": "Bukchon Hanok Maeul",
+    "pronunciation": "",
+    "localScript": "북촌한옥마을"
+  },
+  {
+    "id": "place-busan-tower",
+    "type": "place",
+    "name": "Busan Tower",
+    "romanization": "Busan Tawo",
+    "pronunciation": "",
+    "localScript": "부산타워"
+  },
+  {
+    "id": "place-busan-x-the-sky",
+    "type": "place",
+    "name": "BUSAN X the SKY",
+    "romanization": "BUSAN X the SKY",
+    "pronunciation": "",
+    "localScript": "부산엑스더스카이"
+  },
+  {
+    "id": "place-cathedral-of-st-michael-and-st-gudula",
+    "type": "place",
+    "name": "Cathedral of St. Michael and St. Gudula",
+    "romanization": "Cathédrale des Saints-Michel-et-Gudule / Sint-Michiels- en Sint-Goedelekathedraal",
+    "pronunciation": "",
+    "localScript": "Cathédrale des Saints-Michel-et-Gudule / Sint-Michiels- en Sint-Goedelekathedraal"
+  },
+  {
+    "id": "place-central-park",
+    "type": "place",
+    "name": "Central Park",
+    "romanization": "Central Park",
+    "pronunciation": "",
+    "localScript": "Central Park"
+  },
+  {
+    "id": "place-chelsea-market",
+    "type": "place",
+    "name": "Chelsea Market",
+    "romanization": "Chelsea Market",
+    "pronunciation": "",
+    "localScript": "Chelsea Market"
+  },
+  {
+    "id": "place-chelsea",
+    "type": "place",
+    "name": "Chelsea",
+    "romanization": "Chelsea",
+    "pronunciation": "",
+    "localScript": "Chelsea"
+  },
+  {
+    "id": "place-cheonggyecheon",
+    "type": "place",
+    "name": "Cheonggyecheon",
+    "romanization": "Cheonggyecheon",
+    "pronunciation": "",
+    "localScript": "청계천"
+  },
+  {
+    "id": "place-children-s-beach",
+    "type": "place",
+    "name": "Children's Beach",
+    "romanization": "Children's Beach",
+    "pronunciation": "",
+    "localScript": "Children's Beach"
+  },
+  {
+    "id": "place-citadel-of-salah-al-din-al-ayyubi",
+    "type": "place",
+    "name": "Citadel of Salah al-Din al-Ayyubi",
+    "romanization": "Qalʿat Salah al-Din al-Ayyubi",
+    "pronunciation": "",
+    "localScript": "قلعة صلاح الدين الأيوبي"
+  },
+  {
+    "id": "place-columbus-circle",
+    "type": "place",
+    "name": "Columbus Circle",
+    "romanization": "Columbus Circle",
+    "pronunciation": "",
+    "localScript": "Columbus Circle"
+  },
+  {
+    "id": "place-cook-s-cycle-shop",
+    "type": "place",
+    "name": "Cook's Cycle Shop",
+    "romanization": "Cook's Cycle Shop",
+    "pronunciation": "",
+    "localScript": "Cook's Cycle Shop"
+  },
+  {
+    "id": "place-delray-public-beach",
+    "type": "place",
+    "name": "Delray Public Beach",
+    "romanization": "Delray Public Beach",
+    "pronunciation": "",
+    "localScript": "Delray Public Beach"
+  },
+  {
+    "id": "place-devil-s-den-state-park",
+    "type": "place",
+    "name": "Devil's Den State Park",
+    "romanization": "Devil's Den State Park",
+    "pronunciation": "",
+    "localScript": "Devil's Den State Park"
+  },
+  {
+    "id": "place-dotonbori",
+    "type": "place",
+    "name": "Dotonbori",
+    "romanization": "Dōtonbori",
+    "pronunciation": "どうとんぼり",
+    "localScript": "道頓堀"
+  },
+  {
+    "id": "place-east-broadway-station",
+    "type": "place",
+    "name": "East Broadway Station",
+    "romanization": "East Broadway Station",
+    "pronunciation": "",
+    "localScript": "East Broadway Station"
+  },
+  {
+    "id": "place-engyoji-temple",
+    "type": "place",
+    "name": "Engyoji Temple",
+    "romanization": "Engyōji",
+    "pronunciation": "えんぎょうじ",
+    "localScript": "圓教寺"
+  },
+  {
+    "id": "place-enseiji-temple",
+    "type": "place",
+    "name": "Enseiji Temple",
+    "romanization": "Enseiji",
+    "pronunciation": "えんせいじ",
+    "localScript": "円政寺"
+  },
+  {
+    "id": "place-fairview-lookout-trail",
+    "type": "place",
+    "name": "Fairview Lookout Trail",
+    "romanization": "Fairview Lookout Trail",
+    "pronunciation": "",
+    "localScript": "Fairview Lookout Trail"
+  },
+  {
+    "id": "place-fifth-avenue-presbyterian-church",
+    "type": "place",
+    "name": "Fifth Avenue Presbyterian Church",
+    "romanization": "Fifth Avenue Presbyterian Church",
+    "pronunciation": "",
+    "localScript": "Fifth Avenue Presbyterian Church"
+  },
+  {
+    "id": "place-financial-district",
+    "type": "place",
+    "name": "Financial District",
+    "romanization": "Financial District",
+    "pronunciation": "",
+    "localScript": "Financial District"
+  },
+  {
+    "id": "place-former-kubota-family-residence",
+    "type": "place",
+    "name": "Former Kubota Family Residence",
+    "romanization": "Kyū Kubota-ke Jūtaku",
+    "pronunciation": "きゅうくぼたけじゅうたく",
+    "localScript": "旧久保田家住宅"
+  },
+  {
+    "id": "place-freeman-alley",
+    "type": "place",
+    "name": "Freeman Alley",
+    "romanization": "Freeman Alley",
+    "pronunciation": "",
+    "localScript": "Freeman Alley"
+  },
+  {
+    "id": "place-fulton-center-subway-station",
+    "type": "place",
+    "name": "Fulton Center Subway Station",
+    "romanization": "Fulton Center Subway Station",
+    "pronunciation": "",
+    "localScript": "Fulton Center Subway Station"
+  },
+  {
+    "id": "place-gamcheon-culture-village",
+    "type": "place",
+    "name": "Gamcheon Culture Village",
+    "romanization": "Gamcheon Munhwa Maeul",
+    "pronunciation": "",
+    "localScript": "감천문화마을"
+  },
+  {
+    "id": "place-general-william-tecumseh-sherman-monument",
+    "type": "place",
+    "name": "General William Tecumseh Sherman Monument",
+    "romanization": "General William Tecumseh Sherman Monument",
+    "pronunciation": "",
+    "localScript": "General William Tecumseh Sherman Monument"
+  },
+  {
+    "id": "place-geunjeongjeon",
+    "type": "place",
+    "name": "Geunjeongjeon",
+    "romanization": "Geunjeongjeon",
+    "pronunciation": "",
+    "localScript": "근정전"
+  },
+  {
     "id": "place-geunjeongmun-gate",
     "type": "place",
     "name": "Geunjeongmun Gate",
     "romanization": "Geunjeongmun",
     "pronunciation": "",
     "localScript": "근정문"
+  },
+  {
+    "id": "place-giza-necropolis",
+    "type": "place",
+    "name": "Giza Necropolis",
+    "romanization": "Mujammaʿ Ahramat al-Giza",
+    "pronunciation": "",
+    "localScript": "مجمع أهرامات الجيزة"
+  },
+  {
+    "id": "place-grand-central-station",
+    "type": "place",
+    "name": "Grand Central Station",
+    "romanization": "Grand Central Station",
+    "pronunciation": "",
+    "localScript": "Grand Central Station"
+  },
+  {
+    "id": "place-grand-egyptian-museum",
+    "type": "place",
+    "name": "Grand Egyptian Museum",
+    "romanization": "Al-Mathaf al-Misri al-Kabir",
+    "pronunciation": "",
+    "localScript": "المتحف المصري الكبير"
+  },
+  {
+    "id": "place-grand-place",
+    "type": "place",
+    "name": "Grand Place",
+    "romanization": "Grand-Place / Grote Markt",
+    "pronunciation": "",
+    "localScript": "Grand-Place / Grote Markt"
+  },
+  {
+    "id": "place-greene-street",
+    "type": "place",
+    "name": "Greene Street",
+    "romanization": "Greene Street",
+    "pronunciation": "",
+    "localScript": "Greene Street"
+  },
+  {
+    "id": "place-gwangjang-market",
+    "type": "place",
+    "name": "Gwangjang Market",
+    "romanization": "Gwangjang Sijang",
+    "pronunciation": "",
+    "localScript": "광장시장"
   },
   {
     "id": "place-gyeongbokgung-palace",
@@ -121,6 +825,222 @@
     "localScript": "경복궁"
   },
   {
+    "id": "place-gyeongbokgung-station",
+    "type": "place",
+    "name": "Gyeongbokgung Station",
+    "romanization": "Gyeongbokgung-yeok",
+    "pronunciation": "",
+    "localScript": "경복궁역"
+  },
+  {
+    "id": "place-hagi-castle-town",
+    "type": "place",
+    "name": "Hagi Castle Town",
+    "romanization": "Hagi Jōkamachi",
+    "pronunciation": "はぎじょうかまち",
+    "localScript": "萩城下町"
+  },
+  {
+    "id": "place-hagi-station",
+    "type": "place",
+    "name": "Hagi Station",
+    "romanization": "Hagi-eki",
+    "pronunciation": "はぎえき",
+    "localScript": "萩駅"
+  },
+  {
+    "id": "place-international-port-of-busan",
+    "type": "place",
+    "name": "International Port of Busan",
+    "romanization": "Busanhang Gukje Yeogaek Teomineol",
+    "pronunciation": "",
+    "localScript": "부산항 국제여객터미널"
+  },
+  {
+    "id": "place-itaewon",
+    "type": "place",
+    "name": "Itaewon",
+    "romanization": "Itaewon",
+    "pronunciation": "",
+    "localScript": "이태원"
+  },
+  {
+    "id": "place-izumo-shrine",
+    "type": "place",
+    "name": "Izumo Shrine",
+    "romanization": "Izumo Ōyashiro",
+    "pronunciation": "いずもおおやしろ",
+    "localScript": "出雲大社"
+  },
+  {
+    "id": "place-jacqueline-kennedy-onassis-reservoir",
+    "type": "place",
+    "name": "Jacqueline Kennedy Onassis Reservoir",
+    "romanization": "Jacqueline Kennedy Onassis Reservoir",
+    "pronunciation": "",
+    "localScript": "Jacqueline Kennedy Onassis Reservoir"
+  },
+  {
+    "id": "place-jogyesa-temple",
+    "type": "place",
+    "name": "Jogyesa Temple",
+    "romanization": "Jogyesa",
+    "pronunciation": "",
+    "localScript": "조계사"
+  },
+  {
+    "id": "place-jongmyo-shrine",
+    "type": "place",
+    "name": "Jongmyo Shrine",
+    "romanization": "Jongmyo",
+    "pronunciation": "",
+    "localScript": "종묘"
+  },
+  {
+    "id": "place-karnak",
+    "type": "place",
+    "name": "Karnak",
+    "romanization": "Al-Karnak",
+    "pronunciation": "",
+    "localScript": "الكرنك"
+  },
+  {
+    "id": "place-kent-falls-state-park",
+    "type": "place",
+    "name": "Kent Falls State Park",
+    "romanization": "Kent Falls State Park",
+    "pronunciation": "",
+    "localScript": "Kent Falls State Park"
+  },
+  {
+    "id": "place-komfortabel-coffee-namsan",
+    "type": "place",
+    "name": "Komfortabel coffee Namsan",
+    "romanization": "Komfortabel Namsan",
+    "pronunciation": "",
+    "localScript": "콤포타블 남산"
+  },
+  {
+    "id": "place-lake-brienz",
+    "type": "place",
+    "name": "Lake Brienz",
+    "romanization": "Brienzersee",
+    "pronunciation": "",
+    "localScript": "Brienzersee"
+  },
+  {
+    "id": "place-lake-qarun",
+    "type": "place",
+    "name": "Lake Qarun",
+    "romanization": "Buhayrat Qarun",
+    "pronunciation": "",
+    "localScript": "بحيرة قارون"
+  },
+  {
+    "id": "place-lazib-inn",
+    "type": "place",
+    "name": "Lazib Inn",
+    "romanization": "Lazib Inn",
+    "pronunciation": "",
+    "localScript": "لازيب إن"
+  },
+  {
+    "id": "place-lintilhac-park",
+    "type": "place",
+    "name": "Lintilhac Park",
+    "romanization": "Lintilhac Park",
+    "pronunciation": "",
+    "localScript": "Lintilhac Park"
+  },
+  {
+    "id": "place-little-italy",
+    "type": "place",
+    "name": "Little Italy",
+    "romanization": "Little Italy",
+    "pronunciation": "",
+    "localScript": "Little Italy"
+  },
+  {
+    "id": "place-lower-east-side",
+    "type": "place",
+    "name": "Lower East Side",
+    "romanization": "Lower East Side",
+    "pronunciation": "",
+    "localScript": "Lower East Side"
+  },
+  {
+    "id": "place-manhattan-bridge",
+    "type": "place",
+    "name": "Manhattan Bridge",
+    "romanization": "Manhattan Bridge",
+    "pronunciation": "",
+    "localScript": "Manhattan Bridge"
+  },
+  {
+    "id": "place-manhattan-chinatown",
+    "type": "place",
+    "name": "Manhattan Chinatown",
+    "romanization": "Manhattan Chinatown",
+    "pronunciation": "",
+    "localScript": "Manhattan Chinatown"
+  },
+  {
+    "id": "place-marblehead-harbor",
+    "type": "place",
+    "name": "Marblehead Harbor",
+    "romanization": "Marblehead Harbor",
+    "pronunciation": "",
+    "localScript": "Marblehead Harbor"
+  },
+  {
+    "id": "place-marsam-hotel",
+    "type": "place",
+    "name": "Marsam Hotel",
+    "romanization": "Funduq al-Marsam",
+    "pronunciation": "",
+    "localScript": "فندق المرسم"
+  },
+  {
+    "id": "place-matsue-castle",
+    "type": "place",
+    "name": "Matsue Castle",
+    "romanization": "Matsue-jō",
+    "pronunciation": "まつえじょう",
+    "localScript": "松江城"
+  },
+  {
+    "id": "place-mena-house",
+    "type": "place",
+    "name": "Mena House",
+    "romanization": "Mena House",
+    "pronunciation": "",
+    "localScript": "مينا هاوس"
+  },
+  {
+    "id": "place-messe-basel",
+    "type": "place",
+    "name": "Messe Basel",
+    "romanization": "Messe Basel",
+    "pronunciation": "",
+    "localScript": "Messe Basel"
+  },
+  {
+    "id": "place-metropolitan-museum-of-art",
+    "type": "place",
+    "name": "Metropolitan Museum of Art",
+    "romanization": "Metropolitan Museum of Art",
+    "pronunciation": "",
+    "localScript": "Metropolitan Museum of Art"
+  },
+  {
+    "id": "place-midtown-west",
+    "type": "place",
+    "name": "Midtown West",
+    "romanization": "Midtown West",
+    "pronunciation": "",
+    "localScript": "Midtown West"
+  },
+  {
     "id": "place-midtown",
     "type": "place",
     "name": "Midtown East",
@@ -129,12 +1049,436 @@
     "localScript": "Midtown East"
   },
   {
+    "id": "place-mill-river-park",
+    "type": "place",
+    "name": "Mill River Park",
+    "romanization": "Mill River Park",
+    "pronunciation": "",
+    "localScript": "Mill River Park"
+  },
+  {
+    "id": "place-mirror-pond",
+    "type": "place",
+    "name": "Mirror Pond",
+    "romanization": "Mirror Pond",
+    "pronunciation": "",
+    "localScript": "Mirror Pond"
+  },
+  {
+    "id": "place-morikami-museum-and-japanese-gardens",
+    "type": "place",
+    "name": "Morikami Museum and Japanese Gardens",
+    "romanization": "Morikami Museum and Japanese Gardens",
+    "pronunciation": "",
+    "localScript": "Morikami Museum and Japanese Gardens"
+  },
+  {
+    "id": "place-mosque-madrasa-of-sultan-hassan",
+    "type": "place",
+    "name": "Mosque-Madrasa of Sultan Hassan",
+    "romanization": "Masjid wa-Madrasat al-Sultan Hasan",
+    "pronunciation": "",
+    "localScript": "مسجد ومدرسة السلطان حسن"
+  },
+  {
+    "id": "place-muhammad-ali-mosque",
+    "type": "place",
+    "name": "Muhammad Ali Mosque",
+    "romanization": "Masjid Muhammad Ali",
+    "pronunciation": "",
+    "localScript": "مسجد محمد علي"
+  },
+  {
     "id": "place-murray-hill",
     "type": "place",
     "name": "Murray Hill",
     "romanization": "Murray Hill",
     "pronunciation": "",
     "localScript": "Murray Hill"
+  },
+  {
+    "id": "place-museum-of-arts-and-design",
+    "type": "place",
+    "name": "Museum of Arts and Design",
+    "romanization": "Museum of Arts and Design",
+    "pronunciation": "",
+    "localScript": "Museum of Arts and Design"
+  },
+  {
+    "id": "place-museum-of-egyptian-antiquities",
+    "type": "place",
+    "name": "Museum of Egyptian Antiquities",
+    "romanization": "Al-Mathaf al-Misri",
+    "pronunciation": "",
+    "localScript": "المتحف المصري"
+  },
+  {
+    "id": "place-myeongdong-street",
+    "type": "place",
+    "name": "Myeongdong Street",
+    "romanization": "Myeongdong-geori",
+    "pronunciation": "",
+    "localScript": "명동거리"
+  },
+  {
+    "id": "place-namba",
+    "type": "place",
+    "name": "Namba",
+    "romanization": "Nanba",
+    "pronunciation": "なんば",
+    "localScript": "難波"
+  },
+  {
+    "id": "place-namsan-dulle-gil-trail",
+    "type": "place",
+    "name": "Namsan Dulle-gil Trail",
+    "romanization": "Namsan Dullegil",
+    "pronunciation": "",
+    "localScript": "남산둘레길"
+  },
+  {
+    "id": "place-namsan-tower",
+    "type": "place",
+    "name": "Namsan Tower",
+    "romanization": "Namsan Tawo",
+    "pronunciation": "",
+    "localScript": "남산타워"
+  },
+  {
+    "id": "place-nantucket-harbor",
+    "type": "place",
+    "name": "Nantucket Harbor",
+    "romanization": "Nantucket Harbor",
+    "pronunciation": "",
+    "localScript": "Nantucket Harbor"
+  },
+  {
+    "id": "place-national-museum-of-korea",
+    "type": "place",
+    "name": "National Museum of Korea",
+    "romanization": "Gungnip Jungang Bangmulgwan",
+    "pronunciation": "",
+    "localScript": "국립중앙박물관"
+  },
+  {
+    "id": "place-new-canaan-historical-society",
+    "type": "place",
+    "name": "New Canaan Historical Society",
+    "romanization": "New Canaan Historical Society",
+    "pronunciation": "",
+    "localScript": "New Canaan Historical Society"
+  },
+  {
+    "id": "place-new-canaan-nature-center",
+    "type": "place",
+    "name": "New Canaan Nature Center",
+    "romanization": "New Canaan Nature Center",
+    "pronunciation": "",
+    "localScript": "New Canaan Nature Center"
+  },
+  {
+    "id": "place-new-haven-train-station",
+    "type": "place",
+    "name": "New Haven Train Station",
+    "romanization": "New Haven Train Station",
+    "pronunciation": "",
+    "localScript": "New Haven Train Station"
+  },
+  {
+    "id": "place-noho",
+    "type": "place",
+    "name": "NoHo",
+    "romanization": "NoHo",
+    "pronunciation": "",
+    "localScript": "NoHo"
+  },
+  {
+    "id": "place-outer-richmond",
+    "type": "place",
+    "name": "Outer Richmond",
+    "romanization": "Outer Richmond",
+    "pronunciation": "",
+    "localScript": "Outer Richmond"
+  },
+  {
+    "id": "place-paine-open",
+    "type": "place",
+    "name": "Paine Open",
+    "romanization": "Paine Open",
+    "pronunciation": "",
+    "localScript": "Paine Open"
+  },
+  {
+    "id": "place-qasr-el-sagha",
+    "type": "place",
+    "name": "Qasr el-Sagha",
+    "romanization": "Qasr al-Sagha",
+    "pronunciation": "",
+    "localScript": "قصر الصاغة"
+  },
+  {
+    "id": "place-queens",
+    "type": "place",
+    "name": "Queens",
+    "romanization": "Queens",
+    "pronunciation": "",
+    "localScript": "Queens"
+  },
+  {
+    "id": "place-queensboro-bridge",
+    "type": "place",
+    "name": "Queensboro Bridge",
+    "romanization": "Queensboro Bridge",
+    "pronunciation": "",
+    "localScript": "Queensboro Bridge"
+  },
+  {
+    "id": "place-queensboro-plaza-subway-station",
+    "type": "place",
+    "name": "Queensboro Plaza Subway Station",
+    "romanization": "Queensboro Plaza Subway Station",
+    "pronunciation": "",
+    "localScript": "Queensboro Plaza Subway Station"
+  },
+  {
+    "id": "place-qurnet-murai-necropolis",
+    "type": "place",
+    "name": "Qurnet Murai Necropolis",
+    "romanization": "Qurnat Marʿi",
+    "pronunciation": "",
+    "localScript": "قرنة مرعي"
+  },
+  {
+    "id": "place-red-pyramid",
+    "type": "place",
+    "name": "Red Pyramid",
+    "romanization": "Al-Haram al-Ahmar",
+    "pronunciation": "",
+    "localScript": "الهرم الأحمر"
+  },
+  {
+    "id": "place-rockefeller-center",
+    "type": "place",
+    "name": "Rockefeller Center",
+    "romanization": "Rockefeller Center",
+    "pronunciation": "",
+    "localScript": "Rockefeller Center"
+  },
+  {
+    "id": "place-saladin-citadel",
+    "type": "place",
+    "name": "Saladin Citadel",
+    "romanization": "Qalʿat Salah al-Din al-Ayyubi",
+    "pronunciation": "",
+    "localScript": "قلعة صلاح الدين الأيوبي"
+  },
+  {
+    "id": "place-samsung-837",
+    "type": "place",
+    "name": "Samsung 837",
+    "romanization": "Samsung 837",
+    "pronunciation": "",
+    "localScript": "Samsung 837"
+  },
+  {
+    "id": "place-sannomiya",
+    "type": "place",
+    "name": "Sannomiya",
+    "romanization": "Sannomiya",
+    "pronunciation": "さんのみや",
+    "localScript": "三宮"
+  },
+  {
+    "id": "place-soho",
+    "type": "place",
+    "name": "SoHo",
+    "romanization": "SoHo",
+    "pronunciation": "",
+    "localScript": "SoHo"
+  },
+  {
+    "id": "place-squibb-park-bridge",
+    "type": "place",
+    "name": "Squibb Park Bridge",
+    "romanization": "Squibb Park Bridge",
+    "pronunciation": "",
+    "localScript": "Squibb Park Bridge"
+  },
+  {
+    "id": "place-st-mary-s-by-the-sea",
+    "type": "place",
+    "name": "St. Mary's by the Sea",
+    "romanization": "St. Mary's by the Sea",
+    "pronunciation": "",
+    "localScript": "St. Mary's by the Sea"
+  },
+  {
+    "id": "place-stamford-train-station",
+    "type": "place",
+    "name": "Stamford Train Station",
+    "romanization": "Stamford Train Station",
+    "pronunciation": "",
+    "localScript": "Stamford Train Station"
+  },
+  {
+    "id": "place-step-pyramid-of-djoser",
+    "type": "place",
+    "name": "Step Pyramid of Djoser",
+    "romanization": "Haram Zoser al-Mudarraj",
+    "pronunciation": "",
+    "localScript": "هرم زوسر المدرج"
+  },
+  {
+    "id": "place-surfside-beach",
+    "type": "place",
+    "name": "Surfside Beach",
+    "romanization": "Surfside Beach",
+    "pronunciation": "",
+    "localScript": "Surfside Beach"
+  },
+  {
+    "id": "place-the-great-pyramid-of-giza",
+    "type": "place",
+    "name": "The Great Pyramid of Giza",
+    "romanization": "Al-Haram al-Akbar",
+    "pronunciation": "",
+    "localScript": "الهرم الأكبر"
+  },
+  {
+    "id": "place-the-high-line",
+    "type": "place",
+    "name": "The High Line",
+    "romanization": "The High Line",
+    "pronunciation": "",
+    "localScript": "The High Line"
+  },
+  {
+    "id": "place-the-juice-bar",
+    "type": "place",
+    "name": "The Juice Bar",
+    "romanization": "The Juice Bar",
+    "pronunciation": "",
+    "localScript": "The Juice Bar"
+  },
+  {
+    "id": "place-the-oberoi",
+    "type": "place",
+    "name": "The Oberoi",
+    "romanization": "The Oberoi",
+    "pronunciation": "",
+    "localScript": "ذي أوبروي"
+  },
+  {
+    "id": "place-the-oculus",
+    "type": "place",
+    "name": "The Oculus",
+    "romanization": "The Oculus",
+    "pronunciation": "",
+    "localScript": "The Oculus"
+  },
+  {
+    "id": "place-times-square",
+    "type": "place",
+    "name": "Times Square",
+    "romanization": "Times Square",
+    "pronunciation": "",
+    "localScript": "Times Square"
+  },
+  {
+    "id": "place-tokoji-temple",
+    "type": "place",
+    "name": "Tokoji Temple",
+    "romanization": "Tōkōji",
+    "pronunciation": "とうこうじ",
+    "localScript": "東光寺"
+  },
+  {
+    "id": "place-tomb-of-tutankhamun",
+    "type": "place",
+    "name": "Tomb of Tutankhamun",
+    "romanization": "Maqbarat Tut ʿAnkh Amun",
+    "pronunciation": "",
+    "localScript": "مقبرة توت عنخ آمون"
+  },
+  {
+    "id": "place-upper-east-side",
+    "type": "place",
+    "name": "Upper East Side",
+    "romanization": "Upper East Side",
+    "pronunciation": "",
+    "localScript": "Upper East Side"
+  },
+  {
+    "id": "place-valley-of-the-kings",
+    "type": "place",
+    "name": "Valley of the Kings",
+    "romanization": "Wadi al-Muluk",
+    "pronunciation": "",
+    "localScript": "وادي الملوك"
+  },
+  {
+    "id": "place-wadi-el-hitan",
+    "type": "place",
+    "name": "Wadi El-Hitan",
+    "romanization": "Wadi al-Hitan",
+    "pronunciation": "",
+    "localScript": "وادي الحيتان"
+  },
+  {
+    "id": "place-wadi-el-rayan",
+    "type": "place",
+    "name": "Wadi El Rayan",
+    "romanization": "Wadi al-Rayan",
+    "pronunciation": "",
+    "localScript": "وادي الريان"
+  },
+  {
+    "id": "place-washington-square-park",
+    "type": "place",
+    "name": "Washington Square Park",
+    "romanization": "Washington Square Park",
+    "pronunciation": "",
+    "localScript": "Washington Square Park"
+  },
+  {
+    "id": "place-waveny-park",
+    "type": "place",
+    "name": "Waveny Park",
+    "romanization": "Waveny Park",
+    "pronunciation": "",
+    "localScript": "Waveny Park"
+  },
+  {
+    "id": "place-welling-court-mural-project",
+    "type": "place",
+    "name": "Welling Court Mural Project",
+    "romanization": "Welling Court Mural Project",
+    "pronunciation": "",
+    "localScript": "Welling Court Mural Project"
+  },
+  {
+    "id": "place-williamsburg-bridge",
+    "type": "place",
+    "name": "Williamsburg Bridge",
+    "romanization": "Williamsburg Bridge",
+    "pronunciation": "",
+    "localScript": "Williamsburg Bridge"
+  },
+  {
+    "id": "state-alberta",
+    "type": "state",
+    "name": "Alberta",
+    "romanization": "Alberta",
+    "pronunciation": "",
+    "localScript": "Alberta"
+  },
+  {
+    "id": "state-brussels-capital",
+    "type": "state",
+    "name": "Brussels-Capital",
+    "romanization": "Bruxelles-Capitale / Brussel-Hoofdstad",
+    "pronunciation": "",
+    "localScript": "Bruxelles-Capitale / Brussel-Hoofdstad"
   },
   {
     "id": "state-busan",
@@ -153,6 +1497,14 @@
     "localScript": "محافظة القاهرة"
   },
   {
+    "id": "state-california",
+    "type": "state",
+    "name": "California",
+    "romanization": "California",
+    "pronunciation": "",
+    "localScript": "California"
+  },
+  {
     "id": "state-connecticut",
     "type": "state",
     "name": "Connecticut",
@@ -167,6 +1519,14 @@
     "romanization": "Muḥāfaẓat al-Fayyūm",
     "pronunciation": "",
     "localScript": "محافظة الفيوم"
+  },
+  {
+    "id": "state-florida",
+    "type": "state",
+    "name": "Florida",
+    "romanization": "Florida",
+    "pronunciation": "",
+    "localScript": "Florida"
   },
   {
     "id": "state-giza",
@@ -185,6 +1545,14 @@
     "localScript": "兵庫県"
   },
   {
+    "id": "state-luxor",
+    "type": "state",
+    "name": "Luxor",
+    "romanization": "Al-Uqsur",
+    "pronunciation": "",
+    "localScript": "الأقصر"
+  },
+  {
     "id": "state-massachusetts",
     "type": "state",
     "name": "Massachusetts",
@@ -201,12 +1569,52 @@
     "localScript": "New York"
   },
   {
+    "id": "state-osaka",
+    "type": "state",
+    "name": "Osaka",
+    "romanization": "Ōsaka",
+    "pronunciation": "おおさか",
+    "localScript": "大阪"
+  },
+  {
+    "id": "state-qena-governante",
+    "type": "state",
+    "name": "Qena Governante",
+    "romanization": "Muhafazat Qina",
+    "pronunciation": "",
+    "localScript": "محافظة قنا"
+  },
+  {
+    "id": "state-red-sea",
+    "type": "state",
+    "name": "Red Sea",
+    "romanization": "Al-Bahr al-Ahmar",
+    "pronunciation": "",
+    "localScript": "البحر الأحمر"
+  },
+  {
     "id": "state-seoul",
     "type": "state",
     "name": "Seoul",
     "romanization": "Seoul-teukbyeolsi",
     "pronunciation": "",
     "localScript": "서울특별시"
+  },
+  {
+    "id": "state-shimane",
+    "type": "state",
+    "name": "Shimane",
+    "romanization": "Shimane",
+    "pronunciation": "しまね",
+    "localScript": "島根"
+  },
+  {
+    "id": "state-vermont",
+    "type": "state",
+    "name": "Vermont",
+    "romanization": "Vermont",
+    "pronunciation": "",
+    "localScript": "Vermont"
   },
   {
     "id": "state-yamaguchi",

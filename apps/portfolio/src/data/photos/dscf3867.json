@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["palace", "apartments", "rooftops", "city", "mountains", "haze", "hanok", "pagoda"],
-  "genres": [],
+  "tags": ["palace", "apartments", "rooftops", "city", "mountains", "haze"],
+  "genres": ["cityscape", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -269,5 +269,6 @@
     "chroma": 11.35,
     "peakChroma": 21.53,
     "samples": 9975
-  }
+  },
+  "notes": "Shows hanok roofs and a pagoda; 'hanok' and 'pagoda' aren't tags, since only 1–2 photos have them."
 }

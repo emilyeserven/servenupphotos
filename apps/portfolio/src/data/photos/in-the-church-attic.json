@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["tracery", "church", "attic", "windows", "beams", "interior", "shadows"],
+  "tags": ["church", "windows", "beams", "interior", "shadows"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0,
     "peakChroma": 0,
     "samples": 9728
-  }
+  },
+  "notes": "Shows a church attic with Gothic tracery; 'attic' and 'tracery' aren't tags, since only 1–2 photos have them."
 }

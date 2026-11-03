@@ -49,15 +49,13 @@
   "customLens": null,
   "albums": [],
   "tags": [
-    "street-performer",
-    "dancing",
+    "street-performers",
     "crowd",
     "pedestrians",
     "park",
-    "bench",
+    "benches",
     "trees",
-    "busking",
-    "lamppost",
+    "street-lights",
     "sidewalk",
     "shadows"
   ],
@@ -277,5 +275,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9825
-  }
+  },
+  "notes": "Shows street dancing; 'dancing' isn't a tag, since only 2 photos have it."
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["planter", "graffiti", "rust", "steel", "road", "sidewalk", "crosswalk"],
+  "tags": ["graffiti", "rust", "steel", "road", "sidewalk", "crosswalk"],
   "genres": ["street"],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 11.95,
     "peakChroma": 32.12,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a planter; 'planter' isn't a tag, since only 2 photos have one."
 }

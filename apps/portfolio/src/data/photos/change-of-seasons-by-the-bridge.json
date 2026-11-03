@@ -48,7 +48,16 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["autumn", "footbridge", "skyline", "skyscraper", "ivy", "fence", "pedestrians", "trees"],
+  "tags": [
+    "autumn",
+    "footbridges",
+    "skyline",
+    "skyscrapers",
+    "ivy",
+    "fence",
+    "pedestrians",
+    "trees"
+  ],
   "genres": ["street", "architecture"],
   "places": [
     {

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["ducks", "birds", "pond", "reflections", "water", "stones", "park"],
+  "tags": ["birds", "pond", "reflections", "water", "stones", "park"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 9.78,
     "peakChroma": 20.5,
     "samples": 9916
-  }
+  },
+  "notes": "Shows ducks; 'ducks' isn't a tag, since only 1 photo has them."
 }

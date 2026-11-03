@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["bay-windows", "houses", "apartments", "trees", "stones", "humor"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

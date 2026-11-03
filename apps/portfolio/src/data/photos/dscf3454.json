@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["autumn", "park", "bench", "trees", "grass", "brick"],
-  "genres": [],
+  "tags": ["autumn", "park", "benches", "trees", "grass", "brick"],
+  "genres": ["street", "landscape"],
   "places": [
     {
       "relation": "",

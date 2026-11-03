@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["koi", "fish", "water", "canal"],
-  "genres": [],
+  "genres": ["wildlife", "nature"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

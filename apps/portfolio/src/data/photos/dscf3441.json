@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["autumn", "pond", "pier", "reflections", "bench", "trees", "fallen-leaves", "park"],
-  "genres": [],
+  "tags": ["autumn", "pond", "pier", "reflections", "benches", "trees", "fallen-leaves", "park"],
+  "genres": ["landscape"],
   "places": [
     {
       "relation": "",

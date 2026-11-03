@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hills", "road", "cars", "trees", "houses", "city", "framing"],
-  "genres": [],
+  "genres": ["cityscape", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

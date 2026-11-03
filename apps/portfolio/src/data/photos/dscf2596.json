@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["highway", "apartments", "cars", "beach", "city", "haze"],
-  "genres": [],
+  "genres": ["cityscape", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

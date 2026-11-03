@@ -48,16 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "stream",
-    "stones",
-    "pedestrians",
-    "bridge",
-    "reflections",
-    "trees",
-    "path",
-    "jingeomdari"
-  ],
+  "tags": ["stream", "stones", "pedestrians", "bridges", "reflections", "trees", "path"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -278,5 +269,6 @@
     "chroma": 9.04,
     "peakChroma": 21.9,
     "samples": 9975
-  }
+  },
+  "notes": "Shows jingeomdari stepping stones; 'jingeomdari' isn't a tag, since only 1 photo has them."
 }

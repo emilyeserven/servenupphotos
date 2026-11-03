@@ -1,0 +1,6 @@
+{
+  "id": "footbridges",
+  "name": "footbridges",
+  "description": "bridges for people on foot, from small wooden crossings to skybridges",
+  "parent": "bridges"
+}

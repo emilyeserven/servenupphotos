@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["buoys", "reflections", "water", "houses", "fence", "minimalism"],
+  "tags": ["reflections", "water", "houses", "fence", "minimalism"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 6.44,
     "peakChroma": 12.12,
     "samples": 10050
-  }
+  },
+  "notes": "Shows buoys; 'buoys' isn't a tag, since only 2 photos have them."
 }

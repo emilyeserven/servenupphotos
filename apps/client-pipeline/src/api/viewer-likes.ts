@@ -38,6 +38,21 @@ export function viewerId(name: string): string {
 export interface ParsedLikes {
   ids: number[];
   skipped: string[];
+  /** True when the IDs came from photo links, so titles and comments around them were ignored. */
+  fromLinks: boolean;
+}
+
+/** A portfolio photo link's ID: `/photos/281/` or `?photo=281`. */
+const PHOTO_LINK = /\/photos\/(\d+)(?=[/?#)\s]|$)|[?&]photo=(\d+)/g;
+
+/** The photo IDs in the text's portfolio photo links, in order, such as the Markdown My Likes makes for Discord. */
+function linkIds(text: string): number[] {
+  return [...text.matchAll(PHOTO_LINK)].map((m) => Number(m[1] ?? m[2]));
+}
+
+/** ids sorted, each once, without any below 1. */
+function sortedIds(ids: Iterable<number>): number[] {
+  return [...new Set(ids)].filter((id) => id > 0).toSorted((a, b) => a - b);
 }
 
 /** A list's parts: a JSON array's items, or else the text split at commas and spaces. */
@@ -55,17 +70,26 @@ function listParts(text: string): string[] {
 }
 
 /**
- * The photo IDs in a list sent from the portfolio's My Likes page: the comma-separated text
- * "Send to photographer" makes, such as "281, 284, 286", or a JSON array such as [281, 284].
+ * The photo IDs in a list sent from the portfolio's My Likes page. With photo links in it, such as
+ * the Markdown list "- [Castle Door](https://servenupphotos.net/photos/284/)" made for Discord, the
+ * IDs are read from the links and the titles and comments are ignored. Otherwise it's the
+ * comma-separated text made for Messenger or a text, such as "281, 284, 286", or a JSON array such
+ * as [281, 284].
  */
 export function parseLikes(text: string): ParsedLikes {
-  const ids = new Set<number>();
-  const skipped: string[] = [];
-  for (const part of listParts(text)) {
-    if (/^\d+$/.test(part.trim()) && Number(part) > 0) ids.add(Number(part));
-    else skipped.push(part);
-  }
-  return { ids: [...ids].toSorted((a, b) => a - b), skipped };
+  const linked = linkIds(text);
+  if (linked.length > 0) return { ids: sortedIds(linked), skipped: [], fromLinks: true };
+  return { ...parseIdList(text), fromLinks: false };
+}
+
+/** The IDs in comma-separated text or a JSON array, and the parts that aren't IDs. */
+function parseIdList(text: string): Omit<ParsedLikes, "fromLinks"> {
+  const parts = listParts(text);
+  const isId = (part: string) => /^\d+$/.test(part.trim()) && Number(part) > 0;
+  return {
+    ids: sortedIds(parts.filter(isId).map(Number)),
+    skipped: parts.filter((part) => !isId(part)),
+  };
 }
 
 /** How many people liked each photo, by photo ID. */

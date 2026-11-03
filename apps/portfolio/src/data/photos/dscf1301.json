@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["wabi-sabi", "doors", "wood", "texture", "patterns", "ironwork"],
-  "genres": [],
+  "genres": ["abstract", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

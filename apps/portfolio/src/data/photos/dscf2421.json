@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["bridge", "suspension-cables", "sailboats", "park", "tall-grass", "picnic", "mountains"],
-  "genres": [],
+  "tags": ["bridges", "suspension-cables", "sailboats", "park", "tall-grass", "mountains"],
+  "genres": ["landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -262,5 +262,6 @@
     "peakChroma": 41.28,
     "samples": 10115
   },
-  "undecided": true
+  "undecided": true,
+  "notes": "Shows a picnic; 'picnic' isn't a tag, since only 2 photos have one."
 }

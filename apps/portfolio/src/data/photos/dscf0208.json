@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city", "mountains", "houses", "rooftops", "clouds"],
-  "genres": [],
+  "genres": ["cityscape", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

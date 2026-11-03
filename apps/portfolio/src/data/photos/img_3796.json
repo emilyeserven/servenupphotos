@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["facade", "windows", "trees", "cars", "traffic-lights", "power-lines", "twilight"],
+  "tags": ["facade", "windows", "trees", "cars", "power-lines", "twilight"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 4.2,
     "peakChroma": 9.31,
     "samples": 9694
-  }
+  },
+  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them."
 }
