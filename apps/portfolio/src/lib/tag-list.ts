@@ -9,6 +9,8 @@ export interface TagEntry {
   between: Group[];
   /** How many photos have the tag or a tag under it. */
   count: number;
+  /** How many tags with photos are under it, however deep. */
+  subtags: number;
   /** Its newest few photos with images, for the card's thumbnails. */
   previews: ImagePhoto[];
 }
@@ -51,10 +53,23 @@ function newestFew(
     .slice(0, few);
 }
 
-/** The tag with its photo count and previews, from the photos given. */
+/** Whether any of the photos has the tag or a tag under it. */
+function hasPhotos(id: string, used: ReadonlySet<string>): boolean {
+  return [...tagAndSubTags(id)].some((under) => used.has(under));
+}
+
+/** How many tags with photos are under the tag, however deep, so the ones the page shows. */
+function subtagCount(tag: Group, all: Photo[]): number {
+  const used = new Set(all.flatMap((photo) => photo.tags));
+  const under = [...tagAndSubTags(tag.id)].filter((id) => id !== tag.id);
+  return under.filter((id) => hasPhotos(id, used)).length;
+}
+
+/** The tag with its photo and subtag counts and previews, from the photos given. */
 function entryOf(tag: Group, between: Group[], all: Photo[], few = PREVIEW_COUNT): TagEntry {
   const tagged = taggedUnder(tag, all);
-  return { tag, between, count: tagged.length, previews: newestFew(tagged, new Set(), few) };
+  const previews = newestFew(tagged, new Set(), few);
+  return { tag, between, count: tagged.length, subtags: subtagCount(tag, all), previews };
 }
 
 /** The ids of the photos the entries preview. */
@@ -89,8 +104,11 @@ function ownPreviews(tag: Group, all: Photo[], children: TagEntry[]): ImagePhoto
   return newestFew(tagged, previewedIds(children));
 }
 
-/** How the Tags page orders tags: by name, or by how many photos they have, most first. */
-export type TagSort = "name" | "count";
+/**
+ * How the Tags page orders tags: by name, by how many photos they have, or by how many tags are
+ * under them, most first.
+ */
+export type TagSort = "name" | "count" | "subtags";
 
 /** By name. */
 function byName(a: TagEntry, b: TagEntry): number {
@@ -102,10 +120,16 @@ function byCount(a: TagEntry, b: TagEntry): number {
   return b.count - a.count || byName(a, b);
 }
 
+/** Most tags under it first, then most photos, then by name. */
+function bySubtags(a: TagEntry, b: TagEntry): number {
+  return b.subtags - a.subtags || byCount(a, b);
+}
+
 /** Each sort's comparison. */
 const COMPARE: Record<TagSort, (a: TagEntry, b: TagEntry) => number> = {
   name: byName,
   count: byCount,
+  subtags: bySubtags,
 };
 
 /** The tags without a parent tag, counting ones whose parent isn't a tag. */

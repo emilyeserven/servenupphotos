@@ -25,17 +25,19 @@ export const Route = createFileRoute("/tags")({
 const SECTIONS: Record<TagSort, TagSection[]> = {
   name: tagSections("name"),
   count: tagSections("count"),
+  subtags: tagSections("subtags"),
 };
 
 // The favorite tags, set on the pipeline, for the top of the page, in each sort's order.
 const FAVORITES: Record<TagSort, TagEntry[]> = {
   name: favoriteTags("name"),
   count: favoriteTags("count"),
+  subtags: favoriteTags("subtags"),
 };
 
 /**
- * Every tag with photos, each linking to the Grid filtered to it, by name or by how many photos
- * it has: parent tags first, each with the tags under it, then the rest; or only the top-level
+ * Every tag with photos, each linking to the Grid filtered to it, by name, by how many photos it
+ * has or by how many tags are under it: parent tags first, each with the tags under it, then the rest; or only the top-level
  * tags, as one grid. Favorite tags come first, under Spotlight Tags. The search box narrows them to the tags with its text in their name or
  * description.
  */

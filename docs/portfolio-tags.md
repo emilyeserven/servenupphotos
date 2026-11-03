@@ -41,15 +41,17 @@ are parent tags above. Tags without photos are left out, and a loop of parents s
 
 Two rows of buttons under the title change what the page shows, and are kept in the URL so a link keeps them:
 
-- **A–Z** (the default) or **Most photos** (`?sort=count`): orders the parent tags' sections, the tags in each
-  section (each among the tags beside it, so a tag's own tags still come right after it) and the **More tags** grid.
-  **Most photos** puts the tags with the most photos first, and tags with as many photos by name.
+- **A–Z** (the default), **Most photos** (`?sort=count`) or **Most subtags** (`?sort=subtags`): orders the parent
+  tags' sections, the tags in each section (each among the tags beside it, so a tag's own tags still come right after
+  it) and the **More tags** grid. **Most photos** puts the tags with the most photos first, and tags with as many
+  photos by name. **Most subtags** puts the tags with the most tags under them first, counting every level down but
+  only the tags with photos (the ones the page shows); tags with as many subtags go by most photos, then by name.
 - **All tags** (the default) or **Top level only** (`?top=true`): hides every tag that has a parent and drops the
   sections, leaving one grid of the top-level tags. A parent tag's count there still counts the photos of the tags
   under it, as its link to the Grid does.
 
-The page works out both orders once at build time (`tagSections("name")` and `tagSections("count")`), so switching is
-instant.
+The page works out every order once at build time (`tagSections("name")`, `tagSections("count")` and
+`tagSections("subtags")`), so switching is instant.
 
 ## Search
 
