@@ -167,7 +167,7 @@ func TestApplyTagLibraryErrors(t *testing.T) {
 
 func TestExportTagLibrary(t *testing.T) {
 	photos := map[string]string{
-		"a.json": `{"title":"Lanterns","city":"Kyoto","customCountry":"Japan","tags":["lanterns"],"notes":"for me"}`,
+		"a.json": `{"id":7,"title":"Lanterns","city":"Kyoto","customCountry":"Japan","tags":["lanterns"],"notes":"for me"}`,
 		"b.json": `{"tags":`,
 	}
 	_, c := pruneTagRepo(t, photos)
@@ -184,6 +184,9 @@ func TestExportTagLibrary(t *testing.T) {
 	want := TagLibraryPhotoInfo{Photo: "a", Title: "Lanterns", City: "Kyoto", Country: "Japan", Notes: "for me"}
 	if len(got.Photos) != 1 || got.Photos[0].Photo != want.Photo || got.Photos[0].Country != want.Country || got.Photos[0].Notes != want.Notes || !slices.Equal(got.Photos[0].Tags, []string{"lanterns"}) {
 		t.Errorf("Photos = %+v, want %+v", got.Photos, want)
+	}
+	if p := got.Photos[0]; p.Path != photosDir+"a.json" || p.ID == nil || *p.ID != 7 {
+		t.Errorf("Photos[0] path, id = %q, %v, want a.json and 7", p.Path, p.ID)
 	}
 	if !slices.Equal(got.Unreadable, []string{photosDir + "b.json"}) {
 		t.Errorf("Unreadable = %v, want b.json", got.Unreadable)

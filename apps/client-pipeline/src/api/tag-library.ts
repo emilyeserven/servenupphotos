@@ -18,6 +18,10 @@ export interface TagLibraryTag {
 export interface TagLibraryPhotoInfo {
   /** Its file name without .json. */
   photo: string;
+  /** Its file's path in the repository, which a save names it by. The prompt leaves it out. */
+  path: string;
+  /** Its photo ID, or null when it has none yet. The prompt leaves it out. */
+  id: number | null;
   title: string;
   city: string;
   country: string;

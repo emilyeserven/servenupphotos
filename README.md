@@ -111,6 +111,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
 - [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes
 - [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages
+- [Small Tags](docs/small-tags.md) (`/small-tags`): cleaning up the tags and subtags with fewer than 3 photos, one by one or with an LLM
 - [Album Layouts and Covers](docs/album-layouts.md) (`/albums/<id>`): rows of photos with Markdown text, up to 5 cover photos, and album JSON export and import
 - [Smart Albums](docs/smart-albums.md) (`/albums/<id>`): albums whose photos come from saved Grid filters, a timeline label and dates
 - [Photographic Genres](docs/photographic-genres.md) (`/genres`): kinds of photography such as street or landscape, set on each photo and filterable on the portfolio, kept in `ALLGENRES.json`

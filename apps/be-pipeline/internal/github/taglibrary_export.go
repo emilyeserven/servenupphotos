@@ -22,7 +22,13 @@ type TagLibraryTag struct {
 // known of it that helps pick its tags.
 type TagLibraryPhotoInfo struct {
 	// Photo is its file name without .json.
-	Photo   string   `json:"photo"`
+	Photo string `json:"photo"`
+	// Path is its file's path in the repository, which a save names it by.
+	// The prompt leaves it out.
+	Path string `json:"path"`
+	// ID is its photo ID, or nil when it has none yet. The prompt leaves it
+	// out.
+	ID      *int     `json:"id"`
 	Title   string   `json:"title"`
 	City    string   `json:"city"`
 	Country string   `json:"country"`
@@ -75,11 +81,12 @@ func (c *Client) ExportTagLibrary(ctx context.Context, gh settings.GitHub) (TagL
 func libraryPhotoInfo(f photoFile) TagLibraryPhotoInfo {
 	p := readBulkPhoto(f)
 	var data struct {
+		ID                                              *int
 		Title, CustomCity, City, CustomCountry, Country *string
 	}
 	_ = json.Unmarshal(f.content, &data)
 	return TagLibraryPhotoInfo{
-		Photo: p.name, Title: firstText(data.Title),
+		Photo: p.name, Path: f.path, ID: data.ID, Title: firstText(data.Title),
 		City: firstText(data.CustomCity, data.City), Country: firstText(data.CustomCountry, data.Country),
 		Places: orEmpty(p.places), Genres: orEmpty(p.genres), Albums: orEmpty(p.albums), Tags: orEmpty(p.tags),
 		Notes: photoNotes(f.content),

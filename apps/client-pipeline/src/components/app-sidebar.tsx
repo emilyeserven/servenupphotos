@@ -21,6 +21,7 @@ import {
   SettingsIcon,
   ShapesIcon,
   SparklesIcon,
+  TagIcon,
   TagsIcon,
 } from "lucide-react";
 import type * as React from "react";
@@ -60,6 +61,7 @@ export const navGroups = [
     items: [
       { title: "Albums", url: "/albums", icon: BookImageIcon },
       { title: "Tags", url: "/tags", icon: TagsIcon },
+      { title: "Small Tags", url: "/small-tags", icon: TagIcon },
       { title: "Genres", url: "/genres", icon: ShapesIcon },
     ],
   },

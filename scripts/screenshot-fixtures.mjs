@@ -715,6 +715,8 @@ const libraryPhoto = ({ path: filePath, data }) => ({
     .split("/")
     .pop()
     .replace(/\.json$/, ""),
+  path: filePath,
+  id: typeof data.id === "number" ? data.id : null,
   title: firstOr(data.title),
   city: firstOr(data.customCity, data.city),
   country: firstOr(data.customCountry, data.country),
