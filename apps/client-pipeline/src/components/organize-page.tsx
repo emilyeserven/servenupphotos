@@ -29,6 +29,7 @@ import { HiddenMark } from "@/components/album-visibility-card";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { GroupCombobox } from "@/components/group-picker";
 import { TagNamesCard } from "@/components/tag-names-card";
+import { FavoriteTagButton, FavoriteTagsCard } from "@/components/tag-favorites";
 import { validateGroupName } from "@/lib/group-name";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -123,6 +124,7 @@ function GroupCards({ kind, folder }: { kind: GroupKind; folder: string }) {
 
   return (
     <>
+      {kind === "tags" && <FavoriteTagsCard organize={organize.data} />}
       <NewGroupCard
         kind={kind}
         folder={folder}
@@ -516,6 +518,7 @@ function GroupRow({
             <HiddenMark album={group} />
             <GroupNote group={group} />
           </div>
+          <FavoriteTagButton kind={kind} tag={group} />
           <AlbumMoveButtons album={group} albums={albums} />
         </div>
       </TableCell>

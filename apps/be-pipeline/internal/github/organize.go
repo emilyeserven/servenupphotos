@@ -101,6 +101,8 @@ type groupJSON struct {
 	Layout []AlbumRow `json:"layout,omitempty"`
 	// Hidden is true for an album the portfolio doesn't list or give a page.
 	Hidden bool `json:"hidden,omitempty"`
+	// Favorite is true for a tag pinned to the top of the tag lists.
+	Favorite bool `json:"favorite,omitempty"`
 }
 
 // albumJSON is the content of an album file, as written: it always lists its
@@ -128,6 +130,8 @@ type albumJSON struct {
 	// Hidden is true for an album the portfolio doesn't list or give a page;
 	// missing or false while it's shown.
 	Hidden bool `json:"hidden,omitempty"`
+	// Favorite is only for tags; albums never set it.
+	Favorite bool `json:"favorite,omitempty"`
 }
 
 // fileContent is g as kind's files are written.
@@ -163,8 +167,11 @@ type Group struct {
 	Layout []AlbumRow `json:"layout,omitempty"`
 	// Hidden is true for an album the portfolio doesn't list or give a page,
 	// along with the albums inside it.
-	Hidden bool   `json:"hidden,omitempty"`
-	Path   string `json:"path"`
+	Hidden bool `json:"hidden,omitempty"`
+	// Favorite is true for a favorite tag, which the pipeline's and the
+	// portfolio's tag lists show first.
+	Favorite bool   `json:"favorite,omitempty"`
+	Path     string `json:"path"`
 	// FileURL is the file's page on GitHub; empty while its latest change is
 	// only pending.
 	FileURL string `json:"fileUrl"`
@@ -450,5 +457,6 @@ func (w *workspace) readGroup(p string) Group {
 	}
 	g.SpotlightZones, g.PhotoOrder = content.SpotlightZones, content.PhotoOrder
 	g.Covers, g.Layout, g.Hidden = content.Covers, content.Layout, content.Hidden
+	g.Favorite = content.Favorite
 	return g
 }

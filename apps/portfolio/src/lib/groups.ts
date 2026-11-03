@@ -37,6 +37,11 @@ export interface Group {
    * Albums page, the album filter or their own pages, though a spotlight zone still shows it.
    */
   hidden?: boolean;
+  /**
+   * For a tag, true when it's a favorite, set on the pipeline's Tags page: the Tags page shows it
+   * at the top, under Favorites.
+   */
+  favorite?: boolean;
 }
 
 /** One row of an album's layout: Markdown text above, its photos side by side, and text below. */

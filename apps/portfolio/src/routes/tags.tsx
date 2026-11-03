@@ -1,12 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Tags } from "lucide-react";
+import { Star, Tags } from "lucide-react";
 import { useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { CARD_GRID, ParentTagSection, TagCard } from "@/components/tag-card";
 import { parseTagsSearch, TagControls } from "@/components/tag-controls";
 import { TagSearchBox } from "@/components/tag-search-box";
-import { type TagEntry, type TagSection, type TagSort, tagSections } from "@/lib/tag-list";
-import { searchTags } from "@/lib/tag-search";
+import {
+  favoriteTags,
+  type TagEntry,
+  type TagSection,
+  type TagSort,
+  tagSections,
+} from "@/lib/tag-list";
+import { searchTagEntries, searchTags } from "@/lib/tag-search";
 import { useRememberViewOptions } from "@/lib/view-options";
 
 export const Route = createFileRoute("/tags")({
@@ -21,10 +27,16 @@ const SECTIONS: Record<TagSort, TagSection[]> = {
   count: tagSections("count"),
 };
 
+// The favorite tags, set on the pipeline, for the top of the page, in each sort's order.
+const FAVORITES: Record<TagSort, TagEntry[]> = {
+  name: favoriteTags("name"),
+  count: favoriteTags("count"),
+};
+
 /**
  * Every tag with photos, each linking to the Grid filtered to it, by name or by how many photos
  * it has: parent tags first, each with the tags under it, then the rest; or only the top-level
- * tags, as one grid. The search box narrows them to the tags with its text in their name or
+ * tags, as one grid. Favorite tags come first, under Favorites. The search box narrows them to the tags with its text in their name or
  * description.
  */
 function TagsView() {
@@ -34,6 +46,7 @@ function TagsView() {
   const top = search.top === true;
   const [query, setQuery] = useState("");
   const sections = searchTags(SECTIONS[sort], query);
+  const favorites = searchTagEntries(FAVORITES[sort], query);
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-16 sm:px-6">
       <header className="flex flex-col gap-4">
@@ -53,6 +66,7 @@ function TagsView() {
         </div>
       </header>
       {sections.length === 0 && <NoTags query={query} />}
+      <Favorites entries={favorites} />
       {top ? <CardList entries={sections.map((s) => s.parent)} /> : <Grouped sections={sections} />}
     </div>
   );
@@ -76,6 +90,20 @@ function Grouped({ sections }: { sections: TagSection[] }) {
         </section>
       )}
     </>
+  );
+}
+
+/** The favorite tags as one grid of cards, headed Favorites; nothing when there are none. */
+function Favorites({ entries }: { entries: TagEntry[] }) {
+  if (entries.length === 0) return null;
+  return (
+    <section aria-label="Favorite tags" className="flex flex-col gap-3">
+      <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight">
+        <Star className="size-5 fill-amber-400 text-amber-500" aria-hidden />
+        Favorites
+      </h2>
+      <CardList entries={entries} />
+    </section>
   );
 }
 

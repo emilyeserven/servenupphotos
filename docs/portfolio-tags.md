@@ -7,6 +7,13 @@ opens the [Grid](portfolio-grid.md) filtered to that tag (`/grid?tag=shotengai`)
 [Tag filter](portfolio-filters.md#album-tag-and-genre) as the Timeline and Map. It's in the site menu after Albums;
 like Albums, the homepage doesn't link to it.
 
+## Favorites
+
+The [favorite tags](albums-and-tags.md#favorite-tags), starred on the pipeline's Tags page, come first, as one grid of
+cards headed **Favorites** with a star. They're still in their usual places further down too. The section follows the
+sort and the search like the rest of the page, shows in **Top level only** as well (a favorite with a parent included),
+and leaves out favorites without photos; with no favorites, it isn't there.
+
 ## Parent tags
 
 A tag with tags under it (its [parent](albums-and-tags.md#parent-tags), set on the pipeline) gets a section of its own, at the top

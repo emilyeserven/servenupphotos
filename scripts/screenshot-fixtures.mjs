@@ -356,7 +356,15 @@ function group({ path: filePath, data }, inFlight) {
     id: data.id,
     name: data.name,
     description: data.description,
-    ...setFields(data, ["parent", "order", "spotlightZones", "photoOrder", "covers", "layout"]),
+    ...setFields(data, [
+      "parent",
+      "order",
+      "spotlightZones",
+      "photoOrder",
+      "covers",
+      "layout",
+      "favorite",
+    ]),
     path: filePath,
     fileUrl: fileUrl(filePath, inFlight ? PULL_REQUEST.branch : BASE_BRANCH),
     inFlight,
@@ -1037,6 +1045,10 @@ export function defaultFixtures() {
     "PUT /api/organize/tags/descriptions": ({ body }) => ({
       ...pendingSave(),
       files: Object.keys(body?.descriptions ?? {}).length,
+    }),
+    "PUT /api/organize/tags/favorites": ({ body }) => ({
+      ...pendingSave(),
+      files: Object.keys(body?.favorites ?? {}).length,
     }),
     "PUT /api/organize/spotlight/homepage": { ...pendingSave(), files: 2 },
     "POST /api/photos/groups": ({ body }) => groupsAdded(body),

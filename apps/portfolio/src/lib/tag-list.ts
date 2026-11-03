@@ -107,3 +107,9 @@ export function tagSections(sort: TagSort = "name", all: Photo[] = photos): TagS
     ),
   }));
 }
+
+/** Every favorite tag with photos, in the sort's order, for the top of the Tags page. */
+export function favoriteTags(sort: TagSort = "name", all: Photo[] = photos): TagEntry[] {
+  const favorites = tags.filter((tag) => tag.favorite).map((tag) => entryOf(tag, [], all));
+  return withPhotos(favorites).toSorted(COMPARE[sort]);
+}

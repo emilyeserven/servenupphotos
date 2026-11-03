@@ -111,6 +111,18 @@ remove or put under another, use [Tag pruning](update-data.md#tag-pruning) on Up
 > **Frontend analogy:** it's a category tree like a shop's "Shoes › Sneakers": filtering by the parent category
 > includes every product in the categories under it.
 
+## Favorite tags
+
+The star beside each tag in the Tags page's list makes it a favorite, or not (`PUT /api/organize/tags/favorites` with
+`{ "favorites": { "<id>": true | false } }`), writing only the tag file's `favorite`, as a
+[change waiting for Commit](pending-changes.md). Favorite tags are pinned in three places: the **Favorite tags** card at
+the top of the Tags page, which links to each one and has its star to unpin it; the top of every **Tags** field's
+list (on the Photo page, the Gallery's bulk card and elsewhere), in their usual order; and the
+[portfolio's Tags page](portfolio-tags.md#favorites), under **Favorites**.
+
+> **Frontend analogy:** like starring a repo on GitHub: a boolean on the item, and lists render the starred ones in a
+> section of their own above the rest, rather than a separate list to keep in sync.
+
 ## Order
 
 The Albums list has up and down arrows by each album that move it one place among the albums in the same parent. A move
