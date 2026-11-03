@@ -11,6 +11,14 @@ export interface MonthLayout {
   /** The list's height in pixels. */
   height: number;
   marks: ScrubberMark[];
+  /** Each day shown in the list, with its timeline label ("" for none), in order. */
+  days: DayMark[];
+}
+
+/** A day's place in the list, from 0 to 1, and its timeline label, "" when it has none. */
+export interface DayMark {
+  label: string;
+  at: number;
 }
 
 /** Measures the list of months, whose sections carry their heading in `data-month`. */
@@ -18,11 +26,26 @@ export function measureMonths(list: HTMLElement): MonthLayout {
   const listBox = list.getBoundingClientRect();
   const height = Math.max(1, listBox.height);
   const sections = list.querySelectorAll<HTMLElement>(":scope > [data-month]");
+  const at = (element: HTMLElement) => (element.getBoundingClientRect().top - listBox.top) / height;
   const marks = [...sections].map((section) => ({
     month: section.dataset.month ?? "",
-    at: (section.getBoundingClientRect().top - listBox.top) / height,
+    at: at(section),
   }));
-  return { top: listBox.top + window.scrollY, height, marks };
+  const days = [...list.querySelectorAll<HTMLElement>("[data-day]")].map((day) => ({
+    label: day.dataset.label ?? "",
+    at: at(day),
+  }));
+  return { top: listBox.top + window.scrollY, height, marks, days };
+}
+
+/**
+ * The timeline label of the day at a fraction of the way down the list, the last one starting at
+ * or above it, but only in the same month; "" when it has none.
+ */
+export function labelAt(layout: MonthLayout, fraction: number): string {
+  const month = markAt(layout.marks, fraction);
+  const day = layout.days.findLast((d) => d.at <= fraction);
+  return day && month && day.at >= month.at ? day.label : "";
 }
 
 /** How far down the list the top of the window is, from 0 to 1. */

@@ -2,9 +2,9 @@
 
 `/timeline-labels`, under **Configuration** in the sidebar, names runs of days, such as **Korea** for September 20 to
 21, 2026 and **Japan** for September 22 to October 2. The portfolio's [Timeline](portfolio-timeline.md) shows each
-day's label on the right of the day's heading, which sticks just under the month's heading. So while September 2026's
-Japan days scroll past, the top of the list reads **September 2026** with **Japan** under it on the right, and it
-switches to **Korea** once the Korea days reach the top.
+day's label beside the date in the day's heading, which sticks just under the month's heading. So while September 2026's
+Japan days scroll past, the top of the list reads **September 2026** with **Japan** beside the date under it, and it
+switches to **Korea** once the Korea days reach the top. Pointing at the Timeline's scrubber shows the label of the days there under the month in its bubble.
 
 > **Frontend analogy:** it's a lookup table from a date range to a string, like a `Map<[start, end], label>`, that the
 > Timeline checks each day heading against while rendering.

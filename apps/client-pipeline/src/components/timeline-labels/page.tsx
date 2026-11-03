@@ -18,7 +18,7 @@ export function TimelineLabelsPage() {
     <Page
       wide
       title="Timeline Labels"
-      description="Names for runs of days, such as “Korea” for Sep 20 to 21 and “Japan” for Sep 22 to Oct 2. The portfolio's Timeline shows each day's label on the right of its heading, just under the month. Each label is one JSON file, combined into TIMELINE.json."
+      description="Names for runs of days, such as “Korea” for Sep 20 to 21 and “Japan” for Sep 22 to Oct 2. The portfolio's Timeline shows each day's label beside the date in its heading, just under the month. Each label is one JSON file, combined into TIMELINE.json."
     >
       <GitHubGate>{() => <Labels />}</GitHubGate>
     </Page>

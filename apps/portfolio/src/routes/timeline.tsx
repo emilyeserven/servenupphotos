@@ -238,13 +238,15 @@ function DaySection({
   dayPhotos,
   ...options
 }: RowOptions & { day: string; dayPhotos: Photo[] }) {
+  const label = dayLabel(dayPhotos);
+  // The scrubber reads data-label to name the label of the days under its pointer.
   return (
-    <li className="flex flex-col gap-1">
+    <li data-day={day} data-label={label} className="flex flex-col gap-1">
       {/* Sticks just under the month's heading while the day's photos scroll under it, so the
-          label on its right reads as the label of the month's days now in view. */}
-      <h3 className="sticky top-10 z-[5] -mx-1 flex items-center justify-between gap-3 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
-        <span className="min-w-0 truncate">{day}</span>
-        <DayLabel dayPhotos={dayPhotos} />
+          label beside the date reads as the label of the month's days now in view. */}
+      <h3 className="sticky top-10 z-[5] -mx-1 flex items-center gap-2 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
+        <span className="shrink-0">{day}</span>
+        <DayLabel label={label} />
       </h3>
       <ul className="flex flex-col gap-3">
         {dayPhotos.map((photo) => (
@@ -255,13 +257,17 @@ function DaySection({
   );
 }
 
-/** The timeline label of the day the photos were taken, on the right of its heading; nothing without one. */
-function DayLabel({ dayPhotos }: { dayPhotos: Photo[] }) {
+/** The timeline label of the days the photos were taken, or "" without one. */
+function dayLabel(dayPhotos: Photo[]): string {
   const [first] = dayPhotos;
-  const label = first ? labelOn(dayKey(first.takenAt)) : "";
+  return first ? labelOn(dayKey(first.takenAt)) : "";
+}
+
+/** The day's timeline label beside its date; nothing without one. */
+function DayLabel({ label }: { label: string }) {
   if (!label) return null;
   return (
-    <span className="mr-12 max-w-1/2 shrink-0 truncate rounded-full sm:mr-0 bg-muted px-2 py-0.5 font-semibold text-foreground">
+    <span className="min-w-0 truncate rounded-full bg-muted px-2 py-0.5 font-semibold text-foreground">
       {label}
     </span>
   );
