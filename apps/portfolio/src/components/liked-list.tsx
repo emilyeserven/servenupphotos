@@ -3,20 +3,21 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useLikeComments } from "@/lib/likes";
 import type { Photo } from "@/lib/photos";
+import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 import { photoPageUrl } from "@/lib/shown-photo";
 
-/** What the copyable list adds to each title. */
-export interface LikedListOptions {
-  /** Set to make each title a Markdown link to the photo's own page. */
-  links: boolean;
-  /** Set to add the visitor's own comment after each title that has one. */
-  comments: boolean;
-  /**
-   * Set to list only the photos' ids, comma separated, such as `281, 284, 286`, for the visitor to
-   * send to the photographer, who adds them up on the pipeline. Links and comments are left out.
-   */
-  photographer: boolean;
-}
+/**
+ * Where the visitor will send their likes, which decides the text: `discord` for a Markdown list
+ * of titles linking to each photo, with their comments, or `text` for only the ids, for
+ * Messenger or a text message.
+ */
+export type LikedListService = "discord" | "text";
+
+/** Each service's button label, in the toggle's order. */
+const SERVICES: { value: LikedListService; label: string }[] = [
+  { value: "discord", label: "Discord" },
+  { value: "text", label: "Messenger / Text" },
+];
 
 /** Backslashes `[`, `]` and `\` in a title, so it can't break the Markdown link around it. */
 function escapeMarkdown(text: string): string {
@@ -28,11 +29,6 @@ function titleOf(photo: Photo): string {
   return photo.title.trim() || "Untitled";
 }
 
-/** The title as a Markdown list item linking to the photo's own page. */
-function linkedTitle(photo: Photo): string {
-  return `- [${escapeMarkdown(titleOf(photo))}](${photoPageUrl(photo.id)})`;
-}
-
 /** The comment on one line, after a colon, or nothing for a photo without one. */
 function commentSuffix(comment: string | undefined): string {
   const oneLine = comment?.replace(/\s+/g, " ").trim();
@@ -40,81 +36,58 @@ function commentSuffix(comment: string | undefined): string {
 }
 
 /**
- * The liked photos as text to copy: one title per line, or with links, a Markdown list of links to
- * each photo's own page, such as `- [Shibuya at night](https://servenupphotos.net/photos/12/)`.
- * With comments, each title with a comment is followed by it, as `Title: comment`.
+ * The Discord text: a Markdown list of each title linking to the photo's own page, followed by
+ * the visitor's comment when there is one, such as
+ * `- [Shibuya at night](https://servenupphotos.net/photos/12/): love the light`. The pipeline's
+ * likes import reads the ids back out of the `/photos/<id>/` links.
  */
-function titleListText(
-  photos: readonly Photo[],
-  options: LikedListOptions,
-  comments: Readonly<Record<string, string>>,
-): string {
-  const title = options.links ? linkedTitle : titleOf;
-  const suffix = (photo: Photo) => (options.comments ? commentSuffix(comments[photo.id]) : "");
-  return photos.map((photo) => title(photo) + suffix(photo)).join("\n");
+function discordText(photos: readonly Photo[], comments: Readonly<Record<string, string>>) {
+  return photos
+    .map(
+      (photo) =>
+        `- [${escapeMarkdown(titleOf(photo))}](${photoPageUrl(photo.id)})${commentSuffix(comments[photo.id])}`,
+    )
+    .join("\n");
 }
 
-/** The text to copy: the photos' ids for the photographer, or else their titles. */
+/** The text to copy for the service: the Discord list, or the ids comma separated, such as `281, 284, 286`. */
 function likedListText(
   photos: readonly Photo[],
-  options: LikedListOptions,
+  service: LikedListService,
   comments: Readonly<Record<string, string>>,
 ): string {
-  if (options.photographer) return photos.map((photo) => photo.id).join(", ");
-  return titleListText(photos, options, comments);
-}
-
-/** The list's heading, saying what the text is. */
-function listHeading({ photographer, links }: LikedListOptions): string {
-  if (photographer) return "Photo IDs for the photographer";
-  return links ? "Markdown list" : "Titles";
+  if (service === "text") return photos.map((photo) => photo.id).join(", ");
+  return discordText(photos, comments);
 }
 
 /**
- * My Likes' list of the liked photos' titles, with a **Copy** button and checkboxes that turn it
- * into a Markdown list of links, add the visitor's comments, or make it the photos' ids to send
- * to the photographer.
+ * My Likes' text to send to the photographer, with a toggle between Discord (titles, links and
+ * comments) and Messenger / Text (just the ids), and a **Copy** button.
  */
 export function LikedList({
   photos,
-  options,
-  onOptions,
+  service,
+  onService,
 }: {
   photos: readonly Photo[];
-  options: LikedListOptions;
-  onOptions: (options: LikedListOptions) => void;
+  service: LikedListService;
+  onService: (service: LikedListService) => void;
 }) {
-  const text = likedListText(photos, options, useLikeComments());
+  const text = likedListText(photos, service, useLikeComments());
   return (
     <section aria-labelledby="liked-list-title" className="rounded-lg border bg-muted/40 p-3">
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <h2 id="liked-list-title" className="text-sm font-medium">
-          {listHeading(options)}
+          Send to the photographer
         </h2>
-        <Checkbox
-          label="Include links"
-          checked={options.links}
-          disabled={options.photographer}
-          onChange={(links) => onOptions({ ...options, links })}
-        />
-        <Checkbox
-          label="Include my comments"
-          checked={options.comments}
-          disabled={options.photographer}
-          onChange={(comments) => onOptions({ ...options, comments })}
-        />
-        <Checkbox
-          label="Send to photographer"
-          checked={options.photographer}
-          onChange={(photographer) => onOptions({ ...options, photographer })}
-        />
+        <ServiceToggle service={service} onService={onService} />
         <CopyTextButton text={text} />
       </div>
       <textarea
         readOnly
         aria-labelledby="liked-list-title"
         value={text}
-        rows={options.photographer ? 2 : Math.min(photos.length, 8)}
+        rows={service === "text" ? 2 : Math.min(photos.length, 8)}
         onFocus={(event) => event.target.select()}
         className="mt-2 w-full resize-y rounded-md border bg-background p-2 font-mono text-xs leading-relaxed outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
       />
@@ -122,29 +95,28 @@ export function LikedList({
   );
 }
 
-/** A labelled checkbox for one of the list's options, dimmed when disabled. */
-function Checkbox({
-  label,
-  checked,
-  disabled = false,
-  onChange,
+/** The buttons picking the service the text is for. */
+function ServiceToggle({
+  service,
+  onService,
 }: {
-  label: string;
-  checked: boolean;
-  disabled?: boolean;
-  onChange: (checked: boolean) => void;
+  service: LikedListService;
+  onService: (service: LikedListService) => void;
 }) {
   return (
-    <label className="flex items-center gap-2 text-sm text-muted-foreground has-disabled:opacity-50">
-      <input
-        type="checkbox"
-        checked={checked}
-        disabled={disabled}
-        onChange={(event) => onChange(event.target.checked)}
-        className="size-4 accent-primary"
-      />
-      {label}
-    </label>
+    <div role="group" aria-label="Message service" className={CONTROL_FRAME}>
+      {SERVICES.map(({ value, label }) => (
+        <button
+          key={value}
+          type="button"
+          aria-pressed={service === value}
+          onClick={() => onService(value)}
+          className={controlButtonClass(service === value)}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
   );
 }
 
