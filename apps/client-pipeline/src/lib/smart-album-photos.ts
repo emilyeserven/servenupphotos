@@ -58,14 +58,23 @@ export function withSmartAlbumEntries(
   files: Pick<CombinedFiles, "albums" | "timeline">,
 ): CombinedPhoto[] {
   const albums = listOf<Group>(files.albums.data);
-  if (!albums.some(isSmartAlbum)) return entries;
+  const smartIds = new Set(albums.filter(isSmartAlbum).map((album) => album.id));
+  if (smartIds.size === 0) return entries;
   const { photos, ids } = readEntries(entries, albums, labelsOf(files));
   const read = new Map(photos.map((photo) => [photo.id, photo.albums]));
-  return entries.map((entry, index) => withAlbums(entry, read.get(ids[index] as number)));
+  return entries.map((entry, index) => withAlbums(entry, read.get(ids[index] as number), smartIds));
 }
 
-/** The entry with albums as its `albums`, or as it is when it has no more than it lists. */
-function withAlbums(entry: CombinedPhoto, albums: string[] | undefined): CombinedPhoto {
-  const own = Array.isArray(entry.albums) ? entry.albums.length : 0;
-  return albums && albums.length > own ? { ...entry, albums } : entry;
+/**
+ * The entry with albums as its `albums`, or, for one the portfolio can't read, its own without the
+ * Smart Albums in smartIds, since only rules put a photo in one.
+ */
+function withAlbums(
+  entry: CombinedPhoto,
+  albums: string[] | undefined,
+  smartIds: ReadonlySet<string>,
+): CombinedPhoto {
+  if (albums) return { ...entry, albums };
+  const own = Array.isArray(entry.albums) ? entry.albums : [];
+  return { ...entry, albums: own.filter((id) => !smartIds.has(id)) };
 }

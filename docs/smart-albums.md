@@ -28,13 +28,14 @@ plus `?label=`, `?from=` and `?to=`), so the filters work exactly as they do on 
 using rules** saves `{ "rules": null }`, making it an album of chosen photos again. The backend refuses a rule that
 isn't one of these filters, or a value that isn't text, a number or a list of them.
 
-A Smart Album has no **Add photos** or **Remove photos**, since the rules decide its photos. Photos whose own JSON
-lists the album stay in it too, so turning an album into a Smart Album doesn't drop the ones already in it. Its
-**Reorder**, **Layout and covers**, **On the portfolio** (hiding) and parent work as for any album. The Albums list
-marks each one **Smart Album**.
+A Smart Album is only what its rules match: it has no **Add photos**, **Remove photos** or **Layout and covers**, a
+photo whose own JSON lists it isn't in it for that, and the portfolio shows its first photos as its covers and one
+photo after another on its page, ignoring any `covers` or `layout` left in its file. Its **Reorder**, **On the
+portfolio** (hiding) and parent work as for any album. The Albums list marks each one **Smart Album**.
 
-A rule naming an album (`album`) matches only the photos that list that album themselves, so one Smart Album's rules
-never depend on another Smart Album's. A label rule whose timeline label has been deleted matches no photos.
+A rule naming an album (`album`) can name another Smart Album, matching that album's photos, so "the vertical photos
+of the Japan Smart Album" works. Albums whose rules only name each other stay empty. A label rule whose timeline
+label has been deleted matches no photos.
 
 ## The schema
 
@@ -56,8 +57,10 @@ file.
 ## Where its photos are worked out
 
 Nothing writes the Smart Album into the photo files. Instead, `withSmartAlbums` in
-`apps/portfolio/src/lib/smart-albums.ts` adds each Smart Album's ID to the `albums` of every photo its rules match,
-when the photos are read (`photosFromData` in `lib/photos.ts`). On the portfolio that happens with the data the site
+`apps/portfolio/src/lib/smart-albums.ts` takes every Smart Album out of each photo's own `albums`, then adds each
+Smart Album's ID to every photo its rules match, when the photos are read (`photosFromData` in `lib/photos.ts`). It
+goes round again until nothing changes (at most once per Smart Album, plus one), so a rule naming another Smart Album
+sees that album's photos. On the portfolio that happens with the data the site
 was built with, so every view sees the same thing: the album's page and its strip on the [Albums](portfolio-albums.md)
 page, the Grid's **Album** filter and its counts, and a [spotlight zone](publish.md#site-spotlight) showing it. A
 hidden Smart Album stays off the album lists and pages, as any [hidden album](albums-and-tags.md#showing-or-hiding-on-the-portfolio)

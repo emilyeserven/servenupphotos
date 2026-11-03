@@ -134,19 +134,31 @@ export function matchesRules(photo: Photo, rules: SmartRules, labels?: TimelineL
   return grid.length === 1 && matchesDays(photo, rules, labels);
 }
 
-/** The IDs of the Smart Albums in smart whose rules the photo matches and that it doesn't list itself. */
-function smartAlbumIds(photo: Photo, smart: Group[], labels?: TimelineLabel[]): string[] {
-  return smart
+/** The photo without the Smart Albums in smartIds in its own albums: only rules put a photo in one. */
+function withoutSmart<T extends Photo>(photo: T, smartIds: ReadonlySet<string>): T {
+  const albums = photo.albums.filter((id) => !smartIds.has(id));
+  return albums.length === photo.albums.length ? photo : { ...photo, albums };
+}
+
+/**
+ * The photo with the IDs of the Smart Albums in smart whose rules it matches added after its
+ * albums, or the photo itself when it's in no new one.
+ */
+function withMatches<T extends Photo>(photo: T, smart: Group[], labels?: TimelineLabel[]): T {
+  const ids = smart
     .filter((album) => !photo.albums.includes(album.id))
     .filter((album) => matchesRules(photo, album.rules ?? {}, labels))
     .map((album) => album.id);
+  return ids.length === 0 ? photo : { ...photo, albums: [...photo.albums, ...ids] };
 }
 
 /**
  * The photos, each with the IDs of the Smart Albums whose rules it matches added after its own
- * albums, so every view, filter and count sees it in them. A rule naming an album matches only the
- * photos that list that album themselves, so one Smart Album's rules never depend on another's.
- * `albums` are the portfolio's own when left out; the pipeline passes the ones on GitHub.
+ * albums, so every view, filter and count sees it in them. A Smart Album is only ever what its
+ * rules match: a photo listing one itself isn't in it for that. A rule naming another Smart Album
+ * matches that album's photos, so the albums are worked out again until none changes (at most once
+ * per Smart Album, plus one); albums whose rules only name each other stay empty. `albums` are the
+ * portfolio's own when left out; the pipeline passes the ones on GitHub.
  */
 export function withSmartAlbums<T extends Photo>(
   list: T[],
@@ -155,8 +167,12 @@ export function withSmartAlbums<T extends Photo>(
 ): T[] {
   const smart = albums.filter(isSmartAlbum);
   if (smart.length === 0) return list;
-  return list.map((photo) => {
-    const ids = smartAlbumIds(photo, smart, labels);
-    return ids.length === 0 ? photo : { ...photo, albums: [...photo.albums, ...ids] };
-  });
+  const smartIds = new Set(smart.map((album) => album.id));
+  let current = list.map((photo) => withoutSmart(photo, smartIds));
+  for (let pass = 0; pass <= smart.length; pass++) {
+    const next = current.map((photo) => withMatches(photo, smart, labels));
+    if (next.every((photo, index) => photo === current[index])) break;
+    current = next;
+  }
+  return current;
 }

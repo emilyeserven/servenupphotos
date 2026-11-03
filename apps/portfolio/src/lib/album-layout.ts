@@ -1,4 +1,5 @@
-import type { Group } from "@/lib/groups";
+import type { AlbumRow, Group } from "@/lib/groups";
+import { isSmartAlbum } from "@/lib/smart-albums";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 
 /** How many photos stand for an album on the Albums page. */
@@ -17,12 +18,19 @@ function byIds(ids: readonly number[], photos: ImagePhoto[]): ImagePhoto[] {
   return ids.flatMap((id) => byId.get(id) ?? []);
 }
 
+/** The album's covers and layout; none for a Smart Album, whose photos only its rules decide. */
+function customized(album: Group): { covers: number[]; layout: AlbumRow[] } {
+  if (isSmartAlbum(album)) return { covers: [], layout: [] };
+  return { covers: album.covers ?? [], layout: album.layout ?? [] };
+}
+
 /**
  * The photos that stand for the album on the Albums page: its covers, in their order, or its first
- * 5 photos when it has none (or none of them is among its photos with images).
+ * 5 photos when it has none (or none of them is among its photos with images). A Smart Album
+ * always shows its first 5.
  */
 export function coverPhotos(album: Group, photos: ImagePhoto[]): ImagePhoto[] {
-  const covers = byIds(album.covers ?? [], photos).slice(0, PREVIEW_COUNT);
+  const covers = byIds(customized(album).covers, photos).slice(0, PREVIEW_COUNT);
   return covers.length > 0 ? covers : photos.slice(0, PREVIEW_COUNT);
 }
 
@@ -30,11 +38,11 @@ export function coverPhotos(album: Group, photos: ImagePhoto[]): ImagePhoto[] {
  * The album's layout as its page shows it, from photos, its photos in its order: each row with
  * only the photos that are in the album and have images (a row left with neither photos nor text
  * is dropped), then the photos no row has, in the album's order. Without a layout, there are no
- * rows and every photo is in the rest.
+ * rows and every photo is in the rest; a Smart Album never has one.
  */
 export function albumRows(album: Group, photos: ImagePhoto[]) {
-  const rows = (album.layout ?? [])
-    .map((row) => ({ ...row, photos: byIds(row.photos, photos) }))
+  const rows = customized(album)
+    .layout.map((row) => ({ ...row, photos: byIds(row.photos, photos) }))
     .filter((row) => row.photos.length > 0 || row.textAbove.trim() || row.textBelow.trim());
   const placed = new Set(rows.flatMap((row) => row.photos.map((photo) => photo.id)));
   return { rows, rest: photos.filter((photo) => !placed.has(photo.id)) };

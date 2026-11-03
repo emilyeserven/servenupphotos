@@ -134,7 +134,7 @@ function GroupDetail({ kind, group, organize }: GroupDetailProps) {
     <>
       {album && <SmartAlbumCard album={group} />}
       <GroupColumns kind={kind} group={group} organize={organize} />
-      {album && <AlbumLayoutCard album={group} albums={organize.albums} />}
+      {byHand(kind, group) && <AlbumLayoutCard album={group} albums={organize.albums} />}
     </>
   );
 }
@@ -548,7 +548,10 @@ function canRemove(kind: GroupKind, group: Group, photos: unknown[] = []): boole
   return byHand(kind, group) && photos.length > 0;
 }
 
-/** Whether the group is a readable album whose photos are chosen by hand, not a Smart Album. */
+/**
+ * Whether the group is a readable album whose photos are chosen by hand, not a Smart Album, whose
+ * photos, covers and layout only its rules decide.
+ */
 function byHand(kind: GroupKind, group: Group): boolean {
   return isReadableAlbum(kind, group) && !isSmartAlbum(group);
 }

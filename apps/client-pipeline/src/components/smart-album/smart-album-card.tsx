@@ -47,8 +47,8 @@ export function SmartAlbumCard({ album }: { album: Group }) {
         </CardTitle>
         <CardDescription>
           A Smart Album's photos are every photo its rules match, using the portfolio Grid's
-          filters, so new photos join it on their own. Photos listing the album themselves stay in
-          it too.
+          filters, so new photos join it on their own. It has only those: no photos added by hand,
+          and no custom covers or layout.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 text-sm">
