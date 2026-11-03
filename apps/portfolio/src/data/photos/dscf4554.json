@@ -1,9 +1,9 @@
 {
-  "id": 246,
-  "title": null,
+  "title": "Watching from the Wall",
   "comment": null,
+  "id": 246,
   "file": "DSCF4554.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:50:20Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.5,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/3d1ecb53d0d3-dscf4554-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/3d1ecb53d0d3-dscf4554-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/3d1ecb53d0d3-dscf4554-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/3d1ecb53d0d3-dscf4554-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3d1ecb53d0d3-dscf4554-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/3d1ecb53d0d3-dscf4554-thumbnail.webp?crop=3061,0,4347",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/3d1ecb53d0d3-dscf4554-thumbnailpreview.webp?crop=3061,0,4347",
     "thumbnailcrop": {
-      "x": 1690,
+      "x": 3061,
       "y": 0,
       "size": 4347,
       "outputSize": 500
@@ -53,7 +53,16 @@
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-11-05",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
