@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { canonicalJson } from "@/lib/combined";
 
 /** The photo JSON field that lists the photo's posts on social media. */
@@ -22,10 +23,18 @@ export const socialPlatforms: SocialPlatform[] = [
 /** Whether a post is waiting to go up or already up. */
 export type SocialPostStatus = "scheduled" | "posted";
 
+/**
+ * Whether a post on date is up yet, judged from today: posted on or before today, scheduled after it
+ * or when it has no day. It isn't saved, so it changes on its own as the day passes.
+ */
+export function postStatus(date: string | null, today = format(new Date(), "yyyy-MM-dd")) {
+  const status: SocialPostStatus = date && date <= today ? "posted" : "scheduled";
+  return status;
+}
+
 /** One post of the photo on social media, as the photo JSON's `socialPosts` saves it. */
 export interface SocialPost {
   platform: string;
-  status: SocialPostStatus;
   /** The day it's posted or scheduled for, as YYYY-MM-DD, or null when it isn't known. */
   date: string | null;
   /** The post's link; empty before it's posted. */
@@ -50,12 +59,11 @@ function draftId(): string {
   return `social-post-${nextId}`;
 }
 
-/** A new post, scheduled on Instagram with nothing else filled in. */
+/** A new post on Instagram with nothing else filled in. */
 export function newSocialPost(): SocialPostDraft {
   return {
     id: draftId(),
     platform: "instagram",
-    status: "scheduled",
     date: "",
     url: "",
     caption: "",
@@ -88,7 +96,6 @@ function toDraft(post: Record<string, unknown>): SocialPostDraft {
   return {
     id: draftId(),
     platform: text(post.platform) || "other",
-    status: post.status === "posted" ? "posted" : "scheduled",
     date: text(post.date),
     url: text(post.url),
     caption: text(post.caption),
@@ -105,10 +112,9 @@ export function savedSocialPosts(data: Record<string, unknown>): SocialPostDraft
 }
 
 /** A draft as it's saved, with its text trimmed. */
-function toSaved({ platform, status, date, url, caption, hashtags }: SocialPostDraft): SocialPost {
+function toSaved({ platform, date, url, caption, hashtags }: SocialPostDraft): SocialPost {
   return {
     platform,
-    status,
     date: date || null,
     url: url.trim(),
     caption: caption.trim(),

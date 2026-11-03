@@ -1,6 +1,6 @@
 import type { SocialPhoto } from "@/api/publish";
 import type { FileChange } from "@/lib/optimistic";
-import { type SocialPostStatus, savedSocialPosts } from "@/lib/social-posts";
+import { type SocialPostStatus, postStatus, savedSocialPosts } from "@/lib/social-posts";
 
 /** A photo file whose social media posts are shown, from the gallery or in flight. */
 export interface PostedPhotoFile {
@@ -21,6 +21,7 @@ export interface PostedPhotoFile {
 /** One post of a photo on a day, as a calendar of posts shows it. */
 export interface DayPost {
   photo: PostedPhotoFile;
+  /** Posted on or before today, scheduled after it; see `postStatus`. */
   status: SocialPostStatus;
   /** The post's link; empty before it's posted. */
   url: string;
@@ -106,5 +107,8 @@ export function postsByDay(files: PostedPhotoFile[], platform: string): Map<stri
 function datedPosts(photo: PostedPhotoFile, platform: string) {
   return savedSocialPosts(photo.data)
     .filter((post) => post.platform === platform && post.date)
-    .map(({ date, status, url }) => ({ day: date, post: { photo, status, url: url.trim() } }));
+    .map(({ date, url }) => ({
+      day: date,
+      post: { photo, status: postStatus(date), url: url.trim() },
+    }));
 }

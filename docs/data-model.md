@@ -83,8 +83,8 @@ albums instead (see [Publish](publish.md#site-spotlight)), and the photos that w
 **Homepage Spotlight** album, which the Homepage zone shows. `websiteSpotlight` still puts those photos first in an
 album without a [photo order](albums-and-tags.md#photo-order), in their old order; `spotlightZones` isn't read.
 
-A photo's `socialPosts` lists its posts on social media, each with its platform, status, date, link, caption and
-hashtags; see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
+A photo's `socialPosts` lists its posts on social media, each with its platform, date, link, caption and
+hashtags (whether it's posted is worked out from its date); see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
 
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).

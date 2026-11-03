@@ -12,10 +12,10 @@ import { type PostedPhotoFile } from "@/lib/social-post-days";
 import { cn } from "@/lib/utils";
 import {
   type SocialPostDraft,
-  type SocialPostStatus,
   newSocialPost,
   parseHashtags,
   platformLabel,
+  postStatus,
   socialPlatforms,
 } from "@/lib/social-posts";
 
@@ -142,6 +142,7 @@ function SocialPostFields({
       <div className="flex items-center justify-between gap-2">
         <p id={id("heading")} className="text-sm font-medium">
           Post {number} · {platformLabel(post.platform)}
+          <StatusNote date={post.date} />
         </p>
         <Button
           variant="ghost"
@@ -161,14 +162,6 @@ function SocialPostFields({
             value={post.platform}
             disabled={disabled}
             onChange={(platform) => onChange({ platform })}
-          />
-        </Field>
-        <Field id={id("status")} label="Status" help="Scheduled until it's up, then posted.">
-          <StatusSelect
-            id={id("status")}
-            value={post.status}
-            disabled={disabled}
-            onChange={(status) => onChange({ status })}
           />
         </Field>
         <Field
@@ -206,6 +199,15 @@ function SocialPostFields({
         <HashtagCount typed={post.hashtags} />
       </Field>
     </div>
+  );
+}
+
+/** Whether the post is up yet, from its day compared with today; nothing before it has a day. */
+function StatusNote({ date }: { date: string }) {
+  if (!date) return null;
+  const posted = postStatus(date) === "posted";
+  return (
+    <span className="text-muted-foreground font-normal"> · {posted ? "Posted" : "Scheduled"}</span>
   );
 }
 
@@ -270,21 +272,6 @@ function PlatformSelect({ id, value, disabled, onChange }: SelectProps<string>) 
           {platform.label}
         </option>
       ))}
-    </select>
-  );
-}
-
-function StatusSelect({ id, value, disabled, onChange }: SelectProps<SocialPostStatus>) {
-  return (
-    <select
-      id={id}
-      value={value}
-      disabled={disabled}
-      onChange={(event) => onChange(event.target.value as SocialPostStatus)}
-      className={SELECT_CLASSES}
-    >
-      <option value="scheduled">Scheduled</option>
-      <option value="posted">Posted</option>
     </select>
   );
 }
