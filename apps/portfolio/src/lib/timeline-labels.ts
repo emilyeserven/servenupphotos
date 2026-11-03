@@ -1,5 +1,5 @@
-import committedLabels from "@/data/timeline/TIMELINE.json";
-import { localFile } from "@/lib/localize";
+import committedLabels from "@portfolio/data/timeline/TIMELINE.json";
+import { localFile } from "@portfolio/lib/localize";
 
 /**
  * A timeline label from TIMELINE.json: a name for a run of days, such as "Japan" for a trip, which

@@ -101,6 +101,9 @@ type groupJSON struct {
 	Layout []AlbumRow `json:"layout,omitempty"`
 	// Hidden is true for an album the portfolio doesn't list or give a page.
 	Hidden bool `json:"hidden,omitempty"`
+	// Rules makes an album a Smart Album: the portfolio Grid's filters, as
+	// its URL names them, that pick its photos.
+	Rules json.RawMessage `json:"rules,omitempty"`
 	// Favorite is true for a tag pinned to the top of the tag lists.
 	Favorite bool `json:"favorite,omitempty"`
 }
@@ -130,6 +133,9 @@ type albumJSON struct {
 	// Hidden is true for an album the portfolio doesn't list or give a page;
 	// missing or false while it's shown.
 	Hidden bool `json:"hidden,omitempty"`
+	// Rules makes the album a Smart Album, whose photos are the ones these
+	// filters match; missing or null for an album of chosen photos.
+	Rules json.RawMessage `json:"rules,omitempty"`
 	// Favorite is only for tags; albums never set it.
 	Favorite bool `json:"favorite,omitempty"`
 }
@@ -168,6 +174,10 @@ type Group struct {
 	// Hidden is true for an album the portfolio doesn't list or give a page,
 	// along with the albums inside it.
 	Hidden bool `json:"hidden,omitempty"`
+	// Rules is a Smart Album's filters, by the names the portfolio's URL
+	// gives them, such as {"tag": "night", "orientation": "vertical"}; empty
+	// for an album of chosen photos.
+	Rules map[string]any `json:"rules,omitempty"`
 	// Favorite is true for a favorite tag, which the pipeline's and the
 	// portfolio's tag lists show first.
 	Favorite bool   `json:"favorite,omitempty"`
@@ -457,6 +467,7 @@ func (w *workspace) readGroup(p string) Group {
 	}
 	g.SpotlightZones, g.PhotoOrder = content.SpotlightZones, content.PhotoOrder
 	g.Covers, g.Layout, g.Hidden = content.Covers, content.Layout, content.Hidden
+	g.Rules = smartRules(content.Rules)
 	g.Favorite = content.Favorite
 	return g
 }

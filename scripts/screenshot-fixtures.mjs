@@ -1209,6 +1209,7 @@ export function defaultFixtures() {
       photos: body?.photoIds?.length ?? 0,
     }),
     "PUT /api/organize/albums/homepage-spotlight/visibility": { ...pendingSave(), files: 1 },
+    "PUT /api/organize/albums/japan/rules": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/descriptions": ({ body }) => ({
       ...pendingSave(),

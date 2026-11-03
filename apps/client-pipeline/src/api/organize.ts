@@ -51,6 +51,11 @@ export interface Group {
    * absent while it's shown.
    */
   hidden?: boolean;
+  /**
+   * For a Smart Album, the portfolio Grid's filters that pick its photos, by their URL names, such
+   * as `{ "tag": "night" }`; missing for an album of chosen photos.
+   */
+  rules?: Record<string, unknown>;
   /** True for a favorite tag, listed first on the Tags page and in the Tags field; absent otherwise. */
   favorite?: boolean;
   path: string;
@@ -312,6 +317,17 @@ export const setAlbumHiddenMutation = albumsMutation(
   ({ id }: { id: string; hidden: boolean }) =>
     `/api/organize/albums/${encodeURIComponent(id)}/visibility`,
   ({ hidden }) => ({ hidden }),
+);
+
+/**
+ * Saves `rules`, the portfolio Grid's filters by their URL names, as the album's Smart Album rules,
+ * or makes it an album of chosen photos again with null, as a change waiting for Commit.
+ */
+export const setAlbumRulesMutation = albumsMutation(
+  "rules",
+  ({ id }: { id: string; rules: Record<string, unknown> | null }) =>
+    `/api/organize/albums/${encodeURIComponent(id)}/rules`,
+  ({ rules }) => ({ rules }),
 );
 
 /** The mutation options that PUT `body` to `/api/organize/tags/<key>` and save the tag files it changes. */

@@ -319,3 +319,28 @@ func handleSetAlbumHidden(store *settings.Store, gh *github.Client) http.Handler
 		writeSocialResult(w, result, err, "could not save the album's visibility")
 	}
 }
+
+// handleSetAlbumRules saves the body's rules as the path's album's Smart
+// Album rules, or makes it an album of chosen photos again when they're
+// empty or null, as a change waiting for Commit.
+func handleSetAlbumRules(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Rules map[string]json.RawMessage `json:"rules"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid Smart Album rules body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetAlbumRules(ctx, cfg, r.PathValue("id"), req.Rules)
+		writeSocialResult(w, result, err, "could not save the Smart Album's rules")
+	}
+}

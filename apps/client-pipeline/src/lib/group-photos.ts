@@ -1,5 +1,6 @@
 import type { GroupKind } from "@/api/organize";
-import type { CombinedData } from "@/api/photos";
+import type { CombinedData, CombinedFiles } from "@/api/photos";
+import { withSmartAlbumEntries } from "@/lib/smart-album-photos";
 
 /** An ALLPHOTOS.json entry, as far as the album and tag pages read it. */
 export type CombinedPhoto = Record<string, unknown> & {
@@ -15,10 +16,36 @@ interface CurrentPhotos {
 
 /**
  * ALLPHOTOS.json at the photo data pull request's head when one is open, so photos in flight are
- * included, or else on the base branch; undefined when it couldn't be read.
+ * included, or else on the base branch; undefined when it couldn't be read. Each photo also lists
+ * the Smart Albums whose rules it matches, as the portfolio will show it.
  */
 export function currentPhotos(data: CombinedData): CurrentPhotos | undefined {
+  const known = worked.get(data);
+  if (known) return known;
+  const raw = currentListedPhotos(data);
+  if (!raw) return undefined;
+  const current = { ...raw, photos: withSmartAlbumEntries(raw.photos, currentLists(data)) };
+  worked.set(data, current);
+  return current;
+}
+
+/**
+ * The photos already worked out for each read of the combined lists, since working out which Smart
+ * Albums each photo is in runs every one through the portfolio's filters.
+ */
+const worked = new WeakMap<CombinedData, CurrentPhotos>();
+
+/**
+ * ALLPHOTOS.json as currentPhotos reads it, but with each photo listing only the albums its own
+ * JSON lists, without the Smart Albums its rules put it in.
+ */
+export function currentListedPhotos(data: CombinedData): CurrentPhotos | undefined {
   return headPhotos(data) ?? basePhotos(data);
+}
+
+/** The combined lists currentPhotos reads ALLPHOTOS.json from, at the head or on the base branch. */
+export function currentLists({ head, base }: CombinedData): CombinedFiles {
+  return head?.photos.data ? head : base;
 }
 
 function headPhotos({ head }: CombinedData): CurrentPhotos | undefined {

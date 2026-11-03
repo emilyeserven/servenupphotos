@@ -27,7 +27,8 @@ portfolio that show its photos, such as `["homepage"]`; see [Albums and Tags](al
 portfolio's Albums page, and its `layout` lists its page's rows, each `{ "textAbove", "photos", "textBelow" }` with
 Markdown text; see [Album Layouts and Covers](album-layouts.md#the-schema). Its `hidden`, when `true`, keeps it and
 the albums inside it off the portfolio's album lists and pages; see
-[Showing or hiding on the portfolio](albums-and-tags.md#showing-or-hiding-on-the-portfolio).
+[Showing or hiding on the portfolio](albums-and-tags.md#showing-or-hiding-on-the-portfolio). Its `rules`, when set, make it a
+[Smart Album](smart-albums.md): the Grid's filters, by their URL names, that pick its photos.
 An album's `parent` is the ID of the one album it sits inside, or `null` for a top-level album; the pipeline never
 lets an album end up inside itself. A tag file may have a `parent` too: the ID of a more general tag it's a kind of
 (see [Parent tags](albums-and-tags.md#parent-tags)), missing or `null` at the top, and a `favorite`, `true` for a
