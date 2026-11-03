@@ -2,8 +2,8 @@ import { mutationOptions } from "@tanstack/react-query";
 import { requestJson } from "@/api/settings";
 import type { FileChange } from "@/lib/optimistic";
 
-/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses or caption templates. */
-type SettingKind = "cameras" | "lenses" | "captions";
+/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates or timeline labels. */
+type SettingKind = "cameras" | "lenses" | "captions" | "timeline";
 
 /** What saving or removing a setting file did; nothing is saved when it already had that content. */
 interface SettingResult<T> {

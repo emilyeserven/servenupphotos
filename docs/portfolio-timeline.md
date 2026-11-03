@@ -2,7 +2,9 @@
 
 The portfolio's Timeline (`/timeline`) lists the photos in a time range, newest first, grouped by month and then by day.
 The month and day headings stay at the top of the window while their photos scroll past, and clicking a month's heading
-folds it away. Clicking a photo's thumbnail or title opens the photo viewer. The filters are described in
+folds it away. A day covered by a [timeline label](timeline-labels.md), such as **Japan** for a trip, shows the label beside
+the date in its heading, so the label of the days in view sits just under the month's heading. Clicking a photo's
+thumbnail or title opens the photo viewer. The filters are described in
 [Portfolio Filters](portfolio-filters.md).
 
 ## Scrubber
@@ -11,7 +13,7 @@ Once the chart has scrolled up out of the window, a scrubber appears down the ri
 It has a short tick for each month in the list and a label for each year at its first month, leaving out a year whose
 label would crowd the one above. Each tick sits as far down the scrubber as its month is down the list, so a busy month
 takes up more of it. A line marks the month now at the top of the window. Pointing at the scrubber shows a bubble naming
-the month there, and clicking or dragging along it scrolls the list to that month; on a phone, touch and drag. With the
+the month there, with the [timeline label](timeline-labels.md) of the days there under it, and clicking or dragging along it scrolls the list to that month; on a phone, touch and drag. With the
 scrubber focused, the up and down arrow keys move a month at a time. It measures the list again whenever it changes
 size, such as when a month is folded away or the thumbnail size changes.
 

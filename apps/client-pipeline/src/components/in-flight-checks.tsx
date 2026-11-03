@@ -90,6 +90,8 @@ export function FileChecks({ data }: { data: InFlightResponse }) {
         <dd>{groupsSummary(data.lenses)}</dd>
         <dt className="text-muted-foreground">Caption template files</dt>
         <dd>{groupsSummary(data.captions)}</dd>
+        <dt className="text-muted-foreground">Timeline label files</dt>
+        <dd>{groupsSummary(data.timeline)}</dd>
       </dl>
     </details>
   );

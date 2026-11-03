@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { dayKey } from "@/lib/heatmap";
+import { labelOn } from "@/lib/timeline-labels";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
@@ -237,11 +238,15 @@ function DaySection({
   dayPhotos,
   ...options
 }: RowOptions & { day: string; dayPhotos: Photo[] }) {
+  const label = dayLabel(dayPhotos);
+  // The scrubber reads data-label to name the label of the days under its pointer.
   return (
-    <li className="flex flex-col gap-1">
-      {/* Sticks just under the month's heading while the day's photos scroll under it. */}
-      <h3 className="sticky top-10 z-[5] -mx-1 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
-        {day}
+    <li data-day={day} data-label={label} className="flex flex-col gap-1">
+      {/* Sticks just under the month's heading while the day's photos scroll under it, so the
+          label beside the date reads as the label of the month's days now in view. */}
+      <h3 className="sticky top-10 z-[5] -mx-1 flex items-center gap-2 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
+        <span className="shrink-0">{day}</span>
+        <DayLabel label={label} />
       </h3>
       <ul className="flex flex-col gap-3">
         {dayPhotos.map((photo) => (
@@ -249,6 +254,22 @@ function DaySection({
         ))}
       </ul>
     </li>
+  );
+}
+
+/** The timeline label of the days the photos were taken, or "" without one. */
+function dayLabel(dayPhotos: Photo[]): string {
+  const [first] = dayPhotos;
+  return first ? labelOn(dayKey(first.takenAt)) : "";
+}
+
+/** The day's timeline label beside its date; nothing without one. */
+function DayLabel({ label }: { label: string }) {
+  if (!label) return null;
+  return (
+    <span className="min-w-0 truncate rounded-full bg-muted px-2 py-0.5 font-semibold text-foreground">
+      {label}
+    </span>
   );
 }
 

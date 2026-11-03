@@ -1,7 +1,7 @@
 # Changes waiting for Commit
 
 Nothing the pipeline saves goes to GitHub on its own. Saving a photo (Photo page, Bulk Upload, Explore Bucket), editing
-or removing one (Photos in Flight, Gallery), making or moving an album or tag, deleting an album or removing photos from one, saving a place, localization, metadata group, camera override or custom lens,
+or removing one (Photos in Flight, Gallery), making or moving an album or tag, deleting an album or removing photos from one, saving a place, localization, metadata group, camera override, custom lens or timeline label,
 adding albums and tags to photos from the Gallery, Update Data and Instagram dates all keep their files in the app as
 **changes waiting for Commit**. The only button that writes photo data to GitHub is **Commit**, on Photos in Flight and
 in the sync button's panel at the top right. Uploads to R2 still happen right away, since the JSON points at them.
@@ -43,7 +43,7 @@ the browser keeps a copy of them once the pipeline has been offline (see [Offlin
 
 **Commit** (`POST /api/photos/combined`) writes, as **one commit**, every change waiting for Commit, the browser-only
 [local edits](combined-data-store.md#local-edits), and `ALLPHOTOS.json`, `ALLALBUMS.json`, `ALLTAGS.json`,
-`PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json` and `LENSES.json` rebuilt from the result (`ALLPHOTOS.json` without
+`PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json`, `LENSES.json` and `TIMELINE.json` rebuilt from the result (`ALLPHOTOS.json` without
 [drafts](drafts.md), photos with no title). It uses GitHub's
 [Git database API](https://docs.github.com/en/rest/git/trees#create-a-tree): one tree with every changed file (a
 deletion is an entry with `sha: null`), one commit on top of the pull request's head, and the branch moved to it. With

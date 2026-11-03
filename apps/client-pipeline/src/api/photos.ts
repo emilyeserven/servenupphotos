@@ -119,6 +119,8 @@ export interface CombinedFiles {
   lenses: CombinedFile;
   /** CAPTIONS.json, the caption templates. */
   captions: CombinedFile;
+  /** TIMELINE.json, the timeline labels. */
+  timeline: CombinedFile;
 }
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */
@@ -163,6 +165,8 @@ export interface InFlightRead {
   lenses: InFlightGroupsRead;
   /** The caption template files, combined into CAPTIONS.json. */
   captions: InFlightGroupsRead;
+  /** The timeline label files, combined into TIMELINE.json. */
+  timeline: InFlightGroupsRead;
   images: InFlightImages;
 }
 
@@ -185,11 +189,12 @@ export interface InFlightResponse extends Omit<
   | "cameras"
   | "lenses"
   | "captions"
+  | "timeline"
 > {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens and caption template files in the pull request. */
+  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template and timeline label files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
   genres: InFlightGroups;
@@ -199,6 +204,7 @@ export interface InFlightResponse extends Omit<
   cameras: InFlightGroups;
   lenses: InFlightGroups;
   captions: InFlightGroups;
+  timeline: InFlightGroups;
 }
 
 /** The album, tag, place or localization files in the pull request, and the combined file built from them. */

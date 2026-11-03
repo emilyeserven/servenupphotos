@@ -670,7 +670,8 @@ type GroupKey =
   | "metainfo"
   | "cameras"
   | "lenses"
-  | "captions";
+  | "captions"
+  | "timeline";
 
 /** The kinds of data files listed after the photos, in order, with their headings. */
 const GROUPS: [GroupKey, string][] = [
@@ -683,6 +684,7 @@ const GROUPS: [GroupKey, string][] = [
   ["cameras", "Camera overrides"],
   ["lenses", "Custom lenses"],
   ["captions", "Caption templates"],
+  ["timeline", "Timeline labels"],
 ];
 
 /** The album, tag, place or localization files in the pull request, each with its JSON; nothing when there are none. */

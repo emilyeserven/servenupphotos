@@ -14,7 +14,7 @@ import (
 )
 
 // EntryKind is a kind of data file the pipeline saves whole, by ID: places,
-// localizations, metadata groups, camera overrides and custom lenses. Each is one JSON file in its kind's folder, and Commit
+// localizations, metadata groups, camera overrides, custom lenses and timeline labels. Each is one JSON file in its kind's folder, and Commit
 // combines them into the kind's AllFile.
 type EntryKind struct {
 	// Name is the kind's singular name, as shown: "place" or "localization".
@@ -40,7 +40,9 @@ var (
 	Cameras       = EntryKind{Name: "camera override", Folder: "cameras", AllFile: "CAMERAS.json"}
 	Lenses        = EntryKind{Name: "custom lens", Folder: "lenses", AllFile: "LENSES.json"}
 	Captions      = EntryKind{Name: "caption template", Folder: "captions", AllFile: "CAPTIONS.json"}
-	entryKinds    = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions}
+	// TimelineLabels name runs of days, such as a trip, on the portfolio's Timeline.
+	TimelineLabels = EntryKind{Name: "timeline label", Folder: "timeline", AllFile: "TIMELINE.json"}
+	entryKinds     = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, TimelineLabels}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as
