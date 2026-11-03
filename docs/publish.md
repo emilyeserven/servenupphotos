@@ -23,6 +23,19 @@ page doesn't use it.)
 > **Frontend analogy:** it's a draft kept in a client-side store (persisted to `localStorage`) instead of component
 > state, so it survives a reload and other pages can see it; Commit is the one "Save all" request.
 
+The calendar also shows the Instagram posts saved on photos under **Social media posts** (below): a day with one gets
+a check in its corner when every post that day is up, or a clock while one is scheduled (with a count when there's
+more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts** lists
+the posts on the days shown, each with its photo, **Posted** or **Scheduled**, whether the photo is **In flight** or as
+the **Gallery** has it, a link to the post and a link to edit the photo. Gallery and in flight photos are both
+included, and nothing more is fetched for them: the posts come from the photo files the calendar already read, with
+the changes waiting for Commit and local edits the app keeps (`useChangedPhotoFiles` in the combined data store) made
+over them, so a post saved on the Photo page shows here before **Commit**. `apps/client-pipeline/src/lib/social-post-days.ts`
+does the merging (`postedPhotoFiles`, `postsByDay`), for any page that needs each day's posts.
+
+> **Frontend analogy:** it's an optimistic UI: the list is the last server response with the store's unsent mutations
+> replayed over it, rather than a refetch.
+
 ## Social media posts
 
 The Photo page in edit mode (`/exif?edit=<path>`) has a **Social media posts** card, for keeping track of where the
