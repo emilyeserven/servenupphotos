@@ -16,7 +16,8 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { dayKey } from "@/lib/heatmap";
-import { labelOn } from "@/lib/timeline-labels";
+import { findTimelineLabel, labelDates, labelOn } from "@/lib/timeline-labels";
+import { TimelineLabelPicker } from "@/components/timeline-label-picker";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
@@ -46,7 +47,7 @@ type ImagePhoto = Photo & { image: PhotoImage };
 type TimelineSearch = TimeRangeValue &
   PhotoFilters &
   ShownPhotoSearch &
-  TimelineDisplaySearch & { chart?: "heatmap" };
+  TimelineDisplaySearch & { chart?: "heatmap"; label?: string };
 
 export const Route = createFileRoute("/timeline")({
   validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
@@ -55,11 +56,41 @@ export const Route = createFileRoute("/timeline")({
     ...parseShownPhoto(search),
     ...parseTimelineDisplay(search),
     ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
+    ...parseLabel(search.label),
   }),
   component: TimelineView,
 });
 
 const earliestPhoto = min(photos.map((photo) => photo.takenAt));
+
+/** The timeline label ID in the URL (`?label=japan-2026-09-22`), when there's one. */
+function parseLabel(label: unknown): { label?: string } {
+  return typeof label === "string" && label ? { label } : {};
+}
+
+/** Whether the Timeline shows every photo's days: no time range and no label. */
+function showsAllTime(range: TimeRangeValue, label: ReturnType<typeof findTimelineLabel>) {
+  return Object.keys(range).length === 0 && !label;
+}
+
+/** What the time range picker shows: the label's days as dates while one is chosen. */
+function pickerRange(
+  range: TimeRangeValue,
+  label: ReturnType<typeof findTimelineLabel>,
+  days: { start: Date; end: Date },
+): TimeRangeValue {
+  return label ? absoluteTimeRange(days.start, days.end) : range;
+}
+
+/**
+ * The days the Timeline shows: the chosen timeline label's, or else the time range's, with its
+ * start at the oldest photo when it has none.
+ */
+function shownDays(label: ReturnType<typeof findTimelineLabel>, range: TimeRangeValue, now: Date) {
+  if (label) return labelDates(label);
+  const { start = earliestPhoto, end } = resolveTimeRange(range, now);
+  return { start, end };
+}
 
 /** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
 function groupByDate(group: Photo[], pattern: string) {
@@ -78,22 +109,33 @@ function TimelineView() {
   const { shown, show, close } = useShownPhoto();
   const filters = parseFilters(search);
   const timeRange = parseTimeRange(search);
-  const { start = earliestPhoto, end } = resolveTimeRange(timeRange, now);
+  const label = findTimelineLabel(search.label);
+  const { start, end } = shownDays(label, timeRange, now);
   // Newest first, so the months and the photos in each read down from the latest.
   const matching = filterPhotos(photos, filters);
   const inRange = matching
     .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
-  const isAllTime = Object.keys(timeRange).length === 0;
+  const isAllTime = showsAllTime(timeRange, label);
   const display = resolveTimelineDisplay(search);
   const [chart, setChart] = useState<HTMLDivElement | null>(null);
   const [list, setList] = useState<HTMLOListElement | null>(null);
   useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
 
-  /** Shows the time range, keeping the filters and the rest of the view's options. */
-  function showRange(next: TimeRangeValue) {
+  /**
+   * Shows the time range, or the timeline label's days, keeping the filters and the rest of the
+   * view's options; a range and a label each replace the other.
+   */
+  function showRange(next: TimeRangeValue & { label?: string }) {
     navigate({
-      search: (prev) => ({ ...prev, range: undefined, from: undefined, to: undefined, ...next }),
+      search: (prev) => ({
+        ...prev,
+        range: undefined,
+        from: undefined,
+        to: undefined,
+        label: undefined,
+        ...next,
+      }),
     });
   }
 
@@ -109,10 +151,11 @@ function TimelineView() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <TimeRangePicker
-            value={timeRange}
+            value={pickerRange(timeRange, label, { start, end })}
             selection={{ from: start, to: end }}
             onChange={showRange}
           />
+          <TimelineLabelPicker value={label} onChange={(id) => showRange({ label: id })} />
           <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
           <Button variant="outline" size="sm" disabled={isAllTime} onClick={() => showRange({})}>
             <RotateCcw aria-hidden />
@@ -153,7 +196,8 @@ function TimelineView() {
         onOpen={show}
         listRef={setList}
       />
-      <TimelineScrubber list={list} chart={chart} />
+      {/* With one label's days, the ticks are its days rather than a month or two. */}
+      <TimelineScrubber list={list} chart={chart} byDay={label !== undefined} />
       <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
     </div>
   );
@@ -200,7 +244,7 @@ function MonthSection({
   const [open, setOpen] = useState(true);
   const listId = useId();
   return (
-    <li data-month={month} className="flex flex-col gap-1">
+    <li data-month={month} data-group={month.slice(-4)} className="flex flex-col gap-1">
       {/* Sticks to the top while the month's photos scroll under it. Its fixed height (h-10) is
           where each day's subheading sticks, just under it. */}
       <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center bg-background px-1">
@@ -241,7 +285,12 @@ function DaySection({
   const label = dayLabel(dayPhotos);
   // The scrubber reads data-label to name the label of the days under its pointer.
   return (
-    <li data-day={day} data-label={label} className="flex flex-col gap-1">
+    <li
+      data-day={day}
+      data-group={dayGroup(dayPhotos)}
+      data-label={label}
+      className="flex flex-col gap-1"
+    >
       {/* Sticks just under the month's heading while the day's photos scroll under it, so the
           label beside the date reads as the label of the month's days now in view. */}
       <h3 className="sticky top-10 z-[5] -mx-1 flex items-center gap-2 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
@@ -255,6 +304,12 @@ function DaySection({
       </ul>
     </li>
   );
+}
+
+/** The short month of the day the photos were taken, such as "Sep", which the scrubber labels days by. */
+function dayGroup(dayPhotos: Photo[]): string {
+  const [first] = dayPhotos;
+  return first ? format(first.takenAt, "MMM") : "";
 }
 
 /** The timeline label of the days the photos were taken, or "" without one. */
