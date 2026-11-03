@@ -80,7 +80,7 @@ export function SocialPostDatePicker({
             onSelect={(date) => pick(date ? format(date, "yyyy-MM-dd") : "")}
             modifiers={{ used }}
             modifiersClassNames={{
-              used: "text-muted-foreground line-through opacity-60 data-[selected=true]:no-underline data-[selected=true]:opacity-100",
+              used: "text-muted-foreground opacity-50 data-[selected=true]:opacity-100",
             }}
           />
           <CalendarFooter hasValue={Boolean(value)} onClear={() => pick("")} />

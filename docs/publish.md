@@ -50,7 +50,7 @@ it. A post with a platform that isn't listed, such as one typed into the JSON, k
 
 A post's day is picked on a calendar (shadcn's `Calendar` in a `Popover`, in
 `apps/client-pipeline/src/components/social-post-date-picker.tsx`), with **Clear** to leave it empty. Days other photos
-already post on are grayed out and struck through: any day in another photo's `socialPosts`, on any platform, or its
+already post on are grayed out: any day in another photo's `socialPosts`, on any platform, or its
 Instagram calendar day (`socialMediaPublishDate`). They're read from the Gallery's photos (`GET /api/photos/published`)
 with the photo data pull request's (`GET /api/photos/in-flight`) over them, so a photo the pull request changes counts
 with its days there; the photo being edited is left out. A grayed day can still be picked, since two photos can share
