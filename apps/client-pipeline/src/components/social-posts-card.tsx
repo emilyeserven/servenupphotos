@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { CalendarIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { type ReactNode } from "react";
 import { FieldLabel } from "@/components/field-label";
+import { GenerateCaption } from "@/components/generate-caption";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,13 +24,21 @@ interface SocialPostsCardProps {
   calendarDate: string | null;
   /** Saving is underway, so changing them now would not change the file. */
   disabled: boolean;
+  /** The photo's JSON as it's being edited, which Generate makes captions from. */
+  photo: Record<string, unknown>;
 }
 
 /**
  * The photo's posts on social media, each with its platform, whether it's scheduled or posted, its
  * day, link, caption and hashtags, saved as the JSON's "socialPosts".
  */
-export function SocialPostsCard({ value, onChange, calendarDate, disabled }: SocialPostsCardProps) {
+export function SocialPostsCard({
+  value,
+  onChange,
+  calendarDate,
+  disabled,
+  photo,
+}: SocialPostsCardProps) {
   const update = (id: string, next: Partial<SocialPostDraft>) =>
     onChange(value.map((post) => (post.id === id ? { ...post, ...next } : post)));
   return (
@@ -50,6 +59,7 @@ export function SocialPostsCard({ value, onChange, calendarDate, disabled }: Soc
             post={post}
             number={index + 1}
             disabled={disabled}
+            photo={photo}
             onChange={(next) => update(post.id, next)}
             onRemove={() => onChange(value.filter((p) => p.id !== post.id))}
           />
@@ -90,12 +100,20 @@ interface SocialPostFieldsProps {
   /** The post's place in the list, counted from 1, for its heading. */
   number: number;
   disabled: boolean;
+  photo: Record<string, unknown>;
   onChange: (next: Partial<SocialPostDraft>) => void;
   onRemove: () => void;
 }
 
 /** One post's fields, with a button to take it out of the list. */
-function SocialPostFields({ post, number, disabled, onChange, onRemove }: SocialPostFieldsProps) {
+function SocialPostFields({
+  post,
+  number,
+  disabled,
+  photo,
+  onChange,
+  onRemove,
+}: SocialPostFieldsProps) {
   const id = (field: string) => `${post.id}-${field}`;
   const input = (field: "url" | "hashtags") => ({
     id: id(field),
@@ -158,10 +176,20 @@ function SocialPostFields({ post, number, disabled, onChange, onRemove }: Social
       <Field id={id("url")} label="Link" help="The post's address, once it's up.">
         <Input type="url" placeholder="https://…" {...input("url")} />
       </Field>
-      <Field id={id("caption")} label="Caption" help="The post's text, without its hashtags.">
+      <Field
+        id={id("caption")}
+        label="Caption"
+        help="The post's text. Generate writes it from a caption template and the photo's data."
+      >
+        <GenerateCaption
+          post={post}
+          photo={photo}
+          disabled={disabled}
+          onGenerate={(caption) => onChange({ caption })}
+        />
         <Textarea
           id={id("caption")}
-          rows={3}
+          rows={post.caption.includes("\n") ? 8 : 3}
           value={post.caption}
           disabled={disabled}
           onChange={(event) => onChange({ caption: event.target.value })}
