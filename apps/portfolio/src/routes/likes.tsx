@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HeartIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-import { LikedList, type LikedListOptions } from "@/components/liked-list";
+import { LikedList, type LikedListService } from "@/components/liked-list";
 import { LikedPhotos } from "@/components/liked-photos";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import type { ImagePhoto } from "@/components/photo-tiles";
@@ -15,20 +15,14 @@ import {
 } from "@/lib/shown-photo";
 
 interface LikesSearch extends ShownPhotoSearch {
-  /** Set when the list of titles is a Markdown list of links. Left out for plain titles. */
-  links?: true;
-  /** Set when the list of titles has the visitor's comments after them. */
-  comments?: true;
-  /** Set when the list is the photos' ids, comma separated, to send to the photographer. */
-  photographer?: true;
+  /** Set to `text` when the text to send is just the ids, for Messenger or a text message. Left out for Discord. */
+  service?: "text";
 }
 
-/** Reads the list's options and the open photo from the URL. */
+/** Reads the message service and the open photo from the URL. */
 function validateLikesSearch(search: Record<string, unknown>): LikesSearch {
   return {
-    ...(search.links === true ? { links: true as const } : {}),
-    ...(search.comments === true ? { comments: true as const } : {}),
-    ...(search.photographer === true ? { photographer: true as const } : {}),
+    ...(search.service === "text" ? { service: "text" as const } : {}),
     ...parseShownPhoto(search),
   };
 }
@@ -82,9 +76,9 @@ function LikesPage() {
         ) : (
           <LikedList
             photos={liked}
-            options={listOptions(search)}
-            onOptions={(options) =>
-              void navigate({ search: optionsSearch(options), replace: true })
+            service={search.service ?? "discord"}
+            onService={(service) =>
+              void navigate({ search: serviceSearch(service), replace: true })
             }
           />
         )}
@@ -97,22 +91,11 @@ function LikesPage() {
   );
 }
 
-/** The list's options from the URL. */
-function listOptions(search: LikesSearch): LikedListOptions {
-  return {
-    links: search.links === true,
-    comments: search.comments === true,
-    photographer: search.photographer === true,
-  };
-}
-
-/** The list's options as the URL keeps them, leaving out the ones that are off. */
-function optionsSearch({ links, comments, photographer }: LikedListOptions) {
+/** The service as the URL keeps it, leaving out Discord, the default. */
+function serviceSearch(service: LikedListService) {
   return (prev: LikesSearch): LikesSearch => ({
     ...prev,
-    links: links || undefined,
-    comments: comments || undefined,
-    photographer: photographer || undefined,
+    service: service === "text" ? "text" : undefined,
   });
 }
 
