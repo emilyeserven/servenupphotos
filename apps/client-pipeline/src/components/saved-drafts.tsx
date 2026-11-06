@@ -5,9 +5,9 @@ import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-
 import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
-import { isDraft, useUntitledDrafts } from "@/lib/drafts";
-import { undecidedPaths } from "@/lib/undecided";
-import { useLocalEditsStore } from "@/stores/local-edits";
+import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
+import { editedData, undecidedPaths } from "@/lib/undecided";
+import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 
 interface SavedDraftsProps {
   /** Whether photos are in flight too: these drafts' Undecided panel is named after the branch to tell it apart from theirs. */
@@ -19,7 +19,7 @@ export const DRAFT_FILTERS = "draft";
 
 /**
  * The drafts already on the base branch and not in flight (photos without a title, which
- * ALLPHOTOS.json leaves out), in an Undecided queue or a list of drafts, so they can be named
+ * ALLPHOTOS.json leaves out), leaving out the ones that lost in a compare group, in an Undecided queue or a list of drafts, so they can be named
  * from here, with their own filters and sort. Placeholders while they're read, and nothing when
  * untitled photos aren't kept as drafts.
  */
@@ -49,7 +49,7 @@ function NoDrafts({ branch }: { branch: string }) {
     <section className="flex flex-col gap-1">
       <h2 className="text-lg font-semibold">Drafts on {branch}</h2>
       <p className="text-muted-foreground text-sm">
-        None: every photo on {branch} has a title, or is in flight above.
+        None: every photo on {branch} has a title, is in flight above, or is in Unselected Photos.
       </p>
     </section>
   );
@@ -60,11 +60,19 @@ function isBaseDraft(file: PublishedFile): boolean {
   return !file.error && !file.inFlight && isDraft(file.data);
 }
 
+/**
+ * Whether the draft lost in a compare group, with the local edits made: it's listed in Unselected
+ * Photos on the Compare page instead.
+ */
+function lostInCompare(file: PublishedFile, edits: Record<string, LocalEdit>): boolean {
+  return isUnselected(editedData(file, edits));
+}
+
 function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedResponse }) {
   const edits = useLocalEditsStore((s) => s.edits);
   const { filters, filter } = usePhotoFilters(DRAFT_FILTERS);
   const sort = useSearch({ strict: false, select: parseDraftSort });
-  const all = data.files.filter(isBaseDraft);
+  const all = data.files.filter((file) => isBaseDraft(file) && !lostInCompare(file, edits));
   if (all.length === 0) return <NoDrafts branch={data.branch} />;
   const drafts = sortDrafts(filter(all), sort);
   const undecided = undecidedPaths(drafts, edits);

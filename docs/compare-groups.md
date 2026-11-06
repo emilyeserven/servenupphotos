@@ -65,7 +65,8 @@ Thumbnail), the group it lost in, the day, what's left of it in R2, and:
 - **Move back**, which takes it out of Unselected Photos. Its images stay as they are, so one deleted from R2 stays without
   them.
 
-An unselected photo is marked **Unselected** in the Gallery and Photos in Flight (linked here), and **Next untitled
+An unselected photo is marked **Unselected** in the Gallery and Photos in Flight (linked here), is left out of
+Photos in Flight's **Drafts on `<branch>`**, and **Next untitled
 photo** skips it.
 
 ### Off the portfolio
