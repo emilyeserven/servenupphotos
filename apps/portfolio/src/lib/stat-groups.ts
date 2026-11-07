@@ -49,6 +49,8 @@ export interface GroupDef {
   linked?: string;
   /** For the top card of a chain that narrows down, the title of the chain's box, such as "Calendar". */
   runTitle?: string;
+  /** For the first card of a chain or of linked cards, a line under the box's title saying what it shows. */
+  runDescription?: string;
 }
 
 /** One way to make a group with variants, such as Lenses by brand. */
