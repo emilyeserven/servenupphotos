@@ -6,7 +6,6 @@ import {
 } from "@portfolio/lib/metadata-groups";
 import type { CameraSettings, Photo } from "@portfolio/lib/photos";
 import { filterPhotos, parseFilters } from "@portfolio/lib/photo-filters";
-import { inHours } from "@portfolio/lib/time-of-day";
 import { matchesOrientation, ORIENTATION_KEY } from "@portfolio/lib/orientation";
 
 /** The camera settings the Table's and Grid's range sliders narrow by, named as they are in the URL. */
@@ -22,9 +21,6 @@ export type EquipmentKey = (typeof EQUIPMENT_KEYS)[number];
 /** The camera and lens group filters, each matching the values of one metadata group. */
 const EQUIPMENT_GROUP_KEYS = ["cameraGroup", "lensGroup"] as const;
 
-/** The filter for the time of day each photo was taken, a range of hours such as "6-18". */
-export const TIME_KEY = "time";
-
 /**
  * The camera filters as they're named in the URL, which the Table and Grid have and the other views
  * don't, with the photo's orientation among them.
@@ -33,7 +29,6 @@ export const CAMERA_FILTER_KEYS = [
   ...EQUIPMENT_KEYS,
   ...EQUIPMENT_GROUP_KEYS,
   ...RANGE_KEYS,
-  TIME_KEY,
   ORIENTATION_KEY,
 ] as const;
 
@@ -148,12 +143,6 @@ function matchesEquipment(photo: Photo, key: EquipmentKey, filters: CameraFilter
   return group === undefined || inEquipmentGroup(photo, key, group);
 }
 
-/** Whether the photo was taken in the time of day chosen, or none is. */
-function matchesTime(photo: Photo, filters: CameraFilters): boolean {
-  const range = parseRange(filters[TIME_KEY]);
-  return !range || inHours(photo, range);
-}
-
 /** Whether the photo matches every one of the camera filters that's set. */
 function matchesCameraFilters(photo: Photo, filters: CameraFilters): boolean {
   return (
@@ -162,7 +151,6 @@ function matchesCameraFilters(photo: Photo, filters: CameraFilters): boolean {
       const range = parseRange(filters[key]);
       return !range || inRange(photo, key, range);
     }) &&
-    matchesTime(photo, filters) &&
     matchesOrientation(photo, filters[ORIENTATION_KEY])
   );
 }

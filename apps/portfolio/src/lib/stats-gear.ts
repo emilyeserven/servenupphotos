@@ -1,7 +1,13 @@
-import { type Bucket, bucketGroup, type StatGroup, valueGroup } from "@/lib/stat-groups";
+import {
+  type Bucket,
+  bucketGroup,
+  type GroupDef,
+  type StatGroup,
+  valueGroup,
+} from "@/lib/stat-groups";
 import { groupRange, parseRange, rangeValues } from "@/lib/camera-filters";
 import { groupTree, groupValues, type MetaGroup } from "@/lib/metadata-groups";
-import type { Photo } from "@/lib/photos";
+import { type Photo, photos as allPhotos } from "@/lib/photos";
 
 /** What the photos have for "no camera" in place of one. */
 const UNKNOWN_CAMERA = "Unknown camera";
@@ -76,32 +82,49 @@ function categoryTitle(equipment: Equipment, category: MetaGroup): string {
   return `${plural} by ${category.name.toLowerCase()}`;
 }
 
+/** The ID of the group of every camera or lens, which their categories narrow. */
+const EQUIPMENT_GROUP_IDS: Record<Equipment, string> = { camera: "cameras", lens: "lenses" };
+
+/** A category's group: its groups as rows, counting the photos with a camera or lens. */
+function categoryDef(
+  equipment: Equipment,
+  id: string,
+  title: string,
+  inside: MetaGroup[],
+): GroupDef {
+  const buckets = inside.map((group) => metaBucket(equipment, group));
+  const known = (photo: Photo) => photo[equipment] !== null;
+  return {
+    id,
+    narrows: EQUIPMENT_GROUP_IDS[equipment],
+    build: (list) =>
+      uncategorized(bucketGroup(title, list.filter(known), buckets, inMetaGroup(equipment))),
+  };
+}
+
 /**
  * The camera or lens metadata groups set on the pipeline, as groups of rows: each top-level group
  * with groups in it, such as Type, is a category whose rows are the groups in it, such as Prime;
- * the top-level groups with none in them go together under "Lens groups".
+ * the top-level groups with none in them go together under "Lens groups". Each narrows the group
+ * of every camera or lens.
  */
-function categoryGroups(equipment: Equipment, list: Photo[]): StatGroup[] {
-  const tree = groupTree(equipment);
-  const top = tree.filter(([, depth]) => depth === 0).map(([group]) => group);
-  const childrenOf = (id: string) => tree.filter(([g]) => g.parent === id).map(([g]) => g);
-  const inside = inMetaGroup(equipment);
+function categoryDefs(equipment: Equipment): GroupDef[] {
+  const tree = groupTree(equipment).map(([group]) => group);
+  const childrenOf = (id: string) => tree.filter((group) => group.parent === id);
+  const top = tree.filter((group) => !tree.some((other) => other.id === group.parent));
   const categories = top.filter((group) => childrenOf(group.id).length > 0);
   const loose = top.filter((group) => childrenOf(group.id).length === 0);
-  const groups = categories.map((category) =>
-    uncategorized(
-      bucketGroup(
-        categoryTitle(equipment, category),
-        list.filter((photo) => photo[equipment] !== null),
-        childrenOf(category.id).map((group) => metaBucket(equipment, group)),
-        inside,
-      ),
+  const defs = categories.map((category) =>
+    categoryDef(
+      equipment,
+      `${equipment}-${category.id}`,
+      categoryTitle(equipment, category),
+      childrenOf(category.id),
     ),
   );
-  if (loose.length === 0) return groups;
+  if (loose.length === 0) return defs;
   const title = `${equipment === "lens" ? "Lens" : "Camera"} groups`;
-  const buckets = loose.map((group) => metaBucket(equipment, group));
-  return [...groups, uncategorized(bucketGroup(title, list, buckets, inside))];
+  return [...defs, categoryDef(equipment, `${equipment}-groups`, title, loose)];
 }
 
 /** A group whose uncounted photos are the ones in none of its categories. */
@@ -114,13 +137,20 @@ function equipmentBucket(equipment: Equipment) {
   return (name: string): Bucket => ({ key: name, label: name, filter: { [equipment]: name } });
 }
 
-/** The Gear section's groups: cameras, lenses, their categories and focal length ranges. */
-export function gearGroups(list: Photo[], all: Photo[]): StatGroup[] {
-  return [
-    valueGroup("Cameras", list, cameraOf, equipmentBucket("camera")),
-    ...categoryGroups("camera", list),
-    valueGroup("Lenses", list, (photo) => photo.lens, equipmentBucket("lens")),
-    ...categoryGroups("lens", list),
-    focalGroup(list, all),
-  ];
-}
+/**
+ * The Gear section's groups: cameras, the lens categories (narrowing the lenses), lenses and focal
+ * length ranges. Camera categories come before the cameras when there are any.
+ */
+export const GEAR_GROUPS: GroupDef[] = [
+  ...categoryDefs("camera"),
+  {
+    id: "cameras",
+    build: (list) => valueGroup("Cameras", list, cameraOf, equipmentBucket("camera")),
+  },
+  ...categoryDefs("lens"),
+  {
+    id: "lenses",
+    build: (list) => valueGroup("Lenses", list, (photo) => photo.lens, equipmentBucket("lens")),
+  },
+  { id: "focal-length", build: (list) => focalGroup(list, allPhotos) },
+];

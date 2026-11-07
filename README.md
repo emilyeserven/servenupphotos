@@ -94,7 +94,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Albums](docs/portfolio-albums.md) (`/albums` on the portfolio): a strip of each album's photos, in the order set on the pipeline
 - [Portfolio analytics](docs/portfolio-analytics.md): Umami page views and query events on the published portfolio
 - [Portfolio Tags](docs/portfolio-tags.md) (`/tags` on the portfolio): every tag with a few of its photos, grouped under parent tags, each linking to the Grid
-- [Portfolio Stats](docs/portfolio-stats.md) (`/stats` on the portfolio): the photos counted by gear, place and time, with filters, and clicking a row to narrow the counts to its photos
+- [Portfolio Stats](docs/portfolio-stats.md) (`/stats` on the portfolio): the photos counted by gear, place and time, each row opening its photos on the Grid
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
 - [Portfolio Back to top button](docs/portfolio-back-to-top.md): the button at the bottom left of every page but the Map and Color that scrolls back to the top
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other

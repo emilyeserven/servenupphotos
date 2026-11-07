@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import type { Photo } from "@/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** A Quick dates choice: this date, this month or this season, in the years before. */
 export type QuickDate = "date" | "month" | "season";

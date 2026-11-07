@@ -29,12 +29,3 @@ export function hourStart(hour: string): string {
 export function hourEnd(hour: string): string {
   return clockText(Number(hour) + 1);
 }
-
-/**
- * Whether the photo was taken within a range of hours the URL writes, such as ["6", "18"]: from
- * the start of the first hour to the end of the last, so 6 AM to 7 PM.
- */
-export function inHours(photo: Photo, [low, high]: [string, string]): boolean {
-  const hour = photo.takenAt.getHours();
-  return hour >= Number(low) && hour <= Number(high);
-}

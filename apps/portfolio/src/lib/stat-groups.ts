@@ -12,9 +12,7 @@ export interface StatRow {
    * The filter that narrows the photos to the row's, as the URL writes it, such as
    * `{ camera: "Fujifilm X-T5" }`; left out when no filter can.
    */
-  filter?: Record<string, string>;
-  /** The days the row's photos were taken between, for a year, which the Timeline narrows to. */
-  timeline?: { from: string; to: string };
+  filter?: Record<string, string | string[]>;
 }
 
 /** A group of rows on the Stats page, such as Cameras or Time of day. */
@@ -25,6 +23,18 @@ export interface StatGroup {
   missing: number;
   /** Why it couldn't count them: they don't say, or they aren't in any of its categories. */
   missingReason: "unknown" | "uncategorized";
+}
+
+/**
+ * How the Stats page makes a group from the photos. A group that `narrows` another, such as
+ * Countries narrowing Cities, picks which of its photos that one counts: clicking one of its rows
+ * narrows the other group to the row's photos instead of opening them on the Grid.
+ */
+export interface GroupDef {
+  id: string;
+  build: (list: Photo[]) => StatGroup;
+  /** The ID of the group its rows narrow. */
+  narrows?: string;
 }
 
 /** A key photos are counted by, with its row's text and filter. */

@@ -20,7 +20,13 @@ import { dayKey } from "@/lib/heatmap";
 import { inQuickDate, parseQuickDate, type QuickDate } from "@/lib/quick-dates";
 import { findTimelineLabel, labelDates, labelOn } from "@/lib/timeline-labels";
 import { TimelineLabelPicker } from "@/components/timeline-label-picker";
-import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import {
+  filterPhotos,
+  hasFilters,
+  parseFilters,
+  type PhotoFilters,
+  withoutFilters,
+} from "@/lib/photo-filters";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
@@ -125,7 +131,8 @@ function TimelineView() {
   const navigate = Route.useNavigate();
   const [now] = useState(() => new Date());
   const { shown, show, close } = useShownPhoto();
-  const filters = parseFilters(search);
+  // The Quick dates choice is part of the Timeline's time range here, which its chart leaves out.
+  const filters = withoutFilters(parseFilters(search), ["when"]);
   const timeRange = parseTimeRange(search);
   const label = findTimelineLabel(search.label);
   const { start, end } = shownDays(label, timeRange, now);

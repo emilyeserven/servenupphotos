@@ -1,181 +1,245 @@
-import { CalendarDays, CalendarRange, type LucideIcon, Sunrise } from "lucide-react";
-import type { FilterOption } from "@portfolio/lib/filter-options";
 import type { Photo } from "@portfolio/lib/photos";
+import { inQuickDate, parseQuickDate, type QuickDate } from "@portfolio/lib/quick-dates";
+
+/** The "when" filters that take any number of choices: months and days of the week. */
+const LIST_KEYS = ["month", "weekday"] as const;
+
+type ListKey = (typeof LIST_KEYS)[number];
+
+/** The time of day filter: a range of hours, such as "6-18" for 6 AM to 7 PM. */
+export const TIME_KEY = "time";
+
+/** The date range filter's first and last day, as YYYY-MM-DD. */
+export const DATE_KEYS = ["start", "end"] as const;
+
+/** The Quick dates filter: this date, month or season in the years before (`?when=month`). */
+const QUICK_DATE_KEY = "when";
 
 /**
- * The "when" filters every view with filters shares, as they're named in the URL: the part of the
- * day, the season, the month and the day of the week the photo was taken on.
+ * The "when" filters every view with filters shares, as the URL names them: the months and days
+ * of the week, across every year, the hours of the day, a range of dates, and the Timeline's Quick
+ * dates (this date, month or season in the years before).
  */
-export const WHEN_KEYS = ["daypart", "season", "month", "weekday"] as const;
+export const WHEN_KEYS = [...LIST_KEYS, TIME_KEY, ...DATE_KEYS, QUICK_DATE_KEY] as const;
 
 export type WhenKey = (typeof WHEN_KEYS)[number];
 
-/** One choice of a "when" filter: its URL value, its name, and whether a photo is in it. */
+/** The "when" filters, each left out when it isn't set. */
+export type WhenFilters = {
+  /** Months by their lowercase English name, such as ["june", "july"], in any year. */
+  month?: string[];
+  /** Days of the week by their lowercase English name, such as ["saturday"]. */
+  weekday?: string[];
+  /** A range of hours on a 24-hour clock, such as "6-18". */
+  time?: string;
+  start?: string;
+  end?: string;
+  /** Today's date, month or season, in the years before. */
+  when?: QuickDate;
+};
+
+/** One choice of a "when" filter, such as a month: its URL value, its names and whether a photo is in it. */
 export interface WhenChoice {
-  key: WhenKey;
   value: string;
   label: string;
-  /** A second, quieter line, such as a part of the day's hours. */
-  detail?: string;
-  /** How deep it goes in its dropdown: a month is under its season. */
-  depth: number;
+  /** Its short name, such as "Mar", for a grid of buttons. */
+  short: string;
   matches: (photo: Photo) => boolean;
 }
 
-/** An hour as a 12-hour clock writes it, such as "5 AM" or "12 PM". */
-function hourText(hour: number): string {
-  return `${hour % 12 || 12} ${hour % 24 < 12 ? "AM" : "PM"}`;
+/** A month's name, such as "March" or "Mar", for its number from 0. */
+function monthName(number: number, style: "short" | "long" = "long"): string {
+  return new Date(2000, number, 1).toLocaleString("en-US", { month: style });
 }
 
-/** A part of the day, from the start of its first hour to the end of its last. */
-function daypart(value: string, label: string, first: number, last: number): WhenChoice {
+/** A month, by its number from 0. */
+function monthChoice(number: number): WhenChoice {
   return {
-    key: "daypart",
-    value,
-    label,
-    detail: `${hourText(first)}–${hourText(last + 1)}`,
-    depth: 0,
-    matches: (photo) => photo.takenAt.getHours() >= first && photo.takenAt.getHours() <= last,
+    value: monthName(number).toLowerCase(),
+    label: monthName(number),
+    short: monthName(number, "short"),
+    matches: (photo) => photo.takenAt.getMonth() === number,
   };
+}
+
+/** The months, January first. */
+export const MONTHS: WhenChoice[] = Array.from({ length: 12 }, (_, number) => monthChoice(number));
+
+/** A season: a shortcut for its three months, as the northern hemisphere has them. */
+export interface Season {
+  value: string;
+  label: string;
+  /** Its months, in order, winter's wrapping round the new year. */
+  months: WhenChoice[];
+}
+
+/** A season by the numbers of its months from 0. */
+function season(label: string, numbers: number[]): Season {
+  return { value: label.toLowerCase(), label, months: numbers.map((n) => MONTHS[n]!) };
+}
+
+/** The seasons, spring first. */
+export const SEASONS: Season[] = [
+  season("Spring", [2, 3, 4]),
+  season("Summer", [5, 6, 7]),
+  season("Autumn", [8, 9, 10]),
+  season("Winter", [11, 0, 1]),
+];
+
+/** A season's months as a range, such as "Mar–May". */
+export function seasonSpan({ months }: Season): string {
+  return `${months[0]!.short}–${months.at(-1)!.short}`;
+}
+
+/** A day of the week, by its number as `getDay()` counts, from Sunday. */
+function weekdayChoice(day: number): WhenChoice {
+  // 2023-01-01 was a Sunday.
+  const date = new Date(2023, 0, 1 + day);
+  const label = date.toLocaleString("en-US", { weekday: "long" });
+  return {
+    value: label.toLowerCase(),
+    label,
+    short: date.toLocaleString("en-US", { weekday: "short" }),
+    matches: (photo) => photo.takenAt.getDay() === day,
+  };
+}
+
+/** The days of the week, Monday first. */
+export const WEEKDAYS: WhenChoice[] = [1, 2, 3, 4, 5, 6, 0].map(weekdayChoice);
+
+/** A part of the day: a quick pick for the hours, from the start of its first hour to the end of its last. */
+export interface Daypart {
+  id: string;
+  label: string;
+  first: number;
+  last: number;
 }
 
 /**
  * The parts of the day, by the clock where the photo was taken, as its capture time has no time
  * zone.
  */
-export const DAYPARTS: WhenChoice[] = [
-  daypart("late-night", "Late night", 0, 4),
-  daypart("early-morning", "Early morning", 5, 7),
-  daypart("morning", "Morning", 8, 11),
-  daypart("afternoon", "Afternoon", 12, 16),
-  daypart("evening", "Evening", 17, 20),
-  daypart("night", "Night", 21, 23),
+export const DAYPARTS: Daypart[] = [
+  { id: "late-night", label: "Late night", first: 0, last: 4 },
+  { id: "early-morning", label: "Early morning", first: 5, last: 7 },
+  { id: "morning", label: "Morning", first: 8, last: 11 },
+  { id: "afternoon", label: "Afternoon", first: 12, last: 16 },
+  { id: "evening", label: "Evening", first: 17, last: 20 },
+  { id: "night", label: "Night", first: 21, last: 23 },
 ];
 
-/** A month's name, such as "March" or "Mar", for its number from 0. */
-function monthName(month: number, style: "short" | "long" = "long"): string {
-  return new Date(2000, month, 1).toLocaleString("en-US", { month: style });
+/** An hour as a 12-hour clock writes it, such as "5 AM" or "12 PM". */
+function hourText(hour: number): string {
+  return `${hour % 12 || 12} ${hour % 24 < 12 ? "AM" : "PM"}`;
 }
 
-/** A month, by its number from 0, with its lowercase English name in the URL, such as "march". */
-function monthChoice(number: number): WhenChoice {
-  return {
-    key: "month",
-    value: monthName(number).toLowerCase(),
-    label: monthName(number),
-    depth: 1,
-    matches: (photo) => photo.takenAt.getMonth() === number,
+/** A part of the day's hours, such as "8 AM–12 PM". */
+export function daypartSpan({ first, last }: Daypart): string {
+  return `${hourText(first)}–${hourText(last + 1)}`;
+}
+
+/**
+ * The hours a part of the day sets, from the first to the last of `hours` (the hours the photos
+ * were taken in) inside it, so the hours slider can show it; undefined when none is.
+ */
+export function daypartRange({ first, last }: Daypart, hours: string[]): string | undefined {
+  const inside = hours.filter((hour) => Number(hour) >= first && Number(hour) <= last);
+  return inside.length > 0 ? `${inside[0]}-${inside.at(-1)}` : undefined;
+}
+
+/** Each list filter's choices. */
+const LIST_CHOICES: Record<ListKey, WhenChoice[]> = { month: MONTHS, weekday: WEEKDAYS };
+
+/** The list filter's known values in the URL's search, in their order, leaving out anything else. */
+function parseList(key: ListKey, value: unknown): string[] {
+  const list: unknown[] = Array.isArray(value) ? value : [value];
+  return LIST_CHOICES[key].map((c) => c.value).filter((known) => list.includes(known));
+}
+
+/** A YYYY-MM-DD date in the URL's search, or undefined for anything else. */
+function parseDay(value: unknown): string | undefined {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : undefined;
+}
+
+/** A range of hours in the URL's search, such as "6-18", or undefined for anything else. */
+function parseHours(value: unknown): string | undefined {
+  return typeof value === "string" && /^\d{1,2}-\d{1,2}$/.test(value) ? value : undefined;
+}
+
+/** Whether a filter's value is set: some text, or a list with something in it. */
+function isSet(value: unknown): boolean {
+  return Array.isArray(value) ? value.length > 0 : value !== undefined;
+}
+
+/** The "when" filters in the URL's search, leaving out anything that isn't one or is empty. */
+export function parseWhen(search: Record<string, unknown>): WhenFilters {
+  const parsed: Record<string, unknown> = {
+    month: parseList("month", search.month),
+    weekday: parseList("weekday", search.weekday),
+    time: parseHours(search[TIME_KEY]),
+    start: parseDay(search.start),
+    end: parseDay(search.end),
+    ...parseQuickDate(search[QUICK_DATE_KEY]),
   };
+  return Object.fromEntries(Object.entries(parsed).filter(([, value]) => isSet(value)));
 }
 
-/** A season, by the months it starts and ends with, as the northern hemisphere has them. */
-function season(value: string, label: string, months: number[]): WhenChoice {
-  return {
-    key: "season",
-    value,
-    label,
-    detail: `${monthName(months[0]!, "short")}–${monthName(months.at(-1)!, "short")}`,
-    depth: 0,
-    matches: (photo) => months.includes(photo.takenAt.getMonth()),
-  };
+/** Whether a date range is set, from either end. */
+export function hasDateRange(filters: WhenFilters): boolean {
+  return filters.start !== undefined || filters.end !== undefined;
 }
 
-/** The seasons, winter wrapping round the new year. */
-export const SEASONS: WhenChoice[] = [
-  season("spring", "Spring", [2, 3, 4]),
-  season("summer", "Summer", [5, 6, 7]),
-  season("autumn", "Autumn", [8, 9, 10]),
-  season("winter", "Winter", [11, 0, 1]),
-];
-
-/** The months, January first. */
-export const MONTHS: WhenChoice[] = Array.from({ length: 12 }, (_, number) => monthChoice(number));
-
-/** Each season, with its months under it, for the **Time of year** dropdown. */
-const TIMES_OF_YEAR: WhenChoice[] = [
-  SEASONS[0]!,
-  ...MONTHS.slice(2, 5),
-  SEASONS[1]!,
-  ...MONTHS.slice(5, 8),
-  SEASONS[2]!,
-  ...MONTHS.slice(8, 11),
-  SEASONS[3]!,
-  MONTHS[11]!,
-  ...MONTHS.slice(0, 2),
-];
-
-/** A day of the week, by its number as `getDay()` counts, from Sunday. */
-function weekday(day: number): WhenChoice {
-  // 2023-01-01 was a Sunday.
-  const label = new Date(2023, 0, 1 + day).toLocaleString("en-US", { weekday: "long" });
-  return {
-    key: "weekday",
-    value: label.toLowerCase(),
-    label,
-    depth: 0,
-    matches: (photo) => photo.takenAt.getDay() === day,
-  };
+/**
+ * How many "when" filters are set: the months, the days, the hours, the date range and the Quick
+ * date count one each.
+ */
+export function whenCount(filters: WhenFilters): number {
+  const set = [filters.month, filters.weekday, filters.time, filters.when].filter(isSet).length;
+  return set + Number(hasDateRange(filters));
 }
 
-/** The days of the week, Monday first. */
-export const WEEKDAYS: WhenChoice[] = [1, 2, 3, 4, 5, 6, 0].map(weekday);
-
-/** Every "when" choice, to find one by its key and value. */
-const ALL_CHOICES = [...DAYPARTS, ...SEASONS, ...MONTHS, ...WEEKDAYS];
-
-/** Whether the photo was taken in the "when" filter's choice; none is in a choice that isn't there. */
-export function matchesWhen(photo: Photo, key: WhenKey, value: string): boolean {
-  const choice = ALL_CHOICES.find((c) => c.key === key && c.value === value);
-  return choice !== undefined && choice.matches(photo);
+/** Whether the photo is in one of the list filter's choices, or none are chosen. */
+function matchesList(photo: Photo, key: ListKey, values: string[] | undefined): boolean {
+  if (!values) return true;
+  return LIST_CHOICES[key].some((choice) => values.includes(choice.value) && choice.matches(photo));
 }
 
-/** A "when" dropdown: its name and icon, the URL keys it sets, and its choices in order. */
-export interface WhenDropdown {
-  label: string;
-  plural: string;
-  Icon: LucideIcon;
-  keys: readonly WhenKey[];
-  choices: WhenChoice[];
+/** Whether the photo was taken within the hours, from the start of the first to the end of the last. */
+function matchesHours(photo: Photo, time: string | undefined): boolean {
+  if (!time) return true;
+  const [low = 0, high = 23] = time.split("-").map(Number);
+  const hour = photo.takenAt.getHours();
+  return hour >= low && hour <= high;
 }
 
-/** The **Time of day**, **Time of year** and **Day of the week** dropdowns. */
-export const WHEN_DROPDOWNS: WhenDropdown[] = [
-  {
-    label: "Time of day",
-    plural: "times of day",
-    Icon: Sunrise,
-    keys: ["daypart"],
-    choices: DAYPARTS,
-  },
-  {
-    label: "Time of year",
-    plural: "times of year",
-    Icon: CalendarRange,
-    keys: ["season", "month"],
-    choices: TIMES_OF_YEAR,
-  },
-  {
-    label: "Day of the week",
-    plural: "days",
-    Icon: CalendarDays,
-    keys: ["weekday"],
-    choices: WEEKDAYS,
-  },
-];
-
-/** A choice's name, the same in every script, with its detail after it. */
-function choiceLabel({ label, detail }: WhenChoice) {
-  const text = detail ? `${label} · ${detail}` : label;
-  return { english: text, romanized: text, phonetic: text, native: text };
+/** Two digits, such as "05". */
+function pad(number: number): string {
+  return String(number).padStart(2, "0");
 }
 
-/** A dropdown's choices, each counting the photos of `facet` it would show. */
-export function whenOptions(dropdown: WhenDropdown, facet: Photo[]): FilterOption[] {
-  return dropdown.choices.map((choice) => ({
-    key: choice.key,
-    value: choice.value,
-    label: choiceLabel(choice),
-    depth: choice.depth,
-    count: facet.filter(choice.matches).length,
-  }));
+/** The day of a date as YYYY-MM-DD, by the clock where the photo was taken. */
+export function dayOf(date: Date): string {
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+/** Whether the photo was taken from the first day to the last, both included; a missing end is open. */
+function matchesDates(photo: Photo, { start = "", end = "9999-12-31" }: WhenFilters): boolean {
+  const day = dayOf(photo.takenAt);
+  return day >= start && day <= end;
+}
+
+/** Whether the photo matches every "when" filter that's set. */
+export function matchesWhen(photo: Photo, filters: WhenFilters): boolean {
+  const lists = LIST_KEYS.every((key) => matchesList(photo, key, filters[key]));
+  return (
+    lists &&
+    matchesHours(photo, filters.time) &&
+    matchesDates(photo, filters) &&
+    matchesQuickDate(photo, filters.when)
+  );
+}
+
+/** Whether the photo was taken on today's date, month or season in an earlier year, or none is chosen. */
+function matchesQuickDate(photo: Photo, when: QuickDate | undefined): boolean {
+  return !when || inQuickDate(photo.takenAt, when, new Date());
 }

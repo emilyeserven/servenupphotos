@@ -26,12 +26,10 @@ import {
   rangeValues,
   type CameraFilters,
   parseCameraFilters,
-  TIME_KEY,
   withoutCameraFilters,
 } from "@portfolio/lib/camera-filters";
 import { ORIENTATION_KEY, orientationCounts } from "@portfolio/lib/orientation";
 import { parseTextSearch, searchPhotos } from "@portfolio/lib/text-search";
-import { hourEnd, hourStart, photoHours } from "@portfolio/lib/time-of-day";
 
 /** Each range slider's name. */
 const RANGE_LABELS: Record<RangeKey, string> = {
@@ -54,9 +52,6 @@ function writeSetting(key: RangeKey): (value: string) => string {
 const RANGE_VALUES = Object.fromEntries(
   RANGE_KEYS.map((key) => [key, rangeValues(allPhotos, key)]),
 ) as Record<RangeKey, string[]>;
-
-/** The steps of the **Time of day** slider: every hour of the day a portfolio photo was taken in. */
-const HOUR_VALUES = photoHours(allPhotos);
 
 /**
  * A quick pick's range as the photos write its ends, such as "11mm – 24mm" or "250 – 1600 ISO", or
@@ -97,7 +92,7 @@ function useSetCameraFilters() {
 /**
  * The camera filters, after the shared ones on the Table and Grid: **Camera** and **Lens** dropdowns, with the
  * metadata groups of each, a range slider for each of ISO, exposure, focal length and
- * aperture, with its range groups as quick picks, one for the time of day, and the **Orientation**
+ * aperture, with its range groups as quick picks, and the **Orientation**
  * buttons. `photos` is the photos the shared
  * filters leave, which the camera and lens counts are out of, given the other filters here.
  * `children` go after the sliders, in the same row, such as the Grid's **Colors**.
@@ -128,15 +123,6 @@ function CameraFilterControls({
             onChange={(range) => setFilters({ [key]: range })}
           />
         ))}
-        <RangeFilter
-          label="Time of day"
-          values={HOUR_VALUES}
-          range={filters[TIME_KEY]}
-          write={hourStart}
-          writeHigh={hourEnd}
-          presets={[]}
-          onChange={(range) => setFilters({ [TIME_KEY]: range })}
-        />
         <OrientationFilter
           orientation={filters[ORIENTATION_KEY]}
           counts={orientationCounts(

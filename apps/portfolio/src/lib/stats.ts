@@ -1,14 +1,14 @@
-import { type Bucket, type StatGroup, tally, valueGroup } from "@/lib/stat-groups";
-import { cameraOf, gearGroups } from "@/lib/stats-gear";
-import { timeGroups } from "@/lib/stats-time";
-import { type Photo, photos } from "@/lib/photos";
+import { type Bucket, type GroupDef, tally, valueGroup } from "@/lib/stat-groups";
+import { cameraOf, GEAR_GROUPS } from "@/lib/stats-gear";
+import { TIME_GROUPS } from "@/lib/stats-time";
+import type { Photo } from "@/lib/photos";
 
-/** A section of the Stats page, such as Gear, with its groups. */
+/** A section of the Stats page, such as Gear, with how to make its groups. */
 export interface StatSection {
   id: "gear" | "places" | "time";
   title: string;
   description: string;
-  groups: StatGroup[];
+  groups: GroupDef[];
 }
 
 /** The headline numbers at the top of the Stats page. */
@@ -20,61 +20,63 @@ export interface StatTotals {
   years: number;
 }
 
-/** Each city's country, by the city's English name, as the photos have them. */
-function cityCountries(list: Photo[]): Map<string, string> {
-  return new Map(list.flatMap((p) => (p.city && p.country ? [[p.city, p.country]] : [])));
-}
-
 /** A country as a row, filtering to it. */
 function countryBucket(country: string): Bucket {
   return { key: country, label: country, filter: { country } };
 }
 
-/** The Places section's groups: countries, and cities with their country on hover. */
-function placeGroups(list: Photo[]): StatGroup[] {
-  const countries = cityCountries(list);
-  return [
-    valueGroup("Countries", list, (photo) => photo.country, countryBucket),
-    valueGroup(
-      "Cities",
-      list,
-      (photo) => photo.city,
-      (city) => ({
-        key: city,
-        label: city,
-        hint: countries.get(city),
-        filter: { city },
-      }),
-    ),
-  ];
+/** Each city's country, by the city's English name, as the photos have them. */
+function cityCountries(list: Photo[]): Map<string, string> {
+  return new Map(list.flatMap((p) => (p.city && p.country ? [[p.city, p.country]] : [])));
 }
 
-/**
- * Every section of the Stats page, counting the photos given: the ones the filters leave. `all`
- * is every portfolio photo, which the focal length ranges are worked out from, as the Grid's are.
- */
-export function statSections(list: Photo[], all: Photo[] = photos): StatSection[] {
-  return [
-    {
-      id: "gear",
-      title: "Gear",
-      description: "What the photos were taken with.",
-      groups: gearGroups(list, all),
+/** The Places section's groups: countries (narrowing the cities), and cities with their country on hover. */
+const PLACE_GROUPS: GroupDef[] = [
+  {
+    id: "countries",
+    narrows: "cities",
+    build: (list) => valueGroup("Countries", list, (photo) => photo.country, countryBucket),
+  },
+  {
+    id: "cities",
+    build: (list) => {
+      const countries = cityCountries(list);
+      return valueGroup(
+        "Cities",
+        list,
+        (photo) => photo.city,
+        (city) => ({
+          key: city,
+          label: city,
+          hint: countries.get(city),
+          filter: { city },
+        }),
+      );
     },
-    {
-      id: "places",
-      title: "Places",
-      description: "Where the photos were taken.",
-      groups: placeGroups(list),
-    },
-    {
-      id: "time",
-      title: "Time",
-      description: "When the photos were taken, by the clock and calendar where they were.",
-      groups: timeGroups(list),
-    },
-  ];
-}
+  },
+];
+
+/** The sections of the Stats page, each with its groups. */
+export const STAT_SECTIONS: StatSection[] = [
+  {
+    id: "gear",
+    title: "Gear",
+    description: "What the photos were taken with.",
+    groups: GEAR_GROUPS,
+  },
+  {
+    id: "places",
+    title: "Places",
+    description: "Where the photos were taken.",
+    groups: PLACE_GROUPS,
+  },
+  {
+    id: "time",
+    title: "Time",
+    description: "When the photos were taken, by the clock and calendar where they were.",
+    groups: TIME_GROUPS,
+  },
+];
 
 /** The headline numbers for the top of the Stats page. */
 export function statTotals(list: Photo[]): StatTotals {
