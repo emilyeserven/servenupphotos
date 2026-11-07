@@ -12,12 +12,9 @@ import { cn } from "@/lib/utils";
  */
 export function GraphFilters({
   filters,
-  kept,
   onChange,
 }: {
   filters: GraphFilter[];
-  /** How many photos the filters keep. */
-  kept: number;
   onChange: (filters: GraphFilter[]) => void;
 }) {
   const update = (index: number, filter: GraphFilter) =>
@@ -33,14 +30,11 @@ export function GraphFilters({
           onRemove={() => onChange(filters.filter((_, i) => i !== index))}
         />
       ))}
-      <div className="flex flex-wrap items-center gap-3">
+      <div>
         <Button type="button" variant="outline" size="sm" onClick={add}>
           <Plus aria-hidden />
           Add a filter
         </Button>
-        <span className="text-sm text-muted-foreground tabular-nums">
-          {kept.toLocaleString()} of {photos.length.toLocaleString()} photos
-        </span>
       </div>
     </div>
   );

@@ -1,11 +1,3 @@
-import {
-  ChartColumn,
-  ChartLine,
-  ChartPie,
-  ChartScatter,
-  CircleDot,
-  type LucideIcon,
-} from "lucide-react";
 import { GraphField, StatOptions, StatSelect } from "@/components/graph-builder/graph-field";
 import {
   type GraphConfig,
@@ -14,18 +6,18 @@ import {
   type SortOrder,
   SPLIT_TYPES,
 } from "@/lib/graph-data";
-import { CONTROL_FRAME, controlButtonClass, SELECT_CLASS } from "@/lib/segmented-control";
+import { SELECT_CLASS } from "@/lib/segmented-control";
 
 /** A change to some of the graph's settings. */
 export type ConfigChange = (change: Partial<GraphConfig>) => void;
 
-/** The graph types, each with its button's label and icon. */
-const TYPES: [GraphType, string, LucideIcon][] = [
-  ["bar", "Bar", ChartColumn],
-  ["line", "Line", ChartLine],
-  ["dot", "Dot", CircleDot],
-  ["pie", "Pie", ChartPie],
-  ["scatter", "Scatter", ChartScatter],
+/** The graph types, with their names. */
+const TYPES: [GraphType, string][] = [
+  ["bar", "Bar"],
+  ["line", "Line"],
+  ["dot", "Dot"],
+  ["pie", "Pie"],
+  ["scatter", "Scatter"],
 ];
 
 /** The x axis's orders, with their names. */
@@ -39,8 +31,8 @@ const SORTS: [SortOrder, string][] = [
 const LIMITS = [0, 5, 10, 20];
 
 /**
- * The graph's settings in a row over it: its type, what's on each axis, what splits a bar or line
- * graph, and the x axis's order and how many of its values show.
+ * The graph's settings, in the Adjust Graph box: its type, what's on each axis, what splits a bar,
+ * line or dot graph, and the x axis's order and how many of its values show.
  */
 export function GraphControls({
   config,
@@ -51,7 +43,7 @@ export function GraphControls({
 }) {
   return (
     <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
-      <TypeButtons type={config.type} onChange={onChange} />
+      <TypeSelect type={config.type} onChange={onChange} />
       <GraphField label={config.type === "pie" ? "Slices" : "X axis"}>
         <StatSelect value={config.x} onChange={(x) => onChange({ x })} />
       </GraphField>
@@ -62,24 +54,32 @@ export function GraphControls({
   );
 }
 
-/** The buttons picking the graph's type. */
-function TypeButtons({ type, onChange }: { type: GraphType; onChange: ConfigChange }) {
+/** The dropdown picking the graph's type. */
+function TypeSelect({ type, onChange }: { type: GraphType; onChange: ConfigChange }) {
   return (
-    <div role="group" aria-label="Graph type" className={CONTROL_FRAME}>
-      {TYPES.map(([option, label, Icon]) => (
-        <button
-          key={option}
-          type="button"
-          aria-pressed={type === option}
-          onClick={() => onChange({ type: option })}
-          title={label}
-          className={controlButtonClass(type === option)}
-        >
-          <Icon aria-hidden />
-          <span className="max-sm:sr-only">{label}</span>
-        </button>
-      ))}
-    </div>
+    <GraphField label="Graph type">
+      <select
+        value={type}
+        onChange={(e) => onChange({ type: e.target.value as GraphType })}
+        className={SELECT_CLASS}
+      >
+        {TYPES.map(([option, label]) => (
+          <option key={option} value={option}>
+            {label}
+          </option>
+        ))}
+      </select>
+    </GraphField>
+  );
+}
+
+/** What a bar, line, dot or pie graph can measure, as a dropdown's options. */
+export function MeasureOptions() {
+  return (
+    <>
+      <option value="count">Photos</option>
+      <option value="percent">Share of photos (%)</option>
+    </>
   );
 }
 
@@ -99,8 +99,7 @@ function YField({ config, onChange }: { config: GraphConfig; onChange: ConfigCha
         onChange={(e) => onChange({ measure: e.target.value as Measure })}
         className={SELECT_CLASS}
       >
-        <option value="count">Photos</option>
-        <option value="percent">Share of photos (%)</option>
+        <MeasureOptions />
       </select>
     </GraphField>
   );

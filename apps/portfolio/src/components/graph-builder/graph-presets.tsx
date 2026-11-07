@@ -21,7 +21,7 @@ function presetConfig(x: string): Partial<GraphConfig> {
 export function GraphPresets({ onPick }: { onPick: (change: Partial<GraphConfig>) => void }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs font-medium text-muted-foreground">Presets</span>
+      <span className="text-sm font-medium text-muted-foreground">Presets</span>
       {PRESETS.map(([label, x]) => (
         <Button
           key={x}

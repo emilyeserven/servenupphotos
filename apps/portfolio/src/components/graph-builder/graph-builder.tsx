@@ -1,5 +1,6 @@
-import { ChartColumn, Table2 } from "lucide-react";
+import { ChartColumn, SlidersHorizontal, Table2 } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
+import { AxisLabels } from "@/components/graph-builder/graph-axes";
 import { BarGraph, LineGraph, PieGraph } from "@/components/graph-builder/graph-chart";
 import { type ConfigChange, GraphControls } from "@/components/graph-builder/graph-controls";
 import { GraphFilters } from "@/components/graph-builder/graph-filters";
@@ -15,6 +16,7 @@ import {
   scatterData,
   statById,
 } from "@/lib/graph-data";
+import { Button } from "@/components/ui/button";
 import { photos } from "@/lib/photos";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
@@ -36,35 +38,87 @@ const START: GraphConfig = {
 type View = "graph" | "table";
 
 /**
- * A graph of the person's own making from the Numbers page's counts: they pick its type (bar, line,
- * pie or scatterplot), the stat along each axis, what splits a bar or line graph, and filters on
- * the photos it counts. Its numbers show as a table too.
+ * A graph of the person's own making from the Numbers page's counts. Presets come first, then the
+ * Adjust Graph button, which opens a box of its settings: its type, the stat along each axis, what
+ * splits a bar, line or dot graph, and filters on the photos it counts. Under them, the graph's box
+ * names each axis with a dropdown to change it, and shows its numbers as a table too.
  */
 export function GraphBuilder() {
   const [config, setConfig] = useState(START);
   const [view, setView] = useState<View>("graph");
+  const [adjusting, setAdjusting] = useState(false);
   const onChange: ConfigChange = (change) => setConfig((current) => ({ ...current, ...change }));
   const kept = useMemo(() => filteredPhotos(photos, config.filters), [config.filters]);
   return (
-    <section className="flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-sm">
+    <div className="flex flex-col gap-4">
       <GraphPresets onPick={onChange} />
-      <GraphControls config={config} onChange={onChange} />
-      <GraphFilters
-        filters={config.filters}
-        kept={kept.length}
-        onChange={(filters) => onChange({ filters })}
-      />
-      <div className="flex justify-end">
-        <ViewButtons view={view} onChange={setView} />
+      <div>
+        <Button
+          type="button"
+          variant="outline"
+          aria-expanded={adjusting}
+          onClick={() => setAdjusting(!adjusting)}
+        >
+          <SlidersHorizontal aria-hidden />
+          Adjust Graph
+        </Button>
       </div>
-      {kept.length === 0 ? (
-        <p className="py-16 text-center text-sm text-muted-foreground">
-          No photos are left by these filters.
-        </p>
-      ) : (
-        <GraphBody list={kept} config={config} view={view} />
-      )}
+      {adjusting && <AdjustBox config={config} onChange={onChange} />}
+      <section className={BOX_CLASS}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span className="text-sm text-muted-foreground tabular-nums">
+            {kept.length.toLocaleString()} of {photos.length.toLocaleString()} photos
+          </span>
+          <ViewButtons view={view} onChange={setView} />
+        </div>
+        <GraphArea list={kept} config={config} view={view} onChange={onChange} />
+      </section>
+    </div>
+  );
+}
+
+/** How the Graph page's boxes look. */
+const BOX_CLASS =
+  "flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-sm";
+
+/** The box Adjust Graph opens: the graph's settings, then its filters. */
+function AdjustBox({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
+  return (
+    <section aria-label="Adjust Graph" className={BOX_CLASS}>
+      <GraphControls config={config} onChange={onChange} />
+      <GraphFilters filters={config.filters} onChange={(filters) => onChange({ filters })} />
     </section>
+  );
+}
+
+/**
+ * The graph, its axes named with dropdowns to change them, or its table; a note instead when the
+ * filters leave no photos.
+ */
+function GraphArea({
+  list,
+  config,
+  view,
+  onChange,
+}: {
+  list: Photo[];
+  config: GraphConfig;
+  view: View;
+  onChange: ConfigChange;
+}) {
+  if (list.length === 0) {
+    return (
+      <p className="py-16 text-center text-sm text-muted-foreground">
+        No photos are left by these filters.
+      </p>
+    );
+  }
+  const body = <GraphBody list={list} config={config} view={view} />;
+  if (view === "table") return body;
+  return (
+    <AxisLabels config={config} onChange={onChange}>
+      {body}
+    </AxisLabels>
   );
 }
 

@@ -6,6 +6,14 @@ on the [Numbers](portfolio-stats.md) page. It's in the site menu after Numbers, 
 The builder's parts are in `components/graph-builder/`; what it counts is in `lib/graph-data.ts`, and the camera
 settings it adds in `lib/graph-settings.ts`.
 
+## Layout
+
+**Presets** come first, then an **Adjust Graph** button, then the graph's box. Adjust Graph opens a box over the graph
+with its settings and filters (closed when the page opens). The graph's box says how many photos the filters leave, has
+the **Graph** / **Table** buttons, and names each axis: the y axis over the top left and the x axis centered under the
+graph (a pie names its slices and size over it). Each axis name is a dropdown, so clicking it changes what's on that
+axis without opening Adjust Graph.
+
 ## What you can pick
 
 | Setting  | What it does                                                                                                                                                                                                                                                              |
@@ -20,7 +28,7 @@ settings it adds in `lib/graph-settings.ts`.
 
 The page opens on photos per year, oldest first, each bar split by season. Nothing is kept in the URL.
 
-**Presets** above the settings set up a dot graph of **Aperture**, **Exposure**, **ISO** or **Focal length**: a dot for
+**Presets** set up a dot graph of **Aperture**, **Exposure**, **ISO** or **Focal length**: a dot for
 each value the photos were taken at, lowest first, at how many photos have it. The filters stay as they are.
 
 ## How it's counted
