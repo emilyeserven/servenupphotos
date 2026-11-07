@@ -1,5 +1,11 @@
-import { type Bucket, bucketGroup, type GroupDef, type StatGroup, tally } from "@/lib/stat-groups";
-import type { Photo } from "@/lib/photos";
+import {
+  type Bucket,
+  bucketGroup,
+  type GroupDef,
+  type StatGroup,
+  tally,
+} from "@portfolio/lib/stat-groups";
+import type { Photo } from "@portfolio/lib/photos";
 import {
   type Daypart,
   DAYPARTS,
@@ -10,7 +16,7 @@ import {
   seasonSpan,
   type WhenChoice,
   WEEKDAYS,
-} from "@/lib/when-filters";
+} from "@portfolio/lib/when-filters";
 
 /** A choice of a "when" filter as a row, filtering to it. */
 function choiceBucket(key: ListKey, detail?: (choice: WhenChoice) => string) {

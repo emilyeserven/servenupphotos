@@ -62,7 +62,7 @@ Smart Album's ID to every photo its rules match, when the photos are read (`phot
 goes round again until nothing changes (at most once per Smart Album, plus one), so a rule naming another Smart Album
 sees that album's photos. On the portfolio that happens with the data the site
 was built with, so every view sees the same thing: the album's page and its strip on the [Albums](portfolio-albums.md)
-page, the Grid's **Album** filter and its counts, and a [spotlight zone](publish.md#site-spotlight) showing it. A
+page, the Grid's **Groups** filter and its counts, and a [spotlight zone](publish.md#site-spotlight) showing it. A
 hidden Smart Album stays off the album lists and pages, as any [hidden album](albums-and-tags.md#showing-or-hiding-on-the-portfolio)
 does.
 

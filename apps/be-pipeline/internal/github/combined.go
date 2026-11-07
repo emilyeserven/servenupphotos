@@ -31,6 +31,8 @@ type CombinedFiles struct {
 	Likes InFlightAllPhotos `json:"likes"`
 	// TripLines is TRIPLINES.json, the days' trip lines as marked.
 	TripLines InFlightAllPhotos `json:"triplines"`
+	// Graphs is GRAPHS.json, the Graph page's presets and preset groups.
+	Graphs InFlightAllPhotos `json:"graphs"`
 }
 
 // CombinedBase is CombinedFiles on the base branch: what the portfolio has.
@@ -104,6 +106,7 @@ func combinedFiles(t target, root string, s *snapshot, branch string) CombinedFi
 		Timeline:      read(TimelineLabels.Folder, TimelineLabels.AllFile),
 		Likes:         read(ViewerLikesKind.Folder, ViewerLikesKind.AllFile),
 		TripLines:     read(TripLines.Folder, TripLines.AllFile),
+		Graphs:        read(GraphPresets.Folder, GraphPresets.AllFile),
 	}
 }
 

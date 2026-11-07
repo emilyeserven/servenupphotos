@@ -1,7 +1,9 @@
-# Portfolio Stats
+# Portfolio Numbers
 
-The portfolio's Stats page (`/stats`, `apps/portfolio/src/routes/stats.tsx`) counts the photos by gear, place and time.
-It's in the site menu after Tags, with the other small views; like them, the homepage doesn't link to it.
+The portfolio's Numbers page (`/stats`, `apps/portfolio/src/routes/stats.tsx`), once called Stats, counts the photos by
+gear, place and time. It's in the site menu after Tags, with the other small views, and just before
+[Graph](portfolio-graph.md), which draws its counts as a graph of your own; like them, the homepage doesn't link to it.
+The page still lives at `/stats`, and its spotlight zone is still called **Stats Header**.
 
 When an album is picked for the **Stats Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page,
 its photos fade in and out across the top of the page, up to 30% of the screen's height, with the title under them (see

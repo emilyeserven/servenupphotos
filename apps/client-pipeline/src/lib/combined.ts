@@ -103,6 +103,7 @@ export function withCombined(read: InFlightRead, view: CombinedView): InFlightRe
     timeline: checkedGroups(read.timeline, file("timeline", "TIMELINE.json")),
     likes: checkedGroups(read.likes, file("likes", "LIKES.json")),
     triplines: checkedGroups(read.triplines, file("triplines", "TRIPLINES.json")),
+    graphs: checkedGroups(read.graphs, file("graphs", "GRAPHS.json")),
   };
 }
 

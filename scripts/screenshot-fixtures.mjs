@@ -52,6 +52,7 @@ const baseCaptions = readFolder("captions", "CAPTIONS");
 const baseTimeline = readFolder("timeline", "TIMELINE");
 const baseLikes = readFolder("likes", "LIKES");
 const baseTripLines = readFolder("triplines", "TRIPLINES");
+const baseGraphs = readFolder("graphs", "GRAPHS");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -86,6 +87,15 @@ function newPhoto() {
       tags: ["night"],
       genres: ["street"],
     },
+  };
+}
+
+/** A graph preset file the pull request adds, in a group, with the rest of its graph's settings as the Graph page starts them. */
+function graphPresetFile(id, name, order, group, graph) {
+  const settings = { measure: "count", y: "", split: "", stacked: false, sort: "group", limit: 0 };
+  return {
+    path: `${FOLDER}/graphs/${id}.json`,
+    data: { id, kind: "preset", name, order, group, graph: { ...settings, ...graph } },
   };
 }
 
@@ -249,6 +259,20 @@ const added = {
       data: { id: "2026-10-26", day: "2026-10-26", auto: true, segments: [] },
     },
   ],
+  graphs: [
+    {
+      path: `${FOLDER}/graphs/when.json`,
+      data: { id: "when", kind: "group", name: "When", order: 5 },
+    },
+    graphPresetFile("seasons-by-year", "Seasons by year", 1, "when", {
+      type: "bar",
+      x: "year",
+      split: "season",
+      stacked: true,
+      sort: "reverse",
+    }),
+    graphPresetFile("time-of-day", "Time of day", 2, "when", { type: "pie", x: "daypart" }),
+  ],
   timeline: [
     {
       path: `${FOLDER}/timeline/japan-2026-09-22.json`,
@@ -338,6 +362,7 @@ const headCaptions = withAdded(baseCaptions, added.captions);
 const headTimeline = withAdded(baseTimeline, added.timeline);
 const headLikes = withAdded(baseLikes, added.likes);
 const headTripLines = withAdded(baseTripLines, added.triplines);
+const headGraphs = withAdded(baseGraphs, added.graphs);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -365,6 +390,7 @@ function combinedFiles(
     timeline,
     likes,
     triplines,
+    graphs,
   ],
   branch,
 ) {
@@ -382,6 +408,7 @@ function combinedFiles(
     timeline: combinedFile("timeline", "TIMELINE.json", timeline, branch),
     likes: combinedFile("likes", "LIKES.json", likes, branch),
     triplines: combinedFile("triplines", "TRIPLINES.json", triplines, branch),
+    graphs: combinedFile("graphs", "GRAPHS.json", graphs, branch),
   };
 }
 
@@ -1067,6 +1094,7 @@ export function defaultFixtures() {
           baseTimeline,
           baseLikes,
           baseTripLines,
+          baseGraphs,
         ]),
         branch: BASE_BRANCH,
       },
@@ -1086,6 +1114,7 @@ export function defaultFixtures() {
             headTimeline,
             headLikes,
             headTripLines,
+            headGraphs,
           ],
           PULL_REQUEST.branch,
         ),
@@ -1112,6 +1141,7 @@ export function defaultFixtures() {
       timeline: { folder: `${FOLDER}/timeline`, files: added.timeline.map(groupFile) },
       likes: { folder: `${FOLDER}/likes`, files: added.likes.map(groupFile) },
       triplines: { folder: `${FOLDER}/triplines`, files: added.triplines.map(groupFile) },
+      graphs: { folder: `${FOLDER}/graphs`, files: added.graphs.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -1357,6 +1387,13 @@ export function defaultFixtures() {
       path: `${FOLDER}/triplines/2026-10-01.json`,
       data: body,
       before: added.triplines[0].data,
+      changed: true,
+    }),
+    "PUT /api/graphs/time-of-day": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/graphs/time-of-day.json`,
+      data: body,
+      before: added.graphs[2].data,
       changed: true,
     }),
     "PUT /api/timeline/japan-2026-09-22": ({ body }) => ({

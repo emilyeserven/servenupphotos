@@ -1,33 +1,16 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import {
-  ChevronsUpDown,
-  FolderOpen,
-  type LucideIcon,
-  Shapes,
-  SlidersHorizontal,
-  Tag,
-  X,
-} from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
-import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
-import { hiddenText } from "@portfolio/components/hidden-note";
+import { GroupPicker } from "@portfolio/components/group-picker";
 import { MoreFilters } from "@portfolio/components/more-filters";
 import { PhotoSearchBox } from "@portfolio/components/photo-search-box";
 import { PlacesFilter } from "@portfolio/components/places-filter";
 import { WhenFilter } from "@portfolio/components/when-filter";
-import { useScriptDisplay } from "@portfolio/components/script-display-provider";
 import { Button } from "@portfolio/components/ui/button";
-import {
-  albumOptions,
-  type FilterOption,
-  genreOptions,
-  locationOptions,
-  tagOptions,
-} from "@portfolio/lib/filter-options";
+import { locationOptions } from "@portfolio/lib/filter-options";
 import {
   FILTER_KEYS,
   filterCount,
-  type FilterKey,
   filterPhotos,
   LOCATION_KEYS,
   locationFilters,
@@ -81,17 +64,6 @@ export interface OwnFilters {
 }
 
 const NO_OWN_FILTERS: OwnFilters = { keys: [], count: 0, children: null };
-
-/** A choice's value in its dropdown: the filter's key and its value, such as "city:Seoul". */
-function optionValue({ key, value }: Pick<FilterOption, "key" | "value">): string {
-  return `${key}:${value}`;
-}
-
-/** The filter a dropdown's value sets, or none for "All". */
-function filterOf(selected: string): PhotoFilters {
-  const at = selected.indexOf(":");
-  return at === -1 ? {} : { [selected.slice(0, at)]: selected.slice(at + 1) };
-}
 
 /**
  * A **Show filters** button that opens filters narrowing the view's photos by place (any number of
@@ -179,7 +151,7 @@ const OVER_MAP =
   "contents [&_button]:bg-background dark:[&_button]:bg-background [&_select]:bg-background [&_select]:[field-sizing:content] dark:[&_select]:bg-background";
 
 /**
- * The album, tag and genre dropdowns behind a **More filters** button, after the view's own
+ * The **Groups** and **When** pickers behind a **More filters** button, after the view's own
  * filters (`own`, such as the map's days), then `children` and **Clear filters** while any filter
  * is set, for a view with no room to spare for the **Show filters** button, such as the map.
  */
@@ -241,7 +213,7 @@ interface DropdownProps {
 }
 
 /**
- * The Places combobox and the album, tag and genre dropdowns. Each choice says how many of `facet`
+ * The Places combobox and the **Groups** and **When** pickers. Each choice says how many of `facet`
  * it would show, given the other filters.
  */
 function FilterDropdowns(props: DropdownProps) {
@@ -267,122 +239,13 @@ function PlacesDropdown({ photos, facet, filters, setFilters }: DropdownProps) {
   );
 }
 
-/** The album, tag and genre dropdowns; the tag and genre ones are left out while there are none. */
+/** The **Groups** picker, for the album, tag and genre, and the **When** picker. */
 function GroupDropdowns({ facet, filters, setFilters }: DropdownProps) {
-  const albums = albumOptions(filterPhotos(facet, withoutFilters(filters, ["album"])));
-  const tags = tagOptions(filterPhotos(facet, withoutFilters(filters, ["tag"])));
-  const genres = genreOptions(filterPhotos(facet, withoutFilters(filters, ["genre"])));
-
-  /** Replaces the filters `keys` name with the ones chosen. */
-  function choose(keys: readonly FilterKey[], chosen: PhotoFilters) {
-    setFilters({ ...withoutFilters(filters, keys), ...chosen });
-  }
-
   return (
     <>
-      <FilterSelect
-        label="Album"
-        Icon={FolderOpen}
-        options={albums}
-        selected={selectedValue(albums, filters)}
-        onChange={(selected) => choose(["album"], filterOf(selected))}
-      />
-      {tags.length > 0 && (
-        <FilterSelect
-          label="Tag"
-          Icon={Tag}
-          options={tags}
-          selected={selectedValue(tags, filters)}
-          onChange={(selected) => choose(["tag"], filterOf(selected))}
-        />
-      )}
-      {genres.length > 0 && (
-        <FilterSelect
-          label="Genre"
-          Icon={Shapes}
-          options={genres}
-          selected={selectedValue(genres, filters)}
-          onChange={(selected) => choose(["genre"], filterOf(selected))}
-        />
-      )}
+      <GroupPicker facet={facet} filters={filters} setFilters={setFilters} />
       <WhenFilter facet={facet} filters={filters} setFilters={setFilters} />
     </>
-  );
-}
-
-/** The value of the dropdown's choice the search sets, or "" for "All". */
-export function selectedValue(options: FilterOption[], search: Record<string, unknown>): string {
-  const chosen = options.find((option) => search[option.key] === option.value);
-  return chosen ? optionValue(chosen) : "";
-}
-
-/**
- * A choice's text: indented under what it's in, with how many photos it would show. The chosen one
- * isn't indented, as the closed dropdown shows it on its own.
- */
-function optionText(option: FilterOption, name: string, chosen: boolean): string {
-  return `${"   ".repeat(chosen ? 0 : option.depth)}${name} (${option.count})`;
-}
-
-/**
- * A dropdown of one filter's choices, with "All" first; `selected` is the chosen one's value and
- * `plural` names them all, such as "lenses", when adding an "s" doesn't. While one is chosen, an X
- * beside it goes back to "All".
- */
-export function FilterSelect({
-  label,
-  plural = `${label.toLowerCase()}s`,
-  Icon,
-  options,
-  selected,
-  onChange,
-}: {
-  label: string;
-  plural?: string;
-  Icon: LucideIcon;
-  options: FilterOption[];
-  selected: string;
-  onChange: (selected: string) => void;
-}) {
-  const { script } = useScriptDisplay();
-  // Choices that would show no photos, given the other filters, are left out, unless chosen.
-  const shown = options.filter((option) => option.count > 0 || optionValue(option) === selected);
-  const hidden = options.length - shown.length;
-  return (
-    // The icon, X and chevron sit over the dropdown, inside its border, like the Places button's.
-    <div className="relative inline-flex items-center text-sm text-muted-foreground">
-      <Icon className="pointer-events-none absolute left-2.5 size-4" aria-hidden />
-      <label className="contents">
-        <span className="sr-only">{label}</span>
-        <select
-          value={selected}
-          onChange={(event) => onChange(event.target.value)}
-          className={cn(
-            "h-8 max-w-56 cursor-pointer appearance-none truncate rounded-md border bg-background pl-8 text-sm text-foreground shadow-xs outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
-            selected ? "pr-14" : "pr-8",
-          )}
-        >
-          <option value="">All {plural}</option>
-          {shown.map((option, index) => (
-            <option key={`${index}-${optionValue(option)}`} value={optionValue(option)}>
-              {optionText(option, option.label[script], optionValue(option) === selected)}
-            </option>
-          ))}
-          {hidden > 0 && <option disabled>{hiddenText(hidden, "choices")}</option>}
-        </select>
-      </label>
-      {selected && (
-        <ClearFilterButton
-          label={label}
-          onClear={() => onChange("")}
-          className="absolute right-7"
-        />
-      )}
-      <ChevronsUpDown
-        className="pointer-events-none absolute right-2.5 size-4 opacity-50"
-        aria-hidden
-      />
-    </div>
   );
 }
 

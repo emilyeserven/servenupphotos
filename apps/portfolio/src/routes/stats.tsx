@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ChartColumn } from "lucide-react";
+import { ArrowDown, Hash } from "lucide-react";
 import { useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { type FocusChain, type StatFocus, StatGroupCard } from "@/components/stat-group";
@@ -79,8 +79,8 @@ function StatsView() {
         <div>
           <SiteHomeLink className="mb-1" />
           <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
-            <ChartColumn className="size-8 text-muted-foreground" aria-hidden />
-            Stats
+            <Hash className="size-8 text-muted-foreground" aria-hidden />
+            Numbers
           </h1>
           <p className="mt-2 text-muted-foreground">
             The photos counted by gear, place and time. Open a row to see its photos on the Grid.

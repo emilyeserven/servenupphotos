@@ -1,0 +1,16 @@
+{
+  "id": "exposure",
+  "kind": "preset",
+  "name": "Exposure",
+  "order": 2,
+  "graph": {
+    "type": "dot",
+    "x": "exposure",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0
+  }
+}

@@ -4,6 +4,7 @@ import {
   CalendarClock,
   ChartColumn,
   Dices,
+  Hash,
   Grid3x3,
   Heart,
   MapPin,
@@ -18,6 +19,7 @@ export interface PortfolioView {
     | "/albums"
     | "/tags"
     | "/stats"
+    | "/graph"
     | "/grid"
     | "/color"
     | "/lucky"
@@ -28,7 +30,7 @@ export interface PortfolioView {
   /** False for a view that's linked but not ready to visit yet. */
   enabled: boolean;
   /**
-   * True for a lesser view (Albums, Tags, Stats, Lucky, My Likes): the site menu lists it in small text under the
+   * True for a lesser view (Albums, Tags, Numbers, Graph, Lucky, My Likes): the site menu lists it in small text under the
    * big icon tiles, and the homepage leaves it out.
    */
   minor?: boolean;
@@ -82,8 +84,17 @@ const portfolioViews: PortfolioView[] = [
   },
   {
     to: "/stats",
-    label: "Stats",
+    label: "Numbers",
     description: "The photos counted by gear, place and time.",
+    icon: Hash,
+    enabled: true,
+    minor: true,
+  },
+  {
+    to: "/graph",
+    label: "Graph",
+    description:
+      "A graph of your own from the Numbers page's counts, as bars, lines, a pie or dots.",
     icon: ChartColumn,
     enabled: true,
     minor: true,

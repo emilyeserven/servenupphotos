@@ -113,12 +113,14 @@ type InFlightResult struct {
 	Likes         InFlightGroups `json:"likes"`
 	// TripLines are the trip line files in the pull request.
 	TripLines InFlightGroups `json:"triplines"`
+	// Graphs are the graph preset files in the pull request.
+	Graphs InFlightGroups `json:"graphs"`
 }
 
 // groups are r's album, tag, genre, place, localization, metadata group, camera
-// override, custom lens, caption template, timeline label, viewer likes and trip line files.
+// override, custom lens, caption template, timeline label, viewer likes, trip line and graph preset files.
 func (r *InFlightResult) groups() []*InFlightGroups {
-	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Genres, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses, &r.Captions, &r.Timeline, &r.Likes, &r.TripLines}
+	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Genres, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses, &r.Captions, &r.Timeline, &r.Likes, &r.TripLines, &r.Graphs}
 }
 
 // InFlightGroups is the files of one Kind in the pull request.
@@ -174,6 +176,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		Timeline:      newInFlightGroups(w.root, Kind{Folder: TimelineLabels.Folder, AllFile: TimelineLabels.AllFile}),
 		Likes:         newInFlightGroups(w.root, Kind{Folder: ViewerLikesKind.Folder, AllFile: ViewerLikesKind.AllFile}),
 		TripLines:     newInFlightGroups(w.root, Kind{Folder: TripLines.Folder, AllFile: TripLines.AllFile}),
+		Graphs:        newInFlightGroups(w.root, Kind{Folder: GraphPresets.Folder, AllFile: GraphPresets.AllFile}),
 	}
 	for _, p := range w.changed(folder, AllPhotosFile) {
 		if w.status(p) == statusRemoved {
