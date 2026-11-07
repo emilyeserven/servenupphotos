@@ -169,6 +169,60 @@ func (n jsonNode) alwaysBreaks() bool {
 	return true
 }
 
+// isNumberList says n is a list of two or more numbers, such as a trip line's
+// photos. When it doesn't fit on one line, oxfmt fills each line with as many
+// numbers as fit instead of putting each on its own, as Prettier does.
+func (n jsonNode) isNumberList() bool {
+	if n.isObject || len(n.values) < 2 {
+		return false
+	}
+	for _, v := range n.values {
+		if !isNumber(v.scalar) {
+			return false
+		}
+	}
+	return true
+}
+
+// isNumber says scalar is a printed JSON number.
+func isNumber(scalar string) bool {
+	return scalar != "" && strings.ContainsRune("-0123456789", rune(scalar[0]))
+}
+
+// printFilled prints the number list n broken over lines indented by depth+1
+// levels, each holding as many numbers as fit in printWidth.
+func printFilled(out *bytes.Buffer, n jsonNode, depth int) {
+	inner := strings.Repeat("  ", depth+1)
+	out.WriteString("[\n" + inner)
+	col := len(inner)
+	for i, v := range n.values {
+		last := i == len(n.values)-1
+		item := v.scalar
+		if !last {
+			item += ","
+		}
+		width := utf8.RuneCountInString(item)
+		if i > 0 {
+			col = fillSeparator(out, col, width, inner)
+		}
+		out.WriteString(item)
+		col += width
+	}
+	out.WriteString("\n" + strings.Repeat("  ", depth) + "]")
+}
+
+// fillSeparator writes what goes between two numbers of a filled list: a space
+// when the next one, width wide with its comma, still fits on the line that's at column col,
+// or else a new line indented by inner. It returns the column after it.
+func fillSeparator(out *bytes.Buffer, col, width int, inner string) int {
+	if col+1+width <= printWidth {
+		out.WriteByte(' ')
+		return col + 1
+	}
+	out.WriteString("\n" + inner)
+	return len(inner)
+}
+
 // printJSON prints n starting at column col of a line indented by depth
 // levels; comma says a comma follows it on the same line.
 func printJSON(out *bytes.Buffer, n jsonNode, depth, col int, comma bool) {
@@ -181,6 +235,10 @@ func printJSON(out *bytes.Buffer, n jsonNode, depth, col int, comma bool) {
 	fits := line != "" && col+utf8.RuneCountInString(line)+tail <= printWidth
 	if fits || !n.isContainer() || len(n.values) == 0 {
 		out.WriteString(line)
+		return
+	}
+	if n.isNumberList() {
+		printFilled(out, n, depth)
 		return
 	}
 	opening, closing := "[", "]"

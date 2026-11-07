@@ -85,6 +85,9 @@ func TestCommitCombinedRefreshesAutoLines(t *testing.T) {
 	if got := tree[file]; !strings.Contains(got, `"mode": "walk"`) || !strings.Contains(got, `"auto": true`) {
 		t.Errorf("committed line = %s", got)
 	}
+	if got := tree[file]; got != string(formatJSONFile([]byte(got))) {
+		t.Errorf("committed line isn't formatted the way oxfmt does:\n%s", got)
+	}
 	if got := tree[dataRoot+"/triplines/TRIPLINES.json"]; !strings.Contains(got, `"walk"`) {
 		t.Errorf("TRIPLINES.json = %s", got)
 	}
