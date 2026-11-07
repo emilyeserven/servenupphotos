@@ -2,7 +2,7 @@ import { mutationOptions } from "@tanstack/react-query";
 import { requestJson } from "@/api/settings";
 import type { FileChange } from "@/lib/optimistic";
 
-/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, timeline labels, viewer likes, trip lines or graph presets. */
+/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, timeline labels, viewer likes, trip lines, graph presets or gear pictures. */
 type SettingKind =
   | "cameras"
   | "lenses"
@@ -10,7 +10,8 @@ type SettingKind =
   | "timeline"
   | "likes"
   | "triplines"
-  | "graphs";
+  | "graphs"
+  | "gear";
 
 /** What saving or removing a setting file did; nothing is saved when it already had that content. */
 interface SettingResult<T> {

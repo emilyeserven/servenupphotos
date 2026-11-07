@@ -133,6 +133,8 @@ export interface CombinedFiles {
   triplines: CombinedFile;
   /** GRAPHS.json, the portfolio Graph page's presets and preset groups. */
   graphs: CombinedFile;
+  /** GEAR.json, the cameras' and lenses' own pictures. */
+  gear: CombinedFile;
 }
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */
@@ -185,6 +187,8 @@ export interface InFlightRead {
   triplines: InFlightGroupsRead;
   /** The graph preset and preset group files, combined into GRAPHS.json. */
   graphs: InFlightGroupsRead;
+  /** The gear picture files, combined into GEAR.json. */
+  gear: InFlightGroupsRead;
   images: InFlightImages;
 }
 
@@ -211,11 +215,12 @@ export interface InFlightResponse extends Omit<
   | "likes"
   | "triplines"
   | "graphs"
+  | "gear"
 > {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template, timeline label, viewer likes, trip line and graph preset files in the pull request. */
+  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template, timeline label, viewer likes, trip line, graph preset and gear picture files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
   genres: InFlightGroups;
@@ -229,6 +234,7 @@ export interface InFlightResponse extends Omit<
   likes: InFlightGroups;
   triplines: InFlightGroups;
   graphs: InFlightGroups;
+  gear: InFlightGroups;
 }
 
 /** The album, tag, place or localization files in the pull request, and the combined file built from them. */

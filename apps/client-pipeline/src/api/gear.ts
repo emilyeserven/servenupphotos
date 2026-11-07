@@ -1,0 +1,87 @@
+import { mutationOptions } from "@tanstack/react-query";
+import type { GearFile, GearKind } from "@portfolio/lib/gear-pictures";
+import { settingMutations } from "@/api/data-files";
+import type { CombinedData } from "@/api/photos";
+import { entryId } from "@/api/places";
+import { requestJson } from "@/api/settings";
+import type { CombinedPhoto } from "@/lib/group-photos";
+
+function isGearFile(value: unknown): value is GearFile {
+  const file = value as Partial<GearFile> | null;
+  return typeof file?.id === "string" && typeof file.name === "string";
+}
+
+/** The gear pictures as the next Commit will have them: GEAR.json with the changes since. */
+export function gearFiles(data: CombinedData | undefined): GearFile[] {
+  const entries = data ? (data.head ?? data.base).gear.data : undefined;
+  return (entries ?? []).filter(isGearFile);
+}
+
+/** The ID a camera's or lens's picture file gets, such as `camera-fujifilm-x-t5`. */
+export function gearId(kind: GearKind, name: string): string {
+  return `${kind}-${entryId(name)}`.slice(0, 100).replace(/-+$/, "");
+}
+
+/** One camera or lens on the Gear Pictures page: its name, how many photos have it, and its picture file. */
+export interface GearRow {
+  kind: GearKind;
+  name: string;
+  photos: number;
+  file?: GearFile;
+}
+
+/** How many photos name each camera or lens, by name. */
+function namesOf(photos: CombinedPhoto[], kind: GearKind): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const name of photos.flatMap((photo) => nameOf(photo, kind))) {
+    counts.set(name, (counts.get(name) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/** The camera or lens a photo names, or none. */
+function nameOf(photo: CombinedPhoto, kind: GearKind): string[] {
+  const name = photo[kind];
+  return typeof name === "string" && name.trim() !== "" ? [name] : [];
+}
+
+/**
+ * Every camera or lens the photos name, most photos first, each with its picture file, then the
+ * picture files for ones no photo names any more.
+ */
+export function gearRows(photos: CombinedPhoto[], files: GearFile[], kind: GearKind): GearRow[] {
+  const ofKind = files.filter((file) => file.kind === kind);
+  const fileFor = (name: string) =>
+    ofKind.find((file) => file.name.toLowerCase() === name.toLowerCase());
+  const named = [...namesOf(photos, kind)]
+    .toSorted((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([name, count]): GearRow => ({ kind, name, photos: count, file: fileFor(name) }));
+  const left = ofKind
+    .filter((file) => !named.some((row) => row.file === file))
+    .map((file): GearRow => ({ kind, name: file.name, photos: 0, file }));
+  return [...named, ...left];
+}
+
+/** Where an uploaded gear picture went in R2. */
+interface UploadedGearImage {
+  key: string;
+  url: string;
+}
+
+/** Resizes a picture and puts it in R2 right away, for a gear picture file to point at. */
+export const uploadGearImageMutation = mutationOptions({
+  mutationKey: ["gear", "image"],
+  mutationFn: (image: File) => {
+    const body = new FormData();
+    body.append("image", image);
+    return requestJson<UploadedGearImage>("/api/gear/image", { method: "POST", body });
+  },
+});
+
+const gearMutations = settingMutations<GearFile>("gear");
+
+/** Saves a camera's or lens's picture file, new or changed, as a change waiting for Commit. */
+export const saveGearMutation = gearMutations.save;
+
+/** Removes a camera's or lens's picture file, as a change waiting for Commit. */
+export const deleteGearMutation = gearMutations.remove;

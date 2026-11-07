@@ -164,10 +164,15 @@ under it a level up, then any camera or lens it doesn't list), and **Name**, eve
 that lists the chosen one. A choice that would show no photos given the other
 filters is left out, unless chosen; **Show N choices hidden by the other filters** lists them dimmed, and hovering one
 says which filters hide it: each one that, cleared alone, would let it show photos ("Hidden by Aperture or Lens"), or
-"the other filters together" when no single one would. Each camera has a little drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name). Hovering
-a lens by name shows its details to the right: a side view of it, longer for a longer focal length and with a zoom ring
-when it zooms; its focal length, whether it's a prime or zoom, and its widest aperture, read from its name; and how many
-photos used it, on which cameras, at which focal length most, and from when to when. The four camera settings each have a slider with a handle
+"the other filters together" when no single one would. Each camera has a little drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name), or its own
+picture when the pipeline's [Gear Pictures](gear-pictures.md) page gave it one. The **(i)** button across from the
+**Cameras** or **Lenses** title opens an info pane to the right (on phones, the **Show info** button under the list
+opens it below), the same one the settings' graphics use, with the details of the camera or lens pointed at, or else
+the chosen one: its own picture and description from Gear Pictures, or else a drawing (for a lens, a side view of it,
+longer for a longer focal length and with a zoom ring when it zooms). A camera then lists its kind, how many photos
+used it, with which lenses, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
+widest aperture, read from its name, and how many photos used it, on which cameras, at which focal length most, and
+from when to when. A group, such as a brand, has no details. The four camera settings each have a slider with a handle
 at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,

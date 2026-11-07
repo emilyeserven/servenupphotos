@@ -1,7 +1,9 @@
 import { ChevronDown, Eye, EyeOff, Info } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ChoiceRow } from "@portfolio/components/choice-row";
+import { EquipmentInfoPane } from "@portfolio/components/equipment-info-pane";
 import { EquipmentRow } from "@portfolio/components/equipment-row";
+import { InfoButton } from "@portfolio/components/info-button";
 import type {
   CameraPickerProps,
   CameraSection,
@@ -43,19 +45,61 @@ export function CameraPickerPart({
 /** What each equipment list calls all of its choices. */
 const ANY_LABELS: Record<EquipmentKey, string> = { camera: "All cameras", lens: "All lenses" };
 
+/** Each equipment list's title. */
+const TITLES: Record<EquipmentKey, string> = { camera: "Cameras", lens: "Lenses" };
+
 /**
  * Every camera or lens group and name, indented under the group it's in, with how many photos
  * each would show; clicking the chosen one again goes back to all. Choices that would show no
  * photos, given the other filters, are left out, unless chosen, behind a button that shows them
- * dimmed, each saying on hover which filters hide it.
+ * dimmed, each saying on hover which filters hide it. While `graphics` is on, the (i) button's
+ * pane to the right shows the details of the camera or lens pointed at, or else the chosen one.
  */
 function EquipmentPart({
+  equipment,
+  graphics,
+  onGraphics,
+  ...props
+}: PickerPartProps & { equipment: EquipmentKey }) {
+  const [pointed, setPointed] = useState<FilterOption | undefined>();
+  const chosen = equipmentChoices(equipment, props.photos, props.filters).chosen;
+  const toggle = () => onGraphics(!graphics);
+  return (
+    <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <PartTitle label={TITLES[equipment]} on={graphics} onClick={toggle} />
+        <EquipmentList equipment={equipment} onPoint={setPointed} {...props} />
+        <MobileInfoToggle on={graphics} onClick={toggle} />
+      </div>
+      {graphics && <EquipmentInfoPane equipment={equipment} option={pointed ?? chosen} />}
+    </div>
+  );
+}
+
+/** A section's title, with the (i) button beside it on wider screens. */
+function PartTitle({ label, on, onClick }: { label: string; on: boolean; onClick: () => void }) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <h3 className="text-sm font-semibold">{label}</h3>
+      <span className="max-sm:hidden">
+        <InfoButton open={on} label={`info about ${label}`} onClick={onClick} />
+      </span>
+    </div>
+  );
+}
+
+/** The camera or lens choices, each telling `onPoint` when it's pointed at. */
+function EquipmentList({
   equipment,
   photos,
   filters,
   source,
   onChange,
-}: CameraPickerProps & { equipment: EquipmentKey }) {
+  onPoint,
+}: CameraPickerProps & {
+  equipment: EquipmentKey;
+  onPoint: (option: FilterOption | undefined) => void;
+}) {
   const [showHidden, setShowHidden] = useState(false);
   const choices = equipmentChoices(equipment, photos, filters);
   const { chosen } = choices;
@@ -68,7 +112,7 @@ function EquipmentPart({
   const blockers = useMemo(() => (showHidden ? cameraBlockers(source) : []), [showHidden, source]);
   const choose = (option?: FilterOption) => onChange(equipmentFilters(equipment, option));
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" onMouseLeave={() => onPoint(undefined)}>
       <GroupingTabs groupings={groupings} value={groupingId} onChange={setGroupingId} />
       <ChoiceRow label={ANY_LABELS[equipment]} on={!chosen} onClick={() => choose()} />
       {shown.map((option, index) => (
@@ -81,6 +125,7 @@ function EquipmentPart({
             option.count === 0 ? blockersOf(equipment, option, filters, blockers) : undefined
           }
           onClick={(on) => choose(on ? undefined : option)}
+          onPoint={() => onPoint(option)}
         />
       ))}
       <HiddenToggle count={hidden} shown={showHidden} onClick={() => setShowHidden(!showHidden)} />
@@ -177,10 +222,7 @@ function RangePart({
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
       <div className="flex min-w-0 flex-1 flex-col gap-3">
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="text-sm font-semibold">{label}</h3>
-          <InfoButton on={graphics} label={label} onClick={toggle} />
-        </div>
+        <PartTitle label={label} on={graphics} onClick={toggle} />
         <RangeFilter
           label={label}
           values={RANGE_VALUES[setting]}
@@ -211,25 +253,6 @@ function RangePart({
         </aside>
       )}
     </div>
-  );
-}
-
-/** On wider screens, the (i) button beside the title that shows or hides the info pane. */
-function InfoButton({ on, label, onClick }: { on: boolean; label: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={on}
-      aria-label={`${on ? "Hide" : "Show"} info about ${label}`}
-      title={`${on ? "Hide" : "Show"} info`}
-      onClick={onClick}
-      className={cn(
-        "flex size-7 items-center justify-center rounded-full text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 max-sm:hidden",
-        on && "bg-accent text-foreground",
-      )}
-    >
-      <Info aria-hidden className="size-4" />
-    </button>
   );
 }
 
