@@ -87,7 +87,7 @@ become No stage.
 ## Next up
 
 Once there's a list, a **Next up** panel at the top of the page suggests 3 albums to work on **Overall** and 3 at
-each stage (Cull Round 1 to Re-editing, then No stage), leaving out albums that are Done (`lib/lightroom-next-up.ts`):
+each stage (Cull Round 1 to Re-editing, then No stage), leaving out albums that are Done or that Lightroom shows with 0 photos (an album whose count wasn't read stays in) (`lib/lightroom-next-up.ts`):
 
 - **Overall** puts the albums furthest along first, so an album you've started gets finished before a new one begins,
   and the ones with no stage last.
