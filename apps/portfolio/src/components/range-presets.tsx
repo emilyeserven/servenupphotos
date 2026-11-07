@@ -14,18 +14,23 @@ export interface RangePreset {
 
 /**
  * The slider's quick picks, listed under it in the Camera picker. Choosing one sets the slider to
- * its range, or clears the slider when it's already there. Nothing shows when there are none.
+ * its range, or clears the slider when it's already there. Pointing at one (or tabbing to it)
+ * tells `onPoint` its range, so the slider and the info pane's graphics can show it before it's
+ * chosen. Nothing shows when there are none.
  */
 export function RangePresetList({
   label,
   presets,
   range,
   onChange,
+  onPoint,
 }: {
   label: string;
   presets: RangePreset[];
   range: string | undefined;
   onChange: (range: string | undefined) => void;
+  /** Hears the range of the quick pick pointed at, and undefined once none is. */
+  onPoint?: (range: string | undefined) => void;
 }) {
   if (presets.length === 0) return null;
   return (
@@ -36,7 +41,12 @@ export function RangePresetList({
           key={preset.id}
           preset={preset}
           pressed={preset.range === range}
-          onClick={(pressed) => onChange(pressed ? undefined : preset.range)}
+          onClick={(pressed) => {
+            // Once chosen, the slider shows what the click set rather than the pick pointed at.
+            onPoint?.(undefined);
+            onChange(pressed ? undefined : preset.range);
+          }}
+          onPoint={(on) => onPoint?.(on ? preset.range : undefined)}
         />
       ))}
     </div>
@@ -48,16 +58,23 @@ function PresetItem({
   preset,
   pressed,
   onClick,
+  onPoint,
 }: {
   preset: RangePreset;
   pressed: boolean;
   onClick: (pressed: boolean) => void;
+  /** Hears whether it's pointed at or focused. */
+  onPoint: (on: boolean) => void;
 }) {
   return (
     <button
       type="button"
       aria-pressed={pressed}
       onClick={() => onClick(pressed)}
+      onPointerEnter={() => onPoint(true)}
+      onPointerLeave={() => onPoint(false)}
+      onFocus={() => onPoint(true)}
+      onBlur={() => onPoint(false)}
       className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-accent focus-visible:bg-accent"
     >
       <Check aria-hidden className={cn("size-4 shrink-0", !pressed && "invisible")} />
