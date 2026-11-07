@@ -57,17 +57,17 @@ for a year.
 
 Some cards narrow another instead: **Countries** narrows **Regions**, which narrows **Cities**; the lens card narrows **Focal length**, which
 narrows **Lenses**; and **Year** narrows **Season**, which narrows **Month**. Clicking one of their rows highlights it
-and makes the other card count only its photos, with the chosen value at the top, such as **Japan 57 →**, which opens
+and makes the other card count only its photos, with "in" and the chosen value in quiet text under its title, such as "in Japan", whose name opens
 those photos on the Grid, and an X that shows every photo again. Narrowing passes down the chain: picking 2026 and then
-Autumn leaves Month counting autumn 2026, with only the chip for the card right above it, **Autumn**, which opens
-autumn 2026 on the Grid. Clearing a chip clears only that step, and picking another lens category in the **Group by** control clears what it narrowed. While a card is narrowed, its rows don't repeat the chosen value on hover, such as a city's country. Clicking the highlighted row again does the same. The page has no filters of its own, and what's
+Autumn leaves Month counting autumn 2026, saying only what the card right above it chose, "in Autumn", which opens
+autumn 2026 on the Grid. Clearing one clears only that step, and picking another lens category in the **Group by** control clears what it narrowed. While a card is narrowed, its rows don't repeat the chosen value on hover, such as a city's country. Clicking the highlighted row again does the same. The page has no filters of its own, and what's
 narrowed isn't kept in the URL.
 
 Regions are the photos' states, provinces and prefectures, as the pipeline reads them from the EXIF. The photos without
 one share a **No region** row at the bottom of Regions, which narrows Cities like any other row; its chip opens them on the
 Grid with `?state=none`, which the Places filter's button shows as **No region**.
 
-A row with no photos is left out. A group longer than 8 rows shows its first 8 and a **Show all** button, and a group
+A row with no photos is left out. Every row is shown, a long group scrolling within the card (at most 24rem tall), and a group
 says how many photos it couldn't count, such as photos without a lens in their EXIF ("10 photos don't say"). A focal
 length row counts the photos within the range the Grid's slider would set for it, so the count matches the Grid.
 
