@@ -1,7 +1,7 @@
 # Portfolio homepage
 
 The portfolio's homepage (`/`, `apps/portfolio/src/routes/index.tsx`) is where a visitor picks a way to explore the
-photos: the site's name on frosted glass, then one small frosted tile for each view, with its icon and name, that's ready to visit (Timeline, Map and Grid). [Albums](portfolio-albums.md), [Tags](portfolio-tags.md), [Lucky](portfolio-lucky.md) and [My Likes](portfolio-likes.md) are minor views (`minor: true` in `portfolio-views.ts`): they're left off the homepage, and the site menu lists them under its big icon tiles as a row of small links (as many across as fit, each at least 5rem wide), each with a small icon before its name. A view is ready when its
+photos: the site's name on frosted glass, then one small frosted tile for each view, with its icon and name, that's ready to visit (Map, Timeline, Color and Grid, in that order). The site menu shows the same four as big icon tiles, two across. [Albums](portfolio-albums.md), [Tags](portfolio-tags.md), [Stats](portfolio-stats.md), [Lucky](portfolio-lucky.md) and [My Likes](portfolio-likes.md) are minor views (`minor: true` in `portfolio-views.ts`): they're left off the homepage, and the site menu lists them under its big icon tiles as a row of small links (as many across as fit, each at least 5rem wide), each with a small icon before its name. A view is ready when its
 entry in `apps/portfolio/src/lib/portfolio-views.ts` has `enabled: true`; the site menu greys out the others, and the
 homepage leaves them out.
 
