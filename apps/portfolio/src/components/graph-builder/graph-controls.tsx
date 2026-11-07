@@ -1,5 +1,19 @@
+import {
+  ArrowDownUp,
+  ChartColumn,
+  ChartLine,
+  ChartNoAxesColumn,
+  ChartPie,
+  ChartScatter,
+  Eye,
+  type LucideIcon,
+  MoveRight,
+  MoveUp,
+  Split,
+} from "lucide-react";
 import { GraphRanges } from "@portfolio/components/graph-builder/graph-ranges";
 import {
+  FieldName,
   GraphField,
   StatOptions,
   StatSelect,
@@ -25,6 +39,15 @@ const TYPES: [GraphType, string][] = [
   ["pie", "Pie"],
   ["scatter", "Scatter"],
 ];
+
+/** Each graph type's icon, shown before the Graph type group's name. */
+const TYPE_ICONS: Record<GraphType, LucideIcon> = {
+  bar: ChartColumn,
+  line: ChartLine,
+  dot: ChartNoAxesColumn,
+  pie: ChartPie,
+  scatter: ChartScatter,
+};
 
 /** The x axis's orders, with their names. */
 const SORTS: [SortOrder, string][] = [
@@ -52,24 +75,30 @@ export function GraphControls({
 }) {
   return (
     <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
-      <TypeSelect type={config.type} onChange={onChange} />
-      <GraphField label={config.type === "pie" ? "Slices" : "X axis"}>
+      <TypeGroup config={config} onChange={onChange} />
+      <GraphField label={config.type === "pie" ? "Slices" : "X axis"} icon={MoveRight}>
         <StatSelect value={config.x} onChange={(x) => onChange({ x })} />
       </GraphField>
       <YField config={config} onChange={onChange} />
-      <SplitFields config={config} onChange={onChange} />
       <OrderFields config={config} onChange={onChange} />
       <GraphRanges config={config} onChange={onChange} list={list} />
     </div>
   );
 }
 
-/** The dropdown picking the graph's type. */
-function TypeSelect({ type, onChange }: { type: GraphType; onChange: ConfigChange }) {
+/**
+ * The Graph type group: the graph's type, and for a bar, line or dot graph, which can be split,
+ * what splits it and whether a split bar's parts stack.
+ */
+function TypeGroup({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
   return (
-    <GraphField label="Graph type">
+    <fieldset className="flex min-w-0 flex-wrap items-end gap-x-4 gap-y-3 rounded-lg border p-3">
+      <legend className="px-1 text-xs font-medium text-muted-foreground">
+        <FieldName label="Graph type" icon={TYPE_ICONS[config.type]} />
+      </legend>
       <select
-        value={type}
+        aria-label="Graph type"
+        value={config.type}
         onChange={(e) => onChange({ type: e.target.value as GraphType })}
         className={SELECT_CLASS}
       >
@@ -79,7 +108,8 @@ function TypeSelect({ type, onChange }: { type: GraphType; onChange: ConfigChang
           </option>
         ))}
       </select>
-    </GraphField>
+      <SplitFields config={config} onChange={onChange} />
+    </fieldset>
   );
 }
 
@@ -97,13 +127,13 @@ export function MeasureOptions() {
 function YField({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
   if (config.type === "scatter") {
     return (
-      <GraphField label="Y axis">
+      <GraphField label="Y axis" icon={MoveUp}>
         <StatSelect value={config.y} onChange={(y) => onChange({ y })} leaveOut={[config.x]} />
       </GraphField>
     );
   }
   return (
-    <GraphField label={config.type === "pie" ? "Size" : "Y axis"}>
+    <GraphField label={config.type === "pie" ? "Size" : "Y axis"} icon={MoveUp}>
       <select
         value={config.measure}
         onChange={(e) => onChange({ measure: e.target.value as Measure })}
@@ -115,12 +145,12 @@ function YField({ config, onChange }: { config: GraphConfig; onChange: ConfigCha
   );
 }
 
-/** What splits each bar or line, and for bars whether their parts stack; nothing for the other types. */
+/** What splits each bar, line or dot, and for bars whether their parts stack; nothing for the types that can't be split. */
 function SplitFields({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
   if (!SPLIT_TYPES.has(config.type)) return null;
   return (
     <>
-      <GraphField label="Split by">
+      <GraphField label="Split by" icon={Split}>
         <select
           value={config.split}
           onChange={(e) => onChange({ split: e.target.value })}
@@ -156,7 +186,7 @@ function StackField({ config, onChange }: { config: GraphConfig; onChange: Confi
 function OrderFields({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
   return (
     <>
-      <GraphField label="Order">
+      <GraphField label="Order" icon={ArrowDownUp}>
         <select
           value={config.sort}
           onChange={(e) => onChange({ sort: e.target.value as SortOrder })}
@@ -169,7 +199,7 @@ function OrderFields({ config, onChange }: { config: GraphConfig; onChange: Conf
           ))}
         </select>
       </GraphField>
-      <GraphField label="Show">
+      <GraphField label="Show" icon={Eye}>
         <select
           value={config.limit}
           onChange={(e) => onChange({ limit: Number(e.target.value) })}

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { GraphField } from "@portfolio/components/graph-builder/graph-field";
+import { OptionCheckbox } from "@portfolio/components/view-options-button";
 import { axisValues, type GraphConfig, statById } from "@portfolio/lib/graph-data";
 import { photoCounts, roundSteps } from "@portfolio/lib/graph-ranges";
 import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
@@ -171,18 +172,12 @@ function PhotoThreshold({ config, rows, onChange }: ThresholdProps) {
   );
 }
 
-/** The switch that leaves out the x values with no photos at either end of the axis. */
+/** The checkbox that leaves out the x values with no photos at either end of the axis. */
 function HideZeros({ checked, onChange }: { checked: boolean; onChange: (on: boolean) => void }) {
   return (
-    <label className="flex h-8 items-center gap-2 text-sm">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="size-4 accent-foreground"
-      />
-      Trim empty ends
-    </label>
+    <div className="flex h-8 items-center text-sm">
+      <OptionCheckbox label="Trim empty ends" checked={checked} onChange={onChange} />
+    </div>
   );
 }
 
