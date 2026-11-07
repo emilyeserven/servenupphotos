@@ -74,7 +74,7 @@ export function GraphBuilder({
   return (
     <div className="flex flex-col gap-4">
       <div className={cn(COLUMN, "flex flex-col gap-4")}>
-        <SpotlightPresets onPick={onChange} />
+        <SpotlightPresets config={config} onPick={onChange} />
         <GraphTabs config={config} onChange={onChange} photos={photos} list={kept} />
       </div>
       <section className={cn(BOX_CLASS, !wide && COLUMN)}>

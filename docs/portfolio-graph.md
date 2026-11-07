@@ -55,7 +55,13 @@ button over the presets opens the picker's info pane, further right (under the p
 is set as (`preset-settings.tsx`). A group with no presets isn't shown. The committed presets are photo dot graphs of
 **Aperture**, **Exposure**, **ISO** and **Focal length**, plus Month by year and Time of day by weekday heatmaps.
 
-A preset the pipeline marks **Spotlight** also shows as its own button above Presets and Adjust Graph.
+Whenever the graph's settings match a preset, whether it was picked, set by hand in Adjust Graph, or opened from a
+link, that preset is checked off in the picker and its group names it (`presetIsOn` in `lib/graph-presets.ts`). A
+setting the preset's type doesn't draw, such as a photo dot graph's or bar graph's y axis stat, isn't compared, since a
+link leaves it out.
+
+A preset the pipeline marks **Spotlight** also shows as its own button above Presets and Adjust Graph, with a check
+in place of its star and a filled background while the graph matches it.
 
 The **Save as preset** tab lists the settings it will keep, then asks for a name; its **Save preset** button keeps the graph's settings (not its filters) as one of the visitor's own presets,
 listed under **Yours** in the picker with a × to remove it. They're kept in the browser's local storage
