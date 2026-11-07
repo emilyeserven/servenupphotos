@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ColorRouteImport } from './routes/color'
+import { Route as GraphRouteImport } from './routes/graph'
 import { Route as GridRouteImport } from './routes/grid'
 import { Route as LikesRouteImport } from './routes/likes'
 import { Route as LuckyRouteImport } from './routes/lucky'
@@ -32,6 +33,11 @@ const IndexRoute = IndexRouteImport.update({
 const ColorRoute = ColorRouteImport.update({
   id: '/color',
   path: '/color',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GraphRoute = GraphRouteImport.update({
+  id: '/graph',
+  path: '/graph',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GridRoute = GridRouteImport.update({
@@ -98,6 +104,7 @@ const PhotosIdRoute = PhotosIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
+  '/graph': typeof GraphRoute
   '/grid': typeof GridRoute
   '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
+  '/graph': typeof GraphRoute
   '/grid': typeof GridRoute
   '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
+  '/graph': typeof GraphRoute
   '/grid': typeof GridRoute
   '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/color'
+    | '/graph'
     | '/grid'
     | '/likes'
     | '/lucky'
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/color'
+    | '/graph'
     | '/grid'
     | '/likes'
     | '/lucky'
@@ -181,6 +192,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/color'
+    | '/graph'
     | '/grid'
     | '/likes'
     | '/lucky'
@@ -198,6 +210,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ColorRoute: typeof ColorRoute
+  GraphRoute: typeof GraphRoute
   GridRoute: typeof GridRoute
   LikesRoute: typeof LikesRoute
   LuckyRoute: typeof LuckyRoute
@@ -226,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/color'
       fullPath: '/color'
       preLoaderRoute: typeof ColorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/graph': {
+      id: '/graph'
+      path: '/graph'
+      fullPath: '/graph'
+      preLoaderRoute: typeof GraphRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/grid': {
@@ -318,6 +338,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ColorRoute: ColorRoute,
+  GraphRoute: GraphRoute,
   GridRoute: GridRoute,
   LikesRoute: LikesRoute,
   LuckyRoute: LuckyRoute,
