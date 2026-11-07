@@ -10,6 +10,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/offline"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/routing"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
 )
@@ -80,6 +81,9 @@ type routeDeps struct {
 	// findPhotos looks for the photos' images in R2, falling back to the
 	// offline copy when R2 can't be reached.
 	findPhotos findPhotosFunc
+	// route finds the path along streets of a trip line's walks and drives,
+	// from the OpenStreetMap routing servers (see routing.New).
+	route github.RouteFunc
 }
 
 // newRouteDeps is what the routes are built from, with the offline copy in
@@ -98,6 +102,7 @@ func newRouteDeps(extractor exif.Extractor, store *settings.Store, gh *github.Cl
 		colors:     newKeyCache[colors.Summary](),
 		offline:    kept,
 		findPhotos: findPhotosFunc(kept.Find(storage.FindPhotos)),
+		route:      routing.New().Path,
 	}
 }
 

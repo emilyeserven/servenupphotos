@@ -1,7 +1,6 @@
 import type { TripPoint, TripSegment } from "@/api/trip-lines";
 import type { TripPhoto } from "@/lib/trip-days";
-
-type LngLat = [number, number];
+import { type LngLat, linePoints } from "@/lib/trip-points";
 
 /** A segment as a GeoJSON line, with its mode. */
 interface LineFeature {
@@ -16,16 +15,10 @@ interface LineCollection {
   features: LineFeature[];
 }
 
-/** The point as [longitude, latitude], as GeoJSON writes it. */
-function lngLat(p: TripPoint | TripPhoto): LngLat {
-  return [p.longitude, p.latitude];
-}
-
-/** The points the segment's line goes through: its start, its photos that are on the day, its end. */
+/** The points the segment's line goes through: its path along streets when it has one, or else its points. */
 function segmentCoordinates(segment: TripSegment, byId: Map<number, TripPhoto>): LngLat[] {
-  const photos = segment.photos.flatMap((id) => byId.get(id) ?? []);
-  const points = [segment.start, ...photos, segment.end].filter((p) => p !== undefined);
-  return points.map(lngLat);
+  if (segment.path && segment.path.length >= 2) return segment.path;
+  return linePoints(segment, byId).map((p) => p.at);
 }
 
 /** The segments as GeoJSON lines with their mode, the way the map draws them. */

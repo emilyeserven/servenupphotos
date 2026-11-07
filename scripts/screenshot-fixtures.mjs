@@ -514,6 +514,43 @@ function colorFiles() {
   }));
 }
 
+/** A photo's GPS spot as [longitude, latitude], read from its "51 deg 24' 46.80\" N, …" position. */
+function photoSpot(id) {
+  const gps = headPhotos.find((p) => p.data.id === id)?.data.gpsPosition;
+  const parts = gps?.match(/[\d.]+ deg [\d.]+' [\d.]+" [NSEW]/g) ?? [];
+  const [lat, lng] = parts.map((part) => {
+    const [d, m, sec] = part.match(/[\d.]+/g).map(Number);
+    return (d + m / 60 + sec / 3600) * (/[SW]/.test(part) ? -1 : 1);
+  });
+  return lat === undefined ? undefined : [lng, lat];
+}
+
+/** The segment's via spots after a photo (or after its start, for undefined), as [longitude, latitude]. */
+const viaSpots = (segment, after) =>
+  (segment.via ?? []).filter((v) => v.after === after).map((v) => [v.longitude, v.latitude]);
+
+/** A pretend street path through a segment's spots: each stretch turns one corner, like a city block. */
+function blockPath(segment) {
+  const spots = [
+    segment.start && [segment.start.longitude, segment.start.latitude],
+    ...viaSpots(segment, undefined),
+    ...segment.photos.flatMap((id) => [photoSpot(id), ...viaSpots(segment, id)]),
+    segment.end && [segment.end.longitude, segment.end.latitude],
+  ].filter(Boolean);
+  return spots.flatMap((spot, i) => (i === 0 ? [spot] : [[spot[0], spots[i - 1][1]], spot]));
+}
+
+/** The Snap to streets answer: every walk, bus or car segment gets a block-shaped path. */
+const snapped = ({ body }) => ({
+  line: {
+    ...body,
+    segments: body.segments.map((s) =>
+      ["walk", "bus", "car"].includes(s.mode) ? { ...s, path: blockPath(s) } : s,
+    ),
+  },
+  unrouted: 0,
+});
+
 const pendingSave = (branch = PULL_REQUEST.branch) => ({
   branch,
   pullRequestUrl: PULL_REQUEST.url,
@@ -1216,6 +1253,7 @@ export function defaultFixtures() {
         { mode: "walk", photos: [495, 496, 497, 471] },
       ],
     },
+    "POST /api/triplines/2026-10-01/route": snapped,
     "PUT /api/triplines/2026-10-01": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/triplines/2026-10-01.json`,

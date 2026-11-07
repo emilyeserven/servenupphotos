@@ -47,6 +47,24 @@ type TripSegment struct {
 	Photos []int `json:"photos"`
 	// End is a spot with no photo the line ends at, after Photos.
 	End *TripPoint `json:"end,omitempty"`
+	// Via are spots the line goes through between its photos, to shape it.
+	Via []TripVia `json:"via,omitempty"`
+	// Path is the line along streets through the segment's points, each
+	// [longitude, latitude], found by Snap to streets (see RouteTripLine);
+	// none for a train or subway, or before it's snapped, which draws it
+	// straight through the points.
+	Path [][2]float64 `json:"path,omitempty"`
+}
+
+// TripVia is a spot a segment's line goes through to shape it, such as a
+// bridge crossed between two photos.
+type TripVia struct {
+	// After is the ID of the photo the spot comes after; nil puts it right
+	// after the segment's start spot. Spots with the same After keep their
+	// order.
+	After     *int    `json:"after,omitempty"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
 }
 
 // TripLine is a trip line file: the route of one day, which the portfolio's
@@ -64,21 +82,50 @@ type TripLine struct {
 }
 
 // SaveTripLine saves line as <folder>/triplines/<day>.json, new or replacing
-// the one there, in the pending changes. It fails when a photo isn't from that
-// day or has no exact spot.
+// the one there, in the pending changes, with the paths along streets it was
+// given (see RouteTripLine). It fails when a photo isn't from that day or has
+// no exact spot.
 func (c *Client) SaveTripLine(ctx context.Context, gh settings.GitHub, line TripLine) (EntryResult, error) {
-	line, perr := validTripLine(line)
+	line, _, perr := c.checkedTripLine(ctx, gh, line)
 	if perr != nil {
-		return EntryResult{}, perr
-	}
-	w, perr := c.workspace(ctx, gh)
-	if perr != nil {
-		return EntryResult{}, perr
-	}
-	if perr := checkTripPhotos(line, w.tripSpots(false)); perr != nil {
 		return EntryResult{}, perr
 	}
 	return c.saveEntry(ctx, gh, TripLines, line.ID, line, func([]Entry) *PublishError { return nil })
+}
+
+// RoutedTripLine is a trip line with its walks, bus rides and drives snapped
+// to streets, and how many of those got no route, so they stay straight.
+type RoutedTripLine struct {
+	Line     TripLine `json:"line"`
+	Unrouted int      `json:"unrouted"`
+}
+
+// RouteTripLine is line, not saved, with the path along streets of each walk,
+// bus or car segment that hasn't one yet found by route through its photos
+// and via spots, for the pipeline to show before it's saved.
+func (c *Client) RouteTripLine(ctx context.Context, gh settings.GitHub, line TripLine, route RouteFunc) (RoutedTripLine, error) {
+	line, spots, perr := c.checkedTripLine(ctx, gh, line)
+	if perr != nil {
+		return RoutedTripLine{}, perr
+	}
+	unrouted := routeSegments(ctx, line, spots, route)
+	return RoutedTripLine{Line: line, Unrouted: unrouted}, nil
+}
+
+// checkedTripLine is line trimmed as it will be saved, and the photos a line
+// can go through, by ID. It fails when line isn't valid, or a photo isn't
+// from its day or has no exact spot.
+func (c *Client) checkedTripLine(ctx context.Context, gh settings.GitHub, line TripLine) (TripLine, map[int]tripSpot, *PublishError) {
+	line, perr := validTripLine(line)
+	if perr != nil {
+		return line, nil, perr
+	}
+	w, perr := c.workspace(ctx, gh)
+	if perr != nil {
+		return line, nil, perr
+	}
+	spots := w.tripSpots(false)
+	return line, spots, checkTripPhotos(line, spots)
 }
 
 // DeleteTripLine removes the trip line file of day in the pending changes.
@@ -136,12 +183,21 @@ func validTripSegment(seg TripSegment, n int) (TripSegment, *PublishError) {
 			return seg, perr
 		}
 	}
+	if perr := validPath(seg.Path, n); perr != nil {
+		return seg, perr
+	}
+	if perr := validVia(seg, n); perr != nil {
+		return seg, perr
+	}
+	if !streetModes[seg.Mode] {
+		seg.Path = nil
+	}
 	return seg, repeatedPhoto(seg, n)
 }
 
 // pointCount is how many points seg's line goes through.
 func pointCount(seg TripSegment) int {
-	n := len(seg.Photos)
+	n := len(seg.Photos) + len(seg.Via)
 	if seg.Start != nil {
 		n++
 	}
