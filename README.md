@@ -95,6 +95,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio analytics](docs/portfolio-analytics.md): Umami page views and query events on the published portfolio
 - [Portfolio Tags](docs/portfolio-tags.md) (`/tags` on the portfolio): every tag with a few of its photos, grouped under parent tags, each linking to the Grid
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
+- [Portfolio Back to top button](docs/portfolio-back-to-top.md): the button at the bottom left of every page but the Map and Color that scrolls back to the top
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Dashboard](docs/dashboard.md) (`/`): the home page, with the next Lightroom albums, drafts, Compare sets, Instagram queue and Site Spotlight dates
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check

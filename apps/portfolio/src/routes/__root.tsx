@@ -1,5 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import { BackToTopButton } from "@/components/back-to-top-button";
 import { PageHeaderSpotlight } from "@/components/header-spotlight";
 import { SiteMenu } from "@/components/site-menu";
 
@@ -15,6 +16,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       </div>
       <PageHeaderSpotlight />
       <Outlet />
+      <BackToTopButton />
     </main>
   ),
 });
