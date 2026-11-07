@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Grid3x3, Table } from "lucide-react";
 import { ColorOrderControls } from "@/components/color-order-controls";
-import { GridColorFilters } from "@/components/grid-color-filters";
+import { VisualsPicker } from "@/components/visuals-picker";
 import { GridSortSelect } from "@/components/grid-sort-select";
 import { GridViewOptions } from "@/components/grid-view-options";
 import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-tiles";
@@ -175,7 +175,10 @@ function GridView() {
               keys: COLOR_FILTER_KEYS,
               count: colorFilterCount(search),
               children: (
-                <GridColorFilters photos={searchedPhotos(newestFirst, search)} filters={search} />
+                <VisualsPicker
+                  photos={searchedPhotos(newestFirst, { ...search, orientation: undefined })}
+                  filters={search}
+                />
               ),
             }}
           />

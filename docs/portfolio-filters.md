@@ -2,7 +2,7 @@
 
 The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens
 filters that narrow the photos they show: **Places**, [Groups](#groups-album-tag-and-genre) and [When](#when) (**Hide filters** closes them again). The
-Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** button, which opens the Color page's color filters (see
+Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Visuals** button, which opens the Color page's color filters and **Orientation** (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
 beside it. Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
@@ -148,11 +148,13 @@ photo without the setting isn't in any range.
 
 The hours of the day are in the [When](#when) picker, which every view with filters has.
 
-**Orientation** sits after the **Gear & settings** button: a horizontal and a vertical rectangle button, each with how many photos the
-other filters leave have that orientation. Clicking one shows only the photos wider than they're tall
-(`?orientation=horizontal`) or taller than they're wide (`?orientation=vertical`); clicking it again, or its X, clears
-it. A square photo is neither, so it's only shown while no orientation is chosen. The photo's size is the one its JSON
-file saves (`width` and `height`), so a photo not uploaded to R2 yet has no orientation either.
+**Orientation** is a section of the **Visuals** picker (see
+[Portfolio Color](portfolio-color.md#on-the-grid-page)): a list of **Horizontal**, **Vertical** and **Square**, each
+drawn as an outlined shape of its proportions, with how many photos the other filters (colors too) leave have that
+orientation. Clicking one shows only the photos wider than they're tall (`?orientation=horizontal`), taller than
+they're wide (`?orientation=vertical`), or exactly as wide as they're tall (`?orientation=square`); clicking it again
+clears it. The photo's size is the one its JSON file saves (`width` and `height`), so a photo not uploaded to R2 yet
+has no orientation.
 
 The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and **Clear filters** clears them too.
 
