@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { TripLinesCrumbs } from "@/components/sidebar/route-crumbs";
 import { TripLinesPage } from "@/components/trip-lines/page";
 import { parseTripLinesSearch } from "@/lib/trip-lines-search";
 
@@ -19,4 +20,5 @@ export const Route = createFileRoute("/trip-lines/")({
     });
   },
   component: TripLinesPage,
+  staticData: { crumbs: TripLinesCrumbs },
 });
