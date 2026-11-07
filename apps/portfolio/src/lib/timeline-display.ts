@@ -35,13 +35,14 @@ export const THUMB_LAYOUT: Record<ThumbSize, { thumbnail: string; row: string }>
 /**
  * The Timeline's display options as they're kept in its URL, each left out at its default:
  * `?thumbs=large` for the thumbnail size, `?tech=true` to show technical info, and
- * `?comments=false` or `?places=false` to hide comments or places, and `?ticks=days` for a scrubber
- * tick on every day.
+ * `?comments=false` or `?places=false` to hide comments or places, `?ticks=days` for a scrubber
+ * tick on every day, and `?maps=true` to open each month's trip line maps.
  */
 export interface TimelineDisplaySearch {
   thumbs?: Exclude<ThumbSize, "small">;
   ticks?: "days";
   tech?: true;
+  maps?: true;
   comments?: false;
   places?: false;
 }
@@ -58,6 +59,8 @@ export interface TimelineDisplay {
   places: boolean;
   /** Whether the scrubber has a tick for each month or for each day. */
   ticks: TimelineTicks;
+  /** Whether each month's trip line maps start open; each month's button still opens or closes them. */
+  maps: boolean;
 }
 
 /** The options a Timeline opens with when its URL sets none. */
@@ -67,6 +70,7 @@ export const DEFAULT_TIMELINE_DISPLAY: TimelineDisplay = {
   comments: true,
   places: true,
   ticks: "months",
+  maps: false,
 };
 
 /** The display options in a Timeline URL's search, dropping any it doesn't know. */
@@ -75,8 +79,16 @@ export function parseTimelineDisplay(search: Record<string, unknown>): TimelineD
     ...parseThumbs(search.thumbs),
     ...parseTicks(search.ticks),
     ...(search.tech === true ? { tech: true } : {}),
+    ...parseShown(search),
+  };
+}
+
+/** `?comments=false`, `?places=false` and `?maps=true` when they're set. */
+function parseShown(search: Record<string, unknown>): TimelineDisplaySearch {
+  return {
     ...(search.comments === false ? { comments: false } : {}),
     ...(search.places === false ? { places: false } : {}),
+    ...(search.maps === true ? { maps: true } : {}),
   };
 }
 
@@ -99,6 +111,7 @@ export function resolveTimelineDisplay(search: TimelineDisplaySearch): TimelineD
     comments: search.comments !== false,
     places: search.places !== false,
     ticks: search.ticks ?? "months",
+    maps: search.maps === true,
   };
 }
 
@@ -113,6 +126,7 @@ export function timelineDisplaySearch(display: TimelineDisplay): TimelineDisplay
     comments: hiddenParam(display.comments),
     places: hiddenParam(display.places),
     ticks: display.ticks === "days" ? "days" : undefined,
+    maps: display.maps ? true : undefined,
   };
 }
 

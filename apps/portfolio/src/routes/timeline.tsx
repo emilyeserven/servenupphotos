@@ -31,6 +31,7 @@ import {
 import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
 import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
+import { MonthMaps, TripLinesButton, useMonthTripLines } from "@/components/timeline-month-map";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
@@ -162,7 +163,10 @@ function PhotoMonths({
   );
 }
 
-/** A month's heading and its photos, which the heading's button hides and shows again. */
+/**
+ * A month's heading and its photos, which the heading's button hides and shows again, with its trip
+ * line maps under it when its **Trip lines** button has them open.
+ */
 function MonthSection({
   month,
   monthPhotos,
@@ -170,6 +174,7 @@ function MonthSection({
 }: RowOptions & { month: string; monthPhotos: Photo[] }) {
   const [open, setOpen] = useState(true);
   const listId = useId();
+  const lines = useMonthTripLines(monthPhotos, options.display.maps);
   return (
     <li
       data-month={month}
@@ -179,32 +184,61 @@ function MonthSection({
     >
       {/* Sticks to the top while the month's photos scroll under it. Its fixed height (h-10) is
           where each day's subheading sticks, just under it. */}
-      <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center bg-background px-1">
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-controls={listId}
-          onClick={() => setOpen(!open)}
-          className="flex items-center gap-1.5 rounded-sm text-sm font-medium tracking-wide text-muted-foreground uppercase outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <ChevronDown
-            className={cn("size-4 transition-transform", !open && "-rotate-90")}
-            aria-hidden
-          />
-          {month}
-          <span className="ml-0.5 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tracking-normal text-foreground tabular-nums">
-            {monthPhotos.length}
-          </span>
-        </button>
+      <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center justify-between gap-2 bg-background px-1">
+        <MonthButton
+          month={month}
+          count={monthPhotos.length}
+          open={open}
+          controls={listId}
+          onToggle={() => setOpen(!open)}
+        />
+        {open && <TripLinesButton lines={lines} />}
       </h2>
       {open && (
-        <ol id={listId} className="flex flex-col gap-4">
-          {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
-            <DaySection key={day} day={day} dayPhotos={dayPhotos} {...options} />
-          ))}
-        </ol>
+        <div id={listId} className="flex flex-col gap-4">
+          <MonthMaps lines={lines} />
+          <ol className="flex flex-col gap-4">
+            {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
+              <DaySection key={day} day={day} dayPhotos={dayPhotos} {...options} />
+            ))}
+          </ol>
+        </div>
       )}
     </li>
+  );
+}
+
+/** The month's name and photo count, a button that hides and shows its photos. */
+function MonthButton({
+  month,
+  count,
+  open,
+  controls,
+  onToggle,
+}: {
+  month: string;
+  count: number;
+  open: boolean;
+  controls: string;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-expanded={open}
+      aria-controls={controls}
+      onClick={onToggle}
+      className="flex items-center gap-1.5 rounded-sm text-sm font-medium tracking-wide text-muted-foreground uppercase outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <ChevronDown
+        className={cn("size-4 transition-transform", !open && "-rotate-90")}
+        aria-hidden
+      />
+      {month}
+      <span className="ml-0.5 rounded-full bg-muted px-2 py-0.5 text-xs font-semibold tracking-normal text-foreground tabular-nums">
+        {count}
+      </span>
+    </button>
   );
 }
 
