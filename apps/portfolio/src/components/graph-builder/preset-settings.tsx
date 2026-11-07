@@ -1,6 +1,6 @@
-import { sortName } from "@portfolio/components/graph-builder/graph-controls";
 import { graphTypeName } from "@portfolio/components/graph-builder/graph-type-picker";
 import { type GraphConfig, hasYStat, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
+import { orderName } from "@portfolio/lib/graph-order";
 import type { GraphRanges } from "@portfolio/lib/graph-ranges";
 
 /** One line of a preset's settings: its name and what it's set to, such as X axis: Aperture. */
@@ -57,7 +57,7 @@ function settingLines(config: GraphConfig): SettingLine[] {
     [config.type === "pie" ? "Slices" : "X axis", statById(config.x).label],
     [config.type === "pie" ? "Size" : "Y axis", yText(config)],
     ...splitLines(config),
-    ["Order", sortName(config.sort)],
+    ["Order", orderName(config.x, "X axis", config.sort)],
     ["Show", config.limit === 0 ? "All" : `First ${config.limit}`],
     ...rangeLines(config),
   ];

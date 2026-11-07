@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { type ConfigChange, MeasureOptions } from "@/components/graph-builder/graph-controls";
+import { MEASURES } from "@/components/graph-builder/axes-picker";
+import type { ConfigChange } from "@/components/graph-builder/graph-controls";
 import { StatOptions } from "@/components/graph-builder/graph-field";
 import { type GraphConfig, hasYStat, type Measure } from "@/lib/graph-data";
 
@@ -51,7 +52,11 @@ function YPicker({ config, onChange }: { config: GraphConfig; onChange: ConfigCh
       value={config.measure}
       onChange={(measure) => onChange({ measure: measure as Measure })}
     >
-      <MeasureOptions />
+      {MEASURES.map(([measure, label]) => (
+        <option key={measure} value={measure}>
+          {label}
+        </option>
+      ))}
     </AxisPicker>
   );
 }

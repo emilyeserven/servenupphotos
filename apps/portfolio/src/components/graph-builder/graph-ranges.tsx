@@ -1,42 +1,32 @@
 import type { ReactNode } from "react";
-import { GraphField } from "@portfolio/components/graph-builder/graph-field";
-import { OptionCheckbox } from "@portfolio/components/view-options-button";
-import { axisStatRows, axisValues, type GraphConfig, hasYStat } from "@portfolio/lib/graph-data";
-import { photoCounts, roundSteps } from "@portfolio/lib/graph-ranges";
-import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
+import { axisStatRows, type GraphConfig, hasYStat } from "@portfolio/lib/graph-data";
+import { roundSteps } from "@portfolio/lib/graph-ranges";
+import type { Photo } from "@portfolio/lib/photos";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import type { StatRow } from "@portfolio/lib/stat-groups";
 
 /** A change to some of the graph's settings. */
 type ConfigChange = (change: Partial<GraphConfig>) => void;
 
-interface RangesProps {
+/** The x axis's ends, or a pie's first and last slice, picked from its values in its order. */
+export function XEnds({
+  name,
+  rows,
+  config,
+  onChange,
+}: {
+  name: string;
+  rows: StatRow[];
   config: GraphConfig;
   onChange: ConfigChange;
-  /** The photos the choices are read from: the ones the filters keep, or else every photo. */
-  list?: Photo[];
-}
-
-/**
- * The Range group in the Adjust Graph box: the first and last value on each axis, each picked from
- * the values the axis has, how many photos an x value needs to show (picked from the counts they
- * have), and a switch that trims the values with no photos off the axis's ends.
- */
-export function GraphRanges({ config, onChange, list = allPhotos }: RangesProps) {
-  const rows = axisValues(list, config);
+}) {
   return (
-    <fieldset className="flex basis-full flex-wrap items-end gap-x-4 gap-y-3 rounded-lg border p-3">
-      <legend className="px-1 text-xs font-medium text-muted-foreground">Range</legend>
-      <LabelEnds
-        name={config.type === "pie" ? "Slices" : "X axis"}
-        labels={rows.map((row) => row.label)}
-        ends={[config.xFrom, config.xTo]}
-        onChange={([xFrom, xTo]) => onChange({ xFrom, xTo })}
-      />
-      <YEnds config={config} rows={rows} list={list} onChange={onChange} />
-      <PhotoThreshold config={config} rows={rows} onChange={onChange} />
-      <HideZeros checked={config.hideZeros} onChange={(hideZeros) => onChange({ hideZeros })} />
-    </fieldset>
+    <LabelEnds
+      name={name}
+      labels={rows.map((row) => row.label)}
+      ends={[config.xFrom, config.xTo]}
+      onChange={([xFrom, xTo]) => onChange({ xFrom, xTo })}
+    />
   );
 }
 
@@ -97,7 +87,7 @@ interface YEndsProps {
 }
 
 /** The y axis's ends: a scatterplot's or heatmap's y values, a bar, line or dot graph's round numbers up to its top; none for a pie. */
-function YEnds({ config, rows, list, onChange }: YEndsProps) {
+export function YEnds({ config, rows, list, onChange }: YEndsProps) {
   if (config.type === "pie") return null;
   if (hasYStat(config.type)) {
     const labels = axisStatRows(list, config.y, config.yBucket).map((row) => row.label);
@@ -137,45 +127,6 @@ function NumberEnds({ config, rows, onChange }: Omit<YEndsProps, "list">) {
         onChange={(v) => onChange({ yMax: numberOf(v) })}
       />
     </EndPair>
-  );
-}
-
-interface ThresholdProps {
-  config: GraphConfig;
-  rows: StatRow[];
-  onChange: ConfigChange;
-}
-
-/** How many photos an x value needs to show, from the counts the x values have. */
-function PhotoThreshold({ config, rows, onChange }: ThresholdProps) {
-  const counts = photoCounts(rows).filter((count) => count > 1);
-  return (
-    <GraphField label="Photos per value">
-      <select
-        value={String(config.minPhotos)}
-        onChange={(e) => onChange({ minPhotos: Number(e.target.value) })}
-        className={SELECT_CLASS}
-      >
-        <option value="0">Any</option>
-        {counts.map((count) => (
-          <option key={count} value={count}>
-            At least {count}
-          </option>
-        ))}
-        {config.minPhotos > 0 && !counts.includes(config.minPhotos) && (
-          <option value={config.minPhotos}>At least {config.minPhotos}</option>
-        )}
-      </select>
-    </GraphField>
-  );
-}
-
-/** The checkbox that leaves out the x values with no photos at either end of the axis. */
-function HideZeros({ checked, onChange }: { checked: boolean; onChange: (on: boolean) => void }) {
-  return (
-    <div className="flex h-8 items-center text-sm">
-      <OptionCheckbox label="Trim empty ends" checked={checked} onChange={onChange} />
-    </div>
   );
 }
 
