@@ -123,7 +123,7 @@ Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores th
 new square. Saving any other change to a file without `images.thumbnailcrop` adds it too. The new square is in R2 at
 once; the JSON goes to GitHub with the next **Commit**.
 
-Under the photos it lists the album, tag, genre, place, localization, metadata group, camera override, custom lens, timeline label and viewer likes files the pull request or the changes waiting for
+Under the photos it lists the album, tag, genre, place, localization, metadata group, camera override, custom lens, Trip and viewer likes files the pull request or the changes waiting for
 Commit add or change, each kind in its own panel collapsed to how many files it has. Opened, a panel shows the files on
 the left by name (their `name`, or else their file name) with how many lines each adds and removes (`+3 −1`, the way
 its diff counts them; every line is added for a new file), and on the right the selected file's JSON, with what it

@@ -46,8 +46,8 @@ type tripPageDay struct {
 // and counts its pages in counts. The portfolio leaves out the photos it
 // doesn't have, such as drafts.
 func (w *workspace) addTripPages(changes map[string][]byte, counts map[string]int) *PublishError {
-	entries := w.withChanges(changes).entries(TripLines)
-	pages := bakeTripPages(storiesIn(entries), tripsIn(entries))
+	view := w.withChanges(changes)
+	pages := bakeTripPages(storiesIn(view.entries(TripLines)), view.allTrips())
 	b, err := json.Marshal(pages)
 	if err != nil {
 		return publishErr(http.StatusInternalServerError, "Couldn't format %s.", TripPagesFile)

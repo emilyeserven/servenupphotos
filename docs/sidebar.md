@@ -45,7 +45,7 @@ branches that add pages don't clash:
   - Update Data (each of its subpages)
   - Metadata Groups
   - Camera Overrides
-  - Timeline Labels
+  - Trips
   - Trip Lines
 
 ## Submenus

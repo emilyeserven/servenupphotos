@@ -286,7 +286,7 @@ export function pendingText(summary: PendingSummary): string {
     [summary.cameras, "camera override"],
     [summary.lenses, "custom lens file"],
     [summary.captions, "caption template"],
-    [summary.timeline, "timeline label"],
+    [summary.timeline, "Trip"],
     [summary.likes, "user likes list"],
     [summary.triplines, "trip line"],
     [summary.graphs, "graph preset"],

@@ -9,7 +9,7 @@ function textRule(value: unknown): string {
 }
 
 /**
- * The rules a Smart Album has besides the Grid's filters: a timeline label whose days its photos
+ * The rules a Smart Album has besides the Grid's filters: a Trip whose days its photos
  * were taken on, and the first and last days, by the clock where each photo was taken.
  */
 export function DateRules({ rules, labels }: { rules: RuleParams; labels: TimelineLabel[] }) {
@@ -23,14 +23,14 @@ export function DateRules({ rules, labels }: { rules: RuleParams; labels: Timeli
     <div className="grid gap-3 text-sm sm:grid-cols-3">
       <div className="flex flex-col gap-1.5">
         <span id="smart-label" className="font-medium">
-          Timeline label
+          Trip
         </span>
         <SingleCombobox
           aria-labelledby="smart-label"
           options={options}
           value={textRule(rules.draft.label)}
           placeholder="Any day"
-          emptyText="No timeline labels match."
+          emptyText="No Trips match."
           onChange={(id) => set("label", id)}
         />
       </div>

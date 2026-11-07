@@ -3,7 +3,7 @@
 A Smart Album is an album whose photos come from saved rules rather than being picked one by one, such as "every
 vertical photo from the Japan trip". Its rules are the portfolio [Grid's filters](portfolio-filters.md) (places, album,
 tag, genre, camera, lens, the ISO, exposure, focal length, aperture and time of day sliders, orientation and colors),
-plus three of its own: a [timeline label](timeline-labels.md) whose days its photos were taken on, and **Taken on or
+plus three of its own: a [Trip](trips.md) whose days its photos were taken on, and **Taken on or
 after** and **Taken on or before** days. A photo has to match every rule, the same way the Grid's filters combine, and
 a photo taken on a new day or given a new tag joins (or leaves) the album on its own.
 

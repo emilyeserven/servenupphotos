@@ -171,7 +171,7 @@ export const navGroups: readonly NavGroup[] = [
       { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
       { title: "Camera Overrides", url: "/camera-overrides", icon: CameraIcon },
       { title: "Gear Pictures", url: "/gear-pictures", icon: ImagePlusIcon },
-      { title: "Timeline Labels", url: "/timeline-labels", icon: CalendarRangeIcon },
+      { title: "Trips", url: "/trips", icon: CalendarRangeIcon },
       { title: "Trip Lines", url: "/trip-lines", icon: RouteIcon },
       { title: "Graph Presets", url: "/graph-presets", icon: ChartColumnIcon },
     ],

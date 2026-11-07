@@ -9,23 +9,25 @@ import (
 
 // tripKorea is a Trip over the trip line test photos' two days: a ferry
 // between them, and a flight home from the second day.
-var tripKorea = Trip{ID: "trip-kyoto", Name: " Kyoto ", Start: "2026-09-23", End: "2026-09-24", Legs: []TripLeg{
+var tripKorea = Trip{ID: "kyoto", Name: " Kyoto ", Start: "2026-09-23", End: "2026-09-24", Legs: []TripLeg{
 	{Mode: ModeFerry, From: TripLegEnd{Day: "2026-09-23"}, To: TripLegEnd{Day: "2026-09-24"}},
 	{Mode: ModeFlight, From: TripLegEnd{Day: "2026-09-24"}, To: TripLegEnd{Day: "2026-09-24", Spot: &TripPoint{Latitude: 40.7, Longitude: -74, Label: "Home"}}},
 }}
 
 func TestSaveTrip(t *testing.T) {
-	_, c := newMainRepo(t, tripPhotos)
+	_, c := newMainRepo(t, with(tripPhotos, map[string]string{
+		dataRoot + "/timeline/seoul.json": `{"id":"seoul","name":"Seoul","start":"2026-08-01","end":"2026-08-03"}`,
+	}))
 	if _, err := c.SaveTrip(t.Context(), placesGH, tripKorea); err != nil {
 		t.Fatalf("SaveTrip() error = %v", err)
 	}
-	saved := staged(t, c, dataRoot+"/triplines/trip-kyoto.json")
+	saved := staged(t, c, dataRoot+"/timeline/kyoto.json")
 	if !strings.Contains(saved, `"name": "Kyoto"`) || !strings.Contains(saved, `"mode": "ferry"`) {
 		t.Errorf("saved %s", saved)
 	}
 	leg := func(mode, from, to string) Trip {
 		trip := tripKorea
-		trip.ID = "trip-other"
+		trip.ID = "other"
 		trip.Start, trip.End = "2026-10-01", "2026-10-05"
 		trip.Legs = []TripLeg{{Mode: mode, From: TripLegEnd{Day: from}, To: TripLegEnd{Day: to}}}
 		return trip
@@ -35,13 +37,15 @@ func TestSaveTrip(t *testing.T) {
 		trip   Trip
 		status int
 	}{
-		{"no prefix", Trip{ID: "kyoto", Name: "Kyoto", Start: "2026-09-23", End: "2026-09-24"}, http.StatusBadRequest},
-		{"no name", Trip{ID: "trip-x", Start: "2026-09-23", End: "2026-09-24"}, http.StatusBadRequest},
-		{"backwards", Trip{ID: "trip-x", Name: "X", Start: "2026-09-24", End: "2026-09-23"}, http.StatusBadRequest},
+		{"bad ID", Trip{ID: "A A", Name: "A", Start: "2026-01-01", End: "2026-01-01"}, http.StatusBadRequest},
+		{"no name", Trip{ID: "x", Start: "2026-09-23", End: "2026-09-24"}, http.StatusBadRequest},
+		{"not a date", Trip{ID: "x", Name: "X", Start: "Sept 1", End: "2026-09-24"}, http.StatusBadRequest},
+		{"backwards", Trip{ID: "x", Name: "X", Start: "2026-09-24", End: "2026-09-23"}, http.StatusBadRequest},
 		{"bad mode", leg("walk", "2026-10-01", "2026-10-02"), http.StatusBadRequest},
 		{"outside", leg(ModeFerry, "2026-10-01", "2026-10-09"), http.StatusBadRequest},
 		{"arrives first", leg(ModeFerry, "2026-10-03", "2026-10-02"), http.StatusBadRequest},
-		{"overlaps", Trip{ID: "trip-x", Name: "X", Start: "2026-09-24", End: "2026-09-30"}, http.StatusConflict},
+		{"overlaps", Trip{ID: "x", Name: "X", Start: "2026-09-24", End: "2026-09-30"}, http.StatusConflict},
+		{"overlaps a label", Trip{ID: "x", Name: "X", Start: "2026-08-02", End: "2026-08-02"}, http.StatusConflict},
 	}
 	for _, tt := range tests {
 		_, err := c.SaveTrip(t.Context(), placesGH, tt.trip)
@@ -54,8 +58,47 @@ func TestSaveTrip(t *testing.T) {
 	if _, err := c.SaveTrip(t.Context(), placesGH, leg(ModeFlight, "2026-10-01", "2026-10-05")); err != nil {
 		t.Errorf("skipping days: SaveTrip() error = %v", err)
 	}
+	// A Trip with no legs, as a timeline label was, leaves legs out of its file.
+	if _, err := c.SaveTrip(t.Context(), placesGH, Trip{ID: "busan", Name: "Busan", Start: "2026-11-01", End: "2026-11-01"}); err != nil {
+		t.Fatalf("no legs: SaveTrip() error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/timeline/busan.json"); strings.Contains(saved, "legs") {
+		t.Errorf("no legs: saved %s", saved)
+	}
+	// Saving it again over its own days isn't an overlap.
+	if _, err := c.SaveTrip(t.Context(), placesGH, tripKorea); err != nil {
+		t.Errorf("resave: SaveTrip() error = %v", err)
+	}
 	if _, err := c.DeleteTrip(t.Context(), placesGH, "2026-09-23"); err == nil {
 		t.Error("DeleteTrip() of a day's line: no error")
+	}
+}
+
+func TestLegacyTrip(t *testing.T) {
+	legacy := `{"id":"trip-kyoto","name":"Kyoto","start":"2026-09-23","end":"2026-09-24","legs":[]}`
+	_, c := newMainRepo(t, with(tripPhotos, map[string]string{dataRoot + "/triplines/trip-kyoto.json": legacy}))
+	w, perr := c.workspace(t.Context(), placesGH)
+	if perr != nil {
+		t.Fatal(perr)
+	}
+	if trips := w.allTrips(); len(trips) != 1 || trips[0].ID != "trip-kyoto" {
+		t.Fatalf("allTrips() = %+v, want the Trip saved in the trip lines folder", trips)
+	}
+	// Its days are taken, so another Trip can't have them.
+	_, err := c.SaveTrip(t.Context(), placesGH, Trip{ID: "x", Name: "X", Start: "2026-09-24", End: "2026-09-24"})
+	var perr2 *PublishError
+	if !errors.As(err, &perr2) || perr2.Status != http.StatusConflict {
+		t.Errorf("overlap: SaveTrip() error = %v, want 409", err)
+	}
+	// Saving it moves it to the timeline folder.
+	trip := tripKorea
+	trip.ID = "trip-kyoto"
+	if _, err := c.SaveTrip(t.Context(), placesGH, trip); err != nil {
+		t.Fatalf("SaveTrip() error = %v", err)
+	}
+	staged(t, c, dataRoot+"/timeline/trip-kyoto.json")
+	if f, _ := stagedContent(t, c, dataRoot+"/triplines/trip-kyoto.json"); !f.Deleted {
+		t.Error("the trip lines folder's copy wasn't removed")
 	}
 }
 
@@ -74,7 +117,7 @@ func TestCommitCombinedBakesTrips(t *testing.T) {
 	baked := f.committedTree()[dataRoot+"/triplines/"+TripLinesMapFile]
 	// The ferry leaves from Sep 23's last photo (12, at the station) and
 	// arrives at Sep 24's first (13).
-	for _, want := range []string{`"mode": "ferry"`, `"trip": "trip-kyoto"`, `"arrive": "2026-09-24"`, `"photos": [12, 13]`, `[135.9, 35.1]`, `"mode": "flight"`, `"end": "Home"`} {
+	for _, want := range []string{`"mode": "ferry"`, `"trip": "kyoto"`, `"arrive": "2026-09-24"`, `"photos": [12, 13]`, `[135.9, 35.1]`, `"mode": "flight"`, `"end": "Home"`} {
 		if !strings.Contains(baked, want) {
 			t.Errorf("baked map has no %s:\n%s", want, baked)
 		}

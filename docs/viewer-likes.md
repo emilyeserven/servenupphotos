@@ -20,7 +20,7 @@ instead of adding to it, so a person who sends their likes twice still counts on
 ## The file
 
 Each person is one file, `likes/<id>.json`, and **Commit** combines them into `likes/LIKES.json` the way it combines
-the timeline labels into `TIMELINE.json`:
+the [Trips](trips.md) into `TIMELINE.json`:
 
 ```json
 {

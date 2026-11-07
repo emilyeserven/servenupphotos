@@ -27,7 +27,7 @@ photo of the day, with an exact spot or not, in the order they were taken, laid 
   No box shows until its button is pressed, unless it already has text.
 - The eye button on a photo leaves it off the page; it moves to **Not on the page**, where clicking it puts it back.
 
-The card says which Trip page the day goes on: the [Trip](trip-lines.md#trips) whose days include it, or else a page of
+The card says which Trip page the day goes on: the [Trip](trips.md) whose days include it, or else a page of
 its own for that day alone. **Save story** saves it and **Remove story** takes the day off its page, each as a
 [change waiting for Commit](pending-changes.md). A day without a saved story isn't on any Trip page.
 
@@ -36,8 +36,8 @@ day's story is kept apart from its line, so the line can be redrawn, turned auto
 
 ## The file
 
-Each day's story is `triplines/story-<YYYY-MM-DD>.json`, in the trip lines folder next to the days' lines and the
-Trips, so it's listed, combined into `TRIPLINES.json` and committed with them (`PUT` and
+Each day's story is `triplines/story-<YYYY-MM-DD>.json`, in the trip lines folder next to the days' lines, so
+it's listed, combined into `TRIPLINES.json` and committed with them (`PUT` and
 `DELETE /api/tripstories/story-<day>` → `/tripstories/{id}`, `be-pipeline/internal/github/trip_stories.go`):
 
 ```json

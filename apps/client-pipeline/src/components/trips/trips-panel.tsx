@@ -1,24 +1,26 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useTripLinesSearch } from "@/lib/trip-lines-search";
 import type { CombinedData } from "@/api/photos";
-import { timelineLabels } from "@/api/timeline-labels";
-import { type Trip, trips } from "@/api/trips";
-import { dayTitle } from "@/components/trip-lines/day-title";
+import { legacyTripIds, photosBetween, type Trip, trips } from "@/api/trips";
+import { dayRange } from "@/components/trips/day-range";
 import { TripEditor } from "@/components/trips/trip-editor";
-import { TripFromLabel } from "@/components/trips/trip-from-label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { shownPhotos } from "@/lib/place-seeds";
 import type { TripDay } from "@/lib/trip-days";
+import { useTripsSearch } from "@/lib/trips-search";
 import { cn } from "@/lib/utils";
 
 /** A new Trip with no name, days or legs yet. */
 const NEW_TRIP: Trip = { id: "", name: "", start: "", end: "", legs: [] };
 
+/** How many saved photos were taken on a day from start to end. */
+type CountPhotos = (start: string, end: string) => number;
+
 /** The Trips listed on the left, newest first, and the chosen one, or a new one, edited on the right. */
 export function TripsPanel({ data, days }: { data: CombinedData; days: TripDay[] }) {
   const all = trips(data);
-  const { search, set } = useTripLinesSearch();
+  const { search, set } = useTripsSearch();
   // A new Trip not saved yet, which has no ID for the URL.
   const [draft, setDraft] = useState<Trip>();
   const trip = draft ?? chosenTrip(all, search.trip);
@@ -26,29 +28,32 @@ export function TripsPanel({ data, days }: { data: CombinedData; days: TripDay[]
     setDraft(typeof chosen === "object" ? chosen : undefined);
     set({ trip: typeof chosen === "string" ? chosen : undefined });
   };
-  const byDay = new Map(days.map((d) => [d.day, d]));
+  const photos = shownPhotos(data);
+  const countPhotos: CountPhotos = (start, end) => photosBetween(photos, start, end);
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
       <TripList
         trips={all}
         chosen={trip?.id}
+        countPhotos={countPhotos}
         onChoose={setChosen}
-        onNew={setChosen}
-        labels={timelineLabels(data)}
+        onNew={() => setChosen(NEW_TRIP)}
       />
       {trip ? (
         <TripEditor
           key={editorKey(trip)}
           trip={trip}
           others={all.filter((t) => t.id !== trip.id)}
-          days={byDay}
+          days={new Map(days.map((d) => [d.day, d]))}
+          countPhotos={countPhotos}
+          legacy={legacyTripIds(data).has(trip.id)}
           onSaved={setChosen}
           onRemoved={() => setChosen(undefined)}
         />
       ) : (
         <p className="text-muted-foreground text-sm">
-          A Trip groups a run of days and adds the legs between them, such as a ferry or a flight.
-          Start one with <strong>New Trip</strong>.
+          A Trip names a run of days on the Timeline and adds the legs between them, such as a ferry
+          or a flight. Start one with <strong>New Trip</strong>.
         </p>
       )}
     </div>
@@ -62,56 +67,84 @@ function chosenTrip(all: Trip[], id: string | undefined): Trip | undefined {
 
 /** A key that starts the editor afresh for another Trip, or another new one. */
 function editorKey(trip: Trip): string {
-  return trip.id || `new-${trip.name}-${trip.start}`;
+  return trip.id || "new";
 }
 
 interface TripListProps {
   trips: Trip[];
   chosen: string | undefined;
+  countPhotos: CountPhotos;
   onChoose: (id: string) => void;
-  onNew: (trip: Trip) => void;
-  labels: ReturnType<typeof timelineLabels>;
+  onNew: () => void;
 }
 
-function TripList({ trips: all, chosen, onChoose, onNew, labels }: TripListProps) {
+function TripList({ trips: all, chosen, countPhotos, onChoose, onNew }: TripListProps) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Trips</CardTitle>
-        <CardDescription>Runs of days, with the legs travelled between them.</CardDescription>
-        <div className="flex flex-col gap-2 pt-1">
-          <Button
-            variant="outline"
-            size="sm"
-            className="self-start"
-            onClick={() => onNew(NEW_TRIP)}
-          >
-            <Plus />
-            New Trip
-          </Button>
-          <TripFromLabel labels={labels} onPick={onNew} />
-        </div>
+        <CardDescription>
+          Newest first, with how many photos were taken on their days.
+        </CardDescription>
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-1 self-start"
+          disabled={chosen === ""}
+          onClick={onNew}
+        >
+          <Plus />
+          New Trip
+        </Button>
       </CardHeader>
       <CardContent className="flex max-h-[70vh] flex-col gap-1 overflow-y-auto">
         {all.length === 0 && <p className="text-muted-foreground text-sm">None yet.</p>}
         {all.map((t) => (
-          <button
+          <TripRow
             key={t.id}
-            type="button"
-            onClick={() => onChoose(t.id)}
-            aria-current={t.id === chosen}
-            className={cn(
-              "hover:bg-muted flex flex-col rounded-md px-2 py-1.5 text-left text-sm",
-              t.id === chosen && "bg-muted font-medium",
-            )}
-          >
-            <span className="truncate">{t.name}</span>
-            <span className="text-muted-foreground text-xs font-normal">
-              {dayTitle(t.start)} to {dayTitle(t.end)}, {t.legs.length} legs
-            </span>
-          </button>
+            trip={t}
+            chosen={t.id === chosen}
+            photos={countPhotos(t.start, t.end)}
+            onChoose={() => onChoose(t.id)}
+          />
         ))}
       </CardContent>
     </Card>
+  );
+}
+
+/** "1 leg" or "3 legs"; "" with none. */
+function legsText(n: number): string {
+  if (n === 0) return "";
+  return n === 1 ? ", 1 leg" : `, ${n} legs`;
+}
+
+interface TripRowProps {
+  trip: Trip;
+  chosen: boolean;
+  photos: number;
+  onChoose: () => void;
+}
+
+function TripRow({ trip, chosen, photos, onChoose }: TripRowProps) {
+  return (
+    <button
+      type="button"
+      onClick={onChoose}
+      aria-current={chosen}
+      className={cn(
+        "hover:bg-muted flex items-baseline justify-between gap-3 rounded-md px-2 py-1.5 text-left text-sm",
+        chosen && "bg-muted font-medium",
+      )}
+    >
+      <span className="flex min-w-0 flex-col">
+        <span className="truncate">{trip.name}</span>
+        <span className="text-muted-foreground text-xs font-normal">
+          {dayRange(trip.start, trip.end)}
+          {legsText(trip.legs.length)}
+        </span>
+      </span>
+      <span className="text-muted-foreground shrink-0 text-xs">{photos}</span>
+    </button>
   );
 }

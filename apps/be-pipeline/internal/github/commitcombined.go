@@ -35,7 +35,7 @@ type CombinedCommit struct {
 	// Counts are how many entries each combined list has: photos, albums,
 	// tags, genres, places, localizations, metadata groups (metainfo), camera
 	// overrides (cameras), custom lenses (lenses), caption templates
-	// (captions), timeline labels (timeline), viewer likes (likes), trip
+	// (captions), Trips (timeline), viewer likes (likes), trip
 	// lines (triplines), graph presets (graphs), gear pictures (gear), how many lines the trip lines map has (tripLineSegments), how many
 	// Trip pages there are (tripPages), and how
 	// many photos were left out of ALLPHOTOS.json as drafts (drafts).
@@ -77,7 +77,7 @@ func combinedKinds() []combinedKind {
 		{"cameras", Cameras.Folder, Cameras.AllFile},
 		{"lenses", Lenses.Folder, Lenses.AllFile},
 		{"captions", Captions.Folder, Captions.AllFile},
-		{"timeline", TimelineLabels.Folder, TimelineLabels.AllFile},
+		{"timeline", Trips.Folder, Trips.AllFile},
 		{"likes", ViewerLikesKind.Folder, ViewerLikesKind.AllFile},
 		{"triplines", TripLines.Folder, TripLines.AllFile},
 		{"graphs", GraphPresets.Folder, GraphPresets.AllFile},

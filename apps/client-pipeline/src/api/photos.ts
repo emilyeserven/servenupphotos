@@ -125,7 +125,7 @@ export interface CombinedFiles {
   lenses: CombinedFile;
   /** CAPTIONS.json, the caption templates. */
   captions: CombinedFile;
-  /** TIMELINE.json, the timeline labels. */
+  /** TIMELINE.json, the Trips. */
   timeline: CombinedFile;
   /** LIKES.json, the photos each viewer liked. */
   likes: CombinedFile;
@@ -179,7 +179,7 @@ export interface InFlightRead {
   lenses: InFlightGroupsRead;
   /** The caption template files, combined into CAPTIONS.json. */
   captions: InFlightGroupsRead;
-  /** The timeline label files, combined into TIMELINE.json. */
+  /** The Trip files, combined into TIMELINE.json. */
   timeline: InFlightGroupsRead;
   /** The viewer likes files, one per person, combined into LIKES.json. */
   likes: InFlightGroupsRead;
@@ -220,7 +220,7 @@ export interface InFlightResponse extends Omit<
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template, timeline label, viewer likes, trip line, graph preset and gear picture files in the pull request. */
+  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template, Trip, viewer likes, trip line, graph preset and gear picture files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
   genres: InFlightGroups;

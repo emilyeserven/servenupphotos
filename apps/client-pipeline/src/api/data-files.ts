@@ -2,7 +2,7 @@ import { mutationOptions } from "@tanstack/react-query";
 import { requestJson } from "@/api/settings";
 import type { FileChange } from "@/lib/optimistic";
 
-/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, timeline labels, viewer likes, trip lines, graph presets or gear pictures. */
+/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets or gear pictures. */
 type SettingKind =
   | "cameras"
   | "lenses"
@@ -41,8 +41,8 @@ function settingMeta<T>(kind: SettingKind) {
 
 /**
  * Saving a setting file, new or changed, and removing one, each as a change waiting for Commit.
- * `route` is the backend's path for them when it isn't the kind's, as for Trips, kept with the
- * trip lines.
+ * `route` is the backend's path for them when it isn't the kind's, as for Trips, kept in the
+ * timeline folder.
  */
 export function settingMutations<T extends { id: string }>(
   kind: SettingKind,

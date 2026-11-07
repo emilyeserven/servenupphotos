@@ -7,12 +7,12 @@ const DAY_FILTERS = ["marked", "out-of-date", "automatic", "none"] as const;
 export type DayFilter = (typeof DAY_FILTERS)[number];
 
 /**
- * The Trip Lines page's search, so a link opens the page as it was: which tab, the day chosen,
- * the day list's filter, the group shown alone on the day's map, and the Trip chosen. Each is
- * left out at its default.
+ * The Trip Lines page's search, so a link opens the page as it was: the day chosen, the day
+ * list's filter, and the group shown alone on the day's map. Each is left out at its default.
+ * `tab` and `trip` are from when the Trips were a tab here; such a link opens the Trips page.
  */
 export interface TripLinesSearch {
-  /** "trips" for the Trips tab; Days unless set. */
+  /** "trips" for the old Trips tab, which now opens the Trips page. */
   tab?: "trips";
   /** The day chosen, such as "2026-09-23"; the newest unless set. */
   day?: string;
@@ -20,7 +20,7 @@ export interface TripLinesSearch {
   show?: DayFilter;
   /** The name of the group shown alone on the day's map, the others faded. */
   group?: string;
-  /** The ID of the Trip chosen on the Trips tab; the newest unless set. */
+  /** The ID of the Trip chosen on the old Trips tab, opened on the Trips page. */
   trip?: string;
 }
 
