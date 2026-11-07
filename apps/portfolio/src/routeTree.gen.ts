@@ -24,6 +24,7 @@ import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
 import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
 import { Route as PhotosIdRouteImport } from './routes/photos.$id'
+import { Route as AlbumsTripsIdRouteImport } from './routes/albums.trips.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -100,6 +101,11 @@ const PhotosIdRoute = PhotosIdRouteImport.update({
   path: '/photos/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AlbumsTripsIdRoute = AlbumsTripsIdRouteImport.update({
+  id: '/albums/trips/$id',
+  path: '/albums/trips/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/albums/$id': typeof AlbumsIdRoute
   '/photos/$id': typeof PhotosIdRoute
   '/albums/': typeof AlbumsIndexRoute
+  '/albums/trips/$id': typeof AlbumsTripsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/albums/$id': typeof AlbumsIdRoute
   '/photos/$id': typeof PhotosIdRoute
   '/albums': typeof AlbumsIndexRoute
+  '/albums/trips/$id': typeof AlbumsTripsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/albums/$id': typeof AlbumsIdRoute
   '/photos/$id': typeof PhotosIdRoute
   '/albums/': typeof AlbumsIndexRoute
+  '/albums/trips/$id': typeof AlbumsTripsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/photos/$id'
     | '/albums/'
+    | '/albums/trips/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/photos/$id'
     | '/albums'
+    | '/albums/trips/$id'
   id:
     | '__root__'
     | '/'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/photos/$id'
     | '/albums/'
+    | '/albums/trips/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   AlbumsIdRoute: typeof AlbumsIdRoute
   PhotosIdRoute: typeof PhotosIdRoute
   AlbumsIndexRoute: typeof AlbumsIndexRoute
+  AlbumsTripsIdRoute: typeof AlbumsTripsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PhotosIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/albums/trips/$id': {
+      id: '/albums/trips/$id'
+      path: '/albums/trips/$id'
+      fullPath: '/albums/trips/$id'
+      preLoaderRoute: typeof AlbumsTripsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -351,6 +371,7 @@ const rootRouteChildren: RootRouteChildren = {
   AlbumsIdRoute: AlbumsIdRoute,
   PhotosIdRoute: PhotosIdRoute,
   AlbumsIndexRoute: AlbumsIndexRoute,
+  AlbumsTripsIdRoute: AlbumsTripsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

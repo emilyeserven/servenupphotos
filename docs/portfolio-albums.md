@@ -16,6 +16,9 @@ Each photo is as tall as the strip and as wide as its own shape, and the strip s
 its page. Clicking a photo opens it in the [photo viewer](photo-viewer.md), which steps through every photo in a strip.
 The old `/spotlight` address redirects here.
 
+After the albums, **Trips** lists the [Trip pages](trip-pages.md), newest first, each with a strip of its first 5
+photos, its days and how many photos it has, linked to its page (`/albums/trips/<id>`, `routes/albums.trips.$id.tsx`).
+
 ## An album's page
 
 Each album's name links to its own page, `/albums/<id>` (`routes/albums.$id.tsx`), with its description, then the

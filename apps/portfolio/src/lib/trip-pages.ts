@@ -1,0 +1,136 @@
+import committedPages from "@/data/triplines/TRIPPAGES.json";
+import { format, parseISO } from "date-fns";
+import type { ImagePhoto } from "@/lib/spotlight-zones";
+
+/** One photo of a day's story on a Trip page, as the pipeline wrote it. */
+interface StoryPhoto {
+  id: number;
+  /** Shown under the photo. */
+  caption?: string;
+  /** Puts the next photo in the same row, side by side. */
+  withNext?: boolean;
+  /** A paragraph (Markdown) after the photo, across the page, which ends its row. */
+  after?: string;
+}
+
+/** One day's story on a Trip page. */
+interface TripPageDay {
+  /** The day, such as "2026-10-01". */
+  day: string;
+  /** A paragraph (Markdown) before the day's first photo. */
+  intro?: string;
+  /** Its photos in order, with their words. */
+  photos: StoryPhoto[];
+}
+
+/**
+ * A Trip page from TRIPPAGES.json, which the pipeline's Commit bakes from the days' stories: a Trip
+ * with the stories of its days, or one day in no Trip.
+ */
+export interface TripPage {
+  /** The Trip's ID, or "day-" and the day; its address under /albums/trips/. */
+  id: string;
+  /** The Trip's name; "" for a day in no Trip, named after the day. */
+  name: string;
+  /** Its first and last days, such as "2026-09-22". */
+  start: string;
+  end: string;
+  days: TripPageDay[];
+}
+
+/** Every Trip page, newest first. */
+export const tripPages = committedPages as TripPage[];
+
+/** A day written out, such as "Wednesday, October 1, 2026". */
+export function dayTitle(day: string): string {
+  return format(parseISO(day), "EEEE, MMMM d, yyyy");
+}
+
+/** The page's title: its Trip's name, or else its day. */
+export function pageTitle(page: TripPage): string {
+  return page.name || dayTitle(page.start);
+}
+
+/** The days the page covers, such as "September 22 to October 2, 2026"; one day for a day's page. */
+export function pageDates(page: TripPage): string {
+  const end = parseISO(page.end);
+  if (page.start === page.end) return format(end, "MMMM d, yyyy");
+  return `${format(parseISO(page.start), "MMMM d")} to ${format(end, "MMMM d, yyyy")}`;
+}
+
+/** A row of a Trip page: photos side by side, with the paragraph after them. */
+export interface StoryRow {
+  photos: ImagePhoto[];
+  after: string;
+}
+
+/** A day of a Trip page as it shows: its paragraph first, then its rows. */
+export interface StoryDay {
+  day: string;
+  intro: string;
+  rows: StoryRow[];
+}
+
+/** Two paragraphs one after the other, as one. */
+function joined(a: string, b = ""): string {
+  return [a, b.trim()].filter(Boolean).join("\n\n");
+}
+
+/** The last row while it's open, or else a new one added after it. */
+function openRow(rows: StoryRow[], open: boolean): StoryRow {
+  const last = open ? rows.at(-1) : undefined;
+  if (last) return last;
+  const fresh: StoryRow = { photos: [], after: "" };
+  rows.push(fresh);
+  return fresh;
+}
+
+/** Whether the next photo joins the entry's row: it's linked and no paragraph comes between. */
+function joinsNext(entry: StoryPhoto): boolean {
+  return entry.withNext === true && !entry.after;
+}
+
+/**
+ * Adds the entry to the open row, and says whether the next one joins it. A photo the portfolio
+ * doesn't have, such as a draft, still ends its row and keeps its paragraph.
+ */
+function addEntry(
+  rows: StoryRow[],
+  entry: StoryPhoto,
+  photo: ImagePhoto | undefined,
+  open: boolean,
+) {
+  const row = openRow(rows, open);
+  if (photo) row.photos.push(photo);
+  row.after = joined(row.after, entry.after);
+  return joinsNext(entry);
+}
+
+/** The day's rows, from byId, the photos with images by ID, leaving out rows left empty. */
+function dayRows(entries: StoryPhoto[], byId: Map<number, ImagePhoto>): StoryRow[] {
+  const rows: StoryRow[] = [];
+  let open = false;
+  for (const entry of entries) open = addEntry(rows, entry, byId.get(entry.id), open);
+  return rows.filter((row) => row.photos.length > 0 || row.after);
+}
+
+/** The page's days as they show, with only the photos among photos (the ones with images). */
+export function storyDays(page: TripPage, photos: ImagePhoto[]): StoryDay[] {
+  const byId = new Map(photos.map((photo) => [photo.id, photo]));
+  return page.days.map(({ day, intro = "", photos: entries }) => ({
+    day,
+    intro,
+    rows: dayRows(entries, byId),
+  }));
+}
+
+/** Every caption on the page, by photo ID. */
+export function pageCaptions(page: TripPage): Map<number, string> {
+  const all = page.days.flatMap((d) => d.photos);
+  return new Map(all.flatMap(({ id, caption }) => (caption ? [[id, caption] as const] : [])));
+}
+
+/** The photos the page shows, in order. */
+export function shownPhotos(days: StoryDay[]): ImagePhoto[] {
+  return days.flatMap((d) => d.rows.flatMap((row) => row.photos));
+}

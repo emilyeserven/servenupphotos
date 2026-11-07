@@ -36,7 +36,8 @@ type CombinedCommit struct {
 	// tags, genres, places, localizations, metadata groups (metainfo), camera
 	// overrides (cameras), custom lenses (lenses), caption templates
 	// (captions), timeline labels (timeline), viewer likes (likes), trip
-	// lines (triplines), graph presets (graphs), how many lines the trip lines map has (tripLineSegments), and how
+	// lines (triplines), graph presets (graphs), how many lines the trip lines map has (tripLineSegments), how many
+	// Trip pages there are (tripPages), and how
 	// many photos were left out of ALLPHOTOS.json as drafts (drafts).
 	Counts map[string]int `json:"counts"`
 	// NewPullRequest is true when the commit opened the photo data pull
@@ -113,6 +114,9 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits [
 		}
 	}
 	if perr := w.addTripLinesMap(changes, result.Counts); perr != nil {
+		return CombinedCommit{}, perr
+	}
+	if perr := w.addTripPages(changes, result.Counts); perr != nil {
 		return CombinedCommit{}, perr
 	}
 	result.Files, result.Edited = changedPaths(changes)
@@ -300,7 +304,7 @@ func changedPaths(changes map[string][]byte) ([]string, int) {
 // isCombinedFile reports one of the combined lists, by its name.
 func isCombinedFile(p string) bool {
 	name := p[strings.LastIndex(p, "/")+1:]
-	if name == TripLinesMapFile {
+	if name == TripLinesMapFile || name == TripPagesFile {
 		return true
 	}
 	for _, k := range combinedKinds() {
