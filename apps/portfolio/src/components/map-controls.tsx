@@ -5,6 +5,7 @@ import { MapDisplayOptions } from "@/components/map-display-options";
 import { MapViewControls } from "@/components/map-view-controls";
 import { MapPlacePicker } from "@/components/map-place-picker";
 import { PlaceAreaLayer } from "@/components/place-area-layer";
+import { TripLinesLayer } from "@/components/trip-lines-layer";
 import { MoreFilterControls } from "@/components/photo-filters";
 import { ViewInGridButton } from "@/components/view-in-grid-button";
 import type { MapDisplay } from "@/lib/map-display";
@@ -66,6 +67,7 @@ export function MapControls({
       }
     >
       <PlaceAreaLayer {...area.shown} />
+      <TripLinesLayer photos={drawn} show={display.tripLines} />
       <MapDisplayOptions display={display} onChange={onDisplayChange} />
       <MoreFilterControls
         photos={placedPhotos}

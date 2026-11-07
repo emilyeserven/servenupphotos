@@ -75,6 +75,7 @@ fits without covering the map:
   - **Groups show the latest** picks which three photos a group's marker fades through: **Added** (the default), the
     ones added to the portfolio last, or **Captured**, the ones taken last. Photos with no added date count as
     the oldest added.
+  - **Trip lines** (on by default) draws the [trip lines](#trip-lines) under the photos.
   - **Reset to defaults** goes back to these defaults.
 
   These options, but for the group photos, are `components/pin-display-fields.tsx`, which the
@@ -105,3 +106,22 @@ fits without covering the map:
 - Once a day is chosen and another day is in view, a second **to** dropdown picks the last day of a range
   (`?day=2026-05-01&to=2026-05-17`), and the map shows every photo from the first day through the last. Either day can
   be the earlier one; the range is put in order. **Just this day** goes back to one day.
+
+## Trip lines
+
+Under the photos, the map draws the trip lines of the days its photos were taken, so the day filter and the other
+filters narrow them too (`components/trip-lines-layer.tsx`). They come from `triplines/TRIPLINES.geo.json`, which the
+pipeline's Commit bakes (see [Trip lines](trip-lines.md#the-baked-map-triplinesgeojson)), loaded the first time the map
+draws them (`lib/trip-lines-map.ts`):
+
+- Walks are solid blue (lighter in dark mode).
+- A hop along the bus, subway or train line it rode is solid in that line's color; any other hop is dashed purple.
+- Places visited are amber dots.
+- Areas that photos without an exact spot were taken in are shaded light blue, like a place's area.
+
+**Trip lines** in the display options turns them off. The lines, stations and areas come from OpenStreetMap data,
+under the [ODbL](https://www.openstreetmap.org/copyright); the basemap's attribution (the ⓘ in the corner) already
+credits OpenStreetMap's contributors, which covers them.
+
+> **Frontend analogy:** the map reads a build artifact. The pipeline compiles each day's line into one GeoJSON file at
+> Commit, and the portfolio only renders it, the way a static site renders prebuilt JSON instead of calling an API.
