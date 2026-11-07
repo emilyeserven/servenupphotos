@@ -2,10 +2,10 @@
 
 The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens
 filters that narrow the photos they show: **Places**, [Groups](#groups-album-tag-and-genre) and [When](#when) (**Hide filters** closes them again). The
-Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. Every view with filters (the Grid,
+Grid and the Timeline also have the camera filters (see [Camera filters](#camera-filters)), the Grid in each of its views, including the Table. Every view with filters (the Grid,
 Lucky, the Graph page, the Timeline and, under **More filters**, the Map) also has a **Visuals** button, which opens the Color page's color filters and **Orientation** (see
-[Portfolio Color](portfolio-color.md#on-the-grid-page)). Where the camera filters are, it comes with them (`CameraFilterBar`); the Timeline and the
-Map add it as their own filters (`visualsOwnFilters`, read with `lib/visual-filters.ts`).
+[Portfolio Color](portfolio-color.md#on-the-grid-page)). Where the camera filters are, it comes with them (`CameraFilterBar`); the
+Map adds it as its own filters (`visualsOwnFilters`, read with `lib/visual-filters.ts`).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and pointing at it swaps
 that number for an X that clears them all (see [Clearing filters](#clearing-filters)). Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
 that one (a range slider's X sits beside its range). The filters are kept in the URL, so a link keeps them, and the menu's view

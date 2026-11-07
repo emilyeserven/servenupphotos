@@ -3,8 +3,7 @@ import { format } from "date-fns";
 import { CalendarClock, ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
-import { PhotoFilterBar } from "@/components/photo-filters";
-import { visualsOwnFilters } from "@/components/visuals-picker";
+import { CameraFilterBar } from "@/components/camera-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
@@ -15,10 +14,11 @@ import { TimelineScrubber } from "@/components/timeline-scrubber";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { labelOn } from "@/lib/timeline-labels";
 import { withOldTimelineLinks } from "@/lib/timeline-old-links";
-import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
+import { hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { dayOf } from "@/lib/when-filters";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
-import { filterByVisuals, parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
+import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
   parseTimelineDisplay,
@@ -41,7 +41,8 @@ type ImagePhoto = Photo & { image: PhotoImage };
  * options; each left out when it's the default.
  */
 type TimelineSearch = PhotoFilters &
-  VisualSearch &
+  CameraFilters &
+  ColorFilters &
   ShownPhotoSearch &
   TimelineDisplaySearch & { q?: string };
 
@@ -51,7 +52,8 @@ export const Route = createFileRoute("/timeline")({
     const search = withOldTimelineLinks(raw, new Date());
     return {
       ...parseFilters(search),
-      ...parseVisualFilters(search),
+      ...parseColorFilters(search),
+      ...parseCameraFilters(search),
       ...parseTextSearch(search),
       ...parseShownPhoto(search),
       ...parseTimelineDisplay(search),
@@ -59,6 +61,12 @@ export const Route = createFileRoute("/timeline")({
   },
   component: TimelineView,
 });
+
+/** Whether any filter, Gear & settings pick or search is set, so an empty range can say why. */
+function isFiltered(search: Record<string, unknown> & { q?: string }): boolean {
+  const camera = Object.keys(parseCameraFilters(search)).length > 0;
+  return hasFilters(parseFilters(search)) || camera || search.q !== undefined;
+}
 
 /** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
 function groupByDate(group: Photo[], pattern: string) {
@@ -74,11 +82,10 @@ function TimelineView() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const { shown, show, close } = useShownPhoto();
-  const filters = parseFilters(search);
-  // What the filters and search leave before Visuals, which its counts are out of.
-  const beforeVisuals = searchPhotos(filterPhotos(photos, filters), search.q);
+  // What the filters, Gear & settings (orientation included) and the search leave, then the colors.
+  const filtered = searchPhotos(filterWithCamera(photos, search), search.q);
   // Newest first, so the months and the photos in each read down from the latest.
-  const inRange = filterByVisuals(beforeVisuals, search).toSorted(
+  const inRange = filterByColors(filtered, search).toSorted(
     (a, b) => b.takenAt.getTime() - a.takenAt.getTime(),
   );
   const display = resolveTimelineDisplay(search);
@@ -97,10 +104,9 @@ function TimelineView() {
           </h1>
         </div>
         <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
-        <PhotoFilterBar
+        <CameraFilterBar
           photos={photos}
           searchable
-          own={visualsOwnFilters(beforeVisuals, search)}
           end={
             <TimelineDisplayOptions
               display={display}
@@ -119,7 +125,7 @@ function TimelineView() {
       <RouteSketches>
         <PhotoMonths
           photos={inRange}
-          filtered={hasFilters(filters) || search.q !== undefined}
+          filtered={isFiltered(search)}
           display={display}
           onOpen={show}
           listRef={setList}
