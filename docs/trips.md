@@ -28,9 +28,12 @@ label **Korea** on September 12 to 21 and **Japan** on September 22 to October 2
 day in place of the Trip's name, and a day no label covers shows the Trip's name. The Trip stays one Trip everywhere
 else: one Trip page for its days' stories, one set of legs, one Smart Album rule.
 
-Under its name and days, a Trip's page lists its **Timeline labels**: each one's name and its first and last days,
-picked from the Trip's, and **Add a timeline label**, which starts the day after the last label ends. Labels can't
-share a day, and must be within the Trip.
+Under its name and days, a Trip's page lists its **Timeline labels**: each one's name, and a row of the Trip's own
+days to pick its days from. A click picks the first day and a second click the last (the same day again for a
+one-day label); days another label has are struck out. **Add a timeline label** starts a new one the day after the
+last label ends. Labels can't share a day, and must be within the Trip.
+
+> **Frontend analogy:** like a date range picker whose calendar only shows the Trip's days.
 
 ## Combining Trips
 
