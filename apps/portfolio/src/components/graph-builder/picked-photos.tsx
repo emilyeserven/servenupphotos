@@ -1,9 +1,10 @@
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { PickAxes } from "@/components/graph-builder/pick-axes";
 import { PickedGroupSection, PickedThumbnails } from "@/components/graph-builder/picked-group";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { Button } from "@/components/ui/button";
-import { type GraphConfig, statById } from "@/lib/graph-data";
+import type { GraphConfig } from "@/lib/graph-data";
 import {
   type Direction,
   type GraphPick,
@@ -15,17 +16,6 @@ import {
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass, SELECT_CLASS } from "@/lib/segmented-control";
 import { useShownPhoto } from "@/lib/shown-photo";
-
-/** The picked value as its heading: the x value with its stat, and a dot's y value too. */
-function pickTitle(config: GraphConfig, pick: GraphPick): string {
-  const x = `${statById(config.x).label}: ${pick.x}`;
-  return pick.y === undefined ? x : `${x} · ${statById(config.y).label}: ${pick.y}`;
-}
-
-/** A count of photos as words, such as "1 photo" or "12 photos". */
-function photoCount(count: number): string {
-  return `${count.toLocaleString()} ${count === 1 ? "photo" : "photos"}`;
-}
 
 /**
  * The photos of the value picked on the graph, under it: in groups that open and close when the
@@ -55,9 +45,9 @@ export function PickedPhotos({
       className="flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-sm"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h2 className="font-semibold">{pickTitle(config, pick)}</h2>
-          <p className="text-sm text-muted-foreground tabular-nums">{photoCount(picked.total)}</p>
+        <div className="flex min-w-0 flex-col gap-2">
+          <h2 className="font-semibold">Photos</h2>
+          <PickAxes config={config} pick={pick} picked={picked} total={list.length} />
         </div>
         <Button type="button" variant="ghost" size="sm" onClick={onClear}>
           <X aria-hidden />

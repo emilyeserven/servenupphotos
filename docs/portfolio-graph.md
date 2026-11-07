@@ -53,6 +53,10 @@ Clicking a bar, a line or dot graph's point, a slice or a scatterplot dot shows 
 fades while one is picked (a dashed line marks it on a line or dot graph); clicking it again, **Close**, or changing the
 graph in any way clears it. The photos are the ones the filters keep, and each opens in the lightbox.
 
+The box's heading names each axis and what's on it for the pick: **X axis** with its stat and value (such as Year:
+2016), **Y axis** with how many photos (or what share) it has, or a scatterplot dot's y stat and value, and **Grouped
+by** when the photos are in groups. A pie says **Slices** and **Size** instead.
+
 - On a split graph, such as each year's bar stacked by season, the photos are in a group for each split value with any,
   in its color. Each group opens and closes from its heading, with **Expand all** and **Collapse all** over them; all
   are open at first. Split values past the graph's own colors (drawn together as **Other**) get a group each, in gray.
