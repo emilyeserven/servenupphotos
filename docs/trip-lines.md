@@ -131,11 +131,12 @@ them. A new photo opens with a break on both sides, ready to join the line.
 
 A card opens the day's own pages, each a tab with its own link:
 
-| Page        | Path                      | What it has                                                                                             |
-| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Photo order | `/trip-lines/<day>/order` | The photo strip on its own, its groups stacked top to bottom with what happened between them in between |
-| Route       | `/trip-lines/<day>/route` | The strip with the map and its tools, as below                                                          |
-| Story       | `/trip-lines/<day>/story` | The [Trip page story](#trip-page-story)                                                                 |
+| Page        | Path                       | What it has                                                                                             |
+| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Photo order | `/trip-lines/<day>/order`  | The photo strip on its own, its groups stacked top to bottom with what happened between them in between |
+| Route       | `/trip-lines/<day>/route`  | The strip with the map and its tools, as below                                                          |
+| Places      | `/trip-lines/<day>/places` | The strip, the map, and the [places visited](#places-visited) list                                      |
+| Story       | `/trip-lines/<day>/story`  | The [Trip page story](#trip-page-story)                                                                 |
 
 `/trip-lines/<day>` opens Photo order. The pages share one editor that stays mounted while hidden, so a change made on
 Photo order shows on Route before it's saved, and **Save route** on either saves both. **Every day** goes back to the
@@ -176,7 +177,7 @@ highlights its dot.
 
 ## Places visited
 
-Under the map, **Places visited** lists the places stopped at along the day's route, with or without a photo: a
+On the day's **Places** page, under the map, **Places visited** lists the places stopped at along the day's route, with or without a photo: a
 restaurant, café, bar, shop, museum, sight or other. **Add a place on the map** drops one where the map is clicked;
 **Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km of the
 day's photos, named after it. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
@@ -201,7 +202,7 @@ They're saved with the line as `visits`:
 `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
-two photos, named on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
+two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
 route (it stops at the first and last gap). The pin with a plus under each gap in the strip, shown on hover, adds a
 place right there: a new one halfway between the two photos, to name and move under the map, or one of up to eight
 saved places nearest to them. **Not on the route** leaves it as a pin only. A place put after a break or after the last

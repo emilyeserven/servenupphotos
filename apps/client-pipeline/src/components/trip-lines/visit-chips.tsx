@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { TripVisit } from "@/api/trip-lines";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface VisitChipsProps {
   visits: TripVisit[];
@@ -8,7 +9,7 @@ interface VisitChipsProps {
   onMove?: (visit: TripVisit, by: -1 | 1) => void;
 }
 
-/** The places visited between two photos, as small icons named on hover; nothing when none. */
+/** The places visited between two photos, as small icons whose name shows on hover; nothing when none. */
 export function VisitChips({ visits, onMove }: VisitChipsProps) {
   if (visits.length === 0) return null;
   return (
@@ -39,13 +40,18 @@ function VisitChip({ visit, onMove }: { visit: TripVisit; onMove?: (by: -1 | 1) 
           <ChevronLeft className="size-3" aria-hidden />
         </button>
       )}
-      <span
-        title={name}
-        className="flex size-6 items-center justify-center rounded-full border border-amber-500 bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
-      >
-        <Icon className="size-3.5" aria-hidden />
-        <span className="sr-only">{name}</span>
-      </span>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            tabIndex={0}
+            className="flex size-6 items-center justify-center rounded-full border border-amber-500 bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
+          >
+            <Icon className="size-3.5" aria-hidden />
+            <span className="sr-only">{name}</span>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>{name}</TooltipContent>
+      </Tooltip>
       {onMove && (
         <button
           type="button"

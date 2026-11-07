@@ -6,7 +6,7 @@ import { tripStories } from "@/api/trip-stories";
 import { trips } from "@/api/trips";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
-import { DayEditor } from "@/components/trip-lines/day-editor";
+import { DayEditor, type EditorPart } from "@/components/trip-lines/day-editor";
 import { dayTitle } from "@/components/trip-lines/day-title";
 import { StoryCard } from "@/components/trip-story/story-card";
 import { Button } from "@/components/ui/button";
@@ -20,12 +20,13 @@ import { useCombinedData } from "@/stores/combined-data";
 const PART_LABELS: Record<DayPart, string> = {
   order: "Photo order",
   route: "Route",
+  places: "Places",
   story: "Story",
 };
 
 /**
- * One day's pages on Trip Lines: the photo order, the route on the map, and the story for the
- * portfolio's Trip page, each its own link.
+ * One day's pages on Trip Lines: the photo order, the route on the map, the places visited, and the
+ * story for the portfolio's Trip page, each its own link.
  */
 export function TripDayPage() {
   const { day } = useParams({ from: "/trip-lines/$day/$part" });
@@ -33,7 +34,7 @@ export function TripDayPage() {
     <Page
       wide
       title={dayTitle(day)}
-      description="This day's trip line, in three steps: the photos' order and groups, the route drawn on the map, and the story the portfolio's Trip page tells."
+      description="This day's trip line, step by step: the photos' order and groups, the route drawn on the map, the places visited along it, and the story the portfolio's Trip page tells."
       action={
         <Button asChild variant="outline" size="sm">
           <Link to="/trip-lines">
@@ -83,7 +84,7 @@ function DayParts({ data, day }: { data: CombinedData; day: TripDay }) {
           key={day.day}
           day={day}
           line={tripLines(data).get(day.day)}
-          part={part === "route" ? "route" : "order"}
+          part={editorPart(part)}
         />
       </div>
       <div hidden={part !== "story"}>
@@ -96,6 +97,11 @@ function DayParts({ data, day }: { data: CombinedData; day: TripDay }) {
       </div>
     </>
   );
+}
+
+/** The editor's page for the part shown: itself, or Photo order behind the Story. */
+function editorPart(part: string): EditorPart {
+  return part === "route" || part === "places" ? part : "order";
 }
 
 /** The day's pages as tabs, each a link, keeping the group shown alone. */

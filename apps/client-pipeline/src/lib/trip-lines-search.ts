@@ -6,8 +6,8 @@ const DAY_FILTERS = ["marked", "out-of-date", "automatic", "none"] as const;
 /** A day list filter other than All. */
 export type DayFilter = (typeof DAY_FILTERS)[number];
 
-/** A day's pages: the photo order, the route on the map, and the Trip page story. */
-export const DAY_PARTS = ["order", "route", "story"] as const;
+/** A day's pages: the photo order, the route on the map, the places visited, and the Trip page story. */
+export const DAY_PARTS = ["order", "route", "places", "story"] as const;
 
 /** One of a day's pages. */
 export type DayPart = (typeof DAY_PARTS)[number];
