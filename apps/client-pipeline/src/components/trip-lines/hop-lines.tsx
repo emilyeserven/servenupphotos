@@ -1,8 +1,9 @@
 import { Search, X } from "lucide-react";
 import type { HopAsk, Spot, TransitLine } from "@/api/transit";
-import type { TripSegment, TripTransitLine } from "@/api/trip-lines";
+import type { TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { HopStations } from "@/components/trip-lines/hop-stations";
+import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
 import { gapInfo } from "@/components/trip-lines/modes";
 import { useHopRide } from "@/components/trip-lines/use-hop-ride";
 import { Button } from "@/components/ui/button";
@@ -150,47 +151,4 @@ function HopButtons({ hop, busy, onFind, onClear }: HopButtonsProps) {
       )}
     </>
   );
-}
-
-/** The line ridden, in its color, or that none is picked. */
-function LineBadge({ line }: { line?: TripTransitLine }) {
-  if (!line) return <span className="text-muted-foreground italic">no line picked</span>;
-  return (
-    <span className="inline-flex items-center gap-1.5 font-medium">
-      <span className="size-3 rounded-full" style={{ background: line.colour || "#9333ea" }} />
-      {line.ref ? `${line.ref} · ${line.name}` : line.name}
-    </span>
-  );
-}
-
-interface LineChoicesProps {
-  lines?: TransitLine[];
-  disabled: boolean;
-  onPick: (line: TransitLine) => void;
-}
-
-/** The lines found near both photos, each a button that picks it. */
-function LineChoices({ lines = [], disabled, onPick }: LineChoicesProps) {
-  return (
-    <ul className="flex max-h-56 flex-col gap-1 overflow-y-auto">
-      {lines.map((line) => (
-        <li key={line.id}>
-          <button
-            type="button"
-            disabled={disabled}
-            onClick={() => onPick(line)}
-            className="hover:bg-muted flex w-full items-center gap-2 rounded px-2 py-1 text-left text-sm disabled:opacity-50"
-          >
-            <LineBadge line={line} />
-            <span className="text-muted-foreground">{lineEnds(line)}</span>
-          </button>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/** Where the line runs, such as "Nakamozu → Esaka", or its kind when that isn't mapped. */
-function lineEnds({ from, to, kind }: TransitLine): string {
-  return from && to ? `${from} → ${to}` : kind;
 }

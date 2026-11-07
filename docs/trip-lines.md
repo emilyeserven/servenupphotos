@@ -154,7 +154,9 @@ Under the map, **Lines ridden** lists each train, subway, bus or transit hop of 
 yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its photos (a transit hop of
 unknown kind looks for every kind). Each is a [route relation](https://wiki.openstreetmap.org/wiki/Relation:route),
 usually one direction of one line, listed with its number, color and ends. When everything found is one line (say,
-its two directions), it's picked by itself; otherwise pick one. **Change line** looks again.
+its two directions), it's picked by itself; otherwise pick one. When the lines found are of more than one kind, as for a
+transit hop, **Bus**, **Subway** and **Train** (and **Other**, such as a ferry) show only that kind. Subway covers light
+rail, monorails and trams. **Change line** looks again.
 
 Picking a line gets its stations or stops and sets **Got on at** and **Got off at** to the ones nearest each photo.
 Either can be changed to another station, such as one a walk away from the next photo, or to **At the photo**. The
