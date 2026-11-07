@@ -2,7 +2,8 @@
 
 A camera keeps one clock, and on a day you cross timezones (a flight, a border) it can be wrong for part of a session:
 it may stay on home time, have been set to the destination's time before leaving, or just be off by some amount
-nobody remembers. The Photo page fixes a session of photos at once.
+nobody remembers. **Update Data → Times across timezones** (`/update-data/timezones`) fixes a session of photos at
+once.
 
 > **Frontend analogy:** the camera stores a naive `Date` string with no offset, like `"2026-10-01T18:15"` with no `Z`.
 > The fix reads each string in the timezone the camera's clock was on (or with the clock's known error), turns it
@@ -11,14 +12,12 @@ nobody remembers. The Photo page fixes a session of photos at once.
 
 ## Using it
 
-When a photo is open for editing (`/exif?edit=…`), the **Times across timezones** card, right under the card with the
-title and **Date taken**, has **Fix times across timezones…**, which opens a dialog:
-
-1. **Day, by the camera's clock** starts on the open photo's day. It lists every photo from Photos in Flight and the
-   Gallery (with their [local edits](combined-data-store.md#local-edits)) whose clock time or current time is on that
-   day, in the order the camera took them, so a photo already fixed onto the next day still shows.
+1. **From** and **To (optional)** pick a day, or the first and last day of a range. They list every photo from Photos
+   in Flight and the Gallery (with their [local edits](combined-data-store.md#local-edits)) whose clock time or
+   current time is in those days, in the order the camera took them, so a photo already fixed onto the next day still
+   shows. Nothing is listed until **From** is picked.
 2. **Start timezone** and **End timezone** are IANA timezones (type a city, such as Tokyo), each shown with its offset
-   on that day, daylight saving included. The start one begins as the browser's own.
+   on the **From** day, daylight saving included. The start one begins as the browser's own.
 3. **The camera's clock was set to**:
    - **Start timezone** (the default): it stayed on home time.
    - **End timezone**: it was set to the destination's time before leaving.
@@ -30,7 +29,7 @@ title and **Date taken**, has **Fix times across timezones…**, which opens a d
    later one as after; photos left out keep their choice. Photos taken in the clock's own timezone keep their time.
 5. The preview lists each photo's time **Now** and **After the fix**, how far it moves, and **Moves to …** when it
    lands on another day. Under it are the [knock-on effects](#knock-on-effects).
-6. **Fix N photos' times** keeps the new times and closes the dialog.
+6. **Fix N photos' times** keeps the new times, and says how many it fixed.
 
 ## What it writes
 
@@ -41,8 +40,7 @@ fix, so running it again with other timezones replaces the last fix rather than 
 portfolio treats every time as the local time where the photo was taken.
 
 They're kept as [local edits](combined-data-store.md#local-edits), counted by the sync button, until **Commit** saves
-them. When the open photo is one of them, its **Date taken → Custom date** field takes the new time too, so saving
-the page keeps it.
+them.
 
 ## Knock-on effects
 

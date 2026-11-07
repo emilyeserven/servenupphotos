@@ -14,7 +14,6 @@ import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-d
 import { QueryResult } from "@/components/query-result";
 import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
-import { TimezoneShiftCard } from "@/components/timezone-shift/timezone-shift-card";
 import { PickedSimilarCard } from "@/components/related-photos/picked-similar-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { Button } from "@/components/ui/button";
@@ -182,13 +181,6 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           description="All optional. Saving changes writes them over the ones in the JSON, and a new title renames a file that's new in the pull request."
           disabled={pending}
           locationPrompt={locationPrompt}
-        />
-        <TimezoneShiftCard
-          path={editable.file.path}
-          onCurrentFixed={(customCreateDate) =>
-            edit.setDetails({ ...edit.details, customCreateDate })
-          }
-          disabled={pending}
         />
         <SocialPostsCard
           value={edit.socialPosts}

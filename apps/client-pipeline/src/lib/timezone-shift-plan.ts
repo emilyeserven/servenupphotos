@@ -69,18 +69,26 @@ function dayPhoto(photo: ComparePhoto): DayPhoto | null {
   };
 }
 
-/** Whether the photo's clock time or the time used now falls on the day ("2016-12-23"). */
-function isOnDay(photo: DayPhoto, day: string): boolean {
-  return dayOf(photo.clockTime) === day || dayOf(photo.currentTime) === day;
+/** Whether the day ("2016-12-23") is from `from` to `to`, both included; just `from` when `to` is blank or earlier. */
+function inRange(day: string, from: string, to: string): boolean {
+  const last = to > from ? to : from;
+  return day >= from && day <= last;
+}
+
+/** Whether the photo's clock time or the time used now falls in the days. */
+function isInRange(photo: DayPhoto, from: string, to: string): boolean {
+  return inRange(dayOf(photo.clockTime), from, to) || inRange(dayOf(photo.currentTime), from, to);
 }
 
 /**
- * The photos whose camera clock or current time is on the day, in the order the camera took them.
- * A photo already fixed onto the next day still shows, so the fix can be changed.
+ * The photos whose camera clock or current time is from the day `from` to the day `to`, in the
+ * order the camera took them. A photo already fixed onto the next day still shows, so the fix can
+ * be changed. None until `from` is picked.
  */
-export function photosOnDay(photos: DayPhoto[], day: string): DayPhoto[] {
+export function photosInRange(photos: DayPhoto[], from: string, to: string): DayPhoto[] {
+  if (!from) return [];
   return photos
-    .filter((photo) => isOnDay(photo, day))
+    .filter((photo) => isInRange(photo, from, to))
     .toSorted((a, b) => a.clockTime.localeCompare(b.clockTime));
 }
 
