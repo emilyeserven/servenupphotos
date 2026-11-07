@@ -3,7 +3,7 @@
 The portfolio's Grid (`/grid`, `routes/grid.tsx`) shows every photo with resized versions in R2, newest first, in one of
 three views picked at the top right (`?view=`): **Square** tiles (the default), **Natural** tiles, or a **Table**. Its
 **Show filters** panel has the filters in [Portfolio Filters](portfolio-filters.md), including the camera filters, and
-a **Colors** section (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
+a **Colors** button (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
 photo opens the [photo viewer](photo-viewer.md).
 
 When an album is picked for the **Grid Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page,
