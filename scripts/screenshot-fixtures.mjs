@@ -7,6 +7,7 @@
 // function of the request ({ url, body }) that returns { status, body } or a body.
 // To change an answer for one screenshot, pass `--fixtures my-fixtures.mjs`, a module whose
 // default export takes these fixtures and returns the ones to use.
+import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -1094,6 +1095,43 @@ function albumSuggestionsPreview() {
   };
 }
 
+/** A page of the Changelog from this checkout's own last 40 commits, as GitHub would list them. */
+function changelogFixture() {
+  let log = "";
+  try {
+    log = execFileSync("git", ["log", "-40", "--no-merges", "--format=%H%x1f%an%x1f%cI%x1f%s"], {
+      cwd: root,
+      encoding: "utf8",
+    });
+  } catch {
+    // No git history, such as in an exported copy: show an empty Changelog.
+  }
+  const entries = log.split("\n").filter(Boolean).map(changelogEntry);
+  return { repo: REPO, branch: BASE_BRANCH, entries, nextPage: entries.length === 40 ? 2 : 0 };
+}
+
+/** One `git log` line (sha, author, date and subject, split by \x1f) as a Changelog entry. */
+function changelogEntry(line) {
+  const [sha, author, date, subject] = line.split("\x1f");
+  const match = /\s*\(#(\d+)\)$/.exec(subject);
+  const title = match ? subject.slice(0, match.index) : subject;
+  const pr = match
+    ? {
+        pullRequest: Number(match[1]),
+        pullRequestUrl: `https://github.com/${REPO}/pull/${match[1]}`,
+      }
+    : {};
+  return {
+    sha,
+    title,
+    ...pr,
+    commitUrl: `https://github.com/${REPO}/commit/${sha}`,
+    author,
+    date,
+    photoData: title === "Add photo data",
+  };
+}
+
 const secret = { set: true, last4: "a1b2" };
 
 /** The default answers: everything set up, and one photo data pull request open. */
@@ -1101,6 +1139,7 @@ export function defaultFixtures() {
   return {
     "GET /api/health": { status: "ok", bff: "ok", backend: "ok" },
     "GET /api/hello": { message: "Hello from be-pipeline (Go)" },
+    "GET /api/changelog": changelogFixture(),
     "GET /api/settings": {
       r2: {
         accountId: "0123456789abcdef",
