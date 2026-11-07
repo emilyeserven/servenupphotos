@@ -22,6 +22,20 @@ export function apertureOpening(fNumber: number): number {
   return clamp(1.2 / fNumber, 0.06, 1);
 }
 
+/** The widest and narrowest f-numbers the background blur tells apart. */
+const WIDEST = 1.2;
+const NARROWEST = 22;
+
+/**
+ * How much to blur the background behind the subject at the f-number, as an SVG blur radius:
+ * about 2.4 wide open at f/1.2, 1.2 at f/3.4, 0.5 at f/8 and sharp at f/22, so each stop closer
+ * to wide open blurs it a little more.
+ */
+export function backgroundBlur(fNumber: number): number {
+  const share = 1 - Math.log2(fNumber / WIDEST) / Math.log2(NARROWEST / WIDEST);
+  return 2.4 * clamp(share, 0, 1) ** 1.5;
+}
+
 /** The shortest and longest exposures the dial shows, in seconds. */
 const SHORTEST = 1 / 8000;
 const LONGEST = 30;

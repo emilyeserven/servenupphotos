@@ -1,8 +1,9 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 import { MotionGraphic } from "@portfolio/components/motion-graphic";
 import type { RangeKey } from "@portfolio/lib/camera-filters";
 import {
   apertureOpening,
+  backgroundBlur,
   exposureShare,
   grainCount,
   SETTING_NOTES,
@@ -64,6 +65,46 @@ function ApertureGraphic({ value }: { value: number }) {
         className="fill-background"
       />
       <circle cx={cx} cy={cy} r={r} className="fill-none stroke-foreground" strokeWidth={1} />
+    </Graphic>
+  );
+}
+
+/**
+ * What the aperture does to a photo: a person standing sharp in front of trees and hills that
+ * blur more the wider the aperture opens.
+ */
+function DepthGraphic({ value }: { value: number }) {
+  const id = useId().replace(/[^a-zA-Z0-9]/g, "");
+  return (
+    <Graphic label={`Background blur at f/${value}`}>
+      <defs>
+        <clipPath id={`frame${id}`}>
+          <rect x={6} y={3} width={WIDTH - 12} height={HEIGHT - 6} rx={3} />
+        </clipPath>
+        <filter id={`blur${id}`} x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation={backgroundBlur(value)} />
+        </filter>
+      </defs>
+      <g clipPath={`url(#frame${id})`}>
+        <rect x={0} y={0} width={WIDTH} height={HEIGHT} className="fill-muted" />
+        <g filter={`url(#blur${id})`}>
+          <circle cx={14} cy={10} r={3.5} className="fill-foreground/25" />
+          <path d="M 0 30 Q 14 18 28 28 T 56 24 V 40 H 0 Z" className="fill-foreground/30" />
+          <path d="M 12 29 L 16 15 L 20 29 Z" className="fill-foreground/55" />
+          <path d="M 38 27 L 43 12 L 48 27 Z" className="fill-foreground/55" />
+        </g>
+        <circle cx={27} cy={20} r={3.5} className="fill-foreground" />
+        <path d="M 21 37 Q 21 25 27 25 Q 33 25 33 37 Z" className="fill-foreground" />
+      </g>
+      <rect
+        x={6}
+        y={3}
+        width={WIDTH - 12}
+        height={HEIGHT - 6}
+        rx={3}
+        className="fill-none stroke-foreground"
+        strokeWidth={1}
+      />
     </Graphic>
   );
 }
@@ -135,7 +176,12 @@ function IsoGraphic({ value }: { value: number }) {
 /** Each setting's graphic for one of its values, as the photos write it. */
 const GRAPHICS: Record<RangeKey, (value: string) => ReactNode> = {
   focalLength: (value) => <FocalGraphic value={Number(value)} />,
-  aperture: (value) => <ApertureGraphic value={Number(value)} />,
+  aperture: (value) => (
+    <div className="flex items-center gap-1">
+      <ApertureGraphic value={Number(value)} />
+      <DepthGraphic value={Number(value)} />
+    </div>
+  ),
   exposure: (value) => <ExposureGraphic value={value} />,
   iso: (value) => <IsoGraphic value={Number(value)} />,
 };
