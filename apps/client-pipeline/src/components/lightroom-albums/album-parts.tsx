@@ -4,19 +4,30 @@ import { cn } from "@/lib/utils";
 import { LIGHTROOM_STAGES, type LightroomAlbum, type LightroomStage } from "@/lib/lightroom-albums";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 
+interface AlbumTitleProps {
+  album: LightroomAlbum;
+  className?: string;
+  /** Leaves out the Offline mark, where every album shown is offline anyway. */
+  hideOffline?: boolean;
+}
+
 /** The album's name with its Smart, Offline and photo count marks, and a warning when the LLM wasn't sure of it. */
-export function AlbumTitle({ album, className }: { album: LightroomAlbum; className?: string }) {
+export function AlbumTitle({ album, className, hideOffline = false }: AlbumTitleProps) {
   return (
     <p className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium", className)}>
       {album.name}
       {album.smart && <span className="text-muted-foreground text-xs">Smart</span>}
-      {album.offline && <OfflineBadge />}
-      {album.photoCount !== null && (
-        <span className="text-muted-foreground text-xs">{count(album.photoCount, "photo")}</span>
-      )}
+      {album.offline && !hideOffline && <OfflineBadge />}
+      <PhotoCount photoCount={album.photoCount} />
       <Uncertain note={album.uncertainNote} />
     </p>
   );
+}
+
+/** How many photos Lightroom says the album has, when it showed a count. */
+function PhotoCount({ photoCount }: { photoCount: number | null }) {
+  if (photoCount === null) return null;
+  return <span className="text-muted-foreground text-xs">{count(photoCount, "photo")}</span>;
 }
 
 /** Marks an album Lightroom keeps on the device, so it can be worked on without the internet. */

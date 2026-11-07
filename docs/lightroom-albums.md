@@ -56,7 +56,8 @@ each stage (Cull Round 1 to Re-editing, then No stage), leaving out albums that 
   Albums whose photo count wasn't read go after the ones with a count.
 
 The **Online / Offline** switch (remembered in the browser) says whether you have the internet. **Offline** suggests
-only the albums Lightroom keeps on the device, the ones with the **Offline** mark.
+only the albums Lightroom keeps on the device, the ones with the **Offline** mark, and leaves the mark off them
+there, since every suggestion is offline.
 
 > **Frontend analogy:** it's a derived selector over the store, like
 > `albums.filter(notDone).toSorted(byStageDesc || bySize).slice(0, 3)`, recomputed on every render, with the

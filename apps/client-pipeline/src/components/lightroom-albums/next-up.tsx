@@ -25,6 +25,7 @@ export function NextUpCard() {
   const setConnection = useLightroomAlbumsStore((state) => state.setConnection);
   if (!file) return null;
   const albums = allAlbums(file.items);
+  const offline = connection === "offline";
   return (
     <Card>
       <CardHeader className="flex flex-wrap items-start justify-between gap-2">
@@ -32,7 +33,7 @@ export function NextUpCard() {
           <CardTitle>Next up</CardTitle>
           <CardDescription>
             Albums furthest along come first, so started ones get finished, then the ones with fewer
-            photos. {connection === "offline" && "Only albums kept offline are suggested."}
+            photos. {offline && "Only albums kept offline are suggested."}
           </CardDescription>
         </div>
         <Segmented
@@ -43,13 +44,19 @@ export function NextUpCard() {
         />
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
-        <TopList title="Overall" albums={topOverall(albums, connection)} showStage />
+        <TopList
+          title="Overall"
+          albums={topOverall(albums, connection)}
+          offline={offline}
+          showStage
+        />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {NEXT_UP_STAGES.map((stage) => (
             <TopList
               key={stage ?? "none"}
               title={stage ?? "No stage"}
               albums={topAtStage(albums, connection, stage)}
+              offline={offline}
             />
           ))}
         </div>
@@ -63,10 +70,12 @@ interface TopListProps {
   albums: LightroomAlbum[];
   /** Whether each album says its stage, for the Overall list, which mixes stages. */
   showStage?: boolean;
+  /** Whether only offline albums are suggested, so their Offline marks are left out. */
+  offline: boolean;
 }
 
 /** A numbered list of up to 3 albums, or a line saying there are none. */
-function TopList({ title, albums, showStage = false }: TopListProps) {
+function TopList({ title, albums, showStage = false, offline }: TopListProps) {
   return (
     <section className="flex flex-col gap-2">
       <h3 className="text-sm font-medium">{title}</h3>
@@ -75,7 +84,13 @@ function TopList({ title, albums, showStage = false }: TopListProps) {
       )}
       <ol className="flex flex-col gap-1.5">
         {albums.map((album, i) => (
-          <TopAlbum key={album.path} album={album} place={i + 1} showStage={showStage} />
+          <TopAlbum
+            key={album.path}
+            album={album}
+            place={i + 1}
+            showStage={showStage}
+            offline={offline}
+          />
         ))}
       </ol>
     </section>
@@ -86,17 +101,18 @@ interface TopAlbumProps {
   album: LightroomAlbum;
   place: number;
   showStage: boolean;
+  offline: boolean;
 }
 
 /** One suggested album: its place, name and marks, and its folder (and stage, in the Overall list). */
-function TopAlbum({ album, place, showStage }: TopAlbumProps) {
+function TopAlbum({ album, place, showStage, offline }: TopAlbumProps) {
   const stage = showStage ? (album.stage ?? "No stage") : "";
   const where = [stage, albumFolder(album)].filter(Boolean).join(" · ");
   return (
     <li className="flex items-start gap-2 rounded-md border p-2">
       <span className="text-muted-foreground w-4 text-sm tabular-nums">{place}</span>
       <div className="min-w-0 flex-1">
-        <AlbumTitle album={album} />
+        <AlbumTitle album={album} hideOffline={offline} />
         {where && <p className="text-muted-foreground truncate text-xs">{where}</p>}
       </div>
     </li>
