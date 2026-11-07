@@ -17,11 +17,15 @@ Below them every page is listed under its section:
 
 ## Submenus
 
-A page with pages under it, such as **Tags**, has an arrow on its right. Its submenu is listed under it, indented,
-while the page or one in its submenu is open, and the arrow shows or hides it by hand. A submenu page keeps its own
-URL (Explore Bucket is still `/bucket`); it only sits under another in the sidebar and the breadcrumbs, which read
-**Organize › Tags › Small Tags**, with the middle page a link back to it. On a phone only the open page shows in the
-breadcrumbs.
+A page with pages under it, such as **Tags**, has an arrow on its right. On a desktop, hovering it (or focusing it
+with the keyboard) flies its submenu out to the right: the page itself, then the pages under it
+(`components/sidebar/nav-flyout.tsx`), whether the sidebar is expanded or collapsed to icons. The page stays
+highlighted while one of its submenu pages is open. On a phone, where there's no hover, the submenu is listed under
+the page instead, open while the page or one in its submenu is showing, and the arrow shows or hides it.
+
+A submenu page keeps its own URL (Explore Bucket is still `/bucket`); it only sits under another in the sidebar and
+the breadcrumbs, which read **Organize › Tags › Small Tags**, with the middle page a link back to it. On a phone only
+the open page shows in the breadcrumbs.
 
 The pages, their icons and their submenus are `navGroups` in `components/sidebar/nav-groups.ts`; a new page needs one
 entry there, with an icon, and its `url` is checked against the route tree.
@@ -38,8 +42,7 @@ at the bottom of the rail). Collapsed:
 - each page shows only its icon, and hovering it shows the page's name in a tooltip;
 - the group names are hidden;
 - Bulk Upload and Upload become two stacked icon buttons that open the same modals;
-- hovering (or focusing) the icon of a page with a submenu flies out a panel to its right with the page and the pages
-  under it, in place of the name tooltip (`components/sidebar/nav-flyout.tsx`).
+- hovering the icon of a page with a submenu flies the submenu out, in place of the name tooltip.
 
 The choice is kept in the browser's `localStorage` under `pipeline-sidebar` (`stores/sidebar.ts`), so the sidebar
 stays collapsed or expanded after a reload.
