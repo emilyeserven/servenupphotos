@@ -26,8 +26,9 @@ so the sketches appear a moment later, and on screens under 360 px wide they're 
 
 ### Month trip line maps
 
-A month with trip lines on any of its shown days has small maps of them under its heading
-(`components/timeline-month-map.tsx`), 144 × 96 px each, with every line of those days drawn together in the same
+A month with trip lines on any of its shown days has a **Trip lines** button under its heading that opens and closes
+small maps of them (`components/timeline-month-map.tsx`). They start closed; **Open trip line maps** under **Each month**
+in Display Options (`?maps=true`) starts every month open instead, and changing it opens or closes them all. The maps are 144 × 96 px each, with every line of those days drawn together in the same
 styles as the day sketches. The days are grouped by where their lines are (`lib/route-places.ts`): a day joins the first
 group its lines come within about 50 km of, so a city and its day trips share one map while two cities on one trip each
 get their own, rather than shrinking to two dots in one box. Each map is labelled with its days ("Jan 19" or "Oct 3–6")
@@ -56,7 +57,7 @@ size, such as when a month is folded away or the thumbnail size changes.
 ## Display options
 
 **Display Options**, at the right end of the row with the search and **Show filters**, opens the display options in a
-wide flyout: the thumbnail size and scrubber ticks in one column and the checkboxes for each photo in another, stacked
+wide flyout: the thumbnail size and scrubber ticks in one column and the checkboxes for each photo and each month in another, stacked
 on a phone. Each is kept in the URL, left out at its default, and
 remembered in the browser with the rest of the Timeline's settings, so links to the Timeline from other pages open it the
 same way.
@@ -68,6 +69,7 @@ same way.
 | Show comments       | Each photo's comment, on one line; on                                             | `?comments=false`          |
 | Show places         | Where each photo was taken; on                                                    | `?places=false`            |
 | Scrubber ticks      | A tick for each month (Month & year, the default) or each day (Day, month & year) | `?ticks=days`              |
+| Open trip line maps | Whether each month's [trip line maps](#month-trip-line-maps) start open; off      | `?maps=true`               |
 
 On a phone, Large and Huge thumbnails sit above their photo's title instead of beside it.
 **Reset to defaults** puts every option back.

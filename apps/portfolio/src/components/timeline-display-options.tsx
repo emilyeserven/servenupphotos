@@ -14,7 +14,8 @@ import {
 /**
  * The **Display Options** button at the right of the Timeline's search row that opens its display
  * options: how big the thumbnails are and whether the scrubber marks months or days, beside whether
- * each photo shows its technical info, comment and place.
+ * each photo shows its technical info, comment and place, and whether each month's trip line maps
+ * start open.
  */
 export function TimelineDisplayOptions({
   display,
@@ -44,23 +45,32 @@ export function TimelineDisplayOptions({
         </>
       }
       checks={
-        <OptionGroup label="Each photo">
-          <OptionCheckbox
-            label="Show technical info"
-            checked={display.tech}
-            onChange={(tech) => onChange({ tech })}
-          />
-          <OptionCheckbox
-            label="Show comments"
-            checked={display.comments}
-            onChange={(comments) => onChange({ comments })}
-          />
-          <OptionCheckbox
-            label="Show places"
-            checked={display.places}
-            onChange={(places) => onChange({ places })}
-          />
-        </OptionGroup>
+        <>
+          <OptionGroup label="Each photo">
+            <OptionCheckbox
+              label="Show technical info"
+              checked={display.tech}
+              onChange={(tech) => onChange({ tech })}
+            />
+            <OptionCheckbox
+              label="Show comments"
+              checked={display.comments}
+              onChange={(comments) => onChange({ comments })}
+            />
+            <OptionCheckbox
+              label="Show places"
+              checked={display.places}
+              onChange={(places) => onChange({ places })}
+            />
+          </OptionGroup>
+          <OptionGroup label="Each month">
+            <OptionCheckbox
+              label="Open trip line maps"
+              checked={display.maps}
+              onChange={(maps) => onChange({ maps })}
+            />
+          </OptionGroup>
+        </>
       }
     />
   );

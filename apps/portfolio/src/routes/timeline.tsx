@@ -200,7 +200,7 @@ function MonthSection({
       </h2>
       {open && (
         <div id={listId} className="flex flex-col gap-4">
-          <TimelineMonthMap monthPhotos={monthPhotos} />
+          <TimelineMonthMap monthPhotos={monthPhotos} open={options.display.maps} />
           <ol className="flex flex-col gap-4">
             {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
               <DaySection key={day} day={day} dayPhotos={dayPhotos} {...options} />

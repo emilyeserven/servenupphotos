@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { format, parseISO } from "date-fns";
+import { ChevronDown, Route } from "lucide-react";
+import { useId, useState } from "react";
 import {
   type DaysSketch,
   SketchDrawing,
@@ -8,6 +10,7 @@ import {
 import { fitView } from "@/lib/fit-view";
 import type { Photo } from "@/lib/photos";
 import { MONTH_SKETCH_SIZE } from "@/lib/route-sketch";
+import { cn } from "@/lib/utils";
 
 /** The days the photos were taken, as TRIPLINES.geo.json writes them, earliest first. */
 function daysOf(photos: Photo[]): string[] {
@@ -22,21 +25,47 @@ function daysText(days: string[]): string {
 }
 
 /**
- * Under a month's heading on the Timeline, every trip line of its days drawn together as small
- * maps, one for each place the lines are in, in the Map's line styles; nothing for a month
- * without a trip line.
+ * Under a month's heading on the Timeline, a button that opens and closes small maps of every trip
+ * line of its days, one for each place the lines are in, in the Map's line styles; nothing for a
+ * month without a trip line. The maps start open or closed as the display options say.
  */
-export function TimelineMonthMap({ monthPhotos }: { monthPhotos: Photo[] }) {
+export function TimelineMonthMap({ monthPhotos, open }: { monthPhotos: Photo[]; open: boolean }) {
   const places = useDaysSketches(daysOf(monthPhotos), MONTH_SKETCH_SIZE);
   if (places.length === 0) return null;
+  // Keyed by the option, so changing it in the display options opens or closes every month.
+  return <PlaceMaps key={String(open)} places={places} startOpen={open} />;
+}
+
+/** The month's button and, while it's open, its maps. */
+function PlaceMaps({ places, startOpen }: { places: DaysSketch[]; startOpen: boolean }) {
+  const [open, setOpen] = useState(startOpen);
+  const listId = useId();
   return (
-    <ul aria-label="This month's trip lines" className="flex flex-wrap gap-2">
-      {places.map((place) => (
-        <li key={place.days.join(" ")}>
-          <PlaceMap place={place} />
-        </li>
-      ))}
-    </ul>
+    <div className="flex flex-col gap-2">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={() => setOpen(!open)}
+        className="flex w-fit items-center gap-1.5 rounded-sm text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <ChevronDown
+          className={cn("size-3.5 transition-transform", !open && "-rotate-90")}
+          aria-hidden
+        />
+        <Route className="size-3.5" aria-hidden />
+        Trip lines
+      </button>
+      {open && (
+        <ul id={listId} aria-label="This month's trip lines" className="flex flex-wrap gap-2">
+          {places.map((place) => (
+            <li key={place.days.join(" ")}>
+              <PlaceMap place={place} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
