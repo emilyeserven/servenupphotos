@@ -30,7 +30,17 @@ its sections on the left, each saying what it's set to, and the chosen one's cho
 
 The **Filters** tab's box holds the site's usual filters, with Places, Groups, When, Gear & settings and Orientation, kept in the URL like on the Grid, so the menu carries them between views. The Graph page has no text search.
 
-The page opens on photos per year, oldest first, each bar split by season. Only the filters are kept in the URL.
+The page opens on photos per year, oldest first, each bar split by season. The graph's settings are kept in the URL
+beside the filters (`lib/graph-search.ts`), so a link shares the graph:
+
+- A built-in preset from GRAPHS.json is written as its ID, such as `?graph=aperture`.
+- Any other graph is written as each setting that differs from the opening graph, with `g` before its name so it
+  can't clash with a filter, such as `?gType=pie&gX=cameras`. A split of none is `gSplit=none`.
+- A link can mix the two, such as `?graph=aperture&gLimit=5`. Settings a link gets wrong, such as an unknown type,
+  are ignored.
+
+Changing the graph replaces the URL rather than adding to the browser's history. **Wide**, the Graph / Table view and
+the display options stay out of the URL.
 
 **Wide**, beside Graph / Table, lets the graph's box use the window's whole width instead of the usual column, while
 the heading, buttons, Adjust Graph box and Selected Photos stay in the column (**Narrow** puts it back). The choice is remembered in the browser.

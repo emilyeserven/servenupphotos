@@ -29,23 +29,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { type GraphPick, samePick } from "@/lib/graph-pick";
 import { photoDots } from "@/lib/graph-photo-dots";
-import { NO_RANGES } from "@/lib/graph-ranges";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 import { cn } from "@/lib/utils";
-
-/** The graph shown at first: photos per year, oldest first, each bar split by season. */
-const START: GraphConfig = {
-  type: "bar",
-  x: "year",
-  measure: "count",
-  y: "season",
-  split: "season",
-  stacked: true,
-  sort: "reverse",
-  limit: 0,
-  ...NO_RANGES,
-};
 
 /** Whether the graph or its numbers as a table show. */
 type View = "graph" | "table";
@@ -61,6 +47,8 @@ type View = "graph" | "table";
 export function GraphBuilder({
   photos,
   kept,
+  config,
+  onConfigChange,
   wide,
   onWideChange,
 }: {
@@ -68,16 +56,18 @@ export function GraphBuilder({
   photos: Photo[];
   /** The photos the filters and the text search leave, which the graph counts. */
   kept: Photo[];
+  /** The graph's settings, which the page keeps in the URL so a link shares the graph. */
+  config: GraphConfig;
+  onConfigChange: (config: GraphConfig) => void;
   /** Whether the graph uses the window's whole width, while everything else keeps to the column. */
   wide: boolean;
   onWideChange: (wide: boolean) => void;
 }) {
-  const [config, setConfig] = useState(START);
   const [view, setView] = useState<View>("graph");
   const [pick, setPick] = useState<GraphPick | null>(null);
   const [display, setDisplay] = useState(DEFAULT_GRAPH_DISPLAY);
   const onChange: ConfigChange = (change) => {
-    setConfig((current) => ({ ...current, ...change }));
+    onConfigChange({ ...config, ...change });
     setPick(null);
   };
   const onPick = (next: GraphPick) => setPick(samePick(pick, next) ? null : next);

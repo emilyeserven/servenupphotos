@@ -125,3 +125,8 @@ export function spotlightPresets(files: GraphPresetFile[] = presetFiles): GraphP
     .filter((file) => file.kind === "preset" && file.spotlight)
     .map(presetOf);
 }
+
+/** Every preset the site's GRAPHS.json has, in or out of groups, which a link can name by ID instead of its settings. */
+export function builtInPresets(files: GraphPresetFile[] = presetFiles): GraphPreset[] {
+  return files.filter((file) => file.kind === "preset").map(presetOf);
+}
