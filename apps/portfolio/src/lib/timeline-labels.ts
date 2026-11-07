@@ -47,8 +47,3 @@ export function findTimelineLabel(
 ): TimelineLabel | undefined {
   return labels.find((label) => label.id === id);
 }
-
-/** The label's first and last days as dates: the start of the first, and the end of the last. */
-export function labelDates({ start, end }: TimelineLabel): { start: Date; end: Date } {
-  return { start: new Date(`${start}T00:00:00`), end: new Date(`${end}T23:59:59.999`) };
-}

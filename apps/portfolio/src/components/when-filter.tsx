@@ -1,4 +1,3 @@
-import { useLocation } from "@tanstack/react-router";
 import { CalendarClock, ChevronsUpDown } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Button } from "@portfolio/components/ui/button";
@@ -63,13 +62,11 @@ function countedOut({ facet, filters }: WhenProps): Photo[] {
 /**
  * A **When** button that opens one picker for when photos were taken, one way at a time: across
  * all years (seasons, months, days of the week or hours, any number of one kind, with the current
- * one a click away), or a range of dates on a calendar. The Timeline has its own time range, so
- * there it only picks across all years.
+ * one a click away), or a range of dates on a calendar, which on the Timeline is the days it shows.
  */
 export function WhenFilter({ facet, filters, setFilters }: WhenProps) {
   const props = { facet, filters, setFilters };
   const count = whenCount(filters);
-  const onTimeline = useLocation().pathname === "/timeline";
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -88,7 +85,7 @@ export function WhenFilter({ facet, filters, setFilters }: WhenProps) {
         align="start"
         className="flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-3 p-3"
       >
-        <ModeParts {...props} onlyYears={onTimeline} />
+        <ModeParts {...props} />
       </PopoverContent>
     </Popover>
   );
@@ -105,12 +102,12 @@ const MODE_PARTS: Record<DateMode, (props: WhenProps) => ReactNode> = {
   range: (props) => <RangePart {...props} />,
 };
 
-/** A tab for each way of choosing, unless `onlyYears`, which keeps to across all years. */
-function ModeParts({ onlyYears, ...props }: WhenProps & { onlyYears: boolean }) {
-  const [mode, setMode] = useState<DateMode>(() => (onlyYears ? "years" : modeOf(props.filters)));
+/** A tab for each way of choosing. */
+function ModeParts(props: WhenProps) {
+  const [mode, setMode] = useState<DateMode>(() => modeOf(props.filters));
   return (
     <>
-      {!onlyYears && <Tabs label="When" options={MODE_LABELS} value={mode} onChange={setMode} />}
+      <Tabs label="When" options={MODE_LABELS} value={mode} onChange={setMode} />
       {MODE_PARTS[mode](props)}
     </>
   );
