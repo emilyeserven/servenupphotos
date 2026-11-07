@@ -42,6 +42,13 @@ export interface GroupDef {
    * by brand; the first is shown at first. `build` is left for the rest of the page to name it by.
    */
   variants?: GroupVariant[];
+  /**
+   * The name of the linked cards it's one of, such as "Exposure Triangle": a row chosen in any of
+   * them narrows every other one, and the cards go together in a titled box.
+   */
+  linked?: string;
+  /** For the top card of a chain that narrows down, the title of the chain's box, such as "Calendar". */
+  runTitle?: string;
 }
 
 /** One way to make a group with variants, such as Lenses by brand. */
@@ -105,19 +112,26 @@ export function bucketGroup(
 
 /**
  * A section's groups laid out in runs: each group that narrows another with the groups it narrows
- * down the line, such as Countries then Cities, and the groups between them on their own, in order.
+ * down the line, such as Countries then Cities, each set of linked groups together, and the groups
+ * between them on their own, in order.
  */
 export function groupChains(groups: GroupDef[]): GroupDef[][] {
   const narrowed = new Set(groups.map((def) => def.narrows));
   const chains: GroupDef[][] = [];
   for (const def of groups.filter((g) => !narrowed.has(g.id))) {
-    const chain = [def];
-    let next = groups.find((g) => g.id === chain.at(-1)!.narrows);
-    while (next && !chain.includes(next)) {
-      chain.push(next);
-      next = groups.find((g) => g.id === next!.narrows);
-    }
-    chains.push(chain);
+    if (!chains.some((chain) => chain.includes(def))) chains.push(chainFrom(def, groups));
   }
   return chains;
+}
+
+/** The run a group starts: the groups linked with it, or the ones it narrows down the line. */
+function chainFrom(def: GroupDef, groups: GroupDef[]): GroupDef[] {
+  if (def.linked) return groups.filter((g) => g.linked === def.linked);
+  const chain = [def];
+  let next = groups.find((g) => g.id === def.narrows);
+  while (next && !chain.includes(next)) {
+    chain.push(next);
+    next = groups.find((g) => g.id === next!.narrows);
+  }
+  return chain;
 }

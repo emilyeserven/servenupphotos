@@ -99,16 +99,16 @@ const PLACE_GROUPS: GroupDef[] = [
 /** The sections of the Stats page, each with its groups. */
 export const STAT_SECTIONS: StatSection[] = [
   {
-    id: "gear",
-    title: "Gear",
-    description: "What the photos were taken with.",
-    groups: GEAR_GROUPS,
-  },
-  {
     id: "places",
     title: "Places",
     description: "Where the photos were taken.",
     groups: PLACE_GROUPS,
+  },
+  {
+    id: "gear",
+    title: "Gear",
+    description: "What the photos were taken with.",
+    groups: GEAR_GROUPS,
   },
   {
     id: "time",
