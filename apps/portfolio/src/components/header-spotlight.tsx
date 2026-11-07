@@ -8,6 +8,7 @@ import {
   GRID_HEADER_ZONE,
   type ImagePhoto,
   spotlightPhotos,
+  STATS_HEADER_ZONE,
   TIMELINE_HEADER_ZONE,
   UPRIGHT_PHONE_QUERY,
 } from "@/lib/spotlight-zones";
@@ -23,7 +24,14 @@ const HEADER_MS = 7000;
 const ZONE_BY_PATH: Record<string, string> = {
   "/grid": GRID_HEADER_ZONE,
   "/timeline": TIMELINE_HEADER_ZONE,
+  "/stats": STATS_HEADER_ZONE,
 };
+
+/**
+ * The zones whose page lists its photos below, so **Jump to Cover Image** has somewhere to go; the
+ * Stats page shows numbers, not photos, so its header has no button.
+ */
+const JUMP_ZONES: ReadonlySet<string> = new Set([GRID_HEADER_ZONE, TIMELINE_HEADER_ZONE]);
 
 /**
  * The header spotlight of the page showing, such as the Grid Header on the Grid; nothing on a page
@@ -73,7 +81,7 @@ function HeaderPhotos({ photos, zone }: { photos: ImagePhoto[]; zone: string }) 
       <div aria-hidden className="absolute inset-0">
         <HeaderImages photos={photos} zone={zone} turn={turn} box={size} />
       </div>
-      <JumpToCover photo={photos[turn]} />
+      {JUMP_ZONES.has(zone) && <JumpToCover photo={photos[turn]} />}
     </div>
   );
 }
