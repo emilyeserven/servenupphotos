@@ -21,7 +21,7 @@ with the number of photos it holds, such as "15 photos (3 rows)", so the last ro
   Grid's are (see [Portfolio Grid](portfolio-grid.md#natural)), and the first rows are shown. Rows hold different
   numbers of photos, so the dropdown's counts are worked out from the layout.
 
-The eye button's **Size** and **Show info** work as they do on the Grid, and change how many photos fit in a row.
+**Display Options**' **Size** and **Show info** work as they do on the Grid, and change how many photos fit in a row.
 
 ## Shuffle
 

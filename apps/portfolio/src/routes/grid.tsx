@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Grid3x3, Table } from "lucide-react";
 import { ColorOrderControls } from "@/components/color-order-controls";
-import { GridSortSelect } from "@/components/grid-sort-select";
+import { GridSortControl } from "@/components/grid-sort-control";
 import { GridViewOptions } from "@/components/grid-view-options";
 import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-tiles";
 import { PhotoTable } from "@/components/photo-table";
@@ -21,7 +21,13 @@ import {
   parseColorOrder,
 } from "@/lib/color-search";
 import type { ColorSort } from "@/lib/color-sort";
-import { type GridColorSpec, type GridSort, sortGrid } from "@/lib/grid-sort";
+import {
+  defaultOrder,
+  type GridColorSpec,
+  type GridSort,
+  parseDateOrder,
+  sortGrid,
+} from "@/lib/grid-sort";
 import { type GridSize, naturalSize, parseGridSize, squareSize, tableSize } from "@/lib/grid-size";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
@@ -45,11 +51,10 @@ interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
    */
   size?: GridSize;
   /**
-   * Set when the oldest or most recently added photo comes first, to sort by time of day, or to
-   * sort by color or vividness. Left out for the
-   * default, newest first.
+   * What the photos are sorted by, once one is picked from **Sort**. Left out for the default,
+   * newest first, which the button shows as plain "Sort".
    */
-  sort?: Exclude<GridSort, "newest">;
+  sort?: GridSort;
 }
 
 /**
@@ -89,20 +94,25 @@ function viewOf(view: unknown): GridSearch {
 }
 
 /** The sorts the URL can ask for by date, besides newest first, which have no order of their own. */
-const DATE_SORTS: readonly string[] = ["oldest", "added", "time"];
+const DATE_SORTS: readonly string[] = ["newest", "oldest", "added", "time"];
 
-/** The sorts the URL can ask for, besides newest first. */
-const URL_SORTS: readonly string[] = [...DATE_SORTS, "color", "vivid"];
+/** The sorts the URL can ask for, including newest first once it's picked from **Sort**. */
+const URL_SORTS: readonly string[] = ["newest", ...DATE_SORTS, "color", "vivid"];
 
-/** The sort from the URL, with the color sorts' order and secondary sort when it's one of them. */
+/**
+ * The sort from the URL, with its order: for a color sort its order and secondary sort, and for
+ * Recently Added and Time of Day the order when it's the way round from their default.
+ */
 function sortOf(search: Record<string, unknown>): GridSearch {
   if (!URL_SORTS.includes(search.sort as string)) return {};
-  const sort = search.sort as Exclude<GridSort, "newest">;
-  return isColorSort(sort) ? { sort, ...parseColorOrder(sort, search) } : { sort };
+  const sort = search.sort as GridSort;
+  return isColorSort(sort)
+    ? { sort, ...parseColorOrder(sort, search) }
+    : { sort, ...parseDateOrder(sort, search.order) };
 }
 
 /** Whether the sort is by color or vividness, rather than by a date. */
-function isColorSort(sort: Exclude<GridSort, "newest">): sort is ColorSort {
+function isColorSort(sort: GridSort): sort is ColorSort {
   return !DATE_SORTS.includes(sort);
 }
 
@@ -121,9 +131,15 @@ const newestFirst = photos
   .filter((photo): photo is ImagePhoto => photo.image !== null)
   .sort((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
 
-/** How the URL asks for the color or vividness sort to run, with each default filled in. */
+/** How the URL asks for the sort to run, with each default filled in. */
 function colorSpec(search: GridSearch): GridColorSpec {
-  const { order = "asc", secondary, secondaryOrder = "asc", measure = "average", color } = search;
+  const {
+    order = defaultOrder(search.sort ?? "newest"),
+    secondary,
+    secondaryOrder = "asc",
+    measure = "average",
+    color,
+  } = search;
   return { order, secondary, secondaryOrder, measure, color };
 }
 
@@ -160,12 +176,15 @@ function GridView() {
           Grid
         </h1>
         <p className="text-sm text-muted-foreground">{shownPhotos.length} photos</p>
-        <div className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-2 self-center">
-          {mode !== "table" && <TileControls search={search} mode={mode} />}
+        <div className="ml-auto self-center">
           <ViewSwitcher choices={VIEW_MODES} mode={mode} />
         </div>
         <div className="mt-3 w-full">
-          <CameraFilterBar photos={newestFirst} searchable />
+          <CameraFilterBar
+            photos={newestFirst}
+            searchable
+            end={mode !== "table" && <TileControls search={search} mode={mode} />}
+          />
         </div>
       </header>
       <NoMatchingPhotos
@@ -229,30 +248,32 @@ function GridBody({
   );
 }
 
-/** The tiles' sort, its color order and their display options, which the table doesn't use. */
+/**
+ * The tiles' **Sort**, the color sorts' **Then by**, and their **Display Options**, at the right of
+ * the search row; the table has none of them.
+ */
 function TileControls({ search, mode }: { search: GridSearch; mode: TileMode }) {
-  const sort: GridSort = search.sort ?? "newest";
   return (
-    <>
-      <GridSortSelect sort={sort} />
-      <ColorOrder sort={sort} search={search} />
+    <div className="flex flex-wrap items-center justify-end gap-2">
+      <GridSortControl sort={search.sort} order={colorSpec(search).order} />
+      <ColorOrder sort={search.sort} search={search} />
       <GridViewOptions
         view={mode}
         size={mode === "natural" ? naturalSize(search.size) : squareSize(search.size)}
         info={search.info === true}
+        align="end"
       />
-    </>
+    </div>
   );
 }
 
-/** The color or vividness sort's order and secondary sort, shown while the Grid is sorted by one. */
-function ColorOrder({ sort, search }: { sort: GridSort; search: GridSearch }) {
+/** The color or vividness sort's secondary sort, shown while the Grid is sorted by one. */
+function ColorOrder({ sort, search }: { sort?: GridSort; search: GridSearch }) {
   if (sort !== "color" && sort !== "vivid") return null;
-  const { order, secondary, secondaryOrder } = colorSpec(search);
+  const { secondary, secondaryOrder } = colorSpec(search);
   return (
     <ColorOrderControls
       sort={sort satisfies ColorSort}
-      order={order}
       secondary={secondary}
       secondaryOrder={secondaryOrder}
     />

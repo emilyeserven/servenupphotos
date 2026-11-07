@@ -69,19 +69,23 @@ const NO_EXTRA: OwnFilters = { keys: [], count: 0, children: null };
  * The filter bar of the Table and Grid: the shared filters every view has, then the camera
  * filters, all in one **Show filters** panel, so both views always offer the same ones. `extra`
  * are a view's own filters after those, in the sliders' row, such as the Grid's **Visuals**.
- * `searchable` adds the text search box, which the camera filters' counts then leave out too.
+ * `searchable` adds the text search box, which the camera filters' counts then leave out too, and
+ * `end` goes at the right end of the search row, such as the Grid's Sort and Display Options.
  */
 export function CameraFilterBar({
   photos,
   extra = NO_EXTRA,
   searchable = false,
   bare = false,
+  end,
 }: {
   photos: Photo[];
   extra?: OwnFilters;
   searchable?: boolean;
   /** Shows the filters always, with no Show filters button, as the Graph page's Filters tab does. */
   bare?: boolean;
+  /** Shown at the right end of the row with the search and Show filters button. */
+  end?: ReactNode;
 }) {
   const search = useSearch({ strict: false });
   const own = parseCameraFilters(search);
@@ -92,6 +96,7 @@ export function CameraFilterBar({
       photos={photos}
       searchable={searchable}
       bare={bare}
+      end={end}
       facet={filterByCamera(photos, own)}
       own={{
         keys: [...CAMERA_FILTER_KEYS, ...COLOR_FILTER_KEYS, ...extra.keys],

@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { PinDisplayFields } from "@/components/pin-display-fields";
+import { PinChoiceFields, PinGroupChecks } from "@/components/pin-display-fields";
 import { OptionChoices, ViewOptionsButton } from "@/components/view-options-button";
 import {
   type ChartUp,
@@ -15,7 +15,7 @@ const CHART_UPS: [ChartUp, string][] = [
 ];
 
 /**
- * The Color page's display options, behind an eye button like the Map's: the same Grouping, Pin
+ * The Color page's display options, behind a **Display Options** button like the Map's: the same Grouping, Pin
  * size, counts and darkening options, kept in the URL so a link keeps them. In the Black & white
  * view it also picks what the chart's height stands for.
  */
@@ -27,20 +27,26 @@ export function ColorDisplayOptions({ display, mono }: { display: ColorDisplay; 
       replace: true,
     });
   return (
-    <ViewOptionsButton onReset={() => change(DEFAULT_COLOR_DISPLAY)}>
-      <PinDisplayFields
-        display={display}
-        defaultGrouping={DEFAULT_COLOR_DISPLAY.grouping}
-        onChange={change}
-      />
-      {mono && (
-        <OptionChoices
-          label="Up the chart"
-          choices={CHART_UPS}
-          value={display.chartUp}
-          onChange={(chartUp) => change({ chartUp })}
-        />
-      )}
-    </ViewOptionsButton>
+    <ViewOptionsButton
+      onReset={() => change(DEFAULT_COLOR_DISPLAY)}
+      choices={
+        <>
+          <PinChoiceFields
+            display={display}
+            defaultGrouping={DEFAULT_COLOR_DISPLAY.grouping}
+            onChange={change}
+          />
+          {mono && (
+            <OptionChoices
+              label="Up the chart"
+              choices={CHART_UPS}
+              value={display.chartUp}
+              onChange={(chartUp) => change({ chartUp })}
+            />
+          )}
+        </>
+      }
+      checks={<PinGroupChecks display={display} onChange={change} />}
+    />
   );
 }

@@ -1,5 +1,10 @@
-import { PinDisplayFields } from "@/components/pin-display-fields";
-import { OptionCheckbox, OptionChoices, ViewOptionsButton } from "@/components/view-options-button";
+import { PinChoiceFields, PinGroupChecks } from "@/components/pin-display-fields";
+import {
+  OptionCheckbox,
+  OptionChoices,
+  OptionGroup,
+  ViewOptionsButton,
+} from "@/components/view-options-button";
 import { DEFAULT_MAP_DISPLAY, type GroupPhotos, type MapDisplay } from "@/lib/map-display";
 
 /** The choices for which photos a group's marker shows, with their labels. */
@@ -22,30 +27,44 @@ export function MapDisplayOptions({
   onChange: (change: Partial<MapDisplay>) => void;
 }) {
   return (
-    <ViewOptionsButton onReset={() => onChange(DEFAULT_MAP_DISPLAY)}>
-      <PinDisplayFields
-        display={display}
-        defaultGrouping={DEFAULT_MAP_DISPLAY.grouping}
-        onChange={onChange}
-      />
-      <OptionChoices
-        label="Groups show the latest"
-        choices={GROUP_PHOTOS}
-        value={display.groupPhotos}
-        onChange={(groupPhotos) => onChange({ groupPhotos })}
-      />
-      <OptionCheckbox
-        label="Trip lines"
-        checked={display.tripLines}
-        onChange={(tripLines) => onChange({ tripLines })}
-      />
-      {display.tripLines && (
-        <OptionCheckbox
-          label="Direction of travel"
-          checked={display.tripFlow}
-          onChange={(tripFlow) => onChange({ tripFlow })}
-        />
-      )}
-    </ViewOptionsButton>
+    // Eye only: the map's floating controls have no room for words.
+    <ViewOptionsButton
+      iconOnly
+      onReset={() => onChange(DEFAULT_MAP_DISPLAY)}
+      choices={
+        <>
+          <PinChoiceFields
+            display={display}
+            defaultGrouping={DEFAULT_MAP_DISPLAY.grouping}
+            onChange={onChange}
+          />
+          <OptionChoices
+            label="Groups show the latest"
+            choices={GROUP_PHOTOS}
+            value={display.groupPhotos}
+            onChange={(groupPhotos) => onChange({ groupPhotos })}
+          />
+        </>
+      }
+      checks={
+        <>
+          <PinGroupChecks display={display} onChange={onChange} />
+          <OptionGroup label="Trip lines">
+            <OptionCheckbox
+              label="Show trip lines"
+              checked={display.tripLines}
+              onChange={(tripLines) => onChange({ tripLines })}
+            />
+            {display.tripLines && (
+              <OptionCheckbox
+                label="Direction of travel"
+                checked={display.tripFlow}
+                onChange={(tripFlow) => onChange({ tripFlow })}
+              />
+            )}
+          </OptionGroup>
+        </>
+      }
+    />
   );
 }

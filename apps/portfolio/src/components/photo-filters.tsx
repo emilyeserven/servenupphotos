@@ -76,7 +76,8 @@ const NO_OWN_FILTERS: OwnFilters = { keys: [], count: 0, children: null };
  * and **Clear filters** stays beside it. `facet` is the photos the counts are out of, when the view
  * narrows them with its own filters; `own` are those filters, shown after the shared ones.
  * `searchable` puts the text search box before the button (see `PhotoSearchBox`), which counts as
- * a filter and narrows the counts too.
+ * a filter and narrows the counts too. `end` goes at the right end of the button's row, such as the
+ * Timeline's Display Options.
  */
 export function PhotoFilterBar({
   photos,
@@ -84,6 +85,7 @@ export function PhotoFilterBar({
   own = NO_OWN_FILTERS,
   searchable = false,
   bare = false,
+  end,
 }: {
   photos: Photo[];
   facet?: Photo[];
@@ -91,6 +93,8 @@ export function PhotoFilterBar({
   searchable?: boolean;
   /** Shows the filters always, with no Show filters button, for a page that opens them itself, such as the Graph page's Filters tab. */
   bare?: boolean;
+  /** Shown at the right end of the row with the search and Show filters button. */
+  end?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const filters = useFilters();
@@ -111,6 +115,7 @@ export function PhotoFilterBar({
         count={count}
         onToggle={() => setOpen(!open)}
         onClear={clearFilters}
+        end={end}
       />
       <div
         id={listId}
@@ -137,7 +142,8 @@ export function PhotoFilterBar({
 
 /**
  * The filter bar's top row: the text search when it has one, the Show filters button saying how
- * many are set, and **Clear filters** while any is. A bare bar has only Clear filters.
+ * many are set, and **Clear filters** while any is, then `end` pushed to the right. A bare bar has
+ * only Clear filters.
  */
 function ToggleRow({
   searchable,
@@ -147,6 +153,7 @@ function ToggleRow({
   count,
   onToggle,
   onClear,
+  end,
 }: {
   searchable: boolean;
   bare: boolean;
@@ -155,6 +162,7 @@ function ToggleRow({
   count: number;
   onToggle: () => void;
   onClear: () => void;
+  end: ReactNode;
 }) {
   if (bare && count === 0) return null;
   return (
@@ -162,6 +170,7 @@ function ToggleRow({
       {searchable && <PhotoSearchBox />}
       <ToggleButton bare={bare} open={open} listId={listId} count={count} onClick={onToggle} />
       <ClearFilters count={count} onClear={onClear} />
+      <div className="ml-auto empty:hidden">{end}</div>
     </div>
   );
 }

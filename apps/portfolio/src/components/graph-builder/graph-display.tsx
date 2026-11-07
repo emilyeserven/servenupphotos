@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { OptionCheckbox, ViewOptionsButton } from "@/components/view-options-button";
+import { OptionCheckbox, OptionGroup, ViewOptionsButton } from "@/components/view-options-button";
 
 /** How the graph is drawn, picked in its display options: only the pie has any yet. */
 export interface GraphDisplay {
@@ -18,7 +18,7 @@ export function useGraphDisplay(): GraphDisplay {
   return useContext(GraphDisplayContext);
 }
 
-/** The eye button beside **Wide** that opens a pie's display options: whether its slices are named with their values. */
+/** The **Display Options** button beside **Wide** that opens a pie's display options: whether its slices are named with their values. */
 export function GraphDisplayOptions({
   display,
   onChange,
@@ -27,12 +27,17 @@ export function GraphDisplayOptions({
   onChange: (display: GraphDisplay) => void;
 }) {
   return (
-    <ViewOptionsButton onReset={() => onChange(DEFAULT_GRAPH_DISPLAY)}>
-      <OptionCheckbox
-        label="Slice names and values"
-        checked={display.sliceLabels}
-        onChange={(sliceLabels) => onChange({ ...display, sliceLabels })}
-      />
-    </ViewOptionsButton>
+    <ViewOptionsButton
+      onReset={() => onChange(DEFAULT_GRAPH_DISPLAY)}
+      checks={
+        <OptionGroup label="Pie">
+          <OptionCheckbox
+            label="Slice names and values"
+            checked={display.sliceLabels}
+            onChange={(sliceLabels) => onChange({ ...display, sliceLabels })}
+          />
+        </OptionGroup>
+      }
+    />
   );
 }

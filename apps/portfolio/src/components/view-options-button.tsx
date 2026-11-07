@@ -1,48 +1,88 @@
 import { Eye } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import { CONTROL_FRAME, controlButtonClass } from "@portfolio/lib/segmented-control";
 import { cn } from "@portfolio/lib/utils";
 
 /**
- * An eye button that opens a view's display options in a flyout, such as the map's pin size or the
- * Timeline's thumbnail size. `label` names it for the tooltip and screen readers, and `onReset`, when
- * given, adds a **Reset to defaults** link under the options.
+ * The **Display Options** button that opens a view's display options in a flyout, such as the
+ * Timeline's thumbnail size or the map's pin size. Every view's flyout has the same wide layout:
+ * `choices` (sizes, sliders and other picks) in the left column and `checks` (checkboxes, each set
+ * in an `OptionGroup`) in the right, stacked on a phone (a flyout with only checks has one column), then **Reset to defaults** under both when
+ * `onReset` is given.
+ *
+ * The button says "Display Options" beside its eye. `iconOnly` leaves just the eye, for a view with
+ * no room for words, such as the Map's floating controls. `align` is which edge of the button the
+ * flyout lines up with: "end" for a button at the right end of a row.
  */
 export function ViewOptionsButton({
-  label = "Display options",
+  iconOnly = false,
+  align = "start",
   onReset,
-  contentClassName,
-  children,
+  choices,
+  checks,
 }: {
-  label?: string;
+  /** Shows the eye alone, named only for the tooltip and screen readers. */
+  iconOnly?: boolean;
+  /** Which edge of the button the flyout lines up with, such as "end" for a button on the right. */
+  align?: "start" | "end";
   onReset?: () => void;
-  /** Extra classes for the flyout, such as a wider width. */
-  contentClassName?: string;
-  children: ReactNode;
+  /** The left column: `OptionChoices` and other picks, top to bottom. Left out when there are none. */
+  choices?: ReactNode;
+  /** The right column: one or more `OptionGroup`s of checkboxes. */
+  checks: ReactNode;
 }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          title={label}
-          aria-label={label}
-          className="inline-flex size-8 items-center justify-center rounded-md border bg-background text-muted-foreground shadow-xs outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring dark:border-input"
-        >
-          <Eye className="size-4" aria-hidden />
-        </button>
+        <TriggerButton iconOnly={iconOnly} />
       </PopoverTrigger>
       <PopoverContent
-        align="start"
-        className={cn("flex w-64 flex-col gap-4 p-3 text-sm", contentClassName)}
+        align={align}
+        className="flex w-auto max-w-[calc(100vw-2rem)] flex-col gap-4 p-3 text-sm"
       >
-        {children}
+        <OptionColumns choices={choices} checks={checks} />
         {onReset && <ResetLink onClick={onReset} />}
       </PopoverContent>
     </Popover>
   );
 }
+
+/** The flyout's two columns, side by side from `sm` up; just the checks when there are no choices. */
+function OptionColumns({ choices, checks }: { choices: ReactNode; checks: ReactNode }) {
+  return (
+    <div className="grid gap-4 sm:auto-cols-auto sm:grid-flow-col sm:gap-8">
+      {choices && <div className="flex flex-col gap-4">{choices}</div>}
+      <div className="flex flex-col gap-4">{checks}</div>
+    </div>
+  );
+}
+
+/** The flyout button's name, written on it and read out by screen readers. */
+const LABEL = "Display Options";
+
+/** The eye that opens the flyout, with "Display Options" written beside it unless `iconOnly`. */
+function TriggerButton({ iconOnly, ...props }: { iconOnly: boolean }) {
+  return (
+    <button
+      type="button"
+      title={LABEL}
+      aria-label={iconOnly ? LABEL : undefined}
+      className={cn(TRIGGER_CLASS, iconOnly ? "size-8" : LABELLED_CLASS)}
+      {...props}
+    >
+      <Eye className="size-4" aria-hidden />
+      {!iconOnly && LABEL}
+    </button>
+  );
+}
+
+/** The eye button's look, with or without its words. */
+const TRIGGER_CLASS =
+  "inline-flex items-center justify-center rounded-md border bg-background text-muted-foreground shadow-xs outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring dark:border-input";
+
+/** The worded button's size, matching the small outline buttons beside it such as Show filters. */
+const LABELLED_CLASS = "h-8 gap-1.5 px-2.5 text-sm font-medium text-foreground";
 
 /** A labelled row of buttons in the options that picks one of a few choices, such as a size. */
 export function OptionChoices<T extends string>({
@@ -77,7 +117,24 @@ export function OptionChoices<T extends string>({
   );
 }
 
-/** A labelled checkbox for one of the options. */
+/**
+ * A titled set of checkboxes in the flyout's right column, such as the Timeline's **Each photo**.
+ * The title names what the checkboxes change, so each checkbox can be short.
+ */
+export function OptionGroup({ label, children }: { label: string; children: ReactNode }) {
+  const id = useId();
+  return (
+    <div className="flex flex-col gap-2" role="group" aria-labelledby={id}>
+      <span id={id} className="text-xs font-medium text-muted-foreground">
+        {label}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+/** A labelled checkbox for one of the options, inside an `OptionGroup`. */
+
 export function OptionCheckbox({
   label,
   checked,

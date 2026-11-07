@@ -7,7 +7,7 @@ import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 const SORT_LABELS: Record<ColorSort, string> = { color: "Color", vivid: "Vividness" };
 
 /** What ascending and descending mean for each sort. */
-const ORDER_TITLES: Record<ColorSort, Record<ColorOrder, string>> = {
+export const ORDER_TITLES: Record<ColorSort, Record<ColorOrder, string>> = {
   color: {
     asc: "Red around the color wheel to rose, secondary black to white; or the most of the picked color first",
     desc: "White to black, secondary rose around the color wheel to red; or the least of the picked color first",
@@ -20,31 +20,25 @@ const ORDERS = [
   { order: "desc", label: "Descending", Icon: ArrowDown },
 ] as const;
 
-/** The URL keys an order toggle sets: the main sort's way, or the secondary sort's. */
-type OrderParam = "order" | "secondaryOrder";
-
 /**
- * Which way the Grid's color or vividness sort runs, and optionally the other one as a secondary
- * sort within the groups the first makes, with its own way. Kept in the URL as `?order=desc`,
- * `?secondary=` and `?secondaryOrder=desc`, each left out at its default, so a link keeps them.
+ * The other of the Grid's color and vividness sorts as an optional secondary sort within the groups
+ * the first makes, with its own way. Kept in the URL as `?secondary=` and `?secondaryOrder=desc`,
+ * each left out at its default, so a link keeps them. The main sort's way is the arrow on **Sort**.
  */
 export function ColorOrderControls({
   sort,
-  order,
   secondary,
   secondaryOrder,
 }: {
   sort: ColorSort;
-  order: ColorOrder;
   /** The secondary sort, always the one sort isn't; undefined for none. */
   secondary: ColorSort | undefined;
   secondaryOrder: ColorOrder;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <OrderToggle sort={sort} order={order} param="order" />
       <ThenToggle other={sort === "color" ? "vivid" : "color"} on={secondary !== undefined} />
-      {secondary && <OrderToggle sort={secondary} order={secondaryOrder} param="secondaryOrder" />}
+      {secondary && <OrderToggle sort={secondary} order={secondaryOrder} />}
     </div>
   );
 }
@@ -70,23 +64,19 @@ function ThenToggle({ other, on }: { other: ColorSort; on: boolean }) {
   );
 }
 
-/** Ascending or descending for sort, each titled with what it means, set on param. */
-function OrderToggle({
-  sort,
-  order,
-  param,
-}: {
-  sort: ColorSort;
-  order: ColorOrder;
-  param: OrderParam;
-}) {
+/** Ascending or descending for the secondary sort, each titled with what it means. */
+function OrderToggle({ sort, order }: { sort: ColorSort; order: ColorOrder }) {
   return (
     <div role="group" aria-label={`${SORT_LABELS[sort]} order`} className={CONTROL_FRAME}>
       {ORDERS.map(({ order: option, label, Icon }) => (
         <Link
           key={option}
           to="."
-          search={(prev) => ({ ...prev, ...orderSearch(param, option), photo: undefined })}
+          search={(prev) => ({
+            ...prev,
+            secondaryOrder: option === "desc" ? option : undefined,
+            photo: undefined,
+          })}
           replace
           aria-pressed={order === option}
           title={ORDER_TITLES[sort][option]}
@@ -98,10 +88,4 @@ function OrderToggle({
       ))}
     </div>
   );
-}
-
-/** The URL change that sets param to order, leaving it out for ascending. */
-function orderSearch(param: OrderParam, order: ColorOrder) {
-  const value = order === "desc" ? order : undefined;
-  return param === "order" ? { order: value } : { secondaryOrder: value };
 }

@@ -65,6 +65,11 @@ complexity at 4 or under; every `?:`, `??`, `?.`, `&&` and `||` counts). Split a
   already near 600 to 700 lines. The Gallery's and the photo editor's parts live in `components/gallery/` and
   `components/edit-in-flight/`. Put new UI in a new component file and import it, rather than
   growing them.
+- **Display options:** every portfolio view's display options use `ViewOptionsButton`
+  (`components/view-options-button.tsx`): a **Display Options** button (eye and words; the Map alone is eye only) whose
+  flyout puts `choices` (`OptionChoices`, sliders) in the left column and `checks` (checkboxes in titled `OptionGroup`s)
+  in the right, stacking on a phone (a flyout with only checkboxes leaves `choices` out). Next to search and **Show filters**, it goes at the right end of that row with
+  `align="end"`.
 - **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
   extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
   grouping off by default, and no icons in choice lists.

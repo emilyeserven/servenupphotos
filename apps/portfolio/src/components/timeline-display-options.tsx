@@ -1,4 +1,9 @@
-import { OptionCheckbox, OptionChoices, ViewOptionsButton } from "@/components/view-options-button";
+import {
+  OptionCheckbox,
+  OptionChoices,
+  OptionGroup,
+  ViewOptionsButton,
+} from "@/components/view-options-button";
 import {
   DEFAULT_TIMELINE_DISPLAY,
   THUMB_SIZES,
@@ -7,9 +12,9 @@ import {
 } from "@/lib/timeline-display";
 
 /**
- * The eye button in the Timeline's header that opens its display options: how big the thumbnails
- * are, whether each photo shows its technical info, comment and place, and whether the scrubber
- * marks months or days.
+ * The **Display Options** button at the right of the Timeline's search row that opens its display
+ * options: how big the thumbnails are and whether the scrubber marks months or days, beside whether
+ * each photo shows its technical info, comment and place.
  */
 export function TimelineDisplayOptions({
   display,
@@ -19,36 +24,44 @@ export function TimelineDisplayOptions({
   onChange: (change: Partial<TimelineDisplay>) => void;
 }) {
   return (
-    <ViewOptionsButton onReset={() => onChange(DEFAULT_TIMELINE_DISPLAY)} contentClassName="w-72">
-      <OptionChoices
-        label="Thumbnail size"
-        choices={THUMB_SIZES}
-        value={display.thumbs}
-        onChange={(thumbs) => onChange({ thumbs })}
-      />
-      <OptionChoices
-        label="Scrubber ticks"
-        choices={TICK_CHOICES}
-        value={display.ticks}
-        onChange={(ticks) => onChange({ ticks })}
-      />
-      <div className="flex flex-col gap-2">
-        <OptionCheckbox
-          label="Show technical info"
-          checked={display.tech}
-          onChange={(tech) => onChange({ tech })}
-        />
-        <OptionCheckbox
-          label="Show comments"
-          checked={display.comments}
-          onChange={(comments) => onChange({ comments })}
-        />
-        <OptionCheckbox
-          label="Show places"
-          checked={display.places}
-          onChange={(places) => onChange({ places })}
-        />
-      </div>
-    </ViewOptionsButton>
+    <ViewOptionsButton
+      align="end"
+      onReset={() => onChange(DEFAULT_TIMELINE_DISPLAY)}
+      choices={
+        <>
+          <OptionChoices
+            label="Thumbnail size"
+            choices={THUMB_SIZES}
+            value={display.thumbs}
+            onChange={(thumbs) => onChange({ thumbs })}
+          />
+          <OptionChoices
+            label="Scrubber ticks"
+            choices={TICK_CHOICES}
+            value={display.ticks}
+            onChange={(ticks) => onChange({ ticks })}
+          />
+        </>
+      }
+      checks={
+        <OptionGroup label="Each photo">
+          <OptionCheckbox
+            label="Show technical info"
+            checked={display.tech}
+            onChange={(tech) => onChange({ tech })}
+          />
+          <OptionCheckbox
+            label="Show comments"
+            checked={display.comments}
+            onChange={(comments) => onChange({ comments })}
+          />
+          <OptionCheckbox
+            label="Show places"
+            checked={display.places}
+            onChange={(places) => onChange({ places })}
+          />
+        </OptionGroup>
+      }
+    />
   );
 }

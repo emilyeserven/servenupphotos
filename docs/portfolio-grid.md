@@ -10,9 +10,27 @@ When an album is picked for the **Grid Header** zone on the pipeline's [Site Spo
 its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background,
 with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).
 
-The tile views share the sort dropdown (newest, oldest, **Recently Added**, **Time of Day**, color, vividness) and
-the eye button's display options (`components/grid-view-options.tsx`, using the flyout shared with the Map and Timeline,
-`components/view-options-button.tsx`):
+The tile views have **Sort** and **Display Options** at the right end of the row with the search and **Show filters**
+(the Table has neither).
+
+**Sort** (`components/grid-sort-control.tsx`) says just "Sort" until a sort is picked from its menu, and the photos are
+newest first. Once one is picked, the button shows an arrow for which way it runs and the sort's name; clicking the
+name opens the menu again, and clicking the arrow turns the sort around. **Clear sort** at the bottom of the menu goes
+back to plain "Sort".
+
+| Sort        | Default way                          | Turned around                  | URL                            |
+| ----------- | ------------------------------------ | ------------------------------ | ------------------------------ |
+| Date taken  | Newest first (↓)                     | Oldest first (↑)               | `?sort=newest`, `?sort=oldest` |
+| Date added  | Most recently added first (↓)        | Least recently added first (↑) | `?sort=added`, `&order=asc`    |
+| Time of day | Earliest in the day first (↑)        | Latest in the day first (↓)    | `?sort=time`, `&order=desc`    |
+| Color       | Red around the color wheel first (↑) | The other way (↓)              | `?sort=color`, `&order=desc`   |
+| Vividness   | Least vivid first (↑)                | Most vivid first (↓)           | `?sort=vivid`, `&order=desc`   |
+
+With no `?sort=` the photos are newest first, the same as **Date taken** ↓, but the button says "Sort". The color
+sorts' **Then by** sits beside **Sort** (see [Portfolio Color](portfolio-color.md#on-the-grid-page)).
+
+**Display Options** (`components/grid-view-options.tsx`, using the flyout shared with the Map and Timeline,
+`components/view-options-button.tsx`) has, side by side:
 
 - **Size** (`?size=small|medium|large|xlarge`, `lib/grid-size.ts`): how big the tiles are. Square tiles come in
   Small, Medium (their default) and Large, by using more or fewer columns (see [Square](#square)). Natural tiles come
@@ -26,12 +44,13 @@ with the Grid's other settings.
 
 **Recently Added** (`?sort=added`) puts the photos most recently added to the portfolio first, by their
 [`addedDate`](data-model.md#date-added). Photos added on the same day go by when they were taken, newest first,
-and photos that have no date added yet come after the rest, newest first.
+and photos that have no date added yet come after the rest, newest first. Turned around, the least recently added come
+first, and photos with no date added still come last.
 
 **Time of Day** (`?sort=time`) puts the photos in the order of the time of day they were taken, from just after
 midnight to just before, whatever the day, so sunrises gather at the start and night shots at the end. The time is
 the clock where the photo was taken (its custom date, or else its EXIF date, which has no time zone), not the
-viewer's. Photos taken in the same minute go newest first.
+viewer's. Photos taken in the same minute go newest first. Turned around, night shots come first.
 
 > **Frontend analogy:** like sorting `Date`s by `getHours() * 60 + getMinutes()` instead of `getTime()`: the date
 > part is dropped, so a 7 AM photo from 2019 sits next to a 7 AM photo from last week.

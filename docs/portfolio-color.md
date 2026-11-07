@@ -18,7 +18,7 @@ Clicking a photo opens the photo viewer (`?photo=`). Like the Map, the page fill
 title and controls float at the top left (`components/floating-header.tsx`, shared with the Map), over the page's
 background; the wheel or chart starts below them, its top fading in from the background (a CSS mask on the board), and
 the wheel starts a little further down still. The zoom buttons are at the bottom right. **Wheel / Black & white** picks
-the view. The eye button opens the **display options** (`components/color-display-options.tsx`, kept in
+the view. **Display Options** opens the display options (`components/color-display-options.tsx`, kept in
 `lib/color-display.ts`), the same pin options as the [Map's](portfolio-map.md) (`components/pin-display-fields.tsx`,
 shared with it), for the wheel and the Black & white chart alike. Unlike the Map's, they're kept in the URL, each left
 out at its default, and remembered with the page's other settings (`lib/view-options.ts`):
@@ -29,8 +29,8 @@ out at its default, and remembered with the page's other settings (`lib/view-opt
   It changes the view once the slider is let go.
 - **Pin size**: **Small** (the default), **Medium** or **Large** (`?pins=medium`, `?pins=large`; `lib/pin-scale.ts`)
   makes the pins 1×, 1.5× or 2× their usual size; bigger pins cluster sooner.
-- **Show counts on groups** (`?counts=false` when unticked) hides the number on cluster pins.
-- **Darken photos under counts** (`?dim=false` when unticked) shows a cluster's photo as it is, with its count in a
+- **Groups**: **Show counts** (`?counts=false` when unticked) hides the number on cluster pins.
+- **Groups**: **Darken photos under counts** (`?dim=false` when unticked) shows a cluster's photo as it is, with its count in a
   small dark badge instead.
 - **Up the chart**, only in the Black & white view, picks what the chart's height stands for: **Contrast** (the
   default) or **Vividness** (`?up=vividness`). See [Black & white](#black--white).
@@ -139,8 +139,9 @@ color, vividness and orientation filters count toward the filter button's number
 saved colors don't match a color or a vividness above 0. With **Show info** on, each tile also shows its color bar
 (`components/color-bar.tsx`): each color as wide as its share, the biggest three named under it.
 
-The Grid's sort dropdown has **Color** (`?sort=color`) and **Vividness** (`?sort=vivid`) after newest and oldest
-(`lib/grid-sort.ts`, `lib/color-sort.ts`), each **Ascending** (the default) or **Descending** (`?order=desc`):
+The Grid's **Sort** menu has **Color** (`?sort=color`) and **Vividness** (`?sort=vivid`) after the date sorts
+(`lib/grid-sort.ts`, `lib/color-sort.ts`), each **Ascending** (the default) or **Descending** (`?order=desc`), switched
+with the arrow on the **Sort** button:
 
 - **Color**, with no color picked: by each photo's largest color, nudged toward whichever neighboring color it has more
   of so the colors run smoothly into each other, and newest first where they tie. Ascending runs red, orange, yellow,
