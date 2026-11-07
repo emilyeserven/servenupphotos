@@ -2,6 +2,7 @@ import {
   type Bucket,
   bucketGroup,
   type GroupDef,
+  type GroupVariant,
   type StatGroup,
   valueGroup,
 } from "@/lib/stat-groups";
@@ -64,9 +65,44 @@ function focalGroup(list: Photo[], all: Photo[]): StatGroup {
 /** The equipment a group of metadata groups is of. */
 type Equipment = "camera" | "lens";
 
-/** A metadata group as a row, filtering to the cameras or lenses in it. */
+/**
+ * The focal lengths a lens covers, as its name writes them, such as [18, 135] for
+ * "EF-S18-135mm f/3.5-5.6 IS STM" or [50, 50] for "EF50mm f/1.8 II"; undefined when it doesn't say.
+ */
+function lensFocalLengths(name: string): [number, number] | undefined {
+  const match = /(\d+(?:\.\d+)?)(?:-(\d+(?:\.\d+)?))?\s*mm/i.exec(name);
+  if (!match) return undefined;
+  const low = Number(match[1]);
+  return [low, Number(match[2] ?? low)];
+}
+
+/** The focal lengths a lens was used at in the portfolio's photos, for a lens whose name doesn't say. */
+function usedFocalLengths(name: string): number[] {
+  return allPhotos.flatMap((photo) =>
+    photo.lens === name && photo.settings.focalLength !== null ? [photo.settings.focalLength] : [],
+  );
+}
+
+/**
+ * The focal lengths the lenses in a lens group cover, such as "55–250mm": from their names, or
+ * else from the photos taken with them; undefined when neither says.
+ */
+function lensGroupSpan(group: MetaGroup): string | undefined {
+  const lengths = [...groupValues(group)].flatMap(
+    (name) => lensFocalLengths(name) ?? usedFocalLengths(name),
+  );
+  if (lengths.length === 0) return undefined;
+  const [low, high] = [Math.min(...lengths), Math.max(...lengths)];
+  return low === high ? `${low}mm` : `${low}–${high}mm`;
+}
+
+/**
+ * A metadata group as a row, filtering to the cameras or lenses in it. A lens group says the focal
+ * lengths its lenses cover.
+ */
 function metaBucket(equipment: Equipment, group: MetaGroup): Bucket {
-  return { key: group.id, label: group.name, filter: { [`${equipment}Group`]: group.id } };
+  const detail = equipment === "lens" ? lensGroupSpan(group) : undefined;
+  return { key: group.id, label: group.name, detail, filter: { [`${equipment}Group`]: group.id } };
 }
 
 /** Whether the photo's camera or lens is in the bucket's metadata group, or one inside it. */
@@ -82,49 +118,41 @@ function categoryTitle(equipment: Equipment, category: MetaGroup): string {
   return `${plural} by ${category.name.toLowerCase()}`;
 }
 
-/** The ID of the group of every camera or lens, which their categories narrow. */
-const EQUIPMENT_GROUP_IDS: Record<Equipment, string> = { camera: "cameras", lens: "lenses" };
-
-/** A category's group: its groups as rows, counting the photos with a camera or lens. */
-function categoryDef(
-  equipment: Equipment,
-  id: string,
-  title: string,
-  inside: MetaGroup[],
-): GroupDef {
+/** A category as a way to make the categories' group: its groups as rows, counting the photos with a camera or lens. */
+function categoryVariant(equipment: Equipment, title: string, inside: MetaGroup[]): GroupVariant {
   const buckets = inside.map((group) => metaBucket(equipment, group));
   const known = (photo: Photo) => photo[equipment] !== null;
   return {
-    id,
-    narrows: EQUIPMENT_GROUP_IDS[equipment],
+    label: title,
     build: (list) =>
       uncategorized(bucketGroup(title, list.filter(known), buckets, inMetaGroup(equipment))),
   };
 }
 
+/** Sorts the lens category named Type first, as the one the card opens on. */
+function typeFirst(a: MetaGroup, b: MetaGroup): number {
+  return Number(b.name === "Type") - Number(a.name === "Type");
+}
+
 /**
- * The camera or lens metadata groups set on the pipeline, as groups of rows: each top-level group
- * with groups in it, such as Type, is a category whose rows are the groups in it, such as Prime;
- * the top-level groups with none in them go together under "Lens groups". Each narrows the group
- * of every camera or lens.
+ * The camera or lens metadata groups set on the pipeline, as one card: each top-level group with
+ * groups in it, such as Type, is a category picked from the card's dropdown, its rows the groups in
+ * it, such as Prime; the top-level groups with none in them go together as "Lens groups". The card
+ * narrows `narrows`.
  */
-function categoryDefs(equipment: Equipment): GroupDef[] {
+function categoryDefs(equipment: Equipment, narrows: string): GroupDef[] {
   const tree = groupTree(equipment).map(([group]) => group);
   const childrenOf = (id: string) => tree.filter((group) => group.parent === id);
   const top = tree.filter((group) => !tree.some((other) => other.id === group.parent));
-  const categories = top.filter((group) => childrenOf(group.id).length > 0);
+  const categories = top.filter((group) => childrenOf(group.id).length > 0).toSorted(typeFirst);
   const loose = top.filter((group) => childrenOf(group.id).length === 0);
-  const defs = categories.map((category) =>
-    categoryDef(
-      equipment,
-      `${equipment}-${category.id}`,
-      categoryTitle(equipment, category),
-      childrenOf(category.id),
-    ),
+  const variants = categories.map((category) =>
+    categoryVariant(equipment, categoryTitle(equipment, category), childrenOf(category.id)),
   );
-  if (loose.length === 0) return defs;
   const title = `${equipment === "lens" ? "Lens" : "Camera"} groups`;
-  return [...defs, categoryDef(equipment, `${equipment}-groups`, title, loose)];
+  if (loose.length > 0) variants.push(categoryVariant(equipment, title, loose));
+  if (variants.length === 0) return [];
+  return [{ id: `${equipment}-categories`, narrows, build: variants[0]!.build, variants }];
 }
 
 /** A group whose uncounted photos are the ones in none of its categories. */
@@ -138,19 +166,20 @@ function equipmentBucket(equipment: Equipment) {
 }
 
 /**
- * The Gear section's groups: cameras, the lens categories (narrowing the lenses), lenses and focal
- * length ranges. Camera categories come before the cameras when there are any.
+ * The Gear section's groups: the camera categories (narrowing the cameras) when there are any,
+ * cameras, then the lenses from the top down: the lens categories narrow the focal length ranges,
+ * which narrow the lenses.
  */
 export const GEAR_GROUPS: GroupDef[] = [
-  ...categoryDefs("camera"),
+  ...categoryDefs("camera", "cameras"),
   {
     id: "cameras",
     build: (list) => valueGroup("Cameras", list, cameraOf, equipmentBucket("camera")),
   },
-  ...categoryDefs("lens"),
+  ...categoryDefs("lens", "focal-length"),
+  { id: "focal-length", narrows: "lenses", build: (list) => focalGroup(list, allPhotos) },
   {
     id: "lenses",
     build: (list) => valueGroup("Lenses", list, (photo) => photo.lens, equipmentBucket("lens")),
   },
-  { id: "focal-length", build: (list) => focalGroup(list, allPhotos) },
 ];

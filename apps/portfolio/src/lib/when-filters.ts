@@ -1,5 +1,4 @@
 import type { Photo } from "@portfolio/lib/photos";
-import { inQuickDate, parseQuickDate, type QuickDate } from "@portfolio/lib/quick-dates";
 
 /**
  * The "when" filters that take any number of choices of one kind, in any year: seasons, months,
@@ -12,15 +11,12 @@ export type ListKey = (typeof LIST_KEYS)[number];
 /** The date range filter's first and last day, as YYYY-MM-DD. */
 const DATE_KEYS = ["start", "end"] as const;
 
-/** The Quick dates filter: this date, month or season in the years before (`?when=month`). */
-const QUICK_DATE_KEY = "when";
-
 /**
  * The "when" filters every view with filters shares, as the URL names them: seasons, months, days
- * of the week or hours, across every year; a range of dates; or the Timeline's Quick dates (this
- * date, month or season in the years before). Only one of them is set at a time.
+ * of the week or hours, across every year, or a range of dates. The When picker sets one of them at
+ * a time.
  */
-export const WHEN_KEYS = [...LIST_KEYS, ...DATE_KEYS, QUICK_DATE_KEY] as const;
+export const WHEN_KEYS = [...LIST_KEYS, ...DATE_KEYS] as const;
 
 export type WhenKey = (typeof WHEN_KEYS)[number];
 
@@ -29,8 +25,6 @@ export type WhenFilters = Partial<Record<ListKey, string[]>> & {
   /** The first and last day of the date range, as YYYY-MM-DD; either can be left open. */
   start?: string;
   end?: string;
-  /** Today's date, month or season, in the years before. */
-  when?: QuickDate;
 };
 
 /** One choice of a "when" filter, such as a month: its URL value, its names and whether a photo is in it. */
@@ -186,7 +180,6 @@ export function parseWhen(search: Record<string, unknown>): WhenFilters {
     ...Object.fromEntries(lists),
     start: parseDay(search.start),
     end: parseDay(search.end),
-    ...parseQuickDate(search[QUICK_DATE_KEY]),
   };
   return Object.fromEntries(Object.entries(parsed).filter(([, value]) => isSet(value)));
 }
@@ -196,10 +189,10 @@ export function hasDateRange(filters: WhenFilters): boolean {
   return filters.start !== undefined || filters.end !== undefined;
 }
 
-/** How many "when" filters are set: each kind of list, the date range and the Quick date count one each. */
+/** How many "when" filters are set: each kind of list and the date range count one each. */
 export function whenCount(filters: WhenFilters): number {
   const lists = LIST_KEYS.filter((key) => isSet(filters[key])).length;
-  return lists + Number(hasDateRange(filters)) + Number(isSet(filters.when));
+  return lists + Number(hasDateRange(filters));
 }
 
 /** Whether the photo is in one of the list filter's choices, or none are chosen. */
@@ -224,13 +217,22 @@ function matchesDates(photo: Photo, { start = "", end = "9999-12-31" }: WhenFilt
   return day >= start && day <= end;
 }
 
-/** Whether the photo was taken on today's date, month or season in an earlier year, or none is chosen. */
-function matchesQuickDate(photo: Photo, when: QuickDate | undefined): boolean {
-  return !when || inQuickDate(photo.takenAt, when, new Date());
-}
-
 /** Whether the photo matches every "when" filter that's set. */
 export function matchesWhen(photo: Photo, filters: WhenFilters): boolean {
   const lists = LIST_KEYS.every((key) => matchesList(photo, key, filters[key]));
-  return lists && matchesDates(photo, filters) && matchesQuickDate(photo, filters.when);
+  return lists && matchesDates(photo, filters);
+}
+
+/** What each kind of list calls its choice that `now` is in, such as "This season". */
+export const CURRENT_LABELS: Record<ListKey, string> = {
+  season: "This season",
+  month: "This month",
+  weekday: "Today",
+  hour: "This hour",
+};
+
+/** The choice of a kind of list that `now` is in, such as Autumn for a day in November. */
+export function currentChoice(key: ListKey, now: Date): WhenChoice {
+  const asPhoto = { takenAt: now } as Photo;
+  return LIST_CHOICES[key].find((choice) => choice.matches(asPhoto))!;
 }

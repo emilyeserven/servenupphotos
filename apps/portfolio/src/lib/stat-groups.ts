@@ -35,6 +35,17 @@ export interface GroupDef {
   build: (list: Photo[]) => StatGroup;
   /** The ID of the group its rows narrow. */
   narrows?: string;
+  /**
+   * Other ways to make it, picked from a dropdown in place of its title, such as Lenses by type or
+   * by brand; the first is shown at first. `build` is left for the rest of the page to name it by.
+   */
+  variants?: GroupVariant[];
+}
+
+/** One way to make a group with variants, such as Lenses by brand. */
+export interface GroupVariant {
+  label: string;
+  build: (list: Photo[]) => StatGroup;
 }
 
 /** A key photos are counted by, with its row's text and filter. */
@@ -87,4 +98,23 @@ export function bucketGroup(
     .filter((row) => row.count > 0);
   const missing = list.filter((photo) => !buckets.some((b) => inside(photo, b))).length;
   return { title, rows, missing, missingReason: "unknown" };
+}
+
+/**
+ * A section's groups laid out in runs: each group that narrows another with the groups it narrows
+ * down the line, such as Countries then Cities, and the groups between them on their own, in order.
+ */
+export function groupChains(groups: GroupDef[]): GroupDef[][] {
+  const narrowed = new Set(groups.map((def) => def.narrows));
+  const chains: GroupDef[][] = [];
+  for (const def of groups.filter((g) => !narrowed.has(g.id))) {
+    const chain = [def];
+    let next = groups.find((g) => g.id === chain.at(-1)!.narrows);
+    while (next && !chain.includes(next)) {
+      chain.push(next);
+      next = groups.find((g) => g.id === next!.narrows);
+    }
+    chains.push(chain);
+  }
+  return chains;
 }

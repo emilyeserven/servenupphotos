@@ -1,37 +1,46 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, X } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { GridRow, NarrowRow } from "@/components/stat-row";
 import type { StatGroup, StatRow } from "@/lib/stat-groups";
 
 /** How many rows a group shows before its "Show all" button. */
 const SHOWN_ROWS = 8;
 
-/** A row chosen in a group that narrows another, and which group it's in. */
+/** A row chosen in a group that narrows another, and which group it narrows. */
 export interface StatFocus {
+  /** The narrowed group's title, such as "Cities", for its X's label. */
   title: string;
+  /** The narrowed group's ID. */
+  target: string;
   row: StatRow;
 }
+
+/** A row narrowing a group, with the filter for its photos and those of the rows narrowing it. */
+export type FocusChain = (StatFocus & { filter: Record<string, string | string[]> })[];
 
 /**
  * One group on the Stats page, such as Cameras, as a card of its rows. A group that narrows
  * another (`onNarrow`), such as Countries, narrows it with a click on a row, `chosen` being the row
- * chosen; any other group's rows open their photos on the Grid. A group narrowed by another says
- * by what (`focus`), which opens those photos on the Grid, or clears it. A long group shows its
- * first rows and a button for the rest.
+ * chosen; any other group's rows open their photos on the Grid. A group narrowed by others says
+ * by what (`focuses`, from the top down), each opening those photos on the Grid, or clearing it.
+ * `title` takes the place of the group's title, such as a dropdown of its variants. A long group
+ * shows its first rows and a button for the rest.
  */
 export function StatGroupCard({
   group,
-  focus,
+  title,
+  focuses,
   chosen,
   onNarrow,
   onClearFocus,
 }: {
   group: StatGroup;
-  focus?: StatFocus;
+  title?: ReactNode;
+  focuses: FocusChain;
   chosen?: string;
   onNarrow?: (row: StatRow) => void;
-  onClearFocus: () => void;
+  onClearFocus: (target: string) => void;
 }) {
   const [all, setAll] = useState(false);
   const max = Math.max(1, ...group.rows.map((row) => row.count));
@@ -41,24 +50,21 @@ export function StatGroupCard({
       aria-label={group.title}
       className="flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground shadow-sm"
     >
-      <h3 className="font-semibold tracking-tight">{group.title}</h3>
-      {focus && <FocusChip focus={focus} onClear={onClearFocus} />}
+      <h3 className="font-semibold tracking-tight">{title ?? group.title}</h3>
+      <FocusChips focuses={focuses} onClearFocus={onClearFocus} />
       {group.rows.length === 0 && (
         <p className="text-sm text-muted-foreground">None of these photos say.</p>
       )}
       <ul className="flex flex-col gap-1">
         {rows.map((row) => (
           <li key={row.label}>
-            {onNarrow ? (
-              <NarrowRow
-                row={row}
-                max={max}
-                chosen={chosen === row.label}
-                onClick={() => onNarrow(row)}
-              />
-            ) : (
-              <GridRow row={row} max={max} hideHint={focus !== undefined} />
-            )}
+            <CardRow
+              row={row}
+              max={max}
+              chosen={chosen}
+              onNarrow={onNarrow}
+              hideHint={focuses.length > 0}
+            />
           </li>
         ))}
       </ul>
@@ -67,16 +73,54 @@ export function StatGroupCard({
   );
 }
 
+/** The chips for the rows narrowing a group, from the top down; nothing when none do. */
+function FocusChips({
+  focuses,
+  onClearFocus,
+}: {
+  focuses: FocusChain;
+  onClearFocus: (target: string) => void;
+}) {
+  if (focuses.length === 0) return undefined;
+  return (
+    <div className="-mt-1 flex flex-wrap gap-1">
+      {focuses.map((focus) => (
+        <FocusChip key={focus.target} focus={focus} onClear={() => onClearFocus(focus.target)} />
+      ))}
+    </div>
+  );
+}
+
+/** A row of a card: a toggle that narrows another group, or a link to its photos on the Grid. */
+function CardRow({
+  row,
+  max,
+  chosen,
+  onNarrow,
+  hideHint,
+}: {
+  row: StatRow;
+  max: number;
+  chosen?: string;
+  onNarrow?: (row: StatRow) => void;
+  hideHint: boolean;
+}) {
+  if (!onNarrow) return <GridRow row={row} max={max} hideHint={hideHint} />;
+  return (
+    <NarrowRow row={row} max={max} chosen={chosen === row.label} onClick={() => onNarrow(row)} />
+  );
+}
+
 /**
  * What a narrowed group is narrowed to, such as Japan: a link to those photos on the Grid, and an
  * X that shows every photo again.
  */
-function FocusChip({ focus, onClear }: { focus: StatFocus; onClear: () => void }) {
+function FocusChip({ focus, onClear }: { focus: FocusChain[number]; onClear: () => void }) {
   return (
-    <div className="-mt-1 flex items-center gap-1 text-sm">
+    <div className="flex items-center gap-1 text-sm">
       <Link
         to="/grid"
-        search={focus.row.filter}
+        search={focus.filter}
         className="group flex min-w-0 items-center gap-1.5 rounded-full border bg-accent px-2.5 py-0.5 font-medium outline-none hover:bg-accent/70 focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
         <span className="truncate">{focus.row.label}</span>

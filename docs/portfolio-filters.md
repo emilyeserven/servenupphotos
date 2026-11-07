@@ -86,7 +86,8 @@ clears the others. Every button says how many photos it would show, given the ot
 dimmed.
 
 - **Across all years** has a tab for each kind, and any number of one kind can be on: they show the photos in any of
-  them.
+  them. Above each kind's buttons, one picks just the one it is now, such as **This season · Autumn**, **This month ·
+  November**, **Today · Saturday** or **This hour · 2 PM–3 PM**, in every year; clicking it again clears it.
   - **Seasons** (`?season=summer&season=winter`), as the northern hemisphere has them: Spring is March to May, and
     Winter is December to February.
   - **Months** (`?month=june&month=july`), in four columns headed by their season.
@@ -94,12 +95,11 @@ dimmed.
   - **Hours** (`?hour=17&hour=18`, on a 24-hour clock), a row for each part of the day: Late night (12–5 AM), Early
     morning, Morning, Afternoon, Evening and Night (9 PM–12 AM). A part's name turns all its hours on, or off once they
     all are.
-- **Previous years**: the Timeline's [Quick dates](portfolio-timeline.md), this date, this month or this season in the
-  years before this one (`?when=month`).
-- **Date range**: a first and last day, both included (`?start=2024-03-01&end=2024-05-31`); either end can be left open.
+- **Date range**: a calendar, from the first to the last month a photo was taken in, opening on the chosen start or
+  the latest photo's month. The first click sets the first day and the second the last, both included
+  (`?start=2024-03-01&end=2024-05-31`).
 
-On the Timeline, which has its own time range and Quick dates, the picker only has **Across all years**, and the
-Timeline's chart leaves out the Quick dates choice as it does its range.
+On the Timeline, which has its own time range and Quick dates, the picker only has **Across all years**.
 
 > **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
 > `?tag=a&tag=b`, and the tabs are radio buttons over which group is in use.
