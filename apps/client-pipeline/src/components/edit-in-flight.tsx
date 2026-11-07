@@ -51,7 +51,7 @@ export function EditInFlightPhoto({ path, from }: { path: string; from?: "galler
   return (
     <>
       <BackLink from={from} />
-      <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
+      <QueryResult query={inFlight} pendingLabel="Reading the pull request…">
         {(data) => <EditFound inFlight={data} path={path} />}
       </QueryResult>
     </>
@@ -65,7 +65,7 @@ export function EditInFlightPhoto({ path, from }: { path: string; from?: "galler
  */
 function EditFound({ inFlight, path }: { inFlight: InFlightRead; path: string }) {
   const editable = useEditable(inFlight, path);
-  if (editable === null) return <p>Reading the photo from GitHub…</p>;
+  if (editable === null) return <p>Reading the photo…</p>;
   if (typeof editable === "string") return <Problem>{editable}</Problem>;
   // Keyed by the photo's image rather than its file, which a new title can rename.
   return <EditWithSavedCrop key={editable.image.key} editable={editable} />;

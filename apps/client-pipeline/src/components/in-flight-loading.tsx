@@ -20,7 +20,7 @@ const SUMMARY_ROWS: [string, string][] = [
 export function PullRequestSummarySkeleton() {
   return (
     <div aria-busy="true">
-      <span className="sr-only">Reading the pull request from GitHub…</span>
+      <span className="sr-only">Reading the pull request…</span>
       <dl aria-hidden className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
         {SUMMARY_ROWS.map(([label, width]) => (
           <Fragment key={label}>

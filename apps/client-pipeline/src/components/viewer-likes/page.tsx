@@ -26,7 +26,7 @@ export function ViewerLikesPage() {
 
 function Likes() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and user likes from GitHub…</p>;
+  if (combined.isPending) return <p>Reading the photos and user likes…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   return <ViewerChooser data={combined.data} />;
 }

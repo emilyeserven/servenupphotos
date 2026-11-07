@@ -134,7 +134,7 @@ interface NewPhotoLensProps {
   photo: CombinedPhoto;
   lenses: CustomLens[];
   onChange: (value: LensChoice) => void;
-  /** The JSON has been saved to GitHub. */
+  /** The JSON has been saved, waiting for Commit. */
   saved: boolean;
 }
 

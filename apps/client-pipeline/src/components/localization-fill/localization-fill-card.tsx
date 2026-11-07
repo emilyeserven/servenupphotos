@@ -46,7 +46,7 @@ export function LocalizationFillCard() {
       <CardContent className="flex flex-col gap-6">
         {error && <p className="text-destructive text-sm">{error.message}</p>}
         {pending ? (
-          <p className="text-sm">Reading photos, places and localizations from GitHub…</p>
+          <p className="text-sm">Reading photos, places and localizations…</p>
         ) : (
           <>
             <FillStatus toFill={toFill.length} total={rows.length} />

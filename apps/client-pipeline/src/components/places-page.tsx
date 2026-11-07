@@ -37,7 +37,7 @@ export function PlacesPage() {
 function PlacesLayout({ folder }: { folder: string }) {
   const read = useQuery(placesQuery);
   return (
-    <QueryResult query={read} pendingLabel="Reading places from GitHub…">
+    <QueryResult query={read} pendingLabel="Reading places…">
       {(data) => <PlacesPanes folder={folder} data={data} />}
     </QueryResult>
   );

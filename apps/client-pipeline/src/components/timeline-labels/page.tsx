@@ -27,7 +27,7 @@ export function TimelineLabelsPage() {
 
 function Labels() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and timeline labels from GitHub…</p>;
+  if (combined.isPending) return <p>Reading the photos and timeline labels…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   return <LabelChooser data={combined.data} />;
 }

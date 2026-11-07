@@ -39,7 +39,7 @@ const TABS: { type: LocalizationType; title: string }[] = [
 function LocalizationTabs() {
   const { rows, pending, error } = useLocalizationRows();
   const drafts = useLocalizationDrafts(rows);
-  if (pending) return <p>Reading photos, places and localizations from GitHub…</p>;
+  if (pending) return <p>Reading photos, places and localizations…</p>;
   return (
     <>
       {error && <p className="text-destructive text-sm">{error.message}</p>}
@@ -110,8 +110,8 @@ function LocalizationCard({ type, title, rows, drafts }: LocalizationCardProps) 
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>
-          {DESCRIPTIONS[type]} Each saves as one commit in the photo data pull request; saves made
-          while one runs wait their turn.
+          {DESCRIPTIONS[type]} Each save waits for Commit with your other changes; saves made while
+          one runs wait their turn.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col divide-y">

@@ -73,7 +73,7 @@ interface GroupComboboxProps {
   onCreate?: (text: string) => void;
 }
 
-/** A combobox of every album, tag or genre on GitHub, read once with the Organize pages' query. */
+/** A combobox of every album, tag or genre, read once with the Organize pages' query. */
 export function GroupCombobox({
   kind,
   exclude,
@@ -91,7 +91,7 @@ export function GroupCombobox({
       disabled={disabled || !organize.data}
       placeholder={groupPlaceholder(kind, organize.isPending, multiple, placeholder)}
       emptyText={emptyText(organize.data, kind)}
-      unknownLabel={(id) => `${id}, which isn't ${ONE[kind]} on GitHub`}
+      unknownLabel={(id) => `${id}, which isn't ${ONE[kind]}`}
     />
   );
 }
@@ -105,7 +105,7 @@ function groupPlaceholder(
   multiple: boolean,
   placeholder?: string,
 ): string {
-  if (pending) return `Reading ${kind} from GitHub…`;
+  if (pending) return `Reading ${kind}…`;
   if (placeholder) return placeholder;
   return `Choose ${multiple ? kind : ONE[kind]}`;
 }
