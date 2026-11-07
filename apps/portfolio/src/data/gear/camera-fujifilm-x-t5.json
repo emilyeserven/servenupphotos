@@ -1,0 +1,21 @@
+{
+  "id": "camera-fujifilm-x-t5",
+  "kind": "camera",
+  "name": "Fujifilm X-T5",
+  "image": "https://cdn.servenupphotos.net/gear/d7a415b9da80-fujifilm-xt5.webp",
+  "original": "https://cdn.servenupphotos.net/gear/originals/7a647e1acdc8-fujifilm-xt5.jpg",
+  "crop": {
+    "x": -0.6315054253240259,
+    "y": -0.3482318398834861,
+    "width": 2.229684744873749,
+    "height": 1.6701758388567387,
+    "fill": "white"
+  },
+  "subject": {
+    "x": 0.0025,
+    "y": 0.1575,
+    "width": 0.9925,
+    "height": 0.6575
+  },
+  "description": ""
+}

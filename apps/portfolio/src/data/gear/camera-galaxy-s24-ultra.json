@@ -1,0 +1,21 @@
+{
+  "id": "camera-galaxy-s24-ultra",
+  "kind": "camera",
+  "name": "Galaxy S24 Ultra",
+  "image": "https://cdn.servenupphotos.net/gear/7c211a07a614-samsung-s24-ultra.webp",
+  "original": "https://cdn.servenupphotos.net/gear/originals/06a6a4c99c32-samsung-s24-ultra.jpg",
+  "crop": {
+    "x": -0.8240780288162036,
+    "y": -0.4719490262102912,
+    "width": 2.6120437166029293,
+    "height": 1.9453098948245766,
+    "fill": "white"
+  },
+  "subject": {
+    "x": 0,
+    "y": 0,
+    "width": 1,
+    "height": 1
+  },
+  "description": ""
+}

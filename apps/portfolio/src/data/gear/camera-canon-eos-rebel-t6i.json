@@ -1,0 +1,21 @@
+{
+  "id": "camera-canon-eos-rebel-t6i",
+  "kind": "camera",
+  "name": "Canon EOS Rebel T6i",
+  "image": "https://cdn.servenupphotos.net/gear/beba4d89d426-canon-t6i.webp",
+  "original": "https://cdn.servenupphotos.net/gear/originals/3bbc80a85efb-canon-t6i.jpg",
+  "crop": {
+    "x": 0.025122732259685754,
+    "y": 0.055358363539031674,
+    "width": 0.9497545354806285,
+    "height": 0.8892832729219367,
+    "fill": "white"
+  },
+  "subject": {
+    "x": 0.1175,
+    "y": 0.13125,
+    "width": 0.765,
+    "height": 0.7375
+  },
+  "description": ""
+}
