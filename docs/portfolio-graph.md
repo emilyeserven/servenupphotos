@@ -47,6 +47,14 @@ until the page is left.
 > **Frontend analogy:** the site's presets are the app's built-in defaults shipped in the bundle (`GRAPHS.json`), and a
 > visitor's own are user settings in `localStorage`, merged into one list when rendering.
 
+**Save as preset** asks for a name and keeps the graph's settings (not its filters) as one of the visitor's own presets,
+shown after the site's with a bookmark and a × to remove it. They're kept in the browser's local storage
+(`servenup:graph-presets`, `lib/saved-graphs.ts`), so they're only on that browser; in a private window they last
+until the page is left.
+
+> **Frontend analogy:** the site's presets are the app's built-in defaults shipped in the bundle (`GRAPHS.json`), and a
+> visitor's own are user settings in `localStorage`, merged into one list when rendering.
+
 ## How it's counted
 
 Each stat is one of the Numbers page's groups (`STAT_SECTIONS` in `lib/stats.ts`), so a group added there shows up in
