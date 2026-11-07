@@ -44,9 +44,10 @@ type View = "graph" | "table";
 
 /**
  * A graph of the person's own making from the Numbers page's counts. The pipeline's spotlight
- * presets come first, then the Presets and Adjust Graph buttons. Adjust Graph opens a box with the
- * site's usual **Show filters** bar, kept in the URL, which picks the photos it counts, and the
- * graph's settings: its type, the stat along each axis, what splits a bar, line or dot graph. Under them, the graph's box names each axis with a dropdown to change it,
+ * presets come first, then the Presets and Adjust Graph buttons and the site's usual **Show
+ * filters** bar, kept in the URL, which picks the photos it counts, with Save as preset at the
+ * row's far end. Adjust Graph opens a box of the graph's settings: its type, the stat along each
+ * axis, what splits a bar, line or dot graph. Under them, the graph's box names each axis with a dropdown to change it,
  * and shows its numbers as a table too. Clicking a bar, point, slice or dot shows its photos under
  * the graph; changing the graph clears it.
  */
@@ -87,8 +88,12 @@ export function GraphBuilder({
             <SlidersHorizontal aria-hidden />
             Adjust Graph
           </Button>
+          {/* Its own row of buttons lines up with Presets and Adjust Graph, and its filters open under it. */}
+          <div className="min-w-0 flex-1 [&>div>div:first-child]:min-h-9">
+            <CameraFilterBar photos={photos} />
+          </div>
         </PresetButtons>
-        {adjusting && <AdjustBox config={config} photos={photos} list={kept} onChange={onChange} />}
+        {adjusting && <AdjustBox config={config} list={kept} onChange={onChange} />}
       </div>
       <section className={cn(BOX_CLASS, !wide && COLUMN)}>
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -126,23 +131,19 @@ export const COLUMN = "mx-auto w-full max-w-5xl";
 const BOX_CLASS =
   "flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-sm";
 
-/** The box Adjust Graph opens: the site's usual **Show filters** bar, then the graph's settings. */
+/** The box Adjust Graph opens: the graph's settings. */
 function AdjustBox({
   config,
-  photos,
   list,
   onChange,
 }: {
   config: GraphConfig;
-  /** Every photo, which the filters are read from. */
-  photos: Photo[];
   /** The photos the filters keep, which the Range group's choices are read from. */
   list: Photo[];
   onChange: ConfigChange;
 }) {
   return (
     <section aria-label="Adjust Graph" className={BOX_CLASS}>
-      <CameraFilterBar photos={photos} />
       <GraphControls config={config} onChange={onChange} list={list} />
     </section>
   );
