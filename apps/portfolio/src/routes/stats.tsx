@@ -230,6 +230,7 @@ function StatsSection({ section, state }: { section: StatSection; state: PageSta
 interface Run {
   kind: "alone" | "down" | "linked";
   title?: string;
+  description?: string;
   defs: GroupDef[];
 }
 
@@ -249,7 +250,12 @@ function sectionRuns(groups: GroupDef[]): Run[] {
 function runOf(chain: GroupDef[]): Run {
   const first = chain[0]!;
   const kind = first.linked ? "linked" : chain.length > 1 ? "down" : "alone";
-  return { kind, title: first.linked ?? first.runTitle, defs: chain };
+  return {
+    kind,
+    title: first.linked ?? first.runTitle,
+    description: first.runDescription,
+    defs: chain,
+  };
 }
 
 /** Whether a run of one card goes on with the cards on their own before it. */
@@ -289,7 +295,7 @@ function GroupRun({ run, state, boxed }: { run: Run; state: PageState; boxed: bo
   );
   if (!boxed) return row;
   return (
-    <RunBox title={run.title} button={<ShowInGrid filter={runFilter(run, state)} />}>
+    <RunBox run={run} button={<ShowInGrid filter={runFilter(run, state)} />}>
       {row}
     </RunBox>
   );
@@ -310,20 +316,15 @@ function linkOf(def: GroupDef, links: Links): StatFocus[] {
   return link ? [link] : [];
 }
 
-/** A run's box, in a shade a little off the page, with its title and Show in Grid button above its cards. */
-function RunBox({
-  title,
-  button,
-  children,
-}: {
-  title?: string;
-  button: ReactNode;
-  children: ReactNode;
-}) {
+/** A run's box, in a shade a little off the page, with its title, description and Show in Grid button above its cards. */
+function RunBox({ run, button, children }: { run: Run; button: ReactNode; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-muted p-3 sm:p-4">
       <div className="flex min-h-7 items-center justify-between gap-2">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+        <div className="flex min-w-0 flex-col">
+          <h3 className="text-sm font-medium text-muted-foreground">{run.title}</h3>
+          {run.description && <p className="text-xs text-muted-foreground/80">{run.description}</p>}
+        </div>
         {button}
       </div>
       {children}

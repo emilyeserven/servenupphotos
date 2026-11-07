@@ -138,6 +138,10 @@ function exposureDef(id: string, key: RangeKey, title: string): GroupDef {
   return { id, linked: "Exposure Triangle", build: settingGroup(key, title, true) };
 }
 
+/** What the Exposure Triangle's box says under its title. */
+const EXPOSURE_DESCRIPTION =
+  "The three settings that balance how bright a photo is. Pick one to see the other two within it.";
+
 /** Every camera as a row, the Cameras card's first way to group. */
 const EACH_CAMERA: GroupVariant = {
   label: "Each camera",
@@ -176,7 +180,7 @@ export const GEAR_GROUPS: GroupDef[] = [
     id: "lenses",
     build: (list) => valueGroup("Lenses", list, (photo) => photo.lens, equipmentBucket("lens")),
   },
-  exposureDef("aperture", "aperture", "Aperture"),
+  { ...exposureDef("aperture", "aperture", "Aperture"), runDescription: EXPOSURE_DESCRIPTION },
   exposureDef("shutter-speed", "exposure", "Shutter speed"),
   exposureDef("iso", "iso", "ISO"),
   camerasDef(),

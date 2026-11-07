@@ -59,7 +59,8 @@ Cards that narrow each other come in two kinds, and each sits together on one ro
 
 The bars run across on a desktop and down on a phone. Each row of either kind sits in a shaded box with a small title,
 **Lenses**, **Exposure Triangle** or **Calendar** (Year, Season, Month), except in a section that has nothing else, such as
-Places. The other cards share a grid below.
+Places. The Exposure Triangle's box also says what it shows under its title: "The three settings that balance how bright
+a photo is. Pick one to see the other two within it." The other cards share a grid below.
 
 Once a value is chosen on a box's cards, a **Show in Grid** button appears opposite the box's title (for Places, opposite
 the section's title). It opens the Grid with every choice in that box applied together: the whole chain down for Filter
