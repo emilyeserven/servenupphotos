@@ -1,6 +1,7 @@
 import {
   CameraIcon,
   FileTextIcon,
+  GlobeIcon,
   LanguagesIcon,
   LibraryIcon,
   Link2Icon,
@@ -23,6 +24,7 @@ import { PruneTagsCard } from "@/components/prune-tags/prune-tags-card";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
 import { TagDescriptionsCard } from "@/components/tag-descriptions/tag-descriptions-card";
 import { TagLibraryCard } from "@/components/tag-library/tag-library-card";
+import { TimezoneShiftCard } from "@/components/timezone-shift/timezone-shift-card";
 
 /** One of Update Data's or Tag Data's subpages: a single bulk change, shown as its card. */
 export interface UpdateDataSection {
@@ -73,6 +75,12 @@ export const updateDataSections: readonly UpdateDataSection[] = [
     title: "Localizations",
     icon: LanguagesIcon,
     render: () => <LocalizationFillCard />,
+  },
+  {
+    slug: "timezones",
+    title: "Times across timezones",
+    icon: GlobeIcon,
+    render: () => <TimezoneShiftCard />,
   },
 ];
 
