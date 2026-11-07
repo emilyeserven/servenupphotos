@@ -59,7 +59,7 @@ export function exposureSeconds(exposure: string | null): number | undefined {
 }
 
 /** A setting's value as a number to compare, such as 1/60 for "1/60"; undefined when it's missing. */
-function settingNumber(key: RangeKey, value: CameraSettings[RangeKey]): number | undefined {
+export function settingNumber(key: RangeKey, value: CameraSettings[RangeKey]): number | undefined {
   if (value === null) return undefined;
   return key === "exposure" ? exposureSeconds(String(value)) : Number(value);
 }
