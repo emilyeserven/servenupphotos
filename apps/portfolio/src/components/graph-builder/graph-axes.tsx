@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { type ConfigChange, MeasureOptions } from "@/components/graph-builder/graph-controls";
 import { StatOptions } from "@/components/graph-builder/graph-field";
-import type { GraphConfig, Measure } from "@/lib/graph-data";
+import { type GraphConfig, hasYStat, type Measure } from "@/lib/graph-data";
 
 /** How an axis's name on the graph looks: plain text with a dropdown arrow, shaded on hover. */
 const AXIS_CLASS =
@@ -35,10 +35,10 @@ function AxisPicker({
   );
 }
 
-/** The y axis's name: the second stat on a scatterplot, or what the other graphs measure. */
+/** The y axis's name: the second stat on a scatterplot or heatmap, or what the other graphs measure. */
 function YPicker({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
   const name = config.type === "pie" ? "Size" : "Y axis";
-  if (config.type === "scatter") {
+  if (hasYStat(config.type)) {
     return (
       <AxisPicker name={name} value={config.y} onChange={(y) => onChange({ y })}>
         <StatOptions leaveOut={[config.x]} />
