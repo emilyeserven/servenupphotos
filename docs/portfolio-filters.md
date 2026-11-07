@@ -87,14 +87,19 @@ name (`?genre=<id>`), and is likewise left out while there are none.
 ## When
 
 A **When** button after **Groups**, on every view with filters (on the Map, under **More filters**), opens one picker
-for when the photos were taken (`components/when-filter.tsx`, `lib/when-filters.ts`), by the clock and calendar where
-each was taken, as a photo's capture time has no time zone. It picks one way at a time, each a tab, and choosing in one
-clears the others. Every button says how many photos it would show, given the other filters, and a choice with none is
-dimmed.
+for when the photos were taken (`components/when-filter.tsx`, `components/when-picker-parts.tsx`,
+`lib/when-filters.ts`), by the clock and calendar where each was taken, as a photo's capture time has no time zone.
+Like the other pickers (see [Picker layout](#picker-layout)), its left side lists **Seasons**, **Months**, **Days**,
+**Hours** and **Date range**, each saying what it's set to ("Any", the one or two chosen such as "Spring, Autumn", or
+how many, such as "4 hours") with a dot while it's set, and **Clear when** under them while any is; the right side
+shows the chosen one's buttons, under a line saying what they do. It picks one way at a time, and choosing in one
+clears the others. The picker opens on the one that's set. Every button says how many photos it would show, given the
+other filters, and a choice with none is dimmed.
 
-- **Across all years** has a tab for each kind, and any number of one kind can be on: they show the photos in any of
-  them. Above each kind's buttons, one picks just the one it is now, such as **This season · Autumn**, **This month ·
-  November**, **Today · Saturday** or **This hour · 2 PM–3 PM**, in every year; clicking it again clears it.
+- **Seasons**, **Months**, **Days** and **Hours** pick across all years, and any number of one kind can be on: they
+  show the photos in any of them. Above each kind's buttons, one picks just the one it is now, such as **This season ·
+  Autumn**, **This month · November**, **Today · Saturday** or **This hour · 2 PM–3 PM**, in every year; clicking it
+  again clears it.
   - **Seasons** (`?season=summer&season=winter`), as the northern hemisphere has them: Spring is March to May, and
     Winter is December to February.
   - **Months** (`?month=june&month=july`), in four columns headed by their season.
@@ -108,10 +113,25 @@ dimmed.
   keep From on or before To. Clicking the month's name above a calendar swaps the days for every month over the years,
   a row of twelve for each year, newest first, to jump straight to one.
 
-On the Timeline, which has its own time range and Quick dates, the picker only has **Across all years**.
+On the Timeline, which has its own time range and Quick dates, the picker leaves out **Date range**.
 
 > **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
-> `?tag=a&tag=b`, and the tabs are radio buttons over which group is in use.
+> `?tag=a&tag=b`, and the left list is a set of radio buttons over which group is in use.
+
+## Picker layout
+
+**Groups**, **When**, **Gear & settings**, **Visuals** and the Graph page's **Graph type** share one layout,
+`SectionPicker` in `components/section-picker.tsx`: a list of sections on the left (`SectionTab` in
+`components/picker-section-tab.tsx`), each with its name, an icon for Groups, what it's set to under it and a dot while
+it's set, an optional footer under the list such as **Clear visuals**, and the chosen section's controls on the right.
+The picker keeps 16px from the screen's edges and is at most 28rem tall, scrolling inside. On phones the list folds up
+above the controls, behind a button naming the chosen section and what it's set to; while it's open it takes the
+controls' place, and choosing a section folds it up again. The Grid's filter buttons open it through
+`FilterPickerButton`, which shows the filter's icon, name and how many of its filters are set; `PickerPart` puts the
+line saying what a section is for over its controls.
+
+> **Frontend analogy:** it's a vertical tabs component whose tab list turns into an accordion header on small screens;
+> each picker only supplies the tabs' labels and the panel.
 
 ## Camera filters
 

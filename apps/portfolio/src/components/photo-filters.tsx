@@ -1,6 +1,7 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
+import { FilterCount } from "@portfolio/components/filter-count";
 import { GroupPicker } from "@portfolio/components/group-picker";
 import { MoreFilters } from "@portfolio/components/more-filters";
 import { PhotoSearchBox } from "@portfolio/components/photo-search-box";
@@ -22,6 +23,9 @@ import {
 import type { Photo } from "@portfolio/lib/photos";
 import { parseTextSearch, searchPhotos, TEXT_SEARCH_KEY } from "@portfolio/lib/text-search";
 import { cn } from "@portfolio/lib/utils";
+
+/** The filter count badge, here too for the views that read it with the filter bar. */
+export { FilterCount };
 
 /** The filters in the current URL, for any portfolio view. */
 function useFilters(): PhotoFilters {
@@ -189,16 +193,6 @@ function ClearFilters({ count, onClear }: { count: number; onClear: () => void }
       <X aria-hidden />
       Clear filters
     </Button>
-  );
-}
-
-/** How many filters are set, as a badge; nothing when none are. */
-export function FilterCount({ count }: { count: number }) {
-  if (count === 0) return null;
-  return (
-    <span className="rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground tabular-nums">
-      {count}
-    </span>
   );
 }
 

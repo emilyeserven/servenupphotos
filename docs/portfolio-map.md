@@ -87,8 +87,8 @@ fits without covering the map:
   > **Frontend analogy:** MapLibre can't change how a source groups its points once it's made, so changing
   > **Grouping** remounts the `<Source>` with a new `key`, like resetting a component's state by changing its key.
 
-- **More filters** opens the day dropdowns (below), then the album, tag and genre dropdowns, and shows how many of them
-  are set.
+- **More filters** opens the day dropdowns (below), then the **Groups** and **When** pickers, side by side in one row
+  (wrapping onto more rows on a phone), and shows how many of them are set.
 - **View in grid** opens the Grid on the photos in view (`gridFiltersFor` in `lib/map-grid-link.ts`). It keeps the
   album, tag and genre filters and looks for the fewest countries, states, cities and places, biggest first, that show
   just those photos, so a view of Seoul opens `/grid?state=Seoul` and one of New York City `/grid?city=New York City`.
