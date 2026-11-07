@@ -46,7 +46,7 @@ export function statById(id: string): GraphStat {
 }
 
 /** The kinds of graph the builder draws. */
-export type GraphType = "bar" | "line" | "dot" | "pie" | "scatter";
+export type GraphType = "bar" | "line" | "dot" | "pie" | "scatter" | "heatmap";
 
 /** What a bar, line or pie measures: how many photos, or their share in percent. */
 export type Measure = "count" | "percent";
@@ -61,7 +61,7 @@ export interface GraphConfig extends GraphRanges {
   x: string;
   /** What a bar, line or pie measures. */
   measure: Measure;
-  /** The stat along a scatterplot's y axis. */
+  /** The stat along a scatterplot's or heatmap's y axis. */
   y: string;
   /** The stat that splits each bar or line, or "" for none. */
   split: string;
@@ -211,6 +211,14 @@ function isSplit(config: GraphConfig): boolean {
   return config.split !== "" && SPLIT_TYPES.has(config.type);
 }
 
+/** The graph types with a second stat along the y axis, in place of what's measured: the scatterplot and the heatmap. */
+const Y_STAT_TYPES: ReadonlySet<GraphType> = new Set(["scatter", "heatmap"]);
+
+/** Whether the graph puts a second stat along its y axis: a scatterplot or a heatmap. */
+export function hasYStat(type: GraphType): boolean {
+  return Y_STAT_TYPES.has(type);
+}
+
 /** What a bar, line or pie graph draws from the photos kept. */
 export function graphData(list: Photo[], config: GraphConfig): GraphData {
   const rows = axisRows(list, config);
@@ -228,14 +236,17 @@ export interface ScatterPoint {
   count: number;
 }
 
-/** What a scatterplot draws: each axis's values, and a dot for every pair with photos. */
+/** What a scatterplot or heatmap draws: each axis's values, and a dot or cell for every pair with photos. */
 export interface ScatterData {
   xLabels: string[];
   yLabels: string[];
   points: ScatterPoint[];
 }
 
-/** A scatterplot: a dot for each x value and y value the same photos have, as big as how many. */
+/**
+ * A scatterplot or heatmap: a dot or cell for each x value and y value the same photos have, as big
+ * or as dark as how many.
+ */
 export function scatterData(list: Photo[], config: GraphConfig): ScatterData {
   const xRows = axisRows(list, config);
   const yStat = statById(config.y);

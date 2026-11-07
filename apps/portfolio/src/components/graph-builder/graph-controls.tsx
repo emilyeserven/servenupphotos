@@ -2,7 +2,12 @@ import { ArrowDownUp, Eye, MoveRight, MoveUp } from "lucide-react";
 import { GraphRanges } from "@portfolio/components/graph-builder/graph-ranges";
 import { GraphTypePicker } from "@portfolio/components/graph-builder/graph-type-picker";
 import { GraphField, StatSelect } from "@portfolio/components/graph-builder/graph-field";
-import { type GraphConfig, type Measure, type SortOrder } from "@portfolio/lib/graph-data";
+import {
+  type GraphConfig,
+  hasYStat,
+  type Measure,
+  type SortOrder,
+} from "@portfolio/lib/graph-data";
 import type { Photo } from "@portfolio/lib/photos";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
@@ -56,9 +61,9 @@ export function MeasureOptions() {
   );
 }
 
-/** The y axis: another stat for a scatterplot, or what's measured for the rest. */
+/** The y axis: another stat for a scatterplot or heatmap, or what's measured for the rest. */
 function YField({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
-  if (config.type === "scatter") {
+  if (hasYStat(config.type)) {
     return (
       <GraphField label="Y axis" icon={MoveUp}>
         <StatSelect value={config.y} onChange={(y) => onChange({ y })} leaveOut={[config.x]} />

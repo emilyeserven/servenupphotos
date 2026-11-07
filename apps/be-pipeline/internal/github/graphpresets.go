@@ -40,13 +40,13 @@ type GraphPreset struct {
 // GraphSettings is what a graph preset sets the Graph page's graph to, named
 // as the page names them. The page's filters stay as they are.
 type GraphSettings struct {
-	// Type is "bar", "line", "dot", "pie" or "scatter".
+	// Type is "bar", "line", "dot", "pie", "scatter" or "heatmap".
 	Type string `json:"type"`
 	// X is the stat along the x axis, or a pie's slices, such as "aperture".
 	X string `json:"x"`
 	// Measure is "count" for how many photos, or "percent" for their share.
 	Measure string `json:"measure"`
-	// Y is the stat along a scatterplot's y axis.
+	// Y is the stat along a scatterplot's or heatmap's y axis.
 	Y string `json:"y"`
 	// Split is the stat that splits each bar or line, or "" for none.
 	Split string `json:"split"`
@@ -66,7 +66,7 @@ type GraphRanges struct {
 	// "f/2" and "f/8"; "" for the axis's own start or end.
 	XFrom string `json:"xFrom,omitempty"`
 	XTo   string `json:"xTo,omitempty"`
-	// YFrom and YTo are a scatterplot's first and last y values shown, like
+	// YFrom and YTo are a scatterplot's or heatmap's first and last y values shown, like
 	// the x axis's.
 	YFrom string `json:"yFrom,omitempty"`
 	YTo   string `json:"yTo,omitempty"`
@@ -82,7 +82,7 @@ type GraphRanges struct {
 
 // The values a preset's graph can take for each of its choices.
 var (
-	graphTypes    = []string{"bar", "line", "dot", "pie", "scatter"}
+	graphTypes    = []string{"bar", "line", "dot", "pie", "scatter", "heatmap"}
 	graphMeasures = []string{"count", "percent"}
 	graphSorts    = []string{"group", "reverse", "count"}
 )

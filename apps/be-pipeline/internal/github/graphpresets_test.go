@@ -29,6 +29,13 @@ func TestSaveGraphPreset(t *testing.T) {
 	if saved := staged(t, c, dataRoot+"/graphs/mid.json"); !strings.Contains(saved, `"xTo": "f/8"`) || !strings.Contains(saved, `"minPhotos": 5`) || strings.Contains(saved, "hideZeros") {
 		t.Errorf("ranges saved as %s, want xTo and minPhotos only", saved)
 	}
+	heatmap := GraphPreset{ID: "months", Kind: "preset", Name: "Months", Graph: &GraphSettings{Type: "heatmap", X: "month", Y: "year", Measure: "count", Sort: "group"}}
+	if _, err := c.SaveGraphPreset(t.Context(), placesGH, heatmap); err != nil {
+		t.Fatalf("SaveGraphPreset(heatmap) error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/graphs/months.json"); !strings.Contains(saved, `"type": "heatmap"`) {
+		t.Errorf("heatmap saved as %s", saved)
+	}
 	group := GraphPreset{ID: "time", Kind: "group", Name: "Time", Group: "camera", Graph: dotGraph}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, group); err != nil {
 		t.Fatalf("SaveGraphPreset(group) error = %v", err)

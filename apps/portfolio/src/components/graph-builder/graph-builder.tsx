@@ -5,6 +5,7 @@ import { BarGraph, LineGraph, PieGraph } from "@/components/graph-builder/graph-
 import { type ConfigChange, GraphControls } from "@/components/graph-builder/graph-controls";
 import { CameraFilterBar } from "@/components/camera-filters";
 import { GraphPresets } from "@/components/graph-builder/graph-presets";
+import { HeatmapGraph } from "@/components/graph-builder/heatmap-graph";
 import { ScatterGraph } from "@/components/graph-builder/scatter-graph";
 import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
 import {
@@ -12,6 +13,7 @@ import {
   type GraphData,
   graphData,
   type GraphType,
+  hasYStat,
   scatterData,
   statById,
 } from "@/lib/graph-data";
@@ -184,17 +186,18 @@ function ViewButtons({ view, onChange }: { view: View; onChange: (view: View) =>
   );
 }
 
-/** What the builder draws: a scatterplot, or a bar, line or pie graph, as a graph or a table. */
+/** What the builder draws: a scatterplot or heatmap, or a bar, line or pie graph, as a graph or a table. */
 function GraphBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
-  if (config.type === "scatter") return <ScatterBody list={list} config={config} view={view} />;
+  if (hasYStat(config.type)) return <ScatterBody list={list} config={config} view={view} />;
   return <SeriesBody list={list} config={config} view={view} />;
 }
 
-/** A scatterplot of the photos kept, or its dots as a table. */
+/** A scatterplot or heatmap of the photos kept, or its dots or cells as a table. */
 function ScatterBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
   const data = useMemo(() => scatterData(list, config), [list, config]);
   const names = { xName: statById(config.x).label, yName: statById(config.y).label };
   if (view === "table") return <ScatterTable data={data} {...names} />;
+  if (config.type === "heatmap") return <HeatmapGraph data={data} {...names} />;
   return <ScatterGraph data={data} {...names} />;
 }
 
@@ -207,8 +210,8 @@ function SeriesBody({ list, config, view }: { list: Photo[]; config: GraphConfig
   return DRAW[config.type as SeriesType](graph, config);
 }
 
-/** The graph types drawn from series: every one but the scatterplot. */
-type SeriesType = Exclude<GraphType, "scatter">;
+/** The graph types drawn from series: every one but the scatterplot and the heatmap. */
+type SeriesType = Exclude<GraphType, "scatter" | "heatmap">;
 
 /** How each of those types is drawn. */
 const DRAW: Record<SeriesType, (graph: GraphData, config: GraphConfig) => ReactNode> = {

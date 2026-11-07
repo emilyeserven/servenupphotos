@@ -5,6 +5,7 @@ import {
   ChartPie,
   ChartScatter,
   ChevronsUpDown,
+  Grid3x3,
   type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
@@ -25,6 +26,7 @@ const TYPES: [GraphType, string, LucideIcon][] = [
   ["dot", "Dot", ChartNoAxesColumn],
   ["pie", "Pie", ChartPie],
   ["scatter", "Scatter", ChartScatter],
+  ["heatmap", "Heatmap", Grid3x3],
 ];
 
 /** The graph type's name and icon. */
