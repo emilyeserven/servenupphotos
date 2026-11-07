@@ -5,27 +5,43 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import type { TripDay } from "@/lib/trip-days";
 import { cn } from "@/lib/utils";
 
-/** Whether a day's line is marked by hand, automatic, or not there yet. */
-type LineStatus = "Marked" | "Automatic" | "None";
+/**
+ * Whether a day's line is marked by hand, marked by hand but out of date with the day's photos,
+ * automatic, or not there yet.
+ */
+type LineStatus = "Marked" | "Out of date" | "Automatic" | "None";
 
-const FILTERS: ("All" | LineStatus)[] = ["All", "Marked", "Automatic", "None"];
+const FILTERS: ("All" | LineStatus)[] = ["All", "Marked", "Out of date", "Automatic", "None"];
 
-function statusOf(line: TripLine | undefined): LineStatus {
+/** How each status reads in the list: out of date in red, so it stands out. */
+const STATUS_CLASS: Record<LineStatus, string> = {
+  Marked: "text-foreground",
+  "Out of date": "text-destructive font-medium",
+  Automatic: "text-foreground",
+  None: "text-muted-foreground",
+};
+
+function statusOf(line: TripLine | undefined, stale: Set<string>): LineStatus {
   if (!line) return "None";
-  return line.auto ? "Automatic" : "Marked";
+  if (line.auto) return "Automatic";
+  return stale.has(line.day) ? "Out of date" : "Marked";
 }
 
 interface DayListProps {
   days: TripDay[];
   lines: Map<string, TripLine>;
+  /** The days whose hand-marked line is out of date with their photos. */
+  stale: Set<string>;
   chosen: string;
   onChoose: (day: string) => void;
 }
 
 /** The days a trip line can be marked for, newest first, with each one's status and a filter by it. */
-export function DayList({ days, lines, chosen, onChoose }: DayListProps) {
+export function DayList({ days, lines, stale, chosen, onChoose }: DayListProps) {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
-  const shown = days.filter((d) => filter === "All" || statusOf(lines.get(d.day)) === filter);
+  const shown = days.filter(
+    (d) => filter === "All" || statusOf(lines.get(d.day), stale) === filter,
+  );
   return (
     <Card>
       <CardHeader>
@@ -54,7 +70,7 @@ export function DayList({ days, lines, chosen, onChoose }: DayListProps) {
           <DayRow
             key={d.day}
             day={d}
-            status={statusOf(lines.get(d.day))}
+            status={statusOf(lines.get(d.day), stale)}
             chosen={d.day === chosen}
             onChoose={onChoose}
           />
@@ -88,14 +104,7 @@ function DayRow({ day, status, chosen, onChoose }: DayRowProps) {
           {day.photos.length} photos, {day.spots} spots
         </span>
       </span>
-      <span
-        className={cn(
-          "shrink-0 text-xs",
-          status === "None" ? "text-muted-foreground" : "text-foreground",
-        )}
-      >
-        {status}
-      </span>
+      <span className={cn("shrink-0 text-xs", STATUS_CLASS[status])}>{status}</span>
     </button>
   );
 }
