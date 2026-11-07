@@ -14,6 +14,8 @@ interface GraphPickerProps<K extends string> {
   sections: GraphPickerSection<K>[];
   /** The chosen section's controls. */
   children: (section: K) => ReactNode;
+  /** The chosen section's info pane, to the right of its controls, while its (i) is on; undefined while it's off. */
+  aside?: (section: K) => ReactNode;
 }
 
 /**
@@ -42,21 +44,37 @@ export function GraphPicker<K extends string>({ label, Icon, ...props }: GraphPi
   );
 }
 
+/** The chosen section's info pane, or undefined while there's none. */
+function paneOf<K extends string>(
+  aside: GraphPickerProps<K>["aside"],
+  section: K,
+): ReactNode | undefined {
+  return aside ? aside(section) : undefined;
+}
+
+/** How wide the picker is beside phones: wider while it shows an info pane. */
+function widthOf(pane: ReactNode | undefined): string {
+  return pane === undefined ? "sm:w-[32rem]" : "sm:w-[48rem]";
+}
+
 /** The sections and the chosen section's controls beside them, or under them on phones. */
 function PickerBody<K extends string>({
   label,
   sections,
   children,
+  aside,
 }: Omit<GraphPickerProps<K>, "Icon">) {
   const [chosen, setChosen] = useState<K | undefined>();
   const section = sections.find(([key]) => key === chosen)?.[0] ?? sections[0]![0];
+  const pane = paneOf(aside, section);
   return (
     <SectionPicker
       label={label}
       sections={sections.map(([key, name, text]) => ({ key, label: name, text }))}
       chosen={section}
       onChoose={setChosen}
-      width="sm:w-[32rem]"
+      width={widthOf(pane)}
+      aside={pane}
     >
       <div className="-m-1 flex flex-col">{children(section)}</div>
     </SectionPicker>
