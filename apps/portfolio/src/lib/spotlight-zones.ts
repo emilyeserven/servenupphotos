@@ -7,8 +7,24 @@ export type ImagePhoto = Photo & { image: PhotoImage };
 /** The spotlight zone the homepage's background shows. */
 export const HOMEPAGE_ZONE = "homepage";
 
+/** The spotlight zone above the Timeline's title. */
+export const TIMELINE_HEADER_ZONE = "timeline-header";
+
+/** The spotlight zone above the Grid's title and filters. */
+export const GRID_HEADER_ZONE = "grid-header";
+
 /** What each spotlight zone is called, by ID, for the Albums page to say where an album shows. */
-const ZONE_LABELS: Record<string, string> = { [HOMEPAGE_ZONE]: "the homepage" };
+const ZONE_LABELS: Record<string, string> = {
+  [HOMEPAGE_ZONE]: "the homepage",
+  [TIMELINE_HEADER_ZONE]: "the Timeline's header",
+  [GRID_HEADER_ZONE]: "the Grid's header",
+};
+
+/**
+ * A phone held upright, where a zone that matches the screen puts portrait photos first; every
+ * other screen gets landscape photos first.
+ */
+export const UPRIGHT_PHONE_QUERY = "(max-width: 767px) and (orientation: portrait)";
 
 /** The photos with images, newest first. */
 export function newestWithImages(all: Photo[]): ImagePhoto[] {
@@ -55,9 +71,38 @@ function zoneAlbum(zone: string): Group | undefined {
  * The photos the zone shows: the ones in the album picked for it on the pipeline's Site Spotlight
  * page and its sub-albums, in the album's order; none when no album is picked.
  */
-export function zonePhotos(zone: string, all: Photo[] = photos): ImagePhoto[] {
+function zonePhotos(zone: string, all: Photo[] = photos): ImagePhoto[] {
   const album = zoneAlbum(zone);
   return album ? albumPhotos(album.id, all) : [];
+}
+
+/**
+ * Whether the zone puts the photos that fit the screen's shape first, as set on the pipeline's
+ * Site Spotlight page: true unless the album picked for it says "none", and true with no album.
+ */
+function matchesScreen(zone: string): boolean {
+  return zoneAlbum(zone)?.spotlightOrientation?.[zone] !== "none";
+}
+
+/** Whether the photo is taller than it's wide, as it's shown. */
+function isPortrait({ image }: ImagePhoto): boolean {
+  return image.height > image.width;
+}
+
+/**
+ * The list as the zone shows it on a phone held upright (`phone`) or a wider screen: when the zone
+ * matches the screen, portrait photos first on the phone and landscape photos first elsewhere,
+ * each part keeping its order; otherwise as it is.
+ */
+export function arranged(list: ImagePhoto[], zone: string, phone: boolean): ImagePhoto[] {
+  if (!matchesScreen(zone)) return list;
+  const first = list.filter((photo) => isPortrait(photo) === phone);
+  return [...first, ...list.filter((photo) => isPortrait(photo) !== phone)];
+}
+
+/** The zone's photos as it shows them on a phone held upright (`phone`) or a wider screen. */
+export function spotlightPhotos(zone: string, phone: boolean, all: Photo[] = photos): ImagePhoto[] {
+  return arranged(zonePhotos(zone, all), zone, phone);
 }
 
 /** Where on the site the album's photos show, such as "the homepage"; empty for nowhere. */

@@ -7,6 +7,10 @@ the date in its heading, so the label of the days in view sits just under the mo
 thumbnail or title opens the photo viewer. The filters are described in
 [Portfolio Filters](portfolio-filters.md), including the [text search](portfolio-filters.md#text-search) box.
 
+When an album is picked for the **Timeline Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page,
+its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background,
+with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).
+
 ## Scrubber
 
 Once the chart has scrolled up out of the window, a scrubber appears down the right edge, like the one in Google Photos.

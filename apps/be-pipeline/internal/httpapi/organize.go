@@ -272,12 +272,14 @@ func handleSetTagFavorites(store *settings.Store, gh *github.Client) http.Handle
 }
 
 // handleSetSpotlightAlbum makes the body's album the one the path's spotlight
-// spot shows, or leaves the spot without one when it's empty or null, as a
-// change waiting for Commit.
+// spot shows, or leaves the spot without one when it's empty or null, with
+// the body's orientation ("screen", "none", or missing to keep the spot's),
+// as a change waiting for Commit.
 func handleSetSpotlightAlbum(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
-			Album *string `json:"album"`
+			Album       *string `json:"album"`
+			Orientation string  `json:"orientation"`
 		}
 		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
 		dec.DisallowUnknownFields()
@@ -291,7 +293,7 @@ func handleSetSpotlightAlbum(store *settings.Store, gh *github.Client) http.Hand
 		}
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		result, err := gh.SetSpotlightAlbum(ctx, cfg, r.PathValue("zone"), *cmp.Or(req.Album, new(string)))
+		result, err := gh.SetSpotlightAlbum(ctx, cfg, r.PathValue("zone"), *cmp.Or(req.Album, new(string)), req.Orientation)
 		writeSocialResult(w, result, err, "could not save the spot's album")
 	}
 }

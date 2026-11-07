@@ -93,6 +93,9 @@ type groupJSON struct {
 	// SpotlightUpdated is the day, as YYYY-MM-DD, each of SpotlightZones was
 	// last given to this album on the Site Spotlight page.
 	SpotlightUpdated map[string]string `json:"spotlightUpdated,omitempty"`
+	// SpotlightOrientation says, for each of those spots by ID, which photos
+	// it puts first (see SpotlightOrientations).
+	SpotlightOrientation map[string]string `json:"spotlightOrientation,omitempty"`
 	// PhotoOrder is the IDs of an album's photos in the order the portfolio
 	// shows them.
 	PhotoOrder []int `json:"photoOrder,omitempty"`
@@ -127,6 +130,9 @@ type albumJSON struct {
 	// SpotlightUpdated is the day, as YYYY-MM-DD, each spot was last given
 	// to the album; missing until one is picked on the Site Spotlight page.
 	SpotlightUpdated map[string]string `json:"spotlightUpdated,omitempty"`
+	// SpotlightOrientation says, for each of those spots by ID, which photos
+	// it puts first; missing or empty while each matches the screen.
+	SpotlightOrientation map[string]string `json:"spotlightOrientation,omitempty"`
 	// PhotoOrder is the IDs of the album's photos in the order the portfolio
 	// shows them; missing or empty while they're in the default order.
 	PhotoOrder []int `json:"photoOrder,omitempty"`
@@ -172,6 +178,9 @@ type Group struct {
 	// SpotlightZones was given to the album; a spot is missing when it was
 	// picked before these days were kept.
 	SpotlightUpdated map[string]string `json:"spotlightUpdated,omitempty"`
+	// SpotlightOrientation says, for each of those spots by ID, which photos
+	// it puts first, "screen" or "none"; a spot left out matches the screen.
+	SpotlightOrientation map[string]string `json:"spotlightOrientation,omitempty"`
 	// PhotoOrder is the IDs of an album's photos in the order the portfolio
 	// shows them, set on its page; empty for the default order.
 	PhotoOrder []int `json:"photoOrder,omitempty"`
@@ -476,6 +485,7 @@ func (w *workspace) readGroup(p string) Group {
 		g.Order = *content.Order
 	}
 	g.SpotlightZones, g.SpotlightUpdated, g.PhotoOrder = content.SpotlightZones, content.SpotlightUpdated, content.PhotoOrder
+	g.SpotlightOrientation = content.SpotlightOrientation
 	g.Covers, g.Layout, g.Hidden = content.Covers, content.Layout, content.Hidden
 	g.Rules = smartRules(content.Rules)
 	g.Favorite = content.Favorite

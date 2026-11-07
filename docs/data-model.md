@@ -21,7 +21,8 @@ A photo can have several tags and is usually in one album (more is allowed, but 
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
 `{ "id", "name", "description" }` and an album file `{ "id", "name", "description", "parent" }`, each named by its ID.
 An album file may also have `order`, its place among the albums (1 first), and `spotlightZones`, the spots on the
-portfolio that show its photos, such as `["homepage"]`; see [Albums and Tags](albums-and-tags.md#order). Its
+portfolio that show its photos, such as `["homepage"]`, with `spotlightOrientation` saying which photos each puts first,
+such as `{ "grid-header": "none" }` (see [Site Spotlight](publish.md#site-spotlight)); see [Albums and Tags](albums-and-tags.md#order). Its
 `photoOrder` lists photo IDs in the order the portfolio shows the album's photos, such as `[12, 3, 40]`; see
 [Photo order](albums-and-tags.md#photo-order). Its `covers` lists up to 5 photo IDs that stand for it on the
 portfolio's Albums page, and its `layout` lists its page's rows, each `{ "textAbove", "photos", "textBelow" }` with
