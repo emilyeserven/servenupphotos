@@ -7,27 +7,6 @@ the date in its heading, so the label of the days in view sits just under the mo
 thumbnail or title opens the photo viewer. The filters are described in
 [Portfolio Filters](portfolio-filters.md), including the [text search](portfolio-filters.md#text-search) box.
 
-## Quick dates
-
-The **Quick dates** menu beside the range picker lists the busiest times, newest first: each photo's day, or else its
-week (Sunday to Saturday, as on the heatmap), or else its month, whichever is the most specific with more than five
-photos, with how many photos each has. Days are listed under their week, weeks under their month, and months under
-their year. It counts the photos the filters and search let through, and isn't shown when no time has more than five.
-Picking one sets the time range to its dates (`?from=…&to=…`), and the menu's button then names it; **Reset** and the
-range picker undo it as usual.
-
-Whenever the time range is exactly one month, week or day, whether from **Quick dates** or picked by hand, the list
-divides its photos one step finer than usual:
-
-| Time range | Headings | Subheadings |
-| ---------- | -------- | ----------- |
-| Any other  | Months   | Days        |
-| One month  | Weeks    | Days        |
-| One week   | Days     | Hours       |
-| One day    | The day  | Hours       |
-
-While a [timeline label](timeline-labels.md) is chosen, the list keeps months and days.
-
 When an album is picked for the **Timeline Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page,
 its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background,
 with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).
@@ -63,8 +42,19 @@ On a phone, Large and Huge thumbnails sit above their photo's title instead of b
 The range picker chooses a quick range, such as **Last 30 days** (`?range=30d`), or two dates (`?from=…&to=…`). Beside
 it, the label picker (shown once there are [timeline labels](timeline-labels.md)) shows only one label's days, such as
 **Japan** (`?label=japan-2026-09-22`); the range picker then shows those dates, and picking a range or **Any label**
-lets the label go. While a label is chosen, the scrubber has a tick for each day, with each month's short name at its
-first day, and its bubble names the day. **Reset** goes back to **All time**. The chart under the header picks a range too, and the buttons above it switch between two
+lets the label go.
+
+The **Quick dates** menu beside them shows the photos taken at this time of year in earlier years:
+
+| Choice      | Shows photos taken in an earlier year…                                  | URL            |
+| ----------- | ----------------------------------------------------------------------- | -------------- |
+| This date   | on today's month and day, such as every Nov 7 before this one           | `?when=date`   |
+| This month  | in today's month, leaving out this month itself                         | `?when=month`  |
+| This season | in today's season (Northern Hemisphere: winter is December to February) | `?when=season` |
+
+Each choice shows how many photos it has, counting those the filters and search let through, and choices with fewer than
+five are left out (the menu too, when none has five). A choice, a range and a label each replace the others. While a label is chosen, the scrubber has a tick for each day, with each month's short name at its
+first day, and its bubble names the day. **Reset** goes back to **All time**, letting a label or Quick dates choice go. The chart under the header picks a range too, and the buttons above it switch between two
 charts:
 
 | Chart           | Shows                                                                                        | URL              |
