@@ -74,7 +74,7 @@ const PAGES: Record<GroupKind, { title: string; description: string }> = {
   },
 };
 
-/** The Albums, Tags or Photographic Genres page: a form to add one, then every one on GitHub. */
+/** The Albums, Tags or Photographic Genres page: a form to add one, then every one. */
 export function GroupPage({ kind }: { kind: GroupKind }) {
   const page = PAGES[kind];
 
@@ -406,7 +406,7 @@ function GroupListCard({
         <CardDescription>
           {organize.data
             ? `On ${organize.data.branch} in ${organize.data.repo}, and in the open photo data pull request.`
-            : "Reading them from GitHub."}
+            : "Reading them…"}
         </CardDescription>
         <CardAction>
           <Button
@@ -421,7 +421,7 @@ function GroupListCard({
         </CardAction>
       </CardHeader>
       <CardContent>
-        <QueryResult query={organize} pendingLabel={`Reading ${plural} from GitHub…`}>
+        <QueryResult query={organize} pendingLabel={`Reading ${plural}…`}>
           {(data) =>
             data[kind].length === 0 ? (
               <p className="text-muted-foreground text-sm">No {plural} yet.</p>

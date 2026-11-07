@@ -26,7 +26,7 @@ export function CaptionTemplatesPage() {
 
 function Templates() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the caption templates from GitHub…</p>;
+  if (combined.isPending) return <p>Reading the caption templates…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   return <TemplateChooser data={combined.data} />;
 }

@@ -25,7 +25,7 @@ import {
 export function SiteSpotlight() {
   const organize = useQuery(organizeQuery);
   return (
-    <QueryResult query={organize} pendingLabel="Reading albums from GitHub…">
+    <QueryResult query={organize} pendingLabel="Reading albums…">
       {(data) => <Zones organize={data} />}
     </QueryResult>
   );

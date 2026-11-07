@@ -448,7 +448,7 @@ function RemoveButton({ disabled, onRemove }: { disabled: boolean; onRemove: () 
 }
 
 function placeholder(index: number, all: Places): string {
-  if (all.read.isPending) return "Reading places from GitHub…";
+  if (all.read.isPending) return "Reading places…";
   if (all.save.isPending) return "Adding the place…";
   return index === 0 ? "Such as Gyeongbokgung Palace" : "Such as Geunjeongmun Gate";
 }

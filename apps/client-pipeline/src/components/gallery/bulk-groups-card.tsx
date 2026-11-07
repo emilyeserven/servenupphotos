@@ -26,8 +26,8 @@ interface BulkGroupsCardProps {
 }
 
 /**
- * Adds albums, tags and genres to every chosen photo, as one commit in the photo data pull request. Each
- * photo keeps the ones it has.
+ * Adds albums, tags and genres to every chosen photo, as changes waiting for Commit.
+ * Each photo keeps the ones it has.
  */
 export function BulkGroupsCard({
   files,
@@ -48,7 +48,7 @@ export function BulkGroupsCard({
         <CardTitle>Add albums, tags and genres</CardTitle>
         <CardDescription>
           Choose photos below, then the albums, tags and genres to add to them. Each photo keeps the
-          ones it has, and the change goes into the photo data pull request as one commit.
+          ones it has, and the change waits for Commit.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 text-sm">

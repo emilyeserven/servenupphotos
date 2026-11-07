@@ -32,7 +32,7 @@ export function MetadataGroupsPage() {
 
 function MetaGroupTabs() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and metadata groups from GitHub…</p>;
+  if (combined.isPending) return <p>Reading the photos and metadata groups…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   const photos = shownPhotos(combined.data);
   const groups = metaGroups(combined.data);

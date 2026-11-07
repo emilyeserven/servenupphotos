@@ -12,7 +12,7 @@ function UpdateDataPage() {
   return (
     <SectionsLayout
       name="Update Data"
-      description="Bulk changes to every photo's JSON on GitHub. Each one previews what it will change, then saves it as one commit in the photo data pull request."
+      description="Bulk changes to every photo's JSON on GitHub. Each one previews what it will change, then saves it as changes waiting for Commit."
       sections={updateDataSections}
       to="/update-data/$section"
     />

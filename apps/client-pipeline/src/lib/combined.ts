@@ -49,9 +49,7 @@ function inEntries(entries: ReadonlySet<string> | undefined, data: unknown): boo
 
 /** What to show for a combined file the store hasn't read, or couldn't. */
 function unread(path: string, view: CombinedView): CombinedFile {
-  const error = view.error
-    ? `Couldn't read it: ${view.error.message}`
-    : "Still reading it from GitHub.";
+  const error = view.error ? `Couldn't read it: ${view.error.message}` : "Still reading it.";
   return { path, found: true, count: 0, error };
 }
 

@@ -75,10 +75,7 @@ export function GroupDetailPage({ kind, id }: { kind: GroupKind; id: string }) {
       </Button>
       <GitHubGate>
         {() => (
-          <QueryResult
-            query={organize}
-            pendingLabel={`Reading the ${GROUP_KINDS[kind].singular} from GitHub…`}
-          >
+          <QueryResult query={organize} pendingLabel={`Reading the ${GROUP_KINDS[kind].singular}…`}>
             {(data) => <GroupFound kind={kind} id={id} group={group} organize={data} />}
           </QueryResult>
         )}
@@ -112,7 +109,7 @@ function GroupFound({
     <Card>
       <CardContent>
         <p className="text-muted-foreground">
-          There's no {GROUP_KINDS[kind].singular} with the ID <code>{id}</code> on GitHub.
+          There's no {GROUP_KINDS[kind].singular} with the ID <code>{id}</code>.
         </p>
       </CardContent>
     </Card>

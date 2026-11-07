@@ -12,7 +12,7 @@ function TagDataPage() {
   return (
     <SectionsLayout
       name="Tag Data"
-      description="Bulk changes to the photos' tags and the tag files on GitHub. Each one previews what it will change, then saves it waiting for Commit."
+      description="Bulk changes to the photos' tags and the tag files. Each one previews what it will change, then saves it waiting for Commit."
       sections={tagDataSections}
       to="/tag-data/$section"
     />
