@@ -16,9 +16,10 @@ Update Data keeps the changes to the photo files as a whole: **Image base URL**,
 **Colors**, **Camera overrides**, **Localizations** and [**Times across timezones**](timezone-shift.md). The rest moved into the sidebar, next to what they change,
 working just as described below:
 
-- **Tag Data** (`/tag-data`, under **Tags**) is a page like Update Data, with its own side navigation, for the four
-  tag changes: **Bulk tagging**, **Tag library**, **Tag pruning** and **Tag descriptions** (`/tag-data/<name>`;
-  `/tag-data` on its own opens Bulk tagging). Its list is `tagDataSections` in the same file.
+- The four tag changes, **Bulk tagging**, **Tag library**, **Tag pruning** and **Tag descriptions**, are the tag
+  tools: each a page of its own (`/tag-tools/<name>`, `components/tag-tool-page.tsx`), listed in the **Tags** submenu
+  under a small **Tools** header. Their list is `tagTools` in the same file. They used to share a Tag Data page with
+  its own side navigation; an old `/tag-data` link opens Bulk tagging and `/tag-data/<name>` opens that tool.
 - **Location Names** (`/location-names`) and **Bulk Places** (`/bulk-places`) are under **Places**, **Genre
   Suggestions** (`/genre-suggestions`) under **Genres**, and **Album Suggestions** (`/album-suggestions`) under
   **Albums**, each a page with just its card (`components/update-data/card-page.tsx`).

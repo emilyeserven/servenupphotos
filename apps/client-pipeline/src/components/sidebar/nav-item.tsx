@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronRightIcon } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   SidebarMenuAction,
   SidebarMenuButton,
@@ -10,7 +10,7 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { NavFlyout } from "@/components/sidebar/nav-flyout";
+import { NavFlyout, SubmenuHeading } from "@/components/sidebar/nav-flyout";
 import { isUnder, isWithin, pagePath, type NavPage } from "@/components/sidebar/nav-groups";
 import { cn } from "@/lib/utils";
 
@@ -134,11 +134,18 @@ function Submenu({ subpages, pathname, onNavigate }: SubmenuProps) {
   return (
     <SidebarMenuSub>
       {subpages.map((child) => (
-        <SidebarMenuSubItem key={pagePath(child)}>
-          <SidebarMenuSubButton asChild isActive={isUnder(pathname, pagePath(child))}>
-            <PageLink page={child} onNavigate={onNavigate} />
-          </SidebarMenuSubButton>
-        </SidebarMenuSubItem>
+        <Fragment key={pagePath(child)}>
+          {child.heading && (
+            <li>
+              <SubmenuHeading title={child.heading} />
+            </li>
+          )}
+          <SidebarMenuSubItem>
+            <SidebarMenuSubButton asChild isActive={isUnder(pathname, pagePath(child))}>
+              <PageLink page={child} onNavigate={onNavigate} />
+            </SidebarMenuSubButton>
+          </SidebarMenuSubItem>
+        </Fragment>
       ))}
     </SidebarMenuSub>
   );

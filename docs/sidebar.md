@@ -22,7 +22,7 @@ branches that add pages don't clash:
     - Album Suggestions
   - Tags
     - Small Tags
-    - Tag Data
+    - Tools: Bulk tagging, Tag library, Tag pruning, Tag descriptions
   - Genres
     - Genre Suggestions
   - Places
@@ -53,7 +53,8 @@ branches that add pages don't clash:
 A page with pages under it, such as **Tags**, has an arrow on its right. On a desktop, hovering it (or focusing it
 with the keyboard) flies its submenu out to the right: the page itself, then the pages under it
 (`components/sidebar/nav-flyout.tsx`), whether the sidebar is expanded or collapsed to icons. The page stays
-highlighted while one of its submenu pages is open. On a phone, where there's no hover, the submenu is listed under
+highlighted while one of its submenu pages is open. A submenu page can start a group under a small header, as the
+tag tools do under **Tools** in the Tags submenu (`heading` on the page in `navGroups`). On a phone, where there's no hover, the submenu is listed under
 the page instead, open while the page or one in its submenu is showing, and the arrow shows or hides it.
 
 A submenu page keeps its own URL (Explore Bucket is still `/bucket`); it only sits under another in the sidebar and

@@ -26,7 +26,7 @@ import { TagDescriptionsCard } from "@/components/tag-descriptions/tag-descripti
 import { TagLibraryCard } from "@/components/tag-library/tag-library-card";
 import { TimezoneShiftCard } from "@/components/timezone-shift/timezone-shift-card";
 
-/** One of Update Data's or Tag Data's subpages: a single bulk change, shown as its card. */
+/** One of Update Data's subpages or one of the tag tools: a single bulk change, shown as its card. */
 export interface UpdateDataSection {
   /** The last part of its URL, such as `image-names` in `/update-data/image-names`. */
   slug: string;
@@ -84,29 +84,39 @@ export const updateDataSections: readonly UpdateDataSection[] = [
   },
 ];
 
-/** Every Tag Data subpage: the bulk changes to tags, in the order its side navigation lists them. */
-export const tagDataSections: readonly UpdateDataSection[] = [
+/** One of the tag tools: a bulk change to the photos' tags or the tag files, on a page of its own. */
+export interface TagTool extends UpdateDataSection {
+  /** The line under its page's title. */
+  description: string;
+}
+
+/** Every tag tool, in the order the Tags submenu lists them under its Tools header. */
+export const tagTools: readonly TagTool[] = [
   {
     slug: "bulk-tagging",
     title: "Bulk tagging",
+    description: "Tags photos that have none, with an LLM's suggestions you review.",
     icon: TagsIcon,
     render: () => <BulkTaggingCard />,
   },
   {
     slug: "tag-library",
     title: "Tag library",
+    description: "Reworks the whole tag library at once, with an LLM's suggestions you review.",
     icon: LibraryIcon,
     render: () => <TagLibraryCard />,
   },
   {
     slug: "tag-pruning",
     title: "Tag pruning",
+    description: "Merges, removes or regroups tags with too few photos.",
     icon: ScissorsIcon,
     render: () => <PruneTagsCard />,
   },
   {
     slug: "tag-descriptions",
     title: "Tag descriptions",
+    description: "Writes descriptions for the tags that have none.",
     icon: FileTextIcon,
     render: () => <TagDescriptionsCard />,
   },
@@ -121,5 +131,5 @@ export const movedSections: Readonly<Record<string, string>> = {
   "bulk-places": "/bulk-places",
   "genre-suggestions": "/genre-suggestions",
   "album-suggestions": "/album-suggestions",
-  ...Object.fromEntries(tagDataSections.map((s) => [s.slug, `/tag-data/${s.slug}`])),
+  ...Object.fromEntries(tagTools.map((s) => [s.slug, `/tag-tools/${s.slug}`])),
 };

@@ -104,7 +104,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Dashboard](docs/dashboard.md) (`/`): the home page, with the next Lightroom albums, drafts, Compare sets, Instagram queue and Site Spotlight dates
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check
-- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and Tag Data (`/tag-data`) for bulk tagging, the whole tag library, pruning and tag descriptions
+- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and the tag tools (`/tag-tools/<name>`, under Tools in the Tags submenu) for bulk tagging, the whole tag library, pruning and tag descriptions
 - [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
 - [Alt text](docs/alt-text.md) (`/alt-text`): a description of each photo for screen readers, written on the Photo page or for many photos at once with an LLM prompt, which the portfolio uses as the images' `alt`
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`

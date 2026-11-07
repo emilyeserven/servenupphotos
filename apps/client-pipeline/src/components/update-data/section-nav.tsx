@@ -2,8 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import type { UpdateDataSection } from "@/components/update-data/sections";
 
-/** The URL of a page with subpages picked from a side navigation: Update Data or Tag Data. */
-export type SectionsRoute = "/update-data/$section" | "/tag-data/$section";
+/** The URL of a page with subpages picked from a side navigation: Update Data. */
+export type SectionsRoute = "/update-data/$section";
 
 interface SectionNavProps {
   /** The page's name, such as Update Data, which labels the navigation. */
@@ -14,7 +14,7 @@ interface SectionNavProps {
 }
 
 /**
- * A side navigation of subpages, as on Update Data and Tag Data: one link per subpage, its icon left
+ * A side navigation of subpages, as on Update Data: one link per subpage, its icon left
  * of its name. On a phone it's a dropdown above the card instead, so the card keeps the whole width.
  */
 export function SectionNav({ name, sections, to, current }: SectionNavProps) {

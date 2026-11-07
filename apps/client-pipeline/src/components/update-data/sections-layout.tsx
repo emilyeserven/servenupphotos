@@ -15,7 +15,7 @@ interface SectionsLayoutProps {
   to: SectionsRoute;
 }
 
-/** A page of bulk changes, one subpage each, picked from a side navigation: Update Data or Tag Data. */
+/** A page of bulk changes, one subpage each, picked from a side navigation: Update Data. */
 export function SectionsLayout({ name, description, sections, to }: SectionsLayoutProps) {
   const current = useParams({ strict: false, select: (params) => params.section });
   return (
@@ -37,7 +37,7 @@ interface SectionCardProps {
   slug: string;
 }
 
-/** One subpage of Update Data or Tag Data: its card, once GitHub is set up. */
+/** One subpage of Update Data: its card, once GitHub is set up. */
 export function SectionCard({ name, sections, slug }: SectionCardProps) {
   const section = sections.find((s) => s.slug === slug);
   if (!section) {
