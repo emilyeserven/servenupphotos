@@ -5,7 +5,7 @@ export type CameraKind = "dslr" | "mirrorless" | "compact" | "phone";
 
 /** Words in a camera's model name that tell its kind, checked in order; mirrorless when none match. */
 const CAMERA_KINDS: [RegExp, CameraKind][] = [
-  [/iphone|pixel|galaxy|phone/i, "phone"],
+  [/iphone|pixel|galaxy|phone|\bsm-[a-z]\d/i, "phone"],
   [/x100|powershot|coolpix|ricoh gr|rx100|compact/i, "compact"],
   [/eos r\d*\b|eos m\d*\b/i, "mirrorless"],
   [/\beos\b|\bd\d{2,4}\b|dslr|rebel|kiss/i, "dslr"],
@@ -67,16 +67,40 @@ function byCount<T>(values: T[]): T[] {
   return [...counts.entries()].toSorted((a, b) => b[1] - a[1]).map(([value]) => value);
 }
 
+/** When the first and last of the photos were taken; neither when there are none. */
+function takenSpan(photos: Photo[]): { first?: Date; last?: Date } {
+  const times = photos.map((photo) => photo.takenAt.getTime());
+  if (times.length === 0) return {};
+  return { first: new Date(Math.min(...times)), last: new Date(Math.max(...times)) };
+}
+
 /** How the portfolio's photos used the lens: how many, on which cameras, at what, and when. */
 export function lensUse(photos: Photo[], name: string): LensUse {
   const taken = photos.filter((photo) => photo.lens === name);
-  const times = taken.map((photo) => photo.takenAt.getTime());
   const focals = taken.flatMap((photo) => photo.settings.focalLength ?? []);
   return {
     count: taken.length,
     cameras: byCount(taken.map((photo) => photo.camera)),
     favoriteFocal: byCount(focals)[0],
-    first: times.length > 0 ? new Date(Math.min(...times)) : undefined,
-    last: times.length > 0 ? new Date(Math.max(...times)) : undefined,
+    ...takenSpan(taken),
+  };
+}
+
+/** What the portfolio's photos taken with a camera say about it. */
+export interface CameraUse {
+  count: number;
+  /** The lenses used on it, most photos first. */
+  lenses: string[];
+  first?: Date;
+  last?: Date;
+}
+
+/** How the portfolio's photos used the camera: how many, with which lenses, and when. */
+export function cameraUse(photos: Photo[], name: string): CameraUse {
+  const taken = photos.filter((photo) => photo.camera === name);
+  return {
+    count: taken.length,
+    lenses: byCount(taken.flatMap((photo) => photo.lens || [])),
+    ...takenSpan(taken),
   };
 }

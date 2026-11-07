@@ -1,14 +1,15 @@
 import type { ReactNode } from "react";
-import { type CameraKind, cameraKind, type LensSpecs } from "@portfolio/lib/gear-kinds";
+import { type CameraKind, cameraKind, type LensSpecs, lensSpecs } from "@portfolio/lib/gear-kinds";
+import { type GearKind, gearFile } from "@portfolio/lib/gear-pictures";
 
-/** A small line drawing at the size of a list row's icon. */
-function Icon({ children, width = 28 }: { children: ReactNode; width?: number }) {
+/** A small line drawing at the size of a list row's icon, or `scale` times that. */
+function Icon({ children, scale = 1 }: { children: ReactNode; scale?: number }) {
   return (
     <svg
       aria-hidden
-      viewBox={`0 0 ${width} 20`}
-      width={width}
-      height={20}
+      viewBox="0 0 28 20"
+      width={28 * scale}
+      height={20 * scale}
       className="shrink-0 fill-none stroke-current text-muted-foreground"
       strokeWidth={1.3}
       strokeLinejoin="round"
@@ -49,16 +50,40 @@ const CAMERA_DRAWINGS: Record<CameraKind, ReactNode> = {
   ),
 };
 
-/** A little drawing of the kind of camera a model is, such as a DSLR for "Canon EOS 80D". */
-export function CameraGraphic({ name }: { name: string }) {
-  return <Icon>{CAMERA_DRAWINGS[cameraKind(name)]}</Icon>;
+/**
+ * A big picture of a camera or lens for its details: `image` when given, else its own picture
+ * from the Gear Pictures page, else a drawing of its kind of camera or of the lens from its name.
+ */
+export function GearPicture({
+  kind,
+  name,
+  image,
+}: {
+  kind: GearKind;
+  name: string;
+  image?: string;
+}) {
+  const src = image ?? pictureOf(kind, name);
+  if (!src) return <GearDrawing kind={kind} name={name} />;
+  return <img src={src} alt={name} className="max-h-32 w-full rounded-sm object-contain" />;
+}
+
+/** The camera's or lens's own picture from the Gear Pictures page, or "" when it has none. */
+function pictureOf(kind: GearKind, name: string): string {
+  return gearFile(kind, name)?.image ?? "";
+}
+
+/** A big drawing of the lens, from its name, or of the kind of camera it is. */
+function GearDrawing({ kind, name }: { kind: GearKind; name: string }) {
+  if (kind === "lens") return <LensGraphic specs={lensSpecs(name)} />;
+  return <Icon scale={3}>{CAMERA_DRAWINGS[cameraKind(name)]}</Icon>;
 }
 
 /**
  * A lens from the side, longer the longer its focal length and with a zoom ring when it zooms,
  * so a 10–18mm wide angle is short and a 55–250mm telephoto long.
  */
-export function LensGraphic({ specs }: { specs: LensSpecs }) {
+function LensGraphic({ specs }: { specs: LensSpecs }) {
   const [low = 50, high = low] = specs.focal ?? [];
   const length = Math.round(14 + Math.min(56, Math.log2(high / 8) * 12));
   return (

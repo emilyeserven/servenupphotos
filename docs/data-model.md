@@ -19,6 +19,7 @@ The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in 
 | Viewer likes      | `likes/<ID>.json`                                           | `likes/LIKES.json`                 |
 | Trip lines        | `triplines/<DAY>.json`, Trips as `triplines/trip-<ID>.json` | `triplines/TRIPLINES.json`         |
 | Graph presets     | `graphs/<ID>.json`                                          | `graphs/GRAPHS.json`               |
+| Gear pictures     | `gear/<ID>.json`                                            | `gear/GEAR.json`                   |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is

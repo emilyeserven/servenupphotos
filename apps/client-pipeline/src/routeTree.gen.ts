@@ -21,6 +21,7 @@ import { Route as CaptionTemplatesRouteImport } from './routes/caption-templates
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as GearPicturesRouteImport } from './routes/gear-pictures'
 import { Route as GenreSuggestionsRouteImport } from './routes/genre-suggestions'
 import { Route as GraphPresetsRouteImport } from './routes/graph-presets'
 import { Route as InFlightRouteImport } from './routes/in-flight'
@@ -112,6 +113,11 @@ const ExifRoute = ExifRouteImport.update({
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GearPicturesRoute = GearPicturesRouteImport.update({
+  id: '/gear-pictures',
+  path: '/gear-pictures',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenreSuggestionsRoute = GenreSuggestionsRouteImport.update({
@@ -288,6 +294,7 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/gear-pictures': typeof GearPicturesRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
@@ -334,6 +341,7 @@ export interface FileRoutesByTo {
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/gear-pictures': typeof GearPicturesRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
@@ -379,6 +387,7 @@ export interface FileRoutesById {
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/gear-pictures': typeof GearPicturesRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
@@ -427,6 +436,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/gear-pictures'
     | '/genre-suggestions'
     | '/graph-presets'
     | '/in-flight'
@@ -473,6 +483,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/gear-pictures'
     | '/genre-suggestions'
     | '/graph-presets'
     | '/in-flight'
@@ -517,6 +528,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/gear-pictures'
     | '/genre-suggestions'
     | '/graph-presets'
     | '/in-flight'
@@ -564,6 +576,7 @@ export interface RootRouteChildren {
   CompareRoute: typeof CompareRoute
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
+  GearPicturesRoute: typeof GearPicturesRoute
   GenreSuggestionsRoute: typeof GenreSuggestionsRoute
   GraphPresetsRoute: typeof GraphPresetsRoute
   InFlightRoute: typeof InFlightRoute
@@ -678,6 +691,13 @@ declare module '@tanstack/react-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gear-pictures': {
+      id: '/gear-pictures'
+      path: '/gear-pictures'
+      fullPath: '/gear-pictures'
+      preLoaderRoute: typeof GearPicturesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/genre-suggestions': {
@@ -947,6 +967,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompareRoute: CompareRoute,
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
+  GearPicturesRoute: GearPicturesRoute,
   GenreSuggestionsRoute: GenreSuggestionsRoute,
   GraphPresetsRoute: GraphPresetsRoute,
   InFlightRoute: InFlightRoute,
