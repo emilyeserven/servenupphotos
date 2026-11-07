@@ -1,36 +1,29 @@
 import type { ReactNode } from "react";
 import { type GraphType, seriesColor } from "@portfolio/lib/graph-data";
 
-/** What a graph type is for: a line on how it draws, and the data it suits best. */
+/** What a graph type is for: the data it suits best. */
 interface TypeNote {
-  text: string;
   best: string;
 }
 
 /** Each graph type's note. */
 const NOTES: Record<GraphType, TypeNote> = {
   bar: {
-    text: "A bar for each value, as tall as its photos. Split it to stack or line up its parts, such as each year's seasons.",
     best: "A handful to about 20 separate values, such as cameras, lenses or years.",
   },
   line: {
-    text: "A point for each value, joined in order, so the rise and fall between them stands out.",
     best: "Values with an order, such as years, months, or a camera setting from low to high.",
   },
   pie: {
-    text: "A slice for each value, as big as its share of the photos; past 8 slices, the rest go together as Other.",
     best: "Shares of a whole across a few values, such as which cameras took the photos.",
   },
   scatter: {
-    text: "A dot for each pair of values the same photos have, bigger for more photos.",
     best: "How two stats go together, such as aperture against focal length.",
   },
   heatmap: {
-    text: "A cell for every pair of two stats' values, darker for more photos; empty pairs stay gray.",
     best: "Two stats with an order and many pairs, such as time of day by day of the week.",
   },
   photos: {
-    text: "A stack of dots over each value, one dot for every photo, colored by a split.",
     best: "Smaller counts where each photo should show, such as the apertures used.",
   },
 };
@@ -180,7 +173,7 @@ const DIAGRAMS: Record<GraphType, () => ReactNode> = {
 
 /**
  * The Graph type picker's info pane: a little diagram of the type pointed at, or else the one
- * chosen, what it draws, and the data it suits best.
+ * chosen, and under a **Best for** heading, the data it suits best.
  */
 export function GraphTypeInfo({ type, name }: { type: GraphType; name: string }) {
   const Diagram = DIAGRAMS[type];
@@ -196,10 +189,9 @@ export function GraphTypeInfo({ type, name }: { type: GraphType; name: string })
         <Diagram />
       </svg>
       <p className="font-medium">{name}</p>
-      <p className="text-muted-foreground">{note.text}</p>
       <div className="flex flex-col gap-1">
-        <span className="text-xs font-medium text-muted-foreground">Best for</span>
-        <p>{note.best}</p>
+        <h4 className="text-xs font-semibold tracking-wide text-foreground uppercase">Best for</h4>
+        <p className="text-muted-foreground">{note.best}</p>
       </div>
     </div>
   );
