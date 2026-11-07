@@ -108,9 +108,16 @@ On the Timeline, which has its own time range and Quick dates, the picker only h
 
 ## Camera filters
 
-The Grid's filters panel also has **Camera** and **Lens** dropdowns (`?camera=Fujifilm X-T5`,
-`?lens=EF50mm f/1.8 II`; a photo whose EXIF didn't name a lens is under none) and a slider with a handle at each end
-for each of **ISO**, **Exposure**, **Focal length** and **Aperture**. A slider steps through the values the portfolio's
+The Grid's filters panel also has a **Camera** button after **When** that opens one picker for the camera filters. Its
+left side lists **Cameras**, **Lenses**, **Focal length**, **Aperture**, **Exposure** and **ISO**, each with what it's set
+to under its name ("Any" while it isn't) and a dot while it's set; the right side shows the chosen one's choices. Unlike
+**When**, any number of them can be set at once, and the button's badge counts how many are. The picker opens on the
+first one that's set.
+
+**Cameras** and **Lenses** list every camera or lens (`?camera=Fujifilm X-T5`, `?lens=EF50mm f/1.8 II`; a photo whose
+EXIF didn't name a lens is under none) with how many photos each would show; **All cameras** or **All lenses** comes
+first, and clicking the checked one again goes back to all. The four camera settings each have a slider with a handle
+at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,
 `?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. A
@@ -118,7 +125,7 @@ photo without the setting isn't in any range.
 
 The hours of the day are in the [When](#when) picker, which every view with filters has.
 
-**Orientation** sits after the sliders: a horizontal and a vertical rectangle button, each with how many photos the
+**Orientation** sits after the **Camera** button: a horizontal and a vertical rectangle button, each with how many photos the
 other filters leave have that orientation. Clicking one shows only the photos wider than they're tall
 (`?orientation=horizontal`) or taller than they're wide (`?orientation=vertical`); clicking it again, or its X, clears
 it. A square photo is neither, so it's only shown while no orientation is chosen. The photo's size is the one its JSON
@@ -140,11 +147,11 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
   `?cameraGroup=<id>`) shows the photos taken with any value it or a group inside it lists; choosing a group clears a
   chosen name and the other way round. A group that would show no photos, given the other filters, isn't listed,
   unless it's the one chosen.
-- **ISO**, **Exposure**, **Focal length** and **Aperture** each get a small dropdown to the right of the slider,
-  listing a quick pick for each of their groups. Each pick shows the lowest and highest values the photos actually have
+- **ISO**, **Exposure**, **Focal length** and **Aperture** each list a quick pick for each of their groups under the
+  slider. Each pick shows the lowest and highest values the photos actually have
   inside the group's range, not the range as it's set: a **Moderate** ISO group of 201 to 1600 shows **250 – 1600 ISO**
   when those are the photos' nearest values, and Wide angle's 10 to 24 mm shows **11mm – 24mm** when no photo was taken
-  at 10 mm. Choosing one moves the handles to those values (`?focalLength=11-24`) and closes the list; the list checks
+  at 10 mm. Choosing one moves the handles to those values (`?focalLength=11-24`); the list checks
   the one the slider is set to, and choosing that one again clears the slider. A group's range runs from the lowest to
   the highest end of its own range, its values and those of every group in it; a range with only a `min` runs up from
   it, and one with only a `max` up to it. A group no photo is in isn't listed.

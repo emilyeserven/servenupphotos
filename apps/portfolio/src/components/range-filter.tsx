@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
-import { type RangePreset, RangePresets } from "@portfolio/components/range-presets";
 import { Slider } from "@portfolio/components/ui/slider";
 import { parseRange } from "@portfolio/lib/camera-filters";
 /** The value's position among the values, or `fallback` when it isn't one of them. */
@@ -26,8 +25,7 @@ function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | unde
  * steps through `values`, the ones the photos have, lowest first, so each step shows a different
  * set of photos; `write` writes one the way a photographer does, such as "f/5.6". `range` is the
  * one set, as "low-high", and `onChange` gets the new one once a handle is let go, or undefined
- * when the handles are back at the ends or its X is clicked. `presets` are the metadata groups of the setting, listed in a
- * dropdown to the right of the slider as quick picks. `writeHigh`, when given, writes the range's
+ * when the handles are back at the ends or its X is clicked. Its quick picks are listed apart, by `RangePresetList`. `writeHigh`, when given, writes the range's
  * high end instead, such as the last minute of an hour.
  */
 export function RangeFilter({
@@ -36,7 +34,6 @@ export function RangeFilter({
   range,
   write,
   writeHigh = write,
-  presets,
   onChange,
 }: {
   label: string;
@@ -44,7 +41,6 @@ export function RangeFilter({
   range: string | undefined;
   write: (value: string) => string;
   writeHigh?: (value: string) => string;
-  presets: RangePreset[];
   onChange: (range: string | undefined) => void;
 }) {
   const committed = positionsOf(values, range);
@@ -55,7 +51,7 @@ export function RangeFilter({
     <div
       role="group"
       aria-label={label}
-      className="flex w-full flex-col sm:w-52 gap-2 rounded-md border px-3 py-2"
+      className="flex w-full flex-col gap-2 rounded-md border px-3 py-2"
     >
       <div className="flex h-5 items-center justify-between gap-2 text-xs">
         <span className="font-medium whitespace-nowrap text-muted-foreground">{label}</span>
@@ -70,23 +66,20 @@ export function RangeFilter({
           <ClearFilterButton label={label} onClear={() => onChange(undefined)} className="-mr-1" />
         )}
       </div>
-      <div className="flex items-center gap-2">
-        <Slider
-          min={0}
-          max={Math.max(0, values.length - 1)}
-          step={1}
-          minStepsBetweenThumbs={0}
-          value={[low, high]}
-          disabled={values.length < 2}
-          onValueChange={setDragging}
-          onValueCommit={(next) => {
-            setDragging(null);
-            onChange(rangeOf(values, next));
-          }}
-          className="py-1"
-        />
-        <RangePresets label={label} presets={presets} range={range} onChange={onChange} />
-      </div>
+      <Slider
+        min={0}
+        max={Math.max(0, values.length - 1)}
+        step={1}
+        minStepsBetweenThumbs={0}
+        value={[low, high]}
+        disabled={values.length < 2}
+        onValueChange={setDragging}
+        onValueCommit={(next) => {
+          setDragging(null);
+          onChange(rangeOf(values, next));
+        }}
+        className="py-1"
+      />
     </div>
   );
 }
