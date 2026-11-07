@@ -56,7 +56,7 @@ export function CropLimitLines() {
     <div
       key={side}
       aria-hidden
-      className="pointer-events-none absolute border-0 border-rose-500 bg-rose-500/10"
+      className="pointer-events-none absolute z-20 border-0 border-rose-500 bg-rose-500/10"
       style={LINE_PLACES[side](`${limits[side]}%`)}
     />
   ));

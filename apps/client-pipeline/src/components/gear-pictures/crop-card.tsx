@@ -17,6 +17,9 @@ const CHECKER = {
   backgroundSize: "16px 16px",
 };
 
+/** How opaque a chosen picture is: mostly, so the others still show through it a little. */
+const CHOSEN_OPACITY = 0.85;
+
 /** What the card is called, by the kind of gear it crops. */
 const TITLES: Record<GearKind, string> = { camera: "Camera crops", lens: "Lens crops" };
 
@@ -72,7 +75,8 @@ function CropFrame({ bulk, overlay }: { bulk: BulkCrop; overlay: number }) {
           key={entry.file.id}
           entry={entry}
           bulk={bulk}
-          opacity={bulk.chosen.has(entry.file.id) ? 1 : overlay}
+          chosen={bulk.chosen.has(entry.file.id)}
+          opacity={bulk.chosen.has(entry.file.id) ? CHOSEN_OPACITY : overlay}
         />
       ))}
       <CenterLines />
@@ -85,10 +89,12 @@ function CropFrame({ bulk, overlay }: { bulk: BulkCrop; overlay: number }) {
 function FramedPicture({
   entry,
   bulk,
+  chosen,
   opacity,
 }: {
   entry: CropEntry;
   bulk: BulkCrop;
+  chosen: boolean;
   opacity: number;
 }) {
   const { file, original, crop } = entry;
@@ -99,7 +105,7 @@ function FramedPicture({
       alt=""
       draggable={false}
       className="pointer-events-none"
-      style={{ ...placed, opacity, zIndex: opacity === 1 ? 1 : 0 }}
+      style={{ ...placed, opacity, zIndex: Number(chosen) }}
       onLoad={(e) => {
         const size: [number, number] = [
           e.currentTarget.naturalWidth,
