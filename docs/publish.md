@@ -130,7 +130,8 @@ sub-albums, in the album's order (see [Portfolio Albums](portfolio-albums.md)). 
 Each zone is a card with an **Album** picker and the photos the zone will show, read from `ALLPHOTOS.json` in the
 [combined data store](combined-data-store.md). Picking an album (`PUT /api/organize/spotlight/<zone>` with
 `{ "album": "<id>" | null }`) saves the zone in that album file's `spotlightZones`, a list of zone IDs, and takes it out
-of every other album's, so a zone has one album at a time. Like other album changes, it's a
+of every other album's, so a zone has one album at a time. The album that gets the zone also gets the day in its `spotlightUpdated`, such as
+`{ "homepage": "2026-11-07" }`, which the [Dashboard](dashboard.md) shows. Like other album changes, it's a
 [change waiting for Commit](pending-changes.md). Photos are added to an album on the Gallery or a photo's page (see
 [Albums and Tags](albums-and-tags.md)).
 

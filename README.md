@@ -96,7 +96,8 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Tags](docs/portfolio-tags.md) (`/tags` on the portfolio): every tag with a few of its photos, grouped under parent tags, each linking to the Grid
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
-- [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets
+- [Dashboard](docs/dashboard.md) (`/`): the home page, with the next Lightroom albums, drafts, Compare sets, Instagram queue and Site Spotlight dates
+- [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check
 - [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and Tag Data (`/tag-data`) for bulk tagging, the whole tag library, pruning and tag descriptions
 - [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
@@ -171,7 +172,7 @@ The pipeline runs as two containers:
    docker compose up -d --build
    ```
 
-3. Open <http://localhost:8080>. The status page should show both the BFF and the backend as `ok`.
+3. Open <http://localhost:8080>. **Settings › Status** (`/settings/status`) should show both the BFF and the backend as `ok`.
 
 This runs the production builds, so code changes need another `docker compose up -d --build`. While developing, use
 `pnpm dev:docker` instead (see [Pipeline in Docker with hot reload](#pipeline-in-docker-with-hot-reload)).

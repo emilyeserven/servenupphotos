@@ -79,6 +79,8 @@ each stage (Cull Round 1 to Re-editing, then No stage), leaving out albums that 
 - At the same stage, and in each stage's list, the album with fewer photos comes first, as the quicker one to finish.
   Albums whose photo count wasn't read go after the ones with a count.
 
+The [Dashboard](dashboard.md) shows the same lists, Overview or one stage at a time.
+
 The **Online / Offline** switch (remembered in the browser) says whether you have the internet. **Offline** suggests
 only the albums Lightroom keeps on the device, the ones with the **Offline** mark, and leaves the mark off them
 there, since every suggestion is offline.

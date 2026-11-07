@@ -18,7 +18,7 @@ const APP_NAME = "Photo Pipeline";
 
 /**
  * The browser tab's title: the photo's name when there is one, then the page, then the app, each
- * once, so the Status page, which is named after the app, isn't named twice.
+ * once, so a page named after the app, isn't named twice.
  */
 export function tabTitle(page: string, subject: string | null): string {
   const parts = [subject, page, APP_NAME].filter((part): part is string => Boolean(part));

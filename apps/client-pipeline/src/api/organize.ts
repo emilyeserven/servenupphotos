@@ -32,6 +32,11 @@ export interface Group {
   /** The IDs of the portfolio's spotlight spots that show an album's photos, such as "homepage". */
   spotlightZones?: string[];
   /**
+   * The day, as YYYY-MM-DD, each of an album's spotlight zones was last given to it on Site
+   * Spotlight; a zone is missing when it was picked before these days were kept.
+   */
+  spotlightUpdated?: Record<string, string>;
+  /**
    * The IDs of an album's photos in the order the portfolio shows them, set on its page; absent or
    * empty for the default order. Photos it leaves out come after the ones it lists.
    */

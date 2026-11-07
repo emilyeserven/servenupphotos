@@ -1,4 +1,5 @@
 import {
+  ActivityIcon,
   ApertureIcon,
   BookImageIcon,
   CalendarDaysIcon,
@@ -122,6 +123,7 @@ export const navGroups: readonly NavGroup[] = [
         url: "/settings",
         icon: SettingsIcon,
         children: [
+          { title: "Status", url: "/settings/status", icon: ActivityIcon },
           { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon },
           { title: "Manage Sizes", url: "/sizes", icon: ScalingIcon },
         ],
