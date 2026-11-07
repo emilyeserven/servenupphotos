@@ -40,13 +40,14 @@ Rules:
 - Look each place up on a map to check it's the place and where it is: Google Maps, or for a place in South Korea, Naver Map or Kakao Map, which show much more there than Google Maps does. Put the link to the place on that map in "mapUrl", or "" when you can't link to it.
 - Trust what's already known unless the photo clearly contradicts it, and say so in "reasoning" when it does.
 - Name the most specific place you can recognize. If it's one of the existing places listed below, spell it exactly as it's listed. Give photos taken at the same place the same name, spelled the same way.
+- "wikidata" is the place's Wikidata item ID, such as "Q1490", for an item that is this exact place (not its city or a similar place). Look it up on wikidata.org to check it; "" when there isn't one or you aren't sure. It's only used to fetch the place's outline from OpenStreetMap, so never give coordinates for the outline yourself.
 - "parent" is an existing place, spelled exactly as it's listed, that the place is in, such as Gyeongbokgung Palace for Geunjeongmun Gate; or "" for none.
 ${PLACE_NAME_RULES}
 ${POSITION_RULES}
 - Answer with only this JSON, with nothing before or after it, and every photo listed once by its name in quotes above:
 {
   "photos": [
-    { "photo": "the photo's name", "place": "", "parent": "", "relation": "", "city": "", "state": "", "country": "", "latitude": null, "longitude": null, "exact": false, "mapUrl": "", "confidence": "", "reasoning": "" }
+    { "photo": "the photo's name", "place": "", "parent": "", "relation": "", "city": "", "state": "", "country": "", "latitude": null, "longitude": null, "exact": false, "mapUrl": "", "wikidata": "", "confidence": "", "reasoning": "" }
   ]
 }
 
@@ -62,6 +63,14 @@ export interface PastedPhotoPlace extends PastedLocation {
   parent: string;
   /** The answer's link to the place on a map, when it's a web link; otherwise "". */
   mapUrl: string;
+  /** The place's Wikidata item ID, such as "Q1490", when the answer gives one; otherwise "". */
+  wikidata: string;
+}
+
+/** value when it's a Wikidata item ID such as "Q1490", in capitals, or else "". */
+function wikidataId(value: unknown): string {
+  const id = str(value).toUpperCase();
+  return /^Q\d+$/.test(id) ? id : "";
 }
 
 /** url when it's an http or https link, or else "". */
@@ -76,7 +85,13 @@ function readPhoto(value: unknown): PastedPhotoPlace | null {
   const item = value as Record<string, unknown>;
   const photo = str(item.photo).replace(/\.json$/i, "");
   if (!photo) return null;
-  return { ...readLocation(item), photo, parent: str(item.parent), mapUrl: webLink(item.mapUrl) };
+  return {
+    ...readLocation(item),
+    photo,
+    parent: str(item.parent),
+    mapUrl: webLink(item.mapUrl),
+    wikidata: wikidataId(item.wikidata),
+  };
 }
 
 /** Each photo in the LLM's answer, or null when it has no JSON object with a list of photos. */

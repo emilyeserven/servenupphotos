@@ -23,6 +23,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/memo"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/throttle"
 )
 
@@ -78,6 +79,8 @@ type Client struct {
 	HTTP         *http.Client
 	// Gate spaces requests out, as the servers ask.
 	Gate throttle.Gate
+	// Cache keeps the areas already found, by query, for a day; nil keeps none.
+	Cache *memo.Cache[[]Area]
 }
 
 // New is a client for NOMINATIM_URL and WIKIDATA_URL, or else the defaults.
@@ -87,6 +90,7 @@ func New() *Client {
 		WikidataURL:  envURL("WIKIDATA_URL", DefaultWikidataURL),
 		HTTP:         &http.Client{Timeout: 15 * time.Second},
 		Gate:         throttle.Gate{Gap: time.Second},
+		Cache:        memo.New[[]Area](24*time.Hour, 100),
 	}
 }
 
@@ -102,6 +106,19 @@ func envURL(name, def string) string {
 // Castle Park", or a Wikidata item ID, such as Q1490.
 func (c *Client) Find(ctx context.Context, query string) ([]Area, error) {
 	query = strings.TrimSpace(query)
+	if found, ok := c.Cache.Get(query); ok {
+		return found, nil
+	}
+	found, err := c.find(ctx, query)
+	if err == nil {
+		c.Cache.Put(query, found)
+	}
+	return found, err
+}
+
+// find asks the servers for query's areas: one request to Nominatim for a
+// name, or one to Wikidata and one to Nominatim for a Wikidata item ID.
+func (c *Client) find(ctx context.Context, query string) ([]Area, error) {
 	if qid.MatchString(query) {
 		return c.wikidata(ctx, query)
 	}

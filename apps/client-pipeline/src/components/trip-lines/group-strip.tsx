@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronRight, Eye, EyeOff, Merge } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, EyeOff, Merge, Shuffle } from "lucide-react";
 import { useState } from "react";
 import type { TripVisit } from "@/api/trip-lines";
 import { GroupAreaButton } from "@/components/trip-lines/group-area-button";
@@ -9,7 +9,9 @@ import { Input } from "@/components/ui/input";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type GapDraft, withGap } from "@/lib/trip-gaps";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
-import { visitsAfter } from "@/lib/trip-visits";
+import { insertedVisit, movedVisit, visitsAfter } from "@/lib/trip-visits";
+import { VisitInsert } from "@/components/trip-lines/visit-insert";
+import { isWandered, withWandered } from "@/lib/trip-wander";
 
 interface GroupStripProps {
   photos: TripPhoto[];
@@ -19,18 +21,22 @@ interface GroupStripProps {
   /** The name of the group shown on its own on the map. */
   focus?: string;
   onFocus: (name: string | undefined) => void;
+  /** Moves a photo one place earlier or later in the day. */
+  onMove: (id: number, by: -1 | 1) => void;
 }
 
 /**
  * The day's photos in groups, each its own named line: a group starts wherever the photos' place
  * changes, or at a photo split off by hand. Each group collapses to its header.
  */
-export function GroupStrip({ photos, draft, onChange, onHover, focus, onFocus }: GroupStripProps) {
+export function GroupStrip(props: GroupStripProps) {
+  const { photos, draft, onChange, onHover, focus, onFocus, onMove } = props;
   const ids = photos.map((p) => p.id);
   const groups = photoGroups(ids, draft.groups);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
   const toggle = (key: string) =>
     setCollapsed((c) => new Set(c.has(key) ? [...c].filter((k) => k !== key) : [...c, key]));
+  const onMoveVisit = (visit: TripVisit, by: -1 | 1) => onChange(movedVisit(draft, visit, ids, by));
   return (
     <ol
       className="flex items-start gap-2 overflow-x-auto pb-2"
@@ -42,7 +48,9 @@ export function GroupStrip({ photos, draft, onChange, onHover, focus, onFocus }:
             <GroupGap
               draft={draft}
               group={g}
+              photos={photos}
               onChange={onChange}
+              onMoveVisit={onMoveVisit}
               before={visitsAfter(draft.visits, ids[g.start - 1])}
             />
           )}
@@ -56,6 +64,8 @@ export function GroupStrip({ photos, draft, onChange, onHover, focus, onFocus }:
             onToggle={() => toggle(g.key)}
             focus={focus}
             onFocus={onFocus}
+            onMove={onMove}
+            onMoveVisit={onMoveVisit}
           />
         </li>
       ))}
@@ -66,17 +76,30 @@ export function GroupStrip({ photos, draft, onChange, onHover, focus, onFocus }:
 interface GroupGapProps {
   draft: GapDraft;
   group: PhotoGroup;
+  photos: TripPhoto[];
   onChange: (draft: GapDraft) => void;
+  onMoveVisit: (visit: TripVisit, by: -1 | 1) => void;
   /** The places visited on the route between the two groups. */
   before: TripVisit[];
 }
 
 /** What happened between two groups, the places visited there, and joining the two. */
-function GroupGap({ draft, group, onChange, before }: GroupGapProps) {
+function GroupGap({ draft, group, photos, onChange, onMoveVisit, before }: GroupGapProps) {
+  const [a, b] = [photos[group.start - 1], photos[group.start]];
   return (
     <div className="flex flex-col items-center gap-1 pt-9">
-      <VisitChips visits={before} />
+      {before.length > 0 && (
+        <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
+      )}
+      <VisitChips visits={before} onMove={onMoveVisit} />
       <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
+      {a && b && (
+        <VisitInsert
+          a={a}
+          b={b}
+          onInsert={(visit) => onChange(insertedVisit(draft, visit, a.id))}
+        />
+      )}
       <Button
         variant="ghost"
         size="icon"
@@ -138,6 +161,8 @@ interface GroupBoxProps {
   onToggle: () => void;
   focus?: string;
   onFocus: (name: string | undefined) => void;
+  onMove: (id: number, by: -1 | 1) => void;
+  onMoveVisit: (visit: TripVisit, by: -1 | 1) => void;
 }
 
 /** One group: its name, how many photos, collapsing and showing it alone, and its photos. */
@@ -154,6 +179,9 @@ function GroupBox(props: GroupBoxProps) {
           onGap={(i, gap) => onChange(withGap(draft, i, gap))}
           onHover={onHover}
           onSplit={(id) => onChange(withGroupStart(draft, id, true))}
+          onMove={props.onMove}
+          onMoveVisit={props.onMoveVisit}
+          onInsertVisit={(after, visit) => onChange(insertedVisit(draft, visit, after))}
           visits={draft.visits}
         />
       )}
@@ -190,8 +218,37 @@ function GroupHeader({
         {group.end - group.start} photos
       </span>
       <FocusButton name={name.trim()} focus={focus} onFocus={onFocus} />
+      <WanderButton group={group} draft={draft} onChange={onChange} />
       <GroupAreaButton place={photos[group.start]?.place} />
     </div>
+  );
+}
+
+interface WanderButtonProps {
+  group: PhotoGroup;
+  draft: GapDraft;
+  onChange: (draft: GapDraft) => void;
+}
+
+/**
+ * Marks the group as an area wandered with no set route, such as a hike: no line through its
+ * photos, and the lines before and after it run to its entrance and from its exit once those are
+ * set under the map. Pressed again, its photos are walked through again.
+ */
+function WanderButton({ group, draft, onChange }: WanderButtonProps) {
+  const on = isWandered(draft, group);
+  return (
+    <Button
+      variant={on ? "secondary" : "ghost"}
+      size="icon"
+      className="size-7"
+      aria-pressed={on}
+      disabled={group.end - group.start < 2}
+      title={on ? "Walk through these photos again" : "Wandered this area with no set route"}
+      onClick={() => onChange(withWandered(draft, group, !on))}
+    >
+      <Shuffle className="size-4" aria-hidden />
+    </Button>
   );
 }
 

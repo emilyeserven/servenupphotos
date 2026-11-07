@@ -1,5 +1,3 @@
-import { useSearch } from "@tanstack/react-router";
-import { useState } from "react";
 import type { CombinedData } from "@/api/photos";
 import { type TripLine, tripLines } from "@/api/trip-lines";
 import { GitHubGate } from "@/components/organize-page";
@@ -9,6 +7,7 @@ import { DayList } from "@/components/trip-lines/day-list";
 import { TripsPanel } from "@/components/trips/trips-panel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { lineDays, staleTripLines } from "@/lib/stale-trip-lines";
+import { useTripLinesSearch } from "@/lib/trip-lines-search";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** The Trip Lines page: each day's route, drawn on the portfolio's map. */
@@ -33,8 +32,12 @@ function Days() {
 
 /** The days' lines, and the Trips that add the legs between days, each on a tab. */
 function DaysAndTrips({ data }: { data: CombinedData }) {
+  const { search, set } = useTripLinesSearch();
   return (
-    <Tabs defaultValue="days">
+    <Tabs
+      value={search.tab ?? "days"}
+      onValueChange={(tab) => set({ tab: tab === "trips" ? "trips" : undefined })}
+    >
       <TabsList>
         <TabsTrigger value="days">Days</TabsTrigger>
         <TabsTrigger value="trips">Trips</TabsTrigger>
@@ -53,10 +56,9 @@ function DaysAndTrips({ data }: { data: CombinedData }) {
 function DayChooser({ data }: { data: CombinedData }) {
   const days = lineDays(data);
   const lines: Map<string, TripLine> = tripLines(data);
-  const linked = useSearch({ from: "/trip-lines" }).day;
-  const [chosen, setChosen] = useState(() => linked ?? days[0]?.day);
+  const { search, set } = useTripLinesSearch();
   const stale = new Set(staleTripLines(data).map((s) => s.day));
-  const day = days.find((d) => d.day === chosen) ?? days[0];
+  const day = days.find((d) => d.day === search.day) ?? days[0];
   if (!day) {
     return (
       <p className="text-muted-foreground text-sm">
@@ -66,7 +68,13 @@ function DayChooser({ data }: { data: CombinedData }) {
   }
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
-      <DayList days={days} lines={lines} stale={stale} chosen={day.day} onChoose={setChosen} />
+      <DayList
+        days={days}
+        lines={lines}
+        stale={stale}
+        chosen={day.day}
+        onChoose={(chosen) => set({ day: chosen, group: undefined })}
+      />
       <DayEditor key={day.day} day={day} line={lines.get(day.day)} />
     </div>
   );

@@ -1,8 +1,8 @@
-import { useState } from "react";
 import type { TripLine } from "@/api/trip-lines";
 import { dayTitle } from "@/components/trip-lines/day-title";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TripDay } from "@/lib/trip-days";
+import { type DayFilter, useTripLinesSearch } from "@/lib/trip-lines-search";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,6 +21,16 @@ const STATUS_CLASS: Record<LineStatus, string> = {
   None: "text-muted-foreground",
 };
 
+/** A filter's label as the URL writes it, such as "out-of-date"; none for All. */
+function filterParam(label: (typeof FILTERS)[number]): DayFilter | undefined {
+  return label === "All" ? undefined : (label.toLowerCase().replaceAll(" ", "-") as DayFilter);
+}
+
+/** The filter the URL names, All unless it names one. */
+function filterOf(show: DayFilter | undefined): (typeof FILTERS)[number] {
+  return FILTERS.find((f) => filterParam(f) === show) ?? "All";
+}
+
 function statusOf(line: TripLine | undefined, stale: Set<string>): LineStatus {
   if (!line) return "None";
   if (line.auto) return "Automatic";
@@ -38,7 +48,8 @@ interface DayListProps {
 
 /** The days a trip line can be marked for, newest first, with each one's status and a filter by it. */
 export function DayList({ days, lines, stale, chosen, onChoose }: DayListProps) {
-  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
+  const { search, set } = useTripLinesSearch();
+  const filter = filterOf(search.show);
   const shown = days.filter(
     (d) => filter === "All" || statusOf(lines.get(d.day), stale) === filter,
   );
@@ -53,7 +64,7 @@ export function DayList({ days, lines, stale, chosen, onChoose }: DayListProps) 
               key={f}
               type="button"
               aria-pressed={filter === f}
-              onClick={() => setFilter(f)}
+              onClick={() => set({ show: filterParam(f) })}
               className={cn(
                 "rounded-md border px-2 py-0.5 text-xs",
                 filter === f && "bg-muted font-medium",

@@ -31,8 +31,39 @@ export function AreaSearch({ initial, onPick }: { initial: string; onPick: (area
           {found.isFetching ? "Looking…" : "Find an area"}
         </Button>
       </form>
+      <LookUpLinks text={text} />
       <AreaResults asked={asked} found={found} onPick={onPick} />
     </div>
+  );
+}
+
+/**
+ * Links that look the text up on OpenStreetMap's own search page (Nominatim's, the same search
+ * Find an area asks) and on Wikidata, in a new tab, so the exact name or a Wikidata ID can be found
+ * there before asking here.
+ */
+function LookUpLinks({ text }: { text: string }) {
+  const q = encodeURIComponent(text.trim());
+  return (
+    <p className="text-muted-foreground flex flex-wrap gap-x-3 text-xs">
+      <span>Look it up first:</span>
+      <a
+        className="underline underline-offset-4"
+        href={`https://nominatim.openstreetmap.org/ui/search.html?q=${q}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        OpenStreetMap names
+      </a>
+      <a
+        className="underline underline-offset-4"
+        href={`https://www.wikidata.org/w/index.php?search=${q}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        Wikidata IDs
+      </a>
+    </p>
   );
 }
 

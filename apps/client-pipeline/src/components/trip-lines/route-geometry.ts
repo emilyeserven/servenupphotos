@@ -51,14 +51,15 @@ function colourOf(segment: TripSegment): string {
   return segment.line?.colour || HOP_COLOUR;
 }
 
-/** The segments as GeoJSON lines with their mode, the way the map draws them. */
+/** The segments as GeoJSON lines with their mode, the way the map draws them; a wander draws none. */
 export function lineFeatures(
   segments: TripSegment[],
   photos: TripPhoto[],
   focus?: string,
 ): LineCollection {
   const byId = new Map(photos.map((p) => [p.id, p]));
-  const features = segments.flatMap((segment): LineFeature[] => {
+  const drawn = segments.filter((segment) => segment.mode !== "wander");
+  const features = drawn.flatMap((segment): LineFeature[] => {
     const coordinates = segmentCoordinates(segment, byId);
     if (coordinates.length < 2) return [];
     const props = lineProps(segment, focus);

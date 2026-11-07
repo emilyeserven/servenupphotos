@@ -37,7 +37,17 @@ function photoPoints(segment: TripSegment, id: number, byId: Map<number, TripPho
   const photo = byId.get(id);
   if (!photo) return [];
   const key = String(id);
-  return [{ at: lngLat(photo), key, index: -1 }, ...viaPoints(segment.via ?? [], key, id)];
+  const at = lngLat(areaEnd(segment, id) ?? photo);
+  return [{ at, key, index: -1 }, ...viaPoints(segment.via ?? [], key, id)];
+}
+
+/**
+ * The spot drawn instead of photo id: the exit of the area the segment's first photo is in, or the
+ * entrance of the area its last one is in, when set (as after wandering a park); none otherwise.
+ */
+function areaEnd(segment: TripSegment, id: number): TripPoint | undefined {
+  if (id === segment.photos[0] && segment.from) return segment.from;
+  return id === segment.photos.at(-1) ? segment.to : undefined;
 }
 
 /** The end spot, as a line point; nothing comes after it. */
