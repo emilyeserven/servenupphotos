@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { CameraPicker } from "@portfolio/components/camera-picker";
 import type { BlockerSource } from "@portfolio/lib/camera-blockers";
 import { type OwnFilters, PhotoFilterBar } from "@portfolio/components/photo-filters";
-import { OrientationFilter } from "@portfolio/components/orientation-filter";
 import type { Photo } from "@portfolio/lib/photos";
 import { filterPhotos, parseFilters } from "@portfolio/lib/photo-filters";
 import {
@@ -11,9 +10,7 @@ import {
   filterByCamera,
   type CameraFilters,
   parseCameraFilters,
-  withoutCameraFilters,
 } from "@portfolio/lib/camera-filters";
-import { ORIENTATION_KEY, orientationCounts } from "@portfolio/lib/orientation";
 import { parseTextSearch, searchPhotos } from "@portfolio/lib/text-search";
 
 /** Sets some of the camera filters in the URL, keeping everything else. */
@@ -30,9 +27,10 @@ function useSetCameraFilters() {
 
 /**
  * The camera filters, after the shared ones on the Table and Grid: the **Gear & settings** picker, for the
- * camera, lens, focal length, aperture, exposure and ISO, and the **Orientation** buttons.
+ * camera, lens, focal length, aperture, exposure and ISO. The orientation, though a camera filter
+ * in the URL, is in the Grid's **Visuals** picker.
  * `photos` is the photos the shared filters leave, which the picker's counts are out of, given the
- * other filters here, and `source` what's needed to say which filters hide a choice. `children` go after them, in the filters' row, such as the Grid's **Colors**.
+ * other filters here, and `source` what's needed to say which filters hide a choice. `children` go after them, in the filters' row, such as the Grid's **Visuals**.
  */
 function CameraFilterControls({
   photos,
@@ -49,13 +47,6 @@ function CameraFilterControls({
   return (
     <>
       <CameraPicker photos={photos} filters={filters} source={source} onChange={setFilters} />
-      <OrientationFilter
-        orientation={filters[ORIENTATION_KEY]}
-        counts={orientationCounts(
-          filterByCamera(photos, withoutCameraFilters(filters, [ORIENTATION_KEY])),
-        )}
-        onChange={(orientation) => setFilters({ [ORIENTATION_KEY]: orientation })}
-      />
       {children}
     </>
   );
@@ -66,7 +57,7 @@ const NO_EXTRA: OwnFilters = { keys: [], count: 0, children: null };
 /**
  * The filter bar of the Table and Grid: the shared filters every view has, then the camera
  * filters, all in one **Show filters** panel, so both views always offer the same ones. `extra`
- * are a view's own filters after those, in the sliders' row, such as the Grid's **Colors**.
+ * are a view's own filters after those, in the sliders' row, such as the Grid's **Visuals**.
  * `searchable` adds the text search box, which the camera filters' counts then leave out too.
  */
 export function CameraFilterBar({

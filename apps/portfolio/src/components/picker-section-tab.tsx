@@ -1,6 +1,6 @@
 import { cn } from "@portfolio/lib/utils";
 
-/** A section in a picker's left list, such as the Colors or Graph type picker: its name, with what it's set to under it. */
+/** A section in a picker's left list, such as the Visuals or Graph type picker: its name, with what it's set to under it. */
 export function SectionTab({
   label,
   text,
@@ -24,7 +24,7 @@ export function SectionTab({
       )}
     >
       <span className="font-medium">{label}</span>
-      <span className="w-full truncate text-xs text-muted-foreground">{text}</span>
+      <span className="line-clamp-2 w-full text-xs text-muted-foreground">{text}</span>
     </button>
   );
 }

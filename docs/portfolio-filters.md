@@ -2,7 +2,7 @@
 
 The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens
 filters that narrow the photos they show: **Places**, [Groups](#groups-album-tag-and-genre) and [When](#when) (**Hide filters** closes them again). The
-Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** button, which opens the Color page's color filters (see
+Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Visuals** button, which opens the Color page's color filters and **Orientation** (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
 beside it. Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
@@ -131,20 +131,30 @@ under it a level up, then any camera or lens it doesn't list), and **Name**, eve
 that lists the chosen one. A choice that would show no photos given the other
 filters is left out, unless chosen; **Show N choices hidden by the other filters** lists them dimmed, and hovering one
 says which filters hide it: each one that, cleared alone, would let it show photos ("Hidden by Aperture or Lens"), or
-"the other filters together" when no single one would. The four camera settings each have a slider with a handle
+"the other filters together" when no single one would. Each camera has a little drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name). Hovering
+a lens by name shows its details to the right: a side view of it, longer for a longer focal length and with a zoom ring
+when it zooms; its focal length, whether it's a prime or zoom, and its widest aperture, read from its name; and how many
+photos used it, on which cameras, at which focal length most, and from when to when. The four camera settings each have a slider with a handle
 at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,
-`?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. A
+`?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. Each setting's title sits above its slider, which has a tick under it for every step and its lowest and highest values
+at its ends. The **(i)** button across from the title opens an info pane to the right (on phones, a full-width
+**Show info** button under the quick picks opens it below) with little
+graphics of what its two ends look like, following the handles as they're dragged: the angle of view for focal length, the opening for aperture, a dial
+filled for longer exposures, and grain for ISO, with a sentence on what the setting does. Clicking it again closes it;
+the browser remembers which, for every setting. A
 photo without the setting isn't in any range.
 
 The hours of the day are in the [When](#when) picker, which every view with filters has.
 
-**Orientation** sits after the **Gear & settings** button: a horizontal and a vertical rectangle button, each with how many photos the
-other filters leave have that orientation. Clicking one shows only the photos wider than they're tall
-(`?orientation=horizontal`) or taller than they're wide (`?orientation=vertical`); clicking it again, or its X, clears
-it. A square photo is neither, so it's only shown while no orientation is chosen. The photo's size is the one its JSON
-file saves (`width` and `height`), so a photo not uploaded to R2 yet has no orientation either.
+**Orientation** is a section of the **Visuals** picker (see
+[Portfolio Color](portfolio-color.md#on-the-grid-page)): a list of **Horizontal**, **Vertical** and **Square**, each
+drawn as an outlined shape of its proportions, with how many photos the other filters (colors too) leave have that
+orientation. Clicking one shows only the photos wider than they're tall (`?orientation=horizontal`), taller than
+they're wide (`?orientation=vertical`), or exactly as wide as they're tall (`?orientation=square`); clicking it again
+clears it. The photo's size is the one its JSON file saves (`width` and `height`), so a photo not uploaded to R2 yet
+has no orientation.
 
 The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and **Clear filters** clears them too.
 
