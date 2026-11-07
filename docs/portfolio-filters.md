@@ -1,7 +1,7 @@
 # Portfolio Filters
 
-The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens three
-filters that narrow the photos they show: **Places**, **Album**, **Tag** and **Genre** (**Hide filters** closes them again). The
+The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens
+filters that narrow the photos they show: **Places**, **Album**, **Tag**, **Genre** and the [when filters](#time-of-day-time-of-year-and-day-of-the-week) (**Hide filters** closes them again). The Stats page has the same filters as the Grid. The
 Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** section, the Color page's color filters (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
@@ -76,6 +76,21 @@ the **Show filters** button, and **Clear filters** clears it.
 shows the photos in it and in any album inside it. **Tag** lists every tag in `ALLTAGS.json` (`?tag=<id>`), each [under its parent tag](albums-and-tags.md#parent-tags); choosing one shows the photos with it or any tag under it, and is left
 out while there are no tags. **Genre** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, by
 name (`?genre=<id>`), and is likewise left out while there are none.
+
+## Time of day, Time of year and Day of the week
+
+Three dropdowns after **Genre**, on every view with filters (on the Map, under **More filters**), narrow the photos by
+when they were taken, by the clock and calendar where they were taken, as a photo's capture time has no time zone
+(`lib/when-filters.ts`):
+
+- **Time of day** (`?daypart=morning`): Late night (12–5 AM), Early morning (5–8 AM), Morning (8 AM–12 PM),
+  Afternoon (12–5 PM), Evening (5–9 PM) and Night (9 PM–12 AM). The Grid's **Time of day** slider picks any range of
+  hours on top of it.
+- **Time of year**: each season (`?season=autumn`), with its months under it (`?month=october`). Seasons are the
+  northern hemisphere's: Spring is March to May, and Winter is December to February.
+- **Day of the week** (`?weekday=saturday`), Monday first.
+
+Like the other dropdowns, each choice counts the photos it would show, given the other filters.
 
 ## Camera filters
 

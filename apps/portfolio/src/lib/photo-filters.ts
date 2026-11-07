@@ -1,13 +1,17 @@
 import { albumAndSubAlbums, tagAndSubTags } from "@portfolio/lib/groups";
 import type { Photo } from "@portfolio/lib/photos";
+import { matchesWhen, WHEN_KEYS, type WhenKey } from "@portfolio/lib/when-filters";
 
 /** The location filter's keys: countries, cities (by their English names) and places (by their IDs). */
 export const LOCATION_KEYS = ["country", "state", "city", "place"] as const;
 
 export type LocationKey = (typeof LOCATION_KEYS)[number];
 
-/** The album, tag and genre filters' keys; an album also matches the photos in its sub-albums. */
-const GROUP_KEYS = ["album", "tag", "genre"] as const;
+/**
+ * The filters that take one value: album, tag and genre (an album also matches the photos in its
+ * sub-albums), and the "when" filters: part of the day, season, month and day of the week.
+ */
+const GROUP_KEYS = ["album", "tag", "genre", ...WHEN_KEYS] as const;
 
 type GroupKey = (typeof GROUP_KEYS)[number];
 
@@ -102,6 +106,9 @@ const MATCHES: Record<FilterKey, (photo: Photo, value: string) => boolean> = {
   album: inAlbum,
   tag: hasTag,
   genre: (photo, value) => photo.genres.includes(value),
+  ...(Object.fromEntries(
+    WHEN_KEYS.map((key) => [key, (photo: Photo, value: string) => matchesWhen(photo, key, value)]),
+  ) as Record<WhenKey, (photo: Photo, value: string) => boolean>),
 };
 
 /** The chosen countries, cities and places, as pairs of a key and a value. */

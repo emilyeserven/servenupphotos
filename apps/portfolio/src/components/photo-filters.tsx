@@ -38,6 +38,7 @@ import {
 import type { Photo } from "@portfolio/lib/photos";
 import { parseTextSearch, searchPhotos, TEXT_SEARCH_KEY } from "@portfolio/lib/text-search";
 import { cn } from "@portfolio/lib/utils";
+import { WHEN_DROPDOWNS, whenOptions } from "@portfolio/lib/when-filters";
 
 /** The filters in the current URL, for any portfolio view. */
 function useFilters(): PhotoFilters {
@@ -304,8 +305,35 @@ function GroupDropdowns({ facet, filters, setFilters }: DropdownProps) {
           onChange={(selected) => choose(["genre"], filterOf(selected))}
         />
       )}
+      <WhenDropdowns facet={facet} filters={filters} setFilters={setFilters} />
     </>
   );
+}
+
+/**
+ * The **Time of day**, **Time of year** (seasons, with their months under them) and **Day of the
+ * week** dropdowns.
+ */
+function WhenDropdowns({ facet, filters, setFilters }: Omit<DropdownProps, "photos">) {
+  return WHEN_DROPDOWNS.map((dropdown) => {
+    const options = whenOptions(
+      dropdown,
+      filterPhotos(facet, withoutFilters(filters, dropdown.keys)),
+    );
+    return (
+      <FilterSelect
+        key={dropdown.label}
+        label={dropdown.label}
+        plural={dropdown.plural}
+        Icon={dropdown.Icon}
+        options={options}
+        selected={selectedValue(options, filters)}
+        onChange={(selected) =>
+          setFilters({ ...withoutFilters(filters, dropdown.keys), ...filterOf(selected) })
+        }
+      />
+    );
+  });
 }
 
 /** The value of the dropdown's choice the search sets, or "" for "All". */
