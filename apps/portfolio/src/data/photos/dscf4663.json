@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["framing", "autumn", "marsh", "observation-towers", "branches", "wood", "trees"],
-  "genres": [],
+  "genres": ["landscape", "nature"],
   "places": [
     {
       "relation": "",

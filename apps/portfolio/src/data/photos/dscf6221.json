@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city-walls", "giwa", "gates", "arches", "stones", "pedestrians", "trees"],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

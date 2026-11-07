@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["autumn", "boardwalk", "forest", "fallen-leaves", "hiking-trail", "trees"],
-  "genres": [],
+  "genres": ["landscape", "nature"],
   "places": [
     {
       "relation": "",

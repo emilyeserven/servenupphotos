@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["pond", "islands", "pine-trees", "trees", "garden", "reflections"],
-  "genres": [],
+  "genres": ["landscape", "nature"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

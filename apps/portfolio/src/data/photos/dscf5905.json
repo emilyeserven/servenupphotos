@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["bridges", "stream", "walls", "moss", "pedestrians", "stones"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

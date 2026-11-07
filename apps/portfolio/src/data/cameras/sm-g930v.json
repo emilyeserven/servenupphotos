@@ -1,0 +1,12 @@
+{
+  "id": "sm-g930v",
+  "camera": "SM-G930V",
+  "rules": [
+    {
+      "when": null,
+      "set": {
+        "camera": "Samsung Galaxy S7"
+      }
+    }
+  ]
+}

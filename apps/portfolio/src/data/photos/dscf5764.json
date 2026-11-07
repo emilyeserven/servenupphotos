@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["gates", "shrine", "mountains", "walls", "trees", "tourists", "confucianism", "giwa"],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [
     {
       "relation": "",

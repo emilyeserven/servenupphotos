@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hangul", "apartments", "signage", "cars", "road", "urban-decay"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

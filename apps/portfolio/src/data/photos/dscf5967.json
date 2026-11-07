@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["alley", "storefronts", "pedestrians", "tourists", "balconies", "power-lines"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

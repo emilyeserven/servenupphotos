@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": ["homepage-spotlight"],
   "tags": ["yeondeung", "buddhism", "lanterns", "repetition", "patterns", "shadows", "festivals"],
-  "genres": [],
+  "genres": ["abstract"],
   "places": [
     {
       "relation": "",

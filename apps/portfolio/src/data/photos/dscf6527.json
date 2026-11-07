@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hangul", "road", "cars", "sidewalk", "office-buildings", "signage", "pedestrians"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

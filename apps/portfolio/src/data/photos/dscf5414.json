@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["signage", "storefronts", "umbrellas", "pedestrians", "power-lines", "cars", "hangul"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -27430,7 +27430,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["stream", "silhouettes", "pedestrians", "stones", "reflections", "trees", "walls"],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [
       {
         "relation": "",
@@ -27709,7 +27709,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["autumn", "hiking-trail", "signage", "trees", "forest"],
-    "genres": [],
+    "genres": ["nature", "landscape"],
     "places": [
       {
         "relation": "",
@@ -27989,7 +27989,7 @@
       "pedestrians",
       "trees"
     ],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -28254,7 +28254,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["ivy", "hiking-trail", "signage", "trees", "texture", "lichen"],
-    "genres": [],
+    "genres": ["nature", "abstract"],
     "places": [
       {
         "relation": "",
@@ -28525,7 +28525,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["stream", "stones", "ivy", "walls", "pedestrians", "path", "trees", "reflections"],
-    "genres": [],
+    "genres": ["street", "landscape"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -28790,7 +28790,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["stream", "stones", "pedestrians", "bridges", "reflections", "trees", "path"],
-    "genres": [],
+    "genres": ["street", "landscape"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -29065,7 +29065,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["hangul", "apartments", "signage", "cars", "road", "urban-decay"],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -29339,7 +29339,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["autumn", "trees", "branches", "park"],
-    "genres": [],
+    "genres": ["landscape", "nature"],
     "places": [
       {
         "relation": "",
@@ -29610,7 +29610,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["giwa", "gates", "city-walls", "traffic", "cars", "road", "motion-blur"],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -29884,7 +29884,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["city-walls", "office-buildings", "stairs", "facade", "windows", "trees", "crowd"],
-    "genres": [],
+    "genres": ["street", "architecture"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -30157,7 +30157,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["autumn", "boardwalk", "forest", "fallen-leaves", "hiking-trail", "trees"],
-    "genres": [],
+    "genres": ["landscape", "nature"],
     "places": [
       {
         "relation": "",
@@ -30428,7 +30428,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["city-walls", "crowd", "skyline", "skyscrapers", "twilight", "city"],
-    "genres": [],
+    "genres": ["cityscape", "street"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -30702,7 +30702,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["autumn", "observation-towers", "wood", "stairs", "pine-trees", "forest"],
-    "genres": [],
+    "genres": ["architecture", "nature"],
     "places": [
       {
         "relation": "",
@@ -30973,7 +30973,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["framing", "autumn", "marsh", "observation-towers", "branches", "wood", "trees"],
-    "genres": [],
+    "genres": ["landscape", "nature"],
     "places": [
       {
         "relation": "",
@@ -31247,7 +31247,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["autumn", "boardwalk", "hiking-trail", "forest", "fence", "fallen-leaves"],
-    "genres": [],
+    "genres": ["landscape", "nature"],
     "places": [
       {
         "relation": "",
@@ -31521,7 +31521,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["autumn", "benches", "lichen", "wood", "fallen-leaves", "texture"],
-    "genres": [],
+    "genres": ["nature", "abstract"],
     "places": [
       {
         "relation": "",
@@ -31792,7 +31792,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["autumn", "fallen-leaves", "boardwalk", "patterns", "texture"],
-    "genres": [],
+    "genres": ["nature", "abstract"],
     "places": [
       {
         "relation": "",
@@ -32063,7 +32063,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["autumn", "boardwalk", "fallen-leaves", "forest", "footbridges", "shadows"],
-    "genres": [],
+    "genres": ["landscape", "nature"],
     "places": [
       {
         "relation": "",
@@ -32334,7 +32334,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["daldongne", "houses", "rooftops", "twilight", "city-lights", "apartments"],
-    "genres": [],
+    "genres": ["cityscape"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -32608,7 +32608,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["framing", "autumn", "pavilion", "trees", "columns", "marsh"],
-    "genres": [],
+    "genres": ["architecture", "landscape"],
     "places": [
       {
         "relation": "",
@@ -32879,7 +32879,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["daldongne", "night", "houses", "rooftops", "city-lights", "trees"],
-    "genres": [],
+    "genres": ["cityscape"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -33153,7 +33153,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["alley", "night", "string-lights", "cables", "walls", "stairs"],
-    "genres": [],
+    "genres": ["street"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -33427,7 +33427,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["signage", "storefronts", "umbrellas", "pedestrians", "power-lines", "cars", "hangul"],
-    "genres": [],
+    "genres": ["street"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -33702,7 +33702,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["hangul", "neon", "signage", "storefronts", "crowd", "night"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
@@ -33972,7 +33972,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["gates", "shrine", "mountains", "walls", "trees", "tourists", "confucianism", "giwa"],
-    "genres": [],
+    "genres": ["architecture"],
     "places": [
       {
         "relation": "",
@@ -34242,7 +34242,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["gates", "wood", "patterns", "texture", "dancheong"],
-    "genres": [],
+    "genres": ["abstract", "architecture"],
     "places": [],
     "spotlightZones": [],
     "spotlightFocus": null,
@@ -34508,7 +34508,7 @@
     "customLens": null,
     "albums": ["homepage-spotlight"],
     "tags": ["yeondeung", "buddhism", "lanterns", "repetition", "patterns", "shadows", "festivals"],
-    "genres": [],
+    "genres": ["abstract"],
     "places": [
       {
         "relation": "",
@@ -34778,7 +34778,7 @@
     "customLens": null,
     "albums": [],
     "tags": ["cafe", "silhouettes", "windows", "interior", "skyline", "city"],
-    "genres": [],
+    "genres": ["street"],
     "places": [
       {
         "relation": "",
