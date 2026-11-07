@@ -2,6 +2,7 @@ import { ChevronDown, ListTree } from "lucide-react";
 import { useMap } from "@vis.gl/react-maplibre";
 import { type ReactNode, useState } from "react";
 import { createPortal } from "react-dom";
+import { LegendHelp } from "@/components/map-legend-help";
 import {
   AreaSymbol,
   GroupSymbol,
@@ -21,17 +22,30 @@ import { type ShownArea, usePlaceArea } from "@/lib/place-areas";
 import { useShownTripLines } from "@/lib/trip-lines-map";
 import { cn } from "@/lib/utils";
 
-/** One row of the key: whether it's listed, its sample, and what it means. */
-type LegendRow = [shown: boolean, symbol: ReactNode, label: string];
+/** One row of the key: whether it's listed, its sample, what it means, and more help behind a (?). */
+type LegendRow = [shown: boolean, symbol: ReactNode, label: string, help?: ReactNode];
 
 /** The key's rows for the photos' markers. */
 function pinRows(items: LegendItems): LegendRow[] {
   return [
     [items.photo, <PhotoSymbol key="photo" />, "Photo"],
-    [items.group, <GroupSymbol key="group" />, "Group of photos"],
-    [items.approximate, <PhotoSymbol approximate key="approximate" />, "Photo placed by its area"],
+    [items.group, <GroupSymbol key="group" />, "Group of photos", <GroupHelp key="group-help" />],
     [items.noImage, <NoImageSymbol key="no-image" />, "Photo without an image yet"],
   ];
+}
+
+/** What clicking a group does, with and without ⌘ or Ctrl held. */
+function GroupHelp() {
+  return (
+    <>
+      <p>Click a group to zoom in until its photos split apart.</p>
+      <p>
+        Hold <kbd className="font-sans font-semibold">⌘</kbd> (or{" "}
+        <kbd className="font-sans font-semibold">Ctrl</kbd> on Windows and Linux) while clicking to
+        see its photos in a grid instead. Photos at one spot open the grid either way.
+      </p>
+    </>
+  );
 }
 
 /** The key's rows for the trip lines and areas under the markers. */
@@ -157,10 +171,11 @@ function LegendList({ groups }: { groups: LegendRow[][] }) {
 function LegendRows({ rows }: { rows: LegendRow[] }) {
   return (
     <ul className="flex flex-col gap-1 py-1.5">
-      {rows.map(([, symbol, label]) => (
+      {rows.map(([, symbol, label, help]) => (
         <li key={label} className="flex items-center gap-2.5">
           {symbol}
           <span>{label}</span>
+          {help && <LegendHelp label={label}>{help}</LegendHelp>}
         </li>
       ))}
     </ul>

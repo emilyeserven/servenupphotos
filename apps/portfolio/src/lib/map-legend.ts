@@ -3,14 +3,12 @@ import type { TripLinesMap, TripMapFeature } from "@/lib/trip-lines-map";
 
 /** What the map's key lists, as only what the map is drawing now. */
 export interface LegendItems {
-  /** Whether a photo's own pin, with its thumbnail and an exact spot, is drawn. */
+  /** Whether a photo's own pin, with its thumbnail, is drawn. */
   photo: boolean;
   /** Whether a group's marker can be drawn: there are at least two photos. */
   group: boolean;
   /** Whether a photo without resized versions yet is drawn, as a small light-blue dot. */
   noImage: boolean;
-  /** Whether a photo placed by its area rather than an exact spot is drawn, with a faded edge. */
-  approximate: boolean;
   /** Whether a day's walk is drawn. */
   walk: boolean;
   /** The colors of the transit lines a hop rode, at most a few, in the order first drawn. */
@@ -77,10 +75,9 @@ function tripItems(trips: TripLinesMap | undefined) {
 /** Which kinds of photo pin the map draws; a group whenever there are photos enough to make one. */
 function pinItems(photos: PlacedPhoto[]) {
   return {
-    photo: photos.some((photo) => photo.image !== null && !photo.approximatePosition),
+    photo: photos.some((photo) => photo.image !== null),
     group: photos.length > 1,
     noImage: photos.some((photo) => photo.image === null),
-    approximate: photos.some((photo) => photo.image !== null && photo.approximatePosition),
   };
 }
 

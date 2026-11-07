@@ -18,11 +18,11 @@ function MarkerTile({ children }: { children: ReactNode }) {
 const PIN =
   "flex size-4 items-center justify-center rounded-[3px] shadow-sm shadow-black/30 ring-2";
 
-/** A photo's pin: its square thumbnail with a white edge, faded when its spot is approximate. */
-export function PhotoSymbol({ approximate = false }: { approximate?: boolean }) {
+/** A photo's pin: its square thumbnail with a white edge. */
+export function PhotoSymbol() {
   return (
     <MarkerTile>
-      <span className={cn(PIN, "bg-muted", approximate ? "ring-white/40" : "ring-white")}>
+      <span className={cn(PIN, "bg-muted ring-white")}>
         <Image className="size-2.5 text-muted-foreground" aria-hidden />
       </span>
     </MarkerTile>
