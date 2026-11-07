@@ -91,8 +91,9 @@ function Between(props: StripItemProps & { i: number }) {
   const picker = { gap: gapBefore(gaps, i), index: i - 1, onGap };
   return (
     <>
-      <GapBeforeVisits before={before} {...picker} />
-      {chips}
+      <PlacesVisited before={before} {...picker}>
+        {chips}
+      </PlacesVisited>
       <GapColumn
         {...picker}
         onSplit={onSplit && (() => onSplit(photo.id))}
@@ -102,9 +103,27 @@ function Between(props: StripItemProps & { i: number }) {
   );
 }
 
-/** The way to the places visited, before them; nothing when none were visited there. */
-function GapBeforeVisits({ before, ...picker }: GapPickerProps & { before: TripVisit[] }) {
-  return before.length > 0 ? <GapPicker {...picker} /> : null;
+interface PlacesVisitedProps extends GapPickerProps {
+  before: TripVisit[];
+  /** The places' icons. */
+  children: React.ReactNode;
+}
+
+/**
+ * The places visited between two photos, after the way there, raised by the height of the cut row
+ * under the gap after them so the two ways and the places line up; nothing when none were visited.
+ */
+function PlacesVisited({ before, children, ...picker }: PlacesVisitedProps) {
+  if (before.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="flex items-center gap-1">
+        <GapPicker {...picker} />
+        {children}
+      </span>
+      <span className="h-[18px]" aria-hidden />
+    </div>
+  );
 }
 
 /** Where lines start and end at the photo at index i; nowhere while the day has no line. */
