@@ -4,6 +4,7 @@ import { CalendarClock, ChevronDown, RotateCcw } from "lucide-react";
 import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoFilterBar } from "@/components/photo-filters";
+import { visualsOwnFilters } from "@/components/visuals-picker";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
@@ -22,6 +23,7 @@ import { findTimelineLabel, labelDates, labelOn } from "@/lib/timeline-labels";
 import { TimelineLabelPicker } from "@/components/timeline-label-picker";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
+import { filterByVisuals, parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
   parseTimelineDisplay,
@@ -50,6 +52,7 @@ type ImagePhoto = Photo & { image: PhotoImage };
  */
 type TimelineSearch = TimeRangeValue &
   PhotoFilters &
+  VisualSearch &
   ShownPhotoSearch &
   TimelineDisplaySearch & { chart?: "heatmap"; label?: string; q?: string; when?: QuickDate };
 
@@ -57,6 +60,7 @@ export const Route = createFileRoute("/timeline")({
   validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
     ...parseTimeRange(search),
     ...parseFilters(search),
+    ...parseVisualFilters(search),
     ...parseTextSearch(search),
     ...parseShownPhoto(search),
     ...parseTimelineDisplay(search),
@@ -136,7 +140,8 @@ function TimelineView() {
   const label = findTimelineLabel(search.label);
   const { start, end } = shownDays(label, timeRange, now);
   // Newest first, so the months and the photos in each read down from the latest.
-  const matching = searchPhotos(filterPhotos(photos, filters), search.q);
+  const beforeVisuals = searchPhotos(filterPhotos(photos, filters), search.q);
+  const matching = filterByVisuals(beforeVisuals, search);
   const inRange = matching
     .filter(shownOn({ start, end }, search.when, now))
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
@@ -206,7 +211,7 @@ function TimelineView() {
             />
           </div>
         </div>
-        <PhotoFilterBar photos={photos} searchable />
+        <PhotoFilterBar photos={photos} searchable own={visualsOwnFilters(beforeVisuals, search)} />
       </header>
       <div ref={setChart}>
         <TimelineChart

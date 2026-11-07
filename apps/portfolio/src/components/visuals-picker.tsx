@@ -15,6 +15,8 @@ import {
 import { COLOR_FILTER_KEYS, colorFilterCount, DEFAULT_PERCENT } from "@portfolio/lib/color-search";
 import { ORIENTATION_KEY } from "@portfolio/lib/orientation";
 import { type ColorName, colorLabel, colorSwatch, isShade } from "@portfolio/lib/photo-colors";
+import type { OwnFilters } from "@portfolio/components/photo-filters";
+import type { Photo } from "@portfolio/lib/photos";
 import { cn } from "@portfolio/lib/utils";
 
 /** The URL keys the Visuals picker sets: the color filters and the orientation. */
@@ -79,6 +81,19 @@ export function VisualsPicker(props: VisualsPickerProps) {
       <PickerBody {...props} />
     </FilterPickerButton>
   );
+}
+
+/**
+ * The **Visuals** picker as a view's own filters in the filter bar, for the Timeline and the Map:
+ * its keys for **Clear filters**, how many of its filters are set, and the picker. `photos` is what
+ * the other filters leave, which its counts are out of.
+ */
+export function visualsOwnFilters(photos: Photo[], filters: VisualFilters): OwnFilters {
+  return {
+    keys: VISUAL_FILTER_KEYS,
+    count: visualFilterCount(filters),
+    children: <VisualsPicker photos={photos} filters={filters} />,
+  };
 }
 
 /** A small dot of the picked color in the button, so it shows while the picker is closed. */
