@@ -22,7 +22,8 @@ type transitFinder interface {
 
 // transitTimeout is how long one look-up may take, waiting its turn and trying
 // the mirrors included.
-const transitTimeout = 55 * time.Second
+// It fits one full try on each of the three default servers.
+const transitTimeout = 85 * time.Second
 
 // trackAnswer is a transit line's track between two spots.
 type trackAnswer struct {
@@ -31,7 +32,7 @@ type trackAnswer struct {
 }
 
 // handleTransitLines answers the lines of ?mode= ("train", "subway", "bus"
-// or "transit") whose track passes near both ?from= and ?to=, each
+// or "ferry") whose track passes near both ?from= and ?to=, each
 // "longitude,latitude".
 func handleTransitLines(finder transitFinder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +44,7 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 		defer cancel()
 		lines, err := finder.Lines(ctx, r.URL.Query().Get("mode"), from, to)
 		if errors.Is(err, transit.ErrNoKind) {
-			writeError(w, http.StatusBadRequest, "Only a train, subway, bus or transit hop rides a line.")
+			writeError(w, http.StatusBadRequest, "Pick whether the hop was a train, subway, bus or ferry to find its lines.")
 			return
 		}
 		if err != nil {
@@ -120,20 +121,24 @@ func writeOverpassError(w http.ResponseWriter, what string, err error) {
 	var busy *transit.BusyError
 	if errors.As(err, &busy) {
 		writeError(w, http.StatusServiceUnavailable, fmt.Sprintf(
-			"OpenStreetMap's line servers are busy right now, so we couldn't %s (tried %d times on %d servers; the last, %s, said %s). Try again in a minute.",
+			"OpenStreetMap's line servers are busy right now, so we couldn't %s (tried %d times on %d servers; the last, %s, %s). Try again in a minute.",
 			what, busy.Tries, busy.Servers, busy.Server, statusOf(busy.Last)))
 		return
 	}
 	writeError(w, http.StatusBadGateway, "Couldn't "+what+" on OpenStreetMap: "+err.Error())
 }
 
-// statusOf is a server's failure in a few words, such as "502 Bad Gateway".
+// statusOf is a server's failure in a few words, such as "answered 502 Bad
+// Gateway" or "took too long to answer".
 func statusOf(err error) string {
 	var status *transit.StatusError
 	if errors.As(err, &status) {
-		return status.Status
+		return "answered " + status.Status
 	}
-	return err.Error()
+	if errors.Is(err, transit.ErrSlow) {
+		return "took too long to answer"
+	}
+	return "failed: " + err.Error()
 }
 
 // spotsParam reads ?from= and ?to=, writing an error when either isn't a spot.

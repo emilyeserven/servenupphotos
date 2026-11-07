@@ -3,6 +3,7 @@ package transit
 import (
 	"context"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -75,5 +76,38 @@ func TestServerURLs(t *testing.T) {
 	}
 	if got := serverURLs(""); len(got) != len(DefaultURLs) {
 		t.Errorf("serverURLs(\"\") = %v", got)
+	}
+}
+
+// slowServer never answers until its request is given up on. It reads the
+// query first, so the server notices when the client hangs up.
+func slowServer(t *testing.T) string {
+	t.Helper()
+	srv := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+		_, _ = io.Copy(io.Discard, r.Body)
+		<-r.Context().Done()
+	}))
+	t.Cleanup(srv.Close)
+	return srv.URL
+}
+
+func TestAskOutOfTimeIsBusy(t *testing.T) {
+	c := &Client{BaseURLs: []string{slowServer(t)}, HTTP: http.DefaultClient}
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	defer cancel()
+	_, err := c.query(ctx, "q")
+	var busy *BusyError
+	if !errors.As(err, &busy) || busy.Tries != 1 || !errors.Is(err, ErrSlow) {
+		t.Fatalf("err = %v, want a BusyError after 1 try from a slow server", err)
+	}
+}
+
+func TestAskCallerGoneIsNotBusy(t *testing.T) {
+	c := &Client{BaseURLs: []string{slowServer(t)}, HTTP: http.DefaultClient}
+	ctx, cancel := context.WithCancel(context.Background())
+	time.AfterFunc(50*time.Millisecond, cancel)
+	var busy *BusyError
+	if _, err := c.query(ctx, "q"); !errors.Is(err, context.Canceled) || errors.As(err, &busy) {
+		t.Fatalf("err = %v, want the caller's cancel", err)
 	}
 }
