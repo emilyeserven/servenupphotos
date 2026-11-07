@@ -4,6 +4,7 @@ import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
+import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap } from "@/lib/trip-gaps";
 import { visitsAfter } from "@/lib/trip-visits";
@@ -23,6 +24,10 @@ interface PhotoStripProps {
   onSplit?: (id: number) => void;
   /** Moves a photo one place earlier (-1) or later (1) in the day; left out, photos can't move. */
   onMove?: (id: number, by: -1 | 1) => void;
+  /** Moves a place visited one photo earlier or later on the route; left out, they can't move. */
+  onMoveVisit?: (visit: TripVisit, by: -1 | 1) => void;
+  /** Adds a place visited to the route right after photo `after`; left out, none can be added. */
+  onInsertVisit?: (after: number, visit: TripVisit) => void;
   /** The day's places visited; the ones put on the route show between their two photos. */
   visits?: TripVisit[];
 }
@@ -37,6 +42,7 @@ export function PhotoStrip({ photos, visits, offset = 0, ...rest }: PhotoStripPr
           photo={p}
           local={i}
           offset={offset}
+          prev={photos[i - 1]}
           before={visitsAfter(visits, photos[i - 1]?.id)}
           {...rest}
         />
@@ -47,6 +53,8 @@ export function PhotoStrip({ photos, visits, offset = 0, ...rest }: PhotoStripPr
 
 interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits"> {
   photo: TripPhoto;
+  /** The photo before it in the strip; none for the strip's first. */
+  prev?: TripPhoto;
   /** The places visited on the route between the photo before and this one. */
   before: TripVisit[];
   /** Its index among the strip's photos. */
@@ -56,18 +64,18 @@ interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits"> {
 
 /** One photo in the strip, after the gap before it (none before the strip's first photo). */
 function StripItem(props: StripItemProps) {
-  const { photo, local, offset, gaps, onGap, onHover, onSplit, onMove, before } = props;
+  const { photo, prev, local, offset, gaps, onGap, onHover, onSplit, onMove, before } = props;
   const i = offset + local;
-  const first = local === 0;
   return (
     <li className="flex shrink-0 items-center gap-1">
-      <VisitChips visits={before} />
-      {gaps && !first && (
+      <VisitChips visits={before} onMove={props.onMoveVisit} />
+      {gaps && prev && (
         <GapColumn
           gap={gapBefore(gaps, i)}
           index={i - 1}
           onGap={onGap}
           onSplit={onSplit && (() => onSplit(photo.id))}
+          insert={insertBetween(prev, photo, props.onInsertVisit)}
         />
       )}
       <StripPhoto
@@ -185,17 +193,43 @@ function MoveButtons({ onMove }: { onMove: (by: -1 | 1) => void }) {
   );
 }
 
+/** Adding a place visited between two photos: the photos, and what adds it. */
+interface InsertBetween {
+  a: TripPhoto;
+  b: TripPhoto;
+  onInsert: (visit: TripVisit) => void;
+}
+
+/** What adds a place visited between a and b, when places can be added. */
+function insertBetween(
+  a: TripPhoto,
+  b: TripPhoto,
+  onInsertVisit: ((after: number, visit: TripVisit) => void) | undefined,
+): InsertBetween | undefined {
+  return onInsertVisit && { a, b, onInsert: (visit) => onInsertVisit(a.id, visit) };
+}
+
 interface GapColumnProps extends GapPickerProps {
   /** Cuts to a new place here: the photo after the gap starts a new group. */
   onSplit?: () => void;
+  /** Adds a place visited here. */
+  insert?: InsertBetween;
 }
 
-/** What happened between two photos, with the scissors under it, shown on hover, when it can cut. */
-function GapColumn({ onSplit, ...picker }: GapColumnProps) {
+/**
+ * What happened between two photos, with the scissors and adding a place visited under it, shown
+ * on hover.
+ */
+function GapColumn({ onSplit, insert, ...picker }: GapColumnProps) {
   return (
     <div className="group/gap flex flex-col items-center gap-1">
       <GapPicker {...picker} />
-      {onSplit && <CutButton onClick={onSplit} />}
+      <span className="flex">
+        {onSplit && <CutButton onClick={onSplit} />}
+        {insert && (
+          <VisitInsert {...insert} className={cn("group-hover/gap:opacity-100", ON_HOVER)} />
+        )}
+      </span>
     </div>
   );
 }

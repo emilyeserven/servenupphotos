@@ -180,7 +180,10 @@ They're saved with the line as `visits`:
 `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
-two photos, named on hover. **Not on the route** leaves it as a pin only. A place put after a break or after the last
+two photos, named on hover. Pointing at that icon shows arrows that move the place one photo earlier or later on the
+route (it stops at the first and last gap). The pin with a plus under each gap in the strip, shown on hover, adds a
+place right there: a new one halfway between the two photos, to name and move under the map, or one of up to eight
+saved places nearest to them. **Not on the route** leaves it as a pin only. A place put after a break or after the last
 photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is a photo on the line
 and that every `visit` names a place the day has.
