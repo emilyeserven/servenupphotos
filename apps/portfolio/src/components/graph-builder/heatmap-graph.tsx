@@ -1,6 +1,8 @@
 import type { CSSProperties } from "react";
+import { useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { ScatterData } from "@/lib/graph-data";
+import type { GraphPick } from "@/lib/graph-pick";
 import { cn } from "@/lib/utils";
 
 /** How many x values fit before their names are written sideways. */
@@ -42,7 +44,8 @@ function textClass(count: number, most: number): string {
 /**
  * A heatmap of two stats: a grid of the x values across and the y values down, each cell as dark as
  * how many photos have both, such as month by year or aperture by focal length. The first y value
- * is at the top. It scrolls sideways when the x values don't fit.
+ * is at the top. It scrolls sideways when the x values don't fit. Clicking a cell with photos picks
+ * it, so its photos show under the graph, and fades the rest.
  */
 export function HeatmapGraph({
   data,
@@ -125,7 +128,19 @@ function ColumnNames({ labels }: { labels: string[] }) {
   );
 }
 
-/** One cell: its count on a shade as dark as its share of the most photos, and its values on hover. */
+/** Whether the cell is the picked one, or faded because another is. */
+function pickState(pick: GraphPick | null, xLabel: string, yLabel: string): boolean | null {
+  if (pick === null) return null;
+  return pick.x === xLabel && pick.y === yLabel;
+}
+
+/** How a cell looks while a cell is picked: ringed when it's the one, faded when it isn't. */
+const PICKED_CLASS = { true: "ring-2 ring-foreground", false: "opacity-35" };
+
+/**
+ * One cell: its count on a shade as dark as its share of the most photos, and its values on hover.
+ * A cell with photos is a button that picks it.
+ */
 function HeatCell({
   xLabel,
   yLabel,
@@ -137,29 +152,43 @@ function HeatCell({
   count: number;
   most: number;
 }) {
+  const { pick, onPick } = useGraphPick();
+  const picked = pickState(pick, xLabel, yLabel);
   const photos = `${count.toLocaleString()} ${count === 1 ? "photo" : "photos"}`;
+  const look = cn(
+    "flex h-9 w-full items-center justify-center rounded-sm bg-muted/50 text-[11px] tabular-nums",
+    textClass(count, most),
+    picked !== null && PICKED_CLASS[`${picked}`],
+  );
+  if (count === 0) {
+    return <div role="cell" aria-label={`${xLabel} · ${yLabel}: ${photos}`} className={look} />;
+  }
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div
-          role="cell"
-          aria-label={`${xLabel} · ${yLabel}: ${photos}`}
-          className={cn(
-            "flex h-9 items-center justify-center rounded-sm bg-muted/50 text-[11px] tabular-nums",
-            textClass(count, most),
-          )}
-          style={cellStyle(count, most)}
-        >
-          {count > 0 && count.toLocaleString()}
-        </div>
-      </TooltipTrigger>
-      <TooltipContent>
-        <div className="font-medium">
-          {xLabel} · {yLabel}
-        </div>
-        <div className="tabular-nums">{photos}</div>
-      </TooltipContent>
-    </Tooltip>
+    <div role="cell">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            aria-label={`${xLabel} · ${yLabel}: ${photos}`}
+            aria-pressed={picked === true}
+            onClick={() => onPick({ x: xLabel, y: yLabel })}
+            className={cn(
+              look,
+              "cursor-pointer outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+            )}
+            style={cellStyle(count, most)}
+          >
+            {count.toLocaleString()}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="font-medium">
+            {xLabel} · {yLabel}
+          </div>
+          <div className="tabular-nums">{photos}</div>
+        </TooltipContent>
+      </Tooltip>
+    </div>
   );
 }
 

@@ -57,9 +57,9 @@ until the page is left.
 
 ## Photos of a picked value
 
-Clicking a bar, a line or dot graph's point, a slice or a scatterplot dot shows its photos in a **Selected Photos** box under the graph
+Clicking a bar, a line or dot graph's point, a slice, a scatterplot dot or a heatmap cell with photos shows its photos in a **Selected Photos** box under the graph
 (`components/graph-builder/picked-photos.tsx`, with what's picked worked out in `lib/graph-pick.ts`). Every other value
-fades while one is picked (a dashed line marks it on a line or dot graph); clicking it again, **Close**, or changing the
+fades while one is picked (a dashed line marks it on a line or dot graph, and a ring on a heatmap cell); clicking it again, **Close**, or changing the
 graph in any way clears it. The photos are the ones the filters keep, and each opens in the lightbox.
 
 The box's heading names each axis and what's on it for the pick: **X axis** with its stat and value (such as Year:
@@ -101,6 +101,9 @@ each cell as dark as how many photos have both (from `--series-1` mixed into the
 such as month by year or aperture by focal length. Empty cells stay gray, so the grid keeps every pair. A key over it
 shows what the lightest and darkest shades mean, and it scrolls sideways when the x values don't fit. Every graph has a tooltip on hover, a key over it when it's split or a pie, and a **Table** button that
 shows its numbers as a table.
+
+The site's presets include two heatmaps: **Time of day by weekday** (days of the week across, times of day down) and
+**Month by year** (months across, years down).
 
 The series colors are `--series-1` to `--series-8` in `styles.css`, with their own steps for dark mode, picked so
 neighbors stay apart for colorblind eyes; a few light ones are faint on white, which is what the table view is for.
