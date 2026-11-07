@@ -35,6 +35,8 @@ const TIMEOUTS: Record<string, number> = {
   "/data/image-names": 310_000,
   // Downloads the originals from R2 to read their colors; the backend gives that 5 minutes.
   "/data/colors": 310_000,
+  // Downloads the originals from R2 to read their EXIF, given 5 minutes; editing one gets 3 minutes.
+  "/data/r2-exif": 310_000,
   // May download Small versions from R2 to read their perceptual hashes; the backend gives that 5 minutes.
   "/data/near-duplicates": 310_000,
   // Reads every photo file; the backend gives GitHub 60s.

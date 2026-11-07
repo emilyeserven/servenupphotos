@@ -13,8 +13,9 @@ directly. The list and each subpage's card are in `components/update-data/sectio
 entry there, in both navigations (`SectionsLayout` and `SectionNav` in `components/update-data/` draw the page and its navigation).
 
 Update Data keeps the changes to the photo files as a whole: **Image base URL**, **Image names**, **Missing fields**,
-**Colors**, **Camera overrides**, **Localizations** and [**Times across timezones**](timezone-shift.md). The rest moved into the sidebar, next to what they change,
-working just as described below:
+**Colors**, **Camera overrides**, **Localizations**, [**Times across timezones**](timezone-shift.md) and
+[**EXIF in R2**](r2-exif.md), the one change that writes to the originals in R2 rather than the photo files. The rest
+moved into the sidebar, next to what they change, working just as described below:
 
 - **Tag Data** (`/tag-data`, under **Tags**) is a page like Update Data, with its own side navigation, for the four
   tag changes: **Bulk tagging**, **Tag library**, **Tag pruning** and **Tag descriptions** (`/tag-data/<name>`;

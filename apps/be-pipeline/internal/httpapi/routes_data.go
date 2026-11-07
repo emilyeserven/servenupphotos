@@ -48,4 +48,8 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("POST /data/colors/preview", progress.tracked("colors", handlePreviewColors(d.store, d.gh, storage.GetPhoto, d.colors)))
 	mux.HandleFunc("POST /data/colors", progress.tracked("colors", handleWriteColors(d.store, d.gh, storage.GetPhoto, d.colors)))
 	mux.HandleFunc("POST /data/near-duplicates", progress.tracked("near-duplicates", handleFindNearDuplicates(d.store, d.gh, d.hashes)))
+	mux.HandleFunc("POST /data/r2-exif/preview", progress.tracked("r2-exif",
+		handlePreviewR2Exif(d.extractor, d.store, d.gh, storage.GetPhoto, exifs)))
+	mux.HandleFunc("POST /data/r2-exif/write", handleWriteR2Exif(d.extractor, d.store, d.gh, storage.GetPhoto, replaceOriginal, exifs))
+	mux.HandleFunc("PUT /data/r2-exif/lightroom", handleSetR2ExifLightroom(d.store, d.gh))
 }

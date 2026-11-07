@@ -601,6 +601,50 @@ function colorFiles() {
   }));
 }
 
+/**
+ * Photos whose originals don't match their photo files, as POST /api/data/r2-exif/preview finds
+ * them: a time fixed across timezones, a lens renamed by a camera override, and one edited before
+ * with a change still to make in Lightroom.
+ */
+function r2ExifPhotos() {
+  const [fixed, renamed, edited] = headPhotos.slice(0, 3).map(({ path, data }) => ({
+    path,
+    fileUrl: "",
+    key: data.images.key,
+    title: data.title,
+    thumbnail: data.images.thumbnail,
+    mismatches: [],
+    edits: [],
+  }));
+  fixed.mismatches = [
+    {
+      field: "createDate",
+      photo: "2016:12:24 06:07:39",
+      r2: "2016:12:23 22:07:39",
+      source: "custom",
+    },
+    { field: "city", photo: "Seoul", r2: null, source: "custom" },
+  ];
+  renamed.mismatches = [
+    { field: "lens", photo: "Color Skopar 21mm F4", r2: "21.0 mm", source: "override" },
+  ];
+  edited.edits = [
+    {
+      date: "2026-11-02T10:15:00Z",
+      fields: [
+        {
+          field: "createDate",
+          from: "2016:12:16 01:27:41",
+          to: "2016:12:16 09:27:41",
+          lightroom: true,
+        },
+        { field: "country", from: null, to: "Netherlands", lightroom: false },
+      ],
+    },
+  ];
+  return [fixed, renamed, edited];
+}
+
 /** A photo's GPS spot as [longitude, latitude], read from its "51 deg 24' 46.80\" N, …" position. */
 function photoSpot(id) {
   const gps = headPhotos.find((p) => p.data.id === id)?.data.gpsPosition;
@@ -1358,6 +1402,31 @@ export function defaultFixtures() {
       files: colorFiles(),
     }),
     "POST /api/data/colors": () => ({ ...pendingSave(), files: 3, failed: 1 }),
+    "POST /api/data/r2-exif/preview": () => ({
+      repo: REPO,
+      folder: `${FOLDER}/photos`,
+      branch: PULL_REQUEST.branch,
+      pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+      photoFiles: headPhotos.length,
+      checked: headPhotos.length,
+      unreadable: [],
+      photos: r2ExifPhotos(),
+    }),
+    "POST /api/data/r2-exif/write": ({ body }) => ({
+      ...pendingSave(),
+      edits: [
+        {
+          date: "2026-11-07T15:30:00Z",
+          fields: (body?.fields ?? []).map((f) => ({
+            ...f,
+            from: null,
+            to: f.value,
+            lightroom: false,
+          })),
+        },
+      ],
+    }),
+    "PUT /api/data/r2-exif/lightroom": () => ({ ...pendingSave(), edits: r2ExifPhotos()[2].edits }),
     "POST /api/data/near-duplicates": () => ({
       ...pendingSave(),
       photos: 120,
@@ -1372,6 +1441,7 @@ export function defaultFixtures() {
     }),
     // No read running: the page shows its own label until a read reports how far it has got.
     "GET /api/data/progress/colors": { running: false, step: "", done: 0, total: 0 },
+    "GET /api/data/progress/r2-exif": { running: false, step: "", done: 0, total: 0 },
     "GET /api/data/progress/missing-fields": { running: false, step: "", done: 0, total: 0 },
     "PUT /api/localizations/country-united-states-of-america": ({ body }) => ({
       ...pendingSave(),

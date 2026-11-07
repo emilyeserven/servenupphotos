@@ -3,11 +3,11 @@ package github
 import (
 	"encoding/json"
 	"math"
-	"regexp"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
+
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 )
 
 // exifDateLayout is how exiftool writes a photo's date, and how a custom date
@@ -114,43 +114,14 @@ func exactPlaces(entries []Entry) map[string]TripPoint {
 	return out
 }
 
-// exifCoordinate matches one coordinate as exiftool writes it, such as
-// 51 deg 24' 46.80" N.
-var exifCoordinate = regexp.MustCompile(`(\d+(?:\.\d+)?) deg (\d+(?:\.\d+)?)' (\d+(?:\.\d+)?)" ([NSEW])`)
-
 // parseGPS reads a GPS position as exiftool writes it, or as a custom one is
 // written on the Photo page ("40.7795, -73.9634").
 func parseGPS(value *string) (TripPoint, bool) {
 	if value == nil {
 		return TripPoint{}, false
 	}
-	parts := strings.Split(*value, ",")
-	if len(parts) != 2 {
-		return TripPoint{}, false
-	}
-	lat, latOK := parseCoordinate(parts[0])
-	lng, lngOK := parseCoordinate(parts[1])
-	return TripPoint{Latitude: lat, Longitude: lng}, latOK && lngOK
-}
-
-// parseCoordinate reads one coordinate in decimal degrees or as exiftool
-// writes it.
-func parseCoordinate(s string) (float64, bool) {
-	if f, err := strconv.ParseFloat(strings.TrimSpace(s), 64); err == nil {
-		return f, true
-	}
-	m := exifCoordinate.FindStringSubmatch(s)
-	if m == nil {
-		return 0, false
-	}
-	deg, _ := strconv.ParseFloat(m[1], 64)
-	minutes, _ := strconv.ParseFloat(m[2], 64)
-	sec, _ := strconv.ParseFloat(m[3], 64)
-	v := deg + minutes/60 + sec/3600
-	if m[4] == "S" || m[4] == "W" {
-		v = -v
-	}
-	return v, true
+	lat, lng, ok := exif.ParseGPS(*value)
+	return TripPoint{Latitude: lat, Longitude: lng}, ok
 }
 
 // spotsOn is the spots taken on day, in the order they were taken.
