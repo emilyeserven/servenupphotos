@@ -5,6 +5,15 @@ function join(folder: string, name: string): string {
   return folder ? `${folder}/${name}` : name;
 }
 
+/** A folder path typed by hand, with spaces around each name and empty names taken out, such as "Travel/Japan". */
+function cleanFolder(folder: string): string {
+  return folder
+    .split("/")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join("/");
+}
+
 /** A new, empty folder at a path. */
 function newFolder(name: string, path: string): LightroomFolder {
   return { kind: "folder", name, path, children: [], collapsed: false };
@@ -46,6 +55,57 @@ export function removeAlbum(items: LightroomItem[], path: string): LightroomItem
   });
 }
 
+/** Every album in the tree, from top to bottom. */
+function albumsIn(items: LightroomItem[]): LightroomAlbum[] {
+  return items.flatMap((item) => (item.kind === "album" ? [item] : albumsIn(item.children)));
+}
+
+/** The album at a path, anywhere in the tree. */
+function findAlbum(items: LightroomItem[], path: string): LightroomAlbum | undefined {
+  return albumsIn(items).find((album) => album.path === path);
+}
+
+/** Where Lightroom has an album being moved: nowhere for one added by hand, else where it was before any move. */
+function lightroomHome(album: LightroomAlbum): string | undefined {
+  return album.manual ? undefined : (album.lightroomPath ?? album.path);
+}
+
+/** The album at its new path, remembering where Lightroom has it unless that's where it now is. */
+function movedTo(album: LightroomAlbum, to: string): LightroomAlbum {
+  const home = lightroomHome(album);
+  const moved: LightroomAlbum = { ...album, path: to };
+  delete moved.lightroomPath;
+  return home && home !== to ? { ...moved, lightroomPath: home } : moved;
+}
+
+/**
+ * The tree with the album at `path` moved into another folder ("" for no parent), making the folder when it isn't
+ * there yet. An album read from Lightroom remembers where Lightroom has it, so a new import matches it and keeps it
+ * where it was moved. Nothing changes when a folder or album already has the new path.
+ */
+export function moveAlbum(items: LightroomItem[], path: string, folder: string): LightroomItem[] {
+  const album = findAlbum(items, path);
+  if (!album) return items;
+  const to = join(cleanFolder(folder), album.name);
+  if (pathTaken(items, to)) return items;
+  return insertAlbum(removeAlbum(items, path), movedTo(album, to));
+}
+
+/**
+ * The imported tree with an album that was moved on this page put back where it was moved, keeping what the import
+ * read for it. It stays where Lightroom has it when something in the import is already at the moved path.
+ */
+export function keepMove(items: LightroomItem[], old: LightroomAlbum): LightroomItem[] {
+  const from = old.lightroomPath ?? old.path;
+  const imported = findAlbum(items, from);
+  if (!imported || pathTaken(items, old.path)) return items;
+  return insertAlbum(removeAlbum(items, from), {
+    ...imported,
+    path: old.path,
+    lightroomPath: from,
+  });
+}
+
 /** Every folder's path in the tree, from top to bottom, such as "Travel" and "Travel/Japan". */
 export function folderPaths(items: LightroomItem[]): string[] {
   return items.flatMap((item) =>
@@ -71,11 +131,7 @@ export interface ManualAlbum {
 
 /** The album to add by hand, with its path from its folder and `manual` set so a new import keeps it. */
 export function manualAlbum({ name, folder, photoCount, offline }: ManualAlbum): LightroomAlbum {
-  const clean = folder
-    .split("/")
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .join("/");
+  const clean = cleanFolder(folder);
   return {
     kind: "album",
     name: name.trim(),
