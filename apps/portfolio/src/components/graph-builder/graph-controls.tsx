@@ -1,3 +1,4 @@
+import { GraphRanges } from "@portfolio/components/graph-builder/graph-ranges";
 import {
   GraphField,
   StatOptions,
@@ -10,6 +11,7 @@ import {
   type SortOrder,
   SPLIT_TYPES,
 } from "@portfolio/lib/graph-data";
+import type { Photo } from "@portfolio/lib/photos";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 /** A change to some of the graph's settings. */
@@ -36,14 +38,17 @@ const LIMITS = [0, 5, 10, 20];
 
 /**
  * The graph's settings, in the Adjust Graph box: its type, what's on each axis, what splits a bar,
- * line or dot graph, and the x axis's order and how many of its values show.
+ * line or dot graph, the x axis's order and how many of its values show, and the Range group.
  */
 export function GraphControls({
   config,
   onChange,
+  list,
 }: {
   config: GraphConfig;
   onChange: ConfigChange;
+  /** The photos the Range group's choices are read from; every photo when left out. */
+  list?: Photo[];
 }) {
   return (
     <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
@@ -54,6 +59,7 @@ export function GraphControls({
       <YField config={config} onChange={onChange} />
       <SplitFields config={config} onChange={onChange} />
       <OrderFields config={config} onChange={onChange} />
+      <GraphRanges config={config} onChange={onChange} list={list} />
     </div>
   );
 }

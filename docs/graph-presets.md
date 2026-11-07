@@ -45,7 +45,10 @@ way it combines the timeline labels into `TIMELINE.json`:
   there shows as its own button too.
 - **`graph`** holds the Graph page's settings by the names in `GraphConfig` (`lib/graph-data.ts`): `type` (bar, line,
   dot, pie or scatter), `x` and `y` (stat IDs, such as `aperture`, `year` or `daypart`), `measure` (count or percent),
-  `split` (a stat ID or "" for none), `stacked`, `sort` (group, reverse or count) and `limit` (0 for all). A preset
+  `split` (a stat ID or "" for none), `stacked`, `sort` (group, reverse or count), `limit` (0 for all), and the
+  Range group's parts, each left out when it's off: `xFrom` and `xTo` (x values by name, such as `"f/2"`), `yFrom`
+  and `yTo` (a scatterplot's y values by name), `yMin` and `yMax` (where a bar, line or dot graph's y axis starts and
+  ends), `minPhotos` (how many photos an x value needs) and `hideZeros`. Saving fails when `yMin` is above `yMax`. A preset
   never sets the filters; the visitor's stay as they are.
 - The ID is made from the name when it's first saved (with `-2` and so on after it when that's taken) and kept when
   it's renamed.

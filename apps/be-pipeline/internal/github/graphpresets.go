@@ -56,6 +56,28 @@ type GraphSettings struct {
 	Sort string `json:"sort"`
 	// Limit is how many of the x axis's values show; 0 for all.
 	Limit int `json:"limit"`
+	GraphRanges
+}
+
+// GraphRanges is how much of each axis a preset's graph shows, from the
+// Graph page's Range group. Each part is left out when it's off.
+type GraphRanges struct {
+	// XFrom and XTo are the first and last x values shown, by name, such as
+	// "f/2" and "f/8"; "" for the axis's own start or end.
+	XFrom string `json:"xFrom,omitempty"`
+	XTo   string `json:"xTo,omitempty"`
+	// YFrom and YTo are a scatterplot's first and last y values shown, like
+	// the x axis's.
+	YFrom string `json:"yFrom,omitempty"`
+	YTo   string `json:"yTo,omitempty"`
+	// YMin and YMax are where a bar, line or dot graph's y axis starts and
+	// ends, such as 0 and 50 photos; nil for its own.
+	YMin *float64 `json:"yMin,omitempty"`
+	YMax *float64 `json:"yMax,omitempty"`
+	// MinPhotos is how many photos an x value needs to be shown; 0 for any.
+	MinPhotos int `json:"minPhotos,omitempty"`
+	// HideZeros leaves out values with no photos.
+	HideZeros bool `json:"hideZeros,omitempty"`
 }
 
 // The values a preset's graph can take for each of its choices.
@@ -164,6 +186,18 @@ func validPresetGraph(p GraphPreset) *PublishError {
 	}
 	if g.Limit < 0 {
 		return publishErr(http.StatusBadRequest, "Show all of the x axis's values, or a number of them above 0.")
+	}
+	return validRanges(g.GraphRanges)
+}
+
+// validRanges fails when the y axis starts above where it ends, or an x
+// value needs fewer than no photos.
+func validRanges(r GraphRanges) *PublishError {
+	if r.YMin != nil && r.YMax != nil && *r.YMin > *r.YMax {
+		return publishErr(http.StatusBadRequest, "The y axis starts above where it ends.")
+	}
+	if r.MinPhotos < 0 {
+		return publishErr(http.StatusBadRequest, "An x value can't need fewer than 0 photos.")
 	}
 	return nil
 }

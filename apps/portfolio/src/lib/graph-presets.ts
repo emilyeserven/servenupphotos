@@ -1,9 +1,13 @@
 import committedPresets from "@portfolio/data/graphs/GRAPHS.json";
 import type { GraphConfig } from "@portfolio/lib/graph-data";
+import { type GraphRanges, NO_RANGES } from "@portfolio/lib/graph-ranges";
 import { localFile } from "@portfolio/lib/localize";
 
 /** What a graph preset sets the graph to: every setting but the filters, which stay as they are. */
 export type PresetGraph = Omit<GraphConfig, "filters">;
+
+/** A preset's graph as its file keeps it: the Range group's parts that are off are left out. */
+export type SavedGraph = Omit<PresetGraph, keyof GraphRanges> & Partial<GraphRanges>;
 
 /**
  * A graph preset file from GRAPHS.json, which the pipeline's Graph Presets page saves: a
@@ -21,10 +25,10 @@ export interface GraphPresetFile {
   /** A preset's group, by ID; left out when it's in none. */
   group?: string;
   /** What a preset sets the graph to; groups leave it out. */
-  graph?: PresetGraph;
+  graph?: SavedGraph;
 }
 
-/** A preset on the Graph page: its name, and what it sets the graph to. */
+/** A preset on the Graph page: its name, and what it sets the graph to, with the ranges it leaves out turned off. */
 export interface GraphPreset {
   id: string;
   name: string;
@@ -53,7 +57,7 @@ function byOrder(a: GraphPresetFile, b: GraphPresetFile): number {
 
 /** The file as a preset to pick. */
 function presetOf(file: GraphPresetFile): GraphPreset {
-  return { id: file.id, name: file.name, graph: file.graph ?? {} };
+  return { id: file.id, name: file.name, graph: { ...NO_RANGES, ...file.graph } };
 }
 
 /** The presets in the group, in their order. */

@@ -17,6 +17,7 @@ import {
   statById,
 } from "@/lib/graph-data";
 import { Button } from "@/components/ui/button";
+import { NO_RANGES } from "@/lib/graph-ranges";
 import { photos } from "@/lib/photos";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
@@ -32,6 +33,7 @@ const START: GraphConfig = {
   filters: [],
   sort: "reverse",
   limit: 0,
+  ...NO_RANGES,
 };
 
 /** Whether the graph or its numbers as a table show. */
@@ -70,7 +72,7 @@ export function GraphBuilder({
           Adjust Graph
         </Button>
       </div>
-      {adjusting && <AdjustBox config={config} onChange={onChange} />}
+      {adjusting && <AdjustBox config={config} list={kept} onChange={onChange} />}
       <section className={BOX_CLASS}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="text-sm text-muted-foreground tabular-nums">
@@ -92,10 +94,19 @@ const BOX_CLASS =
   "flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-sm";
 
 /** The box Adjust Graph opens: the graph's settings, then its filters. */
-function AdjustBox({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
+function AdjustBox({
+  config,
+  list,
+  onChange,
+}: {
+  config: GraphConfig;
+  /** The photos the filters keep, which the Range group's choices are read from. */
+  list: Photo[];
+  onChange: ConfigChange;
+}) {
   return (
     <section aria-label="Adjust Graph" className={BOX_CLASS}>
-      <GraphControls config={config} onChange={onChange} />
+      <GraphControls config={config} onChange={onChange} list={list} />
       <GraphFilters filters={config.filters} onChange={(filters) => onChange({ filters })} />
     </section>
   );

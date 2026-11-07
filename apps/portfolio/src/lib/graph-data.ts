@@ -1,6 +1,14 @@
 import { filterWithCamera } from "@portfolio/lib/camera-filters";
 import type { Photo } from "@portfolio/lib/photos";
 import type { GroupDef, StatGroup, StatRow } from "@portfolio/lib/stat-groups";
+import {
+  type GraphRanges,
+  rangedRows,
+  rowsBetween,
+  withoutZeros,
+  type YDomain,
+  yDomain,
+} from "@portfolio/lib/graph-ranges";
 import { SETTING_STATS } from "@portfolio/lib/graph-settings";
 import { STAT_SECTIONS } from "@portfolio/lib/stats";
 
@@ -53,8 +61,8 @@ export interface GraphFilter {
   values: string[];
 }
 
-/** Everything a person picks for their graph. */
-export interface GraphConfig {
+/** Everything a person picks for their graph, with how much of each axis it shows. */
+export interface GraphConfig extends GraphRanges {
   type: GraphType;
   /** The stat along the x axis, or the pie's slices. */
   x: string;
@@ -99,10 +107,15 @@ const SORTS: Record<SortOrder, (rows: StatRow[]) => StatRow[]> = {
   reverse: (rows) => rows.toReversed(),
 };
 
-/** The x axis's rows, in the order picked and cut to the limit. */
-function axisRows(group: StatGroup, sort: SortOrder, limit: number): StatRow[] {
-  const sorted = SORTS[sort](group.rows);
-  return limit > 0 ? sorted.slice(0, limit) : sorted;
+/** Every x value the photos have, in the order picked: what the Range group picks the x axis's ends from. */
+export function axisValues(list: Photo[], config: GraphConfig): StatRow[] {
+  return SORTS[config.sort](statById(config.x).build(list).rows);
+}
+
+/** The x axis's rows, in the order picked, cut by the Range group and then to the limit. */
+function axisRows(list: Photo[], config: GraphConfig): StatRow[] {
+  const kept = rangedRows(axisValues(list, config), config);
+  return config.limit > 0 ? kept.slice(0, config.limit) : kept;
 }
 
 /** How many series or slices get their own color; the rest go together as Other. */
@@ -127,6 +140,8 @@ export interface GraphDatum {
 export interface GraphData {
   series: GraphSeries[];
   data: GraphDatum[];
+  /** Where a bar, line or dot graph's y axis runs, when the Range group sets it. */
+  domain?: YDomain;
 }
 
 /** The color of the nth series, from the Graph page's palette; Other's is gray. */
@@ -196,7 +211,7 @@ function splitData(list: Photo[], rows: StatRow[], config: GraphConfig): GraphDa
     return {
       label: row.label,
       photos: row.count,
-      values: measuredAll(counts, row.count, config.measure),
+      values: withoutZeros(measuredAll(counts, row.count, config.measure), config.hideZeros),
     };
   });
   return { series, data };
@@ -221,10 +236,12 @@ function isSplit(config: GraphConfig): boolean {
 
 /** What a bar, line or pie graph draws from the photos kept. */
 export function graphData(list: Photo[], config: GraphConfig): GraphData {
-  const rows = axisRows(statById(config.x).build(list), config.sort, config.limit);
+  const rows = axisRows(list, config);
   if (config.type === "pie") return pieData(rows, list.length, config);
-  if (isSplit(config)) return splitData(list, rows, config);
-  return singleSeries(rows, list.length, config);
+  const graph = isSplit(config)
+    ? splitData(list, rows, config)
+    : singleSeries(rows, list.length, config);
+  return { ...graph, domain: yDomain(config) };
 }
 
 /** One dot of a scatterplot: where it sits on each axis, by the values' places, and how many photos it has. */
@@ -243,9 +260,11 @@ export interface ScatterData {
 
 /** A scatterplot: a dot for each x value and y value the same photos have, as big as how many. */
 export function scatterData(list: Photo[], config: GraphConfig): ScatterData {
-  const xRows = axisRows(statById(config.x).build(list), config.sort, config.limit);
+  const xRows = axisRows(list, config);
   const yStat = statById(config.y);
-  const yLabels = yStat.build(list).rows.map((row) => row.label);
+  const yLabels = rowsBetween(yStat.build(list).rows, config.yFrom, config.yTo).map(
+    (row) => row.label,
+  );
   const points = xRows.flatMap((row, x) =>
     yStat
       .build(rowPhotos(list, row))
