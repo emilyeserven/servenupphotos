@@ -118,7 +118,9 @@ like **When**: closed, it shows only a dot of the picked color and how many of i
 (`components/visuals-picker-parts.tsx` has its sections) with a list on the left of **Color**, **Color threshold**, **Vividness**
 and **Orientation**, each with what it's set to under its name (such as "Blue", "At least 30%", "Peak · 40+" or
 "Vertical"), and **Clear visuals** under them while any of them is set. The right side shows the chosen section, with a line on
-what it's for and, for Color threshold and Vividness, what each choice does:
+what it's for. Color threshold and Vividness also have an (i) button beside that line, like the Graph page's presets
+(`components/info-button.tsx`, shown by `PickerPart`'s `info`), which shows or hides what each of their choices does
+under the controls; it starts hidden:
 
 - **Color**: the small swatches; picking the chosen one again clears it.
 - **Color threshold** (how much of the picked color a photo needs): **Largest only** (the picked color is the photo's biggest share) or **At least…** (it covers at least the

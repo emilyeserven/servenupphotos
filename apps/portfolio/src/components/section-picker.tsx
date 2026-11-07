@@ -3,6 +3,7 @@ import { type ReactNode, useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
 import { SectionTab } from "@portfolio/components/picker-section-tab";
 import { FilterCount } from "@portfolio/components/filter-count";
+import { InfoButton } from "@portfolio/components/info-button";
 import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import { cn } from "@portfolio/lib/utils";
@@ -170,12 +171,53 @@ export function FilterPickerButton({
   );
 }
 
-/** A section's controls, with a line over them saying what they're for. */
-export function PickerPart({ intro, children }: { intro: string; children: ReactNode }) {
+/**
+ * A section's controls, with a line over them saying what they're for. With `info`, an (i) button
+ * beside that line shows or hides it under the controls, such as what each choice does.
+ */
+export function PickerPart({
+  intro,
+  info,
+  children,
+}: {
+  intro: string;
+  info?: ReactNode;
+  children: ReactNode;
+}) {
+  if (info === undefined) {
+    return (
+      <div className="flex flex-col gap-3">
+        <p className="text-xs text-muted-foreground">{intro}</p>
+        {children}
+      </div>
+    );
+  }
+  return (
+    <InfoPart intro={intro} info={info}>
+      {children}
+    </InfoPart>
+  );
+}
+
+/** A section's controls with an (i) button beside its line, showing `info` under them while on. */
+function InfoPart({
+  intro,
+  info,
+  children,
+}: {
+  intro: string;
+  info: ReactNode;
+  children: ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs text-muted-foreground">{intro}</p>
+      <div className="-mt-1 -mr-1 flex items-start gap-2">
+        <p className="flex-1 pt-1 text-xs text-muted-foreground">{intro}</p>
+        <InfoButton open={open} label="what each choice does" onClick={() => setOpen(!open)} />
+      </div>
       {children}
+      {open && info}
     </div>
   );
 }

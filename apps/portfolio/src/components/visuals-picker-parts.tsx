@@ -65,43 +65,58 @@ function ColorPart({ photos, filters }: VisualsPickerProps) {
 /** How a photo matches the picked color, with what each choice does. */
 function MatchPart({ filters }: VisualsPickerProps) {
   return (
-    <PickerPart intro="How much of the picked color a photo needs to show.">
+    <PickerPart intro="How much of the picked color a photo needs to show." info={<MatchChoices />}>
       <ColorMatchControl
         threshold={matchOf(filters).mode === "threshold"}
         percent={filters.min ?? DEFAULT_PERCENT}
         fallback={DEFAULT_PERCENT}
       />
-      <Choices
-        items={[
-          [
-            "Largest only",
-            "The picked color is the biggest share of the photo. A blue sky over a green field shows under whichever covers more.",
-          ],
-          [
-            "At least…",
-            "The picked color covers at least the share you set, even when another color is bigger. A photo can show under several colors this way.",
-          ],
-        ]}
-      />
     </PickerPart>
+  );
+}
+
+/** What Largest only and At least… do, behind the Color threshold's (i) button. */
+function MatchChoices() {
+  return (
+    <Choices
+      items={[
+        [
+          "Largest only",
+          "The picked color is the biggest share of the photo. A blue sky over a green field shows under whichever covers more.",
+        ],
+        [
+          "At least…",
+          "The picked color covers at least the share you set, even when another color is bigger. A photo can show under several colors this way.",
+        ],
+      ]}
+    />
   );
 }
 
 /** Which vividness to measure and the least a photo needs, with what each choice does. */
 function VividPart({ filters }: VisualsPickerProps) {
   return (
-    <PickerPart intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30.">
+    <PickerPart
+      intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30."
+      info={<VividChoices />}
+    >
       <VividnessControl vivid={filters.vivid ?? 0} measure={filters.measure ?? "average"} />
-      <Choices
-        items={[
-          ["Average", "How vivid the whole photo is. Muted photos with a little color score low."],
-          [
-            "Peak",
-            "How vivid its most vivid tenth is, so a gray street with one bright red sign still scores high.",
-          ],
-        ]}
-      />
     </PickerPart>
+  );
+}
+
+/** What Average and Peak do, behind the Vividness (i) button. */
+function VividChoices() {
+  return (
+    <Choices
+      items={[
+        ["Average", "How vivid the whole photo is. Muted photos with a little color score low."],
+        [
+          "Peak",
+          "How vivid its most vivid tenth is, so a gray street with one bright red sign still scores high.",
+        ],
+      ]}
+    />
   );
 }
 
