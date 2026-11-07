@@ -11,7 +11,7 @@ its photos fade in and out across the top of the page, up to 30% of the screen's
 photos to jump to.
 
 At the top are six headline numbers: photos, countries, regions, cities, cameras and years. Each but photos is a link that
-jumps to its card, such as **Cities** to the Cities card, and shows a down arrow on hover. Under them, **Gear**, **Places** and **Time** jump to their
+jumps to its card, such as **Cities** to the Cities card, and shows a down arrow on hover. Under them, **Places**, **Gear** and **Time** jump to their
 sections.
 
 ## Sections and groups
@@ -21,13 +21,13 @@ biggest, and the number of photos:
 
 | Section | Group                       | Rows                                                                                                  |
 | ------- | --------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Gear    | Cameras                     | each camera, most photos first, or grouped by a camera category from its **Group by** control         |
-| Gear    | Lenses by type, by brand, … | one card, its **Group by** control picking a top-level lens [metadata group](metadata-groups.md)      |
-| Gear    | Focal length                | the top-level focal length metadata groups, widest first                                              |
-| Gear    | Lenses                      | each lens, most photos first                                                                          |
 | Places  | Countries                   | each country, most photos first                                                                       |
 | Places  | Regions                     | each state, province or prefecture, most photos first; its country shows on hover; then **No region** |
 | Places  | Cities                      | each city, most photos first; its country shows on hover                                              |
+| Gear    | Lenses by type, by brand, … | one card, its **Group by** control picking a top-level lens [metadata group](metadata-groups.md)      |
+| Gear    | Focal length                | the top-level focal length metadata groups, widest first                                              |
+| Gear    | Lenses                      | each lens, most photos first                                                                          |
+| Gear    | Cameras                     | each camera, most photos first, or grouped by a camera category from its **Group by** control         |
 | Time    | Time of day                 | Late night to Night, as the [When](portfolio-filters.md#when) picker's Hours tab groups them          |
 | Time    | Year                        | newest first                                                                                          |
 | Time    | Season                      | Spring to Winter                                                                                      |

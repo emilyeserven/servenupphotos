@@ -85,7 +85,7 @@ function StatsView() {
             Numbers
           </h1>
           <p className="mt-2 text-muted-foreground">
-            The photos counted by gear, place and time. Open a row to see its photos on the Grid.
+            The photos counted by place, gear and time. Open a row to see its photos on the Grid.
           </p>
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(6.5rem,1fr))] gap-3">

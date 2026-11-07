@@ -200,15 +200,15 @@ function equipmentBucket(equipment: Equipment) {
 }
 
 /**
- * The Gear section's groups: cameras, which can be grouped by their categories, then the lenses
- * from the top down: the lens categories narrow the focal length ranges, which narrow the lenses.
+ * The Gear section's groups: the lenses from the top down, the lens categories narrowing the focal
+ * length ranges, which narrow the lenses; then cameras, which can be grouped by their categories.
  */
 export const GEAR_GROUPS: GroupDef[] = [
-  camerasDef(),
   ...lensCategoryDefs("focal-length"),
   { id: "focal-length", narrows: "lenses", build: (list) => focalGroup(list, allPhotos) },
   {
     id: "lenses",
     build: (list) => valueGroup("Lenses", list, (photo) => photo.lens, equipmentBucket("lens")),
   },
+  camerasDef(),
 ];
