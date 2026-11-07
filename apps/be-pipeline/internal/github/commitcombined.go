@@ -109,6 +109,9 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits [
 		return CombinedCommit{}, perr
 	}
 	result := CombinedCommit{Files: []string{}, Counts: map[string]int{}, Skipped: skipped}
+	if perr := w.refreshAutoLines(changes); perr != nil {
+		return CombinedCommit{}, perr
+	}
 	for _, kind := range combinedKinds() {
 		if perr := w.addCombined(kind, changes, result.Counts); perr != nil {
 			return CombinedCommit{}, perr

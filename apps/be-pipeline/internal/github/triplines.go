@@ -102,7 +102,8 @@ type TripLine struct {
 	// Day is the day the photos were taken, the same as ID.
 	Day string `json:"day"`
 	// Auto is true for the automatic line, worked out again from the day's
-	// photos at every Commit (see autoSegments); Segments is then empty.
+	// photos at every Commit (see autoSegments); Segments is then the line as
+	// it was drawn when saved or at the last Commit, for the pipeline to show.
 	Auto bool `json:"auto"`
 	// Segments are the stretches of the day, in the order they happened.
 	Segments []TripSegment `json:"segments"`
@@ -120,12 +121,16 @@ type TripLine struct {
 
 // SaveTripLine saves line as <folder>/triplines/<day>.json, new or replacing
 // the one there, in the pending changes, with the paths along streets it was
-// given (see RouteTripLine). It fails when a photo isn't from that day or has
-// no exact spot.
+// given (see RouteTripLine). An automatic line is saved with its segments as
+// the photos draw it now, so the file shows the line too. It fails when a
+// photo isn't from that day or has no exact spot.
 func (c *Client) SaveTripLine(ctx context.Context, gh settings.GitHub, line TripLine) (EntryResult, error) {
-	line, _, perr := c.checkedTripLine(ctx, gh, line)
+	line, spots, perr := c.checkedTripLine(ctx, gh, line)
 	if perr != nil {
 		return EntryResult{}, perr
+	}
+	if line.Auto {
+		line.Segments = autoSegments(spotsOn(spots, line.Day))
 	}
 	return c.saveEntry(ctx, gh, TripLines, line.ID, line, func([]Entry) *PublishError { return nil })
 }

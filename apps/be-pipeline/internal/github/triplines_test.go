@@ -59,12 +59,34 @@ func TestSaveTripLine(t *testing.T) {
 			t.Errorf("%s: SaveTripLine() error = %v, want 400", tt.name, err)
 		}
 	}
-	// The automatic line saves with no segments.
+	// The automatic line saves with its segments as the photos draw it, not the ones given.
 	if _, err := c.SaveTripLine(t.Context(), placesGH, TripLine{ID: "2026-09-24", Auto: true, Segments: line.Segments}); err != nil {
 		t.Fatalf("auto: SaveTripLine() error = %v", err)
 	}
 	if saved := staged(t, c, dataRoot+"/triplines/2026-09-24.json"); !strings.Contains(saved, `"segments": []`) {
 		t.Errorf("auto saved %s", saved)
+	}
+	if _, err := c.SaveTripLine(t.Context(), placesGH, TripLine{ID: "2026-09-23", Auto: true}); err != nil {
+		t.Fatalf("auto: SaveTripLine() error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/triplines/2026-09-23.json"); !strings.Contains(saved, `"mode": "walk"`) {
+		t.Errorf("auto saved %s", saved)
+	}
+}
+
+func TestCommitCombinedRefreshesAutoLines(t *testing.T) {
+	file := dataRoot + "/triplines/2026-09-23.json"
+	stale := `{"id":"2026-09-23","day":"2026-09-23","auto":true,"segments":[]}`
+	f, c := newMainRepo(t, with(emptyLists, with(tripPhotos, map[string]string{file: stale})))
+	if _, err := c.CommitCombined(t.Context(), pullGH, nil); err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
+	}
+	tree := f.committedTree()
+	if got := tree[file]; !strings.Contains(got, `"mode": "walk"`) || !strings.Contains(got, `"auto": true`) {
+		t.Errorf("committed line = %s", got)
+	}
+	if got := tree[dataRoot+"/triplines/TRIPLINES.json"]; !strings.Contains(got, `"walk"`) {
+		t.Errorf("TRIPLINES.json = %s", got)
 	}
 }
 

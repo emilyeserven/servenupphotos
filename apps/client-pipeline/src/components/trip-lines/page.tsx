@@ -1,13 +1,9 @@
 import type { CombinedData } from "@/api/photos";
-import { type TripLine, tripLines } from "@/api/trip-lines";
+import { tripLines } from "@/api/trip-lines";
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
-import { DayEditor } from "@/components/trip-lines/day-editor";
-import { DayList } from "@/components/trip-lines/day-list";
+import { DayGrid } from "@/components/trip-lines/day-grid";
 import { TripsPanel } from "@/components/trips/trips-panel";
-import { StoryCard } from "@/components/trip-story/story-card";
-import { tripStories } from "@/api/trip-stories";
-import { trips } from "@/api/trips";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { lineDays, staleTripLines } from "@/lib/stale-trip-lines";
 import { useTripLinesSearch } from "@/lib/trip-lines-search";
@@ -26,6 +22,7 @@ export function TripLinesPage() {
   );
 }
 
+/** The page once the photos and lines are read. */
 function Days() {
   const combined = useCombinedData();
   if (combined.isPending) return <p>Reading the photos and trip lines…</p>;
@@ -46,7 +43,7 @@ function DaysAndTrips({ data }: { data: CombinedData }) {
         <TabsTrigger value="trips">Trips</TabsTrigger>
       </TabsList>
       <TabsContent value="days">
-        <DayChooser data={data} />
+        <DayCards data={data} />
       </TabsContent>
       <TabsContent value="trips">
         <TripsPanel data={data} days={lineDays(data)} />
@@ -55,38 +52,16 @@ function DaysAndTrips({ data }: { data: CombinedData }) {
   );
 }
 
-/** The days listed on the left, newest first, and the chosen one edited on the right. */
-function DayChooser({ data }: { data: CombinedData }) {
+/** Every day a line can be marked for, each linking to its pages. */
+function DayCards({ data }: { data: CombinedData }) {
   const days = lineDays(data);
-  const lines: Map<string, TripLine> = tripLines(data);
-  const { search, set } = useTripLinesSearch();
-  const stale = new Set(staleTripLines(data).map((s) => s.day));
-  const day = days.find((d) => d.day === search.day) ?? days[0];
-  if (!day) {
+  if (days.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
         No day has two or more photos at two or more exact spots yet.
       </p>
     );
   }
-  return (
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
-      <DayList
-        days={days}
-        lines={lines}
-        stale={stale}
-        chosen={day.day}
-        onChoose={(chosen) => set({ day: chosen, group: undefined })}
-      />
-      <div className="flex min-w-0 flex-col gap-6">
-        <DayEditor key={day.day} day={day} line={lines.get(day.day)} />
-        <StoryCard
-          key={`story-${day.day}`}
-          day={day}
-          story={tripStories(data).get(day.day)}
-          trips={trips(data)}
-        />
-      </div>
-    </div>
-  );
+  const stale = new Set(staleTripLines(data).map((s) => s.day));
+  return <DayGrid days={days} lines={tripLines(data)} stale={stale} />;
 }

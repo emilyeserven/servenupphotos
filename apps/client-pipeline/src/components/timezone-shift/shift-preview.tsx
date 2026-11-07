@@ -120,7 +120,11 @@ function TripLineNote({ effect }: { effect: TripLineEffect }) {
       <RouteIcon className="mt-0.5 size-3.5 shrink-0" />
       <span>
         The trip line for{" "}
-        <Link to="/trip-lines" search={{ day: effect.day }} className="underline">
+        <Link
+          to="/trip-lines/$day/$part"
+          params={{ day: effect.day, part: "route" }}
+          className="underline"
+        >
           {readableDay(effect.day)}
         </Link>{" "}
         was marked by hand. {what}

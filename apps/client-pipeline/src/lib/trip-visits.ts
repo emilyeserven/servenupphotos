@@ -77,9 +77,7 @@ export function visitsAfter(visits: TripVisit[] | undefined, id: number | undefi
  */
 export function movedVisit(draft: GapDraft, visit: TripVisit, ids: number[], by: -1 | 1): GapDraft {
   const to = neighbourAfter(ids, visit.after, by);
-  if (to === undefined) return draft;
-  const visits = (draft.visits ?? []).map((v) => (v === visit ? { ...v, after: to } : v));
-  return { ...draft, visits };
+  return to === undefined ? draft : placedVisit(draft, visit, to);
 }
 
 /** The photo `by` places from photo `after` among ids, when a gap follows it; none otherwise. */
@@ -88,12 +86,20 @@ function neighbourAfter(ids: number[], after: number | undefined, by: -1 | 1): n
   return at === -1 ? undefined : ids.slice(0, -1)[at + by];
 }
 
-/** The draft with the visit added to the route right after photo `after`. */
-export function insertedVisit(draft: GapDraft, visit: TripVisit, after: number): GapDraft {
-  return withVisit(draft, { ...visit, after });
+/**
+ * The draft with one of its places visited put on the route right after photo `after`, or taken
+ * off it with undefined.
+ */
+export function placedVisit(
+  draft: GapDraft,
+  visit: TripVisit,
+  after: number | undefined,
+): GapDraft {
+  const visits = (draft.visits ?? []).map((v) => (v === visit ? { ...v, after } : v));
+  return { ...draft, visits };
 }
 
-/** The spot halfway between two photos, for a new place visited between them. */
-export function midway(a: TripPoint, b: TripPoint): TripPoint {
-  return { latitude: (a.latitude + b.latitude) / 2, longitude: (a.longitude + b.longitude) / 2 };
+/** The places visited not on the route yet, which the photo strip can put between two photos. */
+export function offRoute(visits: TripVisit[] | undefined): TripVisit[] {
+  return (visits ?? []).filter((v) => v.after === undefined);
 }

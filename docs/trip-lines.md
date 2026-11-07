@@ -52,7 +52,7 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
   relation. Only train, subway, bus and transit hops keep one.
 - **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
   `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
-- **`auto: true`** with no segments turns on the [automatic line](#the-automatic-line).
+- **`auto: true`** turns on the [automatic line](#the-automatic-line); its segments are filled in by the backend.
 
 A photo in a line must be from that day (its [custom date](data-model.md#date-taken), or else its EXIF date) and have
 an exact spot: its custom GPS position, its EXIF one, or a [place](places-and-localizations.md) marked as an **Exact
@@ -112,35 +112,57 @@ more than 2 hours apart, with a `car` drive across a big jump (two photos more t
 day as the next Commit would draw it.
 
 A file with `"auto": true` keeps it on: it's worked out again at every Commit, so a photo added to that day later joins
-the line.
+the line. Its `segments` hold the line as it was last worked out: when it's turned on, and again at each Commit when
+the photos draw it differently (`refreshAutoLines`), so the file and `TRIPLINES.json` show it as drawn.
+
+> **Frontend analogy:** the segments are a cached copy of a derived value, like persisting a `useMemo` result next to
+> its inputs and refreshing it whenever they change.
 
 ## The page
 
-The left side lists the days with two or more photos at two or more different exact spots, newest first, each with how
-many photos and spots it has and whether its line is **Marked**, **Out of date**, **Automatic** or **None**, with a filter by each. **Out of date** (in
-red) is a line marked by hand that doesn't go through every photo of the day with an exact spot, such as photos added
-since, or goes through photos no longer on that day; the Dashboard's **Needs attention** lists them as urgent. A new
-photo opens with a break on both sides, ready to join the line.
+`/trip-lines` lists the days with two or more photos at two or more different exact spots, newest first, as cards. Each
+card has how many photos and spots the day has, whether its line is **Marked**, **Out of date**, **Automatic** or
+**None** (with a filter by each), and a small drawing of the line from its file, by hand or automatic: the line in
+the map's colors and the photos as dots, drawn as SVG with no basemap so a long list stays quick. An automatic line
+saved before its segments were kept shows a note until it's saved again or the next Commit fills them in. **Out of date** (in red) is a line marked by hand
+that doesn't go through every photo of the day with an exact spot, such as photos added since, or goes through photos
+no longer on that day; the Dashboard's **Needs attention** lists them as urgent and links to this list filtered to
+them. A new photo opens with a break on both sides, ready to join the line.
 
-The page keeps what's chosen in its URL, so a link or a reload opens it the same way (`lib/trip-lines-search.ts`, read
-by the route's `validateSearch`):
+A card opens the day's own pages, each a tab with its own link:
 
-| Param   | What it opens                                                       | Unless set |
-| ------- | ------------------------------------------------------------------- | ---------- |
-| `tab`   | `trips` for the Trips tab                                           | Days       |
-| `day`   | The day chosen, such as `2026-09-23`                                | The newest |
-| `show`  | The day list's filter: `marked`, `out-of-date`, `automatic`, `none` | All        |
-| `group` | The group shown alone on the map (the eye), by its name             | None       |
-| `trip`  | The Trip chosen on the Trips tab, by its ID                         | The newest |
+| Page        | Path                       | What it has                                                                                             |
+| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Photo order | `/trip-lines/<day>/order`  | The photo strip on its own, its groups stacked top to bottom with what happened between them in between |
+| Route       | `/trip-lines/<day>/route`  | The strip with the map and its tools, as below                                                          |
+| Places      | `/trip-lines/<day>/places` | The strip, the map, and the [places visited](#places-visited) list                                      |
+| Story       | `/trip-lines/<day>/story`  | The [Trip page story](#trip-page-story)                                                                 |
 
-For example, `/trip-lines?day=2026-09-29&show=out-of-date&group=Engyoji%20Temple`. Clicks replace the history entry
-rather than adding one, so Back leaves the page. Choosing another day clears `group`. A new Trip isn't in the URL until
-it's saved. Needs attention links to its newest out-of-date day with `show=out-of-date`.
+`/trip-lines/<day>` opens Photo order. The pages share one editor that stays mounted while hidden, so a change made on
+Photo order shows on Route before it's saved, and **Save route** on either saves both. **Every day** goes back to the
+list.
+
+> **Frontend analogy:** the editor's state lives above the tabs, like lifting `useState` into a layout so switching
+> nested routes doesn't reset a form.
+
+The pages keep what's chosen in their URL, so a link or a reload opens them the same way (`lib/trip-lines-search.ts`,
+read by each route's `validateSearch`):
+
+| Param   | Where    | What it opens                                                       | Unless set |
+| ------- | -------- | ------------------------------------------------------------------- | ---------- |
+| `tab`   | The list | `trips` for the Trips tab                                           | Days       |
+| `show`  | The list | The day list's filter: `marked`, `out-of-date`, `automatic`, `none` | All        |
+| `trip`  | The list | The Trip chosen on the Trips tab, by its ID                         | The newest |
+| `group` | A day    | The group shown alone on the map (the eye), by its name             | None       |
+
+For example, `/trip-lines?show=out-of-date` or `/trip-lines/2026-09-29/route?group=Engyoji%20Temple`. Clicks replace
+the history entry rather than adding one, so Back leaves the page. A new Trip isn't in the URL until it's saved. A link
+from before days had pages, `/trip-lines?day=2026-09-29&group=…`, opens that day's Route page.
 
 > **Frontend analogy:** this is TanStack Router's search params used as the page's state store instead of `useState`,
 > like keeping a table's sort and filter in the query string.
 
-The right side edits the chosen day: its photos in the order they were taken, with what happened between each two, and
+The Route page edits the day: its photos in the order they were taken, with what happened between each two, and
 a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
 highlights its dot.
 
@@ -155,10 +177,12 @@ highlights its dot.
 
 ## Places visited
 
-Under the map, **Places visited** lists the places stopped at along the day's route, with or without a photo: a
-restaurant, café, bar, shop, museum, sight or other. **Add a place on the map** drops one where the map is clicked;
-**Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km of the
-day's photos, named after it. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
+The day's **Places** page lists the places stopped at along the day's route, with or without a photo: a restaurant,
+café, bar, shop, museum, sight or other. It's only for adding them: **Add a place on the map** drops one where the map
+is clicked; **Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km
+of the day's photos, named after it; and **Add at this coordinate** adds one at a latitude and longitude typed or
+pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too). Each row says where the place
+is on the route, which Photo order and Route set. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
 Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
 
 They're saved with the line as `visits`:
@@ -176,14 +200,14 @@ They're saved with the line as `visits`:
 }
 ```
 
-**Where on the route** puts a place between two photos taken one after the other, such as "Between photos 4 and 5".
-`after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
+The photo strip on **Photo order** and **Route** puts these places on the route: the pin with a plus under each gap,
+shown on hover, lists the day's places not on the route yet, and picking one puts it between those two photos (with a
+link to the Places page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
-two photos, named on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
-route (it stops at the first and last gap). The pin with a plus under each gap in the strip, shown on hover, adds a
-place right there: a new one halfway between the two photos, to name and move under the map, or one of up to eight
-saved places nearest to them. **Not on the route** leaves it as a pin only. A place put after a break or after the last
+two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
+route (it stops at the first and last gap), and a cross that takes it off the route again. A place not on the route
+is a pin only. A place put after a break or after the last
 photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is a photo on the line
 and that every `visit` names a place the day has.
@@ -427,6 +451,6 @@ The portfolio doesn't draw the lines yet; that's the next step.
 
 ## Trip page story
 
-Under the day's route, **Trip page story** writes the words around the day's photos for the portfolio's Trip
+The day's **Story** page, **Trip page story**, writes the words around the day's photos for the portfolio's Trip
 page: a caption on each photo, a paragraph between photos, and which photos share a row. See
 [Trip Pages](trip-pages.md).
