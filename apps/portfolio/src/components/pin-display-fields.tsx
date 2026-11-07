@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { OptionCheckbox, OptionChoices } from "@/components/view-options-button";
+import { OptionCheckbox, OptionChoices, OptionGroup } from "@/components/view-options-button";
 import { Slider } from "@/components/ui/slider";
 import { GROUPING_RANGE } from "@/lib/map-display";
 
@@ -25,11 +25,10 @@ const PIN_SIZES: [PinSize, string][] = [
 ];
 
 /**
- * The pin options in a view's display options flyout: how readily photos are grouped, how big the
- * pins are, whether groups show their counts, and whether a group's photos are darkened under the
- * count. `defaultGrouping` is marked under the Grouping slider.
+ * The pin picks in the left column of a view's display options: how readily photos are grouped and
+ * how big the pins are. `defaultGrouping` is marked under the Grouping slider.
  */
-export function PinDisplayFields({
+export function PinChoiceFields({
   display,
   defaultGrouping,
   onChange,
@@ -51,19 +50,34 @@ export function PinDisplayFields({
         value={display.pinSize}
         onChange={(pinSize) => onChange({ pinSize })}
       />
-      <div className="flex flex-col gap-2">
-        <OptionCheckbox
-          label="Show counts on groups"
-          checked={display.showCounts}
-          onChange={(showCounts) => onChange({ showCounts })}
-        />
-        <OptionCheckbox
-          label="Darken photos under counts"
-          checked={display.dimGroups}
-          onChange={(dimGroups) => onChange({ dimGroups })}
-        />
-      </div>
     </>
+  );
+}
+
+/**
+ * The **Groups** checkboxes in the right column of a view's display options: whether groups show
+ * their counts, and whether a group's photos are darkened under the count.
+ */
+export function PinGroupChecks({
+  display,
+  onChange,
+}: {
+  display: PinDisplay;
+  onChange: (change: Partial<PinDisplay>) => void;
+}) {
+  return (
+    <OptionGroup label="Groups">
+      <OptionCheckbox
+        label="Show counts"
+        checked={display.showCounts}
+        onChange={(showCounts) => onChange({ showCounts })}
+      />
+      <OptionCheckbox
+        label="Darken photos under counts"
+        checked={display.dimGroups}
+        onChange={(dimGroups) => onChange({ dimGroups })}
+      />
+    </OptionGroup>
   );
 }
 
@@ -82,7 +96,7 @@ function GroupingSlider({
 }) {
   const [dragging, setDragging] = useState<number | null>(null);
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex w-56 max-w-full flex-col gap-1.5">
       <span className="text-xs font-medium text-muted-foreground">Grouping</span>
       <Slider
         min={GROUPING_RANGE.min}

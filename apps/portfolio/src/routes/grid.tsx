@@ -261,7 +261,7 @@ function TileControls({ search, mode }: { search: GridSearch; mode: TileMode }) 
         view={mode}
         size={mode === "natural" ? naturalSize(search.size) : squareSize(search.size)}
         info={search.info === true}
-        labelled
+        align="end"
       />
     </div>
   );

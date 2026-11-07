@@ -64,6 +64,11 @@ complexity at 4 or under; every `?:`, `??`, `?.`, `&&` and `||` counts). Split a
   already near 600 to 700 lines. The Gallery's and the photo editor's parts live in `components/gallery/` and
   `components/edit-in-flight/`. Put new UI in a new component file and import it, rather than
   growing them.
+- **Display options:** every portfolio view's display options use `ViewOptionsButton`
+  (`components/view-options-button.tsx`): a **Display Options** button (eye and words; the Map alone is eye only) whose
+  flyout puts `choices` (`OptionChoices`, sliders) in the left column and `checks` (checkboxes in titled `OptionGroup`s)
+  in the right, stacking on a phone. Next to search and **Show filters**, it goes at the right end of that row with
+  `align="end"`.
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors

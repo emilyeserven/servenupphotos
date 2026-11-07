@@ -62,7 +62,8 @@ fits without covering the map:
   sky, standing in for the brand blue, apart from the walking lines' darker blue), with a darker edge in light mode
   and a lighter one in dark mode (`lib/map-theme.ts`, which the pipeline's trip line map shares, basemaps included).
 - The eye button opens the map's **display options** (`components/map-display-options.tsx`, kept in
-  `lib/map-display.ts`):
+  `lib/map-display.ts`). It's the one display options button without the words "Display Options", since the map's
+  floating controls have no room for them. The picks are in the left column and the checkboxes on the right:
   - **Grouping** is how close photos are, in pixels on the screen, before they're one round marker (MapLibre's
     `clusterRadius`, 40 by default at Medium pins, from 10 to 100). Less shows more photos on their own; set well
     below the pin size, groups can overlap each other. A small tick under the slider marks the default.
@@ -70,14 +71,14 @@ fits without covering the map:
     (`clusterRadius` in `lib/map-display.ts`), and fewer photos are split out of a group at each zoom (`fanLimit`,
     shrinking with the room a pin takes), so big pins group sooner rather than being pushed far from their spots to
     keep from overlapping. Photos moved apart are kept a pin's width and a gap apart.
-  - **Show counts on groups** hides the number on group markers when unticked.
-  - **Darken photos under counts**, when unticked, shows a group's photos as they are, with its count in a small dark
+  - **Groups → Show counts** hides the number on group markers when unticked.
+  - **Groups → Darken photos under counts**, when unticked, shows a group's photos as they are, with its count in a small dark
     badge instead.
   - **Groups show the latest** picks which three photos a group's marker fades through: **Added** (the default), the
     ones added to the portfolio last, or **Captured**, the ones taken last. Photos with no added date count as
     the oldest added.
-  - **Trip lines** (on by default) draws the [trip lines](#trip-lines) under the photos.
-  - **Direction of travel** (off by default, shown while **Trip lines** is on) shows the way each line was travelled
+  - **Trip lines → Show trip lines** (on by default) draws the [trip lines](#trip-lines) under the photos.
+  - **Direction of travel** (off by default, shown while **Show trip lines** is on) shows the way each line was travelled
     like a ride app shows a route: a light runs along it from where it started to where it ended, over and over
     (`components/trip-flow-layer.tsx`). With the system's reduce motion setting on, each line instead brightens from
     its start to its end without moving.
@@ -125,7 +126,7 @@ draws them (`lib/trip-lines-map.ts`):
 - Places visited are amber dots.
 - Areas that photos without an exact spot were taken in are shaded light blue, like a place's area.
 
-**Trip lines** in the display options turns them off, and takes them out of the [key](#key) too. The lines, stations and areas come from OpenStreetMap data,
+**Show trip lines** in the display options turns them off, and takes them out of the [key](#key) too. The lines, stations and areas come from OpenStreetMap data,
 under the [ODbL](https://www.openstreetmap.org/copyright); the basemap's attribution (the ⓘ in the corner) already
 credits OpenStreetMap's contributors, which covers them.
 
@@ -142,7 +143,7 @@ filters and the day filter change it:
   there are at least two photos) and **Photo without an image yet** (a small light-blue dot). A (?) after **Group of
   photos** opens a note on clicking a group: a click zooms in, and ⌘-click (Ctrl-click off Apple devices, read from the
   browser's user agent in `lib/platform.ts`) lists its photos in a grid (`components/map-legend-help.tsx`).
-- Then, under a divider, the trip lines of the photos' days when **Trip lines** is on: **Walk**, **Bus, subway or
+- Then, under a divider, the trip lines of the photos' days when **Show trip lines** is on: **Walk**, **Bus, subway or
   train** (a sample in the colors of the lines ridden), **Drive** (long dashes), **Ferry**, **Flight**, **Other trip** (dashed), **Place visited** and **Area**.
   **Area** also shows while a place's area is shaded from **Places**.
 
