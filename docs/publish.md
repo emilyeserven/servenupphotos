@@ -221,6 +221,15 @@ cropped around its focus point and placement, with a fade into the page's backgr
 page's title, filters and the rest come after them, and the site menu stays fixed at the top right. With no album
 picked, the page starts with its title as before.
 
+A **Jump to Cover Image** button at the strip's bottom right (`components/jump-to-cover.tsx`) scrolls to the photo
+showing in the strip at that moment, its Grid tile or table row or its Timeline row, to the middle of the screen, and
+rings it for a moment. Each tile and row carries its photo's ID as `data-photo-id` for this. When the page doesn't
+show the photo, because a filter leaves it out or its Timeline month is closed, the button opens it in the
+[photo viewer](photo-viewer.md) instead.
+
+> **Frontend analogy:** it's an in-page anchor link, except the target is found by `data-photo-id` when clicked,
+> since the photo showing changes every few seconds.
+
 > **Frontend analogy:** it's like a layout route rendering a hero banner above `<Outlet />`, chosen by the URL, so the
 > pages themselves don't change.
 

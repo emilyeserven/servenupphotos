@@ -76,7 +76,11 @@ export function NaturalRows<T extends { id: number; image: PhotoImage }>({
       {rows.map((row) => (
         <ul key={row.photos[0]!.id} className={cn("flex gap-x-3", row.full && "justify-center")}>
           {row.photos.map((photo) => (
-            <li key={photo.id} style={tileStyle(ratioOf(photo), row.height, row.full)}>
+            <li
+              key={photo.id}
+              data-photo-id={photo.id}
+              style={tileStyle(ratioOf(photo), row.height, row.full)}
+            >
               {renderTile(photo)}
             </li>
           ))}

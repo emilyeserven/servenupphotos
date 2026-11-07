@@ -438,7 +438,7 @@ function PhotoRow({
   const { image } = photo;
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   return (
-    <tr className="border-t">
+    <tr className="border-t" data-photo-id={photo.id}>
       {columnIds.map((id) => (
         <td key={id} className={CELLS[id].className}>
           {CELLS[id].render(photo, open, cell)}

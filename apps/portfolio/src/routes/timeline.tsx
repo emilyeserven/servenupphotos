@@ -340,7 +340,7 @@ function PhotoRow({ photo, display, onOpen }: RowOptions & { photo: Photo }) {
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   const layout = THUMB_LAYOUT[display.thumbs];
   return (
-    <li className={cn("flex gap-3", layout.row)}>
+    <li className={cn("flex gap-3", layout.row)} data-photo-id={photo.id}>
       <PhotoThumbnailButton
         image={image}
         title={photo.title}
