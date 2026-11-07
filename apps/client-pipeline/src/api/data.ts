@@ -84,7 +84,7 @@ export const replaceBaseUrlMutation = mutationOptions({
 });
 
 /** An Update Data read that reports how far it has got. */
-export type ReadTask = "missing-fields" | "colors";
+export type ReadTask = "missing-fields" | "colors" | "r2-exif";
 
 /** How far an Update Data read has got: `done` of `total` in `step`. */
 export interface ReadProgress {

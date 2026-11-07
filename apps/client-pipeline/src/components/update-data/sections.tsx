@@ -1,5 +1,6 @@
 import {
   CameraIcon,
+  FileImageIcon,
   FileTextIcon,
   GlobeIcon,
   LanguagesIcon,
@@ -20,6 +21,7 @@ import { ImageNamesCard } from "@/components/image-names-card";
 import { LocalizationFillCard } from "@/components/localization-fill/localization-fill-card";
 import { MissingFieldsCard } from "@/components/missing-fields";
 import { PhotoColorsCard } from "@/components/photo-colors-card";
+import { R2ExifCard } from "@/components/r2-exif/r2-exif-card";
 import { PruneTagsCard } from "@/components/prune-tags/prune-tags-card";
 import { ReapplyOverridesCard } from "@/components/reapply-overrides";
 import { TagDescriptionsCard } from "@/components/tag-descriptions/tag-descriptions-card";
@@ -81,6 +83,12 @@ export const updateDataSections: readonly UpdateDataSection[] = [
     title: "Times across timezones",
     icon: GlobeIcon,
     render: () => <TimezoneShiftCard />,
+  },
+  {
+    slug: "r2-exif",
+    title: "EXIF in R2",
+    icon: FileImageIcon,
+    render: (s) => <R2ExifCard canRead={r2IsSetUp(s.r2)} />,
   },
 ];
 

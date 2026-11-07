@@ -6,6 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 const R2_LABELS: Record<ReadTask, string> = {
   "missing-fields": "Reading camera details from the originals in R2",
   colors: "Reading each photo's colors from its original in R2",
+  "r2-exif": "Reading each photo's EXIF from its original in R2",
 };
 
 interface ReadProgressViewProps {
