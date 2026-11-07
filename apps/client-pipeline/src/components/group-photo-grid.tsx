@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ImageOffIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import type { GroupKind } from "@/api/organize";
 import { ImageLightbox } from "@/components/image-lightbox";
 import {
@@ -28,13 +28,18 @@ export type GroupPhotos = ReturnType<typeof useGroupPhotos>;
 /**
  * The photos as Square Thumbnails, in the album's order (its photo order, when it has one, then
  * the default order), each opening full size, or why there are none:
- * ALLPHOTOS.json still being read or unreadable, or no photo listing it.
+ * ALLPHOTOS.json still being read or unreadable, or no photo listing it. `action` puts a button on
+ * a photo's tile, such as the one that takes it out of the album.
  */
 export function GroupPhotoGrid({
   combined,
   photos,
   order,
-}: Pick<GroupPhotos, "combined" | "photos"> & { order?: number[] }) {
+  action,
+}: Pick<GroupPhotos, "combined" | "photos"> & {
+  order?: number[];
+  action?: (photo: CombinedPhoto) => ReactNode;
+}) {
   if (combined.isPending) return <p>Reading ALLPHOTOS.json…</p>;
   if (!photos) return <ReadError error={combined.error} />;
   if (photos.length === 0) return <NoPhotos />;
@@ -42,7 +47,7 @@ export function GroupPhotoGrid({
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]">
       {albumPhotoOrder(photos, order).map((photo, i) => (
         <li key={`${photoText(photo, "file") ?? ""}-${i}`}>
-          <PhotoTile photo={photo} />
+          <PhotoTile photo={photo} action={action?.(photo)} />
         </li>
       ))}
     </ul>
@@ -85,15 +90,16 @@ function fullUrl(photo: CombinedPhoto): string | undefined {
   return photoImage(photo, "xlarge") ?? photoImage(photo, "full");
 }
 
-/** A photo's Square Thumbnail and title, opening the photo full size. */
-export function PhotoTile({ photo }: { photo: CombinedPhoto }) {
+/** A photo's Square Thumbnail and title, opening the photo full size, with `action` over its corner. */
+export function PhotoTile({ photo, action }: { photo: CombinedPhoto; action?: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [failed, setFailed] = useState(false);
   const name = photoName(photo);
   const square = squareUrl(photo);
   const full = fullUrl(photo);
   return (
-    <figure className="flex flex-col gap-1.5">
+    <figure className="group/tile relative flex flex-col gap-1.5">
+      {action}
       {square && !failed ? (
         <button
           type="button"

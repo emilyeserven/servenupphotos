@@ -51,6 +51,10 @@ album out of each picked photo's `albums`, keeping its other albums, and takes t
 `{ "photoIds": [...] }`). The backend refuses an ID that isn't a photo's, or a photo that isn't in the album itself.
 **Cancel** leaves them as they were.
 
+To take out just one photo, hover its tile in the **Photos** card (on a phone the button is always showing) and press
+the **×** in its corner. It saves the same change as picking that one photo under **Remove photos**, right away and
+waiting for Commit like the rest. Photos only in a sub-album, and every photo of a Smart Album, get no **×**.
+
 > **Frontend analogy:** like removing items from a list that other state points at by ID: the same save also filters
 > the IDs out of every derived array (the order, the covers, the rows), so nothing is left pointing at a removed item.
 

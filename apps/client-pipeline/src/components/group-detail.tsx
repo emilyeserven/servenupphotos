@@ -39,10 +39,11 @@ import {
   AlbumRemovePhotos,
   useAlbumRemove,
 } from "@/components/album-remove-photos";
+import { AlbumPhotoGrid } from "@/components/album-remove-one";
 import { AlbumVisibilityCard } from "@/components/album-visibility-card";
 import { SmartAlbumCard } from "@/components/smart-album/smart-album-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
-import { type GroupPhotos, GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
+import { type GroupPhotos, useGroupPhotos } from "@/components/group-photo-grid";
 import { GroupCombobox } from "@/components/group-picker";
 import { GitHubGate, GroupStatus } from "@/components/organize-page";
 import { Page } from "@/components/page";
@@ -523,6 +524,7 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
           photos={photos}
           mode={mode}
           remove={removing}
+          removable={byHand(kind, group)}
           onDone={() => setMode("view")}
         />
       </CardContent>
@@ -560,6 +562,8 @@ interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> 
   group: Group;
   mode: PhotosMode;
   remove: AlbumRemove;
+  /** Whether each of the album's own photos gets a button that takes it out of the album. */
+  removable: boolean;
   onDone: () => void;
 }
 
@@ -567,10 +571,9 @@ interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> 
  * The photos in the album's order, or, while reordering, the tiles to drag into a new one, or,
  * while removing, the tiles to pick.
  */
-function PhotosOrReorder({ group, combined, photos, mode, remove, onDone }: PhotosOrReorderProps) {
-  if (mode === "view" || !photos) {
-    return <GroupPhotoGrid combined={combined} photos={photos} order={group.photoOrder} />;
-  }
+function PhotosOrReorder(props: PhotosOrReorderProps) {
+  const { group, photos, mode, remove, onDone } = props;
+  if (mode === "view" || !photos) return <AlbumPhotoGrid {...props} album={group} />;
   if (mode === "reorder") {
     return <AlbumPhotoReorder album={group} photos={photos} onDone={onDone} />;
   }
