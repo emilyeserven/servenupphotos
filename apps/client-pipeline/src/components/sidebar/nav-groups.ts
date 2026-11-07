@@ -10,6 +10,7 @@ import {
   GalleryHorizontalIcon,
   HeartIcon,
   ImageIcon,
+  ImagesIcon,
   LanguagesIcon,
   LayoutGridIcon,
   LightbulbIcon,
@@ -59,6 +60,7 @@ export const navGroups: readonly NavGroup[] = [
     items: [
       { title: "Photo", url: "/exif", icon: ImageIcon },
       { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
+      { title: "All Photos", url: "/all-photos", icon: ImagesIcon },
     ],
   },
   {
