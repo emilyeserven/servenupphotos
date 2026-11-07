@@ -7,6 +7,7 @@ import {
   useSections,
 } from "@portfolio/components/group-picker-parts";
 import { FilterPickerButton, SectionPicker } from "@portfolio/components/section-picker";
+import { GROUP_KEYS, withoutFilters } from "@portfolio/lib/photo-filters";
 
 /**
  * A **Groups** button that opens one picker for the album, tag and genre filters, like **When**: a
@@ -18,7 +19,12 @@ export function GroupPicker(props: GroupPickerProps) {
   const sections = useSections(props);
   const count = sections.filter((section) => section.chosen).length;
   return (
-    <FilterPickerButton Icon={FolderOpen} label="Groups" count={count}>
+    <FilterPickerButton
+      Icon={FolderOpen}
+      label="Groups"
+      count={count}
+      onClear={() => props.setFilters(withoutFilters(props.filters, GROUP_KEYS))}
+    >
       <PickerBody sections={sections} {...props} />
     </FilterPickerButton>
   );

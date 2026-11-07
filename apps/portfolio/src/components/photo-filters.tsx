@@ -1,6 +1,7 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
+import { ClearableTrigger, SwapOut } from "@portfolio/components/clearable-trigger";
 import { FilterCount } from "@portfolio/components/filter-count";
 import { GroupPicker } from "@portfolio/components/group-picker";
 import { MoreFilters } from "@portfolio/components/more-filters";
@@ -142,8 +143,8 @@ export function PhotoFilterBar({
 
 /**
  * The filter bar's top row: the text search when it has one, the Show filters button saying how
- * many are set, and **Clear filters** while any is, then `end` pushed to the right. A bare bar has
- * only Clear filters.
+ * many are set, whose X clears them all, then `end` pushed to the right. A bare bar, with no Show
+ * filters button, has **Clear filters** instead while any is set.
  */
 function ToggleRow({
   searchable,
@@ -168,40 +169,56 @@ function ToggleRow({
   return (
     <div className="flex flex-wrap items-center gap-2">
       {searchable && <PhotoSearchBox />}
-      <ToggleButton bare={bare} open={open} listId={listId} count={count} onClick={onToggle} />
-      <ClearFilters count={count} onClear={onClear} />
+      <ToggleButton
+        bare={bare}
+        open={open}
+        listId={listId}
+        count={count}
+        onClick={onToggle}
+        onClear={onClear}
+      />
+      <ClearFilters bare={bare} count={count} onClear={onClear} />
       <div className="ml-auto empty:hidden">{end}</div>
     </div>
   );
 }
 
-/** The Show filters button, or Hide filters while they show, with how many are set; none on a bare bar. */
+/**
+ * The Show filters button, or Hide filters while they show, with how many are set; none on a bare
+ * bar. While any is set, pointing at it swaps the count for an X that clears them all.
+ */
 function ToggleButton({
   bare,
   open,
   listId,
   count,
   onClick,
+  onClear,
 }: {
   bare: boolean;
   open: boolean;
   listId: string;
   count: number;
   onClick: () => void;
+  onClear: () => void;
 }) {
   if (bare) return null;
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      aria-expanded={open}
-      aria-controls={listId}
-      onClick={onClick}
-    >
-      <SlidersHorizontal aria-hidden />
-      {open ? "Hide filters" : "Show filters"}
-      <FilterCount count={count} />
-    </Button>
+    <ClearableTrigger label="all filters" count={count} onClear={onClear}>
+      <Button
+        variant="outline"
+        size="sm"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={onClick}
+      >
+        <SlidersHorizontal aria-hidden />
+        {open ? "Hide filters" : "Show filters"}
+        <SwapOut clearable={count > 0}>
+          <FilterCount count={count} />
+        </SwapOut>
+      </Button>
+    </ClearableTrigger>
   );
 }
 
@@ -224,9 +241,9 @@ const OVER_MAP =
 
 /**
  * The **Groups** and **When** pickers behind a **More filters** button, then the view's own
- * filters (`own`, such as the map's **Visuals**), side by side, then `children` and **Clear
- * filters** while any filter is set, for a view with no room to spare for the **Show filters**
- * button, such as the map.
+ * filters (`own`, such as the map's **Visuals**), side by side, then `children`, for a view with no
+ * room to spare for the **Show filters** button, such as the map. Pointing at **More filters**
+ * while any filter is set shows an X that clears them all.
  */
 export function MoreFilterControls({
   photos,
@@ -244,19 +261,26 @@ export function MoreFilterControls({
   const groupCount = filterCount(withoutFilters(props.filters, LOCATION_KEYS));
   return (
     <div className={OVER_MAP}>
-      <MoreFilters badge={<FilterCount count={groupCount + own.count} />}>
+      <MoreFilters count={groupCount + own.count} onClear={clearFilters}>
         <GroupDropdowns {...props} />
         {own.children}
       </MoreFilters>
       {children}
-      <ClearFilters count={filterCount(props.filters) + own.count} onClear={clearFilters} />
     </div>
   );
 }
 
-/** A **Clear filters** button, shown only while `count` filters are set. */
-function ClearFilters({ count, onClear }: { count: number; onClear: () => void }) {
-  if (count === 0) return null;
+/** A bare bar's **Clear filters** button, shown only while `count` filters are set. */
+function ClearFilters({
+  bare,
+  count,
+  onClear,
+}: {
+  bare: boolean;
+  count: number;
+  onClear: () => void;
+}) {
+  if (!bare || count === 0) return null;
   return (
     <Button variant="ghost" size="sm" onClick={onClear} className="bg-background/80">
       <X aria-hidden />

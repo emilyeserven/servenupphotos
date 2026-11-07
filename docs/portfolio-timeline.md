@@ -18,7 +18,7 @@ A day with a [trip line](trip-lines.md) has a small sketch of its route at the r
 bakes, fitted into 48 × 32 px with their shape kept, in the Map's line styles and colors (walks solid blue, drives in
 long light blue dashes, rides in their line's color, other hops dashed purple, trip stops as amber dots). Areas are left
 out. Clicking it opens the [Map](portfolio-map.md) on that day, zoomed to fit the day's whole line
-(`/map?day=2026-09-23&lat=…&lng=…&zoom=…`, worked out for the window's size in `lib/fit-view.ts`). The file loads after the page,
+(`/map?start=2026-09-23&end=2026-09-23&lat=…&lng=…&zoom=…`, worked out for the window's size in `lib/fit-view.ts`). The file loads after the page,
 so the sketches appear a moment later, and on screens under 360 px wide they're hidden.
 
 > **Frontend analogy:** the sketch is a sparkline for a route: the same GeoJSON the Map draws with MapLibre, drawn

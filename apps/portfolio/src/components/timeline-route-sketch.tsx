@@ -94,7 +94,11 @@ export function TimelineRouteSketch({ day }: { day: string }) {
   return (
     <Link
       to="/map"
-      search={{ day, ...fitView(sketch.bounds, window.innerWidth, window.innerHeight) }}
+      search={{
+        start: day,
+        end: day,
+        ...fitView(sketch.bounds, window.innerWidth, window.innerHeight),
+      }}
       aria-label="Show this day's route on the map"
       title="Show this day's route on the map"
       className="-my-1 ml-auto shrink-0 rounded-sm bg-muted/60 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring max-[359px]:hidden"

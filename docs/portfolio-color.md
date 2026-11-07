@@ -135,7 +135,7 @@ The picker opens on the first of Color, Vividness and Orientation that's set, an
 count only the photos of the chosen orientation. It stays open while you pick, and keeps 16px
 from the screen's edges on a phone. On a phone the list folds up above the controls, like **Gear & settings**: a button
 naming the chosen section and what it's set to opens it, and picking a section closes it again. It uses the same URL keys as above, counting the photos the Grid's other filters leave. Its
-color, vividness and orientation filters count toward the filter button's number, and **Clear filters** clears them. Photos without
+color, vividness and orientation filters count toward the filter button's number, and its clear X clears them, as does the **Visuals** button's own. Photos without
 saved colors don't match a color or a vividness above 0. With **Show info** on, each tile also shows its color bar
 (`components/color-bar.tsx`): each color as wide as its share, the biggest three named under it.
 

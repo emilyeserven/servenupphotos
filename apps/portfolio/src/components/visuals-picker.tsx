@@ -72,12 +72,14 @@ function firstSection(filters: VisualFilters): VisualSection {
  * what the other filters leave, before the color and orientation filters, which the counts are out of.
  */
 export function VisualsPicker(props: VisualsPickerProps) {
+  const clear = useClearVisuals();
   return (
     <FilterPickerButton
       Icon={Palette}
       label="Visuals"
       count={visualFilterCount(props.filters)}
       badge={<PickedDot color={props.filters.color} />}
+      onClear={clear}
     >
       <PickerBody {...props} />
     </FilterPickerButton>
@@ -137,11 +139,10 @@ function PickerBody(props: VisualsPickerProps) {
   );
 }
 
-/** An X under the list clearing every visual filter, shown while any is set. */
-function ClearVisuals({ filters }: { filters: VisualFilters }) {
+/** Clears every visual filter in the URL. */
+function useClearVisuals(): () => void {
   const navigate = useNavigate();
-  if (visualFilterCount(filters) === 0) return null;
-  const clear = () =>
+  return () =>
     void navigate({
       to: ".",
       resetScroll: false,
@@ -151,5 +152,11 @@ function ClearVisuals({ filters }: { filters: VisualFilters }) {
       }),
       replace: true,
     });
+}
+
+/** **Clear visuals** under the list, clearing every visual filter, shown while any is set. */
+function ClearVisuals({ filters }: { filters: VisualFilters }) {
+  const clear = useClearVisuals();
+  if (visualFilterCount(filters) === 0) return null;
   return <PickerClear text="Clear visuals" label="Visuals" onClear={clear} />;
 }
