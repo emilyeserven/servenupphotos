@@ -43,7 +43,7 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
 	}
 	saved := first.Data
 	first.Data = nil
-	if want := (PublishResult{Path: "photos/data/photos/DSC0001.json"}); !reflect.DeepEqual(first, want) {
+	if want := (PublishResult{Path: "photos/data/photos/DSC0001.json", Changes: []ScanChange{}}); !reflect.DeepEqual(first, want) {
 		t.Errorf("first Publish() = %+v, want %+v", first, want)
 	}
 	wantJSON := `{

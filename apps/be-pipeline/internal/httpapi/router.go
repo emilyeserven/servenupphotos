@@ -70,6 +70,10 @@ type routeDeps struct {
 	// when a photo is uploaded and read when its JSON is saved or Update
 	// Data reads colors.
 	colors *colorCache
+	// hashes reads the perceptual hash of a photo's Small version from the
+	// offline copy, remembering each by URL, when a photo is saved or near
+	// duplicates are looked for.
+	hashes github.HashReader
 	// offline keeps the thumbnails and the images found in R2 for when the
 	// internet can't be reached, in the settings folder.
 	offline *offline.Copy
@@ -87,6 +91,7 @@ func newRouteDeps(extractor exif.Extractor, store *settings.Store, gh *github.Cl
 	}
 	kept := offline.New(dir, storage.GetThumbnail)
 	return routeDeps{
+		hashes:     hashReader(store.R2, kept.Thumbnail, newKeyCache[string]()),
 		extractor:  extractor,
 		store:      store,
 		gh:         gh,

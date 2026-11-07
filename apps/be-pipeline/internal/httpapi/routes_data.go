@@ -47,4 +47,5 @@ func registerDataRoutes(mux *http.ServeMux, d routeDeps) {
 		handleApplyBackfill(d.extractor, d.store, d.gh, storage.GetPhoto, storage.ThumbnailCrop, exifs)))
 	mux.HandleFunc("POST /data/colors/preview", progress.tracked("colors", handlePreviewColors(d.store, d.gh, storage.GetPhoto, d.colors)))
 	mux.HandleFunc("POST /data/colors", progress.tracked("colors", handleWriteColors(d.store, d.gh, storage.GetPhoto, d.colors)))
+	mux.HandleFunc("POST /data/near-duplicates", progress.tracked("near-duplicates", handleFindNearDuplicates(d.store, d.gh, d.hashes)))
 }

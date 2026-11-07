@@ -458,7 +458,7 @@ function FileSection({
         <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
         <FileStatus status={file.status} pending={file.pending} />
         <UnselectedMark file={file}>
-          <DraftMark data={file.status === "removed" ? undefined : file.data}>
+          <DraftMark data={file.status === "removed" ? undefined : file.data} path={file.path}>
             <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
           </DraftMark>
         </UnselectedMark>

@@ -1117,6 +1117,18 @@ export function defaultFixtures() {
       files: colorFiles(),
     }),
     "POST /api/data/colors": () => ({ ...pendingSave(), files: 3, failed: 1 }),
+    "POST /api/data/near-duplicates": () => ({
+      ...pendingSave(),
+      photos: 120,
+      hashed: 118,
+      hashFailed: 2,
+      groups: [
+        {
+          group: "Near duplicates of Lantern street",
+          paths: [`${FOLDER}/photos/lantern-street.json`, `${FOLDER}/photos/DSCF4801.json`],
+        },
+      ],
+    }),
     // No read running: the page shows its own label until a read reports how far it has got.
     "GET /api/data/progress/colors": { running: false, step: "", done: 0, total: 0 },
     "GET /api/data/progress/missing-fields": { running: false, step: "", done: 0, total: 0 },

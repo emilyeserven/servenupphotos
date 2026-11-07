@@ -31,6 +31,11 @@ download it again; after a backend restart, saving reads them from the original 
 whose colors can't be read is saved without them, and Update Data's **Colors** can add them later. Bulk uploads save
 the same way.
 
+The backend also adds its `perceptualHash`, read from its Small version (from the offline copy, or else R2, given 10
+seconds), and when the photo looks nearly the same as one already saved it puts both in a compare group in the same
+save, which the page then names under **Saved**; see [Near duplicates](compare-groups.md#near-duplicates). A photo
+whose Small version can't be read is saved without a hash and isn't checked until **Find near duplicates** runs.
+
 Once a photo is analyzed, the page first looks for it in the saved photo data on GitHub: `ALLPHOTOS.json` on the
 Settings branch, from the [combined data store](combined-data-store.md), and each photo JSON file the open **Add photo
 data** pull request adds or changes (`POST /api/photos/all-photos/check` → `POST /photos/all-photos/check`). The pull request's files are read directly, not its `ALLPHOTOS.json`, because that only

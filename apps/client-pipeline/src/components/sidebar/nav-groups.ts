@@ -10,6 +10,7 @@ import {
   GalleryHorizontalIcon,
   HeartIcon,
   ImageIcon,
+  ImagesIcon,
   LanguagesIcon,
   LayoutGridIcon,
   LightbulbIcon,
@@ -65,6 +66,7 @@ export const navGroups: readonly NavGroup[] = [
         children: [{ title: "Alt Text", url: "/alt-text", icon: ScanTextIcon }],
       },
       { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
+      { title: "All Photos", url: "/all-photos", icon: ImagesIcon },
     ],
   },
   {

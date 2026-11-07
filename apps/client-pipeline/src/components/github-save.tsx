@@ -6,6 +6,7 @@ import type { SanitizedExif } from "@/api/exif";
 import { NO_GROUPS, type PhotoGroups } from "@/api/organize";
 import { type PublishResult, publishPhotoMutation } from "@/api/photos";
 import { type SettingsResponse, dataFolder, settingsQuery } from "@/api/settings";
+import { NearDuplicatesNote } from "@/components/compare/near-duplicates-note";
 import { QueryResult } from "@/components/query-result";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -181,6 +182,7 @@ export function PublishSuccess({ result }: { result: PublishResult }) {
         Saved <code>{result.path}</code> in the batch.{" "}
         <WaitingForCommit pullRequestUrl={result.pullRequestUrl} />
       </p>
+      <NearDuplicatesNote near={result.nearDuplicates} />
     </div>
   );
 }

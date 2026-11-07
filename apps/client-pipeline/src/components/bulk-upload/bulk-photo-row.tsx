@@ -10,6 +10,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { type ReactNode, useEffect } from "react";
+import { NearDuplicatesNote } from "@/components/compare/near-duplicates-note";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useObjectUrl } from "@/hooks/use-object-url";
@@ -112,9 +113,12 @@ function Finished({ photo }: { photo: BulkPhoto }) {
 function Added({ photo }: { photo: BulkPhoto }) {
   const saved = photo.saved;
   return (
-    <Line icon={<CircleCheckIcon />} className="text-emerald-700 dark:text-emerald-400">
-      Added to the batch as <code>{saved?.path.split("/").pop()}</code>, waiting for Commit
-    </Line>
+    <>
+      <Line icon={<CircleCheckIcon />} className="text-emerald-700 dark:text-emerald-400">
+        Added to the batch as <code>{saved?.path.split("/").pop()}</code>, waiting for Commit
+      </Line>
+      <NearDuplicatesNote near={saved?.nearDuplicates} />
+    </>
   );
 }
 
