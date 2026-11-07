@@ -389,11 +389,25 @@ light use, so `be-pipeline/internal/transit` spaces its requests a second apart,
 routing servers. The public servers are often busy and answer 429, 502 or 504, so when one does, the backend waits a
 moment and tries the next of the
 [public mirrors](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances)
-(`overpass.private.coffee`, then `maps.mail.ru`), going round them twice, each given 20s. A query a server turns down
-as wrong (400) isn't tried again. When none answer, the page says the servers are busy and to try again in a minute
-(503). Answers are kept in memory for a day, up to 200 of them, so looking up the same hop again, even after reloading
-the page, doesn't ask a server; restarting the backend clears them. `OVERPASS_URL`, a comma-separated list, replaces
-the servers asked.
+(`overpass.private.coffee`, then `maps.mail.ru`), going round them twice. Each try gets 25s, and the query asks the
+server to stop after 20s (`[timeout:20]`; a lower value is also
+[less likely to be turned away](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#timeout:) when the
+server is loaded). The whole look-up gets 85s, enough for one full try on each server. A query a server turns down as
+wrong (400) isn't tried again. When none answer, or the 85s run out while one is still thinking, the page says the
+servers are busy, which server answered last and how (such as "took too long to answer"), and to try again in a minute
+(503).
+
+The lines query is kept light: near the first photo it looks only at the ways the hop's lines run on (`railway` for a
+train or subway, `highway` for a bus, both plus ferry routes for transit), not the buildings and footpaths around a
+station, and near the second photo it looks only at those lines' own ways
+([`way(r.a)(around:…)`](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL))
+instead of every way there.
+
+> **Frontend analogy:** the old query was like `document.querySelectorAll("*")` around both photos and then filtering
+> in JavaScript; the new one is `querySelectorAll(".rail")` around the first photo and then, for the second, only
+> checking the children of the lines already found. Answers are kept in memory for a day, up to 200 of them, so looking up the same hop again, even after reloading
+> the page, doesn't ask a server; restarting the backend clears them. `OVERPASS_URL`, a comma-separated list, replaces
+> the servers asked.
 
 > **Frontend analogy:** it's a `fetch` wrapper with retry, like TanStack Query's `retry` and `retryDelay`, that also
 > switches to a backup CDN when the first one fails, plus a `staleTime` of a day kept on the backend.

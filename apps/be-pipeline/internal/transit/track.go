@@ -17,7 +17,7 @@ var ErrNoTrack = errors.New("couldn't follow that line between those spots")
 // it nearest to, each [longitude, latitude], with from and to themselves
 // added at its ends so it joins the photos.
 func (c *Client) Track(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error) {
-	elements, err := c.query(ctx, fmt.Sprintf("[out:json][timeout:25];rel(%d);out geom;", id))
+	elements, err := c.query(ctx, fmt.Sprintf(serverTimeout+"rel(%d);out geom;", id))
 	if err != nil {
 		return nil, err
 	}

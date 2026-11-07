@@ -38,12 +38,29 @@ var DefaultURLs = []string{
 // a walk.
 var ErrNoKind = errors.New("no transit lines for this way of travelling")
 
-// routeKinds are the OpenStreetMap route values each mode's lines can have.
-var routeKinds = map[string]string{
-	"train":   "train|light_rail|monorail|tram",
-	"subway":  "subway|light_rail|monorail|tram",
-	"bus":     "bus|trolleybus|coach",
-	"transit": "train|light_rail|monorail|tram|subway|bus|trolleybus|coach|ferry",
+// routeKind is what a mode's lines are mapped as.
+type routeKind struct {
+	// routes are the OpenStreetMap route values its lines can have, as a regex
+	// alternation, such as "bus|trolleybus|coach".
+	routes string
+	// ways are the Overpass tag filters for the ways its lines run on, such as
+	// "[railway]", so the look-up skips the buildings and paths nearby.
+	ways []string
+}
+
+// rail, road and ferry ways are the ways trains, buses and ferries run on.
+const (
+	railWays  = "[railway]"
+	roadWays  = "[highway]"
+	ferryWays = "[route=ferry]"
+)
+
+// routeKinds are what each mode's lines are mapped as.
+var routeKinds = map[string]routeKind{
+	"train":   {"train|light_rail|monorail|tram", []string{railWays}},
+	"subway":  {"subway|light_rail|monorail|tram", []string{railWays}},
+	"bus":     {"bus|trolleybus|coach", []string{roadWays}},
+	"transit": {"train|light_rail|monorail|tram|subway|bus|trolleybus|coach|ferry", []string{railWays, roadWays, ferryWays}},
 }
 
 // Line is one transit line OpenStreetMap maps: usually one direction of one
@@ -161,7 +178,7 @@ func (c *Client) askOnce(ctx context.Context, base, ql string) ([]element, error
 	req.Header.Set("User-Agent", "servenupphotos-pipeline")
 	res, err := c.HTTP.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, slowOr(ctx, err)
 	}
 	defer res.Body.Close() //nolint:errcheck // read-only body
 	if res.StatusCode != http.StatusOK {
@@ -171,7 +188,7 @@ func (c *Client) askOnce(ctx context.Context, base, ql string) ([]element, error
 		Elements []element `json:"elements"`
 	}
 	if err := json.NewDecoder(res.Body).Decode(&a); err != nil {
-		return nil, errUnreadable
+		return nil, slowOr(ctx, errUnreadable)
 	}
 	return a.Elements, nil
 }

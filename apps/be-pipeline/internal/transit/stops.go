@@ -18,7 +18,7 @@ type Stop struct {
 // Stops are line id's stations or stops, in the order the line runs, each
 // named once even when it's mapped as more than one point.
 func (c *Client) Stops(ctx context.Context, id int64) ([]Stop, error) {
-	elements, err := c.query(ctx, fmt.Sprintf("[out:json][timeout:25];rel(%d);out body;node(r);out body;", id))
+	elements, err := c.query(ctx, fmt.Sprintf(serverTimeout+"rel(%d);out body;node(r);out body;", id))
 	if err != nil {
 		return nil, err
 	}

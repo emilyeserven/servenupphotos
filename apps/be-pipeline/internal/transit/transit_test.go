@@ -37,10 +37,13 @@ func TestLines(t *testing.T) {
 	if len(lines) != 3 || lines[0].Name != "Line 3" || lines[1].Ref != "M" || lines[1].Colour != "#e5171f" || lines[1].To != "Esaka" {
 		t.Fatalf("lines = %+v", lines)
 	}
-	for _, want := range []string{"around:500,34.660000,135.500000", "around:500,34.700000,135.490000", `route~"^(subway|`, "rel.a.b"} {
+	for _, want := range []string{"[timeout:20]", "way(around:500,34.660000,135.500000)[railway];", "way(r.a)(around:500,34.700000,135.490000)", `route~"^(subway|`, "rel.a.b"} {
 		if !strings.Contains(got, want) {
 			t.Errorf("query %q lacks %q", got, want)
 		}
+	}
+	if _, err := c.Lines(context.Background(), "transit", [2]float64{}, [2]float64{}); err != nil || !strings.Contains(got, "[highway];") || !strings.Contains(got, "[route=ferry];") {
+		t.Errorf("transit query %q lacks road and ferry ways (err %v)", got, err)
 	}
 	if _, err := c.Lines(context.Background(), "walk", [2]float64{}, [2]float64{}); !errors.Is(err, ErrNoKind) {
 		t.Errorf("walk: err = %v", err)

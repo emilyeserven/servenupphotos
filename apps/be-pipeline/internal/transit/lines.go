@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 )
 
 // nearM is how far, in meters, a line's track can pass from a spot and still
@@ -17,11 +18,11 @@ const maxLines = 40
 // Lines are the lines of mode's kinds whose track passes near both from and
 // to, each [longitude, latitude], sorted by number and name.
 func (c *Client) Lines(ctx context.Context, mode string, from, to [2]float64) ([]Line, error) {
-	kinds, ok := routeKinds[mode]
+	kind, ok := routeKinds[mode]
 	if !ok {
 		return nil, ErrNoKind
 	}
-	elements, err := c.query(ctx, linesQuery(kinds, from, to))
+	elements, err := c.query(ctx, linesQuery(kind, from, to))
 	if err != nil {
 		return nil, err
 	}
@@ -38,16 +39,23 @@ func (c *Client) Lines(ctx context.Context, mode string, from, to [2]float64) ([
 	return lines, nil
 }
 
-// linesQuery is the Overpass QL for route relations of kinds (a regex
-// alternation) with a way near both from and to.
-func linesQuery(kinds string, from, to [2]float64) string {
-	return fmt.Sprintf(`[out:json][timeout:25];
-way(around:%d,%f,%f)->.w1;
+// linesQuery is the Overpass QL for route relations of kind with a way near
+// both from and to. It looks only at the ways kind's lines run on near from,
+// rather than every building and path there, and then only at those lines'
+// own ways near to, rather than every way near to.
+func linesQuery(kind routeKind, from, to [2]float64) string {
+	near := fmt.Sprintf("(around:%d,%f,%f)", nearM, from[1], from[0])
+	var ways strings.Builder
+	for _, tag := range kind.ways {
+		ways.WriteString("way" + near + tag + ";")
+	}
+	return fmt.Sprintf(serverTimeout+`
+(%s)->.w1;
 rel(bw.w1)[type=route][route~"^(%s)$"]->.a;
-way(around:%d,%f,%f)->.w2;
-rel(bw.w2)[type=route][route~"^(%s)$"]->.b;
+way(r.a)(around:%d,%f,%f);
+rel(bw)->.b;
 rel.a.b;
-out tags;`, nearM, from[1], from[0], kinds, nearM, to[1], to[0], kinds)
+out tags;`, ways.String(), kind.routes, nearM, to[1], to[0])
 }
 
 // lineOf is the route relation e as a Line, named by its name, or else its
