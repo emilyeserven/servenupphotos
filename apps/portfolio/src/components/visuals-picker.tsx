@@ -15,6 +15,7 @@ import { COLOR_FILTER_KEYS, colorFilterCount, DEFAULT_PERCENT } from "@portfolio
 import { ORIENTATION_KEY } from "@portfolio/lib/orientation";
 import { type ColorName, colorLabel, colorSwatch, isShade } from "@portfolio/lib/photo-colors";
 import { cn } from "@portfolio/lib/utils";
+import { SectionTab } from "@portfolio/components/picker-section-tab";
 
 /** The URL keys the Visuals picker sets: the color filters and the orientation. */
 const VISUAL_FILTER_KEYS = [...COLOR_FILTER_KEYS, ORIENTATION_KEY] as const;
@@ -186,35 +187,6 @@ function ListToggle({
         aria-hidden
         className={cn("ml-auto size-4 shrink-0 transition-transform", open && "rotate-180")}
       />
-    </button>
-  );
-}
-
-/** A section in the left list: its name, with what it's set to under it. */
-function SectionTab({
-  label,
-  text,
-  chosen,
-  onClick,
-}: {
-  label: string;
-  text: string;
-  chosen: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={chosen}
-      onClick={onClick}
-      className={cn(
-        "flex w-full flex-col items-start rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50",
-        chosen && "bg-background shadow-xs",
-      )}
-    >
-      <span className="font-medium">{label}</span>
-      <span className="line-clamp-2 w-full text-xs text-muted-foreground">{text}</span>
     </button>
   );
 }

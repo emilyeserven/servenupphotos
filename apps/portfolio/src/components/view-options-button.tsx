@@ -1,8 +1,8 @@
 import { Eye } from "lucide-react";
 import type { ReactNode } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
-import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
+import { CONTROL_FRAME, controlButtonClass } from "@portfolio/lib/segmented-control";
+import { cn } from "@portfolio/lib/utils";
 
 /**
  * An eye button that opens a view's display options in a flyout, such as the map's pin size or the

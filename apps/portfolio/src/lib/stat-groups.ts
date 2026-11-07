@@ -84,18 +84,19 @@ export function valueGroup(
 }
 
 /**
- * A group whose rows are the buckets in their own order, empty ones left out. A photo can be in
- * more than one, or none: `inside` says which buckets it's in.
+ * A group whose rows are the buckets in their own order, empty ones left out unless `keepEmpty`. A
+ * photo can be in more than one, or none: `inside` says which buckets it's in.
  */
 export function bucketGroup(
   title: string,
   list: Photo[],
   buckets: Bucket[],
   inside: (photo: Photo, bucket: Bucket) => boolean,
+  keepEmpty = false,
 ): StatGroup {
   const rows = buckets
     .map((bucket) => rowOf(bucket, list.filter((photo) => inside(photo, bucket)).length))
-    .filter((row) => row.count > 0);
+    .filter((row) => keepEmpty || row.count > 0);
   const missing = list.filter((photo) => !buckets.some((b) => inside(photo, b))).length;
   return { title, rows, missing, missingReason: "unknown" };
 }
