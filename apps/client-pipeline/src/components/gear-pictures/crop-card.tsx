@@ -39,8 +39,9 @@ export function GearCropCard({ kind, files }: { kind: GearKind; files: GearFile[
         <CardTitle>{TITLES[kind]}</CardTitle>
         <CardDescription>
           Every picture drawn in one frame, so each gets the same size and place: the portfolio
-          shows each sized version at exactly 267 × 200. Choose pictures to unfade them; dragging,
-          zooming, fitting and filling change all the chosen ones.
+          shows each sized version at exactly 267 × 200, always cut from the full-size original.
+          Check pictures to select them: fitting, whole picture, filling and reset change every
+          selected one. Click a name to edit that picture: dragging and zooming change only it.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
@@ -76,7 +77,7 @@ function CropFrame({ bulk, overlay }: { bulk: BulkCrop; overlay: number }) {
           key={entry.file.id}
           entry={entry}
           bulk={bulk}
-          chosen={bulk.chosen.has(entry.file.id)}
+          layer={layerOf(bulk, entry)}
           opacity={bulk.chosen.has(entry.file.id) ? CHOSEN_OPACITY : overlay}
         />
       ))}
@@ -86,16 +87,22 @@ function CropFrame({ bulk, overlay }: { bulk: BulkCrop; overlay: number }) {
   );
 }
 
+/** How high a picture is stacked: the one being edited on top, then the chosen ones, then the rest. */
+function layerOf(bulk: BulkCrop, entry: CropEntry): number {
+  if (bulk.current === entry) return 2;
+  return Number(bulk.chosen.has(entry.file.id));
+}
+
 /** One picture in the frame; one from before crops gets the whole picture once it loads. */
 function FramedPicture({
   entry,
   bulk,
-  chosen,
+  layer,
   opacity,
 }: {
   entry: CropEntry;
   bulk: BulkCrop;
-  chosen: boolean;
+  layer: number;
   opacity: number;
 }) {
   const { file, original, crop } = entry;
@@ -106,7 +113,7 @@ function FramedPicture({
       alt=""
       draggable={false}
       className="pointer-events-none"
-      style={{ ...placed, opacity, zIndex: Number(chosen) }}
+      style={{ ...placed, opacity, zIndex: layer }}
       onLoad={(e) => {
         const size: [number, number] = [
           e.currentTarget.naturalWidth,
@@ -129,7 +136,7 @@ function CenterLines() {
   );
 }
 
-/** Pointer handlers that move every chosen picture as the frame is dragged. */
+/** Pointer handlers that move the picture being edited, and no other, as the frame is dragged. */
 function useDrag(bulk: BulkCrop) {
   const last = useRef<{ x: number; y: number }>(undefined);
   return {
@@ -142,7 +149,7 @@ function useDrag(bulk: BulkCrop) {
       const box = e.currentTarget.getBoundingClientRect();
       const dx = (e.clientX - last.current.x) / box.width;
       const dy = (e.clientY - last.current.y) / box.height;
-      bulk.change(({ crop }) => crop && moveCrop(crop, dx, dy));
+      bulk.changeCurrent((crop) => moveCrop(crop, dx, dy));
       last.current = { x: e.clientX, y: e.clientY };
     },
     onPointerUp: () => {
@@ -166,23 +173,65 @@ function CropPicks({ bulk }: { bulk: BulkCrop }) {
         </button>
       </div>
       {bulk.entries.map((entry) => (
-        <label
-          key={entry.file.id}
-          className={cn(
-            "hover:bg-muted flex items-center gap-2 rounded-md px-2 py-1",
-            bulk.chosen.has(entry.file.id) && "bg-muted",
-          )}
-        >
-          <input
-            type="checkbox"
-            className="accent-primary"
-            checked={bulk.chosen.has(entry.file.id)}
-            onChange={() => bulk.toggle(entry.file.id)}
-          />
-          <span className="min-w-0 flex-1 truncate">{entry.file.name}</span>
-          {entry.changed && <span className="text-muted-foreground text-xs">changed</span>}
-        </label>
+        <CropPick key={entry.file.id} entry={entry} bulk={bulk} />
       ))}
+      <MissingNote count={bulk.missing} />
     </fieldset>
+  );
+}
+
+/**
+ * One picture to choose from: its box selects it for the bulk actions, and its name makes it the
+ * one being edited, which dragging and zooming move.
+ */
+function CropPick({ entry, bulk }: { entry: CropEntry; bulk: BulkCrop }) {
+  const id = entry.file.id;
+  const editing = bulk.current === entry;
+  return (
+    <div
+      className={cn(
+        "hover:bg-muted flex items-center gap-2 rounded-md px-2 py-1",
+        bulk.chosen.has(id) && "bg-muted",
+        editing && "ring-primary ring-1",
+      )}
+    >
+      <input
+        type="checkbox"
+        aria-label={`Select ${entry.file.name}`}
+        className="accent-primary"
+        checked={bulk.chosen.has(id)}
+        onChange={() => bulk.toggle(id)}
+      />
+      <button
+        type="button"
+        className="min-w-0 flex-1 truncate text-left hover:underline"
+        aria-pressed={editing}
+        onClick={() => bulk.edit(id)}
+      >
+        {entry.file.name}
+      </button>
+      <PickMarks editing={editing} changed={entry.changed} />
+    </div>
+  );
+}
+
+/** The marks after a picture's name: "editing" on the one being edited, "changed" on a changed crop. */
+function PickMarks({ editing, changed }: { editing: boolean; changed: boolean }) {
+  return (
+    <>
+      {editing && <span className="text-primary text-xs">editing</span>}
+      {changed && <span className="text-muted-foreground text-xs">changed</span>}
+    </>
+  );
+}
+
+/** A note on the pictures saved before originals were kept, which can't be sized. */
+function MissingNote({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <p className="text-muted-foreground mt-2 text-xs">
+      {count} {count === 1 ? "picture was" : "pictures were"} saved before originals were kept and
+      can't be sized from full size; upload {count === 1 ? "it" : "them"} again to size.
+    </p>
   );
 }

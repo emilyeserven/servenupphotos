@@ -5,7 +5,7 @@ import { sameCrop } from "@/lib/gear-crop";
 /** A picture in the Crops card: its file, the original crops are cut from, and its crop now. */
 export interface CropEntry {
   file: GearFile;
-  /** The picture as uploaded, or the file's picture itself when it's from before crops. */
+  /** The picture as uploaded, at its full size, which every sized version is cut from. */
   original: string;
   /** The crop lined up, or none until a picture from before crops has loaded. */
   crop?: GearCrop;
@@ -13,17 +13,23 @@ export interface CropEntry {
   changed: boolean;
 }
 
-/** The files with a picture to crop: every one but those showing the drawing. */
-function pictured(files: GearFile[]): GearFile[] {
-  return files.filter((file) => Boolean(file.original ?? file.image));
+/** A file whose picture was kept as uploaded, so it can be sized from its full-size original. */
+type OriginalFile = GearFile & { original: string };
+
+/**
+ * The files that can be sized: those with their original kept. A file saved before originals were
+ * kept has only a resized picture, and is left out until its picture is uploaded again.
+ */
+function withOriginals(files: GearFile[]): OriginalFile[] {
+  return files.filter((file): file is OriginalFile => Boolean(file.original));
 }
 
 /** A file's entry, with the crop lined up for it if there is one, else its saved crop. */
-function entryOf(file: GearFile, edited: Record<string, GearCrop>): CropEntry {
+function entryOf(file: OriginalFile, edited: Record<string, GearCrop>): CropEntry {
   const crop = edited[file.id] ?? file.crop;
   return {
     file,
-    original: file.original ?? file.image,
+    original: file.original,
     crop,
     changed: !sameCrop(crop, file.crop),
   };
@@ -44,18 +50,35 @@ function changeChosen(
 }
 
 /**
- * The Crops card's state: every picture's crop, edited ones over saved ones, the pictures chosen
- * (unfaded, and moved, zoomed and fitted together), and each picture's size once it has loaded.
+ * The sizing card's state: every picture's crop, edited ones over saved ones; the pictures chosen
+ * (unfaded, and fitted, filled and reset together); the one picture being edited (dragged and
+ * zoomed on its own); and each picture's size once it has loaded.
  */
 export function useBulkCrop(files: GearFile[]) {
   const [edited, setEdited] = useState<Record<string, GearCrop>>({});
   const [chosen, setChosen] = useState<Set<string>>(() => new Set());
+  const [editing, setEditing] = useState<string>();
   const [sizes, setSizes] = useState<Record<string, [number, number]>>({});
-  const entries = pictured(files).map((file) => entryOf(file, edited));
+  const entries = withOriginals(files).map((file) => entryOf(file, edited));
+  const current = entries.find((entry) => entry.file.id === editing);
   return {
     entries,
     chosen,
     sizes,
+    /** The picture being edited, if any. */
+    current,
+    /** How many pictures can't be sized, having no original kept. */
+    missing: files.filter((file) => file.image && !file.original).length,
+    /** Edits a picture, choosing it too. */
+    edit: (id: string) => {
+      setEditing(id);
+      setChosen((now) => new Set(now).add(id));
+    },
+    /** Changes the crop of the picture being edited, and no other. */
+    changeCurrent: (change: (crop: GearCrop) => GearCrop) => {
+      if (current?.crop)
+        setEdited((now) => ({ ...now, [current.file.id]: change(current.crop as GearCrop) }));
+    },
     /** Chooses a picture, or lets it go. */
     toggle: (id: string) =>
       setChosen((now) => {

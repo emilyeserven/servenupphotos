@@ -1,39 +1,34 @@
 import { Minus, Plus } from "lucide-react";
-import type { BulkCrop, CropEntry } from "@/components/gear-pictures/use-bulk-crop";
+import type { BulkCrop } from "@/components/gear-pictures/use-bulk-crop";
+import type { GearCrop } from "@portfolio/lib/gear-pictures";
 import { Button } from "@/components/ui/button";
 import { wholeCrop, zoomCrop, zoomOf } from "@/lib/gear-crop";
 
 /** How much one press of − or + zooms, as a power of two. */
 const ZOOM_STEP = 0.1;
 
-/** The chosen pictures' crop zoomed by `step` powers of two. */
-const zoomBy = (step: number) => (entry: CropEntry) =>
-  entry.crop && zoomCrop(entry.crop, zoomOf(entry.crop) + step);
-
-/** The first chosen picture with a crop, which the slider shows the zoom of. */
-function leadOf(bulk: BulkCrop): CropEntry | undefined {
-  return bulk.entries.find((entry) => entry.crop && bulk.chosen.has(entry.file.id));
-}
+/** A crop zoomed by `step` powers of two. */
+const zoomBy = (step: number) => (crop: GearCrop) => zoomCrop(crop, zoomOf(crop) + step);
 
 /**
- * How far the slider goes, around the lead picture's whole-picture zoom, so a picture of any
+ * How far the slider goes, around the edited picture's whole-picture zoom, so a picture of any
  * shape can be zoomed well in to its gear or out to room around it.
  */
-function rangeOf(bulk: BulkCrop, lead?: CropEntry): { min: number; max: number } {
+function rangeOf(bulk: BulkCrop): { min: number; max: number } {
+  const lead = bulk.current;
   const size = lead && bulk.sizes[lead.file.id];
   const whole = size ? zoomOf(wholeCrop(...size)) : 0;
   return { min: whole - 3, max: whole + 5 };
 }
 
 /**
- * The zoom slider, with − and + at its ends, zooming every chosen picture together. The slider
- * shows the first chosen picture's zoom; moving it zooms each chosen picture by the same amount,
- * so pictures already lined up stay lined up.
+ * The zoom slider, with − and + at its ends, zooming only the picture being edited (not every
+ * chosen one), and off until one is.
  */
 export function CropZoom({ bulk }: { bulk: BulkCrop }) {
-  const lead = leadOf(bulk);
+  const lead = bulk.current;
   const value = lead?.crop ? zoomOf(lead.crop) : 0;
-  const zoom = (step: number) => bulk.change(zoomBy(step));
+  const zoom = (step: number) => bulk.changeCurrent(zoomBy(step));
   return (
     <div className="flex items-center gap-1 text-xs">
       <span className="text-muted-foreground mr-1">Zoom</span>
@@ -50,7 +45,7 @@ export function CropZoom({ bulk }: { bulk: BulkCrop }) {
       <input
         type="range"
         aria-label="Zoom"
-        {...rangeOf(bulk, lead)}
+        {...rangeOf(bulk)}
         step={0.01}
         value={value}
         disabled={!lead}
