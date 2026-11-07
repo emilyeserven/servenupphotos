@@ -4,16 +4,10 @@ import type { GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 import { cropGearImageMutation, saveGearMutation } from "@/api/gear";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { cropLimits } from "@/components/gear-pictures/crop-limits";
+import { CropZoom } from "@/components/gear-pictures/crop-zoom";
 import type { BulkCrop, CropEntry } from "@/components/gear-pictures/use-bulk-crop";
 import { Button } from "@/components/ui/button";
-import { fitCrop, wholeCrop, zoomCrop, zoomOf } from "@/lib/gear-crop";
-
-/** How much one press of a zoom button zooms, as a power of two. */
-const ZOOM_STEP = 0.1;
-
-/** The chosen pictures' crop zoomed by `step` powers of two. */
-const zoomBy = (step: number) => (entry: CropEntry) =>
-  entry.crop && zoomCrop(entry.crop, zoomOf(entry.crop) + step);
+import { fitCrop, wholeCrop } from "@/lib/gear-crop";
 
 /** The crop that fits the picture's gear inside the limit lines, when its gear was found. */
 const fitted = (sizes: BulkCrop["sizes"]) => (entry: CropEntry) => {
@@ -39,7 +33,7 @@ interface CropActionsProps {
 }
 
 /**
- * What can be done to every chosen picture at once: zoom out or in, fit its gear inside the limit
+ * What can be done to every chosen picture at once: zoom it with the slider or − and +, fit its gear inside the limit
  * lines, show it whole, fill around it with white or nothing, or put its crop back as saved; and
  * how faint the pictures not chosen are.
  */
@@ -52,8 +46,7 @@ export function CropActions({ bulk, overlay, onOverlay }: CropActionsProps) {
   );
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs">
-      {act("Zoom out", zoomBy(-ZOOM_STEP))}
-      {act("Zoom in", zoomBy(ZOOM_STEP))}
+      <CropZoom bulk={bulk} />
       {act("Fit to limits", fitted(bulk.sizes))}
       {act("Whole picture", whole(bulk.sizes))}
       {act("White fill", filled("white"))}
