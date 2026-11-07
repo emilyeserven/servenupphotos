@@ -10,7 +10,6 @@ import {
   uploadGearImageMutation,
 } from "@/api/gear";
 import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
-import { CropView, croppedFiles } from "@/components/gear-pictures/crop-view";
 import {
   type GearPictureEditor,
   type GearPictureState,
@@ -30,12 +29,12 @@ function fileOf(row: GearRow, picture: GearPictureState, description: string): G
   const fresh = { id: gearId(row.kind, row.name), kind: row.kind, name: row.name };
   const { original: _o, crop: _c, subject: _s, ...saved } = { ...fresh, ...row.file };
   const next = { ...saved, image: picture.image, description: description.trim() };
-  return picture.applied ? { ...next, ...croppedPart(picture) } : next;
+  return picture.crop ? { ...next, ...croppedPart(picture) } : next;
 }
 
 /** The original, the crop cut from it and the gear's box in it, for a picture with a cut crop. */
-function croppedPart({ original, applied, subject }: GearPictureState): Partial<GearFile> {
-  return subject ? { original, crop: applied, subject } : { original, crop: applied };
+function croppedPart({ original, crop, subject }: GearPictureState): Partial<GearFile> {
+  return subject ? { original, crop, subject } : { original, crop };
 }
 
 /** What the card says about the camera or lens: its kind and how many photos name it. */
@@ -46,10 +45,10 @@ function usageText({ kind, photos }: GearRow): string {
 
 /**
  * Edits one camera's or lens's picture and description: a preview as the portfolio will show it,
- * a picture to upload (kept in R2 as it is) or the drawing instead, the crop lined up with the
- * `others`' crops, and Save and Remove, each a change waiting for Commit.
+ * a picture to upload (kept in R2 as it is, with its gear cut out fitted inside the limit lines)
+ * or the drawing instead, and Save and Remove, each a change waiting for Commit.
  */
-export function GearEditor({ row, others }: { row: GearRow; others: GearFile[] }) {
+export function GearEditor({ row }: { row: GearRow }) {
   const editor = useGearPicture(row.file);
   const [description, setDescription] = useState(() => row.file?.description ?? "");
   const next = fileOf(row, editor.picture, description);
@@ -62,7 +61,6 @@ export function GearEditor({ row, others }: { row: GearRow; others: GearFile[] }
       <CardContent className="flex flex-col gap-4">
         <Preview row={row} image={editor.picture.image} />
         <ImageField editor={editor} />
-        <CropView editor={editor} others={croppedFiles(others)} />
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="font-medium">Description, shown under the picture</span>
           <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
@@ -108,14 +106,14 @@ function ImageField({ editor }: { editor: GearPictureEditor }) {
             if (file) upload.mutate(file, { onSuccess: editor.uploaded });
           }}
         />
-        <Busy busy={upload.isPending} />
+        <Busy busy={upload.isPending || editor.cut.isPending} />
         {editor.picture.original && (
           <Button variant="ghost" size="sm" onClick={editor.clear}>
             Use the drawing
           </Button>
         )}
       </div>
-      <SaveNote error={upload.error} why="" />
+      <SaveNote error={upload.error ?? editor.cut.error} why="" />
     </div>
   );
 }

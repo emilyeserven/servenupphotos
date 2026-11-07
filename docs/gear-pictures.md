@@ -74,17 +74,25 @@ another picture or cutting another crop leaves the old ones in R2.
 
 The left lists every camera or lens (a tab for each) that the photos name, most photos first, with a picture mark on the
 ones that have one, then any file for one no photo names any more. The right edits the chosen one: a preview as the
-info pane will show it (the drawing until a picture is chosen), the picture to upload, **Use the drawing** to clear it,
-the crop, and the description.
+info pane will show it (the drawing until a picture is chosen), the picture to upload (its crop is cut, fitted inside
+the limit lines, as soon as it's uploaded), **Use the drawing** to clear it, and the description. **Save picture** (or
+**Save changes**) and **Remove picture** keep the file as a change waiting for Commit. The pipeline's own Gallery shows
+the committed pictures, since it imports the portfolio's filters.
 
-**Crop** is a frame the shape of the 267 × 200 crop. Drag the picture to move it, and use **Zoom** to make it bigger or
-smaller; zooming out gives it room around it, which **Fill** makes **White** or **Transparent** (a checkerboard). Every
-other camera's crop (or every other lens's) is drawn over it, faint, with **Others** setting how faint, and dashed
-lines cross the middle, so each picture can be given the same size and place as the rest. **Limits** draws a red line
-in from the top, bottom, left and right, each a percentage of the frame (0 for none), with the space past it shaded, to
-fit every picture inside. The limits are a preference kept in this browser's local storage
-(`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files. **Fit to limits** fits the
-subject inside the limit lines again (after changing them, say), and **Whole picture** goes back to the whole picture,
-centered. The zoom slider's range follows the picture's shape, from well past the whole picture to well into it. **Cut crop** makes the crop in R2; until then the page says the crop isn't cut yet,
-and saving keeps the last crop cut. **Save picture** (or **Save changes**) and **Remove picture** keep the file as a change waiting
-for Commit. The pipeline's own Gallery shows the committed pictures, since it imports the portfolio's filters.
+### Crops
+
+Under them, **Camera crops** (or **Lens crops**, following the tab) lines up every picture of that kind at once, not
+one camera's. It's a frame the shape of the 267 × 200 crop with every picture drawn in it by its crop, faint, with
+**Others** setting how faint, and dashed lines across the middle. The list beside it chooses pictures (**All**,
+**None**, or one by one): the chosen ones are unfaded and drawn on top, and everything done in the frame changes all of
+them together. Dragging moves them; **Zoom out** and **Zoom in** scale them; **Fit to limits** fits each one's subject
+inside the limit lines (a picture uploaded before subjects were found can't be fitted); **Whole picture** shows each
+whole, centered; **White fill** and **Transparent fill** set what fills the room around them; **Reset** puts their
+crops back as saved. A picture from before crops starts at its whole picture, so it shows as changed.
+
+**Limits** draws a red line in from the top, bottom, left and right, each a percentage of the frame (0 for none), with
+the space past it shaded, to fit every picture inside. The limits are a preference kept in this browser's local
+storage (`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files.
+
+The list marks each picture whose crop has changed, and **Cut and save** cuts every changed crop, chosen or not, and
+saves its file, one after another, each a change waiting for Commit.
