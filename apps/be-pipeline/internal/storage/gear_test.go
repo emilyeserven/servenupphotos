@@ -141,8 +141,9 @@ func TestCropGearImageProblems(t *testing.T) {
 	}{
 		"another bucket":   {"https://elsewhere.example/gear/a.png", whole},
 		"not a gear photo": {"https://cdn.example/photos/a.jpg", whole},
-		"no size":          {"https://cdn.example/gear/a.png", GearCrop{}},
-		"odd fill":         {"https://cdn.example/gear/a.png", GearCrop{Width: 1, Height: 1, Fill: "plaid"}},
+		"a sized version":  {"https://cdn.example/gear/a.webp", whole},
+		"no size":          {"https://cdn.example/gear/originals/a.png", GearCrop{}},
+		"odd fill":         {"https://cdn.example/gear/originals/a.png", GearCrop{Width: 1, Height: 1, Fill: "plaid"}},
 	} {
 		_, err := cropGearImage(t.Context(), gearR2, "http://unused", tc.original, tc.crop)
 		if !errors.As(err, &uerr) {

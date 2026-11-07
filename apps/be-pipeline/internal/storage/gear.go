@@ -131,8 +131,9 @@ func uploadGearOriginal(ctx context.Context, cfg settings.R2, endpoint, name str
 	}, nil
 }
 
-// CropGearImage cuts crop out of the gear picture at original, a public URL
-// of a picture under gear/ in the bucket, scales it to GearCropWidth by
+// CropGearImage cuts crop out of the gear picture at original, the public URL
+// of a full-size original under gear/originals/ in the bucket (never an
+// earlier sized version, so sizing again never loses detail), scales it to GearCropWidth by
 // GearCropHeight, and puts it in the bucket as gear/<hash>-<name>.webp,
 // returning its key and public URL. Failures are *UploadError.
 func CropGearImage(ctx context.Context, cfg settings.R2, original string, crop GearCrop) (Uploaded, error) {
@@ -145,8 +146,8 @@ func cropGearImage(ctx context.Context, cfg settings.R2, endpoint, original stri
 		return Uploaded{}, err
 	}
 	key, ok := strings.CutPrefix(original, base+"/")
-	if !ok || !strings.HasPrefix(key, "gear/") || !validGearCrop(crop) {
-		return Uploaded{}, &UploadError{Message: "Pick a gear picture in the bucket and a part of it to crop."}
+	if !ok || !strings.HasPrefix(key, "gear/originals/") || !validGearCrop(crop) {
+		return Uploaded{}, &UploadError{Message: "Pick a gear picture's full-size original in the bucket and a part of it to size."}
 	}
 	data, err := encodeGearCrop(ctx, cfg, endpoint, key, crop)
 	if err != nil {

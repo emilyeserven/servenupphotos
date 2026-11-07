@@ -88,15 +88,22 @@ the committed pictures, since it imports the portfolio's filters.
 Under them, **Sized cameras** (or **Sized lenses**, following the tab) lines up every picture of that kind at once, not
 one camera's. It's a frame the shape of the 267 × 200 crop with every picture drawn in it by its crop, faint, with
 **Others** setting how faint, and dashed lines across the middle. The list beside it chooses pictures (**All**,
-**None**, or one by one): the chosen ones are drawn on top, mostly opaque (85%, so the others still show through a little), and everything done in the frame changes all of
-them together. Dragging moves them; the **Zoom** slider, with **−** and **+** at its ends, scales them (it shows the first chosen picture's zoom, and moving it zooms every chosen picture by the same amount); **Fit to limits** fits each one's subject
+**None**, or one by one, with each picture's box): the selected ones are drawn on top, mostly opaque (85%, so the
+others still show through a little), and the buttons change all of them together. Clicking a picture's name makes it
+the one **editing** (outlined in the list, and selected too), drawn above everything else; dragging the frame moves only
+that picture, and the **Zoom** slider, with **−** and **+** at its ends, shows and scales only that picture, so
+selecting a picture and editing it are different things. **Fit to limits** fits each selected picture's subject
 inside the limit lines (a picture uploaded before subjects were found can't be fitted); **Whole picture** shows each
 whole, centered; **White fill** and **Transparent fill** set what fills the room around them; **Reset** puts their
 crops back as saved. A picture from before crops starts at its whole picture, so it shows as changed.
+
+Every sized version is cut from the full-size original kept under `gear/originals/`, never from an earlier sized
+version, so sizing again never loses detail. A picture saved before originals were kept isn't in the frame; a note
+under the list counts them, and uploading the picture again brings it in.
 
 **Limits** draws a red line, above every picture, in from the top, bottom, left and right, each a percentage of the frame (0 for none), with
 the space past it shaded, to fit every picture inside. The limits are a preference kept in this browser's local
 storage (`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files.
 
-The list marks each picture whose crop has changed, and **Save N sized pictures** cuts every changed crop, chosen or
+The list marks each picture whose crop has changed, and **Save N sized pictures** cuts every changed crop, selected or
 not, into its sized version and saves its file, one after another, each a change waiting for Commit.
