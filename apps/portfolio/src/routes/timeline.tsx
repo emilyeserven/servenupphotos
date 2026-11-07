@@ -180,11 +180,11 @@ function MonthSection({
       data-month={month}
       data-group={month.slice(-4)}
       data-year={month.slice(-4)}
-      className="flex flex-col gap-1"
+      className="relative flex flex-col gap-1"
     >
       {/* Sticks to the top while the month's photos scroll under it. Its fixed height (h-10) is
           where each day's subheading sticks, just under it. */}
-      <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center justify-between gap-2 bg-background px-1">
+      <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center bg-background px-1">
         <MonthButton
           month={month}
           count={monthPhotos.length}
@@ -192,8 +192,12 @@ function MonthSection({
           controls={listId}
           onToggle={() => setOpen(!open)}
         />
-        {open && <TripLinesButton lines={lines} />}
       </h2>
+      {/* At the right end of the heading's line, but not in the heading, so it scrolls away with
+          the month instead of sticking with it. */}
+      <div className="absolute top-1.5 right-0 z-[11]">
+        {open && <TripLinesButton lines={lines} />}
+      </div>
       {open && (
         <div id={listId} className="flex flex-col gap-4">
           <MonthMaps lines={lines} />
