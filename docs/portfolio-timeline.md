@@ -7,6 +7,26 @@ the date in its heading, so the label of the days in view sits just under the mo
 thumbnail or title opens the photo viewer. The filters are described in
 [Portfolio Filters](portfolio-filters.md), including the [text search](portfolio-filters.md#text-search) box.
 
+## Same day, week or month
+
+Under each photo's title, a quick filter such as **Same day · 8** shows only the photos taken around the same time: the
+photo's day, or else its week (Sunday to Saturday, as on the heatmap), or else its month, whichever is the most specific
+with more than five photos. It counts the photos the filters and search let through, and isn't shown when none of the
+three has more than five, or when the Timeline already shows that time. It sets the time range to those dates
+(`?from=…&to=…`), so **Reset** and the range picker undo it as usual.
+
+Whenever the time range is exactly one month, week or day, whether from a quick filter or picked by hand, the list
+divides its photos one step finer than usual:
+
+| Time range | Headings | Subheadings |
+| ---------- | -------- | ----------- |
+| Any other  | Months   | Days        |
+| One month  | Weeks    | Days        |
+| One week   | Days     | Hours       |
+| One day    | The day  | Hours       |
+
+While a [timeline label](timeline-labels.md) is chosen, the list keeps months and days.
+
 When an album is picked for the **Timeline Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page,
 its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background,
 with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).

@@ -7,6 +7,7 @@ import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { SameTimeButton } from "@/components/same-time-button";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
@@ -16,6 +17,14 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { dayKey } from "@/lib/heatmap";
+import {
+  countTimes,
+  sameTime,
+  shownUnit,
+  TIME_DIVISIONS,
+  type SameTime,
+  type TimeDivision,
+} from "@/lib/same-time";
 import { findTimelineLabel, labelDates, labelOn } from "@/lib/timeline-labels";
 import { TimelineLabelPicker } from "@/components/timeline-label-picker";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
@@ -94,14 +103,23 @@ function shownDays(label: ReturnType<typeof findTimelineLabel>, range: TimeRange
   return { start, end };
 }
 
-/** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
-function groupByDate(group: Photo[], pattern: string) {
+/** Photos grouped by the heading of their date taken, such as "September 2026" for months. */
+function groupByDate(group: Photo[], { heading }: TimeDivision) {
   const groups = new Map<string, Photo[]>();
   for (const photo of group) {
-    const key = format(photo.takenAt, pattern);
+    const key = heading(photo.takenAt);
     groups.set(key, [...(groups.get(key) ?? []), photo]);
   }
   return [...groups];
+}
+
+/**
+ * The headings and subheadings the list divides its photos into: by month and day, unless the
+ * time range is exactly one month, week or day (and no label is chosen).
+ */
+function timeDivisions(range: TimeRangeValue, label: ReturnType<typeof findTimelineLabel>) {
+  const unit = label ? undefined : shownUnit(range);
+  return TIME_DIVISIONS[unit ?? "all"];
 }
 
 function TimelineView() {
@@ -123,6 +141,8 @@ function TimelineView() {
   const [chart, setChart] = useState<HTMLDivElement | null>(null);
   const [list, setList] = useState<HTMLOListElement | null>(null);
   useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
+  // Each photo's quick filter counts the photos the filters let through, at any time.
+  const counts = countTimes(matching);
 
   /**
    * Shows the time range, or the timeline label's days, keeping the filters and the rest of the
@@ -195,7 +215,10 @@ function TimelineView() {
         photos={inRange}
         filtered={hasFilters(filters) || search.q !== undefined}
         display={display}
+        divisions={timeDivisions(timeRange, label)}
         onOpen={show}
+        sameTimeOf={(photo) => sameTime(photo, counts, timeRange)}
+        onPickTime={showRange}
         listRef={setList}
       />
       {/* With one label's days, the ticks are its days rather than a month or two. */}
@@ -205,19 +228,29 @@ function TimelineView() {
   );
 }
 
-/** What each photo row needs from the page: the display options, and how to open a photo. */
+/**
+ * What each photo row needs from the page: the display options, how to open a photo, and its quick
+ * filter to the photos taken around the same time.
+ */
 interface RowOptions {
   display: TimelineDisplay;
   onOpen: (photo: ImagePhoto) => void;
+  /** The day, week or month the photo's quick filter shows, if any. */
+  sameTimeOf: (photo: Photo) => SameTime | undefined;
+  /** Shows only the photos in the time range a quick filter picked. */
+  onPickTime: (range: TimeRangeValue) => void;
 }
 
 function PhotoMonths({
   photos,
   filtered,
   listRef,
+  divisions: [outer, inner],
   ...options
 }: RowOptions & {
   photos: Photo[];
+  /** The headings and subheadings the photos are divided into, such as months and days. */
+  divisions: [TimeDivision, TimeDivision];
   /** Given the list of months, for the scrubber to measure. */
   listRef: (list: HTMLOListElement | null) => void;
   /** Whether any filter is set, so an empty range can say the filters may be why. */
@@ -230,23 +263,44 @@ function PhotoMonths({
 
   return (
     <ol ref={listRef} className="flex flex-col gap-4">
-      {groupByDate(photos, "MMMM yyyy").map(([month, monthPhotos]) => (
-        <MonthSection key={month} month={month} monthPhotos={monthPhotos} {...options} />
+      {groupByDate(photos, outer).map(([month, monthPhotos]) => (
+        <MonthSection
+          key={month}
+          month={month}
+          monthPhotos={monthPhotos}
+          outer={outer}
+          inner={inner}
+          {...options}
+        />
       ))}
     </ol>
   );
 }
 
-/** A month's heading and its photos, which the heading's button hides and shows again. */
+/**
+ * A month's heading (or a week's or day's, while the Timeline shows only one month or week) and its
+ * photos, which the heading's button hides and shows again.
+ */
 function MonthSection({
   month,
   monthPhotos,
+  outer,
+  inner,
   ...options
-}: RowOptions & { month: string; monthPhotos: Photo[] }) {
+}: RowOptions & {
+  month: string;
+  monthPhotos: Photo[];
+  outer: TimeDivision;
+  inner: TimeDivision;
+}) {
   const [open, setOpen] = useState(true);
   const listId = useId();
   return (
-    <li data-month={month} data-group={month.slice(-4)} className="flex flex-col gap-1">
+    <li
+      data-month={month}
+      data-group={monthGroup(monthPhotos, outer)}
+      className="flex flex-col gap-1"
+    >
       {/* Sticks to the top while the month's photos scroll under it. Its fixed height (h-10) is
           where each day's subheading sticks, just under it. */}
       <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center bg-background px-1">
@@ -269,7 +323,7 @@ function MonthSection({
       </h2>
       {open && (
         <ol id={listId} className="flex flex-col gap-4">
-          {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
+          {groupByDate(monthPhotos, inner).map(([day, dayPhotos]) => (
             <DaySection key={day} day={day} dayPhotos={dayPhotos} {...options} />
           ))}
         </ol>
@@ -308,6 +362,12 @@ function DaySection({
   );
 }
 
+/** The scrubber's group of the heading's photos, such as the year of a month. */
+function monthGroup(monthPhotos: Photo[], { group }: TimeDivision): string {
+  const [first] = monthPhotos;
+  return first ? group(first.takenAt) : "";
+}
+
 /** The short month of the day the photos were taken, such as "Sep", which the scrubber labels days by. */
 function dayGroup(dayPhotos: Photo[]): string {
   const [first] = dayPhotos;
@@ -335,7 +395,13 @@ function DayLabel({ label }: { label: string }) {
  * its day is in the subheading above. The thumbnail and the title open the photo in the lightbox;
  * photos without resized versions in R2 have nothing to open.
  */
-function PhotoRow({ photo, display, onOpen }: RowOptions & { photo: Photo }) {
+function PhotoRow({
+  photo,
+  display,
+  onOpen,
+  sameTimeOf,
+  onPickTime,
+}: RowOptions & { photo: Photo }) {
   const { image } = photo;
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   const layout = THUMB_LAYOUT[display.thumbs];
@@ -350,6 +416,7 @@ function PhotoRow({ photo, display, onOpen }: RowOptions & { photo: Photo }) {
       <div className="flex w-full min-w-0 flex-1 flex-col">
         <RowTitle title={photo.title} onOpen={open} />
         <RowDetails photo={photo} display={display} />
+        <SameTimeButton same={sameTimeOf(photo)} onPick={onPickTime} />
       </div>
     </li>
   );
