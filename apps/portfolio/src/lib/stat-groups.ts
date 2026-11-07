@@ -35,6 +35,17 @@ export interface GroupDef {
   build: (list: Photo[]) => StatGroup;
   /** The ID of the group its rows narrow. */
   narrows?: string;
+  /**
+   * Other ways to make it, picked from a dropdown in place of its title, such as Lenses by type or
+   * by brand; the first is shown at first. `build` is left for the rest of the page to name it by.
+   */
+  variants?: GroupVariant[];
+}
+
+/** One way to make a group with variants, such as Lenses by brand. */
+export interface GroupVariant {
+  label: string;
+  build: (list: Photo[]) => StatGroup;
 }
 
 /** A key photos are counted by, with its row's text and filter. */
