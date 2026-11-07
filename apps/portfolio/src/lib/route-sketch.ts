@@ -21,8 +21,9 @@ export interface RouteSketch {
   visits: { x: number; y: number }[];
 }
 
+/** A day's own line; a Trip's leg to another day, such as a flight, would dwarf the day's route. */
 function isLine(feature: TripMapFeature): boolean {
-  return feature.geometry.type === "LineString";
+  return feature.geometry.type === "LineString" && feature.properties.trip === undefined;
 }
 
 function isVisit(feature: TripMapFeature): boolean {

@@ -258,6 +258,33 @@ const added = {
       path: `${FOLDER}/triplines/2026-10-26.json`,
       data: { id: "2026-10-26", day: "2026-10-26", auto: true, segments: [] },
     },
+    {
+      path: `${FOLDER}/triplines/trip-japan-2026-09-22.json`,
+      data: {
+        id: "trip-japan-2026-09-22",
+        name: "Japan",
+        start: "2026-09-22",
+        end: "2026-10-02",
+        legs: [
+          {
+            mode: "flight",
+            from: {
+              day: "2026-09-22",
+              spot: { latitude: 40.6413, longitude: -73.7781, label: "JFK" },
+            },
+            to: { day: "2026-10-01" },
+          },
+          {
+            mode: "ferry",
+            from: { day: "2026-10-01" },
+            to: {
+              day: "2026-10-02",
+              spot: { latitude: 35.1028, longitude: 129.0403, label: "Busan Port" },
+            },
+          },
+        ],
+      },
+    },
   ],
   graphs: [
     {

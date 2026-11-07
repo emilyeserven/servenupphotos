@@ -127,6 +127,39 @@ export function DriveSymbol({ dark }: { dark: boolean }) {
   );
 }
 
+/** A Trip's ferry: a teal line of dots. */
+export function FerrySymbol({ dark }: { dark: boolean }) {
+  return (
+    <LineSample>
+      <line
+        x1={4}
+        x2={28}
+        y1={12}
+        y2={12}
+        stroke={tripColors(dark).ferry}
+        strokeWidth={3}
+        strokeLinecap="round"
+        strokeDasharray="0.1 5"
+      />
+    </LineSample>
+  );
+}
+
+/** A Trip's flight: a pink dashed arc. */
+export function FlightSymbol({ dark }: { dark: boolean }) {
+  return (
+    <LineSample>
+      <path
+        d="M3 18 Q16 2 29 18"
+        fill="none"
+        stroke={tripColors(dark).flight}
+        strokeWidth={2}
+        strokeDasharray="5 3"
+      />
+    </LineSample>
+  );
+}
+
 /** A place visited: an amber dot with an edge like the map's background. */
 export function VisitSymbol({ dark }: { dark: boolean }) {
   const colors = tripColors(dark);

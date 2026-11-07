@@ -40,6 +40,10 @@ type tripLineGeometry struct {
 type tripLineProps struct {
 	Day  string `json:"day"`
 	Mode string `json:"mode"`
+	// Trip is the ID of the Trip a leg between days is part of, and Arrive
+	// the day it arrived; both "" for a day's own line.
+	Trip   string `json:"trip,omitempty"`
+	Arrive string `json:"arrive,omitempty"`
 	// Name names the line of the day the segment is part of; "" for none.
 	Name   string  `json:"name,omitempty"`
 	Auto   bool    `json:"auto"`
@@ -60,7 +64,9 @@ type tripLineProps struct {
 // drawn.
 func (w *workspace) addTripLinesMap(changes map[string][]byte, counts map[string]int) *PublishError {
 	view := w.withChanges(changes)
-	m := bakeTripLines(view.tripLineFiles(), view.tripSpots(true))
+	spots := view.tripSpots(true)
+	m := bakeTripLines(view.tripLineFiles(), spots)
+	m.Features = append(m.Features, bakeTrips(tripsIn(view.entries(TripLines)), spots)...)
 	b, err := json.Marshal(m)
 	if err != nil {
 		return publishErr(http.StatusInternalServerError, "Couldn't format %s.", TripLinesMapFile)

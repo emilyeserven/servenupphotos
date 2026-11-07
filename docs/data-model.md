@@ -2,23 +2,23 @@
 
 The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in Settings), one JSON file per thing:
 
-| What              | File                         | Combined by **Commit** into        |
-| ----------------- | ---------------------------- | ---------------------------------- |
-| Photos            | `photos/<PHOTONAME>.json`    | `photos/ALLPHOTOS.json`            |
-| Albums            | `albums/<ALBUM_ID>.json`     | `albums/ALLALBUMS.json`            |
-| Tags              | `tags/<TAG_ID>.json`         | `tags/ALLTAGS.json`                |
-| Genres            | `genres/<GENRE_ID>.json`     | `genres/ALLGENRES.json`            |
-| Places            | `places/<PLACE_ID>.json`     | `places/PLACES.json`               |
-| Place areas       | `places/<PLACE_ID>.geo.json` | Not combined: loaded one by one    |
-| Localizations     | `localizations/<ID>.json`    | `localizations/LOCALIZATIONS.json` |
-| Metadata groups   | `metainfo/<ID>.json`         | `metainfo/METAINFO.json`           |
-| Camera overrides  | `cameras/<ID>.json`          | `cameras/CAMERAS.json`             |
-| Custom lenses     | `lenses/<ID>.json`           | `lenses/LENSES.json`               |
-| Caption templates | `captions/<ID>.json`         | `captions/CAPTIONS.json`           |
-| Timeline labels   | `timeline/<ID>.json`         | `timeline/TIMELINE.json`           |
-| Viewer likes      | `likes/<ID>.json`            | `likes/LIKES.json`                 |
-| Trip lines        | `triplines/<DAY>.json`       | `triplines/TRIPLINES.json`         |
-| Graph presets     | `graphs/<ID>.json`           | `graphs/GRAPHS.json`               |
+| What              | File                                                        | Combined by **Commit** into        |
+| ----------------- | ----------------------------------------------------------- | ---------------------------------- |
+| Photos            | `photos/<PHOTONAME>.json`                                   | `photos/ALLPHOTOS.json`            |
+| Albums            | `albums/<ALBUM_ID>.json`                                    | `albums/ALLALBUMS.json`            |
+| Tags              | `tags/<TAG_ID>.json`                                        | `tags/ALLTAGS.json`                |
+| Genres            | `genres/<GENRE_ID>.json`                                    | `genres/ALLGENRES.json`            |
+| Places            | `places/<PLACE_ID>.json`                                    | `places/PLACES.json`               |
+| Place areas       | `places/<PLACE_ID>.geo.json`                                | Not combined: loaded one by one    |
+| Localizations     | `localizations/<ID>.json`                                   | `localizations/LOCALIZATIONS.json` |
+| Metadata groups   | `metainfo/<ID>.json`                                        | `metainfo/METAINFO.json`           |
+| Camera overrides  | `cameras/<ID>.json`                                         | `cameras/CAMERAS.json`             |
+| Custom lenses     | `lenses/<ID>.json`                                          | `lenses/LENSES.json`               |
+| Caption templates | `captions/<ID>.json`                                        | `captions/CAPTIONS.json`           |
+| Timeline labels   | `timeline/<ID>.json`                                        | `timeline/TIMELINE.json`           |
+| Viewer likes      | `likes/<ID>.json`                                           | `likes/LIKES.json`                 |
+| Trip lines        | `triplines/<DAY>.json`, Trips as `triplines/trip-<ID>.json` | `triplines/TRIPLINES.json`         |
+| Graph presets     | `graphs/<ID>.json`                                          | `graphs/GRAPHS.json`               |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is

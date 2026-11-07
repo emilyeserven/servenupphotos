@@ -5,6 +5,8 @@ import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { DayEditor } from "@/components/trip-lines/day-editor";
 import { DayList } from "@/components/trip-lines/day-list";
+import { TripsPanel } from "@/components/trips/trips-panel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { currentLists } from "@/lib/group-photos";
 import { shownPhotos } from "@/lib/place-seeds";
 import { tripDays } from "@/lib/trip-days";
@@ -17,7 +19,7 @@ export function TripLinesPage() {
     <Page
       wide
       title="Trip Lines"
-      description="The route of a day, drawn on the portfolio's map: walking from photo to photo in the order they were taken, and hops by train, subway, bus or car between. Each day's line is one JSON file, combined into TRIPLINES.json, and Commit bakes them with their photos' spots into TRIPLINES.geo.json for the map."
+      description="The route of a day, drawn on the portfolio's map: walking from photo to photo in the order they were taken, and hops by train, subway, bus or car between. Trips add the ferries and flights between days. Each day's line is one JSON file, combined into TRIPLINES.json, and Commit bakes them with their photos' spots into TRIPLINES.geo.json for the map."
     >
       <GitHubGate>{() => <Days />}</GitHubGate>
     </Page>
@@ -28,7 +30,25 @@ function Days() {
   const combined = useCombinedData();
   if (combined.isPending) return <p>Reading the photos and trip lines…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
-  return <DayChooser data={combined.data} />;
+  return <DaysAndTrips data={combined.data} />;
+}
+
+/** The days' lines, and the Trips that add the legs between days, each on a tab. */
+function DaysAndTrips({ data }: { data: CombinedData }) {
+  return (
+    <Tabs defaultValue="days">
+      <TabsList>
+        <TabsTrigger value="days">Days</TabsTrigger>
+        <TabsTrigger value="trips">Trips</TabsTrigger>
+      </TabsList>
+      <TabsContent value="days">
+        <DayChooser data={data} />
+      </TabsContent>
+      <TabsContent value="trips">
+        <TripsPanel data={data} days={tripDays(shownPhotos(data), placesOf(data))} />
+      </TabsContent>
+    </Tabs>
+  );
 }
 
 /** The places in the combined lists, for the photos at a place marked as an exact location. */

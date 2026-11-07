@@ -150,9 +150,9 @@ func fenceFeatureOf(day string, f TripFence) fenceFeature {
 
 // featureCounts is how many of each the map has: segments' lines
 // ("tripLineSegments"), places visited's pins ("tripLineVisits") and fences
-// ("tripLineFences").
+// ("tripLineFences"), and Trips' legs between days ("tripLegs").
 func featureCounts(m tripLinesMap) map[string]int {
-	counts := map[string]int{"tripLineSegments": 0, "tripLineVisits": 0, "tripLineFences": 0}
+	counts := map[string]int{"tripLineSegments": 0, "tripLineVisits": 0, "tripLineFences": 0, "tripLegs": 0}
 	for _, f := range m.Features {
 		counts[featureCount(f)]++
 	}
@@ -161,12 +161,22 @@ func featureCounts(m tripLinesMap) map[string]int {
 
 // featureCount is the count f adds to.
 func featureCount(f any) string {
-	switch f.(type) {
+	switch v := f.(type) {
 	case visitFeature:
 		return "tripLineVisits"
 	case fenceFeature:
 		return "tripLineFences"
+	case tripLineFeature:
+		return lineCount(v)
 	default:
 		return "tripLineSegments"
 	}
+}
+
+// lineCount is the count a line adds to: a Trip's leg, or a day's segment.
+func lineCount(f tripLineFeature) string {
+	if f.Properties.Trip != "" {
+		return "tripLegs"
+	}
+	return "tripLineSegments"
 }
