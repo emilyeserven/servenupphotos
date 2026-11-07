@@ -117,7 +117,25 @@ The left side lists the days with two or more photos at two or more different ex
 many photos and spots it has and whether its line is **Marked**, **Out of date**, **Automatic** or **None**, with a filter by each. **Out of date** (in
 red) is a line marked by hand that doesn't go through every photo of the day with an exact spot, such as photos added
 since, or goes through photos no longer on that day; the Dashboard's **Needs attention** lists them as urgent. A new
-photo opens with a break on both sides, ready to join the line. `?day=2026-09-23` opens the page on a day.
+photo opens with a break on both sides, ready to join the line.
+
+The page keeps what's chosen in its URL, so a link or a reload opens it the same way (`lib/trip-lines-search.ts`, read
+by the route's `validateSearch`):
+
+| Param   | What it opens                                                       | Unless set |
+| ------- | ------------------------------------------------------------------- | ---------- |
+| `tab`   | `trips` for the Trips tab                                           | Days       |
+| `day`   | The day chosen, such as `2026-09-23`                                | The newest |
+| `show`  | The day list's filter: `marked`, `out-of-date`, `automatic`, `none` | All        |
+| `group` | The group shown alone on the map (the eye), by its name             | None       |
+| `trip`  | The Trip chosen on the Trips tab, by its ID                         | The newest |
+
+For example, `/trip-lines?day=2026-09-29&show=out-of-date&group=Engyoji%20Temple`. Clicks replace the history entry
+rather than adding one, so Back leaves the page. Choosing another day clears `group`. A new Trip isn't in the URL until
+it's saved. Needs attention links to its newest out-of-date day with `show=out-of-date`.
+
+> **Frontend analogy:** this is TanStack Router's search params used as the page's state store instead of `useState`,
+> like keeping a table's sort and filter in the query string.
 
 The right side edits the chosen day: its photos in the order they were taken, with what happened between each two, and
 a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
