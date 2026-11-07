@@ -54,6 +54,7 @@ const baseTimeline = readFolder("timeline", "TIMELINE");
 const baseLikes = readFolder("likes", "LIKES");
 const baseTripLines = readFolder("triplines", "TRIPLINES");
 const baseGraphs = readFolder("graphs", "GRAPHS");
+const baseGear = readFolder("gear", "GEAR");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -287,6 +288,18 @@ const added = {
       },
     },
   ],
+  gear: [
+    {
+      path: `${FOLDER}/gear/camera-fujifilm-x-t5.json`,
+      data: {
+        id: "camera-fujifilm-x-t5",
+        kind: "camera",
+        name: "Fujifilm X-T5",
+        image: "https://cdn.servenupphotos.net/gear/0a1b2c3d4e5f-x-t5.webp",
+        description: "My everyday camera since 2024.",
+      },
+    },
+  ],
   graphs: [
     {
       path: `${FOLDER}/graphs/when.json`,
@@ -391,6 +404,7 @@ const headTimeline = withAdded(baseTimeline, added.timeline);
 const headLikes = withAdded(baseLikes, added.likes);
 const headTripLines = withAdded(baseTripLines, added.triplines);
 const headGraphs = withAdded(baseGraphs, added.graphs);
+const headGear = withAdded(baseGear, added.gear);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -419,6 +433,7 @@ function combinedFiles(
     likes,
     triplines,
     graphs,
+    gear,
   ],
   branch,
 ) {
@@ -437,6 +452,7 @@ function combinedFiles(
     likes: combinedFile("likes", "LIKES.json", likes, branch),
     triplines: combinedFile("triplines", "TRIPLINES.json", triplines, branch),
     graphs: combinedFile("graphs", "GRAPHS.json", graphs, branch),
+    gear: combinedFile("gear", "GEAR.json", gear, branch),
   };
 }
 
@@ -1177,6 +1193,7 @@ export function defaultFixtures() {
           baseLikes,
           baseTripLines,
           baseGraphs,
+          baseGear,
         ]),
         branch: BASE_BRANCH,
       },
@@ -1197,6 +1214,7 @@ export function defaultFixtures() {
             headLikes,
             headTripLines,
             headGraphs,
+            headGear,
           ],
           PULL_REQUEST.branch,
         ),
@@ -1224,6 +1242,7 @@ export function defaultFixtures() {
       likes: { folder: `${FOLDER}/likes`, files: added.likes.map(groupFile) },
       triplines: { folder: `${FOLDER}/triplines`, files: added.triplines.map(groupFile) },
       graphs: { folder: `${FOLDER}/graphs`, files: added.graphs.map(groupFile) },
+      gear: { folder: `${FOLDER}/gear`, files: added.gear.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -1477,6 +1496,17 @@ export function defaultFixtures() {
       path: `${FOLDER}/triplines/2026-10-01.json`,
       data: body,
       before: added.triplines[0].data,
+      changed: true,
+    }),
+    "POST /api/gear/image": {
+      key: "gear/6f7e8d9c0b1a-lens.webp",
+      url: "https://cdn.servenupphotos.net/gear/6f7e8d9c0b1a-lens.webp",
+    },
+    "PUT /api/gear/camera-fujifilm-x-t5": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/gear/camera-fujifilm-x-t5.json`,
+      data: body,
+      before: added.gear[0].data,
       changed: true,
     }),
     "PUT /api/graphs/time-of-day": ({ body }) => ({

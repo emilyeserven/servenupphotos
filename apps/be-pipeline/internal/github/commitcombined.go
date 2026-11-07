@@ -36,7 +36,7 @@ type CombinedCommit struct {
 	// tags, genres, places, localizations, metadata groups (metainfo), camera
 	// overrides (cameras), custom lenses (lenses), caption templates
 	// (captions), timeline labels (timeline), viewer likes (likes), trip
-	// lines (triplines), graph presets (graphs), how many lines the trip lines map has (tripLineSegments), and how
+	// lines (triplines), graph presets (graphs), gear pictures (gear), how many lines the trip lines map has (tripLineSegments), and how
 	// many photos were left out of ALLPHOTOS.json as drafts (drafts).
 	Counts map[string]int `json:"counts"`
 	// NewPullRequest is true when the commit opened the photo data pull
@@ -80,6 +80,7 @@ func combinedKinds() []combinedKind {
 		{"likes", ViewerLikesKind.Folder, ViewerLikesKind.AllFile},
 		{"triplines", TripLines.Folder, TripLines.AllFile},
 		{"graphs", GraphPresets.Folder, GraphPresets.AllFile},
+		{"gear", GearKind.Folder, GearKind.AllFile},
 	}
 }
 

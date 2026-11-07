@@ -158,16 +158,24 @@ button naming the chosen one, and choosing one folds it up again.
 
 **Cameras** and **Lenses** list every camera or lens (`?camera=Fujifilm X-T5`, `?lens=EF50mm f/1.8 II`; a photo whose
 EXIF didn't name a lens is under none) with how many photos each would show; **All cameras** or **All lenses** comes
-first, and clicking the checked one again goes back to all. A **Group by** row above the list picks how it's laid out: one tab for each top-level
-metadata group that has groups or names under it, such as **Brand** or **Type** (that group's own row left out, what's
-under it a level up, then any camera or lens it doesn't list), and **Name**, every one once, A to Z. It opens on the tab
-that lists the chosen one. A choice that would show no photos given the other
+first, and clicking the checked one again goes back to all. A **Group by** button in the title row, beside the **Sort** button and left of the **(i)**, opens a menu that picks how it's laid out: **None**, every one once, A to Z (the default);
+**Brand**; or **Type**. Brand and Type are the top-level metadata groups with those names (that group's own row left
+out, what's under it a level up, then any camera or lens it doesn't list). Cameras without such a group get their own,
+guessed from the model name: Brand, such as Canon or Fujifilm, and Type (Mirrorless, DSLR, Compact or Phone), each
+under a heading, with Unknown last. A grouping with nothing in it isn't offered, and the list opens on the grouping of a
+chosen group. Each button is shaded while it isn't on its default. **Sort** opens a menu of the order: **Name** keeps the grouping's order, and **Oldest first** or **Newest
+first** orders the cameras or lenses under each heading or group by when the first of the portfolio's photos was taken with each. A choice that would show no photos given the other
 filters is left out, unless chosen; **Show N choices hidden by the other filters** lists them dimmed, and hovering one
 says which filters hide it: each one that, cleared alone, would let it show photos ("Hidden by Aperture or Lens"), or
-"the other filters together" when no single one would. Each camera has a little drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name). Hovering
-a lens by name shows its details to the right: a side view of it, longer for a longer focal length and with a zoom ring
-when it zooms; its focal length, whether it's a prime or zoom, and its widest aperture, read from its name; and how many
-photos used it, on which cameras, at which focal length most, and from when to when. The four camera settings each have a slider with a handle
+"the other filters together" when no single one would. The **(i)** button across from the
+**Cameras** or **Lenses** title opens an info pane to the right (on phones, the **Show info** button under the list
+opens it below), the same one the settings' graphics use, with the details of the camera or lens pointed at, or else
+the chosen one: its own picture and description from the pipeline's [Gear Pictures](gear-pictures.md) page, or else a
+drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name) (for a lens, a side view of it,
+longer for a longer focal length and with a zoom ring when it zooms). A camera then lists its kind, how many photos
+used it, with which lenses, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
+widest aperture, read from its name, and how many photos used it, on which cameras, at which focal length most, and
+from when to when. A group, such as a brand, has no details. The four camera settings each have a slider with a handle
 at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,

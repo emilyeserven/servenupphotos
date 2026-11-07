@@ -21,5 +21,6 @@ apps/portfolio/src/data/genres/ALLGENRES.local.json
 apps/portfolio/src/data/metainfo/METAINFO.local.json
 apps/portfolio/src/data/timeline/TIMELINE.local.json
 apps/portfolio/src/data/graphs/GRAPHS.local.json
+apps/portfolio/src/data/gear/GEAR.local.json
 # Made by `pnpm shot`.
 screenshots/

@@ -78,18 +78,17 @@ export function CameraPicker(props: CameraPickerProps) {
   );
 }
 
-/** The sections and the chosen one's choices, wider while the settings' graphics pane shows. */
+/** The sections and the chosen one's choices, wider while the (i) button's info pane shows. */
 function PickerBody(props: CameraPickerProps) {
   const [section, setSection] = useState<CameraSection>(() => firstSet(props.filters));
   const [graphics, setGraphics] = useGraphicsPane();
-  const wide = graphics && !isEquipment(section);
   return (
     <SectionPicker
       label="Gear and settings"
       sections={useSections(props)}
       chosen={section}
       onChoose={setSection}
-      width={wide ? "sm:w-[46rem]" : "sm:w-[34rem]"}
+      width={graphics ? "sm:w-[46rem]" : "sm:w-[34rem]"}
     >
       <CameraPickerPart section={section} graphics={graphics} onGraphics={setGraphics} {...props} />
     </SectionPicker>
