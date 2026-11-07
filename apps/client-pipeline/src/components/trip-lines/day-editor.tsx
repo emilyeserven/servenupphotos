@@ -143,6 +143,7 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
           onHover={setHovered}
           focus={focus}
           onFocus={setFocus}
+          stacked={part === "order"}
         />
         {part === "route" && (
           <DayMap

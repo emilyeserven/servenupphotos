@@ -48,7 +48,7 @@ interface DayGridProps {
 
 /**
  * The days a trip line can be marked for, newest first, each a card with its status and a drawing of
- * its line when it's marked by hand, linking to the day's pages; with a filter by status.
+ * its line, linking to the day's pages; with a filter by status.
  */
 export function DayGrid({ days, lines, stale }: DayGridProps) {
   const { search, set } = useTripLinesSearch();
@@ -112,17 +112,17 @@ function DayCard({ day, line, status }: DayCardProps) {
   );
 }
 
-/** The line drawn small when it's marked by hand, or a note on why there's no drawing. */
+/** The line drawn small, or a note on why there's no drawing. */
 function Preview({ day, line }: { day: TripDay; line?: TripLine }) {
   if (isDrawn(line)) return <LinePreview photos={day.photos} line={line as TripLine} />;
   return (
     <span className="bg-muted/50 text-muted-foreground flex aspect-[2/1] items-center justify-center rounded-md px-3 text-center text-xs">
-      {line?.auto ? "Automatic line, worked out when opened" : "No line yet"}
+      {line?.auto ? "Automatic line, drawn here after its next save or Commit" : "No line yet"}
     </span>
   );
 }
 
-/** Whether the line is marked by hand, with segments to draw. */
+/** Whether the line has segments to draw, by hand or as last worked out automatically. */
 function isDrawn(line: TripLine | undefined): boolean {
   return (line?.segments.length ?? 0) > 0;
 }

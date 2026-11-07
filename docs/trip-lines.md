@@ -52,7 +52,7 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
   relation. Only train, subway, bus and transit hops keep one.
 - **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
   `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
-- **`auto: true`** with no segments turns on the [automatic line](#the-automatic-line).
+- **`auto: true`** turns on the [automatic line](#the-automatic-line); its segments are filled in by the backend.
 
 A photo in a line must be from that day (its [custom date](data-model.md#date-taken), or else its EXIF date) and have
 an exact spot: its custom GPS position, its EXIF one, or a [place](places-and-localizations.md) marked as an **Exact
@@ -112,26 +112,30 @@ more than 2 hours apart, with a `car` drive across a big jump (two photos more t
 day as the next Commit would draw it.
 
 A file with `"auto": true` keeps it on: it's worked out again at every Commit, so a photo added to that day later joins
-the line.
+the line. Its `segments` hold the line as it was last worked out: when it's turned on, and again at each Commit when
+the photos draw it differently (`refreshAutoLines`), so the file and `TRIPLINES.json` show it as drawn.
+
+> **Frontend analogy:** the segments are a cached copy of a derived value, like persisting a `useMemo` result next to
+> its inputs and refreshing it whenever they change.
 
 ## The page
 
 `/trip-lines` lists the days with two or more photos at two or more different exact spots, newest first, as cards. Each
 card has how many photos and spots the day has, whether its line is **Marked**, **Out of date**, **Automatic** or
-**None** (with a filter by each), and a small drawing of the line when it's marked by hand: the line in the map's
-colors and the photos as dots, drawn as SVG with no basemap so a long list stays quick. An automatic line is worked out
-by the backend only when its day opens, so its card says so instead. **Out of date** (in red) is a line marked by hand
+**None** (with a filter by each), and a small drawing of the line from its file, by hand or automatic: the line in
+the map's colors and the photos as dots, drawn as SVG with no basemap so a long list stays quick. An automatic line
+saved before its segments were kept shows a note until it's saved again or the next Commit fills them in. **Out of date** (in red) is a line marked by hand
 that doesn't go through every photo of the day with an exact spot, such as photos added since, or goes through photos
 no longer on that day; the Dashboard's **Needs attention** lists them as urgent and links to this list filtered to
 them. A new photo opens with a break on both sides, ready to join the line.
 
 A card opens the day's own pages, each a tab with its own link:
 
-| Page        | Path                      | What it has                                                               |
-| ----------- | ------------------------- | ------------------------------------------------------------------------- |
-| Photo order | `/trip-lines/<day>/order` | The photo strip on its own: order, groups, what happened between each two |
-| Route       | `/trip-lines/<day>/route` | The strip with the map and its tools, as below                            |
-| Story       | `/trip-lines/<day>/story` | The [Trip page story](#trip-page-story)                                   |
+| Page        | Path                      | What it has                                                                                             |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Photo order | `/trip-lines/<day>/order` | The photo strip on its own, its groups stacked top to bottom with what happened between them in between |
+| Route       | `/trip-lines/<day>/route` | The strip with the map and its tools, as below                                                          |
+| Story       | `/trip-lines/<day>/story` | The [Trip page story](#trip-page-story)                                                                 |
 
 `/trip-lines/<day>` opens Photo order. The pages share one editor that stays mounted while hidden, so a change made on
 Photo order shows on Route before it's saved, and **Save route** on either saves both. **Every day** goes back to the

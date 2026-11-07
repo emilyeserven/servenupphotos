@@ -49,7 +49,7 @@ interface LinePreviewProps {
 }
 
 /**
- * A small drawing of a day's line marked by hand, in the map's colors, with its photos as dots; no
+ * A small drawing of a day's line as its file has it, in the map's colors, with its photos as dots; no
  * basemap, so a list of days draws quickly.
  */
 export function LinePreview({ photos, line }: LinePreviewProps) {
