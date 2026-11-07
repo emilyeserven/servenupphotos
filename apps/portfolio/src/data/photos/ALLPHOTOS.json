@@ -15118,9 +15118,9 @@
     }
   },
   {
-    "id": 43,
     "title": "Clock and Gears",
     "comment": null,
+    "id": 43,
     "file": "IMG_6965.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -15166,7 +15166,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["timeline-spotlight"],
     "tags": ["clockwork", "clocks", "gears", "machinery", "steel"],
     "genres": ["abstract", "architecture"],
     "places": [
@@ -15184,8 +15184,8 @@
         "hex": "#1d1d1d",
         "lab": {
           "l": 11.01,
-          "a": -0,
-          "b": -0
+          "a": 0,
+          "b": 0
         },
         "hcl": {
           "h": 259.96,
@@ -15384,7 +15384,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9694
-    }
+    },
+    "notes": null
   },
   {
     "title": "Cobblestone Street",
@@ -60021,7 +60022,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["timeline-spotlight"],
     "tags": ["highway", "bridges", "columns", "steel", "houses", "snow", "winter"],
     "genres": [],
     "places": [],
@@ -60234,7 +60235,8 @@
       "chroma": 5.11,
       "peakChroma": 12.18,
       "samples": 9216
-    }
+    },
+    "notes": null
   },
   {
     "title": "Cook's Cycle Shop",
@@ -71356,7 +71358,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["timeline-spotlight"],
     "tags": ["typography", "letters", "vintage", "museum", "repetition"],
     "genres": [],
     "places": [
@@ -89648,7 +89650,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["grid-spotlight"],
     "tags": ["subway", "platform", "commuters", "columns", "silhouettes", "railway", "pedestrians"],
     "genres": [],
     "places": [],
@@ -89661,8 +89663,8 @@
         "hex": "#1b1b1b",
         "lab": {
           "l": 9.72,
-          "a": -0,
-          "b": -0
+          "a": 0,
+          "b": 0
         },
         "hcl": {
           "h": 259.96,
@@ -89861,7 +89863,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9990
-    }
+    },
+    "notes": null
   },
   {
     "id": 68,
@@ -91747,9 +91750,9 @@
     "notes": "Shows signatures in a church attic; 'attic' and 'signatures' aren't tags, since only 1–2 photos have them."
   },
   {
-    "id": 71,
     "title": "Transit Above Transit",
     "comment": null,
+    "id": 71,
     "file": "IMG_1924.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -91795,7 +91798,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["grid-spotlight"],
     "tags": [
       "train-station",
       "silhouettes",
@@ -92021,7 +92024,8 @@
       "chroma": 1.21,
       "peakChroma": 4.13,
       "samples": 9864
-    }
+    },
+    "notes": null
   },
   {
     "title": "Treeface",
@@ -93366,9 +93370,9 @@
     }
   },
   {
-    "id": 21,
     "title": "View from the High Line",
     "comment": null,
+    "id": 21,
     "file": "IMG_2576.jpg",
     "addedDate": "2026-10-22T20:14:52Z",
     "camera": "Canon EOS Rebel T6i",
@@ -94990,9 +94994,9 @@
     }
   },
   {
-    "id": 75,
     "title": "Waiting on Williamsburg Bridge",
     "comment": null,
+    "id": 75,
     "file": "IMG_0219-2.jpg",
     "addedDate": "2026-10-23T13:24:41Z",
     "camera": "Canon EOS Rebel T6i",
@@ -95038,7 +95042,7 @@
     "exifOriginals": {},
     "manualAperture": false,
     "customLens": null,
-    "albums": [],
+    "albums": ["grid-spotlight"],
     "tags": ["bridges", "steel", "pedestrians", "bicycles", "commuters", "symmetry", "path"],
     "genres": [],
     "places": [
@@ -95256,7 +95260,8 @@
       "chroma": 21.83,
       "peakChroma": 55.55,
       "samples": 10050
-    }
+    },
+    "notes": null
   },
   {
     "title": "Waiting Room",

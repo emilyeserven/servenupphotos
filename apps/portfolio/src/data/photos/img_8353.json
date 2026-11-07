@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["timeline-spotlight"],
   "tags": ["highway", "bridges", "columns", "steel", "houses", "snow", "winter"],
   "genres": [],
   "places": [],
@@ -260,5 +260,6 @@
     "chroma": 5.11,
     "peakChroma": 12.18,
     "samples": 9216
-  }
+  },
+  "notes": null
 }
