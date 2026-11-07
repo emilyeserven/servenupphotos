@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { placeById } from "@/lib/localize";
+import { circleShape } from "@/lib/place-circle";
 
 /** A GeoJSON MultiPolygon's coordinates: polygons of rings of [longitude, latitude]. */
 type Shape = [number, number][][][];
@@ -29,8 +31,34 @@ function placeIdOf(value: string | undefined): string | undefined {
   return value?.startsWith("place:") ? value.slice("place:".length) : undefined;
 }
 
-/** Place id's area, once loaded; undefined while it loads, or when there's no id or no area. */
+/**
+ * Place id's area: its area file once loaded, or else, for a place with no area file, a circle
+ * around its position (circleShape). Undefined while the file loads, or when there's no id or the
+ * place has neither.
+ */
 export function usePlaceArea(id: string | undefined): PlaceAreaFeature | undefined {
+  const file = useAreaFile(id);
+  return file ?? (hasFile(id) ? undefined : pointArea(id));
+}
+
+/** Whether place id has an area file. */
+function hasFile(id: string | undefined): boolean {
+  return id !== undefined && fileOf(id) !== undefined;
+}
+
+/** A circle around place id's position as its area, or undefined when it has no position. */
+function pointArea(id: string | undefined): PlaceAreaFeature | undefined {
+  const place = placeById(id);
+  if (place?.latitude === undefined || place.longitude === undefined) return undefined;
+  return {
+    type: "Feature",
+    properties: { place: place.id },
+    geometry: { type: "MultiPolygon", coordinates: circleShape(place.longitude, place.latitude) },
+  };
+}
+
+/** Place id's area file, once loaded; undefined while it loads, or when there's no id or file. */
+function useAreaFile(id: string | undefined): PlaceAreaFeature | undefined {
   const [loaded, setLoaded] = useState<{ id: string; feature: PlaceAreaFeature }>();
   useEffect(() => {
     const load = id === undefined ? undefined : fileOf(id);

@@ -3,6 +3,7 @@ package httpapi
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -19,8 +20,9 @@ type transitFinder interface {
 	Stops(ctx context.Context, id int64) ([]transit.Stop, error)
 }
 
-// transitTimeout is how long one look-up may take, waiting its turn included.
-const transitTimeout = 28 * time.Second
+// transitTimeout is how long one look-up may take, waiting its turn and trying
+// the mirrors included.
+const transitTimeout = 55 * time.Second
 
 // trackAnswer is a transit line's track between two spots.
 type trackAnswer struct {
@@ -45,7 +47,7 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 			return
 		}
 		if err != nil {
-			writeError(w, http.StatusBadGateway, "Couldn't look up lines on OpenStreetMap: "+err.Error())
+			writeOverpassError(w, "look up lines", err)
 			return
 		}
 		writeJSON(w, http.StatusOK, lines)
@@ -64,7 +66,7 @@ func handleTransitStops(finder transitFinder) http.HandlerFunc {
 		defer cancel()
 		stops, err := finder.Stops(ctx, id)
 		if err != nil {
-			writeError(w, http.StatusBadGateway, "Couldn't get the line's stops from OpenStreetMap: "+err.Error())
+			writeOverpassError(w, "get the line's stops", err)
 			return
 		}
 		writeJSON(w, http.StatusOK, stops)
@@ -105,10 +107,33 @@ func writeTrack(w http.ResponseWriter, path [][2]float64, err error) {
 	case errors.Is(err, transit.ErrNoTrack):
 		writeError(w, http.StatusUnprocessableEntity, "That line's mapped track doesn't join those two spots. Try another line or direction.")
 	case err != nil:
-		writeError(w, http.StatusBadGateway, "Couldn't get the line's track from OpenStreetMap: "+err.Error())
+		writeOverpassError(w, "get the line's track", err)
 	default:
 		writeJSON(w, http.StatusOK, trackAnswer{Path: path})
 	}
+}
+
+// writeOverpassError answers a failed look-up of what, such as "look up
+// lines". When every server was busy it says so and asks to try again later,
+// since that's the servers' load and not the photos.
+func writeOverpassError(w http.ResponseWriter, what string, err error) {
+	var busy *transit.BusyError
+	if errors.As(err, &busy) {
+		writeError(w, http.StatusServiceUnavailable, fmt.Sprintf(
+			"OpenStreetMap's line servers are busy right now, so we couldn't %s (tried %d times on %d servers; the last, %s, said %s). Try again in a minute.",
+			what, busy.Tries, busy.Servers, busy.Server, statusOf(busy.Last)))
+		return
+	}
+	writeError(w, http.StatusBadGateway, "Couldn't "+what+" on OpenStreetMap: "+err.Error())
+}
+
+// statusOf is a server's failure in a few words, such as "502 Bad Gateway".
+func statusOf(err error) string {
+	var status *transit.StatusError
+	if errors.As(err, &status) {
+		return status.Status
+	}
+	return err.Error()
 }
 
 // spotsParam reads ?from= and ?to=, writing an error when either isn't a spot.

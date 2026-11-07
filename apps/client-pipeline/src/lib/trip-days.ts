@@ -15,7 +15,20 @@ export interface TripPhoto {
   latitude: number;
   longitude: number;
   /** The first place it's at, which groups the day's photos by place. */
-  place?: { id: string; name: string };
+  place?: TripPlace;
+}
+
+/** A saved place a photo is at, with its GPS position when it has one. */
+export interface TripPlace {
+  id: string;
+  name: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+/** The place as a TripPlace. */
+function tripPlace({ id, name, latitude, longitude }: Place): TripPlace {
+  return { id, name, latitude, longitude };
 }
 
 /** A photo taken on a day with no exact spot, which can go in an area (a fence) instead. */
@@ -74,19 +87,19 @@ function spotOf(photo: CombinedPhoto, exact: Map<string, Position>): Position | 
 }
 
 /** The photo's first place with a name, or none. */
-function placeOf(photo: CombinedPhoto, names: Map<string, string>): Pick<TripPhoto, "place"> {
+function placeOf(photo: CombinedPhoto, names: Map<string, TripPlace>): Pick<TripPhoto, "place"> {
   const found = savedPlaces(photo.places).find(({ id }) => names.has(id));
-  return found ? { place: { id: found.id, name: names.get(found.id)! } } : {};
+  return found ? { place: names.get(found.id)! } : {};
 }
 
-/** What tripPhoto reads the places from: exact spots and names, by place ID. */
+/** What tripPhoto reads the places from: exact spots and the places themselves, by place ID. */
 interface PlaceLookup {
   exact: Map<string, Position>;
-  names: Map<string, string>;
+  names: Map<string, TripPlace>;
 }
 
 /** The photo as a LoosePhoto, leaving out its spot, or undefined when it has no ID or date. */
-function datedPhoto(photo: CombinedPhoto, names: Map<string, string>): LoosePhoto | undefined {
+function datedPhoto(photo: CombinedPhoto, names: Map<string, TripPlace>): LoosePhoto | undefined {
   const taken = takenOf(photo);
   if (typeof photo.id !== "number" || !taken) return undefined;
   const day = taken.slice(0, 10).replaceAll(":", "-");
@@ -121,7 +134,10 @@ function byDay<T extends LoosePhoto>(photos: T[]): Map<string, T[]> {
 
 /** Every day a trip line can be marked for, newest first. */
 export function tripDays(photos: CombinedPhoto[], places: Place[]): TripDay[] {
-  const lookup = { exact: exactPlaces(places), names: new Map(places.map((p) => [p.id, p.name])) };
+  const lookup = {
+    exact: exactPlaces(places),
+    names: new Map(places.map((p) => [p.id, tripPlace(p)])),
+  };
   const usable = photos.flatMap((p) => tripPhoto(p, lookup) ?? []);
   const loose = byDay(photos.flatMap((p) => loosePhoto(p, lookup)));
   return [...byDay(usable)]

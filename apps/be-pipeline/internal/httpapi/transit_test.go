@@ -88,3 +88,12 @@ func TestTransitStops(t *testing.T) {
 		t.Errorf("stops: %d %s", rec.Code, rec.Body)
 	}
 }
+
+func TestTransitBusy(t *testing.T) {
+	busy := &transit.BusyError{Tries: 6, Servers: 3, Server: "overpass-api.de", Last: &transit.StatusError{Code: 502, Status: "502 Bad Gateway"}}
+	rec := httptest.NewRecorder()
+	transitMux(&fakeFinder{err: busy}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines?mode=subway&from=1,2&to=3,4", nil))
+	if rec.Code != http.StatusServiceUnavailable || !strings.Contains(rec.Body.String(), "busy right now, so we couldn't look up lines (tried 6 times on 3 servers; the last, overpass-api.de, said 502 Bad Gateway). Try again in a minute.") {
+		t.Errorf("busy: %d %s", rec.Code, rec.Body)
+	}
+}

@@ -265,16 +265,25 @@ day has no photo with an exact spot, and no spot of its own, isn't drawn.
 
 ## Groups
 
-A day often holds several outings, such as three parks. By hand, the photo strip splits the day into groups, each its own
-line with a name:
+A day often holds several outings, such as three parks. The photo strip splits the day into groups, each its own line
+with a name:
 
-- A new hand-drawn line groups the photos by their [place](places-and-localizations.md) at once: a group starts wherever
-  the first place of a photo changes, named after it. A photo with no place stays in the group before it.
+- Every day shows its groups from the start, whatever its line: a day with no line or an automatic one is grouped by
+  their [place](places-and-localizations.md) over the line it shows. A group starts wherever the first place of a
+  photo changes, named after it, and a photo with no place stays in the group before it. Changing anything in the
+  strip (a gap, a name, a split) starts a hand-drawn line from what was shown, as **Mark by hand** or **Edit as my
+  own** would; nothing is saved until **Save route**.
+- Clicking a photo opens it on the Photo page in a new tab (`/exif?photo=<id>`, which finds the photo's file in the
+  pull request or else on the base branch), to change its Place or anything else. Reload the Trip Lines page after
+  saving it there to see the groups follow the new Place.
 - Each group's header has its name, how many photos it has, a button that collapses it to the header, and an eye that
   shows that group alone on the map, the others faded.
 - The shapes button on a group's header edits the area of the group's place (the place of its first photo), the same
   area as the place's own page: find one by name or Wikidata ID, or remove it. It's light blue when the place has one,
-  and the day's map shades the areas of every place on the day.
+  and the day's map shades the areas of every place on the day. A place with no area but with a GPS position gets a
+  dashed circle 80 m around its position instead (`circleShape` in `portfolio/src/lib/place-circle.ts`), so it reads
+  as the place's surroundings rather than one more pin. For a single building, finding it by name gives its
+  footprint as the area when OpenStreetMap maps its outline.
 - The scissors on a photo start a new group there; the join button between two groups merges them. The menu between
   two groups picks what happened between them, like any gap.
 
@@ -336,7 +345,17 @@ route** keeps the line, the stations and the track.
 
 Both ask the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) at `overpass-api.de`, which asks for
 light use, so `be-pipeline/internal/transit` spaces its requests a second apart, through the same throttle as the
-routing servers. `OVERPASS_URL` points it at another Overpass server.
+routing servers. The public servers are often busy and answer 429, 502 or 504, so when one does, the backend waits a
+moment and tries the next of the
+[public mirrors](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances)
+(`overpass.private.coffee`, then `maps.mail.ru`), going round them twice, each given 20s. A query a server turns down
+as wrong (400) isn't tried again. When none answer, the page says the servers are busy and to try again in a minute
+(503). Answers are kept in memory for a day, up to 200 of them, so looking up the same hop again, even after reloading
+the page, doesn't ask a server; restarting the backend clears them. `OVERPASS_URL`, a comma-separated list, replaces
+the servers asked.
+
+> **Frontend analogy:** it's a `fetch` wrapper with retry, like TanStack Query's `retry` and `retryDelay`, that also
+> switches to a backup CDN when the first one fails, plus a `staleTime` of a day kept on the backend.
 
 > **Frontend analogy:** a route relation is like a named SVG `<path>` in a sprite sheet, such as `#midosuji-line`.
 > Find lines searches the sheet for paths that pass near both photos, and picking one clips that path between them.

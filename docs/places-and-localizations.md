@@ -152,7 +152,9 @@ place (its ID made from its name, as for any new place) and then chooses it. Not
 
 A place can have an **area**: the outline of what it covers, such as a park or a neighbourhood. The portfolio's map
 shades it while a visitor points at the place in its **Places** menu, and after picking it (see
-[the map](portfolio-map.md)). The portfolio never looks one up: it only reads the files the pipeline saved.
+[the map](portfolio-map.md)). The portfolio never looks one up: it only reads the files the pipeline saved. A place
+with no area but with a GPS position is shown as a circle 80 m around its position instead, on the portfolio's map and
+the Trip Lines map alike (`portfolio/src/lib/place-circle.ts`); nothing is saved for it.
 
 Under the place's fields, **Area on the map** says whether it has one and how many points its outline has. **Find an
 area** looks up the place's name (or another name, or a Wikidata ID such as `Q1490`) on OpenStreetMap, as the
