@@ -64,20 +64,11 @@ interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits"> {
 
 /** One photo in the strip, after the gap before it (none before the strip's first photo). */
 function StripItem(props: StripItemProps) {
-  const { photo, prev, local, offset, gaps, onGap, onHover, onSplit, onMove, before } = props;
+  const { photo, local, offset, gaps, onHover, onMove } = props;
   const i = offset + local;
   return (
     <li className="flex shrink-0 items-center gap-1">
-      <VisitChips visits={before} onMove={props.onMoveVisit} />
-      {gaps && prev && (
-        <GapColumn
-          gap={gapBefore(gaps, i)}
-          index={i - 1}
-          onGap={onGap}
-          onSplit={onSplit && (() => onSplit(photo.id))}
-          insert={insertBetween(prev, photo, props.onInsertVisit)}
-        />
-      )}
+      <Between {...props} i={i} />
       <StripPhoto
         photo={photo}
         n={i + 1}
@@ -87,6 +78,33 @@ function StripItem(props: StripItemProps) {
       />
     </li>
   );
+}
+
+/**
+ * What comes between the photo before and this one: the places visited there, with the way there
+ * on both sides of them, so the mode shows before and after each place.
+ */
+function Between(props: StripItemProps & { i: number }) {
+  const { photo, prev, gaps, onGap, onSplit, before, i } = props;
+  const chips = <VisitChips visits={before} onMove={props.onMoveVisit} />;
+  if (!gaps || !prev) return chips;
+  const picker = { gap: gapBefore(gaps, i), index: i - 1, onGap };
+  return (
+    <>
+      <GapBeforeVisits before={before} {...picker} />
+      {chips}
+      <GapColumn
+        {...picker}
+        onSplit={onSplit && (() => onSplit(photo.id))}
+        insert={insertBetween(prev, photo, props.onInsertVisit)}
+      />
+    </>
+  );
+}
+
+/** The way to the places visited, before them; nothing when none were visited there. */
+function GapBeforeVisits({ before, ...picker }: GapPickerProps & { before: TripVisit[] }) {
+  return before.length > 0 ? <GapPicker {...picker} /> : null;
 }
 
 /** Where lines start and end at the photo at index i; nowhere while the day has no line. */

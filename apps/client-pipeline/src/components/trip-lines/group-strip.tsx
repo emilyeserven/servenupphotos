@@ -88,6 +88,9 @@ function GroupGap({ draft, group, photos, onChange, onMoveVisit, before }: Group
   const [a, b] = [photos[group.start - 1], photos[group.start]];
   return (
     <div className="flex flex-col items-center gap-1 pt-9">
+      {before.length > 0 && (
+        <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
+      )}
       <VisitChips visits={before} onMove={onMoveVisit} />
       <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
       {a && b && (
