@@ -16,7 +16,7 @@ export function GearPicturesPage() {
     <Page
       wide
       title="Gear Pictures"
-      description="A picture and a few words for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawing of that kind of camera or lens. Pictures go to R2 as uploaded as soon as they're chosen, and the portfolio shows a 200px-tall crop of each, lined up with the others in the crops card under them; each camera's or lens's file is one JSON file, combined into GEAR.json."
+      description="A picture and a few words for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawing of that kind of camera or lens. Pictures go to R2 as uploaded as soon as they're chosen, and the portfolio shows only each one's sized version, all exactly 267 × 200, lined up with the others in the sizing card under them; each camera's or lens's file is one JSON file, combined into GEAR.json."
     >
       <GitHubGate>{() => <Gear />}</GitHubGate>
     </Page>

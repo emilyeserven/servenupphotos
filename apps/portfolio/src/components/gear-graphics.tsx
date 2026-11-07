@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { type CameraKind, cameraKind, type LensSpecs, lensSpecs } from "@portfolio/lib/gear-kinds";
-import { type GearKind, gearFile } from "@portfolio/lib/gear-pictures";
+import { type GearFile, type GearKind, gearFile } from "@portfolio/lib/gear-pictures";
 
 /** A small line drawing at the size of a list row's icon, or `scale` times that. */
 function Icon({ children, scale = 1 }: { children: ReactNode; scale?: number }) {
@@ -69,14 +69,24 @@ export function GearPicture({
     <img
       src={src}
       alt={name}
-      className="aspect-[4/3] w-full max-w-[267px] rounded-sm object-contain"
+      width={267}
+      height={200}
+      className="h-[200px] w-[267px] max-w-full rounded-sm object-contain"
     />
   );
 }
 
-/** The camera's or lens's own picture from the Gear Pictures page, or "" when it has none. */
+/**
+ * The camera's or lens's sized picture from the Gear Pictures page, or "" when it has none. Only a
+ * sized one (cut to 267 × 200 there) is shown, so every picture is the same size.
+ */
 function pictureOf(kind: GearKind, name: string): string {
-  return gearFile(kind, name)?.image ?? "";
+  return sizedImage(gearFile(kind, name));
+}
+
+/** A gear file's picture when it has been sized, else "". */
+function sizedImage(file?: GearFile): string {
+  return file?.crop ? file.image : "";
 }
 
 /** A big drawing of the lens, from its name, or of the kind of camera it is. */

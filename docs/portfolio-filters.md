@@ -217,7 +217,7 @@ says which filters hide it: each one that, cleared alone, would let it show phot
 "the other filters together" when no single one would. The **(i)** button across from the
 **Cameras** or **Lenses** title opens the picker's info pane (see [Picker conventions](#picker-conventions)), the same
 one the settings' graphics use, with the details of the camera or lens pointed at, or else
-the chosen one: its own picture (the 200px-tall crop) and description from the pipeline's [Gear Pictures](gear-pictures.md) page, or else a
+the chosen one: its own sized picture (exactly 267 × 200) and description from the pipeline's [Gear Pictures](gear-pictures.md) page, or else a
 drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name) (for a lens, a side view of it,
 longer for a longer focal length and with a zoom ring when it zooms). A camera then lists its kind, how many photos
 used it, with which lenses, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
