@@ -36,11 +36,11 @@ The page opens on photos per year, oldest first, each bar split by season. Only 
 the heading, buttons, Adjust Graph box and Selected Photos stay in the column (**Narrow** puts it back). The choice is remembered in the browser.
 
 **Presets** are made on the pipeline's [Graph Presets](graph-presets.md) page and read from `graphs/GRAPHS.json`. The
-**Presets** tab opens a picker like the Grid's **Groups** (`preset-picker.tsx`): the preset groups on the left, each
+**Presets** tab opens a `SectionPicker` like the Grid's **Groups** (`preset-picker.tsx`): the preset groups on the left, each
 saying which of its presets the graph is set as, with the presets in no group as **Other** (or **Presets** when there
 are no groups) and the visitor's own as **Yours**, and the chosen group's presets on the right. Picking one sets the
 graph's type, axes, split, order, how many values show and its Range group; the filters stay as they are. The **(i)**
-button over the presets adds a panel further right listing the settings of the preset pointed at, or the one the graph
+button over the presets opens the picker's info pane, further right (under the presets on phones), listing the settings of the preset pointed at, or the one the graph
 is set as (`preset-settings.tsx`). A group with no presets isn't shown. The committed presets are photo dot graphs of
 **Aperture**, **Exposure**, **ISO** and **Focal length**, plus Month by year and Time of day by weekday heatmaps.
 

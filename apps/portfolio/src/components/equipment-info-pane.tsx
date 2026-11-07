@@ -15,8 +15,8 @@ const PANE_LABELS: Record<EquipmentKey, string> = {
 };
 
 /**
- * The Cameras' or Lenses' info pane, to the right of the list while (i) is on, or under it on
- * phones: the details of the camera or lens pointed at, or else the chosen one. A group, such as a
+ * The Cameras' or Lenses' info pane, in the picker's panel to the right of the list while (i) is
+ * on: the details of the camera or lens pointed at, or else the chosen one. A group, such as a
  * brand, has none.
  */
 export function EquipmentInfoPane({
@@ -28,10 +28,7 @@ export function EquipmentInfoPane({
   option?: FilterOption;
 }) {
   return (
-    <aside
-      aria-label={PANE_LABELS[equipment]}
-      className="flex shrink-0 flex-col max-sm:border-t max-sm:pt-3 sm:sticky sm:top-0 sm:w-52 sm:self-start sm:border-l sm:pl-3"
-    >
+    <aside aria-label={PANE_LABELS[equipment]} className="flex flex-col">
       <PaneContent equipment={equipment} option={option} />
     </aside>
   );

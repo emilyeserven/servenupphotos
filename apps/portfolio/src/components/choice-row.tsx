@@ -1,10 +1,10 @@
 import { Check } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps } from "react";
 import { cn } from "@portfolio/lib/utils";
 import { TruncatedText } from "@portfolio/components/truncated-text";
 
 /**
- * A row in a list of choices: a check while it's on, an optional little graphic (`icon`), its
+ * A row in a list of choices: a check while it's on, its
  * name, and how many photos it would show. `dimmed` greys it out, for a choice the other filters
  * hide. Other button props go on the button, so it can be a tooltip's trigger.
  */
@@ -14,7 +14,6 @@ export function ChoiceRow({
   depth = 0,
   on,
   dimmed = false,
-  icon,
   onClick,
   ...rest
 }: Omit<ComponentProps<"button">, "onClick"> & {
@@ -23,7 +22,6 @@ export function ChoiceRow({
   depth?: number;
   on: boolean;
   dimmed?: boolean;
-  icon?: ReactNode;
   onClick: () => void;
 }) {
   return (
@@ -40,7 +38,6 @@ export function ChoiceRow({
       )}
     >
       <Check aria-hidden className={cn("size-4 shrink-0", !on && "invisible")} />
-      {icon}
       <TruncatedText text={label} />
       <span className="ml-auto text-xs text-muted-foreground tabular-nums">{count}</span>
     </button>
