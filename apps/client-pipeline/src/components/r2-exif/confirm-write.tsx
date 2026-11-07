@@ -30,8 +30,8 @@ interface ConfirmWriteProps {
 }
 
 /**
- * "Write N fields to R2…", which asks in a modal before overwriting the photo's original in R2,
- * since that replaces the file the portfolio links to.
+ * "Write N fields to R2…", for the fields ticked as done in Lightroom, which asks in a modal before
+ * overwriting the photo's original in R2, since that replaces the file the portfolio links to.
  */
 export function ConfirmWriteButton({ photo, fields }: ConfirmWriteProps) {
   const [open, setOpen] = useState(false);
@@ -83,10 +83,9 @@ function ConfirmWrite({ photo, fields, onDone }: ConfirmWriteProps & { onDone: (
       </ul>
       <p className="flex gap-2 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-amber-900 dark:text-amber-200">
         <TriangleAlertIcon className="mt-0.5 size-4 shrink-0" aria-hidden />
-        This replaces the JPEG in R2 that the portfolio links to. The first time, a copy of the
-        original is kept under exif-backups/ in the bucket. Lightroom isn&apos;t changed: tick each
-        field once you&apos;ve made the same change there, or the next export from Lightroom brings
-        the old value back.
+        This replaces the JPEG in R2 that the portfolio links to, and no copy of the old one is
+        kept. Check these are already changed in Lightroom: if anything goes wrong, export the photo
+        again and swap it in with Replace image on the Photo page.
       </p>
       {write.error && <p className="text-destructive">{write.error.message}</p>}
       <DialogFooter>

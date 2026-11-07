@@ -86,7 +86,7 @@ func sameMismatches(a, b []R2ExifMismatch) bool {
 	return string(x) == string(y)
 }
 
-func TestRecordR2ExifEditAndLightroom(t *testing.T) {
+func TestRecordR2ExifEdit(t *testing.T) {
 	repo := &baseURLRepo{pull: true, files: map[string]string{"DSC0001.json": fixedPhoto}}
 	c := repo.start(t)
 	path := photosDir + "DSC0001.json"
@@ -96,21 +96,13 @@ func TestRecordR2ExifEditAndLightroom(t *testing.T) {
 	if err != nil {
 		t.Fatalf("RecordR2ExifEdit() error = %v", err)
 	}
-	if len(got.Edits) != 1 || got.Edits[0].Date == "" || got.Edits[0].Fields[0].Lightroom {
-		t.Fatalf("edits = %+v, want one dated edit not yet in Lightroom", got.Edits)
+	if len(got.Edits) != 1 || got.Edits[0].Date == "" {
+		t.Fatalf("edits = %+v, want one dated edit", got.Edits)
 	}
 	content := repo.staged(t)[path]
 	if !strings.HasPrefix(content, fixedPhoto[:strings.LastIndex(fixedPhoto, "}")-2]) ||
 		!strings.Contains(content, `"r2ExifEdits": [`) || !strings.Contains(content, `"to": "2016:12:24 06:07:39"`) {
 		t.Errorf("content = %s, want the old file with the edit added", content)
-	}
-
-	got, err = c.SetR2ExifLightroom(t.Context(), baseURLSettings, path, 0, "createDate", true)
-	if err != nil {
-		t.Fatalf("SetR2ExifLightroom() error = %v", err)
-	}
-	if !got.Edits[0].Fields[0].Lightroom || !strings.Contains(repo.staged(t)[path], `"lightroom": true`) {
-		t.Errorf("edits = %+v, want createDate ticked", got.Edits)
 	}
 }
 
@@ -121,10 +113,6 @@ func TestR2ExifEditProblems(t *testing.T) {
 	if _, err := c.RecordR2ExifEdit(t.Context(), baseURLSettings, path, "photos/other.jpg", nil); err == nil ||
 		!strings.Contains(err.Error(), "another original") {
 		t.Errorf("RecordR2ExifEdit() for another key error = %v", err)
-	}
-	if _, err := c.SetR2ExifLightroom(t.Context(), baseURLSettings, path, 0, "createDate", true); err == nil ||
-		!strings.Contains(err.Error(), "no such EXIF edit") {
-		t.Errorf("SetR2ExifLightroom() without edits error = %v", err)
 	}
 	if key, err := c.R2ExifKey(t.Context(), baseURLSettings, path); err != nil || key != "photos/ab-DSC0001.jpg" {
 		t.Errorf("R2ExifKey() = %q, %v", key, err)

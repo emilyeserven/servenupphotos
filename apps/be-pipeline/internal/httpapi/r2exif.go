@@ -29,10 +29,12 @@ const r2ExifWriteTimeout = 3 * time.Minute
 type replaceOriginalFunc func(ctx context.Context, cfg settings.R2, key string, body *os.File, size int64) string
 
 // r2ExifFieldValue is one field to write into an original's EXIF, and its
-// new value.
+// new value. Lightroom must be true: the change is made in Lightroom first,
+// so a lost original can be exported again with it.
 type r2ExifFieldValue struct {
-	Field string `json:"field"`
-	Value string `json:"value"`
+	Field     string `json:"field"`
+	Value     string `json:"value"`
+	Lightroom bool   `json:"lightroom"`
 }
 
 // r2ExifWriteRequest asks to write fields into the EXIF of the original the
@@ -42,15 +44,6 @@ type r2ExifWriteRequest struct {
 	Path    string             `json:"path"`
 	Confirm bool               `json:"confirm"`
 	Fields  []r2ExifFieldValue `json:"fields"`
-}
-
-// r2ExifLightroomRequest ticks (or unticks) one field of one of a photo's
-// EXIF edits as made in Lightroom too.
-type r2ExifLightroomRequest struct {
-	Path  string `json:"path"`
-	Edit  int    `json:"edit"`
-	Field string `json:"field"`
-	Done  bool   `json:"done"`
 }
 
 // handlePreviewR2Exif lists the photos whose originals' EXIF in R2 doesn't
@@ -72,10 +65,9 @@ func handlePreviewR2Exif(extractor exif.Extractor, store *settings.Store, gh *gi
 	}
 }
 
-// handleWriteR2Exif writes the body's fields into the EXIF of the photo's
-// original in R2, overwriting it (after keeping a backup of the first
-// version), then notes what changed in its photo file as a change waiting for
-// Commit.
+// handleWriteR2Exif writes the body's fields, each already changed in
+// Lightroom, into the EXIF of the photo's original in R2, overwriting it,
+// then notes what changed in its photo file as a change waiting for Commit.
 func handleWriteR2Exif(
 	extractor exif.Extractor, store *settings.Store, gh *github.Client,
 	get getPhotoFunc, replace replaceOriginalFunc, cache *exifCache,
@@ -129,6 +121,9 @@ func r2ExifTags(fields []r2ExifFieldValue) (map[string]string, string) {
 	for _, f := range fields {
 		if seen[f.Field] || !slices.Contains(exif.EditableFields, f.Field) {
 			return nil, f.Field + " can't be written, or is listed twice."
+		}
+		if !f.Lightroom {
+			return nil, "Change " + f.Field + " in Lightroom first, then tick it."
 		}
 		seen[f.Field] = true
 		ft, err := exif.EditTags(f.Field, f.Value)
@@ -240,10 +235,14 @@ func (e r2ExifEdit) upload(ctx context.Context, cfg settings.R2, key, path strin
 		return &github.PublishError{Status: http.StatusInternalServerError, Message: "Couldn't read the edited photo, so the original in R2 wasn't changed."}
 	}
 	if msg := e.replace(ctx, cfg, key, f, info.Size()); msg != "" {
-		return &github.PublishError{Status: http.StatusBadGateway, Message: msg}
+		return &github.PublishError{Status: http.StatusBadGateway, Message: msg + " " + reuploadHint}
 	}
 	return nil
 }
+
+// reuploadHint is what to do when the original in R2 may be broken: the
+// change is already in Lightroom, so a new export replaces it.
+const reuploadHint = "If the photo in R2 looks wrong, export it from Lightroom again and swap it in with Replace image on the Photo page."
 
 // notNotedErr says the original was changed but noting it in the photo file
 // failed, so the page can say to note it by hand.
@@ -255,26 +254,6 @@ func notNotedErr(err error) *github.PublishError {
 	}
 	return &github.PublishError{Status: http.StatusConflict,
 		Message: "The original in R2 was changed, but the edit couldn't be noted in its photo file: " + msg}
-}
-
-// handleSetR2ExifLightroom ticks or unticks one field of a photo's EXIF edit
-// as made in Lightroom too, as a change waiting for Commit.
-func handleSetR2ExifLightroom(store *settings.Store, gh *github.Client) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		var req r2ExifLightroomRequest
-		if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxFieldBytes)).Decode(&req); err != nil || req.Path == "" {
-			writeError(w, http.StatusBadRequest, `expected a JSON body with a "path", "edit", "field" and "done"`)
-			return
-		}
-		cfg, ok := githubSettings(w, store)
-		if !ok {
-			return
-		}
-		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
-		defer cancel()
-		result, err := gh.SetR2ExifLightroom(ctx, cfg, req.Path, req.Edit, req.Field, req.Done)
-		writeSocialResult(w, result, err, "could not tick the Lightroom change")
-	}
 }
 
 // replaceOriginal is storage.ReplaceOriginal as a replaceOriginalFunc.

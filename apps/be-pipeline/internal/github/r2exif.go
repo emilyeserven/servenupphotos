@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -27,8 +26,8 @@ type R2ExifEdit struct {
 	Fields []R2ExifFieldEdit `json:"fields"`
 }
 
-// R2ExifFieldEdit is one field an edit wrote into the original's EXIF, and
-// whether the same change has been made in Lightroom, which is ticked by hand.
+// R2ExifFieldEdit is one field an edit wrote into the original's EXIF, after
+// the same change was made in Lightroom.
 type R2ExifFieldEdit struct {
 	// Field is the photo JSON field, one of exif.EditableFields.
 	Field string `json:"field"`
@@ -37,9 +36,6 @@ type R2ExifFieldEdit struct {
 	From *string `json:"from"`
 	// To is the value written.
 	To string `json:"to"`
-	// Lightroom is ticked once the change has been made in Lightroom's
-	// catalog too, so the next export from Lightroom keeps it.
-	Lightroom bool `json:"lightroom"`
 }
 
 // R2ExifMismatch is a field whose value in the photo JSON isn't the one the
@@ -58,7 +54,7 @@ type R2ExifMismatch struct {
 }
 
 // R2ExifPhoto is a photo whose original's EXIF doesn't match its photo file,
-// or that has edits to tick off in Lightroom.
+// or that was edited before.
 type R2ExifPhoto struct {
 	Path    string `json:"path"`
 	FileURL string `json:"fileUrl"`
@@ -281,23 +277,6 @@ func (c *Client) RecordR2ExifEdit(ctx context.Context, gh settings.GitHub, path,
 			return nil, publishErr(http.StatusConflict, "%s points at another original now, so the edit wasn't noted.", path)
 		}
 		return append(edits, R2ExifEdit{Date: time.Now().UTC().Format(time.RFC3339), Fields: fields}), nil
-	})
-}
-
-// SetR2ExifLightroom ticks (or unticks, with done false) field of the photo
-// file at path's edit number edit (counting from 0, oldest first) as made in
-// Lightroom too, in the pending changes.
-func (c *Client) SetR2ExifLightroom(ctx context.Context, gh settings.GitHub, path string, edit int, field string, done bool) (R2ExifResult, error) {
-	return c.changeR2ExifEdits(ctx, gh, path, func(_ []byte, edits []R2ExifEdit) ([]R2ExifEdit, *PublishError) {
-		if edit < 0 || edit >= len(edits) {
-			return nil, publishErr(http.StatusNotFound, "%s has no such EXIF edit. Check the photos again.", path)
-		}
-		i := slices.IndexFunc(edits[edit].Fields, func(f R2ExifFieldEdit) bool { return f.Field == field })
-		if i < 0 {
-			return nil, publishErr(http.StatusNotFound, "That EXIF edit of %s didn't change %s.", path, field)
-		}
-		edits[edit].Fields[i].Lightroom = done
-		return edits, nil
 	})
 }
 

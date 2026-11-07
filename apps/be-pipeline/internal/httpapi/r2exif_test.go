@@ -40,7 +40,7 @@ func (f *fakeExifFile) Write(_ string, tags map[string]string) error {
 func TestR2ExifWriteChecked(t *testing.T) {
 	file := &fakeExifFile{fields: map[string]any{"CreateDate": "2016:12:23 22:07:39"}}
 	edit := r2ExifEdit{extractor: file, writer: file}
-	fields := []r2ExifFieldValue{{Field: "createDate", Value: "2016:12:24 06:07:39"}, {Field: "city", Value: "Seoul"}}
+	fields := []r2ExifFieldValue{{Field: "createDate", Value: "2016:12:24 06:07:39", Lightroom: true}, {Field: "city", Value: "Seoul", Lightroom: true}}
 	tags, msg := r2ExifTags(fields)
 	if msg != "" {
 		t.Fatalf("r2ExifTags() = %q", msg)
@@ -71,7 +71,7 @@ func TestR2ExifWriteCheckedRefusesUnwrittenFields(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			fields := []r2ExifFieldValue{{Field: "city", Value: "Seoul"}}
+			fields := []r2ExifFieldValue{{Field: "city", Value: "Seoul", Lightroom: true}}
 			tags, _ := r2ExifTags(fields)
 			_, _, perr := r2ExifEdit{extractor: tt.file, writer: tt.file}.writeChecked("photo.jpg", fields, tags)
 			if perr == nil || !strings.Contains(perr.Message, tt.want) || !strings.Contains(perr.Message, "wasn't changed") {
@@ -88,9 +88,10 @@ func TestR2ExifTagsProblems(t *testing.T) {
 		want   string
 	}{
 		{"none", nil, "at least one"},
-		{"twice", []r2ExifFieldValue{{Field: "city", Value: "a"}, {Field: "city", Value: "b"}}, "listed twice"},
-		{"not editable", []r2ExifFieldValue{{Field: "title", Value: "a"}}, "can't be written"},
-		{"bad value", []r2ExifFieldValue{{Field: "createDate", Value: "yesterday"}}, "Couldn't write createDate"},
+		{"twice", []r2ExifFieldValue{{Field: "city", Value: "a", Lightroom: true}, {Field: "city", Value: "b", Lightroom: true}}, "listed twice"},
+		{"not editable", []r2ExifFieldValue{{Field: "title", Value: "a", Lightroom: true}}, "can't be written"},
+		{"not in Lightroom yet", []r2ExifFieldValue{{Field: "city", Value: "a"}}, "in Lightroom first"},
+		{"bad value", []r2ExifFieldValue{{Field: "createDate", Value: "yesterday", Lightroom: true}}, "Couldn't write createDate"},
 	}
 	for _, tt := range tests {
 		if _, msg := r2ExifTags(tt.fields); !strings.Contains(msg, tt.want) {

@@ -603,8 +603,7 @@ function colorFiles() {
 
 /**
  * Photos whose originals don't match their photo files, as POST /api/data/r2-exif/preview finds
- * them: a time fixed across timezones, a lens renamed by a camera override, and one edited before
- * with a change still to make in Lightroom.
+ * them: a time fixed across timezones, a lens renamed by a camera override, and one written before.
  */
 function r2ExifPhotos() {
   const [fixed, renamed, edited] = headPhotos.slice(0, 3).map(({ path, data }) => ({
@@ -636,9 +635,8 @@ function r2ExifPhotos() {
           field: "createDate",
           from: "2016:12:16 01:27:41",
           to: "2016:12:16 09:27:41",
-          lightroom: true,
         },
-        { field: "country", from: null, to: "Netherlands", lightroom: false },
+        { field: "country", from: null, to: "Netherlands" },
       ],
     },
   ];
@@ -1417,16 +1415,10 @@ export function defaultFixtures() {
       edits: [
         {
           date: "2026-11-07T15:30:00Z",
-          fields: (body?.fields ?? []).map((f) => ({
-            ...f,
-            from: null,
-            to: f.value,
-            lightroom: false,
-          })),
+          fields: (body?.fields ?? []).map((f) => ({ field: f.field, from: null, to: f.value })),
         },
       ],
     }),
-    "PUT /api/data/r2-exif/lightroom": () => ({ ...pendingSave(), edits: r2ExifPhotos()[2].edits }),
     "POST /api/data/near-duplicates": () => ({
       ...pendingSave(),
       photos: 120,

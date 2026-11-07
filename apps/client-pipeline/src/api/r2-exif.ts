@@ -1,7 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { type ScannedPhotos, post } from "@/api/data";
 import { type PendingSave, photoChanges } from "@/api/scan-changes";
-import { requestJson } from "@/api/settings";
 
 /** A photo field whose value can be written into its original's EXIF in R2. */
 export type R2ExifField =
@@ -28,14 +27,12 @@ export interface R2ExifMismatch {
   source: "custom" | "override" | "";
 }
 
-/** One field an edit wrote into the original's EXIF, and whether Lightroom has the change too. */
+/** One field an edit wrote into the original's EXIF, after the same change was made in Lightroom. */
 export interface R2ExifFieldEdit {
   field: R2ExifField;
   /** The EXIF's value before; null when it had none. */
   from: string | null;
   to: string;
-  /** Ticked by hand once the same change is made in Lightroom. */
-  lightroom: boolean;
 }
 
 /** One edit of a photo's original's EXIF in R2, kept under `r2ExifEdits` in its photo file. */
@@ -45,7 +42,7 @@ export interface R2ExifEdit {
   fields: R2ExifFieldEdit[];
 }
 
-/** A photo whose original doesn't match its photo file, or with edits to tick off in Lightroom. */
+/** A photo whose original doesn't match its photo file, or that was edited before. */
 export interface R2ExifPhoto {
   path: string;
   fileUrl: string;
@@ -73,10 +70,12 @@ export interface R2ExifResult extends PendingSave {
   edits: R2ExifEdit[];
 }
 
-/** A field to write into an original's EXIF, and its new value. */
+/** A field to write into an original's EXIF, and its new value, already changed in Lightroom. */
 export interface R2ExifFieldValue {
   field: R2ExifField;
   value: string;
+  /** Always true: the backend only writes fields ticked as done in Lightroom. */
+  lightroom: true;
 }
 
 /** Reads every photo file and its original's EXIF in R2, listing where they don't match. */
@@ -99,18 +98,6 @@ export const writeR2ExifMutation = mutationOptions({
     post<R2ExifResult>("/api/data/r2-exif/write", { ...body, confirm: true }),
 });
 
-/** Ticks or unticks one field of a photo's EXIF edit as made in Lightroom too. */
-export const setR2ExifLightroomMutation = mutationOptions({
-  mutationKey: ["data", "r2-exif", "lightroom"],
-  meta: { saves: true, changes: (result) => photoChanges(result as R2ExifResult) },
-  mutationFn: (body: { path: string; edit: number; field: R2ExifField; done: boolean }) =>
-    requestJson<R2ExifResult>("/api/data/r2-exif/lightroom", {
-      method: "PUT",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    }),
-});
-
 /** Each field's name on the page. */
 export const R2_EXIF_FIELD_LABELS: Record<R2ExifField, string> = {
   createDate: "Date taken",
@@ -126,11 +113,6 @@ export const R2_EXIF_FIELD_LABELS: Record<R2ExifField, string> = {
   focalLength: "Focal length",
 };
 
-/** How many of the photo's edited fields aren't ticked as made in Lightroom yet. */
-export function lightroomToDo(photo: R2ExifPhoto): number {
-  return photo.edits.flatMap((e) => e.fields).filter((f) => !f.lightroom).length;
-}
-
 /**
  * The preview with `photo` as it is after a save answered `result`: its edits as saved, and the
  * fields just written no longer listed as mismatches.
@@ -139,7 +121,7 @@ export function afterSave(
   preview: R2ExifPreview,
   path: string,
   result: R2ExifResult,
-  written: R2ExifField[] = [],
+  written: R2ExifField[],
 ): R2ExifPreview {
   return {
     ...preview,

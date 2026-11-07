@@ -125,8 +125,8 @@ that look nearly the same can be put in a compare group together; see
 [Near duplicates](compare-groups.md#near-duplicates). New photos get it when they're saved, and older files from
 **Find near duplicates** on the Compare page. Like `colors`, it isn't one of the fields Missing fields adds.
 
-A photo's `r2ExifEdits` lists each time fields were written into its original's EXIF in R2, with each field's old and
-new value and whether the change was made in Lightroom too; only photos edited that way have it, and the portfolio's
+A photo's `r2ExifEdits` lists each time fields were written into its original's EXIF in R2 (after the same change was
+made in Lightroom), with each field's old and new value; only photos edited that way have it, and the portfolio's
 build leaves it out. See [EXIF in R2](r2-exif.md).
 
 > **Frontend analogy:** it's a normalized store, like a Redux slice keyed by ID: photos hold only the IDs of their

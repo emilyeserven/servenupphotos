@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useState } from "react";
 import {
   R2_EXIF_FIELD_LABELS,
   type R2ExifFieldValue,
@@ -16,8 +16,9 @@ const SOURCE_NOTES: Record<R2ExifMismatch["source"], string> = {
 };
 
 /**
- * The fields of a photo that don't match its original in R2. Each starts unticked with the
- * pipeline's value ready to write, which can be changed first; the button asks before writing.
+ * The fields of a photo that don't match its original in R2. Make each change in Lightroom first,
+ * then tick it as done there; only ticked fields are written, and the button asks before writing.
+ * Each starts with the pipeline's value, which can be changed to match what Lightroom has.
  */
 export function MismatchForm({ photo }: { photo: R2ExifPhoto }) {
   const [picked, setPicked] = useState<Record<string, boolean>>({});
@@ -26,16 +27,14 @@ export function MismatchForm({ photo }: { photo: R2ExifPhoto }) {
   );
   const fields: R2ExifFieldValue[] = photo.mismatches
     .filter((m) => picked[m.field])
-    .map((m) => ({ field: m.field, value: values[m.field] ?? m.photo }));
+    .map((m) => ({ field: m.field, value: values[m.field] ?? m.photo, lightroom: true as const }));
 
   return (
     <div className="flex flex-col gap-3">
       <table className="w-full text-sm">
         <thead className="text-muted-foreground text-left text-xs">
           <tr>
-            <th className="w-6 font-normal">
-              <span className="sr-only">Write</span>
-            </th>
+            <th className="w-24 font-normal">Done in Lightroom</th>
             <th className="font-normal">Field</th>
             <th className="font-normal">In R2 now</th>
             <th className="font-normal">Write</th>
@@ -67,25 +66,22 @@ interface MismatchRowProps {
   onValue: (value: string) => void;
 }
 
-/** One field: a box to pick it, what R2 has, and the value to write. */
+/** One field: a box to tick once it's changed in Lightroom, what R2 has, and the value to write. */
 function MismatchRow({ mismatch, picked, value, onPick, onValue }: MismatchRowProps) {
-  const id = useId();
   const label = R2_EXIF_FIELD_LABELS[mismatch.field];
   return (
     <tr className="align-top">
       <td className="py-1.5">
         <input
-          id={id}
           type="checkbox"
+          aria-label={`${label} is done in Lightroom`}
           className="accent-primary mt-1 size-4"
           checked={picked}
           onChange={(event) => onPick(event.target.checked)}
         />
       </td>
       <td className="py-1.5 pr-2">
-        <label htmlFor={id} className="font-medium">
-          {label}
-        </label>
+        <span className="font-medium">{label}</span>
         <SourceNote source={mismatch.source} />
       </td>
       <td className="text-muted-foreground py-1.5 pr-2 break-all">{mismatch.r2 ?? "None"}</td>

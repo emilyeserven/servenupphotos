@@ -5,7 +5,7 @@ const ALL_PHOTOS = /[/\\]ALLPHOTOS(\.local)?\.json$/;
 
 /**
  * The photo fields only the pipeline uses, which the pipeline writes: the photographer-only notes,
- * and the edits made to each original's EXIF in R2 with their Lightroom checklist.
+ * and the edits made to each original's EXIF in R2.
  */
 const PRIVATE_KEYS = ["notes", "r2ExifEdits"];
 

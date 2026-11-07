@@ -13,9 +13,8 @@ interface R2ExifCardProps {
 }
 
 /**
- * Finds the photos whose originals in R2 have EXIF that doesn't match their photo files, writes
- * picked fields into an original after a confirm step, and keeps a by-hand checklist of which of
- * those changes were made in Lightroom too.
+ * Finds the photos whose originals in R2 have EXIF that doesn't match their photo files, and writes
+ * the fields already changed in Lightroom into an original after a confirm step.
  */
 export function R2ExifCard({ canRead }: R2ExifCardProps) {
   const [checking, setChecking] = useState(false);
@@ -26,10 +25,10 @@ export function R2ExifCard({ canRead }: R2ExifCardProps) {
         <CardDescription>
           Checks each photo&apos;s original JPEG in R2 against its photo file and lists where the
           EXIF doesn&apos;t match what the pipeline shows, such as a time fixed by Times across
-          timezones or a lens renamed by a camera override. Pick the fields to write and confirm to
-          overwrite that original in R2; nothing is written until you do. Lightroom isn&apos;t
-          changed, so each written field gets a box to tick once you&apos;ve made the same change
-          there. It downloads every original the first time, so it takes a while.
+          timezones or a lens renamed by a camera override. Make each change in Lightroom first,
+          tick it as done there, then confirm to write the ticked fields over that original in R2;
+          nothing is written until you do. It downloads every original the first time, so it takes a
+          while.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
