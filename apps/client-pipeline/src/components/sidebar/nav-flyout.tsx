@@ -11,13 +11,13 @@ const closeDelayMs = 150;
 interface NavFlyoutProps {
   page: NavPage;
   pathname: string;
-  /** The page's own icon in the rail, which the flyout opens beside. */
+  /** The page's own link in the sidebar, which the flyout opens beside. */
   trigger: ReactNode;
 }
 
 /**
- * The collapsed sidebar's submenu: hovering or focusing a page's icon flies out a panel to its right
- * with the page's name and the pages under it, in place of the usual name tooltip.
+ * A page's submenu on a desktop: hovering or focusing the page flies out a panel to its right with
+ * the page's name and the pages under it, whether the sidebar is expanded or collapsed to icons.
  */
 export function NavFlyout({ page, pathname, trigger }: NavFlyoutProps) {
   const { open, show, hide } = useHoverOpen();

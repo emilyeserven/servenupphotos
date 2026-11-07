@@ -46,11 +46,40 @@ function PageLink({ page, onNavigate, ...props }: NavItemProps & { className?: s
 }
 
 /**
- * A page with a submenu. Expanded, the pages under it are listed below it, open while one of them
- * (or the page itself) is showing and toggled by the arrow on the right. Collapsed to a rail of
- * icons, they fly out to the right on hover instead.
+ * A page with a submenu. On a desktop its pages fly out to its right on hover, whether the sidebar is
+ * expanded or collapsed to icons, and it stays highlighted while one of them is open. On a phone,
+ * where there's no hover, they're listed below it instead.
  */
-function NavItemWithSubmenu({
+function NavItemWithSubmenu(props: NavItemProps & { subpages: readonly NavPage[] }) {
+  const { isMobile } = useSidebar();
+  return isMobile ? <InlineSubmenuItem {...props} /> : <FlyoutSubmenuItem {...props} />;
+}
+
+/** The desktop's page with a submenu: its link, an arrow, and the flyout on hover. */
+function FlyoutSubmenuItem({ page, onNavigate }: NavItemProps) {
+  const pathname = useLocation({ select: (location) => location.pathname });
+  const button = (
+    <SidebarMenuButton asChild isActive={isWithin(pathname, page)}>
+      <PageLink page={page} onNavigate={onNavigate} />
+    </SidebarMenuButton>
+  );
+  return (
+    <SidebarMenuItem>
+      <NavFlyout page={page} pathname={pathname} trigger={button} />
+      <SidebarMenuAction asChild className="pointer-events-none">
+        <span aria-hidden>
+          <ChevronRightIcon />
+        </span>
+      </SidebarMenuAction>
+    </SidebarMenuItem>
+  );
+}
+
+/**
+ * The phone's page with a submenu: its pages listed below it, open while one of them (or the page
+ * itself) is showing and toggled by the arrow on the right.
+ */
+function InlineSubmenuItem({
   page,
   subpages,
   onNavigate,
@@ -62,7 +91,9 @@ function NavItemWithSubmenu({
 
   return (
     <SidebarMenuItem>
-      <ParentButton page={page} pathname={pathname} onNavigate={onNavigate} />
+      <SidebarMenuButton asChild isActive={isUnder(pathname, page.url)}>
+        <PageLink page={page} onNavigate={onNavigate} />
+      </SidebarMenuButton>
       <SubmenuToggle title={page.title} open={open} onToggle={() => setToggled(!open)} />
       {open && <Submenu subpages={subpages} pathname={pathname} onNavigate={onNavigate} />}
     </SidebarMenuItem>
@@ -88,25 +119,13 @@ function SubmenuToggle({ title, open, onToggle }: SubmenuToggleProps) {
   );
 }
 
-/** The link to the page a submenu is under, which flies its submenu out when the sidebar is collapsed. */
-function ParentButton({ page, pathname, onNavigate }: NavItemProps & { pathname: string }) {
-  const { state, isMobile } = useSidebar();
-  const button = (
-    <SidebarMenuButton asChild isActive={isUnder(pathname, page.url)}>
-      <PageLink page={page} onNavigate={onNavigate} />
-    </SidebarMenuButton>
-  );
-  if (state !== "collapsed" || isMobile) return button;
-  return <NavFlyout page={page} pathname={pathname} trigger={button} />;
-}
-
 interface SubmenuProps {
   subpages: readonly NavPage[];
   pathname: string;
   onNavigate: () => void;
 }
 
-/** The pages under one, listed below it in the expanded sidebar. */
+/** The pages under one, listed below it on a phone. */
 function Submenu({ subpages, pathname, onNavigate }: SubmenuProps) {
   return (
     <SidebarMenuSub>
