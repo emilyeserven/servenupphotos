@@ -81,7 +81,12 @@ function firstSection(filters: PhotoFilters): WhenSection {
  */
 export function WhenFilter(props: WhenProps) {
   return (
-    <FilterPickerButton Icon={CalendarClock} label="When" count={whenCount(props.filters)}>
+    <FilterPickerButton
+      Icon={CalendarClock}
+      label="When"
+      count={whenCount(props.filters)}
+      onClear={() => clearWhen(props)}
+    >
       <PickerBody {...props} />
     </FilterPickerButton>
   );
@@ -104,9 +109,13 @@ function PickerBody(props: WhenProps) {
   );
 }
 
-/** An X under the list clearing every "when" filter, shown while one is set. */
-function ClearWhen({ filters, setFilters }: WhenSetters) {
-  if (whenCount(filters) === 0) return null;
-  const clear = () => setFilters(withoutFilters(filters, WHEN_KEYS));
-  return <PickerClear text="Clear when" label="When" onClear={clear} />;
+/** Clears every "when" filter. */
+function clearWhen({ filters, setFilters }: WhenSetters) {
+  setFilters(withoutFilters(filters, WHEN_KEYS));
+}
+
+/** **Clear when** under the list, clearing every "when" filter, shown while one is set. */
+function ClearWhen(props: WhenSetters) {
+  if (whenCount(props.filters) === 0) return null;
+  return <PickerClear text="Clear when" label="When" onClear={() => clearWhen(props)} />;
 }

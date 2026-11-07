@@ -6,8 +6,8 @@ Grid also has the camera filters (see [Camera filters](#camera-filters)), in eac
 Lucky, the Graph page, the Timeline and, under **More filters**, the Map) also has a **Visuals** button, which opens the Color page's color filters and **Orientation** (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)). Where the camera filters are, it comes with them (`CameraFilterBar`); the Timeline and the
 Map add it as their own filters (`visualsOwnFilters`, read with `lib/visual-filters.ts`).
-The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
-beside it. Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
+The dropdowns start hidden on each view; while filters are set, the button shows how many, and pointing at it swaps
+that number for an X that clears them all (see [Clearing filters](#clearing-filters)). Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
 that one (a range slider's X sits beside its range). The filters are kept in the URL, so a link keeps them, and the menu's view
 links carry them to the other views. A view's own settings, such as the Grid's sort or its Table's
 columns, stay with that view, and are remembered in this browser: the menu's links, the homepage's, the Tags page's
@@ -28,7 +28,7 @@ matched every way it can be written: its places, city, state and country in Engl
 script, whichever the menu's **Script display** shows.
 
 The URL changes as you type, replacing the page's history entry rather than adding one per letter. The search counts
-as one filter on the **Show filters** button, the X inside the box or **Clear filters** clears it, and the filters'
+as one filter on the **Show filters** button, the X inside the box or the button's clear X clears it, and the filters'
 counts are out of the photos it leaves. The menu carries it between the Grid and the Timeline, but not to the other
 views, which have no box.
 
@@ -77,7 +77,7 @@ after the countries starts with **All of** the place it's in, such as **All of J
 
 The map's **View in grid** can open the Grid on photos chosen one by one (`?ids=[316,317,319]`) when no places cover
 just the photos in view (see [Portfolio Map](portfolio-map.md)). There's no dropdown for it: it counts as one filter on
-the **Show filters** button, and **Clear filters** clears it.
+the **Show filters** button, and the button's clear X clears it.
 
 ## Groups: Album, Tag and Genre
 
@@ -132,11 +132,13 @@ On the Timeline, the date range is the days it shows.
 **Groups**, **When**, **Gear & settings**, **Visuals** and the Graph page's **Graph type** share one layout,
 `SectionPicker` in `components/section-picker.tsx`: a list of sections on the left (`SectionTab` in
 `components/picker-section-tab.tsx`), each with its name, an icon for Groups, what it's set to under it and a dot while
-it's set, an optional footer under the list such as **Clear visuals**, and the chosen section's controls on the right.
+it's set, an optional footer under the list such as **Clear visuals** (`PickerClear`, whose words and X are one
+button), and the chosen section's controls on the right.
 The picker keeps 16px from the screen's edges and is at most 28rem tall, scrolling inside. On phones the list folds up
 above the controls, behind a button naming the chosen section and what it's set to; while it's open it takes the
 controls' place, and choosing a section folds it up again. The Grid's filter buttons open it through
-`FilterPickerButton`, which shows the filter's icon, name and how many of its filters are set; `PickerPart` puts the
+`FilterPickerButton`, which shows the filter's icon, name and how many of its filters are set, and takes the
+`onClear` its clear X calls (see [Clearing filters](#clearing-filters)); `PickerPart` puts the
 line saying what a section is for over its controls.
 
 A name or value cut off with an ellipsis, in a picker's list, a choice such as a long album in **Groups**, the Places
@@ -145,6 +147,26 @@ the hover text only while the text is cut off).
 
 > **Frontend analogy:** it's a vertical tabs component whose tab list turns into an accordion header on small screens;
 > each picker only supplies the tabs' labels and the panel.
+
+## Clearing filters
+
+Every button that opens filters has a clear X while any of its filters is set (`ClearableTrigger` in
+`components/clearable-trigger.tsx`): pointing at the button, or reaching it with the keyboard, swaps the end of it
+for an X, which clears just that button's filters without opening it.
+
+- **Groups**, **When**, **Gear & settings** and **Visuals** swap their arrows for the X, and clear their own
+  filters: Groups the album, tag and genre, When every "when" filter, Gear & settings the camera, lens and settings
+  (not the orientation, which is in Visuals), and Visuals the colors, vividness and orientation. **Clear when** and
+  **Clear visuals** under their pickers' lists do the same from inside.
+- **Show filters** (or **Hide filters**) swaps its count for the X, which clears every filter, the text search too.
+- On the Map, **More filters** swaps its arrows for the X, which clears every filter it holds.
+- **Places** keeps the X it always shows while a place is chosen, to the left of its arrows.
+
+On a touch screen, which can't point, the X shows whenever any of the button's filters is set. The Graph page's
+Filters tab, which has no Show filters button, keeps a **Clear filters** button instead.
+
+> **Frontend analogy:** the X is a sibling of the trigger button positioned over it, not a child, as a `<button>`
+> can't hold another; the wrapper is a Tailwind `group`, so `group-hover:` shows the X and hides the arrows together.
 
 ### Picker conventions
 
@@ -166,6 +188,8 @@ alike:
 - **Choice lists are text.** A row in a list of choices (`ChoiceRow`) has its check, name and count, and no icon or
   picture; pictures belong in the info pane. The one exception is the Graph page's **Graph type** list, whose rows
   each have their type's icon (`ChoiceRow`'s `icon`), as the owner asked. Headings in a list, such as **DSLR**, are plain small text, not choices.
+- **A button that opens filters clears them with an X.** Build it with `FilterPickerButton` (or wrap it in
+  `ClearableTrigger`) and pass the `onClear` that clears its filters; never add a separate Clear button beside it.
 - **Defaults aren't news.** A section that's at its default says "Any" (or its default's name) in the list, and a button
   only stands out while it's changed.
 
@@ -219,7 +243,7 @@ they're wide (`?orientation=vertical`), or exactly as wide as they're tall (`?or
 clears it. The photo's size is the one its JSON file saves (`width` and `height`), so a photo not uploaded to R2 yet
 has no orientation.
 
-The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and **Clear filters** clears them too.
+The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and the button's clear X clears them too.
 
 > **Frontend analogy:** the slider's value is an index into a sorted array of the values, not the value itself, so
 > `1/4000` and `30` seconds sit one step apart when nothing's between them, like `<input type="range">` over

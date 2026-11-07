@@ -96,7 +96,8 @@ fits without covering the map:
   > **Grouping** remounts the `<Source>` with a new `key`, like resetting a component's state by changing its key.
 
 - **More filters** opens the **Groups**, **When** and **Visuals** pickers, side by side in one row (wrapping onto more
-  rows on a phone), and shows how many of their filters are set. To see one day or a few, use When's **Date range**;
+  rows on a phone), and shows how many of their filters are set. Pointing at it while any is set swaps its arrows for
+  an X that clears them all (see [Clearing filters](portfolio-filters.md#clearing-filters)). To see one day or a few, use When's **Date range**;
   the map fits itself to the photos it leaves, like any other filter. **View in grid** carries the Visuals filters to the
   Grid too.
 - **View in grid** opens the Grid on the photos in view (`gridFiltersFor` in `lib/map-grid-link.ts`). It keeps the
@@ -109,8 +110,9 @@ fits without covering the map:
 - **Browse** opens the photo viewer on the newest photo in view, and its arrows, keys and swipes step through every
   photo in view, newest first. Opening a photo's own marker steps through them the same way, starting on that photo;
   a group's grid still steps through just that group's photos. It can't be pressed while no photos are in view.
-- Links from before the day dropdown moved into When, `?day=2026-05-01&to=2026-05-17` (such as the Timeline's route
-  sketches), open on that date range, as `?start=2026-05-01&end=2026-05-17`; `to` can be left out for one day.
+- Links from before the day dropdown moved into When, `?day=2026-05-01&to=2026-05-17`, open on that date range, as
+  `?start=2026-05-01&end=2026-05-17`; `to` can be left out for one day. The old keys leave the URL with the next change
+  (`stripSearchParams` on the route), or clearing When or the filters would bring the days back.
 
 ## Trip lines
 

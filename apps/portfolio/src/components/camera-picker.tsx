@@ -9,10 +9,12 @@ import {
   SectionPicker,
 } from "@portfolio/components/section-picker";
 import {
+  CAMERA_FILTER_KEYS,
   type CameraFilters,
   type EquipmentKey,
   type RangeKey,
 } from "@portfolio/lib/camera-filters";
+import { ORIENTATION_KEY } from "@portfolio/lib/orientation";
 import { equipmentChoices } from "@portfolio/lib/camera-picker";
 import { useGraphicsPane } from "@portfolio/lib/use-graphics-pane";
 import type { BlockerSource } from "@portfolio/lib/camera-blockers";
@@ -32,6 +34,11 @@ const SECTIONS: [CameraSection, string][] = [
   ["exposure", RANGE_LABELS.exposure],
   ["iso", RANGE_LABELS.iso],
 ];
+
+/** The camera filters with every one the picker sets cleared, leaving the orientation (in Visuals). */
+const GEAR_CLEARED: CameraFilters = Object.fromEntries(
+  CAMERA_FILTER_KEYS.filter((key) => key !== ORIENTATION_KEY).map((key) => [key, undefined]),
+);
 
 /** What the Camera picker reads and changes, and the photos its counts are out of. */
 export interface CameraPickerProps {
@@ -77,7 +84,12 @@ function setCount(filters: CameraFilters): number {
  */
 export function CameraPicker(props: CameraPickerProps) {
   return (
-    <FilterPickerButton Icon={Camera} label="Gear & settings" count={setCount(props.filters)}>
+    <FilterPickerButton
+      Icon={Camera}
+      label="Gear & settings"
+      count={setCount(props.filters)}
+      onClear={() => props.onChange(GEAR_CLEARED)}
+    >
       <PickerBody {...props} />
     </FilterPickerButton>
   );

@@ -1,6 +1,6 @@
-import { ChevronDown, ChevronsUpDown, type LucideIcon } from "lucide-react";
+import { ChevronDown, type LucideIcon, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
-import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
+import { ClearableTrigger, TriggerArrows } from "@portfolio/components/clearable-trigger";
 import { SectionTab } from "@portfolio/components/picker-section-tab";
 import { FilterCount } from "@portfolio/components/filter-count";
 import { InfoButton } from "@portfolio/components/info-button";
@@ -166,33 +166,39 @@ function ListToggle({
 /**
  * A filter's button that opens its picker, such as **When**: its icon and name, `badge` (such as
  * the picked color), how many of its filters are set, and the picker under it, 16px from the
- * screen's edges.
+ * screen's edges. While any is set, pointing at the button swaps its arrows for an X that clears
+ * them all (`onClear`); see `ClearableTrigger`.
  */
 export function FilterPickerButton({
   Icon,
   label,
   count,
   badge,
+  onClear,
   children,
 }: {
   Icon: LucideIcon;
   label: string;
   count: number;
   badge?: ReactNode;
+  /** Clears all the picker's filters. */
+  onClear: () => void;
   /** The picker, usually a `SectionPicker`. */
   children: ReactNode;
 }) {
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="font-normal">
-          <Icon className="text-muted-foreground" aria-hidden />
-          {label}
-          {badge}
-          <FilterCount count={count} />
-          <ChevronsUpDown className="opacity-50" aria-hidden />
-        </Button>
-      </PopoverTrigger>
+      <ClearableTrigger label={label} count={count} onClear={onClear}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" className="font-normal">
+            <Icon className="text-muted-foreground" aria-hidden />
+            {label}
+            {badge}
+            <FilterCount count={count} />
+            <TriggerArrows clearable={count > 0} />
+          </Button>
+        </PopoverTrigger>
+      </ClearableTrigger>
       <PopoverContent
         align="start"
         collisionPadding={16}
@@ -236,7 +242,10 @@ export function PickerPart({
   );
 }
 
-/** An X under a picker's list clearing all its filters, such as **Clear visuals**. */
+/**
+ * A button under a picker's list clearing all its filters, such as **Clear visuals**: its words
+ * and X are one button, so clicking either clears them.
+ */
 export function PickerClear({
   text,
   label,
@@ -249,9 +258,14 @@ export function PickerClear({
   onClear: () => void;
 }) {
   return (
-    <div className="flex items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground sm:mt-auto">
+    <button
+      type="button"
+      aria-label={`Clear ${label}`}
+      onClick={onClear}
+      className="flex items-center gap-1 rounded-sm px-2 py-1.5 text-left text-xs text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring sm:mt-auto"
+    >
       {text}
-      <ClearFilterButton label={label} onClear={onClear} />
-    </div>
+      <X className="size-3.5" aria-hidden />
+    </button>
   );
 }

@@ -20,7 +20,7 @@ Under those, **Show filters** opens the same filters as the portfolio's [Grid an
 their metadata groups), the **ISO**, **Exposure**, **Focal length**, **Aperture** sliders, the **When** picker,
 and the **Visuals** picker (colors and orientation), kept in the URL under the portfolio's own names (`?album=`, `?camera=`, `?color=`, …), so a filtered Grid
 link's search works here too. Each choice counts the photos the Gallery's other filters leave, and the Gallery's
-**Clear filters** clears these as well. Changing any Gallery filter keeps the page where it's scrolled to: each
+**Clear filters** clears these as well, and so does the X that pointing at **Show filters** shows. Changing any Gallery filter keeps the page where it's scrolled to: each
 filter's `navigate` passes `resetScroll: false`, since TanStack Router scrolls to the top on every navigation
 otherwise. The Grid's filters, being the same code, do too.
 

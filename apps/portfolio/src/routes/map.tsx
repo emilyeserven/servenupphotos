@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, stripSearchParams } from "@tanstack/react-router";
 import {
   Layer,
   Map,
@@ -84,6 +84,9 @@ export const Route = createFileRoute("/map")({
     ...parseShownPhoto(search),
     ...parseMapView(search),
   }),
+  // Once read, the old day filter leaves the URL with the next change, or clearing When or the
+  // filters would bring its days back.
+  search: { middlewares: [stripSearchParams(["day", "to"])] },
   component: MapView,
 });
 
