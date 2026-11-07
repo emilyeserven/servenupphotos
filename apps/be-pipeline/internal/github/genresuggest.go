@@ -124,7 +124,7 @@ func (c *Client) PreviewGenreSuggestions(ctx context.Context, gh settings.GitHub
 		preview.Photos = append(preview.Photos, g.plan(p, parsed))
 	}
 	preview.NewGenres = append(preview.NewGenres, g.fresh...)
-	preview.Unknown = unknownPhotos(photos, parsed)
+	preview.Unknown = unknownPhotos(photos, parsed.names())
 	return preview, nil
 }
 
@@ -140,13 +140,11 @@ func genreDescriptions(answer genreAnswer) map[string]string {
 	return out
 }
 
-// unknownPhotos is the names in answer that aren't any of photos.
-func unknownPhotos(photos []bulkPhoto, answer genreAnswer) []string {
-	out := []string{}
-	for _, a := range answer.Photos {
-		if !slices.ContainsFunc(photos, func(p bulkPhoto) bool { return p.name == strings.TrimSpace(a.Photo) }) {
-			out = append(out, a.Photo)
-		}
+// names is the photo names the answer lists, as it wrote them.
+func (a genreAnswer) names() []string {
+	out := make([]string, 0, len(a.Photos))
+	for _, p := range a.Photos {
+		out = append(out, p.Photo)
 	}
 	return out
 }

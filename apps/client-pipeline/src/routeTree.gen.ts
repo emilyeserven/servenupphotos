@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AlbumSuggestionsRouteImport } from './routes/album-suggestions'
 import { Route as AllPhotosRouteImport } from './routes/all-photos'
+import { Route as AltTextRouteImport } from './routes/alt-text'
 import { Route as BucketRouteImport } from './routes/bucket'
 import { Route as BulkPlacesRouteImport } from './routes/bulk-places'
 import { Route as BulkUploadRouteImport } from './routes/bulk-upload'
@@ -65,6 +66,11 @@ const AlbumSuggestionsRoute = AlbumSuggestionsRouteImport.update({
 const AllPhotosRoute = AllPhotosRouteImport.update({
   id: '/all-photos',
   path: '/all-photos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AltTextRoute = AltTextRouteImport.update({
+  id: '/alt-text',
+  path: '/alt-text',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BucketRoute = BucketRouteImport.update({
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/album-suggestions': typeof AlbumSuggestionsRoute
   '/all-photos': typeof AllPhotosRoute
+  '/alt-text': typeof AltTextRoute
   '/bucket': typeof BucketRoute
   '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
@@ -311,6 +318,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/album-suggestions': typeof AlbumSuggestionsRoute
   '/all-photos': typeof AllPhotosRoute
+  '/alt-text': typeof AltTextRoute
   '/bucket': typeof BucketRoute
   '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
@@ -354,6 +362,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/album-suggestions': typeof AlbumSuggestionsRoute
   '/all-photos': typeof AllPhotosRoute
+  '/alt-text': typeof AltTextRoute
   '/bucket': typeof BucketRoute
   '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
@@ -400,6 +409,7 @@ export interface FileRouteTypes {
     | '/'
     | '/album-suggestions'
     | '/all-photos'
+    | '/alt-text'
     | '/bucket'
     | '/bulk-places'
     | '/bulk-upload'
@@ -444,6 +454,7 @@ export interface FileRouteTypes {
     | '/'
     | '/album-suggestions'
     | '/all-photos'
+    | '/alt-text'
     | '/bucket'
     | '/bulk-places'
     | '/bulk-upload'
@@ -486,6 +497,7 @@ export interface FileRouteTypes {
     | '/'
     | '/album-suggestions'
     | '/all-photos'
+    | '/alt-text'
     | '/bucket'
     | '/bulk-places'
     | '/bulk-upload'
@@ -531,6 +543,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AlbumSuggestionsRoute: typeof AlbumSuggestionsRoute
   AllPhotosRoute: typeof AllPhotosRoute
+  AltTextRoute: typeof AltTextRoute
   BucketRoute: typeof BucketRoute
   BulkPlacesRoute: typeof BulkPlacesRoute
   BulkUploadRoute: typeof BulkUploadRoute
@@ -589,6 +602,13 @@ declare module '@tanstack/react-router' {
       path: '/all-photos'
       fullPath: '/all-photos'
       preLoaderRoute: typeof AllPhotosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/alt-text': {
+      id: '/alt-text'
+      path: '/alt-text'
+      fullPath: '/alt-text'
+      preLoaderRoute: typeof AltTextRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bucket': {
@@ -898,6 +918,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AlbumSuggestionsRoute: AlbumSuggestionsRoute,
   AllPhotosRoute: AllPhotosRoute,
+  AltTextRoute: AltTextRoute,
   BucketRoute: BucketRoute,
   BulkPlacesRoute: BulkPlacesRoute,
   BulkUploadRoute: BulkUploadRoute,

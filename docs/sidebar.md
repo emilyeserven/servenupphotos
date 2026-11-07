@@ -5,15 +5,46 @@ The pipeline's sidebar (`components/app-sidebar.tsx`, with its parts in `compone
 the Bulk Upload modal, and the smaller **Upload** icon on its right uploads one photo. The Bulk Upload page
 (`/bulk-upload`) has no sidebar link of its own; it's linked from the upload queue and the Photo page.
 
-Below them every page is listed under its section:
+Below them every page is listed under its section, with the pages in its submenu under it. One page per line here, so
+branches that add pages don't clash:
 
-| Section       | Pages (submenu pages in parentheses)                                                                                                                |
-| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Images        | Photo, Gallery, All Photos                                                                                                                          |
-| Pipeline      | Photos in Flight, Compare, Lightroom Albums                                                                                                         |
-| Organize      | Albums (Album Suggestions), Tags (Small Tags, Tag Data), Genres (Genre Suggestions), Places (Location Names, Bulk Places, Localizations)            |
-| Publish       | Instagram (Planned Posts, Caption Templates), Site Spotlight, User Likes                                                                            |
-| Configuration | Settings (Status, Explore Bucket, Manage Sizes), Update Data (each of its subpages), Metadata Groups, Camera Overrides, Timeline Labels, Trip Lines |
+- **Images**
+  - Photo
+    - Alt Text
+  - Gallery
+  - All Photos
+- **Pipeline**
+  - Photos in Flight
+  - Compare
+  - Lightroom Albums
+- **Organize**
+  - Albums
+    - Album Suggestions
+  - Tags
+    - Small Tags
+    - Tag Data
+  - Genres
+    - Genre Suggestions
+  - Places
+    - Location Names
+    - Bulk Places
+    - Localizations
+- **Publish**
+  - Instagram
+    - Planned Posts
+    - Caption Templates
+  - Site Spotlight
+  - User Likes
+- **Configuration**
+  - Settings
+    - Status
+    - Explore Bucket
+    - Manage Sizes
+  - Update Data (each of its subpages)
+  - Metadata Groups
+  - Camera Overrides
+  - Timeline Labels
+  - Trip Lines
 
 ## Submenus
 

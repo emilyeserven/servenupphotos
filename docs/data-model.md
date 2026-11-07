@@ -106,6 +106,9 @@ picked to post; both are left out or `null` otherwise. A photo that wasn't chose
 winners, the group, the day and what's left in R2), which keeps it out of `ALLPHOTOS.json`; see
 [Unselected Photos](compare-groups.md#unselected-photos). Only the pipeline reads them.
 
+A photo's `altText` describes what it shows for screen readers, and the portfolio uses it as its images' `alt`, or
+`null` until it's written; see [Alt text](alt-text.md).
+
 A photo's `colors` is its color summary, as the EXIF page's Colors tab shows it: the `average` color (hex, CIELAB and
 HCL), the share of the photo in each of 12 hue `buckets`, the `neutrals` (blacks, grays and whites) by lightness, and
 the mean `lightness` and `chroma`, and `peakChroma`, the chroma the most vivid tenth of its pixels reach (the 90th

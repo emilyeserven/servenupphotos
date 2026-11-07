@@ -85,7 +85,6 @@ function StripPhoto({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void }
     <button
       type="button"
       title={photo.title}
-      aria-label={`Show ${photo.title}`}
       onClick={onOpen}
       className="block h-48 cursor-zoom-in overflow-hidden rounded-md bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:h-64"
       style={{ aspectRatio: `${width} / ${height}` }}
@@ -94,7 +93,7 @@ function StripPhoto({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void }
         src={small}
         srcSet={srcSet}
         sizes="(min-width: 640px) 400px, 300px"
-        alt=""
+        alt={photo.alt}
         loading="lazy"
         className="size-full object-cover"
       />

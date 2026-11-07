@@ -71,6 +71,9 @@ type photoJSON struct {
 	ID      *int    `json:"id"`
 	Title   *string `json:"title"`
 	Comment *string `json:"comment"`
+	// AltText is a short description of what the photo shows, for screen
+	// readers (see PhotoAltTextKey); nil until one is written.
+	AltText *string `json:"altText"`
 	// Notes is the photographer-only notes: text kept for the pipeline, such
 	// as what a photo shows that isn't a tag. The portfolio's build leaves it
 	// out.
@@ -171,7 +174,7 @@ func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 		s.ExifOriginals = map[string]json.RawMessage{}
 	}
 	return photoJSON{
-		Title: s.Title, Comment: s.Comment, Notes: s.Notes, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
+		Title: s.Title, Comment: s.Comment, AltText: s.AltText, Notes: s.Notes, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
 		Genres: []string{},
 		Places: []PhotoPlace{}, SpotlightZones: []string{}, SocialPosts: []SocialPost{},
 		PickedSimilar: []int{}, SimilarPhotos: []int{},

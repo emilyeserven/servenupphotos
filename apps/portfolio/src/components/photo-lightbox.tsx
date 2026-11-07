@@ -157,7 +157,7 @@ function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProp
         onClick={onTap}
         className="flex size-full touch-manipulation items-center justify-center select-none [container-type:size]"
       >
-        <LightboxImage key={photo.id} image={photo.image} alt={photo.title}>
+        <LightboxImage key={photo.id} image={photo.image} alt={photo.alt}>
           {burst !== null && <LikeBurst key={burst} onDone={onBurstDone} />}
           <StepButtons steps={steps} bare={bare} />
         </LightboxImage>

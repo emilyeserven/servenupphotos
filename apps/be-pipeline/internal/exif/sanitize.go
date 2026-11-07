@@ -17,6 +17,10 @@ type Sanitized struct {
 	// Comment is the photographer's note about the photo, in Markdown.
 	// Sanitize leaves it nil; it is written on the Photo page before saving.
 	Comment *string `json:"comment"`
+	// AltText is a short description of what the photo shows, which the
+	// portfolio gives its images for screen readers. Sanitize leaves it nil;
+	// it is written on the Photo page or on the Alt Text page.
+	AltText *string `json:"altText"`
 	// Notes is the photographer-only notes, plain text for the pipeline that
 	// the portfolio's build leaves out. Sanitize leaves it nil; it is written
 	// on the Photo page or by the Tag library.

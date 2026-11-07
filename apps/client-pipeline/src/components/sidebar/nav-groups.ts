@@ -25,6 +25,7 @@ import {
   RefreshCwIcon,
   ScaleIcon,
   ScalingIcon,
+  ScanTextIcon,
   SettingsIcon,
   ShapesIcon,
   SignpostIcon,
@@ -59,7 +60,12 @@ export const navGroups: readonly NavGroup[] = [
   {
     title: "Images",
     items: [
-      { title: "Photo", url: "/exif", icon: ImageIcon },
+      {
+        title: "Photo",
+        url: "/exif",
+        icon: ImageIcon,
+        children: [{ title: "Alt Text", url: "/alt-text", icon: ScanTextIcon }],
+      },
       { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
       { title: "All Photos", url: "/all-photos", icon: ImagesIcon },
     ],
