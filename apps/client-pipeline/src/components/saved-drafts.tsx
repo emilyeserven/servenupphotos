@@ -6,6 +6,7 @@ import {
   publishedPhotosQuery,
   type PublishedResponse,
 } from "@/api/photos";
+import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
 import { MissingImageDrafts } from "@/components/missing-image-drafts";
@@ -97,14 +98,14 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
       >
         <DraftSortToggle sort={sort} />
       </PhotoFilterBar>
-      <MissingImageDrafts files={missing} images={data.images} />
+      <DraftList files={drafts.filter((file) => !undecided.has(file.path))} data={data} />
       <UndecidedQueue
         files={drafts.filter((file) => undecided.has(file.path))}
         images={data.images}
         fromGallery
         title={undecidedTitle(data.branch, alongside)}
       />
-      <DraftList files={drafts.filter((file) => !undecided.has(file.path))} data={data} />
+      <MissingImageDrafts files={missing} images={data.images} />
     </section>
   );
 }
@@ -126,19 +127,24 @@ function undecidedTitle(branch: string, alongside?: boolean): string | undefined
   return alongside ? `Undecided on ${branch}` : undefined;
 }
 
-/** The drafts on the base branch that aren't Undecided, as tiles; nothing when there are none. */
+/**
+ * The drafts on the base branch that can be edited and aren't Undecided, as tiles in a Drafts
+ * panel, open at first and above the Undecided and Can't be edited ones; nothing when there are none.
+ */
 function DraftList({ files, data }: { files: PublishedFile[]; data: PublishedResponse }) {
   if (files.length === 0) return null;
   return (
-    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-      {files.map((file) => (
-        <DraftTile
-          key={file.path}
-          file={file}
-          imageUrl={data.images.byPath[file.path]?.url}
-          fromGallery
-        />
-      ))}
-    </ul>
+    <CollapsiblePanel title="Drafts" count={countOf(files.length, "draft")} open>
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        {files.map((file) => (
+          <DraftTile
+            key={file.path}
+            file={file}
+            imageUrl={data.images.byPath[file.path]?.url}
+            fromGallery
+          />
+        ))}
+      </ul>
+    </CollapsiblePanel>
   );
 }

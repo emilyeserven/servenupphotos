@@ -1,5 +1,6 @@
-import { ArchiveXIcon, ChevronRightIcon } from "lucide-react";
+import { ArchiveXIcon } from "lucide-react";
 import type { InFlightImages, PublishedFile } from "@/api/photos";
+import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
 import { DraftTile } from "@/components/undecided-photos";
 import { Button } from "@/components/ui/button";
 import { useCompareEdits } from "@/hooks/use-compare-groups";
@@ -24,23 +25,17 @@ export function MissingImageDrafts({
 }) {
   if (files.length === 0) return null;
   return (
-    <details className="group bg-card rounded-xl border shadow-sm">
-      <summary className="hover:bg-muted/50 flex cursor-pointer list-none items-center gap-2 rounded-xl px-6 py-4 [&::-webkit-details-marker]:hidden">
-        <ChevronRightIcon className="text-muted-foreground size-4 transition-transform group-open:rotate-90" />
-        <span className="font-semibold">Can&apos;t be edited</span>
-        <span className="text-muted-foreground text-sm">
-          {files.length} {files.length === 1 ? "draft" : "drafts"} without an image
-        </span>
-      </summary>
-      <div className="flex flex-col gap-4 px-6 pb-6">
-        {imagesKnown(images) ? <MoveAll files={files} /> : <NotSearched message={images.message} />}
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {files.map((file) => (
-            <DraftTile key={file.path} file={file} fromGallery />
-          ))}
-        </ul>
-      </div>
-    </details>
+    <CollapsiblePanel
+      title="Can't be edited"
+      count={`${countOf(files.length, "draft")} without an image`}
+    >
+      {imagesKnown(images) ? <MoveAll files={files} /> : <NotSearched message={images.message} />}
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        {files.map((file) => (
+          <DraftTile key={file.path} file={file} fromGallery />
+        ))}
+      </ul>
+    </CollapsiblePanel>
   );
 }
 
