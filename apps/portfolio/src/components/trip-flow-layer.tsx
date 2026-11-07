@@ -1,6 +1,7 @@
 import { Layer, useMap } from "@vis.gl/react-maplibre";
 import type { ExpressionSpecification, Map as MapLibreMap } from "maplibre-gl";
 import { useEffect } from "react";
+import { LANE_OFFSET } from "@/lib/trip-lanes";
 
 /** The flow layer's ID. */
 const FLOW = "trip-flow";
@@ -85,7 +86,11 @@ export function TripFlowLayer() {
       source="trip-lines"
       filter={["!", ["has", "feature"]]}
       layout={{ "line-cap": "round", "line-join": "round" }}
-      paint={{ "line-width": 3, "line-gradient": reducedMotion() ? STILL : flowGradient(0) }}
+      paint={{
+        "line-width": 3,
+        "line-offset": LANE_OFFSET,
+        "line-gradient": reducedMotion() ? STILL : flowGradient(0),
+      }}
     />
   );
 }
