@@ -111,5 +111,10 @@ the mean `lightness` and `chroma`, and `peakChroma`, the chroma the most vivid t
 percentile), so a muted photo with a small vivid part still scores high. New photos get it when they're saved after uploading to R2 (see [Saving photo data to GitHub](saving-to-github.md)), and older files once Update Data's **Colors** has read it; see
 [Update Data](update-data.md).
 
+A photo's `perceptualHash` is 16 hex digits fingerprinting what it looks like, read from its Small version, so photos
+that look nearly the same can be put in a compare group together; see
+[Near duplicates](compare-groups.md#near-duplicates). New photos get it when they're saved, and older files from
+**Find near duplicates** on the Compare page. Like `colors`, it isn't one of the fields Missing fields adds.
+
 > **Frontend analogy:** it's a normalized store, like a Redux slice keyed by ID: photos hold only the IDs of their
 > albums and tags, and each album or tag is stored once, so renaming one later changes a single file.

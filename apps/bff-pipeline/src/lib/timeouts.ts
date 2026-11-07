@@ -9,8 +9,8 @@ const TIMEOUTS: Record<string, number> = {
   "/upload": 150_000,
   // A resized WEBP version of an uploaded photo, as an upload would put in R2.
   "/photos/versions/": 60_000,
-  // Saving a photo may read its colors from R2, given 20s, then GitHub, given 30s.
-  "/photos/github": 55_000,
+  // Saving a photo may read its colors from R2, given 20s, its Small version, given 10s, then GitHub, given 30s.
+  "/photos/github": 65_000,
   // Removing a photo waiting for Commit gives GitHub 30s, then R2 15s.
   "/photos/in-flight": 50_000,
   // Reads every photo file; the backend gives GitHub 60s.
@@ -35,6 +35,8 @@ const TIMEOUTS: Record<string, number> = {
   "/data/image-names": 310_000,
   // Downloads the originals from R2 to read their colors; the backend gives that 5 minutes.
   "/data/colors": 310_000,
+  // May download Small versions from R2 to read their perceptual hashes; the backend gives that 5 minutes.
+  "/data/near-duplicates": 310_000,
   // Reads every photo file; the backend gives GitHub 60s.
   "/publish/": 65_000,
 };

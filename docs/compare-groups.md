@@ -12,6 +12,36 @@ tile under **Drafts on `<branch>`**. It opens a dialog to choose a group, or to 
 “…”**. A photo is in at most one group, so choosing another moves it. Once a photo is in a group, its button shows the
 group's name, and the dialog adds **Compare “…”**, to open the group, and **Take out of the group**.
 
+## Near duplicates
+
+A photo that looks nearly the same as one already saved, such as another frame of the same burst, a re-export or a
+small crop, isn't turned away: saving it (on the Photo page or in [Bulk Upload](bulk-upload.md)) puts it in a compare
+group with the photos it looks like, so they can be weighed here. The group is the one those photos are in already,
+or else a new one called **Near duplicates of** the first one's title or file name. Photos in another group stay in
+it, and [unselected](#unselected-photos) photos are left out, since their images may be gone. The Photo page and
+Bulk Upload say which group it went in, linked to it. The same photo saved twice (the same file name, GPS position
+and creation date) is still stopped by the already-saved check, since there's nothing to weigh.
+
+**Find near duplicates**, above the groups on the Compare page, has the backend do the same for every saved photo
+(`POST /api/data/near-duplicates`): each photo without a perceptual hash gets one, then each set of photos that look
+nearly the same, directly or by way of each other, goes in a group the same way. It says how many photos it put in
+how many groups, and how many it couldn't check because their Small version couldn't be read. Everything it changes,
+the hashes included, waits for **Commit** like any other save.
+
+The look is the photo file's `perceptualHash`, a difference hash (dHash) made in `internal/phash`: the photo's Small
+version (500 pixels on the longest edge, from the [offline copy](offline-mode.md) when it's there, else from R2)
+shrunk to 9 × 8 grey pixels, with one bit for each pair of pixels side by side, set when the left one is brighter.
+Two photos are near duplicates when their 64 bits differ in at most 10 (`phash.Near`); unrelated photos differ in
+about 32. Making one takes well under a millisecond, and comparing a photo with a few thousand others is a loop over
+64-bit numbers, so it needs no model or service. It doesn't find the same scene from another angle, which only an
+image model could. The rules are in `apps/be-pipeline/internal/github/nearduplicates.go`.
+
+> **ELI5:** it's squinting at two photos until each is a blurry blob of light and dark. If the blobs match, they're
+> probably the same shot.
+
+> **Frontend analogy:** like a content hash for cache busting, except that a small change to the image only flips a
+> few bits rather than all of them, so "how many bits differ" works like a similarity score: `popcount(a ^ b) <= 10`.
+
 ## The Compare page
 
 `/compare` (**Compare** in the sidebar, under **Pipeline**) lists every group as a card with its photo count, its

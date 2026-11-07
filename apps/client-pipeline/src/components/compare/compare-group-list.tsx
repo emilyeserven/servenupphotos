@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ImageIcon, ScaleIcon, TrophyIcon } from "lucide-react";
+import { FindNearDuplicates } from "@/components/compare/find-near-duplicates";
 import { UnselectedPhotos } from "@/components/compare/unselected-photos";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,6 +31,7 @@ export function CompareGroupList({ compare }: { compare: CompareRead }) {
   return (
     <>
       <ReadProblems problems={compare.problems} />
+      <FindNearDuplicates />
       {compare.groups.length === 0 ? (
         <NoGroups />
       ) : (

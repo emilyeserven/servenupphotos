@@ -1,6 +1,8 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ExifResponse, SanitizedExif } from "@/api/exif";
+import type { NearDuplicates } from "@/api/near-duplicates";
 import type { PhotoPlace } from "@/api/places";
+import { type ScanChange, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
@@ -25,6 +27,10 @@ export interface PublishResult {
   pullRequestNumber?: number;
   /** The JSON saved. */
   data: unknown;
+  /** The compare group it was put in with the photos it looks nearly the same as, when there are any. */
+  nearDuplicates?: NearDuplicates;
+  /** The other photo files the save changed, putting them in that compare group. */
+  changes?: ScanChange[];
 }
 
 export const publishPhotoMutation = mutationOptions({
@@ -32,8 +38,8 @@ export const publishPhotoMutation = mutationOptions({
   meta: {
     saves: true,
     changes: (result) => {
-      const { path, data } = result as PublishResult;
-      return [{ kind: "photos", path, after: data }];
+      const saved = result as PublishResult;
+      return [{ kind: "photos", path: saved.path, after: saved.data }, ...photoChanges(saved)];
     },
   },
   mutationFn: (photo: PhotoData) =>
