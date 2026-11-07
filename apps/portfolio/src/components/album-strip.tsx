@@ -79,7 +79,7 @@ function SpotsNote({ album }: { album: Group }) {
 }
 
 /** A photo in the strip, as tall as the strip and as wide as its shape makes it. */
-function StripPhoto({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void }) {
+export function StripPhoto({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void }) {
   const { width, height, small, srcSet } = photo.image;
   return (
     <button

@@ -257,6 +257,28 @@ const added = {
       },
     },
     {
+      path: `${FOLDER}/triplines/story-2026-10-01.json`,
+      data: {
+        id: "story-2026-10-01",
+        date: "2026-10-01",
+        intro:
+          "Our first afternoon in **Osaka**, straight from the airport to the covered arcades.",
+        photos: [
+          { id: 302, text: "The arcade roof kept the drizzle off", withNext: true },
+          { id: 303, text: "Lanterns for the *autumn* festival" },
+          {
+            id: 304,
+            text: "Off the main arcade the streets got **narrow** and quiet, with bikes parked two deep outside every shop.",
+            textSide: "left",
+            after: "A short subway ride later we crossed the river just as the signs came on.",
+          },
+          { id: 305, withNext: true },
+          { id: 306, text: "Quieter streets one block back", withNext: true },
+          { id: 307, text: "Dotonbori at night" },
+        ],
+      },
+    },
+    {
       path: `${FOLDER}/triplines/2026-10-26.json`,
       data: { id: "2026-10-26", day: "2026-10-26", auto: true, segments: [] },
     },
@@ -1496,6 +1518,13 @@ export function defaultFixtures() {
       path: `${FOLDER}/triplines/2026-10-01.json`,
       data: body,
       before: added.triplines[0].data,
+      changed: true,
+    }),
+    "PUT /api/tripstories/story-2026-10-01": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/triplines/story-2026-10-01.json`,
+      data: body,
+      before: added.triplines[1].data,
       changed: true,
     }),
     "POST /api/gear/image": {

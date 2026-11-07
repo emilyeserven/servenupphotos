@@ -5,6 +5,9 @@ import { Page } from "@/components/page";
 import { DayEditor } from "@/components/trip-lines/day-editor";
 import { DayList } from "@/components/trip-lines/day-list";
 import { TripsPanel } from "@/components/trips/trips-panel";
+import { StoryCard } from "@/components/trip-story/story-card";
+import { tripStories } from "@/api/trip-stories";
+import { trips } from "@/api/trips";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { lineDays, staleTripLines } from "@/lib/stale-trip-lines";
 import { useTripLinesSearch } from "@/lib/trip-lines-search";
@@ -75,7 +78,15 @@ function DayChooser({ data }: { data: CombinedData }) {
         chosen={day.day}
         onChoose={(chosen) => set({ day: chosen, group: undefined })}
       />
-      <DayEditor key={day.day} day={day} line={lines.get(day.day)} />
+      <div className="flex min-w-0 flex-col gap-6">
+        <DayEditor key={day.day} day={day} line={lines.get(day.day)} />
+        <StoryCard
+          key={`story-${day.day}`}
+          day={day}
+          story={tripStories(data).get(day.day)}
+          trips={trips(data)}
+        />
+      </div>
     </div>
   );
 }

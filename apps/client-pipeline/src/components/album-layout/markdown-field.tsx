@@ -1,5 +1,5 @@
 import { EyeIcon, PencilIcon } from "lucide-react";
-import { useId, useState } from "react";
+import { type ReactNode, useId, useState } from "react";
 import Markdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { MARKDOWN_CLASSES } from "@/components/photo-details";
@@ -14,10 +14,16 @@ export function MarkdownField({
   label,
   value,
   onChange,
+  action,
+  boxClassName = "min-h-10",
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  /** Another button beside Preview, such as one that opens a larger box. */
+  action?: ReactNode;
+  /** The text box's classes, such as its height; a short box unless set. */
+  boxClassName?: string;
 }) {
   const id = useId();
   const [preview, setPreview] = useState(false);
@@ -27,10 +33,13 @@ export function MarkdownField({
         <label htmlFor={id} className="text-muted-foreground text-xs font-medium">
           {label} <span className="font-normal">(Markdown)</span>
         </label>
-        <Button size="xs" variant="ghost" onClick={() => setPreview(!preview)}>
-          {preview ? <PencilIcon aria-hidden /> : <EyeIcon aria-hidden />}
-          {preview ? "Write" : "Preview"}
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button size="xs" variant="ghost" onClick={() => setPreview(!preview)}>
+            {preview ? <PencilIcon aria-hidden /> : <EyeIcon aria-hidden />}
+            {preview ? "Write" : "Preview"}
+          </Button>
+          {action}
+        </div>
       </div>
       {preview ? (
         <MarkdownPreview text={value} />
@@ -39,7 +48,7 @@ export function MarkdownField({
           id={id}
           value={value}
           placeholder="None"
-          className="min-h-10"
+          className={boxClassName}
           onChange={(event) => onChange(event.target.value)}
         />
       )}

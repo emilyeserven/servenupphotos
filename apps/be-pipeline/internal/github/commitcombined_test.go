@@ -35,6 +35,7 @@ var emptyLists = map[string]string{
 	dataRoot + "/likes/LIKES.json":                 "[]\n",
 	dataRoot + "/triplines/TRIPLINES.json":         "[]\n",
 	dataRoot + "/triplines/TRIPLINES.geo.json":     emptyTripLinesMap,
+	dataRoot + "/triplines/TRIPPAGES.json":         "[]\n",
 	dataRoot + "/graphs/GRAPHS.json":               "[]\n",
 	dataRoot + "/gear/GEAR.json":                   "[]\n",
 }
@@ -91,14 +92,15 @@ func TestCommitCombined(t *testing.T) {
 		dataRoot + "/likes/LIKES.json":                 "[]\n",
 		dataRoot + "/triplines/TRIPLINES.json":         "[]\n",
 		dataRoot + "/triplines/TRIPLINES.geo.json":     emptyTripLinesMap,
+		dataRoot + "/triplines/TRIPPAGES.json":         "[]\n",
 		dataRoot + "/graphs/GRAPHS.json":               "[]\n",
 		dataRoot + "/gear/GEAR.json":                   "[]\n",
 	}
 	if tree := f.committedTree(); !maps.Equal(tree, want) {
 		t.Errorf("committed %q, want %q", tree, want)
 	}
-	if !got.Changed || got.CommitSHA != "commit-1" || len(got.Files) != 15 || got.NewPullRequest {
-		t.Errorf("CommitCombined() = %+v, want commit-1 with fifteen files", got)
+	if !got.Changed || got.CommitSHA != "commit-1" || len(got.Files) != 16 || got.NewPullRequest {
+		t.Errorf("CommitCombined() = %+v, want commit-1 with sixteen files", got)
 	}
 	if got.Counts["photos"] != 2 || got.Counts["albums"] != 1 || got.Counts["tags"] != 0 {
 		t.Errorf("counts = %v, want 2 photos, 1 album, 0 tags", got.Counts)

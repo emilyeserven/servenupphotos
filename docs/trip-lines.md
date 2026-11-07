@@ -424,3 +424,9 @@ The page reads the day files from the [combined data store](combined-data-store.
 changes since made over it, so a saved line shows at once.
 
 The portfolio doesn't draw the lines yet; that's the next step.
+
+## Trip page story
+
+Under the day's route, **Trip page story** writes the words around the day's photos for the portfolio's Trip
+page: a caption on each photo, a paragraph between photos, and which photos share a row. See
+[Trip Pages](trip-pages.md).
