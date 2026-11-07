@@ -9,6 +9,7 @@ import {
   INSTAGRAM_DAYS_WANTED,
   type PhotoProblem,
   type ProblemCount,
+  URGENCY,
   instagramShortBy,
   photoProblems,
 } from "@/lib/needs-attention";
@@ -16,12 +17,12 @@ import { useChangedPhotoFiles } from "@/stores/combined-data";
 
 /** What each photo problem says, and the page that fixes it. */
 const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => ReactNode }> = {
-  untitled: {
-    label: "Photos without a title",
+  noGps: {
+    label: "Photos without GPS",
     fix: (first) => (
       <FixLink>
         <Link to="/exif" search={{ edit: first }}>
-          Next untitled photo
+          Next photo without GPS
         </Link>
       </FixLink>
     ),
@@ -74,7 +75,8 @@ const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => Re
 
 /**
  * What needs fixing across the photo files, each problem with how many photos have it and a link to
- * the page that fixes it, and an Instagram queue shorter than a week.
+ * the page that fixes it, and an Instagram queue shorter than a week, most urgent first: photos
+ * without GPS or color data, then the Instagram queue, then the rest.
  */
 export function NeedsAttentionCard() {
   return (
@@ -99,14 +101,20 @@ function Problems({ calendar }: { calendar: SocialCalendar }) {
   const queue = useSocialQueue(calendar, 0);
   const short = instagramShortBy(queue.daysLeft);
   if (problems.length === 0 && short === 0) return <AllClear />;
+  const urgent = problems.filter((found) => URGENCY[found.problem] === "high");
+  const rest = problems.filter((found) => URGENCY[found.problem] !== "high");
   return (
     <ul className="divide-y rounded-md border">
+      <ProblemRows problems={urgent} />
       {short > 0 && <InstagramRow daysLeft={queue.daysLeft} short={short} />}
-      {problems.map((problem) => (
-        <ProblemRow key={problem.problem} found={problem} />
-      ))}
+      <ProblemRows problems={rest} />
     </ul>
   );
+}
+
+/** The rows for these problems, in the order given, most urgent first. */
+function ProblemRows({ problems }: { problems: ProblemCount[] }) {
+  return problems.map((problem) => <ProblemRow key={problem.problem} found={problem} />);
 }
 
 function AllClear() {

@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { FieldSection } from "@/components/field-section";
 import { FieldLabel } from "@/components/field-label";
 import { Input } from "@/components/ui/input";
@@ -11,27 +12,33 @@ interface PhotoCustomGpsProps {
   value: string;
   /** The GPS position in the photo's EXIF, or null when it has none. */
   exifGps: string | null;
+  /** Whether the photo is marked as going without a GPS position on purpose, such as a studio photo. */
+  noGps: boolean;
   disabled: boolean;
   onChange: (value: string) => void;
+  /** Marks the photo as going without a GPS position on purpose, or takes the mark off. */
+  onNoGps: (noGps: boolean) => void;
 }
 
 /** What the map uses, for the collapsed summary: the custom position, the EXIF one, or none. */
-function gpsSummary(value: string, exifGps: string | null): string {
+function gpsSummary(value: string, exifGps: string | null, noGps: boolean): string {
   if (value.trim()) return `${value.trim()} (custom)`;
-  return exifGps ? `${exifGps} (from EXIF)` : "None in the EXIF";
+  if (exifGps) return `${exifGps} (from EXIF)`;
+  return noGps ? "None, on purpose" : "None in the EXIF";
 }
 
 /**
  * The photo's own GPS position, written as "latitude, longitude", which the portfolio uses instead of
- * its EXIF one or its places'. Collapsed to what the map uses, and open from the start when one is
- * written or the EXIF has none.
+ * its EXIF one or its places', and a mark for a photo that won't have one, such as a studio photo.
+ * Collapsed to what the map uses, and open from the start when one is written or the EXIF has none.
  */
-export function PhotoCustomGps({ value, exifGps, disabled, onChange }: PhotoCustomGpsProps) {
+export function PhotoCustomGps(props: PhotoCustomGpsProps) {
+  const { value, exifGps, noGps, disabled, onChange } = props;
   const invalid = parseGps(value) === null;
   return (
     <FieldSection
       title="GPS position"
-      summary={gpsSummary(value, exifGps)}
+      summary={gpsSummary(value, exifGps, noGps)}
       defaultOpen={Boolean(value.trim() || !exifGps)}
       className="flex flex-col gap-2"
     >
@@ -52,6 +59,36 @@ export function PhotoCustomGps({ value, exifGps, disabled, onChange }: PhotoCust
           126°59′56″E.
         </p>
       )}
+      <NoGpsCheckbox checked={noGps} disabled={disabled} onChange={props.onNoGps} />
     </FieldSection>
+  );
+}
+
+interface NoGpsCheckboxProps {
+  checked: boolean;
+  disabled: boolean;
+  onChange: (checked: boolean) => void;
+}
+
+/** The mark for a photo that won't have a GPS position, which keeps it off Needs Attention's GPS and place rows. */
+function NoGpsCheckbox({ checked, disabled, onChange }: NoGpsCheckboxProps) {
+  const id = useId();
+  return (
+    <div className="flex items-start gap-2 pt-1 text-sm">
+      <input
+        id={id}
+        type="checkbox"
+        className="accent-primary mt-0.5 size-4"
+        checked={checked}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      <label htmlFor={id}>
+        This photo won&apos;t have a GPS position, such as a studio photo
+        <span className="text-muted-foreground block">
+          Needs attention leaves it out of the photos without GPS or a place. Saved as noGps.
+        </span>
+      </label>
+    </div>
   );
 }

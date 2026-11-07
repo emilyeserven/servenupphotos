@@ -96,6 +96,7 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
   "tags": [],
   "genres": [],
   "places": [],
+  "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,

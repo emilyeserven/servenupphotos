@@ -93,6 +93,10 @@ type photoJSON struct {
 	// photo relates to it. The place name is kept in PlaceName too, for the
 	// portfolio.
 	Places []PhotoPlace `json:"places"`
+	// NoGPS marks a photo that won't have a GPS position on purpose, such
+	// as a studio photo, set on the Photo page. Needs Attention leaves it
+	// out of its rows for photos without GPS and without a place.
+	NoGPS bool `json:"noGps"`
 	// SpotlightZones are the IDs of the spots on the portfolio the photo is
 	// spotlighted in, such as "homepage", the homepage's background. They're
 	// picked on the Site Spotlight page.

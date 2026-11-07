@@ -46,6 +46,7 @@ var oldPhotoGaps = []string{
 	"tags",
 	"genres",
 	"places",
+	"noGps",
 	"spotlightZones",
 	"spotlightFocus",
 	"spotlightPlacement",
