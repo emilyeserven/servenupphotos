@@ -1,3 +1,4 @@
+import { SectionTab } from "@portfolio/components/picker-section-tab";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronsUpDown, Palette } from "lucide-react";
 import { useState } from "react";
@@ -107,35 +108,6 @@ function PickerBody(props: ColorPickerProps) {
         <ColorPickerPart section={section} {...props} />
       </div>
     </div>
-  );
-}
-
-/** A section in the left list: its name, with what it's set to under it. */
-function SectionTab({
-  label,
-  text,
-  chosen,
-  onClick,
-}: {
-  label: string;
-  text: string;
-  chosen: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={chosen}
-      onClick={onClick}
-      className={cn(
-        "flex w-full flex-col items-start rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50",
-        chosen && "bg-background shadow-xs",
-      )}
-    >
-      <span className="font-medium">{label}</span>
-      <span className="w-full truncate text-xs text-muted-foreground">{text}</span>
-    </button>
   );
 }
 

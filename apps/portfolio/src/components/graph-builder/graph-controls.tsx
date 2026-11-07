@@ -1,53 +1,13 @@
-import {
-  ArrowDownUp,
-  ChartColumn,
-  ChartLine,
-  ChartNoAxesColumn,
-  ChartPie,
-  ChartScatter,
-  Eye,
-  type LucideIcon,
-  MoveRight,
-  MoveUp,
-  Split,
-} from "lucide-react";
+import { ArrowDownUp, Eye, MoveRight, MoveUp } from "lucide-react";
 import { GraphRanges } from "@portfolio/components/graph-builder/graph-ranges";
-import {
-  FieldName,
-  GraphField,
-  StatOptions,
-  StatSelect,
-} from "@portfolio/components/graph-builder/graph-field";
-import {
-  type GraphConfig,
-  type GraphType,
-  type Measure,
-  type SortOrder,
-  SPLIT_TYPES,
-} from "@portfolio/lib/graph-data";
+import { GraphTypePicker } from "@portfolio/components/graph-builder/graph-type-picker";
+import { GraphField, StatSelect } from "@portfolio/components/graph-builder/graph-field";
+import { type GraphConfig, type Measure, type SortOrder } from "@portfolio/lib/graph-data";
 import type { Photo } from "@portfolio/lib/photos";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 /** A change to some of the graph's settings. */
 export type ConfigChange = (change: Partial<GraphConfig>) => void;
-
-/** The graph types, with their names. */
-const TYPES: [GraphType, string][] = [
-  ["bar", "Bar"],
-  ["line", "Line"],
-  ["dot", "Dot"],
-  ["pie", "Pie"],
-  ["scatter", "Scatter"],
-];
-
-/** Each graph type's icon, shown before the Graph type group's name. */
-const TYPE_ICONS: Record<GraphType, LucideIcon> = {
-  bar: ChartColumn,
-  line: ChartLine,
-  dot: ChartNoAxesColumn,
-  pie: ChartPie,
-  scatter: ChartScatter,
-};
 
 /** The x axis's orders, with their names. */
 const SORTS: [SortOrder, string][] = [
@@ -75,7 +35,7 @@ export function GraphControls({
 }) {
   return (
     <div className="flex flex-wrap items-end gap-x-4 gap-y-3">
-      <TypeGroup config={config} onChange={onChange} />
+      <GraphTypePicker config={config} onChange={onChange} />
       <GraphField label={config.type === "pie" ? "Slices" : "X axis"} icon={MoveRight}>
         <StatSelect value={config.x} onChange={(x) => onChange({ x })} />
       </GraphField>
@@ -83,33 +43,6 @@ export function GraphControls({
       <OrderFields config={config} onChange={onChange} />
       <GraphRanges config={config} onChange={onChange} list={list} />
     </div>
-  );
-}
-
-/**
- * The Graph type group: the graph's type, and for a bar, line or dot graph, which can be split,
- * what splits it and whether a split bar's parts stack.
- */
-function TypeGroup({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
-  return (
-    <fieldset className="flex min-w-0 flex-wrap items-end gap-x-4 gap-y-3 rounded-lg border p-3">
-      <legend className="px-1 text-xs font-medium text-muted-foreground">
-        <FieldName label="Graph type" icon={TYPE_ICONS[config.type]} />
-      </legend>
-      <select
-        aria-label="Graph type"
-        value={config.type}
-        onChange={(e) => onChange({ type: e.target.value as GraphType })}
-        className={SELECT_CLASS}
-      >
-        {TYPES.map(([option, label]) => (
-          <option key={option} value={option}>
-            {label}
-          </option>
-        ))}
-      </select>
-      <SplitFields config={config} onChange={onChange} />
-    </fieldset>
   );
 }
 
@@ -140,43 +73,6 @@ function YField({ config, onChange }: { config: GraphConfig; onChange: ConfigCha
         className={SELECT_CLASS}
       >
         <MeasureOptions />
-      </select>
-    </GraphField>
-  );
-}
-
-/** What splits each bar, line or dot, and for bars whether their parts stack; nothing for the types that can't be split. */
-function SplitFields({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
-  if (!SPLIT_TYPES.has(config.type)) return null;
-  return (
-    <>
-      <GraphField label="Split by" icon={Split}>
-        <select
-          value={config.split}
-          onChange={(e) => onChange({ split: e.target.value })}
-          className={SELECT_CLASS}
-        >
-          <option value="">Nothing</option>
-          <StatOptions leaveOut={[config.x]} />
-        </select>
-      </GraphField>
-      <StackField config={config} onChange={onChange} />
-    </>
-  );
-}
-
-/** Whether a split bar's parts stack or stand side by side; nothing for an unsplit or other graph. */
-function StackField({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
-  if (config.type !== "bar" || config.split === "") return null;
-  return (
-    <GraphField label="Parts">
-      <select
-        value={config.stacked ? "stacked" : "side"}
-        onChange={(e) => onChange({ stacked: e.target.value === "stacked" })}
-        className={SELECT_CLASS}
-      >
-        <option value="stacked">Stacked</option>
-        <option value="side">Side by side</option>
       </select>
     </GraphField>
   );

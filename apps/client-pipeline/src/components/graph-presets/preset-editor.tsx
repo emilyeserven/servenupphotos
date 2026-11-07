@@ -101,7 +101,7 @@ export function PresetEditor({ preset, files, onSaved }: PresetEditorProps) {
     preset ? savedDraft(preset) : newDraft(files),
   );
   const set = (part: Partial<PresetDraft>) => setDraft({ ...draft, ...part });
-  const config: GraphConfig = { ...draft.graph, filters: [] };
+  const config: GraphConfig = draft.graph;
   const next = presetOf(draft, files, preset);
   return (
     <Card>

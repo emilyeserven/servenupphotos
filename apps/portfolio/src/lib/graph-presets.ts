@@ -3,8 +3,8 @@ import type { GraphConfig } from "@portfolio/lib/graph-data";
 import { type GraphRanges, NO_RANGES } from "@portfolio/lib/graph-ranges";
 import { localFile } from "@portfolio/lib/localize";
 
-/** What a graph preset sets the graph to: every setting but the filters, which stay as they are. */
-export type PresetGraph = Omit<GraphConfig, "filters">;
+/** What a graph preset sets the graph to: all of its settings. The filters, kept in the URL, stay as they are. */
+export type PresetGraph = GraphConfig;
 
 /** A preset's graph as its file keeps it: the Range group's parts that are off are left out. */
 export type SavedGraph = Omit<PresetGraph, keyof GraphRanges> & Partial<GraphRanges>;

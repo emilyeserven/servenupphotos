@@ -23,7 +23,7 @@ export function GraphField({
 }
 
 /** A setting's name, with its icon before it when it has one. */
-export function FieldName({ label, icon: Icon }: { label: string; icon?: LucideIcon }) {
+function FieldName({ label, icon: Icon }: { label: string; icon?: LucideIcon }) {
   return (
     <span className="flex items-center gap-1.5">
       {Icon && <Icon className="size-3.5" aria-hidden />}
@@ -32,8 +32,8 @@ export function FieldName({ label, icon: Icon }: { label: string; icon?: LucideI
   );
 }
 
-/** The stats, by the section they're in, such as Gear. */
-function statsBySection(): [string, GraphStat[]][] {
+/** The stats, by the section they're in, such as Gear, as the dropdowns and the Graph type picker list them. */
+export function statsBySection(): [string, GraphStat[]][] {
   const sections = new Map<string, GraphStat[]>();
   for (const stat of GRAPH_STATS)
     sections.set(stat.section, [...(sections.get(stat.section) ?? []), stat]);

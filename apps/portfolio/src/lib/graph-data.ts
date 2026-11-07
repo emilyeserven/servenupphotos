@@ -54,12 +54,6 @@ export type Measure = "count" | "percent";
 /** What order the x axis's values go in: the Numbers card's own, most photos first, or the card's reversed. */
 export type SortOrder = "group" | "count" | "reverse";
 
-/** One filter on a graph's photos: the stat it filters by, and the values kept (any of them). */
-export interface GraphFilter {
-  stat: string;
-  values: string[];
-}
-
 /** Everything a person picks for their graph, with how much of each axis it shows. */
 export interface GraphConfig extends GraphRanges {
   type: GraphType;
@@ -73,7 +67,6 @@ export interface GraphConfig extends GraphRanges {
   split: string;
   /** Whether a split bar's parts are stacked, or side by side. */
   stacked: boolean;
-  filters: GraphFilter[];
   sort: SortOrder;
   /** How many of the x axis's values are shown, from the start of the order; 0 for all. */
   limit: number;
@@ -82,21 +75,6 @@ export interface GraphConfig extends GraphRanges {
 /** A row's photos among the list: none for a row without a filter, which can't be told apart. */
 function rowPhotos(list: Photo[], row: StatRow): Photo[] {
   return row.filter ? filterWithCamera(list, row.filter) : [];
-}
-
-/** The list without the photos outside the filter's values; the whole list while none are picked. */
-function keepIn(list: Photo[], filter: GraphFilter): Photo[] {
-  if (filter.values.length === 0) return list;
-  const rows = statById(filter.stat)
-    .build(list)
-    .rows.filter((row) => filter.values.includes(row.label));
-  const inside = new Set(rows.flatMap((row) => rowPhotos(list, row)));
-  return list.filter((photo) => inside.has(photo));
-}
-
-/** The photos every filter keeps: any value of one filter, and every filter at once. */
-export function filteredPhotos(list: Photo[], filters: GraphFilter[]): Photo[] {
-  return filters.reduce(keepIn, list);
 }
 
 /** How the x axis's rows are put in order before the limit. */
