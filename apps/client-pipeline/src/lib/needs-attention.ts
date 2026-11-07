@@ -13,6 +13,9 @@ export type Urgency = "high" | "medium" | "low";
 /** How urgent the Instagram queue running short is. */
 export const INSTAGRAM_URGENCY: Urgency = "medium";
 
+/** How urgent a hand-marked trip line out of date with its day's photos is: the map draws it wrong. */
+export const TRIP_LINES_URGENCY: Urgency = "high";
+
 /** Each photo problem's urgency. */
 export const URGENCY: Record<PhotoProblem, Urgency> = {
   noGps: "high",
