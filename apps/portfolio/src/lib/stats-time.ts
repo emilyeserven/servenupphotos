@@ -67,14 +67,14 @@ function yearGroup(list: Photo[]): StatGroup {
   return bucketGroup("Year", list, years.map(yearBucket), (photo, b) => yearOf(photo) === b.key);
 }
 
-/** The Time section's groups: parts of the day, years (narrowing the seasons), seasons (narrowing the months), months and days of the week. */
+/** The Time section's groups: years (narrowing the seasons), seasons (narrowing the months), months, parts of the day and days of the week. */
 export const TIME_GROUPS: GroupDef[] = [
+  { id: "year", narrows: "season", build: yearGroup },
+  { id: "season", narrows: "month", build: choiceGroup("Season", "season", SEASONS, seasonSpan) },
+  { id: "month", build: choiceGroup("Month", "month", MONTHS) },
   {
     id: "daypart",
     build: (list) => bucketGroup("Time of day", list, DAYPARTS.map(daypartBucket), inHours),
   },
-  { id: "year", narrows: "season", build: yearGroup },
-  { id: "season", narrows: "month", build: choiceGroup("Season", "season", SEASONS, seasonSpan) },
-  { id: "month", build: choiceGroup("Month", "month", MONTHS) },
   { id: "weekday", build: choiceGroup("Day of the week", "weekday", WEEKDAYS) },
 ];

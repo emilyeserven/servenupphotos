@@ -99,3 +99,22 @@ export function bucketGroup(
   const missing = list.filter((photo) => !buckets.some((b) => inside(photo, b))).length;
   return { title, rows, missing, missingReason: "unknown" };
 }
+
+/**
+ * A section's groups laid out in runs: each group that narrows another with the groups it narrows
+ * down the line, such as Countries then Cities, and the groups between them on their own, in order.
+ */
+export function groupChains(groups: GroupDef[]): GroupDef[][] {
+  const narrowed = new Set(groups.map((def) => def.narrows));
+  const chains: GroupDef[][] = [];
+  for (const def of groups.filter((g) => !narrowed.has(g.id))) {
+    const chain = [def];
+    let next = groups.find((g) => g.id === chain.at(-1)!.narrows);
+    while (next && !chain.includes(next)) {
+      chain.push(next);
+      next = groups.find((g) => g.id === next!.narrows);
+    }
+    chains.push(chain);
+  }
+  return chains;
+}

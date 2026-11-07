@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ChartColumn } from "lucide-react";
+import { ArrowDown, ChartColumn } from "lucide-react";
 import { useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { type FocusChain, type StatFocus, StatGroupCard } from "@/components/stat-group";
 import { filterWithCamera } from "@/lib/camera-filters";
 import { photos } from "@/lib/photos";
-import type { GroupDef, GroupVariant, StatRow } from "@/lib/stat-groups";
+import { type GroupDef, type GroupVariant, groupChains, type StatRow } from "@/lib/stat-groups";
 import { type StatSection, STAT_SECTIONS, type StatTotals, statTotals } from "@/lib/stats";
 
 export const Route = createFileRoute("/stats")({
@@ -110,7 +110,7 @@ function StatsView() {
   );
 }
 
-/** A headline number's card, a link to its group's card when it has one. */
+/** A headline number's card, a link to its group's card when it has one, with an arrow on hover. */
 function TotalCard({ total: [key, label, group] }: { total: TotalDef }) {
   const body = (
     <>
@@ -125,9 +125,13 @@ function TotalCard({ total: [key, label, group] }: { total: TotalDef }) {
   return (
     <a
       href={`#${cardAnchor(group)}`}
-      className={`${box} block transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none`}
+      className={`${box} group relative block transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none`}
     >
       {body}
+      <ArrowDown
+        className="absolute top-3 right-3 size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+        aria-hidden
+      />
     </a>
   );
 }
@@ -159,7 +163,7 @@ function groupPhotos(chain: FocusChain) {
   return last ? filterWithCamera(photos, last.filter) : photos;
 }
 
-/** One section, such as Gear, with its groups as cards. */
+/** One section, such as Gear, with its groups as cards: each chain of narrowing groups on a row of its own. */
 function StatsSection({ section, state }: { section: StatSection; state: PageState }) {
   return (
     <section id={section.id} aria-labelledby={`${section.id}-title`} className="scroll-mt-20">
@@ -167,16 +171,70 @@ function StatsSection({ section, state }: { section: StatSection; state: PageSta
         {section.title}
       </h2>
       <p className="mt-1 mb-4 text-sm text-muted-foreground">{section.description}</p>
-      <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {section.groups.map((def) => (
-          <div key={def.id} id={cardAnchor(def.id)} className="scroll-mt-20">
-            <DefCard def={def} state={state} />
-          </div>
+      <div className="flex flex-col gap-4">
+        {sectionRuns(section.groups).map((run) => (
+          <GroupRun key={run.defs[0]!.id} run={run} state={state} />
         ))}
       </div>
     </section>
   );
 }
+
+/** A row of a section's cards: a chain whose cards narrow each other, or cards on their own. */
+interface Run {
+  chained: boolean;
+  defs: GroupDef[];
+}
+
+/** A section's groups as rows: each chain on its own, and the groups on their own between them together. */
+function sectionRuns(groups: GroupDef[]): Run[] {
+  const runs: Run[] = [];
+  for (const chain of groupChains(groups)) {
+    const run = { chained: chain.length > 1, defs: chain };
+    const last = runs.at(-1);
+    if (joinsLast(run, last)) last!.defs.push(...chain);
+    else runs.push(run);
+  }
+  return runs;
+}
+
+/** Whether a run of one card goes on with the cards on their own before it. */
+function joinsLast(run: Run, last: Run | undefined): boolean {
+  return !run.chained && last?.chained === false;
+}
+
+/** A chain's columns on a desktop, one per card. */
+const CHAIN_COLUMNS: Record<number, string> = { 2: "lg:grid-cols-2", 3: "lg:grid-cols-3" };
+
+/**
+ * A row of cards. A chain, such as Year, Season and Month, sits on a shaded band, with a line from
+ * each card to the one it narrows: across on a desktop, down on a phone.
+ */
+function GroupRun({ run, state }: { run: Run; state: PageState }) {
+  const cards = run.defs.map((def, index) => (
+    <div
+      key={def.id}
+      id={cardAnchor(def.id)}
+      className={`relative min-w-0 scroll-mt-20 ${run.chained && index > 0 ? CHAIN_LINE : ""}`}
+    >
+      <DefCard def={def} state={state} />
+    </div>
+  ));
+  if (!run.chained) {
+    return <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">{cards}</div>;
+  }
+  return (
+    <div
+      className={`grid items-start gap-6 rounded-2xl bg-muted/60 p-3 sm:p-4 ${CHAIN_COLUMNS[run.defs.length] ?? CHAIN_COLUMNS[3]}`}
+    >
+      {cards}
+    </div>
+  );
+}
+
+/** The line joining a chained card to the one before it, filling the gap between them. */
+const CHAIN_LINE =
+  "before:absolute before:-top-6 before:left-8 before:h-6 before:w-0.5 before:bg-muted-foreground/40 lg:before:top-7 lg:before:-left-6 lg:before:h-0.5 lg:before:w-6";
 
 /** How a group is made: its picked variant's way, or its own. */
 function buildOf(def: GroupDef, variants: Variants) {

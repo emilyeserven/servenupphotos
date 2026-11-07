@@ -9,7 +9,7 @@ its photos fade in and out across the top of the page, up to 30% of the screen's
 photos to jump to.
 
 At the top are five headline numbers: photos, countries, cities, cameras and years. Each but photos is a link that
-jumps to its card, such as **Cities** to the Cities card. Under them, **Gear**, **Places** and **Time** jump to their
+jumps to its card, such as **Cities** to the Cities card, and shows a down arrow on hover. Under them, **Gear**, **Places** and **Time** jump to their
 sections.
 
 ## Sections and groups
@@ -41,6 +41,9 @@ the pipeline; the mm ranges don't, since a metadata group has none. A photo can 
 row of a category, and the card says how many are in none of them.
 
 ## Opening and narrowing
+
+Cards that narrow each other sit together on one shaded row, joined by a line from each card to the one it narrows:
+across on a desktop, down on a phone. The other cards share an unshaded grid.
 
 A row opens its photos on the Grid: hovering it turns its count into **See More (37) →** without moving the number
 (the ") →" after it always takes its space), and a click opens the Grid filtered to it, such as `/grid?city=Hagi`,
