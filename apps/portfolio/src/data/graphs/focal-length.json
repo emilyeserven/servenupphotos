@@ -5,7 +5,7 @@
   "order": 4,
   "group": "technical-details",
   "graph": {
-    "type": "dot",
+    "type": "photos",
     "x": "focalLength",
     "measure": "count",
     "y": "",

@@ -83,7 +83,7 @@ function numberOf(value: string): number | null {
   return value === "" ? null : Number(value);
 }
 
-/** The highest a bar, line or dot graph's y axis needs to reach: 100 for shares, else the most photos an x value has. */
+/** The highest a bar or line graph's y axis needs to reach: 100 for shares, else the most photos an x value has. */
 function yTop(config: GraphConfig, rows: StatRow[]): number {
   if (config.measure === "percent") return 100;
   return Math.max(1, ...rows.map((row) => row.count));
@@ -99,7 +99,7 @@ interface YEndsProps {
 /** The graph types with no y axis ends to pick: the pie, and the photo dot graph, whose stacks are as tall as they are. */
 const NO_Y_ENDS: ReadonlySet<GraphConfig["type"]> = new Set(["pie", "photos"]);
 
-/** The y axis's ends: a scatterplot's or heatmap's y values, a bar, line or dot graph's round numbers up to its top; none for a pie or photo dot graph. */
+/** The y axis's ends: a scatterplot's or heatmap's y values, a bar or line graph's round numbers up to its top; none for a pie or photo dot graph. */
 function YEnds({ config, rows, list, onChange }: YEndsProps) {
   if (NO_Y_ENDS.has(config.type)) return null;
   if (hasYStat(config.type)) {
@@ -118,7 +118,7 @@ function YEnds({ config, rows, list, onChange }: YEndsProps) {
   return <NumberEnds config={config} rows={rows} onChange={onChange} />;
 }
 
-/** From and To dropdowns of round numbers for a bar, line or dot graph's y axis. */
+/** From and To dropdowns of round numbers for a bar or line graph's y axis. */
 function NumberEnds({ config, rows, onChange }: Omit<YEndsProps, "list">) {
   const suffix = config.measure === "percent" ? "%" : "";
   const options = roundSteps(yTop(config, rows)).map((n) => ({

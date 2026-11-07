@@ -5,7 +5,7 @@
   "order": 1,
   "group": "technical-details",
   "graph": {
-    "type": "dot",
+    "type": "photos",
     "x": "aperture",
     "measure": "count",
     "y": "",

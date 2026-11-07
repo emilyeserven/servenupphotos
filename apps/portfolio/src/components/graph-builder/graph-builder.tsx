@@ -47,7 +47,7 @@ type View = "graph" | "table";
 /**
  * A graph of the person's own making from the Numbers page's counts. The pipeline's spotlight
  * presets come first, then the tabs (see `GraphTabs`): Presets, Adjust Graph (the graph's type, the
- * stat along each axis, what splits a bar, line or dot graph), Filters (the site's usual filters,
+ * stat along each axis, what splits a bar or line graph), Filters (the site's usual filters,
  * kept in the URL, which pick the photos it counts) and Save as preset, each opening a box. Under them, the graph's box names each axis with a dropdown to change it,
  * and shows its numbers as a table too. Clicking a bar, point, slice or dot shows its photos under
  * the graph; changing the graph clears it.
@@ -214,7 +214,7 @@ function PhotoDotsChart({ list, config }: { list: Photo[]; config: GraphConfig }
   return <PhotoDotsGraph data={data} xName={statById(config.x).label} />;
 }
 
-/** A bar, line, dot or pie graph of the photos kept, or its numbers as a table. */
+/** A bar, line or pie graph of the photos kept, or its numbers as a table. */
 function SeriesBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
   const graph = useMemo(() => graphData(list, config), [list, config]);
   if (view === "table") {
@@ -232,6 +232,5 @@ const DRAW: Record<SeriesType, (graph: GraphData, config: GraphConfig) => ReactN
     <BarGraph graph={graph} measure={config.measure} stacked={config.stacked} />
   ),
   line: (graph, config) => <LineGraph graph={graph} measure={config.measure} />,
-  dot: (graph, config) => <LineGraph graph={graph} measure={config.measure} dots />,
   pie: (graph, config) => <PieGraph graph={graph} measure={config.measure} />,
 };

@@ -1,5 +1,5 @@
 import committedPresets from "@portfolio/data/graphs/GRAPHS.json";
-import type { GraphConfig } from "@portfolio/lib/graph-data";
+import { currentType, type GraphConfig } from "@portfolio/lib/graph-data";
 import { type GraphRanges, NO_RANGES } from "@portfolio/lib/graph-ranges";
 import { localFile } from "@portfolio/lib/localize";
 
@@ -11,7 +11,7 @@ export type SavedGraph = Omit<PresetGraph, keyof GraphRanges> & Partial<GraphRan
 
 /**
  * A graph preset file from GRAPHS.json, which the pipeline's Graph Presets page saves: a
- * ready-made graph, such as a dot graph of Aperture, or a preset group, which the Graph page shows
+ * ready-made graph, such as a photo dot graph of Aperture, or a preset group, which the Graph page shows
  * as one dropdown of its presets among the others.
  */
 export interface GraphPresetFile {
@@ -59,7 +59,8 @@ function byOrder(a: GraphPresetFile, b: GraphPresetFile): number {
 
 /** The file as a preset to pick. */
 function presetOf(file: GraphPresetFile): GraphPreset {
-  return { id: file.id, name: file.name, graph: { ...NO_RANGES, ...file.graph } };
+  const graph = { ...NO_RANGES, ...file.graph, type: currentType(file.graph?.type) };
+  return { id: file.id, name: file.name, graph };
 }
 
 /** The presets in the group, in their order. */
