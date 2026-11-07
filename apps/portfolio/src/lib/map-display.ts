@@ -22,7 +22,7 @@ export interface MapDisplay {
   /** Whether a group's photos are darkened under its count, rather than shown as they are. */
   dimGroups: boolean;
   groupPhotos: GroupPhotos;
-  /** Whether the map draws the days' trip lines, places visited and areas under the photos. */
+  /** Whether the map draws the days' trip lines and areas under the photos. */
   tripLines: boolean;
   /** Whether a light runs along each trip line the way it was travelled, like a ride app's route. */
   tripFlow: boolean;

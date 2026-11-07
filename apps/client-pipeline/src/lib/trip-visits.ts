@@ -66,7 +66,7 @@ export function webLink(link: string | undefined): boolean {
   return /^https?:\/\/\S+$/.test(link ?? "");
 }
 
-/** The places visited put on the route right after photo id, in the order added. */
+/** The trip stops put on the route right after photo id, in the order added. */
 export function visitsAfter(visits: TripVisit[] | undefined, id: number | undefined): TripVisit[] {
   return (visits ?? []).filter((v) => v.after !== undefined && v.after === id);
 }
@@ -87,7 +87,7 @@ function neighbourAfter(ids: number[], after: number | undefined, by: -1 | 1): n
 }
 
 /**
- * The draft with one of its places visited put on the route right after photo `after`, or taken
+ * The draft with one of its trip stops put on the route right after photo `after`, or taken
  * off it with undefined.
  */
 export function placedVisit(
@@ -99,7 +99,7 @@ export function placedVisit(
   return { ...draft, visits };
 }
 
-/** The places visited not on the route yet, which the photo strip can put between two photos. */
+/** The trip stops not on the route yet, which the photo strip can put between two photos. */
 export function offRoute(visits: TripVisit[] | undefined): TripVisit[] {
   return (visits ?? []).filter((v) => v.after === undefined);
 }

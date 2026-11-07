@@ -91,9 +91,9 @@ function startingView(day: TripDay, line: TripLine | undefined): EditorView {
 
 /**
  * The day's pages the editor shows on: the photo order (the strip alone), the route (the strip and
- * the map with its tools), and the places visited (the map and the list of places).
+ * the map with its tools), and the trip stops (the map and the list of places).
  */
-export type EditorPart = "order" | "route" | "places";
+export type EditorPart = "order" | "route" | "stops";
 
 interface DayEditorProps {
   day: TripDay;
@@ -105,7 +105,7 @@ interface DayEditorProps {
 const PART_TITLES: Record<EditorPart, string> = {
   order: "Photo order",
   route: "Route",
-  places: "Places visited",
+  stops: "Trip Stops",
 };
 
 /** What each page says the editor is for. */
@@ -114,8 +114,8 @@ const PART_NOTES: Record<EditorPart, string> = {
     "Put the photos in order, cut them into groups by place, and pick what happened between each two: keep walking, a break, or a hop by train, subway, bus or car.",
   route:
     "Pick what happened between each two photos, and shape the line on the map: via points, the day's start and end, transit lines and areas.",
-  places:
-    "The places stopped at along the day's route, such as restaurants and shops, with or without a photo: add them on the map, from the saved places or by a coordinate. Put them on the route between two photos in the strip on Photo order or Route.",
+  stops:
+    "The stops along the day's route, such as restaurants and shops, with or without a photo, and the casual photos taken there, which show only on the Trip page: add stops on the map, from the saved places or by a coordinate. Put them on the route between two photos in the strip on Photo order or Route.",
 };
 
 /** Edits one day's trip line: the photo strip, the map on the Route page, and saving. */
@@ -144,7 +144,7 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {part !== "places" && (
+        {part !== "stops" && (
           <GroupStrip
             photos={day.photos}
             draft={shownDraft}
@@ -186,17 +186,17 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
 
 interface DayMapProps extends Omit<HandMapProps, "draft"> {
   view: EditorView;
-  /** The draft the strip shows, which adding a place visited starts a hand-drawn line from. */
+  /** The draft the strip shows, which adding a trip stop starts a hand-drawn line from. */
   shown: GapDraft;
 }
 
 /**
- * The day's map: with its tools while the line is drawn by hand or on the Places page, or else as
+ * The day's map: with its tools while the line is drawn by hand or on the Trip Stops page, or else as
  * it's drawn.
  */
 function DayMap({ view, shown, ...props }: DayMapProps) {
   if (view.kind === "hand") return <HandMap {...props} draft={view.draft} />;
-  if (props.part === "places") return <HandMap {...props} draft={shown} />;
+  if (props.part === "stops") return <HandMap {...props} draft={shown} />;
   const { day, segments, highlighted, focus, placeAreas } = props;
   return (
     <RouteMap
@@ -239,7 +239,7 @@ interface HandMapProps {
 }
 
 /**
- * The map of a line drawn by hand, with the page's tools: the route's, or the places visited.
+ * The map of a line drawn by hand, with the page's tools: the route's, or the trip stops.
  * Clicking the map places the spot being picked, or adds a via point while adding them.
  */
 function HandMap(props: HandMapProps) {
@@ -281,7 +281,7 @@ function HandMap(props: HandMapProps) {
   );
 }
 
-/** The places visited and areas in a hand-drawn view, as the line file lists them; none otherwise. */
+/** The trip stops and areas in a hand-drawn view, as the line file lists them; none otherwise. */
 function extrasOf(view: EditorView): Pick<TripLine, "visits" | "fences"> {
   if (view.kind !== "hand") return {};
   const { visits = [], fences = [] } = view.draft;

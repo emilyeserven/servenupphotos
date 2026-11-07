@@ -31,7 +31,7 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 
 - **`name`** on a segment names the group of photos it's in, such as "Nara Park": each [group](#groups) is a line of
   its own. A walk or hop from one group to the next has none.
-- **`visits`** are the [places visited](#places-visited) along the day's route, such as restaurants.
+- **`visits`** are the [trip stops](#trip-stops) along the day's route, such as restaurants.
 - **`fences`** are the [areas](#areas) photos without an exact spot were taken in, such as a park.
 - **`segments`** are the stretches of the day, in the order they happened. Each one's line runs from `start` (when
   set), through its `photos` (photo IDs) in order, to `end` (when set). `from` and `to`, when set, are drawn instead of
@@ -44,7 +44,7 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - One photo can end a segment and start the next (304 and 305 above), so the line doesn't break at a station.
 - **`start`** and **`end`** are spots with no photo, such as the hotel, with an optional `label`.
 - **`via`** lists spots with no photo the line bends through, each with the photo it comes `after` (none for right
-  after `start`), and `visit` when it stands for a [place visited](#places-visited) on the route. See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
+  after `start`), and `visit` when it stands for a [trip stop](#trip-stops) on the route. See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
 - **`path`** is a walk, bus or car segment's line along the streets, as `[longitude, latitude]` pairs, from **Snap to
   streets**, or a hop's track along its `line`. A train, subway or transit hop keeps one only with a line.
 - **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
@@ -131,12 +131,12 @@ them. A new photo opens with a break on both sides, ready to join the line.
 
 A card opens the day's own pages, each a tab with its own link:
 
-| Page        | Path                       | What it has                                                                                             |
-| ----------- | -------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Photo order | `/trip-lines/<day>/order`  | The photo strip on its own, its groups stacked top to bottom with what happened between them in between |
-| Route       | `/trip-lines/<day>/route`  | The strip with the map and its tools, as below                                                          |
-| Places      | `/trip-lines/<day>/places` | The strip, the map, and the [places visited](#places-visited) list                                      |
-| Story       | `/trip-lines/<day>/story`  | The [Trip page story](#trip-page-story)                                                                 |
+| Page        | Path                      | What it has                                                                                             |
+| ----------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Photo order | `/trip-lines/<day>/order` | The photo strip on its own, its groups stacked top to bottom with what happened between them in between |
+| Route       | `/trip-lines/<day>/route` | The strip with the map and its tools, as below                                                          |
+| Trip Stops  | `/trip-lines/<day>/stops` | The strip, the map, and the [trip stops](#trip-stops) list                                              |
+| Story       | `/trip-lines/<day>/story` | The [Trip page story](#trip-page-story)                                                                 |
 
 `/trip-lines/<day>` opens Photo order. The pages share one editor that stays mounted while hidden, so a change made on
 Photo order shows on Route before it's saved, and **Save route** on either saves both. **Every day** goes back to the
@@ -175,15 +175,35 @@ highlights its dot.
 - An automatic day shows the line as the next Commit would draw it, with **Edit as my own** and **Turn off automatic
   line**.
 
-## Places visited
+## Trip Stops
 
-The day's **Places** page lists the places stopped at along the day's route, with or without a photo: a restaurant,
-café, bar, shop, museum, sight or other. It's only for adding them: **Add a place on the map** drops one where the map
+Trip stops were called places visited; they're named apart from the [saved places](places-and-localizations.md) on
+the Places page, which a stop can be added from. An old `/trip-lines/<day>/places` link opens Trip Stops. In the files
+they're still `visits`.
+
+The day's **Trip Stops** page lists the stops along the day's route, with or without a photo: a restaurant,
+café, bar, shop, museum, sight or other. It's only for adding them: **Add a stop on the map** drops one where the map
 is clicked; **Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km
 of the day's photos, named after it; and **Add at this coordinate** adds one at a latitude and longitude typed or
-pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too). Each row says where the place
+pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too). Each row says where the stop
 is on the route, which Photo order and Route set. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
 Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
+
+### Casual photos
+
+A stop can have **casual photos**: snapshots taken there, such as the food at a restaurant, that show only with the
+stop on the day's [Trip page](trip-pages.md#trip-stops), never in the Gallery, the portfolio's Grid or Map, or on a
+trip line. **Add casual photos** under a stop opens a grid of every photo taken that day (on the portfolio, drafts,
+Undecided ones and casual photos of other stops; `components/trip-lines/casual-photos.tsx`), and picking one adds it.
+Its thumbnail's cross takes it off again. The stop keeps their IDs in `photos` (at most 50, each once), and each
+photo's file gets `"casual": true` as a local edit waiting for Commit (see [Drafts](drafts.md)); taking a photo off, or
+removing the stop, clears the mark. **Save line** so the stop keeps its photos.
+
+A casual photo is left off the day's photo strip and line, out of `ALLPHOTOS.json`, and out of the Dashboard's
+**Drafts** card and **Needs attention** counts, since it needs no title, tags, album or GPS of its own.
+
+> **Frontend analogy:** `casual` is like a `hidden` flag on a CMS entry: the record still exists and the editor can
+> see it, but the public list query filters it out, and only the one page that asks for it by ID shows it.
 
 They're saved with the line as `visits`:
 
@@ -196,13 +216,14 @@ They're saved with the line as `visits`:
   "note": "Ramen before the river walk",
   "link": "https://maps.app.goo.gl/…",
   "place": "ichiran-dotonbori",
-  "after": 305
+  "after": 305,
+  "photos": [311, 312]
 }
 ```
 
 The photo strip on **Photo order** and **Route** puts these places on the route: the pin with a plus under each gap,
 shown on hover, lists the day's places not on the route yet, and picking one puts it between those two photos (with a
-link to the Places page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
+link to the Trip Stops page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
 two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
@@ -217,7 +238,8 @@ and that every `visit` names a place the day has.
 
 `place` is the saved place's ID when one was picked. The link has to be an `http` or `https` web address. Commit bakes
 each into `TRIPLINES.geo.json` as a GeoJSON `Point` with `"feature": "visit"`, the day, and the name, kind, note and
-link, next to the lines, and counts them (`tripLineVisits`).
+link, next to the lines, and counts them (`tripLineVisits`). The Timeline's route sketches draw them; the portfolio's
+Map doesn't.
 
 ## Areas
 

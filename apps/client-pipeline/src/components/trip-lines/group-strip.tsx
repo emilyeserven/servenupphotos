@@ -90,13 +90,13 @@ interface GroupGapProps {
   onChange: (draft: GapDraft) => void;
   onMoveVisit: (visit: TripVisit, by: -1 | 1) => void;
   onOffVisit: (visit: TripVisit) => void;
-  /** The places visited on the route between the two groups. */
+  /** The trip stops on the route between the two groups. */
   before: TripVisit[];
   /** Whether the groups are stacked, so this sits between them under the first. */
   stacked: boolean;
 }
 
-/** What happened between two groups, the places visited there, and joining the two. */
+/** What happened between two groups, the trip stops there, and joining the two. */
 function GroupGap(props: GroupGapProps) {
   const { draft, group, photos, onChange, onMoveVisit, before, stacked } = props;
   const a = photos[group.start - 1];

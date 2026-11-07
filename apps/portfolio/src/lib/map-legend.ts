@@ -21,8 +21,6 @@ export interface LegendItems {
   ferry: boolean;
   /** Whether a Trip's flight is drawn, as a dashed pink arc. */
   flight: boolean;
-  /** Whether a place visited is drawn, as an amber dot. */
-  visit: boolean;
   /** Whether an area is shaded: a trip line's area, or the place picked or pointed at in Places. */
   area: boolean;
 }
@@ -71,7 +69,7 @@ function rideColors(features: TripMapFeature[]): string[] {
 /** Which of the trip lines' kinds the map draws, or none while they're off or not loaded. */
 function tripItems(trips: TripLinesMap | undefined) {
   const features = trips?.features ?? [];
-  const has = (kind: "visit" | "fence") => features.some((f) => f.properties.feature === kind);
+  const has = (kind: "fence") => features.some((f) => f.properties.feature === kind);
   return {
     walk: features.some(isWalk),
     rides: rideColors(features),
@@ -79,7 +77,6 @@ function tripItems(trips: TripLinesMap | undefined) {
     drive: features.some(isDrive),
     ferry: features.some(isMode("ferry")),
     flight: features.some(isMode("flight")),
-    visit: has("visit"),
     fence: has("fence"),
   };
 }

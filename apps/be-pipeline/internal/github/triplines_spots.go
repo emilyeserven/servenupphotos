@@ -44,7 +44,7 @@ func (w *workspace) tripSpots(portfolioOnly bool) map[int]tripSpot {
 	spots := map[int]tripSpot{}
 	for _, p := range w.paths(w.root+"/"+PhotosFolder, AllPhotosFile) {
 		data, msg := w.json(p)
-		if msg != "" || (portfolioOnly && !w.onPortfolio(data)) {
+		if msg != "" || isCasual(data) || (portfolioOnly && !w.onPortfolio(data)) {
 			continue
 		}
 		if spot, ok := spotOf(data, exact); ok {

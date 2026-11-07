@@ -126,6 +126,11 @@ export interface TripVisit {
   place?: string;
   /** The ID of the photo it comes after on the route; none leaves it off the route, as a pin only. */
   after?: number;
+  /**
+   * The IDs of the casual photos taken there, such as the food, in order. Each is marked `casual`,
+   * so it shows only with the place on its day's Trip page.
+   */
+  photos?: number[];
 }
 
 function isTripLine(value: unknown): value is TripLine {

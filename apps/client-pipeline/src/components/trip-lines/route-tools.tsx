@@ -9,7 +9,7 @@ import type { TripDay } from "@/lib/trip-days";
 import type { GapDraft } from "@/lib/trip-gaps";
 import { type AreaPick, isAreaPick } from "@/lib/trip-wander";
 
-/** What a click on the map places: the day's start or end spot, or a place visited. */
+/** What a click on the map places: the day's start or end spot, or a trip stop. */
 export type MapPick = EndKey | "visit" | AreaPick;
 
 /** The start or end spot being picked, if that's what is. */
@@ -36,14 +36,14 @@ interface RouteToolsProps {
 }
 
 /**
- * The tools under the map for the page it's on: the places visited on the Places page, or else the
+ * The tools under the map for the page it's on: the trip stops on the Trip Stops page, or else the
  * route's.
  */
 export function MapTools({
   part,
   ...props
-}: RouteToolsProps & { part: "order" | "route" | "places" }) {
-  if (part !== "places") return <RouteTools {...props} />;
+}: RouteToolsProps & { part: "order" | "route" | "stops" }) {
+  if (part !== "stops") return <RouteTools {...props} />;
   return (
     <Visits
       day={props.day}

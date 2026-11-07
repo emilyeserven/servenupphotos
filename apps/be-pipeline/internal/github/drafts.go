@@ -45,10 +45,21 @@ func (w *workspace) leftOut(kind combinedKind, data json.RawMessage) bool {
 }
 
 // onPortfolio reports whether the photo file with data goes in AllPhotosFile:
-// it isn't unselected (see isUnselected), and it isn't a draft or w includes
-// untitled photos.
+// it isn't unselected (see isUnselected) or casual (see isCasual), and it
+// isn't a draft or w includes untitled photos.
 func (w *workspace) onPortfolio(data json.RawMessage) bool {
-	return !isUnselected(data) && (w.includeUntitled || !isDraft(data))
+	return !isUnselected(data) && !isCasual(data) && (w.includeUntitled || !isDraft(data))
+}
+
+// isCasual reports a photo file's JSON marked as a casual photo of a place
+// visited ("casual": true), such as a plate of food at a restaurant. It shows
+// only on its day's Trip page (see TripPagesFile), so it's always left out of
+// AllPhotosFile and of the trip lines, whatever its title.
+func isCasual(data json.RawMessage) bool {
+	var photo struct {
+		Casual any `json:"casual"`
+	}
+	return json.Unmarshal(data, &photo) == nil && photo.Casual == true
 }
 
 // baseDrafts reads the photo files in folder on the base branch, unchanged

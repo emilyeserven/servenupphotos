@@ -20,12 +20,12 @@ import { useCombinedData } from "@/stores/combined-data";
 export const PART_LABELS: Record<DayPart, string> = {
   order: "Photo order",
   route: "Route",
-  places: "Places",
+  stops: "Trip Stops",
   story: "Story",
 };
 
 /**
- * One day's pages on Trip Lines: the photo order, the route on the map, the places visited, and the
+ * One day's pages on Trip Lines: the photo order, the route on the map, the trip stops, and the
  * story for the portfolio's Trip page, each its own link.
  */
 export function TripDayPage() {
@@ -34,7 +34,7 @@ export function TripDayPage() {
     <Page
       wide
       title={dayTitle(day)}
-      description="This day's trip line, step by step: the photos' order and groups, the route drawn on the map, the places visited along it, and the story the portfolio's Trip page tells."
+      description="This day's trip line, step by step: the photos' order and groups, the route drawn on the map, the trip stops along it, and the story the portfolio's Trip page tells."
       action={
         <Button asChild variant="outline" size="sm">
           <Link to="/trip-lines">
@@ -101,7 +101,7 @@ function DayParts({ data, day }: { data: CombinedData; day: TripDay }) {
 
 /** The editor's page for the part shown: itself, or Photo order behind the Story. */
 function editorPart(part: string): EditorPart {
-  return part === "route" || part === "places" ? part : "order";
+  return part === "route" || part === "stops" ? part : "order";
 }
 
 /** The day's pages as tabs, each a link, keeping the group shown alone. */

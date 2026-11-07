@@ -160,16 +160,6 @@ export function FlightSymbol({ dark }: { dark: boolean }) {
   );
 }
 
-/** A place visited: an amber dot with an edge like the map's background. */
-export function VisitSymbol({ dark }: { dark: boolean }) {
-  const colors = tripColors(dark);
-  return (
-    <LineSample>
-      <circle cx={16} cy={12} r={5} fill={colors.visit} stroke={colors.visitEdge} strokeWidth={2} />
-    </LineSample>
-  );
-}
-
 /** An area: light-blue shading with a dashed edge. */
 export function AreaSymbol({ dark }: { dark: boolean }) {
   const colors = areaColors(dark);

@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 )
 
-// TripVisit is a place visited along a day's route, such as a restaurant or a
+// TripVisit is a trip stop along a day's route, such as a restaurant or a
 // museum, shown as a pin on the map whether or not a photo was taken there.
 type TripVisit struct {
 	// Name is what the place is called, such as "Ichiran Dotonbori".
@@ -29,6 +29,10 @@ type TripVisit struct {
 	// line passes through it on the way to the next photo; nil leaves it off
 	// the route, as a pin only.
 	After *int `json:"after,omitempty"`
+	// Photos are the IDs of the casual photos taken there, such as the food,
+	// in order: marked casual (see isCasual), they show only with the place
+	// on its day's Trip page. None when there are none.
+	Photos []int `json:"photos,omitempty"`
 }
 
 // visitKinds are the sorts of place a visit can be.
@@ -44,7 +48,7 @@ const (
 // validVisits checks each visit and trims its text in place.
 func validVisits(visits []TripVisit, segments []TripSegment) *PublishError {
 	if len(visits) > maxVisits {
-		return publishErr(http.StatusBadRequest, "Keep a day to %d places visited.", maxVisits)
+		return publishErr(http.StatusBadRequest, "Keep a day to %d trip stops.", maxVisits)
 	}
 	for i := range visits {
 		if perr := validVisit(&visits[i], i+1); perr != nil {
@@ -66,13 +70,13 @@ func visitPlaced(after *int, segments []TripSegment) bool {
 	return slices.ContainsFunc(segments, func(s TripSegment) bool { return slices.Contains(s.Photos, *after) })
 }
 
-// validViaVisits fails when a via spot stands for a place visited the day
+// validViaVisits fails when a via spot stands for a trip stop the day
 // doesn't have (one of n).
 func validViaVisits(segments []TripSegment, n int) *PublishError {
 	for i, seg := range segments {
 		for _, v := range seg.Via {
 			if v.Visit != nil && (*v.Visit < 0 || *v.Visit >= n) {
-				return publishErr(http.StatusBadRequest, "Segment %d: a via spot stands for a place visited the day doesn't have.", i+1)
+				return publishErr(http.StatusBadRequest, "Segment %d: a via spot stands for a trip stop the day doesn't have.", i+1)
 			}
 		}
 	}
@@ -95,7 +99,29 @@ func validVisit(v *TripVisit, n int) *PublishError {
 	if utf8.RuneCountInString(v.Note) > maxNoteLength {
 		return publishErr(http.StatusBadRequest, "Place visited %d: keep its note to %d characters.", n, maxNoteLength)
 	}
+	if perr := validVisitPhotos(v.Photos, n); perr != nil {
+		return perr
+	}
 	return validLink(v.Link, n)
+}
+
+// maxVisitPhotos is how many casual photos one trip stop can have.
+const maxVisitPhotos = 50
+
+// validVisitPhotos fails when the nth trip stop has too many casual
+// photos, or one twice.
+func validVisitPhotos(photos []int, n int) *PublishError {
+	if len(photos) > maxVisitPhotos {
+		return publishErr(http.StatusBadRequest, "Place visited %d: keep it to %d photos.", n, maxVisitPhotos)
+	}
+	seen := map[int]bool{}
+	for _, id := range photos {
+		if seen[id] {
+			return publishErr(http.StatusBadRequest, "Place visited %d has photo %d twice.", n, id)
+		}
+		seen[id] = true
+	}
+	return nil
 }
 
 // validLink fails when link, if there is one, isn't a web address.
@@ -110,7 +136,7 @@ func validLink(link string, n int) *PublishError {
 	return nil
 }
 
-// visitFeature is a place visited as a GeoJSON point.
+// visitFeature is a trip stop as a GeoJSON point.
 type visitFeature struct {
 	Type       string        `json:"type"`
 	Geometry   visitGeometry `json:"geometry"`

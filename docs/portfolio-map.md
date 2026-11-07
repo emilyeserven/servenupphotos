@@ -133,7 +133,7 @@ draws them (`lib/trip-lines-map.ts`):
 - A [Trip](trips.md)'s ferry is a line of teal dots, and its flight a dashed pink arc. A leg shows with
   the photos of either the day it left or the day it arrived. The Timeline's route sketches leave legs out.
 - Any other hop is dashed purple.
-- Places visited are amber dots.
+- Trip stops aren't drawn: they show on the [Trip pages](trip-pages.md#trip-stops), with their casual photos.
 - Areas that photos without an exact spot were taken in are shaded light blue, like a place's area.
 
 **Show trip lines** in the display options turns them off, and takes them out of the [key](#key) too. The lines, stations and areas come from OpenStreetMap data,
@@ -154,7 +154,7 @@ filters and the day filter change it:
   photos** opens a note on clicking a group: a click zooms in, and ⌘-click (Ctrl-click off Apple devices, read from the
   browser's user agent in `lib/platform.ts`) lists its photos in a grid (`components/map-legend-help.tsx`).
 - Then, under a divider, the trip lines of the photos' days when **Show trip lines** is on: **Walk**, **Bus, subway or
-  train** (a sample in the colors of the lines ridden), **Drive** (long dashes), **Ferry**, **Flight**, **Other trip** (dashed), **Place visited** and **Area**.
+  train** (a sample in the colors of the lines ridden), **Drive** (long dashes), **Ferry**, **Flight**, **Other trip** (dashed) and **Area**.
   **Area** also shows while a place's area is shaded from **Places**.
 
 The samples use the same colors as the map in light and dark mode (`lib/map-theme.ts`). The **Key** button folds the

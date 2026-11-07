@@ -1,4 +1,5 @@
 import type { SocialPhoto } from "@/api/publish";
+import { isCasual } from "@/lib/drafts";
 import { currentData } from "@/lib/social-schedule";
 
 /** How many days of Instagram posts in a row from today the queue should have, at least. */
@@ -88,11 +89,15 @@ const TESTS: Record<PhotoProblem, (data: PhotoData) => boolean> = {
   noAlbums: (data) => isEmptyList(data, "albums"),
 };
 
-/** Every photo file as the next Commit will have it, by path, without the removed ones. */
+/**
+ * Every photo file as the next Commit will have it, by path, without the removed ones or casual
+ * photos, which only show with their place on a Trip page and need none of the rest.
+ */
 function currentPhotos(photos: SocialPhoto[], changed: Map<string, unknown>) {
   return photos
     .map((photo) => ({ path: photo.path, data: currentData(photo, changed) as PhotoData | null }))
     .filter((photo): photo is { path: string; data: PhotoData } => photo.data !== null)
+    .filter((photo) => !isCasual(photo.data))
     .toSorted((a, b) => a.path.localeCompare(b.path, "en"));
 }
 

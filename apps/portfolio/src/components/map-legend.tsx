@@ -13,7 +13,6 @@ import {
   NoImageSymbol,
   PhotoSymbol,
   RideSymbol,
-  VisitSymbol,
   WalkSymbol,
 } from "@/components/map-legend-symbols";
 import type { MapDisplay } from "@/lib/map-display";
@@ -63,7 +62,6 @@ function lineRows(items: LegendItems, dark: boolean): LegendRow[] {
     [items.ferry, <FerrySymbol dark={dark} key="ferry" />, "Ferry"],
     [items.flight, <FlightSymbol dark={dark} key="flight" />, "Flight"],
     [items.hop, <HopSymbol dark={dark} key="hop" />, "Other trip"],
-    [items.visit, <VisitSymbol dark={dark} key="visit" />, "Place visited"],
     [items.area, <AreaSymbol dark={dark} key="area" />, "Area"],
   ];
 }
@@ -102,7 +100,7 @@ function useLegendOpen(): [boolean, () => void] {
 
 /**
  * The map's key, a panel in its bottom left corner: what its markers mean, and the trip lines,
- * places visited and areas it draws under them. It lists only what the map is drawing, and folds
+ * areas it draws under them. It lists only what the map is drawing, and folds
  * down to its **Key** button, which phones start with.
  */
 export function MapLegend({

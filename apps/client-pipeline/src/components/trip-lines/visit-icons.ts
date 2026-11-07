@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import type { VisitKind } from "@/api/trip-lines";
 
-/** The icon each sort of place visited shows, on the map and in the list. */
+/** The icon each sort of trip stop shows, on the map and in the list. */
 export const VISIT_ICONS: Record<VisitKind, LucideIcon> = {
   restaurant: UtensilsCrossed,
   cafe: Coffee,

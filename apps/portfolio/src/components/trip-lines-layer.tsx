@@ -7,7 +7,7 @@ import { type TripLinesMap, useShownTripLines } from "@/lib/trip-lines-map";
 
 /**
  * The trip lines of the days the map's photos were taken, from TRIPLINES.geo.json: walks in blue,
- * drives in long light blue dashes, lines that run over an earlier one drawn to its side,, a Trip's ferries in teal dots and flights as pink dashed arcs, hops along a transit line in its color and others dashed, places visited as amber dots, and areas
+ * drives in long light blue dashes, lines that run over an earlier one drawn to its side, a Trip's ferries in teal dots and flights as pink dashed arcs, hops along a transit line in its color and others dashed, and areas
  * shaded light blue, with a light running along each line the way it was travelled when `flow` is on. Nothing while
  * `show` is off or there are none.
  */

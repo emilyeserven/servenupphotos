@@ -2,14 +2,14 @@ import type { LayerProps } from "@vis.gl/react-maplibre";
 import { areaEdgePaint, areaFillPaint, tripColors } from "@portfolio/lib/map-theme";
 import { LANE_OFFSET } from "@portfolio/lib/trip-lanes";
 
-/** Only the segments' lines, not the places visited or the areas. */
+/** Only the segments' lines, not the trip stops or the areas. */
 const IS_LINE = ["!", ["has", "feature"]];
 
 /** The modes drawn in a style of their own, rather than as a ride in its line's color or a dashed hop. */
 const OWN_STYLE = ["!", ["in", ["get", "mode"], ["literal", ["walk", "car", "ferry", "flight"]]]];
 
 /**
- * Each layer of the trip lines, under the photos' markers: areas, then lines, then visits. The
+ * Each layer of the trip lines, under the photos' markers: areas, then lines. Trip stops aren't drawn: they belong to the Trip pages. The
  * portfolio's map draws TRIPLINES.geo.json with them, and the pipeline's Trip page its Trip's days.
  */
 export function tripLineLayers(dark: boolean): LayerProps[] {
@@ -87,21 +87,10 @@ export function tripLineLayers(dark: boolean): LayerProps[] {
         "line-offset": LANE_OFFSET,
       },
     },
-    {
-      id: "trip-visit",
-      type: "circle",
-      filter: isFeature("visit"),
-      paint: {
-        "circle-radius": 5,
-        "circle-color": colors.visit,
-        "circle-stroke-color": colors.visitEdge,
-        "circle-stroke-width": 2,
-      },
-    },
   ] as LayerProps[];
 }
 
 /** A filter for the features marked `kind`. */
-function isFeature(kind: "visit" | "fence") {
+function isFeature(kind: "fence") {
   return ["==", ["get", "feature"], kind];
 }

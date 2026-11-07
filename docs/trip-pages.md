@@ -68,6 +68,17 @@ The backend trims the words, drops `withNext` from the last photo and `text` bes
 `textSide` other than `left` or `right`, a photo not taken that day (its custom
 date, or else its EXIF one), a photo listed twice, a photo with both `withNext` and `after`, and a row of more than 4.
 
+## Trip Stops
+
+A day's [trip stops](trip-lines.md#trip-stops), such as a restaurant, show in its story between the two photos the
+route puts them between (`after`), each on its own small line: a pin, its name (linking to its outside map), its kind
+and its note. A stop's [casual photos](trip-lines.md#casual-photos) are folded under it behind **3 photos**, as small
+squares that each open the large version in a new tab (`components/trip-stops.tsx`). A stop ends its row the way a
+paragraph does, so a stop after a photo in the middle of a row splits it there, and it shows before that photo's
+paragraph. Stops not on the route, or after a photo left off the story, show after the day's last row. Casual photos
+aren't in `ALLPHOTOS.json`, so Commit bakes every stop, with what the page needs of its casual photos (ID, title, size
+and image URLs), into the day's `stops`.
+
 ## The baked pages: `TRIPPAGES.json`
 
 Every Commit also writes `triplines/TRIPPAGES.json` from the story and Trip files (`trip_pages.go`), newest first, and
@@ -85,7 +96,18 @@ data** workflow leaves it as it is.
       {
         "day": "2026-10-01",
         "intro": "…",
-        "photos": [{ "id": 302, "text": "…", "withNext": true }]
+        "photos": [{ "id": 302, "text": "…", "withNext": true }],
+        "stops": [
+          {
+            "name": "Ichiran Dotonbori",
+            "kind": "restaurant",
+            "link": "https://maps.app.goo.gl/…",
+            "after": 302,
+            "photos": [
+              { "id": 311, "width": 4000, "height": 3000, "images": { "small": "…", "large": "…" } }
+            ]
+          }
+        ]
       }
     ]
   },

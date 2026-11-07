@@ -115,12 +115,20 @@ function isUnselected(photo) {
 }
 
 /**
- * What the kind's combined list leaves out: for photos, unselected ones, and drafts unless untitled
- * photos are included.
+ * Whether a photo is a casual photo of a place visited, shown only on its day's Trip page, so the
+ * pipeline's Commit always leaves it out of ALLPHOTOS.json (see docs/trip-pages.md).
+ */
+function isCasual(photo) {
+  return photo?.casual === true;
+}
+
+/**
+ * What the kind's combined list leaves out: for photos, unselected and casual ones, and drafts
+ * unless untitled photos are included.
  */
 function leftOutOf(kind, includeUntitled) {
   if (kind.folder !== "photos") return () => false;
-  return (photo) => isUnselected(photo) || (!includeUntitled && isDraft(photo));
+  return (photo) => isUnselected(photo) || isCasual(photo) || (!includeUntitled && isDraft(photo));
 }
 
 /** entries without the ones that pending changes waiting for Commit remove. */

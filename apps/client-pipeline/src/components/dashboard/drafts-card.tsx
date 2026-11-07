@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import type { CompareRead } from "@/components/compare/compare-group-list";
 import type { ComparePhoto } from "@/lib/compare-groups";
-import { isSetAside, isUnselected, titleOf, useUntitledDrafts } from "@/lib/drafts";
+import { isCasual, isSetAside, isUnselected, titleOf, useUntitledDrafts } from "@/lib/drafts";
 import { photoId } from "@/lib/unselected";
 
 /** How the card picks its 3 drafts. */
@@ -21,12 +21,17 @@ const PICKS: { value: DraftPick; label: string }[] = [
 /** How many drafts the card shows. */
 const SHOWN = 3;
 
+/** Whether the photo is done with as a draft: unselected in a compare group, or a casual photo. */
+function isDone(data: unknown): boolean {
+  return isUnselected(data) || isCasual(data);
+}
+
 /**
  * Whether the photo is a draft right now: set aside as Undecided, or untitled while untitled photos
- * are kept as drafts. Unselected photos are left out, since they're done with.
+ * are kept as drafts. Unselected and casual photos are left out, since they're done with.
  */
 function isCurrentDraft(photo: ComparePhoto, untitledDrafts: boolean): boolean {
-  if (isUnselected(photo.data)) return false;
+  if (isDone(photo.data)) return false;
   return isSetAside(photo.data) || (untitledDrafts && titleOf(photo.data) === undefined);
 }
 
