@@ -1,9 +1,14 @@
+import { cn } from "@/lib/utils";
 import { formatValue, type GraphDatum, type GraphSeries, type Measure } from "@/lib/graph-data";
 
-/** A colored square naming a series, beside its label. */
-export function Swatch({ color }: { color: string }) {
+/** A colored square naming a series, beside its label; with `round`, a dot, like a photo dot graph's. */
+export function Swatch({ color, round = false }: { color: string; round?: boolean }) {
   return (
-    <span className="size-2.5 shrink-0 rounded-[3px]" style={{ background: color }} aria-hidden />
+    <span
+      className={cn("size-2.5 shrink-0", round ? "rounded-full" : "rounded-[3px]")}
+      style={{ background: color }}
+      aria-hidden
+    />
   );
 }
 

@@ -104,11 +104,12 @@ shows what the lightest and darkest shades mean, and it scrolls sideways when th
 reads like a bar graph you can count. Split by colors each dot by the photo's split value (the first one it has, in the
 split's order; past 8 values, Other's gray), with the photos in the same colors grouped together. The stacks get wider
 as the biggest one grows, so the tallest stays at most 30 dots high. Hovering a dot names its photo and the day it was
-taken, and clicking a stack picks its x value like a bar. It has no y axis setting or y range, since a stack is always
+taken, and clicking a stack picks its x value like a bar. Its key always shows, saying a dot is **One photo**, then
+the split's colors when it's split. It has no y axis setting or y range, since a stack is always
 its photos; its **Table** shows each x value's photo counts (`lib/graph-photo-dots.ts`,
 `components/graph-builder/photo-dots-graph.tsx`).
 
-Every graph has a tooltip on hover, a key when it's split or a pie (`graph-key.tsx`): a **Key** button at the right end of the y axis's row over the graph (`KeyRow`), so folded it covers nothing and takes no room of its own, and open at first, its list floating over the graph's top right corner, apart from the y axis, and a **Table** button that
+Every graph has a tooltip on hover, a key when it's split, a pie or photo dots (`graph-key.tsx`): a **Key** button at the right end of the y axis's row over the graph (`KeyRow`), so folded it covers nothing and takes no room of its own, and open at first, its list floating over the graph's top right corner, apart from the y axis, and a **Table** button that
 shows its numbers as a table.
 
 The site's presets come in two groups: **Technical Details** (Aperture, Exposure, ISO and Focal length) and **Time

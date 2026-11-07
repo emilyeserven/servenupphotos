@@ -5,8 +5,8 @@ import { Swatch } from "@portfolio/components/graph-builder/graph-parts";
 import type { GraphSeries } from "@portfolio/lib/graph-data";
 import { cn } from "@portfolio/lib/utils";
 
-/** A series or slice in the graph's key. */
-type KeyItem = Pick<GraphSeries, "label" | "color">;
+/** A series or slice in the graph's key, with a round swatch when `round`, as a photo dot graph's dots are. */
+export type KeyItem = Pick<GraphSeries, "label" | "color"> & { round?: boolean };
 
 /** Where the key's button goes: the end of the row with the y axis's name, once it's drawn. */
 const KeySlot = createContext<HTMLElement | null>(null);
@@ -14,7 +14,7 @@ const KeySlot = createContext<HTMLElement | null>(null);
 /**
  * The row over the graph, with `start` (the y axis's name) on the left and room for the key's
  * button on the right, so folded the key takes no space from the graph; then the graph. The row
- * hides while it has nothing in it, such as a photo dot graph's with no split.
+ * hides while it has nothing in it.
  */
 export function KeyRow({ start, children }: { start: ReactNode; children: ReactNode }) {
   const [slot, setSlot] = useState<HTMLDivElement | null>(null);
@@ -81,7 +81,7 @@ function KeyList({ items }: { items: KeyItem[] }) {
     >
       {items.map((item) => (
         <li key={item.label} className="flex items-center gap-1.5">
-          <Swatch color={item.color} />
+          <Swatch color={item.color} round={item.round} />
           <span className="truncate">{item.label}</span>
         </li>
       ))}
