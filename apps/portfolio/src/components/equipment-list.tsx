@@ -1,9 +1,11 @@
-import { Eye, EyeOff } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowUpDown, Eye, EyeOff, ListTree, type LucideIcon } from "lucide-react";
+import { type ReactNode, useMemo, useState } from "react";
 import type { CameraPickerProps } from "@portfolio/components/camera-picker";
 import { ChoiceRow } from "@portfolio/components/choice-row";
 import { EquipmentRow } from "@portfolio/components/equipment-row";
 import { hiddenText } from "@portfolio/components/hidden-note";
+import { Button } from "@portfolio/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import { blockersOf, cameraBlockers } from "@portfolio/lib/camera-blockers";
 import type { EquipmentKey } from "@portfolio/lib/camera-filters";
 import { equipmentChoices, equipmentFilters, isChosen } from "@portfolio/lib/camera-picker";
@@ -15,21 +17,17 @@ import {
 } from "@portfolio/lib/equipment-groupings";
 import { type EquipmentSort, sortEquipment } from "@portfolio/lib/equipment-sort";
 import type { FilterOption } from "@portfolio/lib/filter-options";
-import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { cn } from "@portfolio/lib/utils";
 
 /** What each equipment list calls all of its choices. */
 const ANY_LABELS: Record<EquipmentKey, string> = { camera: "All cameras", lens: "All lenses" };
 
-/** The Cameras list's orders, with their names; the Lenses list has none. */
-const SORTS: Record<EquipmentKey, [EquipmentSort, string][]> = {
-  camera: [
-    ["name", "Name"],
-    ["oldest", "Oldest first"],
-    ["newest", "Newest first"],
-  ],
-  lens: [],
-};
+/** The orders the Cameras and Lenses lists can be in, with their names. */
+const SORTS: [EquipmentSort, string][] = [
+  ["name", "Name"],
+  ["oldest", "Oldest first"],
+  ["newest", "Newest first"],
+];
 
 /** Whether the choice is a heading, such as **DSLR**, rather than something to pick. */
 function isHeading(option: FilterOption): boolean {
@@ -43,13 +41,15 @@ function withoutEmptyHeadings(options: FilterOption[]): FilterOption[] {
 
 interface ListProps extends CameraPickerProps {
   equipment: EquipmentKey;
+  /** The list's title row, given the Group by and Sort buttons to put in it. */
+  header: (controls: ReactNode) => ReactNode;
   onPoint: (option: FilterOption | undefined) => void;
 }
 
 /**
- * The camera or lens choices, each telling `onPoint` when it's pointed at: a Group by dropdown
- * with each way to list them, a Sort dropdown for the cameras (by name, or by when the first photo
- * was taken with each, oldest or newest first), All cameras or All lenses, then the choices.
+ * The camera or lens choices, each telling `onPoint` when it's pointed at, under `header` given a
+ * Group by menu with each way to list them and a Sort menu (by name, or by when the first photo was
+ * taken with each, oldest or newest first), All cameras or All lenses, then the choices.
  */
 export function EquipmentList(props: ListProps) {
   const { equipment, photos, filters } = props;
@@ -60,18 +60,29 @@ export function EquipmentList(props: ListProps) {
   const options = sortEquipment(equipment, groupingOptions(groupings, groupingId), sort);
   const choose = (option?: FilterOption) => props.onChange(equipmentFilters(equipment, option));
   return (
-    <div className="flex flex-col" onMouseLeave={() => props.onPoint(undefined)}>
-      <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-        <PickSelect
-          label="Group by"
-          options={groupings.map(({ id, label }): [string, string] => [id, label])}
-          value={groupingId}
-          onChange={setGroupingId}
-        />
-        <PickSelect label="Sort" options={SORTS[equipment]} value={sort} onChange={setSort} />
+    <div className="flex flex-col gap-2" onMouseLeave={() => props.onPoint(undefined)}>
+      <div className="flex flex-col">
+        {props.header(
+          <>
+            <PickMenu
+              label="Group by"
+              Icon={ListTree}
+              options={groupings.map(({ id, label }): [string, string] => [id, label])}
+              value={groupingId}
+              onChange={setGroupingId}
+            />
+            <PickMenu
+              label="Sort"
+              Icon={ArrowUpDown}
+              options={SORTS}
+              value={sort}
+              onChange={setSort}
+            />
+          </>,
+        )}
+        <ChoiceRow label={ANY_LABELS[equipment]} on={!choices.chosen} onClick={() => choose()} />
+        <Choices {...props} options={options} choose={choose} />
       </div>
-      <ChoiceRow label={ANY_LABELS[equipment]} on={!choices.chosen} onClick={() => choose()} />
-      <Choices {...props} options={options} choose={choose} />
     </div>
   );
 }
@@ -120,34 +131,68 @@ function Heading({ label }: { label: string }) {
   return <span className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground">{label}</span>;
 }
 
-/** A small labeled dropdown, such as Group by's None, Brand and Type; none with fewer than two choices. */
-function PickSelect<T extends string>({
+/** The name of the choice with the ID. */
+function nameOf<T extends string>(options: [T, string][], value: T): string {
+  return options.find(([id]) => id === value)?.[1] ?? "";
+}
+
+/** Whether the value isn't the first choice, the default. */
+function isChanged<T extends string>(options: [T, string][], value: T): boolean {
+  return options.findIndex(([id]) => id === value) > 0;
+}
+
+/**
+ * A small button naming what it changes, such as **Group by**, with its icon, that opens a menu of
+ * its choices, the current one checked; pressed-looking while it isn't the first, the default.
+ * None with fewer than two choices.
+ */
+function PickMenu<T extends string>({
   label,
+  Icon,
   options,
   value,
   onChange,
 }: {
   label: string;
+  Icon: LucideIcon;
   options: [T, string][];
   value: T;
   onChange: (value: T) => void;
 }) {
+  const [open, setOpen] = useState(false);
   if (options.length < 2) return null;
+  const current = nameOf(options, value);
   return (
-    <label className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
-      <span className="whitespace-nowrap">{label}</span>
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value as T)}
-        className={cn(SELECT_CLASS, "h-7 min-w-0 text-xs")}
-      >
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={`${label}: ${current}`}
+          title={`${label}: ${current}`}
+          className={cn(
+            "h-7 gap-1 px-2 text-xs font-normal text-muted-foreground",
+            isChanged(options, value) && "bg-accent text-foreground",
+          )}
+        >
+          <Icon aria-hidden className="size-3.5" />
+          {label}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="flex w-44 flex-col p-1">
         {options.map(([id, name]) => (
-          <option key={id} value={id}>
-            {name}
-          </option>
+          <ChoiceRow
+            key={id}
+            label={name}
+            on={id === value}
+            onClick={() => {
+              onChange(id);
+              setOpen(false);
+            }}
+          />
         ))}
-      </select>
-    </label>
+      </PopoverContent>
+    </Popover>
   );
 }
 

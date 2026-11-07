@@ -3,7 +3,7 @@ import type { FilterOption } from "@portfolio/lib/filter-options";
 import { photos as allPhotos } from "@portfolio/lib/photos";
 
 /**
- * How the Cameras list orders the cameras under each heading or group: as the tab lists them (by
+ * How the Cameras or Lenses list orders the cameras or lenses under each heading or group: as the tab lists them (by
  * name), or by when the first of the portfolio's photos was taken with each, oldest or newest first.
  */
 export type EquipmentSort = "name" | "oldest" | "newest";

@@ -1,5 +1,5 @@
 import { ChevronDown, Info } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { EquipmentInfoPane } from "@portfolio/components/equipment-info-pane";
 import { EquipmentList } from "@portfolio/components/equipment-list";
 import { InfoButton } from "@portfolio/components/info-button";
@@ -51,8 +51,16 @@ function EquipmentPart({
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
       <div className="flex min-w-0 flex-1 flex-col gap-2">
-        <PartTitle label={TITLES[equipment]} on={graphics} onClick={toggle} />
-        <EquipmentList equipment={equipment} onPoint={setPointed} {...props} />
+        <EquipmentList
+          equipment={equipment}
+          onPoint={setPointed}
+          header={(controls) => (
+            <PartTitle label={TITLES[equipment]} on={graphics} onClick={toggle}>
+              {controls}
+            </PartTitle>
+          )}
+          {...props}
+        />
         <MobileInfoToggle on={graphics} onClick={toggle} />
       </div>
       {graphics && <EquipmentInfoPane equipment={equipment} option={pointed ?? chosen} />}
@@ -60,11 +68,22 @@ function EquipmentPart({
   );
 }
 
-/** A section's title, with the (i) button beside it on wider screens. */
-function PartTitle({ label, on, onClick }: { label: string; on: boolean; onClick: () => void }) {
+/** A section's title, with `children` (such as Group by and Sort) and the (i) button to its right, the (i) on wider screens only. */
+function PartTitle({
+  label,
+  on,
+  onClick,
+  children,
+}: {
+  label: string;
+  on: boolean;
+  onClick: () => void;
+  children?: ReactNode;
+}) {
   return (
-    <div className="flex items-center justify-between gap-2">
-      <h3 className="text-sm font-semibold">{label}</h3>
+    <div className="flex items-center gap-1">
+      <h3 className="mr-auto text-sm font-semibold">{label}</h3>
+      {children}
       <span className="max-sm:hidden">
         <InfoButton open={on} label={`info about ${label}`} onClick={onClick} />
       </span>
