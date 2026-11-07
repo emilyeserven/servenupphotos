@@ -4,6 +4,7 @@ import { CalendarClock, ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoFilterBar } from "@/components/photo-filters";
+import { visualsOwnFilters } from "@/components/visuals-picker";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
@@ -24,6 +25,7 @@ import {
 } from "@/lib/photo-filters";
 import { dayOf, hasDateRange, type WhenFilters } from "@/lib/when-filters";
 import { parseTextSearch, searchPhotos } from "@/lib/text-search";
+import { filterByVisuals, parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
   parseTimelineDisplay,
@@ -45,6 +47,7 @@ type ImagePhoto = Photo & { image: PhotoImage };
  * options and whether the chart is the heatmap; each left out when it's the default.
  */
 type TimelineSearch = PhotoFilters &
+  VisualSearch &
   ShownPhotoSearch &
   TimelineDisplaySearch & { chart?: "heatmap"; q?: string };
 
@@ -54,6 +57,7 @@ export const Route = createFileRoute("/timeline")({
     const search = withOldTimelineLinks(raw, new Date());
     return {
       ...parseFilters(search),
+      ...parseVisualFilters(search),
       ...parseTextSearch(search),
       ...parseShownPhoto(search),
       ...parseTimelineDisplay(search),
@@ -100,10 +104,12 @@ function TimelineView() {
   const filters = parseFilters(search);
   const { start, end } = shownDays(filters, now);
   // Every photo the other filters let through, so the heatmap can fade the weeks outside the days.
-  const matching = searchPhotos(
-    filterPhotos(photos, withoutFilters(filters, ["start", "end"])),
-    search.q,
+  const matching = filterByVisuals(
+    searchPhotos(filterPhotos(photos, withoutFilters(filters, ["start", "end"])), search.q),
+    search,
   );
+  // What the filters and search leave before Visuals, which its counts are out of.
+  const beforeVisuals = searchPhotos(filterPhotos(photos, filters), search.q);
   // Newest first, so the months and the photos in each read down from the latest.
   const inRange = filterPhotos(matching, filters).toSorted(
     (a, b) => b.takenAt.getTime() - a.takenAt.getTime(),
@@ -139,7 +145,7 @@ function TimelineView() {
             />
           </div>
         </div>
-        <PhotoFilterBar photos={photos} searchable />
+        <PhotoFilterBar photos={photos} searchable own={visualsOwnFilters(beforeVisuals, search)} />
       </header>
       <div ref={setChart}>
         <TimelineChart

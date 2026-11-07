@@ -49,12 +49,13 @@ Over the top left corner, beside the title on wider screens and under it on phon
 (`components/map-controls.tsx`). On phones, **More filters**, **View in grid** and **Browse** are just their icons, so the row
 fits without covering the map:
 
-- **Places** comes first, with the icon button beside it that zooms back out to every photo. It opens the same tree as
-  the [Places filter](portfolio-filters.md#places), with the United States of America expanded, but it doesn't filter:
-  picking a country, state, city or place closes the tree and moves the map to that place's photos, the way the
+- **Places** comes first, with the icon button beside it that zooms back out to every photo. It opens the same columns as
+  the [Places filter](portfolio-filters.md#places), without checkboxes, and it doesn't filter: picking a place (one with
+  nothing in it, or **All of** at the top of a column, such as **All of Japan**) closes them and moves the map to that
+  place's photos, the one place at a time, the way the
   zoom-out button moves it to every photo (`components/map-place-picker.tsx`). Its counts are out of the photos the
   other filters leave. A link with a place filter in its URL opens the map on every photo, as the map ignores it.
-  Pointing at a place in the tree (or focusing it) shades its [area](places-and-localizations.md#areas) on the map,
+  Pointing at a place in the columns (or focusing it) shades its [area](places-and-localizations.md#areas) on the map,
   when it has one, and picking it keeps the area shaded, more faintly, until another place is picked
   (`components/place-area-layer.tsx`, `lib/place-areas.ts`). Each area is its own `places/<id>.geo.json` file,
   loaded the first time it's shown, so the map's page doesn't carry every outline. Areas are light blue (Tailwind's
@@ -91,29 +92,26 @@ fits without covering the map:
   > **Frontend analogy:** MapLibre can't change how a source groups its points once it's made, so changing
   > **Grouping** remounts the `<Source>` with a new `key`, like resetting a component's state by changing its key.
 
-- **More filters** opens the day dropdowns (below), then the album, tag and genre dropdowns, and shows how many of them
-  are set.
+- **More filters** opens the **Groups**, **When** and **Visuals** pickers, side by side in one row (wrapping onto more
+  rows on a phone), and shows how many of their filters are set. To see one day or a few, use When's **Date range**;
+  the map fits itself to the photos it leaves, like any other filter. **View in grid** carries the Visuals filters to the
+  Grid too.
 - **View in grid** opens the Grid on the photos in view (`gridFiltersFor` in `lib/map-grid-link.ts`). It keeps the
   album, tag and genre filters and looks for the fewest countries, states, cities and places, biggest first, that show
   just those photos, so a view of Seoul opens `/grid?state=Seoul` and one of New York City `/grid?city=New York City`.
-  When none fit, such as a city only partly in view or a day filter that leaves out some of its photos, it chooses
+  When none fit, such as a city only partly in view or a date range that leaves out some of its photos, it chooses
   the photos one by one instead (`?ids=[…]`, see [Chosen photos](portfolio-filters.md#chosen-photos)). A place filter
   also shows that place's photos with no GPS position, which the map can't show. It can't be pressed while no photos
   are in view.
 - **Browse** opens the photo viewer on the newest photo in view, and its arrows, keys and swipes step through every
   photo in view, newest first. Opening a photo's own marker steps through them the same way, starting on that photo;
   a group's grid still steps through just that group's photos. It can't be pressed while no photos are in view.
-- The **day** dropdown, in **More filters**, narrows the map to the photos taken on one day (`?day=2026-05-17` in the URL). It only lists
-  the days of the photos in view, newest first with how many photos each has there, and updates as the map moves; a
-  chosen day stays listed after moving away from its photos. Choosing a day doesn't move the map. It works alongside the
-  album, tag and genre filters, but the menu doesn't carry it to the other views.
-- Once a day is chosen and another day is in view, a second **to** dropdown picks the last day of a range
-  (`?day=2026-05-01&to=2026-05-17`), and the map shows every photo from the first day through the last. Either day can
-  be the earlier one; the range is put in order. **Just this day** goes back to one day.
+- Links from before the day dropdown moved into When, `?day=2026-05-01&to=2026-05-17` (such as the Timeline's route
+  sketches), open on that date range, as `?start=2026-05-01&end=2026-05-17`; `to` can be left out for one day.
 
 ## Trip lines
 
-Under the photos, the map draws the trip lines of the days its photos were taken, so the day filter and the other
+Under the photos, the map draws the trip lines of the days its photos were taken, so the date range and the other
 filters narrow them too (`components/trip-lines-layer.tsx`). They come from `triplines/TRIPLINES.geo.json`, which the
 pipeline's Commit bakes (see [Trip lines](trip-lines.md#the-baked-map-triplinesgeojson)), loaded the first time the map
 draws them (`lib/trip-lines-map.ts`):

@@ -1,6 +1,7 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { CameraPicker } from "@portfolio/components/camera-picker";
+import { VisualsPicker } from "@portfolio/components/visuals-picker";
 import type { BlockerSource } from "@portfolio/lib/camera-blockers";
 import { type OwnFilters, PhotoFilterBar } from "@portfolio/components/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
@@ -11,6 +12,11 @@ import {
   type CameraFilters,
   parseCameraFilters,
 } from "@portfolio/lib/camera-filters";
+import {
+  COLOR_FILTER_KEYS,
+  colorFilterCount,
+  parseColorFilters,
+} from "@portfolio/lib/color-search";
 import { parseTextSearch, searchPhotos } from "@portfolio/lib/text-search";
 
 /** Sets some of the camera filters in the URL, keeping everything else. */
@@ -27,8 +33,8 @@ function useSetCameraFilters() {
 
 /**
  * The camera filters, after the shared ones on the Table and Grid: the **Gear & settings** picker, for the
- * camera, lens, focal length, aperture, exposure and ISO. The orientation, though a camera filter
- * in the URL, is in the Grid's **Visuals** picker.
+ * camera, lens, focal length, aperture, exposure and ISO, then the **Visuals** picker, for the
+ * color, vividness and orientation (a camera filter in the URL).
  * `photos` is the photos the shared filters leave, which the picker's counts are out of, given the
  * other filters here, and `source` what's needed to say which filters hide a choice. `children` go after them, in the filters' row, such as the Grid's **Visuals**.
  */
@@ -44,9 +50,14 @@ function CameraFilterControls({
   children: ReactNode;
 }) {
   const setFilters = useSetCameraFilters();
+  const colors = parseColorFilters(useSearch({ strict: false }));
   return (
     <>
       <CameraPicker photos={photos} filters={filters} source={source} onChange={setFilters} />
+      <VisualsPicker
+        photos={filterByCamera(photos, { ...filters, orientation: undefined })}
+        filters={{ ...colors, orientation: filters.orientation }}
+      />
       {children}
     </>
   );
@@ -83,8 +94,8 @@ export function CameraFilterBar({
       bare={bare}
       facet={filterByCamera(photos, own)}
       own={{
-        keys: [...CAMERA_FILTER_KEYS, ...extra.keys],
-        count: Object.keys(own).length + extra.count,
+        keys: [...CAMERA_FILTER_KEYS, ...COLOR_FILTER_KEYS, ...extra.keys],
+        count: Object.keys(own).length + colorFilterCount(parseColorFilters(search)) + extra.count,
         children: (
           <CameraFilterControls
             photos={filterPhotos(searchPhotos(photos, query), shared)}

@@ -4,7 +4,7 @@ import type { Photo } from "@portfolio/lib/photos";
  * The "when" filters that take any number of choices of one kind, in any year: seasons, months,
  * days of the week and hours of the day.
  */
-export const LIST_KEYS = ["season", "month", "weekday", "hour"] as const;
+const LIST_KEYS = ["season", "month", "weekday", "hour"] as const;
 
 export type ListKey = (typeof LIST_KEYS)[number];
 
