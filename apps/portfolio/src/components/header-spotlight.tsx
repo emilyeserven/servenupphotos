@@ -1,5 +1,6 @@
 import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
+import { JumpToCover } from "@/components/jump-to-cover";
 import { objectPosition } from "@/lib/spotlight-focus";
 import {
   focusIn,
@@ -37,7 +38,8 @@ export function PageHeaderSpotlight() {
  * page, fading in and out in turn across the top of the page, 30% of the screen's height, fading
  * into the page's background at the bottom. The page's title and filters come after it, and the
  * site menu stays where it is. A zone set to match the screen puts portrait photos first on a phone
- * held upright and landscape photos first elsewhere. With no album picked it shows nothing.
+ * held upright and landscape photos first elsewhere. A **Jump to Cover Image** button on it scrolls to
+ * the photo showing in the page below. With no album picked it shows nothing.
  */
 function HeaderSpotlight({ zone }: { zone: string }) {
   const phone = useMediaQuery(UPRIGHT_PHONE_QUERY);
@@ -53,15 +55,34 @@ function HeaderSpotlight({ zone }: { zone: string }) {
 /** The header's photos, each cropped to fill it with its focus point where its placement says. */
 function HeaderPhotos({ photos, zone }: { photos: ImagePhoto[]; zone: string }) {
   const { turn } = useTurn(photos.length, HEADER_MS);
-  const [loaded, setLoaded] = useState<ReadonlySet<number>>(new Set());
   const [ref, size] = useSize();
   return (
     <div
       ref={ref}
-      aria-hidden
       // The page's top padding starts under the fade, so its title sits just below the photo.
       className="relative -mb-12 h-[30svh] w-full overflow-hidden bg-background"
     >
+      <div aria-hidden className="absolute inset-0">
+        <HeaderImages photos={photos} zone={zone} turn={turn} box={size} />
+      </div>
+      <JumpToCover photo={photos[turn]} />
+    </div>
+  );
+}
+
+interface HeaderImagesProps {
+  photos: ImagePhoto[];
+  zone: string;
+  /** The index of the photo showing. */
+  turn: number;
+  box: { width: number; height: number };
+}
+
+/** The photos showing and near it, fading in and out, and the fade into the page at the bottom. */
+function HeaderImages({ photos, zone, turn, box }: HeaderImagesProps) {
+  const [loaded, setLoaded] = useState<ReadonlySet<number>>(new Set());
+  return (
+    <>
       {photos.map(
         (photo, index) =>
           isNear(index, turn, photos.length) && (
@@ -71,13 +92,13 @@ function HeaderPhotos({ photos, zone }: { photos: ImagePhoto[]; zone: string }) 
               zone={zone}
               seen={index === turn && loaded.has(photo.id)}
               showing={index === turn}
-              box={size}
+              box={box}
               onLoad={() => setLoaded((ids) => new Set(ids).add(photo.id))}
             />
           ),
       )}
       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-b from-transparent to-background" />
-    </div>
+    </>
   );
 }
 

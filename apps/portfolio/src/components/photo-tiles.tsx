@@ -81,7 +81,9 @@ export function GridTiles({
       )}
     >
       {photos.map((photo) => (
-        <li key={photo.id}>{tile(photo)}</li>
+        <li key={photo.id} data-photo-id={photo.id}>
+          {tile(photo)}
+        </li>
       ))}
     </ul>
   );
