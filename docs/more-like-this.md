@@ -2,10 +2,12 @@
 
 The portfolio's [photo viewer](photo-viewer.md) has a **More like this** drawer down its left side. A short tab with a
 right arrow, on the left edge halfway down, slides it in (or the **M** key); the tab's arrow then points left to close
-it. The drawer lists up to 6 related photos, one per line: each one's square thumbnail, with its title to the right and,
-for a photo picked by hand, the note written for it under the title. Clicking one shows that photo in the viewer with
-the drawer still open, so you can keep following related photos. On a wide screen the drawer pushes the photo over; on
-a phone (under 640px wide) it slides in over the photo.
+it. Closed, the tab is faint (20% opacity, 40% on a touch screen) until the pointer comes within 24px of the left edge
+(stopping short of the **‹** button), so it doesn't distract from the photo. The drawer lists up to 6 related photos, one per line: each one's square
+thumbnail, with its title to the right and, for a photo picked by hand, the note written for it under the title.
+Clicking one shows that photo in the viewer with the drawer still open, so you can keep following related photos. The
+tab and the drawer sit over the photo's left side, so the photo keeps the same size and padding whether the drawer is
+open or not.
 
 Whether the drawer is open is remembered in the browser, between photos and visits, under `servenup-more-like-this`.
 Hiding the details (the eye button or **H**) hides the tab and the drawer too. A photo with no related photos has no

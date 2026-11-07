@@ -17,9 +17,10 @@ export function toggleMoreLikeThis() {
 }
 
 /**
- * The More like this drawer down the left of the photo viewer: a short tab with an arrow on the
- * photo's left edge that slides in a list (over the photo on a phone) of the photos related to this one, each with its title
- * and, for the ones picked by hand on the pipeline's Related Photos page, its note. The picked ones
+ * The More like this drawer down the left of the photo viewer: a short, faint tab with an arrow on
+ * the left edge that slides in, over the photo's left side, a list of the photos related to this
+ * one, each with its title and, for the ones picked by hand on the pipeline's Related Photos page,
+ * its note. The picked ones
  * come first, then the ones the pipeline found. It's left out for a photo without any. Clicking one
  * shows it in the viewer, and the drawer stays open for it.
  */
@@ -35,8 +36,8 @@ export function MoreLikeThis({
   const related = relatedTo(photo);
   if (related.length === 0) return null;
   return (
-    // Beside the photo, pushing it over; on a phone, over the photo, which would be too small beside it.
-    <div className="flex shrink-0 items-center max-sm:absolute max-sm:inset-y-0 max-sm:left-0 max-sm:z-10">
+    // Over the photo's left side, so the photo keeps its size and padding whether it's open or not.
+    <div className="absolute inset-y-0 left-0 z-10 flex items-center">
       {/* Columns from 0fr to 1fr, so the drawer slides in to its own width. */}
       <div
         className={cn(
@@ -53,22 +54,31 @@ export function MoreLikeThis({
   );
 }
 
-/** The short tab on the photo's left edge, with a right arrow while it's closed and a left arrow while open. */
+/**
+ * The short tab on the left edge, with a right arrow while it's closed and a left arrow while
+ * open. Closed, it's faint until the pointer comes near: the strip around it, a little wider than
+ * the tab, brings it up when hovered.
+ */
 function DrawerTab({ open }: { open: boolean }) {
   const Icon = open ? ChevronLeftIcon : ChevronRightIcon;
   const label = open ? "Hide more like this" : "Show more like this";
   return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-expanded={open}
-      aria-controls="more-like-this"
-      title={`${label} (M)`}
-      onClick={toggleMoreLikeThis}
-      className="flex h-14 w-4 items-center justify-center rounded-r-md bg-white/10 text-white/70 outline-none hover:bg-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-white/60"
-    >
-      <Icon className="size-4" />
-    </button>
+    <div className="group/tab flex h-40 w-6 items-center">
+      <button
+        type="button"
+        aria-label={label}
+        aria-expanded={open}
+        aria-controls="more-like-this"
+        title={`${label} (M)`}
+        onClick={toggleMoreLikeThis}
+        className={cn(
+          "flex h-14 w-4 items-center justify-center rounded-r-md bg-white/15 text-white outline-none transition-opacity duration-200 group-hover/tab:opacity-100 hover:bg-white/25 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-white/60",
+          open ? "opacity-100" : "opacity-20 pointer-coarse:opacity-40",
+        )}
+      >
+        <Icon className="size-4" />
+      </button>
+    </div>
   );
 }
 
@@ -81,7 +91,7 @@ function RelatedList({
   onShow: (photo: ImagePhoto) => void;
 }) {
   return (
-    <div className="flex h-full w-[min(18rem,80vw)] flex-col border-r border-white/10 bg-white/5 max-sm:bg-neutral-900">
+    <div className="flex h-full w-[min(18rem,80vw)] flex-col border-r border-white/10 bg-neutral-900/95">
       <p className="px-4 pt-3 pb-2 text-xs font-medium tracking-wide text-white/60 uppercase">
         More like this
       </p>

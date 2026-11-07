@@ -131,9 +131,9 @@ function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBody
       {showDetails && (
         <LightboxHeader photo={photo} position={steps.position} onHide={onToggleBare} />
       )}
-      <div className="relative flex min-h-0 flex-1">
-        {showDetails && onShow && <MoreLikeThis photo={photo} onShow={onShow} />}
+      <div className="relative flex min-h-0 flex-1 flex-col">
         <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
+        {showDetails && onShow && <MoreLikeThis photo={photo} onShow={onShow} />}
       </div>
     </>
   );
