@@ -84,13 +84,13 @@ the committed pictures, since it imports the portfolio's filters.
 Under them, **Camera crops** (or **Lens crops**, following the tab) lines up every picture of that kind at once, not
 one camera's. It's a frame the shape of the 267 × 200 crop with every picture drawn in it by its crop, faint, with
 **Others** setting how faint, and dashed lines across the middle. The list beside it chooses pictures (**All**,
-**None**, or one by one): the chosen ones are unfaded and drawn on top, and everything done in the frame changes all of
+**None**, or one by one): the chosen ones are drawn on top, mostly opaque (85%, so the others still show through a little), and everything done in the frame changes all of
 them together. Dragging moves them; **Zoom out** and **Zoom in** scale them; **Fit to limits** fits each one's subject
 inside the limit lines (a picture uploaded before subjects were found can't be fitted); **Whole picture** shows each
 whole, centered; **White fill** and **Transparent fill** set what fills the room around them; **Reset** puts their
 crops back as saved. A picture from before crops starts at its whole picture, so it shows as changed.
 
-**Limits** draws a red line in from the top, bottom, left and right, each a percentage of the frame (0 for none), with
+**Limits** draws a red line, above every picture, in from the top, bottom, left and right, each a percentage of the frame (0 for none), with
 the space past it shaded, to fit every picture inside. The limits are a preference kept in this browser's local
 storage (`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files.
 
