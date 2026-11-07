@@ -100,6 +100,10 @@ type TripLine struct {
 	// Fences are the areas photos without an exact spot were taken in, such
 	// as a park; none when there are none.
 	Fences []TripFence `json:"fences,omitempty"`
+	// Order is the day's photo IDs in the order they were moved into by hand,
+	// such as when a camera's clock was off; none while they're in the order
+	// they were taken. The editor reads the segments in this order.
+	Order []int `json:"order,omitempty"`
 }
 
 // SaveTripLine saves line as <folder>/triplines/<day>.json, new or replacing

@@ -26,12 +26,13 @@ import { draftOf, type GapDraft, segmentsOf, walkingDraft } from "@/lib/trip-gap
 import { draftVias, movedVia, withVia } from "@/lib/trip-points";
 import { dayTitle } from "@/components/trip-lines/day-title";
 import { useTripLinesSearch } from "@/lib/trip-lines-search";
+import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
 
 /** What the editor shows first: the saved line by hand, the automatic line, or nothing yet. */
 function initialView(ids: number[], line: TripLine | undefined): EditorView {
   if (!line) return { kind: "none" };
   if (line.auto) return { kind: "auto" };
-  const extras = { visits: line.visits, fences: line.fences };
+  const extras = { visits: line.visits, fences: line.fences, order: line.order };
   return { kind: "hand", draft: { ...draftOf(ids, line.segments), ...extras } };
 }
 
@@ -75,13 +76,31 @@ function endsOf(segments: TripSegment[]): TripPoint[] {
   );
 }
 
-/** Edits one day's trip line: the photo strip, the map, and saving. */
-export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
-  const ids = day.photos.map((p) => p.id);
-  const [view, setRawView] = useState<EditorView>(() =>
-    withPlaceGroups(initialView(ids, line), day.photos),
+/** The order the view's photos were moved into by hand, when it's a hand-drawn line with one. */
+function draftOrder(view: EditorView): number[] | undefined {
+  return view.kind === "hand" ? view.draft.order : undefined;
+}
+
+/** The view to start with: the saved line, its photos in the order it saved, grouped by place. */
+function startingView(day: TripDay, line: TripLine | undefined): EditorView {
+  const photos = orderedPhotos(day.photos, line?.order);
+  return withPlaceGroups(
+    initialView(
+      photos.map((p) => p.id),
+      line,
+    ),
+    photos,
   );
-  const setView = (next: EditorView) => setRawView(withPlaceGroups(next, day.photos));
+}
+
+/** Edits one day's trip line: the photo strip, the map, and saving. */
+export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine }) {
+  const [view, setRawView] = useState<EditorView>(() => startingView(taken, line));
+  // The day with its photos in the view's order: as taken, unless moved by hand.
+  const day = { ...taken, photos: orderedPhotos(taken.photos, draftOrder(view)) };
+  const ids = day.photos.map((p) => p.id);
+  const setView = (next: EditorView) =>
+    setRawView(withPlaceGroups(next, orderedPhotos(taken.photos, draftOrder(next))));
   const [hovered, setHovered] = useState<number>();
   const { search, set } = useTripLinesSearch();
   const focus = search.group;
@@ -91,6 +110,7 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
   const editDraft = (draft: GapDraft) => setView({ kind: "hand", draft });
   const draft = view.kind === "hand" ? view.draft : undefined;
   const placeAreas = useDayPlaceAreas(day.photos);
+  const shownDraft = stripDraft(view, day.photos, segments);
   return (
     <Card>
       <CardHeader>
@@ -103,8 +123,9 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
       <CardContent className="flex flex-col gap-4">
         <GroupStrip
           photos={day.photos}
-          draft={stripDraft(view, day.photos, segments)}
+          draft={shownDraft}
           onChange={editDraft}
+          onMove={(id, by) => editDraft({ ...shownDraft, order: movedId(ids, id, by) })}
           onHover={setHovered}
           focus={focus}
           onFocus={setFocus}
@@ -138,6 +159,7 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
           setView={setView}
           auto={auto}
           segments={segments}
+          order={orderToSave(taken.photos, ids)}
           saved={line}
         />
       </CardContent>
@@ -244,11 +266,14 @@ interface DayActionsProps {
   setView: (view: EditorView) => void;
   auto: { data?: TripLine; isFetching: boolean; error: Error | null };
   segments: TripSegment[];
+  /** The photo order moved into by hand, to save with the line; none while it's as taken. */
+  order?: number[];
   saved?: TripLine;
 }
 
 /** The buttons under the map, which save and remove the line as changes waiting for Commit. */
-function DayActions({ day, ids, view, setView, auto, segments, saved }: DayActionsProps) {
+function DayActions(props: DayActionsProps) {
+  const { day, ids, view, setView, auto, segments, order, saved } = props;
   const save = useMutation(saveTripLineMutation);
   const remove = useMutation(deleteTripLineMutation);
   const base = { id: day.day, day: day.day };
@@ -260,7 +285,9 @@ function DayActions({ day, ids, view, setView, auto, segments, saved }: DayActio
       autoBusy={auto.isFetching}
       save={save}
       remove={remove}
-      onSaveHand={() => save.mutate({ ...base, auto: false, segments, ...extrasOf(view) })}
+      onSaveHand={() =>
+        save.mutate({ ...base, auto: false, segments, ...extrasOf(view), ...(order && { order }) })
+      }
       onTurnOnAuto={() =>
         save.mutate(
           { ...base, auto: true, segments: [] },

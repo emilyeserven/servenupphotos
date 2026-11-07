@@ -19,13 +19,16 @@ interface GroupStripProps {
   /** The name of the group shown on its own on the map. */
   focus?: string;
   onFocus: (name: string | undefined) => void;
+  /** Moves a photo one place earlier or later in the day. */
+  onMove: (id: number, by: -1 | 1) => void;
 }
 
 /**
  * The day's photos in groups, each its own named line: a group starts wherever the photos' place
  * changes, or at a photo split off by hand. Each group collapses to its header.
  */
-export function GroupStrip({ photos, draft, onChange, onHover, focus, onFocus }: GroupStripProps) {
+export function GroupStrip(props: GroupStripProps) {
+  const { photos, draft, onChange, onHover, focus, onFocus, onMove } = props;
   const ids = photos.map((p) => p.id);
   const groups = photoGroups(ids, draft.groups);
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
@@ -56,6 +59,7 @@ export function GroupStrip({ photos, draft, onChange, onHover, focus, onFocus }:
             onToggle={() => toggle(g.key)}
             focus={focus}
             onFocus={onFocus}
+            onMove={onMove}
           />
         </li>
       ))}
@@ -138,6 +142,7 @@ interface GroupBoxProps {
   onToggle: () => void;
   focus?: string;
   onFocus: (name: string | undefined) => void;
+  onMove: (id: number, by: -1 | 1) => void;
 }
 
 /** One group: its name, how many photos, collapsing and showing it alone, and its photos. */
@@ -154,6 +159,7 @@ function GroupBox(props: GroupBoxProps) {
           onGap={(i, gap) => onChange(withGap(draft, i, gap))}
           onHover={onHover}
           onSplit={(id) => onChange(withGroupStart(draft, id, true))}
+          onMove={props.onMove}
           visits={draft.visits}
         />
       )}

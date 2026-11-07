@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Flag, MapPin, Scissors } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag, MapPin, Scissors } from "lucide-react";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
@@ -21,6 +21,8 @@ interface PhotoStripProps {
   offset?: number;
   /** Starts a new group at a photo; left out, photos can't start one. */
   onSplit?: (id: number) => void;
+  /** Moves a photo one place earlier (-1) or later (1) in the day; left out, photos can't move. */
+  onMove?: (id: number, by: -1 | 1) => void;
   /** The day's places visited; the ones put on the route show between their two photos. */
   visits?: TripVisit[];
 }
@@ -54,18 +56,26 @@ interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits"> {
 
 /** One photo in the strip, after the gap before it (none before the strip's first photo). */
 function StripItem(props: StripItemProps) {
-  const { photo, local, offset, gaps, onGap, onHover, onSplit, before } = props;
+  const { photo, local, offset, gaps, onGap, onHover, onSplit, onMove, before } = props;
   const i = offset + local;
   const first = local === 0;
   return (
     <li className="flex shrink-0 items-center gap-1">
       <VisitChips visits={before} />
-      {gaps && !first && <GapPicker gap={gapBefore(gaps, i)} index={i - 1} onGap={onGap} />}
+      {gaps && !first && (
+        <GapColumn
+          gap={gapBefore(gaps, i)}
+          index={i - 1}
+          onGap={onGap}
+          onSplit={onSplit && (() => onSplit(photo.id))}
+        />
+      )}
       <StripPhoto
         photo={photo}
+        n={i + 1}
         ends={endsAt(gaps, i)}
         onHover={onHover}
-        onSplit={first ? undefined : onSplit}
+        onMove={onMove}
       />
     </li>
   );
@@ -99,16 +109,18 @@ function lineEnds(gaps: Gap[], i: number): LineEnds {
 
 interface StripPhotoProps {
   photo: TripPhoto;
+  /** Its number among the day's photos, counting from 1, as the map's dots show it. */
+  n: number;
   ends: LineEnds;
   onHover: (id: number | undefined) => void;
-  onSplit?: (id: number) => void;
+  onMove?: (id: number, by: -1 | 1) => void;
 }
 
-function StripPhoto({ photo, ends, onHover, onSplit }: StripPhotoProps) {
+function StripPhoto({ photo, n, ends, onHover, onMove }: StripPhotoProps) {
   const url = squareUrl(photo.photo);
   return (
     <figure
-      className="flex w-20 flex-col items-center gap-1"
+      className="group/photo flex w-20 flex-col items-center gap-1"
       onMouseEnter={() => onHover(photo.id)}
       onMouseLeave={() => onHover(undefined)}
     >
@@ -117,9 +129,14 @@ function StripPhoto({ photo, ends, onHover, onSplit }: StripPhotoProps) {
           {url && <img src={url} alt={photoName(photo.photo)} className="size-full object-cover" />}
         </PhotoLink>
         <Ends {...ends} />
-        {onSplit && <SplitButton onClick={() => onSplit(photo.id)} />}
+        {onMove && <MoveButtons onMove={(by) => onMove(photo.id, by)} />}
       </div>
-      <figcaption className="text-muted-foreground text-xs tabular-nums">{photo.time}</figcaption>
+      <figcaption className="text-muted-foreground text-xs tabular-nums">
+        <span className="text-foreground font-medium" title="Its number on the map">
+          {n}
+        </span>{" "}
+        · {photo.time}
+      </figcaption>
     </figure>
   );
 }
@@ -142,17 +159,58 @@ function PhotoLink({ id, children }: { id: number; children: React.ReactNode }) 
   );
 }
 
-/** Starts a new group at the photo, shown over it. */
-function SplitButton({ onClick }: { onClick: () => void }) {
+/** Shown on hover or focus only. */
+const ON_HOVER = "opacity-0 focus-visible:opacity-100";
+
+/**
+ * Moves the photo one place earlier or later in the day, such as when the camera's clock was off;
+ * shown over the photo while it's pointed at.
+ */
+function MoveButtons({ onMove }: { onMove: (by: -1 | 1) => void }) {
+  const button = cn(
+    "bg-background/90 rounded-sm p-0.5 shadow-sm group-hover/photo:opacity-100",
+    ON_HOVER,
+  );
+  return (
+    <span className="absolute right-1 bottom-1 flex gap-0.5">
+      <button type="button" title="Move earlier" className={button} onClick={() => onMove(-1)}>
+        <ChevronLeft className="size-3" aria-hidden />
+        <span className="sr-only">Move earlier</span>
+      </button>
+      <button type="button" title="Move later" className={button} onClick={() => onMove(1)}>
+        <ChevronRight className="size-3" aria-hidden />
+        <span className="sr-only">Move later</span>
+      </button>
+    </span>
+  );
+}
+
+interface GapColumnProps extends GapPickerProps {
+  /** Cuts to a new place here: the photo after the gap starts a new group. */
+  onSplit?: () => void;
+}
+
+/** What happened between two photos, with the scissors under it, shown on hover, when it can cut. */
+function GapColumn({ onSplit, ...picker }: GapColumnProps) {
+  return (
+    <div className="group/gap flex flex-col items-center gap-1">
+      <GapPicker {...picker} />
+      {onSplit && <CutButton onClick={onSplit} />}
+    </div>
+  );
+}
+
+/** Cuts the strip here into a new group: a new place between these areas. */
+function CutButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       type="button"
-      title="Start a new group here"
+      title="Cut to a new place here"
       onClick={onClick}
-      className="bg-background/90 absolute right-1 bottom-1 rounded-sm p-0.5 shadow-sm"
+      className={cn("hover:bg-muted rounded-sm p-0.5 group-hover/gap:opacity-100", ON_HOVER)}
     >
-      <Scissors className="size-3" aria-hidden />
-      <span className="sr-only">Start a new group here</span>
+      <Scissors className="size-3.5" aria-hidden />
+      <span className="sr-only">Cut to a new place here</span>
     </button>
   );
 }

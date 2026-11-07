@@ -83,6 +83,8 @@ export interface TripLine {
   visits?: TripVisit[];
   /** The areas photos without an exact spot were taken in, such as a park. */
   fences?: TripFence[];
+  /** The day's photo IDs in the order moved into by hand; none while they're as taken. */
+  order?: number[];
 }
 
 /** An outline as a GeoJSON MultiPolygon's coordinates: polygons of rings of [longitude, latitude]. */

@@ -48,6 +48,8 @@ export interface GapDraft {
   visits?: TripVisit[];
   /** The areas photos without an exact spot were taken in, in the order added. */
   fences?: TripFence[];
+  /** The day's photo IDs in the order moved into by hand; none while they're as taken. */
+  order?: number[];
 }
 
 /** The line a hop rode, and how the hop was travelled when it was picked. */
