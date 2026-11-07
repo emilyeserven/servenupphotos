@@ -10,8 +10,11 @@ now **Settings › Status** (see [Settings](settings.md#status)).
 - **Needs attention:** across the full width above the other cards, a table with one row per problem: its priority,
   what it is, how many photos it affects, and a link to the page that fixes it. Rows only show while something has the
   problem; with none, it says nothing needs attention. It counts every photo file as the next Commit will have it
-  (changes waiting for Commit and local edits made, removed files left out), from the same read as the Instagram card,
-  so it asks GitHub nothing new. The **Priority** column shows a red dot for high, yellow for medium and gray for low.
+  (changes waiting for Commit and local edits made, removed files left out). It reads them from `/api/attention`, the
+  same files the Instagram calendar reads, so it asks GitHub nothing new, but with each file cut down to what the card
+  counts from: no image URLs, EXIF originals, notes, comment or alt text, and `colors` only as its `peakChroma`. That's
+  about a sixth of the size. It's read once and kept (`staleTime: Infinity`), since saves and local edits are layered
+  on top as they happen, and read again after a Commit or a Discard. The **Priority** column shows a red dot for high, yellow for medium and gray for low.
   The table starts sorted by priority, most urgent first, and pressing **Priority**, **Problem** or **Photos** sorts by
   that column instead (pressing it again flips the order). On a phone, the fix link moves under the problem.
   - **Photos without GPS** (high): no custom GPS position and none in the EXIF, leaving out photos marked
@@ -55,3 +58,7 @@ now **Settings › Status** (see [Settings](settings.md#status)).
 The cards are in `components/dashboard/` (the Needs attention table, built with TanStack Table, in
 `needs-attention-table.tsx`), the queue's counting in `lib/social-queue.ts` (shared through
 `hooks/use-social-queue.ts`), and the Needs attention checks in `lib/needs-attention.ts`.
+
+> **Frontend analogy:** `/api/attention` is a slim "list view" endpoint next to the calendar's "detail view" one, like
+> asking a GraphQL API for only the fields a component renders instead of whole records. The cutting happens in
+> `be-pipeline/internal/github/attention.go`.

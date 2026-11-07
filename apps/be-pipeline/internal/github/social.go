@@ -82,6 +82,15 @@ type socialFields struct {
 // SocialCalendar reads every photo JSON file, as PreviewBaseURL does, with
 // its social media publish date. It changes nothing.
 func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (SocialCalendar, error) {
+	return c.socialCalendar(ctx, gh, wholeFile)
+}
+
+// wholeFile is a photo file's content as it is, for the Instagram calendar.
+func wholeFile(content []byte) (json.RawMessage, error) { return content, nil }
+
+// socialCalendar reads every photo JSON file with its social media publish
+// date, each photo's Data being what data makes of its file.
+func (c *Client) socialCalendar(ctx context.Context, gh settings.GitHub, data func([]byte) (json.RawMessage, error)) (SocialCalendar, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
 		return SocialCalendar{}, perr
@@ -101,7 +110,11 @@ func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (Social
 			continue
 		}
 		var fields socialFields
-		if err := json.Unmarshal(f.content, &fields); err != nil {
+		content, err := data(f.content)
+		if err == nil {
+			err = json.Unmarshal(f.content, &fields)
+		}
+		if err != nil {
 			cal.Unreadable = append(cal.Unreadable, BaseURLUnreadable{Path: f.path, Error: "The file's fields aren't the expected types."})
 			continue
 		}
@@ -109,7 +122,7 @@ func (c *Client) SocialCalendar(ctx context.Context, gh settings.GitHub) (Social
 			Path: f.path, FileURL: f.fileURL, GPSPosition: fields.GPSPosition, CreateDate: fields.CreateDate,
 			Title: fields.Title, Image: socialImage(fields.Images),
 			IsSocialMediaEligible: fields.IsSocialMediaEligible, SocialMediaPublishDate: fields.SocialMediaPublishDate,
-			Data: f.content,
+			Data: content,
 		}
 		if fields.File != nil {
 			photo.File = *fields.File
