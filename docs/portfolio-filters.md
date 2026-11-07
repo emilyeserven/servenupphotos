@@ -139,6 +139,10 @@ controls' place, and choosing a section folds it up again. The Grid's filter but
 `FilterPickerButton`, which shows the filter's icon, name and how many of its filters are set; `PickerPart` puts the
 line saying what a section is for over its controls.
 
+A name or value cut off with an ellipsis, in a picker's list, a choice such as a long album in **Groups**, the Places
+columns or the Places button, shows all of it on hover (`TruncatedText` in `components/truncated-text.tsx`, which adds
+the hover text only while the text is cut off).
+
 > **Frontend analogy:** it's a vertical tabs component whose tab list turns into an accordion header on small screens;
 > each picker only supplies the tabs' labels and the panel.
 
