@@ -30,10 +30,24 @@ export interface TripSegment {
   /** Spots the line goes through between its photos, to shape it. */
   via?: TripVia[];
   /**
-   * The line along streets through its points, each [longitude, latitude], from Snap to streets;
-   * none for a train or subway, or before it's snapped, which draws it straight through its points.
+   * The line along streets through its points, each [longitude, latitude], from Snap to streets, or
+   * a hop's track along its `line`; none before either, which draws it straight through its points.
    */
   path?: [number, number][];
+  /** The bus, subway or train line a hop rode, picked from the ones OpenStreetMap maps. */
+  line?: TripTransitLine;
+}
+
+/** The bus, subway or train line a hop rode: an OpenStreetMap route, with its name and color. */
+export interface TripTransitLine {
+  /** The route's OpenStreetMap ID. */
+  id: number;
+  /** Its name, such as "Midosuji Line". */
+  name: string;
+  /** Its short number or letter, such as "M". */
+  ref?: string;
+  /** Its color, such as "#e5171f", which the map draws it in. */
+  colour?: string;
 }
 
 /** A spot a segment's line goes through to shape it, such as a bridge crossed between two photos. */

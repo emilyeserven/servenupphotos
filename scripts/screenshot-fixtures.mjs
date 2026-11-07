@@ -551,6 +551,18 @@ const snapped = ({ body }) => ({
   unrouted: 0,
 });
 
+/** A pretend track between ?from= and ?to=, bending out to one side like a line around a block. */
+function curvedTrack({ url }) {
+  const [from, to] = ["from", "to"].map((k) => url.searchParams.get(k).split(",").map(Number));
+  const bend = [(from[0] + to[0]) / 2 + (to[1] - from[1]) * 0.3, (from[1] + to[1]) / 2];
+  const steps = [0, 0.25, 0.5, 0.75, 1];
+  const along = steps.map((t) => [
+    (1 - t) ** 2 * from[0] + 2 * (1 - t) * t * bend[0] + t ** 2 * to[0],
+    (1 - t) ** 2 * from[1] + 2 * (1 - t) * t * bend[1] + t ** 2 * to[1],
+  ]);
+  return { path: along };
+}
+
 const pendingSave = (branch = PULL_REQUEST.branch) => ({
   branch,
   pullRequestUrl: PULL_REQUEST.url,
@@ -1254,6 +1266,36 @@ export function defaultFixtures() {
       ],
     },
     "POST /api/triplines/2026-10-01/route": snapped,
+    "GET /api/transit/lines": [
+      {
+        id: 1,
+        name: "Midosuji Line",
+        ref: "M",
+        colour: "#e5171f",
+        kind: "subway",
+        from: "Nakamozu",
+        to: "Esaka",
+      },
+      {
+        id: 2,
+        name: "Midosuji Line",
+        ref: "M",
+        colour: "#e5171f",
+        kind: "subway",
+        from: "Esaka",
+        to: "Nakamozu",
+      },
+      {
+        id: 3,
+        name: "Yotsubashi Line",
+        ref: "Y",
+        colour: "#0078ba",
+        kind: "subway",
+        from: "Suminoekoen",
+        to: "Nishi-Umeda",
+      },
+    ],
+    "GET /api/transit/lines/1/track": curvedTrack,
     "PUT /api/triplines/2026-10-01": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/triplines/2026-10-01.json`,

@@ -2,10 +2,18 @@ import type { TripPoint, TripSegment } from "@/api/trip-lines";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type LngLat, linePoints } from "@/lib/trip-points";
 
+/** What the map draws a line by: its mode, and for a hop along its line, that line's color. */
+interface LineProps {
+  mode: string;
+  /** Whether it's a hop drawn along the track of the line it rode. */
+  onLine: boolean;
+  colour: string;
+}
+
 /** A segment as a GeoJSON line, with its mode. */
 interface LineFeature {
   type: "Feature";
-  properties: { mode: string };
+  properties: LineProps;
   geometry: { type: "LineString"; coordinates: LngLat[] };
 }
 
@@ -17,8 +25,27 @@ interface LineCollection {
 
 /** The points the segment's line goes through: its path along streets when it has one, or else its points. */
 function segmentCoordinates(segment: TripSegment, byId: Map<number, TripPhoto>): LngLat[] {
-  if (segment.path && segment.path.length >= 2) return segment.path;
+  if (hasPath(segment)) return segment.path!;
   return linePoints(segment, byId).map((p) => p.at);
+}
+
+/** The hop color when a line has none of its own. */
+const HOP_COLOUR = "#9333ea";
+
+/** What the map draws the segment by. */
+function lineProps(segment: TripSegment): LineProps {
+  const onLine = segment.line !== undefined && hasPath(segment);
+  return { mode: segment.mode, onLine, colour: colourOf(segment) };
+}
+
+/** Whether the segment has a path to draw along. */
+function hasPath(segment: TripSegment): boolean {
+  return (segment.path?.length ?? 0) >= 2;
+}
+
+/** The color of the line the segment rode, or else the usual hop color. */
+function colourOf(segment: TripSegment): string {
+  return segment.line?.colour || HOP_COLOUR;
 }
 
 /** The segments as GeoJSON lines with their mode, the way the map draws them. */
@@ -30,7 +57,7 @@ export function lineFeatures(segments: TripSegment[], photos: TripPhoto[]): Line
     return [
       {
         type: "Feature",
-        properties: { mode: segment.mode },
+        properties: lineProps(segment),
         geometry: { type: "LineString", coordinates },
       },
     ];

@@ -30,12 +30,21 @@ function walkLayer(preview: boolean): LayerProps {
   };
 }
 
-/** A hop by train, subway, bus or car, a dashed line. */
+/** A hop by train, subway, bus or car with no line picked, a dashed line. */
 const hopLayer: LayerProps = {
   id: "trip-hop",
   type: "line",
-  filter: ["!=", ["get", "mode"], "walk"],
-  paint: { "line-color": "#9333ea", "line-width": 3, "line-dasharray": [2, 2] },
+  filter: ["all", ["!=", ["get", "mode"], "walk"], ["!", ["get", "onLine"]]],
+  paint: { "line-color": ["get", "colour"], "line-width": 3, "line-dasharray": [2, 2] },
+};
+
+/** A hop along the track of the line it rode, solid in that line's color. */
+const lineLayer: LayerProps = {
+  id: "trip-transit-line",
+  type: "line",
+  filter: ["get", "onLine"],
+  layout: { "line-cap": "round", "line-join": "round" },
+  paint: { "line-color": ["get", "colour"], "line-width": 4, "line-opacity": 0.9 },
 };
 
 interface RouteMapProps {
@@ -84,6 +93,7 @@ export function RouteMap({
         <Source id="trip-line" type="geojson" data={lineFeatures(segments, photos)}>
           <Layer {...walkLayer(preview === true)} />
           <Layer {...hopLayer} />
+          <Layer {...lineLayer} />
         </Source>
         {photos.map((p, i) => (
           <Marker key={p.id} latitude={p.latitude} longitude={p.longitude}>
