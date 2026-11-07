@@ -44,7 +44,22 @@ new.
 ## Folders
 
 In the tree, a folder opens and closes from its name, which shows how many albums are inside it. **Expand all** and
-**Collapse all** open or close every folder. Which folders are closed is remembered in the browser.
+**Collapse all** open or close every folder. Which folders are closed is remembered in the browser. Albums with no
+parent folder are grouped after the folders under an italic _No Parent_, which opens and closes like a folder.
+
+## Changing an album's parent
+
+Each album in the tree has a **Parent** select under its stage: **No parent**, every folder there is, or **New
+folder…**, which asks for a path such as `Travel/Korea` and makes the folders it needs (`moveAlbum` in
+`lib/lightroom-tree.ts`). A folder that already has something with the album's name refuses the move with a message.
+Folders a move leaves empty stay, as they do in Lightroom.
+
+A moved album read from Lightroom keeps where Lightroom has it as `lightroomPath`. A new import matches it by that
+path, so it keeps its stage and notes and stays where you moved it, unless the import already has something at the
+moved path. Moving it back to where Lightroom has it drops `lightroomPath`.
+
+> **Frontend analogy:** like a React list keyed by a stable ID rather than by index: the album's position (`path`)
+> can change on the page, but `lightroomPath` is the key the next import reconciles against.
 
 ## Adding albums by hand
 

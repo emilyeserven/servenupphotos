@@ -1,6 +1,6 @@
 import screenshotsPrompt from "@/lib/lightroom-albums-prompt.md?raw";
 import recordingPrompt from "@/lib/lightroom-albums-recording-prompt.md?raw";
-import { insertAlbum } from "@/lib/lightroom-tree";
+import { insertAlbum, keepMove } from "@/lib/lightroom-tree";
 
 /** How the album panel is captured for the LLM: overlapping screenshots, or a screen recording scrolling through it. */
 export type LightroomCapture = "screenshots" | "recording";
@@ -39,6 +39,11 @@ export interface LightroomAlbum {
   offline: boolean;
   /** Whether it was added by hand on the page rather than read from Lightroom, so a new import keeps it. */
   manual?: boolean;
+  /**
+   * Where Lightroom has the album, when it was moved to another folder on this page, so a new import still matches
+   * it and leaves it where it was moved.
+   */
+  lightroomPath?: string;
   /** Which stage the album is at, or null before one is picked. */
   stage: LightroomStage | null;
   /** The photographer's notes on the album. */
@@ -112,6 +117,15 @@ function itemPath(raw: Record<string, unknown>, name: string, parent: string): s
   return text(raw.path) || (parent ? `${parent}/${name}` : name);
 }
 
+/** Whether the album was added by hand, and where Lightroom has it when it was moved on this page. */
+function origin(raw: Record<string, unknown>): Pick<LightroomAlbum, "manual" | "lightroomPath"> {
+  const lightroomPath = text(raw.lightroomPath);
+  return {
+    ...(raw.manual === true ? { manual: true } : {}),
+    ...(lightroomPath ? { lightroomPath } : {}),
+  };
+}
+
 function readAlbum(raw: Record<string, unknown>, name: string, path: string): LightroomAlbum {
   return {
     kind: "album",
@@ -120,7 +134,7 @@ function readAlbum(raw: Record<string, unknown>, name: string, path: string): Li
     photoCount: count(raw.photoCount),
     smart: raw.smart === true,
     offline: raw.offline === true,
-    ...(raw.manual === true ? { manual: true } : {}),
+    ...origin(raw),
     stage: stage(raw.stage),
     notes: text(raw.notes),
     ...uncertainty(raw),
@@ -188,6 +202,11 @@ function hasWork(album: LightroomAlbum): boolean {
   return album.stage !== null || album.notes.trim() !== "";
 }
 
+/** Where Lightroom has the album: where it was before it was moved on this page, or where it is. */
+function lightroomPathOf(album: LightroomAlbum): string {
+  return album.lightroomPath ?? album.path;
+}
+
 /** The album with the old album's stage and notes in place of any it doesn't have itself. */
 function keepWork(album: LightroomAlbum, old: LightroomAlbum | undefined): LightroomAlbum {
   if (!old) return album;
@@ -221,14 +240,17 @@ export function mergeLightroomAlbums(
   current: LightroomItem[],
   imported: LightroomItem[],
 ): LightroomMerge {
-  const old = new Map(allAlbums(current).map((album) => [album.path, album]));
+  const old = new Map(allAlbums(current).map((album) => [lightroomPathOf(album), album]));
   const merged = imported.map((item) => mergeItem(item, old));
   const paths = new Set(allAlbums(merged).map((album) => album.path));
   const kept = [...paths].filter((path) => old.has(path)).length;
-  const missing = [...old.values()].filter((album) => !paths.has(album.path));
+  const missing = [...old.values()].filter((album) => !paths.has(lightroomPathOf(album)));
   const manual = missing.filter((album) => album.manual);
+  const moved = [...old.values()].filter(
+    (album) => album.lightroomPath && paths.has(album.lightroomPath),
+  );
   return {
-    items: manual.reduce(insertAlbum, merged),
+    items: manual.reduce(insertAlbum, moved.reduce(keepMove, merged)),
     added: paths.size - kept,
     kept,
     dropped: missing.filter((album) => !album.manual && hasWork(album)),

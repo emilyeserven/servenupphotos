@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AlbumBoard } from "@/components/lightroom-albums/album-board";
 import { AddAlbumButton } from "@/components/lightroom-albums/add-album";
-import { FolderButtons, ItemList } from "@/components/lightroom-albums/folder-tree";
+import { AlbumTree, FolderButtons } from "@/components/lightroom-albums/folder-tree";
 import { Segmented } from "@/components/lightroom-albums/segmented";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { count } from "@/components/update-data-shared";
@@ -97,7 +97,7 @@ function TreeView({ file, albums }: { file: LightroomAlbumsFile; albums: Lightro
         <StageChips albums={albums} filter={filter} onFilter={setFilter} />
         <FolderButtons items={file.items} />
       </div>
-      <ItemList items={filterItems(file.items, filter)} />
+      <AlbumTree items={filterItems(file.items, filter)} />
     </div>
   );
 }

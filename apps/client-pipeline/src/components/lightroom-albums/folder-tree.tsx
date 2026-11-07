@@ -1,5 +1,6 @@
 import { ChevronRightIcon, FolderIcon, Trash2Icon } from "lucide-react";
 import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
+import { ParentSelect } from "@/components/lightroom-albums/parent-select";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { count } from "@/components/update-data-shared";
@@ -13,10 +14,34 @@ import { folderPaths } from "@/lib/lightroom-tree";
 import { cn } from "@/lib/utils";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 
+/** The path that opens and closes the No Parent group, which no real folder can have. */
+const NO_PARENT = "\u0000no-parent";
+
+/** The top level of the tree: its folders, then the albums with no parent grouped under "No Parent". */
+function grouped(items: LightroomItem[]): LightroomItem[] {
+  const loose = items.filter((item) => item.kind === "album");
+  const folders = items.filter((item) => item.kind === "folder");
+  if (loose.length === 0) return folders;
+  return [
+    ...folders,
+    { kind: "folder", name: "No Parent", path: NO_PARENT, children: loose, collapsed: false },
+  ];
+}
+
+/** Every folder that can be opened and closed, the No Parent group too. */
+function closablePaths(items: LightroomItem[]): string[] {
+  return folderPaths(grouped(items));
+}
+
+/** The whole tree, with the albums that have no parent grouped under "No Parent" after the folders. */
+export function AlbumTree({ items }: { items: LightroomItem[] }) {
+  return <ItemList items={grouped(items)} />;
+}
+
 /** Opens or closes every folder in the tree at once. */
 export function FolderButtons({ items }: { items: LightroomItem[] }) {
   const setClosedFolders = useLightroomAlbumsStore((state) => state.setClosedFolders);
-  if (folderPaths(items).length === 0) return null;
+  if (closablePaths(items).length === 0) return null;
   return (
     <div className="flex gap-2">
       <Button type="button" size="sm" variant="outline" onClick={() => setClosedFolders([])}>
@@ -26,7 +51,7 @@ export function FolderButtons({ items }: { items: LightroomItem[] }) {
         type="button"
         size="sm"
         variant="outline"
-        onClick={() => setClosedFolders(folderPaths(items))}
+        onClick={() => setClosedFolders(closablePaths(items))}
       >
         Collapse all
       </Button>
@@ -35,7 +60,7 @@ export function FolderButtons({ items }: { items: LightroomItem[] }) {
 }
 
 /** The folders and albums at one level of the tree, with what's inside each open folder under it. */
-export function ItemList({ items }: { items: LightroomItem[] }) {
+function ItemList({ items }: { items: LightroomItem[] }) {
   if (items.length === 0) return <p className="text-muted-foreground text-sm">No albums here.</p>;
   return (
     <ul className="flex flex-col gap-2">
@@ -65,7 +90,7 @@ function FolderRow({ folder }: { folder: LightroomFolder }) {
           aria-hidden
         />
         <FolderIcon className="text-muted-foreground size-4" aria-hidden />
-        {folder.name}
+        <span className={cn(folder.path === NO_PARENT && "italic")}>{folder.name}</span>
         <span className="text-muted-foreground text-xs font-normal">
           {count(allAlbums(folder.children).length, "album")}
         </span>
@@ -107,7 +132,8 @@ function AlbumRow({ album }: { album: LightroomAlbum }) {
         />
       </div>
       <div className="flex gap-2 sm:flex-col">
-        <StageSelect album={album} className="flex-1 sm:w-40 sm:flex-none" />
+        <StageSelect album={album} className="flex-1 sm:w-44 sm:flex-none" />
+        <ParentSelect album={album} className="flex-1 sm:w-44 sm:flex-none" />
         {album.manual && <RemoveButton album={album} />}
       </div>
     </div>
