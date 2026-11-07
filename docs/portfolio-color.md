@@ -96,7 +96,7 @@ The **Filters** vividness controls work here too. Older links' `?light=` range i
 
 These are on the [Grid page](#on-the-grid-page); the Color page keeps only the vividness ones, behind **Filters**. The
 swatches filter by one color (`?color=orange`, `?color=dark gray`; **All** clears it): the
-12 hues, then the 5 shades after a divider. How a photo matches the color is picked under them (`lib/color-match.ts`),
+12 hues, six to a row, then the 5 shades on a row of their own below a line. How a photo matches the color is picked under them (`lib/color-match.ts`),
 and each swatch's tooltip says how many photos it shows that way. A swatch that would show none is crossed out with an
 X and can't be picked, unless it's already the filter from a link, so it can still be cleared:
 

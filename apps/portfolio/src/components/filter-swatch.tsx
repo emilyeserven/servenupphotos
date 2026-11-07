@@ -9,7 +9,7 @@ interface SwatchSearch {
 }
 
 const SWATCH_CLASS =
-  "flex size-6 items-center justify-center rounded-full border-2 p-px outline-none transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "flex size-9 items-center justify-center rounded-full border-2 p-0.5 outline-none transition focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background";
 
 /**
  * A round swatch of fill that sets pick in the URL, or clears it with clear when it's already
@@ -67,7 +67,7 @@ function UnavailableSwatch({ title, children }: { title: string; children: React
       <X
         aria-hidden
         strokeWidth={3}
-        className="absolute size-4 text-white drop-shadow-[0_0_1.5px_black]"
+        className="absolute size-5 text-white drop-shadow-[0_0_1.5px_black]"
       />
     </span>
   );
