@@ -75,9 +75,10 @@ autumn 2026 on the Grid. Clearing one clears only that step. While a card is nar
 narrowed isn't kept in the URL. The Grid matches any of several places, so when a chain chooses more than one kind of
 place, such as the United States and then No region, its link opens the photos themselves by ID (`?ids=…`).
 
-Clicking a row on a linked card highlights it and makes the other two count only photos with that setting. Every linked
-card lists every choice under its title, with the card's name, in card order: "with" before the first and "and" before
-the rest, such as "with Fast aperture and Base ISO". Each name opens on the Grid the photos with every choice listed
+Clicking a row on a linked card highlights it and makes the other two count only photos with that setting. Each linked
+card lists the other cards' choices under its title, not its own, with the card's name, in card order: "with" before the
+first and "and" before the rest, such as "with Fast aperture and Base ISO" on Shutter speed. Each name opens on the Grid
+the photos with every choice listed
 (such as `/grid?aperture=2-3.1&iso=100-200`), and its X clears only that choice. A linked card never narrows itself, so its own
 rows keep counting every photo the other choices leave, and its ranges stay listed even when they come to 0.
 

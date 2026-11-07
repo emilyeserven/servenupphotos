@@ -375,12 +375,11 @@ function narrowedTitle(id: string): string {
   return ALL_GROUPS.find((g) => g.id === id)?.build([]).title ?? id;
 }
 
-/** The rows chosen in the groups linked with the group, its own too unless `own` is false. */
-function linkedChoices(def: GroupDef, links: Links, own = true): StatFocus[] {
-  const linked = ALL_GROUPS.filter((other) => other.linked === def.linked);
-  return linked
-    .filter((other) => own || other.id !== def.id)
-    .flatMap((other) => (links[other.id] ? [links[other.id]!] : []));
+/** The rows chosen in the groups linked with the group, not its own. */
+function otherLinks(def: GroupDef, links: Links): StatFocus[] {
+  return ALL_GROUPS.filter((other) => other.linked === def.linked && other.id !== def.id).flatMap(
+    (other) => (links[other.id] ? [links[other.id]!] : []),
+  );
 }
 
 /** The filter for the photos with every one of the chosen rows. */
@@ -396,16 +395,16 @@ function linkText(focus: StatFocus): string {
 
 /**
  * A linked group's card, such as Aperture: it counts the photos the rows chosen in the other groups
- * linked with it leave, and lists every linked choice, its own too, as "with Fast aperture and Base
+ * linked with it leave, and lists those choices, not its own, as "with Fast shutter speed and Base
  * ISO", each opening the photos with all of them; a click on its own row chooses it for the others.
  */
 function LinkedCard({ def, state }: { def: GroupDef; state: PageState }) {
-  const list = filterWithCamera(photos, linkFilter(linkedChoices(def, state.links, false)));
+  const others = otherLinks(def, state.links);
+  const filter = linkFilter(others);
+  const list = filterWithCamera(photos, filter);
   const group = def.build(list);
-  const choices = linkedChoices(def, state.links);
-  const filter = linkFilter(choices);
-  const count = filterWithCamera(photos, filter).length;
-  const focuses = choices.map((focus, index) => ({
+  const count = list.length;
+  const focuses = others.map((focus, index) => ({
     ...focus,
     row: { ...focus.row, label: linkText(focus), count },
     filter,
