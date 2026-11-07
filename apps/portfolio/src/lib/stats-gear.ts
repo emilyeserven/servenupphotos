@@ -139,8 +139,7 @@ function exposureDef(id: string, key: RangeKey, title: string): GroupDef {
 }
 
 /** What the Exposure Triangle's box says under its title. */
-const EXPOSURE_DESCRIPTION =
-  "The three settings that balance how bright a photo is. Pick one to see the other two within it.";
+const EXPOSURE_DESCRIPTION = "The three settings that balance how bright a photo is.";
 
 /** Every camera as a row, the Cameras card's first way to group. */
 const EACH_CAMERA: GroupVariant = {
