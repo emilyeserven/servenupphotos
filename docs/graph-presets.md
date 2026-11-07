@@ -68,6 +68,14 @@ and **New preset** and **New group** under them. The right side edits the chosen
   page shows up here too).
 - A **group** has its name and order, and says which presets are in it. A group with no presets isn't shown on the
   Graph page, and **Remove group** waits until its presets are moved out.
+- A group with presets also has **Change every preset in it**: the same **Graph type**, **Axes** and **Range** buttons,
+  starting from its first preset's graph, for changing a setting in all its presets at once, such as making them all
+  pie charts. Only the settings picked there change (listed under the buttons with what they'll be); each preset keeps
+  its others. **Save N presets** saves each preset that the change makes different, one after another, the same way
+  its own **Save** would, and says which presets have those settings already. **Start over** drops the picks.
+
+  > **Frontend analogy:** it's a bulk edit, like selecting rows in a table and setting one column: the picks are a
+  > `Partial<GraphConfig>` spread over each preset's graph, `{ ...preset.graph, ...picked }`, then one `PUT` per preset.
 
 **Save** (`PUT /api/graphs/<id>` → `PUT /graphs/{id}`) and **Remove** (`DELETE /api/graphs/<id>` → `DELETE
 /graphs/{id}`) keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as a graph
