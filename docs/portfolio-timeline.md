@@ -11,6 +11,18 @@ When an album is picked for the **Timeline Header** zone on the pipeline's [Site
 its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background,
 with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).
 
+## Route sketches
+
+A day with a [trip line](trip-lines.md) has a small sketch of its route at the right end of its heading
+(`components/timeline-route-sketch.tsx`): the day's lines and places visited from the `TRIPLINES.geo.json` that Commit
+bakes, fitted into 48 × 32 px with their shape kept, in the Map's line styles and colors (walks solid blue, drives in
+long gray dashes, rides in their line's color, other hops dashed purple, places visited as amber dots). Areas are left
+out. Clicking it opens the [Map](portfolio-map.md) on that day (`/map?day=2026-09-23`). The file loads after the page,
+so the sketches appear a moment later, and on screens under 360 px wide they're hidden.
+
+> **Frontend analogy:** the sketch is a sparkline for a route: the same GeoJSON the Map draws with MapLibre, drawn
+> instead as one tiny inline `<svg>` with no tiles, like a chart thumbnail.
+
 ## Scrubber
 
 Once the chart has scrolled up out of the window, a scrubber appears down the right edge, like the one in Google Photos.
