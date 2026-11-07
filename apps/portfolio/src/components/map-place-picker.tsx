@@ -11,25 +11,36 @@ import { filterPhotos, locationFilters } from "@/lib/photo-filters";
  * The map's **Places** button: the same searchable tree of countries, cities and places as the
  * Places filter, but picking one moves the map to its photos and closes the tree, rather than
  * filtering the photos. `photos` are the ones the map's filters leave, which the tree lists and
- * counts, and `onPick` gets the picked place's photos.
+ * counts, and `onPick` gets the picked place's photos. Pointing at a place with an area shades it
+ * on the map (see place-areas.ts).
  */
 export function MapPlacePicker({
   photos,
   onPick,
+  onHover,
 }: {
   photos: PlacedPhoto[];
-  onPick: (photos: PlacedPhoto[]) => void;
+  /** Gets the picked place's photos and its location value, such as "place:osaka-castle-park". */
+  onPick: (photos: PlacedPhoto[], value: string) => void;
+  /** Gets the location value pointed at in the tree, and undefined after or once it closes. */
+  onHover: (value: string | undefined) => void;
 }) {
   const [open, setOpen] = useState(false);
 
+  /** Opens or closes the tree, forgetting what was pointed at when it closes. */
+  function toggle(next: boolean) {
+    setOpen(next);
+    if (!next) onHover(undefined);
+  }
+
   /** Moves the map to the place's photos and closes the tree. */
   function pick(value: string) {
-    setOpen(false);
-    onPick(filterPhotos(photos, locationFilters([value])));
+    toggle(false);
+    onPick(filterPhotos(photos, locationFilters([value])), value);
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={toggle}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -43,7 +54,9 @@ export function MapPlacePicker({
           <ChevronsUpDown aria-hidden className="absolute right-2.5 opacity-50" />
         </Button>
       </PopoverTrigger>
-      {open && <PlacesPanel options={locationOptions(photos, photos)} onChoose={pick} />}
+      {open && (
+        <PlacesPanel options={locationOptions(photos, photos)} onChoose={pick} onHover={onHover} />
+      )}
     </Popover>
   );
 }

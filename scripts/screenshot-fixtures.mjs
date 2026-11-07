@@ -1297,6 +1297,20 @@ export function defaultFixtures() {
       ],
     },
     "POST /api/triplines/2026-10-01/route": snapped,
+    "GET /api/places/washington-square-park/area": {
+      osm: "R1",
+      shape: [
+        [
+          [
+            [-73.9995, 40.7303],
+            [-73.9964, 40.7295],
+            [-73.9953, 40.7315],
+            [-73.9985, 40.7322],
+            [-73.9995, 40.7303],
+          ],
+        ],
+      ],
+    },
     "GET /api/areas": [
       {
         name: "Upper East Side",

@@ -209,7 +209,13 @@ async function fromDataFolder(kind) {
   const dataDir = path.join(root, DATA_PATH, kind.folder);
   const skipped = new Set([`${kind.all}.json`, `${kind.all}.local.json`]);
   const files = (await readdir(dataDir, { withFileTypes: true }).catch(() => []))
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".json") && !skipped.has(entry.name))
+    .filter(
+      (entry) =>
+        entry.isFile() &&
+        entry.name.endsWith(".json") &&
+        !entry.name.endsWith(".geo.json") &&
+        !skipped.has(entry.name),
+    )
     .map((entry) => entry.name)
     // Byte order, like `LC_ALL=C sort` in the workflow.
     .sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));

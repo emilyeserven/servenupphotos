@@ -2,6 +2,7 @@ package github
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"unicode/utf8"
@@ -52,19 +53,20 @@ func validFence(f *TripFence, n int) *PublishError {
 	if len(f.Photos) == 0 || len(f.Photos) > maxFencePhotos {
 		return publishErr(http.StatusBadRequest, "Area %d: put 1 to %d photos in it.", n, maxFencePhotos)
 	}
-	return validShape(f.Shape, n)
+	return validShape(f.Shape, fmt.Sprintf("Area %d", n))
 }
 
 // validShape fails unless shape is an outline on the globe of up to
-// areas.MaxPoints points, each ring closed.
-func validShape(shape areas.Shape, n int) *PublishError {
+// areas.MaxPoints points, each ring closed. what names it in the message,
+// such as "Area 2".
+func validShape(shape areas.Shape, what string) *PublishError {
 	if len(shape) == 0 || areas.Points(shape) > areas.MaxPoints {
-		return publishErr(http.StatusBadRequest, "Area %d needs an outline of up to %d points.", n, areas.MaxPoints)
+		return publishErr(http.StatusBadRequest, "%s needs an outline of up to %d points.", what, areas.MaxPoints)
 	}
 	for _, polygon := range shape {
 		for _, ring := range polygon {
 			if !validRing(ring) {
-				return publishErr(http.StatusBadRequest, "Area %d: its outline has a ring that isn't closed or is off the globe.", n)
+				return publishErr(http.StatusBadRequest, "%s: its outline has a ring that isn't closed or is off the globe.", what)
 			}
 		}
 	}
