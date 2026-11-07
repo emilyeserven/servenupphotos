@@ -7,15 +7,16 @@ the date in its heading, so the label of the days in view sits just under the mo
 thumbnail or title opens the photo viewer. The filters are described in
 [Portfolio Filters](portfolio-filters.md), including the [text search](portfolio-filters.md#text-search) box.
 
-## Same day, week or month
+## Quick dates
 
-Under each photo's title, a quick filter such as **Same day · 8** shows only the photos taken around the same time: the
-photo's day, or else its week (Sunday to Saturday, as on the heatmap), or else its month, whichever is the most specific
-with more than five photos. It counts the photos the filters and search let through, and isn't shown when none of the
-three has more than five, or when the Timeline already shows that time. It sets the time range to those dates
-(`?from=…&to=…`), so **Reset** and the range picker undo it as usual.
+The **Quick dates** menu beside the range picker lists the busiest times, newest first: each photo's day, or else its
+week (Sunday to Saturday, as on the heatmap), or else its month, whichever is the most specific with more than five
+photos, with how many photos each has. Days are listed under their week, weeks under their month, and months under
+their year. It counts the photos the filters and search let through, and isn't shown when no time has more than five.
+Picking one sets the time range to its dates (`?from=…&to=…`), and the menu's button then names it; **Reset** and the
+range picker undo it as usual.
 
-Whenever the time range is exactly one month, week or day, whether from a quick filter or picked by hand, the list
+Whenever the time range is exactly one month, week or day, whether from **Quick dates** or picked by hand, the list
 divides its photos one step finer than usual:
 
 | Time range | Headings | Subheadings |

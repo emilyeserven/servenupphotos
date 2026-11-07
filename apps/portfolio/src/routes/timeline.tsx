@@ -7,7 +7,7 @@ import { PhotoFilterBar } from "@/components/photo-filters";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
-import { SameTimeButton } from "@/components/same-time-button";
+import { QuickDatesPicker } from "@/components/quick-dates-picker";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
@@ -17,14 +17,7 @@ import { Button } from "@/components/ui/button";
 import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
 import { dayKey } from "@/lib/heatmap";
-import {
-  countTimes,
-  sameTime,
-  shownUnit,
-  TIME_DIVISIONS,
-  type SameTime,
-  type TimeDivision,
-} from "@/lib/same-time";
+import { shownUnit, TIME_DIVISIONS, type TimeDivision } from "@/lib/busy-times";
 import { findTimelineLabel, labelDates, labelOn } from "@/lib/timeline-labels";
 import { TimelineLabelPicker } from "@/components/timeline-label-picker";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
@@ -141,8 +134,6 @@ function TimelineView() {
   const [chart, setChart] = useState<HTMLDivElement | null>(null);
   const [list, setList] = useState<HTMLOListElement | null>(null);
   useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
-  // Each photo's quick filter counts the photos the filters let through, at any time.
-  const counts = countTimes(matching);
 
   /**
    * Shows the time range, or the timeline label's days, keeping the filters and the rest of the
@@ -177,6 +168,7 @@ function TimelineView() {
             selection={{ from: start, to: end }}
             onChange={showRange}
           />
+          <QuickDatesPicker photos={matching} value={timeRange} onChange={showRange} />
           <TimelineLabelPicker value={label} onChange={(id) => showRange({ label: id })} />
           <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
           <Button variant="outline" size="sm" disabled={isAllTime} onClick={() => showRange({})}>
@@ -217,8 +209,6 @@ function TimelineView() {
         display={display}
         divisions={timeDivisions(timeRange, label)}
         onOpen={show}
-        sameTimeOf={(photo) => sameTime(photo, counts, timeRange)}
-        onPickTime={showRange}
         listRef={setList}
       />
       {/* With one label's days, the ticks are its days rather than a month or two. */}
@@ -228,17 +218,10 @@ function TimelineView() {
   );
 }
 
-/**
- * What each photo row needs from the page: the display options, how to open a photo, and its quick
- * filter to the photos taken around the same time.
- */
+/** What each photo row needs from the page: the display options, and how to open a photo. */
 interface RowOptions {
   display: TimelineDisplay;
   onOpen: (photo: ImagePhoto) => void;
-  /** The day, week or month the photo's quick filter shows, if any. */
-  sameTimeOf: (photo: Photo) => SameTime | undefined;
-  /** Shows only the photos in the time range a quick filter picked. */
-  onPickTime: (range: TimeRangeValue) => void;
 }
 
 function PhotoMonths({
@@ -395,13 +378,7 @@ function DayLabel({ label }: { label: string }) {
  * its day is in the subheading above. The thumbnail and the title open the photo in the lightbox;
  * photos without resized versions in R2 have nothing to open.
  */
-function PhotoRow({
-  photo,
-  display,
-  onOpen,
-  sameTimeOf,
-  onPickTime,
-}: RowOptions & { photo: Photo }) {
+function PhotoRow({ photo, display, onOpen }: RowOptions & { photo: Photo }) {
   const { image } = photo;
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   const layout = THUMB_LAYOUT[display.thumbs];
@@ -416,7 +393,6 @@ function PhotoRow({
       <div className="flex w-full min-w-0 flex-1 flex-col">
         <RowTitle title={photo.title} onOpen={open} />
         <RowDetails photo={photo} display={display} />
-        <SameTimeButton same={sameTimeOf(photo)} onPick={onPickTime} />
       </div>
     </li>
   );
