@@ -6,6 +6,7 @@ import { HiddenNote } from "@portfolio/components/hidden-note";
 import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import type { LocationOption } from "@portfolio/lib/filter-options";
+import { NO_STATE } from "@portfolio/lib/photo-filters";
 import type { ScriptDisplay } from "@portfolio/lib/localize";
 import { cn } from "@portfolio/lib/utils";
 
@@ -80,7 +81,13 @@ function matching(
 function buttonText(options: LocationOption[], selected: string[], script: ScriptDisplay): string {
   if (selected.length === 0) return "All places";
   if (selected.length > 1) return `${selected.length} places`;
-  const chosen = everyOption(options).find((option) => valueOf(option) === selected[0]);
+  return oneText(options, selected[0]!, script);
+}
+
+/** What the button says for one chosen place: its name, "No region" for photos without one, or "1 place". */
+function oneText(options: LocationOption[], selected: string, script: ScriptDisplay): string {
+  if (selected === `state:${NO_STATE}`) return "No region";
+  const chosen = everyOption(options).find((option) => valueOf(option) === selected);
   return chosen ? chosen.label[script] : "1 place";
 }
 

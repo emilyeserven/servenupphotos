@@ -22,6 +22,7 @@ type TotalDef = [keyof StatTotals, string, string?];
 const TOTAL_LABELS: TotalDef[] = [
   ["photos", "Photos"],
   ["countries", "Countries", "countries"],
+  ["regions", "Regions", "regions"],
   ["cities", "Cities", "cities"],
   ["cameras", "Cameras", "cameras"],
   ["years", "Years", "year"],
@@ -207,7 +208,7 @@ function joinsLast(run: Run, last: Run | undefined): boolean {
 const CHAIN_COLUMNS: Record<number, string> = { 2: "lg:grid-cols-2", 3: "lg:grid-cols-3" };
 
 /**
- * A row of cards. A chain, such as Year, Season and Month, sits on a shaded band, with a bar from
+ * A row of cards. A chain, such as Year, Season and Month, has a bar from
  * each card to the one it narrows: across on a desktop, down on a phone.
  */
 function GroupRun({ run, state }: { run: Run; state: PageState }) {
@@ -225,7 +226,7 @@ function GroupRun({ run, state }: { run: Run; state: PageState }) {
   }
   return (
     <div
-      className={`grid items-start gap-6 rounded-2xl bg-muted/60 p-3 sm:p-4 lg:items-stretch lg:[&>div>section]:h-full ${CHAIN_COLUMNS[run.defs.length] ?? CHAIN_COLUMNS[3]}`}
+      className={`grid items-start gap-6 lg:items-stretch lg:[&>div>section]:h-full ${CHAIN_COLUMNS[run.defs.length] ?? CHAIN_COLUMNS[3]}`}
     >
       {cards}
     </div>
@@ -245,21 +246,24 @@ function buildOf(def: GroupDef, variants: Variants) {
   return def.variants?.[variants[def.id] ?? 0]?.build ?? def.build;
 }
 
-/** A group's card, counting the photos the rows narrowing it leave. */
+/**
+ * A group's card, counting the photos the rows narrowing it leave. Its chip shows only the row
+ * chosen in the card right above it, such as Autumn on Month, not the Year above that.
+ */
 function DefCard({ def, state }: { def: GroupDef; state: PageState }) {
   const chain = focusChain(def.id, state.focuses);
   return (
     <StatGroupCard
       group={buildOf(def, state.variants)(groupPhotos(chain))}
-      title={def.variants && <VariantSelect def={def} variants={def.variants} state={state} />}
-      focuses={chain}
+      control={def.variants && <VariantSelect def={def} variants={def.variants} state={state} />}
+      focuses={chain.filter((focus) => focus.target === def.id)}
       {...narrowing(def, state)}
       onClearFocus={state.onClear}
     />
   );
 }
 
-/** A dropdown of a group's variants in place of its title, such as Lenses by type; for a group that has them. */
+/** A group's Group by dropdown of its variants, such as By type or By brand; for a group that has them. */
 function VariantSelect({
   def,
   variants,
@@ -274,7 +278,7 @@ function VariantSelect({
       aria-label="Group by"
       value={state.variants[def.id] ?? 0}
       onChange={(event) => state.onVariant(def, Number(event.target.value))}
-      className="-ml-1 cursor-pointer rounded-md bg-transparent px-1 font-semibold tracking-tight outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      className="cursor-pointer rounded-md border bg-background px-1.5 py-0.5 text-xs text-muted-foreground shadow-xs outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
     >
       {variants.map((variant, index) => (
         <option key={variant.label} value={index}>

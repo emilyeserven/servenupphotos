@@ -43,6 +43,8 @@ and **Expand all** and **Collapse all** do every one at once; a search shows eve
 The tree starts with whatever's around the chosen ones expanded, and the United States of America always expanded
 one level, to its states (`START_EXPANDED` in `components/places-filter.tsx`). Names are written the way the menu's **Script display**
 says, and a search matches them that way or in English. The button shows the one chosen name, or how many are chosen.
+`?state=none` keeps the photos with no state, province or prefecture, as the Numbers page's **No region** row links to;
+the button then says **No region**.
 
 Any number can be chosen, and the view shows the photos taken in **any** of them:
 
