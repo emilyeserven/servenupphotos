@@ -61,7 +61,7 @@ export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps
 }
 
 /** The saved places, from the combined lists. */
-function useSavedPlaces(): Place[] {
+export function useSavedPlaces(): Place[] {
   const data = useCombinedData().data;
   return data ? ((currentLists(data).places.data ?? []) as Place[]) : [];
 }

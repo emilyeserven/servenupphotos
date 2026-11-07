@@ -1,7 +1,8 @@
-import { WithKey } from "@/components/graph-builder/graph-key";
+import { type KeyItem, WithKey } from "@/components/graph-builder/graph-key";
 import { pickedOpacity, useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import { ColumnNames } from "@/components/graph-builder/heatmap-graph";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { seriesColor } from "@/lib/graph-data";
 import type { DotColumn, PhotoDot, PhotoDotsData } from "@/lib/graph-photo-dots";
 
 /** A count of photos as words, such as "1 photo" or "12 photos". */
@@ -22,9 +23,19 @@ function stackWidth(data: PhotoDotsData): number {
 }
 
 /**
+ * The graph's key: a dot meaning one photo, in the graph's own color, or in the text color over the split's
+ * colors when it's split, which follow as dots too.
+ */
+function dotKey(data: PhotoDotsData): KeyItem[] {
+  const split = data.series.length > 0;
+  const photo = { label: "One photo", color: split ? "var(--foreground)" : seriesColor(0) };
+  return [photo, ...data.series].map((item) => ({ ...item, round: true }));
+}
+
+/**
  * A photo dot graph: a stack of dots over each x value, one for every photo it has, so the tallest
- * stack has the most photos. A split colors each dot by the photo's split value, with the split's
- * key on the right. Hovering a dot names its photo; clicking a stack picks its x value, so its
+ * stack has the most photos. A split colors each dot by the photo's split value. The key on the
+ * right says a dot is one photo, then names the split's colors. Hovering a dot names its photo; clicking a stack picks its x value, so its
  * photos show under the graph. It scrolls sideways when the x values don't fit.
  */
 export function PhotoDotsGraph({ data, xName }: { data: PhotoDotsData; xName: string }) {
@@ -33,7 +44,7 @@ export function PhotoDotsGraph({ data, xName }: { data: PhotoDotsData; xName: st
     gridTemplateColumns: `repeat(${data.columns.length}, minmax(${width + 8}px, 1fr))`,
   };
   return (
-    <WithKey items={data.series}>
+    <WithKey items={dotKey(data)}>
       <div className="overflow-x-auto">
         <div
           role="group"

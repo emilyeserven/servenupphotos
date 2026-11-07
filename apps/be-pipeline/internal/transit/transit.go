@@ -7,7 +7,7 @@
 // by default the public overpass-api.de, which asks for light use; requests
 // are spaced a second apart. When a server is busy or down it waits a little
 // and tries the next public mirror (see ask.go), and it keeps each answer for a
-// day (see cache.go). OVERPASS_URL, a comma-separated list, points it at other
+// day (see internal/memo). OVERPASS_URL, a comma-separated list, points it at other
 // servers.
 package transit
 
@@ -21,6 +21,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/memo"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/throttle"
 )
 
@@ -74,8 +75,8 @@ type Client struct {
 	// Waits are how long to wait before each try after the first; the last
 	// one repeats. None means trying again straight away.
 	Waits []time.Duration
-	// Cache keeps answers already given; nil keeps none.
-	Cache *Cache
+	// Cache keeps answers already given, by query; nil keeps none.
+	Cache *memo.Cache[[]element]
 }
 
 // New is a client for OVERPASS_URL's servers, or else DefaultURLs.
@@ -85,7 +86,7 @@ func New() *Client {
 		HTTP:     &http.Client{},
 		Gate:     throttle.Gate{Gap: time.Second},
 		Waits:    []time.Duration{time.Second, 3 * time.Second},
-		Cache:    NewCache(cacheFor, cacheSize),
+		Cache:    memo.New[[]element](cacheFor, cacheSize),
 	}
 }
 
@@ -134,12 +135,12 @@ type member struct {
 // query runs an Overpass QL query and reads its elements, from the cache
 // when it was asked before.
 func (c *Client) query(ctx context.Context, ql string) ([]element, error) {
-	if elements, ok := c.Cache.get(ql); ok {
+	if elements, ok := c.Cache.Get(ql); ok {
 		return elements, nil
 	}
 	elements, err := c.ask(ctx, ql)
 	if err == nil {
-		c.Cache.put(ql, elements)
+		c.Cache.Put(ql, elements)
 	}
 	return elements, err
 }

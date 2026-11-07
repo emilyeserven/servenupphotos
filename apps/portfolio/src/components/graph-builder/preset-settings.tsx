@@ -68,12 +68,10 @@ function settingLines(config: GraphConfig): SettingLine[] {
 /** The settings panel of the Presets picker: what the preset pointed at, or picked, sets the graph to. */
 export function PresetSettings({ name, config }: { name?: string; config?: GraphConfig }) {
   if (!name || !config) {
-    return (
-      <p className="p-2 text-xs text-muted-foreground">Point at a preset to see its settings.</p>
-    );
+    return <p className="text-xs text-muted-foreground">Point at a preset to see its settings.</p>;
   }
   return (
-    <div className="flex flex-col gap-2 p-2 text-sm">
+    <div className="flex flex-col gap-2 text-sm">
       <span className="font-medium">{name}</span>
       <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1 text-xs">
         {settingLines(config).map(([label, value], index) => (

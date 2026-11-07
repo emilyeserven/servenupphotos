@@ -26,6 +26,7 @@ The README covers setup and commands. Each feature's behavior is in `docs/<featu
 | `apps/client-pipeline/src/components`              | Page parts. `app-sidebar.tsx` has the nav; `page.tsx` is the page shell; `components/ui` is shadcn/ui (generated, don't edit)                                                                                                               |
 | `apps/portfolio/src/lib/photos.ts`                 | Turns the photo JSON into the portfolio's `Photo` type; every view (`routes/grid.tsx`, `timeline.tsx`, `map.tsx`, `color.tsx`, …) reads it                                                                                                  |
 | `@portfolio/*` imports                             | The portfolio's Grid filters, which the pipeline's Gallery imports too (`docs/gallery.md`). Files reached from them import with `@portfolio/`, not `@/`                                                                                     |
+| `apps/portfolio/map-preview`                       | Build step that writes the map's place pages (`/maps/<kind>/<place>/`) and draws their link preview images when `MAP_PREVIEWS=1` (`docs/map-link-previews.md`). `pnpm --filter @servenup/portfolio test`                                    |
 | `apps/portfolio/src/data`                          | Committed photo, album and tag JSON (`docs/data-model.md`). `.ignore` keeps it out of repo-wide searches; name the folder to search it. `ALLPHOTOS.local.json` is git-ignored and made by `pnpm photos:local`                               |
 | `scripts/`                                         | `combine-photo-data.mjs` (`pnpm photos:local`), `screenshot.mjs` (`pnpm shot`)                                                                                                                                                              |
 
@@ -67,8 +68,11 @@ complexity at 4 or under; every `?:`, `??`, `?.`, `&&` and `||` counts). Split a
 - **Display options:** every portfolio view's display options use `ViewOptionsButton`
   (`components/view-options-button.tsx`): a **Display Options** button (eye and words; the Map alone is eye only) whose
   flyout puts `choices` (`OptionChoices`, sliders) in the left column and `checks` (checkboxes in titled `OptionGroup`s)
-  in the right, stacking on a phone. Next to search and **Show filters**, it goes at the right end of that row with
+  in the right, stacking on a phone (a flyout with only checkboxes leaves `choices` out). Next to search and **Show filters**, it goes at the right end of that row with
   `align="end"`.
+- **Filter pickers:** build on `SectionPicker` and follow [Picker conventions](docs/portfolio-filters.md#picker-conventions):
+  extra info behind `InfoButton` in the `aside` panel on the right, Group by and Sort as small menus left of the (i),
+  grouping off by default, and no icons in choice lists.
 - **Frontend stack:** React 19, TanStack Router, TanStack Query, TanStack Form, Zustand, Tailwind 4, shadcn/ui. No
   Next.js or other full-stack frameworks. Shared versions are in the `catalog:` of `pnpm-workspace.yaml`.
 - **Go:** stdlib `net/http`, errors as `writeError(w, status, message)` with messages a user can read; GitHub errors

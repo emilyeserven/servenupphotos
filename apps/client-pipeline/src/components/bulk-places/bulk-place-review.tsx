@@ -8,6 +8,7 @@ import {
   useReviewedSave,
 } from "@/components/bulk-tagging/review-parts";
 import { count } from "@/components/update-data-shared";
+import { outlineAsks, PlaceOutlines } from "@/components/bulk-places/place-outlines";
 import {
   type BulkPlacePlan,
   type BulkPlacesReview,
@@ -61,6 +62,7 @@ export function BulkPlaceReview({ review }: { review: BulkPlacesReview }) {
           />
         ))}
       </ul>
+      {apply.isSuccess && <PlaceOutlines asks={outlineAsks(save.newPlaces, review.wikidata)} />}
       <SaveReviewed
         apply={apply}
         save={save}

@@ -92,6 +92,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Lucky](docs/portfolio-lucky.md) (`/lucky` on the portfolio): whole rows of photos picked at random from the ones the filters leave, with Shuffle
 - [Portfolio Likes](docs/portfolio-likes.md) (`/likes` on the portfolio): double tap a photo to like it, then My Likes lists them with your comments and text to send over Discord or Messenger/Text
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
+- [Map Link Previews](docs/map-link-previews.md): the map's Copy link, and the place pages built on deploy whose link previews show a picture of the map
 - [Portfolio Albums](docs/portfolio-albums.md) (`/albums` on the portfolio): a strip of each album's photos, in the order set on the pipeline
 - [Portfolio analytics](docs/portfolio-analytics.md): Umami page views and query events on the published portfolio
 - [Portfolio Tags](docs/portfolio-tags.md) (`/tags` on the portfolio): every tag with a few of its photos, grouped under parent tags, each linking to the Grid
@@ -129,11 +130,13 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Caption Templates](docs/caption-templates.md) (`/caption-templates`): social media captions with placeholders for a photo's fields, filled in by **Generate** on the Photo page's posts, kept in `CAPTIONS.json`
 - [Timeline Labels](docs/timeline-labels.md) (`/timeline-labels`): names for runs of days, such as a trip, shown beside those days on the portfolio Timeline, kept in `TIMELINE.json`
 - [Trip Lines](docs/trip-lines.md) (`/trip-lines`): the route of a day, walking from photo to photo and hopping by train, subway, bus or car, kept in `TRIPLINES.json` and baked into `TRIPLINES.geo.json` for the portfolio map
+- [Gear Pictures](docs/gear-pictures.md) (`/gear-pictures`): a picture and description for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawings, kept in `GEAR.json`
 - [Graph Presets](docs/graph-presets.md) (`/graph-presets`): the ready-made graphs over the portfolio Graph page, and preset groups shown there as dropdowns, kept in `GRAPHS.json`
 - [User Likes](docs/viewer-likes.md) (`/viewer-likes`): import the liked-photo lists people send from the portfolio's My Likes page, one per person, and see each photo's total likes, kept in `LIKES.json`
 - [Lightroom Albums](docs/lightroom-albums.md) (`/lightroom-albums`): your Lightroom folders and albums, read by an LLM from screenshots or a screen recording, with a stage and notes on each album as a tree or a Kanban board and the next albums to work on, imported on its own page or added by hand, kept only in the browser and moved between computers with Export and Import
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
+- [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 

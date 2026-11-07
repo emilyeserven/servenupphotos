@@ -18,9 +18,11 @@ import { Route as BulkPlacesRouteImport } from './routes/bulk-places'
 import { Route as BulkUploadRouteImport } from './routes/bulk-upload'
 import { Route as CameraOverridesRouteImport } from './routes/camera-overrides'
 import { Route as CaptionTemplatesRouteImport } from './routes/caption-templates'
+import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as GearPicturesRouteImport } from './routes/gear-pictures'
 import { Route as GenreSuggestionsRouteImport } from './routes/genre-suggestions'
 import { Route as GraphPresetsRouteImport } from './routes/graph-presets'
 import { Route as InFlightRouteImport } from './routes/in-flight'
@@ -99,6 +101,11 @@ const CaptionTemplatesRoute = CaptionTemplatesRouteImport.update({
   path: '/caption-templates',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChangelogRoute = ChangelogRouteImport.update({
+  id: '/changelog',
+  path: '/changelog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CompareRoute = CompareRouteImport.update({
   id: '/compare',
   path: '/compare',
@@ -112,6 +119,11 @@ const ExifRoute = ExifRouteImport.update({
 const GalleryRoute = GalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GearPicturesRoute = GearPicturesRouteImport.update({
+  id: '/gear-pictures',
+  path: '/gear-pictures',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenreSuggestionsRoute = GenreSuggestionsRouteImport.update({
@@ -285,9 +297,11 @@ export interface FileRoutesByFullPath {
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
+  '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/gear-pictures': typeof GearPicturesRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
@@ -331,9 +345,11 @@ export interface FileRoutesByTo {
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
+  '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/gear-pictures': typeof GearPicturesRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
@@ -376,9 +392,11 @@ export interface FileRoutesById {
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
+  '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/gear-pictures': typeof GearPicturesRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
@@ -424,9 +442,11 @@ export interface FileRouteTypes {
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
+    | '/changelog'
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/gear-pictures'
     | '/genre-suggestions'
     | '/graph-presets'
     | '/in-flight'
@@ -470,9 +490,11 @@ export interface FileRouteTypes {
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
+    | '/changelog'
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/gear-pictures'
     | '/genre-suggestions'
     | '/graph-presets'
     | '/in-flight'
@@ -514,9 +536,11 @@ export interface FileRouteTypes {
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
+    | '/changelog'
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/gear-pictures'
     | '/genre-suggestions'
     | '/graph-presets'
     | '/in-flight'
@@ -561,9 +585,11 @@ export interface RootRouteChildren {
   BulkUploadRoute: typeof BulkUploadRoute
   CameraOverridesRoute: typeof CameraOverridesRoute
   CaptionTemplatesRoute: typeof CaptionTemplatesRoute
+  ChangelogRoute: typeof ChangelogRoute
   CompareRoute: typeof CompareRoute
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
+  GearPicturesRoute: typeof GearPicturesRoute
   GenreSuggestionsRoute: typeof GenreSuggestionsRoute
   GraphPresetsRoute: typeof GraphPresetsRoute
   InFlightRoute: typeof InFlightRoute
@@ -659,6 +685,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CaptionTemplatesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/changelog': {
+      id: '/changelog'
+      path: '/changelog'
+      fullPath: '/changelog'
+      preLoaderRoute: typeof ChangelogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/compare': {
       id: '/compare'
       path: '/compare'
@@ -678,6 +711,13 @@ declare module '@tanstack/react-router' {
       path: '/gallery'
       fullPath: '/gallery'
       preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gear-pictures': {
+      id: '/gear-pictures'
+      path: '/gear-pictures'
+      fullPath: '/gear-pictures'
+      preLoaderRoute: typeof GearPicturesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/genre-suggestions': {
@@ -944,9 +984,11 @@ const rootRouteChildren: RootRouteChildren = {
   BulkUploadRoute: BulkUploadRoute,
   CameraOverridesRoute: CameraOverridesRoute,
   CaptionTemplatesRoute: CaptionTemplatesRoute,
+  ChangelogRoute: ChangelogRoute,
   CompareRoute: CompareRoute,
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
+  GearPicturesRoute: GearPicturesRoute,
   GenreSuggestionsRoute: GenreSuggestionsRoute,
   GraphPresetsRoute: GraphPresetsRoute,
   InFlightRoute: InFlightRoute,

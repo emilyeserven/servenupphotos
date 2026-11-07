@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Flag, MapPin, Scissors } from "lucide-react";
+import { ChevronLeft, ChevronRight, Flag, MapPin, Scissors } from "lucide-react";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
+import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap } from "@/lib/trip-gaps";
 import { visitsAfter } from "@/lib/trip-visits";
@@ -21,6 +22,12 @@ interface PhotoStripProps {
   offset?: number;
   /** Starts a new group at a photo; left out, photos can't start one. */
   onSplit?: (id: number) => void;
+  /** Moves a photo one place earlier (-1) or later (1) in the day; left out, photos can't move. */
+  onMove?: (id: number, by: -1 | 1) => void;
+  /** Moves a place visited one photo earlier or later on the route; left out, they can't move. */
+  onMoveVisit?: (visit: TripVisit, by: -1 | 1) => void;
+  /** Adds a place visited to the route right after photo `after`; left out, none can be added. */
+  onInsertVisit?: (after: number, visit: TripVisit) => void;
   /** The day's places visited; the ones put on the route show between their two photos. */
   visits?: TripVisit[];
 }
@@ -35,6 +42,7 @@ export function PhotoStrip({ photos, visits, offset = 0, ...rest }: PhotoStripPr
           photo={p}
           local={i}
           offset={offset}
+          prev={photos[i - 1]}
           before={visitsAfter(visits, photos[i - 1]?.id)}
           {...rest}
         />
@@ -45,6 +53,8 @@ export function PhotoStrip({ photos, visits, offset = 0, ...rest }: PhotoStripPr
 
 interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits"> {
   photo: TripPhoto;
+  /** The photo before it in the strip; none for the strip's first. */
+  prev?: TripPhoto;
   /** The places visited on the route between the photo before and this one. */
   before: TripVisit[];
   /** Its index among the strip's photos. */
@@ -54,20 +64,65 @@ interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits"> {
 
 /** One photo in the strip, after the gap before it (none before the strip's first photo). */
 function StripItem(props: StripItemProps) {
-  const { photo, local, offset, gaps, onGap, onHover, onSplit, before } = props;
+  const { photo, local, offset, gaps, onHover, onMove } = props;
   const i = offset + local;
-  const first = local === 0;
   return (
     <li className="flex shrink-0 items-center gap-1">
-      <VisitChips visits={before} />
-      {gaps && !first && <GapPicker gap={gapBefore(gaps, i)} index={i - 1} onGap={onGap} />}
+      <Between {...props} i={i} />
       <StripPhoto
         photo={photo}
+        n={i + 1}
         ends={endsAt(gaps, i)}
         onHover={onHover}
-        onSplit={first ? undefined : onSplit}
+        onMove={onMove}
       />
     </li>
+  );
+}
+
+/**
+ * What comes between the photo before and this one: the places visited there, with the way there
+ * on both sides of them, so the mode shows before and after each place.
+ */
+function Between(props: StripItemProps & { i: number }) {
+  const { photo, prev, gaps, onGap, onSplit, before, i } = props;
+  const chips = <VisitChips visits={before} onMove={props.onMoveVisit} />;
+  if (!gaps || !prev) return chips;
+  const picker = { gap: gapBefore(gaps, i), index: i - 1, onGap };
+  return (
+    <>
+      <PlacesVisited before={before} {...picker}>
+        {chips}
+      </PlacesVisited>
+      <GapColumn
+        {...picker}
+        onSplit={onSplit && (() => onSplit(photo.id))}
+        insert={insertBetween(prev, photo, props.onInsertVisit)}
+      />
+    </>
+  );
+}
+
+interface PlacesVisitedProps extends GapPickerProps {
+  before: TripVisit[];
+  /** The places' icons. */
+  children: React.ReactNode;
+}
+
+/**
+ * The places visited between two photos, after the way there, raised by the height of the cut row
+ * under the gap after them so the two ways and the places line up; nothing when none were visited.
+ */
+function PlacesVisited({ before, children, ...picker }: PlacesVisitedProps) {
+  if (before.length === 0) return null;
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="flex items-center gap-1">
+        <GapPicker {...picker} />
+        {children}
+      </span>
+      <span className="h-[18px]" aria-hidden />
+    </div>
   );
 }
 
@@ -99,16 +154,18 @@ function lineEnds(gaps: Gap[], i: number): LineEnds {
 
 interface StripPhotoProps {
   photo: TripPhoto;
+  /** Its number among the day's photos, counting from 1, as the map's dots show it. */
+  n: number;
   ends: LineEnds;
   onHover: (id: number | undefined) => void;
-  onSplit?: (id: number) => void;
+  onMove?: (id: number, by: -1 | 1) => void;
 }
 
-function StripPhoto({ photo, ends, onHover, onSplit }: StripPhotoProps) {
+function StripPhoto({ photo, n, ends, onHover, onMove }: StripPhotoProps) {
   const url = squareUrl(photo.photo);
   return (
     <figure
-      className="flex w-20 flex-col items-center gap-1"
+      className="group/photo flex w-20 flex-col items-center gap-1"
       onMouseEnter={() => onHover(photo.id)}
       onMouseLeave={() => onHover(undefined)}
     >
@@ -117,9 +174,14 @@ function StripPhoto({ photo, ends, onHover, onSplit }: StripPhotoProps) {
           {url && <img src={url} alt={photoName(photo.photo)} className="size-full object-cover" />}
         </PhotoLink>
         <Ends {...ends} />
-        {onSplit && <SplitButton onClick={() => onSplit(photo.id)} />}
+        {onMove && <MoveButtons onMove={(by) => onMove(photo.id, by)} />}
       </div>
-      <figcaption className="text-muted-foreground text-xs tabular-nums">{photo.time}</figcaption>
+      <figcaption className="text-muted-foreground text-xs tabular-nums">
+        <span className="text-foreground font-medium" title="Its number on the map">
+          {n}
+        </span>{" "}
+        · {photo.time}
+      </figcaption>
     </figure>
   );
 }
@@ -142,17 +204,84 @@ function PhotoLink({ id, children }: { id: number; children: React.ReactNode }) 
   );
 }
 
-/** Starts a new group at the photo, shown over it. */
-function SplitButton({ onClick }: { onClick: () => void }) {
+/** Shown on hover or focus only. */
+const ON_HOVER = "opacity-0 focus-visible:opacity-100";
+
+/**
+ * Moves the photo one place earlier or later in the day, such as when the camera's clock was off;
+ * shown over the photo while it's pointed at.
+ */
+function MoveButtons({ onMove }: { onMove: (by: -1 | 1) => void }) {
+  const button = cn(
+    "bg-background/90 rounded-sm p-0.5 shadow-sm group-hover/photo:opacity-100",
+    ON_HOVER,
+  );
+  return (
+    <span className="absolute right-1 bottom-1 flex gap-0.5">
+      <button type="button" title="Move earlier" className={button} onClick={() => onMove(-1)}>
+        <ChevronLeft className="size-3" aria-hidden />
+        <span className="sr-only">Move earlier</span>
+      </button>
+      <button type="button" title="Move later" className={button} onClick={() => onMove(1)}>
+        <ChevronRight className="size-3" aria-hidden />
+        <span className="sr-only">Move later</span>
+      </button>
+    </span>
+  );
+}
+
+/** Adding a place visited between two photos: the photos, and what adds it. */
+interface InsertBetween {
+  a: TripPhoto;
+  b: TripPhoto;
+  onInsert: (visit: TripVisit) => void;
+}
+
+/** What adds a place visited between a and b, when places can be added. */
+function insertBetween(
+  a: TripPhoto,
+  b: TripPhoto,
+  onInsertVisit: ((after: number, visit: TripVisit) => void) | undefined,
+): InsertBetween | undefined {
+  return onInsertVisit && { a, b, onInsert: (visit) => onInsertVisit(a.id, visit) };
+}
+
+interface GapColumnProps extends GapPickerProps {
+  /** Cuts to a new place here: the photo after the gap starts a new group. */
+  onSplit?: () => void;
+  /** Adds a place visited here. */
+  insert?: InsertBetween;
+}
+
+/**
+ * What happened between two photos, with the scissors and adding a place visited under it, shown
+ * on hover.
+ */
+function GapColumn({ onSplit, insert, ...picker }: GapColumnProps) {
+  return (
+    <div className="group/gap flex flex-col items-center gap-1">
+      <GapPicker {...picker} />
+      <span className="flex">
+        {onSplit && <CutButton onClick={onSplit} />}
+        {insert && (
+          <VisitInsert {...insert} className={cn("group-hover/gap:opacity-100", ON_HOVER)} />
+        )}
+      </span>
+    </div>
+  );
+}
+
+/** Cuts the strip here into a new group: a new place between these areas. */
+function CutButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       type="button"
-      title="Start a new group here"
+      title="Cut to a new place here"
       onClick={onClick}
-      className="bg-background/90 absolute right-1 bottom-1 rounded-sm p-0.5 shadow-sm"
+      className={cn("hover:bg-muted rounded-sm p-0.5 group-hover/gap:opacity-100", ON_HOVER)}
     >
-      <Scissors className="size-3" aria-hidden />
-      <span className="sr-only">Start a new group here</span>
+      <Scissors className="size-3.5" aria-hidden />
+      <span className="sr-only">Cut to a new place here</span>
     </button>
   );
 }

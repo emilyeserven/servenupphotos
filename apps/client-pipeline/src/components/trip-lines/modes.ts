@@ -5,6 +5,7 @@ import {
   type LucideIcon,
   Pause,
   Route,
+  Shuffle,
   TrainFront,
   TramFront,
 } from "lucide-react";
@@ -19,6 +20,7 @@ export const GAPS: { gap: Gap; label: string; icon: LucideIcon }[] = [
   { gap: "bus", label: "Bus", icon: BusFront },
   { gap: "car", label: "Car or taxi", icon: CarTaxiFront },
   { gap: "transit", label: "Transit (kind unknown)", icon: Route },
+  { gap: "wander", label: "Wandered the area (no set route)", icon: Shuffle },
 ];
 
 /** The gap's entry in GAPS. */

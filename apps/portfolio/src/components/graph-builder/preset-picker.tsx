@@ -1,13 +1,13 @@
-import { Info, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useState } from "react";
 import { ChoiceRow } from "@/components/choice-row";
 import { PresetSettings } from "@/components/graph-builder/preset-settings";
-import { SectionTab } from "@/components/picker-section-tab";
+import { InfoButton } from "@/components/info-button";
+import { SectionPicker } from "@/components/section-picker";
 import { Button } from "@/components/ui/button";
 import type { GraphConfig } from "@/lib/graph-data";
 import { type GraphPreset, type PresetSection, presetSections } from "@/lib/graph-presets";
 import type { SavedGraphs } from "@/lib/saved-graphs";
-import { cn } from "@/lib/utils";
 
 /** Picking a preset: the graph takes its settings, and the filters stay as they are. */
 type OnPick = (change: Partial<GraphConfig>) => void;
@@ -78,34 +78,36 @@ interface PanelsProps extends PickerProps {
   onInfo: () => void;
 }
 
-/** The list of sections, the chosen one's presets, and their settings while (i) is on. */
+/**
+ * The groups on the left and the chosen one's presets beside them (see `SectionPicker`), with the
+ * settings of the preset pointed at, or the one the graph is set as, in the picker's panel to the
+ * right while (i) is on.
+ */
 function PickerPanels({ sections, section, onSection, ...props }: PanelsProps) {
   const { config, info, onInfo } = props;
   const [pointed, setPointed] = useState<GraphPreset | undefined>();
   return (
-    <div className="flex max-h-[28rem] flex-col sm:flex-row">
-      <div
-        role="tablist"
-        aria-orientation="vertical"
-        aria-label="Preset groups"
-        className="flex shrink-0 flex-col gap-0.5 overflow-y-auto border-b bg-muted/40 p-1 sm:w-40 sm:border-r sm:border-b-0"
-      >
-        {sections.map((each) => (
-          <SectionTab
-            key={each.id}
-            label={each.name}
-            text={sectionText(each, config)}
-            chosen={each.id === section.id}
-            onClick={() => onSection(each.id)}
-          />
-        ))}
-      </div>
-      <div role="tabpanel" className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto p-1">
+    <SectionPicker
+      label="Preset groups"
+      sections={sections.map((each) => ({
+        key: each.id,
+        label: each.name,
+        text: sectionText(each, config),
+      }))}
+      chosen={section.id}
+      onChoose={onSection}
+      width="w-full"
+      aside={
+        info ? (
+          <SettingsPanel config={config} preset={pointed ?? onIn(section, config)} />
+        ) : undefined
+      }
+    >
+      <div className="-m-2 flex flex-col">
         <PanelHeader name={section.name} info={info} onInfo={onInfo} />
         <PresetList {...props} section={section} onPoint={setPointed} />
       </div>
-      {info && <SettingsPanel config={config} preset={pointed ?? onIn(section, config)} />}
-    </div>
+    </SectionPicker>
   );
 }
 
@@ -114,13 +116,9 @@ function onIn(section: PresetSection, config: GraphConfig): GraphPreset | undefi
   return section.presets.find((preset) => isOn(preset, config));
 }
 
-/** The panel right of the presets with the settings of the one pointed at or the graph is set as. */
+/** The settings of the preset pointed at or the graph is set as. */
 function SettingsPanel({ config, preset }: { config: GraphConfig; preset?: GraphPreset }) {
-  return (
-    <div className="min-w-0 shrink-0 border-t sm:w-56 sm:border-t-0 sm:border-l">
-      <PresetSettings name={preset?.name} config={preset && { ...config, ...preset.graph }} />
-    </div>
-  );
+  return <PresetSettings name={preset?.name} config={preset && { ...config, ...preset.graph }} />;
 }
 
 /** The presets panel's heading, with the (i) button that shows or hides their settings. */
@@ -128,18 +126,7 @@ function PanelHeader({ name, info, onInfo }: { name: string; info: boolean; onIn
   return (
     <div className="flex items-center justify-between gap-2 px-2 pt-1 pb-1">
       <span className="text-xs font-medium text-muted-foreground">{name}</span>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-pressed={info}
-        aria-label={info ? "Hide preset settings" : "Show preset settings"}
-        title={info ? "Hide preset settings" : "Show preset settings"}
-        onClick={onInfo}
-        className={cn("size-7", info && "bg-accent")}
-      >
-        <Info aria-hidden />
-      </Button>
+      <InfoButton open={info} label="preset settings" onClick={onInfo} />
     </div>
   );
 }

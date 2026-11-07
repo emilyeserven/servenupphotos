@@ -8,7 +8,7 @@ import { cn } from "@portfolio/lib/utils";
  * The **Display Options** button that opens a view's display options in a flyout, such as the
  * Timeline's thumbnail size or the map's pin size. Every view's flyout has the same wide layout:
  * `choices` (sizes, sliders and other picks) in the left column and `checks` (checkboxes, each set
- * in an `OptionGroup`) in the right, stacked on a phone, then **Reset to defaults** under both when
+ * in an `OptionGroup`) in the right, stacked on a phone (a flyout with only checks has one column), then **Reset to defaults** under both when
  * `onReset` is given.
  *
  * The button says "Display Options" beside its eye. `iconOnly` leaves just the eye, for a view with
@@ -27,8 +27,8 @@ export function ViewOptionsButton({
   /** Which edge of the button the flyout lines up with, such as "end" for a button on the right. */
   align?: "start" | "end";
   onReset?: () => void;
-  /** The left column: `OptionChoices` and other picks, top to bottom. */
-  choices: ReactNode;
+  /** The left column: `OptionChoices` and other picks, top to bottom. Left out when there are none. */
+  choices?: ReactNode;
   /** The right column: one or more `OptionGroup`s of checkboxes. */
   checks: ReactNode;
 }) {
@@ -41,13 +41,20 @@ export function ViewOptionsButton({
         align={align}
         className="flex w-auto max-w-[calc(100vw-2rem)] flex-col gap-4 p-3 text-sm"
       >
-        <div className="grid gap-4 sm:grid-cols-[auto_auto] sm:gap-8">
-          <div className="flex flex-col gap-4">{choices}</div>
-          <div className="flex flex-col gap-4">{checks}</div>
-        </div>
+        <OptionColumns choices={choices} checks={checks} />
         {onReset && <ResetLink onClick={onReset} />}
       </PopoverContent>
     </Popover>
+  );
+}
+
+/** The flyout's two columns, side by side from `sm` up; just the checks when there are no choices. */
+function OptionColumns({ choices, checks }: { choices: ReactNode; checks: ReactNode }) {
+  return (
+    <div className="grid gap-4 sm:auto-cols-auto sm:grid-flow-col sm:gap-8">
+      {choices && <div className="flex flex-col gap-4">{choices}</div>}
+      <div className="flex flex-col gap-4">{checks}</div>
+    </div>
   );
 }
 

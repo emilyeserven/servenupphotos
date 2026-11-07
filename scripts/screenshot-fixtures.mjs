@@ -7,6 +7,7 @@
 // function of the request ({ url, body }) that returns { status, body } or a body.
 // To change an answer for one screenshot, pass `--fixtures my-fixtures.mjs`, a module whose
 // default export takes these fixtures and returns the ones to use.
+import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -53,6 +54,7 @@ const baseTimeline = readFolder("timeline", "TIMELINE");
 const baseLikes = readFolder("likes", "LIKES");
 const baseTripLines = readFolder("triplines", "TRIPLINES");
 const baseGraphs = readFolder("graphs", "GRAPHS");
+const baseGear = readFolder("gear", "GEAR");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -286,6 +288,18 @@ const added = {
       },
     },
   ],
+  gear: [
+    {
+      path: `${FOLDER}/gear/camera-fujifilm-x-t5.json`,
+      data: {
+        id: "camera-fujifilm-x-t5",
+        kind: "camera",
+        name: "Fujifilm X-T5",
+        image: "https://cdn.servenupphotos.net/gear/0a1b2c3d4e5f-x-t5.webp",
+        description: "My everyday camera since 2024.",
+      },
+    },
+  ],
   graphs: [
     {
       path: `${FOLDER}/graphs/when.json`,
@@ -390,6 +404,7 @@ const headTimeline = withAdded(baseTimeline, added.timeline);
 const headLikes = withAdded(baseLikes, added.likes);
 const headTripLines = withAdded(baseTripLines, added.triplines);
 const headGraphs = withAdded(baseGraphs, added.graphs);
+const headGear = withAdded(baseGear, added.gear);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -418,6 +433,7 @@ function combinedFiles(
     likes,
     triplines,
     graphs,
+    gear,
   ],
   branch,
 ) {
@@ -436,6 +452,7 @@ function combinedFiles(
     likes: combinedFile("likes", "LIKES.json", likes, branch),
     triplines: combinedFile("triplines", "TRIPLINES.json", triplines, branch),
     graphs: combinedFile("graphs", "GRAPHS.json", graphs, branch),
+    gear: combinedFile("gear", "GEAR.json", gear, branch),
   };
 }
 
@@ -1094,6 +1111,43 @@ function albumSuggestionsPreview() {
   };
 }
 
+/** A page of the Changelog from this checkout's own last 40 commits, as GitHub would list them. */
+function changelogFixture() {
+  let log = "";
+  try {
+    log = execFileSync("git", ["log", "-40", "--no-merges", "--format=%H%x1f%an%x1f%cI%x1f%s"], {
+      cwd: root,
+      encoding: "utf8",
+    });
+  } catch {
+    // No git history, such as in an exported copy: show an empty Changelog.
+  }
+  const entries = log.split("\n").filter(Boolean).map(changelogEntry);
+  return { repo: REPO, branch: BASE_BRANCH, entries, nextPage: entries.length === 40 ? 2 : 0 };
+}
+
+/** One `git log` line (sha, author, date and subject, split by \x1f) as a Changelog entry. */
+function changelogEntry(line) {
+  const [sha, author, date, subject] = line.split("\x1f");
+  const match = /\s*\(#(\d+)\)$/.exec(subject);
+  const title = match ? subject.slice(0, match.index) : subject;
+  const pr = match
+    ? {
+        pullRequest: Number(match[1]),
+        pullRequestUrl: `https://github.com/${REPO}/pull/${match[1]}`,
+      }
+    : {};
+  return {
+    sha,
+    title,
+    ...pr,
+    commitUrl: `https://github.com/${REPO}/commit/${sha}`,
+    author,
+    date,
+    photoData: title === "Add photo data",
+  };
+}
+
 const secret = { set: true, last4: "a1b2" };
 
 /** The default answers: everything set up, and one photo data pull request open. */
@@ -1101,6 +1155,7 @@ export function defaultFixtures() {
   return {
     "GET /api/health": { status: "ok", bff: "ok", backend: "ok" },
     "GET /api/hello": { message: "Hello from be-pipeline (Go)" },
+    "GET /api/changelog": changelogFixture(),
     "GET /api/settings": {
       r2: {
         accountId: "0123456789abcdef",
@@ -1138,6 +1193,7 @@ export function defaultFixtures() {
           baseLikes,
           baseTripLines,
           baseGraphs,
+          baseGear,
         ]),
         branch: BASE_BRANCH,
       },
@@ -1158,6 +1214,7 @@ export function defaultFixtures() {
             headLikes,
             headTripLines,
             headGraphs,
+            headGear,
           ],
           PULL_REQUEST.branch,
         ),
@@ -1185,6 +1242,7 @@ export function defaultFixtures() {
       likes: { folder: `${FOLDER}/likes`, files: added.likes.map(groupFile) },
       triplines: { folder: `${FOLDER}/triplines`, files: added.triplines.map(groupFile) },
       graphs: { folder: `${FOLDER}/graphs`, files: added.graphs.map(groupFile) },
+      gear: { folder: `${FOLDER}/gear`, files: added.gear.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -1438,6 +1496,17 @@ export function defaultFixtures() {
       path: `${FOLDER}/triplines/2026-10-01.json`,
       data: body,
       before: added.triplines[0].data,
+      changed: true,
+    }),
+    "POST /api/gear/image": {
+      key: "gear/6f7e8d9c0b1a-lens.webp",
+      url: "https://cdn.servenupphotos.net/gear/6f7e8d9c0b1a-lens.webp",
+    },
+    "PUT /api/gear/camera-fujifilm-x-t5": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/gear/camera-fujifilm-x-t5.json`,
+      data: body,
+      before: added.gear[0].data,
       changed: true,
     }),
     "PUT /api/graphs/time-of-day": ({ body }) => ({

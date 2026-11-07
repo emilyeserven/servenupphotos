@@ -6,6 +6,9 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/memo"
 )
 
 // park is a Nominatim answer: a park with an outline, then a point that isn't
@@ -79,5 +82,22 @@ func TestShapeTooBig(t *testing.T) {
 	ring := strings.Repeat("[1,2],", MaxPoints) + "[1,2]"
 	if _, ok := shapeOf(geometry{Type: "Polygon", Coordinates: []byte("[[" + ring + "]]")}); ok {
 		t.Error("an outline over MaxPoints was kept")
+	}
+}
+
+func TestFindKeepsAnswers(t *testing.T) {
+	asked := 0
+	c := testClient(t, func(w http.ResponseWriter, _ *http.Request) {
+		asked++
+		_, _ = w.Write([]byte(park))
+	})
+	c.Cache = memo.New[[]Area](time.Hour, 10)
+	for range 2 {
+		if found, err := c.Find(t.Context(), "Osaka Castle Park"); err != nil || len(found) != 1 {
+			t.Fatalf("found = %+v, err = %v", found, err)
+		}
+	}
+	if asked != 1 {
+		t.Errorf("Nominatim asked %d times; want 1, the second from the cache", asked)
 	}
 }
