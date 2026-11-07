@@ -11,6 +11,7 @@ import {
   FolderTreeIcon,
   GalleryHorizontalIcon,
   HeartIcon,
+  HistoryIcon,
   ImageIcon,
   ImagesIcon,
   LanguagesIcon,
@@ -141,6 +142,7 @@ export const navGroups: readonly NavGroup[] = [
         icon: SettingsIcon,
         children: [
           { title: "Status", url: "/settings/status", icon: ActivityIcon },
+          { title: "Changelog", url: "/changelog", icon: HistoryIcon },
           { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon },
           { title: "Manage Sizes", url: "/sizes", icon: ScalingIcon },
         ],

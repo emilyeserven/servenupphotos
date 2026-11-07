@@ -39,6 +39,7 @@ branches that add pages don't clash:
 - **Configuration**
   - Settings
     - Status
+    - Changelog
     - Explore Bucket
     - Manage Sizes
   - Update Data (each of its subpages)
