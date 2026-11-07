@@ -24,8 +24,7 @@ import type { TripDay, TripPhoto } from "@/lib/trip-days";
 import { placeGroups } from "@/lib/trip-groups";
 import { draftOf, type GapDraft, segmentsOf, walkingDraft } from "@/lib/trip-gaps";
 import { draftVias, movedVia, withVia } from "@/lib/trip-points";
-import { dayTitle } from "@/components/trip-lines/day-title";
-import { useTripLinesSearch } from "@/lib/trip-lines-search";
+import { useTripDaySearch } from "@/lib/trip-lines-search";
 import { type AreaPick, isAreaPick, withAreaEnd } from "@/lib/trip-wander";
 import { AreaEnds } from "@/components/trip-lines/area-ends";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
@@ -95,8 +94,23 @@ function startingView(day: TripDay, line: TripLine | undefined): EditorView {
   );
 }
 
-/** Edits one day's trip line: the photo strip, the map, and saving. */
-export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine }) {
+interface DayEditorProps {
+  day: TripDay;
+  line?: TripLine;
+  /** Which of the day's pages shows it: the photo order shows the strip alone, the route the map too. */
+  part: "order" | "route";
+}
+
+/** What each page says the editor is for. */
+const PART_NOTES: Record<DayEditorProps["part"], string> = {
+  order:
+    "Put the photos in order, cut them into groups by place, and pick what happened between each two: keep walking, a break, or a hop by train, subway, bus or car.",
+  route:
+    "Pick what happened between each two photos, and shape the line on the map: via points, the day's start and end, transit lines, places visited and areas.",
+};
+
+/** Edits one day's trip line: the photo strip, the map on the Route page, and saving. */
+export function DayEditor({ day: taken, line, part }: DayEditorProps) {
   const [view, setRawView] = useState<EditorView>(() => startingView(taken, line));
   // The day with its photos in the view's order: as taken, unless moved by hand.
   const day = { ...taken, photos: orderedPhotos(taken.photos, draftOrder(view)) };
@@ -104,22 +118,20 @@ export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine 
   const setView = (next: EditorView) =>
     setRawView(withPlaceGroups(next, orderedPhotos(taken.photos, draftOrder(next))));
   const [hovered, setHovered] = useState<number>();
-  const { search, set } = useTripLinesSearch();
+  const { search, set } = useTripDaySearch();
   const focus = search.group;
   const setFocus = (group: string | undefined) => set({ group });
   const auto = useQuery({ ...autoTripLineQuery(day.day), enabled: showsAuto(view) });
   const segments = viewSegments(ids, view, auto.data);
   const editDraft = (draft: GapDraft) => setView({ kind: "hand", draft });
-  const draft = view.kind === "hand" ? view.draft : undefined;
   const placeAreas = useDayPlaceAreas(day.photos);
   const shownDraft = stripDraft(view, day.photos, segments);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{dayTitle(day.day)}</CardTitle>
+        <CardTitle>{part === "order" ? "Photo order" : "Route"}</CardTitle>
         <CardDescription>
-          {day.photos.length} photos at {day.spots} spots. Pick what happened between each two
-          photos: keep walking, a break, or a hop by train, subway, bus or car.
+          {day.photos.length} photos at {day.spots} spots. {PART_NOTES[part]}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -132,26 +144,15 @@ export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine 
           focus={focus}
           onFocus={setFocus}
         />
-        {draft ? (
-          <HandMap
+        {part === "route" && (
+          <DayMap
             day={day}
-            draft={draft}
+            view={view}
             segments={segments}
             highlighted={hovered}
             focus={focus}
             placeAreas={placeAreas}
             onChange={editDraft}
-          />
-        ) : (
-          <RouteMap
-            day={day.day}
-            photos={day.photos}
-            segments={segments}
-            preview={view.kind === "preview"}
-            highlighted={hovered}
-            focus={focus}
-            ends={endsOf(segments)}
-            fences={placeAreas}
           />
         )}
         <DayActions
@@ -166,6 +167,28 @@ export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine 
         />
       </CardContent>
     </Card>
+  );
+}
+
+interface DayMapProps extends Omit<HandMapProps, "draft"> {
+  view: EditorView;
+}
+
+/** The day's map: with its tools while the line is drawn by hand, or else as it's drawn. */
+function DayMap({ view, ...props }: DayMapProps) {
+  if (view.kind === "hand") return <HandMap {...props} draft={view.draft} />;
+  const { day, segments, highlighted, focus, placeAreas } = props;
+  return (
+    <RouteMap
+      day={day.day}
+      photos={day.photos}
+      segments={segments}
+      preview={view.kind === "preview"}
+      highlighted={highlighted}
+      focus={focus}
+      ends={endsOf(segments)}
+      fences={placeAreas}
+    />
   );
 }
 

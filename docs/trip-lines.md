@@ -116,31 +116,48 @@ the line.
 
 ## The page
 
-The left side lists the days with two or more photos at two or more different exact spots, newest first, each with how
-many photos and spots it has and whether its line is **Marked**, **Out of date**, **Automatic** or **None**, with a filter by each. **Out of date** (in
-red) is a line marked by hand that doesn't go through every photo of the day with an exact spot, such as photos added
-since, or goes through photos no longer on that day; the Dashboard's **Needs attention** lists them as urgent. A new
-photo opens with a break on both sides, ready to join the line.
+`/trip-lines` lists the days with two or more photos at two or more different exact spots, newest first, as cards. Each
+card has how many photos and spots the day has, whether its line is **Marked**, **Out of date**, **Automatic** or
+**None** (with a filter by each), and a small drawing of the line when it's marked by hand: the line in the map's
+colors and the photos as dots, drawn as SVG with no basemap so a long list stays quick. An automatic line is worked out
+by the backend only when its day opens, so its card says so instead. **Out of date** (in red) is a line marked by hand
+that doesn't go through every photo of the day with an exact spot, such as photos added since, or goes through photos
+no longer on that day; the Dashboard's **Needs attention** lists them as urgent and links to this list filtered to
+them. A new photo opens with a break on both sides, ready to join the line.
 
-The page keeps what's chosen in its URL, so a link or a reload opens it the same way (`lib/trip-lines-search.ts`, read
-by the route's `validateSearch`):
+A card opens the day's own pages, each a tab with its own link:
 
-| Param   | What it opens                                                       | Unless set |
-| ------- | ------------------------------------------------------------------- | ---------- |
-| `tab`   | `trips` for the Trips tab                                           | Days       |
-| `day`   | The day chosen, such as `2026-09-23`                                | The newest |
-| `show`  | The day list's filter: `marked`, `out-of-date`, `automatic`, `none` | All        |
-| `group` | The group shown alone on the map (the eye), by its name             | None       |
-| `trip`  | The Trip chosen on the Trips tab, by its ID                         | The newest |
+| Page        | Path                      | What it has                                                               |
+| ----------- | ------------------------- | ------------------------------------------------------------------------- |
+| Photo order | `/trip-lines/<day>/order` | The photo strip on its own: order, groups, what happened between each two |
+| Route       | `/trip-lines/<day>/route` | The strip with the map and its tools, as below                            |
+| Story       | `/trip-lines/<day>/story` | The [Trip page story](#trip-page-story)                                   |
 
-For example, `/trip-lines?day=2026-09-29&show=out-of-date&group=Engyoji%20Temple`. Clicks replace the history entry
-rather than adding one, so Back leaves the page. Choosing another day clears `group`. A new Trip isn't in the URL until
-it's saved. Needs attention links to its newest out-of-date day with `show=out-of-date`.
+`/trip-lines/<day>` opens Photo order. The pages share one editor that stays mounted while hidden, so a change made on
+Photo order shows on Route before it's saved, and **Save route** on either saves both. **Every day** goes back to the
+list.
+
+> **Frontend analogy:** the editor's state lives above the tabs, like lifting `useState` into a layout so switching
+> nested routes doesn't reset a form.
+
+The pages keep what's chosen in their URL, so a link or a reload opens them the same way (`lib/trip-lines-search.ts`,
+read by each route's `validateSearch`):
+
+| Param   | Where    | What it opens                                                       | Unless set |
+| ------- | -------- | ------------------------------------------------------------------- | ---------- |
+| `tab`   | The list | `trips` for the Trips tab                                           | Days       |
+| `show`  | The list | The day list's filter: `marked`, `out-of-date`, `automatic`, `none` | All        |
+| `trip`  | The list | The Trip chosen on the Trips tab, by its ID                         | The newest |
+| `group` | A day    | The group shown alone on the map (the eye), by its name             | None       |
+
+For example, `/trip-lines?show=out-of-date` or `/trip-lines/2026-09-29/route?group=Engyoji%20Temple`. Clicks replace
+the history entry rather than adding one, so Back leaves the page. A new Trip isn't in the URL until it's saved. A link
+from before days had pages, `/trip-lines?day=2026-09-29&group=…`, opens that day's Route page.
 
 > **Frontend analogy:** this is TanStack Router's search params used as the page's state store instead of `useState`,
 > like keeping a table's sort and filter in the query string.
 
-The right side edits the chosen day: its photos in the order they were taken, with what happened between each two, and
+The Route page edits the day: its photos in the order they were taken, with what happened between each two, and
 a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
 highlights its dot.
 
@@ -427,6 +444,6 @@ The portfolio doesn't draw the lines yet; that's the next step.
 
 ## Trip page story
 
-Under the day's route, **Trip page story** writes the words around the day's photos for the portfolio's Trip
+The day's **Story** page, **Trip page story**, writes the words around the day's photos for the portfolio's Trip
 page: a caption on each photo, a paragraph between photos, and which photos share a row. See
 [Trip Pages](trip-pages.md).

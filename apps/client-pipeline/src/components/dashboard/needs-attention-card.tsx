@@ -181,9 +181,8 @@ function useTripLineRows(): AttentionRow[] {
   return stale.length > 0 ? [tripLinesRow(stale)] : [];
 }
 
-/** The trip lines out of date: how many days, what changed, and a link to the newest one. */
+/** The trip lines out of date: how many days, what changed, and a link to the list of them. */
 function tripLinesRow(stale: StaleTripLine[]): AttentionRow {
-  const [newest] = stale as [StaleTripLine, ...StaleTripLine[]];
   const missing = stale.reduce((sum, s) => sum + s.missing, 0);
   const label = "Trip lines out of date with their photos";
   return {
@@ -201,7 +200,7 @@ function tripLinesRow(stale: StaleTripLine[]): AttentionRow {
     countText: stale.length === 1 ? "1 day" : `${stale.length} days`,
     fix: (
       <FixLink>
-        <Link to="/trip-lines" search={{ day: newest.day, show: "out-of-date" }}>
+        <Link to="/trip-lines" search={{ show: "out-of-date" }}>
           Trip Lines
         </Link>
       </FixLink>
