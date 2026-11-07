@@ -18,7 +18,9 @@ undocumented database that Lightroom locks while it's open. So an LLM reads the 
 
 The answer is a JSON tree. Each item has a `path`, every name from the top down joined with `/`, such as
 `Travel/Busan, South Korea`. Items the LLM couldn't read clearly come with a note, shown next to the name with a
-warning icon, and a folder that was closed in the screenshots says its albums weren't read.
+warning icon, and a folder that was closed in the screenshots says its albums weren't read. An album Lightroom keeps
+on the device (**Make Available Offline**, shown in Lightroom with a small offline icon) comes back with
+`"offline": true` and gets a blue **Offline** mark on the page; the Albums card says how many there are.
 
 ## Importing again
 
@@ -30,9 +32,18 @@ new.
 
 ## Stages and notes
 
-Each album has a **Stage** (No stage, Not started, Culling, Editing, Ready to upload, Uploaded, Done) and a notes
-box. The buttons above the tree show how many albums are at each stage and, when pressed, only those albums, inside
-the folders that hold them.
+Each album has a **Stage** (No stage, Cull Round 1, Cull Round 2, Cropping, Editing, Re-editing, Done) and notes.
+The Albums card shows them two ways, switched with **Tree** and **Board** (remembered in the browser):
+
+- **Tree:** Lightroom's folders with each album's notes box and stage. The buttons above it show how many albums are
+  at each stage and, when pressed, only those albums, inside the folders that hold them.
+- **Board:** a Kanban board with a lane for each stage, left to right, and a **No stage** lane first. Each album is
+  a card with its folder, marks and notes; drag it to another lane, or pick a stage on the card, to move it. The
+  board scrolls sideways when the lanes don't fit.
+
+A list saved before the board's lanes is read again when the page opens: **Culling** becomes **Cull Round 1**,
+**Editing** and **Done** stay, and the stages that aren't lanes any more (Not started, Ready to upload, Uploaded)
+become No stage.
 
 ## Kept on this computer only
 

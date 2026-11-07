@@ -3,13 +3,13 @@ import promptText from "@/lib/lightroom-albums-prompt.md?raw";
 /** The prompt to send an LLM with screenshots of Lightroom's album panel, asking for the albums as JSON. */
 export const lightroomAlbumsPrompt = promptText;
 
-/** The stages an album can be at, in the order work on an album usually goes. */
+/** The stages an album can be at, in the order work on an album usually goes: the board's lanes, left to right. */
 export const LIGHTROOM_STAGES = [
-  "Not started",
-  "Culling",
+  "Cull Round 1",
+  "Cull Round 2",
+  "Cropping",
   "Editing",
-  "Ready to upload",
-  "Uploaded",
+  "Re-editing",
   "Done",
 ] as const;
 
@@ -27,6 +27,8 @@ export interface LightroomAlbum {
   photoCount: number | null;
   /** Whether it's a Smart Collection. */
   smart: boolean;
+  /** Whether Lightroom keeps the album on the device, so it's there without the internet. */
+  offline: boolean;
   /** Which stage the album is at, or null before one is picked. */
   stage: LightroomStage | null;
   /** The photographer's notes on the album. */
@@ -63,12 +65,12 @@ export interface LightroomAlbumsFile {
 }
 
 /** The JSON object in pasted text, from its first `{` to its last `}`, so a code block or words around it are fine. */
-function jsonObject(text: string): Record<string, unknown> {
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
+function jsonObject(input: string): Record<string, unknown> {
+  const start = input.indexOf("{");
+  const end = input.lastIndexOf("}");
   if (start < 0 || end < start) throw new Error("There's no JSON object in it.");
   try {
-    return JSON.parse(text.slice(start, end + 1)) as Record<string, unknown>;
+    return JSON.parse(input.slice(start, end + 1)) as Record<string, unknown>;
   } catch {
     throw new Error("The JSON couldn't be read. Check it's the whole answer or file.");
   }
@@ -82,8 +84,11 @@ function count(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
+/** Stages from before the board's lanes, read as the lane each became. */
+const OLD_STAGES: Record<string, LightroomStage> = { Culling: "Cull Round 1" };
+
 function stage(value: unknown): LightroomStage | null {
-  return LIGHTROOM_STAGES.find((s) => s === value) ?? null;
+  return LIGHTROOM_STAGES.find((s) => s === value) ?? OLD_STAGES[text(value)] ?? null;
 }
 
 /** The uncertain note, kept when the item was marked uncertain (an LLM answer) or has one (an exported file). */
@@ -104,6 +109,7 @@ function readAlbum(raw: Record<string, unknown>, name: string, path: string): Li
     path,
     photoCount: count(raw.photoCount),
     smart: raw.smart === true,
+    offline: raw.offline === true,
     stage: stage(raw.stage),
     notes: text(raw.notes),
     ...uncertainty(raw),
@@ -149,6 +155,11 @@ export function readLightroomAlbums(input: string): LightroomAlbumsFile {
   const items = readItems(raw.items, "");
   if (items.length === 0) throw new Error("The list has no folders or albums in it.");
   return { source: text(raw.source) || "unknown", updatedAt: new Date().toISOString(), items };
+}
+
+/** The tree read again, so a list kept in the browser by an older version of the page gets the current fields and stages. */
+export function normalizeLightroomItems(items: unknown): LightroomItem[] {
+  return readItems(items, "");
 }
 
 /** Every album in the tree, folders left out, from top to bottom. */

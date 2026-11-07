@@ -1,18 +1,21 @@
-import { FolderIcon, TriangleAlertIcon } from "lucide-react";
+import { FolderIcon } from "lucide-react";
 import { useState } from "react";
+import { AlbumBoard } from "@/components/lightroom-albums/album-board";
+import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { count } from "@/components/update-data-shared";
 import {
   LIGHTROOM_STAGES,
   type LightroomAlbum,
+  type LightroomAlbumsFile,
   type LightroomFolder,
   type LightroomItem,
   type LightroomStage,
   allAlbums,
 } from "@/lib/lightroom-albums";
 import { cn } from "@/lib/utils";
-import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
+import { type LightroomView, useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 
 /** Which albums the tree shows: every album, the ones without a stage, or the ones at one stage. */
 type StageFilter = "all" | "none" | LightroomStage;
@@ -32,28 +35,82 @@ function filterItems(items: LightroomItem[], filter: StageFilter): LightroomItem
   });
 }
 
-/** The Albums card: how many albums are at each stage, and the folder tree with each album's stage and notes. */
+/** The Albums card: the albums as Lightroom's folder tree or as a board with a lane per stage, each with its stage and notes. */
 export function AlbumTreeCard() {
   const file = useLightroomAlbumsStore((state) => state.file);
-  const [filter, setFilter] = useState<StageFilter>("all");
   const albums = file ? allAlbums(file.items) : [];
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Albums</CardTitle>
-        <CardDescription>
-          {file
-            ? `${count(albums.length, "album")}, last changed ${new Date(file.updatedAt).toLocaleString()}.`
-            : "Nothing imported yet."}
-        </CardDescription>
+      <CardHeader className="flex flex-wrap items-start justify-between gap-2">
+        <div className="flex flex-col gap-1.5">
+          <CardTitle>Albums</CardTitle>
+          <CardDescription>{summary(file, albums)}</CardDescription>
+        </div>
+        {file && <ViewSwitch />}
       </CardHeader>
       {file && (
-        <CardContent className="flex flex-col gap-4">
-          <StageChips albums={albums} filter={filter} onFilter={setFilter} />
-          <ItemList items={filterItems(file.items, filter)} />
+        <CardContent>
+          <AlbumsView file={file} albums={albums} />
         </CardContent>
       )}
     </Card>
+  );
+}
+
+/** How many albums there are, how many are offline, and when the list last changed. */
+function summary(file: LightroomAlbumsFile | null, albums: LightroomAlbum[]) {
+  if (!file) return "Nothing imported yet.";
+  const offline = albums.filter((album) => album.offline).length;
+  return `${count(albums.length, "album")}, ${offline} offline, last changed ${new Date(file.updatedAt).toLocaleString()}.`;
+}
+
+const VIEWS: { value: LightroomView; label: string }[] = [
+  { value: "tree", label: "Tree" },
+  { value: "board", label: "Board" },
+];
+
+/** Switches the Albums card between the tree and the board, remembered in the browser. */
+function ViewSwitch() {
+  const view = useLightroomAlbumsStore((state) => state.view);
+  const setView = useLightroomAlbumsStore((state) => state.setView);
+  return (
+    <div className="flex rounded-md border p-0.5" role="group" aria-label="Show the albums as">
+      {VIEWS.map((v) => (
+        <button
+          key={v.value}
+          type="button"
+          aria-pressed={view === v.value}
+          onClick={() => setView(v.value)}
+          className={cn(
+            "rounded px-3 py-1 text-sm",
+            view === v.value ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+          )}
+        >
+          {v.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** The chosen view of the albums. */
+function AlbumsView({ file, albums }: { file: LightroomAlbumsFile; albums: LightroomAlbum[] }) {
+  const view = useLightroomAlbumsStore((state) => state.view);
+  return view === "board" ? (
+    <AlbumBoard albums={albums} />
+  ) : (
+    <TreeView file={file} albums={albums} />
+  );
+}
+
+/** The folder tree, with the stage buttons above it that show only the albums at one stage. */
+function TreeView({ file, albums }: { file: LightroomAlbumsFile; albums: LightroomAlbum[] }) {
+  const [filter, setFilter] = useState<StageFilter>("all");
+  return (
+    <div className="flex flex-col gap-4">
+      <StageChips albums={albums} filter={filter} onFilter={setFilter} />
+      <ItemList items={filterItems(file.items, filter)} />
+    </div>
   );
 }
 
@@ -124,22 +181,13 @@ function FolderRow({ folder }: { folder: LightroomFolder }) {
   );
 }
 
-/** An album's name and photo count, with its stage and notes to change. */
+/** An album's name and marks, with its stage and notes to change. */
 function AlbumRow({ album }: { album: LightroomAlbum }) {
   const setAlbum = useLightroomAlbumsStore((state) => state.setAlbum);
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="flex flex-wrap items-center gap-2 text-sm font-medium">
-          {album.name}
-          {album.smart && <span className="text-muted-foreground text-xs">Smart</span>}
-          {album.photoCount !== null && (
-            <span className="text-muted-foreground text-xs">
-              {count(album.photoCount, "photo")}
-            </span>
-          )}
-          <Uncertain note={album.uncertainNote} />
-        </p>
+        <AlbumTitle album={album} />
         <Textarea
           aria-label={`Notes on ${album.name}`}
           placeholder="Notes"
@@ -148,32 +196,7 @@ function AlbumRow({ album }: { album: LightroomAlbum }) {
           onChange={(event) => setAlbum(album.path, { notes: event.target.value })}
         />
       </div>
-      <select
-        aria-label={`Stage of ${album.name}`}
-        className="border-input bg-background h-9 rounded-md border px-3 text-sm sm:w-40"
-        value={album.stage ?? ""}
-        onChange={(event) =>
-          setAlbum(album.path, { stage: (event.target.value || null) as LightroomStage | null })
-        }
-      >
-        <option value="">No stage</option>
-        {LIGHTROOM_STAGES.map((stage) => (
-          <option key={stage} value={stage}>
-            {stage}
-          </option>
-        ))}
-      </select>
+      <StageSelect album={album} className="sm:w-40" />
     </div>
-  );
-}
-
-/** A warning icon saying why the LLM wasn't sure it read the name right. */
-function Uncertain({ note }: { note?: string }) {
-  if (!note) return null;
-  return (
-    <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1 text-xs font-normal">
-      <TriangleAlertIcon className="size-3.5" aria-hidden />
-      {note}
-    </span>
   );
 }

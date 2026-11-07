@@ -13,6 +13,10 @@ overlaps the one before by a few rows. Read the whole list and write it out as a
   marks a folder (Lightroom Classic: collection set; Lightroom: folder). A folder icon or a stacked-photos icon
   marks a folder too. A plain album or collection icon marks an album.
 - **Smart Collections** (Lightroom Classic, gear icon on the collection) are albums with `"smart": true`.
+- **Offline albums:** in Lightroom, an album kept on this device shows a small offline icon (a downward arrow, or a
+  device or cloud-with-arrow icon) beside its name or photo count, after **Make Available Offline** or **Store
+  Album Locally**. Give those albums `"offline": true`, and every other album `"offline": false`. If an icon might
+  mean offline but you can't tell, use `false`, set `"uncertain": true` and say so in `"uncertainNote"`.
 - **Collapsed folders:** if a folder's triangle points right (closed) in every screenshot it's in, give it
   `"collapsed": true` and `"children": []`. Don't guess what's inside it.
 - **Photo counts:** use the number shown at the right of the row. Use `null` when there isn't one or you can't read it.
@@ -44,6 +48,7 @@ First, a JSON code block exactly in this shape:
           "path": "Travel/Busan, South Korea",
           "photoCount": 214,
           "smart": false,
+          "offline": false,
           "stage": null,
           "notes": ""
         }
@@ -55,8 +60,8 @@ First, a JSON code block exactly in this shape:
 
 - `source` is `"lightroom-classic"` or `"lightroom"`, depending on which app the screenshots show. Use `"unknown"` if
   you can't tell.
-- `kind` is `"folder"` or `"album"`. Only folders have `children` and `collapsed`. Only albums have `smart`, `stage`
-  and `notes`.
+- `kind` is `"folder"` or `"album"`. Only folders have `children` and `collapsed`. Only albums have `smart`,
+  `offline`, `stage` and `notes`.
 - `path` is every name from the top of the tree down to this item, joined with `/`. It's how the item will be matched
   again on the next import, so keep it exact.
 - Always write `stage` as `null` and `notes` as `""`. The user fills these in later.
@@ -64,7 +69,7 @@ First, a JSON code block exactly in this shape:
 
 After the JSON, write a short check list in plain text:
 
-1. How many folders and how many albums you found.
+1. How many folders and how many albums you found, and how many albums are offline.
 2. Every item marked uncertain, with its path and the reason.
 3. Every place where two screenshots in a row share no rows, so items may be missing between them (for example,
    "screenshot 3 ends at _Japan 2024_ and screenshot 4 starts at _Weddings_ with no overlap"), with the item names on
