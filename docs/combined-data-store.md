@@ -46,8 +46,9 @@ everything that changed as one commit, "Combine photo, album and tag data", on t
 request's branch, or on a new `photo-data/` branch with a new pull request when none is open. Each is every other `.json` file directly in its folder,
 sorted by path, as one array, formatted as oxfmt formats it, so a list that's already up to date isn't committed again.
 Every data file in the commit is formatted the same way first (a short list such as `"spotlightZones": ["homepage"]` on one
-line, while a list of lists such as a trip line's points always gets one line per point), so CI's `oxfmt --check`
-passes on what the app commits. The Go formatter (`internal/github/jsonfmt.go`) copies oxfmt's rules rather than running
+line, a list of numbers too long for one line, such as a trip line's photos, filled with as many numbers per line as fit,
+and a list of lists such as a trip line's points always one line per point), including the automatic trip lines Commit
+redraws, so CI's `oxfmt --check` passes on what the app commits. The Go formatter (`internal/github/jsonfmt.go`) copies oxfmt's rules rather than running
 it, so `jsonfmt_oxfmt_test.go` runs the repository's real oxfmt on sample data shapes and expects the same bytes. CI's Go
 job installs oxfmt so that test can't be skipped; add a case there whenever a new kind of data file is committed.
 

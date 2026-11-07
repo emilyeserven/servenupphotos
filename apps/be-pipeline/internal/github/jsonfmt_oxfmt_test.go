@@ -12,7 +12,8 @@ import (
 
 // oxfmtCases are data shapes the pipeline commits, each checked against the
 // real oxfmt: lists of lists (trip line points, GeoJSON coordinates), short
-// and long lists, nested objects, and text that isn't ASCII.
+// and long lists, long lists of numbers (a trip line's photos), nested
+// objects, and text that isn't ASCII.
 var oxfmtCases = []string{
 	`{"path":[[32.658169,25.719],[32.658163,25.719003],[32.65815,25.71901]]}`,
 	`{"geometry":{"type":"LineString","coordinates":[[32.60537222222222,25.723936111111108],[32.601583,25.740389]]}}`,
@@ -21,6 +22,9 @@ var oxfmtCases = []string{
 	`{"tags":["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","ccccc"]}`,
 	`{"edge":["xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"]}`,
 	`{"n":[1,2.5,-3e2],"html":"<b>&amp;</b> \"q\" é 東京","x":null,"y":true}`,
+	`{"a":{"b":{"c":{"photos":[419,420,421,422,423,424,425,426,427,428,429,430,431,432,433,434,435,436,437,438]}}}}`,
+	`{"kkkkkkkkkkkkkkkkkk":{"x":[2621907,8,337,8354629,60289,-8.5,8,213,9966910,8070272,7,53118,983,274,848,4,1,7]}}`,
+	`{"kkkkkkkkkkkkkkkkkk":{"x":[2621907,8,337,8354629,60289,-8.5,8,213,9966910,8070272,7,53118,983,274,848,4,1]}}`,
 	`[{"day":"2025-01-20","lines":[{"mode":"walk","photos":[358,359],"path":[[32.6,25.7],[32.7,25.8]]}]}]`,
 }
 
