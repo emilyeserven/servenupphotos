@@ -29,7 +29,8 @@ way it combines the timeline labels into `TIMELINE.json`:
     "split": "",
     "stacked": false,
     "sort": "group",
-    "limit": 0
+    "limit": 0,
+    "yMin": 5
   }
 }
 ```
@@ -45,7 +46,9 @@ way it combines the timeline labels into `TIMELINE.json`:
   there shows as its own button too.
 - **`graph`** holds the Graph page's settings by the names in `GraphConfig` (`lib/graph-data.ts`): `type` (bar, line,
   dot, pie or scatter), `x` and `y` (stat IDs, such as `aperture`, `year` or `daypart`), `measure` (count or percent),
-  `split` (a stat ID or "" for none), `stacked`, `sort` (group, reverse or count) and `limit` (0 for all). A preset
+  `split` (a stat ID or "" for none), `stacked`, `sort` (group, reverse or count), `limit` (0 for all) and the
+  thresholds `xMin`, `xMax`, `yMin` and `yMax` (see [the Graph page](portfolio-graph.md#what-you-can-pick); left out
+  for no limit, and saving fails when an axis's lowest is above its highest). A preset
   never sets the filters; the visitor's stay as they are.
 - The ID is made from the name when it's first saved (with `-2` and so on after it when that's taken) and kept when
   it's renamed.

@@ -22,6 +22,13 @@ func TestSaveGraphPreset(t *testing.T) {
 	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) {
 		t.Errorf("saved %s", saved)
 	}
+	thresholds := GraphPreset{ID: "wide", Kind: "preset", Name: "Wide", Graph: &GraphSettings{Type: "dot", X: "aperture", Measure: "count", Sort: "group", XMax: num(4), YMin: num(5)}}
+	if _, err := c.SaveGraphPreset(t.Context(), placesGH, thresholds); err != nil {
+		t.Fatalf("SaveGraphPreset(thresholds) error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/graphs/wide.json"); !strings.Contains(saved, `"xMax": 4`) || strings.Contains(saved, "xMin") {
+		t.Errorf("thresholds saved as %s, want xMax and no xMin", saved)
+	}
 	group := GraphPreset{ID: "time", Kind: "group", Name: "Time", Group: "camera", Graph: dotGraph}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, group); err != nil {
 		t.Fatalf("SaveGraphPreset(group) error = %v", err)
@@ -39,6 +46,7 @@ func TestSaveGraphPreset(t *testing.T) {
 		{"odd type", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "radar", X: "iso", Measure: "count", Sort: "group"}}},
 		{"no such group", GraphPreset{ID: "a", Kind: "preset", Name: "A", Group: "lenses", Graph: dotGraph}},
 		{"bad ID", GraphPreset{ID: "A A", Kind: "group", Name: "A"}},
+		{"min above max", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "dot", X: "iso", Measure: "count", Sort: "group", YMin: num(10), YMax: num(2)}}},
 	}
 	for _, tt := range tests {
 		_, err := c.SaveGraphPreset(t.Context(), placesGH, tt.preset)
@@ -66,3 +74,6 @@ func TestDeleteGraphPresetGroup(t *testing.T) {
 		t.Errorf("DeleteGraphPreset(empty group) error = %v", err)
 	}
 }
+
+// num is a threshold for a test preset.
+func num(v float64) *float64 { return &v }

@@ -56,6 +56,16 @@ type GraphSettings struct {
 	Sort string `json:"sort"`
 	// Limit is how many of the x axis's values show; 0 for all.
 	Limit int `json:"limit"`
+	// XMin and XMax are the lowest and highest x values shown, such as 2 and
+	// 8 for f/2 to f/8, for a stat whose values go in order; nil for no
+	// limit.
+	XMin *float64 `json:"xMin,omitempty"`
+	XMax *float64 `json:"xMax,omitempty"`
+	// YMin and YMax are the lowest and highest y values shown: a
+	// scatterplot's y stat's values, or for the rest how many photos (or what
+	// share) an x value needs to show; nil for no limit.
+	YMin *float64 `json:"yMin,omitempty"`
+	YMax *float64 `json:"yMax,omitempty"`
 }
 
 // The values a preset's graph can take for each of its choices.
@@ -164,6 +174,16 @@ func validPresetGraph(p GraphPreset) *PublishError {
 	}
 	if g.Limit < 0 {
 		return publishErr(http.StatusBadRequest, "Show all of the x axis's values, or a number of them above 0.")
+	}
+	return validThresholds(g)
+}
+
+// validThresholds fails when an axis's lowest value is above its highest.
+func validThresholds(g *GraphSettings) *PublishError {
+	for _, r := range [][2]*float64{{g.XMin, g.XMax}, {g.YMin, g.YMax}} {
+		if r[0] != nil && r[1] != nil && *r[0] > *r[1] {
+			return publishErr(http.StatusBadRequest, "An axis's lowest value is above its highest.")
+		}
 	}
 	return nil
 }

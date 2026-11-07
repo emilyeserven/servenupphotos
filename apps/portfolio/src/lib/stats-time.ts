@@ -64,7 +64,12 @@ function yearOf(photo: Photo): string {
 
 /** A year as a row, filtering to its dates. */
 function yearBucket(year: string): Bucket {
-  return { key: year, label: year, filter: { start: `${year}-01-01`, end: `${year}-12-31` } };
+  return {
+    key: year,
+    label: year,
+    value: Number(year),
+    filter: { start: `${year}-01-01`, end: `${year}-12-31` },
+  };
 }
 
 /** Each year the photos were taken in, newest first. */
@@ -75,7 +80,7 @@ function yearGroup(list: Photo[]): StatGroup {
 
 /** The Time section's groups: years (narrowing the seasons), seasons (narrowing the months), months, parts of the day and days of the week. */
 export const TIME_GROUPS: GroupDef[] = [
-  { id: "year", narrows: "season", build: yearGroup },
+  { id: "year", narrows: "season", ordered: true, build: yearGroup },
   { id: "season", narrows: "month", build: choiceGroup("Season", "season", SEASONS, seasonSpan) },
   { id: "month", build: choiceGroup("Month", "month", MONTHS) },
   {

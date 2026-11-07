@@ -16,24 +16,36 @@ axis without opening Adjust Graph.
 
 ## What you can pick
 
-| Setting  | What it does                                                                                                                                                                                                                                                              |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Type     | A dropdown of **Bar**, **Line**, **Dot** (a dot for each value, no line), **Pie** or **Scatter**                                                                                                                                                                          |
-| X axis   | Any group on the Numbers page (Cameras, each lens category, Focal length, Lenses, Countries, Cities, Year, Season, Month, Time of day, Day of the week), or a camera setting under **Technical** (Aperture, Exposure, ISO, Focal length in mm). For a pie it's **Slices** |
-| Y axis   | **Photos**, or **Share of photos (%)**. For a scatterplot it's a second stat instead. For a pie it's **Size**                                                                                                                                                             |
-| Split by | Bar, line and dot graphs only: another stat that splits each value, such as each year's bar into seasons. Bars can be **Stacked** or **Side by side**                                                                                                                     |
-| Order    | **As on Numbers** (the card's own order, such as newest year first), **Reversed**, or **Most photos first**                                                                                                                                                               |
-| Show     | **All** of the x axis's values, or the first 5, 10 or 20 in that order                                                                                                                                                                                                    |
-| Filters  | **Add a filter** picks a stat and the values to keep, such as Countries: Japan. A photo is kept with any of a filter's values, and must pass every filter.                                                                                                                |
+| Setting    | What it does                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Type       | A dropdown of **Bar**, **Line**, **Dot** (a dot for each value, no line), **Pie** or **Scatter**                                                                                                                                                                                                                                                                                                                                |
+| X axis     | Any group on the Numbers page (Cameras, each lens category, Focal length, Lenses, Countries, Cities, Year, Season, Month, Time of day, Day of the week), or a camera setting under **Technical** (Aperture, Exposure, ISO, Focal length in mm). For a pie it's **Slices**                                                                                                                                                       |
+| Y axis     | **Photos**, or **Share of photos (%)**. For a scatterplot it's a second stat instead. For a pie it's **Size**                                                                                                                                                                                                                                                                                                                   |
+| Split by   | Bar, line and dot graphs only: another stat that splits each value, such as each year's bar into seasons. Bars can be **Stacked** or **Side by side**                                                                                                                                                                                                                                                                           |
+| Order      | **As on Numbers** (the card's own order, such as newest year first), **Reversed**, or **Most photos first**                                                                                                                                                                                                                                                                                                                     |
+| Show       | **All** of the x axis's values, or the first 5, 10 or 20 in that order                                                                                                                                                                                                                                                                                                                                                          |
+| Thresholds | **X axis from / to**: the lowest and highest x values shown, for a stat whose values go in order (Year and the camera settings), such as f/2 to f/8 or 1/250 for an exposure. **Y axis from / to**: how many photos (or what share) an x value needs to be shown, such as at least 5; for a scatterplot it's the y stat's values instead, like the x axis's. Empty is no limit. They cut the values before **Show** counts them |
+| Filters    | **Add a filter** picks a stat and the values to keep, such as Countries: Japan. A photo is kept with any of a filter's values, and must pass every filter.                                                                                                                                                                                                                                                                      |
 
 The page opens on photos per year, oldest first, each bar split by season. Nothing is kept in the URL.
+
+**Wide**, beside Graph / Table, lets the page use the window's whole width instead of the usual column (**Narrow** puts
+it back). The choice is remembered in the browser.
 
 **Presets** are made on the pipeline's [Graph Presets](graph-presets.md) page and read from `graphs/GRAPHS.json`. Each
 is a button that sets the graph's type, axes, split, order and how many values show; the filters stay as they are. A
 **preset group** is a dropdown among the buttons, such as **When**, listing its presets; a group with no presets isn't
 shown, and the row is left out when there are no presets at all. The committed ones are dot graphs of **Aperture**,
 **Exposure**, **ISO** and **Focal length**: a dot for each value the photos were taken at, lowest first, at how many
-photos have it.
+photos have it. Presets can set the thresholds too; one that leaves them out turns them off.
+
+**Save as preset** asks for a name and keeps the graph's settings (not its filters) as one of the visitor's own presets,
+shown after the site's with a bookmark and a × to remove it. They're kept in the browser's local storage
+(`servenup:graph-presets`, `lib/saved-graphs.ts`), so they're only on that browser; in a private window they last
+until the page is left.
+
+> **Frontend analogy:** the site's presets are the app's built-in defaults shipped in the bundle (`GRAPHS.json`), and a
+> visitor's own are user settings in `localStorage`, merged into one list when rendering.
 
 ## How it's counted
 

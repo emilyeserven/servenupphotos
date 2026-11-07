@@ -1,4 +1,4 @@
-import { type RangeKey, rangeValues } from "@portfolio/lib/camera-filters";
+import { exposureSeconds, type RangeKey, rangeValues } from "@portfolio/lib/camera-filters";
 import type { GraphStat } from "@portfolio/lib/graph-data";
 import { type Photo, SETTING_FORMATS } from "@portfolio/lib/photos";
 import { type Bucket, bucketGroup, type StatGroup } from "@portfolio/lib/stat-groups";
@@ -6,7 +6,17 @@ import { type Bucket, bucketGroup, type StatGroup } from "@portfolio/lib/stat-gr
 /** A camera setting's value as a row: written as a photographer would, filtering to just that value. */
 function settingBucket(key: RangeKey, value: string): Bucket {
   const write = SETTING_FORMATS.find(([name]) => name === key)![1];
-  return { key: value, label: write(value), filter: { [key]: `${value}-${value}` } };
+  return {
+    key: value,
+    label: write(value),
+    value: settingValue(key, value),
+    filter: { [key]: `${value}-${value}` },
+  };
+}
+
+/** A setting's value as a number, such as 1/60 for an exposure of "1/60". */
+function settingValue(key: RangeKey, value: string): number | undefined {
+  return key === "exposure" ? exposureSeconds(value) : Number(value);
 }
 
 /** A group of the setting's values the photos have, lowest first, such as f/1.4 to f/16. */
@@ -32,5 +42,6 @@ export const SETTING_STATS: GraphStat[] = (
   id: key,
   label,
   section: "Technical",
+  ordered: true,
   build: settingGroup(key, label),
 }));

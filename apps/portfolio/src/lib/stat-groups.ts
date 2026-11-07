@@ -9,6 +9,11 @@ export interface StatRow {
   hint?: string;
   count: number;
   /**
+   * The row's value as a number, for a group whose values go in order, such as 2.8 for f/2.8, 1/60
+   * for 1/60s or 2024 for a year; left out for the rest. The Graph page's axis thresholds compare it.
+   */
+  value?: number;
+  /**
    * The filter that narrows the photos to the row's, as the URL writes it, such as
    * `{ camera: "Fujifilm X-T5" }`; left out when no filter can.
    */
@@ -35,6 +40,8 @@ export interface GroupDef {
   build: (list: Photo[]) => StatGroup;
   /** The ID of the group its rows narrow. */
   narrows?: string;
+  /** Whether its rows have a `value`, so a graph's axis can be cut to a range of them. */
+  ordered?: boolean;
   /**
    * Other ways to make it, picked from a dropdown in place of its title, such as Lenses by type or
    * by brand; the first is shown at first. `build` is left for the rest of the page to name it by.

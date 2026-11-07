@@ -1,3 +1,4 @@
+import { GraphThresholds } from "@portfolio/components/graph-builder/graph-thresholds";
 import {
   GraphField,
   StatOptions,
@@ -36,7 +37,7 @@ const LIMITS = [0, 5, 10, 20];
 
 /**
  * The graph's settings, in the Adjust Graph box: its type, what's on each axis, what splits a bar,
- * line or dot graph, and the x axis's order and how many of its values show.
+ * line or dot graph, the x axis's order and how many of its values show, and each axis's thresholds.
  */
 export function GraphControls({
   config,
@@ -54,6 +55,7 @@ export function GraphControls({
       <YField config={config} onChange={onChange} />
       <SplitFields config={config} onChange={onChange} />
       <OrderFields config={config} onChange={onChange} />
+      <GraphThresholds config={config} onChange={onChange} />
     </div>
   );
 }
