@@ -42,7 +42,7 @@ const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => Re
     label: "Photos without tags",
     fix: () => (
       <FixLink>
-        <Link to="/tag-data/$section" params={{ section: "bulk-tagging" }}>
+        <Link to="/tag-tools/$section" params={{ section: "bulk-tagging" }}>
           Bulk tagging
         </Link>
       </FixLink>

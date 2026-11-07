@@ -37,7 +37,6 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as SmallTagsRouteImport } from './routes/small-tags'
-import { Route as TagDataRouteImport } from './routes/tag-data'
 import { Route as TimelineLabelsRouteImport } from './routes/timeline-labels'
 import { Route as TripLinesRouteImport } from './routes/trip-lines'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
@@ -51,6 +50,7 @@ import { Route as LightroomAlbumsImportRouteImport } from './routes/lightroom-al
 import { Route as SettingsStatusRouteImport } from './routes/settings_.status'
 import { Route as TagDataIndexRouteImport } from './routes/tag-data.index'
 import { Route as TagDataSectionRouteImport } from './routes/tag-data.$section'
+import { Route as TagToolsSectionRouteImport } from './routes/tag-tools.$section'
 import { Route as TagsIndexRouteImport } from './routes/tags.index'
 import { Route as TagsIdRouteImport } from './routes/tags.$id'
 import { Route as UpdateDataIndexRouteImport } from './routes/update-data.index'
@@ -196,11 +196,6 @@ const SmallTagsRoute = SmallTagsRouteImport.update({
   path: '/small-tags',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TagDataRoute = TagDataRouteImport.update({
-  id: '/tag-data',
-  path: '/tag-data',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TimelineLabelsRoute = TimelineLabelsRouteImport.update({
   id: '/timeline-labels',
   path: '/timeline-labels',
@@ -257,14 +252,19 @@ const SettingsStatusRoute = SettingsStatusRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const TagDataIndexRoute = TagDataIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TagDataRoute,
+  id: '/tag-data/',
+  path: '/tag-data/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TagDataSectionRoute = TagDataSectionRouteImport.update({
-  id: '/$section',
-  path: '/$section',
-  getParentRoute: () => TagDataRoute,
+  id: '/tag-data/$section',
+  path: '/tag-data/$section',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagToolsSectionRoute = TagToolsSectionRouteImport.update({
+  id: '/tag-tools/$section',
+  path: '/tag-tools/$section',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TagsIndexRoute = TagsIndexRouteImport.update({
   id: '/tags/',
@@ -316,7 +316,6 @@ export interface FileRoutesByFullPath {
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
-  '/tag-data': typeof TagDataRouteWithChildren
   '/timeline-labels': typeof TimelineLabelsRoute
   '/trip-lines': typeof TripLinesRoute
   '/update-data': typeof UpdateDataRouteWithChildren
@@ -326,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/settings/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
+  '/tag-tools/$section': typeof TagToolsSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
@@ -372,6 +372,7 @@ export interface FileRoutesByTo {
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/settings/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
+  '/tag-tools/$section': typeof TagToolsSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums': typeof AlbumsIndexRoute
@@ -411,7 +412,6 @@ export interface FileRoutesById {
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
-  '/tag-data': typeof TagDataRouteWithChildren
   '/timeline-labels': typeof TimelineLabelsRoute
   '/trip-lines': typeof TripLinesRoute
   '/update-data': typeof UpdateDataRouteWithChildren
@@ -421,6 +421,7 @@ export interface FileRoutesById {
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/settings_/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
+  '/tag-tools/$section': typeof TagToolsSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
@@ -461,7 +462,6 @@ export interface FileRouteTypes {
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
-    | '/tag-data'
     | '/timeline-labels'
     | '/trip-lines'
     | '/update-data'
@@ -471,6 +471,7 @@ export interface FileRouteTypes {
     | '/lightroom-albums/import'
     | '/settings/status'
     | '/tag-data/$section'
+    | '/tag-tools/$section'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums/'
@@ -517,6 +518,7 @@ export interface FileRouteTypes {
     | '/lightroom-albums/import'
     | '/settings/status'
     | '/tag-data/$section'
+    | '/tag-tools/$section'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums'
@@ -555,7 +557,6 @@ export interface FileRouteTypes {
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
-    | '/tag-data'
     | '/timeline-labels'
     | '/trip-lines'
     | '/update-data'
@@ -565,6 +566,7 @@ export interface FileRouteTypes {
     | '/lightroom-albums/import'
     | '/settings_/status'
     | '/tag-data/$section'
+    | '/tag-tools/$section'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums/'
@@ -604,7 +606,6 @@ export interface RootRouteChildren {
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
   SmallTagsRoute: typeof SmallTagsRoute
-  TagDataRoute: typeof TagDataRouteWithChildren
   TimelineLabelsRoute: typeof TimelineLabelsRoute
   TripLinesRoute: typeof TripLinesRoute
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
@@ -613,10 +614,13 @@ export interface RootRouteChildren {
   GenresIdRoute: typeof GenresIdRoute
   LightroomAlbumsImportRoute: typeof LightroomAlbumsImportRoute
   SettingsStatusRoute: typeof SettingsStatusRoute
+  TagDataSectionRoute: typeof TagDataSectionRoute
+  TagToolsSectionRoute: typeof TagToolsSectionRoute
   TagsIdRoute: typeof TagsIdRoute
   AlbumsIndexRoute: typeof AlbumsIndexRoute
   GenresIndexRoute: typeof GenresIndexRoute
   LightroomAlbumsIndexRoute: typeof LightroomAlbumsIndexRoute
+  TagDataIndexRoute: typeof TagDataIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
 }
 
@@ -818,13 +822,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SmallTagsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tag-data': {
-      id: '/tag-data'
-      path: '/tag-data'
-      fullPath: '/tag-data'
-      preLoaderRoute: typeof TagDataRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/timeline-labels': {
       id: '/timeline-labels'
       path: '/timeline-labels'
@@ -904,17 +901,24 @@ declare module '@tanstack/react-router' {
     }
     '/tag-data/': {
       id: '/tag-data/'
-      path: '/'
+      path: '/tag-data'
       fullPath: '/tag-data/'
       preLoaderRoute: typeof TagDataIndexRouteImport
-      parentRoute: typeof TagDataRoute
+      parentRoute: typeof rootRouteImport
     }
     '/tag-data/$section': {
       id: '/tag-data/$section'
-      path: '/$section'
+      path: '/tag-data/$section'
       fullPath: '/tag-data/$section'
       preLoaderRoute: typeof TagDataSectionRouteImport
-      parentRoute: typeof TagDataRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/tag-tools/$section': {
+      id: '/tag-tools/$section'
+      path: '/tag-tools/$section'
+      fullPath: '/tag-tools/$section'
+      preLoaderRoute: typeof TagToolsSectionRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/tags/': {
       id: '/tags/'
@@ -946,19 +950,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface TagDataRouteChildren {
-  TagDataSectionRoute: typeof TagDataSectionRoute
-  TagDataIndexRoute: typeof TagDataIndexRoute
-}
-
-const TagDataRouteChildren: TagDataRouteChildren = {
-  TagDataSectionRoute: TagDataSectionRoute,
-  TagDataIndexRoute: TagDataIndexRoute,
-}
-
-const TagDataRouteWithChildren =
-  TagDataRoute._addFileChildren(TagDataRouteChildren)
 
 interface UpdateDataRouteChildren {
   UpdateDataSectionRoute: typeof UpdateDataSectionRoute
@@ -1003,7 +994,6 @@ const rootRouteChildren: RootRouteChildren = {
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
   SmallTagsRoute: SmallTagsRoute,
-  TagDataRoute: TagDataRouteWithChildren,
   TimelineLabelsRoute: TimelineLabelsRoute,
   TripLinesRoute: TripLinesRoute,
   UpdateDataRoute: UpdateDataRouteWithChildren,
@@ -1012,10 +1002,13 @@ const rootRouteChildren: RootRouteChildren = {
   GenresIdRoute: GenresIdRoute,
   LightroomAlbumsImportRoute: LightroomAlbumsImportRoute,
   SettingsStatusRoute: SettingsStatusRoute,
+  TagDataSectionRoute: TagDataSectionRoute,
+  TagToolsSectionRoute: TagToolsSectionRoute,
   TagsIdRoute: TagsIdRoute,
   AlbumsIndexRoute: AlbumsIndexRoute,
   GenresIndexRoute: GenresIndexRoute,
   LightroomAlbumsIndexRoute: LightroomAlbumsIndexRoute,
+  TagDataIndexRoute: TagDataIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
 }
 export const routeTree = rootRouteImport

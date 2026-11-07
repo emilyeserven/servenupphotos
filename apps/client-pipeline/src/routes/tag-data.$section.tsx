@@ -1,13 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { SectionCard } from "@/components/update-data/sections-layout";
-import { tagDataSections } from "@/components/update-data/sections";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
+/** An old Tag Data subpage, such as `/tag-data/tag-pruning`, opens that tag tool's own page. */
 export const Route = createFileRoute("/tag-data/$section")({
-  component: TagDataSectionPage,
+  beforeLoad: ({ params }) => {
+    throw redirect({ to: "/tag-tools/$section", params, replace: true });
+  },
 });
-
-/** One Tag Data subpage: its card, once GitHub is set up. */
-function TagDataSectionPage() {
-  const { section } = Route.useParams();
-  return <SectionCard name="Tag Data" sections={tagDataSections} slug={section} />;
-}

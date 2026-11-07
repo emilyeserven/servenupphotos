@@ -23,7 +23,6 @@ import {
   MapPinIcon,
   MapPinnedIcon,
   MessageSquareTextIcon,
-  NotebookTabsIcon,
   PlaneIcon,
   RefreshCwIcon,
   ScaleIcon,
@@ -37,7 +36,7 @@ import {
   TagsIcon,
 } from "lucide-react";
 import type { FileRoutesByTo } from "@/routeTree.gen";
-import { updateDataSections } from "@/components/update-data/sections";
+import { tagTools, updateDataSections } from "@/components/update-data/sections";
 
 /** A page in the sidebar, with the icon it has when collapsed. */
 export interface NavPage {
@@ -48,6 +47,8 @@ export interface NavPage {
   /** The subpage a `$section` URL opens, such as `image-names` for `/update-data/$section`. */
   section?: string;
   icon: LucideIcon;
+  /** A small header shown above this page in its submenu, starting a group such as Tools under Tags. */
+  heading?: string;
   /** Pages listed under it in its submenu, such as Small Tags under Tags. */
   children?: readonly NavPage[];
 }
@@ -96,7 +97,14 @@ export const navGroups: readonly NavGroup[] = [
         icon: TagsIcon,
         children: [
           { title: "Small Tags", url: "/small-tags", icon: TagIcon },
-          { title: "Tag Data", url: "/tag-data", icon: NotebookTabsIcon },
+          // The tag tools, each a page of its own, under a Tools header.
+          ...tagTools.map((tool, i) => ({
+            title: tool.title,
+            url: "/tag-tools/$section" as const,
+            section: tool.slug,
+            icon: tool.icon,
+            heading: i === 0 ? "Tools" : undefined,
+          })),
         ],
       },
       {

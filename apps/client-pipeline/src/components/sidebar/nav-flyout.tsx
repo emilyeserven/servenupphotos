@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Popover as PopoverPrimitive } from "radix-ui";
-import { type ReactNode, useRef, useState } from "react";
+import { Fragment, type ReactNode, useRef, useState } from "react";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { isUnder, pagePath, type NavPage } from "@/components/sidebar/nav-groups";
 import { cn } from "@/lib/utils";
@@ -40,12 +40,10 @@ export function NavFlyout({ page, pathname, trigger }: NavFlyoutProps) {
         onBlur={hide}
       >
         {[page, ...(page.children ?? [])].map((p, i) => (
-          <FlyoutLink
-            key={pagePath(p)}
-            page={p}
-            active={activeIn(pathname, p, page)}
-            heading={i === 0}
-          />
+          <Fragment key={pagePath(p)}>
+            {p.heading && <SubmenuHeading title={p.heading} />}
+            <FlyoutLink page={p} active={activeIn(pathname, p, page)} heading={i === 0} />
+          </Fragment>
         ))}
       </PopoverContent>
     </Popover>
@@ -87,6 +85,18 @@ function FlyoutLink({
       <page.icon />
       <span>{page.title}</span>
     </Link>
+  );
+}
+
+/**
+ * A small header above a group of pages in a submenu, such as Tools under Tags, with a line above it
+ * to set it apart from the pages before it.
+ */
+export function SubmenuHeading({ title }: { title: string }) {
+  return (
+    <div className="text-muted-foreground mt-1 border-t px-2 pb-0.5 pt-2 text-[0.7rem] font-medium uppercase tracking-wide">
+      {title}
+    </div>
   );
 }
 
