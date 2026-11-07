@@ -263,15 +263,17 @@ const added = {
         intro:
           "Our first afternoon in **Osaka**, straight from the airport to the covered arcades.",
         photos: [
-          { id: 302, caption: "The arcade roof kept the drizzle off", withNext: true },
-          { id: 303, caption: "Lanterns for the autumn festival" },
+          { id: 302, text: "The arcade roof kept the drizzle off", withNext: true },
+          { id: 303, text: "Lanterns for the *autumn* festival" },
           {
             id: 304,
+            text: "Off the main arcade the streets got **narrow** and quiet, with bikes parked two deep outside every shop.",
+            textSide: "left",
             after: "A short subway ride later we crossed the river just as the signs came on.",
           },
           { id: 305, withNext: true },
-          { id: 306, caption: "Quieter streets one block back", withNext: true },
-          { id: 307, caption: "Dotonbori at night" },
+          { id: 306, text: "Quieter streets one block back", withNext: true },
+          { id: 307, text: "Dotonbori at night" },
         ],
       },
     },

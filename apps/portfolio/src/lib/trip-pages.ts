@@ -1,12 +1,17 @@
 import committedPages from "@/data/triplines/TRIPPAGES.json";
 import { format, parseISO } from "date-fns";
+import type { PhotoText } from "@/components/album-rows";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 
 /** One photo of a day's story on a Trip page, as the pipeline wrote it. */
 interface StoryPhoto {
   id: number;
-  /** Shown under the photo. */
-  caption?: string;
+  /** Its own text (Markdown). */
+  text?: string;
+  /** Shows the photo's Comment in place of `text`. */
+  useComment?: boolean;
+  /** Where the text goes: left out, under the photo as a caption; or a paragraph to its left or right. */
+  textSide?: "left" | "right";
   /** Puts the next photo in the same row, side by side. */
   withNext?: boolean;
   /** A paragraph (Markdown) after the photo, across the page, which ends its row. */
@@ -124,10 +129,22 @@ export function storyDays(page: TripPage, photos: ImagePhoto[]): StoryDay[] {
   }));
 }
 
-/** Every caption on the page, by photo ID. */
-export function pageCaptions(page: TripPage): Map<number, string> {
+/** The entry's text: the photo's Comment when it says so, or else its own. */
+function entryText(entry: StoryPhoto, photo: ImagePhoto | undefined): string {
+  const text = entry.useComment ? photo?.comment : entry.text;
+  return text?.trim() ?? "";
+}
+
+/** Every photo's text on the page and where it goes, by photo ID, from photos, the ones with images. */
+export function pageTexts(page: TripPage, photos: ImagePhoto[]): Map<number, PhotoText> {
+  const byId = new Map(photos.map((photo) => [photo.id, photo]));
   const all = page.days.flatMap((d) => d.photos);
-  return new Map(all.flatMap(({ id, caption }) => (caption ? [[id, caption] as const] : [])));
+  return new Map(
+    all.flatMap((entry) => {
+      const text = entryText(entry, byId.get(entry.id));
+      return text ? [[entry.id, { text, side: entry.textSide ?? "caption" }] as const] : [];
+    }),
+  );
 }
 
 /** The photos the page shows, in order. */

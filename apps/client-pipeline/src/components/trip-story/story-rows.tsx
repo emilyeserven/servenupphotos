@@ -1,7 +1,7 @@
-import { Link2, Plus, Unlink2 } from "lucide-react";
-import { Fragment, useState } from "react";
-import { MarkdownField } from "@/components/album-layout/markdown-field";
+import { Link2, Unlink2 } from "lucide-react";
+import { Fragment } from "react";
 import { StoryPhotoCard } from "@/components/trip-story/story-photo";
+import { StoryText } from "@/components/trip-story/story-text";
 import { Button } from "@/components/ui/button";
 import {
   canJoin,
@@ -49,11 +49,7 @@ function Row({ row, onChange }: { row: StoryItem[]; onChange: Change }) {
       {row.map((item, i) => (
         <Fragment key={item.photo.id}>
           <UnlinkButton before={row[i - 1]} onChange={onChange} />
-          <StoryPhotoCard
-            item={item}
-            onCaption={(caption) => onChange(item.photo.id, { caption })}
-            onLeaveOut={() => onChange(item.photo.id, { shown: false, withNext: false })}
-          />
+          <StoryPhotoCard item={item} onChange={(c) => onChange(item.photo.id, c)} />
         </Fragment>
       ))}
     </div>
@@ -67,7 +63,7 @@ function UnlinkButton({ before, onChange }: { before?: StoryItem; onChange: Chan
     <Button
       size="icon-sm"
       variant="ghost"
-      className="mt-16 shrink-0"
+      className="mt-20 shrink-0"
       title="Put the next photo in a row of its own"
       aria-label="Split the row here"
       onClick={() => onChange(before.photo.id, { withNext: false })}
@@ -84,6 +80,12 @@ interface RowGapProps {
   onChange: Change;
 }
 
+/** The paragraph after the last row's words. */
+const CLOSING = { label: "After the last photo", addLabel: "Add a closing paragraph" };
+
+/** The paragraph between two rows' words. */
+const BETWEEN = { label: "Paragraph between photos", addLabel: "Add a paragraph" };
+
 /** What comes between a row and the next photo: joining that photo to the row, or a paragraph. */
 function RowGap({ row, last, onChange }: RowGapProps) {
   const end = row.at(-1);
@@ -91,9 +93,9 @@ function RowGap({ row, last, onChange }: RowGapProps) {
   return (
     <div className="flex flex-col gap-2 pl-4">
       {!last && <JoinButton row={row} onClick={() => onChange(end.photo.id, { withNext: true })} />}
-      <Paragraph
+      <StoryText
         key={end.photo.id}
-        label={last ? "After the last photo" : "Paragraph between photos"}
+        {...(last ? CLOSING : BETWEEN)}
         value={end.after}
         onChange={(after) => onChange(end.photo.id, { after })}
       />
@@ -117,24 +119,4 @@ function JoinButton({ row, onClick }: { row: StoryItem[]; onClick: () => void })
       Same row as the next photo
     </Button>
   );
-}
-
-interface ParagraphProps {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}
-
-/** A paragraph's Markdown box, behind a button until it has text. */
-function Paragraph({ label, value, onChange }: ParagraphProps) {
-  const [open, setOpen] = useState(value !== "");
-  if (!open) {
-    return (
-      <Button size="xs" variant="ghost" className="w-fit" onClick={() => setOpen(true)}>
-        <Plus aria-hidden />
-        {label === "After the last photo" ? "Add a closing paragraph" : "Add a paragraph"}
-      </Button>
-    );
-  }
-  return <MarkdownField label={label} value={value} onChange={onChange} />;
 }

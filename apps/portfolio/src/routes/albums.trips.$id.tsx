@@ -7,8 +7,8 @@ import { photos } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { newestWithImages } from "@/lib/spotlight-zones";
 import {
-  pageCaptions,
   pageDates,
+  pageTexts,
   pageTitle,
   shownPhotos,
   storyDays,
@@ -64,14 +64,15 @@ function TripHeader({ title, dates }: { title: string; dates?: string }) {
 /** The Trip's days and their photos, each photo opening the viewer, which steps through them all. */
 function TripFound({ page }: { page: TripPage }) {
   const { shown, show, close } = useShownPhoto();
-  const days = storyDays(page, newestWithImages(photos));
+  const withImages = newestWithImages(photos);
+  const days = storyDays(page, withImages);
   const inOrder = shownPhotos(days);
   return (
     <>
       <p className={`${NARROW} text-sm text-muted-foreground`}>
         {inOrder.length} {inOrder.length === 1 ? "photo" : "photos"}.
       </p>
-      <TripStory days={days} captions={pageCaptions(page)} onOpen={show} />
+      <TripStory days={days} texts={pageTexts(page, withImages)} onOpen={show} />
       <PhotoLightbox photo={shown} photos={inOrder} onShow={show} onClose={close} />
     </>
   );

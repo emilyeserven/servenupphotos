@@ -1,4 +1,4 @@
-import { AlbumText, RowPhotos } from "@/components/album-rows";
+import { AlbumText, type PhotoText, RowPhotos } from "@/components/album-rows";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 import { dayTitle, type StoryDay } from "@/lib/trip-pages";
 
@@ -7,16 +7,16 @@ const NARROW = "mx-auto w-full max-w-5xl px-4 sm:px-6";
 
 interface TripStoryProps {
   days: StoryDay[];
-  /** Each photo's caption, by its ID. */
-  captions: ReadonlyMap<number, string>;
+  /** Each photo's text and where it goes, by its ID. */
+  texts: ReadonlyMap<number, PhotoText>;
   onOpen: (photo: ImagePhoto) => void;
 }
 
 /**
  * A Trip page's days, each under its date: its first paragraph, then its rows of photos side by
- * side with their captions under them, each followed by its paragraph across the page.
+ * side with their text under or beside them, each followed by its paragraph across the page.
  */
-export function TripStory({ days, captions, onOpen }: TripStoryProps) {
+export function TripStory({ days, texts, onOpen }: TripStoryProps) {
   return (
     <ol className="flex flex-col gap-16">
       {days.map((day) => (
@@ -25,7 +25,7 @@ export function TripStory({ days, captions, onOpen }: TripStoryProps) {
           <AlbumText text={day.intro} />
           {day.rows.map((row) => (
             <div key={row.photos[0]?.id ?? row.after} className="flex flex-col gap-8">
-              <RowPhotos photos={row.photos} captions={captions} onOpen={onOpen} />
+              <RowPhotos photos={row.photos} texts={texts} onOpen={onOpen} />
               <AlbumText text={row.after} />
             </div>
           ))}

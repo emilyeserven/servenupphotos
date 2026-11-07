@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import Markdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import { FittedPhoto } from "@/components/fitted-photo";
+import { cn } from "@/lib/utils";
 import type { ShownRow } from "@/lib/album-layout";
 import type { ImagePhoto } from "@/lib/spotlight-zones";
 
@@ -46,36 +47,102 @@ export function AlbumRows({
   );
 }
 
-/** A photo's caption, small and muted under it, as a Trip page writes it; nothing for none. */
-function Caption({ text }: { text?: string }) {
-  if (!text) return null;
-  return <figcaption className="mt-1.5 px-1 text-sm text-muted-foreground">{text}</figcaption>;
+/** A photo's own text on a Trip page, and where it goes: under it as a caption, or beside it. */
+export interface PhotoText {
+  text: string;
+  side: "caption" | "left" | "right";
+}
+
+/** The photo's text when it goes on side; nothing otherwise. */
+function textOn(text: PhotoText | undefined, side: PhotoText["side"]): string {
+  return text?.side === side ? text.text : "";
+}
+
+/** A photo's caption, small and muted under it, in Markdown; nothing for none. */
+function Caption({ text }: { text?: PhotoText }) {
+  const caption = textOn(text, "caption");
+  if (!caption) return null;
+  return (
+    <figcaption className={`mt-1.5 px-1 text-sm text-muted-foreground ${PROSE}`}>
+      <Markdown remarkPlugins={MARKDOWN_PLUGINS}>{caption}</Markdown>
+    </figcaption>
+  );
+}
+
+/** A photo's text as a paragraph beside it, in Markdown, when it goes on side; nothing otherwise. */
+function SideText({
+  text,
+  side,
+  wide,
+}: {
+  text?: PhotoText;
+  side: "left" | "right";
+  wide?: boolean;
+}) {
+  const paragraph = textOn(text, side);
+  if (!paragraph) return null;
+  return (
+    <div className={cn("shrink-0 px-1", wide ? "sm:w-80" : "sm:w-40 text-sm", PROSE)}>
+      <Markdown remarkPlugins={MARKDOWN_PLUGINS}>{paragraph}</Markdown>
+    </div>
+  );
+}
+
+/** Whether the photo's text is a paragraph beside it. */
+function isBeside(text: PhotoText | undefined): boolean {
+  return text !== undefined && text.text !== "" && text.side !== "caption";
+}
+
+/**
+ * A photo on its own, as large as it fits, with its text under it as a caption, or beside it as a
+ * paragraph (above or below it on a phone).
+ */
+function OnlyPhoto({
+  photo,
+  text,
+  onOpen,
+}: {
+  photo: ImagePhoto;
+  text?: PhotoText;
+  onOpen: () => void;
+}) {
+  return (
+    <figure
+      className={cn(
+        "flex flex-col items-center gap-4",
+        isBeside(text) && "mx-auto w-full max-w-7xl px-4 sm:flex-row sm:gap-8 sm:px-6",
+      )}
+    >
+      <SideText text={text} side="left" wide />
+      <div className="w-full min-w-0 flex-1">
+        <FittedPhoto photo={photo} onOpen={onOpen} />
+      </div>
+      <SideText text={text} side="right" wide />
+      <Caption text={text} />
+    </figure>
+  );
 }
 
 /**
  * A row's photos: one on its own as large as it fits, or several side by side at the same height,
  * each as wide as its shape makes it, filling the width without being taller than the screen. On a
- * phone they go one under another. A photo with a caption (a Trip page's) has it under it.
+ * phone they go one under another. A photo with text (a Trip page's) has it under it as a caption,
+ * or beside it as a paragraph.
  */
 export function RowPhotos({
   photos,
   onOpen,
-  captions,
+  texts,
 }: {
   photos: ImagePhoto[];
   onOpen: (photo: ImagePhoto) => void;
-  /** Each photo's caption, by its ID. */
-  captions?: ReadonlyMap<number, string>;
+  /** Each photo's text, by its ID. */
+  texts?: ReadonlyMap<number, PhotoText>;
 }) {
   if (photos.length === 0) return null;
   const [only] = photos;
   if (photos.length === 1 && only) {
-    return (
-      <figure className="flex flex-col items-center">
-        <FittedPhoto photo={only} onOpen={() => onOpen(only)} />
-        <Caption text={captions?.get(only.id)} />
-      </figure>
-    );
+    return <OnlyPhoto photo={only} text={texts?.get(only.id)} onOpen={() => onOpen(only)} />;
   }
   // The row's width over its height, the sum of its photos'.
   const shape = photos.reduce((sum, photo) => sum + photo.image.width / photo.image.height, 0);
@@ -88,7 +155,7 @@ export function RowPhotos({
         <RowPhoto
           key={photo.id}
           photo={photo}
-          caption={captions?.get(photo.id)}
+          text={texts?.get(photo.id)}
           onOpen={() => onOpen(photo)}
         />
       ))}
@@ -96,14 +163,17 @@ export function RowPhotos({
   );
 }
 
-/** A photo in a row, growing to its share of the row's width by its shape, with its caption under it. */
+/**
+ * A photo in a row, growing to its share of the row's width by its shape, with its caption under
+ * it or its paragraph beside it.
+ */
 function RowPhoto({
   photo,
-  caption,
+  text,
   onOpen,
 }: {
   photo: ImagePhoto;
-  caption?: string;
+  text?: PhotoText;
   onOpen: () => void;
 }) {
   const { width, height, src, srcSet } = photo.image;
@@ -112,23 +182,27 @@ function RowPhoto({
       className="min-w-0 sm:[flex:var(--photo-shape)_1_0%]"
       style={{ "--photo-shape": width / height } as CSSProperties}
     >
-      <button
-        type="button"
-        title={photo.title}
-        onClick={onOpen}
-        className="block w-full cursor-zoom-in overflow-hidden bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-        style={{ aspectRatio: `${width} / ${height}` }}
-      >
-        <img
-          src={src}
-          srcSet={srcSet}
-          sizes="(min-width: 640px) 50vw, 100vw"
-          alt={photo.alt}
-          loading="lazy"
-          className="size-full object-cover"
-        />
-      </button>
-      <Caption text={caption} />
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+        <SideText text={text} side="left" />
+        <button
+          type="button"
+          title={photo.title}
+          onClick={onOpen}
+          className="block w-full min-w-0 cursor-zoom-in overflow-hidden bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          style={{ aspectRatio: `${width} / ${height}` }}
+        >
+          <img
+            src={src}
+            srcSet={srcSet}
+            sizes="(min-width: 640px) 50vw, 100vw"
+            alt={photo.alt}
+            loading="lazy"
+            className="size-full object-cover"
+          />
+        </button>
+        <SideText text={text} side="right" />
+      </div>
+      <Caption text={text} />
     </figure>
   );
 }

@@ -24,8 +24,6 @@ const (
 	// maxStoryRow is the most photos side by side in one row, as in an
 	// album's layout.
 	maxStoryRow = 4
-	// maxCaptionLength is the most characters a photo's caption can have.
-	maxCaptionLength = 500
 	// maxParagraphLength is the most characters a paragraph can have, as an
 	// album layout row's text.
 	maxParagraphLength = 5000
@@ -48,12 +46,25 @@ type TripStory struct {
 	Photos []StoryPhoto `json:"photos"`
 }
 
+// Where a photo's text goes on the Trip page: under it as a caption (the
+// default, written as ""), or as a paragraph to its left or right.
+const (
+	TextLeft  = "left"
+	TextRight = "right"
+)
+
 // StoryPhoto is one photo of a day's story, with the words around it.
 type StoryPhoto struct {
 	// ID is the photo's ID.
 	ID int `json:"id"`
-	// Caption is shown under the photo; "" for none.
-	Caption string `json:"caption,omitempty"`
+	// Text is the photo's own text (Markdown); "" for none.
+	Text string `json:"text,omitempty"`
+	// UseComment shows the photo's Comment, written on the Photo page, in
+	// place of Text, so it stays in step when the Comment changes.
+	UseComment bool `json:"useComment,omitempty"`
+	// TextSide is where the text goes: "" under the photo as a caption,
+	// TextLeft or TextRight as a paragraph beside it.
+	TextSide string `json:"textSide,omitempty"`
 	// WithNext puts the next photo in the same row as this one, side by side.
 	WithNext bool `json:"withNext,omitempty"`
 	// After is a paragraph (Markdown) shown after the photo, across the
@@ -115,15 +126,22 @@ func validTripStory(story TripStory) (TripStory, *PublishError) {
 	return story, checkStoryRows(story.Photos)
 }
 
-// trimStoryPhoto trims p's words in place, and fails when they're too long
-// or it both shares a row with the next photo and has a paragraph after it.
-// The last photo has no next one to share a row with.
+// trimStoryPhoto trims p's words in place, and fails when they're too long,
+// its text's side isn't one there is, or it both shares a row with the next
+// photo and has a paragraph after it. The last photo has no next one to share
+// a row with.
 func trimStoryPhoto(p *StoryPhoto, last bool) *PublishError {
-	p.Caption = strings.TrimSpace(p.Caption)
+	p.Text = strings.TrimSpace(p.Text)
 	p.After = strings.TrimSpace(p.After)
 	p.WithNext = p.WithNext && !last
-	if utf8.RuneCountInString(p.Caption) > maxCaptionLength {
-		return publishErr(http.StatusBadRequest, "Photo %d: keep its caption to %d characters.", p.ID, maxCaptionLength)
+	if p.UseComment {
+		p.Text = ""
+	}
+	if p.TextSide != "" && p.TextSide != TextLeft && p.TextSide != TextRight {
+		return publishErr(http.StatusBadRequest, "Photo %d: put its text under it, or to its left or right.", p.ID)
+	}
+	if utf8.RuneCountInString(p.Text) > maxParagraphLength {
+		return publishErr(http.StatusBadRequest, "Photo %d: keep its text to %d characters.", p.ID, maxParagraphLength)
 	}
 	if utf8.RuneCountInString(p.After) > maxParagraphLength {
 		return publishErr(http.StatusBadRequest, "Photo %d: keep the paragraph after it to %d characters.", p.ID, maxParagraphLength)

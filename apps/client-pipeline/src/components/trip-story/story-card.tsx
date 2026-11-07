@@ -7,10 +7,10 @@ import {
   type TripStory,
 } from "@/api/trip-stories";
 import type { Trip } from "@/api/trips";
-import { MarkdownField } from "@/components/album-layout/markdown-field";
 import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
 import { LeftOut } from "@/components/trip-story/left-out";
 import { StoryRows } from "@/components/trip-story/story-rows";
+import { StoryText } from "@/components/trip-story/story-text";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TripDay } from "@/lib/trip-days";
@@ -44,13 +44,16 @@ export function StoryCard({ day, story, trips }: StoryCardProps) {
         <CardTitle>Trip page story</CardTitle>
         <CardDescription>
           The words around this day&apos;s photos on the portfolio&apos;s Trip page, shown with the
-          Albums. A caption shows under its photo; a paragraph between photos spans the page. Link
-          photos to put them side by side in a row, up to 4. {pageNote(day.day, trips)}
+          Albums, all in Markdown. A photo&apos;s text goes under it as a caption, or beside it as a
+          paragraph on its left or right, and can be its Comment from the Photo page. A paragraph
+          between photos spans the page. Link photos to put them side by side in a row, up to 4.{" "}
+          {pageNote(day.day, trips)}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <MarkdownField
+        <StoryText
           label="Before the first photo"
+          addLabel="Add an opening paragraph"
           value={draft.intro}
           onChange={(intro) => setDraft({ ...draft, intro })}
         />

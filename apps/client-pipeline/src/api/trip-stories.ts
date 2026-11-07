@@ -5,8 +5,12 @@ import type { CombinedData } from "@/api/photos";
 export interface StoryPhoto {
   /** The photo's ID. */
   id: number;
-  /** Shown under the photo, as its caption. */
-  caption?: string;
+  /** The photo's own text (Markdown): its caption, or a paragraph beside it. */
+  text?: string;
+  /** Shows the photo's Comment from the Photo page in place of `text`, kept in step with it. */
+  useComment?: boolean;
+  /** Where the text goes: left out, under the photo as a caption; or a paragraph to its left or right. */
+  textSide?: "left" | "right";
   /** Puts the next photo in the same row as this one, side by side. */
   withNext?: boolean;
   /** A paragraph (Markdown) after the photo, across the page, which ends its row. */

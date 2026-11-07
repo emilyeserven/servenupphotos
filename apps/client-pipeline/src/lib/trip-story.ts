@@ -2,13 +2,21 @@ import type { StoryPhoto, TripStory } from "@/api/trip-stories";
 import { storyId } from "@/api/trip-stories";
 import type { LoosePhoto, TripDay } from "@/lib/trip-days";
 
+/** Where a photo's text goes on the Trip page. */
+export type TextSide = "caption" | "left" | "right";
+
 /** The most photos side by side in one row of a Trip page, as in an album's layout. */
 export const MAX_ROW = 4;
 
 /** One of the day's photos in the story editor, with its words and whether the page shows it. */
 export interface StoryItem {
   photo: LoosePhoto;
-  caption: string;
+  /** Its own text (Markdown). */
+  text: string;
+  /** Shows its Comment from the Photo page in place of text. */
+  useComment: boolean;
+  /** Where its text goes: under it, or beside it on the left or right. */
+  textSide: TextSide;
   /** Puts the next photo shown in the same row. */
   withNext: boolean;
   /** The paragraph after it, which ends its row. */
@@ -30,13 +38,16 @@ function storyPhotos(day: TripDay): LoosePhoto[] {
   );
 }
 
-/** A photo the saved story has no words for. */
-const NO_WORDS: StoryPhoto = { id: 0 };
-
 /** The item for photo from its saved entry; a photo the saved story doesn't list is left out. */
 function itemOf(photo: LoosePhoto, saved: StoryPhoto | undefined, listed: boolean): StoryItem {
-  const { caption = "", withNext = false, after = "" } = saved ?? NO_WORDS;
-  return { photo, caption, withNext, after, shown: !listed || saved !== undefined };
+  const words = {
+    text: "",
+    useComment: false,
+    textSide: "caption" as TextSide,
+    withNext: false,
+    after: "",
+  };
+  return { photo, ...words, ...saved, shown: !listed || saved !== undefined };
 }
 
 /** A day's story before any is saved. */
@@ -92,16 +103,26 @@ export function withItem(
   };
 }
 
+/** Only the fields that say something: no empty text and nothing false or unset. */
+function present(fields: Omit<StoryPhoto, "id">): Omit<StoryPhoto, "id"> {
+  return Object.fromEntries(
+    Object.entries(fields).filter(
+      ([, value]) => value !== "" && value !== false && value !== undefined,
+    ),
+  );
+}
+
 /** The item as the story file writes it, leaving out empty words; the last of a row ends it. */
 function storyPhoto(item: StoryItem, endsRow: boolean): StoryPhoto {
-  const caption = item.caption.trim();
-  const after = item.after.trim();
-  const withNext = !endsRow;
   return {
     id: item.photo.id,
-    ...(caption && { caption }),
-    ...(withNext && { withNext }),
-    ...(after && { after }),
+    ...present({
+      text: item.useComment ? "" : item.text.trim(),
+      useComment: item.useComment,
+      textSide: item.textSide === "caption" ? undefined : item.textSide,
+      withNext: !endsRow,
+      after: item.after.trim(),
+    }),
   };
 }
 

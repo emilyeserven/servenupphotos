@@ -14,12 +14,17 @@ On `/trip-lines`, under the chosen day's route (the card with the photo strip an
 photo of the day, with an exact spot or not, in the order they were taken, laid out in rows the way the page will be
 (`components/trip-story/`, `lib/trip-story.ts`):
 
-- **Before the first photo** is a Markdown paragraph that opens the day.
-- Each photo has a **Caption** box. The caption shows in small text under the photo.
+- **Add an opening paragraph** opens a Markdown paragraph before the day's first photo.
+- Each photo's text goes where its three buttons say: **Caption under it** (small text under the photo), or
+  **Paragraph on its left** or **on its right**, beside the photo on a wide screen and above or below it on a phone.
+  **Add text** opens its box; a photo with a **Comment** on the Photo page also has **Use the photo's Comment**,
+  which shows the Comment instead and keeps it in step when the Comment changes.
 - **Same row as the next photo** puts the next photo beside the row's last one, up to 4 in a row, as in an album's
   layout. The unlink button between two photos in a row splits it there.
 - **Add a paragraph** after a row opens a Markdown box for a paragraph between that photo and the next, shown across
   the page. A paragraph ends the row, so the two can't be on one photo. After the last row it's a closing paragraph.
+- Every box is Markdown, with **Preview**, and its expand button opens the same text in a large box over the page.
+  No box shows until its button is pressed, unless it already has text.
 - The eye button on a photo leaves it off the page; it moves to **Not on the page**, where clicking it puts it back.
 
 The card says which Trip page the day goes on: the [Trip](trip-lines.md#trips) whose days include it, or else a page of
@@ -41,8 +46,8 @@ Trips, so it's listed, combined into `TRIPLINES.json` and committed with them (`
   "date": "2026-10-01",
   "intro": "Our first afternoon in **Osaka**.",
   "photos": [
-    { "id": 302, "caption": "The arcade roof kept the drizzle off", "withNext": true },
-    { "id": 303, "caption": "Lanterns for the autumn festival" },
+    { "id": 302, "text": "The arcade roof kept the drizzle off", "withNext": true },
+    { "id": 303, "useComment": true, "textSide": "left" },
     { "id": 304, "after": "A short subway ride later we crossed the river." },
     { "id": 305 }
   ]
@@ -59,7 +64,8 @@ Trips, so it's listed, combined into `TRIPLINES.json` and committed with them (`
 | `photos[].withNext` | boolean           | Puts the next photo in the same row. Left out on a row's last photo      |
 | `photos[].after`    | string (Markdown) | The paragraph after the photo; at most 5,000 characters. Ends the row    |
 
-The backend trims the words, drops `withNext` from the last photo, and refuses a photo not taken that day (its custom
+The backend trims the words, drops `withNext` from the last photo and `text` beside `useComment`, and refuses a
+`textSide` other than `left` or `right`, a photo not taken that day (its custom
 date, or else its EXIF one), a photo listed twice, a photo with both `withNext` and `after`, and a row of more than 4.
 
 ## The baked pages: `TRIPPAGES.json`
@@ -79,7 +85,7 @@ data** workflow leaves it as it is.
       {
         "day": "2026-10-01",
         "intro": "…",
-        "photos": [{ "id": 302, "caption": "…", "withNext": true }]
+        "photos": [{ "id": 302, "text": "…", "withNext": true }]
       }
     ]
   },
@@ -97,8 +103,10 @@ its own, with the ID `day-` and the day and no name. The portfolio reads only th
 
 `/albums/trips/<id>` (`routes/albums.trips.$id.tsx`) shows the Trip's name, its days and how many photos it has, then
 each day under its date: its first paragraph, then its rows (`components/trip-story.tsx`, `lib/trip-pages.ts`). A row's
-photos are side by side at the same height, as an album's rows are (`components/album-rows.tsx`), each with its caption
-under it; one photo is as large as it fits. On a phone a row's photos go one under another. A paragraph after a row
+photos are side by side at the same height, as an album's rows are (`components/album-rows.tsx`), each with its text
+rendered as Markdown: a caption under it, or a paragraph beside it (a wide column next to a photo on its own, a
+narrow one in a row of several). One photo is as large as it fits. A photo's Comment comes from `ALLPHOTOS.json`,
+so a story that uses it shows the Comment as it is now. On a phone a row's photos go one under another. A paragraph after a row
 spans the text column. Clicking a photo opens the [photo viewer](photo-viewer.md), which steps through the page in
 order. A day's page is titled with its date.
 
