@@ -114,11 +114,15 @@ type photoJSON struct {
 	// photo's image there clears it.
 	ReEdit *ReEdit `json:"reEdit"`
 	// PickedSimilar are the IDs of the photos picked by hand on the
-	// pipeline's Similar Photos page to show first in the portfolio's More
+	// pipeline's Related Photos page to show first in the portfolio's More
 	// like this drawer, in order.
 	PickedSimilar []int `json:"pickedSimilar"`
+	// PickedSimilarNotes is the note the drawer shows beside each of
+	// PickedSimilar, by the picked photo's ID; a photo without one is left
+	// out.
+	PickedSimilarNotes map[string]string `json:"pickedSimilarNotes"`
 	// SimilarPhotos are the IDs of the photos most like this one, best first,
-	// as Find Similar Photos last found them; the drawer shows them after
+	// as Find Related Photos last found them; the drawer shows them after
 	// PickedSimilar.
 	SimilarPhotos []int `json:"similarPhotos"`
 	// PerceptualHash is the photo's perceptual hash (see
@@ -177,7 +181,7 @@ func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 		Title: s.Title, Comment: s.Comment, AltText: s.AltText, Notes: s.Notes, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
 		Genres: []string{},
 		Places: []PhotoPlace{}, SpotlightZones: []string{}, SocialPosts: []SocialPost{},
-		PickedSimilar: []int{}, SimilarPhotos: []int{},
+		PickedSimilar: []int{}, PickedSimilarNotes: map[string]string{}, SimilarPhotos: []int{},
 	}
 }
 

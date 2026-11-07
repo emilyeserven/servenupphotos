@@ -122,7 +122,7 @@ interface LightboxBodyProps {
 
 /**
  * The caption and buttons over the photo, with the previous and next buttons beside it and the
- * More like this drawer below it, or just the photo, filling the window, when they're hidden.
+ * More like this drawer to its left, or just the photo, filling the window, when they're hidden.
  */
 function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBodyProps) {
   const showDetails = !bare;
@@ -131,8 +131,10 @@ function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBody
       {showDetails && (
         <LightboxHeader photo={photo} position={steps.position} onHide={onToggleBare} />
       )}
-      <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
-      {showDetails && onShow && <MoreLikeThis photo={photo} onShow={onShow} />}
+      <div className="relative flex min-h-0 flex-1">
+        {showDetails && onShow && <MoreLikeThis photo={photo} onShow={onShow} />}
+        <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
+      </div>
     </>
   );
 }
@@ -149,7 +151,10 @@ function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProp
   return (
     <div
       {...swipe}
-      className={cn("flex min-h-0 flex-1 items-center justify-center", bare ? "p-0" : "p-4 pt-0")}
+      className={cn(
+        "flex min-h-0 min-w-0 flex-1 items-center justify-center",
+        bare ? "p-0" : "p-4 pt-0",
+      )}
     >
       {/* A size container, so the photo can be fitted to it with cqw and cqh. It hears the taps;
           touch-action stops a double tap from zooming the page, but not pinch-zooming. */}

@@ -7,21 +7,26 @@ import (
 	"encoding/json"
 	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
 // similarKey and pickedSimilarKey are the photo JSON fields the portfolio's
-// More like this drawer reads: the IDs Find Similar Photos found, and the
+// More like this drawer reads: the IDs Find Related Photos found, and the
 // IDs picked by hand, which come first.
 const (
 	similarKey       = "similarPhotos"
 	pickedSimilarKey = "pickedSimilar"
+	// pickedNotesKey is the note shown beside each hand-picked photo in the
+	// drawer, by the picked photo's ID.
+	pickedNotesKey = "pickedSimilarNotes"
 )
 
-// similarCount is how many similar photos Find Similar Photos keeps for each
+// similarCount is how many related photos Find Related Photos keeps for each
 // photo, as many as the drawer shows.
 const similarCount = 6
 
@@ -45,8 +50,8 @@ const (
 // into, dark to light, as the portfolio's Color page splits them.
 var shadeNames = []string{"black", "dark gray", "gray", "light gray", "white"}
 
-// SimilarResult says what Find Similar Photos saved: each photo's list of
-// similar photos, in the pending changes for the next Commit.
+// SimilarResult says what Find Related Photos saved: each photo's list of
+// related photos, in the pending changes for the next Commit.
 type SimilarResult struct {
 	pendingSave
 	// PhotoFiles is how many photo files were compared.
@@ -55,7 +60,7 @@ type SimilarResult struct {
 	Photos int `json:"photos"`
 }
 
-// similarPhoto is what Find Similar Photos compares of a photo file.
+// similarPhoto is what Find Related Photos compares of a photo file.
 type similarPhoto struct {
 	file     photoFile
 	id       int
@@ -89,7 +94,7 @@ type similarColorData struct {
 	} `json:"neutrals"`
 }
 
-// readSimilarPhoto reads what Find Similar Photos compares from f, a readable
+// readSimilarPhoto reads what Find Related Photos compares from f, a readable
 // photo file.
 func readSimilarPhoto(f photoFile) similarPhoto {
 	var fields similarFields
@@ -158,7 +163,7 @@ func (c *Client) FindSimilarPhotos(ctx context.Context, gh settings.GitHub) (Sim
 		}
 	}
 	if len(entries) == 0 {
-		return SimilarResult{}, publishErr(http.StatusConflict, "Every photo's similar photos are already up to date, so there's nothing to change.")
+		return SimilarResult{}, publishErr(http.StatusConflict, "Every photo's related photos are already up to date, so there's nothing to change.")
 	}
 	saved, perr := c.saveScan(scan, entries)
 	if perr != nil {
@@ -293,7 +298,13 @@ func setIDList(content []byte, key string, ids []int) ([]byte, error) {
 type PickedSimilar struct {
 	Path string `json:"path"`
 	IDs  []int  `json:"ids"`
+	// Notes is the note to show beside each picked photo, by its ID, such
+	// as "The same alley at night". A picked photo may have none.
+	Notes map[string]string `json:"notes"`
 }
+
+// maxPickNote is the longest note a picked photo can have, in characters.
+const maxPickNote = 280
 
 // PickedSimilarResult says where the picks were saved: in the pending
 // changes, for the next Commit.
@@ -301,9 +312,11 @@ type PickedSimilarResult struct {
 	pendingSave
 }
 
-// SetPickedSimilar saves picked.IDs as the photo file's "pickedSimilar", in
-// the pending changes. Each ID must be another photo's, listed once, and
-// there can be up to similarCount of them.
+// SetPickedSimilar saves picked.IDs as the photo file's "pickedSimilar", and
+// picked.Notes as its "pickedSimilarNotes", in the pending changes. Each ID
+// must be another photo's, listed once, and there can be up to similarCount
+// of them. Notes are trimmed, and empty ones and ones for photos that aren't
+// picked are left out.
 func (c *Client) SetPickedSimilar(ctx context.Context, gh settings.GitHub, picked PickedSimilar) (PickedSimilarResult, error) {
 	scan, perr := c.scanPhotos(ctx, gh)
 	if perr != nil {
@@ -320,7 +333,14 @@ func (c *Client) SetPickedSimilar(ctx context.Context, gh settings.GitHub, picke
 	if perr := checkPicks(photos[i].id, picked.IDs, photos); perr != nil {
 		return PickedSimilarResult{}, perr
 	}
+	notes, perr := pickNotes(picked)
+	if perr != nil {
+		return PickedSimilarResult{}, perr
+	}
 	content, err := setIDList(photos[i].file.content, pickedSimilarKey, append([]int{}, picked.IDs...))
+	if err == nil {
+		content, err = setTopLevelList(content, pickedNotesKey, notes)
+	}
 	if err != nil {
 		return PickedSimilarResult{}, publishErr(http.StatusConflict, "%s: %s, so nothing was changed.", picked.Path, err)
 	}
@@ -349,4 +369,22 @@ func checkPicks(self int, ids []int, photos []similarPhoto) *PublishError {
 		seen[id] = true
 	}
 	return nil
+}
+
+// pickNotes is picked's notes as the JSON object to save, trimmed, keeping
+// only the non-empty ones for picked photos.
+func pickNotes(picked PickedSimilar) ([]byte, *PublishError) {
+	out := map[string]string{}
+	for _, id := range picked.IDs {
+		key := strconv.Itoa(id)
+		note := strings.TrimSpace(picked.Notes[key])
+		if utf8.RuneCountInString(note) > maxPickNote {
+			return nil, publishErr(http.StatusBadRequest, "The note for photo %d is longer than %d characters.", id, maxPickNote)
+		}
+		if note != "" {
+			out[key] = note
+		}
+	}
+	b, _ := json.Marshal(out)
+	return b, nil
 }

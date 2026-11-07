@@ -98,8 +98,9 @@ A photo's `reEdit` marks it to edit again, with a reason and the day it was mark
 [Re-editing a photo](replace-image.md).
 
 A photo's `pickedSimilar` and `similarPhotos` are the IDs its portfolio **More like this** drawer shows: the ones picked
-by hand first, then the ones **Find similar photos** found, best first; see [More Like This](more-like-this.md). Older
-files may be missing them, which means none.
+by hand first, then the ones **Find related photos** found, best first. `pickedSimilarNotes` holds the note shown
+beside each picked photo, by its ID, such as `{ "286": "Same morning, deeper in the woods" }`; see
+[More Like This](more-like-this.md). Older files may be missing them, which means none.
 
 A photo's `compareGroup` names the [compare group](compare-groups.md) it's in, and `compareWinner: true` marks one
 picked to post; both are left out or `null` otherwise. A photo that wasn't chosen has `unselected` (why, the IDs of the

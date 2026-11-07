@@ -1,14 +1,14 @@
 import { useMemo, useState } from "react";
 import { useSavedPhotos } from "@/components/saved-photo-picker";
-import { PhotoChoiceGrid } from "@/components/similar-photos/photo-choice-grid";
-import { PickedEditor } from "@/components/similar-photos/picked-editor";
-import { savedPhotoId, photosById } from "@/components/similar-photos/similar-ids";
+import { PhotoChoiceGrid } from "@/components/related-photos/photo-choice-grid";
+import { PickedEditor } from "@/components/related-photos/picked-editor";
+import { savedPhotoId, photosById } from "@/components/related-photos/picks";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
 /**
  * Pick by hand: choose a photo, then the photos its More like this drawer shows first, ahead of
- * the ones Find Similar Photos found.
+ * the ones Find Related Photos found.
  */
 export function PickSimilarCard() {
   const { photos: saved, pending } = useSavedPhotos();
@@ -19,7 +19,7 @@ export function PickSimilarCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Pick similar photos by hand</CardTitle>
+        <CardTitle>Pick related photos by hand</CardTitle>
         <CardDescription>
           Choose a photo, then the photos you want its More like this drawer to show first. Picks
           take precedence over the ones found automatically, which fill the rest of the drawer.

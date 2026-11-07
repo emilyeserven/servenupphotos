@@ -14,7 +14,7 @@ import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-d
 import { QueryResult } from "@/components/query-result";
 import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
-import { PickedSimilarCard } from "@/components/similar-photos/picked-similar-card";
+import { PickedSimilarCard } from "@/components/related-photos/picked-similar-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

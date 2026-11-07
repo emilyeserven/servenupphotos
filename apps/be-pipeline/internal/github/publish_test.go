@@ -102,6 +102,7 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
   "socialPosts": [],
   "reEdit": null,
   "pickedSimilar": [],
+  "pickedSimilarNotes": {},
   "similarPhotos": []
 }
 `
