@@ -28,3 +28,12 @@ export function useTurn(count: number, ms: number, start = 0): Turn {
   const step = useCallback((by: number) => setTurn((t) => t + by), []);
   return { turn: count === 0 ? 0 : ((turn % count) + count) % count, step };
 }
+
+/**
+ * Whether the photo at index is the one showing, or the one before or after it, which are the
+ * only ones kept on the page: the one before is still fading out, and the one after loads ahead.
+ */
+export function isNear(index: number, turn: number, count: number): boolean {
+  const ahead = (index - turn + count) % count;
+  return ahead <= 1 || ahead === count - 1;
+}

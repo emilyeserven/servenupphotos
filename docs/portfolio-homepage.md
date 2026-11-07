@@ -14,8 +14,10 @@ was taken (`/map?lat=…&lng=…&zoom=…`, as the photo viewer's **View on map*
 the ones in the album picked for the **Homepage** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page, sub-albums included, in the album's order, or, with no album picked, the 5 newest photos (`lib/homepage-photos.ts`, over the zones in `lib/spotlight-zones.ts`). Only photos with resized versions in R2
 are shown.
 
-On a phone held upright (`(max-width: 767px) and (orientation: portrait)`), portrait photos come first, each part
-keeping its order; with no album picked, that's the 5 newest photos with portrait ones preferred. Each photo is cropped to
+On a phone held upright (`(max-width: 767px) and (orientation: portrait)`), portrait photos come first, and on every
+other screen landscape photos come first, each part keeping its order, unless the zone's **Photos first** is set to
+**Album order** on [Site Spotlight](publish.md#site-spotlight); with no album picked, that's the 5 newest photos with
+the screen's shape preferred. Each photo is cropped to
 fill the screen around its **focus point**, set on the pipeline's Photo page (see [Site Spotlight](publish.md#site-spotlight)),
 so a landscape photo on a phone or a portrait one on a computer keeps the part that matters in view. The point goes
 where its **placement**, set there too, says on the screen: the middle by default, or for example the bottom middle.

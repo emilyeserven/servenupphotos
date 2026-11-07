@@ -4,20 +4,11 @@ import type { ImagePhoto } from "@/lib/spotlight-zones";
 import { objectPosition } from "@/lib/spotlight-focus";
 import { useArrowKeys } from "@/lib/use-arrow-keys";
 import { useSize } from "@/lib/use-size";
-import { useTurn } from "@/lib/use-turn";
+import { isNear, useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
 /** How long each photo shows behind the page, in milliseconds. */
 const BACKDROP_MS = 7000;
-
-/**
- * Whether the photo at index is the one showing, or the one before or after it, which are the
- * only ones kept on the page: the one before is still fading out, and the one after loads ahead.
- */
-function isNear(index: number, turn: number, count: number): boolean {
-  const ahead = (index - turn + count) % count;
-  return ahead <= 1 || ahead === count - 1;
-}
 
 /**
  * Photos filling the screen behind a page, fading in and out in turn with no tint over them, with the showing photo's title and a link to it on the map at the bottom, fading with it. Each

@@ -6,6 +6,10 @@ three views picked at the top right (`?view=`): **Square** tiles (the default), 
 a **Colors** section (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
 photo opens the [photo viewer](photo-viewer.md).
 
+When an album is picked for the **Grid Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page,
+its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background,
+with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).
+
 The tile views share the sort dropdown (newest, oldest, **Recently Added**, **Time of Day**, color, vividness) and
 the eye button's display options (`components/grid-view-options.tsx`, using the flyout shared with the Map and Timeline,
 `components/view-options-button.tsx`):

@@ -37,6 +37,12 @@ export interface Group {
    */
   spotlightUpdated?: Record<string, string>;
   /**
+   * For each of those spots, by ID, which photos it puts first: "screen" for portrait photos on a
+   * phone and landscape ones elsewhere, or "none" for the album's order. A spot left out matches
+   * the screen.
+   */
+  spotlightOrientation?: Record<string, SpotlightOrientation>;
+  /**
    * The IDs of an album's photos in the order the portfolio shows them, set on its page; absent or
    * empty for the default order. Photos it leaves out come after the ones it lists.
    */
@@ -380,14 +386,27 @@ export function favoritesFirst<T extends { favorite?: boolean }>(tags: T[]): T[]
 }
 
 /**
+ * Which photos a spotlight spot puts first: "screen" for portrait photos on a phone held upright
+ * and landscape photos elsewhere, or "none" to keep the album's order everywhere.
+ */
+export type SpotlightOrientation = "screen" | "none";
+
+/** What picking a spotlight spot's album saves. */
+interface SpotlightAlbumChange {
+  zone: string;
+  album: string | null;
+  /** Which photos the spot puts first; left out to keep the spot's current choice. */
+  orientation?: SpotlightOrientation;
+}
+
+/**
  * Makes `album` the one the spotlight spot `zone` shows, or leaves the spot without one when it's
- * null, as changes waiting for Commit.
+ * null, with the spot's orientation, as changes waiting for Commit.
  */
 export const setSpotlightAlbumMutation = albumsMutation(
   "spotlight",
-  ({ zone }: { zone: string; album: string | null }) =>
-    `/api/organize/spotlight/${encodeURIComponent(zone)}`,
-  ({ album }) => ({ album }),
+  ({ zone }: SpotlightAlbumChange) => `/api/organize/spotlight/${encodeURIComponent(zone)}`,
+  ({ album, orientation }) => ({ album, orientation }),
 );
 
 /** A photo's albums, tags and genres, by ID, as its JSON lists them. */

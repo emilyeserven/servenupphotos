@@ -154,8 +154,10 @@ scheduled, the card says for which day and links to it; that day is still set on
 ## Site Spotlight
 
 `/site-spotlight` picks the album each **spotlight zone** of the portfolio shows. The zones are listed in
-`apps/client-pipeline/src/lib/site-spotlight.ts`; the first is **Homepage** (`"homepage"`), the photos fading in and
-out behind the [portfolio homepage](portfolio-homepage.md). A zone shows every photo in its album and the album's
+`apps/client-pipeline/src/lib/site-spotlight.ts`: **Homepage** (`"homepage"`), the photos fading in and
+out behind the [portfolio homepage](portfolio-homepage.md), then **Timeline Header** (`"timeline-header"`) and **Grid
+Header** (`"grid-header"`), photos fading in and out across the top of the [Timeline](portfolio-timeline.md) and the
+[Grid](portfolio-grid.md) (see [Header spotlights](#header-spotlights)). A zone shows every photo in its album and the album's
 sub-albums, in the album's order (see [Portfolio Albums](portfolio-albums.md)). With no album picked, the homepage shows the 5 newest photos instead.
 
 Each zone is a card with an **Album** picker and the photos the zone will show, read from `ALLPHOTOS.json` in the
@@ -163,20 +165,38 @@ Each zone is a card with an **Album** picker and the photos the zone will show, 
 `{ "album": "<id>" | null }`) saves the zone in that album file's `spotlightZones`, a list of zone IDs, and takes it out
 of every other album's, so a zone has one album at a time. The album that gets the zone also gets the day in its `spotlightUpdated`, such as
 `{ "homepage": "2026-11-07" }`, which the [Dashboard](dashboard.md) shows. Like other album changes, it's a
-[change waiting for Commit](pending-changes.md). Photos are added to an album on the Gallery or a photo's page (see
+[change waiting for Commit](pending-changes.md).
+
+Once a zone has an album, **Photos first** picks which photos it puts first: **Match the screen** (the default) puts
+portrait photos first on a phone held upright and landscape photos first on every other screen, each part keeping the
+album's order; **Album order** keeps the album's order everywhere. It's saved with the same request
+(`{ "album": "<id>", "orientation": "screen" | "none" }`) in the album file's `spotlightOrientation`, an object of zone
+ID to choice, such as `{ "grid-header": "none" }`. A zone the object leaves out matches the screen. Picking another
+album for a zone without an orientation moves the zone's choice along to the new album's file. Photos are added to an album on the Gallery or a photo's page (see
 [Albums and Tags](albums-and-tags.md)).
 
-Above the photos, **Preview** shows them one at a time as the homepage would, on a phone held upright and on a
+For the Homepage zone, above the photos, **Preview** shows them one at a time as the homepage would, on a phone held upright and on a
 computer, with buttons for the photo before and after. With no album picked, there's no preview. Each
 screen is the homepage drawn at its real size (390 × 844 and 1440 × 900) and scaled down to fit: the photo cropped
 around its focus point with no tint, the frosted site name and view tiles, and the photo's title at the
 bottom left, after a map button when it has a GPS position or a place (`components/spotlight-preview.tsx`). It reads
 `ALLPHOTOS.json` with local edits applied, so a focus point set but not committed already shows. Photos without
-resized versions are left out, as the portfolio leaves them out. The homepage's real order on a phone, portrait photos
-first, isn't previewed.
+resized versions are left out, as the portfolio leaves them out. The order **Photos first** gives isn't previewed.
 
 > **Frontend analogy:** the preview is a fixed-size `<div>` with `transform: scale()`, like zooming out on a design
 > mockup: the CSS inside runs at full size, so the crop and the blur look as they do live.
+
+### Header spotlights
+
+On the portfolio, the Timeline and Grid each start with their zone's photos when an album is picked for it
+(`components/header-spotlight.tsx`, placed by `routes/__root.tsx` for the `/timeline` and `/grid` paths). They span
+the page's width, 30% of the screen's height (`30svh`), fading in and out every 7 seconds like the homepage, each
+cropped around its focus point and placement, with a fade into the page's background over the bottom two thirds. The
+page's title, filters and the rest come after them, and the site menu stays fixed at the top right. With no album
+picked, the page starts with its title as before.
+
+> **Frontend analogy:** it's like a layout route rendering a hero banner above `<Outlet />`, chosen by the URL, so the
+> pages themselves don't change.
 
 > **Frontend analogy:** it's like a radio group spread over several files: choosing one album unchecks the others, and
 > the backend writes every file whose checkbox changed.

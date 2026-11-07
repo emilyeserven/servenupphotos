@@ -18,6 +18,12 @@ export interface Group {
   /** For an album, the spots on the site that show its photos, such as "homepage". */
   spotlightZones?: string[];
   /**
+   * For an album, which photos each of those spots puts first, by spot: "screen" for portrait
+   * photos on a phone held upright and landscape photos elsewhere, or "none" for the album's
+   * order. A spot left out matches the screen.
+   */
+  spotlightOrientation?: Record<string, "screen" | "none">;
+  /**
    * For an album, the IDs of its photos in the order they're shown, set on the pipeline's album
    * page; missing or empty for the default order. Photos it leaves out come after the ones it lists.
    */

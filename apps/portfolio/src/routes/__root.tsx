@@ -1,5 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import { PageHeaderSpotlight } from "@/components/header-spotlight";
 import { SiteMenu } from "@/components/site-menu";
 
 interface RouterContext {
@@ -12,6 +13,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       <div className="fixed top-4 right-4 z-40">
         <SiteMenu />
       </div>
+      <PageHeaderSpotlight />
       <Outlet />
     </main>
   ),

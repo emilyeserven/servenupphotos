@@ -49,7 +49,7 @@ func TestSetSpotlightAlbum(t *testing.T) {
 	f.files["main:data/albums/korea.json"] = "{\n  \"id\": \"korea\",\n  \"name\": \"Korea\",\n  \"spotlightZones\": [\"homepage\"]\n}\n"
 	f.files["main:data/albums/japan.json"] = "{\n  \"id\": \"japan\",\n  \"name\": \"Japan\"\n}\n"
 
-	got, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "homepage", "japan")
+	got, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "homepage", "japan", "")
 	if err != nil {
 		t.Fatalf("SetSpotlightAlbum() error = %v", err)
 	}
@@ -66,18 +66,46 @@ func TestSetSpotlightAlbum(t *testing.T) {
 		t.Errorf("SetSpotlightAlbum() = %v, want only japan dated %s", after, day)
 	}
 
-	none, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "homepage", "")
+	none, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "homepage", "", "")
 	if err != nil || none.Files != 1 {
 		t.Errorf("SetSpotlightAlbum(no album) = %+v, %v; want japan.json taken out", none, err)
 	}
 
-	_, err = c.SetSpotlightAlbum(t.Context(), organizeGH, "homepage", "peru")
+	_, err = c.SetSpotlightAlbum(t.Context(), organizeGH, "homepage", "peru", "")
 	var perr *PublishError
 	if !errors.As(err, &perr) || perr.Status != http.StatusNotFound {
 		t.Errorf("SetSpotlightAlbum(peru) error = %v, want not found", err)
 	}
-	if _, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "Home Page", "japan"); err == nil {
+	if _, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "Home Page", "japan", ""); err == nil {
 		t.Error("SetSpotlightAlbum(bad spot) error = nil, want one")
+	}
+}
+
+func TestSetSpotlightOrientation(t *testing.T) {
+	f, c := newFakeGitHub(t)
+	f.files["main:data/albums/korea.json"] = "{\n  \"id\": \"korea\",\n  \"name\": \"Korea\",\n  \"spotlightZones\": [\"grid-header\"],\n  \"spotlightOrientation\": {\"grid-header\": \"none\"}\n}\n"
+	f.files["main:data/albums/japan.json"] = "{\n  \"id\": \"japan\",\n  \"name\": \"Japan\"\n}\n"
+
+	// Moving the spot to Japan without naming an orientation carries Korea's along.
+	got, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "grid-header", "japan", "")
+	if err != nil {
+		t.Fatalf("SetSpotlightAlbum() error = %v", err)
+	}
+	after := map[string]string{}
+	for _, ch := range got.Changes {
+		after[ch.Path] = string(ch.After)
+	}
+	if !strings.Contains(after["data/albums/japan.json"], `"spotlightOrientation": {"grid-header":"none"}`) ||
+		!strings.Contains(after["data/albums/korea.json"], `"spotlightOrientation": {}`) {
+		t.Errorf("SetSpotlightAlbum() = %v, want the orientation moved from korea to japan", after)
+	}
+
+	changed, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "grid-header", "japan", OrientationScreen)
+	if err != nil || changed.Files != 1 || !strings.Contains(string(changed.Changes[0].After), `{"grid-header":"screen"}`) {
+		t.Errorf("SetSpotlightAlbum(screen) = %+v, %v; want japan.json matching the screen", changed, err)
+	}
+	if _, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "grid-header", "japan", "sideways"); err == nil {
+		t.Error("SetSpotlightAlbum(sideways) error = nil, want one")
 	}
 }
 
