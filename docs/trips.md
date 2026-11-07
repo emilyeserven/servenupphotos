@@ -41,14 +41,21 @@ combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/
       },
       "to": { "day": "2026-10-01" }
     },
-    { "mode": "ferry", "from": { "day": "2026-10-01" }, "to": { "day": "2026-10-02" } }
+    {
+      "mode": "ferry",
+      "from": { "day": "2026-10-01", "photo": 307 },
+      "to": { "day": "2026-10-02" }
+    }
   ]
 }
 ```
 
 - **`start`** and **`end`** are the first and last days the Trip covers, both included, written `YYYY-MM-DD`. A
   photo's day is the day of its custom date, or else its EXIF date, as the Timeline groups it.
-- **`legs`** are left out when there are none, as a timeline label was written.
+- **`legs`** are left out when there are none, as a timeline label was written. Each end has its `day`, and either a
+  `spot` with no photo or the ID of the day's `photo` it leaves from or arrives at; with neither, it's the day's last
+  photo with an exact spot where it leaves and its first where it arrives. A `photo` that isn't from that day, or has
+  no exact spot, falls back to the same.
 - Trips can't overlap: saving one whose days another Trip already covers fails, so each day has at most one Trip. If a
   hand-edited file does overlap, the Timeline shows both names joined with " · ".
 - The ID is the name and first day as an ID, made when the Trip is first saved and kept when it's renamed or its days
@@ -65,22 +72,29 @@ Trips tab marks it **Save to show on the Timeline**, and its page says the same.
 
 The Trips tab lists every Trip as a card, newest first, with its days, how many saved photos were taken on them and
 how many legs it has. Clicking one opens its own page, `/trip-lines/trips/<id>` (**New Trip** opens
-`/trip-lines/trips/new`), with **All Trips** to go back:
+`/trip-lines/trips/new`), with **All Trips** to go back. From the top:
 
-- The editor: its name, first day and last day (left empty, the last day is the first), then its **Legs between
-  days**. It says how many photos fall in the days typed, and says so before saving when another Trip already covers
-  some of them. Saving a new Trip moves to its page; removing one goes back to the tab.
-- **Its days**: the days in the Trip with photos at an exact spot, each linking to that day on the Days tab to mark its
-  line and story.
+- **The map** (`components/trips/trip-map.tsx`, `lib/trip-map.ts`): each day's line and photos, with the day's number
+  (1 for the Trip's first day) at its first photo, and the legs between them, drawn with the portfolio map's own
+  layers (`@portfolio/lib/trip-line-layers`): a ferry in teal dots, a flight in pink dashes. It fits the days' photos,
+  so a long flight home runs off its edge rather than zooming out to the whole world, and it follows what's typed, so
+  a leg shows as soon as it's added. A leg is a straight line here; Commit bakes a flight as an arc for the portfolio.
+- **Name, first day and last day** (left empty, the last day is the first). It says how many photos fall in the days
+  typed, and says so before saving when another Trip already covers some of them.
+- **Days and legs** (`components/trips/day-legs.tsx`): every day of the Trip, first to last, each linking to its Route
+  page when it has a route to mark. Under each day are the legs that **leave** it, edited in place, and **Add a leg
+  from this day**; a day lists the legs that **arrive** on it too, such as "Arrives by Flight (leg 1, from Tue, Sep
+  22, 2026)". A day can have any number of legs, and a leg can arrive the same day it left.
 
-An old link to `/timeline-labels` or `/trips` opens the Trips tab, and one to a Trip on the tab
-(`/trip-lines?tab=trips&trip=<id>`) opens that Trip's page.
+Saving a new Trip moves to its page; removing one goes back to the tab. An old link to `/timeline-labels` or `/trips`
+opens the Trips tab, and one to a Trip on the tab (`/trip-lines?tab=trips&trip=<id>`) opens that Trip's page.
 
 Each leg has a mode (**Ferry**, **Flight**, **Train**, **Bus** or **Car**), the day it **Leaves** and the day it
-**Arrives**. Days can be skipped, such as a flight out on the first day and home on the last. A leg leaves from the
-day's last photo with an exact spot and arrives at the day's first, or from or to **A spot with no photo**, such as an
-airport or "Home", typed as a label and `latitude, longitude`. The row shows the photo it uses and how far the leg is
-in a straight line.
+**Arrives**, and where on each day: **The day's last photo** where it leaves or **first photo** where it arrives (the
+photos with an exact spot), **one of the day's photos** picked by its time and title, such as one taken at the
+airport, or **A spot with no photo**, such as "Home", typed as a label and `latitude, longitude`. Picking a photo is
+what lets one day have several legs from different places. The row shows the photo it uses and how far the leg is in
+a straight line.
 
 **Save Trip** (`PUT /api/trips/<id>` → `PUT /trips/{id}`) and **Remove Trip** (`DELETE /api/trips/<id>` →
 `DELETE /trips/{id}`) keep the file as a [change waiting for Commit](pending-changes.md), counted by the sync button as

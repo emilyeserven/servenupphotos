@@ -16,6 +16,11 @@ export interface TripLegEnd {
    * the last one taken where it leaves, the first where it arrives.
    */
   spot?: TripPoint;
+  /**
+   * The ID of the day's photo it leaves from or arrives at, such as one taken at the airport, so a
+   * day can have several legs from different spots. Left out, it's the day's last or first photo.
+   */
+  photo?: number;
 }
 
 /** One stretch of a Trip from one day to another, such as a ferry or a flight. */

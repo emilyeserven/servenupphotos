@@ -11,16 +11,32 @@ export function datesBetween(start: string, end: string): string[] {
 }
 
 /**
- * The photo a leg's end uses when it has no spot of its own: the day's last photo with an exact
- * spot where it leaves, or its first where it arrives; undefined when the day has none.
+ * The photo a leg's end uses when it has no spot of its own: the one it names, or else the day's
+ * last photo with an exact spot where it leaves, or its first where it arrives; undefined when the
+ * day has none.
  */
 export function endPhoto(
   end: TripLegEnd,
   days: Map<string, TripDay>,
   last: boolean,
 ): TripPhoto | undefined {
-  const photos = days.get(end.day)?.photos ?? [];
+  const photos = dayPhotos(days, end.day);
+  return namedPhoto(end, photos) ?? edgePhoto(photos, last);
+}
+
+/** The day's photos with an exact spot, in the order taken; none when it has none. */
+export function dayPhotos(days: Map<string, TripDay>, day: string): TripPhoto[] {
+  return days.get(day)?.photos ?? [];
+}
+
+/** The last photo, or else the first; undefined with none. */
+function edgePhoto(photos: TripPhoto[], last: boolean): TripPhoto | undefined {
   return last ? photos.at(-1) : photos[0];
+}
+
+/** The photo the end names, when it's one of the day's; undefined otherwise. */
+function namedPhoto(end: TripLegEnd, photos: TripPhoto[]): TripPhoto | undefined {
+  return photos.find((p) => p.id === end.photo);
 }
 
 type Position = { latitude: number; longitude: number };

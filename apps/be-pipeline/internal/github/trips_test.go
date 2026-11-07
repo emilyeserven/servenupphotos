@@ -145,3 +145,23 @@ func TestNearSideAndArc(t *testing.T) {
 		t.Errorf("southern arc() middle %v doesn't bow south", mid)
 	}
 }
+
+func TestLegEndPhoto(t *testing.T) {
+	spots := map[int]tripSpot{
+		10: {ID: 10, Day: "2026-09-23", Longitude: 135.7, Latitude: 35},
+		12: {ID: 12, Day: "2026-09-23", Longitude: 135.9, Latitude: 35.1},
+		13: {ID: 13, Day: "2026-09-24", Longitude: 136, Latitude: 35.2},
+	}
+	// Leaving with no photo named uses the day's last; naming one uses it,
+	// so a day can have legs from different spots.
+	if _, _, id, _ := legEnd(TripLegEnd{Day: "2026-09-23"}, spots, true); id != 12 {
+		t.Errorf("default leaving photo = %d, want 12", id)
+	}
+	if _, _, id, _ := legEnd(TripLegEnd{Day: "2026-09-23", Photo: 10}, spots, true); id != 10 {
+		t.Errorf("named leaving photo = %d, want 10", id)
+	}
+	// A photo from another day is ignored.
+	if _, _, id, _ := legEnd(TripLegEnd{Day: "2026-09-23", Photo: 13}, spots, true); id != 12 {
+		t.Errorf("other day's photo = %d, want 12", id)
+	}
+}

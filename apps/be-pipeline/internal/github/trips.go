@@ -69,9 +69,13 @@ type TripLegEnd struct {
 	// skipped, such as a flight out on the first day and home on the last.
 	Day string `json:"day"`
 	// Spot is a spot with no photo, such as an airport or "Home". Nil uses
-	// the day's photos: the last one taken for where it left, the first for
-	// where it arrived.
+	// the day's photos: Photo when set, or else the last one taken for where
+	// it left and the first for where it arrived.
 	Spot *TripPoint `json:"spot,omitempty"`
+	// Photo is the ID of the day's photo the leg leaves from or arrives at,
+	// such as one taken at the airport, so a day can have several legs from
+	// different spots. 0 uses the day's last or first photo.
+	Photo int `json:"photo,omitempty"`
 }
 
 // SaveTrip saves trip as <folder>/timeline/<id>.json, new or replacing the
@@ -174,6 +178,9 @@ func validLeg(trip Trip, leg *TripLeg, n int) *PublishError {
 	}
 	if !inTrip(trip, leg.From.Day) || !inTrip(trip, leg.To.Day) || leg.To.Day < leg.From.Day {
 		return publishErr(http.StatusBadRequest, "Leg %d: pick the days it left and arrived, within the Trip, leaving first.", n)
+	}
+	if leg.From.Photo < 0 || leg.To.Photo < 0 {
+		return publishErr(http.StatusBadRequest, "Leg %d: pick a photo from the list.", n)
 	}
 	for _, spot := range []*TripPoint{leg.From.Spot, leg.To.Spot} {
 		if perr := validTripPoint(spot, n); perr != nil {
