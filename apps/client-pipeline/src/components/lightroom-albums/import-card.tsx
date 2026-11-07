@@ -1,4 +1,5 @@
 import { DownloadIcon, Trash2Icon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { type ChangeEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -127,18 +128,21 @@ interface ImportReviewProps {
 /** What the import changes, with a button to use it, or why it couldn't be read. */
 function ImportReview({ read, onDone }: ImportReviewProps) {
   const replace = useLightroomAlbumsStore((state) => state.replace);
+  const navigate = useNavigate();
   if (!read) return null;
   if ("error" in read) return <p className="text-destructive text-sm">{read.error}</p>;
   const { merge, source } = read;
   const use = () => {
     replace(source, merge.items);
     onDone();
+    void navigate({ to: "/lightroom-albums" });
   };
   return (
     <div className="bg-muted/50 flex flex-col gap-2 rounded-md border p-3 text-sm">
       <p>
         {count(merge.added, "new album")}, {count(merge.kept, "album")} matched and keeping their
         stage and notes.
+        {merge.manual > 0 && ` ${count(merge.manual, "album")} added by hand also kept.`}
       </p>
       <DroppedAlbums merge={merge} />
       <div className="flex gap-2">
