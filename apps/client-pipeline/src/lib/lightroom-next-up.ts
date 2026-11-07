@@ -16,10 +16,20 @@ function bySize(a: LightroomAlbum, b: LightroomAlbum): number {
   return (a.photoCount ?? Infinity) - (b.photoCount ?? Infinity);
 }
 
-/** The albums that can be worked on now: not Done, and kept offline when there's no internet. */
+/** Whether the album has photos to work on: not one Lightroom shows with 0. Albums with no count read are kept. */
+function hasPhotos(album: LightroomAlbum): boolean {
+  return album.photoCount !== 0;
+}
+
+/** Whether the album can be opened now: any album online, only the ones kept offline without the internet. */
+function reachable(album: LightroomAlbum, connection: LightroomConnection): boolean {
+  return connection === "online" || album.offline;
+}
+
+/** The albums that can be worked on now: not Done, with photos, and kept offline when there's no internet. */
 function workable(albums: LightroomAlbum[], connection: LightroomConnection): LightroomAlbum[] {
   return albums.filter(
-    (album) => album.stage !== "Done" && (connection === "online" || album.offline),
+    (album) => album.stage !== "Done" && hasPhotos(album) && reachable(album, connection),
   );
 }
 
