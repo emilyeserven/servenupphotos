@@ -11,6 +11,7 @@ import {
 import { EditorActions, type EditorView } from "@/components/trip-lines/editor-actions";
 import { type EndKey, EndSpots } from "@/components/trip-lines/end-spots";
 import { HopLines } from "@/components/trip-lines/hop-lines";
+import { Fences } from "@/components/trip-lines/fences";
 import { Visits } from "@/components/trip-lines/visits";
 import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
@@ -28,7 +29,8 @@ import { dayTitle } from "@/components/trip-lines/day-title";
 function initialView(ids: number[], line: TripLine | undefined): EditorView {
   if (!line) return { kind: "none" };
   if (line.auto) return { kind: "auto" };
-  return { kind: "hand", draft: { ...draftOf(ids, line.segments), visits: line.visits } };
+  const extras = { visits: line.visits, fences: line.fences };
+  return { kind: "hand", draft: { ...draftOf(ids, line.segments), ...extras } };
 }
 
 /** The view, with a hand-drawn draft that has no groups yet grouped by its photos' places. */
@@ -190,6 +192,7 @@ function HandMap({ day, draft, segments, highlighted, focus, onChange }: HandMap
         onPick={picking || addingVia ? pick : undefined}
         vias={draftVias(draft)}
         visits={draft.visits}
+        fences={draft.fences}
         onMoveVia={(key, i, point) => onChange(movedVia(draft, key, i, point))}
       />
       <ShapeTools
@@ -214,14 +217,16 @@ function HandMap({ day, draft, segments, highlighted, focus, onChange }: HandMap
         picking={picking === "visit"}
         onPicking={(on) => setPicking(on ? "visit" : undefined)}
       />
+      <Fences day={day} draft={draft} onChange={onChange} />
     </>
   );
 }
 
-/** The places visited in a hand-drawn view, as the line file lists them; none otherwise. */
-function visitsOf(view: EditorView): Pick<TripLine, "visits"> {
-  const visits = view.kind === "hand" ? view.draft.visits : undefined;
-  return visits?.length ? { visits } : {};
+/** The places visited and areas in a hand-drawn view, as the line file lists them; none otherwise. */
+function extrasOf(view: EditorView): Pick<TripLine, "visits" | "fences"> {
+  if (view.kind !== "hand") return {};
+  const { visits = [], fences = [] } = view.draft;
+  return { ...(visits.length > 0 && { visits }), ...(fences.length > 0 && { fences }) };
 }
 
 interface DayActionsProps {
@@ -247,7 +252,7 @@ function DayActions({ day, ids, view, setView, auto, segments, saved }: DayActio
       autoBusy={auto.isFetching}
       save={save}
       remove={remove}
-      onSaveHand={() => save.mutate({ ...base, auto: false, segments, ...visitsOf(view) })}
+      onSaveHand={() => save.mutate({ ...base, auto: false, segments, ...extrasOf(view) })}
       onTurnOnAuto={() =>
         save.mutate(
           { ...base, auto: true, segments: [] },

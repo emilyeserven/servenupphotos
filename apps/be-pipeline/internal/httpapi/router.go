@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/areas"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
@@ -88,6 +89,9 @@ type routeDeps struct {
 	// transit looks up the bus, subway and train lines a hop can ride, and
 	// their tracks, from OpenStreetMap through Overpass (see transit.New).
 	transit transitFinder
+	// areas looks up the outline of an area, such as a park or a city, from
+	// OpenStreetMap through Nominatim (see areas.New).
+	areas areaFinder
 }
 
 // newRouteDeps is what the routes are built from, with the offline copy in
@@ -108,6 +112,7 @@ func newRouteDeps(extractor exif.Extractor, store *settings.Store, gh *github.Cl
 		findPhotos: findPhotosFunc(kept.Find(storage.FindPhotos)),
 		route:      routing.New().Path,
 		transit:    transit.New(),
+		areas:      areas.New(),
 	}
 }
 

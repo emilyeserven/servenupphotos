@@ -69,9 +69,8 @@ func TestBakeVisits(t *testing.T) {
 	spots := map[int]tripSpot{10: {ID: 10, Day: "2026-09-23", Latitude: 35, Longitude: 135.75}, 11: {ID: 11, Day: "2026-09-23", Latitude: 35.001, Longitude: 135.751}}
 	line := TripLine{Day: "2026-09-23", Segments: []TripSegment{{Mode: ModeWalk, Photos: []int{10, 11}}}, Visits: []TripVisit{{Name: "Ichiran", Kind: "restaurant", Latitude: 35.0005, Longitude: 135.7505, Link: "https://naver.me/x"}}}
 	m := bakeTripLines([]TripLine{line}, spots)
-	lines, visits := countFeatures(m)
-	if lines != 1 || visits != 1 {
-		t.Fatalf("lines %d, visits %d", lines, visits)
+	if c := featureCounts(m); c["tripLineSegments"] != 1 || c["tripLineVisits"] != 1 {
+		t.Fatalf("counts %v", c)
 	}
 	v, ok := m.Features[1].(visitFeature)
 	if !ok || v.Geometry.Type != "Point" || v.Geometry.Coordinates != [2]float64{135.7505, 35.0005} || v.Properties.Feature != "visit" || v.Properties.Link != "https://naver.me/x" {

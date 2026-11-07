@@ -9,10 +9,12 @@ import {
 import { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import type { TripPoint, TripSegment, TripVisit } from "@/api/trip-lines";
+import type { TripFence, TripPoint, TripSegment, TripVisit } from "@/api/trip-lines";
+import { FenceAreas } from "@/components/trip-lines/fence-areas";
 import { lineFeatures, pointsBounds } from "@/components/trip-lines/route-geometry";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
 import type { TripPhoto } from "@/lib/trip-days";
+import { fenceCorners } from "@/lib/trip-fences";
 import { cn } from "@/lib/utils";
 
 setWorkerUrl(maplibreWorkerUrl);
@@ -82,6 +84,8 @@ interface RouteMapProps {
   onMoveVia?: (key: string, index: number, point: TripPoint | null) => void;
   /** The places visited along the route, as pins. */
   visits?: TripVisit[];
+  /** The areas photos without an exact spot were taken in, shaded. */
+  fences?: TripFence[];
 }
 
 /** The day's photos as numbered dots, and its trip line drawn through them. */
@@ -97,8 +101,9 @@ export function RouteMap({
   vias = [],
   onMoveVia,
   visits = [],
+  fences = [],
 }: RouteMapProps) {
-  const bounds = pointsBounds([...photos, ...ends, ...visits]);
+  const bounds = pointsBounds([...photos, ...ends, ...visits, ...fenceCorners(fences)]);
   return (
     <div
       className={cn("h-80 overflow-hidden rounded-md border md:h-96", onPick && "cursor-crosshair")}
@@ -111,6 +116,7 @@ export function RouteMap({
         onClick={(e) => onPick?.({ latitude: e.lngLat.lat, longitude: e.lngLat.lng })}
       >
         <NavigationControl position="bottom-right" showCompass={false} />
+        <FenceAreas fences={fences} />
         <Source id="trip-line" type="geojson" data={lineFeatures(segments, photos, focus)}>
           <Layer {...walkLayer(preview === true)} />
           <Layer {...hopLayer} />

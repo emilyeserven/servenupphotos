@@ -1297,6 +1297,25 @@ export function defaultFixtures() {
       ],
     },
     "POST /api/triplines/2026-10-01/route": snapped,
+    "GET /api/areas": [
+      {
+        name: "Upper East Side",
+        place: "Upper East Side, Manhattan, New York County, New York, United States",
+        kind: "neighbourhood",
+        osm: "R1",
+        shape: [
+          [
+            [
+              [-73.9727, 40.7644],
+              [-73.959, 40.7584],
+              [-73.942, 40.782],
+              [-73.955, 40.788],
+              [-73.9727, 40.7644],
+            ],
+          ],
+        ],
+      },
+    ],
     "GET /api/transit/lines": [
       {
         id: 1,

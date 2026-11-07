@@ -32,6 +32,7 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - **`name`** on a segment names the group of photos it's in, such as "Nara Park": each [group](#groups) is a line of
   its own. A walk or hop from one group to the next has none.
 - **`visits`** are the [places visited](#places-visited) along the day's route, such as restaurants.
+- **`fences`** are the [areas](#areas) photos without an exact spot were taken in, such as a park.
 - **`segments`** are the stretches of the day, in the order they happened. Each one's line runs from `start` (when
   set), through its `photos` (photo IDs) in order, to `end` (when set).
 - **`mode`** is `walk`, `train`, `subway`, `bus`, `car` (taxis too) or `transit`, a hop whose kind isn't known, as the
@@ -165,6 +166,54 @@ and that every `visit` names a place the day has.
 `place` is the saved place's ID when one was picked. The link has to be an `http` or `https` web address. Commit bakes
 each into `TRIPLINES.geo.json` as a GeoJSON `Point` with `"feature": "visit"`, the day, and the name, kind, note and
 link, next to the lines, and counts them (`tripLineVisits`).
+
+## Areas
+
+A line only goes through photos with an exact spot: their own GPS position, or a place marked as an exact location.
+A photo that only has a neighbourhood or a park as its place has no point to draw, so **Areas** (under **Places
+visited**, on a day that has such photos) puts it in the area it was taken in, and the map shades that area with a
+dashed edge.
+
+Type a name, or a Wikidata ID such as `Q1490`, and press **Find an area**. The box starts with the place or city of the
+first photo not in an area yet. Picking a result adds the area holding every photo not in one yet. Click a photo under
+an area to put it in or take it out; a photo is in one area at most. Rename or remove an area from its row.
+
+The backend asks OpenStreetMap's [Nominatim](https://nominatim.org/release-docs/latest/api/Search/) for places with
+an outline (`polygon_geojson`), simplified to about 50 m (`polygon_threshold`) and kept to 5,000 points. A Wikidata ID
+is looked up through the item's [OpenStreetMap relation ID (P402)](https://www.wikidata.org/wiki/Property:P402); an item
+without one can't be used, so search by name instead. Requests go at most once a second and name the pipeline in
+their `User-Agent`, as the [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/) asks.
+`NOMINATIM_URL` and `WIKIDATA_URL` point it at other servers. The outlines are OpenStreetMap data under the
+[ODbL](https://www.openstreetmap.org/copyright), like the lines ridden.
+
+They're saved with the line as `fences`:
+
+```json
+{
+  "name": "Upper East Side",
+  "photos": [24, 28, 31],
+  "osm": "R…",
+  "shape": [
+    [
+      [
+        [-73.9727, 40.7644],
+        [-73.959, 40.7584],
+        [-73.942, 40.782],
+        [-73.9727, 40.7644]
+      ]
+    ]
+  ]
+}
+```
+
+`shape` is a GeoJSON `MultiPolygon`'s coordinates: polygons, each an outer ring then any holes, each ring closed. The
+backend checks that each photo was taken that day and each ring is closed and on the globe. Commit bakes each into
+`TRIPLINES.geo.json` as a `MultiPolygon` with `"feature": "fence"`, the day, the name and the photos, and counts them
+(`tripLineFences`).
+
+> **Frontend analogy:** Nominatim is a search API like an autocomplete endpoint, but its answers carry the shape
+> too, the way an image search returns the picture and not only its name. The backend is the one calling it, so the
+> once-a-second limit holds however many tabs are open.
 
 ## Groups
 
