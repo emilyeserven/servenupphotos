@@ -8,6 +8,7 @@ import {
   updateAlbum,
 } from "@/lib/lightroom-albums";
 import type { LightroomConnection } from "@/lib/lightroom-next-up";
+import { insertAlbum, removeAlbum } from "@/lib/lightroom-tree";
 
 /** How the Albums card shows the albums: as Lightroom's folder tree, or as a board with a lane per stage. */
 export type LightroomView = "tree" | "board";
@@ -21,6 +22,16 @@ interface LightroomAlbumsState {
   setAlbum: (path: string, change: Partial<Pick<LightroomAlbum, "stage" | "notes">>) => void;
   /** Forgets the whole tree, with every stage and note. */
   clear: () => void;
+  /** Adds an album by hand, starting a list when there isn't one yet. */
+  addAlbum: (album: LightroomAlbum) => void;
+  /** Removes an album, such as one added by hand by mistake. */
+  removeAlbum: (path: string) => void;
+  /** The paths of the folders closed in the tree. */
+  closedFolders: string[];
+  /** Opens or closes one folder in the tree. */
+  toggleFolder: (path: string) => void;
+  /** Sets which folders are closed, such as all of them or none. */
+  setClosedFolders: (paths: string[]) => void;
   /** Whether the Albums card shows the tree or the board. */
   view: LightroomView;
   /** Switches between the tree and the board. */
@@ -38,6 +49,14 @@ function migrate(saved: unknown): Partial<LightroomAlbumsState> {
   return { file: { ...state.file, items: normalizeLightroomItems(state.file.items) } };
 }
 
+/** The list with its tree changed and its time of change set to now. */
+function changed(
+  file: LightroomAlbumsFile,
+  change: (items: LightroomItem[]) => LightroomItem[],
+): LightroomAlbumsFile {
+  return { ...file, items: change(file.items), updatedAt: new Date().toISOString() };
+}
+
 /**
  * The Lightroom Albums page's tree, with each album's stage and notes. It's kept only in this browser's
  * localStorage and is never sent to the backend or GitHub; Export and Import carry it to another computer.
@@ -50,13 +69,27 @@ export const useLightroomAlbumsStore = create<LightroomAlbumsState>()(
         set({ file: { source, items, updatedAt: new Date().toISOString() } }),
       setAlbum: (path, change) =>
         set((state) => ({
-          file: state.file && {
-            ...state.file,
-            items: updateAlbum(state.file.items, path, change),
-            updatedAt: new Date().toISOString(),
-          },
+          file: state.file && changed(state.file, (items) => updateAlbum(items, path, change)),
         })),
       clear: () => set({ file: null }),
+      addAlbum: (album) =>
+        set((state) => ({
+          file: changed(state.file ?? { source: "manual", updatedAt: "", items: [] }, (items) =>
+            insertAlbum(items, album),
+          ),
+        })),
+      removeAlbum: (path) =>
+        set((state) => ({
+          file: state.file && changed(state.file, (items) => removeAlbum(items, path)),
+        })),
+      closedFolders: [],
+      toggleFolder: (path) =>
+        set((state) => ({
+          closedFolders: state.closedFolders.includes(path)
+            ? state.closedFolders.filter((p) => p !== path)
+            : [...state.closedFolders, path],
+        })),
+      setClosedFolders: (closedFolders) => set({ closedFolders }),
       view: "tree",
       setView: (view) => set({ view }),
       connection: "online",

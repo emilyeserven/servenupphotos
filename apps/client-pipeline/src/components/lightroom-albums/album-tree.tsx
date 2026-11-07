@@ -1,16 +1,14 @@
-import { FolderIcon } from "lucide-react";
 import { useState } from "react";
 import { AlbumBoard } from "@/components/lightroom-albums/album-board";
-import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
+import { AddAlbumButton } from "@/components/lightroom-albums/add-album";
+import { FolderButtons, ItemList } from "@/components/lightroom-albums/folder-tree";
 import { Segmented } from "@/components/lightroom-albums/segmented";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { count } from "@/components/update-data-shared";
 import {
   LIGHTROOM_STAGES,
   type LightroomAlbum,
   type LightroomAlbumsFile,
-  type LightroomFolder,
   type LightroomItem,
   type LightroomStage,
   allAlbums,
@@ -47,7 +45,10 @@ export function AlbumTreeCard() {
           <CardTitle>Albums</CardTitle>
           <CardDescription>{summary(file, albums)}</CardDescription>
         </div>
-        {file && <ViewSwitch />}
+        <div className="flex flex-wrap gap-2">
+          <AddAlbumButton />
+          {file && <ViewSwitch />}
+        </div>
       </CardHeader>
       {file && (
         <CardContent>
@@ -60,7 +61,7 @@ export function AlbumTreeCard() {
 
 /** How many albums there are, how many are offline, and when the list last changed. */
 function summary(file: LightroomAlbumsFile | null, albums: LightroomAlbum[]) {
-  if (!file) return "Nothing imported yet.";
+  if (!file) return "Nothing yet. Import your albums from Lightroom, or add them by hand.";
   const offline = albums.filter((album) => album.offline).length;
   return `${count(albums.length, "album")}, ${offline} offline, last changed ${new Date(file.updatedAt).toLocaleString()}.`;
 }
@@ -92,7 +93,10 @@ function TreeView({ file, albums }: { file: LightroomAlbumsFile; albums: Lightro
   const [filter, setFilter] = useState<StageFilter>("all");
   return (
     <div className="flex flex-col gap-4">
-      <StageChips albums={albums} filter={filter} onFilter={setFilter} />
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <StageChips albums={albums} filter={filter} onFilter={setFilter} />
+        <FolderButtons items={file.items} />
+      </div>
       <ItemList items={filterItems(file.items, filter)} />
     </div>
   );
@@ -127,60 +131,6 @@ function StageChips({ albums, filter, onFilter }: StageChipsProps) {
           {chip.label} · {albums.filter((album) => matches(album, chip.value)).length}
         </button>
       ))}
-    </div>
-  );
-}
-
-function ItemList({ items }: { items: LightroomItem[] }) {
-  if (items.length === 0) return <p className="text-muted-foreground text-sm">No albums here.</p>;
-  return (
-    <ul className="flex flex-col gap-2">
-      {items.map((item) => (
-        <li key={item.path}>
-          {item.kind === "folder" ? <FolderRow folder={item} /> : <AlbumRow album={item} />}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/** A folder that opens and closes, with what's inside it indented under it. */
-function FolderRow({ folder }: { folder: LightroomFolder }) {
-  return (
-    <details open className="group">
-      <summary className="flex cursor-pointer items-center gap-2 py-1 font-medium">
-        <FolderIcon className="text-muted-foreground size-4" aria-hidden />
-        {folder.name}
-        <Uncertain note={folder.uncertainNote} />
-        {folder.collapsed && (
-          <span className="text-muted-foreground text-xs font-normal">
-            (closed in the screenshots, so its albums weren&apos;t read)
-          </span>
-        )}
-      </summary>
-      <div className="mt-1 border-s ps-4">
-        <ItemList items={folder.children} />
-      </div>
-    </details>
-  );
-}
-
-/** An album's name and marks, with its stage and notes to change. */
-function AlbumRow({ album }: { album: LightroomAlbum }) {
-  const setAlbum = useLightroomAlbumsStore((state) => state.setAlbum);
-  return (
-    <div className="flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-start">
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <AlbumTitle album={album} />
-        <Textarea
-          aria-label={`Notes on ${album.name}`}
-          placeholder="Notes"
-          value={album.notes}
-          className="min-h-9 text-sm"
-          onChange={(event) => setAlbum(album.path, { notes: event.target.value })}
-        />
-      </div>
-      <StageSelect album={album} className="sm:w-40" />
     </div>
   );
 }

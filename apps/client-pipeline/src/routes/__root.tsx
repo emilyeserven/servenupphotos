@@ -1,5 +1,11 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, Outlet, useLocation } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  Link,
+  Outlet,
+  useLocation,
+  useMatches,
+} from "@tanstack/react-router";
 import type * as React from "react";
 import { AppSidebar, navGroups } from "@/components/app-sidebar";
 import { InFlightBackupKeeper } from "@/components/in-flight-backup-keeper";
@@ -8,6 +14,7 @@ import { SyncStatus } from "@/components/sync-status";
 import {
   Breadcrumb,
   BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
@@ -25,6 +32,8 @@ declare module "@tanstack/react-router" {
   interface StaticDataRouteOption {
     /** Lays the page out in a wider column. */
     wide?: boolean;
+    /** The name of a page under one in the sidebar, such as "Import", shown after it in the breadcrumb. */
+    subpage?: string;
   }
 }
 
@@ -63,17 +72,7 @@ function RootLayout() {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4 md:hidden"
             />
-            {group && page ? (
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">{group.title}</BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>{page.title}</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            ) : null}
+            {group && page ? <PageCrumbs group={group.title} page={page} /> : null}
           </header>
           <div className="flex-1">
             <Outlet />
@@ -81,5 +80,40 @@ function RootLayout() {
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
+  );
+}
+
+interface PageCrumbsProps {
+  group: string;
+  page: { title: string; url: string };
+}
+
+/** The breadcrumb: the sidebar group, the page, and the subpage when the route names one, such as Import. */
+function PageCrumbs({ group, page }: PageCrumbsProps) {
+  const subpage = useMatches({ select: (matches) => matches.at(-1)?.staticData.subpage });
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem className="hidden md:block">{group}</BreadcrumbItem>
+        <BreadcrumbSeparator className="hidden md:block" />
+        <BreadcrumbItem>
+          {subpage ? (
+            <BreadcrumbLink asChild>
+              <Link to={page.url}>{page.title}</Link>
+            </BreadcrumbLink>
+          ) : (
+            <BreadcrumbPage>{page.title}</BreadcrumbPage>
+          )}
+        </BreadcrumbItem>
+        {subpage && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{subpage}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </>
+        )}
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 }

@@ -16,12 +16,18 @@ export function AlbumTitle({ album, className, hideOffline = false }: AlbumTitle
   return (
     <p className={cn("flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium", className)}>
       {album.name}
-      {album.smart && <span className="text-muted-foreground text-xs">Smart</span>}
+      <KindMark album={album} />
       {album.offline && !hideOffline && <OfflineBadge />}
       <PhotoCount photoCount={album.photoCount} />
       <Uncertain note={album.uncertainNote} />
     </p>
   );
+}
+
+/** Says the album is a Smart Collection, or was added by hand rather than read from Lightroom. */
+function KindMark({ album }: { album: LightroomAlbum }) {
+  const mark = album.smart ? "Smart" : album.manual ? "Added by hand" : "";
+  return mark && <span className="text-muted-foreground text-xs">{mark}</span>;
 }
 
 /** How many photos Lightroom says the album has, when it showed a count. */

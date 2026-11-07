@@ -19,7 +19,6 @@ import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
-import { Route as LightroomAlbumsRouteImport } from './routes/lightroom-albums'
 import { Route as LocalizationsRouteImport } from './routes/localizations'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PlacesRouteImport } from './routes/places'
@@ -34,6 +33,8 @@ import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
 import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
 import { Route as GenresIndexRouteImport } from './routes/genres.index'
 import { Route as GenresIdRouteImport } from './routes/genres.$id'
+import { Route as LightroomAlbumsIndexRouteImport } from './routes/lightroom-albums.index'
+import { Route as LightroomAlbumsImportRouteImport } from './routes/lightroom-albums.import'
 import { Route as TagsIndexRouteImport } from './routes/tags.index'
 import { Route as TagsIdRouteImport } from './routes/tags.$id'
 import { Route as UpdateDataIndexRouteImport } from './routes/update-data.index'
@@ -87,11 +88,6 @@ const InFlightRoute = InFlightRouteImport.update({
 const InstagramRoute = InstagramRouteImport.update({
   id: '/instagram',
   path: '/instagram',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LightroomAlbumsRoute = LightroomAlbumsRouteImport.update({
-  id: '/lightroom-albums',
-  path: '/lightroom-albums',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocalizationsRoute = LocalizationsRouteImport.update({
@@ -164,6 +160,16 @@ const GenresIdRoute = GenresIdRouteImport.update({
   path: '/genres/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LightroomAlbumsIndexRoute = LightroomAlbumsIndexRouteImport.update({
+  id: '/lightroom-albums/',
+  path: '/lightroom-albums/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LightroomAlbumsImportRoute = LightroomAlbumsImportRouteImport.update({
+  id: '/lightroom-albums/import',
+  path: '/lightroom-albums/import',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TagsIndexRoute = TagsIndexRouteImport.update({
   id: '/tags/',
   path: '/tags/',
@@ -196,7 +202,6 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
-  '/lightroom-albums': typeof LightroomAlbumsRoute
   '/localizations': typeof LocalizationsRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
@@ -209,10 +214,12 @@ export interface FileRoutesByFullPath {
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
+  '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
   '/genres/': typeof GenresIndexRoute
+  '/lightroom-albums/': typeof LightroomAlbumsIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
 }
@@ -227,7 +234,6 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
-  '/lightroom-albums': typeof LightroomAlbumsRoute
   '/localizations': typeof LocalizationsRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
@@ -239,10 +245,12 @@ export interface FileRoutesByTo {
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
+  '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums': typeof AlbumsIndexRoute
   '/genres': typeof GenresIndexRoute
+  '/lightroom-albums': typeof LightroomAlbumsIndexRoute
   '/tags': typeof TagsIndexRoute
   '/update-data': typeof UpdateDataIndexRoute
 }
@@ -258,7 +266,6 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
-  '/lightroom-albums': typeof LightroomAlbumsRoute
   '/localizations': typeof LocalizationsRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
@@ -271,10 +278,12 @@ export interface FileRoutesById {
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
+  '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
   '/genres/': typeof GenresIndexRoute
+  '/lightroom-albums/': typeof LightroomAlbumsIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
 }
@@ -291,7 +300,6 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
-    | '/lightroom-albums'
     | '/localizations'
     | '/metadata-groups'
     | '/places'
@@ -304,10 +312,12 @@ export interface FileRouteTypes {
     | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
+    | '/lightroom-albums/import'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums/'
     | '/genres/'
+    | '/lightroom-albums/'
     | '/tags/'
     | '/update-data/'
   fileRoutesByTo: FileRoutesByTo
@@ -322,7 +332,6 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
-    | '/lightroom-albums'
     | '/localizations'
     | '/metadata-groups'
     | '/places'
@@ -334,10 +343,12 @@ export interface FileRouteTypes {
     | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
+    | '/lightroom-albums/import'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums'
     | '/genres'
+    | '/lightroom-albums'
     | '/tags'
     | '/update-data'
   id:
@@ -352,7 +363,6 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
-    | '/lightroom-albums'
     | '/localizations'
     | '/metadata-groups'
     | '/places'
@@ -365,10 +375,12 @@ export interface FileRouteTypes {
     | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
+    | '/lightroom-albums/import'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums/'
     | '/genres/'
+    | '/lightroom-albums/'
     | '/tags/'
     | '/update-data/'
   fileRoutesById: FileRoutesById
@@ -384,7 +396,6 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
-  LightroomAlbumsRoute: typeof LightroomAlbumsRoute
   LocalizationsRoute: typeof LocalizationsRoute
   MetadataGroupsRoute: typeof MetadataGroupsRoute
   PlacesRoute: typeof PlacesRoute
@@ -397,9 +408,11 @@ export interface RootRouteChildren {
   ViewerLikesRoute: typeof ViewerLikesRoute
   AlbumsIdRoute: typeof AlbumsIdRoute
   GenresIdRoute: typeof GenresIdRoute
+  LightroomAlbumsImportRoute: typeof LightroomAlbumsImportRoute
   TagsIdRoute: typeof TagsIdRoute
   AlbumsIndexRoute: typeof AlbumsIndexRoute
   GenresIndexRoute: typeof GenresIndexRoute
+  LightroomAlbumsIndexRoute: typeof LightroomAlbumsIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
 }
 
@@ -473,13 +486,6 @@ declare module '@tanstack/react-router' {
       path: '/instagram'
       fullPath: '/instagram'
       preLoaderRoute: typeof InstagramRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lightroom-albums': {
-      id: '/lightroom-albums'
-      path: '/lightroom-albums'
-      fullPath: '/lightroom-albums'
-      preLoaderRoute: typeof LightroomAlbumsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/localizations': {
@@ -580,6 +586,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GenresIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lightroom-albums/': {
+      id: '/lightroom-albums/'
+      path: '/lightroom-albums'
+      fullPath: '/lightroom-albums/'
+      preLoaderRoute: typeof LightroomAlbumsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lightroom-albums/import': {
+      id: '/lightroom-albums/import'
+      path: '/lightroom-albums/import'
+      fullPath: '/lightroom-albums/import'
+      preLoaderRoute: typeof LightroomAlbumsImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tags/': {
       id: '/tags/'
       path: '/tags'
@@ -636,7 +656,6 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
-  LightroomAlbumsRoute: LightroomAlbumsRoute,
   LocalizationsRoute: LocalizationsRoute,
   MetadataGroupsRoute: MetadataGroupsRoute,
   PlacesRoute: PlacesRoute,
@@ -649,9 +668,11 @@ const rootRouteChildren: RootRouteChildren = {
   ViewerLikesRoute: ViewerLikesRoute,
   AlbumsIdRoute: AlbumsIdRoute,
   GenresIdRoute: GenresIdRoute,
+  LightroomAlbumsImportRoute: LightroomAlbumsImportRoute,
   TagsIdRoute: TagsIdRoute,
   AlbumsIndexRoute: AlbumsIndexRoute,
   GenresIndexRoute: GenresIndexRoute,
+  LightroomAlbumsIndexRoute: LightroomAlbumsIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
 }
 export const routeTree = rootRouteImport

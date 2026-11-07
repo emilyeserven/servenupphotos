@@ -2,14 +2,17 @@
 
 `/lightroom-albums`, under **Workflow** in the sidebar, lists your Lightroom folders and albums (Lightroom Classic's
 collection sets and collections, or Lightroom's folders and albums) so you can keep a **stage** and **notes** on
-each album, such as which ones are still being culled and which are ready to upload.
+each album, such as which ones are still being culled and which are ready to upload. Getting the list from
+Lightroom, and Export and Import, are on a page of their own, **Lightroom Albums › Import**
+(`/lightroom-albums/import`), opened with **Import or export** at the top of the page. The breadcrumb shows a page
+under a sidebar page from its route's `staticData.subpage`.
 
 ## Getting the list
 
 Neither Lightroom has a way in that the pipeline can use. Lightroom's API is only open to approved partner apps
 ([Lightroom partner APIs](https://github.com/AdobeDocs/lightroom-partner-apis)), and Lightroom Classic's catalog is an
 undocumented database that Lightroom locks while it's open. So an LLM reads the list from screenshots or a screen
-recording instead, picked with the **Screenshots / Screen recording** switch on the prompt card:
+recording instead, picked with the **Screenshots / Screen recording** switch on the Import page's prompt card:
 
 1. Open every folder you want in Lightroom's album panel.
 2. Capture the list:
@@ -21,7 +24,7 @@ recording instead, picked with the **Screenshots / Screen recording** switch on 
 3. Copy the prompt (`lib/lightroom-albums-prompt.md` for screenshots, `lib/lightroom-albums-recording-prompt.md` for a
    recording) and send it to an LLM with the screenshots, in order, or the recording. Both prompts ask for the same
    JSON, so both answers import the same way.
-4. Paste its answer under **Import** and press **Read the list**.
+4. Paste its answer under **Import** and press **Read the list**. **Use this list** goes back to Lightroom Albums.
 
 The answer is a JSON tree. Each item has a `path`, every name from the top down joined with `/`, such as
 `Travel/Busan, South Korea`. Items the LLM couldn't read clearly come with a note, shown next to the name with a
@@ -34,8 +37,22 @@ on the device (**Make Available Offline**, shown in Lightroom with a small offli
 Importing a new list (a fresh LLM answer after you've added albums in Lightroom, say) matches albums by `path`.
 **Read the list** says how many albums are new and how many keep their stage and notes, and lists the albums with a
 stage or notes that aren't in the new list, since **Use this list** drops them. **Cancel** leaves the page as it was.
+Albums [added by hand](#adding-albums-by-hand) that aren't in the new list are kept, put back in their folder.
 Renaming an album or moving it to another folder in Lightroom changes its path, so it's dropped and comes back as
 new.
+
+## Folders
+
+In the tree, a folder opens and closes from its name, which shows how many albums are inside it. **Expand all** and
+**Collapse all** open or close every folder. Which folders are closed is remembered in the browser.
+
+## Adding albums by hand
+
+**Add album**, on the Albums card, adds an album the LLM missed or one not made in Lightroom yet: its name, its
+folder (pick one that's there, type a new path such as `Travel/Japan`, which makes the folders it needs, or leave it
+empty for the top), its photo count and whether it's offline. It can't share a path with a folder or album already
+there. It's marked **Added by hand**, has a **Remove** button, and is saved with `"manual": true`, so importing a new
+list keeps it (`lib/lightroom-tree.ts`). With no list yet, adding an album starts one.
 
 ## Stages and notes
 

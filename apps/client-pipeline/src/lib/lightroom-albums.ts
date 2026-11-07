@@ -1,5 +1,6 @@
 import screenshotsPrompt from "@/lib/lightroom-albums-prompt.md?raw";
 import recordingPrompt from "@/lib/lightroom-albums-recording-prompt.md?raw";
+import { insertAlbum } from "@/lib/lightroom-tree";
 
 /** How the album panel is captured for the LLM: overlapping screenshots, or a screen recording scrolling through it. */
 export type LightroomCapture = "screenshots" | "recording";
@@ -36,6 +37,8 @@ export interface LightroomAlbum {
   smart: boolean;
   /** Whether Lightroom keeps the album on the device, so it's there without the internet. */
   offline: boolean;
+  /** Whether it was added by hand on the page rather than read from Lightroom, so a new import keeps it. */
+  manual?: boolean;
   /** Which stage the album is at, or null before one is picked. */
   stage: LightroomStage | null;
   /** The photographer's notes on the album. */
@@ -117,6 +120,7 @@ function readAlbum(raw: Record<string, unknown>, name: string, path: string): Li
     photoCount: count(raw.photoCount),
     smart: raw.smart === true,
     offline: raw.offline === true,
+    ...(raw.manual === true ? { manual: true } : {}),
     stage: stage(raw.stage),
     notes: text(raw.notes),
     ...uncertainty(raw),
@@ -205,6 +209,8 @@ export interface LightroomMerge {
   kept: number;
   /** Albums with a stage or notes that aren't in the new list, so they're dropped along with their notes. */
   dropped: LightroomAlbum[];
+  /** Albums added by hand that aren't in the new list, kept and added to it. */
+  manual: number;
 }
 
 /**
@@ -216,14 +222,17 @@ export function mergeLightroomAlbums(
   imported: LightroomItem[],
 ): LightroomMerge {
   const old = new Map(allAlbums(current).map((album) => [album.path, album]));
-  const items = imported.map((item) => mergeItem(item, old));
-  const paths = new Set(allAlbums(items).map((album) => album.path));
+  const merged = imported.map((item) => mergeItem(item, old));
+  const paths = new Set(allAlbums(merged).map((album) => album.path));
   const kept = [...paths].filter((path) => old.has(path)).length;
+  const missing = [...old.values()].filter((album) => !paths.has(album.path));
+  const manual = missing.filter((album) => album.manual);
   return {
-    items,
+    items: manual.reduce(insertAlbum, merged),
     added: paths.size - kept,
     kept,
-    dropped: [...old.values()].filter((album) => !paths.has(album.path) && hasWork(album)),
+    dropped: missing.filter((album) => !album.manual && hasWork(album)),
+    manual: manual.length,
   };
 }
 
