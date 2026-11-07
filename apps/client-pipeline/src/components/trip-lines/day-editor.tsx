@@ -12,6 +12,7 @@ import { EditorActions, type EditorView } from "@/components/trip-lines/editor-a
 import { type EndKey, EndSpots } from "@/components/trip-lines/end-spots";
 import { HopLines } from "@/components/trip-lines/hop-lines";
 import { Fences } from "@/components/trip-lines/fences";
+import { useDayPlaceAreas } from "@/components/trip-lines/use-day-place-areas";
 import { Visits } from "@/components/trip-lines/visits";
 import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
@@ -175,6 +176,7 @@ interface HandMapProps {
 function HandMap({ day, draft, segments, highlighted, focus, onChange }: HandMapProps) {
   const [picking, setPicking] = useState<MapPick>();
   const [addingVia, setAddingVia] = useState(false);
+  const placeAreas = useDayPlaceAreas(day.photos);
   const pick = (point: TripPoint) => {
     onChange(picked(draft, picking, point, () => withVia(draft, segments, day.photos, point)));
     setPicking(undefined);
@@ -192,7 +194,7 @@ function HandMap({ day, draft, segments, highlighted, focus, onChange }: HandMap
         onPick={picking || addingVia ? pick : undefined}
         vias={draftVias(draft)}
         visits={draft.visits}
-        fences={draft.fences}
+        fences={[...(draft.fences ?? []), ...placeAreas]}
         onMoveVia={(key, i, point) => onChange(movedVia(draft, key, i, point))}
       />
       <ShapeTools

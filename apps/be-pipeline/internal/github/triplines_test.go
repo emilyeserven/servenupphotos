@@ -80,6 +80,7 @@ func TestAutoSegments(t *testing.T) {
 		at(5, 40, 35.101, 135),  // walking again
 		at(6, 300, 35.102, 135), // hours later: a break
 		at(7, 310, 35.103, 135),
+		at(8, 400, 35.403, 135), // about 33 km, hours later: a drive
 	}
 	got := autoSegments(spots)
 	want := []TripSegment{
@@ -87,6 +88,7 @@ func TestAutoSegments(t *testing.T) {
 		{Mode: ModeTransit, Photos: []int{3, 4}},
 		{Mode: ModeWalk, Photos: []int{4, 5}},
 		{Mode: ModeWalk, Photos: []int{6, 7}},
+		{Mode: ModeCar, Photos: []int{7, 8}},
 	}
 	if len(got) != len(want) {
 		t.Fatalf("autoSegments() = %+v, want %+v", got, want)

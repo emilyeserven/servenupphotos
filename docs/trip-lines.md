@@ -103,7 +103,8 @@ how many lines it has (`tripLineSegments`).
 ## The automatic line
 
 The automatic line is one walk through the day's photos in the order they were taken, broken where two photos are
-more than 2 hours apart, with a `transit` hop where moving between two (more than 300 m apart) was faster than 6 km/h
+more than 2 hours apart, with a `car` drive across a big jump (two photos more than 15 km apart and taken within
+6 hours of each other) and a `transit` hop where moving between two (more than 300 m apart) was faster than 6 km/h
 (`autoSegments` in `be-pipeline/internal/github/triplines_auto.go`). `GET /api/triplines/<day>/auto` answers it for the
 day as the next Commit would draw it.
 
@@ -224,6 +225,9 @@ line with a name:
   the first place of a photo changes, named after it. A photo with no place stays in the group before it.
 - Each group's header has its name, how many photos it has, a button that collapses it to the header, and an eye that
   shows that group alone on the map, the others faded.
+- The shapes button on a group's header edits the area of the group's place (the place of its first photo), the same
+  area as the place's own page: find one by name or Wikidata ID, or remove it. It's light blue when the place has one,
+  and the day's map shades the areas of every place on the day.
 - The scissors on a photo start a new group there; the join button between two groups merges them. The menu between
   two groups picks what happened between them, like any gap.
 
