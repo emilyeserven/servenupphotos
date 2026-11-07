@@ -1,5 +1,6 @@
 import type { SocialPhoto } from "@/api/publish";
 import { isoDate, parseIsoDate } from "@/lib/calendar";
+import type { DayPost } from "@/lib/social-post-days";
 
 /** How the Instagram queue looks from today: the next photos and how long it lasts. */
 export interface SocialQueue {
@@ -45,4 +46,28 @@ export function socialQueue(
     .map(([day, photo]) => ({ day, photo }));
   const run = runFrom(byDay, today);
   return { next: upcoming.slice(0, shown), ...run, later: upcoming.length - run.daysLeft };
+}
+
+/** The first of the posts' photos that the Instagram calendar read, by path. */
+function firstReadPhoto(posts: DayPost[], byPath: Map<string, SocialPhoto>) {
+  return posts.map((post) => byPath.get(post.photo.path)).find((photo) => photo !== undefined);
+}
+
+/**
+ * The calendar's photo for each day (byDay), with the days that only have an Instagram post, from
+ * the photos' Social media posts (posts, by day), filled in with that post's photo. A day on the
+ * calendar keeps its calendar photo.
+ */
+export function withPostDays(
+  byDay: Map<string, SocialPhoto>,
+  photos: SocialPhoto[],
+  posts: Map<string, DayPost[]>,
+): Map<string, SocialPhoto> {
+  const byPath = new Map(photos.map((photo) => [photo.path, photo]));
+  const days = new Map(byDay);
+  for (const [day, dayPosts] of posts) {
+    const photo = firstReadPhoto(dayPosts, byPath);
+    if (photo && !days.has(day)) days.set(day, photo);
+  }
+  return days;
 }
