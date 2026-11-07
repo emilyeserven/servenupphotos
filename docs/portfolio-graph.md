@@ -36,11 +36,11 @@ The page opens on photos per year, oldest first, each bar split by season. Only 
 the heading, buttons, Adjust Graph box and Selected Photos stay in the column (**Narrow** puts it back). The choice is remembered in the browser.
 
 **Presets** are made on the pipeline's [Graph Presets](graph-presets.md) page and read from `graphs/GRAPHS.json`. The
-**Presets** tab opens a picker like the Grid's **Groups** (`preset-picker.tsx`): the preset groups on the left, each
+**Presets** tab opens a `SectionPicker` like the Grid's **Groups** (`preset-picker.tsx`): the preset groups on the left, each
 saying which of its presets the graph is set as, with the presets in no group as **Other** (or **Presets** when there
 are no groups) and the visitor's own as **Yours**, and the chosen group's presets on the right. Picking one sets the
 graph's type, axes, split, order, how many values show and its Range group; the filters stay as they are. The **(i)**
-button over the presets adds a panel further right listing the settings of the preset pointed at, or the one the graph
+button over the presets opens the picker's info pane, further right (under the presets on phones), listing the settings of the preset pointed at, or the one the graph
 is set as (`preset-settings.tsx`). A group with no presets isn't shown. The committed presets are photo dot graphs of
 **Aperture**, **Exposure**, **ISO** and **Focal length**, plus Month by year and Time of day by weekday heatmaps.
 
@@ -91,7 +91,7 @@ the dropdowns on its own. The camera settings count each value the photos have, 
   `filterWithCamera` the Grid uses) are counted again by the other stat. A split with more than 8 values shows the first
   7 in their own colors and the rest together as **Other**. With **Share of photos**, a split value is its share of
   that x value's photos, so stacked bars reach 100%.
-- **Pie**: past 8 slices, the rest go together as **Other**.
+- **Pie**: past 8 slices, the rest go together as **Other**. Once its box is at least 560px wide, each slice is named around the pie with its value, such as Fujifilm X-T5 173 (`pie-parts.tsx`); the eye button beside **Wide** opens its display options, where **Slice names and values** turns that off (it's on at first, and narrower pies, such as on phones, leave the naming to the key). Its tooltip follows the cursor instead of sitting at the slice's middle.
 - A photo can be in more than one row of a lens or camera category, so those parts can add up to more than the photos.
 
 A scatterplot puts both stats' values on a grid, with a dot where they meet as big as how many photos have both, such as
@@ -104,11 +104,12 @@ shows what the lightest and darkest shades mean, and it scrolls sideways when th
 reads like a bar graph you can count. Split by colors each dot by the photo's split value (the first one it has, in the
 split's order; past 8 values, Other's gray), with the photos in the same colors grouped together. The stacks get wider
 as the biggest one grows, so the tallest stays at most 30 dots high. Hovering a dot names its photo and the day it was
-taken, and clicking a stack picks its x value like a bar. It has no y axis setting or y range, since a stack is always
+taken, and clicking a stack picks its x value like a bar. Its key always shows, saying a dot is **One photo**, then
+the split's colors when it's split. It has no y axis setting or y range, since a stack is always
 its photos; its **Table** shows each x value's photo counts (`lib/graph-photo-dots.ts`,
 `components/graph-builder/photo-dots-graph.tsx`).
 
-Every graph has a tooltip on hover, a key when it's split or a pie (`graph-key.tsx`): a **Key** button at the right end of the y axis's row over the graph (`KeyRow`), so folded it covers nothing and takes no room of its own, and open at first, its list floating over the graph's top right corner, apart from the y axis, and a **Table** button that
+Every graph has a tooltip on hover, a key when it's split, a pie or photo dots (`graph-key.tsx`): a **Key** button at the right end of the y axis's row over the graph (`KeyRow`), so folded it covers nothing and takes no room of its own, and open at first, its list floating over the graph's top right corner, apart from the y axis, and a **Table** button that
 shows its numbers as a table.
 
 The site's presets come in two groups: **Technical Details** (Aperture, Exposure, ISO and Focal length) and **Time

@@ -23,8 +23,10 @@ import { Route as TagsRouteImport } from './routes/tags'
 import { Route as TimelineRouteImport } from './routes/timeline'
 import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
 import { Route as AlbumsIdRouteImport } from './routes/albums.$id'
+import { Route as MapsAllRouteImport } from './routes/maps.all'
 import { Route as PhotosIdRouteImport } from './routes/photos.$id'
 import { Route as AlbumsTripsIdRouteImport } from './routes/albums.trips.$id'
+import { Route as MapsKindSlugRouteImport } from './routes/maps.$kind.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -96,6 +98,11 @@ const AlbumsIdRoute = AlbumsIdRouteImport.update({
   path: '/albums/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MapsAllRoute = MapsAllRouteImport.update({
+  id: '/maps/all',
+  path: '/maps/all',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PhotosIdRoute = PhotosIdRouteImport.update({
   id: '/photos/$id',
   path: '/photos/$id',
@@ -104,6 +111,11 @@ const PhotosIdRoute = PhotosIdRouteImport.update({
 const AlbumsTripsIdRoute = AlbumsTripsIdRouteImport.update({
   id: '/albums/trips/$id',
   path: '/albums/trips/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapsKindSlugRoute = MapsKindSlugRouteImport.update({
+  id: '/maps/$kind/$slug',
+  path: '/maps/$kind/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -121,9 +133,11 @@ export interface FileRoutesByFullPath {
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/maps/all': typeof MapsAllRoute
   '/photos/$id': typeof PhotosIdRoute
   '/albums/': typeof AlbumsIndexRoute
   '/albums/trips/$id': typeof AlbumsTripsIdRoute
+  '/maps/$kind/$slug': typeof MapsKindSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,9 +153,11 @@ export interface FileRoutesByTo {
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/maps/all': typeof MapsAllRoute
   '/photos/$id': typeof PhotosIdRoute
   '/albums': typeof AlbumsIndexRoute
   '/albums/trips/$id': typeof AlbumsTripsIdRoute
+  '/maps/$kind/$slug': typeof MapsKindSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -158,9 +174,11 @@ export interface FileRoutesById {
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
   '/albums/$id': typeof AlbumsIdRoute
+  '/maps/all': typeof MapsAllRoute
   '/photos/$id': typeof PhotosIdRoute
   '/albums/': typeof AlbumsIndexRoute
   '/albums/trips/$id': typeof AlbumsTripsIdRoute
+  '/maps/$kind/$slug': typeof MapsKindSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -178,9 +196,11 @@ export interface FileRouteTypes {
     | '/tags'
     | '/timeline'
     | '/albums/$id'
+    | '/maps/all'
     | '/photos/$id'
     | '/albums/'
     | '/albums/trips/$id'
+    | '/maps/$kind/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -196,9 +216,11 @@ export interface FileRouteTypes {
     | '/tags'
     | '/timeline'
     | '/albums/$id'
+    | '/maps/all'
     | '/photos/$id'
     | '/albums'
     | '/albums/trips/$id'
+    | '/maps/$kind/$slug'
   id:
     | '__root__'
     | '/'
@@ -214,9 +236,11 @@ export interface FileRouteTypes {
     | '/tags'
     | '/timeline'
     | '/albums/$id'
+    | '/maps/all'
     | '/photos/$id'
     | '/albums/'
     | '/albums/trips/$id'
+    | '/maps/$kind/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -233,9 +257,11 @@ export interface RootRouteChildren {
   TagsRoute: typeof TagsRoute
   TimelineRoute: typeof TimelineRoute
   AlbumsIdRoute: typeof AlbumsIdRoute
+  MapsAllRoute: typeof MapsAllRoute
   PhotosIdRoute: typeof PhotosIdRoute
   AlbumsIndexRoute: typeof AlbumsIndexRoute
   AlbumsTripsIdRoute: typeof AlbumsTripsIdRoute
+  MapsKindSlugRoute: typeof MapsKindSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -338,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlbumsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/maps/all': {
+      id: '/maps/all'
+      path: '/maps/all'
+      fullPath: '/maps/all'
+      preLoaderRoute: typeof MapsAllRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/photos/$id': {
       id: '/photos/$id'
       path: '/photos/$id'
@@ -350,6 +383,13 @@ declare module '@tanstack/react-router' {
       path: '/albums/trips/$id'
       fullPath: '/albums/trips/$id'
       preLoaderRoute: typeof AlbumsTripsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maps/$kind/$slug': {
+      id: '/maps/$kind/$slug'
+      path: '/maps/$kind/$slug'
+      fullPath: '/maps/$kind/$slug'
+      preLoaderRoute: typeof MapsKindSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -369,9 +409,11 @@ const rootRouteChildren: RootRouteChildren = {
   TagsRoute: TagsRoute,
   TimelineRoute: TimelineRoute,
   AlbumsIdRoute: AlbumsIdRoute,
+  MapsAllRoute: MapsAllRoute,
   PhotosIdRoute: PhotosIdRoute,
   AlbumsIndexRoute: AlbumsIndexRoute,
   AlbumsTripsIdRoute: AlbumsTripsIdRoute,
+  MapsKindSlugRoute: MapsKindSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

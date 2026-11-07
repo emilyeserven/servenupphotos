@@ -201,7 +201,7 @@ function tripLinesRow(stale: StaleTripLine[]): AttentionRow {
     countText: stale.length === 1 ? "1 day" : `${stale.length} days`,
     fix: (
       <FixLink>
-        <Link to="/trip-lines" search={{ day: newest.day }}>
+        <Link to="/trip-lines" search={{ day: newest.day, show: "out-of-date" }}>
           Trip Lines
         </Link>
       </FixLink>

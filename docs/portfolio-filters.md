@@ -146,6 +146,28 @@ the hover text only while the text is cut off).
 > **Frontend analogy:** it's a vertical tabs component whose tab list turns into an accordion header on small screens;
 > each picker only supplies the tabs' labels and the panel.
 
+### Picker conventions
+
+Every picker that uses `SectionPicker`, and anything new built like one, follows these, so the pickers look and behave
+alike:
+
+- **More about a section goes behind an (i).** The (i) is `InfoButton` (`components/info-button.tsx`), the last thing in
+  the section's top row: beside `PickerPart`'s intro line (its `info` prop), or at the right of a section title such as
+  **Cameras**. It never hides on phones. What it shows goes in `SectionPicker`'s `aside`, the panel to the right of the
+  controls (under them on phones), never inside the controls or in a hover. Pass a wider `width` while the aside shows.
+  The aside follows what's pointed at, and falls back to what's chosen, as the presets' settings and the cameras'
+  details do.
+- **Ways to arrange a list are small menus in the top row.** **Group by** and **Sort** are icon buttons that keep their
+  name ("Group by", "Sort") and open a short menu of choices with the current one checked (`PickMenu` in
+  `components/pick-menu.tsx`), left of the (i). A button is shaded while it isn't on its first choice, the
+  default. They aren't tab rows or segmented controls, which take a row of their own.
+- **Grouping is optional and starts off.** The first grouping is **None**, the list A to Z, and the others are Brand
+  and Type. A list opens on None unless what's chosen is a group only another grouping lists.
+- **Choice lists are text.** A row in a list of choices (`ChoiceRow`) has its check, name and count, and no icon or
+  picture; pictures belong in the info pane. Headings in a list, such as **DSLR**, are plain small text, not choices.
+- **Defaults aren't news.** A section that's at its default says "Any" (or its default's name) in the list, and a button
+  only stands out while it's changed.
+
 ## Camera filters
 
 The Grid's filters panel also has a **Gear & settings** button after **When** that opens one picker for the camera
@@ -158,22 +180,29 @@ button naming the chosen one, and choosing one folds it up again.
 
 **Cameras** and **Lenses** list every camera or lens (`?camera=Fujifilm X-T5`, `?lens=EF50mm f/1.8 II`; a photo whose
 EXIF didn't name a lens is under none) with how many photos each would show; **All cameras** or **All lenses** comes
-first, and clicking the checked one again goes back to all. A **Group by** row above the list picks how it's laid out: one tab for each top-level
-metadata group that has groups or names under it, such as **Brand** or **Type** (that group's own row left out, what's
-under it a level up, then any camera or lens it doesn't list), and **Name**, every one once, A to Z. It opens on the tab
-that lists the chosen one. A choice that would show no photos given the other
+first, and clicking the checked one again goes back to all. A **Group by** button in the title row, beside the **Sort** button and left of the **(i)**, opens a menu that picks how it's laid out: **None**, every one once, A to Z (the default);
+**Brand**; or **Type**. Brand and Type are the top-level metadata groups with those names (that group's own row left
+out, what's under it a level up, then any camera or lens it doesn't list). Cameras without such a group get their own,
+guessed from the model name: Brand, such as Canon or Fujifilm, and Type (Mirrorless, DSLR, Compact or Phone), each
+under a heading, with Unknown last. A grouping with nothing in it isn't offered, and the list opens on the grouping of a
+chosen group. Each button is shaded while it isn't on its default. **Sort** opens a menu of the order: **Name** keeps the grouping's order, and **Oldest first** or **Newest
+first** orders the cameras or lenses under each heading or group by when the first of the portfolio's photos was taken with each. A choice that would show no photos given the other
 filters is left out, unless chosen; **Show N choices hidden by the other filters** lists them dimmed, and hovering one
 says which filters hide it: each one that, cleared alone, would let it show photos ("Hidden by Aperture or Lens"), or
-"the other filters together" when no single one would. Each camera has a little drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name). Hovering
-a lens by name shows its details to the right: a side view of it, longer for a longer focal length and with a zoom ring
-when it zooms; its focal length, whether it's a prime or zoom, and its widest aperture, read from its name; and how many
-photos used it, on which cameras, at which focal length most, and from when to when. The four camera settings each have a slider with a handle
+"the other filters together" when no single one would. The **(i)** button across from the
+**Cameras** or **Lenses** title opens the picker's info pane (see [Picker conventions](#picker-conventions)), the same
+one the settings' graphics use, with the details of the camera or lens pointed at, or else
+the chosen one: its own picture and description from the pipeline's [Gear Pictures](gear-pictures.md) page, or else a
+drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name) (for a lens, a side view of it,
+longer for a longer focal length and with a zoom ring when it zooms). A camera then lists its kind, how many photos
+used it, with which lenses, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
+widest aperture, read from its name, and how many photos used it, on which cameras, at which focal length most, and
+from when to when. A group, such as a brand, has no details. The four camera settings each have a slider with a handle
 at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,
 `?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. Each setting's title sits above its slider, which has a tick under it for every step and its lowest and highest values
-at its ends. The **(i)** button across from the title opens an info pane to the right (on phones, a full-width
-**Show info** button under the quick picks opens it below) with little
+at its ends. The **(i)** button across from the title opens the info pane with little
 graphics of what its two ends look like, following the handles as they're dragged: the angle of view for focal length, the opening for aperture, a dial
 filled for longer exposures, and grain for ISO, with a sentence on what the setting does. Clicking it again closes it;
 the browser remembers which, for every setting. A

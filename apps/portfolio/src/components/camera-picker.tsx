@@ -1,6 +1,6 @@
 import { Camera } from "lucide-react";
 import { useState } from "react";
-import { CameraPickerPart } from "@portfolio/components/camera-picker-parts";
+import { CameraPickerAside, CameraPickerPart } from "@portfolio/components/camera-picker-parts";
 import { RANGE_LABELS, spanText } from "@portfolio/components/camera-ranges";
 import { useScriptDisplay } from "@portfolio/components/script-display-provider";
 import {
@@ -17,6 +17,7 @@ import { equipmentChoices } from "@portfolio/lib/camera-picker";
 import { useGraphicsPane } from "@portfolio/lib/use-graphics-pane";
 import type { BlockerSource } from "@portfolio/lib/camera-blockers";
 import type { ScriptDisplay } from "@portfolio/lib/localize";
+import type { FilterOption } from "@portfolio/lib/filter-options";
 import type { Photo } from "@portfolio/lib/photos";
 
 /** One section of the Camera picker: the camera, the lens, or a camera setting. */
@@ -43,9 +44,13 @@ export interface CameraPickerProps {
 
 /** What each section's part of the picker gets: the picker's props and the graphics pane's state. */
 export interface PickerPartProps extends CameraPickerProps {
-  /** Whether the settings' graphics pane is shown, beside each slider. */
+  /** Whether the (i) button's info pane is shown, to the right of the controls. */
   graphics: boolean;
   onGraphics: (on: boolean) => void;
+  /** Hears the camera or lens pointed at, for the info pane; undefined when none is. */
+  onPoint: (option: FilterOption | undefined) => void;
+  /** Hears a slider's ends while a handle is dragged, for the info pane's graphics. */
+  onDrag: (ends: [string, string] | undefined) => void;
 }
 
 /** Whether the section has a filter set: its name or group for the camera and lens. */
@@ -78,20 +83,32 @@ export function CameraPicker(props: CameraPickerProps) {
   );
 }
 
-/** The sections and the chosen one's choices, wider while the settings' graphics pane shows. */
+/** The sections and the chosen one's choices, wider while the (i) button's info pane shows. */
 function PickerBody(props: CameraPickerProps) {
   const [section, setSection] = useState<CameraSection>(() => firstSet(props.filters));
   const [graphics, setGraphics] = useGraphicsPane();
-  const wide = graphics && !isEquipment(section);
+  const [pointed, setPointed] = useState<FilterOption | undefined>();
+  const [dragged, setDragged] = useState<[string, string] | undefined>();
+  const choose = (next: CameraSection) => {
+    setSection(next);
+    setPointed(undefined);
+    setDragged(undefined);
+  };
+  const handlers = { graphics, onGraphics: setGraphics, onPoint: setPointed, onDrag: setDragged };
   return (
     <SectionPicker
       label="Gear and settings"
       sections={useSections(props)}
       chosen={section}
-      onChoose={setSection}
-      width={wide ? "sm:w-[46rem]" : "sm:w-[34rem]"}
+      onChoose={choose}
+      width={graphics ? "sm:w-[48rem]" : "sm:w-[34rem]"}
+      aside={
+        graphics ? (
+          <CameraPickerAside section={section} pointed={pointed} dragged={dragged} {...props} />
+        ) : undefined
+      }
     >
-      <CameraPickerPart section={section} graphics={graphics} onGraphics={setGraphics} {...props} />
+      <CameraPickerPart section={section} {...handlers} {...props} />
     </SectionPicker>
   );
 }

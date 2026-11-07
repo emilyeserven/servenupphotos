@@ -22,10 +22,15 @@ const (
 	ModeBus     = "bus"
 	ModeCar     = "car"
 	ModeTransit = "transit"
+	// ModeWander is wandering around one area with no set route, such as a
+	// hike: no line is drawn through its photos; the lines before and after
+	// it run to the area's entrance and from its exit (TripSegment.To and
+	// From) when those are set.
+	ModeWander = "wander"
 )
 
 // tripModes are the modes a segment can have.
-var tripModes = []string{ModeWalk, ModeTrain, ModeSubway, ModeBus, ModeCar, ModeTransit}
+var tripModes = []string{ModeWalk, ModeTrain, ModeSubway, ModeBus, ModeCar, ModeTransit, ModeWander}
 
 // TripPoint is a spot on a trip line with no photo, such as the hotel a day
 // starts from.
@@ -50,6 +55,13 @@ type TripSegment struct {
 	Photos []int `json:"photos"`
 	// End is a spot with no photo the line ends at, after Photos.
 	End *TripPoint `json:"end,omitempty"`
+	// From is where the line leaves the area its first photo was taken in,
+	// such as a park's gate after wandering it (ModeWander): drawn instead of
+	// that photo's spot. Nil draws the photo's spot.
+	From *TripPoint `json:"from,omitempty"`
+	// To is where the line enters the area its last photo was taken in,
+	// drawn instead of that photo's spot. Nil draws the photo's spot.
+	To *TripPoint `json:"to,omitempty"`
 	// Via are spots the line goes through between its photos, to shape it.
 	Via []TripVia `json:"via,omitempty"`
 	// Path is the line along streets through the segment's points, each
@@ -100,6 +112,10 @@ type TripLine struct {
 	// Fences are the areas photos without an exact spot were taken in, such
 	// as a park; none when there are none.
 	Fences []TripFence `json:"fences,omitempty"`
+	// Order is the day's photo IDs in the order they were moved into by hand,
+	// such as when a camera's clock was off; none while they're in the order
+	// they were taken. The editor reads the segments in this order.
+	Order []int `json:"order,omitempty"`
 }
 
 // SaveTripLine saves line as <folder>/triplines/<day>.json, new or replacing
@@ -209,7 +225,7 @@ func validTripSegment(seg TripSegment, n int) (TripSegment, *PublishError) {
 	if pointCount(seg) < 2 {
 		return seg, publishErr(http.StatusBadRequest, "Segment %d needs at least two points to draw a line.", n)
 	}
-	for _, p := range []*TripPoint{seg.Start, seg.End} {
+	for _, p := range []*TripPoint{seg.Start, seg.End, seg.From, seg.To} {
 		if perr := validTripPoint(p, n); perr != nil {
 			return seg, perr
 		}

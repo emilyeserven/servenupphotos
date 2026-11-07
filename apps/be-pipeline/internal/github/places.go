@@ -14,7 +14,7 @@ import (
 )
 
 // EntryKind is a kind of data file the pipeline saves whole, by ID: places,
-// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes, trip lines and graph presets. Each is one JSON file in its kind's folder, and Commit
+// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes, trip lines, graph presets and gear pictures. Each is one JSON file in its kind's folder, and Commit
 // combines them into the kind's AllFile.
 type EntryKind struct {
 	// Name is the kind's singular name, as shown: "place" or "localization".
@@ -51,7 +51,10 @@ var (
 	// GraphPresets are the ready-made graphs and preset groups on the
 	// portfolio's Graph page, one file each.
 	GraphPresets = EntryKind{Name: "graph preset", Folder: "graphs", AllFile: "GRAPHS.json"}
-	entryKinds   = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, TimelineLabels, ViewerLikesKind, TripLines, GraphPresets}
+	// GearKind is the cameras' and lenses' own pictures, shown in place of
+	// the portfolio's drawings of them, one file each.
+	GearKind   = EntryKind{Name: "gear picture", Folder: "gear", AllFile: "GEAR.json"}
+	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, TimelineLabels, ViewerLikesKind, TripLines, GraphPresets, GearKind}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

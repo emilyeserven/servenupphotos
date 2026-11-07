@@ -34,9 +34,12 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - **`visits`** are the [places visited](#places-visited) along the day's route, such as restaurants.
 - **`fences`** are the [areas](#areas) photos without an exact spot were taken in, such as a park.
 - **`segments`** are the stretches of the day, in the order they happened. Each one's line runs from `start` (when
-  set), through its `photos` (photo IDs) in order, to `end` (when set).
-- **`mode`** is `walk`, `train`, `subway`, `bus`, `car` (taxis too) or `transit`, a hop whose kind isn't known, as the
-  automatic line marks one. A walk is drawn through every photo; the others are a straight dashed line from the first
+  set), through its `photos` (photo IDs) in order, to `end` (when set). `from` and `to`, when set, are drawn instead of
+  the first and last photo: the exit and entrance of an [area wandered](#areas-wandered).
+- **`order`** is the day's photo IDs in the order they were [moved into by hand](#groups), such as when a camera's
+  clock was off; left out while they're in the order taken.
+- **`mode`** is `walk`, `train`, `subway`, `bus`, `car` (taxis too), `transit` (a hop whose kind isn't known, as the
+  automatic line marks one) or `wander` (an [area wandered](#areas-wandered) with no set route, drawn with no line). A walk is drawn through every photo; the others are a straight dashed line from the first
   point to the last, since the real track isn't known.
 - One photo can end a segment and start the next (304 and 305 above), so the line doesn't break at a station.
 - **`start`** and **`end`** are spots with no photo, such as the hotel, with an optional `label`.
@@ -117,7 +120,25 @@ The left side lists the days with two or more photos at two or more different ex
 many photos and spots it has and whether its line is **Marked**, **Out of date**, **Automatic** or **None**, with a filter by each. **Out of date** (in
 red) is a line marked by hand that doesn't go through every photo of the day with an exact spot, such as photos added
 since, or goes through photos no longer on that day; the Dashboard's **Needs attention** lists them as urgent. A new
-photo opens with a break on both sides, ready to join the line. `?day=2026-09-23` opens the page on a day.
+photo opens with a break on both sides, ready to join the line.
+
+The page keeps what's chosen in its URL, so a link or a reload opens it the same way (`lib/trip-lines-search.ts`, read
+by the route's `validateSearch`):
+
+| Param   | What it opens                                                       | Unless set |
+| ------- | ------------------------------------------------------------------- | ---------- |
+| `tab`   | `trips` for the Trips tab                                           | Days       |
+| `day`   | The day chosen, such as `2026-09-23`                                | The newest |
+| `show`  | The day list's filter: `marked`, `out-of-date`, `automatic`, `none` | All        |
+| `group` | The group shown alone on the map (the eye), by its name             | None       |
+| `trip`  | The Trip chosen on the Trips tab, by its ID                         | The newest |
+
+For example, `/trip-lines?day=2026-09-29&show=out-of-date&group=Engyoji%20Temple`. Clicks replace the history entry
+rather than adding one, so Back leaves the page. Choosing another day clears `group`. A new Trip isn't in the URL until
+it's saved. Needs attention links to its newest out-of-date day with `show=out-of-date`.
+
+> **Frontend analogy:** this is TanStack Router's search params used as the page's state store instead of `useState`,
+> like keeping a table's sort and filter in the query string.
 
 The right side edits the chosen day: its photos in the order they were taken, with what happened between each two, and
 a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
@@ -159,7 +180,10 @@ They're saved with the line as `visits`:
 `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
-two photos, named on hover. **Not on the route** leaves it as a pin only. A place put after a break or after the last
+two photos, named on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
+route (it stops at the first and last gap). The pin with a plus under each gap in the strip, shown on hover, adds a
+place right there: a new one halfway between the two photos, to name and move under the map, or one of up to eight
+saved places nearest to them. **Not on the route** leaves it as a pin only. A place put after a break or after the last
 photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is a photo on the line
 and that every `visit` names a place the day has.
@@ -187,7 +211,16 @@ an outline (`polygon_geojson`), simplified to about 50 m (`polygon_threshold`) a
 is looked up through the item's [OpenStreetMap relation ID (P402)](https://www.wikidata.org/wiki/Property:P402); an item
 without one can't be used, so search by name instead. Requests go at most once a second and name the pipeline in
 their `User-Agent`, as the [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/) asks.
-`NOMINATIM_URL` and `WIKIDATA_URL` point it at other servers. The outlines are OpenStreetMap data under the
+`NOMINATIM_URL` and `WIKIDATA_URL` point it at other servers.
+
+A search asks only when **Find an area** is pressed, never while typing. A name is one Nominatim request and a Wikidata
+ID is two (Wikidata, then Nominatim). The page keeps each answer until it's reloaded, and the backend keeps it for a
+day (up to 100 searches, `internal/memo`), so asking the same thing again sends nothing. Neither server needs a key or
+charges for requests; the only limit is the one a second. Under the box, **OpenStreetMap names** and **Wikidata IDs**
+open the same text on [Nominatim's search page](https://nominatim.openstreetmap.org/ui/search.html) and Wikidata's
+search in a new tab, so the exact name or ID can be found there before searching here.
+
+The outlines are OpenStreetMap data under the
 [ODbL](https://www.openstreetmap.org/copyright), like the lines ridden.
 
 They're saved with the line as `fences`:
@@ -284,8 +317,14 @@ with a name:
   dashed circle 80 m around its position instead (`circleShape` in `portfolio/src/lib/place-circle.ts`), so it reads
   as the place's surroundings rather than one more pin. For a single building, finding it by name gives its
   footprint as the area when OpenStreetMap maps its outline.
-- The scissors on a photo start a new group there; the join button between two groups merges them. The menu between
-  two groups picks what happened between them, like any gap.
+- Each photo shows its number on the map before the time it was taken, such as **3 · 14:59**.
+- Pointing at a photo shows arrows that move it one place earlier or later in the day, for a camera whose clock was
+  off. The new order is saved with the line as `order`, and the map's numbers and line follow it. A photo added to the
+  day since goes after the photo taken just before it.
+- Pointing at the menu between two photos shows the scissors under it: **Cut to a new place here** starts a new group
+  at the photo after it. The join button between two groups merges them. The menu between two groups picks what
+  happened between them, like any gap.
+- The shuffle button on a group's header marks it as an [area wandered](#areas-wandered).
 
 Saving writes each group's name on its segments, and a walk crossing from one group into the next is split there, so
 the stretch between the two groups is its own unnamed segment. Opening a saved line rebuilds the groups from those
@@ -293,6 +332,23 @@ names. A line saved with no names is grouped by place again, and a group left un
 
 > **Frontend analogy:** groups are like `<details>` sections over one list: they change how the list is shown and
 > labeled, but the photos and gaps underneath stay one array.
+
+### Areas wandered
+
+For a hike or an afternoon wandering a park with no set route, the shuffle button on a group's header makes every gap
+inside it **Wandered the area** (`wander`), and pressing it again walks through the photos again. No line is drawn
+through a wandered group's photos; the map shades the place's area, or circles it, instead. Under the map, **Areas
+wandered** lists them, each with **Entrance on the map** and **Exit on the map**: click the spot where the day entered
+and left the area, such as a park's gates. They're kept for that day only. The line from the photo before then runs
+to the entrance, and the line to the next photo from the exit, instead of to and from the photos inside
+(`lib/trip-wander.ts`, `components/trip-lines/area-ends.tsx`).
+
+They're saved on the segments around the area: `to` on the one coming in (by the area's first photo) and `from` on
+the one going out (by its last). Commit bakes those segments through them (`areaEnd` in `triplines_route.go`), snapping
+to streets follows them too, and a `wander` segment bakes no line at all.
+
+> **Frontend analogy:** like `position: absolute` children inside a box: the photos still belong to the group, but
+> the line only connects the box's doors.
 
 ## Shaping the line and snapping it to streets
 

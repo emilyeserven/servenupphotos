@@ -30,6 +30,17 @@ export interface BulkPlacesReview {
   unknown: string[];
   /** Every place's name, the new ones too, by ID. */
   names: Record<string, string>;
+  /** The Wikidata item ID the answer gives each new place, by the place's ID, to fetch its outline by. */
+  wikidata: Record<string, string>;
+}
+
+/** The Wikidata item ID the answer gives each new place, by place ID, the first one given. */
+function newPlaceWikidata(answer: PastedPhotoPlace[], made: Place[]): Record<string, string> {
+  const fresh = new Set(made.map((place) => place.id));
+  const given = answer
+    .filter((pasted) => pasted.wikidata !== "" && fresh.has(entryId(pasted.place)))
+    .map((pasted) => [entryId(pasted.place), pasted.wikidata] as const);
+  return Object.fromEntries(given.toReversed());
 }
 
 /** A new place for the pasted one, in the existing place the answer says it's in, when it's one. */
@@ -95,6 +106,7 @@ export function reviewBulkPlaces(
     newPlaces: made,
     unknown: answer.map((pasted) => pasted.photo).filter((name) => !names.has(name.toLowerCase())),
     names: Object.fromEntries(all.map((place) => [place.id, place.name || place.id])),
+    wikidata: newPlaceWikidata(answer, made),
   };
 }
 

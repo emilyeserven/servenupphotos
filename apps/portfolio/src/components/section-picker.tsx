@@ -73,7 +73,7 @@ export function SectionPicker<K extends string>(props: SectionPickerProps<K>) {
  */
 function pickerClass(width: string, hasAside: boolean): string {
   return cn(
-    "flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] w-[calc(100vw-2rem)] flex-col sm:flex-row",
+    "flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height,29rem)-1rem))] w-[calc(100vw-2rem)] flex-col sm:flex-row",
     width,
     hasAside && "max-sm:overflow-y-auto",
   );

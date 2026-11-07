@@ -3,6 +3,12 @@ import { type ReactNode, useMemo, useState } from "react";
 import { AxisLabels } from "@/components/graph-builder/graph-axes";
 import { BarGraph, LineGraph, PieGraph } from "@/components/graph-builder/graph-chart";
 import { type ConfigChange } from "@/components/graph-builder/graph-controls";
+import {
+  DEFAULT_GRAPH_DISPLAY,
+  type GraphDisplay,
+  GraphDisplayContext,
+  GraphDisplayOptions,
+} from "@/components/graph-builder/graph-display";
 import { GraphTabs } from "@/components/graph-builder/graph-tabs";
 import { GraphPickContext } from "@/components/graph-builder/graph-pick-context";
 import { SpotlightPresets } from "@/components/graph-builder/graph-presets";
@@ -69,6 +75,7 @@ export function GraphBuilder({
   const [config, setConfig] = useState(START);
   const [view, setView] = useState<View>("graph");
   const [pick, setPick] = useState<GraphPick | null>(null);
+  const [display, setDisplay] = useState(DEFAULT_GRAPH_DISPLAY);
   const onChange: ConfigChange = (change) => {
     setConfig((current) => ({ ...current, ...change }));
     setPick(null);
@@ -86,13 +93,16 @@ export function GraphBuilder({
             {kept.length.toLocaleString()} of {photos.length.toLocaleString()} photos
           </span>
           <div className="flex items-center gap-2">
+            <DisplayButton config={config} view={view} display={display} onChange={setDisplay} />
             <WideButton wide={wide} onChange={onWideChange} />
             <ViewButtons view={view} onChange={setView} />
           </div>
         </div>
-        <GraphPickContext value={{ pick, onPick }}>
-          <GraphArea list={kept} config={config} view={view} onChange={onChange} />
-        </GraphPickContext>
+        <GraphDisplayContext value={display}>
+          <GraphPickContext value={{ pick, onPick }}>
+            <GraphArea list={kept} config={config} view={view} onChange={onChange} />
+          </GraphPickContext>
+        </GraphDisplayContext>
       </section>
       {pick && (
         <div className={COLUMN}>
@@ -145,6 +155,21 @@ function GraphArea({
       {body}
     </AxisLabels>
   );
+}
+
+/** The display options' eye button, for a pie's graph: the only graph with any yet. */
+function DisplayButton({
+  config,
+  view,
+  ...props
+}: {
+  config: GraphConfig;
+  view: View;
+  display: GraphDisplay;
+  onChange: (display: GraphDisplay) => void;
+}) {
+  if (config.type !== "pie" || view !== "graph") return null;
+  return <GraphDisplayOptions {...props} />;
 }
 
 /** The button that makes the graph use the window's whole width, or the usual column again. */

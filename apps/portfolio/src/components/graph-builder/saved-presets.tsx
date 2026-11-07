@@ -28,7 +28,7 @@ export function SavePresetForm({
   };
   return (
     <form onSubmit={submit} className="flex flex-col gap-3 sm:flex-row sm:items-start">
-      <div className="min-w-0 rounded-lg border sm:w-72">
+      <div className="min-w-0 rounded-lg border p-2 sm:w-72">
         <PresetSettings name="These settings are saved" config={config} />
       </div>
       <div className="flex flex-col gap-2 sm:w-64">
