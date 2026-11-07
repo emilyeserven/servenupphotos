@@ -15,6 +15,12 @@ import { useScriptDisplay } from "@portfolio/components/script-display-provider"
 import type { EquipmentKey, RangeKey } from "@portfolio/lib/camera-filters";
 import { blockersOf, cameraBlockers } from "@portfolio/lib/camera-blockers";
 import { equipmentChoices, equipmentFilters, isChosen } from "@portfolio/lib/camera-picker";
+import {
+  type EquipmentGrouping,
+  equipmentGroupings,
+  groupingOf,
+  groupingOptions,
+} from "@portfolio/lib/equipment-groupings";
 import type { FilterOption } from "@portfolio/lib/filter-options";
 import { cn } from "@portfolio/lib/utils";
 
@@ -46,13 +52,19 @@ function EquipmentPart({
   onChange,
 }: CameraPickerProps & { equipment: EquipmentKey }) {
   const [showHidden, setShowHidden] = useState(false);
-  const { options, chosen } = equipmentChoices(equipment, photos, filters);
-  const shown = options.filter((option) => showHidden || option.count > 0 || option === chosen);
-  const hidden = options.filter((option) => option.count === 0 && option !== chosen).length;
+  const choices = equipmentChoices(equipment, photos, filters);
+  const { chosen } = choices;
+  const groupings = equipmentGroupings(equipment, choices.options);
+  const [groupingId, setGroupingId] = useState(() => groupingOf(groupings, chosen));
+  const options = groupingOptions(groupings, groupingId);
+  const isOn = (option: FilterOption) => isChosen(option, filters);
+  const shown = options.filter((option) => showHidden || option.count > 0 || isOn(option));
+  const hidden = options.filter((option) => option.count === 0 && !isOn(option)).length;
   const blockers = useMemo(() => (showHidden ? cameraBlockers(source) : []), [showHidden, source]);
   const choose = (option?: FilterOption) => onChange(equipmentFilters(equipment, option));
   return (
     <div className="flex flex-col">
+      <GroupingTabs groupings={groupings} value={groupingId} onChange={setGroupingId} />
       <ChoiceRow label={ANY_LABELS[equipment]} on={!chosen} onClick={() => choose()} />
       {shown.map((option, index) => (
         <EquipmentRow
@@ -66,6 +78,43 @@ function EquipmentPart({
         />
       ))}
       <HiddenToggle count={hidden} shown={showHidden} onClick={() => setShowHidden(!showHidden)} />
+    </div>
+  );
+}
+
+/** Tabs for each way to list the cameras or lenses, such as Brand, Type or Name; none with one way. */
+function GroupingTabs({
+  groupings,
+  value,
+  onChange,
+}: {
+  groupings: EquipmentGrouping[];
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  if (groupings.length < 2) return null;
+  return (
+    <div
+      role="tablist"
+      aria-label="Group by"
+      className="mb-2 flex items-center gap-1 rounded-md border bg-muted/50 p-0.5"
+    >
+      <span className="px-1.5 text-xs text-muted-foreground">Group by</span>
+      {groupings.map(({ id, label }) => (
+        <button
+          key={id}
+          type="button"
+          role="tab"
+          aria-selected={value === id}
+          onClick={() => onChange(id)}
+          className={cn(
+            "flex-1 rounded-sm px-1.5 py-1 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
+            value === id && "bg-background text-foreground shadow-xs",
+          )}
+        >
+          {label}
+        </button>
+      ))}
     </div>
   );
 }
