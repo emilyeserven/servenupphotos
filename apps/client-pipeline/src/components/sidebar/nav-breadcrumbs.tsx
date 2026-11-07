@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { navTrail, type NavPage } from "@/components/sidebar/nav-groups";
+import { navTrail, pagePath, type NavPage } from "@/components/sidebar/nav-groups";
 
 /**
  * The header's breadcrumbs: the open page's sidebar section, the page its submenu is under, the page
@@ -27,7 +27,7 @@ export function NavBreadcrumbs() {
         <BreadcrumbItem className="hidden md:block">{trail.group}</BreadcrumbItem>
         <BreadcrumbSeparator className="hidden md:block" />
         {trail.pages.map((page, i) => (
-          <PageCrumb key={page.url} page={page} current={i === last && !subpage} />
+          <PageCrumb key={pagePath(page)} page={page} current={i === last && !subpage} />
         ))}
         {subpage && (
           <BreadcrumbItem>
@@ -52,7 +52,9 @@ function PageCrumb({ page, current }: { page: NavPage; current: boolean }) {
     <Fragment>
       <BreadcrumbItem className="hidden md:inline-flex">
         <BreadcrumbLink asChild>
-          <Link to={page.url}>{page.title}</Link>
+          <Link to={page.url} params={{ section: page.section }}>
+            {page.title}
+          </Link>
         </BreadcrumbLink>
       </BreadcrumbItem>
       <BreadcrumbSeparator className="hidden md:block" />

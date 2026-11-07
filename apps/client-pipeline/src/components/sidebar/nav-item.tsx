@@ -11,7 +11,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { NavFlyout } from "@/components/sidebar/nav-flyout";
-import { isUnder, isWithin, type NavPage } from "@/components/sidebar/nav-groups";
+import { isUnder, isWithin, pagePath, type NavPage } from "@/components/sidebar/nav-groups";
 import { cn } from "@/lib/utils";
 
 interface NavItemProps {
@@ -26,7 +26,11 @@ export function NavItem({ page, onNavigate }: NavItemProps) {
   if (!page.children) {
     return (
       <SidebarMenuItem>
-        <SidebarMenuButton asChild isActive={isUnder(pathname, page.url)} tooltip={page.title}>
+        <SidebarMenuButton
+          asChild
+          isActive={isUnder(pathname, pagePath(page))}
+          tooltip={page.title}
+        >
           <PageLink page={page} onNavigate={onNavigate} />
         </SidebarMenuButton>
       </SidebarMenuItem>
@@ -38,7 +42,7 @@ export function NavItem({ page, onNavigate }: NavItemProps) {
 /** A page's link: its icon and its name. */
 function PageLink({ page, onNavigate, ...props }: NavItemProps & { className?: string }) {
   return (
-    <Link to={page.url} onClick={onNavigate} {...props}>
+    <Link to={page.url} params={{ section: page.section }} onClick={onNavigate} {...props}>
       <page.icon />
       <span>{page.title}</span>
     </Link>
@@ -91,7 +95,7 @@ function InlineSubmenuItem({
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={isUnder(pathname, page.url)}>
+      <SidebarMenuButton asChild isActive={isUnder(pathname, pagePath(page))}>
         <PageLink page={page} onNavigate={onNavigate} />
       </SidebarMenuButton>
       <SubmenuToggle title={page.title} open={open} onToggle={() => setToggled(!open)} />
@@ -130,8 +134,8 @@ function Submenu({ subpages, pathname, onNavigate }: SubmenuProps) {
   return (
     <SidebarMenuSub>
       {subpages.map((child) => (
-        <SidebarMenuSubItem key={child.url}>
-          <SidebarMenuSubButton asChild isActive={isUnder(pathname, child.url)}>
+        <SidebarMenuSubItem key={pagePath(child)}>
+          <SidebarMenuSubButton asChild isActive={isUnder(pathname, pagePath(child))}>
             <PageLink page={child} onNavigate={onNavigate} />
           </SidebarMenuSubButton>
         </SidebarMenuSubItem>
