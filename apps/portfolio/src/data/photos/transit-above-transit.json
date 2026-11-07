@@ -1,7 +1,7 @@
 {
-  "id": 71,
   "title": "Transit Above Transit",
   "comment": null,
+  "id": 71,
   "file": "IMG_1924.jpg",
   "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["grid-spotlight"],
   "tags": [
     "train-station",
     "silhouettes",
@@ -273,5 +273,6 @@
     "chroma": 1.21,
     "peakChroma": 4.13,
     "samples": 9864
-  }
+  },
+  "notes": null
 }

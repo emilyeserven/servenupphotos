@@ -651,8 +651,8 @@
     "name": "Marblehead Harbor",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "Marblehead",
+    "country": "United States of America"
   },
   {
     "id": "marsam-hotel",
@@ -953,7 +953,7 @@
     "description": "",
     "parent": "",
     "city": "",
-    "country": ""
+    "country": "Egypt"
   },
   {
     "id": "rockefeller-center",
@@ -1049,7 +1049,7 @@
     "description": "",
     "parent": "",
     "city": "",
-    "country": ""
+    "country": "Egypt"
   },
   {
     "id": "the-high-line",
@@ -1066,8 +1066,8 @@
     "name": "The Juice Bar",
     "description": "",
     "parent": "",
-    "city": "",
-    "country": ""
+    "city": "Nantucket",
+    "country": "United States of America"
   },
   {
     "id": "the-oberoi",
@@ -1133,7 +1133,7 @@
     "description": "",
     "parent": "",
     "city": "",
-    "country": ""
+    "country": "Egypt"
   },
   {
     "id": "wadi-el-rayan",

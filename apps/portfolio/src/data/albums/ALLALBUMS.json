@@ -1,5 +1,15 @@
 [
   {
+    "id": "grid-spotlight",
+    "name": "Grid Spotlight",
+    "description": "",
+    "parent": null,
+    "spotlightZones": ["grid-header"],
+    "spotlightUpdated": {
+      "grid-header": "2026-11-07"
+    }
+  },
+  {
     "id": "homepage-spotlight",
     "name": "Homepage Spotlight",
     "description": "The photos that fade in and out behind the homepage.",
@@ -13,5 +23,15 @@
     "name": "Japan",
     "description": "",
     "parent": null
+  },
+  {
+    "id": "timeline-spotlight",
+    "name": "Timeline Spotlight",
+    "description": "",
+    "parent": null,
+    "spotlightZones": ["timeline-header"],
+    "spotlightUpdated": {
+      "timeline-header": "2026-11-07"
+    }
   }
 ]

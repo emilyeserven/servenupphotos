@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["grid-spotlight"],
   "tags": ["subway", "platform", "commuters", "columns", "silhouettes", "railway", "pedestrians"],
   "genres": [],
   "places": [],
@@ -60,8 +60,8 @@
       "hex": "#1b1b1b",
       "lab": {
         "l": 9.72,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,
@@ -260,5 +260,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9990
-  }
+  },
+  "notes": null
 }

@@ -1,7 +1,7 @@
 {
-  "id": 75,
   "title": "Waiting on Williamsburg Bridge",
   "comment": null,
+  "id": 75,
   "file": "IMG_0219-2.jpg",
   "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
@@ -47,7 +47,7 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
+  "albums": ["grid-spotlight"],
   "tags": ["bridges", "steel", "pedestrians", "bicycles", "commuters", "symmetry", "path"],
   "genres": [],
   "places": [
@@ -265,5 +265,6 @@
     "chroma": 21.83,
     "peakChroma": 55.55,
     "samples": 10050
-  }
+  },
+  "notes": null
 }

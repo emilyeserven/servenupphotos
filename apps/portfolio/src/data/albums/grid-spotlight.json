@@ -1,0 +1,10 @@
+{
+  "id": "grid-spotlight",
+  "name": "Grid Spotlight",
+  "description": "",
+  "parent": null,
+  "spotlightZones": ["grid-header"],
+  "spotlightUpdated": {
+    "grid-header": "2026-11-07"
+  }
+}
