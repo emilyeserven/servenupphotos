@@ -57,7 +57,7 @@ export function StatGroupCard({
                 onClick={() => onNarrow(row)}
               />
             ) : (
-              <GridRow row={row} max={max} />
+              <GridRow row={row} max={max} hideHint={focus !== undefined} />
             )}
           </li>
         ))}

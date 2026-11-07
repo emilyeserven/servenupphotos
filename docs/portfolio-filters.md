@@ -81,29 +81,28 @@ name (`?genre=<id>`), and is likewise left out while there are none.
 
 A **When** button after **Genre**, on every view with filters (on the Map, under **More filters**), opens one picker
 for when the photos were taken (`components/when-filter.tsx`, `lib/when-filters.ts`), by the clock and calendar where
-each was taken, as a photo's capture time has no time zone. Every button in it says how many photos it would show,
-given the other filters, and the **When** button says how many of its parts are set.
+each was taken, as a photo's capture time has no time zone. It picks one way at a time, each a tab, and choosing in one
+clears the others. Every button says how many photos it would show, given the other filters, and a choice with none is
+dimmed.
 
-Its top part picks dates one of three ways, each a tab. Choosing in one clears the others:
-
-- **Across all years**: the seasons as four columns, each with its months under it, as toggles (`?month=june&month=july`).
-  A month turns on or off; a season turns its three months on, or off once they all are, and is outlined while some of
-  them are on. Seasons are the northern hemisphere's: Spring is March to May, and Winter is December to February.
+- **Across all years** has a tab for each kind, and any number of one kind can be on: they show the photos in any of
+  them.
+  - **Seasons** (`?season=summer&season=winter`), as the northern hemisphere has them: Spring is March to May, and
+    Winter is December to February.
+  - **Months** (`?month=june&month=july`), in four columns headed by their season.
+  - **Days** of the week, Monday first (`?weekday=saturday&weekday=sunday`).
+  - **Hours** (`?hour=17&hour=18`, on a 24-hour clock), a row for each part of the day: Late night (12–5 AM), Early
+    morning, Morning, Afternoon, Evening and Night (9 PM–12 AM). A part's name turns all its hours on, or off once they
+    all are.
 - **Previous years**: the Timeline's [Quick dates](portfolio-timeline.md), this date, this month or this season in the
   years before this one (`?when=month`).
 - **Date range**: a first and last day, both included (`?start=2024-03-01&end=2024-05-31`); either end can be left open.
 
-Under them, **Days** toggles the days of the week, Monday first (`?weekday=saturday&weekday=sunday`), and **Hours** is
-a slider stepping through each hour of the day a portfolio photo was taken in, saying the range as clock times, such
-as "6 AM – 7 PM" (`?time=6-18`, the hours on a 24-hour clock). Its quick picks are the parts of the day: Late night
-(12–5 AM), Early morning, Morning, Afternoon, Evening and Night (9 PM–12 AM). A range can't wrap past midnight.
+On the Timeline, which has its own time range and Quick dates, the picker only has **Across all years**, and the
+Timeline's chart leaves out the Quick dates choice as it does its range.
 
-Several months or days show the photos in any of them; the dates, days and hours each narrow the photos further. On the
-Timeline, which has its own time range and Quick dates, the picker only has **Across all years**, and the Timeline's
-chart leaves out the Quick dates choice as it does its range.
-
-> **Frontend analogy:** months and days are multi-select checkboxes kept as repeated search params, like
-> `?tag=a&tag=b`; a season button is a "select these three" shortcut that writes nothing of its own.
+> **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
+> `?tag=a&tag=b`, and the tabs are radio buttons over which group is in use.
 
 ## Camera filters
 

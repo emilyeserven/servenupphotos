@@ -1,27 +1,30 @@
 import type { ReactNode } from "react";
 import type { Photo } from "@portfolio/lib/photos";
 import { cn } from "@portfolio/lib/utils";
-import { type Season, seasonSpan, type WhenChoice } from "@portfolio/lib/when-filters";
+import {
+  type Daypart,
+  daypartSpan,
+  type Season,
+  type WhenChoice,
+} from "@portfolio/lib/when-filters";
 
 /** A heading over one part of the When picker, such as Days. */
 export function WhenHeading({ children }: { children: ReactNode }) {
   return <h3 className="text-xs font-medium text-muted-foreground">{children}</h3>;
 }
 
-/** How a toggle looks: on, partly on, off with no photos, or off. */
-type ToggleState = "on" | "partly" | "empty" | "off";
+/** How a toggle looks: on, off with no photos, or off. */
+type ToggleState = "on" | "empty" | "off";
 
 const STATE_CLASSES: Record<ToggleState, string> = {
   on: "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
-  partly: "border-primary/60",
   empty: "opacity-40",
   off: "",
 };
 
-/** How a toggle looks, being on wins over being partly on, which wins over having no photos. */
-function toggleState(on: boolean, partly: boolean, count: number): ToggleState {
+/** How a toggle looks: being on wins over having no photos. */
+function toggleState(on: boolean, count: number): ToggleState {
   if (on) return "on";
-  if (partly) return "partly";
   return count === 0 ? "empty" : "off";
 }
 
@@ -34,15 +37,12 @@ export function ToggleButton({
   title,
   count,
   on,
-  partly = false,
   onClick,
 }: {
   label: string;
   title?: string;
   count: number;
   on: boolean;
-  /** Some of what it stands for is on, such as one month of a season. */
-  partly?: boolean;
   onClick: () => void;
 }) {
   return (
@@ -53,7 +53,7 @@ export function ToggleButton({
       onClick={onClick}
       className={cn(
         "flex flex-col items-center rounded-md border px-1 py-1 text-xs leading-tight outline-none transition-colors hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50",
-        STATE_CLASSES[toggleState(on, partly, count)],
+        STATE_CLASSES[toggleState(on, count)],
       )}
     >
       <span className="font-medium">{label}</span>
@@ -72,88 +72,94 @@ function toggledValue(chosen: string[], value: string): string[] {
   return chosen.includes(value) ? chosen.filter((v) => v !== value) : [...chosen, value];
 }
 
-/**
- * The chosen months with the season's turned on, or off when all three already are. A season is
- * a shortcut: only its months go in the URL.
- */
-function toggledSeason(chosen: string[], { months }: Season): string[] {
-  const values = months.map((month) => month.value);
-  const all = values.every((value) => chosen.includes(value));
+/** The chosen values with all of `values` turned on, or off when they all already are. */
+function toggledAll(chosen: string[], values: string[]): string[] {
   const rest = chosen.filter((value) => !values.includes(value));
-  return all ? rest : [...rest, ...values];
+  return values.every((value) => chosen.includes(value)) ? rest : [...rest, ...values];
 }
 
-/**
- * The seasons as four columns, each with its months under it, as toggles: a month turns on or off,
- * and a season turns its three months on, or off once they all are. `photos` are what the counts
- * are out of.
- */
-export function SeasonMonthGrid({
-  seasons,
-  photos,
-  chosen,
-  onChange,
-}: {
-  seasons: Season[];
+/** What a grid of toggles reads and changes. */
+interface GridProps {
+  /** The photos each choice's count is out of. */
   photos: Photo[];
   chosen: string[];
-  onChange: (months: string[]) => void;
-}) {
+  onChange: (values: string[]) => void;
+}
+
+/** A toggle for one choice. */
+function ChoiceToggle({ choice, photos, chosen, onChange }: GridProps & { choice: WhenChoice }) {
   return (
-    <div className="grid grid-cols-4 gap-1.5">
-      {seasons.map((season) => {
-        const on = season.months.filter((month) => chosen.includes(month.value)).length;
-        return (
-          <div key={season.value} className="flex flex-col gap-1">
-            <ToggleButton
-              label={season.label}
-              title={seasonSpan(season)}
-              count={season.months.reduce((sum, month) => sum + countOf(photos, month), 0)}
-              on={on === 3}
-              partly={on > 0}
-              onClick={() => onChange(toggledSeason(chosen, season))}
-            />
-            {season.months.map((month) => (
-              <ToggleButton
-                key={month.value}
-                label={month.short}
-                title={month.label}
-                count={countOf(photos, month)}
-                on={chosen.includes(month.value)}
-                onClick={() => onChange(toggledValue(chosen, month.value))}
-              />
-            ))}
-          </div>
-        );
-      })}
+    <ToggleButton
+      label={choice.short}
+      title={choice.label}
+      count={countOf(photos, choice)}
+      on={chosen.includes(choice.value)}
+      onClick={() => onChange(toggledValue(chosen, choice.value))}
+    />
+  );
+}
+
+/** The choices as a grid of toggles, `columns` across, such as the days of the week. */
+export function ChoiceGrid({
+  choices,
+  columns,
+  ...props
+}: GridProps & { choices: WhenChoice[]; columns: string }) {
+  return (
+    <div className={cn("grid gap-1.5", columns)}>
+      {choices.map((choice) => (
+        <ChoiceToggle key={choice.value} choice={choice} {...props} />
+      ))}
     </div>
   );
 }
 
-/** A row of toggles, one for each choice, such as the days of the week. */
-export function ChoiceRow({
-  choices,
-  photos,
-  chosen,
-  onChange,
-}: {
-  choices: WhenChoice[];
-  photos: Photo[];
-  chosen: string[];
-  onChange: (values: string[]) => void;
-}) {
+/** The months as four columns, one for each season, headed by its name. */
+export function MonthColumns({ seasons, ...props }: GridProps & { seasons: Season[] }) {
   return (
-    <div className="grid grid-cols-7 gap-1">
-      {choices.map((choice) => (
-        <ToggleButton
-          key={choice.value}
-          label={choice.short}
-          title={choice.label}
-          count={countOf(photos, choice)}
-          on={chosen.includes(choice.value)}
-          onClick={() => onChange(toggledValue(chosen, choice.value))}
-        />
+    <div className="grid grid-cols-4 gap-1.5">
+      {seasons.map((season) => (
+        <div key={season.value} className="flex flex-col gap-1">
+          <span className="text-center text-xs text-muted-foreground">{season.label}</span>
+          {season.months.map((month) => (
+            <ChoiceToggle key={month.value} choice={month} {...props} />
+          ))}
+        </div>
       ))}
+    </div>
+  );
+}
+
+/**
+ * The hours as a row for each part of the day: its name, which turns all its hours on, or off
+ * once they all are, then a toggle for each hour.
+ */
+export function HourRows({ dayparts, ...props }: GridProps & { dayparts: Daypart[] }) {
+  return (
+    <div className="flex flex-col gap-1">
+      {dayparts.map((part) => {
+        const values = part.hours.map((hour) => hour.value);
+        const on = values.filter((value) => props.chosen.includes(value)).length;
+        return (
+          <div key={part.label} className="grid grid-cols-[6.5rem_repeat(5,1fr)] gap-1">
+            <button
+              type="button"
+              aria-pressed={on === values.length}
+              title={daypartSpan(part)}
+              onClick={() => props.onChange(toggledAll(props.chosen, values))}
+              className={cn(
+                "truncate rounded-md px-1.5 text-left text-xs font-medium outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                on > 0 && "text-primary underline underline-offset-2",
+              )}
+            >
+              {part.label}
+            </button>
+            {part.hours.map((hour) => (
+              <ChoiceToggle key={hour.value} choice={hour} {...props} />
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }

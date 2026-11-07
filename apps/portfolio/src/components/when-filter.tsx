@@ -1,60 +1,38 @@
 import { useLocation } from "@tanstack/react-router";
 import { CalendarClock, ChevronsUpDown } from "lucide-react";
 import { type ReactNode, useState } from "react";
-import { RangeFilter } from "@portfolio/components/range-filter";
-import type { RangePreset } from "@portfolio/components/range-presets";
 import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import {
-  ChoiceRow,
-  SeasonMonthGrid,
+  ChoiceGrid,
+  HourRows,
+  MonthColumns,
   ToggleButton,
   WhenHeading,
 } from "@portfolio/components/when-buttons";
 import { filterPhotos, type PhotoFilters, withoutFilters } from "@portfolio/lib/photo-filters";
 import { photos as allPhotos, type Photo } from "@portfolio/lib/photos";
 import { QUICK_DATES, quickDateDetail, inQuickDate } from "@portfolio/lib/quick-dates";
-import { hourEnd, hourStart, photoHours } from "@portfolio/lib/time-of-day";
 import { cn } from "@portfolio/lib/utils";
 import {
   DAYPARTS,
-  daypartRange,
-  daypartSpan,
   dayOf,
-  DATE_KEYS,
   hasDateRange,
+  LIST_KEYS,
+  type ListKey,
   SEASONS,
-  TIME_KEY,
   WEEKDAYS,
+  WHEN_KEYS,
   whenCount,
 } from "@portfolio/lib/when-filters";
-
-/** The hours slider's steps: every hour of the day a portfolio photo was taken in. */
-const HOUR_VALUES = photoHours(allPhotos);
-
-/** The parts of the day as the hours slider's quick picks, leaving out ones no photo is in. */
-const DAYPART_PRESETS: RangePreset[] = DAYPARTS.flatMap((daypart) => {
-  const range = daypartRange(daypart, HOUR_VALUES);
-  return range ? [{ id: daypart.id, name: daypart.label, span: daypartSpan(daypart), range }] : [];
-});
 
 /** The first and last day a portfolio photo was taken, for the date range's inputs. */
 const DAYS = allPhotos.map((photo) => dayOf(photo.takenAt)).toSorted();
 
-/** The ways the When picker chooses dates: in every year, recently in earlier years, or a range. */
+/** The ways the When picker chooses: in every year, recently in earlier years, or a range of dates. */
 type DateMode = "years" | "quick" | "range";
 
-/** The filters each way of choosing dates sets, which choosing another way clears. */
-const MODE_KEYS = { years: ["month"], quick: ["when"], range: DATE_KEYS } as const;
-
-/** Every way's keys but the mode's, so choosing in one clears the others. */
-function otherModeKeys(mode: DateMode) {
-  return (Object.keys(MODE_KEYS) as DateMode[])
-    .filter((m) => m !== mode)
-    .flatMap((m) => MODE_KEYS[m]);
-}
-
-/** The way the filters choose dates, to open the picker on. */
+/** The way the filters choose, to open the picker on. */
 function modeOf(filters: PhotoFilters): DateMode {
   if (filters.when) return "quick";
   return hasDateRange(filters) ? "range" : "years";
@@ -71,11 +49,21 @@ interface WhenProps extends WhenSetters {
   facet: Photo[];
 }
 
+/** Sets one "when" filter, clearing the others: the picker chooses one way at a time. */
+function setWhen({ filters, setFilters }: WhenSetters, next: PhotoFilters) {
+  setFilters({ ...withoutFilters(filters, WHEN_KEYS), ...next });
+}
+
+/** The photos the facet leaves with the other filters, but no "when" filter. */
+function countedOut({ facet, filters }: WhenProps): Photo[] {
+  return filterPhotos(facet, withoutFilters(filters, WHEN_KEYS));
+}
+
 /**
- * A **When** button that opens one picker for when photos were taken: the dates (the seasons with
- * their months under them, in any year; this date, month or season in earlier years; or a range of
- * dates), then the days of the week and the hours, with the parts of the day as quick picks. The
- * Timeline has its own range and Quick dates, so there it only picks across every year.
+ * A **When** button that opens one picker for when photos were taken, one way at a time: across
+ * all years (seasons, months, days of the week or hours, any number of one kind), this date, month
+ * or season in earlier years, or a range of dates. The Timeline has its own range and Quick dates,
+ * so there it only picks across all years.
  */
 export function WhenFilter({ facet, filters, setFilters }: WhenProps) {
   const props = { facet, filters, setFilters };
@@ -97,19 +85,12 @@ export function WhenFilter({ facet, filters, setFilters }: WhenProps) {
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-4 p-3"
+        className="flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-3 p-3"
       >
-        <DatesPart {...props} onlyYears={onTimeline} />
-        <DaysPart {...props} />
-        <HoursPart {...props} />
+        <ModeParts {...props} onlyYears={onTimeline} />
       </PopoverContent>
     </Popover>
   );
-}
-
-/** The photos the facet leaves with the filters but the ones named. */
-function countedOut(facet: Photo[], filters: PhotoFilters, keys: readonly string[]): Photo[] {
-  return filterPhotos(facet, withoutFilters(filters, keys as Parameters<typeof withoutFilters>[1]));
 }
 
 const MODE_LABELS: [DateMode, string][] = [
@@ -118,66 +99,94 @@ const MODE_LABELS: [DateMode, string][] = [
   ["range", "Date range"],
 ];
 
-/** The part of the picker for each way of choosing dates. */
+/** The part of the picker for each way of choosing. */
 const MODE_PARTS: Record<DateMode, (props: WhenProps) => ReactNode> = {
   years: (props) => <YearsPart {...props} />,
   quick: (props) => <QuickPart {...props} />,
   range: (props) => <RangePart {...props} />,
 };
 
-/** The dates: a tab for each way of choosing them, unless `onlyYears`, which keeps to across all years. */
-function DatesPart({ onlyYears, ...props }: WhenProps & { onlyYears: boolean }) {
+/** A tab for each way of choosing, unless `onlyYears`, which keeps to across all years. */
+function ModeParts({ onlyYears, ...props }: WhenProps & { onlyYears: boolean }) {
   const [mode, setMode] = useState<DateMode>(() => (onlyYears ? "years" : modeOf(props.filters)));
   return (
-    <section className="flex flex-col gap-2">
-      {!onlyYears && <DateTabs mode={mode} onChange={setMode} />}
+    <>
+      {!onlyYears && <Tabs label="When" options={MODE_LABELS} value={mode} onChange={setMode} />}
       {MODE_PARTS[mode](props)}
-    </section>
+    </>
   );
 }
 
-/** The tabs for the ways of choosing dates. */
-function DateTabs({ mode, onChange }: { mode: DateMode; onChange: (mode: DateMode) => void }) {
+/** A row of tabs, the chosen one raised. */
+function Tabs<T extends string>({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: [T, string][];
+  value: T;
+  onChange: (value: T) => void;
+}) {
   return (
-    <div role="tablist" aria-label="Dates" className="flex rounded-md border bg-muted/50 p-0.5">
-      {MODE_LABELS.map(([value, label]) => (
+    <div role="tablist" aria-label={label} className="flex rounded-md border bg-muted/50 p-0.5">
+      {options.map(([option, text]) => (
         <button
-          key={value}
+          key={option}
           type="button"
           role="tab"
-          aria-selected={mode === value}
-          onClick={() => onChange(value)}
+          aria-selected={value === option}
+          onClick={() => onChange(option)}
           className={cn(
             "flex-1 rounded-sm px-1.5 py-1 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
-            mode === value && "bg-background text-foreground shadow-xs",
+            value === option && "bg-background text-foreground shadow-xs",
           )}
         >
-          {label}
+          {text}
         </button>
       ))}
     </div>
   );
 }
 
-/** Sets the mode's filters, clearing the other ways of choosing dates. */
-function setInMode(props: WhenSetters, mode: DateMode, next: PhotoFilters) {
-  props.setFilters({
-    ...withoutFilters(props.filters, [...otherModeKeys(mode), ...MODE_KEYS[mode]]),
-    ...next,
-  });
+const KIND_LABELS: [ListKey, string][] = [
+  ["season", "Seasons"],
+  ["month", "Months"],
+  ["weekday", "Days"],
+  ["hour", "Hours"],
+];
+
+/** The kind of list the filters choose from, or seasons when none is set. */
+function kindOf(filters: PhotoFilters): ListKey {
+  return LIST_KEYS.find((key) => (filters[key]?.length ?? 0) > 0) ?? "season";
 }
 
-/** The seasons with their months, in any year. */
+/** The grid of toggles for each kind of list. */
+const KIND_GRIDS: Record<
+  ListKey,
+  (props: { photos: Photo[]; chosen: string[]; onChange: (v: string[]) => void }) => ReactNode
+> = {
+  season: (props) => <ChoiceGrid choices={SEASONS} columns="grid-cols-4" {...props} />,
+  month: (props) => <MonthColumns seasons={SEASONS} {...props} />,
+  weekday: (props) => <ChoiceGrid choices={WEEKDAYS} columns="grid-cols-7" {...props} />,
+  hour: (props) => <HourRows dayparts={DAYPARTS} {...props} />,
+};
+
+/**
+ * Seasons, months, days of the week or hours, in any year: a tab for each kind, and any number of
+ * one kind chosen. Choosing another kind clears the first.
+ */
 function YearsPart(props: WhenProps) {
+  const [kind, setKind] = useState<ListKey>(() => kindOf(props.filters));
   return (
     <>
-      <WhenHeading>Time of year</WhenHeading>
-      <SeasonMonthGrid
-        seasons={SEASONS}
-        photos={countedOut(props.facet, props.filters, ["month", ...otherModeKeys("years")])}
-        chosen={props.filters.month ?? []}
-        onChange={(month) => setInMode(props, "years", month.length > 0 ? { month } : {})}
-      />
+      <Tabs label="Across all years" options={KIND_LABELS} value={kind} onChange={setKind} />
+      {KIND_GRIDS[kind]({
+        photos: countedOut(props),
+        chosen: props.filters[kind] ?? [],
+        onChange: (values) => setWhen(props, values.length > 0 ? { [kind]: values } : {}),
+      })}
     </>
   );
 }
@@ -185,7 +194,7 @@ function YearsPart(props: WhenProps) {
 /** This date, month or season, in the years before this one. */
 function QuickPart(props: WhenProps) {
   const [now] = useState(() => new Date());
-  const counted = countedOut(props.facet, props.filters, ["when", ...otherModeKeys("quick")]);
+  const counted = countedOut(props);
   return (
     <>
       <WhenHeading>This time, previous years</WhenHeading>
@@ -196,9 +205,7 @@ function QuickPart(props: WhenProps) {
             label={`${label} · ${quickDateDetail(value, now)}`}
             count={counted.filter((photo) => inQuickDate(photo.takenAt, value, now)).length}
             on={props.filters.when === value}
-            onClick={() =>
-              setInMode(props, "quick", props.filters.when === value ? {} : { when: value })
-            }
+            onClick={() => setWhen(props, props.filters.when === value ? {} : { when: value })}
           />
         ))}
       </div>
@@ -212,7 +219,7 @@ function RangePart(props: WhenSetters) {
   /** Sets one end, keeping the other. */
   function setEnd(key: "start" | "end", value: string) {
     const next = { start, end, [key]: value || undefined };
-    setInMode(props, "range", Object.fromEntries(Object.entries(next).filter(([, v]) => v)));
+    setWhen(props, Object.fromEntries(Object.entries(next).filter(([, v]) => v)));
   }
   return (
     <div className="grid grid-cols-2 gap-2 text-xs">
@@ -230,45 +237,5 @@ function RangePart(props: WhenSetters) {
         </label>
       ))}
     </div>
-  );
-}
-
-/** The days of the week, Monday first. */
-function DaysPart(props: WhenProps) {
-  return (
-    <section className="flex flex-col gap-2">
-      <WhenHeading>Days</WhenHeading>
-      <ChoiceRow
-        choices={WEEKDAYS}
-        photos={countedOut(props.facet, props.filters, ["weekday"])}
-        chosen={props.filters.weekday ?? []}
-        onChange={(weekday) =>
-          props.setFilters({
-            ...withoutFilters(props.filters, ["weekday"]),
-            ...(weekday.length > 0 ? { weekday } : {}),
-          })
-        }
-      />
-    </section>
-  );
-}
-
-/** The hours slider, with the parts of the day as quick picks. */
-function HoursPart(props: WhenSetters) {
-  return (
-    <RangeFilter
-      label="Hours"
-      values={HOUR_VALUES}
-      range={props.filters[TIME_KEY]}
-      write={hourStart}
-      writeHigh={hourEnd}
-      presets={DAYPART_PRESETS}
-      onChange={(time) =>
-        props.setFilters({
-          ...withoutFilters(props.filters, [TIME_KEY]),
-          ...(time ? { time } : {}),
-        })
-      }
-    />
   );
 }

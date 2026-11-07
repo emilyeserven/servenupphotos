@@ -10,36 +10,52 @@ const ROW =
 
 /**
  * A row that opens its photos on the Grid: its label over a bar as long as its share of the
- * group's biggest, and its count, which "Grid" and an arrow take the place of on hover. A row's hint, such as
- * a city's country, shows as a tooltip.
+ * group's biggest, and its count, which reads "See More (37) →" on hover without moving. A row's
+ * hint, such as a city's country, shows as a tooltip, unless `hideHint`, as when the card already
+ * says it.
  */
-export function GridRow({ row, max }: { row: StatRow; max: number }) {
+export function GridRow({ row, max, hideHint }: { row: StatRow; max: number; hideHint: boolean }) {
   if (!row.filter)
     return (
       <div className="px-2 py-1.5">
-        <RowBody row={row} max={max} />
+        <RowBody row={row} max={max} count={<span>{row.count}</span>} />
       </div>
     );
   return (
-    <WithHint hint={row.hint}>
+    <WithHint hint={hideHint ? undefined : row.hint}>
       <Link
         to="/grid"
         search={row.filter}
         className={ROW}
         aria-label={`${row.label}: see its ${row.count} photos on the Grid`}
       >
-        <RowBody row={row} max={max} trailing={<GridHint />} />
+        <RowBody row={row} max={max} count={<SeeMore count={row.count} />} />
       </Link>
     </WithHint>
   );
 }
 
-/** What a row that opens the Grid adds on hover. */
-function GridHint() {
+/**
+ * A row's count, with "See More (" before it and ") →" after it shown on hover. The text after
+ * is only made visible, keeping its space, and the text before grows leftwards, so the number
+ * doesn't move.
+ */
+function SeeMore({ count }: { count: number }) {
+  const shown = "group-hover:visible group-focus-visible:visible";
   return (
-    <span className="flex shrink-0 items-center gap-0.5 self-center text-xs font-medium text-foreground">
-      Grid
-      <ArrowRight className="size-3" aria-hidden />
+    <span className="flex items-center">
+      <span
+        className={cn(
+          "invisible absolute right-full whitespace-nowrap bg-accent pr-px pl-1",
+          shown,
+        )}
+      >
+        See More (
+      </span>
+      {count}
+      <span className={cn("invisible flex items-center pl-px", shown)} aria-hidden>
+        )<ArrowRight className="ml-1 size-3" />
+      </span>
     </span>
   );
 }
@@ -66,7 +82,7 @@ export function NarrowRow({
       onClick={onClick}
       className={cn(ROW, chosen && "bg-accent")}
     >
-      <RowBody row={row} max={max} />
+      <RowBody row={row} max={max} count={<span>{row.count}</span>} />
     </button>
   );
 }
@@ -82,9 +98,8 @@ function WithHint({ hint, children }: { hint?: string; children: ReactNode }) {
   );
 }
 
-/** A row's text, bar and count, which `trailing` takes the place of on hover. */
-function RowBody({ row, max, trailing }: { row: StatRow; max: number; trailing?: ReactNode }) {
-  const hides = trailing ? "group-hover:hidden group-focus-visible:hidden" : "";
+/** A row's text, bar and count. */
+function RowBody({ row, max, count }: { row: StatRow; max: number; count: ReactNode }) {
   return (
     <>
       <span className="flex items-baseline gap-2 text-sm">
@@ -94,14 +109,9 @@ function RowBody({ row, max, trailing }: { row: StatRow; max: number; trailing?:
             {row.detail}
           </span>
         )}
-        <span className={cn("ml-auto shrink-0 tabular-nums text-muted-foreground", hides)}>
-          {row.count}
+        <span className="relative ml-auto shrink-0 tabular-nums text-muted-foreground group-hover:text-foreground">
+          {count}
         </span>
-        {trailing && (
-          <span className="ml-auto hidden group-hover:flex group-focus-visible:flex">
-            {trailing}
-          </span>
-        )}
       </span>
       <span className="mt-1 block h-1.5 rounded-full bg-muted" aria-hidden>
         <span
