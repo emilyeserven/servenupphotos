@@ -375,11 +375,17 @@ function narrowedTitle(id: string): string {
   return ALL_GROUPS.find((g) => g.id === id)?.build([]).title ?? id;
 }
 
-/** The rows chosen in the groups linked with the group, not its own. */
-function otherLinks(def: GroupDef, links: Links): StatFocus[] {
-  return ALL_GROUPS.filter((other) => other.linked === def.linked && other.id !== def.id).flatMap(
-    (other) => (links[other.id] ? [links[other.id]!] : []),
-  );
+/** The rows chosen in the groups linked with the group, its own too unless `own` is false. */
+function linkedChoices(def: GroupDef, links: Links, own = true): StatFocus[] {
+  const linked = ALL_GROUPS.filter((other) => other.linked === def.linked);
+  return linked
+    .filter((other) => own || other.id !== def.id)
+    .flatMap((other) => (links[other.id] ? [links[other.id]!] : []));
+}
+
+/** The filter for the photos with every one of the chosen rows. */
+function linkFilter(choices: StatFocus[]): Record<string, string | string[]> {
+  return Object.assign({}, ...choices.map((focus) => focus.row.filter));
 }
 
 /** A chosen row's text after "in" on another linked card, such as "Fast aperture" or "Base ISO". */
@@ -389,18 +395,21 @@ function linkText(focus: StatFocus): string {
 }
 
 /**
- * A linked group's card, such as Aperture: it counts the photos the rows chosen in the groups
- * linked with it leave, says what those are, and a click on its own row chooses it for them.
+ * A linked group's card, such as Aperture: it counts the photos the rows chosen in the other groups
+ * linked with it leave, and lists every linked choice, its own too, as "with Fast aperture and Base
+ * ISO", each opening the photos with all of them; a click on its own row chooses it for the others.
  */
 function LinkedCard({ def, state }: { def: GroupDef; state: PageState }) {
-  const others = otherLinks(def, state.links);
-  const filter = Object.assign({}, ...others.map((focus) => focus.row.filter));
-  const list = filterWithCamera(photos, filter);
+  const list = filterWithCamera(photos, linkFilter(linkedChoices(def, state.links, false)));
   const group = def.build(list);
-  const focuses = others.map((focus) => ({
+  const choices = linkedChoices(def, state.links);
+  const filter = linkFilter(choices);
+  const count = filterWithCamera(photos, filter).length;
+  const focuses = choices.map((focus, index) => ({
     ...focus,
-    row: { ...focus.row, label: linkText(focus), count: list.length },
+    row: { ...focus.row, label: linkText(focus), count },
     filter,
+    prefix: index === 0 ? "with" : "and",
   }));
   return (
     <StatGroupCard

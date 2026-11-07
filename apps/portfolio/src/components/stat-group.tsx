@@ -13,8 +13,14 @@ export interface StatFocus {
   row: StatRow;
 }
 
-/** A row narrowing a group, with the filter for its photos and those of the rows narrowing it. */
-export type FocusChain = (StatFocus & { filter: Record<string, string | string[] | number[]> })[];
+/**
+ * A row narrowing a group, with the filter for its photos and those of the rows narrowing it, and
+ * the word before it, such as "with" or "and"; "in" when left out.
+ */
+export type FocusChain = (StatFocus & {
+  filter: Record<string, string | string[] | number[]>;
+  prefix?: string;
+})[];
 
 /**
  * One group on the Stats page, such as Cameras, as a card of its rows. A group that narrows
@@ -71,7 +77,10 @@ export function StatGroupCard({
   );
 }
 
-/** What the card right above a group narrowed it to, such as "in Japan"; nothing when it isn't narrowed. */
+/**
+ * What a group is narrowed to, such as "in Japan" from the card right above it, or every linked
+ * card's choice; nothing when it isn't narrowed.
+ */
 function FocusChips({
   focuses,
   onClearFocus,
@@ -117,7 +126,7 @@ function FocusChip({ focus, onClear }: { focus: FocusChain[number]; onClear: () 
   return (
     <div className="flex min-w-0 items-center gap-1 text-sm text-muted-foreground">
       <span className="truncate">
-        in{" "}
+        {focus.prefix ?? "in"}{" "}
         <Link
           to="/grid"
           search={focus.filter}
