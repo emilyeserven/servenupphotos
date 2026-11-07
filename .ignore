@@ -1,0 +1,4 @@
+# Keeps ripgrep, and the code search built on it, out of the 1,100+ photo, album and tag JSON
+# files, which otherwise make up most hits for words like "tags". Git and the apps still use them,
+# and a search that names the folder, such as `rg tags apps/portfolio/src/data`, still reads them.
+apps/portfolio/src/data/
