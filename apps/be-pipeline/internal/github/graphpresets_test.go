@@ -22,11 +22,7 @@ func TestSaveGraphPreset(t *testing.T) {
 	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) || !strings.Contains(saved, `"spotlight": true`) {
 		t.Errorf("saved %s", saved)
 	}
-<<<<<<< HEAD
 	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "photos", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5, XBucket: 2}}}
-=======
-	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "photos", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5}}}
->>>>>>> origin/claude/project-thread-907vy7
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, ranged); err != nil {
 		t.Fatalf("SaveGraphPreset(ranges) error = %v", err)
 	}
@@ -61,11 +57,8 @@ func TestSaveGraphPreset(t *testing.T) {
 		{"odd type", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "radar", X: "iso", Measure: "count", Sort: "group"}}},
 		{"no such group", GraphPreset{ID: "a", Kind: "preset", Name: "A", Group: "lenses", Graph: dotGraph}},
 		{"bad ID", GraphPreset{ID: "A A", Kind: "group", Name: "A"}},
-<<<<<<< HEAD
 		{"negative bucket", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "photos", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XBucket: -1}}}},
 		{"negative width", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "photos", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{YWidth: -1}}}},
-=======
->>>>>>> origin/claude/project-thread-907vy7
 		{"y starts above its end", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "photos", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{YMin: num(10), YMax: num(2)}}}},
 	}
 	for _, tt := range tests {
