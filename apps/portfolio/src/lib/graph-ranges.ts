@@ -18,6 +18,10 @@ export interface GraphRanges {
   minPhotos: number;
   /** Whether the x values with no photos at either end of the axis are left out; ones in between stay. */
   hideZeros: boolean;
+  /** How many of the x axis's values each bucket puts together, in the axis's own order, such as 2 for f/1.4 – f/2; 0 for none. */
+  xBucket: number;
+  /** A scatterplot's or heatmap's y values put together, like the x axis's. */
+  yBucket: number;
 }
 
 /** The ranges, all off. */
@@ -30,6 +34,8 @@ export const NO_RANGES: GraphRanges = {
   yMax: null,
   minPhotos: 0,
   hideZeros: false,
+  xBucket: 0,
+  yBucket: 0,
 };
 
 /** Where a named end is among the rows; the fallback when it's off or not among them. */

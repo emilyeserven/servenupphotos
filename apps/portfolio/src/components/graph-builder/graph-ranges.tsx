@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { GraphField } from "@portfolio/components/graph-builder/graph-field";
 import { OptionCheckbox } from "@portfolio/components/view-options-button";
-import { axisValues, type GraphConfig, hasYStat, statById } from "@portfolio/lib/graph-data";
+import { axisStatRows, axisValues, type GraphConfig, hasYStat } from "@portfolio/lib/graph-data";
 import { photoCounts, roundSteps } from "@portfolio/lib/graph-ranges";
 import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
@@ -100,9 +100,7 @@ interface YEndsProps {
 function YEnds({ config, rows, list, onChange }: YEndsProps) {
   if (config.type === "pie") return null;
   if (hasYStat(config.type)) {
-    const labels = statById(config.y)
-      .build(list)
-      .rows.map((row) => row.label);
+    const labels = axisStatRows(list, config.y, config.yBucket).map((row) => row.label);
     return (
       <LabelEnds
         name="Y axis"

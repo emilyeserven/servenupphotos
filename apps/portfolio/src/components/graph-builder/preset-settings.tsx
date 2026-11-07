@@ -41,6 +41,8 @@ const RANGE_PARTS: ((r: GraphRanges) => SettingLine | null)[] = [
   (r) => (either(r.yMin, r.yMax) ? ["Y range", endsText(r.yMin ?? 0, r.yMax)] : null),
   (r) => (r.minPhotos > 0 ? ["Photos per value", `At least ${r.minPhotos}`] : null),
   (r) => (r.hideZeros ? ["Empty ends", "Trimmed"] : null),
+  (r) => (r.xBucket > 1 ? ["X buckets", `Every ${r.xBucket} values`] : null),
+  (r) => (r.yBucket > 1 ? ["Y buckets", `Every ${r.yBucket} values`] : null),
 ];
 
 /** The Range group's parts that are on. */

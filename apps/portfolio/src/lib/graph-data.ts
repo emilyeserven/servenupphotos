@@ -8,6 +8,7 @@ import {
   type YDomain,
   yDomain,
 } from "@portfolio/lib/graph-ranges";
+import { bucketNames, bucketRows } from "@portfolio/lib/graph-buckets";
 import { SETTING_STATS } from "@portfolio/lib/graph-settings";
 import { STAT_SECTIONS } from "@portfolio/lib/stats";
 
@@ -72,9 +73,24 @@ export interface GraphConfig extends GraphRanges {
   limit: number;
 }
 
-/** A row's photos among the list: none for a row without a filter, which can't be told apart. */
+/**
+ * A row's photos among the list: a bucket's are its rows' photos, each once, in the list's order;
+ * none for a row without a filter, which can't be told apart.
+ */
 export function rowPhotos(list: Photo[], row: StatRow): Photo[] {
+  if (row.parts) return partsPhotos(list, row.parts);
   return row.filter ? filterWithCamera(list, row.filter) : [];
+}
+
+/** The photos in any of a bucket's rows, each once, in the list's order. */
+function partsPhotos(list: Photo[], parts: StatRow[]): Photo[] {
+  const inside = new Set(parts.flatMap((part) => rowPhotos(list, part)));
+  return list.filter((photo) => inside.has(photo));
+}
+
+/** A stat's rows along an axis, in buckets of `size` values when it's 2 or more. */
+export function axisStatRows(list: Photo[], stat: string, size: number): StatRow[] {
+  return bucketRows(statById(stat).build(list).rows, size);
 }
 
 /** How the x axis's rows are put in order before the limit. */
@@ -86,7 +102,7 @@ const SORTS: Record<SortOrder, (rows: StatRow[]) => StatRow[]> = {
 
 /** Every x value the photos have, in the order picked: what the Range group picks the x axis's ends from. */
 export function axisValues(list: Photo[], config: GraphConfig): StatRow[] {
-  return SORTS[config.sort](statById(config.x).build(list).rows);
+  return SORTS[config.sort](axisStatRows(list, config.x, config.xBucket));
 }
 
 /** The x axis's rows, in the order picked, cut by the Range group and then to the limit. */
@@ -256,19 +272,32 @@ export interface ScatterData {
 export function scatterData(list: Photo[], config: GraphConfig): ScatterData {
   const xRows = axisRows(list, config);
   const yStat = statById(config.y);
-  const yLabels = rowsBetween(yStat.build(list).rows, config.yFrom, config.yTo).map(
+  const yRows = yStat.build(list).rows;
+  const yLabels = rowsBetween(bucketRows(yRows, config.yBucket), config.yFrom, config.yTo).map(
     (row) => row.label,
   );
+  const yBucket = bucketNames(yRows, config.yBucket);
   const points = xRows.flatMap((row, x) =>
     yStat
       .build(rowPhotos(list, row))
-      .rows.map((cell) => ({ x, y: yLabels.indexOf(cell.label), count: cell.count })),
+      .rows.map((cell) => ({ x, y: yLabels.indexOf(yBucket(cell.label)), count: cell.count })),
   );
   return {
     xLabels: xRows.map((row) => row.label),
     yLabels,
-    points: points.filter((p) => p.y >= 0),
+    points: mergePoints(points.filter((p) => p.y >= 0)),
   };
+}
+
+/** The points with the ones on the same spot, such as two y values in one bucket, made one. */
+function mergePoints(points: ScatterPoint[]): ScatterPoint[] {
+  const merged = new Map<string, ScatterPoint>();
+  for (const point of points) {
+    const key = `${point.x}:${point.y}`;
+    const count = (merged.get(key)?.count ?? 0) + point.count;
+    merged.set(key, { ...point, count });
+  }
+  return [...merged.values()];
 }
 
 /** A number on the graph as text: a count as it is, a share with a % sign. */

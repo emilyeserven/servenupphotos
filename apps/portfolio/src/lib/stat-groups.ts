@@ -13,6 +13,8 @@ export interface StatRow {
    * `{ camera: "Fujifilm X-T5" }`; left out when no filter can.
    */
   filter?: Record<string, string | string[]>;
+  /** The rows a Graph bucket puts together, such as f/1.4 and f/2 in f/1.4 – f/2; left out on a row of its own. */
+  parts?: StatRow[];
 }
 
 /** A group of rows on the Stats page, such as Cameras or Time of day. */

@@ -22,12 +22,12 @@ func TestSaveGraphPreset(t *testing.T) {
 	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) || !strings.Contains(saved, `"spotlight": true`) {
 		t.Errorf("saved %s", saved)
 	}
-	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "dot", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5}}}
+	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "dot", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5, XBucket: 2}}}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, ranged); err != nil {
 		t.Fatalf("SaveGraphPreset(ranges) error = %v", err)
 	}
-	if saved := staged(t, c, dataRoot+"/graphs/mid.json"); !strings.Contains(saved, `"xTo": "f/8"`) || !strings.Contains(saved, `"minPhotos": 5`) || strings.Contains(saved, "hideZeros") {
-		t.Errorf("ranges saved as %s, want xTo and minPhotos only", saved)
+	if saved := staged(t, c, dataRoot+"/graphs/mid.json"); !strings.Contains(saved, `"xTo": "f/8"`) || !strings.Contains(saved, `"minPhotos": 5`) || !strings.Contains(saved, `"xBucket": 2`) || strings.Contains(saved, "yBucket") || strings.Contains(saved, "hideZeros") {
+		t.Errorf("ranges saved as %s, want xTo, minPhotos and xBucket only", saved)
 	}
 	heatmap := GraphPreset{ID: "months", Kind: "preset", Name: "Months", Graph: &GraphSettings{Type: "heatmap", X: "month", Y: "year", Measure: "count", Sort: "group"}}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, heatmap); err != nil {
@@ -53,6 +53,7 @@ func TestSaveGraphPreset(t *testing.T) {
 		{"odd type", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "radar", X: "iso", Measure: "count", Sort: "group"}}},
 		{"no such group", GraphPreset{ID: "a", Kind: "preset", Name: "A", Group: "lenses", Graph: dotGraph}},
 		{"bad ID", GraphPreset{ID: "A A", Kind: "group", Name: "A"}},
+		{"negative bucket", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "dot", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XBucket: -1}}}},
 		{"y starts above its end", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "dot", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{YMin: num(10), YMax: num(2)}}}},
 	}
 	for _, tt := range tests {

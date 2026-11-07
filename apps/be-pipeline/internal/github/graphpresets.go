@@ -81,6 +81,12 @@ type GraphRanges struct {
 	MinPhotos int `json:"minPhotos,omitempty"`
 	// HideZeros leaves out values with no photos.
 	HideZeros bool `json:"hideZeros,omitempty"`
+	// XBucket is how many of the x axis's values each bucket puts together,
+	// in the axis's own order, such as 2 for f/1.4 – f/2; 0 for none.
+	XBucket int `json:"xBucket,omitempty"`
+	// YBucket puts a scatterplot's or heatmap's y values together, like
+	// XBucket.
+	YBucket int `json:"yBucket,omitempty"`
 }
 
 // The values a preset's graph can take for each of its choices.
@@ -193,14 +199,17 @@ func validPresetGraph(p GraphPreset) *PublishError {
 	return validRanges(g.GraphRanges)
 }
 
-// validRanges fails when the y axis starts above where it ends, or an x
-// value needs fewer than no photos.
+// validRanges fails when the y axis starts above where it ends, an x value
+// needs fewer than no photos, or a bucket holds fewer than no values.
 func validRanges(r GraphRanges) *PublishError {
 	if r.YMin != nil && r.YMax != nil && *r.YMin > *r.YMax {
 		return publishErr(http.StatusBadRequest, "The y axis starts above where it ends.")
 	}
 	if r.MinPhotos < 0 {
 		return publishErr(http.StatusBadRequest, "An x value can't need fewer than 0 photos.")
+	}
+	if r.XBucket < 0 || r.YBucket < 0 {
+		return publishErr(http.StatusBadRequest, "Put each value on its own, or 2 or more in a bucket.")
 	}
 	return nil
 }

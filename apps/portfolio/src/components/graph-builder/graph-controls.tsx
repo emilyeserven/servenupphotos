@@ -1,4 +1,5 @@
 import { ArrowDownUp, Eye, MoveRight, MoveUp } from "lucide-react";
+import { GraphBuckets } from "@portfolio/components/graph-builder/graph-buckets";
 import { GraphRanges } from "@portfolio/components/graph-builder/graph-ranges";
 import { GraphTypePicker } from "@portfolio/components/graph-builder/graph-type-picker";
 import { GraphField, StatSelect } from "@portfolio/components/graph-builder/graph-field";
@@ -31,7 +32,8 @@ const LIMITS = [0, 5, 10, 20];
 
 /**
  * The graph's settings, in the Adjust Graph box: its type, what's on each axis, what splits a bar,
- * line or dot graph, the x axis's order and how many of its values show, and the Range group.
+ * line or dot graph, the x axis's order and how many of its values show, and the Buckets and Range
+ * groups.
  */
 export function GraphControls({
   config,
@@ -51,6 +53,7 @@ export function GraphControls({
       </GraphField>
       <YField config={config} onChange={onChange} />
       <OrderFields config={config} onChange={onChange} />
+      <GraphBuckets config={config} onChange={onChange} list={list} />
       <GraphRanges config={config} onChange={onChange} list={list} />
     </div>
   );

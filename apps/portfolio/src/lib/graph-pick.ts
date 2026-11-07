@@ -1,4 +1,12 @@
-import { type GraphConfig, rowPhotos, seriesColor, SPLIT_TYPES, statById } from "@/lib/graph-data";
+import {
+  axisStatRows,
+  type GraphConfig,
+  rowPhotos,
+  seriesColor,
+  SPLIT_TYPES,
+  statById,
+} from "@/lib/graph-data";
+import { bucketNames } from "@/lib/graph-buckets";
 import type { Photo } from "@/lib/photos";
 import type { StatRow } from "@/lib/stat-groups";
 
@@ -41,9 +49,7 @@ function photosIn(list: Photo[], rows: StatRow[]): Photo[] {
 /** The x axis's rows the pick is on: its own, or each one in a pie's Other slice. */
 function pickedRows(list: Photo[], config: GraphConfig, pick: GraphPick): StatRow[] {
   const labels = new Set(pick.others ?? [pick.x]);
-  return statById(config.x)
-    .build(list)
-    .rows.filter((row) => labels.has(row.label));
+  return axisStatRows(list, config.x, config.xBucket).filter((row) => labels.has(row.label));
 }
 
 /** How many split values get their own color on the graph; the rest are drawn as Other. */
@@ -87,11 +93,20 @@ function groupedBy(inside: Photo[], stat: string, color: (label: string) => stri
   return { groupedBy: statById(stat).label, groups, total: inside.length };
 }
 
-/** A scatterplot dot's photos: the x value's ones that have the y value too. */
-function scatterPhotos(inside: Photo[], config: GraphConfig, y: string): PickedPhotos {
+/**
+ * A scatterplot dot's or heatmap cell's photos: the x value's ones that have the y value too, or
+ * any of the values in the y bucket, which `list` (every photo kept) says.
+ */
+function scatterPhotos(
+  list: Photo[],
+  inside: Photo[],
+  config: GraphConfig,
+  y: string,
+): PickedPhotos {
+  const yBucket = bucketNames(statById(config.y).build(list).rows, config.yBucket);
   const rows = statById(config.y)
     .build(inside)
-    .rows.filter((row) => row.label === y);
+    .rows.filter((row) => yBucket(row.label) === y);
   return wholeGroup(y, photosIn(inside, rows));
 }
 
@@ -108,7 +123,7 @@ export function isSplit(config: GraphConfig): boolean {
 export function pickedPhotos(list: Photo[], config: GraphConfig, pick: GraphPick): PickedPhotos {
   const inside = photosIn(list, pickedRows(list, config, pick));
   if (pick.others) return groupedBy(inside, config.x, () => seriesColor(MAX_SERIES));
-  if (pick.y !== undefined) return scatterPhotos(inside, config, pick.y);
+  if (pick.y !== undefined) return scatterPhotos(list, inside, config, pick.y);
   if (isSplit(config)) return groupedBy(inside, config.split, splitColors(list, config.split));
   return wholeGroup(pick.x, inside);
 }
