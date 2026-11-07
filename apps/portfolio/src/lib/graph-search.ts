@@ -16,9 +16,10 @@ const GRAPH_START: GraphConfig = {
 };
 
 /**
- * The graph's settings as the Graph page keeps them in the URL, so a link shares the graph:
- * `graph`, a built-in preset by its ID, and each setting that differs from it (or from the first
- * graph), named with a `g` before it so it can't clash with the filters, such as `gType=pie`.
+ * The graph's settings as the Graph page keeps them in the URL, so a link shares the graph: each
+ * setting that differs from the first graph, named with a `g` before it so it can't clash with the
+ * filters, such as `gType=pie`. Older links may also name a built-in preset by its ID in `graph`,
+ * which the settings start from.
  */
 export type GraphSearch = Partial<Record<GraphParam, string | number | boolean>>;
 
@@ -86,7 +87,7 @@ function readValue(key: keyof GraphConfig, value: unknown): unknown {
   return textOf(key, value);
 }
 
-/** The built-in preset the URL names, as the graph it starts from; the first graph when it names none. */
+/** The built-in preset an older link names in `graph`, as the graph it starts from; the first graph when it names none. */
 function baseOf(search: Record<string, unknown>): GraphConfig {
   const preset = builtInPresets().find((each) => each.id === search.graph);
   return preset ? { ...GRAPH_START, ...preset.graph } : GRAPH_START;
@@ -103,27 +104,22 @@ export function graphFromSearch(search: Record<string, unknown>): GraphConfig {
   return { ...base, ...Object.fromEntries(changes) };
 }
 
-/** The graph's settings that differ from `base`, as URL params. */
+/** The graph's settings that differ from `base`, as URL params; an empty one, such as a pie's unused y axis, is left out. */
 function changedParams(config: GraphConfig, base: GraphConfig): GraphSearch {
   return Object.fromEntries(
     (Object.keys(GRAPH_START) as (keyof GraphConfig)[])
       .filter((key) => config[key] !== base[key])
-      .map((key) => [paramOf(key), writeValue(key, config[key])]),
+      .map((key) => [paramOf(key), writeValue(key, config[key])])
+      .filter(([, value]) => value !== ""),
   );
 }
 
-/** Whether two graphs have every setting the same. */
-function sameGraph(a: GraphConfig, b: GraphConfig): boolean {
-  return Object.keys(changedParams(a, b)).length === 0;
-}
-
 /**
- * The graph as URL params: the built-in preset it is, by ID, when it's one; otherwise each setting
- * that differs from the first graph. A range end that's off is left out, so it reads as off.
+ * The graph as URL params: each setting that differs from the first graph, a built-in preset's
+ * too, so a link keeps showing the same graph even if the preset changes later. A range end that's
+ * off is left out, so it reads as off.
  */
 export function graphToSearch(config: GraphConfig): GraphSearch {
-  const preset = builtInPresets().find((each) => sameGraph(config, baseOf({ graph: each.id })));
-  if (preset) return { graph: preset.id };
   return changedParams(config, GRAPH_START);
 }
 

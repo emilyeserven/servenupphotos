@@ -33,11 +33,12 @@ The **Filters** tab's box holds the site's usual filters, with Places, Groups, W
 The page opens on photos per year, oldest first, each bar split by season. The graph's settings are kept in the URL
 beside the filters (`lib/graph-search.ts`), so a link shares the graph:
 
-- A built-in preset from GRAPHS.json is written as its ID, such as `?graph=aperture`.
-- Any other graph is written as each setting that differs from the opening graph, with `g` before its name so it
-  can't clash with a filter, such as `?gType=pie&gX=cameras`. A split of none is `gSplit=none`.
-- A link can mix the two, such as `?graph=aperture&gLimit=5`. Settings a link gets wrong, such as an unknown type,
-  are ignored.
+- Every graph, a built-in preset's too, is written as each setting that differs from the opening graph, with `g`
+  before its name so it can't clash with a filter, such as `?gType=pie&gX=cameras`. A split of none is `gSplit=none`.
+  Writing a preset's settings rather than its name keeps a link showing the same graph even if the preset changes,
+  and lets a preset's link be tweaked by hand.
+- Links from before this name a built-in preset by its ID, such as `?graph=aperture`, and still open it, with any
+  settings beside it on top. Settings a link gets wrong, such as an unknown type, are ignored.
 
 Changing the graph replaces the URL rather than adding to the browser's history. **Wide**, the Graph / Table view and
 the display options stay out of the URL.
