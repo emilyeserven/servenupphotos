@@ -234,11 +234,11 @@ function GroupRun({ run, state }: { run: Run; state: PageState }) {
 
 /**
  * The bar joining a chained card to the one before it, filling the gap between them in the cards'
- * border color: centered down the row on a desktop, where the chain's cards are as tall as each
- * other, and across the card on a phone.
+ * border color, 1em in from each end of the card: down the row on a desktop, where the chain's
+ * cards are as tall as each other, and across the card on a phone.
  */
 const CHAIN_LINE =
-  "before:absolute before:-top-6 before:left-1/2 before:h-6 before:w-3 before:-translate-x-1/2 before:bg-border lg:before:top-1/2 lg:before:-left-6 lg:before:h-3 lg:before:w-6 lg:before:translate-x-0 lg:before:-translate-y-1/2";
+  "before:absolute before:-top-6 before:right-[1em] before:left-[1em] before:h-6 before:bg-border lg:before:top-[1em] lg:before:bottom-[1em] lg:before:-left-6 lg:before:right-auto lg:before:h-auto lg:before:w-6";
 
 /** How a group is made: its picked variant's way, or its own. */
 function buildOf(def: GroupDef, variants: Variants) {

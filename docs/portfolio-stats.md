@@ -42,7 +42,7 @@ row of a category, and the card says how many are in none of them.
 
 ## Opening and narrowing
 
-Cards that narrow each other sit together on one shaded row, the same height, joined by a bar in the card border color from each card to the one it narrows:
+Cards that narrow each other sit together on one shaded row, the same height, joined by a bar in the card border color, 1em shorter than the cards at each end, from each card to the one it narrows:
 across on a desktop, down on a phone. The other cards share an unshaded grid.
 
 A row opens its photos on the Grid: hovering it turns its count into **See More (37) →** without moving the number
