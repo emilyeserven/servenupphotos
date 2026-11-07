@@ -1,10 +1,11 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { ColorFilter } from "@portfolio/components/color-filter";
-import { ColorMatchControl } from "@portfolio/components/color-match-control";
+import { ChoiceRow } from "@portfolio/components/choice-row";
+import { ShareThreshold } from "@portfolio/components/color-match-control";
 import { OrientationFilter } from "@portfolio/components/orientation-filter";
-import { PickerPart } from "@portfolio/components/section-picker";
-import { VividnessControl } from "@portfolio/components/vividness-control";
+import { type PickerInfo, PickerPart } from "@portfolio/components/section-picker";
+import { VividnessSlider } from "@portfolio/components/vividness-control";
 import {
   type ColorFilters,
   countsFor,
@@ -34,15 +35,24 @@ export interface VisualsPickerProps {
   filters: VisualFilters;
 }
 
+/** A section's controls, with its (i) button when it has more to say. */
+type PartProps = VisualsPickerProps & { info: PickerInfo };
+
 /** The right side of the Visuals picker: the chosen section's controls. */
-export function VisualsPickerPart({
-  section,
-  ...props
-}: VisualsPickerProps & { section: VisualSection }) {
+export function VisualsPickerPart({ section, ...props }: PartProps & { section: VisualSection }) {
   return PARTS[section](props);
 }
 
-const PARTS: Record<VisualSection, (props: VisualsPickerProps) => ReactNode> = {
+/**
+ * What each choice of a section does, for the panel its (i) button opens on the right; the
+ * sections left out have no (i) button.
+ */
+export const VISUAL_INFO: Partial<Record<VisualSection, ReactNode>> = {
+  match: <MatchChoices />,
+  vivid: <VividChoices />,
+};
+
+const PARTS: Record<VisualSection, (props: PartProps) => ReactNode> = {
   color: (props) => <ColorPart {...props} />,
   match: (props) => <MatchPart {...props} />,
   vivid: (props) => <VividPart {...props} />,
@@ -62,46 +72,91 @@ function ColorPart({ photos, filters }: VisualsPickerProps) {
   );
 }
 
-/** How a photo matches the picked color, with what each choice does. */
-function MatchPart({ filters }: VisualsPickerProps) {
+/** How a photo matches the picked color: a list of Largest only and At least…, with its slider. */
+function MatchPart({ filters, info }: PartProps) {
+  const threshold = matchOf(filters).mode === "threshold";
+  const navigate = useNavigate();
+  const set = (match: "threshold" | undefined) =>
+    void navigate({
+      to: ".",
+      resetScroll: false,
+      search: (prev: Record<string, unknown>) => ({ ...prev, match, photo: undefined }),
+      replace: true,
+    });
   return (
-    <PickerPart intro="How much of the picked color a photo needs to show.">
-      <ColorMatchControl
-        threshold={matchOf(filters).mode === "threshold"}
-        percent={filters.min ?? DEFAULT_PERCENT}
-        fallback={DEFAULT_PERCENT}
-      />
-      <Choices
-        items={[
-          [
-            "Largest only",
-            "The picked color is the biggest share of the photo. A blue sky over a green field shows under whichever covers more.",
-          ],
-          [
-            "At least…",
-            "The picked color covers at least the share you set, even when another color is bigger. A photo can show under several colors this way.",
-          ],
-        ]}
-      />
+    <PickerPart intro="How much of the picked color a photo needs to show." info={info}>
+      <div role="group" aria-label="How photos match the color" className="-mx-2 flex flex-col">
+        <ChoiceRow label="Largest only" on={!threshold} onClick={() => set(undefined)} />
+        <ChoiceRow label="At least…" on={threshold} onClick={() => set("threshold")} />
+      </div>
+      {threshold && (
+        <ShareThreshold percent={filters.min ?? DEFAULT_PERCENT} fallback={DEFAULT_PERCENT} />
+      )}
     </PickerPart>
   );
 }
 
-/** Which vividness to measure and the least a photo needs, with what each choice does. */
-function VividPart({ filters }: VisualsPickerProps) {
+/** What Largest only and At least… do, behind the Color threshold's (i) button. */
+function MatchChoices() {
   return (
-    <PickerPart intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30.">
-      <VividnessControl vivid={filters.vivid ?? 0} measure={filters.measure ?? "average"} />
-      <Choices
-        items={[
-          ["Average", "How vivid the whole photo is. Muted photos with a little color score low."],
-          [
-            "Peak",
-            "How vivid its most vivid tenth is, so a gray street with one bright red sign still scores high.",
-          ],
-        ]}
-      />
+    <Choices
+      items={[
+        [
+          "Largest only",
+          "The picked color is the biggest share of the photo. A blue sky over a green field shows under whichever covers more.",
+        ],
+        [
+          "At least…",
+          "The picked color covers at least the share you set, even when another color is bigger. A photo can show under several colors this way.",
+        ],
+      ]}
+    />
+  );
+}
+
+/** Which vividness to measure, as a list of Average and Peak, and the least a photo needs. */
+function VividPart({ filters, info }: PartProps) {
+  return (
+    <PickerPart
+      intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30."
+      info={info}
+    >
+      <MeasureChoices peak={filters.measure === "peak"} />
+      <VividnessSlider vivid={filters.vivid ?? 0} />
     </PickerPart>
+  );
+}
+
+/** Average and Peak, one under the other, the chosen one checked; average is left out of the URL. */
+function MeasureChoices({ peak }: { peak: boolean }) {
+  const navigate = useNavigate();
+  const set = (measure: "peak" | undefined) =>
+    void navigate({
+      to: ".",
+      resetScroll: false,
+      search: (prev: Record<string, unknown>) => ({ ...prev, measure, photo: undefined }),
+      replace: true,
+    });
+  return (
+    <div role="group" aria-label="Vividness measure" className="-mx-2 flex flex-col">
+      <ChoiceRow label="Average" on={!peak} onClick={() => set(undefined)} />
+      <ChoiceRow label="Peak" on={peak} onClick={() => set("peak")} />
+    </div>
+  );
+}
+
+/** What Average and Peak do, behind the Vividness (i) button. */
+function VividChoices() {
+  return (
+    <Choices
+      items={[
+        ["Average", "How vivid the whole photo is. Muted photos with a little color score low."],
+        [
+          "Peak",
+          "How vivid its most vivid tenth is, so a gray street with one bright red sign still scores high.",
+        ],
+      ]}
+    />
   );
 }
 
@@ -128,7 +183,7 @@ function OrientationPart({ photos, filters }: VisualsPickerProps) {
 /** What each of a control's choices does, as a short list under it. */
 function Choices({ items }: { items: [string, string][] }) {
   return (
-    <dl className="flex flex-col gap-2 border-t pt-3 text-xs">
+    <dl className="flex flex-col gap-3 text-xs">
       {items.map(([name, text]) => (
         <div key={name}>
           <dt className="font-medium">{name}</dt>

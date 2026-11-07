@@ -3,6 +3,7 @@ import { type ReactNode, useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
 import { SectionTab } from "@portfolio/components/picker-section-tab";
 import { FilterCount } from "@portfolio/components/filter-count";
+import { InfoButton } from "@portfolio/components/info-button";
 import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import { cn } from "@portfolio/lib/utils";
@@ -32,6 +33,11 @@ interface SectionPickerProps<K extends string> {
   footer?: ReactNode;
   /** The chosen section's controls. */
   children: ReactNode;
+  /**
+   * More about the chosen section, in its own panel to the right of the controls (under them on
+   * phones), such as what each choice does while its (i) button is on.
+   */
+  aside?: ReactNode;
 }
 
 /**
@@ -39,7 +45,7 @@ interface SectionPickerProps<K extends string> {
  * **Visuals**: a list of sections on the left, each saying what it's set to, and the chosen
  * section's controls on the right. On phones the list folds up above the controls instead, behind
  * a button naming the chosen section, and takes the controls' place while it's open; choosing a
- * section folds it up again.
+ * section folds it up again. `aside`, when given, is a third panel to the right.
  */
 export function SectionPicker<K extends string>(props: SectionPickerProps<K>) {
   const [listOpen, setListOpen] = useState(false);
@@ -48,22 +54,50 @@ export function SectionPicker<K extends string>(props: SectionPickerProps<K>) {
     props.onChoose(key);
     setListOpen(false);
   };
+  const hasAside = props.aside !== undefined;
+  return (
+    <div className={pickerClass(props.width, hasAside)}>
+      <ListToggle section={current} open={listOpen} onClick={() => setListOpen(!listOpen)} />
+      <SectionList {...props} listOpen={listOpen} onChoose={choose} />
+      <div role="tabpanel" aria-label={current?.label} className={panelClass(listOpen, hasAside)}>
+        {props.children}
+      </div>
+      {hasAside && <PickerAside listOpen={listOpen}>{props.aside}</PickerAside>}
+    </div>
+  );
+}
+
+/**
+ * The picker's own box, `width` wide beside phones. With an aside, on phones the controls and the
+ * aside scroll together, rather than squeezing each other.
+ */
+function pickerClass(width: string, hasAside: boolean): string {
+  return cn(
+    "flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] w-[calc(100vw-2rem)] flex-col sm:flex-row",
+    width,
+    hasAside && "max-sm:overflow-y-auto",
+  );
+}
+
+/** The controls' panel: hidden on phones while the list is open, and its full height beside an aside. */
+function panelClass(listOpen: boolean, hasAside: boolean): string {
+  return cn(
+    "min-h-0 min-w-0 flex-1 overflow-y-auto p-3",
+    listOpen && "max-sm:hidden",
+    hasAside && "max-sm:flex-none",
+  );
+}
+
+/** The panel to the right of a picker's controls, or under them on phones. */
+function PickerAside({ listOpen, children }: { listOpen: boolean; children: ReactNode }) {
   return (
     <div
       className={cn(
-        "flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] w-[calc(100vw-2rem)] flex-col sm:flex-row",
-        props.width,
+        "min-w-0 shrink-0 border-t p-3 sm:min-h-0 sm:w-56 sm:overflow-y-auto sm:border-t-0 sm:border-l",
+        listOpen && "max-sm:hidden",
       )}
     >
-      <ListToggle section={current} open={listOpen} onClick={() => setListOpen(!listOpen)} />
-      <SectionList {...props} listOpen={listOpen} onChoose={choose} />
-      <div
-        role="tabpanel"
-        aria-label={current?.label}
-        className={cn("min-h-0 min-w-0 flex-1 overflow-y-auto p-3", listOpen && "max-sm:hidden")}
-      >
-        {props.children}
-      </div>
+      {children}
     </div>
   );
 }
@@ -170,11 +204,33 @@ export function FilterPickerButton({
   );
 }
 
-/** A section's controls, with a line over them saying what they're for. */
-export function PickerPart({ intro, children }: { intro: string; children: ReactNode }) {
+/** A picker section's (i) button: whether it's on, and what turns it on or off. */
+export interface PickerInfo {
+  open: boolean;
+  onToggle: () => void;
+}
+
+/**
+ * A section's controls, with a line over them saying what they're for. With `info`, an (i) button
+ * beside that line shows or hides more about them in the picker's `aside`.
+ */
+export function PickerPart({
+  intro,
+  info,
+  children,
+}: {
+  intro: string;
+  info?: PickerInfo;
+  children: ReactNode;
+}) {
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs text-muted-foreground">{intro}</p>
+      <div className="-mt-1 -mr-1 flex min-h-7 items-start gap-2">
+        <p className="flex-1 pt-1 text-xs text-muted-foreground">{intro}</p>
+        {info && (
+          <InfoButton open={info.open} label="what each choice does" onClick={info.onToggle} />
+        )}
+      </div>
       {children}
     </div>
   );
