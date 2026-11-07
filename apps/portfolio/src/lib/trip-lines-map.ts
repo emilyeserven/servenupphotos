@@ -23,7 +23,7 @@ export interface TripLinesMap {
  * TRIPLINES.geo.json, loaded the first time the map draws trip lines, so pages that never do
  * don't carry it; undefined until then, or while `on` is false.
  */
-function useTripLinesMap(on: boolean): TripLinesMap | undefined {
+export function useTripLinesMap(on: boolean): TripLinesMap | undefined {
   const [map, setMap] = useState<TripLinesMap>();
   useEffect(() => {
     if (!on || map) return;

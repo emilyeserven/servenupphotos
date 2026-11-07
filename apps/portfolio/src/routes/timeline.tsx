@@ -33,6 +33,7 @@ import {
 } from "@/lib/timeline-display";
 import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
+import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
 import {
   absoluteTimeRange,
   parseTimeRange,
@@ -219,13 +220,15 @@ function TimelineView() {
           onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
         />
       </div>
-      <PhotoMonths
-        photos={inRange}
-        filtered={hasFilters(filters) || search.q !== undefined}
-        display={display}
-        onOpen={show}
-        listRef={setList}
-      />
+      <RouteSketches>
+        <PhotoMonths
+          photos={inRange}
+          filtered={hasFilters(filters) || search.q !== undefined}
+          display={display}
+          onOpen={show}
+          listRef={setList}
+        />
+      </RouteSketches>
       {/* With one label's days, the ticks are its days rather than a month or two. */}
       <TimelineScrubber list={list} chart={chart} byDay={scrubsByDay(label, display)} />
       <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
@@ -333,6 +336,7 @@ function DaySection({
       <h3 className="sticky top-10 z-[5] -mx-1 flex items-center gap-2 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
         <span className="shrink-0">{day}</span>
         <DayLabel label={label} />
+        <TimelineRouteSketch day={dayFormat(dayPhotos, "yyyy-MM-dd")} />
       </h3>
       <ul className="flex flex-col gap-3">
         {dayPhotos.map((photo) => (
