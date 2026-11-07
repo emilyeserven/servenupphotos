@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Shapes } from "lucide-react";
+import { ChevronDown, Eye, EyeOff, Info } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ChoiceRow } from "@portfolio/components/choice-row";
 import { EquipmentRow } from "@portfolio/components/equipment-row";
@@ -173,10 +173,14 @@ function RangePart({
   const set = (range: string | undefined) => onChange({ [setting]: range });
   const [dragged, setDragged] = useState<[string, string] | undefined>();
   const [low, high] = dragged ?? setEnds(RANGE_VALUES[setting], filters[setting]);
+  const toggle = () => onGraphics(!graphics);
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
       <div className="flex min-w-0 flex-1 flex-col gap-3">
-        <GraphicsToggle on={graphics} onClick={() => onGraphics(!graphics)} />
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold">{label}</h3>
+          <InfoButton on={graphics} label={label} onClick={toggle} />
+        </div>
         <RangeFilter
           label={label}
           values={RANGE_VALUES[setting]}
@@ -191,11 +195,12 @@ function RangePart({
           range={filters[setting]}
           onChange={set}
         />
+        <MobileInfoToggle on={graphics} onClick={toggle} />
       </div>
       {graphics && (
         <aside
-          aria-label={`${label} graphics`}
-          className="flex shrink-0 flex-col border-t pt-3 sm:w-44 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-3"
+          aria-label={`About ${label}`}
+          className="flex shrink-0 flex-col sm:w-44 sm:border-l sm:pl-3"
         >
           <SettingIllustration
             setting={setting}
@@ -209,17 +214,37 @@ function RangePart({
   );
 }
 
-/** The button that shows or hides the graphics pane beside the slider. */
-function GraphicsToggle({ on, onClick }: { on: boolean; onClick: () => void }) {
+/** On wider screens, the (i) button beside the title that shows or hides the info pane. */
+function InfoButton({ on, label, onClick }: { on: boolean; label: string; onClick: () => void }) {
   return (
     <button
       type="button"
       aria-pressed={on}
+      aria-label={`${on ? "Hide" : "Show"} info about ${label}`}
+      title={`${on ? "Hide" : "Show"} info`}
       onClick={onClick}
-      className="flex items-center gap-1.5 self-end rounded-sm px-2 py-1 text-xs text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:bg-accent"
+      className={cn(
+        "flex size-7 items-center justify-center rounded-full text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 max-sm:hidden",
+        on && "bg-accent text-foreground",
+      )}
     >
-      <Shapes aria-hidden className="size-3.5" />
-      {on ? "Hide graphics" : "Show graphics"}
+      <Info aria-hidden className="size-4" />
+    </button>
+  );
+}
+
+/** On phones, a full-width button at the bottom that opens or closes the info under it. */
+function MobileInfoToggle({ on, onClick }: { on: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-expanded={on}
+      onClick={onClick}
+      className="flex w-full items-center justify-center gap-1.5 rounded-md border py-2 text-sm text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:hidden"
+    >
+      <Info aria-hidden className="size-4" />
+      {on ? "Hide info" : "Show info"}
+      <ChevronDown aria-hidden className={cn("size-4 transition-transform", on && "rotate-180")} />
     </button>
   );
 }
