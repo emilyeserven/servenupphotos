@@ -82,7 +82,7 @@ export function SiteMenu() {
           className="mb-1 block rounded-md px-2 py-1.5 text-base text-foreground hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:no-underline"
         />
         <nav aria-label="Portfolio views">
-          <ul className="grid grid-cols-3 gap-1">
+          <ul className="grid grid-cols-2 gap-1">
             {mainViews.map((view) => (
               <li key={view.to}>
                 <ViewLink

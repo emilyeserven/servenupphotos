@@ -34,7 +34,15 @@ export interface PortfolioView {
   minor?: boolean;
 }
 
+// In the order the site menu and the homepage show them: Map, Timeline, Color and Grid as the big tiles.
 const portfolioViews: PortfolioView[] = [
+  {
+    to: "/map",
+    label: "Map",
+    description: "Photos plotted by where they were taken.",
+    icon: MapPin,
+    enabled: true,
+  },
   {
     to: "/timeline",
     label: "Timeline",
@@ -43,10 +51,17 @@ const portfolioViews: PortfolioView[] = [
     enabled: true,
   },
   {
-    to: "/map",
-    label: "Map",
-    description: "Photos plotted by where they were taken.",
-    icon: MapPin,
+    to: "/color",
+    label: "Color",
+    description: "Photos browsed by color and vividness.",
+    icon: Palette,
+    enabled: true,
+  },
+  {
+    to: "/grid",
+    label: "Grid",
+    description: "Every photo as a gallery grid, or as a sortable table of their details.",
+    icon: Grid3x3,
     enabled: true,
   },
   {
@@ -72,20 +87,6 @@ const portfolioViews: PortfolioView[] = [
     icon: ChartColumn,
     enabled: true,
     minor: true,
-  },
-  {
-    to: "/grid",
-    label: "Grid",
-    description: "Every photo as a gallery grid, or as a sortable table of their details.",
-    icon: Grid3x3,
-    enabled: true,
-  },
-  {
-    to: "/color",
-    label: "Color",
-    description: "Photos browsed by color and vividness.",
-    icon: Palette,
-    enabled: true,
   },
   {
     to: "/lucky",
