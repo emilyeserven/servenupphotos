@@ -1,0 +1,16 @@
+{
+  "id": "iso",
+  "kind": "preset",
+  "name": "ISO",
+  "order": 3,
+  "graph": {
+    "type": "dot",
+    "x": "iso",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0
+  }
+}

@@ -22,6 +22,7 @@ import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as GenreSuggestionsRouteImport } from './routes/genre-suggestions'
+import { Route as GraphPresetsRouteImport } from './routes/graph-presets'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
 import { Route as InstagramPlannedRouteImport } from './routes/instagram-planned'
@@ -116,6 +117,11 @@ const GalleryRoute = GalleryRouteImport.update({
 const GenreSuggestionsRoute = GenreSuggestionsRouteImport.update({
   id: '/genre-suggestions',
   path: '/genre-suggestions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GraphPresetsRoute = GraphPresetsRouteImport.update({
+  id: '/graph-presets',
+  path: '/graph-presets',
   getParentRoute: () => rootRouteImport,
 } as any)
 const InFlightRoute = InFlightRouteImport.update({
@@ -283,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
+  '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/instagram-planned': typeof InstagramPlannedRoute
@@ -328,6 +335,7 @@ export interface FileRoutesByTo {
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
+  '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/instagram-planned': typeof InstagramPlannedRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
   '/genre-suggestions': typeof GenreSuggestionsRoute
+  '/graph-presets': typeof GraphPresetsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/instagram-planned': typeof InstagramPlannedRoute
@@ -419,6 +428,7 @@ export interface FileRouteTypes {
     | '/exif'
     | '/gallery'
     | '/genre-suggestions'
+    | '/graph-presets'
     | '/in-flight'
     | '/instagram'
     | '/instagram-planned'
@@ -464,6 +474,7 @@ export interface FileRouteTypes {
     | '/exif'
     | '/gallery'
     | '/genre-suggestions'
+    | '/graph-presets'
     | '/in-flight'
     | '/instagram'
     | '/instagram-planned'
@@ -507,6 +518,7 @@ export interface FileRouteTypes {
     | '/exif'
     | '/gallery'
     | '/genre-suggestions'
+    | '/graph-presets'
     | '/in-flight'
     | '/instagram'
     | '/instagram-planned'
@@ -553,6 +565,7 @@ export interface RootRouteChildren {
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
   GenreSuggestionsRoute: typeof GenreSuggestionsRoute
+  GraphPresetsRoute: typeof GraphPresetsRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
   InstagramPlannedRoute: typeof InstagramPlannedRoute
@@ -672,6 +685,13 @@ declare module '@tanstack/react-router' {
       path: '/genre-suggestions'
       fullPath: '/genre-suggestions'
       preLoaderRoute: typeof GenreSuggestionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/graph-presets': {
+      id: '/graph-presets'
+      path: '/graph-presets'
+      fullPath: '/graph-presets'
+      preLoaderRoute: typeof GraphPresetsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/in-flight': {
@@ -928,6 +948,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
   GenreSuggestionsRoute: GenreSuggestionsRoute,
+  GraphPresetsRoute: GraphPresetsRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
   InstagramPlannedRoute: InstagramPlannedRoute,

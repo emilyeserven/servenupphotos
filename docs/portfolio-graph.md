@@ -3,8 +3,8 @@
 The portfolio's Graph page (`/graph`, `apps/portfolio/src/routes/graph.tsx`) draws a graph of your own from the counts
 on the [Numbers](portfolio-stats.md) page. It's in the site menu after Numbers, with the other small views.
 
-The builder's parts are in `components/graph-builder/`; what it counts is in `lib/graph-data.ts`, and the camera
-settings it adds in `lib/graph-settings.ts`.
+The builder's parts are in `components/graph-builder/`; what it counts is in `lib/graph-data.ts`, the camera
+settings it adds in `lib/graph-settings.ts`, and the presets' row in `lib/graph-presets.ts`.
 
 ## Layout
 
@@ -28,8 +28,12 @@ axis without opening Adjust Graph.
 
 The page opens on photos per year, oldest first, each bar split by season. Nothing is kept in the URL.
 
-**Presets** set up a dot graph of **Aperture**, **Exposure**, **ISO** or **Focal length**: a dot for
-each value the photos were taken at, lowest first, at how many photos have it. The filters stay as they are.
+**Presets** are made on the pipeline's [Graph Presets](graph-presets.md) page and read from `graphs/GRAPHS.json`. Each
+is a button that sets the graph's type, axes, split, order and how many values show; the filters stay as they are. A
+**preset group** is a dropdown among the buttons, such as **When**, listing its presets; a group with no presets isn't
+shown, and the row is left out when there are no presets at all. The committed ones are dot graphs of **Aperture**,
+**Exposure**, **ISO** and **Focal length**: a dot for each value the photos were taken at, lowest first, at how many
+photos have it.
 
 ## How it's counted
 

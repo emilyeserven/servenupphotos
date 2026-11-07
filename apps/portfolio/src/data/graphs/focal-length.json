@@ -1,0 +1,16 @@
+{
+  "id": "focal-length",
+  "kind": "preset",
+  "name": "Focal length",
+  "order": 4,
+  "graph": {
+    "type": "dot",
+    "x": "focalLength",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0
+  }
+}

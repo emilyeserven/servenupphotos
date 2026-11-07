@@ -1,38 +1,81 @@
+import { ChevronDown } from "lucide-react";
+import { DropdownMenu } from "radix-ui";
 import { Button } from "@/components/ui/button";
 import type { GraphConfig } from "@/lib/graph-data";
+import { type GraphPreset, type PresetItem, presetRow } from "@/lib/graph-presets";
 
-/** The ready-made graphs: a dot for each value of a camera setting, at how many photos have it. */
-const PRESETS: [string, string][] = [
-  ["Aperture", "aperture"],
-  ["Exposure", "exposure"],
-  ["ISO", "iso"],
-  ["Focal length", "focalLength"],
-];
-
-/** A preset's settings: a dot graph of the setting, lowest value first, unsplit, every value shown. */
-function presetConfig(x: string): Partial<GraphConfig> {
-  return { type: "dot", x, measure: "count", split: "", sort: "group", limit: 0 };
-}
+/** Picking a preset: the graph takes its settings, and the filters stay as they are. */
+type OnPick = (change: Partial<GraphConfig>) => void;
 
 /**
- * Buttons for the ready-made graphs, each setting the graph to a dot graph of a camera setting,
- * such as one dot per aperture. The filters stay as they are.
+ * The row of ready-made graphs the pipeline's Graph Presets page saves, in their order: a button
+ * for each preset, such as a dot graph of Aperture, and a dropdown for each preset group. Picking
+ * one sets the graph to it; the filters stay as they are.
  */
-export function GraphPresets({ onPick }: { onPick: (change: Partial<GraphConfig>) => void }) {
+export function GraphPresets({ onPick }: { onPick: OnPick }) {
+  const row = presetRow();
+  if (row.length === 0) return null;
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-sm font-medium text-muted-foreground">Presets</span>
-      {PRESETS.map(([label, x]) => (
-        <Button
-          key={x}
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => onPick(presetConfig(x))}
-        >
-          {label}
-        </Button>
+      {row.map((item) => (
+        <RowItem key={itemKey(item)} item={item} onPick={onPick} />
       ))}
     </div>
+  );
+}
+
+/** What a row item is kept apart by: its preset's or group's ID. */
+function itemKey(item: PresetItem): string {
+  return item.kind === "preset" ? item.preset.id : `group:${item.id}`;
+}
+
+/** A preset's button, or a group's dropdown. */
+function RowItem({ item, onPick }: { item: PresetItem; onPick: OnPick }) {
+  if (item.kind === "group")
+    return <PresetGroup name={item.name} presets={item.presets} onPick={onPick} />;
+  return (
+    <Button type="button" variant="outline" size="sm" onClick={() => onPick(item.preset.graph)}>
+      {item.preset.name}
+    </Button>
+  );
+}
+
+/** A preset group: a button with its name that opens a menu of its presets. */
+function PresetGroup({
+  name,
+  presets,
+  onPick,
+}: {
+  name: string;
+  presets: GraphPreset[];
+  onPick: OnPick;
+}) {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <Button type="button" variant="outline" size="sm">
+          {name}
+          <ChevronDown aria-hidden />
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align="start"
+          sideOffset={4}
+          className="z-50 min-w-40 rounded-md border bg-popover p-1 text-popover-foreground shadow-md"
+        >
+          {presets.map((preset) => (
+            <DropdownMenu.Item
+              key={preset.id}
+              onSelect={() => onPick(preset.graph)}
+              className="cursor-default rounded-sm px-2 py-1.5 text-sm outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground"
+            >
+              {preset.name}
+            </DropdownMenu.Item>
+          ))}
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }

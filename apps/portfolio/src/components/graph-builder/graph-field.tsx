@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { GRAPH_STATS, type GraphStat } from "@/lib/graph-data";
-import { SELECT_CLASS } from "@/lib/segmented-control";
+import { GRAPH_STATS, type GraphStat } from "@portfolio/lib/graph-data";
+import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 /** One of the graph builder's settings: its name over its control. */
 export function GraphField({ label, children }: { label: string; children: ReactNode }) {

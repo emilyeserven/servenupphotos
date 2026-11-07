@@ -1,12 +1,16 @@
-import { GraphField, StatOptions, StatSelect } from "@/components/graph-builder/graph-field";
+import {
+  GraphField,
+  StatOptions,
+  StatSelect,
+} from "@portfolio/components/graph-builder/graph-field";
 import {
   type GraphConfig,
   type GraphType,
   type Measure,
   type SortOrder,
   SPLIT_TYPES,
-} from "@/lib/graph-data";
-import { SELECT_CLASS } from "@/lib/segmented-control";
+} from "@portfolio/lib/graph-data";
+import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 /** A change to some of the graph's settings. */
 export type ConfigChange = (change: Partial<GraphConfig>) => void;
