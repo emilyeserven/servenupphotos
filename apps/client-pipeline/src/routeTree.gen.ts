@@ -35,6 +35,7 @@ import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as SmallTagsRouteImport } from './routes/small-tags'
 import { Route as TagDataRouteImport } from './routes/tag-data'
 import { Route as TimelineLabelsRouteImport } from './routes/timeline-labels'
+import { Route as TripLinesRouteImport } from './routes/trip-lines'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
 import { Route as ViewerLikesRouteImport } from './routes/viewer-likes'
 import { Route as AlbumsIndexRouteImport } from './routes/albums.index'
@@ -181,6 +182,11 @@ const TimelineLabelsRoute = TimelineLabelsRouteImport.update({
   path: '/timeline-labels',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TripLinesRoute = TripLinesRouteImport.update({
+  id: '/trip-lines',
+  path: '/trip-lines',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UpdateDataRoute = UpdateDataRouteImport.update({
   id: '/update-data',
   path: '/update-data',
@@ -284,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/small-tags': typeof SmallTagsRoute
   '/tag-data': typeof TagDataRouteWithChildren
   '/timeline-labels': typeof TimelineLabelsRoute
+  '/trip-lines': typeof TripLinesRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
@@ -326,6 +333,7 @@ export interface FileRoutesByTo {
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
   '/timeline-labels': typeof TimelineLabelsRoute
+  '/trip-lines': typeof TripLinesRoute
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
@@ -369,6 +377,7 @@ export interface FileRoutesById {
   '/small-tags': typeof SmallTagsRoute
   '/tag-data': typeof TagDataRouteWithChildren
   '/timeline-labels': typeof TimelineLabelsRoute
+  '/trip-lines': typeof TripLinesRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
@@ -414,6 +423,7 @@ export interface FileRouteTypes {
     | '/small-tags'
     | '/tag-data'
     | '/timeline-labels'
+    | '/trip-lines'
     | '/update-data'
     | '/viewer-likes'
     | '/albums/$id'
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/small-tags'
     | '/timeline-labels'
+    | '/trip-lines'
     | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
@@ -498,6 +509,7 @@ export interface FileRouteTypes {
     | '/small-tags'
     | '/tag-data'
     | '/timeline-labels'
+    | '/trip-lines'
     | '/update-data'
     | '/viewer-likes'
     | '/albums/$id'
@@ -542,6 +554,7 @@ export interface RootRouteChildren {
   SmallTagsRoute: typeof SmallTagsRoute
   TagDataRoute: typeof TagDataRouteWithChildren
   TimelineLabelsRoute: typeof TimelineLabelsRoute
+  TripLinesRoute: typeof TripLinesRoute
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
   ViewerLikesRoute: typeof ViewerLikesRoute
   AlbumsIdRoute: typeof AlbumsIdRoute
@@ -739,6 +752,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineLabelsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trip-lines': {
+      id: '/trip-lines'
+      path: '/trip-lines'
+      fullPath: '/trip-lines'
+      preLoaderRoute: typeof TripLinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/update-data': {
       id: '/update-data'
       path: '/update-data'
@@ -901,6 +921,7 @@ const rootRouteChildren: RootRouteChildren = {
   SmallTagsRoute: SmallTagsRoute,
   TagDataRoute: TagDataRouteWithChildren,
   TimelineLabelsRoute: TimelineLabelsRoute,
+  TripLinesRoute: TripLinesRoute,
   UpdateDataRoute: UpdateDataRouteWithChildren,
   ViewerLikesRoute: ViewerLikesRoute,
   AlbumsIdRoute: AlbumsIdRoute,

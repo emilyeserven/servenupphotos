@@ -1,0 +1,110 @@
+import {
+  Layer,
+  Map,
+  Marker,
+  NavigationControl,
+  Source,
+  type LayerProps,
+} from "@vis.gl/react-maplibre";
+import { setWorkerUrl } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+import type { TripPoint, TripSegment } from "@/api/trip-lines";
+import { lineFeatures, pointsBounds } from "@/components/trip-lines/route-geometry";
+import type { TripPhoto } from "@/lib/trip-days";
+import { cn } from "@/lib/utils";
+
+setWorkerUrl(maplibreWorkerUrl);
+
+// The same free CARTO basemap as the portfolio's map.
+const MAP_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+
+/** Walking, a solid line, fainter for a preview. */
+function walkLayer(preview: boolean): LayerProps {
+  return {
+    id: "trip-walk",
+    type: "line",
+    filter: ["==", ["get", "mode"], "walk"],
+    layout: { "line-cap": "round", "line-join": "round" },
+    paint: { "line-color": "#2563eb", "line-width": 4, "line-opacity": preview ? 0.5 : 0.9 },
+  };
+}
+
+/** A hop by train, subway, bus or car, a dashed line. */
+const hopLayer: LayerProps = {
+  id: "trip-hop",
+  type: "line",
+  filter: ["!=", ["get", "mode"], "walk"],
+  paint: { "line-color": "#9333ea", "line-width": 3, "line-dasharray": [2, 2] },
+};
+
+interface RouteMapProps {
+  day: string;
+  photos: TripPhoto[];
+  segments: TripSegment[];
+  /** A preview not yet saved, drawn fainter. */
+  preview?: boolean;
+  /** The photo pointed at in the strip. */
+  highlighted?: number;
+  /** The day's spots with no photo. */
+  ends: TripPoint[];
+  /** Picks a spot on the map, while the editor is waiting for one. */
+  onPick?: (point: TripPoint) => void;
+}
+
+/** The day's photos as numbered dots, and its trip line drawn through them. */
+export function RouteMap({
+  day,
+  photos,
+  segments,
+  preview,
+  highlighted,
+  ends,
+  onPick,
+}: RouteMapProps) {
+  const bounds = pointsBounds([...photos, ...ends]);
+  return (
+    <div
+      className={cn("h-80 overflow-hidden rounded-md border md:h-96", onPick && "cursor-crosshair")}
+    >
+      <Map
+        key={day}
+        initialViewState={{ bounds, fitBoundsOptions: { padding: 40, maxZoom: 16 } }}
+        mapStyle={MAP_STYLE}
+        cursor={onPick ? "crosshair" : undefined}
+        onClick={(e) => onPick?.({ latitude: e.lngLat.lat, longitude: e.lngLat.lng })}
+      >
+        <NavigationControl position="bottom-right" showCompass={false} />
+        <Source id="trip-line" type="geojson" data={lineFeatures(segments, photos)}>
+          <Layer {...walkLayer(preview === true)} />
+          <Layer {...hopLayer} />
+        </Source>
+        {photos.map((p, i) => (
+          <Marker key={p.id} latitude={p.latitude} longitude={p.longitude}>
+            <PhotoDot n={i + 1} highlighted={p.id === highlighted} />
+          </Marker>
+        ))}
+        {ends.map((p, i) => (
+          <Marker key={`end-${i}`} latitude={p.latitude} longitude={p.longitude}>
+            <span className="bg-foreground text-background rounded px-1.5 py-0.5 text-xs shadow">
+              {p.label || "Spot"}
+            </span>
+          </Marker>
+        ))}
+      </Map>
+    </div>
+  );
+}
+
+function PhotoDot({ n, highlighted }: { n: number; highlighted: boolean }) {
+  return (
+    <span
+      className={cn(
+        "flex size-6 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-[11px] font-semibold text-white shadow",
+        highlighted && "scale-125 bg-orange-500",
+      )}
+    >
+      {n}
+    </span>
+  );
+}

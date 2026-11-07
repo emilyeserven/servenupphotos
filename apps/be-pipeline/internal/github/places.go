@@ -14,7 +14,7 @@ import (
 )
 
 // EntryKind is a kind of data file the pipeline saves whole, by ID: places,
-// localizations, metadata groups, camera overrides, custom lenses, timeline labels and viewer likes. Each is one JSON file in its kind's folder, and Commit
+// localizations, metadata groups, camera overrides, custom lenses, timeline labels, viewer likes and trip lines. Each is one JSON file in its kind's folder, and Commit
 // combines them into the kind's AllFile.
 type EntryKind struct {
 	// Name is the kind's singular name, as shown: "place" or "localization".
@@ -45,7 +45,10 @@ var (
 	// ViewerLikesKind is the photos each person who sent their My Likes list
 	// liked, one file per person.
 	ViewerLikesKind = EntryKind{Name: "viewer", Folder: "likes", AllFile: "LIKES.json"}
-	entryKinds      = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, TimelineLabels, ViewerLikesKind}
+	// TripLines are the days' routes, drawn on the portfolio's map: one file
+	// per day, named by the day.
+	TripLines  = EntryKind{Name: "trip line", Folder: "triplines", AllFile: "TRIPLINES.json"}
+	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, TimelineLabels, ViewerLikesKind, TripLines}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

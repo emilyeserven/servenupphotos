@@ -129,6 +129,8 @@ export interface CombinedFiles {
   timeline: CombinedFile;
   /** LIKES.json, the photos each viewer liked. */
   likes: CombinedFile;
+  /** TRIPLINES.json, the days' trip lines as marked. */
+  triplines: CombinedFile;
 }
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */
@@ -177,6 +179,8 @@ export interface InFlightRead {
   timeline: InFlightGroupsRead;
   /** The viewer likes files, one per person, combined into LIKES.json. */
   likes: InFlightGroupsRead;
+  /** The trip line files, one per day, combined into TRIPLINES.json. */
+  triplines: InFlightGroupsRead;
   images: InFlightImages;
 }
 
@@ -201,11 +205,12 @@ export interface InFlightResponse extends Omit<
   | "captions"
   | "timeline"
   | "likes"
+  | "triplines"
 > {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template, timeline label and viewer likes files in the pull request. */
+  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template, timeline label, viewer likes and trip line files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
   genres: InFlightGroups;
@@ -217,6 +222,7 @@ export interface InFlightResponse extends Omit<
   captions: InFlightGroups;
   timeline: InFlightGroups;
   likes: InFlightGroups;
+  triplines: InFlightGroups;
 }
 
 /** The album, tag, place or localization files in the pull request, and the combined file built from them. */

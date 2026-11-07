@@ -152,7 +152,9 @@ func sortPaths(paths []string) {
 
 // isDataFile reports a .json file directly in folder other than skip.
 func isDataFile(folder, p, skip string) bool {
-	return inFolder(folder, p) && strings.EqualFold(path.Ext(p), ".json") && !strings.EqualFold(path.Base(p), skip)
+	base := path.Base(p)
+	return inFolder(folder, p) && strings.EqualFold(path.Ext(p), ".json") && !strings.EqualFold(base, skip) &&
+		!strings.EqualFold(base, TripLinesMapFile)
 }
 
 // Change statuses of a file against the base branch, as GitHub names them in
