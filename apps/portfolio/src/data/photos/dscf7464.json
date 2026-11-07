@@ -262,5 +262,6 @@
     "peakChroma": 41.18,
     "samples": 10050
   },
-  "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them."
+  "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [261, 262, 457, 468, 17, 455]
 }

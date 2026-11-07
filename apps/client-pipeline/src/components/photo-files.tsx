@@ -10,14 +10,21 @@ import { useCombinedData } from "@/stores/combined-data";
  * they're read. ALLPHOTOS.json on the base branch, kept by the combined data store, tells photos in
  * flight from published ones.
  */
-export function PhotoFiles({ children }: { children: (files: SocialCalendar) => ReactNode }) {
+export function PhotoFiles({
+  children,
+  query = socialCalendarQuery,
+}: {
+  children: (files: SocialCalendar) => ReactNode;
+  /** The read of the photo files to use; the Instagram calendar's whole files by default. */
+  query?: typeof socialCalendarQuery;
+}) {
   const combined = useCombinedData();
   const { data: lists, error } = combined;
   const select = useCallback(
     (read: SocialCalendarRead) => withBaseAllPhotos(read, { data: lists, error }),
     [lists, error],
   );
-  const files = useQuery({ ...socialCalendarQuery, select });
+  const files = useQuery({ ...query, select });
   if (combined.isPending) return <p>Reading ALLPHOTOS.json…</p>;
   return (
     <QueryResult query={files} pendingLabel="Reading the photo JSON…">

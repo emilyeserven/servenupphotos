@@ -262,5 +262,6 @@
     "peakChroma": 4.28,
     "samples": 9801
   },
-  "notes": "Shows a fabric curtain with a crest; 'fabric' isn't a tag, since only 1 photo has it."
+  "notes": "Shows a fabric curtain with a crest; 'fabric' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [464, 346, 378, 262, 384, 382]
 }

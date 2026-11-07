@@ -261,5 +261,6 @@
     "peakChroma": 23.72,
     "samples": 10050
   },
-  "notes": "Shows painted numbers; 'numbers' isn't a tag, since only 2 photos have them."
+  "notes": "Shows painted numbers; 'numbers' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [180, 63, 15, 20, 391, 58]
 }

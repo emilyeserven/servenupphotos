@@ -261,5 +261,6 @@
     "peakChroma": 9.15,
     "samples": 10112
   },
-  "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one."
+  "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [140, 142, 147, 144, 141, 145]
 }

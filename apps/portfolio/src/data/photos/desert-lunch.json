@@ -261,5 +261,6 @@
     "peakChroma": 26.38,
     "samples": 9694
   },
-  "notes": "Shows a picnic on a carpet in the desert; 'carpet' and 'picnic' aren't tags, since only 2 photos have each."
+  "notes": "Shows a picnic on a carpet in the desert; 'carpet' and 'picnic' aren't tags, since only 2 photos have each.",
+  "similarPhotos": [366, 365, 367, 369, 362, 426]
 }

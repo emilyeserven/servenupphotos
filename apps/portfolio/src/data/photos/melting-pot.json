@@ -262,5 +262,6 @@
     "peakChroma": 32.87,
     "samples": 9975
   },
-  "notes": "Shows Halloween skeletons; 'skeletons' isn't a tag, since only 2 photos have them."
+  "notes": "Shows Halloween skeletons; 'skeletons' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [16, 438, 306, 441, 132, 450]
 }

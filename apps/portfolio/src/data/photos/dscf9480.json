@@ -261,5 +261,6 @@
     "peakChroma": 19.88,
     "samples": 9912
   },
-  "notes": "Shows a karahafu gable and katomado window; 'karahafu' and 'katomado' aren't tags, since only 1 photo has them."
+  "notes": "Shows a karahafu gable and katomado window; 'karahafu' and 'katomado' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [349, 350, 464, 330, 309, 378]
 }

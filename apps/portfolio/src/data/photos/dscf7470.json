@@ -266,5 +266,6 @@
     "peakChroma": 15.05,
     "samples": 9975
   },
-  "notes": "Shows a Buddha statue; 'buddha' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a Buddha statue; 'buddha' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [324, 309, 313, 311, 310, 312]
 }

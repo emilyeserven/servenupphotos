@@ -26,6 +26,8 @@ export interface GraphPresetFile {
   group?: string;
   /** What a preset sets the graph to; groups leave it out. */
   graph?: SavedGraph;
+  /** Whether a preset shows as its own button above the Graph page's Presets and Adjust Graph; left out when it doesn't. */
+  spotlight?: boolean;
 }
 
 /** A preset on the Graph page: its name, and what it sets the graph to, with the ranges it leaves out turned off. */
@@ -88,4 +90,37 @@ export function presetRow(files: GraphPresetFile[] = presetFiles, keepEmpty = fa
     .filter((file) => inRow(file, groups))
     .map((file) => itemOf(file, sorted))
     .filter((item) => keepEmpty || item.kind === "preset" || item.presets.length > 0);
+}
+
+/** One section of the Presets picker: a preset group, or the presets in none, with its presets in order. */
+export interface PresetSection {
+  /** The group's ID, or "" for the presets in no group. */
+  id: string;
+  name: string;
+  presets: GraphPreset[];
+}
+
+/** What the section of the presets in no group is called: Other beside groups, or Presets alone. */
+function looseName(groups: PresetSection[]): string {
+  return groups.length > 0 ? "Other" : "Presets";
+}
+
+/**
+ * The Presets picker's sections: each preset group with presets in it, in order, then the presets
+ * in no group, when there are any.
+ */
+export function presetSections(files: GraphPresetFile[] = presetFiles): PresetSection[] {
+  const row = presetRow(files);
+  const groups = row.flatMap((item) => (item.kind === "group" ? [item] : []));
+  const loose = row.flatMap((item) => (item.kind === "preset" ? [item.preset] : []));
+  if (loose.length === 0) return groups;
+  return [...groups, { id: "", name: looseName(groups), presets: loose }];
+}
+
+/** The presets the pipeline spotlights, in order, shown as buttons above the Graph page's Presets. */
+export function spotlightPresets(files: GraphPresetFile[] = presetFiles): GraphPreset[] {
+  return files
+    .toSorted(byOrder)
+    .filter((file) => file.kind === "preset" && file.spotlight)
+    .map(presetOf);
 }

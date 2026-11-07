@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { GraphField } from "@portfolio/components/graph-builder/graph-field";
 import { OptionCheckbox } from "@portfolio/components/view-options-button";
-import { axisValues, type GraphConfig, statById } from "@portfolio/lib/graph-data";
+import { axisValues, type GraphConfig, hasYStat, statById } from "@portfolio/lib/graph-data";
 import { photoCounts, roundSteps } from "@portfolio/lib/graph-ranges";
 import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
@@ -96,10 +96,10 @@ interface YEndsProps {
   onChange: ConfigChange;
 }
 
-/** The y axis's ends: a scatterplot's y values, a bar, line or dot graph's round numbers up to its top; none for a pie. */
+/** The y axis's ends: a scatterplot's or heatmap's y values, a bar, line or dot graph's round numbers up to its top; none for a pie. */
 function YEnds({ config, rows, list, onChange }: YEndsProps) {
   if (config.type === "pie") return null;
-  if (config.type === "scatter") {
+  if (hasYStat(config.type)) {
     const labels = statById(config.y)
       .build(list)
       .rows.map((row) => row.label);

@@ -3,6 +3,7 @@
   "kind": "preset",
   "name": "Aperture",
   "order": 1,
+  "group": "technical-details",
   "graph": {
     "type": "dot",
     "x": "aperture",

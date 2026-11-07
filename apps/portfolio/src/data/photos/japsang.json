@@ -266,5 +266,6 @@
     "peakChroma": 21.03,
     "samples": 10050
   },
-  "notes": "Shows japsang roof guardians; 'japsang' isn't a tag, since only 2 photos have them."
+  "notes": "Shows japsang roof guardians; 'japsang' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [5, 212, 130, 126, 217, 127]
 }

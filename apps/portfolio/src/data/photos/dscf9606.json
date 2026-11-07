@@ -271,5 +271,6 @@
     "samples": 9900
   },
   "undecided": true,
-  "notes": "Shows a kakejiku scroll in a tokonoma; 'kakejiku' and 'tokonoma' aren't tags, since only 1 photo has them."
+  "notes": "Shows a kakejiku scroll in a tokonoma; 'kakejiku' and 'tokonoma' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [344, 345, 346, 347, 378, 384]
 }

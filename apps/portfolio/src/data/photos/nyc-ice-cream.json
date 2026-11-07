@@ -269,5 +269,6 @@
     "peakChroma": 0.01,
     "samples": 9825
   },
-  "notes": "Shows an ice cream van; 'ice-cream' and 'van' aren't tags, since only 2 photos have each."
+  "notes": "Shows an ice cream van; 'ice-cream' and 'van' aren't tags, since only 2 photos have each.",
+  "similarPhotos": [169, 11, 46, 203, 436, 441]
 }

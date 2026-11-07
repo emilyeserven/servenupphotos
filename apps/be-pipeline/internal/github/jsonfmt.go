@@ -130,7 +130,8 @@ func quoteJSON(s string) string {
 func (n jsonNode) isContainer() bool { return n.scalar == "" }
 
 // inline is n on one line, or "" when n can't be printed on one line: a
-// non-empty object, or an array holding one.
+// non-empty object, an array holding one, or a list of lists (see
+// alwaysBreaks).
 func (n jsonNode) inline() string {
 	if !n.isContainer() {
 		return n.scalar
@@ -141,7 +142,7 @@ func (n jsonNode) inline() string {
 		}
 		return "[]"
 	}
-	if n.isObject {
+	if n.isObject || n.alwaysBreaks() {
 		return ""
 	}
 	parts := make([]string, len(n.values))
@@ -151,6 +152,21 @@ func (n jsonNode) inline() string {
 		}
 	}
 	return "[" + strings.Join(parts, ", ") + "]"
+}
+
+// alwaysBreaks says n is a list of two or more lists that each hold two or
+// more values, such as a trip line's points. oxfmt puts each of those on its
+// own line even when the whole list would fit on one, as Prettier does.
+func (n jsonNode) alwaysBreaks() bool {
+	if len(n.values) < 2 {
+		return false
+	}
+	for _, v := range n.values {
+		if !v.isContainer() || v.isObject || len(v.values) < 2 {
+			return false
+		}
+	}
+	return true
 }
 
 // printJSON prints n starting at column col of a line indented by depth

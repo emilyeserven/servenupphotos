@@ -266,5 +266,6 @@
     "peakChroma": 7.18,
     "samples": 10010
   },
-  "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [29, 25, 45, 51, 32, 28]
 }

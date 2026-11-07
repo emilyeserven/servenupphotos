@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 9648
   },
-  "notes": "Shows a juggler; 'juggling' isn't a tag, since only 1 photo has it."
+  "notes": "Shows a juggler; 'juggling' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [40, 192, 186, 166, 24, 163]
 }

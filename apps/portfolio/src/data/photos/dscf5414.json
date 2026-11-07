@@ -270,5 +270,6 @@
     "peakChroma": 11.03,
     "samples": 10050
   },
-  "notes": "Shows a noraebang sign; 'noraebang' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a noraebang sign; 'noraebang' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [319, 453, 304, 282, 400, 120]
 }

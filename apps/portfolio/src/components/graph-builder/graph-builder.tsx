@@ -5,7 +5,8 @@ import { BarGraph, LineGraph, PieGraph } from "@/components/graph-builder/graph-
 import { type ConfigChange, GraphControls } from "@/components/graph-builder/graph-controls";
 import { CameraFilterBar } from "@/components/camera-filters";
 import { GraphPickContext } from "@/components/graph-builder/graph-pick-context";
-import { GraphPresets } from "@/components/graph-builder/graph-presets";
+import { PresetButtons, SpotlightPresets } from "@/components/graph-builder/graph-presets";
+import { HeatmapGraph } from "@/components/graph-builder/heatmap-graph";
 import { PickedPhotos } from "@/components/graph-builder/picked-photos";
 import { ScatterGraph } from "@/components/graph-builder/scatter-graph";
 import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
@@ -14,6 +15,7 @@ import {
   type GraphData,
   graphData,
   type GraphType,
+  hasYStat,
   scatterData,
   statById,
 } from "@/lib/graph-data";
@@ -22,6 +24,7 @@ import { type GraphPick, samePick } from "@/lib/graph-pick";
 import { NO_RANGES } from "@/lib/graph-ranges";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
+import { cn } from "@/lib/utils";
 
 /** The graph shown at first: photos per year, oldest first, each bar split by season. */
 const START: GraphConfig = {
@@ -40,10 +43,10 @@ const START: GraphConfig = {
 type View = "graph" | "table";
 
 /**
- * A graph of the person's own making from the Numbers page's counts. Presets come first, then the
- * Adjust Graph button, which opens a box of its settings: its type, the stat along each axis, what
- * splits a bar, line or dot graph. The site's usual **Show filters** bar, kept in the URL, picks
- * the photos it counts. Under them, the graph's box names each axis with a dropdown to change it,
+ * A graph of the person's own making from the Numbers page's counts. The pipeline's spotlight
+ * presets come first, then the Presets and Adjust Graph buttons. Adjust Graph opens a box with the
+ * site's usual **Show filters** bar, kept in the URL, which picks the photos it counts, and the
+ * graph's settings: its type, the stat along each axis, what splits a bar, line or dot graph. Under them, the graph's box names each axis with a dropdown to change it,
  * and shows its numbers as a table too. Clicking a bar, point, slice or dot shows its photos under
  * the graph; changing the graph clears it.
  */
@@ -57,7 +60,7 @@ export function GraphBuilder({
   photos: Photo[];
   /** The photos the filters and the text search leave, which the graph counts. */
   kept: Photo[];
-  /** Whether the page uses the window's whole width. */
+  /** Whether the graph uses the window's whole width, while everything else keeps to the column. */
   wide: boolean;
   onWideChange: (wide: boolean) => void;
 }) {
@@ -72,21 +75,22 @@ export function GraphBuilder({
   const onPick = (next: GraphPick) => setPick(samePick(pick, next) ? null : next);
   return (
     <div className="flex flex-col gap-4">
-      <CameraFilterBar photos={photos} searchable />
-      <GraphPresets config={config} onPick={onChange} />
-      <div>
-        <Button
-          type="button"
-          variant="outline"
-          aria-expanded={adjusting}
-          onClick={() => setAdjusting(!adjusting)}
-        >
-          <SlidersHorizontal aria-hidden />
-          Adjust Graph
-        </Button>
+      <div className={cn(COLUMN, "flex flex-col gap-4")}>
+        <SpotlightPresets onPick={onChange} />
+        <PresetButtons config={config} onPick={onChange}>
+          <Button
+            type="button"
+            variant="outline"
+            aria-expanded={adjusting}
+            onClick={() => setAdjusting(!adjusting)}
+          >
+            <SlidersHorizontal aria-hidden />
+            Adjust Graph
+          </Button>
+        </PresetButtons>
+        {adjusting && <AdjustBox config={config} photos={photos} list={kept} onChange={onChange} />}
       </div>
-      {adjusting && <AdjustBox config={config} list={kept} onChange={onChange} />}
-      <section className={BOX_CLASS}>
+      <section className={cn(BOX_CLASS, !wide && COLUMN)}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="text-sm text-muted-foreground tabular-nums">
             {kept.length.toLocaleString()} of {photos.length.toLocaleString()} photos
@@ -101,35 +105,44 @@ export function GraphBuilder({
         </GraphPickContext>
       </section>
       {pick && (
-        <PickedPhotos
-          key={JSON.stringify(pick)}
-          list={kept}
-          config={config}
-          pick={pick}
-          onClear={() => setPick(null)}
-        />
+        <div className={COLUMN}>
+          <PickedPhotos
+            key={JSON.stringify(pick)}
+            list={kept}
+            config={config}
+            pick={pick}
+            onClear={() => setPick(null)}
+          />
+        </div>
       )}
     </div>
   );
 }
 
+/** The page's usual column, which everything but a wide graph keeps to. */
+export const COLUMN = "mx-auto w-full max-w-5xl";
+
 /** How the Graph page's boxes look. */
 const BOX_CLASS =
   "flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-sm";
 
-/** The box Adjust Graph opens: the graph's settings. */
+/** The box Adjust Graph opens: the site's usual **Show filters** bar, then the graph's settings. */
 function AdjustBox({
   config,
+  photos,
   list,
   onChange,
 }: {
   config: GraphConfig;
+  /** Every photo, which the filters are read from. */
+  photos: Photo[];
   /** The photos the filters keep, which the Range group's choices are read from. */
   list: Photo[];
   onChange: ConfigChange;
 }) {
   return (
     <section aria-label="Adjust Graph" className={BOX_CLASS}>
+      <CameraFilterBar photos={photos} />
       <GraphControls config={config} onChange={onChange} list={list} />
     </section>
   );
@@ -166,7 +179,7 @@ function GraphArea({
   );
 }
 
-/** The button that makes the page use the window's whole width, or the usual column again. */
+/** The button that makes the graph use the window's whole width, or the usual column again. */
 function WideButton({ wide, onChange }: { wide: boolean; onChange: (wide: boolean) => void }) {
   const Icon = wide ? Minimize2 : Maximize2;
   return (
@@ -204,17 +217,18 @@ function ViewButtons({ view, onChange }: { view: View; onChange: (view: View) =>
   );
 }
 
-/** What the builder draws: a scatterplot, or a bar, line or pie graph, as a graph or a table. */
+/** What the builder draws: a scatterplot or heatmap, or a bar, line or pie graph, as a graph or a table. */
 function GraphBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
-  if (config.type === "scatter") return <ScatterBody list={list} config={config} view={view} />;
+  if (hasYStat(config.type)) return <ScatterBody list={list} config={config} view={view} />;
   return <SeriesBody list={list} config={config} view={view} />;
 }
 
-/** A scatterplot of the photos kept, or its dots as a table. */
+/** A scatterplot or heatmap of the photos kept, or its dots or cells as a table. */
 function ScatterBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
   const data = useMemo(() => scatterData(list, config), [list, config]);
   const names = { xName: statById(config.x).label, yName: statById(config.y).label };
   if (view === "table") return <ScatterTable data={data} {...names} />;
+  if (config.type === "heatmap") return <HeatmapGraph data={data} {...names} />;
   return <ScatterGraph data={data} {...names} />;
 }
 
@@ -227,8 +241,8 @@ function SeriesBody({ list, config, view }: { list: Photo[]; config: GraphConfig
   return DRAW[config.type as SeriesType](graph, config);
 }
 
-/** The graph types drawn from series: every one but the scatterplot. */
-type SeriesType = Exclude<GraphType, "scatter">;
+/** The graph types drawn from series: every one but the scatterplot and the heatmap. */
+type SeriesType = Exclude<GraphType, "scatter" | "heatmap">;
 
 /** How each of those types is drawn. */
 const DRAW: Record<SeriesType, (graph: GraphData, config: GraphConfig) => ReactNode> = {

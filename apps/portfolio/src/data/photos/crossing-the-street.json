@@ -264,5 +264,6 @@
     "peakChroma": 18.69,
     "samples": 9828
   },
-  "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [492, 490, 494, 444, 158, 412]
 }

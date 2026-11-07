@@ -1,42 +1,10 @@
-import { Bookmark, X } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GraphConfig } from "@/lib/graph-data";
 import type { SavedGraphs } from "@/lib/saved-graphs";
 import { SELECT_CLASS } from "@/lib/segmented-control";
-
-/** Picking a preset: the graph takes its settings, and the filters stay as they are. */
-type OnPick = (change: Partial<GraphConfig>) => void;
-
-/** The visitor's own presets, each a button with a × to remove it, after the site's presets. */
-export function SavedPresets({ saved, onPick }: { saved: SavedGraphs; onPick: OnPick }) {
-  return saved.presets.map((preset) => (
-    <span key={preset.id} className="inline-flex">
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="rounded-r-none border-r-0"
-        onClick={() => onPick(preset.graph)}
-      >
-        <Bookmark aria-hidden />
-        {preset.name}
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="rounded-l-none px-2"
-        aria-label={`Remove ${preset.name}`}
-        title="Remove this preset"
-        onClick={() => saved.remove(preset.id)}
-      >
-        <X aria-hidden />
-      </Button>
-    </span>
-  ));
-}
 
 /**
  * The Save as preset button: it asks for a name, then keeps the graph's settings (not its filters)

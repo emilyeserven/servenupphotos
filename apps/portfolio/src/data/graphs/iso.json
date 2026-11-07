@@ -3,6 +3,7 @@
   "kind": "preset",
   "name": "ISO",
   "order": 3,
+  "group": "technical-details",
   "graph": {
     "type": "dot",
     "x": "iso",

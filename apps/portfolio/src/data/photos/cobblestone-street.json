@@ -266,5 +266,6 @@
     "peakChroma": 13.6,
     "samples": 9694
   },
-  "notes": "Shows outdoor dining; 'outdoor-dining' isn't a tag, since only 1 photo has it."
+  "notes": "Shows outdoor dining; 'outdoor-dining' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [401, 250, 219, 306, 404, 304]
 }

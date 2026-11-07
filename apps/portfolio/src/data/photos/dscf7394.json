@@ -266,5 +266,6 @@
     "peakChroma": 36.66,
     "samples": 9828
   },
-  "notes": "Shows a chozuya basin with a dragon spout; 'chozuya' and 'dragons' aren't tags, since only 1 photo has them."
+  "notes": "Shows a chozuya basin with a dragon spout; 'chozuya' and 'dragons' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [324, 313, 315, 309, 464, 311]
 }

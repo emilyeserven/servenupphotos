@@ -266,5 +266,6 @@
     "peakChroma": 20.73,
     "samples": 9768
   },
-  "notes": "Shows the arcaded gallery (riwaq) around a mosque courtyard; 'arcade' and 'riwaq' aren't tags, since only 2 photos have them."
+  "notes": "Shows the arcaded gallery (riwaq) around a mosque courtyard; 'arcade' and 'riwaq' aren't tags, since only 2 photos have them.",
+  "similarPhotos": [273, 272, 275, 288, 277, 279]
 }

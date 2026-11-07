@@ -262,5 +262,6 @@
     "peakChroma": 15.51,
     "samples": 9728
   },
-  "notes": "Shows bracket fungi; 'bracket-fungi' isn't a tag, since only 2 photos have it."
+  "notes": "Shows bracket fungi; 'bracket-fungi' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [88, 87, 85, 89, 91, 92]
 }

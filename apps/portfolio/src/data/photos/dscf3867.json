@@ -270,5 +270,6 @@
     "peakChroma": 21.53,
     "samples": 9975
   },
-  "notes": "Shows hanok roofs and a pagoda; 'hanok' and 'pagoda' aren't tags, since only 1–2 photos have them."
+  "notes": "Shows hanok roofs and a pagoda; 'hanok' and 'pagoda' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [395, 396, 387, 461, 388, 419]
 }

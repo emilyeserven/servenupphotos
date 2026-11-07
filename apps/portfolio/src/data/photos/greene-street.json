@@ -270,5 +270,6 @@
     "peakChroma": 15.16,
     "samples": 9782
   },
-  "notes": "Shows SoHo's cast-iron facades; 'cast-iron-architecture' isn't a tag, since only 1 photo has it."
+  "notes": "Shows SoHo's cast-iron facades; 'cast-iron-architecture' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [42, 372, 416, 408, 250, 281]
 }

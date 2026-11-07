@@ -266,5 +266,6 @@
     "peakChroma": 36.25,
     "samples": 9417
   },
-  "notes": "Shows a dog; 'dogs' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a dog; 'dogs' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [366, 362, 365, 368, 359, 294]
 }

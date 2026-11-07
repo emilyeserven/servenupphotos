@@ -262,5 +262,6 @@
     "peakChroma": 26.19,
     "samples": 10050
   },
-  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them."
+  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [436, 429, 413, 435, 250, 373]
 }

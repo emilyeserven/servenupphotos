@@ -261,5 +261,6 @@
     "peakChroma": 28.69,
     "samples": 10050
   },
-  "notes": "Shows Korean changsal latticework; 'changsal' isn't a tag, since only 1 photo has it."
+  "notes": "Shows Korean changsal latticework; 'changsal' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [260, 298, 62, 339, 397, 172]
 }

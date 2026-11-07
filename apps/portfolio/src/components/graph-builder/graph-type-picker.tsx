@@ -5,6 +5,7 @@ import {
   ChartPie,
   ChartScatter,
   ChevronsUpDown,
+  Grid3x3,
   type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
@@ -25,11 +26,17 @@ const TYPES: [GraphType, string, LucideIcon][] = [
   ["dot", "Dot", ChartNoAxesColumn],
   ["pie", "Pie", ChartPie],
   ["scatter", "Scatter", ChartScatter],
+  ["heatmap", "Heatmap", Grid3x3],
 ];
 
 /** The graph type's name and icon. */
 function typeOf(type: GraphType): [GraphType, string, LucideIcon] {
   return TYPES.find(([each]) => each === type) ?? TYPES[0]!;
+}
+
+/** The graph type's name, such as Bar, for the Presets picker's settings. */
+export function graphTypeName(type: GraphType): string {
+  return typeOf(type)[1];
 }
 
 /** One section of the Graph type picker. */

@@ -267,5 +267,6 @@
     "peakChroma": 0.01,
     "samples": 9782
   },
-  "notes": "Shows soap bubbles; 'bubbles' isn't a tag, since only 2 photos have them."
+  "notes": "Shows soap bubbles; 'bubbles' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [165, 192, 40, 168, 167, 170]
 }

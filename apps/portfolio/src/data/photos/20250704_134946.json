@@ -266,5 +266,6 @@
     "peakChroma": 14.21,
     "samples": 9975
   },
-  "notes": "Shows a door knocker; 'door-knocker' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a door knocker; 'door-knocker' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [397, 288, 33, 45, 376, 256]
 }

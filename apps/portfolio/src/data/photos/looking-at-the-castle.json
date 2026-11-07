@@ -266,5 +266,6 @@
     "peakChroma": 19.9,
     "samples": 10050
   },
-  "notes": "Shows the castle keep (tenshu); 'tenshu' isn't a tag, since only 2 photos have one."
+  "notes": "Shows the castle keep (tenshu); 'tenshu' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [394, 337, 223, 393, 253, 10]
 }

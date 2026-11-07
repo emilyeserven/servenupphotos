@@ -266,5 +266,6 @@
     "peakChroma": 54.01,
     "samples": 9975
   },
-  "notes": "Shows tree roots; 'roots' isn't a tag, since only 1 photo has them."
+  "notes": "Shows tree roots; 'roots' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [287, 8, 114, 91, 85, 92]
 }

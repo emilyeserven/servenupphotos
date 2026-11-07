@@ -697,6 +697,22 @@ function socialPhoto({ path: filePath, data }, i) {
   };
 }
 
+/** A photo file as /api/attention answers it: the Instagram calendar's, with its data cut down. */
+function attentionPhoto(file, i) {
+  const photo = socialPhoto(file, i);
+  const {
+    images: _images,
+    exifOriginals: _exifOriginals,
+    notes: _notes,
+    comment: _comment,
+    altText: _altText,
+    colors,
+    ...rest
+  } = photo.data;
+  const peakChroma = colors?.peakChroma;
+  return { ...photo, data: peakChroma === undefined ? rest : { ...rest, colors: { peakChroma } } };
+}
+
 /** What saving a new photo JSON file answers: it waits for Commit, nothing on GitHub yet. */
 const savedPhoto = (filePath, data) => ({
   path: filePath,
@@ -1483,6 +1499,15 @@ export function defaultFixtures() {
       branch: PULL_REQUEST.branch,
       pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
       photos: headPhotos.map(socialPhoto),
+      unreadable: [],
+    },
+    // The same files cut down, as the Dashboard's Needs attention reads them.
+    "GET /api/attention": {
+      repo: REPO,
+      folder: `${FOLDER}/photos`,
+      branch: PULL_REQUEST.branch,
+      pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+      photos: headPhotos.map(attentionPhoto),
       unreadable: [],
     },
     // Saves answer as the backend does: their changes wait for Commit, for the open pull request.

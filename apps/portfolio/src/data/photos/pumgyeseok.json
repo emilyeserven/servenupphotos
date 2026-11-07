@@ -270,5 +270,6 @@
     "peakChroma": 10.63,
     "samples": 9900
   },
-  "notes": "Shows pumgyeseok rank stones inscribed in hanja; 'pumgyeseok' and 'hanja' aren't tags, since only 1–2 photos have them."
+  "notes": "Shows pumgyeseok rank stones inscribed in hanja; 'pumgyeseok' and 'hanja' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [129, 213, 128, 126, 210, 389]
 }
