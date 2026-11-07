@@ -9,8 +9,9 @@ import {
 import { setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import type { TripPoint, TripSegment } from "@/api/trip-lines";
+import type { TripPoint, TripSegment, TripVisit } from "@/api/trip-lines";
 import { lineFeatures, pointsBounds } from "@/components/trip-lines/route-geometry";
+import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
 import type { TripPhoto } from "@/lib/trip-days";
 import { cn } from "@/lib/utils";
 
@@ -79,6 +80,8 @@ interface RouteMapProps {
   vias?: { key: string; index: number; point: TripPoint }[];
   /** Moves a via point, or removes it with null; left out, they can't be changed. */
   onMoveVia?: (key: string, index: number, point: TripPoint | null) => void;
+  /** The places visited along the route, as pins. */
+  visits?: TripVisit[];
 }
 
 /** The day's photos as numbered dots, and its trip line drawn through them. */
@@ -93,8 +96,9 @@ export function RouteMap({
   onPick,
   vias = [],
   onMoveVia,
+  visits = [],
 }: RouteMapProps) {
-  const bounds = pointsBounds([...photos, ...ends]);
+  const bounds = pointsBounds([...photos, ...ends, ...visits]);
   return (
     <div
       className={cn("h-80 overflow-hidden rounded-md border md:h-96", onPick && "cursor-crosshair")}
@@ -137,6 +141,11 @@ export function RouteMap({
             />
           </Marker>
         ))}
+        {visits.map((v, i) => (
+          <Marker key={`visit-${i}`} latitude={v.latitude} longitude={v.longitude}>
+            <VisitPin visit={v} />
+          </Marker>
+        ))}
         {ends.map((p, i) => (
           <Marker key={`end-${i}`} latitude={p.latitude} longitude={p.longitude}>
             <span className="bg-foreground text-background rounded px-1.5 py-0.5 text-xs shadow">
@@ -146,6 +155,19 @@ export function RouteMap({
         ))}
       </Map>
     </div>
+  );
+}
+
+/** A place visited, as a round pin with its kind's icon and its name on hover. */
+function VisitPin({ visit }: { visit: TripVisit }) {
+  const Icon = VISIT_ICONS[visit.kind];
+  return (
+    <span
+      title={visit.name || "A place visited"}
+      className="flex size-6 items-center justify-center rounded-full border-2 border-amber-500 bg-white text-amber-600 shadow"
+    >
+      <Icon className="size-3.5" aria-hidden />
+    </span>
   );
 }
 

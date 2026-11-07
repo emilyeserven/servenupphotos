@@ -1,8 +1,11 @@
 import { Flag, MapPin, Scissors } from "lucide-react";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
+import type { TripVisit } from "@/api/trip-lines";
 import { GAPS, gapInfo } from "@/components/trip-lines/modes";
+import { VisitChips } from "@/components/trip-lines/visit-chips";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap } from "@/lib/trip-gaps";
+import { visitsAfter } from "@/lib/trip-visits";
 import { cn } from "@/lib/utils";
 
 interface PhotoStripProps {
@@ -17,10 +20,12 @@ interface PhotoStripProps {
   offset?: number;
   /** Starts a new group at a photo; left out, photos can't start one. */
   onSplit?: (id: number) => void;
+  /** The day's places visited; the ones put on the route show between their two photos. */
+  visits?: TripVisit[];
 }
 
 /** The day's photos in the order they were taken, with what happened between each two. */
-export function PhotoStrip({ photos, gaps, onGap, onHover, offset = 0, onSplit }: PhotoStripProps) {
+export function PhotoStrip({ photos, visits, offset = 0, ...rest }: PhotoStripProps) {
   return (
     <ol className="flex items-center gap-1 overflow-x-auto pb-2" aria-label="The day's photos">
       {photos.map((p, i) => (
@@ -29,29 +34,31 @@ export function PhotoStrip({ photos, gaps, onGap, onHover, offset = 0, onSplit }
           photo={p}
           local={i}
           offset={offset}
-          gaps={gaps}
-          onGap={onGap}
-          onHover={onHover}
-          onSplit={onSplit}
+          before={visitsAfter(visits, photos[i - 1]?.id)}
+          {...rest}
         />
       ))}
     </ol>
   );
 }
 
-interface StripItemProps extends Omit<PhotoStripProps, "photos"> {
+interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits"> {
   photo: TripPhoto;
+  /** The places visited on the route between the photo before and this one. */
+  before: TripVisit[];
   /** Its index among the strip's photos. */
   local: number;
   offset: number;
 }
 
 /** One photo in the strip, after the gap before it (none before the strip's first photo). */
-function StripItem({ photo, local, offset, gaps, onGap, onHover, onSplit }: StripItemProps) {
+function StripItem(props: StripItemProps) {
+  const { photo, local, offset, gaps, onGap, onHover, onSplit, before } = props;
   const i = offset + local;
   const first = local === 0;
   return (
     <li className="flex shrink-0 items-center gap-1">
+      <VisitChips visits={before} />
       {gaps && !first && <GapPicker gap={gapBefore(gaps, i)} index={i - 1} onGap={onGap} />}
       <StripPhoto
         photo={photo}

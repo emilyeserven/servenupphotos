@@ -1,11 +1,14 @@
 import { ChevronDown, ChevronRight, Eye, EyeOff, Merge } from "lucide-react";
 import { useState } from "react";
+import type { TripVisit } from "@/api/trip-lines";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
+import { VisitChips } from "@/components/trip-lines/visit-chips";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type GapDraft, withGap } from "@/lib/trip-gaps";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
+import { visitsAfter } from "@/lib/trip-visits";
 
 interface GroupStripProps {
   photos: TripPhoto[];
@@ -34,7 +37,14 @@ export function GroupStrip({ photos, draft, onChange, onHover, focus, onFocus }:
     >
       {groups.map((g, n) => (
         <li key={g.key} className="flex shrink-0 items-start gap-2">
-          {n > 0 && <GroupGap draft={draft} group={g} onChange={onChange} />}
+          {n > 0 && (
+            <GroupGap
+              draft={draft}
+              group={g}
+              onChange={onChange}
+              before={visitsAfter(draft.visits, ids[g.start - 1])}
+            />
+          )}
           <GroupBox
             group={g}
             photos={photos}
@@ -56,12 +66,15 @@ interface GroupGapProps {
   draft: GapDraft;
   group: PhotoGroup;
   onChange: (draft: GapDraft) => void;
+  /** The places visited on the route between the two groups. */
+  before: TripVisit[];
 }
 
-/** What happened between two groups, and joining the group to the one before. */
-function GroupGap({ draft, group, onChange }: GroupGapProps) {
+/** What happened between two groups, the places visited there, and joining the two. */
+function GroupGap({ draft, group, onChange, before }: GroupGapProps) {
   return (
     <div className="flex flex-col items-center gap-1 pt-9">
+      <VisitChips visits={before} />
       <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
       <Button
         variant="ghost"
@@ -140,6 +153,7 @@ function GroupBox(props: GroupBoxProps) {
           onGap={(i, gap) => onChange(withGap(draft, i, gap))}
           onHover={onHover}
           onSplit={(id) => onChange(withGroupStart(draft, id, true))}
+          visits={draft.visits}
         />
       )}
     </div>

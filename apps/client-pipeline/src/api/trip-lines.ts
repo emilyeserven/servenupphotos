@@ -62,6 +62,8 @@ export interface TripVia {
   after?: number;
   latitude: number;
   longitude: number;
+  /** The place visited (its index in the day's visits) this spot stands for; none for its own. */
+  visit?: number;
 }
 
 /**
@@ -77,6 +79,28 @@ export interface TripLine {
   auto: boolean;
   /** The stretches of the day, in the order they happened; empty for the automatic line. */
   segments: TripSegment[];
+  /** The places visited along the day's route, such as a restaurant, with or without a photo. */
+  visits?: TripVisit[];
+}
+
+/** What sort of place a visit is. */
+export type VisitKind = "restaurant" | "cafe" | "bar" | "shop" | "museum" | "sight" | "other";
+
+/** A place visited along a day's route, shown as a pin on the map. */
+export interface TripVisit {
+  /** What it's called, such as "Ichiran Dotonbori". */
+  name: string;
+  kind: VisitKind;
+  latitude: number;
+  longitude: number;
+  /** A few words about it. */
+  note?: string;
+  /** The place on an outside map, such as Google Maps or Naver Map. */
+  link?: string;
+  /** The ID of the saved place it is, when picked from them. */
+  place?: string;
+  /** The ID of the photo it comes after on the route; none leaves it off the route, as a pin only. */
+  after?: number;
 }
 
 function isTripLine(value: unknown): value is TripLine {
