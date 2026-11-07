@@ -12,6 +12,7 @@ import { type ReactNode, useId, useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
 import { hiddenText } from "@portfolio/components/hidden-note";
 import { MoreFilters } from "@portfolio/components/more-filters";
+import { PhotoSearchBox } from "@portfolio/components/photo-search-box";
 import { PlacesFilter } from "@portfolio/components/places-filter";
 import { useScriptDisplay } from "@portfolio/components/script-display-provider";
 import { Button } from "@portfolio/components/ui/button";
@@ -35,6 +36,7 @@ import {
   withoutFilters,
 } from "@portfolio/lib/photo-filters";
 import type { Photo } from "@portfolio/lib/photos";
+import { parseTextSearch, searchPhotos, TEXT_SEARCH_KEY } from "@portfolio/lib/text-search";
 import { cn } from "@portfolio/lib/utils";
 
 /** The filters in the current URL, for any portfolio view. */
@@ -96,26 +98,32 @@ function filterOf(selected: string): PhotoFilters {
  * carries them to the other views. The button says how many filters are set while they're hidden,
  * and **Clear filters** stays beside it. `facet` is the photos the counts are out of, when the view
  * narrows them with its own filters; `own` are those filters, shown after the shared ones.
+ * `searchable` puts the text search box before the button (see `PhotoSearchBox`), which counts as
+ * a filter and narrows the counts too.
  */
 export function PhotoFilterBar({
   photos,
   facet = photos,
   own = NO_OWN_FILTERS,
+  searchable = false,
 }: {
   photos: Photo[];
   facet?: Photo[];
   own?: OwnFilters;
+  searchable?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const filters = useFilters();
   const setFilters = useSetFilters();
-  const clearFilters = useClearFilters(own.keys);
+  const search = useTextSearch(searchable);
+  const clearFilters = useClearFilters([...own.keys, ...search.keys]);
   const listId = useId();
-  const count = filterCount(filters) + own.count;
+  const count = filterCount(filters) + own.count + search.count;
 
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
+        {searchable && <PhotoSearchBox />}
         <Button
           variant="outline"
           size="sm"
@@ -140,7 +148,7 @@ export function PhotoFilterBar({
           <>
             <FilterDropdowns
               photos={photos}
-              facet={facet}
+              facet={searchPhotos(facet, search.query)}
               filters={filters}
               setFilters={setFilters}
             />
@@ -150,6 +158,16 @@ export function PhotoFilterBar({
       </div>
     </div>
   );
+}
+
+/**
+ * The text search, while the bar has one: its URL key for **Clear filters**, the search, and 1 for
+ * the button's count while it's set.
+ */
+function useTextSearch(searchable: boolean): { keys: string[]; query?: string; count: number } {
+  const { q } = parseTextSearch(useSearch({ strict: false }));
+  if (!searchable) return { keys: [], count: 0 };
+  return { keys: [TEXT_SEARCH_KEY], query: q, count: q ? 1 : 0 };
 }
 
 /**

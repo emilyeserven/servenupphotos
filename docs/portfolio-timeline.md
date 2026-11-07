@@ -5,7 +5,7 @@ The month and day headings stay at the top of the window while their photos scro
 folds it away. A day covered by a [timeline label](timeline-labels.md), such as **Japan** for a trip, shows the label beside
 the date in its heading, so the label of the days in view sits just under the month's heading. Clicking a photo's
 thumbnail or title opens the photo viewer. The filters are described in
-[Portfolio Filters](portfolio-filters.md).
+[Portfolio Filters](portfolio-filters.md), including the [text search](portfolio-filters.md#text-search) box.
 
 ## Scrubber
 

@@ -30,6 +30,7 @@ import {
   withoutCameraFilters,
 } from "@portfolio/lib/camera-filters";
 import { ORIENTATION_KEY, orientationCounts } from "@portfolio/lib/orientation";
+import { parseTextSearch, searchPhotos } from "@portfolio/lib/text-search";
 import { hourEnd, hourStart, photoHours } from "@portfolio/lib/time-of-day";
 
 /** Each range slider's name. */
@@ -198,25 +199,30 @@ const NO_EXTRA: OwnFilters = { keys: [], count: 0, children: null };
  * The filter bar of the Table and Grid: the shared filters every view has, then the camera
  * filters, all in one **Show filters** panel, so both views always offer the same ones. `extra`
  * are a view's own filters after those, in the sliders' row, such as the Grid's **Colors**.
+ * `searchable` adds the text search box, which the camera filters' counts then leave out too.
  */
 export function CameraFilterBar({
   photos,
   extra = NO_EXTRA,
+  searchable = false,
 }: {
   photos: Photo[];
   extra?: OwnFilters;
+  searchable?: boolean;
 }) {
   const search = useSearch({ strict: false });
   const own = parseCameraFilters(search);
+  const searched = searchable ? searchPhotos(photos, parseTextSearch(search).q) : photos;
   return (
     <PhotoFilterBar
       photos={photos}
+      searchable={searchable}
       facet={filterByCamera(photos, own)}
       own={{
         keys: [...CAMERA_FILTER_KEYS, ...extra.keys],
         count: Object.keys(own).length + extra.count,
         children: (
-          <CameraFilterControls photos={filterPhotos(photos, parseFilters(search))} filters={own}>
+          <CameraFilterControls photos={filterPhotos(searched, parseFilters(search))} filters={own}>
             {extra.children}
           </CameraFilterControls>
         ),

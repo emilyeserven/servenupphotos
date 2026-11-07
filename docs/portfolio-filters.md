@@ -1,6 +1,6 @@
 # Portfolio Filters
 
-The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens three
+The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens three
 filters that narrow the photos they show: **Places**, **Album**, **Tag** and **Genre** (**Hide filters** closes them again). The
 Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** section, the Color page's color filters (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)).
@@ -15,6 +15,24 @@ its URL still opens with them.
 
 > **Frontend analogy:** like TanStack Router search params shared by sibling routes: each route's `validateSearch`
 > reads the same filter keys, and the menu's `<Link search={(prev) => parseFilters(prev)}>` passes them along.
+
+## Text search
+
+The Grid and the Timeline have a search box before **Show filters** (`components/photo-search-box.tsx`), always shown,
+that narrows the photos to ones whose **title**, **location** or **camera model** has the text (`?q=seoul x-t5`,
+`lib/text-search.ts`). Each word has to be found somewhere in those, in any order, so "seoul x-t5" finds the photos
+taken in Seoul on a Fujifilm X-T5. It ignores case and accents ("sao paulo" finds São Paulo), and the location is
+matched every way it can be written: its places, city, state and country in English, romanized, phonetic and native
+script, whichever the menu's **Script display** shows.
+
+The URL changes as you type, replacing the page's history entry rather than adding one per letter. The search counts
+as one filter on the **Show filters** button, the X inside the box or **Clear filters** clears it, and the filters'
+counts are out of the photos it leaves. The menu carries it between the Grid and the Timeline, but not to the other
+views, which have no box.
+
+> **Frontend analogy:** each photo's searchable text is joined into one lowercase string once and kept in a
+> `WeakMap`, so a keystroke is just `words.every((word) => text.includes(word))` over the photos, like a memoized
+> selector.
 
 ## Places
 

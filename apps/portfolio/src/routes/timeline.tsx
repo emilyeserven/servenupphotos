@@ -19,6 +19,7 @@ import { dayKey } from "@/lib/heatmap";
 import { findTimelineLabel, labelDates, labelOn } from "@/lib/timeline-labels";
 import { TimelineLabelPicker } from "@/components/timeline-label-picker";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
   parseTimelineDisplay,
@@ -47,12 +48,13 @@ type ImagePhoto = Photo & { image: PhotoImage };
 type TimelineSearch = TimeRangeValue &
   PhotoFilters &
   ShownPhotoSearch &
-  TimelineDisplaySearch & { chart?: "heatmap"; label?: string };
+  TimelineDisplaySearch & { chart?: "heatmap"; label?: string; q?: string };
 
 export const Route = createFileRoute("/timeline")({
   validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
     ...parseTimeRange(search),
     ...parseFilters(search),
+    ...parseTextSearch(search),
     ...parseShownPhoto(search),
     ...parseTimelineDisplay(search),
     ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
@@ -112,7 +114,7 @@ function TimelineView() {
   const label = findTimelineLabel(search.label);
   const { start, end } = shownDays(label, timeRange, now);
   // Newest first, so the months and the photos in each read down from the latest.
-  const matching = filterPhotos(photos, filters);
+  const matching = searchPhotos(filterPhotos(photos, filters), search.q);
   const inRange = matching
     .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
     .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
@@ -175,7 +177,7 @@ function TimelineView() {
             />
           </div>
         </div>
-        <PhotoFilterBar photos={photos} />
+        <PhotoFilterBar photos={photos} searchable />
       </header>
       <div ref={setChart}>
         <TimelineChart
@@ -191,7 +193,7 @@ function TimelineView() {
       </div>
       <PhotoMonths
         photos={inRange}
-        filtered={hasFilters(filters)}
+        filtered={hasFilters(filters) || search.q !== undefined}
         display={display}
         onOpen={show}
         listRef={setList}

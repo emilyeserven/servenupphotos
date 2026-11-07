@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import type { ScriptDisplay } from "@/lib/localize";
 import { parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters } from "@/lib/photo-filters";
+import { parseTextSearch } from "@/lib/text-search";
 import { mainViews, minorViews, type PortfolioView } from "@/lib/portfolio-views";
 import { cn } from "@/lib/utils";
 import { rememberedViewOptions } from "@/lib/view-options";
@@ -17,12 +18,25 @@ import { rememberedViewOptions } from "@/lib/view-options";
  * What a view link carries: the filters from the page it's on, and the view's own settings as it
  * was last left, such as the Grid's Table view. The camera filters go too, kept by the views that
  * have them (Table and Grid). The Map always opens with no filters, so it doesn't keep ones set
- * before.
+ * before. The text search goes only between the Grid and the Timeline, the views with a search box.
  */
 function carriedSearch(to: PortfolioView["to"], prev: Record<string, unknown>) {
   if (to === "/map") return {};
-  return { ...rememberedViewOptions(to), ...parseFilters(prev), ...parseCameraFilters(prev) };
+  return {
+    ...rememberedViewOptions(to),
+    ...parseFilters(prev),
+    ...parseCameraFilters(prev),
+    ...carriedTextSearch(to, prev),
+  };
 }
+
+/** The text search, when the link goes to a view with a search box. */
+function carriedTextSearch(to: PortfolioView["to"], prev: Record<string, unknown>) {
+  return SEARCHABLE_VIEWS.includes(to) ? parseTextSearch(prev) : {};
+}
+
+/** The views with a text search box. */
+const SEARCHABLE_VIEWS: readonly string[] = ["/grid", "/timeline"];
 
 interface Option<T> {
   value: T;
