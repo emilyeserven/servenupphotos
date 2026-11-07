@@ -5,14 +5,16 @@
 //
 // It asks an Overpass API server (https://wiki.openstreetmap.org/wiki/Overpass_API),
 // by default the public overpass-api.de, which asks for light use; requests
-// are spaced a second apart. OVERPASS_URL points it at another server.
+// are spaced a second apart. When a server is busy or down it waits a little
+// and tries the next public mirror (see ask.go), and it keeps each answer for a
+// day (see cache.go). OVERPASS_URL, a comma-separated list, points it at other
+// servers.
 package transit
 
 import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -22,8 +24,14 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/throttle"
 )
 
-// DefaultURL is the public Overpass API server's address.
-const DefaultURL = "https://overpass-api.de/api/interpreter"
+// DefaultURLs are the public Overpass API servers asked, in order: the main
+// one, then mirrors that hold the whole planet
+// (https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances).
+var DefaultURLs = []string{
+	"https://overpass-api.de/api/interpreter",
+	"https://overpass.private.coffee/api/interpreter",
+	"https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+}
 
 // ErrNoKind is returned for a way of travelling with no mapped lines, such as
 // a walk.
@@ -55,22 +63,44 @@ type Line struct {
 	To   string `json:"to,omitempty"`
 }
 
-// Client asks an Overpass API server, at most one request per gap.
+// Client asks Overpass API servers, at most one request per gap, trying the
+// next server when one is busy or down.
 type Client struct {
-	// BaseURL is the server's interpreter address.
-	BaseURL string
-	HTTP    *http.Client
-	// Gate spaces requests out, as the server asks.
+	// BaseURLs are the servers' interpreter addresses, asked in order.
+	BaseURLs []string
+	HTTP     *http.Client
+	// Gate spaces requests out, as the servers ask.
 	Gate throttle.Gate
+	// Waits are how long to wait before each try after the first; the last
+	// one repeats. None means trying again straight away.
+	Waits []time.Duration
+	// Cache keeps answers already given; nil keeps none.
+	Cache *Cache
 }
 
-// New is a client for OVERPASS_URL, or else DefaultURL.
+// New is a client for OVERPASS_URL's servers, or else DefaultURLs.
 func New() *Client {
-	base := os.Getenv("OVERPASS_URL")
-	if base == "" {
-		base = DefaultURL
+	return &Client{
+		BaseURLs: serverURLs(os.Getenv("OVERPASS_URL")),
+		HTTP:     &http.Client{},
+		Gate:     throttle.Gate{Gap: time.Second},
+		Waits:    []time.Duration{time.Second, 3 * time.Second},
+		Cache:    NewCache(cacheFor, cacheSize),
 	}
-	return &Client{BaseURL: base, HTTP: &http.Client{Timeout: 30 * time.Second}, Gate: throttle.Gate{Gap: time.Second}}
+}
+
+// serverURLs are the comma-separated addresses in list, or else DefaultURLs.
+func serverURLs(list string) []string {
+	var urls []string
+	for u := range strings.SplitSeq(list, ",") {
+		if u = strings.TrimSpace(u); u != "" {
+			urls = append(urls, u)
+		}
+	}
+	if len(urls) == 0 {
+		return DefaultURLs
+	}
+	return urls
 }
 
 // Kinds reports whether mode, such as "subway", has transit lines to look up.
@@ -101,13 +131,28 @@ type member struct {
 	} `json:"geometry"`
 }
 
-// query runs an Overpass QL query and reads its elements.
+// query runs an Overpass QL query and reads its elements, from the cache
+// when it was asked before.
 func (c *Client) query(ctx context.Context, ql string) ([]element, error) {
+	if elements, ok := c.Cache.get(ql); ok {
+		return elements, nil
+	}
+	elements, err := c.ask(ctx, ql)
+	if err == nil {
+		c.Cache.put(ql, elements)
+	}
+	return elements, err
+}
+
+// askOnce posts ql to the server at base and reads its elements.
+func (c *Client) askOnce(ctx context.Context, base, ql string) ([]element, error) {
 	if err := c.Gate.Wait(ctx); err != nil {
 		return nil, err
 	}
+	ctx, cancel := context.WithTimeout(ctx, tryTimeout)
+	defer cancel()
 	body := strings.NewReader(url.Values{"data": {ql}}.Encode())
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.BaseURL, body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, base, body)
 	if err != nil {
 		return nil, err
 	}
@@ -118,11 +163,14 @@ func (c *Client) query(ctx context.Context, ql string) ([]element, error) {
 		return nil, err
 	}
 	defer res.Body.Close() //nolint:errcheck // read-only body
+	if res.StatusCode != http.StatusOK {
+		return nil, &StatusError{Code: res.StatusCode, Status: res.Status}
+	}
 	var a struct {
 		Elements []element `json:"elements"`
 	}
-	if res.StatusCode != http.StatusOK || json.NewDecoder(res.Body).Decode(&a) != nil {
-		return nil, fmt.Errorf("the Overpass server answered %s", res.Status)
+	if err := json.NewDecoder(res.Body).Decode(&a); err != nil {
+		return nil, errUnreadable
 	}
 	return a.Elements, nil
 }

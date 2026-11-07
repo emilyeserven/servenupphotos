@@ -56,7 +56,7 @@ fits without covering the map:
   zoom-out button moves it to every photo (`components/map-place-picker.tsx`). Its counts are out of the photos the
   other filters leave. A link with a place filter in its URL opens the map on every photo, as the map ignores it.
   Pointing at a place in the columns (or focusing it) shades its [area](places-and-localizations.md#areas) on the map,
-  when it has one, and picking it keeps the area shaded, more faintly, until another place is picked
+  or a circle 80 m around its position when it has no area, and picking it keeps the area shaded, more faintly, until another place is picked
   (`components/place-area-layer.tsx`, `lib/place-areas.ts`). Each area is its own `places/<id>.geo.json` file,
   loaded the first time it's shown, so the map's page doesn't carry every outline. Areas are light blue (Tailwind's
   sky, standing in for the brand blue, apart from the walking lines' darker blue), with a darker edge in light mode

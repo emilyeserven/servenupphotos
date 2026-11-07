@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Flag, MapPin, Scissors } from "lucide-react";
 import { photoName, squareUrl } from "@/components/group-photo-grid";
 import type { TripVisit } from "@/api/trip-lines";
@@ -112,12 +113,32 @@ function StripPhoto({ photo, ends, onHover, onSplit }: StripPhotoProps) {
       onMouseLeave={() => onHover(undefined)}
     >
       <div className="bg-muted relative size-20 overflow-hidden rounded-md">
-        {url && <img src={url} alt={photoName(photo.photo)} className="size-full object-cover" />}
+        <PhotoLink id={photo.id}>
+          {url && <img src={url} alt={photoName(photo.photo)} className="size-full object-cover" />}
+        </PhotoLink>
         <Ends {...ends} />
         {onSplit && <SplitButton onClick={() => onSplit(photo.id)} />}
       </div>
       <figcaption className="text-muted-foreground text-xs tabular-nums">{photo.time}</figcaption>
     </figure>
+  );
+}
+
+/**
+ * Opens the photo's editor in a new tab, to change its Place or anything else; the photo's group
+ * here follows its new Place once this page is reloaded.
+ */
+function PhotoLink({ id, children }: { id: number; children: React.ReactNode }) {
+  return (
+    <Link
+      to="/exif"
+      search={{ photo: id }}
+      target="_blank"
+      title="Edit this photo, such as its Place, in a new tab"
+      className="block size-full"
+    >
+      {children}
+    </Link>
   );
 }
 

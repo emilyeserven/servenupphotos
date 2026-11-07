@@ -39,6 +39,8 @@ const TIMEOUTS: Record<string, number> = {
   "/data/near-duplicates": 310_000,
   // Reads every photo file; the backend gives GitHub 60s.
   "/publish/": 65_000,
+  // OpenStreetMap line look-ups; the backend gives the Overpass servers and their mirrors 55s.
+  "/transit/": 60_000,
 };
 
 /** The wait for every other path: the backend gives GitHub 30s for most reads and saves. */

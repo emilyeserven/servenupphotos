@@ -1370,6 +1370,14 @@ export function defaultFixtures() {
       ],
     },
     "POST /api/triplines/2026-10-01/route": snapped,
+    // Places with no area, which the Trip Lines map circles instead.
+    "GET /api/places/waveny-park/area": null,
+    "GET /api/places/bristow-bird-sanctuary/area": null,
+    "GET /api/places/new-canaan-nature-center/area": null,
+    "GET /api/places/namba/area": null,
+    "GET /api/places/dotonbori/area": null,
+    "GET /api/places/engyoji-temple/area": null,
+    "GET /api/places/sannomiya/area": null,
     "GET /api/places/washington-square-park/area": {
       osm: "R1",
       shape: [

@@ -20,7 +20,7 @@ func fakeOverpass(t *testing.T, body string, got *string) *Client {
 		_, _ = w.Write([]byte(body))
 	}))
 	t.Cleanup(srv.Close)
-	return &Client{BaseURL: srv.URL, HTTP: srv.Client()}
+	return &Client{BaseURLs: []string{srv.URL}, HTTP: srv.Client()}
 }
 
 func TestLines(t *testing.T) {
