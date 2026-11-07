@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
-import { type ConfigChange, MeasureOptions } from "@/components/graph-builder/graph-controls";
+import { MEASURES } from "@/components/graph-builder/axes-picker";
+import { KeyRow } from "@/components/graph-builder/graph-key";
+import type { ConfigChange } from "@/components/graph-builder/graph-controls";
 import { StatOptions } from "@/components/graph-builder/graph-field";
 import { type GraphConfig, hasYStat, type Measure } from "@/lib/graph-data";
 
@@ -55,7 +57,11 @@ function YPicker({ config, onChange }: { config: GraphConfig; onChange: ConfigCh
       value={config.measure}
       onChange={(measure) => onChange({ measure: measure as Measure })}
     >
-      <MeasureOptions />
+      {MEASURES.map(([measure, label]) => (
+        <option key={measure} value={measure}>
+          {label}
+        </option>
+      ))}
     </AxisPicker>
   );
 }
@@ -75,7 +81,8 @@ function XPicker({ config, onChange }: { config: GraphConfig; onChange: ConfigCh
 
 /**
  * The graph with each axis named, each name a dropdown to change it: the y axis's over the graph's
- * top left, the x axis's centered under it. A pie names its slices and size over it.
+ * top left, the x axis's centered under it. A pie names its slices and size over it. The graph's
+ * key, when it has one, sits at the right end of the row over it (see `KeyRow`).
  */
 export function AxisLabels({
   config,
@@ -89,18 +96,22 @@ export function AxisLabels({
   if (config.type === "pie") {
     return (
       <div className="flex flex-col gap-2">
-        <div className="flex flex-wrap gap-x-4">
-          <XPicker config={config} onChange={onChange} />
-          <YPicker config={config} onChange={onChange} />
-        </div>
-        {children}
+        <KeyRow
+          start={
+            <div className="flex flex-wrap gap-x-4">
+              <XPicker config={config} onChange={onChange} />
+              <YPicker config={config} onChange={onChange} />
+            </div>
+          }
+        >
+          {children}
+        </KeyRow>
       </div>
     );
   }
   return (
     <div className="flex flex-col gap-2">
-      <YPicker config={config} onChange={onChange} />
-      {children}
+      <KeyRow start={<YPicker config={config} onChange={onChange} />}>{children}</KeyRow>
       <div className="flex justify-center">
         <XPicker config={config} onChange={onChange} />
       </div>

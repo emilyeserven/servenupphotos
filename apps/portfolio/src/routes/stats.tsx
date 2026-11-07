@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, Hash } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { type FocusChain, type StatFocus, StatGroupCard } from "@/components/stat-group";
 import { filterWithCamera } from "@/lib/camera-filters";
@@ -40,28 +40,37 @@ type Focuses = Record<string, StatFocus & { from: string }>;
 /** Which variant each group with variants shows, by the group's ID; the first when it isn't set. */
 type Variants = Record<string, number>;
 
+/** The row chosen in each linked group, such as Fast in Aperture, by the group's ID. */
+type Links = Record<string, StatFocus>;
+
 /** What a card needs from the page: the rows chosen, the variants picked, and how to change them. */
 interface PageState {
   focuses: Focuses;
   variants: Variants;
+  links: Links;
   onNarrow: (def: GroupDef, title: string, row: StatRow) => void;
   onClear: (id: string) => void;
   onVariant: (def: GroupDef, index: number) => void;
+  onLink: (def: GroupDef, title: string, row: StatRow) => void;
+  onUnlink: (id: string) => void;
 }
 
 /**
  * How the photos break down: a few headline numbers, then the Gear, Places and Time sections, each
  * with its groups, such as Cameras or Time of day, counting the photos in each value. A row opens
  * its photos on the Grid, except in a group that narrows another, such as Countries, whose rows
- * narrow that one, such as Cities, to their photos. Narrowing passes down a chain: a lens type
- * narrows the focal lengths, and a focal length the lenses, within that type.
+ * narrow that one, such as Cities, to their photos. Narrowing passes down a chain: a lens brand
+ * narrows the focal lengths, and a focal length the lenses, within that brand. Linked groups, such
+ * as the Exposure Triangle's, narrow each other both ways.
  */
 function StatsView() {
   const [focuses, setFocuses] = useState<Focuses>({});
   const [variants, setVariants] = useState<Variants>({});
+  const [links, setLinks] = useState<Links>({});
   const state: PageState = {
     focuses,
     variants,
+    links,
     onNarrow: (def, title, row) => {
       const target = def.narrows!;
       const current = focuses[target];
@@ -74,6 +83,13 @@ function StatsView() {
       setVariants({ ...variants, [def.id]: index });
       setFocuses(without(focuses, def.narrows ?? ""));
     },
+    onLink: (def, title, row) => {
+      const same = links[def.id]?.row.label === row.label;
+      setLinks(
+        same ? without(links, def.id) : { ...links, [def.id]: { title, target: def.id, row } },
+      );
+    },
+    onUnlink: (id) => setLinks(without(links, id)),
   };
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 py-16 sm:px-6">
@@ -85,7 +101,7 @@ function StatsView() {
             Numbers
           </h1>
           <p className="mt-2 text-muted-foreground">
-            The photos counted by gear, place and time. Open a row to see its photos on the Grid.
+            The photos counted by place, gear and time. Open a row to see its photos on the Grid.
           </p>
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(6.5rem,1fr))] gap-3">
@@ -138,9 +154,9 @@ function TotalCard({ total: [key, label, group] }: { total: TotalDef }) {
   );
 }
 
-/** The focuses without the one for the group with the ID. */
-function without(focuses: Focuses, id: string): Focuses {
-  return Object.fromEntries(Object.entries(focuses).filter(([key]) => key !== id));
+/** The chosen rows without the one for the group with the ID. */
+function without<T>(chosen: Record<string, T>, id: string): Record<string, T> {
+  return Object.fromEntries(Object.entries(chosen).filter(([key]) => key !== id));
 }
 
 /** Every group, to find which one narrows another. */
@@ -193,17 +209,21 @@ function StatsSection({ section, state }: { section: StatSection; state: PageSta
       </h2>
       <p className="mt-1 mb-4 text-sm text-muted-foreground">{section.description}</p>
       <div className="flex flex-col gap-4">
-        {sectionRuns(section.groups).map((run) => (
-          <GroupRun key={run.defs[0]!.id} run={run} state={state} />
+        {sectionRuns(section.groups).map((run, _, runs) => (
+          <GroupRun key={run.defs[0]!.id} run={run} state={state} boxed={runs.length > 1} />
         ))}
       </div>
     </section>
   );
 }
 
-/** A row of a section's cards: a chain whose cards narrow each other, or cards on their own. */
+/**
+ * A row of a section's cards: a chain whose cards narrow each other down, linked cards that narrow
+ * each other both ways, or cards on their own; a chain or linked cards can have a title.
+ */
 interface Run {
-  chained: boolean;
+  kind: "alone" | "down" | "linked";
+  title?: string;
   defs: GroupDef[];
 }
 
@@ -211,7 +231,7 @@ interface Run {
 function sectionRuns(groups: GroupDef[]): Run[] {
   const runs: Run[] = [];
   for (const chain of groupChains(groups)) {
-    const run = { chained: chain.length > 1, defs: chain };
+    const run = runOf(chain);
     const last = runs.at(-1);
     if (joinsLast(run, last)) last!.defs.push(...chain);
     else runs.push(run);
@@ -219,36 +239,55 @@ function sectionRuns(groups: GroupDef[]): Run[] {
   return runs;
 }
 
+/** A run of groups: linked, narrowing down, or one group on its own. */
+function runOf(chain: GroupDef[]): Run {
+  const first = chain[0]!;
+  const kind = first.linked ? "linked" : chain.length > 1 ? "down" : "alone";
+  return { kind, title: first.linked ?? first.runTitle, defs: chain };
+}
+
 /** Whether a run of one card goes on with the cards on their own before it. */
 function joinsLast(run: Run, last: Run | undefined): boolean {
-  return !run.chained && last?.chained === false;
+  return run.kind === "alone" && last?.kind === "alone";
 }
 
 /** A chain's columns on a desktop, one per card. */
 const CHAIN_COLUMNS: Record<number, string> = { 2: "lg:grid-cols-2", 3: "lg:grid-cols-3" };
 
 /**
- * A row of cards. A chain, such as Year, Season and Month, has a bar from
- * each card to the one it narrows: across on a desktop, down on a phone.
+ * A row of cards. A chain, such as Year, Season and Month, has a bar from each card to the one it
+ * narrows, and linked cards a short one between each: across on a desktop, down on a phone. A
+ * titled run sits in a box under its title, unless it's the section's only run.
  */
-function GroupRun({ run, state }: { run: Run; state: PageState }) {
+function GroupRun({ run, state, boxed }: { run: Run; state: PageState; boxed: boolean }) {
   const cards = run.defs.map((def, index) => (
     <div
       key={def.id}
       id={cardAnchor(def.id)}
-      className={`relative min-w-0 scroll-mt-20 ${run.chained && index > 0 ? CHAIN_LINE : ""}`}
+      className={`relative min-w-0 scroll-mt-20 ${index > 0 ? RUN_LINES[run.kind] : ""}`}
     >
       <DefCard def={def} state={state} />
     </div>
   ));
-  if (!run.chained) {
+  if (run.kind === "alone") {
     return <div className="grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">{cards}</div>;
   }
-  return (
+  const row = (
     <div
       className={`grid items-start gap-6 lg:items-stretch lg:[&>div>section]:h-full ${CHAIN_COLUMNS[run.defs.length] ?? CHAIN_COLUMNS[3]}`}
     >
       {cards}
+    </div>
+  );
+  return boxed ? <RunBox title={run.title}>{row}</RunBox> : row;
+}
+
+/** A run's box, in a shade a little off the page, with its title above its cards. */
+function RunBox({ title, children }: { title?: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl bg-muted p-3 sm:p-4">
+      {title && <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>}
+      {children}
     </div>
   );
 }
@@ -261,6 +300,16 @@ function GroupRun({ run, state }: { run: Run; state: PageState }) {
 const CHAIN_LINE =
   "before:absolute before:-top-6 before:right-[1em] before:left-[1em] before:h-6 before:bg-border lg:before:top-[1em] lg:before:bottom-[1em] lg:before:-left-6 lg:before:right-auto lg:before:h-auto lg:before:w-6";
 
+/**
+ * The bar joining a linked card to the one before it: a short one, 2rem long, in the middle of the
+ * gap between them, so linked cards read apart from a chain's.
+ */
+const LINK_LINE =
+  "before:absolute before:-top-6 before:left-1/2 before:h-6 before:w-8 before:-translate-x-1/2 before:bg-border lg:before:top-1/2 lg:before:-left-6 lg:before:h-8 lg:before:w-6 lg:before:translate-x-0 lg:before:-translate-y-1/2";
+
+/** The bar from each card of a run to the one before it, by the run's kind. */
+const RUN_LINES: Record<Run["kind"], string> = { alone: "", down: CHAIN_LINE, linked: LINK_LINE };
+
 /** How a group is made: its picked variant's way, or its own. */
 function buildOf(def: GroupDef, variants: Variants) {
   return def.variants?.[variants[def.id] ?? 0]?.build ?? def.build;
@@ -271,6 +320,7 @@ function buildOf(def: GroupDef, variants: Variants) {
  * chosen in the card right above it, such as Autumn on Month, not the Year above that.
  */
 function DefCard({ def, state }: { def: GroupDef; state: PageState }) {
+  if (def.linked) return <LinkedCard def={def} state={state} />;
   const chain = focusChain(def.id, state.focuses);
   return (
     <StatGroupCard
@@ -323,4 +373,50 @@ function narrowing(def: GroupDef, state: PageState) {
 /** What the narrowed group is called in its X's label, such as "cities". */
 function narrowedTitle(id: string): string {
   return ALL_GROUPS.find((g) => g.id === id)?.build([]).title ?? id;
+}
+
+/** The rows chosen in the groups linked with the group, not its own. */
+function otherLinks(def: GroupDef, links: Links): StatFocus[] {
+  return ALL_GROUPS.filter((other) => other.linked === def.linked && other.id !== def.id).flatMap(
+    (other) => (links[other.id] ? [links[other.id]!] : []),
+  );
+}
+
+/** The filter for the photos with every one of the chosen rows. */
+function linkFilter(choices: StatFocus[]): Record<string, string | string[]> {
+  return Object.assign({}, ...choices.map((focus) => focus.row.filter));
+}
+
+/** A chosen row's text after "in" on another linked card, such as "Fast aperture" or "Base ISO". */
+function linkText(focus: StatFocus): string {
+  const title = /[a-z]/.test(focus.title) ? focus.title.toLowerCase() : focus.title;
+  return `${focus.row.label} ${title}`;
+}
+
+/**
+ * A linked group's card, such as Aperture: it counts the photos the rows chosen in the other groups
+ * linked with it leave, and lists those choices, not its own, as "with Fast shutter speed and Base
+ * ISO", each opening the photos with all of them; a click on its own row chooses it for the others.
+ */
+function LinkedCard({ def, state }: { def: GroupDef; state: PageState }) {
+  const others = otherLinks(def, state.links);
+  const filter = linkFilter(others);
+  const list = filterWithCamera(photos, filter);
+  const group = def.build(list);
+  const count = list.length;
+  const focuses = others.map((focus, index) => ({
+    ...focus,
+    row: { ...focus.row, label: linkText(focus), count },
+    filter,
+    prefix: index === 0 ? "with" : "and",
+  }));
+  return (
+    <StatGroupCard
+      group={group}
+      focuses={focuses}
+      chosen={state.links[def.id]?.row.label}
+      onNarrow={(row) => state.onLink(def, group.title, row)}
+      onClearFocus={state.onUnlink}
+    />
+  );
 }

@@ -6,8 +6,9 @@ import {
   type StatGroup,
   valueGroup,
 } from "@portfolio/lib/stat-groups";
-import { groupRange, parseRange, rangeValues } from "@portfolio/lib/camera-filters";
 import { groupTree, groupValues, type MetaGroup } from "@portfolio/lib/metadata-groups";
+import { settingGroup } from "@portfolio/lib/stats-settings";
+import type { RangeKey } from "@portfolio/lib/camera-filters";
 import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
 
 /** What the photos have for "no camera" in place of one. */
@@ -16,50 +17,6 @@ const UNKNOWN_CAMERA = "Unknown camera";
 /** The photo's camera, or null when its EXIF didn't say. */
 export function cameraOf(photo: Photo): string | null {
   return photo.camera === UNKNOWN_CAMERA ? null : photo.camera;
-}
-
-/** A focal length group's range in millimeters, such as "23–39mm", "251mm+" or "≤22mm". */
-function rangeText({ range = {} }: MetaGroup): string {
-  const { min, max } = range;
-  if (min === undefined) return `≤${max}mm`;
-  return max === undefined ? `${min}mm+` : `${min}–${max}mm`;
-}
-
-/** Where a focal length group starts, so the widest comes first. */
-function rangeStart(group: MetaGroup): number {
-  return group.range?.min ?? 0;
-}
-
-/**
- * A focal length range from METAINFO.json, with the Grid's range filter for it: from the shortest
- * to the longest focal length any portfolio photo has in it, so the count matches the Grid.
- */
-function focalBucket(group: MetaGroup, values: string[]): Bucket {
-  const range = groupRange("focalLength", group, values);
-  return {
-    key: range ?? "",
-    label: group.name,
-    detail: rangeText(group),
-    filter: range ? { focalLength: range } : undefined,
-  };
-}
-
-/** Whether the photo's focal length is in the bucket's range. */
-function inFocalRange(photo: Photo, bucket: Bucket): boolean {
-  const [low, high] = parseRange(bucket.key) ?? [];
-  const length = photo.settings.focalLength;
-  return length !== null && length >= Number(low) && length <= Number(high);
-}
-
-/** The focal length ranges set on the pipeline's Metadata Groups page, widest first. */
-function focalGroup(list: Photo[], all: Photo[]): StatGroup {
-  const values = rangeValues(all, "focalLength");
-  const buckets = groupTree("focalLength")
-    .filter(([, depth]) => depth === 0)
-    .map(([group]) => group)
-    .toSorted((a, b) => rangeStart(a) - rangeStart(b))
-    .map((group) => focalBucket(group, values));
-  return bucketGroup("Focal length", list, buckets, inFocalRange);
 }
 
 /** The equipment a group of metadata groups is of. */
@@ -166,11 +123,19 @@ function categoryVariants(equipment: Equipment): GroupVariant[] {
   return variants;
 }
 
-/** The lens categories as one card, grouped by its control, narrowing `narrows`; none without them. */
-function lensCategoryDefs(narrows: string): GroupDef[] {
-  const variants = categoryVariants("lens");
-  if (variants.length === 0) return [];
-  return [{ id: "lens-categories", narrows, build: variants[0]!.build, variants }];
+/**
+ * The lens brands as one card, the top of the Lenses chain, narrowing `narrows`; none without a
+ * lens category named Brand on the pipeline.
+ */
+function lensBrandDefs(narrows: string): GroupDef[] {
+  const brand = categoryVariants("lens").find((variant) => variant.label === "By brand");
+  if (!brand) return [];
+  return [{ id: "lens-brands", narrows, build: brand.build, runTitle: "Lenses" }];
+}
+
+/** A card of the Exposure Triangle, linked with the other two, showing every range. */
+function exposureDef(id: string, key: RangeKey, title: string): GroupDef {
+  return { id, linked: "Exposure Triangle", build: settingGroup(key, title, true) };
 }
 
 /** Every camera as a row, the Cameras card's first way to group. */
@@ -200,15 +165,19 @@ function equipmentBucket(equipment: Equipment) {
 }
 
 /**
- * The Gear section's groups: cameras, which can be grouped by their categories, then the lenses
- * from the top down: the lens categories narrow the focal length ranges, which narrow the lenses.
+ * The Gear section's groups: the lenses from the top down, the lens brands narrowing the focal
+ * length ranges, which narrow the lenses; then the Exposure Triangle's linked aperture, shutter
+ * speed and ISO; then cameras, which can be grouped by their categories.
  */
 export const GEAR_GROUPS: GroupDef[] = [
-  camerasDef(),
-  ...lensCategoryDefs("focal-length"),
-  { id: "focal-length", narrows: "lenses", build: (list) => focalGroup(list, allPhotos) },
+  ...lensBrandDefs("focal-length"),
+  { id: "focal-length", narrows: "lenses", build: settingGroup("focalLength", "Focal length") },
   {
     id: "lenses",
     build: (list) => valueGroup("Lenses", list, (photo) => photo.lens, equipmentBucket("lens")),
   },
+  exposureDef("aperture", "aperture", "Aperture"),
+  exposureDef("shutter-speed", "exposure", "Shutter speed"),
+  exposureDef("iso", "iso", "ISO"),
+  camerasDef(),
 ];
