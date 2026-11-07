@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { GearKind } from "@portfolio/lib/gear-pictures";
 import { gearFiles, type GearRow, gearRows } from "@/api/gear";
 import type { CombinedData } from "@/api/photos";
+import { GearCropCard } from "@/components/gear-pictures/crop-card";
 import { GearEditor } from "@/components/gear-pictures/editor";
 import { GearList } from "@/components/gear-pictures/gear-list";
 import { GitHubGate } from "@/components/organize-page";
@@ -15,7 +16,7 @@ export function GearPicturesPage() {
     <Page
       wide
       title="Gear Pictures"
-      description="A picture and a few words for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawing of that kind of camera or lens. Pictures go to R2 as soon as they're chosen; each camera's or lens's file is one JSON file, combined into GEAR.json."
+      description="A picture and a few words for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawing of that kind of camera or lens. Pictures go to R2 as uploaded as soon as they're chosen, and the portfolio shows a 200px-tall crop of each, lined up with the others in the crops card under them; each camera's or lens's file is one JSON file, combined into GEAR.json."
     >
       <GitHubGate>{() => <Gear />}</GitHubGate>
     </Page>
@@ -41,16 +42,20 @@ function GearChooser({ data }: { data: CombinedData }) {
   const [chosen, setChosen] = useState<Chosen | undefined>();
   const rows = gearRows(shownPhotos(data), gearFiles(data), kind);
   const row = chosenRow(rows, chosen) ?? rows[0];
+  const files = gearFiles(data);
   return (
-    <div className="grid items-start gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-      <GearList
-        kind={kind}
-        onKind={setKind}
-        rows={rows}
-        chosen={row?.name}
-        onChoose={(name) => setChosen({ kind, name })}
-      />
-      <ChosenGear row={row} />
+    <div className="flex flex-col gap-6">
+      <div className="grid items-start gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+        <GearList
+          kind={kind}
+          onKind={setKind}
+          rows={rows}
+          chosen={row?.name}
+          onChoose={(name) => setChosen({ kind, name })}
+        />
+        <ChosenGear row={row} />
+      </div>
+      <GearCropCard kind={kind} files={files.filter((file) => file.kind === kind)} />
     </div>
   );
 }
