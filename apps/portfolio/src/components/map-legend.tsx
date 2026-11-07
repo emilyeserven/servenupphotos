@@ -18,6 +18,7 @@ import type { MapDisplay } from "@/lib/map-display";
 import { type LegendItems, legendItems } from "@/lib/map-legend";
 import type { PlacedPhoto } from "@/lib/map-photos";
 import { useIsDark } from "@/lib/map-theme";
+import { modifierKey } from "@/lib/platform";
 import { type ShownArea, usePlaceArea } from "@/lib/place-areas";
 import { useShownTripLines } from "@/lib/trip-lines-map";
 import { cn } from "@/lib/utils";
@@ -34,15 +35,14 @@ function pinRows(items: LegendItems): LegendRow[] {
   ];
 }
 
-/** What clicking a group does, with and without ⌘ or Ctrl held. */
+/** What clicking a group does, with and without ⌘ (Ctrl off Apple devices) held. */
 function GroupHelp() {
   return (
     <>
       <p>Click a group to zoom in until its photos split apart.</p>
       <p>
-        Hold <kbd className="font-sans font-semibold">⌘</kbd> (or{" "}
-        <kbd className="font-sans font-semibold">Ctrl</kbd> on Windows and Linux) while clicking to
-        see its photos in a grid instead. Photos at one spot open the grid either way.
+        Hold <kbd className="font-sans font-semibold">{modifierKey()}</kbd> while clicking to see
+        its photos in a grid instead.
       </p>
     </>
   );

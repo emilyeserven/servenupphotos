@@ -136,8 +136,8 @@ filters and the day filter change it:
 
 - The pins: **Photo** (a square pin with a white edge), **Group of photos** (a round marker with its count, whenever
   there are at least two photos) and **Photo without an image yet** (a small light-blue dot). A (?) after **Group of
-  photos** opens a note on clicking a group: a click zooms in, and ⌘ or Ctrl-click lists its photos in a grid
-  (`components/map-legend-help.tsx`).
+  photos** opens a note on clicking a group: a click zooms in, and ⌘-click (Ctrl-click off Apple devices, read from the
+  browser's user agent in `lib/platform.ts`) lists its photos in a grid (`components/map-legend-help.tsx`).
 - Then, under a divider, the trip lines of the photos' days when **Trip lines** is on: **Walk**, **Bus, subway or
   train** (a sample in the colors of the lines ridden), **Drive** (long dashes), **Other trip** (dashed), **Place visited** and **Area**.
   **Area** also shows while a place's area is shaded from **Places**.
