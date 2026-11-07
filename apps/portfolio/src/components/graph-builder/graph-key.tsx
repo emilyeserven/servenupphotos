@@ -1,5 +1,6 @@
 import { ChevronDown, Palette } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
+import { createPortal } from "react-dom";
 import { Swatch } from "@portfolio/components/graph-builder/graph-parts";
 import type { GraphSeries } from "@portfolio/lib/graph-data";
 import { cn } from "@portfolio/lib/utils";
@@ -7,17 +8,40 @@ import { cn } from "@portfolio/lib/utils";
 /** A series or slice in the graph's key. */
 type KeyItem = Pick<GraphSeries, "label" | "color">;
 
+/** Where the key's button goes: the end of the row with the y axis's name, once it's drawn. */
+const KeySlot = createContext<HTMLElement | null>(null);
+
 /**
- * A graph with its key: a **Key** button in a row of its own over the graph's right end, so folded
- * it covers nothing, and open at first, its list floating under the button over the graph's top
- * right corner, apart from the y axis. Without items, just the graph.
+ * The row over the graph, with `start` (the y axis's name) on the left and room for the key's
+ * button on the right, so folded the key takes no space from the graph; then the graph. The row
+ * hides while it has nothing in it, such as a photo dot graph's with no split.
+ */
+export function KeyRow({ start, children }: { start: ReactNode; children: ReactNode }) {
+  const [slot, setSlot] = useState<HTMLDivElement | null>(null);
+  return (
+    <>
+      <div className="hidden min-h-7 flex-wrap items-center justify-between gap-2 has-[>:not(:empty)]:flex">
+        {start}
+        <div ref={setSlot} className="ml-auto" />
+      </div>
+      <KeySlot value={slot}>{children}</KeySlot>
+    </>
+  );
+}
+
+/**
+ * A graph with its key: a **Key** button at the end of the y axis's row, so folded it covers
+ * nothing, and open at first, its list floating under the button over the graph's top right
+ * corner, apart from the y axis. Without items, just the graph.
  */
 export function WithKey({ items, children }: { items: KeyItem[]; children: ReactNode }) {
+  const slot = useContext(KeySlot);
+  const panel = items.length > 0 && slot !== null;
   return (
-    <div className="flex flex-col gap-1">
-      {items.length > 0 && <KeyPanel items={items} />}
+    <>
+      {panel && createPortal(<KeyPanel items={items} />, slot)}
       {children}
-    </div>
+    </>
   );
 }
 
@@ -25,7 +49,7 @@ export function WithKey({ items, children }: { items: KeyItem[]; children: React
 function KeyPanel({ items }: { items: KeyItem[] }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="relative z-10 ml-auto w-max max-w-44 rounded-md border bg-card/95 text-xs shadow-sm backdrop-blur-sm">
+    <div className="relative z-10 w-max max-w-44 rounded-md border bg-card/95 text-xs shadow-sm backdrop-blur-sm">
       <button
         type="button"
         aria-expanded={open}
