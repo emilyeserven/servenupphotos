@@ -6,7 +6,12 @@ import { InfoButton } from "@/components/info-button";
 import { SectionPicker } from "@/components/section-picker";
 import { Button } from "@/components/ui/button";
 import type { GraphConfig } from "@/lib/graph-data";
-import { type GraphPreset, type PresetSection, presetSections } from "@/lib/graph-presets";
+import {
+  type GraphPreset,
+  type PresetSection,
+  presetIsOn as isOn,
+  presetSections,
+} from "@/lib/graph-presets";
 import type { SavedGraphs } from "@/lib/saved-graphs";
 
 /** Picking a preset: the graph takes its settings, and the filters stay as they are. */
@@ -14,13 +19,6 @@ type OnPick = (change: Partial<GraphConfig>) => void;
 
 /** What the visitor's own presets are called in the picker's list. */
 const YOURS = "yours";
-
-/** Whether the graph is set as the preset sets it. */
-function isOn(preset: GraphPreset, config: GraphConfig): boolean {
-  return Object.entries(preset.graph).every(
-    ([key, value]) => config[key as keyof GraphConfig] === value,
-  );
-}
 
 /** The picker's sections: the site's groups, then the visitor's own presets when they have any. */
 function sectionsOf(saved: SavedGraphs): PresetSection[] {

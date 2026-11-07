@@ -1,5 +1,5 @@
 import committedPresets from "@portfolio/data/graphs/GRAPHS.json";
-import { currentType, type GraphConfig } from "@portfolio/lib/graph-data";
+import { currentType, type GraphConfig, hasYStat } from "@portfolio/lib/graph-data";
 import { type GraphRanges, NO_RANGES } from "@portfolio/lib/graph-ranges";
 import { localFile } from "@portfolio/lib/localize";
 
@@ -129,4 +129,20 @@ export function spotlightPresets(files: GraphPresetFile[] = presetFiles): GraphP
 /** Every preset the site's GRAPHS.json has, in or out of groups, which a link can name by ID instead of its settings. */
 export function builtInPresets(files: GraphPresetFile[] = presetFiles): GraphPreset[] {
   return files.filter((file) => file.kind === "preset").map(presetOf);
+}
+
+/** Whether the graph type draws the setting: a second stat on the y axis is only a scatterplot's or heatmap's. */
+function usedBy(key: string, graph: Partial<PresetGraph>): boolean {
+  return key !== "y" || hasYStat(currentType(graph.type));
+}
+
+/**
+ * Whether the graph is set as the preset sets it, so the Presets picker checks it off. A setting
+ * the preset's graph type doesn't draw, such as a photo dot graph's y axis stat, isn't compared,
+ * since a link leaves it out and it can be anything.
+ */
+export function presetIsOn(preset: GraphPreset, config: GraphConfig): boolean {
+  return Object.entries(preset.graph).every(
+    ([key, value]) => !usedBy(key, preset.graph) || config[key as keyof GraphConfig] === value,
+  );
 }
