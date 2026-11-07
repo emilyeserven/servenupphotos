@@ -25,6 +25,7 @@ import { placeGroups } from "@/lib/trip-groups";
 import { draftOf, type GapDraft, segmentsOf, walkingDraft } from "@/lib/trip-gaps";
 import { draftVias, movedVia, withVia } from "@/lib/trip-points";
 import { dayTitle } from "@/components/trip-lines/day-title";
+import { useTripLinesSearch } from "@/lib/trip-lines-search";
 
 /** What the editor shows first: the saved line by hand, the automatic line, or nothing yet. */
 function initialView(ids: number[], line: TripLine | undefined): EditorView {
@@ -82,7 +83,9 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
   );
   const setView = (next: EditorView) => setRawView(withPlaceGroups(next, day.photos));
   const [hovered, setHovered] = useState<number>();
-  const [focus, setFocus] = useState<string>();
+  const { search, set } = useTripLinesSearch();
+  const focus = search.group;
+  const setFocus = (group: string | undefined) => set({ group });
   const auto = useQuery({ ...autoTripLineQuery(day.day), enabled: showsAuto(view) });
   const segments = viewSegments(ids, view, auto.data);
   const editDraft = (draft: GapDraft) => setView({ kind: "hand", draft });

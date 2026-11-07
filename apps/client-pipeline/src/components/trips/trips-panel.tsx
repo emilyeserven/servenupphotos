@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { useTripLinesSearch } from "@/lib/trip-lines-search";
 import type { CombinedData } from "@/api/photos";
 import { timelineLabels } from "@/api/timeline-labels";
 import { type Trip, trips } from "@/api/trips";
@@ -17,8 +18,14 @@ const NEW_TRIP: Trip = { id: "", name: "", start: "", end: "", legs: [] };
 /** The Trips listed on the left, newest first, and the chosen one, or a new one, edited on the right. */
 export function TripsPanel({ data, days }: { data: CombinedData; days: TripDay[] }) {
   const all = trips(data);
-  const [chosen, setChosen] = useState<string | Trip | undefined>(() => all[0]?.id);
-  const trip = chosenTrip(all, chosen);
+  const { search, set } = useTripLinesSearch();
+  // A new Trip not saved yet, which has no ID for the URL.
+  const [draft, setDraft] = useState<Trip>();
+  const trip = draft ?? chosenTrip(all, search.trip);
+  const setChosen = (chosen: string | Trip | undefined) => {
+    setDraft(typeof chosen === "object" ? chosen : undefined);
+    set({ trip: typeof chosen === "string" ? chosen : undefined });
+  };
   const byDay = new Map(days.map((d) => [d.day, d]));
   return (
     <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
@@ -48,9 +55,9 @@ export function TripsPanel({ data, days }: { data: CombinedData; days: TripDay[]
   );
 }
 
-/** The Trip chosen: a saved one by its ID, or a new one not saved yet. */
-function chosenTrip(all: Trip[], chosen: string | Trip | undefined): Trip | undefined {
-  return typeof chosen === "string" ? all.find((t) => t.id === chosen) : chosen;
+/** The saved Trip the URL names, or else the newest. */
+function chosenTrip(all: Trip[], id: string | undefined): Trip | undefined {
+  return all.find((t) => t.id === id) ?? all[0];
 }
 
 /** A key that starts the editor afresh for another Trip, or another new one. */
