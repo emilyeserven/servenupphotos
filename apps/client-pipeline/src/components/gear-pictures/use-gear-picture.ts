@@ -1,8 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import type { GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
+import type { GearBox, GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 import { cropGearImageMutation, type UploadedGearOriginal } from "@/api/gear";
-import { wholeCrop } from "@/lib/gear-crop";
+import { cropLimits } from "@/components/gear-pictures/crop-limits";
+import { fitCrop } from "@/lib/gear-crop";
 
 /** A gear picture being edited: its crop's link, its original's, and the crops wanted and shown. */
 export interface GearPictureState {
@@ -14,6 +15,8 @@ export interface GearPictureState {
   crop?: GearCrop;
   /** The crop `image` shows, once one has been cut. */
   applied?: GearCrop;
+  /** The box around the gear in `original`, when it was found on upload. */
+  subject?: GearBox;
 }
 
 /** The saved file's picture: its crop and original, or its picture alone from before crops. */
@@ -21,14 +24,14 @@ function savedPicture(file?: GearFile): GearPictureState {
   return file ? fromFile(file) : { image: "", original: "" };
 }
 
-function fromFile({ image, original, crop }: GearFile): GearPictureState {
-  return { image, original: original ?? image, crop, applied: crop };
+function fromFile({ image, original, crop, subject }: GearFile): GearPictureState {
+  return { image, original: original ?? image, crop, applied: crop, subject };
 }
 
 /**
  * A camera's or lens's picture while it's edited, starting from its saved file, with what can be
- * done to it: take an upload (cutting the whole picture as its first crop), line up a crop, cut
- * the crop lined up, or go back to the drawing.
+ * done to it: take an upload (cutting its gear, fitted inside the limit lines, as its first crop),
+ * line up a crop, cut the crop lined up, or go back to the drawing.
  */
 export function useGearPicture(file?: GearFile) {
   const [picture, setPicture] = useState(() => savedPicture(file));
@@ -41,10 +44,10 @@ export function useGearPicture(file?: GearFile) {
   return {
     picture,
     cut,
-    /** Takes a new upload, and cuts the whole of it as its first crop. */
+    /** Takes a new upload, and cuts its gear fitted inside the limit lines as its first crop. */
     uploaded: (res: UploadedGearOriginal) => {
-      const crop = wholeCrop(res.width, res.height);
-      setPicture((p) => ({ ...p, original: res.url, crop }));
+      const crop = fitCrop(res.subject, [res.width, res.height], cropLimits.get());
+      setPicture((p) => ({ ...p, original: res.url, crop, subject: res.subject }));
       apply(res.url, crop);
     },
     /** Lines up a new crop, not cut yet. */

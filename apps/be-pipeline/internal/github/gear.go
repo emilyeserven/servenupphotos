@@ -36,6 +36,10 @@ type Gear struct {
 	// Crop is the part of Original that Image shows, or nil when there's no
 	// Original.
 	Crop *GearCrop `json:"crop,omitempty"`
+	// Subject is the box around the camera or lens in Original, found when it
+	// was uploaded, as fractions of its width and height, which crops are
+	// fitted to; nil when there's no Original or it was uploaded before boxes.
+	Subject *GearBox `json:"subject,omitempty"`
 	// Description is a few words about it, shown under the picture, or "".
 	Description string `json:"description"`
 }
@@ -51,6 +55,14 @@ type GearCrop struct {
 	// Fill is what fills the crop around the picture: "white", or "" for
 	// transparent.
 	Fill string `json:"fill,omitempty"`
+}
+
+// GearBox is a box in a gear picture, as fractions of its width and height.
+type GearBox struct {
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+	Width  float64 `json:"width"`
+	Height float64 `json:"height"`
 }
 
 // SaveGear saves gear as <folder>/gear/<id>.json, new or replacing the one
@@ -94,7 +106,7 @@ func validGear(g Gear) (Gear, *PublishError) {
 	out := Gear{
 		ID: strings.TrimSpace(g.ID), Kind: g.Kind, Name: strings.TrimSpace(g.Name),
 		Image: strings.TrimSpace(g.Image), Description: strings.TrimSpace(g.Description),
-		Original: strings.TrimSpace(g.Original), Crop: g.Crop,
+		Original: strings.TrimSpace(g.Original), Crop: g.Crop, Subject: g.Subject,
 	}
 	if perr := validEntryID(GearKind.Name, out.ID); perr != nil {
 		return out, perr

@@ -28,9 +28,14 @@ import { canonicalJson } from "@/lib/combined";
  */
 function fileOf(row: GearRow, picture: GearPictureState, description: string): GearFile {
   const fresh = { id: gearId(row.kind, row.name), kind: row.kind, name: row.name };
-  const { original: _o, crop: _c, ...saved } = { ...fresh, ...row.file };
+  const { original: _o, crop: _c, subject: _s, ...saved } = { ...fresh, ...row.file };
   const next = { ...saved, image: picture.image, description: description.trim() };
-  return picture.applied ? { ...next, original: picture.original, crop: picture.applied } : next;
+  return picture.applied ? { ...next, ...croppedPart(picture) } : next;
+}
+
+/** The original, the crop cut from it and the gear's box in it, for a picture with a cut crop. */
+function croppedPart({ original, applied, subject }: GearPictureState): Partial<GearFile> {
+  return subject ? { original, crop: applied, subject } : { original, crop: applied };
 }
 
 /** What the card says about the camera or lens: its kind and how many photos name it. */
@@ -88,13 +93,14 @@ function ImageField({ editor }: { editor: GearPictureEditor }) {
   return (
     <div className="flex flex-col gap-1.5 text-sm">
       <label htmlFor="gear-image" className="font-medium">
-        Picture (JPEG, PNG or WEBP; a PNG or WEBP keeps its transparent background)
+        Picture: a JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF of any size, such as one from a store
+        page. The gear in it is found and fitted inside the limit lines.
       </label>
       <div className="flex flex-wrap items-center gap-2">
         <Input
           id="gear-image"
           type="file"
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/*"
           className="max-w-80"
           disabled={upload.isPending}
           onChange={(event) => {

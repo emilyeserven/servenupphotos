@@ -12,7 +12,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gen2brain/avif"
+
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
 
 // gearR2 is validR2 with a public URL, so uploads have links.
@@ -50,7 +53,7 @@ func TestUploadGearOriginal(t *testing.T) {
 	if !strings.HasPrefix(got.Key, "gear/originals/") || !strings.HasSuffix(got.Key, "-my-x-t5.png") {
 		t.Errorf("key = %q, want gear/originals/<hash>-my-x-t5.png", got.Key)
 	}
-	if got.URL != "https://cdn.example/"+got.Key || got.Width != 40 || got.Height != 30 {
+	if got.URL != "https://cdn.example/"+got.Key || got.Width != 40 || got.Height != 30 || got.Subject.Width != 1 {
 		t.Errorf("got %+v, want its link and a 40x30 size", got)
 	}
 	if f.contentType != "image/png" || !bytes.Equal(f.body, picture) {
@@ -144,6 +147,58 @@ func TestCropGearImageProblems(t *testing.T) {
 		_, err := cropGearImage(t.Context(), gearR2, "http://unused", tc.original, tc.crop)
 		if !errors.As(err, &uerr) {
 			t.Errorf("%s: error = %v, want an UploadError", name, err)
+		}
+	}
+}
+
+func TestUploadGearOriginalAVIF(t *testing.T) {
+	img := image.NewNRGBA(image.Rect(0, 0, 64, 16))
+	var buf bytes.Buffer
+	if err := avif.Encode(&buf, img); err != nil {
+		t.Fatal(err)
+	}
+	if got := GearPictureType(buf.Bytes()); got != "image/avif" {
+		t.Fatalf("GearPictureType(avif) = %q", got)
+	}
+	f := &fakeR2Upload{status: http.StatusOK}
+	got, err := uploadGearOriginal(t.Context(), gearR2, f.start(t), "lens.avif", &buf)
+	if err != nil || !strings.HasSuffix(got.Key, "-lens.avif") || got.Width != 64 || got.Height != 16 {
+		t.Fatalf("uploadGearOriginal(avif) = %+v, %v; want a 64x16 .avif", got, err)
+	}
+	if f.contentType != "image/avif" {
+		t.Errorf("content type = %q", f.contentType)
+	}
+}
+
+// Store pages' pictures come in every shape and size: a crop of each fills
+// the whole frame, scaling a tiny one up and a long one down.
+func TestCutOutOddSizes(t *testing.T) {
+	for name, size := range map[string]image.Point{"tiny": {30, 20}, "long": {4000, 100}, "tall": {100, 4000}, "huge square": {3000, 3000}} {
+		img := image.NewNRGBA(image.Rect(0, 0, size.X, size.Y))
+		// The whole picture, centered, as the page's first crop has it.
+		aspect := float64(GearCropWidth) / GearCropHeight
+		part := versions.Part{X: 0, Y: 0, Width: 1, Height: 1}
+		if float64(size.X)/float64(size.Y) > aspect {
+			part.Height = float64(size.X) / aspect / float64(size.Y)
+			part.Y = (1 - part.Height) / 2
+		} else {
+			part.Width = float64(size.Y) * aspect / float64(size.X)
+			part.X = (1 - part.Width) / 2
+		}
+		got, ok := versions.CutOut(img, part, GearCropWidth, GearCropHeight, color.White)
+		if !ok || got.Bounds().Dx() != GearCropWidth || got.Bounds().Dy() != GearCropHeight {
+			t.Errorf("%s: CutOut() = %v, %v; want %dx%d", name, got.Bounds(), ok, GearCropWidth, GearCropHeight)
+		}
+	}
+}
+
+func TestGearPictureType(t *testing.T) {
+	for want, head := range map[string]string{
+		"image/png": "\x89PNG\r\n\x1a\n", "image/gif": "GIF89a", "image/bmp": "BM", "image/tiff": "II*\x00",
+		"": "hello",
+	} {
+		if got := GearPictureType([]byte(head + "rest of the picture")); got != want {
+			t.Errorf("GearPictureType(%q) = %q, want %q", head, got, want)
 		}
 	}
 }

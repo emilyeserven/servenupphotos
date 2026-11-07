@@ -1,5 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
-import type { GearCrop, GearFile, GearKind } from "@portfolio/lib/gear-pictures";
+import type { GearBox, GearCrop, GearFile, GearKind } from "@portfolio/lib/gear-pictures";
 import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 import { entryId } from "@/api/places";
@@ -68,13 +68,15 @@ interface UploadedGearImage {
   url: string;
 }
 
-/** Where an original gear picture went in R2, and its size upright, in pixels. */
+/** Where an original gear picture went in R2, its size upright, in pixels, and where the gear is in it. */
 export interface UploadedGearOriginal extends UploadedGearImage {
   width: number;
   height: number;
+  /** The box around what isn't plain background: the product on a store page's white. */
+  subject: GearBox;
 }
 
-/** Puts a picture in R2 right away, unchanged, for a crop to be cut from. */
+/** Puts a picture in R2 right away, unchanged, for a crop to be cut from, and finds the gear in it. */
 export const uploadGearImageMutation = mutationOptions({
   mutationKey: ["gear", "image"],
   mutationFn: (image: File) => {

@@ -10,8 +10,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.3
 	github.com/aws/smithy-go v1.28.5
 	github.com/disintegration/imaging v1.6.2
+	github.com/gen2brain/avif v0.4.4
 	github.com/gen2brain/webp v0.6.4
 	github.com/lucasb-eyer/go-colorful v1.4.1
+	golang.org/x/image v0.36.0
 )
 
 require (
@@ -24,5 +26,5 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.6 // indirect
 	github.com/ebitengine/purego v0.10.1 // indirect
-	golang.org/x/image v0.36.0 // indirect
+	github.com/tetratelabs/wazero v1.9.0 // indirect
 )

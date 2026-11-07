@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { GearCrop } from "@portfolio/lib/gear-pictures";
+import type { GearBox, GearCrop } from "@portfolio/lib/gear-pictures";
 
 /** A gear picture's crop's size in pixels, as the backend makes it: 200px tall and 4:3. */
 const GEAR_CROP_SIZE = { width: 267, height: 200 };
@@ -67,4 +67,47 @@ export function cropStyle(crop: GearCrop): CSSProperties {
 /** Whether two crops are the same, or both missing. */
 export function sameCrop(a?: GearCrop, b?: GearCrop): boolean {
   return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+}
+
+/** How far in from each side of the crop frame its limit lines are, as percentages of the frame. */
+export interface CropLimits {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+/** The space inside the limit lines, as fractions of the frame. */
+function insideLimits(limits: CropLimits): GearBox {
+  const x = limits.left / 100;
+  const y = limits.top / 100;
+  return { x, y, width: 1 - x - limits.right / 100, height: 1 - y - limits.bottom / 100 };
+}
+
+/**
+ * The crop that normalizes a `width` by `height` picture: its `subject` (the gear, found when it
+ * was uploaded) as big as it fits inside the limit lines and centered between them, whatever the
+ * picture's size or shape, with `fill` around it.
+ */
+export function fitCrop(
+  subject: GearBox,
+  [width, height]: [number, number],
+  limits: CropLimits,
+  fill: GearCrop["fill"] = "white",
+): GearCrop {
+  const inside = insideLimits(limits);
+  const ch = Math.max(
+    subject.height / inside.height,
+    ((subject.width / inside.width) * width) / (height * ASPECT),
+  );
+  const cw = (ch * height * ASPECT) / width;
+  const middleX = inside.x + inside.width / 2;
+  const middleY = inside.y + inside.height / 2;
+  return {
+    x: subject.x + subject.width / 2 - middleX * cw,
+    y: subject.y + subject.height / 2 - middleY * ch,
+    width: cw,
+    height: ch,
+    fill,
+  };
 }

@@ -320,6 +320,7 @@ const added = {
         image: "https://cdn.servenupphotos.net/gear/0a1b2c3d4e5f-x-t5.webp",
         original: "https://cdn.servenupphotos.net/gear/originals/9a8b7c6d5e4f-x-t5.jpg",
         crop: { x: 0.05, y: -0.1, width: 0.9, height: 1.35 },
+        subject: { x: 0.1, y: 0.1, width: 0.8, height: 0.8 },
         description: "My everyday camera since 2024.",
       },
     },
@@ -1608,6 +1609,7 @@ export function defaultFixtures() {
       url: "https://cdn.servenupphotos.net/gear/originals/6f7e8d9c0b1a-lens.jpg",
       width: 1200,
       height: 800,
+      subject: { x: 0.55, y: 0.15, width: 0.3, height: 0.4 },
     },
     "POST /api/gear/crop": {
       key: "gear/7a8b9c0d1e2f-lens.webp",

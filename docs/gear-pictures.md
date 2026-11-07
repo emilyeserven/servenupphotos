@@ -22,6 +22,7 @@ way it combines the custom lenses into `LENSES.json`:
   "image": "https://cdn.servenupphotos.net/gear/0a1b2c3d4e5f-x-t5.webp",
   "original": "https://cdn.servenupphotos.net/gear/originals/9a8b7c6d5e4f-x-t5.jpg",
   "crop": { "x": 0.05, "y": -0.1, "width": 0.9, "height": 1.35, "fill": "white" },
+  "subject": { "x": 0.1, "y": 0.2, "width": 0.8, "height": 0.6 },
   "description": "My everyday camera since 2024."
 }
 ```
@@ -36,6 +37,8 @@ way it combines the custom lenses into `LENSES.json`:
   fractions of the original's width and height. A crop can reach past the original's edges (a negative `x`, or a
   `width` over 1), and `fill` says what fills that room: `"white"`, or transparent when it's missing. Files saved
   before crops have only `image`; the page crops that picture as their original.
+- **`subject`** is the box around the camera or lens in `original`, found when it was uploaded, which **Fit to
+  limits** fits inside the limit lines. It's missing for pictures uploaded before boxes were found.
 
 Saving or removing one (`PUT /api/gear/<id>` → `PUT /gear/{id}`, `DELETE /api/gear/<id>` → `DELETE /gear/{id}`) is a
 [change waiting for Commit](pending-changes.md), counted by the sync button as a gear picture. Photos in Flight lists
@@ -44,10 +47,18 @@ in place of the committed file.
 
 ## The picture and its crop
 
+The crop is a normalizer: pictures come from store pages in any size, shape and format, and every crop comes out the
+same 267 × 200 WEBP with the gear the same size and place in it.
+
 Choosing a picture (`POST /api/gear/image` → `POST /gear/image`, a multipart form with the file as `image`) uploads it
-to R2 at once, like a photo, since the file only points at it. It can be a JPEG, PNG or WEBP of up to 20 MB. The
-backend keeps it as it is, under `gear/originals/<hash>-<name>.<ext>`, and answers with its link and its size upright.
-The page then cuts its first crop: the whole picture, centered, with white around it.
+to R2 at once, like a photo, since the file only points at it. It can be a JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF of
+up to 20 MB, of any size or shape. The backend keeps it as it is, under `gear/originals/<hash>-<name>.<ext>`, and
+answers with its link, its size upright, and its **subject**: the box around everything that isn't plain background.
+It shrinks the picture to 400px, takes the average of its four corners as the background, and counts a pixel as
+background when it's (nearly) see-through or within 24 of that color in every channel, so a store page's white, a
+faint shadow on it, or a transparent PNG's nothing are all trimmed. A picture with no plain background is its own
+subject. The page then cuts its first crop: the subject as big as fits inside the [limit lines](#the-page), centered
+between them, with white around it.
 
 Cutting a crop (`POST /api/gear/crop` → `POST /gear/crop`, with `{ "original": <link>, "crop": { … } }`) reads the
 original back from R2, turns it upright, cuts the crop out, fills the room past its edges (and behind a transparent
@@ -72,7 +83,8 @@ other camera's crop (or every other lens's) is drawn over it, faint, with **Othe
 lines cross the middle, so each picture can be given the same size and place as the rest. **Limits** draws a red line
 in from the top, bottom, left and right, each a percentage of the frame (0 for none), with the space past it shaded, to
 fit every picture inside. The limits are a preference kept in this browser's local storage
-(`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files. **Whole picture** goes back
-to the whole picture, centered. **Cut crop** makes the crop in R2; until then the page says the crop isn't cut yet,
+(`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files. **Fit to limits** fits the
+subject inside the limit lines again (after changing them, say), and **Whole picture** goes back to the whole picture,
+centered. The zoom slider's range follows the picture's shape, from well past the whole picture to well into it. **Cut crop** makes the crop in R2; until then the page says the crop isn't cut yet,
 and saving keeps the last crop cut. **Save picture** (or **Save changes**) and **Remove picture** keep the file as a change waiting
 for Commit. The pipeline's own Gallery shows the committed pictures, since it imports the portfolio's filters.

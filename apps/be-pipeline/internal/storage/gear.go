@@ -12,6 +12,15 @@ import (
 	"path"
 	"strings"
 
+	// Registers GIF with image.Decode: a gear picture can be any format.
+	_ "image/gif"
+
+	// Register AVIF, BMP and TIFF with image.Decode, since a gear picture
+	// saved from a store page can be any of them.
+	_ "github.com/gen2brain/avif"
+	_ "golang.org/x/image/bmp"
+	_ "golang.org/x/image/tiff"
+
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/versions"
 )
@@ -28,14 +37,49 @@ const gearCropQuality = 90
 
 // gearOriginalExts are the extensions an original gear picture keeps, by its
 // kind of picture.
-var gearOriginalExts = map[string]string{"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp"}
+var gearOriginalExts = map[string]string{
+	"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp", "image/avif": ".avif",
+	"image/gif": ".gif", "image/bmp": ".bmp", "image/tiff": ".tif",
+}
 
-// GearOriginal is where an uploaded gear picture went in R2, unchanged, and
-// its size upright, in pixels.
+// tiffHeads are how a TIFF starts, little- or big-endian.
+var tiffHeads = []string{"II*\x00", "MM\x00*"}
+
+// GearPictureType is the kind of picture data starts with, such as
+// "image/png", or "" when it isn't a JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF.
+// It needs the first 512 bytes at most.
+func GearPictureType(data []byte) string {
+	if len(data) >= 12 && string(data[4:8]) == "ftyp" && (string(data[8:12]) == "avif" || string(data[8:12]) == "avis") {
+		return "image/avif"
+	}
+	for _, head := range tiffHeads {
+		if bytes.HasPrefix(data, []byte(head)) {
+			return "image/tiff"
+		}
+	}
+	if kind := http.DetectContentType(data); gearOriginalExts[kind] != "" {
+		return kind
+	}
+	return ""
+}
+
+// GearOriginal is where an uploaded gear picture went in R2, unchanged, its
+// size upright, in pixels, and where the camera or lens is in it.
 type GearOriginal struct {
 	Uploaded
 	Width  int `json:"width"`
 	Height int `json:"height"`
+	// Subject is the box around what isn't plain background, as fractions of
+	// the picture's width and height: the product on a store page's white.
+	Subject GearBox `json:"subject"`
+}
+
+// GearBox is a box in a gear picture, as fractions of its width and height.
+type GearBox struct {
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+	Width  float64 `json:"width"`
+	Height float64 `json:"height"`
 }
 
 // GearCrop is the part of an original gear picture its crop shows, as
@@ -54,7 +98,7 @@ type GearCrop struct {
 // gearFills are the colors a crop's Fill can name.
 var gearFills = map[string]color.Color{"": color.Transparent, "white": color.White}
 
-// UploadGearOriginal puts the JPEG, PNG or WEBP picture in body in the bucket
+// UploadGearOriginal puts the JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF picture in body in the bucket
 // as it is, at gear/originals/<hash>-<name>.<ext>, returning its key, public
 // URL and size. Failures are *UploadError.
 func UploadGearOriginal(ctx context.Context, cfg settings.R2, name string, body io.Reader) (GearOriginal, error) {
@@ -71,16 +115,20 @@ func uploadGearOriginal(ctx context.Context, cfg settings.R2, endpoint, name str
 		return GearOriginal{}, &UploadError{Message: "Couldn't read the upload."}
 	}
 	img, err := versions.Decode(bytes.NewReader(data))
-	ext := gearOriginalExts[http.DetectContentType(data)]
-	if err != nil || ext == "" {
-		return GearOriginal{}, &UploadError{Message: "Couldn't read this picture. Use a JPEG, PNG or WEBP.", NotAPhoto: true}
+	kind := GearPictureType(data)
+	if err != nil || kind == "" {
+		return GearOriginal{}, &UploadError{Message: "Couldn't read this picture. Use a JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF.", NotAPhoto: true}
 	}
-	key := gearKey("gear/originals/", name, data, ext)
-	if err := putObject(ctx, newR2Client(cfg, endpoint), cfg, key, bytes.NewReader(data), int64(len(data)), http.DetectContentType(data), nil); err != nil {
+	key := gearKey("gear/originals/", name, data, gearOriginalExts[kind])
+	if err := putObject(ctx, newR2Client(cfg, endpoint), cfg, key, bytes.NewReader(data), int64(len(data)), kind, nil); err != nil {
 		return GearOriginal{}, err
 	}
 	size := img.Bounds().Size()
-	return GearOriginal{Uploaded: Uploaded{Key: key, URL: base + "/" + key}, Width: size.X, Height: size.Y}, nil
+	subject := versions.Subject(img)
+	return GearOriginal{
+		Uploaded: Uploaded{Key: key, URL: base + "/" + key}, Width: size.X, Height: size.Y,
+		Subject: GearBox{X: subject.X, Y: subject.Y, Width: subject.Width, Height: subject.Height},
+	}, nil
 }
 
 // CropGearImage cuts crop out of the gear picture at original, a public URL
@@ -134,7 +182,7 @@ func encodeGearCrop(ctx context.Context, cfg settings.R2, endpoint, key string, 
 // has a fill it knows.
 func validGearCrop(c GearCrop) bool {
 	for _, v := range []float64{c.X, c.Y, c.Width, c.Height} {
-		if math.IsNaN(v) || math.Abs(v) > 10 {
+		if math.IsNaN(v) || math.Abs(v) > 100 {
 			return false
 		}
 	}

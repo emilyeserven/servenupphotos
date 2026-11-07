@@ -17,6 +17,14 @@ export interface GearCrop {
   fill?: "white";
 }
 
+/** A box in a gear picture, as fractions of its width and height. */
+export interface GearBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 /**
  * A gear picture file from GEAR.json, which the pipeline's Gear Pictures page saves: a picture
  * and a few words for one camera or lens, shown in place of the Gear & settings filter's drawing
@@ -33,6 +41,8 @@ export interface GearFile {
   original?: string;
   /** The part of `original` that `image` shows, if there's an original. */
   crop?: GearCrop;
+  /** The box around the camera or lens in `original`, found when it was uploaded, which crops fit to. */
+  subject?: GearBox;
   /** A few words about it, or "". */
   description: string;
 }

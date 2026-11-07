@@ -21,9 +21,6 @@ const gearUploadTimeout = 25 * time.Second
 // maxGearImageBytes caps the size of an uploaded gear picture.
 const maxGearImageBytes = 20 << 20
 
-// gearImageTypes are the kinds of picture a camera or lens can be given.
-var gearImageTypes = map[string]bool{"image/jpeg": true, "image/png": true, "image/webp": true}
-
 // gearUploadFunc puts an original gear picture in R2;
 // storage.UploadGearOriginal in production.
 type gearUploadFunc func(ctx context.Context, cfg settings.R2, name string, body io.Reader) (storage.GearOriginal, error)
@@ -67,7 +64,7 @@ func handleDeleteGear(store *settings.Store, gh *github.Client) http.HandlerFunc
 	}
 }
 
-// handleUploadGearImage puts the JPEG, PNG or WEBP in the "image" field of a
+// handleUploadGearImage puts the JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF in the "image" field of a
 // multipart form in R2 right away, unchanged, responding with its key, URL and
 // size, for a crop to be cut from.
 func handleUploadGearImage(loadR2 func() (settings.R2, error), upload gearUploadFunc) http.HandlerFunc {
@@ -133,7 +130,8 @@ func writeGearUpload[T any](w http.ResponseWriter, res T, err error) {
 }
 
 // receiveGearImage finds the "image" part of the multipart body and returns
-// its file name and a reader of it, after checking it's a JPEG, PNG or WEBP.
+// its file name and a reader of it, after checking it's a picture a gear
+// picture can be (storage.GearPictureType).
 func receiveGearImage(w http.ResponseWriter, r *http.Request) (string, io.Reader, bool) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxGearImageBytes)
 	mr, err := r.MultipartReader()
@@ -152,8 +150,8 @@ func receiveGearImage(w http.ResponseWriter, r *http.Request) (string, io.Reader
 		}
 		body := bufio.NewReader(part)
 		head, _ := body.Peek(512)
-		if !gearImageTypes[http.DetectContentType(head)] {
-			writeError(w, http.StatusUnsupportedMediaType, "the picture must be a JPEG, PNG or WEBP")
+		if storage.GearPictureType(head) == "" {
+			writeError(w, http.StatusUnsupportedMediaType, "the picture must be a JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF")
 			return "", nil, false
 		}
 		return part.FileName(), body, true

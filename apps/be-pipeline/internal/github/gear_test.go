@@ -26,11 +26,12 @@ func TestSaveGear(t *testing.T) {
 	cropped := Gear{
 		ID: "x100", Kind: "camera", Name: "Fujifilm X100V", Image: "https://cdn.example/gear/c.webp",
 		Original: "https://cdn.example/gear/originals/c.png", Crop: &GearCrop{X: -0.1, Y: 0, Width: 1.2, Height: 0.9},
+		Subject: &GearBox{X: 0.2, Y: 0.3, Width: 0.6, Height: 0.4},
 	}
 	if _, err := c.SaveGear(t.Context(), placesGH, cropped); err != nil {
 		t.Fatalf("SaveGear(cropped) error = %v", err)
 	}
-	if saved := staged(t, c, dataRoot+"/gear/x100.json"); !strings.Contains(saved, `"original": "https://cdn.example/gear/originals/c.png"`) || !strings.Contains(saved, `"width": 1.2`) {
+	if saved := staged(t, c, dataRoot+"/gear/x100.json"); !strings.Contains(saved, `"original": "https://cdn.example/gear/originals/c.png"`) || !strings.Contains(saved, `"width": 1.2`) || !strings.Contains(saved, `"subject"`) {
 		t.Errorf("saved %s, want its original and crop", saved)
 	}
 	tests := []struct {

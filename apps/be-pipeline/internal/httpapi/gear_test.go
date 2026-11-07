@@ -26,7 +26,7 @@ func TestUploadGearImage(t *testing.T) {
 	}{
 		{"uploaded", "image", redJPEG(t), nil, http.StatusOK, `"url":"https://cdn.example/gear/k.webp"`},
 		{"a PNG", "image", []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR"), nil, http.StatusOK, `"key":"gear/k.webp"`},
-		{"not a picture", "image", []byte("hello"), nil, http.StatusUnsupportedMediaType, "JPEG, PNG or WEBP"},
+		{"not a picture", "image", []byte("hello"), nil, http.StatusUnsupportedMediaType, "JPEG, PNG, WEBP, AVIF, GIF, BMP or TIFF"},
 		{"no image field", "photo", redJPEG(t), nil, http.StatusBadRequest, `missing \"image\" field`},
 		{"unreadable", "image", redJPEG(t), &storage.UploadError{Message: "Couldn't read this picture.", NotAPhoto: true}, http.StatusUnprocessableEntity, "Couldn't read"},
 		{"other failure", "image", redJPEG(t), errors.New("disk on fire"), http.StatusInternalServerError, "could not upload the picture"},

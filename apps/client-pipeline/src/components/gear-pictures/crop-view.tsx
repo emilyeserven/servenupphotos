@@ -1,10 +1,22 @@
 import { type PointerEvent, useRef, useState } from "react";
 import type { GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 import { Busy, SaveNote } from "@/components/entry-buttons";
-import { CropLimitFields, CropLimitLines } from "@/components/gear-pictures/crop-limits";
+import {
+  CropLimitFields,
+  CropLimitLines,
+  cropLimits,
+} from "@/components/gear-pictures/crop-limits";
 import type { GearPictureEditor } from "@/components/gear-pictures/use-gear-picture";
 import { Button } from "@/components/ui/button";
-import { cropStyle, moveCrop, sameCrop, wholeCrop, zoomCrop, zoomOf } from "@/lib/gear-crop";
+import {
+  cropStyle,
+  fitCrop,
+  moveCrop,
+  sameCrop,
+  wholeCrop,
+  zoomCrop,
+  zoomOf,
+} from "@/lib/gear-crop";
 
 /** A gear picture file that has an original and a crop, which can be shown over another's. */
 type CroppedFile = GearFile & { original: string; crop: GearCrop };
@@ -143,6 +155,15 @@ function useDrag(crop: GearCrop | undefined, setCrop: (crop: GearCrop) => void) 
   };
 }
 
+/**
+ * How far the zoom slider goes, around the whole picture's zoom, so a picture of any shape, from a
+ * long banner to a small square, can be zoomed well in to its gear or out to room around it.
+ */
+function zoomRange(size?: [number, number]): { min: number; max: number } {
+  const whole = size ? zoomOf(wholeCrop(...size)) : 0;
+  return { min: whole - 3, max: whole + 5 };
+}
+
 interface CropControlsProps {
   editor: GearPictureEditor;
   size?: [number, number];
@@ -157,13 +178,13 @@ function CropControls({ editor, size, overlay, onOverlay }: CropControlsProps) {
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
       <Range
         label="Zoom"
-        min={-2}
-        max={3}
+        {...zoomRange(size)}
         value={picture.crop ? zoomOf(picture.crop) : 0}
         onChange={(zoom) => picture.crop && setCrop(zoomCrop(picture.crop, zoom))}
       />
       <Range label="Others" min={0} max={1} value={overlay} onChange={onOverlay} />
       <FillChoice editor={editor} />
+      <FitButton editor={editor} size={size} />
       <Button
         variant="outline"
         size="sm"
@@ -174,6 +195,28 @@ function CropControls({ editor, size, overlay, onOverlay }: CropControlsProps) {
       </Button>
       <CutButton editor={editor} />
     </div>
+  );
+}
+
+/**
+ * Fits the gear, as found when the picture was uploaded, inside the limit lines, keeping the fill:
+ * the normalized crop. Pictures uploaded before gear was found can't be fitted.
+ */
+function FitButton({ editor, size }: { editor: GearPictureEditor; size?: [number, number] }) {
+  const { picture, setCrop } = editor;
+  const { subject } = picture;
+  const fit = () =>
+    size && subject && setCrop(fitCrop(subject, size, cropLimits.get(), picture.crop?.fill));
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      disabled={!size || !subject}
+      title={subject ? undefined : "Upload the picture again to have its gear found."}
+      onClick={fit}
+    >
+      Fit to limits
+    </Button>
   );
 }
 
