@@ -18,6 +18,7 @@ import { Route as BulkPlacesRouteImport } from './routes/bulk-places'
 import { Route as BulkUploadRouteImport } from './routes/bulk-upload'
 import { Route as CameraOverridesRouteImport } from './routes/camera-overrides'
 import { Route as CaptionTemplatesRouteImport } from './routes/caption-templates'
+import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
@@ -98,6 +99,11 @@ const CameraOverridesRoute = CameraOverridesRouteImport.update({
 const CaptionTemplatesRoute = CaptionTemplatesRouteImport.update({
   id: '/caption-templates',
   path: '/caption-templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChangelogRoute = ChangelogRouteImport.update({
+  id: '/changelog',
+  path: '/changelog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompareRoute = CompareRouteImport.update({
@@ -291,6 +297,7 @@ export interface FileRoutesByFullPath {
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
+  '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
@@ -338,6 +345,7 @@ export interface FileRoutesByTo {
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
+  '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
@@ -384,6 +392,7 @@ export interface FileRoutesById {
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
+  '/changelog': typeof ChangelogRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
@@ -433,6 +442,7 @@ export interface FileRouteTypes {
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
+    | '/changelog'
     | '/compare'
     | '/exif'
     | '/gallery'
@@ -480,6 +490,7 @@ export interface FileRouteTypes {
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
+    | '/changelog'
     | '/compare'
     | '/exif'
     | '/gallery'
@@ -525,6 +536,7 @@ export interface FileRouteTypes {
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
+    | '/changelog'
     | '/compare'
     | '/exif'
     | '/gallery'
@@ -573,6 +585,7 @@ export interface RootRouteChildren {
   BulkUploadRoute: typeof BulkUploadRoute
   CameraOverridesRoute: typeof CameraOverridesRoute
   CaptionTemplatesRoute: typeof CaptionTemplatesRoute
+  ChangelogRoute: typeof ChangelogRoute
   CompareRoute: typeof CompareRoute
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
@@ -670,6 +683,13 @@ declare module '@tanstack/react-router' {
       path: '/caption-templates'
       fullPath: '/caption-templates'
       preLoaderRoute: typeof CaptionTemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/changelog': {
+      id: '/changelog'
+      path: '/changelog'
+      fullPath: '/changelog'
+      preLoaderRoute: typeof ChangelogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/compare': {
@@ -964,6 +984,7 @@ const rootRouteChildren: RootRouteChildren = {
   BulkUploadRoute: BulkUploadRoute,
   CameraOverridesRoute: CameraOverridesRoute,
   CaptionTemplatesRoute: CaptionTemplatesRoute,
+  ChangelogRoute: ChangelogRoute,
   CompareRoute: CompareRoute,
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
