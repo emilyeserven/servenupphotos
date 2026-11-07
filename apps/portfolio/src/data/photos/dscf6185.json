@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["observation-towers", "skyline", "skyscrapers", "mountains", "city", "haze"],
-  "genres": [],
+  "genres": ["cityscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

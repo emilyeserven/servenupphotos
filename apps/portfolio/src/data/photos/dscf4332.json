@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city-walls", "office-buildings", "stairs", "facade", "windows", "trees", "crowd"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

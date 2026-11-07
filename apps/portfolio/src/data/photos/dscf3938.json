@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["autumn", "hiking-trail", "signage", "trees", "forest"],
-  "genres": [],
+  "genres": ["nature", "landscape"],
   "places": [
     {
       "relation": "",

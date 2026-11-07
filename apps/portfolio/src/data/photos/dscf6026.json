@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["dobei", "kawara", "calligraphy", "walls", "stones"],
-  "genres": [],
+  "genres": ["architecture", "abstract"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
