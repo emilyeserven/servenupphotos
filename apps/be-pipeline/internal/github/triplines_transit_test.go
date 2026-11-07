@@ -1,6 +1,9 @@
 package github
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestTrimLine(t *testing.T) {
 	line := func() *TripTransitLine {
@@ -61,5 +64,29 @@ func TestBakeStationWalks(t *testing.T) {
 	plain := TripSegment{Mode: ModeSubway, Photos: []int{1, 2}, Board: board}
 	if _ = trimLine(&plain, 1); plain.Board != nil {
 		t.Error("a hop with no line kept its station")
+	}
+}
+
+func TestNamedSegments(t *testing.T) {
+	_, c := newMainRepo(t, tripPhotos)
+	line := TripLine{ID: "2026-09-23", Segments: []TripSegment{
+		{Mode: ModeWalk, Name: "  Morning walk ", Photos: []int{10, 11}},
+		{Mode: ModeWalk, Name: strings.Repeat("x", maxEntryTextLength+1), Photos: []int{11, 12}},
+	}}
+	if _, err := c.SaveTripLine(t.Context(), placesGH, line); err == nil {
+		t.Error("a name too long saved")
+	}
+	line.Segments = line.Segments[:1]
+	saved, err := c.SaveTripLine(t.Context(), placesGH, line)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(saved.Data), `"name": "Morning walk"`) {
+		t.Errorf("saved = %s", saved.Data)
+	}
+	spots := map[int]tripSpot{10: {ID: 10, Latitude: 35, Longitude: 135.75}, 11: {ID: 11, Latitude: 35.001, Longitude: 135.751}}
+	f, _ := segmentFeature(TripLine{Day: "2026-09-23"}, line.Segments[0], spots)
+	if f.Properties.Name == "" {
+		t.Errorf("feature name = %q", f.Properties.Name)
 	}
 }

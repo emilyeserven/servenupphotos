@@ -29,6 +29,8 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 }
 ```
 
+- **`name`** on a segment names the group of photos it's in, such as "Nara Park": each [group](#groups) is a line of
+  its own. A walk or hop from one group to the next has none.
 - **`segments`** are the stretches of the day, in the order they happened. Each one's line runs from `start` (when
   set), through its `photos` (photo IDs) in order, to `end` (when set).
 - **`mode`** is `walk`, `train`, `subway`, `bus`, `car` (taxis too) or `transit`, a hop whose kind isn't known, as the
@@ -82,6 +84,8 @@ segment, coordinates filled in from the photos:
 A hop with a `board` or `alight` station also gets a walk feature from its first photo to where it got on, and from
 where it got off to its last photo.
 
+Each feature also has its segment's `name`, so the portfolio can show one group's line at a time.
+
 Each feature also has `line`, `ref` and `colour` when its hop rode a picked line, so the portfolio can draw it in the
 line's color and name it.
 
@@ -121,6 +125,25 @@ highlights its dot.
   **Ends at** set a spot with no photo by clicking the map, with a label such as "Hotel". **Save route** saves it.
 - An automatic day shows the line as the next Commit would draw it, with **Edit as my own** and **Turn off automatic
   line**.
+
+## Groups
+
+A day often holds several outings, such as three parks. By hand, the photo strip splits the day into groups, each its own
+line with a name:
+
+- A new hand-drawn line groups the photos by their [place](places-and-localizations.md) at once: a group starts wherever
+  the first place of a photo changes, named after it. A photo with no place stays in the group before it.
+- Each group's header has its name, how many photos it has, a button that collapses it to the header, and an eye that
+  shows that group alone on the map, the others faded.
+- The scissors on a photo start a new group there; the join button between two groups merges them. The menu between
+  two groups picks what happened between them, like any gap.
+
+Saving writes each group's name on its segments, and a walk crossing from one group into the next is split there, so
+the stretch between the two groups is its own unnamed segment. Opening a saved line rebuilds the groups from those
+names. A line saved with no names is grouped by place again, and a group left unnamed isn't kept.
+
+> **Frontend analogy:** groups are like `<details>` sections over one list: they change how the list is shown and
+> labeled, but the photos and gaps underneath stay one array.
 
 ## Shaping the line and snapping it to streets
 

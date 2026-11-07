@@ -14,6 +14,8 @@ export interface TripPhoto {
   taken: string;
   latitude: number;
   longitude: number;
+  /** The first place it's at, which groups the day's photos by place. */
+  place?: { id: string; name: string };
 }
 
 /** A day a trip line can be marked for: two or more photos at two or more spots. */
@@ -66,13 +68,26 @@ function spotOf(photo: CombinedPhoto, exact: Map<string, Position>): Position | 
   return found ? (exact.get(found.id) ?? null) : null;
 }
 
+/** The photo's first place with a name, or none. */
+function placeOf(photo: CombinedPhoto, names: Map<string, string>): Pick<TripPhoto, "place"> {
+  const found = savedPlaces(photo.places).find(({ id }) => names.has(id));
+  return found ? { place: { id: found.id, name: names.get(found.id)! } } : {};
+}
+
+/** What tripPhoto reads the places from: exact spots and names, by place ID. */
+interface PlaceLookup {
+  exact: Map<string, Position>;
+  names: Map<string, string>;
+}
+
 /** The photo as a TripPhoto, or undefined when it has no ID, date or exact spot. */
-function tripPhoto(photo: CombinedPhoto, exact: Map<string, Position>): TripPhoto | undefined {
+function tripPhoto(photo: CombinedPhoto, { exact, names }: PlaceLookup): TripPhoto | undefined {
   const taken = takenOf(photo);
   const spot = spotOf(photo, exact);
   if (typeof photo.id !== "number" || !taken || !spot) return undefined;
   const day = taken.slice(0, 10).replaceAll(":", "-");
-  return { id: photo.id, photo, day, time: taken.slice(11, 16), taken, ...spot };
+  const place = placeOf(photo, names);
+  return { id: photo.id, photo, day, time: taken.slice(11, 16), taken, ...spot, ...place };
 }
 
 /** How many different spots the photos are at, to about 10 metres. */
@@ -90,8 +105,8 @@ function byDay(photos: TripPhoto[]): Map<string, TripPhoto[]> {
 
 /** Every day a trip line can be marked for, newest first. */
 export function tripDays(photos: CombinedPhoto[], places: Place[]): TripDay[] {
-  const exact = exactPlaces(places);
-  const usable = photos.flatMap((p) => tripPhoto(p, exact) ?? []);
+  const lookup = { exact: exactPlaces(places), names: new Map(places.map((p) => [p.id, p.name])) };
+  const usable = photos.flatMap((p) => tripPhoto(p, lookup) ?? []);
   return [...byDay(usable)]
     .map(([day, dayPhotos]) => ({ day, photos: dayPhotos, spots: spotCount(dayPhotos) }))
     .filter((d) => d.photos.length >= 2 && d.spots >= 2)

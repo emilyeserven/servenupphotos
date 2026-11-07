@@ -40,6 +40,9 @@ type TripPoint struct {
 type TripSegment struct {
 	// Mode is how the stretch was travelled: one of tripModes.
 	Mode string `json:"mode"`
+	// Name names the line the segment is part of, such as "Nara Park": the
+	// segments between two breaks make one line, and share it. "" for none.
+	Name string `json:"name,omitempty"`
 	// Start is a spot with no photo the line starts from, before Photos.
 	Start *TripPoint `json:"start,omitempty"`
 	// Photos are the IDs of the day's photos the line goes through, in
@@ -183,6 +186,10 @@ func validTripSegment(seg TripSegment, n int) (TripSegment, *PublishError) {
 	}
 	if seg.Photos == nil {
 		seg.Photos = []int{}
+	}
+	seg.Name = strings.TrimSpace(seg.Name)
+	if utf8.RuneCountInString(seg.Name) > maxEntryTextLength {
+		return seg, publishErr(http.StatusBadRequest, "Segment %d: keep its line's name to %d characters.", n, maxEntryTextLength)
 	}
 	if pointCount(seg) < 2 {
 		return seg, publishErr(http.StatusBadRequest, "Segment %d needs at least two points to draw a line.", n)

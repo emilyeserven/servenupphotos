@@ -19,6 +19,11 @@ setWorkerUrl(maplibreWorkerUrl);
 // The same free CARTO basemap as the portfolio's map.
 const MAP_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
+/** The line's opacity: full, or faint when outside the group shown on its own. */
+function opacity(full: number): ["case", ["get", string], number, number] {
+  return ["case", ["get", "faded"], 0.15, full];
+}
+
 /** Walking, a solid line, fainter for a preview. */
 function walkLayer(preview: boolean): LayerProps {
   return {
@@ -26,7 +31,11 @@ function walkLayer(preview: boolean): LayerProps {
     type: "line",
     filter: ["==", ["get", "mode"], "walk"],
     layout: { "line-cap": "round", "line-join": "round" },
-    paint: { "line-color": "#2563eb", "line-width": 4, "line-opacity": preview ? 0.5 : 0.9 },
+    paint: {
+      "line-color": "#2563eb",
+      "line-width": 4,
+      "line-opacity": opacity(preview ? 0.5 : 0.9),
+    },
   };
 }
 
@@ -35,7 +44,12 @@ const hopLayer: LayerProps = {
   id: "trip-hop",
   type: "line",
   filter: ["all", ["!=", ["get", "mode"], "walk"], ["!", ["get", "onLine"]]],
-  paint: { "line-color": ["get", "colour"], "line-width": 3, "line-dasharray": [2, 2] },
+  paint: {
+    "line-color": ["get", "colour"],
+    "line-width": 3,
+    "line-dasharray": [2, 2],
+    "line-opacity": opacity(1),
+  },
 };
 
 /** A hop along the track of the line it rode, solid in that line's color. */
@@ -44,7 +58,7 @@ const lineLayer: LayerProps = {
   type: "line",
   filter: ["get", "onLine"],
   layout: { "line-cap": "round", "line-join": "round" },
-  paint: { "line-color": ["get", "colour"], "line-width": 4, "line-opacity": 0.9 },
+  paint: { "line-color": ["get", "colour"], "line-width": 4, "line-opacity": opacity(0.9) },
 };
 
 interface RouteMapProps {
@@ -55,6 +69,8 @@ interface RouteMapProps {
   preview?: boolean;
   /** The photo pointed at in the strip. */
   highlighted?: number;
+  /** The name of the group shown on its own, the others faded. */
+  focus?: string;
   /** The day's spots with no photo. */
   ends: TripPoint[];
   /** Picks a spot on the map, while the editor is waiting for one. */
@@ -72,6 +88,7 @@ export function RouteMap({
   segments,
   preview,
   highlighted,
+  focus,
   ends,
   onPick,
   vias = [],
@@ -90,7 +107,7 @@ export function RouteMap({
         onClick={(e) => onPick?.({ latitude: e.lngLat.lat, longitude: e.lngLat.lng })}
       >
         <NavigationControl position="bottom-right" showCompass={false} />
-        <Source id="trip-line" type="geojson" data={lineFeatures(segments, photos)}>
+        <Source id="trip-line" type="geojson" data={lineFeatures(segments, photos, focus)}>
           <Layer {...walkLayer(preview === true)} />
           <Layer {...hopLayer} />
           <Layer {...lineLayer} />

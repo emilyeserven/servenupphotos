@@ -1,4 +1,5 @@
 import type { TripMode, TripPoint, TripSegment, TripTransitLine, TripVia } from "@/api/trip-lines";
+import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 
 /**
  * What happened between two photos taken one after the other: kept walking, a break (the line
@@ -28,6 +29,13 @@ export interface GapDraft {
    * changed to another mode leaves it out.
    */
   lines?: Record<string, HopLine>;
+  /**
+   * The photos (by ID) that start a group of their own, such as the first photo in a new park; the
+   * day's first photo always does. Each group is its own named line.
+   */
+  groups?: string[];
+  /** Each group's name, by its first photo's ID. */
+  names?: Record<string, string>;
 }
 
 /** The line a hop rode, and how the hop was travelled when it was picked. */
@@ -136,7 +144,12 @@ function withPath(segment: TripSegment, draft: GapDraft): TripSegment {
 
 /** The segments the gaps make between photos, taken one after the other. */
 export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
-  return plainSegments(photos, draft).map((segment) => withPath(segment, draft));
+  const plain = splitAtGroups(plainSegments(photos, draft), draft.groups);
+  return withNames(
+    plain.map((segment) => withPath(segment, draft)),
+    photos,
+    draft,
+  );
 }
 
 /** Whether a and b are next to each other, in that order, in the segment's photos. */
@@ -187,10 +200,23 @@ function linesOf(segments: TripSegment[]): Record<string, HopLine> {
 export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
   const gaps = photos.slice(1).map((b, i) => gapIn(segments, photos[i] as number, b));
   const lines = linesOf(segments);
-  return { gaps, ...dayEnds(segments), via: viaByKey(segments), paths: pathsOf(segments), lines };
+  const via = viaByKey(segments);
+  return {
+    gaps,
+    ...dayEnds(segments),
+    via,
+    paths: pathsOf(segments),
+    lines,
+    ...groupsOf(segments),
+  };
 }
 
 /** The draft with every gap kept walking: one line through all the photos. */
 export function walkingDraft(photos: number[]): GapDraft {
   return { gaps: photos.slice(1).map(() => "walk") };
+}
+
+/** The draft with gap index changed. */
+export function withGap(draft: GapDraft, index: number, gap: Gap): GapDraft {
+  return { ...draft, gaps: draft.gaps.map((g, i) => (i === index ? gap : g)) };
 }

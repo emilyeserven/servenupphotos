@@ -86,20 +86,20 @@ func segmentFeatures(line TripLine, seg TripSegment, spots map[int]tripSpot) []t
 	}
 	coords, photos := segmentPoints(seg, spots)
 	first, last := photos[:min(1, len(photos))], photos[max(0, len(photos)-1):]
-	out := stationWalk(line, seg.Board, func(st [2]float64) [][2]float64 { return [][2]float64{coords[0], st} }, first)
+	out := stationWalk(line, seg.Name, seg.Board, func(st [2]float64) [][2]float64 { return [][2]float64{coords[0], st} }, first)
 	out = append(out, f)
-	return append(out, stationWalk(line, seg.Alight, func(st [2]float64) [][2]float64 { return [][2]float64{st, coords[len(coords)-1]} }, last)...)
+	return append(out, stationWalk(line, seg.Name, seg.Alight, func(st [2]float64) [][2]float64 { return [][2]float64{st, coords[len(coords)-1]} }, last)...)
 }
 
 // stationWalk is the walk between a hop's photo spot and the station it got
 // on or off at, drawn through the points walk gives for the station, as a
 // one-feature list; none when it has no such station.
-func stationWalk(line TripLine, station *TripPoint, walk func([2]float64) [][2]float64, photos []int) []tripLineFeature {
+func stationWalk(line TripLine, name string, station *TripPoint, walk func([2]float64) [][2]float64, photos []int) []tripLineFeature {
 	if station == nil {
 		return nil
 	}
 	coords := walk([2]float64{station.Longitude, station.Latitude})
-	props := tripLineProps{Day: line.Day, Mode: ModeWalk, Auto: line.Auto, Photos: photos, Km: lineKm(coords)}
+	props := tripLineProps{Day: line.Day, Mode: ModeWalk, Name: name, Auto: line.Auto, Photos: photos, Km: lineKm(coords)}
 	return []tripLineFeature{{Type: "Feature", Geometry: tripLineGeometry{Type: "LineString", Coordinates: coords}, Properties: props}}
 }
 
