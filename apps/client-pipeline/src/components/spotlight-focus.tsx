@@ -1,53 +1,66 @@
-import { useQuery } from "@tanstack/react-query";
-import { organizeQuery } from "@/api/organize";
 import type { SocialPhoto } from "@/api/publish";
+import { HeaderPreview } from "@/components/header-preview";
 import { SpotlightPlacement } from "@/components/spotlight-placement";
-import { type PreviewPhoto, SpotlightPreview } from "@/components/spotlight-preview";
+import { SpotlightPreview } from "@/components/spotlight-preview";
 import { Button } from "@/components/ui/button";
+import type { SpotlightZone } from "@/lib/site-spotlight";
 import {
   type Focus,
-  SPOTLIGHT_FOCUS,
-  SPOTLIGHT_PLACEMENT,
+  type ZoneFocus,
+  SPOTLIGHT_ZONE_FOCUS,
   clickedFocus,
-  focusChange,
-  focusOf,
+  editedData,
   wholePhoto,
+  zoneFocusChange,
+  zoneFocusOf,
 } from "@/lib/spotlight-focus";
-import { hasSpotlightAlbum } from "@/lib/site-spotlight";
 import { previewOf } from "@/lib/spotlight-preview";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
 /**
- * The photo's focus point: where to click on it to keep that part in view when a spotlight zone
- * crops it to a screen of the other shape, such as a landscape photo behind the homepage on a phone,
- * and where on the screen that point goes.
- * It's a local edit until **Commit**, like the zones, with a preview of the photo behind the
- * homepage on a phone and a computer once an album is picked for a zone on Site Spotlight.
+ * The photo's focus point in the zone: where to click on it to keep that part in view when the
+ * zone crops it, such as a landscape photo behind the homepage on a phone, and where on the screen
+ * that point goes, with a preview of the zone on a phone and a computer. Each zone keeps its own.
+ * It's a local edit until **Commit**, like the zones.
  */
-export function SpotlightFocus({ photo }: { photo: SocialPhoto }) {
+export function SpotlightFocus({ photo, zone }: { photo: SocialPhoto; zone: SpotlightZone }) {
   const edits = useLocalEditsStore((state) => state.edits);
   const setField = useLocalEditsStore((state) => state.setField);
-  const focus = focusOf(edits, photo);
-  const placement = focusOf(edits, photo, SPOTLIGHT_PLACEMENT);
-  const set = (next: Focus | null) => setField(SPOTLIGHT_FOCUS, [focusChange(photo, next)]);
-  const place = (next: Focus | null) => setField(SPOTLIGHT_PLACEMENT, [focusChange(photo, next)]);
+  const data = editedData(edits, photo);
+  const current = zoneFocusOf(data, zone.id);
+  const save = (next: Partial<ZoneFocus>) =>
+    setField(SPOTLIGHT_ZONE_FOCUS, [
+      zoneFocusChange(photo, data, zone.id, { ...current, ...next }),
+    ]);
   const src = wholePhoto(photo);
   if (!src) return null;
+  const preview = previewOf(photo.data, src, current.focus, current.placement);
   return (
-    <div className="flex flex-col gap-3 pt-1">
+    <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-sm font-medium">Focus point</p>
-        <Button variant="outline" size="sm" disabled={!focus} onClick={() => set(null)}>
+        <p className="font-medium">Focus point</p>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!current.focus}
+          onClick={() => save({ focus: null })}
+        >
           Use the middle
         </Button>
       </div>
-      <p className="text-muted-foreground text-sm">
-        Click the part to keep in view on a screen of the other shape: a phone showing a landscape
-        photo, or a computer a portrait one.
+      <p className="text-muted-foreground">
+        Click the part of the photo to keep in view where {zone.label} crops it.
       </p>
-      <FocusPicker src={src} focus={focus} onPick={set} />
-      <SpotlightPlacement placement={placement} onPick={place} />
-      <HomepagePreview photo={previewOf(photo.data, src, focus, placement)} />
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+        <div className="flex flex-col gap-3">
+          <FocusPicker src={src} focus={current.focus} onPick={(focus) => save({ focus })} />
+          <SpotlightPlacement
+            placement={current.placement}
+            onPick={(placement) => save({ placement })}
+          />
+        </div>
+        {zone.homepage ? <SpotlightPreview photo={preview} /> : <HeaderPreview photo={preview} />}
+      </div>
     </div>
   );
 }
@@ -79,17 +92,5 @@ function FocusPicker({ src, focus, onPick }: FocusPickerProps) {
         style={{ left: `${at.x}%`, top: `${at.y}%` }}
       />
     </button>
-  );
-}
-
-/** The photo behind the homepage, shown only once an album is picked for a spotlight zone. */
-function HomepagePreview({ photo }: { photo: PreviewPhoto }) {
-  const organize = useQuery(organizeQuery);
-  if (!organize.data || !hasSpotlightAlbum(organize.data.albums)) return null;
-  return (
-    <>
-      <p className="pt-1 text-sm font-medium">Behind the homepage</p>
-      <SpotlightPreview photo={photo} />
-    </>
   );
 }

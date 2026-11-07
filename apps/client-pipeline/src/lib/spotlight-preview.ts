@@ -1,5 +1,5 @@
 import type { PreviewPhoto } from "@/components/spotlight-preview";
-import { type Focus, asFocus, resizedPhoto } from "@/lib/spotlight-focus";
+import type { Focus } from "@/lib/spotlight-focus";
 
 /** A string field of a photo's data, trimmed, or undefined when it's empty or not a string. */
 function text(data: Record<string, unknown>, field: string): string | undefined {
@@ -29,15 +29,4 @@ export function previewOf(
   placement: Focus | null,
 ): PreviewPhoto {
   return { src, title: titleOf(data), focus, placement, onMap: hasPosition(data) };
-}
-
-/**
- * An ALLPHOTOS.json entry as a spotlight preview shows it, with its focus point and placement; undefined when
- * it has no resized versions, which a spotlight zone can't show.
- */
-export function combinedPreview(photo: Record<string, unknown>): PreviewPhoto | undefined {
-  const src = resizedPhoto(photo);
-  return src
-    ? previewOf(photo, src, asFocus(photo.spotlightFocus), asFocus(photo.spotlightPlacement))
-    : undefined;
 }

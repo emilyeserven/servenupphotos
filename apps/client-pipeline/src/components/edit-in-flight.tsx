@@ -14,7 +14,6 @@ import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-d
 import { QueryResult } from "@/components/query-result";
 import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
-import { SpotlightCard } from "@/components/spotlight-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -171,7 +170,6 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           disabled={pending}
           tagPrompt={<TagPromptButton imageUrl={imageUrl} details={edit.details} exif={exif} />}
         />
-        <SpotlightCard path={editable.file.path} />
       </div>
       <div className="flex min-w-0 flex-col gap-6">
         <PhotoDetailsCard

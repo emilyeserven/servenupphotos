@@ -2,6 +2,7 @@ import { useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 import { objectPosition } from "@/lib/spotlight-focus";
 import {
+  focusIn,
   GRID_HEADER_ZONE,
   type ImagePhoto,
   spotlightPhotos,
@@ -46,11 +47,11 @@ function HeaderSpotlight({ zone }: { zone: string }) {
   }));
   const shown = phone ? photos.phone : photos.wide;
   if (shown.length === 0) return null;
-  return <HeaderPhotos key={String(phone)} photos={shown} />;
+  return <HeaderPhotos key={String(phone)} photos={shown} zone={zone} />;
 }
 
 /** The header's photos, each cropped to fill it with its focus point where its placement says. */
-function HeaderPhotos({ photos }: { photos: ImagePhoto[] }) {
+function HeaderPhotos({ photos, zone }: { photos: ImagePhoto[]; zone: string }) {
   const { turn } = useTurn(photos.length, HEADER_MS);
   const [loaded, setLoaded] = useState<ReadonlySet<number>>(new Set());
   const [ref, size] = useSize();
@@ -67,6 +68,7 @@ function HeaderPhotos({ photos }: { photos: ImagePhoto[] }) {
             <HeaderImage
               key={photo.id}
               photo={photo}
+              zone={zone}
               seen={index === turn && loaded.has(photo.id)}
               showing={index === turn}
               box={size}
@@ -81,6 +83,8 @@ function HeaderPhotos({ photos }: { photos: ImagePhoto[] }) {
 
 interface HeaderImageProps {
   photo: ImagePhoto;
+  /** The zone the header shows, whose focus point and placement crop the photo. */
+  zone: string;
   /** Whether it's the photo showing and has loaded. */
   seen: boolean;
   /** Whether it's the photo showing, which is fetched first. */
@@ -91,7 +95,8 @@ interface HeaderImageProps {
 }
 
 /** One photo of the header, seen only while it's showing and has loaded. */
-function HeaderImage({ photo, seen, showing, box, onLoad }: HeaderImageProps) {
+function HeaderImage({ photo, zone, seen, showing, box, onLoad }: HeaderImageProps) {
+  const { focus, placement } = focusIn(photo, zone);
   return (
     <img
       src={photo.image.src}
@@ -101,12 +106,7 @@ function HeaderImage({ photo, seen, showing, box, onLoad }: HeaderImageProps) {
       fetchPriority={showing ? "high" : "low"}
       onLoad={onLoad}
       style={{
-        objectPosition: objectPosition(
-          photo.spotlightFocus,
-          photo.spotlightPlacement,
-          photo.image,
-          box,
-        ),
+        objectPosition: objectPosition(focus, placement, photo.image, box),
       }}
       className={cn(
         "absolute inset-0 size-full object-cover transition-opacity duration-2000 motion-reduce:transition-none",

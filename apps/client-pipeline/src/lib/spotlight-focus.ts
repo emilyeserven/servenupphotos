@@ -1,11 +1,11 @@
 import type { SocialPhoto } from "@/api/publish";
 import type { FieldChange, LocalEdit } from "@/stores/local-edits";
 
-/** The photo JSON field that holds the point to keep in view where a spotlight zone crops it. */
-export const SPOTLIGHT_FOCUS = "spotlightFocus";
-
-/** The photo JSON field that holds where on the screen a spotlight zone puts the focus point. */
-export const SPOTLIGHT_PLACEMENT = "spotlightPlacement";
+/**
+ * The photo JSON field that holds its focus point and placement for each spotlight zone, by zone
+ * ID, such as `{ "grid-header": { "focus": { "x": 30, "y": 70 }, "placement": null } }`.
+ */
+export const SPOTLIGHT_ZONE_FOCUS = "spotlightZoneFocus";
 
 /** A point of a photo, as percentages of its width and height from its top left corner. */
 export interface Focus {
@@ -21,32 +21,53 @@ function isFocus(value: unknown): value is Focus {
   return isObject(value) && typeof value.x === "number" && typeof value.y === "number";
 }
 
-/** A spotlightFocus value as a focus, or null for the photo's middle when it isn't one. */
-export function asFocus(value: unknown): Focus | null {
+/** A saved focus point or placement as a focus, or null for the photo's middle when it isn't one. */
+function asFocus(value: unknown): Focus | null {
   return isFocus(value) ? value : null;
 }
 
-/** The value the photo's field has: its local edit's when it has one, or else its file's. */
-function fieldValue(edit: LocalEdit | undefined, photo: SocialPhoto, field: string): unknown {
-  if (edit && field in edit.fields) return edit.fields[field];
-  return photo.data[field];
+/** A photo's focus point and placement in one spotlight zone; null for the middle. */
+export interface ZoneFocus {
+  focus: Focus | null;
+  placement: Focus | null;
+}
+
+/** The photo's focus points by zone, as its data holds them; empty when it has none. */
+function zoneFocusMap(data: Record<string, unknown>): Record<string, unknown> {
+  const value = data[SPOTLIGHT_ZONE_FOCUS];
+  return isObject(value) ? value : {};
 }
 
 /**
- * The photo's focus, or with SPOTLIGHT_PLACEMENT its placement, with its local edit applied; null
- * for the middle.
+ * The photo's focus point and placement in the zone: its own for the zone, or else the
+ * `spotlightFocus` and `spotlightPlacement` it had before each zone had its own.
  */
-export function focusOf(
-  edits: Record<string, LocalEdit>,
-  photo: SocialPhoto,
-  field = SPOTLIGHT_FOCUS,
-): Focus | null {
-  return asFocus(fieldValue(edits[photo.path], photo, field));
+export function zoneFocusOf(data: Record<string, unknown>, zone: string): ZoneFocus {
+  const entry = zoneFocusMap(data)[zone];
+  if (isObject(entry)) return { focus: asFocus(entry.focus), placement: asFocus(entry.placement) };
+  return { focus: asFocus(data.spotlightFocus), placement: asFocus(data.spotlightPlacement) };
 }
 
-/** The local edit that sets the photo's focus or placement, or puts it back in the middle with null. */
-export function focusChange(photo: SocialPhoto, focus: Focus | null): FieldChange {
-  return { path: photo.path, before: photo.data, value: focus };
+/** The photo's data with its local edit applied, as Commit will save it. */
+export function editedData(
+  edits: Record<string, LocalEdit>,
+  photo: SocialPhoto,
+): Record<string, unknown> {
+  const edit = edits[photo.path];
+  return edit ? { ...photo.data, ...edit.fields } : photo.data;
+}
+
+/**
+ * The local edit that gives the photo, whose data with its local edit is `data`, the focus point
+ * and placement `next` in the zone, keeping its other zones'.
+ */
+export function zoneFocusChange(
+  photo: SocialPhoto,
+  data: Record<string, unknown>,
+  zone: string,
+  next: ZoneFocus,
+): FieldChange {
+  return { path: photo.path, before: photo.data, value: { ...zoneFocusMap(data), [zone]: next } };
 }
 
 /** A width and a height in pixels. */
@@ -96,7 +117,7 @@ export function clickedFocus(clientX: number, clientY: number, box: DOMRect): Fo
 }
 
 /** The Medium version in a photo's data, or a smaller one; undefined when it has none. */
-export function resizedPhoto(data: Record<string, unknown>): string | undefined {
+function resizedPhoto(data: Record<string, unknown>): string | undefined {
   const images = isObject(data.images) ? data.images : {};
   const found = [images.medium, images.small, images.xsmall].find((url) => typeof url === "string");
   return found as string | undefined;

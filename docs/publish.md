@@ -175,13 +175,39 @@ ID to choice, such as `{ "grid-header": "none" }`. A zone the object leaves out 
 album for a zone without an orientation moves the zone's choice along to the new album's file. Photos are added to an album on the Gallery or a photo's page (see
 [Albums and Tags](albums-and-tags.md)).
 
-For the Homepage zone, above the photos, **Preview** shows them one at a time as the homepage would, on a phone held upright and on a
-computer, with buttons for the photo before and after. With no album picked, there's no preview. Each
-screen is the homepage drawn at its real size (390 × 844 and 1440 × 900) and scaled down to fit: the photo cropped
-around its focus point with no tint, the frosted site name and view tiles, and the photo's title at the
-bottom left, after a map button when it has a GPS position or a place (`components/spotlight-preview.tsx`). It reads
-`ALLPHOTOS.json` with local edits applied, so a focus point set but not committed already shows. Photos without
-resized versions are left out, as the portfolio leaves them out. The order **Photos first** gives isn't previewed.
+### Focus spots
+
+Under **Photos first**, **Focus spots** lists the photos the zone shows, in its order, as small squares
+(`components/zone-focus.tsx`); one with its own focus point for the zone has a dot. Clicking one picks it, and under
+them its **Focus point** for that zone: click the part of the photo to keep in view where the zone crops it, such as a
+landscape photo on a phone behind the homepage, or any photo in a header's wide strip (`components/spotlight-focus.tsx`).
+**Use the middle** clears it. Each zone keeps its own, so the same photo can be cropped one way behind the homepage and
+another across the Grid. Focus points are set only here; the Photo page no longer has them.
+
+Beside the photo, the preview updates as the point moves. For the Homepage, it's the homepage on a phone held upright
+and on a computer, each drawn at its real size (390 × 844 and 1440 × 900) and scaled down to fit: the photo cropped
+around its focus point with no tint, the frosted site name and view tiles, and the photo's title at the bottom left,
+after a map button when it has a GPS position or a place (`components/spotlight-preview.tsx`). For a header, it's the
+strip at 390 × 253 and 1440 × 270, 30% of those screens' heights, fading into the page at the bottom
+(`components/header-preview.tsx`). Photos without resized versions, or whose file wasn't read, are left out, as the
+portfolio leaves them out.
+
+Under the photo, a three by three grid picks **where on the screen the focus point goes** in the zone: the middle (the
+default), or a side or corner, such as the bottom middle to have it low on the screen
+(`components/spotlight-placement.tsx`). The spots are 20%, 50% and 80% across and down. The crop moves the photo to get
+the point there, as near as the photo's edges allow, so it never leaves a gap; on a side the photo already fills,
+nothing moves.
+
+Both are saved in the photo file's `spotlightZoneFocus`, an object of zone ID to `{ "focus", "placement" }`, each
+`{ "x": 30, "y": 70 }` in percent across from the left and down from the top, or `null` for the middle:
+
+```json
+"spotlightZoneFocus": { "grid-header": { "focus": { "x": 75, "y": 30 }, "placement": null } }
+```
+
+A zone the object leaves out, or a photo without it, uses the photo's older `spotlightFocus` and `spotlightPlacement`
+(the single focus point the Photo page used to set, for every zone), and the first change in a zone starts from them.
+It's a [local edit](combined-data-store.md#local-edits) until **Commit**.
 
 > **Frontend analogy:** the preview is a fixed-size `<div>` with `transform: scale()`, like zooming out on a design
 > mockup: the CSS inside runs at full size, so the crop and the blur look as they do live.
@@ -200,24 +226,6 @@ picked, the page starts with its title as before.
 
 > **Frontend analogy:** it's like a radio group spread over several files: choosing one album unchecks the others, and
 > the backend writes every file whose checkbox changed.
-
-The Photo page in edit mode (`/exif?edit=<path>`) has a **Spotlight** card in its left column, under Albums and Tags,
-linking to Site Spotlight.
-
-The card has the photo's **Focus point**: click the part of the photo to keep in view when it's
-cropped to a screen of the other shape (a landscape photo on a phone, or a portrait one on a computer). Under it,
-**Behind the homepage** shows the same phone and computer preview as Site Spotlight, updating as the point moves,
-once an album is picked for a zone on Site Spotlight. **Use the middle** clears it. It's saved as `spotlightFocus`, `{ "x": 30, "y": 70 }`
-in percent across from the left and down from the top, or `null` (the default, which new saves write and Update Data →
-Missing fields adds) for the middle. It's a [local edit](combined-data-store.md#local-edits) until **Commit**, apart
-from the page's **Save changes**.
-
-Under the photo, a three by three grid picks **where on the screen the focus point goes**: the middle (the default), or
-a side or corner, such as the bottom middle to have it low on the screen (`components/spotlight-placement.tsx`). The
-spots are 20%, 50% and 80% across and down. The crop moves the photo to get the point there, as near as the photo's
-edges allow, so it never leaves a gap; on a side the photo already fills, nothing moves. It's saved as
-`spotlightPlacement`, the same shape as `spotlightFocus` in percent of the screen, or `null` for the middle, the same way
-(a local edit until Commit, `null` by default and added by Missing fields). The preview shows it.
 
 > **Frontend analogy:** `object-position: 30% 70%` lines up the image's 30% point with the box's 30% point. To put the
 > image's point `f` at the box's point `a` instead, the position is `(a·box − f·drawn) / (box − drawn)`, where `drawn` is
