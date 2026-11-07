@@ -1,260 +1,112 @@
-import { CalendarClock, ChevronsUpDown } from "lucide-react";
-import { type ReactNode, useState } from "react";
-import { Button } from "@portfolio/components/ui/button";
-import { DateField } from "@portfolio/components/date-field";
-import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
+import { CalendarClock } from "lucide-react";
+import { useState } from "react";
 import {
-  ChoiceGrid,
-  HourRows,
-  MonthColumns,
-  ToggleButton,
-} from "@portfolio/components/when-buttons";
-import { filterPhotos, type PhotoFilters, withoutFilters } from "@portfolio/lib/photo-filters";
-import { photos as allPhotos, type Photo } from "@portfolio/lib/photos";
-import { cn } from "@portfolio/lib/utils";
+  FilterPickerButton,
+  PickerClear,
+  type PickerSection,
+  SectionPicker,
+} from "@portfolio/components/section-picker";
 import {
-  CURRENT_LABELS,
-  currentChoice,
+  dateOf,
+  type WhenProps,
+  type WhenSection,
+  type WhenSetters,
+  WhenPickerPart,
+} from "@portfolio/components/when-picker-parts";
+import { type PhotoFilters, withoutFilters } from "@portfolio/lib/photo-filters";
+import {
   DAYPARTS,
-  dayOf,
   hasDateRange,
-  LIST_KEYS,
   type ListKey,
+  MONTHS,
   SEASONS,
   WEEKDAYS,
   WHEN_KEYS,
+  type WhenChoice,
   whenCount,
 } from "@portfolio/lib/when-filters";
 
-/** The first and last day a portfolio photo was taken, which the calendar keeps to. */
-const FIRST_DAY = new Date(Math.min(...allPhotos.map((photo) => photo.takenAt.getTime())));
-const LAST_DAY = new Date(Math.max(...allPhotos.map((photo) => photo.takenAt.getTime())));
-
-/** The ways the When picker chooses: across all years, or a range of dates. */
-type DateMode = "years" | "range";
-
-/** The way the filters choose, to open the picker on. */
-function modeOf(filters: PhotoFilters): DateMode {
-  return hasDateRange(filters) ? "range" : "years";
-}
-
-/** The filters the When picker reads and changes. */
-interface WhenSetters {
-  filters: PhotoFilters;
-  setFilters: (next: PhotoFilters) => void;
-}
-
-/** What the When picker reads and changes, and the photos each choice's count is out of. */
-interface WhenProps extends WhenSetters {
-  facet: Photo[];
-}
-
-/** Sets one "when" filter, clearing the others: the picker chooses one way at a time. */
-function setWhen({ filters, setFilters }: WhenSetters, next: PhotoFilters) {
-  setFilters({ ...withoutFilters(filters, WHEN_KEYS), ...next });
-}
-
-/** The photos the facet leaves with the other filters, but no "when" filter. */
-function countedOut({ facet, filters }: WhenProps): Photo[] {
-  return filterPhotos(facet, withoutFilters(filters, WHEN_KEYS));
-}
-
-/**
- * A **When** button that opens one picker for when photos were taken, one way at a time: across
- * all years (seasons, months, days of the week or hours, any number of one kind, with the current
- * one a click away), or a range of dates on a calendar, which on the Timeline is the days it shows.
- */
-export function WhenFilter({ facet, filters, setFilters }: WhenProps) {
-  const props = { facet, filters, setFilters };
-  const count = whenCount(filters);
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="font-normal">
-          <CalendarClock className="text-muted-foreground" aria-hidden />
-          When
-          {count > 0 && (
-            <span className="rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground tabular-nums">
-              {count}
-            </span>
-          )}
-          <ChevronsUpDown className="opacity-50" aria-hidden />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        className="flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-3 p-3"
-      >
-        <ModeParts {...props} />
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-const MODE_LABELS: [DateMode, string][] = [
-  ["years", "Across all years"],
-  ["range", "Date range"],
+/** Each kind of list's name in the picker, what several chosen are called, and its choices. */
+const KINDS: [ListKey, string, string, WhenChoice[]][] = [
+  ["season", "Seasons", "seasons", SEASONS],
+  ["month", "Months", "months", MONTHS],
+  ["weekday", "Days", "days", WEEKDAYS],
+  ["hour", "Hours", "hours", DAYPARTS.flatMap((part) => part.hours)],
 ];
 
-/** The part of the picker for each way of choosing. */
-const MODE_PARTS: Record<DateMode, (props: WhenProps) => ReactNode> = {
-  years: (props) => <YearsPart {...props} />,
-  range: (props) => <RangePart {...props} />,
-};
-
-/** A tab for each way of choosing. */
-function ModeParts(props: WhenProps) {
-  const [mode, setMode] = useState<DateMode>(() => modeOf(props.filters));
-  return (
-    <>
-      <Tabs label="When" options={MODE_LABELS} value={mode} onChange={setMode} />
-      {MODE_PARTS[mode](props)}
-    </>
-  );
+/** What a kind of list is set to: "Any", the one or two chosen, such as "Spring, Autumn", or how many. */
+function listText(chosen: string[], plural: string, choices: WhenChoice[]): string {
+  if (chosen.length === 0) return "Any";
+  if (chosen.length > 2) return `${chosen.length} ${plural}`;
+  return choices
+    .filter((choice) => chosen.includes(choice.value))
+    .map((choice) => choice.label)
+    .join(", ");
 }
 
-/** A row of tabs, the chosen one raised. */
-function Tabs<T extends string>({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: [T, string][];
-  value: T;
-  onChange: (value: T) => void;
-}) {
-  return (
-    <div role="tablist" aria-label={label} className="flex rounded-md border bg-muted/50 p-0.5">
-      {options.map(([option, text]) => (
-        <button
-          key={option}
-          type="button"
-          role="tab"
-          aria-selected={value === option}
-          onClick={() => onChange(option)}
-          className={cn(
-            "flex-1 rounded-sm px-1.5 py-1 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
-            value === option && "bg-background text-foreground shadow-xs",
-          )}
-        >
-          {text}
-        </button>
-      ))}
-    </div>
-  );
+/** A day as the list shows it, such as "Mar 1, 2024", or "Any day" for an open end. */
+function rangeDay(day: string | undefined): string {
+  const date = dateOf(day);
+  if (!date) return "Any day";
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-const KIND_LABELS: [ListKey, string][] = [
-  ["season", "Seasons"],
-  ["month", "Months"],
-  ["weekday", "Days"],
-  ["hour", "Hours"],
-];
-
-/** The kind of list the filters choose from, or seasons when none is set. */
-function kindOf(filters: PhotoFilters): ListKey {
-  return LIST_KEYS.find((key) => (filters[key]?.length ?? 0) > 0) ?? "season";
+/** What the date range is set to, such as "Mar 1, 2024 – Any day", or "Any". */
+function rangeText(filters: PhotoFilters): string {
+  if (!hasDateRange(filters)) return "Any";
+  return `${rangeDay(filters.start)} – ${rangeDay(filters.end)}`;
 }
 
-/** The grid of toggles for each kind of list. */
-const KIND_GRIDS: Record<
-  ListKey,
-  (props: { photos: Photo[]; chosen: string[]; onChange: (v: string[]) => void }) => ReactNode
-> = {
-  season: (props) => <ChoiceGrid choices={SEASONS} columns="grid-cols-4" {...props} />,
-  month: (props) => <MonthColumns seasons={SEASONS} {...props} />,
-  weekday: (props) => <ChoiceGrid choices={WEEKDAYS} columns="grid-cols-7" {...props} />,
-  hour: (props) => <HourRows dayparts={DAYPARTS} {...props} />,
-};
+/** The picker's sections: each kind of list, then the date range. */
+function sectionsOf(filters: PhotoFilters): PickerSection<WhenSection>[] {
+  const lists = KINDS.map(([key, label, plural, choices]) => {
+    const chosen = filters[key] ?? [];
+    return { key, label, set: chosen.length > 0, text: listText(chosen, plural, choices) };
+  });
+  const range = { key: "range" as const, label: "Date range", set: hasDateRange(filters) };
+  return [...lists, { ...range, text: rangeText(filters) }];
+}
 
-/**
- * Seasons, months, days of the week or hours, in any year: a tab for each kind, a button for the
- * one it is now, and any number of one kind chosen. Choosing another kind clears the first.
- */
-function YearsPart(props: WhenProps) {
-  const [kind, setKind] = useState<ListKey>(() => kindOf(props.filters));
-  const photos = countedOut(props);
-  const chosen = props.filters[kind] ?? [];
-  const onChange = (values: string[]) =>
-    setWhen(props, values.length > 0 ? { [kind]: values } : {});
-  return (
-    <>
-      <Tabs label="Across all years" options={KIND_LABELS} value={kind} onChange={setKind} />
-      <CurrentButton kind={kind} photos={photos} chosen={chosen} onChange={onChange} />
-      {KIND_GRIDS[kind]({ photos, chosen, onChange })}
-    </>
-  );
+/** The section to open the picker on: the one set, or the seasons when none is. */
+function firstSection(filters: PhotoFilters): WhenSection {
+  return sectionsOf(filters).find((section) => section.set)?.key ?? "season";
 }
 
 /**
- * A button for the season, month, day of the week or hour it is now, such as "This season ·
- * Autumn": it chooses just that one, or clears it when it's the only one chosen.
+ * A **When** button that opens one picker for when photos were taken, like **Gear & settings**: a
+ * list of Seasons, Months, Days, Hours and Date range on the left, each saying what it's set to,
+ * with **Clear when** under it, and the chosen one's choices on the right. It chooses one way at a
+ * time: across all years (any number of seasons, months, days of the week or hours, with the
+ * current one a click away), or a range of dates, which on the Timeline is the days it shows.
  */
-function CurrentButton({
-  kind,
-  photos,
-  chosen,
-  onChange,
-}: {
-  kind: ListKey;
-  photos: Photo[];
-  chosen: string[];
-  onChange: (values: string[]) => void;
-}) {
-  const [now] = useState(() => new Date());
-  const current = currentChoice(kind, now);
-  const on = chosen.length === 1 && chosen[0] === current.value;
+export function WhenFilter(props: WhenProps) {
   return (
-    <ToggleButton
-      label={`${CURRENT_LABELS[kind]} · ${current.label}`}
-      count={photos.filter(current.matches).length}
-      on={on}
-      onClick={() => onChange(on ? [] : [current.value])}
-    />
+    <FilterPickerButton Icon={CalendarClock} label="When" count={whenCount(props.filters)}>
+      <PickerBody {...props} />
+    </FilterPickerButton>
   );
 }
 
-/** A day as YYYY-MM-DD, or undefined without one. */
-function dayText(date: Date | undefined): string | undefined {
-  return date ? dayOf(date) : undefined;
-}
-
-/** A YYYY-MM-DD day as a date, or undefined without one. */
-function dateOf(day: string | undefined): Date | undefined {
-  return day ? new Date(`${day}T00:00`) : undefined;
-}
-
-/**
- * A range of dates from the first day to the last, both included, each picked in its own field with
- * its own calendar; either can be left open. The start can't come after the end.
- */
-function RangePart(props: WhenSetters) {
-  const from = dateOf(props.filters.start);
-  const to = dateOf(props.filters.end);
-  const set = (next: { start?: Date; end?: Date }) => {
-    const days = { start: dayText(next.start), end: dayText(next.end) };
-    setWhen(props, Object.fromEntries(Object.entries(days).filter(([, day]) => day)));
-  };
+/** The sections, opening on the one set, and the chosen one's choices. */
+function PickerBody(props: WhenProps) {
+  const [section, setSection] = useState(() => firstSection(props.filters));
   return (
-    <div className="grid grid-cols-2 gap-2">
-      <DateField
-        label="From"
-        value={from}
-        onChange={(start) => set({ start, end: to })}
-        first={FIRST_DAY}
-        last={LAST_DAY}
-        disabled={to && { after: to }}
-      />
-      <DateField
-        label="To"
-        value={to}
-        onChange={(end) => set({ start: from, end })}
-        first={FIRST_DAY}
-        last={LAST_DAY}
-        disabled={from && { before: from }}
-      />
-    </div>
+    <SectionPicker
+      label="When"
+      sections={sectionsOf(props.filters)}
+      chosen={section}
+      onChoose={setSection}
+      width="sm:w-[36rem]"
+      footer={<ClearWhen {...props} />}
+    >
+      <WhenPickerPart section={section} {...props} />
+    </SectionPicker>
   );
+}
+
+/** An X under the list clearing every "when" filter, shown while one is set. */
+function ClearWhen({ filters, setFilters }: WhenSetters) {
+  if (whenCount(filters) === 0) return null;
+  const clear = () => setFilters(withoutFilters(filters, WHEN_KEYS));
+  return <PickerClear text="Clear when" label="When" onClear={clear} />;
 }

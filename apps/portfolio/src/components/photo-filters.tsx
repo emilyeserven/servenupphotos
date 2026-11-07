@@ -1,6 +1,7 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
+import { FilterCount } from "@portfolio/components/filter-count";
 import { GroupPicker } from "@portfolio/components/group-picker";
 import { MoreFilters } from "@portfolio/components/more-filters";
 import { PhotoSearchBox } from "@portfolio/components/photo-search-box";
@@ -22,6 +23,9 @@ import {
 import type { Photo } from "@portfolio/lib/photos";
 import { parseTextSearch, searchPhotos, TEXT_SEARCH_KEY } from "@portfolio/lib/text-search";
 import { cn } from "@portfolio/lib/utils";
+
+/** The filter count badge, here too for the views that read it with the filter bar. */
+export { FilterCount };
 
 /** The filters in the current URL, for any portfolio view. */
 function useFilters(): PhotoFilters {
@@ -210,9 +214,10 @@ const OVER_MAP =
   "contents [&_button]:bg-background dark:[&_button]:bg-background [&_select]:bg-background [&_select]:[field-sizing:content] dark:[&_select]:bg-background";
 
 /**
- * The **Groups** and **When** pickers behind a **More filters** button, after the view's own
- * filters (`own`, such as the map's days), then `children` and **Clear filters** while any filter
- * is set, for a view with no room to spare for the **Show filters** button, such as the map.
+ * The **Groups** and **When** pickers behind a **More filters** button, then the view's own
+ * filters (`own`, such as the map's **Visuals**), side by side, then `children` and **Clear
+ * filters** while any filter is set, for a view with no room to spare for the **Show filters**
+ * button, such as the map.
  */
 export function MoreFilterControls({
   photos,
@@ -220,22 +225,22 @@ export function MoreFilterControls({
   children,
 }: {
   photos: Photo[];
-  /** The view's own filters shown first in **More filters**, and how many of them are set. */
-  own: { count: number; children: ReactNode };
+  /** The view's own filters shown after Groups and When in **More filters**. */
+  own: OwnFilters;
   /** More controls after the filters, such as the map's **View in grid**. */
   children?: ReactNode;
 }) {
   const props = { photos, facet: photos, filters: useFilters(), setFilters: useSetFilters() };
-  const clearFilters = useClearFilters([]);
+  const clearFilters = useClearFilters(own.keys);
   const groupCount = filterCount(withoutFilters(props.filters, LOCATION_KEYS));
   return (
     <div className={OVER_MAP}>
       <MoreFilters badge={<FilterCount count={groupCount + own.count} />}>
-        {own.children}
         <GroupDropdowns {...props} />
+        {own.children}
       </MoreFilters>
       {children}
-      <ClearFilters count={filterCount(props.filters)} onClear={clearFilters} />
+      <ClearFilters count={filterCount(props.filters) + own.count} onClear={clearFilters} />
     </div>
   );
 }
@@ -248,16 +253,6 @@ function ClearFilters({ count, onClear }: { count: number; onClear: () => void }
       <X aria-hidden />
       Clear filters
     </Button>
-  );
-}
-
-/** How many filters are set, as a badge; nothing when none are. */
-export function FilterCount({ count }: { count: number }) {
-  if (count === 0) return null;
-  return (
-    <span className="rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground tabular-nums">
-      {count}
-    </span>
   );
 }
 

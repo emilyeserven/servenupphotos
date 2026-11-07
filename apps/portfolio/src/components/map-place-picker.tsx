@@ -1,6 +1,6 @@
 import { ChevronsUpDown, MapPin } from "lucide-react";
 import { useState } from "react";
-import { PlacesPanel } from "@/components/places-filter";
+import { PlacesPanel } from "@/components/place-columns";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { locationOptions } from "@/lib/filter-options";
@@ -8,8 +8,8 @@ import type { PlacedPhoto } from "@/lib/map-photos";
 import { filterPhotos, locationFilters } from "@/lib/photo-filters";
 
 /**
- * The map's **Places** button: the same searchable tree of countries, cities and places as the
- * Places filter, but picking one moves the map to its photos and closes the tree, rather than
+ * The map's **Places** button: the same searchable columns of countries, regions, cities and places
+ * as the Places filter, but picking one moves the map to its photos and closes them, rather than
  * filtering the photos. `photos` are the ones the map's filters leave, which the tree lists and
  * counts, and `onPick` gets the picked place's photos. Pointing at a place with an area shades it
  * on the map (see place-areas.ts).

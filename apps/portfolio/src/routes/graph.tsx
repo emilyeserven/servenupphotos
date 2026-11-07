@@ -2,19 +2,21 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ChartColumn } from "lucide-react";
 import { COLUMN, GraphBuilder } from "@/components/graph-builder/graph-builder";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
+import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { photos } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { useGraphWide } from "@/lib/graph-wide";
 
-/** What the Graph page keeps in the URL: the site's usual filters and the selected photo open in the lightbox. */
-type GraphSearch = PhotoFilters & CameraFilters & ShownPhotoSearch;
+/** What the Graph page keeps in the URL: the site's usual filters, Visuals' colors and the selected photo open in the lightbox. */
+type GraphSearch = PhotoFilters & CameraFilters & ColorFilters & ShownPhotoSearch;
 
 export const Route = createFileRoute("/graph")({
   validateSearch: (search: Record<string, unknown>): GraphSearch => ({
     ...parseFilters(search),
     ...parseCameraFilters(search),
+    ...parseColorFilters(search),
     ...parseShownPhoto(search),
   }),
   component: GraphView,
@@ -24,7 +26,7 @@ export const Route = createFileRoute("/graph")({
 function GraphView() {
   const [wide, setWide] = useGraphWide();
   const search = Route.useSearch();
-  const kept = filterWithCamera(photos, search);
+  const kept = filterByColors(filterWithCamera(photos, search), search);
   return (
     <div className="flex w-full flex-col gap-6 px-4 py-16 sm:px-6 lg:px-10">
       <header className={COLUMN}>

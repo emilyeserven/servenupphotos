@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { ChoiceRow } from "@portfolio/components/choice-row";
-import { SectionTab } from "@portfolio/components/picker-section-tab";
+import { SectionPicker } from "@portfolio/components/section-picker";
 import { statsBySection } from "@portfolio/components/graph-builder/graph-field";
 import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
@@ -80,7 +80,7 @@ function buttonText(config: GraphConfig): string {
 /**
  * The **Graph type** button, like the Grid's **Gear & settings**: it opens a list of Type, Split by
  * (for the bar, line and photo dot graphs, which can be split) and Parts (for a split bar) on the left,
- * each saying what it's set to, and the chosen one's choices on the right.
+ * each saying what it's set to, and the chosen one's choices on the right (see `SectionPicker`).
  */
 export function GraphTypePicker({
   config,
@@ -109,7 +109,7 @@ export function GraphTypePicker({
         <PopoverContent
           align="start"
           collisionPadding={16}
-          className="w-[min(30rem,calc(100vw-2rem))] p-0"
+          className="w-auto max-w-[calc(100vw-2rem)] p-0"
         >
           <PickerBody config={config} onChange={onChange} />
         </PopoverContent>
@@ -118,33 +118,23 @@ export function GraphTypePicker({
   );
 }
 
-/** The list of sections and the chosen section's choices beside it, or under it on phones. */
+/** The sections and the chosen section's choices beside them, or under them on phones. */
 function PickerBody({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
   const [chosen, setChosen] = useState<TypeSection>("type");
   const sections = sectionsOf(config);
   const section = sections.some(([key]) => key === chosen) ? chosen : "type";
   return (
-    <div className="flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] flex-col sm:flex-row">
-      <div
-        role="tablist"
-        aria-orientation="vertical"
-        aria-label="Graph type"
-        className="flex shrink-0 flex-col gap-0.5 border-b bg-muted/40 p-1 sm:w-40 sm:border-r sm:border-b-0"
-      >
-        {sections.map(([key, label, text]) => (
-          <SectionTab
-            key={key}
-            label={label}
-            text={text}
-            chosen={section === key}
-            onClick={() => setChosen(key)}
-          />
-        ))}
-      </div>
-      <div role="tabpanel" className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto p-2">
+    <SectionPicker
+      label="Graph type"
+      sections={sections.map(([key, label, text]) => ({ key, label, text }))}
+      chosen={section}
+      onChoose={setChosen}
+      width="sm:w-[30rem]"
+    >
+      <div className="-m-1 flex flex-col">
         <SectionChoices section={section} config={config} onChange={onChange} />
       </div>
-    </div>
+    </SectionPicker>
   );
 }
 
