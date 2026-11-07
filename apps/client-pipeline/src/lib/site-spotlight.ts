@@ -9,7 +9,7 @@ export interface SpotlightZone {
   description: string;
   /** What the portfolio shows there while no album is picked. */
   fallback: string;
-  /** Whether the zone fills the homepage, which the preview of a phone and a computer shows. */
+  /** Whether the zone fills the homepage, so its preview draws the homepage rather than a header. */
   homepage?: boolean;
 }
 
@@ -41,11 +41,6 @@ export const spotlightZones: SpotlightZone[] = [
 /** The album picked for the zone, the first that lists it when several do; undefined for none. */
 export function zoneAlbum(albums: Group[], zone: string): Group | undefined {
   return albums.find((album) => !album.error && album.spotlightZones?.includes(zone));
-}
-
-/** Whether any spotlight zone has an album picked for it. */
-export function hasSpotlightAlbum(albums: Group[]): boolean {
-  return spotlightZones.some((zone) => zoneAlbum(albums, zone.id) !== undefined);
 }
 
 /** Which photos the album puts first in the zone; a zone it saves nothing for matches the screen. */

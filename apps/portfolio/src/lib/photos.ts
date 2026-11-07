@@ -84,6 +84,11 @@ export interface Photo {
   /** Where on the screen the focus point goes, in percent across and down, set on its Photo page; null for the middle. */
   spotlightPlacement: SpotlightFocus | null;
   /**
+   * Its own focus point and placement for each spotlight zone, by zone ID, set on the pipeline's
+   * Site Spotlight page; a zone left out uses spotlightFocus and spotlightPlacement.
+   */
+  zoneFocus: Record<string, ZoneFocus>;
+  /**
    * How its colors split between the 12 hue buckets and the shades from black to white, biggest
    * first; empty until the pipeline saves its colors.
    */
@@ -105,6 +110,12 @@ export interface Photo {
 export interface SpotlightFocus {
   x: number;
   y: number;
+}
+
+/** A photo's focus point and placement in one spotlight zone; null for the middle. */
+export interface ZoneFocus {
+  focus: SpotlightFocus | null;
+  placement: SpotlightFocus | null;
 }
 
 /** Where the photo was taken, written each way the menu's Script Display can choose. */
@@ -261,6 +272,11 @@ interface PhotoData {
   spotlightFocus?: SpotlightFocus | null;
   /** Where on the screen the focus point goes; null or missing for the middle. */
   spotlightPlacement?: SpotlightFocus | null;
+  /**
+   * The focus point and placement for each spotlight zone, by zone ID, set on Site Spotlight; a
+   * zone left out, or the whole field missing, uses spotlightFocus and spotlightPlacement.
+   */
+  spotlightZoneFocus?: Record<string, Partial<ZoneFocus>>;
   /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
   places?: PhotoPlaces;
   /** The IDs of the photo's albums, tags and genres; older entries were saved without them. */
@@ -642,7 +658,7 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums, tags, genres, old spotlight place, focus point and its placement; older entries are missing them. */
+/** The photo's albums, tags, genres, old spotlight place, focus points and their placements; older entries are missing them. */
 function groupFields({
   albums = [],
   tags = [],
@@ -650,6 +666,7 @@ function groupFields({
   websiteSpotlight = null,
   spotlightFocus = null,
   spotlightPlacement = null,
+  spotlightZoneFocus = {},
 }: PhotoData) {
   return {
     albums,
@@ -658,7 +675,18 @@ function groupFields({
     spotlightPlace: websiteSpotlight,
     spotlightFocus,
     spotlightPlacement,
+    zoneFocus: zoneFocuses(spotlightZoneFocus),
   };
+}
+
+/** Each zone's focus point and placement, with a missing one as the middle. */
+function zoneFocuses(raw: Record<string, Partial<ZoneFocus>>): Record<string, ZoneFocus> {
+  return Object.fromEntries(
+    Object.entries(raw).map(([zone, { focus = null, placement = null }]) => [
+      zone,
+      { focus, placement },
+    ]),
+  );
 }
 
 /**

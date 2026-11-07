@@ -18,7 +18,7 @@ On a phone held upright (`(max-width: 767px) and (orientation: portrait)`), port
 other screen landscape photos come first, each part keeping its order, unless the zone's **Photos first** is set to
 **Album order** on [Site Spotlight](publish.md#site-spotlight); with no album picked, that's the 5 newest photos with
 the screen's shape preferred. Each photo is cropped to
-fill the screen around its **focus point**, set on the pipeline's Photo page (see [Site Spotlight](publish.md#site-spotlight)),
+fill the screen around its homepage **focus point**, set on the pipeline's Site Spotlight page (see [Focus spots](publish.md#focus-spots)),
 so a landscape photo on a phone or a portrait one on a computer keeps the part that matters in view. The point goes
 where its **placement**, set there too, says on the screen: the middle by default, or for example the bottom middle.
 The crop gets as near as the photo's edges allow; without a focus point, the photo's middle is used. It's worked out

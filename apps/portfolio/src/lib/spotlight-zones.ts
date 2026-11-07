@@ -1,5 +1,5 @@
 import { albumAndSubAlbums, albums, type Group } from "@/lib/groups";
-import { photos, type Photo, type PhotoImage } from "@/lib/photos";
+import { photos, type Photo, type PhotoImage, type ZoneFocus } from "@/lib/photos";
 
 /** A photo with resized versions in R2, which is all a spotlight zone can show. */
 export type ImagePhoto = Photo & { image: PhotoImage };
@@ -108,4 +108,14 @@ export function spotlightPhotos(zone: string, phone: boolean, all: Photo[] = pho
 /** Where on the site the album's photos show, such as "the homepage"; empty for nowhere. */
 export function albumSpots(album: Group): string[] {
   return (album.spotlightZones ?? []).flatMap((zone) => ZONE_LABELS[zone] ?? []);
+}
+
+/**
+ * The photo's focus point and placement in the zone: its own for the zone, set on the pipeline's
+ * Site Spotlight page, or else the one it had before zones had their own.
+ */
+export function focusIn(photo: Photo, zone: string): ZoneFocus {
+  return (
+    photo.zoneFocus[zone] ?? { focus: photo.spotlightFocus, placement: photo.spotlightPlacement }
+  );
 }

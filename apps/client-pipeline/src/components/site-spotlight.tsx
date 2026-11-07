@@ -13,7 +13,7 @@ import { GroupCombobox } from "@/components/group-picker";
 import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SpotlightOrientationPicker } from "@/components/spotlight-orientation";
-import { ZonePreview } from "@/components/zone-preview";
+import { ZoneFocus } from "@/components/zone-focus";
 import {
   type SpotlightZone,
   spotlightZones,
@@ -113,7 +113,7 @@ function ZoneAlbum({ album, albums, zone, saving, onOrientation }: ZoneAlbumProp
         disabled={saving}
         onPick={onOrientation}
       />
-      <AlbumPhotos album={album} albums={albums} preview={zone.homepage === true} />
+      <AlbumPhotos album={album} albums={albums} zone={zone} />
     </>
   );
 }
@@ -121,18 +121,16 @@ function ZoneAlbum({ album, albums, zone, saving, onOrientation }: ZoneAlbumProp
 interface AlbumPhotosProps {
   album: Group;
   albums: Group[];
-  /** Whether to show a preview of each photo filling the homepage. */
-  preview: boolean;
+  zone: SpotlightZone;
 }
 
-/** The photos in album and its sub-albums, as the zone shows them, with a preview when asked. */
-function AlbumPhotos({ album, albums, preview }: AlbumPhotosProps) {
+/**
+ * The photos in album and its sub-albums, in the order the zone shows them, to pick one and set
+ * its focus point in the zone; or why there are none.
+ */
+function AlbumPhotos({ album, albums, zone }: AlbumPhotosProps) {
   const ids = new Set([album.id, ...albumDescendants(albums, album.id)]);
   const { combined, photos } = useGroupPhotos("albums", ids);
-  return (
-    <>
-      {preview && photos && <ZonePreview photos={albumPhotoOrder(photos, album.photoOrder)} />}
-      <GroupPhotoGrid combined={combined} photos={photos} order={album.photoOrder} />
-    </>
-  );
+  if (!photos?.length) return <GroupPhotoGrid combined={combined} photos={photos} />;
+  return <ZoneFocus zone={zone} photos={albumPhotoOrder(photos, album.photoOrder)} />;
 }
