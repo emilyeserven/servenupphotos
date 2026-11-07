@@ -23,7 +23,7 @@ func TestExiftoolWriteEditTags(t *testing.T) {
 		t.Fatal(err)
 	}
 	path := filepath.Join(t.TempDir(), "photo.jpg")
-	if err := os.WriteFile(path, data, 0o600); err != nil {
+	if err := os.WriteFile(path, data, 0o600); err != nil { //nolint:gosec // path is in t.TempDir()
 		t.Fatal(err)
 	}
 
