@@ -248,8 +248,9 @@ function CalendarGrid(props: CalendarGridProps) {
       </div>
       <p className="text-muted-foreground text-sm">
         Click an empty day to pick a photo for it, or a photo to change or remove it. Drag a photo
-        to another day to move it there; dropping it on another photo swaps the two. A check or a
-        clock in a day&apos;s corner marks Instagram posts saved on photos, posted or scheduled.
+        to another day to move it there; dropping it on another photo swaps the two. A check in a
+        day&apos;s corner marks Instagram posts already scheduled on Instagram, and a clock ones
+        still planned.
       </p>
     </>
   );

@@ -29,9 +29,9 @@ page doesn't use it.)
 > state, so it survives a reload and other pages can see it; Commit is the one "Save all" request.
 
 The calendar also shows the Instagram posts saved on photos under **Social media posts** (below): a day with one gets
-a check in its corner when every post that day is up, or a clock while one is scheduled (with a count when there's
-more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts** lists
-the posts on the days shown, each with its photo, **Posted** or **Scheduled**, whether the photo is **In flight** or as
+a check in its corner when every post that day is scheduled on Instagram, or a clock while one is still planned (with a
+count when there's more than one), and an empty day shows that photo faded behind its **+**. Under the calendar, **Instagram posts** lists
+the posts on the days shown, each with its photo, **Planned** or **Scheduled**, whether the photo is **In flight** or as
 the **Gallery** has it, a link to the post and a link to edit the photo. Gallery and in flight photos are both
 included, and nothing more is fetched for them: the posts come from the photo files the calendar already read, with
 the changes waiting for Commit and local edits the app keeps (`useChangedPhotoFiles` in the combined data store) made
@@ -45,8 +45,8 @@ does the merging (`postedPhotoFiles`, `postsByDay`), for any page that needs eac
 
 When a day is picked, the picker's first section, **Suggested**, holds up to 8 unused photos most like the 3 photos on
 Instagram on the days just before it (on the calendar, or with an Instagram post under **Social media posts**). Below
-it, **All photos** lists the rest as before. "Unused" means not on the calendar and with no Instagram post, scheduled
-or posted. Each pair of photos is scored from 0 to 1 and a photo's score is its average against the 3:
+it, **All photos** lists the rest as before. "Unused" means not on the calendar and with no Instagram post, planned
+or scheduled. Each pair of photos is scored from 0 to 1 and a photo's score is its average against the 3:
 
 - **Place (40%):** by distance when both have a GPS position (custom or EXIF), halving every 25 km; else 0.8 for a
   shared place or city, 0.3 for the same country.
@@ -72,6 +72,35 @@ GitHub; the filters are in `lib/social-focus.ts`.
 
 > **Frontend analogy:** it's saved default filters, like a persisted Zustand slice for a table's filter bar.
 
+### Planned Posts
+
+`/instagram-planned`, under **Instagram** in the sidebar, goes through the photos still to put on Instagram one at a
+time, made to sit in a narrow window next to Instagram. A photo is planned when it has an Instagram post with status
+**Planned**, or is on the Instagram calendar without an Instagram post that's **Scheduled**. They come in the order
+they go up: by the planned post's day, or else the calendar day, with photos without a day last; a day before today is
+marked **Overdue**. Photos set aside as Undecided are left out, as on the calendar. The list is worked out in the
+browser from the photo files the calendar reads, with changes waiting for Commit and local edits made over them
+(`plannedPhotos` in `apps/client-pipeline/src/lib/instagram-planned.ts`).
+
+Each photo shows its Medium version, its name (a link to edit it), its day, and:
+
+- **Download original JPEG**, which saves the original from R2, named after the photo's `file`. A browser won't
+  download straight from R2's address on another origin, so the link goes through the pipeline:
+  `GET /api/photos/original?key=<images.key>&name=<file>` reads the original from R2 and sends it as an attachment.
+- **Caption**, the default Instagram [caption template](caption-templates.md) (the first one for Instagram, or else the
+  first for any platform, as the Photo page's Generate starts with) filled in from the photo and its planned post's
+  hashtags, with **Copy caption**. A caption already written on the planned post is shown instead.
+- **Mark as Scheduled and go to the next**, which sets the planned Instagram post's status to scheduled (keeping its
+  caption, or else taking the one shown, and the calendar day when it has none), or adds a scheduled Instagram post
+  with the caption on the calendar day when the photo had none. The photo leaves the list, so the next one shows in its
+  place, and **Undo** above it puts its posts back. Like the calendar, it's a [local edit](combined-data-store.md#local-edits)
+  of the photo's `socialPosts`, so nothing goes to GitHub until **Commit**.
+
+**Previous** and **Next** move through the list without changing anything.
+
+> **Frontend analogy:** it's a wizard over a derived list: the steps are a `useMemo` filter of the store, and finishing
+> a step edits the store so the item filters itself out, the way a todo app's "done" button shrinks an "active" view.
+
 ## Social media posts
 
 The Photo page in edit mode (`/exif?edit=<path>`) has a **Social media posts** card, for keeping track of where the
@@ -82,6 +111,7 @@ Data → Missing fields adds it to older files):
 "socialPosts": [
   {
     "platform": "instagram",
+    "status": "scheduled",
     "date": "2026-10-20",
     "url": "https://www.instagram.com/p/…",
     "caption": "Late light over the river.",
@@ -90,11 +120,12 @@ Data → Missing fields adds it to older files):
 ]
 ```
 
-`date` is `YYYY-MM-DD`, or `null` when it's left empty. Whether a post is **Posted** or **Scheduled** isn't saved: it's
-worked out from its day each time it's shown (`postStatus` in `social-posts.ts`), posted on or before today and
-scheduled after it or without a day, so a post moves to posted by itself once its day comes. The card shows it next to
-the post's heading, and the Instagram calendar's marks and **Instagram posts** list use the same. A `status` saved
-by older versions is ignored and dropped the next time the posts are saved. Hashtags are typed separated by spaces or commas, with or
+`date` is `YYYY-MM-DD`, or `null` when it's left empty. `status` is `"planned"` while the post still has to be put on
+the site, and `"scheduled"` once it's there, posted or scheduled on the site to post; the card's **Status** field sets
+it, and a new post starts **Planned**. The Instagram calendar's marks (a check when every post that day is
+scheduled, a clock while one is planned) and its **Instagram posts** list show the same. A post saved before posts
+kept their status (or with an older `"posted"`) counts as scheduled when it has a link or its day has come, and as
+planned otherwise, until it's saved again (`savedStatus` in `social-posts.ts`). Hashtags are typed separated by spaces or commas, with or
 without the `#`, and saved without it. The platforms offered are listed in
 `apps/client-pipeline/src/lib/social-posts.ts` (Instagram, Threads, Bluesky, Facebook and Other); add one there to offer
 it. A post with a platform that isn't listed, such as one typed into the JSON, keeps it.

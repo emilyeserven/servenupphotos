@@ -22,6 +22,7 @@ import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as GenreSuggestionsRouteImport } from './routes/genre-suggestions'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
+import { Route as InstagramPlannedRouteImport } from './routes/instagram-planned'
 import { Route as LocalizationsRouteImport } from './routes/localizations'
 import { Route as LocationNamesRouteImport } from './routes/location-names'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
@@ -110,6 +111,11 @@ const InFlightRoute = InFlightRouteImport.update({
 const InstagramRoute = InstagramRouteImport.update({
   id: '/instagram',
   path: '/instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InstagramPlannedRoute = InstagramPlannedRouteImport.update({
+  id: '/instagram-planned',
+  path: '/instagram-planned',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocalizationsRoute = LocalizationsRouteImport.update({
@@ -247,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/instagram-planned': typeof InstagramPlannedRoute
   '/localizations': typeof LocalizationsRoute
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
@@ -286,6 +293,7 @@ export interface FileRoutesByTo {
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/instagram-planned': typeof InstagramPlannedRoute
   '/localizations': typeof LocalizationsRoute
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
@@ -324,6 +332,7 @@ export interface FileRoutesById {
   '/genre-suggestions': typeof GenreSuggestionsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/instagram-planned': typeof InstagramPlannedRoute
   '/localizations': typeof LocalizationsRoute
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
@@ -365,6 +374,7 @@ export interface FileRouteTypes {
     | '/genre-suggestions'
     | '/in-flight'
     | '/instagram'
+    | '/instagram-planned'
     | '/localizations'
     | '/location-names'
     | '/metadata-groups'
@@ -404,6 +414,7 @@ export interface FileRouteTypes {
     | '/genre-suggestions'
     | '/in-flight'
     | '/instagram'
+    | '/instagram-planned'
     | '/localizations'
     | '/location-names'
     | '/metadata-groups'
@@ -441,6 +452,7 @@ export interface FileRouteTypes {
     | '/genre-suggestions'
     | '/in-flight'
     | '/instagram'
+    | '/instagram-planned'
     | '/localizations'
     | '/location-names'
     | '/metadata-groups'
@@ -481,6 +493,7 @@ export interface RootRouteChildren {
   GenreSuggestionsRoute: typeof GenreSuggestionsRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
+  InstagramPlannedRoute: typeof InstagramPlannedRoute
   LocalizationsRoute: typeof LocalizationsRoute
   LocationNamesRoute: typeof LocationNamesRoute
   MetadataGroupsRoute: typeof MetadataGroupsRoute
@@ -594,6 +607,13 @@ declare module '@tanstack/react-router' {
       path: '/instagram'
       fullPath: '/instagram'
       preLoaderRoute: typeof InstagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/instagram-planned': {
+      id: '/instagram-planned'
+      path: '/instagram-planned'
+      fullPath: '/instagram-planned'
+      preLoaderRoute: typeof InstagramPlannedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/localizations': {
@@ -808,6 +828,7 @@ const rootRouteChildren: RootRouteChildren = {
   GenreSuggestionsRoute: GenreSuggestionsRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
+  InstagramPlannedRoute: InstagramPlannedRoute,
   LocalizationsRoute: LocalizationsRoute,
   LocationNamesRoute: LocationNamesRoute,
   MetadataGroupsRoute: MetadataGroupsRoute,

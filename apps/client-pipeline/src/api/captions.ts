@@ -28,6 +28,18 @@ export function captionTemplates(data: CombinedData | undefined): CaptionTemplat
   return (entries ?? []).filter(isTemplate).toSorted((a, b) => a.name.localeCompare(b.name));
 }
 
+/**
+ * The template a post on platform starts with, its default: the first one for that platform, or
+ * else the first one for any, or else the first; undefined when there are none.
+ */
+export function defaultCaptionTemplate(
+  templates: CaptionTemplate[],
+  platform: string,
+): CaptionTemplate | undefined {
+  const forPlatform = (p: string) => templates.find((t) => t.platform === p);
+  return forPlatform(platform) ?? forPlatform("") ?? templates[0];
+}
+
 /** The ID a new template gets, such as `instagram-travel`. */
 export const captionTemplateId = overrideId;
 
