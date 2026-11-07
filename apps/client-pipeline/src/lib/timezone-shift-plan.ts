@@ -1,10 +1,13 @@
 import type { TripLine } from "@/api/trip-lines";
 import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
+import { type CameraClock, DEFAULT_CLOCK, byCamera, resolveClock } from "@/lib/camera-clock";
 import {
+  type Clock,
   type ShiftSide,
   type ShiftZones,
   dayOf,
   minutesBetween,
+  photoZone,
   shiftedTime,
 } from "@/lib/timezone-shift";
 
@@ -103,24 +106,40 @@ function customValue(day: DayPhoto, fixedTime: string): string | null {
   return textOf(day.photo.data.createDate) === fixedTime ? null : fixedTime;
 }
 
-/** What fixing the photo would do, or null when it's left out or a timezone isn't chosen. */
-function planOne(day: DayPhoto, side: ShiftSide, zones: ShiftZones): PlannedShift | null {
-  if (side === "skip") return null;
-  const fixedTime = shiftedTime(day.clockTime, side, zones);
+/**
+ * What fixing the photo would do, or null when it's left out, its camera's clock was right or isn't
+ * worked out yet, or a timezone isn't chosen.
+ */
+function planOne(
+  day: DayPhoto,
+  side: ShiftSide,
+  zones: ShiftZones,
+  clock: Clock | null,
+): PlannedShift | null {
+  if (side === "skip" || !clock) return null;
+  const fixedTime = shiftedTime(day.clockTime, photoZone(side, zones), clock);
   if (!fixedTime) return null;
   const minutes = minutesBetween(day.currentTime, fixedTime);
   return { day, side, fixedTime, value: customValue(day, fixedTime), minutes };
 }
 
-/** What fixing each photo would do, for the ones on a side of the change, in the order they were taken. */
+/**
+ * What fixing each photo would do, for the ones on a side of the change, by camera, each with the
+ * clock its camera kept (`clocks` by camera name; one not listed kept the start timezone).
+ */
 export function planShifts(
   photos: DayPhoto[],
   sides: Record<string, ShiftSide>,
   zones: ShiftZones,
+  clocks: Record<string, CameraClock>,
 ): PlannedShift[] {
-  return photos
-    .map((day) => planOne(day, sides[day.photo.file.path] ?? "before", zones))
-    .filter((plan): plan is PlannedShift => plan !== null);
+  const context = { zones, photos, sides };
+  return byCamera(photos).flatMap(([camera, days]) => {
+    const clock = resolveClock(clocks[camera] ?? DEFAULT_CLOCK, context);
+    return days
+      .map((day) => planOne(day, sides[day.photo.file.path] ?? "before", zones, clock))
+      .filter((plan): plan is PlannedShift => plan !== null);
+  });
 }
 
 /** Whether the fix moves the photo to another day. */

@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import { SingleCombobox } from "@/components/ui/single-combobox";
-import { type ClockZone, type ShiftZones, knownZones, zoneOffsetOn } from "@/lib/timezone-shift";
-import { cn } from "@/lib/utils";
+import { type ShiftZones, knownZones, zoneOffsetOn } from "@/lib/timezone-shift";
 
 interface ZonePickersProps {
   zones: ShiftZones;
@@ -12,7 +11,7 @@ interface ZonePickersProps {
 }
 
 /** Each timezone as an option, with its offset on the day, such as "Asia/Tokyo" and "UTC+9". */
-function zoneOptions(day: string): ComboboxOption[] {
+export function zoneOptions(day: string): ComboboxOption[] {
   return knownZones().map((zone) => ({
     value: zone,
     label: zone.replaceAll("_", " "),
@@ -21,7 +20,7 @@ function zoneOptions(day: string): ComboboxOption[] {
   }));
 }
 
-/** The start and end timezones of the day, and which one the camera's clock was set to. */
+/** The start and end timezones of the day. */
 export function ZonePickers({ zones, onChange, day }: ZonePickersProps) {
   const options = useMemo(() => zoneOptions(day), [day]);
   return (
@@ -44,7 +43,6 @@ export function ZonePickers({ zones, onChange, day }: ZonePickersProps) {
         offset={zoneOffsetOn(zones.end, day)}
         onChange={(end) => onChange({ ...zones, end })}
       />
-      <ClockToggle value={zones.clock} onChange={(clock) => onChange({ ...zones, clock })} />
     </div>
   );
 }
@@ -60,7 +58,8 @@ interface ZoneFieldProps {
   onChange: (zone: string) => void;
 }
 
-function ZoneField({ id, label, help, options, value, offset, onChange }: ZoneFieldProps) {
+/** One timezone, typed to filter, with its offset on the day beside its label. */
+export function ZoneField({ id, label, help, options, value, offset, onChange }: ZoneFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <span id={`${id}-label`} className="text-xs font-medium">
@@ -76,55 +75,6 @@ function ZoneField({ id, label, help, options, value, offset, onChange }: ZoneFi
         placeholder="Type a city, such as Tokyo"
       />
       <span className="text-muted-foreground text-xs">{help}</span>
-    </div>
-  );
-}
-
-const CLOCK_CHOICES: [ClockZone, string][] = [
-  ["start", "Start timezone"],
-  ["end", "End timezone"],
-];
-
-/** Which timezone the camera's clock was set to all day. */
-function ClockToggle({
-  value,
-  onChange,
-}: {
-  value: ClockZone;
-  onChange: (clock: ClockZone) => void;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5 sm:col-span-2">
-      <span id="timezone-shift-clock" className="text-xs font-medium">
-        The camera&apos;s clock was set to
-      </span>
-      <div
-        role="group"
-        aria-labelledby="timezone-shift-clock"
-        className="bg-background flex self-start rounded-md border p-0.5"
-      >
-        {CLOCK_CHOICES.map(([choice, label]) => (
-          <button
-            key={choice}
-            type="button"
-            aria-pressed={value === choice}
-            onClick={() => onChange(choice)}
-            className={cn(
-              "focus-visible:ring-ring rounded px-2 py-0.5 text-xs outline-none focus-visible:ring-2",
-              value === choice
-                ? "bg-secondary text-secondary-foreground font-medium"
-                : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <span className="text-muted-foreground text-xs">
-        Usually the start one: the camera kept home time after the trip. Pick the end one if you set
-        it to the new time before leaving. Photos taken in the clock&apos;s own timezone keep their
-        time.
-      </span>
     </div>
   );
 }

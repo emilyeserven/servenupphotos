@@ -1,14 +1,11 @@
 /**
- * Fixing the times of photos taken on a day that crossed timezones. A camera keeps one clock, so
- * after a flight its photos carry the time back home; this works out the local time where each
- * photo was taken, as exiftool writes dates ("2016:12:23 22:07:39").
+ * Fixing the times of photos taken on a day that crossed timezones. A camera keeps one clock, which
+ * can be set to home time, the destination's, or just be wrong; this works out the local time where
+ * each photo was taken, as exiftool writes dates ("2016:12:23 22:07:39").
  */
 
 /** Which side of the timezone change a photo was taken on, or "skip" to leave it as it is. */
 export type ShiftSide = "before" | "after" | "skip";
-
-/** Which timezone the camera's clock was set to that day. */
-export type ClockZone = "start" | "end";
 
 /** The timezones of a day that crossed them, as IANA names such as "Asia/Tokyo". */
 export interface ShiftZones {
@@ -16,9 +13,13 @@ export interface ShiftZones {
   start: string;
   /** Where the day ended. */
   end: string;
-  /** Which of the two the camera's clock was set to. */
-  clock: ClockZone;
 }
+
+/**
+ * What a camera's clock kept: a timezone's time, or a fixed distance from UTC in milliseconds, as
+ * worked out from a photo whose real time is known.
+ */
+export type Clock = { zone: string } | { offsetMs: number };
 
 const EXIF_DATE = /^(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2})(?::(\d{2}))?/;
 
@@ -90,36 +91,37 @@ function isZone(zone: string): boolean {
   }
 }
 
-/** Whether every one of the names is a timezone this browser knows. */
-function allKnown(...zones: string[]): boolean {
-  return zones.every(isZone);
-}
-
-/** The timezone the camera's clock was set to. */
-function clockZoneOf(zones: ShiftZones): string {
-  return zones.clock === "start" ? zones.start : zones.end;
-}
-
 /** Which timezone a photo was taken in: the start one before the change, the end one after. */
-function photoZone(side: Exclude<ShiftSide, "skip">, zones: ShiftZones): string {
+export function photoZone(side: Exclude<ShiftSide, "skip">, zones: ShiftZones): string {
   return side === "before" ? zones.start : zones.end;
 }
 
+/** The instant the clock read `wall` (milliseconds read as UTC); null for a timezone not known. */
+function clockInstant(wall: number, clock: Clock): number | null {
+  if ("offsetMs" in clock) return wall - clock.offsetMs;
+  return isZone(clock.zone) ? instantOf(wall, clock.zone) : null;
+}
+
 /**
- * The local time where the photo was taken, as exiftool writes dates, from what the camera's clock
- * read; null when the clock time isn't a date or a timezone isn't known.
+ * The local time in `zone`, where the photo was taken, as exiftool writes dates, from what the
+ * camera's clock read; null when the clock time isn't a date or a timezone isn't known.
  */
-export function shiftedTime(
-  clockTime: string,
-  side: Exclude<ShiftSide, "skip">,
-  zones: ShiftZones,
-): string | null {
+export function shiftedTime(clockTime: string, zone: string, clock: Clock): string | null {
   const wall = wallMillis(clockTime);
-  const clockZone = clockZoneOf(zones);
-  const zone = photoZone(side, zones);
-  if (wall === null || !allKnown(clockZone, zone)) return null;
-  const instant = instantOf(wall, clockZone);
+  const instant = wall === null ? null : clockInstant(wall, clock);
+  if (instant === null || !isZone(zone)) return null;
   return exifFromWall(instant + offsetAt(instant, zone));
+}
+
+/**
+ * The clock of a camera that read `clockTime` when the real local time in `zone` was `realTime`:
+ * how far its clock was from UTC. Null when either isn't a date or the timezone isn't known.
+ */
+export function clockFromPhoto(clockTime: string, realTime: string, zone: string): Clock | null {
+  const wall = wallMillis(clockTime);
+  const real = wallMillis(realTime);
+  if (wall === null || real === null || !isZone(zone)) return null;
+  return { offsetMs: wall - instantOf(real, zone) };
 }
 
 /** How far apart two exiftool dates are, in minutes (later minus earlier); 0 when either isn't one. */

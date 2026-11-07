@@ -16,6 +16,7 @@ import {
   planShifts,
   tripLineEffects,
 } from "@/lib/timezone-shift-plan";
+import type { CameraClock } from "@/lib/camera-clock";
 import { type FieldChange, useLocalEditsStore } from "@/stores/local-edits";
 
 interface TimezoneShiftFormProps {
@@ -60,14 +61,14 @@ type ShiftFormProps = TimezoneShiftFormProps & Omit<ReturnType<typeof useDatedPh
 function ShiftForm({ currentPath, onCurrentFixed, onDone, photos, lines }: ShiftFormProps) {
   const [day, setDay] = useState(() => startingDay(photos, currentPath));
   const [sides, setSides] = useState<Record<string, ShiftSide>>({});
-  const [zones, setZones] = useState<ShiftZones>(() => ({
-    start: browserZone(),
-    end: "",
-    clock: "start",
-  }));
+  const [zones, setZones] = useState<ShiftZones>(() => ({ start: browserZone(), end: "" }));
+  const [clocks, setClocks] = useState<Record<string, CameraClock>>({});
   const setField = useLocalEditsStore((s) => s.setField);
   const onDay = useMemo(() => photosOnDay(photos, day), [photos, day]);
-  const plans = useMemo(() => planShifts(onDay, sides, zones), [onDay, sides, zones]);
+  const plans = useMemo(
+    () => planShifts(onDay, sides, zones, clocks),
+    [onDay, sides, zones, clocks],
+  );
   const effects = useMemo(() => tripLineEffects(plans, photos, lines), [plans, photos, lines]);
   const changed = plans.filter((plan) => plan.minutes !== 0);
 
@@ -81,10 +82,18 @@ function ShiftForm({ currentPath, onCurrentFixed, onDone, photos, lines }: Shift
   return (
     <div className="flex min-h-0 flex-col gap-4 overflow-y-auto">
       <DayField day={day} onChange={setDay} count={onDay.length} />
-      {onDay.length > 0 && (
-        <DayPhotoList photos={onDay} sides={sides} onChange={setSides} currentPath={currentPath} />
-      )}
       <ZonePickers zones={zones} onChange={setZones} day={day} />
+      {onDay.length > 0 && (
+        <DayPhotoList
+          photos={onDay}
+          sides={sides}
+          onSidesChange={setSides}
+          clocks={clocks}
+          onClocksChange={setClocks}
+          currentPath={currentPath}
+          day={day}
+        />
+      )}
       <ShiftPreview plans={plans} effects={effects} />
       <DialogFooter>
         <Button type="button" disabled={changed.length === 0} onClick={apply}>
@@ -119,7 +128,7 @@ function DayField({ day, onChange, count }: DayFieldProps) {
       <span className="text-muted-foreground text-xs">
         {count === 0
           ? "No photos were taken that day."
-          : `${count} ${count === 1 ? "photo" : "photos"}, in the order the camera took them. Mark the ones taken after the timezone change.`}
+          : `${count} ${count === 1 ? "photo" : "photos"}, by camera. For each camera, say what its clock was set to and mark the photos taken after the timezone change.`}
       </span>
     </div>
   );
