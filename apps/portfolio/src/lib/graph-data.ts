@@ -12,17 +12,11 @@ export interface GraphStat {
   /** The section it's in, such as "Gear" or "Technical", to group the dropdowns by. */
   section: string;
   build: (list: Photo[]) => StatGroup;
-  /** Whether its rows have values in order, such as apertures or years, so an axis of it can be cut to a range. */
-  ordered?: boolean;
 }
 
 /** A group's stats: the group itself, or each of its variants, such as Lenses by type and by brand. */
 function statsOf(def: GroupDef, section: string): GraphStat[] {
-  if (!def.variants) {
-    return [
-      { id: def.id, label: def.build([]).title, section, build: def.build, ordered: def.ordered },
-    ];
-  }
+  if (!def.variants) return [{ id: def.id, label: def.build([]).title, section, build: def.build }];
   return def.variants.map((variant, index) => ({
     id: `${def.id}-${index}`,
     label: variant.label,
@@ -76,32 +70,6 @@ export interface GraphConfig {
   sort: SortOrder;
   /** How many of the x axis's values are shown, from the start of the order; 0 for all. */
   limit: number;
-  /**
-   * The lowest and highest x values shown, such as f/2 to f/8, for a stat whose values go in order;
-   * null for no limit.
-   */
-  xMin: number | null;
-  xMax: number | null;
-  /**
-   * The lowest and highest y values shown: for a scatterplot, its y stat's values, like the x axis's;
-   * for the rest, the photos (or share of photos) an x value needs to be shown, such as at least 5.
-   * Null for no limit.
-   */
-  yMin: number | null;
-  yMax: number | null;
-}
-
-/** The axis thresholds, all off. */
-export const NO_THRESHOLDS = { xMin: null, xMax: null, yMin: null, yMax: null } as const;
-
-/** Whether the value is from min to max, both included; a null end is no limit. */
-function inRange(value: number, min: number | null, max: number | null): boolean {
-  return (min === null || value >= min) && (max === null || value <= max);
-}
-
-/** Whether a row is kept by an axis's range: rows without a value always are. */
-function rowInRange(row: StatRow, min: number | null, max: number | null): boolean {
-  return row.value === undefined || inRange(row.value, min, max);
 }
 
 /** A row's photos among the list: none for a row without a filter, which can't be told apart. */
@@ -131,22 +99,10 @@ const SORTS: Record<SortOrder, (rows: StatRow[]) => StatRow[]> = {
   reverse: (rows) => rows.toReversed(),
 };
 
-/**
- * The x axis's rows the thresholds keep: x values in the x range, and, but for a scatterplot (whose
- * y axis is a stat), x values with photos (or a share of the `total` photos) in the y range.
- */
-function keptRows(rows: StatRow[], config: GraphConfig, total: number): StatRow[] {
-  const inX = rows.filter((row) => rowInRange(row, config.xMin, config.xMax));
-  if (config.type === "scatter") return inX;
-  return inX.filter((row) =>
-    inRange(measured(row.count, total, config.measure), config.yMin, config.yMax),
-  );
-}
-
-/** The x axis's rows, in the order picked, cut by the thresholds and then to the limit. */
-function axisRows(group: StatGroup, config: GraphConfig, total: number): StatRow[] {
-  const kept = keptRows(SORTS[config.sort](group.rows), config, total);
-  return config.limit > 0 ? kept.slice(0, config.limit) : kept;
+/** The x axis's rows, in the order picked and cut to the limit. */
+function axisRows(group: StatGroup, sort: SortOrder, limit: number): StatRow[] {
+  const sorted = SORTS[sort](group.rows);
+  return limit > 0 ? sorted.slice(0, limit) : sorted;
 }
 
 /** How many series or slices get their own color; the rest go together as Other. */
@@ -265,7 +221,7 @@ function isSplit(config: GraphConfig): boolean {
 
 /** What a bar, line or pie graph draws from the photos kept. */
 export function graphData(list: Photo[], config: GraphConfig): GraphData {
-  const rows = axisRows(statById(config.x).build(list), config, list.length);
+  const rows = axisRows(statById(config.x).build(list), config.sort, config.limit);
   if (config.type === "pie") return pieData(rows, list.length, config);
   if (isSplit(config)) return splitData(list, rows, config);
   return singleSeries(rows, list.length, config);
@@ -287,12 +243,9 @@ export interface ScatterData {
 
 /** A scatterplot: a dot for each x value and y value the same photos have, as big as how many. */
 export function scatterData(list: Photo[], config: GraphConfig): ScatterData {
-  const xRows = axisRows(statById(config.x).build(list), config, list.length);
+  const xRows = axisRows(statById(config.x).build(list), config.sort, config.limit);
   const yStat = statById(config.y);
-  const yLabels = yStat
-    .build(list)
-    .rows.filter((row) => rowInRange(row, config.yMin, config.yMax))
-    .map((row) => row.label);
+  const yLabels = yStat.build(list).rows.map((row) => row.label);
   const points = xRows.flatMap((row, x) =>
     yStat
       .build(rowPhotos(list, row))

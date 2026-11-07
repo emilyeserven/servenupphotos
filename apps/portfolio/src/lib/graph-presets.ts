@@ -1,15 +1,9 @@
 import committedPresets from "@portfolio/data/graphs/GRAPHS.json";
-import { type GraphConfig, NO_THRESHOLDS } from "@portfolio/lib/graph-data";
+import type { GraphConfig } from "@portfolio/lib/graph-data";
 import { localFile } from "@portfolio/lib/localize";
 
 /** What a graph preset sets the graph to: every setting but the filters, which stay as they are. */
 export type PresetGraph = Omit<GraphConfig, "filters">;
-
-/** The axis thresholds' settings. */
-type ThresholdKey = keyof typeof NO_THRESHOLDS;
-
-/** A preset's graph as its file keeps it: thresholds that are off are left out. */
-export type SavedGraph = Omit<PresetGraph, ThresholdKey> & Partial<Pick<PresetGraph, ThresholdKey>>;
 
 /**
  * A graph preset file from GRAPHS.json, which the pipeline's Graph Presets page saves: a
@@ -27,10 +21,10 @@ export interface GraphPresetFile {
   /** A preset's group, by ID; left out when it's in none. */
   group?: string;
   /** What a preset sets the graph to; groups leave it out. */
-  graph?: SavedGraph;
+  graph?: PresetGraph;
 }
 
-/** A preset on the Graph page: its name, and what it sets the graph to, thresholds it leaves out turned off. */
+/** A preset on the Graph page: its name, and what it sets the graph to. */
 export interface GraphPreset {
   id: string;
   name: string;
@@ -59,7 +53,7 @@ function byOrder(a: GraphPresetFile, b: GraphPresetFile): number {
 
 /** The file as a preset to pick. */
 function presetOf(file: GraphPresetFile): GraphPreset {
-  return { id: file.id, name: file.name, graph: { ...NO_THRESHOLDS, ...file.graph } };
+  return { id: file.id, name: file.name, graph: file.graph ?? {} };
 }
 
 /** The presets in the group, in their order. */

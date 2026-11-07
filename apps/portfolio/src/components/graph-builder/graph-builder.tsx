@@ -13,7 +13,6 @@ import {
   type GraphData,
   graphData,
   type GraphType,
-  NO_THRESHOLDS,
   scatterData,
   statById,
 } from "@/lib/graph-data";
@@ -33,7 +32,6 @@ const START: GraphConfig = {
   filters: [],
   sort: "reverse",
   limit: 0,
-  ...NO_THRESHOLDS,
 };
 
 /** Whether the graph or its numbers as a table show. */

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { NO_THRESHOLDS } from "@/lib/graph-data";
 import type { GraphPreset, PresetGraph } from "@/lib/graph-presets";
 
 /** Where the visitor's own presets are kept in their browser. */
@@ -49,8 +48,7 @@ export function useSavedGraphs(): SavedGraphs {
   };
   return {
     presets,
-    save: (name, graph) =>
-      change([...presets, { id: `${Date.now()}`, name, graph: { ...NO_THRESHOLDS, ...graph } }]),
+    save: (name, graph) => change([...presets, { id: `${Date.now()}`, name, graph }]),
     remove: (id) => change(presets.filter((preset) => preset.id !== id)),
   };
 }

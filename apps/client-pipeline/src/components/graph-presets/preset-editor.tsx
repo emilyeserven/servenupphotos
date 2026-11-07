@@ -3,8 +3,8 @@ import { lastOrder, newPresetId } from "@/api/graph-presets";
 import { EditorButtons, Field, NameAndOrder } from "@/components/graph-presets/editor-parts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraphControls } from "@portfolio/components/graph-builder/graph-controls";
-import { type GraphConfig, NO_THRESHOLDS } from "@portfolio/lib/graph-data";
-import type { GraphPresetFile, PresetGraph, SavedGraph } from "@portfolio/lib/graph-presets";
+import type { GraphConfig } from "@portfolio/lib/graph-data";
+import type { GraphPresetFile, PresetGraph } from "@portfolio/lib/graph-presets";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 /** A new preset's graph, as the Graph page starts: photos per year, split by season. */
@@ -17,34 +17,14 @@ const START_GRAPH: PresetGraph = {
   stacked: true,
   sort: "reverse",
   limit: 0,
-  ...NO_THRESHOLDS,
 };
 
 /** The settings a preset keeps, in the order its file writes them. */
-const GRAPH_KEYS = [
-  "type",
-  "x",
-  "measure",
-  "y",
-  "split",
-  "stacked",
-  "sort",
-  "limit",
-  "xMin",
-  "xMax",
-  "yMin",
-  "yMax",
-] as const;
+const GRAPH_KEYS = ["type", "x", "measure", "y", "split", "stacked", "sort", "limit"] as const;
 
 /** The graph's settings without its filters, which a preset leaves as they are. */
 function presetGraph(config: PresetGraph): PresetGraph {
   return Object.fromEntries(GRAPH_KEYS.map((key) => [key, config[key]])) as unknown as PresetGraph;
-}
-
-/** The graph as the preset's file keeps it, with the thresholds that are off left out. */
-function savedGraph(graph: PresetGraph): SavedGraph {
-  const kept = Object.entries(presetGraph(graph)).filter(([, value]) => value !== null);
-  return Object.fromEntries(kept) as SavedGraph;
 }
 
 /** The preset as typed. */
@@ -79,7 +59,7 @@ function presetOf(
     kind: "preset",
     name,
     order: draft.order,
-    graph: savedGraph(draft.graph),
+    graph: presetGraph(draft.graph),
   };
   return draft.group ? { ...file, group: draft.group } : file;
 }
