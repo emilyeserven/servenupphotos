@@ -56,6 +56,7 @@ import { Route as TagsIndexRouteImport } from './routes/tags.index'
 import { Route as TagsIdRouteImport } from './routes/tags.$id'
 import { Route as UpdateDataIndexRouteImport } from './routes/update-data.index'
 import { Route as UpdateDataSectionRouteImport } from './routes/update-data.$section'
+import { Route as TripLinesTripsIdRouteImport } from './routes/trip-lines_.trips.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -292,6 +293,11 @@ const UpdateDataSectionRoute = UpdateDataSectionRouteImport.update({
   path: '/$section',
   getParentRoute: () => UpdateDataRoute,
 } as any)
+const TripLinesTripsIdRoute = TripLinesTripsIdRouteImport.update({
+  id: '/trip-lines_/trips/$id',
+  path: '/trip-lines/trips/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -341,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/tag-data/': typeof TagDataIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
+  '/trip-lines/trips/$id': typeof TripLinesTripsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -389,6 +396,7 @@ export interface FileRoutesByTo {
   '/tag-data': typeof TagDataIndexRoute
   '/tags': typeof TagsIndexRoute
   '/update-data': typeof UpdateDataIndexRoute
+  '/trip-lines/trips/$id': typeof TripLinesTripsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -439,6 +447,7 @@ export interface FileRoutesById {
   '/tag-data/': typeof TagDataIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
+  '/trip-lines_/trips/$id': typeof TripLinesTripsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -490,6 +499,7 @@ export interface FileRouteTypes {
     | '/tag-data/'
     | '/tags/'
     | '/update-data/'
+    | '/trip-lines/trips/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -538,6 +548,7 @@ export interface FileRouteTypes {
     | '/tag-data'
     | '/tags'
     | '/update-data'
+    | '/trip-lines/trips/$id'
   id:
     | '__root__'
     | '/'
@@ -587,6 +598,7 @@ export interface FileRouteTypes {
     | '/tag-data/'
     | '/tags/'
     | '/update-data/'
+    | '/trip-lines_/trips/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -635,6 +647,7 @@ export interface RootRouteChildren {
   LightroomAlbumsIndexRoute: typeof LightroomAlbumsIndexRoute
   TagDataIndexRoute: typeof TagDataIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
+  TripLinesTripsIdRoute: typeof TripLinesTripsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -968,6 +981,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UpdateDataSectionRouteImport
       parentRoute: typeof UpdateDataRoute
     }
+    '/trip-lines_/trips/$id': {
+      id: '/trip-lines_/trips/$id'
+      path: '/trip-lines/trips/$id'
+      fullPath: '/trip-lines/trips/$id'
+      preLoaderRoute: typeof TripLinesTripsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1031,6 +1051,7 @@ const rootRouteChildren: RootRouteChildren = {
   LightroomAlbumsIndexRoute: LightroomAlbumsIndexRoute,
   TagDataIndexRoute: TagDataIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
+  TripLinesTripsIdRoute: TripLinesTripsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

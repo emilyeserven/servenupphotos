@@ -127,13 +127,14 @@ by the route's `validateSearch`):
 
 | Param   | What it opens                                                       | Unless set |
 | ------- | ------------------------------------------------------------------- | ---------- |
+| `tab`   | `trips` for the Trips tab                                           | Days       |
 | `day`   | The day chosen, such as `2026-09-23`                                | The newest |
 | `show`  | The day list's filter: `marked`, `out-of-date`, `automatic`, `none` | All        |
 | `group` | The group shown alone on the map (the eye), by its name             | None       |
 
 For example, `/trip-lines?day=2026-09-29&show=out-of-date&group=Engyoji%20Temple`. Clicks replace the history entry
-rather than adding one, so Back leaves the page. Choosing another day clears `group`. An old link to the Trips tab (`tab=trips`, with `trip`) opens
-the [Trips](trips.md) page. Needs attention links to its newest out-of-date day with `show=out-of-date`.
+rather than adding one, so Back leaves the page. Choosing another day clears `group`. An old link with a `trip` on the [Trips](trips.md) tab opens
+that Trip's page. Needs attention links to its newest out-of-date day with `show=out-of-date`.
 
 > **Frontend analogy:** this is TanStack Router's search params used as the page's state store instead of `useState`,
 > like keeping a table's sort and filter in the query string.
@@ -253,7 +254,7 @@ backend checks that each photo was taken that day and each ring is closed and on
 ## Trips
 
 A day's line can't cross midnight, so the ferries and flights between days are the legs of a [Trip](trips.md), on the
-Trips page. Commit bakes them into `TRIPLINES.geo.json` with the days' lines.
+Trips tab. Commit bakes them into `TRIPLINES.geo.json` with the days' lines.
 
 ## Groups
 

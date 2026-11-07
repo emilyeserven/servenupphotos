@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { TripsPage } from "@/components/trips/page";
-import { parseTripsSearch } from "@/lib/trips-search";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
+// The Trips were briefly a page of their own; a link to it opens the Trip Lines page's Trips tab.
 export const Route = createFileRoute("/trips")({
-  validateSearch: parseTripsSearch,
-  component: TripsPage,
+  beforeLoad: () => {
+    throw redirect({ to: "/trip-lines", search: { tab: "trips" }, replace: true });
+  },
 });

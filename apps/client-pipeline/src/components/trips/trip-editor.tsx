@@ -67,7 +67,7 @@ export function TripEditor(props: TripEditorProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{trip.name || "New Trip"}</CardTitle>
+        <CardTitle>Name, days and legs</CardTitle>
         <CardDescription>
           <Covers trip={draft} countPhotos={props.countPhotos} />
         </CardDescription>

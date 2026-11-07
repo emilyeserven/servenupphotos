@@ -1,6 +1,6 @@
 # Trips
 
-`/trips`, under **Configuration** in the sidebar, names runs of days, such as **Korea** for September 20 to 21, 2026
+A **Trip**, on the **Trips** tab of the [Trip Lines](trip-lines.md) page (`/trip-lines?tab=trips`), names runs of days, such as **Korea** for September 20 to 21, 2026
 and **Japan** for September 22 to October 2, and adds the legs travelled between those days, such as the ferry from
 Busan to Fukuoka. One Trip does three jobs on the portfolio:
 
@@ -14,8 +14,7 @@ Busan to Fukuoka. One Trip does three jobs on the portfolio:
 
 A [Smart Album](smart-albums.md) can also take its photos from a Trip's days.
 
-Trips and timeline labels used to be two things, a label on the Timeline Labels page and a Trip on a tab of the Trip
-Lines page, though a label like "Japan" usually was the trip. They're one now: every timeline label is a Trip with no
+Trips and timeline labels used to be two things, a label on the Timeline Labels page and a Trip on the Trips tab, though a label like "Japan" usually was the trip. They're one now: every timeline label is a Trip with no
 legs, and its file didn't change.
 
 > **Frontend analogy:** a Trip is a lookup table from a date range to a name, like a `Map<[start, end], name>`, that
@@ -59,17 +58,23 @@ combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/
 
 Before the merge, a Trip was saved in the trip lines folder as `triplines/trip-<slug>.json`. Such a file is still
 read, so its legs are still drawn, its days still go on its page and other Trips still can't take its days, and the
-Trips page lists it with a note that the Timeline doesn't show it yet. **Save Trip** moves it: it saves
+Trips tab marks it **Save to show on the Timeline**, and its page says the same. **Save Trip** moves it: it saves
 `timeline/<id>.json` and removes the old file, both as changes waiting for Commit.
 
-## The page
+## The tab and each Trip's page
 
-The left side lists the Trips, newest first, each with its days, how many legs it has and how many saved photos were
-taken on its days. The right side edits the chosen Trip, or a new one after **New Trip**: its name, first day and last
-day (left empty, the last day is the first), then its **Legs between days**. The editor says how many photos fall in
-the days typed, and says so before saving when another Trip already covers some of them. The chosen Trip is in the URL
-as `?trip=<id>`; an old link to `/timeline-labels`, or to the Trip Lines page's Trips tab
-(`/trip-lines?tab=trips&trip=<id>`), opens this page.
+The Trips tab lists every Trip as a card, newest first, with its days, how many saved photos were taken on them and
+how many legs it has. Clicking one opens its own page, `/trip-lines/trips/<id>` (**New Trip** opens
+`/trip-lines/trips/new`), with **All Trips** to go back:
+
+- The editor: its name, first day and last day (left empty, the last day is the first), then its **Legs between
+  days**. It says how many photos fall in the days typed, and says so before saving when another Trip already covers
+  some of them. Saving a new Trip moves to its page; removing one goes back to the tab.
+- **Its days**: the days in the Trip with photos at an exact spot, each linking to that day on the Days tab to mark its
+  line and story.
+
+An old link to `/timeline-labels` or `/trips` opens the Trips tab, and one to a Trip on the tab
+(`/trip-lines?tab=trips&trip=<id>`) opens that Trip's page.
 
 Each leg has a mode (**Ferry**, **Flight**, **Train**, **Bus** or **Car**), the day it **Leaves** and the day it
 **Arrives**. Days can be skipped, such as a flight out on the first day and home on the last. A leg leaves from the
