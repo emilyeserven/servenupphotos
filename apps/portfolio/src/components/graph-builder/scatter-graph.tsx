@@ -1,5 +1,7 @@
-import { CartesianGrid, Scatter, ScatterChart, XAxis, YAxis, ZAxis } from "recharts";
+import { CartesianGrid, Cell, Scatter, ScatterChart, XAxis, YAxis, ZAxis } from "recharts";
 import { hovered, shortLabel, TOOLTIP_CLASS } from "@/components/graph-builder/graph-parts";
+import { useGraphPick } from "@/components/graph-builder/graph-pick-context";
+import type { GraphPick } from "@/lib/graph-pick";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import type { ScatterData, ScatterPoint } from "@/lib/graph-data";
 
@@ -23,9 +25,26 @@ function plotHeight(rows: number, xSlanted: boolean): number {
   return Math.max(288, rows * 32 + (xSlanted ? 100 : 40));
 }
 
+/** A dot as a pick: its x and y values. */
+function dotPick(data: ScatterData, point: ScatterPoint | undefined): GraphPick | null {
+  if (!point) return null;
+  return { x: data.xLabels[point.x] ?? "", y: data.yLabels[point.y] ?? "" };
+}
+
+/** Whether the dot is the picked one. */
+function isPicked(data: ScatterData, pick: GraphPick, point: ScatterPoint): boolean {
+  return pick.x === data.xLabels[point.x] && pick.y === data.yLabels[point.y];
+}
+
+/** How faint a dot that isn't picked is, while another is. */
+function dotOpacity(data: ScatterData, pick: GraphPick | null, point: ScatterPoint): number {
+  if (pick === null) return 0.85;
+  return isPicked(data, pick, point) ? 1 : 0.3;
+}
+
 /**
  * A scatterplot of two stats: a dot where an x value and a y value meet, as big as how many photos
- * have both, such as Japan and Autumn. The first y value is at the top.
+ * have both, such as Japan and Autumn. The first y value is at the top. Clicking a dot picks it.
  */
 export function ScatterGraph({
   data,
@@ -37,6 +56,11 @@ export function ScatterGraph({
   yName: string;
 }) {
   const slanted = data.xLabels.length > 6;
+  const { pick, onPick } = useGraphPick();
+  const pickDot = (_: unknown, index: number) => {
+    const picked = dotPick(data, data.points[index]);
+    if (picked) onPick(picked);
+  };
   return (
     <ChartContainer
       config={{}}
@@ -75,11 +99,16 @@ export function ScatterGraph({
         <Scatter
           data={data.points}
           fill="var(--series-1)"
-          fillOpacity={0.85}
           stroke="var(--card)"
           strokeWidth={2}
           isAnimationActive={false}
-        />
+          onClick={pickDot}
+          className="cursor-pointer"
+        >
+          {data.points.map((point) => (
+            <Cell key={`${point.x}-${point.y}`} fillOpacity={dotOpacity(data, pick, point)} />
+          ))}
+        </Scatter>
       </ScatterChart>
     </ChartContainer>
   );

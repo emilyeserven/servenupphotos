@@ -8,10 +8,12 @@ import {
   LineChart,
   Pie,
   PieChart,
+  ReferenceLine,
   XAxis,
   YAxis,
 } from "recharts";
 import { GraphLegend, GraphTooltip, shortLabel } from "@/components/graph-builder/graph-parts";
+import { pickedOpacity, pickOf, useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { formatValue, type GraphData, type Measure, seriesColor } from "@/lib/graph-data";
 
@@ -23,7 +25,7 @@ type FlatDatum = { label: string; photos: number } & Record<string, number | str
 
 /** The data with each series' number moved up beside the label, for recharts. */
 function flat(data: GraphData["data"]): FlatDatum[] {
-  return data.map(({ values, ...rest }) => ({ ...rest, ...values }));
+  return data.map((datum) => ({ label: datum.label, photos: datum.photos, ...datum.values }));
 }
 
 /** What a bar or line graph needs to draw. */
@@ -75,6 +77,15 @@ function Frame({ graph, children }: { graph: GraphData; children: ReactElement }
   );
 }
 
+/** Picking the clicked value of a bar, line or dot graph, so its photos show under it. */
+function useClickPick(graph: GraphData) {
+  const { onPick } = useGraphPick();
+  return (state: { activeIndex?: unknown }) => {
+    const pick = pickOf(graph.data[Number(state.activeIndex)]);
+    if (pick) onPick(pick);
+  };
+}
+
 /** What every bar, line and dot graph has: a grid, both axes and the tooltip. */
 function cartesianParts({ graph, measure }: CartesianProps) {
   return [
@@ -91,9 +102,15 @@ function cartesianParts({ graph, measure }: CartesianProps) {
 /** A bar graph; a split one's parts stacked or side by side, with a gap between them. */
 export function BarGraph({ graph, measure, stacked }: CartesianProps & { stacked: boolean }) {
   const stack = stacked ? "parts" : undefined;
+  const { pick } = useGraphPick();
   return (
     <Frame graph={graph}>
-      <BarChart data={flat(graph.data)} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+      <BarChart
+        data={flat(graph.data)}
+        margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+        onClick={useClickPick(graph)}
+        className="cursor-pointer"
+      >
         {cartesianParts({ graph, measure })}
         {graph.series.map((s) => (
           <Bar
@@ -107,7 +124,11 @@ export function BarGraph({ graph, measure, stacked }: CartesianProps & { stacked
             strokeWidth={stack ? 2 : 0}
             maxBarSize={56}
             isAnimationActive={false}
-          />
+          >
+            {graph.data.map((datum) => (
+              <Cell key={datum.label} fillOpacity={pickedOpacity(pick, datum.label)} />
+            ))}
+          </Bar>
         ))}
       </BarChart>
     </Frame>
@@ -119,10 +140,17 @@ export function BarGraph({ graph, measure, stacked }: CartesianProps & { stacked
  * how many photos it has, such as one for each aperture.
  */
 export function LineGraph({ graph, measure, dots = false }: CartesianProps & { dots?: boolean }) {
+  const { pick } = useGraphPick();
   return (
     <Frame graph={graph}>
-      <LineChart data={flat(graph.data)} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+      <LineChart
+        data={flat(graph.data)}
+        margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
+        onClick={useClickPick(graph)}
+        className="cursor-pointer"
+      >
         {cartesianParts({ graph, measure })}
+        {pick && <ReferenceLine x={pick.x} stroke="var(--foreground)" strokeDasharray="4 4" />}
         {graph.series.map((s) => (
           <Line
             key={s.key}
@@ -144,6 +172,11 @@ export function LineGraph({ graph, measure, dots = false }: CartesianProps & { d
 /** A pie, each x value a slice in its own color, with a gap between them. */
 export function PieGraph({ graph, measure }: CartesianProps) {
   const slices = flat(graph.data);
+  const { pick, onPick } = useGraphPick();
+  const pickSlice = (_: unknown, index: number) => {
+    const picked = pickOf(graph.data[index]);
+    if (picked) onPick(picked);
+  };
   return (
     <>
       <GraphLegend
@@ -161,9 +194,15 @@ export function PieGraph({ graph, measure }: CartesianProps) {
             stroke="var(--card)"
             strokeWidth={2}
             isAnimationActive={false}
+            onClick={pickSlice}
+            className="cursor-pointer"
           >
             {slices.map((slice, index) => (
-              <Cell key={slice.label} fill={seriesColor(index)} />
+              <Cell
+                key={slice.label}
+                fill={seriesColor(index)}
+                fillOpacity={pickedOpacity(pick, slice.label)}
+              />
             ))}
           </Pie>
         </PieChart>

@@ -35,6 +35,26 @@ shown, and the row is left out when there are no presets at all. The committed o
 **Exposure**, **ISO** and **Focal length**: a dot for each value the photos were taken at, lowest first, at how many
 photos have it.
 
+## Photos of a picked value
+
+Clicking a bar, a line or dot graph's point, a slice or a scatterplot dot shows its photos in a box under the graph
+(`components/graph-builder/picked-photos.tsx`, with what's picked worked out in `lib/graph-pick.ts`). Every other value
+fades while one is picked (a dashed line marks it on a line or dot graph); clicking it again, **Close**, or changing the
+graph in any way clears it. The photos are the ones the filters keep, and each opens in the lightbox.
+
+- On a split graph, such as each year's bar stacked by season, the photos are in a group for each split value with any,
+  in its color. Each group opens and closes from its heading, with **Expand all** and **Collapse all** over them; all
+  are open at first. Split values past the graph's own colors (drawn together as **Other**) get a group each, in gray.
+- A pie's **Other** slice groups its photos by the x values it puts together.
+- A scatterplot dot shows the photos that have both its values; a value that isn't split, its photos in one set.
+- **Order by** (grouped photos only) orders the groups by their values on the axis (the Numbers card's order, or
+  lowest first when they're all numbers, such as years) or by how many photos they have. **Ascending** and
+  **Descending** turn that order around, and put each group's photos oldest or newest first by when they were taken.
+- A group shows its first 48 photos, then **Show all**.
+
+> **Frontend analogy:** the click is a row selection in a data table. The graph keeps the selected key in state and
+> hands it down through context, and the box below runs the same `.filter()` the bar was counted from to list the rows.
+
 ## How it's counted
 
 Each stat is one of the Numbers page's groups (`STAT_SECTIONS` in `lib/stats.ts`), so a group added there shows up in
