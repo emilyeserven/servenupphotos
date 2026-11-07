@@ -1,3 +1,4 @@
+import type { GeoBounds } from "@/lib/fit-view";
 import type { TripMapFeature } from "@/lib/trip-lines-map";
 
 /** The width and height of a day's route sketch on the Timeline, in pixels. */
@@ -19,10 +20,13 @@ export interface SketchLine {
 export interface RouteSketch {
   lines: SketchLine[];
   visits: { x: number; y: number }[];
+  /** The box on the map around the whole route, for the Map to open fitted to it. */
+  bounds: GeoBounds;
 }
 
+/** A day's own line; a Trip's leg to another day, such as a flight, would dwarf the day's route. */
 function isLine(feature: TripMapFeature): boolean {
-  return feature.geometry.type === "LineString";
+  return feature.geometry.type === "LineString" && feature.properties.trip === undefined;
 }
 
 function isVisit(feature: TripMapFeature): boolean {
@@ -67,6 +71,18 @@ function fitter(points: LngLat[]) {
   return ([x, y]: LngLat) => ({ x: left + (x - box.minX) * k, y: top + (y - box.minY) * k });
 }
 
+/** The box on the map around the points. */
+function geoBounds(points: LngLat[]): GeoBounds {
+  const lngs = points.map(([lng]) => lng);
+  const lats = points.map(([, lat]) => lat);
+  return {
+    west: Math.min(...lngs),
+    east: Math.max(...lngs),
+    south: Math.min(...lats),
+    north: Math.max(...lats),
+  };
+}
+
 /** A number with at most one decimal, to keep the SVG small. */
 function round(n: number): number {
   return Math.round(n * 10) / 10;
@@ -95,5 +111,6 @@ export function routeSketch(features: TripMapFeature[]): RouteSketch | null {
       colour: line.properties.colour,
     })),
     visits: take(visits.length),
+    bounds: geoBounds(raw),
   };
 }

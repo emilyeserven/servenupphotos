@@ -17,6 +17,10 @@ export interface LegendItems {
   hop: boolean;
   /** Whether a drive is drawn, in long gray dashes. */
   drive: boolean;
+  /** Whether a Trip's ferry is drawn, in teal dots. */
+  ferry: boolean;
+  /** Whether a Trip's flight is drawn, as a dashed pink arc. */
+  flight: boolean;
   /** Whether a place visited is drawn, as an amber dot. */
   visit: boolean;
   /** Whether an area is shaded: a trip line's area, or the place picked or pointed at in Places. */
@@ -34,13 +38,19 @@ function isWalk(feature: TripMapFeature): boolean {
   return isLine(feature) && feature.properties.mode === "walk";
 }
 
-function isDrive(feature: TripMapFeature): boolean {
-  return isLine(feature) && feature.properties.mode === "car";
+/** A function that tells whether a feature is a line travelled by mode. */
+function isMode(mode: string) {
+  return (feature: TripMapFeature) => isLine(feature) && feature.properties.mode === mode;
 }
 
-/** Whether the feature is a hop by train, subway, bus or transit: a line that's no walk or drive. */
+const isDrive = isMode("car");
+
+/** The modes drawn in a style of their own, rather than as a ride or a dashed hop. */
+const OWN_STYLE = new Set(["walk", "car", "ferry", "flight"]);
+
+/** Whether the feature is a hop by train, subway, bus or transit: a line with no style of its own. */
 function isRide(feature: TripMapFeature): boolean {
-  return isLine(feature) && !isWalk(feature) && !isDrive(feature);
+  return isLine(feature) && !OWN_STYLE.has(feature.properties.mode ?? "");
 }
 
 /** A hop's transit line color, or undefined for a walk, a hop without one, or no line at all. */
@@ -67,6 +77,8 @@ function tripItems(trips: TripLinesMap | undefined) {
     rides: rideColors(features),
     hop: features.some(isHop),
     drive: features.some(isDrive),
+    ferry: features.some(isMode("ferry")),
+    flight: features.some(isMode("flight")),
     visit: has("visit"),
     fence: has("fence"),
   };
