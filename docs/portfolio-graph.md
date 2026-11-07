@@ -10,7 +10,7 @@ settings it adds in `lib/graph-settings.ts`, and the presets' row in `lib/graph-
 
 The pipeline's **spotlight** presets come first, each its own button with a star, then the **Presets** and **Adjust
 Graph** buttons and the site's usual **Show filters** button, with **Save as preset** at the far end of that row, then
-the graph's box. Show filters opens the filters under its button, and Adjust Graph opens a box over the graph with the
+the graph's box. Show filters opens the filters as a whole row under the buttons, and Adjust Graph opens a box over the graph with the
 graph's settings (closed when the page opens). The graph's box says how many photos the filters leave, has
 the **Graph** / **Table** buttons, and names each axis: the y axis over the top left and the x axis centered under the
 graph (a pie names its slices and size over it). Each axis name is a dropdown, so clicking it changes what's on that

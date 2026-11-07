@@ -88,8 +88,8 @@ export function GraphBuilder({
             <SlidersHorizontal aria-hidden />
             Adjust Graph
           </Button>
-          {/* Its own row of buttons lines up with Presets and Adjust Graph, and its filters open under it. */}
-          <div className="min-w-0 flex-1 [&>div>div:first-child]:min-h-9">
+          {/* Its button sits in the row; its filters open as a whole row under the buttons, from the left. */}
+          <div className="contents [&>div]:contents [&>div>div:last-child]:order-last [&>div>div:last-child]:basis-full">
             <CameraFilterBar photos={photos} />
           </div>
         </PresetButtons>

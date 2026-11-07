@@ -27,12 +27,12 @@ export function PresetButtons({
 }) {
   const saved = useSavedGraphs();
   return (
-    <div className="flex flex-wrap items-start justify-between gap-2">
-      <div className="flex min-w-0 flex-1 flex-wrap items-start gap-2">
-        <PresetPicker config={config} saved={saved} onPick={onPick} />
-        {children}
+    <div className="flex flex-wrap items-center gap-2">
+      <PresetPicker config={config} saved={saved} onPick={onPick} />
+      {children}
+      <div className="ml-auto">
+        <SavePresetButton saved={saved} config={config} />
       </div>
-      <SavePresetButton saved={saved} config={config} />
     </div>
   );
 }
