@@ -1,5 +1,8 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { GalleryVerticalEndIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { PhotoThumbnail } from "@/components/photo-thumbnail";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { type Photo, type PhotoImage } from "@/lib/photos";
 import { showablePhoto } from "@/lib/shown-photo";
 import { storedValue } from "@/lib/stored-value";
@@ -11,15 +14,14 @@ type ImagePhoto = Photo & { image: PhotoImage };
 /** Whether the More like this drawer is open, remembered in this browser between photos and visits. */
 const drawerOpen = storedValue("servenup-more-like-this", (stored) => stored === true);
 
-/** Opens the More like this drawer, or closes it, as its tab and the M key do. */
+/** Opens the More like this drawer, or closes it, as the Related button and the M key do. */
 export function toggleMoreLikeThis() {
   drawerOpen.set(!drawerOpen.get());
 }
 
 /**
- * The More like this drawer down the left of the photo viewer: a short, faint tab with an arrow on
- * the left edge that slides in, over the photo's left side, a list of the photos related to this
- * one, each with its title and, for the ones picked by hand on the pipeline's Related Photos page,
+ * The More like this drawer down the left of the photo viewer, which the Related button (or the
+ * M key) slides in over the photo's left side: a list of the photos related to this one, each with its title and, for the ones picked by hand on the pipeline's Related Photos page,
  * its note. The picked ones
  * come first, then the ones the pipeline found. It's left out for a photo without any. Clicking one
  * shows it in the viewer, and the drawer stays open for it.
@@ -29,56 +31,71 @@ export function MoreLikeThis({
   onShow,
 }: {
   photo: ImagePhoto;
-  /** Shows one of the related photos in the viewer. */
-  onShow: (photo: ImagePhoto) => void;
+  /** Shows one of the related photos in the viewer; without it, there's no drawer. */
+  onShow?: (photo: ImagePhoto) => void;
 }) {
   const open = drawerOpen.use();
-  const related = relatedTo(photo);
-  if (related.length === 0) return null;
+  const related = drawerPhotos(photo, onShow);
+  if (!onShow || related.length === 0) return null;
   return (
     // Over the photo's left side, so the photo keeps its size and padding whether it's open or not.
-    <div className="absolute inset-y-0 left-0 z-10 flex items-center">
-      {/* Columns from 0fr to 1fr, so the drawer slides in to its own width. */}
-      <div
-        className={cn(
-          "grid h-full transition-[grid-template-columns] duration-300",
-          open ? "grid-cols-[1fr]" : "grid-cols-[0fr]",
-        )}
-      >
-        <div id="more-like-this" inert={!open} className="min-w-0 overflow-hidden">
-          {open && <RelatedList related={related} onShow={onShow} />}
-        </div>
+    <div className="absolute inset-y-0 left-0 z-10 flex">
+      <DrawerSlide open={open}>
+        {open && <RelatedList related={related} onShow={onShow} />}
+      </DrawerSlide>
+    </div>
+  );
+}
+
+/** Slides its children in from the left while open, to their own width, and out while closed. */
+function DrawerSlide({ open, children }: { open: boolean; children: ReactNode }) {
+  return (
+    // Columns from 0fr to 1fr, so the drawer slides in to its own width.
+    <div
+      className={cn(
+        "grid h-full transition-[grid-template-columns] duration-300",
+        open ? "grid-cols-[1fr]" : "grid-cols-[0fr]",
+      )}
+    >
+      <div id="more-like-this" inert={!open} className="min-w-0 overflow-hidden">
+        {children}
       </div>
-      <DrawerTab open={open} />
     </div>
   );
 }
 
 /**
- * The short tab on the left edge, with a right arrow while it's closed and a left arrow while
- * open. Closed, it's faint until the pointer comes near: the strip around it, a little wider than
- * the tab, brings it up when hovered.
+ * The Related button among the photo viewer's buttons, which opens the More like this drawer or
+ * closes it, with a "Related" tooltip. It's left out for a photo without related photos, and on a
+ * page that can't show another photo.
  */
-function DrawerTab({ open }: { open: boolean }) {
-  const Icon = open ? ChevronLeftIcon : ChevronRightIcon;
-  const label = open ? "Hide more like this" : "Show more like this";
+export function RelatedButton({
+  photo,
+  onShow,
+}: {
+  photo: Photo;
+  /** How the viewer shows another photo; without it, there's no drawer and no button. */
+  onShow?: (photo: ImagePhoto) => void;
+}) {
+  const open = drawerOpen.use();
+  if (drawerPhotos(photo, onShow).length === 0) return null;
   return (
-    <div className="group/tab flex h-40 w-6 items-center">
-      <button
-        type="button"
-        aria-label={label}
-        aria-expanded={open}
-        aria-controls="more-like-this"
-        title={`${label} (M)`}
-        onClick={toggleMoreLikeThis}
-        className={cn(
-          "flex h-14 w-4 items-center justify-center rounded-r-md bg-white/15 text-white outline-none transition-opacity duration-200 group-hover/tab:opacity-100 hover:bg-white/25 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-white/60",
-          open ? "opacity-100" : "opacity-20 pointer-coarse:opacity-40",
-        )}
-      >
-        <Icon className="size-4" />
-      </button>
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Related"
+          aria-pressed={open}
+          aria-controls="more-like-this"
+          onClick={toggleMoreLikeThis}
+          className={cn("text-white hover:bg-white/10 hover:text-white", open && "bg-white/15")}
+        >
+          <GalleryVerticalEndIcon />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Related (M)</TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -150,4 +167,9 @@ function relatedTo(photo: Photo): ShownRelated[] {
       return shown ? [{ photo: shown, note }] : [];
     })
     .slice(0, RELATED_COUNT);
+}
+
+/** The photos the drawer shows, or none when the page can't show another photo. */
+function drawerPhotos(photo: Photo, onShow: unknown): ShownRelated[] {
+  return onShow ? relatedTo(photo) : [];
 }
