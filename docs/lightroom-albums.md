@@ -8,17 +8,24 @@ each album, such as which ones are still being culled and which are ready to upl
 
 Neither Lightroom has a way in that the pipeline can use. Lightroom's API is only open to approved partner apps
 ([Lightroom partner APIs](https://github.com/AdobeDocs/lightroom-partner-apis)), and Lightroom Classic's catalog is an
-undocumented database that Lightroom locks while it's open. So an LLM reads the list from screenshots instead:
+undocumented database that Lightroom locks while it's open. So an LLM reads the list from screenshots or a screen
+recording instead, picked with the **Screenshots / Screen recording** switch on the prompt card:
 
 1. Open every folder you want in Lightroom's album panel.
-2. Take a screenshot, scroll so the last two or three rows still show at the top, take the next, and so on to the
-   bottom. The rows two screenshots share are how the LLM stitches them together without listing an album twice.
-3. **Copy the prompt** (`lib/lightroom-albums-prompt.md`) and send it to an LLM with the screenshots, in order.
+2. Capture the list:
+   - **Screenshots:** take one, scroll so the last two or three rows still show at the top, take the next, and so on
+     to the bottom. The rows two screenshots share are how the LLM stitches them together without listing an album
+     twice. Cheaper to send than a video.
+   - **Screen recording:** record while you scroll slowly to the bottom, pausing on each screenful. Needs an LLM that
+     reads video.
+3. Copy the prompt (`lib/lightroom-albums-prompt.md` for screenshots, `lib/lightroom-albums-recording-prompt.md` for a
+   recording) and send it to an LLM with the screenshots, in order, or the recording. Both prompts ask for the same
+   JSON, so both answers import the same way.
 4. Paste its answer under **Import** and press **Read the list**.
 
 The answer is a JSON tree. Each item has a `path`, every name from the top down joined with `/`, such as
 `Travel/Busan, South Korea`. Items the LLM couldn't read clearly come with a note, shown next to the name with a
-warning icon, and a folder that was closed in the screenshots says its albums weren't read. An album Lightroom keeps
+warning icon, and a folder that was closed in the screenshots or recording says its albums weren't read. An album Lightroom keeps
 on the device (**Make Available Offline**, shown in Lightroom with a small offline icon) comes back with
 `"offline": true` and gets a blue **Offline** mark on the page; the Albums card says how many there are.
 

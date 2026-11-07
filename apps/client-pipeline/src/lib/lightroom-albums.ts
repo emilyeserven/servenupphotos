@@ -1,7 +1,14 @@
-import promptText from "@/lib/lightroom-albums-prompt.md?raw";
+import screenshotsPrompt from "@/lib/lightroom-albums-prompt.md?raw";
+import recordingPrompt from "@/lib/lightroom-albums-recording-prompt.md?raw";
 
-/** The prompt to send an LLM with screenshots of Lightroom's album panel, asking for the albums as JSON. */
-export const lightroomAlbumsPrompt = promptText;
+/** How the album panel is captured for the LLM: overlapping screenshots, or a screen recording scrolling through it. */
+export type LightroomCapture = "screenshots" | "recording";
+
+/** The prompt to send an LLM with screenshots or a screen recording of Lightroom's album panel, asking for the albums as JSON. */
+export const lightroomAlbumsPrompts: Record<LightroomCapture, string> = {
+  screenshots: screenshotsPrompt,
+  recording: recordingPrompt,
+};
 
 /** The stages an album can be at, in the order work on an album usually goes: the board's lanes, left to right. */
 export const LIGHTROOM_STAGES = [
