@@ -2,7 +2,7 @@ import { useLocation } from "@tanstack/react-router";
 import { CalendarClock, ChevronsUpDown } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Button } from "@portfolio/components/ui/button";
-import { Calendar } from "@portfolio/components/ui/calendar";
+import { DateField } from "@portfolio/components/date-field";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import {
   ChoiceGrid,
@@ -230,24 +230,34 @@ function dateOf(day: string | undefined): Date | undefined {
 }
 
 /**
- * A range of dates on a calendar, from the first day to the last, both included: the first click
- * sets the start, the second the end. It opens on the start's month, or the latest photo's.
+ * A range of dates from the first day to the last, both included, each picked in its own field with
+ * its own calendar; either can be left open. The start can't come after the end.
  */
 function RangePart(props: WhenSetters) {
   const from = dateOf(props.filters.start);
   const to = dateOf(props.filters.end);
+  const set = (next: { start?: Date; end?: Date }) => {
+    const days = { start: dayText(next.start), end: dayText(next.end) };
+    setWhen(props, Object.fromEntries(Object.entries(days).filter(([, day]) => day)));
+  };
   return (
-    <Calendar
-      mode="range"
-      defaultMonth={from ?? LAST_DAY}
-      selected={from ? { from, to } : undefined}
-      onSelect={(range) => {
-        const next = { start: dayText(range?.from), end: dayText(range?.to) };
-        setWhen(props, Object.fromEntries(Object.entries(next).filter(([, day]) => day)));
-      }}
-      startMonth={FIRST_DAY}
-      endMonth={LAST_DAY}
-      className="mx-auto bg-transparent p-0"
-    />
+    <div className="grid grid-cols-2 gap-2">
+      <DateField
+        label="From"
+        value={from}
+        onChange={(start) => set({ start, end: to })}
+        first={FIRST_DAY}
+        last={LAST_DAY}
+        disabled={to && { after: to }}
+      />
+      <DateField
+        label="To"
+        value={to}
+        onChange={(end) => set({ start: from, end })}
+        first={FIRST_DAY}
+        last={LAST_DAY}
+        disabled={from && { before: from }}
+      />
+    </div>
   );
 }
