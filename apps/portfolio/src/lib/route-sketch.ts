@@ -15,8 +15,8 @@ export interface SketchSize {
 /** The size of a day's route sketch on the Timeline, in its heading. */
 export const SKETCH_SIZE: SketchSize = { width: 48, height: 32, lane: 1.5 };
 
-/** The size of a month's trip line map on the Timeline, every day's lines that month together. */
-export const MONTH_SKETCH_SIZE: SketchSize = { width: 176, height: 104, lane: 2.5 };
+/** The size of each of a month's small trip line maps on the Timeline, a place's days together. */
+export const MONTH_SKETCH_SIZE: SketchSize = { width: 144, height: 96, lane: 2.5 };
 
 /** How far the sketch keeps from its edges, so round line caps and dots aren't cut off. */
 const PAD = 3;

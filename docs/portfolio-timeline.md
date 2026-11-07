@@ -24,16 +24,21 @@ so the sketches appear a moment later, and on screens under 360 px wide they're 
 > **Frontend analogy:** the sketch is a sparkline for a route: the same GeoJSON the Map draws with MapLibre, drawn
 > instead as one tiny inline `<svg>` with no tiles, like a chart thumbnail.
 
-### Month trip line map
+### Month trip line maps
 
-A month with trip lines on any of its shown days has one small map of them under its heading
-(`components/timeline-month-map.tsx`), 176 × 104 px, with every line of those days drawn together in the same styles
-as the day sketches. It is labelled with the days that have a line ("Jan 19, 20") and opens the [Map](portfolio-map.md)
-on that date range, zoomed to fit all of them. Days in places far apart are fitted into the one box too, so each place's
-lines come out small. A Trip's legs between days, such as flights, are left out as in the day sketches.
+A month with trip lines on any of its shown days has small maps of them under its heading
+(`components/timeline-month-map.tsx`), 144 × 96 px each, with every line of those days drawn together in the same
+styles as the day sketches. The days are grouped by where their lines are (`lib/route-places.ts`): a day joins the first
+group its lines come within about 50 km of, so a city and its day trips share one map while two cities on one trip each
+get their own, rather than shrinking to two dots in one box. Each map is labelled with its days ("Jan 19" or "Oct 3–6")
+and opens the [Map](portfolio-map.md) on that date range, zoomed to fit its lines. A Trip's legs between days, such as
+flights, are left out as in the day sketches.
 
 Lines that run over an earlier one are drawn to its side in both the day sketches and the month maps, in the lanes the
 Map gives them (`lib/trip-lanes.ts`), moved 1.5 px (days) or 2.5 px (months) to the right of their direction of travel.
+
+> **Frontend analogy:** grouping the days is like bucketing chart points before drawing small multiples: one sparkline
+> per bucket reads better than one sparkline squashed to fit outliers.
 
 ## Scrubber
 
