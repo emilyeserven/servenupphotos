@@ -1,23 +1,9 @@
 import { formatValue, type GraphDatum, type GraphSeries, type Measure } from "@/lib/graph-data";
 
 /** A colored square naming a series, beside its label. */
-function Swatch({ color }: { color: string }) {
+export function Swatch({ color }: { color: string }) {
   return (
     <span className="size-2.5 shrink-0 rounded-[3px]" style={{ background: color }} aria-hidden />
-  );
-}
-
-/** The graph's key: each series or slice with its color, over the graph. */
-export function GraphLegend({ items }: { items: Pick<GraphSeries, "label" | "color">[] }) {
-  return (
-    <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-      {items.map((item) => (
-        <li key={item.label} className="flex items-center gap-1.5">
-          <Swatch color={item.color} />
-          {item.label}
-        </li>
-      ))}
-    </ul>
   );
 }
 

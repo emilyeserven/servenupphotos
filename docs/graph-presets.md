@@ -51,7 +51,7 @@ way it combines the timeline labels into `TIMELINE.json`:
   `split` (a stat ID or "" for none), `stacked`, `sort` (group, reverse or count), `limit` (0 for all), and the
   Range group's parts, each left out when it's off: `xFrom` and `xTo` (x values by name, such as `"f/2"`), `yFrom`
   and `yTo` (a scatterplot's or heatmap's y values by name), `yMin` and `yMax` (where a bar or line graph's y axis starts and
-  ends), `minPhotos` (how many photos an x value needs) and `hideZeros`. Saving fails when `yMin` is above `yMax`. A preset
+  ends), `minPhotos` (how many photos an x value needs), `hideZeros`, and `xBucket` and `yBucket` (how many of an axis's values each bucket puts together, such as `2`), and `xWidth` and `yWidth` (how wide a camera setting's even ranges are, in stops or mm, such as `1`). Saving fails when `yMin` is above `yMax`, or a bucket size or width is below 0. A preset
   never sets the filters; the visitor's stay as they are.
 - The ID is made from the name when it's first saved (with `-2` and so on after it when that's taken) and kept when
   it's renamed.
