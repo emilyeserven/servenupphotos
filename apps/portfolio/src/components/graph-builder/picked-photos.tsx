@@ -38,6 +38,7 @@ export function PickedPhotos({
   const [order, setOrder] = useState<PickOrder>("axis");
   const [direction, setDirection] = useState<Direction>("asc");
   const groups = orderedGroups(picked.groups, order, direction);
+  const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
   const { shown, show, close } = useShownPhoto();
   return (
     <section
@@ -54,15 +55,20 @@ export function PickedPhotos({
           Close
         </Button>
       </div>
-      <div className="flex flex-wrap items-center gap-2">
-        {picked.groupedBy && (
-          <OrderSelect order={order} groupedBy={picked.groupedBy} onChange={setOrder} />
-        )}
-        <DirectionButtons direction={direction} onChange={setDirection} />
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {picked.groupedBy && (
+            <OrderSelect order={order} groupedBy={picked.groupedBy} onChange={setOrder} />
+          )}
+          <DirectionButtons direction={direction} onChange={setDirection} />
+        </div>
+        {picked.groupedBy && <ExpandButtons groups={groups} onChange={setClosed} />}
       </div>
       <PickedBody
         groups={groups}
         grouped={picked.groupedBy !== null}
+        closed={closed}
+        onClosedChange={setClosed}
         onOpen={(photo) => photo.image && show(photo)}
       />
       <PhotoLightbox
@@ -76,62 +82,65 @@ export function PickedPhotos({
 }
 
 /** The picked photos: in groups that open and close, or as one set of thumbnails. */
-function PickedBody({
-  groups,
-  grouped,
-  onOpen,
-}: {
-  groups: PickedGroup[];
-  grouped: boolean;
-  onOpen: (photo: Photo) => void;
-}) {
+function PickedBody({ groups, grouped, onOpen, ...open }: GroupsProps & { grouped: boolean }) {
   if (groups.length === 0 || groups[0]!.photos.length === 0) {
     return <p className="text-sm text-muted-foreground">No photos are in this value.</p>;
   }
   if (!grouped) return <PickedThumbnails photos={groups[0]!.photos} onOpen={onOpen} />;
-  return <PickedGroups groups={groups} onOpen={onOpen} />;
+  return <PickedGroups groups={groups} onOpen={onOpen} {...open} />;
 }
 
-/** The groups, each opening and closing, all open at first, with buttons to open or close them all. */
-function PickedGroups({
-  groups,
-  onOpen,
-}: {
+/** The groups, which of them are closed, and opening a photo. */
+interface GroupsProps {
   groups: PickedGroup[];
+  closed: ReadonlySet<string>;
+  onClosedChange: (closed: ReadonlySet<string>) => void;
   onOpen: (photo: Photo) => void;
-}) {
-  const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
+}
+
+/** The groups, each opening and closing from its heading; all open at first. */
+function PickedGroups({ groups, closed, onClosedChange, onOpen }: GroupsProps) {
   const toggle = (key: string) => {
     const next = new Set(closed);
     if (!next.delete(key)) next.add(key);
-    setClosed(next);
+    onClosedChange(next);
   };
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex gap-1">
-        <Button type="button" variant="outline" size="sm" onClick={() => setClosed(new Set())}>
-          Expand all
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setClosed(new Set(groups.map((group) => group.key)))}
-        >
-          Collapse all
-        </Button>
-      </div>
-      <ul className="flex flex-col gap-2">
-        {groups.map((group) => (
-          <PickedGroupSection
-            key={group.key}
-            group={group}
-            open={!closed.has(group.key)}
-            onToggle={() => toggle(group.key)}
-            onOpen={onOpen}
-          />
-        ))}
-      </ul>
+    <ul className="flex flex-col gap-2">
+      {groups.map((group) => (
+        <PickedGroupSection
+          key={group.key}
+          group={group}
+          open={!closed.has(group.key)}
+          onToggle={() => toggle(group.key)}
+          onOpen={onOpen}
+        />
+      ))}
+    </ul>
+  );
+}
+
+/** The Expand all and Collapse all buttons, opening or closing every group. */
+function ExpandButtons({
+  groups,
+  onChange,
+}: {
+  groups: PickedGroup[];
+  onChange: (closed: ReadonlySet<string>) => void;
+}) {
+  return (
+    <div className="flex gap-1">
+      <Button type="button" variant="outline" size="sm" onClick={() => onChange(new Set())}>
+        Expand all
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => onChange(new Set(groups.map((group) => group.key)))}
+      >
+        Collapse all
+      </Button>
     </div>
   );
 }
