@@ -258,7 +258,7 @@ function GroupDropdowns({ facet, filters, setFilters }: DropdownProps) {
 }
 
 /** The value of the dropdown's choice the search sets, or "" for "All". */
-export function selectedValue(options: FilterOption[], search: Record<string, unknown>): string {
+function selectedValue(options: FilterOption[], search: Record<string, unknown>): string {
   const chosen = options.find((option) => search[option.key] === option.value);
   return chosen ? optionValue(chosen) : "";
 }
@@ -276,7 +276,7 @@ function optionText(option: FilterOption, name: string, chosen: boolean): string
  * `plural` names them all, such as "lenses", when adding an "s" doesn't. While one is chosen, an X
  * beside it goes back to "All".
  */
-export function FilterSelect({
+function FilterSelect({
   label,
   plural = `${label.toLowerCase()}s`,
   Icon,
