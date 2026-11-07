@@ -1,33 +1,20 @@
-import { ChevronDown, Eye, EyeOff, Info } from "lucide-react";
-import { useMemo, useState } from "react";
-import { ChoiceRow } from "@portfolio/components/choice-row";
+import { ChevronDown, Info } from "lucide-react";
+import { useState } from "react";
 import { EquipmentInfoPane } from "@portfolio/components/equipment-info-pane";
-import { EquipmentRow } from "@portfolio/components/equipment-row";
+import { EquipmentList } from "@portfolio/components/equipment-list";
 import { InfoButton } from "@portfolio/components/info-button";
-import type {
-  CameraPickerProps,
-  CameraSection,
-  PickerPartProps,
-} from "@portfolio/components/camera-picker";
+import type { CameraSection, PickerPartProps } from "@portfolio/components/camera-picker";
 import {
   RANGE_LABELS,
   RANGE_PRESETS,
   RANGE_VALUES,
   writeSetting,
 } from "@portfolio/components/camera-ranges";
-import { hiddenText } from "@portfolio/components/hidden-note";
 import { RangeFilter } from "@portfolio/components/range-filter";
 import { SettingIllustration } from "@portfolio/components/setting-graphics";
 import { RangePresetList } from "@portfolio/components/range-presets";
 import { type EquipmentKey, parseRange, type RangeKey } from "@portfolio/lib/camera-filters";
-import { blockersOf, cameraBlockers } from "@portfolio/lib/camera-blockers";
-import { equipmentChoices, equipmentFilters, isChosen } from "@portfolio/lib/camera-picker";
-import {
-  type EquipmentGrouping,
-  equipmentGroupings,
-  groupingOf,
-  groupingOptions,
-} from "@portfolio/lib/equipment-groupings";
+import { equipmentChoices } from "@portfolio/lib/camera-picker";
 import type { FilterOption } from "@portfolio/lib/filter-options";
 import { cn } from "@portfolio/lib/utils";
 
@@ -41,9 +28,6 @@ export function CameraPickerPart({
   }
   return <RangePart key={section} setting={section} {...props} />;
 }
-
-/** What each equipment list calls all of its choices. */
-const ANY_LABELS: Record<EquipmentKey, string> = { camera: "All cameras", lens: "All lenses" };
 
 /** Each equipment list's title. */
 const TITLES: Record<EquipmentKey, string> = { camera: "Cameras", lens: "Lenses" };
@@ -85,116 +69,6 @@ function PartTitle({ label, on, onClick }: { label: string; on: boolean; onClick
         <InfoButton open={on} label={`info about ${label}`} onClick={onClick} />
       </span>
     </div>
-  );
-}
-
-/** The camera or lens choices, each telling `onPoint` when it's pointed at. */
-function EquipmentList({
-  equipment,
-  photos,
-  filters,
-  source,
-  onChange,
-  onPoint,
-}: CameraPickerProps & {
-  equipment: EquipmentKey;
-  onPoint: (option: FilterOption | undefined) => void;
-}) {
-  const [showHidden, setShowHidden] = useState(false);
-  const choices = equipmentChoices(equipment, photos, filters);
-  const { chosen } = choices;
-  const groupings = equipmentGroupings(equipment, choices.options);
-  const [groupingId, setGroupingId] = useState(() => groupingOf(groupings, chosen));
-  const options = groupingOptions(groupings, groupingId);
-  const isOn = (option: FilterOption) => isChosen(option, filters);
-  const shown = options.filter((option) => showHidden || option.count > 0 || isOn(option));
-  const hidden = options.filter((option) => option.count === 0 && !isOn(option)).length;
-  const blockers = useMemo(() => (showHidden ? cameraBlockers(source) : []), [showHidden, source]);
-  const choose = (option?: FilterOption) => onChange(equipmentFilters(equipment, option));
-  return (
-    <div className="flex flex-col" onMouseLeave={() => onPoint(undefined)}>
-      <GroupingTabs groupings={groupings} value={groupingId} onChange={setGroupingId} />
-      <ChoiceRow label={ANY_LABELS[equipment]} on={!chosen} onClick={() => choose()} />
-      {shown.map((option, index) => (
-        <EquipmentRow
-          equipment={equipment}
-          key={`${index}-${option.key}:${option.value}`}
-          option={option}
-          on={isChosen(option, filters)}
-          blockedBy={
-            option.count === 0 ? blockersOf(equipment, option, filters, blockers) : undefined
-          }
-          onClick={(on) => choose(on ? undefined : option)}
-          onPoint={() => onPoint(option)}
-        />
-      ))}
-      <HiddenToggle count={hidden} shown={showHidden} onClick={() => setShowHidden(!showHidden)} />
-    </div>
-  );
-}
-
-/** Tabs for each way to list the cameras or lenses, such as Brand, Type or Name; none with one way. */
-function GroupingTabs({
-  groupings,
-  value,
-  onChange,
-}: {
-  groupings: EquipmentGrouping[];
-  value: string;
-  onChange: (id: string) => void;
-}) {
-  if (groupings.length < 2) return null;
-  return (
-    <div
-      role="tablist"
-      aria-label="Group by"
-      className="mb-2 flex items-center gap-1 rounded-md border bg-muted/50 p-0.5"
-    >
-      <span className="px-1.5 text-xs text-muted-foreground">Group by</span>
-      {groupings.map(({ id, label }) => (
-        <button
-          key={id}
-          type="button"
-          role="tab"
-          aria-selected={value === id}
-          onClick={() => onChange(id)}
-          className={cn(
-            "flex-1 rounded-sm px-1.5 py-1 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
-            value === id && "bg-background text-foreground shadow-xs",
-          )}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-/** The button that shows or hides the choices the other filters hide; nothing when none are. */
-function HiddenToggle({
-  count,
-  shown,
-  onClick,
-}: {
-  count: number;
-  shown: boolean;
-  onClick: () => void;
-}) {
-  if (count === 0) return null;
-  return (
-    <button
-      type="button"
-      aria-pressed={shown}
-      onClick={onClick}
-      className="mt-1 flex items-center gap-1.5 rounded-sm px-2 py-1.5 text-left text-xs text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:bg-accent"
-    >
-      {shown ? (
-        <EyeOff aria-hidden className="size-3.5" />
-      ) : (
-        <Eye aria-hidden className="size-3.5" />
-      )}
-      {shown ? `Hide the ${count} hidden choices` : `Show ${hiddenText(count, "choices")}`}
-    </button>
   );
 }
 

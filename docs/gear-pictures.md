@@ -2,8 +2,7 @@
 
 `/gear-pictures`, under **Configuration** in the sidebar, gives a camera or lens its own picture and a few words about
 it. The portfolio's **Gear & settings** filter shows the picture in place of its drawing of that kind of camera (a
-DSLR, mirrorless, compact or phone) or of the lens: beside the camera in the **Cameras** list, and at the top of the
-**(i)** info pane for a camera or lens, with the description under its name (see
+DSLR, mirrorless, compact or phone) or of the lens, at the top of the **(i)** info pane for a camera or lens, with the description under its name (see
 [Filters](portfolio-filters.md)).
 
 > **Frontend analogy:** it's an avatar for each camera and lens. The photos keep naming their camera as text, and

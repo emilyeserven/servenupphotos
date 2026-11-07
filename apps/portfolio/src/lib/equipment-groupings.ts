@@ -1,5 +1,9 @@
 import type { EquipmentKey } from "@portfolio/lib/camera-filters";
 import type { FilterOption } from "@portfolio/lib/filter-options";
+import { type CameraKind, cameraKind } from "@portfolio/lib/gear-kinds";
+
+/** The key of a heading in a list of choices, such as **DSLR**: a label, not a choice. */
+export const HEADING = "heading";
 
 /**
  * One way the Gear & settings picker can list the cameras or lenses: under one top-level metadata
@@ -52,25 +56,82 @@ function byName(equipment: EquipmentKey, options: FilterOption[]): FilterOption[
   return [...names.values()].toSorted((a, b) => a.value.localeCompare(b.value));
 }
 
+/** Each kind of camera's heading, in the order the Type tab lists them. */
+const KIND_HEADINGS: [CameraKind | "unknown", string][] = [
+  ["mirrorless", "Mirrorless"],
+  ["dslr", "DSLR"],
+  ["compact", "Compact"],
+  ["phone", "Phone"],
+  ["unknown", "Unknown"],
+];
+
+/** What the portfolio calls the camera of photos whose EXIF names none. */
+const UNKNOWN_CAMERA = "Unknown camera";
+
+/** The kind of camera a choice is, or unknown for photos whose EXIF names none. */
+function kindOf(name: string): CameraKind | "unknown" {
+  return name === UNKNOWN_CAMERA ? "unknown" : cameraKind(name);
+}
+
+/** A heading row for the label, such as **DSLR**. */
+function heading(label: string): FilterOption {
+  return {
+    key: HEADING,
+    value: label,
+    label: { english: label, romanized: label, phonetic: label, native: label },
+    depth: 0,
+    count: 0,
+  };
+}
+
+/**
+ * The cameras by the kind their model name says they are, each kind under its heading, such as
+ * **DSLR** for "Canon EOS 80D".
+ */
+function typeOptions(named: FilterOption[]): FilterOption[] {
+  return KIND_HEADINGS.flatMap(([kind, label]) => {
+    const ofKind = named.filter((option) => kindOf(option.value) === kind);
+    if (ofKind.length === 0) return [];
+    return [heading(label), ...ofKind.map((option) => ({ ...option, depth: 1 }))];
+  });
+}
+
+/**
+ * The cameras' own Type tab, by the kind of camera each is, unless a metadata group already makes
+ * a tab called Type; none for lenses.
+ */
+function typeGrouping(
+  equipment: EquipmentKey,
+  named: FilterOption[],
+  others: EquipmentGrouping[],
+): EquipmentGrouping[] {
+  if (equipment !== "camera" || others.some(({ label }) => label === "Type")) return [];
+  return [{ id: "type", label: "Type", options: typeOptions(named) }];
+}
+
 /**
  * The ways to list the camera or lens choices: one for each top-level metadata group with groups
  * or names under it, such as **Brand** and **Type**, its own row left out and what's under it moved
- * up a level, then the cameras or lenses no group lists; and last, every one by name.
+ * up a level, then the cameras or lenses no group lists; for cameras, by the kind each is; and
+ * last, every one by name.
  */
 export function equipmentGroupings(
   equipment: EquipmentKey,
   options: FilterOption[],
 ): EquipmentGrouping[] {
   const { branches, loose } = branchesOf(equipment, options);
+  const named = byName(equipment, options);
+  const groups = branches
+    .filter(({ children }) => children.length > 0)
+    .map(({ head, children }) => ({
+      id: head.value,
+      label: head.label.english,
+      options: [...children.map((child) => ({ ...child, depth: child.depth - 1 })), ...loose],
+    }));
   return [
-    ...branches
-      .filter(({ children }) => children.length > 0)
-      .map(({ head, children }) => ({
-        id: head.value,
-        label: head.label.english,
-        options: [...children.map((child) => ({ ...child, depth: child.depth - 1 })), ...loose],
-      })),
-    { id: "name", label: "Name", options: byName(equipment, options) },
+    ...groups,
+    ...typeGrouping(equipment, named, groups),
+    { id: "name", label: "Name", options: named },
   ];
 }
 

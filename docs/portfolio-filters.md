@@ -160,15 +160,19 @@ button naming the chosen one, and choosing one folds it up again.
 EXIF didn't name a lens is under none) with how many photos each would show; **All cameras** or **All lenses** comes
 first, and clicking the checked one again goes back to all. A **Group by** row above the list picks how it's laid out: one tab for each top-level
 metadata group that has groups or names under it, such as **Brand** or **Type** (that group's own row left out, what's
-under it a level up, then any camera or lens it doesn't list), and **Name**, every one once, A to Z. It opens on the tab
+under it a level up, then any camera or lens it doesn't list); for cameras, **Type**, each under the kind its model
+name says it is (Mirrorless, DSLR, Compact, Phone, or Unknown for photos whose EXIF names none), left out when a
+metadata group already makes a Type tab; and **Name**, every one once, A to Z. The Cameras list also has a **Sort** row:
+**Name** keeps the tab's order, and **Oldest first** or **Newest first** orders the cameras under each heading or group
+by when the first of the portfolio's photos was taken with each. It opens on the tab
 that lists the chosen one. A choice that would show no photos given the other
 filters is left out, unless chosen; **Show N choices hidden by the other filters** lists them dimmed, and hovering one
 says which filters hide it: each one that, cleared alone, would let it show photos ("Hidden by Aperture or Lens"), or
-"the other filters together" when no single one would. Each camera has a little drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name), or its own
-picture when the pipeline's [Gear Pictures](gear-pictures.md) page gave it one. The **(i)** button across from the
+"the other filters together" when no single one would. The **(i)** button across from the
 **Cameras** or **Lenses** title opens an info pane to the right (on phones, the **Show info** button under the list
 opens it below), the same one the settings' graphics use, with the details of the camera or lens pointed at, or else
-the chosen one: its own picture and description from Gear Pictures, or else a drawing (for a lens, a side view of it,
+the chosen one: its own picture and description from the pipeline's [Gear Pictures](gear-pictures.md) page, or else a
+drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name) (for a lens, a side view of it,
 longer for a longer focal length and with a zoom ring when it zooms). A camera then lists its kind, how many photos
 used it, with which lenses, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
 widest aperture, read from its name, and how many photos used it, on which cameras, at which focal length most, and

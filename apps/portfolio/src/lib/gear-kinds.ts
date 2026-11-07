@@ -5,7 +5,7 @@ export type CameraKind = "dslr" | "mirrorless" | "compact" | "phone";
 
 /** Words in a camera's model name that tell its kind, checked in order; mirrorless when none match. */
 const CAMERA_KINDS: [RegExp, CameraKind][] = [
-  [/iphone|pixel|galaxy|phone/i, "phone"],
+  [/iphone|pixel|galaxy|phone|\bsm-[a-z]\d/i, "phone"],
   [/x100|powershot|coolpix|ricoh gr|rx100|compact/i, "compact"],
   [/eos r\d*\b|eos m\d*\b/i, "mirrorless"],
   [/\beos\b|\bd\d{2,4}\b|dslr|rebel|kiss/i, "dslr"],

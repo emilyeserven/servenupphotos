@@ -51,18 +51,6 @@ const CAMERA_DRAWINGS: Record<CameraKind, ReactNode> = {
 };
 
 /**
- * A little drawing of the kind of camera a model is, such as a DSLR for "Canon EOS 80D", or the
- * camera's own picture when the pipeline's Gear Pictures page gave it one.
- */
-export function CameraGraphic({ name }: { name: string }) {
-  const image = gearFile("camera", name)?.image;
-  if (image) {
-    return <img src={image} alt="" loading="lazy" className="h-5 w-7 shrink-0 object-contain" />;
-  }
-  return <Icon>{CAMERA_DRAWINGS[cameraKind(name)]}</Icon>;
-}
-
-/**
  * A big picture of a camera or lens for its details: `image` when given, else its own picture
  * from the Gear Pictures page, else a drawing of its kind of camera or of the lens from its name.
  */
