@@ -2,11 +2,16 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon, CircleCheckIcon } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
 import type { SocialCalendar } from "@/api/publish";
+import {
+  type AttentionRow,
+  NeedsAttentionTable,
+} from "@/components/dashboard/needs-attention-table";
 import { PhotoFiles } from "@/components/photo-files";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useSocialQueue } from "@/hooks/use-social-queue";
 import {
   INSTAGRAM_DAYS_WANTED,
+  INSTAGRAM_URGENCY,
   type PhotoProblem,
   type ProblemCount,
   URGENCY,
@@ -75,8 +80,8 @@ const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => Re
 
 /**
  * What needs fixing across the photo files, each problem with how many photos have it and a link to
- * the page that fixes it, and an Instagram queue shorter than a week, most urgent first: photos
- * without GPS or color data, then the Instagram queue, then the rest.
+ * the page that fixes it, and an Instagram queue shorter than a week, in a table sorted most urgent
+ * first.
  */
 export function NeedsAttentionCard() {
   return (
@@ -101,20 +106,9 @@ function Problems({ calendar }: { calendar: SocialCalendar }) {
   const queue = useSocialQueue(calendar, 0);
   const short = instagramShortBy(queue.daysLeft);
   if (problems.length === 0 && short === 0) return <AllClear />;
-  const urgent = problems.filter((found) => URGENCY[found.problem] === "high");
-  const rest = problems.filter((found) => URGENCY[found.problem] !== "high");
-  return (
-    <ul className="divide-y rounded-md border">
-      <ProblemRows problems={urgent} />
-      {short > 0 && <InstagramRow daysLeft={queue.daysLeft} short={short} />}
-      <ProblemRows problems={rest} />
-    </ul>
-  );
-}
-
-/** The rows for these problems, in the order given, most urgent first. */
-function ProblemRows({ problems }: { problems: ProblemCount[] }) {
-  return problems.map((problem) => <ProblemRow key={problem.problem} found={problem} />);
+  const rows = problems.map(problemRow);
+  if (short > 0) rows.push(instagramRow(queue.daysLeft, short));
+  return <NeedsAttentionTable rows={rows} />;
 }
 
 function AllClear() {
@@ -126,52 +120,52 @@ function AllClear() {
   );
 }
 
-/** One problem, how many photos it affects, and where to fix it. */
-function Row({ label, count, fix }: { label: ReactNode; count: string; fix: ReactNode }) {
-  return (
-    <li className="flex flex-wrap items-center gap-x-4 gap-y-1 p-3 text-sm">
-      <span className="min-w-0 flex-1 font-medium">{label}</span>
-      <span className="text-muted-foreground tabular-nums">{count}</span>
-      {fix}
-    </li>
-  );
-}
-
 function photos(count: number): string {
   return count === 1 ? "1 photo" : `${count} photos`;
 }
 
-function ProblemRow({ found }: { found: ProblemCount }) {
+/** One photo problem's row: how many photos have it, and where to fix it. */
+function problemRow(found: ProblemCount): AttentionRow {
   const { label, fix } = PROBLEMS[found.problem];
-  return <Row label={label} count={photos(found.count)} fix={fix(found.first)} />;
+  return {
+    id: found.problem,
+    urgency: URGENCY[found.problem],
+    label,
+    labelText: label,
+    count: found.count,
+    countText: photos(found.count),
+    fix: fix(found.first),
+  };
 }
 
 /** The Instagram queue lasting less than a week, and how many photos would fill it. */
-function InstagramRow({ daysLeft, short }: { daysLeft: number; short: number }) {
+function instagramRow(daysLeft: number, short: number): AttentionRow {
   const days = daysLeft === 1 ? "1 day" : `${daysLeft} days`;
   const label =
     daysLeft === 0
       ? "Nothing is queued on Instagram for today"
       : `Instagram posts are queued for only ${days}`;
-  return (
-    <Row
-      label={
-        <span title={`The queue should last at least ${INSTAGRAM_DAYS_WANTED} days.`}>{label}</span>
-      }
-      count={`${photos(short)} to schedule`}
-      fix={
-        <FixLink>
-          <Link to="/instagram">Instagram calendar</Link>
-        </FixLink>
-      }
-    />
-  );
+  return {
+    id: "instagram",
+    urgency: INSTAGRAM_URGENCY,
+    label: (
+      <span title={`The queue should last at least ${INSTAGRAM_DAYS_WANTED} days.`}>{label}</span>
+    ),
+    labelText: label,
+    count: short,
+    countText: `${photos(short)} to schedule`,
+    fix: (
+      <FixLink>
+        <Link to="/instagram">Instagram calendar</Link>
+      </FixLink>
+    ),
+  };
 }
 
 /** A link to the page that fixes a problem, with an arrow after it. */
 function FixLink({ children }: { children: ReactNode }) {
   return (
-    <span className="[&>a]:text-foreground flex items-center gap-1 [&>a]:underline [&>a]:underline-offset-4 [&>a]:hover:no-underline">
+    <span className="[&>a]:text-foreground inline-flex items-center gap-1 [&>a]:underline [&>a]:underline-offset-4 [&>a]:hover:no-underline">
       {children}
       <ArrowRightIcon className="size-3.5" aria-hidden />
     </span>

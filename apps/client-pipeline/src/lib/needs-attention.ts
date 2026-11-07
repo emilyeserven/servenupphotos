@@ -10,7 +10,10 @@ export type PhotoProblem = "noGps" | "noColors" | "noPlaces" | "untagged" | "noG
 /** How soon a problem should be fixed, which the card sorts its rows by. */
 export type Urgency = "high" | "medium" | "low";
 
-/** Each problem's urgency. The Instagram queue running short is medium. */
+/** How urgent the Instagram queue running short is. */
+export const INSTAGRAM_URGENCY: Urgency = "medium";
+
+/** Each photo problem's urgency. */
 export const URGENCY: Record<PhotoProblem, Urgency> = {
   noGps: "high",
   noColors: "high",
