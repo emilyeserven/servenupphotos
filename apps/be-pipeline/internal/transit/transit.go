@@ -35,7 +35,7 @@ var DefaultURLs = []string{
 }
 
 // ErrNoKind is returned for a way of travelling with no mapped lines, such as
-// a walk.
+// a walk, or for "transit", whose kind of line has to be picked first.
 var ErrNoKind = errors.New("no transit lines for this way of travelling")
 
 // routeKind is what a mode's lines are mapped as.
@@ -55,12 +55,14 @@ const (
 	ferryWays = "[route=ferry]"
 )
 
-// routeKinds are what each mode's lines are mapped as.
+// routeKinds are what each mode's lines are mapped as. A transit hop of no
+// known kind isn't here: looking for every kind at once is slow on the public
+// servers, so its kind is picked first.
 var routeKinds = map[string]routeKind{
-	"train":   {"train|light_rail|monorail|tram", []string{railWays}},
-	"subway":  {"subway|light_rail|monorail|tram", []string{railWays}},
-	"bus":     {"bus|trolleybus|coach", []string{roadWays}},
-	"transit": {"train|light_rail|monorail|tram|subway|bus|trolleybus|coach|ferry", []string{railWays, roadWays, ferryWays}},
+	"train":  {"train|light_rail|monorail|tram", []string{railWays}},
+	"subway": {"subway|light_rail|monorail|tram", []string{railWays}},
+	"bus":    {"bus|trolleybus|coach", []string{roadWays}},
+	"ferry":  {"ferry", []string{ferryWays}},
 }
 
 // Line is one transit line OpenStreetMap maps: usually one direction of one

@@ -32,7 +32,7 @@ type trackAnswer struct {
 }
 
 // handleTransitLines answers the lines of ?mode= ("train", "subway", "bus"
-// or "transit") whose track passes near both ?from= and ?to=, each
+// or "ferry") whose track passes near both ?from= and ?to=, each
 // "longitude,latitude".
 func handleTransitLines(finder transitFinder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +44,7 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 		defer cancel()
 		lines, err := finder.Lines(ctx, r.URL.Query().Get("mode"), from, to)
 		if errors.Is(err, transit.ErrNoKind) {
-			writeError(w, http.StatusBadRequest, "Only a train, subway, bus or transit hop rides a line.")
+			writeError(w, http.StatusBadRequest, "Pick whether the hop was a train, subway, bus or ferry to find its lines.")
 			return
 		}
 		if err != nil {

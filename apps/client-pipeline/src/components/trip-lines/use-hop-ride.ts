@@ -60,14 +60,31 @@ function useAutoPick(
   });
 }
 
+/** The kind to look lines up as at first: the hop's own, or none for a transit hop, whose kind is picked. */
+function firstKind(mode: string): string | undefined {
+  return mode === "transit" ? undefined : mode;
+}
+
+/** What the lines look-up asks: the hop's spots as kind; none until both are known. */
+function lookupOf(ask: HopAsk | undefined, kind: string | undefined): HopAsk | undefined {
+  if (!ask || !kind) return undefined;
+  return { ...ask, mode: kind };
+}
+
 /**
- * A hop's look-ups: the lines near both its photos, found at once when it has no line yet, and
- * riding one, which picks it by itself when it's the only line found.
+ * A hop's look-ups: the lines near both its photos, found at once when it has no line yet (for a
+ * transit hop, once the kind of line is picked), and riding one, which picks it by itself when
+ * it's the only line found.
  */
 export function useHopRide(hop: TripSegment, ask: HopAsk | undefined, onRide: (r: Ride) => void) {
   const [finding, setFinding] = useState(!hop.line);
-  const lines = useQuery({ ...transitLinesQuery(ask!), enabled: finding && ask !== undefined });
+  const [kind, setKind] = useState(firstKind(hop.mode));
+  const lookup = lookupOf(ask, kind);
+  const lines = useQuery({
+    ...transitLinesQuery(lookup!),
+    enabled: finding && lookup !== undefined,
+  });
   const { mutation, ride } = useRide(ask, (r) => (onRide(r), setFinding(false)));
   useAutoPick(hop, lines.data, ride);
-  return { finding, setFinding, lines, mutation, ride };
+  return { finding, setFinding, kind, setKind, lines, mutation, ride };
 }

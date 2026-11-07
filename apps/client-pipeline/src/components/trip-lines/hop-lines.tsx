@@ -4,6 +4,7 @@ import type { TripSegment } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
 import { HopStations } from "@/components/trip-lines/hop-stations";
 import { LineBadge, LineChoices } from "@/components/trip-lines/line-choices";
+import { LookupKind } from "@/components/trip-lines/lookup-kind";
 import { gapInfo } from "@/components/trip-lines/modes";
 import { useHopRide } from "@/components/trip-lines/use-hop-ride";
 import { Button } from "@/components/ui/button";
@@ -67,7 +68,11 @@ interface HopRowProps {
  */
 function HopRow({ hop, ends, onRide }: HopRowProps) {
   const ask = askOf(hop, ends);
-  const { finding, setFinding, lines, mutation, ride } = useHopRide(hop, ask, onRide);
+  const { finding, setFinding, kind, setKind, lines, mutation, ride } = useHopRide(
+    hop,
+    ask,
+    onRide,
+  );
   const busy = busyOf(lines, mutation);
   return (
     <div className="flex flex-col gap-2 rounded-md border p-2">
@@ -90,6 +95,7 @@ function HopRow({ hop, ends, onRide }: HopRowProps) {
           onChange={(chosen) => ride(hop.line!, chosen)}
         />
       )}
+      {finding && <LookupKind mode={hop.mode} kind={kind} disabled={busy} onKind={setKind} />}
       {finding && <LineChoices lines={lines.data} onPick={ride} disabled={busy} />}
       <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines.data)} />
     </div>

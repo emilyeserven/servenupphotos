@@ -364,11 +364,12 @@ one run locally.
 ## Lines ridden
 
 Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand. A hop with no line
-yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its photos (a transit hop of
-unknown kind looks for every kind). Each is a [route relation](https://wiki.openstreetmap.org/wiki/Relation:route),
+yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its photos. A transit hop of
+unknown kind first asks **Look for a** **Train**, **Subway**, **Bus** or **Ferry** line, and looks nothing up until one
+is picked, since looking for every kind at once is slow on OpenStreetMap's servers (the backend turns down
+`mode=transit` with a 400). Picking another kind looks again; the hop stays a transit hop. Each is a [route relation](https://wiki.openstreetmap.org/wiki/Relation:route),
 usually one direction of one line, listed with its number, color and ends. When everything found is one line (say,
-its two directions), it's picked by itself; otherwise pick one. When the lines found are of more than one kind, as for a
-transit hop, **Bus**, **Subway** and **Train** (and **Other**, such as a ferry) show only that kind. Subway covers light
+its two directions), it's picked by itself; otherwise pick one. When the lines found are of more than one kind, **Bus**, **Subway** and **Train** (and **Other**, such as a ferry) show only that kind. Subway covers light
 rail, monorails and trams. **Change line** looks again.
 
 Picking a line gets its stations or stops and sets **Got on at** and **Got off at** to the ones nearest each photo.
@@ -377,7 +378,8 @@ hop is drawn along the line's track between them, solid in the line's color, wit
 it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
 route** keeps the line, the stations and the track.
 
-- `GET /api/transit/lines?mode=subway&from=<lng,lat>&to=<lng,lat>` answers the lines found.
+- `GET /api/transit/lines?mode=subway&from=<lng,lat>&to=<lng,lat>` answers the lines found. `mode` is `train`,
+  `subway`, `bus` or `ferry`.
 - `GET /api/transit/lines/<id>/stops` answers the line's stations or stops in order, each with its `name`,
   `latitude` and `longitude` (its `stop` members, or else its platforms).
 - `GET /api/transit/lines/<id>/track?from=…&to=…` answers `{ "path": [...] }`. It's the shortest way along the line's
@@ -398,7 +400,7 @@ servers are busy, which server answered last and how (such as "took too long to 
 (503).
 
 The lines query is kept light: near the first photo it looks only at the ways the hop's lines run on (`railway` for a
-train or subway, `highway` for a bus, both plus ferry routes for transit), not the buildings and footpaths around a
+train or subway, `highway` for a bus, `route=ferry` for a ferry), not the buildings and footpaths around a
 station, and near the second photo it looks only at those lines' own ways
 ([`way(r.a)(around:…)`](https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL))
 instead of every way there.

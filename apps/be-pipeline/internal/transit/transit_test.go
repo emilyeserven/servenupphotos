@@ -42,11 +42,16 @@ func TestLines(t *testing.T) {
 			t.Errorf("query %q lacks %q", got, want)
 		}
 	}
-	if _, err := c.Lines(context.Background(), "transit", [2]float64{}, [2]float64{}); err != nil || !strings.Contains(got, "[highway];") || !strings.Contains(got, "[route=ferry];") {
-		t.Errorf("transit query %q lacks road and ferry ways (err %v)", got, err)
+	if _, err := c.Lines(context.Background(), "bus", [2]float64{}, [2]float64{}); err != nil || !strings.Contains(got, "[highway];") {
+		t.Errorf("bus query %q lacks road ways (err %v)", got, err)
 	}
-	if _, err := c.Lines(context.Background(), "walk", [2]float64{}, [2]float64{}); !errors.Is(err, ErrNoKind) {
-		t.Errorf("walk: err = %v", err)
+	if _, err := c.Lines(context.Background(), "ferry", [2]float64{}, [2]float64{}); err != nil || !strings.Contains(got, "[route=ferry];") {
+		t.Errorf("ferry query %q lacks ferry ways (err %v)", got, err)
+	}
+	for _, mode := range []string{"walk", "transit"} {
+		if _, err := c.Lines(context.Background(), mode, [2]float64{}, [2]float64{}); !errors.Is(err, ErrNoKind) {
+			t.Errorf("%s: err = %v", mode, err)
+		}
 	}
 }
 
