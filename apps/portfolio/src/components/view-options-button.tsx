@@ -7,15 +7,22 @@ import { cn } from "@portfolio/lib/utils";
 /**
  * An eye button that opens a view's display options in a flyout, such as the map's pin size or the
  * Timeline's thumbnail size. `label` names it for the tooltip and screen readers, and `onReset`, when
- * given, adds a **Reset to defaults** link under the options.
+ * given, adds a **Reset to defaults** link under the options. `labelled` writes the label beside the
+ * eye, and `align` is which edge of the button the flyout lines up with.
  */
 export function ViewOptionsButton({
   label = "Display options",
+  labelled = false,
+  align = "start",
   onReset,
   contentClassName,
   children,
 }: {
   label?: string;
+  /** Writes the label on the button beside the eye, rather than the eye alone. */
+  labelled?: boolean;
+  /** Which edge of the button the flyout lines up with, such as "end" for a button on the right. */
+  align?: "start" | "end";
   onReset?: () => void;
   /** Extra classes for the flyout, such as a wider width. */
   contentClassName?: string;
@@ -24,17 +31,10 @@ export function ViewOptionsButton({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          title={label}
-          aria-label={label}
-          className="inline-flex size-8 items-center justify-center rounded-md border bg-background text-muted-foreground shadow-xs outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring dark:border-input"
-        >
-          <Eye className="size-4" aria-hidden />
-        </button>
+        <TriggerButton label={label} labelled={labelled} />
       </PopoverTrigger>
       <PopoverContent
-        align="start"
+        align={align}
         className={cn("flex w-64 flex-col gap-4 p-3 text-sm", contentClassName)}
       >
         {children}
@@ -43,6 +43,29 @@ export function ViewOptionsButton({
     </Popover>
   );
 }
+
+/** The eye that opens the flyout, with its label written beside it when `labelled`. */
+function TriggerButton({ label, labelled, ...props }: { label: string; labelled: boolean }) {
+  return (
+    <button
+      type="button"
+      title={label}
+      aria-label={labelled ? undefined : label}
+      className={cn(TRIGGER_CLASS, labelled ? LABELLED_CLASS : "size-8")}
+      {...props}
+    >
+      <Eye className="size-4" aria-hidden />
+      {labelled && label}
+    </button>
+  );
+}
+
+/** The eye button's look, the same whether or not it's labelled. */
+const TRIGGER_CLASS =
+  "inline-flex items-center justify-center rounded-md border bg-background text-muted-foreground shadow-xs outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-2 focus-visible:ring-ring dark:border-input";
+
+/** A labelled eye button's size, matching the small outline buttons beside it such as Show filters. */
+const LABELLED_CLASS = "h-8 gap-1.5 px-2.5 text-sm font-medium text-foreground";
 
 /** A labelled row of buttons in the options that picks one of a few choices, such as a size. */
 export function OptionChoices<T extends string>({

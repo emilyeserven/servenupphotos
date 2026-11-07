@@ -139,8 +139,9 @@ color, vividness and orientation filters count toward the filter button's number
 saved colors don't match a color or a vividness above 0. With **Show info** on, each tile also shows its color bar
 (`components/color-bar.tsx`): each color as wide as its share, the biggest three named under it.
 
-The Grid's sort dropdown has **Color** (`?sort=color`) and **Vividness** (`?sort=vivid`) after newest and oldest
-(`lib/grid-sort.ts`, `lib/color-sort.ts`), each **Ascending** (the default) or **Descending** (`?order=desc`):
+The Grid's **Sort** menu has **Color** (`?sort=color`) and **Vividness** (`?sort=vivid`) after the date sorts
+(`lib/grid-sort.ts`, `lib/color-sort.ts`), each **Ascending** (the default) or **Descending** (`?order=desc`), switched
+with the arrow on the **Sort** button:
 
 - **Color**, with no color picked: by each photo's largest color, nudged toward whichever neighboring color it has more
   of so the colors run smoothly into each other, and newest first where they tie. Ascending runs red, orange, yellow,

@@ -95,9 +95,12 @@ function TimelineView() {
             Timeline
           </h1>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
-          <div className="ml-auto">
+        <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
+        <PhotoFilterBar
+          photos={photos}
+          searchable
+          own={visualsOwnFilters(beforeVisuals, search)}
+          end={
             <TimelineDisplayOptions
               display={display}
               onChange={(change) =>
@@ -109,9 +112,8 @@ function TimelineView() {
                 })
               }
             />
-          </div>
-        </div>
-        <PhotoFilterBar photos={photos} searchable own={visualsOwnFilters(beforeVisuals, search)} />
+          }
+        />
       </header>
       <RouteSketches>
         <PhotoMonths

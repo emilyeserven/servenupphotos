@@ -39,7 +39,9 @@ size, such as when a month is folded away or the thumbnail size changes.
 
 ## Display options
 
-The eye button at the end of the header opens the display options. Each is kept in the URL, left out at its default, and
+**Display Options**, at the right end of the row with the search and **Show filters**, opens the display options in a
+wide flyout: the thumbnail size and scrubber ticks in one column and the checkboxes for each photo in another, stacked
+on a phone. Each is kept in the URL, left out at its default, and
 remembered in the browser with the rest of the Timeline's settings, so links to the Timeline from other pages open it the
 same way.
 
