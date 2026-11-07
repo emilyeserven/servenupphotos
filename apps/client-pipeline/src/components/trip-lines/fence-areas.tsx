@@ -1,19 +1,16 @@
+import { areaEdgePaint, areaFillPaint } from "@portfolio/lib/map-theme";
 import { Layer, type LayerProps, Source } from "@vis.gl/react-maplibre";
 import type { AreaShape, TripFence } from "@/api/trip-lines";
 
 /** The shaded inside of an area. */
-const fillLayer: LayerProps = {
-  id: "trip-fence-fill",
-  type: "fill",
-  paint: { "fill-color": "#9333ea", "fill-opacity": 0.12 },
-};
+function fillLayer(dark: boolean): LayerProps {
+  return { id: "trip-fence-fill", type: "fill", paint: areaFillPaint(dark) };
+}
 
 /** An area's dashed edge. */
-const edgeLayer: LayerProps = {
-  id: "trip-fence-edge",
-  type: "line",
-  paint: { "line-color": "#9333ea", "line-width": 2, "line-dasharray": [3, 2] },
-};
+function edgeLayer(dark: boolean): LayerProps {
+  return { id: "trip-fence-edge", type: "line", paint: areaEdgePaint(dark) };
+}
 
 /** A fence as a GeoJSON feature. */
 interface FenceFeature {
@@ -37,12 +34,12 @@ function fenceFeatures(fences: TripFence[]): {
   };
 }
 
-/** The areas photos without an exact spot were taken in, shaded with a dashed edge. */
-export function FenceAreas({ fences }: { fences: TripFence[] }) {
+/** The areas photos without an exact spot were taken in, shaded light blue with a dashed edge. */
+export function FenceAreas({ fences, dark }: { fences: TripFence[]; dark: boolean }) {
   return (
     <Source id="trip-fences" type="geojson" data={fenceFeatures(fences)}>
-      <Layer {...fillLayer} />
-      <Layer {...edgeLayer} />
+      <Layer {...fillLayer(dark)} />
+      <Layer {...edgeLayer(dark)} />
     </Source>
   );
 }

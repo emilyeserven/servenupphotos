@@ -57,7 +57,9 @@ fits without covering the map:
   Pointing at a place in the tree (or focusing it) shades its [area](places-and-localizations.md#areas) on the map,
   when it has one, and picking it keeps the area shaded, more faintly, until another place is picked
   (`components/place-area-layer.tsx`, `lib/place-areas.ts`). Each area is its own `places/<id>.geo.json` file,
-  loaded the first time it's shown, so the map's page doesn't carry every outline.
+  loaded the first time it's shown, so the map's page doesn't carry every outline. Areas are light blue (Tailwind's
+  sky, standing in for the brand blue, apart from the walking lines' darker blue), with a darker edge in light mode
+  and a lighter one in dark mode (`lib/map-theme.ts`, which the pipeline's trip line map shares, basemaps included).
 - The eye button opens the map's **display options** (`components/map-display-options.tsx`, kept in
   `lib/map-display.ts`):
   - **Grouping** is how close photos are, in pixels on the screen, before they're one round marker (MapLibre's

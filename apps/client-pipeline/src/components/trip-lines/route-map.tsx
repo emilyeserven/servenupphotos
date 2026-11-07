@@ -1,3 +1,4 @@
+import { MAP_STYLES, useIsDark } from "@portfolio/lib/map-theme";
 import {
   Layer,
   Map,
@@ -18,9 +19,6 @@ import { fenceCorners } from "@/lib/trip-fences";
 import { cn } from "@/lib/utils";
 
 setWorkerUrl(maplibreWorkerUrl);
-
-// The same free CARTO basemap as the portfolio's map.
-const MAP_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
 /** The line's opacity: full, or faint when outside the group shown on its own. */
 function opacity(full: number): ["case", ["get", string], number, number] {
@@ -104,6 +102,7 @@ export function RouteMap({
   fences = [],
 }: RouteMapProps) {
   const bounds = pointsBounds([...photos, ...ends, ...visits, ...fenceCorners(fences)]);
+  const dark = useIsDark();
   return (
     <div
       className={cn("h-80 overflow-hidden rounded-md border md:h-96", onPick && "cursor-crosshair")}
@@ -111,12 +110,12 @@ export function RouteMap({
       <Map
         key={day}
         initialViewState={{ bounds, fitBoundsOptions: { padding: 40, maxZoom: 16 } }}
-        mapStyle={MAP_STYLE}
+        mapStyle={dark ? MAP_STYLES.dark : MAP_STYLES.light}
         cursor={onPick ? "crosshair" : undefined}
         onClick={(e) => onPick?.({ latitude: e.lngLat.lat, longitude: e.lngLat.lng })}
       >
         <NavigationControl position="bottom-right" showCompass={false} />
-        <FenceAreas fences={fences} />
+        <FenceAreas fences={fences} dark={dark} />
         <Source id="trip-line" type="geojson" data={lineFeatures(segments, photos, focus)}>
           <Layer {...walkLayer(preview === true)} />
           <Layer {...hopLayer} />

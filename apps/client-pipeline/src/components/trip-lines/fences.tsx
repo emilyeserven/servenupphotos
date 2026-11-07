@@ -140,7 +140,7 @@ function LooseToggle({ photo, on, onClick }: LooseToggleProps) {
       onClick={onClick}
       className={cn(
         "bg-muted size-12 overflow-hidden rounded-md border-2",
-        on ? "border-purple-600" : "border-transparent opacity-50",
+        on ? "border-sky-500" : "border-transparent opacity-50",
       )}
     >
       {url && <img src={url} alt={photoName(photo.photo)} className="size-full object-cover" />}

@@ -13,7 +13,7 @@ import { MapPin } from "lucide-react";
 import { type LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import { type RefObject, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 import { FloatingHeader } from "@/components/floating-header";
 import { MapControls } from "@/components/map-controls";
 import {
@@ -38,6 +38,7 @@ import { clusterRadius, type MapDisplay, PIN_PIXELS, useMapDisplay } from "@/lib
 import { fadeTo } from "@/lib/map-fade";
 import { photosInView } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
+import { MAP_STYLES, useIsDark } from "@/lib/map-theme";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import {
   LOCATION_KEYS,
@@ -80,10 +81,6 @@ export const Route = createFileRoute("/map")({
 setWorkerUrl(maplibreWorkerUrl);
 
 // Free CARTO basemaps; no API key needed, attribution is shown by the map.
-const MAP_STYLES = {
-  light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-  dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-};
 
 // The markers are HTML, drawn from the clusters MapLibre works out for the source. MapLibre only
 // clusters a source a layer uses, so this one draws nothing.
@@ -136,19 +133,6 @@ function showAllPhotos(map: MapRef, bounds: LngLatBounds | null) {
     if (bounds) faded.fitBounds(bounds, { ...ALL_PHOTOS_FIT, animate: false });
     else faded.jumpTo(WORLD_VIEW);
   });
-}
-
-// The theme provider toggles the `dark` class on <html>; follow it so the basemap matches.
-function subscribeToDarkClass(onChange: () => void) {
-  const observer = new MutationObserver(onChange);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-  return () => observer.disconnect();
-}
-
-function useIsDark() {
-  return useSyncExternalStore(subscribeToDarkClass, () =>
-    document.documentElement.classList.contains("dark"),
-  );
 }
 
 function hasImage(photo: Photo): photo is ImagePhoto {
