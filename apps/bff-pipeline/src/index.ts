@@ -2,29 +2,15 @@ import { existsSync } from "node:fs";
 import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
 import { env } from "./env.js";
-import { dataRoutes } from "./routes/data.js";
-import { githubRoutes } from "./routes/github.js";
-import { organizeRoutes } from "./routes/organize.js";
-import { placesRoutes } from "./routes/places.js";
-import { photoRoutes } from "./routes/photos.js";
-import { publishRoutes } from "./routes/publish.js";
 import { healthRoutes } from "./routes/health.js";
-import { helloRoutes } from "./routes/hello.js";
-import { settingsRoutes } from "./routes/settings.js";
+import { relayRoutes } from "./routes/relay.js";
 
 const app = Fastify({ logger: true });
 
 await app.register(
   async (api) => {
     await api.register(healthRoutes);
-    await api.register(helloRoutes);
-    await api.register(photoRoutes);
-    await api.register(githubRoutes);
-    await api.register(settingsRoutes);
-    await api.register(dataRoutes);
-    await api.register(organizeRoutes);
-    await api.register(placesRoutes);
-    await api.register(publishRoutes);
+    await api.register(relayRoutes);
   },
   { prefix: "/api" },
 );
