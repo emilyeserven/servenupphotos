@@ -1,4 +1,3 @@
-import { useLocation } from "@tanstack/react-router";
 import { CalendarClock } from "lucide-react";
 import { useState } from "react";
 import {
@@ -58,20 +57,19 @@ function rangeText(filters: PhotoFilters): string {
   return `${rangeDay(filters.start)} – ${rangeDay(filters.end)}`;
 }
 
-/** The picker's sections: each kind of list, then the date range unless `onlyYears`. */
-function sectionsOf(filters: PhotoFilters, onlyYears: boolean): PickerSection<WhenSection>[] {
+/** The picker's sections: each kind of list, then the date range. */
+function sectionsOf(filters: PhotoFilters): PickerSection<WhenSection>[] {
   const lists = KINDS.map(([key, label, plural, choices]) => {
     const chosen = filters[key] ?? [];
     return { key, label, set: chosen.length > 0, text: listText(chosen, plural, choices) };
   });
-  if (onlyYears) return lists;
   const range = { key: "range" as const, label: "Date range", set: hasDateRange(filters) };
   return [...lists, { ...range, text: rangeText(filters) }];
 }
 
 /** The section to open the picker on: the one set, or the seasons when none is. */
-function firstSection(filters: PhotoFilters, onlyYears: boolean): WhenSection {
-  return sectionsOf(filters, onlyYears).find((section) => section.set)?.key ?? "season";
+function firstSection(filters: PhotoFilters): WhenSection {
+  return sectionsOf(filters).find((section) => section.set)?.key ?? "season";
 }
 
 /**
@@ -79,25 +77,23 @@ function firstSection(filters: PhotoFilters, onlyYears: boolean): WhenSection {
  * list of Seasons, Months, Days, Hours and Date range on the left, each saying what it's set to,
  * with **Clear when** under it, and the chosen one's choices on the right. It chooses one way at a
  * time: across all years (any number of seasons, months, days of the week or hours, with the
- * current one a click away), or a range of dates. The Timeline has its own time range, so there it
- * only picks across all years.
+ * current one a click away), or a range of dates, which on the Timeline is the days it shows.
  */
 export function WhenFilter(props: WhenProps) {
-  const onlyYears = useLocation().pathname === "/timeline";
   return (
     <FilterPickerButton Icon={CalendarClock} label="When" count={whenCount(props.filters)}>
-      <PickerBody {...props} onlyYears={onlyYears} />
+      <PickerBody {...props} />
     </FilterPickerButton>
   );
 }
 
 /** The sections, opening on the one set, and the chosen one's choices. */
-function PickerBody({ onlyYears, ...props }: WhenProps & { onlyYears: boolean }) {
-  const [section, setSection] = useState(() => firstSection(props.filters, onlyYears));
+function PickerBody(props: WhenProps) {
+  const [section, setSection] = useState(() => firstSection(props.filters));
   return (
     <SectionPicker
       label="When"
-      sections={sectionsOf(props.filters, onlyYears)}
+      sections={sectionsOf(props.filters)}
       chosen={section}
       onChoose={setSection}
       width="sm:w-[36rem]"

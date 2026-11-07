@@ -10,7 +10,15 @@ import type { PlacedPhoto } from "@/lib/map-photos";
 export interface TripMapFeature {
   type: "Feature";
   geometry: { type: string; coordinates: unknown };
-  properties: { day: string; feature?: "visit" | "fence"; mode?: string; colour?: string };
+  properties: {
+    day: string;
+    feature?: "visit" | "fence";
+    mode?: string;
+    colour?: string;
+    /** The Trip a leg between days is part of, and the day it arrived. */
+    trip?: string;
+    arrive?: string;
+  };
 }
 
 /** TRIPLINES.geo.json: every day's lines, places visited and areas. */
@@ -38,9 +46,14 @@ export function useTripLinesMap(on: boolean): TripLinesMap | undefined {
   return on ? map : undefined;
 }
 
+/** Whether a feature belongs to one of the days: its own, or for a Trip's leg, the day it arrived. */
+function isOnDays({ properties }: TripMapFeature, days: Set<string>): boolean {
+  return days.has(properties.day) || days.has(properties.arrive ?? "");
+}
+
 /** The map with only the features of days, such as the days of the photos the map draws. */
 function onDays(map: TripLinesMap, days: Set<string>): TripLinesMap {
-  return { ...map, features: map.features.filter((f) => days.has(f.properties.day)) };
+  return { ...map, features: map.features.filter((f) => isOnDays(f, days)) };
 }
 
 /** The days the photos were taken, as TRIPLINES.geo.json writes them. */

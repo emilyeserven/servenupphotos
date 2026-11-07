@@ -46,14 +46,34 @@ export function areaEdgePaint(dark: boolean) {
 }
 
 /**
- * The trip lines' colors that change with dark mode: walks, hops with no transit line picked, and the
- * edge around a place visited, which matches the basemap. Places visited are amber in both.
+ * The trip lines' colors that change with dark mode: walks, hops with no transit line picked,
+ * drives, a Trip's ferries and flights, and the edge around a place visited, which matches the
+ * basemap. Places visited are amber in both.
  */
 export function tripColors(dark: boolean) {
-  return dark
-    ? { walk: "#60a5fa", hop: "#c084fc", drive: "#a3a3a3", visit: "#f59e0b", visitEdge: "#171717" }
-    : { walk: "#2563eb", hop: "#9333ea", drive: "#525252", visit: "#f59e0b", visitEdge: "#ffffff" };
+  return dark ? TRIP_COLORS.dark : TRIP_COLORS.light;
 }
+
+const TRIP_COLORS = {
+  light: {
+    walk: "#2563eb",
+    hop: "#9333ea",
+    drive: "#525252",
+    ferry: "#0d9488",
+    flight: "#db2777",
+    visit: "#f59e0b",
+    visitEdge: "#ffffff",
+  },
+  dark: {
+    walk: "#60a5fa",
+    hop: "#c084fc",
+    drive: "#a3a3a3",
+    ferry: "#2dd4bf",
+    flight: "#f472b6",
+    visit: "#f59e0b",
+    visitEdge: "#171717",
+  },
+};
 
 /** The colors of an area: its fill and its dashed edge. */
 export function areaColors(dark: boolean) {

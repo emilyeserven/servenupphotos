@@ -77,6 +77,10 @@ fits without covering the map:
     ones added to the portfolio last, or **Captured**, the ones taken last. Photos with no added date count as
     the oldest added.
   - **Trip lines** (on by default) draws the [trip lines](#trip-lines) under the photos.
+  - **Direction of travel** (off by default, shown while **Trip lines** is on) shows the way each line was travelled
+    like a ride app shows a route: a light runs along it from where it started to where it ended, over and over
+    (`components/trip-flow-layer.tsx`). With the system's reduce motion setting on, each line instead brightens from
+    its start to its end without moving.
   - **Reset to defaults** goes back to these defaults.
 
   These options, but for the group photos, are `components/pin-display-fields.tsx`, which the
@@ -115,6 +119,8 @@ draws them (`lib/trip-lines-map.ts`):
 - Walks are solid blue (lighter in dark mode).
 - A hop along the bus, subway or train line it rode is solid in that line's color.
 - A drive (`car`, such as a big jump the automatic line marks) is gray in long dashes.
+- A [Trip](trip-lines.md#trips)'s ferry is a line of teal dots, and its flight a dashed pink arc. A leg shows with
+  the photos of either the day it left or the day it arrived. The Timeline's route sketches leave legs out.
 - Any other hop is dashed purple.
 - Places visited are amber dots.
 - Areas that photos without an exact spot were taken in are shaded light blue, like a place's area.
@@ -137,7 +143,7 @@ filters and the day filter change it:
   photos** opens a note on clicking a group: a click zooms in, and ⌘-click (Ctrl-click off Apple devices, read from the
   browser's user agent in `lib/platform.ts`) lists its photos in a grid (`components/map-legend-help.tsx`).
 - Then, under a divider, the trip lines of the photos' days when **Trip lines** is on: **Walk**, **Bus, subway or
-  train** (a sample in the colors of the lines ridden), **Drive** (long dashes), **Other trip** (dashed), **Place visited** and **Area**.
+  train** (a sample in the colors of the lines ridden), **Drive** (long dashes), **Ferry**, **Flight**, **Other trip** (dashed), **Place visited** and **Area**.
   **Area** also shows while a place's area is shaded from **Places**.
 
 The samples use the same colors as the map in light and dark mode (`lib/map-theme.ts`). The **Key** button folds the

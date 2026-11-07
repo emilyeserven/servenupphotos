@@ -12,13 +12,19 @@ import { useSocialQueue } from "@/hooks/use-social-queue";
 import {
   INSTAGRAM_DAYS_WANTED,
   INSTAGRAM_URGENCY,
+  TRIP_LINES_URGENCY,
   type PhotoProblem,
   type ProblemCount,
   URGENCY,
   instagramShortBy,
   photoProblems,
 } from "@/lib/needs-attention";
-import { useChangedPhotoFiles, useCombinedDataStore } from "@/stores/combined-data";
+import { type StaleTripLine, staleTripLines } from "@/lib/stale-trip-lines";
+import {
+  useChangedPhotoFiles,
+  useCombinedData,
+  useCombinedDataStore,
+} from "@/stores/combined-data";
 
 /** What each photo problem says, and the page that fixes it. */
 const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => ReactNode }> = {
@@ -108,9 +114,9 @@ function Problems({ calendar }: { calendar: SocialCalendar }) {
   );
   const queue = useSocialQueue(calendar, 0);
   const short = instagramShortBy(queue.daysLeft);
-  if (problems.length === 0 && short === 0) return <AllClear />;
-  const rows = problems.map(problemRow);
+  const rows = [...useTripLineRows(), ...problems.map(problemRow)];
   if (short > 0) rows.push(instagramRow(queue.daysLeft, short));
+  if (rows.length === 0) return <AllClear />;
   return <NeedsAttentionTable rows={rows} />;
 }
 
@@ -160,6 +166,44 @@ function instagramRow(daysLeft: number, short: number): AttentionRow {
     fix: (
       <FixLink>
         <Link to="/instagram">Instagram calendar</Link>
+      </FixLink>
+    ),
+  };
+}
+
+/** The hand-marked trip lines out of date with their days' photos, as one urgent row; none while reading. */
+function useTripLineRows(): AttentionRow[] {
+  const combined = useCombinedData();
+  const stale = useMemo(
+    () => (combined.data ? staleTripLines(combined.data) : []),
+    [combined.data],
+  );
+  return stale.length > 0 ? [tripLinesRow(stale)] : [];
+}
+
+/** The trip lines out of date: how many days, what changed, and a link to the newest one. */
+function tripLinesRow(stale: StaleTripLine[]): AttentionRow {
+  const [newest] = stale as [StaleTripLine, ...StaleTripLine[]];
+  const missing = stale.reduce((sum, s) => sum + s.missing, 0);
+  const label = "Trip lines out of date with their photos";
+  return {
+    id: "trip-lines",
+    urgency: TRIP_LINES_URGENCY,
+    label: (
+      <span
+        title={`${photos(missing)} not on their day's line, such as ones added since it was marked.`}
+      >
+        {label}
+      </span>
+    ),
+    labelText: label,
+    count: stale.length,
+    countText: stale.length === 1 ? "1 day" : `${stale.length} days`,
+    fix: (
+      <FixLink>
+        <Link to="/trip-lines" search={{ day: newest.day }}>
+          Trip Lines
+        </Link>
       </FixLink>
     ),
   };

@@ -66,7 +66,7 @@ export function MapControls({
       }
     >
       <PlaceAreaLayer {...area.shown} />
-      <TripLinesLayer photos={drawn} show={display.tripLines} />
+      <TripLinesLayer photos={drawn} show={display.tripLines} flow={display.tripFlow} />
       <MapLegend photos={drawn} display={display} area={area.shown} />
       <MapDisplayOptions display={display} onChange={onDisplayChange} />
       <MoreFilterControls

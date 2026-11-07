@@ -12,7 +12,7 @@ const GROUP_PHOTOS: [GroupPhotos, string][] = [
  * An eye button over the map that opens its display options in a flyout: how readily photos are
  * grouped, how big the pins are, whether groups show their counts, and whether a group's photos
  * are darkened under the count, which of a group's photos it shows, and whether the days' trip lines
- * are drawn.
+ * are drawn, with a light running along them the way they were travelled.
  */
 export function MapDisplayOptions({
   display,
@@ -39,6 +39,13 @@ export function MapDisplayOptions({
         checked={display.tripLines}
         onChange={(tripLines) => onChange({ tripLines })}
       />
+      {display.tripLines && (
+        <OptionCheckbox
+          label="Direction of travel"
+          checked={display.tripFlow}
+          onChange={(tripFlow) => onChange({ tripFlow })}
+        />
+      )}
     </ViewOptionsButton>
   );
 }

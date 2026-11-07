@@ -24,6 +24,8 @@ export interface MapDisplay {
   groupPhotos: GroupPhotos;
   /** Whether the map draws the days' trip lines, places visited and areas under the photos. */
   tripLines: boolean;
+  /** Whether a light runs along each trip line the way it was travelled, like a ride app's route. */
+  tripFlow: boolean;
 }
 
 /** The display options a first visit starts with. */
@@ -34,6 +36,7 @@ export const DEFAULT_MAP_DISPLAY: MapDisplay = {
   dimGroups: true,
   groupPhotos: "added",
   tripLines: true,
+  tripFlow: false,
 };
 
 /** The grouping slider's range and step, in pixels. */
@@ -73,6 +76,7 @@ const VALID: Record<keyof MapDisplay, (value: unknown) => boolean> = {
   dimGroups: (value) => typeof value === "boolean",
   groupPhotos: (value) => value === "added" || value === "taken",
   tripLines: (value) => typeof value === "boolean",
+  tripFlow: (value) => typeof value === "boolean",
 };
 
 /** The options in a saved value that are still valid, leaving out the rest. */

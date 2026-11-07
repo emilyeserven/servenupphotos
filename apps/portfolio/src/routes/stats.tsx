@@ -4,7 +4,8 @@ import { useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { type FocusChain, type StatFocus, StatGroupCard } from "@/components/stat-group";
 import { filterWithCamera } from "@/lib/camera-filters";
-import { photos } from "@/lib/photos";
+import { LOCATION_KEYS } from "@/lib/photo-filters";
+import { type Photo, photos } from "@/lib/photos";
 import { type GroupDef, type GroupVariant, groupChains, type StatRow } from "@/lib/stat-groups";
 import { type StatSection, STAT_SECTIONS, type StatTotals, statTotals } from "@/lib/stats";
 
@@ -22,6 +23,7 @@ type TotalDef = [keyof StatTotals, string, string?];
 const TOTAL_LABELS: TotalDef[] = [
   ["photos", "Photos"],
   ["countries", "Countries", "countries"],
+  ["regions", "Regions", "regions"],
   ["cities", "Cities", "cities"],
   ["cameras", "Cameras", "cameras"],
   ["years", "Years", "year"],
@@ -144,23 +146,42 @@ function without(focuses: Focuses, id: string): Focuses {
 /** Every group, to find which one narrows another. */
 const ALL_GROUPS = STAT_SECTIONS.flatMap((section) => section.groups);
 
+/** A row narrowing a group, with the photos it and the rows above it leave. */
+type Step = FocusChain[number] & { photos: Photo[] };
+
 /**
  * The rows narrowing the group, from the top down: the one chosen in the group narrowing it, after
- * the ones narrowing that group, each with the filter for its photos and those above it.
+ * the ones narrowing that group. Each step keeps only the photos the steps above it left, so a
+ * third card counts within every choice above it, such as Cities within No region within the US.
  */
-function focusChain(id: string, focuses: Focuses, seen = new Set<string>()): FocusChain {
+function focusChain(id: string, focuses: Focuses, seen = new Set<string>()): Step[] {
   const parent = ALL_GROUPS.find((def) => def.narrows === id);
   const above = parent && !seen.has(id) ? focusChain(parent.id, focuses, seen.add(id)) : [];
   const focus = focuses[id];
-  if (!focus) return above;
-  const filter = Object.assign({}, ...above.map((f) => f.filter), focus.row.filter);
-  return [...above, { ...focus, filter }];
+  return focus ? [...above, stepOf(above, focus)] : above;
+}
+
+/** The chosen row as a step below the steps above it, keeping only the photos they left. */
+function stepOf(above: Step[], focus: StatFocus): Step {
+  const narrowed = filterWithCamera(groupPhotos(above), focus.row.filter ?? {});
+  const filter = gridFilter([...above.map((step) => step.row), focus.row], narrowed);
+  return { ...focus, filter, photos: narrowed };
+}
+
+/**
+ * The Grid's filter for a chain's photos: its rows' filters together, or, when they choose more
+ * than one kind of place, which the Grid would match any of, the photos themselves by ID.
+ */
+function gridFilter(rows: StatRow[], narrowed: Photo[]): Step["filter"] {
+  const filter = Object.assign({}, ...rows.map((row) => row.filter));
+  const places = LOCATION_KEYS.filter((key) => key in filter);
+  if (places.length < 2) return filter;
+  return { ids: narrowed.map((photo) => photo.id) };
 }
 
 /** The photos a group counts: the ones the rows narrowing it leave, or every photo. */
-function groupPhotos(chain: FocusChain) {
-  const last = chain.at(-1);
-  return last ? filterWithCamera(photos, last.filter) : photos;
+function groupPhotos(chain: Step[]): Photo[] {
+  return chain.at(-1)?.photos ?? photos;
 }
 
 /** One section, such as Gear, with its groups as cards: each chain of narrowing groups on a row of its own. */
@@ -207,7 +228,7 @@ function joinsLast(run: Run, last: Run | undefined): boolean {
 const CHAIN_COLUMNS: Record<number, string> = { 2: "lg:grid-cols-2", 3: "lg:grid-cols-3" };
 
 /**
- * A row of cards. A chain, such as Year, Season and Month, sits on a shaded band, with a bar from
+ * A row of cards. A chain, such as Year, Season and Month, has a bar from
  * each card to the one it narrows: across on a desktop, down on a phone.
  */
 function GroupRun({ run, state }: { run: Run; state: PageState }) {
@@ -225,7 +246,7 @@ function GroupRun({ run, state }: { run: Run; state: PageState }) {
   }
   return (
     <div
-      className={`grid items-start gap-6 rounded-2xl bg-muted/60 p-3 sm:p-4 lg:items-stretch lg:[&>div>section]:h-full ${CHAIN_COLUMNS[run.defs.length] ?? CHAIN_COLUMNS[3]}`}
+      className={`grid items-start gap-6 lg:items-stretch lg:[&>div>section]:h-full ${CHAIN_COLUMNS[run.defs.length] ?? CHAIN_COLUMNS[3]}`}
     >
       {cards}
     </div>
@@ -245,21 +266,24 @@ function buildOf(def: GroupDef, variants: Variants) {
   return def.variants?.[variants[def.id] ?? 0]?.build ?? def.build;
 }
 
-/** A group's card, counting the photos the rows narrowing it leave. */
+/**
+ * A group's card, counting the photos the rows narrowing it leave. Its chip shows only the row
+ * chosen in the card right above it, such as Autumn on Month, not the Year above that.
+ */
 function DefCard({ def, state }: { def: GroupDef; state: PageState }) {
   const chain = focusChain(def.id, state.focuses);
   return (
     <StatGroupCard
       group={buildOf(def, state.variants)(groupPhotos(chain))}
-      title={def.variants && <VariantSelect def={def} variants={def.variants} state={state} />}
-      focuses={chain}
+      control={def.variants && <VariantSelect def={def} variants={def.variants} state={state} />}
+      focuses={chain.filter((focus) => focus.target === def.id)}
       {...narrowing(def, state)}
       onClearFocus={state.onClear}
     />
   );
 }
 
-/** A dropdown of a group's variants in place of its title, such as Lenses by type; for a group that has them. */
+/** A group's Group by dropdown of its variants, such as By type or By brand; for a group that has them. */
 function VariantSelect({
   def,
   variants,
@@ -274,7 +298,7 @@ function VariantSelect({
       aria-label="Group by"
       value={state.variants[def.id] ?? 0}
       onChange={(event) => state.onVariant(def, Number(event.target.value))}
-      className="-ml-1 cursor-pointer rounded-md bg-transparent px-1 font-semibold tracking-tight outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+      className="cursor-pointer rounded-md border bg-background px-1.5 py-0.5 text-xs text-muted-foreground shadow-xs outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
     >
       {variants.map((variant, index) => (
         <option key={variant.label} value={index}>

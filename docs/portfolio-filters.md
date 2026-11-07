@@ -49,6 +49,8 @@ picker opens on the columns around the first chosen place, or the only country w
 columns for every matching place, with what it's in under its name, such as "Japan › Yamaguchi › Hagi". Names are
 written the way the menu's **Script display** says, and a search matches them that way or in English. The button shows
 the one chosen name, or how many are chosen.
+`?state=none` keeps the photos with no state, province or prefecture, as the Numbers page's **No region** row links to;
+the button then says **No region**.
 
 Any number can be chosen, and the view shows the photos taken in **any** of them:
 
@@ -120,7 +122,7 @@ other filters, and a choice with none is dimmed.
   keep From on or before To. Clicking the month's name above a calendar swaps the days for every month over the years,
   a row of twelve for each year, newest first, to jump straight to one.
 
-On the Timeline, which has its own time range and Quick dates, the picker leaves out **Date range**.
+On the Timeline, the date range is the days it shows, and selecting bars or weeks on its chart sets it too.
 
 > **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
 > `?tag=a&tag=b`, and the left list is a set of radio buttons over which group is in use.
