@@ -64,9 +64,44 @@ function focalGroup(list: Photo[], all: Photo[]): StatGroup {
 /** The equipment a group of metadata groups is of. */
 type Equipment = "camera" | "lens";
 
-/** A metadata group as a row, filtering to the cameras or lenses in it. */
+/**
+ * The focal lengths a lens covers, as its name writes them, such as [18, 135] for
+ * "EF-S18-135mm f/3.5-5.6 IS STM" or [50, 50] for "EF50mm f/1.8 II"; undefined when it doesn't say.
+ */
+function lensFocalLengths(name: string): [number, number] | undefined {
+  const match = /(\d+(?:\.\d+)?)(?:-(\d+(?:\.\d+)?))?\s*mm/i.exec(name);
+  if (!match) return undefined;
+  const low = Number(match[1]);
+  return [low, Number(match[2] ?? low)];
+}
+
+/** The focal lengths a lens was used at in the portfolio's photos, for a lens whose name doesn't say. */
+function usedFocalLengths(name: string): number[] {
+  return allPhotos.flatMap((photo) =>
+    photo.lens === name && photo.settings.focalLength !== null ? [photo.settings.focalLength] : [],
+  );
+}
+
+/**
+ * The focal lengths the lenses in a lens group cover, such as "55–250mm": from their names, or
+ * else from the photos taken with them; undefined when neither says.
+ */
+function lensGroupSpan(group: MetaGroup): string | undefined {
+  const lengths = [...groupValues(group)].flatMap(
+    (name) => lensFocalLengths(name) ?? usedFocalLengths(name),
+  );
+  if (lengths.length === 0) return undefined;
+  const [low, high] = [Math.min(...lengths), Math.max(...lengths)];
+  return low === high ? `${low}mm` : `${low}–${high}mm`;
+}
+
+/**
+ * A metadata group as a row, filtering to the cameras or lenses in it. A lens group says the focal
+ * lengths its lenses cover.
+ */
 function metaBucket(equipment: Equipment, group: MetaGroup): Bucket {
-  return { key: group.id, label: group.name, filter: { [`${equipment}Group`]: group.id } };
+  const detail = equipment === "lens" ? lensGroupSpan(group) : undefined;
+  return { key: group.id, label: group.name, detail, filter: { [`${equipment}Group`]: group.id } };
 }
 
 /** Whether the photo's camera or lens is in the bucket's metadata group, or one inside it. */

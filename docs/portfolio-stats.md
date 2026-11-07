@@ -26,7 +26,9 @@ biggest, and the number of photos:
 | Time    | Year                        | newest first                                                                                 |
 
 Lens categories come from the lens metadata groups set on the pipeline's Metadata Groups page: a top-level group such
-as **Type**, with **Prime** and **Telephoto** in it, makes a **Lenses by type** card. Top-level lens groups with none
+as **Type**, with **Prime** and **Telephoto** in it, makes a **Lenses by type** card. Each lens group's row says the focal lengths its lenses
+cover, such as **Longer Telephoto 55–250mm**, read from the lenses' names ("EF-S55-250mm f/4-5.6 IS STM"), or for a
+lens whose name doesn't say, from the focal lengths its photos were taken at. Top-level lens groups with none
 in them go together on a **Lens groups** card, and camera groups work the same way. A photo can be in more than one
 row of a category, and the card says how many are in none of them.
 

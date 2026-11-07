@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import type { Photo } from "@portfolio/lib/photos";
 import { cn } from "@portfolio/lib/utils";
 import {
@@ -7,11 +6,6 @@ import {
   type Season,
   type WhenChoice,
 } from "@portfolio/lib/when-filters";
-
-/** A heading over one part of the When picker, such as Days. */
-export function WhenHeading({ children }: { children: ReactNode }) {
-  return <h3 className="text-xs font-medium text-muted-foreground">{children}</h3>;
-}
 
 /** How a toggle looks: on, off with no photos, or off. */
 type ToggleState = "on" | "empty" | "off";

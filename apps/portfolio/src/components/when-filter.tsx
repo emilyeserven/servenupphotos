@@ -2,19 +2,20 @@ import { useLocation } from "@tanstack/react-router";
 import { CalendarClock, ChevronsUpDown } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Button } from "@portfolio/components/ui/button";
+import { Calendar } from "@portfolio/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import {
   ChoiceGrid,
   HourRows,
   MonthColumns,
   ToggleButton,
-  WhenHeading,
 } from "@portfolio/components/when-buttons";
 import { filterPhotos, type PhotoFilters, withoutFilters } from "@portfolio/lib/photo-filters";
 import { photos as allPhotos, type Photo } from "@portfolio/lib/photos";
-import { QUICK_DATES, quickDateDetail, inQuickDate } from "@portfolio/lib/quick-dates";
 import { cn } from "@portfolio/lib/utils";
 import {
+  CURRENT_LABELS,
+  currentChoice,
   DAYPARTS,
   dayOf,
   hasDateRange,
@@ -26,15 +27,15 @@ import {
   whenCount,
 } from "@portfolio/lib/when-filters";
 
-/** The first and last day a portfolio photo was taken, for the date range's inputs. */
-const DAYS = allPhotos.map((photo) => dayOf(photo.takenAt)).toSorted();
+/** The first and last day a portfolio photo was taken, which the calendar keeps to. */
+const FIRST_DAY = new Date(Math.min(...allPhotos.map((photo) => photo.takenAt.getTime())));
+const LAST_DAY = new Date(Math.max(...allPhotos.map((photo) => photo.takenAt.getTime())));
 
-/** The ways the When picker chooses: in every year, recently in earlier years, or a range of dates. */
-type DateMode = "years" | "quick" | "range";
+/** The ways the When picker chooses: across all years, or a range of dates. */
+type DateMode = "years" | "range";
 
 /** The way the filters choose, to open the picker on. */
 function modeOf(filters: PhotoFilters): DateMode {
-  if (filters.when) return "quick";
   return hasDateRange(filters) ? "range" : "years";
 }
 
@@ -61,9 +62,9 @@ function countedOut({ facet, filters }: WhenProps): Photo[] {
 
 /**
  * A **When** button that opens one picker for when photos were taken, one way at a time: across
- * all years (seasons, months, days of the week or hours, any number of one kind), this date, month
- * or season in earlier years, or a range of dates. The Timeline has its own range and Quick dates,
- * so there it only picks across all years.
+ * all years (seasons, months, days of the week or hours, any number of one kind, with the current
+ * one a click away), or a range of dates on a calendar. The Timeline has its own time range, so
+ * there it only picks across all years.
  */
 export function WhenFilter({ facet, filters, setFilters }: WhenProps) {
   const props = { facet, filters, setFilters };
@@ -95,14 +96,12 @@ export function WhenFilter({ facet, filters, setFilters }: WhenProps) {
 
 const MODE_LABELS: [DateMode, string][] = [
   ["years", "Across all years"],
-  ["quick", "Previous years"],
   ["range", "Date range"],
 ];
 
 /** The part of the picker for each way of choosing. */
 const MODE_PARTS: Record<DateMode, (props: WhenProps) => ReactNode> = {
   years: (props) => <YearsPart {...props} />,
-  quick: (props) => <QuickPart {...props} />,
   range: (props) => <RangePart {...props} />,
 };
 
@@ -174,68 +173,81 @@ const KIND_GRIDS: Record<
 };
 
 /**
- * Seasons, months, days of the week or hours, in any year: a tab for each kind, and any number of
- * one kind chosen. Choosing another kind clears the first.
+ * Seasons, months, days of the week or hours, in any year: a tab for each kind, a button for the
+ * one it is now, and any number of one kind chosen. Choosing another kind clears the first.
  */
 function YearsPart(props: WhenProps) {
   const [kind, setKind] = useState<ListKey>(() => kindOf(props.filters));
+  const photos = countedOut(props);
+  const chosen = props.filters[kind] ?? [];
+  const onChange = (values: string[]) =>
+    setWhen(props, values.length > 0 ? { [kind]: values } : {});
   return (
     <>
       <Tabs label="Across all years" options={KIND_LABELS} value={kind} onChange={setKind} />
-      {KIND_GRIDS[kind]({
-        photos: countedOut(props),
-        chosen: props.filters[kind] ?? [],
-        onChange: (values) => setWhen(props, values.length > 0 ? { [kind]: values } : {}),
-      })}
+      <CurrentButton kind={kind} photos={photos} chosen={chosen} onChange={onChange} />
+      {KIND_GRIDS[kind]({ photos, chosen, onChange })}
     </>
   );
 }
 
-/** This date, month or season, in the years before this one. */
-function QuickPart(props: WhenProps) {
+/**
+ * A button for the season, month, day of the week or hour it is now, such as "This season ·
+ * Autumn": it chooses just that one, or clears it when it's the only one chosen.
+ */
+function CurrentButton({
+  kind,
+  photos,
+  chosen,
+  onChange,
+}: {
+  kind: ListKey;
+  photos: Photo[];
+  chosen: string[];
+  onChange: (values: string[]) => void;
+}) {
   const [now] = useState(() => new Date());
-  const counted = countedOut(props);
+  const current = currentChoice(kind, now);
+  const on = chosen.length === 1 && chosen[0] === current.value;
   return (
-    <>
-      <WhenHeading>This time, previous years</WhenHeading>
-      <div className="grid grid-cols-3 gap-1.5">
-        {QUICK_DATES.map(({ value, label }) => (
-          <ToggleButton
-            key={value}
-            label={`${label} · ${quickDateDetail(value, now)}`}
-            count={counted.filter((photo) => inQuickDate(photo.takenAt, value, now)).length}
-            on={props.filters.when === value}
-            onClick={() => setWhen(props, props.filters.when === value ? {} : { when: value })}
-          />
-        ))}
-      </div>
-    </>
+    <ToggleButton
+      label={`${CURRENT_LABELS[kind]} · ${current.label}`}
+      count={photos.filter(current.matches).length}
+      on={on}
+      onClick={() => onChange(on ? [] : [current.value])}
+    />
   );
 }
 
-/** A range of dates, from the first day to the last, both included. */
+/** A day as YYYY-MM-DD, or undefined without one. */
+function dayText(date: Date | undefined): string | undefined {
+  return date ? dayOf(date) : undefined;
+}
+
+/** A YYYY-MM-DD day as a date, or undefined without one. */
+function dateOf(day: string | undefined): Date | undefined {
+  return day ? new Date(`${day}T00:00`) : undefined;
+}
+
+/**
+ * A range of dates on a calendar, from the first day to the last, both included: the first click
+ * sets the start, the second the end. It opens on the start's month, or the latest photo's.
+ */
 function RangePart(props: WhenSetters) {
-  const { start, end } = props.filters;
-  /** Sets one end, keeping the other. */
-  function setEnd(key: "start" | "end", value: string) {
-    const next = { start, end, [key]: value || undefined };
-    setWhen(props, Object.fromEntries(Object.entries(next).filter(([, v]) => v)));
-  }
+  const from = dateOf(props.filters.start);
+  const to = dateOf(props.filters.end);
   return (
-    <div className="grid grid-cols-2 gap-2 text-xs">
-      {(["start", "end"] as const).map((key) => (
-        <label key={key} className="flex flex-col gap-1 font-medium text-muted-foreground">
-          {key === "start" ? "From" : "To"}
-          <input
-            type="date"
-            value={props.filters[key] ?? ""}
-            min={DAYS[0]}
-            max={DAYS.at(-1)}
-            onChange={(event) => setEnd(key, event.target.value)}
-            className="h-8 rounded-md border bg-background px-2 text-sm text-foreground dark:bg-input/30"
-          />
-        </label>
-      ))}
-    </div>
+    <Calendar
+      mode="range"
+      defaultMonth={from ?? LAST_DAY}
+      selected={from ? { from, to } : undefined}
+      onSelect={(range) => {
+        const next = { start: dayText(range?.from), end: dayText(range?.to) };
+        setWhen(props, Object.fromEntries(Object.entries(next).filter(([, day]) => day)));
+      }}
+      startMonth={FIRST_DAY}
+      endMonth={LAST_DAY}
+      className="mx-auto bg-transparent p-0"
+    />
   );
 }
