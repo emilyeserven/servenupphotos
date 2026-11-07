@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { EquipmentInfoPane } from "@portfolio/components/equipment-info-pane";
 import { EquipmentList } from "@portfolio/components/equipment-list";
 import { InfoButton } from "@portfolio/components/info-button";
@@ -87,7 +87,10 @@ function setEnds(values: string[], range: string | undefined): [string, string] 
   return parseRange(range) ?? [values[0] ?? "", values.at(-1) ?? ""];
 }
 
-/** A camera setting's slider, with its quick picks listed under it. */
+/**
+ * A camera setting's slider, with its quick picks listed under it. Pointing at a quick pick moves
+ * the handles and the info pane's graphics to its range until the pointer leaves it.
+ */
 function RangePart({
   setting,
   filters,
@@ -98,6 +101,11 @@ function RangePart({
 }: PickerPartProps & { setting: RangeKey }) {
   const label = RANGE_LABELS[setting];
   const set = (range: string | undefined) => onChange({ [setting]: range });
+  const [previewed, setPreviewed] = useState<string | undefined>();
+  const point = (range: string | undefined) => {
+    setPreviewed(range);
+    onDrag(parseRange(range));
+  };
   return (
     <div className="flex flex-col gap-3">
       <PartTitle label={label} on={graphics} onClick={() => onGraphics(!graphics)} />
@@ -105,6 +113,7 @@ function RangePart({
         label={label}
         values={RANGE_VALUES[setting]}
         range={filters[setting]}
+        preview={previewed}
         write={writeSetting(setting)}
         onDrag={onDrag}
         onChange={set}
@@ -114,6 +123,7 @@ function RangePart({
         presets={RANGE_PRESETS[setting]}
         range={filters[setting]}
         onChange={set}
+        onPoint={point}
       />
     </div>
   );
@@ -124,7 +134,7 @@ interface AsideProps extends CameraPickerProps {
   section: CameraSection;
   /** The camera or lens pointed at, if any. */
   pointed?: FilterOption;
-  /** A slider's ends while a handle is dragged, if one is. */
+  /** A slider's ends while a handle is dragged or a quick pick pointed at, if one is. */
   dragged?: [string, string];
 }
 
@@ -151,7 +161,10 @@ function EquipmentAside({
   return <EquipmentInfoPane equipment={equipment} option={pointed ?? chosen} />;
 }
 
-/** Graphics of what a setting's ends look like: the handles' while dragged, else the filter's. */
+/**
+ * Graphics of what a setting's ends look like: the handles' while dragged or a quick pick's while
+ * it's pointed at, else the filter's.
+ */
 function RangeAside({
   setting,
   dragged,

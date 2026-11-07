@@ -217,10 +217,10 @@ says which filters hide it: each one that, cleared alone, would let it show phot
 "the other filters together" when no single one would. The **(i)** button across from the
 **Cameras** or **Lenses** title opens the picker's info pane (see [Picker conventions](#picker-conventions)), the same
 one the settings' graphics use, with the details of the camera or lens pointed at, or else
-the chosen one: its own picture (the 200px-tall crop) and description from the pipeline's [Gear Pictures](gear-pictures.md) page, or else a
+the chosen one: its own sized picture (exactly 267 × 200) and description from the pipeline's [Gear Pictures](gear-pictures.md) page, or else a
 drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name) (for a lens, a side view of it,
 longer for a longer focal length and with a zoom ring when it zooms). A camera then lists its kind, how many photos
-used it, with which lenses, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
+used it, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
 widest aperture, read from its name, and how many photos used it, on which cameras, at which focal length most, and
 from when to when. A group, such as a brand, has no details. The four camera settings each have a slider with a handle
 at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
@@ -229,7 +229,7 @@ The URL changes once a handle is let go, keeping the range's ends as the photos 
 `?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. Each setting's title sits above its slider, which has a tick under it for every step and its lowest and highest values
 at its ends. The **(i)** button across from the title opens the info pane with little
 graphics of what its two ends look like, following the handles as they're dragged: the angle of view for focal length, the opening for aperture beside a person in front of trees whose blur grows as the f-number drops, a dial
-filled for longer exposures, and grain for ISO, with a sentence on what the setting does. Clicking it again closes it;
+filled for longer exposures beside a moving ball that's sharp at a fast shutter and smeared into a streak at a slow one, and grain for ISO, with a sentence on what the setting does. Clicking it again closes it;
 the browser remembers which, for every setting. A
 photo without the setting isn't in any range.
 
@@ -263,13 +263,16 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
   slider. Each pick shows the lowest and highest values the photos actually have
   inside the group's range, not the range as it's set: a **Moderate** ISO group of 201 to 1600 shows **250 – 1600 ISO**
   when those are the photos' nearest values, and Wide angle's 10 to 24 mm shows **11mm – 24mm** when no photo was taken
-  at 10 mm. Choosing one moves the handles to those values (`?focalLength=11-24`); the list checks
+  at 10 mm. Pointing at one (or tabbing to it) previews it: the handles, the range written above them and the info
+  pane's graphics move to its values until the pointer leaves, without changing the URL. Choosing one moves the handles to those values (`?focalLength=11-24`); the list checks
   the one the slider is set to, and choosing that one again clears the slider. A group's range runs from the lowest to
   the highest end of its own range, its values and those of every group in it; a range with only a `min` runs up from
   it, and one with only a `max` up to it. A group no photo is in isn't listed.
 
 > **Frontend analogy:** a quick pick is a preset that calls the same `onChange` as letting go of the handles, so the
 > URL only ever holds the plain range; the list works out which one to check by comparing its range to the URL's.
+> Pointing at one is like a hover preview: the picker keeps the pointed-at range in local state and the slider and
+> graphics read it ahead of the URL's, the same way they follow a handle while it's dragged.
 
 ## Counts
 

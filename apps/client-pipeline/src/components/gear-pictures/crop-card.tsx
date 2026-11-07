@@ -21,7 +21,7 @@ const CHECKER = {
 const CHOSEN_OPACITY = 0.85;
 
 /** What the card is called, by the kind of gear it crops. */
-const TITLES: Record<GearKind, string> = { camera: "Camera crops", lens: "Lens crops" };
+const TITLES: Record<GearKind, string> = { camera: "Sized cameras", lens: "Sized lenses" };
 
 /**
  * Lines up every camera's (or lens's) crop at once, the normalizer for pictures that come in any
@@ -38,13 +38,14 @@ export function GearCropCard({ kind, files }: { kind: GearKind; files: GearFile[
       <CardHeader>
         <CardTitle>{TITLES[kind]}</CardTitle>
         <CardDescription>
-          Every picture drawn in one frame, so each gets the same size and place. Choose pictures to
-          unfade them; dragging, zooming, fitting and filling change all the chosen ones.
+          Every picture drawn in one frame, so each gets the same size and place: the portfolio
+          shows each sized version at exactly 267 × 200. Choose pictures to unfade them; dragging,
+          zooming, fitting and filling change all the chosen ones.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {bulk.entries.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No picture to crop yet.</p>
+          <p className="text-muted-foreground text-sm">No picture to size yet.</p>
         ) : (
           <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
             <div className="flex flex-col gap-3">
@@ -154,7 +155,7 @@ function useDrag(bulk: BulkCrop) {
 function CropPicks({ bulk }: { bulk: BulkCrop }) {
   return (
     <fieldset className="flex flex-col gap-1 text-sm">
-      <legend className="sr-only">Pictures to crop</legend>
+      <legend className="sr-only">Pictures to size</legend>
       <div className="text-muted-foreground mb-1 flex items-center gap-2 text-xs">
         <span className="mr-auto">{bulk.chosen.size} chosen</span>
         <button type="button" className="hover:underline" onClick={() => bulk.chooseAll(true)}>

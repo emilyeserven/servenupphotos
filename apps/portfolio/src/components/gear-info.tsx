@@ -81,7 +81,6 @@ function cameraRows(name: string): Detail[] {
   return [
     ["Kind", CAMERA_KIND_NAMES[cameraKind(name)]],
     ["Photos", String(use.count)],
-    ["Lenses", listText(use.lenses)],
     ["Taken", takenText(use.first, use.last)],
   ];
 }

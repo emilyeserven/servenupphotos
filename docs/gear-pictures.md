@@ -45,7 +45,11 @@ Saving or removing one (`PUT /api/gear/<id>` → `PUT /gear/{id}`, `DELETE /api/
 the files under **Gear pictures**. Locally, `pnpm photos:local` also makes `GEAR.local.json`, which the portfolio uses
 in place of the committed file.
 
-## The picture and its crop
+## The picture and its sized version
+
+The page calls a picture's crop its **sized** version: every one comes out exactly 267 × 200, and the portfolio shows
+only sized pictures, at exactly that size, so they all match. A file whose picture isn't sized yet (one saved before
+sizing, with no `crop`) shows the drawing in the portfolio until it's sized.
 
 The crop is a normalizer: pictures come from store pages in any size, shape and format, and every crop comes out the
 same 267 × 200 WEBP with the gear the same size and place in it.
@@ -79,9 +83,9 @@ the limit lines, as soon as it's uploaded), **Use the drawing** to clear it, and
 **Save changes**) and **Remove picture** keep the file as a change waiting for Commit. The pipeline's own Gallery shows
 the committed pictures, since it imports the portfolio's filters.
 
-### Crops
+### Sizing
 
-Under them, **Camera crops** (or **Lens crops**, following the tab) lines up every picture of that kind at once, not
+Under them, **Sized cameras** (or **Sized lenses**, following the tab) lines up every picture of that kind at once, not
 one camera's. It's a frame the shape of the 267 × 200 crop with every picture drawn in it by its crop, faint, with
 **Others** setting how faint, and dashed lines across the middle. The list beside it chooses pictures (**All**,
 **None**, or one by one): the chosen ones are drawn on top, mostly opaque (85%, so the others still show through a little), and everything done in the frame changes all of
@@ -94,5 +98,5 @@ crops back as saved. A picture from before crops starts at its whole picture, so
 the space past it shaded, to fit every picture inside. The limits are a preference kept in this browser's local
 storage (`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files.
 
-The list marks each picture whose crop has changed, and **Cut and save** cuts every changed crop, chosen or not, and
-saves its file, one after another, each a change waiting for Commit.
+The list marks each picture whose crop has changed, and **Save N sized pictures** cuts every changed crop, chosen or
+not, into its sized version and saves its file, one after another, each a change waiting for Commit.

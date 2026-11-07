@@ -75,9 +75,9 @@ function croppedFile(entry: CropEntry, image: string): GearFile {
   return { ...entry.file, image, original: entry.original, crop: entry.crop };
 }
 
-/** "1 crop" or "3 crops". */
-function cropsText(count: number): string {
-  return `${count} ${count === 1 ? "crop" : "crops"}`;
+/** "1 sized picture" or "3 sized pictures". */
+function sizedText(count: number): string {
+  return `${count} sized ${count === 1 ? "picture" : "pictures"}`;
 }
 
 /**
@@ -105,8 +105,8 @@ export function SaveCrops({ bulk }: { bulk: BulkCrop }) {
       <Button disabled={changed.length === 0 || run.isPending} onClick={() => run.mutate(changed)}>
         <Busy busy={run.isPending} />
         {run.isPending
-          ? `Cutting ${done + 1} of ${changed.length}…`
-          : `Cut and save ${cropsText(changed.length)}`}
+          ? `Sizing ${done + 1} of ${changed.length}…`
+          : `Save ${sizedText(changed.length)}`}
       </Button>
       <SaveNote error={run.error} why="" />
     </div>
