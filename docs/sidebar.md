@@ -13,7 +13,7 @@ Below them every page is listed under its section:
 | Pipeline      | Photos in Flight, Compare, Lightroom Albums                                                                                              |
 | Organize      | Albums (Album Suggestions), Tags (Small Tags, Tag Data), Genres (Genre Suggestions), Places (Location Names, Bulk Places, Localizations) |
 | Publish       | Instagram (Planned Posts, Caption Templates), Site Spotlight, User Likes                                                                 |
-| Configuration | Settings (Explore Bucket, Manage Sizes), Update Data, Metadata Groups, Camera Overrides, Timeline Labels                                 |
+| Configuration | Settings (Status, Explore Bucket, Manage Sizes), Update Data (each of its subpages), Metadata Groups, Camera Overrides, Timeline Labels  |
 
 ## Submenus
 

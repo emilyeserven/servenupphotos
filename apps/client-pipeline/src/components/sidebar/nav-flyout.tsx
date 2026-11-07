@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Popover as PopoverPrimitive } from "radix-ui";
 import { type ReactNode, useRef, useState } from "react";
 import { Popover, PopoverContent } from "@/components/ui/popover";
-import { isUnder, type NavPage } from "@/components/sidebar/nav-groups";
+import { isUnder, pagePath, type NavPage } from "@/components/sidebar/nav-groups";
 import { cn } from "@/lib/utils";
 
 /** How long the flyout stays after the pointer leaves, so it can cross the gap to the flyout. */
@@ -40,11 +40,29 @@ export function NavFlyout({ page, pathname, trigger }: NavFlyoutProps) {
         onBlur={hide}
       >
         {[page, ...(page.children ?? [])].map((p, i) => (
-          <FlyoutLink key={p.url} page={p} active={isUnder(pathname, p.url)} heading={i === 0} />
+          <FlyoutLink
+            key={pagePath(p)}
+            page={p}
+            active={activeIn(pathname, p, page)}
+            heading={i === 0}
+          />
         ))}
       </PopoverContent>
     </Popover>
   );
+}
+
+/**
+ * Whether a flyout link is the open page: the page itself only while none of the pages under it is
+ * open, so /update-data/colors marks Colors and not Update Data too.
+ */
+function activeIn(pathname: string, link: NavPage, parent: NavPage) {
+  if (link !== parent) return isUnder(pathname, pagePath(link));
+  return isUnder(pathname, pagePath(parent)) && !inChildren(pathname, parent);
+}
+
+function inChildren(pathname: string, page: NavPage) {
+  return (page.children ?? []).some((c) => isUnder(pathname, pagePath(c)));
 }
 
 function FlyoutLink({
@@ -59,6 +77,7 @@ function FlyoutLink({
   return (
     <Link
       to={page.url}
+      params={{ section: page.section }}
       className={cn(
         "hover:bg-accent flex items-center gap-2 rounded-sm px-2 py-1.5 text-xs [&>svg]:size-4",
         active && "bg-accent font-medium",

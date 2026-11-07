@@ -30,6 +30,7 @@ import {
   TagsIcon,
 } from "lucide-react";
 import type { FileRoutesByTo } from "@/routeTree.gen";
+import { updateDataSections } from "@/components/update-data/sections";
 
 /** A page in the sidebar, with the icon it has when collapsed. */
 export interface NavPage {
@@ -37,6 +38,8 @@ export interface NavPage {
   title: string;
   /** Where it opens; pages under this URL, such as an album's, show as this page. */
   url: keyof FileRoutesByTo;
+  /** The subpage a `$section` URL opens, such as `image-names` for `/update-data/$section`. */
+  section?: string;
   icon: LucideIcon;
   /** Pages listed under it in its submenu, such as Small Tags under Tags. */
   children?: readonly NavPage[];
@@ -130,13 +133,29 @@ export const navGroups: readonly NavGroup[] = [
           { title: "Manage Sizes", url: "/sizes", icon: ScalingIcon },
         ],
       },
-      { title: "Update Data", url: "/update-data", icon: RefreshCwIcon },
+      {
+        title: "Update Data",
+        url: "/update-data",
+        icon: RefreshCwIcon,
+        // Its subpages, the same list as its own side navigation.
+        children: updateDataSections.map((section) => ({
+          title: section.title,
+          url: "/update-data/$section" as const,
+          section: section.slug,
+          icon: section.icon,
+        })),
+      },
       { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
       { title: "Camera Overrides", url: "/camera-overrides", icon: CameraIcon },
       { title: "Timeline Labels", url: "/timeline-labels", icon: CalendarRangeIcon },
     ],
   },
 ];
+
+/** The path a sidebar page opens, with its `$section` filled in. */
+export function pagePath(page: NavPage): string {
+  return page.section ? page.url.replace("$section", page.section) : page.url;
+}
 
 /** Whether the open page is this sidebar page or one under it, such as an Update Data subpage. */
 export function isUnder(pathname: string, url: string) {
@@ -145,7 +164,9 @@ export function isUnder(pathname: string, url: string) {
 
 /** Whether the open page is this sidebar page, one under it, or one in its submenu. */
 export function isWithin(pathname: string, page: NavPage): boolean {
-  return isUnder(pathname, page.url) || (page.children ?? []).some((c) => isWithin(pathname, c));
+  return (
+    isUnder(pathname, pagePath(page)) || (page.children ?? []).some((c) => isWithin(pathname, c))
+  );
 }
 
 /** Where the open page is in the sidebar: its section, and the page with the one in its submenu after it. */
