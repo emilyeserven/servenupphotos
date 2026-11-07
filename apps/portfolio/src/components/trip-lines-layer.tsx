@@ -1,4 +1,5 @@
 import { Layer, type LayerProps, Source } from "@vis.gl/react-maplibre";
+import { TripArrowsLayer } from "@/components/trip-arrows-layer";
 import { areaEdgePaint, areaFillPaint, tripColors, useIsDark } from "@/lib/map-theme";
 import type { PlacedPhoto } from "@/lib/map-photos";
 import { type TripLinesMap, useShownTripLines } from "@/lib/trip-lines-map";
@@ -77,20 +78,37 @@ function isFeature(kind: "visit" | "fence") {
 /**
  * The trip lines of the days the map's photos were taken, from TRIPLINES.geo.json: walks in blue,
  * drives in long gray dashes, a Trip's ferries in teal dots and flights as pink dashed arcs, hops along a transit line in its color and others dashed, places visited as amber dots, and areas
- * shaded light blue. Nothing while `show` is off or there are none.
+ * shaded light blue, with arrows the way each was travelled when `arrows` is on. Nothing while
+ * `show` is off or there are none.
  */
-export function TripLinesLayer({ photos, show }: { photos: PlacedPhoto[]; show: boolean }) {
+export function TripLinesLayer({
+  photos,
+  show,
+  arrows,
+}: {
+  photos: PlacedPhoto[];
+  show: boolean;
+  /** Whether arrows along the lines show the way they were travelled. */
+  arrows: boolean;
+}) {
   const data = useShownTripLines(photos, show);
   const dark = useIsDark();
-  return data ? <TripLinesSource data={data} dark={dark} /> : null;
+  return data ? <TripLinesSource data={data} dark={dark} arrows={arrows} /> : null;
 }
 
-function TripLinesSource({ data, dark }: { data: TripLinesMap; dark: boolean }) {
+interface TripLinesSourceProps {
+  data: TripLinesMap;
+  dark: boolean;
+  arrows: boolean;
+}
+
+function TripLinesSource({ data, dark, arrows }: TripLinesSourceProps) {
   return (
     <Source id="trip-lines" type="geojson" data={data}>
       {layers(dark).map((layer) => (
         <Layer key={layer.id} {...layer} />
       ))}
+      {arrows && <TripArrowsLayer dark={dark} />}
     </Source>
   );
 }

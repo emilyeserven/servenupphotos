@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { createContext, type ReactNode, use, useMemo } from "react";
 import { tripColors, useIsDark } from "@/lib/map-theme";
+import { fitView } from "@/lib/fit-view";
 import { type RouteSketch, SKETCH_SIZE, type SketchLine, routeSketch } from "@/lib/route-sketch";
 import { type TripMapFeature, useTripLinesMap } from "@/lib/trip-lines-map";
 
@@ -39,7 +40,7 @@ export function RouteSketches({ children }: { children: ReactNode }) {
 
 /**
  * A day's route as a small sketch, in the same line styles as the Map, linking to the Map on that
- * day; nothing for a day without a trip line.
+ * day, zoomed to fit its whole line; nothing for a day without a trip line.
  */
 export function TimelineRouteSketch({ day }: { day: string }) {
   const sketch = use(SketchesContext).get(day);
@@ -47,7 +48,7 @@ export function TimelineRouteSketch({ day }: { day: string }) {
   return (
     <Link
       to="/map"
-      search={{ day }}
+      search={{ day, ...fitView(sketch.bounds, window.innerWidth, window.innerHeight) }}
       aria-label="Show this day's route on the map"
       title="Show this day's route on the map"
       className="-my-1 ml-auto shrink-0 rounded-sm bg-muted/60 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring max-[359px]:hidden"
