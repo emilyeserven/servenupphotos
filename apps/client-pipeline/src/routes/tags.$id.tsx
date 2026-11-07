@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { TagCrumbs } from "@/components/sidebar/route-crumbs";
 import { GroupDetailPage } from "@/components/group-detail";
 
 export const Route = createFileRoute("/tags/$id")({
   component: TagDetailPage,
-  staticData: { wide: true },
+  staticData: { wide: true, crumbs: TagCrumbs },
 });
 
 function TagDetailPage() {

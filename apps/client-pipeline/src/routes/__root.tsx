@@ -3,6 +3,7 @@ import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import type * as React from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { NavBreadcrumbs } from "@/components/sidebar/nav-breadcrumbs";
+import type { RouteCrumbs } from "@/components/sidebar/route-crumbs";
 import { InFlightBackupKeeper } from "@/components/in-flight-backup-keeper";
 import { CombinedDataSync } from "@/components/combined-data-sync";
 import { SyncStatus } from "@/components/sync-status";
@@ -19,8 +20,10 @@ declare module "@tanstack/react-router" {
   interface StaticDataRouteOption {
     /** Lays the page out in a wider column. */
     wide?: boolean;
-    /** The name of a page under one in the sidebar, such as "Import", shown after it in the breadcrumb. */
-    subpage?: string;
+    /**
+     * The breadcrumbs after the sidebar's pages, such as an album's name or a day's Route page.
+     */
+    crumbs?: RouteCrumbs;
   }
 }
 

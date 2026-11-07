@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { TripDayCrumbs } from "@/components/sidebar/route-crumbs";
 import { TripDayPage } from "@/components/trip-lines/day-page";
 import { isDayPart, parseTripDaySearch } from "@/lib/trip-lines-search";
 
@@ -14,4 +15,5 @@ export const Route = createFileRoute("/trip-lines/$day/$part")({
     });
   },
   component: TripDayPage,
+  staticData: { crumbs: TripDayCrumbs },
 });

@@ -57,14 +57,35 @@ tag tools do under **Tools** in the Tags submenu (`heading` on the page in `navG
 the page instead, open while the page or one in its submenu is showing, and the arrow shows or hides it.
 
 A submenu page keeps its own URL (Explore Bucket is still `/bucket`); it only sits under another in the sidebar and
-the breadcrumbs, which read **Organize › Tags › Small Tags**, with the middle page a link back to it. On a phone only
-the open page shows in the breadcrumbs.
+the breadcrumbs, which read **Organize › Tags › Small Tags**, with the middle page a link back to it.
 
 The pages, their icons and their submenus are `navGroups` in `components/sidebar/nav-groups.ts`; a new page needs one
 entry there, with an icon, and its `url` is checked against the route tree.
 
 > **Frontend analogy:** it's one nested config array that both the sidebar and the breadcrumbs map over, like a
 > `routes` config in a router that also drives the menu.
+
+## Breadcrumbs
+
+The header's breadcrumbs start with the open page's sidebar section and page, and a route adds its own after them with
+`staticData.crumbs` (`components/sidebar/route-crumbs.tsx`). Every breadcrumb but the last links back to its page;
+on a phone only the last shows.
+
+| Page                          | Breadcrumbs                                                      |
+| ----------------------------- | ---------------------------------------------------------------- |
+| An album, tag or genre        | **Organize › Albums › Japan › Tokyo** (an album's parents link)  |
+| A day's page on Trip Lines    | **Configuration › Trip Lines › Thu, Oct 1, 2026 › Route**        |
+| A Trip                        | **Configuration › Trip Lines › Trips › Japan**                   |
+| Trip Lines' Trips tab         | **Configuration › Trip Lines › Trips**                           |
+| Lightroom Albums' Import page | **Pipeline › Lightroom Albums › Import**                         |
+| Dashboard, Bulk Upload        | **Dashboard**, **Bulk Upload** (the sidebar's header opens them) |
+
+A route's `crumbs` is a small component that reads what it needs, such as the album's name, and hands the list to
+the breadcrumbs, so a name shows as soon as the data is read (the ID until then). `fixedCrumbs("Import")` makes one
+for names that never change.
+
+> **Frontend analogy:** it's a render prop: the route supplies a component that calls its own hooks and passes its
+> crumbs to a callback, so the header never calls a hook that changes from page to page.
 
 ## Collapsing
 

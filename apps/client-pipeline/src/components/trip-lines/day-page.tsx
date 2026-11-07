@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** What each of a day's pages is called in its tabs. */
-const PART_LABELS: Record<DayPart, string> = {
+export const PART_LABELS: Record<DayPart, string> = {
   order: "Photo order",
   route: "Route",
   places: "Places",
