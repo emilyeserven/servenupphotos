@@ -28,6 +28,7 @@ import { Route as LocationNamesRouteImport } from './routes/location-names'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SimilarPhotosRouteImport } from './routes/similar-photos'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as SmallTagsRouteImport } from './routes/small-tags'
@@ -142,6 +143,11 @@ const PlacesRoute = PlacesRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SimilarPhotosRoute = SimilarPhotosRouteImport.update({
+  id: '/similar-photos',
+  path: '/similar-photos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SiteSpotlightRoute = SiteSpotlightRouteImport.update({
@@ -265,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
+  '/similar-photos': typeof SimilarPhotosRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -306,6 +313,7 @@ export interface FileRoutesByTo {
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
+  '/similar-photos': typeof SimilarPhotosRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -346,6 +354,7 @@ export interface FileRoutesById {
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
+  '/similar-photos': typeof SimilarPhotosRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -389,6 +398,7 @@ export interface FileRouteTypes {
     | '/metadata-groups'
     | '/places'
     | '/settings'
+    | '/similar-photos'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -430,6 +440,7 @@ export interface FileRouteTypes {
     | '/metadata-groups'
     | '/places'
     | '/settings'
+    | '/similar-photos'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -469,6 +480,7 @@ export interface FileRouteTypes {
     | '/metadata-groups'
     | '/places'
     | '/settings'
+    | '/similar-photos'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -511,6 +523,7 @@ export interface RootRouteChildren {
   MetadataGroupsRoute: typeof MetadataGroupsRoute
   PlacesRoute: typeof PlacesRoute
   SettingsRoute: typeof SettingsRoute
+  SimilarPhotosRoute: typeof SimilarPhotosRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
   SmallTagsRoute: typeof SmallTagsRoute
@@ -662,6 +675,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/similar-photos': {
+      id: '/similar-photos'
+      path: '/similar-photos'
+      fullPath: '/similar-photos'
+      preLoaderRoute: typeof SimilarPhotosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/site-spotlight': {
@@ -854,6 +874,7 @@ const rootRouteChildren: RootRouteChildren = {
   MetadataGroupsRoute: MetadataGroupsRoute,
   PlacesRoute: PlacesRoute,
   SettingsRoute: SettingsRoute,
+  SimilarPhotosRoute: SimilarPhotosRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
   SmallTagsRoute: SmallTagsRoute,

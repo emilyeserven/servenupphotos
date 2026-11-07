@@ -32,6 +32,9 @@ arrow keys, swiping and **Esc** keep working while they're hidden, and the viewe
 
 The **heart** button, left of the eye button, likes the photo or takes the like back.
 
+The short tab with an up arrow under the photo opens the **More like this** drawer of similar photos; see
+[More Like This](more-like-this.md).
+
 | Page         | The photos it moves through                                                                                              |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | Grid         | Every photo, in the chosen sort (newest or oldest first)                                                                 |
