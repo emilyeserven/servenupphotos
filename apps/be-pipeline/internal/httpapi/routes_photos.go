@@ -10,7 +10,7 @@ import (
 func registerPhotoRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("POST /upload", handleUpload(d.store.R2, storage.UploadPhoto, d.colors))
 	mux.HandleFunc("POST /photos/versions/{version}", handleVersionPreview)
-	mux.HandleFunc("POST /photos/github", handlePublishPhoto(d.store, d.gh, colorReader(d.store.R2, storage.GetPhoto, d.colors)))
+	mux.HandleFunc("POST /photos/github", handlePublishPhoto(d.store, d.gh, colorReader(d.store.R2, storage.GetPhoto, d.colors), d.hashes))
 	mux.HandleFunc("POST /photos/all-photos/check", handleAllPhotosCheck(d.store, d.gh))
 	mux.HandleFunc("GET /photos/combined", handleCombined(d.store, d.gh))
 	mux.HandleFunc("GET /photos/combined/status", handleCombinedStatus(d.store, d.gh))
