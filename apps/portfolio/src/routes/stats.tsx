@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, Hash } from "lucide-react";
 import { type ReactNode, useState } from "react";
+import { ShowInGrid } from "@/components/show-in-grid";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { type FocusChain, type StatFocus, StatGroupCard } from "@/components/stat-group";
 import { filterWithCamera } from "@/lib/camera-filters";
@@ -202,14 +203,19 @@ function groupPhotos(chain: Step[]): Photo[] {
 
 /** One section, such as Gear, with its groups as cards: each chain of narrowing groups on a row of its own. */
 function StatsSection({ section, state }: { section: StatSection; state: PageState }) {
+  const runs = sectionRuns(section.groups);
+  const only = runs.length === 1 ? runs[0] : undefined;
   return (
     <section id={section.id} aria-labelledby={`${section.id}-title`} className="scroll-mt-20">
-      <h2 id={`${section.id}-title`} className="text-xl font-semibold tracking-tight">
-        {section.title}
-      </h2>
+      <div className="flex items-center justify-between gap-2">
+        <h2 id={`${section.id}-title`} className="text-xl font-semibold tracking-tight">
+          {section.title}
+        </h2>
+        {only && <ShowInGrid filter={runFilter(only, state)} />}
+      </div>
       <p className="mt-1 mb-4 text-sm text-muted-foreground">{section.description}</p>
       <div className="flex flex-col gap-4">
-        {sectionRuns(section.groups).map((run, _, runs) => (
+        {runs.map((run) => (
           <GroupRun key={run.defs[0]!.id} run={run} state={state} boxed={runs.length > 1} />
         ))}
       </div>
@@ -257,7 +263,9 @@ const CHAIN_COLUMNS: Record<number, string> = { 2: "lg:grid-cols-2", 3: "lg:grid
 /**
  * A row of cards. A chain, such as Year, Season and Month, has a bar from each card to the one it
  * narrows, and linked cards a short one between each: across on a desktop, down on a phone. A
- * titled run sits in a box under its title, unless it's the section's only run.
+ * titled run sits in a box under its title, unless it's the section's only run, with a Show in Grid
+ * button opposite the title once a value is chosen on its cards; the section's only run has it
+ * opposite the section's title.
  */
 function GroupRun({ run, state, boxed }: { run: Run; state: PageState; boxed: boolean }) {
   const cards = run.defs.map((def, index) => (
@@ -279,14 +287,45 @@ function GroupRun({ run, state, boxed }: { run: Run; state: PageState; boxed: bo
       {cards}
     </div>
   );
-  return boxed ? <RunBox title={run.title}>{row}</RunBox> : row;
+  if (!boxed) return row;
+  return (
+    <RunBox title={run.title} button={<ShowInGrid filter={runFilter(run, state)} />}>
+      {row}
+    </RunBox>
+  );
 }
 
-/** A run's box, in a shade a little off the page, with its title above its cards. */
-function RunBox({ title, children }: { title?: string; children: ReactNode }) {
+/**
+ * The Grid's filter for a run's photos: every value chosen on its linked cards, or every row
+ * chosen down its chain; undefined for cards on their own.
+ */
+function runFilter(run: Run, state: PageState): Record<string, unknown> | undefined {
+  if (run.kind === "linked") return linkFilter(run.defs.flatMap((def) => linkOf(def, state.links)));
+  return focusChain(run.defs.at(-1)!.id, state.focuses).at(-1)?.filter;
+}
+
+/** The row chosen on a linked card, as a list of it or of none. */
+function linkOf(def: GroupDef, links: Links): StatFocus[] {
+  const link = links[def.id];
+  return link ? [link] : [];
+}
+
+/** A run's box, in a shade a little off the page, with its title and Show in Grid button above its cards. */
+function RunBox({
+  title,
+  button,
+  children,
+}: {
+  title?: string;
+  button: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-muted p-3 sm:p-4">
-      {title && <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>}
+      <div className="flex min-h-7 items-center justify-between gap-2">
+        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
+        {button}
+      </div>
       {children}
     </div>
   );

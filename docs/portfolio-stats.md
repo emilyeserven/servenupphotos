@@ -61,6 +61,12 @@ The bars run across on a desktop and down on a phone. Each row of either kind si
 **Lenses**, **Exposure Triangle** or **Calendar** (Year, Season, Month), except in a section that has nothing else, such as
 Places. The other cards share a grid below.
 
+Once a value is chosen on a box's cards, a **Show in Grid** button appears opposite the box's title (for Places, opposite
+the section's title). It opens the Grid with every choice in that box applied together: the whole chain down for Filter
+down cards, such as `/grid?country=Japan&city=Hagi`, or every linked card's choice, such as
+`/grid?aperture=2-2.4&iso=100-200`. Like the "in" links, a chain choosing more than one kind of place opens the photos
+by ID.
+
 A row opens its photos on the Grid: hovering it turns its count into **See More (37) →** without moving the number
 (the ") →" after it always takes its space), and a click opens the Grid filtered to it, such as `/grid?city=Hagi`,
 `/grid?season=summer`, `/grid?hour=17&hour=18&hour=19&hour=20` for Evening, or `/grid?start=2024-01-01&end=2024-12-31`
