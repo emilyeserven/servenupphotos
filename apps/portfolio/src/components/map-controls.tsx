@@ -1,5 +1,6 @@
 import type { LngLatBounds } from "maplibre-gl";
 import { BrowseInViewButton } from "@/components/browse-in-view-button";
+import { CopyMapLinkButton } from "@/components/copy-map-link-button";
 import { MapDisplayOptions } from "@/components/map-display-options";
 import { MapLegend } from "@/components/map-legend";
 import { MapViewControls } from "@/components/map-view-controls";
@@ -19,7 +20,7 @@ import { useShownArea } from "@/lib/place-areas";
 /**
  * The map's controls under its title: **Places**, which moves the map to a place and shades its
  * area while it's pointed at and once it's picked, when it has one (see place-areas.ts), the zoom-out button, the display options, then
- * **More filters** (Groups, When and Visuals), **View in grid** and **Browse**. The map's
+ * **More filters** (Groups, When and Visuals), **View in grid**, **Browse** and **Copy link**. The map's
  * key, in its bottom left corner, is drawn from here too, as it explains the shaded place area.
  */
 export function MapControls({
@@ -75,6 +76,7 @@ export function MapControls({
       >
         <ViewInGridButton filters={gridLink(gridFiltersFor(drawn, view, filters), visuals)} />
         <BrowseInViewButton photos={browsable} onOpen={onBrowse} />
+        <CopyMapLinkButton drawn={drawn} view={view} />
       </MoreFilterControls>
     </MapViewControls>
   );
