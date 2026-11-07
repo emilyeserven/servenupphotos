@@ -32,9 +32,9 @@ const SECTIONS: [VisualSection, string, (filters: VisualFilters) => string][] = 
   ["orientation", "Orientation", orientationText],
 ];
 
-/** How photos match the color, such as "Largest color" or "At least 30%". */
+/** How photos match the color, as a short sentence: "Color is the largest" or "Color is 30%+ of photo". */
 function matchText({ match, min = DEFAULT_PERCENT }: VisualFilters): string {
-  return match === "threshold" ? `At least ${min}%` : "Largest color";
+  return match === "threshold" ? `Color is ${min}%+ of photo` : "Color is the largest";
 }
 
 /** The vividness measure and the least a photo needs, such as "Peak · 40+". */
@@ -152,7 +152,7 @@ function SectionTab({
       )}
     >
       <span className="font-medium">{label}</span>
-      <span className="w-full truncate text-xs text-muted-foreground">{text}</span>
+      <span className="line-clamp-2 w-full text-xs text-muted-foreground">{text}</span>
     </button>
   );
 }
