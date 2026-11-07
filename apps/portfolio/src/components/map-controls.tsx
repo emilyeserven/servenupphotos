@@ -2,6 +2,7 @@ import type { LngLatBounds } from "maplibre-gl";
 import { BrowseInViewButton } from "@/components/browse-in-view-button";
 import { MapDayFilter } from "@/components/map-day-filter";
 import { MapDisplayOptions } from "@/components/map-display-options";
+import { MapLegend } from "@/components/map-legend";
 import { MapViewControls } from "@/components/map-view-controls";
 import { MapPlacePicker } from "@/components/map-place-picker";
 import { PlaceAreaLayer } from "@/components/place-area-layer";
@@ -18,7 +19,8 @@ import { useShownArea } from "@/lib/place-areas";
 /**
  * The map's controls under its title: **Places**, which moves the map to a place and shades its
  * area while it's pointed at and once it's picked, when it has one (see place-areas.ts), the zoom-out button, the display options, then
- * **More filters** (the days in view, album, tag and genre), **View in grid** and **Browse**.
+ * **More filters** (the days in view, album, tag and genre), **View in grid** and **Browse**. The map's
+ * key, in its bottom left corner, is drawn from here too, as it explains the shaded place area.
  */
 export function MapControls({
   search,
@@ -68,6 +70,7 @@ export function MapControls({
     >
       <PlaceAreaLayer {...area.shown} />
       <TripLinesLayer photos={drawn} show={display.tripLines} />
+      <MapLegend photos={drawn} display={display} area={area.shown} />
       <MapDisplayOptions display={display} onChange={onDisplayChange} />
       <MoreFilterControls
         photos={placedPhotos}

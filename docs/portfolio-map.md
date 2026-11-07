@@ -119,9 +119,28 @@ draws them (`lib/trip-lines-map.ts`):
 - Places visited are amber dots.
 - Areas that photos without an exact spot were taken in are shaded light blue, like a place's area.
 
-**Trip lines** in the display options turns them off. The lines, stations and areas come from OpenStreetMap data,
+**Trip lines** in the display options turns them off, and takes them out of the [key](#key) too. The lines, stations and areas come from OpenStreetMap data,
 under the [ODbL](https://www.openstreetmap.org/copyright); the basemap's attribution (the ⓘ in the corner) already
 credits OpenStreetMap's contributors, which covers them.
 
 > **Frontend analogy:** the map reads a build artifact. The pipeline compiles each day's line into one GeoJSON file at
 > Commit, and the portfolio only renders it, the way a static site renders prebuilt JSON instead of calling an API.
+
+## Key
+
+A **Key** panel in the map's bottom left corner explains what the map draws (`components/map-legend.tsx`). It lists
+only the kinds of thing the map draws for its photos, whether or not they're in view (`lib/map-legend.ts`), so the
+filters and the day filter change it:
+
+- The pins: **Photo** (a square pin with a white edge), **Group of photos** (a round marker with its count, whenever
+  there are at least two photos), **Photo placed by its area** (a faded edge) and **Photo without an image yet** (a
+  small light-blue dot).
+- Then, under a divider, the trip lines of the photos' days when **Trip lines** is on: **Walk**, **Bus, subway or
+  train** (a sample in the colors of the lines ridden), **Other trip** (dashed), **Place visited** and **Area**.
+  **Area** also shows while a place's area is shaded from **Places**.
+
+The samples use the same colors as the map in light and dark mode (`lib/map-theme.ts`). The **Key** button folds the
+panel down to itself; it starts open on wider screens and folded on phones, and is remembered in this browser.
+
+> **Frontend analogy:** the key is derived state, like a filter chip list built from the current results. It reads the
+> same trip line data and photos as the map's layers and keeps only the entries that would render something.

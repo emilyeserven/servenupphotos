@@ -35,12 +35,27 @@ const AREA_COLORS = {
 
 /** An area's fill paint: more opaque while it's pointed at. */
 export function areaFillPaint(dark: boolean, hovered = false) {
-  const colors = dark ? AREA_COLORS.dark : AREA_COLORS.light;
+  const colors = areaColors(dark);
   return { "fill-color": colors.fill, "fill-opacity": hovered ? 0.35 : 0.22 };
 }
 
 /** An area's dashed edge paint. */
 export function areaEdgePaint(dark: boolean) {
-  const colors = dark ? AREA_COLORS.dark : AREA_COLORS.light;
+  const colors = areaColors(dark);
   return { "line-color": colors.edge, "line-width": 2, "line-dasharray": [3, 2] };
+}
+
+/**
+ * The trip lines' colors that change with dark mode: walks, hops with no transit line picked, and the
+ * edge around a place visited, which matches the basemap. Places visited are amber in both.
+ */
+export function tripColors(dark: boolean) {
+  return dark
+    ? { walk: "#60a5fa", hop: "#c084fc", visit: "#f59e0b", visitEdge: "#171717" }
+    : { walk: "#2563eb", hop: "#9333ea", visit: "#f59e0b", visitEdge: "#ffffff" };
+}
+
+/** The colors of an area: its fill and its dashed edge. */
+export function areaColors(dark: boolean) {
+  return dark ? AREA_COLORS.dark : AREA_COLORS.light;
 }
