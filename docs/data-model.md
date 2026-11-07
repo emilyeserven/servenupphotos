@@ -97,6 +97,10 @@ date, link, caption and hashtags; see [Publish](publish.md#social-media-posts). 
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).
 
+A photo's `pickedSimilar` and `similarPhotos` are the IDs its portfolio **More like this** drawer shows: the ones picked
+by hand first, then the ones **Find similar photos** found, best first; see [More Like This](more-like-this.md). Older
+files may be missing them, which means none.
+
 A photo's `compareGroup` names the [compare group](compare-groups.md) it's in, and `compareWinner: true` marks one
 picked to post; both are left out or `null` otherwise. A photo that wasn't chosen has `unselected` (why, the IDs of the
 winners, the group, the day and what's left in R2), which keeps it out of `ALLPHOTOS.json`; see

@@ -25,6 +25,11 @@ import {
 import { canonicalJson } from "@/lib/combined";
 import { type Crop, sameCrop } from "@/lib/crop";
 import { type ReEditDraft, reEditChanged, withReEdit } from "@/lib/re-edit";
+import {
+  pickedIds,
+  picksChanged,
+  withPickedSimilar,
+} from "@/components/similar-photos/similar-ids";
 import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
 import { UNDECIDED } from "@/lib/undecided";
@@ -187,13 +192,15 @@ function placesChanged(data: PhotoJson, details: PhotoDetails): boolean {
 
 /**
  * What the Photo page edits besides the crop: the details, albums and tags, social media posts, the
- * re-edit mark, and the fields the camera overrides change once they're applied (null until they are).
+ * re-edit mark, the hand-picked similar photos, and the fields the camera overrides change once they're applied (null until they are).
  */
 export interface EditedFields {
   details: PhotoDetails;
   groups: PhotoGroups;
   socialPosts: SocialPostDraft[];
   reEdit: ReEditDraft;
+  /** The photos picked by hand for its More like this drawer, by ID, in order. */
+  pickedSimilar: number[];
   overrides: Record<string, unknown> | null;
 }
 
@@ -205,6 +212,7 @@ export function fieldsChanged(data: PhotoJson, fields: EditedFields) {
     () => !sameGroups(savedGroups(data), fields.groups),
     () => socialPostsChanged(data, fields.socialPosts),
     () => reEditChanged(data, fields.reEdit),
+    () => picksChanged(pickedIds(data), fields.pickedSimilar),
   ];
   return checks.some((changed) => changed());
 }
@@ -250,13 +258,16 @@ export function photoFile(saved: PhotoJson): string {
  */
 export function saveRequest(
   saved: PhotoJson,
-  { details, groups, socialPosts, reEdit, overrides }: EditedFields,
+  { details, groups, socialPosts, reEdit, pickedSimilar, overrides }: EditedFields,
   crop: Crop | null,
   baseline: Crop | null,
   remakeSquares: boolean,
 ): SaveRequest {
   const grouped = withGroups(withDetails(saved, details), groups);
-  const edited = withReEdit(withSocialPosts(grouped, socialPosts), reEdit);
+  const edited = withPickedSimilar(
+    withReEdit(withSocialPosts(grouped, socialPosts), reEdit),
+    pickedSimilar,
+  );
   const data = withNamed(saved, details.title, { ...edited, ...overrides });
   return remakeSquares ? { crop, data } : { crop: null, data: withCropField(data, baseline) };
 }

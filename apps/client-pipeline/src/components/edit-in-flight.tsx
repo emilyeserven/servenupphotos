@@ -14,6 +14,7 @@ import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-d
 import { QueryResult } from "@/components/query-result";
 import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
+import { PickedSimilarCard } from "@/components/similar-photos/picked-similar-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -190,6 +191,12 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           photo={edit.next ?? edit.savedData}
         />
         <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
+        <PickedSimilarCard
+          saved={edit.savedData}
+          value={edit.pickedSimilar}
+          onChange={edit.setPickedSimilar}
+          disabled={pending}
+        />
         <LensCards edit={edit} disabled={pending} />
         <JsonPreview file={editable.file} edit={edit} />
       </div>

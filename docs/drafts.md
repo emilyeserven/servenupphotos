@@ -31,6 +31,8 @@ GitHub settings' `includeUntitled` (`false` by default) and changes what the nex
 - **Photos in Flight** can set any photo aside in its [Undecided](photos-in-flight.md#undecided) queue, titled or not.
 - **Photos in Flight** marks a draft **Draft, not on the portfolio** instead of the `ALLPHOTOS.json` check mark, and the
   sync button's panel counts it as synced, since `ALLPHOTOS.json` isn't missing anything.
+- **All Photos** can show drafts and Undecided photos among the published ones, where they'd go, and each draft
+  elsewhere has **See in All Photos** to open it there (see [All Photos](all-photos.md)).
 - **Gallery** lists drafts on the base branch too (it reads the photos folder, not `ALLPHOTOS.json`), marked **Draft**.
 - The **Instagram calendar** lists drafts with a **Draft** label. A draft can be scheduled, and can be in an album
   a spotlight zone shows, but the portfolio skips it until it has a title. The calendar's count of

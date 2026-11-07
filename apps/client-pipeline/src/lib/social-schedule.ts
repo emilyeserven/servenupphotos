@@ -88,7 +88,7 @@ export function pickerChoices(
 }
 
 /** The photo's JSON with its last change waiting for Commit or local edit made, if any. */
-function currentData(photo: SocialPhoto, changed: Map<string, unknown>): unknown {
+export function currentData(photo: SocialPhoto, changed: Map<string, unknown>): unknown {
   return changed.has(photo.path) ? changed.get(photo.path) : photo.data;
 }
 

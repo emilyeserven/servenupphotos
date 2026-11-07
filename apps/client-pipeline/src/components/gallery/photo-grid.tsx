@@ -120,7 +120,7 @@ function PhotoCard({ file, images, likes, selected, onToggle }: PhotoCardProps) 
         <PlaceGpsMark file={file} />
         <InFlightMark status={file.inFlight} />
         <UnselectedMark file={file}>
-          <DraftMark data={file.data} />
+          <DraftMark data={file.data} path={file.path} />
         </UnselectedMark>
         <ReEditMark data={file.data} />
         <div className="mt-auto flex flex-wrap items-center gap-2">

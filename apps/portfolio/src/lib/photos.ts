@@ -77,6 +77,11 @@ export interface Photo {
    */
   spotlightPlace: number | null;
   tags: string[];
+  /**
+   * The IDs of the photos its More like this drawer shows, in order: the ones picked by hand, then
+   * the ones the pipeline found, each once. Empty until the pipeline has found any.
+   */
+  similar: number[];
   /** The IDs of the photographic genres it's in, such as "street"; empty for older entries. */
   genres: string[];
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
@@ -285,6 +290,10 @@ interface PhotoData {
   genres?: string[];
   /** The photo's color summary, saved by the pipeline; older entries don't have it. */
   colors?: PhotoColorData | null;
+  /** The IDs of the photos picked by hand on the pipeline's Similar Photos page, shown first in More like this. */
+  pickedSimilar?: number[];
+  /** The IDs of the photos most like it, best first, as the pipeline's Find Similar Photos saved them. */
+  similarPhotos?: number[];
 }
 
 // ALLPHOTOS.local.json is made by `pnpm photos:local` (which `pnpm dev` runs) and git-ignored, so
@@ -667,10 +676,13 @@ function groupFields({
   spotlightFocus = null,
   spotlightPlacement = null,
   spotlightZoneFocus = {},
+  pickedSimilar = [],
+  similarPhotos = [],
 }: PhotoData) {
   return {
     albums,
     tags,
+    similar: [...new Set([...pickedSimilar, ...similarPhotos])],
     genres,
     spotlightPlace: websiteSpotlight,
     spotlightFocus,

@@ -8,8 +8,10 @@ import {
   CameraIcon,
   DatabaseIcon,
   FolderTreeIcon,
+  GalleryHorizontalIcon,
   HeartIcon,
   ImageIcon,
+  ImagesIcon,
   LanguagesIcon,
   LayoutGridIcon,
   LightbulbIcon,
@@ -59,6 +61,7 @@ export const navGroups: readonly NavGroup[] = [
     items: [
       { title: "Photo", url: "/exif", icon: ImageIcon },
       { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
+      { title: "All Photos", url: "/all-photos", icon: ImagesIcon },
     ],
   },
   {
@@ -118,6 +121,7 @@ export const navGroups: readonly NavGroup[] = [
         ],
       },
       { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
+      { title: "Similar Photos", url: "/similar-photos", icon: GalleryHorizontalIcon },
       { title: "User Likes", url: "/viewer-likes", icon: HeartIcon },
     ],
   },

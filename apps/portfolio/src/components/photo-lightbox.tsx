@@ -4,6 +4,7 @@ import { Dialog } from "radix-ui";
 import { type KeyboardEvent, type ReactNode, useRef, useState } from "react";
 import { CopyPhotoLinkButton } from "@/components/copy-photo-link-button";
 import { LikeBurst, LikeButton } from "@/components/like-button";
+import { MoreLikeThis, toggleMoreLikeThis } from "@/components/more-like-this";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
@@ -75,16 +76,29 @@ export function PhotoLightbox({
             event.preventDefault();
             opener.current?.focus();
           }}
-          onKeyDown={(event) => runKey(event, { ...steps.keys, h: toggleBare, H: toggleBare })}
+          onKeyDown={(event) =>
+            runKey(event, { ...steps.keys, ...drawerKeys(bare), h: toggleBare, H: toggleBare })
+          }
           className={cn("fixed inset-0 z-50 flex flex-col text-white outline-none", FADE)}
         >
           {photo && (
-            <LightboxBody photo={photo} steps={steps} bare={bare} onToggleBare={toggleBare} />
+            <LightboxBody
+              photo={photo}
+              steps={steps}
+              bare={bare}
+              onToggleBare={toggleBare}
+              onShow={onShow}
+            />
           )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
+}
+
+/** The M key, which opens or closes the More like this drawer, while it's shown (not bare). */
+function drawerKeys(bare: boolean): Record<string, () => void> {
+  return bare ? {} : { m: toggleMoreLikeThis, M: toggleMoreLikeThis };
 }
 
 /** Runs the step for the key pressed, if there is one, instead of what the key would do. */
@@ -102,17 +116,23 @@ interface LightboxBodyProps {
   bare: boolean;
   /** Hides the details and buttons from the hide button, or shows them again from a tap on the photo. */
   onToggleBare: () => void;
+  /** Shows another photo, such as one from the More like this drawer, which is left out without it. */
+  onShow?: (photo: ImagePhoto) => void;
 }
 
 /**
- * The caption and buttons over the photo, with the previous and next buttons beside it, or just
- * the photo, filling the window, when they're hidden.
+ * The caption and buttons over the photo, with the previous and next buttons beside it and the
+ * More like this drawer below it, or just the photo, filling the window, when they're hidden.
  */
-function LightboxBody({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
+function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBodyProps) {
+  const showDetails = !bare;
   return (
     <>
-      {!bare && <LightboxHeader photo={photo} position={steps.position} onHide={onToggleBare} />}
+      {showDetails && (
+        <LightboxHeader photo={photo} position={steps.position} onHide={onToggleBare} />
+      )}
       <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
+      {showDetails && onShow && <MoreLikeThis photo={photo} onShow={onShow} />}
     </>
   );
 }

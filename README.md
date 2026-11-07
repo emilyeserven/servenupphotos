@@ -86,6 +86,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio homepage](docs/portfolio-homepage.md) (`/` on the portfolio): the ways to explore, over the album picked on Site Spotlight
 - [Portfolio Filters](docs/portfolio-filters.md): filtering the portfolio's views by place, album and tag (plus camera, lens and settings on the Grid), kept in the URL across views
 - [Photo Viewer](docs/photo-viewer.md): the portfolio's full-window photo, and moving between photos with the arrow keys
+- [More Like This](docs/more-like-this.md) (`/similar-photos` in the pipeline): the photo viewer's drawer of similar photos, found by the backend or picked by hand
 - [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, technical info, and picking a range on the graph or the heatmap
 - [Portfolio Grid](docs/portfolio-grid.md) (`/grid` on the portfolio): square and natural tiles (vertical photos in rows of their own) and the Table view, with its sorting, Columns menu and place names
 - [Portfolio Lucky](docs/portfolio-lucky.md) (`/lucky` on the portfolio): whole rows of photos picked at random from the ones the filters leave, with Shuffle
@@ -106,6 +107,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
+- [All Photos](docs/all-photos.md) (`/all-photos`): every photo in the portfolio's order, sorted any way, with drafts and Undecided photos shown among them and a box to jump to each
 - [Compare groups](docs/compare-groups.md) (`/compare`): putting Gallery and in-flight photos in groups to weigh them side by side and pick the ones to post, and Unselected Photos for the rest, with why and what's kept in R2; only in the pipeline
 - [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
