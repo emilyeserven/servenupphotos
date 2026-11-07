@@ -8,7 +8,7 @@ import {
 } from "@/api/photos";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
-import { imagesKnown, MissingImageDrafts } from "@/components/missing-image-drafts";
+import { MissingImageDrafts } from "@/components/missing-image-drafts";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
@@ -97,7 +97,7 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
       >
         <DraftSortToggle sort={sort} />
       </PhotoFilterBar>
-      <MissingImageDrafts files={missing} />
+      <MissingImageDrafts files={missing} images={data.images} />
       <UndecidedQueue
         files={drafts.filter((file) => undecided.has(file.path))}
         images={data.images}
@@ -110,14 +110,13 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
 }
 
 /**
- * The drafts with an image in R2, and the ones without, which are listed apart. While R2 couldn't
- * be searched, none are listed apart.
+ * The drafts that can be edited (their image is in R2), and the ones that can't, which are listed
+ * apart so the main list only has drafts with Edit.
  */
 function splitMissing(
   files: PublishedFile[],
   images: InFlightImages,
 ): [PublishedFile[], PublishedFile[]] {
-  if (!imagesKnown(images)) return [files, []];
   const missing = (file: PublishedFile) => images.byPath[file.path] === undefined;
   return [files.filter((file) => !missing(file)), files.filter(missing)];
 }

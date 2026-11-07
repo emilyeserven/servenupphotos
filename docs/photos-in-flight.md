@@ -81,10 +81,11 @@ Gallery's `GET /api/photos/published`): the Undecided ones in the **Undecided** 
 the rest under **Drafts on `<branch>`**, each with **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
 back**. Naming one and saving it puts it back in flight, and Commit sends it to a new pull request. A draft that
 lost in a [compare group](compare-groups.md#unselected-photos) isn't listed here, as soon as its group is finished; it's
-in Unselected Photos instead, and comes back here if it's moved back. A draft whose image isn't in R2 (once R2 has been searched,
-or its offline copy read) goes in a collapsed **Not in R2** panel above the others instead: usually it lost in a
-compare group and had its images deleted without being marked. **Move all to Unselected Photos** marks each one as
-unselected with no group or winners and its images deleted, which takes it out of the drafts. Nothing is listed when untitled photos aren't kept
+in Unselected Photos instead, and comes back here if it's moved back. A draft that can't be edited, because its image wasn't found in
+R2, goes in a collapsed **Can't be edited** panel above the others, so the main list only has drafts with **Edit**.
+Usually it lost in a compare group and had its images deleted without being marked. When R2 was searched (or its
+offline copy read), **Move all to Unselected Photos** marks each one as unselected with no group or winners and its
+images deleted, which takes it out of the drafts; when R2 couldn't be searched, the panel says so instead. Nothing is listed when untitled photos aren't kept
 as drafts.
 
 The drafts have their own filter bar, with the same filters as the photos in flight, kept in the URL under a `draft`
