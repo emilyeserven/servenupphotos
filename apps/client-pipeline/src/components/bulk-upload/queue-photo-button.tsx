@@ -47,7 +47,7 @@ interface QueuePhotoButtonProps {
 /**
  * Floated next to the sync button: hands the photo to the upload queue, which uploads it to R2 and
  * saves its JSON in the background, so the page can be left right away. The flyout shows how it's
- * going, as the Status page does.
+ * going, as the Dashboard does.
  */
 export function QueuePhotoButton({ photo, onQueued }: QueuePhotoButtonProps) {
   const queryClient = useQueryClient();
@@ -69,7 +69,7 @@ function QueueIntro() {
   return (
     <p className="text-muted-foreground">
       Uploads the photo to R2 with this square, then saves its JSON with its title, albums, tags and
-      genres to the batch. It keeps going after you leave this page; the Status page shows how it's
+      genres to the batch. It keeps going after you leave this page; the Dashboard shows how it's
       doing.
     </p>
   );

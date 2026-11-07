@@ -77,7 +77,7 @@ export function UploadQueueSection({ onNavigate }: { onNavigate: () => void }) {
           onClick={onNavigate}
           className="text-muted-foreground underline underline-offset-4"
         >
-          Status
+          Dashboard
         </Link>
       </div>
       <div className="max-h-64 overflow-y-auto">

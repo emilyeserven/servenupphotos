@@ -40,6 +40,7 @@ import { Route as GenresIndexRouteImport } from './routes/genres.index'
 import { Route as GenresIdRouteImport } from './routes/genres.$id'
 import { Route as LightroomAlbumsIndexRouteImport } from './routes/lightroom-albums.index'
 import { Route as LightroomAlbumsImportRouteImport } from './routes/lightroom-albums.import'
+import { Route as SettingsStatusRouteImport } from './routes/settings_.status'
 import { Route as TagDataIndexRouteImport } from './routes/tag-data.index'
 import { Route as TagDataSectionRouteImport } from './routes/tag-data.$section'
 import { Route as TagsIndexRouteImport } from './routes/tags.index'
@@ -202,6 +203,11 @@ const LightroomAlbumsImportRoute = LightroomAlbumsImportRouteImport.update({
   path: '/lightroom-albums/import',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsStatusRoute = SettingsStatusRouteImport.update({
+  id: '/settings_/status',
+  path: '/settings/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TagDataIndexRoute = TagDataIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -262,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/settings/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
@@ -299,6 +306,7 @@ export interface FileRoutesByTo {
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/settings/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
@@ -339,6 +347,7 @@ export interface FileRoutesById {
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/settings_/status': typeof SettingsStatusRoute
   '/tag-data/$section': typeof TagDataSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
@@ -380,6 +389,7 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/settings/status'
     | '/tag-data/$section'
     | '/tags/$id'
     | '/update-data/$section'
@@ -417,6 +427,7 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/settings/status'
     | '/tag-data/$section'
     | '/tags/$id'
     | '/update-data/$section'
@@ -456,6 +467,7 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/settings_/status'
     | '/tag-data/$section'
     | '/tags/$id'
     | '/update-data/$section'
@@ -496,6 +508,7 @@ export interface RootRouteChildren {
   AlbumsIdRoute: typeof AlbumsIdRoute
   GenresIdRoute: typeof GenresIdRoute
   LightroomAlbumsImportRoute: typeof LightroomAlbumsImportRoute
+  SettingsStatusRoute: typeof SettingsStatusRoute
   TagsIdRoute: typeof TagsIdRoute
   AlbumsIndexRoute: typeof AlbumsIndexRoute
   GenresIndexRoute: typeof GenresIndexRoute
@@ -722,6 +735,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LightroomAlbumsImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings_/status': {
+      id: '/settings_/status'
+      path: '/settings/status'
+      fullPath: '/settings/status'
+      preLoaderRoute: typeof SettingsStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tag-data/': {
       id: '/tag-data/'
       path: '/'
@@ -823,6 +843,7 @@ const rootRouteChildren: RootRouteChildren = {
   AlbumsIdRoute: AlbumsIdRoute,
   GenresIdRoute: GenresIdRoute,
   LightroomAlbumsImportRoute: LightroomAlbumsImportRoute,
+  SettingsStatusRoute: SettingsStatusRoute,
   TagsIdRoute: TagsIdRoute,
   AlbumsIndexRoute: AlbumsIndexRoute,
   GenresIndexRoute: GenresIndexRoute,

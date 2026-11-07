@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "@tanstack/react-router";
 import { ImagesIcon, UploadIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { BulkUploadPanel } from "@/components/bulk-upload/bulk-upload-panel";
+import { BulkUploadDialog } from "@/components/bulk-upload/bulk-upload-dialog";
 import { DropZone } from "@/components/bulk-upload/drop-zone";
 import { Button } from "@/components/ui/button";
 import {
@@ -94,24 +94,6 @@ function SingleUploadDialog({
             onClose();
           }}
         />
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function BulkUploadDialog({ open, onClose }: UploadDialogProps) {
-  return (
-    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Bulk Upload</DialogTitle>
-          <DialogDescription>
-            Each photo gets its file name as its title and the middle square as its Square
-            Thumbnail; change either afterward with Edit. This closes once they're added, and the
-            sync button shows how the uploads are going.
-          </DialogDescription>
-        </DialogHeader>
-        <BulkUploadPanel onAdded={onClose} />
       </DialogContent>
     </Dialog>
   );

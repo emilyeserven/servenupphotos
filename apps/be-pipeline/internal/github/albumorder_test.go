@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestSetAlbumOrder(t *testing.T) {
@@ -59,6 +60,10 @@ func TestSetSpotlightAlbum(t *testing.T) {
 	if got.Files != 2 || !strings.Contains(after["data/albums/japan.json"], `"spotlightZones": ["homepage"]`) ||
 		!strings.Contains(after["data/albums/korea.json"], `"spotlightZones": []`) {
 		t.Errorf("SetSpotlightAlbum() = %v, want homepage moved from korea to japan", after)
+	}
+	if day := c.now().Format(time.DateOnly); !strings.Contains(after["data/albums/japan.json"], `"spotlightUpdated": {"homepage":"`+day+`"}`) ||
+		strings.Contains(after["data/albums/korea.json"], "spotlightUpdated") {
+		t.Errorf("SetSpotlightAlbum() = %v, want only japan dated %s", after, day)
 	}
 
 	none, err := c.SetSpotlightAlbum(t.Context(), organizeGH, "homepage", "")

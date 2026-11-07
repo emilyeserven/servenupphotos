@@ -75,7 +75,7 @@ interface TopListProps {
 }
 
 /** A numbered list of up to 3 albums, or a line saying there are none. */
-function TopList({ title, albums, showStage = false, offline }: TopListProps) {
+export function TopList({ title, albums, showStage = false, offline }: TopListProps) {
   return (
     <section className="flex flex-col gap-2">
       <h3 className="text-sm font-medium">{title}</h3>

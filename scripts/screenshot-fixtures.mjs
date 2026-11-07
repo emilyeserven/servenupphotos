@@ -98,6 +98,7 @@ const added = {
       description: "Two weeks in Seoul.",
       parent: null,
       spotlightZones: ["homepage"],
+      spotlightUpdated: { homepage: "2026-10-26" },
     },
   },
   tag: {

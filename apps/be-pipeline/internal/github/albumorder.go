@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"maps"
 	"net/http"
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
@@ -17,7 +19,9 @@ import (
 const (
 	orderKey          = "order"
 	spotlightZonesKey = "spotlightZones"
-	photoOrderKey     = "photoOrder"
+	// spotlightUpdatedKey holds the day each spot was last given to the album.
+	spotlightUpdatedKey = "spotlightUpdated"
+	photoOrderKey       = "photoOrder"
 )
 
 // AlbumsResult says which album files a change to several albums saved.
@@ -88,8 +92,9 @@ func checkPhotoOrder(photoIDs []int) *PublishError {
 
 // SetSpotlightAlbum makes album the one whose photos the portfolio's spot
 // zone shows, adding zone to its file's "spotlightZones" and taking it out of
-// every other album's, in the pending changes. An empty album leaves the spot
-// without one.
+// every other album's, in the pending changes. The album also gets today's
+// date for zone in its "spotlightUpdated", which the Dashboard shows. An empty
+// album leaves the spot without one.
 func (c *Client) SetSpotlightAlbum(ctx context.Context, gh settings.GitHub, zone, album string) (AlbumsResult, error) {
 	zone, album = strings.TrimSpace(zone), strings.TrimSpace(album)
 	if !groupIDPattern.MatchString(zone) {
@@ -109,9 +114,25 @@ func (c *Client) SetSpotlightAlbum(ctx context.Context, gh settings.GitHub, zone
 	for _, a := range albums {
 		if edit, ok := zoneEdit(a, zone, a.ID == album); ok {
 			edits = append(edits, edit)
+			edits = appendDateEdit(edits, a, zone, a.ID == album, c.now())
 		}
 	}
 	return c.saveAlbumEdits(w, edits)
+}
+
+// appendDateEdit adds the edit that records now as the day zone was given to
+// album, when in says it was; edits is returned as it was otherwise.
+func appendDateEdit(edits []albumEdit, album Group, zone string, in bool, now time.Time) []albumEdit {
+	if !in {
+		return edits
+	}
+	dates := maps.Clone(album.SpotlightUpdated)
+	if dates == nil {
+		dates = map[string]string{}
+	}
+	dates[zone] = now.Format(time.DateOnly)
+	value, _ := json.Marshal(dates)
+	return append(edits, albumEdit{album: album, key: spotlightUpdatedKey, value: value})
 }
 
 // zoneEdit is the edit that puts album in zone, or takes it out, and false
