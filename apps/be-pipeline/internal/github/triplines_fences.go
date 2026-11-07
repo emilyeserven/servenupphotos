@@ -111,7 +111,7 @@ func (w *workspace) photoDays() map[int]string {
 			continue
 		}
 		if taken, ok := photoTaken(photo); ok {
-			days[*photo.ID] = taken.Format(labelDateLayout)
+			days[*photo.ID] = taken.Format(dayLayout)
 		}
 	}
 	return days

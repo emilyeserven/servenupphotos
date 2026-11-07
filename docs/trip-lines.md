@@ -10,7 +10,7 @@ every day's line, with its photos' spots filled in, into one file the portfolio'
 ## The file
 
 Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** combines them into
-`triplines/TRIPLINES.json` the way it combines the timeline labels into `TIMELINE.json`:
+`triplines/TRIPLINES.json` the way it combines the [Trips](trips.md) into `TIMELINE.json`:
 
 ```json
 {
@@ -148,12 +148,12 @@ list.
 The pages keep what's chosen in their URL, so a link or a reload opens them the same way (`lib/trip-lines-search.ts`,
 read by each route's `validateSearch`):
 
-| Param   | Where    | What it opens                                                       | Unless set |
-| ------- | -------- | ------------------------------------------------------------------- | ---------- |
-| `tab`   | The list | `trips` for the Trips tab                                           | Days       |
-| `show`  | The list | The day list's filter: `marked`, `out-of-date`, `automatic`, `none` | All        |
-| `trip`  | The list | The Trip chosen on the Trips tab, by its ID                         | The newest |
-| `group` | A day    | The group shown alone on the map (the eye), by its name             | None       |
+| Param   | Where    | What it opens                                                           | Unless set |
+| ------- | -------- | ----------------------------------------------------------------------- | ---------- |
+| `tab`   | The list | `trips` for the Trips tab                                               | Days       |
+| `show`  | The list | The day list's filter: `marked`, `out-of-date`, `automatic`, `none`     | All        |
+| `trip`  | The list | A Trip on the Trips tab, from an older link: opens [its page](trips.md) | None       |
+| `group` | A day    | The group shown alone on the map (the eye), by its name                 | None       |
 
 For example, `/trip-lines?show=out-of-date` or `/trip-lines/2026-09-29/route?group=Engyoji%20Temple`. Clicks replace
 the history entry rather than adding one, so Back leaves the page. A new Trip isn't in the URL until it's saved. A link
@@ -278,47 +278,8 @@ backend checks that each photo was taken that day and each ring is closed and on
 
 ## Trips
 
-A day's line can't cross midnight, so the ferries and flights between days go in a **Trip**: a run of days with the
-legs travelled between them, such as the ferry from Busan to Fukuoka. The **Trips** tab on the Trip Lines page lists
-them. **New Trip** starts one with a name and its first and last days, or **From a timeline label…** copies a label's
-name and days, since a label like "Japan" usually is the trip. Two Trips can't share a day.
-
-Each leg has a mode (**Ferry**, **Flight**, **Train**, **Bus** or **Car**), the day it **Leaves** and the day it
-**Arrives**. Days can be skipped, such as a flight out on the first day and home on the last. A leg leaves from the
-day's last photo with an exact spot and arrives at the day's first, or from or to **A spot with no photo**, such as an
-airport or "Home", typed as a label and `latitude, longitude`. The row shows the photo it uses and how far the leg is
-in a straight line.
-
-A Trip is saved in the trip lines folder as `trip-<slug>.json`, so it's listed, combined into `TRIPLINES.json` and
-committed with the days' lines (`PUT` and `DELETE /api/trips/<id>`, `be-pipeline/internal/github/trips.go`):
-
-```json
-{
-  "id": "trip-japan-2026-09-22",
-  "name": "Japan",
-  "start": "2026-09-22",
-  "end": "2026-10-02",
-  "legs": [
-    {
-      "mode": "flight",
-      "from": {
-        "day": "2026-09-22",
-        "spot": { "latitude": 40.6413, "longitude": -73.7781, "label": "JFK" }
-      },
-      "to": { "day": "2026-10-01" }
-    },
-    { "mode": "ferry", "from": { "day": "2026-10-01" }, "to": { "day": "2026-10-02" } }
-  ]
-}
-```
-
-Commit bakes each leg into `TRIPLINES.geo.json` as a line with its `trip`, the `day` it left and the day it `arrive`d,
-counted as `tripLegs` (`trips_map.go`). A flight is drawn as a gentle arc bowed toward the nearer pole, the way a great
-circle looks on a flat map, and crosses the date line rather than going around the world the other way. A leg whose
-day has no photo with an exact spot, and no spot of its own, isn't drawn.
-
-> **Frontend analogy:** a Trip is like a layout route wrapping several pages: each day still renders its own line, and
-> the Trip only adds what sits between them.
+A day's line can't cross midnight, so the ferries and flights between days are the legs of a [Trip](trips.md), on the
+Trips tab. Commit bakes them into `TRIPLINES.geo.json` with the days' lines.
 
 ## Groups
 

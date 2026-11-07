@@ -128,7 +128,7 @@ function SavedRules({
   );
 }
 
-/** The timeline labels in the combined lists, with the changes waiting for Commit; none until read. */
+/** The Trips in the combined lists, with the changes waiting for Commit; none until read. */
 function useCombinedLabels(): TimelineLabel[] {
   const { data } = useCombinedData();
   return data ? labelsOf(currentLists(data)) : [];
@@ -181,7 +181,7 @@ function MatchPreview({
   if (count === 0) {
     return (
       <p className="text-muted-foreground">
-        Set a timeline label, a day or one of the filters to pick the album's photos.
+        Set a Trip, a day or one of the filters to pick the album's photos.
       </p>
     );
   }

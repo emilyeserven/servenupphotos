@@ -10,8 +10,6 @@ func registerTripLineRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("PUT /triplines/{day}", handleSaveTripLine(d.store, d.gh))
 	mux.HandleFunc("POST /triplines/{day}/route", handleRouteTripLine(d.store, d.gh, d.route))
 	mux.HandleFunc("DELETE /triplines/{day}", handleDeleteTripLine(d.store, d.gh))
-	mux.HandleFunc("PUT /trips/{id}", handleSaveTrip(d.store, d.gh))
-	mux.HandleFunc("DELETE /trips/{id}", handleDeleteTrip(d.store, d.gh))
 	mux.HandleFunc("PUT /tripstories/{id}", handleSaveTripStory(d.store, d.gh))
 	mux.HandleFunc("DELETE /tripstories/{id}", handleDeleteTripStory(d.store, d.gh))
 	mux.HandleFunc("GET /transit/lines", handleTransitLines(d.transit))

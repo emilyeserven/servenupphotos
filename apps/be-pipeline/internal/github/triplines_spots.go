@@ -69,7 +69,7 @@ func spotOf(data json.RawMessage, exact map[string]TripPoint) (tripSpot, bool) {
 	if !ok {
 		return tripSpot{}, false
 	}
-	return tripSpot{ID: *photo.ID, Day: taken.Format(labelDateLayout), Taken: taken, Latitude: at.Latitude, Longitude: at.Longitude}, true
+	return tripSpot{ID: *photo.ID, Day: taken.Format(dayLayout), Taken: taken, Latitude: at.Latitude, Longitude: at.Longitude}, true
 }
 
 // photoTaken is when photo was taken: its custom date, or else its EXIF one.

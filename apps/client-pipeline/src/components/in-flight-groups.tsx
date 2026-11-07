@@ -34,7 +34,7 @@ const GROUPS: [GroupKey, string][] = [
   ["cameras", "Camera overrides"],
   ["lenses", "Custom lenses"],
   ["captions", "Caption templates"],
-  ["timeline", "Timeline labels"],
+  ["timeline", "Trips"],
   ["likes", "User likes"],
   ["triplines", "Trip lines"],
   ["graphs", "Graph presets"],

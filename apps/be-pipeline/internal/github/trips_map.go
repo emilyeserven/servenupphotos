@@ -26,21 +26,32 @@ func bakeTrips(trips []Trip, spots map[int]tripSpot) []any {
 }
 
 // legEnd is where a leg's end is, as [longitude, latitude], its label, and
-// the photo it's at (0 for a spot with no photo). last picks the day's last
-// photo rather than its first. False when the day has no photo to use.
+// the photo it's at (0 for a spot with no photo). Without a photo of its
+// own, last picks the day's last photo rather than its first. False when the
+// day has no photo to use.
 func legEnd(end TripLegEnd, spots map[int]tripSpot, last bool) ([2]float64, string, int, bool) {
 	if end.Spot != nil {
 		return [2]float64{end.Spot.Longitude, end.Spot.Latitude}, end.Spot.Label, 0, true
 	}
+	s, ok := legPhoto(end, spots, last)
+	return [2]float64{s.Longitude, s.Latitude}, "", s.ID, ok
+}
+
+// legPhoto is the photo a leg's end uses: the one it names when that photo
+// has a spot on its day, or else the day's last or first. False when the day
+// has none.
+func legPhoto(end TripLegEnd, spots map[int]tripSpot, last bool) (tripSpot, bool) {
+	if s, ok := spots[end.Photo]; ok && end.Photo != 0 && s.Day == end.Day {
+		return s, true
+	}
 	day := spotsOn(spots, end.Day)
 	if len(day) == 0 {
-		return [2]float64{}, "", 0, false
+		return tripSpot{}, false
 	}
-	s := day[0]
 	if last {
-		s = day[len(day)-1]
+		return day[len(day)-1], true
 	}
-	return [2]float64{s.Longitude, s.Latitude}, "", s.ID, true
+	return day[0], true
 }
 
 // legFeature is leg of trip as a GeoJSON line, and false when either end has

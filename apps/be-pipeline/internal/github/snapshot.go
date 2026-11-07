@@ -12,7 +12,7 @@ import (
 
 // snapshot is every file directly in the data folder's subfolders (photos,
 // albums, tags, genres, places, localizations, metadata groups, camera overrides,
-// custom lenses, caption templates, timeline labels, viewer likes, trip lines, graph presets and gear pictures) at one commit. A commit never
+// custom lenses, caption templates, Trips, viewer likes, trip lines, graph presets and gear pictures) at one commit. A commit never
 // changes, so a snapshot is read from GitHub once, with one GraphQL query, and
 // kept.
 type snapshot struct {
@@ -113,7 +113,7 @@ func (a snapshotAnswer) folders() map[string]treeAnswer {
 		PhotosFolder: r.Photos, Albums.Folder: r.Albums, Tags.Folder: r.Tags, Genres.Folder: r.Genres,
 		Places.Folder: r.Places, Localizations.Folder: r.Localizations, MetaInfo.Folder: r.MetaInfo,
 		Cameras.Folder: r.Cameras, Lenses.Folder: r.Lenses, Captions.Folder: r.Captions,
-		TimelineLabels.Folder: r.Timeline, ViewerLikesKind.Folder: r.Likes, TripLines.Folder: r.TripLines,
+		Trips.Folder: r.Timeline, ViewerLikesKind.Folder: r.Likes, TripLines.Folder: r.TripLines,
 		GraphPresets.Folder: r.Graphs, GearKind.Folder: r.Gear,
 	}
 }

@@ -4,7 +4,7 @@ import type { LegMode, TripLeg } from "@/api/trips";
 import { LegEndField } from "@/components/trips/leg-end";
 import { Button } from "@/components/ui/button";
 import type { TripDay } from "@/lib/trip-days";
-import { distanceKm, endPhoto, endPosition } from "@/lib/trip-legs";
+import { dayPhotos, distanceKm, endPhoto, endPosition } from "@/lib/trip-legs";
 
 /** The ways a leg can be travelled, as the menu lists them. */
 const LEG_MODES: { mode: LegMode; label: string }[] = [
@@ -63,6 +63,7 @@ export function LegRow({ leg, n, dates, days, onChange, onRemove }: LegRowProps)
           dates={dates}
           photo={fromPhoto}
           photoWord="last photo"
+          photos={dayPhotos(days, leg.from.day)}
           onChange={(from) => onChange({ ...leg, from })}
         />
         <LegEndField
@@ -71,6 +72,7 @@ export function LegRow({ leg, n, dates, days, onChange, onRemove }: LegRowProps)
           dates={dates.filter((d) => d >= leg.from.day)}
           photo={toPhoto}
           photoWord="first photo"
+          photos={dayPhotos(days, leg.to.day)}
           onChange={(to) => onChange({ ...leg, to })}
         />
       </div>

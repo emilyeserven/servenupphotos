@@ -20,7 +20,7 @@ function listOf<T>(data: unknown[] | undefined): T[] {
   return (data ?? []).filter((item) => typeof item === "object" && item !== null) as T[];
 }
 
-/** The timeline labels in the combined lists, for the Smart Albums' label rules. */
+/** The Trips (TIMELINE.json) in the combined lists, for the Smart Albums' Trip rules. */
 export function labelsOf(files: Pick<CombinedFiles, "timeline">): TimelineLabel[] {
   return listOf<TimelineLabel>(files.timeline.data);
 }

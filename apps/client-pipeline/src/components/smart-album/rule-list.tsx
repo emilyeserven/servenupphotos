@@ -26,7 +26,7 @@ const RULE_NAMES: Record<string, string> = {
   min: "Color share at least",
   vivid: "Vividness at least",
   measure: "Vividness measure",
-  label: "Timeline label",
+  label: "Trip",
   from: "Taken on or after",
   to: "Taken on or before",
 };
@@ -37,14 +37,14 @@ function valueText(key: string, value: unknown): string {
   return key === "ids" ? `${value.length} photos` : value.join(", ");
 }
 
-/** The timeline label's name, or its ID when it's gone. */
+/** The Trip's name, or its ID when it's gone. */
 function labelName(id: unknown, labels: TimelineLabel[]): string {
   return labels.find((label) => label.id === id)?.name ?? String(id);
 }
 
 /**
  * A Smart Album's rules as a list of what each filter is set to, such as "Tag: night", with the
- * timeline label by its name from labels.
+ * Trip by its name from labels.
  */
 export function RuleList({ rules, labels }: { rules: SmartRules; labels: TimelineLabel[] }) {
   return (

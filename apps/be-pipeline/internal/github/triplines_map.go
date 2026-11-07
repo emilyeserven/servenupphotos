@@ -66,7 +66,7 @@ func (w *workspace) addTripLinesMap(changes map[string][]byte, counts map[string
 	view := w.withChanges(changes)
 	spots := view.tripSpots(true)
 	m := bakeTripLines(view.tripLineFiles(), spots)
-	m.Features = append(m.Features, bakeTrips(tripsIn(view.entries(TripLines)), spots)...)
+	m.Features = append(m.Features, bakeTrips(view.allTrips(), spots)...)
 	b, err := json.Marshal(m)
 	if err != nil {
 		return publishErr(http.StatusInternalServerError, "Couldn't format %s.", TripLinesMapFile)

@@ -291,33 +291,6 @@ const added = {
         ],
       },
     },
-    {
-      path: `${FOLDER}/triplines/trip-japan-2026-09-22.json`,
-      data: {
-        id: "trip-japan-2026-09-22",
-        name: "Japan",
-        start: "2026-09-22",
-        end: "2026-10-02",
-        legs: [
-          {
-            mode: "flight",
-            from: {
-              day: "2026-09-22",
-              spot: { latitude: 40.6413, longitude: -73.7781, label: "JFK" },
-            },
-            to: { day: "2026-10-01" },
-          },
-          {
-            mode: "ferry",
-            from: { day: "2026-10-01" },
-            to: {
-              day: "2026-10-02",
-              spot: { latitude: 35.1028, longitude: 129.0403, label: "Busan Port" },
-            },
-          },
-        ],
-      },
-    },
   ],
   gear: [
     {
@@ -348,7 +321,30 @@ const added = {
   timeline: [
     {
       path: `${FOLDER}/timeline/japan-2026-09-22.json`,
-      data: { id: "japan-2026-09-22", name: "Japan", start: "2026-09-22", end: "2026-10-02" },
+      data: {
+        id: "japan-2026-09-22",
+        name: "Japan",
+        start: "2026-09-22",
+        end: "2026-10-02",
+        legs: [
+          {
+            mode: "flight",
+            from: {
+              day: "2026-09-22",
+              spot: { latitude: 40.6413, longitude: -73.7781, label: "JFK" },
+            },
+            to: { day: "2026-10-01" },
+          },
+          {
+            mode: "ferry",
+            from: { day: "2026-10-01" },
+            to: {
+              day: "2026-10-02",
+              spot: { latitude: 35.1028, longitude: 129.0403, label: "Busan Port" },
+            },
+          },
+        ],
+      },
     },
     {
       path: `${FOLDER}/timeline/korea-2026-09-20.json`,
@@ -1616,7 +1612,7 @@ export function defaultFixtures() {
       before: added.graphs[2].data,
       changed: true,
     }),
-    "PUT /api/timeline/japan-2026-09-22": ({ body }) => ({
+    "PUT /api/trips/japan-2026-09-22": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/timeline/japan-2026-09-22.json`,
       data: body,

@@ -25,7 +25,7 @@ type CombinedFiles struct {
 	Lenses InFlightAllPhotos `json:"lenses"`
 	// Captions is CAPTIONS.json, the caption templates.
 	Captions InFlightAllPhotos `json:"captions"`
-	// Timeline is TIMELINE.json, the timeline labels.
+	// Timeline is TIMELINE.json, the Trips.
 	Timeline InFlightAllPhotos `json:"timeline"`
 	// Likes is LIKES.json, the photos each viewer liked.
 	Likes InFlightAllPhotos `json:"likes"`
@@ -105,7 +105,7 @@ func combinedFiles(t target, root string, s *snapshot, branch string) CombinedFi
 		Cameras:       read(Cameras.Folder, Cameras.AllFile),
 		Lenses:        read(Lenses.Folder, Lenses.AllFile),
 		Captions:      read(Captions.Folder, Captions.AllFile),
-		Timeline:      read(TimelineLabels.Folder, TimelineLabels.AllFile),
+		Timeline:      read(Trips.Folder, Trips.AllFile),
 		Likes:         read(ViewerLikesKind.Folder, ViewerLikesKind.AllFile),
 		TripLines:     read(TripLines.Folder, TripLines.AllFile),
 		Graphs:        read(GraphPresets.Folder, GraphPresets.AllFile),

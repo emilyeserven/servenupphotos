@@ -23,7 +23,7 @@ const (
 // smartRuleKeys are the filters a Smart Album's rules can set, named as the
 // portfolio's URL names them: the Grid's places, album, tag, genre and
 // chosen photos; its camera, lens, setting, time of day and orientation
-// filters; its colors; and the timeline label and the first and last days.
+// filters; its colors; and the Trip (once a timeline label) and the first and last days.
 var smartRuleKeys = []string{
 	"country", "state", "city", "place", "album", "tag", "genre", "ids",
 	"camera", "lens", "cameraGroup", "lensGroup", "iso", "exposure", "focalLength", "aperture", "time", "orientation",

@@ -15,7 +15,7 @@ export function TripLinesPage() {
     <Page
       wide
       title="Trip Lines"
-      description="The route of a day, drawn on the portfolio's map: walking from photo to photo in the order they were taken, and hops by train, subway, bus or car between. Trips add the ferries and flights between days. Each day's line is one JSON file, combined into TRIPLINES.json, and Commit bakes them with their photos' spots into TRIPLINES.geo.json for the map."
+      description="The route of a day, drawn on the portfolio's map: walking from photo to photo in the order they were taken, and hops by train, subway, bus or car between. Trips name runs of days on the Timeline and add the ferries and flights between them. Each day's line is one JSON file, combined into TRIPLINES.json, and Commit bakes them with their photos' spots into TRIPLINES.geo.json for the map."
     >
       <GitHubGate>{() => <Days />}</GitHubGate>
     </Page>
@@ -46,7 +46,7 @@ function DaysAndTrips({ data }: { data: CombinedData }) {
         <DayCards data={data} />
       </TabsContent>
       <TabsContent value="trips">
-        <TripsPanel data={data} days={lineDays(data)} />
+        <TripsPanel data={data} />
       </TabsContent>
     </Tabs>
   );
