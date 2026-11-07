@@ -124,7 +124,7 @@ what it's for and, for Match and Vividness, what each choice does:
   share set on the slider, even when another color is bigger).
 - **Vividness**: **Average** (how vivid the whole photo is) or **Peak** (how vivid its most vivid tenth is), and the
   least of it a photo needs.
-- **Orientation**: the horizontal and vertical buttons (see
+- **Orientation**: a list of Horizontal, Vertical and Square (see
   [Camera filters](portfolio-filters.md#camera-filters)), each counting the photos the color filters leave.
 
 The picker opens on the first of Color, Vividness and Orientation that's set, and on Color when none is. The swatches

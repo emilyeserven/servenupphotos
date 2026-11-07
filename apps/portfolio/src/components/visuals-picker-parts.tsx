@@ -104,7 +104,7 @@ function VividPart({ filters }: VisualsPickerProps) {
   );
 }
 
-/** The horizontal and vertical buttons, each counting the photos the color filters leave. */
+/** The Horizontal, Vertical and Square choices, each counting the photos the color filters leave. */
 function OrientationPart({ photos, filters }: VisualsPickerProps) {
   const navigate = useNavigate();
   const set = (orientation: Orientation | undefined) =>
@@ -114,7 +114,7 @@ function OrientationPart({ photos, filters }: VisualsPickerProps) {
       search: (prev: Record<string, unknown>) => ({ ...prev, [ORIENTATION_KEY]: orientation }),
     });
   return (
-    <Part intro="Show only the photos wider than they're tall, or taller than they're wide. Square photos are neither.">
+    <Part intro="Show only the photos wider than they're tall, taller than they're wide, or square. Pick it again to clear it.">
       <OrientationFilter
         orientation={filters.orientation}
         counts={orientationCounts(filterByColors(photos, filters))}

@@ -141,11 +141,12 @@ photo without the setting isn't in any range.
 The hours of the day are in the [When](#when) picker, which every view with filters has.
 
 **Orientation** is a section of the **Visuals** picker (see
-[Portfolio Color](portfolio-color.md#on-the-grid-page)): a horizontal and a vertical rectangle button, each with how many photos the
-other filters (colors too) leave have that orientation. Clicking one shows only the photos wider than they're tall
-(`?orientation=horizontal`) or taller than they're wide (`?orientation=vertical`); clicking it again, or its X, clears
-it. A square photo is neither, so it's only shown while no orientation is chosen. The photo's size is the one its JSON
-file saves (`width` and `height`), so a photo not uploaded to R2 yet has no orientation either.
+[Portfolio Color](portfolio-color.md#on-the-grid-page)): a list of **Horizontal**, **Vertical** and **Square**, each
+drawn as an outlined shape of its proportions, with how many photos the other filters (colors too) leave have that
+orientation. Clicking one shows only the photos wider than they're tall (`?orientation=horizontal`), taller than
+they're wide (`?orientation=vertical`), or exactly as wide as they're tall (`?orientation=square`); clicking it again
+clears it. The photo's size is the one its JSON file saves (`width` and `height`), so a photo not uploaded to R2 yet
+has no orientation.
 
 The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and **Clear filters** clears them too.
 

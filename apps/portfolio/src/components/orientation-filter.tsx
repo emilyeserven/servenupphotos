@@ -1,23 +1,18 @@
-import { RectangleHorizontal, RectangleVertical } from "lucide-react";
-import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
-import { CONTROL_FRAME, controlButtonClass } from "@portfolio/lib/segmented-control";
+import { Check } from "lucide-react";
 import { ORIENTATIONS, type Orientation } from "@portfolio/lib/orientation";
+import { cn } from "@portfolio/lib/utils";
 
-/** Each orientation's name and its rectangle icon. */
-const ORIENTATION = {
-  horizontal: { label: "Horizontal", Icon: RectangleHorizontal },
-  vertical: { label: "Vertical", Icon: RectangleVertical },
-} as const;
-
-/** The orientation chosen, as the filter's top line names it, or "Any" when none is. */
-function chosenText(orientation: string | undefined): string {
-  return ORIENTATION[orientation as Orientation]?.label ?? "Any";
-}
+/** Each orientation's name, and the size of the shape drawn for it, in Tailwind units. */
+const ORIENTATION: Record<Orientation, { label: string; shape: string }> = {
+  horizontal: { label: "Horizontal", shape: "h-4 w-6" },
+  vertical: { label: "Vertical", shape: "h-6 w-4" },
+  square: { label: "Square", shape: "size-5" },
+};
 
 /**
- * The **Orientation** filter, beside the camera sliders and boxed like them: a horizontal and a
- * vertical rectangle button, each with how many of the photos the other filters leave have that
- * orientation. Clicking the chosen one again, or the X, clears it.
+ * The **Orientation** filter in the Visuals picker: a list of Horizontal, Vertical and Square,
+ * each drawn as an outlined shape of its proportions, with how many of the photos the other filters
+ * leave have it. Clicking the chosen one again clears it.
  */
 export function OrientationFilter({
   orientation,
@@ -29,42 +24,55 @@ export function OrientationFilter({
   onChange: (orientation: Orientation | undefined) => void;
 }) {
   return (
-    <div
-      role="group"
-      aria-label="Orientation"
-      className="flex flex-col gap-2 rounded-md border px-3 py-2"
-    >
-      <div className="flex h-5 items-center gap-2 text-xs">
-        <span className="font-medium whitespace-nowrap text-muted-foreground">Orientation</span>
-        <span className="ml-auto whitespace-nowrap">{chosenText(orientation)}</span>
-        {orientation && (
-          <ClearFilterButton
-            label="Orientation"
-            onClear={() => onChange(undefined)}
-            className="-mr-1"
-          />
-        )}
-      </div>
-      <div className={CONTROL_FRAME}>
-        {ORIENTATIONS.map((value) => {
-          const { label, Icon } = ORIENTATION[value];
-          const active = orientation === value;
-          return (
-            <button
-              key={value}
-              type="button"
-              aria-pressed={active}
-              aria-label={label}
-              title={label}
-              onClick={() => onChange(active ? undefined : value)}
-              className={controlButtonClass(active)}
-            >
-              <Icon aria-hidden />
-              <span className="tabular-nums">{counts[value]}</span>
-            </button>
-          );
-        })}
-      </div>
+    <div role="group" aria-label="Orientation" className="flex flex-col">
+      {ORIENTATIONS.map((value) => (
+        <OrientationRow
+          key={value}
+          value={value}
+          count={counts[value]}
+          on={orientation === value}
+          onClick={(on) => onChange(on ? undefined : value)}
+        />
+      ))}
     </div>
+  );
+}
+
+/** One orientation: a check while it's chosen, its shape, its name and its count. */
+function OrientationRow({
+  value,
+  count,
+  on,
+  onClick,
+}: {
+  value: Orientation;
+  count: number;
+  on: boolean;
+  onClick: (on: boolean) => void;
+}) {
+  const { label, shape } = ORIENTATION[value];
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={() => onClick(on)}
+      className={cn(
+        "flex items-center gap-3 rounded-sm px-2 py-2 text-left text-sm outline-none hover:bg-accent focus-visible:bg-accent",
+        on && "font-medium",
+      )}
+    >
+      <Check aria-hidden className={cn("size-4 shrink-0", !on && "invisible")} />
+      <span aria-hidden className="flex size-6 shrink-0 items-center justify-center">
+        <span
+          className={cn(
+            "rounded-[3px] border-2",
+            shape,
+            on ? "border-foreground bg-foreground/15" : "border-muted-foreground",
+          )}
+        />
+      </span>
+      <span>{label}</span>
+      <span className="ml-auto text-xs text-muted-foreground tabular-nums">{count}</span>
+    </button>
   );
 }
