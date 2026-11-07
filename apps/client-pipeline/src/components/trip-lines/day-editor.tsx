@@ -11,6 +11,8 @@ import {
 import { EditorActions, type EditorView } from "@/components/trip-lines/editor-actions";
 import { type EndKey, EndSpots } from "@/components/trip-lines/end-spots";
 import { HopLines } from "@/components/trip-lines/hop-lines";
+import { Visits } from "@/components/trip-lines/visits";
+import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
 import { RouteMap } from "@/components/trip-lines/route-map";
@@ -26,7 +28,7 @@ import { dayTitle } from "@/components/trip-lines/day-title";
 function initialView(ids: number[], line: TripLine | undefined): EditorView {
   if (!line) return { kind: "none" };
   if (line.auto) return { kind: "auto" };
-  return { kind: "hand", draft: draftOf(ids, line.segments) };
+  return { kind: "hand", draft: { ...draftOf(ids, line.segments), visits: line.visits } };
 }
 
 /** The view, with a hand-drawn draft that has no groups yet grouped by its photos' places. */
@@ -135,6 +137,25 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
   );
 }
 
+/** What a click on the map places: the day's start or end spot, or a place visited. */
+type MapPick = EndKey | "visit";
+
+/** The start or end spot being picked, if that's what is. */
+function endPicking(picking: MapPick | undefined): EndKey | undefined {
+  return picking === "visit" ? undefined : picking;
+}
+
+/** The draft with the clicked point placed as picking says, or else as a via point. */
+function picked(
+  draft: GapDraft,
+  picking: MapPick | undefined,
+  point: TripPoint,
+  via: () => GapDraft,
+): GapDraft {
+  if (picking === "visit") return withVisit(draft, newVisit(point));
+  return picking ? { ...draft, [picking]: point } : via();
+}
+
 interface HandMapProps {
   day: TripDay;
   draft: GapDraft;
@@ -150,12 +171,10 @@ interface HandMapProps {
  * or adds a via point while adding them.
  */
 function HandMap({ day, draft, segments, highlighted, focus, onChange }: HandMapProps) {
-  const [picking, setPicking] = useState<EndKey>();
+  const [picking, setPicking] = useState<MapPick>();
   const [addingVia, setAddingVia] = useState(false);
   const pick = (point: TripPoint) => {
-    onChange(
-      picking ? { ...draft, [picking]: point } : withVia(draft, segments, day.photos, point),
-    );
+    onChange(picked(draft, picking, point, () => withVia(draft, segments, day.photos, point)));
     setPicking(undefined);
   };
   return (
@@ -170,6 +189,7 @@ function HandMap({ day, draft, segments, highlighted, focus, onChange }: HandMap
         ends={endsOf(segments)}
         onPick={picking || addingVia ? pick : undefined}
         vias={draftVias(draft)}
+        visits={draft.visits}
         onMoveVia={(key, i, point) => onChange(movedVia(draft, key, i, point))}
       />
       <ShapeTools
@@ -181,9 +201,27 @@ function HandMap({ day, draft, segments, highlighted, focus, onChange }: HandMap
         onAddingVia={setAddingVia}
       />
       <HopLines photos={day.photos} draft={draft} segments={segments} onChange={onChange} />
-      <EndSpots draft={draft} onChange={onChange} picking={picking} onPicking={setPicking} />
+      <EndSpots
+        draft={draft}
+        onChange={onChange}
+        picking={endPicking(picking)}
+        onPicking={setPicking}
+      />
+      <Visits
+        day={day}
+        draft={draft}
+        onChange={onChange}
+        picking={picking === "visit"}
+        onPicking={(on) => setPicking(on ? "visit" : undefined)}
+      />
     </>
   );
+}
+
+/** The places visited in a hand-drawn view, as the line file lists them; none otherwise. */
+function visitsOf(view: EditorView): Pick<TripLine, "visits"> {
+  const visits = view.kind === "hand" ? view.draft.visits : undefined;
+  return visits?.length ? { visits } : {};
 }
 
 interface DayActionsProps {
@@ -209,7 +247,7 @@ function DayActions({ day, ids, view, setView, auto, segments, saved }: DayActio
       autoBusy={auto.isFetching}
       save={save}
       remove={remove}
-      onSaveHand={() => save.mutate({ ...base, auto: false, segments })}
+      onSaveHand={() => save.mutate({ ...base, auto: false, segments, ...visitsOf(view) })}
       onTurnOnAuto={() =>
         save.mutate(
           { ...base, auto: true, segments: [] },

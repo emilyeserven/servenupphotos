@@ -31,6 +31,7 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 
 - **`name`** on a segment names the group of photos it's in, such as "Nara Park": each [group](#groups) is a line of
   its own. A walk or hop from one group to the next has none.
+- **`visits`** are the [places visited](#places-visited) along the day's route, such as restaurants.
 - **`segments`** are the stretches of the day, in the order they happened. Each one's line runs from `start` (when
   set), through its `photos` (photo IDs) in order, to `end` (when set).
 - **`mode`** is `walk`, `train`, `subway`, `bus`, `car` (taxis too) or `transit`, a hop whose kind isn't known, as the
@@ -125,6 +126,32 @@ highlights its dot.
   **Ends at** set a spot with no photo by clicking the map, with a label such as "Hotel". **Save route** saves it.
 - An automatic day shows the line as the next Commit would draw it, with **Edit as my own** and **Turn off automatic
   line**.
+
+## Places visited
+
+Under the map, **Places visited** lists the places stopped at along the day's route, with or without a photo: a
+restaurant, café, bar, shop, museum, sight or other. **Add a place on the map** drops one where the map is clicked;
+**Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km of the
+day's photos, named after it. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
+Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
+
+They're saved with the line as `visits`:
+
+```json
+{
+  "name": "Ichiran Dotonbori",
+  "kind": "restaurant",
+  "latitude": 34.6688,
+  "longitude": 135.5026,
+  "note": "Ramen before the river walk",
+  "link": "https://maps.app.goo.gl/…",
+  "place": "ichiran-dotonbori"
+}
+```
+
+`place` is the saved place's ID when one was picked. The link has to be an `http` or `https` web address. Commit bakes
+each into `TRIPLINES.geo.json` as a GeoJSON `Point` with `"feature": "visit"`, the day, and the name, kind, note and
+link, next to the lines, and counts them (`tripLineVisits`).
 
 ## Groups
 

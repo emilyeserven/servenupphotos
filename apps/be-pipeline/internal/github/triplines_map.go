@@ -12,10 +12,12 @@ import (
 // next to TRIPLINES.json.
 const TripLinesMapFile = "TRIPLINES.geo.json"
 
-// tripLinesMap is TripLinesMapFile: a GeoJSON FeatureCollection.
+// tripLinesMap is TripLinesMapFile: a GeoJSON FeatureCollection of the
+// segments' lines (tripLineFeature) and the places visited's pins
+// (visitFeature).
 type tripLinesMap struct {
-	Type     string            `json:"type"`
-	Features []tripLineFeature `json:"features"`
+	Type     string `json:"type"`
+	Features []any  `json:"features"`
 }
 
 // tripLineFeature is one segment of a day as a GeoJSON line.
@@ -63,7 +65,7 @@ func (w *workspace) addTripLinesMap(changes map[string][]byte, counts map[string
 		return publishErr(http.StatusInternalServerError, "Couldn't format %s.", TripLinesMapFile)
 	}
 	content := formatJSONFile(b)
-	counts["tripLineSegments"] = len(m.Features)
+	counts["tripLineSegments"], counts["tripLineVisits"] = countFeatures(m)
 	file := w.root + "/" + TripLines.Folder + "/" + TripLinesMapFile
 	if old, ok := w.head.files[file]; !ok || old.sha != blobSHA(content) {
 		changes[file] = content
@@ -87,7 +89,7 @@ func (w *workspace) tripLineFiles() []TripLine {
 // ones, drawn through spots. A photo not in spots is skipped, and a segment
 // left with fewer than two points isn't drawn.
 func bakeTripLines(lines []TripLine, spots map[int]tripSpot) tripLinesMap {
-	m := tripLinesMap{Type: "FeatureCollection", Features: []tripLineFeature{}}
+	m := tripLinesMap{Type: "FeatureCollection", Features: []any{}}
 	for _, line := range lines {
 		day := onDay(spots, line.Day)
 		segments := line.Segments
@@ -95,7 +97,12 @@ func bakeTripLines(lines []TripLine, spots map[int]tripSpot) tripLinesMap {
 			segments = autoSegments(spotsOn(day, line.Day))
 		}
 		for _, seg := range segments {
-			m.Features = append(m.Features, segmentFeatures(line, seg, day)...)
+			for _, f := range segmentFeatures(line, seg, day) {
+				m.Features = append(m.Features, f)
+			}
+		}
+		for _, v := range line.Visits {
+			m.Features = append(m.Features, visitFeatureOf(line.Day, v))
 		}
 	}
 	return m

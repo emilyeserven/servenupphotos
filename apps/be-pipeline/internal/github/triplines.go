@@ -91,6 +91,9 @@ type TripLine struct {
 	Auto bool `json:"auto"`
 	// Segments are the stretches of the day, in the order they happened.
 	Segments []TripSegment `json:"segments"`
+	// Visits are the places visited along the day's route, such as a
+	// restaurant, with or without a photo; none when there are none.
+	Visits []TripVisit `json:"visits,omitempty"`
 }
 
 // SaveTripLine saves line as <folder>/triplines/<day>.json, new or replacing
@@ -176,7 +179,7 @@ func validTripLine(line TripLine) (TripLine, *PublishError) {
 		}
 		line.Segments[i] = seg
 	}
-	return line, nil
+	return line, validVisits(line.Visits)
 }
 
 // validTripSegment checks the nth segment and returns it trimmed.

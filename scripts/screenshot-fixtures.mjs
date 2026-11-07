@@ -226,6 +226,17 @@ const added = {
           { mode: "subway", photos: [304, 305] },
           { mode: "walk", photos: [305, 306, 307] },
         ],
+        visits: [
+          {
+            name: "Ichiran Dotonbori",
+            kind: "restaurant",
+            latitude: 34.6688,
+            longitude: 135.5026,
+            note: "Ramen before the river walk",
+            link: "https://maps.app.goo.gl/example",
+          },
+          { name: "Kuromon Market", kind: "shop", latitude: 34.6655, longitude: 135.5065 },
+        ],
       },
     },
     {

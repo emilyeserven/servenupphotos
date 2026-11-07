@@ -1,4 +1,11 @@
-import type { TripMode, TripPoint, TripSegment, TripTransitLine, TripVia } from "@/api/trip-lines";
+import type {
+  TripMode,
+  TripPoint,
+  TripSegment,
+  TripTransitLine,
+  TripVia,
+  TripVisit,
+} from "@/api/trip-lines";
 import { groupsOf, splitAtGroups, withNames } from "@/lib/trip-groups";
 
 /**
@@ -36,6 +43,8 @@ export interface GapDraft {
   groups?: string[];
   /** Each group's name, by its first photo's ID. */
   names?: Record<string, string>;
+  /** The places visited along the route, such as restaurants, in the order added. */
+  visits?: TripVisit[];
 }
 
 /** The line a hop rode, and how the hop was travelled when it was picked. */
