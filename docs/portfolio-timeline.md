@@ -26,7 +26,8 @@ so the sketches appear a moment later, and on screens under 360 px wide they're 
 
 ### Month trip line maps
 
-A month with trip lines on any of its shown days has a **Trip lines** button under its heading that opens and closes
+A month with trip lines on any of its shown days has a **Trip lines** button at the right end of its heading that opens and
+closes
 small maps of them (`components/timeline-month-map.tsx`). They start closed; **Open trip line maps** under **Each month**
 in Display Options (`?maps=true`) starts every month open instead, and changing it opens or closes them all. The maps are 144 × 96 px each, with every line of those days drawn together in the same
 styles as the day sketches. The days are grouped by where their lines are (`lib/route-places.ts`): a day joins the first

@@ -7,6 +7,7 @@ import {
   SketchDrawing,
   useDaysSketches,
 } from "@/components/timeline-route-sketch";
+import { Button } from "@/components/ui/button";
 import { fitView } from "@/lib/fit-view";
 import type { Photo } from "@/lib/photos";
 import { MONTH_SKETCH_SIZE } from "@/lib/route-sketch";
@@ -24,48 +25,67 @@ function daysText(days: string[]): string {
   return first === last ? from : `${from}–${format(parseISO(last), "d")}`;
 }
 
-/**
- * Under a month's heading on the Timeline, a button that opens and closes small maps of every trip
- * line of its days, one for each place the lines are in, in the Map's line styles; nothing for a
- * month without a trip line. The maps start open or closed as the display options say.
- */
-export function TimelineMonthMap({ monthPhotos, open }: { monthPhotos: Photo[]; open: boolean }) {
-  const places = useDaysSketches(daysOf(monthPhotos), MONTH_SKETCH_SIZE);
-  if (places.length === 0) return null;
-  // Keyed by the option, so changing it in the display options opens or closes every month.
-  return <PlaceMaps key={String(open)} places={places} startOpen={open} />;
+/** A month's trip line maps on the Timeline, and whether its **Trip lines** button has them open. */
+interface MonthTripLines {
+  /** One small map for each place the month's lines are in; none for a month without a trip line. */
+  places: DaysSketch[];
+  open: boolean;
+  toggle: () => void;
+  /** The id of the maps' list, which the button controls. */
+  id: string;
 }
 
-/** The month's button and, while it's open, its maps. */
-function PlaceMaps({ places, startOpen }: { places: DaysSketch[]; startOpen: boolean }) {
-  const [open, setOpen] = useState(startOpen);
-  const listId = useId();
+/**
+ * A month's trip line maps and whether they're open. They start as the display option says, and
+ * changing the option opens or closes every month's again.
+ */
+export function useMonthTripLines(monthPhotos: Photo[], option: boolean): MonthTripLines {
+  const places = useDaysSketches(daysOf(monthPhotos), MONTH_SKETCH_SIZE);
+  const [state, setState] = useState({ option, open: option });
+  const open = state.option === option ? state.open : option;
+  const id = useId();
+  return { places, open, toggle: () => setState({ option, open: !open }), id };
+}
+
+/**
+ * The **Trip lines** button at the right of a month's heading, which opens and closes its maps;
+ * nothing for a month without a trip line.
+ */
+export function TripLinesButton({ lines }: { lines: MonthTripLines }) {
+  if (lines.places.length === 0) return null;
   return (
-    <div className="flex flex-col gap-2">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={listId}
-        onClick={() => setOpen(!open)}
-        className="flex w-fit items-center gap-1.5 rounded-sm text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <ChevronDown
-          className={cn("size-3.5 transition-transform", !open && "-rotate-90")}
-          aria-hidden
-        />
-        <Route className="size-3.5" aria-hidden />
-        Trip lines
-      </button>
-      {open && (
-        <ul id={listId} aria-label="This month's trip lines" className="flex flex-wrap gap-2">
-          {places.map((place) => (
-            <li key={place.days.join(" ")}>
-              <PlaceMap place={place} />
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <Button
+      type="button"
+      variant="outline"
+      aria-expanded={lines.open}
+      aria-controls={lines.id}
+      onClick={lines.toggle}
+      className="h-7 gap-1.5 px-2 text-xs has-[>svg]:px-2"
+    >
+      <Route className="size-3.5" aria-hidden />
+      Trip lines
+      <ChevronDown
+        className={cn("size-3.5 transition-transform", !lines.open && "-rotate-90")}
+        aria-hidden
+      />
+    </Button>
+  );
+}
+
+/**
+ * A month's trip line maps under its heading, each place's lines drawn together in the Map's line
+ * styles; nothing while its **Trip lines** button has them closed.
+ */
+export function MonthMaps({ lines }: { lines: MonthTripLines }) {
+  if (!lines.open || lines.places.length === 0) return null;
+  return (
+    <ul id={lines.id} aria-label="This month's trip lines" className="flex flex-wrap gap-2">
+      {lines.places.map((place) => (
+        <li key={place.days.join(" ")}>
+          <PlaceMap place={place} />
+        </li>
+      ))}
+    </ul>
   );
 }
 
