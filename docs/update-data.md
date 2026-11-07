@@ -1,14 +1,28 @@
 # Update Data
 
-`/update-data`, under Configuration in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
+`/update-data`, under **Configuration** in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
 previews what it will change, then saves every changed file as a [change waiting for Commit](pending-changes.md),
 so one **Commit** sends them to the open **Add photo data** pull request (or opens one) together with `ALLPHOTOS.json`
 rebuilt.
 
 Each bulk change has its own subpage, `/update-data/<name>` (such as `/update-data/image-names`), picked from a side
-navigation beside the card; on a phone the navigation is a dropdown above it. `/update-data` on its own opens the first,
-**Image base URL**, and the main sidebar keeps **Update Data** highlighted on every subpage. The list and each subpage's
-card are in `components/update-data/sections.tsx`, so a new bulk change is one entry there.
+navigation beside the card, each with its icon left of its name; on a phone the navigation is a dropdown above it.
+`/update-data` on its own opens the first, **Image base URL**, and the main sidebar keeps **Update Data** highlighted on
+every subpage. The list and each subpage's card are in `components/update-data/sections.tsx`, so a new bulk change is
+one entry there (`SectionsLayout` and `SectionNav` in `components/update-data/` draw the page and its navigation).
+
+Update Data keeps the changes to the photo files as a whole: **Image base URL**, **Image names**, **Missing fields**,
+**Colors**, **Camera overrides** and **Localizations**. The rest moved into the sidebar, next to what they change,
+working just as described below:
+
+- **Tag Data** (`/tag-data`, under **Tags**) is a page like Update Data, with its own side navigation, for the four
+  tag changes: **Bulk tagging**, **Tag library**, **Tag pruning** and **Tag descriptions** (`/tag-data/<name>`;
+  `/tag-data` on its own opens Bulk tagging). Its list is `tagDataSections` in the same file.
+- **Location Names** (`/location-names`) and **Bulk Places** (`/bulk-places`) are under **Places**, **Genre
+  Suggestions** (`/genre-suggestions`) under **Genres**, and **Album Suggestions** (`/album-suggestions`) under
+  **Albums**, each a page with just its card (`components/update-data/card-page.tsx`).
+
+An old link to one of them, such as `/update-data/tag-library`, opens it where it is now (`movedSections`).
 
 **Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
 development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder

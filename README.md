@@ -97,7 +97,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets
-- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, bulk tagging, the whole tag library, tag descriptions)
+- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and Tag Data (`/tag-data`) for bulk tagging, the whole tag library, pruning and tag descriptions
 - [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
 - [Saving photo data to GitHub](docs/saving-to-github.md): saving a photo's JSON to the Add photo data pull request, uploading to R2, resized versions and the Square Thumbnail
@@ -121,7 +121,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Custom Lenses](docs/custom-lenses.md) (Metadata Groups → Lenses): lenses the EXIF doesn't name well, such as manual ones, picked for a photo on the Photo page, with a Manual/unknown aperture option, kept in `LENSES.json`
 - [Caption Templates](docs/caption-templates.md) (`/caption-templates`): social media captions with placeholders for a photo's fields, filled in by **Generate** on the Photo page's posts, kept in `CAPTIONS.json`
 - [Timeline Labels](docs/timeline-labels.md) (`/timeline-labels`): names for runs of days, such as a trip, shown beside those days on the portfolio Timeline, kept in `TIMELINE.json`
-- [Viewer Likes](docs/viewer-likes.md) (`/viewer-likes`): import the liked-photo lists people send from the portfolio's My Likes page, one per person, and see each photo's total likes, kept in `LIKES.json`
+- [User Likes](docs/viewer-likes.md) (`/viewer-likes`): import the liked-photo lists people send from the portfolio's My Likes page, one per person, and see each photo's total likes, kept in `LIKES.json`
 - [Lightroom Albums](docs/lightroom-albums.md) (`/lightroom-albums`): your Lightroom folders and albums, read by an LLM from screenshots or a screen recording, with a stage and notes on each album as a tree or a Kanban board and the next albums to work on, imported on its own page or added by hand, kept only in the browser and moved between computers with Export and Import
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions

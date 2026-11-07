@@ -72,7 +72,7 @@ open. From then on the photo is in Photos in Flight, and edits go to that copy, 
 the old file from the portfolio when it merges and the photo's file name would change under it.
 
 A photo people liked shows a heart and how many of them liked it beside its title, summed from the lists on
-[Viewer Likes](viewer-likes.md).
+[User Likes](viewer-likes.md).
 
 Each tile's **Compare** puts the photo in a [compare group](compare-groups.md), to weigh it against others on the
 Compare page before deciding which gets posted.

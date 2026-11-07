@@ -13,7 +13,7 @@ import { navTrail, type NavPage } from "@/components/sidebar/nav-groups";
 /**
  * The header's breadcrumbs: the open page's sidebar section, the page its submenu is under, the page
  * itself, and the subpage when the route names one, such as Organize › Tags › Small Tags or
- * Pipeline › Lightroom Albums › Import. On a phone the section is left out.
+ * Pipeline › Lightroom Albums › Import. On a phone only the open page (or subpage) shows.
  */
 export function NavBreadcrumbs() {
   const pathname = useLocation({ select: (location) => location.pathname });
@@ -50,12 +50,12 @@ function PageCrumb({ page, current }: { page: NavPage; current: boolean }) {
   }
   return (
     <Fragment>
-      <BreadcrumbItem>
+      <BreadcrumbItem className="hidden md:inline-flex">
         <BreadcrumbLink asChild>
           <Link to={page.url}>{page.title}</Link>
         </BreadcrumbLink>
       </BreadcrumbItem>
-      <BreadcrumbSeparator />
+      <BreadcrumbSeparator className="hidden md:block" />
     </Fragment>
   );
 }
