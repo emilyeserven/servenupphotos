@@ -207,7 +207,7 @@ function joinsLast(run: Run, last: Run | undefined): boolean {
 const CHAIN_COLUMNS: Record<number, string> = { 2: "lg:grid-cols-2", 3: "lg:grid-cols-3" };
 
 /**
- * A row of cards. A chain, such as Year, Season and Month, sits on a shaded band, with a line from
+ * A row of cards. A chain, such as Year, Season and Month, sits on a shaded band, with a bar from
  * each card to the one it narrows: across on a desktop, down on a phone.
  */
 function GroupRun({ run, state }: { run: Run; state: PageState }) {
@@ -225,16 +225,20 @@ function GroupRun({ run, state }: { run: Run; state: PageState }) {
   }
   return (
     <div
-      className={`grid items-start gap-6 rounded-2xl bg-muted/60 p-3 sm:p-4 ${CHAIN_COLUMNS[run.defs.length] ?? CHAIN_COLUMNS[3]}`}
+      className={`grid items-start gap-6 rounded-2xl bg-muted/60 p-3 sm:p-4 lg:items-stretch lg:[&>div>section]:h-full ${CHAIN_COLUMNS[run.defs.length] ?? CHAIN_COLUMNS[3]}`}
     >
       {cards}
     </div>
   );
 }
 
-/** The line joining a chained card to the one before it, filling the gap between them. */
+/**
+ * The bar joining a chained card to the one before it, filling the gap between them in the cards'
+ * border color: centered down the row on a desktop, where the chain's cards are as tall as each
+ * other, and across the card on a phone.
+ */
 const CHAIN_LINE =
-  "before:absolute before:-top-6 before:left-8 before:h-6 before:w-0.5 before:bg-muted-foreground/40 lg:before:top-7 lg:before:-left-6 lg:before:h-0.5 lg:before:w-6";
+  "before:absolute before:-top-6 before:left-1/2 before:h-6 before:w-3 before:-translate-x-1/2 before:bg-border lg:before:top-1/2 lg:before:-left-6 lg:before:h-3 lg:before:w-6 lg:before:translate-x-0 lg:before:-translate-y-1/2";
 
 /** How a group is made: its picked variant's way, or its own. */
 function buildOf(def: GroupDef, variants: Variants) {
