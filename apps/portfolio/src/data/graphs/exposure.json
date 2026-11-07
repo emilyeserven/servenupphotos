@@ -3,6 +3,7 @@
   "kind": "preset",
   "name": "Exposure",
   "order": 2,
+  "group": "technical-details",
   "graph": {
     "type": "dot",
     "x": "exposure",

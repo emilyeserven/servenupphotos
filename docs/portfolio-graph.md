@@ -102,8 +102,9 @@ such as month by year or aperture by focal length. Empty cells stay gray, so the
 shows what the lightest and darkest shades mean, and it scrolls sideways when the x values don't fit. Every graph has a tooltip on hover, a key over it when it's split or a pie, and a **Table** button that
 shows its numbers as a table.
 
-The site's presets include two heatmaps: **Time of day by weekday** (days of the week across, times of day down) and
-**Month by year** (months across, years down).
+The site's presets come in two groups: **Technical Details** (Aperture, Exposure, ISO and Focal length) and **Time
+Heatmaps**: **Time of day by weekday** (days of the week across, times of day down) and **Month by year** (months across,
+years down).
 
 The series colors are `--series-1` to `--series-8` in `styles.css`, with their own steps for dark mode, picked so
 neighbors stay apart for colorblind eyes; a few light ones are faint on white, which is what the table view is for.

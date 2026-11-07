@@ -2,7 +2,8 @@
   "id": "time-of-day-by-weekday",
   "kind": "preset",
   "name": "Time of day by weekday",
-  "order": 5,
+  "order": 1,
+  "group": "time-heatmaps",
   "graph": {
     "type": "heatmap",
     "x": "weekday",

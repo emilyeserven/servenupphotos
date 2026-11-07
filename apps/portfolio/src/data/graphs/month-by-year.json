@@ -2,7 +2,8 @@
   "id": "month-by-year",
   "kind": "preset",
   "name": "Month by year",
-  "order": 6,
+  "order": 2,
+  "group": "time-heatmaps",
   "graph": {
     "type": "heatmap",
     "x": "month",
