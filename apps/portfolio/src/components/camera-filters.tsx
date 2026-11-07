@@ -64,10 +64,13 @@ export function CameraFilterBar({
   photos,
   extra = NO_EXTRA,
   searchable = false,
+  bare = false,
 }: {
   photos: Photo[];
   extra?: OwnFilters;
   searchable?: boolean;
+  /** Shows the filters always, with no Show filters button, as the Graph page's Filters tab does. */
+  bare?: boolean;
 }) {
   const search = useSearch({ strict: false });
   const own = parseCameraFilters(search);
@@ -77,6 +80,7 @@ export function CameraFilterBar({
     <PhotoFilterBar
       photos={photos}
       searchable={searchable}
+      bare={bare}
       facet={filterByCamera(photos, own)}
       own={{
         keys: [...CAMERA_FILTER_KEYS, ...extra.keys],

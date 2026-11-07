@@ -79,11 +79,14 @@ export function PhotoFilterBar({
   facet = photos,
   own = NO_OWN_FILTERS,
   searchable = false,
+  bare = false,
 }: {
   photos: Photo[];
   facet?: Photo[];
   own?: OwnFilters;
   searchable?: boolean;
+  /** Shows the filters always, with no Show filters button, for a page that opens them itself, such as the Graph page's Filters tab. */
+  bare?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const filters = useFilters();
@@ -92,32 +95,27 @@ export function PhotoFilterBar({
   const clearFilters = useClearFilters([...own.keys, ...search.keys]);
   const listId = useId();
   const count = filterCount(filters) + own.count + search.count;
+  const shown = open || bare;
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-2">
-        {searchable && <PhotoSearchBox />}
-        <Button
-          variant="outline"
-          size="sm"
-          aria-expanded={open}
-          aria-controls={listId}
-          onClick={() => setOpen(!open)}
-        >
-          <SlidersHorizontal aria-hidden />
-          {open ? "Hide filters" : "Show filters"}
-          <FilterCount count={count} />
-        </Button>
-        <ClearFilters count={count} onClear={clearFilters} />
-      </div>
+      <ToggleRow
+        searchable={searchable}
+        bare={bare}
+        open={open}
+        listId={listId}
+        count={count}
+        onToggle={() => setOpen(!open)}
+        onClear={clearFilters}
+      />
       <div
         id={listId}
-        hidden={!open}
+        hidden={!shown}
         className="flex flex-wrap items-start gap-x-3 gap-y-2"
         role="group"
         aria-label="Filters"
       >
-        {open && (
+        {shown && (
           <>
             <FilterDropdowns
               photos={photos}
@@ -130,6 +128,67 @@ export function PhotoFilterBar({
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * The filter bar's top row: the text search when it has one, the Show filters button saying how
+ * many are set, and **Clear filters** while any is. A bare bar has only Clear filters.
+ */
+function ToggleRow({
+  searchable,
+  bare,
+  open,
+  listId,
+  count,
+  onToggle,
+  onClear,
+}: {
+  searchable: boolean;
+  bare: boolean;
+  open: boolean;
+  listId: string;
+  count: number;
+  onToggle: () => void;
+  onClear: () => void;
+}) {
+  if (bare && count === 0) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {searchable && <PhotoSearchBox />}
+      <ToggleButton bare={bare} open={open} listId={listId} count={count} onClick={onToggle} />
+      <ClearFilters count={count} onClear={onClear} />
+    </div>
+  );
+}
+
+/** The Show filters button, or Hide filters while they show, with how many are set; none on a bare bar. */
+function ToggleButton({
+  bare,
+  open,
+  listId,
+  count,
+  onClick,
+}: {
+  bare: boolean;
+  open: boolean;
+  listId: string;
+  count: number;
+  onClick: () => void;
+}) {
+  if (bare) return null;
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      aria-expanded={open}
+      aria-controls={listId}
+      onClick={onClick}
+    >
+      <SlidersHorizontal aria-hidden />
+      {open ? "Hide filters" : "Show filters"}
+      <FilterCount count={count} />
+    </Button>
   );
 }
 

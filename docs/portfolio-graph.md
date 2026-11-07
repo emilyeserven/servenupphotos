@@ -8,10 +8,11 @@ settings it adds in `lib/graph-settings.ts`, and the presets' row in `lib/graph-
 
 ## Layout
 
-The pipeline's **spotlight** presets come first, each its own button with a star, then the **Presets** and **Adjust
-Graph** buttons and the site's usual **Show filters** button, with **Save as preset** at the far end of that row, then
-the graph's box. Show filters opens the filters as a whole row under the buttons, and Adjust Graph opens a box over the graph with the
-graph's settings (closed when the page opens). The graph's box says how many photos the filters leave, has
+The pipeline's **spotlight** presets come first, each its own button with a star, then a row of tabs
+(`graph-tabs.tsx`): **Presets**, **Adjust Graph** and **Filters** on the left and **Save as preset** on the right. Each
+tab opens its own box under the row, and clicking the open tab closes it; all are closed when the page opens. Adjust
+Graph's box holds the graph's settings, and Filters' box the site's usual filters, with the Filters tab counting how
+many are set. The graph's box says how many photos the filters leave, has
 the **Graph** / **Table** buttons, and names each axis: the y axis over the top left and the x axis centered under the
 graph (a pie names its slices and size over it). Each axis name is a dropdown, so clicking it changes what's on that
 axis without opening Adjust Graph.
@@ -27,7 +28,7 @@ axis without opening Adjust Graph.
 | Order    | **As on Numbers** (the card's own order, such as newest year first), **Reversed**, or **Most photos first**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | Show     | **All** of the x axis's values, or the first 5, 10 or 20 in that order                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | Range    | One group under the settings. **X axis**: the first and last value shown, picked from the values the axis has in its order, such as f/2 – f/8 (**Start** and **End** are the axis's own). **Y axis**: a bar, line or dot graph's y axis start and end, picked from round numbers up to its highest value (or 100% for shares); for a scatterplot or heatmap, its y stat's first and last value, like the x axis. **Photos per value**: **At least** one of the photo counts the x values have, leaving out x values with fewer. **Trim empty ends** leaves out the x values with no photos at either end of the axis; empty ones in between stay, so the scale keeps its steps. The camera settings always list every value any photo has, with 0 for the ones the filters leave out, so the axis keeps its whole scale. The choices are read from the photos the filters keep, and the range cuts the values before **Show** counts them |
-| Filters  | The site's usual **Show filters** button, right of Adjust Graph, with Places, Groups, When, Gear & settings and Orientation, kept in the URL like on the Grid, so the menu carries them between views. The Graph page has no text search                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Filters  | The **Filters** tab's box: the site's usual filters, with Places, Groups, When, Gear & settings and Orientation, kept in the URL like on the Grid, so the menu carries them between views. The Graph page has no text search                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 
 The page opens on photos per year, oldest first, each bar split by season. Only the filters are kept in the URL.
 
@@ -35,7 +36,7 @@ The page opens on photos per year, oldest first, each bar split by season. Only 
 the heading, buttons, Adjust Graph box and Selected Photos stay in the column (**Narrow** puts it back). The choice is remembered in the browser.
 
 **Presets** are made on the pipeline's [Graph Presets](graph-presets.md) page and read from `graphs/GRAPHS.json`. The
-**Presets** button opens a picker like the Grid's **Groups** (`preset-picker.tsx`): the preset groups on the left, each
+**Presets** tab opens a picker like the Grid's **Groups** (`preset-picker.tsx`): the preset groups on the left, each
 saying which of its presets the graph is set as, with the presets in no group as **Other** (or **Presets** when there
 are no groups) and the visitor's own as **Yours**, and the chosen group's presets on the right. Picking one sets the
 graph's type, axes, split, order, how many values show and its Range group; the filters stay as they are. The **(i)**
@@ -45,7 +46,7 @@ is set as (`preset-settings.tsx`). A group with no presets isn't shown. The comm
 
 A preset the pipeline marks **Spotlight** also shows as its own button above Presets and Adjust Graph.
 
-**Save as preset** asks for a name and keeps the graph's settings (not its filters) as one of the visitor's own presets,
+The **Save as preset** tab lists the settings it will keep, then asks for a name; its **Save preset** button keeps the graph's settings (not its filters) as one of the visitor's own presets,
 listed under **Yours** in the picker with a × to remove it. They're kept in the browser's local storage
 (`servenup:graph-presets`, `lib/saved-graphs.ts`), so they're only on that browser; in a private window they last
 until the page is left.
