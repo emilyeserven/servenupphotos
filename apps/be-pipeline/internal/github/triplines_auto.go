@@ -25,33 +25,48 @@ const (
 // autoBreak apart, with a ModeTransit hop where moving between two was faster
 // than walking.
 func autoSegments(spots []tripSpot) []TripSegment {
-	segments := []TripSegment{}
-	var walk []int
-	flush := func() {
-		if len(walk) >= 2 {
-			segments = append(segments, TripSegment{Mode: ModeWalk, Photos: walk})
-		}
-		walk = nil
+	b := autoLine{segments: []TripSegment{}}
+	var prev *tripSpot
+	for _, s := range spots {
+		b.add(prev, s)
+		prev = &s
 	}
-	for i, s := range spots {
-		if i == 0 {
-			walk = []int{s.ID}
-			continue
-		}
-		switch gapBetween(spots[i-1], s) {
-		case gapWalk:
-			walk = append(walk, s.ID)
-		case gapHop:
-			flush()
-			segments = append(segments, TripSegment{Mode: ModeTransit, Photos: []int{spots[i-1].ID, s.ID}})
-			walk = []int{s.ID}
-		case gapBreak:
-			flush()
-			walk = []int{s.ID}
-		}
+	b.flush()
+	return b.segments
+}
+
+// autoLine builds the automatic line one photo at a time: the segments so
+// far, and the walk being added to.
+type autoLine struct {
+	segments []TripSegment
+	walk     []int
+}
+
+// add adds s, taken after prev (nil for the day's first photo), by the gap
+// between them.
+func (b *autoLine) add(prev *tripSpot, s tripSpot) {
+	if prev == nil {
+		b.walk = []int{s.ID}
+		return
 	}
-	flush()
-	return segments
+	gap := gapBetween(*prev, s)
+	if gap == gapWalk {
+		b.walk = append(b.walk, s.ID)
+		return
+	}
+	b.flush()
+	if gap == gapHop {
+		b.segments = append(b.segments, TripSegment{Mode: ModeTransit, Photos: []int{prev.ID, s.ID}})
+	}
+	b.walk = []int{s.ID}
+}
+
+// flush ends the walk being added to, keeping it when it has two or more photos.
+func (b *autoLine) flush() {
+	if len(b.walk) >= 2 {
+		b.segments = append(b.segments, TripSegment{Mode: ModeWalk, Photos: b.walk})
+	}
+	b.walk = nil
 }
 
 // gapBetween is how the automatic line joins a and b, b taken after a.
