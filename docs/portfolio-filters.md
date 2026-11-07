@@ -220,7 +220,7 @@ one the settings' graphics use, with the details of the camera or lens pointed a
 the chosen one: its own sized picture (exactly 267 × 200) and description from the pipeline's [Gear Pictures](gear-pictures.md) page, or else a
 drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name) (for a lens, a side view of it,
 longer for a longer focal length and with a zoom ring when it zooms). A camera then lists its kind, how many photos
-used it, with which lenses, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
+used it, and from when to when. A lens lists its focal length, whether it's a prime or zoom, and its
 widest aperture, read from its name, and how many photos used it, on which cameras, at which focal length most, and
 from when to when. A group, such as a brand, has no details. The four camera settings each have a slider with a handle
 at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
