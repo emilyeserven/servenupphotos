@@ -16,13 +16,29 @@ with the title and filters under them (see [Header spotlights](publish.md#header
 A day with a [trip line](trip-lines.md) has a small sketch of its route at the right end of its heading
 (`components/timeline-route-sketch.tsx`): the day's lines and places visited from the `TRIPLINES.geo.json` that Commit
 bakes, fitted into 48 × 32 px with their shape kept, in the Map's line styles and colors (walks solid blue, drives in
-long gray dashes, rides in their line's color, other hops dashed purple, places visited as amber dots). Areas are left
+long light blue dashes, rides in their line's color, other hops dashed purple, places visited as amber dots). Areas are left
 out. Clicking it opens the [Map](portfolio-map.md) on that day, zoomed to fit the day's whole line
 (`/map?day=2026-09-23&lat=…&lng=…&zoom=…`, worked out for the window's size in `lib/fit-view.ts`). The file loads after the page,
 so the sketches appear a moment later, and on screens under 360 px wide they're hidden.
 
 > **Frontend analogy:** the sketch is a sparkline for a route: the same GeoJSON the Map draws with MapLibre, drawn
 > instead as one tiny inline `<svg>` with no tiles, like a chart thumbnail.
+
+### Month trip line maps
+
+A month with trip lines on any of its shown days has small maps of them under its heading
+(`components/timeline-month-map.tsx`), 144 × 96 px each, with every line of those days drawn together in the same
+styles as the day sketches. The days are grouped by where their lines are (`lib/route-places.ts`): a day joins the first
+group its lines come within about 50 km of, so a city and its day trips share one map while two cities on one trip each
+get their own, rather than shrinking to two dots in one box. Each map is labelled with its days ("Jan 19" or "Oct 3–6")
+and opens the [Map](portfolio-map.md) on that date range, zoomed to fit its lines. A Trip's legs between days, such as
+flights, are left out as in the day sketches.
+
+Lines that run over an earlier one are drawn to its side in both the day sketches and the month maps, in the lanes the
+Map gives them (`lib/trip-lanes.ts`), moved 1.5 px (days) or 2.5 px (months) to the right of their direction of travel.
+
+> **Frontend analogy:** grouping the days is like bucketing chart points before drawing small multiples: one sparkline
+> per bucket reads better than one sparkline squashed to fit outliers.
 
 ## Scrubber
 

@@ -31,6 +31,7 @@ import {
 import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
 import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
+import { TimelineMonthMap } from "@/components/timeline-month-map";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
@@ -198,11 +199,14 @@ function MonthSection({
         </button>
       </h2>
       {open && (
-        <ol id={listId} className="flex flex-col gap-4">
-          {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
-            <DaySection key={day} day={day} dayPhotos={dayPhotos} {...options} />
-          ))}
-        </ol>
+        <div id={listId} className="flex flex-col gap-4">
+          <TimelineMonthMap monthPhotos={monthPhotos} />
+          <ol className="flex flex-col gap-4">
+            {groupByDate(monthPhotos, "EEEE, MMMM d").map(([day, dayPhotos]) => (
+              <DaySection key={day} day={day} dayPhotos={dayPhotos} {...options} />
+            ))}
+          </ol>
+        </div>
       )}
     </li>
   );

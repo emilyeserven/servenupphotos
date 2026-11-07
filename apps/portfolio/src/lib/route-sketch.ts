@@ -1,13 +1,33 @@
 import type { GeoBounds } from "@/lib/fit-view";
+import { withLanes } from "@/lib/trip-lanes";
 import type { TripMapFeature } from "@/lib/trip-lines-map";
 
-/** The width and height of a day's route sketch on the Timeline, in pixels. */
-export const SKETCH_SIZE = { width: 48, height: 32 } as const;
+/**
+ * The size of a route sketch in pixels, and how far apart it draws the lanes of lines that run
+ * over an earlier one, as the Map does a few pixels to the side.
+ */
+export interface SketchSize {
+  width: number;
+  height: number;
+  lane: number;
+}
+
+/** The size of a day's route sketch on the Timeline, in its heading. */
+export const SKETCH_SIZE: SketchSize = { width: 48, height: 32, lane: 1.5 };
+
+/** The size of each of a month's small trip line maps on the Timeline, a place's days together. */
+export const MONTH_SKETCH_SIZE: SketchSize = { width: 144, height: 96, lane: 2.5 };
 
 /** How far the sketch keeps from its edges, so round line caps and dots aren't cut off. */
 const PAD = 3;
 
 type LngLat = [number, number];
+
+/** A point placed in the sketch. */
+interface Point {
+  x: number;
+  y: number;
+}
 
 /** One trip line drawn in a sketch: its points as an SVG `points` list, its mode and its line's color. */
 export interface SketchLine {
@@ -61,14 +81,36 @@ function boxOf(points: LngLat[]) {
 }
 
 /** A function that places a flattened point in the sketch, scaled to fit and centered. */
-function fitter(points: LngLat[]) {
+function fitter(points: LngLat[], size: SketchSize) {
   const box = boxOf(points);
-  const room = { width: SKETCH_SIZE.width - 2 * PAD, height: SKETCH_SIZE.height - 2 * PAD };
+  const room = { width: size.width - 2 * PAD, height: size.height - 2 * PAD };
   const scale = Math.min(room.width / box.width || Infinity, room.height / box.height || Infinity);
   const k = Number.isFinite(scale) ? scale : 0;
-  const left = (SKETCH_SIZE.width - box.width * k) / 2;
-  const top = (SKETCH_SIZE.height - box.height * k) / 2;
-  return ([x, y]: LngLat) => ({ x: left + (x - box.minX) * k, y: top + (y - box.minY) * k });
+  const left = (size.width - box.width * k) / 2;
+  const top = (size.height - box.height * k) / 2;
+  return ([x, y]: LngLat): Point => ({ x: left + (x - box.minX) * k, y: top + (y - box.minY) * k });
+}
+
+/** The direction to the right of the line at one of its points, where the Map draws a later lane. */
+function rightOf(at: Point, i: number, points: Point[]): Point {
+  const from = points[i - 1] ?? at;
+  const to = points[i + 1] ?? at;
+  const length = Math.hypot(to.x - from.x, to.y - from.y) || 1;
+  return { x: -(to.y - from.y) / length, y: (to.x - from.x) / length };
+}
+
+/** The line moved `by` pixels to its right, for a line drawn in a lane beside an earlier one. */
+function offsetLine(points: Point[], by: number): Point[] {
+  if (by === 0) return points;
+  return points.map((at, i) => {
+    const right = rightOf(at, i, points);
+    return { x: at.x + right.x * by, y: at.y + right.y * by };
+  });
+}
+
+/** A line's points as an SVG `points` list. */
+function pointsList(points: Point[]): string {
+  return points.map(({ x, y }) => `${round(x)},${round(y)}`).join(" ");
 }
 
 /** The box on the map around the points. */
@@ -89,24 +131,27 @@ function round(n: number): number {
 }
 
 /**
- * A day's trip lines and places visited from TRIPLINES.geo.json, fitted into a SKETCH_SIZE box
- * keeping their shape; null when the day has no line to draw. Areas are left out.
+ * Trip lines and places visited from TRIPLINES.geo.json, such as a day's or a month's, fitted into
+ * a box of `size` keeping their shape, each line that runs over an earlier one drawn to its side as
+ * on the Map; null when there's no line to draw. Areas are left out.
  */
-export function routeSketch(features: TripMapFeature[]): RouteSketch | null {
-  const lines = features.filter(isLine);
+export function routeSketch(
+  features: TripMapFeature[],
+  size: SketchSize = SKETCH_SIZE,
+): RouteSketch | null {
+  const lines = withLanes(features.filter(isLine));
   if (lines.length === 0) return null;
   const visits = features.filter(isVisit);
   const raw = [...lines.flatMap(lineCoordinates), ...visits.map(visitCoordinates)];
   const flat = flatten(raw);
-  const place = fitter(flat);
-  const placed = flat.map(place);
+  const placed = flat.map(fitter(flat, size));
   let next = 0;
   const take = (count: number) => placed.slice(next, (next += count));
   return {
     lines: lines.map((line) => ({
-      points: take(lineCoordinates(line).length)
-        .map(({ x, y }) => `${round(x)},${round(y)}`)
-        .join(" "),
+      points: pointsList(
+        offsetLine(take(lineCoordinates(line).length), (line.properties.lane ?? 0) * size.lane),
+      ),
       mode: line.properties.mode,
       colour: line.properties.colour,
     })),
