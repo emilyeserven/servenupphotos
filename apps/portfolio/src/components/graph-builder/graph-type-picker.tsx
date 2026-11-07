@@ -34,6 +34,11 @@ function typeOf(type: GraphType): [GraphType, string, LucideIcon] {
   return TYPES.find(([each]) => each === type) ?? TYPES[0]!;
 }
 
+/** The graph type's name, such as Bar, for the Presets picker's settings. */
+export function graphTypeName(type: GraphType): string {
+  return typeOf(type)[1];
+}
+
 /** One section of the Graph type picker. */
 type TypeSection = "type" | "split" | "parts";
 

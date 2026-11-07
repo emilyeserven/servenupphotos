@@ -21,6 +21,11 @@ const SORTS: [SortOrder, string][] = [
   ["count", "Most photos first"],
 ];
 
+/** The order's name, such as Reversed, for the Presets picker's settings. */
+export function sortName(sort: SortOrder): string {
+  return SORTS.find(([value]) => value === sort)?.[1] ?? "";
+}
+
 /** How many of the x axis's values can be shown; 0 is all. */
 const LIMITS = [0, 5, 10, 20];
 

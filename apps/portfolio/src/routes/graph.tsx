@@ -1,23 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ChartColumn } from "lucide-react";
-import { GraphBuilder } from "@/components/graph-builder/graph-builder";
+import { COLUMN, GraphBuilder } from "@/components/graph-builder/graph-builder";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
 import { photos } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
-import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { useGraphWide } from "@/lib/graph-wide";
-import { cn } from "@/lib/utils";
 
-/** What the Graph page keeps in the URL: the site's usual filters, the text search, and the selected photo open in the lightbox. */
-type GraphSearch = PhotoFilters & CameraFilters & ShownPhotoSearch & { q?: string };
+/** What the Graph page keeps in the URL: the site's usual filters and the selected photo open in the lightbox. */
+type GraphSearch = PhotoFilters & CameraFilters & ShownPhotoSearch;
 
 export const Route = createFileRoute("/graph")({
   validateSearch: (search: Record<string, unknown>): GraphSearch => ({
     ...parseFilters(search),
     ...parseCameraFilters(search),
-    ...parseTextSearch(search),
     ...parseShownPhoto(search),
   }),
   component: GraphView,
@@ -27,15 +24,10 @@ export const Route = createFileRoute("/graph")({
 function GraphView() {
   const [wide, setWide] = useGraphWide();
   const search = Route.useSearch();
-  const kept = filterWithCamera(searchPhotos(photos, search.q), search);
+  const kept = filterWithCamera(photos, search);
   return (
-    <div
-      className={cn(
-        "mx-auto flex w-full flex-col gap-6 px-4 py-16 sm:px-6",
-        wide ? "max-w-none lg:px-10" : "max-w-5xl",
-      )}
-    >
-      <header>
+    <div className="flex w-full flex-col gap-6 px-4 py-16 sm:px-6 lg:px-10">
+      <header className={COLUMN}>
         <SiteHomeLink className="mb-1" />
         <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
           <ChartColumn className="size-8 text-muted-foreground" aria-hidden />

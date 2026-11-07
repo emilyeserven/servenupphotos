@@ -35,6 +35,9 @@ type GraphPreset struct {
 	Group string `json:"group,omitempty"`
 	// Graph is what a preset sets the graph to. Groups leave it out.
 	Graph *GraphSettings `json:"graph,omitempty"`
+	// Spotlight shows a preset as its own button above the Graph page's
+	// Presets and Adjust Graph buttons. Groups leave it out.
+	Spotlight bool `json:"spotlight,omitempty"`
 }
 
 // GraphSettings is what a graph preset sets the Graph page's graph to, named
@@ -163,7 +166,7 @@ func validGraphPreset(p GraphPreset) (GraphPreset, *PublishError) {
 	}
 	switch p.Kind {
 	case graphGroupKind:
-		p.Group, p.Graph = "", nil
+		p.Group, p.Graph, p.Spotlight = "", nil, false
 		return p, nil
 	case graphPresetKind:
 		return p, validPresetGraph(p)
