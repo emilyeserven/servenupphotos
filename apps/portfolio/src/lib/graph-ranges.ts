@@ -16,7 +16,7 @@ export interface GraphRanges {
   yMax: number | null;
   /** How many photos an x value needs to be shown, such as 5; 0 for any. */
   minPhotos: number;
-  /** Whether values with no photos are left out: x values, and a split's parts at 0. */
+  /** Whether the x values with no photos at either end of the axis are left out; ones in between stay. */
   hideZeros: boolean;
 }
 
@@ -45,18 +45,19 @@ export function rowsBetween(rows: StatRow[], from: string | null, to: string | n
   return rows.slice(Math.min(start, end), Math.max(start, end) + 1);
 }
 
-/** The x axis's rows the Range group keeps: from its first to last value, with enough photos. */
-export function rangedRows(rows: StatRow[], ranges: GraphRanges): StatRow[] {
-  const least = Math.max(ranges.minPhotos, ranges.hideZeros ? 1 : 0);
-  return rowsBetween(rows, ranges.xFrom, ranges.xTo).filter((row) => row.count >= least);
+/** The rows without the ones with no photos at either end; ones in between stay, keeping the scale. */
+function trimEmptyEnds(rows: StatRow[]): StatRow[] {
+  const first = rows.findIndex((row) => row.count > 0);
+  const last = rows.findLastIndex((row) => row.count > 0);
+  return first < 0 ? [] : rows.slice(first, last + 1);
 }
 
-/** The counts without the parts at 0, when they're hidden. */
-export function withoutZeros(
-  values: Record<string, number>,
-  hide: boolean,
-): Record<string, number> {
-  return hide ? Object.fromEntries(Object.entries(values).filter(([, v]) => v !== 0)) : values;
+/** The x axis's rows the Range group keeps: from its first to last value, with enough photos, empty ends trimmed when asked. */
+export function rangedRows(rows: StatRow[], ranges: GraphRanges): StatRow[] {
+  const kept = rowsBetween(rows, ranges.xFrom, ranges.xTo).filter(
+    (row) => row.count >= ranges.minPhotos,
+  );
+  return ranges.hideZeros ? trimEmptyEnds(kept) : kept;
 }
 
 /** Where a bar, line or dot graph's y axis runs; undefined for its own start and end. */

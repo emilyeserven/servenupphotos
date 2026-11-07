@@ -5,7 +5,6 @@ import {
   type GraphRanges,
   rangedRows,
   rowsBetween,
-  withoutZeros,
   type YDomain,
   yDomain,
 } from "@portfolio/lib/graph-ranges";
@@ -211,7 +210,7 @@ function splitData(list: Photo[], rows: StatRow[], config: GraphConfig): GraphDa
     return {
       label: row.label,
       photos: row.count,
-      values: withoutZeros(measuredAll(counts, row.count, config.measure), config.hideZeros),
+      values: measuredAll(counts, row.count, config.measure),
     };
   });
   return { series, data };

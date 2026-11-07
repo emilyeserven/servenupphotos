@@ -19,7 +19,7 @@ interface RangesProps {
 /**
  * The Range group in the Adjust Graph box: the first and last value on each axis, each picked from
  * the values the axis has, how many photos an x value needs to show (picked from the counts they
- * have), and a switch that leaves out values with no photos.
+ * have), and a switch that trims the values with no photos off the axis's ends.
  */
 export function GraphRanges({ config, onChange, list = allPhotos }: RangesProps) {
   const rows = axisValues(list, config);
@@ -171,7 +171,7 @@ function PhotoThreshold({ config, rows, onChange }: ThresholdProps) {
   );
 }
 
-/** The switch that leaves out values with no photos. */
+/** The switch that leaves out the x values with no photos at either end of the axis. */
 function HideZeros({ checked, onChange }: { checked: boolean; onChange: (on: boolean) => void }) {
   return (
     <label className="flex h-8 items-center gap-2 text-sm">
@@ -181,7 +181,7 @@ function HideZeros({ checked, onChange }: { checked: boolean; onChange: (on: boo
         onChange={(e) => onChange(e.target.checked)}
         className="size-4 accent-foreground"
       />
-      Hide values with no photos
+      Trim empty ends
     </label>
   );
 }

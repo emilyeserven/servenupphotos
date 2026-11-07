@@ -1,6 +1,6 @@
 import { type RangeKey, rangeValues } from "@portfolio/lib/camera-filters";
 import type { GraphStat } from "@portfolio/lib/graph-data";
-import { type Photo, SETTING_FORMATS } from "@portfolio/lib/photos";
+import { type Photo, photos as allPhotos, SETTING_FORMATS } from "@portfolio/lib/photos";
 import { type Bucket, bucketGroup, type StatGroup } from "@portfolio/lib/stat-groups";
 
 /** A camera setting's value as a row: written as a photographer would, filtering to just that value. */
@@ -9,14 +9,20 @@ function settingBucket(key: RangeKey, value: string): Bucket {
   return { key: value, label: write(value), filter: { [key]: `${value}-${value}` } };
 }
 
-/** A group of the setting's values the photos have, lowest first, such as f/1.4 to f/16. */
+/**
+ * A group of every value of the setting any photo has, lowest first, such as f/1.4 to f/16, with
+ * how many of the list's photos have each: 0 for the ones the filters leave out, so the axis keeps
+ * its whole scale.
+ */
 function settingGroup(key: RangeKey, title: string) {
+  const buckets = rangeValues(allPhotos, key).map((value) => settingBucket(key, value));
   return (list: Photo[]): StatGroup =>
     bucketGroup(
       title,
       list,
-      rangeValues(list, key).map((value) => settingBucket(key, value)),
+      buckets,
       (photo, bucket) => String(photo.settings[key]) === bucket.key,
+      true,
     );
 }
 
