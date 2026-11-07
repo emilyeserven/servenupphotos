@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["beach", "ocean", "waves", "cars", "road", "path", "volleyball", "sand-dunes"],
+  "tags": ["beach", "ocean", "waves", "cars", "road", "path", "volleyball"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,7 @@
     "chroma": 9.04,
     "peakChroma": 28.24,
     "samples": 9912
-  }
+  },
+  "notes": "Shows sand dunes; 'sand-dunes' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [427, 429, 422, 423, 425, 426]
 }

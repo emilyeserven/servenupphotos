@@ -1,0 +1,17 @@
+{
+  "id": "month-by-year",
+  "kind": "preset",
+  "name": "Month by year",
+  "order": 2,
+  "group": "time-heatmaps",
+  "graph": {
+    "type": "heatmap",
+    "x": "month",
+    "measure": "count",
+    "y": "year",
+    "split": "",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0
+  }
+}

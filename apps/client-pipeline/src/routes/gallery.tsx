@@ -135,7 +135,7 @@ function PublishedPhotos() {
           onSelectionChange={selection.setSelected}
         />
       )}
-      <QueryResult query={published} pendingLabel="Reading the portfolio's photos from GitHub…">
+      <QueryResult query={published} pendingLabel="Reading the portfolio's photos…">
         {(data) => (
           <PhotoGrid
             data={data}

@@ -1,0 +1,183 @@
+import {
+  type Bucket,
+  bucketGroup,
+  type GroupDef,
+  type GroupVariant,
+  type StatGroup,
+  valueGroup,
+} from "@portfolio/lib/stat-groups";
+import { groupTree, groupValues, type MetaGroup } from "@portfolio/lib/metadata-groups";
+import { settingGroup } from "@portfolio/lib/stats-settings";
+import type { RangeKey } from "@portfolio/lib/camera-filters";
+import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
+
+/** What the photos have for "no camera" in place of one. */
+const UNKNOWN_CAMERA = "Unknown camera";
+
+/** The photo's camera, or null when its EXIF didn't say. */
+export function cameraOf(photo: Photo): string | null {
+  return photo.camera === UNKNOWN_CAMERA ? null : photo.camera;
+}
+
+/** The equipment a group of metadata groups is of. */
+type Equipment = "camera" | "lens";
+
+/**
+ * The focal lengths a lens covers, as its name writes them, such as [18, 135] for
+ * "EF-S18-135mm f/3.5-5.6 IS STM" or [50, 50] for "EF50mm f/1.8 II"; undefined when it doesn't say.
+ */
+function lensFocalLengths(name: string): [number, number] | undefined {
+  const match = /(\d+(?:\.\d+)?)(?:-(\d+(?:\.\d+)?))?\s*mm/i.exec(name);
+  if (!match) return undefined;
+  const low = Number(match[1]);
+  return [low, Number(match[2] ?? low)];
+}
+
+/** The focal lengths a lens was used at in the portfolio's photos, for a lens whose name doesn't say. */
+function usedFocalLengths(name: string): number[] {
+  return allPhotos.flatMap((photo) =>
+    photo.lens === name && photo.settings.focalLength !== null ? [photo.settings.focalLength] : [],
+  );
+}
+
+/**
+ * The focal lengths the lenses in a lens group cover, such as "55–250mm": from their names, or
+ * else from the photos taken with them; undefined when neither says.
+ */
+function lensGroupSpan(group: MetaGroup): string | undefined {
+  const lengths = [...groupValues(group)].flatMap(
+    (name) => lensFocalLengths(name) ?? usedFocalLengths(name),
+  );
+  if (lengths.length === 0) return undefined;
+  const [low, high] = [Math.min(...lengths), Math.max(...lengths)];
+  return low === high ? `${low}mm` : `${low}–${high}mm`;
+}
+
+/**
+ * A metadata group as a row, filtering to the cameras or lenses in it. A lens group says the focal
+ * lengths its lenses cover.
+ */
+function metaBucket(equipment: Equipment, group: MetaGroup): Bucket {
+  const detail = equipment === "lens" ? lensGroupSpan(group) : undefined;
+  return { key: group.id, label: group.name, detail, filter: { [`${equipment}Group`]: group.id } };
+}
+
+/** Whether the photo's camera or lens is in the bucket's metadata group, or one inside it. */
+function inMetaGroup(equipment: Equipment) {
+  const values = new Map(groupTree(equipment).map(([group]) => [group.id, groupValues(group)]));
+  return (photo: Photo, bucket: Bucket): boolean =>
+    values.get(bucket.key)?.has(photo[equipment] ?? "") === true;
+}
+
+/** The title of a category's group, such as "Lenses by type" for the lens group Type. */
+function categoryTitle(equipment: Equipment, category: MetaGroup): string {
+  const plural = equipment === "lens" ? "Lenses" : "Cameras";
+  return `${plural} by ${category.name.toLowerCase()}`;
+}
+
+/**
+ * A category as a way to make the categories' group, named in the card's Group by control, such
+ * as "By type": its groups as rows, counting the photos with a camera or lens.
+ */
+function categoryVariant(
+  equipment: Equipment,
+  category: string,
+  title: string,
+  inside: MetaGroup[],
+): GroupVariant {
+  const buckets = inside.map((group) => metaBucket(equipment, group));
+  const known = (photo: Photo) => photo[equipment] !== null;
+  return {
+    label: `By ${category.toLowerCase()}`,
+    build: (list) =>
+      uncategorized(bucketGroup(title, list.filter(known), buckets, inMetaGroup(equipment))),
+  };
+}
+
+/** Sorts the category named Type first, as the one a card opens on. */
+function typeFirst(a: MetaGroup, b: MetaGroup): number {
+  return Number(b.name === "Type") - Number(a.name === "Type");
+}
+
+/**
+ * The camera or lens metadata groups set on the pipeline as ways to group a card: each top-level
+ * group with groups in it, such as Type, is a category whose rows are the groups in it, such as
+ * Prime, Type first; the top-level groups with none in them go together as "By group".
+ */
+function categoryVariants(equipment: Equipment): GroupVariant[] {
+  const tree = groupTree(equipment).map(([group]) => group);
+  const childrenOf = (id: string) => tree.filter((group) => group.parent === id);
+  const top = tree.filter((group) => !tree.some((other) => other.id === group.parent));
+  const categories = top.filter((group) => childrenOf(group.id).length > 0).toSorted(typeFirst);
+  const loose = top.filter((group) => childrenOf(group.id).length === 0);
+  const variants = categories.map((category) =>
+    categoryVariant(
+      equipment,
+      category.name,
+      categoryTitle(equipment, category),
+      childrenOf(category.id),
+    ),
+  );
+  const title = `${equipment === "lens" ? "Lens" : "Camera"} groups`;
+  if (loose.length > 0) variants.push(categoryVariant(equipment, "Group", title, loose));
+  return variants;
+}
+
+/**
+ * The lens brands as one card, the top of the Lenses chain, narrowing `narrows`; none without a
+ * lens category named Brand on the pipeline.
+ */
+function lensBrandDefs(narrows: string): GroupDef[] {
+  const brand = categoryVariants("lens").find((variant) => variant.label === "By brand");
+  if (!brand) return [];
+  return [{ id: "lens-brands", narrows, build: brand.build, runTitle: "Lenses" }];
+}
+
+/** A card of the Exposure Triangle, linked with the other two, showing every range. */
+function exposureDef(id: string, key: RangeKey, title: string): GroupDef {
+  return { id, linked: "Exposure Triangle", build: settingGroup(key, title, true) };
+}
+
+/** Every camera as a row, the Cameras card's first way to group. */
+const EACH_CAMERA: GroupVariant = {
+  label: "Each camera",
+  build: (list) => valueGroup("Cameras", list, cameraOf, equipmentBucket("camera")),
+};
+
+/**
+ * The Cameras card: each camera, or, from its Group by control, the camera categories set on the
+ * pipeline, such as By type; no control when there are none.
+ */
+function camerasDef(): GroupDef {
+  const categories = categoryVariants("camera");
+  const variants = categories.length > 0 ? [EACH_CAMERA, ...categories] : undefined;
+  return { id: "cameras", build: EACH_CAMERA.build, variants };
+}
+
+/** A group whose uncounted photos are the ones in none of its categories. */
+function uncategorized(group: StatGroup): StatGroup {
+  return { ...group, missingReason: "uncategorized" };
+}
+
+/** A camera or lens as a row, filtering to it. */
+function equipmentBucket(equipment: Equipment) {
+  return (name: string): Bucket => ({ key: name, label: name, filter: { [equipment]: name } });
+}
+
+/**
+ * The Gear section's groups: the lenses from the top down, the lens brands narrowing the focal
+ * length ranges, which narrow the lenses; then the Exposure Triangle's linked aperture, shutter
+ * speed and ISO; then cameras, which can be grouped by their categories.
+ */
+export const GEAR_GROUPS: GroupDef[] = [
+  ...lensBrandDefs("focal-length"),
+  { id: "focal-length", narrows: "lenses", build: settingGroup("focalLength", "Focal length") },
+  {
+    id: "lenses",
+    build: (list) => valueGroup("Lenses", list, (photo) => photo.lens, equipmentBucket("lens")),
+  },
+  exposureDef("aperture", "aperture", "Aperture"),
+  exposureDef("shutter-speed", "exposure", "Shutter speed"),
+  exposureDef("iso", "iso", "ISO"),
+  camerasDef(),
+];

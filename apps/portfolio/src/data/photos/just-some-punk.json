@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mosaic", "art-installation", "subway", "faces", "fence", "patterns"],
+  "tags": ["art-installations", "subway", "faces", "fence", "patterns"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 4.23,
     "peakChroma": 7.18,
     "samples": 10010
-  }
+  },
+  "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [29, 25, 45, 51, 32, 28]
 }

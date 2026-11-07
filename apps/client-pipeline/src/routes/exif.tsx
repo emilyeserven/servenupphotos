@@ -9,6 +9,7 @@ import type { PhotoIdentity } from "@/api/photos";
 import { ChangePhotoButton, SavedPhotoCard } from "@/components/choose-photo-dialog";
 import { ColorData, RawColorData } from "@/components/color-data";
 import { EditInFlightPhoto } from "@/components/edit-in-flight";
+import { EditPhotoById, photoIdSearch } from "@/components/edit-photo-by-id";
 import { PhotoGroupsCard } from "@/components/group-picker";
 import { JsonCodeBlock } from "@/components/json-code-block";
 import { QueuePhotoButton, useQueuedPhoto } from "@/components/bulk-upload/queue-photo-button";
@@ -53,22 +54,44 @@ interface PhotoSearch {
   edit?: string;
   /** The page the edit was opened from, which the back link returns to; Photos in Flight unless set. */
   from?: "gallery";
+  /** The ID of a photo to edit, when the page linking here knows only that, such as Trip Lines. */
+  photo?: number;
 }
 
 export const Route = createFileRoute("/exif")({
   component: PhotoRoute,
   staticData: { wide: true },
-  validateSearch: (search: Record<string, unknown>): PhotoSearch => {
-    if (typeof search.edit !== "string" || !search.edit) return {};
-    return search.from === "gallery"
-      ? { edit: search.edit, from: "gallery" }
-      : { edit: search.edit };
-  },
+  validateSearch: (search: Record<string, unknown>): PhotoSearch => ({
+    ...editSearch(search),
+    ...photoIdSearch(search),
+  }),
 });
 
+/** The Photo page's `?edit=` and `?from=`, when it edits a photo file by its path. */
+function editSearch(search: Record<string, unknown>): PhotoSearch {
+  if (typeof search.edit !== "string" || !search.edit) return {};
+  return search.from === "gallery" ? { edit: search.edit, from: "gallery" } : { edit: search.edit };
+}
+
 function PhotoRoute() {
-  const { edit, from } = Route.useSearch();
-  if (!edit) return <PhotoPage />;
+  const { edit, from, photo } = Route.useSearch();
+  if (edit) {
+    return (
+      <EditPage>
+        <EditInFlightPhoto path={edit} from={from} />
+      </EditPage>
+    );
+  }
+  if (photo === undefined) return <PhotoPage />;
+  return (
+    <EditPage>
+      <EditPhotoById id={photo} />
+    </EditPage>
+  );
+}
+
+/** The Edit Photo page around an editor. */
+function EditPage({ children }: { children: React.ReactNode }) {
   return (
     <Page
       title="Edit Photo"
@@ -76,7 +99,7 @@ function PhotoRoute() {
       wide
       action={<ChangePhotoButton />}
     >
-      <EditInFlightPhoto path={edit} from={from} />
+      {children}
     </Page>
   );
 }

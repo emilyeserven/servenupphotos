@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["footbridge", "bridge", "steel", "symmetry", "repetition", "train-station", "windows"],
+  "tags": ["footbridges", "bridges", "steel", "symmetry", "repetition", "train-station", "windows"],
   "genres": ["architecture", "abstract"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 15.92,
     "peakChroma": 35.42,
     "samples": 9801
-  }
+  },
+  "similarPhotos": [45, 35, 39, 237, 113, 402]
 }

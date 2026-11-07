@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["figurines", "birds", "toys", "moss", "stones", "forest"],
+  "tags": ["figurines", "birds", "moss", "stones", "forest"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 19.4,
     "peakChroma": 28.18,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [114, 81, 111, 82, 315, 113]
 }

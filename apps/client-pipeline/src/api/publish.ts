@@ -49,7 +49,24 @@ export interface SocialCalendar extends Omit<SocialCalendarRead, "photos"> {
 /** Every photo JSON file with its social media publish date. */
 export const socialCalendarQuery = queryOptions({
   queryKey: ["publish", "instagram"],
-  queryFn: () => requestJson<SocialCalendarRead>("/api/publish/instagram"),
+  queryFn: () => requestJson<SocialCalendarRead>("/api/attention"),
   retry: false,
   refetchOnWindowFocus: false,
 });
+
+/**
+ * Every photo JSON file as the Dashboard's Needs attention counts from it: like the Instagram
+ * calendar's, but each file's data without image URLs, EXIF originals or notes, and colors cut down
+ * to their peakChroma, which makes it a fraction of the size. Saves and local edits are layered on
+ * top by the card, so it's read once, and again after a Commit (commitSha) or a Discard.
+ */
+export function attentionQuery(commitSha: string | undefined) {
+  return queryOptions({
+    queryKey: ["publish", "attention", commitSha ?? "start"],
+    queryFn: () => requestJson<SocialCalendarRead>("/api/attention"),
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity,
+    gcTime: 30 * 60_000,
+  });
+}

@@ -48,16 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "bay-windows",
-    "apartments",
-    "power-lines",
-    "storefronts",
-    "pedestrians",
-    "cars",
-    "traffic-lights"
-  ],
-  "genres": [],
+  "tags": ["bay-windows", "apartments", "power-lines", "storefronts", "pedestrians", "cars"],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -269,5 +261,7 @@
     "chroma": 11.76,
     "peakChroma": 26.19,
     "samples": 10050
-  }
+  },
+  "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [436, 429, 413, 435, 250, 373]
 }

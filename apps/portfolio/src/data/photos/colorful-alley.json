@@ -51,14 +51,14 @@
   "tags": [
     "alley",
     "street-art",
-    "mural",
-    "fire-escape",
+    "murals",
+    "fire-escapes",
     "balconies",
     "ironwork",
     "string-lights",
     "night"
   ],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -270,5 +270,6 @@
     "chroma": 13.48,
     "peakChroma": 40.1,
     "samples": 9628
-  }
+  },
+  "similarPhotos": [439, 440, 441, 467, 438, 283]
 }

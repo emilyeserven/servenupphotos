@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["gates", "wood", "patterns", "texture", "dancheong", "phoenixes"],
+  "tags": ["gates", "wood", "patterns", "texture", "dancheong"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,7 @@
     "chroma": 14.61,
     "peakChroma": 24.17,
     "samples": 9975
-  }
+  },
+  "notes": "Shows painted phoenixes; 'phoenixes' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [256, 397, 33, 63, 145, 210]
 }

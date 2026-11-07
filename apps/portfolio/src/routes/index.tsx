@@ -3,8 +3,9 @@ import { useState } from "react";
 import { FROSTED } from "@/components/backdrop-caption";
 import { PhotoBackdrop } from "@/components/photo-backdrop";
 import { homepagePhotos } from "@/lib/homepage-photos";
-import { homepageStart, rememberHomepagePhoto } from "@/lib/last-homepage-photo";
-import { enabledViews } from "@/lib/portfolio-views";
+import { rememberSpotlightPhoto, spotlightStart } from "@/lib/last-spotlight-photo";
+import { mainViews } from "@/lib/portfolio-views";
+import { HOMEPAGE_ZONE, UPRIGHT_PHONE_QUERY } from "@/lib/spotlight-zones";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { rememberedViewOptions } from "@/lib/view-options";
@@ -17,20 +18,19 @@ export const Route = createFileRoute("/")({
 const backdropPhotos = homepagePhotos();
 const phoneBackdropPhotos = homepagePhotos(undefined, true);
 
-/** The views with a card on the homepage: Albums, Tags and Lucky are only in the menu. */
-const MENU_ONLY: readonly string[] = ["/albums", "/tags", "/lucky"];
+/** The views with a card on the homepage: the minor ones (Albums, Tags, Lucky, My Likes) are only in the menu. */
+const homepageViews = mainViews.filter((view) => view.enabled);
 
-const homepageViews = enabledViews.filter((view) => !MENU_ONLY.includes(view.to));
-
-/** A phone held upright, which shows portrait photos first. */
-const PHONE_QUERY = "(max-width: 767px) and (orientation: portrait)";
+/** Saves the homepage photo showing now, so the next visit starts on the one after it. */
+const rememberHomepagePhoto = (photo: { id: number }) =>
+  rememberSpotlightPhoto(HOMEPAGE_ZONE, photo);
 
 /** The portfolio's front door: each way to explore the photos, over photos fading in and out. */
 function Homepage() {
-  const phone = useMediaQuery(PHONE_QUERY);
+  const phone = useMediaQuery(UPRIGHT_PHONE_QUERY);
   const photos = phone ? phoneBackdropPhotos : backdropPhotos;
   // Picked once per visit, from the photo this browser showed last, so each visit starts on a new one.
-  const [start] = useState(() => homepageStart(photos));
+  const [start] = useState(() => spotlightStart(HOMEPAGE_ZONE, photos));
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center px-4 py-20 text-white">
       <PhotoBackdrop photos={photos} start={start} onShow={rememberHomepagePhoto} />

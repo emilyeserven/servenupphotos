@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["bench", "abandoned", "road", "grass", "tall-grass", "forest", "countryside", "clouds"],
+  "tags": ["benches", "road", "grass", "tall-grass", "forest", "countryside", "clouds"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,7 @@
     "chroma": 28.02,
     "peakChroma": 47.64,
     "samples": 9216
-  }
+  },
+  "notes": "Shows an abandoned bench and road; 'abandoned' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [241, 234, 81, 311, 482, 93]
 }

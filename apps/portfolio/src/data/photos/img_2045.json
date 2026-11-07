@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["bracket-fungi", "fungi", "patterns", "texture", "forest"],
+  "tags": ["fungi", "patterns", "texture", "forest"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,7 @@
     "chroma": 7.57,
     "peakChroma": 15.51,
     "samples": 9728
-  }
+  },
+  "notes": "Shows bracket fungi; 'bracket-fungi' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [88, 87, 85, 89, 91, 92]
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["lunar-new-year", "parade", "police", "uniforms", "flags", "repetition"],
+  "tags": ["festivals", "flags", "repetition"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 10.57,
     "peakChroma": 28.7,
     "samples": 9694
-  }
+  },
+  "notes": "Shows uniformed police; 'police' and 'uniforms' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [16, 262, 68, 56, 45, 76]
 }

@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["beach", "road", "cars", "apartments", "coastline", "promenade", "crosswalk", "sand"],
-  "genres": [],
+  "genres": ["street", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -263,5 +263,6 @@
     "chroma": 4.24,
     "peakChroma": 8.75,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [422, 426, 420, 427, 429, 424]
 }

@@ -8,6 +8,7 @@ import {
   MinusIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { isSmartAlbum } from "@portfolio/lib/smart-albums";
 import {
   GROUP_KINDS,
   type Group,
@@ -38,9 +39,11 @@ import {
   AlbumRemovePhotos,
   useAlbumRemove,
 } from "@/components/album-remove-photos";
+import { AlbumPhotoGrid } from "@/components/album-remove-one";
 import { AlbumVisibilityCard } from "@/components/album-visibility-card";
+import { SmartAlbumCard } from "@/components/smart-album/smart-album-card";
 import { AllPhotosRebuild, useAllPhotosRebuild } from "@/components/all-photos-rebuild";
-import { type GroupPhotos, GroupPhotoGrid, useGroupPhotos } from "@/components/group-photo-grid";
+import { type GroupPhotos, useGroupPhotos } from "@/components/group-photo-grid";
 import { GroupCombobox } from "@/components/group-picker";
 import { GitHubGate, GroupStatus } from "@/components/organize-page";
 import { Page } from "@/components/page";
@@ -72,10 +75,7 @@ export function GroupDetailPage({ kind, id }: { kind: GroupKind; id: string }) {
       </Button>
       <GitHubGate>
         {() => (
-          <QueryResult
-            query={organize}
-            pendingLabel={`Reading the ${GROUP_KINDS[kind].singular} from GitHub…`}
-          >
+          <QueryResult query={organize} pendingLabel={`Reading the ${GROUP_KINDS[kind].singular}…`}>
             {(data) => <GroupFound kind={kind} id={id} group={group} organize={data} />}
           </QueryResult>
         )}
@@ -109,7 +109,7 @@ function GroupFound({
     <Card>
       <CardContent>
         <p className="text-muted-foreground">
-          There's no {GROUP_KINDS[kind].singular} with the ID <code>{id}</code> on GitHub.
+          There's no {GROUP_KINDS[kind].singular} with the ID <code>{id}</code>.
         </p>
       </CardContent>
     </Card>
@@ -127,14 +127,19 @@ interface GroupDetailProps {
 }
 
 function GroupDetail({ kind, group, organize }: GroupDetailProps) {
+  const album = isReadableAlbum(kind, group);
   return (
     <>
+      {album && <SmartAlbumCard album={group} />}
       <GroupColumns kind={kind} group={group} organize={organize} />
-      {kind === "albums" && !group.error && (
-        <AlbumLayoutCard album={group} albums={organize.albums} />
-      )}
+      {byHand(kind, group) && <AlbumLayoutCard album={group} albums={organize.albums} />}
     </>
   );
+}
+
+/** Whether the group is an album whose file could be read. */
+function isReadableAlbum(kind: GroupKind, group: Group): boolean {
+  return kind === "albums" && !group.error;
 }
 
 function GroupColumns({ kind, group, organize }: GroupDetailProps) {
@@ -516,6 +521,7 @@ function GroupPhotos({ kind, group, albums }: { kind: GroupKind; group: Group; a
           photos={photos}
           mode={mode}
           remove={removing}
+          removable={byHand(kind, group)}
           onDone={() => setMode("view")}
         />
       </CardContent>
@@ -538,13 +544,23 @@ type PhotosMode = "view" | "reorder" | "remove";
 
 /** Whether the group is an album, readable, with photos to take out of it. */
 function canRemove(kind: GroupKind, group: Group, photos: unknown[] = []): boolean {
-  return kind === "albums" && !group.error && photos.length > 0;
+  return byHand(kind, group) && photos.length > 0;
+}
+
+/**
+ * Whether the group is a readable album whose photos are chosen by hand, not a Smart Album, whose
+ * photos, covers and layout only its rules decide.
+ */
+function byHand(kind: GroupKind, group: Group): boolean {
+  return isReadableAlbum(kind, group) && !isSmartAlbum(group);
 }
 
 interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> {
   group: Group;
   mode: PhotosMode;
   remove: AlbumRemove;
+  /** Whether each of the album's own photos gets a button that takes it out of the album. */
+  removable: boolean;
   onDone: () => void;
 }
 
@@ -552,10 +568,9 @@ interface PhotosOrReorderProps extends Pick<GroupPhotos, "combined" | "photos"> 
  * The photos in the album's order, or, while reordering, the tiles to drag into a new one, or,
  * while removing, the tiles to pick.
  */
-function PhotosOrReorder({ group, combined, photos, mode, remove, onDone }: PhotosOrReorderProps) {
-  if (mode === "view" || !photos) {
-    return <GroupPhotoGrid combined={combined} photos={photos} order={group.photoOrder} />;
-  }
+function PhotosOrReorder(props: PhotosOrReorderProps) {
+  const { group, photos, mode, remove, onDone } = props;
+  if (mode === "view" || !photos) return <AlbumPhotoGrid {...props} album={group} />;
   if (mode === "reorder") {
     return <AlbumPhotoReorder album={group} photos={photos} onDone={onDone} />;
   }
@@ -568,7 +583,7 @@ function AddPhotosButton({
   group,
   add,
 }: { kind: GroupKind; group: Group } & Pick<AlbumAdd, "add">) {
-  if (kind !== "albums" || group.error) return null;
+  if (!byHand(kind, group)) return null;
   return <AlbumAddPhotos album={group} add={add} />;
 }
 

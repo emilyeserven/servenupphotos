@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": ["homepage-spotlight"],
-  "tags": ["tenshu", "castle", "lanterns", "matsuri", "andon", "night", "suitorou"],
+  "tags": ["castle", "lanterns", "night", "festivals"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,16 @@
     "chroma": 1.15,
     "peakChroma": 2.28,
     "samples": 10115
-  }
+  },
+  "notes": "Shows the castle keep (tenshu), andon lanterns and the Suitoro festival; 'tenshu', 'andon', 'matsuri' and 'suitorou' aren't tags, since each is on only 1–2 photos.",
+  "spotlightZoneFocus": {
+    "homepage": {
+      "focus": {
+        "x": 31,
+        "y": 27
+      },
+      "placement": null
+    }
+  },
+  "similarPhotos": [355, 438, 162, 467, 262, 351]
 }

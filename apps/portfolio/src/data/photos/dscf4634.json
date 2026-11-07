@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["autumn", "observation-tower", "wood", "stairs", "pine-trees", "forest"],
+  "tags": ["autumn", "observation-towers", "wood", "stairs", "pine-trees", "forest"],
   "genres": [],
   "places": [
     {
@@ -266,5 +266,6 @@
     "chroma": 8.99,
     "peakChroma": 17.71,
     "samples": 10030
-  }
+  },
+  "similarPhotos": [473, 474, 495, 479, 476, 477]
 }

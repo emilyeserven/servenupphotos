@@ -28,6 +28,12 @@ type pruneTagAnswer struct {
 		Parent *string `json:"parent"`
 		Reason string  `json:"reason"`
 	} `json:"reparent"`
+	// Notes are notes for the photographer-only notes of the photos a removed
+	// or merged tag was on, saying what it described and why it went.
+	Notes []struct {
+		Photo string `json:"photo"`
+		Note  string `json:"note"`
+	} `json:"notes"`
 }
 
 // parsePruneTagAnswer reads the JSON object in text, the LLM's answer, which
@@ -41,7 +47,7 @@ func parsePruneTagAnswer(text string) (pruneTagAnswer, *PublishError) {
 	if err := json.Unmarshal([]byte(text[start:end+1]), &answer); err != nil {
 		return answer, publishErr(http.StatusBadRequest, "The answer isn't the JSON the prompt asks for (%v). Ask the LLM to answer with only that JSON.", err)
 	}
-	if len(answer.Merge)+len(answer.Remove)+len(answer.Reparent) == 0 {
+	if len(answer.Merge)+len(answer.Remove)+len(answer.Reparent)+len(answer.Notes) == 0 {
 		return answer, publishErr(http.StatusBadRequest, "The answer doesn't suggest any changes, so the tags are fine as they are.")
 	}
 	return answer, nil
@@ -94,7 +100,9 @@ type PruneTagsPreview struct {
 	Merge    []PruneTagMerge    `json:"merge"`
 	Remove   []PruneTagRemoval  `json:"remove"`
 	Reparent []PruneTagReparent `json:"reparent"`
-	Skipped  []PruneTagSkipped  `json:"skipped"`
+	// Notes are the notes the answer adds to photos.
+	Notes   []TagLibraryNote  `json:"notes"`
+	Skipped []PruneTagSkipped `json:"skipped"`
 }
 
 // tagLookup finds a tag by its ID or name, ignoring case, or by the ID made
@@ -168,34 +176,29 @@ func (c *Client) PreviewPruneTags(ctx context.Context, gh settings.GitHub, answe
 	if perr != nil {
 		return PruneTagsPreview{}, perr
 	}
-	p := newTagPruner(scan.w.groups()[Tags.Folder])
-	req, reasons := newTagLookup(p.tags).request(parsed)
+	l := newTagLibrarian(scan)
+	lookup := newLibraryLookup(l, scan)
+	req, reasons := lookup.tags.request(parsed)
+	notes := lookup.notes(parsed)
 	preview := PruneTagsPreview{
-		Tags: len(p.tags), Merge: []PruneTagMerge{}, Remove: []PruneTagRemoval{},
-		Reparent: []PruneTagReparent{}, Skipped: []PruneTagSkipped{},
+		Tags: len(l.tags), Merge: []PruneTagMerge{}, Remove: []PruneTagRemoval{},
+		Reparent: []PruneTagReparent{}, Notes: []TagLibraryNote{}, Skipped: []PruneTagSkipped{},
 	}
 	counts := tagCounts(scan)
-	for _, s := range p.steps(req) {
-		before := p.parentOf(stepTag(req, s))
+	names := photoNames(scan)
+	for _, s := range l.steps(TagLibrary{PruneTags: req, Notes: notes}, names) {
+		before := l.stepBefore(TagLibrary{PruneTags: req}, s)
 		if why := s.run(); why != "" {
 			preview.Skipped = append(preview.Skipped, PruneTagSkipped{Change: s.said, Reason: why})
 			continue
 		}
-		preview.add(p, req, s, reasons[s.kind][s.index], counts, before)
+		if s.kind == libraryNotes {
+			preview.Notes = append(preview.Notes, noteListed(notes[s.index], names))
+			continue
+		}
+		preview.add(l.tagPruner, req, s, reasons[s.kind][s.index], counts, before)
 	}
 	return preview, nil
-}
-
-// stepTag is the tag s changes.
-func stepTag(req PruneTags, s pruneStep) string {
-	switch s.kind {
-	case pruneMerge:
-		return req.Merge[s.index].Tag
-	case pruneRemove:
-		return req.Remove[s.index]
-	default:
-		return req.Reparent[s.index].Tag
-	}
 }
 
 // add lists s, a change that can be made, with the answer's reason for it.

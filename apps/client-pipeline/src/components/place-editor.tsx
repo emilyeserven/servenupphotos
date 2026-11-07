@@ -9,6 +9,7 @@ import {
 } from "@/api/places";
 import { FieldLabel } from "@/components/field-label";
 import { FloatingSaveButton } from "@/components/floating-save-button";
+import { PlaceAreaEditor } from "@/components/place-area-editor";
 import {
   type LocalizationDraft,
   LocalizationFields,
@@ -277,6 +278,7 @@ export function PlaceEditor({ folder, place, places, localization, onDone }: Pla
             busy={busy}
           />
         </form>
+        {place && <PlaceAreaEditor id={place.id} name={place.name} />}
       </CardContent>
     </Card>
   );

@@ -3,8 +3,12 @@
 The portfolio's Grid (`/grid`, `routes/grid.tsx`) shows every photo with resized versions in R2, newest first, in one of
 three views picked at the top right (`?view=`): **Square** tiles (the default), **Natural** tiles, or a **Table**. Its
 **Show filters** panel has the filters in [Portfolio Filters](portfolio-filters.md), including the camera filters, and
-a **Colors** section (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
+a **Visuals** button for colors and orientation (see [Portfolio Color](portfolio-color.md#on-the-grid-page)); they apply to every view. Clicking a
 photo opens the [photo viewer](photo-viewer.md).
+
+When an album is picked for the **Grid Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page,
+its photos fade in and out across the top of the page, up to 30% of the screen's height, fading into the background,
+with the title and filters under them (see [Header spotlights](publish.md#header-spotlights)).
 
 The tile views share the sort dropdown (newest, oldest, **Recently Added**, **Time of Day**, color, vividness) and
 the eye button's display options (`components/grid-view-options.tsx`, using the flyout shared with the Map and Timeline,
@@ -78,6 +82,15 @@ name sorts by it (`?column=…&dir=…`), the **Columns** menu hides columns (`?
 the rows in the table's sort. The tiles' sort and **Show info** are hidden here. Older `/table` links go to this view,
 keeping their sort (their `?sort=` becomes `?column=`), columns, filters and open photo (`routes/table.tsx`,
 `lib/table-search.ts`).
+
+Once the table's header row scrolls above the top of the window, a copy of it sticks there until the last row goes
+by, so the column names and their sort buttons stay in sight (`components/sticky-table-header.tsx`). The table sits in a
+box that scrolls sideways on narrow screens, and that box keeps CSS `position: sticky` on the table's own header from
+working, so the copy is a separate row that matches the columns' widths and follows the box's sideways scroll. Screen
+readers and the keyboard use the table's own header; the copy's buttons work with a click or a tap.
+
+> **Frontend analogy:** `position: sticky` sticks to the nearest ancestor that scrolls, and `overflow-x: auto` makes
+> the box scroll on both axes, so a sticky header inside it would only stick within that box, never to the window.
 
 ### View menu
 

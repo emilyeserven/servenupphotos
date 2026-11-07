@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": ["homepage-spotlight"],
-  "tags": ["city", "night", "road", "cars", "traffic", "skyscraper", "city-lights"],
+  "tags": ["city", "night", "road", "cars", "traffic", "skyscrapers", "city-lights"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -263,5 +263,18 @@
     "chroma": 1.53,
     "peakChroma": 2.3,
     "samples": 9828
-  }
+  },
+  "spotlightZoneFocus": {
+    "homepage": {
+      "focus": {
+        "x": 53,
+        "y": 70
+      },
+      "placement": {
+        "x": 50,
+        "y": 80
+      }
+    }
+  },
+  "similarPhotos": [270, 352, 326, 354, 492, 311]
 }

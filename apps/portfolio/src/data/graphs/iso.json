@@ -1,0 +1,17 @@
+{
+  "id": "iso",
+  "kind": "preset",
+  "name": "ISO",
+  "order": 3,
+  "group": "technical-details",
+  "graph": {
+    "type": "photos",
+    "x": "iso",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0
+  }
+}

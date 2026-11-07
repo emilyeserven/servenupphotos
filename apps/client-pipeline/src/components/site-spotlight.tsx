@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   type Group,
   type OrganizeResponse,
+  type SpotlightOrientation,
   albumDescendants,
   organizeQuery,
   setSpotlightAlbumMutation,
@@ -11,14 +12,20 @@ import { albumPhotoOrder } from "@/lib/album-photo-order";
 import { GroupCombobox } from "@/components/group-picker";
 import { QueryResult } from "@/components/query-result";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ZonePreview } from "@/components/zone-preview";
-import { type SpotlightZone, spotlightZones, zoneAlbum } from "@/lib/site-spotlight";
+import { SpotlightOrientationPicker } from "@/components/spotlight-orientation";
+import { ZoneFocus } from "@/components/zone-focus";
+import {
+  type SpotlightZone,
+  spotlightZones,
+  zoneAlbum,
+  zoneOrientation,
+} from "@/lib/site-spotlight";
 
 /** Picks the album each spotlight zone of the portfolio shows, such as the homepage's. */
 export function SiteSpotlight() {
   const organize = useQuery(organizeQuery);
   return (
-    <QueryResult query={organize} pendingLabel="Reading albums from GitHub…">
+    <QueryResult query={organize} pendingLabel="Reading albums…">
       {(data) => <Zones organize={data} />}
     </QueryResult>
   );
@@ -72,7 +79,15 @@ function ZoneCard({ zone, albums }: { zone: SpotlightZone; albums: Group[] }) {
           {save.isError && <p className="text-destructive">{save.error.message}</p>}
         </div>
         {album ? (
-          <AlbumPhotos album={album} albums={albums} />
+          <ZoneAlbum
+            album={album}
+            albums={albums}
+            zone={zone}
+            saving={save.isPending}
+            onOrientation={(orientation) =>
+              save.mutate({ zone: zone.id, album: album.id, orientation })
+            }
+          />
         ) : (
           <p className="text-muted-foreground">{zone.fallback}</p>
         )}
@@ -81,14 +96,41 @@ function ZoneCard({ zone, albums }: { zone: SpotlightZone; albums: Group[] }) {
   );
 }
 
-/** The photos in album and its sub-albums, as the zone shows them, with a preview of each. */
-function AlbumPhotos({ album, albums }: { album: Group; albums: Group[] }) {
-  const ids = new Set([album.id, ...albumDescendants(albums, album.id)]);
-  const { combined, photos } = useGroupPhotos("albums", ids);
+interface ZoneAlbumProps {
+  album: Group;
+  albums: Group[];
+  zone: SpotlightZone;
+  saving: boolean;
+  onOrientation: (orientation: SpotlightOrientation) => void;
+}
+
+/** The zone's album: which of its photos come first, and the photos the zone shows from it. */
+function ZoneAlbum({ album, albums, zone, saving, onOrientation }: ZoneAlbumProps) {
   return (
     <>
-      {photos && <ZonePreview photos={albumPhotoOrder(photos, album.photoOrder)} />}
-      <GroupPhotoGrid combined={combined} photos={photos} order={album.photoOrder} />
+      <SpotlightOrientationPicker
+        value={zoneOrientation(album, zone.id)}
+        disabled={saving}
+        onPick={onOrientation}
+      />
+      <AlbumPhotos album={album} albums={albums} zone={zone} />
     </>
   );
+}
+
+interface AlbumPhotosProps {
+  album: Group;
+  albums: Group[];
+  zone: SpotlightZone;
+}
+
+/**
+ * The photos in album and its sub-albums, in the order the zone shows them, to pick one and set
+ * its focus point in the zone; or why there are none.
+ */
+function AlbumPhotos({ album, albums, zone }: AlbumPhotosProps) {
+  const ids = new Set([album.id, ...albumDescendants(albums, album.id)]);
+  const { combined, photos } = useGroupPhotos("albums", ids);
+  if (!photos?.length) return <GroupPhotoGrid combined={combined} photos={photos} />;
+  return <ZoneFocus zone={zone} photos={albumPhotoOrder(photos, album.photoOrder)} />;
 }

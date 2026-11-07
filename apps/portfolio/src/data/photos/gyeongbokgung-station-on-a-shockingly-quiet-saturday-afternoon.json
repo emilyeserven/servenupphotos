@@ -44,7 +44,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["seokdeung", "subway", "train-station", "arches", "platform", "pedestrians", "symmetry"],
+  "tags": ["subway", "train-station", "arches", "platform", "pedestrians", "symmetry", "lanterns"],
   "genres": [],
   "placeName": "gyeongbokgung-station",
   "customCity": "Seoul",
@@ -265,5 +265,7 @@
     "chroma": 3.28,
     "peakChroma": 6.91,
     "samples": 9900
-  }
+  },
+  "notes": "Shows a seokdeung stone lantern; 'seokdeung' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [125, 6, 74, 151, 219, 22]
 }

@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hills", "road", "cars", "trees", "houses", "apartments", "city"],
-  "genres": [],
+  "genres": ["cityscape", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -264,5 +264,6 @@
     "peakChroma": 14.22,
     "samples": 9912
   },
-  "undecided": true
+  "undecided": true,
+  "similarPhotos": [492, 494, 491, 493, 444, 412]
 }

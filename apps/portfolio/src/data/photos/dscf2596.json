@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["highway", "apartments", "cars", "beach", "city", "haze"],
-  "genres": [],
+  "genres": ["cityscape", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -264,5 +264,6 @@
     "peakChroma": 15.16,
     "samples": 9694
   },
-  "undecided": true
+  "undecided": true,
+  "similarPhotos": [420, 419, 429, 425, 417, 490]
 }

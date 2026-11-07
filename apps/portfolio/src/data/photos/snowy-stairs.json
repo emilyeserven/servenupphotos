@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["snow", "winter", "stairs", "lamppost", "park", "smartphones", "repetition"],
+  "tags": ["snow", "winter", "stairs", "street-lights", "park", "smartphones", "repetition"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 3.28,
     "peakChroma": 4.23,
     "samples": 9216
-  }
+  },
+  "similarPhotos": [105, 104, 64, 69, 240, 237]
 }

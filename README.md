@@ -86,22 +86,32 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Portfolio homepage](docs/portfolio-homepage.md) (`/` on the portfolio): the ways to explore, over the album picked on Site Spotlight
 - [Portfolio Filters](docs/portfolio-filters.md): filtering the portfolio's views by place, album and tag (plus camera, lens and settings on the Grid), kept in the URL across views
 - [Photo Viewer](docs/photo-viewer.md): the portfolio's full-window photo, and moving between photos with the arrow keys
-- [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, technical info, and picking a range on the graph or the heatmap
+- [More Like This](docs/more-like-this.md) (`/related-photos` in the pipeline): the photo viewer's drawer of related photos, found by the backend or picked by hand
+- [Portfolio Timeline](docs/portfolio-timeline.md) (`/timeline` on the portfolio): photos by month and day, with technical info and a scrubber
 - [Portfolio Grid](docs/portfolio-grid.md) (`/grid` on the portfolio): square and natural tiles (vertical photos in rows of their own) and the Table view, with its sorting, Columns menu and place names
 - [Portfolio Lucky](docs/portfolio-lucky.md) (`/lucky` on the portfolio): whole rows of photos picked at random from the ones the filters leave, with Shuffle
+- [Portfolio Likes](docs/portfolio-likes.md) (`/likes` on the portfolio): double tap a photo to like it, then My Likes lists them with your comments and text to send over Discord or Messenger/Text
 - [Portfolio Map](docs/portfolio-map.md) (`/map` on the portfolio): photo markers, groups of photos, and jumping to all photos or an area
 - [Map Link Previews](docs/map-link-previews.md): the map's Copy link, and the place pages built on deploy whose link previews show a picture of the map
 - [Portfolio Albums](docs/portfolio-albums.md) (`/albums` on the portfolio): a strip of each album's photos, in the order set on the pipeline
+- [Portfolio analytics](docs/portfolio-analytics.md): Umami page views and query events on the published portfolio
 - [Portfolio Tags](docs/portfolio-tags.md) (`/tags` on the portfolio): every tag with a few of its photos, grouped under parent tags, each linking to the Grid
+- [Portfolio Numbers](docs/portfolio-stats.md) (`/stats` on the portfolio): the photos counted by gear, place and time, each row opening its photos on the Grid
+- [Portfolio Graph](docs/portfolio-graph.md) (`/graph` on the portfolio): a bar, line, dot, pie or scatter graph of your own from those counts and the camera settings, with filters, axis ranges, presets (and your own, saved in the browser) and a Wide view
 - [Portfolio Color](docs/portfolio-color.md) (`/color` on the portfolio): filtering photos by hue bucket or shade, sorting them by color or vividness, with each photo's share of colors
+- [Portfolio Back to top button](docs/portfolio-back-to-top.md): the button at the bottom left of every page but the Map and Color that scrolls back to the top
 - [Photo, album and tag data](docs/data-model.md): the photo, album and tag JSON files and how they refer to each other
-- [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets
-- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, bulk tagging, tag descriptions)
+- [Dashboard](docs/dashboard.md) (`/`): the home page, with the next Lightroom albums, drafts, Compare sets, Instagram queue and Site Spotlight dates
+- [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check
+- [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and Tag Data (`/tag-data`) for bulk tagging, the whole tag library, pruning and tag descriptions
+- [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
+- [Alt text](docs/alt-text.md) (`/alt-text`): a description of each photo for screen readers, written on the Photo page or for many photos at once with an LLM prompt, which the portfolio uses as the images' `alt`
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
 - [Saving photo data to GitHub](docs/saving-to-github.md): saving a photo's JSON to the Add photo data pull request, uploading to R2, resized versions and the Square Thumbnail
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails
 - [Photos in Flight](docs/photos-in-flight.md) (`/in-flight`): the open pull request's photos, removing and editing them
 - [Gallery](docs/gallery.md) (`/gallery`): photos already in the portfolio, editing them and adding albums, tags and genres
+- [All Photos](docs/all-photos.md) (`/all-photos`): every photo in the portfolio's order, sorted any way, with drafts and Undecided photos shown among them and a box to jump to each
 - [Compare groups](docs/compare-groups.md) (`/compare`): putting Gallery and in-flight photos in groups to weigh them side by side and pick the ones to post, and Unselected Photos for the rest, with why and what's kept in R2; only in the pipeline
 - [Re-editing a photo](docs/replace-image.md): marking a photo for re-editing with a reason, and swapping its image for the re-edit, keeping its ID, details and, when the size matches, its Square Thumbnail
 - [Drafts](docs/drafts.md): photos without a title are saved but left out of `ALLPHOTOS.json`, so the portfolio doesn't show them, with a setting to turn it off
@@ -109,7 +119,9 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Combined data store](docs/combined-data-store.md): how `ALLPHOTOS.json`, `ALLALBUMS.json` and `ALLTAGS.json` are read once and shared
 - [Changes waiting for Commit](docs/pending-changes.md): saves stay in the app until **Commit** sends them to GitHub as one commit, and the few GitHub calls that takes
 - [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages
+- [Small Tags](docs/small-tags.md) (`/small-tags`): cleaning up the tags and subtags with fewer than 3 photos, one by one or with an LLM
 - [Album Layouts and Covers](docs/album-layouts.md) (`/albums/<id>`): rows of photos with Markdown text, up to 5 cover photos, and album JSON export and import
+- [Smart Albums](docs/smart-albums.md) (`/albums/<id>`): albums whose photos come from saved Grid filters, a timeline label and dates
 - [Photographic Genres](docs/photographic-genres.md) (`/genres`): kinds of photography such as street or landscape, set on each photo and filterable on the portfolio, kept in `ALLGENRES.json`
 - [Places and Localizations](docs/places-and-localizations.md) (`/places` and `/localizations`): places a photo was taken at and how it relates to them, and the local script, pronunciation and romanization of countries, cities and places
 - [Metadata Groups](docs/metadata-groups.md) (`/metadata-groups`): named groups of cameras, lenses, focal lengths, apertures, exposures and ISO values, kept in `METAINFO.json`
@@ -117,8 +129,13 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Custom Lenses](docs/custom-lenses.md) (Metadata Groups → Lenses): lenses the EXIF doesn't name well, such as manual ones, picked for a photo on the Photo page, with a Manual/unknown aperture option, kept in `LENSES.json`
 - [Caption Templates](docs/caption-templates.md) (`/caption-templates`): social media captions with placeholders for a photo's fields, filled in by **Generate** on the Photo page's posts, kept in `CAPTIONS.json`
 - [Timeline Labels](docs/timeline-labels.md) (`/timeline-labels`): names for runs of days, such as a trip, shown beside those days on the portfolio Timeline, kept in `TIMELINE.json`
+- [Trip Lines](docs/trip-lines.md) (`/trip-lines`): the route of a day, walking from photo to photo and hopping by train, subway, bus or car, kept in `TRIPLINES.json` and baked into `TRIPLINES.geo.json` for the portfolio map
+- [Graph Presets](docs/graph-presets.md) (`/graph-presets`): the ready-made graphs over the portfolio Graph page, and preset groups shown there as dropdowns, kept in `GRAPHS.json`
+- [User Likes](docs/viewer-likes.md) (`/viewer-likes`): import the liked-photo lists people send from the portfolio's My Likes page, one per person, and see each photo's total likes, kept in `LIKES.json`
+- [Lightroom Albums](docs/lightroom-albums.md) (`/lightroom-albums`): your Lightroom folders and albums, read by an LLM from screenshots or a screen recording, with a stage and notes on each album as a tree or a Kanban board and the next albums to work on, imported on its own page or added by hand, kept only in the browser and moved between computers with Export and Import
 - [Explore Bucket](docs/explore-bucket.md) (`/bucket`): every image in R2, filterable, making JSON for an original that isn't saved, and deleting images
 - [Manage Sizes](docs/manage-sizes.md) (`/sizes`): making and remaking resized versions
+- [Changelog](docs/changelog.md) (`/changelog`): the pull requests merged into the repository, by day, with links to GitHub and without merge commits or photo data merges
 - [Sidebar](docs/sidebar.md): the pipeline's navigation, and collapsing it to icons
 - [Theme](docs/theme.md): the pipeline's shadcn/ui Mira style, and switching between light, dark and system colors
 
@@ -165,7 +182,7 @@ The pipeline runs as two containers:
    docker compose up -d --build
    ```
 
-3. Open <http://localhost:8080>. The status page should show both the BFF and the backend as `ok`.
+3. Open <http://localhost:8080>. **Settings › Status** (`/settings/status`) should show both the BFF and the backend as `ok`.
 
 This runs the production builds, so code changes need another `docker compose up -d --build`. While developing, use
 `pnpm dev:docker` instead (see [Pipeline in Docker with hot reload](#pipeline-in-docker-with-hot-reload)).

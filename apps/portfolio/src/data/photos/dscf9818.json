@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["machiya", "koshi", "shoji", "interior", "windows", "trees"],
+  "tags": ["koshi", "shoji", "interior", "windows", "trees"],
   "genres": [],
   "places": [
     {
@@ -269,5 +269,7 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a machiya townhouse; 'machiya' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [345, 346, 344, 343, 70, 73]
 }

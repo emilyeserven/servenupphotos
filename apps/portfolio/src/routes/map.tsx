@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Layer,
   Map,
@@ -13,7 +13,7 @@ import { MapPin } from "lucide-react";
 import { type LngLatBounds, setWorkerUrl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import { type RefObject, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 import { FloatingHeader } from "@/components/floating-header";
 import { MapControls } from "@/components/map-controls";
 import {
@@ -26,18 +26,12 @@ import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { mapViewOf } from "@/components/view-on-map-link";
 import { type ClusterMarkerData, MapMarkerView } from "@/components/map-marker-view";
-import {
-  type PlacedPhoto,
-  boundsOf,
-  placedById,
-  useDayPhotos,
-  useMapPhotos,
-} from "@/lib/map-photos";
-import { type DayRange, isDay } from "@/lib/map-days";
+import { type PlacedPhoto, boundsOf, placedById, useMapPhotos } from "@/lib/map-photos";
 import { clusterRadius, type MapDisplay, PIN_PIXELS, useMapDisplay } from "@/lib/map-display";
 import { fadeTo } from "@/lib/map-fade";
 import { photosInView } from "@/lib/map-grid-link";
 import { type MapMarker, markersInView, photosInCluster, SOURCE_ID } from "@/lib/map-markers";
+import { MAP_STYLES, useIsDark } from "@/lib/map-theme";
 import { parseMapView, type MapViewSearch, useMapViewInUrl } from "@/lib/map-view";
 import {
   LOCATION_KEYS,
@@ -47,28 +41,46 @@ import {
 } from "@/lib/photo-filters";
 import type { Photo, PhotoImage } from "@/lib/photos";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
+import { parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
 /**
- * The map's search: the shared filters, the open photo, where the map is looking, and the day only
- * the map narrows to, or the first day of a range with `to` as its last.
+ * The map's search: the shared filters, Visuals' filters, the open photo and where the map is
+ * looking. `day` and `to` are only read, as the old day filter (see `oldDays`), such as from the
+ * Timeline's route sketches; they turn into When's date range and are never kept.
  */
-type MapSearch = PhotoFilters & ShownPhotoSearch & MapViewSearch & { day?: string; to?: string };
+type MapSearch = PhotoFilters &
+  VisualSearch &
+  ShownPhotoSearch &
+  MapViewSearch & { day?: string; to?: string };
 
-/** The day, and the last day of the range when there's a day and it's after it. */
-function daysOf(search: Record<string, unknown>): Pick<MapSearch, "day" | "to"> {
-  if (!isDay(search.day)) return {};
-  return isDay(search.to) && search.to > search.day
-    ? { day: search.day, to: search.to }
-    : { day: search.day };
+/** Whether the text is a day as YYYY-MM-DD. */
+function isDay(value: unknown): value is string {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+/**
+ * The map's old day filter, `?day=2026-05-01&to=2026-05-17`, as When's date range, so links made
+ * before it moved into When still open on those days. A date range in the URL wins over it.
+ */
+function oldDays(search: Record<string, unknown>): Pick<PhotoFilters, "start" | "end"> {
+  if (!isDay(search.day) || hasRange(search)) return {};
+  const [start, end] = [search.day, isDay(search.to) ? search.to : search.day].toSorted();
+  return { start, end };
+}
+
+/** Whether the URL has When's date range, from either end. */
+function hasRange({ start, end }: Record<string, unknown>): boolean {
+  return Boolean(start ?? end);
 }
 
 export const Route = createFileRoute("/map")({
   validateSearch: (search: Record<string, unknown>): MapSearch => ({
     // Places only move the map here, rather than filtering it.
     ...withoutFilters(parseFilters(search), LOCATION_KEYS),
-    ...daysOf(search),
+    ...oldDays(search),
+    ...parseVisualFilters(search),
     ...parseShownPhoto(search),
     ...parseMapView(search),
   }),
@@ -80,10 +92,6 @@ export const Route = createFileRoute("/map")({
 setWorkerUrl(maplibreWorkerUrl);
 
 // Free CARTO basemaps; no API key needed, attribution is shown by the map.
-const MAP_STYLES = {
-  light: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
-  dark: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
-};
 
 // The markers are HTML, drawn from the clusters MapLibre works out for the source. MapLibre only
 // clusters a source a layer uses, so this one draws nothing.
@@ -138,19 +146,6 @@ function showAllPhotos(map: MapRef, bounds: LngLatBounds | null) {
   });
 }
 
-// The theme provider toggles the `dark` class on <html>; follow it so the basemap matches.
-function subscribeToDarkClass(onChange: () => void) {
-  const observer = new MutationObserver(onChange);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-  return () => observer.disconnect();
-}
-
-function useIsDark() {
-  return useSyncExternalStore(subscribeToDarkClass, () =>
-    document.documentElement.classList.contains("dark"),
-  );
-}
-
 function hasImage(photo: Photo): photo is ImagePhoto {
   return photo.image !== null;
 }
@@ -174,23 +169,11 @@ function useFitOnFilter(
   });
 }
 
-/**
- * The photos the shared filters leave, which the map fits itself to, and of those the ones taken
- * on the day in the URL, which it draws.
- */
+/** The photos the shared filters and Visuals leave, which the map draws and fits itself to. */
 function useMapFilters() {
   const search = Route.useSearch();
-  const mapPhotos = useMapPhotos(parseFilters(search));
-  const dayPhotos = useDayPhotos(mapPhotos, search.day, search.to);
-  return { search, mapPhotos, dayPhotos, setDays: useSetDays() };
-}
-
-/** Sets the days the map is narrowed to in the URL, keeping the other filters; no day for all. */
-function useSetDays() {
-  const navigate = useNavigate({ from: "/map" });
-  return ({ day, to }: DayRange) => {
-    void navigate({ search: (prev) => ({ ...prev, day, to }), replace: true });
-  };
+  const mapPhotos = useMapPhotos({ ...parseFilters(search), ...parseVisualFilters(search) });
+  return { search, mapPhotos };
 }
 
 /**
@@ -249,7 +232,7 @@ function MapView() {
   const [cluster, setCluster] = useState<OpenCluster | null>(null);
   const phone = useMediaQuery(PHONE_QUERY);
   const { shown, show, close } = useShownPhoto();
-  const { search, mapPhotos, dayPhotos, setDays } = useMapFilters();
+  const { search, mapPhotos } = useMapFilters();
   const [initialViewState] = useState(() => initialViewOf(mapPhotos.bounds, search));
   const saveView = useMapViewInUrl(map, search);
   useFitOnFilter(map, mapPhotos.bounds, () => {
@@ -258,7 +241,7 @@ function MapView() {
   });
   // The photos the lightbox steps through: the open group's, or else the photos in view.
   const [shownGroup, setShownGroup] = useState<PlacedPhoto[]>([]);
-  const browsable = browsableIn(dayPhotos.placed, view);
+  const browsable = browsableIn(mapPhotos.placed, view);
 
   function onMoveEnd() {
     void updateMarkers();
@@ -312,15 +295,13 @@ function MapView() {
           }}
         >
           <NavigationControl position="bottom-right" />
-          <FloatingHeader icon={MapPin} title="Map" count={dayPhotos.placed.length}>
+          <FloatingHeader icon={MapPin} title="Map" count={mapPhotos.placed.length}>
             <MapControls
               search={search}
-              filtered={mapPhotos.placed}
-              drawn={dayPhotos.placed}
+              drawn={mapPhotos.placed}
               view={view}
               display={display}
               onDisplayChange={changeDisplay}
-              onDaysChange={setDays}
               browsable={browsable}
               onBrowse={openPhoto}
               onReset={() => {
@@ -336,7 +317,7 @@ function MapView() {
             key={clusterRadius(display)}
             id={SOURCE_ID}
             type="geojson"
-            data={dayPhotos.geoJson}
+            data={mapPhotos.geoJson}
             cluster
             clusterMaxZoom={17}
             // Photos group when they're closer than this many pixels: by default a little under a

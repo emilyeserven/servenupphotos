@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city", "mountains", "houses", "rooftops", "haze"],
-  "genres": [],
+  "genres": ["cityscape", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 14.18,
     "peakChroma": 25.77,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [395, 388, 386, 217, 387, 419]
 }

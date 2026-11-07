@@ -11,10 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ColorRouteImport } from './routes/color'
+import { Route as GraphRouteImport } from './routes/graph'
 import { Route as GridRouteImport } from './routes/grid'
+import { Route as LikesRouteImport } from './routes/likes'
 import { Route as LuckyRouteImport } from './routes/lucky'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as SpotlightRouteImport } from './routes/spotlight'
+import { Route as StatsRouteImport } from './routes/stats'
 import { Route as TableRouteImport } from './routes/table'
 import { Route as TagsRouteImport } from './routes/tags'
 import { Route as TimelineRouteImport } from './routes/timeline'
@@ -34,9 +37,19 @@ const ColorRoute = ColorRouteImport.update({
   path: '/color',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraphRoute = GraphRouteImport.update({
+  id: '/graph',
+  path: '/graph',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GridRoute = GridRouteImport.update({
   id: '/grid',
   path: '/grid',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LikesRoute = LikesRouteImport.update({
+  id: '/likes',
+  path: '/likes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LuckyRoute = LuckyRouteImport.update({
@@ -52,6 +65,11 @@ const MapRoute = MapRouteImport.update({
 const SpotlightRoute = SpotlightRouteImport.update({
   id: '/spotlight',
   path: '/spotlight',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatsRoute = StatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TableRoute = TableRouteImport.update({
@@ -98,10 +116,13 @@ const MapsKindSlugRoute = MapsKindSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
+  '/graph': typeof GraphRoute
   '/grid': typeof GridRoute
+  '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
+  '/stats': typeof StatsRoute
   '/table': typeof TableRoute
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
@@ -114,10 +135,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
+  '/graph': typeof GraphRoute
   '/grid': typeof GridRoute
+  '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
+  '/stats': typeof StatsRoute
   '/table': typeof TableRoute
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
@@ -131,10 +155,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/color': typeof ColorRoute
+  '/graph': typeof GraphRoute
   '/grid': typeof GridRoute
+  '/likes': typeof LikesRoute
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
+  '/stats': typeof StatsRoute
   '/table': typeof TableRoute
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
@@ -149,10 +176,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/color'
+    | '/graph'
     | '/grid'
+    | '/likes'
     | '/lucky'
     | '/map'
     | '/spotlight'
+    | '/stats'
     | '/table'
     | '/tags'
     | '/timeline'
@@ -165,10 +195,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/color'
+    | '/graph'
     | '/grid'
+    | '/likes'
     | '/lucky'
     | '/map'
     | '/spotlight'
+    | '/stats'
     | '/table'
     | '/tags'
     | '/timeline'
@@ -181,10 +214,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/color'
+    | '/graph'
     | '/grid'
+    | '/likes'
     | '/lucky'
     | '/map'
     | '/spotlight'
+    | '/stats'
     | '/table'
     | '/tags'
     | '/timeline'
@@ -198,10 +234,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ColorRoute: typeof ColorRoute
+  GraphRoute: typeof GraphRoute
   GridRoute: typeof GridRoute
+  LikesRoute: typeof LikesRoute
   LuckyRoute: typeof LuckyRoute
   MapRoute: typeof MapRoute
   SpotlightRoute: typeof SpotlightRoute
+  StatsRoute: typeof StatsRoute
   TableRoute: typeof TableRoute
   TagsRoute: typeof TagsRoute
   TimelineRoute: typeof TimelineRoute
@@ -228,11 +267,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ColorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graph': {
+      id: '/graph'
+      path: '/graph'
+      fullPath: '/graph'
+      preLoaderRoute: typeof GraphRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/grid': {
       id: '/grid'
       path: '/grid'
       fullPath: '/grid'
       preLoaderRoute: typeof GridRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/likes': {
+      id: '/likes'
+      path: '/likes'
+      fullPath: '/likes'
+      preLoaderRoute: typeof LikesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lucky': {
@@ -254,6 +307,13 @@ declare module '@tanstack/react-router' {
       path: '/spotlight'
       fullPath: '/spotlight'
       preLoaderRoute: typeof SpotlightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stats': {
+      id: '/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof StatsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/table': {
@@ -318,10 +378,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ColorRoute: ColorRoute,
+  GraphRoute: GraphRoute,
   GridRoute: GridRoute,
+  LikesRoute: LikesRoute,
   LuckyRoute: LuckyRoute,
   MapRoute: MapRoute,
   SpotlightRoute: SpotlightRoute,
+  StatsRoute: StatsRoute,
   TableRoute: TableRoute,
   TagsRoute: TagsRoute,
   TimelineRoute: TimelineRoute,

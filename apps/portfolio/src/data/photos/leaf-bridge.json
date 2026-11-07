@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["autumn", "fallen-leaves", "hiking-trail", "footbridge", "forest", "wood", "stones"],
+  "tags": ["autumn", "fallen-leaves", "hiking-trail", "footbridges", "forest", "wood", "stones"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 13.78,
     "peakChroma": 28.41,
     "samples": 9912
-  }
+  },
+  "similarPhotos": [496, 471, 479, 473, 476, 477]
 }

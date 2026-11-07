@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["art-installation", "museum", "minimalism", "strings", "patterns", "interior"],
+  "tags": ["art-installations", "museum", "minimalism", "patterns", "interior"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9702
-  }
+  },
+  "notes": "Shows a string installation; 'strings' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [150, 45, 27, 76, 346, 25]
 }

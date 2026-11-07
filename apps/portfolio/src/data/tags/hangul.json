@@ -1,6 +1,6 @@
 {
   "id": "hangul",
   "name": "hangul",
-  "description": "",
+  "description": "the Korean alphabet on signs, posters and street art",
   "parent": "letters"
 }

@@ -247,13 +247,39 @@ func handleSetTagDescriptions(store *settings.Store, gh *github.Client) http.Han
 	}
 }
 
+// handleSetTagFavorites saves whether each tag in the body's favorites, by
+// tag ID, is a favorite tag, as changes waiting for Commit.
+func handleSetTagFavorites(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Favorites map[string]bool `json:"favorites"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil || len(req.Favorites) == 0 {
+			writeError(w, http.StatusBadRequest, "invalid favorite tags body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetTagFavorites(ctx, cfg, req.Favorites)
+		writeSocialResult(w, result, err, "could not save the favorite tags")
+	}
+}
+
 // handleSetSpotlightAlbum makes the body's album the one the path's spotlight
-// spot shows, or leaves the spot without one when it's empty or null, as a
-// change waiting for Commit.
+// spot shows, or leaves the spot without one when it's empty or null, with
+// the body's orientation ("screen", "none", or missing to keep the spot's),
+// as a change waiting for Commit.
 func handleSetSpotlightAlbum(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
-			Album *string `json:"album"`
+			Album       *string `json:"album"`
+			Orientation string  `json:"orientation"`
 		}
 		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
 		dec.DisallowUnknownFields()
@@ -267,7 +293,7 @@ func handleSetSpotlightAlbum(store *settings.Store, gh *github.Client) http.Hand
 		}
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
-		result, err := gh.SetSpotlightAlbum(ctx, cfg, r.PathValue("zone"), *cmp.Or(req.Album, new(string)))
+		result, err := gh.SetSpotlightAlbum(ctx, cfg, r.PathValue("zone"), *cmp.Or(req.Album, new(string)), req.Orientation)
 		writeSocialResult(w, result, err, "could not save the spot's album")
 	}
 }
@@ -293,5 +319,30 @@ func handleSetAlbumHidden(store *settings.Store, gh *github.Client) http.Handler
 		defer cancel()
 		result, err := gh.SetAlbumHidden(ctx, cfg, r.PathValue("id"), *req.Hidden)
 		writeSocialResult(w, result, err, "could not save the album's visibility")
+	}
+}
+
+// handleSetAlbumRules saves the body's rules as the path's album's Smart
+// Album rules, or makes it an album of chosen photos again when they're
+// empty or null, as a change waiting for Commit.
+func handleSetAlbumRules(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req struct {
+			Rules map[string]json.RawMessage `json:"rules"`
+		}
+		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&req); err != nil {
+			writeError(w, http.StatusBadRequest, "invalid Smart Album rules body")
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.SetAlbumRules(ctx, cfg, r.PathValue("id"), req.Rules)
+		writeSocialResult(w, result, err, "could not save the Smart Album's rules")
 	}
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["texture", "bukeyashiki", "dobei", "wabi-sabi", "walls", "doors", "gates", "ivy"],
+  "tags": ["texture", "dobei", "wabi-sabi", "walls", "doors", "gates", "ivy"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 6.72,
     "peakChroma": 16.05,
     "samples": 10050
-  }
+  },
+  "notes": "Shows samurai residences (bukeyashiki); 'bukeyashiki' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [397, 350, 339, 338, 451, 284]
 }

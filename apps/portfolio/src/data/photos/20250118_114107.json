@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["ancient-egypt", "hieroglyphs", "inscriptions", "carvings", "stones", "texture"],
+  "tags": ["hieroglyphs", "inscriptions", "carvings", "stones", "texture"],
   "genres": ["abstract", "architecture"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 10.52,
     "peakChroma": 18.86,
     "samples": 9490
-  }
+  },
+  "similarPhotos": [292, 504, 390, 290, 359, 284]
 }

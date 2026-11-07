@@ -56,7 +56,7 @@
     "repetition",
     "reflections",
     "minimalism",
-    "office-building"
+    "office-buildings"
   ],
   "genres": [],
   "places": [],
@@ -269,5 +269,6 @@
     "chroma": 3.71,
     "peakChroma": 10.97,
     "samples": 9652
-  }
+  },
+  "similarPhotos": [172, 173, 174, 185, 176, 76]
 }

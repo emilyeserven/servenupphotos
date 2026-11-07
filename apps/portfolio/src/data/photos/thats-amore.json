@@ -45,7 +45,7 @@
   "websiteSpotlight": null,
   "socialMediaPublishDate": null,
   "albums": [],
-  "tags": ["city", "storefronts", "signage", "crosswalk", "pedestrians", "skyscraper"],
+  "tags": ["city", "storefronts", "signage", "crosswalk", "pedestrians", "skyscrapers"],
   "genres": ["tilt-shift"],
   "places": [
     {
@@ -271,5 +271,6 @@
     "chroma": 7.3,
     "peakChroma": 16.86,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [132, 304, 282, 250, 11, 219]
 }

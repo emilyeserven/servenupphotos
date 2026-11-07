@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["wanikuchi", "kamon", "nobori", "buddhism", "temple", "rope", "signage"],
-  "genres": [],
+  "tags": ["wanikuchi", "kamon", "buddhism", "temple", "rope", "signage", "flags"],
+  "genres": ["architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,7 @@
     "chroma": 12.77,
     "peakChroma": 23.02,
     "samples": 9768
-  }
+  },
+  "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [378, 385, 464, 348, 349, 376]
 }

@@ -1,5 +1,6 @@
 {
   "id": "boardwalk",
   "name": "boardwalk",
-  "description": ""
+  "description": "raised wooden walkways over marshes, forests and sand",
+  "parent": "path"
 }

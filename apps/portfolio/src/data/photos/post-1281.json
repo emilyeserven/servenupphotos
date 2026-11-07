@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["footbridge", "bridge", "symmetry", "wood", "forest", "trees"],
+  "tags": ["footbridges", "bridges", "symmetry", "wood", "forest", "trees"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 16.78,
     "peakChroma": 41.86,
     "samples": 9453
-  }
+  },
+  "similarPhotos": [114, 237, 81, 111, 495, 82]
 }

@@ -64,8 +64,9 @@ CARTO's raster tiles need an API key; without one they carry an "API key require
 non-commercial use up to 5 million tile requests a month
 ([CARTO basemap styles](https://github.com/CartoDB/basemap-styles), [API keys](https://www.carto.com/basemaps/apikey/)),
 and a deploy fetches only the tiles it hasn't kept (about 2,000 the first time, few after). Add it as a repository
-secret named `CARTO_KEY` under **Settings → Secrets and variables → Actions**. Until it's there, the pictures are drawn
-with the watermark, and adding it draws them all again.
+secret named `CARTO_KEY` under **Settings → Secrets and variables → Actions**. Until it's there, deploys skip the map
+pages (with a warning in the build log): **Copy link** still copies `/maps/…/` addresses, which open the map on that
+place through GitHub Pages' `404.html`, but they preview as the plain site.
 
 ## Tests
 

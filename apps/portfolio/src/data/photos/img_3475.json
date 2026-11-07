@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["storefronts", "produce", "watermelons", "signage", "repetition", "patterns"],
+  "tags": ["storefronts", "signage", "repetition", "patterns"],
   "genres": [],
   "places": [
     {
@@ -269,5 +269,7 @@
     "chroma": 20.71,
     "peakChroma": 43.81,
     "samples": 10086
-  }
+  },
+  "notes": "Shows produce and watermelons; 'produce' and 'watermelons' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [48, 20, 132, 436, 437, 62]
 }

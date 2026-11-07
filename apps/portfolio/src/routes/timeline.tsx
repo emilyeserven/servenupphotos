@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { format, min } from "date-fns";
-import { CalendarClock, ChevronDown, RotateCcw } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarClock, ChevronDown } from "lucide-react";
 import { useId, useState } from "react";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoFilterBar } from "@/components/photo-filters";
+import { visualsOwnFilters } from "@/components/visuals-picker";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
@@ -11,13 +12,13 @@ import { SiteHomeLink } from "@/components/site-home-link";
 import { TechnicalInfo } from "@/components/technical-info";
 import { TimelineDisplayOptions } from "@/components/timeline-display-options";
 import { TimelineScrubber } from "@/components/timeline-scrubber";
-import { TimelineChart } from "@/components/timeline-chart";
-import { Button } from "@/components/ui/button";
-import { TimeRangePicker } from "@/components/time-range-picker";
 import { photos, type Photo, type PhotoImage } from "@/lib/photos";
-import { dayKey } from "@/lib/heatmap";
 import { labelOn } from "@/lib/timeline-labels";
+import { withOldTimelineLinks } from "@/lib/timeline-old-links";
 import { filterPhotos, hasFilters, parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { dayOf } from "@/lib/when-filters";
+import { parseTextSearch, searchPhotos } from "@/lib/text-search";
+import { filterByVisuals, parseVisualFilters, type VisualSearch } from "@/lib/visual-filters";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import {
   parseTimelineDisplay,
@@ -29,37 +30,34 @@ import {
 } from "@/lib/timeline-display";
 import { useRememberViewOptions } from "@/lib/view-options";
 import { cn } from "@/lib/utils";
-import {
-  absoluteTimeRange,
-  parseTimeRange,
-  resolveTimeRange,
-  type TimeRangeValue,
-} from "@/lib/time-range";
+import { RouteSketches, TimelineRouteSketch } from "@/components/timeline-route-sketch";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
 type ImagePhoto = Photo & { image: PhotoImage };
 
 /**
- * The time range, filters and open photo, plus the display options and whether the chart is the
- * heatmap; each left out when it's the default.
+ * The filters (their date range is the days the Timeline shows), the open photo and the display
+ * options; each left out when it's the default.
  */
-type TimelineSearch = TimeRangeValue &
-  PhotoFilters &
+type TimelineSearch = PhotoFilters &
+  VisualSearch &
   ShownPhotoSearch &
-  TimelineDisplaySearch & { chart?: "heatmap" };
+  TimelineDisplaySearch & { q?: string };
 
 export const Route = createFileRoute("/timeline")({
-  validateSearch: (search: Record<string, unknown>): TimelineSearch => ({
-    ...parseTimeRange(search),
-    ...parseFilters(search),
-    ...parseShownPhoto(search),
-    ...parseTimelineDisplay(search),
-    ...(search.chart === "heatmap" ? { chart: "heatmap" as const } : {}),
-  }),
+  validateSearch: (raw: Record<string, unknown>): TimelineSearch => {
+    // Links from before the time range, label and Quick dates pickers became filters still work.
+    const search = withOldTimelineLinks(raw, new Date());
+    return {
+      ...parseFilters(search),
+      ...parseVisualFilters(search),
+      ...parseTextSearch(search),
+      ...parseShownPhoto(search),
+      ...parseTimelineDisplay(search),
+    };
+  },
   component: TimelineView,
 });
-
-const earliestPhoto = min(photos.map((photo) => photo.takenAt));
 
 /** Photos grouped by their date taken written with a date-fns pattern, such as "MMMM yyyy" for months. */
 function groupByDate(group: Photo[], pattern: string) {
@@ -74,32 +72,22 @@ function groupByDate(group: Photo[], pattern: string) {
 function TimelineView() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const [now] = useState(() => new Date());
   const { shown, show, close } = useShownPhoto();
   const filters = parseFilters(search);
-  const timeRange = parseTimeRange(search);
-  const { start = earliestPhoto, end } = resolveTimeRange(timeRange, now);
+  // What the filters and search leave before Visuals, which its counts are out of.
+  const beforeVisuals = searchPhotos(filterPhotos(photos, filters), search.q);
   // Newest first, so the months and the photos in each read down from the latest.
-  const matching = filterPhotos(photos, filters);
-  const inRange = matching
-    .filter(({ takenAt }) => takenAt >= start && takenAt <= end)
-    .toSorted((a, b) => b.takenAt.getTime() - a.takenAt.getTime());
-  const isAllTime = Object.keys(timeRange).length === 0;
+  const inRange = filterByVisuals(beforeVisuals, search).toSorted(
+    (a, b) => b.takenAt.getTime() - a.takenAt.getTime(),
+  );
   const display = resolveTimelineDisplay(search);
-  const [chart, setChart] = useState<HTMLDivElement | null>(null);
+  const [header, setHeader] = useState<HTMLElement | null>(null);
   const [list, setList] = useState<HTMLOListElement | null>(null);
-  useRememberViewOptions("/timeline", { ...timelineDisplaySearch(display), chart: search.chart });
-
-  /** Shows the time range, keeping the filters and the rest of the view's options. */
-  function showRange(next: TimeRangeValue) {
-    navigate({
-      search: (prev) => ({ ...prev, range: undefined, from: undefined, to: undefined, ...next }),
-    });
-  }
+  useRememberViewOptions("/timeline", timelineDisplaySearch(display));
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-8 px-4 py-16 sm:px-6">
-      <header className="flex flex-col gap-4">
+      <header ref={setHeader} className="flex flex-col gap-4">
         <div>
           <SiteHomeLink className="mb-1" />
           <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
@@ -108,16 +96,7 @@ function TimelineView() {
           </h1>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <TimeRangePicker
-            value={timeRange}
-            selection={{ from: start, to: end }}
-            onChange={showRange}
-          />
           <p className="text-sm text-muted-foreground">{inRange.length} photos in range</p>
-          <Button variant="outline" size="sm" disabled={isAllTime} onClick={() => showRange({})}>
-            <RotateCcw aria-hidden />
-            Reset
-          </Button>
           <div className="ml-auto">
             <TimelineDisplayOptions
               display={display}
@@ -132,28 +111,18 @@ function TimelineView() {
             />
           </div>
         </div>
-        <PhotoFilterBar photos={photos} />
+        <PhotoFilterBar photos={photos} searchable own={visualsOwnFilters(beforeVisuals, search)} />
       </header>
-      <div ref={setChart}>
-        <TimelineChart
-          mode={search.chart ?? "graph"}
-          inRange={inRange.map((photo) => photo.takenAt)}
-          all={matching.map((photo) => photo.takenAt)}
-          start={start}
-          end={end}
-          now={now}
-          shown={isAllTime ? undefined : { from: dayKey(start), to: dayKey(end) }}
-          onSelect={(from, to) => showRange(absoluteTimeRange(from, to))}
+      <RouteSketches>
+        <PhotoMonths
+          photos={inRange}
+          filtered={hasFilters(filters) || search.q !== undefined}
+          display={display}
+          onOpen={show}
+          listRef={setList}
         />
-      </div>
-      <PhotoMonths
-        photos={inRange}
-        filtered={hasFilters(filters)}
-        display={display}
-        onOpen={show}
-        listRef={setList}
-      />
-      <TimelineScrubber list={list} chart={chart} />
+      </RouteSketches>
+      <TimelineScrubber list={list} above={header} byDay={display.ticks === "days"} />
       <PhotoLightbox photo={shown} photos={inRange} onShow={show} onClose={close} />
     </div>
   );
@@ -200,7 +169,12 @@ function MonthSection({
   const [open, setOpen] = useState(true);
   const listId = useId();
   return (
-    <li data-month={month} className="flex flex-col gap-1">
+    <li
+      data-month={month}
+      data-group={month.slice(-4)}
+      data-year={month.slice(-4)}
+      className="flex flex-col gap-1"
+    >
       {/* Sticks to the top while the month's photos scroll under it. Its fixed height (h-10) is
           where each day's subheading sticks, just under it. */}
       <h2 className="sticky top-0 z-10 -mx-1 flex h-10 items-center bg-background px-1">
@@ -241,12 +215,20 @@ function DaySection({
   const label = dayLabel(dayPhotos);
   // The scrubber reads data-label to name the label of the days under its pointer.
   return (
-    <li data-day={day} data-label={label} className="flex flex-col gap-1">
+    <li
+      data-day={day}
+      data-group={dayGroup(dayPhotos)}
+      data-year={dayFormat(dayPhotos, "yyyy")}
+      data-name={dayFormat(dayPhotos, "EEEE, MMMM d, yyyy")}
+      data-label={label}
+      className="flex flex-col gap-1"
+    >
       {/* Sticks just under the month's heading while the day's photos scroll under it, so the
           label beside the date reads as the label of the month's days now in view. */}
       <h3 className="sticky top-10 z-[5] -mx-1 flex items-center gap-2 bg-background px-1 py-1 text-xs font-medium text-muted-foreground">
         <span className="shrink-0">{day}</span>
         <DayLabel label={label} />
+        <TimelineRouteSketch day={dayFormat(dayPhotos, "yyyy-MM-dd")} />
       </h3>
       <ul className="flex flex-col gap-3">
         {dayPhotos.map((photo) => (
@@ -257,10 +239,21 @@ function DaySection({
   );
 }
 
+/** The short month of the day the photos were taken, such as "Sep", which the scrubber labels days by. */
+function dayGroup(dayPhotos: Photo[]): string {
+  return dayFormat(dayPhotos, "MMM");
+}
+
+/** The day the photos were taken written with a date-fns pattern, or "" without photos. */
+function dayFormat(dayPhotos: Photo[], pattern: string): string {
+  const [first] = dayPhotos;
+  return first ? format(first.takenAt, pattern) : "";
+}
+
 /** The timeline label of the days the photos were taken, or "" without one. */
 function dayLabel(dayPhotos: Photo[]): string {
   const [first] = dayPhotos;
-  return first ? labelOn(dayKey(first.takenAt)) : "";
+  return first ? labelOn(dayOf(first.takenAt)) : "";
 }
 
 /** The day's timeline label beside its date; nothing without one. */
@@ -283,7 +276,7 @@ function PhotoRow({ photo, display, onOpen }: RowOptions & { photo: Photo }) {
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   const layout = THUMB_LAYOUT[display.thumbs];
   return (
-    <li className={cn("flex gap-3", layout.row)}>
+    <li className={cn("flex gap-3", layout.row)} data-photo-id={photo.id}>
       <PhotoThumbnailButton
         image={image}
         title={photo.title}

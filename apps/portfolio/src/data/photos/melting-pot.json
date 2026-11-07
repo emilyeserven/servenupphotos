@@ -48,16 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "chinatown",
-    "lanterns",
-    "humor",
-    "signage",
-    "chains",
-    "storefronts",
-    "halloween",
-    "skeletons"
-  ],
+  "tags": ["chinatown", "lanterns", "humor", "signage", "chains", "storefronts", "festivals"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -270,5 +261,7 @@
     "chroma": 12.17,
     "peakChroma": 32.87,
     "samples": 9975
-  }
+  },
+  "notes": "Shows Halloween skeletons; 'skeletons' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [16, 438, 306, 441, 132, 450]
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["herons", "birds", "pond", "stones", "water"],
+  "tags": ["birds", "pond", "stones", "water"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 12.07,
     "peakChroma": 20.46,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a heron; 'herons' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [78, 155, 79, 81, 23, 215]
 }

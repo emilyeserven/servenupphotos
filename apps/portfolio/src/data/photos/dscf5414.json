@@ -48,21 +48,21 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "signage",
-    "storefronts",
-    "umbrellas",
-    "pedestrians",
-    "power-lines",
-    "cars",
-    "hangul",
-    "noraebang"
-  ],
+  "tags": ["signage", "storefronts", "umbrellas", "pedestrians", "power-lines", "cars", "hangul"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-11-09",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -269,5 +269,7 @@
     "chroma": 5.38,
     "peakChroma": 11.03,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a noraebang sign; 'noraebang' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [319, 453, 304, 282, 400, 120]
 }

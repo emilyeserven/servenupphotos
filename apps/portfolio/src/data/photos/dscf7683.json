@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["nobori", "toro", "buddhism", "temple", "flags", "statue", "moss", "path"],
+  "tags": ["toro", "buddhism", "temple", "flags", "statues", "moss", "path"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 10.65,
     "peakChroma": 27.07,
     "samples": 9975
-  }
+  },
+  "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [315, 309, 310, 313, 312, 384]
 }

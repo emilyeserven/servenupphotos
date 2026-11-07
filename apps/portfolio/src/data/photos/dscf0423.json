@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["signage", "bridge", "crowd", "tourists", "storefronts", "twilight"],
-  "genres": [],
+  "tags": ["signage", "bridges", "crowd", "tourists", "storefronts", "twilight"],
+  "genres": ["street"],
   "places": [
     {
       "relation": "in",
@@ -265,5 +265,6 @@
     "chroma": 8.62,
     "peakChroma": 16.9,
     "samples": 10030
-  }
+  },
+  "similarPhotos": [306, 169, 307, 304, 219, 251]
 }

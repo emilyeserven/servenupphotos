@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["night", "clouds", "countryside", "stars", "milky-way", "fence", "silhouettes"],
+  "tags": ["night", "clouds", "countryside", "night-sky", "fence", "silhouettes"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 4,
     "peakChroma": 8.46,
     "samples": 9768
-  }
+  },
+  "similarPhotos": [195, 162, 438, 467, 151, 234]
 }

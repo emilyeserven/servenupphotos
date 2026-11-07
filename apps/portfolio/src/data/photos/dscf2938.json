@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["paifang", "chinatown", "gates", "lamppost", "trees", "night"],
-  "genres": [],
+  "tags": ["chinatown", "gates", "street-lights", "trees", "night"],
+  "genres": ["architecture", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -262,5 +262,7 @@
     "peakChroma": 0.01,
     "samples": 9975
   },
-  "undecided": true
+  "undecided": true,
+  "notes": "Shows a paifang gate; 'paifang' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [438, 441, 439, 442, 467, 435]
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["artist", "children", "park", "bench", "fallen-leaves"],
+  "tags": ["artists", "children", "park", "benches", "fallen-leaves"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9648
-  }
+  },
+  "similarPhotos": [192, 187, 186, 481, 164, 40]
 }

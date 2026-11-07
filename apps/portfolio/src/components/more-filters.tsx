@@ -4,8 +4,9 @@ import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 
 /**
- * A **More filters** button that opens the filters it holds in a popup, such as the map's album,
- * tag and genre dropdowns, with `badge` after its label, such as how many of them are set.
+ * A **More filters** button that opens the filters it holds in a popup, such as the map's **Groups**
+ * and **When** pickers, with `badge` after its label, such as how many of them are set. The
+ * filters sit side by side in a row, like the Grid's filters, wrapping onto more rows on phones.
  */
 export function MoreFilters({ badge, children }: { badge: ReactNode; children: ReactNode }) {
   return (
@@ -21,7 +22,8 @@ export function MoreFilters({ badge, children }: { badge: ReactNode; children: R
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="flex w-auto flex-col items-stretch gap-2 p-2 [&_select]:w-full [&>div]:flex"
+        collisionPadding={16}
+        className="flex w-auto max-w-[calc(100vw-2rem)] flex-wrap items-start gap-2 p-2 [&>div]:flex [&>div]:flex-wrap [&>div]:gap-2"
       >
         {children}
       </PopoverContent>

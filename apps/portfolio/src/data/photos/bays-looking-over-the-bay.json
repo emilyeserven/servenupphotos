@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["bay-windows", "houses", "apartments", "trees", "stones", "humor"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 9.74,
     "peakChroma": 28.15,
     "samples": 9768
-  }
+  },
+  "similarPhotos": [436, 429, 373, 494, 430, 400]
 }

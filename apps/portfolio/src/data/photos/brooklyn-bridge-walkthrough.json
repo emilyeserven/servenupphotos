@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["suspension-cables", "bridge", "skyline", "skyscraper", "city", "steel", "patterns"],
+  "tags": ["suspension-cables", "bridges", "skyline", "skyscrapers", "city", "steel", "patterns"],
   "genres": ["architecture", "street"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 18,
     "peakChroma": 37.3,
     "samples": 9916
-  }
+  },
+  "similarPhotos": [41, 489, 44, 258, 34, 117]
 }

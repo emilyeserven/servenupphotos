@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["ishigaki", "castle", "ruins", "gates", "inscriptions", "stones", "path"],
-  "genres": [],
+  "genres": ["architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 8.05,
     "peakChroma": 22.34,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [393, 390, 394, 504, 392, 332]
 }

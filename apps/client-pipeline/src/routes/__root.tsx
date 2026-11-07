@@ -1,17 +1,11 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, Outlet, useLocation } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import type * as React from "react";
-import { AppSidebar, navGroups } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { NavBreadcrumbs } from "@/components/sidebar/nav-breadcrumbs";
 import { InFlightBackupKeeper } from "@/components/in-flight-backup-keeper";
 import { CombinedDataSync } from "@/components/combined-data-sync";
 import { SyncStatus } from "@/components/sync-status";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +19,8 @@ declare module "@tanstack/react-router" {
   interface StaticDataRouteOption {
     /** Lays the page out in a wider column. */
     wide?: boolean;
+    /** The name of a page under one in the sidebar, such as "Import", shown after it in the breadcrumb. */
+    subpage?: string;
   }
 }
 
@@ -33,11 +29,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootLayout() {
-  const pathname = useLocation({ select: (location) => location.pathname });
-  // A page under one in the sidebar, such as an album's, shows as that page.
-  const isPage = (url: string) => pathname === url || pathname.startsWith(`${url}/`);
-  const group = navGroups.find((g) => g.items.some((item) => isPage(item.url)));
-  const page = group?.items.find((item) => isPage(item.url));
   const sidebarOpen = useSidebarStore((state) => state.open);
   const setSidebarOpen = useSidebarStore((state) => state.setOpen);
 
@@ -63,17 +54,7 @@ function RootLayout() {
               orientation="vertical"
               className="mr-2 data-[orientation=vertical]:h-4 md:hidden"
             />
-            {group && page ? (
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">{group.title}</BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>{page.title}</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            ) : null}
+            <NavBreadcrumbs />
           </header>
           <div className="flex-1">
             <Outlet />

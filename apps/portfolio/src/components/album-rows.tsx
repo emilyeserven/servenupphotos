@@ -82,7 +82,6 @@ function RowPhoto({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void }) 
     <button
       type="button"
       title={photo.title}
-      aria-label={`Show ${photo.title}`}
       onClick={onOpen}
       className="block min-w-0 cursor-zoom-in overflow-hidden bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:[flex:var(--photo-shape)_1_0%]"
       style={
@@ -93,7 +92,7 @@ function RowPhoto({ photo, onOpen }: { photo: ImagePhoto; onOpen: () => void }) 
         src={src}
         srcSet={srcSet}
         sizes="(min-width: 640px) 50vw, 100vw"
-        alt=""
+        alt={photo.alt}
         loading="lazy"
         className="size-full object-cover"
       />

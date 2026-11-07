@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["fog", "skyline", "skyscraper", "lake", "reflections", "trees"],
+  "tags": ["fog", "skyline", "skyscrapers", "lake", "reflections", "trees"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 3.17,
     "peakChroma": 7.12,
     "samples": 9801
-  }
+  },
+  "similarPhotos": [154, 41, 174, 34, 316, 44]
 }

@@ -2,34 +2,41 @@
 
 The portfolio's data lives in `apps/portfolio/src/data` (the **Data folder** in Settings), one JSON file per thing:
 
-| What              | File                      | Combined by **Commit** into        |
-| ----------------- | ------------------------- | ---------------------------------- |
-| Photos            | `photos/<PHOTONAME>.json` | `photos/ALLPHOTOS.json`            |
-| Albums            | `albums/<ALBUM_ID>.json`  | `albums/ALLALBUMS.json`            |
-| Tags              | `tags/<TAG_ID>.json`      | `tags/ALLTAGS.json`                |
-| Genres            | `genres/<GENRE_ID>.json`  | `genres/ALLGENRES.json`            |
-| Places            | `places/<PLACE_ID>.json`  | `places/PLACES.json`               |
-| Localizations     | `localizations/<ID>.json` | `localizations/LOCALIZATIONS.json` |
-| Metadata groups   | `metainfo/<ID>.json`      | `metainfo/METAINFO.json`           |
-| Camera overrides  | `cameras/<ID>.json`       | `cameras/CAMERAS.json`             |
-| Custom lenses     | `lenses/<ID>.json`        | `lenses/LENSES.json`               |
-| Caption templates | `captions/<ID>.json`      | `captions/CAPTIONS.json`           |
-| Timeline labels   | `timeline/<ID>.json`      | `timeline/TIMELINE.json`           |
+| What              | File                                                        | Combined by **Commit** into        |
+| ----------------- | ----------------------------------------------------------- | ---------------------------------- |
+| Photos            | `photos/<PHOTONAME>.json`                                   | `photos/ALLPHOTOS.json`            |
+| Albums            | `albums/<ALBUM_ID>.json`                                    | `albums/ALLALBUMS.json`            |
+| Tags              | `tags/<TAG_ID>.json`                                        | `tags/ALLTAGS.json`                |
+| Genres            | `genres/<GENRE_ID>.json`                                    | `genres/ALLGENRES.json`            |
+| Places            | `places/<PLACE_ID>.json`                                    | `places/PLACES.json`               |
+| Place areas       | `places/<PLACE_ID>.geo.json`                                | Not combined: loaded one by one    |
+| Localizations     | `localizations/<ID>.json`                                   | `localizations/LOCALIZATIONS.json` |
+| Metadata groups   | `metainfo/<ID>.json`                                        | `metainfo/METAINFO.json`           |
+| Camera overrides  | `cameras/<ID>.json`                                         | `cameras/CAMERAS.json`             |
+| Custom lenses     | `lenses/<ID>.json`                                          | `lenses/LENSES.json`               |
+| Caption templates | `captions/<ID>.json`                                        | `captions/CAPTIONS.json`           |
+| Timeline labels   | `timeline/<ID>.json`                                        | `timeline/TIMELINE.json`           |
+| Viewer likes      | `likes/<ID>.json`                                           | `likes/LIKES.json`                 |
+| Trip lines        | `triplines/<DAY>.json`, Trips as `triplines/trip-<ID>.json` | `triplines/TRIPLINES.json`         |
+| Graph presets     | `graphs/<ID>.json`                                          | `graphs/GRAPHS.json`               |
 
 A photo can have several tags and is usually in one album (more is allowed, but the pipeline warns), and an album or
 tag can have many photos: each photo JSON has `albums` and `tags` keys, arrays of album and tag IDs. A tag file is
 `{ "id", "name", "description" }` and an album file `{ "id", "name", "description", "parent" }`, each named by its ID.
 An album file may also have `order`, its place among the albums (1 first), and `spotlightZones`, the spots on the
-portfolio that show its photos, such as `["homepage"]`; see [Albums and Tags](albums-and-tags.md#order). Its
+portfolio that show its photos, such as `["homepage"]`, with `spotlightOrientation` saying which photos each puts first,
+such as `{ "grid-header": "none" }` (see [Site Spotlight](publish.md#site-spotlight)); see [Albums and Tags](albums-and-tags.md#order). Its
 `photoOrder` lists photo IDs in the order the portfolio shows the album's photos, such as `[12, 3, 40]`; see
 [Photo order](albums-and-tags.md#photo-order). Its `covers` lists up to 5 photo IDs that stand for it on the
 portfolio's Albums page, and its `layout` lists its page's rows, each `{ "textAbove", "photos", "textBelow" }` with
 Markdown text; see [Album Layouts and Covers](album-layouts.md#the-schema). Its `hidden`, when `true`, keeps it and
 the albums inside it off the portfolio's album lists and pages; see
-[Showing or hiding on the portfolio](albums-and-tags.md#showing-or-hiding-on-the-portfolio).
+[Showing or hiding on the portfolio](albums-and-tags.md#showing-or-hiding-on-the-portfolio). Its `rules`, when set, make it a
+[Smart Album](smart-albums.md): the Grid's filters, by their URL names, that pick its photos.
 An album's `parent` is the ID of the one album it sits inside, or `null` for a top-level album; the pipeline never
 lets an album end up inside itself. A tag file may have a `parent` too: the ID of a more general tag it's a kind of
-(see [Parent tags](albums-and-tags.md#parent-tags)), missing or `null` at the top. A photo's `genres` lists its [photographic genres](photographic-genres.md), such as
+(see [Parent tags](albums-and-tags.md#parent-tags)), missing or `null` at the top, and a `favorite`, `true` for a
+[favorite tag](albums-and-tags.md#favorite-tags) and missing or `false` otherwise. A photo's `genres` lists its [photographic genres](photographic-genres.md), such as
 `["street"]`, each a file like a tag's. Albums, tags and genres share one set of IDs and names, compared ignoring case,
 so a photo's `albums`, `tags` and `genres` never mean the same thing.
 
@@ -86,22 +93,35 @@ albums instead (see [Publish](publish.md#site-spotlight)), and the photos that w
 **Homepage Spotlight** album, which the Homepage zone shows. `websiteSpotlight` still puts those photos first in an
 album without a [photo order](albums-and-tags.md#photo-order), in their old order; `spotlightZones` isn't read.
 
-A photo's `socialPosts` lists its posts on social media, each with its platform, date, link, caption and
-hashtags (whether it's posted is worked out from its date); see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
+A photo's `socialPosts` lists its posts on social media, each with its platform, status (`planned` or `scheduled`),
+date, link, caption and hashtags; see [Publish](publish.md#social-media-posts). Older files may be missing it, which means none.
 
 A photo's `reEdit` marks it to edit again, with a reason and the day it was marked, or is `null`; see
 [Re-editing a photo](replace-image.md).
+
+A photo's `pickedSimilar` and `similarPhotos` are the IDs its portfolio **More like this** drawer shows: the ones picked
+by hand first, then the ones **Find related photos** found, best first. `pickedSimilarNotes` holds the note shown
+beside each picked photo, by its ID, such as `{ "286": "Same morning, deeper in the woods" }`; see
+[More Like This](more-like-this.md). Older files may be missing them, which means none.
 
 A photo's `compareGroup` names the [compare group](compare-groups.md) it's in, and `compareWinner: true` marks one
 picked to post; both are left out or `null` otherwise. A photo that wasn't chosen has `unselected` (why, the IDs of the
 winners, the group, the day and what's left in R2), which keeps it out of `ALLPHOTOS.json`; see
 [Unselected Photos](compare-groups.md#unselected-photos). Only the pipeline reads them.
 
+A photo's `altText` describes what it shows for screen readers, and the portfolio uses it as its images' `alt`, or
+`null` until it's written; see [Alt text](alt-text.md).
+
 A photo's `colors` is its color summary, as the EXIF page's Colors tab shows it: the `average` color (hex, CIELAB and
 HCL), the share of the photo in each of 12 hue `buckets`, the `neutrals` (blacks, grays and whites) by lightness, and
 the mean `lightness` and `chroma`, and `peakChroma`, the chroma the most vivid tenth of its pixels reach (the 90th
 percentile), so a muted photo with a small vivid part still scores high. New photos get it when they're saved after uploading to R2 (see [Saving photo data to GitHub](saving-to-github.md)), and older files once Update Data's **Colors** has read it; see
 [Update Data](update-data.md).
+
+A photo's `perceptualHash` is 16 hex digits fingerprinting what it looks like, read from its Small version, so photos
+that look nearly the same can be put in a compare group together; see
+[Near duplicates](compare-groups.md#near-duplicates). New photos get it when they're saved, and older files from
+**Find near duplicates** on the Compare page. Like `colors`, it isn't one of the fields Missing fields adds.
 
 > **Frontend analogy:** it's a normalized store, like a Redux slice keyed by ID: photos hold only the IDs of their
 > albums and tags, and each album or tag is stored once, so renaming one later changes a single file.

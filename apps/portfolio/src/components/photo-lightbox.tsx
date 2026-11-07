@@ -3,12 +3,16 @@ import { ChevronLeftIcon, ChevronRightIcon, EyeOffIcon, XIcon } from "lucide-rea
 import { Dialog } from "radix-ui";
 import { type KeyboardEvent, type ReactNode, useRef, useState } from "react";
 import { CopyPhotoLinkButton } from "@/components/copy-photo-link-button";
+import { LikeBurst, LikeButton } from "@/components/like-button";
+import { MoreLikeThis, RelatedButton, toggleMoreLikeThis } from "@/components/more-like-this";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
 import { viewOnMapLink } from "@/components/view-on-map-link";
+import { like } from "@/lib/likes";
 import { settingsText, type Photo, type PhotoImage } from "@/lib/photos";
 import { useSwipe } from "@/lib/use-swipe";
+import { useTaps } from "@/lib/use-taps";
 import { cn } from "@/lib/utils";
 
 /** A photo with resized versions in R2, which is all the lightbox can show. */
@@ -72,16 +76,29 @@ export function PhotoLightbox({
             event.preventDefault();
             opener.current?.focus();
           }}
-          onKeyDown={(event) => runKey(event, { ...steps.keys, h: toggleBare, H: toggleBare })}
+          onKeyDown={(event) =>
+            runKey(event, { ...steps.keys, ...drawerKeys(bare), h: toggleBare, H: toggleBare })
+          }
           className={cn("fixed inset-0 z-50 flex flex-col text-white outline-none", FADE)}
         >
           {photo && (
-            <LightboxBody photo={photo} steps={steps} bare={bare} onToggleBare={toggleBare} />
+            <LightboxBody
+              photo={photo}
+              steps={steps}
+              bare={bare}
+              onToggleBare={toggleBare}
+              onShow={onShow}
+            />
           )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
+}
+
+/** The M key, which opens or closes the More like this drawer, while it's shown (not bare). */
+function drawerKeys(bare: boolean): Record<string, () => void> {
+  return bare ? {} : { m: toggleMoreLikeThis, M: toggleMoreLikeThis };
 }
 
 /** Runs the step for the key pressed, if there is one, instead of what the key would do. */
@@ -97,70 +114,122 @@ interface LightboxBodyProps {
   steps: Steps;
   /** Set when only the photo is shown, without the details and buttons. */
   bare: boolean;
-  /** Hides the details and buttons, or shows them again, from the hide button or a click on the photo. */
+  /** Hides the details and buttons from the hide button, or shows them again from a tap on the photo. */
   onToggleBare: () => void;
+  /** Shows another photo, such as one from the More like this drawer, which is left out without it. */
+  onShow?: (photo: ImagePhoto) => void;
 }
 
 /**
- * The caption and buttons over the photo, with the previous and next buttons beside it, or just
- * the photo, filling the window, when they're hidden.
+ * The caption and buttons over the photo, with the previous and next buttons beside it and the
+ * More like this drawer to its left, or just the photo, filling the window, when they're hidden.
  */
-function LightboxBody({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
+function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBodyProps) {
+  const showDetails = !bare;
   return (
     <>
-      {!bare && <LightboxHeader photo={photo} position={steps.position} onHide={onToggleBare} />}
-      <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
+      {showDetails && (
+        <LightboxHeader
+          photo={photo}
+          position={steps.position}
+          onHide={onToggleBare}
+          related={<RelatedButton photo={photo} onShow={onShow} />}
+        />
+      )}
+      <div className="relative flex min-h-0 flex-1 flex-col">
+        <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
+        {showDetails && <MoreLikeThis photo={photo} onShow={onShow} />}
+      </div>
     </>
   );
 }
 
 /**
  * The photo, with the previous and next buttons over its sides while it's hovered, or on its own,
- * filling the window, when bare. Swiping left or right on it moves to the next or previous photo.
+ * filling the window, when bare. Swiping left or right on it moves to the next or previous photo,
+ * and double tapping (or double clicking) it likes it. A single tap does nothing while the
+ * details show, and shows them again when bare.
  */
 function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProps) {
   const swipe = useSwipe((by) => (by < 0 ? steps.previous : steps.next)?.());
+  const { onTap, burst, onBurstDone } = useDoubleTapLike(photo.id, bare ? onToggleBare : undefined);
   return (
     <div
       {...swipe}
-      className={cn("flex min-h-0 flex-1 items-center justify-center", bare ? "p-0" : "p-4 pt-0")}
+      className={cn(
+        "flex min-h-0 min-w-0 flex-1 items-center justify-center",
+        bare ? "p-0" : "p-4 pt-0",
+      )}
     >
-      {/* A size container, so the photo can be fitted to it with cqw and cqh. Clicking it hides
-          the details or shows them again. */}
+      {/* A size container, so the photo can be fitted to it with cqw and cqh. It hears the taps;
+          touch-action stops a double tap from zooming the page, but not pinch-zooming. */}
       <div
-        onClick={onToggleBare}
-        className="flex size-full items-center justify-center [container-type:size]"
+        onClick={onTap}
+        className="flex size-full touch-manipulation items-center justify-center select-none [container-type:size]"
       >
-        <LightboxImage key={photo.id} image={photo.image} alt={photo.title}>
-          {!bare && <StepButton direction="previous" steps={steps} />}
-          {!bare && <StepButton direction="next" steps={steps} />}
+        <LightboxImage key={photo.id} image={photo.image} alt={photo.alt}>
+          {burst !== null && <LikeBurst key={burst} onDone={onBurstDone} />}
+          <StepButtons steps={steps} bare={bare} />
         </LightboxImage>
       </div>
     </div>
   );
 }
 
-/** The photo's caption, where it is among the photos, and the hide and close buttons. */
+/** The previous and next buttons over the photo's sides, left out when bare. */
+function StepButtons({ steps, bare }: { steps: Steps; bare: boolean }) {
+  if (bare) return null;
+  return (
+    <>
+      <StepButton direction="previous" steps={steps} />
+      <StepButton direction="next" steps={steps} />
+    </>
+  );
+}
+
+/**
+ * The photo's tap handler: a double tap likes the photo and pops a heart over it, and a single tap
+ * runs onSingle, if there is one, once it's clear it isn't a double tap.
+ */
+function useDoubleTapLike(id: number, onSingle: (() => void) | undefined) {
+  // Counts double taps, so each one pops a new heart; null once the last heart has faded.
+  const [burst, setBurst] = useState<number | null>(null);
+  const onTap = useTaps({
+    onSingle,
+    onDouble: () => {
+      like(id);
+      setBurst((count) => (count ?? 0) + 1);
+    },
+  });
+  return { onTap, burst, onBurstDone: () => setBurst(null) };
+}
+
+/** The photo's caption, where it is among the photos, and the related, link, like, hide and close buttons. */
 function LightboxHeader({
   photo,
   position,
   onHide,
+  related,
 }: {
   photo: ImagePhoto;
   position?: string;
   onHide: () => void;
+  /** The Related button, which opens the More like this drawer. */
+  related?: ReactNode;
 }) {
   return (
     <div className="flex items-center gap-4 p-4">
       <LightboxCaption photo={photo} />
       <span className="shrink-0 text-sm text-white/60 tabular-nums empty:hidden">{position}</span>
       <div className="flex shrink-0 items-center">
+        {related}
         <CopyPhotoLinkButton id={photo.id} />
+        <LikeButton id={photo.id} />
         <Button
           variant="ghost"
           size="icon"
           aria-label="Hide details"
-          title="Hide details (H); click the photo to show them again"
+          title="Hide details (H); tap the photo to show them again"
           onClick={onHide}
           className="text-white hover:bg-white/10 hover:text-white"
         >
@@ -250,7 +319,7 @@ function StepButton({ direction, steps }: { direction: "previous" | "next"; step
       size="icon"
       aria-label={label}
       onClick={(event) => {
-        // Not a click on the photo, which would hide the details.
+        // Not a tap on the photo, which counts toward a double tap.
         event.stopPropagation();
         onStep();
       }}

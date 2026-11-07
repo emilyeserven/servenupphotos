@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["framing", "autumn", "marsh", "observation-tower", "branches", "wood", "trees"],
+  "tags": ["framing", "autumn", "marsh", "observation-towers", "branches", "wood", "trees"],
   "genres": [],
   "places": [
     {
@@ -269,5 +269,6 @@
     "chroma": 9.45,
     "peakChroma": 19.64,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [499, 480, 472, 475, 495, 471]
 }

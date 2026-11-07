@@ -58,7 +58,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-29",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -265,5 +274,6 @@
     "chroma": 7.86,
     "peakChroma": 18.01,
     "samples": 9768
-  }
+  },
+  "similarPhotos": [221, 222, 223, 448, 224, 259]
 }

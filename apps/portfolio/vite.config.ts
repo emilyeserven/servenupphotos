@@ -7,6 +7,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 import { mapPreviewPages } from "./map-preview/pages";
 import { photoPreviewPages } from "./photo-previews";
+import { privatePhotoNotes } from "./private-notes";
 
 const root = path.resolve(import.meta.dirname, "../..");
 /** How long after one refresh the next page load waits before refreshing again. */
@@ -49,6 +50,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
     localPhotoData(),
+    // Photographer-only notes stay in the pipeline; see docs/photo-notes.md.
+    privatePhotoNotes(),
     // Pages at /photos/<id>/ whose link previews show the photo; see docs/photo-viewer.md.
     photoPreviewPages(path.join(import.meta.dirname, "src/data/photos/ALLPHOTOS.json")),
     // Pages at /maps/<kind>/<place>/ whose link previews show a map of the place, when

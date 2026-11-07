@@ -25,6 +25,12 @@ import {
 import { canonicalJson } from "@/lib/combined";
 import { type Crop, sameCrop } from "@/lib/crop";
 import { type ReEditDraft, reEditChanged, withReEdit } from "@/lib/re-edit";
+import {
+  picksChanged,
+  type Pick,
+  savedPicks,
+  withPickedSimilar,
+} from "@/components/related-photos/picks";
 import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
 import { UNDECIDED } from "@/lib/undecided";
@@ -171,12 +177,19 @@ function hasThumbnail(saved: PhotoJson): boolean {
   return SQUARE_NAMES.every((name) => savedUrl(saved.images?.[name]));
 }
 
-/** Whether the title, place name, places, custom city or country, or comment differs from the ones saved in data. */
+/** Whether the title, place name, places, custom city or country, no-GPS mark, or comment differs from the ones saved in data. */
 function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
   const next = withDetails({}, details);
   return (
-    TEXT_FIELDS.some((key) => next[key] !== (data[key] ?? null)) || placesChanged(data, details)
+    TEXT_FIELDS.some((key) => next[key] !== (data[key] ?? null)) ||
+    placesChanged(data, details) ||
+    noGpsChanged(data, details)
   );
+}
+
+/** Whether the mark for a photo that won't have a GPS position differs from the one saved in data. */
+function noGpsChanged(data: PhotoJson, details: PhotoDetails): boolean {
+  return details.noGps !== savedDetails(data).noGps;
 }
 
 /** Whether the chosen places differ from the ones saved in data. */
@@ -187,13 +200,15 @@ function placesChanged(data: PhotoJson, details: PhotoDetails): boolean {
 
 /**
  * What the Photo page edits besides the crop: the details, albums and tags, social media posts, the
- * re-edit mark, and the fields the camera overrides change once they're applied (null until they are).
+ * re-edit mark, the hand-picked related photos, and the fields the camera overrides change once they're applied (null until they are).
  */
 export interface EditedFields {
   details: PhotoDetails;
   groups: PhotoGroups;
   socialPosts: SocialPostDraft[];
   reEdit: ReEditDraft;
+  /** The photos picked by hand for its More like this drawer, in order, with their notes. */
+  pickedSimilar: Pick[];
   overrides: Record<string, unknown> | null;
 }
 
@@ -205,6 +220,7 @@ export function fieldsChanged(data: PhotoJson, fields: EditedFields) {
     () => !sameGroups(savedGroups(data), fields.groups),
     () => socialPostsChanged(data, fields.socialPosts),
     () => reEditChanged(data, fields.reEdit),
+    () => picksChanged(savedPicks(data), fields.pickedSimilar),
   ];
   return checks.some((changed) => changed());
 }
@@ -250,13 +266,16 @@ export function photoFile(saved: PhotoJson): string {
  */
 export function saveRequest(
   saved: PhotoJson,
-  { details, groups, socialPosts, reEdit, overrides }: EditedFields,
+  { details, groups, socialPosts, reEdit, pickedSimilar, overrides }: EditedFields,
   crop: Crop | null,
   baseline: Crop | null,
   remakeSquares: boolean,
 ): SaveRequest {
   const grouped = withGroups(withDetails(saved, details), groups);
-  const edited = withReEdit(withSocialPosts(grouped, socialPosts), reEdit);
+  const edited = withPickedSimilar(
+    withReEdit(withSocialPosts(grouped, socialPosts), reEdit),
+    pickedSimilar,
+  );
   const data = withNamed(saved, details.title, { ...edited, ...overrides });
   return remakeSquares ? { crop, data } : { crop: null, data: withCropField(data, baseline) };
 }

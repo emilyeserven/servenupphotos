@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["street-performer", "children", "park", "bench", "trees", "rock-formations"],
+  "tags": ["street-performers", "children", "park", "benches", "trees", "rock-formations"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9984
-  }
+  },
+  "similarPhotos": [40, 186, 193, 165, 163, 191]
 }

@@ -1,13 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
-import { type PublishedFile, publishedPhotosQuery, type PublishedResponse } from "@/api/photos";
+import {
+  type InFlightImages,
+  type PublishedFile,
+  publishedPhotosQuery,
+  type PublishedResponse,
+} from "@/api/photos";
+import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
+import { MissingImageDrafts } from "@/components/missing-image-drafts";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
-import { isDraft, useUntitledDrafts } from "@/lib/drafts";
-import { undecidedPaths } from "@/lib/undecided";
-import { useLocalEditsStore } from "@/stores/local-edits";
+import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
+import { editedData, undecidedPaths } from "@/lib/undecided";
+import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 
 interface SavedDraftsProps {
   /** Whether photos are in flight too: these drafts' Undecided panel is named after the branch to tell it apart from theirs. */
@@ -19,7 +26,7 @@ export const DRAFT_FILTERS = "draft";
 
 /**
  * The drafts already on the base branch and not in flight (photos without a title, which
- * ALLPHOTOS.json leaves out), in an Undecided queue or a list of drafts, so they can be named
+ * ALLPHOTOS.json leaves out), leaving out the ones that lost in a compare group, in an Undecided queue or a list of drafts, so they can be named
  * from here, with their own filters and sort. Placeholders while they're read, and nothing when
  * untitled photos aren't kept as drafts.
  */
@@ -49,7 +56,7 @@ function NoDrafts({ branch }: { branch: string }) {
     <section className="flex flex-col gap-1">
       <h2 className="text-lg font-semibold">Drafts on {branch}</h2>
       <p className="text-muted-foreground text-sm">
-        None: every photo on {branch} has a title, or is in flight above.
+        None: every photo on {branch} has a title, is in flight above, or is in Unselected Photos.
       </p>
     </section>
   );
@@ -60,13 +67,21 @@ function isBaseDraft(file: PublishedFile): boolean {
   return !file.error && !file.inFlight && isDraft(file.data);
 }
 
+/**
+ * Whether the draft lost in a compare group, with the local edits made: it's listed in Unselected
+ * Photos on the Compare page instead.
+ */
+function lostInCompare(file: PublishedFile, edits: Record<string, LocalEdit>): boolean {
+  return isUnselected(editedData(file, edits));
+}
+
 function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedResponse }) {
   const edits = useLocalEditsStore((s) => s.edits);
   const { filters, filter } = usePhotoFilters(DRAFT_FILTERS);
   const sort = useSearch({ strict: false, select: parseDraftSort });
-  const all = data.files.filter(isBaseDraft);
+  const all = data.files.filter((file) => isBaseDraft(file) && !lostInCompare(file, edits));
   if (all.length === 0) return <NoDrafts branch={data.branch} />;
-  const drafts = sortDrafts(filter(all), sort);
+  const [drafts, missing] = splitMissing(sortDrafts(filter(all), sort), data.images);
   const undecided = undecidedPaths(drafts, edits);
   return (
     <section className="flex flex-col gap-3">
@@ -77,21 +92,34 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
       </p>
       <PhotoFilterBar
         filters={filters}
-        shown={drafts.length}
+        shown={drafts.length + missing.length}
         total={all.length}
         prefix={DRAFT_FILTERS}
       >
         <DraftSortToggle sort={sort} />
       </PhotoFilterBar>
+      <DraftList files={drafts.filter((file) => !undecided.has(file.path))} data={data} />
       <UndecidedQueue
         files={drafts.filter((file) => undecided.has(file.path))}
         images={data.images}
         fromGallery
         title={undecidedTitle(data.branch, alongside)}
       />
-      <DraftList files={drafts.filter((file) => !undecided.has(file.path))} data={data} />
+      <MissingImageDrafts files={missing} images={data.images} />
     </section>
   );
+}
+
+/**
+ * The drafts that can be edited (their image is in R2), and the ones that can't, which are listed
+ * apart so the main list only has drafts with Edit.
+ */
+function splitMissing(
+  files: PublishedFile[],
+  images: InFlightImages,
+): [PublishedFile[], PublishedFile[]] {
+  const missing = (file: PublishedFile) => images.byPath[file.path] === undefined;
+  return [files.filter((file) => !missing(file)), files.filter(missing)];
 }
 
 /** The base branch's Undecided panel heading: named after the branch beside the photos in flight. */
@@ -99,19 +127,24 @@ function undecidedTitle(branch: string, alongside?: boolean): string | undefined
   return alongside ? `Undecided on ${branch}` : undefined;
 }
 
-/** The drafts on the base branch that aren't Undecided, as tiles; nothing when there are none. */
+/**
+ * The drafts on the base branch that can be edited and aren't Undecided, as tiles in a Drafts
+ * panel, open at first and above the Undecided and Can't be edited ones; nothing when there are none.
+ */
 function DraftList({ files, data }: { files: PublishedFile[]; data: PublishedResponse }) {
   if (files.length === 0) return null;
   return (
-    <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-      {files.map((file) => (
-        <DraftTile
-          key={file.path}
-          file={file}
-          imageUrl={data.images.byPath[file.path]?.url}
-          fromGallery
-        />
-      ))}
-    </ul>
+    <CollapsiblePanel title="Drafts" count={countOf(files.length, "draft")} open>
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        {files.map((file) => (
+          <DraftTile
+            key={file.path}
+            file={file}
+            imageUrl={data.images.byPath[file.path]?.url}
+            fromGallery
+          />
+        ))}
+      </ul>
+    </CollapsiblePanel>
   );
 }

@@ -1,6 +1,6 @@
 {
   "id": "hiking-trail",
   "name": "hiking-trail",
-  "description": "",
+  "description": "marked trails through forests and hills",
   "parent": "path"
 }

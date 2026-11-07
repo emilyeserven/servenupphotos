@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["statue", "sculpture", "hula-hoop", "children", "humor", "stairs", "brick"],
+  "tags": ["statues", "sculpture", "children", "humor", "stairs", "brick"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,7 @@
     "chroma": 9.6,
     "peakChroma": 24.01,
     "samples": 9880
-  }
+  },
+  "notes": "Shows a statue with a hula hoop; 'hula-hoop' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [56, 257, 190, 55, 201, 164]
 }

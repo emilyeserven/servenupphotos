@@ -35,8 +35,10 @@ jobs:
               - '!apps/be-pipeline/**/*.go'
               - '!apps/be-pipeline/go.{mod,sum}'
             go:
-              # One pattern, since a file has to match all of them.
-              - '{apps/be-pipeline/**,.github/workflows/ci.yml}'
+              # One pattern, since a file has to match all of them. The oxfmt
+              # config and lockfile are here because the Go tests check the
+              # pipeline's JSON against oxfmt.
+              - '{apps/be-pipeline/**,.github/workflows/ci.yml,.oxfmtrc.json,pnpm-lock.yaml}'
 
   typescript:
     name: TypeScript (lint, format, typecheck, fallow)
@@ -80,10 +82,22 @@ jobs:
         with:
           go-version-file: apps/be-pipeline/go.mod
           cache-dependency-path: apps/be-pipeline/go.mod
+      # The Go tests run the repository's oxfmt on the JSON the pipeline
+      # commits, so a photo data pull request can't fail the format check.
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.14.0
           working-directory: apps/be-pipeline
       - run: go test ./...
+        env:
+          # Fail, rather than skip, the oxfmt comparison if oxfmt is missing.
+          REQUIRE_OXFMT: "1"
       - run: go build ./...

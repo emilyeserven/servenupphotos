@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["coastline", "beach", "highway", "city", "mountains", "haze", "waves"],
-  "genres": [],
+  "genres": ["landscape", "cityscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -262,5 +262,6 @@
     "peakChroma": 13.64,
     "samples": 10050
   },
-  "undecided": true
+  "undecided": true,
+  "similarPhotos": [417, 420, 424, 418, 395, 387]
 }

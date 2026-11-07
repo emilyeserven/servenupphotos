@@ -2,22 +2,29 @@ package github
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"encoding/json"
+	"maps"
 	"net/http"
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
 // The album file fields that hold its place among the albums, the
-// portfolio's spots that show its photos, and its photos' order.
+// portfolio's spots that show its photos and the order each puts them in,
+// and its photos' order.
 const (
-	orderKey          = "order"
-	spotlightZonesKey = "spotlightZones"
-	photoOrderKey     = "photoOrder"
+	orderKey                = "order"
+	spotlightZonesKey       = "spotlightZones"
+	spotlightOrientationKey = "spotlightOrientation"
+	// spotlightUpdatedKey holds the day each spot was last given to the album.
+	spotlightUpdatedKey = "spotlightUpdated"
+	photoOrderKey       = "photoOrder"
 )
 
 // AlbumsResult says which album files a change to several albums saved.
@@ -86,14 +93,26 @@ func checkPhotoOrder(photoIDs []int) *PublishError {
 	return checkPhotoIDs(photoIDs, "the order")
 }
 
+// The ways a spot can order the photos of its album: Screen puts portrait
+// photos first on a phone held upright and landscape photos first elsewhere,
+// and None keeps the album's order everywhere. A spot that names neither
+// matches the screen.
+const (
+	OrientationScreen = "screen"
+	OrientationNone   = "none"
+)
+
 // SetSpotlightAlbum makes album the one whose photos the portfolio's spot
 // zone shows, adding zone to its file's "spotlightZones" and taking it out of
-// every other album's, in the pending changes. An empty album leaves the spot
-// without one.
-func (c *Client) SetSpotlightAlbum(ctx context.Context, gh settings.GitHub, zone, album string) (AlbumsResult, error) {
+// every other album's, in the pending changes. The album also gets today's
+// date for zone in its "spotlightUpdated", which the Dashboard shows. An empty
+// album leaves the spot without one. The spot's orientation, OrientationScreen
+// or OrientationNone, is saved in the album's "spotlightOrientation"; an empty
+// one keeps the spot's current one, moving it along with the spot.
+func (c *Client) SetSpotlightAlbum(ctx context.Context, gh settings.GitHub, zone, album, orientation string) (AlbumsResult, error) {
 	zone, album = strings.TrimSpace(zone), strings.TrimSpace(album)
-	if !groupIDPattern.MatchString(zone) {
-		return AlbumsResult{}, publishErr(http.StatusBadRequest, "%q isn't a spotlight spot.", zone)
+	if perr := checkSpot(zone, orientation); perr != nil {
+		return AlbumsResult{}, perr
 	}
 	w, perr := c.workspace(ctx, gh)
 	if perr != nil {
@@ -105,13 +124,68 @@ func (c *Client) SetSpotlightAlbum(ctx context.Context, gh settings.GitHub, zone
 			return AlbumsResult{}, perr
 		}
 	}
+	orientation = cmp.Or(orientation, zoneOrientation(albums, zone))
 	var edits []albumEdit
 	for _, a := range albums {
-		if edit, ok := zoneEdit(a, zone, a.ID == album); ok {
-			edits = append(edits, edit)
-		}
+		edits = append(edits, zoneEdits(a, zone, a.ID == album, orientation, c.now())...)
 	}
 	return c.saveAlbumEdits(w, edits)
+}
+
+// appendDateEdit adds the edit that records now as the day zone was given to
+// album, when in says it was; edits is returned as it was otherwise.
+func appendDateEdit(edits []albumEdit, album Group, zone string, in bool, now time.Time) []albumEdit {
+	if !in {
+		return edits
+	}
+	dates := maps.Clone(album.SpotlightUpdated)
+	if dates == nil {
+		dates = map[string]string{}
+	}
+	dates[zone] = now.Format(time.DateOnly)
+	value, _ := json.Marshal(dates)
+	return append(edits, albumEdit{album: album, key: spotlightUpdatedKey, value: value})
+}
+
+// checkSpot fails when zone isn't a spot's ID or orientation isn't one of
+// the ways a spot orders its photos.
+func checkSpot(zone, orientation string) *PublishError {
+	if !groupIDPattern.MatchString(zone) {
+		return publishErr(http.StatusBadRequest, "%q isn't a spotlight spot.", zone)
+	}
+	if !slices.Contains([]string{"", OrientationScreen, OrientationNone}, orientation) {
+		return publishErr(http.StatusBadRequest, "%q isn't a way to order a spot's photos.", orientation)
+	}
+	return nil
+}
+
+// zoneOrientation is the orientation saved for zone by the album that shows
+// it now; empty when none does or it has none saved.
+func zoneOrientation(albums []Group, zone string) string {
+	for _, a := range albums {
+		if a.Error == "" && slices.Contains(a.SpotlightZones, zone) {
+			return a.SpotlightOrientation[zone]
+		}
+	}
+	return ""
+}
+
+// zoneEdits are the edits that put album in zone with orientation, dated
+// now, or take it and its orientation out, leaving out the ones that change
+// nothing. Changing only the orientation keeps the zone's date.
+func zoneEdits(album Group, zone string, in bool, orientation string, now time.Time) []albumEdit {
+	var edits []albumEdit
+	if edit, ok := zoneEdit(album, zone, in); ok {
+		edits = append(edits, edit)
+		edits = appendDateEdit(edits, album, zone, in, now)
+	}
+	if !in {
+		orientation = ""
+	}
+	if edit, ok := orientationEdit(album, zone, orientation); ok {
+		edits = append(edits, edit)
+	}
+	return edits
 }
 
 // zoneEdit is the edit that puts album in zone, or takes it out, and false
@@ -126,6 +200,25 @@ func zoneEdit(album Group, zone string, in bool) (albumEdit, bool) {
 	}
 	value, _ := json.Marshal(append([]string{}, zones...))
 	return albumEdit{album: album, key: spotlightZonesKey, value: value}, true
+}
+
+// orientationEdit is the edit that saves orientation for zone in album's
+// "spotlightOrientation", or takes zone out of it when orientation is empty,
+// and false when it's already that way or its file couldn't be read.
+func orientationEdit(album Group, zone, orientation string) (albumEdit, bool) {
+	next := maps.Clone(album.SpotlightOrientation)
+	if next == nil {
+		next = map[string]string{}
+	}
+	delete(next, zone)
+	if orientation != "" {
+		next[zone] = orientation
+	}
+	if album.Error != "" || maps.Equal(next, album.SpotlightOrientation) {
+		return albumEdit{}, false
+	}
+	value, _ := json.Marshal(next)
+	return albumEdit{album: album, key: spotlightOrientationKey, value: value}, true
 }
 
 // readableAlbum is the album in albums with id, failing when there's none or

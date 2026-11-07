@@ -90,6 +90,12 @@ type groupJSON struct {
 	// SpotlightZones are the IDs of the portfolio's spots that show an
 	// album's photos, such as "homepage".
 	SpotlightZones []string `json:"spotlightZones,omitempty"`
+	// SpotlightUpdated is the day, as YYYY-MM-DD, each of SpotlightZones was
+	// last given to this album on the Site Spotlight page.
+	SpotlightUpdated map[string]string `json:"spotlightUpdated,omitempty"`
+	// SpotlightOrientation says, for each of those spots by ID, which photos
+	// it puts first (see SpotlightOrientations).
+	SpotlightOrientation map[string]string `json:"spotlightOrientation,omitempty"`
 	// PhotoOrder is the IDs of an album's photos in the order the portfolio
 	// shows them.
 	PhotoOrder []int `json:"photoOrder,omitempty"`
@@ -101,6 +107,11 @@ type groupJSON struct {
 	Layout []AlbumRow `json:"layout,omitempty"`
 	// Hidden is true for an album the portfolio doesn't list or give a page.
 	Hidden bool `json:"hidden,omitempty"`
+	// Rules makes an album a Smart Album: the portfolio Grid's filters, as
+	// its URL names them, that pick its photos.
+	Rules json.RawMessage `json:"rules,omitempty"`
+	// Favorite is true for a tag pinned to the top of the tag lists.
+	Favorite bool `json:"favorite,omitempty"`
 }
 
 // albumJSON is the content of an album file, as written: it always lists its
@@ -116,6 +127,12 @@ type albumJSON struct {
 	// SpotlightZones are the IDs of the portfolio's spots that show the
 	// album's photos; missing while it's in none.
 	SpotlightZones []string `json:"spotlightZones,omitempty"`
+	// SpotlightUpdated is the day, as YYYY-MM-DD, each spot was last given
+	// to the album; missing until one is picked on the Site Spotlight page.
+	SpotlightUpdated map[string]string `json:"spotlightUpdated,omitempty"`
+	// SpotlightOrientation says, for each of those spots by ID, which photos
+	// it puts first; missing or empty while each matches the screen.
+	SpotlightOrientation map[string]string `json:"spotlightOrientation,omitempty"`
 	// PhotoOrder is the IDs of the album's photos in the order the portfolio
 	// shows them; missing or empty while they're in the default order.
 	PhotoOrder []int `json:"photoOrder,omitempty"`
@@ -128,6 +145,11 @@ type albumJSON struct {
 	// Hidden is true for an album the portfolio doesn't list or give a page;
 	// missing or false while it's shown.
 	Hidden bool `json:"hidden,omitempty"`
+	// Rules makes the album a Smart Album, whose photos are the ones these
+	// filters match; missing or null for an album of chosen photos.
+	Rules json.RawMessage `json:"rules,omitempty"`
+	// Favorite is only for tags; albums never set it.
+	Favorite bool `json:"favorite,omitempty"`
 }
 
 // fileContent is g as kind's files are written.
@@ -152,6 +174,13 @@ type Group struct {
 	// SpotlightZones are the IDs of the portfolio's spots that show an
 	// album's photos, such as "homepage".
 	SpotlightZones []string `json:"spotlightZones,omitempty"`
+	// SpotlightUpdated is the day, as YYYY-MM-DD, each spot in
+	// SpotlightZones was given to the album; a spot is missing when it was
+	// picked before these days were kept.
+	SpotlightUpdated map[string]string `json:"spotlightUpdated,omitempty"`
+	// SpotlightOrientation says, for each of those spots by ID, which photos
+	// it puts first, "screen" or "none"; a spot left out matches the screen.
+	SpotlightOrientation map[string]string `json:"spotlightOrientation,omitempty"`
 	// PhotoOrder is the IDs of an album's photos in the order the portfolio
 	// shows them, set on its page; empty for the default order.
 	PhotoOrder []int `json:"photoOrder,omitempty"`
@@ -163,8 +192,15 @@ type Group struct {
 	Layout []AlbumRow `json:"layout,omitempty"`
 	// Hidden is true for an album the portfolio doesn't list or give a page,
 	// along with the albums inside it.
-	Hidden bool   `json:"hidden,omitempty"`
-	Path   string `json:"path"`
+	Hidden bool `json:"hidden,omitempty"`
+	// Rules is a Smart Album's filters, by the names the portfolio's URL
+	// gives them, such as {"tag": "night", "orientation": "vertical"}; empty
+	// for an album of chosen photos.
+	Rules map[string]any `json:"rules,omitempty"`
+	// Favorite is true for a favorite tag, which the pipeline's and the
+	// portfolio's tag lists show first.
+	Favorite bool   `json:"favorite,omitempty"`
+	Path     string `json:"path"`
 	// FileURL is the file's page on GitHub; empty while its latest change is
 	// only pending.
 	FileURL string `json:"fileUrl"`
@@ -448,7 +484,10 @@ func (w *workspace) readGroup(p string) Group {
 	if content.Order != nil {
 		g.Order = *content.Order
 	}
-	g.SpotlightZones, g.PhotoOrder = content.SpotlightZones, content.PhotoOrder
+	g.SpotlightZones, g.SpotlightUpdated, g.PhotoOrder = content.SpotlightZones, content.SpotlightUpdated, content.PhotoOrder
+	g.SpotlightOrientation = content.SpotlightOrientation
 	g.Covers, g.Layout, g.Hidden = content.Covers, content.Layout, content.Hidden
+	g.Rules = smartRules(content.Rules)
+	g.Favorite = content.Favorite
 	return g
 }

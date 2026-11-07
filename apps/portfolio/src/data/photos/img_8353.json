@@ -47,8 +47,8 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
-  "tags": ["highway", "bridge", "columns", "steel", "houses", "snow", "winter"],
+  "albums": ["timeline-spotlight"],
+  "tags": ["highway", "bridges", "columns", "steel", "houses", "snow", "winter"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,16 @@
     "chroma": 5.11,
     "peakChroma": 12.18,
     "samples": 9216
-  }
+  },
+  "notes": null,
+  "spotlightZoneFocus": {
+    "timeline-header": {
+      "focus": {
+        "x": 28,
+        "y": 72
+      },
+      "placement": null
+    }
+  },
+  "similarPhotos": [235, 240, 241, 236, 237, 64]
 }

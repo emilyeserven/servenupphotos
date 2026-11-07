@@ -1,9 +1,70 @@
 # Sidebar
 
-The pipeline's sidebar (`components/app-sidebar.tsx`) lists every page under its group (Pipeline, Organize, Publish,
-Configuration), with the split **Upload** button at the top: its main part uploads one photo and its icon on the right, **Bulk Upload**, opens the
-Bulk Upload modal. The Bulk Upload page (`/bulk-upload`) has no sidebar link of its own; it's linked from the upload
-queue and the Photo page.
+The pipeline's sidebar (`components/app-sidebar.tsx`, with its parts in `components/sidebar/`) starts with the
+**Photo Pipeline** logo, which opens the Status page (`/`), and the split **Bulk Upload** button: its main part opens
+the Bulk Upload modal, and the smaller **Upload** icon on its right uploads one photo. The Bulk Upload page
+(`/bulk-upload`) has no sidebar link of its own; it's linked from the upload queue and the Photo page.
+
+Below them every page is listed under its section, with the pages in its submenu under it. One page per line here, so
+branches that add pages don't clash:
+
+- **Images**
+  - Photo
+    - Alt Text
+  - Gallery
+  - All Photos
+- **Pipeline**
+  - Photos in Flight
+  - Compare
+  - Lightroom Albums
+- **Organize**
+  - Albums
+    - Album Suggestions
+  - Tags
+    - Small Tags
+    - Tag Data
+  - Genres
+    - Genre Suggestions
+  - Places
+    - Location Names
+    - Bulk Places
+    - Localizations
+- **Publish**
+  - Instagram
+    - Planned Posts
+    - Caption Templates
+  - Site Spotlight
+  - Related Photos
+  - User Likes
+- **Configuration**
+  - Settings
+    - Status
+    - Changelog
+    - Explore Bucket
+    - Manage Sizes
+  - Update Data (each of its subpages)
+  - Metadata Groups
+  - Camera Overrides
+  - Timeline Labels
+  - Trip Lines
+
+## Submenus
+
+A page with pages under it, such as **Tags**, has an arrow on its right. On a desktop, hovering it (or focusing it
+with the keyboard) flies its submenu out to the right: the page itself, then the pages under it
+(`components/sidebar/nav-flyout.tsx`), whether the sidebar is expanded or collapsed to icons. The page stays
+highlighted while one of its submenu pages is open. On a phone, where there's no hover, the submenu is listed under
+the page instead, open while the page or one in its submenu is showing, and the arrow shows or hides it.
+
+A submenu page keeps its own URL (Explore Bucket is still `/bucket`); it only sits under another in the sidebar and
+the breadcrumbs, which read **Organize › Tags › Small Tags**, with the middle page a link back to it. On a phone only
+the open page shows in the breadcrumbs.
+
+The pages, their icons and their submenus are `navGroups` in `components/sidebar/nav-groups.ts`; a new page needs one
+entry there, with an icon, and its `url` is checked against the route tree.
+
+> **Frontend analogy:** it's one nested config array that both the sidebar and the breadcrumbs map over, like a
+> `routes` config in a router that also drives the menu.
 
 ## Collapsing
 
@@ -13,7 +74,8 @@ at the bottom of the rail). Collapsed:
 
 - each page shows only its icon, and hovering it shows the page's name in a tooltip;
 - the group names are hidden;
-- Upload and Bulk Upload become two stacked icon buttons that open the same modals.
+- Bulk Upload and Upload become two stacked icon buttons that open the same modals;
+- hovering the icon of a page with a submenu flies the submenu out, in place of the name tooltip.
 
 The choice is kept in the browser's `localStorage` under `pipeline-sidebar` (`stores/sidebar.ts`), so the sidebar
 stays collapsed or expanded after a reload.
@@ -25,8 +87,6 @@ On a phone the sidebar is a sheet over the page instead. The button left of the 
 it; it always shows in full, so it has no collapse button.
 
 **Theme**, just above **Collapse sidebar**, switches between light, dark and system colors ([Theme](theme.md)).
-
-Each page's icon is set next to its title and URL in `navGroups`; a new page needs one.
 
 ## Tab titles
 

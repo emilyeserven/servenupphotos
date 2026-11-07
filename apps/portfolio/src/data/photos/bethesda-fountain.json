@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["fountain", "plaza", "tourists", "pedestrians", "park", "trees", "shadows"],
+  "tags": ["fountains", "plaza", "tourists", "pedestrians", "park", "trees", "shadows"],
   "genres": ["street", "architecture"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 10087
-  }
+  },
+  "similarPhotos": [163, 40, 165, 168, 159, 483]
 }

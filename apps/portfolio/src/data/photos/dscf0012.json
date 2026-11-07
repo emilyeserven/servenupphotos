@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["omikuji", "prayers", "pine-trees", "branches", "paper"],
-  "genres": [],
+  "genres": ["nature", "abstract"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 10.15,
     "peakChroma": 25.09,
     "samples": 9900
-  }
+  },
+  "similarPhotos": [380, 382, 507, 464, 415, 505]
 }

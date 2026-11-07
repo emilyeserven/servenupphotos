@@ -48,16 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "daldongne",
-    "road",
-    "houses",
-    "brick",
-    "rooftops",
-    "cars",
-    "air-conditioners",
-    "motorcycles"
-  ],
+  "tags": ["daldongne", "road", "houses", "brick", "rooftops", "cars"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -269,5 +260,7 @@
     "chroma": 11.23,
     "peakChroma": 22.39,
     "samples": 10050
-  }
+  },
+  "notes": "Shows wall air conditioners and motorcycles; 'air-conditioners' and 'motorcycles' aren't tags, since only 2 photos have each.",
+  "similarPhotos": [357, 356, 460, 124, 245, 247]
 }

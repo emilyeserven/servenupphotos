@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["trees", "silhouettes", "branches", "clouds", "lamppost"],
-  "genres": [],
+  "tags": ["trees", "silhouettes", "branches", "clouds", "street-lights"],
+  "genres": ["abstract", "nature"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -262,5 +262,6 @@
     "peakChroma": 0.01,
     "samples": 9975
   },
-  "undecided": true
+  "undecided": true,
+  "similarPhotos": [418, 416, 444, 445, 380, 379]
 }

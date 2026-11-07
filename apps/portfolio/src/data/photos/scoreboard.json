@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["baseball", "scoreboard", "autumn", "fence", "trees", "typography"],
+  "tags": ["sports", "autumn", "fence", "trees", "typography"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,7 @@
     "chroma": 22.9,
     "peakChroma": 45.61,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a baseball scoreboard; 'scoreboard' isn't a tag since only 1 photo has one, and 'baseball' was folded into 'sports'.",
+  "similarPhotos": [486, 496, 480, 471, 484, 482]
 }

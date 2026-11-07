@@ -1,11 +1,11 @@
 // Makes ALLPHOTOS.local.json, PLACES.local.json, LOCALIZATIONS.local.json, ALLALBUMS.local.json,
-// ALLTAGS.local.json, ALLGENRES.local.json, METAINFO.local.json and TIMELINE.local.json in apps/portfolio/src/data, which the portfolio uses
+// ALLTAGS.local.json, ALLGENRES.local.json, METAINFO.local.json, TIMELINE.local.json and GRAPHS.local.json in apps/portfolio/src/data, which the portfolio uses
 // in place of the committed combined files whenever they have anything in them. It asks, in turn:
 //
 // 1. The photo pipeline, when it's running locally (PIPELINE_URL, or else http://localhost:8080
 //    or http://localhost:5174): the combined files at the open "Add photo data" pull request's
 //    head, or the base branch's when none is open, with the photo, place, localization, album,
-//    tag, genre, metadata group and timeline label files in flight over them, so the changes waiting for Commit show
+//    tag, genre, metadata group, timeline label and graph preset files in flight over them, so the changes waiting for Commit show
 //    too. Skipped when no pull request is open and nothing is waiting for Commit.
 // 2. GitHub: the combined files from the open "Add photo data" pull request on the `origin`
 //    repository. Set GITHUB_TOKEN to read a private repository.
@@ -38,6 +38,7 @@ const KINDS = [
   { folder: "genres", all: "ALLGENRES", identity: "id" },
   { folder: "metainfo", all: "METAINFO", identity: "id" },
   { folder: "timeline", all: "TIMELINE", identity: "id" },
+  { folder: "graphs", all: "GRAPHS", identity: "id" },
 ];
 
 /** Where the local photo pipeline may be running: as set, `pnpm dev:pipeline` or Docker, then `pnpm dev:docker`. */
@@ -209,7 +210,13 @@ async function fromDataFolder(kind) {
   const dataDir = path.join(root, DATA_PATH, kind.folder);
   const skipped = new Set([`${kind.all}.json`, `${kind.all}.local.json`]);
   const files = (await readdir(dataDir, { withFileTypes: true }).catch(() => []))
-    .filter((entry) => entry.isFile() && entry.name.endsWith(".json") && !skipped.has(entry.name))
+    .filter(
+      (entry) =>
+        entry.isFile() &&
+        entry.name.endsWith(".json") &&
+        !entry.name.endsWith(".geo.json") &&
+        !skipped.has(entry.name),
+    )
     .map((entry) => entry.name)
     // Byte order, like `LC_ALL=C sort` in the workflow.
     .sort((a, b) => Buffer.compare(Buffer.from(a), Buffer.from(b)));

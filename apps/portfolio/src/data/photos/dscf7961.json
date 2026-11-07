@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hangul", "ferry-terminal", "signage", "typography", "facade", "windows", "night"],
+  "tags": ["hangul", "signage", "typography", "facade", "windows", "night"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9490
-  }
+  },
+  "notes": "Shows a ferry terminal; 'ferry-terminal' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [325, 441, 251, 326, 120, 250]
 }

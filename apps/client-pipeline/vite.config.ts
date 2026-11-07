@@ -23,6 +23,8 @@ export default defineConfig({
       "clsx",
       "tailwind-merge",
       "class-variance-authority",
+      "date-fns",
+      "react-day-picker",
     ],
   },
   server: {

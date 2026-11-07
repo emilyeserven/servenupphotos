@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["love-locks", "padlocks", "fence", "city"],
+  "tags": ["padlocks", "fence", "city"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 6.04,
     "peakChroma": 17.23,
     "samples": 9956
-  }
+  },
+  "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [13, 58, 24, 267, 27, 44]
 }

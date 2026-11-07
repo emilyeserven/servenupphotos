@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["windows", "facade", "repetition", "patterns", "office-building", "minimalism"],
+  "tags": ["windows", "facade", "repetition", "patterns", "office-buildings", "minimalism"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 10062
-  }
+  },
+  "similarPhotos": [175, 76, 185, 67, 35, 174]
 }

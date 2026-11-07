@@ -1,7 +1,7 @@
 import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { CameraFilterBar } from "@portfolio/components/camera-filters";
-import { GridColorFilters } from "@portfolio/components/grid-color-filters";
+import { VisualsPicker } from "@portfolio/components/visuals-picker";
 import { ScriptDisplayProvider } from "@portfolio/components/script-display-provider";
 import {
   CAMERA_FILTER_KEYS,
@@ -22,9 +22,11 @@ import {
   filterCount,
   parseFilters,
 } from "@portfolio/lib/photo-filters";
-import { type Photo, photosFromData } from "@portfolio/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 import type { InFlightFileRead } from "@/api/photos";
 import { Card, CardContent } from "@/components/ui/card";
+import type { CombinedPhoto } from "@/lib/group-photos";
+import { readEntries } from "@/lib/smart-album-photos";
 import { editedData } from "@/lib/undecided";
 import { type LocalEdit, useLocalEditsStore } from "@/stores/local-edits";
 
@@ -52,20 +54,10 @@ function gridFilterCount(search: Record<string, unknown>): number {
   return filterCount(parseFilters(search)) + camera + colorFilterCount(parseColorFilters(search));
 }
 
-/** A photo JSON entry as the portfolio reads it. */
-type PhotoData = Parameters<typeof photosFromData>[0][number];
-
 /** The Gallery's photos as the portfolio reads them, and which file each one is, by its ID. */
 interface GalleryPhotos {
   photos: Photo[];
   paths: Map<number, string>;
-}
-
-/** The ID a photo goes by here: its own, or a negative one when it has none or shares one. */
-function uniqueId(id: unknown, index: number, seen: Set<number>): number {
-  const own = typeof id === "number" && !seen.has(id) ? id : -(index + 1);
-  seen.add(own);
-  return own;
 }
 
 /**
@@ -73,17 +65,12 @@ function uniqueId(id: unknown, index: number, seen: Set<number>): number {
  * couldn't be read, or that has no date, has no photo, so the Grid's filters never show it.
  */
 function galleryPhotos(files: InFlightFileRead[], edits: Record<string, LocalEdit>): GalleryPhotos {
-  const seen = new Set<number>();
-  const entries = files.flatMap((file, index) => {
+  const entries = files.flatMap((file) => {
     const data = editedData(file, edits);
-    if (typeof data !== "object" || data === null) return [];
-    const photo = { ...data, id: uniqueId((data as PhotoData).id, index, seen) } as PhotoData;
-    return [{ path: file.path, photo }];
+    return typeof data === "object" && data !== null ? [{ path: file.path, data }] : [];
   });
-  return {
-    photos: photosFromData(entries.map(({ photo }) => photo)),
-    paths: new Map(entries.map(({ path, photo }) => [photo.id as number, path])),
-  };
+  const { photos, ids } = readEntries(entries.map(({ data }) => data as CombinedPhoto));
+  return { photos, paths: new Map(ids.map((id, index) => [id, entries[index]?.path ?? ""])) };
 }
 
 /**
@@ -123,9 +110,12 @@ export function GridFilterBar({ photos }: { photos: Photo[] }) {
               keys: COLOR_FILTER_KEYS,
               count: colorFilterCount(parseColorFilters(search)),
               children: (
-                <GridColorFilters
-                  photos={filterWithCamera(photos, search)}
-                  filters={parseColorFilters(search)}
+                <VisualsPicker
+                  photos={filterWithCamera(photos, { ...search, orientation: undefined })}
+                  filters={{
+                    ...parseColorFilters(search),
+                    orientation: parseCameraFilters(search).orientation,
+                  }}
                 />
               ),
             }}

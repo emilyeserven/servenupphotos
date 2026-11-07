@@ -1,6 +1,6 @@
 {
   "id": "giwa",
   "name": "giwa",
-  "description": "",
-  "parent": "shingles"
+  "description": "traditional Korean clay roof tiles on curved, upturned roofs",
+  "parent": "rooftops"
 }

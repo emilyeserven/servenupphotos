@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hiking-trail", "tree-stump", "carvings", "wood", "moss", "forest", "texture"],
+  "tags": ["hiking-trail", "carvings", "wood", "moss", "forest", "texture", "trees"],
   "genres": ["nature"],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 24.91,
     "peakChroma": 44.78,
     "samples": 9801
-  }
+  },
+  "notes": "Shows a tree stump; 'tree-stump' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [82, 111, 113, 286, 287, 471]
 }

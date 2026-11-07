@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["dancheong", "giwa", "palace", "gates", "tourists", "umbrellas", "pedestrians"],
-  "genres": [],
+  "genres": ["architecture", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 10.21,
     "peakChroma": 21.23,
     "samples": 9768
-  }
+  },
+  "similarPhotos": [210, 126, 212, 130, 216, 5]
 }

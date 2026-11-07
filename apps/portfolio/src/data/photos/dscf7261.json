@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["observation-tower", "steel", "city", "skyscraper", "haze", "aerial-view"],
+  "tags": ["observation-towers", "steel", "city", "skyscrapers", "haze", "aerial-view"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 8.99,
     "peakChroma": 12.64,
     "samples": 9801
-  }
+  },
+  "similarPhotos": [268, 461, 458, 258, 456, 39]
 }

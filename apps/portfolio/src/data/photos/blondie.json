@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["street-art", "mural", "faces", "bicycles", "sidewalk", "storefronts"],
+  "tags": ["street-art", "murals", "faces", "bicycles", "sidewalk", "storefronts"],
   "genres": ["street"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 14.7,
     "peakChroma": 60.69,
     "samples": 9750
-  }
+  },
+  "similarPhotos": [439, 36, 203, 66, 214, 57]
 }

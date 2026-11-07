@@ -26,7 +26,7 @@ export function CameraOverridesPage() {
 
 function Cameras() {
   const combined = useCombinedData();
-  if (combined.isPending) return <p>Reading the photos and camera overrides from GitHub…</p>;
+  if (combined.isPending) return <p>Reading the photos and camera overrides…</p>;
   if (!combined.data) return <p className="text-destructive text-sm">{combined.error?.message}</p>;
   return <CameraChooser data={combined.data} />;
 }

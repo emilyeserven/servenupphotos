@@ -48,15 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "hangul",
-    "signage",
-    "storefronts",
-    "power-lines",
-    "traffic",
-    "pedestrians",
-    "motorcycles"
-  ],
+  "tags": ["hangul", "signage", "storefronts", "power-lines", "traffic", "pedestrians"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -268,5 +260,7 @@
     "chroma": 14.25,
     "peakChroma": 35.99,
     "samples": 9900
-  }
+  },
+  "notes": "Shows motorcycles; 'motorcycles' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [250, 304, 219, 453, 120, 121]
 }

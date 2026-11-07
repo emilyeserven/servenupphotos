@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["snakes", "street-performer", "ironwork", "carvings", "walls", "park"],
+  "tags": ["street-performers", "ironwork", "carvings", "walls", "park", "reptiles"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9728
-  }
+  },
+  "notes": "Shows a snake; 'snakes' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [165, 193, 164, 186, 192, 40]
 }

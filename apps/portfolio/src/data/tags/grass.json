@@ -1,5 +1,6 @@
 {
   "id": "grass",
   "name": "grass",
-  "description": ""
+  "description": "lawns, meadows and grassy ground",
+  "parent": "plants"
 }

@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["waves", "ocean", "beach", "swimming", "splash", "water"],
-  "genres": [],
+  "tags": ["waves", "ocean", "beach", "water-sports", "water"],
+  "genres": ["landscape", "street"],
   "places": [
     {
       "relation": "",
@@ -265,5 +265,7 @@
     "chroma": 4.15,
     "peakChroma": 8.95,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a splash; 'splash' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [199, 427, 206, 135, 423, 428]
 }

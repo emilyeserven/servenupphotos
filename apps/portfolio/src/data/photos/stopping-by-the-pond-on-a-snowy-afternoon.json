@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["snow", "winter", "pond", "park", "pedestrians", "lamppost", "trees"],
+  "tags": ["snow", "winter", "pond", "park", "pedestrians", "street-lights", "trees"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 5.48,
     "peakChroma": 7.22,
     "samples": 9768
-  }
+  },
+  "similarPhotos": [104, 106, 40, 102, 237, 93]
 }

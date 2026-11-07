@@ -14,7 +14,7 @@ import { fileStem, PhotoDetailsCard, savedExifPlace } from "@/components/photo-d
 import { QueryResult } from "@/components/query-result";
 import { ReEditCard } from "@/components/re-edit-card";
 import { SocialPostsCard } from "@/components/social-posts-card";
-import { SpotlightCard } from "@/components/spotlight-card";
+import { PickedSimilarCard } from "@/components/related-photos/picked-similar-card";
 import { ThumbnailCrop } from "@/components/thumbnail-crop";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,7 +52,7 @@ export function EditInFlightPhoto({ path, from }: { path: string; from?: "galler
   return (
     <>
       <BackLink from={from} />
-      <QueryResult query={inFlight} pendingLabel="Reading the pull request from GitHub…">
+      <QueryResult query={inFlight} pendingLabel="Reading the pull request…">
         {(data) => <EditFound inFlight={data} path={path} />}
       </QueryResult>
     </>
@@ -66,7 +66,7 @@ export function EditInFlightPhoto({ path, from }: { path: string; from?: "galler
  */
 function EditFound({ inFlight, path }: { inFlight: InFlightRead; path: string }) {
   const editable = useEditable(inFlight, path);
-  if (editable === null) return <p>Reading the photo from GitHub…</p>;
+  if (editable === null) return <p>Reading the photo…</p>;
   if (typeof editable === "string") return <Problem>{editable}</Problem>;
   // Keyed by the photo's image rather than its file, which a new title can rename.
   return <EditWithSavedCrop key={editable.image.key} editable={editable} />;
@@ -171,7 +171,6 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           disabled={pending}
           tagPrompt={<TagPromptButton imageUrl={imageUrl} details={edit.details} exif={exif} />}
         />
-        <SpotlightCard path={editable.file.path} />
       </div>
       <div className="flex min-w-0 flex-col gap-6">
         <PhotoDetailsCard
@@ -192,6 +191,12 @@ function EditSteps({ editable, savedCrop }: EditStepsProps) {
           photo={edit.next ?? edit.savedData}
         />
         <ReEditCard value={edit.reEdit} onChange={edit.setReEdit} disabled={pending} />
+        <PickedSimilarCard
+          saved={edit.savedData}
+          value={edit.pickedSimilar}
+          onChange={edit.setPickedSimilar}
+          disabled={pending}
+        />
         <LensCards edit={edit} disabled={pending} />
         <JsonPreview file={editable.file} edit={edit} />
       </div>

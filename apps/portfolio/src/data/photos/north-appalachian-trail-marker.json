@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hiking-trail", "signpost", "carvings", "wood", "path", "forest"],
+  "tags": ["hiking-trail", "signposts", "carvings", "wood", "path", "forest"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 19.29,
     "peakChroma": 30.38,
     "samples": 9880
-  }
+  },
+  "similarPhotos": [114, 111, 113, 495, 264, 200]
 }

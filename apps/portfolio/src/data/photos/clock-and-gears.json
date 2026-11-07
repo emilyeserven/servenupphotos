@@ -1,7 +1,7 @@
 {
-  "id": 43,
   "title": "Clock and Gears",
   "comment": null,
+  "id": 43,
   "file": "IMG_6965.jpg",
   "addedDate": "2026-10-23T13:24:41Z",
   "camera": "Canon EOS Rebel T6i",
@@ -47,9 +47,9 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
-  "tags": ["clockwork", "clock", "gears", "machinery", "steel"],
-  "genres": [],
+  "albums": ["timeline-spotlight"],
+  "tags": ["clockwork", "clocks", "gears", "machinery", "steel"],
+  "genres": ["abstract", "architecture"],
   "places": [
     {
       "relation": "",
@@ -65,8 +65,8 @@
       "hex": "#1d1d1d",
       "lab": {
         "l": 11.01,
-        "a": -0,
-        "b": -0
+        "a": 0,
+        "b": 0
       },
       "hcl": {
         "h": 259.96,
@@ -265,5 +265,7 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9694
-  }
+  },
+  "notes": null,
+  "similarPhotos": [50, 49, 176, 45, 33, 242]
 }

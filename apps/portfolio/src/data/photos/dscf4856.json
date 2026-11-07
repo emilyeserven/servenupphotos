@@ -1,9 +1,9 @@
 {
-  "id": 247,
-  "title": null,
+  "title": "Mountainous City",
   "comment": null,
+  "id": 247,
   "file": "DSCF4856.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:50:50Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 4.7,
@@ -53,7 +53,16 @@
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-11-06",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -260,5 +269,6 @@
     "chroma": 7.46,
     "peakChroma": 17.98,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [245, 248, 491, 357, 356, 373]
 }

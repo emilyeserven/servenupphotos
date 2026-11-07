@@ -265,5 +265,6 @@
     "chroma": 4.48,
     "peakChroma": 11.22,
     "samples": 9828
-  }
+  },
+  "similarPhotos": [354, 351, 377, 307, 352, 251]
 }

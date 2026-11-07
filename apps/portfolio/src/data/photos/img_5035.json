@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mirror", "reflections", "cameras", "pedestrians", "motion-blur", "interior"],
+  "tags": ["mirrors", "reflections", "cameras", "pedestrians", "motion-blur", "interior"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9906
-  }
+  },
+  "similarPhotos": [125, 148, 182, 186, 176, 177]
 }

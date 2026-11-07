@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hanok", "giwa", "alley", "crowd", "tourists", "umbrellas", "walls"],
-  "genres": [],
+  "tags": ["giwa", "alley", "crowd", "tourists", "umbrellas", "walls", "houses"],
+  "genres": ["street", "architecture"],
   "places": [
     {
       "relation": "",
@@ -58,7 +58,16 @@
   ],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "status": "scheduled",
+      "date": "2026-10-26",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -265,5 +274,7 @@
     "chroma": 7.2,
     "peakChroma": 16.79,
     "samples": 9768
-  }
+  },
+  "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [210, 212, 127, 126, 124, 357]
 }

@@ -32,6 +32,17 @@ export interface Group {
   /** The IDs of the portfolio's spotlight spots that show an album's photos, such as "homepage". */
   spotlightZones?: string[];
   /**
+   * The day, as YYYY-MM-DD, each of an album's spotlight zones was last given to it on Site
+   * Spotlight; a zone is missing when it was picked before these days were kept.
+   */
+  spotlightUpdated?: Record<string, string>;
+  /**
+   * For each of those spots, by ID, which photos it puts first: "screen" for portrait photos on a
+   * phone and landscape ones elsewhere, or "none" for the album's order. A spot left out matches
+   * the screen.
+   */
+  spotlightOrientation?: Record<string, SpotlightOrientation>;
+  /**
    * The IDs of an album's photos in the order the portfolio shows them, set on its page; absent or
    * empty for the default order. Photos it leaves out come after the ones it lists.
    */
@@ -51,6 +62,13 @@ export interface Group {
    * absent while it's shown.
    */
   hidden?: boolean;
+  /**
+   * For a Smart Album, the portfolio Grid's filters that pick its photos, by their URL names, such
+   * as `{ "tag": "night" }`; missing for an album of chosen photos.
+   */
+  rules?: Record<string, unknown>;
+  /** True for a favorite tag, listed first on the Tags page and in the Tags field; absent otherwise. */
+  favorite?: boolean;
   path: string;
   fileUrl: string;
   /** True when it's only in the photo data pull request, not merged yet. */
@@ -312,6 +330,17 @@ export const setAlbumHiddenMutation = albumsMutation(
   ({ hidden }) => ({ hidden }),
 );
 
+/**
+ * Saves `rules`, the portfolio Grid's filters by their URL names, as the album's Smart Album rules,
+ * or makes it an album of chosen photos again with null, as a change waiting for Commit.
+ */
+export const setAlbumRulesMutation = albumsMutation(
+  "rules",
+  ({ id }: { id: string; rules: Record<string, unknown> | null }) =>
+    `/api/organize/albums/${encodeURIComponent(id)}/rules`,
+  ({ rules }) => ({ rules }),
+);
+
 /** The mutation options that PUT `body` to `/api/organize/tags/<key>` and save the tag files it changes. */
 function tagsMutation<T>(key: string, body: (vars: T) => unknown) {
   return mutationOptions({
@@ -343,14 +372,41 @@ export const setTagDescriptionsMutation = tagsMutation(
 );
 
 /**
+ * Saves whether each tag in `favorites`, by tag ID, is a favorite tag, as changes waiting for
+ * Commit. Nothing is saved when an ID isn't a tag.
+ */
+export const setTagFavoritesMutation = tagsMutation(
+  "favorites",
+  (favorites: Record<string, boolean>) => ({ favorites }),
+);
+
+/** The tags with favorites first, keeping the order of each. */
+export function favoritesFirst<T extends { favorite?: boolean }>(tags: T[]): T[] {
+  return [...tags.filter((tag) => tag.favorite), ...tags.filter((tag) => !tag.favorite)];
+}
+
+/**
+ * Which photos a spotlight spot puts first: "screen" for portrait photos on a phone held upright
+ * and landscape photos elsewhere, or "none" to keep the album's order everywhere.
+ */
+export type SpotlightOrientation = "screen" | "none";
+
+/** What picking a spotlight spot's album saves. */
+interface SpotlightAlbumChange {
+  zone: string;
+  album: string | null;
+  /** Which photos the spot puts first; left out to keep the spot's current choice. */
+  orientation?: SpotlightOrientation;
+}
+
+/**
  * Makes `album` the one the spotlight spot `zone` shows, or leaves the spot without one when it's
- * null, as changes waiting for Commit.
+ * null, with the spot's orientation, as changes waiting for Commit.
  */
 export const setSpotlightAlbumMutation = albumsMutation(
   "spotlight",
-  ({ zone }: { zone: string; album: string | null }) =>
-    `/api/organize/spotlight/${encodeURIComponent(zone)}`,
-  ({ album }) => ({ album }),
+  ({ zone }: SpotlightAlbumChange) => `/api/organize/spotlight/${encodeURIComponent(zone)}`,
+  ({ album, orientation }) => ({ album, orientation }),
 );
 
 /** A photo's albums, tags and genres, by ID, as its JSON lists them. */

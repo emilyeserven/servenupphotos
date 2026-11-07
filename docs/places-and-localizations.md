@@ -20,8 +20,9 @@ The Places page is a list on the left and an edit panel on the right (on a phone
 one tree of every country, the cities in it, and the places in each city, each with an icon on the left: a globe for a
 country, a building for a city and a pin for a place (with a check inside for a place marked as an exact location). A place is listed under the place it's in, or else its city (its
 own, or a place above it's), or else its country; a city under its country; anything with nothing above it at the top,
-after the countries. Cities and countries come from the places' city and country and from the photos' (their custom
-city and country, or else their EXIF ones); a city only photos have says **Inferred from photos**. Each row has its
+after the countries. Cities and countries come from the places' city and country, from the photos' (their custom
+city and country, or else their EXIF ones), and from the ones [added with **New**](#adding-a-country-state-or-city);
+a city only photos have says **Inferred from photos**. Each row has its
 local script, a GPS icon (see [GPS position](#gps-position)) and how many photos have it; a place's count links to
 the [Gallery showing its photos](gallery.md#a-places-photos), which also opens from **See photos in Gallery** at the
 top of its panel. A row with rows under it has
@@ -34,11 +35,12 @@ of them; an empty field leaves each place's own. **In** doesn't offer the checke
 so no place ends up in itself. **Save N places** saves each place it changes as its own queued save, and the list
 shows them moved at once; when they've all saved, the places are unchecked, and any that failed are named.
 
-Choosing a row edits it in the panel; **New place** empties the panel for a new place. A place's panel changes its
+Choosing a row edits it in the panel; **New** opens a menu to empty the panel for a new place, city, state or
+country. A place's panel changes its
 name, description, parent (**In**, which lists only places that aren't in it), city, country and GPS position (its ID
 stays), and its localization: romanization, local pronunciation and local script, as on the Localizations page. A city's
-or country's panel shows where it is and how many cities, places and photos have it, and edits its localization only,
-since its name comes from the places and photos that have it. Each field's title has an ⓘ beside it whose tooltip says
+or country's panel shows where it is and how many cities, places and photos have it, and edits its localization (and
+for a city or state, where it is; see below), since its name comes from the places and photos that have it. Each field's title has an ⓘ beside it whose tooltip says
 what to write, with an example. **Save changes**, or **Save** at the top right (the rightmost
 floating button, next to the sync button), saves the place when it changed and its localization when that did, each
 as its own save. The list shows the change as soon as Save is pressed, before the backend answers, and reads the
@@ -54,6 +56,39 @@ no city can still have them chosen; choosing a state whose country is known fill
 [change waiting for Commit](pending-changes.md), and the list reads the place files themselves
 (`GET /api/places` → `GET /places`, as the next Commit will have them), so a place shows before it's committed to
 `PLACES.json`.
+
+### Adding a country, state or city
+
+**New → City**, **New → State** or **New → Country** opens a form for one no photo or place has yet: its name, where
+it is (a city's **State** and **Country**, a state's **Country**, each a combobox like a place's) and its
+localization. **Add city** saves it as its localization (`localizations/city-<name as an ID>.json`, a
+[change waiting for Commit](pending-changes.md)), with where it is as `"state"` and `"country"`:
+
+```json
+{
+  "id": "city-kanazawa",
+  "type": "city",
+  "name": "Kanazawa",
+  "romanization": "",
+  "pronunciation": "",
+  "localScript": "金沢",
+  "state": "Ishikawa",
+  "country": "Japan"
+}
+```
+
+The list then shows it under its state or country (adding a row for a state or country only it names), selected,
+with 0 photos, and the **City**, **State** and **Country** comboboxes on places and photos offer it ("No photos
+yet"). A name already listed, or another name of one, can't be added again. Every saved country, state and city
+localization is listed this way, so one whose photos have since moved to another name still shows, with 0 photos.
+
+An existing city's or state's panel has the same **State** and **Country** fields. Empty, they show where its places
+and photos put it as a placeholder; written, they win over that, so a city whose photos disagree can be put in the
+right state. Only a city keeps a state, and only a city or state keeps a country.
+
+> **Frontend analogy:** the countries, states and cities are a derived list, like a `useMemo` over the photos and
+> places. Adding one writes a seed entry into the same source the list already reads (its localization), instead of a
+> new store, so the derived list picks it up on the next render.
 
 ### Connecting words
 
@@ -113,6 +148,27 @@ place (its ID made from its name, as for any new place) and then chooses it. Not
 
 > **Frontend analogy:** like a tag input that suggests tags other posts already use, before they're in the tag list.
 
+### Areas
+
+A place can have an **area**: the outline of what it covers, such as a park or a neighbourhood. The portfolio's map
+shades it while a visitor points at the place in its **Places** menu, and after picking it (see
+[the map](portfolio-map.md)). The portfolio never looks one up: it only reads the files the pipeline saved. A place
+with no area but with a GPS position is shown as a circle 80 m around its position instead, on the portfolio's map and
+the Trip Lines map alike (`portfolio/src/lib/place-circle.ts`); nothing is saved for it.
+
+Under the place's fields, **Area on the map** says whether it has one and how many points its outline has. **Find an
+area** looks up the place's name (or another name, or a Wikidata ID such as `Q1490`) on OpenStreetMap, as the
+[trip lines' areas](trip-lines.md#areas) do; picking a result saves it, and **Remove** removes it, both as changes
+waiting for Commit. The routes are `GET`, `PUT` and `DELETE /api/places/{id}/area`.
+
+The area is saved next to the place as `places/<id>.geo.json`, a GeoJSON `Feature` with a `MultiPolygon` and
+`{ "place", "osm" }` properties. Like `TRIPLINES.geo.json`, `.geo.json` files are left out of `PLACES.json` by
+Commit, the "Combine photo data" workflow and `pnpm photos:local`, so outlines of up to 5,000 points don't make every
+page that reads the places bigger. The pending changes list them with the places.
+
+> **Frontend analogy:** like code splitting. `PLACES.json` is the main bundle every page imports; each area is a lazy
+> chunk (`import.meta.glob` without `eager`) fetched the first time the map shows it.
+
 ## A photo's places
 
 On the Photo page and in Edit Photo, the title and comment are in one card and the photo's location in another:
@@ -139,6 +195,12 @@ for the Places page's (!) warning, so a photo with one is never missing from the
 
 > **Frontend analogy:** like `customCity`, it's a user override layered over a read-only source:
 > `customGpsPosition ?? gpsPosition`.
+
+Under the field, **This photo won't have a GPS position** marks a photo that goes without one on purpose, such as a
+studio photo. It's saved as `"noGps": true` (`false` otherwise, which new photos get and **Update Data → Missing
+fields** adds to older ones), the summary then reads **None, on purpose**, and the Dashboard's
+[Needs attention](dashboard.md) leaves the photo out of its **Photos without GPS** and **Photos without a place** rows.
+It changes nothing on the portfolio.
 
 When the photo has no GPS position of its own (EXIF or custom), each chosen place with none either (its own or a place above it's) has
 **Add a GPS position for …** under that line, which opens a `latitude, longitude` field and **Save**. It saves the
@@ -209,7 +271,7 @@ and country its places give it) and a checkbox, ticked when the photo has nothin
 
 **Fill in N ticked** puts them into the Location card as an edit that **Save changes** saves.
 
-To ask about many photos without places at once, use [Update Data → Bulk places](update-data.md#bulk-places).
+To ask about many photos without places at once, use [Places → Bulk Places](update-data.md#bulk-places).
 
 > **Frontend analogy:** it's the Tags field's paste handling with a JSON body instead of a CSV: parse, diff each field
 > against the form's current value, and show a "review changes" list of checkboxes before patching the form state.
@@ -309,6 +371,10 @@ at the top right next to the sync button, saves every changed row on every tab. 
 tabs. **Update Data → Localizations** asks an LLM to fill in the ones still missing, up to 50 at a time (see
 [Update Data](update-data.md#localizations)).
 
+A city's or state's localization can also say where it is, as `"state"` and `"country"` (see
+[Adding a country, state or city](#adding-a-country-state-or-city)); they're left out when empty, and the Localizations
+page keeps them when saving a row.
+
 ### Other names
 
 A country, state or city can have **other names**: other ways the photos and places write it, such as `"United States"` and
@@ -326,7 +392,7 @@ and places still write another name, with a link to Update Data. The Photo page'
 and a place's **City**, offer only the winning names too. The Localizations page keeps a country's or city's other
 names when saving its row.
 
-The names are rewritten in the files, not only shown: **Update Data → Location names**
+The names are rewritten in the files, not only shown: **Places → Location Names**
 (`POST /api/data/location-names/preview`, then `POST /api/data/location-names`) lists every photo file whose `country`,
 `state`, `city`, `customCountry`, `customState` or `customCity`, and every place file whose `country`, `state` or
 `city`, is another name, then saves

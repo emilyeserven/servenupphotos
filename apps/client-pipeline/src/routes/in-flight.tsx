@@ -1,8 +1,6 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import {
-  CheckIcon,
-  CircleDashedIcon,
   CircleMinusIcon,
   ImageOffIcon,
   PanelRightCloseIcon,
@@ -11,10 +9,8 @@ import {
 } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import {
-  type BaseFile,
   type CombinedFile,
   type InFlightFile,
-  type InFlightGroups,
   type InFlightImages,
   type InFlightResponse,
   type CombinedStatus,
@@ -25,13 +21,14 @@ import { CommitError } from "@/components/commit-error";
 import { CompareButton } from "@/components/compare/compare-button";
 import { UnselectedMark } from "@/components/compare/unselected-mark";
 import { JsonCodeBlock } from "@/components/json-code-block";
-import { JsonDiffBlock } from "@/components/json-diff-block";
 import {
   AllPhotosRebuild,
   CommitButton,
   useAllPhotosRebuild,
 } from "@/components/all-photos-rebuild";
 import { ImageLightbox } from "@/components/image-lightbox";
+import { AllPhotosMark, FileJson } from "@/components/in-flight-file-json";
+import { AllGroupFiles } from "@/components/in-flight-groups";
 import { FileChecks, fileName } from "@/components/in-flight-checks";
 import {
   EmptySection,
@@ -183,16 +180,9 @@ function InFlightCard() {
         baseBranch={baseBranch}
         onRemoved={onRemoved}
       />
-      {shown &&
-        GROUPS.map(([key, title]) => (
-          <GroupFiles
-            key={key}
-            title={title}
-            groups={shown[key]}
-            rebuilding={rebuild.rebuilding}
-            baseBranch={baseBranch}
-          />
-        ))}
+      {shown && (
+        <AllGroupFiles shown={shown} rebuilding={rebuild.rebuilding} baseBranch={baseBranch} />
+      )}
     </div>
   );
 
@@ -468,7 +458,7 @@ function FileSection({
         <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
         <FileStatus status={file.status} pending={file.pending} />
         <UnselectedMark file={file}>
-          <DraftMark data={file.status === "removed" ? undefined : file.data}>
+          <DraftMark data={file.status === "removed" ? undefined : file.data} path={file.path}>
             <AllPhotosMark inAllPhotos={file.inAllPhotos} rebuilding={rebuilding} />
           </DraftMark>
         </UnselectedMark>
@@ -482,35 +472,6 @@ function FileSection({
         <FileJson file={file} baseBranch={baseBranch} />
       </div>
     </section>
-  );
-}
-
-/**
- * A file's JSON from the pull request, with what it changes against the base branch when the pull
- * request changes it rather than adds it, or why it couldn't be read.
- */
-function FileJson({
-  file,
-  baseBranch = "the base branch",
-}: {
-  file: BaseFile & { path: string; data?: unknown; error?: string };
-  baseBranch?: string;
-}) {
-  if (file.error) return <p className="text-destructive text-sm">{file.error}</p>;
-  if (file.base !== undefined) {
-    return (
-      <JsonDiffBlock value={file.data} base={file.base} title={file.path} baseBranch={baseBranch} />
-    );
-  }
-  return (
-    <div className="flex min-w-0 flex-col gap-2">
-      {file.baseError && (
-        <p className="text-muted-foreground text-xs">
-          Couldn&apos;t compare it with {baseBranch}: {file.baseError}
-        </p>
-      )}
-      <JsonCodeBlock value={file.data} title={file.path} />
-    </div>
   );
 }
 
@@ -609,114 +570,6 @@ function PhotoImage({ name, url, checked }: { name: string; url?: string; checke
       <span className="text-muted-foreground">{label}</span>
       <span className="text-muted-foreground font-mono text-xs">{name}</span>
     </div>
-  );
-}
-
-const ALL_PHOTOS_MARKS = {
-  in: {
-    Icon: CheckIcon,
-    label: (file: string) => `In ${file}`,
-    className: "text-emerald-600 dark:text-emerald-400",
-  },
-  // Not in it until it's committed.
-  out: {
-    Icon: CircleDashedIcon,
-    label: (file: string) => `Not synced to ${file} yet`,
-    className: "text-amber-700 dark:text-amber-400",
-  },
-  // Not in it yet, but it's being committed.
-  pending: {
-    Icon: CircleDashedIcon,
-    label: (file: string) => `Not synced to ${file} yet`,
-    className: "text-muted-foreground [&>svg]:animate-spin",
-  },
-};
-
-function allPhotosMarkKey(inAllPhotos: boolean, rebuilding: boolean) {
-  if (inAllPhotos) return "in";
-  return rebuilding ? "pending" : "out";
-}
-
-/**
- * A check mark when the file's data is an entry of `allFile` (ALLPHOTOS.json unless named), or a
- * dashed circle marking it not synced when it isn't, spinning while it's committed. Nothing when either file couldn't be
- * read.
- */
-function AllPhotosMark({
-  inAllPhotos,
-  rebuilding,
-  allFile = "ALLPHOTOS.json",
-}: {
-  inAllPhotos: boolean | null;
-  rebuilding: boolean;
-  allFile?: string;
-}) {
-  if (inAllPhotos === null) return null;
-  const { Icon, label, className } = ALL_PHOTOS_MARKS[allPhotosMarkKey(inAllPhotos, rebuilding)];
-  return (
-    <span className={cn("flex items-center gap-1 text-xs font-normal", className)}>
-      <Icon className="size-4" aria-hidden />
-      {label(allFile)}
-    </span>
-  );
-}
-
-type GroupKey =
-  | "albums"
-  | "tags"
-  | "genres"
-  | "places"
-  | "localizations"
-  | "metainfo"
-  | "cameras"
-  | "lenses"
-  | "captions"
-  | "timeline";
-
-/** The kinds of data files listed after the photos, in order, with their headings. */
-const GROUPS: [GroupKey, string][] = [
-  ["albums", "Albums"],
-  ["tags", "Tags"],
-  ["genres", "Photographic genres"],
-  ["places", "Places"],
-  ["localizations", "Localizations"],
-  ["metainfo", "Metadata groups"],
-  ["cameras", "Camera overrides"],
-  ["lenses", "Custom lenses"],
-  ["captions", "Caption templates"],
-  ["timeline", "Timeline labels"],
-];
-
-/** The album, tag, place or localization files in the pull request, each with its JSON; nothing when there are none. */
-function GroupFiles({
-  title,
-  groups,
-  rebuilding,
-  baseBranch,
-}: {
-  title: string;
-  groups: InFlightGroups;
-  /** Whether the combined files are being committed, so a missing entry may be on its way. */
-  rebuilding: boolean;
-  /** The branch the pull request merges into, which changed files are compared against. */
-  baseBranch?: string;
-}) {
-  if (groups.files.length === 0) return null;
-  const allFile = fileName(groups.all.path);
-  return (
-    <section className="flex flex-col gap-3">
-      <h2 className="text-lg font-semibold">{title}</h2>
-      {groups.files.map((file) => (
-        <div key={file.path} className="flex flex-col gap-2">
-          <h3 className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
-            <FileLink fileUrl={file.fileUrl} name={fileName(file.path)} />
-            <FileStatus status={file.status} pending={file.pending} />
-            <AllPhotosMark inAllPhotos={file.inAll} rebuilding={rebuilding} allFile={allFile} />
-          </h3>
-          <FileJson file={file} baseBranch={baseBranch} />
-        </div>
-      ))}
-    </section>
   );
 }
 

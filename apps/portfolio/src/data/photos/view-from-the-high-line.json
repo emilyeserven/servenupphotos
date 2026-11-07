@@ -1,7 +1,7 @@
 {
-  "id": 21,
   "title": "View from the High Line",
   "comment": null,
+  "id": 21,
   "file": "IMG_2576.jpg",
   "addedDate": "2026-10-22T20:14:52Z",
   "camera": "Canon EOS Rebel T6i",
@@ -48,15 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "fire-escape",
-    "apartments",
-    "windows",
-    "facade",
-    "balconies",
-    "air-conditioners",
-    "urban-decay"
-  ],
+  "tags": ["fire-escapes", "apartments", "windows", "facade", "balconies", "urban-decay"],
   "genres": [],
   "places": [
     {
@@ -273,5 +265,7 @@
     "chroma": 3.49,
     "peakChroma": 7.36,
     "samples": 9828
-  }
+  },
+  "notes": "Shows air conditioners on the facade; 'air-conditioners' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [67, 173, 35, 76, 176, 408]
 }

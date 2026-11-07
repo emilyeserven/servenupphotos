@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["bridge", "stream", "walls", "moss", "pedestrians", "stones"],
+  "tags": ["bridges", "stream", "walls", "moss", "pedestrians", "stones"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 11.25,
     "peakChroma": 27.26,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [223, 220, 222, 221, 394, 447]
 }

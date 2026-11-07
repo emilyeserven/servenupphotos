@@ -17,10 +17,11 @@ import {
 } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ArrowDown, ArrowUp, ArrowUpDown, Columns3 } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode, useRef } from "react";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { PhotoLocation } from "@/components/photo-location";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { StickyTableHeader } from "@/components/sticky-table-header";
 import { TableViewMenu } from "@/components/table-view-menu";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -212,6 +213,15 @@ export function PhotoTable({
 
   const visibleIds = table.getVisibleLeafColumns().map((column) => column.id as ColumnId);
   const rows = table.getRowModel().rows;
+  const tableRef = useRef<HTMLTableElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const headerRows = table.getHeaderGroups().map((group) => (
+    <tr key={group.id}>
+      {group.headers.map((header) => (
+        <HeaderCell key={header.id} header={header} />
+      ))}
+    </tr>
+  ));
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
@@ -234,30 +244,32 @@ export function PhotoTable({
         />
         <ColumnsMenu allColumns={table.getAllLeafColumns()} />
       </div>
-      {/* Scrolls sideways on narrow screens rather than squeezing the columns. */}
-      <div className="overflow-x-auto rounded-md border">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/50 text-left text-muted-foreground">
-            {table.getHeaderGroups().map((group) => (
-              <tr key={group.id}>
-                {group.headers.map((header) => (
-                  <HeaderCell key={header.id} header={header} />
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {rows.map((row) => (
-              <PhotoRow
-                key={row.id}
-                photo={row.original}
-                columnIds={visibleIds}
-                cell={{ detail: placeDetail, thumbnail: TABLE_THUMBNAILS[size] }}
-                onOpen={onShow}
-              />
-            ))}
-          </tbody>
-        </table>
+      <div>
+        {/* The header row again, stuck to the top of the window once the table's own scrolls past. */}
+        <StickyTableHeader
+          tableRef={tableRef}
+          scrollerRef={scrollerRef}
+          columns={visibleIds.length}
+        >
+          {headerRows}
+        </StickyTableHeader>
+        {/* Scrolls sideways on narrow screens rather than squeezing the columns. */}
+        <div ref={scrollerRef} className="overflow-x-auto rounded-md border">
+          <table ref={tableRef} className="w-full text-sm">
+            <thead className="bg-muted/50 text-left text-muted-foreground">{headerRows}</thead>
+            <tbody>
+              {rows.map((row) => (
+                <PhotoRow
+                  key={row.id}
+                  photo={row.original}
+                  columnIds={visibleIds}
+                  cell={{ detail: placeDetail, thumbnail: TABLE_THUMBNAILS[size] }}
+                  onOpen={onShow}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
       <PhotoLightbox
         photo={shown}
@@ -438,7 +450,7 @@ function PhotoRow({
   const { image } = photo;
   const open = image ? () => onOpen({ ...photo, image }) : undefined;
   return (
-    <tr className="border-t">
+    <tr className="border-t" data-photo-id={photo.id}>
       {columnIds.map((id) => (
         <td key={id} className={CELLS[id].className}>
           {CELLS[id].render(photo, open, cell)}

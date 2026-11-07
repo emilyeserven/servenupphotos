@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["shotengai", "arcade", "silhouettes", "pedestrians", "signage", "skylight"],
-  "genres": [],
+  "tags": ["silhouettes", "pedestrians", "signage", "skylight", "covered-street"],
+  "genres": ["street", "architecture"],
   "places": [
     {
       "relation": "",
@@ -265,5 +265,7 @@
     "chroma": 7.99,
     "peakChroma": 17.77,
     "samples": 10115
-  }
+  },
+  "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [306, 303, 219, 377, 307, 304]
 }

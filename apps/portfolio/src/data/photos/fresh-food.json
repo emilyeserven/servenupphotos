@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["produce", "storefronts", "umbrellas", "pumpkins", "autumn", "signage", "repetition"],
+  "tags": ["storefronts", "umbrellas", "autumn", "signage", "repetition"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 18.07,
     "peakChroma": 48.12,
     "samples": 9727
-  }
+  },
+  "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [17, 250, 469, 437, 438, 282]
 }

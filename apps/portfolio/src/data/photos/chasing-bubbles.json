@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["bubbles", "children", "street-performer", "tourists", "park", "arches"],
+  "tags": ["children", "street-performers", "tourists", "park", "arches"],
   "genres": ["street"],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9956
-  }
+  },
+  "notes": "Shows soap bubbles; 'bubbles' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [167, 164, 192, 170, 40, 166]
 }

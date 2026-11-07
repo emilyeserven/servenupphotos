@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["halloween", "houses", "bay-windows", "skeletons", "topiary", "cars", "power-lines"],
-  "genres": [],
+  "tags": ["festivals", "houses", "bay-windows", "cars", "power-lines"],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -262,5 +262,7 @@
     "peakChroma": 32.98,
     "samples": 9975
   },
-  "undecided": true
+  "undecided": true,
+  "notes": "Shows Halloween skeletons and topiary; 'skeletons' and 'topiary' aren't tags, since only 2 photos have each.",
+  "similarPhotos": [436, 494, 408, 414, 400, 373]
 }

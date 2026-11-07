@@ -14,7 +14,7 @@ import { renderPreview, type TileSource, tileUrl } from "./render.ts";
  * view drawn from CARTO's tiles with the photo pins.
  *
  * Drawing takes CARTO's API key and a few seconds per new image, so it only runs when
- * `MAP_PREVIEWS=1`, as the deploy workflow sets it. Images and tiles are kept in a cache folder
+ * `MAP_PREVIEWS=1`, as the deploy workflow sets it, and is skipped without `CARTO_KEY`. Images and tiles are kept in a cache folder
  * between builds, and an image is drawn again only when its view or the pins in it change.
  *
  * > **Frontend analogy:** like the photo pages, this is static site generation for just the
@@ -42,11 +42,10 @@ async function writeMaking(file: string, data: Uint8Array | string): Promise<voi
 }
 
 /**
- * CARTO's tiles, from the cache folder or else fetched with the API key (without one, CARTO marks
- * its raster tiles "API key required"). A tile that can't be fetched is null and isn't kept.
+ * CARTO's tiles, from the cache folder or else fetched with the API key. A tile that can't be fetched is null and isn't kept.
  */
-function cachedTiles(cartoKey: string | undefined): TileSource {
-  const search = cartoKey ? `?key=${encodeURIComponent(cartoKey)}` : "";
+function cachedTiles(cartoKey: string): TileSource {
+  const search = `?key=${encodeURIComponent(cartoKey)}`;
   return async (z, x, y) => {
     const file = path.join(CACHE_DIR, "tiles", String(z), String(x), `${y}.png`);
     const kept = await readIfThere(file);
@@ -60,9 +59,9 @@ function cachedTiles(cartoKey: string | undefined): TileSource {
 }
 
 /** What a page's image shows, as a short hash: its view and the pins drawn in it. */
-function imageKey(page: MapPage, pins: Pin[], keyed: boolean): string {
+function imageKey(page: MapPage, pins: Pin[]): string {
   const markers = markersOf(frameOf(page.view), pins);
-  const content = JSON.stringify([STYLE_VERSION, keyed, page.view, markers]);
+  const content = JSON.stringify([STYLE_VERSION, page.view, markers]);
   return createHash("sha256").update(content).digest("hex").slice(0, 16);
 }
 
@@ -70,8 +69,8 @@ function imageKey(page: MapPage, pins: Pin[], keyed: boolean): string {
  * A page's image from the cache folder, or else drawn and kept there. An image missing a tile isn't
  * kept, so the next build tries again.
  */
-async function imageFor(page: MapPage, pins: Pin[], cartoKey: string | undefined) {
-  const file = path.join(CACHE_DIR, "images", `${imageKey(page, pins, Boolean(cartoKey))}.png`);
+async function imageFor(page: MapPage, pins: Pin[], cartoKey: string) {
+  const file = path.join(CACHE_DIR, "images", `${imageKey(page, pins)}.png`);
   const kept = await readIfThere(file);
   if (kept) return { png: kept, drawn: false };
   const { png, complete } = await renderPreview(page.view, pins, cachedTiles(cartoKey));
@@ -146,14 +145,14 @@ async function writePage(dir: string, html: string, page: MapPage, context: Page
 /** What every page is drawn with. */
 interface PageContext {
   pins: Pin[];
-  cartoKey: string | undefined;
+  cartoKey: string;
 }
 
 /** Writes every map page into the built site in dir, and says how many there are and how many images were drawn. */
-async function writePages(dir: string): Promise<string> {
+async function writePages(dir: string, cartoKey: string): Promise<string> {
   const html = await readFile(path.join(dir, "index.html"), "utf8");
   const pages = await loadPages();
-  const context = { pins: pinsOf(pages), cartoKey: process.env.CARTO_KEY || undefined };
+  const context = { pins: pinsOf(pages), cartoKey };
   let drawn = 0;
   for (const page of pages) drawn += Number(await writePage(dir, html, page, context));
   return `Wrote ${pages.length} map pages for link previews (${drawn} images drawn)`;
@@ -165,7 +164,12 @@ export function mapPreviewPages(): Plugin {
     name: "map-preview-pages",
     apply: (_config, env) => env.command === "build" && process.env.MAP_PREVIEWS === "1",
     async writeBundle(options) {
-      this.info(await writePages(options.dir ?? path.join(ROOT, "dist")));
+      // Without a key CARTO marks its tiles "API key required", so there are no map pages at all,
+      // and Copy link's addresses fall back to the app, which opens the map there.
+      const cartoKey = process.env.CARTO_KEY;
+      if (!cartoKey)
+        return this.warn("No CARTO_KEY, so the map pages for link previews were skipped");
+      this.info(await writePages(options.dir ?? path.join(ROOT, "dist"), cartoKey));
     },
   };
 }

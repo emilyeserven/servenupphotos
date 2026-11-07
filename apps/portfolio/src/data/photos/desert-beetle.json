@@ -48,17 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "cars",
-    "desert",
-    "vintage-cars",
-    "van",
-    "rock-formations",
-    "mud-brick",
-    "domes",
-    "clouds"
-  ],
-  "genres": [],
+  "tags": ["cars", "desert", "rock-formations", "clouds", "brick", "vintage"],
+  "genres": ["landscape"],
   "places": [
     {
       "relation": "in",
@@ -274,5 +265,7 @@
     "chroma": 21.23,
     "peakChroma": 36.91,
     "samples": 9490
-  }
+  },
+  "notes": "Shows a vintage VW Beetle and van by a domed mud-brick building; 'vintage-cars', 'van', 'domes' and 'mud-brick' aren't tags, since each is on only 1–2 photos.",
+  "similarPhotos": [366, 368, 367, 369, 362, 201]
 }

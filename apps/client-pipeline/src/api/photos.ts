@@ -1,6 +1,8 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import type { ExifResponse, SanitizedExif } from "@/api/exif";
+import type { NearDuplicates } from "@/api/near-duplicates";
 import type { PhotoPlace } from "@/api/places";
+import { type ScanChange, photoChanges } from "@/api/scan-changes";
 import { requestJson } from "@/api/settings";
 
 /** A photo's data to save as `<folder>/<name>.json` in the GitHub repository from Settings. */
@@ -25,6 +27,10 @@ export interface PublishResult {
   pullRequestNumber?: number;
   /** The JSON saved. */
   data: unknown;
+  /** The compare group it was put in with the photos it looks nearly the same as, when there are any. */
+  nearDuplicates?: NearDuplicates;
+  /** The other photo files the save changed, putting them in that compare group. */
+  changes?: ScanChange[];
 }
 
 export const publishPhotoMutation = mutationOptions({
@@ -32,8 +38,8 @@ export const publishPhotoMutation = mutationOptions({
   meta: {
     saves: true,
     changes: (result) => {
-      const { path, data } = result as PublishResult;
-      return [{ kind: "photos", path, after: data }];
+      const saved = result as PublishResult;
+      return [{ kind: "photos", path: saved.path, after: saved.data }, ...photoChanges(saved)];
     },
   },
   mutationFn: (photo: PhotoData) =>
@@ -121,6 +127,12 @@ export interface CombinedFiles {
   captions: CombinedFile;
   /** TIMELINE.json, the timeline labels. */
   timeline: CombinedFile;
+  /** LIKES.json, the photos each viewer liked. */
+  likes: CombinedFile;
+  /** TRIPLINES.json, the days' trip lines as marked. */
+  triplines: CombinedFile;
+  /** GRAPHS.json, the portfolio Graph page's presets and preset groups. */
+  graphs: CombinedFile;
 }
 
 /** The combined lists on the base branch and, when one is open, the photo data pull request. */
@@ -167,6 +179,12 @@ export interface InFlightRead {
   captions: InFlightGroupsRead;
   /** The timeline label files, combined into TIMELINE.json. */
   timeline: InFlightGroupsRead;
+  /** The viewer likes files, one per person, combined into LIKES.json. */
+  likes: InFlightGroupsRead;
+  /** The trip line files, one per day, combined into TRIPLINES.json. */
+  triplines: InFlightGroupsRead;
+  /** The graph preset and preset group files, combined into GRAPHS.json. */
+  graphs: InFlightGroupsRead;
   images: InFlightImages;
 }
 
@@ -190,11 +208,14 @@ export interface InFlightResponse extends Omit<
   | "lenses"
   | "captions"
   | "timeline"
+  | "likes"
+  | "triplines"
+  | "graphs"
 > {
   files: InFlightFile[];
   /** ALLPHOTOS.json at the pull request's head; not `found` when there is no pull request. */
   allPhotos: CombinedFile;
-  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template and timeline label files in the pull request. */
+  /** The album, tag, genre, place, localization, metadata group, camera override, custom lens, caption template, timeline label, viewer likes, trip line and graph preset files in the pull request. */
   albums: InFlightGroups;
   tags: InFlightGroups;
   genres: InFlightGroups;
@@ -205,6 +226,9 @@ export interface InFlightResponse extends Omit<
   lenses: InFlightGroups;
   captions: InFlightGroups;
   timeline: InFlightGroups;
+  likes: InFlightGroups;
+  triplines: InFlightGroups;
+  graphs: InFlightGroups;
 }
 
 /** The album, tag, place or localization files in the pull request, and the combined file built from them. */

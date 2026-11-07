@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["palace", "cameras", "tourists", "humor", "gates", "skyscraper", "windows"],
+  "tags": ["palace", "cameras", "tourists", "humor", "gates", "skyscrapers", "windows"],
   "genres": [],
   "places": [
     {
@@ -269,5 +269,6 @@
     "chroma": 5.12,
     "peakChroma": 11.81,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [212, 128, 210, 209, 127, 5]
 }

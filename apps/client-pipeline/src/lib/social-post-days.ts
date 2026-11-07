@@ -1,6 +1,7 @@
 import type { SocialPhoto } from "@/api/publish";
+import { isSetAside } from "@/lib/drafts";
 import type { FileChange } from "@/lib/optimistic";
-import { type SocialPostStatus, postStatus, savedSocialPosts } from "@/lib/social-posts";
+import { type SocialPostStatus, savedSocialPosts } from "@/lib/social-posts";
 
 /** A photo file whose social media posts are shown, from the gallery or in flight. */
 export interface PostedPhotoFile {
@@ -21,7 +22,7 @@ export interface PostedPhotoFile {
 /** One post of a photo on a day, as a calendar of posts shows it. */
 export interface DayPost {
   photo: PostedPhotoFile;
-  /** Posted on or before today, scheduled after it; see `postStatus`. */
+  /** Planned, or scheduled once it's on the site. */
   status: SocialPostStatus;
   /** The post's link; empty before it's posted. */
   url: string;
@@ -107,8 +108,21 @@ export function postsByDay(files: PostedPhotoFile[], platform: string): Map<stri
 function datedPosts(photo: PostedPhotoFile, platform: string) {
   return savedSocialPosts(photo.data)
     .filter((post) => post.platform === platform && post.date)
-    .map(({ date, url }) => ({
+    .map(({ date, status, url }) => ({
       day: date,
-      post: { photo, status: postStatus(date), url: url.trim() },
+      post: { photo, status, url: url.trim() },
     }));
+}
+
+/**
+ * Each day's Instagram posts as the Instagram calendar shows them: from the photos' Social media
+ * posts, with the changes not committed yet (changed, by path) made over the files read, and
+ * without photos set aside as Undecided.
+ */
+export function instagramPostsByDay(
+  photos: SocialPhoto[],
+  changed: Map<string, unknown>,
+): Map<string, DayPost[]> {
+  const files = postedPhotoFiles(photos, changed).filter((file) => !isSetAside(file.data));
+  return postsByDay(files, "instagram");
 }

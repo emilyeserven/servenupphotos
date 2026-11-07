@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["rust", "steel", "bridge", "river"],
+  "tags": ["rust", "steel", "bridges", "river"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 20.35,
     "peakChroma": 39.37,
     "samples": 9956
-  }
+  },
+  "similarPhotos": [113, 79, 63, 81, 180, 300]
 }

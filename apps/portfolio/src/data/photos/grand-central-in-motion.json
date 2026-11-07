@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["train-station", "commuters", "crowd", "motion-blur", "windows", "clock", "interior"],
+  "tags": ["train-station", "commuters", "crowd", "motion-blur", "windows", "clocks", "interior"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [118, 148, 71, 116, 243, 51]
 }

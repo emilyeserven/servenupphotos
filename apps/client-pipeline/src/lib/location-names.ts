@@ -45,7 +45,7 @@ export function winningName(names: LocationNames, type: RegionType, name: string
   return names[type].get(nameKey(name)) ?? name ?? "";
 }
 
-/** Whether value is another name of winner, so Update Data's Location names rewrites it. */
+/** Whether value is another name of winner, so Location Names rewrites it. */
 function isOtherName(names: LocationNames, type: RegionType, winner: string, value: unknown) {
   return (
     typeof value === "string" && value !== winner && winningName(names, type, value) === winner
@@ -58,7 +58,7 @@ const CUSTOM_FIELD = {
   city: "customCity",
 } as const;
 
-/** How many photos and places still write another name of winner, until Update Data rewrites them. */
+/** How many photos and places still write another name of winner, until Location Names rewrites them. */
 export function unrenamedCounts(
   photos: CombinedPhoto[],
   places: Place[],

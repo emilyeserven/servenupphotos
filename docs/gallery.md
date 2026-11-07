@@ -16,9 +16,9 @@ each photo's file path, which `ALLPHOTOS.json` entries don't carry.
 ### The portfolio Grid's filters
 
 Under those, **Show filters** opens the same filters as the portfolio's [Grid and Table](portfolio-filters.md):
-**Places** (any number of countries, cities and places), **Album**, **Tag** and **Genre**, **Camera** and **Lens** (with
-their metadata groups), the **ISO**, **Exposure**, **Focal length**, **Aperture** and **Time of day** sliders,
-**Orientation**, and **Colors**, kept in the URL under the portfolio's own names (`?album=`, `?camera=`, `?color=`, …), so a filtered Grid
+**Places** (any number of countries, cities and places), the **Groups** picker (album, tag and genre), **Camera** and **Lens** (with
+their metadata groups), the **ISO**, **Exposure**, **Focal length**, **Aperture** sliders, the **When** picker,
+and the **Visuals** picker (colors and orientation), kept in the URL under the portfolio's own names (`?album=`, `?camera=`, `?color=`, …), so a filtered Grid
 link's search works here too. Each choice counts the photos the Gallery's other filters leave, and the Gallery's
 **Clear filters** clears these as well. Changing any Gallery filter keeps the page where it's scrolled to: each
 filter's `navigate` passes `resetScroll: false`, since TanStack Router scrolls to the top on every navigation
@@ -38,6 +38,11 @@ album or camera that's only in GitHub shows up once the clone has it.
 > **Frontend analogy:** it's like importing a component from a sibling package in a monorepo without publishing it:
 > the alias points both apps at the same source files, and Vite's `resolve.dedupe` makes them share one React and one
 > TanStack Router.
+
+A package that a shared portfolio file imports (React, `date-fns`, `lucide-react`, …) has to be in client-pipeline's
+`package.json` **and** in `resolve.dedupe` in its `vite.config.ts`. The Docker build installs only the pipeline's
+packages, so without `dedupe` Vite looks for the package next to the portfolio's file, finds no `node_modules` there,
+and the build fails with "failed to resolve import".
 
 ### A place's photos
 
@@ -65,6 +70,9 @@ the same editor Photos in Flight uses, and each tile lists the photo's album, ta
 have the file; update it from the base branch if it was made before the photo merged), or to a new one when none is
 open. From then on the photo is in Photos in Flight, and edits go to that copy, whether or not a pull request is open yet. A new title doesn't rename the file, since the pull request would then delete
 the old file from the portfolio when it merges and the photo's file name would change under it.
+
+A photo people liked shows a heart and how many of them liked it beside its title, summed from the lists on
+[User Likes](viewer-likes.md).
 
 Each tile's **Compare** puts the photo in a [compare group](compare-groups.md), to weigh it against others on the
 Compare page before deciding which gets posted.

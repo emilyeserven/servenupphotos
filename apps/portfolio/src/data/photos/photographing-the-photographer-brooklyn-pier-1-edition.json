@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["pilings", "skyline", "skyscraper", "river", "cameras", "tourists", "stones"],
+  "tags": ["pilings", "skyline", "skyscrapers", "river", "cameras", "tourists", "stones"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 14.01,
     "peakChroma": 26.48,
     "samples": 9856
-  }
+  },
+  "similarPhotos": [39, 41, 73, 34, 4, 244]
 }

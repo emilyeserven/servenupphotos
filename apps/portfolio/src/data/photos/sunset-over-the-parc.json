@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["skyscraper", "apartments", "reflections", "ice", "twilight"],
+  "tags": ["skyscrapers", "apartments", "reflections", "twilight"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 24.97,
     "peakChroma": 35.22,
     "samples": 10050
-  }
+  },
+  "notes": "Shows ice; 'ice' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [326, 395, 373, 491, 204, 247]
 }

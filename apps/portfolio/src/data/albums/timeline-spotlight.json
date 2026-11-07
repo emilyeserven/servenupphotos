@@ -1,0 +1,10 @@
+{
+  "id": "timeline-spotlight",
+  "name": "Timeline Spotlight",
+  "description": "",
+  "parent": null,
+  "spotlightZones": ["timeline-header"],
+  "spotlightUpdated": {
+    "timeline-header": "2026-11-07"
+  }
+}

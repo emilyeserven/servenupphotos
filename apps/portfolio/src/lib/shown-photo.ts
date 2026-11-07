@@ -16,6 +16,11 @@ const showableById = new Map(
   ),
 );
 
+/** The photo with this ID, when the lightbox can show it. */
+export function showablePhoto(id: number): ImagePhoto | undefined {
+  return showableById.get(id);
+}
+
 /**
  * The full link to a photo's own page, `/photos/<id>/`, which the build writes with the photo as
  * its social media preview (photo-previews.ts) and which opens the photo on the Grid.

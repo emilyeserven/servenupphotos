@@ -10,6 +10,7 @@ import {
   createGroupMutation,
   groupId,
   groupLabel,
+  favoritesFirst,
   groupName,
   organizeQuery,
   withNewGroup,
@@ -32,14 +33,21 @@ function groupOptions(
   groups: Group[],
   exclude: ReadonlySet<string> = new Set(),
 ): ComboboxOption[] {
-  return groups
+  // Favorite tags come first, so they're at the top of the Tags field's list.
+  return favoritesFirst(groups)
     .filter((group) => !group.error && !exclude.has(group.id))
     .map((group) => ({
       value: group.id,
       label: groupLabel(group),
-      detail: kind === "albums" ? albumPlace(groups, group) : undefined,
+      detail: optionDetail(kind, groups, group),
       fresh: waitingForCommit(group),
     }));
+}
+
+/** The line under an option: where an album sits, or "★ Favorite" for a favorite tag. */
+function optionDetail(kind: GroupKind, groups: Group[], group: Group): string | undefined {
+  if (kind === "albums") return albumPlace(groups, group);
+  return group.favorite ? "★ Favorite" : undefined;
 }
 
 /** Whether the group's file is only a change waiting for Commit, with no page on GitHub yet. */
@@ -65,7 +73,7 @@ interface GroupComboboxProps {
   onCreate?: (text: string) => void;
 }
 
-/** A combobox of every album, tag or genre on GitHub, read once with the Organize pages' query. */
+/** A combobox of every album, tag or genre, read once with the Organize pages' query. */
 export function GroupCombobox({
   kind,
   exclude,
@@ -83,7 +91,7 @@ export function GroupCombobox({
       disabled={disabled || !organize.data}
       placeholder={groupPlaceholder(kind, organize.isPending, multiple, placeholder)}
       emptyText={emptyText(organize.data, kind)}
-      unknownLabel={(id) => `${id}, which isn't ${ONE[kind]} on GitHub`}
+      unknownLabel={(id) => `${id}, which isn't ${ONE[kind]}`}
     />
   );
 }
@@ -97,7 +105,7 @@ function groupPlaceholder(
   multiple: boolean,
   placeholder?: string,
 ): string {
-  if (pending) return `Reading ${kind} from GitHub…`;
+  if (pending) return `Reading ${kind}…`;
   if (placeholder) return placeholder;
   return `Choose ${multiple ? kind : ONE[kind]}`;
 }

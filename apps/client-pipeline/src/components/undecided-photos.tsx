@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRightIcon, CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
+import { CircleHelpIcon, ImageIcon, PencilIcon, Undo2Icon } from "lucide-react";
 import type { InFlightFileRead, InFlightImages } from "@/api/photos";
+import { SeeInAllPhotos } from "@/components/all-photos/see-in-all-photos";
 import { CompareButton } from "@/components/compare/compare-button";
+import { CollapsiblePanel, countOf } from "@/components/collapsible-panel";
 import { Button } from "@/components/ui/button";
 import { squareImages } from "@/lib/offline-thumbnails";
 import { UNDECIDED } from "@/lib/undecided";
@@ -78,33 +80,24 @@ export function UndecidedQueue({
 }) {
   if (files.length === 0) return null;
   return (
-    <details className="group bg-card rounded-xl border shadow-sm">
-      <summary className="hover:bg-muted/50 flex cursor-pointer list-none items-center gap-2 rounded-xl px-6 py-4 [&::-webkit-details-marker]:hidden">
-        <ChevronRightIcon className="text-muted-foreground size-4 transition-transform group-open:rotate-90" />
-        <span className="font-semibold">{title}</span>
-        <span className="text-muted-foreground text-sm">
-          {files.length} {files.length === 1 ? "photo" : "photos"} set aside
-        </span>
-      </summary>
-      <div className="flex flex-col gap-4 px-6 pb-6">
-        <p className="text-muted-foreground text-sm">
-          Photos set aside. They stay saved as drafts the portfolio doesn&apos;t show, even with a
-          title, and Next untitled photo skips them. Moving one back, or naming an untitled one,
-          returns it to the list.
-        </p>
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {files.map((file) => (
-            <DraftTile
-              key={file.path}
-              file={file}
-              imageUrl={images.byPath[file.path]?.url}
-              undecided
-              fromGallery={fromGallery}
-            />
-          ))}
-        </ul>
-      </div>
-    </details>
+    <CollapsiblePanel title={title} count={`${countOf(files.length, "photo")} set aside`}>
+      <p className="text-muted-foreground text-sm">
+        Photos set aside. They stay saved as drafts the portfolio doesn&apos;t show, even with a
+        title, and Next untitled photo skips them. Moving one back, or naming an untitled one,
+        returns it to the list.
+      </p>
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+        {files.map((file) => (
+          <DraftTile
+            key={file.path}
+            file={file}
+            imageUrl={images.byPath[file.path]?.url}
+            undecided
+            fromGallery={fromGallery}
+          />
+        ))}
+      </ul>
+    </CollapsiblePanel>
   );
 }
 
@@ -119,7 +112,7 @@ interface DraftTileProps {
 
 /**
  * A draft as a tile: its Square Thumbnail, file name, Edit, Move back when it's in
- * the Undecided queue or Undecided when it isn't, and Compare.
+ * the Undecided queue or Undecided when it isn't, Compare, and a link to its place on All Photos.
  */
 export function DraftTile({ file, imageUrl, undecided, fromGallery }: DraftTileProps) {
   const name = file.path.split("/").pop() ?? file.path;
@@ -135,6 +128,7 @@ export function DraftTile({ file, imageUrl, undecided, fromGallery }: DraftTileP
         {imageUrl && <TileEdit path={file.path} fromGallery={fromGallery} />}
         {undecided ? <MoveBack file={file} /> : <MoveToUndecided file={file} />}
         <CompareButton file={file} />
+        <SeeInAllPhotos path={file.path} undecided={undecided} />
       </span>
     </li>
   );

@@ -50,17 +50,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "hills",
-    "road",
-    "pedestrians",
-    "silhouettes",
-    "cars",
-    "trees",
-    "manhole-cover",
-    "scale"
-  ],
-  "genres": [],
+  "tags": ["hills", "road", "pedestrians", "silhouettes", "cars", "trees", "scale"],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -272,5 +263,7 @@
     "chroma": 12.02,
     "peakChroma": 18.69,
     "samples": 9828
-  }
+  },
+  "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [492, 490, 494, 444, 158, 412]
 }

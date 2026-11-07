@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["footbridge", "bridge", "snow", "winter", "trees", "symmetry", "path"],
+  "tags": ["footbridges", "bridges", "snow", "winter", "trees", "symmetry", "path"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 4.94,
     "peakChroma": 7.54,
     "samples": 9216
-  }
+  },
+  "similarPhotos": [113, 239, 238, 105, 93, 104]
 }

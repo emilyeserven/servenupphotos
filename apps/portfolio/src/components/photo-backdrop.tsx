@@ -1,27 +1,18 @@
 import { useEffect, useState } from "react";
 import { BackdropCaption } from "@/components/backdrop-caption";
-import type { ImagePhoto } from "@/lib/spotlight-zones";
+import { focusIn, HOMEPAGE_ZONE, type ImagePhoto } from "@/lib/spotlight-zones";
 import { objectPosition } from "@/lib/spotlight-focus";
 import { useArrowKeys } from "@/lib/use-arrow-keys";
 import { useSize } from "@/lib/use-size";
-import { useTurn } from "@/lib/use-turn";
+import { isNear, useTurn } from "@/lib/use-turn";
 import { cn } from "@/lib/utils";
 
 /** How long each photo shows behind the page, in milliseconds. */
 const BACKDROP_MS = 7000;
 
 /**
- * Whether the photo at index is the one showing, or the one before or after it, which are the
- * only ones kept on the page: the one before is still fading out, and the one after loads ahead.
- */
-function isNear(index: number, turn: number, count: number): boolean {
-  const ahead = (index - turn + count) % count;
-  return ahead <= 1 || ahead === count - 1;
-}
-
-/**
  * Photos filling the screen behind a page, fading in and out in turn with no tint over them, with the showing photo's title and a link to it on the map at the bottom, fading with it. Each
- * photo is cropped to put its focus point where its placement says on the screen, the middle by default. The left and right arrow keys show
+ * photo is cropped to put its homepage focus point where its placement says on the screen, the middle by default. The left and right arrow keys show
  * the photo before or after, and the next one waits its full time again. With reduced motion the
  * photo it starts on stays until an arrow key moves on. A photo fades in only once it has loaded.
  * It starts on the photo at `start`, the first by default, and calls `onShow` with each photo as
@@ -93,6 +84,7 @@ function BackdropImage({
   loaded: boolean;
   onLoad: () => void;
 }) {
+  const { focus, placement } = focusIn(photo, HOMEPAGE_ZONE);
   return (
     <img
       src={photo.image.src}
@@ -103,12 +95,7 @@ function BackdropImage({
       fetchPriority={showing ? "high" : "low"}
       onLoad={onLoad}
       style={{
-        objectPosition: objectPosition(
-          photo.spotlightFocus,
-          photo.spotlightPlacement,
-          photo.image,
-          screen,
-        ),
+        objectPosition: objectPosition(focus, placement, photo.image, screen),
       }}
       className={cn(
         "absolute inset-0 size-full object-cover transition-opacity duration-2000 motion-reduce:transition-none",

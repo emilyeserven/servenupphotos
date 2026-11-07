@@ -23,6 +23,8 @@ parent (`PUT /api/organize/albums/<id>/parent` with `{ "parent": "<id>" | null }
 
 ## Adding photos
 
+To have an album pick its own photos from filters instead, make it a [Smart Album](smart-albums.md).
+
 **Add photos**, on the **Photos** card of an album's page, opens the saved photos that aren't in the album yet (in
 the photo data pull request or the portfolio, the same ones the Photo page's **Choose a saved photo** lists), with a
 search by title or file name, the [Gallery](gallery.md)'s **Title**, **Place**, **GPS position**, **Albums**,
@@ -48,6 +50,10 @@ album out of each picked photo's `albums`, keeping its other albums, and takes t
 [change waiting for Commit](pending-changes.md) (`DELETE /api/organize/albums/<id>/photos` with
 `{ "photoIds": [...] }`). The backend refuses an ID that isn't a photo's, or a photo that isn't in the album itself.
 **Cancel** leaves them as they were.
+
+To take out just one photo, hover its tile in the **Photos** card (on a phone the button is always showing) and press
+the **×** in its corner. It saves the same change as picking that one photo under **Remove photos**, right away and
+waiting for Commit like the rest. Photos only in a sub-album, and every photo of a Smart Album, get no **×**.
 
 > **Frontend analogy:** like removing items from a list that other state points at by ID: the same save also filters
 > the IDs out of every derived array (the order, the covers, the rows), so nothing is left pointing at a removed item.
@@ -91,7 +97,7 @@ To lay the album's page out in rows with text above and below them, and to pick 
 The **On the portfolio** card, on an album's page, hides the album on the portfolio or shows it again
 (`PUT /api/organize/albums/<id>/visibility` with `{ "hidden": true | false }`), writing only the file's `hidden`, as a
 [change waiting for Commit](pending-changes.md). A hidden album, and every album inside it, isn't on the portfolio's
-[Albums](portfolio-albums.md) page or in the Grid's **Album** filter, and its own page says there's no such album. Its
+[Albums](portfolio-albums.md) page or in the Grid's **Groups** filter, and its own page says there's no such album. Its
 photos still show everywhere else, and a [spotlight zone](publish.md#site-spotlight) that shows it still does, so an
 album like **Homepage Spotlight** can feed the homepage without being listed. The card says when an album is hidden
 because one it's inside is, and the Albums list marks each hidden album with **Hidden on the portfolio**.
@@ -102,14 +108,26 @@ because one it's inside is, and the Albums list marks each hidden album with **H
 ## Parent tags
 
 A tag can have one parent tag: a more general tag it's a kind of, such as `shotengai` (a Japanese shopping street)
-under `covered-street`. That links a culture's own word to the general idea, so the portfolio's **Tag** filter for
+under `covered-street`. That links a culture's own word to the general idea, so the portfolio's **Groups** filter for
 `covered-street` shows the `shotengai` photos too, and lists `shotengai` under it. A tag's page shows where it sits
 (**Under**) and has a **Parent tag** card that changes it (`PUT /api/organize/tags/<id>/parent`), the same way an
 album's parent changes; a genre has no parent. To tidy the whole tree at once, with an LLM suggesting tags to merge,
-remove or put under another, use [Tag pruning](update-data.md#tag-pruning) on Update Data.
+remove or put under another, use [Tag pruning](update-data.md#tag-pruning) on Tag Data (under **Tags** in the sidebar).
 
 > **Frontend analogy:** it's a category tree like a shop's "Shoes › Sneakers": filtering by the parent category
 > includes every product in the categories under it.
+
+## Favorite tags
+
+The star beside each tag in the Tags page's list makes it a favorite, or not (`PUT /api/organize/tags/favorites` with
+`{ "favorites": { "<id>": true | false } }`), writing only the tag file's `favorite`, as a
+[change waiting for Commit](pending-changes.md). Favorite tags are pinned in three places: the **Favorite tags** card at
+the top of the Tags page, which links to each one and has its star to unpin it; the top of every **Tags** field's
+list (on the Photo page, the Gallery's bulk card and elsewhere), in their usual order; and the
+[portfolio's Tags page](portfolio-tags.md#spotlight-tags), under **Spotlight Tags**.
+
+> **Frontend analogy:** like starring a repo on GitHub: a boolean on the item, and lists render the starred ones in a
+> section of their own above the rest, rather than a separate list to keep in sync.
 
 ## Order
 

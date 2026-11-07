@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["autumn", "forest", "path", "fence", "pedestrians", "trees", "fallen-leaves"],
-  "genres": [],
+  "genres": ["landscape", "street"],
   "places": [
     {
       "relation": "",
@@ -269,5 +269,6 @@
     "chroma": 18.88,
     "peakChroma": 42.14,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [496, 483, 471, 476, 481, 485]
 }

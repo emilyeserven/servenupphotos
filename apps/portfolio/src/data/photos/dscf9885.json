@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["torii", "sando", "toro", "temple", "shrine", "signage", "stones", "shinbutsu-shugo"],
+  "tags": ["torii", "sando", "toro", "temple", "shrine", "signage", "stones"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 10.23,
     "peakChroma": 23.66,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a temple-shrine blend (shinbutsu-shugo); 'shinbutsu-shugo' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [505, 510, 309, 310, 511, 384]
 }

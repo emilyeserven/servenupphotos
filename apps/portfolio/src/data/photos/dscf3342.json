@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["giwa", "palace", "gates", "walls", "trees", "skyscraper", "bench"],
-  "genres": [],
+  "tags": ["giwa", "palace", "gates", "walls", "trees", "skyscrapers", "benches"],
+  "genres": ["architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 13.73,
     "peakChroma": 32.42,
     "samples": 9768
-  }
+  },
+  "similarPhotos": [212, 210, 252, 211, 127, 128]
 }

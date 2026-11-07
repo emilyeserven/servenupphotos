@@ -77,10 +77,17 @@ drafts turned off in Settings an Undecided photo goes in `ALLPHOTOS.json` like a
 
 After the photos in flight (or alone, when none are), the page lists the [drafts](drafts.md) already on the base
 branch that the pull request doesn't change (read with the
-Gallery's `GET /api/photos/published`): the Undecided ones in the **Undecided** panel (**Undecided on `<branch>`** when photos are in flight too, to tell it apart from theirs) and
-the rest under **Drafts on `<branch>`**, each with **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
-back**. Naming one and saving it puts it back in flight, and Commit sends it to a new pull request. Nothing is listed
-when untitled photos aren't kept as drafts.
+Gallery's `GET /api/photos/published`) under **Drafts on `<branch>`**, in three panels: **Drafts**, open at first
+and above the others; the Undecided ones in the **Undecided** panel (**Undecided on `<branch>`** when photos are in
+flight too, to tell it apart from theirs); and **Can't be edited**. Each draft has **Edit**, which opens it on the Photo page as the Gallery does, and **Undecided** or **Move
+back**. Naming one and saving it puts it back in flight, and Commit sends it to a new pull request. A draft that
+lost in a [compare group](compare-groups.md#unselected-photos) isn't listed here, as soon as its group is finished; it's
+in Unselected Photos instead, and comes back here if it's moved back. A draft that can't be edited, because its image wasn't found in
+R2, goes in the collapsed **Can't be edited** panel, so the Drafts panel only has drafts with **Edit**.
+Usually it lost in a compare group and had its images deleted without being marked. When R2 was searched (or its
+offline copy read), **Move all to Unselected Photos** marks each one as unselected with no group or winners and its
+images deleted, which takes it out of the drafts; when R2 couldn't be searched, the panel says so instead. Nothing is listed when untitled photos aren't kept
+as drafts.
 
 The drafts have their own filter bar, with the same filters as the photos in flight, kept in the URL under a `draft`
 prefix (such as `?draftPlace=without`), so filtering one list doesn't hide photos in the other. They apply to the
@@ -116,6 +123,9 @@ Cloudflare's cache fetch afresh instead of showing the old square (R2 ignores th
 new square. Saving any other change to a file without `images.thumbnailcrop` adds it too. The new square is in R2 at
 once; the JSON goes to GitHub with the next **Commit**.
 
-Under the photos it lists the album, tag, genre, place, localization, metadata group, camera override, custom lens and timeline label files the pull request or the changes waiting for
-Commit add or change, each with its JSON and a check mark when it's an entry of `ALLALBUMS.json`, `ALLTAGS.json`, `ALLGENRES.json`,
-`PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json`, `LENSES.json` or `TIMELINE.json` at the same head, and the pull request summary counts them.
+Under the photos it lists the album, tag, genre, place, localization, metadata group, camera override, custom lens, timeline label and viewer likes files the pull request or the changes waiting for
+Commit add or change, each kind in its own panel collapsed to how many files it has. Opened, a panel shows the files on
+the left by name (their `name`, or else their file name) with how many lines each adds and removes (`+3 −1`, the way
+its diff counts them; every line is added for a new file), and on the right the selected file's JSON, with what it
+changes against the base branch and a check mark when it's an entry of `ALLALBUMS.json`, `ALLTAGS.json`, `ALLGENRES.json`,
+`PLACES.json`, `LOCALIZATIONS.json`, `METAINFO.json`, `CAMERAS.json`, `LENSES.json`, `TIMELINE.json` or `LIKES.json` at the same head, and the pull request summary counts them.

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["kamon", "buddhism", "fabric", "patterns", "shadows"],
+  "tags": ["kamon", "buddhism", "patterns", "shadows"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,7 @@
     "chroma": 2.06,
     "peakChroma": 4.28,
     "samples": 9801
-  }
+  },
+  "notes": "Shows a fabric curtain with a crest; 'fabric' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [464, 346, 378, 262, 384, 382]
 }

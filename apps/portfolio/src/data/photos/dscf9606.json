@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["tokonoma", "kakejiku", "washitsu", "tatami", "shoji", "flowers", "interior"],
+  "tags": ["washitsu", "tatami", "shoji", "flowers", "interior"],
   "genres": [],
   "places": [
     {
@@ -270,5 +270,7 @@
     "peakChroma": 37.01,
     "samples": 9900
   },
-  "undecided": true
+  "undecided": true,
+  "notes": "Shows a kakejiku scroll in a tokonoma; 'kakejiku' and 'tokonoma' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [344, 345, 346, 347, 378, 384]
 }

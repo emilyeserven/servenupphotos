@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": ["homepage-spotlight"],
-  "tags": ["skyline", "skyscraper", "mountains", "city", "haze", "aerial-view"],
+  "tags": ["skyline", "skyscrapers", "mountains", "city", "haze", "aerial-view"],
   "genres": [],
   "places": [
     {
@@ -268,5 +268,18 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 10086
-  }
+  },
+  "spotlightZoneFocus": {
+    "homepage": {
+      "focus": {
+        "x": 46,
+        "y": 28
+      },
+      "placement": {
+        "x": 50,
+        "y": 20
+      }
+    }
+  },
+  "similarPhotos": [458, 258, 459, 246, 461, 263]
 }

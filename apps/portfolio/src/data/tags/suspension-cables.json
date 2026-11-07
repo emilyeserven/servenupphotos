@@ -1,6 +1,6 @@
 {
   "id": "suspension-cables",
   "name": "suspension-cables",
-  "description": "",
+  "description": "the main cables and hangers of suspension bridges",
   "parent": "cables"
 }

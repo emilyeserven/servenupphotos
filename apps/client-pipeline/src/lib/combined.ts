@@ -49,9 +49,7 @@ function inEntries(entries: ReadonlySet<string> | undefined, data: unknown): boo
 
 /** What to show for a combined file the store hasn't read, or couldn't. */
 function unread(path: string, view: CombinedView): CombinedFile {
-  const error = view.error
-    ? `Couldn't read it: ${view.error.message}`
-    : "Still reading it from GitHub.";
+  const error = view.error ? `Couldn't read it: ${view.error.message}` : "Still reading it.";
   return { path, found: true, count: 0, error };
 }
 
@@ -103,6 +101,9 @@ export function withCombined(read: InFlightRead, view: CombinedView): InFlightRe
     lenses: checkedGroups(read.lenses, file("lenses", "LENSES.json")),
     captions: checkedGroups(read.captions, file("captions", "CAPTIONS.json")),
     timeline: checkedGroups(read.timeline, file("timeline", "TIMELINE.json")),
+    likes: checkedGroups(read.likes, file("likes", "LIKES.json")),
+    triplines: checkedGroups(read.triplines, file("triplines", "TRIPLINES.json")),
+    graphs: checkedGroups(read.graphs, file("graphs", "GRAPHS.json")),
   };
 }
 

@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Dices } from "lucide-react";
 import { useState } from "react";
 import { CameraFilterBar } from "@/components/camera-filters";
-import { GridColorFilters } from "@/components/grid-color-filters";
 import { GridViewOptions } from "@/components/grid-view-options";
 import { LuckyRowsSelect, ShuffleButton } from "@/components/lucky-controls";
 import { NoMatchingPhotos } from "@/components/photo-filters";
@@ -12,13 +11,7 @@ import { SiteHomeLink } from "@/components/site-home-link";
 import { ViewPlaceholder } from "@/components/view-placeholder";
 import { TILE_SHAPES, ViewSwitcher } from "@/components/view-switcher";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
-import {
-  COLOR_FILTER_KEYS,
-  colorFilterCount,
-  type ColorFilters,
-  filterByColors,
-  parseColorFilters,
-} from "@/lib/color-search";
+import { type ColorFilters, filterByColors, parseColorFilters } from "@/lib/color-search";
 import { type GridSize, naturalSize, parseGridSize, squareSize } from "@/lib/grid-size";
 import {
   DEFAULT_LUCKY_ROWS,
@@ -107,16 +100,7 @@ function LuckyView() {
           />
         </div>
         <div className="mt-3 w-full">
-          <CameraFilterBar
-            photos={withImages}
-            extra={{
-              keys: COLOR_FILTER_KEYS,
-              count: colorFilterCount(search),
-              children: (
-                <GridColorFilters photos={filterWithCamera(withImages, search)} filters={search} />
-              ),
-            }}
-          />
+          <CameraFilterBar photos={withImages} />
         </div>
       </header>
       <NoMatchingPhotos count={pool.length} className="mx-auto w-full max-w-6xl px-1 sm:px-2" />

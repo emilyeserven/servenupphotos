@@ -51,7 +51,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city", "rooftops", "houses", "apartments", "hills", "twilight", "palm-trees"],
-  "genres": [],
+  "genres": ["cityscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -264,5 +264,6 @@
     "peakChroma": 15.13,
     "samples": 9975
   },
-  "undecided": true
+  "undecided": true,
+  "similarPhotos": [490, 395, 492, 489, 247, 443]
 }

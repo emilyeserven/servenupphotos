@@ -43,13 +43,15 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
 	}
 	saved := first.Data
 	first.Data = nil
-	if want := (PublishResult{Path: "photos/data/photos/DSC0001.json"}); !reflect.DeepEqual(first, want) {
+	if want := (PublishResult{Path: "photos/data/photos/DSC0001.json", Changes: []ScanChange{}}); !reflect.DeepEqual(first, want) {
 		t.Errorf("first Publish() = %+v, want %+v", first, want)
 	}
 	wantJSON := `{
   "id": 1,
   "title": "Tokyo at night",
   "comment": "Shot from the **bridge**.",
+  "altText": null,
+  "notes": null,
   "file": "DSC0001.jpg",
   "addedDate": "2026-10-15T02:45:00Z",
   "camera": "X-T5",
@@ -94,11 +96,15 @@ func TestPublishKeepsThePhotoUntilCommit(t *testing.T) {
   "tags": [],
   "genres": [],
   "places": [],
+  "noGps": false,
   "spotlightZones": [],
   "spotlightFocus": null,
   "spotlightPlacement": null,
   "socialPosts": [],
-  "reEdit": null
+  "reEdit": null,
+  "pickedSimilar": [],
+  "pickedSimilarNotes": {},
+  "similarPhotos": []
 }
 `
 	if string(saved) != wantJSON {

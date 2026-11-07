@@ -1,0 +1,116 @@
+[
+  {
+    "id": "aperture",
+    "kind": "preset",
+    "name": "Aperture",
+    "order": 1,
+    "group": "technical-details",
+    "graph": {
+      "type": "photos",
+      "x": "aperture",
+      "measure": "count",
+      "y": "",
+      "split": "",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0
+    }
+  },
+  {
+    "id": "exposure",
+    "kind": "preset",
+    "name": "Exposure",
+    "order": 2,
+    "group": "technical-details",
+    "graph": {
+      "type": "photos",
+      "x": "exposure",
+      "measure": "count",
+      "y": "",
+      "split": "",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0
+    }
+  },
+  {
+    "id": "focal-length",
+    "kind": "preset",
+    "name": "Focal length",
+    "order": 4,
+    "group": "technical-details",
+    "graph": {
+      "type": "photos",
+      "x": "focalLength",
+      "measure": "count",
+      "y": "",
+      "split": "",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0
+    }
+  },
+  {
+    "id": "iso",
+    "kind": "preset",
+    "name": "ISO",
+    "order": 3,
+    "group": "technical-details",
+    "graph": {
+      "type": "photos",
+      "x": "iso",
+      "measure": "count",
+      "y": "",
+      "split": "",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0
+    }
+  },
+  {
+    "id": "month-by-year",
+    "kind": "preset",
+    "name": "Month by year",
+    "order": 2,
+    "group": "time-heatmaps",
+    "graph": {
+      "type": "heatmap",
+      "x": "month",
+      "measure": "count",
+      "y": "year",
+      "split": "",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0
+    }
+  },
+  {
+    "id": "technical-details",
+    "kind": "group",
+    "name": "Technical Details",
+    "order": 1
+  },
+  {
+    "id": "time-heatmaps",
+    "kind": "group",
+    "name": "Time Heatmaps",
+    "order": 2
+  },
+  {
+    "id": "time-of-day-by-weekday",
+    "kind": "preset",
+    "name": "Time of day by weekday",
+    "order": 1,
+    "group": "time-heatmaps",
+    "graph": {
+      "type": "heatmap",
+      "x": "weekday",
+      "measure": "count",
+      "y": "daypart",
+      "split": "",
+      "stacked": false,
+      "sort": "group",
+      "limit": 0
+    }
+  }
+]

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": ["homepage-spotlight"],
-  "tags": ["train-station", "commuters", "bench", "interior", "lamps", "clock", "symmetry"],
+  "tags": ["train-station", "commuters", "benches", "interior", "lamps", "clocks", "symmetry"],
   "genres": [],
   "places": [
     {
@@ -268,5 +268,15 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9620
-  }
+  },
+  "spotlightZoneFocus": {
+    "homepage": {
+      "focus": {
+        "x": 52,
+        "y": 78
+      },
+      "placement": null
+    }
+  },
+  "similarPhotos": [52, 148, 7, 71, 178, 116]
 }

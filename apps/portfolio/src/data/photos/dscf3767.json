@@ -49,11 +49,19 @@
   "customLens": null,
   "albums": [],
   "tags": ["water", "stones", "moss", "minimalism", "texture"],
-  "genres": [],
+  "genres": ["nature", "abstract"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "date": "2026-10-24",
+      "url": "",
+      "caption": "",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -260,5 +268,6 @@
     "chroma": 10.45,
     "peakChroma": 15.33,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [447, 224, 504, 382, 309, 310]
 }

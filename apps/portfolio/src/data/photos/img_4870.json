@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["table-tennis", "park", "lamppost", "fence", "storefronts"],
+  "tags": ["sports", "park", "street-lights", "fence", "storefronts"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9656
-  }
+  },
+  "similarPhotos": [193, 40, 177, 187, 192, 186]
 }

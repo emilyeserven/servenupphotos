@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["silhouettes", "skyline", "skyscraper", "twilight", "trees"],
+  "tags": ["silhouettes", "skyline", "skyscrapers", "twilight", "trees"],
   "genres": [],
   "places": [
     {
@@ -268,5 +268,6 @@
     "chroma": 15.68,
     "peakChroma": 39.25,
     "samples": 10001
-  }
+  },
+  "similarPhotos": [34, 31, 41, 246, 158, 73]
 }

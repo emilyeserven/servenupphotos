@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["koi", "fish", "water", "canal"],
-  "genres": [],
+  "genres": ["wildlife", "nature"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 16.43,
     "peakChroma": 23.19,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [502, 501, 337, 485, 393, 95]
 }

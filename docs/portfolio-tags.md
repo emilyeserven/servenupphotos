@@ -7,6 +7,15 @@ opens the [Grid](portfolio-grid.md) filtered to that tag (`/grid?tag=shotengai`)
 [Tag filter](portfolio-filters.md#album-tag-and-genre) as the Timeline and Map. It's in the site menu after Albums;
 like Albums, the homepage doesn't link to it.
 
+## Spotlight Tags
+
+The [favorite tags](albums-and-tags.md#favorite-tags), starred on the pipeline's Tags page, come first under
+**Spotlight Tags**, with a divider below them. Their cards are wider than the rest: one per row on a phone and two on a
+wider screen, where the other grids have two, three or four. Each shows its 6 newest photos instead of 3, so the
+thumbnails stay about the same size. They're still in their usual places further down too. The
+section follows the sort and the search like the rest of the page, shows in **Top level only** as well (a favorite with
+a parent included), and leaves out favorites without photos; with no favorites, it isn't there.
+
 ## Parent tags
 
 A tag with tags under it (its [parent](albums-and-tags.md#parent-tags), set on the pipeline) gets a section of its own, at the top
@@ -14,6 +23,12 @@ and by name: its name links to the Grid filtered to it, followed by its photo co
 tag under it too, as the Tag filter does, then its description when one is written. Below, when photos are tagged with the parent tag itself, comes a card of their 3 newest thumbnails without a
 name, linking to the Grid filtered to the parent tag; then cards for every tag under it, however deep, by name, each one's own
 tags right after it. A tag more than one level down names the tags in between (`shimenawa › shide`).
+
+A photo shows once in a section where it can: a card leaves out the photos already previewed by the cards for the tags
+under it and fills those squares with its next newest photos, and the parent tag's own card leaves out every photo the
+cards below it preview. So a photo tagged both `amphibians` and `newts` shows only on the **newts** card, and the
+parent's own card is left out when all its photos are already shown below. The counts aren't changed, and in **Top level
+only** each card still previews its newest photos.
 
 The tags with none under them come after the parent tags as one grid of cards, by name, headed **More tags** when there
 are parent tags above. Tags without photos are left out, and a loop of parents stops where it comes back round.
@@ -26,15 +41,17 @@ are parent tags above. Tags without photos are left out, and a loop of parents s
 
 Two rows of buttons under the title change what the page shows, and are kept in the URL so a link keeps them:
 
-- **A–Z** (the default) or **Most photos** (`?sort=count`): orders the parent tags' sections, the tags in each
-  section (each among the tags beside it, so a tag's own tags still come right after it) and the **More tags** grid.
-  **Most photos** puts the tags with the most photos first, and tags with as many photos by name.
+- **A–Z** (the default), **Most photos** (`?sort=count`) or **Most subtags** (`?sort=subtags`): orders the parent
+  tags' sections, the tags in each section (each among the tags beside it, so a tag's own tags still come right after
+  it) and the **More tags** grid. **Most photos** puts the tags with the most photos first, and tags with as many
+  photos by name. **Most subtags** puts the tags with the most tags under them first, counting every level down but
+  only the tags with photos (the ones the page shows); tags with as many subtags go by most photos, then by name.
 - **All tags** (the default) or **Top level only** (`?top=true`): hides every tag that has a parent and drops the
   sections, leaving one grid of the top-level tags. A parent tag's count there still counts the photos of the tags
   under it, as its link to the Grid does.
 
-The page works out both orders once at build time (`tagSections("name")` and `tagSections("count")`), so switching is
-instant.
+The page works out every order once at build time (`tagSections("name")`, `tagSections("count")` and
+`tagSections("subtags")`), so switching is instant.
 
 ## Search
 

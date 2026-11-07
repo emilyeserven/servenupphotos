@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["busking", "musicians", "violin", "subway", "signage", "typography"],
+  "tags": ["street-performers", "musicians", "subway", "signage", "typography"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,7 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 10011
-  }
+  },
+  "notes": "Shows a violinist; 'violin' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [46, 180, 22, 25, 186, 6]
 }

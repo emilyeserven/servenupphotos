@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["shrine", "statue", "amphibians", "rope", "stones"],
+  "tags": ["shrine", "statues", "rope", "stones"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,7 @@
     "chroma": 5.91,
     "peakChroma": 9.52,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a frog statue; 'amphibians' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [315, 509, 348, 324, 329, 451]
 }

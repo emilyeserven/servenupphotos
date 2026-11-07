@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["railway", "train", "city", "cars", "trees", "walls", "lamppost"],
+  "tags": ["railway", "trains", "city", "cars", "trees", "walls", "street-lights"],
   "genres": ["street"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9709
-  }
+  },
+  "similarPhotos": [490, 7, 492, 40, 270, 158]
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["street-art", "mural", "graffiti", "brick", "walls", "pedestrians"],
+  "tags": ["street-art", "murals", "graffiti", "brick", "walls", "pedestrians"],
   "genres": [],
   "places": [
     {
@@ -269,5 +269,6 @@
     "chroma": 23.73,
     "peakChroma": 38.93,
     "samples": 9825
-  }
+  },
+  "similarPhotos": [57, 36, 14, 439, 47, 60]
 }

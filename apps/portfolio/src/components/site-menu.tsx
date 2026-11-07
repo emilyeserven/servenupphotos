@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { MenuIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { useScriptDisplay } from "@/components/script-display-provider";
 import { type Theme, useTheme } from "@/components/theme-provider";
@@ -9,20 +9,34 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import type { ScriptDisplay } from "@/lib/localize";
 import { parseCameraFilters } from "@/lib/camera-filters";
 import { parseFilters } from "@/lib/photo-filters";
-import { type PortfolioView, portfolioViews } from "@/lib/portfolio-views";
+import { parseTextSearch } from "@/lib/text-search";
+import { mainViews, minorViews, type PortfolioView } from "@/lib/portfolio-views";
 import { cn } from "@/lib/utils";
 import { rememberedViewOptions } from "@/lib/view-options";
 
 /**
  * What a view link carries: the filters from the page it's on, and the view's own settings as it
  * was last left, such as the Grid's Table view. The camera filters go too, kept by the views that
- * have them (Table and Grid). The Map always opens with no filters, so it doesn't keep ones set
- * before.
+ * have them (Table, Grid and Graph). The Map always opens with no filters, so it doesn't keep ones set
+ * before. The text search goes only between the Grid and the Timeline, the views with a search box.
  */
 function carriedSearch(to: PortfolioView["to"], prev: Record<string, unknown>) {
   if (to === "/map") return {};
-  return { ...rememberedViewOptions(to), ...parseFilters(prev), ...parseCameraFilters(prev) };
+  return {
+    ...rememberedViewOptions(to),
+    ...parseFilters(prev),
+    ...parseCameraFilters(prev),
+    ...carriedTextSearch(to, prev),
+  };
 }
+
+/** The text search, when the link goes to a view with a search box. */
+function carriedTextSearch(to: PortfolioView["to"], prev: Record<string, unknown>) {
+  return SEARCHABLE_VIEWS.includes(to) ? parseTextSearch(prev) : {};
+}
+
+/** The views with a text search box. */
+const SEARCHABLE_VIEWS: readonly string[] = ["/grid", "/timeline"];
 
 interface Option<T> {
   value: T;
@@ -68,23 +82,31 @@ export function SiteMenu() {
           className="mb-1 block rounded-md px-2 py-1.5 text-base text-foreground hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:no-underline"
         />
         <nav aria-label="Portfolio views">
-          <ul className="grid grid-cols-3 gap-1">
-            {portfolioViews.map(({ to, label, icon: Icon, enabled }) => (
-              <li key={to}>
-                <Link
-                  to={to}
-                  search={(prev: Record<string, unknown>) => carriedSearch(to, prev)}
-                  disabled={!enabled}
+          <ul className="grid grid-cols-2 gap-1">
+            {mainViews.map((view) => (
+              <li key={view.to}>
+                <ViewLink
+                  view={view}
                   onClick={() => setOpen(false)}
-                  className="flex flex-col items-center gap-1.5 rounded-md px-1 py-3 text-xs font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40"
-                  activeProps={{
-                    className: "bg-accent text-accent-foreground",
-                    "aria-current": "page",
-                  }}
+                  className="flex-col gap-1.5 px-1 py-3 text-xs"
                 >
-                  <Icon className="size-6" aria-hidden />
-                  {label}
-                </Link>
+                  <view.icon className="size-6" aria-hidden />
+                  {view.label}
+                </ViewLink>
+              </li>
+            ))}
+          </ul>
+          <ul className="mt-1 grid grid-cols-[repeat(auto-fit,minmax(5rem,1fr))] gap-1 border-y py-1">
+            {minorViews.map((view) => (
+              <li key={view.to}>
+                <ViewLink
+                  view={view}
+                  onClick={() => setOpen(false)}
+                  className="gap-2 px-2 py-1.5 text-xs"
+                >
+                  <view.icon className="size-3.5" aria-hidden />
+                  {view.label}
+                </ViewLink>
               </li>
             ))}
           </ul>
@@ -110,6 +132,35 @@ export function SiteMenu() {
         />
       </PopoverContent>
     </Popover>
+  );
+}
+
+interface ViewLinkProps {
+  view: PortfolioView;
+  onClick: () => void;
+  className: string;
+  children: ReactNode;
+}
+
+/** A link in the site menu to one of the portfolio's views, highlighted on the view's own page. */
+function ViewLink({ view, onClick, className, children }: ViewLinkProps) {
+  return (
+    <Link
+      to={view.to}
+      search={(prev: Record<string, unknown>) => carriedSearch(view.to, prev)}
+      disabled={!view.enabled}
+      onClick={onClick}
+      className={cn(
+        "flex items-center rounded-md font-medium text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-disabled:pointer-events-none aria-disabled:opacity-40",
+        className,
+      )}
+      activeProps={{
+        className: "bg-accent text-accent-foreground",
+        "aria-current": "page",
+      }}
+    >
+      {children}
+    </Link>
   );
 }
 

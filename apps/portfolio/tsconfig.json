@@ -11,5 +11,5 @@
       "@portfolio/*": ["./src/*"]
     }
   },
-  "include": ["src", "vite.config.ts", "photo-previews.ts", "map-preview"]
+  "include": ["src", "vite.config.ts", "photo-previews.ts", "private-notes.ts", "map-preview"]
 }

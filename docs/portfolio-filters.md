@@ -1,9 +1,11 @@
 # Portfolio Filters
 
-The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens three
-filters that narrow the photos they show: **Places**, **Album**, **Tag** and **Genre** (**Hide filters** closes them again). The
-Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** section, the Color page's color filters (see
-[Portfolio Color](portfolio-color.md#on-the-grid-page)).
+The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens
+filters that narrow the photos they show: **Places**, [Groups](#groups-album-tag-and-genre) and [When](#when) (**Hide filters** closes them again). The
+Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. Every view with filters (the Grid,
+Lucky, the Graph page, the Timeline and, under **More filters**, the Map) also has a **Visuals** button, which opens the Color page's color filters and **Orientation** (see
+[Portfolio Color](portfolio-color.md#on-the-grid-page)). Where the camera filters are, it comes with them (`CameraFilterBar`); the Timeline and the
+Map add it as their own filters (`visualsOwnFilters`, read with `lib/visual-filters.ts`).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
 beside it. Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
 that one (a range slider's X sits beside its range). The filters are kept in the URL, so a link keeps them, and the menu's view
@@ -16,15 +18,39 @@ its URL still opens with them.
 > **Frontend analogy:** like TanStack Router search params shared by sibling routes: each route's `validateSearch`
 > reads the same filter keys, and the menu's `<Link search={(prev) => parseFilters(prev)}>` passes them along.
 
+## Text search
+
+The Grid and the Timeline have a search box before **Show filters** (`components/photo-search-box.tsx`), always shown,
+that narrows the photos to ones whose **title**, **location** or **camera model** has the text (`?q=seoul x-t5`,
+`lib/text-search.ts`). Each word has to be found somewhere in those, in any order, so "seoul x-t5" finds the photos
+taken in Seoul on a Fujifilm X-T5. It ignores case and accents ("sao paulo" finds São Paulo), and the location is
+matched every way it can be written: its places, city, state and country in English, romanized, phonetic and native
+script, whichever the menu's **Script display** shows.
+
+The URL changes as you type, replacing the page's history entry rather than adding one per letter. The search counts
+as one filter on the **Show filters** button, the X inside the box or **Clear filters** clears it, and the filters'
+counts are out of the photos it leaves. The menu carries it between the Grid and the Timeline, but not to the other
+views, which have no box.
+
+> **Frontend analogy:** each photo's searchable text is joined into one lowercase string once and kept in a
+> `WeakMap`, so a keystroke is just `words.every((word) => text.includes(word))` over the photos, like a memoized
+> selector.
+
 ## Places
 
-A button that opens a searchable tree: each country the photos were taken in, the states in it, the cities in each, and the places in each
-city, each place under the place it's in (see [Places](places-and-localizations.md#places)), each with a checkbox and
-how many photos it would show. The chevron beside a country, state, city or place with others in it expands or collapses it,
-and **Expand all** and **Collapse all** do every one at once; a search shows every match with what it's in, expanded.
-The tree starts with whatever's around the chosen ones expanded, and the United States of America always expanded
-one level, to its states (`START_EXPANDED` in `components/places-filter.tsx`). Names are written the way the menu's **Script display**
-says, and a search matches them that way or in English. The button shows the one chosen name, or how many are chosen.
+A button that opens the places in columns, like a Mac's Finder in column view (`components/place-columns.tsx`,
+`lib/place-tree.ts`): the countries the photos were taken in first, and clicking one opens a column beside it of what's
+in it, its regions (states, provinces and prefectures), then a region's cities, a city's places, and each place's
+places inside it (see [Places](places-and-localizations.md#places)), each with how many photos it would show and an
+arrow while it has more in it. Opening a place in a column closes the columns after it, and the newest column scrolls
+into view. Each place has a checkbox, and any number can be checked in any columns, so places in different countries can
+be chosen at once; a place with nothing in it is checked by clicking its name too. **Clear** unchecks them all. The
+picker opens on the columns around the first chosen place, or the only country when there's one. A search swaps the
+columns for every matching place, with what it's in under its name, such as "Japan › Yamaguchi › Hagi". Names are
+written the way the menu's **Script display** says, and a search matches them that way or in English. The button shows
+the one chosen name, or how many are chosen.
+`?state=none` keeps the photos with no state, province or prefecture, as the Numbers page's **No region** row links to;
+the button then says **No region**.
 
 Any number can be chosen, and the view shows the photos taken in **any** of them:
 
@@ -43,8 +69,9 @@ names, whichever way they're shown. A name listed in another one's **Other names
 counts as that one (`mainName` in `lib/localize.ts`), so photos whose EXIF says "United States" are shown, listed and
 filtered as the United States of America.
 
-On the Map, **Places** doesn't filter: picking one moves the map to it instead (see
-[Portfolio Map](portfolio-map.md)).
+On the Map, **Places** doesn't filter: it has the same columns without checkboxes, and picking one moves the map to it
+instead (see [Portfolio Map](portfolio-map.md)). There, clicking a place with nothing in it picks it, and each column
+after the countries starts with **All of** the place it's in, such as **All of Japan**, to pick that one.
 
 ## Chosen photos
 
@@ -52,34 +79,115 @@ The map's **View in grid** can open the Grid on photos chosen one by one (`?ids=
 just the photos in view (see [Portfolio Map](portfolio-map.md)). There's no dropdown for it: it counts as one filter on
 the **Show filters** button, and **Clear filters** clears it.
 
-## Album, Tag and Genre
+## Groups: Album, Tag and Genre
 
-**Album** lists every album in `ALLALBUMS.json`, each sub-album under its parent. Choosing an album (`?album=<id>`)
-shows the photos in it and in any album inside it. **Tag** lists every tag in `ALLTAGS.json` (`?tag=<id>`), each [under its parent tag](albums-and-tags.md#parent-tags); choosing one shows the photos with it or any tag under it, and is left
-out while there are no tags. **Genre** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, by
+A **Groups** button opens one picker for the album, tag and genre filters (`components/group-picker.tsx`), like
+[When](#when): a list of **Albums**, **Tags** and **Genres** on the left, each saying what it's set to (or "Any") with a
+dot while it's set, and the chosen one's choices on the right, each with how many photos it would show given the other
+filters. One of each can be chosen at once, and the button's badge says how many are. Clicking the chosen choice again,
+or the "All …" row at the top, clears it. On phones the left list folds up above the choices, under a button naming the
+section shown, and the picker keeps 16px from the screen's edges.
+
+**Albums** lists every album in `ALLALBUMS.json`, each sub-album under its parent. Choosing an album (`?album=<id>`)
+shows the photos in it and in any album inside it. **Tags** lists every tag in `ALLTAGS.json` (`?tag=<id>`), each [under its parent tag](albums-and-tags.md#parent-tags); choosing one shows the photos with it or any tag under it, and is left
+out while there are no tags. **Genres** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, by
 name (`?genre=<id>`), and is likewise left out while there are none.
+
+## When
+
+A **When** button after **Groups**, on every view with filters (on the Map, under **More filters**), opens one picker
+for when the photos were taken (`components/when-filter.tsx`, `components/when-picker-parts.tsx`,
+`lib/when-filters.ts`), by the clock and calendar where each was taken, as a photo's capture time has no time zone.
+Like the other pickers (see [Picker layout](#picker-layout)), its left side lists **Seasons**, **Months**, **Days**,
+**Hours** and **Date range**, each saying what it's set to ("Any", the one or two chosen such as "Spring, Autumn", or
+how many, such as "4 hours") with a dot while it's set, and **Clear when** under them while any is; the right side
+shows the chosen one's buttons, under a line saying what they do. It picks one way at a time, and choosing in one
+clears the others. The picker opens on the one that's set. Every button says how many photos it would show, given the
+other filters, and a choice with none is dimmed.
+
+- **Seasons**, **Months**, **Days** and **Hours** pick across all years, and any number of one kind can be on: they
+  show the photos in any of them. Above each kind's buttons, one picks just the one it is now, such as **This season ·
+  Autumn**, **This month · November**, **Today · Saturday** or **This hour · 2 PM–3 PM**, in every year; clicking it
+  again clears it.
+  - **Seasons** (`?season=summer&season=winter`), as the northern hemisphere has them: Spring is March to May, and
+    Winter is December to February.
+  - **Months** (`?month=june&month=july`), in four columns headed by their season.
+  - **Days** of the week, Monday first (`?weekday=saturday&weekday=sunday`).
+  - **Hours** (`?hour=17&hour=18`, on a 24-hour clock), a row for each part of the day: Late night (12–5 AM), Early
+    morning, Morning, Afternoon, Evening and Night (9 PM–12 AM). A part's name turns all its hours on, or off once they
+    all are.
+- **Date range**: two fields, **From** and **To** (`?start=2024-03-01&end=2024-05-31`, both days included). Each
+  shows its day, or "Any day" while that end is open, opens its own calendar when clicked, and has an X that clears
+  it. The calendars keep to the months a photo was taken in, open on the field's day or the latest photo's month, and
+  keep From on or before To. Clicking the month's name above a calendar swaps the days for every month over the years,
+  a row of twelve for each year, newest first, to jump straight to one.
+
+On the Timeline, the date range is the days it shows.
+
+> **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
+> `?tag=a&tag=b`, and the left list is a set of radio buttons over which group is in use.
+
+## Picker layout
+
+**Groups**, **When**, **Gear & settings**, **Visuals** and the Graph page's **Graph type** share one layout,
+`SectionPicker` in `components/section-picker.tsx`: a list of sections on the left (`SectionTab` in
+`components/picker-section-tab.tsx`), each with its name, an icon for Groups, what it's set to under it and a dot while
+it's set, an optional footer under the list such as **Clear visuals**, and the chosen section's controls on the right.
+The picker keeps 16px from the screen's edges and is at most 28rem tall, scrolling inside. On phones the list folds up
+above the controls, behind a button naming the chosen section and what it's set to; while it's open it takes the
+controls' place, and choosing a section folds it up again. The Grid's filter buttons open it through
+`FilterPickerButton`, which shows the filter's icon, name and how many of its filters are set; `PickerPart` puts the
+line saying what a section is for over its controls.
+
+A name or value cut off with an ellipsis, in a picker's list, a choice such as a long album in **Groups**, the Places
+columns or the Places button, shows all of it on hover (`TruncatedText` in `components/truncated-text.tsx`, which adds
+the hover text only while the text is cut off).
+
+> **Frontend analogy:** it's a vertical tabs component whose tab list turns into an accordion header on small screens;
+> each picker only supplies the tabs' labels and the panel.
 
 ## Camera filters
 
-The Grid's filters panel also has **Camera** and **Lens** dropdowns (`?camera=Fujifilm X-T5`,
-`?lens=EF50mm f/1.8 II`; a photo whose EXIF didn't name a lens is under none) and a slider with a handle at each end
-for each of **ISO**, **Exposure**, **Focal length** and **Aperture**. A slider steps through the values the portfolio's
+The Grid's filters panel also has a **Gear & settings** button after **When** that opens one picker for the camera
+filters: the gear a photo was taken with and how it was shot. Its
+left side lists **Cameras**, **Lenses**, **Focal length**, **Aperture**, **Exposure** and **ISO**, each with what it's set
+to under its name ("Any" while it isn't) and a dot while it's set; the right side shows the chosen one's choices. Unlike
+**When**, any number of them can be set at once, and the button's badge counts how many are. The picker opens on the
+first one that's set. It keeps 16px from the screen's edges. On phones the list folds up above the choices, behind a
+button naming the chosen one, and choosing one folds it up again.
+
+**Cameras** and **Lenses** list every camera or lens (`?camera=Fujifilm X-T5`, `?lens=EF50mm f/1.8 II`; a photo whose
+EXIF didn't name a lens is under none) with how many photos each would show; **All cameras** or **All lenses** comes
+first, and clicking the checked one again goes back to all. A **Group by** row above the list picks how it's laid out: one tab for each top-level
+metadata group that has groups or names under it, such as **Brand** or **Type** (that group's own row left out, what's
+under it a level up, then any camera or lens it doesn't list), and **Name**, every one once, A to Z. It opens on the tab
+that lists the chosen one. A choice that would show no photos given the other
+filters is left out, unless chosen; **Show N choices hidden by the other filters** lists them dimmed, and hovering one
+says which filters hide it: each one that, cleared alone, would let it show photos ("Hidden by Aperture or Lens"), or
+"the other filters together" when no single one would. Each camera has a little drawing of its kind (a DSLR, mirrorless, compact or phone, guessed from its model name). Hovering
+a lens by name shows its details to the right: a side view of it, longer for a longer focal length and with a zoom ring
+when it zooms; its focal length, whether it's a prime or zoom, and its widest aperture, read from its name; and how many
+photos used it, on which cameras, at which focal length most, and from when to when. The four camera settings each have a slider with a handle
+at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,
-`?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. A
+`?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. Each setting's title sits above its slider, which has a tick under it for every step and its lowest and highest values
+at its ends. The **(i)** button across from the title opens an info pane to the right (on phones, a full-width
+**Show info** button under the quick picks opens it below) with little
+graphics of what its two ends look like, following the handles as they're dragged: the angle of view for focal length, the opening for aperture, a dial
+filled for longer exposures, and grain for ISO, with a sentence on what the setting does. Clicking it again closes it;
+the browser remembers which, for every setting. A
 photo without the setting isn't in any range.
 
-A **Time of day** slider sits after them, stepping through each hour of the day a portfolio photo was taken in, and says
-the range as clock times, from the start of the first hour to the end of the last, such as "6 AM – 7 PM"
-(`?time=6-18`, the hours on a 24-hour clock). The time is the clock where the photo was taken, as its custom or EXIF date
-writes it, so a photo taken at 7 PM in Seoul is a 7 PM photo wherever it's viewed. A range can't wrap past midnight;
-pick the evening and early morning hours separately.
+The hours of the day are in the [When](#when) picker, which every view with filters has.
 
-**Orientation** sits after the sliders: a horizontal and a vertical rectangle button, each with how many photos the
-other filters leave have that orientation. Clicking one shows only the photos wider than they're tall
-(`?orientation=horizontal`) or taller than they're wide (`?orientation=vertical`); clicking it again, or its X, clears
-it. A square photo is neither, so it's only shown while no orientation is chosen. The photo's size is the one its JSON
-file saves (`width` and `height`), so a photo not uploaded to R2 yet has no orientation either.
+**Orientation** is a section of the **Visuals** picker (see
+[Portfolio Color](portfolio-color.md#on-the-grid-page)): a list of **Horizontal**, **Vertical** and **Square**, each
+drawn as an outlined shape of its proportions, with how many photos the other filters (colors too) leave have that
+orientation. Clicking one shows only the photos wider than they're tall (`?orientation=horizontal`), taller than
+they're wide (`?orientation=vertical`), or exactly as wide as they're tall (`?orientation=square`); clicking it again
+clears it. The photo's size is the one its JSON file saves (`width` and `height`), so a photo not uploaded to R2 yet
+has no orientation.
 
 The other views don't have these filters, and the menu's links leave them out. They count toward the button's number, and **Clear filters** clears them too.
 
@@ -97,11 +205,11 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
   `?cameraGroup=<id>`) shows the photos taken with any value it or a group inside it lists; choosing a group clears a
   chosen name and the other way round. A group that would show no photos, given the other filters, isn't listed,
   unless it's the one chosen.
-- **ISO**, **Exposure**, **Focal length** and **Aperture** each get a small dropdown to the right of the slider,
-  listing a quick pick for each of their groups. Each pick shows the lowest and highest values the photos actually have
+- **ISO**, **Exposure**, **Focal length** and **Aperture** each list a quick pick for each of their groups under the
+  slider. Each pick shows the lowest and highest values the photos actually have
   inside the group's range, not the range as it's set: a **Moderate** ISO group of 201 to 1600 shows **250 – 1600 ISO**
   when those are the photos' nearest values, and Wide angle's 10 to 24 mm shows **11mm – 24mm** when no photo was taken
-  at 10 mm. Choosing one moves the handles to those values (`?focalLength=11-24`) and closes the list; the list checks
+  at 10 mm. Choosing one moves the handles to those values (`?focalLength=11-24`); the list checks
   the one the slider is set to, and choosing that one again clears the slider. A group's range runs from the lowest to
   the highest end of its own range, its values and those of every group in it; a range with only a `min` runs up from
   it, and one with only a `max` up to it. A group no photo is in isn't listed.
@@ -113,14 +221,14 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
 
 Each choice says how many photos it would show in that view, given the other filters, so a place's count is out of the
 photos the chosen album and tag (and, on the Grid, camera, lens and ranges) leave. The Map counts only photos it can place and the Grid only photos with
-resized versions. The Timeline's counts leave out its time range, which still applies on top of the filters.
+resized versions.
 
 When the filters leave no photos, the view says so instead of its list; the Map shows no markers and moves out to the
 whole world. Changing a filter on the Map fits it to the photos it now shows.
 
 A choice that would show no photos, given the other filters, isn't listed, unless it's the one chosen (or, in
 **Places**, has a chosen one inside it). The dropdown ends with a greyed-out line saying how many were hidden, and the
-Places tree a note under it, such as "40 places hidden by the other filters".
+Places columns a note under them, such as "40 places hidden by the other filters".
 
 ## Remembered view settings
 
@@ -130,10 +238,10 @@ Each of these views remembers its own settings in this browser (`lib/view-option
 - **Grid:** square, natural or Table view, **info** under the tiles, the sort (with a color sort's order and secondary
   sort), and the Table's sorted column, hidden columns and Place detail.
 - **Color:** the color wheel or Black & white view, and the preview size.
-- **Timeline:** technical info shown, and the chart or heatmap.
+- **Timeline:** its display options, such as technical info shown and thumbnail size.
 - **Tags:** the sort, and all tags or the top level only.
 
-Filters, the open photo, the Timeline's time range and where the Map is looking aren't remembered this way. The Map's
+Filters (including the Timeline's date range), the open photo and where the Map is looking aren't remembered this way. The Map's
 display options are remembered on their own (see [Portfolio Map](portfolio-map.md)). A link with settings in its URL
 still opens with them, and a URL without any opens the view's defaults: only links within the site add the remembered
 ones.

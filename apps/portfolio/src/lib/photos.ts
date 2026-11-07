@@ -1,4 +1,5 @@
 import committedData from "@portfolio/data/photos/ALLPHOTOS.json";
+import type { Group } from "@portfolio/lib/groups";
 import {
   type ColorShare,
   type PhotoColorData,
@@ -21,6 +22,9 @@ import {
   SCRIPT_DISPLAYS,
   type ScriptDisplay,
 } from "@portfolio/lib/localize";
+import { withSmartAlbums } from "@portfolio/lib/smart-albums";
+import { relatedPhotos, type RelatedPhoto } from "@portfolio/lib/related-photos";
+import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 
 export interface Photo {
   /**
@@ -30,6 +34,11 @@ export interface Photo {
    */
   id: number;
   title: string;
+  /**
+   * What the photo shows, for screen readers and for when it can't load: the alt text written in the
+   * pipeline, or else the title.
+   */
+  alt: string;
   /** A note about the photo in Markdown, written on the pipeline's Photo page; null without one. */
   comment: string | null;
   camera: string;
@@ -75,12 +84,22 @@ export interface Photo {
    */
   spotlightPlace: number | null;
   tags: string[];
+  /**
+   * The photos its More like this drawer shows, in order: the ones picked by hand, with their
+   * notes, then the ones the pipeline found, each once. Empty until the pipeline has found any.
+   */
+  related: RelatedPhoto[];
   /** The IDs of the photographic genres it's in, such as "street"; empty for older entries. */
   genres: string[];
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
   spotlightFocus: SpotlightFocus | null;
   /** Where on the screen the focus point goes, in percent across and down, set on its Photo page; null for the middle. */
   spotlightPlacement: SpotlightFocus | null;
+  /**
+   * Its own focus point and placement for each spotlight zone, by zone ID, set on the pipeline's
+   * Site Spotlight page; a zone left out uses spotlightFocus and spotlightPlacement.
+   */
+  zoneFocus: Record<string, ZoneFocus>;
   /**
    * How its colors split between the 12 hue buckets and the shades from black to white, biggest
    * first; empty until the pipeline saves its colors.
@@ -105,6 +124,12 @@ export interface Photo {
 export interface SpotlightFocus {
   x: number;
   y: number;
+}
+
+/** A photo's focus point and placement in one spotlight zone; null for the middle. */
+export interface ZoneFocus {
+  focus: SpotlightFocus | null;
+  placement: SpotlightFocus | null;
 }
 
 /** Where the photo was taken, written each way the menu's Script Display can choose. */
@@ -216,6 +241,8 @@ interface PhotoData {
   title?: string | null;
   /** A Markdown note about the photo, when one was written. */
   comment?: string | null;
+  /** A short description of what the photo shows, when one was written; older entries don't have it. */
+  altText?: string | null;
   /** Entries saved before these were added don't have them. */
   aperture?: number | null;
   /** Whether the aperture is manual or unknown; entries saved before it was added don't have it. */
@@ -261,6 +288,11 @@ interface PhotoData {
   spotlightFocus?: SpotlightFocus | null;
   /** Where on the screen the focus point goes; null or missing for the middle. */
   spotlightPlacement?: SpotlightFocus | null;
+  /**
+   * The focus point and placement for each spotlight zone, by zone ID, set on Site Spotlight; a
+   * zone left out, or the whole field missing, uses spotlightFocus and spotlightPlacement.
+   */
+  spotlightZoneFocus?: Record<string, Partial<ZoneFocus>>;
   /** The places it was taken, from PLACES.json, each with how the photo relates to it; older entries don't have them. */
   places?: PhotoPlaces;
   /** The IDs of the photo's albums, tags and genres; older entries were saved without them. */
@@ -269,6 +301,12 @@ interface PhotoData {
   genres?: string[];
   /** The photo's color summary, saved by the pipeline; older entries don't have it. */
   colors?: PhotoColorData | null;
+  /** The IDs of the photos picked by hand on the pipeline's Related Photos page, shown first in More like this. */
+  pickedSimilar?: number[];
+  /** The note shown beside each hand-picked photo in More like this, by its ID. */
+  pickedSimilarNotes?: Record<string, string>;
+  /** The IDs of the photos most like it, best first, as the pipeline's Find Related Photos saved them. */
+  similarPhotos?: number[];
 }
 
 // ALLPHOTOS.local.json is made by `pnpm photos:local` (which `pnpm dev` runs) and git-ignored, so
@@ -424,6 +462,11 @@ function parseImage(photo: PhotoData): PhotoImage | null {
 /** The title written on the Photo page, or else the file name without its extension. */
 function photoTitle(photo: PhotoData): string {
   return photo.title?.trim() || photo.file.replace(/\.[^.]*$/, "");
+}
+
+/** The alt text written in the pipeline, or else the photo's title. */
+function photoAlt(photo: PhotoData): string {
+  return photo.altText?.trim() || photoTitle(photo);
 }
 
 function cameraSettings(photo: PhotoData): CameraSettings {
@@ -642,7 +685,7 @@ function locationFields(photo: PhotoData) {
   };
 }
 
-/** The photo's albums, tags, genres, old spotlight place, focus point and its placement; older entries are missing them. */
+/** The photo's albums, tags, genres, old spotlight place, focus points and their placements; older entries are missing them. */
 function groupFields({
   albums = [],
   tags = [],
@@ -650,15 +693,29 @@ function groupFields({
   websiteSpotlight = null,
   spotlightFocus = null,
   spotlightPlacement = null,
+  spotlightZoneFocus = {},
+  ...related
 }: PhotoData) {
   return {
     albums,
     tags,
+    related: relatedPhotos(related),
     genres,
     spotlightPlace: websiteSpotlight,
     spotlightFocus,
     spotlightPlacement,
+    zoneFocus: zoneFocuses(spotlightZoneFocus),
   };
+}
+
+/** Each zone's focus point and placement, with a missing one as the middle. */
+function zoneFocuses(raw: Record<string, Partial<ZoneFocus>>): Record<string, ZoneFocus> {
+  return Object.fromEntries(
+    Object.entries(raw).map(([zone, { focus = null, placement = null }]) => [
+      zone,
+      { focus, placement },
+    ]),
+  );
 }
 
 /**
@@ -679,6 +736,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
     return {
       id: ids[index] as number,
       title: photoTitle(photo),
+      alt: photoAlt(photo),
       comment: photoComment(photo),
       settings: cameraSettings(photo),
       camera: photo.camera ?? "Unknown camera",
@@ -711,11 +769,17 @@ function withCityCountries(list: Photo[]): Photo[] {
 }
 
 /**
- * Photo JSON entries as the portfolio reads them, leaving out the ones with no date. The pipeline's
- * Gallery reads its photos this way so the portfolio's filters can narrow them.
+ * Photo JSON entries as the portfolio reads them, leaving out the ones with no date, each in the
+ * Smart Albums its rules match too. The pipeline's Gallery reads its photos this way so the
+ * portfolio's filters can narrow them, and its album pages pass the albums and timeline labels on
+ * GitHub, which may be newer than the portfolio's own.
  */
-export function photosFromData(data: PhotoData[]): Photo[] {
-  return withCityCountries(fromPhotoData(data));
+export function photosFromData(
+  data: PhotoData[],
+  albums?: Group[],
+  labels?: TimelineLabel[],
+): Photo[] {
+  return withSmartAlbums(withCityCountries(fromPhotoData(data)), albums, labels);
 }
 
 const localPhotos = localData ? photosFromData(localData) : [];

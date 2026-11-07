@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["hanbok", "palace", "pine-trees", "tourists", "costumes", "shadows"],
-  "genres": [],
+  "tags": ["hanbok", "palace", "pine-trees", "tourists", "traditional-clothing", "shadows"],
+  "genres": ["portrait", "street"],
   "places": [
     {
       "relation": "",
@@ -265,5 +265,6 @@
     "chroma": 14.51,
     "peakChroma": 33.37,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [128, 126, 210, 212, 127, 5]
 }

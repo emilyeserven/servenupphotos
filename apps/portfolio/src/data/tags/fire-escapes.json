@@ -1,0 +1,6 @@
+{
+  "id": "fire-escapes",
+  "name": "fire-escapes",
+  "description": "metal exterior stairways zigzagging down apartment buildings",
+  "parent": "stairs"
+}

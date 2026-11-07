@@ -44,7 +44,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": ["homepage-spotlight"],
-  "tags": ["dancheong", "gazebo", "birds", "patterns", "symmetry", "reflections"],
+  "tags": ["dancheong", "pavilion", "birds", "patterns", "symmetry", "reflections"],
   "genres": [],
   "placeName": "Mirror Pond",
   "customCity": "Seoul",
@@ -269,5 +269,6 @@
     "chroma": 17.64,
     "peakChroma": 31.74,
     "samples": 9900
-  }
+  },
+  "similarPhotos": [269, 468, 129, 262, 10, 256]
 }

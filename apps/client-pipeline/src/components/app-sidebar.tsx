@@ -1,27 +1,5 @@
-import { Link, useLocation } from "@tanstack/react-router";
-import {
-  ApertureIcon,
-  ActivityIcon,
-  BookImageIcon,
-  CalendarDaysIcon,
-  CalendarRangeIcon,
-  CameraIcon,
-  Camera,
-  DatabaseIcon,
-  ImageIcon,
-  LanguagesIcon,
-  LayoutGridIcon,
-  MapPinIcon,
-  MessageSquareTextIcon,
-  PlaneIcon,
-  RefreshCwIcon,
-  ScaleIcon,
-  ScalingIcon,
-  SettingsIcon,
-  ShapesIcon,
-  SparklesIcon,
-  TagsIcon,
-} from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Camera } from "lucide-react";
 import type * as React from "react";
 import {
   Sidebar,
@@ -37,59 +15,17 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { SidebarCollapseButton } from "@/components/sidebar-collapse-button";
+import { navGroups } from "@/components/sidebar/nav-groups";
+import { NavItem } from "@/components/sidebar/nav-item";
 import { ThemeButton } from "@/components/theme-button";
 import { UploadButtons } from "@/components/upload-buttons";
 
-/** Every page in the app, grouped the way the sidebar shows them, with the icon it has when collapsed. */
-export const navGroups = [
-  {
-    title: "Pipeline",
-    items: [
-      { title: "Status", url: "/", icon: ActivityIcon },
-      { title: "Photo", url: "/exif", icon: ImageIcon },
-      { title: "Photos in Flight", url: "/in-flight", icon: PlaneIcon },
-      { title: "Gallery", url: "/gallery", icon: LayoutGridIcon },
-      { title: "Compare", url: "/compare", icon: ScaleIcon },
-      { title: "Explore Bucket", url: "/bucket", icon: DatabaseIcon },
-      { title: "Manage Sizes", url: "/sizes", icon: ScalingIcon },
-    ],
-  },
-  {
-    title: "Organize",
-    items: [
-      { title: "Albums", url: "/albums", icon: BookImageIcon },
-      { title: "Tags", url: "/tags", icon: TagsIcon },
-      { title: "Genres", url: "/genres", icon: ShapesIcon },
-    ],
-  },
-  {
-    title: "Publish",
-    items: [
-      { title: "Instagram", url: "/instagram", icon: CalendarDaysIcon },
-      { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
-    ],
-  },
-  {
-    title: "Configuration",
-    items: [
-      { title: "Settings", url: "/settings", icon: SettingsIcon },
-      { title: "Update Data", url: "/update-data", icon: RefreshCwIcon },
-      { title: "Places", url: "/places", icon: MapPinIcon },
-      { title: "Localizations", url: "/localizations", icon: LanguagesIcon },
-      { title: "Metadata Groups", url: "/metadata-groups", icon: ApertureIcon },
-      { title: "Camera Overrides", url: "/camera-overrides", icon: CameraIcon },
-      { title: "Caption Templates", url: "/caption-templates", icon: MessageSquareTextIcon },
-      { title: "Timeline Labels", url: "/timeline-labels", icon: CalendarRangeIcon },
-    ],
-  },
-] as const;
-
 /**
- * Floating sidebar navigation, adapted from shadcn's sidebar-04 block. Its buttons at the bottom switch
+ * Floating sidebar navigation, adapted from shadcn's sidebar-04 block. Pages with pages under them, such as Tags, have a submenu
+ * (`components/sidebar/`). Its buttons at the bottom switch
  * the color theme and collapse it to a rail of icons, each naming its page in a tooltip.
  */
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
-  const pathname = useLocation({ select: (location) => location.pathname });
   const { isMobile, setOpenMobile } = useSidebar();
   // On mobile the sidebar is a sheet over the page, so close it after navigating.
   const closeOnMobile = () => {
@@ -123,19 +59,8 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
               {group.title}
             </SidebarGroupLabel>
             <SidebarMenu>
-              {group.items.map((item) => (
-                <SidebarMenuItem key={item.url}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isUnder(pathname, item.url)}
-                    tooltip={item.title}
-                  >
-                    <Link to={item.url} onClick={closeOnMobile}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+              {group.items.map((page) => (
+                <NavItem key={page.url} page={page} onNavigate={closeOnMobile} />
               ))}
             </SidebarMenu>
           </SidebarGroup>
@@ -148,9 +73,4 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail />
     </Sidebar>
   );
-}
-
-/** Whether the open page is this sidebar page or one under it, such as an Update Data subpage. */
-function isUnder(pathname: string, url: string) {
-  return pathname === url || pathname.startsWith(`${url}/`);
 }

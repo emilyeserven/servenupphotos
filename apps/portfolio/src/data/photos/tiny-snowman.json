@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["snowman", "snow", "winter", "humor", "park", "fence"],
+  "tags": ["snow", "winter", "humor", "park", "fence"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 1.93,
     "peakChroma": 3.66,
     "samples": 9728
-  }
+  },
+  "notes": "Shows a snowman; 'snowman' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [104, 105, 106, 64, 240, 46]
 }

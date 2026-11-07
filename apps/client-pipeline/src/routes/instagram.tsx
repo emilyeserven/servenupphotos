@@ -17,7 +17,7 @@ function InstagramPage() {
     <Page
       wide
       title="Instagram"
-      description="Schedule one photo a day to post to Instagram. Changes are saved to each photo's JSON on GitHub as its socialMediaPublishDate."
+      description="Schedule one photo a day to post to Instagram. Changes are saved to each photo's JSON as its socialMediaPublishDate, waiting for Commit."
     >
       <QueryResult query={settings}>
         {(data) =>

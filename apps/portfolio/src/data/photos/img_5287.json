@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": ["homepage-spotlight"],
-  "tags": ["pigeons", "birds", "bench", "park", "humor"],
+  "tags": ["pigeons", "birds", "benches", "park", "humor"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9856
-  }
+  },
+  "similarPhotos": [46, 192, 23, 186, 152, 163]
 }

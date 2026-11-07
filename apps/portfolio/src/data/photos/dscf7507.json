@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["sculpture", "beach", "ocean", "mountains", "sand", "haze", "buoys", "islands"],
+  "tags": ["sculpture", "beach", "ocean", "mountains", "sand", "haze", "islands"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,7 @@
     "chroma": 6.25,
     "peakChroma": 9.8,
     "samples": 9975
-  }
+  },
+  "notes": "Shows buoys; 'buoys' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [433, 419, 134, 417, 423, 316]
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["wadi", "desert", "sand", "clouds", "rock-formations", "tourists"],
+  "tags": ["desert", "sand", "clouds", "rock-formations", "tourists"],
   "genres": ["landscape"],
   "places": [
     {
@@ -266,5 +266,7 @@
     "peakChroma": 45.31,
     "samples": 9900
   },
-  "undecided": true
+  "undecided": true,
+  "notes": "Shows a wadi; 'wadi' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [365, 362, 367, 368, 369, 294]
 }

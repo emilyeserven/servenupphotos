@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["sunglasses", "tall-grass", "boardwalk", "path", "fence", "trees"],
+  "tags": ["tall-grass", "boardwalk", "path", "fence", "trees"],
   "genres": ["portrait"],
   "places": [],
   "spotlightZones": [],
@@ -263,5 +263,7 @@
     "chroma": 8.17,
     "peakChroma": 17.22,
     "samples": 10086
-  }
+  },
+  "notes": "Shows sunglasses; 'sunglasses' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [264, 486, 234, 499, 471, 111]
 }

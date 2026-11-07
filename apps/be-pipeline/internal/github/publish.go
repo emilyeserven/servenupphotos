@@ -44,6 +44,11 @@ type Photo struct {
 	// Colors is the photo's color summary, which the backend reads from its
 	// original in R2; nil when it couldn't, and the file has no "colors".
 	Colors *colors.Summary `json:"-"`
+	// PerceptualHash is the photo's perceptual hash (see
+	// PerceptualHashField), which the backend reads from its Small version
+	// in R2; nil when it couldn't, and the photo isn't checked for near
+	// duplicates.
+	PerceptualHash *string `json:"-"`
 }
 
 // PhotoPlace is one place a photo was taken at, from PLACES.json, and how
@@ -66,7 +71,14 @@ type photoJSON struct {
 	ID      *int    `json:"id"`
 	Title   *string `json:"title"`
 	Comment *string `json:"comment"`
-	File    string  `json:"file"`
+	// AltText is a short description of what the photo shows, for screen
+	// readers (see PhotoAltTextKey); nil until one is written.
+	AltText *string `json:"altText"`
+	// Notes is the photographer-only notes: text kept for the pipeline, such
+	// as what a photo shows that isn't a tag. The portfolio's build leaves it
+	// out.
+	Notes *string `json:"notes"`
+	File  string  `json:"file"`
 	// AddedDate is when the photo went on the portfolio (see addedField), or
 	// nil while it's a draft.
 	AddedDate *string `json:"addedDate"`
@@ -81,6 +93,10 @@ type photoJSON struct {
 	// photo relates to it. The place name is kept in PlaceName too, for the
 	// portfolio.
 	Places []PhotoPlace `json:"places"`
+	// NoGPS marks a photo that won't have a GPS position on purpose, such
+	// as a studio photo, set on the Photo page. Needs Attention leaves it
+	// out of its rows for photos without GPS and without a place.
+	NoGPS bool `json:"noGps"`
 	// SpotlightZones are the IDs of the spots on the portfolio the photo is
 	// spotlighted in, such as "homepage", the homepage's background. They're
 	// picked on the Site Spotlight page.
@@ -101,6 +117,22 @@ type photoJSON struct {
 	// nil when it isn't marked. It's set on the Photo page, and replacing the
 	// photo's image there clears it.
 	ReEdit *ReEdit `json:"reEdit"`
+	// PickedSimilar are the IDs of the photos picked by hand on the
+	// pipeline's Related Photos page to show first in the portfolio's More
+	// like this drawer, in order.
+	PickedSimilar []int `json:"pickedSimilar"`
+	// PickedSimilarNotes is the note the drawer shows beside each of
+	// PickedSimilar, by the picked photo's ID; a photo without one is left
+	// out.
+	PickedSimilarNotes map[string]string `json:"pickedSimilarNotes"`
+	// SimilarPhotos are the IDs of the photos most like this one, best first,
+	// as Find Related Photos last found them; the drawer shows them after
+	// PickedSimilar.
+	SimilarPhotos []int `json:"similarPhotos"`
+	// PerceptualHash is the photo's perceptual hash (see
+	// PerceptualHashField). Like Colors it's left out of newPhotoJSON's
+	// defaults; Find near duplicates on the Compare page adds it.
+	PerceptualHash *string `json:"perceptualHash,omitempty"`
 	// Colors is the photo's color summary (see ColorsField), last as it's
 	// long. It's left out of newPhotoJSON's defaults, so Backfill doesn't add
 	// it; Update Data's Colors does.
@@ -120,7 +152,8 @@ type ReEdit struct {
 type SocialPost struct {
 	// Platform is where it's posted, such as "instagram".
 	Platform string `json:"platform"`
-	// Status is "scheduled" or "posted".
+	// Status is "planned", while it still has to be put on the site, or
+	// "scheduled", once it is: posted, or scheduled there to post.
 	Status string `json:"status"`
 	// Date is the day it's posted or scheduled for, as YYYY-MM-DD, or nil
 	// when it isn't known.
@@ -149,9 +182,10 @@ func newPhotoJSON(file string, s exif.Sanitized) photoJSON {
 		s.ExifOriginals = map[string]json.RawMessage{}
 	}
 	return photoJSON{
-		Title: s.Title, Comment: s.Comment, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
+		Title: s.Title, Comment: s.Comment, AltText: s.AltText, Notes: s.Notes, File: file, Sanitized: s, Albums: []string{}, Tags: []string{},
 		Genres: []string{},
 		Places: []PhotoPlace{}, SpotlightZones: []string{}, SocialPosts: []SocialPost{},
+		PickedSimilar: []int{}, PickedSimilarNotes: map[string]string{}, SimilarPhotos: []int{},
 	}
 }
 
@@ -166,6 +200,12 @@ type PublishResult struct {
 	// Data is the JSON saved, so pages can show it before Commit rebuilds the
 	// combined lists with it.
 	Data json.RawMessage `json:"data"`
+	// NearDuplicates is the compare group the photo was put in with the
+	// photos it looks nearly the same as; nil when there are none.
+	NearDuplicates *NearDuplicates `json:"nearDuplicates,omitempty"`
+	// Changes are the other photo files the save changed, putting them in
+	// that compare group.
+	Changes []ScanChange `json:"changes"`
 }
 
 // PublishError is a failed publish, with a message fit to show and the HTTP
@@ -230,25 +270,38 @@ func (c *Client) Publish(ctx context.Context, gh settings.GitHub, photo Photo) (
 	data.Albums, data.Tags = appendMissing(data.Albums, photo.Albums), appendMissing(data.Tags, photo.Tags)
 	data.Genres = appendMissing(data.Genres, photo.Genres)
 	data.Places = append(data.Places, photo.Places...)
-	data.Colors = photo.Colors
+	data.Colors, data.PerceptualHash = photo.Colors, photo.PerceptualHash
 	content, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return PublishResult{}, publishErr(http.StatusInternalServerError, "Couldn't encode the photo data.")
 	}
-	return c.saveNewFile(w, path, w.stampAdded(append(content, '\n'), c.now()))
+	content, others, near, perr := w.withNearDuplicates(folder, path, w.stampAdded(append(content, '\n'), c.now()))
+	if perr != nil {
+		return PublishResult{}, perr
+	}
+	result, err := c.saveNewFile(w, path, content, others)
+	result.NearDuplicates = near
+	return result, err
 }
 
-// saveNewFile saves content as path, a new file, in the pending changes. It
-// fails when path is already on the base branch, the pull request's branch or
-// in the pending changes.
-func (c *Client) saveNewFile(w *workspace, path string, content []byte) (PublishResult, error) {
+// saveNewFile saves content as path, a new file, in the pending changes,
+// with the other changes. It fails when path is already on the base branch,
+// the pull request's branch or in the pending changes.
+func (c *Client) saveNewFile(w *workspace, path string, content []byte, others ...[]ScanChange) (PublishResult, error) {
 	if perr := w.ensureAbsent(path); perr != nil {
 		return PublishResult{}, perr
 	}
-	if perr := c.save(w, map[string][]byte{path: content}); perr != nil {
+	files := map[string][]byte{path: content}
+	result := PublishResult{Path: path, Data: json.RawMessage(content), Changes: []ScanChange{}}
+	for _, changes := range others {
+		for _, ch := range changes {
+			files[ch.Path] = ch.After
+			result.Changes = append(result.Changes, ch)
+		}
+	}
+	if perr := c.save(w, files); perr != nil {
 		return PublishResult{}, perr
 	}
-	result := PublishResult{Path: path, Data: json.RawMessage(content)}
 	if w.pr != nil {
 		result.PullRequestURL, result.PullRequestNumber = w.pr.HTMLURL, w.pr.Number
 	}

@@ -2,8 +2,15 @@ import { mutationOptions } from "@tanstack/react-query";
 import { requestJson } from "@/api/settings";
 import type { FileChange } from "@/lib/optimistic";
 
-/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates or timeline labels. */
-type SettingKind = "cameras" | "lenses" | "captions" | "timeline";
+/** A kind of setting file saved one per entry and combined by Commit: camera overrides, custom lenses, caption templates, timeline labels, viewer likes, trip lines or graph presets. */
+type SettingKind =
+  | "cameras"
+  | "lenses"
+  | "captions"
+  | "timeline"
+  | "likes"
+  | "triplines"
+  | "graphs";
 
 /** What saving or removing a setting file did; nothing is saved when it already had that content. */
 interface SettingResult<T> {
@@ -31,12 +38,19 @@ function settingMeta<T>(kind: SettingKind) {
   };
 }
 
-/** Saving a setting file, new or changed, and removing one, each as a change waiting for Commit. */
-export function settingMutations<T extends { id: string }>(kind: SettingKind) {
-  const url = (id: string) => `/api/${kind}/${encodeURIComponent(id)}`;
+/**
+ * Saving a setting file, new or changed, and removing one, each as a change waiting for Commit.
+ * `route` is the backend's path for them when it isn't the kind's, as for Trips, kept with the
+ * trip lines.
+ */
+export function settingMutations<T extends { id: string }>(
+  kind: SettingKind,
+  route: string = kind,
+) {
+  const url = (id: string) => `/api/${route}/${encodeURIComponent(id)}`;
   return {
     save: mutationOptions({
-      mutationKey: [kind, "save"],
+      mutationKey: [route, "save"],
       scope: { id: "photo-data-entries" },
       meta: settingMeta<T>(kind),
       mutationFn: (entry: T) =>
@@ -47,7 +61,7 @@ export function settingMutations<T extends { id: string }>(kind: SettingKind) {
         }),
     }),
     remove: mutationOptions({
-      mutationKey: [kind, "delete"],
+      mutationKey: [route, "delete"],
       scope: { id: "photo-data-entries" },
       meta: settingMeta<T>(kind),
       mutationFn: (id: string) => requestJson<SettingResult<T>>(url(id), { method: "DELETE" }),

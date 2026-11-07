@@ -6,12 +6,15 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/areas"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/colors"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/exif"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/github"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/offline"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/routing"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/transit"
 )
 
 // NewRouter returns the HTTP handler for all be-pipeline routes. extractor may be
@@ -70,12 +73,25 @@ type routeDeps struct {
 	// when a photo is uploaded and read when its JSON is saved or Update
 	// Data reads colors.
 	colors *colorCache
+	// hashes reads the perceptual hash of a photo's Small version from the
+	// offline copy, remembering each by URL, when a photo is saved or near
+	// duplicates are looked for.
+	hashes github.HashReader
 	// offline keeps the thumbnails and the images found in R2 for when the
 	// internet can't be reached, in the settings folder.
 	offline *offline.Copy
 	// findPhotos looks for the photos' images in R2, falling back to the
 	// offline copy when R2 can't be reached.
 	findPhotos findPhotosFunc
+	// route finds the path along streets of a trip line's walks and drives,
+	// from the OpenStreetMap routing servers (see routing.New).
+	route github.RouteFunc
+	// transit looks up the bus, subway and train lines a hop can ride, and
+	// their tracks, from OpenStreetMap through Overpass (see transit.New).
+	transit transitFinder
+	// areas looks up the outline of an area, such as a park or a city, from
+	// OpenStreetMap through Nominatim (see areas.New).
+	areas areaFinder
 }
 
 // newRouteDeps is what the routes are built from, with the offline copy in
@@ -87,12 +103,16 @@ func newRouteDeps(extractor exif.Extractor, store *settings.Store, gh *github.Cl
 	}
 	kept := offline.New(dir, storage.GetThumbnail)
 	return routeDeps{
+		hashes:     hashReader(store.R2, kept.Thumbnail, newKeyCache[string]()),
 		extractor:  extractor,
 		store:      store,
 		gh:         gh,
 		colors:     newKeyCache[colors.Summary](),
 		offline:    kept,
 		findPhotos: findPhotosFunc(kept.Find(storage.FindPhotos)),
+		route:      routing.New().Path,
+		transit:    transit.New(),
+		areas:      areas.New(),
 	}
 }
 
@@ -116,6 +136,9 @@ func routes(d routeDeps) http.Handler {
 	registerPlacesRoutes(mux, d)
 	registerMetaInfoRoutes(mux, d)
 	registerTimelineRoutes(mux, d)
+	registerTripLineRoutes(mux, d)
+	registerGraphRoutes(mux, d)
+	registerLikesRoutes(mux, d)
 	registerCameraRoutes(mux, d)
 	registerCaptionRoutes(mux, d)
 	registerDataRoutes(mux, d)

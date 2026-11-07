@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["mosque", "silhouettes", "doorway", "lamps", "carpet", "walls", "shadows"],
+  "tags": ["mosque", "silhouettes", "doorways", "lamps", "walls", "shadows"],
   "genres": ["architecture", "street"],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 7.73,
     "peakChroma": 24.18,
     "samples": 9348
-  }
+  },
+  "notes": "Shows mosque carpets; 'carpet' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [275, 212, 277, 279, 288, 34]
 }

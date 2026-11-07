@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["tengu", "buddhism", "masks", "carvings", "faces", "beams", "wood"],
-  "genres": [],
+  "tags": ["buddhism", "carvings", "faces", "beams", "wood"],
+  "genres": ["architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,7 @@
     "chroma": 17.03,
     "peakChroma": 30.95,
     "samples": 10115
-  }
+  },
+  "notes": "Shows a carved tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them.",
+  "similarPhotos": [381, 384, 349, 378, 350, 298]
 }

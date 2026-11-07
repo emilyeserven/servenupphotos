@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Grid3x3, Table } from "lucide-react";
 import { ColorOrderControls } from "@/components/color-order-controls";
-import { GridColorFilters } from "@/components/grid-color-filters";
 import { GridSortSelect } from "@/components/grid-sort-select";
 import { GridViewOptions } from "@/components/grid-view-options";
 import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-tiles";
@@ -15,8 +14,6 @@ import { TILE_SHAPES, type ViewChoice, ViewSwitcher } from "@/components/view-sw
 import { photos, type Photo } from "@/lib/photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import {
-  COLOR_FILTER_KEYS,
-  colorFilterCount,
   type ColorFilters,
   type ColorOrderSearch,
   filterByColors,
@@ -28,6 +25,7 @@ import { type GridColorSpec, type GridSort, sortGrid } from "@/lib/grid-sort";
 import { type GridSize, naturalSize, parseGridSize, squareSize, tableSize } from "@/lib/grid-size";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useRememberViewOptions } from "@/lib/view-options";
 
@@ -35,6 +33,8 @@ import { useRememberViewOptions } from "@/lib/view-options";
 type ViewMode = TileMode | "table";
 
 interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
+  /** The text search: the words each photo's title, location or camera model has to have. */
+  q?: string;
   /** Left out for the default, square tiles. */
   view?: Exclude<ViewMode, "square">;
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
@@ -64,6 +64,7 @@ function validateGridSearch(
     ...parseColorFilters(search),
     ...parseFilters(search),
     ...parseCameraFilters(search),
+    ...parseTextSearch(search),
     ...parseShownPhoto(search),
   };
 }
@@ -126,10 +127,19 @@ function colorSpec(search: GridSearch): GridColorSpec {
   return { order, secondary, secondaryOrder, measure, color };
 }
 
+/** The photos the text search, the filters and the camera filters leave, before the colors. */
+function searchedPhotos<T extends Photo>(list: T[], search: GridSearch & Record<string, unknown>) {
+  return filterWithCamera(searchPhotos(list, search.q), search);
+}
+
+/** What every filter and the text search leave of the photos, in the same order. */
+function filteredPhotos<T extends Photo>(list: T[], search: GridSearch & Record<string, unknown>) {
+  return filterByColors(searchedPhotos(list, search), search);
+}
+
 /** The grid's photos: what every filter leaves, in the URL's sort. */
 function gridPhotosFor(search: GridSearch & Record<string, unknown>, sort: GridSort): ImagePhoto[] {
-  const filtered = filterByColors(filterWithCamera(newestFirst, search), search);
-  return sortGrid(filtered, sort, colorSpec(search));
+  return sortGrid(filteredPhotos(newestFirst, search), sort, colorSpec(search));
 }
 
 function GridView() {
@@ -155,16 +165,7 @@ function GridView() {
           <ViewSwitcher choices={VIEW_MODES} mode={mode} />
         </div>
         <div className="mt-3 w-full">
-          <CameraFilterBar
-            photos={newestFirst}
-            extra={{
-              keys: COLOR_FILTER_KEYS,
-              count: colorFilterCount(search),
-              children: (
-                <GridColorFilters photos={filterWithCamera(newestFirst, search)} filters={search} />
-              ),
-            }}
-          />
+          <CameraFilterBar photos={newestFirst} searchable />
         </div>
       </header>
       <NoMatchingPhotos
@@ -181,7 +182,7 @@ function GridView() {
  * table, every photo (even those without resized versions in R2), which the table sorts itself.
  */
 function photosFor(search: GridSearch & Record<string, unknown>, mode: ViewMode): Photo[] {
-  if (mode === "table") return filterByColors(filterWithCamera(photos, search), search);
+  if (mode === "table") return filteredPhotos(photos, search);
   return gridPhotosFor(search, search.sort ?? "newest");
 }
 

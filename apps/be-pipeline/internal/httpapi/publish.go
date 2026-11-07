@@ -25,8 +25,10 @@ const publishColorsTimeout = 20 * time.Second
 
 // handlePublishPhoto saves a photo's sanitized EXIF as JSON in a pull request
 // on the GitHub repository from Settings, with its colors read from its
-// original in R2 by readColors when it's there.
-func handlePublishPhoto(store *settings.Store, gh *github.Client, readColors github.ColorReader) http.HandlerFunc {
+// original in R2 by readColors and its perceptual hash from its Small version
+// by readHash when they're there. A photo that looks nearly the same as
+// others goes in a compare group with them.
+func handlePublishPhoto(store *settings.Store, gh *github.Client, readColors github.ColorReader, readHash github.HashReader) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var photo github.Photo
 		dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxPhotoDataBytes))
@@ -43,6 +45,7 @@ func handlePublishPhoto(store *settings.Store, gh *github.Client, readColors git
 		}
 
 		photo.Colors = photoColors(r.Context(), readColors, photo.Sanitized.Images.Key)
+		photo.PerceptualHash = photoHash(r.Context(), readHash, photo.Sanitized.Images.Small)
 		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
 		defer cancel()
 		result, err := gh.Publish(ctx, cfg, photo)

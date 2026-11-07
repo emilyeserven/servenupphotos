@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["toro", "buddhism", "wabi-sabi", "temple", "cemetery", "moss", "repetition", "stones"],
-  "genres": [],
+  "genres": ["abstract", "architecture"],
   "places": [
     {
       "relation": "",
@@ -265,5 +265,6 @@
     "chroma": 14.48,
     "peakChroma": 19.16,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [310, 324, 315, 348, 331, 504]
 }

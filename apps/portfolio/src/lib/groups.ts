@@ -18,6 +18,12 @@ export interface Group {
   /** For an album, the spots on the site that show its photos, such as "homepage". */
   spotlightZones?: string[];
   /**
+   * For an album, which photos each of those spots puts first, by spot: "screen" for portrait
+   * photos on a phone held upright and landscape photos elsewhere, or "none" for the album's
+   * order. A spot left out matches the screen.
+   */
+  spotlightOrientation?: Record<string, "screen" | "none">;
+  /**
    * For an album, the IDs of its photos in the order they're shown, set on the pipeline's album
    * page; missing or empty for the default order. Photos it leaves out come after the ones it lists.
    */
@@ -37,6 +43,17 @@ export interface Group {
    * Albums page, the album filter or their own pages, though a spotlight zone still shows it.
    */
   hidden?: boolean;
+  /**
+   * For a Smart Album, the portfolio Grid's filters that pick its photos, by their URL names, such
+   * as `{ "tag": "night", "orientation": "vertical" }`, set on the pipeline's album page; missing
+   * or null for an album of chosen photos. See `lib/smart-albums.ts`.
+   */
+  rules?: Record<string, unknown> | null;
+  /**
+   * For a tag, true when it's a favorite, set on the pipeline's Tags page: the Tags page shows it
+   * at the top, under Spotlight Tags.
+   */
+  favorite?: boolean;
 }
 
 /** One row of an album's layout: Markdown text above, its photos side by side, and text below. */

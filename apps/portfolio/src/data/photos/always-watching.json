@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["pigeons", "birds", "fountain", "water", "park"],
+  "tags": ["pigeons", "birds", "fountains", "water", "park"],
   "genres": ["wildlife", "street"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0.01,
     "peakChroma": 0.01,
     "samples": 9825
-  }
+  },
+  "similarPhotos": [46, 187, 167, 164, 152, 78]
 }

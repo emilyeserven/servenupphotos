@@ -3,7 +3,7 @@ import { BulkQueue } from "@/components/bulk-upload/bulk-upload-panel";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBulkUploadStore } from "@/stores/bulk-upload";
 
-/** The upload queue on the Status page, while there's anything in it. */
+/** The upload queue on the Dashboard, while there's anything in it. */
 export function UploadQueueCard() {
   const count = useBulkUploadStore((state) => state.photos.length);
   if (count === 0) return null;

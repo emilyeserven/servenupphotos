@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["lanterns", "yeondeung", "buddhism", "temple", "prayers", "patterns"],
+  "tags": ["lanterns", "yeondeung", "buddhism", "temple", "prayers", "patterns", "festivals"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 20.19,
     "peakChroma": 65.24,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [308, 262, 455, 261, 16, 350]
 }

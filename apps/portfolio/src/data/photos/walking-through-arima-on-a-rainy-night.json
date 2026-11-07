@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["night", "pedestrians", "signage", "onsen", "rain", "umbrellas", "alley"],
+  "tags": ["night", "pedestrians", "signage", "rain", "umbrellas", "alley"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 1.92,
     "peakChroma": 3.91,
     "samples": 9912
-  }
+  },
+  "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered.",
+  "similarPhotos": [352, 353, 354, 377, 450, 449]
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["changsal", "dancheong", "windows", "doors", "patterns", "repetition", "wood"],
+  "tags": ["dancheong", "windows", "doors", "patterns", "repetition", "wood"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,7 @@
     "chroma": 17.69,
     "peakChroma": 28.69,
     "samples": 10050
-  }
+  },
+  "notes": "Shows Korean changsal latticework; 'changsal' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [260, 298, 62, 339, 397, 172]
 }

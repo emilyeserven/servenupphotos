@@ -100,7 +100,7 @@ swatches filter by one color (`?color=orange`, `?color=dark gray`; **All** clear
 and each swatch's tooltip says how many photos it shows that way. A swatch that would show none is crossed out with an
 X and can't be picked, unless it's already the filter from a link, so it can still be cleared:
 
-- **Largest color** (the default): the color is the biggest part of the photo.
+- **Largest only** (the default): the color is the biggest part of the photo.
 - **At least…** (`?match=threshold`): the color is at least a share of the whole photo, 30% unless the slider beside
   it changes it, from 5% to 95% in steps of 5 (`?min=15`, left out at 30%; `DEFAULT_PERCENT` in `lib/color-search.ts`).
 
@@ -112,11 +112,30 @@ in steps of 5 (`?vivid=20`), and the swatches' counts only count the photos it l
 
 ## On the Grid page
 
-The Grid's **Show filters** panel has a compact **Colors** box (`components/grid-color-filters.tsx`) in the camera
-sliders' row, the same height as them: small swatches (picking the chosen one again clears it), the picked color's name,
-an X clearing every color filter, and a **More** toggle opening the match and vividness controls below the swatches (open
-from the start when one of them is set). It uses the same URL keys as above, counting the photos the Grid's other filters leave. Its
-color and vividness filters count toward the filter button's number, and **Clear filters** clears them. Photos without
+The Grid's **Show filters** panel has a **Visuals** button (`components/visuals-picker.tsx`) after **Gear & settings**, as
+every other view with filters does (see [Portfolio Filters](portfolio-filters.md)),
+like **When**: closed, it shows only a dot of the picked color and how many of its filters are set. It opens a picker
+(`components/visuals-picker-parts.tsx` has its sections) with a list on the left of **Color**, **Color threshold**, **Vividness**
+and **Orientation**, each with what it's set to under its name (such as "Blue", "At least 30%", "Peak · 40+" or
+"Vertical"), and **Clear visuals** under them while any of them is set. The right side shows the chosen section, with a line on
+what it's for. Color threshold and Vividness also have an (i) button beside that line, like the Graph page's presets
+(`components/info-button.tsx`, shown by `PickerPart`'s `info`), which shows or hides what each of their choices does
+in a panel to the right of the controls (under them on a phone), widening the picker; it starts hidden and stays on as
+you move between sections:
+
+- **Color**: the small swatches; picking the chosen one again clears it.
+- **Color threshold** (how much of the picked color a photo needs): a list of **Largest only** (the picked color is the photo's biggest share) and **At least…** (it covers at least the
+  share set on the slider, even when another color is bigger). The slider shows under the list only while At least… is chosen.
+- **Vividness**: a list of **Average** (how vivid the whole photo is) and **Peak** (how vivid its most vivid tenth is), and the
+  slider under it for the least of it a photo needs.
+- **Orientation**: a list of Horizontal, Vertical and Square (see
+  [Camera filters](portfolio-filters.md#camera-filters)), each counting the photos the color filters leave.
+
+The picker opens on the first of Color, Vividness and Orientation that's set, and on Color when none is. The swatches
+count only the photos of the chosen orientation. It stays open while you pick, and keeps 16px
+from the screen's edges on a phone. On a phone the list folds up above the controls, like **Gear & settings**: a button
+naming the chosen section and what it's set to opens it, and picking a section closes it again. It uses the same URL keys as above, counting the photos the Grid's other filters leave. Its
+color, vividness and orientation filters count toward the filter button's number, and **Clear filters** clears them. Photos without
 saved colors don't match a color or a vividness above 0. With **Show info** on, each tile also shows its color bar
 (`components/color-bar.tsx`): each color as wide as its share, the biggest three named under it.
 

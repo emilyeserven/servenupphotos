@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["signage", "palm-trees", "hotel", "walls", "garden", "signpost"],
+  "tags": ["signage", "palm-trees", "hotel", "walls", "garden", "signposts"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 25.03,
     "peakChroma": 53.81,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [363, 296, 360, 370, 464, 200]
 }

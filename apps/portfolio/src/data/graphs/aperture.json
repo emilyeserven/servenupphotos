@@ -1,0 +1,17 @@
+{
+  "id": "aperture",
+  "kind": "preset",
+  "name": "Aperture",
+  "order": 1,
+  "group": "technical-details",
+  "graph": {
+    "type": "photos",
+    "x": "aperture",
+    "measure": "count",
+    "y": "",
+    "split": "",
+    "stacked": false,
+    "sort": "group",
+    "limit": 0
+  }
+}

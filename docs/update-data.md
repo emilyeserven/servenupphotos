@@ -1,14 +1,29 @@
 # Update Data
 
-`/update-data`, under Configuration in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
+`/update-data`, under **Configuration** in the sidebar, holds bulk changes to the photo JSON on GitHub. Each one
 previews what it will change, then saves every changed file as a [change waiting for Commit](pending-changes.md),
 so one **Commit** sends them to the open **Add photo data** pull request (or opens one) together with `ALLPHOTOS.json`
 rebuilt.
 
 Each bulk change has its own subpage, `/update-data/<name>` (such as `/update-data/image-names`), picked from a side
-navigation beside the card; on a phone the navigation is a dropdown above it. `/update-data` on its own opens the first,
-**Image base URL**, and the main sidebar keeps **Update Data** highlighted on every subpage. The list and each subpage's
-card are in `components/update-data/sections.tsx`, so a new bulk change is one entry there.
+navigation beside the card, each with its icon left of its name; on a phone the navigation is a dropdown above it.
+`/update-data` on its own opens the first, **Image base URL**, and the main sidebar keeps **Update Data** highlighted on
+every subpage. **Update Data** in the main sidebar also has a submenu of the same subpages, so hovering it opens any one
+directly. The list and each subpage's card are in `components/update-data/sections.tsx`, so a new bulk change is one
+entry there, in both navigations (`SectionsLayout` and `SectionNav` in `components/update-data/` draw the page and its navigation).
+
+Update Data keeps the changes to the photo files as a whole: **Image base URL**, **Image names**, **Missing fields**,
+**Colors**, **Camera overrides** and **Localizations**. The rest moved into the sidebar, next to what they change,
+working just as described below:
+
+- **Tag Data** (`/tag-data`, under **Tags**) is a page like Update Data, with its own side navigation, for the four
+  tag changes: **Bulk tagging**, **Tag library**, **Tag pruning** and **Tag descriptions** (`/tag-data/<name>`;
+  `/tag-data` on its own opens Bulk tagging). Its list is `tagDataSections` in the same file.
+- **Location Names** (`/location-names`) and **Bulk Places** (`/bulk-places`) are under **Places**, **Genre
+  Suggestions** (`/genre-suggestions`) under **Genres**, and **Album Suggestions** (`/album-suggestions`) under
+  **Albums**, each a page with just its card (`components/update-data/card-page.tsx`).
+
+An old link to one of them, such as `/update-data/tag-library`, opens it where it is now (`movedSections`).
 
 **Image base URL** moves every image URL in the photo files from one base URL to another, such as from R2's public
 development URL (`https://pub-….r2.dev`) to a custom domain. It reads every photo JSON file in the photos folder
@@ -266,6 +281,76 @@ asks `GET /api/data/progress/{task}` (`missing-fields` or `colors`) every half s
 > **Frontend analogy:** it's a codemod for your data: a find-and-replace across every file, with a dry-run diff before
 > it opens (or adds to) a pull request.
 
+## Tag library
+
+**Tag library** (`components/tag-library/`) overhauls every tag at once with one LLM prompt. Opening it reads every
+tag and every photo file as the next Commit will have them (`POST /api/data/tag-library/export`,
+`github/taglibrary_export.go`) and says how many there are, listing any photo file it couldn't read. **Copy the
+library prompt** (`lib/tag-library-prompt.ts`) copies the whole library as JSON, one line per tag (its parent,
+description and photo count) and one per photo (its file name without `.json`, title, city and country, places,
+genres, albums, tags and [photographer notes](photo-notes.md), leaving out the empty ones, and leaving out its
+`path` and `id`, which the export has for [Small Tags](small-tags.md)), with the **Already
+filtered** names. **Download the library JSON** saves that same JSON as `tag-library.json`, to attach to a chat or
+look over. The prompt asks for at least 3 photos per tag (`minTagPhotos`), subtags especially, and, whenever a tag is
+removed or one isn't made because too few photos would have it, a note on each of its photos saying which tag it was,
+what it described and why it isn't one. The [Small Tags](small-tags.md) page asks for the same answer, narrowed to the tags with too few photos, and saves
+with the same request. The answer has Tag pruning's three lists plus five more:
+
+```json
+{
+  "newTags": [
+    {
+      "tag": "paper-lanterns",
+      "description": "lanterns made of paper",
+      "parent": "lanterns",
+      "reason": "5 photos show them"
+    }
+  ],
+  "rename": [{ "tag": "lamp", "to": "lamps", "reason": "other tags are plural" }],
+  "merge": [],
+  "remove": [],
+  "reparent": [],
+  "describe": [{ "tag": "shotengai", "description": "a covered Japanese shopping street" }],
+  "photos": [
+    { "photo": "20161216_092741", "add": ["paper-lanterns"], "remove": ["details"], "reason": "…" }
+  ],
+  "notes": [
+    {
+      "photo": "20161216_092741",
+      "note": "Shows a koi pond; 'koi' isn't a tag, since only 2 photos have one."
+    }
+  ]
+}
+```
+
+Paste it and **Review the changes** (`POST /api/data/tag-library/preview`, which saves nothing,
+`github/taglibrary_answer.go`). The backend reads it as Tag pruning does, and checks every change one at a time in
+this order, each against the ones before it (`github/taglibrary.go`, whose `tagLibrarian` is Tag pruning's
+`tagPruner` with new tags in it too): new tags (an ID made from the name, as Bulk tagging makes one, which no album,
+tag or genre has, under a tag that's kept), renames (a new tag with the old one's description and parent, and the old
+one merged into it), merges, removals, new parents, descriptions, each photo's tags (a photo found by its file name,
+with each tag followed to where a merge or rename took it), then notes. A change that can't be made is listed under
+**Left out** with why.
+
+The review lists each change with a checkbox: new tags, renames (with how many photos), Tag pruning's three lists,
+descriptions (with the one there now), each photo's tags as **+added** and **−removed** with the tags it had, and the
+notes. Below them, a box lists every tag that would have fewer than 3 photos once everything listed is made (from the
+preview's `fewPhotos`, each with the file names of the photos that would have it). **Copy the follow-up prompt**
+(`tagLibraryFollowUpPrompt` in `lib/tag-library-prompt.ts`) copies those tags and their photos, for the same chat,
+asking the LLM to add each one to more photos or remove it (or not make it) with a note on each of its photos, and
+to send its whole answer again. Paste the new answer over the old one and review the changes again. **Save N changes** (`POST /api/data/tag-library`, `{ newTags: [{ id, description, parent }],
+rename: [{ tag, to }], merge, remove, reparent, describe: [{ tag, description }], photos: [{ path, add, remove }],
+notes: [{ path, note }] }`, `github/taglibrary_apply.go`) checks them again and saves, in one save of [changes
+waiting for Commit](pending-changes.md): each new tag's file (with its parent and description after the changes,
+unless it was merged away), each merged, renamed or removed tag's file deleted, each kept tag's file with its new
+`parent` or `description`, and every photo file whose `tags` changed, or that gets a note (added to its `notes`
+after a blank line). The answer and the save can be up to 4 MB. Nothing is saved when a change can't be made or a
+photo file can't be read. Unticking a new tag that a photo's change adds makes the save fail and say so.
+
+> **Frontend analogy:** it's Tag pruning grown into a full codemod for the design system: the whole token list
+> and every component's usage go to the LLM, and the diff that comes back can add, rename and delete tokens and
+> update each component, all reviewed as one PR.
+
 ## Tag pruning
 
 **Tag pruning** asks an LLM which tags to tidy up. **Copy the pruning prompt** (`lib/prune-tag-prompt.ts`) copies
@@ -280,11 +365,23 @@ short reason each, using only the listed tags:
   site already filters by. Having only one photo isn't a reason on its own.
 - **Reparent** a tag under a more general one it's a kind of, or move it to the top level (`"parent": null`).
 
+It asks for at least 3 photos per tag, subtags especially, and to remove or merge a tag with fewer. For the notes,
+the prompt also lists each photo with a tag that fewer than 3 photos have (by file name, from the Tag library's read,
+`fewPhotoTagLines`), and asks for a note on each photo of a tag it removes for that: which tag it was, what it
+described and why it isn't a tag, under `"notes": [{ "photo", "note" }]`, which go into the photos'
+[photographer notes](photo-notes.md).
+
 ```json
 {
   "merge": [{ "tag": "lamppost", "into": "lamps", "reason": "a kind of lamp" }],
   "remove": [{ "tag": "details", "reason": "too vague" }],
-  "reparent": [{ "tag": "torii", "parent": "shrine", "reason": "a shrine gate" }]
+  "reparent": [{ "tag": "torii", "parent": "shrine", "reason": "a shrine gate" }],
+  "notes": [
+    {
+      "photo": "20161216_092741",
+      "note": "Shows a torii gate; 'torii' isn't a tag, since only 1 photo has one."
+    }
+  ]
 }
 ```
 
@@ -298,14 +395,16 @@ is itself merged later follows it there.
 
 The review lists each change with a checkbox, the LLM's reason, and what it does: how many photo files a merge or
 removal touches and which tags under it move, or where a tag sits now. **Save N changes**
-(`POST /api/data/prune-tags`, `{ merge: [{ tag, into }], remove: [ids], reparent: [{ tag, parent }] }`) checks
+(`POST /api/data/prune-tags`, `{ merge: [{ tag, into }], remove: [ids], reparent: [{ tag, parent }], notes: [{ path, note }] }`) checks
 them again and saves, in one save of [changes waiting for Commit](pending-changes.md):
 
 - each merged or removed tag's file deleted;
 - every photo file listing one rewritten with only its `tags` changed: a merged tag replaced by the tag it went into
   (kept once, where the first of them was), a removed one taken off;
 - the tags under a merged tag moved under the tag it went into, the ones under a removed tag under that tag's parent,
-  and each reparented tag's `parent` set (`null` at the top level).
+  and each reparented tag's `parent` set (`null` at the top level);
+- each ticked note added to its photo's `notes`. The notes are listed in the review with a checkbox each, and a note
+  for a photo file that isn't there is left out saying so.
 
 Nothing is saved when a change can't be made or a photo file can't be read, since it might list a pruned tag.
 

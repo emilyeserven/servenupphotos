@@ -1,0 +1,370 @@
+# Trip Lines
+
+`/trip-lines`, under **Configuration** in the sidebar, marks the route of a day: a solid line walking from photo to
+photo in the order they were taken, and a dashed hop by train, subway, bus or car between two of them. Commit bakes
+every day's line, with its photos' spots filled in, into one file the portfolio's map can draw as it is.
+
+> **Frontend analogy:** the day files are the source, like `.tsx`, and `TRIPLINES.geo.json` is the build output, like
+> the bundle. Commit is the build step, so the browser never works routes out; it only loads the result.
+
+## The file
+
+Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** combines them into
+`triplines/TRIPLINES.json` the way it combines the timeline labels into `TIMELINE.json`:
+
+```json
+{
+  "id": "2026-10-01",
+  "day": "2026-10-01",
+  "auto": false,
+  "segments": [
+    {
+      "mode": "walk",
+      "start": { "latitude": 34.6655, "longitude": 135.5006, "label": "Hotel" },
+      "photos": [302, 303, 304]
+    },
+    { "mode": "subway", "photos": [304, 305] },
+    { "mode": "walk", "photos": [305, 306, 307] }
+  ]
+}
+```
+
+- **`name`** on a segment names the group of photos it's in, such as "Nara Park": each [group](#groups) is a line of
+  its own. A walk or hop from one group to the next has none.
+- **`visits`** are the [places visited](#places-visited) along the day's route, such as restaurants.
+- **`fences`** are the [areas](#areas) photos without an exact spot were taken in, such as a park.
+- **`segments`** are the stretches of the day, in the order they happened. Each one's line runs from `start` (when
+  set), through its `photos` (photo IDs) in order, to `end` (when set).
+- **`mode`** is `walk`, `train`, `subway`, `bus`, `car` (taxis too) or `transit`, a hop whose kind isn't known, as the
+  automatic line marks one. A walk is drawn through every photo; the others are a straight dashed line from the first
+  point to the last, since the real track isn't known.
+- One photo can end a segment and start the next (304 and 305 above), so the line doesn't break at a station.
+- **`start`** and **`end`** are spots with no photo, such as the hotel, with an optional `label`.
+- **`via`** lists spots with no photo the line bends through, each with the photo it comes `after` (none for right
+  after `start`), and `visit` when it stands for a [place visited](#places-visited) on the route. See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
+- **`path`** is a walk, bus or car segment's line along the streets, as `[longitude, latitude]` pairs, from **Snap to
+  streets**, or a hop's track along its `line`. A train, subway or transit hop keeps one only with a line.
+- **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
+  `{ "id": 1234, "name": "Midosuji Line", "ref": "M", "colour": "#e5171f" }`, where `id` is the OpenStreetMap route
+  relation. Only train, subway, bus and transit hops keep one.
+- **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
+  `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
+- **`auto: true`** with no segments turns on the [automatic line](#the-automatic-line).
+
+A photo in a line must be from that day (its [custom date](data-model.md#date-taken), or else its EXIF date) and have
+an exact spot: its custom GPS position, its EXIF one, or a [place](places-and-localizations.md) marked as an **Exact
+location**. Saving (`PUT /api/triplines/<day>` → `PUT /triplines/{day}`) fails otherwise, and so does a segment with
+fewer than two points. Saving and **Remove route** (`DELETE /api/triplines/<day>` → `DELETE /triplines/{day}`) keep the
+file as a [change waiting for Commit](pending-changes.md), counted by the sync button as a trip line.
+
+## The baked map: `TRIPLINES.geo.json`
+
+Every Commit also writes `triplines/TRIPLINES.geo.json`, a GeoJSON `FeatureCollection` with one `LineString` per
+segment, coordinates filled in from the photos:
+
+```json
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "LineString",
+    "coordinates": [
+      [135.5006, 34.6655],
+      [135.5012, 34.6663]
+    ]
+  },
+  "properties": {
+    "day": "2026-10-01",
+    "mode": "walk",
+    "auto": false,
+    "photos": [302],
+    "km": 0.1,
+    "start": "Hotel"
+  }
+}
+```
+
+A hop with a `board` or `alight` station also gets a walk feature from its first photo to where it got on, and from
+where it got off to its last photo.
+
+Each feature also has its segment's `name`, so the portfolio can show one group's line at a time.
+
+Each feature also has `line`, `ref` and `colour` when its hop rode a picked line, so the portfolio can draw it in the
+line's color and name it.
+
+A segment with a `path` is drawn along it, as long as the path still starts and ends within 300 m of the segment's first
+and last points; otherwise (say a photo's GPS position was fixed since) it falls back to straight lines through its
+points until it's snapped again.
+
+It's rebuilt from the day files and the photo files at each Commit, so fixing a photo's GPS position or date fixes its
+line on the next one. Only photos on the portfolio are drawn (not drafts or [unselected
+photos](compare-groups.md#unselected-photos)); a segment left with fewer than two points is skipped. Commit's counts say
+how many lines it has (`tripLineSegments`).
+
+## The automatic line
+
+The automatic line is one walk through the day's photos in the order they were taken, broken where two photos are
+more than 2 hours apart, with a `car` drive across a big jump (two photos more than 15 km apart and taken within
+6 hours of each other) and a `transit` hop where moving between two (more than 300 m apart) was faster than 6 km/h
+(`autoSegments` in `be-pipeline/internal/github/triplines_auto.go`). `GET /api/triplines/<day>/auto` answers it for the
+day as the next Commit would draw it.
+
+A file with `"auto": true` keeps it on: it's worked out again at every Commit, so a photo added to that day later joins
+the line.
+
+## The page
+
+The left side lists the days with two or more photos at two or more different exact spots, newest first, each with how
+many photos and spots it has and whether its line is **Marked**, **Out of date**, **Automatic** or **None**, with a filter by each. **Out of date** (in
+red) is a line marked by hand that doesn't go through every photo of the day with an exact spot, such as photos added
+since, or goes through photos no longer on that day; the Dashboard's **Needs attention** lists them as urgent. A new
+photo opens with a break on both sides, ready to join the line. `?day=2026-09-23` opens the page on a day.
+
+The right side edits the chosen day: its photos in the order they were taken, with what happened between each two, and
+a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo
+highlights its dot.
+
+- A day with no line offers **Preview automatic line**, drawn fainter and not saved, and **Mark by hand**, which starts
+  from one walk through every photo. From the preview, **Turn on automatic line** saves `{ "auto": true }`, and **Edit as
+  my own** copies it into the photo strip to change by hand.
+- By hand, each gap between two photos is a menu: **Keep walking**, **Break** (the line stops, and starts again at the
+  next photo), or a hop. A pin marks each photo a line starts at and a flag each one it ends at. **Starts from** and
+  **Ends at** set a spot with no photo by clicking the map, with a label such as "Hotel". **Save route** saves it.
+- An automatic day shows the line as the next Commit would draw it, with **Edit as my own** and **Turn off automatic
+  line**.
+
+## Places visited
+
+Under the map, **Places visited** lists the places stopped at along the day's route, with or without a photo: a
+restaurant, café, bar, shop, museum, sight or other. **Add a place on the map** drops one where the map is clicked;
+**Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km of the
+day's photos, named after it. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
+Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
+
+They're saved with the line as `visits`:
+
+```json
+{
+  "name": "Ichiran Dotonbori",
+  "kind": "restaurant",
+  "latitude": 34.6688,
+  "longitude": 135.5026,
+  "note": "Ramen before the river walk",
+  "link": "https://maps.app.goo.gl/…",
+  "place": "ichiran-dotonbori",
+  "after": 305
+}
+```
+
+**Where on the route** puts a place between two photos taken one after the other, such as "Between photos 4 and 5".
+`after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
+segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
+to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
+two photos, named on hover. **Not on the route** leaves it as a pin only. A place put after a break or after the last
+photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
+time, so moving or removing the place keeps the line in step; the backend checks that `after` is a photo on the line
+and that every `visit` names a place the day has.
+
+> **Frontend analogy:** the via spot is derived state, like a `useMemo` over `visits`: `visits` is the source of
+> truth, and the saved via spot is only written out so the portfolio and the router don't need to know about places.
+
+`place` is the saved place's ID when one was picked. The link has to be an `http` or `https` web address. Commit bakes
+each into `TRIPLINES.geo.json` as a GeoJSON `Point` with `"feature": "visit"`, the day, and the name, kind, note and
+link, next to the lines, and counts them (`tripLineVisits`).
+
+## Areas
+
+A line only goes through photos with an exact spot: their own GPS position, or a place marked as an exact location.
+A photo that only has a neighbourhood or a park as its place has no point to draw, so **Areas** (under **Places
+visited**, on a day that has such photos) puts it in the area it was taken in, and the map shades that area with a
+dashed edge.
+
+Type a name, or a Wikidata ID such as `Q1490`, and press **Find an area**. The box starts with the place or city of the
+first photo not in an area yet. Picking a result adds the area holding every photo not in one yet. Click a photo under
+an area to put it in or take it out; a photo is in one area at most. Rename or remove an area from its row.
+
+The backend asks OpenStreetMap's [Nominatim](https://nominatim.org/release-docs/latest/api/Search/) for places with
+an outline (`polygon_geojson`), simplified to about 50 m (`polygon_threshold`) and kept to 5,000 points. A Wikidata ID
+is looked up through the item's [OpenStreetMap relation ID (P402)](https://www.wikidata.org/wiki/Property:P402); an item
+without one can't be used, so search by name instead. Requests go at most once a second and name the pipeline in
+their `User-Agent`, as the [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/) asks.
+`NOMINATIM_URL` and `WIKIDATA_URL` point it at other servers. The outlines are OpenStreetMap data under the
+[ODbL](https://www.openstreetmap.org/copyright), like the lines ridden.
+
+They're saved with the line as `fences`:
+
+```json
+{
+  "name": "Upper East Side",
+  "photos": [24, 28, 31],
+  "osm": "R…",
+  "shape": [
+    [
+      [
+        [-73.9727, 40.7644],
+        [-73.959, 40.7584],
+        [-73.942, 40.782],
+        [-73.9727, 40.7644]
+      ]
+    ]
+  ]
+}
+```
+
+`shape` is a GeoJSON `MultiPolygon`'s coordinates: polygons, each an outer ring then any holes, each ring closed. The
+backend checks that each photo was taken that day and each ring is closed and on the globe. Commit bakes each into
+`TRIPLINES.geo.json` as a `MultiPolygon` with `"feature": "fence"`, the day, the name and the photos, and counts them
+(`tripLineFences`).
+
+> **Frontend analogy:** Nominatim is a search API like an autocomplete endpoint, but its answers carry the shape
+> too, the way an image search returns the picture and not only its name. The backend is the one calling it, so the
+> once-a-second limit holds however many tabs are open.
+
+## Trips
+
+A day's line can't cross midnight, so the ferries and flights between days go in a **Trip**: a run of days with the
+legs travelled between them, such as the ferry from Busan to Fukuoka. The **Trips** tab on the Trip Lines page lists
+them. **New Trip** starts one with a name and its first and last days, or **From a timeline label…** copies a label's
+name and days, since a label like "Japan" usually is the trip. Two Trips can't share a day.
+
+Each leg has a mode (**Ferry**, **Flight**, **Train**, **Bus** or **Car**), the day it **Leaves** and the day it
+**Arrives**. Days can be skipped, such as a flight out on the first day and home on the last. A leg leaves from the
+day's last photo with an exact spot and arrives at the day's first, or from or to **A spot with no photo**, such as an
+airport or "Home", typed as a label and `latitude, longitude`. The row shows the photo it uses and how far the leg is
+in a straight line.
+
+A Trip is saved in the trip lines folder as `trip-<slug>.json`, so it's listed, combined into `TRIPLINES.json` and
+committed with the days' lines (`PUT` and `DELETE /api/trips/<id>`, `be-pipeline/internal/github/trips.go`):
+
+```json
+{
+  "id": "trip-japan-2026-09-22",
+  "name": "Japan",
+  "start": "2026-09-22",
+  "end": "2026-10-02",
+  "legs": [
+    {
+      "mode": "flight",
+      "from": {
+        "day": "2026-09-22",
+        "spot": { "latitude": 40.6413, "longitude": -73.7781, "label": "JFK" }
+      },
+      "to": { "day": "2026-10-01" }
+    },
+    { "mode": "ferry", "from": { "day": "2026-10-01" }, "to": { "day": "2026-10-02" } }
+  ]
+}
+```
+
+Commit bakes each leg into `TRIPLINES.geo.json` as a line with its `trip`, the `day` it left and the day it `arrive`d,
+counted as `tripLegs` (`trips_map.go`). A flight is drawn as a gentle arc bowed toward the nearer pole, the way a great
+circle looks on a flat map, and crosses the date line rather than going around the world the other way. A leg whose
+day has no photo with an exact spot, and no spot of its own, isn't drawn.
+
+> **Frontend analogy:** a Trip is like a layout route wrapping several pages: each day still renders its own line, and
+> the Trip only adds what sits between them.
+
+## Groups
+
+A day often holds several outings, such as three parks. The photo strip splits the day into groups, each its own line
+with a name:
+
+- Every day shows its groups from the start, whatever its line: a day with no line or an automatic one is grouped by
+  their [place](places-and-localizations.md) over the line it shows. A group starts wherever the first place of a
+  photo changes, named after it, and a photo with no place stays in the group before it. Changing anything in the
+  strip (a gap, a name, a split) starts a hand-drawn line from what was shown, as **Mark by hand** or **Edit as my
+  own** would; nothing is saved until **Save route**.
+- Clicking a photo opens it on the Photo page in a new tab (`/exif?photo=<id>`, which finds the photo's file in the
+  pull request or else on the base branch), to change its Place or anything else. Reload the Trip Lines page after
+  saving it there to see the groups follow the new Place.
+- Each group's header has its name, how many photos it has, a button that collapses it to the header, and an eye that
+  shows that group alone on the map, the others faded.
+- The shapes button on a group's header edits the area of the group's place (the place of its first photo), the same
+  area as the place's own page: find one by name or Wikidata ID, or remove it. It's light blue when the place has one,
+  and the day's map shades the areas of every place on the day. A place with no area but with a GPS position gets a
+  dashed circle 80 m around its position instead (`circleShape` in `portfolio/src/lib/place-circle.ts`), so it reads
+  as the place's surroundings rather than one more pin. For a single building, finding it by name gives its
+  footprint as the area when OpenStreetMap maps its outline.
+- The scissors on a photo start a new group there; the join button between two groups merges them. The menu between
+  two groups picks what happened between them, like any gap.
+
+Saving writes each group's name on its segments, and a walk crossing from one group into the next is split there, so
+the stretch between the two groups is its own unnamed segment. Opening a saved line rebuilds the groups from those
+names. A line saved with no names is grouped by place again, and a group left unnamed isn't kept.
+
+> **Frontend analogy:** groups are like `<details>` sections over one list: they change how the list is shown and
+> labeled, but the photos and gaps underneath stay one array.
+
+## Shaping the line and snapping it to streets
+
+A line drawn by hand is straight from point to point. To make it follow the streets:
+
+1. **Add via points**, then click the map where the line should bend. Each click puts a via point in the stretch of the
+   line nearest it. Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding.
+2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
+   servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
+   walk, bus or car segment's points and via points, walking on foot and buses and cars by road. Train and subway hops
+   stay dashed straight lines.
+3. **Save route** saves the paths with the line. Snapping alone saves nothing.
+
+`POST /api/triplines/<day>/route` → `POST /triplines/{day}/route` takes the line, checks it as saving would, and answers
+`{ "line": …, "unrouted": n }`: the line with a `path` on each street segment that didn't have one, and how many got
+no route (they stay straight). A segment keeps its path while it's unchanged; changing its photos, mode, ends or via
+points drops it, and the page says how many stretches are straight again.
+
+The routing servers ask for no more than one request a second, so `be-pipeline/internal/routing` waits between
+requests, across every segment and every click, however fast they come. The button is off while a snap is running.
+`ROUTING_URL` points the backend at another OSRM server with the same `routed-foot` and `routed-car` profiles, such as
+one run locally.
+
+> **Frontend analogy:** via points are like the control points of an SVG path you drag around in a design tool, and
+> Snap to streets is a debounced `fetch` that swaps the rough path for a precise one. The backend's one-a-second wait is
+> a throttle on that fetch, shared by every caller.
+
+## Lines ridden
+
+Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand. A hop with no line
+yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its photos (a transit hop of
+unknown kind looks for every kind). Each is a [route relation](https://wiki.openstreetmap.org/wiki/Relation:route),
+usually one direction of one line, listed with its number, color and ends. When everything found is one line (say,
+its two directions), it's picked by itself; otherwise pick one. When the lines found are of more than one kind, as for a
+transit hop, **Bus**, **Subway** and **Train** (and **Other**, such as a ferry) show only that kind. Subway covers light
+rail, monorails and trams. **Change line** looks again.
+
+Picking a line gets its stations or stops and sets **Got on at** and **Got off at** to the ones nearest each photo.
+Either can be changed to another station, such as one a walk away from the next photo, or to **At the photo**. The
+hop is drawn along the line's track between them, solid in the line's color, with a walk from the first photo to where
+it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
+route** keeps the line, the stations and the track.
+
+- `GET /api/transit/lines?mode=subway&from=<lng,lat>&to=<lng,lat>` answers the lines found.
+- `GET /api/transit/lines/<id>/stops` answers the line's stations or stops in order, each with its `name`,
+  `latitude` and `longitude` (its `stop` members, or else its platforms).
+- `GET /api/transit/lines/<id>/track?from=…&to=…` answers `{ "path": [...] }`. It's the shortest way along the line's
+  mapped ways between the points on it nearest each photo, so it works whichever way the ways were drawn. It fails
+  with 422 when the line's track doesn't join the two spots.
+
+Both ask the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) at `overpass-api.de`, which asks for
+light use, so `be-pipeline/internal/transit` spaces its requests a second apart, through the same throttle as the
+routing servers. The public servers are often busy and answer 429, 502 or 504, so when one does, the backend waits a
+moment and tries the next of the
+[public mirrors](https://wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances)
+(`overpass.private.coffee`, then `maps.mail.ru`), going round them twice, each given 20s. A query a server turns down
+as wrong (400) isn't tried again. When none answer, the page says the servers are busy and to try again in a minute
+(503). Answers are kept in memory for a day, up to 200 of them, so looking up the same hop again, even after reloading
+the page, doesn't ask a server; restarting the backend clears them. `OVERPASS_URL`, a comma-separated list, replaces
+the servers asked.
+
+> **Frontend analogy:** it's a `fetch` wrapper with retry, like TanStack Query's `retry` and `retryDelay`, that also
+> switches to a backup CDN when the first one fails, plus a `staleTime` of a day kept on the backend.
+
+> **Frontend analogy:** a route relation is like a named SVG `<path>` in a sprite sheet, such as `#midosuji-line`.
+> Find lines searches the sheet for paths that pass near both photos, and picking one clips that path between them.
+
+A hop's line is kept with the mode it was picked for. Changing the hop to another kind of travel leaves the line out,
+and changing it back before saving brings it back. The walks to and from the stations are straight lines; Snap to streets
+doesn't route them.
+
+The page reads the day files from the [combined data store](combined-data-store.md)'s `TRIPLINES.json` with the
+changes since made over it, so a saved line shows at once.
+
+The portfolio doesn't draw the lines yet; that's the next step.

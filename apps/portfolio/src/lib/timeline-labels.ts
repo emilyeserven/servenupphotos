@@ -1,5 +1,5 @@
-import committedLabels from "@/data/timeline/TIMELINE.json";
-import { localFile } from "@/lib/localize";
+import committedLabels from "@portfolio/data/timeline/TIMELINE.json";
+import { localFile } from "@portfolio/lib/localize";
 
 /**
  * A timeline label from TIMELINE.json: a name for a run of days, such as "Japan" for a trip, which
@@ -33,4 +33,17 @@ export function labelOn(day: string, labels: TimelineLabel[] = timelineLabels): 
     .filter(({ start, end }) => start <= day && day <= end)
     .map(({ name }) => name)
     .join(" · ");
+}
+
+/** Every timeline label, newest first. */
+export function allTimelineLabels(labels: TimelineLabel[] = timelineLabels): TimelineLabel[] {
+  return labels.toSorted((a, b) => b.start.localeCompare(a.start));
+}
+
+/** The timeline label with the ID, or undefined when there's none. */
+export function findTimelineLabel(
+  id: string | undefined,
+  labels: TimelineLabel[] = timelineLabels,
+): TimelineLabel | undefined {
+  return labels.find((label) => label.id === id);
 }

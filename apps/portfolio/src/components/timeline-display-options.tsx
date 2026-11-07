@@ -2,12 +2,14 @@ import { OptionCheckbox, OptionChoices, ViewOptionsButton } from "@/components/v
 import {
   DEFAULT_TIMELINE_DISPLAY,
   THUMB_SIZES,
+  TICK_CHOICES,
   type TimelineDisplay,
 } from "@/lib/timeline-display";
 
 /**
  * The eye button in the Timeline's header that opens its display options: how big the thumbnails
- * are, and whether each photo shows its technical info, comment and place.
+ * are, whether each photo shows its technical info, comment and place, and whether the scrubber
+ * marks months or days.
  */
 export function TimelineDisplayOptions({
   display,
@@ -23,6 +25,12 @@ export function TimelineDisplayOptions({
         choices={THUMB_SIZES}
         value={display.thumbs}
         onChange={(thumbs) => onChange({ thumbs })}
+      />
+      <OptionChoices
+        label="Scrubber ticks"
+        choices={TICK_CHOICES}
+        value={display.ticks}
+        onChange={(ticks) => onChange({ ticks })}
       />
       <div className="flex flex-col gap-2">
         <OptionCheckbox

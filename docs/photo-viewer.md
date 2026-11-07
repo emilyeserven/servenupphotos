@@ -25,9 +25,15 @@ A swipe is a quick one-finger move of at least 50px that's mostly sideways, so s
 panning around a pinch-zoomed page don't change the photo.
 
 To see the whole photo with nothing over or around it, the **eye** button beside the close button (or the **H** key)
-hides the details, the count and the ‹ › buttons, and the photo grows to fill the window. Clicking or tapping the photo,
-or pressing **H** again, brings them back. The arrow keys, swiping and **Esc** keep working while they're hidden, and the viewer
-opens with them shown each time.
+hides the details, the count and the ‹ › buttons, and the photo grows to fill the window. Only the eye button and **H**
+hide them: tapping the photo while they're shown does nothing, as a double tap likes it (see
+[Portfolio Likes](portfolio-likes.md)). Clicking or tapping the photo, or pressing **H** again, brings them back. The
+arrow keys, swiping and **Esc** keep working while they're hidden, and the viewer opens with them shown each time.
+
+The **heart** button, left of the eye button, likes the photo or takes the like back.
+
+The **Related** button, left of the link button, opens the **More like this** drawer of related photos; see
+[More Like This](more-like-this.md).
 
 | Page         | The photos it moves through                                                                                              |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------ |
@@ -45,8 +51,14 @@ Each page passes `photos` and `onShow` to `PhotoLightbox` in `apps/portfolio/src
 
 The **link** button beside the eye button copies the photo's own link, `https://servenupphotos.net/photos/<id>/`. Shared
 on social media or in a chat, it shows the photo as the link's preview, with its title, and its comment (cut to 200
-characters) or else where it was taken as the description. Opening it shows the photo on the Grid. The page's own
-address, `/grid?photo=12`, still opens the photo but previews as the plain site.
+characters) or else where it was taken as the description. The link also carries the page it was copied from and that
+page's settings, such as `/photos/512/?from=%2Ftimeline&thumbs=large`, so opening it shows the photo on that page with
+those settings (`/timeline?thumbs=large&photo=512`). A link without them, like the ones in My Likes, opens the photo
+on the Grid. The page's own address, `/timeline?…&photo=512`, still opens the photo but previews as the plain site.
+
+> **Frontend analogy:** GitHub Pages picks the file by the path alone and ignores everything after the `?`, so the
+> settings ride along in the search without changing which page, and which preview, the bots get. It's
+> `photoShareUrl` and `photoReturnHref` in `apps/portfolio/src/lib/photo-share.ts`.
 
 The preview uses the photo's Medium version (1200px on its longest edge) as `og:image`, with `twitter:card` set to
 `summary_large_image` so X shows it full width ([Open Graph protocol](https://ogp.me/),

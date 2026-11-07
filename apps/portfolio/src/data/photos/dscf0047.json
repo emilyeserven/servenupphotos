@@ -48,8 +48,8 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["wanikuchi", "buddhism", "rope", "chains", "bronze", "symmetry"],
-  "genres": [],
+  "tags": ["wanikuchi", "buddhism", "rope", "chains", "symmetry"],
+  "genres": ["architecture", "abstract"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,7 @@
     "chroma": 5.99,
     "peakChroma": 12.21,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a bronze gong; 'bronze' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [384, 378, 376, 309, 310, 45]
 }

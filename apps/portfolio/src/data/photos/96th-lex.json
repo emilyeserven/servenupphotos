@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": ["homepage-spotlight"],
-  "tags": ["subway", "commuters", "platform", "train", "railway", "reflections", "lamps"],
+  "tags": ["subway", "commuters", "platform", "trains", "railway", "reflections", "lamps"],
   "genres": ["street"],
   "places": [
     {
@@ -268,5 +268,15 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 10086
-  }
+  },
+  "spotlightZoneFocus": {
+    "homepage": {
+      "focus": {
+        "x": 79,
+        "y": 49
+      },
+      "placement": null
+    }
+  },
+  "similarPhotos": [22, 6, 51, 151, 383, 74]
 }

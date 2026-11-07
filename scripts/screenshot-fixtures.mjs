@@ -7,6 +7,7 @@
 // function of the request ({ url, body }) that returns { status, body } or a body.
 // To change an answer for one screenshot, pass `--fixtures my-fixtures.mjs`, a module whose
 // default export takes these fixtures and returns the ones to use.
+import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
@@ -50,6 +51,9 @@ const baseCameras = readFolder("cameras", "CAMERAS");
 const baseLenses = readFolder("lenses", "LENSES");
 const baseCaptions = readFolder("captions", "CAPTIONS");
 const baseTimeline = readFolder("timeline", "TIMELINE");
+const baseLikes = readFolder("likes", "LIKES");
+const baseTripLines = readFolder("triplines", "TRIPLINES");
+const baseGraphs = readFolder("graphs", "GRAPHS");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -87,6 +91,15 @@ function newPhoto() {
   };
 }
 
+/** A graph preset file the pull request adds, in a group, with the rest of its graph's settings as the Graph page starts them. */
+function graphPresetFile(id, name, order, group, graph) {
+  const settings = { measure: "count", y: "", split: "", stacked: false, sort: "group", limit: 0 };
+  return {
+    path: `${FOLDER}/graphs/${id}.json`,
+    data: { id, kind: "preset", name, order, group, graph: { ...settings, ...graph } },
+  };
+}
+
 const added = {
   photo: newPhoto(),
   album: {
@@ -97,6 +110,7 @@ const added = {
       description: "Two weeks in Seoul.",
       parent: null,
       spotlightZones: ["homepage"],
+      spotlightUpdated: { homepage: "2026-10-26" },
     },
   },
   tag: {
@@ -182,6 +196,110 @@ const added = {
         manualAperture: true,
       },
     },
+  ],
+  likes: [
+    {
+      path: `${FOLDER}/likes/jane.json`,
+      data: {
+        id: "jane",
+        name: "Jane",
+        photos: [271, 277, 281, 284, 286, 288],
+        importedAt: "2026-11-01T18:20:00Z",
+      },
+    },
+    {
+      path: `${FOLDER}/likes/sam-k.json`,
+      data: {
+        id: "sam-k",
+        name: "Sam K.",
+        photos: [274, 281, 284, 289],
+        importedAt: "2026-11-02T09:05:00Z",
+      },
+    },
+    {
+      path: `${FOLDER}/likes/mom.json`,
+      data: { id: "mom", name: "Mom", photos: [281, 286, 287], importedAt: "2026-10-30T22:41:00Z" },
+    },
+  ],
+  triplines: [
+    {
+      path: `${FOLDER}/triplines/2026-10-01.json`,
+      data: {
+        id: "2026-10-01",
+        day: "2026-10-01",
+        auto: false,
+        segments: [
+          {
+            mode: "walk",
+            start: { latitude: 34.6655, longitude: 135.5006, label: "Hotel" },
+            photos: [302, 303, 304],
+          },
+          { mode: "subway", photos: [304, 305] },
+          {
+            mode: "walk",
+            photos: [305, 306, 307],
+            via: [{ after: 305, latitude: 34.6688, longitude: 135.5026, visit: 0 }],
+          },
+        ],
+        visits: [
+          {
+            name: "Ichiran Dotonbori",
+            kind: "restaurant",
+            latitude: 34.6688,
+            longitude: 135.5026,
+            note: "Ramen before the river walk",
+            link: "https://maps.app.goo.gl/example",
+            after: 305,
+          },
+          { name: "Kuromon Market", kind: "shop", latitude: 34.6655, longitude: 135.5065 },
+        ],
+      },
+    },
+    {
+      path: `${FOLDER}/triplines/2026-10-26.json`,
+      data: { id: "2026-10-26", day: "2026-10-26", auto: true, segments: [] },
+    },
+    {
+      path: `${FOLDER}/triplines/trip-japan-2026-09-22.json`,
+      data: {
+        id: "trip-japan-2026-09-22",
+        name: "Japan",
+        start: "2026-09-22",
+        end: "2026-10-02",
+        legs: [
+          {
+            mode: "flight",
+            from: {
+              day: "2026-09-22",
+              spot: { latitude: 40.6413, longitude: -73.7781, label: "JFK" },
+            },
+            to: { day: "2026-10-01" },
+          },
+          {
+            mode: "ferry",
+            from: { day: "2026-10-01" },
+            to: {
+              day: "2026-10-02",
+              spot: { latitude: 35.1028, longitude: 129.0403, label: "Busan Port" },
+            },
+          },
+        ],
+      },
+    },
+  ],
+  graphs: [
+    {
+      path: `${FOLDER}/graphs/when.json`,
+      data: { id: "when", kind: "group", name: "When", order: 5 },
+    },
+    graphPresetFile("seasons-by-year", "Seasons by year", 1, "when", {
+      type: "bar",
+      x: "year",
+      split: "season",
+      stacked: true,
+      sort: "reverse",
+    }),
+    graphPresetFile("time-of-day", "Time of day", 2, "when", { type: "pie", x: "daypart" }),
   ],
   timeline: [
     {
@@ -270,6 +388,9 @@ const headCameras = withAdded(baseCameras, added.cameras);
 const headLenses = withAdded(baseLenses, added.lenses);
 const headCaptions = withAdded(baseCaptions, added.captions);
 const headTimeline = withAdded(baseTimeline, added.timeline);
+const headLikes = withAdded(baseLikes, added.likes);
+const headTripLines = withAdded(baseTripLines, added.triplines);
+const headGraphs = withAdded(baseGraphs, added.graphs);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -295,6 +416,9 @@ function combinedFiles(
     lenses,
     captions,
     timeline,
+    likes,
+    triplines,
+    graphs,
   ],
   branch,
 ) {
@@ -310,6 +434,9 @@ function combinedFiles(
     lenses: combinedFile("lenses", "LENSES.json", lenses, branch),
     captions: combinedFile("captions", "CAPTIONS.json", captions, branch),
     timeline: combinedFile("timeline", "TIMELINE.json", timeline, branch),
+    likes: combinedFile("likes", "LIKES.json", likes, branch),
+    triplines: combinedFile("triplines", "TRIPLINES.json", triplines, branch),
+    graphs: combinedFile("graphs", "GRAPHS.json", graphs, branch),
   };
 }
 
@@ -356,7 +483,15 @@ function group({ path: filePath, data }, inFlight) {
     id: data.id,
     name: data.name,
     description: data.description,
-    ...setFields(data, ["parent", "order", "spotlightZones", "photoOrder", "covers", "layout"]),
+    ...setFields(data, [
+      "parent",
+      "order",
+      "spotlightZones",
+      "photoOrder",
+      "covers",
+      "layout",
+      "favorite",
+    ]),
     path: filePath,
     fileUrl: fileUrl(filePath, inFlight ? PULL_REQUEST.branch : BASE_BRANCH),
     inFlight,
@@ -450,6 +585,70 @@ function colorFiles() {
   }));
 }
 
+/** A photo's GPS spot as [longitude, latitude], read from its "51 deg 24' 46.80\" N, …" position. */
+function photoSpot(id) {
+  const gps = headPhotos.find((p) => p.data.id === id)?.data.gpsPosition;
+  const parts = gps?.match(/[\d.]+ deg [\d.]+' [\d.]+" [NSEW]/g) ?? [];
+  const [lat, lng] = parts.map((part) => {
+    const [d, m, sec] = part.match(/[\d.]+/g).map(Number);
+    return (d + m / 60 + sec / 3600) * (/[SW]/.test(part) ? -1 : 1);
+  });
+  return lat === undefined ? undefined : [lng, lat];
+}
+
+/** The segment's via spots after a photo (or after its start, for undefined), as [longitude, latitude]. */
+const viaSpots = (segment, after) =>
+  (segment.via ?? []).filter((v) => v.after === after).map((v) => [v.longitude, v.latitude]);
+
+/** A pretend street path through a segment's spots: each stretch turns one corner, like a city block. */
+function blockPath(segment) {
+  const spots = [
+    segment.start && [segment.start.longitude, segment.start.latitude],
+    ...viaSpots(segment, undefined),
+    ...segment.photos.flatMap((id) => [photoSpot(id), ...viaSpots(segment, id)]),
+    segment.end && [segment.end.longitude, segment.end.latitude],
+  ].filter(Boolean);
+  return spots.flatMap((spot, i) => (i === 0 ? [spot] : [[spot[0], spots[i - 1][1]], spot]));
+}
+
+/** The Snap to streets answer: every walk, bus or car segment gets a block-shaped path. */
+const snapped = ({ body }) => ({
+  line: {
+    ...body,
+    segments: body.segments.map((s) =>
+      ["walk", "bus", "car"].includes(s.mode) ? { ...s, path: blockPath(s) } : s,
+    ),
+  },
+  unrouted: 0,
+});
+
+/** A pretend track between ?from= and ?to=, bending out to one side like a line around a block. */
+function curvedTrack({ url }) {
+  const [from, to] = ["from", "to"].map((k) => url.searchParams.get(k).split(",").map(Number));
+  const bend = [(from[0] + to[0]) / 2 + (to[1] - from[1]) * 0.3, (from[1] + to[1]) / 2];
+  const steps = [0, 0.25, 0.5, 0.75, 1];
+  const along = steps.map((t) => [
+    (1 - t) ** 2 * from[0] + 2 * (1 - t) * t * bend[0] + t ** 2 * to[0],
+    (1 - t) ** 2 * from[1] + 2 * (1 - t) * t * bend[1] + t ** 2 * to[1],
+  ]);
+  return { path: along };
+}
+
+/** Pretend stops along the line between photos 304 and 305, the last one a walk short of 305. */
+function lineStops() {
+  const [a, b] = [photoSpot(304), photoSpot(305)];
+  const at = (t, dx = 0) => ({
+    latitude: a[1] + (b[1] - a[1]) * t,
+    longitude: a[0] + (b[0] - a[0]) * t + dx,
+  });
+  return [
+    { name: "Namba", ...at(0.02, 0.0004) },
+    { name: "Shinsaibashi", ...at(0.35, 0.002) },
+    { name: "Yodoyabashi", ...at(0.65, 0.002) },
+    { name: "Umeda", ...at(0.85, 0.0006) },
+  ];
+}
+
 const pendingSave = (branch = PULL_REQUEST.branch) => ({
   branch,
   pullRequestUrl: PULL_REQUEST.url,
@@ -497,6 +696,22 @@ function socialPhoto({ path: filePath, data }, i) {
     socialMediaPublishDate,
     data: { ...data, socialMediaPublishDate },
   };
+}
+
+/** A photo file as /api/attention answers it: the Instagram calendar's, with its data cut down. */
+function attentionPhoto(file, i) {
+  const photo = socialPhoto(file, i);
+  const {
+    images: _images,
+    exifOriginals: _exifOriginals,
+    notes: _notes,
+    comment: _comment,
+    altText: _altText,
+    colors,
+    ...rest
+  } = photo.data;
+  const peakChroma = colors?.peakChroma;
+  return { ...photo, data: peakChroma === undefined ? rest : { ...rest, colors: { peakChroma } } };
 }
 
 /** What saving a new photo JSON file answers: it waits for Commit, nothing on GitHub yet. */
@@ -644,7 +859,130 @@ function pruneTagsPreview() {
       { tag: "torii", from: "", parent: "shrine", reason: "a torii is a shrine gate" },
       { tag: "chochin", from: "", parent: "lanterns", reason: "a Japanese paper lantern" },
     ],
+    notes: [
+      {
+        photo: headPhotos[0].path
+          .split("/")
+          .pop()
+          .replace(/\.json$/, ""),
+        path: headPhotos[0].path,
+        note: "Shows the details of a carved door; 'details' isn't a tag, since it's too vague.",
+      },
+    ],
     skipped: [{ change: "merge cats into animals", reason: '"cats" isn\'t a tag' }],
+  };
+}
+
+/** The first of values that isn't missing, or "". */
+const firstOr = (...values) => values.find((v) => typeof v === "string") ?? "";
+
+/** list, or [] when it's missing. */
+const listOr = (list) => list ?? [];
+
+/** How many head photos list each tag. */
+function headTagCounts() {
+  const counts = new Map();
+  for (const tag of headPhotos.flatMap(({ data }) => listOr(data.tags))) {
+    counts.set(tag, (counts.get(tag) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/** One head photo as the Tag library exports it. */
+const libraryPhoto = ({ path: filePath, data }) => ({
+  photo: filePath
+    .split("/")
+    .pop()
+    .replace(/\.json$/, ""),
+  path: filePath,
+  id: typeof data.id === "number" ? data.id : null,
+  title: firstOr(data.title),
+  city: firstOr(data.customCity, data.city),
+  country: firstOr(data.customCountry, data.country),
+  places: listOr(data.places).map((place) => place.id),
+  genres: listOr(data.genres),
+  albums: listOr(data.albums),
+  tags: listOr(data.tags),
+  notes: firstOr(data.notes),
+});
+
+/** Every tag and photo with its tags, as the Tag library reads them. */
+function tagLibraryExport() {
+  const counts = headTagCounts();
+  const tags = headTags.map(({ data }) => ({
+    tag: data.id,
+    description: firstOr(data.description),
+    parent: firstOr(data.parent),
+    photos: counts.get(data.id) ?? 0,
+  }));
+  return {
+    tags: tags.toSorted((x, y) => x.tag.localeCompare(y.tag)),
+    photos: headPhotos.map(libraryPhoto),
+    unreadable: [],
+    minPhotos: 3,
+  };
+}
+
+/** What a Tag library answer would do: one of each kind of change. */
+function tagLibraryPreview() {
+  const prune = pruneTagsPreview();
+  const stem = (i) =>
+    headPhotos[i].path
+      .split("/")
+      .pop()
+      .replace(/\.json$/, "");
+  const edit = (i, add, remove, reason) => ({
+    photo: stem(i),
+    path: headPhotos[i].path,
+    add,
+    remove,
+    reason,
+    tags: headPhotos[i].data.tags ?? [],
+  });
+  return {
+    ...prune,
+    photos: headPhotos.length,
+    newTags: [
+      {
+        tag: "paper-lanterns",
+        description: "lanterns made of paper, often hung outside shops",
+        parent: "lanterns",
+        reason: "4 photos show them",
+      },
+    ],
+    rename: [
+      {
+        tag: "lamppost",
+        to: "street-lights",
+        reason: "matches how the others are named",
+        photos: 4,
+      },
+    ],
+    merge: [],
+    describe: [{ tag: "shotengai", from: "", description: "a covered Japanese shopping street" }],
+    edits: [
+      edit(1, ["paper-lanterns"], ["details"], "paper lanterns hang over the street"),
+      edit(2, ["street-lights"], [], "a row of lampposts lines the canal"),
+    ],
+    notes: [
+      ...prune.notes,
+      {
+        photo: stem(3),
+        path: headPhotos[3].path,
+        note: "Has a koi pond; 'koi' wasn't made a tag, since only 2 photos have one.",
+      },
+    ],
+    fewPhotos: [
+      { tag: "chochin", photos: 2, parent: "lanterns", photoNames: [stem(1), stem(3)] },
+      { tag: "torii", photos: 1, parent: "shrine", photoNames: [stem(2)] },
+    ],
+    minPhotos: 3,
+    skipped: [
+      {
+        change: "make temple",
+        reason: 'The tag "temple" already has the ID "temple". Pick another ID',
+      },
+    ],
   };
 }
 
@@ -676,6 +1014,35 @@ function genreSuggestionsPreview() {
         description: "Photos taken after dark, lit by streetlights, signs or the moon.",
       },
     ],
+    unknown: [],
+  };
+}
+
+/** The photos the Alt Text page picks: Bulk Tagging's pick, as photos without alt text. */
+function altTextPick(count = 20) {
+  const { untagged: _untagged, ...pick } = bulkTagPick(Math.min(count, 4));
+  return {
+    ...pick,
+    withoutAltText: 31,
+    photos: pick.photos.map((photo) => ({ ...photo, related: [] })),
+  };
+}
+
+/** What reading a pasted Alt Text answer finds for the picked photos. */
+function altTextPreview() {
+  const texts = [
+    "A paper lantern glowing over a narrow alley at night, its light on wet stones.",
+    "Two cats asleep on a sunlit stone wall, one curled around the other.",
+    "",
+    "Crowds crossing a wide intersection under tall neon signs on a rainy evening, umbrellas open everywhere you look, the lights reflected in the puddles.",
+  ];
+  return {
+    photos: altTextPick().photos.map(({ path, name }, i) => ({
+      path,
+      name,
+      altText: texts[i] ?? "",
+      current: i === 1 ? "Cats on a wall." : "",
+    })),
     unknown: [],
   };
 }
@@ -728,6 +1095,43 @@ function albumSuggestionsPreview() {
   };
 }
 
+/** A page of the Changelog from this checkout's own last 40 commits, as GitHub would list them. */
+function changelogFixture() {
+  let log = "";
+  try {
+    log = execFileSync("git", ["log", "-40", "--no-merges", "--format=%H%x1f%an%x1f%cI%x1f%s"], {
+      cwd: root,
+      encoding: "utf8",
+    });
+  } catch {
+    // No git history, such as in an exported copy: show an empty Changelog.
+  }
+  const entries = log.split("\n").filter(Boolean).map(changelogEntry);
+  return { repo: REPO, branch: BASE_BRANCH, entries, nextPage: entries.length === 40 ? 2 : 0 };
+}
+
+/** One `git log` line (sha, author, date and subject, split by \x1f) as a Changelog entry. */
+function changelogEntry(line) {
+  const [sha, author, date, subject] = line.split("\x1f");
+  const match = /\s*\(#(\d+)\)$/.exec(subject);
+  const title = match ? subject.slice(0, match.index) : subject;
+  const pr = match
+    ? {
+        pullRequest: Number(match[1]),
+        pullRequestUrl: `https://github.com/${REPO}/pull/${match[1]}`,
+      }
+    : {};
+  return {
+    sha,
+    title,
+    ...pr,
+    commitUrl: `https://github.com/${REPO}/commit/${sha}`,
+    author,
+    date,
+    photoData: title === "Add photo data",
+  };
+}
+
 const secret = { set: true, last4: "a1b2" };
 
 /** The default answers: everything set up, and one photo data pull request open. */
@@ -735,6 +1139,7 @@ export function defaultFixtures() {
   return {
     "GET /api/health": { status: "ok", bff: "ok", backend: "ok" },
     "GET /api/hello": { message: "Hello from be-pipeline (Go)" },
+    "GET /api/changelog": changelogFixture(),
     "GET /api/settings": {
       r2: {
         accountId: "0123456789abcdef",
@@ -769,6 +1174,9 @@ export function defaultFixtures() {
           baseLenses,
           baseCaptions,
           baseTimeline,
+          baseLikes,
+          baseTripLines,
+          baseGraphs,
         ]),
         branch: BASE_BRANCH,
       },
@@ -786,6 +1194,9 @@ export function defaultFixtures() {
             headLenses,
             headCaptions,
             headTimeline,
+            headLikes,
+            headTripLines,
+            headGraphs,
           ],
           PULL_REQUEST.branch,
         ),
@@ -810,6 +1221,9 @@ export function defaultFixtures() {
       lenses: { folder: `${FOLDER}/lenses`, files: added.lenses.map(groupFile) },
       captions: { folder: `${FOLDER}/captions`, files: added.captions.map(groupFile) },
       timeline: { folder: `${FOLDER}/timeline`, files: added.timeline.map(groupFile) },
+      likes: { folder: `${FOLDER}/likes`, files: added.likes.map(groupFile) },
+      triplines: { folder: `${FOLDER}/triplines`, files: added.triplines.map(groupFile) },
+      graphs: { folder: `${FOLDER}/graphs`, files: added.graphs.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -893,12 +1307,26 @@ export function defaultFixtures() {
       reparented: 2,
       photos: 10,
     }),
+    "POST /api/data/tag-library/export": () => tagLibraryExport(),
+    "POST /api/data/tag-library/preview": () => tagLibraryPreview(),
+    "POST /api/data/tag-library": () => ({
+      ...pendingSave(),
+      made: 2,
+      deleted: 2,
+      edited: 3,
+      photos: 12,
+    }),
     "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count),
     "POST /api/data/genre-suggestions/preview": () => genreSuggestionsPreview(),
     "POST /api/data/genre-suggestions": () => ({ ...pendingSave(), newGenres: 1, photos: 6 }),
+    "POST /api/data/alt-text/pick": ({ body }) => altTextPick(body?.count),
+    "POST /api/data/alt-text/preview": () => altTextPreview(),
+    "POST /api/data/alt-text": () => ({ ...pendingSave(), photos: 3 }),
     "POST /api/data/album-suggestions/pick": ({ body }) => albumPick(body?.count),
     "POST /api/data/album-suggestions/preview": () => albumSuggestionsPreview(),
     "POST /api/data/album-suggestions": () => ({ ...pendingSave(), newAlbums: 1, photos: 5 }),
+    "POST /api/data/related-photos": () => ({ ...pendingSave(), photoFiles: 368, photos: 361 }),
+    "PUT /api/data/related-photos/picked": () => pendingSave(),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,
@@ -911,6 +1339,18 @@ export function defaultFixtures() {
       files: colorFiles(),
     }),
     "POST /api/data/colors": () => ({ ...pendingSave(), files: 3, failed: 1 }),
+    "POST /api/data/near-duplicates": () => ({
+      ...pendingSave(),
+      photos: 120,
+      hashed: 118,
+      hashFailed: 2,
+      groups: [
+        {
+          group: "Near duplicates of Lantern street",
+          paths: [`${FOLDER}/photos/lantern-street.json`, `${FOLDER}/photos/DSCF4801.json`],
+        },
+      ],
+    }),
     // No read running: the page shows its own label until a read reports how far it has got.
     "GET /api/data/progress/colors": { running: false, step: "", done: 0, total: 0 },
     "GET /api/data/progress/missing-fields": { running: false, step: "", done: 0, total: 0 },
@@ -940,6 +1380,110 @@ export function defaultFixtures() {
       path: `${FOLDER}/lenses/7artisans-12mm-f2-8.json`,
       data: body,
       before: added.lenses[0].data,
+      changed: true,
+    }),
+    "PUT /api/likes/jane": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/likes/jane.json`,
+      data: { ...body, importedAt: "2026-11-03T03:32:11Z" },
+      before: added.likes[0].data,
+      changed: true,
+    }),
+    "GET /api/triplines/2026-10-26/auto": {
+      id: "2026-10-26",
+      day: "2026-10-26",
+      auto: false,
+      segments: [
+        { mode: "walk", photos: [409, 410, 412, 414, 416] },
+        { mode: "walk", photos: [444, 445] },
+      ],
+    },
+    "GET /api/triplines/2026-11-01/auto": {
+      id: "2026-11-01",
+      day: "2026-11-01",
+      auto: false,
+      segments: [
+        { mode: "walk", photos: [481, 482, 485, 486, 488, 469, 470, 475] },
+        { mode: "transit", photos: [475, 495] },
+        { mode: "walk", photos: [495, 496, 497, 471] },
+      ],
+    },
+    "POST /api/triplines/2026-10-01/route": snapped,
+    // Places with no area, which the Trip Lines map circles instead.
+    "GET /api/places/waveny-park/area": null,
+    "GET /api/places/bristow-bird-sanctuary/area": null,
+    "GET /api/places/new-canaan-nature-center/area": null,
+    "GET /api/places/namba/area": null,
+    "GET /api/places/dotonbori/area": null,
+    "GET /api/places/engyoji-temple/area": null,
+    "GET /api/places/sannomiya/area": null,
+    "GET /api/places/washington-square-park/area": {
+      osm: "R1",
+      shape: [
+        [
+          [
+            [-73.9995, 40.7303],
+            [-73.9964, 40.7295],
+            [-73.9953, 40.7315],
+            [-73.9985, 40.7322],
+            [-73.9995, 40.7303],
+          ],
+        ],
+      ],
+    },
+    "GET /api/areas": [
+      {
+        name: "Upper East Side",
+        place: "Upper East Side, Manhattan, New York County, New York, United States",
+        kind: "neighbourhood",
+        osm: "R1",
+        shape: [
+          [
+            [
+              [-73.9727, 40.7644],
+              [-73.959, 40.7584],
+              [-73.942, 40.782],
+              [-73.955, 40.788],
+              [-73.9727, 40.7644],
+            ],
+          ],
+        ],
+      },
+    ],
+    "GET /api/transit/lines": [
+      {
+        id: 1,
+        name: "Midosuji Line",
+        ref: "M",
+        colour: "#e5171f",
+        kind: "subway",
+        from: "Nakamozu",
+        to: "Esaka",
+      },
+      {
+        id: 2,
+        name: "Midosuji Line",
+        ref: "M",
+        colour: "#e5171f",
+        kind: "subway",
+        from: "Esaka",
+        to: "Nakamozu",
+      },
+    ],
+    "GET /api/transit/lines/1/stops": lineStops,
+    "GET /api/transit/lines/1/track": curvedTrack,
+    "PUT /api/triplines/2026-10-01": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/triplines/2026-10-01.json`,
+      data: body,
+      before: added.triplines[0].data,
+      changed: true,
+    }),
+    "PUT /api/graphs/time-of-day": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/graphs/time-of-day.json`,
+      data: body,
+      before: added.graphs[2].data,
       changed: true,
     }),
     "PUT /api/timeline/japan-2026-09-22": ({ body }) => ({
@@ -1004,6 +1548,15 @@ export function defaultFixtures() {
       photos: headPhotos.map(socialPhoto),
       unreadable: [],
     },
+    // The same files cut down, as the Dashboard's Needs attention reads them.
+    "GET /api/attention": {
+      repo: REPO,
+      folder: `${FOLDER}/photos`,
+      branch: PULL_REQUEST.branch,
+      pullRequest: { number: PULL_REQUEST.number, url: PULL_REQUEST.url },
+      photos: headPhotos.map(attentionPhoto),
+      unreadable: [],
+    },
     // Saves answer as the backend does: their changes wait for Commit, for the open pull request.
     "POST /api/photos/github": ({ body }) => savedPhoto(`${FOLDER}/photos/${body?.name}.json`),
     "POST /api/organize/tags": ({ body = {} }) =>
@@ -1032,11 +1585,20 @@ export function defaultFixtures() {
       ...pendingSave(),
       photos: body?.photoIds?.length ?? 0,
     }),
+    "DELETE /api/organize/albums/japan/photos": ({ body }) => ({
+      ...pendingSave(),
+      photos: body?.photoIds?.length ?? 0,
+    }),
     "PUT /api/organize/albums/homepage-spotlight/visibility": { ...pendingSave(), files: 1 },
+    "PUT /api/organize/albums/japan/rules": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/names": { ...pendingSave(), files: 1 },
     "PUT /api/organize/tags/descriptions": ({ body }) => ({
       ...pendingSave(),
       files: Object.keys(body?.descriptions ?? {}).length,
+    }),
+    "PUT /api/organize/tags/favorites": ({ body }) => ({
+      ...pendingSave(),
+      files: Object.keys(body?.favorites ?? {}).length,
     }),
     "PUT /api/organize/spotlight/homepage": { ...pendingSave(), files: 2 },
     "POST /api/photos/groups": ({ body }) => groupsAdded(body),

@@ -17,6 +17,7 @@ import {
   UNSELECTED,
   type Unselected,
   type UnselectedImages,
+  missingImages,
   photoId,
   today,
 } from "@/lib/unselected";
@@ -128,5 +129,14 @@ export function useCompareEdits() {
     /** Sets the photo's `unselected`, or takes it out of Unselected Photos with null. */
     setUnselected: (photo: ComparePhoto, unselected: Unselected | null) =>
       setField(UNSELECTED, [change(photo.file, unselected)]),
+    /**
+     * Moves photos whose images are already gone from R2 to Unselected Photos, without a group or
+     * winners, such as ones that lost in a compare group before it was finished.
+     */
+    setAsideMissing: (files: InFlightFileRead[]) =>
+      setField(
+        UNSELECTED,
+        files.map((file) => change(file, missingImages())),
+      ),
   };
 }

@@ -48,15 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "ancient-egypt",
-    "houses",
-    "mountains",
-    "power-lines",
-    "necropolis",
-    "village",
-    "desert"
-  ],
+  "tags": ["houses", "mountains", "power-lines", "necropolis", "village", "desert"],
   "genres": [],
   "places": [
     {
@@ -273,5 +265,6 @@
     "chroma": 15.28,
     "peakChroma": 24.13,
     "samples": 9417
-  }
+  },
+  "similarPhotos": [341, 342, 362, 337, 240, 366]
 }

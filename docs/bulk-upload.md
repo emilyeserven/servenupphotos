@@ -39,7 +39,7 @@ again. **Clear finished** takes the added and skipped photos off the list, and a
 Bulk Upload's queue is the app's one upload queue. The Photo page's **Upload & save** button (next to Upload to R2 and
 Save, until the photo is uploaded there) hands the analyzed photo to it with its title and other details, its square,
 albums and tags, and the queue uploads it and saves its JSON while you go on to other pages. Changes made on the Photo
-page after that aren't saved with it; change it afterward with Edit. While the queue has anything in it, the Status page
+page after that aren't saved with it; change it afterward with Edit. While the queue has anything in it, the Dashboard
 shows it, with the same rows and buttons.
 
 ## Choosing a photo on the Photo page
@@ -54,4 +54,4 @@ tab for a new photo from this computer.
 
 Dropping photos in the Bulk Upload modal closes it, so you can carry on while they upload. While any photo in the queue
 isn't done yet, the top-right sync button starts with a ring of how many are, such as "2/6", and its panel lists the
-queue above the batch's counts, with the same rows and buttons and a link to the Status page.
+queue above the batch's counts, with the same rows and buttons and a link to the Dashboard.

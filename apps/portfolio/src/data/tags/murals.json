@@ -1,0 +1,6 @@
+{
+  "id": "murals",
+  "name": "murals",
+  "description": "large paintings on walls and buildings",
+  "parent": "street-art"
+}

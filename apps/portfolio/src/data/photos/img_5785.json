@@ -48,16 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": [
-    "abandoned",
-    "houses",
-    "urban-decay",
-    "shingles",
-    "tall-grass",
-    "trees",
-    "fence",
-    "countryside"
-  ],
+  "tags": ["houses", "urban-decay", "shingles", "tall-grass", "trees", "fence", "countryside"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -269,5 +260,7 @@
     "chroma": 23.26,
     "peakChroma": 41.13,
     "samples": 9216
-  }
+  },
+  "notes": "Shows an abandoned house; 'abandoned' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [197, 264, 231, 431, 281, 194]
 }

@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["lighthouse", "harbor", "sailboats", "boats", "islands", "rock-formations"],
+  "tags": ["harbor", "sailboats", "boats", "islands", "rock-formations"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,7 @@
     "chroma": 15.86,
     "peakChroma": 20.68,
     "samples": 10050
-  }
+  },
+  "notes": "Shows a lighthouse; 'lighthouse' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [229, 228, 202, 204, 399, 375]
 }

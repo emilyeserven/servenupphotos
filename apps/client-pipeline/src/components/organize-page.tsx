@@ -26,9 +26,11 @@ import {
 } from "@/components/all-photos-rebuild";
 import { AlbumMoveButtons } from "@/components/album-move-buttons";
 import { HiddenMark } from "@/components/album-visibility-card";
+import { SmartMark } from "@/components/smart-album/smart-album-card";
 import { WaitingForCommit } from "@/components/waiting-for-commit";
 import { GroupCombobox } from "@/components/group-picker";
 import { TagNamesCard } from "@/components/tag-names-card";
+import { FavoriteTagButton, FavoriteTagsCard } from "@/components/tag-favorites";
 import { validateGroupName } from "@/lib/group-name";
 import { Page } from "@/components/page";
 import { QueryResult } from "@/components/query-result";
@@ -72,7 +74,7 @@ const PAGES: Record<GroupKind, { title: string; description: string }> = {
   },
 };
 
-/** The Albums, Tags or Photographic Genres page: a form to add one, then every one on GitHub. */
+/** The Albums, Tags or Photographic Genres page: a form to add one, then every one. */
 export function GroupPage({ kind }: { kind: GroupKind }) {
   const page = PAGES[kind];
 
@@ -123,6 +125,7 @@ function GroupCards({ kind, folder }: { kind: GroupKind; folder: string }) {
 
   return (
     <>
+      {kind === "tags" && <FavoriteTagsCard organize={organize.data} />}
       <NewGroupCard
         kind={kind}
         folder={folder}
@@ -403,7 +406,7 @@ function GroupListCard({
         <CardDescription>
           {organize.data
             ? `On ${organize.data.branch} in ${organize.data.repo}, and in the open photo data pull request.`
-            : "Reading them from GitHub."}
+            : "Reading them…"}
         </CardDescription>
         <CardAction>
           <Button
@@ -418,7 +421,7 @@ function GroupListCard({
         </CardAction>
       </CardHeader>
       <CardContent>
-        <QueryResult query={organize} pendingLabel={`Reading ${plural} from GitHub…`}>
+        <QueryResult query={organize} pendingLabel={`Reading ${plural}…`}>
           {(data) =>
             data[kind].length === 0 ? (
               <p className="text-muted-foreground text-sm">No {plural} yet.</p>
@@ -514,8 +517,10 @@ function GroupRow({
           <div className="min-w-0 flex-1">
             <GroupName kind={kind} group={group} />
             <HiddenMark album={group} />
+            <SmartMark album={group} />
             <GroupNote group={group} />
           </div>
+          <FavoriteTagButton kind={kind} tag={group} />
           <AlbumMoveButtons album={group} albums={albums} />
         </div>
       </TableCell>

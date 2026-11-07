@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["houses", "cars", "signpost", "road", "power-lines", "trees", "repetition"],
+  "tags": ["houses", "cars", "signposts", "road", "power-lines", "trees", "repetition"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 10.18,
     "peakChroma": 23.8,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [430, 436, 414, 409, 373, 445]
 }

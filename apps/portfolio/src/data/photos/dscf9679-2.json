@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["washitsu", "tatami", "shoji", "interior", "machiya", "koshi", "byobu"],
+  "tags": ["washitsu", "tatami", "shoji", "interior", "koshi"],
   "genres": [],
   "places": [
     {
@@ -269,5 +269,7 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [344, 343, 347, 346, 378, 381]
 }

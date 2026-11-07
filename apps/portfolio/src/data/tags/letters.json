@@ -1,5 +1,6 @@
 {
   "id": "letters",
   "name": "letters",
-  "description": ""
+  "description": "individual letters and characters of any script",
+  "parent": "typography"
 }

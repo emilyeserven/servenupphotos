@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["snow", "winter", "trees", "farmland", "countryside", "village", "minimalism"],
+  "tags": ["snow", "winter", "trees", "countryside", "village", "minimalism"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -260,5 +260,7 @@
     "chroma": 5.19,
     "peakChroma": 5.97,
     "samples": 9216
-  }
+  },
+  "notes": "Shows farmland; 'farmland' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [239, 240, 237, 104, 105, 241]
 }

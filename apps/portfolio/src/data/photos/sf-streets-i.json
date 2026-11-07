@@ -53,7 +53,7 @@
     "facade",
     "power-lines",
     "cars",
-    "lamppost",
+    "street-lights",
     "twilight",
     "repetition",
     "bay-windows"
@@ -269,5 +269,6 @@
     "chroma": 4.1,
     "peakChroma": 8.46,
     "samples": 9768
-  }
+  },
+  "similarPhotos": [408, 373, 430, 414, 436, 374]
 }

@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city", "mountains", "rooftops", "apartments", "coastline", "trees"],
-  "genres": [],
+  "genres": ["cityscape", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
@@ -261,5 +261,6 @@
     "chroma": 14.38,
     "peakChroma": 30.03,
     "samples": 9768
-  }
+  },
+  "similarPhotos": [395, 388, 386, 217, 419, 396]
 }

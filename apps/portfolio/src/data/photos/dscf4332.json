@@ -1,9 +1,9 @@
 {
-  "id": 243,
-  "title": null,
+  "title": "City Wall Hangout Point",
   "comment": null,
+  "id": 243,
   "file": "DSCF4332.jpg",
-  "addedDate": null,
+  "addedDate": "2026-11-03T00:49:04Z",
   "camera": "Fujifilm X-T5",
   "lens": "XF18-135mmF3.5-5.6R LM OIS WR",
   "aperture": 5.6,
@@ -32,10 +32,10 @@
     "small": "https://cdn.servenupphotos.net/photos/4860a7b0a63e-dscf4332-small.webp",
     "xsmall": "https://cdn.servenupphotos.net/photos/4860a7b0a63e-dscf4332-xsmall.webp",
     "preview": "https://cdn.servenupphotos.net/photos/4860a7b0a63e-dscf4332-preview.webp",
-    "thumbnail": "https://cdn.servenupphotos.net/photos/4860a7b0a63e-dscf4332-thumbnail.webp",
-    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4860a7b0a63e-dscf4332-thumbnailpreview.webp",
+    "thumbnail": "https://cdn.servenupphotos.net/photos/4860a7b0a63e-dscf4332-thumbnail.webp?crop=2526,0,3515",
+    "thumbnailpreview": "https://cdn.servenupphotos.net/photos/4860a7b0a63e-dscf4332-thumbnailpreview.webp?crop=2526,0,3515",
     "thumbnailcrop": {
-      "x": 1367,
+      "x": 2526,
       "y": 0,
       "size": 3515,
       "outputSize": 500
@@ -48,12 +48,20 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["city-walls", "office-building", "stairs", "facade", "windows", "trees", "crowd"],
+  "tags": ["city-walls", "office-buildings", "stairs", "facade", "windows", "trees", "crowd"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,
-  "socialPosts": [],
+  "socialPosts": [
+    {
+      "platform": "instagram",
+      "date": "2026-11-03",
+      "url": "",
+      "caption": "City Wall Hangout Point\n\n2026.05.17\nFujifilm X-T5, XF18-135mm @ 62mm, 1/150sec, ƒ 5.6, ISO 400",
+      "hashtags": []
+    }
+  ],
   "reEdit": null,
   "colors": {
     "average": {
@@ -260,5 +268,6 @@
     "chroma": 8.3,
     "peakChroma": 13.94,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [246, 172, 374, 128, 175, 452]
 }

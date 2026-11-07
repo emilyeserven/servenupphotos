@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["fire-alarm", "signage", "typography", "rust", "vintage", "cars"],
+  "tags": ["signage", "typography", "rust", "vintage", "cars"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,7 @@
     "chroma": 11.62,
     "peakChroma": 27.2,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a fire alarm; 'fire-alarm' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [180, 101, 406, 373, 441, 20]
 }

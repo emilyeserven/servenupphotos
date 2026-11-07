@@ -1,16 +1,7 @@
 import type { BulkTagPhoto } from "@/api/bulk-tags";
 import type { Group } from "@/api/organize";
 import type { Place } from "@/api/places";
-import { photoBasics, savedTags } from "@/lib/bulk-tag-prompt";
-
-/** One photo's part of the prompt: its name and link, its title and where it was taken, and its tags. */
-function photoSection(photo: BulkTagPhoto, places: Place[]): string {
-  const { heading, known } = photoBasics(photo, places);
-  const tags = savedTags(photo.data);
-  if (tags.length > 0) known.push(`- Tags: ${tags.join(", ")}`);
-  return `${heading}
-${known.join("\n") || "- Nothing known yet."}`;
-}
+import { photoWithTags as photoSection } from "@/lib/bulk-tag-prompt";
 
 /** The genres the prompt offers, one "- Name: description" line each. */
 function genreLines(genres: Group[]): string {

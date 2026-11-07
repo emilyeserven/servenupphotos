@@ -47,8 +47,8 @@
   "exifOriginals": {},
   "manualAperture": false,
   "customLens": null,
-  "albums": [],
-  "tags": ["letterpress", "typography", "letters", "vintage", "museum", "repetition"],
+  "albums": ["timeline-spotlight"],
+  "tags": ["typography", "letters", "vintage", "museum", "repetition"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,19 @@
     "chroma": 2.23,
     "peakChroma": 5.98,
     "samples": 9975
-  }
+  },
+  "notes": "Shows letterpress type; 'letterpress' isn't a tag, since only 1 photo has it.",
+  "spotlightZoneFocus": {
+    "timeline-header": {
+      "focus": {
+        "x": 69,
+        "y": 26
+      },
+      "placement": {
+        "x": 80,
+        "y": 50
+      }
+    }
+  },
+  "similarPhotos": [101, 410, 156, 64, 178, 100]
 }

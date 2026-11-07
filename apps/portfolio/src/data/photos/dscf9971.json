@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["kawara", "kamon", "buddhism", "temple", "pine-trees", "garden", "signpost"],
+  "tags": ["kawara", "kamon", "buddhism", "temple", "pine-trees", "garden", "signposts"],
   "genres": [],
   "places": [],
   "spotlightZones": [],
@@ -261,5 +261,6 @@
     "chroma": 12.42,
     "peakChroma": 30.54,
     "samples": 10050
-  }
+  },
+  "similarPhotos": [378, 384, 349, 465, 309, 339]
 }

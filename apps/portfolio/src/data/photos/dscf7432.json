@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["temple", "hiking-trail", "path", "forest", "fog", "lamppost", "trees"],
+  "tags": ["temple", "hiking-trail", "path", "forest", "fog", "street-lights", "trees"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 0,
     "peakChroma": 0.01,
     "samples": 10115
-  }
+  },
+  "similarPhotos": [264, 315, 111, 311, 324, 265]
 }

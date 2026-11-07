@@ -48,7 +48,15 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["houses", "bay-windows", "facade", "fire-escape", "power-lines", "cars", "lamppost"],
+  "tags": [
+    "houses",
+    "bay-windows",
+    "facade",
+    "fire-escapes",
+    "power-lines",
+    "cars",
+    "street-lights"
+  ],
   "genres": [],
   "places": [
     {
@@ -266,5 +274,6 @@
     "chroma": 7.46,
     "peakChroma": 14.89,
     "samples": 9975
-  }
+  },
+  "similarPhotos": [372, 414, 413, 373, 436, 430]
 }

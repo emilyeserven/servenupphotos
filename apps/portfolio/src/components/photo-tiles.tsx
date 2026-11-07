@@ -81,7 +81,9 @@ export function GridTiles({
       )}
     >
       {photos.map((photo) => (
-        <li key={photo.id}>{tile(photo)}</li>
+        <li key={photo.id} data-photo-id={photo.id}>
+          {tile(photo)}
+        </li>
       ))}
     </ul>
   );
@@ -183,7 +185,7 @@ function PhotoTile({
       >
         {/* Keyed by mode so switching starts each image's fallbacks over. */}
         <TilePlaceholder key={`placeholder-${mode}`} image={photo.image} mode={mode} />
-        <TileImage key={`image-${mode}`} image={photo.image} sizes={sizes} alt={photo.title} />
+        <TileImage key={`image-${mode}`} image={photo.image} sizes={sizes} alt={photo.alt} />
       </button>
       {showInfo && <TileCaption photo={photo} />}
     </figure>

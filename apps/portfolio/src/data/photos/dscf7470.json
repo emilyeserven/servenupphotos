@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["buddhism", "temple", "statue", "buddha", "moss", "stones", "forest"],
+  "tags": ["buddhism", "temple", "statues", "moss", "stones", "forest"],
   "genres": [],
   "places": [
     {
@@ -265,5 +265,7 @@
     "chroma": 5.4,
     "peakChroma": 15.05,
     "samples": 9975
-  }
+  },
+  "notes": "Shows a Buddha statue; 'buddha' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [324, 309, 313, 311, 310, 312]
 }

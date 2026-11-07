@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { CheckIcon } from "lucide-react";
 
 /**
  * The end of a save's message: what was saved waits in the app for Commit, which sends it to the
@@ -33,5 +34,20 @@ function CommitTarget({ url }: { url?: string }) {
         the open pull request
       </a>
     </>
+  );
+}
+
+/**
+ * A card's line after a save: what it saved waits in the app for Commit, with a check beside it.
+ * `what` names it, such as "the rules".
+ */
+export function SavedInApp({ what, pullRequestUrl }: { what: string; pullRequestUrl?: string }) {
+  return (
+    <p className="flex items-start gap-2">
+      <CheckIcon className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+      <span>
+        Saved {what} in the app. <WaitingForCommit pullRequestUrl={pullRequestUrl} />
+      </span>
+    </p>
   );
 }

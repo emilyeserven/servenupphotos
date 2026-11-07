@@ -48,7 +48,7 @@
   "manualAperture": false,
   "customLens": null,
   "albums": [],
-  "tags": ["ancient-egypt", "necropolis", "pyramids", "tourists", "monument", "stones", "clouds"],
+  "tags": ["necropolis", "pyramids", "tourists", "monuments", "stones", "clouds"],
   "genres": ["architecture", "street"],
   "places": [
     {
@@ -265,5 +265,6 @@
     "chroma": 12.91,
     "peakChroma": 22.52,
     "samples": 9620
-  }
+  },
+  "similarPhotos": [291, 362, 289, 126, 290, 366]
 }

@@ -51,74 +51,12 @@ func TestFindGapsAndFill(t *testing.T) {
 	for _, g := range gaps {
 		fields = append(fields, g.field)
 	}
-	want := []string{
-		"id", "title", "comment", "addedDate", "aperture", "exposure", "iso", "focalLength", "customGpsPosition", "customCreateDate", "placeName",
-		"customCity", "customState", "customCountry", "state",
-		"images.xlarge", "images.large", "images.small", "images.xsmall",
-		"images.preview", "images.thumbnail", "images.thumbnailpreview", "images.thumbnailcrop",
-		"isSocialMediaEligible", "websiteSpotlight", "socialMediaPublishDate", "exifOriginals", "manualAperture", "customLens", "albums", "tags", "genres", "places",
-		"spotlightZones", "spotlightFocus", "spotlightPlacement", "socialPosts", "reEdit",
-	}
-	if !reflect.DeepEqual(fields, want) {
-		t.Fatalf("fields = %v, want %v", fields, want)
+	if !reflect.DeepEqual(fields, oldPhotoGaps) {
+		t.Fatalf("fields = %v, want %v", fields, oldPhotoGaps)
 	}
 
 	got := string(fillGaps([]byte(oldPhoto), gaps))
-	wantContent := `{
-  "id": null,
-  "title": null,
-  "comment": null,
-  "file": "DSC0001.jpg",
-  "addedDate": null,
-  "camera": "X-T5",
-  "lens": null,
-  "aperture": null,
-  "exposure": null,
-  "iso": null,
-  "focalLength": null,
-  "gpsPosition": null,
-  "customGpsPosition": null,
-  "createDate": "2026:05:16 15:24:10",
-  "customCreateDate": null,
-  "placeName": null,
-  "customCity": null,
-  "customState": null,
-  "customCountry": null,
-  "country": null,
-  "state": null,
-  "city": "Tokyo",
-  "width": 6240,
-  "height": 4160,
-  "images": {
-    "full": "https://pub-1234.r2.dev/photos/ab-DSC0001.jpg",
-    "key": "photos/ab-DSC0001.jpg",
-    "xlarge": null,
-    "large": null,
-    "medium": "https://pub-1234.r2.dev/photos/ab-DSC0001-medium.webp",
-    "small": null,
-    "xsmall": null,
-    "preview": null,
-    "thumbnail": null,
-    "thumbnailpreview": null,
-    "thumbnailcrop": null
-  },
-  "isSocialMediaEligible": false,
-  "websiteSpotlight": null,
-  "socialMediaPublishDate": null,
-  "exifOriginals": {},
-  "manualAperture": false,
-  "customLens": null,
-  "albums": [],
-  "tags": [],
-  "genres": [],
-  "places": [],
-  "spotlightZones": [],
-  "spotlightFocus": null,
-  "spotlightPlacement": null,
-  "socialPosts": [],
-  "reEdit": null
-}
-`
+	wantContent := filledOldPhoto(t)
 	if got != wantContent {
 		t.Errorf("fillGaps() =\n%s\nwant\n%s", got, wantContent)
 	}
@@ -255,7 +193,7 @@ func TestBackfill(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Backfill() error = %v", err)
 	}
-	if got.Files != 1 || got.Fields != 38 || got.PullRequestNumber != 1 {
+	if got.Files != 1 || got.Fields != len(oldPhotoGaps) || got.PullRequestNumber != 1 {
 		t.Errorf("Backfill() = %+v", got)
 	}
 	staged := repo.staged(t)
@@ -263,7 +201,7 @@ func TestBackfill(t *testing.T) {
 	if len(staged) != 1 || !ok {
 		t.Fatalf("pending = %v, want DSC0001.json only", staged)
 	}
-	if !strings.HasPrefix(content, "{\n  \"id\": 1,\n  \"title\": null,\n  \"comment\": null,\n  \"file\"") {
+	if !strings.HasPrefix(content, "{\n  \"id\": 1,\n  \"title\": null,\n") {
 		t.Errorf("content = %s", content)
 	}
 }
