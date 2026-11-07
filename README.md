@@ -83,6 +83,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 
 - [Portfolio with your own photo data](docs/local-photo-data.md): how `pnpm photos:local` and the portfolio's dev server build its local photo, place, localization, album and tag data, and what each portfolio view shows
 - [EXIF and color data](docs/exif-and-colors.md) (`/exif`): reading a photo's EXIF metadata and color analysis
+- [Times across timezones](docs/timezone-shift.md) (`/exif?edit=…`): fixing the times of a day's photos taken after crossing timezones, with a preview and its effect on trip lines
 - [Portfolio homepage](docs/portfolio-homepage.md) (`/` on the portfolio): the ways to explore, over the album picked on Site Spotlight
 - [Portfolio Filters](docs/portfolio-filters.md): filtering the portfolio's views by place, album and tag (plus camera, lens and settings on the Grid), kept in the URL across views
 - [Photo Viewer](docs/photo-viewer.md): the portfolio's full-window photo, and moving between photos with the arrow keys

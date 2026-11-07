@@ -59,7 +59,8 @@ show. The section starts open when the EXIF has no date. When the file name has 
 (`IMG_20161223_220739_041`, `PXL_20230101_123456789`, `Screenshot_2016-12-23-22-07-39`), it offers
 **Use Dec 23, 2016, 10:07:39 PM from the file name** in one click. New photos get `"customCreateDate": null`, and
 **Update Data → Missing fields** adds it to older ones. The pipeline's own checks, such as a duplicate photo's
-`file`, `gpsPosition` and `createDate`, still use the EXIF date.
+`file`, `gpsPosition` and `createDate`, still use the EXIF date. To fix a whole day of photos taken after crossing timezones, see
+[Times across timezones](timezone-shift.md).
 
 > **Frontend analogy:** like a `defaultValue` the user can override: `customCreateDate ?? createDate`, with the file
 > name as a suggested value.
