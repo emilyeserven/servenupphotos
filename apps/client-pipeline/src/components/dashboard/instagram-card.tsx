@@ -1,14 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
 import type { SocialCalendar } from "@/api/publish";
 import { PhotoImage } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { dayFormat, isoDate, parseIsoDate } from "@/lib/calendar";
-import { photoName, photosByDay, unsavedFromEdits, withoutUndecided } from "@/lib/social-schedule";
-import { type SocialQueue, socialQueue } from "@/lib/social-queue";
-import { useChangedPhotoFiles } from "@/stores/combined-data";
-import { useLocalEditsStore } from "@/stores/local-edits";
+import { useSocialQueue } from "@/hooks/use-social-queue";
+import { dayFormat, parseIsoDate } from "@/lib/calendar";
+import { photoName } from "@/lib/social-schedule";
+import type { SocialQueue } from "@/lib/social-queue";
 
 /** How many of the next scheduled photos the card shows. */
 const SHOWN = 3;
@@ -34,20 +32,8 @@ export function InstagramCard() {
   );
 }
 
-/** The queue as the Instagram page has it: without Undecided photos, with the unsaved dates. */
-function useQueue(calendar: SocialCalendar): SocialQueue {
-  const changed = useChangedPhotoFiles();
-  const edits = useLocalEditsStore((state) => state.edits);
-  // Read the clock once, as the calendar does.
-  const [today] = useState(() => isoDate(new Date()));
-  return useMemo(() => {
-    const { photos } = withoutUndecided(calendar.photos, changed);
-    return socialQueue(photosByDay(photos, unsavedFromEdits(edits)), today, SHOWN);
-  }, [calendar.photos, changed, edits, today]);
-}
-
 function Queue({ calendar }: { calendar: SocialCalendar }) {
-  const queue = useQueue(calendar);
+  const queue = useSocialQueue(calendar, SHOWN);
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm">

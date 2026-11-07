@@ -7,6 +7,18 @@ now **Settings › Status** (see [Settings](settings.md#status)).
 
 ## The cards
 
+- **Needs attention:** across the full width above the other cards, one row per problem, each with how many photos it
+  affects and a link to the page that fixes it. Rows only show while something has the problem; with none, it says
+  nothing needs attention. It counts every photo file as the next Commit will have it (changes waiting for Commit and
+  local edits made, removed files left out), from the same read as the Instagram card, so it asks GitHub nothing new:
+  - **Instagram:** fewer than 7 **days left** in the queue (counted as **Next on Instagram** counts them), with how
+    many photos it would take to fill a week. Links to the [Instagram calendar](publish.md).
+  - **Photos without a title** that aren't Undecided or unselected. Links to the first one, by path, on the Photo page.
+  - **Photos without tags**, **without a genre**, **that aren't in an album** and **without a place**, counted as
+    [Bulk tagging](update-data.md#bulk-tagging), Genre Suggestions, [Album Suggestions](update-data.md#album-suggestions)
+    and [Bulk Places](update-data.md#bulk-places) pick them, and linking to those pages.
+  - **Photos without color data:** no `colors`, or `colors` saved before `peakChroma`, as **Update Data › Colors**
+    reads them, linking there.
 - **Next up albums:** the [Lightroom Albums](lightroom-albums.md#next-up) page's Next up suggestions. It shows the
   **Overview** list by default; the menu at the top right picks one stage's list instead (Cull Round 1 to Re-editing,
   or No stage). It follows the Lightroom Albums page's **Online / Offline** choice, and, like that page, reads only
@@ -26,4 +38,5 @@ now **Settings › Status** (see [Settings](settings.md#status)).
   picked for it, from the album file's `spotlightUpdated`. An album picked before these days were kept says so, and
   gets a date the next time it's picked.
 
-The cards are in `components/dashboard/`, and the queue's counting in `lib/social-queue.ts`.
+The cards are in `components/dashboard/`, the queue's counting in `lib/social-queue.ts` (shared through
+`hooks/use-social-queue.ts`), and the Needs attention checks in `lib/needs-attention.ts`.
