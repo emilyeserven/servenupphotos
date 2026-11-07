@@ -36,6 +36,8 @@ export interface ColorShare {
 
 /** A photo's `colors`, as the pipeline saves it: only the hue buckets and the neutral histogram are read here. */
 export interface PhotoColorData {
+  /** The average of its pixels; only its hex is read here. */
+  average?: { hex?: string };
   buckets?: { name: string; share: number }[];
   /** The mean CIELAB chroma of its pixels: 0 for a gray photo, about 50 or more for a very colorful one. */
   chroma?: number;
@@ -87,6 +89,11 @@ const BLACK_AND_WHITE_SHARE = 0.9;
 export function isBlackAndWhite(palette: ColorShare[]): boolean {
   const shades = palette.reduce((sum, c) => sum + (isShade(c.color) ? c.share : 0), 0);
   return shades >= BLACK_AND_WHITE_SHARE;
+}
+
+/** A photo's average color as a hex string, or null until the pipeline saves its colors. */
+export function photoAverageColor(colors: PhotoColorData | null | undefined): string | null {
+  return colors?.average?.hex ?? null;
 }
 
 /** How vivid a photo's colors are, its mean chroma rounded; null when the photo has no colors saved yet. */
