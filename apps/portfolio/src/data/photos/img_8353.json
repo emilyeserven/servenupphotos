@@ -261,5 +261,14 @@
     "peakChroma": 12.18,
     "samples": 9216
   },
-  "notes": null
+  "notes": null,
+  "spotlightZoneFocus": {
+    "timeline-header": {
+      "focus": {
+        "x": 28,
+        "y": 72
+      },
+      "placement": null
+    }
+  }
 }

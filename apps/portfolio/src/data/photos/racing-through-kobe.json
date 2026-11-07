@@ -263,5 +263,17 @@
     "chroma": 1.53,
     "peakChroma": 2.3,
     "samples": 9828
+  },
+  "spotlightZoneFocus": {
+    "homepage": {
+      "focus": {
+        "x": 53,
+        "y": 70
+      },
+      "placement": {
+        "x": 50,
+        "y": 80
+      }
+    }
   }
 }
