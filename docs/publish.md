@@ -221,6 +221,11 @@ cropped around its focus point and placement, with a fade into the page's backgr
 page's title, filters and the rest come after them, and the site menu stays fixed at the top right. With no album
 picked, the page starts with its title as before.
 
+Like the homepage, each visit starts on the photo after the one this browser showed last in that zone, going back to
+the first after the last one. Each zone keeps its own in `localStorage` as `servenup-last-<zone>-photo`, such as
+`servenup-last-grid-header-photo`, saved each time a new photo comes up (`lib/last-spotlight-photo.ts`, which the
+homepage's `servenup-last-homepage-photo` uses too).
+
 A **Jump to Cover Image** button at the strip's top right, just left of the site menu button (`components/jump-to-cover.tsx`), scrolls to the photo
 showing in the strip at that moment, its Grid tile or table row or its Timeline row, to the middle of the screen, and
 rings it for a moment. Each tile and row carries its photo's ID as `data-photo-id` for this. When the page doesn't

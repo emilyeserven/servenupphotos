@@ -3,9 +3,9 @@ import { useState } from "react";
 import { FROSTED } from "@/components/backdrop-caption";
 import { PhotoBackdrop } from "@/components/photo-backdrop";
 import { homepagePhotos } from "@/lib/homepage-photos";
-import { homepageStart, rememberHomepagePhoto } from "@/lib/last-homepage-photo";
+import { rememberSpotlightPhoto, spotlightStart } from "@/lib/last-spotlight-photo";
 import { mainViews } from "@/lib/portfolio-views";
-import { UPRIGHT_PHONE_QUERY } from "@/lib/spotlight-zones";
+import { HOMEPAGE_ZONE, UPRIGHT_PHONE_QUERY } from "@/lib/spotlight-zones";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 import { rememberedViewOptions } from "@/lib/view-options";
@@ -21,12 +21,16 @@ const phoneBackdropPhotos = homepagePhotos(undefined, true);
 /** The views with a card on the homepage: the minor ones (Albums, Tags, Lucky, My Likes) are only in the menu. */
 const homepageViews = mainViews.filter((view) => view.enabled);
 
+/** Saves the homepage photo showing now, so the next visit starts on the one after it. */
+const rememberHomepagePhoto = (photo: { id: number }) =>
+  rememberSpotlightPhoto(HOMEPAGE_ZONE, photo);
+
 /** The portfolio's front door: each way to explore the photos, over photos fading in and out. */
 function Homepage() {
   const phone = useMediaQuery(UPRIGHT_PHONE_QUERY);
   const photos = phone ? phoneBackdropPhotos : backdropPhotos;
   // Picked once per visit, from the photo this browser showed last, so each visit starts on a new one.
-  const [start] = useState(() => homepageStart(photos));
+  const [start] = useState(() => spotlightStart(HOMEPAGE_ZONE, photos));
   return (
     <div className="relative flex min-h-svh flex-col items-center justify-center px-4 py-20 text-white">
       <PhotoBackdrop photos={photos} start={start} onShow={rememberHomepagePhoto} />

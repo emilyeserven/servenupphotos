@@ -26,7 +26,7 @@ from the photo's size and the screen's, measured as the window resizes (`objectP
 
 Each visit starts on the photo after the one this browser showed last, going back to the first after the last one,
 so returning visitors don't always see the same photo first. The showing photo's id is saved in `localStorage`
-(`servenup-last-homepage-photo`, `lib/last-homepage-photo.ts`) each time a new one comes up, including by arrow key.
+(`servenup-last-homepage-photo`, `lib/last-spotlight-photo.ts`) each time a new one comes up, including by arrow key.
 With storage blocked, or when the saved photo is no longer on the homepage, a visit starts on the first photo.
 
 > **Frontend analogy:** it's a bookmark: the carousel's starting index comes from `useState(() => …)` reading the
