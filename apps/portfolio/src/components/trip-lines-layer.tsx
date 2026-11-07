@@ -23,14 +23,30 @@ function layers(dark: boolean): LayerProps[] {
     {
       id: "trip-ride",
       type: "line",
-      filter: ["all", IS_LINE, ["!=", ["get", "mode"], "walk"], ["has", "colour"]],
+      filter: [
+        "all",
+        IS_LINE,
+        ["!", ["in", ["get", "mode"], ["literal", ["walk", "car"]]]],
+        ["has", "colour"],
+      ],
       layout: round,
       paint: { "line-color": ["get", "colour"], "line-width": 3, "line-opacity": 0.85 },
     },
     {
+      id: "trip-drive",
+      type: "line",
+      filter: ["all", IS_LINE, ["==", ["get", "mode"], "car"]],
+      paint: { "line-color": colors.drive, "line-width": 3, "line-dasharray": [4, 2] },
+    },
+    {
       id: "trip-hop",
       type: "line",
-      filter: ["all", IS_LINE, ["!=", ["get", "mode"], "walk"], ["!", ["has", "colour"]]],
+      filter: [
+        "all",
+        IS_LINE,
+        ["!", ["in", ["get", "mode"], ["literal", ["walk", "car"]]]],
+        ["!", ["has", "colour"]],
+      ],
       paint: { "line-color": colors.hop, "line-width": 2, "line-dasharray": [2, 2] },
     },
     {
@@ -54,7 +70,7 @@ function isFeature(kind: "visit" | "fence") {
 
 /**
  * The trip lines of the days the map's photos were taken, from TRIPLINES.geo.json: walks in blue,
- * hops along a transit line in its color and others dashed, places visited as amber dots, and areas
+ * drives in long gray dashes, hops along a transit line in its color and others dashed, places visited as amber dots, and areas
  * shaded light blue. Nothing while `show` is off or there are none.
  */
 export function TripLinesLayer({ photos, show }: { photos: PlacedPhoto[]; show: boolean }) {

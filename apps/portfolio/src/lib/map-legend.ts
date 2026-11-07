@@ -17,6 +17,8 @@ export interface LegendItems {
   rides: string[];
   /** Whether a hop with no transit line picked is drawn, dashed. */
   hop: boolean;
+  /** Whether a drive is drawn, in long gray dashes. */
+  drive: boolean;
   /** Whether a place visited is drawn, as an amber dot. */
   visit: boolean;
   /** Whether an area is shaded: a trip line's area, or the place picked or pointed at in Places. */
@@ -34,13 +36,22 @@ function isWalk(feature: TripMapFeature): boolean {
   return isLine(feature) && feature.properties.mode === "walk";
 }
 
+function isDrive(feature: TripMapFeature): boolean {
+  return isLine(feature) && feature.properties.mode === "car";
+}
+
+/** Whether the feature is a hop by train, subway, bus or transit: a line that's no walk or drive. */
+function isRide(feature: TripMapFeature): boolean {
+  return isLine(feature) && !isWalk(feature) && !isDrive(feature);
+}
+
 /** A hop's transit line color, or undefined for a walk, a hop without one, or no line at all. */
 function rideColor(feature: TripMapFeature): string | undefined {
-  return isLine(feature) && !isWalk(feature) ? feature.properties.colour : undefined;
+  return isRide(feature) ? feature.properties.colour : undefined;
 }
 
 function isHop(feature: TripMapFeature): boolean {
-  return isLine(feature) && !isWalk(feature) && feature.properties.colour === undefined;
+  return isRide(feature) && feature.properties.colour === undefined;
 }
 
 /** The distinct transit line colors of the hops, up to MAX_RIDES. */
@@ -57,6 +68,7 @@ function tripItems(trips: TripLinesMap | undefined) {
     walk: features.some(isWalk),
     rides: rideColors(features),
     hop: features.some(isHop),
+    drive: features.some(isDrive),
     visit: has("visit"),
     fence: has("fence"),
   };

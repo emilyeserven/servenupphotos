@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import {
   AreaSymbol,
   GroupSymbol,
+  DriveSymbol,
   HopSymbol,
   NoImageSymbol,
   PhotoSymbol,
@@ -42,6 +43,7 @@ function lineRows(items: LegendItems, dark: boolean): LegendRow[] {
       <RideSymbol colors={items.rides} key="ride" />,
       "Bus, subway or train",
     ],
+    [items.drive, <DriveSymbol dark={dark} key="drive" />, "Drive"],
     [items.hop, <HopSymbol dark={dark} key="hop" />, "Other trip"],
     [items.visit, <VisitSymbol dark={dark} key="visit" />, "Place visited"],
     [items.area, <AreaSymbol dark={dark} key="area" />, "Area"],

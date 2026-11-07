@@ -51,8 +51,8 @@ export function areaEdgePaint(dark: boolean) {
  */
 export function tripColors(dark: boolean) {
   return dark
-    ? { walk: "#60a5fa", hop: "#c084fc", visit: "#f59e0b", visitEdge: "#171717" }
-    : { walk: "#2563eb", hop: "#9333ea", visit: "#f59e0b", visitEdge: "#ffffff" };
+    ? { walk: "#60a5fa", hop: "#c084fc", drive: "#a3a3a3", visit: "#f59e0b", visitEdge: "#171717" }
+    : { walk: "#2563eb", hop: "#9333ea", drive: "#525252", visit: "#f59e0b", visitEdge: "#ffffff" };
 }
 
 /** The colors of an area: its fill and its dashed edge. */

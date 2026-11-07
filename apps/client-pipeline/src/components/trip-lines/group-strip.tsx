@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronRight, Eye, EyeOff, Merge } from "lucide-react";
 import { useState } from "react";
 import type { TripVisit } from "@/api/trip-lines";
+import { GroupAreaButton } from "@/components/trip-lines/group-area-button";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
 import { VisitChips } from "@/components/trip-lines/visit-chips";
 import { Button } from "@/components/ui/button";
@@ -160,9 +161,13 @@ function GroupBox(props: GroupBoxProps) {
   );
 }
 
-/** The group's name field, photo count, and its collapse and show-alone buttons. */
+/**
+ * The group's name field, photo count, its collapse and show-alone buttons, and the area of the
+ * place its photos are at.
+ */
 function GroupHeader({
   group,
+  photos,
   draft,
   onChange,
   collapsed,
@@ -185,6 +190,7 @@ function GroupHeader({
         {group.end - group.start} photos
       </span>
       <FocusButton name={name.trim()} focus={focus} onFocus={onFocus} />
+      <GroupAreaButton place={photos[group.start]?.place} />
     </div>
   );
 }

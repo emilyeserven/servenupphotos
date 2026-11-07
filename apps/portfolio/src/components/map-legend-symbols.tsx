@@ -110,6 +110,23 @@ export function HopSymbol({ dark }: { dark: boolean }) {
   );
 }
 
+/** A drive: a gray line in long dashes. */
+export function DriveSymbol({ dark }: { dark: boolean }) {
+  return (
+    <LineSample>
+      <line
+        x1={3}
+        x2={29}
+        y1={12}
+        y2={12}
+        stroke={tripColors(dark).drive}
+        strokeWidth={3}
+        strokeDasharray="9 4"
+      />
+    </LineSample>
+  );
+}
+
 /** A place visited: an amber dot with an edge like the map's background. */
 export function VisitSymbol({ dark }: { dark: boolean }) {
   const colors = tripColors(dark);
