@@ -73,7 +73,7 @@ function MatchPart({ filters }: VisualsPickerProps) {
       <Choices
         items={[
           [
-            "Largest color",
+            "Largest only",
             "The picked color is the biggest share of the photo. A blue sky over a green field shows under whichever covers more.",
           ],
           [

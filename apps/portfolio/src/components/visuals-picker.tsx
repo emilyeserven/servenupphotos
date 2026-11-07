@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { ChevronsUpDown, Palette } from "lucide-react";
+import { ChevronDown, ChevronsUpDown, Palette } from "lucide-react";
 import { useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
 import {
@@ -27,14 +27,14 @@ function visualFilterCount(filters: VisualFilters): number {
 /** What each section of the picker is set to, shown under its name in the left list. */
 const SECTIONS: [VisualSection, string, (filters: VisualFilters) => string][] = [
   ["color", "Color", ({ color }) => (color ? colorLabel(color) : "Any")],
-  ["match", "Match priority", matchText],
+  ["match", "Color threshold", matchText],
   ["vivid", "Vividness", vividText],
   ["orientation", "Orientation", orientationText],
 ];
 
-/** How photos match the color, as a short sentence: "Color is the largest" or "Color is 30%+ of photo". */
+/** How photos match the color: "Largest only", or a share such as "At least 30%". */
 function matchText({ match, min = DEFAULT_PERCENT }: VisualFilters): string {
-  return match === "threshold" ? `Color is ${min}%+ of photo` : "Color is the largest";
+  return match === "threshold" ? `At least ${min}%` : "Largest only";
 }
 
 /** The vividness measure and the least a photo needs, such as "Peak · 40+". */
@@ -62,7 +62,7 @@ function firstSection(filters: VisualFilters): VisualSection {
 
 /**
  * The Grid's **Visuals** filter, a button like **When** and **Gear & settings** that opens a
- * picker: a list of Color, Match priority, Vividness and Orientation on the left, each saying what it's set
+ * picker: a list of Color, Color threshold, Vividness and Orientation on the left, each saying what it's set
  * to, and the chosen one's controls on the right, with what each choice does. The button shows the
  * picked color and how many of its filters are set. `photos` is what the other filters leave,
  * before the color and orientation filters, which the counts are out of.
@@ -82,7 +82,7 @@ export function VisualsPicker(props: VisualsPickerProps) {
       <PopoverContent
         align="start"
         collisionPadding={16}
-        className="w-[min(32rem,calc(100vw-2rem))] p-0"
+        className="w-auto max-w-[calc(100vw-2rem)] p-0"
       >
         <PickerBody {...props} />
       </PopoverContent>
@@ -102,12 +102,32 @@ function PickedDot({ color }: { color: ColorName | undefined }) {
   );
 }
 
-/** The list of sections on the left, with **Clear** under it, and the chosen one on the right. */
+/**
+ * The list of sections on the left, with **Clear visuals** under it, and the chosen one on the
+ * right. On phones the list folds up above the controls instead, behind a button naming the chosen
+ * section, like **Gear & settings**, and takes the controls' place while it's open.
+ */
 function PickerBody(props: VisualsPickerProps) {
   const [section, setSection] = useState<VisualSection>(() => firstSection(props.filters));
+  const [listOpen, setListOpen] = useState(false);
+  const choose = (next: VisualSection) => {
+    setSection(next);
+    setListOpen(false);
+  };
   return (
-    <div className="flex max-h-[min(28rem,70vh)]">
-      <div className="flex w-28 shrink-0 flex-col gap-0.5 border-r bg-muted/40 p-1 sm:w-36">
+    <div className="flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] w-[calc(100vw-2rem)] flex-col sm:w-[32rem] sm:flex-row">
+      <ListToggle
+        section={section}
+        filters={props.filters}
+        open={listOpen}
+        onClick={() => setListOpen(!listOpen)}
+      />
+      <div
+        className={cn(
+          "flex min-h-0 flex-col gap-0.5 overflow-y-auto border-b bg-muted/40 p-1 sm:w-36 sm:shrink-0 sm:border-r sm:border-b-0",
+          !listOpen && "max-sm:hidden",
+        )}
+      >
         <div role="tablist" aria-orientation="vertical" aria-label="Visual filters">
           {SECTIONS.map(([key, label, text]) => (
             <SectionTab
@@ -115,16 +135,58 @@ function PickerBody(props: VisualsPickerProps) {
               label={label}
               text={text(props.filters)}
               chosen={section === key}
-              onClick={() => setSection(key)}
+              onClick={() => choose(key)}
             />
           ))}
         </div>
         <ClearVisuals filters={props.filters} />
       </div>
-      <div role="tabpanel" className="min-w-0 flex-1 overflow-y-auto p-3">
+      <div
+        role="tabpanel"
+        className={cn("min-h-0 min-w-0 flex-1 overflow-y-auto p-3", listOpen && "max-sm:hidden")}
+      >
         <VisualsPickerPart section={section} {...props} />
       </div>
     </div>
+  );
+}
+
+/** The section's name and what it's set to, as the left list shows them. */
+function sectionOf(section: VisualSection, filters: VisualFilters): [string, string] {
+  const found = SECTIONS.find(([key]) => key === section);
+  return found ? [found[1], found[2](filters)] : ["", ""];
+}
+
+/**
+ * On phones only, the button that opens and closes the list of sections, naming the chosen one
+ * and what it's set to.
+ */
+function ListToggle({
+  section,
+  filters,
+  open,
+  onClick,
+}: {
+  section: VisualSection;
+  filters: VisualFilters;
+  open: boolean;
+  onClick: () => void;
+}) {
+  const [label, text] = sectionOf(section, filters);
+  return (
+    <button
+      type="button"
+      aria-expanded={open}
+      onClick={onClick}
+      className="flex items-center gap-2 border-b bg-muted/40 px-3 py-2 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:hidden"
+    >
+      <span className="font-medium whitespace-nowrap">{label}</span>
+      <span className="truncate text-xs text-muted-foreground">{text}</span>
+      <ChevronDown
+        aria-hidden
+        className={cn("ml-auto size-4 shrink-0 transition-transform", open && "rotate-180")}
+      />
+    </button>
   );
 }
 
@@ -172,7 +234,7 @@ function ClearVisuals({ filters }: { filters: VisualFilters }) {
       replace: true,
     });
   return (
-    <div className="mt-auto flex items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground">
+    <div className="flex items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground sm:mt-auto">
       Clear visuals
       <ClearFilterButton label="Visuals" onClear={clear} />
     </div>
