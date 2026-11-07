@@ -8,7 +8,7 @@ import (
 )
 
 // dotGraph is a preset's graph: a dot for each aperture.
-var dotGraph = &GraphSettings{Type: "dot", X: "aperture", Measure: "count", Sort: "group"}
+var dotGraph = &GraphSettings{Type: "photos", X: "aperture", Measure: "count", Sort: "group"}
 
 func TestSaveGraphPreset(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{
@@ -22,7 +22,7 @@ func TestSaveGraphPreset(t *testing.T) {
 	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) || !strings.Contains(saved, `"spotlight": true`) {
 		t.Errorf("saved %s", saved)
 	}
-	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "dot", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5}}}
+	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "photos", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5}}}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, ranged); err != nil {
 		t.Fatalf("SaveGraphPreset(ranges) error = %v", err)
 	}
@@ -57,7 +57,7 @@ func TestSaveGraphPreset(t *testing.T) {
 		{"odd type", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "radar", X: "iso", Measure: "count", Sort: "group"}}},
 		{"no such group", GraphPreset{ID: "a", Kind: "preset", Name: "A", Group: "lenses", Graph: dotGraph}},
 		{"bad ID", GraphPreset{ID: "A A", Kind: "group", Name: "A"}},
-		{"y starts above its end", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "dot", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{YMin: num(10), YMax: num(2)}}}},
+		{"y starts above its end", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "photos", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{YMin: num(10), YMax: num(2)}}}},
 	}
 	for _, tt := range tests {
 		_, err := c.SaveGraphPreset(t.Context(), placesGH, tt.preset)
@@ -71,7 +71,7 @@ func TestSaveGraphPreset(t *testing.T) {
 func TestDeleteGraphPresetGroup(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{
 		dataRoot + "/graphs/camera.json":   `{"id":"camera","kind":"group","name":"Camera settings","order":1}`,
-		dataRoot + "/graphs/aperture.json": `{"id":"aperture","kind":"preset","name":"Aperture","order":1,"group":"camera","graph":{"type":"dot","x":"aperture","measure":"count","sort":"group"}}`,
+		dataRoot + "/graphs/aperture.json": `{"id":"aperture","kind":"preset","name":"Aperture","order":1,"group":"camera","graph":{"type":"photos","x":"aperture","measure":"count","sort":"group"}}`,
 	})
 	_, err := c.DeleteGraphPreset(t.Context(), placesGH, "camera")
 	var perr *PublishError

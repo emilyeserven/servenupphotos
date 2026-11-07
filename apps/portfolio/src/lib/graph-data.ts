@@ -46,7 +46,15 @@ export function statById(id: string): GraphStat {
 }
 
 /** The kinds of graph the builder draws. */
-export type GraphType = "bar" | "line" | "dot" | "pie" | "scatter" | "heatmap" | "photos";
+export type GraphType = "bar" | "line" | "pie" | "scatter" | "heatmap" | "photos";
+
+/**
+ * A saved graph's type as it is now: the old Dot type, a dot for each value, became Photo dots, a
+ * dot for every photo, so presets saved with it keep working.
+ */
+export function currentType(type: string | undefined): GraphType {
+  return type === "dot" ? "photos" : (type as GraphType);
+}
 
 /** What a bar, line or pie measures: how many photos, or their share in percent. */
 export type Measure = "count" | "percent";
@@ -119,7 +127,7 @@ export interface GraphDatum {
 export interface GraphData {
   series: GraphSeries[];
   data: GraphDatum[];
-  /** Where a bar, line or dot graph's y axis runs, when the Range group sets it. */
+  /** Where a bar or line graph's y axis runs, when the Range group sets it. */
   domain?: YDomain;
 }
 
@@ -210,9 +218,9 @@ function pieData(rows: StatRow[], total: number, config: GraphConfig): GraphData
 }
 
 /** The graph types whose values can be split by another stat. */
-export const SPLIT_TYPES: ReadonlySet<GraphType> = new Set(["bar", "line", "dot", "photos"]);
+export const SPLIT_TYPES: ReadonlySet<GraphType> = new Set(["bar", "line", "photos"]);
 
-/** Whether the graph is split: a bar, line, dot or photo dot graph with a stat to split by. */
+/** Whether the graph is split: a bar, line or photo dot graph with a stat to split by. */
 function isSplit(config: GraphConfig): boolean {
   return config.split !== "" && SPLIT_TYPES.has(config.type);
 }

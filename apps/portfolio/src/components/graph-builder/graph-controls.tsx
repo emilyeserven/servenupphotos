@@ -31,7 +31,7 @@ const LIMITS = [0, 5, 10, 20];
 
 /**
  * The graph's settings, in the Adjust Graph box: its type, what's on each axis, what splits a bar,
- * line or dot graph, the x axis's order and how many of its values show, and the Range group.
+ * line graph, the x axis's order and how many of its values show, and the Range group.
  */
 export function GraphControls({
   config,
@@ -56,7 +56,7 @@ export function GraphControls({
   );
 }
 
-/** What a bar, line, dot or pie graph can measure, as a dropdown's options. */
+/** What a bar, line or pie graph can measure, as a dropdown's options. */
 export function MeasureOptions() {
   return (
     <>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { currentType } from "@/lib/graph-data";
 import type { GraphPreset, PresetGraph } from "@/lib/graph-presets";
 
 /** Where the visitor's own presets are kept in their browser. */
@@ -10,11 +11,16 @@ function isSaved(value: unknown): value is GraphPreset {
   return typeof preset?.id === "string" && typeof preset.name === "string";
 }
 
+/** A saved preset with its graph's type as it is now, such as the old Dot type as Photo dots. */
+function upgraded(preset: GraphPreset): GraphPreset {
+  return { ...preset, graph: { ...preset.graph, type: currentType(preset.graph.type) } };
+}
+
 /** The visitor's presets from their browser; none when there are none or it can't be read. */
 function readSaved(): GraphPreset[] {
   try {
     const stored: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "[]");
-    return Array.isArray(stored) ? stored.filter(isSaved) : [];
+    return Array.isArray(stored) ? stored.filter(isSaved).map(upgraded) : [];
   } catch {
     return [];
   }

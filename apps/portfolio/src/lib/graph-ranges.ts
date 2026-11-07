@@ -11,7 +11,7 @@ export interface GraphRanges {
   /** A scatterplot's first and last y values shown, like the x axis's. */
   yFrom: string | null;
   yTo: string | null;
-  /** Where a bar, line or dot graph's y axis starts and ends, such as 0 to 50 photos; null for its own. */
+  /** Where a bar or line graph's y axis starts and ends, such as 0 to 50 photos; null for its own. */
   yMin: number | null;
   yMax: number | null;
   /** How many photos an x value needs to be shown, such as 5; 0 for any. */
@@ -60,7 +60,7 @@ export function rangedRows(rows: StatRow[], ranges: GraphRanges): StatRow[] {
   return ranges.hideZeros ? trimEmptyEnds(kept) : kept;
 }
 
-/** Where a bar, line or dot graph's y axis runs; undefined for its own start and end. */
+/** Where a bar or line graph's y axis runs; undefined for its own start and end. */
 export type YDomain = [number, number | "auto"] | undefined;
 
 /** The y axis's start and end the Range group sets, if it sets either. */
