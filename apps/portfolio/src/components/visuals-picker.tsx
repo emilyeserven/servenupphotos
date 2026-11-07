@@ -9,6 +9,7 @@ import {
 import {
   type VisualFilters,
   type VisualSection,
+  VISUAL_INFO,
   VisualsPickerPart,
   type VisualsPickerProps,
 } from "@portfolio/components/visuals-picker-parts";
@@ -108,19 +109,30 @@ function PickedDot({ color }: { color: ColorName | undefined }) {
   );
 }
 
-/** The sections, opening on the first one set, with **Clear visuals** under them. */
+/**
+ * The sections, opening on the first one set, with **Clear visuals** under them. While the (i)
+ * button is on, a section with more to say, such as Color threshold, shows it in a panel to the
+ * right, which widens the picker.
+ */
 function PickerBody(props: VisualsPickerProps) {
   const [section, setSection] = useState<VisualSection>(() => firstSection(props.filters));
+  const [infoOpen, setInfoOpen] = useState(false);
+  const aside = infoOpen ? VISUAL_INFO[section] : undefined;
   return (
     <SectionPicker
       label="Visual filters"
       sections={SECTIONS.map(([key, label, text]) => ({ key, label, text: text(props.filters) }))}
       chosen={section}
       onChoose={setSection}
-      width="sm:w-[32rem]"
+      width={aside ? "sm:w-[46rem]" : "sm:w-[32rem]"}
       footer={<ClearVisuals filters={props.filters} />}
+      aside={aside}
     >
-      <VisualsPickerPart section={section} {...props} />
+      <VisualsPickerPart
+        section={section}
+        info={{ open: infoOpen, onToggle: () => setInfoOpen(!infoOpen) }}
+        {...props}
+      />
     </SectionPicker>
   );
 }

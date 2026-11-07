@@ -120,11 +120,12 @@ and **Orientation**, each with what it's set to under its name (such as "Blue", 
 "Vertical"), and **Clear visuals** under them while any of them is set. The right side shows the chosen section, with a line on
 what it's for. Color threshold and Vividness also have an (i) button beside that line, like the Graph page's presets
 (`components/info-button.tsx`, shown by `PickerPart`'s `info`), which shows or hides what each of their choices does
-under the controls; it starts hidden:
+in a panel to the right of the controls (under them on a phone), widening the picker; it starts hidden and stays on as
+you move between sections:
 
 - **Color**: the small swatches; picking the chosen one again clears it.
-- **Color threshold** (how much of the picked color a photo needs): **Largest only** (the picked color is the photo's biggest share) or **At least…** (it covers at least the
-  share set on the slider, even when another color is bigger).
+- **Color threshold** (how much of the picked color a photo needs): a list of **Largest only** (the picked color is the photo's biggest share) and **At least…** (it covers at least the
+  share set on the slider, even when another color is bigger). The slider shows under the list only while At least… is chosen.
 - **Vividness**: **Average** (how vivid the whole photo is) or **Peak** (how vivid its most vivid tenth is), and the
   least of it a photo needs.
 - **Orientation**: a list of Horizontal, Vertical and Square (see

@@ -1,9 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { ColorFilter } from "@portfolio/components/color-filter";
-import { ColorMatchControl } from "@portfolio/components/color-match-control";
+import { ChoiceRow } from "@portfolio/components/choice-row";
+import { ShareThreshold } from "@portfolio/components/color-match-control";
 import { OrientationFilter } from "@portfolio/components/orientation-filter";
-import { PickerPart } from "@portfolio/components/section-picker";
+import { type PickerInfo, PickerPart } from "@portfolio/components/section-picker";
 import { VividnessControl } from "@portfolio/components/vividness-control";
 import {
   type ColorFilters,
@@ -34,15 +35,24 @@ export interface VisualsPickerProps {
   filters: VisualFilters;
 }
 
+/** A section's controls, with its (i) button when it has more to say. */
+type PartProps = VisualsPickerProps & { info: PickerInfo };
+
 /** The right side of the Visuals picker: the chosen section's controls. */
-export function VisualsPickerPart({
-  section,
-  ...props
-}: VisualsPickerProps & { section: VisualSection }) {
+export function VisualsPickerPart({ section, ...props }: PartProps & { section: VisualSection }) {
   return PARTS[section](props);
 }
 
-const PARTS: Record<VisualSection, (props: VisualsPickerProps) => ReactNode> = {
+/**
+ * What each choice of a section does, for the panel its (i) button opens on the right; the
+ * sections left out have no (i) button.
+ */
+export const VISUAL_INFO: Partial<Record<VisualSection, ReactNode>> = {
+  match: <MatchChoices />,
+  vivid: <VividChoices />,
+};
+
+const PARTS: Record<VisualSection, (props: PartProps) => ReactNode> = {
   color: (props) => <ColorPart {...props} />,
   match: (props) => <MatchPart {...props} />,
   vivid: (props) => <VividPart {...props} />,
@@ -62,15 +72,26 @@ function ColorPart({ photos, filters }: VisualsPickerProps) {
   );
 }
 
-/** How a photo matches the picked color, with what each choice does. */
-function MatchPart({ filters }: VisualsPickerProps) {
+/** How a photo matches the picked color: a list of Largest only and At least…, with its slider. */
+function MatchPart({ filters, info }: PartProps) {
+  const threshold = matchOf(filters).mode === "threshold";
+  const navigate = useNavigate();
+  const set = (match: "threshold" | undefined) =>
+    void navigate({
+      to: ".",
+      resetScroll: false,
+      search: (prev: Record<string, unknown>) => ({ ...prev, match, photo: undefined }),
+      replace: true,
+    });
   return (
-    <PickerPart intro="How much of the picked color a photo needs to show." info={<MatchChoices />}>
-      <ColorMatchControl
-        threshold={matchOf(filters).mode === "threshold"}
-        percent={filters.min ?? DEFAULT_PERCENT}
-        fallback={DEFAULT_PERCENT}
-      />
+    <PickerPart intro="How much of the picked color a photo needs to show." info={info}>
+      <div role="group" aria-label="How photos match the color" className="-mx-2 flex flex-col">
+        <ChoiceRow label="Largest only" on={!threshold} onClick={() => set(undefined)} />
+        <ChoiceRow label="At least…" on={threshold} onClick={() => set("threshold")} />
+      </div>
+      {threshold && (
+        <ShareThreshold percent={filters.min ?? DEFAULT_PERCENT} fallback={DEFAULT_PERCENT} />
+      )}
     </PickerPart>
   );
 }
@@ -94,11 +115,11 @@ function MatchChoices() {
 }
 
 /** Which vividness to measure and the least a photo needs, with what each choice does. */
-function VividPart({ filters }: VisualsPickerProps) {
+function VividPart({ filters, info }: PartProps) {
   return (
     <PickerPart
       intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30."
-      info={<VividChoices />}
+      info={info}
     >
       <VividnessControl vivid={filters.vivid ?? 0} measure={filters.measure ?? "average"} />
     </PickerPart>
@@ -143,7 +164,7 @@ function OrientationPart({ photos, filters }: VisualsPickerProps) {
 /** What each of a control's choices does, as a short list under it. */
 function Choices({ items }: { items: [string, string][] }) {
   return (
-    <dl className="flex flex-col gap-2 border-t pt-3 text-xs">
+    <dl className="flex flex-col gap-3 text-xs">
       {items.map(([name, text]) => (
         <div key={name}>
           <dt className="font-medium">{name}</dt>
