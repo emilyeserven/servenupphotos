@@ -1,6 +1,6 @@
 import type { TripLine } from "@/api/trip-lines";
 import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
-import { type CameraClock, DEFAULT_CLOCK, byCamera, resolveClock } from "@/lib/camera-clock";
+import { type ClockSetting, resolveClock } from "@/lib/clock-setting";
 import {
   type Clock,
   type ShiftSide,
@@ -107,8 +107,8 @@ function customValue(day: DayPhoto, fixedTime: string): string | null {
 }
 
 /**
- * What fixing the photo would do, or null when it's left out, its camera's clock was right or isn't
- * worked out yet, or a timezone isn't chosen.
+ * What fixing the photo would do, or null when it's left out, the clock isn't worked out yet, or a
+ * timezone isn't chosen.
  */
 function planOne(
   day: DayPhoto,
@@ -124,22 +124,19 @@ function planOne(
 }
 
 /**
- * What fixing each photo would do, for the ones on a side of the change, by camera, each with the
- * clock its camera kept (`clocks` by camera name; one not listed kept the start timezone).
+ * What fixing each photo would do, for the ones on a side of the change, with the clock the camera
+ * kept that session.
  */
 export function planShifts(
   photos: DayPhoto[],
   sides: Record<string, ShiftSide>,
   zones: ShiftZones,
-  clocks: Record<string, CameraClock>,
+  setting: ClockSetting,
 ): PlannedShift[] {
-  const context = { zones, photos, sides };
-  return byCamera(photos).flatMap(([camera, days]) => {
-    const clock = resolveClock(clocks[camera] ?? DEFAULT_CLOCK, context);
-    return days
-      .map((day) => planOne(day, sides[day.photo.file.path] ?? "before", zones, clock))
-      .filter((plan): plan is PlannedShift => plan !== null);
-  });
+  const clock = resolveClock(setting, { zones, photos, sides });
+  return photos
+    .map((day) => planOne(day, sides[day.photo.file.path] ?? "before", zones, clock))
+    .filter((plan): plan is PlannedShift => plan !== null);
 }
 
 /** Whether the fix moves the photo to another day. */

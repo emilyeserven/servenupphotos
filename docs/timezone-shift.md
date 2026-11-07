@@ -1,9 +1,8 @@
 # Times across timezones
 
-Each camera keeps its own clock, and on a day you cross timezones (a flight, a border) those clocks disagree: a phone
-sets itself to the local time, while a camera may stay on home time, have been set to the destination's time before
-leaving, or just be wrong by some amount nobody remembers. So one day's photos can have a mix of right and wrong
-times. The Photo page fixes a day of them at once, camera by camera.
+A camera keeps one clock, and on a day you cross timezones (a flight, a border) it can be wrong for part of a session:
+it may stay on home time, have been set to the destination's time before leaving, or just be off by some amount
+nobody remembers. The Photo page fixes a session of photos at once.
 
 > **Frontend analogy:** the camera stores a naive `Date` string with no offset, like `"2026-10-01T18:15"` with no `Z`.
 > The fix reads each string in the timezone the camera's clock was on (or with the clock's known error), turns it
@@ -17,20 +16,18 @@ title and **Date taken**, has **Fix times across timezones…**, which opens a d
 
 1. **Day, by the camera's clock** starts on the open photo's day. It lists every photo from Photos in Flight and the
    Gallery (with their [local edits](combined-data-store.md#local-edits)) whose clock time or current time is on that
-   day, so a photo already fixed onto the next day still shows.
+   day, in the order the camera took them, so a photo already fixed onto the next day still shows.
 2. **Start timezone** and **End timezone** are IANA timezones (type a city, such as Tokyo), each shown with its offset
    on that day, daylight saving included. The start one begins as the browser's own.
-3. The photos are grouped by camera (the EXIF `camera`; **Unknown camera** when it has none), each group in the order
-   that camera took them. For each camera, say what its clock was set to:
+3. **The camera's clock was set to**:
    - **Start timezone** (the default): it stayed on home time.
    - **End timezone**: it was set to the destination's time before leaving.
    - **Another timezone**: pick it.
-   - **Don't know**: pick one of its photos and enter that photo's real local time, such as from a phone photo of the
-     same moment. That tells how far the clock was from UTC, and its other photos move by as much. The real time is
-     read in the timezone of the side the photo is marked on.
-   - **Already right**: it showed the local time wherever it was, as a phone does, so its photos keep their times.
-4. Each photo of a camera whose clock wasn't right is **Before** (the default), **After** or **Leave out**.
-   **After from here** marks that photo and every later one from the same camera as after.
+   - **Don't know**: pick one of the photos and enter its real local time, such as from a phone photo of the same
+     moment. That tells how far the clock was from UTC, and the other photos move by as much. The real time is read
+     in the timezone of the side the photo is marked on.
+4. Each photo is **Before** (the default), **After** or **Leave out**. **After from here** marks that photo and every
+   later one as after; photos left out keep their choice. Photos taken in the clock's own timezone keep their time.
 5. The preview lists each photo's time **Now** and **After the fix**, how far it moves, and **Moves to …** when it
    lands on another day. Under it are the [knock-on effects](#knock-on-effects).
 6. **Fix N photos' times** keeps the new times and closes the dialog.
@@ -60,6 +57,6 @@ Changing a time can move a photo to another day or change the order of a day's p
   - other photos move onto that day: any with an exact spot aren't on the line, so Needs Attention lists it too;
   - only the order of its photos changes: Needs Attention doesn't catch that, so check the line by hand.
 
-The work is in `lib/timezone-shift.ts` (timezone arithmetic with `Intl.DateTimeFormat`), `lib/camera-clock.ts` (what
-each camera's clock kept) and `lib/timezone-shift-plan.ts` (which photos are on the day, what each becomes, and the
+The work is in `lib/timezone-shift.ts` (timezone arithmetic with `Intl.DateTimeFormat`), `lib/clock-setting.ts` (what
+the camera's clock kept) and `lib/timezone-shift-plan.ts` (which photos are on the day, what each becomes, and the
 trip line effects); the dialog is in `components/timezone-shift/`.

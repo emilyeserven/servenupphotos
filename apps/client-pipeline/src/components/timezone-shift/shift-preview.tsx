@@ -23,7 +23,7 @@ export function ShiftPreview({ plans, effects }: ShiftPreviewProps) {
   if (plans.length === 0) {
     return (
       <p className="text-muted-foreground rounded-md border border-dashed p-3 text-center">
-        Choose both timezones, and what each camera's clock was set to, to see the new times.
+        Choose both timezones, and what the camera's clock was set to, to see the new times.
       </p>
     );
   }

@@ -37,10 +37,9 @@ export function TimezoneShiftCard({ path, onCurrentFixed, disabled }: TimezoneSh
       <CardHeader>
         <CardTitle>Times across timezones</CardTitle>
         <CardDescription>
-          Each camera keeps its own clock, which may be on home time, the new time or just wrong, so
-          on a day you crossed timezones its photos can carry the wrong time. This fixes them,
-          camera by camera, by writing each photo&apos;s local time into its custom date; the EXIF
-          date is kept as it is.
+          A camera&apos;s clock may be on home time, the new time or just wrong, so on a day you
+          crossed timezones its photos can carry the wrong time. This fixes a session of them by
+          writing each photo&apos;s local time into its custom date; the EXIF date is kept as it is.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-start gap-2">
@@ -53,8 +52,8 @@ export function TimezoneShiftCard({ path, onCurrentFixed, disabled }: TimezoneSh
             <DialogHeader>
               <DialogTitle>Fix times across timezones</DialogTitle>
               <DialogDescription>
-                Choose where the day started and ended, say what each camera&apos;s clock was set
-                to, mark which photos were taken after the change, and check the new times before
+                Choose where the day started and ended, say what the camera&apos;s clock was set to,
+                mark which photos were taken after the change, and check the new times before
                 keeping them.
               </DialogDescription>
             </DialogHeader>
