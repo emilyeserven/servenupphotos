@@ -109,18 +109,15 @@ export function lensUse(photos: Photo[], name: string): LensUse {
 /** What the portfolio's photos taken with a camera say about it. */
 export interface CameraUse {
   count: number;
-  /** The lenses used on it, most photos first. */
-  lenses: string[];
   first?: Date;
   last?: Date;
 }
 
-/** How the portfolio's photos used the camera: how many, with which lenses, and when. */
+/** How the portfolio's photos used the camera: how many, and when. */
 export function cameraUse(photos: Photo[], name: string): CameraUse {
   const taken = photos.filter((photo) => photo.camera === name);
   return {
     count: taken.length,
-    lenses: byCount(taken.flatMap((photo) => photo.lens || [])),
     ...takenSpan(taken),
   };
 }
