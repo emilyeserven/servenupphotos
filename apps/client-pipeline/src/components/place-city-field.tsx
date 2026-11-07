@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type Place, placesQuery, readEntries } from "@/api/places";
 import { FieldLabel } from "@/components/field-label";
+import { usedBy } from "@/components/region-override-field";
 import type { ComboboxOption } from "@/components/ui/combobox";
 import { SingleCombobox } from "@/components/ui/single-combobox";
 import { locationNames } from "@/lib/location-names";
@@ -8,18 +9,9 @@ import { type CityRow, cityRows, regionKey } from "@/lib/place-cities";
 import { shownPhotos } from "@/lib/place-seeds";
 import { useCombinedData } from "@/stores/combined-data";
 
-/** The count with its noun, such as "1 place" or "3 places". */
-function counted(count: number, noun: string): string {
-  return `${count} ${noun}${count === 1 ? "" : "s"}`;
-}
-
 /** What an option says under the city: its country, and how many places are in it or photos show it. */
 function cityDetail(city: CityRow): string {
-  const used =
-    city.places > 0
-      ? counted(city.places, "place")
-      : `Inferred from ${counted(city.photos, "photo")}`;
-  return [city.country, used].filter(Boolean).join(" · ");
+  return [city.country, usedBy(city)].filter(Boolean).join(" · ");
 }
 
 /** An option for each city, plus the typed one when it's new, so it doesn't show as unknown. */
@@ -60,8 +52,9 @@ export function PlaceCityField({
   help,
   onChange,
 }: PlaceCityFieldProps) {
-  const names = locationNames(readEntries(useQuery(placesQuery).data?.localizations));
-  const cities = cityRows(shownPhotos(useCombinedData().data), places, names);
+  const localizations = readEntries(useQuery(placesQuery).data?.localizations);
+  const names = locationNames(localizations);
+  const cities = cityRows(shownPhotos(useCombinedData().data), places, names, localizations);
   const choose = (city: string) => {
     const found = cities.find((c) => regionKey(c.name) === regionKey(city));
     onChange(found ? found.name : city, found?.country);

@@ -58,6 +58,13 @@ export interface Localization {
    * States of America". Its name wins over them: Location Names rewrites them to it.
    */
   otherNames?: string[];
+  /**
+   * The state, province or prefecture a city is in, as written when it was added or edited on the
+   * Places page, so it's listed there before any photo or place has it. Only a city has one.
+   */
+  state?: string;
+  /** The country a city or state is in, the same way. Only a city or state has one. */
+  country?: string;
 }
 
 /** One place or localization file, as read; `data` is missing when it couldn't be. */

@@ -132,6 +132,14 @@ type Localization struct {
 	// such as "United States" for "United States of America". Name wins over
 	// them: Update Data's Location names rewrites them to it.
 	OtherNames []string `json:"otherNames,omitempty"`
+	// State is the state, province or prefecture a city is in, as written
+	// when it was added or edited on the Places page, so a city no photo or
+	// place has yet is listed under it. Only a city has one; "" or missing
+	// for none.
+	State string `json:"state,omitempty"`
+	// Country is the country a city or state is in, the same way. Only a
+	// city or state has one; "" or missing for none.
+	Country string `json:"country,omitempty"`
 }
 
 // Entry is one place or localization file, as read.
@@ -387,6 +395,7 @@ func validLocalization(l Localization) (Localization, *PublishError) {
 		Romanization: strings.TrimSpace(l.Romanization), Pronunciation: strings.TrimSpace(l.Pronunciation),
 		LocalScript: strings.TrimSpace(l.LocalScript),
 	}
+	out.State, out.Country = localizationRegion(l)
 	if perr := validEntryID("localization", out.ID); perr != nil {
 		return out, perr
 	}
@@ -396,7 +405,7 @@ func validLocalization(l Localization) (Localization, *PublishError) {
 	if out.Name == "" {
 		return out, publishErr(http.StatusBadRequest, "Say which %s the localization is for.", out.Type)
 	}
-	for _, s := range []string{out.Name, out.Romanization, out.Pronunciation, out.LocalScript} {
+	for _, s := range []string{out.Name, out.Romanization, out.Pronunciation, out.LocalScript, out.State, out.Country} {
 		if utf8.RuneCountInString(s) > maxEntryTextLength {
 			return out, publishErr(http.StatusBadRequest, "Keep each field to %d characters.", maxEntryTextLength)
 		}
@@ -404,6 +413,18 @@ func validLocalization(l Localization) (Localization, *PublishError) {
 	var perr *PublishError
 	out.OtherNames, perr = cleanOtherNames(out, l.OtherNames)
 	return out, perr
+}
+
+// localizationRegion is the state and country l is in, trimmed, keeping only
+// what its type has: a city's state and country, or a state's country.
+func localizationRegion(l Localization) (state, country string) {
+	switch strings.TrimSpace(l.Type) {
+	case LocalizationCity:
+		return strings.TrimSpace(l.State), strings.TrimSpace(l.Country)
+	case LocalizationState:
+		return "", strings.TrimSpace(l.Country)
+	}
+	return "", ""
 }
 
 // validEntryID fails unless id is lowercase letters, numbers and single

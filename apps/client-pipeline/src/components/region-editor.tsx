@@ -10,6 +10,7 @@ import {
 import { FloatingSaveButton } from "@/components/floating-save-button";
 import { OtherNamesField } from "@/components/other-names-field";
 import { RegionIcon } from "@/components/region-icon";
+import { NO_WHERE, type RegionWhere, RegionWhereFields } from "@/components/region-where-fields";
 import type { RegionListData } from "@/components/region-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,25 +80,67 @@ function useOtherNames(saved: Localization | undefined, draft: LocalizationDraft
   return { names, set, changed: !sameNames(names, before) };
 }
 
-/** The country's or city's localization and other names as typed, and saving them. */
+/** The state and country written on a city's or state's localization; empty for none. */
+function savedWhere(saved: Localization | undefined): RegionWhere {
+  if (!saved) return NO_WHERE;
+  return { state: saved.state || "", country: saved.country || "" };
+}
+
+/** Where a city or state is as written, whether it differs from the saved one, and setting it. */
+function useWhere(saved: Localization | undefined, draft: LocalizationDraft) {
+  const before = savedWhere(saved);
+  const [where, setWhere] = useState(before);
+  const set = (next: RegionWhere) => {
+    draft.save.reset();
+    setWhere(next);
+  };
+  const changed = where.state.trim() !== before.state || where.country.trim() !== before.country;
+  return { where, set, changed };
+}
+
+/** The country's or city's localization, other names and where it is, as typed, and saving them. */
 function useRegionForm(node: RegionNode, saved: Localization | undefined) {
   const draft = useLocalizationDraft(saved);
   const other = useOtherNames(saved, draft);
+  const where = useWhere(saved, draft);
   const type = node.kind as LocalizationType;
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const target = { id: localizationId(type, node.name), type, name: node.name };
-    draft.saveAs(target, { otherNames: other.names });
+    draft.saveAs(target, { otherNames: other.names, ...where.where });
   };
-  return { draft, other, changed: draft.changed || other.changed, submit };
+  const changed = [draft.changed, other.changed, where.changed].some(Boolean);
+  return { draft, other, where, changed, submit };
+}
+
+/** What a city's or state's fields show while empty: where its places and photos say it is. */
+function wherePlaceholder(node: RegionNode): RegionWhere {
+  const region = node.region as Partial<CityRow>;
+  return { ...NO_WHERE, state: region.state ?? "", country: region.country ?? "" };
+}
+
+/** Where a city or state is, written on its localization; nothing for a country. */
+function WhereFields({ node, form }: { node: RegionNode; form: ReturnType<typeof useRegionForm> }) {
+  if (node.kind !== "city" && node.kind !== "state") return null;
+  return (
+    <RegionWhereFields
+      kind={node.kind}
+      value={form.where.where}
+      placeholder={wherePlaceholder(node)}
+      disabled={form.draft.save.isPending}
+      onChange={form.where.set}
+    />
+  );
 }
 
 /** The country's or city's other names and localization fields, and a button to save them. */
 function RegionLocalizationForm({ node, saved, list }: RegionEditorProps) {
-  const { draft, other, changed, submit } = useRegionForm(node, saved);
+  const form = useRegionForm(node, saved);
+  const { draft, other, changed, submit } = form;
   const { save } = draft;
   return (
     <form id="region-editor-form" className="flex flex-col gap-4" onSubmit={submit}>
+      <WhereFields node={node} form={form} />
       <OtherNamesField
         node={node}
         list={list}
