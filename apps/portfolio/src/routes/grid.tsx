@@ -28,6 +28,7 @@ import { type GridColorSpec, type GridSort, sortGrid } from "@/lib/grid-sort";
 import { type GridSize, naturalSize, parseGridSize, squareSize, tableSize } from "@/lib/grid-size";
 import { parseTableSearch, type TableSearch } from "@/lib/table-search";
 import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { parseShownPhoto, type ShownPhotoSearch, useShownPhoto } from "@/lib/shown-photo";
 import { useRememberViewOptions } from "@/lib/view-options";
 
@@ -35,6 +36,8 @@ import { useRememberViewOptions } from "@/lib/view-options";
 type ViewMode = TileMode | "table";
 
 interface GridSearch extends ColorFilters, ColorOrderSearch, TableSearch {
+  /** The text search: the words each photo's title, location or camera model has to have. */
+  q?: string;
   /** Left out for the default, square tiles. */
   view?: Exclude<ViewMode, "square">;
   /** Set when each tile shows its title, place and comment under it. Left out for the default, hidden. */
@@ -64,6 +67,7 @@ function validateGridSearch(
     ...parseColorFilters(search),
     ...parseFilters(search),
     ...parseCameraFilters(search),
+    ...parseTextSearch(search),
     ...parseShownPhoto(search),
   };
 }
@@ -126,10 +130,19 @@ function colorSpec(search: GridSearch): GridColorSpec {
   return { order, secondary, secondaryOrder, measure, color };
 }
 
+/** The photos the text search, the filters and the camera filters leave, before the colors. */
+function searchedPhotos<T extends Photo>(list: T[], search: GridSearch & Record<string, unknown>) {
+  return filterWithCamera(searchPhotos(list, search.q), search);
+}
+
+/** What every filter and the text search leave of the photos, in the same order. */
+function filteredPhotos<T extends Photo>(list: T[], search: GridSearch & Record<string, unknown>) {
+  return filterByColors(searchedPhotos(list, search), search);
+}
+
 /** The grid's photos: what every filter leaves, in the URL's sort. */
 function gridPhotosFor(search: GridSearch & Record<string, unknown>, sort: GridSort): ImagePhoto[] {
-  const filtered = filterByColors(filterWithCamera(newestFirst, search), search);
-  return sortGrid(filtered, sort, colorSpec(search));
+  return sortGrid(filteredPhotos(newestFirst, search), sort, colorSpec(search));
 }
 
 function GridView() {
@@ -157,11 +170,12 @@ function GridView() {
         <div className="mt-3 w-full">
           <CameraFilterBar
             photos={newestFirst}
+            searchable
             extra={{
               keys: COLOR_FILTER_KEYS,
               count: colorFilterCount(search),
               children: (
-                <GridColorFilters photos={filterWithCamera(newestFirst, search)} filters={search} />
+                <GridColorFilters photos={searchedPhotos(newestFirst, search)} filters={search} />
               ),
             }}
           />
@@ -181,7 +195,7 @@ function GridView() {
  * table, every photo (even those without resized versions in R2), which the table sorts itself.
  */
 function photosFor(search: GridSearch & Record<string, unknown>, mode: ViewMode): Photo[] {
-  if (mode === "table") return filterByColors(filterWithCamera(photos, search), search);
+  if (mode === "table") return filteredPhotos(photos, search);
   return gridPhotosFor(search, search.sort ?? "newest");
 }
 
