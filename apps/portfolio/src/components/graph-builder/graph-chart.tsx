@@ -12,7 +12,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { GraphTooltip, shortLabel, WithKey } from "@/components/graph-builder/graph-parts";
+import { WithKey } from "@/components/graph-builder/graph-key";
+import { GraphTooltip, shortLabel } from "@/components/graph-builder/graph-parts";
 import { pickedOpacity, pickOf, useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { formatValue, type GraphData, type Measure, seriesColor } from "@/lib/graph-data";

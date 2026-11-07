@@ -108,7 +108,7 @@ taken, and clicking a stack picks its x value like a bar. It has no y axis setti
 its photos; its **Table** shows each x value's photo counts (`lib/graph-photo-dots.ts`,
 `components/graph-builder/photo-dots-graph.tsx`).
 
-Every graph has a tooltip on hover, a key on its right when it's split or a pie (under it on phones, `WithKey` in `graph-parts.tsx`), so the y axis stays on its own, and a **Table** button that
+Every graph has a tooltip on hover, a key when it's split or a pie, floating over the graph's top right corner so the y axis stays on its own (`graph-key.tsx`; open at first, and its **Key** heading folds it up or opens it again), and a **Table** button that
 shows its numbers as a table.
 
 The site's presets come in two groups: **Technical Details** (Aperture, Exposure, ISO and Focal length) and **Time

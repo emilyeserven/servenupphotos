@@ -1,4 +1,4 @@
-import { WithKey } from "@/components/graph-builder/graph-parts";
+import { WithKey } from "@/components/graph-builder/graph-key";
 import { pickedOpacity, useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import { ColumnNames } from "@/components/graph-builder/heatmap-graph";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
