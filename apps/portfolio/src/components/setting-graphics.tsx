@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { MotionGraphic } from "@portfolio/components/motion-graphic";
 import type { RangeKey } from "@portfolio/lib/camera-filters";
 import {
   apertureOpening,
@@ -67,8 +68,21 @@ function ApertureGraphic({ value }: { value: number }) {
   );
 }
 
-/** The exposure time: a dial filled further the longer the shutter stays open. */
+/**
+ * The exposure time: a dial filled further the longer the shutter stays open, with a moving ball
+ * beside it showing how sharp or blurred it comes out.
+ */
 function ExposureGraphic({ value }: { value: string }) {
+  return (
+    <div className="flex items-center gap-1">
+      <ExposureDial value={value} />
+      <MotionGraphic value={value} />
+    </div>
+  );
+}
+
+/** A dial filled further the longer the shutter stays open. */
+function ExposureDial({ value }: { value: string }) {
   const share = exposureShare(value);
   const [cx, cy, r] = [WIDTH / 2, HEIGHT / 2, HEIGHT / 2 - 3];
   const degrees = Math.max(4, share * 359.9);
