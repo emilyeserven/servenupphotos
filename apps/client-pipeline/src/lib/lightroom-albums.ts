@@ -162,6 +162,11 @@ export function normalizeLightroomItems(items: unknown): LightroomItem[] {
   return readItems(items, "");
 }
 
+/** The folder an album is in, from its path, such as "Travel/Japan", or "" when it's at the top. */
+export function albumFolder(album: LightroomAlbum): string {
+  return album.path.slice(0, Math.max(0, album.path.length - album.name.length - 1));
+}
+
 /** Every album in the tree, folders left out, from top to bottom. */
 export function allAlbums(items: LightroomItem[]): LightroomAlbum[] {
   return items.flatMap((item) => (item.kind === "album" ? [item] : allAlbums(item.children)));

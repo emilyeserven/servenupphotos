@@ -2,6 +2,7 @@ import { FolderIcon } from "lucide-react";
 import { useState } from "react";
 import { AlbumBoard } from "@/components/lightroom-albums/album-board";
 import { AlbumTitle, StageSelect, Uncertain } from "@/components/lightroom-albums/album-parts";
+import { Segmented } from "@/components/lightroom-albums/segmented";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { count } from "@/components/update-data-shared";
@@ -73,24 +74,7 @@ const VIEWS: { value: LightroomView; label: string }[] = [
 function ViewSwitch() {
   const view = useLightroomAlbumsStore((state) => state.view);
   const setView = useLightroomAlbumsStore((state) => state.setView);
-  return (
-    <div className="flex rounded-md border p-0.5" role="group" aria-label="Show the albums as">
-      {VIEWS.map((v) => (
-        <button
-          key={v.value}
-          type="button"
-          aria-pressed={view === v.value}
-          onClick={() => setView(v.value)}
-          className={cn(
-            "rounded px-3 py-1 text-sm",
-            view === v.value ? "bg-primary text-primary-foreground" : "hover:bg-muted",
-          )}
-        >
-          {v.label}
-        </button>
-      ))}
-    </div>
-  );
+  return <Segmented label="Show the albums as" options={VIEWS} value={view} onChange={setView} />;
 }
 
 /** The chosen view of the albums. */

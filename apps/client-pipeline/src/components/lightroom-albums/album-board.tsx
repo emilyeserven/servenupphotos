@@ -1,6 +1,11 @@
 import { type DragEvent, useState } from "react";
 import { AlbumTitle, StageSelect } from "@/components/lightroom-albums/album-parts";
-import { LIGHTROOM_STAGES, type LightroomAlbum, type LightroomStage } from "@/lib/lightroom-albums";
+import {
+  LIGHTROOM_STAGES,
+  type LightroomAlbum,
+  type LightroomStage,
+  albumFolder,
+} from "@/lib/lightroom-albums";
 import { cn } from "@/lib/utils";
 import { useLightroomAlbumsStore } from "@/stores/lightroom-albums";
 
@@ -70,14 +75,9 @@ function Lane({ stage, albums }: LaneProps) {
   );
 }
 
-/** The folder an album is in, from its path, or "" when it's at the top. */
-function folderOf(album: LightroomAlbum) {
-  return album.path.slice(0, Math.max(0, album.path.length - album.name.length - 1));
-}
-
 /** An album's card, dragged by its body, with its folder, notes and stage. */
 function BoardCard({ album }: { album: LightroomAlbum }) {
-  const folder = folderOf(album);
+  const folder = albumFolder(album);
   return (
     <article
       draggable

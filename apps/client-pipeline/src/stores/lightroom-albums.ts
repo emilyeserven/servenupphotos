@@ -7,6 +7,7 @@ import {
   normalizeLightroomItems,
   updateAlbum,
 } from "@/lib/lightroom-albums";
+import type { LightroomConnection } from "@/lib/lightroom-next-up";
 
 /** How the Albums card shows the albums: as Lightroom's folder tree, or as a board with a lane per stage. */
 export type LightroomView = "tree" | "board";
@@ -24,6 +25,10 @@ interface LightroomAlbumsState {
   view: LightroomView;
   /** Switches between the tree and the board. */
   setView: (view: LightroomView) => void;
+  /** Whether the Next up panel suggests any album, or only the ones Lightroom keeps offline. */
+  connection: LightroomConnection;
+  /** Switches the Next up panel between online and offline. */
+  setConnection: (connection: LightroomConnection) => void;
 }
 
 /** A list saved by version 0 of the page, read again so its albums get "offline" and its stages become lanes. */
@@ -54,6 +59,8 @@ export const useLightroomAlbumsStore = create<LightroomAlbumsState>()(
       clear: () => set({ file: null }),
       view: "tree",
       setView: (view) => set({ view }),
+      connection: "online",
+      setConnection: (connection) => set({ connection }),
     }),
     {
       name: "pipeline-lightroom-albums",

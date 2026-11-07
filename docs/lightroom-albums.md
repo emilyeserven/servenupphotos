@@ -45,6 +45,23 @@ A list saved before the board's lanes is read again when the page opens: **Culli
 **Editing** and **Done** stay, and the stages that aren't lanes any more (Not started, Ready to upload, Uploaded)
 become No stage.
 
+## Next up
+
+Once there's a list, a **Next up** panel at the top of the page suggests 3 albums to work on **Overall** and 3 at
+each stage (Cull Round 1 to Re-editing, then No stage), leaving out albums that are Done (`lib/lightroom-next-up.ts`):
+
+- **Overall** puts the albums furthest along first, so an album you've started gets finished before a new one begins,
+  and the ones with no stage last.
+- At the same stage, and in each stage's list, the album with fewer photos comes first, as the quicker one to finish.
+  Albums whose photo count wasn't read go after the ones with a count.
+
+The **Online / Offline** switch (remembered in the browser) says whether you have the internet. **Offline** suggests
+only the albums Lightroom keeps on the device, the ones with the **Offline** mark.
+
+> **Frontend analogy:** it's a derived selector over the store, like
+> `albums.filter(notDone).toSorted(byStageDesc || bySize).slice(0, 3)`, recomputed on every render, with the
+> Online / Offline switch as one more filter in front of it.
+
 ## Kept on this computer only
 
 The list, stages and notes are kept in this browser's `localStorage` (`stores/lightroom-albums.ts`, under
