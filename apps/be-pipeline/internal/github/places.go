@@ -40,8 +40,10 @@ var (
 	Cameras       = EntryKind{Name: "camera override", Folder: "cameras", AllFile: "CAMERAS.json"}
 	Lenses        = EntryKind{Name: "custom lens", Folder: "lenses", AllFile: "LENSES.json"}
 	Captions      = EntryKind{Name: "caption template", Folder: "captions", AllFile: "CAPTIONS.json"}
-	// TimelineLabels name runs of days, such as a trip, on the portfolio's Timeline.
-	TimelineLabels = EntryKind{Name: "timeline label", Folder: "timeline", AllFile: "TIMELINE.json"}
+	// Trips name runs of days, such as "Japan", which the portfolio's
+	// Timeline shows beside those days, with the legs travelled between them.
+	// They're kept in the timeline folder, as the timeline labels were.
+	Trips = EntryKind{Name: "Trip", Folder: "timeline", AllFile: "TIMELINE.json"}
 	// ViewerLikesKind is the photos each person who sent their My Likes list
 	// liked, one file per person.
 	ViewerLikesKind = EntryKind{Name: "viewer", Folder: "likes", AllFile: "LIKES.json"}
@@ -54,7 +56,7 @@ var (
 	// GearKind is the cameras' and lenses' own pictures, shown in place of
 	// the portfolio's drawings of them, one file each.
 	GearKind   = EntryKind{Name: "gear picture", Folder: "gear", AllFile: "GEAR.json"}
-	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, TimelineLabels, ViewerLikesKind, TripLines, GraphPresets, GearKind}
+	entryKinds = []EntryKind{Places, Localizations, MetaInfo, Cameras, Lenses, Captions, Trips, ViewerLikesKind, TripLines, GraphPresets, GearKind}
 )
 
 // EntryKindByFolder returns the entry kind whose folder is folder, such as

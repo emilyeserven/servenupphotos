@@ -65,7 +65,13 @@ export function GearPicture({
 }) {
   const src = image ?? pictureOf(kind, name);
   if (!src) return <GearDrawing kind={kind} name={name} />;
-  return <img src={src} alt={name} className="max-h-32 w-full rounded-sm object-contain" />;
+  return (
+    <img
+      src={src}
+      alt={name}
+      className="aspect-[4/3] w-full max-w-[267px] rounded-sm object-contain"
+    />
+  );
 }
 
 /** The camera's or lens's own picture from the Gear Pictures page, or "" when it has none. */

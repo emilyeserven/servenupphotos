@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["giwa", "gates", "city-walls", "traffic", "cars", "road", "motion-blur"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -130,7 +130,7 @@ draws them (`lib/trip-lines-map.ts`):
   > **Frontend analogy:** like laying out overlapping calendar events in columns: each later event takes the first
   > column none of the events it overlaps is in.
 
-- A [Trip](trip-lines.md#trips)'s ferry is a line of teal dots, and its flight a dashed pink arc. A leg shows with
+- A [Trip](trips.md)'s ferry is a line of teal dots, and its flight a dashed pink arc. A leg shows with
   the photos of either the day it left or the day it arrived. The Timeline's route sketches leave legs out.
 - Any other hop is dashed purple.
 - Trip stops aren't drawn: they show on the [Trip pages](trip-pages.md#trip-stops), with their casual photos.

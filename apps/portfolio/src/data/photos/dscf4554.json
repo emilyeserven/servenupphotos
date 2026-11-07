@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["city-walls", "crowd", "skyline", "skyscrapers", "twilight", "city"],
-  "genres": [],
+  "genres": ["cityscape", "street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

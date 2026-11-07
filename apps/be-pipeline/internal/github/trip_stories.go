@@ -105,7 +105,7 @@ func validTripStory(story TripStory) (TripStory, *PublishError) {
 	if !strings.HasPrefix(story.ID, storyIDPrefix) {
 		return story, publishErr(http.StatusBadRequest, "Start a story's ID with %q.", storyIDPrefix)
 	}
-	if _, err := time.Parse(labelDateLayout, story.Date); err != nil {
+	if _, err := time.Parse(dayLayout, story.Date); err != nil {
 		return story, publishErr(http.StatusBadRequest, "Give the story's day as a date, such as story-2026-09-23.")
 	}
 	story.Intro = strings.TrimSpace(story.Intro)

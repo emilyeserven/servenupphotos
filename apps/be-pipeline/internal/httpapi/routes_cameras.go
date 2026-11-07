@@ -14,7 +14,8 @@ func registerCameraRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("DELETE /cameras/{id}", handleDeleteCameraOverride(d.store, d.gh))
 	mux.HandleFunc("PUT /lenses/{id}", handleSaveCustomLens(d.store, d.gh))
 	mux.HandleFunc("DELETE /lenses/{id}", handleDeleteCustomLens(d.store, d.gh))
-	mux.HandleFunc("POST /gear/image", handleUploadGearImage(d.store.R2, storage.UploadGearImage))
+	mux.HandleFunc("POST /gear/image", handleUploadGearImage(d.store.R2, storage.UploadGearOriginal))
+	mux.HandleFunc("POST /gear/crop", handleCropGearImage(d.store.R2, storage.CropGearImage))
 	mux.HandleFunc("PUT /gear/{id}", handleSaveGear(d.store, d.gh))
 	mux.HandleFunc("DELETE /gear/{id}", handleDeleteGear(d.store, d.gh))
 }

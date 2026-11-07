@@ -1,5 +1,5 @@
 import { mutationOptions } from "@tanstack/react-query";
-import type { GearFile, GearKind } from "@portfolio/lib/gear-pictures";
+import type { GearBox, GearCrop, GearFile, GearKind } from "@portfolio/lib/gear-pictures";
 import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 import { entryId } from "@/api/places";
@@ -62,20 +62,45 @@ export function gearRows(photos: CombinedPhoto[], files: GearFile[], kind: GearK
   return [...named, ...left];
 }
 
-/** Where an uploaded gear picture went in R2. */
+/** Where a gear picture or its crop went in R2. */
 interface UploadedGearImage {
   key: string;
   url: string;
 }
 
-/** Resizes a picture and puts it in R2 right away, for a gear picture file to point at. */
+/** Where an original gear picture went in R2, its size upright, in pixels, and where the gear is in it. */
+export interface UploadedGearOriginal extends UploadedGearImage {
+  width: number;
+  height: number;
+  /** The box around what isn't plain background: the product on a store page's white. */
+  subject: GearBox;
+}
+
+/** Puts a picture in R2 right away, unchanged, for a crop to be cut from, and finds the gear in it. */
 export const uploadGearImageMutation = mutationOptions({
   mutationKey: ["gear", "image"],
   mutationFn: (image: File) => {
     const body = new FormData();
     body.append("image", image);
-    return requestJson<UploadedGearImage>("/api/gear/image", { method: "POST", body });
+    return requestJson<UploadedGearOriginal>("/api/gear/image", { method: "POST", body });
   },
+});
+
+/** What to crop: the original picture's link in R2 and the part of it to keep. */
+interface GearCropRequest {
+  original: string;
+  crop: GearCrop;
+}
+
+/** Cuts a 200px-tall crop out of an original gear picture and puts it in R2 right away. */
+export const cropGearImageMutation = mutationOptions({
+  mutationKey: ["gear", "crop"],
+  mutationFn: (request: GearCropRequest) =>
+    requestJson<UploadedGearImage>("/api/gear/crop", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    }),
 });
 
 const gearMutations = settingMutations<GearFile>("gear");

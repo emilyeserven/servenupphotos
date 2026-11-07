@@ -31,7 +31,7 @@ export interface TripLinesSearch {
   show?: DayFilter;
   /** The name of the group shown alone on the day's map, from an older link. */
   group?: string;
-  /** The ID of the Trip chosen on the Trips tab; the newest unless set. */
+  /** The ID of a Trip chosen on the Trips tab before each Trip had a page; such a link opens its page. */
   trip?: string;
 }
 

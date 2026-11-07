@@ -291,10 +291,53 @@ const added = {
         ],
       },
     },
+  ],
+  gear: [
     {
-      path: `${FOLDER}/triplines/trip-japan-2026-09-22.json`,
+      path: `${FOLDER}/gear/camera-fujifilm-x-t5.json`,
       data: {
-        id: "trip-japan-2026-09-22",
+        id: "camera-fujifilm-x-t5",
+        kind: "camera",
+        name: "Fujifilm X-T5",
+        image: "https://cdn.servenupphotos.net/gear/0a1b2c3d4e5f-x-t5.webp",
+        original: "https://cdn.servenupphotos.net/gear/originals/9a8b7c6d5e4f-x-t5.jpg",
+        crop: { x: 0.05, y: -0.1, width: 0.9, height: 1.35 },
+        subject: { x: 0.1, y: 0.1, width: 0.8, height: 0.8 },
+        description: "My everyday camera since 2024.",
+      },
+    },
+    {
+      path: `${FOLDER}/gear/camera-fujifilm-x100v.json`,
+      data: {
+        id: "camera-fujifilm-x100v",
+        kind: "camera",
+        name: "Fujifilm X100V",
+        image: "https://cdn.servenupphotos.net/gear/1b2c3d4e5f6a-x100v.webp",
+        original: "https://cdn.servenupphotos.net/gear/originals/8b7c6d5e4f3a-x100v.jpg",
+        crop: { x: -0.1, y: -0.2, width: 1.2, height: 1.8 },
+        description: "",
+      },
+    },
+  ],
+  graphs: [
+    {
+      path: `${FOLDER}/graphs/when.json`,
+      data: { id: "when", kind: "group", name: "When", order: 5 },
+    },
+    graphPresetFile("seasons-by-year", "Seasons by year", 1, "when", {
+      type: "bar",
+      x: "year",
+      split: "season",
+      stacked: true,
+      sort: "reverse",
+    }),
+    graphPresetFile("time-of-day", "Time of day", 2, "when", { type: "pie", x: "daypart" }),
+  ],
+  timeline: [
+    {
+      path: `${FOLDER}/timeline/japan-2026-09-22.json`,
+      data: {
+        id: "japan-2026-09-22",
         name: "Japan",
         start: "2026-09-22",
         end: "2026-10-02",
@@ -317,38 +360,6 @@ const added = {
           },
         ],
       },
-    },
-  ],
-  gear: [
-    {
-      path: `${FOLDER}/gear/camera-fujifilm-x-t5.json`,
-      data: {
-        id: "camera-fujifilm-x-t5",
-        kind: "camera",
-        name: "Fujifilm X-T5",
-        image: "https://cdn.servenupphotos.net/gear/0a1b2c3d4e5f-x-t5.webp",
-        description: "My everyday camera since 2024.",
-      },
-    },
-  ],
-  graphs: [
-    {
-      path: `${FOLDER}/graphs/when.json`,
-      data: { id: "when", kind: "group", name: "When", order: 5 },
-    },
-    graphPresetFile("seasons-by-year", "Seasons by year", 1, "when", {
-      type: "bar",
-      x: "year",
-      split: "season",
-      stacked: true,
-      sort: "reverse",
-    }),
-    graphPresetFile("time-of-day", "Time of day", 2, "when", { type: "pie", x: "daypart" }),
-  ],
-  timeline: [
-    {
-      path: `${FOLDER}/timeline/japan-2026-09-22.json`,
-      data: { id: "japan-2026-09-22", name: "Japan", start: "2026-09-22", end: "2026-10-02" },
     },
     {
       path: `${FOLDER}/timeline/korea-2026-09-20.json`,
@@ -1599,8 +1610,15 @@ export function defaultFixtures() {
       changed: true,
     }),
     "POST /api/gear/image": {
-      key: "gear/6f7e8d9c0b1a-lens.webp",
-      url: "https://cdn.servenupphotos.net/gear/6f7e8d9c0b1a-lens.webp",
+      key: "gear/originals/6f7e8d9c0b1a-lens.jpg",
+      url: "https://cdn.servenupphotos.net/gear/originals/6f7e8d9c0b1a-lens.jpg",
+      width: 1200,
+      height: 800,
+      subject: { x: 0.55, y: 0.15, width: 0.3, height: 0.4 },
+    },
+    "POST /api/gear/crop": {
+      key: "gear/7a8b9c0d1e2f-lens.webp",
+      url: "https://cdn.servenupphotos.net/gear/7a8b9c0d1e2f-lens.webp",
     },
     "PUT /api/gear/camera-fujifilm-x-t5": ({ body }) => ({
       ...pendingSave(),
@@ -1616,7 +1634,7 @@ export function defaultFixtures() {
       before: added.graphs[2].data,
       changed: true,
     }),
-    "PUT /api/timeline/japan-2026-09-22": ({ body }) => ({
+    "PUT /api/trips/japan-2026-09-22": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/timeline/japan-2026-09-22.json`,
       data: body,

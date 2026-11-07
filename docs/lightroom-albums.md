@@ -5,7 +5,7 @@ collection sets and collections, or Lightroom's folders and albums) so you can k
 each album, such as which ones are still being culled and which are ready to upload. Getting the list from
 Lightroom, and Export and Import, are on a page of their own, **Lightroom Albums › Import**
 (`/lightroom-albums/import`), opened with **Import or export** at the top of the page. The breadcrumb shows a page
-under a sidebar page from its route's `staticData.subpage`.
+under a sidebar page from its route's `staticData.crumbs` ([Sidebar › Breadcrumbs](sidebar.md#breadcrumbs)).
 
 ## Getting the list
 

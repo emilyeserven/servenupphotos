@@ -76,7 +76,7 @@ func TestStoryIsNotALine(t *testing.T) {
 	if lines := w.tripLineFiles(); len(lines) != 0 {
 		t.Errorf("tripLineFiles() = %+v; a story was read as a line", lines)
 	}
-	if trips := tripsIn(w.entries(TripLines)); len(trips) != 0 {
+	if trips := legacyTripsIn(w.entries(TripLines)); len(trips) != 0 {
 		t.Errorf("tripsIn() = %+v; a story was read as a Trip", trips)
 	}
 }
@@ -95,7 +95,7 @@ func TestBakeTripPages(t *testing.T) {
 	if day.ID != "day-2026-10-01" || day.Name != "" || day.Start != "2026-10-01" || len(day.Days) != 1 {
 		t.Errorf("day page = %+v", day)
 	}
-	if trip.ID != "trip-kyoto" || len(trip.Days) != 2 || trip.Days[0].Day != "2026-09-23" || trip.Days[0].Photos[0].Text != "Gate" {
+	if trip.ID != "kyoto" || len(trip.Days) != 2 || trip.Days[0].Day != "2026-09-23" || trip.Days[0].Photos[0].Text != "Gate" {
 		t.Errorf("Trip page = %+v", trip)
 	}
 }

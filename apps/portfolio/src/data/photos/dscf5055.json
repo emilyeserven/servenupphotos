@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["alley", "night", "string-lights", "cables", "walls", "stairs"],
-  "genres": [],
+  "genres": ["street"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

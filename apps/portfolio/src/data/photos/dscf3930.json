@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["stream", "silhouettes", "pedestrians", "stones", "reflections", "trees", "walls"],
-  "genres": [],
+  "genres": ["street", "architecture"],
   "places": [
     {
       "relation": "",

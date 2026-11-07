@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["stream", "stones", "ivy", "walls", "pedestrians", "path", "trees", "reflections"],
-  "genres": [],
+  "genres": ["street", "landscape"],
   "places": [],
   "spotlightZones": [],
   "spotlightFocus": null,

@@ -1,117 +1,92 @@
+import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { useState } from "react";
-import { useTripLinesSearch } from "@/lib/trip-lines-search";
 import type { CombinedData } from "@/api/photos";
-import { timelineLabels } from "@/api/timeline-labels";
-import { type Trip, trips } from "@/api/trips";
-import { dayTitle } from "@/components/trip-lines/day-title";
-import { TripEditor } from "@/components/trips/trip-editor";
-import { TripFromLabel } from "@/components/trips/trip-from-label";
+import { legacyTripIds, photosBetween, type Trip, trips } from "@/api/trips";
+import { dayRange } from "@/components/trips/day-range";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { TripDay } from "@/lib/trip-days";
-import { cn } from "@/lib/utils";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { shownPhotos } from "@/lib/place-seeds";
 
-/** A new Trip with no name, days or legs yet. */
-const NEW_TRIP: Trip = { id: "", name: "", start: "", end: "", legs: [] };
+/** The ID in a Trip page's URL for a new Trip, not saved yet. */
+export const NEW_TRIP_ID = "new";
 
-/** The Trips listed on the left, newest first, and the chosen one, or a new one, edited on the right. */
-export function TripsPanel({ data, days }: { data: CombinedData; days: TripDay[] }) {
+/** The Trip Lines page's Trips tab: every Trip, newest first, each linking to its own page. */
+export function TripsPanel({ data }: { data: CombinedData }) {
   const all = trips(data);
-  const { search, set } = useTripLinesSearch();
-  // A new Trip not saved yet, which has no ID for the URL.
-  const [draft, setDraft] = useState<Trip>();
-  const trip = draft ?? chosenTrip(all, search.trip);
-  const setChosen = (chosen: string | Trip | undefined) => {
-    setDraft(typeof chosen === "object" ? chosen : undefined);
-    set({ trip: typeof chosen === "string" ? chosen : undefined });
-  };
-  const byDay = new Map(days.map((d) => [d.day, d]));
+  const photos = shownPhotos(data);
+  const legacy = legacyTripIds(data);
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
-      <TripList
-        trips={all}
-        chosen={trip?.id}
-        onChoose={setChosen}
-        onNew={setChosen}
-        labels={timelineLabels(data)}
-      />
-      {trip ? (
-        <TripEditor
-          key={editorKey(trip)}
-          trip={trip}
-          others={all.filter((t) => t.id !== trip.id)}
-          days={byDay}
-          onSaved={setChosen}
-          onRemoved={() => setChosen(undefined)}
-        />
-      ) : (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-muted-foreground text-sm">
-          A Trip groups a run of days and adds the legs between them, such as a ferry or a flight.
-          Start one with <strong>New Trip</strong>.
+          A Trip names a run of days on the Timeline, adds the legs between them, such as a ferry or
+          a flight, and gathers its days' stories into its Trip page.
         </p>
-      )}
+        <Button asChild variant="outline" size="sm">
+          <Link to="/trip-lines/trips/$id" params={{ id: NEW_TRIP_ID }}>
+            <Plus />
+            New Trip
+          </Link>
+        </Button>
+      </div>
+      {all.length === 0 && <p className="text-muted-foreground text-sm">No Trips yet.</p>}
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {all.map((trip) => (
+          <li key={trip.id}>
+            <TripCard
+              trip={trip}
+              photos={photosBetween(photos, trip.start, trip.end)}
+              legacy={legacy.has(trip.id)}
+            />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-/** The saved Trip the URL names, or else the newest. */
-function chosenTrip(all: Trip[], id: string | undefined): Trip | undefined {
-  return all.find((t) => t.id === id) ?? all[0];
+/** "2 legs"; "No legs" with none. */
+function legsText(n: number): string {
+  if (n === 0) return "No legs";
+  return n === 1 ? "1 leg" : `${n} legs`;
 }
 
-/** A key that starts the editor afresh for another Trip, or another new one. */
-function editorKey(trip: Trip): string {
-  return trip.id || `new-${trip.name}-${trip.start}`;
+/** "53 photos". */
+function photosText(n: number): string {
+  return n === 1 ? "1 photo" : `${n} photos`;
 }
 
-interface TripListProps {
-  trips: Trip[];
-  chosen: string | undefined;
-  onChoose: (id: string) => void;
-  onNew: (trip: Trip) => void;
-  labels: ReturnType<typeof timelineLabels>;
+interface TripCardProps {
+  trip: Trip;
+  photos: number;
+  /** Whether it's still in the trip lines folder from before, so the Timeline doesn't show it yet. */
+  legacy: boolean;
 }
 
-function TripList({ trips: all, chosen, onChoose, onNew, labels }: TripListProps) {
+/** One Trip on the tab: its name, days, legs and photos, linking to its page. */
+function TripCard({ trip, photos, legacy }: TripCardProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Trips</CardTitle>
-        <CardDescription>Runs of days, with the legs travelled between them.</CardDescription>
-        <div className="flex flex-col gap-2 pt-1">
-          <Button
-            variant="outline"
-            size="sm"
-            className="self-start"
-            onClick={() => onNew(NEW_TRIP)}
-          >
-            <Plus />
-            New Trip
-          </Button>
-          <TripFromLabel labels={labels} onPick={onNew} />
-        </div>
-      </CardHeader>
-      <CardContent className="flex max-h-[70vh] flex-col gap-1 overflow-y-auto">
-        {all.length === 0 && <p className="text-muted-foreground text-sm">None yet.</p>}
-        {all.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => onChoose(t.id)}
-            aria-current={t.id === chosen}
-            className={cn(
-              "hover:bg-muted flex flex-col rounded-md px-2 py-1.5 text-left text-sm",
-              t.id === chosen && "bg-muted font-medium",
-            )}
-          >
-            <span className="truncate">{t.name}</span>
-            <span className="text-muted-foreground text-xs font-normal">
-              {dayTitle(t.start)} to {dayTitle(t.end)}, {t.legs.length} legs
+    <Link
+      to="/trip-lines/trips/$id"
+      params={{ id: trip.id }}
+      className="hover:ring-ring block h-full rounded-xl hover:ring-2"
+    >
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>{trip.name}</CardTitle>
+          <CardDescription className="flex flex-col gap-0.5">
+            <span>{dayRange(trip.start, trip.end)}</span>
+            <span>
+              {photosText(photos)} · {legsText(trip.legs.length)}
             </span>
-          </button>
-        ))}
-      </CardContent>
-    </Card>
+            {legacy && (
+              <span className="text-amber-700 dark:text-amber-400">
+                Save to show on the Timeline
+              </span>
+            )}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    </Link>
   );
 }

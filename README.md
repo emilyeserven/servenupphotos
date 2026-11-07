@@ -123,14 +123,14 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Albums and Tags](docs/albums-and-tags.md) (`/albums` and `/tags`): making albums and tags, parent albums, album and tag pages
 - [Small Tags](docs/small-tags.md) (`/small-tags`): cleaning up the tags and subtags with fewer than 3 photos, one by one or with an LLM
 - [Album Layouts and Covers](docs/album-layouts.md) (`/albums/<id>`): rows of photos with Markdown text, up to 5 cover photos, and album JSON export and import
-- [Smart Albums](docs/smart-albums.md) (`/albums/<id>`): albums whose photos come from saved Grid filters, a timeline label and dates
+- [Smart Albums](docs/smart-albums.md) (`/albums/<id>`): albums whose photos come from saved Grid filters, a Trip and dates
 - [Photographic Genres](docs/photographic-genres.md) (`/genres`): kinds of photography such as street or landscape, set on each photo and filterable on the portfolio, kept in `ALLGENRES.json`
 - [Places and Localizations](docs/places-and-localizations.md) (`/places` and `/localizations`): places a photo was taken at and how it relates to them, and the local script, pronunciation and romanization of countries, cities and places
 - [Metadata Groups](docs/metadata-groups.md) (`/metadata-groups`): named groups of cameras, lenses, focal lengths, apertures, exposures and ISO values, kept in `METAINFO.json`
 - [Camera Overrides](docs/camera-overrides.md) (`/camera-overrides`): per-camera rules that write other values over a photo's EXIF, such as a lens's name for "21.0 mm", applied to new photos and again from Update Data and the Photo page, kept in `CAMERAS.json`
 - [Custom Lenses](docs/custom-lenses.md) (Metadata Groups → Lenses): lenses the EXIF doesn't name well, such as manual ones, picked for a photo on the Photo page, with a Manual/unknown aperture option, kept in `LENSES.json`
 - [Caption Templates](docs/caption-templates.md) (`/caption-templates`): social media captions with placeholders for a photo's fields, filled in by **Generate** on the Photo page's posts, kept in `CAPTIONS.json`
-- [Timeline Labels](docs/timeline-labels.md) (`/timeline-labels`): names for runs of days, such as a trip, shown beside those days on the portfolio Timeline, kept in `TIMELINE.json`
+- [Trips](docs/trips.md) (the Trip Lines page's Trips tab, a page per Trip): names for runs of days, such as "Japan", shown beside those days on the portfolio Timeline, with the ferries and flights between days drawn on the map and a Trip page for their stories, kept in `TIMELINE.json`
 - [Trip Lines](docs/trip-lines.md) (`/trip-lines`): the route of a day, walking from photo to photo and hopping by train, subway, bus or car, kept in `TRIPLINES.json` and baked into `TRIPLINES.geo.json` for the portfolio map
 - [Gear Pictures](docs/gear-pictures.md) (`/gear-pictures`): a picture and description for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawings, kept in `GEAR.json`
 - [Trip Pages](docs/trip-pages.md) (`/trip-lines`, and `/albums/trips/<id>` on the portfolio): captions, paragraphs between photos and rows of photos for each day, gathered into one story page per Trip under the portfolio's Albums, baked into `TRIPPAGES.json`

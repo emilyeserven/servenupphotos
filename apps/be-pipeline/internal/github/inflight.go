@@ -99,7 +99,7 @@ type InFlightResult struct {
 	// Albums, Tags, Genres, Places, Localizations, MetaInfo, Cameras, Lenses
 	// Captions, Timeline and Likes are the album, tag, genre, place,
 	// localization, metadata group, camera override, custom lens, caption
-	// template, timeline label and viewer likes files in the pull request.
+	// template, Trip and viewer likes files in the pull request.
 	Albums        InFlightGroups `json:"albums"`
 	Tags          InFlightGroups `json:"tags"`
 	Genres        InFlightGroups `json:"genres"`
@@ -120,7 +120,7 @@ type InFlightResult struct {
 }
 
 // groups are r's album, tag, genre, place, localization, metadata group, camera
-// override, custom lens, caption template, timeline label, viewer likes, trip line, graph preset and gear picture files.
+// override, custom lens, caption template, Trip, viewer likes, trip line, graph preset and gear picture files.
 func (r *InFlightResult) groups() []*InFlightGroups {
 	return []*InFlightGroups{&r.Albums, &r.Tags, &r.Genres, &r.Places, &r.Localizations, &r.MetaInfo, &r.Cameras, &r.Lenses, &r.Captions, &r.Timeline, &r.Likes, &r.TripLines, &r.Graphs, &r.Gear}
 }
@@ -175,7 +175,7 @@ func (c *Client) InFlight(ctx context.Context, gh settings.GitHub) (InFlightResu
 		Cameras:       newInFlightGroups(w.root, Kind{Folder: Cameras.Folder, AllFile: Cameras.AllFile}),
 		Lenses:        newInFlightGroups(w.root, Kind{Folder: Lenses.Folder, AllFile: Lenses.AllFile}),
 		Captions:      newInFlightGroups(w.root, Kind{Folder: Captions.Folder, AllFile: Captions.AllFile}),
-		Timeline:      newInFlightGroups(w.root, Kind{Folder: TimelineLabels.Folder, AllFile: TimelineLabels.AllFile}),
+		Timeline:      newInFlightGroups(w.root, Kind{Folder: Trips.Folder, AllFile: Trips.AllFile}),
 		Likes:         newInFlightGroups(w.root, Kind{Folder: ViewerLikesKind.Folder, AllFile: ViewerLikesKind.AllFile}),
 		TripLines:     newInFlightGroups(w.root, Kind{Folder: TripLines.Folder, AllFile: TripLines.AllFile}),
 		Graphs:        newInFlightGroups(w.root, Kind{Folder: GraphPresets.Folder, AllFile: GraphPresets.AllFile}),

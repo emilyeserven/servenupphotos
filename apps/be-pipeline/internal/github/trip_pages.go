@@ -50,9 +50,8 @@ type tripPageDay struct {
 // doesn't have, such as drafts.
 func (w *workspace) addTripPages(changes map[string][]byte, counts map[string]int) *PublishError {
 	view := w.withChanges(changes)
-	entries := view.entries(TripLines)
 	places := pageStops(view.tripLineFiles(), view.casualPhotos())
-	pages := bakeTripPages(storiesIn(entries), tripsIn(entries), places)
+	pages := bakeTripPages(storiesIn(view.entries(TripLines)), view.allTrips(), places)
 	b, err := json.Marshal(pages)
 	if err != nil {
 		return publishErr(http.StatusInternalServerError, "Couldn't format %s.", TripPagesFile)

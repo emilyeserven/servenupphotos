@@ -182,7 +182,7 @@ func (c *Client) DeleteTripLine(ctx context.Context, gh settings.GitHub, day str
 // from the photos then: for the pipeline to preview before it's turned on, or
 // to copy and change by hand.
 func (c *Client) AutoTripLine(ctx context.Context, gh settings.GitHub, day string) (TripLine, error) {
-	if _, err := time.Parse(labelDateLayout, day); err != nil {
+	if _, err := time.Parse(dayLayout, day); err != nil {
 		return TripLine{}, publishErr(http.StatusBadRequest, "Give the day as a date, such as 2026-09-23.")
 	}
 	w, perr := c.workspace(ctx, gh)
@@ -196,7 +196,7 @@ func (c *Client) AutoTripLine(ctx context.Context, gh settings.GitHub, day strin
 func validTripLine(line TripLine) (TripLine, *PublishError) {
 	line.ID = strings.TrimSpace(line.ID)
 	line.Day = line.ID
-	if _, err := time.Parse(labelDateLayout, line.ID); err != nil {
+	if _, err := time.Parse(dayLayout, line.ID); err != nil {
 		return line, publishErr(http.StatusBadRequest, "Give the day as a date, such as 2026-09-23.")
 	}
 	if line.Auto || line.Segments == nil {

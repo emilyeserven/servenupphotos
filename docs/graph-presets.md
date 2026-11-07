@@ -13,7 +13,7 @@
 ## The file
 
 Each preset and each group is one file, `graphs/<id>.json`, and **Commit** combines them into `graphs/GRAPHS.json` the
-way it combines the timeline labels into `TIMELINE.json`:
+way it combines the [Trips](trips.md) into `TIMELINE.json`:
 
 ```json
 {

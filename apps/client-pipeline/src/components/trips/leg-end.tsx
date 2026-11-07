@@ -15,18 +15,21 @@ interface LegEndFieldProps {
   /** The photo it uses without a spot of its own, and what it's called there, such as "last photo". */
   photo: TripPhoto | undefined;
   photoWord: string;
+  /** The day's photos with an exact spot, in the order taken, which it can leave from or arrive at. */
+  photos: TripPhoto[];
   onChange: (end: TripLegEnd) => void;
 }
 
-/** One end of a leg: its day, and either that day's photo or a spot with no photo, such as an airport. */
-export function LegEndField({ title, end, dates, photo, photoWord, onChange }: LegEndFieldProps) {
+/** One end of a leg: its day, and either one of that day's photos or a spot with no photo, such as an airport. */
+export function LegEndField(props: LegEndFieldProps) {
+  const { title, end, dates, photo, onChange } = props;
   return (
     <fieldset className="flex min-w-0 flex-col gap-1.5">
       <legend className="mb-1 text-sm font-medium">{title}</legend>
       <select
         value={end.day}
         aria-label={`${title}: day`}
-        onChange={(e) => onChange({ ...end, day: e.target.value })}
+        onChange={(e) => onChange({ day: e.target.value, spot: end.spot })}
         className={SELECT_CLASS}
       >
         {dates.map((d) => (
@@ -35,25 +38,57 @@ export function LegEndField({ title, end, dates, photo, photoWord, onChange }: L
           </option>
         ))}
       </select>
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          checked={end.spot !== undefined}
-          onChange={(e) =>
-            onChange({
-              day: end.day,
-              spot: e.target.checked ? startingSpot(photo) : undefined,
-            })
-          }
-        />
-        A spot with no photo
-      </label>
+      <WherePicker {...props} />
       {end.spot ? (
         <SpotFields end={end} title={title} onChange={onChange} />
       ) : (
-        <PhotoNote photo={photo} photoWord={photoWord} />
+        <PhotoNote photo={photo} photoWord={props.photoWord} named={end.photo !== undefined} />
       )}
     </fieldset>
+  );
+}
+
+/** What the "where" menu shows for the end: a photo's ID, the day's usual photo, or a spot. */
+function whereValue(end: TripLegEnd): string {
+  if (end.spot) return SPOT;
+  return end.photo === undefined ? DAY_PHOTO : String(end.photo);
+}
+
+/** The "where" menu's choice for a spot with no photo, and for the day's last or first photo. */
+const SPOT = "spot";
+const DAY_PHOTO = "day";
+
+/** The end with the "where" menu's choice: a spot, one of the day's photos, or its usual photo. */
+function withWhere(end: TripLegEnd, where: string, photo: TripPhoto | undefined): TripLegEnd {
+  if (where === SPOT) return { day: end.day, spot: startingSpot(photo) };
+  if (where === DAY_PHOTO) return { day: end.day };
+  return { day: end.day, photo: Number(where) };
+}
+
+/** A photo's title, or else its ID. */
+function photoTitle(photo: TripPhoto): string {
+  return typeof photo.photo.title === "string" && photo.photo.title
+    ? photo.photo.title
+    : `Photo ${photo.id}`;
+}
+
+/** Where on its day the end is: the day's last or first photo, one picked from the day, or a spot. */
+function WherePicker({ title, end, photo, photoWord, photos, onChange }: LegEndFieldProps) {
+  return (
+    <select
+      value={whereValue(end)}
+      aria-label={`${title}: where`}
+      onChange={(e) => onChange(withWhere(end, e.target.value, photo))}
+      className={SELECT_CLASS}
+    >
+      <option value={DAY_PHOTO}>The day's {photoWord}</option>
+      {photos.map((p) => (
+        <option key={p.id} value={String(p.id)}>
+          {p.time} · {photoTitle(p)}
+        </option>
+      ))}
+      <option value={SPOT}>A spot with no photo</option>
+    </select>
   );
 }
 
@@ -64,13 +99,20 @@ function startingSpot(photo: TripPhoto | undefined) {
     : { latitude: 0, longitude: 0 };
 }
 
-function PhotoNote({ photo, photoWord }: { photo: TripPhoto | undefined; photoWord: string }) {
+interface PhotoNoteProps {
+  photo: TripPhoto | undefined;
+  photoWord: string;
+  /** Whether the end names its photo, which the menu already shows. */
+  named: boolean;
+}
+
+function PhotoNote({ photo, photoWord, named }: PhotoNoteProps) {
   if (!photo)
     return <p className="text-destructive text-xs">No photo with an exact spot on this day.</p>;
-  const title = typeof photo.photo.title === "string" ? photo.photo.title : `Photo ${photo.id}`;
+  if (named) return null;
   return (
     <p className="text-muted-foreground text-xs">
-      The day's {photoWord}: {title} ({photo.time})
+      The day's {photoWord}: {photoTitle(photo)} ({photo.time})
     </p>
   );
 }

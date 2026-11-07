@@ -49,7 +49,7 @@
   "customLens": null,
   "albums": [],
   "tags": ["hangul", "neon", "signage", "storefronts", "crowd", "night"],
-  "genres": [],
+  "genres": ["street"],
   "places": [
     {
       "relation": "",
