@@ -4,7 +4,7 @@ import { Dialog } from "radix-ui";
 import { type KeyboardEvent, type ReactNode, useRef, useState } from "react";
 import { CopyPhotoLinkButton } from "@/components/copy-photo-link-button";
 import { LikeBurst, LikeButton } from "@/components/like-button";
-import { MoreLikeThis, toggleMoreLikeThis } from "@/components/more-like-this";
+import { MoreLikeThis, RelatedButton, toggleMoreLikeThis } from "@/components/more-like-this";
 import { PhotoComment } from "@/components/photo-comment";
 import { PhotoLocation } from "@/components/photo-location";
 import { Button } from "@/components/ui/button";
@@ -122,17 +122,24 @@ interface LightboxBodyProps {
 
 /**
  * The caption and buttons over the photo, with the previous and next buttons beside it and the
- * More like this drawer below it, or just the photo, filling the window, when they're hidden.
+ * More like this drawer to its left, or just the photo, filling the window, when they're hidden.
  */
 function LightboxBody({ photo, steps, bare, onToggleBare, onShow }: LightboxBodyProps) {
   const showDetails = !bare;
   return (
     <>
       {showDetails && (
-        <LightboxHeader photo={photo} position={steps.position} onHide={onToggleBare} />
+        <LightboxHeader
+          photo={photo}
+          position={steps.position}
+          onHide={onToggleBare}
+          related={<RelatedButton photo={photo} onShow={onShow} />}
+        />
       )}
-      <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
-      {showDetails && onShow && <MoreLikeThis photo={photo} onShow={onShow} />}
+      <div className="relative flex min-h-0 flex-1 flex-col">
+        <LightboxPhotoRow photo={photo} steps={steps} bare={bare} onToggleBare={onToggleBare} />
+        {showDetails && <MoreLikeThis photo={photo} onShow={onShow} />}
+      </div>
     </>
   );
 }
@@ -149,7 +156,10 @@ function LightboxPhotoRow({ photo, steps, bare, onToggleBare }: LightboxBodyProp
   return (
     <div
       {...swipe}
-      className={cn("flex min-h-0 flex-1 items-center justify-center", bare ? "p-0" : "p-4 pt-0")}
+      className={cn(
+        "flex min-h-0 min-w-0 flex-1 items-center justify-center",
+        bare ? "p-0" : "p-4 pt-0",
+      )}
     >
       {/* A size container, so the photo can be fitted to it with cqw and cqh. It hears the taps;
           touch-action stops a double tap from zooming the page, but not pinch-zooming. */}
@@ -194,21 +204,25 @@ function useDoubleTapLike(id: number, onSingle: (() => void) | undefined) {
   return { onTap, burst, onBurstDone: () => setBurst(null) };
 }
 
-/** The photo's caption, where it is among the photos, and the like, hide and close buttons. */
+/** The photo's caption, where it is among the photos, and the related, link, like, hide and close buttons. */
 function LightboxHeader({
   photo,
   position,
   onHide,
+  related,
 }: {
   photo: ImagePhoto;
   position?: string;
   onHide: () => void;
+  /** The Related button, which opens the More like this drawer. */
+  related?: ReactNode;
 }) {
   return (
     <div className="flex items-center gap-4 p-4">
       <LightboxCaption photo={photo} />
       <span className="shrink-0 text-sm text-white/60 tabular-nums empty:hidden">{position}</span>
       <div className="flex shrink-0 items-center">
+        {related}
         <CopyPhotoLinkButton id={photo.id} />
         <LikeButton id={photo.id} />
         <Button

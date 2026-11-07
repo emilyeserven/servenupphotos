@@ -72,15 +72,23 @@ func TestFindSimilarPhotosAgainChangesNothing(t *testing.T) {
 
 func TestSetPickedSimilar(t *testing.T) {
 	repo := similarRepo()
-	got, err := repo.start(t).SetPickedSimilar(t.Context(), baseURLSettings, PickedSimilar{Path: similarDir + "A.json", IDs: []int{4, 3}})
+	got, err := repo.start(t).SetPickedSimilar(t.Context(), baseURLSettings, PickedSimilar{
+		Path:  similarDir + "A.json",
+		IDs:   []int{4, 3},
+		Notes: map[string]string{"4": "  Same canal at night ", "3": " ", "2": "Not picked"},
+	})
 	if err != nil {
 		t.Fatalf("SetPickedSimilar() error = %v", err)
 	}
 	if len(got.Changes) != 1 {
 		t.Errorf("changes = %d, want 1", len(got.Changes))
 	}
-	if ids := savedIDs(t, repo.staged(t), "A.json", pickedSimilarKey); !slices.Equal(ids, []int{4, 3}) {
+	staged := repo.staged(t)
+	if ids := savedIDs(t, staged, "A.json", pickedSimilarKey); !slices.Equal(ids, []int{4, 3}) {
 		t.Errorf("A.json pickedSimilar = %v, want [4 3] in the order picked", ids)
+	}
+	if a := staged[similarDir+"A.json"]; !strings.Contains(a, `"pickedSimilarNotes": {"4":"Same canal at night"}`) {
+		t.Errorf("A.json = %s, want only the picked photo's trimmed note", a)
 	}
 }
 
@@ -94,6 +102,7 @@ func TestSetPickedSimilarErrors(t *testing.T) {
 		{"itself", PickedSimilar{Path: similarDir + "A.json", IDs: []int{1}}, "like itself"},
 		{"twice", PickedSimilar{Path: similarDir + "A.json", IDs: []int{2, 2}}, "more than once"},
 		{"unknown ID", PickedSimilar{Path: similarDir + "A.json", IDs: []int{99}}, "no photo with the ID 99"},
+		{"long note", PickedSimilar{Path: similarDir + "A.json", IDs: []int{2}, Notes: map[string]string{"2": strings.Repeat("a", 281)}}, "longer than 280"},
 		{"too many", PickedSimilar{Path: similarDir + "A.json", IDs: []int{2, 3, 4, 5, 6, 7, 8}}, "up to 6 photos"},
 	}
 	for _, tt := range tests {

@@ -127,7 +127,7 @@ export const navGroups: readonly NavGroup[] = [
         ],
       },
       { title: "Site Spotlight", url: "/site-spotlight", icon: SparklesIcon },
-      { title: "Similar Photos", url: "/similar-photos", icon: GalleryHorizontalIcon },
+      { title: "Related Photos", url: "/related-photos", icon: GalleryHorizontalIcon },
       { title: "User Likes", url: "/viewer-likes", icon: HeartIcon },
     ],
   },

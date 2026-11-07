@@ -29,8 +29,8 @@ import { Route as LocalizationsRouteImport } from './routes/localizations'
 import { Route as LocationNamesRouteImport } from './routes/location-names'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PlacesRouteImport } from './routes/places'
+import { Route as RelatedPhotosRouteImport } from './routes/related-photos'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as SimilarPhotosRouteImport } from './routes/similar-photos'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as SmallTagsRouteImport } from './routes/small-tags'
@@ -153,14 +153,14 @@ const PlacesRoute = PlacesRouteImport.update({
   path: '/places',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RelatedPhotosRoute = RelatedPhotosRouteImport.update({
+  id: '/related-photos',
+  path: '/related-photos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SimilarPhotosRoute = SimilarPhotosRouteImport.update({
-  id: '/similar-photos',
-  path: '/similar-photos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SiteSpotlightRoute = SiteSpotlightRouteImport.update({
@@ -290,8 +290,8 @@ export interface FileRoutesByFullPath {
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
+  '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
-  '/similar-photos': typeof SimilarPhotosRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -335,8 +335,8 @@ export interface FileRoutesByTo {
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
+  '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
-  '/similar-photos': typeof SimilarPhotosRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -379,8 +379,8 @@ export interface FileRoutesById {
   '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
+  '/related-photos': typeof RelatedPhotosRoute
   '/settings': typeof SettingsRoute
-  '/similar-photos': typeof SimilarPhotosRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
@@ -426,8 +426,8 @@ export interface FileRouteTypes {
     | '/location-names'
     | '/metadata-groups'
     | '/places'
+    | '/related-photos'
     | '/settings'
-    | '/similar-photos'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -471,8 +471,8 @@ export interface FileRouteTypes {
     | '/location-names'
     | '/metadata-groups'
     | '/places'
+    | '/related-photos'
     | '/settings'
-    | '/similar-photos'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -514,8 +514,8 @@ export interface FileRouteTypes {
     | '/location-names'
     | '/metadata-groups'
     | '/places'
+    | '/related-photos'
     | '/settings'
-    | '/similar-photos'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
@@ -560,8 +560,8 @@ export interface RootRouteChildren {
   LocationNamesRoute: typeof LocationNamesRoute
   MetadataGroupsRoute: typeof MetadataGroupsRoute
   PlacesRoute: typeof PlacesRoute
+  RelatedPhotosRoute: typeof RelatedPhotosRoute
   SettingsRoute: typeof SettingsRoute
-  SimilarPhotosRoute: typeof SimilarPhotosRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
   SmallTagsRoute: typeof SmallTagsRoute
@@ -723,18 +723,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlacesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/related-photos': {
+      id: '/related-photos'
+      path: '/related-photos'
+      fullPath: '/related-photos'
+      preLoaderRoute: typeof RelatedPhotosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/similar-photos': {
-      id: '/similar-photos'
-      path: '/similar-photos'
-      fullPath: '/similar-photos'
-      preLoaderRoute: typeof SimilarPhotosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/site-spotlight': {
@@ -935,8 +935,8 @@ const rootRouteChildren: RootRouteChildren = {
   LocationNamesRoute: LocationNamesRoute,
   MetadataGroupsRoute: MetadataGroupsRoute,
   PlacesRoute: PlacesRoute,
+  RelatedPhotosRoute: RelatedPhotosRoute,
   SettingsRoute: SettingsRoute,
-  SimilarPhotosRoute: SimilarPhotosRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
   SmallTagsRoute: SmallTagsRoute,

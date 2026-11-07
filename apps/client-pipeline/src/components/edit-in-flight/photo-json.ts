@@ -26,10 +26,11 @@ import { canonicalJson } from "@/lib/combined";
 import { type Crop, sameCrop } from "@/lib/crop";
 import { type ReEditDraft, reEditChanged, withReEdit } from "@/lib/re-edit";
 import {
-  pickedIds,
   picksChanged,
+  type Pick,
+  savedPicks,
   withPickedSimilar,
-} from "@/components/similar-photos/similar-ids";
+} from "@/components/related-photos/picks";
 import { type SocialPostDraft, socialPostsChanged, withSocialPosts } from "@/lib/social-posts";
 import { jsonFileName } from "@/lib/file-name";
 import { UNDECIDED } from "@/lib/undecided";
@@ -192,15 +193,15 @@ function placesChanged(data: PhotoJson, details: PhotoDetails): boolean {
 
 /**
  * What the Photo page edits besides the crop: the details, albums and tags, social media posts, the
- * re-edit mark, the hand-picked similar photos, and the fields the camera overrides change once they're applied (null until they are).
+ * re-edit mark, the hand-picked related photos, and the fields the camera overrides change once they're applied (null until they are).
  */
 export interface EditedFields {
   details: PhotoDetails;
   groups: PhotoGroups;
   socialPosts: SocialPostDraft[];
   reEdit: ReEditDraft;
-  /** The photos picked by hand for its More like this drawer, by ID, in order. */
-  pickedSimilar: number[];
+  /** The photos picked by hand for its More like this drawer, in order, with their notes. */
+  pickedSimilar: Pick[];
   overrides: Record<string, unknown> | null;
 }
 
@@ -212,7 +213,7 @@ export function fieldsChanged(data: PhotoJson, fields: EditedFields) {
     () => !sameGroups(savedGroups(data), fields.groups),
     () => socialPostsChanged(data, fields.socialPosts),
     () => reEditChanged(data, fields.reEdit),
-    () => picksChanged(pickedIds(data), fields.pickedSimilar),
+    () => picksChanged(savedPicks(data), fields.pickedSimilar),
   ];
   return checks.some((changed) => changed());
 }

@@ -1,16 +1,16 @@
 import { useMemo } from "react";
 import { useSavedPhotos } from "@/components/saved-photo-picker";
-import { PickedSimilarFields } from "@/components/similar-photos/picked-similar-fields";
-import { foundIds, savedPhotoId, photosById } from "@/components/similar-photos/similar-ids";
+import { PickedSimilarFields } from "@/components/related-photos/picked-similar-fields";
+import { foundIds, type Pick, photosById, savedPhotoId } from "@/components/related-photos/picks";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
 interface PickedSimilarCardProps {
-  /** The photo's JSON as last saved, for its ID and the similar photos found for it. */
+  /** The photo's JSON as last saved, for its ID and the related photos found for it. */
   saved: Record<string, unknown>;
-  /** The IDs picked so far, in order. */
-  value: number[];
-  onChange: (ids: number[]) => void;
+  /** The photos picked so far, in order, with their notes. */
+  value: Pick[];
+  onChange: (picks: Pick[]) => void;
   /** Saving is under way, so changing it now would not change the file. */
   disabled: boolean;
 }
@@ -31,8 +31,9 @@ export function PickedSimilarCard({ saved, value, onChange, disabled }: PickedSi
         <CardTitle>More like this</CardTitle>
         <CardDescription>
           The photos the portfolio&apos;s More like this drawer shows first for this one, ahead of
-          the ones Find similar photos found. Saving changes writes them into the JSON&apos;s{" "}
-          <code>pickedSimilar</code>.
+          the ones Find related photos found. Saving changes writes them into the JSON&apos;s{" "}
+          <code>pickedSimilar</code>, and their notes, shown to the right of each photo, into{" "}
+          <code>pickedSimilarNotes</code>.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -43,7 +44,7 @@ export function PickedSimilarCard({ saved, value, onChange, disabled }: PickedSi
             <PickedSimilarFields
               self={self}
               found={foundIds(saved)}
-              picked={value}
+              picks={value}
               onChange={onChange}
               photos={photos}
               byId={byId}

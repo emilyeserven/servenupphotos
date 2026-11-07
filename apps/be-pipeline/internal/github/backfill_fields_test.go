@@ -52,6 +52,7 @@ var oldPhotoGaps = []string{
 	"socialPosts",
 	"reEdit",
 	"pickedSimilar",
+	"pickedSimilarNotes",
 	"similarPhotos",
 }
 

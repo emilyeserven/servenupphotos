@@ -9,7 +9,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 )
 
-// handleFindSimilarPhotos works out every photo's most similar photos and
+// handleFindSimilarPhotos works out every photo's most related photos and
 // saves their IDs in its "similarPhotos", as changes waiting for Commit.
 func handleFindSimilarPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +20,7 @@ func handleFindSimilarPhotos(store *settings.Store, gh *github.Client) http.Hand
 		ctx, cancel := context.WithTimeout(r.Context(), baseURLTimeout)
 		defer cancel()
 		result, err := gh.FindSimilarPhotos(ctx, cfg)
-		writeSocialResult(w, result, err, "could not save the similar photos")
+		writeSocialResult(w, result, err, "could not save the related photos")
 	}
 }
 

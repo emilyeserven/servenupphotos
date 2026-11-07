@@ -1,18 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Page } from "@/components/page";
-import { FindSimilarCard } from "@/components/similar-photos/find-similar-card";
-import { PickSimilarCard } from "@/components/similar-photos/pick-similar-card";
+import { FindSimilarCard } from "@/components/related-photos/find-similar-card";
+import { PickSimilarCard } from "@/components/related-photos/pick-similar-card";
 import { WithGitHub } from "@/components/update-data/sections-layout";
 
-export const Route = createFileRoute("/similar-photos")({
+export const Route = createFileRoute("/related-photos")({
   component: SimilarPhotosPage,
 });
 
-/** The Similar Photos page, under Publish in the sidebar: what the portfolio's More like this drawer shows. */
+/** The Related Photos page, under Publish in the sidebar: what the portfolio's More like this drawer shows. */
 function SimilarPhotosPage() {
   return (
     <Page
-      title="Similar Photos"
+      title="Related Photos"
       description="Chooses the photos the portfolio's More like this drawer shows for each photo."
     >
       <WithGitHub

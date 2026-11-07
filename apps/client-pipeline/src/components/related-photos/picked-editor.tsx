@@ -1,16 +1,18 @@
 import { useMutation } from "@tanstack/react-query";
 import { SaveIcon } from "lucide-react";
 import { useState } from "react";
-import { setPickedSimilarMutation } from "@/api/similar-photos";
+import { setPickedSimilarMutation } from "@/api/related-photos";
 import { ErrorText } from "@/components/bulk-tagging/pick-controls";
 import type { SavedPhoto } from "@/components/saved-photo-picker";
-import { PickedSimilarFields } from "@/components/similar-photos/picked-similar-fields";
+import { PickedSimilarFields } from "@/components/related-photos/picked-similar-fields";
 import {
   foundIds,
-  savedPhotoId,
-  pickedIds,
+  type Pick,
+  pickFields,
   picksChanged,
-} from "@/components/similar-photos/similar-ids";
+  savedPhotoId,
+  savedPicks,
+} from "@/components/related-photos/picks";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -21,33 +23,33 @@ interface PickedEditorProps {
   byId: ReadonlyMap<number, SavedPhoto>;
 }
 
-/** The Similar Photos page's picks for one photo, with Save picks, which saves only them. */
+/** The Related Photos page's picks for one photo, with Save picks, which saves only them. */
 export function PickedEditor({ photo, photos, byId }: PickedEditorProps) {
-  const [picked, setPicked] = useState(() => pickedIds(photo.file.data));
+  const [picks, setPicks] = useState(() => savedPicks(photo.file.data));
   return (
     <PickedSimilarFields
       self={savedPhotoId(photo)}
       found={foundIds(photo.file.data)}
-      picked={picked}
-      onChange={setPicked}
+      picks={picks}
+      onChange={setPicks}
       photos={photos}
       byId={byId}
     >
-      <SavePicks photo={photo} picked={picked} />
+      <SavePicks photo={photo} picks={picks} />
     </PickedSimilarFields>
   );
 }
 /** Save, enabled once the picks differ from the photo's saved ones, and what came of it. */
-function SavePicks({ photo, picked }: { photo: SavedPhoto; picked: number[] }) {
+function SavePicks({ photo, picks }: { photo: SavedPhoto; picks: Pick[] }) {
   const save = useMutation(setPickedSimilarMutation);
-  const changed = picksChanged(pickedIds(photo.file.data), picked);
+  const changed = picksChanged(savedPicks(photo.file.data), picks);
   return (
     <>
       <div className="flex items-center gap-3">
         <SaveButton
           pending={save.isPending}
           disabled={!changed}
-          onClick={() => save.mutate({ path: photo.path, ids: picked })}
+          onClick={() => save.mutate({ path: photo.path, ...pickFields(picks) })}
         />
         {save.isSuccess && !changed && (
           <span className="text-muted-foreground text-sm">Saved, waiting for Commit.</span>

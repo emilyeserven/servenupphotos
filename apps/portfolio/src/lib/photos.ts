@@ -22,6 +22,7 @@ import {
   type ScriptDisplay,
 } from "@portfolio/lib/localize";
 import { withSmartAlbums } from "@portfolio/lib/smart-albums";
+import { relatedPhotos, type RelatedPhoto } from "@portfolio/lib/related-photos";
 import type { TimelineLabel } from "@portfolio/lib/timeline-labels";
 
 export interface Photo {
@@ -83,10 +84,10 @@ export interface Photo {
   spotlightPlace: number | null;
   tags: string[];
   /**
-   * The IDs of the photos its More like this drawer shows, in order: the ones picked by hand, then
-   * the ones the pipeline found, each once. Empty until the pipeline has found any.
+   * The photos its More like this drawer shows, in order: the ones picked by hand, with their
+   * notes, then the ones the pipeline found, each once. Empty until the pipeline has found any.
    */
-  similar: number[];
+  related: RelatedPhoto[];
   /** The IDs of the photographic genres it's in, such as "street"; empty for older entries. */
   genres: string[];
   /** The point of the photo kept in view when the screen is the other way round, set on its Photo page; null keeps the middle. */
@@ -297,9 +298,11 @@ interface PhotoData {
   genres?: string[];
   /** The photo's color summary, saved by the pipeline; older entries don't have it. */
   colors?: PhotoColorData | null;
-  /** The IDs of the photos picked by hand on the pipeline's Similar Photos page, shown first in More like this. */
+  /** The IDs of the photos picked by hand on the pipeline's Related Photos page, shown first in More like this. */
   pickedSimilar?: number[];
-  /** The IDs of the photos most like it, best first, as the pipeline's Find Similar Photos saved them. */
+  /** The note shown beside each hand-picked photo in More like this, by its ID. */
+  pickedSimilarNotes?: Record<string, string>;
+  /** The IDs of the photos most like it, best first, as the pipeline's Find Related Photos saved them. */
   similarPhotos?: number[];
 }
 
@@ -688,13 +691,12 @@ function groupFields({
   spotlightFocus = null,
   spotlightPlacement = null,
   spotlightZoneFocus = {},
-  pickedSimilar = [],
-  similarPhotos = [],
+  ...related
 }: PhotoData) {
   return {
     albums,
     tags,
-    similar: [...new Set([...pickedSimilar, ...similarPhotos])],
+    related: relatedPhotos(related),
     genres,
     spotlightPlace: websiteSpotlight,
     spotlightFocus,
