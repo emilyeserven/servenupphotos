@@ -5,6 +5,19 @@ import { localFile } from "@portfolio/lib/localize";
 export type GearKind = "camera" | "lens";
 
 /**
+ * The part of a gear picture's original that its crop shows, as fractions of the original's width
+ * and height. It may reach past the original's edges, which the crop fills with `fill`.
+ */
+export interface GearCrop {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  /** What fills the crop around and behind the picture: white, or transparent when missing. */
+  fill?: "white";
+}
+
+/**
  * A gear picture file from GEAR.json, which the pipeline's Gear Pictures page saves: a picture
  * and a few words for one camera or lens, shown in place of the Gear & settings filter's drawing
  * of that kind of camera or lens.
@@ -14,8 +27,12 @@ export interface GearFile {
   kind: GearKind;
   /** The camera or lens exactly as the photos name it, such as "Fujifilm X-T5". */
   name: string;
-  /** The picture's link in R2, or "" for none. */
+  /** The link in R2 of the picture's crop, the version shown, 200px tall; or "" for none. */
   image: string;
+  /** The link in R2 of the picture as uploaded, which `image` was cropped from, if there is one. */
+  original?: string;
+  /** The part of `original` that `image` shows, if there's an original. */
+  crop?: GearCrop;
   /** A few words about it, or "". */
   description: string;
 }

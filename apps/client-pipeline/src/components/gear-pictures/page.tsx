@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { GearKind } from "@portfolio/lib/gear-pictures";
+import type { GearFile, GearKind } from "@portfolio/lib/gear-pictures";
 import { gearFiles, type GearRow, gearRows } from "@/api/gear";
 import type { CombinedData } from "@/api/photos";
 import { GearEditor } from "@/components/gear-pictures/editor";
@@ -15,7 +15,7 @@ export function GearPicturesPage() {
     <Page
       wide
       title="Gear Pictures"
-      description="A picture and a few words for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawing of that kind of camera or lens. Pictures go to R2 as soon as they're chosen; each camera's or lens's file is one JSON file, combined into GEAR.json."
+      description="A picture and a few words for each camera and lens, shown in the portfolio's Gear & settings filter in place of its drawing of that kind of camera or lens. Pictures go to R2 as uploaded as soon as they're chosen, and the portfolio shows a 200px-tall crop of each, lined up on this page with the others; each camera's or lens's file is one JSON file, combined into GEAR.json."
     >
       <GitHubGate>{() => <Gear />}</GitHubGate>
     </Page>
@@ -50,7 +50,7 @@ function GearChooser({ data }: { data: CombinedData }) {
         chosen={row?.name}
         onChoose={(name) => setChosen({ kind, name })}
       />
-      <ChosenGear row={row} />
+      <ChosenGear row={row} others={othersOf(gearFiles(data), row)} />
     </div>
   );
 }
@@ -60,8 +60,19 @@ function chosenRow(rows: GearRow[], chosen?: Chosen): GearRow | undefined {
   return rows.find((row) => row.kind === chosen?.kind && row.name === chosen.name);
 }
 
+/** The other cameras' or lenses' picture files, of the same kind as the row, to line its crop up with. */
+function othersOf(files: GearFile[], row?: GearRow): GearFile[] {
+  return files.filter((file) => file.kind === row?.kind && file.id !== row.file?.id);
+}
+
 /** The editor for the chosen camera or lens, keyed by it so each starts from its saved file. */
-function ChosenGear({ row }: { row?: GearRow }) {
+function ChosenGear({ row, others }: { row?: GearRow; others: GearFile[] }) {
   if (!row) return <p className="text-muted-foreground text-sm">No photo names one yet.</p>;
-  return <GearEditor key={`${row.kind}\u0000${row.name}\u0000${row.file?.id ?? ""}`} row={row} />;
+  return (
+    <GearEditor
+      key={`${row.kind}\u0000${row.name}\u0000${row.file?.id ?? ""}`}
+      row={row}
+      others={others}
+    />
+  );
 }

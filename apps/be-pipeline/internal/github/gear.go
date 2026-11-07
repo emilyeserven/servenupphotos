@@ -27,10 +27,30 @@ type Gear struct {
 	// Name is the camera or lens exactly as the photo files name it, such as
 	// "Fujifilm X-T5", after the camera overrides and custom lenses.
 	Name string `json:"name"`
-	// Image is the picture's public URL in R2, or "" for none.
+	// Image is the public URL in R2 of the picture's crop, the version the
+	// portfolio shows, or "" for none.
 	Image string `json:"image"`
+	// Original is the public URL in R2 of the picture as uploaded, which Image
+	// was cropped from, or "" when there's none.
+	Original string `json:"original,omitempty"`
+	// Crop is the part of Original that Image shows, or nil when there's no
+	// Original.
+	Crop *GearCrop `json:"crop,omitempty"`
 	// Description is a few words about it, shown under the picture, or "".
 	Description string `json:"description"`
+}
+
+// GearCrop is the part of a gear picture's original that its crop shows, as
+// fractions of the original's width and height. It may reach past the
+// original's edges.
+type GearCrop struct {
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+	Width  float64 `json:"width"`
+	Height float64 `json:"height"`
+	// Fill is what fills the crop around the picture: "white", or "" for
+	// transparent.
+	Fill string `json:"fill,omitempty"`
 }
 
 // SaveGear saves gear as <folder>/gear/<id>.json, new or replacing the one
@@ -74,6 +94,7 @@ func validGear(g Gear) (Gear, *PublishError) {
 	out := Gear{
 		ID: strings.TrimSpace(g.ID), Kind: g.Kind, Name: strings.TrimSpace(g.Name),
 		Image: strings.TrimSpace(g.Image), Description: strings.TrimSpace(g.Description),
+		Original: strings.TrimSpace(g.Original), Crop: g.Crop,
 	}
 	if perr := validEntryID(GearKind.Name, out.ID); perr != nil {
 		return out, perr
@@ -87,7 +108,33 @@ func validGear(g Gear) (Gear, *PublishError) {
 	if utf8.RuneCountInString(out.Description) > maxGroupDescriptionLength {
 		return out, publishErr(http.StatusBadRequest, "Keep the description to %d characters.", maxGroupDescriptionLength)
 	}
-	return out, validGearImage(out)
+	if perr := validGearImage(out); perr != nil {
+		return out, perr
+	}
+	return out, validGearOriginal(out)
+}
+
+// validGearOriginal checks that g's original, if it has one, is a web link
+// with a crop.
+func validGearOriginal(g Gear) *PublishError {
+	if g.Original == "" && g.Crop == nil {
+		return nil
+	}
+	if !webLink(g.Original) || !validCrop(g.Crop) {
+		return publishErr(http.StatusBadRequest, "An original picture needs a web link and a crop.")
+	}
+	return nil
+}
+
+// validCrop reports whether c is there, has a size and a fill it knows.
+func validCrop(c *GearCrop) bool {
+	return c != nil && c.Width > 0 && c.Height > 0 && (c.Fill == "" || c.Fill == "white")
+}
+
+// webLink reports whether raw is an http or https link.
+func webLink(raw string) bool {
+	u, err := url.Parse(raw)
+	return err == nil && (u.Scheme == "https" || u.Scheme == "http") && u.Host != ""
 }
 
 // validGearImage checks that g has a picture or a description, and that its
@@ -99,8 +146,7 @@ func validGearImage(g Gear) *PublishError {
 	if g.Image == "" {
 		return nil
 	}
-	u, err := url.Parse(g.Image)
-	if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" {
+	if !webLink(g.Image) {
 		return publishErr(http.StatusBadRequest, "The picture's link should start with https://.")
 	}
 	return nil

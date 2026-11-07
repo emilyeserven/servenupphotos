@@ -318,7 +318,21 @@ const added = {
         kind: "camera",
         name: "Fujifilm X-T5",
         image: "https://cdn.servenupphotos.net/gear/0a1b2c3d4e5f-x-t5.webp",
+        original: "https://cdn.servenupphotos.net/gear/originals/9a8b7c6d5e4f-x-t5.jpg",
+        crop: { x: 0.05, y: -0.1, width: 0.9, height: 1.35 },
         description: "My everyday camera since 2024.",
+      },
+    },
+    {
+      path: `${FOLDER}/gear/camera-fujifilm-x100v.json`,
+      data: {
+        id: "camera-fujifilm-x100v",
+        kind: "camera",
+        name: "Fujifilm X100V",
+        image: "https://cdn.servenupphotos.net/gear/1b2c3d4e5f6a-x100v.webp",
+        original: "https://cdn.servenupphotos.net/gear/originals/8b7c6d5e4f3a-x100v.jpg",
+        crop: { x: -0.1, y: -0.2, width: 1.2, height: 1.8 },
+        description: "",
       },
     },
   ],
@@ -1590,8 +1604,14 @@ export function defaultFixtures() {
       changed: true,
     }),
     "POST /api/gear/image": {
-      key: "gear/6f7e8d9c0b1a-lens.webp",
-      url: "https://cdn.servenupphotos.net/gear/6f7e8d9c0b1a-lens.webp",
+      key: "gear/originals/6f7e8d9c0b1a-lens.jpg",
+      url: "https://cdn.servenupphotos.net/gear/originals/6f7e8d9c0b1a-lens.jpg",
+      width: 1200,
+      height: 800,
+    },
+    "POST /api/gear/crop": {
+      key: "gear/7a8b9c0d1e2f-lens.webp",
+      url: "https://cdn.servenupphotos.net/gear/7a8b9c0d1e2f-lens.webp",
     },
     "PUT /api/gear/camera-fujifilm-x-t5": ({ body }) => ({
       ...pendingSave(),

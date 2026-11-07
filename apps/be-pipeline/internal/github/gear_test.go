@@ -23,6 +23,16 @@ func TestSaveGear(t *testing.T) {
 	if _, err := c.SaveGear(t.Context(), placesGH, Gear{ID: "odd", Kind: "lens", Name: "Fujifilm X-T5", Description: "A lens named like a camera."}); err != nil {
 		t.Errorf("SaveGear(lens named like a camera) error = %v", err)
 	}
+	cropped := Gear{
+		ID: "x100", Kind: "camera", Name: "Fujifilm X100V", Image: "https://cdn.example/gear/c.webp",
+		Original: "https://cdn.example/gear/originals/c.png", Crop: &GearCrop{X: -0.1, Y: 0, Width: 1.2, Height: 0.9},
+	}
+	if _, err := c.SaveGear(t.Context(), placesGH, cropped); err != nil {
+		t.Fatalf("SaveGear(cropped) error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/gear/x100.json"); !strings.Contains(saved, `"original": "https://cdn.example/gear/originals/c.png"`) || !strings.Contains(saved, `"width": 1.2`) {
+		t.Errorf("saved %s, want its original and crop", saved)
+	}
 	tests := []struct {
 		name   string
 		gear   Gear
@@ -33,6 +43,8 @@ func TestSaveGear(t *testing.T) {
 		{"odd kind", Gear{ID: "a", Kind: "tripod", Name: "A", Image: "https://cdn.example/c.webp"}, http.StatusBadRequest},
 		{"nothing to show", Gear{ID: "a", Kind: "camera", Name: "A"}, http.StatusBadRequest},
 		{"not a link", Gear{ID: "a", Kind: "camera", Name: "A", Image: "gear/c.webp"}, http.StatusBadRequest},
+		{"original without a crop", Gear{ID: "a", Kind: "camera", Name: "A", Image: "https://cdn.example/c.webp", Original: "https://cdn.example/o.png"}, http.StatusBadRequest},
+		{"crop without an original", Gear{ID: "a", Kind: "camera", Name: "A", Image: "https://cdn.example/c.webp", Crop: &GearCrop{Width: 1, Height: 1}}, http.StatusBadRequest},
 		{"bad ID", Gear{ID: "A A", Kind: "camera", Name: "A", Image: "https://cdn.example/c.webp"}, http.StatusBadRequest},
 	}
 	for _, tt := range tests {

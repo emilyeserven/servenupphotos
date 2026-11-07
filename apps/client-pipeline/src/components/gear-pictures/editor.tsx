@@ -10,16 +10,27 @@ import {
   uploadGearImageMutation,
 } from "@/api/gear";
 import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
+import { CropView, croppedFiles } from "@/components/gear-pictures/crop-view";
+import {
+  type GearPictureEditor,
+  type GearPictureState,
+  useGearPicture,
+} from "@/components/gear-pictures/use-gear-picture";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { canonicalJson } from "@/lib/combined";
 
-/** The file the row's camera or lens saves: its saved file with the picture and description changed. */
-function fileOf(row: GearRow, image: string, description: string): GearFile {
+/**
+ * The file the row's camera or lens saves: its saved file with the picture and description
+ * changed, keeping the original and the crop its picture shows once one has been cut.
+ */
+function fileOf(row: GearRow, picture: GearPictureState, description: string): GearFile {
   const fresh = { id: gearId(row.kind, row.name), kind: row.kind, name: row.name };
-  return { ...fresh, ...row.file, image, description: description.trim() };
+  const { original: _o, crop: _c, ...saved } = { ...fresh, ...row.file };
+  const next = { ...saved, image: picture.image, description: description.trim() };
+  return picture.applied ? { ...next, original: picture.original, crop: picture.applied } : next;
 }
 
 /** What the card says about the camera or lens: its kind and how many photos name it. */
@@ -30,13 +41,13 @@ function usageText({ kind, photos }: GearRow): string {
 
 /**
  * Edits one camera's or lens's picture and description: a preview as the portfolio will show it,
- * a picture to upload (to R2 at once) or the drawing instead, and Save and Remove, each a change
- * waiting for Commit.
+ * a picture to upload (kept in R2 as it is) or the drawing instead, the crop lined up with the
+ * `others`' crops, and Save and Remove, each a change waiting for Commit.
  */
-export function GearEditor({ row }: { row: GearRow }) {
-  const [image, setImage] = useState(() => savedField(row, "image"));
-  const [description, setDescription] = useState(() => savedField(row, "description"));
-  const next = fileOf(row, image, description);
+export function GearEditor({ row, others }: { row: GearRow; others: GearFile[] }) {
+  const editor = useGearPicture(row.file);
+  const [description, setDescription] = useState(() => row.file?.description ?? "");
+  const next = fileOf(row, editor.picture, description);
   return (
     <Card>
       <CardHeader>
@@ -44,8 +55,9 @@ export function GearEditor({ row }: { row: GearRow }) {
         <CardDescription>{usageText(row)}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <Preview row={row} image={image} />
-        <ImageField image={image} onImage={setImage} />
+        <Preview row={row} image={editor.picture.image} />
+        <ImageField editor={editor} />
+        <CropView editor={editor} others={croppedFiles(others)} />
         <label className="flex flex-col gap-1.5 text-sm">
           <span className="font-medium">Description, shown under the picture</span>
           <Textarea value={description} onChange={(e) => setDescription(e.target.value)} />
@@ -59,11 +71,6 @@ export function GearEditor({ row }: { row: GearRow }) {
   );
 }
 
-/** The saved file's picture or description, or "" when there's no saved file. */
-function savedField(row: GearRow, field: "image" | "description"): string {
-  return row.file?.[field] ?? "";
-}
-
 /** The picture as the portfolio's info panel will show it: the one chosen, or else the drawing. */
 function Preview({ row, image }: { row: GearRow; image: string }) {
   return (
@@ -75,8 +82,8 @@ function Preview({ row, image }: { row: GearRow; image: string }) {
   );
 }
 
-/** Picks a picture, which is resized and put in R2 as soon as it's chosen; or goes back to the drawing. */
-function ImageField({ image, onImage }: { image: string; onImage: (url: string) => void }) {
+/** Picks a picture, which is put in R2 as soon as it's chosen and cut whole; or goes back to the drawing. */
+function ImageField({ editor }: { editor: GearPictureEditor }) {
   const upload = useMutation(uploadGearImageMutation);
   return (
     <div className="flex flex-col gap-1.5 text-sm">
@@ -92,12 +99,12 @@ function ImageField({ image, onImage }: { image: string; onImage: (url: string) 
           disabled={upload.isPending}
           onChange={(event) => {
             const file = event.target.files?.[0];
-            if (file) upload.mutate(file, { onSuccess: (res) => onImage(res.url) });
+            if (file) upload.mutate(file, { onSuccess: editor.uploaded });
           }}
         />
         <Busy busy={upload.isPending} />
-        {image && (
-          <Button variant="ghost" size="sm" onClick={() => onImage("")}>
+        {editor.picture.original && (
+          <Button variant="ghost" size="sm" onClick={editor.clear}>
             Use the drawing
           </Button>
         )}
