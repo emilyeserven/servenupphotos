@@ -3,6 +3,11 @@
 The portfolio's Stats page (`/stats`, `apps/portfolio/src/routes/stats.tsx`) counts the photos by gear, place and time.
 It's in the site menu after Tags, with the other small views; like them, the homepage doesn't link to it.
 
+When an album is picked for the **Stats Header** zone on the pipeline's [Site Spotlight](publish.md#site-spotlight) page,
+its photos fade in and out across the top of the page, up to 30% of the screen's height, with the title under them (see
+[Header spotlights](publish.md#header-spotlights)). There's no Jump to Cover Image button here, since the page lists no
+photos to jump to.
+
 At the top are five headline numbers: photos, countries, cities, cameras and years. Under them, **Gear**, **Places**
 and **Time** jump to their sections.
 
