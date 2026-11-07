@@ -6744,6 +6744,15 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 10086
+    },
+    "spotlightZoneFocus": {
+      "homepage": {
+        "focus": {
+          "x": 79,
+          "y": 49
+        },
+        "placement": null
+      }
     }
   },
   {
@@ -36471,6 +36480,18 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 10086
+    },
+    "spotlightZoneFocus": {
+      "homepage": {
+        "focus": {
+          "x": 46,
+          "y": 28
+        },
+        "placement": {
+          "x": 50,
+          "y": 20
+        }
+      }
     }
   },
   {
@@ -36740,6 +36761,15 @@
       "chroma": 12.63,
       "peakChroma": 30.02,
       "samples": 9828
+    },
+    "spotlightZoneFocus": {
+      "homepage": {
+        "focus": {
+          "x": 44,
+          "y": 51
+        },
+        "placement": null
+      }
     }
   },
   {
@@ -43467,7 +43497,16 @@
       "peakChroma": 0.01,
       "samples": 9768
     },
-    "notes": "Shows fusuma sliding doors; 'fusuma' isn't a tag, since only 1 photo has them."
+    "notes": "Shows fusuma sliding doors; 'fusuma' isn't a tag, since only 1 photo has them.",
+    "spotlightZoneFocus": {
+      "homepage": {
+        "focus": {
+          "x": 50,
+          "y": 14
+        },
+        "placement": null
+      }
+    }
   },
   {
     "title": "Through the Lattice",
@@ -60236,7 +60275,16 @@
       "peakChroma": 12.18,
       "samples": 9216
     },
-    "notes": null
+    "notes": null,
+    "spotlightZoneFocus": {
+      "timeline-header": {
+        "focus": {
+          "x": 28,
+          "y": 72
+        },
+        "placement": null
+      }
+    }
   },
   {
     "title": "Cook's Cycle Shop",
@@ -69949,7 +69997,16 @@
       "peakChroma": 2.28,
       "samples": 10115
     },
-    "notes": "Shows the castle keep (tenshu), andon lanterns and the Suitoro festival; 'tenshu', 'andon', 'matsuri' and 'suitorou' aren't tags, since each is on only 1–2 photos."
+    "notes": "Shows the castle keep (tenshu), andon lanterns and the Suitoro festival; 'tenshu', 'andon', 'matsuri' and 'suitorou' aren't tags, since each is on only 1–2 photos.",
+    "spotlightZoneFocus": {
+      "homepage": {
+        "focus": {
+          "x": 31,
+          "y": 27
+        },
+        "placement": null
+      }
+    }
   },
   {
     "title": "Melting Pot",
@@ -71577,7 +71634,19 @@
       "peakChroma": 5.98,
       "samples": 9975
     },
-    "notes": "Shows letterpress type; 'letterpress' isn't a tag, since only 1 photo has it."
+    "notes": "Shows letterpress type; 'letterpress' isn't a tag, since only 1 photo has it.",
+    "spotlightZoneFocus": {
+      "timeline-header": {
+        "focus": {
+          "x": 69,
+          "y": 26
+        },
+        "placement": {
+          "x": 80,
+          "y": 50
+        }
+      }
+    }
   },
   {
     "title": "Nantucket Dock",
@@ -79125,6 +79194,18 @@
       "chroma": 1.53,
       "peakChroma": 2.3,
       "samples": 9828
+    },
+    "spotlightZoneFocus": {
+      "homepage": {
+        "focus": {
+          "x": 53,
+          "y": 70
+        },
+        "placement": {
+          "x": 50,
+          "y": 80
+        }
+      }
     }
   },
   {
@@ -89864,7 +89945,16 @@
       "peakChroma": 0.01,
       "samples": 9990
     },
-    "notes": null
+    "notes": null,
+    "spotlightZoneFocus": {
+      "grid-header": {
+        "focus": {
+          "x": 12,
+          "y": 50
+        },
+        "placement": null
+      }
+    }
   },
   {
     "id": 68,
@@ -92025,7 +92115,16 @@
       "peakChroma": 4.13,
       "samples": 9864
     },
-    "notes": null
+    "notes": null,
+    "spotlightZoneFocus": {
+      "grid-header": {
+        "focus": {
+          "x": 57,
+          "y": 38
+        },
+        "placement": null
+      }
+    }
   },
   {
     "title": "Treeface",
@@ -95261,7 +95360,16 @@
       "peakChroma": 55.55,
       "samples": 10050
     },
-    "notes": null
+    "notes": null,
+    "spotlightZoneFocus": {
+      "grid-header": {
+        "focus": {
+          "x": 76,
+          "y": 36
+        },
+        "placement": null
+      }
+    }
   },
   {
     "title": "Waiting Room",
@@ -95533,6 +95641,15 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9620
+    },
+    "spotlightZoneFocus": {
+      "homepage": {
+        "focus": {
+          "x": 52,
+          "y": 78
+        },
+        "placement": null
+      }
     }
   },
   {

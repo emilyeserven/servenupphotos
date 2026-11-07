@@ -266,5 +266,14 @@
     "peakChroma": 55.55,
     "samples": 10050
   },
-  "notes": null
+  "notes": null,
+  "spotlightZoneFocus": {
+    "grid-header": {
+      "focus": {
+        "x": 76,
+        "y": 36
+      },
+      "placement": null
+    }
+  }
 }

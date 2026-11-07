@@ -270,5 +270,14 @@
     "peakChroma": 0.01,
     "samples": 9768
   },
-  "notes": "Shows fusuma sliding doors; 'fusuma' isn't a tag, since only 1 photo has them."
+  "notes": "Shows fusuma sliding doors; 'fusuma' isn't a tag, since only 1 photo has them.",
+  "spotlightZoneFocus": {
+    "homepage": {
+      "focus": {
+        "x": 50,
+        "y": 14
+      },
+      "placement": null
+    }
+  }
 }

@@ -266,5 +266,17 @@
     "peakChroma": 5.98,
     "samples": 9975
   },
-  "notes": "Shows letterpress type; 'letterpress' isn't a tag, since only 1 photo has it."
+  "notes": "Shows letterpress type; 'letterpress' isn't a tag, since only 1 photo has it.",
+  "spotlightZoneFocus": {
+    "timeline-header": {
+      "focus": {
+        "x": 69,
+        "y": 26
+      },
+      "placement": {
+        "x": 80,
+        "y": 50
+      }
+    }
+  }
 }
