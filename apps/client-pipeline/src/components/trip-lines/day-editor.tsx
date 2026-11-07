@@ -12,9 +12,11 @@ import { EditorActions, type EditorView } from "@/components/trip-lines/editor-a
 import { type EndKey, EndSpots } from "@/components/trip-lines/end-spots";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
 import { RouteMap } from "@/components/trip-lines/route-map";
+import { ShapeTools } from "@/components/trip-lines/shape-tools";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TripDay } from "@/lib/trip-days";
 import { draftOf, type Gap, type GapDraft, segmentsOf } from "@/lib/trip-gaps";
+import { draftVias, movedVia, withVia } from "@/lib/trip-points";
 import { dayTitle } from "@/components/trip-lines/day-title";
 
 /** What the editor shows first: the saved line by hand, the automatic line, or nothing yet. */
@@ -55,14 +57,10 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
   const ids = day.photos.map((p) => p.id);
   const [view, setView] = useState<EditorView>(() => initialView(ids, line));
   const [hovered, setHovered] = useState<number>();
-  const [picking, setPicking] = useState<EndKey>();
   const auto = useQuery({ ...autoTripLineQuery(day.day), enabled: showsAuto(view) });
   const segments = viewSegments(ids, view, auto.data);
   const editDraft = (draft: GapDraft) => setView({ kind: "hand", draft });
-  const pick = (point: TripPoint) => {
-    if (view.kind === "hand" && picking) editDraft({ ...view.draft, [picking]: point });
-    setPicking(undefined);
-  };
+  const draft = view.kind === "hand" ? view.draft : undefined;
   return (
     <Card>
       <CardHeader>
@@ -77,25 +75,24 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
           photos={day.photos}
           gaps={stripGaps(ids, view, segments)}
           onHover={setHovered}
-          onGap={
-            view.kind === "hand" ? (i, gap) => editDraft(withGap(view.draft, i, gap)) : undefined
-          }
+          onGap={draft && ((i, gap) => editDraft(withGap(draft, i, gap)))}
         />
-        <RouteMap
-          day={day.day}
-          photos={day.photos}
-          segments={segments}
-          preview={view.kind === "preview"}
-          highlighted={hovered}
-          ends={endsOf(segments)}
-          onPick={picking ? pick : undefined}
-        />
-        {view.kind === "hand" && (
-          <EndSpots
-            draft={view.draft}
+        {draft ? (
+          <HandMap
+            day={day}
+            draft={draft}
+            segments={segments}
+            highlighted={hovered}
             onChange={editDraft}
-            picking={picking}
-            onPicking={setPicking}
+          />
+        ) : (
+          <RouteMap
+            day={day.day}
+            photos={day.photos}
+            segments={segments}
+            preview={view.kind === "preview"}
+            highlighted={hovered}
+            ends={endsOf(segments)}
           />
         )}
         <DayActions
@@ -109,6 +106,53 @@ export function DayEditor({ day, line }: { day: TripDay; line?: TripLine }) {
         />
       </CardContent>
     </Card>
+  );
+}
+
+interface HandMapProps {
+  day: TripDay;
+  draft: GapDraft;
+  segments: TripSegment[];
+  highlighted?: number;
+  onChange: (draft: GapDraft) => void;
+}
+
+/**
+ * The map of a line drawn by hand, with its tools: clicking the map places the spot being picked,
+ * or adds a via point while adding them.
+ */
+function HandMap({ day, draft, segments, highlighted, onChange }: HandMapProps) {
+  const [picking, setPicking] = useState<EndKey>();
+  const [addingVia, setAddingVia] = useState(false);
+  const pick = (point: TripPoint) => {
+    onChange(
+      picking ? { ...draft, [picking]: point } : withVia(draft, segments, day.photos, point),
+    );
+    setPicking(undefined);
+  };
+  return (
+    <>
+      <RouteMap
+        day={day.day}
+        photos={day.photos}
+        segments={segments}
+        preview={false}
+        highlighted={highlighted}
+        ends={endsOf(segments)}
+        onPick={picking || addingVia ? pick : undefined}
+        vias={draftVias(draft)}
+        onMoveVia={(key, i, point) => onChange(movedVia(draft, key, i, point))}
+      />
+      <ShapeTools
+        day={day.day}
+        draft={draft}
+        segments={segments}
+        onChange={onChange}
+        addingVia={addingVia}
+        onAddingVia={setAddingVia}
+      />
+      <EndSpots draft={draft} onChange={onChange} picking={picking} onPicking={setPicking} />
+    </>
   );
 }
 

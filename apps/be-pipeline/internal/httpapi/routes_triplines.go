@@ -8,5 +8,6 @@ import "net/http"
 func registerTripLineRoutes(mux *http.ServeMux, d routeDeps) {
 	mux.HandleFunc("GET /triplines/{day}/auto", handleAutoTripLine(d.store, d.gh))
 	mux.HandleFunc("PUT /triplines/{day}", handleSaveTripLine(d.store, d.gh))
+	mux.HandleFunc("POST /triplines/{day}/route", handleRouteTripLine(d.store, d.gh, d.route))
 	mux.HandleFunc("DELETE /triplines/{day}", handleDeleteTripLine(d.store, d.gh))
 }

@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import { settingMutations } from "@/api/data-files";
 import type { CombinedData } from "@/api/photos";
 import { requestJson } from "@/api/settings";
@@ -27,6 +27,21 @@ export interface TripSegment {
   photos: number[];
   /** A spot with no photo the line ends at, after the photos. */
   end?: TripPoint;
+  /** Spots the line goes through between its photos, to shape it. */
+  via?: TripVia[];
+  /**
+   * The line along streets through its points, each [longitude, latitude], from Snap to streets;
+   * none for a train or subway, or before it's snapped, which draws it straight through its points.
+   */
+  path?: [number, number][];
+}
+
+/** A spot a segment's line goes through to shape it, such as a bridge crossed between two photos. */
+export interface TripVia {
+  /** The ID of the photo it comes after; left out, it comes right after the segment's start spot. */
+  after?: number;
+  latitude: number;
+  longitude: number;
 }
 
 /**
@@ -71,6 +86,28 @@ export function autoTripLineQuery(day: string) {
     retry: false,
   });
 }
+
+/** A trip line with its walks, bus rides and drives snapped to streets, not saved yet. */
+interface RoutedTripLine {
+  line: TripLine;
+  /** How many of those got no route, so they stay straight. */
+  unrouted: number;
+}
+
+/**
+ * Snaps a day's trip line to streets with the OpenStreetMap routing servers, without saving it: each
+ * walk, bus or car segment without a path gets one through its photos and via spots. The backend
+ * asks at most once a second.
+ */
+export const routeTripLineMutation = mutationOptions({
+  mutationKey: ["triplines", "route"],
+  mutationFn: (line: TripLine) =>
+    requestJson<RoutedTripLine>(`/api/triplines/${encodeURIComponent(line.day)}/route`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(line),
+    }),
+});
 
 const tripLineMutations = settingMutations<TripLine>("triplines");
 

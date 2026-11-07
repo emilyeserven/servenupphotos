@@ -81,12 +81,13 @@ func (w *workspace) tripLineFiles() []TripLine {
 func bakeTripLines(lines []TripLine, spots map[int]tripSpot) tripLinesMap {
 	m := tripLinesMap{Type: "FeatureCollection", Features: []tripLineFeature{}}
 	for _, line := range lines {
+		day := onDay(spots, line.Day)
 		segments := line.Segments
 		if line.Auto {
-			segments = autoSegments(spotsOn(spots, line.Day))
+			segments = autoSegments(spotsOn(day, line.Day))
 		}
 		for _, seg := range segments {
-			if f, ok := segmentFeature(line, seg, spots); ok {
+			if f, ok := segmentFeature(line, seg, day); ok {
 				m.Features = append(m.Features, f)
 			}
 		}
@@ -94,30 +95,39 @@ func bakeTripLines(lines []TripLine, spots map[int]tripSpot) tripLinesMap {
 	return m
 }
 
-// segmentFeature is seg of line as a GeoJSON line, and false when it has
-// fewer than two points to draw.
+// segmentFeature is seg of line, through spots taken that day, as a GeoJSON line: along its path when it
+// has one that still fits its points, or else straight through them. False
+// when it has fewer than two points to draw.
 func segmentFeature(line TripLine, seg TripSegment, spots map[int]tripSpot) (tripLineFeature, bool) {
-	props := tripLineProps{Day: line.Day, Mode: seg.Mode, Auto: line.Auto, Photos: []int{}}
-	var coords [][2]float64
-	if seg.Start != nil {
-		coords = append(coords, [2]float64{seg.Start.Longitude, seg.Start.Latitude})
-		props.Start = seg.Start.Label
-	}
-	for _, id := range seg.Photos {
-		if s, ok := spots[id]; ok && s.Day == line.Day {
-			coords = append(coords, [2]float64{s.Longitude, s.Latitude})
-			props.Photos = append(props.Photos, id)
-		}
-	}
-	if seg.End != nil {
-		coords = append(coords, [2]float64{seg.End.Longitude, seg.End.Latitude})
-		props.End = seg.End.Label
-	}
+	coords, photos := segmentPoints(seg, spots)
 	if len(coords) < 2 {
 		return tripLineFeature{}, false
 	}
-	props.Km = lineKm(coords)
+	if pathFits(seg.Path, coords) {
+		coords = seg.Path
+	}
+	props := tripLineProps{Day: line.Day, Mode: seg.Mode, Auto: line.Auto, Photos: photos, Km: lineKm(coords)}
+	props.Start, props.End = labelOf(seg.Start), labelOf(seg.End)
 	return tripLineFeature{Type: "Feature", Geometry: tripLineGeometry{Type: "LineString", Coordinates: coords}, Properties: props}, true
+}
+
+// labelOf is p's label, or "" when there's no p.
+func labelOf(p *TripPoint) string {
+	if p == nil {
+		return ""
+	}
+	return p.Label
+}
+
+// onDay is the spots taken on day.
+func onDay(spots map[int]tripSpot, day string) map[int]tripSpot {
+	out := map[int]tripSpot{}
+	for id, s := range spots {
+		if s.Day == day {
+			out[id] = s
+		}
+	}
+	return out
 }
 
 // lineKm is how long the line through coords is, to the nearest 0.1 km.

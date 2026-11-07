@@ -1,6 +1,7 @@
 package github
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"slices"
@@ -147,4 +148,90 @@ func abs(f float64) float64 {
 		return -f
 	}
 	return f
+}
+
+func TestRouteTripLine(t *testing.T) {
+	f, c := newMainRepo(t, with(emptyLists, tripPhotos))
+	var asked [][][2]float64
+	var modes []string
+	route := func(_ context.Context, mode string, points [][2]float64) ([][2]float64, error) {
+		modes = append(modes, mode)
+		asked = append(asked, points)
+		if mode == ModeCar {
+			return nil, errors.New("no route")
+		}
+		mid := [2]float64{135.7123456789, 35.0005}
+		return [][2]float64{points[0], mid, points[len(points)-1]}, nil
+	}
+	ten := 10
+	line := TripLine{ID: "2026-09-23", Segments: []TripSegment{
+		{Mode: ModeWalk, Photos: []int{10, 11}, Via: []TripVia{{After: &ten, Latitude: 35.0004, Longitude: 135.7505}}},
+		{Mode: ModeSubway, Photos: []int{11, 12}, Path: [][2]float64{{1, 1}, {2, 2}}},
+		{Mode: ModeCar, Photos: []int{12}, End: &TripPoint{Latitude: 35.2, Longitude: 135.9}},
+	}}
+	got, err := c.RouteTripLine(t.Context(), placesGH, line, route)
+	if err != nil {
+		t.Fatalf("RouteTripLine() error = %v", err)
+	}
+	// The subway isn't routed, and its path is dropped; the car found none.
+	if got.Unrouted != 1 || !slices.Equal(modes, []string{ModeWalk, ModeCar}) {
+		t.Errorf("unrouted = %d, asked %v", got.Unrouted, modes)
+	}
+	// The walk is routed through its via spot, between its two photos.
+	if len(asked[0]) != 3 || asked[0][1] != [2]float64{135.7505, 35.0004} {
+		t.Errorf("walk routed through %v", asked[0])
+	}
+	if got.Line.Segments[1].Path != nil || len(got.Line.Segments[0].Path) != 3 {
+		t.Errorf("routed %+v", got.Line.Segments)
+	}
+	// Nothing is saved until the routed line is.
+	if _, ok := stagedContent(t, c, dataRoot+"/triplines/2026-09-23.json"); ok {
+		t.Error("RouteTripLine() saved the line")
+	}
+	if _, err := c.SaveTripLine(t.Context(), placesGH, got.Line); err != nil {
+		t.Fatalf("SaveTripLine() error = %v", err)
+	}
+	if _, err := c.CommitCombined(t.Context(), pullGH, nil); err != nil {
+		t.Fatalf("CommitCombined() error = %v", err)
+	}
+	baked := f.committedTree()[dataRoot+"/triplines/"+TripLinesMapFile]
+	// The walk follows its path; the car, with none, goes straight to its end.
+	for _, want := range []string{"135.712346", "[135.9, 35.2]"} {
+		if !strings.Contains(baked, want) {
+			t.Errorf("baked map has no %s:\n%s", want, baked)
+		}
+	}
+}
+
+func TestTripLineVia(t *testing.T) {
+	_, c := newMainRepo(t, tripPhotos)
+	nine := 9
+	bad := []TripSegment{
+		{Mode: ModeWalk, Photos: []int{10, 11}, Via: []TripVia{{After: &nine, Latitude: 35, Longitude: 135}}},
+		{Mode: ModeWalk, Photos: []int{10, 11}, Via: []TripVia{{Latitude: 35, Longitude: 135}}},
+	}
+	for i, seg := range bad {
+		_, err := c.SaveTripLine(t.Context(), placesGH, TripLine{ID: "2026-09-23", Segments: []TripSegment{seg}})
+		var perr *PublishError
+		if !errors.As(err, &perr) || perr.Status != http.StatusBadRequest {
+			t.Errorf("%d: SaveTripLine() error = %v, want 400", i, err)
+		}
+	}
+	// A via spot after the start counts as a point, so start, via and one photo make a line.
+	seg := TripSegment{Mode: ModeWalk, Start: &TripPoint{Latitude: 35, Longitude: 135.7}, Via: []TripVia{{Latitude: 35, Longitude: 135.72}}, Photos: []int{10}}
+	points, _ := segmentPoints(seg, map[int]tripSpot{10: {ID: 10, Latitude: 35, Longitude: 135.75}})
+	if len(points) != 3 || points[1] != [2]float64{135.72, 35} {
+		t.Errorf("segmentPoints() = %v", points)
+	}
+}
+
+func TestPathFits(t *testing.T) {
+	coords := [][2]float64{{135.75, 35}, {135.751, 35.001}}
+	if !pathFits([][2]float64{{135.7501, 35}, {135.76, 35.01}, {135.751, 35.0011}}, coords) {
+		t.Error("a path from the first point to the last doesn't fit")
+	}
+	// A photo moved about 1 km since the path was found.
+	if pathFits([][2]float64{{135.75, 35}, {135.751, 35.01}}, coords) {
+		t.Error("a path ending 1 km away fits")
+	}
 }

@@ -1,10 +1,16 @@
-import type { TripMode, TripPoint, TripSegment } from "@/api/trip-lines";
+import type { TripMode, TripPoint, TripSegment, TripVia } from "@/api/trip-lines";
 
 /**
  * What happened between two photos taken one after the other: kept walking, a break (the line
  * stops, and starts again at the next photo), or a hop by train, subway, bus or car.
  */
 export type Gap = "walk" | "break" | Exclude<TripMode, "walk">;
+
+/** Where a via spot goes: after the day's start spot ("start"), or after a photo, by its ID. */
+export type ViaKey = string;
+
+/** A path along streets, each point [longitude, latitude]. */
+export type Path = [number, number][];
 
 /** A day's trip line as the editor holds it: one gap between each two photos, and the day's ends. */
 export interface GapDraft {
@@ -13,18 +19,33 @@ export interface GapDraft {
   start?: TripPoint;
   /** A spot with no photo the day ends at. */
   end?: TripPoint;
+  /** The via spots after the start spot and after each photo, in order. */
+  via?: Record<ViaKey, TripPoint[]>;
+  /** Each segment's path along streets, by segmentKey, kept while the segment is unchanged. */
+  paths?: Record<string, Path>;
 }
 
-/** One run of photos walked through, with the spots before and after it. */
+/** One run of photos walked through, with the spots before, between and after them. */
 interface Run {
   start?: TripPoint;
   photos: number[];
+  via: TripVia[];
   end?: TripPoint;
 }
 
+/** The via spots in the draft after key, as a segment lists them. */
+function viaOf(draft: GapDraft, key: ViaKey): TripVia[] {
+  const after = key === "start" ? {} : { after: Number(key) };
+  return (draft.via?.[key] ?? []).map(({ latitude, longitude }) => ({
+    ...after,
+    latitude,
+    longitude,
+  }));
+}
+
 /** How many points a run's line goes through. */
-function runPoints({ start, photos, end }: Run): number {
-  return photos.length + (start ? 1 : 0) + (end ? 1 : 0);
+function runPoints({ start, photos, via, end }: Run): number {
+  return photos.length + via.length + (start ? 1 : 0) + (end ? 1 : 0);
 }
 
 /** The run as a walking segment, when it has two or more points to draw. */
@@ -33,23 +54,62 @@ function walkSegment(run: Run): TripSegment[] {
   return [{ mode: "walk", photos: run.photos, ...withPoints(run) }];
 }
 
-/** The run's start and end spots, leaving out the ones it doesn't have. */
-function withPoints({ start, end }: Run): Partial<TripSegment> {
-  return { ...(start && { start }), ...(end && { end }) };
+/** The run's start and end spots and via spots, leaving out the ones it doesn't have. */
+function withPoints({ start, end, via }: Pick<Run, "start" | "end" | "via">): Partial<TripSegment> {
+  return { ...(start && { start }), ...(end && { end }), ...(via.length > 0 && { via }) };
+}
+
+/** The first run: the first photo, after the start spot and its via spots when there is one. */
+function firstRun(photos: number[], draft: GapDraft): Run {
+  const via = draft.start ? viaOf(draft, "start") : [];
+  return { start: draft.start, photos: photos.slice(0, 1), via };
+}
+
+/** The last run, ending at the end spot with the last photo's via spots when there is one. */
+function lastRun(run: Run, draft: GapDraft): Run {
+  if (!draft.end) return run;
+  return { ...run, end: draft.end, via: [...run.via, ...viaOf(draft, String(run.photos.at(-1)))] };
+}
+
+/** The segments the gaps make between photos, taken one after the other, without their paths. */
+function plainSegments(photos: number[], draft: GapDraft): TripSegment[] {
+  const segments: TripSegment[] = [];
+  let run = firstRun(photos, draft);
+  draft.gaps.forEach((gap, i) => {
+    const [a, b] = [photos[i] as number, photos[i + 1] as number];
+    if (gap === "walk") {
+      run.via.push(...viaOf(draft, String(a)));
+      run.photos.push(b);
+      return;
+    }
+    segments.push(...walkSegment(run));
+    if (gap !== "break")
+      segments.push({ mode: gap, photos: [a, b], ...withPoints({ via: viaOf(draft, String(a)) }) });
+    run = { photos: [b], via: [] };
+  });
+  return [...segments, ...walkSegment(lastRun(run, draft))];
+}
+
+/** The point's coordinates, or null when there's none. */
+function at(p: TripPoint | undefined): [number, number] | null {
+  return p ? [p.latitude, p.longitude] : null;
+}
+
+/** What makes a segment's path: its mode and points, but not its spots' labels. */
+function segmentKey(s: TripSegment): string {
+  const via = (s.via ?? []).map((v) => [v.after ?? null, v.latitude, v.longitude]);
+  return JSON.stringify([s.mode, at(s.start), s.photos, at(s.end), via]);
+}
+
+/** The segment with its path from the draft, when it has one. */
+function withPath(segment: TripSegment, draft: GapDraft): TripSegment {
+  const path = draft.paths?.[segmentKey(segment)];
+  return path ? { ...segment, path } : segment;
 }
 
 /** The segments the gaps make between photos, taken one after the other. */
 export function segmentsOf(photos: number[], draft: GapDraft): TripSegment[] {
-  const segments: TripSegment[] = [];
-  let run: Run = { start: draft.start, photos: photos.slice(0, 1) };
-  draft.gaps.forEach((gap, i) => {
-    const [a, b] = [photos[i] as number, photos[i + 1] as number];
-    if (gap === "walk") return run.photos.push(b);
-    segments.push(...walkSegment(run));
-    if (gap !== "break") segments.push({ mode: gap, photos: [a, b] });
-    run = { photos: [b] };
-  });
-  return [...segments, ...walkSegment({ ...run, end: draft.end })];
+  return plainSegments(photos, draft).map((segment) => withPath(segment, draft));
 }
 
 /** Whether a and b are next to each other, in that order, in the segment's photos. */
@@ -69,10 +129,26 @@ function dayEnds(segments: TripSegment[]): Pick<GapDraft, "start" | "end"> {
   return { start: segments[0]?.start, end: segments.at(-1)?.end };
 }
 
+/** The segments' via spots, by what they come after. */
+function viaByKey(segments: TripSegment[]): Record<ViaKey, TripPoint[]> {
+  const out: Record<ViaKey, TripPoint[]> = {};
+  for (const { after, latitude, longitude } of segments.flatMap((s) => s.via ?? [])) {
+    const key = after === undefined ? "start" : String(after);
+    out[key] = [...(out[key] ?? []), { latitude, longitude }];
+  }
+  return out;
+}
+
+/** The segments' paths along streets, by segmentKey. */
+export function pathsOf(segments: TripSegment[]): Record<string, Path> {
+  const routed = segments.filter((s) => s.path && s.path.length >= 2);
+  return Object.fromEntries(routed.map((s) => [segmentKey(s), s.path as Path]));
+}
+
 /** A saved trip line's segments as gaps between the photos, taken one after the other. */
 export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
   const gaps = photos.slice(1).map((b, i) => gapIn(segments, photos[i] as number, b));
-  return { gaps, ...dayEnds(segments) };
+  return { gaps, ...dayEnds(segments), via: viaByKey(segments), paths: pathsOf(segments) };
 }
 
 /** The draft with every gap kept walking: one line through all the photos. */

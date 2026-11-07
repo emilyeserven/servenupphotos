@@ -50,6 +50,10 @@ interface RouteMapProps {
   ends: TripPoint[];
   /** Picks a spot on the map, while the editor is waiting for one. */
   onPick?: (point: TripPoint) => void;
+  /** The via points that shape the line, each with where it is in the draft. */
+  vias?: { key: string; index: number; point: TripPoint }[];
+  /** Moves a via point, or removes it with null; left out, they can't be changed. */
+  onMoveVia?: (key: string, index: number, point: TripPoint | null) => void;
 }
 
 /** The day's photos as numbered dots, and its trip line drawn through them. */
@@ -61,6 +65,8 @@ export function RouteMap({
   highlighted,
   ends,
   onPick,
+  vias = [],
+  onMoveVia,
 }: RouteMapProps) {
   const bounds = pointsBounds([...photos, ...ends]);
   return (
@@ -82,6 +88,26 @@ export function RouteMap({
         {photos.map((p, i) => (
           <Marker key={p.id} latitude={p.latitude} longitude={p.longitude}>
             <PhotoDot n={i + 1} highlighted={p.id === highlighted} />
+          </Marker>
+        ))}
+        {vias.map(({ key, index, point }) => (
+          <Marker
+            key={`via-${key}-${index}`}
+            latitude={point.latitude}
+            longitude={point.longitude}
+            draggable={onMoveVia !== undefined}
+            onDragEnd={(e) =>
+              onMoveVia?.(key, index, { latitude: e.lngLat.lat, longitude: e.lngLat.lng })
+            }
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
+              onMoveVia?.(key, index, null);
+            }}
+          >
+            <span
+              title="Via point: drag to move, click to remove"
+              className="block size-3 rotate-45 cursor-grab border-2 border-blue-600 bg-white shadow"
+            />
           </Marker>
         ))}
         {ends.map((p, i) => (

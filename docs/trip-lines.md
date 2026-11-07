@@ -36,6 +36,10 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
   point to the last, since the real track isn't known.
 - One photo can end a segment and start the next (304 and 305 above), so the line doesn't break at a station.
 - **`start`** and **`end`** are spots with no photo, such as the hotel, with an optional `label`.
+- **`via`** lists spots with no photo the line bends through, each with the photo it comes `after` (none for right
+  after `start`). See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
+- **`path`** is a walk, bus or car segment's line along the streets, as `[longitude, latitude]` pairs, from **Snap to
+  streets**. Other modes never keep one.
 - **`auto: true`** with no segments turns on the [automatic line](#the-automatic-line).
 
 A photo in a line must be from that day (its [custom date](data-model.md#date-taken), or else its EXIF date) and have
@@ -70,6 +74,10 @@ segment, coordinates filled in from the photos:
 }
 ```
 
+A segment with a `path` is drawn along it, as long as the path still starts and ends within 300 m of the segment's first
+and last points; otherwise (say a photo's GPS position was fixed since) it falls back to straight lines through its
+points until it's snapped again.
+
 It's rebuilt from the day files and the photo files at each Commit, so fixing a photo's GPS position or date fixes its
 line on the next one. Only photos on the portfolio are drawn (not drafts or [unselected
 photos](compare-groups.md#unselected-photos)); a segment left with fewer than two points is skipped. Commit's counts say
@@ -102,6 +110,32 @@ highlights its dot.
   **Ends at** set a spot with no photo by clicking the map, with a label such as "Hotel". **Save route** saves it.
 - An automatic day shows the line as the next Commit would draw it, with **Edit as my own** and **Turn off automatic
   line**.
+
+## Shaping the line and snapping it to streets
+
+A line drawn by hand is straight from point to point. To make it follow the streets:
+
+1. **Add via points**, then click the map where the line should bend. Each click puts a via point in the stretch of the
+   line nearest it. Drag a via point to move it, or click it to remove it. **Done adding via points** stops adding.
+2. Once the straight line looks right, **Snap to streets** asks the [OpenStreetMap routing
+   servers](https://routing.openstreetmap.de/about.html) (FOSSGIS's OSRM) for the way along the streets through every
+   walk, bus or car segment's points and via points, walking on foot and buses and cars by road. Train and subway hops
+   stay dashed straight lines.
+3. **Save route** saves the paths with the line. Snapping alone saves nothing.
+
+`POST /api/triplines/<day>/route` → `POST /triplines/{day}/route` takes the line, checks it as saving would, and answers
+`{ "line": …, "unrouted": n }`: the line with a `path` on each street segment that didn't have one, and how many got
+no route (they stay straight). A segment keeps its path while it's unchanged; changing its photos, mode, ends or via
+points drops it, and the page says how many stretches are straight again.
+
+The routing servers ask for no more than one request a second, so `be-pipeline/internal/routing` waits between
+requests, across every segment and every click, however fast they come. The button is off while a snap is running.
+`ROUTING_URL` points the backend at another OSRM server with the same `routed-foot` and `routed-car` profiles, such as
+one run locally.
+
+> **Frontend analogy:** via points are like the control points of an SVG path you drag around in a design tool, and
+> Snap to streets is a debounced `fetch` that swaps the rough path for a precise one. The backend's one-a-second wait is
+> a throttle on that fetch, shared by every caller.
 
 The page reads the day files from the [combined data store](combined-data-store.md)'s `TRIPLINES.json` with the
 changes since made over it, so a saved line shows at once.
