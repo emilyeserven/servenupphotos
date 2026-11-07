@@ -40,7 +40,7 @@ export function GridRow({ row, max, hideHint }: { row: StatRow; max: number; hid
  * is only made visible, keeping its space, and the text before grows leftwards, so the number
  * doesn't move.
  */
-export function SeeMore({ count }: { count: number }) {
+function SeeMore({ count }: { count: number }) {
   const shown = "group-hover:visible group-focus-visible:visible";
   return (
     <span className="flex items-center">

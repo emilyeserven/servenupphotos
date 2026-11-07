@@ -75,7 +75,7 @@ by** when the photos are in groups. A pie says **Slices** and **Size** instead.
   lowest first when they're all numbers, such as years) or by how many photos they have. **Ascending** and
   **Descending** turn that order around, and put each group's photos oldest or newest first by when they were taken.
 - A group shows its first 48 photos, then **Show all**.
-- Each group's count (or, when the photos aren't grouped, the count beside the order buttons) reads **See More (12) →**
+- Each group's count (or, when the photos aren't grouped, the count beside the order buttons) reads **See More (12)**
   on hover, as the Numbers page's rows do, and opens the group's photos on the Grid with the matching Grid filters: the page's own filters and search, the picked x value and the group's
   value, such as Year 2016 and Season Autumn (`lib/graph-pick-grid.ts`). When those filters wouldn't find exactly the
   group's photos, such as a value the Grid can't filter by, it opens them as photos chosen one by one (`ids`).

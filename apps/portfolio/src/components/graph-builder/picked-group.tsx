@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
-import { SeeMore } from "@/components/stat-row";
 import type { PickedGroup } from "@/lib/graph-pick";
 import type { Photo } from "@/lib/photos";
 import { cn } from "@/lib/utils";
@@ -47,9 +46,12 @@ export function PickedThumbnails({
   );
 }
 
+/** The words around a count shown only on hover or focus, making it read "See More (12)". */
+const SEE_MORE = "hidden group-hover:inline group-focus-visible:inline";
+
 /**
  * The photos' count as a link opening them on the Grid with the filters that find them, reading
- * "See More (12) →" on hover, as the Numbers page's rows do.
+ * "See More (12)" on hover, like the Numbers page's rows.
  */
 export function GridCount({
   search,
@@ -65,9 +67,11 @@ export function GridCount({
       to="/grid"
       search={search}
       aria-label={`${label}: see its ${count} photos on the Grid`}
-      className="group relative shrink-0 rounded-md px-2 py-1 text-sm text-muted-foreground tabular-nums outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      className="group shrink-0 rounded-md whitespace-nowrap px-2 py-1 text-sm text-muted-foreground tabular-nums outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <SeeMore count={count} />
+      <span className={SEE_MORE}>See More (</span>
+      {count.toLocaleString()}
+      <span className={SEE_MORE}>)</span>
     </Link>
   );
 }
