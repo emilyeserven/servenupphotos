@@ -15,6 +15,7 @@ import {
   withPhotos,
 } from "@portfolio/lib/place-tree";
 import { cn } from "@portfolio/lib/utils";
+import { TruncatedText } from "@portfolio/components/truncated-text";
 
 /** What the Places flyout lists, and what choosing in it does. */
 interface PanelProps {
@@ -174,7 +175,7 @@ function AllOf({ parent, selected, onChoose, onHover }: PanelProps & { parent?: 
       {...hoverHandlers(onHover, valueOf(parent))}
       className={cn(ROW_CLASS, "flex-none font-medium")}
     >
-      <span className="truncate">All of {parent.label[script]}</span>
+      <TruncatedText text={`All of ${parent.label[script]}`} />
       <Count count={parent.count} />
     </button>
   );
@@ -206,7 +207,7 @@ function PlaceRow({
         {...hoverHandlers(props.onHover, value)}
         className={ROW_CLASS}
       >
-        <span className="truncate">{option.label[script]}</span>
+        <TruncatedText text={option.label[script]} />
         <Count count={option.count} />
         <Chevron shown={hasChildren} />
       </button>
@@ -277,8 +278,11 @@ function MatchRow({ match: { option, path }, ...props }: PanelProps & { match: P
         className={ROW_CLASS}
       >
         <span className="flex min-w-0 flex-col">
-          <span className="truncate">{option.label[script]}</span>
-          <span className="truncate text-xs text-muted-foreground">{path.join(" › ")}</span>
+          <TruncatedText text={option.label[script]} />
+          <TruncatedText
+            text={path.join(" › ")}
+            className="truncate text-xs text-muted-foreground"
+          />
         </span>
         <Count count={option.count} />
       </button>

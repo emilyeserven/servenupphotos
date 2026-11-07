@@ -9,6 +9,7 @@ import { NO_STATE } from "@portfolio/lib/photo-filters";
 import type { ScriptDisplay } from "@portfolio/lib/localize";
 import { everyOption, valueOf } from "@portfolio/lib/place-tree";
 import { cn } from "@portfolio/lib/utils";
+import { TruncatedText } from "@portfolio/components/truncated-text";
 
 /** What the button says: "All places", the one place's name, or how many are chosen. */
 function buttonText(options: LocationOption[], selected: string[], script: ScriptDisplay): string {
@@ -66,7 +67,7 @@ export function PlacesFilter({
             )}
           >
             <MapPin aria-hidden className="text-muted-foreground" />
-            <span className="truncate">{text}</span>
+            <TruncatedText text={text} />
           </Button>
         </PopoverTrigger>
         {selected.length > 0 && (

@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@portfolio/lib/utils";
+import { TruncatedText } from "@portfolio/components/truncated-text";
 
 /**
  * A section in a picker's left list, such as Cameras in **Gear & settings**: its name, with what
@@ -35,10 +36,10 @@ export function SectionTab({
     >
       <span className="flex w-full items-center gap-1.5 font-medium">
         {Icon && <Icon className="size-4 text-muted-foreground" aria-hidden />}
-        {label}
+        <TruncatedText text={label} />
         {set && <span className="ml-auto size-1.5 rounded-full bg-primary" aria-label="(set)" />}
       </span>
-      <span className="line-clamp-2 w-full text-xs text-muted-foreground">{text}</span>
+      <TruncatedText text={text} className="line-clamp-2 w-full text-xs text-muted-foreground" />
     </button>
   );
 }
