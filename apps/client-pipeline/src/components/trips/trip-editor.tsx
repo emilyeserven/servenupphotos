@@ -11,6 +11,8 @@ import { Busy, RemoveEntryButton, SaveNote } from "@/components/entry-buttons";
 import { dayRange } from "@/components/trips/day-range";
 import { DayLegs } from "@/components/trips/day-legs";
 import { TripFields } from "@/components/trips/trip-fields";
+import { TripLabels } from "@/components/trips/trip-labels";
+import { labelsProblem } from "@/lib/trip-labels";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TripLine } from "@/api/trip-lines";
@@ -71,6 +73,11 @@ export function TripEditor(props: TripEditorProps) {
         <CardContent className="flex flex-col gap-4">
           <LegacyNote legacy={props.legacy} />
           <TripFields trip={typed} onChange={setDraft} />
+          <TripLabels
+            trip={draft}
+            dates={dates}
+            onChange={(labels) => setDraft({ ...typed, labels })}
+          />
           <div className="flex flex-col gap-1">
             <h3 className="text-sm font-medium">Days and legs</h3>
             <p className="text-muted-foreground text-sm">
@@ -101,7 +108,7 @@ export function TripEditor(props: TripEditorProps) {
 }
 
 /** A saved Trip to compare with that never matches, so a Trip from before can be saved as it is. */
-const NEW_SAVE: Trip = { id: "", name: "", start: "", end: "", legs: [] };
+const NEW_SAVE: Trip = { id: "", name: "", start: "", end: "", legs: [], labels: [] };
 
 /** Says a Trip from before isn't on the Timeline until it's saved again. */
 function LegacyNote({ legacy }: { legacy: boolean }) {
@@ -123,7 +130,7 @@ function missingField(draft: Trip): string {
 
 /** Why the draft can't be saved yet; "" when it can. */
 function whyNotSaved(draft: Trip, others: Trip[]): string {
-  const missing = missingField(draft);
+  const missing = missingField(draft) || labelsProblem(draft);
   if (missing) return missing;
   const clash = overlappingTrip(others, draft);
   return clash ? `“${clash.name}” already covers ${dayRange(clash.start, clash.end)}.` : "";

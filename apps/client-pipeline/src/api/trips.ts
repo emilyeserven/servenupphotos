@@ -1,5 +1,8 @@
 import { overrideId } from "@/api/cameras";
+import { mutationOptions } from "@tanstack/react-query";
 import { settingMutations } from "@/api/data-files";
+import { post } from "@/api/data";
+import type { PendingSave } from "@/api/scan-changes";
 import type { CombinedData } from "@/api/photos";
 import type { TripPoint } from "@/api/trip-lines";
 import type { CombinedPhoto } from "@/lib/group-photos";
@@ -47,10 +50,23 @@ export interface Trip {
   end: string;
   /** The legs between days, in the order they were travelled; none for a run of days alone. */
   legs: TripLeg[];
+  /**
+   * Names for parts of the Trip on the Timeline, such as "Korea" and "Japan" in a "Korea and Japan"
+   * Trip, each on the days picked for it; a day none covers shows the Trip's name.
+   */
+  labels: TripLabel[];
 }
 
-/** A Trip as its file may have it: the timeline labels had no legs. */
-type TripFile = Omit<Trip, "legs"> & { legs?: TripLeg[] };
+/** A timeline label within a Trip: a name the Timeline shows beside its days in place of the Trip's. */
+export interface TripLabel {
+  name: string;
+  /** Its first and last days, both included, within the Trip. */
+  start: string;
+  end: string;
+}
+
+/** A Trip as its file may have it: the timeline labels had no legs, and most Trips no labels. */
+type TripFile = Omit<Trip, "legs" | "labels"> & { legs?: TripLeg[]; labels?: TripLabel[] };
 
 function isTripFile(value: unknown): value is TripFile {
   const trip = value as Partial<TripFile> | null;
@@ -61,7 +77,12 @@ function isTripFile(value: unknown): value is TripFile {
 
 /** The Trip files among entries, each with its legs. */
 function tripsOf(entries: unknown[] | undefined): Trip[] {
-  return (entries ?? []).filter(isTripFile).map((trip) => ({ ...trip, legs: trip.legs ?? [] }));
+  return (entries ?? []).filter(isTripFile).map(withLists);
+}
+
+/** The Trip file with its legs and labels, empty when it has none. */
+function withLists(trip: TripFile): Trip {
+  return { ...trip, legs: trip.legs ?? [], labels: trip.labels ?? [] };
 }
 
 /**
@@ -129,6 +150,49 @@ export function photosBetween(photos: CombinedPhoto[], start: string, end: strin
     return day !== undefined && day >= start && day <= end;
   }).length;
 }
+
+/**
+ * One Trip from several: its first day the earliest, its last the latest, its legs all of theirs,
+ * and its labels each one's labels, or else its name on its days, so the Timeline still shows
+ * "Korea" and "Japan" inside "Korea and Japan". It keeps the earliest one's ID.
+ */
+export function combinedTrip(name: string, parts: Trip[]): Trip {
+  const ordered = parts.toSorted((a, b) => a.start.localeCompare(b.start));
+  return {
+    id: ordered[0]!.id,
+    name,
+    start: ordered[0]!.start,
+    end: ordered
+      .map((t) => t.end)
+      .toSorted()
+      .at(-1)!,
+    legs: ordered.flatMap((t) => t.legs),
+    labels: ordered.flatMap(labelsOf),
+  };
+}
+
+/** The Trip's labels, or else one for its name on all its days. */
+function labelsOf(trip: Trip): TripLabel[] {
+  if (trip.labels.length > 0) return trip.labels;
+  return [{ name: trip.name, start: trip.start, end: trip.end }];
+}
+
+/** The files combining Trips changed: the new Trip saved, the others removed. */
+function combineChanges(result: PendingSave) {
+  return result.changes.map((change) => ({
+    kind: change.path.includes("/triplines/") ? ("triplines" as const) : ("timeline" as const),
+    ...change,
+  }));
+}
+
+/** Saves one Trip in place of several, as one change waiting for Commit. */
+export const combineTripsMutation = mutationOptions({
+  mutationKey: ["trips", "combine"],
+  scope: { id: "photo-data-entries" },
+  meta: { saves: true, changes: (result) => combineChanges(result as PendingSave) },
+  mutationFn: ({ trip, ids }: { trip: Trip; ids: string[] }) =>
+    post<PendingSave & { path: string }>("/api/trips/combine", { trip, ids }),
+});
 
 const tripMutations = settingMutations<Trip>("timeline", "trips");
 

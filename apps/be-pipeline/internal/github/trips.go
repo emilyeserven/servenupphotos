@@ -51,6 +51,20 @@ type Trip struct {
 	// Legs are the stretches between days, in the order they were travelled.
 	// Left out of the file when there are none, as a label was written.
 	Legs []TripLeg `json:"legs,omitempty"`
+	// Labels name parts of the Trip on the Timeline, such as "Korea" and
+	// "Japan" in a "Korea and Japan" Trip, each on the days picked for it. A
+	// day no label covers shows the Trip's name. Left out when there are none.
+	Labels []TripLabel `json:"labels,omitempty"`
+}
+
+// TripLabel is a timeline label within a Trip: a name the Timeline shows
+// beside the days from Start to End, both included, in place of the Trip's.
+type TripLabel struct {
+	// Name is what the Timeline shows, such as "Japan".
+	Name string `json:"name"`
+	// Start and End are the first and last days it covers, within the Trip.
+	Start string `json:"start"`
+	End   string `json:"end"`
 }
 
 // TripLeg is one stretch of a Trip from one day to another, such as a ferry
@@ -143,6 +157,9 @@ func validTrip(trip Trip) (Trip, *PublishError) {
 		return trip, publishErr(http.StatusBadRequest, "Give the Trip a name of up to %d characters.", maxEntryTextLength)
 	}
 	if perr := validTripDays(trip); perr != nil {
+		return trip, perr
+	}
+	if perr := validLabels(trip); perr != nil {
 		return trip, perr
 	}
 	return trip, validLegs(trip)
