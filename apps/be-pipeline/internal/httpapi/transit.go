@@ -16,6 +16,7 @@ import (
 type transitFinder interface {
 	Lines(ctx context.Context, mode string, from, to [2]float64) ([]transit.Line, error)
 	Track(ctx context.Context, id int64, from, to [2]float64) ([][2]float64, error)
+	Stops(ctx context.Context, id int64) ([]transit.Stop, error)
 }
 
 // transitTimeout is how long one look-up may take, waiting its turn included.
@@ -51,12 +52,40 @@ func handleTransitLines(finder transitFinder) http.HandlerFunc {
 	}
 }
 
+// handleTransitStops answers line {id}'s stations or stops, in the order it
+// runs.
+func handleTransitStops(finder transitFinder) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, ok := lineID(w, r)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), transitTimeout)
+		defer cancel()
+		stops, err := finder.Stops(ctx, id)
+		if err != nil {
+			writeError(w, http.StatusBadGateway, "Couldn't get the line's stops from OpenStreetMap: "+err.Error())
+			return
+		}
+		writeJSON(w, http.StatusOK, stops)
+	}
+}
+
+// lineID reads the path's {id}, writing an error when it isn't a line's ID.
+func lineID(w http.ResponseWriter, r *http.Request) (int64, bool) {
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil || id <= 0 {
+		writeError(w, http.StatusBadRequest, "Give the line's OpenStreetMap ID.")
+		return 0, false
+	}
+	return id, true
+}
+
 // handleTransitTrack answers line {id}'s track between ?from= and ?to=.
 func handleTransitTrack(finder transitFinder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-		if err != nil || id <= 0 {
-			writeError(w, http.StatusBadRequest, "Give the line's OpenStreetMap ID.")
+		id, ok := lineID(w, r)
+		if !ok {
 			return
 		}
 		from, to, ok := spotsParam(w, r)

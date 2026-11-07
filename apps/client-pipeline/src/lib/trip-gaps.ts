@@ -34,6 +34,10 @@ export interface GapDraft {
 export interface HopLine {
   mode: Gap;
   line: TripTransitLine;
+  /** The station it got on at, when not at the photo. */
+  board?: TripPoint;
+  /** The station it got off at, when not at the next photo. */
+  alight?: TripPoint;
 }
 
 /** One run of photos walked through, with the spots before, between and after them. */
@@ -82,10 +86,15 @@ function lastRun(run: Run, draft: GapDraft): Run {
   return { ...run, end: draft.end, via: [...run.via, ...viaOf(draft, String(run.photos.at(-1)))] };
 }
 
+/** A hop's line and stations as its segment lists them, leaving out the stations it doesn't have. */
+function rideFields({ line, board, alight }: Omit<HopLine, "mode">): Omit<HopLine, "mode"> {
+  return { line, ...(board && { board }), ...(alight && { alight }) };
+}
+
 /** The hop from photo a to b, with its via spots, and its line when one was picked for its mode. */
 function hopSegment(draft: GapDraft, gap: Exclude<Gap, "walk" | "break">, a: number, b: number) {
   const picked = draft.lines?.[String(a)];
-  const line = picked?.mode === gap ? { line: picked.line } : {};
+  const line = picked?.mode === gap ? rideFields(picked) : {};
   return { mode: gap, photos: [a, b], ...withPoints({ via: viaOf(draft, String(a)) }), ...line };
 }
 
@@ -115,7 +124,8 @@ function at(p: TripPoint | undefined): [number, number] | null {
 /** What makes a segment's path: its mode, points and line, but not its spots' labels. */
 export function segmentKey(s: TripSegment): string {
   const via = (s.via ?? []).map((v) => [v.after ?? null, v.latitude, v.longitude]);
-  return JSON.stringify([s.mode, at(s.start), s.photos, at(s.end), via, s.line?.id ?? null]);
+  const ride = [s.line?.id ?? null, at(s.board), at(s.alight)];
+  return JSON.stringify([s.mode, at(s.start), s.photos, at(s.end), via, ride]);
 }
 
 /** The segment with its path from the draft, when it has one. */
@@ -166,7 +176,10 @@ export function pathsOf(segments: TripSegment[]): Record<string, Path> {
 function linesOf(segments: TripSegment[]): Record<string, HopLine> {
   const ridden = segments.filter((s) => s.line && s.photos.length > 0);
   return Object.fromEntries(
-    ridden.map((s) => [String(s.photos[0]), { mode: s.mode as Gap, line: s.line! }]),
+    ridden.map((s) => [
+      String(s.photos[0]),
+      { mode: s.mode as Gap, ...rideFields({ ...s, line: s.line! }) },
+    ]),
   );
 }
 

@@ -85,11 +85,15 @@ type element struct {
 	ID      int64             `json:"id"`
 	Tags    map[string]string `json:"tags"`
 	Members []member          `json:"members"`
+	// Lat and Lon are a node's spot.
+	Lat float64 `json:"lat"`
+	Lon float64 `json:"lon"`
 }
 
 // member is one member of a route relation, with its geometry.
 type member struct {
 	Type     string `json:"type"`
+	Ref      int64  `json:"ref"`
 	Role     string `json:"role"`
 	Geometry []struct {
 		Lat float64 `json:"lat"`

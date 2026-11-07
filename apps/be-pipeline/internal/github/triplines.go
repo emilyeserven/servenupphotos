@@ -57,6 +57,12 @@ type TripSegment struct {
 	// Line is the bus, subway or train line a hop rode, picked from the ones
 	// OpenStreetMap maps; nil when not picked.
 	Line *TripTransitLine `json:"line,omitempty"`
+	// Board and Alight are the station or stop a hop with a Line got on and
+	// off at, when away from its photos, such as a station a 10-minute walk
+	// from the next photo: the line rides between them, with a walk from
+	// the first photo and to the last one. Nil rides from or to the photo.
+	Board  *TripPoint `json:"board,omitempty"`
+	Alight *TripPoint `json:"alight,omitempty"`
 }
 
 // TripVia is a spot a segment's line goes through to shape it, such as a

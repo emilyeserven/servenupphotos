@@ -3,6 +3,7 @@ package github
 import (
 	"net/http"
 	"regexp"
+	"slices"
 	"strings"
 	"unicode/utf8"
 )
@@ -35,8 +36,16 @@ func trimLine(seg *TripSegment, n int) *PublishError {
 	if !lineModes[seg.Mode] {
 		seg.Line = nil
 	}
+	if seg.Line == nil {
+		seg.Board, seg.Alight = nil, nil
+	}
 	if !streetModes[seg.Mode] && seg.Line == nil {
 		seg.Path = nil
+	}
+	for _, p := range []*TripPoint{seg.Board, seg.Alight} {
+		if perr := validTripPoint(p, n); perr != nil {
+			return perr
+		}
 	}
 	return validLine(seg.Line, n)
 }
@@ -64,4 +73,46 @@ func lineProps(l *TripTransitLine) (name, ref, colour string) {
 		return "", "", ""
 	}
 	return l.Name, l.Ref, l.Colour
+}
+
+// segmentFeatures are seg of line drawn through spots: the segment itself
+// and, for a hop that got on or off its line away from its photos, the walks
+// between those photos and the stations. None when it has fewer than two
+// points.
+func segmentFeatures(line TripLine, seg TripSegment, spots map[int]tripSpot) []tripLineFeature {
+	f, ok := segmentFeature(line, seg, spots)
+	if !ok {
+		return nil
+	}
+	coords, photos := segmentPoints(seg, spots)
+	first, last := photos[:min(1, len(photos))], photos[max(0, len(photos)-1):]
+	out := stationWalk(line, seg.Board, func(st [2]float64) [][2]float64 { return [][2]float64{coords[0], st} }, first)
+	out = append(out, f)
+	return append(out, stationWalk(line, seg.Alight, func(st [2]float64) [][2]float64 { return [][2]float64{st, coords[len(coords)-1]} }, last)...)
+}
+
+// stationWalk is the walk between a hop's photo spot and the station it got
+// on or off at, drawn through the points walk gives for the station, as a
+// one-feature list; none when it has no such station.
+func stationWalk(line TripLine, station *TripPoint, walk func([2]float64) [][2]float64, photos []int) []tripLineFeature {
+	if station == nil {
+		return nil
+	}
+	coords := walk([2]float64{station.Longitude, station.Latitude})
+	props := tripLineProps{Day: line.Day, Mode: ModeWalk, Auto: line.Auto, Photos: photos, Km: lineKm(coords)}
+	return []tripLineFeature{{Type: "Feature", Geometry: tripLineGeometry{Type: "LineString", Coordinates: coords}, Properties: props}}
+}
+
+// rideEnds are coords with their first and last points moved to the
+// station seg got on and off at, when it names them: the stretch its line
+// rides.
+func rideEnds(seg TripSegment, coords [][2]float64) [][2]float64 {
+	out := slices.Clone(coords)
+	if seg.Board != nil {
+		out[0] = [2]float64{seg.Board.Longitude, seg.Board.Latitude}
+	}
+	if seg.Alight != nil {
+		out[len(out)-1] = [2]float64{seg.Alight.Longitude, seg.Alight.Latitude}
+	}
+	return out
 }

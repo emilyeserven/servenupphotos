@@ -36,6 +36,10 @@ export interface TripSegment {
   path?: [number, number][];
   /** The bus, subway or train line a hop rode, picked from the ones OpenStreetMap maps. */
   line?: TripTransitLine;
+  /** The station or stop a hop with a line got on at, with its name as the label. */
+  board?: TripPoint;
+  /** The station or stop it got off at, which can be a walk away from the next photo. */
+  alight?: TripPoint;
 }
 
 /** The bus, subway or train line a hop rode: an OpenStreetMap route, with its name and color. */

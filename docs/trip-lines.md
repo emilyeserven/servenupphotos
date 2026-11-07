@@ -43,6 +43,8 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
   `{ "id": 1234, "name": "Midosuji Line", "ref": "M", "colour": "#e5171f" }`, where `id` is the OpenStreetMap route
   relation. Only train, subway, bus and transit hops keep one.
+- **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
+  `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
 - **`auto: true`** with no segments turns on the [automatic line](#the-automatic-line).
 
 A photo in a line must be from that day (its [custom date](data-model.md#date-taken), or else its EXIF date) and have
@@ -76,6 +78,9 @@ segment, coordinates filled in from the photos:
   }
 }
 ```
+
+A hop with a `board` or `alight` station also gets a walk feature from its first photo to where it got on, and from
+where it got off to its last photo.
 
 Each feature also has `line`, `ref` and `colour` when its hop rode a picked line, so the portfolio can draw it in the
 line's color and name it.
@@ -145,15 +150,21 @@ one run locally.
 
 ## Lines ridden
 
-Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand. **Find lines**
-asks OpenStreetMap for the lines of that kind that pass within 500 m of both of the hop's photos (a transit hop of
+Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand. A hop with no line
+yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its photos (a transit hop of
 unknown kind looks for every kind). Each is a [route relation](https://wiki.openstreetmap.org/wiki/Relation:route),
-usually one direction of one line, listed with its number, color and ends. Picking one fetches its track and cuts out
-the part between the two photos, with a short straight join from each photo to the track. The hop is then drawn
-solid, in the line's color, instead of dashed. **Clear** goes back to the straight dashed hop, and **Save route** keeps
-the line and its track.
+usually one direction of one line, listed with its number, color and ends. When everything found is one line (say,
+its two directions), it's picked by itself; otherwise pick one. **Change line** looks again.
+
+Picking a line gets its stations or stops and sets **Got on at** and **Got off at** to the ones nearest each photo.
+Either can be changed to another station, such as one a walk away from the next photo, or to **At the photo**. The
+hop is drawn along the line's track between them, solid in the line's color, with a walk from the first photo to where
+it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
+route** keeps the line, the stations and the track.
 
 - `GET /api/transit/lines?mode=subway&from=<lng,lat>&to=<lng,lat>` answers the lines found.
+- `GET /api/transit/lines/<id>/stops` answers the line's stations or stops in order, each with its `name`,
+  `latitude` and `longitude` (its `stop` members, or else its platforms).
 - `GET /api/transit/lines/<id>/track?from=…&to=…` answers `{ "path": [...] }`. It's the shortest way along the line's
   mapped ways between the points on it nearest each photo, so it works whichever way the ways were drawn. It fails
   with 422 when the line's track doesn't join the two spots.
@@ -166,7 +177,8 @@ routing servers. `OVERPASS_URL` points it at another Overpass server.
 > Find lines searches the sheet for paths that pass near both photos, and picking one clips that path between them.
 
 A hop's line is kept with the mode it was picked for. Changing the hop to another kind of travel leaves the line out,
-and changing it back before saving brings it back.
+and changing it back before saving brings it back. The walks to and from the stations are straight lines; Snap to streets
+doesn't route them.
 
 The page reads the day files from the [combined data store](combined-data-store.md)'s `TRIPLINES.json` with the
 changes since made over it, so a saved line shows at once.

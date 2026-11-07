@@ -563,6 +563,21 @@ function curvedTrack({ url }) {
   return { path: along };
 }
 
+/** Pretend stops along the line between photos 304 and 305, the last one a walk short of 305. */
+function lineStops() {
+  const [a, b] = [photoSpot(304), photoSpot(305)];
+  const at = (t, dx = 0) => ({
+    latitude: a[1] + (b[1] - a[1]) * t,
+    longitude: a[0] + (b[0] - a[0]) * t + dx,
+  });
+  return [
+    { name: "Namba", ...at(0.02, 0.0004) },
+    { name: "Shinsaibashi", ...at(0.35, 0.002) },
+    { name: "Yodoyabashi", ...at(0.65, 0.002) },
+    { name: "Umeda", ...at(0.85, 0.0006) },
+  ];
+}
+
 const pendingSave = (branch = PULL_REQUEST.branch) => ({
   branch,
   pullRequestUrl: PULL_REQUEST.url,
@@ -1285,16 +1300,8 @@ export function defaultFixtures() {
         from: "Esaka",
         to: "Nakamozu",
       },
-      {
-        id: 3,
-        name: "Yotsubashi Line",
-        ref: "Y",
-        colour: "#0078ba",
-        kind: "subway",
-        from: "Suminoekoen",
-        to: "Nishi-Umeda",
-      },
     ],
+    "GET /api/transit/lines/1/stops": lineStops,
     "GET /api/transit/lines/1/track": curvedTrack,
     "PUT /api/triplines/2026-10-01": ({ body }) => ({
       ...pendingSave(),

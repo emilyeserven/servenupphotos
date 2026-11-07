@@ -50,7 +50,9 @@ function stripGaps(ids: number[], view: EditorView, segments: TripSegment[]): Ga
 
 /** The spots with no photo the view draws. */
 function endsOf(segments: TripSegment[]): TripPoint[] {
-  return segments.flatMap((s) => [s.start, s.end].filter((p) => p !== undefined));
+  return segments.flatMap((s) =>
+    [s.start, s.end, s.board, s.alight].filter((p) => p !== undefined),
+  );
 }
 
 /** Edits one day's trip line: the photo strip, the map, and saving. */

@@ -1,4 +1,4 @@
-import { mutationOptions, queryOptions } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 import { requestJson } from "@/api/settings";
 import type { TripTransitLine } from "@/api/trip-lines";
 
@@ -46,9 +46,26 @@ export function transitLinesQuery(ask: HopAsk) {
   });
 }
 
-/** A line's track between the hop's two spots, each point [longitude, latitude]. */
-export const transitTrackMutation = mutationOptions({
-  mutationKey: ["transit", "track"],
-  mutationFn: ({ line, ...ask }: Omit<HopAsk, "mode"> & { line: TripTransitLine }) =>
-    requestJson<{ path: Spot[] }>(`/api/transit/lines/${line.id}/track?${spotParams(ask)}`),
-});
+/** A station or stop on a line, where a hop can get on or off. */
+export interface TransitStop {
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+/** A line's stations or stops, in the order it runs. */
+export function transitStopsQuery(id: number) {
+  return queryOptions({
+    queryKey: ["transit", "stops", id],
+    queryFn: () => requestJson<TransitStop[]>(`/api/transit/lines/${id}/stops`),
+    retry: false,
+    staleTime: Infinity,
+  });
+}
+
+/** Line id's track between two spots, each point [longitude, latitude]. */
+export function fetchTrack(id: number, from: Spot, to: Spot): Promise<{ path: Spot[] }> {
+  return requestJson<{ path: Spot[] }>(
+    `/api/transit/lines/${id}/track?${spotParams({ from, to })}`,
+  );
+}

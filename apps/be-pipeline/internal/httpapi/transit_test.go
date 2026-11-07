@@ -29,6 +29,10 @@ func (f *fakeFinder) Track(_ context.Context, _ int64, from, to [2]float64) ([][
 	return [][2]float64{from, to}, f.err
 }
 
+func (f *fakeFinder) Stops(_ context.Context, _ int64) ([]transit.Stop, error) {
+	return []transit.Stop{{Name: "Namba", Latitude: 34.66, Longitude: 135.5}}, f.err
+}
+
 func transitMux(f *fakeFinder) *http.ServeMux {
 	mux := http.NewServeMux()
 	registerTripLineRoutes(mux, routeDeps{transit: f})
@@ -74,5 +78,13 @@ func TestTransitTrack(t *testing.T) {
 	transitMux(&fakeFinder{}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines/x/track?from=1,2&to=3,4", nil))
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("bad id: %d", rec.Code)
+	}
+}
+
+func TestTransitStops(t *testing.T) {
+	rec := httptest.NewRecorder()
+	transitMux(&fakeFinder{}).ServeHTTP(rec, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/transit/lines/7/stops", nil))
+	if rec.Code != http.StatusOK || !strings.Contains(rec.Body.String(), `"name":"Namba"`) {
+		t.Errorf("stops: %d %s", rec.Code, rec.Body)
 	}
 }

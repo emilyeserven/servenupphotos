@@ -1,5 +1,6 @@
-import type { TripSegment, TripTransitLine } from "@/api/trip-lines";
-import { type Gap, type GapDraft, type Path, segmentKey } from "@/lib/trip-gaps";
+import type { TripSegment } from "@/api/trip-lines";
+import type { Ride } from "@/lib/transit-ride";
+import { type Gap, type GapDraft, segmentKey } from "@/lib/trip-gaps";
 
 /** The modes whose hops can name the line they rode. */
 const LINE_MODES = new Set(["train", "subway", "bus", "transit"]);
@@ -14,16 +15,12 @@ function without(lines: GapDraft["lines"], key: string): GapDraft["lines"] {
   return Object.fromEntries(Object.entries(lines ?? {}).filter(([k]) => k !== key));
 }
 
-/** The draft with the hop riding line along path, or riding none (drawn straight) for undefined. */
-export function withHopLine(
-  draft: GapDraft,
-  hop: TripSegment,
-  picked?: { line: TripTransitLine; path: Path },
-): GapDraft {
+/** The draft with the hop on the ride, or riding no line (drawn straight) for undefined. */
+export function withHopLine(draft: GapDraft, hop: TripSegment, ride?: Ride): GapDraft {
   const key = String(hop.photos[0]);
-  if (!picked) return { ...draft, lines: without(draft.lines, key) };
-  const { line, path } = picked;
-  const lines = { ...draft.lines, [key]: { mode: hop.mode as Gap, line } };
-  const ridden: TripSegment = { ...hop, line, path: undefined };
+  if (!ride) return { ...draft, lines: without(draft.lines, key) };
+  const { path, ...picked } = ride;
+  const lines = { ...draft.lines, [key]: { mode: hop.mode as Gap, ...picked } };
+  const ridden: TripSegment = { ...hop, ...picked, path: undefined };
   return { ...draft, lines, paths: { ...draft.paths, [segmentKey(ridden)]: path } };
 }

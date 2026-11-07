@@ -93,3 +93,32 @@ func TestTrackNotJoined(t *testing.T) {
 		t.Errorf("no relation: err = %v, want ErrNoTrack", err)
 	}
 }
+
+func TestStops(t *testing.T) {
+	var got string
+	c := fakeOverpass(t, `{"elements":[
+		{"type":"relation","id":1,"members":[
+			{"type":"node","ref":10,"role":"stop"},
+			{"type":"node","ref":11,"role":"platform"},
+			{"type":"way","ref":5,"role":""},
+			{"type":"node","ref":12,"role":"stop_exit_only"},
+			{"type":"node","ref":13,"role":"stop"},
+			{"type":"node","ref":14,"role":"stop"}
+		]},
+		{"type":"node","id":10,"lat":34.66,"lon":135.5,"tags":{"name":"Namba"}},
+		{"type":"node","id":11,"lat":34.661,"lon":135.5,"tags":{"name":"Namba"}},
+		{"type":"node","id":12,"lat":34.662,"lon":135.5,"tags":{"name":"Namba"}},
+		{"type":"node","id":13,"lat":34.70,"lon":135.49,"tags":{"name":"Umeda"}},
+		{"type":"node","id":14,"lat":34.75,"lon":135.49}
+	]}`, &got)
+	stops, err := c.Stops(context.Background(), 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(stops) != 3 || stops[0].Name != "Namba" || stops[1].Name != "Umeda" || stops[2].Name != "Stop 3" || stops[1].Latitude != 34.70 {
+		t.Errorf("stops = %+v", stops)
+	}
+	if !strings.Contains(got, "rel(1);out body;node(r);out body;") {
+		t.Errorf("query = %q", got)
+	}
+}

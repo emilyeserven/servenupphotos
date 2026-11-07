@@ -93,9 +93,7 @@ func bakeTripLines(lines []TripLine, spots map[int]tripSpot) tripLinesMap {
 			segments = autoSegments(spotsOn(day, line.Day))
 		}
 		for _, seg := range segments {
-			if f, ok := segmentFeature(line, seg, day); ok {
-				m.Features = append(m.Features, f)
-			}
+			m.Features = append(m.Features, segmentFeatures(line, seg, day)...)
 		}
 	}
 	return m
@@ -109,6 +107,7 @@ func segmentFeature(line TripLine, seg TripSegment, spots map[int]tripSpot) (tri
 	if len(coords) < 2 {
 		return tripLineFeature{}, false
 	}
+	coords = rideEnds(seg, coords)
 	if pathFits(seg.Path, coords) {
 		coords = seg.Path
 	}

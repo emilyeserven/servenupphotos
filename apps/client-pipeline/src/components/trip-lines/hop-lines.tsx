@@ -1,17 +1,12 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { Search, X } from "lucide-react";
-import { useState } from "react";
-import {
-  type HopAsk,
-  type Spot,
-  type TransitLine,
-  transitLinesQuery,
-  transitTrackMutation,
-} from "@/api/transit";
+import type { HopAsk, Spot, TransitLine } from "@/api/transit";
 import type { TripSegment, TripTransitLine } from "@/api/trip-lines";
 import { Busy, SaveNote } from "@/components/entry-buttons";
+import { HopStations } from "@/components/trip-lines/hop-stations";
 import { gapInfo } from "@/components/trip-lines/modes";
+import { useHopRide } from "@/components/trip-lines/use-hop-ride";
 import { Button } from "@/components/ui/button";
+import type { Ride } from "@/lib/transit-ride";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap, GapDraft } from "@/lib/trip-gaps";
 import { ridesLine, withHopLine } from "@/lib/trip-hop-lines";
@@ -39,7 +34,7 @@ export function HopLines({ photos, draft, segments, onChange }: HopLinesProps) {
           key={`${hop.photos[0]}-${hop.mode}`}
           hop={hop}
           ends={hop.photos.map((id) => byId.get(id))}
-          onPick={(picked) => onChange(withHopLine(draft, hop, picked))}
+          onRide={(ride) => onChange(withHopLine(draft, hop, ride))}
         />
       ))}
     </div>
@@ -62,12 +57,17 @@ function askOf(hop: TripSegment, [a, b]: HopEnd[]): HopAsk | undefined {
 interface HopRowProps {
   hop: TripSegment;
   ends: HopEnd[];
-  onPick: (picked?: { line: TripTransitLine; path: Spot[] }) => void;
+  onRide: (ride?: Ride) => void;
 }
 
-/** One hop: which photos it joins, the line it rode, and the lines to pick from once looked up. */
-function HopRow({ hop, ends, onPick }: HopRowProps) {
-  const { finding, setFinding, lines, track, pick } = useHopLookup(hop, ends, onPick);
+/**
+ * One hop: which photos it joins, the line it rode and where it got on and off, and the lines to
+ * pick from, looked up at once while it has no line.
+ */
+function HopRow({ hop, ends, onRide }: HopRowProps) {
+  const ask = askOf(hop, ends);
+  const { finding, setFinding, lines, mutation, ride } = useHopRide(hop, ask, onRide);
+  const busy = busyOf(lines, mutation);
   return (
     <div className="flex flex-col gap-2 rounded-md border p-2">
       <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -77,24 +77,22 @@ function HopRow({ hop, ends, onPick }: HopRowProps) {
         <LineBadge line={hop.line} />
         <HopButtons
           hop={hop}
-          busy={busyOf(lines, track)}
+          busy={busy}
           onFind={() => setFinding(true)}
-          onClear={() => onPick(undefined)}
+          onClear={() => onRide(undefined)}
         />
       </div>
-      {finding && <LineChoices lines={lines.data} onPick={pick} disabled={track.isPending} />}
-      <SaveNote error={errorOf(lines, track)} why={findNote(finding, lines.data)} />
+      {hop.line && (
+        <HopStations
+          hop={{ ...hop, line: hop.line }}
+          disabled={busy}
+          onChange={(chosen) => ride(hop.line!, chosen)}
+        />
+      )}
+      {finding && <LineChoices lines={lines.data} onPick={ride} disabled={busy} />}
+      <SaveNote error={errorOf(lines, mutation)} why={findNote(finding, lines.data)} />
     </div>
   );
-}
-
-/** The hop's look-ups: whether lines are being found, the lines found, and picking one. */
-function useHopLookup(hop: TripSegment, ends: HopEnd[], onPick: HopRowProps["onPick"]) {
-  const [finding, setFinding] = useState(false);
-  const ask = askOf(hop, ends);
-  const lines = useQuery({ ...transitLinesQuery(ask!), enabled: finding && ask !== undefined });
-  const { track, pick } = usePickLine(ask, (picked) => (onPick(picked), setFinding(false)));
-  return { finding, setFinding, lines, track, pick };
 }
 
 interface Pending {
@@ -103,34 +101,14 @@ interface Pending {
   error: Error | null;
 }
 
-/** Whether the lines are being found or a track fetched. */
-function busyOf(lines: Pending, track: Pending): boolean {
-  return Boolean(lines.isFetching || track.isPending);
+/** Whether the lines are being found or a ride's track fetched. */
+function busyOf(lines: Pending, ride: Pending): boolean {
+  return Boolean(lines.isFetching || ride.isPending);
 }
 
-/** Why finding lines or fetching a track failed, if either did. */
-function errorOf(lines: Pending, track: Pending): Error | null {
-  return lines.error ?? track.error;
-}
-
-/** Picks a line for the hop: gets its track between the hop's spots, then hands both on. */
-function usePickLine(
-  ask: HopAsk | undefined,
-  onPicked: (picked: { line: TripTransitLine; path: Spot[] }) => void,
-) {
-  const track = useMutation(transitTrackMutation);
-  const pick = (line: TransitLine) =>
-    ask &&
-    track.mutate(
-      { line, from: ask.from, to: ask.to },
-      { onSuccess: ({ path }) => onPicked({ line: lineOf(line), path }) },
-    );
-  return { track, pick };
-}
-
-/** The line as a hop keeps it: no kind or ends. */
-function lineOf({ id, name, ref, colour }: TransitLine): TripTransitLine {
-  return { id, name, ...(ref && { ref }), ...(colour && { colour }) };
+/** Why finding lines or riding one failed, if either did. */
+function errorOf(lines: Pending, ride: Pending): Error | null {
+  return lines.error ?? ride.error;
 }
 
 /** Which photos the hop joins, such as "Photo 3 → 4". */

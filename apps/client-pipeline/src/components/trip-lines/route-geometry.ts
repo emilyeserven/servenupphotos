@@ -54,15 +54,33 @@ export function lineFeatures(segments: TripSegment[], photos: TripPhoto[]): Line
   const features = segments.flatMap((segment): LineFeature[] => {
     const coordinates = segmentCoordinates(segment, byId);
     if (coordinates.length < 2) return [];
-    return [
-      {
-        type: "Feature",
-        properties: lineProps(segment),
-        geometry: { type: "LineString", coordinates },
-      },
-    ];
+    return [feature(lineProps(segment), coordinates), ...stationWalks(segment, byId)];
   });
   return { type: "FeatureCollection", features };
+}
+
+/** A GeoJSON line. */
+function feature(properties: LineProps, coordinates: LngLat[]): LineFeature {
+  return { type: "Feature", properties, geometry: { type: "LineString", coordinates } };
+}
+
+/** The walks from a hop's first photo to the station it got on at, and from where it got off. */
+function stationWalks(segment: TripSegment, byId: Map<number, TripPhoto>): LineFeature[] {
+  if (!lineProps(segment).onLine) return [];
+  const [a, b] = segment.photos.map((id) => byId.get(id));
+  return [...walkBetween(a, segment.board), ...walkBetween(segment.alight, b)];
+}
+
+/** A short walk from x to y, as a one-line list; none when either is missing. */
+function walkBetween(x?: TripPoint | TripPhoto, y?: TripPoint | TripPhoto): LineFeature[] {
+  if (!x || !y) return [];
+  const walk = { mode: "walk", onLine: false, colour: HOP_COLOUR };
+  return [
+    feature(
+      walk,
+      [x, y].map((p) => [p.longitude, p.latitude] as LngLat),
+    ),
+  ];
 }
 
 /** The corners around the points, as [west, south, east, north]. */
