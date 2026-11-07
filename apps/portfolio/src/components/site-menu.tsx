@@ -17,8 +17,8 @@ import { rememberedViewOptions } from "@/lib/view-options";
 /**
  * What a view link carries: the filters from the page it's on, and the view's own settings as it
  * was last left, such as the Grid's Table view. The camera filters go too, kept by the views that
- * have them (Table and Grid). The Map always opens with no filters, so it doesn't keep ones set
- * before. The text search goes only between the Grid and the Timeline, the views with a search box.
+ * have them (Table, Grid and Graph). The Map always opens with no filters, so it doesn't keep ones set
+ * before. The text search goes only between the Grid, the Timeline and the Graph, the views with a search box.
  */
 function carriedSearch(to: PortfolioView["to"], prev: Record<string, unknown>) {
   if (to === "/map") return {};
@@ -36,7 +36,7 @@ function carriedTextSearch(to: PortfolioView["to"], prev: Record<string, unknown
 }
 
 /** The views with a text search box. */
-const SEARCHABLE_VIEWS: readonly string[] = ["/grid", "/timeline"];
+const SEARCHABLE_VIEWS: readonly string[] = ["/grid", "/timeline", "/graph"];
 
 interface Option<T> {
   value: T;

@@ -10,7 +10,7 @@ import { CONTROL_FRAME, controlButtonClass } from "@portfolio/lib/segmented-cont
 const SHARE_RANGE: SliderRange = { min: 5, max: 95, step: 5 };
 
 const MODES = [
-  { match: undefined, label: "Largest color", title: "Photos whose biggest color is the color" },
+  { match: undefined, label: "Largest only", title: "Photos whose biggest color is the color" },
   { match: "threshold", label: "At least…", title: "Photos with at least a share of the color" },
 ] as const;
 

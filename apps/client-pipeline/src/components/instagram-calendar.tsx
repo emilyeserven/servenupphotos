@@ -7,7 +7,7 @@ import { PhotoImage, PhotoPicker } from "@/components/instagram-photo-picker";
 import { PhotoFiles } from "@/components/photo-files";
 import { Button } from "@/components/ui/button";
 import { calendarDays, dayFormat, isoDate, longDayFormat, parseIsoDate } from "@/lib/calendar";
-import { isDraft, isSetAside, useUntitledDrafts } from "@/lib/drafts";
+import { isDraft, useUntitledDrafts } from "@/lib/drafts";
 import {
   type Unsaved,
   PUBLISH_DATE,
@@ -21,7 +21,7 @@ import {
 } from "@/lib/social-schedule";
 import { useDropTarget } from "@/hooks/use-drop-target";
 import { cn } from "@/lib/utils";
-import { type DayPost, postedPhotoFiles, postsByDay } from "@/lib/social-post-days";
+import { type DayPost, instagramPostsByDay } from "@/lib/social-post-days";
 import { useChangedPhotoFiles } from "@/stores/combined-data";
 import { useLocalEditsStore } from "@/stores/local-edits";
 
@@ -79,14 +79,7 @@ function useUnsavedDates(photos: SocialPhoto[]) {
  */
 function useInstagramPosts(photos: SocialPhoto[]) {
   const changed = useChangedPhotoFiles();
-  return useMemo(
-    () =>
-      postsByDay(
-        postedPhotoFiles(photos, changed).filter((file) => !isSetAside(file.data)),
-        "instagram",
-      ),
-    [photos, changed],
-  );
+  return useMemo(() => instagramPostsByDay(photos, changed), [photos, changed]);
 }
 
 function Schedule({ calendar, undecided }: { calendar: SocialCalendar; undecided: number }) {

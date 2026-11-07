@@ -5,6 +5,7 @@ import {
   ChevronsUpDown,
   X,
 } from "lucide-react";
+import { useSearch } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { PickAxes } from "@/components/graph-builder/pick-axes";
 import {
@@ -51,7 +52,8 @@ export function PickedPhotos({
   const groups = orderedGroups(picked.groups, order, direction);
   const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
   const { shown, show, close } = useShownPhoto();
-  const searchOf = (group: PickedGroup) => gridSearch(config, pick, group);
+  const page = useSearch({ strict: false });
+  const searchOf = (group: PickedGroup) => gridSearch(page, config, pick, group);
   return (
     <section
       aria-label="Selected photos"

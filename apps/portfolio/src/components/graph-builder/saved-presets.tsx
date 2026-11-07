@@ -3,17 +3,11 @@ import { type FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GraphConfig } from "@/lib/graph-data";
-import type { PresetGraph } from "@/lib/graph-presets";
 import type { SavedGraphs } from "@/lib/saved-graphs";
 import { SELECT_CLASS } from "@/lib/segmented-control";
 
 /** Picking a preset: the graph takes its settings, and the filters stay as they are. */
 type OnPick = (change: Partial<GraphConfig>) => void;
-
-/** The graph's settings a preset keeps: all but its filters. */
-function presetGraph({ filters: _filters, ...graph }: GraphConfig): PresetGraph {
-  return graph;
-}
 
 /** The visitor's own presets, each a button with a × to remove it, after the site's presets. */
 export function SavedPresets({ saved, onPick }: { saved: SavedGraphs; onPick: OnPick }) {
@@ -53,7 +47,7 @@ export function SavePresetButton({ saved, config }: { saved: SavedGraphs; config
   const [name, setName] = useState("");
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    saved.save(name.trim(), presetGraph(config));
+    saved.save(name.trim(), config);
     setName("");
     setOpen(false);
   };

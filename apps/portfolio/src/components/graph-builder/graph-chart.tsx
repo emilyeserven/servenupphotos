@@ -52,10 +52,12 @@ function categoryAxis(count: number) {
   );
 }
 
-/** The y axis of a bar or line graph, as counts or shares. */
-function valueAxis(measure: Measure) {
+/** The y axis of a bar or line graph, as counts or shares, from and to where the Range group sets. */
+function valueAxis(measure: Measure, domain: GraphData["domain"]) {
   return (
     <YAxis
+      domain={domain}
+      allowDataOverflow={domain !== undefined}
       tickLine={false}
       axisLine={false}
       width={44}
@@ -91,7 +93,7 @@ function cartesianParts({ graph, measure }: CartesianProps) {
   return [
     <CartesianGrid key="grid" vertical={false} />,
     <Fragment key="x">{categoryAxis(graph.data.length)}</Fragment>,
-    <Fragment key="y">{valueAxis(measure)}</Fragment>,
+    <Fragment key="y">{valueAxis(measure, graph.domain)}</Fragment>,
     <ChartTooltip
       key="tooltip"
       content={<GraphTooltip series={graph.series} measure={measure} />}

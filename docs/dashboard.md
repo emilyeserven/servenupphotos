@@ -32,7 +32,10 @@ now **Settings › Status** (see [Settings](settings.md#status)).
   each opening the group. Finishing a group takes it off.
 - **Next on Instagram:** the next 3 photos scheduled from today on, as the [Instagram calendar](publish.md) has them
   (with dates not committed yet, and without Undecided photos), and how many **days are left** in the queue: the days
-  in a row from today that have a photo, through the last of them. Photos scheduled after the first empty day are
+  in a row from today that have a photo, through the last of them. A day counts when it has a photo on the calendar
+  (`socialMediaPublishDate`) or when a photo has an Instagram post on it in its
+  [Social media posts](publish.md#social-media-posts) (`socialPosts`), planned or scheduled, as the calendar marks
+  those days too. A day with both shows the calendar's photo. Photos scheduled after the first empty day are
   counted on their own ("2 more are scheduled after a gap").
 - **Site Spotlight:** each [spotlight zone](publish.md#site-spotlight), the album it shows and the day that album was
   picked for it, from the album file's `spotlightUpdated`. An album picked before these days were kept says so, and

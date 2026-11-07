@@ -1,4 +1,5 @@
 import type { SocialPhoto } from "@/api/publish";
+import { isSetAside } from "@/lib/drafts";
 import type { FileChange } from "@/lib/optimistic";
 import { type SocialPostStatus, savedSocialPosts } from "@/lib/social-posts";
 
@@ -111,4 +112,17 @@ function datedPosts(photo: PostedPhotoFile, platform: string) {
       day: date,
       post: { photo, status, url: url.trim() },
     }));
+}
+
+/**
+ * Each day's Instagram posts as the Instagram calendar shows them: from the photos' Social media
+ * posts, with the changes not committed yet (changed, by path) made over the files read, and
+ * without photos set aside as Undecided.
+ */
+export function instagramPostsByDay(
+  photos: SocialPhoto[],
+  changed: Map<string, unknown>,
+): Map<string, DayPost[]> {
+  const files = postedPhotoFiles(photos, changed).filter((file) => !isSetAside(file.data));
+  return postsByDay(files, "instagram");
 }

@@ -1,17 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ChartColumn } from "lucide-react";
 import { GraphBuilder } from "@/components/graph-builder/graph-builder";
+import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
+import { parseFilters, type PhotoFilters } from "@/lib/photo-filters";
+import { photos } from "@/lib/photos";
+import { parseShownPhoto, type ShownPhotoSearch } from "@/lib/shown-photo";
+import { parseTextSearch, searchPhotos } from "@/lib/text-search";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { useGraphWide } from "@/lib/graph-wide";
 import { cn } from "@/lib/utils";
 
+/** What the Graph page keeps in the URL: the site's usual filters, the text search, and the selected photo open in the lightbox. */
+type GraphSearch = PhotoFilters & CameraFilters & ShownPhotoSearch & { q?: string };
+
 export const Route = createFileRoute("/graph")({
+  validateSearch: (search: Record<string, unknown>): GraphSearch => ({
+    ...parseFilters(search),
+    ...parseCameraFilters(search),
+    ...parseTextSearch(search),
+    ...parseShownPhoto(search),
+  }),
   component: GraphView,
 });
 
 /** The Graph page: a graph of your own making from the counts on the Numbers page. */
 function GraphView() {
   const [wide, setWide] = useGraphWide();
+  const search = Route.useSearch();
+  const kept = filterWithCamera(searchPhotos(photos, search.q), search);
   return (
     <div
       className={cn(
@@ -30,7 +46,7 @@ function GraphView() {
           each axis, what splits the bars or lines, and which photos it counts.
         </p>
       </header>
-      <GraphBuilder wide={wide} onWideChange={setWide} />
+      <GraphBuilder photos={photos} kept={kept} wide={wide} onWideChange={setWide} />
     </div>
   );
 }

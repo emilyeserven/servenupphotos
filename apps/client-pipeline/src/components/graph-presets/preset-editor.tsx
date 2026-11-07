@@ -4,7 +4,8 @@ import { EditorButtons, Field, NameAndOrder } from "@/components/graph-presets/e
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraphControls } from "@portfolio/components/graph-builder/graph-controls";
 import type { GraphConfig } from "@portfolio/lib/graph-data";
-import type { GraphPresetFile, PresetGraph } from "@portfolio/lib/graph-presets";
+import type { GraphPresetFile, PresetGraph, SavedGraph } from "@portfolio/lib/graph-presets";
+import { NO_RANGES } from "@portfolio/lib/graph-ranges";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 
 /** A new preset's graph, as the Graph page starts: photos per year, split by season. */
@@ -17,14 +18,36 @@ const START_GRAPH: PresetGraph = {
   stacked: true,
   sort: "reverse",
   limit: 0,
+  ...NO_RANGES,
 };
 
 /** The settings a preset keeps, in the order its file writes them. */
-const GRAPH_KEYS = ["type", "x", "measure", "y", "split", "stacked", "sort", "limit"] as const;
+const GRAPH_KEYS = [
+  "type",
+  "x",
+  "measure",
+  "y",
+  "split",
+  "stacked",
+  "sort",
+  "limit",
+  ...(Object.keys(NO_RANGES) as (keyof typeof NO_RANGES)[]),
+] as const;
 
 /** The graph's settings without its filters, which a preset leaves as they are. */
 function presetGraph(config: PresetGraph): PresetGraph {
   return Object.fromEntries(GRAPH_KEYS.map((key) => [key, config[key]])) as unknown as PresetGraph;
+}
+
+/** Whether a setting is a Range group part that's off, which the file leaves out. */
+function isOff([key, value]: [string, unknown]): boolean {
+  return key in NO_RANGES && NO_RANGES[key as keyof typeof NO_RANGES] === value;
+}
+
+/** The graph as the preset's file keeps it, with the Range group's parts that are off left out. */
+function savedGraph(graph: PresetGraph): SavedGraph {
+  const kept = Object.entries(presetGraph(graph)).filter((entry) => !isOff(entry));
+  return Object.fromEntries(kept) as SavedGraph;
 }
 
 /** The preset as typed. */
@@ -59,7 +82,7 @@ function presetOf(
     kind: "preset",
     name,
     order: draft.order,
-    graph: presetGraph(draft.graph),
+    graph: savedGraph(draft.graph),
   };
   return draft.group ? { ...file, group: draft.group } : file;
 }
@@ -78,7 +101,7 @@ export function PresetEditor({ preset, files, onSaved }: PresetEditorProps) {
     preset ? savedDraft(preset) : newDraft(files),
   );
   const set = (part: Partial<PresetDraft>) => setDraft({ ...draft, ...part });
-  const config: GraphConfig = { ...draft.graph, filters: [] };
+  const config: GraphConfig = draft.graph;
   const next = presetOf(draft, files, preset);
   return (
     <Card>

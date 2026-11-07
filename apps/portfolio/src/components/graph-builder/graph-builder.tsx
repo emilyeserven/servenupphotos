@@ -3,14 +3,13 @@ import { type ReactNode, useMemo, useState } from "react";
 import { AxisLabels } from "@/components/graph-builder/graph-axes";
 import { BarGraph, LineGraph, PieGraph } from "@/components/graph-builder/graph-chart";
 import { type ConfigChange, GraphControls } from "@/components/graph-builder/graph-controls";
-import { GraphFilters } from "@/components/graph-builder/graph-filters";
+import { CameraFilterBar } from "@/components/camera-filters";
 import { GraphPickContext } from "@/components/graph-builder/graph-pick-context";
 import { GraphPresets } from "@/components/graph-builder/graph-presets";
 import { PickedPhotos } from "@/components/graph-builder/picked-photos";
 import { ScatterGraph } from "@/components/graph-builder/scatter-graph";
 import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
 import {
-  filteredPhotos,
   type GraphConfig,
   type GraphData,
   graphData,
@@ -20,7 +19,7 @@ import {
 } from "@/lib/graph-data";
 import { Button } from "@/components/ui/button";
 import { type GraphPick, samePick } from "@/lib/graph-pick";
-import { photos } from "@/lib/photos";
+import { NO_RANGES } from "@/lib/graph-ranges";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
 
@@ -32,9 +31,9 @@ const START: GraphConfig = {
   y: "season",
   split: "season",
   stacked: true,
-  filters: [],
   sort: "reverse",
   limit: 0,
+  ...NO_RANGES,
 };
 
 /** Whether the graph or its numbers as a table show. */
@@ -43,14 +42,21 @@ type View = "graph" | "table";
 /**
  * A graph of the person's own making from the Numbers page's counts. Presets come first, then the
  * Adjust Graph button, which opens a box of its settings: its type, the stat along each axis, what
- * splits a bar, line or dot graph, and filters on the photos it counts. Under them, the graph's box
- * names each axis with a dropdown to change it, and shows its numbers as a table too. Clicking a
- * bar, point, slice or dot shows its photos under the graph; changing the graph clears it.
+ * splits a bar, line or dot graph. The site's usual **Show filters** bar, kept in the URL, picks
+ * the photos it counts. Under them, the graph's box names each axis with a dropdown to change it,
+ * and shows its numbers as a table too. Clicking a bar, point, slice or dot shows its photos under
+ * the graph; changing the graph clears it.
  */
 export function GraphBuilder({
+  photos,
+  kept,
   wide,
   onWideChange,
 }: {
+  /** Every photo, which the filters are read from. */
+  photos: Photo[];
+  /** The photos the filters and the text search leave, which the graph counts. */
+  kept: Photo[];
   /** Whether the page uses the window's whole width. */
   wide: boolean;
   onWideChange: (wide: boolean) => void;
@@ -64,9 +70,9 @@ export function GraphBuilder({
     setPick(null);
   };
   const onPick = (next: GraphPick) => setPick(samePick(pick, next) ? null : next);
-  const kept = useMemo(() => filteredPhotos(photos, config.filters), [config.filters]);
   return (
     <div className="flex flex-col gap-4">
+      <CameraFilterBar photos={photos} searchable />
       <GraphPresets config={config} onPick={onChange} />
       <div>
         <Button
@@ -79,7 +85,7 @@ export function GraphBuilder({
           Adjust Graph
         </Button>
       </div>
-      {adjusting && <AdjustBox config={config} onChange={onChange} />}
+      {adjusting && <AdjustBox config={config} list={kept} onChange={onChange} />}
       <section className={BOX_CLASS}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="text-sm text-muted-foreground tabular-nums">
@@ -111,12 +117,20 @@ export function GraphBuilder({
 const BOX_CLASS =
   "flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-sm";
 
-/** The box Adjust Graph opens: the graph's settings, then its filters. */
-function AdjustBox({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
+/** The box Adjust Graph opens: the graph's settings. */
+function AdjustBox({
+  config,
+  list,
+  onChange,
+}: {
+  config: GraphConfig;
+  /** The photos the filters keep, which the Range group's choices are read from. */
+  list: Photo[];
+  onChange: ConfigChange;
+}) {
   return (
     <section aria-label="Adjust Graph" className={BOX_CLASS}>
-      <GraphControls config={config} onChange={onChange} />
-      <GraphFilters filters={config.filters} onChange={(filters) => onChange({ filters })} />
+      <GraphControls config={config} onChange={onChange} list={list} />
     </section>
   );
 }

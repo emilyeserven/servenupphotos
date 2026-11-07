@@ -22,6 +22,13 @@ func TestSaveGraphPreset(t *testing.T) {
 	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) {
 		t.Errorf("saved %s", saved)
 	}
+	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "dot", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5}}}
+	if _, err := c.SaveGraphPreset(t.Context(), placesGH, ranged); err != nil {
+		t.Fatalf("SaveGraphPreset(ranges) error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/graphs/mid.json"); !strings.Contains(saved, `"xTo": "f/8"`) || !strings.Contains(saved, `"minPhotos": 5`) || strings.Contains(saved, "hideZeros") {
+		t.Errorf("ranges saved as %s, want xTo and minPhotos only", saved)
+	}
 	group := GraphPreset{ID: "time", Kind: "group", Name: "Time", Group: "camera", Graph: dotGraph}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, group); err != nil {
 		t.Fatalf("SaveGraphPreset(group) error = %v", err)
@@ -39,6 +46,7 @@ func TestSaveGraphPreset(t *testing.T) {
 		{"odd type", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "radar", X: "iso", Measure: "count", Sort: "group"}}},
 		{"no such group", GraphPreset{ID: "a", Kind: "preset", Name: "A", Group: "lenses", Graph: dotGraph}},
 		{"bad ID", GraphPreset{ID: "A A", Kind: "group", Name: "A"}},
+		{"y starts above its end", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "dot", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{YMin: num(10), YMax: num(2)}}}},
 	}
 	for _, tt := range tests {
 		_, err := c.SaveGraphPreset(t.Context(), placesGH, tt.preset)
@@ -66,3 +74,6 @@ func TestDeleteGraphPresetGroup(t *testing.T) {
 		t.Errorf("DeleteGraphPreset(empty group) error = %v", err)
 	}
 }
+
+// num is a y axis end for a test preset.
+func num(v float64) *float64 { return &v }

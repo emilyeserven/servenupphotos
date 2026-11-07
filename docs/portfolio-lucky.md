@@ -4,7 +4,7 @@ The portfolio's **Lucky** page (`/lucky`, `routes/lucky.tsx`) shows a few rows o
 site menu, after Color, but has no tile on the [homepage](portfolio-homepage.md).
 
 Its **Show filters** panel is the Grid's: the filters in [Portfolio Filters](portfolio-filters.md), the camera filters
-and the **Colors** button. They narrow the pool the photos are picked from, so "Japan, 2023, mostly blue" gives random
+and the **Visuals** button. They narrow the pool the photos are picked from, so "Japan, 2023, mostly blue" gives random
 blue photos from that trip. The count beside the title says how many were picked out of how many, such as "15 random
 of 320 photos". Clicking a photo opens the [photo viewer](photo-viewer.md), which moves through the picked photos.
 
