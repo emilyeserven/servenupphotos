@@ -1,7 +1,7 @@
 # Portfolio Filters
 
 The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens
-filters that narrow the photos they show: **Places**, **Album**, **Tag**, **Genre** and [When](#when) (**Hide filters** closes them again). The
+filters that narrow the photos they show: **Places**, [Groups](#groups-album-tag-and-genre) and [When](#when) (**Hide filters** closes them again). The
 Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** section, the Color page's color filters (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
@@ -70,16 +70,23 @@ The map's **View in grid** can open the Grid on photos chosen one by one (`?ids=
 just the photos in view (see [Portfolio Map](portfolio-map.md)). There's no dropdown for it: it counts as one filter on
 the **Show filters** button, and **Clear filters** clears it.
 
-## Album, Tag and Genre
+## Groups: Album, Tag and Genre
 
-**Album** lists every album in `ALLALBUMS.json`, each sub-album under its parent. Choosing an album (`?album=<id>`)
-shows the photos in it and in any album inside it. **Tag** lists every tag in `ALLTAGS.json` (`?tag=<id>`), each [under its parent tag](albums-and-tags.md#parent-tags); choosing one shows the photos with it or any tag under it, and is left
-out while there are no tags. **Genre** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, by
+A **Groups** button opens one picker for the album, tag and genre filters (`components/group-picker.tsx`), like
+[When](#when): a list of **Albums**, **Tags** and **Genres** on the left, each saying what it's set to (or "Any") with a
+dot while it's set, and the chosen one's choices on the right, each with how many photos it would show given the other
+filters. One of each can be chosen at once, and the button's badge says how many are. Clicking the chosen choice again,
+or the "All …" row at the top, clears it. On phones the left list folds up above the choices, under a button naming the
+section shown, and the picker keeps 16px from the screen's edges.
+
+**Albums** lists every album in `ALLALBUMS.json`, each sub-album under its parent. Choosing an album (`?album=<id>`)
+shows the photos in it and in any album inside it. **Tags** lists every tag in `ALLTAGS.json` (`?tag=<id>`), each [under its parent tag](albums-and-tags.md#parent-tags); choosing one shows the photos with it or any tag under it, and is left
+out while there are no tags. **Genres** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, by
 name (`?genre=<id>`), and is likewise left out while there are none.
 
 ## When
 
-A **When** button after **Genre**, on every view with filters (on the Map, under **More filters**), opens one picker
+A **When** button after **Groups**, on every view with filters (on the Map, under **More filters**), opens one picker
 for when the photos were taken (`components/when-filter.tsx`, `lib/when-filters.ts`), by the clock and calendar where
 each was taken, as a photo's capture time has no time zone. It picks one way at a time, each a tab, and choosing in one
 clears the others. Every button says how many photos it would show, given the other filters, and a choice with none is

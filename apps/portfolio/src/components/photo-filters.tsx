@@ -1,15 +1,8 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import {
-  ChevronsUpDown,
-  FolderOpen,
-  type LucideIcon,
-  Shapes,
-  SlidersHorizontal,
-  Tag,
-  X,
-} from "lucide-react";
+import { ChevronsUpDown, type LucideIcon, SlidersHorizontal, X } from "lucide-react";
 import { type ReactNode, useId, useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
+import { GroupPicker } from "@portfolio/components/group-picker";
 import { hiddenText } from "@portfolio/components/hidden-note";
 import { MoreFilters } from "@portfolio/components/more-filters";
 import { PhotoSearchBox } from "@portfolio/components/photo-search-box";
@@ -17,17 +10,10 @@ import { PlacesFilter } from "@portfolio/components/places-filter";
 import { WhenFilter } from "@portfolio/components/when-filter";
 import { useScriptDisplay } from "@portfolio/components/script-display-provider";
 import { Button } from "@portfolio/components/ui/button";
-import {
-  albumOptions,
-  type FilterOption,
-  genreOptions,
-  locationOptions,
-  tagOptions,
-} from "@portfolio/lib/filter-options";
+import { type FilterOption, locationOptions } from "@portfolio/lib/filter-options";
 import {
   FILTER_KEYS,
   filterCount,
-  type FilterKey,
   filterPhotos,
   LOCATION_KEYS,
   locationFilters,
@@ -85,12 +71,6 @@ const NO_OWN_FILTERS: OwnFilters = { keys: [], count: 0, children: null };
 /** A choice's value in its dropdown: the filter's key and its value, such as "city:Seoul". */
 function optionValue({ key, value }: Pick<FilterOption, "key" | "value">): string {
   return `${key}:${value}`;
-}
-
-/** The filter a dropdown's value sets, or none for "All". */
-function filterOf(selected: string): PhotoFilters {
-  const at = selected.indexOf(":");
-  return at === -1 ? {} : { [selected.slice(0, at)]: selected.slice(at + 1) };
 }
 
 /**
@@ -179,7 +159,7 @@ const OVER_MAP =
   "contents [&_button]:bg-background dark:[&_button]:bg-background [&_select]:bg-background [&_select]:[field-sizing:content] dark:[&_select]:bg-background";
 
 /**
- * The album, tag and genre dropdowns behind a **More filters** button, after the view's own
+ * The **Groups** and **When** pickers behind a **More filters** button, after the view's own
  * filters (`own`, such as the map's days), then `children` and **Clear filters** while any filter
  * is set, for a view with no room to spare for the **Show filters** button, such as the map.
  */
@@ -241,7 +221,7 @@ interface DropdownProps {
 }
 
 /**
- * The Places combobox and the album, tag and genre dropdowns. Each choice says how many of `facet`
+ * The Places combobox and the **Groups** and **When** pickers. Each choice says how many of `facet`
  * it would show, given the other filters.
  */
 function FilterDropdowns(props: DropdownProps) {
@@ -267,44 +247,11 @@ function PlacesDropdown({ photos, facet, filters, setFilters }: DropdownProps) {
   );
 }
 
-/** The album, tag and genre dropdowns; the tag and genre ones are left out while there are none. */
+/** The **Groups** picker, for the album, tag and genre, and the **When** picker. */
 function GroupDropdowns({ facet, filters, setFilters }: DropdownProps) {
-  const albums = albumOptions(filterPhotos(facet, withoutFilters(filters, ["album"])));
-  const tags = tagOptions(filterPhotos(facet, withoutFilters(filters, ["tag"])));
-  const genres = genreOptions(filterPhotos(facet, withoutFilters(filters, ["genre"])));
-
-  /** Replaces the filters `keys` name with the ones chosen. */
-  function choose(keys: readonly FilterKey[], chosen: PhotoFilters) {
-    setFilters({ ...withoutFilters(filters, keys), ...chosen });
-  }
-
   return (
     <>
-      <FilterSelect
-        label="Album"
-        Icon={FolderOpen}
-        options={albums}
-        selected={selectedValue(albums, filters)}
-        onChange={(selected) => choose(["album"], filterOf(selected))}
-      />
-      {tags.length > 0 && (
-        <FilterSelect
-          label="Tag"
-          Icon={Tag}
-          options={tags}
-          selected={selectedValue(tags, filters)}
-          onChange={(selected) => choose(["tag"], filterOf(selected))}
-        />
-      )}
-      {genres.length > 0 && (
-        <FilterSelect
-          label="Genre"
-          Icon={Shapes}
-          options={genres}
-          selected={selectedValue(genres, filters)}
-          onChange={(selected) => choose(["genre"], filterOf(selected))}
-        />
-      )}
+      <GroupPicker facet={facet} filters={filters} setFilters={setFilters} />
       <WhenFilter facet={facet} filters={filters} setFilters={setFilters} />
     </>
   );

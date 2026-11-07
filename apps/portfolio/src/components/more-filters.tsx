@@ -4,8 +4,8 @@ import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 
 /**
- * A **More filters** button that opens the filters it holds in a popup, such as the map's album,
- * tag and genre dropdowns, with `badge` after its label, such as how many of them are set.
+ * A **More filters** button that opens the filters it holds in a popup, such as the map's **Groups**
+ * and **When** pickers, with `badge` after its label, such as how many of them are set.
  */
 export function MoreFilters({ badge, children }: { badge: ReactNode; children: ReactNode }) {
   return (

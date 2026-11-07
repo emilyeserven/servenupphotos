@@ -97,7 +97,7 @@ To lay the album's page out in rows with text above and below them, and to pick 
 The **On the portfolio** card, on an album's page, hides the album on the portfolio or shows it again
 (`PUT /api/organize/albums/<id>/visibility` with `{ "hidden": true | false }`), writing only the file's `hidden`, as a
 [change waiting for Commit](pending-changes.md). A hidden album, and every album inside it, isn't on the portfolio's
-[Albums](portfolio-albums.md) page or in the Grid's **Album** filter, and its own page says there's no such album. Its
+[Albums](portfolio-albums.md) page or in the Grid's **Groups** filter, and its own page says there's no such album. Its
 photos still show everywhere else, and a [spotlight zone](publish.md#site-spotlight) that shows it still does, so an
 album like **Homepage Spotlight** can feed the homepage without being listed. The card says when an album is hidden
 because one it's inside is, and the Albums list marks each hidden album with **Hidden on the portfolio**.
@@ -108,7 +108,7 @@ because one it's inside is, and the Albums list marks each hidden album with **H
 ## Parent tags
 
 A tag can have one parent tag: a more general tag it's a kind of, such as `shotengai` (a Japanese shopping street)
-under `covered-street`. That links a culture's own word to the general idea, so the portfolio's **Tag** filter for
+under `covered-street`. That links a culture's own word to the general idea, so the portfolio's **Groups** filter for
 `covered-street` shows the `shotengai` photos too, and lists `shotengai` under it. A tag's page shows where it sits
 (**Under**) and has a **Parent tag** card that changes it (`PUT /api/organize/tags/<id>/parent`), the same way an
 album's parent changes; a genre has no parent. To tidy the whole tree at once, with an LLM suggesting tags to merge,
