@@ -10,6 +10,18 @@ export const THUMB_SIZES = [
 ] as const satisfies readonly (readonly [ThumbSize, string])[];
 
 /**
+ * How finely the Timeline's scrubber marks the list: a tick for each month (the default, left out
+ * of the URL), or for each day.
+ */
+export type TimelineTicks = "months" | "days";
+
+/** The scrubber's tick choices in the order the options list them, with their labels. */
+export const TICK_CHOICES = [
+  ["months", "Month & year"],
+  ["days", "Day, month & year"],
+] as const satisfies readonly (readonly [TimelineTicks, string])[];
+
+/**
  * Each thumbnail size's square, and how its row lays out. Large and huge thumbnails sit above
  * their title on a phone, where there'd be no room beside them.
  */
@@ -23,10 +35,12 @@ export const THUMB_LAYOUT: Record<ThumbSize, { thumbnail: string; row: string }>
 /**
  * The Timeline's display options as they're kept in its URL, each left out at its default:
  * `?thumbs=large` for the thumbnail size, `?tech=true` to show technical info, and
- * `?comments=false` or `?places=false` to hide comments or places.
+ * `?comments=false` or `?places=false` to hide comments or places, and `?ticks=days` for a scrubber
+ * tick on every day.
  */
 export interface TimelineDisplaySearch {
   thumbs?: Exclude<ThumbSize, "small">;
+  ticks?: "days";
   tech?: true;
   comments?: false;
   places?: false;
@@ -42,6 +56,8 @@ export interface TimelineDisplay {
   comments: boolean;
   /** Whether each photo shows where it was taken. */
   places: boolean;
+  /** Whether the scrubber has a tick for each month or for each day. */
+  ticks: TimelineTicks;
 }
 
 /** The options a Timeline opens with when its URL sets none. */
@@ -50,12 +66,14 @@ export const DEFAULT_TIMELINE_DISPLAY: TimelineDisplay = {
   tech: false,
   comments: true,
   places: true,
+  ticks: "months",
 };
 
 /** The display options in a Timeline URL's search, dropping any it doesn't know. */
 export function parseTimelineDisplay(search: Record<string, unknown>): TimelineDisplaySearch {
   return {
     ...parseThumbs(search.thumbs),
+    ...parseTicks(search.ticks),
     ...(search.tech === true ? { tech: true } : {}),
     ...(search.comments === false ? { comments: false } : {}),
     ...(search.places === false ? { places: false } : {}),
@@ -68,6 +86,11 @@ function parseThumbs(value: unknown): Pick<TimelineDisplaySearch, "thumbs"> {
   return size ? { thumbs: size as Exclude<ThumbSize, "small"> } : {};
 }
 
+/** `?ticks=days` when it's set. */
+function parseTicks(value: unknown): Pick<TimelineDisplaySearch, "ticks"> {
+  return value === "days" ? { ticks: "days" } : {};
+}
+
 /** The display options a URL's search sets, with the defaults for the rest. */
 export function resolveTimelineDisplay(search: TimelineDisplaySearch): TimelineDisplay {
   return {
@@ -75,6 +98,7 @@ export function resolveTimelineDisplay(search: TimelineDisplaySearch): TimelineD
     tech: search.tech === true,
     comments: search.comments !== false,
     places: search.places !== false,
+    ticks: search.ticks ?? "months",
   };
 }
 
@@ -88,6 +112,7 @@ export function timelineDisplaySearch(display: TimelineDisplay): TimelineDisplay
     tech: display.tech ? true : undefined,
     comments: hiddenParam(display.comments),
     places: hiddenParam(display.places),
+    ticks: display.ticks === "days" ? "days" : undefined,
   };
 }
 

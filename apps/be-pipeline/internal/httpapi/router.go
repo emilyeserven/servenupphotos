@@ -121,6 +121,7 @@ func routes(d routeDeps) http.Handler {
 	registerPlacesRoutes(mux, d)
 	registerMetaInfoRoutes(mux, d)
 	registerTimelineRoutes(mux, d)
+	registerTripLineRoutes(mux, d)
 	registerLikesRoutes(mux, d)
 	registerCameraRoutes(mux, d)
 	registerCaptionRoutes(mux, d)

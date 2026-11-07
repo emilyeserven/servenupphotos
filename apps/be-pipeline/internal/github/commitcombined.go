@@ -35,7 +35,8 @@ type CombinedCommit struct {
 	// Counts are how many entries each combined list has: photos, albums,
 	// tags, genres, places, localizations, metadata groups (metainfo), camera
 	// overrides (cameras), custom lenses (lenses), caption templates
-	// (captions), timeline labels (timeline) and viewer likes (likes), and how
+	// (captions), timeline labels (timeline), viewer likes (likes) and trip
+	// lines (triplines), how many lines the trip lines map has (tripLineSegments), and how
 	// many photos were left out of ALLPHOTOS.json as drafts (drafts).
 	Counts map[string]int `json:"counts"`
 	// NewPullRequest is true when the commit opened the photo data pull
@@ -77,6 +78,7 @@ func combinedKinds() []combinedKind {
 		{"captions", Captions.Folder, Captions.AllFile},
 		{"timeline", TimelineLabels.Folder, TimelineLabels.AllFile},
 		{"likes", ViewerLikesKind.Folder, ViewerLikesKind.AllFile},
+		{"triplines", TripLines.Folder, TripLines.AllFile},
 	}
 }
 
@@ -108,6 +110,9 @@ func (c *Client) CommitCombined(ctx context.Context, gh settings.GitHub, edits [
 		if perr := w.addCombined(kind, changes, result.Counts); perr != nil {
 			return CombinedCommit{}, perr
 		}
+	}
+	if perr := w.addTripLinesMap(changes, result.Counts); perr != nil {
+		return CombinedCommit{}, perr
 	}
 	result.Files, result.Edited = changedPaths(changes)
 	// With nothing in flight, a stale list on the base branch isn't worth a new pull request.
@@ -294,6 +299,9 @@ func changedPaths(changes map[string][]byte) ([]string, int) {
 // isCombinedFile reports one of the combined lists, by its name.
 func isCombinedFile(p string) bool {
 	name := p[strings.LastIndex(p, "/")+1:]
+	if name == TripLinesMapFile {
+		return true
+	}
 	for _, k := range combinedKinds() {
 		if name == k.allFile {
 			return true

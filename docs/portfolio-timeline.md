@@ -14,8 +14,11 @@ with the title and filters under them (see [Header spotlights](publish.md#header
 ## Scrubber
 
 Once the chart has scrolled up out of the window, a scrubber appears down the right edge, like the one in Google Photos.
-It has a short tick for each month in the list (or each day, with a label chosen) and a label for each year at its first month, leaving out a year whose
-label would crowd the one above. Each tick sits as far down the scrubber as its month is down the list, so a busy month
+It has a tick for each month in the list and a label for each year at its first month. With **Scrubber ticks** set to
+**Day, month & year** in the display options (or a label chosen), it has a tick for each day instead, labeled with each
+month's short name at its first day and the year at a year's first day, and its bubble names the day. The tick at the
+start of a bigger unit is bigger: a year's first month or day has the longest, darkest tick, and with day ticks a
+month's first day has a longer one than the days after it. A label that would crowd another is left out, years last. Each tick sits as far down the scrubber as its month is down the list, so a busy month
 takes up more of it. A line marks the month now at the top of the window. Pointing at the scrubber shows a bubble naming
 the month there, with the [timeline label](timeline-labels.md) of the days there under it, and clicking or dragging along it scrolls the list to that month; on a phone, touch and drag. With the
 scrubber focused, the up and down arrow keys move a month at a time. It measures the list again whenever it changes
@@ -27,12 +30,13 @@ The eye button at the end of the header opens the display options. Each is kept 
 remembered in the browser with the rest of the Timeline's settings, so links to the Timeline from other pages open it the
 same way.
 
-| Option              | Choices                                                                   | URL                        |
-| ------------------- | ------------------------------------------------------------------------- | -------------------------- |
-| Thumbnail size      | Small (100px, the default), Medium (160px), Large (240px) or Huge (320px) | `?thumbs=medium` and so on |
-| Show technical info | Each photo's aperture, exposure, ISO, focal length, lens and camera; off  | `?tech=true`               |
-| Show comments       | Each photo's comment, on one line; on                                     | `?comments=false`          |
-| Show places         | Where each photo was taken; on                                            | `?places=false`            |
+| Option              | Choices                                                                           | URL                        |
+| ------------------- | --------------------------------------------------------------------------------- | -------------------------- |
+| Thumbnail size      | Small (100px, the default), Medium (160px), Large (240px) or Huge (320px)         | `?thumbs=medium` and so on |
+| Show technical info | Each photo's aperture, exposure, ISO, focal length, lens and camera; off          | `?tech=true`               |
+| Show comments       | Each photo's comment, on one line; on                                             | `?comments=false`          |
+| Show places         | Where each photo was taken; on                                                    | `?places=false`            |
+| Scrubber ticks      | A tick for each month (Month & year, the default) or each day (Day, month & year) | `?ticks=days`              |
 
 On a phone, Large and Huge thumbnails sit above their photo's title instead of beside it.
 **Reset to defaults** puts every option back.
