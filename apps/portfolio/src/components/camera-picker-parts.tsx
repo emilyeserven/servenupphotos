@@ -1,8 +1,12 @@
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Shapes } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ChoiceRow } from "@portfolio/components/choice-row";
 import { EquipmentRow } from "@portfolio/components/equipment-row";
-import type { CameraPickerProps, CameraSection } from "@portfolio/components/camera-picker";
+import type {
+  CameraPickerProps,
+  CameraSection,
+  PickerPartProps,
+} from "@portfolio/components/camera-picker";
 import {
   RANGE_LABELS,
   RANGE_PRESETS,
@@ -13,7 +17,7 @@ import { hiddenText } from "@portfolio/components/hidden-note";
 import { RangeFilter } from "@portfolio/components/range-filter";
 import { SettingIllustration } from "@portfolio/components/setting-graphics";
 import { RangePresetList } from "@portfolio/components/range-presets";
-import type { EquipmentKey, RangeKey } from "@portfolio/lib/camera-filters";
+import { type EquipmentKey, parseRange, type RangeKey } from "@portfolio/lib/camera-filters";
 import { blockersOf, cameraBlockers } from "@portfolio/lib/camera-blockers";
 import { equipmentChoices, equipmentFilters, isChosen } from "@portfolio/lib/camera-picker";
 import {
@@ -29,7 +33,7 @@ import { cn } from "@portfolio/lib/utils";
 export function CameraPickerPart({
   section,
   ...props
-}: CameraPickerProps & { section: CameraSection }) {
+}: PickerPartProps & { section: CameraSection }) {
   if (section === "camera" || section === "lens") {
     return <EquipmentPart key={section} equipment={section} {...props} />;
   }
@@ -149,33 +153,73 @@ function HiddenToggle({
   );
 }
 
-/** A camera setting's slider, with its quick picks listed under it. */
-function RangePart({ setting, filters, onChange }: CameraPickerProps & { setting: RangeKey }) {
+/** The ends of the range the filters set, or every value's when they set none. */
+function setEnds(values: string[], range: string | undefined): [string, string] {
+  return parseRange(range) ?? [values[0] ?? "", values.at(-1) ?? ""];
+}
+
+/**
+ * A camera setting's slider, with its quick picks listed under it and, while `graphics` is on, a
+ * pane to the right with graphics of what its ends look like, following the handles as they move.
+ */
+function RangePart({
+  setting,
+  filters,
+  graphics,
+  onGraphics,
+  onChange,
+}: PickerPartProps & { setting: RangeKey }) {
   const label = RANGE_LABELS[setting];
   const set = (range: string | undefined) => onChange({ [setting]: range });
+  const [dragged, setDragged] = useState<[string, string] | undefined>();
+  const [low, high] = dragged ?? setEnds(RANGE_VALUES[setting], filters[setting]);
   return (
-    <div className="flex flex-col gap-3">
-      <RangeFilter
-        label={label}
-        values={RANGE_VALUES[setting]}
-        range={filters[setting]}
-        write={writeSetting(setting)}
-        illustrate={(low, high) => (
+    <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <GraphicsToggle on={graphics} onClick={() => onGraphics(!graphics)} />
+        <RangeFilter
+          label={label}
+          values={RANGE_VALUES[setting]}
+          range={filters[setting]}
+          write={writeSetting(setting)}
+          onDrag={setDragged}
+          onChange={set}
+        />
+        <RangePresetList
+          label={label}
+          presets={RANGE_PRESETS[setting]}
+          range={filters[setting]}
+          onChange={set}
+        />
+      </div>
+      {graphics && (
+        <aside
+          aria-label={`${label} graphics`}
+          className="flex shrink-0 flex-col border-t pt-3 sm:w-44 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-3"
+        >
           <SettingIllustration
             setting={setting}
             low={low}
             high={high}
             write={writeSetting(setting)}
           />
-        )}
-        onChange={set}
-      />
-      <RangePresetList
-        label={label}
-        presets={RANGE_PRESETS[setting]}
-        range={filters[setting]}
-        onChange={set}
-      />
+        </aside>
+      )}
     </div>
+  );
+}
+
+/** The button that shows or hides the graphics pane beside the slider. */
+function GraphicsToggle({ on, onClick }: { on: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className="flex items-center gap-1.5 self-end rounded-sm px-2 py-1 text-xs text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:bg-accent"
+    >
+      <Shapes aria-hidden className="size-3.5" />
+      {on ? "Hide graphics" : "Show graphics"}
+    </button>
   );
 }

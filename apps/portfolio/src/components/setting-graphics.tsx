@@ -165,9 +165,9 @@ export function SettingIllustration({
 }) {
   const note = SETTING_NOTES[setting];
   return (
-    <div className="flex flex-col gap-2 rounded-md bg-muted/40 p-2">
+    <div className="flex flex-col gap-3">
       {low !== undefined && high !== undefined && (
-        <div className="flex items-start justify-around gap-2">
+        <div className="flex items-start justify-around gap-2 sm:flex-col sm:items-center">
           <End setting={setting} value={low} note={note.low} text={write(low)} />
           {high !== low && (
             <End setting={setting} value={high} note={note.high} text={write(high)} />

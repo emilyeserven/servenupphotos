@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
 import { Slider } from "@portfolio/components/ui/slider";
 import { parseRange } from "@portfolio/lib/camera-filters";
@@ -34,7 +34,7 @@ export function RangeFilter({
   range,
   write,
   writeHigh = write,
-  illustrate,
+  onDrag,
   onChange,
 }: {
   label: string;
@@ -42,8 +42,8 @@ export function RangeFilter({
   range: string | undefined;
   write: (value: string) => string;
   writeHigh?: (value: string) => string;
-  /** Shows under the slider what its ends, as it's set or dragged, look like, such as graphics. */
-  illustrate?: (low: string | undefined, high: string | undefined) => ReactNode;
+  /** Gets the ends' values while a handle is dragged, and undefined once it's let go. */
+  onDrag?: (ends: [string, string] | undefined) => void;
   onChange: (range: string | undefined) => void;
 }) {
   const committed = positionsOf(values, range);
@@ -76,16 +76,24 @@ export function RangeFilter({
         minStepsBetweenThumbs={0}
         value={[low, high]}
         disabled={values.length < 2}
-        onValueChange={setDragging}
+        onValueChange={(next) => {
+          setDragging(next);
+          onDrag?.(endsAt(values, next));
+        }}
         onValueCommit={(next) => {
           setDragging(null);
+          onDrag?.(undefined);
           onChange(rangeOf(values, next));
         }}
         className="py-1"
       />
-      {illustrate?.(values[low], values[high])}
     </div>
   );
+}
+
+/** The values at the handles' positions. */
+function endsAt(values: string[], [low = 0, high = 0]: number[]): [string, string] {
+  return [values[low] ?? "", values[high] ?? ""];
 }
 
 /** The value at a position as `write` writes it, or nothing when there's none. */

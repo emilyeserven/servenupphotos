@@ -138,9 +138,10 @@ photos used it, on which cameras, at which focal length most, and from when to w
 at each end, and their quick picks listed under it. A slider steps through the values the portfolio's
 photos have, lowest first, so every step changes what's shown, and says the range it's set to, such as "f/4 – f/5.6".
 The URL changes once a handle is let go, keeping the range's ends as the photos write them (`?iso=100-400`,
-`?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. Under each slider, little graphics show what its two ends look
-like, following the handles as they're dragged: the angle of view for focal length, the opening for aperture, a dial
-filled for longer exposures, and grain for ISO, with a sentence on what the setting does. A
+`?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. **Show graphics**, above the slider, opens a pane to its right (under it on phones) with little
+graphics of what its two ends look like, following the handles as they're dragged: the angle of view for focal length, the opening for aperture, a dial
+filled for longer exposures, and grain for ISO, with a sentence on what the setting does. **Hide graphics** closes it;
+the browser remembers which, for every setting. A
 photo without the setting isn't in any range.
 
 The hours of the day are in the [When](#when) picker, which every view with filters has.

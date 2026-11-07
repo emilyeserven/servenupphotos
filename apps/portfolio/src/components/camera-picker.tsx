@@ -12,6 +12,7 @@ import {
   type RangeKey,
 } from "@portfolio/lib/camera-filters";
 import { equipmentChoices } from "@portfolio/lib/camera-picker";
+import { useGraphicsPane } from "@portfolio/lib/use-graphics-pane";
 import type { BlockerSource } from "@portfolio/lib/camera-blockers";
 import type { Photo } from "@portfolio/lib/photos";
 import { cn } from "@portfolio/lib/utils";
@@ -36,6 +37,13 @@ export interface CameraPickerProps {
   /** The view's photos and filters, to say which filters hide a camera or lens choice. */
   source: BlockerSource;
   onChange: (next: CameraFilters) => void;
+}
+
+/** What each section's part of the picker gets: the picker's props and the graphics pane's state. */
+export interface PickerPartProps extends CameraPickerProps {
+  /** Whether the settings' graphics pane is shown, beside each slider. */
+  graphics: boolean;
+  onGraphics: (on: boolean) => void;
 }
 
 /** Whether the section has a filter set: its name or group for the camera and lens. */
@@ -74,7 +82,7 @@ export function CameraPicker(props: CameraPickerProps) {
       <PopoverContent
         align="start"
         collisionPadding={16}
-        className="w-[min(34rem,calc(100vw-2rem))] p-0"
+        className="w-auto max-w-[calc(100vw-2rem)] p-0"
       >
         <PickerBody {...props} />
       </PopoverContent>
@@ -89,12 +97,19 @@ export function CameraPicker(props: CameraPickerProps) {
 function PickerBody(props: CameraPickerProps) {
   const [section, setSection] = useState<CameraSection>(() => firstSet(props.filters));
   const [listOpen, setListOpen] = useState(false);
+  const [graphics, setGraphics] = useGraphicsPane();
+  const wide = graphics && !isEquipment(section);
   const choose = (next: CameraSection) => {
     setSection(next);
     setListOpen(false);
   };
   return (
-    <div className="flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] flex-col sm:flex-row">
+    <div
+      className={cn(
+        "flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] w-[calc(100vw-2rem)] flex-col sm:flex-row",
+        wide ? "sm:w-[46rem]" : "sm:w-[34rem]",
+      )}
+    >
       <ListToggle
         section={section}
         open={listOpen}
@@ -122,7 +137,12 @@ function PickerBody(props: CameraPickerProps) {
         ))}
       </div>
       <div role="tabpanel" className="min-h-0 min-w-0 flex-1 overflow-y-auto p-3">
-        <CameraPickerPart section={section} {...props} />
+        <CameraPickerPart
+          section={section}
+          graphics={graphics}
+          onGraphics={setGraphics}
+          {...props}
+        />
       </div>
     </div>
   );
