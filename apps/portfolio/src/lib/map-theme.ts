@@ -58,7 +58,7 @@ const TRIP_COLORS = {
   light: {
     walk: "#2563eb",
     hop: "#9333ea",
-    drive: "#525252",
+    drive: "#93c5fd",
     ferry: "#0d9488",
     flight: "#db2777",
     visit: "#f59e0b",
@@ -67,7 +67,7 @@ const TRIP_COLORS = {
   dark: {
     walk: "#60a5fa",
     hop: "#c084fc",
-    drive: "#a3a3a3",
+    drive: "#bfdbfe",
     ferry: "#2dd4bf",
     flight: "#f472b6",
     visit: "#f59e0b",

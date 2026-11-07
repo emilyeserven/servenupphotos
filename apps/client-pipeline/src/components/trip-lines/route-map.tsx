@@ -1,4 +1,5 @@
 import { MAP_STYLES, tripColors, useIsDark } from "@portfolio/lib/map-theme";
+import { LANE_OFFSET, withLanes } from "@portfolio/lib/trip-lanes";
 import {
   Layer,
   Map,
@@ -36,11 +37,12 @@ function walkLayer(preview: boolean): LayerProps {
       "line-color": "#2563eb",
       "line-width": 4,
       "line-opacity": opacity(preview ? 0.5 : 0.9),
+      "line-offset": LANE_OFFSET,
     },
   };
 }
 
-/** A drive, in long gray dashes like the portfolio's map. */
+/** A drive, in long light blue dashes like the portfolio's map. */
 function driveLayer(dark: boolean): LayerProps {
   return {
     id: "trip-drive",
@@ -51,6 +53,7 @@ function driveLayer(dark: boolean): LayerProps {
       "line-width": 3,
       "line-dasharray": [4, 2],
       "line-opacity": opacity(1),
+      "line-offset": LANE_OFFSET,
     },
   };
 }
@@ -69,6 +72,7 @@ const hopLayer: LayerProps = {
     "line-width": 3,
     "line-dasharray": [2, 2],
     "line-opacity": opacity(1),
+    "line-offset": LANE_OFFSET,
   },
 };
 
@@ -78,7 +82,12 @@ const lineLayer: LayerProps = {
   type: "line",
   filter: ["get", "onLine"],
   layout: { "line-cap": "round", "line-join": "round" },
-  paint: { "line-color": ["get", "colour"], "line-width": 4, "line-opacity": opacity(0.9) },
+  paint: {
+    "line-color": ["get", "colour"],
+    "line-width": 4,
+    "line-opacity": opacity(0.9),
+    "line-offset": LANE_OFFSET,
+  },
 };
 
 interface RouteMapProps {
@@ -103,6 +112,11 @@ interface RouteMapProps {
   visits?: TripVisit[];
   /** The areas photos without an exact spot were taken in, shaded. */
   fences?: TripFence[];
+}
+
+/** The day's lines, each that runs over an earlier one in a lane to its side. */
+function lanes(lines: ReturnType<typeof lineFeatures>) {
+  return { ...lines, features: withLanes(lines.features) };
 }
 
 /** The day's photos as numbered dots, and its trip line drawn through them. */
@@ -135,7 +149,7 @@ export function RouteMap({
       >
         <NavigationControl position="bottom-right" showCompass={false} />
         <FenceAreas fences={fences} dark={dark} />
-        <Source id="trip-line" type="geojson" data={lineFeatures(segments, photos, focus)}>
+        <Source id="trip-line" type="geojson" data={lanes(lineFeatures(segments, photos, focus))}>
           <Layer {...walkLayer(preview === true)} />
           <Layer {...hopLayer} />
           <Layer {...driveLayer(dark)} />

@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import type { PlacedPhoto } from "@/lib/map-photos";
+import { withLanes } from "@/lib/trip-lanes";
 
 /**
  * One feature of TRIPLINES.geo.json, which the pipeline's Commit bakes: a segment of a day's trip
@@ -18,6 +19,8 @@ export interface TripMapFeature {
     /** The Trip a leg between days is part of, and the day it arrived. */
     trip?: string;
     arrive?: string;
+    /** The lane a line that runs over an earlier one is drawn in, to the side of it. */
+    lane?: number;
   };
 }
 
@@ -51,9 +54,12 @@ function isOnDays({ properties }: TripMapFeature, days: Set<string>): boolean {
   return days.has(properties.day) || days.has(properties.arrive ?? "");
 }
 
-/** The map with only the features of days, such as the days of the photos the map draws. */
+/**
+ * The map with only the features of days, such as the days of the photos the map draws, each line
+ * that runs over an earlier one in a lane of its own.
+ */
 function onDays(map: TripLinesMap, days: Set<string>): TripLinesMap {
-  return { ...map, features: map.features.filter((f) => isOnDays(f, days)) };
+  return { ...map, features: withLanes(map.features.filter((f) => isOnDays(f, days))) };
 }
 
 /** The days the photos were taken, as TRIPLINES.geo.json writes them. */

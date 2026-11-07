@@ -121,7 +121,15 @@ draws them (`lib/trip-lines-map.ts`):
 
 - Walks are solid blue (lighter in dark mode).
 - A hop along the bus, subway or train line it rode is solid in that line's color.
-- A drive (`car`, such as a big jump the automatic line marks) is gray in long dashes.
+- A drive (`car`, such as a big jump the automatic line marks) is light blue in long dashes.
+- Where a line runs over an earlier one, such as walking a street one way and driving it back, the later one is
+  drawn about 6 px to its side, in the next free lane, so both show. Lines are compared on a grid of about 30 m, and
+  they overlap when at least 30% of the shorter one runs along the other (`lib/trip-lanes.ts`). The pipeline's
+  Trip Lines map does the same.
+
+  > **Frontend analogy:** like laying out overlapping calendar events in columns: each later event takes the first
+  > column none of the events it overlaps is in.
+
 - A [Trip](trip-lines.md#trips)'s ferry is a line of teal dots, and its flight a dashed pink arc. A leg shows with
   the photos of either the day it left or the day it arrived. The Timeline's route sketches leave legs out.
 - Any other hop is dashed purple.

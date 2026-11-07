@@ -110,7 +110,7 @@ export function HopSymbol({ dark }: { dark: boolean }) {
   );
 }
 
-/** A drive: a gray line in long dashes. */
+/** A drive: a light blue line in long dashes. */
 export function DriveSymbol({ dark }: { dark: boolean }) {
   return (
     <LineSample>
