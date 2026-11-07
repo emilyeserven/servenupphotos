@@ -96,8 +96,8 @@ function TripDays({ trip, days }: { trip: Trip; days: TripDay[] }) {
         {inTrip.map((d) => (
           <Link
             key={d.day}
-            to="/trip-lines"
-            search={{ day: d.day }}
+            to="/trip-lines/$day/$part"
+            params={{ day: d.day, part: "route" }}
             className="hover:bg-muted flex justify-between gap-3 rounded-md px-2 py-1.5 text-sm"
           >
             <span>{dayTitle(d.day)}</span>

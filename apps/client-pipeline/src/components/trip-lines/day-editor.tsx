@@ -10,24 +10,18 @@ import {
   type TripSegment,
 } from "@/api/trip-lines";
 import { EditorActions, type EditorView } from "@/components/trip-lines/editor-actions";
-import { type EndKey, EndSpots } from "@/components/trip-lines/end-spots";
-import { HopLines } from "@/components/trip-lines/hop-lines";
-import { Fences } from "@/components/trip-lines/fences";
 import { useDayPlaceAreas } from "@/components/trip-lines/use-day-place-areas";
-import { Visits } from "@/components/trip-lines/visits";
 import { newVisit, withVisit } from "@/lib/trip-visits";
 import { GroupStrip } from "@/components/trip-lines/group-strip";
 import { RouteMap } from "@/components/trip-lines/route-map";
-import { ShapeTools } from "@/components/trip-lines/shape-tools";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { TripDay, TripPhoto } from "@/lib/trip-days";
 import { placeGroups } from "@/lib/trip-groups";
 import { draftOf, type GapDraft, segmentsOf, walkingDraft } from "@/lib/trip-gaps";
 import { draftVias, movedVia, withVia } from "@/lib/trip-points";
-import { dayTitle } from "@/components/trip-lines/day-title";
-import { useTripLinesSearch } from "@/lib/trip-lines-search";
-import { type AreaPick, isAreaPick, withAreaEnd } from "@/lib/trip-wander";
-import { AreaEnds } from "@/components/trip-lines/area-ends";
+import { useTripDaySearch } from "@/lib/trip-lines-search";
+import { isAreaPick, withAreaEnd } from "@/lib/trip-wander";
+import { MapTools, type MapPick } from "@/components/trip-lines/route-tools";
 import { movedId, orderToSave, orderedPhotos } from "@/lib/trip-order";
 
 /** What the editor shows first: the saved line by hand, the automatic line, or nothing yet. */
@@ -95,8 +89,37 @@ function startingView(day: TripDay, line: TripLine | undefined): EditorView {
   );
 }
 
-/** Edits one day's trip line: the photo strip, the map, and saving. */
-export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine }) {
+/**
+ * The day's pages the editor shows on: the photo order (the strip alone), the route (the strip and
+ * the map with its tools), and the places visited (the map and the list of places).
+ */
+export type EditorPart = "order" | "route" | "places";
+
+interface DayEditorProps {
+  day: TripDay;
+  line?: TripLine;
+  part: EditorPart;
+}
+
+/** What each page is called on its card. */
+const PART_TITLES: Record<EditorPart, string> = {
+  order: "Photo order",
+  route: "Route",
+  places: "Places visited",
+};
+
+/** What each page says the editor is for. */
+const PART_NOTES: Record<EditorPart, string> = {
+  order:
+    "Put the photos in order, cut them into groups by place, and pick what happened between each two: keep walking, a break, or a hop by train, subway, bus or car.",
+  route:
+    "Pick what happened between each two photos, and shape the line on the map: via points, the day's start and end, transit lines and areas.",
+  places:
+    "The places stopped at along the day's route, such as restaurants and shops, with or without a photo: add them on the map, from the saved places or by a coordinate. Put them on the route between two photos in the strip on Photo order or Route.",
+};
+
+/** Edits one day's trip line: the photo strip, the map on the Route page, and saving. */
+export function DayEditor({ day: taken, line, part }: DayEditorProps) {
   const [view, setRawView] = useState<EditorView>(() => startingView(taken, line));
   // The day with its photos in the view's order: as taken, unless moved by hand.
   const day = { ...taken, photos: orderedPhotos(taken.photos, draftOrder(view)) };
@@ -104,54 +127,46 @@ export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine 
   const setView = (next: EditorView) =>
     setRawView(withPlaceGroups(next, orderedPhotos(taken.photos, draftOrder(next))));
   const [hovered, setHovered] = useState<number>();
-  const { search, set } = useTripLinesSearch();
+  const { search, set } = useTripDaySearch();
   const focus = search.group;
   const setFocus = (group: string | undefined) => set({ group });
   const auto = useQuery({ ...autoTripLineQuery(day.day), enabled: showsAuto(view) });
   const segments = viewSegments(ids, view, auto.data);
   const editDraft = (draft: GapDraft) => setView({ kind: "hand", draft });
-  const draft = view.kind === "hand" ? view.draft : undefined;
   const placeAreas = useDayPlaceAreas(day.photos);
   const shownDraft = stripDraft(view, day.photos, segments);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{dayTitle(day.day)}</CardTitle>
+        <CardTitle>{PART_TITLES[part]}</CardTitle>
         <CardDescription>
-          {day.photos.length} photos at {day.spots} spots. Pick what happened between each two
-          photos: keep walking, a break, or a hop by train, subway, bus or car.
+          {day.photos.length} photos at {day.spots} spots. {PART_NOTES[part]}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <GroupStrip
-          photos={day.photos}
-          draft={shownDraft}
-          onChange={editDraft}
-          onMove={(id, by) => editDraft({ ...shownDraft, order: movedId(ids, id, by) })}
-          onHover={setHovered}
-          focus={focus}
-          onFocus={setFocus}
-        />
-        {draft ? (
-          <HandMap
+        {part !== "places" && (
+          <GroupStrip
+            photos={day.photos}
+            draft={shownDraft}
+            onChange={editDraft}
+            onMove={(id, by) => editDraft({ ...shownDraft, order: movedId(ids, id, by) })}
+            onHover={setHovered}
+            focus={focus}
+            onFocus={setFocus}
+            stacked={part === "order"}
+          />
+        )}
+        {part !== "order" && (
+          <DayMap
             day={day}
-            draft={draft}
+            part={part}
+            view={view}
+            shown={shownDraft}
             segments={segments}
             highlighted={hovered}
             focus={focus}
             placeAreas={placeAreas}
             onChange={editDraft}
-          />
-        ) : (
-          <RouteMap
-            day={day.day}
-            photos={day.photos}
-            segments={segments}
-            preview={view.kind === "preview"}
-            highlighted={hovered}
-            focus={focus}
-            ends={endsOf(segments)}
-            fences={placeAreas}
           />
         )}
         <DayActions
@@ -169,17 +184,32 @@ export function DayEditor({ day: taken, line }: { day: TripDay; line?: TripLine 
   );
 }
 
-/** What a click on the map places: the day's start or end spot, or a place visited. */
-type MapPick = EndKey | "visit" | AreaPick;
-
-/** The start or end spot being picked, if that's what is. */
-function endPicking(picking: MapPick | undefined): EndKey | undefined {
-  return picking === "start" || picking === "end" ? picking : undefined;
+interface DayMapProps extends Omit<HandMapProps, "draft"> {
+  view: EditorView;
+  /** The draft the strip shows, which adding a place visited starts a hand-drawn line from. */
+  shown: GapDraft;
 }
 
-/** The entrance or exit of an area wandered being picked, if that's what is. */
-function areaPicking(picking: MapPick | undefined): AreaPick | undefined {
-  return isAreaPick(picking) ? picking : undefined;
+/**
+ * The day's map: with its tools while the line is drawn by hand or on the Places page, or else as
+ * it's drawn.
+ */
+function DayMap({ view, shown, ...props }: DayMapProps) {
+  if (view.kind === "hand") return <HandMap {...props} draft={view.draft} />;
+  if (props.part === "places") return <HandMap {...props} draft={shown} />;
+  const { day, segments, highlighted, focus, placeAreas } = props;
+  return (
+    <RouteMap
+      day={day.day}
+      photos={day.photos}
+      segments={segments}
+      preview={view.kind === "preview"}
+      highlighted={highlighted}
+      focus={focus}
+      ends={endsOf(segments)}
+      fences={placeAreas}
+    />
+  );
 }
 
 /** The draft with the clicked point placed as picking says, or else as a via point. */
@@ -204,13 +234,16 @@ interface HandMapProps {
   /** The areas of the day's places, shaded under the line. */
   placeAreas: TripFence[];
   onChange: (draft: GapDraft) => void;
+  /** The page the map is on, which picks its tools. */
+  part: EditorPart;
 }
 
 /**
- * The map of a line drawn by hand, with its tools: clicking the map places the spot being picked,
- * or adds a via point while adding them.
+ * The map of a line drawn by hand, with the page's tools: the route's, or the places visited.
+ * Clicking the map places the spot being picked, or adds a via point while adding them.
  */
-function HandMap({ day, draft, segments, highlighted, focus, placeAreas, onChange }: HandMapProps) {
+function HandMap(props: HandMapProps) {
+  const { day, draft, segments, highlighted, focus, placeAreas, onChange, part } = props;
   const [picking, setPicking] = useState<MapPick>();
   const [addingVia, setAddingVia] = useState(false);
   const pick = (point: TripPoint) => {
@@ -233,36 +266,17 @@ function HandMap({ day, draft, segments, highlighted, focus, placeAreas, onChang
         fences={[...(draft.fences ?? []), ...placeAreas]}
         onMoveVia={(key, i, point) => onChange(movedVia(draft, key, i, point))}
       />
-      <ShapeTools
-        day={day.day}
+      <MapTools
+        part={part}
+        day={day}
         draft={draft}
         segments={segments}
         onChange={onChange}
+        picking={picking}
+        onPicking={setPicking}
         addingVia={addingVia}
         onAddingVia={setAddingVia}
       />
-      <HopLines photos={day.photos} draft={draft} segments={segments} onChange={onChange} />
-      <EndSpots
-        draft={draft}
-        onChange={onChange}
-        picking={endPicking(picking)}
-        onPicking={setPicking}
-      />
-      <AreaEnds
-        ids={day.photos.map((p) => p.id)}
-        draft={draft}
-        onChange={onChange}
-        picking={areaPicking(picking)}
-        onPicking={setPicking}
-      />
-      <Visits
-        day={day}
-        draft={draft}
-        onChange={onChange}
-        picking={picking === "visit"}
-        onPicking={(on) => setPicking(on ? "visit" : undefined)}
-      />
-      <Fences day={day} draft={draft} onChange={onChange} />
     </>
   );
 }

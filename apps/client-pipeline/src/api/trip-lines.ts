@@ -81,7 +81,10 @@ export interface TripLine {
   day: string;
   /** True for the automatic line, worked out again from the day's photos at every Commit. */
   auto: boolean;
-  /** The stretches of the day, in the order they happened; empty for the automatic line. */
+  /**
+   * The stretches of the day, in the order they happened; for the automatic line, as it was last
+   * worked out (when turned on, or at the last Commit).
+   */
   segments: TripSegment[];
   /** The places visited along the day's route, such as a restaurant, with or without a photo. */
   visits?: TripVisit[];

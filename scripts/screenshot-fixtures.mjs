@@ -280,7 +280,16 @@ const added = {
     },
     {
       path: `${FOLDER}/triplines/2026-10-26.json`,
-      data: { id: "2026-10-26", day: "2026-10-26", auto: true, segments: [] },
+      data: {
+        id: "2026-10-26",
+        day: "2026-10-26",
+        auto: true,
+        // As the backend saves it: the automatic line as last worked out.
+        segments: [
+          { mode: "walk", photos: [409, 410, 412, 414, 416] },
+          { mode: "walk", photos: [444, 445] },
+        ],
+      },
     },
   ],
   gear: [

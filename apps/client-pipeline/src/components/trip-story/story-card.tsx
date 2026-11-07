@@ -32,7 +32,7 @@ function pageNote(day: string, trips: Trip[]): string {
 }
 
 /**
- * The day's story for the portfolio's Trip page, under the route: a caption on each photo, a
+ * The day's story for the portfolio's Trip page, on the day's Story page: a caption on each photo, a
  * paragraph between photos, and which photos share a row. Saving it is a change waiting for Commit,
  * which builds the Trip pages.
  */

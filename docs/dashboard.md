@@ -23,7 +23,7 @@ now **Settings › Status** (see [Settings](settings.md#status)).
   - **Trip lines out of date with their photos** (high): days whose [trip line](trip-lines.md) was marked by hand and
     no longer matches the day's photos with an exact spot: photos added (or given a spot) since it was marked aren't on
     it, or it goes through photos no longer on that day. Counted in days, from the combined lists
-    (`lib/stale-trip-lines.ts`), and links to the newest one on the Trip Lines page (`/trip-lines?day=…&show=out-of-date`). Automatic
+    (`lib/stale-trip-lines.ts`), and links to the Trip Lines list filtered to them (`/trip-lines?show=out-of-date`). Automatic
     lines never are, since they're worked out again at every Commit.
   - **Photos without color data** (high): no `colors`, or `colors` saved before `peakChroma`, as **Update Data ›
     Colors** reads them, linking there.

@@ -38,7 +38,6 @@ import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as SmallTagsRouteImport } from './routes/small-tags'
 import { Route as TimelineLabelsRouteImport } from './routes/timeline-labels'
-import { Route as TripLinesRouteImport } from './routes/trip-lines'
 import { Route as TripsRouteImport } from './routes/trips'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
 import { Route as ViewerLikesRouteImport } from './routes/viewer-likes'
@@ -54,8 +53,11 @@ import { Route as TagDataSectionRouteImport } from './routes/tag-data.$section'
 import { Route as TagToolsSectionRouteImport } from './routes/tag-tools.$section'
 import { Route as TagsIndexRouteImport } from './routes/tags.index'
 import { Route as TagsIdRouteImport } from './routes/tags.$id'
+import { Route as TripLinesIndexRouteImport } from './routes/trip-lines.index'
 import { Route as UpdateDataIndexRouteImport } from './routes/update-data.index'
 import { Route as UpdateDataSectionRouteImport } from './routes/update-data.$section'
+import { Route as TripLinesDayIndexRouteImport } from './routes/trip-lines.$day.index'
+import { Route as TripLinesDayPartRouteImport } from './routes/trip-lines.$day.$part'
 import { Route as TripLinesTripsIdRouteImport } from './routes/trip-lines_.trips.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -203,11 +205,6 @@ const TimelineLabelsRoute = TimelineLabelsRouteImport.update({
   path: '/timeline-labels',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TripLinesRoute = TripLinesRouteImport.update({
-  id: '/trip-lines',
-  path: '/trip-lines',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TripsRoute = TripsRouteImport.update({
   id: '/trips',
   path: '/trips',
@@ -283,6 +280,11 @@ const TagsIdRoute = TagsIdRouteImport.update({
   path: '/tags/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TripLinesIndexRoute = TripLinesIndexRouteImport.update({
+  id: '/trip-lines/',
+  path: '/trip-lines/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UpdateDataIndexRoute = UpdateDataIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -292,6 +294,16 @@ const UpdateDataSectionRoute = UpdateDataSectionRouteImport.update({
   id: '/$section',
   path: '/$section',
   getParentRoute: () => UpdateDataRoute,
+} as any)
+const TripLinesDayIndexRoute = TripLinesDayIndexRouteImport.update({
+  id: '/trip-lines/$day/',
+  path: '/trip-lines/$day/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TripLinesDayPartRoute = TripLinesDayPartRouteImport.update({
+  id: '/trip-lines/$day/$part',
+  path: '/trip-lines/$day/$part',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const TripLinesTripsIdRoute = TripLinesTripsIdRouteImport.update({
   id: '/trip-lines_/trips/$id',
@@ -329,7 +341,6 @@ export interface FileRoutesByFullPath {
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
   '/timeline-labels': typeof TimelineLabelsRoute
-  '/trip-lines': typeof TripLinesRoute
   '/trips': typeof TripsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
@@ -346,8 +357,11 @@ export interface FileRoutesByFullPath {
   '/lightroom-albums/': typeof LightroomAlbumsIndexRoute
   '/tag-data/': typeof TagDataIndexRoute
   '/tags/': typeof TagsIndexRoute
+  '/trip-lines/': typeof TripLinesIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
+  '/trip-lines/$day/$part': typeof TripLinesDayPartRoute
   '/trip-lines/trips/$id': typeof TripLinesTripsIdRoute
+  '/trip-lines/$day/': typeof TripLinesDayIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -379,7 +393,6 @@ export interface FileRoutesByTo {
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
   '/timeline-labels': typeof TimelineLabelsRoute
-  '/trip-lines': typeof TripLinesRoute
   '/trips': typeof TripsRoute
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
@@ -395,8 +408,11 @@ export interface FileRoutesByTo {
   '/lightroom-albums': typeof LightroomAlbumsIndexRoute
   '/tag-data': typeof TagDataIndexRoute
   '/tags': typeof TagsIndexRoute
+  '/trip-lines': typeof TripLinesIndexRoute
   '/update-data': typeof UpdateDataIndexRoute
+  '/trip-lines/$day/$part': typeof TripLinesDayPartRoute
   '/trip-lines/trips/$id': typeof TripLinesTripsIdRoute
+  '/trip-lines/$day': typeof TripLinesDayIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -429,7 +445,6 @@ export interface FileRoutesById {
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
   '/timeline-labels': typeof TimelineLabelsRoute
-  '/trip-lines': typeof TripLinesRoute
   '/trips': typeof TripsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
@@ -446,8 +461,11 @@ export interface FileRoutesById {
   '/lightroom-albums/': typeof LightroomAlbumsIndexRoute
   '/tag-data/': typeof TagDataIndexRoute
   '/tags/': typeof TagsIndexRoute
+  '/trip-lines/': typeof TripLinesIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
+  '/trip-lines/$day/$part': typeof TripLinesDayPartRoute
   '/trip-lines_/trips/$id': typeof TripLinesTripsIdRoute
+  '/trip-lines/$day/': typeof TripLinesDayIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -481,7 +499,6 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/small-tags'
     | '/timeline-labels'
-    | '/trip-lines'
     | '/trips'
     | '/update-data'
     | '/viewer-likes'
@@ -498,8 +515,11 @@ export interface FileRouteTypes {
     | '/lightroom-albums/'
     | '/tag-data/'
     | '/tags/'
+    | '/trip-lines/'
     | '/update-data/'
+    | '/trip-lines/$day/$part'
     | '/trip-lines/trips/$id'
+    | '/trip-lines/$day/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -531,7 +551,6 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/small-tags'
     | '/timeline-labels'
-    | '/trip-lines'
     | '/trips'
     | '/viewer-likes'
     | '/albums/$id'
@@ -547,8 +566,11 @@ export interface FileRouteTypes {
     | '/lightroom-albums'
     | '/tag-data'
     | '/tags'
+    | '/trip-lines'
     | '/update-data'
+    | '/trip-lines/$day/$part'
     | '/trip-lines/trips/$id'
+    | '/trip-lines/$day'
   id:
     | '__root__'
     | '/'
@@ -580,7 +602,6 @@ export interface FileRouteTypes {
     | '/sizes'
     | '/small-tags'
     | '/timeline-labels'
-    | '/trip-lines'
     | '/trips'
     | '/update-data'
     | '/viewer-likes'
@@ -597,8 +618,11 @@ export interface FileRouteTypes {
     | '/lightroom-albums/'
     | '/tag-data/'
     | '/tags/'
+    | '/trip-lines/'
     | '/update-data/'
+    | '/trip-lines/$day/$part'
     | '/trip-lines_/trips/$id'
+    | '/trip-lines/$day/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -631,7 +655,6 @@ export interface RootRouteChildren {
   SizesRoute: typeof SizesRoute
   SmallTagsRoute: typeof SmallTagsRoute
   TimelineLabelsRoute: typeof TimelineLabelsRoute
-  TripLinesRoute: typeof TripLinesRoute
   TripsRoute: typeof TripsRoute
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
   ViewerLikesRoute: typeof ViewerLikesRoute
@@ -647,7 +670,10 @@ export interface RootRouteChildren {
   LightroomAlbumsIndexRoute: typeof LightroomAlbumsIndexRoute
   TagDataIndexRoute: typeof TagDataIndexRoute
   TagsIndexRoute: typeof TagsIndexRoute
+  TripLinesIndexRoute: typeof TripLinesIndexRoute
+  TripLinesDayPartRoute: typeof TripLinesDayPartRoute
   TripLinesTripsIdRoute: typeof TripLinesTripsIdRoute
+  TripLinesDayIndexRoute: typeof TripLinesDayIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -855,13 +881,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineLabelsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/trip-lines': {
-      id: '/trip-lines'
-      path: '/trip-lines'
-      fullPath: '/trip-lines'
-      preLoaderRoute: typeof TripLinesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/trips': {
       id: '/trips'
       path: '/trips'
@@ -967,6 +986,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TagsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trip-lines/': {
+      id: '/trip-lines/'
+      path: '/trip-lines'
+      fullPath: '/trip-lines/'
+      preLoaderRoute: typeof TripLinesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/update-data/': {
       id: '/update-data/'
       path: '/'
@@ -980,6 +1006,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/update-data/$section'
       preLoaderRoute: typeof UpdateDataSectionRouteImport
       parentRoute: typeof UpdateDataRoute
+    }
+    '/trip-lines/$day/': {
+      id: '/trip-lines/$day/'
+      path: '/trip-lines/$day'
+      fullPath: '/trip-lines/$day/'
+      preLoaderRoute: typeof TripLinesDayIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trip-lines/$day/$part': {
+      id: '/trip-lines/$day/$part'
+      path: '/trip-lines/$day/$part'
+      fullPath: '/trip-lines/$day/$part'
+      preLoaderRoute: typeof TripLinesDayPartRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/trip-lines_/trips/$id': {
       id: '/trip-lines_/trips/$id'
@@ -1035,7 +1075,6 @@ const rootRouteChildren: RootRouteChildren = {
   SizesRoute: SizesRoute,
   SmallTagsRoute: SmallTagsRoute,
   TimelineLabelsRoute: TimelineLabelsRoute,
-  TripLinesRoute: TripLinesRoute,
   TripsRoute: TripsRoute,
   UpdateDataRoute: UpdateDataRouteWithChildren,
   ViewerLikesRoute: ViewerLikesRoute,
@@ -1051,7 +1090,10 @@ const rootRouteChildren: RootRouteChildren = {
   LightroomAlbumsIndexRoute: LightroomAlbumsIndexRoute,
   TagDataIndexRoute: TagDataIndexRoute,
   TagsIndexRoute: TagsIndexRoute,
+  TripLinesIndexRoute: TripLinesIndexRoute,
+  TripLinesDayPartRoute: TripLinesDayPartRoute,
   TripLinesTripsIdRoute: TripLinesTripsIdRoute,
+  TripLinesDayIndexRoute: TripLinesDayIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
