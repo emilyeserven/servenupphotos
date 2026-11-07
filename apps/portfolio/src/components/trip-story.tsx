@@ -15,8 +15,8 @@ interface TripStoryProps {
 
 /**
  * A Trip page's days, each under its date: its first paragraph, then its rows of photos side by
- * side with their text under or beside them, each followed by its paragraph across the page, and
- * last the trip stops with their casual photos.
+ * side with their text under or beside them, each followed by the trip stops made after it and its
+ * paragraph across the page; then the stops not between two of its photos.
  */
 export function TripStory({ days, texts, onOpen }: TripStoryProps) {
   return (
@@ -25,9 +25,10 @@ export function TripStory({ days, texts, onOpen }: TripStoryProps) {
         <li key={day.day} className="flex flex-col gap-8">
           <h2 className={`${NARROW} text-xl font-semibold tracking-tight`}>{dayTitle(day.day)}</h2>
           <AlbumText text={day.intro} />
-          {day.rows.map((row) => (
-            <div key={row.photos[0]?.id ?? row.after} className="flex flex-col gap-8">
+          {day.rows.map((row, i) => (
+            <div key={`${day.day}-${i}`} className="flex flex-col gap-8">
               <RowPhotos photos={row.photos} texts={texts} onOpen={onOpen} />
+              <TripStops stops={row.stops} />
               <AlbumText text={row.after} />
             </div>
           ))}

@@ -70,11 +70,14 @@ date, or else its EXIF one), a photo listed twice, a photo with both `withNext` 
 
 ## Trip Stops
 
-A day's [trip stops](trip-lines.md#trip-stops) that have [casual photos](trip-lines.md#casual-photos), such as
-the food at a restaurant, show at the end of that day on the Trip page in a small **Trip Stops** group that starts folded (for now, until stops are worked into the story itself): each stop's name
-(linking to its outside map), its kind, its note, and its casual photos as small squares, each opening its large
-version in a new tab (`components/trip-stops.tsx`). A stop without casual photos isn't listed. Casual photos aren't in
-`ALLPHOTOS.json`, so Commit bakes what the page needs of them (ID, title, size and image URLs) into the day's `stops`.
+A day's [trip stops](trip-lines.md#trip-stops), such as a restaurant, show in its story between the two photos the
+route puts them between (`after`), each on its own small line: a pin, its name (linking to its outside map), its kind
+and its note. A stop's [casual photos](trip-lines.md#casual-photos) are folded under it behind **3 photos**, as small
+squares that each open the large version in a new tab (`components/trip-stops.tsx`). A stop ends its row the way a
+paragraph does, so a stop after a photo in the middle of a row splits it there, and it shows before that photo's
+paragraph. Stops not on the route, or after a photo left off the story, show after the day's last row. Casual photos
+aren't in `ALLPHOTOS.json`, so Commit bakes every stop, with what the page needs of its casual photos (ID, title, size
+and image URLs), into the day's `stops`.
 
 ## The baked pages: `TRIPPAGES.json`
 
@@ -99,6 +102,7 @@ data** workflow leaves it as it is.
             "name": "Ichiran Dotonbori",
             "kind": "restaurant",
             "link": "https://maps.app.goo.gl/…",
+            "after": 302,
             "photos": [
               { "id": 311, "width": 4000, "height": 3000, "images": { "small": "…", "large": "…" } }
             ]

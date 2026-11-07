@@ -9,9 +9,12 @@ type tripStop struct {
 	Kind string `json:"kind"`
 	Note string `json:"note,omitempty"`
 	Link string `json:"link,omitempty"`
+	// After is the photo the stop comes after on the route, which places it
+	// in the story; nil for a stop not on the route, shown after the day.
+	After *int `json:"after,omitempty"`
 	// Photos are the place's casual photos, baked here since they're never in
 	// AllPhotosFile: the portfolio has no other way to show them.
-	Photos []casualPhoto `json:"photos"`
+	Photos []casualPhoto `json:"photos,omitempty"`
 }
 
 // casualPhoto is what the portfolio needs to show a casual photo: its
@@ -55,29 +58,25 @@ func casualPhotoOf(data json.RawMessage) (casualPhoto, bool) {
 	return casualPhoto{ID: *photo.ID, Title: title, Width: photo.Width, Height: photo.Height, Images: photo.Images}, true
 }
 
-// pageStops are each day's trip stops with casual photos, from lines,
-// by day: only the photos that are casual photos, and only the places with
-// one or more left.
+// pageStops are each day's trip stops, from lines, by day, each with only
+// the photos that are casual photos.
 func pageStops(lines []TripLine, photos map[int]casualPhoto) map[string][]tripStop {
 	out := map[string][]tripStop{}
 	for _, line := range lines {
 		for _, v := range line.Visits {
-			if place, ok := pageStopOf(v, photos); ok {
-				out[line.Day] = append(out[line.Day], place)
-			}
+			out[line.Day] = append(out[line.Day], pageStopOf(v, photos))
 		}
 	}
 	return out
 }
 
-// pageStopOf is a trip stop as its Trip page shows it, and false when
-// none of its photos are casual photos.
-func pageStopOf(v TripVisit, photos map[int]casualPhoto) (tripStop, bool) {
-	place := tripStop{Name: v.Name, Kind: v.Kind, Note: v.Note, Link: v.Link, Photos: []casualPhoto{}}
+// pageStopOf is a trip stop as its Trip page shows it.
+func pageStopOf(v TripVisit, photos map[int]casualPhoto) tripStop {
+	place := tripStop{Name: v.Name, Kind: v.Kind, Note: v.Note, Link: v.Link, After: v.After}
 	for _, id := range v.Photos {
 		if photo, ok := photos[id]; ok {
 			place.Photos = append(place.Photos, photo)
 		}
 	}
-	return place, len(place.Photos) > 0
+	return place
 }
