@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
 import { Slider } from "@portfolio/components/ui/slider";
 import { parseRange } from "@portfolio/lib/camera-filters";
@@ -34,6 +34,7 @@ export function RangeFilter({
   range,
   write,
   writeHigh = write,
+  illustrate,
   onChange,
 }: {
   label: string;
@@ -41,6 +42,8 @@ export function RangeFilter({
   range: string | undefined;
   write: (value: string) => string;
   writeHigh?: (value: string) => string;
+  /** Shows under the slider what its ends, as it's set or dragged, look like, such as graphics. */
+  illustrate?: (low: string | undefined, high: string | undefined) => ReactNode;
   onChange: (range: string | undefined) => void;
 }) {
   const committed = positionsOf(values, range);
@@ -80,6 +83,7 @@ export function RangeFilter({
         }}
         className="py-1"
       />
+      {illustrate?.(values[low], values[high])}
     </div>
   );
 }

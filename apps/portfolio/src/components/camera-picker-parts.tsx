@@ -1,5 +1,7 @@
-import { Check, Eye, EyeOff } from "lucide-react";
-import { type ComponentProps, useMemo, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ChoiceRow } from "@portfolio/components/choice-row";
+import { EquipmentRow } from "@portfolio/components/equipment-row";
 import type { CameraPickerProps, CameraSection } from "@portfolio/components/camera-picker";
 import {
   RANGE_LABELS,
@@ -8,10 +10,9 @@ import {
   writeSetting,
 } from "@portfolio/components/camera-ranges";
 import { hiddenText } from "@portfolio/components/hidden-note";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@portfolio/components/ui/tooltip";
 import { RangeFilter } from "@portfolio/components/range-filter";
+import { SettingIllustration } from "@portfolio/components/setting-graphics";
 import { RangePresetList } from "@portfolio/components/range-presets";
-import { useScriptDisplay } from "@portfolio/components/script-display-provider";
 import type { EquipmentKey, RangeKey } from "@portfolio/lib/camera-filters";
 import { blockersOf, cameraBlockers } from "@portfolio/lib/camera-blockers";
 import { equipmentChoices, equipmentFilters, isChosen } from "@portfolio/lib/camera-picker";
@@ -68,6 +69,7 @@ function EquipmentPart({
       <ChoiceRow label={ANY_LABELS[equipment]} on={!chosen} onClick={() => choose()} />
       {shown.map((option, index) => (
         <EquipmentRow
+          equipment={equipment}
           key={`${index}-${option.key}:${option.value}`}
           option={option}
           on={isChosen(option, filters)}
@@ -147,84 +149,6 @@ function HiddenToggle({
   );
 }
 
-/** What a hidden choice's hover says hides it, such as "Hidden by Aperture or Lens". */
-function blockedText(blockedBy: string[]): string {
-  if (blockedBy.length === 0) return "Hidden by the other filters together";
-  return `Hidden by ${new Intl.ListFormat("en", { type: "disjunction" }).format(blockedBy)}`;
-}
-
-/**
- * One camera or lens choice, in the Script Display's writing. `blockedBy` names the filters hiding
- * it, when it's a hidden one: it's dimmed and says so on hover.
- */
-function EquipmentRow({
-  option,
-  on,
-  blockedBy,
-  onClick,
-}: {
-  option: FilterOption;
-  on: boolean;
-  blockedBy?: string[];
-  onClick: (on: boolean) => void;
-}) {
-  const { script } = useScriptDisplay();
-  const row = (
-    <ChoiceRow
-      label={option.label[script]}
-      count={option.count}
-      depth={option.depth}
-      on={on}
-      dimmed={blockedBy !== undefined}
-      onClick={() => onClick(on)}
-    />
-  );
-  if (!blockedBy) return row;
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>{row}</TooltipTrigger>
-      <TooltipContent side="right">{blockedText(blockedBy)}</TooltipContent>
-    </Tooltip>
-  );
-}
-
-/** A row in a list of choices: a check while it's on, its name, and how many photos it would show. */
-function ChoiceRow({
-  label,
-  count,
-  depth = 0,
-  on,
-  dimmed = false,
-  onClick,
-  ...rest
-}: Omit<ComponentProps<"button">, "onClick"> & {
-  label: string;
-  count?: number;
-  depth?: number;
-  on: boolean;
-  dimmed?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      {...rest}
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      style={{ paddingLeft: `${0.5 + depth}rem` }}
-      className={cn(
-        "flex items-center gap-2 rounded-sm py-1.5 pr-2 text-left text-sm outline-none hover:bg-accent focus-visible:bg-accent",
-        on && "font-medium",
-        dimmed && "text-muted-foreground/70",
-      )}
-    >
-      <Check aria-hidden className={cn("size-4 shrink-0", !on && "invisible")} />
-      <span className="truncate">{label}</span>
-      <span className="ml-auto text-xs text-muted-foreground tabular-nums">{count}</span>
-    </button>
-  );
-}
-
 /** A camera setting's slider, with its quick picks listed under it. */
 function RangePart({ setting, filters, onChange }: CameraPickerProps & { setting: RangeKey }) {
   const label = RANGE_LABELS[setting];
@@ -236,6 +160,14 @@ function RangePart({ setting, filters, onChange }: CameraPickerProps & { setting
         values={RANGE_VALUES[setting]}
         range={filters[setting]}
         write={writeSetting(setting)}
+        illustrate={(low, high) => (
+          <SettingIllustration
+            setting={setting}
+            low={low}
+            high={high}
+            write={writeSetting(setting)}
+          />
+        )}
         onChange={set}
       />
       <RangePresetList
