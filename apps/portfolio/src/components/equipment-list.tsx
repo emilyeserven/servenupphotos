@@ -1,11 +1,10 @@
-import { ArrowUpDown, Eye, EyeOff, ListTree, type LucideIcon } from "lucide-react";
+import { ArrowUpDown, Eye, EyeOff, ListTree } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import type { CameraPickerProps } from "@portfolio/components/camera-picker";
 import { ChoiceRow } from "@portfolio/components/choice-row";
 import { EquipmentRow } from "@portfolio/components/equipment-row";
 import { hiddenText } from "@portfolio/components/hidden-note";
-import { Button } from "@portfolio/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
+import { PickMenu } from "@portfolio/components/pick-menu";
 import { blockersOf, cameraBlockers } from "@portfolio/lib/camera-blockers";
 import type { EquipmentKey } from "@portfolio/lib/camera-filters";
 import { equipmentChoices, equipmentFilters, isChosen } from "@portfolio/lib/camera-picker";
@@ -17,7 +16,6 @@ import {
 } from "@portfolio/lib/equipment-groupings";
 import { type EquipmentSort, sortEquipment } from "@portfolio/lib/equipment-sort";
 import type { FilterOption } from "@portfolio/lib/filter-options";
-import { cn } from "@portfolio/lib/utils";
 
 /** What each equipment list calls all of its choices. */
 const ANY_LABELS: Record<EquipmentKey, string> = { camera: "All cameras", lens: "All lenses" };
@@ -129,71 +127,6 @@ function Choices({
 /** A heading over the choices under it, such as **DSLR**. */
 function Heading({ label }: { label: string }) {
   return <span className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground">{label}</span>;
-}
-
-/** The name of the choice with the ID. */
-function nameOf<T extends string>(options: [T, string][], value: T): string {
-  return options.find(([id]) => id === value)?.[1] ?? "";
-}
-
-/** Whether the value isn't the first choice, the default. */
-function isChanged<T extends string>(options: [T, string][], value: T): boolean {
-  return options.findIndex(([id]) => id === value) > 0;
-}
-
-/**
- * A small button naming what it changes, such as **Group by**, with its icon, that opens a menu of
- * its choices, the current one checked; pressed-looking while it isn't the first, the default.
- * None with fewer than two choices.
- */
-function PickMenu<T extends string>({
-  label,
-  Icon,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  Icon: LucideIcon;
-  options: [T, string][];
-  value: T;
-  onChange: (value: T) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  if (options.length < 2) return null;
-  const current = nameOf(options, value);
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={`${label}: ${current}`}
-          title={`${label}: ${current}`}
-          className={cn(
-            "h-7 gap-1 px-2 text-xs font-normal text-muted-foreground",
-            isChanged(options, value) && "bg-accent text-foreground",
-          )}
-        >
-          <Icon aria-hidden className="size-3.5" />
-          {label}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="flex w-44 flex-col p-1">
-        {options.map(([id, name]) => (
-          <ChoiceRow
-            key={id}
-            label={name}
-            on={id === value}
-            onClick={() => {
-              onChange(id);
-              setOpen(false);
-            }}
-          />
-        ))}
-      </PopoverContent>
-    </Popover>
-  );
 }
 
 /** The button that shows or hides the choices the other filters hide; nothing when none are. */
