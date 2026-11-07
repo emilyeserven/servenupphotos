@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { lastOrder, newPresetId } from "@/api/graph-presets";
 import { EditorButtons, NameAndOrder } from "@/components/graph-presets/editor-parts";
+import { GroupSettings } from "@/components/graph-presets/group-settings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { GraphPresetFile } from "@portfolio/lib/graph-presets";
 
@@ -49,7 +50,8 @@ export function GroupEditor({ group, files, onSaved }: GroupEditorProps) {
         <CardTitle>{group ? group.name : "New preset group"}</CardTitle>
         <CardDescription>
           A group on the left of the Graph page's Presets picker, listing the presets put in it. Put
-          a preset in a group from the preset's own editor.
+          a preset in a group from the preset's own editor, and change a setting in all its presets
+          at once below.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -67,6 +69,7 @@ export function GroupEditor({ group, files, onSaved }: GroupEditorProps) {
           whyKeep={inside.length > 0 ? "Move its presets out of it first." : ""}
           onSaved={onSaved}
         />
+        <GroupSettings inside={inside} />
       </CardContent>
     </Card>
   );
