@@ -126,8 +126,8 @@ you move between sections:
 - **Color**: the small swatches; picking the chosen one again clears it.
 - **Color threshold** (how much of the picked color a photo needs): a list of **Largest only** (the picked color is the photo's biggest share) and **At least…** (it covers at least the
   share set on the slider, even when another color is bigger). The slider shows under the list only while At least… is chosen.
-- **Vividness**: **Average** (how vivid the whole photo is) or **Peak** (how vivid its most vivid tenth is), and the
-  least of it a photo needs.
+- **Vividness**: a list of **Average** (how vivid the whole photo is) and **Peak** (how vivid its most vivid tenth is), and the
+  slider under it for the least of it a photo needs.
 - **Orientation**: a list of Horizontal, Vertical and Square (see
   [Camera filters](portfolio-filters.md#camera-filters)), each counting the photos the color filters leave.
 

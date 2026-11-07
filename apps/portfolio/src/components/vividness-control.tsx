@@ -61,7 +61,7 @@ export function VividnessControl({
 }
 
 /** The slider for the least vividness a photo needs to show. */
-function VividnessSlider({ vivid }: { vivid: number }) {
+export function VividnessSlider({ vivid }: { vivid: number }) {
   const navigate = useNavigate();
   return (
     <SearchSlider

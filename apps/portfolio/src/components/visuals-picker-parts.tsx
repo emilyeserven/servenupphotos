@@ -5,7 +5,7 @@ import { ChoiceRow } from "@portfolio/components/choice-row";
 import { ShareThreshold } from "@portfolio/components/color-match-control";
 import { OrientationFilter } from "@portfolio/components/orientation-filter";
 import { type PickerInfo, PickerPart } from "@portfolio/components/section-picker";
-import { VividnessControl } from "@portfolio/components/vividness-control";
+import { VividnessSlider } from "@portfolio/components/vividness-control";
 import {
   type ColorFilters,
   countsFor,
@@ -114,15 +114,34 @@ function MatchChoices() {
   );
 }
 
-/** Which vividness to measure and the least a photo needs, with what each choice does. */
+/** Which vividness to measure, as a list of Average and Peak, and the least a photo needs. */
 function VividPart({ filters, info }: PartProps) {
   return (
     <PickerPart
       intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30."
       info={info}
     >
-      <VividnessControl vivid={filters.vivid ?? 0} measure={filters.measure ?? "average"} />
+      <MeasureChoices peak={filters.measure === "peak"} />
+      <VividnessSlider vivid={filters.vivid ?? 0} />
     </PickerPart>
+  );
+}
+
+/** Average and Peak, one under the other, the chosen one checked; average is left out of the URL. */
+function MeasureChoices({ peak }: { peak: boolean }) {
+  const navigate = useNavigate();
+  const set = (measure: "peak" | undefined) =>
+    void navigate({
+      to: ".",
+      resetScroll: false,
+      search: (prev: Record<string, unknown>) => ({ ...prev, measure, photo: undefined }),
+      replace: true,
+    });
+  return (
+    <div role="group" aria-label="Vividness measure" className="-mx-2 flex flex-col">
+      <ChoiceRow label="Average" on={!peak} onClick={() => set(undefined)} />
+      <ChoiceRow label="Peak" on={peak} onClick={() => set("peak")} />
+    </div>
   );
 }
 
