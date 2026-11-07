@@ -15,6 +15,7 @@ import {
 } from "@portfolio/lib/equipment-groupings";
 import { type EquipmentSort, sortEquipment } from "@portfolio/lib/equipment-sort";
 import type { FilterOption } from "@portfolio/lib/filter-options";
+import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
 import { cn } from "@portfolio/lib/utils";
 
 /** What each equipment list calls all of its choices. */
@@ -46,8 +47,8 @@ interface ListProps extends CameraPickerProps {
 }
 
 /**
- * The camera or lens choices, each telling `onPoint` when it's pointed at: a Group by row with a
- * tab for each way to list them, a Sort row for the cameras (by name, or by when the first photo
+ * The camera or lens choices, each telling `onPoint` when it's pointed at: a Group by dropdown
+ * with each way to list them, a Sort dropdown for the cameras (by name, or by when the first photo
  * was taken with each, oldest or newest first), All cameras or All lenses, then the choices.
  */
 export function EquipmentList(props: ListProps) {
@@ -60,13 +61,15 @@ export function EquipmentList(props: ListProps) {
   const choose = (option?: FilterOption) => props.onChange(equipmentFilters(equipment, option));
   return (
     <div className="flex flex-col" onMouseLeave={() => props.onPoint(undefined)}>
-      <TabRow
-        label="Group by"
-        tabs={groupings.map(({ id, label }): [string, string] => [id, label])}
-        value={groupingId}
-        onChange={setGroupingId}
-      />
-      <TabRow label="Sort" tabs={SORTS[equipment]} value={sort} onChange={setSort} />
+      <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <PickSelect
+          label="Group by"
+          options={groupings.map(({ id, label }): [string, string] => [id, label])}
+          value={groupingId}
+          onChange={setGroupingId}
+        />
+        <PickSelect label="Sort" options={SORTS[equipment]} value={sort} onChange={setSort} />
+      </div>
       <ChoiceRow label={ANY_LABELS[equipment]} on={!choices.chosen} onClick={() => choose()} />
       <Choices {...props} options={options} choose={choose} />
     </div>
@@ -117,42 +120,34 @@ function Heading({ label }: { label: string }) {
   return <span className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground">{label}</span>;
 }
 
-/** A row of tabs, such as Group by's Brand, Type and Name; none with fewer than two. */
-function TabRow<T extends string>({
+/** A small labeled dropdown, such as Group by's None, Brand and Type; none with fewer than two choices. */
+function PickSelect<T extends string>({
   label,
-  tabs,
+  options,
   value,
   onChange,
 }: {
   label: string;
-  tabs: [T, string][];
+  options: [T, string][];
   value: T;
   onChange: (value: T) => void;
 }) {
-  if (tabs.length < 2) return null;
+  if (options.length < 2) return null;
   return (
-    <div
-      role="tablist"
-      aria-label={label}
-      className="mb-2 flex items-center gap-1 rounded-md border bg-muted/50 p-0.5"
-    >
-      <span className="px-1.5 text-xs whitespace-nowrap text-muted-foreground">{label}</span>
-      {tabs.map(([id, name]) => (
-        <button
-          key={id}
-          type="button"
-          role="tab"
-          aria-selected={value === id}
-          onClick={() => onChange(id)}
-          className={cn(
-            "flex-1 rounded-sm px-1.5 py-1 text-xs font-medium text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50",
-            value === id && "bg-background text-foreground shadow-xs",
-          )}
-        >
-          {name}
-        </button>
-      ))}
-    </div>
+    <label className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+      <span className="whitespace-nowrap">{label}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value as T)}
+        className={cn(SELECT_CLASS, "h-7 min-w-0 text-xs")}
+      >
+        {options.map(([id, name]) => (
+          <option key={id} value={id}>
+            {name}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
