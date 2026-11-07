@@ -26,7 +26,7 @@ so the sketches appear a moment later, and on screens under 360 px wide they're 
 
 ## Scrubber
 
-Once the chart has scrolled up out of the window, a scrubber appears down the right edge, like the one in Google Photos.
+Once the header (title and filters) has scrolled up out of the window, a scrubber appears down the right edge, like the one in Google Photos.
 It has a tick for each month in the list and a label for each year at its first month. With **Scrubber ticks** set to
 **Day, month & year** in the display options, it has a tick for each day instead, labeled with each
 month's short name at its first day and the year at a year's first day, and its bubble names the day. The tick at the
@@ -74,18 +74,6 @@ open on the same photos (`lib/timeline-old-links.ts`), turned into filters as th
 > **Frontend analogy:** like a redirect map for old routes, but for search params: `validateSearch` rewrites the old
 > keys into the new ones, and the next navigation writes the new ones back to the URL.
 
-The chart under the header sets the date range too, and the buttons above it switch between two
-charts:
-
-| Chart           | Shows                                                                                        | URL              |
-| --------------- | -------------------------------------------------------------------------------------------- | ---------------- |
-| Graph (default) | Photos per day or per month across the selected range, as bars                               | left out         |
-| Heatmap         | Photos per week for every year, like GitHub's contribution graph, with the range's weeks lit | `?chart=heatmap` |
-
-On either chart, click a bar or week to select it, or click and drag across several to select the span between them. The
-graph zooms into the range it selects. The heatmap always shows every year from the oldest photo to today, side by side
-with the oldest on the left, and scrolls sideways through them, starting at the newest. Each year has a column per
-month holding one square for each week that starts (on Sunday) in that month. A week's square is darker the more photos
-were taken that week, in four steps up to the busiest week, weeks outside the selected range are faded, and a run of
-years without photos is folded into one narrow note. On a phone, swiping scrolls the years, so tap a week to select it.
-Both charts count only the photos the filters let through.
+The Timeline has no chart of its own: the [Graph](portfolio-graph.md) page charts photos over time, and the
+[scrubber](#scrubber) shows how busy each month is by how much of it the month takes up. Old links with
+`?chart=heatmap` open the Timeline without it.

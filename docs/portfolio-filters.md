@@ -110,7 +110,7 @@ dimmed.
   keep From on or before To. Clicking the month's name above a calendar swaps the days for every month over the years,
   a row of twelve for each year, newest first, to jump straight to one.
 
-On the Timeline, the date range is the days it shows, and selecting bars or weeks on its chart sets it too.
+On the Timeline, the date range is the days it shows.
 
 > **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
 > `?tag=a&tag=b`, and the tabs are radio buttons over which group is in use.
@@ -207,7 +207,7 @@ Each of these views remembers its own settings in this browser (`lib/view-option
 - **Grid:** square, natural or Table view, **info** under the tiles, the sort (with a color sort's order and secondary
   sort), and the Table's sorted column, hidden columns and Place detail.
 - **Color:** the color wheel or Black & white view, and the preview size.
-- **Timeline:** technical info shown, and the chart or heatmap.
+- **Timeline:** its display options, such as technical info shown and thumbnail size.
 - **Tags:** the sort, and all tags or the top level only.
 
 Filters, the open photo, the Timeline's time range and where the Map is looking aren't remembered this way. The Map's

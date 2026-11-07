@@ -15,31 +15,31 @@ import { useSize } from "@/lib/use-size";
 import { cn } from "@/lib/utils";
 
 /**
- * A scrubber down the right edge of the window, shown once the chart above the photos has scrolled
+ * A scrubber down the right edge of the window, shown once the header above the photos has scrolled
  * out of view, like the one in Google Photos. Its ticks are the months (or days) in the list and its
  * labels the years (or months), with a bigger tick where a bigger unit starts; dragging along it, or clicking it, scrolls the list there, and a bubble names the
  * month under the pointer.
  */
 export function TimelineScrubber({
   list,
-  chart,
+  above,
   byDay = false,
 }: {
   /** Whether each tick is a day, with the months labeled, rather than a month with the years. */
   byDay?: boolean;
   /** The list of months, whose sections carry their heading in `data-month`. */
   list: HTMLElement | null;
-  /** The chart above the list; the scrubber shows once it's scrolled above the window. */
-  chart: HTMLElement | null;
+  /** The page's header above the list; the scrubber shows once it's scrolled above the window. */
+  above: HTMLElement | null;
 }) {
   const layout = useMonthLayout(list, byDay);
   const fraction = useScrollFraction(layout);
-  const shown = useScrolledPast(chart);
+  const shown = useScrolledPast(above);
   if (!layout || layout.marks.length < 2) return null;
   return <ScrubberTrack layout={layout} fraction={fraction} shown={shown} />;
 }
 
-/** The scrubber itself, faded out while the chart is still in view. */
+/** The scrubber itself, faded out while the header is still in view. */
 function ScrubberTrack({
   layout,
   fraction,
