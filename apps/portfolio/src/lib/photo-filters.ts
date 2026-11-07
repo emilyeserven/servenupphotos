@@ -107,10 +107,18 @@ function hasTag(photo: Photo, id: string): boolean {
   return photo.tags.some((tag) => ids.has(tag));
 }
 
+/** The state filter's value for the photos with no state, province or prefecture: `?state=none`. */
+export const NO_STATE = "none";
+
+/** Whether the photo is in the state, or has none when the value is `NO_STATE`. */
+function inState(photo: Photo, value: string): boolean {
+  return value === NO_STATE ? photo.state === null : photo.state === value;
+}
+
 /** How each filter matches a photo to one of its values. */
 const MATCHES: Record<FilterKey, (photo: Photo, value: string) => boolean> = {
   country: (photo, value) => photo.country === value,
-  state: (photo, value) => photo.state === value,
+  state: inState,
   city: (photo, value) => photo.city === value,
   place: (photo, value) => photo.placeIds.includes(value),
   album: inAlbum,

@@ -23,20 +23,20 @@ export type FocusChain = (StatFocus & { filter: Record<string, string | string[]
  * One group on the Stats page, such as Cameras, as a card of its rows. A group that narrows
  * another (`onNarrow`), such as Countries, narrows it with a click on a row, `chosen` being the row
  * chosen; any other group's rows open their photos on the Grid. A group narrowed by others says
- * by what (`focuses`, from the top down), each opening those photos on the Grid, or clearing it.
- * `title` takes the place of the group's title, such as a dropdown of its variants. A long group
+ * by what (`focuses`), each opening those photos on the Grid, or clearing it.
+ * `control` sits at the other end of the title's row, such as a Group by dropdown. A long group
  * shows its first rows and a button for the rest.
  */
 export function StatGroupCard({
   group,
-  title,
+  control,
   focuses,
   chosen,
   onNarrow,
   onClearFocus,
 }: {
   group: StatGroup;
-  title?: ReactNode;
+  control?: ReactNode;
   focuses: FocusChain;
   chosen?: string;
   onNarrow?: (row: StatRow) => void;
@@ -50,7 +50,10 @@ export function StatGroupCard({
       aria-label={group.title}
       className="flex min-w-0 flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground shadow-sm"
     >
-      <h3 className="font-semibold tracking-tight">{title ?? group.title}</h3>
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="font-semibold tracking-tight">{group.title}</h3>
+        {control}
+      </div>
       <FocusChips focuses={focuses} onClearFocus={onClearFocus} />
       {group.rows.length === 0 && (
         <p className="text-sm text-muted-foreground">None of these photos say.</p>
@@ -73,7 +76,7 @@ export function StatGroupCard({
   );
 }
 
-/** The chips for the rows narrowing a group, from the top down; nothing when none do. */
+/** The chip for the row chosen in the card right above a group; nothing when none is. */
 function FocusChips({
   focuses,
   onClearFocus,
