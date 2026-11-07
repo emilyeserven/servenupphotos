@@ -38,7 +38,7 @@ function presetsIn(files: GraphPresetFile[], group?: GraphPresetFile): GraphPres
   return group ? files.filter((file) => file.group === group.id) : [];
 }
 
-/** Edits one preset group, or a new one: its name and where its dropdown sits. */
+/** Edits one preset group, or a new one: its name and where it sits in the Presets picker. */
 export function GroupEditor({ group, files, onSaved }: GroupEditorProps) {
   const [draft, setDraft] = useState(() => groupDraft(files, group));
   const next = groupOf(draft, files, group);
@@ -48,8 +48,8 @@ export function GroupEditor({ group, files, onSaved }: GroupEditorProps) {
       <CardHeader>
         <CardTitle>{group ? group.name : "New preset group"}</CardTitle>
         <CardDescription>
-          A dropdown among the presets on the Graph page, listing the presets put in it. Put a
-          preset in a group from the preset's own editor.
+          A group on the left of the Graph page's Presets picker, listing the presets put in it. Put
+          a preset in a group from the preset's own editor.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

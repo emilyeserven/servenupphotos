@@ -57,17 +57,25 @@ interface PresetDraft {
   group: string;
   order: number;
   graph: PresetGraph;
+  /** Whether it shows as its own button above the Graph page's Presets and Adjust Graph. */
+  spotlight: boolean;
 }
 
 /** A new preset's draft, last in the row. */
 function newDraft(files: GraphPresetFile[]): PresetDraft {
-  return { name: "", group: "", order: lastOrder(files), graph: START_GRAPH };
+  return { name: "", group: "", order: lastOrder(files), graph: START_GRAPH, spotlight: false };
 }
 
 /** A saved preset's draft. */
 function savedDraft(preset: GraphPresetFile): PresetDraft {
   const graph = { ...START_GRAPH, ...preset.graph };
-  return { name: preset.name, group: preset.group ?? "", order: preset.order, graph };
+  return {
+    name: preset.name,
+    group: preset.group ?? "",
+    order: preset.order,
+    graph,
+    spotlight: preset.spotlight === true,
+  };
 }
 
 /** The file the draft saves, keeping a saved preset's ID. */
@@ -84,7 +92,12 @@ function presetOf(
     order: draft.order,
     graph: savedGraph(draft.graph),
   };
-  return draft.group ? { ...file, group: draft.group } : file;
+  return withExtras(file, draft);
+}
+
+/** The file with the draft's group and spotlight, each left out while it's off. */
+function withExtras(file: GraphPresetFile, { group, spotlight }: PresetDraft): GraphPresetFile {
+  return { ...file, ...(group && { group }), ...(spotlight && { spotlight }) };
 }
 
 interface PresetEditorProps {
@@ -115,6 +128,7 @@ export function PresetEditor({ preset, files, onSaved }: PresetEditorProps) {
       <CardContent className="flex flex-col gap-4">
         <NameAndOrder name={draft.name} order={draft.order} placeholder="Aperture" onChange={set} />
         <GroupSelect value={draft.group} files={files} onChange={(group) => set({ group })} />
+        <SpotlightBox checked={draft.spotlight} onChange={(spotlight) => set({ spotlight })} />
         <section aria-label="Graph settings" className="flex flex-col gap-2">
           <h3 className="text-sm font-medium">The graph it sets</h3>
           <GraphControls
@@ -139,13 +153,13 @@ interface GroupSelectProps {
   onChange: (group: string) => void;
 }
 
-/** The preset group it's in, or none to show it as its own button. */
+/** The preset group it's in, or none to list it under Other. */
 function GroupSelect({ value, files, onChange }: GroupSelectProps) {
   const groups = files.filter((file) => file.kind === "group");
   return (
     <Field label="Group">
       <select value={value} onChange={(e) => onChange(e.target.value)} className={SELECT_CLASS}>
-        <option value="">None, its own button</option>
+        <option value="">None, listed under Other</option>
         {groups.map((group) => (
           <option key={group.id} value={group.id}>
             {group.name}
@@ -153,5 +167,32 @@ function GroupSelect({ value, files, onChange }: GroupSelectProps) {
         ))}
       </select>
     </Field>
+  );
+}
+
+/** Whether the preset shows as its own button above the Graph page's Presets and Adjust Graph. */
+function SpotlightBox({
+  checked,
+  onChange,
+}: {
+  checked: boolean;
+  onChange: (spotlight: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center gap-2 text-sm">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="size-4 accent-primary"
+      />
+      <span>
+        <span className="font-medium">Spotlight</span>
+        <span className="text-muted-foreground">
+          {" "}
+          — show it as its own button above Presets and Adjust Graph
+        </span>
+      </span>
+    </label>
   );
 }

@@ -14,12 +14,12 @@ func TestSaveGraphPreset(t *testing.T) {
 	_, c := newMainRepo(t, map[string]string{
 		dataRoot + "/graphs/camera.json": `{"id":"camera","kind":"group","name":"Camera settings","order":1}`,
 	})
-	preset := GraphPreset{ID: "aperture", Kind: "preset", Name: " Aperture ", Order: 2, Group: "camera", Graph: dotGraph}
+	preset := GraphPreset{ID: "aperture", Kind: "preset", Name: " Aperture ", Order: 2, Group: "camera", Graph: dotGraph, Spotlight: true}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, preset); err != nil {
 		t.Fatalf("SaveGraphPreset() error = %v", err)
 	}
 	saved := staged(t, c, dataRoot+"/graphs/aperture.json")
-	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) {
+	if !strings.Contains(saved, `"name": "Aperture"`) || !strings.Contains(saved, `"group": "camera"`) || !strings.Contains(saved, `"x": "aperture"`) || !strings.Contains(saved, `"spotlight": true`) {
 		t.Errorf("saved %s", saved)
 	}
 	ranged := GraphPreset{ID: "mid", Kind: "preset", Name: "Mid", Graph: &GraphSettings{Type: "dot", X: "aperture", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XFrom: "f/2", XTo: "f/8", MinPhotos: 5}}}
@@ -36,12 +36,12 @@ func TestSaveGraphPreset(t *testing.T) {
 	if saved := staged(t, c, dataRoot+"/graphs/months.json"); !strings.Contains(saved, `"type": "heatmap"`) {
 		t.Errorf("heatmap saved as %s", saved)
 	}
-	group := GraphPreset{ID: "time", Kind: "group", Name: "Time", Group: "camera", Graph: dotGraph}
+	group := GraphPreset{ID: "time", Kind: "group", Name: "Time", Group: "camera", Graph: dotGraph, Spotlight: true}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, group); err != nil {
 		t.Fatalf("SaveGraphPreset(group) error = %v", err)
 	}
-	if saved := staged(t, c, dataRoot+"/graphs/time.json"); strings.Contains(saved, "graph") || strings.Contains(saved, "camera") {
-		t.Errorf("a group keeps no graph or group: %s", saved)
+	if saved := staged(t, c, dataRoot+"/graphs/time.json"); strings.Contains(saved, "graph") || strings.Contains(saved, "camera") || strings.Contains(saved, "spotlight") {
+		t.Errorf("a group keeps no graph, group or spotlight: %s", saved)
 	}
 	tests := []struct {
 		name   string
