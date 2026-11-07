@@ -76,8 +76,10 @@ fits without covering the map:
     ones added to the portfolio last, or **Captured**, the ones taken last. Photos with no added date count as
     the oldest added.
   - **Trip lines** (on by default) draws the [trip lines](#trip-lines) under the photos.
-  - **Direction of travel** (off by default, shown while **Trip lines** is on) adds arrows along each line, in its
-    color, pointing from its first point to its last (`components/trip-arrows-layer.tsx`).
+  - **Direction of travel** (off by default, shown while **Trip lines** is on) shows the way each line was travelled
+    like a ride app shows a route: a light runs along it from where it started to where it ended, over and over
+    (`components/trip-flow-layer.tsx`). With the system's reduce motion setting on, each line instead brightens from
+    its start to its end without moving.
   - **Reset to defaults** goes back to these defaults.
 
   These options, but for the group photos, are `components/pin-display-fields.tsx`, which the
