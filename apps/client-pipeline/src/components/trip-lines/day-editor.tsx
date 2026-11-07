@@ -91,7 +91,7 @@ function startingView(day: TripDay, line: TripLine | undefined): EditorView {
 
 /**
  * The day's pages the editor shows on: the photo order (the strip alone), the route (the strip and
- * the map with its tools), and the places visited (the strip, the map and the list of places).
+ * the map with its tools), and the places visited (the map and the list of places).
  */
 export type EditorPart = "order" | "route" | "places";
 
@@ -115,7 +115,7 @@ const PART_NOTES: Record<EditorPart, string> = {
   route:
     "Pick what happened between each two photos, and shape the line on the map: via points, the day's start and end, transit lines and areas.",
   places:
-    "The places stopped at along the day's route, such as restaurants and shops, with or without a photo: add them on the map or from the saved places, and put them between two photos.",
+    "The places stopped at along the day's route, such as restaurants and shops, with or without a photo: add them on the map, from the saved places or by a coordinate. Put them on the route between two photos in the strip on Photo order or Route.",
 };
 
 /** Edits one day's trip line: the photo strip, the map on the Route page, and saving. */
@@ -144,16 +144,18 @@ export function DayEditor({ day: taken, line, part }: DayEditorProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <GroupStrip
-          photos={day.photos}
-          draft={shownDraft}
-          onChange={editDraft}
-          onMove={(id, by) => editDraft({ ...shownDraft, order: movedId(ids, id, by) })}
-          onHover={setHovered}
-          focus={focus}
-          onFocus={setFocus}
-          stacked={part === "order"}
-        />
+        {part !== "places" && (
+          <GroupStrip
+            photos={day.photos}
+            draft={shownDraft}
+            onChange={editDraft}
+            onMove={(id, by) => editDraft({ ...shownDraft, order: movedId(ids, id, by) })}
+            onHover={setHovered}
+            focus={focus}
+            onFocus={setFocus}
+            stacked={part === "order"}
+          />
+        )}
         {part !== "order" && (
           <DayMap
             day={day}

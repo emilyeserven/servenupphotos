@@ -7,7 +7,7 @@ import { VisitChips } from "@/components/trip-lines/visit-chips";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import type { TripPhoto } from "@/lib/trip-days";
 import type { Gap } from "@/lib/trip-gaps";
-import { visitsAfter } from "@/lib/trip-visits";
+import { offRoute, visitsAfter } from "@/lib/trip-visits";
 import { cn } from "@/lib/utils";
 
 interface PhotoStripProps {
@@ -26,14 +26,17 @@ interface PhotoStripProps {
   onMove?: (id: number, by: -1 | 1) => void;
   /** Moves a place visited one photo earlier or later on the route; left out, they can't move. */
   onMoveVisit?: (visit: TripVisit, by: -1 | 1) => void;
-  /** Adds a place visited to the route right after photo `after`; left out, none can be added. */
+  /** Puts a place visited on the route right after photo `after`; left out, none can be put there. */
   onInsertVisit?: (after: number, visit: TripVisit) => void;
+  /** Takes a place visited off the route; left out, they can't be taken off. */
+  onOffVisit?: (visit: TripVisit) => void;
   /** The day's places visited; the ones put on the route show between their two photos. */
   visits?: TripVisit[];
 }
 
 /** The day's photos in the order they were taken, with what happened between each two. */
 export function PhotoStrip({ photos, visits, offset = 0, ...rest }: PhotoStripProps) {
+  const choices = offRoute(visits);
   return (
     <ol className="flex items-center gap-1 overflow-x-auto pb-2" aria-label="The day's photos">
       {photos.map((p, i) => (
@@ -44,6 +47,7 @@ export function PhotoStrip({ photos, visits, offset = 0, ...rest }: PhotoStripPr
           offset={offset}
           prev={photos[i - 1]}
           before={visitsAfter(visits, photos[i - 1]?.id)}
+          choices={choices}
           {...rest}
         />
       ))}
@@ -57,6 +61,8 @@ interface StripItemProps extends Omit<PhotoStripProps, "photos" | "visits"> {
   prev?: TripPhoto;
   /** The places visited on the route between the photo before and this one. */
   before: TripVisit[];
+  /** The day's places visited not on the route yet, which can be put before this photo. */
+  choices: TripVisit[];
   /** Its index among the strip's photos. */
   local: number;
   offset: number;
@@ -86,7 +92,7 @@ function StripItem(props: StripItemProps) {
  */
 function Between(props: StripItemProps & { i: number }) {
   const { photo, prev, gaps, onGap, onSplit, before, i } = props;
-  const chips = <VisitChips visits={before} onMove={props.onMoveVisit} />;
+  const chips = <VisitChips visits={before} onMove={props.onMoveVisit} onOff={props.onOffVisit} />;
   if (!gaps || !prev) return chips;
   const picker = { gap: gapBefore(gaps, i), index: i - 1, onGap };
   return (
@@ -97,7 +103,7 @@ function Between(props: StripItemProps & { i: number }) {
       <GapColumn
         {...picker}
         onSplit={onSplit && (() => onSplit(photo.id))}
-        insert={insertBetween(prev, photo, props.onInsertVisit)}
+        insert={insertBetween(prev, props.choices, props.onInsertVisit)}
       />
     </>
   );
@@ -230,20 +236,19 @@ function MoveButtons({ onMove }: { onMove: (by: -1 | 1) => void }) {
   );
 }
 
-/** Adding a place visited between two photos: the photos, and what adds it. */
+/** Putting a place visited between two photos: the places that can go there, and what puts one. */
 interface InsertBetween {
-  a: TripPhoto;
-  b: TripPhoto;
+  choices: TripVisit[];
   onInsert: (visit: TripVisit) => void;
 }
 
-/** What adds a place visited between a and b, when places can be added. */
+/** What puts a place visited right after photo a, when places can be put on the route. */
 function insertBetween(
   a: TripPhoto,
-  b: TripPhoto,
+  choices: TripVisit[],
   onInsertVisit: ((after: number, visit: TripVisit) => void) | undefined,
 ): InsertBetween | undefined {
-  return onInsertVisit && { a, b, onInsert: (visit) => onInsertVisit(a.id, visit) };
+  return onInsertVisit && { choices, onInsert: (visit) => onInsertVisit(a.id, visit) };
 }
 
 interface GapColumnProps extends GapPickerProps {

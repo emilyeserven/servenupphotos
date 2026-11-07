@@ -1,15 +1,17 @@
 import { ExternalLink, MapPinPlus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import type { Place } from "@/api/places";
-import type { TripVisit, VisitKind } from "@/api/trip-lines";
+import type { TripPoint, TripVisit, VisitKind } from "@/api/trip-lines";
 import { VISIT_ICONS } from "@/components/trip-lines/visit-icons";
-import { VisitRoute } from "@/components/trip-lines/visit-route";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { currentLists } from "@/lib/group-photos";
+import { writtenPosition } from "@/lib/place-gps";
 import type { TripDay } from "@/lib/trip-days";
 import type { GapDraft } from "@/lib/trip-gaps";
 import {
   changedVisit,
+  newVisit,
   placesNear,
   placeVisit,
   VISIT_KINDS,
@@ -28,15 +30,15 @@ interface VisitsProps {
 }
 
 /**
- * The places visited along the route, such as restaurants and museums, with or without a photo:
- * added by clicking the map or from the saved places nearby, each with a kind, a note and a link to
- * it on Google Maps, Naver Map or another map.
+ * The day's places visited, such as restaurants and museums, with or without a photo: added by
+ * clicking the map, from the saved places nearby or by a coordinate, each with a kind, a note and a
+ * link to it on Google Maps, Naver Map or another map. The photo strip on Photo order and Route puts
+ * them on the route.
  */
 export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps) {
   const visits = draft.visits ?? [];
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-sm font-medium">Places visited</h3>
       {visits.map((visit, i) => (
         <VisitRow
           key={i}
@@ -55,13 +57,14 @@ export function Visits({ day, draft, onChange, picking, onPicking }: VisitsProps
           {picking ? "Click the map where it is…" : "Add a place on the map"}
         </Button>
         <SavedPlacePicker day={day} onPick={(v) => onChange(withVisit(draft, v))} />
+        <CoordinateAdder onAdd={(v) => onChange(withVisit(draft, v))} />
       </div>
     </div>
   );
 }
 
 /** The saved places, from the combined lists. */
-export function useSavedPlaces(): Place[] {
+function useSavedPlaces(): Place[] {
   const data = useCombinedData().data;
   return data ? ((currentLists(data).places.data ?? []) as Place[]) : [];
 }
@@ -94,7 +97,7 @@ interface VisitRowProps {
   onChange: (visit: TripVisit | null) => void;
 }
 
-/** One place visited: its kind, name, note, map link and spot on the route, and removing it. */
+/** One place visited: its kind, name, note, map link, where it is on the route, and removing it. */
 function VisitRow({ visit, day, onChange }: VisitRowProps) {
   const set = (fields: Partial<TripVisit>) => onChange({ ...visit, ...fields });
   const Icon = VISIT_ICONS[visit.kind];
@@ -128,7 +131,7 @@ function VisitRow({ visit, day, onChange }: VisitRowProps) {
         onChange={(e) => set({ note: e.target.value })}
       />
       <LinkField link={visit.link} onLink={(link) => set({ link })} />
-      <VisitRoute photos={day.photos} after={visit.after} onAfter={(after) => set({ after })} />
+      <RouteSpot photos={day.photos} after={visit.after} />
       <Button
         variant="ghost"
         size="icon"
@@ -161,4 +164,50 @@ function LinkField({ link, onLink }: { link?: string; onLink: (link: string) => 
       )}
     </span>
   );
+}
+
+/** Where the place is on the route, which the photo strip sets: between which photos, or not yet. */
+function RouteSpot({ photos, after }: { photos: TripDay["photos"]; after?: number }) {
+  const at = photos.findIndex((p) => p.id === after);
+  return (
+    <span className="text-muted-foreground text-xs">
+      {at === -1 ? "Not on the route yet" : `On the route between photos ${at + 1} and ${at + 2}`}
+    </span>
+  );
+}
+
+/** Adds a place visited at a coordinate typed or pasted in, such as from Google Maps. */
+function CoordinateAdder({ onAdd }: { onAdd: (visit: TripVisit) => void }) {
+  const [text, setText] = useState("");
+  const point = pointOf(text);
+  const add = () => {
+    if (!point) return;
+    onAdd(newVisit(point));
+    setText("");
+  };
+  return (
+    <form
+      className="flex items-center gap-1"
+      onSubmit={(e) => {
+        e.preventDefault();
+        add();
+      }}
+    >
+      <Input
+        aria-label="Coordinate"
+        placeholder="34.6688, 135.5026"
+        className="h-8 w-48"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <Button type="submit" variant="outline" size="sm" disabled={!point}>
+        Add at this coordinate
+      </Button>
+    </form>
+  );
+}
+
+/** The latitude and longitude written in text, in decimal degrees or degrees and minutes; none when it isn't one. */
+function pointOf(text: string): TripPoint | undefined {
+  return writtenPosition(text) ?? undefined;
 }

@@ -177,10 +177,12 @@ highlights its dot.
 
 ## Places visited
 
-On the day's **Places** page, under the map, **Places visited** lists the places stopped at along the day's route, with or without a photo: a
-restaurant, café, bar, shop, museum, sight or other. **Add a place on the map** drops one where the map is clicked;
-**Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km of the
-day's photos, named after it. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
+The day's **Places** page lists the places stopped at along the day's route, with or without a photo: a restaurant,
+café, bar, shop, museum, sight or other. It's only for adding them: **Add a place on the map** drops one where the map
+is clicked; **Add a saved place nearby** adds one of the [saved places](places-and-localizations.md) within about 10 km
+of the day's photos, named after it; and **Add at this coordinate** adds one at a latitude and longitude typed or
+pasted in, such as `34.6672, 135.5013` from Google Maps (degrees and minutes work too). Each row says where the place
+is on the route, which Photo order and Route set. Each has a kind, a name (needed to save), a note, and a link to it on Google Maps, Naver
 Map or any other map, which opens from the row. The map shows each as a round pin with its kind's icon.
 
 They're saved with the line as `visits`:
@@ -198,14 +200,14 @@ They're saved with the line as `visits`:
 }
 ```
 
-**Where on the route** puts a place between two photos taken one after the other, such as "Between photos 4 and 5".
-`after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
+The photo strip on **Photo order** and **Route** puts these places on the route: the pin with a plus under each gap,
+shown on hover, lists the day's places not on the route yet, and picking one puts it between those two photos (with a
+link to the Places page to add more). `after` is the photo it comes after. The line then goes from that photo through the place to the next one: the
 segment lists it as a via spot with `"visit": 0` (its index in `visits`), after the via spots of its own, so **Snap
 to streets** routes through it and the map draws it on the line. The photo strip shows the place's icon between those
 two photos, its name shown on hover, with the way between the two photos shown on both sides of it. Pointing at that icon shows arrows that move the place one photo earlier or later on the
-route (it stops at the first and last gap). The pin with a plus under each gap in the strip, shown on hover, adds a
-place right there: a new one halfway between the two photos, to name and move under the map, or one of up to eight
-saved places nearest to them. **Not on the route** leaves it as a pin only. A place put after a break or after the last
+route (it stops at the first and last gap), and a cross that takes it off the route again. A place not on the route
+is a pin only. A place put after a break or after the last
 photo (with no end spot) has no line to sit on, so it stays a pin. The editor works the via spot out from `after` each
 time, so moving or removing the place keeps the line in step; the backend checks that `after` is a photo on the line
 and that every `visit` names a place the day has.

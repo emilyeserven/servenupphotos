@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import type { TripPhoto } from "@/lib/trip-days";
 import { type GapDraft, withGap } from "@/lib/trip-gaps";
 import { type PhotoGroup, photoGroups, withGroupName, withGroupStart } from "@/lib/trip-groups";
-import { insertedVisit, movedVisit, visitsAfter } from "@/lib/trip-visits";
+import { movedVisit, offRoute, placedVisit, visitsAfter } from "@/lib/trip-visits";
 import { VisitInsert } from "@/components/trip-lines/visit-insert";
 import { isWandered, withWandered } from "@/lib/trip-wander";
 
@@ -40,6 +40,7 @@ export function GroupStrip(props: GroupStripProps) {
   const toggle = (key: string) =>
     setCollapsed((c) => new Set(c.has(key) ? [...c].filter((k) => k !== key) : [...c, key]));
   const onMoveVisit = (visit: TripVisit, by: -1 | 1) => onChange(movedVisit(draft, visit, ids, by));
+  const onOffVisit = (visit: TripVisit) => onChange(placedVisit(draft, visit, undefined));
   return (
     <ol
       className={cn("flex items-start gap-2 pb-2", stacked ? "flex-col" : "overflow-x-auto")}
@@ -57,6 +58,7 @@ export function GroupStrip(props: GroupStripProps) {
               photos={photos}
               onChange={onChange}
               onMoveVisit={onMoveVisit}
+              onOffVisit={onOffVisit}
               before={visitsAfter(draft.visits, ids[g.start - 1])}
               stacked={stacked}
             />
@@ -73,6 +75,7 @@ export function GroupStrip(props: GroupStripProps) {
             onFocus={onFocus}
             onMove={onMove}
             onMoveVisit={onMoveVisit}
+            onOffVisit={onOffVisit}
           />
         </li>
       ))}
@@ -86,6 +89,7 @@ interface GroupGapProps {
   photos: TripPhoto[];
   onChange: (draft: GapDraft) => void;
   onMoveVisit: (visit: TripVisit, by: -1 | 1) => void;
+  onOffVisit: (visit: TripVisit) => void;
   /** The places visited on the route between the two groups. */
   before: TripVisit[];
   /** Whether the groups are stacked, so this sits between them under the first. */
@@ -95,19 +99,18 @@ interface GroupGapProps {
 /** What happened between two groups, the places visited there, and joining the two. */
 function GroupGap(props: GroupGapProps) {
   const { draft, group, photos, onChange, onMoveVisit, before, stacked } = props;
-  const [a, b] = [photos[group.start - 1], photos[group.start]];
+  const a = photos[group.start - 1];
   return (
     <div className={gapClass(stacked)}>
       {before.length > 0 && (
         <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
       )}
-      <VisitChips visits={before} onMove={onMoveVisit} />
+      <VisitChips visits={before} onMove={onMoveVisit} onOff={props.onOffVisit} />
       <PhotoStripGap draft={draft} index={group.start - 1} onChange={onChange} />
-      {a && b && (
+      {a && (
         <VisitInsert
-          a={a}
-          b={b}
-          onInsert={(visit) => onChange(insertedVisit(draft, visit, a.id))}
+          choices={offRoute(draft.visits)}
+          onInsert={(visit) => onChange(placedVisit(draft, visit, a.id))}
         />
       )}
       <Button
@@ -181,6 +184,7 @@ interface GroupBoxProps {
   onFocus: (name: string | undefined) => void;
   onMove: (id: number, by: -1 | 1) => void;
   onMoveVisit: (visit: TripVisit, by: -1 | 1) => void;
+  onOffVisit: (visit: TripVisit) => void;
 }
 
 /** One group: its name, how many photos, collapsing and showing it alone, and its photos. */
@@ -199,7 +203,8 @@ function GroupBox(props: GroupBoxProps) {
           onSplit={(id) => onChange(withGroupStart(draft, id, true))}
           onMove={props.onMove}
           onMoveVisit={props.onMoveVisit}
-          onInsertVisit={(after, visit) => onChange(insertedVisit(draft, visit, after))}
+          onInsertVisit={(after, visit) => onChange(placedVisit(draft, visit, after))}
+          onOffVisit={props.onOffVisit}
           visits={draft.visits}
         />
       )}
