@@ -8,23 +8,24 @@ import { cn } from "@portfolio/lib/utils";
 type KeyItem = Pick<GraphSeries, "label" | "color">;
 
 /**
- * A graph with its key floating over its top right corner, apart from the y axis: open at first,
- * and folded up to a small **Key** button by clicking its heading. Without items, just the graph.
+ * A graph with its key: a **Key** button in a row of its own over the graph's right end, so folded
+ * it covers nothing, and open at first, its list floating under the button over the graph's top
+ * right corner, apart from the y axis. Without items, just the graph.
  */
 export function WithKey({ items, children }: { items: KeyItem[]; children: ReactNode }) {
   return (
-    <div className="relative">
-      {children}
+    <div className="flex flex-col gap-1">
       {items.length > 0 && <KeyPanel items={items} />}
+      {children}
     </div>
   );
 }
 
-/** The floating key: its heading, which opens and closes it, over each item with its color. */
+/** The key's button, which opens and closes it, and while it's open each item with its color floating under it. */
 function KeyPanel({ items }: { items: KeyItem[] }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="absolute top-0 right-0 z-10 max-w-44 rounded-md border bg-card/95 text-xs shadow-sm backdrop-blur-sm">
+    <div className="relative z-10 ml-auto w-max max-w-44 rounded-md border bg-card/95 text-xs shadow-sm backdrop-blur-sm">
       <button
         type="button"
         aria-expanded={open}
@@ -38,7 +39,11 @@ function KeyPanel({ items }: { items: KeyItem[] }) {
           className={cn("ml-auto size-3.5 opacity-60 transition-transform", open && "rotate-180")}
         />
       </button>
-      {open && <KeyList items={items} />}
+      {open && (
+        <div className="absolute top-full -right-px w-max max-w-48 min-w-[calc(100%+2px)] rounded-md rounded-tr-none border bg-card/95 shadow-sm backdrop-blur-sm">
+          <KeyList items={items} />
+        </div>
+      )}
     </div>
   );
 }
@@ -48,7 +53,7 @@ function KeyList({ items }: { items: KeyItem[] }) {
   return (
     <ul
       aria-label="Key"
-      className="flex max-h-48 flex-col gap-1 overflow-y-auto border-t px-2 py-1.5 text-muted-foreground"
+      className="flex max-h-48 flex-col gap-1 overflow-y-auto px-2 py-1.5 text-muted-foreground"
     >
       {items.map((item) => (
         <li key={item.label} className="flex items-center gap-1.5">
