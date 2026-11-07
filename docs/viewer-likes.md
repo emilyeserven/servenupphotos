@@ -1,13 +1,13 @@
-# Viewer Likes
+# User Likes
 
-`/viewer-likes`, under **Publish** in the sidebar, collects the photos people liked on the portfolio. A visitor likes
+`/viewer-likes`, **User Likes** under **Publish** in the sidebar, collects the photos people liked on the portfolio. A visitor likes
 photos on the portfolio's **My Likes** page and sends you the text **Send to photographer** makes, in one of two forms:
 
 - **Discord:** a Markdown list of photo links with their titles and comments, such as
   `- [Castle Door](https://servenupphotos.net/photos/284/) – love the stones`.
 - **Messenger / Text:** the liked photos' IDs joined with commas, such as `281, 284, 286`.
 
-On Viewer Likes you name who sent it and paste the text (or
+On User Likes you name who sent it and paste the text (or
 upload it as a `.txt` or `.json` file), and the pipeline adds one like to each of those photos.
 
 Each list belongs to a **person**. Importing a new list for someone who already sent one replaces their old list

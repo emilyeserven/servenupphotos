@@ -10,22 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AlbumSuggestionsRouteImport } from './routes/album-suggestions'
 import { Route as BucketRouteImport } from './routes/bucket'
+import { Route as BulkPlacesRouteImport } from './routes/bulk-places'
 import { Route as BulkUploadRouteImport } from './routes/bulk-upload'
 import { Route as CameraOverridesRouteImport } from './routes/camera-overrides'
 import { Route as CaptionTemplatesRouteImport } from './routes/caption-templates'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as GenreSuggestionsRouteImport } from './routes/genre-suggestions'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
 import { Route as LocalizationsRouteImport } from './routes/localizations'
+import { Route as LocationNamesRouteImport } from './routes/location-names'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PlacesRouteImport } from './routes/places'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SiteSpotlightRouteImport } from './routes/site-spotlight'
 import { Route as SizesRouteImport } from './routes/sizes'
 import { Route as SmallTagsRouteImport } from './routes/small-tags'
+import { Route as TagDataRouteImport } from './routes/tag-data'
 import { Route as TimelineLabelsRouteImport } from './routes/timeline-labels'
 import { Route as UpdateDataRouteImport } from './routes/update-data'
 import { Route as ViewerLikesRouteImport } from './routes/viewer-likes'
@@ -35,6 +40,8 @@ import { Route as GenresIndexRouteImport } from './routes/genres.index'
 import { Route as GenresIdRouteImport } from './routes/genres.$id'
 import { Route as LightroomAlbumsIndexRouteImport } from './routes/lightroom-albums.index'
 import { Route as LightroomAlbumsImportRouteImport } from './routes/lightroom-albums.import'
+import { Route as TagDataIndexRouteImport } from './routes/tag-data.index'
+import { Route as TagDataSectionRouteImport } from './routes/tag-data.$section'
 import { Route as TagsIndexRouteImport } from './routes/tags.index'
 import { Route as TagsIdRouteImport } from './routes/tags.$id'
 import { Route as UpdateDataIndexRouteImport } from './routes/update-data.index'
@@ -45,9 +52,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AlbumSuggestionsRoute = AlbumSuggestionsRouteImport.update({
+  id: '/album-suggestions',
+  path: '/album-suggestions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BucketRoute = BucketRouteImport.update({
   id: '/bucket',
   path: '/bucket',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BulkPlacesRoute = BulkPlacesRouteImport.update({
+  id: '/bulk-places',
+  path: '/bulk-places',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BulkUploadRoute = BulkUploadRouteImport.update({
@@ -80,6 +97,11 @@ const GalleryRoute = GalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenreSuggestionsRoute = GenreSuggestionsRouteImport.update({
+  id: '/genre-suggestions',
+  path: '/genre-suggestions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InFlightRoute = InFlightRouteImport.update({
   id: '/in-flight',
   path: '/in-flight',
@@ -93,6 +115,11 @@ const InstagramRoute = InstagramRouteImport.update({
 const LocalizationsRoute = LocalizationsRouteImport.update({
   id: '/localizations',
   path: '/localizations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationNamesRoute = LocationNamesRouteImport.update({
+  id: '/location-names',
+  path: '/location-names',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MetadataGroupsRoute = MetadataGroupsRouteImport.update({
@@ -123,6 +150,11 @@ const SizesRoute = SizesRouteImport.update({
 const SmallTagsRoute = SmallTagsRouteImport.update({
   id: '/small-tags',
   path: '/small-tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TagDataRoute = TagDataRouteImport.update({
+  id: '/tag-data',
+  path: '/tag-data',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TimelineLabelsRoute = TimelineLabelsRouteImport.update({
@@ -170,6 +202,16 @@ const LightroomAlbumsImportRoute = LightroomAlbumsImportRouteImport.update({
   path: '/lightroom-albums/import',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TagDataIndexRoute = TagDataIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TagDataRoute,
+} as any)
+const TagDataSectionRoute = TagDataSectionRouteImport.update({
+  id: '/$section',
+  path: '/$section',
+  getParentRoute: () => TagDataRoute,
+} as any)
 const TagsIndexRoute = TagsIndexRouteImport.update({
   id: '/tags/',
   path: '/tags/',
@@ -193,48 +235,59 @@ const UpdateDataSectionRoute = UpdateDataSectionRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/album-suggestions': typeof AlbumSuggestionsRoute
   '/bucket': typeof BucketRoute
+  '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/genre-suggestions': typeof GenreSuggestionsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/localizations': typeof LocalizationsRoute
+  '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
+  '/tag-data': typeof TagDataRouteWithChildren
   '/timeline-labels': typeof TimelineLabelsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/tag-data/$section': typeof TagDataSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
   '/genres/': typeof GenresIndexRoute
   '/lightroom-albums/': typeof LightroomAlbumsIndexRoute
+  '/tag-data/': typeof TagDataIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/album-suggestions': typeof AlbumSuggestionsRoute
   '/bucket': typeof BucketRoute
+  '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/genre-suggestions': typeof GenreSuggestionsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/localizations': typeof LocalizationsRoute
+  '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
@@ -246,44 +299,53 @@ export interface FileRoutesByTo {
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/tag-data/$section': typeof TagDataSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums': typeof AlbumsIndexRoute
   '/genres': typeof GenresIndexRoute
   '/lightroom-albums': typeof LightroomAlbumsIndexRoute
+  '/tag-data': typeof TagDataIndexRoute
   '/tags': typeof TagsIndexRoute
   '/update-data': typeof UpdateDataIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/album-suggestions': typeof AlbumSuggestionsRoute
   '/bucket': typeof BucketRoute
+  '/bulk-places': typeof BulkPlacesRoute
   '/bulk-upload': typeof BulkUploadRoute
   '/camera-overrides': typeof CameraOverridesRoute
   '/caption-templates': typeof CaptionTemplatesRoute
   '/compare': typeof CompareRoute
   '/exif': typeof ExifRoute
   '/gallery': typeof GalleryRoute
+  '/genre-suggestions': typeof GenreSuggestionsRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
   '/localizations': typeof LocalizationsRoute
+  '/location-names': typeof LocationNamesRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
   '/settings': typeof SettingsRoute
   '/site-spotlight': typeof SiteSpotlightRoute
   '/sizes': typeof SizesRoute
   '/small-tags': typeof SmallTagsRoute
+  '/tag-data': typeof TagDataRouteWithChildren
   '/timeline-labels': typeof TimelineLabelsRoute
   '/update-data': typeof UpdateDataRouteWithChildren
   '/viewer-likes': typeof ViewerLikesRoute
   '/albums/$id': typeof AlbumsIdRoute
   '/genres/$id': typeof GenresIdRoute
   '/lightroom-albums/import': typeof LightroomAlbumsImportRoute
+  '/tag-data/$section': typeof TagDataSectionRoute
   '/tags/$id': typeof TagsIdRoute
   '/update-data/$section': typeof UpdateDataSectionRoute
   '/albums/': typeof AlbumsIndexRoute
   '/genres/': typeof GenresIndexRoute
   '/lightroom-albums/': typeof LightroomAlbumsIndexRoute
+  '/tag-data/': typeof TagDataIndexRoute
   '/tags/': typeof TagsIndexRoute
   '/update-data/': typeof UpdateDataIndexRoute
 }
@@ -291,48 +353,59 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/album-suggestions'
     | '/bucket'
+    | '/bulk-places'
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/genre-suggestions'
     | '/in-flight'
     | '/instagram'
     | '/localizations'
+    | '/location-names'
     | '/metadata-groups'
     | '/places'
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
+    | '/tag-data'
     | '/timeline-labels'
     | '/update-data'
     | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/tag-data/$section'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums/'
     | '/genres/'
     | '/lightroom-albums/'
+    | '/tag-data/'
     | '/tags/'
     | '/update-data/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/album-suggestions'
     | '/bucket'
+    | '/bulk-places'
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/genre-suggestions'
     | '/in-flight'
     | '/instagram'
     | '/localizations'
+    | '/location-names'
     | '/metadata-groups'
     | '/places'
     | '/settings'
@@ -344,65 +417,79 @@ export interface FileRouteTypes {
     | '/albums/$id'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/tag-data/$section'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums'
     | '/genres'
     | '/lightroom-albums'
+    | '/tag-data'
     | '/tags'
     | '/update-data'
   id:
     | '__root__'
     | '/'
+    | '/album-suggestions'
     | '/bucket'
+    | '/bulk-places'
     | '/bulk-upload'
     | '/camera-overrides'
     | '/caption-templates'
     | '/compare'
     | '/exif'
     | '/gallery'
+    | '/genre-suggestions'
     | '/in-flight'
     | '/instagram'
     | '/localizations'
+    | '/location-names'
     | '/metadata-groups'
     | '/places'
     | '/settings'
     | '/site-spotlight'
     | '/sizes'
     | '/small-tags'
+    | '/tag-data'
     | '/timeline-labels'
     | '/update-data'
     | '/viewer-likes'
     | '/albums/$id'
     | '/genres/$id'
     | '/lightroom-albums/import'
+    | '/tag-data/$section'
     | '/tags/$id'
     | '/update-data/$section'
     | '/albums/'
     | '/genres/'
     | '/lightroom-albums/'
+    | '/tag-data/'
     | '/tags/'
     | '/update-data/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AlbumSuggestionsRoute: typeof AlbumSuggestionsRoute
   BucketRoute: typeof BucketRoute
+  BulkPlacesRoute: typeof BulkPlacesRoute
   BulkUploadRoute: typeof BulkUploadRoute
   CameraOverridesRoute: typeof CameraOverridesRoute
   CaptionTemplatesRoute: typeof CaptionTemplatesRoute
   CompareRoute: typeof CompareRoute
   ExifRoute: typeof ExifRoute
   GalleryRoute: typeof GalleryRoute
+  GenreSuggestionsRoute: typeof GenreSuggestionsRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
   LocalizationsRoute: typeof LocalizationsRoute
+  LocationNamesRoute: typeof LocationNamesRoute
   MetadataGroupsRoute: typeof MetadataGroupsRoute
   PlacesRoute: typeof PlacesRoute
   SettingsRoute: typeof SettingsRoute
   SiteSpotlightRoute: typeof SiteSpotlightRoute
   SizesRoute: typeof SizesRoute
   SmallTagsRoute: typeof SmallTagsRoute
+  TagDataRoute: typeof TagDataRouteWithChildren
   TimelineLabelsRoute: typeof TimelineLabelsRoute
   UpdateDataRoute: typeof UpdateDataRouteWithChildren
   ViewerLikesRoute: typeof ViewerLikesRoute
@@ -425,11 +512,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/album-suggestions': {
+      id: '/album-suggestions'
+      path: '/album-suggestions'
+      fullPath: '/album-suggestions'
+      preLoaderRoute: typeof AlbumSuggestionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/bucket': {
       id: '/bucket'
       path: '/bucket'
       fullPath: '/bucket'
       preLoaderRoute: typeof BucketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bulk-places': {
+      id: '/bulk-places'
+      path: '/bulk-places'
+      fullPath: '/bulk-places'
+      preLoaderRoute: typeof BulkPlacesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bulk-upload': {
@@ -474,6 +575,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/genre-suggestions': {
+      id: '/genre-suggestions'
+      path: '/genre-suggestions'
+      fullPath: '/genre-suggestions'
+      preLoaderRoute: typeof GenreSuggestionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/in-flight': {
       id: '/in-flight'
       path: '/in-flight'
@@ -493,6 +601,13 @@ declare module '@tanstack/react-router' {
       path: '/localizations'
       fullPath: '/localizations'
       preLoaderRoute: typeof LocalizationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/location-names': {
+      id: '/location-names'
+      path: '/location-names'
+      fullPath: '/location-names'
+      preLoaderRoute: typeof LocationNamesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/metadata-groups': {
@@ -535,6 +650,13 @@ declare module '@tanstack/react-router' {
       path: '/small-tags'
       fullPath: '/small-tags'
       preLoaderRoute: typeof SmallTagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tag-data': {
+      id: '/tag-data'
+      path: '/tag-data'
+      fullPath: '/tag-data'
+      preLoaderRoute: typeof TagDataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/timeline-labels': {
@@ -600,6 +722,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LightroomAlbumsImportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tag-data/': {
+      id: '/tag-data/'
+      path: '/'
+      fullPath: '/tag-data/'
+      preLoaderRoute: typeof TagDataIndexRouteImport
+      parentRoute: typeof TagDataRoute
+    }
+    '/tag-data/$section': {
+      id: '/tag-data/$section'
+      path: '/$section'
+      fullPath: '/tag-data/$section'
+      preLoaderRoute: typeof TagDataSectionRouteImport
+      parentRoute: typeof TagDataRoute
+    }
     '/tags/': {
       id: '/tags/'
       path: '/tags'
@@ -631,6 +767,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface TagDataRouteChildren {
+  TagDataSectionRoute: typeof TagDataSectionRoute
+  TagDataIndexRoute: typeof TagDataIndexRoute
+}
+
+const TagDataRouteChildren: TagDataRouteChildren = {
+  TagDataSectionRoute: TagDataSectionRoute,
+  TagDataIndexRoute: TagDataIndexRoute,
+}
+
+const TagDataRouteWithChildren =
+  TagDataRoute._addFileChildren(TagDataRouteChildren)
+
 interface UpdateDataRouteChildren {
   UpdateDataSectionRoute: typeof UpdateDataSectionRoute
   UpdateDataIndexRoute: typeof UpdateDataIndexRoute
@@ -647,22 +796,27 @@ const UpdateDataRouteWithChildren = UpdateDataRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AlbumSuggestionsRoute: AlbumSuggestionsRoute,
   BucketRoute: BucketRoute,
+  BulkPlacesRoute: BulkPlacesRoute,
   BulkUploadRoute: BulkUploadRoute,
   CameraOverridesRoute: CameraOverridesRoute,
   CaptionTemplatesRoute: CaptionTemplatesRoute,
   CompareRoute: CompareRoute,
   ExifRoute: ExifRoute,
   GalleryRoute: GalleryRoute,
+  GenreSuggestionsRoute: GenreSuggestionsRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
   LocalizationsRoute: LocalizationsRoute,
+  LocationNamesRoute: LocationNamesRoute,
   MetadataGroupsRoute: MetadataGroupsRoute,
   PlacesRoute: PlacesRoute,
   SettingsRoute: SettingsRoute,
   SiteSpotlightRoute: SiteSpotlightRoute,
   SizesRoute: SizesRoute,
   SmallTagsRoute: SmallTagsRoute,
+  TagDataRoute: TagDataRouteWithChildren,
   TimelineLabelsRoute: TimelineLabelsRoute,
   UpdateDataRoute: UpdateDataRouteWithChildren,
   ViewerLikesRoute: ViewerLikesRoute,

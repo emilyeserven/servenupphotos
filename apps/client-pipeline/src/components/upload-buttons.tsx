@@ -22,8 +22,8 @@ function useCloseOnNavigate(close: () => void) {
 }
 
 /**
- * The sidebar's split Upload button: its main part picks one photo for the Photo page, and its right
- * part, the Bulk Upload icon, adds many to the batch. Both open in a modal.
+ * The sidebar's split Upload button: its main part, Bulk Upload, adds many photos to the batch, and
+ * its right part, the Upload icon, picks one photo for the Photo page. Both open in a modal.
  */
 export function UploadButtons({ onNavigate }: { onNavigate?: () => void }) {
   const [open, setOpen] = useState<Open>(null);
@@ -40,20 +40,20 @@ export function UploadButtons({ onNavigate }: { onNavigate?: () => void }) {
       >
         <Button
           className="flex-1 rounded-r-none group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:rounded-md"
-          title="Upload"
-          onClick={() => setOpen("single")}
+          title="Bulk Upload"
+          onClick={() => setOpen("bulk")}
         >
-          <UploadIcon aria-hidden />
-          <span className="group-data-[collapsible=icon]:sr-only">Upload</span>
+          <ImagesIcon aria-hidden />
+          <span className="group-data-[collapsible=icon]:sr-only">Bulk Upload</span>
         </Button>
         <Button
           size="icon"
           className="border-primary-foreground/25 rounded-l-none border-l group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:rounded-md group-data-[collapsible=icon]:border-l-0"
-          title="Bulk Upload"
-          aria-label="Bulk Upload"
-          onClick={() => setOpen("bulk")}
+          title="Upload one photo"
+          aria-label="Upload one photo"
+          onClick={() => setOpen("single")}
         >
-          <ImagesIcon aria-hidden />
+          <UploadIcon aria-hidden />
         </Button>
       </div>
       <SingleUploadDialog open={open === "single"} onClose={close} onNavigate={onNavigate} />

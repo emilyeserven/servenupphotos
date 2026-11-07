@@ -55,7 +55,7 @@ export interface Localization {
   localScript: string;
   /**
    * Other ways photos and places write a country, state or city, such as "United States" for "United
-   * States of America". Its name wins over them: Update Data's Location names rewrites them to it.
+   * States of America". Its name wins over them: Location Names rewrites them to it.
    */
   otherNames?: string[];
 }

@@ -209,7 +209,7 @@ and country its places give it) and a checkbox, ticked when the photo has nothin
 
 **Fill in N ticked** puts them into the Location card as an edit that **Save changes** saves.
 
-To ask about many photos without places at once, use [Update Data → Bulk places](update-data.md#bulk-places).
+To ask about many photos without places at once, use [Places → Bulk Places](update-data.md#bulk-places).
 
 > **Frontend analogy:** it's the Tags field's paste handling with a JSON body instead of a CSV: parse, diff each field
 > against the form's current value, and show a "review changes" list of checkboxes before patching the form state.
@@ -326,7 +326,7 @@ and places still write another name, with a link to Update Data. The Photo page'
 and a place's **City**, offer only the winning names too. The Localizations page keeps a country's or city's other
 names when saving its row.
 
-The names are rewritten in the files, not only shown: **Update Data → Location names**
+The names are rewritten in the files, not only shown: **Places → Location Names**
 (`POST /api/data/location-names/preview`, then `POST /api/data/location-names`) lists every photo file whose `country`,
 `state`, `city`, `customCountry`, `customState` or `customCity`, and every place file whose `country`, `state` or
 `city`, is another name, then saves
