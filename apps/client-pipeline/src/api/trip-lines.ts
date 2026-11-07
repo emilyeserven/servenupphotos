@@ -81,6 +81,22 @@ export interface TripLine {
   segments: TripSegment[];
   /** The places visited along the day's route, such as a restaurant, with or without a photo. */
   visits?: TripVisit[];
+  /** The areas photos without an exact spot were taken in, such as a park. */
+  fences?: TripFence[];
+}
+
+/** An outline as a GeoJSON MultiPolygon's coordinates: polygons of rings of [longitude, latitude]. */
+export type AreaShape = [number, number][][][];
+
+/** An area that photos without an exact spot were taken somewhere in, drawn as a shaded area. */
+export interface TripFence {
+  /** What the area is called, such as "Osaka Castle Park". */
+  name: string;
+  /** The IDs of the photos taken in it. */
+  photos: number[];
+  /** Its OpenStreetMap ID, such as "R358674", when looked up there. */
+  osm?: string;
+  shape: AreaShape;
 }
 
 /** What sort of place a visit is. */

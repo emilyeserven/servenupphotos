@@ -4,6 +4,7 @@ import { MapDayFilter } from "@/components/map-day-filter";
 import { MapDisplayOptions } from "@/components/map-display-options";
 import { MapViewControls } from "@/components/map-view-controls";
 import { MapPlacePicker } from "@/components/map-place-picker";
+import { PlaceAreaLayer } from "@/components/place-area-layer";
 import { MoreFilterControls } from "@/components/photo-filters";
 import { ViewInGridButton } from "@/components/view-in-grid-button";
 import type { MapDisplay } from "@/lib/map-display";
@@ -11,9 +12,11 @@ import { type DayRange, daysInView } from "@/lib/map-days";
 import { gridFiltersFor } from "@/lib/map-grid-link";
 import { type PlacedPhoto, placedPhotos } from "@/lib/map-photos";
 import { parseFilters } from "@/lib/photo-filters";
+import { useShownArea } from "@/lib/place-areas";
 
 /**
- * The map's controls under its title: **Places**, which moves the map to a place, the zoom-out button, the display options, then
+ * The map's controls under its title: **Places**, which moves the map to a place and shades its
+ * area while it's pointed at and once it's picked, when it has one (see place-areas.ts), the zoom-out button, the display options, then
  * **More filters** (the days in view, album, tag and genre), **View in grid** and **Browse**.
  */
 export function MapControls({
@@ -47,11 +50,22 @@ export function MapControls({
   browsable: PlacedPhoto[];
   onBrowse: (photo: PlacedPhoto, photos: PlacedPhoto[]) => void;
 }) {
+  const area = useShownArea();
   return (
     <MapViewControls
       onReset={onReset}
-      places={<MapPlacePicker photos={filtered} onPick={onGoTo} />}
+      places={
+        <MapPlacePicker
+          photos={filtered}
+          onPick={(photos, value) => {
+            area.pick(value);
+            onGoTo(photos);
+          }}
+          onHover={area.hover}
+        />
+      }
     >
+      <PlaceAreaLayer {...area.shown} />
       <MapDisplayOptions display={display} onChange={onDisplayChange} />
       <MoreFilterControls
         photos={placedPhotos}

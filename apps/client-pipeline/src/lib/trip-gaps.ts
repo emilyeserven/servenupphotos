@@ -1,4 +1,5 @@
 import type {
+  TripFence,
   TripMode,
   TripPoint,
   TripSegment,
@@ -45,6 +46,8 @@ export interface GapDraft {
   names?: Record<string, string>;
   /** The places visited along the route, such as restaurants, in the order added. */
   visits?: TripVisit[];
+  /** The areas photos without an exact spot were taken in, in the order added. */
+  fences?: TripFence[];
 }
 
 /** The line a hop rode, and how the hop was travelled when it was picked. */

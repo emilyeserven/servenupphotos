@@ -150,11 +150,12 @@ func sortPaths(paths []string) {
 	sort.Strings(paths)
 }
 
-// isDataFile reports a .json file directly in folder other than skip.
+// isDataFile reports a .json file directly in folder other than skip and
+// GeoJSON files (.geo.json): TRIPLINES.geo.json and the places' areas.
 func isDataFile(folder, p, skip string) bool {
 	base := path.Base(p)
 	return inFolder(folder, p) && strings.EqualFold(path.Ext(p), ".json") && !strings.EqualFold(base, skip) &&
-		!strings.EqualFold(base, TripLinesMapFile)
+		!strings.HasSuffix(strings.ToLower(base), ".geo.json")
 }
 
 // Change statuses of a file against the base branch, as GitHub names them in

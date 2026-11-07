@@ -142,15 +142,3 @@ func visitFeatureOf(day string, v TripVisit) visitFeature {
 		Properties: visitProps{Feature: "visit", Day: day, Name: v.Name, Kind: v.Kind, Note: v.Note, Link: v.Link},
 	}
 }
-
-// countFeatures is how many lines and how many pins m has.
-func countFeatures(m tripLinesMap) (lines, visits int) {
-	for _, f := range m.Features {
-		if _, ok := f.(visitFeature); ok {
-			visits++
-		} else {
-			lines++
-		}
-	}
-	return lines, visits
-}

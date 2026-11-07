@@ -18,11 +18,16 @@ export interface TripPhoto {
   place?: { id: string; name: string };
 }
 
+/** A photo taken on a day with no exact spot, which can go in an area (a fence) instead. */
+export type LoosePhoto = Omit<TripPhoto, "latitude" | "longitude">;
+
 /** A day a trip line can be marked for: two or more photos at two or more spots. */
 export interface TripDay {
   day: string;
   /** Its photos with an exact spot, in the order they were taken. */
   photos: TripPhoto[];
+  /** Its photos with no exact spot, in the order they were taken. */
+  loose: LoosePhoto[];
   /** How many different spots they're at. */
   spots: number;
 }
@@ -80,14 +85,25 @@ interface PlaceLookup {
   names: Map<string, string>;
 }
 
+/** The photo as a LoosePhoto, leaving out its spot, or undefined when it has no ID or date. */
+function datedPhoto(photo: CombinedPhoto, names: Map<string, string>): LoosePhoto | undefined {
+  const taken = takenOf(photo);
+  if (typeof photo.id !== "number" || !taken) return undefined;
+  const day = taken.slice(0, 10).replaceAll(":", "-");
+  return { id: photo.id, photo, day, time: taken.slice(11, 16), taken, ...placeOf(photo, names) };
+}
+
 /** The photo as a TripPhoto, or undefined when it has no ID, date or exact spot. */
 function tripPhoto(photo: CombinedPhoto, { exact, names }: PlaceLookup): TripPhoto | undefined {
-  const taken = takenOf(photo);
+  const dated = datedPhoto(photo, names);
   const spot = spotOf(photo, exact);
-  if (typeof photo.id !== "number" || !taken || !spot) return undefined;
-  const day = taken.slice(0, 10).replaceAll(":", "-");
-  const place = placeOf(photo, names);
-  return { id: photo.id, photo, day, time: taken.slice(11, 16), taken, ...spot, ...place };
+  return dated && spot ? { ...dated, ...spot } : undefined;
+}
+
+/** The photo as a LoosePhoto when it has an ID and a date but no exact spot. */
+function loosePhoto(photo: CombinedPhoto, { exact, names }: PlaceLookup): LoosePhoto[] {
+  const dated = datedPhoto(photo, names);
+  return dated && !spotOf(photo, exact) ? [dated] : [];
 }
 
 /** How many different spots the photos are at, to about 10 metres. */
@@ -96,8 +112,8 @@ function spotCount(photos: TripPhoto[]): number {
 }
 
 /** The photos by the day they were taken, each day's in the order they were taken. */
-function byDay(photos: TripPhoto[]): Map<string, TripPhoto[]> {
-  const days = new Map<string, TripPhoto[]>();
+function byDay<T extends LoosePhoto>(photos: T[]): Map<string, T[]> {
+  const days = new Map<string, T[]>();
   const sorted = photos.toSorted((a, b) => a.taken.localeCompare(b.taken) || a.id - b.id);
   for (const p of sorted) days.set(p.day, [...(days.get(p.day) ?? []), p]);
   return days;
@@ -107,8 +123,14 @@ function byDay(photos: TripPhoto[]): Map<string, TripPhoto[]> {
 export function tripDays(photos: CombinedPhoto[], places: Place[]): TripDay[] {
   const lookup = { exact: exactPlaces(places), names: new Map(places.map((p) => [p.id, p.name])) };
   const usable = photos.flatMap((p) => tripPhoto(p, lookup) ?? []);
+  const loose = byDay(photos.flatMap((p) => loosePhoto(p, lookup)));
   return [...byDay(usable)]
-    .map(([day, dayPhotos]) => ({ day, photos: dayPhotos, spots: spotCount(dayPhotos) }))
+    .map(([day, dayPhotos]) => ({
+      day,
+      photos: dayPhotos,
+      loose: loose.get(day) ?? [],
+      spots: spotCount(dayPhotos),
+    }))
     .filter((d) => d.photos.length >= 2 && d.spots >= 2)
     .toSorted((a, b) => b.day.localeCompare(a.day));
 }

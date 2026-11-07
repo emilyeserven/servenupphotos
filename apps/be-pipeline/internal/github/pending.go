@@ -212,8 +212,12 @@ func sortPending(files []PendingFile) {
 }
 
 // dataKind is the combined list the data file at file goes in, or "" when it
-// isn't a data file, such as a combined list.
+// isn't a data file, such as a combined list. A place's area file counts with
+// the places, though PLACES.json leaves it out.
 func dataKind(root, file string) string {
+	if isPlaceArea(root, file) {
+		return "places"
+	}
 	for _, k := range combinedKinds() {
 		if isDataFile(root+"/"+k.folder, file, k.allFile) {
 			return k.name

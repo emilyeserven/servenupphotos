@@ -97,6 +97,9 @@ type TripLine struct {
 	// Visits are the places visited along the day's route, such as a
 	// restaurant, with or without a photo; none when there are none.
 	Visits []TripVisit `json:"visits,omitempty"`
+	// Fences are the areas photos without an exact spot were taken in, such
+	// as a park; none when there are none.
+	Fences []TripFence `json:"fences,omitempty"`
 }
 
 // SaveTripLine saves line as <folder>/triplines/<day>.json, new or replacing
@@ -143,7 +146,10 @@ func (c *Client) checkedTripLine(ctx context.Context, gh settings.GitHub, line T
 		return line, nil, perr
 	}
 	spots := w.tripSpots(false)
-	return line, spots, checkTripPhotos(line, spots)
+	if perr := checkTripPhotos(line, spots); perr != nil {
+		return line, spots, perr
+	}
+	return line, spots, checkFencePhotos(line, w.photoDays())
 }
 
 // DeleteTripLine removes the trip line file of day in the pending changes.
@@ -182,7 +188,10 @@ func validTripLine(line TripLine) (TripLine, *PublishError) {
 		}
 		line.Segments[i] = seg
 	}
-	return line, validVisits(line.Visits, line.Segments)
+	if perr := validVisits(line.Visits, line.Segments); perr != nil {
+		return line, perr
+	}
+	return line, validFences(line.Fences)
 }
 
 // validTripSegment checks the nth segment and returns it trimmed.

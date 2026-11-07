@@ -163,6 +163,7 @@ export function PlacesPanel({
   selected,
   onChoose,
   onClear,
+  onHover,
 }: {
   options: LocationOption[];
   /** The chosen places' values, for a tree with checkboxes; left out for one that picks a place. */
@@ -170,6 +171,8 @@ export function PlacesPanel({
   onChoose: (value: string) => void;
   /** Unchooses every place, from the toolbar's **Clear**. */
   onClear?: () => void;
+  /** Gets the value pointed at or focused in a tree that picks a place, and undefined after. */
+  onHover?: (value: string | undefined) => void;
 }) {
   const { script } = useScriptDisplay();
   const chosen = selected ?? [];
@@ -220,6 +223,7 @@ export function PlacesPanel({
             isChosen={selected && ((option) => chosen.includes(valueOf(option)))}
             onToggle={(option) => onChoose(valueOf(option))}
             onToggleExpanded={toggleExpanded}
+            onHover={onHover}
           />
         )}
         <HiddenNote count={hidden} noun="places" />
@@ -273,6 +277,8 @@ interface PlaceListProps {
   isChosen?: (option: LocationOption) => boolean;
   onToggle: (option: LocationOption) => void;
   onToggleExpanded: (id: string) => void;
+  /** Gets the value pointed at or focused, and undefined after; left out, nothing is told. */
+  onHover?: (value: string | undefined) => void;
 }
 
 /** The choices, each with a checkbox and what's in it below when it's expanded. */
@@ -320,6 +326,7 @@ function PlaceChoice({
   name,
   isChosen,
   onToggle,
+  onHover = () => {},
 }: PlaceListProps & { option: LocationOption; name: string }) {
   const label = (
     <>
@@ -332,6 +339,7 @@ function PlaceChoice({
       <button
         type="button"
         onClick={() => onToggle(option)}
+        {...hoverHandlers(onHover, valueOf(option))}
         className={cn(CHOICE_CLASS, "outline-none focus-visible:ring-2 focus-visible:ring-ring")}
       >
         {label}
@@ -349,6 +357,13 @@ function PlaceChoice({
       {label}
     </label>
   );
+}
+
+/** Tells onHover when a choice is pointed at or focused, and when it no longer is. */
+function hoverHandlers(onHover: (value: string | undefined) => void, value: string) {
+  const enter = () => onHover(value);
+  const leave = () => onHover(undefined);
+  return { onMouseEnter: enter, onMouseLeave: leave, onFocus: enter, onBlur: leave };
 }
 
 /** The chevron that expands or collapses a choice with others in it; a gap for one without. */

@@ -2,6 +2,7 @@ package github
 
 import (
 	"encoding/json"
+	"maps"
 	"math"
 	"net/http"
 )
@@ -13,8 +14,8 @@ import (
 const TripLinesMapFile = "TRIPLINES.geo.json"
 
 // tripLinesMap is TripLinesMapFile: a GeoJSON FeatureCollection of the
-// segments' lines (tripLineFeature) and the places visited's pins
-// (visitFeature).
+// segments' lines (tripLineFeature), the places visited's pins
+// (visitFeature) and the areas photos were taken in (fenceFeature).
 type tripLinesMap struct {
 	Type     string `json:"type"`
 	Features []any  `json:"features"`
@@ -65,7 +66,7 @@ func (w *workspace) addTripLinesMap(changes map[string][]byte, counts map[string
 		return publishErr(http.StatusInternalServerError, "Couldn't format %s.", TripLinesMapFile)
 	}
 	content := formatJSONFile(b)
-	counts["tripLineSegments"], counts["tripLineVisits"] = countFeatures(m)
+	maps.Copy(counts, featureCounts(m))
 	file := w.root + "/" + TripLines.Folder + "/" + TripLinesMapFile
 	if old, ok := w.head.files[file]; !ok || old.sha != blobSHA(content) {
 		changes[file] = content
@@ -103,6 +104,9 @@ func bakeTripLines(lines []TripLine, spots map[int]tripSpot) tripLinesMap {
 		}
 		for _, v := range line.Visits {
 			m.Features = append(m.Features, visitFeatureOf(line.Day, v))
+		}
+		for _, f := range line.Fences {
+			m.Features = append(m.Features, fenceFeatureOf(line.Day, f))
 		}
 	}
 	return m
