@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, Grid3x3 } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
+import { SeeMore } from "@/components/stat-row";
 import type { PickedGroup } from "@/lib/graph-pick";
 import type { Photo } from "@/lib/photos";
 import { cn } from "@/lib/utils";
@@ -46,24 +47,35 @@ export function PickedThumbnails({
   );
 }
 
-/** The link opening the photos on the Grid, with the filters that find them. */
-export function GridLink({ search, label }: { search: Record<string, unknown>; label: string }) {
+/**
+ * The photos' count as a link opening them on the Grid with the filters that find them, reading
+ * "See More (12) →" on hover, as the Numbers page's rows do.
+ */
+export function GridCount({
+  search,
+  count,
+  label,
+}: {
+  search: Record<string, unknown>;
+  count: number;
+  label: string;
+}) {
   return (
     <Link
       to="/grid"
       search={search}
-      aria-label={`Open ${label} on the Grid`}
-      className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4"
+      aria-label={`${label}: see its ${count} photos on the Grid`}
+      className="group relative shrink-0 rounded-md px-2 py-1 text-sm text-muted-foreground tabular-nums outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <Grid3x3 aria-hidden />
-      Open in Grid
+      <SeeMore count={count} />
     </Link>
   );
 }
 
 /**
  * One group of the picked photos, such as the Autumn part of a stacked bar: a button with its color,
- * name and count that opens and closes it, and Open in Grid, over its thumbnails.
+ * and name that opens and closes it, and its count, which opens the photos on the Grid, over its
+ * thumbnails.
  */
 export function PickedGroupSection({
   group,
@@ -98,11 +110,8 @@ export function PickedGroupSection({
             aria-hidden
           />
           <span className="flex-1">{group.label}</span>
-          <span className="text-muted-foreground tabular-nums">
-            {group.photos.length.toLocaleString()}
-          </span>
         </button>
-        <GridLink search={search} label={group.label} />
+        <GridCount search={search} count={group.photos.length} label={group.label} />
       </div>
       {open && (
         <div className="px-3 pt-1 pb-3">

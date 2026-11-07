@@ -1,8 +1,14 @@
-import { ArrowDownWideNarrow, ArrowUpNarrowWide, X } from "lucide-react";
+import {
+  ArrowDownWideNarrow,
+  ArrowUpNarrowWide,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  X,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { PickAxes } from "@/components/graph-builder/pick-axes";
 import {
-  GridLink,
+  GridCount,
   PickedGroupSection,
   PickedThumbnails,
 } from "@/components/graph-builder/picked-group";
@@ -48,12 +54,12 @@ export function PickedPhotos({
   const searchOf = (group: PickedGroup) => gridSearch(config, pick, group);
   return (
     <section
-      aria-label="Picked photos"
+      aria-label="Selected photos"
       className="flex min-w-0 flex-col gap-4 rounded-xl border bg-card p-4 text-card-foreground shadow-sm"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-2">
-          <h2 className="font-semibold">Photos</h2>
+          <h2 className="font-semibold">Selected Photos</h2>
           <PickAxes config={config} pick={pick} picked={picked} total={list.length} />
         </div>
         <Button type="button" variant="ghost" size="sm" onClick={onClear}>
@@ -69,9 +75,15 @@ export function PickedPhotos({
           <DirectionButtons direction={direction} onChange={setDirection} />
         </div>
         {picked.groupedBy ? (
-          <ExpandButtons groups={groups} onChange={setClosed} />
+          <ExpandButtons groups={groups} closed={closed} onChange={setClosed} />
         ) : (
-          groups[0] && <GridLink search={searchOf(groups[0])} label={groups[0].label} />
+          groups[0] && (
+            <GridCount
+              search={searchOf(groups[0])}
+              count={groups[0].photos.length}
+              label={groups[0].label}
+            />
+          )
         )}
       </div>
       <PickedBody
@@ -134,27 +146,35 @@ function PickedGroups({ groups, closed, onClosedChange, searchOf, onOpen }: Grou
   );
 }
 
-/** The Expand all and Collapse all buttons, opening or closing every group. */
+/**
+ * Expand all and Collapse all, joined like the Graph / Table buttons, the one matching the groups
+ * pressed: Expand all while every group is open, Collapse all while every one is closed.
+ */
 function ExpandButtons({
   groups,
+  closed,
   onChange,
 }: {
   groups: PickedGroup[];
+  closed: ReadonlySet<string>;
   onChange: (closed: ReadonlySet<string>) => void;
 }) {
+  const allClosed = groups.every((group) => closed.has(group.key));
+  const button = (label: string, on: boolean, Icon: typeof X, next: () => Set<string>) => (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={() => onChange(next())}
+      className={controlButtonClass(on)}
+    >
+      <Icon aria-hidden />
+      {label}
+    </button>
+  );
   return (
-    <div className="flex gap-1">
-      <Button type="button" variant="outline" size="sm" onClick={() => onChange(new Set())}>
-        Expand all
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => onChange(new Set(groups.map((group) => group.key)))}
-      >
-        Collapse all
-      </Button>
+    <div role="group" aria-label="Groups" className={CONTROL_FRAME}>
+      {button("Expand all", closed.size === 0, ChevronsUpDown, () => new Set())}
+      {button("Collapse all", allClosed, ChevronsDownUp, () => new Set(groups.map((g) => g.key)))}
     </div>
   );
 }
