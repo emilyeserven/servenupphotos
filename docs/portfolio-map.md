@@ -129,16 +129,15 @@ credits OpenStreetMap's contributors, which covers them.
 ## Key
 
 A **Key** panel in the map's bottom left corner explains what the map draws (`components/map-legend.tsx`). It lists
-only what is in view right now (`lib/map-legend.ts`), and updates as the map moves:
+only the kinds of thing the map draws for its photos, whether or not they're in view (`lib/map-legend.ts`), so the
+filters and the day filter change it:
 
-- The pins, from the markers in view: **Photo** (a square pin with a white edge), **Group of photos** (a round marker
-  with its count), **Photo placed by its area** (a faded edge) and **Photo without an image yet** (a small light-blue
-  dot).
-- Then, under a divider, the trip lines that reach into the view when **Trip lines** is on: **Walk**, **Bus, subway or
+- The pins: **Photo** (a square pin with a white edge), **Group of photos** (a round marker with its count, whenever
+  there are at least two photos), **Photo placed by its area** (a faded edge) and **Photo without an image yet** (a
+  small light-blue dot).
+- Then, under a divider, the trip lines of the photos' days when **Trip lines** is on: **Walk**, **Bus, subway or
   train** (a sample in the colors of the lines ridden), **Other trip** (dashed), **Place visited** and **Area**.
   **Area** also shows while a place's area is shaded from **Places**.
-
-With nothing in view, it says so.
 
 The samples use the same colors as the map in light and dark mode (`lib/map-theme.ts`). The **Key** button folds the
 panel down to itself; it starts open on wider screens and folded on phones, and is remembered in this browser.

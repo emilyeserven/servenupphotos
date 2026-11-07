@@ -13,9 +13,7 @@ import {
   WalkSymbol,
 } from "@/components/map-legend-symbols";
 import type { MapDisplay } from "@/lib/map-display";
-import type { LngLatBounds } from "maplibre-gl";
 import { type LegendItems, legendItems } from "@/lib/map-legend";
-import type { MapMarker } from "@/lib/map-markers";
 import type { PlacedPhoto } from "@/lib/map-photos";
 import { useIsDark } from "@/lib/map-theme";
 import { type ShownArea, usePlaceArea } from "@/lib/place-areas";
@@ -89,17 +87,11 @@ function useLegendOpen(): [boolean, () => void] {
  */
 export function MapLegend({
   photos,
-  markers,
-  view,
   display,
   area,
 }: {
   /** The photos the map draws, whose days' trip lines it draws under them. */
   photos: PlacedPhoto[];
-  /** The markers in view. */
-  markers: MapMarker[];
-  /** What the map shows, or null before it's drawn. */
-  view: LngLatBounds | null;
   display: MapDisplay;
   /** The place whose area is shaded, from the Places menu. */
   area: ShownArea;
@@ -108,7 +100,7 @@ export function MapLegend({
   const dark = useIsDark();
   const trips = useShownTripLines(photos, display.tripLines);
   const placeArea = usePlaceArea(area.id) !== undefined;
-  const items = legendItems(markers, trips, view, placeArea);
+  const items = legendItems(photos, trips, placeArea);
   const groups = [shownRows(pinRows(items)), shownRows(lineRows(items, dark))];
   const container = useMap().current?.getContainer();
   if (!container) return null;
@@ -150,7 +142,7 @@ function LegendToggle({ open, onToggle }: { open: boolean; onToggle: () => void 
 function LegendList({ groups }: { groups: LegendRow[][] }) {
   const listed = groups.filter((rows) => rows.length > 0);
   if (listed.length === 0)
-    return <p className="px-3 pb-2.5 text-muted-foreground">Nothing in view</p>;
+    return <p className="px-3 pb-2.5 text-muted-foreground">No photos on the map</p>;
   return (
     <div className="flex flex-col divide-y px-3 pb-1 dark:divide-input">
       {listed.map((rows) => (
