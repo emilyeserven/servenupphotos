@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@portfolio/lib/utils";
+import { TruncatedText } from "@portfolio/components/truncated-text";
 
 /**
  * A row in a list of choices: a check while it's on, an optional little graphic (`icon`), its
@@ -40,7 +41,7 @@ export function ChoiceRow({
     >
       <Check aria-hidden className={cn("size-4 shrink-0", !on && "invisible")} />
       {icon}
-      <span className="truncate">{label}</span>
+      <TruncatedText text={label} />
       <span className="ml-auto text-xs text-muted-foreground tabular-nums">{count}</span>
     </button>
   );
