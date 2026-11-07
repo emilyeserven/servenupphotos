@@ -16,6 +16,7 @@ import { Route as LikesRouteImport } from './routes/likes'
 import { Route as LuckyRouteImport } from './routes/lucky'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as SpotlightRouteImport } from './routes/spotlight'
+import { Route as StatsRouteImport } from './routes/stats'
 import { Route as TableRouteImport } from './routes/table'
 import { Route as TagsRouteImport } from './routes/tags'
 import { Route as TimelineRouteImport } from './routes/timeline'
@@ -58,6 +59,11 @@ const SpotlightRoute = SpotlightRouteImport.update({
   path: '/spotlight',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StatsRoute = StatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TableRoute = TableRouteImport.update({
   id: '/table',
   path: '/table',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
+  '/stats': typeof StatsRoute
   '/table': typeof TableRoute
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
+  '/stats': typeof StatsRoute
   '/table': typeof TableRoute
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/lucky': typeof LuckyRoute
   '/map': typeof MapRoute
   '/spotlight': typeof SpotlightRoute
+  '/stats': typeof StatsRoute
   '/table': typeof TableRoute
   '/tags': typeof TagsRoute
   '/timeline': typeof TimelineRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/lucky'
     | '/map'
     | '/spotlight'
+    | '/stats'
     | '/table'
     | '/tags'
     | '/timeline'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/lucky'
     | '/map'
     | '/spotlight'
+    | '/stats'
     | '/table'
     | '/tags'
     | '/timeline'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/lucky'
     | '/map'
     | '/spotlight'
+    | '/stats'
     | '/table'
     | '/tags'
     | '/timeline'
@@ -191,6 +203,7 @@ export interface RootRouteChildren {
   LuckyRoute: typeof LuckyRoute
   MapRoute: typeof MapRoute
   SpotlightRoute: typeof SpotlightRoute
+  StatsRoute: typeof StatsRoute
   TableRoute: typeof TableRoute
   TagsRoute: typeof TagsRoute
   TimelineRoute: typeof TimelineRoute
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SpotlightRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stats': {
+      id: '/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof StatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/table': {
       id: '/table'
       path: '/table'
@@ -303,6 +323,7 @@ const rootRouteChildren: RootRouteChildren = {
   LuckyRoute: LuckyRoute,
   MapRoute: MapRoute,
   SpotlightRoute: SpotlightRoute,
+  StatsRoute: StatsRoute,
   TableRoute: TableRoute,
   TagsRoute: TagsRoute,
   TimelineRoute: TimelineRoute,

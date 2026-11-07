@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   BookImage,
   CalendarClock,
+  ChartColumn,
   Dices,
   Grid3x3,
   Heart,
@@ -11,14 +12,23 @@ import {
 } from "lucide-react";
 
 export interface PortfolioView {
-  to: "/timeline" | "/map" | "/albums" | "/tags" | "/grid" | "/color" | "/lucky" | "/likes";
+  to:
+    | "/timeline"
+    | "/map"
+    | "/albums"
+    | "/tags"
+    | "/stats"
+    | "/grid"
+    | "/color"
+    | "/lucky"
+    | "/likes";
   label: string;
   description: string;
   icon: LucideIcon;
   /** False for a view that's linked but not ready to visit yet. */
   enabled: boolean;
   /**
-   * True for a lesser view (Albums, Tags, Lucky, My Likes): the site menu lists it in small text under the
+   * True for a lesser view (Albums, Tags, Stats, Lucky, My Likes): the site menu lists it in small text under the
    * big icon tiles, and the homepage leaves it out.
    */
   minor?: boolean;
@@ -52,6 +62,14 @@ const portfolioViews: PortfolioView[] = [
     label: "Tags",
     description: "Every tag with a few of its photos, each tag under its parent tag.",
     icon: Tags,
+    enabled: true,
+    minor: true,
+  },
+  {
+    to: "/stats",
+    label: "Stats",
+    description: "The photos counted by gear, place and time.",
+    icon: ChartColumn,
     enabled: true,
     minor: true,
   },
