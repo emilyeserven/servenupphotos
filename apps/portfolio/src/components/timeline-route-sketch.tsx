@@ -9,7 +9,6 @@ import {
   type SketchSize,
   routeSketch,
 } from "@/lib/route-sketch";
-import { type RoutePlace, routePlaces } from "@/lib/route-places";
 import { type TripMapFeature, useTripLinesMap } from "@/lib/trip-lines-map";
 
 /** TRIPLINES.geo.json's features by their day, and each day's route sketch, both by `yyyy-MM-dd`. */
@@ -51,36 +50,27 @@ export function RouteSketches({ children }: { children: ReactNode }) {
   return <SketchesContext value={sketches}>{children}</SketchesContext>;
 }
 
-/** One of a month's small maps on the Timeline: the days on it and their lines drawn together. */
+/** A month's trip line map on the Timeline: the days with a line and their lines drawn together. */
 export interface DaysSketch {
   days: string[];
   sketch: RouteSketch;
 }
 
-/** The lines of the place's days drawn together in a box of `size`. */
-function placeSketch(
-  { days }: RoutePlace,
-  features: Map<string, TripMapFeature[]>,
-  size: SketchSize,
-): DaysSketch | null {
-  const sketch = routeSketch(
-    days.flatMap((day) => features.get(day) ?? []),
-    size,
-  );
-  return sketch && { days, sketch };
-}
-
 /**
- * The lines of the days, such as a month's days on the Timeline, drawn together in boxes of `size`,
- * one for each place they're in (see `routePlaces`); none when no day has a line.
+ * Every line of the days, such as a month's days on the Timeline, drawn together in one box of
+ * `size`; null when no day has a line.
  */
-export function useDaysSketches(days: string[], size: SketchSize): DaysSketch[] {
+export function useDaysSketch(days: string[], size: SketchSize): DaysSketch | null {
   const { byDay: features, sketches } = use(SketchesContext);
-  // Keyed by the days' text, so a new array of the same days keeps the sketches.
+  // Keyed by the days' text, so a new array of the same days keeps the sketch.
   const key = days.join(" ");
   return useMemo(() => {
-    const places = routePlaces(key.split(" "), (day) => sketches.get(day)?.bounds);
-    return places.flatMap((place) => placeSketch(place, features, size) ?? []);
+    const lineDays = key.split(" ").filter((day) => sketches.has(day));
+    const sketch = routeSketch(
+      lineDays.flatMap((day) => features.get(day) ?? []),
+      size,
+    );
+    return sketch && { days: lineDays, sketch };
   }, [key, features, sketches, size]);
 }
 
