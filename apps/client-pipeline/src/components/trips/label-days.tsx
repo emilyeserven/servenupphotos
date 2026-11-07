@@ -23,14 +23,22 @@ function between(a: string, b: string): Days {
 
 /**
  * The Trip's days as a row of buttons, the label's own picked: a click picks the first day and a
- * second click the last, like a date range picker that only shows the Trip.
+ * second click the last, like a date range picker that only shows the Trip. A shift-click picks
+ * every day from the last one clicked (or the label's first day) to the one shift-clicked.
  */
 export function LabelDays({ label, dates, taken, onChange }: LabelDaysProps) {
   // The first day clicked, while waiting for the click on the last.
   const [first, setFirst] = useState<string>();
-  const pick = (day: string) => {
+  // The last day clicked without shift, which a shift-click extends from.
+  const [anchor, setAnchor] = useState<string>();
+  const click = (day: string) => {
     setFirst(first === undefined ? day : undefined);
+    setAnchor(day);
     onChange(between(first ?? day, day));
+  };
+  const shiftClick = (day: string) => {
+    setFirst(undefined);
+    onChange(between(anchor ?? label.start, day));
   };
   return (
     <div className="flex flex-col gap-1">
@@ -42,16 +50,20 @@ export function LabelDays({ label, dates, taken, onChange }: LabelDaysProps) {
               withMonth={i === 0 || day.endsWith("-01")}
               on={day >= label.start && day <= label.end}
               taken={taken.has(day)}
-              onClick={() => pick(day)}
+              onClick={(shift) => (shift ? shiftClick(day) : click(day))}
             />
           </li>
         ))}
       </ol>
-      <p className="text-muted-foreground text-xs">
-        {first ? `Now click its last day, or ${dayTitle(first)} again for just that day.` : ""}
-      </p>
+      <p className="text-muted-foreground text-xs">{hint(first)}</p>
     </div>
   );
+}
+
+/** What to click next: the last day while a first one waits, otherwise how to pick. */
+function hint(first?: string): string {
+  if (first) return `Now click its last day, or ${dayTitle(first)} again for just that day.`;
+  return "Click its first day and then its last, or shift-click to stretch the days to another.";
 }
 
 interface DayButtonProps {
@@ -62,11 +74,12 @@ interface DayButtonProps {
   on: boolean;
   /** Whether another label covers the day. */
   taken: boolean;
-  onClick: () => void;
+  /** Called with whether shift was held. */
+  onClick: (shift: boolean) => void;
 }
 
 const DAY_BUTTON =
-  "flex w-14 flex-col items-center rounded-md border px-1 py-1 text-xs leading-tight";
+  "flex w-14 select-none flex-col items-center rounded-md border px-1 py-1 text-xs leading-tight";
 
 /** The day's colors: the label's own days filled, other labels' days struck out. */
 function dayColors(on: boolean, taken: boolean): string {
@@ -82,7 +95,7 @@ function DayButton({ day, withMonth, on, taken, onClick }: DayButtonProps) {
       type="button"
       aria-pressed={on}
       title={taken ? `${dayTitle(day)}: another label has it` : dayTitle(day)}
-      onClick={onClick}
+      onClick={(e) => onClick(e.shiftKey)}
       className={`${DAY_BUTTON} ${dayColors(on, taken)}`}
     >
       <span>{format(date, "EEE")}</span>

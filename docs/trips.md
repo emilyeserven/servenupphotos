@@ -30,7 +30,8 @@ else: one Trip page for its days' stories, one set of legs, one Smart Album rule
 
 Under its name and days, a Trip's page lists its **Timeline labels**: each one's name, and a row of the Trip's own
 days to pick its days from. A click picks the first day and a second click the last (the same day again for a
-one-day label); days another label has are struck out. **Add a timeline label** starts a new one the day after the
+one-day label), and a shift-click picks every day from the last one clicked to it; days another label has are
+struck out. **Add a timeline label** starts a new one the day after the
 last label ends. Labels can't share a day, and must be within the Trip.
 
 > **Frontend analogy:** like a date range picker whose calendar only shows the Trip's days.
