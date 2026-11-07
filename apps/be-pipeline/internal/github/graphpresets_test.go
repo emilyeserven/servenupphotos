@@ -30,6 +30,10 @@ func TestSaveGraphPreset(t *testing.T) {
 		t.Errorf("ranges saved as %s, want xTo and minPhotos only", saved)
 	}
 	heatmap := GraphPreset{ID: "months", Kind: "preset", Name: "Months", Graph: &GraphSettings{Type: "heatmap", X: "month", Y: "year", Measure: "count", Sort: "group"}}
+	dots := GraphPreset{ID: "dots", Kind: "preset", Name: "Dots", Graph: &GraphSettings{Type: "photos", X: "year", Split: "season", Measure: "count", Sort: "group"}}
+	if _, err := c.SaveGraphPreset(t.Context(), placesGH, dots); err != nil {
+		t.Fatalf("SaveGraphPreset(photos) error = %v", err)
+	}
 	if _, err := c.SaveGraphPreset(t.Context(), placesGH, heatmap); err != nil {
 		t.Fatalf("SaveGraphPreset(heatmap) error = %v", err)
 	}

@@ -96,9 +96,12 @@ interface YEndsProps {
   onChange: ConfigChange;
 }
 
-/** The y axis's ends: a scatterplot's or heatmap's y values, a bar, line or dot graph's round numbers up to its top; none for a pie. */
+/** The graph types with no y axis ends to pick: the pie, and the photo dot graph, whose stacks are as tall as they are. */
+const NO_Y_ENDS: ReadonlySet<GraphConfig["type"]> = new Set(["pie", "photos"]);
+
+/** The y axis's ends: a scatterplot's or heatmap's y values, a bar, line or dot graph's round numbers up to its top; none for a pie or photo dot graph. */
 function YEnds({ config, rows, list, onChange }: YEndsProps) {
-  if (config.type === "pie") return null;
+  if (NO_Y_ENDS.has(config.type)) return null;
   if (hasYStat(config.type)) {
     const labels = statById(config.y)
       .build(list)

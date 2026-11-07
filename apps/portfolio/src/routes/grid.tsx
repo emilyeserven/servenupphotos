@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Grid3x3, Table } from "lucide-react";
 import { ColorOrderControls } from "@/components/color-order-controls";
-import { VisualsPicker } from "@/components/visuals-picker";
 import { GridSortSelect } from "@/components/grid-sort-select";
 import { GridViewOptions } from "@/components/grid-view-options";
 import { GridTiles, type ImagePhoto, type TileMode } from "@/components/photo-tiles";
@@ -15,8 +14,6 @@ import { TILE_SHAPES, type ViewChoice, ViewSwitcher } from "@/components/view-sw
 import { photos, type Photo } from "@/lib/photos";
 import { type CameraFilters, filterWithCamera, parseCameraFilters } from "@/lib/camera-filters";
 import {
-  COLOR_FILTER_KEYS,
-  colorFilterCount,
   type ColorFilters,
   type ColorOrderSearch,
   filterByColors,
@@ -168,20 +165,7 @@ function GridView() {
           <ViewSwitcher choices={VIEW_MODES} mode={mode} />
         </div>
         <div className="mt-3 w-full">
-          <CameraFilterBar
-            photos={newestFirst}
-            searchable
-            extra={{
-              keys: COLOR_FILTER_KEYS,
-              count: colorFilterCount(search),
-              children: (
-                <VisualsPicker
-                  photos={searchedPhotos(newestFirst, { ...search, orientation: undefined })}
-                  filters={search}
-                />
-              ),
-            }}
-          />
+          <CameraFilterBar photos={newestFirst} searchable />
         </div>
       </header>
       <NoMatchingPhotos

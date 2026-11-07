@@ -105,12 +105,15 @@ function RowName({ label }: { label: string }) {
   );
 }
 
-/** The x values' names under the grid, written sideways when there are many. */
-function ColumnNames({ labels }: { labels: string[] }) {
+/**
+ * The x values' names under a grid of columns, written sideways when there are many: the heatmap's,
+ * with an empty corner under its row names, and the photo dot graph's.
+ */
+export function ColumnNames({ labels, corner = true }: { labels: string[]; corner?: boolean }) {
   const sideways = labels.length > UPRIGHT_LABELS;
   return (
     <div role="row" className="contents">
-      <span aria-hidden className="sticky left-0 z-10 bg-card" />
+      {corner && <span aria-hidden className="sticky left-0 z-10 bg-card" />}
       {labels.map((label) => (
         <div
           key={label}
@@ -118,7 +121,7 @@ function ColumnNames({ labels }: { labels: string[] }) {
           title={label}
           className={cn(
             "flex min-w-0 justify-center pt-1 text-xs text-muted-foreground",
-            sideways && "max-h-28 [writing-mode:vertical-rl] rotate-180 justify-end",
+            sideways && "max-h-28 rotate-180 items-center justify-end [writing-mode:vertical-rl]",
           )}
         >
           <span className="truncate">{label}</span>

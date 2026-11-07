@@ -2,8 +2,10 @@
 
 The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens
 filters that narrow the photos they show: **Places**, [Groups](#groups-album-tag-and-genre) and [When](#when) (**Hide filters** closes them again). The
-Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Visuals** button, which opens the Color page's color filters and **Orientation** (see
-[Portfolio Color](portfolio-color.md#on-the-grid-page)).
+Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. Every view with filters (the Grid,
+Lucky, the Graph page, the Timeline and, under **More filters**, the Map) also has a **Visuals** button, which opens the Color page's color filters and **Orientation** (see
+[Portfolio Color](portfolio-color.md#on-the-grid-page)). Where the camera filters are, it comes with them (`CameraFilterBar`); the Timeline and the
+Map add it as their own filters (`visualsOwnFilters`, read with `lib/visual-filters.ts`).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
 beside it. Each filter that's set also has a small X inside its border, to the right of what's chosen, which clears just
 that one (a range slider's X sits beside its range). The filters are kept in the URL, so a link keeps them, and the menu's view
@@ -36,13 +38,17 @@ views, which have no box.
 
 ## Places
 
-A button that opens a searchable tree: each country the photos were taken in, the states in it, the cities in each, and the places in each
-city, each place under the place it's in (see [Places](places-and-localizations.md#places)), each with a checkbox and
-how many photos it would show. The chevron beside a country, state, city or place with others in it expands or collapses it,
-and **Expand all** and **Collapse all** do every one at once; a search shows every match with what it's in, expanded.
-The tree starts with whatever's around the chosen ones expanded, and the United States of America always expanded
-one level, to its states (`START_EXPANDED` in `components/places-filter.tsx`). Names are written the way the menu's **Script display**
-says, and a search matches them that way or in English. The button shows the one chosen name, or how many are chosen.
+A button that opens the places in columns, like a Mac's Finder in column view (`components/place-columns.tsx`,
+`lib/place-tree.ts`): the countries the photos were taken in first, and clicking one opens a column beside it of what's
+in it, its regions (states, provinces and prefectures), then a region's cities, a city's places, and each place's
+places inside it (see [Places](places-and-localizations.md#places)), each with how many photos it would show and an
+arrow while it has more in it. Opening a place in a column closes the columns after it, and the newest column scrolls
+into view. Each place has a checkbox, and any number can be checked in any columns, so places in different countries can
+be chosen at once; a place with nothing in it is checked by clicking its name too. **Clear** unchecks them all. The
+picker opens on the columns around the first chosen place, or the only country when there's one. A search swaps the
+columns for every matching place, with what it's in under its name, such as "Japan › Yamaguchi › Hagi". Names are
+written the way the menu's **Script display** says, and a search matches them that way or in English. The button shows
+the one chosen name, or how many are chosen.
 `?state=none` keeps the photos with no state, province or prefecture, as the Numbers page's **No region** row links to;
 the button then says **No region**.
 
@@ -63,8 +69,9 @@ names, whichever way they're shown. A name listed in another one's **Other names
 counts as that one (`mainName` in `lib/localize.ts`), so photos whose EXIF says "United States" are shown, listed and
 filtered as the United States of America.
 
-On the Map, **Places** doesn't filter: picking one moves the map to it instead (see
-[Portfolio Map](portfolio-map.md)).
+On the Map, **Places** doesn't filter: it has the same columns without checkboxes, and picking one moves the map to it
+instead (see [Portfolio Map](portfolio-map.md)). There, clicking a place with nothing in it picks it, and each column
+after the countries starts with **All of** the place it's in, such as **All of Japan**, to pick that one.
 
 ## Chosen photos
 
@@ -89,14 +96,19 @@ name (`?genre=<id>`), and is likewise left out while there are none.
 ## When
 
 A **When** button after **Groups**, on every view with filters (on the Map, under **More filters**), opens one picker
-for when the photos were taken (`components/when-filter.tsx`, `lib/when-filters.ts`), by the clock and calendar where
-each was taken, as a photo's capture time has no time zone. It picks one way at a time, each a tab, and choosing in one
-clears the others. Every button says how many photos it would show, given the other filters, and a choice with none is
-dimmed.
+for when the photos were taken (`components/when-filter.tsx`, `components/when-picker-parts.tsx`,
+`lib/when-filters.ts`), by the clock and calendar where each was taken, as a photo's capture time has no time zone.
+Like the other pickers (see [Picker layout](#picker-layout)), its left side lists **Seasons**, **Months**, **Days**,
+**Hours** and **Date range**, each saying what it's set to ("Any", the one or two chosen such as "Spring, Autumn", or
+how many, such as "4 hours") with a dot while it's set, and **Clear when** under them while any is; the right side
+shows the chosen one's buttons, under a line saying what they do. It picks one way at a time, and choosing in one
+clears the others. The picker opens on the one that's set. Every button says how many photos it would show, given the
+other filters, and a choice with none is dimmed.
 
-- **Across all years** has a tab for each kind, and any number of one kind can be on: they show the photos in any of
-  them. Above each kind's buttons, one picks just the one it is now, such as **This season · Autumn**, **This month ·
-  November**, **Today · Saturday** or **This hour · 2 PM–3 PM**, in every year; clicking it again clears it.
+- **Seasons**, **Months**, **Days** and **Hours** pick across all years, and any number of one kind can be on: they
+  show the photos in any of them. Above each kind's buttons, one picks just the one it is now, such as **This season ·
+  Autumn**, **This month · November**, **Today · Saturday** or **This hour · 2 PM–3 PM**, in every year; clicking it
+  again clears it.
   - **Seasons** (`?season=summer&season=winter`), as the northern hemisphere has them: Spring is March to May, and
     Winter is December to February.
   - **Months** (`?month=june&month=july`), in four columns headed by their season.
@@ -113,7 +125,22 @@ dimmed.
 On the Timeline, the date range is the days it shows.
 
 > **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
-> `?tag=a&tag=b`, and the tabs are radio buttons over which group is in use.
+> `?tag=a&tag=b`, and the left list is a set of radio buttons over which group is in use.
+
+## Picker layout
+
+**Groups**, **When**, **Gear & settings**, **Visuals** and the Graph page's **Graph type** share one layout,
+`SectionPicker` in `components/section-picker.tsx`: a list of sections on the left (`SectionTab` in
+`components/picker-section-tab.tsx`), each with its name, an icon for Groups, what it's set to under it and a dot while
+it's set, an optional footer under the list such as **Clear visuals**, and the chosen section's controls on the right.
+The picker keeps 16px from the screen's edges and is at most 28rem tall, scrolling inside. On phones the list folds up
+above the controls, behind a button naming the chosen section and what it's set to; while it's open it takes the
+controls' place, and choosing a section folds it up again. The Grid's filter buttons open it through
+`FilterPickerButton`, which shows the filter's icon, name and how many of its filters are set; `PickerPart` puts the
+line saying what a section is for over its controls.
+
+> **Frontend analogy:** it's a vertical tabs component whose tab list turns into an accordion header on small screens;
+> each picker only supplies the tabs' labels and the panel.
 
 ## Camera filters
 
@@ -190,14 +217,14 @@ The [metadata groups](metadata-groups.md) in `metainfo/METAINFO.json` show up in
 
 Each choice says how many photos it would show in that view, given the other filters, so a place's count is out of the
 photos the chosen album and tag (and, on the Grid, camera, lens and ranges) leave. The Map counts only photos it can place and the Grid only photos with
-resized versions. The Timeline's counts leave out its time range, which still applies on top of the filters.
+resized versions.
 
 When the filters leave no photos, the view says so instead of its list; the Map shows no markers and moves out to the
 whole world. Changing a filter on the Map fits it to the photos it now shows.
 
 A choice that would show no photos, given the other filters, isn't listed, unless it's the one chosen (or, in
 **Places**, has a chosen one inside it). The dropdown ends with a greyed-out line saying how many were hidden, and the
-Places tree a note under it, such as "40 places hidden by the other filters".
+Places columns a note under them, such as "40 places hidden by the other filters".
 
 ## Remembered view settings
 
@@ -210,7 +237,7 @@ Each of these views remembers its own settings in this browser (`lib/view-option
 - **Timeline:** its display options, such as technical info shown and thumbnail size.
 - **Tags:** the sort, and all tags or the top level only.
 
-Filters, the open photo, the Timeline's time range and where the Map is looking aren't remembered this way. The Map's
+Filters (including the Timeline's date range), the open photo and where the Map is looking aren't remembered this way. The Map's
 display options are remembered on their own (see [Portfolio Map](portfolio-map.md)). A link with settings in its URL
 still opens with them, and a URL without any opens the view's defaults: only links within the site add the remembered
 ones.

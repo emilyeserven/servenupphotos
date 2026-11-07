@@ -43,7 +43,8 @@ type GraphPreset struct {
 // GraphSettings is what a graph preset sets the Graph page's graph to, named
 // as the page names them. The page's filters stay as they are.
 type GraphSettings struct {
-	// Type is "bar", "line", "dot", "pie", "scatter" or "heatmap".
+	// Type is "bar", "line", "dot", "pie", "scatter", "heatmap" or "photos"
+	// (one dot for every photo).
 	Type string `json:"type"`
 	// X is the stat along the x axis, or a pie's slices, such as "aperture".
 	X string `json:"x"`
@@ -85,7 +86,7 @@ type GraphRanges struct {
 
 // The values a preset's graph can take for each of its choices.
 var (
-	graphTypes    = []string{"bar", "line", "dot", "pie", "scatter", "heatmap"}
+	graphTypes    = []string{"bar", "line", "dot", "pie", "scatter", "heatmap", "photos"}
 	graphMeasures = []string{"count", "percent"}
 	graphSorts    = []string{"group", "reverse", "count"}
 )

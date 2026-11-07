@@ -112,7 +112,8 @@ in steps of 5 (`?vivid=20`), and the swatches' counts only count the photos it l
 
 ## On the Grid page
 
-The Grid's **Show filters** panel has a **Visuals** button (`components/visuals-picker.tsx`) after **Gear & settings**,
+The Grid's **Show filters** panel has a **Visuals** button (`components/visuals-picker.tsx`) after **Gear & settings**, as
+every other view with filters does (see [Portfolio Filters](portfolio-filters.md)),
 like **When**: closed, it shows only a dot of the picked color and how many of its filters are set. It opens a picker
 (`components/visuals-picker-parts.tsx` has its sections) with a list on the left of **Color**, **Color threshold**, **Vividness**
 and **Orientation**, each with what it's set to under its name (such as "Blue", "At least 30%", "Peak · 40+" or

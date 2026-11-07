@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { ColorFilter } from "@portfolio/components/color-filter";
 import { ColorMatchControl } from "@portfolio/components/color-match-control";
 import { OrientationFilter } from "@portfolio/components/orientation-filter";
+import { PickerPart } from "@portfolio/components/section-picker";
 import { VividnessControl } from "@portfolio/components/vividness-control";
 import {
   type ColorFilters,
@@ -52,19 +53,19 @@ const PARTS: Record<VisualSection, (props: VisualsPickerProps) => ReactNode> = {
 function ColorPart({ photos, filters }: VisualsPickerProps) {
   const pool = photos.filter((photo) => matchesOrientation(photo, filters.orientation));
   return (
-    <Part intro="Pick a color to show only the photos with much of it. Pick it again to clear it.">
+    <PickerPart intro="Pick a color to show only the photos with much of it. Pick it again to clear it.">
       <ColorFilter
         color={filters.color}
         counts={countsFor(vividEnough(pool, filters), matchOf(filters))}
       />
-    </Part>
+    </PickerPart>
   );
 }
 
 /** How a photo matches the picked color, with what each choice does. */
 function MatchPart({ filters }: VisualsPickerProps) {
   return (
-    <Part intro="How much of the picked color a photo needs to show.">
+    <PickerPart intro="How much of the picked color a photo needs to show.">
       <ColorMatchControl
         threshold={matchOf(filters).mode === "threshold"}
         percent={filters.min ?? DEFAULT_PERCENT}
@@ -82,14 +83,14 @@ function MatchPart({ filters }: VisualsPickerProps) {
           ],
         ]}
       />
-    </Part>
+    </PickerPart>
   );
 }
 
 /** Which vividness to measure and the least a photo needs, with what each choice does. */
 function VividPart({ filters }: VisualsPickerProps) {
   return (
-    <Part intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30.">
+    <PickerPart intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30.">
       <VividnessControl vivid={filters.vivid ?? 0} measure={filters.measure ?? "average"} />
       <Choices
         items={[
@@ -100,7 +101,7 @@ function VividPart({ filters }: VisualsPickerProps) {
           ],
         ]}
       />
-    </Part>
+    </PickerPart>
   );
 }
 
@@ -114,23 +115,13 @@ function OrientationPart({ photos, filters }: VisualsPickerProps) {
       search: (prev: Record<string, unknown>) => ({ ...prev, [ORIENTATION_KEY]: orientation }),
     });
   return (
-    <Part intro="Show only the photos wider than they're tall, taller than they're wide, or square. Pick it again to clear it.">
+    <PickerPart intro="Show only the photos wider than they're tall, taller than they're wide, or square. Pick it again to clear it.">
       <OrientationFilter
         orientation={filters.orientation}
         counts={orientationCounts(filterByColors(photos, filters))}
         onChange={set}
       />
-    </Part>
-  );
-}
-
-/** A section's controls, with a line saying what it's for. */
-function Part({ intro, children }: { intro: string; children: ReactNode }) {
-  return (
-    <div className="flex flex-col gap-3">
-      <p className="text-xs text-muted-foreground">{intro}</p>
-      {children}
-    </div>
+    </PickerPart>
   );
 }
 
