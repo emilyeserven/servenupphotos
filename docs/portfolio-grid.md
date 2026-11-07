@@ -83,6 +83,15 @@ the rows in the table's sort. The tiles' sort and **Show info** are hidden here.
 keeping their sort (their `?sort=` becomes `?column=`), columns, filters and open photo (`routes/table.tsx`,
 `lib/table-search.ts`).
 
+Once the table's header row scrolls above the top of the window, a copy of it sticks there until the last row goes
+by, so the column names and their sort buttons stay in sight (`components/sticky-table-header.tsx`). The table sits in a
+box that scrolls sideways on narrow screens, and that box keeps CSS `position: sticky` on the table's own header from
+working, so the copy is a separate row that matches the columns' widths and follows the box's sideways scroll. Screen
+readers and the keyboard use the table's own header; the copy's buttons work with a click or a tap.
+
+> **Frontend analogy:** `position: sticky` sticks to the nearest ancestor that scrolls, and `overflow-x: auto` makes
+> the box scroll on both axes, so a sticky header inside it would only stick within that box, never to the window.
+
 ### View menu
 
 **View** picks how big the thumbnails are, under **Size**: **Small** (40px, the default), **Medium** (80px) or
