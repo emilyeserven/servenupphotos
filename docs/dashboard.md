@@ -7,18 +7,29 @@ now **Settings › Status** (see [Settings](settings.md#status)).
 
 ## The cards
 
-- **Needs attention:** across the full width above the other cards, one row per problem, each with how many photos it
-  affects and a link to the page that fixes it. Rows only show while something has the problem; with none, it says
-  nothing needs attention. It counts every photo file as the next Commit will have it (changes waiting for Commit and
-  local edits made, removed files left out), from the same read as the Instagram card, so it asks GitHub nothing new:
-  - **Instagram:** fewer than 7 **days left** in the queue (counted as **Next on Instagram** counts them), with how
-    many photos it would take to fill a week. Links to the [Instagram calendar](publish.md).
-  - **Photos without a title** that aren't Undecided or unselected. Links to the first one, by path, on the Photo page.
-  - **Photos without tags**, **without a genre**, **that aren't in an album** and **without a place**, counted as
-    [Bulk tagging](update-data.md#bulk-tagging), Genre Suggestions, [Album Suggestions](update-data.md#album-suggestions)
-    and [Bulk Places](update-data.md#bulk-places) pick them, and linking to those pages.
-  - **Photos without color data:** no `colors`, or `colors` saved before `peakChroma`, as **Update Data › Colors**
-    reads them, linking there.
+- **Needs attention:** across the full width above the other cards, a table with one row per problem: its priority,
+  what it is, how many photos it affects, and a link to the page that fixes it. Rows only show while something has the
+  problem; with none, it says nothing needs attention. It counts every photo file as the next Commit will have it
+  (changes waiting for Commit and local edits made, removed files left out), from the same read as the Instagram card,
+  so it asks GitHub nothing new. The **Priority** column shows a red dot for high, yellow for medium and gray for low.
+  The table starts sorted by priority, most urgent first, and pressing **Priority**, **Problem** or **Photos** sorts by
+  that column instead (pressing it again flips the order). On a phone, the fix link moves under the problem.
+  - **Photos without GPS** (high): no custom GPS position and none in the EXIF, leaving out photos marked
+    [This photo won't have a GPS position](places-and-localizations.md#custom-gps-position). Links to the first one,
+    by path, on the Photo page.
+  - **Photos without color data** (high): no `colors`, or `colors` saved before `peakChroma`, as **Update Data ›
+    Colors** reads them, linking there.
+  - **Instagram** (medium): fewer than 7 **days left** in the queue (counted as **Next on Instagram** counts them), with
+    how many photos it would take to fill a week. Links to the [Instagram calendar](publish.md).
+  - **Photos without a place** (medium), counted as [Bulk Places](update-data.md#bulk-places) picks them, linking there.
+    A photo without GPS is counted in the GPS row instead, since that's more serious, and one marked as going without
+    GPS is left out.
+  - **Photos without tags**, **without a genre** and **that aren't in an album** (low), counted as
+    [Bulk tagging](update-data.md#bulk-tagging), Genre Suggestions and
+    [Album Suggestions](update-data.md#album-suggestions) pick them, and linking to those pages.
+
+  Untitled photos aren't listed: they're drafts, which the **Drafts** card covers.
+
 - **Next up albums:** the [Lightroom Albums](lightroom-albums.md#next-up) page's Next up suggestions. It shows the
   **Overview** list by default; the menu at the top right picks one stage's list instead (Cull Round 1 to Re-editing,
   or No stage). It follows the Lightroom Albums page's **Online / Offline** choice, and, like that page, reads only
@@ -41,5 +52,6 @@ now **Settings › Status** (see [Settings](settings.md#status)).
   picked for it, from the album file's `spotlightUpdated`. An album picked before these days were kept says so, and
   gets a date the next time it's picked.
 
-The cards are in `components/dashboard/`, the queue's counting in `lib/social-queue.ts` (shared through
+The cards are in `components/dashboard/` (the Needs attention table, built with TanStack Table, in
+`needs-attention-table.tsx`), the queue's counting in `lib/social-queue.ts` (shared through
 `hooks/use-social-queue.ts`), and the Needs attention checks in `lib/needs-attention.ts`.

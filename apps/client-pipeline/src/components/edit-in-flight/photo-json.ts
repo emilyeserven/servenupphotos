@@ -177,12 +177,19 @@ function hasThumbnail(saved: PhotoJson): boolean {
   return SQUARE_NAMES.every((name) => savedUrl(saved.images?.[name]));
 }
 
-/** Whether the title, place name, places, custom city or country, or comment differs from the ones saved in data. */
+/** Whether the title, place name, places, custom city or country, no-GPS mark, or comment differs from the ones saved in data. */
 function detailsChanged(data: PhotoJson, details: PhotoDetails): boolean {
   const next = withDetails({}, details);
   return (
-    TEXT_FIELDS.some((key) => next[key] !== (data[key] ?? null)) || placesChanged(data, details)
+    TEXT_FIELDS.some((key) => next[key] !== (data[key] ?? null)) ||
+    placesChanged(data, details) ||
+    noGpsChanged(data, details)
   );
+}
+
+/** Whether the mark for a photo that won't have a GPS position differs from the one saved in data. */
+function noGpsChanged(data: PhotoJson, details: PhotoDetails): boolean {
+  return details.noGps !== savedDetails(data).noGps;
 }
 
 /** Whether the chosen places differ from the ones saved in data. */
