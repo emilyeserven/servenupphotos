@@ -3,6 +3,7 @@
   "kind": "preset",
   "name": "Focal length",
   "order": 4,
+  "group": "technical-details",
   "graph": {
     "type": "dot",
     "x": "focalLength",
