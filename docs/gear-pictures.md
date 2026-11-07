@@ -69,7 +69,10 @@ the crop, and the description.
 **Crop** is a frame the shape of the 267 × 200 crop. Drag the picture to move it, and use **Zoom** to make it bigger or
 smaller; zooming out gives it room around it, which **Fill** makes **White** or **Transparent** (a checkerboard). Every
 other camera's crop (or every other lens's) is drawn over it, faint, with **Others** setting how faint, and dashed
-lines cross the middle, so each picture can be given the same size and place as the rest. **Whole picture** goes back
+lines cross the middle, so each picture can be given the same size and place as the rest. **Limits** draws a red line
+in from the top, bottom, left and right, each a percentage of the frame (0 for none), with the space past it shaded, to
+fit every picture inside. The limits are a preference kept in this browser's local storage
+(`servenup-gear-crop-limits`), the same for every camera and lens, and aren't saved in the gear files. **Whole picture** goes back
 to the whole picture, centered. **Cut crop** makes the crop in R2; until then the page says the crop isn't cut yet,
 and saving keeps the last crop cut. **Save picture** (or **Save changes**) and **Remove picture** keep the file as a change waiting
 for Commit. The pipeline's own Gallery shows the committed pictures, since it imports the portfolio's filters.

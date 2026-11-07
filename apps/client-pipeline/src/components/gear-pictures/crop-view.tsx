@@ -1,6 +1,7 @@
 import { type PointerEvent, useRef, useState } from "react";
 import type { GearCrop, GearFile } from "@portfolio/lib/gear-pictures";
 import { Busy, SaveNote } from "@/components/entry-buttons";
+import { CropLimitFields, CropLimitLines } from "@/components/gear-pictures/crop-limits";
 import type { GearPictureEditor } from "@/components/gear-pictures/use-gear-picture";
 import { Button } from "@/components/ui/button";
 import { cropStyle, moveCrop, sameCrop, wholeCrop, zoomCrop, zoomOf } from "@/lib/gear-crop";
@@ -44,6 +45,7 @@ export function CropView({ editor, others }: { editor: GearPictureEditor; others
         onSize={(w, h) => setSize([w, h])}
       />
       <CropControls editor={editor} size={size} overlay={overlay} onOverlay={setOverlay} />
+      <CropLimitFields />
     </section>
   );
 }
@@ -100,6 +102,7 @@ function CropFrame({ editor, others, overlay, onSize }: CropFrameProps) {
         />
       ))}
       <CenterLines />
+      <CropLimitLines />
     </div>
   );
 }
