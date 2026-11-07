@@ -1,54 +1,17 @@
 import { useState } from "react";
 import { lastOrder, newPresetId } from "@/api/graph-presets";
 import { EditorButtons, Field, NameAndOrder } from "@/components/graph-presets/editor-parts";
+import {
+  fullGraph,
+  presetGraph,
+  savedGraph,
+  START_GRAPH,
+} from "@/components/graph-presets/preset-graph";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraphControls } from "@portfolio/components/graph-builder/graph-controls";
 import type { GraphConfig } from "@portfolio/lib/graph-data";
-import type { GraphPresetFile, PresetGraph, SavedGraph } from "@portfolio/lib/graph-presets";
-import { NO_RANGES } from "@portfolio/lib/graph-ranges";
+import type { GraphPresetFile, PresetGraph } from "@portfolio/lib/graph-presets";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
-
-/** A new preset's graph, as the Graph page starts: photos per year, split by season. */
-const START_GRAPH: PresetGraph = {
-  type: "bar",
-  x: "year",
-  measure: "count",
-  y: "season",
-  split: "season",
-  stacked: true,
-  sort: "reverse",
-  limit: 0,
-  ...NO_RANGES,
-};
-
-/** The settings a preset keeps, in the order its file writes them. */
-const GRAPH_KEYS = [
-  "type",
-  "x",
-  "measure",
-  "y",
-  "split",
-  "stacked",
-  "sort",
-  "limit",
-  ...(Object.keys(NO_RANGES) as (keyof typeof NO_RANGES)[]),
-] as const;
-
-/** The graph's settings without its filters, which a preset leaves as they are. */
-function presetGraph(config: PresetGraph): PresetGraph {
-  return Object.fromEntries(GRAPH_KEYS.map((key) => [key, config[key]])) as unknown as PresetGraph;
-}
-
-/** Whether a setting is a Range group part that's off, which the file leaves out. */
-function isOff([key, value]: [string, unknown]): boolean {
-  return key in NO_RANGES && NO_RANGES[key as keyof typeof NO_RANGES] === value;
-}
-
-/** The graph as the preset's file keeps it, with the Range group's parts that are off left out. */
-function savedGraph(graph: PresetGraph): SavedGraph {
-  const kept = Object.entries(presetGraph(graph)).filter((entry) => !isOff(entry));
-  return Object.fromEntries(kept) as SavedGraph;
-}
 
 /** The preset as typed. */
 interface PresetDraft {
@@ -68,12 +31,11 @@ function newDraft(files: GraphPresetFile[]): PresetDraft {
 
 /** A saved preset's draft. */
 function savedDraft(preset: GraphPresetFile): PresetDraft {
-  const graph = { ...START_GRAPH, ...preset.graph };
   return {
     name: preset.name,
     group: preset.group ?? "",
     order: preset.order,
-    graph,
+    graph: fullGraph(preset.graph),
     spotlight: preset.spotlight === true,
   };
 }
