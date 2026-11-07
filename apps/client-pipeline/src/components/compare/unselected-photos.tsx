@@ -8,7 +8,7 @@ import { useCompareEdits } from "@/hooks/use-compare-groups";
 import { useDiscardImages } from "@/hooks/use-discard-images";
 import { type ComparePhoto, comparePhotoName } from "@/lib/compare-groups";
 import { offlineImageUrl, squareImages } from "@/lib/offline-thumbnails";
-import { UNSELECTED_IMAGES, type Unselected, unselectedOf } from "@/lib/unselected";
+import { notChosenIn, UNSELECTED_IMAGES, type Unselected, unselectedOf } from "@/lib/unselected";
 
 /**
  * Unselected Photos: the photos that weren't chosen when a compare group was finished, each with why,
@@ -126,8 +126,7 @@ function UnselectedHeading({ photo, unselected }: { photo: ComparePhoto; unselec
         {photo.file.path.split("/").pop()}
       </p>
       <p className="text-muted-foreground text-xs">
-        Not chosen in “{unselected.group}” on {unselected.date}.{" "}
-        {UNSELECTED_IMAGES[unselected.images] ?? UNSELECTED_IMAGES.kept}.
+        {notChosenIn(unselected)}. {UNSELECTED_IMAGES[unselected.images] ?? UNSELECTED_IMAGES.kept}.
       </p>
     </div>
   );

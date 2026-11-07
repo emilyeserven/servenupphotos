@@ -33,6 +33,21 @@ export function unselectedOf(photo: ComparePhoto): Unselected | undefined {
   return isUnselected(photo.data) ? (photo.data[UNSELECTED] as Unselected) : undefined;
 }
 
+/**
+ * The `unselected` of a photo whose images were already gone from R2 when it was moved to
+ * Unselected Photos, so it has no group or winners: its group was finished, or given up on, without
+ * marking it.
+ */
+export function missingImages(): Unselected {
+  return { reason: "", winners: [], group: "", date: today(), images: "deleted" };
+}
+
+/** Where an unselected photo lost, such as "Not chosen in “Lanterns” on 2026-11-06". */
+export function notChosenIn(unselected: Unselected): string {
+  if (!unselected.group) return `Moved here without its images on ${unselected.date}`;
+  return `Not chosen in “${unselected.group}” on ${unselected.date}`;
+}
+
 /** The photos that weren't chosen, newest first. */
 export function unselectedPhotos(photos: ComparePhoto[]): ComparePhoto[] {
   return photos

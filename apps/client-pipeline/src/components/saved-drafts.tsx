@@ -1,8 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
-import { type PublishedFile, publishedPhotosQuery, type PublishedResponse } from "@/api/photos";
+import {
+  type InFlightImages,
+  type PublishedFile,
+  publishedPhotosQuery,
+  type PublishedResponse,
+} from "@/api/photos";
 import { DraftSortToggle, parseDraftSort, sortDrafts } from "@/components/draft-sort";
 import { DraftsSkeleton } from "@/components/in-flight-loading";
+import { imagesKnown, MissingImageDrafts } from "@/components/missing-image-drafts";
 import { PhotoFilterBar, usePhotoFilters } from "@/components/photo-filters";
 import { DraftTile, UndecidedQueue } from "@/components/undecided-photos";
 import { isDraft, isUnselected, useUntitledDrafts } from "@/lib/drafts";
@@ -74,7 +80,7 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
   const sort = useSearch({ strict: false, select: parseDraftSort });
   const all = data.files.filter((file) => isBaseDraft(file) && !lostInCompare(file, edits));
   if (all.length === 0) return <NoDrafts branch={data.branch} />;
-  const drafts = sortDrafts(filter(all), sort);
+  const [drafts, missing] = splitMissing(sortDrafts(filter(all), sort), data.images);
   const undecided = undecidedPaths(drafts, edits);
   return (
     <section className="flex flex-col gap-3">
@@ -85,12 +91,13 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
       </p>
       <PhotoFilterBar
         filters={filters}
-        shown={drafts.length}
+        shown={drafts.length + missing.length}
         total={all.length}
         prefix={DRAFT_FILTERS}
       >
         <DraftSortToggle sort={sort} />
       </PhotoFilterBar>
+      <MissingImageDrafts files={missing} />
       <UndecidedQueue
         files={drafts.filter((file) => undecided.has(file.path))}
         images={data.images}
@@ -100,6 +107,19 @@ function DraftsOnBase({ data, alongside }: SavedDraftsProps & { data: PublishedR
       <DraftList files={drafts.filter((file) => !undecided.has(file.path))} data={data} />
     </section>
   );
+}
+
+/**
+ * The drafts with an image in R2, and the ones without, which are listed apart. While R2 couldn't
+ * be searched, none are listed apart.
+ */
+function splitMissing(
+  files: PublishedFile[],
+  images: InFlightImages,
+): [PublishedFile[], PublishedFile[]] {
+  if (!imagesKnown(images)) return [files, []];
+  const missing = (file: PublishedFile) => images.byPath[file.path] === undefined;
+  return [files.filter((file) => !missing(file)), files.filter(missing)];
 }
 
 /** The base branch's Undecided panel heading: named after the branch beside the photos in flight. */
