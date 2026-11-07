@@ -71,8 +71,8 @@ date, or else its EXIF one), a photo listed twice, a photo with both `withNext` 
 ## Trip Stops
 
 A day's [trip stops](trip-lines.md#trip-stops) that have [casual photos](trip-lines.md#casual-photos), such as
-the food at a restaurant, show at the end of that day on the Trip page under **Trip Stops**: each stop's name
-(linking to its outside map), its kind, its note, and its casual photos in a grid of squares, each opening its large
+the food at a restaurant, show at the end of that day on the Trip page in a small **Trip Stops** group that starts folded (for now, until stops are worked into the story itself): each stop's name
+(linking to its outside map), its kind, its note, and its casual photos as small squares, each opening its large
 version in a new tab (`components/trip-stops.tsx`). A stop without casual photos isn't listed. Casual photos aren't in
 `ALLPHOTOS.json`, so Commit bakes what the page needs of them (ID, title, size and image URLs) into the day's `stops`.
 
