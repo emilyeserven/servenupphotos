@@ -114,13 +114,13 @@ in steps of 5 (`?vivid=20`), and the swatches' counts only count the photos it l
 
 The Grid's **Show filters** panel has a **Visuals** button (`components/visuals-picker.tsx`) after **Gear & settings**,
 like **When**: closed, it shows only a dot of the picked color and how many of its filters are set. It opens a picker
-(`components/visuals-picker-parts.tsx` has its sections) with a list on the left of **Color**, **Color share**, **Vividness**
+(`components/visuals-picker-parts.tsx` has its sections) with a list on the left of **Color**, **Match priority**, **Vividness**
 and **Orientation**, each with what it's set to under its name (such as "Blue", "At least 30%", "Peak · 40+" or
 "Vertical"), and **Clear visuals** under them while any of them is set. The right side shows the chosen section, with a line on
-what it's for and, for Color share and Vividness, what each choice does:
+what it's for and, for Match priority and Vividness, what each choice does:
 
 - **Color**: the small swatches; picking the chosen one again clears it.
-- **Color share** (how much of the picked color a photo needs): **Largest color** (the picked color is the photo's biggest share) or **At least…** (it covers at least the
+- **Match priority** (how much of the picked color a photo needs): **Largest color** (the picked color is the photo's biggest share) or **At least…** (it covers at least the
   share set on the slider, even when another color is bigger).
 - **Vividness**: **Average** (how vivid the whole photo is) or **Peak** (how vivid its most vivid tenth is), and the
   least of it a photo needs.
