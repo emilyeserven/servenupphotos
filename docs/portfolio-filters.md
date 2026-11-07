@@ -229,7 +229,7 @@ The URL changes once a handle is let go, keeping the range's ends as the photos 
 `?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. Each setting's title sits above its slider, which has a tick under it for every step and its lowest and highest values
 at its ends. The **(i)** button across from the title opens the info pane with little
 graphics of what its two ends look like, following the handles as they're dragged: the angle of view for focal length, the opening for aperture, a dial
-filled for longer exposures, and grain for ISO, with a sentence on what the setting does. Clicking it again closes it;
+filled for longer exposures beside a moving ball that's sharp at a fast shutter and smeared into a streak at a slow one, and grain for ISO, with a sentence on what the setting does. Clicking it again closes it;
 the browser remembers which, for every setting. A
 photo without the setting isn't in any range.
 
