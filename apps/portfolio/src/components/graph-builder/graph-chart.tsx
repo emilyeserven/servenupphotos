@@ -13,6 +13,7 @@ import {
   YAxis,
 } from "recharts";
 import { WithKey } from "@/components/graph-builder/graph-key";
+import { useCursorTooltip, usePieLabels } from "@/components/graph-builder/pie-parts";
 import { GraphTooltip, shortLabel } from "@/components/graph-builder/graph-parts";
 import { pickedOpacity, pickOf, useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
@@ -173,21 +174,32 @@ export function LineGraph({ graph, measure }: CartesianProps) {
 export function PieGraph({ graph, measure }: CartesianProps) {
   const slices = flat(graph.data);
   const { pick, onPick } = useGraphPick();
+  const [ref, labels] = usePieLabels(measure);
+  const cursor = useCursorTooltip();
   const pickSlice = (_: unknown, index: number) => {
     const picked = pickOf(graph.data[index]);
     if (picked) onPick(picked);
   };
   return (
     <WithKey items={slices.map((s, index) => ({ label: s.label, color: seriesColor(index) }))}>
-      <ChartContainer config={{}} className={CHART_CLASS}>
+      <ChartContainer
+        ref={ref}
+        config={{}}
+        className={CHART_CLASS}
+        onMouseMove={cursor.onMouseMove}
+      >
         <PieChart>
-          <ChartTooltip content={<GraphTooltip series={graph.series} measure={measure} />} />
+          <ChartTooltip
+            position={cursor.position}
+            isAnimationActive={false}
+            content={<GraphTooltip series={graph.series} measure={measure} />}
+          />
           <Pie
             data={slices}
             dataKey="value"
             nameKey="label"
             innerRadius="45%"
-            outerRadius="85%"
+            {...labels}
             stroke="var(--card)"
             strokeWidth={2}
             isAnimationActive={false}
