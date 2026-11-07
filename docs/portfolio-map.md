@@ -49,12 +49,13 @@ Over the top left corner, beside the title on wider screens and under it on phon
 (`components/map-controls.tsx`). On phones, **More filters**, **View in grid** and **Browse** are just their icons, so the row
 fits without covering the map:
 
-- **Places** comes first, with the icon button beside it that zooms back out to every photo. It opens the same tree as
-  the [Places filter](portfolio-filters.md#places), with the United States of America expanded, but it doesn't filter:
-  picking a country, state, city or place closes the tree and moves the map to that place's photos, the way the
+- **Places** comes first, with the icon button beside it that zooms back out to every photo. It opens the same columns as
+  the [Places filter](portfolio-filters.md#places), without checkboxes, and it doesn't filter: picking a place (one with
+  nothing in it, or **All of** at the top of a column, such as **All of Japan**) closes them and moves the map to that
+  place's photos, the one place at a time, the way the
   zoom-out button moves it to every photo (`components/map-place-picker.tsx`). Its counts are out of the photos the
   other filters leave. A link with a place filter in its URL opens the map on every photo, as the map ignores it.
-  Pointing at a place in the tree (or focusing it) shades its [area](places-and-localizations.md#areas) on the map,
+  Pointing at a place in the columns (or focusing it) shades its [area](places-and-localizations.md#areas) on the map,
   when it has one, and picking it keeps the area shaded, more faintly, until another place is picked
   (`components/place-area-layer.tsx`, `lib/place-areas.ts`). Each area is its own `places/<id>.geo.json` file,
   loaded the first time it's shown, so the map's page doesn't carry every outline. Areas are light blue (Tailwind's
