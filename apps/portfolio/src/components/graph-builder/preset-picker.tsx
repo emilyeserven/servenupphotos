@@ -1,10 +1,9 @@
-import { Bookmark, ChevronsUpDown, Info, X } from "lucide-react";
+import { Info, X } from "lucide-react";
 import { useState } from "react";
 import { ChoiceRow } from "@/components/choice-row";
 import { PresetSettings } from "@/components/graph-builder/preset-settings";
 import { SectionTab } from "@/components/picker-section-tab";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { GraphConfig } from "@/lib/graph-data";
 import { type GraphPreset, type PresetSection, presetSections } from "@/lib/graph-presets";
 import type { SavedGraphs } from "@/lib/saved-graphs";
@@ -42,33 +41,17 @@ interface PickerProps {
 }
 
 /**
- * The **Presets** button, like the Grid's **Groups**: it opens a list of the preset groups on the
- * left (the presets in no group as Other, and the visitor's own as Yours), and the chosen group's
- * presets on the right; picking one sets the graph to it. The (i) button adds a panel further
- * right with the settings of the preset pointed at, or the one the graph is set as.
+ * The Presets tab's insides, like the Grid's **Groups** picker: the preset groups on the left (the
+ * presets in no group as Other, and the visitor's own as Yours), and the chosen group's presets on
+ * the right; picking one sets the graph to it. The (i) button adds a panel further right with the
+ * settings of the preset pointed at, or the one the graph is set as.
  */
 export function PresetPicker(props: PickerProps) {
   const [info, setInfo] = useState(false);
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="font-normal">
-          <Bookmark className="text-muted-foreground" aria-hidden />
-          Presets
-          <ChevronsUpDown className="opacity-50" aria-hidden />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        collisionPadding={16}
-        className={cn(
-          "p-0",
-          info ? "w-[min(46rem,calc(100vw-2rem))]" : "w-[min(32rem,calc(100vw-2rem))]",
-        )}
-      >
-        <PickerBody {...props} info={info} onInfo={() => setInfo(!info)} />
-      </PopoverContent>
-    </Popover>
+    <div className="overflow-hidden rounded-lg border">
+      <PickerBody {...props} info={info} onInfo={() => setInfo(!info)} />
+    </div>
   );
 }
 
@@ -100,7 +83,7 @@ function PickerPanels({ sections, section, onSection, ...props }: PanelsProps) {
   const { config, info, onInfo } = props;
   const [pointed, setPointed] = useState<GraphPreset | undefined>();
   return (
-    <div className="flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] flex-col sm:flex-row">
+    <div className="flex max-h-[28rem] flex-col sm:flex-row">
       <div
         role="tablist"
         aria-orientation="vertical"
