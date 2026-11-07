@@ -1,6 +1,7 @@
 import { CopyPromptButton } from "@/components/bulk-tagging/pick-controls";
 import { AlbumTreeCard } from "@/components/lightroom-albums/album-tree";
 import { ImportCard } from "@/components/lightroom-albums/import-card";
+import { NextUpCard } from "@/components/lightroom-albums/next-up";
 import { Page } from "@/components/page";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { lightroomAlbumsPrompt } from "@/lib/lightroom-albums";
@@ -16,6 +17,7 @@ export function LightroomAlbumsPage() {
       title="Lightroom Albums"
       description="Your Lightroom folders and albums, read from screenshots by an LLM, with a stage and notes on each album. It's all kept in this browser only: nothing here goes to the backend or GitHub. Export it to pick up on another computer."
     >
+      <NextUpCard />
       <PromptCard />
       <ImportCard />
       <AlbumTreeCard />
