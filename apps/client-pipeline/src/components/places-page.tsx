@@ -10,6 +10,7 @@ import {
 import { GitHubGate } from "@/components/organize-page";
 import { Page } from "@/components/page";
 import { PlaceEditor } from "@/components/place-editor";
+import { type AddedRegionKind, RegionAdder } from "@/components/region-adder";
 import { QueryResult } from "@/components/query-result";
 import { RegionEditor } from "@/components/region-editor";
 import { RegionList, type RegionListData } from "@/components/region-list";
@@ -17,7 +18,7 @@ import { locationNames } from "@/lib/location-names";
 import { cityRows, countryRows, stateRows } from "@/lib/place-cities";
 import { unmappedPlacePhotos } from "@/lib/place-gps";
 import { placePhotoCounts, shownPhotos } from "@/lib/place-seeds";
-import { type RegionNode, regionNodes } from "@/lib/region-tree";
+import { type RegionKind, type RegionNode, regionNodes } from "@/lib/region-tree";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** The Places page: every country, city and place as one list, and a panel beside it to edit one. */
@@ -54,9 +55,9 @@ function useRegionList(data: PlacesResponse): RegionListData {
   const savedLocalizations = readEntries(data.localizations);
   const names = locationNames(savedLocalizations);
   const nodes = regionNodes({
-    countries: countryRows(photos, places, names),
-    states: stateRows(photos, places, names),
-    cities: cityRows(photos, places, names),
+    countries: countryRows(photos, places, names, savedLocalizations),
+    states: stateRows(photos, places, names, savedLocalizations),
+    cities: cityRows(photos, places, names, savedLocalizations),
     places,
     placePhotos: placePhotoCounts(photos),
     names,
@@ -75,7 +76,8 @@ function useRegionList(data: PlacesResponse): RegionListData {
 function PlacesPanes({ folder, data }: { folder: string; data: PlacesResponse }) {
   const list = useRegionList(data);
   const panel = useRef<HTMLDivElement>(null);
-  // The key of the row being edited, or "" for a new place. Bumped starts the panel afresh.
+  // The key of the row being edited, or "" for a new place, or `new:<kind>` for a new city, state
+  // or country. Bumped starts the panel afresh.
   const [editing, setEditing] = useState({ key: "", count: 0 });
   const edit = (key: string) => {
     setEditing((e) => ({ key, count: e.count + 1 }));
@@ -90,31 +92,50 @@ function PlacesPanes({ folder, data }: { folder: string; data: PlacesResponse })
           folder={folder}
           list={list}
           node={node}
+          adding={addingKind(editing.key)}
           onDone={() => edit("")}
+          onAdded={edit}
         />
       </div>
       <RegionList
         list={list}
         selected={node?.key ?? ""}
         onSelect={(n) => edit(n.key)}
-        onNew={() => edit("")}
+        onNew={(kind) => edit(newKey(kind))}
       />
     </div>
   );
 }
 
+/** The panel's key for a new row of the kind: "" for a place, else `new:<kind>`. */
+function newKey(kind: RegionKind): string {
+  return kind === "place" ? "" : `new:${kind}`;
+}
+
+/** The country, state or city a `new:<kind>` key adds, or undefined for any other key. */
+function addingKind(key: string): AddedRegionKind | undefined {
+  const kind = key.startsWith("new:") ? key.slice(4) : "";
+  return ["country", "state", "city"].includes(kind) ? (kind as AddedRegionKind) : undefined;
+}
+
 interface EditPanelProps {
   folder: string;
   list: RegionListData;
-  /** The row being edited, or undefined for a new place. */
+  /** The row being edited, or undefined for a new one. */
   node: RegionNode | undefined;
+  /** The kind of row being added when it's a city, state or country; undefined for a new place. */
+  adding: AddedRegionKind | undefined;
   onDone: () => void;
+  /** Called with a new city's, state's or country's key once it's saved, to edit it. */
+  onAdded: (key: string) => void;
 }
 
-/** A place's form, a city's or country's localization, or a form for a new place. */
-function EditPanel({ folder, list, node, onDone }: EditPanelProps) {
+/** A place's form, a city's or country's localization, or a form for a new one. */
+function EditPanel({ folder, list, node, adding, onDone, onAdded }: EditPanelProps) {
   if (!node)
-    return <PlaceEditor folder={folder} place={null} places={list.places} onDone={onDone} />;
+    return (
+      <NewPanel folder={folder} list={list} adding={adding} onDone={onDone} onAdded={onAdded} />
+    );
   const saved = list.localizations.get(node.key);
   if (!node.place) return <RegionEditor node={node} saved={saved} list={list} />;
   return (
@@ -126,4 +147,10 @@ function EditPanel({ folder, list, node, onDone }: EditPanelProps) {
       onDone={onDone}
     />
   );
+}
+
+/** The form for a new city, state or country, or else for a new place. */
+function NewPanel({ folder, list, adding, onDone, onAdded }: Omit<EditPanelProps, "node">) {
+  if (adding) return <RegionAdder kind={adding} folder={folder} list={list} onAdded={onAdded} />;
+  return <PlaceEditor folder={folder} place={null} places={list.places} onDone={onDone} />;
 }

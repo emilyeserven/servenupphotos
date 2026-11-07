@@ -1,7 +1,8 @@
-import { ChevronRightIcon, PlusIcon, SearchIcon } from "lucide-react";
+import { ChevronRightIcon, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { type Localization, type Place, type PlacesResponse } from "@/api/places";
 import { InferredPlaceList } from "@/components/inferred-place-list";
+import { NewRegionButton } from "@/components/new-region-button";
 import { PlaceBulkBar } from "@/components/place-bulk-bar";
 import { PlacePhotoCount } from "@/components/place-gallery-link";
 import { PlaceGpsCell } from "@/components/place-gps-cell";
@@ -21,6 +22,7 @@ import type { CombinedPhoto } from "@/lib/group-photos";
 import type { LocationNames } from "@/lib/location-names";
 import { cn } from "@/lib/utils";
 import {
+  type RegionKind,
   type RegionNode,
   type RegionTreeRow,
   regionParentKeys,
@@ -47,7 +49,8 @@ interface RegionListProps {
   /** The key of the row being edited, or "" for none. */
   selected: string;
   onSelect: (node: RegionNode) => void;
-  onNew: () => void;
+  /** Opens the edit panel on a new place, city, state or country. */
+  onNew: (kind: RegionKind) => void;
 }
 
 /**
@@ -62,10 +65,7 @@ export function RegionList({ list, selected, onSelect, onNew }: RegionListProps)
           <CardTitle>Countries, cities and places</CardTitle>
           <CardDescription>Read on {list.data.branch}.</CardDescription>
         </div>
-        <Button type="button" size="sm" onClick={onNew}>
-          <PlusIcon />
-          New place
-        </Button>
+        <NewRegionButton onNew={onNew} />
       </CardHeader>
       <CardContent className="flex flex-col gap-2">
         <RegionTree list={list} selected={selected} onSelect={onSelect} />
@@ -85,7 +85,7 @@ function RegionTree({ list, selected, onSelect }: RegionTreeProps) {
   if (list.nodes.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
-        No places yet. Add one with New place, or from a photo's Place field.
+        No places yet. Add one with New, or from a photo's Place field.
       </p>
     );
   }
@@ -218,7 +218,7 @@ function UnreadableFiles({ files }: { files: PlacesResponse["places"] }) {
 
 /** A city only photos show, which no place is in yet. */
 function isInferredCity(node: RegionNode): boolean {
-  return node.kind === "city" && node.region?.places === 0;
+  return node.kind === "city" && node.region?.places === 0 && node.photos > 0;
 }
 
 /** What's shown under a row's name: a place's ID and description, or that a city is only on photos. */

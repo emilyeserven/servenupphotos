@@ -39,9 +39,12 @@ export function useLocalizationDraft(saved: Localization | undefined) {
     save.reset();
     setFields(next);
   };
-  /** Saves the fields as the localization of target, with more of its fields, such as its other names. */
-  const saveAs = (target: LocalizationTarget, more?: Partial<Localization>) =>
-    save.mutate({ ...target, ...more, ...fields });
+  /**
+   * Saves the fields as the localization of target, with more of its fields, such as its other
+   * names; `onSaved` runs once it's saved.
+   */
+  const saveAs = (target: LocalizationTarget, more?: Partial<Localization>, onSaved?: () => void) =>
+    save.mutate({ ...target, ...more, ...fields }, { onSuccess: onSaved });
   return { fields, set, changed, save, saveAs };
 }
 

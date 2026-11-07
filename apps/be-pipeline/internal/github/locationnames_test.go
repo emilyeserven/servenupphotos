@@ -90,3 +90,29 @@ func TestApplyLocationNames(t *testing.T) {
 		t.Error("ApplyLocationNames() again saved changes, want none")
 	}
 }
+
+func TestSaveLocalizationRegion(t *testing.T) {
+	_, c := newMainRepo(t, map[string]string{})
+	city := Localization{ID: "city-busan", Type: "city", Name: "Busan", State: " Gyeongsang ", Country: " South Korea "}
+	if _, err := c.SaveLocalization(t.Context(), placesGH, city); err != nil {
+		t.Fatalf("SaveLocalization() error = %v", err)
+	}
+	saved := staged(t, c, dataRoot+"/localizations/city-busan.json")
+	if !strings.Contains(saved, `"state": "Gyeongsang"`) || !strings.Contains(saved, `"country": "South Korea"`) {
+		t.Errorf("saved %s, want the city's state and country", saved)
+	}
+	state := Localization{ID: "state-gyeongsang", Type: "state", Name: "Gyeongsang", State: "X", Country: "South Korea"}
+	if _, err := c.SaveLocalization(t.Context(), placesGH, state); err != nil {
+		t.Fatalf("SaveLocalization() error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/localizations/state-gyeongsang.json"); strings.Contains(saved, `"state": `) {
+		t.Errorf("saved %s, want no state on a state", saved)
+	}
+	country := Localization{ID: "country-japan", Type: "country", Name: "Japan", Country: "X"}
+	if _, err := c.SaveLocalization(t.Context(), placesGH, country); err != nil {
+		t.Fatalf("SaveLocalization() error = %v", err)
+	}
+	if saved := staged(t, c, dataRoot+"/localizations/country-japan.json"); strings.Contains(saved, `"country": `) {
+		t.Errorf("saved %s, want no country on a country", saved)
+	}
+}

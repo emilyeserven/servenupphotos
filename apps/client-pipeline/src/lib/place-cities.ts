@@ -1,4 +1,4 @@
-import type { Place } from "@/api/places";
+import type { Localization, Place } from "@/api/places";
 import type { CombinedPhoto } from "@/lib/group-photos";
 import { type LocationNames, NO_LOCATION_NAMES, winningName } from "@/lib/location-names";
 import { shownField } from "@/lib/place-seeds";
@@ -58,21 +58,48 @@ class Tally<T extends { name: string }> {
   }
 }
 
+/** Gives the city a state and country if it had none. */
+function locateCity(row: CityRow | undefined, r: RegionValues) {
+  if (!row) return;
+  row.state ||= regionName(r.state);
+  row.country ||= regionName(r.country);
+}
+
 /** Counts one photo or place in the city, giving the city a state and country if it had none. */
 function countCity(tally: Tally<CityRow>, r: RegionValues, field: "photos" | "places") {
   const row = tally.row(r.city);
-  if (!row) return;
-  row[field]++;
-  row.state ||= regionName(r.state);
-  row.country ||= regionName(r.country);
+  if (row) row[field]++;
+  locateCity(row, r);
 }
 
 /** Counts one photo or place in the state, giving the state a country if it had none. */
 function countState(tally: Tally<StateRow>, r: RegionValues, field: "photos" | "places") {
   const row = tally.row(r.state);
-  if (!row) return;
-  row[field]++;
-  row.country ||= regionName(r.country);
+  if (row) row[field]++;
+  locateState(row, r.country);
+}
+
+/** Gives the state a country if it had none. */
+function locateState(row: StateRow | undefined, country: string) {
+  if (row) row.country ||= regionName(country);
+}
+
+/**
+ * The saved localizations of the type, each as where it is: a city or state added on the Places
+ * page is listed from its localization even before a photo or place has it, in the state and
+ * country written there.
+ */
+function savedRegions(
+  localizations: Localization[],
+  type: "city" | "state" | "country",
+  names: LocationNames,
+): RegionValues[] {
+  return localizations
+    .filter((l) => l.type === type)
+    .map((l) => ({
+      ...regionOf(names, "", l.state, l.country),
+      [type]: winningName(names, type, l.name),
+    }));
 }
 
 /** The name trimmed, or empty when there's none. */
@@ -123,6 +150,7 @@ export function cityRows(
   photos: CombinedPhoto[],
   places: Place[],
   names: LocationNames = NO_LOCATION_NAMES,
+  localizations: Localization[] = [],
 ): CityRow[] {
   const tally = new Tally<CityRow>((name) => ({
     name,
@@ -131,6 +159,8 @@ export function cityRows(
     photos: 0,
     places: 0,
   }));
+  // Saved ones go first, so the state and country written on a city's localization win.
+  for (const r of savedRegions(localizations, "city", names)) locateCity(tally.row(r.city), r);
   for (const r of regionsOf(photos, places, names)) countCity(tally, r, r.field);
   return tally.sorted();
 }
@@ -143,9 +173,17 @@ export function stateRows(
   photos: CombinedPhoto[],
   places: Place[],
   names: LocationNames = NO_LOCATION_NAMES,
+  localizations: Localization[] = [],
 ): StateRow[] {
   const tally = new Tally<StateRow>((name) => ({ name, country: "", photos: 0, places: 0 }));
+  for (const r of savedRegions(localizations, "state", names)) {
+    locateState(tally.row(r.state), r.country);
+  }
   for (const r of regionsOf(photos, places, names)) countState(tally, r, r.field);
+  // A city added in a state no photo or place has yet still lists the state.
+  for (const city of cityRows(photos, places, names, localizations)) {
+    locateState(tally.row(city.state), city.country);
+  }
   return tally.sorted();
 }
 
@@ -154,11 +192,20 @@ export function countryRows(
   photos: CombinedPhoto[],
   places: Place[],
   names: LocationNames = NO_LOCATION_NAMES,
+  localizations: Localization[] = [],
 ): CountryRow[] {
   const tally = new Tally<CountryRow>((name) => ({ name, cities: 0, photos: 0, places: 0 }));
+  for (const r of savedRegions(localizations, "country", names)) tally.row(r.country);
   for (const r of regionsOf(photos, places, names)) countIn(tally.row(r.country), r.field);
-  for (const city of cityRows(photos, places, names)) countIn(tally.row(city.country), "cities");
+  countCountryCities(tally, cityRows(photos, places, names, localizations));
+  // A state added in a country no photo or place has yet still lists the country.
+  for (const state of stateRows(photos, places, names, localizations)) tally.row(state.country);
   return tally.sorted();
+}
+
+/** Counts each city in its country. */
+function countCountryCities(tally: Tally<CountryRow>, cities: CityRow[]) {
+  for (const city of cities) countIn(tally.row(city.country), "cities");
 }
 
 function countIn(row: CountryRow | undefined, field: "cities" | "photos" | "places") {

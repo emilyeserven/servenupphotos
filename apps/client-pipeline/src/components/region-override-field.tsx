@@ -19,11 +19,10 @@ function counted(count: number, noun: string): string {
   return `${count} ${noun}${count === 1 ? "" : "s"}`;
 }
 
-/** How a city or country is known: from places, or else inferred from photos. */
-function usedBy(row: { places: number; photos: number }): string {
-  return row.places > 0
-    ? counted(row.places, "place")
-    : `Inferred from ${counted(row.photos, "photo")}`;
+/** How a city, state or country is known: from places, or else inferred from photos, or else only added. */
+export function usedBy(row: { places: number; photos: number }): string {
+  if (row.places > 0) return counted(row.places, "place");
+  return row.photos > 0 ? `Inferred from ${counted(row.photos, "photo")}` : "No photos yet";
 }
 
 function cityOption(city: CityRow): ComboboxOption {
@@ -52,12 +51,13 @@ function withWritten(options: ComboboxOption[], value: string): ComboboxOption[]
 function useRegions() {
   const read = useQuery(placesQuery).data;
   const places = readEntries(read?.places);
-  const names = locationNames(readEntries(read?.localizations));
+  const localizations = readEntries(read?.localizations);
+  const names = locationNames(localizations);
   const photos = shownPhotos(useCombinedData().data);
   return {
-    cities: cityRows(photos, places, names),
-    states: stateRows(photos, places, names),
-    countries: countryRows(photos, places, names),
+    cities: cityRows(photos, places, names, localizations),
+    states: stateRows(photos, places, names, localizations),
+    countries: countryRows(photos, places, names, localizations),
   };
 }
 

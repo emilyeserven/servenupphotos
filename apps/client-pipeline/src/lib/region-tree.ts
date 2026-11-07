@@ -39,7 +39,10 @@ export interface RegionTreeRow {
 }
 
 /** The key of the country, state or city with this name, or "" when the name is empty. */
-function regionNodeKey(kind: "country" | "state" | "city", name: string | undefined): string {
+export function regionNodeKey(
+  kind: "country" | "state" | "city",
+  name: string | undefined,
+): string {
   const key = regionKey(name);
   return key ? `${kind}:${key}` : "";
 }
