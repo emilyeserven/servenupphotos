@@ -43,7 +43,9 @@ it asks what happens to the photos that didn't win:
 
 Deleting happens at once, through Explore Bucket's delete (`POST /api/photos/bucket/delete`), one photo at a time, so it
 needs the internet. When any of a photo's files can't be deleted, the dialog lists which and why, and **Finish anyway**
-moves it to Unselected Photos as still in R2, from where it can be deleted again. Each version's key is worked out
+moves it to Unselected Photos as still in R2, from where it can be deleted again, while **Try again** deletes
+those photos' files once more. Once deleting starts, the dialog can't be closed without finishing, since the losers
+already deleted have to be marked as unselected or they'd be left as drafts without images. Each version's key is worked out
 from the original's (its JSON's `images.key`, else `images.full`, else the image found in R2) as
 `<original without its extension>-<version>.webp`, the way uploads name them.
 
