@@ -47,7 +47,7 @@ way it combines the timeline labels into `TIMELINE.json`:
 - **`spotlight`** is `true` for a preset shown as its own button above the Graph page's Presets and Adjust Graph; left
   out when it isn't. A group never has it.
 - **`graph`** holds the Graph page's settings by the names in `GraphConfig` (`lib/graph-data.ts`): `type` (bar, line,
-  dot, pie, scatter or heatmap), `x` and `y` (stat IDs, such as `aperture`, `year` or `daypart`), `measure` (count or percent),
+  dot, pie, scatter, heatmap or photos), `x` and `y` (stat IDs, such as `aperture`, `year` or `daypart`), `measure` (count or percent),
   `split` (a stat ID or "" for none), `stacked`, `sort` (group, reverse or count), `limit` (0 for all), and the
   Range group's parts, each left out when it's off: `xFrom` and `xTo` (x values by name, such as `"f/2"`), `yFrom`
   and `yTo` (a scatterplot's or heatmap's y values by name), `yMin` and `yMax` (where a bar, line or dot graph's y axis starts and

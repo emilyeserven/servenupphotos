@@ -4,7 +4,8 @@ import { useState } from "react";
 import { SiteHomeLink } from "@/components/site-home-link";
 import { type FocusChain, type StatFocus, StatGroupCard } from "@/components/stat-group";
 import { filterWithCamera } from "@/lib/camera-filters";
-import { photos } from "@/lib/photos";
+import { LOCATION_KEYS } from "@/lib/photo-filters";
+import { type Photo, photos } from "@/lib/photos";
 import { type GroupDef, type GroupVariant, groupChains, type StatRow } from "@/lib/stat-groups";
 import { type StatSection, STAT_SECTIONS, type StatTotals, statTotals } from "@/lib/stats";
 
@@ -145,23 +146,42 @@ function without(focuses: Focuses, id: string): Focuses {
 /** Every group, to find which one narrows another. */
 const ALL_GROUPS = STAT_SECTIONS.flatMap((section) => section.groups);
 
+/** A row narrowing a group, with the photos it and the rows above it leave. */
+type Step = FocusChain[number] & { photos: Photo[] };
+
 /**
  * The rows narrowing the group, from the top down: the one chosen in the group narrowing it, after
- * the ones narrowing that group, each with the filter for its photos and those above it.
+ * the ones narrowing that group. Each step keeps only the photos the steps above it left, so a
+ * third card counts within every choice above it, such as Cities within No region within the US.
  */
-function focusChain(id: string, focuses: Focuses, seen = new Set<string>()): FocusChain {
+function focusChain(id: string, focuses: Focuses, seen = new Set<string>()): Step[] {
   const parent = ALL_GROUPS.find((def) => def.narrows === id);
   const above = parent && !seen.has(id) ? focusChain(parent.id, focuses, seen.add(id)) : [];
   const focus = focuses[id];
-  if (!focus) return above;
-  const filter = Object.assign({}, ...above.map((f) => f.filter), focus.row.filter);
-  return [...above, { ...focus, filter }];
+  return focus ? [...above, stepOf(above, focus)] : above;
+}
+
+/** The chosen row as a step below the steps above it, keeping only the photos they left. */
+function stepOf(above: Step[], focus: StatFocus): Step {
+  const narrowed = filterWithCamera(groupPhotos(above), focus.row.filter ?? {});
+  const filter = gridFilter([...above.map((step) => step.row), focus.row], narrowed);
+  return { ...focus, filter, photos: narrowed };
+}
+
+/**
+ * The Grid's filter for a chain's photos: its rows' filters together, or, when they choose more
+ * than one kind of place, which the Grid would match any of, the photos themselves by ID.
+ */
+function gridFilter(rows: StatRow[], narrowed: Photo[]): Step["filter"] {
+  const filter = Object.assign({}, ...rows.map((row) => row.filter));
+  const places = LOCATION_KEYS.filter((key) => key in filter);
+  if (places.length < 2) return filter;
+  return { ids: narrowed.map((photo) => photo.id) };
 }
 
 /** The photos a group counts: the ones the rows narrowing it leave, or every photo. */
-function groupPhotos(chain: FocusChain) {
-  const last = chain.at(-1);
-  return last ? filterWithCamera(photos, last.filter) : photos;
+function groupPhotos(chain: Step[]): Photo[] {
+  return chain.at(-1)?.photos ?? photos;
 }
 
 /** One section, such as Gear, with its groups as cards: each chain of narrowing groups on a row of its own. */

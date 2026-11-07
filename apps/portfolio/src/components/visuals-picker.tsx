@@ -1,21 +1,23 @@
 import { useNavigate } from "@tanstack/react-router";
-import { ChevronDown, ChevronsUpDown, Palette } from "lucide-react";
+import { Palette } from "lucide-react";
 import { useState } from "react";
-import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
+import {
+  FilterPickerButton,
+  PickerClear,
+  SectionPicker,
+} from "@portfolio/components/section-picker";
 import {
   type VisualFilters,
   type VisualSection,
   VisualsPickerPart,
   type VisualsPickerProps,
 } from "@portfolio/components/visuals-picker-parts";
-import { FilterCount } from "@portfolio/components/photo-filters";
-import { Button } from "@portfolio/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import { COLOR_FILTER_KEYS, colorFilterCount, DEFAULT_PERCENT } from "@portfolio/lib/color-search";
 import { ORIENTATION_KEY } from "@portfolio/lib/orientation";
 import { type ColorName, colorLabel, colorSwatch, isShade } from "@portfolio/lib/photo-colors";
+import type { OwnFilters } from "@portfolio/components/photo-filters";
+import type { Photo } from "@portfolio/lib/photos";
 import { cn } from "@portfolio/lib/utils";
-import { SectionTab } from "@portfolio/components/picker-section-tab";
 
 /** The URL keys the Visuals picker sets: the color filters and the orientation. */
 const VISUAL_FILTER_KEYS = [...COLOR_FILTER_KEYS, ORIENTATION_KEY] as const;
@@ -64,31 +66,34 @@ function firstSection(filters: VisualFilters): VisualSection {
 /**
  * The Grid's **Visuals** filter, a button like **When** and **Gear & settings** that opens a
  * picker: a list of Color, Color threshold, Vividness and Orientation on the left, each saying what it's set
- * to, and the chosen one's controls on the right, with what each choice does. The button shows the
- * picked color and how many of its filters are set. `photos` is what the other filters leave,
- * before the color and orientation filters, which the counts are out of.
+ * to, with **Clear visuals** under it, and the chosen one's controls on the right, with what each
+ * choice does. The button shows the picked color and how many of its filters are set. `photos` is
+ * what the other filters leave, before the color and orientation filters, which the counts are out of.
  */
 export function VisualsPicker(props: VisualsPickerProps) {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="font-normal">
-          <Palette className="text-muted-foreground" aria-hidden />
-          Visuals
-          <PickedDot color={props.filters.color} />
-          <FilterCount count={visualFilterCount(props.filters)} />
-          <ChevronsUpDown className="opacity-50" aria-hidden />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        collisionPadding={16}
-        className="w-auto max-w-[calc(100vw-2rem)] p-0"
-      >
-        <PickerBody {...props} />
-      </PopoverContent>
-    </Popover>
+    <FilterPickerButton
+      Icon={Palette}
+      label="Visuals"
+      count={visualFilterCount(props.filters)}
+      badge={<PickedDot color={props.filters.color} />}
+    >
+      <PickerBody {...props} />
+    </FilterPickerButton>
   );
+}
+
+/**
+ * The **Visuals** picker as a view's own filters in the filter bar, for the Timeline and the Map:
+ * its keys for **Clear filters**, how many of its filters are set, and the picker. `photos` is what
+ * the other filters leave, which its counts are out of.
+ */
+export function visualsOwnFilters(photos: Photo[], filters: VisualFilters): OwnFilters {
+  return {
+    keys: VISUAL_FILTER_KEYS,
+    count: visualFilterCount(filters),
+    children: <VisualsPicker photos={photos} filters={filters} />,
+  };
 }
 
 /** A small dot of the picked color in the button, so it shows while the picker is closed. */
@@ -103,91 +108,20 @@ function PickedDot({ color }: { color: ColorName | undefined }) {
   );
 }
 
-/**
- * The list of sections on the left, with **Clear visuals** under it, and the chosen one on the
- * right. On phones the list folds up above the controls instead, behind a button naming the chosen
- * section, like **Gear & settings**, and takes the controls' place while it's open.
- */
+/** The sections, opening on the first one set, with **Clear visuals** under them. */
 function PickerBody(props: VisualsPickerProps) {
   const [section, setSection] = useState<VisualSection>(() => firstSection(props.filters));
-  const [listOpen, setListOpen] = useState(false);
-  const choose = (next: VisualSection) => {
-    setSection(next);
-    setListOpen(false);
-  };
   return (
-    <div className="flex max-h-[min(28rem,calc(var(--radix-popover-content-available-height)-1rem))] w-[calc(100vw-2rem)] flex-col sm:w-[32rem] sm:flex-row">
-      <ListToggle
-        section={section}
-        filters={props.filters}
-        open={listOpen}
-        onClick={() => setListOpen(!listOpen)}
-      />
-      <div
-        className={cn(
-          "flex min-h-0 flex-col gap-0.5 overflow-y-auto border-b bg-muted/40 p-1 sm:w-36 sm:shrink-0 sm:border-r sm:border-b-0",
-          !listOpen && "max-sm:hidden",
-        )}
-      >
-        <div role="tablist" aria-orientation="vertical" aria-label="Visual filters">
-          {SECTIONS.map(([key, label, text]) => (
-            <SectionTab
-              key={key}
-              label={label}
-              text={text(props.filters)}
-              chosen={section === key}
-              onClick={() => choose(key)}
-            />
-          ))}
-        </div>
-        <ClearVisuals filters={props.filters} />
-      </div>
-      <div
-        role="tabpanel"
-        className={cn("min-h-0 min-w-0 flex-1 overflow-y-auto p-3", listOpen && "max-sm:hidden")}
-      >
-        <VisualsPickerPart section={section} {...props} />
-      </div>
-    </div>
-  );
-}
-
-/** The section's name and what it's set to, as the left list shows them. */
-function sectionOf(section: VisualSection, filters: VisualFilters): [string, string] {
-  const found = SECTIONS.find(([key]) => key === section);
-  return found ? [found[1], found[2](filters)] : ["", ""];
-}
-
-/**
- * On phones only, the button that opens and closes the list of sections, naming the chosen one
- * and what it's set to.
- */
-function ListToggle({
-  section,
-  filters,
-  open,
-  onClick,
-}: {
-  section: VisualSection;
-  filters: VisualFilters;
-  open: boolean;
-  onClick: () => void;
-}) {
-  const [label, text] = sectionOf(section, filters);
-  return (
-    <button
-      type="button"
-      aria-expanded={open}
-      onClick={onClick}
-      className="flex items-center gap-2 border-b bg-muted/40 px-3 py-2 text-left text-sm outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:hidden"
+    <SectionPicker
+      label="Visual filters"
+      sections={SECTIONS.map(([key, label, text]) => ({ key, label, text: text(props.filters) }))}
+      chosen={section}
+      onChoose={setSection}
+      width="sm:w-[32rem]"
+      footer={<ClearVisuals filters={props.filters} />}
     >
-      <span className="font-medium whitespace-nowrap">{label}</span>
-      <span className="truncate text-xs text-muted-foreground">{text}</span>
-      <ChevronDown
-        aria-hidden
-        className={cn("ml-auto size-4 shrink-0 transition-transform", open && "rotate-180")}
-      />
-    </button>
+      <VisualsPickerPart section={section} {...props} />
+    </SectionPicker>
   );
 }
 
@@ -205,10 +139,5 @@ function ClearVisuals({ filters }: { filters: VisualFilters }) {
       }),
       replace: true,
     });
-  return (
-    <div className="flex items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground sm:mt-auto">
-      Clear visuals
-      <ClearFilterButton label="Visuals" onClear={clear} />
-    </div>
-  );
+  return <PickerClear text="Clear visuals" label="Visuals" onClear={clear} />;
 }

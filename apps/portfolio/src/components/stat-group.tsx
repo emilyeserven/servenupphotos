@@ -14,7 +14,7 @@ export interface StatFocus {
 }
 
 /** A row narrowing a group, with the filter for its photos and those of the rows narrowing it. */
-export type FocusChain = (StatFocus & { filter: Record<string, string | string[]> })[];
+export type FocusChain = (StatFocus & { filter: Record<string, string | string[] | number[]> })[];
 
 /**
  * One group on the Stats page, such as Cameras, as a card of its rows. A group that narrows

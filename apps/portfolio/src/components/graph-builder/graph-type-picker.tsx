@@ -4,6 +4,7 @@ import {
   ChartNoAxesColumn,
   ChartPie,
   ChartScatter,
+  Grip,
   Grid3x3,
   type LucideIcon,
 } from "lucide-react";
@@ -23,6 +24,7 @@ const TYPES: [GraphType, string, LucideIcon][] = [
   ["pie", "Pie", ChartPie],
   ["scatter", "Scatter", ChartScatter],
   ["heatmap", "Heatmap", Grid3x3],
+  ["photos", "Photo dots", Grip],
 ];
 
 /** The graph type's name and icon. */

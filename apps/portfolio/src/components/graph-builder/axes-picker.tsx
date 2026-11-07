@@ -35,9 +35,15 @@ function yText(config: GraphConfig): string {
 function sectionsOf(config: GraphConfig): GraphPickerSection<AxesSection>[] {
   return [
     ["x", xName(config), statById(config.x).label],
-    ["y", config.type === "pie" ? "Size" : "Y axis", yText(config)],
+    ...ySections(config),
     ["order", "Order", orderName(config.x, xName(config), config.sort)],
   ];
+}
+
+/** The y axis's section: a pie's Size, none for a photo dot graph, whose stacks are always photos. */
+function ySections(config: GraphConfig): GraphPickerSection<AxesSection>[] {
+  if (config.type === "photos") return [];
+  return [["y", config.type === "pie" ? "Size" : "Y axis", yText(config)]];
 }
 
 /**

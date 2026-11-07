@@ -49,9 +49,12 @@ function showText(limit: number): string {
   return limit === 0 ? "All" : `First ${limit}`;
 }
 
-/** The y axis's ends, off a pie. */
+/** The graph types with no y axis ends to pick: the pie, and the photo dot graph, whose stacks are as tall as they are. */
+const NO_Y_ENDS: ReadonlySet<GraphConfig["type"]> = new Set(["pie", "photos"]);
+
+/** The y axis's ends, off a pie or photo dot graph. */
 function ySections(config: GraphConfig): GraphPickerSection<RangeSection>[] {
-  return config.type === "pie" ? [] : [["y", "Y axis", yText(config)]];
+  return NO_Y_ENDS.has(config.type) ? [] : [["y", "Y axis", yText(config)]];
 }
 
 /** The y axis's buckets, for a scatterplot's or heatmap's second stat. */

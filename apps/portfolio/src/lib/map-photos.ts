@@ -1,7 +1,7 @@
 import { LngLatBounds } from "maplibre-gl";
 import { useMemo } from "react";
-import { photosOnDays } from "@/lib/map-days";
 import { filterPhotos, type PhotoFilters } from "@/lib/photo-filters";
+import { filterByVisuals, type VisualSearch } from "@/lib/visual-filters";
 import { photos, type Photo } from "@/lib/photos";
 
 /** A photo with a GPS position, which is all the map can show. */
@@ -58,37 +58,15 @@ interface MapPhotos {
  * The photos with a GPS position the filters leave, worked out again only when the filters
  * change, so the map's source isn't reset on every render.
  */
-export function useMapPhotos(filters: PhotoFilters): MapPhotos {
+export function useMapPhotos(filters: PhotoFilters & VisualSearch): MapPhotos {
   const key = JSON.stringify(filters);
   return useMemo(() => {
-    const placed = filterPhotos(placedPhotos, JSON.parse(key) as PhotoFilters);
+    const parsed = JSON.parse(key) as PhotoFilters & VisualSearch;
+    const placed = filterByVisuals(filterPhotos(placedPhotos, parsed), parsed);
     return {
       placed,
       geoJson: geoJsonOf(placed),
       bounds: boundsOf(placed),
     };
   }, [key]);
-}
-
-/** The photos the map draws once the day filter is applied too, and their GeoJSON. */
-interface DayPhotos {
-  placed: PlacedPhoto[];
-  geoJson: ReturnType<typeof geoJsonOf>;
-}
-
-/**
- * The map's photos taken on the day, or from it through `to`, or all of them without a day. It's
- * apart from the other filters so choosing days neither moves the map nor takes the other days out
- * of the day filter's choices.
- */
-export function useDayPhotos(
-  mapPhotos: MapPhotos,
-  day: string | undefined,
-  to: string | undefined,
-): DayPhotos {
-  return useMemo(() => {
-    if (!day) return mapPhotos;
-    const placed = photosOnDays(mapPhotos.placed, day, to);
-    return { placed, geoJson: geoJsonOf(placed) };
-  }, [mapPhotos, day, to]);
 }

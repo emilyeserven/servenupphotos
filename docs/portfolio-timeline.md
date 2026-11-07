@@ -28,7 +28,7 @@ so the sketches appear a moment later, and on screens under 360 px wide they're 
 
 Once the chart has scrolled up out of the window, a scrubber appears down the right edge, like the one in Google Photos.
 It has a tick for each month in the list and a label for each year at its first month. With **Scrubber ticks** set to
-**Day, month & year** in the display options (or a label chosen), it has a tick for each day instead, labeled with each
+**Day, month & year** in the display options, it has a tick for each day instead, labeled with each
 month's short name at its first day and the year at a year's first day, and its bubble names the day. The tick at the
 start of a bigger unit is bigger: a year's first month or day has the longest, darkest tick, and with day ticks a
 month's first day has a longer one than the days after it. A label that would crowd another is left out, years last. Each tick sits as far down the scrubber as its month is down the list, so a busy month
@@ -56,22 +56,25 @@ On a phone, Large and Huge thumbnails sit above their photo's title instead of b
 
 ## Time range
 
-The range picker chooses a quick range, such as **Last 30 days** (`?range=30d`), or two dates (`?from=…&to=…`). Beside
-it, the label picker (shown once there are [timeline labels](timeline-labels.md)) shows only one label's days, such as
-**Japan** (`?label=japan-2026-09-22`); the range picker then shows those dates, and picking a range or **Any label**
-lets the label go.
+The days shown are the **When** filter's date range in [Filters](portfolio-filters.md) (`?start=…&end=…`); with no
+date range the Timeline shows every photo, from the oldest to today. Seasons, months and the rest of the When filter
+narrow it the same way they do on the other views. Clearing the filters goes back to every photo.
 
-The **Quick dates** menu beside them shows the photos taken at this time of year in earlier years:
+The Timeline used to have its own range picker, label picker and **Quick dates** menu. Links made with them still
+open on the same photos (`lib/timeline-old-links.ts`), turned into filters as the page loads:
 
-| Choice      | Shows photos taken in an earlier year…                                  | URL            |
-| ----------- | ----------------------------------------------------------------------- | -------------- |
-| This date   | on today's month and day, such as every Nov 7 before this one           | `?when=date`   |
-| This month  | in today's month, leaving out this month itself                         | `?when=month`  |
-| This season | in today's season (Northern Hemisphere: winter is December to February) | `?when=season` |
+| Old link                           | Becomes                                                    |
+| ---------------------------------- | ---------------------------------------------------------- |
+| `?from=2025-01-01&to=2025-03-31`   | `?start=2025-01-01&end=2025-03-31`                         |
+| `?range=30d` (and 7d, 90d, 6m, 1y) | `?start=` that many days back; `?range=all` is every photo |
+| `?label=japan-2026-09-22`          | the label's first and last days as `?start=…&end=…`        |
+| `?when=month` or `?when=date`      | this month (`?month=november`), in every year              |
+| `?when=season`                     | this season (`?season=autumn`), in every year              |
 
-Each choice shows how many photos it has, counting those the filters and search let through, and choices with fewer than
-five are left out (the menu too, when none has five). A choice, a range and a label each replace the others. While a label is chosen, the scrubber has a tick for each day, with each month's short name at its
-first day, and its bubble names the day. **Reset** goes back to **All time**, letting a label or Quick dates choice go. The chart under the header picks a range too, and the buttons above it switch between two
+> **Frontend analogy:** like a redirect map for old routes, but for search params: `validateSearch` rewrites the old
+> keys into the new ones, and the next navigation writes the new ones back to the URL.
+
+The chart under the header sets the date range too, and the buttons above it switch between two
 charts:
 
 | Chart           | Shows                                                                                        | URL              |

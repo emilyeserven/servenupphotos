@@ -114,7 +114,10 @@ the line.
 ## The page
 
 The left side lists the days with two or more photos at two or more different exact spots, newest first, each with how
-many photos and spots it has and whether its line is **Marked**, **Automatic** or **None**, with a filter by each.
+many photos and spots it has and whether its line is **Marked**, **Out of date**, **Automatic** or **None**, with a filter by each. **Out of date** (in
+red) is a line marked by hand that doesn't go through every photo of the day with an exact spot, such as photos added
+since, or goes through photos no longer on that day; the Dashboard's **Needs attention** lists them as urgent. A new
+photo opens with a break on both sides, ready to join the line. `?day=2026-09-23` opens the page on a day.
 
 The right side edits the chosen day: its photos in the order they were taken, with what happened between each two, and
 a map of the line drawn through them (photos as numbered dots; walks solid, hops dashed). Pointing at a photo

@@ -36,8 +36,12 @@ function AxisPicker({
   );
 }
 
-/** The y axis's name: the second stat on a scatterplot or heatmap, or what the other graphs measure. */
+/**
+ * The y axis's name: the second stat on a scatterplot or heatmap, none on a photo dot graph, or what
+ * the other graphs measure.
+ */
 function YPicker({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
+  if (config.type === "photos") return null;
   const name = config.type === "pie" ? "Size" : "Y axis";
   if (hasYStat(config.type)) {
     return (

@@ -7,6 +7,7 @@ import { GraphTabs } from "@/components/graph-builder/graph-tabs";
 import { GraphPickContext } from "@/components/graph-builder/graph-pick-context";
 import { SpotlightPresets } from "@/components/graph-builder/graph-presets";
 import { HeatmapGraph } from "@/components/graph-builder/heatmap-graph";
+import { PhotoDotsGraph } from "@/components/graph-builder/photo-dots-graph";
 import { PickedPhotos } from "@/components/graph-builder/picked-photos";
 import { ScatterGraph } from "@/components/graph-builder/scatter-graph";
 import { GraphTable, ScatterTable } from "@/components/graph-builder/graph-table";
@@ -21,6 +22,7 @@ import {
 } from "@/lib/graph-data";
 import { Button } from "@/components/ui/button";
 import { type GraphPick, samePick } from "@/lib/graph-pick";
+import { photoDots } from "@/lib/graph-photo-dots";
 import { NO_RANGES } from "@/lib/graph-ranges";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass } from "@/lib/segmented-control";
@@ -183,8 +185,9 @@ function ViewButtons({ view, onChange }: { view: View; onChange: (view: View) =>
   );
 }
 
-/** What the builder draws: a scatterplot or heatmap, or a bar, line or pie graph, as a graph or a table. */
+/** What the builder draws: a photo dot graph, a scatterplot or heatmap, or a bar, line or pie graph, as a graph or a table. */
 function GraphBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
+  if (config.type === "photos") return <PhotoDotsBody list={list} config={config} view={view} />;
   if (hasYStat(config.type)) return <ScatterBody list={list} config={config} view={view} />;
   return <SeriesBody list={list} config={config} view={view} />;
 }
@@ -198,6 +201,19 @@ function ScatterBody({ list, config, view }: { list: Photo[]; config: GraphConfi
   return <ScatterGraph data={data} {...names} />;
 }
 
+/** A photo dot graph of the photos kept, or its photo counts as a table. */
+function PhotoDotsBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
+  const counted = { ...config, measure: "count" as const };
+  if (view === "table") return <SeriesBody list={list} config={counted} view={view} />;
+  return <PhotoDotsChart list={list} config={config} />;
+}
+
+/** The photo dot graph itself. */
+function PhotoDotsChart({ list, config }: { list: Photo[]; config: GraphConfig }) {
+  const data = useMemo(() => photoDots(list, config), [list, config]);
+  return <PhotoDotsGraph data={data} xName={statById(config.x).label} />;
+}
+
 /** A bar, line, dot or pie graph of the photos kept, or its numbers as a table. */
 function SeriesBody({ list, config, view }: { list: Photo[]; config: GraphConfig; view: View }) {
   const graph = useMemo(() => graphData(list, config), [list, config]);
@@ -207,8 +223,8 @@ function SeriesBody({ list, config, view }: { list: Photo[]; config: GraphConfig
   return DRAW[config.type as SeriesType](graph, config);
 }
 
-/** The graph types drawn from series: every one but the scatterplot and the heatmap. */
-type SeriesType = Exclude<GraphType, "scatter" | "heatmap">;
+/** The graph types drawn from series: every one but the scatterplot, the heatmap and the photo dot graph. */
+type SeriesType = Exclude<GraphType, "scatter" | "heatmap" | "photos">;
 
 /** How each of those types is drawn. */
 const DRAW: Record<SeriesType, (graph: GraphData, config: GraphConfig) => ReactNode> = {

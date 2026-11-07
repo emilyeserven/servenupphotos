@@ -32,7 +32,7 @@ export interface HeatmapYear {
 }
 
 /** A day's key, as `yyyy-MM-dd`. */
-export function dayKey(date: Date): string {
+function dayKey(date: Date): string {
   return format(date, "yyyy-MM-dd");
 }
 
