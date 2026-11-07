@@ -68,7 +68,11 @@ function sectionsOf(config: GraphConfig): [TypeSection, string, string][] {
 /**
  * The **Graph type** button, like the Grid's **Gear & settings**: it opens a list of Type, Split by
  * (for the bar, line and photo dot graphs, which can be split) and Parts (for a split bar) on the left,
+<<<<<<< HEAD
  * each saying what it's set to, and the chosen one's choices on the right. Its icon is the type's.
+=======
+ * each saying what it's set to, and the chosen one's choices on the right (see `SectionPicker`).
+>>>>>>> origin/claude/project-thread-907vy7
  */
 export function GraphTypePicker({
   config,

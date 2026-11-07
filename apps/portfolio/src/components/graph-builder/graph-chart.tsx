@@ -68,7 +68,11 @@ function valueAxis(measure: Measure, domain: GraphData["domain"]) {
   );
 }
 
+<<<<<<< HEAD
 /** A bar or line graph's frame: the graph, with its key on the right when it's split. */
+=======
+/** A bar or line graph's frame: a key over it when it's split, then the graph. */
+>>>>>>> origin/claude/project-thread-907vy7
 function Frame({ graph, children }: { graph: GraphData; children: ReactElement }) {
   const split = graph.series[0]?.key !== "value";
   return (
