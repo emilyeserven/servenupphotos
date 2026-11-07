@@ -28,12 +28,23 @@ axis without opening Adjust Graph.
 
 The page opens on photos per year, oldest first, each bar split by season. Nothing is kept in the URL.
 
+**Wide**, beside Graph / Table, lets the page use the window's whole width instead of the usual column (**Narrow** puts
+it back). The choice is remembered in the browser.
+
 **Presets** are made on the pipeline's [Graph Presets](graph-presets.md) page and read from `graphs/GRAPHS.json`. Each
 is a button that sets the graph's type, axes, split, order and how many values show; the filters stay as they are. A
 **preset group** is a dropdown among the buttons, such as **When**, listing its presets; a group with no presets isn't
 shown, and the row is left out when there are no presets at all. The committed ones are dot graphs of **Aperture**,
 **Exposure**, **ISO** and **Focal length**: a dot for each value the photos were taken at, lowest first, at how many
 photos have it.
+
+**Save as preset** asks for a name and keeps the graph's settings (not its filters) as one of the visitor's own presets,
+shown after the site's with a bookmark and a × to remove it. They're kept in the browser's local storage
+(`servenup:graph-presets`, `lib/saved-graphs.ts`), so they're only on that browser; in a private window they last
+until the page is left.
+
+> **Frontend analogy:** the site's presets are the app's built-in defaults shipped in the bundle (`GRAPHS.json`), and a
+> visitor's own are user settings in `localStorage`, merged into one list when rendering.
 
 ## Photos of a picked value
 

@@ -21,7 +21,8 @@ function rangeOf(values: string[], [low = 0, high = 0]: number[]): string | unde
 }
 
 /**
- * A slider with a handle at each end, narrowing the photos to a range of one camera setting. It
+ * A slider with a handle at each end, with a tick under it for each step and its lowest and highest
+ * values at its ends, narrowing the photos to a range of one camera setting. It
  * steps through `values`, the ones the photos have, lowest first, so each step shows a different
  * set of photos; `write` writes one the way a photographer does, such as "f/5.6". `range` is the
  * one set, as "low-high", and `onChange` gets the new one once a handle is let go, or undefined
@@ -34,6 +35,7 @@ export function RangeFilter({
   range,
   write,
   writeHigh = write,
+  onDrag,
   onChange,
 }: {
   label: string;
@@ -41,6 +43,8 @@ export function RangeFilter({
   range: string | undefined;
   write: (value: string) => string;
   writeHigh?: (value: string) => string;
+  /** Gets the ends' values while a handle is dragged, and undefined once it's let go. */
+  onDrag?: (ends: [string, string] | undefined) => void;
   onChange: (range: string | undefined) => void;
 }) {
   const committed = positionsOf(values, range);
@@ -48,23 +52,16 @@ export function RangeFilter({
   const [dragging, setDragging] = useState<number[] | null>(null);
   const [low = 0, high = 0] = dragging ?? committed;
   return (
-    <div
-      role="group"
-      aria-label={label}
-      className="flex w-full flex-col gap-2 rounded-md border px-3 py-2"
-    >
-      <div className="flex h-5 items-center justify-between gap-2 text-xs">
-        <span className="font-medium whitespace-nowrap text-muted-foreground">{label}</span>
-        <span className="ml-auto whitespace-nowrap tabular-nums">
+    <div role="group" aria-label={label} className="flex w-full flex-col gap-2">
+      <div className="flex h-5 items-center gap-1 text-sm">
+        <span className="font-medium whitespace-nowrap tabular-nums">
           <RangeText
             from={endText(values, low, write)}
             to={endText(values, high, writeHigh)}
             empty={values.length === 0}
           />
         </span>
-        {range && (
-          <ClearFilterButton label={label} onClear={() => onChange(undefined)} className="-mr-1" />
-        )}
+        {range && <ClearFilterButton label={label} onClear={() => onChange(undefined)} />}
       </div>
       <Slider
         min={0}
@@ -73,15 +70,59 @@ export function RangeFilter({
         minStepsBetweenThumbs={0}
         value={[low, high]}
         disabled={values.length < 2}
-        onValueChange={setDragging}
+        onValueChange={(next) => {
+          setDragging(next);
+          onDrag?.(endsAt(values, next));
+        }}
         onValueCommit={(next) => {
           setDragging(null);
+          onDrag?.(undefined);
           onChange(rangeOf(values, next));
         }}
         className="py-1"
       />
+      <Scale values={values} write={write} writeHigh={writeHigh} />
     </div>
   );
+}
+
+/**
+ * Under the slider: a tick for each value it steps through, and the lowest and highest values
+ * below its ends. The ticks are inset by half a handle, so they sit under the handles' centers.
+ */
+function Scale({
+  values,
+  write,
+  writeHigh,
+}: {
+  values: string[];
+  write: (value: string) => string;
+  writeHigh: (value: string) => string;
+}) {
+  if (values.length < 2) return null;
+  const last = values.length - 1;
+  return (
+    <div aria-hidden className="-mt-1 flex flex-col gap-0.5">
+      <div className="relative mx-2 h-1.5">
+        {values.map((value, index) => (
+          <span
+            key={value}
+            className="absolute top-0 h-full w-px bg-muted-foreground/50"
+            style={{ left: `${(index / last) * 100}%` }}
+          />
+        ))}
+      </div>
+      <div className="flex justify-between text-xs text-muted-foreground tabular-nums">
+        <span>{write(values[0] ?? "")}</span>
+        <span>{writeHigh(values[last] ?? "")}</span>
+      </div>
+    </div>
+  );
+}
+
+/** The values at the handles' positions. */
+function endsAt(values: string[], [low = 0, high = 0]: number[]): [string, string] {
+  return [values[low] ?? "", values[high] ?? ""];
 }
 
 /** The value at a position as `write` writes it, or nothing when there's none. */

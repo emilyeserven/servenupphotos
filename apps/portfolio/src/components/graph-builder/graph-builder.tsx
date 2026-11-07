@@ -1,4 +1,4 @@
-import { ChartColumn, SlidersHorizontal, Table2 } from "lucide-react";
+import { ChartColumn, Maximize2, Minimize2, SlidersHorizontal, Table2 } from "lucide-react";
 import { type ReactNode, useMemo, useState } from "react";
 import { AxisLabels } from "@/components/graph-builder/graph-axes";
 import { BarGraph, LineGraph, PieGraph } from "@/components/graph-builder/graph-chart";
@@ -47,7 +47,14 @@ type View = "graph" | "table";
  * names each axis with a dropdown to change it, and shows its numbers as a table too. Clicking a
  * bar, point, slice or dot shows its photos under the graph; changing the graph clears it.
  */
-export function GraphBuilder() {
+export function GraphBuilder({
+  wide,
+  onWideChange,
+}: {
+  /** Whether the page uses the window's whole width. */
+  wide: boolean;
+  onWideChange: (wide: boolean) => void;
+}) {
   const [config, setConfig] = useState(START);
   const [view, setView] = useState<View>("graph");
   const [adjusting, setAdjusting] = useState(false);
@@ -60,7 +67,7 @@ export function GraphBuilder() {
   const kept = useMemo(() => filteredPhotos(photos, config.filters), [config.filters]);
   return (
     <div className="flex flex-col gap-4">
-      <GraphPresets onPick={onChange} />
+      <GraphPresets config={config} onPick={onChange} />
       <div>
         <Button
           type="button"
@@ -78,7 +85,10 @@ export function GraphBuilder() {
           <span className="text-sm text-muted-foreground tabular-nums">
             {kept.length.toLocaleString()} of {photos.length.toLocaleString()} photos
           </span>
-          <ViewButtons view={view} onChange={setView} />
+          <div className="flex items-center gap-2">
+            <WideButton wide={wide} onChange={onWideChange} />
+            <ViewButtons view={view} onChange={setView} />
+          </div>
         </div>
         <GraphPickContext value={{ pick, onPick }}>
           <GraphArea list={kept} config={config} view={view} onChange={onChange} />
@@ -139,6 +149,23 @@ function GraphArea({
     <AxisLabels config={config} onChange={onChange}>
       {body}
     </AxisLabels>
+  );
+}
+
+/** The button that makes the page use the window's whole width, or the usual column again. */
+function WideButton({ wide, onChange }: { wide: boolean; onChange: (wide: boolean) => void }) {
+  const Icon = wide ? Minimize2 : Maximize2;
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      aria-pressed={wide}
+      onClick={() => onChange(!wide)}
+    >
+      <Icon aria-hidden />
+      {wide ? "Narrow" : "Wide"}
+    </Button>
   );
 }
 

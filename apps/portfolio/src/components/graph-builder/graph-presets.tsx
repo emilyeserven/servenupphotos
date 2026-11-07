@@ -1,8 +1,10 @@
 import { ChevronDown } from "lucide-react";
 import { DropdownMenu } from "radix-ui";
+import { SavedPresets, SavePresetButton } from "@/components/graph-builder/saved-presets";
 import { Button } from "@/components/ui/button";
 import type { GraphConfig } from "@/lib/graph-data";
 import { type GraphPreset, type PresetItem, presetRow } from "@/lib/graph-presets";
+import { useSavedGraphs } from "@/lib/saved-graphs";
 
 /** Picking a preset: the graph takes its settings, and the filters stay as they are. */
 type OnPick = (change: Partial<GraphConfig>) => void;
@@ -10,17 +12,19 @@ type OnPick = (change: Partial<GraphConfig>) => void;
 /**
  * The row of ready-made graphs the pipeline's Graph Presets page saves, in their order: a button
  * for each preset, such as a dot graph of Aperture, and a dropdown for each preset group. Picking
- * one sets the graph to it; the filters stay as they are.
+ * one sets the graph to it; the filters stay as they are. After them come the visitor's own
+ * presets, kept in their browser, and Save as preset to keep the graph as one.
  */
-export function GraphPresets({ onPick }: { onPick: OnPick }) {
-  const row = presetRow();
-  if (row.length === 0) return null;
+export function GraphPresets({ config, onPick }: { config: GraphConfig; onPick: OnPick }) {
+  const saved = useSavedGraphs();
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-sm font-medium text-muted-foreground">Presets</span>
-      {row.map((item) => (
+      {presetRow().map((item) => (
         <RowItem key={itemKey(item)} item={item} onPick={onPick} />
       ))}
+      <SavedPresets saved={saved} onPick={onPick} />
+      <SavePresetButton saved={saved} config={config} />
     </div>
   );
 }
