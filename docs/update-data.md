@@ -163,7 +163,8 @@ have no places to share.
 with a link to its Small version and what's known of where it was taken (`knownLines` in `lib/location-prompt.ts`),
 then every existing place and the same naming and GPS rules as one photo's prompt. It asks the LLM to check each place
 on Google Maps, or on Naver Map or Kakao Map for a place in South Korea (where Google Maps shows little), and to give
-that link, the existing place it's in, and the same fields as one photo's answer, as JSON:
+that link, the existing place it's in, the place's Wikidata item ID when it has one, and the same fields as one
+photo's answer, as JSON:
 
 ```json
 {
@@ -180,6 +181,7 @@ that link, the existing place it's in, and the same fields as one photo's answer
       "longitude": 126.977,
       "exact": true,
       "mapUrl": "https://map.naver.com/p/search/향원정",
+      "wikidata": "",
       "confidence": "medium",
       "reasoning": "…"
     }
@@ -201,6 +203,17 @@ its place's are written in as its custom ones.
 saving one on the Places page checks it, and replaces each ticked photo's `places`, sets its `placeName` to the first
 place's name and writes in the custom city and country, keeping the rest of the file byte for byte, all in one save of
 [changes waiting for Commit](pending-changes.md). Nothing is saved when a place can't be made or a photo can't be read.
+
+Once that's saved, each new place the answer gave a Wikidata ID gets its real outline as its
+[area](places-and-localizations.md#areas) (`components/bulk-places/place-outlines.tsx`). The places are done one at a
+time through the area search (`GET /api/areas?q=Q…`, which follows the item's OpenStreetMap relation, two requests a
+second apart), and the first outline found is saved (`PUT /api/places/{id}/area`) as another change waiting for Commit.
+A list under the review says how each went: saved, no outline on OpenStreetMap (the maps then circle the place's GPS
+position), or what went wrong. The LLM only names the item; it never writes coordinates for the outline, since it
+would make up a plausible shape.
+
+> **Frontend analogy:** asking for an icon's name in a library such as Lucide rather than for its SVG path: the name
+> can be checked, and the real path is fetched from the source.
 
 > **Frontend analogy:** the same dry run and commit as Bulk tagging, with the dry run done client-side: parsing the
 > answer is a pure function of the pasted text and the cached places query, like a `useMemo` over form input.
