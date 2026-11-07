@@ -1,6 +1,12 @@
-import { Check, Eye, EyeOff } from "lucide-react";
-import { type ComponentProps, useMemo, useState } from "react";
-import type { CameraPickerProps, CameraSection } from "@portfolio/components/camera-picker";
+import { ChevronDown, Eye, EyeOff, Info } from "lucide-react";
+import { useMemo, useState } from "react";
+import { ChoiceRow } from "@portfolio/components/choice-row";
+import { EquipmentRow } from "@portfolio/components/equipment-row";
+import type {
+  CameraPickerProps,
+  CameraSection,
+  PickerPartProps,
+} from "@portfolio/components/camera-picker";
 import {
   RANGE_LABELS,
   RANGE_PRESETS,
@@ -8,11 +14,10 @@ import {
   writeSetting,
 } from "@portfolio/components/camera-ranges";
 import { hiddenText } from "@portfolio/components/hidden-note";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@portfolio/components/ui/tooltip";
 import { RangeFilter } from "@portfolio/components/range-filter";
+import { SettingIllustration } from "@portfolio/components/setting-graphics";
 import { RangePresetList } from "@portfolio/components/range-presets";
-import { useScriptDisplay } from "@portfolio/components/script-display-provider";
-import type { EquipmentKey, RangeKey } from "@portfolio/lib/camera-filters";
+import { type EquipmentKey, parseRange, type RangeKey } from "@portfolio/lib/camera-filters";
 import { blockersOf, cameraBlockers } from "@portfolio/lib/camera-blockers";
 import { equipmentChoices, equipmentFilters, isChosen } from "@portfolio/lib/camera-picker";
 import {
@@ -28,7 +33,7 @@ import { cn } from "@portfolio/lib/utils";
 export function CameraPickerPart({
   section,
   ...props
-}: CameraPickerProps & { section: CameraSection }) {
+}: PickerPartProps & { section: CameraSection }) {
   if (section === "camera" || section === "lens") {
     return <EquipmentPart key={section} equipment={section} {...props} />;
   }
@@ -68,6 +73,7 @@ function EquipmentPart({
       <ChoiceRow label={ANY_LABELS[equipment]} on={!chosen} onClick={() => choose()} />
       {shown.map((option, index) => (
         <EquipmentRow
+          equipment={equipment}
           key={`${index}-${option.key}:${option.value}`}
           option={option}
           on={isChosen(option, filters)}
@@ -147,103 +153,98 @@ function HiddenToggle({
   );
 }
 
-/** What a hidden choice's hover says hides it, such as "Hidden by Aperture or Lens". */
-function blockedText(blockedBy: string[]): string {
-  if (blockedBy.length === 0) return "Hidden by the other filters together";
-  return `Hidden by ${new Intl.ListFormat("en", { type: "disjunction" }).format(blockedBy)}`;
+/** The ends of the range the filters set, or every value's when they set none. */
+function setEnds(values: string[], range: string | undefined): [string, string] {
+  return parseRange(range) ?? [values[0] ?? "", values.at(-1) ?? ""];
 }
 
 /**
- * One camera or lens choice, in the Script Display's writing. `blockedBy` names the filters hiding
- * it, when it's a hidden one: it's dimmed and says so on hover.
+ * A camera setting's slider, with its quick picks listed under it and, while `graphics` is on, a
+ * pane to the right with graphics of what its ends look like, following the handles as they move.
  */
-function EquipmentRow({
-  option,
-  on,
-  blockedBy,
-  onClick,
-}: {
-  option: FilterOption;
-  on: boolean;
-  blockedBy?: string[];
-  onClick: (on: boolean) => void;
-}) {
-  const { script } = useScriptDisplay();
-  const row = (
-    <ChoiceRow
-      label={option.label[script]}
-      count={option.count}
-      depth={option.depth}
-      on={on}
-      dimmed={blockedBy !== undefined}
-      onClick={() => onClick(on)}
-    />
-  );
-  if (!blockedBy) return row;
+function RangePart({
+  setting,
+  filters,
+  graphics,
+  onGraphics,
+  onChange,
+}: PickerPartProps & { setting: RangeKey }) {
+  const label = RANGE_LABELS[setting];
+  const set = (range: string | undefined) => onChange({ [setting]: range });
+  const [dragged, setDragged] = useState<[string, string] | undefined>();
+  const [low, high] = dragged ?? setEnds(RANGE_VALUES[setting], filters[setting]);
+  const toggle = () => onGraphics(!graphics);
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>{row}</TooltipTrigger>
-      <TooltipContent side="right">{blockedText(blockedBy)}</TooltipContent>
-    </Tooltip>
+    <div className="flex flex-col gap-3 sm:flex-row">
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold">{label}</h3>
+          <InfoButton on={graphics} label={label} onClick={toggle} />
+        </div>
+        <RangeFilter
+          label={label}
+          values={RANGE_VALUES[setting]}
+          range={filters[setting]}
+          write={writeSetting(setting)}
+          onDrag={setDragged}
+          onChange={set}
+        />
+        <RangePresetList
+          label={label}
+          presets={RANGE_PRESETS[setting]}
+          range={filters[setting]}
+          onChange={set}
+        />
+        <MobileInfoToggle on={graphics} onClick={toggle} />
+      </div>
+      {graphics && (
+        <aside
+          aria-label={`About ${label}`}
+          className="flex shrink-0 flex-col sm:w-44 sm:border-l sm:pl-3"
+        >
+          <SettingIllustration
+            setting={setting}
+            low={low}
+            high={high}
+            write={writeSetting(setting)}
+          />
+        </aside>
+      )}
+    </div>
   );
 }
 
-/** A row in a list of choices: a check while it's on, its name, and how many photos it would show. */
-function ChoiceRow({
-  label,
-  count,
-  depth = 0,
-  on,
-  dimmed = false,
-  onClick,
-  ...rest
-}: Omit<ComponentProps<"button">, "onClick"> & {
-  label: string;
-  count?: number;
-  depth?: number;
-  on: boolean;
-  dimmed?: boolean;
-  onClick: () => void;
-}) {
+/** On wider screens, the (i) button beside the title that shows or hides the info pane. */
+function InfoButton({ on, label, onClick }: { on: boolean; label: string; onClick: () => void }) {
   return (
     <button
-      {...rest}
       type="button"
       aria-pressed={on}
+      aria-label={`${on ? "Hide" : "Show"} info about ${label}`}
+      title={`${on ? "Hide" : "Show"} info`}
       onClick={onClick}
-      style={{ paddingLeft: `${0.5 + depth}rem` }}
       className={cn(
-        "flex items-center gap-2 rounded-sm py-1.5 pr-2 text-left text-sm outline-none hover:bg-accent focus-visible:bg-accent",
-        on && "font-medium",
-        dimmed && "text-muted-foreground/70",
+        "flex size-7 items-center justify-center rounded-full text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 max-sm:hidden",
+        on && "bg-accent text-foreground",
       )}
     >
-      <Check aria-hidden className={cn("size-4 shrink-0", !on && "invisible")} />
-      <span className="truncate">{label}</span>
-      <span className="ml-auto text-xs text-muted-foreground tabular-nums">{count}</span>
+      <Info aria-hidden className="size-4" />
     </button>
   );
 }
 
-/** A camera setting's slider, with its quick picks listed under it. */
-function RangePart({ setting, filters, onChange }: CameraPickerProps & { setting: RangeKey }) {
-  const label = RANGE_LABELS[setting];
-  const set = (range: string | undefined) => onChange({ [setting]: range });
+/** On phones, a full-width button at the bottom that opens or closes the info under it. */
+function MobileInfoToggle({ on, onClick }: { on: boolean; onClick: () => void }) {
   return (
-    <div className="flex flex-col gap-3">
-      <RangeFilter
-        label={label}
-        values={RANGE_VALUES[setting]}
-        range={filters[setting]}
-        write={writeSetting(setting)}
-        onChange={set}
-      />
-      <RangePresetList
-        label={label}
-        presets={RANGE_PRESETS[setting]}
-        range={filters[setting]}
-        onChange={set}
-      />
-    </div>
+    <button
+      type="button"
+      aria-expanded={on}
+      onClick={onClick}
+      className="flex w-full items-center justify-center gap-1.5 rounded-md border py-2 text-sm text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:hidden"
+    >
+      <Info aria-hidden className="size-4" />
+      {on ? "Hide info" : "Show info"}
+      <ChevronDown aria-hidden className={cn("size-4 transition-transform", on && "rotate-180")} />
+    </button>
   );
 }
