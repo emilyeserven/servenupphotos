@@ -1,6 +1,7 @@
 import { useLocation } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { JumpToCover } from "@/components/jump-to-cover";
+import { rememberSpotlightPhoto, spotlightStart } from "@/lib/last-spotlight-photo";
 import { objectPosition } from "@/lib/spotlight-focus";
 import {
   focusIn,
@@ -39,7 +40,8 @@ export function PageHeaderSpotlight() {
  * into the page's background at the bottom. The page's title and filters come after it, and the
  * site menu stays where it is. A zone set to match the screen puts portrait photos first on a phone
  * held upright and landscape photos first elsewhere. A **Jump to Cover Image** button on it scrolls to
- * the photo showing in the page below. With no album picked it shows nothing.
+ * the photo showing in the page below. Like the homepage, each visit starts on the photo after the
+ * one this browser showed here last. With no album picked it shows nothing.
  */
 function HeaderSpotlight({ zone }: { zone: string }) {
   const phone = useMediaQuery(UPRIGHT_PHONE_QUERY);
@@ -54,7 +56,13 @@ function HeaderSpotlight({ zone }: { zone: string }) {
 
 /** The header's photos, each cropped to fill it with its focus point where its placement says. */
 function HeaderPhotos({ photos, zone }: { photos: ImagePhoto[]; zone: string }) {
-  const { turn } = useTurn(photos.length, HEADER_MS);
+  // Picked once per visit, from the photo this browser showed here last, so each visit starts on a new one.
+  const [start] = useState(() => spotlightStart(zone, photos));
+  const { turn } = useTurn(photos.length, HEADER_MS, start);
+  const showing = photos[turn];
+  useEffect(() => {
+    if (showing) rememberSpotlightPhoto(zone, showing);
+  }, [zone, showing]);
   const [ref, size] = useSize();
   return (
     <div
