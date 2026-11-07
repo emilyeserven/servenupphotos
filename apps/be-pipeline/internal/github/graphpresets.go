@@ -88,6 +88,13 @@ type GraphRanges struct {
 	// YBucket puts a scatterplot's or heatmap's y values together, like
 	// XBucket.
 	YBucket int `json:"yBucket,omitempty"`
+	// XWidth is how wide each of the x axis's even ranges is, for a camera
+	// setting, in its steps, such as 1 stop or 25 mm; 0 for none. Set, it
+	// takes the place of XBucket.
+	XWidth int `json:"xWidth,omitempty"`
+	// YWidth puts a scatterplot's or heatmap's y camera setting in even
+	// ranges, like XWidth.
+	YWidth int `json:"yWidth,omitempty"`
 }
 
 // The values a preset's graph can take for each of its choices.
@@ -211,6 +218,9 @@ func validRanges(r GraphRanges) *PublishError {
 	}
 	if r.XBucket < 0 || r.YBucket < 0 {
 		return publishErr(http.StatusBadRequest, "Put each value on its own, or 2 or more in a bucket.")
+	}
+	if r.XWidth < 0 || r.YWidth < 0 {
+		return publishErr(http.StatusBadRequest, "An even range can't be less than 0 wide.")
 	}
 	return nil
 }

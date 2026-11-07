@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { axisStatRows, type GraphConfig, hasYStat } from "@portfolio/lib/graph-data";
+import { axisStatRows, type GraphConfig, hasYStat, yBuckets } from "@portfolio/lib/graph-data";
 import { roundSteps } from "@portfolio/lib/graph-ranges";
 import type { Photo } from "@portfolio/lib/photos";
 import { SELECT_CLASS } from "@portfolio/lib/segmented-control";
@@ -90,7 +90,7 @@ interface YEndsProps {
 export function YEnds({ config, rows, list, onChange }: YEndsProps) {
   if (config.type === "pie") return null;
   if (hasYStat(config.type)) {
-    const labels = axisStatRows(list, config.y, config.yBucket).map((row) => row.label);
+    const labels = axisStatRows(list, yBuckets(config)).map((row) => row.label);
     return (
       <LabelEnds
         name="Y axis"

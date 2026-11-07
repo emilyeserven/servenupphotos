@@ -12,7 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { GraphLegend, GraphTooltip, shortLabel } from "@/components/graph-builder/graph-parts";
+import { GraphTooltip, shortLabel, WithKey } from "@/components/graph-builder/graph-parts";
 import { pickedOpacity, pickOf, useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { formatValue, type GraphData, type Measure, seriesColor } from "@/lib/graph-data";
@@ -67,15 +67,15 @@ function valueAxis(measure: Measure, domain: GraphData["domain"]) {
   );
 }
 
-/** A bar, line or dot graph's frame: a key over it when it's split, then the graph. */
+/** A bar, line or dot graph's frame: the graph, with its key on the right when it's split. */
 function Frame({ graph, children }: { graph: GraphData; children: ReactElement }) {
+  const split = graph.series[0]?.key !== "value";
   return (
-    <>
-      {graph.series[0]?.key !== "value" && <GraphLegend items={graph.series} />}
+    <WithKey items={split ? graph.series : []}>
       <ChartContainer config={{}} className={CHART_CLASS}>
         {children}
       </ChartContainer>
-    </>
+    </WithKey>
   );
 }
 
@@ -180,10 +180,7 @@ export function PieGraph({ graph, measure }: CartesianProps) {
     if (picked) onPick(picked);
   };
   return (
-    <>
-      <GraphLegend
-        items={slices.map((s, index) => ({ label: s.label, color: seriesColor(index) }))}
-      />
+    <WithKey items={slices.map((s, index) => ({ label: s.label, color: seriesColor(index) }))}>
       <ChartContainer config={{}} className={CHART_CLASS}>
         <PieChart>
           <ChartTooltip content={<GraphTooltip series={graph.series} measure={measure} />} />
@@ -209,6 +206,6 @@ export function PieGraph({ graph, measure }: CartesianProps) {
           </Pie>
         </PieChart>
       </ChartContainer>
-    </>
+    </WithKey>
   );
 }

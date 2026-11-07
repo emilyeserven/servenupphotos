@@ -1,3 +1,4 @@
+import { evenRows, isEvenStat } from "@portfolio/lib/even-buckets";
 import type { StatRow } from "@portfolio/lib/stat-groups";
 
 /** How many of an axis's values a bucket can put together; 0 leaves each value on its own. */
@@ -22,15 +23,28 @@ function bucketOf(run: StatRow[]): StatRow {
  * The axis's rows put together in buckets of `size` values in their own order, such as f/1.4 – f/2
  * then f/2.8 – f/4; the rows as they are when `size` is under 2.
  */
-export function bucketRows(rows: StatRow[], size: number): StatRow[] {
+function bucketRows(rows: StatRow[], size: number): StatRow[] {
   if (size < 2) return rows;
   return runsOf(rows, size).map(bucketOf);
 }
 
+/** How an axis's values are put together: the stat, every `size` values, or even ranges `width` steps wide. */
+export interface AxisBuckets {
+  stat: string;
+  size: number;
+  width: number;
+}
+
+/** The axis's rows in its buckets: even ranges when a camera setting has a width, else runs of `size`. */
+export function axisBucketRows(rows: StatRow[], { stat, size, width }: AxisBuckets): StatRow[] {
+  if (width > 0 && isEvenStat(stat)) return evenRows(rows, stat, width);
+  return bucketRows(rows, size);
+}
+
 /** Each value's bucket by its name, such as f/2 in f/1.4 – f/2, for counting a subset's rows into the buckets. */
-export function bucketNames(rows: StatRow[], size: number): (label: string) => string {
+export function bucketNames(rows: StatRow[], buckets: AxisBuckets): (label: string) => string {
   const names = new Map(
-    bucketRows(rows, size).flatMap((bucket) =>
+    axisBucketRows(rows, buckets).flatMap((bucket) =>
       (bucket.parts ?? [bucket]).map((row) => [row.label, bucket.label] as const),
     ),
   );

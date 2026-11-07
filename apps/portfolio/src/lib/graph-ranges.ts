@@ -22,6 +22,10 @@ export interface GraphRanges {
   xBucket: number;
   /** A scatterplot's or heatmap's y values put together, like the x axis's. */
   yBucket: number;
+  /** How wide each of the x axis's even ranges is, for a camera setting, in its steps, such as 1 stop or 25 mm; 0 for none. Set, it takes the place of `xBucket`. */
+  xWidth: number;
+  /** A scatterplot's or heatmap's y camera setting in even ranges, like the x axis's. */
+  yWidth: number;
 }
 
 /** The ranges, all off. */
@@ -36,6 +40,8 @@ export const NO_RANGES: GraphRanges = {
   hideZeros: false,
   xBucket: 0,
   yBucket: 0,
+  xWidth: 0,
+  yWidth: 0,
 };
 
 /** Where a named end is among the rows; the fallback when it's off or not among them. */

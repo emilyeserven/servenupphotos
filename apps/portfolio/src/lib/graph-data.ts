@@ -8,7 +8,7 @@ import {
   type YDomain,
   yDomain,
 } from "@portfolio/lib/graph-ranges";
-import { bucketNames, bucketRows } from "@portfolio/lib/graph-buckets";
+import { type AxisBuckets, axisBucketRows, bucketNames } from "@portfolio/lib/graph-buckets";
 import { SETTING_STATS } from "@portfolio/lib/graph-settings";
 import { STAT_SECTIONS } from "@portfolio/lib/stats";
 
@@ -88,9 +88,19 @@ function partsPhotos(list: Photo[], parts: StatRow[]): Photo[] {
   return list.filter((photo) => inside.has(photo));
 }
 
-/** A stat's rows along an axis, in buckets of `size` values when it's 2 or more. */
-export function axisStatRows(list: Photo[], stat: string, size: number): StatRow[] {
-  return bucketRows(statById(stat).build(list).rows, size);
+/** A stat's rows along an axis, in its buckets when it has any. */
+export function axisStatRows(list: Photo[], buckets: AxisBuckets): StatRow[] {
+  return axisBucketRows(statById(buckets.stat).build(list).rows, buckets);
+}
+
+/** How the x axis's values are put together. */
+export function xBuckets(config: GraphConfig): AxisBuckets {
+  return { stat: config.x, size: config.xBucket, width: config.xWidth };
+}
+
+/** How a scatterplot's or heatmap's y values are put together. */
+export function yBuckets(config: GraphConfig): AxisBuckets {
+  return { stat: config.y, size: config.yBucket, width: config.yWidth };
 }
 
 /** How the x axis's rows are put in order before the limit. */
@@ -102,7 +112,7 @@ const SORTS: Record<SortOrder, (rows: StatRow[]) => StatRow[]> = {
 
 /** Every x value the photos have, in the order picked: what the Range group picks the x axis's ends from. */
 export function axisValues(list: Photo[], config: GraphConfig): StatRow[] {
-  return SORTS[config.sort](axisStatRows(list, config.x, config.xBucket));
+  return SORTS[config.sort](axisStatRows(list, xBuckets(config)));
 }
 
 /** The x axis's rows, in the order picked, cut by the Range group and then to the limit. */
@@ -273,10 +283,12 @@ export function scatterData(list: Photo[], config: GraphConfig): ScatterData {
   const xRows = axisRows(list, config);
   const yStat = statById(config.y);
   const yRows = yStat.build(list).rows;
-  const yLabels = rowsBetween(bucketRows(yRows, config.yBucket), config.yFrom, config.yTo).map(
-    (row) => row.label,
-  );
-  const yBucket = bucketNames(yRows, config.yBucket);
+  const yLabels = rowsBetween(
+    axisBucketRows(yRows, yBuckets(config)),
+    config.yFrom,
+    config.yTo,
+  ).map((row) => row.label);
+  const yBucket = bucketNames(yRows, yBuckets(config));
   const points = xRows.flatMap((row, x) =>
     yStat
       .build(rowPhotos(list, row))

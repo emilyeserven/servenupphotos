@@ -1,4 +1,4 @@
-import { GraphLegend } from "@/components/graph-builder/graph-parts";
+import { WithKey } from "@/components/graph-builder/graph-parts";
 import { pickedOpacity, useGraphPick } from "@/components/graph-builder/graph-pick-context";
 import { ColumnNames } from "@/components/graph-builder/heatmap-graph";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -24,7 +24,7 @@ function stackWidth(data: PhotoDotsData): number {
 /**
  * A photo dot graph: a stack of dots over each x value, one for every photo it has, so the tallest
  * stack has the most photos. A split colors each dot by the photo's split value, with the split's
- * key over the graph. Hovering a dot names its photo; clicking a stack picks its x value, so its
+ * key on the right. Hovering a dot names its photo; clicking a stack picks its x value, so its
  * photos show under the graph. It scrolls sideways when the x values don't fit.
  */
 export function PhotoDotsGraph({ data, xName }: { data: PhotoDotsData; xName: string }) {
@@ -33,8 +33,7 @@ export function PhotoDotsGraph({ data, xName }: { data: PhotoDotsData; xName: st
     gridTemplateColumns: `repeat(${data.columns.length}, minmax(${width + 8}px, 1fr))`,
   };
   return (
-    <div className="flex flex-col gap-3">
-      {data.series.length > 0 && <GraphLegend items={data.series} />}
+    <WithKey items={data.series}>
       <div className="overflow-x-auto">
         <div
           role="group"
@@ -48,7 +47,7 @@ export function PhotoDotsGraph({ data, xName }: { data: PhotoDotsData; xName: st
           <ColumnNames labels={data.columns.map((column) => column.label)} corner={false} />
         </div>
       </div>
-    </div>
+    </WithKey>
   );
 }
 

@@ -58,6 +58,7 @@ func TestSaveGraphPreset(t *testing.T) {
 		{"no such group", GraphPreset{ID: "a", Kind: "preset", Name: "A", Group: "lenses", Graph: dotGraph}},
 		{"bad ID", GraphPreset{ID: "A A", Kind: "group", Name: "A"}},
 		{"negative bucket", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "dot", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{XBucket: -1}}}},
+		{"negative width", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "dot", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{YWidth: -1}}}},
 		{"y starts above its end", GraphPreset{ID: "a", Kind: "preset", Name: "A", Graph: &GraphSettings{Type: "dot", X: "iso", Measure: "count", Sort: "group", GraphRanges: GraphRanges{YMin: num(10), YMax: num(2)}}}},
 	}
 	for _, tt := range tests {

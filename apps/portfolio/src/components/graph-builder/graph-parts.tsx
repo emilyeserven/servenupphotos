@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { formatValue, type GraphDatum, type GraphSeries, type Measure } from "@/lib/graph-data";
 
 /** A colored square naming a series, beside its label. */
@@ -7,10 +8,29 @@ function Swatch({ color }: { color: string }) {
   );
 }
 
-/** The graph's key: each series or slice with its color, over the graph. */
-export function GraphLegend({ items }: { items: Pick<GraphSeries, "label" | "color">[] }) {
+/** A series or slice in the graph's key. */
+type KeyItem = Pick<GraphSeries, "label" | "color">;
+
+/**
+ * A graph with its key: each series or slice with its color in a column on the right, so the y
+ * axis stays on its own, or under the graph on phones. Without items, just the graph.
+ */
+export function WithKey({ items, children }: { items: KeyItem[]; children: ReactNode }) {
   return (
-    <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+      <div className="min-w-0 flex-1">{children}</div>
+      {items.length > 0 && <GraphLegend items={items} />}
+    </div>
+  );
+}
+
+/** The graph's key: its items in a wrapping row on phones, a column beside the graph past them. */
+function GraphLegend({ items }: { items: KeyItem[] }) {
+  return (
+    <ul
+      aria-label="Key"
+      className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground sm:w-36 sm:shrink-0 sm:flex-col sm:pt-2"
+    >
       {items.map((item) => (
         <li key={item.label} className="flex items-center gap-1.5">
           <Swatch color={item.color} />

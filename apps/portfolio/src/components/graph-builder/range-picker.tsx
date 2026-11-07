@@ -6,9 +6,19 @@ import {
   GraphPicker,
   type GraphPickerSection,
 } from "@portfolio/components/graph-builder/graph-picker";
+import {
+  BucketChoices,
+  bucketText,
+  withValue,
+} from "@portfolio/components/graph-builder/bucket-choices";
 import { XEnds, YEnds } from "@portfolio/components/graph-builder/graph-ranges";
-import { bucketChoices } from "@portfolio/lib/graph-buckets";
-import { axisValues, type GraphConfig, hasYStat, statById } from "@portfolio/lib/graph-data";
+import {
+  axisValues,
+  type GraphConfig,
+  hasYStat,
+  xBuckets,
+  yBuckets,
+} from "@portfolio/lib/graph-data";
 import { photoCounts } from "@portfolio/lib/graph-ranges";
 import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
 import type { StatRow } from "@portfolio/lib/stat-groups";
@@ -39,11 +49,6 @@ function yText(config: GraphConfig): string {
   return endsText(config.yMin, config.yMax, "0");
 }
 
-/** A bucket size as text. */
-function bucketText(size: number): string {
-  return size > 1 ? `Every ${size} values` : "Each value";
-}
-
 /** A size of the x axis's first values as text. */
 function showText(limit: number): string {
   return limit === 0 ? "All" : `First ${limit}`;
@@ -59,7 +64,9 @@ function ySections(config: GraphConfig): GraphPickerSection<RangeSection>[] {
 
 /** The y axis's buckets, for a scatterplot's or heatmap's second stat. */
 function yBucketSections(config: GraphConfig): GraphPickerSection<RangeSection>[] {
-  return hasYStat(config.type) ? [["yBuckets", "Y axis buckets", bucketText(config.yBucket)]] : [];
+  return hasYStat(config.type)
+    ? [["yBuckets", "Y axis buckets", bucketText(yBuckets(config))]]
+    : [];
 }
 
 /** The picker's sections, each with what it's set to. */
@@ -71,7 +78,7 @@ function sectionsOf(config: GraphConfig): GraphPickerSection<RangeSection>[] {
     ["photos", "Photos per value", config.minPhotos > 0 ? `At least ${config.minPhotos}` : "Any"],
     ["show", "Show", showText(config.limit)],
     ["empty", "Empty ends", config.hideZeros ? "Trimmed" : "Kept"],
-    ["xBuckets", `${x} buckets`, bucketText(config.xBucket)],
+    ["xBuckets", `${x} buckets`, bucketText(xBuckets(config))],
     ...yBucketSections(config),
   ];
 }
@@ -152,16 +159,16 @@ const PARTS: Record<RangeSection, (props: ChoicesProps) => ReactNode> = {
   ),
   xBuckets: ({ config, list, onChange }) => (
     <BucketChoices
-      value={config.xBucket}
-      values={statById(config.x).build(list).rows.length}
-      onPick={(xBucket) => onChange({ xBucket, xFrom: null, xTo: null })}
+      buckets={xBuckets(config)}
+      list={list}
+      onPick={(xBucket, xWidth) => onChange({ xBucket, xWidth, xFrom: null, xTo: null })}
     />
   ),
   yBuckets: ({ config, list, onChange }) => (
     <BucketChoices
-      value={config.yBucket}
-      values={statById(config.y).build(list).rows.length}
-      onPick={(yBucket) => onChange({ yBucket, yFrom: null, yTo: null })}
+      buckets={yBuckets(config)}
+      list={list}
+      onPick={(yBucket, yWidth) => onChange({ yBucket, yWidth, yFrom: null, yTo: null })}
     />
   ),
 };
@@ -198,31 +205,4 @@ function PhotoChoices({
       ))}
     </>
   );
-}
-
-/** The choices with the picked one added, in order, when it's set and not among them. */
-function withValue(choices: number[], value: number): number[] {
-  if (value <= 0 || choices.includes(value)) return choices;
-  return [...choices, value].toSorted((a, b) => a - b);
-}
-
-/** Each value, or every 2, 3 … values in a bucket, under how many values the axis has. */
-function BucketChoices({
-  value,
-  values,
-  onPick,
-}: {
-  value: number;
-  /** How many values the axis has. */
-  values: number;
-  onPick: (size: number) => void;
-}) {
-  return withValue(bucketChoices(values), value).map((size) => (
-    <ChoiceRow
-      key={size}
-      label={bucketText(size)}
-      on={value === size}
-      onClick={() => onPick(size)}
-    />
-  ));
 }

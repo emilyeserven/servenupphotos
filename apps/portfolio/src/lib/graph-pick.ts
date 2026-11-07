@@ -1,5 +1,7 @@
 import {
   axisStatRows,
+  xBuckets,
+  yBuckets,
   type GraphConfig,
   rowPhotos,
   seriesColor,
@@ -49,7 +51,7 @@ function photosIn(list: Photo[], rows: StatRow[]): Photo[] {
 /** The x axis's rows the pick is on: its own, or each one in a pie's Other slice. */
 function pickedRows(list: Photo[], config: GraphConfig, pick: GraphPick): StatRow[] {
   const labels = new Set(pick.others ?? [pick.x]);
-  return axisStatRows(list, config.x, config.xBucket).filter((row) => labels.has(row.label));
+  return axisStatRows(list, xBuckets(config)).filter((row) => labels.has(row.label));
 }
 
 /** How many split values get their own color on the graph; the rest are drawn as Other. */
@@ -103,7 +105,7 @@ function scatterPhotos(
   config: GraphConfig,
   y: string,
 ): PickedPhotos {
-  const yBucket = bucketNames(statById(config.y).build(list).rows, config.yBucket);
+  const yBucket = bucketNames(statById(config.y).build(list).rows, yBuckets(config));
   const rows = statById(config.y)
     .build(inside)
     .rows.filter((row) => yBucket(row.label) === y);

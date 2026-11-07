@@ -1,7 +1,7 @@
 import { graphTypeName } from "@portfolio/components/graph-builder/graph-type-picker";
 import { type GraphConfig, hasYStat, SPLIT_TYPES, statById } from "@portfolio/lib/graph-data";
 import { orderName } from "@portfolio/lib/graph-order";
-import type { GraphRanges } from "@portfolio/lib/graph-ranges";
+import { evenText } from "@portfolio/lib/even-buckets";
 
 /** One line of a preset's settings: its name and what it's set to, such as X axis: Aperture. */
 type SettingLine = [string, string];
@@ -35,7 +35,7 @@ function either(from: unknown, to: unknown): boolean {
 }
 
 /** Each part of the Range group as a line, or null while it's off. */
-const RANGE_PARTS: ((r: GraphRanges) => SettingLine | null)[] = [
+const RANGE_PARTS: ((r: GraphConfig) => SettingLine | null)[] = [
   (r) => (either(r.xFrom, r.xTo) ? ["X range", endsText(r.xFrom, r.xTo)] : null),
   (r) => (either(r.yFrom, r.yTo) ? ["Y range", endsText(r.yFrom, r.yTo)] : null),
   (r) => (either(r.yMin, r.yMax) ? ["Y range", endsText(r.yMin ?? 0, r.yMax)] : null),
@@ -43,10 +43,12 @@ const RANGE_PARTS: ((r: GraphRanges) => SettingLine | null)[] = [
   (r) => (r.hideZeros ? ["Empty ends", "Trimmed"] : null),
   (r) => (r.xBucket > 1 ? ["X buckets", `Every ${r.xBucket} values`] : null),
   (r) => (r.yBucket > 1 ? ["Y buckets", `Every ${r.yBucket} values`] : null),
+  (r) => (r.xWidth > 0 ? ["X buckets", evenText(r.x, r.xWidth)] : null),
+  (r) => (r.yWidth > 0 ? ["Y buckets", evenText(r.y, r.yWidth)] : null),
 ];
 
 /** The Range group's parts that are on. */
-function rangeLines(r: GraphRanges): SettingLine[] {
+function rangeLines(r: GraphConfig): SettingLine[] {
   return RANGE_PARTS.map((part) => part(r)).filter((line) => line !== null);
 }
 
