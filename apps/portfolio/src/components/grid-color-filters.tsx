@@ -1,64 +1,148 @@
 import { useNavigate } from "@tanstack/react-router";
-import { ChevronDown } from "lucide-react";
+import { ChevronsUpDown, Palette } from "lucide-react";
 import { useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
-import { ColorFilter } from "@portfolio/components/color-filter";
-import { ColorMatchControl } from "@portfolio/components/color-match-control";
-import { VividnessControl } from "@portfolio/components/vividness-control";
+import {
+  type ColorPickerProps,
+  ColorPickerPart,
+  type ColorSection,
+} from "@portfolio/components/color-picker-parts";
+import { FilterCount } from "@portfolio/components/photo-filters";
+import { Button } from "@portfolio/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
 import {
   COLOR_FILTER_KEYS,
   type ColorFilters,
   colorFilterCount,
-  countsFor,
   DEFAULT_PERCENT,
-  matchOf,
-  vividEnough,
 } from "@portfolio/lib/color-search";
-import { colorLabel } from "@portfolio/lib/photo-colors";
-import type { Photo } from "@portfolio/lib/photos";
+import { type ColorName, colorLabel, colorSwatch, isShade } from "@portfolio/lib/photo-colors";
 import { cn } from "@portfolio/lib/utils";
 
+/** What each section of the picker is set to, shown under its name in the left list. */
+const SECTIONS: [ColorSection, string, (filters: ColorFilters) => string][] = [
+  ["color", "Color", ({ color }) => (color ? colorLabel(color) : "Any")],
+  ["match", "Match", matchText],
+  ["vivid", "Vividness", vividText],
+];
+
+/** How photos match the color, such as "Largest color" or "At least 30%". */
+function matchText({ match, min = DEFAULT_PERCENT }: ColorFilters): string {
+  return match === "threshold" ? `At least ${min}%` : "Largest color";
+}
+
+/** The vividness measure and the least a photo needs, such as "Peak · 40+". */
+function vividText({ vivid, measure = "average" }: ColorFilters): string {
+  const name = measure === "peak" ? "Peak" : "Average";
+  return vivid ? `${name} · ${vivid}+` : `${name} · any`;
+}
+
+/** The section to open the picker on: vividness when only it is set, otherwise the color. */
+function firstSection(filters: ColorFilters): ColorSection {
+  return filters.vivid && !filters.color ? "vivid" : "color";
+}
+
 /**
- * The Grid's **Colors** filter, in its filter panel beside the camera sliders and the same size as
- * them: a small swatch for each hue bucket and shade, and a **More** toggle opening how a photo
- * matches it (its largest color, or at least a share of it) and the least vividness, by average or
- * peak, below the swatches. It starts open when any of those is set. `photos` is what the other
- * filters leave, which the swatches' counts are out of.
+ * The Grid's **Colors** filter, a button like **When** and **Camera** that opens a picker: a list
+ * of Color, Match and Vividness on the left, each saying what it's set to, and the chosen one's
+ * controls on the right, with what each choice does. The button shows the picked color and how
+ * many color filters are set. `photos` is what the other filters leave, which the swatches'
+ * counts are out of.
  */
-export function GridColorFilters({ photos, filters }: { photos: Photo[]; filters: ColorFilters }) {
-  const match = matchOf(filters);
-  const [open, setOpen] = useState(hasMoreSet(filters));
+export function GridColorFilters(props: ColorPickerProps) {
   return (
-    <section
-      aria-label="Colors"
-      className={cn("flex w-full flex-col gap-2 rounded-md border px-3 py-2", !open && "sm:w-auto")}
-    >
-      <ColorsHeader filters={filters} open={open} onToggle={() => setOpen(!open)} />
-      <ColorFilter color={filters.color} counts={countsFor(vividEnough(photos, filters), match)} />
-      {open && <MoreColorOptions filters={filters} />}
-    </section>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className="font-normal">
+          <Palette className="text-muted-foreground" aria-hidden />
+          Colors
+          <PickedDot color={props.filters.color} />
+          <FilterCount count={colorFilterCount(props.filters)} />
+          <ChevronsUpDown className="opacity-50" aria-hidden />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        collisionPadding={16}
+        className="w-[min(32rem,calc(100vw-2rem))] p-0"
+      >
+        <PickerBody {...props} />
+      </PopoverContent>
+    </Popover>
   );
 }
 
-/** Whether any of the options under **More** is set, rather than left at its default. */
-function hasMoreSet({ match, vivid, measure }: ColorFilters): boolean {
-  return [match, vivid, measure].some((value) => value !== undefined);
+/** A small dot of the picked color in the button, so it shows while the picker is closed. */
+function PickedDot({ color }: { color: ColorName | undefined }) {
+  if (!color) return null;
+  return (
+    <span
+      title={colorLabel(color)}
+      className={cn("size-3 rounded-full", isShade(color) && "ring-1 ring-border")}
+      style={{ backgroundColor: colorSwatch(color) }}
+    />
+  );
 }
 
-/**
- * The Colors filter's top line, like a camera slider's: its name, the picked color, an X clearing
- * every color filter while any is set, and the **More** toggle.
- */
-function ColorsHeader({
-  filters,
-  open,
-  onToggle,
+/** The list of sections on the left, with **Clear** under it, and the chosen one on the right. */
+function PickerBody(props: ColorPickerProps) {
+  const [section, setSection] = useState<ColorSection>(() => firstSection(props.filters));
+  return (
+    <div className="flex max-h-[min(28rem,70vh)]">
+      <div className="flex w-28 shrink-0 flex-col gap-0.5 border-r bg-muted/40 p-1 sm:w-36">
+        <div role="tablist" aria-orientation="vertical" aria-label="Color filters">
+          {SECTIONS.map(([key, label, text]) => (
+            <SectionTab
+              key={key}
+              label={label}
+              text={text(props.filters)}
+              chosen={section === key}
+              onClick={() => setSection(key)}
+            />
+          ))}
+        </div>
+        <ClearColors filters={props.filters} />
+      </div>
+      <div role="tabpanel" className="min-w-0 flex-1 overflow-y-auto p-3">
+        <ColorPickerPart section={section} {...props} />
+      </div>
+    </div>
+  );
+}
+
+/** A section in the left list: its name, with what it's set to under it. */
+function SectionTab({
+  label,
+  text,
+  chosen,
+  onClick,
 }: {
-  filters: ColorFilters;
-  open: boolean;
-  onToggle: () => void;
+  label: string;
+  text: string;
+  chosen: boolean;
+  onClick: () => void;
 }) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={chosen}
+      onClick={onClick}
+      className={cn(
+        "flex w-full flex-col items-start rounded-sm px-2 py-1.5 text-left text-sm outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        chosen && "bg-background shadow-xs",
+      )}
+    >
+      <span className="font-medium">{label}</span>
+      <span className="w-full truncate text-xs text-muted-foreground">{text}</span>
+    </button>
+  );
+}
+
+/** An X under the list clearing every color filter, shown while any is set. */
+function ClearColors({ filters }: { filters: ColorFilters }) {
   const navigate = useNavigate();
+  if (colorFilterCount(filters) === 0) return null;
   const clear = () =>
     void navigate({
       to: ".",
@@ -70,41 +154,9 @@ function ColorsHeader({
       replace: true,
     });
   return (
-    <div className="flex h-5 items-center gap-2 text-xs">
-      <span className="font-medium whitespace-nowrap text-muted-foreground">Colors</span>
-      <span className="ml-auto whitespace-nowrap">{pickedText(filters)}</span>
-      {colorFilterCount(filters) > 0 && (
-        <ClearFilterButton label="Colors" onClear={clear} className="-mr-1" />
-      )}
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={onToggle}
-        className="-mr-1 flex items-center gap-0.5 rounded-sm px-1 text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        More
-        <ChevronDown className={cn("size-3.5 transition", open && "rotate-180")} aria-hidden />
-      </button>
-    </div>
-  );
-}
-
-/** The picked color's name, or "Any" when none is picked. */
-function pickedText({ color }: ColorFilters): string {
-  return color ? colorLabel(color) : "Any";
-}
-
-/** The options under **More**: how a photo matches the color, and the least vividness. */
-function MoreColorOptions({ filters }: { filters: ColorFilters }) {
-  const { min = DEFAULT_PERCENT, vivid = 0, measure = "average" } = filters;
-  return (
-    <div className="flex flex-col gap-3 border-t pt-3 pb-1">
-      <ColorMatchControl
-        threshold={matchOf(filters).mode === "threshold"}
-        percent={min}
-        fallback={DEFAULT_PERCENT}
-      />
-      <VividnessControl vivid={vivid} measure={measure} />
+    <div className="mt-auto flex items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground">
+      Clear colors
+      <ClearFilterButton label="Colors" onClear={clear} />
     </div>
   );
 }
