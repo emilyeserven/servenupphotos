@@ -261,5 +261,6 @@
     "peakChroma": 32.12,
     "samples": 10050
   },
-  "notes": "Shows a planter; 'planter' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a planter; 'planter' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [299, 297, 406, 218, 63, 201]
 }

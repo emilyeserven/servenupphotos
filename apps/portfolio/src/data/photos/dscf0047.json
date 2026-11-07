@@ -262,5 +262,6 @@
     "peakChroma": 12.21,
     "samples": 9975
   },
-  "notes": "Shows a bronze gong; 'bronze' isn't a tag, since only 1 photo has it."
+  "notes": "Shows a bronze gong; 'bronze' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [384, 378, 376, 309, 310, 45]
 }

@@ -262,5 +262,6 @@
     "peakChroma": 21.19,
     "samples": 10115
   },
-  "notes": "Shows a tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them."
+  "notes": "Shows a tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them.",
+  "similarPhotos": [384, 385, 464, 309, 349, 465]
 }

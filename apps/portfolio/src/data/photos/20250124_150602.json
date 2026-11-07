@@ -267,5 +267,6 @@
     "samples": 9900
   },
   "undecided": true,
-  "notes": "Shows a wadi; 'wadi' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a wadi; 'wadi' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [365, 362, 367, 368, 369, 294]
 }

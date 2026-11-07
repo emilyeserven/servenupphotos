@@ -266,5 +266,6 @@
     "peakChroma": 48.12,
     "samples": 9727
   },
-  "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them."
+  "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [17, 250, 469, 437, 438, 282]
 }

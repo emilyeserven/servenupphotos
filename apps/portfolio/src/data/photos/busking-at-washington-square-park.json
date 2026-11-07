@@ -276,5 +276,6 @@
     "peakChroma": 0.01,
     "samples": 9825
   },
-  "notes": "Shows street dancing; 'dancing' isn't a tag, since only 2 photos have it."
+  "notes": "Shows street dancing; 'dancing' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [167, 163, 192, 186, 46, 193]
 }

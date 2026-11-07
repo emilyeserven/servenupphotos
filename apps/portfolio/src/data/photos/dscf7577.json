@@ -261,5 +261,6 @@
     "peakChroma": 9.32,
     "samples": 9900
   },
-  "notes": "Shows a ginkgo leaf on a manhole cover; 'ginkgo' and 'manhole-cover' aren't tags, since only 1–2 photos have them."
+  "notes": "Shows a ginkgo leaf on a manhole cover; 'ginkgo' and 'manhole-cover' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [478, 397, 119, 53, 477, 183]
 }

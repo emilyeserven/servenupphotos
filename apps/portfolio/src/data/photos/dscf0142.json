@@ -266,5 +266,6 @@
     "peakChroma": 37.4,
     "samples": 9694
   },
-  "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [302, 304, 450, 306, 305, 307]
 }

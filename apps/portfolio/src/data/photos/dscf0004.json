@@ -262,5 +262,6 @@
     "peakChroma": 17.63,
     "samples": 9768
   },
-  "notes": "Shows vending machines; 'vending-machines' isn't a tag, since only 1 photo has them."
+  "notes": "Shows vending machines; 'vending-machines' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [353, 354, 351, 304, 450, 302]
 }

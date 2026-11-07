@@ -266,5 +266,6 @@
     "peakChroma": 45.18,
     "samples": 9768
   },
-  "notes": "Shows an iguana; 'iguanas' isn't a tag, since only 1 photo has one."
+  "notes": "Shows an iguana; 'iguanas' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [160, 153, 79, 81, 215, 447]
 }

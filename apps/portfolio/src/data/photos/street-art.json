@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 9782
   },
-  "notes": "Shows chalk art on the pavement; 'chalk-art' isn't a tag, since only 1 photo has it."
+  "notes": "Shows chalk art on the pavement; 'chalk-art' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [46, 40, 38, 214, 57, 72]
 }

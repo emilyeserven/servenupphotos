@@ -266,5 +266,6 @@
     "peakChroma": 0,
     "samples": 9728
   },
-  "notes": "Shows a church attic with Gothic tracery; 'attic' and 'tracery' aren't tags, since only 1–2 photos have them."
+  "notes": "Shows a church attic with Gothic tracery; 'attic' and 'tracery' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [70, 295, 159, 275, 73, 148]
 }

@@ -272,5 +272,6 @@
   "spotlightPlacement": {
     "x": 80,
     "y": 50
-  }
+  },
+  "similarPhotos": [314, 423, 419, 427, 417, 198]
 }

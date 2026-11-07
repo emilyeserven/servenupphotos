@@ -263,5 +263,6 @@
     "samples": 10115
   },
   "undecided": true,
-  "notes": "Shows a picnic; 'picnic' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a picnic; 'picnic' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [399, 402, 375, 489, 39, 419]
 }

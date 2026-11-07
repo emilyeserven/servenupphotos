@@ -263,5 +263,6 @@
     "samples": 10115
   },
   "undecided": true,
-  "notes": "Shows roadwork; 'roadwork' isn't a tag, since only 2 photos have it."
+  "notes": "Shows roadwork; 'roadwork' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [406, 409, 412, 436, 413, 490]
 }

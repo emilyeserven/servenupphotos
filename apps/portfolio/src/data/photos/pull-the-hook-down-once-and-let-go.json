@@ -262,5 +262,6 @@
     "peakChroma": 27.2,
     "samples": 9975
   },
-  "notes": "Shows a fire alarm; 'fire-alarm' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a fire alarm; 'fire-alarm' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [180, 101, 406, 373, 441, 20]
 }

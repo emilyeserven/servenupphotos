@@ -266,5 +266,6 @@
     "peakChroma": 16.9,
     "samples": 9975
   },
-  "notes": "Shows hanja characters; 'hanja' isn't a tag, since only 2 photos have them."
+  "notes": "Shows hanja characters; 'hanja' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [327, 231, 319, 120, 251, 250]
 }

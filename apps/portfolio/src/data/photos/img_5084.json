@@ -262,5 +262,6 @@
     "peakChroma": 10.1,
     "samples": 10050
   },
-  "notes": "Shows a typewriter; 'typewriter' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a typewriter; 'typewriter' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [84, 410, 91, 100, 180, 87]
 }

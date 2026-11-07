@@ -262,5 +262,6 @@
     "peakChroma": 24.01,
     "samples": 9880
   },
-  "notes": "Shows a statue with a hula hoop; 'hula-hoop' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a statue with a hula hoop; 'hula-hoop' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [56, 257, 190, 55, 201, 164]
 }

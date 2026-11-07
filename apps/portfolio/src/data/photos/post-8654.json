@@ -261,5 +261,6 @@
     "peakChroma": 58.4,
     "samples": 9842
   },
-  "notes": "Shows shoes; 'shoes' isn't a tag, since only 1 photo has them."
+  "notes": "Shows shoes; 'shoes' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [478, 146, 322, 477, 88, 496]
 }

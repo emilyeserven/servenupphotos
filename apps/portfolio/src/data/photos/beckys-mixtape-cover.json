@@ -264,5 +264,6 @@
     "peakChroma": 17.22,
     "samples": 10086
   },
-  "notes": "Shows sunglasses; 'sunglasses' isn't a tag, since only 1 photo has them."
+  "notes": "Shows sunglasses; 'sunglasses' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [264, 486, 234, 499, 471, 111]
 }

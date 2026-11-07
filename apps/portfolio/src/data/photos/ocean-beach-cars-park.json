@@ -262,5 +262,6 @@
     "peakChroma": 28.24,
     "samples": 9912
   },
-  "notes": "Shows sand dunes; 'sand-dunes' isn't a tag, since only 1 photo has them."
+  "notes": "Shows sand dunes; 'sand-dunes' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [427, 429, 422, 423, 425, 426]
 }

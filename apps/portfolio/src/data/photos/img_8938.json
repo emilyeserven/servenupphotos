@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 10050
   },
-  "notes": "Shows an ice cream queue; 'ice-cream' and 'queue' aren't tags, since only 2 photos have each."
+  "notes": "Shows an ice cream queue; 'ice-cream' and 'queue' aren't tags, since only 2 photos have each.",
+  "similarPhotos": [203, 441, 251, 11, 306, 169]
 }

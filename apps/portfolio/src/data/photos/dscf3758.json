@@ -270,5 +270,6 @@
     "peakChroma": 8.35,
     "samples": 9801
   },
-  "notes": "Shows a painted fire hydrant; 'fire-hydrant' isn't a tag, since only 2 photos have one."
+  "notes": "Shows a painted fire hydrant; 'fire-hydrant' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [46, 38, 66, 36, 297, 40]
 }

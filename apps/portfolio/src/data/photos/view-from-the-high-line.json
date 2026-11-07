@@ -266,5 +266,6 @@
     "peakChroma": 7.36,
     "samples": 9828
   },
-  "notes": "Shows air conditioners on the facade; 'air-conditioners' isn't a tag, since only 2 photos have it."
+  "notes": "Shows air conditioners on the facade; 'air-conditioners' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [67, 173, 35, 76, 176, 408]
 }

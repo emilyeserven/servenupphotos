@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 9825
   },
-  "notes": "Shows the 9/11 Memorial with a rose; 'memorial' and 'remembrance' aren't tags, since only 1 photo has them."
+  "notes": "Shows the 9/11 Memorial with a rose; 'memorial' and 'remembrance' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [165, 23, 167, 163, 6, 42]
 }

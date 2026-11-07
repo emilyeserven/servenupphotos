@@ -266,5 +266,6 @@
     "peakChroma": 26.43,
     "samples": 9727
   },
-  "notes": "Shows an equestrian statue; 'horse' isn't a tag, since only 2 photos have one."
+  "notes": "Shows an equestrian statue; 'horse' isn't a tag, since only 2 photos have one.",
+  "similarPhotos": [55, 153, 99, 44, 138, 187]
 }
