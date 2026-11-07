@@ -151,3 +151,30 @@ func handleApplyGenreSuggestions(store *settings.Store, gh *github.Client) http.
 			return gh.ApplyGenreSuggestions(ctx, cfg, req)
 		})
 }
+
+// handlePickAltTextPhotos picks up to the asked number of photos without alt
+// text for the Alt Text page, leaving out the photos already shown.
+func handlePickAltTextPhotos(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "photo pick", "could not pick the photos",
+		func(ctx context.Context, cfg settings.GitHub, req github.BulkTagPickOptions) (any, error) {
+			return gh.PickAltTextPhotos(ctx, cfg, req.Skip, req.Count)
+		})
+}
+
+// handlePreviewAltText reads the LLM's pasted answer for the picked photos
+// and says the alt text each would get, without saving anything.
+func handlePreviewAltText(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "alt text answer", "could not read the answer",
+		func(ctx context.Context, cfg settings.GitHub, req bulkTagAnswer) (any, error) {
+			return gh.PreviewAltText(ctx, cfg, req.Paths, req.Answer)
+		})
+}
+
+// handleApplyAltText writes the reviewed alt text into each photo's file, as
+// changes waiting for Commit.
+func handleApplyAltText(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return handleBulkTags(store, "alt text", "could not save the alt text",
+		func(ctx context.Context, cfg settings.GitHub, req github.AltTexts) (any, error) {
+			return gh.ApplyAltText(ctx, cfg, req)
+		})
+}

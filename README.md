@@ -101,6 +101,7 @@ How each part of the pipeline and portfolio works is in [`docs/`](docs):
 - [Settings](docs/settings.md) (`/settings`): the R2 and GitHub settings and their write-only secrets, and Status (`/settings/status`), the services and connections check
 - [Update Data](docs/update-data.md) (`/update-data`): bulk changes to the photo JSON (image base URL, missing fields, colors), and Tag Data (`/tag-data`) for bulk tagging, the whole tag library, pruning and tag descriptions
 - [Photographer notes](docs/photo-notes.md): private notes on a photo, written on the Photo page or by the Tag library, which the portfolio's build leaves out
+- [Alt text](docs/alt-text.md) (`/alt-text`): a description of each photo for screen readers, written on the Photo page or for many photos at once with an LLM prompt, which the portfolio uses as the images' `alt`
 - [Publish](docs/publish.md): the publish fields, the `/instagram` calendar and `/site-spotlight`
 - [Saving photo data to GitHub](docs/saving-to-github.md): saving a photo's JSON to the Add photo data pull request, uploading to R2, resized versions and the Square Thumbnail
 - [Bulk Upload](docs/bulk-upload.md) (`/bulk-upload`): adding many photos to the batch at once, with default titles and Square Thumbnails

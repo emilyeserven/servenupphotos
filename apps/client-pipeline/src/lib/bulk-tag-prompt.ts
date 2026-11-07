@@ -28,6 +28,18 @@ export function photoBasics(photo: BulkTagPhoto, places: Place[]) {
   };
 }
 
+/**
+ * One photo's part of a prompt that asks about each photo on its own, such as for its genres: its
+ * name and link, its title and where it was taken, and its tags.
+ */
+export function photoWithTags(photo: BulkTagPhoto, places: Place[]): string {
+  const { heading, known } = photoBasics(photo, places);
+  const tags = savedTags(photo.data);
+  if (tags.length > 0) known.push(`- Tags: ${tags.join(", ")}`);
+  return `${heading}
+${known.join("\n") || "- Nothing known yet."}`;
+}
+
 /** One photo's part of the prompt: its name and link, what's known of it, and its tags. */
 function photoSection(photo: BulkTagPhoto, places: Place[]): string {
   const { heading, known } = photoBasics(photo, places);

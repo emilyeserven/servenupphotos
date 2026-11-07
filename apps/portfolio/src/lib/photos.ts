@@ -32,6 +32,11 @@ export interface Photo {
    */
   id: number;
   title: string;
+  /**
+   * What the photo shows, for screen readers and for when it can't load: the alt text written in the
+   * pipeline, or else the title.
+   */
+  alt: string;
   /** A note about the photo in Markdown, written on the pipeline's Photo page; null without one. */
   comment: string | null;
   camera: string;
@@ -227,6 +232,8 @@ interface PhotoData {
   title?: string | null;
   /** A Markdown note about the photo, when one was written. */
   comment?: string | null;
+  /** A short description of what the photo shows, when one was written; older entries don't have it. */
+  altText?: string | null;
   /** Entries saved before these were added don't have them. */
   aperture?: number | null;
   /** Whether the aperture is manual or unknown; entries saved before it was added don't have it. */
@@ -440,6 +447,11 @@ function parseImage(photo: PhotoData): PhotoImage | null {
 /** The title written on the Photo page, or else the file name without its extension. */
 function photoTitle(photo: PhotoData): string {
   return photo.title?.trim() || photo.file.replace(/\.[^.]*$/, "");
+}
+
+/** The alt text written in the pipeline, or else the photo's title. */
+function photoAlt(photo: PhotoData): string {
+  return photo.altText?.trim() || photoTitle(photo);
 }
 
 function cameraSettings(photo: PhotoData): CameraSettings {
@@ -707,6 +719,7 @@ function fromPhotoData(data: PhotoData[]): Photo[] {
     return {
       id: ids[index] as number,
       title: photoTitle(photo),
+      alt: photoAlt(photo),
       comment: photoComment(photo),
       settings: cameraSettings(photo),
       camera: photo.camera ?? "Unknown camera",

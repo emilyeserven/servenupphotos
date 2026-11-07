@@ -10,7 +10,6 @@ export function FittedPhoto({ photo, onOpen }: { photo: ImagePhoto; onOpen: () =
     <button
       type="button"
       title={photo.title}
-      aria-label={`Show ${photo.title}`}
       onClick={onOpen}
       className="mx-auto block cursor-zoom-in overflow-hidden bg-muted outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       style={{
@@ -22,7 +21,7 @@ export function FittedPhoto({ photo, onOpen }: { photo: ImagePhoto; onOpen: () =
         src={src}
         srcSet={srcSet}
         sizes={`min(100vw, calc(100svh * ${width} / ${height}))`}
-        alt=""
+        alt={photo.alt}
         loading="lazy"
         className="size-full object-cover"
       />

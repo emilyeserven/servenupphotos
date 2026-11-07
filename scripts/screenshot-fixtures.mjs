@@ -840,6 +840,35 @@ function genreSuggestionsPreview() {
   };
 }
 
+/** The photos the Alt Text page picks: Bulk Tagging's pick, as photos without alt text. */
+function altTextPick(count = 20) {
+  const { untagged: _untagged, ...pick } = bulkTagPick(Math.min(count, 4));
+  return {
+    ...pick,
+    withoutAltText: 31,
+    photos: pick.photos.map((photo) => ({ ...photo, related: [] })),
+  };
+}
+
+/** What reading a pasted Alt Text answer finds for the picked photos. */
+function altTextPreview() {
+  const texts = [
+    "A paper lantern glowing over a narrow alley at night, its light on wet stones.",
+    "Two cats asleep on a sunlit stone wall, one curled around the other.",
+    "",
+    "Crowds crossing a wide intersection under tall neon signs on a rainy evening, umbrellas open everywhere you look, the lights reflected in the puddles.",
+  ];
+  return {
+    photos: altTextPick().photos.map(({ path, name }, i) => ({
+      path,
+      name,
+      altText: texts[i] ?? "",
+      current: i === 1 ? "Cats on a wall." : "",
+    })),
+    unknown: [],
+  };
+}
+
 /** The photos Album Suggestions picks: Bulk Tagging's pick, as photos without an album. */
 function albumPick(count = 5) {
   const { untagged, photos, ...rest } = bulkTagPick(count);
@@ -1068,6 +1097,9 @@ export function defaultFixtures() {
     "POST /api/data/genre-suggestions/pick": ({ body }) => genrePick(body?.count),
     "POST /api/data/genre-suggestions/preview": () => genreSuggestionsPreview(),
     "POST /api/data/genre-suggestions": () => ({ ...pendingSave(), newGenres: 1, photos: 6 }),
+    "POST /api/data/alt-text/pick": ({ body }) => altTextPick(body?.count),
+    "POST /api/data/alt-text/preview": () => altTextPreview(),
+    "POST /api/data/alt-text": () => ({ ...pendingSave(), photos: 3 }),
     "POST /api/data/album-suggestions/pick": ({ body }) => albumPick(body?.count),
     "POST /api/data/album-suggestions/preview": () => albumSuggestionsPreview(),
     "POST /api/data/album-suggestions": () => ({ ...pendingSave(), newAlbums: 1, photos: 5 }),

@@ -9,7 +9,7 @@ Below them every page is listed under its section:
 
 | Section       | Pages (submenu pages in parentheses)                                                                                                     |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Images        | Photo, Gallery                                                                                                                           |
+| Images        | Photo (Alt Text), Gallery                                                                                                                |
 | Pipeline      | Photos in Flight, Compare, Lightroom Albums                                                                                              |
 | Organize      | Albums (Album Suggestions), Tags (Small Tags, Tag Data), Genres (Genre Suggestions), Places (Location Names, Bulk Places, Localizations) |
 | Publish       | Instagram (Planned Posts, Caption Templates), Site Spotlight, User Likes                                                                 |
