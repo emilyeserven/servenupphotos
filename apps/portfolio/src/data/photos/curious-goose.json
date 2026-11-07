@@ -266,5 +266,6 @@
     "peakChroma": 38.18,
     "samples": 10087
   },
-  "notes": "Shows a goose; 'geese' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a goose; 'geese' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [23, 8, 152, 46, 187, 483]
 }

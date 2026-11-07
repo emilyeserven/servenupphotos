@@ -267,5 +267,6 @@
     "samples": 9417
   },
   "undecided": true,
-  "notes": "Shows an oasis; 'oasis' isn't a tag, since only 1 photo has one."
+  "notes": "Shows an oasis; 'oasis' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [366, 362, 365, 368, 369, 153]
 }

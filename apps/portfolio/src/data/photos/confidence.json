@@ -266,5 +266,6 @@
     "peakChroma": 63.84,
     "samples": 9856
   },
-  "notes": "Shows hanfu at a Lunar New Year parade; 'hanfu' isn't a tag, since only 1 photo has it."
+  "notes": "Shows hanfu at a Lunar New Year parade; 'hanfu' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [437, 306, 303, 307, 305, 132]
 }

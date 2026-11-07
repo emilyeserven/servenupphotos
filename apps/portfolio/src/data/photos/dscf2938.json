@@ -263,5 +263,6 @@
     "samples": 9975
   },
   "undecided": true,
-  "notes": "Shows a paifang gate; 'paifang' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a paifang gate; 'paifang' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [438, 441, 439, 442, 467, 435]
 }

@@ -269,5 +269,6 @@
     "peakChroma": 0.01,
     "samples": 9936
   },
-  "notes": "Shows mannequins; 'mannequins' isn't a tag, since only 1 photo has them."
+  "notes": "Shows mannequins; 'mannequins' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [76, 35, 99, 445, 172, 117]
 }

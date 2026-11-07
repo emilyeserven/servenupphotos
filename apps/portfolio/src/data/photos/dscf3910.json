@@ -275,5 +275,6 @@
     "peakChroma": 21.97,
     "samples": 10050
   },
-  "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it."
+  "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [306, 302, 282, 250, 319, 304]
 }

@@ -261,5 +261,6 @@
     "peakChroma": 0.01,
     "samples": 10011
   },
-  "notes": "Shows a violinist; 'violin' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a violinist; 'violin' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [46, 180, 22, 25, 186, 6]
 }

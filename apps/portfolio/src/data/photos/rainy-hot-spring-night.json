@@ -266,5 +266,6 @@
     "peakChroma": 8.88,
     "samples": 10050
   },
-  "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered."
+  "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered.",
+  "similarPhotos": [351, 353, 355, 354, 377, 448]
 }

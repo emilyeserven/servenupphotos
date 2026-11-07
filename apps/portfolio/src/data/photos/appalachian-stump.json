@@ -266,5 +266,6 @@
     "peakChroma": 44.78,
     "samples": 9801
   },
-  "notes": "Shows a tree stump; 'tree-stump' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a tree stump; 'tree-stump' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [82, 111, 113, 286, 287, 471]
 }

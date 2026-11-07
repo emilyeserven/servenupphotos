@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 9864
   },
-  "notes": "Shows acrobats and dancing in Times Square; 'acrobatics' and 'dancing' aren't tags, since only 1–2 photos have them."
+  "notes": "Shows acrobats and dancing in Times Square; 'acrobatics' and 'dancing' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [167, 165, 169, 164, 168, 40]
 }

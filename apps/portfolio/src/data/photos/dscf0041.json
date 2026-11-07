@@ -262,5 +262,6 @@
     "peakChroma": 23.02,
     "samples": 9768
   },
-  "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them."
+  "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [378, 385, 464, 348, 349, 376]
 }

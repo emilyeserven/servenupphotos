@@ -263,5 +263,6 @@
     "samples": 9975
   },
   "undecided": true,
-  "notes": "Shows Halloween skeletons and topiary; 'skeletons' and 'topiary' aren't tags, since only 2 photos have each."
+  "notes": "Shows Halloween skeletons and topiary; 'skeletons' and 'topiary' aren't tags, since only 2 photos have each.",
+  "similarPhotos": [436, 494, 408, 414, 400, 373]
 }

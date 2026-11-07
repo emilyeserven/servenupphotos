@@ -262,5 +262,6 @@
     "peakChroma": 14.55,
     "samples": 10050
   },
-  "undecided": true
+  "undecided": true,
+  "similarPhotos": [426, 422, 427, 421, 425, 428]
 }

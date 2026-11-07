@@ -262,5 +262,6 @@
     "peakChroma": 8.34,
     "samples": 9711
   },
-  "notes": "Shows a waterfall; 'waterfall' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a waterfall; 'waterfall' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [447, 448, 451, 220, 222, 79]
 }

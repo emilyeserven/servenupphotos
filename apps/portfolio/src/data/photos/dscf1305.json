@@ -262,5 +262,6 @@
     "peakChroma": 28.28,
     "samples": 10050
   },
-  "notes": "Shows a Western-style yokan house; 'yokan' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a Western-style yokan house; 'yokan' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [281, 464, 337, 505, 176, 507]
 }

@@ -262,7 +262,8 @@
       "peakChroma": 12.75,
       "samples": 9490
     },
-    "notes": "Shows a Dutch canal house (grachtenpand); 'grachtenpand' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a Dutch canal house (grachtenpand); 'grachtenpand' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [297, 398, 301, 176, 34, 124]
   },
   {
     "title": "Castle Door",
@@ -526,7 +527,8 @@
       "chroma": 7.09,
       "peakChroma": 18.26,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [290, 397, 271, 504, 330, 215]
   },
   {
     "title": "Mushroom Nook",
@@ -796,7 +798,8 @@
       "peakChroma": 54.01,
       "samples": 9975
     },
-    "notes": "Shows tree roots; 'roots' isn't a tag, since only 1 photo has them."
+    "notes": "Shows tree roots; 'roots' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [287, 8, 114, 91, 85, 92]
   },
   {
     "title": "Mini Mushroom",
@@ -1065,7 +1068,8 @@
       "chroma": 16.98,
       "peakChroma": 38.17,
       "samples": 9490
-    }
+    },
+    "similarPhotos": [286, 8, 114, 91, 89, 85]
   },
   {
     "title": "A Decree from the Past",
@@ -1334,7 +1338,8 @@
       "chroma": 10.52,
       "peakChroma": 18.86,
       "samples": 9490
-    }
+    },
+    "similarPhotos": [292, 504, 390, 290, 359, 284]
   },
   {
     "title": "Sightseeing the Citadel Halls",
@@ -1604,7 +1609,8 @@
       "peakChroma": 20.73,
       "samples": 9768
     },
-    "notes": "Shows the arcaded gallery (riwaq) around a mosque courtyard; 'arcade' and 'riwaq' aren't tags, since only 2 photos have them."
+    "notes": "Shows the arcaded gallery (riwaq) around a mosque courtyard; 'arcade' and 'riwaq' aren't tags, since only 2 photos have them.",
+    "similarPhotos": [273, 272, 275, 288, 277, 279]
   },
   {
     "title": "Door from the Mosque",
@@ -1887,7 +1893,8 @@
       "peakChroma": 4.91,
       "samples": 9694
     },
-    "notes": "Shows stained glass; 'stained-glass' isn't a tag, since only 1 photo has it."
+    "notes": "Shows stained glass; 'stained-glass' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [278, 288, 295, 34, 274, 212]
   },
   {
     "title": "Mosque's Lamp",
@@ -2157,7 +2164,8 @@
       "peakChroma": 54.39,
       "samples": 9828
     },
-    "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them."
+    "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [279, 278, 274, 275, 273, 290]
   },
   {
     "title": "Into the Light",
@@ -2427,7 +2435,8 @@
       "peakChroma": 24.18,
       "samples": 9348
     },
-    "notes": "Shows mosque carpets; 'carpet' isn't a tag, since only 2 photos have it."
+    "notes": "Shows mosque carpets; 'carpet' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [275, 212, 277, 279, 288, 34]
   },
   {
     "title": "Mosque's Hanging Lights",
@@ -2697,7 +2706,8 @@
       "peakChroma": 22.64,
       "samples": 9768
     },
-    "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them."
+    "notes": "Shows mishkat mosque lamps; 'mishkat' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [277, 278, 288, 274, 290, 275]
   },
   {
     "title": "Geometric Window",
@@ -2967,7 +2977,8 @@
       "peakChroma": 12.7,
       "samples": 9490
     },
-    "notes": "Shows a mashrabiya screen with girih patterns; 'mashrabiya' and 'girih' aren't tags, since only 1 photo has them."
+    "notes": "Shows a mashrabiya screen with girih patterns; 'mashrabiya' and 'girih' aren't tags, since only 1 photo has them.",
+    "similarPhotos": [275, 278, 272, 33, 274, 71]
   },
   {
     "title": "Entrance of the Red Pyramid",
@@ -3236,7 +3247,8 @@
       "chroma": 23.47,
       "peakChroma": 31.29,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [291, 290, 294, 362, 359, 210]
   },
   {
     "title": "Waiting at the Entrance",
@@ -3506,7 +3518,8 @@
       "peakChroma": 23.61,
       "samples": 9828
     },
-    "notes": "Shows scaffolding; 'scaffolding' isn't a tag, since only 2 photos have it."
+    "notes": "Shows scaffolding; 'scaffolding' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [289, 284, 291, 294, 271, 279]
   },
   {
     "title": "Dwarfed",
@@ -3775,7 +3788,8 @@
       "chroma": 15.62,
       "peakChroma": 26.93,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [294, 289, 290, 362, 366, 359]
   },
   {
     "title": "Unfinished Glyphs",
@@ -4044,7 +4058,8 @@
       "chroma": 22.83,
       "peakChroma": 28,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [359, 271, 279, 504, 358, 33]
   },
   {
     "title": "Red Sea Waves",
@@ -4320,7 +4335,8 @@
     "spotlightPlacement": {
       "x": 80,
       "y": 50
-    }
+    },
+    "similarPhotos": [314, 423, 419, 427, 417, 198]
   },
   {
     "title": "Giza Crowd",
@@ -4589,7 +4605,8 @@
       "chroma": 12.91,
       "peakChroma": 22.52,
       "samples": 9620
-    }
+    },
+    "similarPhotos": [291, 362, 289, 126, 290, 366]
   },
   {
     "title": "Brussels Bike",
@@ -4858,7 +4875,8 @@
       "chroma": 4.61,
       "peakChroma": 8.02,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [281, 299, 441, 203, 301, 436]
   },
   {
     "title": "Brussels Door",
@@ -5128,7 +5146,8 @@
       "peakChroma": 14.21,
       "samples": 9975
     },
-    "notes": "Shows a door knocker; 'door-knocker' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a door knocker; 'door-knocker' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [397, 288, 33, 45, 376, 256]
   },
   {
     "title": "Stickered Sign",
@@ -5397,7 +5416,8 @@
       "chroma": 12.75,
       "peakChroma": 32.24,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [297, 436, 453, 11, 282, 407]
   },
   {
     "title": "Artistic Planter",
@@ -5662,7 +5682,8 @@
       "peakChroma": 32.12,
       "samples": 10050
     },
-    "notes": "Shows a planter; 'planter' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a planter; 'planter' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [299, 297, 406, 218, 63, 201]
   },
   {
     "title": "Grand Place",
@@ -5932,7 +5953,8 @@
       "peakChroma": 23.74,
       "samples": 9694
     },
-    "notes": "Shows the Grand Place guildhalls; 'guildhall' isn't a tag, since only 1 photo has one."
+    "notes": "Shows the Grand Place guildhalls; 'guildhall' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [127, 297, 272, 210, 216, 167]
   },
   {
     "id": 6,
@@ -6202,7 +6224,8 @@
       "peakChroma": 0.01,
       "samples": 9728
     },
-    "notes": "Shows a newsstand; 'newsstand' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a newsstand; 'newsstand' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [7, 74, 22, 383, 151, 11]
   },
   {
     "title": "9/11 Memorial",
@@ -6472,7 +6495,8 @@
       "peakChroma": 0.01,
       "samples": 9825
     },
-    "notes": "Shows the 9/11 Memorial with a rose; 'memorial' and 'remembrance' aren't tags, since only 1 photo has them."
+    "notes": "Shows the 9/11 Memorial with a rose; 'memorial' and 'remembrance' aren't tags, since only 1 photo has them.",
+    "similarPhotos": [165, 23, 167, 163, 6, 42]
   },
   {
     "id": 7,
@@ -6753,7 +6777,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [22, 6, 51, 151, 383, 74]
   },
   {
     "id": 23,
@@ -7022,7 +7047,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9825
-    }
+    },
+    "similarPhotos": [46, 187, 167, 164, 152, 78]
   },
   {
     "id": 33,
@@ -7295,7 +7321,8 @@
       "chroma": 11.93,
       "peakChroma": 29.9,
       "samples": 9782
-    }
+    },
+    "similarPhotos": [288, 397, 35, 45, 298, 70]
   },
   {
     "id": 34,
@@ -7568,7 +7595,8 @@
       "chroma": 1.78,
       "peakChroma": 5.54,
       "samples": 9825
-    }
+    },
+    "similarPhotos": [73, 263, 44, 275, 76, 35]
   },
   {
     "id": 35,
@@ -7837,7 +7865,8 @@
       "chroma": 4.83,
       "peakChroma": 10.39,
       "samples": 9956
-    }
+    },
+    "similarPhotos": [67, 76, 45, 176, 172, 174]
   },
   {
     "title": "Appalachian Stump",
@@ -8107,7 +8136,8 @@
       "peakChroma": 44.78,
       "samples": 9801
     },
-    "notes": "Shows a tree stump; 'tree-stump' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a tree stump; 'tree-stump' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [82, 111, 113, 286, 287, 471]
   },
   {
     "title": "Art not Ads",
@@ -8379,7 +8409,8 @@
       "chroma": 11.24,
       "peakChroma": 28.71,
       "samples": 10087
-    }
+    },
+    "similarPhotos": [57, 47, 38, 30, 15, 60]
   },
   {
     "id": 24,
@@ -8648,7 +8679,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9709
-    }
+    },
+    "similarPhotos": [490, 7, 492, 40, 270, 158]
   },
   {
     "title": "Bad Luck Love",
@@ -8912,7 +8944,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9916
-    }
+    },
+    "similarPhotos": [60, 15, 439, 36, 189, 47]
   },
   {
     "title": "Bays Looking Over the Bay",
@@ -9177,7 +9210,8 @@
       "chroma": 9.74,
       "peakChroma": 28.15,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [436, 429, 373, 494, 430, 400]
   },
   {
     "title": "Beach Parking",
@@ -9444,7 +9478,8 @@
       "chroma": 4.24,
       "peakChroma": 8.75,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [422, 426, 420, 427, 429, 424]
   },
   {
     "title": "Beach Volleyball for All",
@@ -9709,7 +9744,8 @@
       "chroma": 5.34,
       "peakChroma": 8.09,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [426, 422, 427, 434, 425, 145]
   },
   {
     "title": "Becky's Mixtape Cover",
@@ -9977,7 +10013,8 @@
       "peakChroma": 17.22,
       "samples": 10086
     },
-    "notes": "Shows sunglasses; 'sunglasses' isn't a tag, since only 1 photo has them."
+    "notes": "Shows sunglasses; 'sunglasses' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [264, 486, 234, 499, 471, 111]
   },
   {
     "title": "Bethesda Fountain",
@@ -10246,7 +10283,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 10087
-    }
+    },
+    "similarPhotos": [163, 40, 165, 168, 159, 483]
   },
   {
     "title": "Between Pillars",
@@ -10516,7 +10554,8 @@
       "peakChroma": 25.89,
       "samples": 8880
     },
-    "notes": "Shows Karnak's hypostyle hall; 'hypostyle' isn't a tag, since only 1 photo has it."
+    "notes": "Shows Karnak's hypostyle hall; 'hypostyle' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [292, 358, 271, 289, 369, 274]
   },
   {
     "id": 37,
@@ -10786,7 +10825,8 @@
       "peakChroma": 9.44,
       "samples": 9727
     },
-    "notes": "Shows a topiary planter; 'planter' and 'topiary' aren't tags, since only 2 photos have each."
+    "notes": "Shows a topiary planter; 'planter' and 'topiary' aren't tags, since only 2 photos have each.",
+    "similarPhotos": [55, 153, 233, 336, 63, 284]
   },
   {
     "title": "Birds Over the Bridge",
@@ -11060,7 +11100,8 @@
       "chroma": 18.24,
       "peakChroma": 29.26,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [403, 489, 405, 399, 393, 375]
   },
   {
     "id": 38,
@@ -11329,7 +11370,8 @@
       "chroma": 14.7,
       "peakChroma": 60.69,
       "samples": 9750
-    }
+    },
+    "similarPhotos": [439, 36, 203, 66, 214, 57]
   },
   {
     "title": "Blue Bridge",
@@ -11606,7 +11648,8 @@
       "chroma": 15.92,
       "peakChroma": 35.42,
       "samples": 9801
-    }
+    },
+    "similarPhotos": [45, 35, 39, 237, 113, 402]
   },
   {
     "title": "Blue Culture Street",
@@ -11875,7 +11918,8 @@
       "chroma": 11.97,
       "peakChroma": 29.37,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [356, 323, 413, 216, 124, 436]
   },
   {
     "title": "Blue Fish",
@@ -12140,7 +12184,8 @@
       "chroma": 16.43,
       "peakChroma": 23.19,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [502, 501, 337, 485, 393, 95]
   },
   {
     "title": "Bridge Stone",
@@ -12405,7 +12450,8 @@
       "chroma": 6.49,
       "peakChroma": 15.71,
       "samples": 9912
-    }
+    },
+    "similarPhotos": [390, 271, 397, 389, 309, 310]
   },
   {
     "id": 39,
@@ -12674,7 +12720,8 @@
       "chroma": 18,
       "peakChroma": 37.3,
       "samples": 9916
-    }
+    },
+    "similarPhotos": [41, 489, 44, 258, 34, 117]
   },
   {
     "id": 40,
@@ -12954,7 +13001,8 @@
       "peakChroma": 0.01,
       "samples": 9825
     },
-    "notes": "Shows street dancing; 'dancing' isn't a tag, since only 2 photos have it."
+    "notes": "Shows street dancing; 'dancing' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [167, 163, 192, 186, 46, 193]
   },
   {
     "title": "Cabrillo",
@@ -13228,7 +13276,8 @@
       "chroma": 12.16,
       "peakChroma": 30,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [430, 373, 412, 414, 435, 413]
   },
   {
     "title": "Cafe de la Presse",
@@ -13494,7 +13543,8 @@
       "peakChroma": 0.01,
       "samples": 9975
     },
-    "notes": "Shows a fire hydrant; 'fire-hydrant' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a fire hydrant; 'fire-hydrant' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [439, 205, 327, 203, 436, 440]
   },
   {
     "title": "Central Park Gazebo",
@@ -13764,7 +13814,8 @@
       "peakChroma": 0.01,
       "samples": 10050
     },
-    "notes": "Shows a rustic-style gazebo; 'rustic' isn't a tag, since only 1 photo has it."
+    "notes": "Shows a rustic-style gazebo; 'rustic' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [167, 40, 192, 42, 482, 165]
   },
   {
     "id": 41,
@@ -14046,7 +14097,8 @@
       "chroma": 17.22,
       "peakChroma": 33.49,
       "samples": 9856
-    }
+    },
+    "similarPhotos": [486, 496, 39, 483, 498, 392]
   },
   {
     "title": "Chasing Bubbles",
@@ -14316,7 +14368,8 @@
       "peakChroma": 0.01,
       "samples": 9956
     },
-    "notes": "Shows soap bubbles; 'bubbles' isn't a tag, since only 2 photos have them."
+    "notes": "Shows soap bubbles; 'bubbles' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [167, 164, 192, 170, 40, 166]
   },
   {
     "id": 42,
@@ -14586,7 +14639,8 @@
       "peakChroma": 0.01,
       "samples": 9864
     },
-    "notes": "Shows a chess game; 'chess' and 'board-games' aren't tags, since only 1 photo has them."
+    "notes": "Shows a chess game; 'chess' and 'board-games' aren't tags, since only 1 photo has them.",
+    "similarPhotos": [40, 159, 186, 163, 167, 187]
   },
   {
     "title": "Circle of Harmony",
@@ -14855,7 +14909,8 @@
       "chroma": 11.72,
       "peakChroma": 23.08,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [157, 81, 155, 37, 257, 102]
   },
   {
     "id": 8,
@@ -15124,7 +15179,8 @@
       "chroma": 18.37,
       "peakChroma": 42.54,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [287, 286, 9, 91, 95, 85]
   },
   {
     "title": "Clock and Gears",
@@ -15394,7 +15450,8 @@
       "peakChroma": 0.01,
       "samples": 9694
     },
-    "notes": null
+    "notes": null,
+    "similarPhotos": [50, 49, 176, 45, 33, 242]
   },
   {
     "title": "Cobblestone Street",
@@ -15672,7 +15729,8 @@
       "peakChroma": 13.6,
       "samples": 9694
     },
-    "notes": "Shows outdoor dining; 'outdoor-dining' isn't a tag, since only 1 photo has it."
+    "notes": "Shows outdoor dining; 'outdoor-dining' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [401, 250, 219, 306, 404, 304]
   },
   {
     "title": "Coit Tower",
@@ -15937,7 +15995,8 @@
       "chroma": 28.2,
       "peakChroma": 42.46,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [491, 490, 387, 435, 444, 217]
   },
   {
     "title": "Colorful Alley",
@@ -16211,7 +16270,8 @@
       "chroma": 13.48,
       "peakChroma": 40.1,
       "samples": 9628
-    }
+    },
+    "similarPhotos": [439, 440, 441, 467, 438, 283]
   },
   {
     "id": 16,
@@ -16481,7 +16541,8 @@
       "peakChroma": 63.84,
       "samples": 9856
     },
-    "notes": "Shows hanfu at a Lunar New Year parade; 'hanfu' isn't a tag, since only 1 photo has it."
+    "notes": "Shows hanfu at a Lunar New Year parade; 'hanfu' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [437, 306, 303, 307, 305, 132]
   },
   {
     "id": 44,
@@ -16754,7 +16815,8 @@
       "chroma": 4.75,
       "peakChroma": 13.78,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [34, 39, 388, 386, 217, 276]
   },
   {
     "title": "Crab's Rock Now",
@@ -17023,7 +17085,8 @@
       "chroma": 22,
       "peakChroma": 48.94,
       "samples": 9709
-    }
+    },
+    "similarPhotos": [98, 96, 97, 141, 142, 8]
   },
   {
     "title": "CRASH & DAB",
@@ -17293,7 +17356,8 @@
       "peakChroma": 8.95,
       "samples": 10050
     },
-    "notes": "Shows a splash; 'splash' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a splash; 'splash' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [199, 427, 206, 135, 423, 428]
   },
   {
     "title": "Crossing the Street",
@@ -17561,7 +17625,8 @@
       "peakChroma": 18.69,
       "samples": 9828
     },
-    "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a manhole cover; 'manhole-cover' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [492, 490, 494, 444, 158, 412]
   },
   {
     "id": 9,
@@ -17831,7 +17896,8 @@
       "peakChroma": 38.18,
       "samples": 10087
     },
-    "notes": "Shows a goose; 'geese' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a goose; 'geese' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [23, 8, 152, 46, 187, 483]
   },
   {
     "title": "Da Flora",
@@ -18097,7 +18163,8 @@
       "peakChroma": 26.19,
       "samples": 10050
     },
-    "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them."
+    "notes": "Shows traffic lights; 'traffic-lights' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [436, 429, 413, 435, 250, 373]
   },
   {
     "title": "Desert Beetle",
@@ -18367,7 +18434,8 @@
       "peakChroma": 36.91,
       "samples": 9490
     },
-    "notes": "Shows a vintage VW Beetle and van by a domed mud-brick building; 'vintage-cars', 'van', 'domes' and 'mud-brick' aren't tags, since each is on only 1–2 photos."
+    "notes": "Shows a vintage VW Beetle and van by a domed mud-brick building; 'vintage-cars', 'van', 'domes' and 'mud-brick' aren't tags, since each is on only 1–2 photos.",
+    "similarPhotos": [366, 368, 367, 369, 362, 201]
   },
   {
     "title": "Desert Lunch",
@@ -18632,7 +18700,8 @@
       "peakChroma": 26.38,
       "samples": 9694
     },
-    "notes": "Shows a picnic on a carpet in the desert; 'carpet' and 'picnic' aren't tags, since only 2 photos have each."
+    "notes": "Shows a picnic on a carpet in the desert; 'carpet' and 'picnic' aren't tags, since only 2 photos have each.",
+    "similarPhotos": [366, 365, 367, 369, 362, 426]
   },
   {
     "id": 45,
@@ -18914,7 +18983,8 @@
       "chroma": 2.45,
       "peakChroma": 6.6,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [150, 76, 35, 117, 176, 173]
   },
   {
     "id": 46,
@@ -19195,7 +19265,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9956
-    }
+    },
+    "similarPhotos": [40, 187, 23, 66, 214, 20]
   },
   {
     "title": "The Tengu",
@@ -19461,7 +19532,8 @@
       "peakChroma": 30.95,
       "samples": 10115
     },
-    "notes": "Shows a carved tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them."
+    "notes": "Shows a carved tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them.",
+    "similarPhotos": [381, 384, 349, 378, 350, 298]
   },
   {
     "title": "Late Night in Kobe",
@@ -19727,7 +19799,8 @@
       "peakChroma": 17.63,
       "samples": 9768
     },
-    "notes": "Shows vending machines; 'vending-machines' isn't a tag, since only 1 photo has them."
+    "notes": "Shows vending machines; 'vending-machines' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [353, 354, 351, 304, 450, 302]
   },
   {
     "title": "Tags on the Tree",
@@ -19992,7 +20065,8 @@
       "chroma": 10.15,
       "peakChroma": 25.09,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [380, 382, 507, 464, 415, 505]
   },
   {
     "title": "Shrine in a Shrine",
@@ -20257,7 +20331,8 @@
       "chroma": 26,
       "peakChroma": 46.61,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [509, 507, 329, 511, 505, 510]
   },
   {
     "title": "Passing Train",
@@ -20522,7 +20597,8 @@
       "chroma": 20.91,
       "peakChroma": 71.32,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [6, 22, 7, 74, 116, 51]
   },
   {
     "title": "Under the Covered Road",
@@ -20792,7 +20868,8 @@
       "peakChroma": 17.77,
       "samples": 10115
     },
-    "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [306, 303, 219, 377, 307, 304]
   },
   {
     "title": "Lantern Rows",
@@ -21062,7 +21139,8 @@
       "peakChroma": 37.4,
       "samples": 9694
     },
-    "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a shotengai; 'shotengai' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [302, 304, 450, 306, 305, 307]
   },
   {
     "title": "Other Side of the Bridge",
@@ -21331,7 +21409,8 @@
       "chroma": 8.62,
       "peakChroma": 16.9,
       "samples": 10030
-    }
+    },
+    "similarPhotos": [306, 169, 307, 304, 219, 251]
   },
   {
     "title": "I miss the countryside",
@@ -21600,7 +21679,8 @@
       "chroma": 7.97,
       "peakChroma": 20.4,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [305, 304, 307, 302, 169, 219]
   },
   {
     "title": "Night in Dotonbori",
@@ -21869,7 +21949,8 @@
       "chroma": 8.47,
       "peakChroma": 20.14,
       "samples": 9711
-    }
+    },
+    "similarPhotos": [306, 353, 305, 251, 302, 354]
   },
   {
     "title": "Stone Marker",
@@ -22134,7 +22215,8 @@
       "chroma": 7.32,
       "peakChroma": 20.99,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [389, 504, 391, 271, 310, 309]
   },
   {
     "title": "Castle Sign",
@@ -22399,7 +22481,8 @@
       "chroma": 6.25,
       "peakChroma": 12.87,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [466, 390, 397, 504, 350, 389]
   },
   {
     "title": "Castle Ruins Torii",
@@ -22664,7 +22747,8 @@
       "chroma": 15.3,
       "peakChroma": 34.62,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [333, 486, 505, 511, 222, 223]
   },
   {
     "title": "Castle Moat Stroll",
@@ -22929,7 +23013,8 @@
       "chroma": 8.85,
       "peakChroma": 23.39,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [393, 389, 334, 448, 489, 392]
   },
   {
     "title": "Stone Lanterns Standing",
@@ -23198,7 +23283,8 @@
       "chroma": 14.48,
       "peakChroma": 19.16,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [310, 324, 315, 348, 331, 504]
   },
   {
     "title": "Gates & Lanterns",
@@ -23470,7 +23556,8 @@
       "chroma": 10.7,
       "peakChroma": 20.49,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [309, 331, 332, 511, 348, 504]
   },
   {
     "title": "Passing by the Gate",
@@ -23743,7 +23830,8 @@
       "chroma": 9.99,
       "peakChroma": 19.62,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [127, 212, 130, 209, 216, 126]
   },
   {
     "title": "Distant Dock",
@@ -24013,7 +24101,8 @@
       "chroma": 8.51,
       "peakChroma": 20.01,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [484, 488, 487, 485, 482, 483]
   },
   {
     "title": "Pagoda in the Pond",
@@ -24277,7 +24366,8 @@
       "chroma": 15.35,
       "peakChroma": 26.95,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [10, 209, 253, 511, 128, 127]
   },
   {
     "title": "Fall Into Reading",
@@ -24547,7 +24637,8 @@
       "chroma": 23.03,
       "peakChroma": 41.52,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [483, 481, 487, 484, 486, 475]
   },
   {
     "title": "Pond Reflections",
@@ -24817,7 +24908,8 @@
       "chroma": 8.95,
       "peakChroma": 23.95,
       "samples": 10030
-    }
+    },
+    "similarPhotos": [487, 488, 481, 484, 497, 486]
   },
   {
     "title": "Looking at Leaves",
@@ -25090,7 +25182,8 @@
       "chroma": 18.88,
       "peakChroma": 42.14,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [496, 483, 471, 476, 481, 485]
   },
   {
     "title": "Autumn Pond",
@@ -25360,7 +25453,8 @@
       "chroma": 8.11,
       "peakChroma": 23.75,
       "samples": 10030
-    }
+    },
+    "similarPhotos": [481, 484, 485, 487, 486, 483]
   },
   {
     "title": "Another Palace Section",
@@ -25629,7 +25723,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [210, 127, 209, 216, 126, 278]
   },
   {
     "title": "Gyeongbokgung Girls",
@@ -25898,7 +25993,8 @@
       "chroma": 14.51,
       "peakChroma": 33.37,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [128, 126, 210, 212, 127, 5]
   },
   {
     "title": "Friendly Hydrant",
@@ -26172,7 +26268,8 @@
       "peakChroma": 8.35,
       "samples": 9801
     },
-    "notes": "Shows a painted fire hydrant; 'fire-hydrant' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a painted fire hydrant; 'fire-hydrant' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [46, 38, 66, 36, 297, 40]
   },
   {
     "title": "Floating Maple",
@@ -26444,7 +26541,8 @@
       "chroma": 10.45,
       "peakChroma": 15.33,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [447, 224, 504, 382, 309, 310]
   },
   {
     "title": "Crowded Hanok Village",
@@ -26723,7 +26821,8 @@
       "peakChroma": 16.79,
       "samples": 9768
     },
-    "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it."
+    "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [210, 212, 127, 126, 124, 357]
   },
   {
     "title": "Evolving City",
@@ -26997,7 +27096,8 @@
       "peakChroma": 21.53,
       "samples": 9975
     },
-    "notes": "Shows hanok roofs and a pagoda; 'hanok' and 'pagoda' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows hanok roofs and a pagoda; 'hanok' and 'pagoda' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [395, 396, 387, 461, 388, 419]
   },
   {
     "title": "Gwangjang",
@@ -27276,7 +27376,8 @@
       "peakChroma": 21.97,
       "samples": 10050
     },
-    "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it."
+    "notes": "Shows street food; 'street-food' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [306, 302, 282, 250, 319, 304]
   },
   {
     "title": "Cheonggyecheon Underpass",
@@ -27554,7 +27655,8 @@
       "chroma": 7.86,
       "peakChroma": 18.01,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [221, 222, 223, 448, 224, 259]
   },
   {
     "title": "Trailheads",
@@ -27824,7 +27926,8 @@
       "chroma": 16.44,
       "peakChroma": 39.29,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [471, 496, 486, 485, 470, 473]
   },
   {
     "title": "Under the Bridge",
@@ -28097,7 +28200,8 @@
       "chroma": 8.1,
       "peakChroma": 21.4,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [220, 222, 223, 448, 209, 259]
   },
   {
     "title": "Ivy Takeover",
@@ -28367,7 +28471,8 @@
       "chroma": 4.91,
       "peakChroma": 9.72,
       "samples": 9801
-    }
+    },
+    "similarPhotos": [469, 477, 231, 471, 488, 485]
   },
   {
     "title": "Riverside",
@@ -28631,7 +28736,8 @@
       "chroma": 12.06,
       "peakChroma": 26.97,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [220, 223, 221, 448, 102, 255]
   },
   {
     "title": "Skip Across the Stream",
@@ -28905,7 +29011,8 @@
       "peakChroma": 21.9,
       "samples": 9975
     },
-    "notes": "Shows jingeomdari stepping stones; 'jingeomdari' isn't a tag, since only 1 photo has them."
+    "notes": "Shows jingeomdari stepping stones; 'jingeomdari' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [222, 220, 221, 448, 102, 224]
   },
   {
     "title": "Apartments by the River",
@@ -29178,7 +29285,8 @@
       "chroma": 6.5,
       "peakChroma": 12.24,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [453, 218, 454, 250, 120, 321]
   },
   {
     "title": "Explosion of Autumnal Color",
@@ -29448,7 +29556,8 @@
       "chroma": 41.63,
       "peakChroma": 67.81,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [484, 487, 482, 481, 474, 483]
   },
   {
     "title": "Still the Gate Stands",
@@ -29721,7 +29830,8 @@
       "chroma": 8.32,
       "peakChroma": 19.25,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [259, 270, 225, 452, 218, 127]
   },
   {
     "title": "City Wall Hangout Point",
@@ -29993,7 +30103,8 @@
       "chroma": 8.3,
       "peakChroma": 13.94,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [246, 172, 374, 128, 175, 452]
   },
   {
     "title": "Boardwalk in the Bird Sanctuary",
@@ -30263,7 +30374,8 @@
       "chroma": 17.29,
       "peakChroma": 37.73,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [473, 476, 496, 486, 495, 469]
   },
   {
     "title": "Watching from the Wall",
@@ -30536,7 +30648,8 @@
       "chroma": 7.22,
       "peakChroma": 12.9,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [244, 268, 243, 44, 39, 258]
   },
   {
     "title": "Wooden Lookout Point",
@@ -30806,7 +30919,8 @@
       "chroma": 8.99,
       "peakChroma": 17.71,
       "samples": 10030
-    }
+    },
+    "similarPhotos": [473, 474, 495, 479, 476, 477]
   },
   {
     "title": "Window Into Nature II",
@@ -31079,7 +31193,8 @@
       "chroma": 9.45,
       "peakChroma": 19.64,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [499, 480, 472, 475, 495, 471]
   },
   {
     "title": "Nature Walk",
@@ -31352,7 +31467,8 @@
       "chroma": 12.71,
       "peakChroma": 24.58,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [473, 471, 496, 495, 486, 479]
   },
   {
     "title": "Lichen Bench",
@@ -31622,7 +31738,8 @@
       "chroma": 14.76,
       "peakChroma": 27.73,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [478, 495, 481, 497, 486, 479]
   },
   {
     "title": "One Red Leaf",
@@ -31892,7 +32009,8 @@
       "chroma": 10.93,
       "peakChroma": 23.72,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [479, 477, 473, 471, 476, 119]
   },
   {
     "title": "Autumn Path",
@@ -32162,7 +32280,8 @@
       "chroma": 11.29,
       "peakChroma": 24.01,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [495, 473, 471, 476, 496, 478]
   },
   {
     "title": "Mountainous City",
@@ -32435,7 +32554,8 @@
       "chroma": 7.46,
       "peakChroma": 17.98,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [245, 248, 491, 357, 356, 373]
   },
   {
     "title": "Window Into Nature",
@@ -32705,7 +32825,8 @@
       "chroma": 13.13,
       "peakChroma": 36.28,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [474, 487, 469, 484, 481, 485]
   },
   {
     "title": "Distant Alley",
@@ -32978,7 +33099,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [247, 245, 370, 356, 323, 357]
   },
   {
     "title": "Staircase by the Wall",
@@ -33251,7 +33373,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 10030
-    }
+    },
+    "similarPhotos": [216, 283, 442, 454, 342, 212]
   },
   {
     "title": "Seoul Street",
@@ -33525,7 +33648,8 @@
       "peakChroma": 11.03,
       "samples": 10050
     },
-    "notes": "Shows a noraebang sign; 'noraebang' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a noraebang sign; 'noraebang' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [319, 453, 304, 282, 400, 120]
   },
   {
     "title": "Busy Night in Myeongdong",
@@ -33794,7 +33918,8 @@
       "chroma": 12.39,
       "peakChroma": 35.47,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [307, 205, 327, 120, 250, 353]
   },
   {
     "title": "Jongmyo Entrance",
@@ -34063,7 +34188,8 @@
       "chroma": 10.61,
       "peakChroma": 22.6,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [255, 452, 209, 210, 254, 212]
   },
   {
     "title": "Gate Ceiling",
@@ -34328,7 +34454,8 @@
       "peakChroma": 24.17,
       "samples": 9975
     },
-    "notes": "Shows painted phoenixes; 'phoenixes' isn't a tag, since only 1 photo has them."
+    "notes": "Shows painted phoenixes; 'phoenixes' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [256, 397, 33, 63, 145, 210]
   },
   {
     "title": "Buddha's Birthday",
@@ -34597,7 +34724,8 @@
       "chroma": 17.67,
       "peakChroma": 52.46,
       "samples": 9801
-    }
+    },
+    "similarPhotos": [261, 328, 455, 308, 463, 465]
   },
   {
     "title": "Cafe Chat",
@@ -34866,7 +34994,8 @@
       "chroma": 4.72,
       "peakChroma": 18.13,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [34, 73, 296, 267, 295, 268]
   },
   {
     "title": "Go with the Flow",
@@ -35144,7 +35273,8 @@
       "chroma": 11.05,
       "peakChroma": 32.41,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [265, 266, 313, 197, 111, 486]
   },
   {
     "title": "Namsan Park Overlook",
@@ -35413,7 +35543,8 @@
       "chroma": 5.59,
       "peakChroma": 12.85,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [263, 268, 458, 456, 213, 217]
   },
   {
     "title": "Artery of the City",
@@ -35678,7 +35809,8 @@
       "chroma": 10.69,
       "peakChroma": 16.54,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [461, 458, 459, 462, 268, 267]
   },
   {
     "title": "View from Namsan",
@@ -35943,7 +36075,8 @@
       "chroma": 9.71,
       "peakChroma": 14.91,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [462, 460, 261, 461, 500, 262]
   },
   {
     "title": "Neighboring Tower",
@@ -36208,7 +36341,8 @@
       "chroma": 8.99,
       "peakChroma": 12.64,
       "samples": 9801
-    }
+    },
+    "similarPhotos": [268, 461, 458, 258, 456, 39]
   },
   {
     "title": "View from Namsan",
@@ -36492,7 +36626,8 @@
           "y": 20
         }
       }
-    }
+    },
+    "similarPhotos": [458, 258, 459, 246, 461, 263]
   },
   {
     "title": "Temple Trail",
@@ -36770,7 +36905,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [460, 315, 313, 355, 324, 323]
   },
   {
     "title": "Dragon fountain",
@@ -37040,7 +37176,8 @@
       "peakChroma": 36.66,
       "samples": 9828
     },
-    "notes": "Shows a chozuya basin with a dragon spout; 'chozuya' and 'dragons' aren't tags, since only 1 photo has them."
+    "notes": "Shows a chozuya basin with a dragon spout; 'chozuya' and 'dragons' aren't tags, since only 1 photo has them.",
+    "similarPhotos": [324, 313, 315, 309, 464, 311]
   },
   {
     "title": "To Engyoji",
@@ -37309,7 +37446,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [264, 315, 111, 311, 324, 265]
   },
   {
     "title": "Little Railway",
@@ -37582,7 +37720,8 @@
       "chroma": 11.85,
       "peakChroma": 16.96,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [423, 432, 427, 293, 428, 235]
   },
   {
     "title": "Breather on Floor 98",
@@ -37851,7 +37990,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [76, 34, 71, 318, 31, 174]
   },
   {
     "title": "Busan Boats",
@@ -38120,7 +38260,8 @@
       "chroma": 9.2,
       "peakChroma": 15.3,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [228, 202, 229, 68, 204, 326]
   },
   {
     "title": "Shore Sculpture",
@@ -38385,7 +38526,8 @@
       "peakChroma": 9.8,
       "samples": 9975
     },
-    "notes": "Shows buoys; 'buoys' isn't a tag, since only 2 photos have them."
+    "notes": "Shows buoys; 'buoys' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [433, 419, 134, 417, 423, 316]
   },
   {
     "title": "Busan Busyness",
@@ -38650,7 +38792,8 @@
       "peakChroma": 35.99,
       "samples": 9900
     },
-    "notes": "Shows motorcycles; 'motorcycles' isn't a tag, since only 2 photos have them."
+    "notes": "Shows motorcycles; 'motorcycles' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [250, 304, 219, 453, 120, 121]
   },
   {
     "title": "Old Busan Tower",
@@ -38919,7 +39062,8 @@
       "chroma": 25.87,
       "peakChroma": 28.97,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [3, 258, 319, 285, 454, 321]
   },
   {
     "title": "Busan Street",
@@ -39183,7 +39327,8 @@
       "chroma": 10.91,
       "peakChroma": 20.55,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [225, 319, 454, 373, 304, 407]
   },
   {
     "title": "Gingko Leaf",
@@ -39448,7 +39593,8 @@
       "peakChroma": 9.32,
       "samples": 9900
     },
-    "notes": "Shows a ginkgo leaf on a manhole cover; 'ginkgo' and 'manhole-cover' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows a ginkgo leaf on a manhole cover; 'ginkgo' and 'manhole-cover' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [478, 397, 119, 53, 477, 183]
   },
   {
     "title": "Biking in Busan",
@@ -39713,7 +39859,8 @@
       "peakChroma": 22.39,
       "samples": 10050
     },
-    "notes": "Shows wall air conditioners and motorcycles; 'air-conditioners' and 'motorcycles' aren't tags, since only 2 photos have each."
+    "notes": "Shows wall air conditioners and motorcycles; 'air-conditioners' and 'motorcycles' aren't tags, since only 2 photos have each.",
+    "similarPhotos": [357, 356, 460, 124, 245, 247]
   },
   {
     "title": "Flags & Lanterns",
@@ -39983,7 +40130,8 @@
       "peakChroma": 27.07,
       "samples": 9975
     },
-    "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them."
+    "notes": "Shows nobori banners; 'nobori' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [315, 309, 310, 313, 312, 384]
   },
   {
     "title": "View from the Overpass",
@@ -40247,7 +40395,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [218, 492, 490, 355, 158, 430]
   },
   {
     "title": "CAUTION THE FALL",
@@ -40517,7 +40666,8 @@
       "peakChroma": 16.9,
       "samples": 9975
     },
-    "notes": "Shows hanja characters; 'hanja' isn't a tag, since only 2 photos have them."
+    "notes": "Shows hanja characters; 'hanja' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [327, 231, 319, 120, 251, 250]
   },
   {
     "title": "View from the Ferry",
@@ -40786,7 +40936,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [307, 355, 327, 248, 247, 317]
   },
   {
     "title": "Watched from the Terminal",
@@ -41056,7 +41207,8 @@
       "peakChroma": 0.01,
       "samples": 9490
     },
-    "notes": "Shows a ferry terminal; 'ferry-terminal' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a ferry terminal; 'ferry-terminal' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [325, 441, 251, 326, 120, 250]
   },
   {
     "title": "Kobe Night Walk",
@@ -41325,7 +41477,8 @@
       "chroma": 4.48,
       "peakChroma": 11.22,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [354, 351, 377, 307, 352, 251]
   },
   {
     "title": "Kani",
@@ -41594,7 +41747,8 @@
       "chroma": 4.41,
       "peakChroma": 7.41,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [37, 504, 233, 447, 55, 79]
   },
   {
     "title": "Countryside Waterways",
@@ -41872,7 +42026,8 @@
       "chroma": 7.48,
       "peakChroma": 15.56,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [338, 342, 341, 340, 124, 220]
   },
   {
     "title": "Edo Period Street",
@@ -42142,7 +42297,8 @@
       "peakChroma": 22.65,
       "samples": 9711
     },
-    "notes": "Shows samurai residences (bukeyashiki); 'bukeyashiki' isn't a tag, since only 2 photos have it."
+    "notes": "Shows samurai residences (bukeyashiki); 'bukeyashiki' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [337, 342, 341, 304, 330, 449]
   },
   {
     "title": "Closed Shrine",
@@ -42407,7 +42563,8 @@
       "peakChroma": 19.88,
       "samples": 9912
     },
-    "notes": "Shows a karahafu gable and katomado window; 'karahafu' and 'katomado' aren't tags, since only 1 photo has them."
+    "notes": "Shows a karahafu gable and katomado window; 'karahafu' and 'katomado' aren't tags, since only 1 photo has them.",
+    "similarPhotos": [349, 350, 464, 330, 309, 378]
   },
   {
     "title": "Local One-Man",
@@ -42677,7 +42834,8 @@
       "peakChroma": 28.79,
       "samples": 9975
     },
-    "notes": "Shows a one-man (wanman) train; 'wanman' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a one-man (wanman) train; 'wanman' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [341, 337, 342, 116, 124, 412]
   },
   {
     "title": "Evening in Hagi",
@@ -42950,7 +43108,8 @@
       "chroma": 5.1,
       "peakChroma": 8.68,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [342, 340, 337, 338, 395, 372]
   },
   {
     "title": "Country Road",
@@ -43223,7 +43382,8 @@
       "chroma": 4.95,
       "peakChroma": 8.37,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [341, 395, 337, 338, 304, 372]
   },
   {
     "title": "Street View",
@@ -43506,7 +43666,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [345, 343, 347, 346, 330, 339]
   },
   {
     "title": "Through the Lattice",
@@ -43780,7 +43941,8 @@
       "peakChroma": 0.01,
       "samples": 9975
     },
-    "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows a byobu folding screen in a machiya townhouse; 'byobu' and 'machiya' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [344, 343, 347, 346, 378, 381]
   },
   {
     "title": "Lanterns for Buddha's Birthday",
@@ -44049,7 +44211,8 @@
       "chroma": 20.19,
       "peakChroma": 65.24,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [308, 262, 455, 261, 16, 350]
   },
   {
     "title": "Lattice Window",
@@ -44323,7 +44486,8 @@
       "peakChroma": 0.01,
       "samples": 10050
     },
-    "notes": "Shows a machiya townhouse; 'machiya' isn't a tag, since only 2 photos have it."
+    "notes": "Shows a machiya townhouse; 'machiya' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [345, 346, 344, 343, 70, 73]
   },
   {
     "title": "Enseiji Entrance",
@@ -44593,7 +44757,8 @@
       "peakChroma": 23.66,
       "samples": 9975
     },
-    "notes": "Shows a temple-shrine blend (shinbutsu-shugo); 'shinbutsu-shugo' isn't a tag, since only 1 photo has it."
+    "notes": "Shows a temple-shrine blend (shinbutsu-shugo); 'shinbutsu-shugo' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [505, 510, 309, 310, 511, 384]
   },
   {
     "title": "Temple Stamps",
@@ -44863,7 +45028,8 @@
       "peakChroma": 18.77,
       "samples": 10050
     },
-    "notes": "Shows temple stamps; 'stamps' isn't a tag, since only 1 photo has them."
+    "notes": "Shows temple stamps; 'stamps' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [350, 339, 466, 384, 464, 378]
   },
   {
     "title": "Pilgrims Past",
@@ -45132,7 +45298,8 @@
       "chroma": 7.46,
       "peakChroma": 11.95,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [466, 349, 397, 330, 339, 384]
   },
   {
     "title": "Edo Walls, Edo Doors",
@@ -45402,7 +45569,8 @@
       "peakChroma": 16.05,
       "samples": 10050
     },
-    "notes": "Shows samurai residences (bukeyashiki); 'bukeyashiki' isn't a tag, since only 2 photos have it."
+    "notes": "Shows samurai residences (bukeyashiki); 'bukeyashiki' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [397, 350, 339, 338, 451, 284]
   },
   {
     "title": "Eye in the Sky",
@@ -45465,7 +45633,214 @@
     "spotlightFocus": null,
     "socialPosts": [],
     "reEdit": null,
-    "customCreateDate": "2016:12:23 22:07:39"
+    "customCreateDate": "2016:12:23 22:07:39",
+    "similarPhotos": [150, 183, 45, 146, 285, 119],
+    "colors": {
+      "average": {
+        "hex": "#55453b",
+        "lab": {
+          "l": 30.47,
+          "a": 5.26,
+          "b": 8.36
+        },
+        "hcl": {
+          "h": 57.82,
+          "c": 9.87,
+          "l": 30.47
+        }
+      },
+      "buckets": [
+        {
+          "name": "red",
+          "hex": "#ff0000",
+          "share": 0.0051
+        },
+        {
+          "name": "orange",
+          "hex": "#ff8000",
+          "share": 0.3581
+        },
+        {
+          "name": "yellow",
+          "hex": "#ffff00",
+          "share": 0.0004
+        },
+        {
+          "name": "chartreuse",
+          "hex": "#80ff00",
+          "share": 0
+        },
+        {
+          "name": "green",
+          "hex": "#00ff00",
+          "share": 0
+        },
+        {
+          "name": "spring green",
+          "hex": "#00ff80",
+          "share": 0.0001
+        },
+        {
+          "name": "cyan",
+          "hex": "#00ffff",
+          "share": 0
+        },
+        {
+          "name": "azure",
+          "hex": "#0080ff",
+          "share": 0
+        },
+        {
+          "name": "blue",
+          "hex": "#0000ff",
+          "share": 0
+        },
+        {
+          "name": "violet",
+          "hex": "#8000ff",
+          "share": 0.0001
+        },
+        {
+          "name": "magenta",
+          "hex": "#ff00ff",
+          "share": 0
+        },
+        {
+          "name": "rose",
+          "hex": "#ff0080",
+          "share": 0.001
+        }
+      ],
+      "neutrals": {
+        "share": 0.6352,
+        "histogram": [
+          {
+            "from": 0,
+            "to": 5,
+            "hex": "#090909",
+            "share": 0.2387
+          },
+          {
+            "from": 5,
+            "to": 10,
+            "hex": "#171717",
+            "share": 0.186
+          },
+          {
+            "from": 10,
+            "to": 15,
+            "hex": "#212121",
+            "share": 0.1256
+          },
+          {
+            "from": 15,
+            "to": 20,
+            "hex": "#2b2b2b",
+            "share": 0.0307
+          },
+          {
+            "from": 20,
+            "to": 25,
+            "hex": "#363636",
+            "share": 0.0007
+          },
+          {
+            "from": 25,
+            "to": 30,
+            "hex": "#414141",
+            "share": 0.0007
+          },
+          {
+            "from": 30,
+            "to": 35,
+            "hex": "#4c4c4c",
+            "share": 0.0004
+          },
+          {
+            "from": 35,
+            "to": 40,
+            "hex": "#585858",
+            "share": 0.0005
+          },
+          {
+            "from": 40,
+            "to": 45,
+            "hex": "#646464",
+            "share": 0.0012
+          },
+          {
+            "from": 45,
+            "to": 50,
+            "hex": "#717171",
+            "share": 0.0012
+          },
+          {
+            "from": 50,
+            "to": 55,
+            "hex": "#7d7d7d",
+            "share": 0.0005
+          },
+          {
+            "from": 55,
+            "to": 60,
+            "hex": "#8a8a8a",
+            "share": 0.0002
+          },
+          {
+            "from": 60,
+            "to": 65,
+            "hex": "#979797",
+            "share": 0.0002
+          },
+          {
+            "from": 65,
+            "to": 70,
+            "hex": "#a4a4a4",
+            "share": 0.0005
+          },
+          {
+            "from": 70,
+            "to": 75,
+            "hex": "#b2b2b2",
+            "share": 0.0006
+          },
+          {
+            "from": 75,
+            "to": 80,
+            "hex": "#bfbfbf",
+            "share": 0.0011
+          },
+          {
+            "from": 80,
+            "to": 85,
+            "hex": "#cdcdcd",
+            "share": 0.0053
+          },
+          {
+            "from": 85,
+            "to": 90,
+            "hex": "#dbdbdb",
+            "share": 0.0107
+          },
+          {
+            "from": 90,
+            "to": 95,
+            "hex": "#e9e9e9",
+            "share": 0.0135
+          },
+          {
+            "from": 95,
+            "to": 100,
+            "hex": "#f8f8f8",
+            "share": 0.0166
+          }
+        ]
+      },
+      "lightness": 30.47,
+      "chroma": 10.3,
+      "peakChroma": 19.85,
+      "samples": 9694
+    }
   },
   {
     "title": "Fayoum Night",
@@ -45734,7 +46109,8 @@
       "chroma": 19.27,
       "peakChroma": 34.12,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [296, 364, 248, 363, 162, 355]
   },
   {
     "title": "Feeding the Bird",
@@ -46003,7 +46379,8 @@
       "chroma": 10.92,
       "peakChroma": 23.24,
       "samples": 9717
-    }
+    },
+    "similarPhotos": [187, 46, 23, 193, 78, 481]
   },
   {
     "title": "Fire Alarm",
@@ -46273,7 +46650,8 @@
       "peakChroma": 60.4,
       "samples": 9975
     },
-    "notes": "Shows a fire alarm; 'fire-alarm' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a fire alarm; 'fire-alarm' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [30, 15, 36, 189, 11, 100]
   },
   {
     "title": "Flight Line",
@@ -46542,7 +46920,8 @@
       "chroma": 13.93,
       "peakChroma": 25.24,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [135, 138, 206, 137, 134, 109]
   },
   {
     "id": 47,
@@ -46811,7 +47190,8 @@
       "chroma": 10.01,
       "peakChroma": 26.95,
       "samples": 9825
-    }
+    },
+    "similarPhotos": [57, 60, 36, 189, 30, 13]
   },
   {
     "id": 48,
@@ -47081,7 +47461,8 @@
       "peakChroma": 48.12,
       "samples": 9727
     },
-    "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows produce and pumpkins; 'produce' and 'pumpkins' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [17, 250, 469, 437, 438, 282]
   },
   {
     "title": "From the Citadel, Looking Over Cairo",
@@ -47355,7 +47736,8 @@
       "peakChroma": 12.27,
       "samples": 9828
     },
-    "notes": "Shows a minaret; 'minaret' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a minaret; 'minaret' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [44, 268, 458, 217, 395, 396]
   },
   {
     "title": "Gamcheon Bowl",
@@ -47624,7 +48006,8 @@
       "chroma": 11.72,
       "peakChroma": 22.9,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [357, 396, 388, 323, 386, 217]
   },
   {
     "id": 49,
@@ -47893,7 +48276,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 10080
-    }
+    },
+    "similarPhotos": [50, 43, 176, 150, 70, 24]
   },
   {
     "id": 50,
@@ -48162,7 +48546,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9727
-    }
+    },
+    "similarPhotos": [43, 49, 150, 45, 176, 70]
   },
   {
     "title": "GEM",
@@ -48440,7 +48825,8 @@
       "chroma": 6.53,
       "peakChroma": 15.45,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [275, 296, 263, 221, 363, 176]
   },
   {
     "id": 51,
@@ -48704,7 +49090,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9875
-    }
+    },
+    "similarPhotos": [7, 22, 6, 176, 383, 173]
   },
   {
     "title": "Going to Ghirardelli Square",
@@ -48978,7 +49365,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [282, 404, 121, 250, 167, 131]
   },
   {
     "id": 52,
@@ -49247,7 +49635,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [118, 148, 71, 116, 243, 51]
   },
   {
     "id": 53,
@@ -49516,7 +49905,8 @@
       "chroma": 6.04,
       "peakChroma": 9.66,
       "samples": 9928
-    }
+    },
+    "similarPhotos": [62, 397, 150, 178, 45, 322]
   },
   {
     "id": 54,
@@ -49790,7 +50180,8 @@
       "peakChroma": 15.16,
       "samples": 9782
     },
-    "notes": "Shows SoHo's cast-iron facades; 'cast-iron-architecture' isn't a tag, since only 1 photo has it."
+    "notes": "Shows SoHo's cast-iron facades; 'cast-iron-architecture' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [42, 372, 416, 408, 250, 281]
   },
   {
     "title": "Gull in Command",
@@ -50059,7 +50450,8 @@
       "chroma": 8.54,
       "peakChroma": 15.02,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [134, 135, 206, 207, 136, 423]
   },
   {
     "id": 2,
@@ -50337,7 +50729,8 @@
       "peakChroma": 6.91,
       "samples": 9900
     },
-    "notes": "Shows a seokdeung stone lantern; 'seokdeung' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a seokdeung stone lantern; 'seokdeung' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [125, 6, 74, 151, 219, 22]
   },
   {
     "id": 10,
@@ -50601,7 +50994,8 @@
       "chroma": 14.07,
       "peakChroma": 25.49,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [211, 253, 128, 209, 468, 5]
   },
   {
     "title": "Domed Hallway",
@@ -50875,7 +51269,8 @@
       "peakChroma": 30.37,
       "samples": 10050
     },
-    "notes": "Shows a domed, arcaded gallery (riwaq); 'arcade', 'riwaq' and 'domes' aren't tags, since only 2 photos have each."
+    "notes": "Shows a domed, arcaded gallery (riwaq); 'arcade', 'riwaq' and 'domes' aren't tags, since only 2 photos have each.",
+    "similarPhotos": [274, 272, 277, 288, 275, 279]
   },
   {
     "title": "Heron on a Stroll",
@@ -51145,7 +51540,8 @@
       "peakChroma": 20.46,
       "samples": 10050
     },
-    "notes": "Shows a heron; 'herons' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a heron; 'herons' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [78, 155, 79, 81, 23, 215]
   },
   {
     "title": "High Line Covered Area",
@@ -51414,7 +51810,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9750
-    }
+    },
+    "similarPhotos": [42, 167, 186, 40, 163, 165]
   },
   {
     "title": "Highway Haze",
@@ -51679,7 +52076,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [453, 409, 401, 444, 424, 430]
   },
   {
     "id": 55,
@@ -51960,7 +52358,8 @@
       "peakChroma": 0.01,
       "samples": 9906
     },
-    "notes": "Shows a relief sculpture; 'relief' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a relief sculpture; 'relief' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [37, 46, 181, 233, 166, 40]
   },
   {
     "title": "I like to imagine that it's just one mannequin",
@@ -52233,7 +52632,8 @@
       "peakChroma": 0.01,
       "samples": 9936
     },
-    "notes": "Shows mannequins; 'mannequins' isn't a tag, since only 1 photo has them."
+    "notes": "Shows mannequins; 'mannequins' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [76, 35, 99, 445, 172, 117]
   },
   {
     "title": "Icy Branches",
@@ -52503,7 +52903,8 @@
       "peakChroma": 12.2,
       "samples": 9750
     },
-    "notes": "Shows ice and icicles on branches; 'ice' and 'icicles' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows ice and icicles on branches; 'ice' and 'icicles' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [239, 156, 64, 181, 474, 93]
   },
   {
     "title": "Rainbowts",
@@ -52772,7 +53173,8 @@
       "chroma": 19.86,
       "peakChroma": 25.78,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [228, 230, 202, 317, 399, 204]
   },
   {
     "id": 17,
@@ -53046,7 +53448,8 @@
       "peakChroma": 43.81,
       "samples": 10086
     },
-    "notes": "Shows produce and watermelons; 'produce' and 'watermelons' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows produce and watermelons; 'produce' and 'watermelons' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [48, 20, 132, 436, 437, 62]
   },
   {
     "title": "One Way, Two Way",
@@ -53310,7 +53713,8 @@
       "chroma": 10.1,
       "peakChroma": 23.69,
       "samples": 9882
-    }
+    },
+    "similarPhotos": [325, 232, 470, 401, 498, 200]
   },
   {
     "title": "Times Square is for Tourists",
@@ -53580,7 +53984,8 @@
       "peakChroma": 0.01,
       "samples": 9864
     },
-    "notes": "Shows acrobats and dancing in Times Square; 'acrobatics' and 'dancing' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows acrobats and dancing in Times Square; 'acrobatics' and 'dancing' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [167, 165, 169, 164, 168, 40]
   },
   {
     "title": "Morning, Paddleboarder",
@@ -53849,7 +54254,8 @@
       "chroma": 16.18,
       "peakChroma": 32.23,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [136, 135, 137, 206, 199, 198]
   },
   {
     "title": "Mechanic Street",
@@ -54113,7 +54519,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 10086
-    }
+    },
+    "similarPhotos": [373, 231, 436, 401, 374, 321]
   },
   {
     "title": "Self Reflection",
@@ -54377,7 +54784,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 10087
-    }
+    },
+    "similarPhotos": [176, 174, 185, 175, 76, 45]
   },
   {
     "title": "Frosted Office",
@@ -54650,7 +55058,8 @@
       "chroma": 3.71,
       "peakChroma": 10.97,
       "samples": 9652
-    }
+    },
+    "similarPhotos": [172, 173, 174, 185, 176, 76]
   },
   {
     "title": "Samsung Spires",
@@ -54919,7 +55328,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9990
-    }
+    },
+    "similarPhotos": [173, 174, 185, 175, 45, 35]
   },
   {
     "title": "Chelsea II",
@@ -55188,7 +55598,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [182, 178, 180, 219, 11, 169]
   },
   {
     "title": "Chelsea I",
@@ -55457,7 +55868,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9933
-    }
+    },
+    "similarPhotos": [177, 182, 53, 180, 118, 7]
   },
   {
     "title": "Chelsea Market Self Portrait",
@@ -55726,7 +56138,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9906
-    }
+    },
+    "similarPhotos": [125, 148, 182, 186, 176, 177]
   },
   {
     "title": "Chelsea III",
@@ -55995,7 +56408,8 @@
       "chroma": 6.91,
       "peakChroma": 12.88,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [177, 63, 20, 227, 156, 410]
   },
   {
     "title": "Waiting in Chelsea II",
@@ -56264,7 +56678,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [183, 55, 189, 184, 14, 186]
   },
   {
     "title": "Waiting in Chelsea I",
@@ -56533,7 +56948,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [177, 178, 179, 186, 187, 192]
   },
   {
     "title": "Haunted Pianest",
@@ -56803,7 +57219,8 @@
       "peakChroma": 0.01,
       "samples": 9856
     },
-    "notes": "Shows a piano; 'piano' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a piano; 'piano' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [40, 192, 42, 159, 187, 193]
   },
   {
     "title": "Birdman",
@@ -57072,7 +57489,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9856
-    }
+    },
+    "similarPhotos": [46, 192, 23, 186, 152, 163]
   },
   {
     "title": "Reaching Out",
@@ -57342,7 +57760,8 @@
       "peakChroma": 26.43,
       "samples": 9727
     },
-    "notes": "Shows an equestrian statue; 'horse' isn't a tag, since only 2 photos have one."
+    "notes": "Shows an equestrian statue; 'horse' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [55, 153, 99, 44, 138, 187]
   },
   {
     "title": "Show for the Kids",
@@ -57611,7 +58030,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9984
-    }
+    },
+    "similarPhotos": [40, 186, 193, 165, 163, 191]
   },
   {
     "title": "Rockman",
@@ -57879,7 +58299,8 @@
       "peakChroma": 8.88,
       "samples": 10086
     },
-    "notes": "Shows folk art with sea glass; 'folk-art' and 'sea-glass' aren't tags, since only 1 photo has them."
+    "notes": "Shows folk art with sea glass; 'folk-art' and 'sea-glass' aren't tags, since only 1 photo has them.",
+    "similarPhotos": [55, 143, 145, 140, 37, 295]
   },
   {
     "title": "Vermont Night",
@@ -58143,7 +58564,8 @@
       "chroma": 4,
       "peakChroma": 8.46,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [195, 162, 438, 467, 151, 234]
   },
   {
     "title": "Master of his Universe",
@@ -58413,7 +58835,8 @@
       "peakChroma": 0.01,
       "samples": 9648
     },
-    "notes": "Shows a juggler; 'juggling' isn't a tag, since only 1 photo has it."
+    "notes": "Shows a juggler; 'juggling' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [40, 192, 186, 166, 24, 163]
   },
   {
     "id": 25,
@@ -58682,7 +59105,8 @@
       "chroma": 6.49,
       "peakChroma": 27.58,
       "samples": 9727
-    }
+    },
+    "similarPhotos": [45, 27, 6, 208, 7, 150]
   },
   {
     "title": "High Tide, Dude",
@@ -58947,7 +59371,8 @@
       "peakChroma": 10.29,
       "samples": 10050
     },
-    "notes": "Shows a surfing wipeout; 'wipeout' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a surfing wipeout; 'wipeout' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [198, 206, 135, 423, 428, 427]
   },
   {
     "title": "Center Conch",
@@ -59211,7 +59636,8 @@
       "chroma": 10.95,
       "peakChroma": 20.3,
       "samples": 9625
-    }
+    },
+    "similarPhotos": [142, 144, 147, 143, 140, 145]
   },
   {
     "title": "It's a Big World Out There",
@@ -59476,7 +59902,8 @@
       "peakChroma": 9.15,
       "samples": 10112
     },
-    "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one."
+    "notes": "Shows an insect; 'insects' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [140, 142, 147, 144, 141, 145]
   },
   {
     "title": "Leaf Veins",
@@ -59740,7 +60167,8 @@
       "chroma": 30.34,
       "peakChroma": 38.21,
       "samples": 9875
-    }
+    },
+    "similarPhotos": [119, 139, 145, 88, 478, 322]
   },
   {
     "title": "The Town of Stowe, Vermont",
@@ -60010,7 +60438,8 @@
       "peakChroma": 6.11,
       "samples": 9216
     },
-    "notes": "Shows a steeple; 'steeple' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a steeple; 'steeple' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [238, 236, 242, 241, 235, 342]
   },
   {
     "title": "Time Marches On...",
@@ -60284,7 +60713,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [235, 240, 241, 236, 237, 64]
   },
   {
     "title": "Cook's Cycle Shop",
@@ -60553,7 +60983,8 @@
       "chroma": 8.81,
       "peakChroma": 19.45,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [205, 441, 297, 11, 38, 201]
   },
   {
     "title": "The Juice Bar",
@@ -60823,7 +61254,8 @@
       "peakChroma": 0.01,
       "samples": 10050
     },
-    "notes": "Shows an ice cream queue; 'ice-cream' and 'queue' aren't tags, since only 2 photos have each."
+    "notes": "Shows an ice cream queue; 'ice-cream' and 'queue' aren't tags, since only 2 photos have each.",
+    "similarPhotos": [203, 441, 251, 11, 306, 169]
   },
   {
     "title": "Kickoff",
@@ -61087,7 +61519,8 @@
       "chroma": 2.52,
       "peakChroma": 4.94,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [135, 134, 207, 137, 199, 198]
   },
   {
     "title": "Gull's Armada",
@@ -61356,7 +61789,8 @@
       "chroma": 6.7,
       "peakChroma": 8.22,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [206, 135, 137, 204, 134, 199]
   },
   {
     "title": "Snow Truck",
@@ -61620,7 +62054,8 @@
       "chroma": 1.39,
       "peakChroma": 3.71,
       "samples": 9216
-    }
+    },
+    "similarPhotos": [355, 438, 162, 235, 467, 64]
   },
   {
     "id": 26,
@@ -61890,7 +62325,8 @@
       "peakChroma": 0,
       "samples": 9728
     },
-    "notes": "Shows a church attic with Gothic tracery; 'attic' and 'tracery' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows a church attic with Gothic tracery; 'attic' and 'tracery' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [70, 295, 159, 275, 73, 148]
   },
   {
     "id": 3,
@@ -62160,7 +62596,8 @@
       "peakChroma": 21.03,
       "samples": 10050
     },
-    "notes": "Shows japsang roof guardians; 'japsang' isn't a tag, since only 2 photos have them."
+    "notes": "Shows japsang roof guardians; 'japsang' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [5, 212, 130, 126, 217, 127]
   },
   {
     "title": "Jowls of Destiny",
@@ -62430,7 +62867,8 @@
       "peakChroma": 45.18,
       "samples": 9768
     },
-    "notes": "Shows an iguana; 'iguanas' isn't a tag, since only 1 photo has one."
+    "notes": "Shows an iguana; 'iguanas' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [160, 153, 79, 81, 215, 447]
   },
   {
     "id": 18,
@@ -62703,7 +63141,8 @@
       "chroma": 23.73,
       "peakChroma": 38.93,
       "samples": 9825
-    }
+    },
+    "similarPhotos": [57, 36, 14, 439, 47, 60]
   },
   {
     "id": 27,
@@ -62973,7 +63412,8 @@
       "peakChroma": 7.18,
       "samples": 10010
     },
-    "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [29, 25, 45, 51, 32, 28]
   },
   {
     "title": "Just your average birds!",
@@ -63242,7 +63682,8 @@
       "chroma": 19.4,
       "peakChroma": 28.18,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [114, 81, 111, 82, 315, 113]
   },
   {
     "title": "Karnak Scaffolding",
@@ -63512,7 +63953,8 @@
       "peakChroma": 28.58,
       "samples": 9620
     },
-    "notes": "Shows workers restoring the temple on scaffolding; 'restoration', 'workers' and 'scaffolding' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows workers restoring the temple on scaffolding; 'restoration', 'workers' and 'scaffolding' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [359, 292, 339, 290, 369, 289]
   },
   {
     "id": 57,
@@ -63781,7 +64223,8 @@
       "chroma": 11.02,
       "peakChroma": 34.95,
       "samples": 10001
-    }
+    },
+    "similarPhotos": [36, 47, 60, 30, 38, 15]
   },
   {
     "title": "Ladies Waiting",
@@ -64050,7 +64493,8 @@
       "chroma": 17.86,
       "peakChroma": 40.18,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [5, 129, 210, 127, 213, 126]
   },
   {
     "title": "Lantern Line",
@@ -64315,7 +64759,8 @@
       "chroma": 5.55,
       "peakChroma": 2.64,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [438, 162, 442, 440, 439, 437]
   },
   {
     "title": "Late Night Lanterns",
@@ -64589,7 +65034,8 @@
       "chroma": 5.34,
       "peakChroma": 8.81,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [467, 440, 437, 162, 442, 283]
   },
   {
     "title": "Lazib Signpost",
@@ -64858,7 +65304,8 @@
       "chroma": 25.03,
       "peakChroma": 53.81,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [363, 296, 360, 370, 464, 200]
   },
   {
     "title": "Leaf Bridge",
@@ -65123,7 +65570,8 @@
       "chroma": 13.78,
       "peakChroma": 28.41,
       "samples": 9912
-    }
+    },
+    "similarPhotos": [496, 471, 479, 473, 476, 477]
   },
   {
     "title": "Little Chinatown",
@@ -65398,7 +65846,8 @@
       "chroma": 9.49,
       "peakChroma": 20.97,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [131, 437, 319, 250, 11, 169]
   },
   {
     "id": 58,
@@ -65667,7 +66116,8 @@
       "chroma": 8,
       "peakChroma": 16.73,
       "samples": 10080
-    }
+    },
+    "similarPhotos": [63, 20, 28, 13, 227, 57]
   },
   {
     "id": 28,
@@ -65937,7 +66387,8 @@
       "peakChroma": 17.23,
       "samples": 9956
     },
-    "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them."
+    "notes": "Shows love locks; 'love-locks' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [13, 58, 24, 267, 27, 44]
   },
   {
     "title": "Lone Pedestrian",
@@ -66213,7 +66664,8 @@
       "chroma": 8.78,
       "peakChroma": 16.92,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [445, 490, 409, 494, 493, 158]
   },
   {
     "title": "Lonely Bench, Lonely Road",
@@ -66478,7 +66930,8 @@
       "peakChroma": 47.64,
       "samples": 9216
     },
-    "notes": "Shows an abandoned bench and road; 'abandoned' isn't a tag, since only 2 photos have it."
+    "notes": "Shows an abandoned bench and road; 'abandoned' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [241, 234, 81, 311, 482, 93]
   },
   {
     "title": "Long Shadows at Grand Central",
@@ -66755,7 +67208,8 @@
       "chroma": 7.96,
       "peakChroma": 14.27,
       "samples": 9825
-    }
+    },
+    "similarPhotos": [151, 52, 118, 295, 14, 158]
   },
   {
     "title": "Looking at the Castle",
@@ -67025,7 +67479,8 @@
       "peakChroma": 19.9,
       "samples": 10050
     },
-    "notes": "Shows the castle keep (tenshu); 'tenshu' isn't a tag, since only 2 photos have one."
+    "notes": "Shows the castle keep (tenshu); 'tenshu' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [394, 337, 223, 393, 253, 10]
   },
   {
     "title": "Looking Back at Gate 1",
@@ -67294,7 +67749,8 @@
       "chroma": 3.18,
       "peakChroma": 9.53,
       "samples": 9882
-    }
+    },
+    "similarPhotos": [505, 392, 506, 510, 507, 348]
   },
   {
     "title": "Looking from the High Line",
@@ -67563,7 +68019,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9727
-    }
+    },
+    "similarPhotos": [490, 444, 493, 270, 220, 24]
   },
   {
     "title": "Looking Over Bethesda Fountain",
@@ -67832,7 +68289,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9727
-    }
+    },
+    "similarPhotos": [167, 40, 165, 164, 169, 170]
   },
   {
     "title": "Looking Over La Playa",
@@ -68106,7 +68564,8 @@
       "chroma": 2.77,
       "peakChroma": 6.54,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [436, 414, 412, 372, 373, 494]
   },
   {
     "title": "Looking Over Leaves",
@@ -68380,7 +68839,8 @@
       "chroma": 30.72,
       "peakChroma": 68.74,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [486, 471, 495, 476, 469, 497]
   },
   {
     "title": "Looking Over the Lake",
@@ -68649,7 +69109,8 @@
       "chroma": 18.88,
       "peakChroma": 27.18,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [337, 220, 222, 221, 55, 236]
   },
   {
     "title": "Lucky Frog",
@@ -68915,7 +69376,8 @@
       "peakChroma": 9.52,
       "samples": 10050
     },
-    "notes": "Shows a frog statue; 'amphibians' isn't a tag, since only 2 photos have it."
+    "notes": "Shows a frog statue; 'amphibians' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [315, 509, 348, 324, 329, 451]
   },
   {
     "title": "Luxor Lunch",
@@ -69185,7 +69647,8 @@
       "peakChroma": 34.52,
       "samples": 9975
     },
-    "notes": "Shows farmland and pottery; 'farmland' and 'pottery' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows farmland and pottery; 'farmland' and 'pottery' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [364, 363, 296, 370, 290, 361]
   },
   {
     "title": "Mason View",
@@ -69458,7 +69921,8 @@
       "chroma": 6.19,
       "peakChroma": 14.33,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [436, 372, 430, 374, 412, 414]
   },
   {
     "title": "Masterpiece",
@@ -69727,7 +70191,8 @@
       "chroma": 8.68,
       "peakChroma": 22.96,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [11, 441, 453, 319, 219, 250]
   },
   {
     "title": "Matsue Castle x Suitorou",
@@ -70006,7 +70471,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [355, 438, 162, 467, 262, 351]
   },
   {
     "title": "Melting Pot",
@@ -70272,7 +70738,8 @@
       "peakChroma": 32.87,
       "samples": 9975
     },
-    "notes": "Shows Halloween skeletons; 'skeletons' isn't a tag, since only 2 photos have them."
+    "notes": "Shows Halloween skeletons; 'skeletons' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [16, 438, 306, 441, 132, 450]
   },
   {
     "title": "Mirror, Mirror (Mirror)",
@@ -70541,7 +71008,8 @@
       "chroma": 3.66,
       "peakChroma": 7.82,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [2, 6, 7, 179, 74, 220]
   },
   {
     "id": 1,
@@ -70814,7 +71282,8 @@
       "chroma": 17.64,
       "peakChroma": 31.74,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [269, 468, 129, 262, 10, 256]
   },
   {
     "id": 29,
@@ -71084,7 +71553,8 @@
       "peakChroma": 30.09,
       "samples": 10001
     },
-    "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a subway mosaic; 'mosaic' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [27, 51, 46, 38, 72, 7]
   },
   {
     "title": "Moon Over Mena House",
@@ -71364,7 +71834,8 @@
       "chroma": 13.66,
       "peakChroma": 23.82,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [296, 364, 489, 295, 370, 360]
   },
   {
     "title": "Movable Type",
@@ -71646,7 +72117,8 @@
           "y": 50
         }
       }
-    }
+    },
+    "similarPhotos": [101, 410, 156, 64, 178, 100]
   },
   {
     "title": "Nantucket Dock",
@@ -71915,7 +72387,8 @@
       "chroma": 4.38,
       "peakChroma": 7.85,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [202, 68, 228, 317, 207, 375]
   },
   {
     "title": "Neat Newt",
@@ -72185,7 +72658,8 @@
       "peakChroma": 31.1,
       "samples": 9804
     },
-    "notes": "Shows a newt; 'newts' and 'amphibians' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows a newt; 'newts' and 'amphibians' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [89, 91, 114, 87, 86, 495]
   },
   {
     "title": "North Appalachian Trail Marker",
@@ -72454,7 +72928,8 @@
       "chroma": 19.29,
       "peakChroma": 30.38,
       "samples": 9880
-    }
+    },
+    "similarPhotos": [114, 111, 113, 495, 264, 200]
   },
   {
     "title": "NYC Ice Cream",
@@ -72727,7 +73202,8 @@
       "peakChroma": 0.01,
       "samples": 9825
     },
-    "notes": "Shows an ice cream van; 'ice-cream' and 'van' aren't tags, since only 2 photos have each."
+    "notes": "Shows an ice cream van; 'ice-cream' and 'van' aren't tags, since only 2 photos have each.",
+    "similarPhotos": [169, 11, 46, 203, 436, 441]
   },
   {
     "title": "Ocean - Beach - Cars - Park",
@@ -72993,7 +73469,8 @@
       "peakChroma": 28.24,
       "samples": 9912
     },
-    "notes": "Shows sand dunes; 'sand-dunes' isn't a tag, since only 1 photo has them."
+    "notes": "Shows sand dunes; 'sand-dunes' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [427, 429, 422, 423, 425, 426]
   },
   {
     "title": "Oculus",
@@ -73262,7 +73739,8 @@
       "chroma": 1.53,
       "peakChroma": 3.81,
       "samples": 9842
-    }
+    },
+    "similarPhotos": [45, 176, 173, 32, 346, 71]
   },
   {
     "title": "\"Oh yeah, that's Bird Shit Rock\"",
@@ -73527,7 +74005,8 @@
       "chroma": 13.24,
       "peakChroma": 20.5,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [423, 318, 134, 428, 427, 429]
   },
   {
     "title": "Old Stone Lantern",
@@ -73792,7 +74271,8 @@
       "chroma": 7.83,
       "peakChroma": 18.72,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [505, 309, 310, 348, 337, 511]
   },
   {
     "id": 59,
@@ -74061,7 +74541,8 @@
       "chroma": 21.26,
       "peakChroma": 51.88,
       "samples": 9825
-    }
+    },
+    "similarPhotos": [75, 237, 117, 129, 305, 13]
   },
   {
     "id": 60,
@@ -74330,7 +74811,8 @@
       "chroma": 13.86,
       "peakChroma": 41.63,
       "samples": 10087
-    }
+    },
+    "similarPhotos": [47, 57, 189, 36, 100, 30]
   },
   {
     "title": "Only Goat Knows",
@@ -74600,7 +75082,8 @@
       "peakChroma": 27,
       "samples": 9728
     },
-    "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them."
+    "notes": "Shows a goat with hay in a barn; 'goats', 'farm-animals', 'hay' and 'barn' aren't tags, since only this photo has them.",
+    "similarPhotos": [477, 495, 499, 201, 474, 290]
   },
   {
     "title": "Open Air Museum",
@@ -74870,7 +75353,8 @@
       "peakChroma": 36.25,
       "samples": 9417
     },
-    "notes": "Shows a dog; 'dogs' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a dog; 'dogs' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [366, 362, 365, 368, 359, 294]
   },
   {
     "title": "Osakan Street",
@@ -75139,7 +75623,8 @@
       "chroma": 7.39,
       "peakChroma": 14.81,
       "samples": 9711
-    }
+    },
+    "similarPhotos": [306, 250, 449, 450, 319, 454]
   },
   {
     "id": 30,
@@ -75408,7 +75893,8 @@
       "chroma": 9.03,
       "peakChroma": 17.91,
       "samples": 10086
-    }
+    },
+    "similarPhotos": [11, 57, 36, 133, 189, 47]
   },
   {
     "title": "Outer Richmond Residences",
@@ -75686,7 +76172,8 @@
       "chroma": 7.46,
       "peakChroma": 14.89,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [372, 414, 413, 373, 436, 430]
   },
   {
     "id": 11,
@@ -75955,7 +76442,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9750
-    }
+    },
+    "similarPhotos": [14, 30, 121, 6, 203, 441]
   },
   {
     "title": "Palace Halls",
@@ -76224,7 +76712,8 @@
       "chroma": 16,
       "peakChroma": 35.15,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [128, 12, 213, 5, 210, 126]
   },
   {
     "title": "Path in Tokoji Temple",
@@ -76493,7 +76982,8 @@
       "chroma": 13.29,
       "peakChroma": 26.57,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [332, 310, 309, 510, 511, 505]
   },
   {
     "id": 4,
@@ -76766,7 +77256,8 @@
       "chroma": 5.12,
       "peakChroma": 11.81,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [212, 128, 210, 209, 127, 5]
   },
   {
     "id": 61,
@@ -77035,7 +77526,8 @@
       "chroma": 14.01,
       "peakChroma": 26.48,
       "samples": 9856
-    }
+    },
+    "similarPhotos": [39, 41, 73, 34, 4, 244]
   },
   {
     "title": "Presidio Pathway",
@@ -77300,7 +77792,8 @@
       "chroma": 15.69,
       "peakChroma": 24.72,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [402, 399, 195, 41, 202, 126]
   },
   {
     "title": "Promenade Bench",
@@ -77578,7 +78071,8 @@
       "chroma": 19.23,
       "peakChroma": 30.08,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [285, 367, 444, 432, 409, 445]
   },
   {
     "id": 19,
@@ -77848,7 +78342,8 @@
       "peakChroma": 28.7,
       "samples": 9694
     },
-    "notes": "Shows uniformed police; 'police' and 'uniforms' aren't tags, since only 1 photo has them."
+    "notes": "Shows uniformed police; 'police' and 'uniforms' aren't tags, since only 1 photo has them.",
+    "similarPhotos": [16, 262, 68, 56, 45, 76]
   },
   {
     "title": "PULL THE HOOK DOWN ONCE AND LET GO",
@@ -78114,7 +78609,8 @@
       "peakChroma": 27.2,
       "samples": 9975
     },
-    "notes": "Shows a fire alarm; 'fire-alarm' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a fire alarm; 'fire-alarm' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [180, 101, 406, 373, 441, 20]
   },
   {
     "id": 12,
@@ -78388,7 +78884,8 @@
       "peakChroma": 10.63,
       "samples": 9900
     },
-    "notes": "Shows pumgyeseok rank stones inscribed in hanja; 'pumgyeseok' and 'hanja' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows pumgyeseok rank stones inscribed in hanja; 'pumgyeseok' and 'hanja' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [129, 213, 128, 126, 210, 389]
   },
   {
     "title": "Pyramid Camel Ride",
@@ -78658,7 +79155,8 @@
       "peakChroma": 44.57,
       "samples": 9417
     },
-    "notes": "Shows camels and horses; 'camels' and 'horse' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows camels and horses; 'camels' and 'horse' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [294, 366, 367, 369, 291, 289]
   },
   {
     "title": "Quiet Itaewon Morning",
@@ -78927,7 +79425,8 @@
       "chroma": 6.12,
       "peakChroma": 13.11,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [250, 319, 251, 225, 453, 282]
   },
   {
     "title": "Racing Through Kobe",
@@ -79206,7 +79705,8 @@
           "y": 80
         }
       }
-    }
+    },
+    "similarPhotos": [270, 352, 326, 354, 492, 311]
   },
   {
     "title": "Rainy Hot Spring Night",
@@ -79476,7 +79976,8 @@
       "peakChroma": 8.88,
       "samples": 10050
     },
-    "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered."
+    "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered.",
+    "similarPhotos": [351, 353, 355, 354, 377, 448]
   },
   {
     "title": "Red Fish",
@@ -79741,7 +80242,8 @@
       "chroma": 10.47,
       "peakChroma": 19.73,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [503, 502, 394, 509, 337, 307]
   },
   {
     "title": "Red Tag",
@@ -80010,7 +80512,8 @@
       "chroma": 11.47,
       "peakChroma": 18.09,
       "samples": 9694
-    }
+    },
+    "similarPhotos": [328, 455, 262, 261, 309, 457]
   },
   {
     "title": "Red Toadstool",
@@ -80279,7 +80782,8 @@
       "chroma": 22.26,
       "peakChroma": 49.15,
       "samples": 9728
-    }
+    },
+    "similarPhotos": [86, 87, 91, 92, 88, 89]
   },
   {
     "title": "Rockefeller Lights",
@@ -80551,7 +81055,8 @@
       "chroma": 4.86,
       "peakChroma": 4.52,
       "samples": 9800
-    }
+    },
+    "similarPhotos": [467, 438, 355, 335, 248, 110]
   },
   {
     "title": "Rope & Charms",
@@ -80816,7 +81321,8 @@
       "chroma": 8.54,
       "peakChroma": 19.69,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [507, 329, 381, 506, 510, 505]
   },
   {
     "title": "Rope & Shide",
@@ -81081,7 +81587,8 @@
       "chroma": 9.49,
       "peakChroma": 20.62,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [507, 505, 509, 511, 510, 381]
   },
   {
     "id": 62,
@@ -81350,7 +81857,8 @@
       "chroma": 25.89,
       "peakChroma": 38.4,
       "samples": 9728
-    }
+    },
+    "similarPhotos": [45, 53, 76, 150, 256, 17]
   },
   {
     "id": 63,
@@ -81619,7 +82127,8 @@
       "chroma": 16.37,
       "peakChroma": 32.15,
       "samples": 10001
-    }
+    },
+    "similarPhotos": [180, 58, 227, 45, 15, 173]
   },
   {
     "title": "Sacred Paper",
@@ -81888,7 +82397,8 @@
       "chroma": 2.7,
       "peakChroma": 7.1,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [509, 381, 507, 506, 505, 510]
   },
   {
     "title": "Sakura Sundown",
@@ -82158,7 +82668,8 @@
       "peakChroma": 24.27,
       "samples": 9605
     },
-    "notes": "Shows spring cherry blossoms; 'spring' isn't a tag, since only 1 photo has it."
+    "notes": "Shows spring cherry blossoms; 'spring' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [223, 222, 105, 244, 486, 40]
   },
   {
     "title": "Scoreboard",
@@ -82424,7 +82935,8 @@
       "peakChroma": 45.61,
       "samples": 9975
     },
-    "notes": "Shows a baseball scoreboard; 'scoreboard' isn't a tag since only 1 photo has one, and 'baseball' was folded into 'sports'."
+    "notes": "Shows a baseball scoreboard; 'scoreboard' isn't a tag since only 1 photo has one, and 'baseball' was folded into 'sports'.",
+    "similarPhotos": [486, 496, 480, 471, 484, 482]
   },
   {
     "title": "Seal Rock Row II",
@@ -82689,7 +83201,8 @@
       "chroma": 5.73,
       "peakChroma": 14.53,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [430, 436, 372, 408, 412, 373]
   },
   {
     "title": "Seal Rock Row",
@@ -82954,7 +83467,8 @@
       "chroma": 10.18,
       "peakChroma": 23.8,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [430, 436, 414, 409, 373, 445]
   },
   {
     "title": "Seaweed King",
@@ -83223,7 +83737,8 @@
       "chroma": 29.02,
       "peakChroma": 49.97,
       "samples": 10010
-    }
+    },
+    "similarPhotos": [95, 96, 97, 141, 142, 83]
   },
   {
     "title": "SF Streets I",
@@ -83496,7 +84011,8 @@
       "chroma": 4.1,
       "peakChroma": 8.46,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [408, 373, 430, 414, 436, 374]
   },
   {
     "title": "Shoin Shrine Gate",
@@ -83761,7 +84277,8 @@
       "chroma": 5.22,
       "peakChroma": 14.07,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [510, 511, 507, 506, 348, 509]
   },
   {
     "title": "Shrouded in Mist",
@@ -84030,7 +84547,8 @@
       "chroma": 3.17,
       "peakChroma": 7.12,
       "samples": 9801
-    }
+    },
+    "similarPhotos": [154, 41, 174, 34, 316, 44]
   },
   {
     "title": "Small Stone Lantern",
@@ -84300,7 +84818,8 @@
       "peakChroma": 15.82,
       "samples": 10050
     },
-    "notes": "Shows a karesansui dry garden; 'karesansui' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a karesansui dry garden; 'karesansui' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [153, 45, 76, 150, 32, 172]
   },
   {
     "title": "Snake Woman",
@@ -84570,7 +85089,8 @@
       "peakChroma": 0.01,
       "samples": 9728
     },
-    "notes": "Shows a snake; 'snakes' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a snake; 'snakes' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [165, 193, 164, 186, 192, 40]
   },
   {
     "title": "Snowy Road",
@@ -84834,7 +85354,8 @@
       "chroma": 3.37,
       "peakChroma": 7.67,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [235, 241, 412, 409, 430, 105]
   },
   {
     "title": "Snowy Stairs",
@@ -85103,7 +85624,8 @@
       "chroma": 3.28,
       "peakChroma": 4.23,
       "samples": 9216
-    }
+    },
+    "similarPhotos": [105, 104, 64, 69, 240, 237]
   },
   {
     "id": 64,
@@ -85368,7 +85890,8 @@
       "peakChroma": 24.17,
       "samples": 9750
     },
-    "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them."
+    "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [106, 7, 22, 24, 116, 242]
   },
   {
     "title": "Stardust Diner",
@@ -85638,7 +86161,8 @@
       "peakChroma": 0.01,
       "samples": 9956
     },
-    "notes": "Shows a queue; 'queue' isn't a tag, since only 2 photos have one."
+    "notes": "Shows a queue; 'queue' isn't a tag, since only 2 photos have one.",
+    "similarPhotos": [305, 306, 161, 170, 168, 205]
   },
   {
     "id": 65,
@@ -85907,7 +86431,8 @@
       "chroma": 15.06,
       "peakChroma": 50.67,
       "samples": 9782
-    }
+    },
+    "similarPhotos": [74, 151, 7, 22, 45, 25]
   },
   {
     "id": 13,
@@ -86176,7 +86701,8 @@
       "chroma": 8.76,
       "peakChroma": 17.07,
       "samples": 9625
-    }
+    },
+    "similarPhotos": [11, 47, 60, 30, 28, 15]
   },
   {
     "title": "Stopping by the pond on a snowy afternoon",
@@ -86445,7 +86971,8 @@
       "chroma": 5.48,
       "peakChroma": 7.22,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [104, 106, 40, 102, 237, 93]
   },
   {
     "title": "Stream Reflection",
@@ -86710,7 +87237,8 @@
       "chroma": 18.29,
       "peakChroma": 41.76,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [485, 496, 487, 486, 471, 481]
   },
   {
     "id": 66,
@@ -86980,7 +87508,8 @@
       "peakChroma": 0.01,
       "samples": 9782
     },
-    "notes": "Shows chalk art on the pavement; 'chalk-art' isn't a tag, since only 1 photo has it."
+    "notes": "Shows chalk art on the pavement; 'chalk-art' isn't a tag, since only 1 photo has it.",
+    "similarPhotos": [46, 40, 38, 214, 57, 72]
   },
   {
     "id": 32,
@@ -87250,7 +87779,8 @@
       "peakChroma": 0.01,
       "samples": 9702
     },
-    "notes": "Shows a string installation; 'strings' isn't a tag, since only 1 photo has them."
+    "notes": "Shows a string installation; 'strings' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [150, 45, 27, 76, 346, 25]
   },
   {
     "title": "Sunrise Seagull Watch",
@@ -87522,7 +88052,8 @@
       "chroma": 5.72,
       "peakChroma": 11.94,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [136, 206, 134, 137, 138, 207]
   },
   {
     "title": "Sunset over the Parc",
@@ -87792,7 +88323,8 @@
       "peakChroma": 35.22,
       "samples": 10050
     },
-    "notes": "Shows ice; 'ice' isn't a tag, since only 2 photos have it."
+    "notes": "Shows ice; 'ice' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [326, 395, 373, 491, 204, 247]
   },
   {
     "id": 20,
@@ -88065,7 +88597,8 @@
       "chroma": 10.25,
       "peakChroma": 29.83,
       "samples": 9750
-    }
+    },
+    "similarPhotos": [46, 180, 177, 121, 58, 410]
   },
   {
     "title": "Switchback",
@@ -88330,7 +88863,8 @@
       "chroma": 7.98,
       "peakChroma": 16.75,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [425, 427, 428, 416, 420, 430]
   },
   {
     "title": "Take Flight",
@@ -88594,7 +89128,8 @@
       "chroma": 2.36,
       "peakChroma": 6.62,
       "samples": 9856
-    }
+    },
+    "similarPhotos": [109, 67, 108, 35, 21, 135]
   },
   {
     "title": "That's Amore",
@@ -88869,7 +89404,8 @@
       "chroma": 7.3,
       "peakChroma": 16.86,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [132, 304, 282, 250, 11, 219]
   },
   {
     "id": 67,
@@ -89146,7 +89682,8 @@
       "chroma": 4.09,
       "peakChroma": 6.84,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [35, 76, 172, 21, 174, 173]
   },
   {
     "title": "The Necropolis",
@@ -89415,7 +89952,8 @@
       "chroma": 15.28,
       "peakChroma": 24.13,
       "samples": 9417
-    }
+    },
+    "similarPhotos": [341, 342, 362, 337, 240, 366]
   },
   {
     "title": "The Other End of the Salt Water Pond",
@@ -89680,7 +90218,8 @@
       "chroma": 8.35,
       "peakChroma": 16.83,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [511, 505, 509, 507, 506, 381]
   },
   {
     "title": "The Other Side",
@@ -89954,7 +90493,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [74, 7, 22, 6, 148, 71]
   },
   {
     "id": 68,
@@ -90232,7 +90772,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9728
-    }
+    },
+    "similarPhotos": [204, 34, 317, 73, 202, 81]
   },
   {
     "title": "Tiles",
@@ -90497,7 +91038,8 @@
       "chroma": 3.41,
       "peakChroma": 7.04,
       "samples": 9801
-    }
+    },
+    "similarPhotos": [397, 457, 145, 504, 89, 506]
   },
   {
     "id": 69,
@@ -90767,7 +91309,8 @@
       "peakChroma": 3.66,
       "samples": 9728
     },
-    "notes": "Shows a snowman; 'snowman' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a snowman; 'snowman' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [104, 105, 106, 64, 240, 46]
   },
   {
     "title": "To the Cliffs",
@@ -91032,7 +91575,8 @@
       "chroma": 8.87,
       "peakChroma": 18.3,
       "samples": 9768
-    }
+    },
+    "similarPhotos": [476, 195, 435, 430, 120, 287]
   },
   {
     "title": "To the Offering Box",
@@ -91298,7 +91842,8 @@
       "peakChroma": 27.04,
       "samples": 9975
     },
-    "notes": "Shows a saisen-bako offering box; 'saisen-bako' isn't a tag, since only 1 photo has one."
+    "notes": "Shows a saisen-bako offering box; 'saisen-bako' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [509, 505, 381, 506, 510, 511]
   },
   {
     "title": "Tokoji Temple - Heading Back",
@@ -91567,7 +92112,8 @@
       "chroma": 11.09,
       "peakChroma": 22.7,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [331, 310, 309, 510, 505, 511]
   },
   {
     "id": 70,
@@ -91837,7 +92383,8 @@
       "peakChroma": 0.01,
       "samples": 9782
     },
-    "notes": "Shows signatures in a church attic; 'attic' and 'signatures' aren't tags, since only 1–2 photos have them."
+    "notes": "Shows signatures in a church attic; 'attic' and 'signatures' aren't tags, since only 1–2 photos have them.",
+    "similarPhotos": [26, 73, 34, 33, 347, 295]
   },
   {
     "title": "Transit Above Transit",
@@ -92124,7 +92671,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [288, 52, 151, 148, 150, 76]
   },
   {
     "title": "Treeface",
@@ -92393,7 +92941,8 @@
       "chroma": 34.48,
       "peakChroma": 68.75,
       "samples": 9216
-    }
+    },
+    "similarPhotos": [114, 257, 29, 435, 468, 231]
   },
   {
     "title": "Treewall",
@@ -92658,7 +93207,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [412, 409, 444, 430, 445, 418]
   },
   {
     "id": 72,
@@ -92927,7 +93477,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9648
-    }
+    },
+    "similarPhotos": [205, 214, 441, 66, 29, 439]
   },
   {
     "id": 14,
@@ -93196,7 +93747,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9984
-    }
+    },
+    "similarPhotos": [11, 40, 148, 221, 167, 18]
   },
   {
     "title": "View from Outer Richmond",
@@ -93466,7 +94018,8 @@
       "chroma": 7.7,
       "peakChroma": 15.82,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [406, 412, 407, 444, 430, 494]
   },
   {
     "title": "View from the High Line",
@@ -93736,7 +94289,8 @@
       "peakChroma": 7.36,
       "samples": 9828
     },
-    "notes": "Shows air conditioners on the facade; 'air-conditioners' isn't a tag, since only 2 photos have it."
+    "notes": "Shows air conditioners on the facade; 'air-conditioners' isn't a tag, since only 2 photos have it.",
+    "similarPhotos": [67, 173, 35, 76, 176, 408]
   },
   {
     "title": "View from the Met",
@@ -94008,7 +94562,8 @@
       "chroma": 15.68,
       "peakChroma": 39.25,
       "samples": 10001
-    }
+    },
+    "similarPhotos": [34, 31, 41, 246, 158, 73]
   },
   {
     "id": 73,
@@ -94281,7 +94836,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 10074
-    }
+    },
+    "similarPhotos": [34, 263, 295, 296, 70, 68]
   },
   {
     "title": "Volleyball Scene",
@@ -94548,7 +95104,8 @@
       "chroma": 5.15,
       "peakChroma": 8.05,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [426, 425, 421, 427, 428, 434]
   },
   {
     "id": 22,
@@ -94821,7 +95378,8 @@
       "chroma": 0.01,
       "peakChroma": 0.01,
       "samples": 9956
-    }
+    },
+    "similarPhotos": [7, 74, 6, 383, 151, 116]
   },
   {
     "id": 74,
@@ -95090,7 +95648,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 10086
-    }
+    },
+    "similarPhotos": [151, 22, 6, 7, 383, 156]
   },
   {
     "title": "Waiting on Williamsburg Bridge",
@@ -95369,7 +95928,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [59, 237, 223, 117, 71, 129]
   },
   {
     "title": "Waiting Room",
@@ -95650,7 +96210,8 @@
         },
         "placement": null
       }
-    }
+    },
+    "similarPhotos": [52, 148, 7, 71, 178, 116]
   },
   {
     "title": "Walking by a Window at Al Khalifa",
@@ -95923,7 +96484,8 @@
       "chroma": 10,
       "peakChroma": 18.55,
       "samples": 9828
-    }
+    },
+    "similarPhotos": [274, 288, 301, 273, 175, 173]
   },
   {
     "title": "Walking Through Arima on a Rainy Night",
@@ -96193,7 +96755,8 @@
       "peakChroma": 3.91,
       "samples": 9912
     },
-    "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered."
+    "notes": "Shows the Arima onsen town; 'onsen' isn't a tag, since only 2 photos have it and the place is already filtered.",
+    "similarPhotos": [352, 353, 354, 377, 450, 449]
   },
   {
     "title": "WATCH THE GAP",
@@ -96462,7 +97025,8 @@
       "chroma": 0,
       "peakChroma": 0.01,
       "samples": 9936
-    }
+    },
+    "similarPhotos": [22, 116, 74, 180, 7, 441]
   },
   {
     "title": "Water over the Rocks",
@@ -96731,7 +97295,8 @@
       "chroma": 9.4,
       "peakChroma": 15.13,
       "samples": 9975
-    }
+    },
+    "similarPhotos": [81, 447, 224, 160, 155, 68]
   },
   {
     "id": 76,
@@ -97004,7 +97569,8 @@
       "chroma": 1.83,
       "peakChroma": 5.43,
       "samples": 9782
-    }
+    },
+    "similarPhotos": [35, 67, 172, 175, 45, 174]
   },
   {
     "title": "Waveny Ducks",
@@ -97274,7 +97840,8 @@
       "peakChroma": 20.5,
       "samples": 9916
     },
-    "notes": "Shows ducks; 'ducks' isn't a tag, since only 1 photo has them."
+    "notes": "Shows ducks; 'ducks' isn't a tag, since only 1 photo has them.",
+    "similarPhotos": [487, 481, 160, 485, 484, 488]
   },
   {
     "title": "Way More Waymos",
@@ -97541,7 +98108,8 @@
       "chroma": 7.23,
       "peakChroma": 14.48,
       "samples": 9900
-    }
+    },
+    "similarPhotos": [444, 412, 430, 494, 490, 416]
   },
   {
     "title": "West Coast Waves",
@@ -97808,7 +98376,8 @@
       "chroma": 12.03,
       "peakChroma": 24.9,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [433, 428, 427, 419, 425, 134]
   },
   {
     "id": 5,
@@ -98078,7 +98647,8 @@
       "peakChroma": 23.41,
       "samples": 9975
     },
-    "notes": "Shows japsang roof guardians; 'japsang' isn't a tag, since only 2 photos have them."
+    "notes": "Shows japsang roof guardians; 'japsang' isn't a tag, since only 2 photos have them.",
+    "similarPhotos": [128, 127, 210, 130, 212, 126]
   },
   {
     "title": "Window of Blue Donkey",
@@ -98357,7 +98927,8 @@
       "peakChroma": 23.55,
       "samples": 9768
     },
-    "notes": "Shows an Egyptian fanous lantern; 'fanous' isn't a tag, since only 1 photo has one."
+    "notes": "Shows an Egyptian fanous lantern; 'fanous' isn't a tag, since only 1 photo has one.",
+    "similarPhotos": [363, 263, 295, 370, 364, 73]
   },
   {
     "title": "Windy Boardwalk Road",
@@ -98622,7 +99193,8 @@
       "chroma": 17.07,
       "peakChroma": 31.18,
       "samples": 10115
-    }
+    },
+    "similarPhotos": [474, 495, 471, 473, 486, 476]
   },
   {
     "title": "Yellow Fish",
@@ -98887,7 +99459,8 @@
       "chroma": 14.72,
       "peakChroma": 24.51,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [503, 501, 337, 312, 155, 160]
   },
   {
     "id": 15,
@@ -99156,6 +99729,7 @@
       "chroma": 19.86,
       "peakChroma": 52.55,
       "samples": 10050
-    }
+    },
+    "similarPhotos": [36, 133, 57, 100, 47, 60]
   }
 ]

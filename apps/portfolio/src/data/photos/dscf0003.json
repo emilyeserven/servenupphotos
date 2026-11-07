@@ -262,5 +262,6 @@
     "peakChroma": 30.95,
     "samples": 10115
   },
-  "notes": "Shows a carved tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them."
+  "notes": "Shows a carved tengu mask; 'tengu' and 'masks' aren't tags, since only 2 photos have them.",
+  "similarPhotos": [381, 384, 349, 378, 350, 298]
 }

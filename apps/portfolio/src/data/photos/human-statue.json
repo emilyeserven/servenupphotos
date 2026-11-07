@@ -277,5 +277,6 @@
     "peakChroma": 0.01,
     "samples": 9906
   },
-  "notes": "Shows a relief sculpture; 'relief' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a relief sculpture; 'relief' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [37, 46, 181, 233, 166, 40]
 }

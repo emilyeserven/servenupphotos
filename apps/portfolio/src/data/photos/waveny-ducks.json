@@ -266,5 +266,6 @@
     "peakChroma": 20.5,
     "samples": 9916
   },
-  "notes": "Shows ducks; 'ducks' isn't a tag, since only 1 photo has them."
+  "notes": "Shows ducks; 'ducks' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [487, 481, 160, 485, 484, 488]
 }

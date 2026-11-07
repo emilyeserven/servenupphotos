@@ -261,5 +261,6 @@
     "peakChroma": 12.75,
     "samples": 9490
   },
-  "notes": "Shows a Dutch canal house (grachtenpand); 'grachtenpand' isn't a tag, since only 1 photo has one."
+  "notes": "Shows a Dutch canal house (grachtenpand); 'grachtenpand' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [297, 398, 301, 176, 34, 124]
 }

@@ -266,5 +266,6 @@
     "peakChroma": 25.89,
     "samples": 8880
   },
-  "notes": "Shows Karnak's hypostyle hall; 'hypostyle' isn't a tag, since only 1 photo has it."
+  "notes": "Shows Karnak's hypostyle hall; 'hypostyle' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [292, 358, 271, 289, 369, 274]
 }

@@ -266,5 +266,6 @@
     "peakChroma": 44.57,
     "samples": 9417
   },
-  "notes": "Shows camels and horses; 'camels' and 'horse' aren't tags, since only 1–2 photos have them."
+  "notes": "Shows camels and horses; 'camels' and 'horse' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [294, 366, 367, 369, 291, 289]
 }

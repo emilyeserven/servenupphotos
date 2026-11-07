@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 10050
   },
-  "notes": "Shows a rustic-style gazebo; 'rustic' isn't a tag, since only 1 photo has it."
+  "notes": "Shows a rustic-style gazebo; 'rustic' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [167, 40, 192, 42, 482, 165]
 }

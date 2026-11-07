@@ -261,5 +261,6 @@
     "peakChroma": 24.17,
     "samples": 9750
   },
-  "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them."
+  "notes": "Shows numbers by the tracks; 'numbers' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [106, 7, 22, 24, 116, 242]
 }

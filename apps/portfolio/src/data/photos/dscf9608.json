@@ -279,5 +279,6 @@
       },
       "placement": null
     }
-  }
+  },
+  "similarPhotos": [345, 343, 347, 346, 330, 339]
 }

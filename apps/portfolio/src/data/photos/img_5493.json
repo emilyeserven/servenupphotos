@@ -264,5 +264,6 @@
     "peakChroma": 8.88,
     "samples": 10086
   },
-  "notes": "Shows folk art with sea glass; 'folk-art' and 'sea-glass' aren't tags, since only 1 photo has them."
+  "notes": "Shows folk art with sea glass; 'folk-art' and 'sea-glass' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [55, 143, 145, 140, 37, 295]
 }

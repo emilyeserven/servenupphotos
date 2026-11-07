@@ -261,5 +261,6 @@
     "peakChroma": 9.8,
     "samples": 9975
   },
-  "notes": "Shows buoys; 'buoys' isn't a tag, since only 2 photos have them."
+  "notes": "Shows buoys; 'buoys' isn't a tag, since only 2 photos have them.",
+  "similarPhotos": [433, 419, 134, 417, 423, 316]
 }

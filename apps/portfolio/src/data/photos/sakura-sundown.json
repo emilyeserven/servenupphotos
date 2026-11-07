@@ -266,5 +266,6 @@
     "peakChroma": 24.27,
     "samples": 9605
   },
-  "notes": "Shows spring cherry blossoms; 'spring' isn't a tag, since only 1 photo has it."
+  "notes": "Shows spring cherry blossoms; 'spring' isn't a tag, since only 1 photo has it.",
+  "similarPhotos": [223, 222, 105, 244, 486, 40]
 }

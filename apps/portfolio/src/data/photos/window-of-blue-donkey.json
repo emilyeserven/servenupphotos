@@ -275,5 +275,6 @@
     "peakChroma": 23.55,
     "samples": 9768
   },
-  "notes": "Shows an Egyptian fanous lantern; 'fanous' isn't a tag, since only 1 photo has one."
+  "notes": "Shows an Egyptian fanous lantern; 'fanous' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [363, 263, 295, 370, 364, 73]
 }

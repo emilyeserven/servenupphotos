@@ -266,5 +266,6 @@
     "peakChroma": 23.74,
     "samples": 9694
   },
-  "notes": "Shows the Grand Place guildhalls; 'guildhall' isn't a tag, since only 1 photo has one."
+  "notes": "Shows the Grand Place guildhalls; 'guildhall' isn't a tag, since only 1 photo has one.",
+  "similarPhotos": [127, 297, 272, 210, 216, 167]
 }

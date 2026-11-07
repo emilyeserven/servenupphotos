@@ -266,5 +266,6 @@
     "peakChroma": 28.7,
     "samples": 9694
   },
-  "notes": "Shows uniformed police; 'police' and 'uniforms' aren't tags, since only 1 photo has them."
+  "notes": "Shows uniformed police; 'police' and 'uniforms' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [16, 262, 68, 56, 45, 76]
 }

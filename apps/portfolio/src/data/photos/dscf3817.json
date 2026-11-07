@@ -275,5 +275,6 @@
     "peakChroma": 16.79,
     "samples": 9768
   },
-  "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it."
+  "notes": "Shows hanok houses in Bukchon; 'hanok' isn't a tag, since only 2 photos have it.",
+  "similarPhotos": [210, 212, 127, 126, 124, 357]
 }

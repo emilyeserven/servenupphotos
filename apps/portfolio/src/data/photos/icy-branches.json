@@ -266,5 +266,6 @@
     "peakChroma": 12.2,
     "samples": 9750
   },
-  "notes": "Shows ice and icicles on branches; 'ice' and 'icicles' aren't tags, since only 1–2 photos have them."
+  "notes": "Shows ice and icicles on branches; 'ice' and 'icicles' aren't tags, since only 1–2 photos have them.",
+  "similarPhotos": [239, 156, 64, 181, 474, 93]
 }

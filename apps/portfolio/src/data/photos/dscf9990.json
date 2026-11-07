@@ -266,5 +266,6 @@
     "peakChroma": 18.77,
     "samples": 10050
   },
-  "notes": "Shows temple stamps; 'stamps' isn't a tag, since only 1 photo has them."
+  "notes": "Shows temple stamps; 'stamps' isn't a tag, since only 1 photo has them.",
+  "similarPhotos": [350, 339, 466, 384, 464, 378]
 }

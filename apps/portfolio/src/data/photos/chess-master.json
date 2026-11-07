@@ -266,5 +266,6 @@
     "peakChroma": 0.01,
     "samples": 9864
   },
-  "notes": "Shows a chess game; 'chess' and 'board-games' aren't tags, since only 1 photo has them."
+  "notes": "Shows a chess game; 'chess' and 'board-games' aren't tags, since only 1 photo has them.",
+  "similarPhotos": [40, 159, 186, 163, 167, 187]
 }
