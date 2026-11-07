@@ -85,7 +85,7 @@ Under them, **Camera crops** (or **Lens crops**, following the tab) lines up eve
 one camera's. It's a frame the shape of the 267 × 200 crop with every picture drawn in it by its crop, faint, with
 **Others** setting how faint, and dashed lines across the middle. The list beside it chooses pictures (**All**,
 **None**, or one by one): the chosen ones are drawn on top, mostly opaque (85%, so the others still show through a little), and everything done in the frame changes all of
-them together. Dragging moves them; **Zoom out** and **Zoom in** scale them; **Fit to limits** fits each one's subject
+them together. Dragging moves them; the **Zoom** slider, with **−** and **+** at its ends, scales them (it shows the first chosen picture's zoom, and moving it zooms every chosen picture by the same amount); **Fit to limits** fits each one's subject
 inside the limit lines (a picture uploaded before subjects were found can't be fitted); **Whole picture** shows each
 whole, centered; **White fill** and **Transparent fill** set what fills the room around them; **Reset** puts their
 crops back as saved. A picture from before crops starts at its whole picture, so it shows as changed.
