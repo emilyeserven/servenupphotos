@@ -1103,6 +1103,8 @@ export function defaultFixtures() {
     "POST /api/data/album-suggestions/pick": ({ body }) => albumPick(body?.count),
     "POST /api/data/album-suggestions/preview": () => albumSuggestionsPreview(),
     "POST /api/data/album-suggestions": () => ({ ...pendingSave(), newAlbums: 1, photos: 5 }),
+    "POST /api/data/similar-photos": () => ({ ...pendingSave(), photoFiles: 368, photos: 361 }),
+    "PUT /api/data/similar-photos/picked": () => pendingSave(),
     "POST /api/data/colors/preview": ({ body }) => ({
       repo: REPO,
       folder: `${FOLDER}/photos`,
