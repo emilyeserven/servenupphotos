@@ -1,4 +1,5 @@
-import { ChevronRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight, Grid3x3 } from "lucide-react";
 import { useState } from "react";
 import { PhotoThumbnailButton } from "@/components/photo-thumbnail";
 import type { PickedGroup } from "@/lib/graph-pick";
@@ -45,43 +46,64 @@ export function PickedThumbnails({
   );
 }
 
+/** The link opening the photos on the Grid, with the filters that find them. */
+export function GridLink({ search, label }: { search: Record<string, unknown>; label: string }) {
+  return (
+    <Link
+      to="/grid"
+      search={search}
+      aria-label={`Open ${label} on the Grid`}
+      className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-muted-foreground outline-none hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring [&_svg]:size-4"
+    >
+      <Grid3x3 aria-hidden />
+      Open in Grid
+    </Link>
+  );
+}
+
 /**
  * One group of the picked photos, such as the Autumn part of a stacked bar: a button with its color,
- * name and count that opens and closes it, over its thumbnails.
+ * name and count that opens and closes it, and Open in Grid, over its thumbnails.
  */
 export function PickedGroupSection({
   group,
+  search,
   open,
   onToggle,
   onOpen,
 }: {
   group: PickedGroup;
+  /** The Grid's filters for the group's photos. */
+  search: Record<string, unknown>;
   open: boolean;
   onToggle: () => void;
   onOpen: (photo: Photo) => void;
 }) {
   return (
     <li className="rounded-lg border">
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={onToggle}
-        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <ChevronRight
-          className={cn("size-4 shrink-0 transition-transform", open && "rotate-90")}
-          aria-hidden
-        />
-        <span
-          className="size-2.5 shrink-0 rounded-[3px]"
-          style={{ background: group.color }}
-          aria-hidden
-        />
-        <span className="flex-1">{group.label}</span>
-        <span className="text-muted-foreground tabular-nums">
-          {group.photos.length.toLocaleString()}
-        </span>
-      </button>
+      <div className="flex items-center gap-1 pr-1">
+        <button
+          type="button"
+          aria-expanded={open}
+          onClick={onToggle}
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <ChevronRight
+            className={cn("size-4 shrink-0 transition-transform", open && "rotate-90")}
+            aria-hidden
+          />
+          <span
+            className="size-2.5 shrink-0 rounded-[3px]"
+            style={{ background: group.color }}
+            aria-hidden
+          />
+          <span className="flex-1">{group.label}</span>
+          <span className="text-muted-foreground tabular-nums">
+            {group.photos.length.toLocaleString()}
+          </span>
+        </button>
+        <GridLink search={search} label={group.label} />
+      </div>
       {open && (
         <div className="px-3 pt-1 pb-3">
           <PickedThumbnails photos={group.photos} onOpen={onOpen} />

@@ -96,7 +96,7 @@ function scatterPhotos(inside: Photo[], config: GraphConfig, y: string): PickedP
 }
 
 /** Whether the graph splits each value by another stat. */
-function isSplit(config: GraphConfig): boolean {
+export function isSplit(config: GraphConfig): boolean {
   return config.split !== "" && SPLIT_TYPES.has(config.type);
 }
 

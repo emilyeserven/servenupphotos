@@ -66,6 +66,10 @@ by** when the photos are in groups. A pie says **Slices** and **Size** instead.
   lowest first when they're all numbers, such as years) or by how many photos they have. **Ascending** and
   **Descending** turn that order around, and put each group's photos oldest or newest first by when they were taken.
 - A group shows its first 48 photos, then **Show all**.
+- **Open in Grid**, on each group's heading (or beside the order buttons when the photos aren't grouped), opens the
+  group's photos on the Grid with the matching Grid filters: the graph's filters, the picked x value and the group's
+  value, such as Year 2016 and Season Autumn (`lib/graph-pick-grid.ts`). When those filters wouldn't find exactly the
+  group's photos, such as a value the Grid can't filter by, it opens them as photos chosen one by one (`ids`).
 
 > **Frontend analogy:** the click is a row selection in a data table. The graph keeps the selected key in state and
 > hands it down through context, and the box below runs the same `.filter()` the bar was counted from to list the rows.

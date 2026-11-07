@@ -1,7 +1,11 @@
 import { ArrowDownWideNarrow, ArrowUpNarrowWide, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PickAxes } from "@/components/graph-builder/pick-axes";
-import { PickedGroupSection, PickedThumbnails } from "@/components/graph-builder/picked-group";
+import {
+  GridLink,
+  PickedGroupSection,
+  PickedThumbnails,
+} from "@/components/graph-builder/picked-group";
 import { PhotoLightbox } from "@/components/photo-lightbox";
 import { Button } from "@/components/ui/button";
 import type { GraphConfig } from "@/lib/graph-data";
@@ -13,6 +17,7 @@ import {
   pickedPhotos,
   type PickOrder,
 } from "@/lib/graph-pick";
+import { gridSearch } from "@/lib/graph-pick-grid";
 import type { Photo } from "@/lib/photos";
 import { CONTROL_FRAME, controlButtonClass, SELECT_CLASS } from "@/lib/segmented-control";
 import { useShownPhoto } from "@/lib/shown-photo";
@@ -40,6 +45,7 @@ export function PickedPhotos({
   const groups = orderedGroups(picked.groups, order, direction);
   const [closed, setClosed] = useState<ReadonlySet<string>>(new Set());
   const { shown, show, close } = useShownPhoto();
+  const searchOf = (group: PickedGroup) => gridSearch(config, pick, group);
   return (
     <section
       aria-label="Picked photos"
@@ -62,13 +68,18 @@ export function PickedPhotos({
           )}
           <DirectionButtons direction={direction} onChange={setDirection} />
         </div>
-        {picked.groupedBy && <ExpandButtons groups={groups} onChange={setClosed} />}
+        {picked.groupedBy ? (
+          <ExpandButtons groups={groups} onChange={setClosed} />
+        ) : (
+          groups[0] && <GridLink search={searchOf(groups[0])} label={groups[0].label} />
+        )}
       </div>
       <PickedBody
         groups={groups}
         grouped={picked.groupedBy !== null}
         closed={closed}
         onClosedChange={setClosed}
+        searchOf={searchOf}
         onOpen={(photo) => photo.image && show(photo)}
       />
       <PhotoLightbox
@@ -95,11 +106,13 @@ interface GroupsProps {
   groups: PickedGroup[];
   closed: ReadonlySet<string>;
   onClosedChange: (closed: ReadonlySet<string>) => void;
+  /** The Grid's filters for a group's photos. */
+  searchOf: (group: PickedGroup) => Record<string, unknown>;
   onOpen: (photo: Photo) => void;
 }
 
 /** The groups, each opening and closing from its heading; all open at first. */
-function PickedGroups({ groups, closed, onClosedChange, onOpen }: GroupsProps) {
+function PickedGroups({ groups, closed, onClosedChange, searchOf, onOpen }: GroupsProps) {
   const toggle = (key: string) => {
     const next = new Set(closed);
     if (!next.delete(key)) next.add(key);
@@ -111,6 +124,7 @@ function PickedGroups({ groups, closed, onClosedChange, onOpen }: GroupsProps) {
         <PickedGroupSection
           key={group.key}
           group={group}
+          search={searchOf(group)}
           open={!closed.has(group.key)}
           onToggle={() => toggle(group.key)}
           onOpen={onOpen}
