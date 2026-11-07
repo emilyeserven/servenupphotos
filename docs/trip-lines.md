@@ -205,7 +205,16 @@ an outline (`polygon_geojson`), simplified to about 50 m (`polygon_threshold`) a
 is looked up through the item's [OpenStreetMap relation ID (P402)](https://www.wikidata.org/wiki/Property:P402); an item
 without one can't be used, so search by name instead. Requests go at most once a second and name the pipeline in
 their `User-Agent`, as the [Nominatim usage policy](https://operations.osmfoundation.org/policies/nominatim/) asks.
-`NOMINATIM_URL` and `WIKIDATA_URL` point it at other servers. The outlines are OpenStreetMap data under the
+`NOMINATIM_URL` and `WIKIDATA_URL` point it at other servers.
+
+A search asks only when **Find an area** is pressed, never while typing. A name is one Nominatim request and a Wikidata
+ID is two (Wikidata, then Nominatim). The page keeps each answer until it's reloaded, and the backend keeps it for a
+day (up to 100 searches, `internal/memo`), so asking the same thing again sends nothing. Neither server needs a key or
+charges for requests; the only limit is the one a second. Under the box, **OpenStreetMap names** and **Wikidata IDs**
+open the same text on [Nominatim's search page](https://nominatim.openstreetmap.org/ui/search.html) and Wikidata's
+search in a new tab, so the exact name or ID can be found there before searching here.
+
+The outlines are OpenStreetMap data under the
 [ODbL](https://www.openstreetmap.org/copyright), like the lines ridden.
 
 They're saved with the line as `fences`:

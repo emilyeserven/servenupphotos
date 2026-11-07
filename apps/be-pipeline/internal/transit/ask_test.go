@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/memo"
 )
 
 // server answers with status, then body when status is 200, and counts its
@@ -27,7 +29,7 @@ func TestAskFallsBackToMirror(t *testing.T) {
 	c := &Client{BaseURLs: []string{
 		server(t, http.StatusBadGateway, "", &down),
 		server(t, http.StatusOK, `{"elements":[{"type":"relation","id":7}]}`, &up),
-	}, HTTP: http.DefaultClient, Cache: NewCache(time.Hour, 10)}
+	}, HTTP: http.DefaultClient, Cache: memo.New[[]element](time.Hour, 10)}
 	for range 2 {
 		elements, err := c.query(context.Background(), "q")
 		if err != nil || len(elements) != 1 || elements[0].ID != 7 {
@@ -44,13 +46,13 @@ func TestAskGivesUpAsBusy(t *testing.T) {
 	c := &Client{BaseURLs: []string{
 		server(t, http.StatusGatewayTimeout, "", &a),
 		server(t, http.StatusTooManyRequests, "", &b),
-	}, HTTP: http.DefaultClient, Cache: NewCache(time.Hour, 10)}
+	}, HTTP: http.DefaultClient, Cache: memo.New[[]element](time.Hour, 10)}
 	_, err := c.query(context.Background(), "q")
 	var busy *BusyError
 	if !errors.As(err, &busy) || busy.Tries != 4 || a != 2 || b != 2 {
 		t.Fatalf("err = %v, asked %d and %d times", err, a, b)
 	}
-	if _, ok := c.Cache.get("q"); ok {
+	if _, ok := c.Cache.Get("q"); ok {
 		t.Error("a failure was cached")
 	}
 }
@@ -64,19 +66,6 @@ func TestAskStopsOnWrongQuery(t *testing.T) {
 	var status *StatusError
 	if _, err := c.query(context.Background(), "q"); !errors.As(err, &status) || status.Code != 400 || b != 0 {
 		t.Fatalf("err = %v, mirror asked %d times", err, b)
-	}
-}
-
-func TestCacheMakesRoom(t *testing.T) {
-	c := NewCache(time.Hour, 2)
-	c.put("a", nil)
-	c.put("b", nil)
-	c.put("c", nil)
-	if _, ok := c.get("a"); ok {
-		t.Error("the oldest answer was kept")
-	}
-	if _, ok := c.get("c"); !ok {
-		t.Error("the newest answer was dropped")
 	}
 }
 
