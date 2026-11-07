@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+import { Combine, Plus } from "lucide-react";
+import { useState } from "react";
 import type { CombinedData } from "@/api/photos";
 import { legacyTripIds, photosBetween, type Trip, trips } from "@/api/trips";
+import { CombineBar } from "@/components/trips/combine-trips";
 import { dayRange } from "@/components/trips/day-range";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +17,9 @@ export function TripsPanel({ data }: { data: CombinedData }) {
   const all = trips(data);
   const photos = shownPhotos(data);
   const legacy = legacyTripIds(data);
+  // The IDs of the Trips picked to combine, or undefined while not combining.
+  const [picked, setPicked] = useState<Set<string>>();
+  const toggle = (id: string) => setPicked(toggled(picked ?? new Set(), id));
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -22,13 +27,31 @@ export function TripsPanel({ data }: { data: CombinedData }) {
           A Trip names a run of days on the Timeline, adds the legs between them, such as a ferry or
           a flight, and gathers its days' stories into its Trip page.
         </p>
-        <Button asChild variant="outline" size="sm">
-          <Link to="/trip-lines/trips/$id" params={{ id: NEW_TRIP_ID }}>
-            <Plus />
-            New Trip
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={picked !== undefined || all.length < 2}
+            onClick={() => setPicked(new Set())}
+          >
+            <Combine />
+            Combine Trips
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link to="/trip-lines/trips/$id" params={{ id: NEW_TRIP_ID }}>
+              <Plus />
+              New Trip
+            </Link>
+          </Button>
+        </div>
       </div>
+      {picked && (
+        <CombineBar
+          picked={all.filter((t) => picked.has(t.id))}
+          all={all}
+          onCancel={() => setPicked(undefined)}
+        />
+      )}
       {all.length === 0 && <p className="text-muted-foreground text-sm">No Trips yet.</p>}
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {all.map((trip) => (
@@ -37,12 +60,26 @@ export function TripsPanel({ data }: { data: CombinedData }) {
               trip={trip}
               photos={photosBetween(photos, trip.start, trip.end)}
               legacy={legacy.has(trip.id)}
+              picked={picked && { on: picked.has(trip.id), toggle: () => toggle(trip.id) }}
             />
           </li>
         ))}
       </ul>
     </div>
   );
+}
+
+/** The set with the ID added, or taken out when it's there. */
+function toggled(set: Set<string>, id: string): Set<string> {
+  const next = new Set(set);
+  if (!next.delete(id)) next.add(id);
+  return next;
+}
+
+/** "2 labels: Korea, Japan"; "" with none. */
+function labelsText(trip: Trip): string {
+  if (trip.labels.length === 0) return "";
+  return `Labels: ${trip.labels.map((l) => l.name).join(", ")}`;
 }
 
 /** "2 legs"; "No legs" with none. */
@@ -61,32 +98,50 @@ interface TripCardProps {
   photos: number;
   /** Whether it's still in the trip lines folder from before, so the Timeline doesn't show it yet. */
   legacy: boolean;
+  /** While combining, whether it's picked and how to pick it; the card then picks rather than links. */
+  picked?: { on: boolean; toggle: () => void };
 }
 
-/** One Trip on the tab: its name, days, legs and photos, linking to its page. */
-function TripCard({ trip, photos, legacy }: TripCardProps) {
+const CARD_LINK = "hover:ring-ring block h-full w-full rounded-xl text-left hover:ring-2";
+
+/** One Trip on the tab, linking to its page, or picking it while combining. */
+function TripCard({ picked, ...props }: TripCardProps) {
+  if (picked) {
+    return (
+      <button
+        type="button"
+        aria-pressed={picked.on}
+        onClick={picked.toggle}
+        className={`${CARD_LINK} ${picked.on ? "ring-primary ring-2" : ""}`}
+      >
+        <TripCardBody {...props} />
+      </button>
+    );
+  }
   return (
-    <Link
-      to="/trip-lines/trips/$id"
-      params={{ id: trip.id }}
-      className="hover:ring-ring block h-full rounded-xl hover:ring-2"
-    >
-      <Card className="h-full">
-        <CardHeader>
-          <CardTitle>{trip.name}</CardTitle>
-          <CardDescription className="flex flex-col gap-0.5">
-            <span>{dayRange(trip.start, trip.end)}</span>
-            <span>
-              {photosText(photos)} · {legsText(trip.legs.length)}
-            </span>
-            {legacy && (
-              <span className="text-amber-700 dark:text-amber-400">
-                Save to show on the Timeline
-              </span>
-            )}
-          </CardDescription>
-        </CardHeader>
-      </Card>
+    <Link to="/trip-lines/trips/$id" params={{ id: props.trip.id }} className={CARD_LINK}>
+      <TripCardBody {...props} />
     </Link>
+  );
+}
+
+/** A Trip's name, days, photos and legs, and its timeline labels. */
+function TripCardBody({ trip, photos, legacy }: Omit<TripCardProps, "picked">) {
+  return (
+    <Card className="h-full">
+      <CardHeader>
+        <CardTitle>{trip.name}</CardTitle>
+        <CardDescription className="flex flex-col gap-0.5">
+          <span>{dayRange(trip.start, trip.end)}</span>
+          <span>
+            {photosText(photos)} · {legsText(trip.legs.length)}
+          </span>
+          {trip.labels.length > 0 && <span>{labelsText(trip)}</span>}
+          {legacy && (
+            <span className="text-amber-700 dark:text-amber-400">Save to show on the Timeline</span>
+          )}
+        </CardDescription>
+      </CardHeader>
+    </Card>
   );
 }

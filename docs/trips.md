@@ -21,6 +21,40 @@ legs, and its file didn't change.
 > the Timeline checks each day heading against while rendering. Its legs are like a layout route wrapping several
 > pages: each day still renders its own line, and the Trip only adds what sits between them.
 
+## Timeline labels within a Trip
+
+A Trip can name parts of itself on the Timeline: a "Korea and Japan" Trip from September 12 to October 2 with the
+label **Korea** on September 12 to 21 and **Japan** on September 22 to October 2. The Timeline shows the label of each
+day in place of the Trip's name, and a day no label covers shows the Trip's name. The Trip stays one Trip everywhere
+else: one Trip page for its days' stories, one set of legs, one Smart Album rule.
+
+Under its name and days, a Trip's page lists its **Timeline labels**: each one's name, and a row of the Trip's own
+days to pick its days from. A click picks the first day and a second click the last (the same day again for a
+one-day label), and a shift-click picks every day from the last one clicked to it; days another label has are
+struck out. **Add a timeline label** starts a new one the day after the
+last label ends. Labels can't share a day, and must be within the Trip.
+
+> **Frontend analogy:** like a date range picker whose calendar only shows the Trip's days.
+
+## Combining Trips
+
+**Combine Trips** on the Trips tab turns the cards into ones to pick. Pick two or more, check the combined Trip's name
+(their names joined with "and", oldest first), and **Combine N Trips** saves one Trip in their place and opens its
+page (`POST /api/trips/combine` → `POST /trips/combine`, `be-pipeline/internal/github/trips_combine.go`):
+
+- Its days run from the earliest first day to the latest last day, and it has all their legs.
+- Each Trip it combines becomes a timeline label on that Trip's days, or keeps its own labels when it has some, so the
+  Timeline reads the same as before.
+- It keeps the ID of the earliest Trip, so a Smart Album or link that used that one still works. Those that used the
+  others need their Trip picked again.
+- Its days' stories become one Trip page.
+
+The new file and the removal of the others are one save, a [change waiting for Commit](pending-changes.md). Combining
+fails when another Trip falls within the combined days (pick it too), or when the Trips' labels would share a day.
+
+> **Frontend analogy:** combining is like merging several list items into one, with each old item kept as a
+> sub-item, in one state update rather than a delete followed by an add, so nothing renders half done.
+
 ## The file
 
 Each Trip is one file, `timeline/<id>.json`, and **Commit** combines them into `timeline/TIMELINE.json` the way it
@@ -52,6 +86,8 @@ combines the metadata groups into `METAINFO.json` (`be-pipeline/internal/github/
 
 - **`start`** and **`end`** are the first and last days the Trip covers, both included, written `YYYY-MM-DD`. A
   photo's day is the day of its custom date, or else its EXIF date, as the Timeline groups it.
+- **`labels`** are the [timeline labels within it](#timeline-labels-within-a-trip), each `{ "name", "start", "end" }`,
+  left out when there are none.
 - **`legs`** are left out when there are none, as a timeline label was written. Each end has its `day`, and either a
   `spot` with no photo or the ID of the day's `photo` it leaves from or arrives at; with neither, it's the day's last
   photo with an exact spot where it leaves and its first where it arrives. A `photo` that isn't from that day, or has

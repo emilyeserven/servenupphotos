@@ -41,3 +41,29 @@ func handleDeleteTrip(store *settings.Store, gh *github.Client) http.HandlerFunc
 		writeSocialResult(w, result, err, "could not remove the Trip")
 	}
 }
+
+// combineBody is what combining Trips sends: the combined Trip, and the IDs
+// of the Trips it replaces.
+type combineBody struct {
+	Trip github.Trip `json:"trip"`
+	IDs  []string    `json:"ids"`
+}
+
+// handleCombineTrips saves the body's Trip in place of the Trips it names,
+// as one change waiting for Commit.
+func handleCombineTrips(store *settings.Store, gh *github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var body combineBody
+		if !decodeEntryUpTo(w, r, &body, "Trip", maxTripLineBytes) {
+			return
+		}
+		cfg, ok := githubSettings(w, store)
+		if !ok {
+			return
+		}
+		ctx, cancel := context.WithTimeout(r.Context(), publishTimeout)
+		defer cancel()
+		result, err := gh.CombineTrips(ctx, cfg, body.Trip, body.IDs)
+		writeSocialResult(w, result, err, "could not combine the Trips")
+	}
+}

@@ -13,7 +13,7 @@ import { lineDays } from "@/lib/stale-trip-lines";
 import { useCombinedData } from "@/stores/combined-data";
 
 /** A new Trip with no name, days or legs yet. */
-const NEW_TRIP: Trip = { id: "", name: "", start: "", end: "", legs: [] };
+const NEW_TRIP: Trip = { id: "", name: "", start: "", end: "", legs: [], labels: [] };
 
 /** One Trip's page, from the Trip Lines page's Trips tab: its name, days and legs, and its days' lines. */
 export function TripPage({ id }: { id: string }) {

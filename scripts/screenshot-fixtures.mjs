@@ -1634,6 +1634,11 @@ export function defaultFixtures() {
       before: added.graphs[2].data,
       changed: true,
     }),
+    "POST /api/trips/combine": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/timeline/${body.trip.id}.json`,
+      data: body.trip,
+    }),
     "PUT /api/trips/japan-2026-09-22": ({ body }) => ({
       ...pendingSave(),
       path: `${FOLDER}/timeline/japan-2026-09-22.json`,
