@@ -14,6 +14,7 @@ import { hiddenText } from "@portfolio/components/hidden-note";
 import { MoreFilters } from "@portfolio/components/more-filters";
 import { PhotoSearchBox } from "@portfolio/components/photo-search-box";
 import { PlacesFilter } from "@portfolio/components/places-filter";
+import { WhenFilter } from "@portfolio/components/when-filter";
 import { useScriptDisplay } from "@portfolio/components/script-display-provider";
 import { Button } from "@portfolio/components/ui/button";
 import {
@@ -304,6 +305,7 @@ function GroupDropdowns({ facet, filters, setFilters }: DropdownProps) {
           onChange={(selected) => choose(["genre"], filterOf(selected))}
         />
       )}
+      <WhenFilter facet={facet} filters={filters} setFilters={setFilters} />
     </>
   );
 }

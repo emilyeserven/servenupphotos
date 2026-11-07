@@ -1,5 +1,13 @@
 import { albumAndSubAlbums, tagAndSubTags } from "@portfolio/lib/groups";
 import type { Photo } from "@portfolio/lib/photos";
+import {
+  matchesWhen,
+  parseWhen,
+  WHEN_KEYS,
+  type WhenFilters,
+  type WhenKey,
+  whenCount,
+} from "@portfolio/lib/when-filters";
 
 /** The location filter's keys: countries, cities (by their English names) and places (by their IDs). */
 export const LOCATION_KEYS = ["country", "state", "city", "place"] as const;
@@ -15,10 +23,11 @@ type GroupKey = (typeof GROUP_KEYS)[number];
 export type FilterKey = LocationKey | GroupKey;
 
 /**
- * Every filter as it's named in the URL: the location, album, tag and genre filters, and `ids`, the
+ * Every filter as it's named in the URL: the location, album, tag and genre filters, the "when"
+ * filters (months, days of the week, hours and a date range, see `when-filters.ts`), and `ids`, the
  * photos chosen one by one, as the map's **View in grid** sets when no place covers just its photos.
  */
-export const FILTER_KEYS = [...LOCATION_KEYS, ...GROUP_KEYS, "ids"] as const;
+export const FILTER_KEYS = [...LOCATION_KEYS, ...GROUP_KEYS, ...WHEN_KEYS, "ids"] as const;
 
 /**
  * The filters every portfolio view shares, kept in the URL; each is left out when it isn't set.
@@ -27,7 +36,8 @@ export const FILTER_KEYS = [...LOCATION_KEYS, ...GROUP_KEYS, "ids"] as const;
  */
 export type PhotoFilters = Partial<
   Record<LocationKey, string | string[]> & Record<GroupKey, string> & { ids: number[] }
->;
+> &
+  WhenFilters;
 
 /** A location filter's values as a list, however many there are. */
 function locationValues(value: string | string[] | undefined): string[] {
@@ -57,7 +67,11 @@ export function parseFilters(search: Record<string, unknown>): PhotoFilters {
     const value = search[key];
     return typeof value === "string" && value !== "" ? [[key, value]] : [];
   });
-  return { ...Object.fromEntries([...locations, ...groups]), ...idsOf(search.ids) };
+  return {
+    ...Object.fromEntries([...locations, ...groups]),
+    ...parseWhen(search),
+    ...idsOf(search.ids),
+  };
 }
 
 /** The photos chosen one by one in the URL, left out when there are none. */
@@ -78,7 +92,7 @@ export function hasFilters(filters: PhotoFilters): boolean {
 export function filterCount(filters: PhotoFilters): number {
   const locations = LOCATION_KEYS.flatMap((key) => locationValues(filters[key])).length;
   const groups = GROUP_KEYS.filter((key) => filters[key] !== undefined).length;
-  return locations + groups + (filters.ids ? 1 : 0);
+  return locations + groups + whenCount(filters) + (filters.ids ? 1 : 0);
 }
 
 /** Whether the photo is in the album with the ID or one of its sub-albums. */
@@ -127,6 +141,7 @@ export function matchesFilters(photo: Photo, filters: PhotoFilters): boolean {
   return (
     matchesIds(photo, filters.ids) &&
     matchesLocations(photo, filters) &&
+    matchesWhen(photo, filters) &&
     GROUP_KEYS.every((key) => {
       const value = filters[key];
       return value === undefined || MATCHES[key](photo, value);
@@ -142,10 +157,10 @@ export function filterPhotos<T extends Photo>(list: T[], filters: PhotoFilters):
 /** The filters with the ones named left out, so a filter's choices can count the photos the others leave. */
 export function withoutFilters(
   filters: PhotoFilters,
-  keys: readonly (FilterKey | "ids")[],
+  keys: readonly (FilterKey | WhenKey | "ids")[],
 ): PhotoFilters {
   return Object.fromEntries(
-    Object.entries(filters).filter(([key]) => !keys.includes(key as FilterKey)),
+    Object.entries(filters).filter(([key]) => !keys.includes(key as FilterKey | WhenKey)),
   );
 }
 

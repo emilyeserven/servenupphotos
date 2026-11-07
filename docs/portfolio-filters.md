@@ -1,7 +1,7 @@
 # Portfolio Filters
 
-The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens three
-filters that narrow the photos they show: **Places**, **Album**, **Tag** and **Genre** (**Hide filters** closes them again). The
+The Grid and Timeline also have a [text search](#text-search) box. The portfolio's Timeline, Map and Grid each have a **Show filters** button under their title, which opens
+filters that narrow the photos they show: **Places**, **Album**, **Tag**, **Genre** and [When](#when) (**Hide filters** closes them again). The
 Grid also has the camera filters (see [Camera filters](#camera-filters)), in each of its views, including the Table. The Grid's panel also has a **Colors** section, the Color page's color filters (see
 [Portfolio Color](portfolio-color.md#on-the-grid-page)).
 The dropdowns start hidden on each view; while filters are set, the button shows how many, and **Clear filters** sits
@@ -77,6 +77,33 @@ shows the photos in it and in any album inside it. **Tag** lists every tag in `A
 out while there are no tags. **Genre** lists every [photographic genre](photographic-genres.md) in `ALLGENRES.json`, by
 name (`?genre=<id>`), and is likewise left out while there are none.
 
+## When
+
+A **When** button after **Genre**, on every view with filters (on the Map, under **More filters**), opens one picker
+for when the photos were taken (`components/when-filter.tsx`, `lib/when-filters.ts`), by the clock and calendar where
+each was taken, as a photo's capture time has no time zone. It picks one way at a time, each a tab, and choosing in one
+clears the others. Every button says how many photos it would show, given the other filters, and a choice with none is
+dimmed.
+
+- **Across all years** has a tab for each kind, and any number of one kind can be on: they show the photos in any of
+  them.
+  - **Seasons** (`?season=summer&season=winter`), as the northern hemisphere has them: Spring is March to May, and
+    Winter is December to February.
+  - **Months** (`?month=june&month=july`), in four columns headed by their season.
+  - **Days** of the week, Monday first (`?weekday=saturday&weekday=sunday`).
+  - **Hours** (`?hour=17&hour=18`, on a 24-hour clock), a row for each part of the day: Late night (12–5 AM), Early
+    morning, Morning, Afternoon, Evening and Night (9 PM–12 AM). A part's name turns all its hours on, or off once they
+    all are.
+- **Previous years**: the Timeline's [Quick dates](portfolio-timeline.md), this date, this month or this season in the
+  years before this one (`?when=month`).
+- **Date range**: a first and last day, both included (`?start=2024-03-01&end=2024-05-31`); either end can be left open.
+
+On the Timeline, which has its own time range and Quick dates, the picker only has **Across all years**, and the
+Timeline's chart leaves out the Quick dates choice as it does its range.
+
+> **Frontend analogy:** each kind is a multi-select checkbox group kept as repeated search params, like
+> `?tag=a&tag=b`, and the tabs are radio buttons over which group is in use.
+
 ## Camera filters
 
 The Grid's filters panel also has **Camera** and **Lens** dropdowns (`?camera=Fujifilm X-T5`,
@@ -87,11 +114,7 @@ The URL changes once a handle is let go, keeping the range's ends as the photos 
 `?exposure=1/500-1/30`, `?focalLength=18-50`, `?aperture=4-5.6`); dragging both handles back to the ends clears it. A
 photo without the setting isn't in any range.
 
-A **Time of day** slider sits after them, stepping through each hour of the day a portfolio photo was taken in, and says
-the range as clock times, from the start of the first hour to the end of the last, such as "6 AM – 7 PM"
-(`?time=6-18`, the hours on a 24-hour clock). The time is the clock where the photo was taken, as its custom or EXIF date
-writes it, so a photo taken at 7 PM in Seoul is a 7 PM photo wherever it's viewed. A range can't wrap past midnight;
-pick the evening and early morning hours separately.
+The hours of the day are in the [When](#when) picker, which every view with filters has.
 
 **Orientation** sits after the sliders: a horizontal and a vertical rectangle button, each with how many photos the
 other filters leave have that orientation. Clicking one shows only the photos wider than they're tall
