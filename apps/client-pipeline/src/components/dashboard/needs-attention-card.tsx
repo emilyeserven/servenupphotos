@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRightIcon, CircleCheckIcon } from "lucide-react";
 import { type ReactNode, useMemo } from "react";
-import type { SocialCalendar } from "@/api/publish";
+import { type SocialCalendar, attentionQuery } from "@/api/publish";
 import {
   type AttentionRow,
   NeedsAttentionTable,
@@ -18,7 +18,7 @@ import {
   instagramShortBy,
   photoProblems,
 } from "@/lib/needs-attention";
-import { useChangedPhotoFiles } from "@/stores/combined-data";
+import { useChangedPhotoFiles, useCombinedDataStore } from "@/stores/combined-data";
 
 /** What each photo problem says, and the page that fixes it. */
 const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => ReactNode }> = {
@@ -84,6 +84,7 @@ const PROBLEMS: Record<PhotoProblem, { label: string; fix: (first: string) => Re
  * first.
  */
 export function NeedsAttentionCard() {
+  const lastCommit = useCombinedDataStore((state) => state.lastCommit);
   return (
     <Card>
       <CardHeader>
@@ -91,7 +92,9 @@ export function NeedsAttentionCard() {
         <CardDescription>From the photo files, with changes not committed yet.</CardDescription>
       </CardHeader>
       <CardContent>
-        <PhotoFiles>{(calendar) => <Problems calendar={calendar} />}</PhotoFiles>
+        <PhotoFiles query={attentionQuery(lastCommit?.commitSha)}>
+          {(calendar) => <Problems calendar={calendar} />}
+        </PhotoFiles>
       </CardContent>
     </Card>
   );
