@@ -32,7 +32,8 @@ type tripLineGeometry struct {
 }
 
 // tripLineProps say what a line is: its day and mode, the photos it goes
-// through, how long it is, and the labels of its spots with no photo.
+// through, how long it is, the labels of its spots with no photo, and the
+// transit line it rode.
 type tripLineProps struct {
 	Day    string  `json:"day"`
 	Mode   string  `json:"mode"`
@@ -41,6 +42,11 @@ type tripLineProps struct {
 	Km     float64 `json:"km"`
 	Start  string  `json:"start,omitempty"`
 	End    string  `json:"end,omitempty"`
+	// Line names the bus, subway or train line a hop rode, Ref is its number
+	// and Colour its color; all "" when none was picked.
+	Line   string `json:"line,omitempty"`
+	Ref    string `json:"ref,omitempty"`
+	Colour string `json:"colour,omitempty"`
 }
 
 // addTripLinesMap bakes TripLinesMapFile from the trip line and photo files
@@ -87,9 +93,7 @@ func bakeTripLines(lines []TripLine, spots map[int]tripSpot) tripLinesMap {
 			segments = autoSegments(spotsOn(day, line.Day))
 		}
 		for _, seg := range segments {
-			if f, ok := segmentFeature(line, seg, day); ok {
-				m.Features = append(m.Features, f)
-			}
+			m.Features = append(m.Features, segmentFeatures(line, seg, day)...)
 		}
 	}
 	return m
@@ -103,11 +107,13 @@ func segmentFeature(line TripLine, seg TripSegment, spots map[int]tripSpot) (tri
 	if len(coords) < 2 {
 		return tripLineFeature{}, false
 	}
+	coords = rideEnds(seg, coords)
 	if pathFits(seg.Path, coords) {
 		coords = seg.Path
 	}
 	props := tripLineProps{Day: line.Day, Mode: seg.Mode, Auto: line.Auto, Photos: photos, Km: lineKm(coords)}
 	props.Start, props.End = labelOf(seg.Start), labelOf(seg.End)
+	props.Line, props.Ref, props.Colour = lineProps(seg.Line)
 	return tripLineFeature{Type: "Feature", Geometry: tripLineGeometry{Type: "LineString", Coordinates: coords}, Properties: props}, true
 }
 

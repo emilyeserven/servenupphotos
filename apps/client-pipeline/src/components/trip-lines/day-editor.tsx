@@ -10,6 +10,7 @@ import {
 } from "@/api/trip-lines";
 import { EditorActions, type EditorView } from "@/components/trip-lines/editor-actions";
 import { type EndKey, EndSpots } from "@/components/trip-lines/end-spots";
+import { HopLines } from "@/components/trip-lines/hop-lines";
 import { PhotoStrip } from "@/components/trip-lines/photo-strip";
 import { RouteMap } from "@/components/trip-lines/route-map";
 import { ShapeTools } from "@/components/trip-lines/shape-tools";
@@ -49,7 +50,9 @@ function stripGaps(ids: number[], view: EditorView, segments: TripSegment[]): Ga
 
 /** The spots with no photo the view draws. */
 function endsOf(segments: TripSegment[]): TripPoint[] {
-  return segments.flatMap((s) => [s.start, s.end].filter((p) => p !== undefined));
+  return segments.flatMap((s) =>
+    [s.start, s.end, s.board, s.alight].filter((p) => p !== undefined),
+  );
 }
 
 /** Edits one day's trip line: the photo strip, the map, and saving. */
@@ -151,6 +154,7 @@ function HandMap({ day, draft, segments, highlighted, onChange }: HandMapProps) 
         addingVia={addingVia}
         onAddingVia={setAddingVia}
       />
+      <HopLines photos={day.photos} draft={draft} segments={segments} onChange={onChange} />
       <EndSpots draft={draft} onChange={onChange} picking={picking} onPicking={setPicking} />
     </>
   );

@@ -50,10 +50,19 @@ type TripSegment struct {
 	// Via are spots the line goes through between its photos, to shape it.
 	Via []TripVia `json:"via,omitempty"`
 	// Path is the line along streets through the segment's points, each
-	// [longitude, latitude], found by Snap to streets (see RouteTripLine);
-	// none for a train or subway, or before it's snapped, which draws it
+	// [longitude, latitude], found by Snap to streets (see RouteTripLine), or
+	// a hop's track along its Line; none before either, which draws it
 	// straight through the points.
 	Path [][2]float64 `json:"path,omitempty"`
+	// Line is the bus, subway or train line a hop rode, picked from the ones
+	// OpenStreetMap maps; nil when not picked.
+	Line *TripTransitLine `json:"line,omitempty"`
+	// Board and Alight are the station or stop a hop with a Line got on and
+	// off at, when away from its photos, such as a station a 10-minute walk
+	// from the next photo: the line rides between them, with a walk from
+	// the first photo and to the last one. Nil rides from or to the photo.
+	Board  *TripPoint `json:"board,omitempty"`
+	Alight *TripPoint `json:"alight,omitempty"`
 }
 
 // TripVia is a spot a segment's line goes through to shape it, such as a
@@ -189,8 +198,8 @@ func validTripSegment(seg TripSegment, n int) (TripSegment, *PublishError) {
 	if perr := validVia(seg, n); perr != nil {
 		return seg, perr
 	}
-	if !streetModes[seg.Mode] {
-		seg.Path = nil
+	if perr := trimLine(&seg, n); perr != nil {
+		return seg, perr
 	}
 	return seg, repeatedPhoto(seg, n)
 }

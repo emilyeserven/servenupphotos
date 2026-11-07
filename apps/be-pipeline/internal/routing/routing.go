@@ -17,8 +17,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
+
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/throttle"
 )
 
 // DefaultURL is the FOSSGIS routing servers' address.
@@ -39,11 +40,8 @@ type Client struct {
 	// BaseURL is the server's address, without a trailing slash.
 	BaseURL string
 	HTTP    *http.Client
-	// Gap is the least time between two requests, as the server asks.
-	Gap time.Duration
-
-	mu   sync.Mutex
-	last time.Time
+	// Gate spaces requests out, as the server asks.
+	Gate throttle.Gate
 }
 
 // New is a client for ROUTING_URL, or else DefaultURL.
@@ -52,7 +50,7 @@ func New() *Client {
 	if base == "" {
 		base = DefaultURL
 	}
-	return &Client{BaseURL: base, HTTP: &http.Client{Timeout: 15 * time.Second}, Gap: time.Second}
+	return &Client{BaseURL: base, HTTP: &http.Client{Timeout: 15 * time.Second}, Gate: throttle.Gate{Gap: time.Second}}
 }
 
 // Routes reports whether mode, such as "walk", is routed along streets.
@@ -71,28 +69,10 @@ func (c *Client) Path(ctx context.Context, mode string, points [][2]float64) ([]
 	if len(points) < 2 || len(points) > maxPoints {
 		return nil, fmt.Errorf("can route through 2 to %d spots, not %d", maxPoints, len(points))
 	}
-	if err := c.wait(ctx); err != nil {
+	if err := c.Gate.Wait(ctx); err != nil {
 		return nil, err
 	}
 	return c.fetch(ctx, c.BaseURL+"/"+profile+"/route/v1/driving/"+coordinates(points)+"?overview=full&geometries=geojson")
-}
-
-// wait holds a request until Gap has passed since the last one.
-func (c *Client) wait(ctx context.Context) error {
-	c.mu.Lock()
-	next := c.last.Add(c.Gap)
-	now := time.Now()
-	if next.Before(now) {
-		next = now
-	}
-	c.last = next
-	c.mu.Unlock()
-	select {
-	case <-time.After(time.Until(next)):
-		return nil
-	case <-ctx.Done():
-		return ctx.Err()
-	}
 }
 
 // coordinates writes points as OSRM's path does: "lng,lat;lng,lat".

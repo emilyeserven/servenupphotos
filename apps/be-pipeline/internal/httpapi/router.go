@@ -13,6 +13,7 @@ import (
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/routing"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/settings"
 	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/storage"
+	"github.com/emilyeserven/servenupphotos/apps/be-pipeline/internal/transit"
 )
 
 // NewRouter returns the HTTP handler for all be-pipeline routes. extractor may be
@@ -84,6 +85,9 @@ type routeDeps struct {
 	// route finds the path along streets of a trip line's walks and drives,
 	// from the OpenStreetMap routing servers (see routing.New).
 	route github.RouteFunc
+	// transit looks up the bus, subway and train lines a hop can ride, and
+	// their tracks, from OpenStreetMap through Overpass (see transit.New).
+	transit transitFinder
 }
 
 // newRouteDeps is what the routes are built from, with the offline copy in
@@ -103,6 +107,7 @@ func newRouteDeps(extractor exif.Extractor, store *settings.Store, gh *github.Cl
 		offline:    kept,
 		findPhotos: findPhotosFunc(kept.Find(storage.FindPhotos)),
 		route:      routing.New().Path,
+		transit:    transit.New(),
 	}
 }
 

@@ -39,7 +39,12 @@ Each day with a line is one file, `triplines/<YYYY-MM-DD>.json`, and **Commit** 
 - **`via`** lists spots with no photo the line bends through, each with the photo it comes `after` (none for right
   after `start`). See [Shaping the line](#shaping-the-line-and-snapping-it-to-streets).
 - **`path`** is a walk, bus or car segment's line along the streets, as `[longitude, latitude]` pairs, from **Snap to
-  streets**. Other modes never keep one.
+  streets**, or a hop's track along its `line`. A train, subway or transit hop keeps one only with a line.
+- **`line`** is the bus, subway or train line a hop rode, picked under [Lines ridden](#lines-ridden):
+  `{ "id": 1234, "name": "Midosuji Line", "ref": "M", "colour": "#e5171f" }`, where `id` is the OpenStreetMap route
+  relation. Only train, subway, bus and transit hops keep one.
+- **`board`** and **`alight`** are the station or stop a hop with a `line` got on and off at, with its name as the
+  `label`, when that isn't at the photo: say the subway was left and then a 10-minute walk led to the next photo.
 - **`auto: true`** with no segments turns on the [automatic line](#the-automatic-line).
 
 A photo in a line must be from that day (its [custom date](data-model.md#date-taken), or else its EXIF date) and have
@@ -73,6 +78,12 @@ segment, coordinates filled in from the photos:
   }
 }
 ```
+
+A hop with a `board` or `alight` station also gets a walk feature from its first photo to where it got on, and from
+where it got off to its last photo.
+
+Each feature also has `line`, `ref` and `colour` when its hop rode a picked line, so the portfolio can draw it in the
+line's color and name it.
 
 A segment with a `path` is drawn along it, as long as the path still starts and ends within 300 m of the segment's first
 and last points; otherwise (say a photo's GPS position was fixed since) it falls back to straight lines through its
@@ -136,6 +147,40 @@ one run locally.
 > **Frontend analogy:** via points are like the control points of an SVG path you drag around in a design tool, and
 > Snap to streets is a debounced `fetch` that swaps the rough path for a precise one. The backend's one-a-second wait is
 > a throttle on that fetch, shared by every caller.
+
+## Lines ridden
+
+Under the map, **Lines ridden** lists each train, subway, bus or transit hop of a line drawn by hand. A hop with no line
+yet looks up its lines at once: the ones of its kind that pass within 500 m of both of its photos (a transit hop of
+unknown kind looks for every kind). Each is a [route relation](https://wiki.openstreetmap.org/wiki/Relation:route),
+usually one direction of one line, listed with its number, color and ends. When everything found is one line (say,
+its two directions), it's picked by itself; otherwise pick one. When the lines found are of more than one kind, as for a
+transit hop, **Bus**, **Subway** and **Train** (and **Other**, such as a ferry) show only that kind. Subway covers light
+rail, monorails and trams. **Change line** looks again.
+
+Picking a line gets its stations or stops and sets **Got on at** and **Got off at** to the ones nearest each photo.
+Either can be changed to another station, such as one a walk away from the next photo, or to **At the photo**. The
+hop is drawn along the line's track between them, solid in the line's color, with a walk from the first photo to where
+it got on and from where it got off to the next photo. **Clear** goes back to the straight dashed hop, and **Save
+route** keeps the line, the stations and the track.
+
+- `GET /api/transit/lines?mode=subway&from=<lng,lat>&to=<lng,lat>` answers the lines found.
+- `GET /api/transit/lines/<id>/stops` answers the line's stations or stops in order, each with its `name`,
+  `latitude` and `longitude` (its `stop` members, or else its platforms).
+- `GET /api/transit/lines/<id>/track?from=…&to=…` answers `{ "path": [...] }`. It's the shortest way along the line's
+  mapped ways between the points on it nearest each photo, so it works whichever way the ways were drawn. It fails
+  with 422 when the line's track doesn't join the two spots.
+
+Both ask the [Overpass API](https://wiki.openstreetmap.org/wiki/Overpass_API) at `overpass-api.de`, which asks for
+light use, so `be-pipeline/internal/transit` spaces its requests a second apart, through the same throttle as the
+routing servers. `OVERPASS_URL` points it at another Overpass server.
+
+> **Frontend analogy:** a route relation is like a named SVG `<path>` in a sprite sheet, such as `#midosuji-line`.
+> Find lines searches the sheet for paths that pass near both photos, and picking one clips that path between them.
+
+A hop's line is kept with the mode it was picked for. Changing the hop to another kind of travel leaves the line out,
+and changing it back before saving brings it back. The walks to and from the stations are straight lines; Snap to streets
+doesn't route them.
 
 The page reads the day files from the [combined data store](combined-data-store.md)'s `TRIPLINES.json` with the
 changes since made over it, so a saved line shows at once.

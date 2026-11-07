@@ -1,4 +1,4 @@
-import type { TripMode, TripPoint, TripSegment, TripVia } from "@/api/trip-lines";
+import type { TripMode, TripPoint, TripSegment, TripTransitLine, TripVia } from "@/api/trip-lines";
 
 /**
  * What happened between two photos taken one after the other: kept walking, a break (the line
@@ -23,6 +23,21 @@ export interface GapDraft {
   via?: Record<ViaKey, TripPoint[]>;
   /** Each segment's path along streets, by segmentKey, kept while the segment is unchanged. */
   paths?: Record<string, Path>;
+  /**
+   * The line each hop rode, by the ID of the photo it starts from, with the hop's mode then: a hop
+   * changed to another mode leaves it out.
+   */
+  lines?: Record<string, HopLine>;
+}
+
+/** The line a hop rode, and how the hop was travelled when it was picked. */
+export interface HopLine {
+  mode: Gap;
+  line: TripTransitLine;
+  /** The station it got on at, when not at the photo. */
+  board?: TripPoint;
+  /** The station it got off at, when not at the next photo. */
+  alight?: TripPoint;
 }
 
 /** One run of photos walked through, with the spots before, between and after them. */
@@ -71,6 +86,18 @@ function lastRun(run: Run, draft: GapDraft): Run {
   return { ...run, end: draft.end, via: [...run.via, ...viaOf(draft, String(run.photos.at(-1)))] };
 }
 
+/** A hop's line and stations as its segment lists them, leaving out the stations it doesn't have. */
+function rideFields({ line, board, alight }: Omit<HopLine, "mode">): Omit<HopLine, "mode"> {
+  return { line, ...(board && { board }), ...(alight && { alight }) };
+}
+
+/** The hop from photo a to b, with its via spots, and its line when one was picked for its mode. */
+function hopSegment(draft: GapDraft, gap: Exclude<Gap, "walk" | "break">, a: number, b: number) {
+  const picked = draft.lines?.[String(a)];
+  const line = picked?.mode === gap ? rideFields(picked) : {};
+  return { mode: gap, photos: [a, b], ...withPoints({ via: viaOf(draft, String(a)) }), ...line };
+}
+
 /** The segments the gaps make between photos, taken one after the other, without their paths. */
 function plainSegments(photos: number[], draft: GapDraft): TripSegment[] {
   const segments: TripSegment[] = [];
@@ -83,8 +110,7 @@ function plainSegments(photos: number[], draft: GapDraft): TripSegment[] {
       return;
     }
     segments.push(...walkSegment(run));
-    if (gap !== "break")
-      segments.push({ mode: gap, photos: [a, b], ...withPoints({ via: viaOf(draft, String(a)) }) });
+    if (gap !== "break") segments.push(hopSegment(draft, gap, a, b));
     run = { photos: [b], via: [] };
   });
   return [...segments, ...walkSegment(lastRun(run, draft))];
@@ -95,10 +121,11 @@ function at(p: TripPoint | undefined): [number, number] | null {
   return p ? [p.latitude, p.longitude] : null;
 }
 
-/** What makes a segment's path: its mode and points, but not its spots' labels. */
-function segmentKey(s: TripSegment): string {
+/** What makes a segment's path: its mode, points and line, but not its spots' labels. */
+export function segmentKey(s: TripSegment): string {
   const via = (s.via ?? []).map((v) => [v.after ?? null, v.latitude, v.longitude]);
-  return JSON.stringify([s.mode, at(s.start), s.photos, at(s.end), via]);
+  const ride = [s.line?.id ?? null, at(s.board), at(s.alight)];
+  return JSON.stringify([s.mode, at(s.start), s.photos, at(s.end), via, ride]);
 }
 
 /** The segment with its path from the draft, when it has one. */
@@ -145,10 +172,22 @@ export function pathsOf(segments: TripSegment[]): Record<string, Path> {
   return Object.fromEntries(routed.map((s) => [segmentKey(s), s.path as Path]));
 }
 
+/** The lines the segments' hops rode, by the photo each hop starts from. */
+function linesOf(segments: TripSegment[]): Record<string, HopLine> {
+  const ridden = segments.filter((s) => s.line && s.photos.length > 0);
+  return Object.fromEntries(
+    ridden.map((s) => [
+      String(s.photos[0]),
+      { mode: s.mode as Gap, ...rideFields({ ...s, line: s.line! }) },
+    ]),
+  );
+}
+
 /** A saved trip line's segments as gaps between the photos, taken one after the other. */
 export function draftOf(photos: number[], segments: TripSegment[]): GapDraft {
   const gaps = photos.slice(1).map((b, i) => gapIn(segments, photos[i] as number, b));
-  return { gaps, ...dayEnds(segments), via: viaByKey(segments), paths: pathsOf(segments) };
+  const lines = linesOf(segments);
+  return { gaps, ...dayEnds(segments), via: viaByKey(segments), paths: pathsOf(segments), lines };
 }
 
 /** The draft with every gap kept walking: one line through all the photos. */
