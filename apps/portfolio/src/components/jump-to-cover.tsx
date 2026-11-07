@@ -29,7 +29,7 @@ function spotlight(element: Element) {
 }
 
 /**
- * The header spotlight's **Jump to Cover Image** button: it scrolls to the photo showing in the
+ * The header spotlight's **Jump to Cover Image** button, left of the site menu button: it scrolls to the photo showing in the
  * header on the page below, its Grid tile or Timeline row, and rings it. When the page doesn't
  * show it, filtered out or in a closed month, it opens the photo in the photo viewer instead.
  */
@@ -45,7 +45,8 @@ export function JumpToCover({ photo }: { photo: Photo | undefined }) {
     <button
       type="button"
       onClick={jump}
-      className="absolute right-4 bottom-16 z-10 flex items-center gap-1.5 rounded-md border border-white/30 bg-black/40 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm backdrop-blur-md transition-colors outline-none hover:bg-black/60 focus-visible:ring-[3px] focus-visible:ring-white/60"
+      // Beside the site menu button, which is fixed at the top right: 1rem in, 2.25rem wide, and a 0.5rem gap.
+      className="absolute top-4 right-15 z-10 flex h-9 items-center gap-1.5 rounded-md border border-white/30 bg-black/40 px-2.5 text-xs font-medium text-white shadow-sm backdrop-blur-md transition-colors outline-none hover:bg-black/60 focus-visible:ring-[3px] focus-visible:ring-white/60"
     >
       <ArrowDownToLine className="size-3.5" aria-hidden />
       Jump to Cover Image
