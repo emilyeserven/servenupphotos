@@ -1,8 +1,8 @@
-import { filterWithCamera } from "@/lib/camera-filters";
-import type { Photo } from "@/lib/photos";
-import type { GroupDef, StatGroup, StatRow } from "@/lib/stat-groups";
-import { SETTING_STATS } from "@/lib/graph-settings";
-import { STAT_SECTIONS } from "@/lib/stats";
+import { filterWithCamera } from "@portfolio/lib/camera-filters";
+import type { Photo } from "@portfolio/lib/photos";
+import type { GroupDef, StatGroup, StatRow } from "@portfolio/lib/stat-groups";
+import { SETTING_STATS } from "@portfolio/lib/graph-settings";
+import { STAT_SECTIONS } from "@portfolio/lib/stats";
 
 /** A stat a graph can be drawn by: one of the Numbers page's groups, such as Cameras or
  * Season, or a camera setting, such as Aperture. */

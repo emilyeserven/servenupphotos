@@ -45,6 +45,7 @@ function inFlightFiles(read: InFlightRead | undefined): CachedFile[] {
     read.timeline,
     read.likes,
     read.triplines,
+    read.graphs,
   ];
   return [...read.files, ...groups.flatMap((group) => group.files)];
 }
@@ -141,6 +142,7 @@ export function withChanges(data: CombinedData, changes: FileChange[]): Combined
       timeline: changedFile(head.timeline, of("timeline")),
       likes: changedFile(head.likes, of("likes")),
       triplines: changedFile(head.triplines, of("triplines")),
+      graphs: changedFile(head.graphs, of("graphs")),
     },
   };
 }
@@ -201,6 +203,7 @@ export interface PendingSummary {
   timeline: number;
   likes: number;
   triplines: number;
+  graphs: number;
   /** Saves whose files aren't known. */
   other: number;
 }
@@ -235,6 +238,7 @@ export function summarizeChanges(
     timeline: 0,
     likes: 0,
     triplines: 0,
+    graphs: 0,
     other: unknownChanges,
   };
   const byKey = new Map(checked.map((file) => [fileKey(file), file]));
@@ -281,6 +285,7 @@ export function pendingText(summary: PendingSummary): string {
     [summary.timeline, "timeline label"],
     [summary.likes, "user likes list"],
     [summary.triplines, "trip line"],
+    [summary.graphs, "graph preset"],
     [summary.other, "other save"],
   ]);
 }

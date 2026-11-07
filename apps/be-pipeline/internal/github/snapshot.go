@@ -12,7 +12,7 @@ import (
 
 // snapshot is every file directly in the data folder's subfolders (photos,
 // albums, tags, genres, places, localizations, metadata groups, camera overrides,
-// custom lenses, caption templates, timeline labels, viewer likes and trip lines) at one commit. A commit never
+// custom lenses, caption templates, timeline labels, viewer likes, trip lines and graph presets) at one commit. A commit never
 // changes, so a snapshot is read from GitHub once, with one GraphQL query, and
 // kept.
 type snapshot struct {
@@ -37,7 +37,7 @@ type snapFile struct {
 const snapshotFolders = `query($owner: String!, $name: String!, $commit: String!, $photos: String!, $albums: String!,
   $tags: String!, $genres: String!, $places: String!, $localizations: String!, $metainfo: String!, $cameras: String!,
   $lenses: String!, $captions: String!, $timeline: String!, $likes: String!,
-  $triplines: String!) {
+  $triplines: String!, $graphs: String!) {
   repository(owner: $owner, name: $name) {
     commit: object(expression: $commit) { ... on Commit { tree { oid } } }
     photos: object(expression: $photos) { ...files }
@@ -53,6 +53,7 @@ const snapshotFolders = `query($owner: String!, $name: String!, $commit: String!
     timeline: object(expression: $timeline) { ...files }
     likes: object(expression: $likes) { ...files }
     triplines: object(expression: $triplines) { ...files }
+    graphs: object(expression: $graphs) { ...files }
   }
 }
 `
@@ -99,6 +100,7 @@ type snapshotAnswer struct {
 		Timeline      treeAnswer `json:"timeline"`
 		Likes         treeAnswer `json:"likes"`
 		TripLines     treeAnswer `json:"triplines"`
+		Graphs        treeAnswer `json:"graphs"`
 	} `json:"repository"`
 }
 
@@ -110,6 +112,7 @@ func (a snapshotAnswer) folders() map[string]treeAnswer {
 		Places.Folder: r.Places, Localizations.Folder: r.Localizations, MetaInfo.Folder: r.MetaInfo,
 		Cameras.Folder: r.Cameras, Lenses.Folder: r.Lenses, Captions.Folder: r.Captions,
 		TimelineLabels.Folder: r.Timeline, ViewerLikesKind.Folder: r.Likes, TripLines.Folder: r.TripLines,
+		GraphPresets.Folder: r.Graphs,
 	}
 }
 

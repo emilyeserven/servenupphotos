@@ -1,4 +1,4 @@
-import type { Photo } from "@/lib/photos";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** One row of a group on the Stats page: a value, such as a camera, and how many photos have it. */
 export interface StatRow {

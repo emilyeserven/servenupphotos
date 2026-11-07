@@ -1,7 +1,7 @@
-import { type Bucket, type GroupDef, tally, valueGroup } from "@/lib/stat-groups";
-import { cameraOf, GEAR_GROUPS } from "@/lib/stats-gear";
-import { TIME_GROUPS } from "@/lib/stats-time";
-import type { Photo } from "@/lib/photos";
+import { type Bucket, type GroupDef, tally, valueGroup } from "@portfolio/lib/stat-groups";
+import { cameraOf, GEAR_GROUPS } from "@portfolio/lib/stats-gear";
+import { TIME_GROUPS } from "@portfolio/lib/stats-time";
+import type { Photo } from "@portfolio/lib/photos";
 
 /** A section of the Stats page, such as Gear, with how to make its groups. */
 export interface StatSection {

@@ -19,7 +19,8 @@ type GroupKey =
   | "captions"
   | "timeline"
   | "likes"
-  | "triplines";
+  | "triplines"
+  | "graphs";
 
 /** The kinds of data files listed after the photos, in order, with their headings. */
 const GROUPS: [GroupKey, string][] = [
@@ -35,6 +36,7 @@ const GROUPS: [GroupKey, string][] = [
   ["timeline", "Timeline labels"],
   ["likes", "User likes"],
   ["triplines", "Trip lines"],
+  ["graphs", "Graph presets"],
 ];
 
 interface GroupFilesProps {

@@ -5,10 +5,10 @@ import {
   type GroupVariant,
   type StatGroup,
   valueGroup,
-} from "@/lib/stat-groups";
-import { groupRange, parseRange, rangeValues } from "@/lib/camera-filters";
-import { groupTree, groupValues, type MetaGroup } from "@/lib/metadata-groups";
-import { type Photo, photos as allPhotos } from "@/lib/photos";
+} from "@portfolio/lib/stat-groups";
+import { groupRange, parseRange, rangeValues } from "@portfolio/lib/camera-filters";
+import { groupTree, groupValues, type MetaGroup } from "@portfolio/lib/metadata-groups";
+import { type Photo, photos as allPhotos } from "@portfolio/lib/photos";
 
 /** What the photos have for "no camera" in place of one. */
 const UNKNOWN_CAMERA = "Unknown camera";
