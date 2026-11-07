@@ -95,9 +95,11 @@ dimmed.
   - **Hours** (`?hour=17&hour=18`, on a 24-hour clock), a row for each part of the day: Late night (12–5 AM), Early
     morning, Morning, Afternoon, Evening and Night (9 PM–12 AM). A part's name turns all its hours on, or off once they
     all are.
-- **Date range**: a calendar, from the first to the last month a photo was taken in, opening on the chosen start or
-  the latest photo's month. The first click sets the first day and the second the last, both included
-  (`?start=2024-03-01&end=2024-05-31`).
+- **Date range**: two fields, **From** and **To** (`?start=2024-03-01&end=2024-05-31`, both days included). Each
+  shows its day, or "Any day" while that end is open, opens its own calendar when clicked, and has an X that clears
+  it. The calendars keep to the months a photo was taken in, open on the field's day or the latest photo's month, and
+  keep From on or before To. Clicking the month's name above a calendar swaps the days for every month over the years,
+  a row of twelve for each year, newest first, to jump straight to one.
 
 On the Timeline, which has its own time range and Quick dates, the picker only has **Across all years**.
 
