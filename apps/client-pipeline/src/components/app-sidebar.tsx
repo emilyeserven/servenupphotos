@@ -8,6 +8,7 @@ import {
   CameraIcon,
   Camera,
   DatabaseIcon,
+  FolderTreeIcon,
   HeartIcon,
   ImageIcon,
   LanguagesIcon,
@@ -64,6 +65,10 @@ export const navGroups = [
       { title: "Small Tags", url: "/small-tags", icon: TagIcon },
       { title: "Genres", url: "/genres", icon: ShapesIcon },
     ],
+  },
+  {
+    title: "Workflow",
+    items: [{ title: "Lightroom Albums", url: "/lightroom-albums", icon: FolderTreeIcon }],
   },
   {
     title: "Publish",

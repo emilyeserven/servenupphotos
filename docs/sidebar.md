@@ -1,6 +1,6 @@
 # Sidebar
 
-The pipeline's sidebar (`components/app-sidebar.tsx`) lists every page under its group (Pipeline, Organize, Publish,
+The pipeline's sidebar (`components/app-sidebar.tsx`) lists every page under its group (Pipeline, Organize, Workflow, Publish,
 Configuration), with the split **Upload** button at the top: its main part uploads one photo and its icon on the right, **Bulk Upload**, opens the
 Bulk Upload modal. The Bulk Upload page (`/bulk-upload`) has no sidebar link of its own; it's linked from the upload
 queue and the Photo page.

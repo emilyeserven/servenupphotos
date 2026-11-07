@@ -19,6 +19,7 @@ import { Route as ExifRouteImport } from './routes/exif'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as InFlightRouteImport } from './routes/in-flight'
 import { Route as InstagramRouteImport } from './routes/instagram'
+import { Route as LightroomAlbumsRouteImport } from './routes/lightroom-albums'
 import { Route as LocalizationsRouteImport } from './routes/localizations'
 import { Route as MetadataGroupsRouteImport } from './routes/metadata-groups'
 import { Route as PlacesRouteImport } from './routes/places'
@@ -86,6 +87,11 @@ const InFlightRoute = InFlightRouteImport.update({
 const InstagramRoute = InstagramRouteImport.update({
   id: '/instagram',
   path: '/instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LightroomAlbumsRoute = LightroomAlbumsRouteImport.update({
+  id: '/lightroom-albums',
+  path: '/lightroom-albums',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocalizationsRoute = LocalizationsRouteImport.update({
@@ -190,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/lightroom-albums': typeof LightroomAlbumsRoute
   '/localizations': typeof LocalizationsRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/lightroom-albums': typeof LightroomAlbumsRoute
   '/localizations': typeof LocalizationsRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/in-flight': typeof InFlightRoute
   '/instagram': typeof InstagramRoute
+  '/lightroom-albums': typeof LightroomAlbumsRoute
   '/localizations': typeof LocalizationsRoute
   '/metadata-groups': typeof MetadataGroupsRoute
   '/places': typeof PlacesRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
+    | '/lightroom-albums'
     | '/localizations'
     | '/metadata-groups'
     | '/places'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
+    | '/lightroom-albums'
     | '/localizations'
     | '/metadata-groups'
     | '/places'
@@ -341,6 +352,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/in-flight'
     | '/instagram'
+    | '/lightroom-albums'
     | '/localizations'
     | '/metadata-groups'
     | '/places'
@@ -372,6 +384,7 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   InFlightRoute: typeof InFlightRoute
   InstagramRoute: typeof InstagramRoute
+  LightroomAlbumsRoute: typeof LightroomAlbumsRoute
   LocalizationsRoute: typeof LocalizationsRoute
   MetadataGroupsRoute: typeof MetadataGroupsRoute
   PlacesRoute: typeof PlacesRoute
@@ -460,6 +473,13 @@ declare module '@tanstack/react-router' {
       path: '/instagram'
       fullPath: '/instagram'
       preLoaderRoute: typeof InstagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lightroom-albums': {
+      id: '/lightroom-albums'
+      path: '/lightroom-albums'
+      fullPath: '/lightroom-albums'
+      preLoaderRoute: typeof LightroomAlbumsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/localizations': {
@@ -616,6 +636,7 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   InFlightRoute: InFlightRoute,
   InstagramRoute: InstagramRoute,
+  LightroomAlbumsRoute: LightroomAlbumsRoute,
   LocalizationsRoute: LocalizationsRoute,
   MetadataGroupsRoute: MetadataGroupsRoute,
   PlacesRoute: PlacesRoute,
