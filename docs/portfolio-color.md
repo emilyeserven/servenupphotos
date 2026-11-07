@@ -112,11 +112,11 @@ in steps of 5 (`?vivid=20`), and the swatches' counts only count the photos it l
 
 ## On the Grid page
 
-The Grid's **Show filters** panel has a **Colors** button (`components/grid-color-filters.tsx`) after the camera
-filters, like **When** and **Camera**: closed, it shows only a dot of the picked color and how many color filters are
-set. It opens a picker (`components/color-picker-parts.tsx` has its sections) with a list on the left of **Color**,
-**Match** and **Vividness**, each with what it's set to under its name (such as "Blue", "At least 30%" or "Peak · 40+"),
-and **Clear colors** under them while any color filter is set. The right side shows the chosen section, with a line on
+The Grid's **Show filters** panel has a **Visuals** button (`components/visuals-picker.tsx`) after **Gear & settings**,
+like **When**: closed, it shows only a dot of the picked color and how many of its filters are set. It opens a picker
+(`components/visuals-picker-parts.tsx` has its sections) with a list on the left of **Color**, **Match**, **Vividness**
+and **Orientation**, each with what it's set to under its name (such as "Blue", "At least 30%", "Peak · 40+" or
+"Vertical"), and **Clear visuals** under them while any of them is set. The right side shows the chosen section, with a line on
 what it's for and, for Match and Vividness, what each choice does:
 
 - **Color**: the small swatches; picking the chosen one again clears it.
@@ -124,10 +124,13 @@ what it's for and, for Match and Vividness, what each choice does:
   share set on the slider, even when another color is bigger).
 - **Vividness**: **Average** (how vivid the whole photo is) or **Peak** (how vivid its most vivid tenth is), and the
   least of it a photo needs.
+- **Orientation**: the horizontal and vertical buttons (see
+  [Camera filters](portfolio-filters.md#camera-filters)), each counting the photos the color filters leave.
 
-The picker opens on Vividness when only it is set, and on Color otherwise. It stays open while you pick, and keeps 16px
+The picker opens on the first of Color, Vividness and Orientation that's set, and on Color when none is. The swatches
+count only the photos of the chosen orientation. It stays open while you pick, and keeps 16px
 from the screen's edges on a phone. It uses the same URL keys as above, counting the photos the Grid's other filters leave. Its
-color and vividness filters count toward the filter button's number, and **Clear filters** clears them. Photos without
+color, vividness and orientation filters count toward the filter button's number, and **Clear filters** clears them. Photos without
 saved colors don't match a color or a vividness above 0. With **Show info** on, each tile also shows its color bar
 (`components/color-bar.tsx`): each color as wide as its share, the biggest three named under it.
 

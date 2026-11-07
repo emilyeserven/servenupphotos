@@ -1,7 +1,7 @@
 import { useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { CameraFilterBar } from "@portfolio/components/camera-filters";
-import { GridColorFilters } from "@portfolio/components/grid-color-filters";
+import { VisualsPicker } from "@portfolio/components/visuals-picker";
 import { ScriptDisplayProvider } from "@portfolio/components/script-display-provider";
 import {
   CAMERA_FILTER_KEYS,
@@ -110,9 +110,12 @@ export function GridFilterBar({ photos }: { photos: Photo[] }) {
               keys: COLOR_FILTER_KEYS,
               count: colorFilterCount(parseColorFilters(search)),
               children: (
-                <GridColorFilters
-                  photos={filterWithCamera(photos, search)}
-                  filters={parseColorFilters(search)}
+                <VisualsPicker
+                  photos={filterWithCamera(photos, { ...search, orientation: undefined })}
+                  filters={{
+                    ...parseColorFilters(search),
+                    orientation: parseCameraFilters(search).orientation,
+                  }}
                 />
               ),
             }}

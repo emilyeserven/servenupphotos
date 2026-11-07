@@ -3,61 +3,79 @@ import { ChevronsUpDown, Palette } from "lucide-react";
 import { useState } from "react";
 import { ClearFilterButton } from "@portfolio/components/clear-filter-button";
 import {
-  type ColorPickerProps,
-  ColorPickerPart,
-  type ColorSection,
-} from "@portfolio/components/color-picker-parts";
+  type VisualFilters,
+  type VisualSection,
+  VisualsPickerPart,
+  type VisualsPickerProps,
+} from "@portfolio/components/visuals-picker-parts";
 import { FilterCount } from "@portfolio/components/photo-filters";
 import { Button } from "@portfolio/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@portfolio/components/ui/popover";
-import {
-  COLOR_FILTER_KEYS,
-  type ColorFilters,
-  colorFilterCount,
-  DEFAULT_PERCENT,
-} from "@portfolio/lib/color-search";
+import { COLOR_FILTER_KEYS, colorFilterCount, DEFAULT_PERCENT } from "@portfolio/lib/color-search";
+import { ORIENTATION_KEY } from "@portfolio/lib/orientation";
 import { type ColorName, colorLabel, colorSwatch, isShade } from "@portfolio/lib/photo-colors";
 import { cn } from "@portfolio/lib/utils";
 
+/** The URL keys the Visuals picker sets: the color filters and the orientation. */
+const VISUAL_FILTER_KEYS = [...COLOR_FILTER_KEYS, ORIENTATION_KEY] as const;
+
+/** How many of the Visuals picker's filters are set: the color, the vividness and the orientation. */
+function visualFilterCount(filters: VisualFilters): number {
+  return colorFilterCount(filters) + Number(Boolean(filters.orientation));
+}
+
 /** What each section of the picker is set to, shown under its name in the left list. */
-const SECTIONS: [ColorSection, string, (filters: ColorFilters) => string][] = [
+const SECTIONS: [VisualSection, string, (filters: VisualFilters) => string][] = [
   ["color", "Color", ({ color }) => (color ? colorLabel(color) : "Any")],
   ["match", "Match", matchText],
   ["vivid", "Vividness", vividText],
+  ["orientation", "Orientation", orientationText],
 ];
 
 /** How photos match the color, such as "Largest color" or "At least 30%". */
-function matchText({ match, min = DEFAULT_PERCENT }: ColorFilters): string {
+function matchText({ match, min = DEFAULT_PERCENT }: VisualFilters): string {
   return match === "threshold" ? `At least ${min}%` : "Largest color";
 }
 
 /** The vividness measure and the least a photo needs, such as "Peak · 40+". */
-function vividText({ vivid, measure = "average" }: ColorFilters): string {
+function vividText({ vivid, measure = "average" }: VisualFilters): string {
   const name = measure === "peak" ? "Peak" : "Average";
   return vivid ? `${name} · ${vivid}+` : `${name} · any`;
 }
 
-/** The section to open the picker on: vividness when only it is set, otherwise the color. */
-function firstSection(filters: ColorFilters): ColorSection {
-  return filters.vivid && !filters.color ? "vivid" : "color";
+/** The orientation chosen, such as "Vertical", or "Any". */
+function orientationText({ orientation }: VisualFilters): string {
+  return orientation ? orientation.charAt(0).toUpperCase() + orientation.slice(1) : "Any";
+}
+
+/** The sections the picker opens on, in order: the first one set, or the color. */
+const OPEN_ORDER: [VisualSection, (filters: VisualFilters) => unknown][] = [
+  ["color", (filters) => filters.color],
+  ["vivid", (filters) => filters.vivid],
+  ["orientation", (filters) => filters.orientation],
+];
+
+/** The section to open the picker on: the first one set, or the color. */
+function firstSection(filters: VisualFilters): VisualSection {
+  return OPEN_ORDER.find(([, isSet]) => isSet(filters))?.[0] ?? "color";
 }
 
 /**
- * The Grid's **Colors** filter, a button like **When** and **Camera** that opens a picker: a list
- * of Color, Match and Vividness on the left, each saying what it's set to, and the chosen one's
- * controls on the right, with what each choice does. The button shows the picked color and how
- * many color filters are set. `photos` is what the other filters leave, which the swatches'
- * counts are out of.
+ * The Grid's **Visuals** filter, a button like **When** and **Gear & settings** that opens a
+ * picker: a list of Color, Match, Vividness and Orientation on the left, each saying what it's set
+ * to, and the chosen one's controls on the right, with what each choice does. The button shows the
+ * picked color and how many of its filters are set. `photos` is what the other filters leave,
+ * before the color and orientation filters, which the counts are out of.
  */
-export function GridColorFilters(props: ColorPickerProps) {
+export function VisualsPicker(props: VisualsPickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="font-normal">
           <Palette className="text-muted-foreground" aria-hidden />
-          Colors
+          Visuals
           <PickedDot color={props.filters.color} />
-          <FilterCount count={colorFilterCount(props.filters)} />
+          <FilterCount count={visualFilterCount(props.filters)} />
           <ChevronsUpDown className="opacity-50" aria-hidden />
         </Button>
       </PopoverTrigger>
@@ -85,12 +103,12 @@ function PickedDot({ color }: { color: ColorName | undefined }) {
 }
 
 /** The list of sections on the left, with **Clear** under it, and the chosen one on the right. */
-function PickerBody(props: ColorPickerProps) {
-  const [section, setSection] = useState<ColorSection>(() => firstSection(props.filters));
+function PickerBody(props: VisualsPickerProps) {
+  const [section, setSection] = useState<VisualSection>(() => firstSection(props.filters));
   return (
     <div className="flex max-h-[min(28rem,70vh)]">
       <div className="flex w-28 shrink-0 flex-col gap-0.5 border-r bg-muted/40 p-1 sm:w-36">
-        <div role="tablist" aria-orientation="vertical" aria-label="Color filters">
+        <div role="tablist" aria-orientation="vertical" aria-label="Visual filters">
           {SECTIONS.map(([key, label, text]) => (
             <SectionTab
               key={key}
@@ -101,10 +119,10 @@ function PickerBody(props: ColorPickerProps) {
             />
           ))}
         </div>
-        <ClearColors filters={props.filters} />
+        <ClearVisuals filters={props.filters} />
       </div>
       <div role="tabpanel" className="min-w-0 flex-1 overflow-y-auto p-3">
-        <ColorPickerPart section={section} {...props} />
+        <VisualsPickerPart section={section} {...props} />
       </div>
     </div>
   );
@@ -139,24 +157,24 @@ function SectionTab({
   );
 }
 
-/** An X under the list clearing every color filter, shown while any is set. */
-function ClearColors({ filters }: { filters: ColorFilters }) {
+/** An X under the list clearing every visual filter, shown while any is set. */
+function ClearVisuals({ filters }: { filters: VisualFilters }) {
   const navigate = useNavigate();
-  if (colorFilterCount(filters) === 0) return null;
+  if (visualFilterCount(filters) === 0) return null;
   const clear = () =>
     void navigate({
       to: ".",
       resetScroll: false,
       search: (prev: Record<string, unknown>) => ({
         ...prev,
-        ...Object.fromEntries(COLOR_FILTER_KEYS.map((key) => [key, undefined])),
+        ...Object.fromEntries(VISUAL_FILTER_KEYS.map((key) => [key, undefined])),
       }),
       replace: true,
     });
   return (
     <div className="mt-auto flex items-center gap-1 px-2 py-1.5 text-xs text-muted-foreground">
-      Clear colors
-      <ClearFilterButton label="Colors" onClear={clear} />
+      Clear visuals
+      <ClearFilterButton label="Visuals" onClear={clear} />
     </div>
   );
 }

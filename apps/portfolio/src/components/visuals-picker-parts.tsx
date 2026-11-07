@@ -1,53 +1,68 @@
+import { useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { ColorFilter } from "@portfolio/components/color-filter";
 import { ColorMatchControl } from "@portfolio/components/color-match-control";
+import { OrientationFilter } from "@portfolio/components/orientation-filter";
 import { VividnessControl } from "@portfolio/components/vividness-control";
 import {
   type ColorFilters,
   countsFor,
   DEFAULT_PERCENT,
+  filterByColors,
   matchOf,
   vividEnough,
 } from "@portfolio/lib/color-search";
+import {
+  matchesOrientation,
+  ORIENTATION_KEY,
+  type Orientation,
+  orientationCounts,
+} from "@portfolio/lib/orientation";
 import type { Photo } from "@portfolio/lib/photos";
 
-/** One section of the Colors picker: the color, how a photo matches it, or the least vividness. */
-export type ColorSection = "color" | "match" | "vivid";
+/** One section of the Visuals picker: the color, how a photo matches it, vividness or orientation. */
+export type VisualSection = "color" | "match" | "vivid" | "orientation";
 
-/** What the Colors picker reads, and the photos its counts are out of. */
-export interface ColorPickerProps {
+/** The filters the Visuals picker reads: the color filters and the photo's orientation. */
+export type VisualFilters = ColorFilters & { orientation?: string };
+
+/** What the Visuals picker reads, and the photos its counts are out of. */
+export interface VisualsPickerProps {
+  /** What the other filters leave, before the color and orientation filters. */
   photos: Photo[];
-  filters: ColorFilters;
+  filters: VisualFilters;
 }
 
-/** The right side of the Colors picker: the chosen section's controls. */
-export function ColorPickerPart({
+/** The right side of the Visuals picker: the chosen section's controls. */
+export function VisualsPickerPart({
   section,
   ...props
-}: ColorPickerProps & { section: ColorSection }) {
+}: VisualsPickerProps & { section: VisualSection }) {
   return PARTS[section](props);
 }
 
-const PARTS: Record<ColorSection, (props: ColorPickerProps) => ReactNode> = {
+const PARTS: Record<VisualSection, (props: VisualsPickerProps) => ReactNode> = {
   color: (props) => <ColorPart {...props} />,
   match: (props) => <MatchPart {...props} />,
   vivid: (props) => <VividPart {...props} />,
+  orientation: (props) => <OrientationPart {...props} />,
 };
 
-/** The swatches, each with how many photos it would show. */
-function ColorPart({ photos, filters }: ColorPickerProps) {
+/** The swatches, each with how many photos of the chosen orientation it would show. */
+function ColorPart({ photos, filters }: VisualsPickerProps) {
+  const pool = photos.filter((photo) => matchesOrientation(photo, filters.orientation));
   return (
     <Part intro="Pick a color to show only the photos with much of it. Pick it again to clear it.">
       <ColorFilter
         color={filters.color}
-        counts={countsFor(vividEnough(photos, filters), matchOf(filters))}
+        counts={countsFor(vividEnough(pool, filters), matchOf(filters))}
       />
     </Part>
   );
 }
 
 /** How a photo matches the picked color, with what each choice does. */
-function MatchPart({ filters }: ColorPickerProps) {
+function MatchPart({ filters }: VisualsPickerProps) {
   return (
     <Part intro="How much of the picked color a photo needs to show.">
       <ColorMatchControl
@@ -72,7 +87,7 @@ function MatchPart({ filters }: ColorPickerProps) {
 }
 
 /** Which vividness to measure and the least a photo needs, with what each choice does. */
-function VividPart({ filters }: ColorPickerProps) {
+function VividPart({ filters }: VisualsPickerProps) {
   return (
     <Part intro="How colorful a photo needs to be, from 0 (every photo, grays too) up to 100. An ordinary colorful photo averages about 20 to 30.">
       <VividnessControl vivid={filters.vivid ?? 0} measure={filters.measure ?? "average"} />
@@ -89,7 +104,27 @@ function VividPart({ filters }: ColorPickerProps) {
   );
 }
 
-/** A section's controls, with a line under its name saying what it's for. */
+/** The horizontal and vertical buttons, each counting the photos the color filters leave. */
+function OrientationPart({ photos, filters }: VisualsPickerProps) {
+  const navigate = useNavigate();
+  const set = (orientation: Orientation | undefined) =>
+    void navigate({
+      to: ".",
+      resetScroll: false,
+      search: (prev: Record<string, unknown>) => ({ ...prev, [ORIENTATION_KEY]: orientation }),
+    });
+  return (
+    <Part intro="Show only the photos wider than they're tall, or taller than they're wide. Square photos are neither.">
+      <OrientationFilter
+        orientation={filters.orientation}
+        counts={orientationCounts(filterByColors(photos, filters))}
+        onChange={set}
+      />
+    </Part>
+  );
+}
+
+/** A section's controls, with a line saying what it's for. */
 function Part({ intro, children }: { intro: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-3">

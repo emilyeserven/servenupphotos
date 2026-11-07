@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Dices } from "lucide-react";
 import { useState } from "react";
 import { CameraFilterBar } from "@/components/camera-filters";
-import { GridColorFilters } from "@/components/grid-color-filters";
+import { VisualsPicker } from "@/components/visuals-picker";
 import { GridViewOptions } from "@/components/grid-view-options";
 import { LuckyRowsSelect, ShuffleButton } from "@/components/lucky-controls";
 import { NoMatchingPhotos } from "@/components/photo-filters";
@@ -113,7 +113,10 @@ function LuckyView() {
               keys: COLOR_FILTER_KEYS,
               count: colorFilterCount(search),
               children: (
-                <GridColorFilters photos={filterWithCamera(withImages, search)} filters={search} />
+                <VisualsPicker
+                  photos={filterWithCamera(withImages, { ...search, orientation: undefined })}
+                  filters={search}
+                />
               ),
             }}
           />
