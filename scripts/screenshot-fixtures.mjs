@@ -51,6 +51,7 @@ const baseLenses = readFolder("lenses", "LENSES");
 const baseCaptions = readFolder("captions", "CAPTIONS");
 const baseTimeline = readFolder("timeline", "TIMELINE");
 const baseLikes = readFolder("likes", "LIKES");
+const baseTripLines = readFolder("triplines", "TRIPLINES");
 
 /** A photo the pull request adds, made from the first committed photo with its own name and key. */
 function newPhoto() {
@@ -209,6 +210,29 @@ const added = {
       data: { id: "mom", name: "Mom", photos: [281, 286, 287], importedAt: "2026-10-30T22:41:00Z" },
     },
   ],
+  triplines: [
+    {
+      path: `${FOLDER}/triplines/2026-10-01.json`,
+      data: {
+        id: "2026-10-01",
+        day: "2026-10-01",
+        auto: false,
+        segments: [
+          {
+            mode: "walk",
+            start: { latitude: 34.6655, longitude: 135.5006, label: "Hotel" },
+            photos: [302, 303, 304],
+          },
+          { mode: "subway", photos: [304, 305] },
+          { mode: "walk", photos: [305, 306, 307] },
+        ],
+      },
+    },
+    {
+      path: `${FOLDER}/triplines/2026-10-26.json`,
+      data: { id: "2026-10-26", day: "2026-10-26", auto: true, segments: [] },
+    },
+  ],
   timeline: [
     {
       path: `${FOLDER}/timeline/japan-2026-09-22.json`,
@@ -297,6 +321,7 @@ const headLenses = withAdded(baseLenses, added.lenses);
 const headCaptions = withAdded(baseCaptions, added.captions);
 const headTimeline = withAdded(baseTimeline, added.timeline);
 const headLikes = withAdded(baseLikes, added.likes);
+const headTripLines = withAdded(baseTripLines, added.triplines);
 
 function combinedFile(kind, all, files, branch) {
   const filePath = `${FOLDER}/${kind}/${all}`;
@@ -323,6 +348,7 @@ function combinedFiles(
     captions,
     timeline,
     likes,
+    triplines,
   ],
   branch,
 ) {
@@ -339,6 +365,7 @@ function combinedFiles(
     captions: combinedFile("captions", "CAPTIONS.json", captions, branch),
     timeline: combinedFile("timeline", "TIMELINE.json", timeline, branch),
     likes: combinedFile("likes", "LIKES.json", likes, branch),
+    triplines: combinedFile("triplines", "TRIPLINES.json", triplines, branch),
   };
 }
 
@@ -930,6 +957,7 @@ export function defaultFixtures() {
           baseCaptions,
           baseTimeline,
           baseLikes,
+          baseTripLines,
         ]),
         branch: BASE_BRANCH,
       },
@@ -948,6 +976,7 @@ export function defaultFixtures() {
             headCaptions,
             headTimeline,
             headLikes,
+            headTripLines,
           ],
           PULL_REQUEST.branch,
         ),
@@ -973,6 +1002,7 @@ export function defaultFixtures() {
       captions: { folder: `${FOLDER}/captions`, files: added.captions.map(groupFile) },
       timeline: { folder: `${FOLDER}/timeline`, files: added.timeline.map(groupFile) },
       likes: { folder: `${FOLDER}/likes`, files: added.likes.map(groupFile) },
+      triplines: { folder: `${FOLDER}/triplines`, files: added.triplines.map(groupFile) },
       images: imagesByPath([added.photo]),
     },
     "GET /api/photos/combined/status": { state: "synced", headSha: PULL_REQUEST.headSha },
@@ -1119,6 +1149,32 @@ export function defaultFixtures() {
       path: `${FOLDER}/likes/jane.json`,
       data: { ...body, importedAt: "2026-11-03T03:32:11Z" },
       before: added.likes[0].data,
+      changed: true,
+    }),
+    "GET /api/triplines/2026-10-26/auto": {
+      id: "2026-10-26",
+      day: "2026-10-26",
+      auto: false,
+      segments: [
+        { mode: "walk", photos: [409, 410, 412, 414, 416] },
+        { mode: "walk", photos: [444, 445] },
+      ],
+    },
+    "GET /api/triplines/2026-11-01/auto": {
+      id: "2026-11-01",
+      day: "2026-11-01",
+      auto: false,
+      segments: [
+        { mode: "walk", photos: [481, 482, 485, 486, 488, 469, 470, 475] },
+        { mode: "transit", photos: [475, 495] },
+        { mode: "walk", photos: [495, 496, 497, 471] },
+      ],
+    },
+    "PUT /api/triplines/2026-10-01": ({ body }) => ({
+      ...pendingSave(),
+      path: `${FOLDER}/triplines/2026-10-01.json`,
+      data: body,
+      before: added.triplines[0].data,
       changed: true,
     }),
     "PUT /api/timeline/japan-2026-09-22": ({ body }) => ({

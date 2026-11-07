@@ -1,0 +1,12 @@
+package httpapi
+
+import "net/http"
+
+// registerTripLineRoutes adds the routes for the days' trip lines, combined
+// into TRIPLINES.json and baked into TRIPLINES.geo.json for the portfolio's
+// map.
+func registerTripLineRoutes(mux *http.ServeMux, d routeDeps) {
+	mux.HandleFunc("GET /triplines/{day}/auto", handleAutoTripLine(d.store, d.gh))
+	mux.HandleFunc("PUT /triplines/{day}", handleSaveTripLine(d.store, d.gh))
+	mux.HandleFunc("DELETE /triplines/{day}", handleDeleteTripLine(d.store, d.gh))
+}

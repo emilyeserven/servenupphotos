@@ -1,5 +1,4 @@
 packages:
-  # apps/be-pipeline is a Go module, not a JS workspace.
   - apps/portfolio
   - apps/client-pipeline
   - apps/bff-pipeline

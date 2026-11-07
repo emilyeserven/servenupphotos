@@ -7,13 +7,13 @@ the Bulk Upload modal, and the smaller **Upload** icon on its right uploads one 
 
 Below them every page is listed under its section:
 
-| Section       | Pages (submenu pages in parentheses)                                                                                                     |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| Images        | Photo, Gallery                                                                                                                           |
-| Pipeline      | Photos in Flight, Compare, Lightroom Albums                                                                                              |
-| Organize      | Albums (Album Suggestions), Tags (Small Tags, Tag Data), Genres (Genre Suggestions), Places (Location Names, Bulk Places, Localizations) |
-| Publish       | Instagram (Planned Posts, Caption Templates), Site Spotlight, User Likes                                                                 |
-| Configuration | Settings (Status, Explore Bucket, Manage Sizes), Update Data (each of its subpages), Metadata Groups, Camera Overrides, Timeline Labels  |
+| Section       | Pages (submenu pages in parentheses)                                                                                                                |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Images        | Photo, Gallery                                                                                                                                      |
+| Pipeline      | Photos in Flight, Compare, Lightroom Albums                                                                                                         |
+| Organize      | Albums (Album Suggestions), Tags (Small Tags, Tag Data), Genres (Genre Suggestions), Places (Location Names, Bulk Places, Localizations)            |
+| Publish       | Instagram (Planned Posts, Caption Templates), Site Spotlight, User Likes                                                                            |
+| Configuration | Settings (Status, Explore Bucket, Manage Sizes), Update Data (each of its subpages), Metadata Groups, Camera Overrides, Timeline Labels, Trip Lines |
 
 ## Submenus
 
