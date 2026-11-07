@@ -46,7 +46,7 @@ export function statById(id: string): GraphStat {
 }
 
 /** The kinds of graph the builder draws. */
-export type GraphType = "bar" | "line" | "dot" | "pie" | "scatter" | "heatmap";
+export type GraphType = "bar" | "line" | "dot" | "pie" | "scatter" | "heatmap" | "photos";
 
 /** What a bar, line or pie measures: how many photos, or their share in percent. */
 export type Measure = "count" | "percent";
@@ -90,7 +90,7 @@ export function axisValues(list: Photo[], config: GraphConfig): StatRow[] {
 }
 
 /** The x axis's rows, in the order picked, cut by the Range group and then to the limit. */
-function axisRows(list: Photo[], config: GraphConfig): StatRow[] {
+export function axisRows(list: Photo[], config: GraphConfig): StatRow[] {
   const kept = rangedRows(axisValues(list, config), config);
   return config.limit > 0 ? kept.slice(0, config.limit) : kept;
 }
@@ -151,7 +151,7 @@ function singleSeries(rows: StatRow[], total: number, config: GraphConfig): Grap
 }
 
 /** The split's series: its values among the photos kept, the ones past the colors going together as Other. */
-function splitSeries(rows: StatRow[]): GraphSeries[] {
+export function splitSeries(rows: StatRow[]): GraphSeries[] {
   const own = rows.length > MAX_SERIES ? rows.slice(0, MAX_SERIES - 1) : rows;
   const series = own.map((row, index) => ({
     key: `s${index}`,
@@ -210,9 +210,9 @@ function pieData(rows: StatRow[], total: number, config: GraphConfig): GraphData
 }
 
 /** The graph types whose values can be split by another stat. */
-export const SPLIT_TYPES: ReadonlySet<GraphType> = new Set(["bar", "line", "dot"]);
+export const SPLIT_TYPES: ReadonlySet<GraphType> = new Set(["bar", "line", "dot", "photos"]);
 
-/** Whether the graph is split: a bar, line or dot graph with a stat to split by. */
+/** Whether the graph is split: a bar, line, dot or photo dot graph with a stat to split by. */
 function isSplit(config: GraphConfig): boolean {
   return config.split !== "" && SPLIT_TYPES.has(config.type);
 }

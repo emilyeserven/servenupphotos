@@ -66,8 +66,12 @@ export function MeasureOptions() {
   );
 }
 
-/** The y axis: another stat for a scatterplot or heatmap, or what's measured for the rest. */
+/**
+ * The y axis: another stat for a scatterplot or heatmap, nothing for a photo dot graph, whose stacks
+ * are always photos, or what's measured for the rest.
+ */
 function YField({ config, onChange }: { config: GraphConfig; onChange: ConfigChange }) {
+  if (config.type === "photos") return null;
   if (hasYStat(config.type)) {
     return (
       <GraphField label="Y axis" icon={MoveUp}>
